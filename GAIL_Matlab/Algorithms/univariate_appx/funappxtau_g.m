@@ -1,4 +1,4 @@
-function [fappx,out_param]=funappxtau_g(f,varargin)
+function [fappx,out_param]=funappxtau_g(varargin)
 %FUNAPPXTAU_G One dimensional guaranteed function recovery on interval 
 %   [0,1] with cone condition tau
 %
@@ -121,59 +121,8 @@ function [fappx,out_param]=funappxtau_g(f,varargin)
 %        [math.NA]}, 2013.
 %
 
-default.abstol  = 1e-6;
-default.tau  = 10;
-default.nmax  = 1e7;
-
-if (nargin<1)
-    help funappxtau_g
-    warning('Function f must be specified. Now GAIL is using f(x)=x^2.')
-    f = @(x) x.^2;
-end;
-
-if (nargin<2)
-   out_param.abstol = default.abstol;
-   out_param.tau = default.tau;
-   out_param.nmax = default.nmax;
-end;
-
-p = inputParser;
-addRequired(p,'f',@isfcn);
-
-%% API format: (fcn, struct)
-if (nargin == 2 && isstruct(varargin{1}))
- p.StructExpand = true;
- addParamValue(p,'abstol',default.abstol,@isnumeric);
- addParamValue(p,'tau',default.tau,@isnumeric);
- addParamValue(p,'nmax',default.nmax,@isnumeric);
- parse(p,f,varargin{:})
- out_param = p.Results;
-end
-
-%% API format---not in order: (fcn, 'input2', inputVal2, 'input3', inputVal3, 'input1', inputVal1)
-if (nargin > 2)
-  in2 = varargin{1};
-  if (ischar(in2)),
-    addParamValue(p,'abstol',default.abstol,@isnumeric);
-    addParamValue(p,'tau',default.tau,@isnumeric);
-    addParamValue(p,'nmax',default.nmax,@isnumeric);
-    parse(p,f,varargin{:})
-    out_param = p.Results;
-  end
-end
-
-%% API format---in order: (fcn, inputVal1, inputVal2, inputVal3) 
-if (nargin >= 2 && isnumeric(varargin{1}))
-    addOptional(p,'abstol',default.abstol,@isnumeric);
-    addOptional(p,'tau',default.tau,@isnumeric);
-    addOptional(p,'nmax',default.nmax,@isnumeric);
-    parse(p,f,varargin{:})
-    out_param = p.Results;
-end
-
 % check parameter satisfy conditions or not
-out_param = funappx_g_param(out_param,default);
-
+[f, out_param] = funappxtau_g_param(varargin{:});
 
 %% main algorithm
 
@@ -246,8 +195,58 @@ x1 = 0:1/(out_param.npoints-1):1;
 y1 = f(x1);
 fappx = @(x) interp1(x1,y1,x,'linear');
 
-function out_param = funappx_g_param(out_param,default)
-% let error tolerance less than 1 and greater than 0
+function [f, out_param] = funappxtau_g_param(varargin)
+% parse the input to the funappxtau_g function
+
+%% Default parameter values
+
+default.abstol  = 1e-6;
+default.tau  = 10;
+default.nmax  = 1e7;
+
+if isempty(varargin)
+    help funappxtau_g
+    warning('Function f must be specified. Now GAIL is using f(x)=x^2.')
+    f = @(x) x.^2;
+else
+    f = varargin{1};
+end;
+
+validvarargin=numel(varargin)>1;
+if validvarargin
+    in2=varargin{2};
+    validvarargin=(isnumeric(in2) || isstruct(in2) ...
+        || ischar(in2));
+end
+
+if ~validvarargin
+    %if only one input f, use all the default parameters
+    out_param.abstol = default.abstol;
+    out_param.tau = default.tau;
+    out_param.nmax = default.nmax;
+else
+    p = inputParser;
+    addRequired(p,'f',@isfcn);
+    if isnumeric(in2)%if there are multiple inputs with
+        %only numeric, they should be put in order.
+        addOptional(p,'abstol',default.abstol,@isnumeric);
+        addOptional(p,'tau',default.tau,@isnumeric);
+        addOptional(p,'nmax',default.nmax,@isnumeric);
+    else
+        if isstruct(in2) %parse input structure
+            p.StructExpand = true;
+            p.KeepUnmatched = true;
+        end
+        addParamValue(p,'abstol',default.abstol,@isnumeric);
+        addParamValue(p,'tau',default.tau,@isnumeric);
+        addParamValue(p,'nmax',default.nmax,@isnumeric);
+        
+    end
+    parse(p,f,varargin{2:end})
+    out_param = p.Results;
+end;
+
+% let error tolerance greater than 0
 if (out_param.abstol <= 0 )
     warning(['Error tolerance should be greater than 0.' ...
             ' Using default error tolerance ' num2str(default.abstol)])
