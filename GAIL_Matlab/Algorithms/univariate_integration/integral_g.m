@@ -1,4 +1,4 @@
-function [q,out_param]= integral_g(f,varargin)
+function [q,out_param]= integral_g(varargin)
 %  INTEGRAL_G 1-D guaranteed function integration using trapezoidal rule
 % 
 %  Description
@@ -66,8 +66,8 @@ function [q,out_param]= integral_g(f,varargin)
 %
 %   Example 3:
 %   >> q = integral_g()
-%   Warning: Function f must be specified. Now GAIL is using
-%   f(x)=x^2. >  In ***
+%   Warning: Function f must be specified. Now GAIL is giving you a toy example of f(x)=x^2.
+%   >  In ***
 %   q = 0.3333
 %
 %
@@ -79,58 +79,8 @@ function [q,out_param]= integral_g(f,varargin)
 %      balls, preprint, 2013, arXiv:1303.2412 [math.ST].
 
 %%
-default.abstol  = 1e-6;    % default tolerance
-default.ninit  = 52;  % default starting number of points
-default.nmax  = 1e7;    % default maximum allowance of number of points
-
-if (nargin<1)
-    help integral_g
-    warning('Function f must be specified. Now GAIL is using f(x)=x^2.')
-    f = @(x) x.^2;
-end;
-
-if (nargin<2)
-   out_param.abstol = default.abstol;
-   out_param.ninit = default.ninit;
-   out_param.nmax = default.nmax;
-end;
-
-p = inputParser;
-addRequired(p,'f',@isfcn);
-
-%% API format: (fcn, struct)
-if (nargin == 2 && isstruct(varargin{1}))
-    p.StructExpand = true;
-    addParamValue(p,'abstol',default.abstol,@ispositive);
-    addParamValue(p,'ninit',default.ninit,@ispositive);
-    addParamValue(p,'nmax',default.nmax,@ispositive);
-    parse(p,f,varargin{:})
-    out_param = p.Results;
-end
-
-%% API format---not in order: (fcn, 'input2', inputVal2, 'input3', inputVal3, 'input1', inputVal1)
-if (nargin > 2)
-    in2 = varargin{1};
-    if (ischar(in2)),
-        addParamValue(p,'abstol',default.abstol,@ispositive);
-        addParamValue(p,'ninit',default.ninit,@ispositive);
-        addParamValue(p,'nmax',default.nmax,@ispositive);
-        parse(p,f,varargin{:})
-        out_param = p.Results;
-    end
-end
-
-%% API format---in order: (fcn, inputVal1, inputVal2, inputVal3) 
-if (nargin >= 2 && isnumeric(varargin{1}))
-    addOptional(p,'abstol',default.abstol,@ispositive);
-    addOptional(p,'ninit',default.ninit,@ispositive);
-    addOptional(p,'nmax',default.nmax,@ispositive);
-    parse(p,f,varargin{:})
-    out_param = p.Results;
-end
-
 % check parameter satisfy conditions or not
-out_param = integral_g_param(out_param,default);
+[f,out_param] = integral_g_param(varargin{:});
 
 %% main alg
 out_param.tau=ceil((out_param.ninit-1)*2-1); % computes the minimum requirement of number of points to start
@@ -205,22 +155,79 @@ out_param.q=q;  % integral of functions
 out_param.npoints=ntrap+1;  % number of points finally used
 out_param.errest=errest;    % error of integral
 
-function out_param = integral_g_param(out_param,default)
-% let error tolerence greater than 0
+function [f, out_param] = integral_g_param(varargin)
+% parse the input to the integral_g function
+
+% Default parameter values
+default.abstol  = 1e-6;
+default.ninit  = 52;
+default.nmax  = 1e7;
+
+
+if isempty(varargin)
+    warning('Function f must be specified. Now GAIL is giving you a toy example of f(x)=x^2.')
+    help integral_g
+    f = @(x) x.^2;
+else
+    f = varargin{1};
+end;
+
+validvarargin=numel(varargin)>1;
+if validvarargin
+    in2=varargin{2};
+    validvarargin=(isnumeric(in2) || isstruct(in2) ...
+        || ischar(in2));
+end
+
+if ~validvarargin
+    %if only one input f, use all the default parameters
+    out_param.abstol = default.abstol;
+    out_param.ninit = default.ninit;
+    out_param.nmax = default.nmax;
+else
+    p = inputParser;
+    addRequired(p,'f',@isfcn);
+    if isnumeric(in2)%if there are multiple inputs with
+        %only numeric, they should be put in order.
+        addOptional(p,'abstol',default.abstol,@isnumeric);
+        addOptional(p,'ninit',default.ninit,@isnumeric);
+        addOptional(p,'nmax',default.nmax,@isnumeric);
+    else
+        if isstruct(in2) %parse input structure
+            p.StructExpand = true;
+            p.KeepUnmatched = true;
+        end
+        addParamValue(p,'abstol',default.abstol,@isnumeric);
+        addParamValue(p,'ninit',default.ninit,@isnumeric);
+        addParamValue(p,'nmax',default.nmax,@isnumeric);
+    end
+    parse(p,f,varargin{2:end})
+    out_param = p.Results;
+end;
+
+% let error tolerance greater than 0
 if (out_param.abstol <= 0 )
     warning(['Error tolerance should be greater than 0.' ...
-    ' Using the default error tolerance of ' num2str(default.abstol) '.'])
+            ' Using default error tolerance ' num2str(default.abstol)])
     out_param.abstol = default.abstol;
 end
-% let cone condition greater or equal 2
-if (out_param.ninit < 3)
-    warning(['Initial number of function values should be no less than 2.' ...
-        ' Using default initial number of ' int2str(default.ninit) '.'])
+% let initial number of points be a positive integer
+if (~isposint(out_param.ninit) && isposge3(out_param.ninit))
+    warning(['Initial number of points should be a positive integer.' ...
+             ' Using ', num2str(ceil(out_param.ninit))])
+    out_param.ninit = ceil(out_param.ninit);
+elseif(~isposint(out_param.ninit) && ~isposge3(out_param.ninit))
+    warning(['Initial number of points should be a positive integer.' ...
+            ' Using default number of points ' int2str(default.ninit)])
     out_param.ninit = default.ninit;
 end
 % let cost budget be a positive integer
-if (~isposint(out_param.nmax))
-    warning(['Cost budget should be a positive integer' ...
-    'Using default cost budget of ' int2str(default.nmax) '.'])
+if (~isposint(out_param.nmax) && ispositive(out_param.nmax))
+    warning(['Cost budget should be a positive integer.' ...
+             ' Using cost budget ', num2str(ceil(out_param.nmax))])
+    out_param.nmax = ceil(out_param.nmax);
+elseif(~isposint(out_param.nmax) && ~ispositive(out_param.nmax))
+    warning(['Cost budget should be a positive integer.' ...
+             ' Using default cost budget ' int2str(default.nmax)])
     out_param.nmax = default.nmax;
 end

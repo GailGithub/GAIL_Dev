@@ -1,4 +1,4 @@
-function [Q,out_param]= integraltau_g(f,varargin)
+function [Q,out_param]= integraltau_g(varargin)
 %  INTEGRALTAU_G 1-D guaranteed function integration using trapezoidal rule
 % 
 %  Description
@@ -55,20 +55,20 @@ function [Q,out_param]= integraltau_g(f,varargin)
 %   Examples
 %
 %   Example 1: 
-%   >> f = @(x) x; fint = integraltau_g(f)
-%   fint = 5.0000e-01
+%   >> q = integral_g(@(x) x.^2)
+%   q = 0.3333
 %
 %
 %   Example 2:
-%   >> f = @(x) x.^2; fint = integraltau_g(f,'tol',0.00001,'tau',100,'nmax',1e7)
-%   fint = 3.3333e-01
+%   >> f = @(x) exp(-x.^2); q = integral_g(f,'abstol',1e-5,'ninit',52,'nmax',1e7)
+%   q = 0.7468
 %
 %
 %   Example 3:
-%   >> fint = integraltau_g()
-%   Warning: Function f must be specified. Now GAIL is giving you a toy example of
-%   f(x)=x^2. >  In ***
-%   fint = 0.3333
+%   >> q = integral_g()
+%   Warning: Function f must be specified. Now GAIL is giving you a toy example of f(x)=x^2.
+%   >  In ***
+%   q = 0.3333
 %
 % 
 % See Also
@@ -80,58 +80,8 @@ function [Q,out_param]= integraltau_g(f,varargin)
 %      balls, preprint, 2013, arXiv:1303.2412 [math.ST].
 
 %%
-default.tol  = 1e-6;    % default tolerance
-default.tau  = 100;  % default cone constant
-default.nmax  = 1e7;    % default maximun allowance of number of points
-
-if (nargin<1)
-    help integraltau_g
-    warning('Function f must be specified. Now GAIL is giving you a toy example of f(x)=x^2.')
-    f = @(x) x.^2;
-end;
-
-if (nargin<2)
-   out_param.tol = default.tol;
-   out_param.tau = default.tau;
-   out_param.nmax = default.nmax;
-end;
-
-p = inputParser;
-addRequired(p,'f',@isfcn);
-
-%% API format: (fcn, struct)
-if (nargin == 2 && isstruct(varargin{1}))
-    p.StructExpand = true;
-    addParamValue(p,'tol',default.tol,@ispositive);
-    addParamValue(p,'tau',default.tau,@ispositive);
-    addParamValue(p,'nmax',default.nmax,@ispositive);
-    parse(p,f,varargin{:})
-    out_param = p.Results;
-end
-
-%% API format---not in order: (fcn, 'input2', inputVal2, 'input3', inputVal3, 'input1', inputVal1)
-if (nargin > 2)
-    in2 = varargin{1};
-    if (ischar(in2)),
-        addParamValue(p,'tol',default.tol,@ispositive);
-        addParamValue(p,'tau',default.tau,@ispositive);
-        addParamValue(p,'nmax',default.nmax,@ispositive);
-        parse(p,f,varargin{:})
-        out_param = p.Results;
-    end
-end
-
-%% API format---in order: (fcn, inputVal1, inputVal2, inputVal3) 
-if (nargin >= 2 && isnumeric(varargin{1}))
-    addOptional(p,'tol',default.tol,@ispositive);
-    addOptional(p,'tau',default.tau,@ispositive);
-    addOptional(p,'nmax',default.nmax,@ispositive);
-    parse(p,f,varargin{:})
-    out_param = p.Results;
-end
-
 % check parameter satisfy conditions or not
-out_param = integraltau_g_param(out_param,default);
+[f,out_param] = integraltau_g_param(varargin{:});
 
 %% main alg
 % out_param = in_param;   % save in_param to out_param
@@ -207,22 +157,79 @@ out_param.Q=Q;  % integral of functions
 out_param.npoints=ntrap+1;  % number of points finally used
 out_param.errest=errest;    % error of integral
 
-function out_param = integraltau_g_param(out_param,default)
-% let error tolerence less than 1 and greater than 0
-if (out_param.tol <= 0 || out_param.tol >= 1)
-    warning('Error tolerence should be less than 1 and greater than 0')
-    warning('Use default error tolerence 1e-7')
-    out_param.tol = default.tol;
+function [f, out_param] = integraltau_g_param(varargin)
+% parse the input to the integral_g function
+
+% Default parameter values
+default.abstol  = 1e-6;
+default.tau  = 100;
+default.nmax  = 1e7;
+
+
+if isempty(varargin)
+    warning('Function f must be specified. Now GAIL is giving you a toy example of f(x)=x^2.')
+    help integral_g
+    f = @(x) x.^2;
+else
+    f = varargin{1};
+end;
+
+validvarargin=numel(varargin)>1;
+if validvarargin
+    in2=varargin{2};
+    validvarargin=(isnumeric(in2) || isstruct(in2) ...
+        || ischar(in2));
 end
-% let cone condition greater or equal 2
-if (out_param.tau < 2)
-    warning('Cone condition should be greater or equal 2')
-    warning('Use default cone condition 10')
+
+if ~validvarargin
+    %if only one input f, use all the default parameters
+    out_param.abstol = default.abstol;
+    out_param.tau = default.tau;
+    out_param.nmax = default.nmax;
+else
+    p = inputParser;
+    addRequired(p,'f',@isfcn);
+    if isnumeric(in2)%if there are multiple inputs with
+        %only numeric, they should be put in order.
+        addOptional(p,'abstol',default.abstol,@isnumeric);
+        addOptional(p,'tau',default.tau,@isnumeric);
+        addOptional(p,'nmax',default.nmax,@isnumeric);
+    else
+        if isstruct(in2) %parse input structure
+            p.StructExpand = true;
+            p.KeepUnmatched = true;
+        end
+        addParamValue(p,'abstol',default.abstol,@isnumeric);
+        addParamValue(p,'tau',default.tau,@isnumeric);
+        addParamValue(p,'nmax',default.nmax,@isnumeric);
+    end
+    parse(p,f,varargin{2:end})
+    out_param = p.Results;
+end;
+
+% let error tolerance greater than 0
+if (out_param.abstol <= 0 )
+    warning(['Error tolerance should be greater than 0.' ...
+            ' Using default error tolerance ' num2str(default.abstol)])
+    out_param.abstol = default.abstol;
+end
+% let initial number of points be a positive integer
+if (~isposint(out_param.tau) && isposge3(out_param.tau))
+    warning(['Initial number of points should be a positive integer.' ...
+             ' Using ', num2str(ceil(out_param.tau))])
+    out_param.tau = ceil(out_param.tau);
+elseif(~isposint(out_param.tau) && ~isposge3(out_param.tau))
+    warning(['Initial number of points should be a positive integer.' ...
+            ' Using default number of points ' int2str(default.tau)])
     out_param.tau = default.tau;
 end
 % let cost budget be a positive integer
-if (~isposint(out_param.nmax))
-    warning('Cost budget should be a positive integer')
-    warning('Use default cost budget 10000000')
+if (~isposint(out_param.nmax) && ispositive(out_param.nmax))
+    warning(['Cost budget should be a positive integer.' ...
+             ' Using cost budget ', num2str(ceil(out_param.nmax))])
+    out_param.nmax = ceil(out_param.nmax);
+elseif(~isposint(out_param.nmax) && ~ispositive(out_param.nmax))
+    warning(['Cost budget should be a positive integer.' ...
+             ' Using default cost budget ' int2str(default.nmax)])
     out_param.nmax = default.nmax;
 end
