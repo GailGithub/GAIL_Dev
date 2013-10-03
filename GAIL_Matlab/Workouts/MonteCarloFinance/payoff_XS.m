@@ -92,6 +92,10 @@ for j=1:pc
                     end
                 end
             end
+        case 'lookcall'
+            pay(Nvec(j)+1:Nvec(j+1))=(stock(:,d+1)-min(stock))*exp(-r*T);
+        case 'lookput'
+            pay(Nvec(j)+1:Nvec(j+1))=(max(stock)-stock(:,d+1))*exp(-r*T);
     end
 end
 end
@@ -196,7 +200,8 @@ if out_payparam.needcheck
             'ameancall','ameanput'...
             'gmeancall','gmeanput'...
             'upincall','upoutcall','downincall','downoutcall'...
-            'upinput','upoutput','downinput','downoutput'}))
+            'upinput','upoutput','downinput','downoutput'...
+            'lookcall','lookput'}))
         warning(['Payoff type not recognized, using ' default.paytype])
         out_payparam.paytype='eurocall';
     end
