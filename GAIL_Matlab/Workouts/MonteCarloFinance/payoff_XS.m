@@ -42,6 +42,7 @@ temp_stparam=out_stparam;
 for j=1:pc
     n=Npc(j);
     stock=stockpath(n,temp_stparam);
+    %size(stock)  n*(d+1)
     switch paytype
         case 'eurocall'
             pay(Nvec(j)+1:Nvec(j+1))=max(stock(:,d+1)-K,0)*exp(-r*T);
@@ -62,40 +63,40 @@ for j=1:pc
         %Barrier option
         case {'upincall','upoutcall','downincall','downoutcall','upinput','upoutput','downinput','downoutput'}
             if strcmp(paytype(1:2),'up') %up barrier
-                in=any(stock>barrier);
+                in=any(stock'>barrier)';
                 if strcmp(paytype(3:4),'in') %up and in barrier
                     if strcmp(paytype(end-3:end),'call') %up and in eurocall
-                        pay(Nvec(j)+1:Nvec(j+1))=max(stock(:,d+1)-K,0)*exp(-r*T)*in;
+                        pay(Nvec(j)+1:Nvec(j+1))=max(stock(:,d+1)-K,0)*exp(-r*T).*in;
                     else %up and in europut
-                        pay(Nvec(j)+1:Nvec(j+1))=max(K-stock(:,d+1),0)*exp(-r*T)*in;
+                        pay(Nvec(j)+1:Nvec(j+1))=max(K-stock(:,d+1),0)*exp(-r*T).*in;
                     end
                 else %up and out barrier
                     if strcmp(paytype(end-3:end),'call') %up and out eurocall
-                        pay(Nvec(j)+1:Nvec(j+1))=max(stock(:,d+1)-K,0)*exp(-r*T)*~in;
+                        pay(Nvec(j)+1:Nvec(j+1))=max(stock(:,d+1)-K,0)*exp(-r*T).*~in;
                     else %up and out europut
-                        pay(Nvec(j)+1:Nvec(j+1))=max(K-stock(:,d+1),0)*exp(-r*T)*~in;
+                        pay(Nvec(j)+1:Nvec(j+1))=max(K-stock(:,d+1),0)*exp(-r*T).*~in;
                     end
                 end
             else %down barrier
-                in=any(stock<barrier);
+                in=any(stock'<barrier)';
                 if strcmp(paytype(5:6),'in') %down and in barrier
                     if strcmp(paytype(end-3:end),'call') %down and in eurocall
-                        pay(Nvec(j)+1:Nvec(j+1))=max(stock(:,d+1)-K,0)*exp(-r*T)*in;
+                        pay(Nvec(j)+1:Nvec(j+1))=max(stock(:,d+1)-K,0)*exp(-r*T).*in;
                     else %down and in europut
-                        pay(Nvec(j)+1:Nvec(j+1))=max(K-stock(:,d+1),0)*exp(-r*T)*in;
+                        pay(Nvec(j)+1:Nvec(j+1))=max(K-stock(:,d+1),0)*exp(-r*T).*in;
                     end
                 else %down and out barrier
                     if strcmp(paytype(end-3:end),'call') %down and out eurocall
-                        pay(Nvec(j)+1:Nvec(j+1))=max(stock(:,d+1)-K,0)*exp(-r*T)*~in;
+                        pay(Nvec(j)+1:Nvec(j+1))=max(stock(:,d+1)-K,0)*exp(-r*T).*~in;
                     else %down and out europut
-                        pay(Nvec(j)+1:Nvec(j+1))=max(K-stock(:,d+1),0)*exp(-r*T)*~in;
+                        pay(Nvec(j)+1:Nvec(j+1))=max(K-stock(:,d+1),0)*exp(-r*T).*~in;
                     end
                 end
             end
         case 'lookcall'
-            pay(Nvec(j)+1:Nvec(j+1))=(stock(:,d+1)-min(stock))*exp(-r*T);
+            pay(Nvec(j)+1:Nvec(j+1))=(stock(:,d+1)-min(stock,[ ],2))*exp(-r*T);
         case 'lookput'
-            pay(Nvec(j)+1:Nvec(j+1))=(max(stock)-stock(:,d+1))*exp(-r*T);
+            pay(Nvec(j)+1:Nvec(j+1))=(max(stock,[ ],2)-stock(:,d+1))*exp(-r*T);
     end
 end
 end
