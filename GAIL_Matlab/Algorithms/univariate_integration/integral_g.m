@@ -165,8 +165,8 @@ default.nmax  = 1e7;
 
 
 if isempty(varargin)
-    warning('Function f must be specified. Now GAIL is giving you a toy example of f(x)=x^2.')
     help integral_g
+    warning('Function f must be specified. Now GAIL is giving you a toy example of f(x)=x^2.')
     f = @(x) x.^2;
 else
     f = varargin{1};
