@@ -1,4 +1,4 @@
-function [Q,out_param] = cubMC_g(f,interval,varargin)
+function [Q,out_param] = cubMC_g(varargin)
 % CUBMC_G Monte Carlo method to evaluate a multidimentional integral to
 % within a specified absolute error tolerance with guaranteed uncertainy
 % within alpha.
@@ -80,91 +80,15 @@ function [Q,out_param] = cubMC_g(f,interval,varargin)
 %        Via Monte Carlo Sampling, preprint, 2013, 	arXiv:1208.4318 [math.ST]. 
 
 tstart=tic;
-default.measure = 'uniform';% default measure
-default.dim = 1;% default dimension
-default.interval = [zeros(1,default.dim);ones(1,default.dim)];% default interval
-default.abstol  = 1e-2;% default absolute error tolerence
-default.alpha = 0.01;% default uncertainty
-default.n_sigma = 1e3; % default n_sigma
-default.fudge = 1.1; % default variance inflation factor
-
-if (nargin<1) % if no input print error message
-    help cubMC_g
-    warning('f must be specified. Now GAIL is using f = @(x) x.^2.')
-    f = @(x) x.^2;
-end;
-
-if (nargin<2) 
-% if only one input which is function f, use default values for all other
-% parameters
-    interval = default.interval;
-    in_param.measure = default.measure;
-    in_param.abstol = default.abstol;
-    in_param.alpha = default.alpha;
-    in_param.n_sigma = default.n_sigma;
-    in_param.fudge = default.fudge;
-end;
-p = inputParser;
-addRequired(p,'f',@isfcn);
-
-if (nargin<3) 
-% if two inputs which are functon f and interval, then use all the default
-% parameters for all other inputs.
-    in_param.measure = default.measure;
-    in_param.abstol = default.abstol;
-    in_param.alpha = default.alpha;
-    in_param.n_sigma = default.n_sigma;
-    in_param.fudge = default.fudge;
-end;
-p = inputParser;
-addRequired(p,'f',@isfcn);
-addRequired(p, 'interval', @isnumeric);
-
-if (nargin == 3 && isstruct(varargin{1})) 
-    % add f interval and in_param as input
-    p.StructExpand = true;
-    p.KeepUnmatched  = true;
-    addParamValue(p,'measure',default.measure,@(x) any(validatestring(x, {'uniform','normal','Gaussian'})));
-    addParamValue(p,'abstol',default.abstol,@isnumeric);
-    addParamValue(p,'alpha',default.alpha,@isnumeric);
-    addParamValue(p,'n_sigma',default.n_sigma,@isnumeric);
-    addParamValue(p,'fudge',default.fudge,@isnumeric);   
-    parse(p,f,interval,varargin{:})
-    in_param = p.Results;
-end
-
-if (nargin > 3)
-    in2 = varargin{1}; % the input parameters are not in order
-    if (ischar(in2)),
-        addParamValue(p,'measure',default.measure,@(x) any(validatestring(x, {'uniform','normal','Gaussian'})));
-        addParamValue(p,'abstol',default.abstol,@isnumeric);
-        addParamValue(p,'alpha',default.alpha,@isnumeric);
-        addParamValue(p,'n_sigma',default.n_sigma,@isnumeric);
-        addParamValue(p,'fudge',default.fudge,@isnumeric);        
-        parse(p,f,interval,varargin{:})
-        in_param = p.Results;
-    end
-end
-
-if (nargin >= 3 && isnumeric(varargin{1})) % the input parameters are in order
-    addOptional(p,'measure',default.measure,@(x) any(validatestring(x, {'uniform','normal','Gaussian'})));
-    addOptional(p,'abstol',default.abstol,@isnumeric);
-    addOptional(p,'alpha',default.alpha,@isnumeric);
-    addOptional(p,'n_sigma',default.n_sigma,@isnumeric);
-    addOptional(p,'fudge',default.fudge,@isnumeric);    
-    parse(p,f,interval,varargin{:})
-    in_param = p.Results;
-end
-in_param = cubMC_g_param(interval,default,in_param);%check validity of inputs
-out_param = in_param; %let the out_param contains all the in_param
+[f,interval,in_param,out_param] = cubMC_g_param(varargin{:});%check validity of inputs
 f=transformIntegrand(f,interval,in_param); 
-%transform integrand so that the interval would not need to be changed
-if strcmp(in_param.measure,'uniform')%the using uniformly distributed samples
+% transform integrand so that the interval would not need to be changed
+if strcmp(in_param.measure,'uniform')% the using uniformly distributed samples
     [Q,out_param] = meanMC_g(@(nfun)f(rand(nfun,in_param.dim)),in_param);
     out_param.Q=Q;% using meanMC_g to get the mean 
-else strcmp(in_param.measure,'normal')%using normally distributed samples
+else strcmp(in_param.measure,'normal')% using normally distributed samples
     [Q,out_param] = meanMC_g(@(nfun)f(randn(nfun,in_param.dim)),in_param);
-    out_param.Q=Q; % using meanMC_g to get the mean
+    out_param.Q=Q;% using meanMC_g to get the mean
 end
 out_param.time=toc(tstart); %elapsed time
 end
@@ -186,10 +110,75 @@ function newf=transformIntegrand(oldf,interval,in_param)
     end   
 end
 
-function [in_param,out_param] = cubMC_g_param(interval,default,in_param)
+function [f,interval,in_param,out_param] = cubMC_g_param(varargin)
 
-out_param.exit=0; %success! until found otherwise
+default.measure = 'uniform';% default measure
+default.dim = 1;% default dimension
+default.interval = [zeros(1,default.dim);ones(1,default.dim)];% default interval
+default.abstol  = 1e-2;% default absolute error tolerence
+default.alpha = 0.01;% default uncertainty
+default.n_sigma = 1e3; % default n_sigma
+default.fudge = 1.1; % default variance inflation factor
 
+if isempty(varargin) % if no input print error message and use the default setting
+    help cubMC_g
+    warning(['f must be specified. Now GAIL is using f = @(x) x.^2.'...
+        'Integration interval must be specified. Now GAIL is using interval [0 1]'])
+    f = @(x) x.^2;
+    interval = default.interval;
+elseif numel(varargin)==1
+    % if there is only function but no interval input. Use default interval.
+    help cubMC_g
+    warning('the interval must be specified, Now GAIL is using interval [0 1]')
+    f = varargin{1};
+    interval = default.interval;    
+else
+    f = varargin{1};
+    interval = varargin{2}; % the first input is function, the second input is interval.
+end
+    
+validvarargin=numel(varargin)>2;% check if there is any optional parameter input
+if validvarargin
+    in3=varargin{3}; % check the third input
+    validvarargin=(isnumeric(in3) || isstruct(in3) || ischar(in3));
+    % to see if it is numeric structure or character.
+end
+
+if ~validvarargin
+% if there is no optional input, use default settings.
+    in_param.measure = default.measure;
+    in_param.abstol = default.abstol;
+    in_param.alpha = default.alpha;
+    in_param.n_sigma = default.n_sigma;
+    in_param.fudge = default.fudge;
+else % if there is some optional input 
+    p = inputParser;
+    addRequired(p,'f',@isfcn);
+    addRequired(p,'interval',@isnumeric);
+    if isnumeric(in3) || ischar(in3)
+        %if there are multiple inputs with only numeric, they should be put
+        %in order.
+        addOptional(p,'measure',default.measure,@(x) any(validatestring(x, {'uniform','normal','Gaussian'})));
+        addOptional(p,'abstol',default.abstol,@isnumeric);
+        addOptional(p,'alpha',default.alpha,@isnumeric);
+        addOptional(p,'n_sigma',default.n_sigma,@isnumeric);
+        addOptional(p,'fudge',default.fudge,@isnumeric);
+    else
+        if isstruct(in3) %the input is structure
+            p.StructExpand = true;
+            p.KeepUnmatched = true;
+        end % if there are multiple inputs with name and numeric, they
+    % could be put not in order
+        addParamValue(p,'measure',default.measure,@(x) any(validatestring(x, {'uniform','normal','Gaussian'})));
+        addParamValue(p,'abstol',default.abstol,@isnumeric);
+        addParamValue(p,'alpha',default.alpha,@isnumeric);
+        addParamValue(p,'n_sigma',default.n_sigma,@isnumeric);
+        addParamValue(p,'fudge',default.fudge,@isnumeric);
+    end
+    parse(p,f,interval,varargin{3:end})
+    in_param = p.Results;
+end
+out_param = in_param; % let the out_param contains all the in_param
 [two, in_param.dim]=size(interval); %interval should be 2 x dimension
 if two==0 && isfield(in_param,'interval'); %if interval specified through in_param structure
     interval=in_param.interval; %then get it from there
@@ -199,7 +188,7 @@ if any(isnan(interval(:))); %check interval for not a number
     out_param.exit=10; out_param = cubMC_g_err(out_param); return; 
 end
 if two~=2 %if interval is given as row vector for dimension 1, fix that
-    if in_param.dim==2; in_param.dim=two; interval=interval'; 
+    if in_param.dim==2; in_param.dim=two; interval=interval';
     else out_param.exit=11; out_param = cubMC_g_err(out_param); return; %else return an error
     end
 end
@@ -209,9 +198,11 @@ if any(interval(1,:)==interval(2,:)); %interval is a point in one direction
 end
 in_param.interval=interval; %copy interval into the param structure
 
-if isfield(in_param,'measure');
+if isfield(in_param,'measure'); % the sample measure
     in_param.measure=validatestring(in_param.measure,{'uniform','normal','Gaussian'});
-    if strcmp(in_param.measure,'Gaussian'); in_param.measure='normal'; end
+    if strcmpi(in_param.measure,'Gaussian')
+        in_param.measure='normal'; 
+    end
 else
     in_param.measure=default.measure;
 end
@@ -223,28 +214,28 @@ if strcmp(in_param.measure,'normal')&&any(isfinite(interval(:)))
     %must integrate on an infinite interval with the normal distribution
     out_param.exit=14; out_param = cubMC_g_err(out_param); return;
 end
-if (~isposint(in_param.n_sigma)) %Initial sample size
-    warning('the number n_sigma should a positive integer,')
-    warning('take the absolute value and ceil.')
+if (~isposint(in_param.n_sigma)) %the sample to estimate sigma
+    warning(['the number n_sigma should a positive integer,'...
+        'take the absolute value and ceil.'])
     in_param.n_sigma = ceil(abs(in_param.n_sigma));
 end
-if (in_param.fudge <= 1) %Variance inflation factor/fudge factor
-    warning('the fudge factor should be bigger than 1, ')
-    warning('use the default value.')
+if (in_param.fudge <= 1) %standard deviation inflation factor/fudge factor
+    warning(['the fudge factor should be bigger than 1, '...
+    'use the default value.'])
     in_param.fudge = default.fudge;
 end
-if (in_param.abstol <= 0) %error tolerence
-    warning('the absolute error tolerence should be larger than 0, ')
-    warning('use the absolute value.')
+if (in_param.abstol <= 0) %error tolerance
+    warning(['the absolute error tolerence should be larger than 0, '...
+     'use the absolute value.'])
     in_param.abstol = abs(in_param.abstol);
 end
-if (in_param.alpha <= 0 ||in_param.alpha >= 1) %Uncertainty 
-    warning('the uncertainy should be less than 1 and bigger than 0, ')
-    warning('use the the default value.')
+if (in_param.alpha <= 0 ||in_param.alpha >= 1) %uncertainty 
+    warning(['the uncertainy should be less than 1 and bigger than 0, '...
+    'use the the default value.'])
     in_param.alpha = default.alpha;
 end
-end
 
+end
 function [out_param,Q]=cubMC_g_err(out_param,tstart)
 %Handles errors in cubMC_g and cubMC_g_param
 %to give an exit with information

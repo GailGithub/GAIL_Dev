@@ -1,7 +1,7 @@
 % This is the drive file to test the meanMC_g algorithm
 clear all; close all; clc;
-y = @(n) rand(n,1).^2;% the test function
-%y = @Ytrafficmodel; % this is the traffic model
+%y = @(n) rand(n,1).^2;% the test function
+y = @Ytrafficmodel; % this is the traffic model
 in_param.abstol = 1e-2;% the absolute error tolerance
 in_param.alpha = 0.01;% uncertainty
 in_param.n_sigma = 1e3;% sample size to estimate the variance
