@@ -1,4 +1,4 @@
-function x=Xinqeq(varargin)
+function [x]=Xinqeq(varargin)
 % x=QEQ(a,b,c) finds the roots of the quadratic equation
 %   a x^2 + b x + c = 0
 % Xin Tong xtong5@hawk.iit.edu
@@ -10,9 +10,9 @@ x=[]; %initialize roots
 
 %% scale the inputs
 scale=max(abs([out_sample.a out_sample.b out_sample.c]));
-a1=out_sample.a./scale; %scale coefficients to avoid overflow or underflow
-b1=out_sample.b./scale;
-c1=out_sample.c./scale;
+a1=out_sample.a/scale; %scale coefficients to avoid overflow or underflow
+b1=out_sample.b/scale;
+c1=out_sample.c/scale;
 if scale==0, return, end %zero polynomial
 
 %% compute the roots
@@ -25,6 +25,8 @@ elseif a1~=0
 end
 x=sort(x);
 end
+
+
 
 function out_sample=Xinqeq_param(varargin) % parse the input to the Xinqeq.m function
 default.a=1;
@@ -42,9 +44,9 @@ else
     if  (varnum==1 && isstruct(in1))  || varnum==3
         p = inputParser;
         if isnumeric(in1)
-            addRequired(p,'a',default.a,@isnumeric);
-            addRequired(p,'b',default.b,@isnumeric);
-            addRequired(p,'c',default.c,@isnumeric);
+            addOptional(p,'a',default.a,@isnumeric);
+            addOptional(p,'b',default.b,@isnumeric);
+            addOptional(p,'c',default.c,@isnumeric);
         else
             if isstruct(in1)
                 p.StructExpand = true;
@@ -78,3 +80,46 @@ if out_sample.a==0
 end
 
 end  
+
+% Example#1
+%  x=Xinqeq([1,4,3])
+% 
+% x =
+% 
+%     -3    -1
+
+% Example#2
+% x=Xinqeq(1,3,2)
+% 
+% x =
+% 
+%    -2.0000   -1.0000
+
+% Example#3
+% coef.a=1;coef.b=13;coef.c=4;
+% x=Xinqeq(coef)
+% 
+% x =
+% 
+%   -12.6847   -0.3153
+
+% Example#4
+%  x=Xinqeq([1,2])
+%   x=QEQ(a,b,c) finds the roots of the quadratic equation
+%     a x^2 + b x + c = 0
+%   Xin Tong xtong5@hawk.iit.edu
+% 
+% Warning: You must input the three coefficients with the
+% default three forms. Now Xinqeq is using a = 1  b = 3  c = 2 
+% > In Xinqeq>Xinqeq_param at 63
+%   In Xinqeq at 7 
+% 
+% x =
+% 
+%    -2.0000   -1.0000
+
+
+
+
+
+
