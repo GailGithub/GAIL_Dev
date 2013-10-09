@@ -1,6 +1,6 @@
 %UT_MEANMC_G unit test for meanMC_g
 classdef ut_meanMC_g < matlab.unittest.TestCase
-
+    
   methods(Test)
       
     function meanMC_gOfexp(testCase)
@@ -29,5 +29,15 @@ classdef ut_meanMC_g < matlab.unittest.TestCase
       actualerr = abs(meanf-exactf);
       testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
     end
+    
+    function meanMC_gOfparsing(testCase)
+      in_param.abstol = 1e-2; 
+      meanf = meanMC_g(@(n) rand(n,1).^2,-1e-2);
+      exactf = 1/3;
+      actualerr = abs(meanf-exactf);
+      testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
+    end
+    
+    
   end
 end

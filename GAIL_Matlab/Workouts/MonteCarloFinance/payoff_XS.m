@@ -11,7 +11,10 @@ function [pay,out_payparam,out_stparam]=payoff_XS(varargin)
 %                  'europut' = European put
 %                  'ameancall' = European call
 %                  'ameanput' = European put
-%          
+%                  'upincall','upoutcall','downincall','downoutcall','upinput','upoutput','downinput','downoutput'=Barrier options
+%                  'lookcall','lookput' = lookback option
+%                  'amer' = American put
+%         
 %       T        = number of years to maturity (default = 1)
 %       K        = strike price (default = 100)
 %       r        = interest rate (default = 2%)
@@ -97,6 +100,28 @@ for j=1:pc
             pay(Nvec(j)+1:Nvec(j+1))=(stock(:,d+1)-min(stock,[ ],2))*exp(-r*T);
         case 'lookput'
             pay(Nvec(j)+1:Nvec(j+1))=(max(stock,[ ],2)-stock(:,d+1))*exp(-r*T);
+        case 'amer'
+            Tmat=0:T/d:T; %time series
+            Tmat=repmat(Tmat,n,1);
+            paydisc=max(K-stock,0).*exp(-r*Tmat); %discounted payoff at each time
+            cf=paydisc(:,d+1); %cash flow at T
+            basis= @(x) repmat(exp(-x/2),1,3).*[ones(length(x),1) 1-x 1-2*x+x.*x/2];
+            for m=d:-1:1 %work backwards from expiry to present
+                in=find(paydisc(:,m)>0); %which paths are in the money
+                if ~isempty(in)
+                    if m>1;
+                        regmat=basis(stock(in,m)/stock(1,1)); %regression matrix for stock prices
+                        hold=regmat*(regmat\cf(in)); %regressed value of options in the future
+                    else
+                        hold=mean(cf(in));
+                    end
+                    shouldex=in(paydisc(in,m)>hold); %which paths should be excercised now
+                    if ~isempty(shouldex);
+                        cf(shouldex)=paydisc(shouldex,m); %updated cashflow
+                    end
+                end
+            end
+            pay(Nvec(j)+1:Nvec(j+1))=cf;
     end
 end
 end
@@ -202,7 +227,8 @@ if out_payparam.needcheck
             'gmeancall','gmeanput'...
             'upincall','upoutcall','downincall','downoutcall'...
             'upinput','upoutput','downinput','downoutput'...
-            'lookcall','lookput'}))
+            'lookcall','lookput'...
+            'amer'}))
         warning(['Payoff type not recognized, using ' default.paytype])
         out_payparam.paytype='eurocall';
     end

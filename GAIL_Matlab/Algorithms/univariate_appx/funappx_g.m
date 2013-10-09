@@ -142,13 +142,13 @@ tauchange = 0;
 
 while n < out_param.nmax;
     % Stage 1: estimate weaker and stronger norm
-    x = (0:n-1)/(n-1);
+    x = 0:1/(n-1):1;
     y = f(x);
     diff_y = diff(y);
     %approximate the weaker norm of input function
-    gn = max((n-1)*abs(diff_y-(y(n)-y(1))/(n-1)));
+    gn = (n-1)*max(abs(diff_y-(y(n)-y(1))/(n-1)));
     %approximate the stronger norm of input function
-    fn = max((n-1)^2*abs(diff(diff_y)));
+    fn = (n-1)^2*max(abs(diff(diff_y)));
     
     % Stage 2: satisfy necessary condition
     if out_param.tau*(gn+fn/(2*n-2))>= fn;

@@ -118,10 +118,10 @@ function [mu,out_param]=meanMC_g(varargin)
 %        Carlo Sampling, preprint, 2013, arXiv:1208.4318 [math.ST].
 
 
-tstart = tic; % start the clock
+tstart = tic; %start the clock
 [Yrand, in_param] = meanMC_g_param(varargin{:});
 out_param = in_param;%let the out_param contains all the in_param
-tstart = tic; % start the clock
+tstart = tic; %start the clock
 n1 = 1;
 Yrand(n1); %let it run once to load all the data. warm up the machine.
 nsofar = n1;
@@ -135,7 +135,7 @@ while true
     timeleft = in_param.timebudget - toc(tstart);%update the time budget.
     out_param.n_left_predict = floor(timeleft*ntry/timetry);
     %get the estimated sample budget from time left
-    out_param.time_n_sigma_predict = timetry /ntry * in_param.n_sigma;
+    out_param.time_n_sigma_predict = timetry/ntry * in_param.n_sigma;
     %get the estimated time using n_sigma samples.
     out_param.nmax = min(in_param.nbudget-nsofar,out_param.n_left_predict);
     %the max sample budget we could afford to do the following calculation
@@ -144,10 +144,8 @@ while true
         %budget, stop try.
         out_param.exit = 2; % exit the loop
         meanMC_g_err(out_param,tstart);% print the error message
-        mu = mean(Yrand(out_param.nmax));
-        out_param.time = toc(tstart);
-        out_param.n = out_param.nmax + nsofar;
-        %calculate the mu without guarantee
+        mu = mean(Yrand(out_param.nmax));%calculate the mu without guarantee
+        out_param.n = out_param.nmax + nsofar;% the total sample used
         break;
     elseif ntry >= ceil(in_param.n_sigma/100);
         %try out sample size is bigger than 1% of n_sigma that is used to
@@ -160,28 +158,27 @@ while true
             meanMC_g_err(out_param,tstart);% print error message
             mu = mean(Yrand(out_param.nmax));
             % calculate the mu without guarantee
-            out_param.time = toc(tstart);
-            out_param.n = out_param.nmax + nsofar;
+            out_param.n = out_param.nmax + nsofar;%total sample used
             break;
         else
             nsofar = nsofar+in_param.n_sigma;% the samples that have been used
             tic
-            Yval=Yrand(in_param.n_sigma); % get the function values
-            timetry_n_sigma= toc;
+            Yval = Yrand(in_param.n_sigma); % get the function values
+            timetry_n_sigma = toc;
             % get the time for calculating n_sigma function values.
-            out_param.var=var(Yval);% calculate the sample variance--stage 1
-            sig0=sqrt(out_param.var);% standard deviation
-            sig0up=in_param.fudge*sig0;% upper bound of the standard deviation
-            alpha1=1-sqrt(1-in_param.alpha);% one side of the uncertainty
-            out_param.kurtmax=(in_param.n_sigma-3)/(in_param.n_sigma-1) ...
+            out_param.var = var(Yval);% calculate the sample variance--stage 1
+            sig0 = sqrt(out_param.var);% standard deviation
+            sig0up = in_param.fudge*sig0;% upper bound of the standard deviation
+            alpha1 = 1-sqrt(1-in_param.alpha);% one side of the uncertainty
+            out_param.kurtmax = (in_param.n_sigma-3)/(in_param.n_sigma-1) ...
                 + ((alpha1*in_param.n_sigma)/(1-alpha1))*(1-1/in_param.fudge^2)^2;
             % get the upper bound on the modified kurtosis
-            if sig0up==0; % if the variance is zero, just take n_sigma samples
-                out_param.n_mu=in_param.n_sigma;
+            if sig0up == 0; % if the variance is zero, just take n_sigma samples
+                out_param.n_mu = in_param.n_sigma;
             else
-                toloversig=in_param.abstol/sig0up;
+                toloversig = in_param.abstol/sig0up;
                 % absolute error tolerance over sigma
-                ncheb=ceil(1/(alpha1*toloversig.^2)); 
+                ncheb = ceil(1/(alpha1*toloversig.^2)); 
                 % use Chebyshev inequality to estimate n
                 A=18.1139;
                 A1=0.3328;
@@ -232,7 +229,7 @@ while true
             end
             %%  Estimate mu
             out_param.mu=sumY/out_param.n_mu; %calculate the mean
-            out_param.n=out_param.n_mu+in_param.n_sigma; 
+            out_param.n=out_param.n_mu+nsofar; 
             %total number of samples used
             mu=out_param.mu; %assign answer
             break;
