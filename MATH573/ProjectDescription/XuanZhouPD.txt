@@ -1,0 +1,10 @@
+Project Description
+Xuan Zhou (xzhou23@hawk.iit.edu)
+
+Title: Maintanence of the GAIL Repository
+
+This project addresses several issues regarding the maintanence of the GAIL repository.
+
+Some topics covered are how to back up and restore the repository together with the commit history, how to resolve merging conflicts, and how to remove the reference to certain files in the commit history.
+
+In particular, addition, modification and deletion of binary files can greatly increase the repository size. I will introduce the process which can remove the reference to these files in the commit history such that the repository is downsized. I will also explore the possibility to create a script which will make this process automated. I will also look for a solution to store the binary files associated with the GAIL library.
