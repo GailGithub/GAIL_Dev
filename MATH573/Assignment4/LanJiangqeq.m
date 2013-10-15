@@ -111,44 +111,6 @@ if  coeff.b == 0&& coeff.a == 0
 end
 end
 
-% Example 1
-% x = LanJiangqeq(1,2,1)
-% 
-% x =
-% 
-%     -1    -1
-
-
-% Example 2
-% x = LanJiangqeq([1,2,1])
-% 
-% x =
-% 
-%     -1    -1
-
-
-% Example 3
-% coeff.a = 1;
-% coeff.b = 2;
-% coeff.c = 1; 
-% x = LanJiangqeq(coeff)
-% 
-% x =
-% 
-%     -1    -1
-
-
-% Example 4
-% x = LanJiangqeq(1)
-%
-% Warning: your input could not be recognized, now using
-% default setting. 
-% > In LanJiangqeq>qeq_param at 53
-%   In LanJiangqeq at 6 
-% 
-% x =
-% 
-%     -1    -1
 
 
 
