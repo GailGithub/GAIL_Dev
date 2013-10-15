@@ -1,0 +1,5 @@
+Yuhan Ding (yding2@hawk.iit.edu)
+
+Title: Extension of funappx_g in GAIL from [0,1] to [a,b]
+
+Decription: funappx_g in GAIL can do function recovery in interval [0, 1]. We can easily shrink any function on [a, b] to [0, 1]. But this could add difficulty to approximate the function as it may change the cone condition from original cone which the function satisfied. Thus, we want to establish a new algorithm of function recovery in [a, b]. If possible, we also would like to consider the situation that a or b can be infinity. When we build the new algorithm, we want to also let the user to input function, a, b and other parameters. Hence, we need to do parsing again in the code. And other related work such as documentation, doc test and unit test will also be done. 
