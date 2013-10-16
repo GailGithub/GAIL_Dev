@@ -88,7 +88,7 @@ function x=jagadeesQeq(varargin)
             return
         end
 	else
-		if isstruct(varargin{1})
+		if isstruct(varargin{1}) %input as structure
             v = varargin{1};
             if  isfield(v, 'a') && isfield(v, 'b') && isfield(v, 'c')
                 a = v.a; b = v.b; c = v.c;
@@ -96,7 +96,7 @@ function x=jagadeesQeq(varargin)
                 warning('Unknown Input arguments format.')
                 return
             end
-        elseif isvector(varargin{1}) && (numel(varargin{1})==3)
+        elseif isvector(varargin{1}) && (numel(varargin{1})==3) % input as vector
             v = varargin{1};
             a = v(1); b = v(2); c = v(3);
         else
