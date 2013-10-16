@@ -1,0 +1,17 @@
+
+Project Description
+--------------------
+
+Jagadeeswaran.R, jrathin1@iit.edu
+
+Title: RBF-FD: 'Radial basis function' based Finite Difference method for 2D/3D Poisson equation approximation
+
+I have been working on using 'Stable Gaussian RBF method' from the paper
+"Stable evaluation of gaussian rbf interpolants by Gregory e. Fasshauer and Michael j. Mccourt"
+for Finite difference methods based on the paper 
+"On the optimal shape parameter for Gaussian radial basis function finite difference approximation of the Poisson equation By
+Oleg Davydova, Dang Thi Oanhb".
+
+I will use the ideas learnt from this course to make my existing code more reliable and usable.
+
+
