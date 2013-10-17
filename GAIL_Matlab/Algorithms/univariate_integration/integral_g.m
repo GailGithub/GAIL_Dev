@@ -76,7 +76,8 @@ function [q,out_param]= integral_g(varargin)
 % Reference:
 % [1]  N. Clancy, Y. Ding, C. Hamilton, F. J. Hickernell, and Y. Zhang, 
 %      The complexity of guaranteed automatic algorithms: Cones, not
-%      balls, preprint, 2013, arXiv:1303.2412 [math.ST].
+%      balls, Journal of Complexity 2013, to appear, DOI
+%      10.1016/j.jco.2013.09.002.
 
 %%
 % check parameter satisfy conditions or not
