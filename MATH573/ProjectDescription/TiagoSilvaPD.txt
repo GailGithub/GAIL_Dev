@@ -1,0 +1,12 @@
+Project Description
+===================
+
+Tiago Silva,  silvat@hawk.iit.edu
+
+Title: Rare even probability estimation using quasi-Monte Carlo Methods and IPaS technique
+
+Description: Using the Interacting Path System technique developed by Del. Moral and Patras, as well as quasi-Monte Carlo methods, I developed in my M.S. thesis an algorithm that estimates rare even probabilities more efficiently than other techniques that is currently known. However, The algorithm that I used was created using Ad Hoc methods. My goal here is to re-create the model I used, using all the techniques that I have been learning in this class and targeting not only a well documented algorithm, robust, accessible and justified, but also an even more efficient algorithm.
+
+[1] Del Moral, P., & Patras, F. (2011). Interacting path systems for credit risk. In
+T. Bielecki, D. Brigo & F. Patras Credit Risk Frontier. Bloomberg Press, Ch. 21,
+Sec. 4.
