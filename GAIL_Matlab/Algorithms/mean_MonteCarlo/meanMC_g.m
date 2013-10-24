@@ -122,7 +122,7 @@ tstart = tic; %start the clock
 [Yrand, in_param] = meanMC_g_param(varargin{:});
 out_param = in_param;%let the out_param contains all the in_param
 tstart = tic; %start the clock
-n1 = 1;
+n1 = 2;
 Yrand(n1); %let it run once to load all the data. warm up the machine.
 nsofar = n1;
 
