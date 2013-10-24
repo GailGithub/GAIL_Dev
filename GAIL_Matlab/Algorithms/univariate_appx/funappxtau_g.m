@@ -117,8 +117,8 @@ function [fappx,out_param]=funappxtau_g(varargin)
 %   Reference
 %   [1]  N. Clancy, Y. Ding, C. Hamilton, F. J. Hickernell, and Y. Zhang, 
 %        The Cost of Deterministic, Adaptive, Automatic Algorithms:  Cones, 
-%        Not Balls, submitted for publication, arXiv.org:1303.2412 
-%        [math.NA]}, 2013.
+%        Not Balls, Journal of Complexity (2013), to appear, DOI
+%        10.1016/j.jco.2013.09.002
 %
 
 % check parameter satisfy conditions or not
