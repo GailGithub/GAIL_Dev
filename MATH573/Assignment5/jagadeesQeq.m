@@ -20,25 +20,31 @@ function x=jagadeesQeq(varargin)
 %
 % Example 1: using the ordered input.
 % >> x = jagadeesQeq(1,2,3)
+%   
 % x =
 %     -1.0000 - 1.4142i  -1.0000 + 1.4142i
+%   
 %
 % Example 2: using vector input 
 % >> x = jagadeesQeq([9,5,3])
+%   
 % x =
 %      -0.2778 - 0.5061i  -0.2778 + 0.5061i
+%   
 %
 % Example 3: using labelled input 
 % >> x = jagadeesQeq('a', 8, 'c', 45, 'b', 2)
+%   
 % x =
 %     -0.1250 - 2.3684i  -0.1250 + 2.3684i
 %
+%   
 % Example 4: using structure input 
-% >> coeff.a = 4; coeff.b = 7;coeff.c = 1; 
-% >> 
-% >> x = jagadeesQeq(coeff)
+% >> coeff.a = 4; coeff.b = 7;coeff.c = 1; x = jagadeesQeq(coeff)
+%   
 % x =
 %     -1.5931   -0.1569
+%   
 %
 % See also, qeq.m
 %
@@ -167,55 +173,15 @@ function testqeq()
 	coef1.c = c;
 	qeq(coef1)    
 end
-% 
-% >> help jagadeesQeq
-%  jagadeesQeq used to find the roots of a quadratic equation
-%     a x^2 + b x + c = 0
-%  
-%     x = JAGADEESQEQ(a,b,c) finds the roots of the quadratic equation
-%      a x^2 + b x + c = 0
-%  
-%     x = JAGADEESQEQ([a,b,c]) finds the roots of the quadratic equation
-%      a x^2 + b x + c = 0 where [a b c] is the vector of coefficients
-%  
-%     x = JAGADEESQEQ('a', a, 'b', b, 'c', c) finds the roots of the quadratic
-%     equation
-%      a x^2 + b x + c = 0 where 'a' is the label following which coefficient
-%      a is given. Similarly other coeffs can be labelled. Order can be
-%      changed.
-%  
-%     x = JAGADEESQEQ(coeff) finds the roots of the quadratic equation
-%      a x^2 + b x + c = 0 where coeff.a, coeff.b, coeff.c Input can be given
-%      in a structure.
-%  
-%   Example 1: using the ordered input.
-%   >> x = jagadeesQeq(1,2,3)
-%   x =
-%       -1.0000 - 1.4142i  -1.0000 + 1.4142i
-%  
-%   Example 2: using vector input 
-%   >> x = jagadeesQeq([9,5,3])
-%   x =
-%        -0.2778 - 0.5061i  -0.2778 + 0.5061i
-%  
-%   Example 3: using labelled input 
-%   >> x = jagadeesQeq('a', 8, 'c', 45, 'b', 2)
-%   x =
-%       -0.1250 - 2.3684i  -0.1250 + 2.3684i
-%  
-%   Example 4: using structure input 
-%   >> coeff.a = 4; coeff.b = 7;coeff.c = 1; 
-%   >> 
-%   >> x = jagadeesQeq(coeff)
-%   x =
-%       -1.5931   -0.1569
-%  
-%   See also, qeq.m
-%  
-%   Reference: MATH 573 Course
- 
+
+% doctest jagadeesQeq
+% TAP version 13
+% 1..4
+% ok 1 - "x = jagadeesQeq(1,2,3)"
+% ok 2 - "x = jagadeesQeq([9,5,3])"
+% ok 3 - "x = jagadeesQeq('a', 8, 'c', 45, 'b', 2)"
+% ok 4 - "coeff.a = 4; coeff.b = 7;coeff.c = 1; x = jagadeesQeq(coeff)"
+
 % Jagadeeswaran.R, jrathin1@iit.edu
 %
 % Windows8, Matlab 7.10.0 (R2010a)
-
-
