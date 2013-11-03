@@ -1,4 +1,4 @@
-function [Q,out_param]= integraltau_g(varargin)
+function [Q,out_param] = integraltau_g(varargin)
 %  INTEGRALTAU_G 1-D guaranteed function integration using trapezoidal rule
 % 
 %  Description
@@ -54,6 +54,7 @@ function [Q,out_param]= integraltau_g(varargin)
 % 
 %   Examples
 %
+%
 %   Example 1: 
 %   >> q = integral_g(@(x) x.^2)
 %   q = 0.3333
@@ -71,8 +72,7 @@ function [Q,out_param]= integraltau_g(varargin)
 %   q = 0.3333
 %
 % 
-% See Also
-% funappx_g, meanMC_g
+% See Also funappx_g, meanMC_g
 %
 % Reference:
 % [1]  N. Clancy, Y. Ding, C. Hamilton, F. J. Hickernell, and Y. Zhang, 

@@ -1,4 +1,4 @@
-function [q,out_param]= integral_g(varargin)
+function [q,out_param] = integral_g(varargin)
 %  INTEGRAL_G 1-D guaranteed function integration using trapezoidal rule
 % 
 %  Description
