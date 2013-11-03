@@ -166,7 +166,7 @@ end;
 
 %if coefficient of quadratic term is zero
 if out_param.a ==0 &&  out_param.b ~= 0
-    warning(['MATLAB:yuhanqeq:zeroquadterm',' coefficient of quadratic '...
+    warning('MATLAB:yuhanqeq:zeroquadterm',[' coefficient of quadratic '...
         ' term is zero; quadratic equation becomes a linear equation.'])
 end
 
