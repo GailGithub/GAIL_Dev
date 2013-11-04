@@ -260,22 +260,26 @@ if (out_param.abstol <= 0 )
     out_param.abstol = default.abstol;
 end
 % let initial number of points be a positive integer
-if (~isposint(out_param.ninit) && isposge3(out_param.ninit))
-    warning(['Initial number of points should be a positive integer.' ...
-             ' Using ', num2str(ceil(out_param.ninit))])
-    out_param.ninit = ceil(out_param.ninit);
-elseif(~isposint(out_param.ninit) && ~isposge3(out_param.ninit))
-    warning(['Initial number of points should be a positive integer.' ...
+if (~isposint(out_param.ninit))
+    if isposge3(out_param.ninit)
+        warning('MATLAB:funappx_g:initnotint',['Initial number of points should be a positive integer.' ...
+            ' Using ', num2str(ceil(out_param.ninit))])
+        out_param.ninit = ceil(out_param.ninit);
+    else
+        warning('MATLAB:funappx_g:initlt3',['Initial number of points should be a positive integer.' ...
             ' Using default number of points ' int2str(default.ninit)])
-    out_param.ninit = default.ninit;
+        out_param.ninit = default.ninit;
+    end
 end
 % let cost budget be a positive integer
-if (~isposint(out_param.nmax) && ispositive(out_param.nmax))
-    warning(['Cost budget should be a positive integer.' ...
-             ' Using cost budget ', num2str(ceil(out_param.nmax))])
-    out_param.nmax = ceil(out_param.nmax);
-elseif(~isposint(out_param.nmax) && ~ispositive(out_param.nmax))
-    warning(['Cost budget should be a positive integer.' ...
-             ' Using default cost budget ' int2str(default.nmax)])
-    out_param.nmax = default.nmax;
+if (~isposint(out_param.nmax))
+    if ispositive(out_param.nmax)
+        warning('MATLAB:funappx_g:budgetnotint',['Cost budget should be a positive integer.' ...
+            ' Using cost budget ', num2str(ceil(out_param.nmax))])
+        out_param.nmax = ceil(out_param.nmax);
+    else
+        warning('MATLAB:funappx_g:budgetisneg',['Cost budget should be a positive integer.' ...
+            ' Using default cost budget ' int2str(default.nmax)])
+        out_param.nmax = default.nmax;
+    end;
 end
