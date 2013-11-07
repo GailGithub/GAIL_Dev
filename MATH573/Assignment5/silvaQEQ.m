@@ -15,20 +15,20 @@ function x=silvaQEQ(varargin)
 %   EXAMPLES
 %
 %   Example 1
-%   silvaQEQ([1,2,1])
+%   >> silvaQEQ([1,2,1])
 %
 %   ans =
 %
 %        -1    -1
 %
 %   Example 2
-%   silvaQEQ(1,-2,1)
+%   >> silvaQEQ(1,-2,1)
 %   ans =
 %
 %         1     1
 %
 %   Example 3
-%   coeff.a = 1; coeff.b = 3; coeff.c = 2; silvaQEQ(coeff)
+%   >> coeff.a = 1; coeff.b = 3; coeff.c = 2; silvaQEQ(coeff)
 %
 %   ans =
 %
