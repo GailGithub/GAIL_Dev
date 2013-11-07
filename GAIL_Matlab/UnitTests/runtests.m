@@ -22,3 +22,5 @@ if MATLABVERSION >= 8
 end
 
 time=toc;
+
+disp(time)
