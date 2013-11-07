@@ -155,7 +155,7 @@ function [fappx,out_param]=funappxab_g(varargin)
 %   >> clear in_param; in_param.a = -10; in_param.b = 10; 
 %   >> in_param.abstol = 10^(-8); in_param.nlo = 10; in_param.nhi = 100;
 %   >> in_param.nmax = 10^6; f = @(x) x.^2;
-%   >> [fappx, out_param] = funappxab_g(f,'a',-2,'b',2,'nhi',100,'nlo',10)
+%   >> [fappx, out_param] = funappxab_g(f,in_param)
 %
 %   fappx =
 %   
