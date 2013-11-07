@@ -258,7 +258,7 @@ if out_param.exceedbudget == 1;
 end;
 
 if tauchange == 1;
-    warning('MATLAB:funappx_g:peaky','This function is peaky relative to ninit. You may wish to increase ninit for similiar functions.')
+    warning('MATLAB:funappx_g:peaky','This function is peaky relative to nlo and nhi. You may wish to increase nlo and nhi for similiar functions.')
 end;
 %out_param.ballradius = 2*out_param.abstol*(out_param.nmax-2)*(out_param.nmax...
 %    -2-out_param.tau)/out_param.tau;
