@@ -1,5 +1,5 @@
 % Drives all doctests and unit tests
- 
+tic; 
 % Call doctest 
 format short
 doctest funappx_g
@@ -21,4 +21,6 @@ if MATLABVERSION >= 8
 %     run(ut_cubMC_g)
 end
 
+time=toc;
 
+disp(time)

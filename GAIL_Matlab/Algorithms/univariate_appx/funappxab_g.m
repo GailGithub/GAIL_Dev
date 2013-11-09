@@ -109,8 +109,7 @@ function [fappx,out_param]=funappxab_g(varargin)
 %         @(x)interp1(x1,y1,x,'linear')
 % 
 %   out_param = 
-% 
-%                a: -21
+%                a: -2
 %           abstol: 1.0000e-07
 %                b: 2
 %                f: @(x)x.^2
@@ -120,8 +119,8 @@ function [fappx,out_param]=funappxab_g(varargin)
 %            ninit: 10
 %              tau: 17
 %     exceedbudget: 0
-%          npoints: 69553
-%         errbound: 8.2688e-10
+%          npoints: 34777
+%         errbound: 3.3075e-09
 %
 %
 %   Example 3:
@@ -134,44 +133,44 @@ function [fappx,out_param]=funappxab_g(varargin)
 %        @(x)interp1(x1,y1,x,'linear')
 % 
 %   out_param =
-% 
-%                a: -21
-%           abstol: 1.0000e-06
-%                b: 2 f: @(x)x.^2
-%              nhi: 100 nlo: 10
-%             nmax: 10000000
-%            ninit: 64
-%              tau: 125
-%     exceedbudget: 0
-%          npoints: 62749
-%         errbound: 1.0159e-09
+%                  a: -2
+%             abstol: 1.0000e-06
+%                  b: 2
+%                  f: @(x)x.^2
+%                nhi: 100
+%                nlo: 10
+%               nmax: 10000000
+%              ninit: 64
+%                tau: 125
+%       exceedbudget: 0
+%            npoints: 31375
+%           errbound: 4.0637e-09
 %
 %
 %   Example 4:
 %
 %   >> clear in_param; in_param.a = -10; in_param.b = 10; 
-%   >> in_param.abstol = 10^(-8); in_param.nlo = 10; in_param.nhi = 100;
+%   >> in_param.abstol = 10^(-7); in_param.nlo = 10; in_param.nhi = 100;
 %   >> in_param.nmax = 10^6; f = @(x) x.^2;
-%   >> [fappx, out_param] = funappxab_g(f,'a',-2,'b',2,'nhi',100,'nlo',10)
+%   >> [fappx, out_param] = funappxab_g(f,in_param)
 %
 %   fappx =
 %   
 %        @(x)interp1(x1,y1,x,'linear')
 % 
 %   out_param =
-% 
-%                a: -21
-%           abstol: 1.0000e-06
-%                b: 2
+%                a: -10
+%           abstol: 1.0000e-07
+%                b: 10
 %                f: @(x)x.^2
 %              nhi: 100
 %              nlo: 10
-%             nmax: 10000000
-%            ninit: 64
-%              tau: 125
+%             nmax: 1000000
+%            ninit: 90
+%              tau: 177
 %     exceedbudget: 0
-%          npoints: 62749
-%         errbound: 1.0159e-09
+%          npoints: 591673 
+%         errbound: 2.8566e-10
 %
 %
 %   See also INTEGRAL_G, MEANMC_G
@@ -253,13 +252,14 @@ if out_param.exceedbudget == 1;
 end;
 
 if tauchange == 1;
-    warning('MATLAB:funappx_g:peaky','This function is peaky relative to ninit. You may wish to increase ninit for similiar functions.')
+    warning('MATLAB:funappx_g:peaky','This function is peaky relative to nlo and nhi. You may wish to increase nlo and nhi for similiar functions.')
 end;
 %out_param.ballradius = 2*out_param.abstol*(out_param.nmax-2)*(out_param.nmax...
 %    -2-out_param.tau)/out_param.tau;
 out_param.npoints = n;
-out_param.errbound = fn/(8*(n-1)^2);
-x1 = out_param.a:(out_param.b-out_param.a)/(out_param.npoints-1):out_param.b;
+ out_param.errbound = fn*len^2/(8*(n-1)^2);
+%out_param.errbound = fn/(8*(n-1)^2);
+x1 = out_param.a:len/(out_param.npoints-1):out_param.b;
 y1 = f(x1);
 fappx = @(x) interp1(x1,y1,x,'linear');
 

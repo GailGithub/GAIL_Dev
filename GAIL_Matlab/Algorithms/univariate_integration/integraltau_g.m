@@ -215,22 +215,21 @@ if (out_param.abstol <= 0 )
     out_param.abstol = default.abstol;
 end
 % let initial number of points be a positive integer
-if (~isposint(out_param.tau) && isposge3(out_param.tau))
-    warning(['Initial number of points should be a positive integer.' ...
-             ' Using ', num2str(ceil(out_param.tau))])
-    out_param.tau = ceil(out_param.tau);
-elseif(~isposint(out_param.tau) && ~isposge3(out_param.tau))
-    warning(['Initial number of points should be a positive integer.' ...
-            ' Using default number of points ' int2str(default.tau)])
+if (out_param.tau < 2)
+    warning(['Cone condition should be greater or equal 2.' ...
+             ' Using default cone condition ' num2str(default.tau)])
     out_param.tau = default.tau;
 end
 % let cost budget be a positive integer
-if (~isposint(out_param.nmax) && ispositive(out_param.nmax))
-    warning(['Cost budget should be a positive integer.' ...
-             ' Using cost budget ', num2str(ceil(out_param.nmax))])
-    out_param.nmax = ceil(out_param.nmax);
-elseif(~isposint(out_param.nmax) && ~ispositive(out_param.nmax))
-    warning(['Cost budget should be a positive integer.' ...
-             ' Using default cost budget ' int2str(default.nmax)])
-    out_param.nmax = default.nmax;
+if (~isposint(out_param.nmax))
+    if ispositive(out_param.nmax)
+        warning('MATLAB:integral_g:budgetnotint',['Cost budget should be a positive integer.' ...
+            ' Using cost budget ', num2str(ceil(out_param.nmax))])
+        out_param.nmax = ceil(out_param.nmax);
+    else
+        warning('MATLAB:integral_g:budgetisneg',['Cost budget should be a positive integer.' ...
+            ' Using default cost budget ' int2str(default.nmax)])
+        out_param.nmax = default.nmax;
+    end;
 end
+

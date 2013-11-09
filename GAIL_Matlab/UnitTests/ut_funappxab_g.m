@@ -36,6 +36,8 @@ classdef ut_funappxab_g < matlab.unittest.TestCase
       in_param.b = 1000;
       in_param.abstol = 10^(-6);
       in_param.nmax = 10^8;
+      in_param.nlo = 100;
+      in_param.nhi = 1000;
       [appxf, result] = funappxab_g(f,in_param);
       x = sqrt(2)*in_param.b/2;
       actualerr = abs(appxf(x)-f(x));
@@ -44,12 +46,14 @@ classdef ut_funappxab_g < matlab.unittest.TestCase
     end
     
     function funappxab_gOfexponential(testCase)
-      f = @(x) sin(x);
+      f = @(x)  exp(-100*(x-0.7).^2);
       in_param.a = 0; 
       in_param.b = 1000;
       in_param.abstol = 10^(-6);
       in_param.nmax = 10^8;
-      [appxf, result] = funappxab_g(f,in_param);
+      in_param.nlo = 100;
+      in_param.nhi = 1000;
+      [appxf, result] = testCase.verifyWarning(@()funappxab_g(f,in_param),'MATLAB:funappx_g:peaky');
       x = sqrt(2)*in_param.b/2;
       actualerr = abs(appxf(x)-f(x));
       testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
