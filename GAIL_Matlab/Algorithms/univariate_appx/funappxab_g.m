@@ -99,7 +99,6 @@ function [fappx,out_param]=funappxab_g(varargin)
 %         errbound: 5.0471e-09
 %
 %
-%
 %   Example 2:
 %
 %   >> f = @(x) x.^2;
@@ -109,10 +108,9 @@ function [fappx,out_param]=funappxab_g(varargin)
 % 
 %         @(x)interp1(x1,y1,x,'linear')
 % 
-% 
 %   out_param = 
 % 
-%                a: -2
+%                a: -21
 %           abstol: 1.0000e-07
 %                b: 2
 %                f: @(x)x.^2
@@ -135,10 +133,9 @@ function [fappx,out_param]=funappxab_g(varargin)
 %   
 %        @(x)interp1(x1,y1,x,'linear')
 % 
-% 
 %   out_param =
 % 
-%                a: -2
+%                a: -21
 %           abstol: 1.0000e-06
 %                b: 2 f: @(x)x.^2
 %              nhi: 100 nlo: 10
@@ -161,11 +158,9 @@ function [fappx,out_param]=funappxab_g(varargin)
 %   
 %        @(x)interp1(x1,y1,x,'linear')
 % 
-% 
 %   out_param =
 % 
-% 
-%                a: -2
+%                a: -21
 %           abstol: 1.0000e-06
 %                b: 2
 %                f: @(x)x.^2
