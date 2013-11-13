@@ -1,7 +1,7 @@
 function [Q,out_param] = cubMC_g(varargin)
-% CUBMC_G Monte Carlo method to evaluate a multidimentional integral to
-% within a specified absolute error tolerance with guaranteed uncertainy
-% within alpha.
+% CUBMC_G Monte Carlo method to evaluate a multidimensional integral to
+% within a specified absolute error tolerance with guaranteed uncertainty
+% within alpha. 
 %
 %   [Q,out_param] = CUBMC_G(f) estimates the integral with integrand f to
 %   within the absolute error tolerance 1e-2 and with guaranteed
@@ -12,7 +12,7 @@ function [Q,out_param] = cubMC_g(varargin)
 %   Q = CUBMC_G(f,interval,measure,abstol,alpha,n_sigma,fudge) estimates the
 %   integral with integrand f to within an absolute error tolerance abstol
 %   with guaranteed uncertainty within alpha using ordered parameter input
-%   interval, measure, tolerence, uncertainty, n_sigma and fudge factor.
+%   interval, measure, tolerance, uncertainty, n_sigma and fudge factor.
 %
 %   Q =
 %   CUBMC_G(f,interval,'measure','uniform','abstol',abstol,'alpha',alpha,
@@ -60,16 +60,33 @@ function [Q,out_param] = cubMC_g(varargin)
 %   Estimate the integral with integrand f(x) = x.^2 in the interval [1,2]
 %   
 %   >> f=@(x) x.^2;interval = [1;2];
-%   >> Q = cubMC_g(f,interval,'abstol',1e-2)
+%   >> Q = cubMC_g(f,interval,'abstol',1e-3)
 %   Q = 2.33***
 %
 %
 %   Example 2:
-%   Estimate the integral with integrand f(x) = x.^2 in the interval [1,2]
+%   Estimate the integral with integrand f(x) = exp(x) in the interval [1,2]
 %
-%   >> f=@(x) x.^2;interval = [1;2];
-%   >> Q = cubMC_g(f,interval)
-%   Q = 2.33***
+%   >> f=@(x) exp(x);interval = [1;2];
+%   >> Q = cubMC_g(f,interval,'uniform',1e-3)
+%   Q = 4.67***
+%
+%
+%   Example 3:
+%   Estimate the integral with integrand f(x) = sin(x) in the interval [1,2]
+%
+%   >> f=@(x) sin(x);interval = [1;2];
+%   >> Q = cubMC_g(f,interval,'uniform',1e-3)
+%   Q = 0.95***
+%
+%
+%   Example 4: 
+%   Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) in the
+%   interval [0 0;1 1],where x is a vector x = [x1 x2].
+%
+%   >> f=@(x) exp(-x(:,1).^2-x(:,2).^2);interval = [0 0;1 1];
+%   >> Q = cubMC_g(f,interval,'uniform',1e-3)
+%   Q = 0.55***
 %
 %
 %   See also FUNAPPX_G, INTEGRAL_G, MEANMC_G
