@@ -35,6 +35,8 @@ classdef ut_meanMC_g < matlab.unittest.TestCase
       meanf = meanMC_g(@(n) rand(n,1).^2,-1e-2);
       exactf = 1/3;
       actualerr = abs(meanf-exactf);
+      testCase.verifyWarning(@()meanMC_g(@(n) rand(n,1).^2,-1e-2),...
+          'MATLAB:meanMC_g:abstolneg')
       testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
     end
     
