@@ -121,11 +121,9 @@ function [mu,out_param]=meanMC_g(varargin)
 tstart = tic; %start the clock
 [Yrand, in_param] = meanMC_g_param(varargin{:});
 out_param = in_param;%let the out_param contains all the in_param
-tstart = tic; %start the clock
 n1 = 2;
 Yrand(n1); %let it run once to load all the data. warm up the machine.
 nsofar = n1;
-
 ntry = 4; %initial try out sample size to get the time.
 nsofar = nsofar + ntry;%the sample size has been used so far
 tic;
@@ -143,9 +141,8 @@ while true
         %after intial try, found it has already used 10% of the time
         %budget, stop try.
         out_param.exit = 2; % exit the loop
-        meanMC_g_err(out_param,tstart);% print the error message
-        mu = mean(Yrand(out_param.nmax));%calculate the mu without guarantee
-        out_param.n = out_param.nmax + nsofar;% the total sample used
+        out_param = meanMC_g_err(out_param,tstart);% print the error message
+        out_param.n_mu = out_param.nmax;
         break;
     elseif ntry >= ceil(in_param.n_sigma/100);
         %try out sample size is bigger than 1% of n_sigma that is used to
@@ -155,10 +152,8 @@ while true
             % of the time budget, could not afford computing variance.
             % using all the sample left to compute the mean.
             out_param.exit = 3; % exit the loop
-            meanMC_g_err(out_param,tstart);% print error message
-            mu = mean(Yrand(out_param.nmax));
-            % calculate the mu without guarantee
-            out_param.n = out_param.nmax + nsofar;%total sample used
+            out_param = meanMC_g_err(out_param,tstart);% print error message
+            out_param.n_mu = out_param.nmax;
             break;
         else
             nsofar = nsofar+in_param.n_sigma;% the samples that have been used
@@ -168,17 +163,18 @@ while true
             % get the time for calculating n_sigma function values.
             out_param.var = var(Yval);% calculate the sample variance--stage 1
             sig0 = sqrt(out_param.var);% standard deviation
-            sig0up = in_param.fudge*sig0;% upper bound of the standard deviation
+            sig0up = in_param.fudge.*sig0;% upper bound of the standard deviation
             alpha1 = 1-sqrt(1-in_param.alpha);% one side of the uncertainty
             out_param.kurtmax = (in_param.n_sigma-3)/(in_param.n_sigma-1) ...
                 + ((alpha1*in_param.n_sigma)/(1-alpha1))*(1-1/in_param.fudge^2)^2;
             % get the upper bound on the modified kurtosis
             if sig0up == 0; % if the variance is zero, just take n_sigma samples
                 out_param.n_mu = in_param.n_sigma;
+                break;
             else
                 toloversig = in_param.abstol/sig0up;
                 % absolute error tolerance over sigma
-                ncheb = ceil(1/(alpha1*toloversig.^2)); 
+                ncheb = ceil(1/(alpha1*toloversig.^2));
                 % use Chebyshev inequality to estimate n
                 A=18.1139;
                 A1=0.3328;
@@ -192,6 +188,7 @@ while true
                 if BEfun(log(sqrt(in_param.n_sigma))) <= 0 || ...
                         ncheb <= in_param.n_sigma;
                     out_param.n_mu=in_param.n_sigma;
+                    break;
                     %the Chebyshev n or the BE n is too small, just use
                     %param.n_sigma;
                 else
@@ -199,40 +196,24 @@ while true
                     % get log of sqrt of n
                     out_param.n_mu=min(ncheb,ceil(exp(2*fzero(BEfun,logsqrtnCLT))));
                     % get the min n (used to estimate mu) by using cheb and BEfun
+                    timeleft = in_param.timebudget-toc(tstart);% update the time left
+                    out_param.n_left_predict = floor(timeleft*in_param.n_sigma...
+                        /timetry_n_sigma);%using the time left to get the n left
+                    out_param.nmax = min(in_param.nbudget-nsofar,...
+                        out_param.n_left_predict);
+                    % update the max n which will be used for estimating mu
+                    if out_param.n_mu > out_param.nmax;
+                        % if the sample size got from Chebyshev and BE fun is
+                        % larger than nmax, print warning message and use nmax
+                        out_param.exit=1; % exit the loop
+                        meanMC_g_err(out_param,tstart); % print warning message
+                        out_param.n_mu = out_param.nmax;% update n_mu
+                        break;
+                    else
+                        break;
+                    end
                 end
             end
-            timeleft = in_param.timebudget-toc(tstart);% update the time left
-            out_param.n_left_predict = floor(timeleft*in_param.n_sigma...
-                /timetry_n_sigma);%using the time left to get the n left
-            out_param.nmax = min(in_param.nbudget-nsofar,...
-                out_param.n_left_predict);
-            % update the max n which will be used for estimating mu
-            if out_param.n_mu > out_param.nmax;
-                % if the sample size got from Chebyshev and BE fun is
-                % larger than nmax, print warning message and use nmax
-                out_param.exit=1; % exit the loop
-                meanMC_g_err(out_param,tstart); % print warning message
-                out_param.n_mu = out_param.nmax;% update n_mu
-            end
-            %%  Split The Param.n into columns
-            nopt=min(in_param.npcmax,out_param.n_mu);
-            % numbers of samples per loop step
-            nn=floor(out_param.n_mu/nopt); % number of loop steps
-            nremain=out_param.n_mu-nn*nopt;
-            % number of samples in last loop step
-            nloop=repmat(nopt,1,nn); 
-            %vector of numbers of samples per loop step
-            if nremain>0; nloop=[nloop nremain]; nn=nn+1; end
-            sumY=0;
-            for iloop=1:nn %loops to save memory
-                sumY=sumY+sum(Yrand(nloop(iloop)));
-            end
-            %%  Estimate mu
-            out_param.mu=sumY/out_param.n_mu; %calculate the mean
-            out_param.n=out_param.n_mu+nsofar; 
-            %total number of samples used
-            mu=out_param.mu; %assign answer
-            break;
         end
     else
         multiplier = 5;
@@ -243,6 +224,24 @@ while true
         timetry = toc;% get the time for calclating ntry function values
     end
 end
+%%  Split The Param.n into columns
+nopt=min(in_param.npcmax,out_param.n_mu);
+% numbers of samples per loop step
+nn=floor(out_param.n_mu/nopt); % number of loop steps
+nremain=out_param.n_mu-nn*nopt;
+% number of samples in last loop step
+nloop=repmat(nopt,1,nn);
+%vector of numbers of samples per loop step
+if nremain>0; nloop=[nloop nremain]; nn=nn+1; end
+sumY=0;
+for iloop=1:nn %loops to save memory
+    sumY=sumY+sum(Yrand(nloop(iloop)));
+end
+%%  Estimate mu
+out_param.mu=sumY/out_param.n_mu; %calculate the mean
+out_param.n=out_param.n_mu+nsofar;
+%total number of samples used
+mu=out_param.mu; %assign answer
 out_param.time=toc(tstart); %elapsed time
 end
 
@@ -271,7 +270,8 @@ default.npcmax = 1e6;% default n piece maximum
 
 if isempty(varargin)
     help meanMC_g
-    warning('Yrand must be specified. Now GAIL is using Yrand = rand(n,1).^2.')
+    warning('MATLAB:cubMC_g:yrandnotgiven',...
+        'Yrand must be specified. Now GAIL is using Yrand = rand(n,1).^2.')
     Yrand = @(n) rand(n,1).^2;
     %give the error message
 else
@@ -326,38 +326,45 @@ end
 %out_param.exit=0; %success! until found otherwise
 % Absolute error tolerance 
 if (in_param.abstol <= 0)
-    warning(['Absolute error tolerance should be greater than 0, ' ...
+    warning('MATLAB:meanMC_g:abstolneg',...
+        ['Absolute error tolerance should be greater than 0, ' ...
         'use the absolute value of the error tolerance'])
     in_param.abstol = abs(in_param.abstol);
 end
 if (in_param.timebudget <= 0) % time budget
-    warning(['Time budget should be bigger than 0, '...
+    warning('MATLAB:meanMC_g:timebudgetlneg',...
+        ['Time budget should be bigger than 0, '...
         'use the absolute value of time budget'])
     in_param.timebudget = abs(in_param.timebudget);
 end
 if (~isposint(in_param.nbudget)) % sample budget should be an integer
-    warning(['the number of sample budget should be a positive integer,'...
+    warning('MATLAB:meanMC_g:nbudgetnotposint',...
+        ['the number of sample budget should be a positive integer,'...
         'take the absolute value and ceil.'])
     in_param.nbudget = ceil(abs(in_param.nbudget));
 end
 if (~isposint(in_param.npcmax)) 
     % maxinum number of scalar values of x per vector should be a integer
-    warning(['the number of each piece of the samples should be' ...
+    warning('MATLAB:meanMC_g:npcmaxnotposint',...
+        ['the number of each piece of the samples should be' ...
     'a positive integer, take the absolute value and ceil.'])
     in_param.npcmax = ceil(abs(in_param.npcmax));
 end
 if (~isposint(in_param.n_sigma)) % initial sample size should be a integer
-    warning(['the number n_sigma should a positive integer, '...
+    warning('MATLAB:meanMC_g:nsignotposint',...
+        ['the number n_sigma should a positive integer, '...
         'take the absolute value and ceil.'])
     in_param.n_sigma = ceil(abs(in_param.n_sigma));
 end
 if (in_param.fudge <= 1) % standard deviation inflation factor/fudge factor
-    warning(['the fudge factor should be bigger than 1, '...
+    warning('MATLAB:meanMC_g:fudgelessthan1',...
+        ['the fudge factor should be bigger than 1, '...
         'use the default value.'])
     in_param.fudge = default.fudge;
 end
 if (in_param.alpha <= 0 ||in_param.alpha >= 1) % uncertainty
-    warning(['the uncertainty should be less than 1 and bigger than 0, '...
+    warning('MATLAB:meanMC_g:alphanotin01',...
+        ['the uncertainty should be less than 1 and bigger than 0, '...
     'use the default value.'])
     in_param.alpha = default.alpha;
 end
@@ -375,22 +382,25 @@ if ~isfield(out_param,'exit'); return; end
 if out_param.exit==0; return; end
 switch out_param.exit
     case 1 % not enough samples to estimate the mean.
-        fprintf(2,['Warning: tried to evaluate at ' int2str(out_param.n_mu) ...
-            ' samples,\nwhich is more than the allowed' ...
-            ' maximum of ' num2str(out_param.nmax) ' samples\n']);
+        warning('MATLAB:cubMC_g:maxreached',...
+            ['tried to evalute at ' int2str(out_param.n_mu) ...
+            ' samples, which is more than the allowed maximum of '...
+            num2str(out_param.nmax) ' samples. Just use the maximum sample budget'];
         return
     case 2 % initial try out time costs more than 10% of time budget.
-        fprintf(2,['Warning: initial try costs more than 10 percent\n'...
-            'of time budget, stop try and return an answer\n'...
-            'without guarantee.\n']);
+        warning('MATLAB:cubMC_g:initialtryoutbudgetreached',...
+            ['initial try costs more than 10 percent '...
+            'of time budget, stop try and return an answer '...
+            'without guarantee.']);
         return
     case 3
         % the estimated time for estimating variance is bigger than half of
         % time budget.
-        fprintf(2,['Warning: the estimated time using n_sigma samples\n'...
-            'is bigger than half of the time budget,\n'...
-            'could not afford estimating variance,\n'...
-            'use all the time left to estimate the mean.\n']);
+        warning('MATLAB:cubMC_g:timebudgetreached',...
+            ['the estimated time using n_sigma samples '...
+            'is bigger than half of the time budget, '...
+            'could not afford estimating variance, '...
+            'use all the time left to estimate the mean.']);
         return
 end
 out_param.mu=NaN;

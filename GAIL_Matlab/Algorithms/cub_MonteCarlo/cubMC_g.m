@@ -139,14 +139,15 @@ default.fudge = 1.1; % default variance inflation factor
 
 if isempty(varargin) % if no input print error message and use the default setting
     help cubMC_g
-    warning(['f must be specified. Now GAIL is using f = @(x) x.^2.'...
+    warning('MATLAB:cubMC_g:fnotgiven',['f must be specified. Now GAIL is using f = @(x) x.^2.'...
         'Integration interval must be specified. Now GAIL is using interval [0 1]'])
     f = @(x) x.^2;
     interval = default.interval;
 elseif numel(varargin)==1
     % if there is only function but no interval input. Use default interval.
     help cubMC_g
-    warning('the interval must be specified, Now GAIL is using interval [0 1]')
+    warning('MATLAB:cubMC_g:intervalnotgiven',...
+        'the interval must be specified, Now GAIL is using interval [0 1]')
     f = varargin{1};
     interval = default.interval;    
 else
@@ -232,22 +233,24 @@ if strcmp(in_param.measure,'normal')&&any(isfinite(interval(:)))
     out_param.exit=14; out_param = cubMC_g_err(out_param); return;
 end
 if (~isposint(in_param.n_sigma)) %the sample to estimate sigma
-    warning(['the number n_sigma should a positive integer,'...
+    warning('MATLAB:cubMC_g:nsignotposint',...
+        ['the number n_sigma should a positive integer,'...
         'take the absolute value and ceil.'])
     in_param.n_sigma = ceil(abs(in_param.n_sigma));
 end
 if (in_param.fudge <= 1) %standard deviation inflation factor/fudge factor
-    warning(['the fudge factor should be bigger than 1, '...
-    'use the default value.'])
+    warning('MATLAB:cubMC_g:fudgelessthan1',...
+        'the fudge factor should be bigger than 1, use the default value.')
     in_param.fudge = default.fudge;
 end
 if (in_param.abstol <= 0) %error tolerance
-    warning(['the absolute error tolerence should be larger than 0, '...
-     'use the absolute value.'])
+    warning('MATLAB:cubMC_g:abstolneg',...
+        'the absolute error tolerence should be larger than 0, use the absolute value.')
     in_param.abstol = abs(in_param.abstol);
 end
 if (in_param.alpha <= 0 ||in_param.alpha >= 1) %uncertainty 
-    warning(['the uncertainy should be less than 1 and bigger than 0, '...
+    warning('MATLAB:cubMC_g:alphanot01',...
+        ['the uncertainy should be less than 1 and bigger than 0, '...
     'use the the default value.'])
     in_param.alpha = default.alpha;
 end
@@ -265,13 +268,12 @@ function [out_param,Q]=cubMC_g_err(out_param,tstart)
 if ~isfield(out_param,'exit'); return; end
 if out_param.exit==0; return; end
 switch out_param.exit
-    case 10; fprintf(2,'Error: interval must contain numbers\n');
-    case 11; fprintf(2,'Error: interval must be 2 x d\n');
-    case 12; fprintf(2,...
-        'Error: interval must be more than a point in any coordinate direction\n');
-    case 13; fprintf(2,'Error: interval must be finite when measure is uniform\n');
-    case 14; fprintf(2,['Error: interval must be infinite in both directions' ...
-        ' when measure is normal\n']);
+    case 10; error('interval must contain numbers.');
+    case 11; error('interval must be 2 x d.');
+    case 12; error('interval must be more than a point in any coordinate direction.');
+    case 13; error('interval must be finite when measure is uniform.');
+    case 14; error(['interval must be infinite in both directions' ...
+        ' when measure is normal']);
 end
 out_param.Q=NaN;
 Q=out_param.Q;
