@@ -1,0 +1,1 @@
+This is the directory for MATH573 Projects. Please create a subfolder with the name “<your name>Project” for your project files.
