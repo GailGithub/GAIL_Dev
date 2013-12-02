@@ -10,10 +10,6 @@ disp('The rbf_fd package is now downloading ...')
 
 unzip('https://github.com/jagadeesr/rbf_fd/archive/v1_0.zip') %download ...and unzip
 cd('rbf_fd-1_0') %get to the right subdirectory
-unzip('rbfqr_v1_2.zip')
-cd('rbfqr_v1_2') % rbf_fd uses this package
-rbfsetup
-cd('..')
 
 rbfdversion = 1.0;
 fprintf('\nWelcome to rbf_fd version %2.1f \n', rbfdversion);
