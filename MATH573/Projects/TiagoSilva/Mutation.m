@@ -20,6 +20,32 @@ function [tau_o,y]=Mutation(f,x,tau_i,lvl,T,U)
 %   other inputs are described above. This function also accepts x and
 %   tau_i as vectors. In this case, y and tau_o will also be vectors.
 %
+%   f --- a nondecreasing function f:(x,U)->y that is used to
+%   generate the markov sequence X=(X_1,X_2,...X_T). The function f must
+%   have two arguments, where the second one receives the random variable, 
+%   the first one receives one term of the markvov sequence and the output
+%   generate the next term of the same sequence.
+%
+%   x --- a vector Mx1 where M is the number of particles  
+%
+%   tau_i --- a vector Mx1 where M is the number of particles, 
+%   which contains the time correspondent to the values in x
+%
+%   lvl --- the value that will interrupt the mutation step for each 
+%   particle. 
+%
+%   T --- number of time steps
+%
+%   U --- Matrix that contains the random variables that will be used in
+%   the mutation phase.
+%
+%   tau_o --- this output is a vector Mx1 that contains the specific time
+%   where the particle reaches the level "lvl"
+%
+%   y --- this output is a vector Mx1 that contains the value of each 
+%   particle at the time tau_o    
+%
+%
 % Example 1: Using function to generate the parent for the first cycle.
 % >> f = @(v,U) v+(U<0.1); T=10;U=[ ones(1,3) 0.05 ones(1,6)]; lvl=1;
 % >> [tau_o,y]=Mutation(f,0,0,lvl,T,U)
@@ -58,9 +84,9 @@ function [tau_o,y]=Mutation(f,x,tau_i,lvl,T,U)
 % Interacting Path Systems and quasi-Monte Carlo methods. MS Thesis.
 % Illinois Institute of Technology.
 %
-N = size(x,1);          % Collect number of particles
-tau=(T+1)*ones(N,1);    % Setting up the next stopping time
-for i=1:N
+M = size(x,1);          % Collect number of particles
+tau=(T+1)*ones(M,1);    % Setting up the next stopping time
+for i=1:M
     for j=1:(T-tau_i(i))
         % Generating next term of the monotone increasing sequence
         % using markov transition function f
