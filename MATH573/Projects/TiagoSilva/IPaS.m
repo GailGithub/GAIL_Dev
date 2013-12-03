@@ -3,7 +3,7 @@ function [gamma,elapsed_time]=IPaS(varargin)
 % split(end), where the terms of the sequence X=(X_i), i=1..T, is ruled by 
 % a Markov transition represented by the given function f:X_i -> X_(i+1), 
 % and the vector split contains the levels for each cycle of the IPaS 
-% method. The quantity M is the number os sample size. It is considered 
+% method. The quantity M is the number of sample size. It is considered 
 % that each term of X is a uni-dimensional random variable and the sequence 
 % X is consequently T-dimentsional random variable.
 %
@@ -43,16 +43,18 @@ function [gamma,elapsed_time]=IPaS(varargin)
 %   coeff.M --- sample size used to estimate gamma
 %
 % Example 1: Using ordered input.
-% >> f = @(v,U) v+(U<0.1);split = [1,2,3,4,5,6]; T=10; M=10^4;
+% >> f = @(v,U) v+(U<0.1); split = [2,4,5]; T=10; M=10^4;
 % >> gamma=IPaS(f,split,T,M)
 %
-% gamma = 1.***e-04
+% gamma = 0.001***
 %
 %
 % Example 2: Using the structured input.
-% >> coeff.f = @(v,U) v+(U<0.1); coeff.split = [2,4,6]; 
-% >> coeff.T=10; coeff.M=4*10^4;
-% >> gamma = IPaS(coeff);
+% >> coeff.f = @(v,U) v+(U<0.1); coeff.split = [2,4,5]; 
+% >> coeff.T=10; coeff.M=10^4;
+% >> gamma = IPaS(coeff)
+%
+% gamma = 0.001***
 %
 %
 % See also, Mutation.m

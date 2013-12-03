@@ -1,9 +1,9 @@
-%In this first workout, we want to compare the efficiency of three
-%differente estimators. First estimator is based on vanilla Monte Carlo
-%method. The second estimator is based on the IPaS method, using 3
-%split levels, and the third estimator is again based on IPaS method, but
-%using 6 split levels. In this analysis, we fix the tolerance os the
-%estimation by the following: The standard deviation of the estimation is
+% In this first workout, we want to compare the efficiency of three
+% differente estimators. First estimator is based on vanilla Monte Carlo
+% method. The second estimator is based on the IPaS method, using 3
+% split levels, and the third estimator is again based on IPaS method, but
+% using 6 split levels. In this analysis, we fix the tolerance os the
+% estimation by the following: The standard deviation of the estimation is
 % 50% of the estimation. By doing that, we can compare the sample size
 % needed and the computational time necessary to satisfy the same
 % condition. That is a good way to analyse performance.
@@ -19,14 +19,15 @@ case1.T=10;                   % Default - Number of steps
 case1.f = @(v,U) v+(U<0.1);   % Default - Markov function f:X_i -> X_(i+1)
 case2=case1; case3=case1;     % Default - case2 and case3  
 
-tol = 1.0;                    % tol = std(gamma_hat)/gamma
-gamma = 1-binocdf(7-1,10,0.1); % Exact solution for gamma
-case1.M=ceil((1/tol)^2*(1-gamma)/gamma); % Sample size that respect tol
-sig = sqrt(gamma*(1-gamma))/sqrt(case1.M); % Exact variance of the estimator 1
-
 case1.split = [7];           % estimator 1 - naive MC
 case2.split = [2,4,7];       % estimator 2 - using IPaS with 3 levels
 case3.split = [2,3,4,5,6,7]; % estimator 3 - using IPaS with 6 levels
+
+tol = 0.5;                    % tol = std(gamma_hat)/gamma
+gamma = FindExactSolForBinoProblem(7,10,0.1); % Exact solution for gamma
+case1.M=ceil((1/tol)^2*(1-gamma)/gamma); % Sample size that respect tol
+sig = sqrt(gamma*(1-gamma))/sqrt(case1.M); % Exact variance of the estimator 1
+
 
 %% Estimate gamma using Estimator 1
 [output1.gamma,output1.elapsed_time]=IPaS(case1); output1.M=case1.M;
@@ -75,3 +76,5 @@ disp(['Sample size case3 = ' num2str(output3.M)])
 disp(['Average Time case1 = ' num2str(output1.elapsed_time)])
 disp(['Average Time case2 = ' num2str(output2.elapsed_time)])
 disp(['Average Time case3 = ' num2str(output3.elapsed_time)])
+
+
