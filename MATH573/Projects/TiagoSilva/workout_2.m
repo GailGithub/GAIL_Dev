@@ -15,17 +15,17 @@
 
 clear all;close all;clc;
 
-N=8;
-T=N*(N+1)/2;
+N = 8;             % Number of scenarios
+Ns = N*(N+1)/2+N;   % Total number of simulations
 
 scenario.split=[1,2,3,4,5,6,7]; scenario.M=2000;
 gamma = FindExactSolForBinoProblem(scenario.split(end),10,0.1);
 
-x=zeros(T,1);
-y=zeros(T,1);
+x=zeros(Ns,1);
+y=zeros(Ns,1);
 k=0;
 for i=1:N
-    for j=1:i
+    for j=1:(i+1)
     k=k+1;
     x(k)=scenario.M;
     y(k)= EstimateStd(scenario)/gamma;
@@ -39,10 +39,10 @@ logX = log(x');
 C = [ones(length(logX'),1) logX']\logY';
 alpha = C(2);
 error = C(1)+C(2)*logX-logY;
-SME = sum(error.^2)/(T-2);
+SME = sum(error.^2)/(Ns-2);
 SS = sum((logX-mean(logX)).^2);
 sb = sqrt(SME/SS);
-CI = tinv(0.975,T-2)*sb;
+CI = tinv(0.975,Ns-2)*sb;
 disp(['The 95% confidence interval of the slope is  [' num2str(alpha-CI) ',' num2str(alpha+CI) ']'])
 hold off
 loglog(x,y,'.')
