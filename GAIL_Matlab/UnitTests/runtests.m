@@ -10,7 +10,7 @@ doctest integral_g
 doctest integraltau_g
 doctest integralab_g
 doctest meanMC_g
-% doctest cubMC_g
+doctest cubMC_g
 
 % Call unit tests
 [~,~,~,MATLABVERSION]=GAILstart(0);
@@ -21,7 +21,7 @@ if MATLABVERSION >= 8
     run(ut_integral_g)
     warning('on','MATLAB:integral_g:peaky')
     run(ut_meanMC_g)
-%     run(ut_cubMC_g)
+    run(ut_cubMC_g)
 end
 
 time=toc;
