@@ -66,7 +66,18 @@
 % 
 % * out_param.abstol --- |guaranteed absolute error|
 % 
-
+%% Guarantee
+%   
+% If function f satisfied condition
+%
+% $$\|f''\|_\infty \le out\_param.tau \left\|f'-f(1)+f(0)\right\|_\infty,$$
+%
+% then we can have the guaranteed result
+%
+% $\| f-fappx \|_{\infty} \le out\_param.abstol$
+%
+% when the flag out_param.exceedbudget = 0.
+%
 %% Examples
 % *Example 1*
 
