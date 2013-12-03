@@ -3,6 +3,11 @@
 % specific absolute error tolerance with guaranteed uncertainty within
 % alpha.|
 %
+%  |The guarantee holds if the modified kurtosis is less than the kmax,
+%  which is defined in terms of uncertainty(alpha), sample size to estimate
+%  variance(n_sigma) and standard deviation inflation factor(fudge). For
+%  details, please refer to our paper.|
+%
 %% Syntax
 %
 % mu = *meanMC_g*(Yrand)

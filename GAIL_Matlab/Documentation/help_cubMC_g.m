@@ -3,6 +3,10 @@
 % within a specified absolute error tolerance with guaranteed uncertainy
 % within alpha.|
 %
+%  |The guarantee holds if the modified kurtosis is less than the kmax,
+%  which is defined in terms of uncertainty(alpha), sample size to estimate
+%  variance(n_sigma) and standard deviation inflation factor(fudge). For
+%  details, please refer to our paper.|
 %% Syntax
 % [Q,out_param] = *cubMC_g*(f)
 %
@@ -82,13 +86,35 @@
 %
 %% Examples
 %   Example 1:
-%
-    f = @(x) x.^2;interval = [1;2]; Q = cubMC_g(f,interval,'abstol',1e-2)
+%   Estimate the integral with integrand f(x) = x.^2 in the interval [0,1]
+
+    f = @(x) x.^2;interval = [0;1]; Q = cubMC_g(f,interval,'abstol',1e-2)
 %%
 %   Example 2:
-    f = @(x) x.^2;interval = [1;2]; Q = cubMC_g(f,interval)
+%   Estimate the integral with integrand f(x) = exp(x) in the interval [1,2]
 
+    f = @(x) exp(x);interval = [1;2]; Q = cubMC_g(f,interval)
 
+%%
+%   Example 3:
+%   Estimate the integral with integrand f(x) = sin(x) in the interval [1,2]
+
+    f = @(x) sin(x);interval = [1;2]; Q = cubMC_g(f,interval,'uniform',1e-3)
+
+%%
+%   Example 4:
+%   Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) in the
+%   interval [0 0;1 1],where x is a vector x = [x1 x2].
+
+    f = @(x) exp(-x(:,1).^2-x(:,2).^2);interval = [0 0;1 1];
+    Q = cubMC_g(f,interval,'uniform',1e-3)
+
+%   Example 5: 
+%   Estimate the integral with integrand f(x) = 2^n*prod(x1*x2*...*xn)+0.555
+%   in the interval [zeros(1,n);ones(1,n)], where x is a vector x = [x1 x2 ... xn].
+%
+    n=3;f=@(x) 2^n*prod(x,2)+0.555;interval = [zeros(1,n);ones(1,n)];
+    Q = cubMC_g(f,interval,'uniform',1e-3)
 %% See Also
 %
 % <html>  
