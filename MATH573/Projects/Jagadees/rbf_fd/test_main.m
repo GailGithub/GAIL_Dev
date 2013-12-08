@@ -2,11 +2,17 @@
 clear
 format compact
 
-if ~exist('rbfqr_v1_2', 'dir')
-	unzip('https://raw.github.com/jagadeesr/rbf_fd/master/rbfqr_v1_2.zip')
-	cd('rbfqr_v1_2') % we need this package
-	rbfsetup
-	cd('..')
+global GAUSSQR_PARAMETERS
+
+% Install RBF-QR Package if not found
+if ~isstruct(GAUSSQR_PARAMETERS)
+    if exist('rbfqr_v1_2', 'dir')~=7
+        unzip('https://raw.github.com/jagadeesr/rbf_fd/master/rbfqr_mike_mccourt/rbfqr_v1_2.zip')
+    end
+    cd('rbfqr_v1_2') % we need this package
+    rbfsetup
+    cd('..')
+    install_path
 end
 
 debug = false;
@@ -83,9 +89,9 @@ xlabel('\epsilon')
 ylabel('RMS error')
 ylim([10^-5 100]);
 legend(sprintf('E1[%di,%db],\\epsilon%1.2f', np(1,1), np(1,2), epvec(Ieopt1)), ...
-       sprintf('E2[%di,%db],\\epsilon%1.2f', np(2,1), np(2,2), epvec(Ieopt2)), ...
-       sprintf('E3[%di,%db],\\epsilon%1.2f', np(3,1), np(3,2), epvec(Ieopt3)), ...
-       sprintf('E4[%di,%db],\\epsilon%1.2f', np(4,1), np(4,2), epvec(Ieopt4))  );
+       sprintf('E2[%di,%db],\\epsilon%1.2f', np(2,1), np(2,2), epvec(Ieopt2))); %, ...
+       %sprintf('E3[%di,%db],\\epsilon%1.2f', np(3,1), np(3,2), epvec(Ieopt3)) , ...
+       %sprintf('E4[%di,%db],\\epsilon%1.2f', np(4,1), np(4,2), epvec(Ieopt4))  );
 hold on
 x = find(stable_flag(:,1)==true, 1, 'last'); plot(epvec(x), err_rbfdir(x,1), 'r*');
 x = find(stable_flag(:,2)==true, 1, 'last'); plot(epvec(x), err_rbfdir(x,2), 'r*');
@@ -97,9 +103,9 @@ title(sprintf('%s, %s',g,func2str(testU)))
 xlabel('\epsilon')
 ylabel('Diff RMS error')
 legend(sprintf('E1[%di,%db]', np(1,1), np(1,2)), ...
-       sprintf('E2[%di,%db]', np(2,1), np(2,2)), ...
-       sprintf('E3[%di,%db]', np(3,1), np(3,2)), ...
-       sprintf('E4[%di,%db]', np(4,1), np(4,2))  );
+       sprintf('E2[%di,%db]', np(2,1), np(2,2))); %, ...
+       %sprintf('E3[%di,%db]', np(3,1), np(3,2)) , ...
+       %sprintf('E4[%di,%db]', np(4,1), np(4,2))  );
 hold on
 x = find(stable_flag(:,1)==true, 1, 'last'); plot(epvec(x), rmsed(x,1), 'r*');
 x = find(stable_flag(:,2)==true, 1, 'last'); plot(epvec(x), rmsed(x,2), 'r*');

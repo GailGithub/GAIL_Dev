@@ -24,6 +24,11 @@
 
 function [rmse, rmsed, stable_flag, u_hat] = calc_rmse(dm, points, int_pts, bound_pts, g, u, Lu, epsilon, RBFQR_flag)
 
+    global GAUSSQR_PARAMETERS
+    if ~isstruct(GAUSSQR_PARAMETERS)
+        error('Please run test_main before running this test')
+    end
+
     % Compute A Matrix to find the approximation to function 'u'
     [A, b, stable_flag] = solve_poisson(dm, points, int_pts, bound_pts, g, Lu, epsilon, RBFQR_flag);
 
