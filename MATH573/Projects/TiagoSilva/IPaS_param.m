@@ -23,16 +23,20 @@ function coeff_out = IPaS_param(varargin)
 % 
 %   coeff.M --- sample size used to estimate gamma
 %
-% Example1 : Empty Input
+% Example1 : Empty Input. In this case the default values for the input are
+% provided. They are the following: default.f = @(v,U) v+(U<0.1); 
+% default.split = [1,2,3,4,5,6]; default.T = 10; and default.M=10^3;
 % >> IPaS_param()
 %
-% Warning: The coefficient must be provided, now using default input
-% > In IPaS_param at 72 In doctest_run>DOCTEST__evalc at 57 In doctest_run at 25 In doctest at 174
+% Warning: The coefficient must be provided, now using default input.
+% default.f = @(v,U) v+(U<0.1), default.split = [1,2,3,4,5,6]; 
+% default.T = 10; default.M=10^3; > In IPaS_param at 76 In doctest_run>DOCTEST__evalc at 57 In doctest_run at 25 In doctest at 174
+%
 % ans = 
-%        f: @(v,U)v+(U<0.1)
-%    split: [1 2 3 4 5 6]
-%        T: 10
-%        M: 1000
+%           f: @(v,U)v+(U<0.1) 
+%       split: [1 2 3 4 5 6] 
+%           T: 10 
+%           M: 1000
 % 
 %
 % Example2 : Using only split levels
@@ -69,7 +73,9 @@ default.T = 10;
 default.M=10^3;
 p = inputParser;
 if isempty(varargin)
-    warning('The coefficient must be provided, now using default input')
+    warning(['The coefficient must be provided, now using default input. '...
+        'default.f = @(v,U) v+(U<0.1), ' ...
+        'default.split = [1,2,3,4,5,6]; default.T = 10; default.M=10^3;' ])
     coeff.f = default.f;
     coeff.split = default.split;
     coeff.T = default.T;
@@ -91,7 +97,8 @@ elseif (nargin == 1 && isstruct(varargin{1}))
     parse(p,varargin{:})
     coeff = p.Results;
 else
-    warning('Your input could not be recognized, now using default setting.')
+    warning(['Your input could not be recognized, now using default setting. default.f = @(v,U) v+(U<0.1), ' ...
+        'default.split = [1,2,3,4,5,6]; default.T = 10; default.M=10^3;' ])
     coeff.f = default.f;
     coeff.split = default.split;
     coeff.T = default.T;
@@ -100,14 +107,14 @@ end
 
 %% Validadtion
 if ~isposint(coeff.T) % number of sample paths should be an integer
-warning(['The number of steps should be a positive integer, using ' num2str(default.T)])
+warning(['The number of steps T should be a positive integer, now using the default value T = ' num2str(default.T)])
 coeff.T = default.T;
 end
 
 if size(coeff.split,2)>1
     if(min(diff(coeff.split))<=0); % slipt levels must be an increasing sequence
     warning(['The levels defined on vector coeff.split must be a increasing sequence, '...
-        'now using default [1,2,3,4,5,6]'])
+        'now using default split levels [1,2,3,4,5,6]'])
     coeff.split = default.split;
     end
     
@@ -132,7 +139,7 @@ if (nargin(coeff.f)~=2) % function must accept two inputs (condition may change 
 end
     
 if ~isposint(coeff.M) % number of sample paths should be an integer
-warning(['The number of samples should be a positive integer, using ' num2str(default.M)])
+warning(['The number of samples M should be a positive integer, now using the default value M = ' num2str(default.M)])
 coeff.M = default.M;
 end
 

@@ -88,6 +88,18 @@
 % * out_param.nhi --- |higher bound of initial number of points we used,
 % default value is 52|
 %
+%% Guarantee
+%   
+% If function f satisfied condition
+%
+% $$\|f''\|_\infty \le \frac{out\_param.tau}{b-a} \left\|f'-\frac{f(b)-f(a)}{b-a}\right\|_\infty,$$
+%
+% then we can have the guaranteed result 
+%
+% $\| f-fappx \|_{\infty} \le out\_param.abstol$
+%
+% when the flag out_param.exceedbudget = 0.
+%
 %% Examples
 % *Example 1*
 

@@ -50,6 +50,13 @@ function [fappx,out_param]=funappx_g(varargin)
 %
 %   out_param.abstol --- guaranteed absolute error
 %
+%   Guarantee:
+%   
+%   If function f satisfied condition, the infinity norm of f'' is bounded 
+%   by the product of the infinity norm of f'-f(1)+f(0) times out_param.tau,
+%   then we can have the guaranteed result the infinite norm of f-fappx is 
+%   less than out_param.abstol when the flag out_param.exceedbudget is 0.
+%
 %   
 %   Examples
 %
@@ -122,8 +129,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %   Reference
 %   [1]  N. Clancy, Y. Ding, C. Hamilton, F. J. Hickernell, and Y. Zhang,
 %        The Cost of Deterministic, Adaptive, Automatic Algorithms:  Cones,
-%        Not Balls, Journal of Complexity (2013), to appear, DOI
-%        10.1016/j.jco.2013.09.002
+%        Not Balls, Journal of Complexity 30 (2014) 21–45
 %
 
 % check parameter satisfy conditions or not

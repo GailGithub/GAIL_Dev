@@ -3,7 +3,7 @@ function [gamma,elapsed_time]=IPaS(varargin)
 % split(end), where the terms of the sequence X=(X_i), i=1..T, is ruled by 
 % a Markov transition represented by the given function f:X_i -> X_(i+1), 
 % and the vector split contains the levels for each cycle of the IPaS 
-% method. The quantity M is the number os sample size. It is considered 
+% method. The quantity M is the number of sample size. It is considered 
 % that each term of X is a uni-dimensional random variable and the sequence 
 % X is consequently T-dimentsional random variable.
 %
@@ -28,7 +28,7 @@ function [gamma,elapsed_time]=IPaS(varargin)
 %   et --- elapsted time for the estimator ruled by coeff
 %
 %   coeff.f --- a nondecreasing function f:(x,U)->y that is used to
-%   generate the markov sequence X=(X_1,X_2,...X_T). the function f must
+%   generate the markov sequence X=(X_1,X_2,...X_T). The function f must
 %   have two arguments, where the second one receives the random variable, 
 %   the first one receives one term of the markvov sequence and the output
 %   generate the next term of the same sequence.
@@ -43,16 +43,18 @@ function [gamma,elapsed_time]=IPaS(varargin)
 %   coeff.M --- sample size used to estimate gamma
 %
 % Example 1: Using ordered input.
-% >> f = @(v,U) v+(U<0.1);split = [1,2,3,4,5,6]; T=10; M=10^4;
+% >> f = @(v,U) v+(U<0.1); split = [2,4,5]; T=10; M=10^4;
 % >> gamma=IPaS(f,split,T,M)
 %
-% gamma = 1.***e-04
+% gamma = 0.001***
 %
 %
 % Example 2: Using the structured input.
-% >> coeff.f = @(v,U) v+(U<0.1); coeff.split = [2,4,6]; 
-% >> coeff.T=10; coeff.M=4*10^4;
-% >> gamma = IPaS(coeff);
+% >> coeff.f = @(v,U) v+(U<0.1); coeff.split = [2,4,5]; 
+% >> coeff.T=10; coeff.M=10^4;
+% >> gamma = IPaS(coeff)
+%
+% gamma = 0.001***
 %
 %
 % See also, Mutation.m
@@ -84,22 +86,22 @@ X=rand(M,T);            % Generating random variable for first cycle
 
 [t,x]=Mutation(f,x,t,split(1),T,X); % S_1 - first set of particles xi
 u=(t<=T);                           % xi that reached the first lvl
-v=cumsum(u,1);                      % cummulative sum of vector u
-m(1)= v(end);                       % Number of xi that reached the first lvl
+m(1)= sum(u);                       % Number of xi that reached the first lvl
 
 %% Now, for each cycle we have first a Selection Phase and a Mutation Phase
 for k=2:kappa
   % If zero particles reached the next level then there is nothing to be 
   % selected and IPaS is truncated here and returns gamma_hat=0  
-  if (v(end)==0); m(k:kappa)=0; break; end;  
+  if (m(k-1)==0); m(k:kappa)=0; break; end;  
 %% Selection Phase - Selecting only the particles that reached the 
 %  previous level and replacing the others randomly selecting particles that
 %  reached the previous level
+  Ik=find(u);                  % Index of particles that reached split(k-1)
   for i=1:M
     if(~u(i))
-      j=find(v>rand*m(k-1),1); % randomly find a selectable index
-      x(i)=x(j); % replace particle position
-      t(i)=t(j); % replace last stopping time    
+      j=Ik(ceil(rand*m(k-1))); % randomly find a selectable index
+      x(i)=x(j);               % replace particle position
+      t(i)=t(j);               % replace last stopping time    
     end
   end
  % At this point, we have a new set where all particles 
@@ -110,8 +112,7 @@ for k=2:kappa
 X=rand(M,T-min(t));                 % Generate new random variable
 [t,x]=Mutation(f,x,t,split(k),T,X); % Perform Mutation operator
 u=(t<=T);                           % xi that reached the next lvl
-v=cumsum(u,1);                      % cummulative sum of vector u
-m(k)= v(end);                       % Number of xi that reached next lvl
+m(k)= sum(u);                       % Number of xi that reached next lvl
 end
 
 gamma=prod(m/M);                    % estimating gamma from cond. prob.

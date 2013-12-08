@@ -37,17 +37,21 @@ function [stded_hat,gamma_hat,et_hat]=EstimateStd(varargin)
 %   coeff.M --- sample size used to estimate gamma
 %   
 % Example 1: Estimating standard deviation
-% >> coeff.M=1000; coeff.split= [2 4 5];
-% >> stded_hat = EstimateStd(coeff);
+% >> coeff.M=2500; coeff.split= [2 4 5];
+% >> stded_hat = EstimateStd(coeff)
+%
+% stded_hat = 2.***e-04
 %
 %
 % Example 2: Estimating standard deviation and expected value and
 % elapsed_time
-% >> coeff.M=1000; coeff.split= [2 4 5];
-% >> [stded_hat,gamma_hat,et_hat] = EstimateStd(coeff);
-% >> gamma_hat
+% >> coeff.M=2500; coeff.split= [2 4 5];
+% >> [stded_hat,gamma_hat,et_hat] = EstimateStd(coeff)
 %
-%gamma_hat =  0.001*** 
+% stded_hat = 2.***e-04
+% gamma_hat = 0.001***
+% et_hat = 0.03***
+%
 %
 %
 % See also, IPaS.m, Mutation.m

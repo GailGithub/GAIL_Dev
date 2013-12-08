@@ -6,8 +6,8 @@ function [fappx,out_param]=funappxab_g(varargin)
 %   absolute error of 1e-6. Default initial number of points is 52 and
 %   default cost budget is 1e7.  Input f is a function handle. The
 %   statement Y=f(X) should accept a vector argument X and return a vector
-%   Y of function values that is the same size as X.
-%
+%   Y of function values that is the same size as X. 
+%   
 %   fappx = FUNAPPXAB_G(f,a,b,abstol,nlo,nhi,nmax) for given function f and
 %   the ordered input parameters with the interval a, b, guaranteed
 %   absolute error abstol, lower bound of initial number of points nlo,
@@ -72,6 +72,14 @@ function [fappx,out_param]=funappxab_g(varargin)
 %   out_param.nhi --- higher bound of initial number of points we used,
 %   default value is 52
 %
+%   Guarantee:
+%   
+%   If function f satisfied condition, the infinity norm of f'' is bounded 
+%   by the product of the infinity norm of f'-(f(b)-f(a))/(b-a) times 
+%   out_param.tau/(b-a), then we can have the guaranteed result the
+%   infinite norm of f-fappx is less than out_param.abstol when the flag 
+%   out_param.exceedbudget is 0.
+%   
 %
 %   Examples
 %
@@ -178,8 +186,7 @@ function [fappx,out_param]=funappxab_g(varargin)
 %   Reference
 %   [1]  N. Clancy, Y. Ding, C. Hamilton, F. J. Hickernell, and Y. Zhang,
 %        The Cost of Deterministic, Adaptive, Automatic Algorithms:  Cones,
-%        Not Balls, Journal of Complexity (2013), to appear, DOI
-%        10.1016/j.jco.2013.09.002
+%        Not Balls, Journal of Complexity 30 (2014) 21–45
 %
 
 % check parameter satisfy conditions or not
@@ -257,7 +264,7 @@ end;
 %out_param.ballradius = 2*out_param.abstol*(out_param.nmax-2)*(out_param.nmax...
 %    -2-out_param.tau)/out_param.tau;
 out_param.npoints = n;
- out_param.errbound = fn*len^2/(8*(n-1)^2);
+out_param.errorbound = fn*len^2/(8*(n-1)^2);
 %out_param.errbound = fn/(8*(n-1)^2);
 x1 = out_param.a:len/(out_param.npoints-1):out_param.b;
 y1 = f(x1);
@@ -326,6 +333,16 @@ else
     out_param = p.Results;
 end;
 
+% let end point of interval not be infinity
+if (out_param.a == inf||out_param.a == -inf)
+    warning(['a can not be infinity. Use default a = ' num2str(default.a)])
+    out_param.a = default.a;
+end;
+if (out_param.b == inf||out_param.b == -inf)
+    warning(['b can not be infinity. Use default b = ' num2str(default.b)])
+    out_param.b = default.b;
+end;
+
 % let error tolerance greater than 0
 if (out_param.abstol <= 0 )
     warning(['Error tolerance should be greater than 0.' ...
@@ -333,6 +350,22 @@ if (out_param.abstol <= 0 )
     out_param.abstol = default.abstol;
 end
 % let initial number of points be a positive integer
+if (length(out_param.nlo) == 2)
+    out_param.nmax = out_param.nhi;
+    out_param.nhi = out_param.nlo(2);
+    out_param.nlo = out_param.nlo(1);
+elseif (length(varargin) == 6)
+    out_param.nmax = out_param.nhi;
+    out_param.nhi = out_param.nlo;
+end;
+
+if (out_param.nlo > out_param.nhi)
+    warning(['Lower bound of initial number of points is larger than upper'...
+        ' bound of initial number of points, exchange these two' ])
+    temp = out_param.nlo;
+    out_param.nlo = out_param.nhi;
+    out_param.nhi = temp;
+end;
 if (~isposint(out_param.nlo))
     if isposge3(out_param.nlo)
         warning('MATLAB:funappx_g:lowinitnotint',['Lower bound of initial number of points should be a positive integer.' ...
@@ -355,6 +388,7 @@ if (~isposint(out_param.nhi))
         out_param.nhi = default.nhi;
     end
 end
+
 h = out_param.b - out_param.a;
 out_param.ninit = ceil(out_param.nhi*(out_param.nlo/out_param.nhi)^(1/(1+h)));
 % let cost budget be a positive integer

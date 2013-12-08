@@ -3,6 +3,11 @@ function [mu,out_param]=meanMC_g(varargin)
 % within a specific absolute error tolerance with guaranteed uncertainty
 % within alpha.
 %
+%  The guarantee holds if the modified kurtosis is less than the kmax,
+%  which is defined in terms of uncertainty(alpha), sample size to estimate
+%  variance(n_sigma) and standard deviation inflation factor(fudge). For
+%  details, please refer to our paper.
+%
 %   mu = MEANMC_G(Yrand) estimates the mean of a random variable Y to
 %   within a specified absolute error tolerance 1e-2 with guaranteed
 %   uncertainty within 1%. Input Yrand is a function handle that accepts a
@@ -59,30 +64,32 @@ function [mu,out_param]=meanMC_g(varargin)
 %   in_param.npcmax --- number of elements in an array of optimal size to
 %   calculate the mu, the default value is 1e6.
 %
-%   out_param.n_left_predict --- using the time left to predict the number
+%   out_param_time_n_sigma_predict --- the estimated time to get n_sigma
+%   samples of the random variable.
+%
+%   out_param_n_left_predict --- using the time left to predict the number
 %   of samples left.
 %
 %   out_param.nmax --- the maximum sample budget to estimate mu, it comes
 %   from both the sample budget and the time budget.
 %
+%   out_param.var --- the sample variance.
 %
 %   out_param.exit --- the state of program when exiting.
-%                  out_param.exit = 1: No enough samples to estimate the
-%                                      mean. 
-%                  out_param.exit = 2: Initial try out time costs more than
-%                                      10% of time budget.
-%                  out_param.exit = 3: The estimated time for estimating
-%                                      variance is bigger than half of the
-%                                      time budget.
-%
+%                      0   Success.
+%                      1   No enough samples to estimate the mean.                                
+%                      2   Initial try out time costs more than 10% of time budget.                                 
+%                      3   The estimated time for estimating variance is bigger
+%                          than half of the time budget.
+%                                      
 %   out_param.kurtmax --- the upper bound on modified kurtosis.
-%
-%   out_param.time --- the time eclipsed.
 %
 %   out_param.n_mu --- the sample size that needed to estimate the mu.
 %
 %   out_param.n --- the total sample size needed to do the two stage
 %   algorithm.
+%
+%   out_param.time --- the time eclipsed.
 %
 %   Examples
 %
@@ -111,12 +118,14 @@ function [mu,out_param]=meanMC_g(varargin)
 %   mu = 0.3***
 %
 %
-%   See also FUNAPPX_G, INTEGRAL_G
+%   See also FUNAPPX_G, INTEGRAL_G, CUBMC_G
 %
-%   Reference: [1]  F. Hickernell, L. Jiang, Y. Liu and A. Owen,
-%        Guaranteed Conservative Fixed Width Confidence Intervals Via Monte
-%        Carlo Sampling, preprint, 2013, arXiv:1208.4318 [math.ST].
-
+%   Reference:
+%   [1]  F. J. Hickernell, L. Jiang, Y. Liu, and A. B. Owen, Guaranteed
+%   conservative fixed width confidence intervals via Monte Carlo sampling,
+%   Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F. Y. Kuo, G.
+%   W. Peters, and I. H. Sloan, eds.), Springer-Verlag, Berlin, 2014, to
+%   appear, arXiv:1208.4318 [math.ST]
 
 tstart = tic; %start the clock
 [Yrand, in_param] = meanMC_g_param(varargin{:});
