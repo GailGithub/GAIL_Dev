@@ -4,9 +4,9 @@ function [fappx,out_param]=funappx_g(varargin)
 %   fappx = FUNAPPX_G(f) recovers function f on the interval [0,1] by a 
 %   piecewise linear interpolant fappx to within a guaranteed absolute 
 %   error of 1e-6. Default initial number of points is 52 and default cost
-%   budget is 1e7.  Input f is a function handle. The statement Y=f(X)
-%   should accept a vector argument X and return a vector Y of function
-%   values that is the same size as X.
+%   budget is 1e7.  Input f is a function handle. The statement y=f(x)
+%   should accept a vector argument x and return a vector y of function
+%   values that is the same size as x.
 %
 %   fappx = FUNAPPX_G(f,abstol,ninit,nmax) for given function f and the ordered 
 %   input parameters with the guaranteed absolute error abstol, initial number
@@ -29,7 +29,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %
 %   in_param.nmax --- cost budget, default value is 1e7
 %
-%   [fappx, out_param] = FUNAPPX_G(f,...) returns an approximated function
+%   [fappx, out_param] = FUNAPPX_G(f,...) returns function approximation
 %   fappx and an output structure out_param, which has the following fields.
 %
 %
@@ -50,14 +50,14 @@ function [fappx,out_param]=funappx_g(varargin)
 %
 %   out_param.abstol --- guaranteed absolute error
 %
-%   Guarantee:
-%   
-%   If function f satisfied condition, the infinity norm of f'' is bounded 
-%   by the product of the infinity norm of f'-f(1)+f(0) times out_param.tau,
-%   then we can have the guaranteed result the infinite norm of f-fappx is 
-%   less than out_param.abstol when the flag out_param.exceedbudget is 0.
+%  Guarantee
+%    
+%  If the function to be approximated, f satisfies the cone condition
+%  \|f''\|_\infty <= out_param.tau\|f'-f(1)+f(0)\|_\infty
+%  then the fappx output by this algorithm is guaranteed to satisfy
+%  \| f-fappx \|_{\infty} <= out_param.abstol,
+%  provided the flag out_param.exceedbudget = 0.
 %
-%   
 %   Examples
 %
 %   Example 1:
