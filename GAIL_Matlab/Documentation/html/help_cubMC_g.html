@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>cubMC_g</title><meta name="generator" content="MATLAB 8.1"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2013-09-19"><meta name="DC.source" content="help_cubMC_g.m"><style type="text/css">
+      --><title>cubMC_g</title><meta name="generator" content="MATLAB 8.1"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2013-12-05"><meta name="DC.source" content="help_cubMC_g.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -65,32 +65,64 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1>cubMC_g</h1><!--introduction--><p><tt>Monte Carlo method to evaluate a multidimentional integral to within a specified absolute error tolerance with guaranteed uncertainy within alpha.</tt></p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Syntax</a></li><li><a href="#2">Description</a></li><li><a href="#3">Examples</a></li><li><a href="#5">See Also</a></li><li><a href="#6">Reference</a></li></ul></div><h2>Syntax<a name="1"></a></h2><p>[Q,out_param] = <b>cubMC_g</b>(f)</p><p>Q = <b>cubMC_g</b>(f,interval,measure,abstol,alpha,n_sigma,fudge)</p><p>Q = <b>cubMC_g</b>(f,interval,'measure','uniform','abstol',abstol,'alpha',alpha,              'n_sigma',n_sigma,fudge',fudge)</p><p>Q = <b>cubMC_g</b>(f,interval,,in_param)</p><h2>Description<a name="2"></a></h2><p>[Q,out_param] = <b>cubMC_g</b>(f) <tt>estimates the integral with integrand f to within the absolute error tolerance 1e-2 and with guaranteed uncertainty alpha within 1%. Input f a function handle. The function Y=f(X) should accept a vector argument X and return a vector result Y, the integrand evaluated at each element of X.</tt></p><p>Q = <b>cubMC_g</b>(f,interval,measure,abstol,alpha,n_sigma,fudge) <tt>estimates the integral with integrand f to within an absolute error tolerance abstol with guaranteed uncertainty within alpha using ordered parameter input interval, measure, tolerence, uncertainty, n_sigma and fudge factor.</tt></p><p>Q = <b>cubMC_g</b>(f,interval,'measure','uniform','abstol',abstol,'alpha',alpha, 'n_sigma',n_sigma,fudge',fudge) <tt>estimates the integral with integrand f to within an absolute error tolerance abstol with guaranteed uncertainty within alpha. All the field-value pairs are optional and can be supplied in different order.</tt></p><p>Q = <b>cubMC_g</b>(f,interval,in_param) <tt>estimates the integral with integrand f to within an absolute error tolerance in_param.abstol with guaranteed uncertainty within in_param.alpha. If a field is not specified, the default value is used.</tt></p><p><b>Input Arguments</b></p><div><ul><li>f --- <tt>the integrand</tt></li></ul></div><div><ul><li>interval --- <tt>the integration interval</tt></li></ul></div><div><ul><li>in_param.measure --- <tt>the measure for generating the random variable,   the default is uniform.</tt></li></ul></div><div><ul><li>in_param.abstol --- <tt>the absolute error tolerance, default value is   1e-2.</tt></li></ul></div><div><ul><li>in_param.alpha --- <tt>the uncertainty, default value is 1%.</tt></li></ul></div><div><ul><li>in_param.n_sigma --- <tt>initial sample size for estimating the sample   variance, the default value is 1e3.</tt></li></ul></div><div><ul><li>in_param.fudge --- <tt>the standard deviation inflation factor, the                       default value is 1.1.</tt></li></ul></div><p><b>Output Arguments</b></p><div><ul><li>Q --- <tt>the estimated value of the the integration.</tt></li></ul></div><div><ul><li>out_param.time --- <tt>the time eclipsed.</tt></li></ul></div><div><ul><li>out_param.exit --- <tt>the state of program when exiting.</tt></li></ul></div><pre>                        0  success</pre><pre>                       10  interval does not contain numbers</pre><pre>                       11  interval not 2 x d</pre><pre>                       12  interval is only a point in one direction</pre><pre>                       13  interval is infinite when measure is uniform</pre><pre>                       14  interval is not doubly infinite when measure is normal</pre><h2>Examples<a name="3"></a></h2><pre class="language-matlab">Example <span class="string">1:</span>
-</pre><pre class="codeinput">    f = @(x) x.^2;interval = [1;2]; Q = cubMC_g(f,interval,<span class="string">'abstol'</span>,1e-2)
+  </style></head><body><div class="content"><h1>cubMC_g</h1><!--introduction--><p><tt>Monte Carlo method to evaluate a multidimentional integral to within a specified absolute error tolerance with guaranteed uncertainy within alpha.</tt></p><p><tt>The guarantee holds if the modified kurtosis is less than the kmax, i.e.:</tt></p><p><img src="help_cubMC_g_eq92826.png" alt="$$\tilde{k} \leq \frac{n_{\sigma}-3}{n_{\sigma}-1}+&#xA;(\frac{\alpha n_\sigma}{1-\alpha})(1-\frac{1}{c^2})^2: = k_{max}$$"></p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Syntax</a></li><li><a href="#2">Description</a></li><li><a href="#3">Examples</a></li><li><a href="#8">See Also</a></li><li><a href="#9">Reference</a></li></ul></div><h2>Syntax<a name="1"></a></h2><p>[Q,out_param] = <b>cubMC_g</b>(f)</p><p>Q = <b>cubMC_g</b>(f,interval,measure,abstol,alpha,n_sigma,fudge)</p><p>Q = <b>cubMC_g</b>(f,interval,'measure','uniform','abstol',abstol,'alpha',alpha,              'n_sigma',n_sigma,fudge',fudge)</p><p>Q = <b>cubMC_g</b>(f,interval,,in_param)</p><h2>Description<a name="2"></a></h2><p>[Q,out_param] = <b>cubMC_g</b>(f,interval) <tt>estimates the integral with integrand f to within the absolute error tolerance 1e-2 and with guaranteed uncertainty alpha within 1%. Input f a function handle. The function Y=f(X) should accept a vector argument X and return a vector result Y, the integrand evaluated at each element of X.</tt></p><p>Q = <b>cubMC_g</b>(f,interval,measure,abstol,alpha,n_sigma,fudge) <tt>estimates the integral with integrand f to within an absolute error tolerance abstol with guaranteed uncertainty within alpha using ordered parameter input interval, measure, tolerence, uncertainty, n_sigma and fudge factor.</tt></p><p>Q = <b>cubMC_g</b>(f,interval,'measure','uniform','abstol',abstol,'alpha',alpha, 'n_sigma',n_sigma,fudge',fudge) <tt>estimates the integral with integrand f to within an absolute error tolerance abstol with guaranteed uncertainty within alpha. All the field-value pairs are optional and can be supplied in different order.</tt></p><p>Q = <b>cubMC_g</b>(f,interval,in_param) <tt>estimates the integral with integrand f to within an absolute error tolerance in_param.abstol with guaranteed uncertainty within in_param.alpha. If a field is not specified, the default value is used.</tt></p><p><b>Input Arguments</b></p><div><ul><li>f --- <tt>the integrand.</tt></li></ul></div><div><ul><li>interval --- <tt>the integration interval.</tt></li></ul></div><div><ul><li>in_param.measure --- <tt>the measure for generating the random variable,   the default is uniform.</tt></li></ul></div><div><ul><li>in_param.abstol --- <tt>the absolute error tolerance, default value is 1e-2.</tt></li></ul></div><div><ul><li>in_param.alpha --- <tt>the uncertainty, default value is 1%.</tt></li></ul></div><div><ul><li>in_param.n_sigma --- <tt>initial sample size for estimating the sample                         variance, the default value is 1e3.</tt></li></ul></div><div><ul><li>in_param.fudge --- <tt>the standard deviation inflation factor, the                       default value is 1.1.</tt></li></ul></div><p><b>Output Arguments</b></p><div><ul><li>Q --- <tt>the estimated value of the the integration.</tt></li></ul></div><div><ul><li>out_param_time_n_sigma_predict --- <tt>the estimated time to get n_sigma                                       samples of the random variable.</tt></li></ul></div><div><ul><li>out_param.n_left_predict --- <tt>using the time left to predict the number                                 of samples left.</tt></li></ul></div><div><ul><li>out_param.nmax --- <tt>the maximum sample budget to estimate mu, it comes                       from both the sample budget and the time budget.</tt></li></ul></div><div><ul><li>out_param.var --- <tt>the sample variance.</tt></li></ul></div><div><ul><li>out_param.kurtmax --- <tt>the upper bound on modified kurtosis.</tt></li></ul></div><div><ul><li>out_param.time --- <tt>the time eclipsed.</tt></li></ul></div><div><ul><li>out_param.n_mu --- <tt>the sample size that needed to estimate the mu.</tt></li></ul></div><div><ul><li>out_param.n --- <tt>the total sample size needed to do the two stage algorithm.</tt></li></ul></div><div><ul><li>out_param.exit --- <tt>the state of program when exiting.</tt></li></ul></div><pre>                       0   success</pre><pre>                       1   No enough samples to estimate the mean</pre><pre>                       2   Initial try out time costs more than
+                           10% of time budget</pre><pre>                       3   The estimated time for estimating variance
+                           is bigger than half of the time budget</pre><pre>                       10  Interval does not contain numbers</pre><pre>                       11  Interval not 2 x d</pre><pre>                       12  Interval is only a point in one direction</pre><pre>                       13  Interval is infinite when measure is uniform</pre><pre>                       14  Interval is not doubly infinite when measure
+                           is normal</pre><h2>Examples<a name="3"></a></h2><p>Example 1: Estimate the integral with integrand <img src="help_cubMC_g_eq58791.png" alt="$f(x) = x.^2$"> in the interval [0,1].</p><pre class="codeinput">    f = @(x) x.^2;interval = [0;1]; Q = cubMC_g(f,interval,<span class="string">'abstol'</span>,1e-2)
 </pre><pre class="codeoutput">
 Q =
 
-   2.3385e+00
+   3.3417e-01
 
-</pre><pre class="language-matlab">Example <span class="string">2:</span>
-</pre><pre class="codeinput">    f = @(x) x.^2;interval = [1;2]; Q = cubMC_g(f,interval)
+</pre><p>Example 2: Estimate the integral with integrand <img src="help_cubMC_g_eq14563.png" alt="$f(x) = \exp(x)$"> in the interval [1,2].</p><pre class="codeinput">    f = @(x) exp(x);interval = [1;2]; Q = cubMC_g(f,interval)
 </pre><pre class="codeoutput">
 Q =
 
-   2.3340e+00
+   4.6662e+00
 
-</pre><h2>See Also<a name="5"></a></h2><p>
+</pre><p>Example 3: Estimate the integral with integrand <img src="help_cubMC_g_eq95515.png" alt="$f(x) = \sin(x)$"> in the interval [1,2].</p><pre class="codeinput">    f = @(x) sin(x);interval = [1;2]; Q = cubMC_g(f,interval,<span class="string">'uniform'</span>,1e-3)
+</pre><pre class="codeoutput">
+Q =
+
+   9.5685e-01
+
+</pre><p>Example 4: Estimate the integral with integrand <img src="help_cubMC_g_eq55657.png" alt="$f(x) = \exp(-x1^2-x2^2)$"> in the interval [0 0;1 1],where x is a vector x = [x1 x2].</p><pre class="codeinput">    f = @(x) exp(-x(:,1).^2-x(:,2).^2);interval = [0 0;1 1];
+    Q = cubMC_g(f,interval,<span class="string">'uniform'</span>,1e-3)
+</pre><pre class="codeoutput">
+Q =
+
+   5.5747e-01
+
+</pre><p>Example 5: Estimate the integral with integrand <img src="help_cubMC_g_eq08416.png" alt="$f(x) = 2^d\prod_{j=1}^d x_j+0.555$"> in the interval [zeros(1,d);ones(1,d)], where x is a vector x = [x1 x2 ... xd].</p><pre class="codeinput">    d=3;f=@(x) 2^d*prod(x,2)+0.555;interval = [zeros(1,d);ones(1,d)];
+    Q = cubMC_g(f,interval,<span class="string">'uniform'</span>,1e-3)
+</pre><pre class="codeoutput">
+Q =
+
+   1.5546e+00
+
+</pre><h2>See Also<a name="8"></a></h2><p>
 <a href="help_funappx_g.html">funappx_g</a>
 </p><p>
 <a href="help_integral_g.html">integral_g</a>
 </p><p>
 <a href="help_meanMC_g.html">meanMC_g</a>
-</p><h2>Reference<a name="6"></a></h2><p>[1]  N. Clancy, Y. Ding, C. Hamilton, F. J. Hickernell, and Y.~Zhang,      The complexity of guaranteed automatic algorithms: Cones, not      balls, preprint, 2013, arXiv:1303.2412 [math.ST].</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2013a</a><br></p></div><!--
+</p><h2>Reference<a name="9"></a></h2><pre class="language-matlab">[1]  F. J. Hickernell, L. Jiang, Y. Liu, and <span class="string">A.</span> <span class="string">B.</span> <span class="string">Owen</span>, Guaranteed
+conservative <span class="string">fixed</span> <span class="string">width</span> <span class="string">confidence</span> <span class="string">intervals</span> <span class="string">via</span> <span class="string">Monte</span> <span class="string">Carlo</span> <span class="string">sampling</span>,
+Monte <span class="string">Carlo</span> <span class="string">and</span> <span class="string">Quasi-Monte</span> <span class="string">Carlo</span> <span class="string">Methods</span> <span class="string">2012</span> <span class="string">(J. Dick, F. Y. Kuo, G.</span>
+W. Peters, and <span class="string">I.</span> <span class="string">H.</span> <span class="string">Sloan</span>, eds.), Springer-Verlag, Berlin, 2014, to
+appear, arXiv:1208.4318 [math.ST]
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2013a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 %% cubMC_g
 % |Monte Carlo method to evaluate a multidimentional integral to
 % within a specified absolute error tolerance with guaranteed uncertainy
 % within alpha.|
+%
+% |The guarantee holds if the modified kurtosis is less than the kmax,
+% i.e.:|
+%
+% $$\tilde{k} \leq \frac{n_{\sigma}-3}{n_{\sigma}-1}+
+% (\frac{\alpha n_\sigma}{1-\alpha})(1-\frac{1}{c^2})^2: = k_{max}$$
 %
 %% Syntax
 % [Q,out_param] = *cubMC_g*(f)
@@ -103,11 +135,11 @@ Q =
 % Q = *cubMC_g*(f,interval,,in_param)
 %
 %% Description
-% [Q,out_param] = *cubMC_g*(f) |estimates the integral with integrand f to
-% within the absolute error tolerance 1e-2 and with guaranteed
-% uncertainty alpha within 1%. Input f a function handle. The function
-% Y=f(X) should accept a vector argument X and return a vector result Y,
-% the integrand evaluated at each element of X.|
+% [Q,out_param] = *cubMC_g*(f,interval) |estimates the integral with
+% integrand f to within the absolute error tolerance 1e-2 and with
+% guaranteed uncertainty alpha within 1%. Input f a function handle. The
+% function Y=f(X) should accept a vector argument X and return a vector
+% result Y, the integrand evaluated at each element of X.|
 %
 % Q = *cubMC_g*(f,interval,measure,abstol,alpha,n_sigma,fudge) |estimates the
 % integral with integrand f to within an absolute error tolerance abstol
@@ -127,20 +159,19 @@ Q =
 %
 % *Input Arguments*
 %
-% * f REPLACE_WITH_DASH_DASH- |the integrand|
+% * f REPLACE_WITH_DASH_DASH- |the integrand.|
 %
-% * interval REPLACE_WITH_DASH_DASH- |the integration interval|
+% * interval REPLACE_WITH_DASH_DASH- |the integration interval.|
 %
 % * in_param.measure REPLACE_WITH_DASH_DASH- |the measure for generating the random variable,
 %   the default is uniform.|
 %
-% * in_param.abstol REPLACE_WITH_DASH_DASH- |the absolute error tolerance, default value is
-%   1e-2.|
+% * in_param.abstol REPLACE_WITH_DASH_DASH- |the absolute error tolerance, default value is 1e-2.|
 %
 % * in_param.alpha REPLACE_WITH_DASH_DASH- |the uncertainty, default value is 1%.|
 %
 % * in_param.n_sigma REPLACE_WITH_DASH_DASH- |initial sample size for estimating the sample
-%   variance, the default value is 1e3.|
+%                         variance, the default value is 1e3.|
 %
 % * in_param.fudge REPLACE_WITH_DASH_DASH- |the standard deviation inflation factor, the
 %                       default value is 1.1.|
@@ -149,35 +180,83 @@ Q =
 %
 % * Q REPLACE_WITH_DASH_DASH- |the estimated value of the the integration.|
 %
+% * out_param_time_n_sigma_predict REPLACE_WITH_DASH_DASH- |the estimated time to get n_sigma
+%                                       samples of the random variable.|
+%
+% * out_param.n_left_predict REPLACE_WITH_DASH_DASH- |using the time left to predict the number
+%                                 of samples left.|
+%
+% * out_param.nmax REPLACE_WITH_DASH_DASH- |the maximum sample budget to estimate mu, it comes
+%                       from both the sample budget and the time budget.|
+%
+% * out_param.var REPLACE_WITH_DASH_DASH- |the sample variance.|
+%
+% * out_param.kurtmax REPLACE_WITH_DASH_DASH- |the upper bound on modified kurtosis.|
+%
 % * out_param.time REPLACE_WITH_DASH_DASH- |the time eclipsed.|
+%
+% * out_param.n_mu REPLACE_WITH_DASH_DASH- |the sample size that needed to estimate the mu.|
+%
+% * out_param.n REPLACE_WITH_DASH_DASH- |the total sample size needed to do the two stage
+% algorithm.|
 %
 % * out_param.exit REPLACE_WITH_DASH_DASH- |the state of program when exiting.|
 %
-%                          0  success
+%                         0   success
 %
-%                         10  interval does not contain numbers
+%                         1   No enough samples to estimate the mean
 %
-%                         11  interval not 2 x d
+%                         2   Initial try out time costs more than
+%                             10% of time budget
 %
-%                         12  interval is only a point in one direction
+%                         3   The estimated time for estimating variance 
+%                             is bigger than half of the time budget
 %
-%                         13  interval is infinite when measure is uniform
+%                         10  Interval does not contain numbers
 %
-%                         14  interval is not doubly infinite when measure is normal
+%                         11  Interval not 2 x d
 %
+%                         12  Interval is only a point in one direction
 %
+%                         13  Interval is infinite when measure is uniform
 %
-%
+%                         14  Interval is not doubly infinite when measure
+%                             is normal
 %
 %% Examples
-%   Example 1:
-%
-    f = @(x) x.^2;interval = [1;2]; Q = cubMC_g(f,interval,'abstol',1e-2)
+% Example 1:
+% Estimate the integral with integrand $f(x) = x.^2$ in the interval [0,1].
+
+    f = @(x) x.^2;interval = [0;1]; Q = cubMC_g(f,interval,'abstol',1e-2)
 %%
-%   Example 2:
-    f = @(x) x.^2;interval = [1;2]; Q = cubMC_g(f,interval)
+% Example 2:
+% Estimate the integral with integrand $f(x) = \exp(x)$ in the interval
+% [1,2].
 
+    f = @(x) exp(x);interval = [1;2]; Q = cubMC_g(f,interval)
 
+%%
+% Example 3:
+% Estimate the integral with integrand $f(x) = \sin(x)$ in the interval
+% [1,2].
+
+    f = @(x) sin(x);interval = [1;2]; Q = cubMC_g(f,interval,'uniform',1e-3)
+
+%%
+% Example 4:
+% Estimate the integral with integrand $f(x) = \exp(-x1^2-x2^2)$ in the
+% interval [0 0;1 1],where x is a vector x = [x1 x2].
+
+    f = @(x) exp(-x(:,1).^2-x(:,2).^2);interval = [0 0;1 1];
+    Q = cubMC_g(f,interval,'uniform',1e-3)
+    
+%%
+% Example 5: 
+% Estimate the integral with integrand $f(x) = 2^d\prod_{j=1}^d x_j+0.555$
+% in the interval [zeros(1,d);ones(1,d)], where x is a vector x = [x1 x2 ... xd].
+%
+    d=3;f=@(x) 2^d*prod(x,2)+0.555;interval = [zeros(1,d);ones(1,d)];
+    Q = cubMC_g(f,interval,'uniform',1e-3)
 %% See Also
 %
 % <html>  
@@ -193,8 +272,10 @@ Q =
 % </html>
 %
 %% Reference
-% [1]  N. Clancy, Y. Ding, C. Hamilton, F. J. Hickernell, and Y.~Zhang, 
-%      The complexity of guaranteed automatic algorithms: Cones, not
-%      balls, preprint, 2013, arXiv:1303.2412 [math.ST].
+%   [1]  F. J. Hickernell, L. Jiang, Y. Liu, and A. B. Owen, Guaranteed
+%   conservative fixed width confidence intervals via Monte Carlo sampling,
+%   Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F. Y. Kuo, G.
+%   W. Peters, and I. H. Sloan, eds.), Springer-Verlag, Berlin, 2014, to
+%   appear, arXiv:1208.4318 [math.ST]
 ##### SOURCE END #####
 --></body></html>

@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>meanMC_g</title><meta name="generator" content="MATLAB 8.1"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2013-09-19"><meta name="DC.source" content="help_meanMC_g.m"><style type="text/css">
+      --><title>meanMC_g</title><meta name="generator" content="MATLAB 8.1"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2013-12-05"><meta name="DC.source" content="help_meanMC_g.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -65,35 +65,44 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1>meanMC_g</h1><!--introduction--><p><tt>Monte Carlo method to estimate the mean of a random variable to within a specific absolute error tolerance with guaranteed uncertainty within alpha.</tt></p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Syntax</a></li><li><a href="#2">Description</a></li><li><a href="#3">Examples</a></li><li><a href="#6">See Also</a></li><li><a href="#7">Reference</a></li></ul></div><h2>Syntax<a name="1"></a></h2><p>mu = <b>meanMC_g</b>(Yrand)</p><p>mu = <b>meanMC_g</b>(Yrand,abstol,alpha,n_sigma,fudge,timebudget,nbudget,npcmax)</p><p>mu = <b>meanMC_g</b>(Yrand,'abstol',abstol,'alpha',alpha,'fudge',fudge,'timebudget', timebudget,'nbudget',nbudget,'npcmax',npcmax)</p><p>mu = <b>meanMC_g</b>(Yrand,in_param)</p><p>[mu, out_param] = <b>meanMC_g</b>(Yrand,in_param)</p><h2>Description<a name="2"></a></h2><p>mu = <b>meanMC_g</b>(Yrand) <tt>estimates the mean of a random variable Y to within a specified absolute error tolerance 1e-2 with guaranteed uncertainty within 1%. Input Yrand is a function handle that accepts a positive integer input n and returns an n x 1 vector of IID instances of the random variable Y.</tt></p><p>mu = <b>meanMC_g</b>(Yrand,abstol,alpha,n_sigma,fudge,timebudget,nbudget,npcmax) <tt>estimates the mean of a random variable Y to within an specified absolute error tolerance abstol with uncertainty within alpha using all parsing inputs n_sigma, fudge, timebudget,nbudget and npcmax.</tt></p><p>mu = <b>meanMC_g</b>(Yrand,'abstol',abstol,'alpha',alpha,'fudge',fudge,'timebudget', timebudget,'nbudget',nbudget,'npcmax',npcmax) <tt>estimates the mean of a random variable Y to within a specified absolute error tolerance abstol with untertainty within alpha. All the field-value pairs are optional and can be supplied in different order.</tt></p><p>mu = <b>meanMC_g</b>(Yrand,in_param) <tt>estimates the mean of a random variable Y to within a specified absolute error tolerence in_param.abstol with uncertainy within in_param.alpha. If a field is not specified, the default value is used.</tt></p><p>[mu, out_param] = <b>meanMC_g</b>(Yrand,in_param) <tt>estimates the mean of a random variable Y to within a specified absolute error tolerence with the given parameters in_param and output parameters out_param.</tt></p><p><b>Input Arguments</b></p><div><ul><li>Yrand --- <tt>the function for generating IID instances of a random   variable Y whose mean we want to estimate. Y is often defined as a   function of some random variable X with a simple distribution.  For   example, if Y = X.^2 where X is a standard uniform random variable,   then one may define Yrand = @(n) rand(n,1).^2.</tt></li></ul></div><div><ul><li>mu --- <tt>the estimated mean of Y.</tt></li></ul></div><div><ul><li>in_param.abstol --- <tt>the absolute error tolerance, default value is   1e-2.</tt></li></ul></div><div><ul><li>in_param.alpha --- <tt>the uncertainty, default value is 1%.</tt></li></ul></div><div><ul><li>in_param.n_sigma --- <tt>initial sample size for estimating the sample   variance, the default value is 1e3.</tt></li></ul></div><div><ul><li>in_param.fudge --- <tt>the standard deviation inflation factor, the default value is 1.1.</tt></li></ul></div><div><ul><li>in_param.timebudget --- <tt>the time budget to do the two-stage   estimation, the default value is 100 seconds.</tt></li></ul></div><div><ul><li>in_param.nbudget --- <tt>the sample budget to do the two-stage   estimation, the default value is 1e8.</tt></li></ul></div><div><ul><li>in_param.npcmax --- <tt>number of elements in an array of optimal size to   calculate the mu, the default value is 1e6.</tt></li></ul></div><p><b>Output Arguments</b></p><div><ul><li>out_param.n_left_predict --- <tt>using the time left to predict the number   of samples left.</tt></li></ul></div><div><ul><li>out_param.nmax --- <tt>the maximum sample budget to estimate mu, it comes   from both the sample budget and the time budget</tt></li></ul></div><div><ul><li>out_param.exit --- <tt>the state of program when exiting.                  out_param.exit = 1: No enough samples to estimate the mean.                  out_param.exit = 2: Initial try out time costs more than                                      10% of time budget.                  out_param.exit = 3: The estimated time for estimating                                      variance is bigger than half of the                                      time budget.</tt></li></ul></div><div><ul><li>out_param.kurtmax --- <tt>the upper bound on mondified kurtosis.</tt></li></ul></div><div><ul><li>out_param.time --- <tt>the time eclipsed.</tt></li></ul></div><div><ul><li>out_param.n_mu --- <tt>the sample needed to estimate the mu.</tt></li></ul></div><div><ul><li>out_param.n --- <tt>the total sample needed to do the two stage   estimation.</tt></li></ul></div><h2>Examples<a name="3"></a></h2><p>Example 1: Calculate the mean of x^2 when x is uniformly distributed in [0,1], with the absolute error tolerance = 1e-2.</p><pre class="codeinput">in_param.abstol=1e-2; in_param.alpha = 0.01; Yrand = @(n) rand(n,1).^2;
+  </style></head><body><div class="content"><h1>meanMC_g</h1><!--introduction--><p><tt>Monte Carlo method to estimate the mean of a random variable to within a specific absolute error tolerance with guaranteed uncertainty within alpha.</tt></p><p><tt>The guarantee holds if the modified kurtosis is less than the kmax, i.e.:</tt></p><p><img src="help_meanMC_g_eq92826.png" alt="$$\tilde{k} \leq \frac{n_{\sigma}-3}{n_{\sigma}-1}+&#xA;(\frac{\alpha n_\sigma}{1-\alpha})(1-\frac{1}{c^2})^2: = k_{max}$$"></p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Syntax</a></li><li><a href="#2">Description</a></li><li><a href="#3">Examples</a></li><li><a href="#6">See Also</a></li><li><a href="#7">Reference</a></li></ul></div><h2>Syntax<a name="1"></a></h2><p>mu = <b>meanMC_g</b>(Yrand)</p><p>mu = <b>meanMC_g</b>(Yrand,abstol,alpha,n_sigma,fudge,timebudget,nbudget,npcmax)</p><p>mu = <b>meanMC_g</b>(Yrand,'abstol',abstol,'alpha',alpha,'fudge',fudge,'timebudget', timebudget,'nbudget',nbudget,'npcmax',npcmax)</p><p>mu = <b>meanMC_g</b>(Yrand,in_param)</p><p>[mu, out_param] = <b>meanMC_g</b>(Yrand,in_param)</p><h2>Description<a name="2"></a></h2><p>mu = <b>meanMC_g</b>(Yrand) <tt>estimates the mean of a random variable Y to within a specified absolute error tolerance 1e-2 with guaranteed uncertainty within 1%. Input Yrand is a function handle that accepts a positive integer input n and returns an n x 1 vector of IID instances of the random variable Y.</tt></p><p>mu = <b>meanMC_g</b>(Yrand,abstol,alpha,n_sigma,fudge,timebudget,nbudget,npcmax) <tt>estimates the mean of a random variable Y to within an specified absolute error tolerance abstol with uncertainty within alpha using all parsing inputs n_sigma, fudge, timebudget,nbudget and npcmax.</tt></p><p>mu = <b>meanMC_g</b>(Yrand,'abstol',abstol,'alpha',alpha,'fudge',fudge,'timebudget', timebudget,'nbudget',nbudget,'npcmax',npcmax) <tt>estimates the mean of a random variable Y to within a specified absolute error tolerance abstol with untertainty within alpha. All the field-value pairs are optional and can be supplied in different order.</tt></p><p>mu = <b>meanMC_g</b>(Yrand,in_param) <tt>estimates the mean of a random variable Y to within a specified absolute error tolerence in_param.abstol with uncertainy within in_param.alpha. If a field is not specified, the default value is used.</tt></p><p>[mu, out_param] = <b>meanMC_g</b>(Yrand,in_param) <tt>estimates the mean of a random variable Y to within a specified absolute error tolerence with the given parameters in_param and output parameters out_param.</tt></p><p><b>Input Arguments</b></p><div><ul><li>Yrand --- <tt>the function for generating IID instances of a random   variable Y whose mean we want to estimate. Y is often defined as a   function of some random variable X with a simple distribution.  For   example, if Y = X.^2 where X is a standard uniform random variable,   then one may define Yrand = @(n) rand(n,1).^2.</tt></li></ul></div><div><ul><li>mu --- <tt>the estimated mean of Y.</tt></li></ul></div><div><ul><li>in_param.abstol --- <tt>the absolute error tolerance, default value is   1e-2.</tt></li></ul></div><div><ul><li>in_param.alpha --- <tt>the uncertainty, default value is 1%.</tt></li></ul></div><div><ul><li>in_param.n_sigma --- <tt>initial sample size for estimating the sample   variance, the default value is 1e3.</tt></li></ul></div><div><ul><li>in_param.fudge --- <tt>the standard deviation inflation factor, the default value is 1.1.</tt></li></ul></div><div><ul><li>in_param.timebudget --- <tt>the time budget to do the two-stage   estimation, the default value is 100 seconds.</tt></li></ul></div><div><ul><li>in_param.nbudget --- <tt>the sample budget to do the two-stage   estimation, the default value is 1e8.</tt></li></ul></div><div><ul><li>in_param.npcmax --- <tt>number of elements in an array of optimal size to   calculate the mu, the default value is 1e6.</tt></li></ul></div><p><b>Output Arguments</b></p><div><ul><li>out_param.n_left_predict --- <tt>using the time left to predict the number   of samples left.</tt></li></ul></div><div><ul><li>out_param.nmax --- <tt>the maximum sample budget to estimate mu, it comes   from both the sample budget and the time budget.</tt></li></ul></div><div><ul><li>out_param.exit --- <tt>the state of program when exiting.</tt></li></ul></div><pre>                      1  No enough samples to estimate the mean</pre><pre>                      2  Initial try out time costs more than 10% of time budget</pre><pre>                      3  The estimated time for estimating variance is bigger than
+                         half of the time budget</pre><div><ul><li>out_param.kurtmax --- <tt>the upper bound on mondified kurtosis.</tt></li></ul></div><div><ul><li>out_param.time --- <tt>the time eclipsed.</tt></li></ul></div><div><ul><li>out_param.n_mu --- <tt>the sample needed to estimate the mu.</tt></li></ul></div><div><ul><li>out_param.n --- <tt>the total sample needed to do the two stage estimation.</tt></li></ul></div><h2>Examples<a name="3"></a></h2><p>Example 1: Calculate the mean of <img src="help_meanMC_g_eq24335.png" alt="$x^2$"> when x is uniformly distributed in [0,1], with the absolute error tolerance = 1e-2.</p><pre class="codeinput">in_param.abstol=1e-2; in_param.alpha = 0.01; Yrand = @(n) rand(n,1).^2;
 mu = meanMC_g(Yrand,in_param)
 </pre><pre class="codeoutput">
 mu =
 
-   3.3346e-01
+   3.3424e-01
 
 </pre><p>Example 2: Using the same function as example 1, with the absolute error tolerance 1e-2.</p><pre class="codeinput">mu = meanMC_g(Yrand,1e-2)
 </pre><pre class="codeoutput">
 mu =
 
-   3.3462e-01
+   3.3590e-01
 
 </pre><p>Example 3: Using the sample function as example 1, with the absolute error tolerance 1e-2 and uncertainty 0.01.</p><pre class="codeinput">mu = meanMC_g(Yrand,<span class="string">'abstol'</span>,1e-2,<span class="string">'alpha'</span>,0.01)
 </pre><pre class="codeoutput">
 mu =
 
-   3.3097e-01
+   3.3634e-01
 
 </pre><h2>See Also<a name="6"></a></h2><p>
 <a href="help_funappx_g.html">funappx_g</a>
 </p><p>
 <a href="help_integral_g.html">integral_g</a>
+</p><p>
+<a href="help_cubMC_g.html">cubMC_g</a>
 </p><h2>Reference<a name="7"></a></h2><p>[1]  N. Clancy, Y. Ding, C. Hamilton, F. J. Hickernell, and Y.~Zhang,      The complexity of guaranteed automatic algorithms: Cones, not      balls, preprint, 2013, arXiv:1303.2412 [math.ST].</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2013a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 %% meanMC_g
 % |Monte Carlo method to estimate the mean of a random variable to within a
 % specific absolute error tolerance with guaranteed uncertainty within
 % alpha.|
+%
+% |The guarantee holds if the modified kurtosis is less than the kmax,
+% i.e.:|
+%
+% $$\tilde{k} \leq \frac{n_{\sigma}-3}{n_{\sigma}-1}+
+% (\frac{\alpha n_\sigma}{1-\alpha})(1-\frac{1}{c^2})^2: = k_{max}$$
 %
 %% Syntax
 %
@@ -175,15 +184,16 @@ mu =
 %   of samples left.|
 %
 % * out_param.nmax REPLACE_WITH_DASH_DASH- |the maximum sample budget to estimate mu, it comes
-%   from both the sample budget and the time budget|
+%   from both the sample budget and the time budget.|
 %
-% * out_param.exit REPLACE_WITH_DASH_DASH- |the state of program when exiting.
-%                  out_param.exit = 1: No enough samples to estimate the mean.
-%                  out_param.exit = 2: Initial try out time costs more than
-%                                      10% of time budget.
-%                  out_param.exit = 3: The estimated time for estimating
-%                                      variance is bigger than half of the
-%                                      time budget.|
+% * out_param.exit REPLACE_WITH_DASH_DASH- |the state of program when exiting.|
+%
+%                        1  No enough samples to estimate the mean
+%
+%                        2  Initial try out time costs more than 10% of time budget
+%
+%                        3  The estimated time for estimating variance is bigger than 
+%                           half of the time budget
 %
 % * out_param.kurtmax REPLACE_WITH_DASH_DASH- |the upper bound on mondified kurtosis.|
 %
@@ -191,13 +201,12 @@ mu =
 %
 % * out_param.n_mu REPLACE_WITH_DASH_DASH- |the sample needed to estimate the mu.|
 %
-% * out_param.n REPLACE_WITH_DASH_DASH- |the total sample needed to do the two stage
-%   estimation.|
+% * out_param.n REPLACE_WITH_DASH_DASH- |the total sample needed to do the two stage estimation.|
 %
 
 %% Examples
 % Example 1:
-% Calculate the mean of x^2 when x is uniformly distributed in [0,1], with
+% Calculate the mean of $x^2$ when x is uniformly distributed in [0,1], with
 % the absolute error tolerance = 1e-2.
 
 in_param.abstol=1e-2; in_param.alpha = 0.01; Yrand = @(n) rand(n,1).^2; 
@@ -228,6 +237,10 @@ mu = meanMC_g(Yrand,'abstol',1e-2,'alpha',0.01)
 %
 % <html>
 % <a href="help_integral_g.html">integral_g</a>
+% </html>
+%
+% <html>
+% <a href="help_cubMC_g.html">cubMC_g</a>
 % </html>
 %
 %% Reference

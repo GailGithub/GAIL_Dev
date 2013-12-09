@@ -122,10 +122,10 @@ function [Q,out_param] = cubMC_g(varargin)
 %
 %
 %   Example 5: 
-%   Estimate the integral with integrand f(x) = 2^n*prod(x1*x2*...*xn)+0.555 in the
-%   interval [zeros(1,n);ones(1,n)],where x is a vector x = [x1 x2 ... xn].
+%   Estimate the integral with integrand f(x) = 2^d*prod(x1*x2*...*xd)+0.555 in the
+%   interval [zeros(1,d);ones(1,d)],where x is a vector x = [x1 x2 ... xd].
 %
-%   >> n=3;f=@(x) 2^n*prod(x,2)+0.555;interval = [zeros(1,n);ones(1,n)];
+%   >> d=3;f=@(x) 2^d*prod(x,2)+0.555;interval = [zeros(1,d);ones(1,d)];
 %   >> Q = cubMC_g(f,interval,'uniform',1e-3)
 %   Q = 1.5***
 %

@@ -3,10 +3,11 @@
 % specific absolute error tolerance with guaranteed uncertainty within
 % alpha.|
 %
-%  |The guarantee holds if the modified kurtosis is less than the kmax,
-%  which is defined in terms of uncertainty(alpha), sample size to estimate
-%  variance(n_sigma) and standard deviation inflation factor(fudge). For
-%  details, please refer to our paper.|
+% |The guarantee holds if the modified kurtosis is less than the kmax,
+% i.e.:|
+%
+% $$\tilde{k} \leq \frac{n_{\sigma}-3}{n_{\sigma}-1}+
+% (\frac{\alpha n_\sigma}{1-\alpha})(1-\frac{1}{c^2})^2: = k_{max}$$
 %
 %% Syntax
 %
@@ -88,15 +89,16 @@
 %   of samples left.|
 %
 % * out_param.nmax --- |the maximum sample budget to estimate mu, it comes
-%   from both the sample budget and the time budget|
+%   from both the sample budget and the time budget.|
 %
-% * out_param.exit --- |the state of program when exiting.
-%                  out_param.exit = 1: No enough samples to estimate the mean.
-%                  out_param.exit = 2: Initial try out time costs more than
-%                                      10% of time budget.
-%                  out_param.exit = 3: The estimated time for estimating
-%                                      variance is bigger than half of the
-%                                      time budget.|
+% * out_param.exit --- |the state of program when exiting.|
+%
+%                        1  No enough samples to estimate the mean
+%
+%                        2  Initial try out time costs more than 10% of time budget
+%
+%                        3  The estimated time for estimating variance is bigger than 
+%                           half of the time budget
 %
 % * out_param.kurtmax --- |the upper bound on mondified kurtosis.|
 %
@@ -104,13 +106,12 @@
 %
 % * out_param.n_mu --- |the sample needed to estimate the mu.|
 %
-% * out_param.n --- |the total sample needed to do the two stage
-%   estimation.|
+% * out_param.n --- |the total sample needed to do the two stage estimation.|
 %
 
 %% Examples
 % Example 1:
-% Calculate the mean of x^2 when x is uniformly distributed in [0,1], with
+% Calculate the mean of $x^2$ when x is uniformly distributed in [0,1], with
 % the absolute error tolerance = 1e-2.
 
 in_param.abstol=1e-2; in_param.alpha = 0.01; Yrand = @(n) rand(n,1).^2; 
@@ -141,6 +142,10 @@ mu = meanMC_g(Yrand,'abstol',1e-2,'alpha',0.01)
 %
 % <html>
 % <a href="help_integral_g.html">integral_g</a>
+% </html>
+%
+% <html>
+% <a href="help_cubMC_g.html">cubMC_g</a>
 % </html>
 %
 %% Reference
