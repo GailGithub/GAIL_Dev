@@ -4,9 +4,9 @@ function [q,out_param] = integralab_g(varargin)
 %  Description
 %
 %   q = INTEGRALAB_G(f) computes q, the definite integral of function f
-%   on the interval [a,b] by trapezoidal rule with 
+%   on the interval [0,1] by trapezoidal rule with 
 %   in a guaranteed absolute error of 1e-6. Default starting number of
-%   sample points taken is 52 and default cost budget is 1e7. Input f is a 
+%   sample points taken is 100 and default cost budget is 1e7. Input f is a 
 %   function handle. The function y = f(x) should accept a vector argument 
 %   x and return a vector result y, the integrand evaluated at each element
 %   of x.

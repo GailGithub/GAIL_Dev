@@ -20,6 +20,7 @@ if MATLABVERSION >= 8
     warning('off','MATLAB:integral_g:peaky')
     run(ut_integral_g)
     warning('on','MATLAB:integral_g:peaky')
+    run(ut_integralab_g)
     run(ut_meanMC_g)
     run(ut_cubMC_g)
 end
