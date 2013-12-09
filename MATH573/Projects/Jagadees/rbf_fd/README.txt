@@ -4,6 +4,11 @@ rbf_fd
 Finite Difference Approximation based on Gaussian Radial Basis Function.
 Uses Gaussian RBF-QR algorithm in case of ill-conditioned weight computation matrix.
 
+How to use:
+-----------
+1. Download the files from 'rbf_fd' folder
+2. run test_main
+
 Currently supports only 2D functions.
 
 Reference: 

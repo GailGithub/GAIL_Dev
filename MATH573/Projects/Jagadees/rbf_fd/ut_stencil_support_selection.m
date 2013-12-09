@@ -5,27 +5,31 @@ classdef ut_stencil_support_selection < matlab.unittest.TestCase
         % ut_stencil_support_selection tests solutions to the stencil_support_selection
 
         function test1(testCase)
-            tol = 1e-4;
-            solNow = stencil_support_selection(1,2,3);
-            exactSol = [(-1.0000 -1.4142i),  (-1.0000 + 1.4142i)];
-            error = norm(exactSol-solNow);
-            testCase.verifyLessThanOrEqual(error,tol);
+			g = 'squareg';
+            [p1] = initmesh(g, 'Jiggle', 'on', 'Hmax',0.42);
+            dm1 = distance_matrix(p1', p1', true);	
+			o1 = stencil_support_selection(dm1, p1, 25);
+			stencil_support = [25     5    38    20    39     1    26];
+            testCase.verifyEqual(stencil_support,o1);
         end
 
         function test2(testCase)
-            tol = 1e-4;
-            solNow = stencil_support_selection([9,5,3]);
-            exactSol = [(-0.2778 - 0.5061i),  (-0.2778 + 0.5061i)];
-            error = norm(exactSol-solNow);
-            testCase.verifyLessThanOrEqual(error,tol);
+			g = 'squareg';
+            [p1] = initmesh(g, 'Jiggle', 'on', 'Hmax',0.42);
+            dm1 = distance_matrix(p1', p1', true);	
+			o1 = stencil_support_selection(dm1, p1, 33);
+			stencil_support = [33    47    43    55    26    48    39];
+            testCase.verifyEqual(stencil_support,o1);
         end
 
         function test2(testCase)
-            tol = 1e-4;
-            solNow = stencil_support_selection('a', 8, 'c', 45, 'b', 2);
-            exactSol = [(-0.1250 - 2.3684i), ( -0.1250 + 2.3684i)];
-            error = norm(exactSol-solNow);
-            testCase.verifyLessThanOrEqual(error,tol);
+			g = 'circleg';
+			[p1,e1,t1] = initmesh(g, 'Jiggle', 'on', 'Hmax',0.42);
+			[p2] = refinemesh(g,p1,e1,t1);
+            dm2 = distance_matrix(p2', p2', true);
+            o2 = stencil_support_selection(dm2, p2, 38);
+			stencil_support = [38   130   127   129   128   126    84];
+			testCase.verifyEqual(stencil_support,o2);
         end
         
     end
