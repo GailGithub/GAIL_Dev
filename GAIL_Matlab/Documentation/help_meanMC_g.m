@@ -3,12 +3,6 @@
 % specific absolute error tolerance with guaranteed uncertainty within
 % alpha.|
 %
-% |The guarantee holds if the modified kurtosis is less than the kmax,
-% i.e.:|
-%
-% $$\tilde{k} \leq \frac{n_{\sigma}-3}{n_{\sigma}-1}+
-% (\frac{\alpha n_\sigma}{1-\alpha})(1-\frac{1}{c^2})^2: = k_{max}$$
-%
 %% Syntax
 %
 % mu = *meanMC_g*(Yrand)
@@ -21,7 +15,6 @@
 % mu = *meanMC_g*(Yrand,in_param)
 %
 % [mu, out_param] = *meanMC_g*(Yrand,in_param)
-%
 %
 %% Description
 %
@@ -83,6 +76,14 @@
 % * in_param.npcmax --- |number of elements in an array of optimal size to
 %   calculate the mu, the default value is 1e6.|
 %
+% * in_param.checked --- |the status that the paramtered are checked.|
+%
+%                        0   not checked
+%
+%                        1   checked by cubMC
+%
+%                        2   checked by meanMC
+%
 % *Output Arguments*
 %
 % * out_param.n_left_predict --- |using the time left to predict the number
@@ -108,10 +109,28 @@
 %
 % * out_param.n --- |the total sample needed to do the two stage estimation.|
 %
+%
+%% Guarantee
+% Suppose the modified kurtosis, $\tilde{\kappa}$, of the random variable Y
+% satisfies the inequality:
+%
+% $$\tilde{\kappa} \leq \frac{n_{\sigma}-3}{n_{\sigma}-1}+
+% \left(\frac{\alpha n_\sigma}{1-\alpha}\right)\left(1-\frac{1}{C^2}\right)^2 =:
+% \tilde{\kappa}_{max}$$
+%
+% where $n_{\sigma}$ is the number of sample used to estimate the variance
+% of Y, C is the standard deviation inflation factor, and $\alpha$ is the
+% level of uncertainty. Then the answer $\hat{\mu}$ is guaranteed to
+% satisfies the inequality:
+%
+% $$Pr\left(|\mu-\hat{\mu}| \leq \epsilon \right) \geq 1-\alpha$$
+%
+% where $\epsilon$ is the absolute error tolerance.
+%
 
 %% Examples
 % Example 1:
-% Calculate the mean of $x^2$ when x is uniformly distributed in [0,1], with
+% Calculate the mean of x^2 when x is uniformly distributed in [0,1], with
 % the absolute error tolerance = 1e-2.
 
 in_param.abstol=1e-2; in_param.alpha = 0.01; Yrand = @(n) rand(n,1).^2; 
@@ -131,7 +150,7 @@ mu = meanMC_g(Yrand,1e-2)
 % Using the sample function as example 1, with the absolute error tolerance
 % 1e-2 and uncertainty 0.01.
 
-mu = meanMC_g(Yrand,'abstol',1e-2,'alpha',0.01)
+mu = meanMC_g(Yrand,'abstol',1e-3,'alpha',0.01)
 
 
 %% See Also
@@ -149,6 +168,8 @@ mu = meanMC_g(Yrand,'abstol',1e-2,'alpha',0.01)
 % </html>
 %
 %% Reference
-% [1]  N. Clancy, Y. Ding, C. Hamilton, F. J. Hickernell, and Y.~Zhang, 
-%      The complexity of guaranteed automatic algorithms: Cones, not
-%      balls, preprint, 2013, arXiv:1303.2412 [math.ST].
+%   [1]  F. J. Hickernell, L. Jiang, Y. Liu, and A. B. Owen, Guaranteed
+%   conservative fixed width confidence intervals via Monte Carlo sampling,
+%   Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F. Y. Kuo, G.
+%   W. Peters, and I. H. Sloan, eds.), Springer-Verlag, Berlin, 2014, to
+%   appear, arXiv:1208.4318 [math.ST]

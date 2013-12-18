@@ -3,11 +3,6 @@ function [mu,out_param]=meanMC_g(varargin)
 % within a specific absolute error tolerance with guaranteed uncertainty
 % within alpha.
 %
-%  The guarantee holds if the modified kurtosis is less than the kmax,
-%  which is defined in terms of uncertainty(alpha), sample size to estimate
-%  variance(n_sigma) and standard deviation inflation factor(fudge). For
-%  details, please refer to our paper.
-%
 %   mu = MEANMC_G(Yrand) estimates the mean of a random variable Y to
 %   within a specified absolute error tolerance 1e-2 with guaranteed
 %   uncertainty within 1%. Input Yrand is a function handle that accepts a
@@ -64,6 +59,11 @@ function [mu,out_param]=meanMC_g(varargin)
 %   in_param.npcmax --- number of elements in an array of optimal size to
 %   calculate the mu, the default value is 1e6.
 %
+%   in_param.checked --- the status that the paramtered are checked.
+%                        0   not checked
+%                        1   checked by cubMC
+%                        2   checked by meanMC
+%
 %   out_param_time_n_sigma_predict --- the estimated time to get n_sigma
 %   samples of the random variable.
 %
@@ -90,6 +90,14 @@ function [mu,out_param]=meanMC_g(varargin)
 %   algorithm.
 %
 %   out_param.time --- the time eclipsed.
+%
+%  Guarantee
+%
+%  If the modified kurtosis of the random variable Y is less than the kmax,
+%  which is defined in terms of uncertainty(alpha), sample size to estimate
+%  variance(n_sigma) and standard deviation inflation factor(fudge). Then
+%  the inequality Pr(|mu-\hat{mu}| <= tol) >= 1-alpha holds.
+%  For details, please refer to [1].
 %
 %   Examples
 %
@@ -120,7 +128,7 @@ function [mu,out_param]=meanMC_g(varargin)
 %
 %   See also FUNAPPX_G, INTEGRAL_G, CUBMC_G
 %
-%   Reference:
+%   Reference
 %   [1]  F. J. Hickernell, L. Jiang, Y. Liu, and A. B. Owen, Guaranteed
 %   conservative fixed width confidence intervals via Monte Carlo sampling,
 %   Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F. Y. Kuo, G.
@@ -128,8 +136,9 @@ function [mu,out_param]=meanMC_g(varargin)
 %   appear, arXiv:1208.4318 [math.ST]
 
 tstart = tic; %start the clock
-[Yrand, in_param] = meanMC_g_param(varargin{:});
-out_param = in_param;%let the out_param contains all the in_param
+[Yrand, in_param,out_param] = meanMC_g_param(varargin{:});
+
+%out_param = in_param;%let the out_param contains all the in_param
 n1 = 2;
 Yrand(n1); %let it run once to load all the data. warm up the machine.
 nsofar = n1;
@@ -267,19 +276,19 @@ function x = stdnorminv(p)
 x = -sqrt(2).*erfcinv(2*p);
 end
 
-function  [Yrand, in_param] = meanMC_g_param(varargin)
+function  [Yrand, in_param, out_param] = meanMC_g_param(varargin)
 
 default.timebudget = 100;% default time budget
-default.nbudget = 1e8; % degfault sample budget
+default.nbudget = 1e8; % default sample budget
 default.abstol  = 1e-2;% default absolute error tolerance
 default.n_sigma = 1e3;% default initial sample size n_sigma
 default.fudge = 1.1;% default fudge factor
 default.alpha = 0.01;% default uncertainty
 default.npcmax = 1e6;% default n piece maximum
-
+default.checked = 0;% default value for the paramters to be checked
 if isempty(varargin)
     help meanMC_g
-    warning('MATLAB:cubMC_g:yrandnotgiven',...
+    warning('MATLAB:meanMC_g:yrandnotgiven',...
         'Yrand must be specified. Now GAIL is using Yrand = rand(n,1).^2.')
     Yrand = @(n) rand(n,1).^2;
     %give the error message
@@ -303,6 +312,7 @@ if ~validvarargin
     in_param.timebudget = default.timebudget;
     in_param.nbudget = default.nbudget;
     in_param.npcmax = default.npcmax;
+    in_param.checked = default.checked;
 else
     p = inputParser;
     addRequired(p,'Yrand',@isfcn);
@@ -315,6 +325,8 @@ else
         addOptional(p,'timebudget',default.timebudget,@isnumeric);
         addOptional(p,'nbudget',default.nbudget,@isnumeric);
         addOptional(p,'npcmax',default.npcmax,@isnumeric);
+        addOptional(p,'checked',default.checked,@isnumeric);
+
     else
         if isstruct(in2) %parse input structure
             p.StructExpand = true;
@@ -327,6 +339,7 @@ else
         addParamValue(p,'timebudget',default.timebudget,@isnumeric);
         addParamValue(p,'nbudget',default.nbudget,@isnumeric);
         addParamValue(p,'npcmax',default.npcmax,@isnumeric);
+        addParamValue(p,'checked',default.checked,@isnumeric);
     end
     parse(p,Yrand,varargin{2:end})
     in_param = p.Results;
@@ -334,49 +347,53 @@ end
 
 %out_param.exit=0; %success! until found otherwise
 % Absolute error tolerance 
-if (in_param.abstol <= 0)
-    warning('MATLAB:meanMC_g:abstolneg',...
-        ['Absolute error tolerance should be greater than 0, ' ...
-        'use the absolute value of the error tolerance'])
-    in_param.abstol = abs(in_param.abstol);
+if in_param.checked==0
+    if (in_param.abstol <= 0)
+        warning('MATLAB:meanMC_g:abstolneg',...
+            ['Absolute error tolerance should be greater than 0, ' ...
+            'use the absolute value of the error tolerance'])
+        in_param.abstol = abs(in_param.abstol);
+    end
+    if (in_param.alpha <= 0 ||in_param.alpha >= 1) % uncertainty
+        warning('MATLAB:meanMC_g:alphanotin01',...
+            ['the uncertainty should be less than 1 and bigger than 0, '...
+            'use the default value.'])
+        in_param.alpha = default.alpha;
+    end
+    if (~isposint(in_param.n_sigma)) % initial sample size should be a integer
+        warning('MATLAB:meanMC_g:nsignotposint',...
+            ['the number n_sigma should a positive integer, '...
+            'take the absolute value and ceil.'])
+        in_param.n_sigma = ceil(abs(in_param.n_sigma));
+    end
+    if (in_param.fudge <= 1) % standard deviation inflation factor/fudge factor
+        warning('MATLAB:meanMC_g:fudgelessthan1',...
+            ['the fudge factor should be bigger than 1, '...
+            'use the default value.'])
+        in_param.fudge = default.fudge;
+    end
+    if (in_param.timebudget <= 0) % time budget
+        warning('MATLAB:meanMC_g:timebudgetlneg',...
+            ['Time budget should be bigger than 0, '...
+            'use the absolute value of time budget'])
+        in_param.timebudget = abs(in_param.timebudget);
+    end
+    if (~isposint(in_param.nbudget)) % sample budget should be an integer
+        warning('MATLAB:meanMC_g:nbudgetnotposint',...
+            ['the number of sample budget should be a positive integer,'...
+            'take the absolute value and ceil.'])
+        in_param.nbudget = ceil(abs(in_param.nbudget));
+    end
+    if (~isposint(in_param.npcmax))
+        % maxinum number of scalar values of x per vector should be a integer
+        warning('MATLAB:meanMC_g:npcmaxnotposint',...
+            ['the number of each piece of the samples should be' ...
+            'a positive integer, take the absolute value and ceil.'])
+        in_param.npcmax = ceil(abs(in_param.npcmax));
+    end
+in_param.checked = 2;
 end
-if (in_param.timebudget <= 0) % time budget
-    warning('MATLAB:meanMC_g:timebudgetlneg',...
-        ['Time budget should be bigger than 0, '...
-        'use the absolute value of time budget'])
-    in_param.timebudget = abs(in_param.timebudget);
-end
-if (~isposint(in_param.nbudget)) % sample budget should be an integer
-    warning('MATLAB:meanMC_g:nbudgetnotposint',...
-        ['the number of sample budget should be a positive integer,'...
-        'take the absolute value and ceil.'])
-    in_param.nbudget = ceil(abs(in_param.nbudget));
-end
-if (~isposint(in_param.npcmax)) 
-    % maxinum number of scalar values of x per vector should be a integer
-    warning('MATLAB:meanMC_g:npcmaxnotposint',...
-        ['the number of each piece of the samples should be' ...
-    'a positive integer, take the absolute value and ceil.'])
-    in_param.npcmax = ceil(abs(in_param.npcmax));
-end
-if (~isposint(in_param.n_sigma)) % initial sample size should be a integer
-    warning('MATLAB:meanMC_g:nsignotposint',...
-        ['the number n_sigma should a positive integer, '...
-        'take the absolute value and ceil.'])
-    in_param.n_sigma = ceil(abs(in_param.n_sigma));
-end
-if (in_param.fudge <= 1) % standard deviation inflation factor/fudge factor
-    warning('MATLAB:meanMC_g:fudgelessthan1',...
-        ['the fudge factor should be bigger than 1, '...
-        'use the default value.'])
-    in_param.fudge = default.fudge;
-end
-if (in_param.alpha <= 0 ||in_param.alpha >= 1) % uncertainty
-    warning('MATLAB:meanMC_g:alphanotin01',...
-        ['the uncertainty should be less than 1 and bigger than 0, '...
-    'use the default value.'])
-    in_param.alpha = default.alpha;
-end
+out_param = in_param;%let the out_param contains all the in_param
 end
 
 function [out_param,mu]=meanMC_g_err(out_param,tstart)
@@ -391,13 +408,13 @@ if ~isfield(out_param,'exit'); return; end
 if out_param.exit==0; return; end
 switch out_param.exit
     case 1 % not enough samples to estimate the mean.
-        warning('MATLAB:cubMC_g:maxreached',...
+        warning('MATLAB:meanMC_g:maxreached',...
             ['tried to evalute at ' int2str(out_param.n_mu) ...
             ' samples, which is more than the allowed maximum of '...
             num2str(out_param.nmax) ' samples. Just use the maximum sample budget']);
         return
     case 2 % initial try out time costs more than 10% of time budget.
-        warning('MATLAB:cubMC_g:initialtryoutbudgetreached',...
+        warning('MATLAB:meanMC_g:initialtryoutbudgetreached',...
             ['initial try costs more than 10 percent '...
             'of time budget, stop try and return an answer '...
             'without guarantee.']);
@@ -405,7 +422,7 @@ switch out_param.exit
     case 3
         % the estimated time for estimating variance is bigger than half of
         % time budget.
-        warning('MATLAB:cubMC_g:timebudgetreached',...
+        warning('MATLAB:meanMC_g:timebudgetreached',...
             ['the estimated time using n_sigma samples '...
             'is bigger than half of the time budget, '...
             'could not afford estimating variance, '...

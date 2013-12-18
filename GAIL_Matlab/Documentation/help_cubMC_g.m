@@ -3,12 +3,6 @@
 % within a specified absolute error tolerance with guaranteed uncertainy
 % within alpha.|
 %
-% |The guarantee holds if the modified kurtosis is less than the kmax,
-% i.e.:|
-%
-% $$\tilde{k} \leq \frac{n_{\sigma}-3}{n_{\sigma}-1}+
-% (\frac{\alpha n_\sigma}{1-\alpha})(1-\frac{1}{c^2})^2: = k_{max}$$
-%
 %% Syntax
 % [Q,out_param] = *cubMC_g*(f)
 %
@@ -61,6 +55,23 @@
 % * in_param.fudge --- |the standard deviation inflation factor, the
 %                       default value is 1.1.|
 %
+%   in_param.timebudget --- |the time budget to do the two-stage estimation,
+%   the default value is 100 seconds.|
+%
+%   in_param.nbudget --- |the sample budget to do the two-stage estimation,
+%   the default value is 1e8.|
+%
+%   in_param.npcmax --- |number of elements in an array of optimal size to
+%   calculate the mu, the default value is 1e6.|
+%
+%   in_param.checked --- |the status that the paramtered are checked.|
+%
+%                        0   not checked
+%
+%                        1   checked by cubMC
+%
+%                        2   checked by meanMC
+%
 % *Output Arguments*
 %
 % * Q --- |the estimated value of the the integration.|
@@ -108,28 +119,46 @@
 %                         14  Interval is not doubly infinite when measure
 %                             is normal
 %
+%% Guarantee
+% Suppose the modified kurtosis, $\tilde{\kappa}$, of the integrand f
+% satisfies the inequality:
+%
+% $$ \tilde{\kappa} \leq \frac{n_{\sigma}-3}{n_{\sigma}-1}+
+% \left(\frac{\alpha n_\sigma}{1-\alpha}\right)\left(1-\frac{1}{C^2}\right)^2 =:
+% \tilde{\kappa}_{max} $$
+%
+% where $n_{\sigma}$ is the number of sample used to estimate the variance
+% of f, C is the standard deviation inflation factor, and $\alpha$ is the
+% level of uncertainty. Then the answer $\hat{\mu}$ is guaranteed to
+% satisfies the inequality:
+%
+% $$Pr\left(|\mu-\hat{\mu}| \leq \epsilon \right) \geq 1-\alpha$$
+%
+% where $\epsilon$ is the absolute error tolerance.
+%
+
 %% Examples
 % Example 1:
-% Estimate the integral with integrand $f(x) = x.^2$ in the interval [0,1].
+% Estimate the integral with integrand f(x) = x^2 in the interval [0,1].
 
     f = @(x) x.^2;interval = [0;1]; Q = cubMC_g(f,interval,'abstol',1e-2)
 %%
 % Example 2:
-% Estimate the integral with integrand $f(x) = \exp(x)$ in the interval
+% Estimate the integral with integrand f(x) = exp(x) in the interval
 % [1,2].
 
     f = @(x) exp(x);interval = [1;2]; Q = cubMC_g(f,interval)
 
 %%
 % Example 3:
-% Estimate the integral with integrand $f(x) = \sin(x)$ in the interval
+% Estimate the integral with integrand f(x) = sin(x) in the interval
 % [1,2].
 
     f = @(x) sin(x);interval = [1;2]; Q = cubMC_g(f,interval,'uniform',1e-3)
 
 %%
 % Example 4:
-% Estimate the integral with integrand $f(x) = \exp(-x1^2-x2^2)$ in the
+% Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) in the
 % interval [0 0;1 1],where x is a vector x = [x1 x2].
 
     f = @(x) exp(-x(:,1).^2-x(:,2).^2);interval = [0 0;1 1];
