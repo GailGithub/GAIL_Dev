@@ -2,16 +2,18 @@ function [fappx,out_param]=funappxab_g(varargin)
 %FUNAPPXAB_G One-dimensional guaranteed function recovery on interval [a,b]
 %
 %   fappx = FUNAPPXAB_G(f) recovers function f on the default interval
-%   [0,1] by a piecewise linear interpolant fappx to within a guaranteed
+%   [a,b] by a piecewise linear interpolant fappx to within a guaranteed
 %   absolute error of 1e-6. Default initial number of points is 52 and
 %   default cost budget is 1e7.  Input f is a function handle. The
-%   statement Y=f(X) should accept a vector argument X and return a vector
-%   Y of function values that is the same size as X. 
+%   statement y=f(x) should accept a vector argument x and return a vector
+%   y of function values that is the same size as x. 
 %   
 %   fappx = FUNAPPXAB_G(f,a,b,abstol,nlo,nhi,nmax) for given function f and
 %   the ordered input parameters with the interval a, b, guaranteed
 %   absolute error abstol, lower bound of initial number of points nlo,
-%   higher bound of initial number of points nhi and cost budget nmax.
+%   higher bound of initial number of points nhi and cost budget nmax. nlo
+%   and nhi can be inputed as a vector or just one value as initial number
+%   of points.
 %
 %   fappx =
 %   FUNAPPXAB_G(f,'a',a,'b',b,'abstol',abstol,'nlo',nlo,'nhi',nhi,'nmax',nmax)
@@ -41,8 +43,9 @@ function [fappx,out_param]=funappxab_g(varargin)
 %
 %   in_param.nmax --- cost budget, default value is 1e7
 %
-%   [fappx, out_param] = FUNAPPXAB_G(f,...) returns an approximated function
-%   fappx and an output structure out_param, which has the following fields.
+%   [fappx, out_param] = FUNAPPXAB_G(f,...) returns a function
+%   approximation fappx and an output structure out_param, which has the
+%   following fields.
 %
 %
 %   out_param.nmax --- cost budget
@@ -72,13 +75,13 @@ function [fappx,out_param]=funappxab_g(varargin)
 %   out_param.nhi --- higher bound of initial number of points we used,
 %   default value is 52
 %
-%   Guarantee:
-%   
-%   If function f satisfied condition, the infinity norm of f'' is bounded 
-%   by the product of the infinity norm of f'-(f(b)-f(a))/(b-a) times 
-%   out_param.tau/(b-a), then we can have the guaranteed result the
-%   infinite norm of f-fappx is less than out_param.abstol when the flag 
-%   out_param.exceedbudget is 0.
+%  Guarantee
+%    
+%  If the function to be approximated, f satisfies the cone condition
+%  \|f''\|_\infty <= \frac{out_param.tau}{b-a}\|f'-\frac{f(b)-f(a)}{b-a}\|_\infty,
+%  then the fappx output by this algorithm is guaranteed to satisfy
+%  \| f-fappx \|_{\infty} <= out_param.abstol,
+%  provided the flag out_param.exceedbudget = 0.
 %   
 %
 %   Examples

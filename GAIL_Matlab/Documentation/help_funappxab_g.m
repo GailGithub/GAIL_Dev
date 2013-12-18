@@ -12,32 +12,34 @@
 % [fappx, out_param] = *funappxab_g*(f,...)
 %% Description
 % 
-% fappx = *funappxab_g*(f) |recovers function f on the default interval
-%   [0,1] by a piecewise linear interpolant fappx to within a guaranteed
+% fappx = *funappxab_g*(f) |recovers function|  f  |on the default interval
+%   [a,b] by a piecewise linear interpolant fappx to within a guaranteed
 %   absolute error of 1e-6. Default initial number of points is 52 and
-%   default cost budget is 1e7.  Input f is a function handle. The
-%   statement Y=f(X) should accept a vector argument X and return a vector
-%   Y of function values that is the same size as X.|
+%   default cost budget is 1e7.  Input| f |is a function handle. The
+%   statement| y=f(x) |should accept a vector argument x and return a vector
+%   y of function values that is the same size as x.|
 %
-% fappx = *funappxab_g*(f,abstol,ninit,nmax) |for given function f and
-%   the ordered input parameters with the interval a, b, guaranteed
+% fappx = *funappxab_g*(f,a,b,abstol,nlo,nhi,nmax) |for given function|  f
+%   |and the ordered input parameters with the interval a, b, guaranteed
 %   absolute error abstol, lower bound of initial number of points nlo,
-%   higher bound of initial number of points nhi and cost budget nmax.|
+%   higher bound of initial number of points nhi and cost budget nmax. nlo
+%   and nhi can be inputed as a vector or just one value as initial number
+%   of points.|
 %
-% fappx = *funappxab_g*(f,'abstol',abstol,'ninit',ninit,'nmax',nmax)
-% |recovers function f with the interval a, b, guaranteed
-%   absolute error abstol, lower bound of initial number of points nlo,
-%   higher bound of initial number of points nhi and cost budget nmax. All
-%   six field-value pairs are optional and can be supplied in different
-%   order.|
+% fappx =
+% *funappxab_g*(f,'a',a,'b',b,'abstol',abstol,'nlo',nlo,'nhi',nhi,'nmax',nmax)
+%   |recovers function|  f  |with the interval a, b, guaranteed absolute
+%   error abstol, lower bound of initial number of points nlo, higher bound
+%   of initial number of points nhi and cost budget nmax. All six
+%   field-value pairs are optional and can be supplied in different order.|
 %
-% fappx = *funappxab_g*(f,in_param) |recovers function f with the interval
-%   in_param.a, in_param.b, guaranteed absolute error in_param.abstol,
-%   lower bound of initial number of points in_param.nlo, higher bound of
-%   initial number of points in_param.nhi and cost budget in_param.nmax. If
-%   a field is not specified, the default value is used.|
+% fappx = *funappxab_g*(f,in_param) |recovers function|  f  |with the
+% interval in_param.a, in_param.b, guaranteed absolute error
+% in_param.abstol, lower bound of initial number of points in_param.nlo,
+% higher bound of initial number of points in_param.nhi and cost budget
+% in_param.nmax. If a field is not specified, the default value is used.|
 %
-% [fappx, out_param] = *funappxab_g*(f,...) |returns an approximated function
+% [fappx, out_param] = *funappxab_g*(f,...) |returns function approximation
 % fappx and an output structure out_param.|
 %
 % *Input Arguments*
@@ -76,9 +78,9 @@
 % 
 % * out_param.tau --- |latest value of tau|
 %
-% * out_param.a --- left end point of interval
+% * out_param.a --- |left end point of interval|
 %
-% * out_param.b --- right end point of interval
+% * out_param.b --- |right end point of interval|
 %
 % * out_param.abstol --- |guaranteed absolute error|
 % 
@@ -89,16 +91,19 @@
 % default value is 52|
 %
 %% Guarantee
-%   
-% If function f satisfied condition
+%    
+% |If the function to be approximated,|  $f$  |satisfies the cone condition|
 %
-% $$\|f''\|_\infty \le \frac{out\_param.tau}{b-a} \left\|f'-\frac{f(b)-f(a)}{b-a}\right\|_\infty,$$
+% $$\|f''\|_\infty \le \frac { \mathrm{out\_param.tau} }{b-a} \left\|f'-\frac{f(b)-f(a)}{b-a}\right\|_\infty,$$
+% 
+% |then the|  $fappx$  |output by this algorithm is guaranteed to
+% satisfy|
 %
-% then we can have the guaranteed result 
+% $$\| f-fappx \|_{\infty} \le \mathrm{out\_param.abstol}$$
 %
-% $\| f-fappx \|_{\infty} \le out\_param.abstol$
+% |provided the flag| 
 %
-% when the flag out_param.exceedbudget = 0.
+% $$\mathrm{out\_param.exceedbudget} = 0.$$
 %
 %% Examples
 % *Example 1*
@@ -150,5 +155,5 @@ clear in_param; f = @(x) x.^2;
 %% Reference
 % [1]  N. Clancy, Y. Ding, C. Hamilton, F. J. Hickernell, and Y. Zhang, The
 % Cost of Deterministic, Adaptive, Automatic Algorithms:  Cones, Not Balls,
-% Journal of Complexity (2013), to appear, DOI 10.1016/j.jco.2013.09.002
+% Journal of Complexity 30 (2014) 21–45
 %

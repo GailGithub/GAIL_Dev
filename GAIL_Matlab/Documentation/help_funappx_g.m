@@ -12,29 +12,29 @@
 % [fappx, out_param] = *funappx_g*(f,...)
 %% Description
 % 
-% fappx = *funappx_g*(f) |recovers function f on the interval [0,1] by a
+% fappx = *funappx_g*(f) |recovers function| f  |on the interval [0,1] by a
 % piecewise linear interpolant fappx to within a guaranteed absolute 
 % error of 1e-6. Default initial number of points is 52 and default cost
-% budget is 1e7. Input f is a function handle. The statement Y=f(X) should
-% accept a vector argument X and return a vector Y of function values that
-% is the same size as X.|
+% budget is 1e7. Input| f |is a function handle. The statement| y=f(x) |should
+% accept a vector argument x and return a vector y of function values that
+% is the same size as x.|
 %
-% fappx = *funappx_g*(f,abstol,ninit,nmax) |for given function f and the 
+% fappx = *funappx_g*(f,abstol,ninit,nmax) |for given function| f |and the 
 %   ordered input parameters with the guaranteed absolute error _abstol_,
 %   initial number of points _ninit_ and cost budget _nmax_.|
 %
 % fappx = *funappx_g*(f,'abstol',abstol,'ninit',ninit,'nmax',nmax) |recovers 
-%   function f with the guaranteed absolute error _abstol_, initial number
+%   function| f |with the guaranteed absolute error _abstol_, initial number
 %   of points _ninit_, and cost budget _nmax_ . All three field-value pairs are
 %   optional and can be supplied in different order.|
 %
-% fappx = *funappx_g*(f,in_param) |recovers function f with the guaranteed
+% fappx = *funappx_g*(f,in_param) |recovers function|  f  |with the guaranteed
 % absolute error _in_param.abstol_, initial number of points _in_param.nint_,
 % and cost budget _in_param.nmax_. If a field is not specified, the default
 % value is used.|
 %
-% [fappx, out_param] = *funappx_g*(f,...) |returns an approximated function
-% fappx and an output structure out_param.|
+% [fappx, out_param] = *funappx_g*(f,...) |returns functon approximation|
+% fappx |and an output structure out_param.|
 %
 % *Input Arguments*
 % 
@@ -68,15 +68,19 @@
 % 
 %% Guarantee
 %   
-% If function f satisfied condition
+% |If the function to be approximated, $f$ satisfies the cone condition|
 %
-% $$\|f''\|_\infty \le out\_param.tau \left\|f'-f(1)+f(0)\right\|_\infty,$$
+% $$\|f''\|_\infty \le \mathrm{out\_param.tau}
+% \left\|f'-f(1)+f(0)\right\|_\infty,$$
 %
-% then we can have the guaranteed result
+% |then the|  $fappx$  |output by this algorithm is guaranteed to
+% satisfy|
 %
-% $\| f-fappx \|_{\infty} \le out\_param.abstol$
+% $$\| f-fappx \|_{\infty} \le \mathrm{out\_param.abstol}$$
 %
-% when the flag out_param.exceedbudget = 0.
+% |provided the flag|
+%
+% $$\mathrm{out\_param.exceedbudget} = 0.$$
 %
 %% Examples
 % *Example 1*
@@ -123,5 +127,5 @@ format short; clear in_param;
 %% Reference
 % [1]  N. Clancy, Y. Ding, C. Hamilton, F. J. Hickernell, and Y. Zhang, The
 % Cost of Deterministic, Adaptive, Automatic Algorithms:  Cones, Not Balls,
-% Journal of Complexity (2013), to appear, DOI 10.1016/j.jco.2013.09.002
+% Journal of Complexity 30 (2014) 21–45
 %
