@@ -55,16 +55,16 @@
 % * in_param.fudge --- |the standard deviation inflation factor, the
 %                       default value is 1.1.|
 %
-%   in_param.timebudget --- |the time budget to do the two-stage estimation,
+% * in_param.timebudget --- |the time budget to do the two-stage estimation,
 %   the default value is 100 seconds.|
 %
-%   in_param.nbudget --- |the sample budget to do the two-stage estimation,
+% * in_param.nbudget --- |the sample budget to do the two-stage estimation,
 %   the default value is 1e8.|
 %
-%   in_param.npcmax --- |number of elements in an array of optimal size to
+% * in_param.npcmax --- |number of elements in an array of optimal size to
 %   calculate the mu, the default value is 1e6.|
 %
-%   in_param.checked --- |the status that the paramtered are checked.|
+% * in_param.checked --- |the status that the paramtered are checked.|
 %
 %                        0   not checked
 %
