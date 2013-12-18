@@ -1,6 +1,5 @@
 function [fappx,out_param]=funappxtau_g(varargin)
-%FUNAPPXTAU_G One dimensional guaranteed function recovery on interval 
-%   [0,1] with cone condition tau
+%FUNAPPXTAU_G One dimensional guaranteed function recovery on interval [0,1] with cone condition tau
 %
 %   fappx = FUNAPPXTAU_G(f) recovers function f on the interval [0,1] by a 
 %   piecewise linear interpolant fappx to within a guaranteed absolute 

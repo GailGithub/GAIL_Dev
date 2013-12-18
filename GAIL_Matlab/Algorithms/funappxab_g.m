@@ -107,7 +107,7 @@ function [fappx,out_param]=funappxab_g(varargin)
 %              tau: 101
 %     exceedbudget: 0
 %          npoints: 7039
-%         errbound: 5.0471e-09
+%       errorbound: 5.0471e-09
 %
 %
 %   Example 2:
@@ -131,7 +131,7 @@ function [fappx,out_param]=funappxab_g(varargin)
 %              tau: 17
 %     exceedbudget: 0
 %          npoints: 34777
-%         errbound: 3.3075e-09
+%       errorbound: 3.3075e-09
 %
 %
 %   Example 3:
@@ -155,7 +155,7 @@ function [fappx,out_param]=funappxab_g(varargin)
 %                tau: 125
 %       exceedbudget: 0
 %            npoints: 31375
-%           errbound: 4.0637e-09
+%         errorbound: 4.0637e-09
 %
 %
 %   Example 4:
@@ -181,7 +181,7 @@ function [fappx,out_param]=funappxab_g(varargin)
 %              tau: 177
 %     exceedbudget: 0
 %          npoints: 591673 
-%         errbound: 2.8566e-10
+%       errorbound: 2.8566e-10
 %
 %
 %   See also INTEGRAL_G, MEANMC_G
