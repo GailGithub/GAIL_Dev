@@ -125,14 +125,14 @@
 %
 % $$ \tilde{\kappa} \leq \frac{n_{\sigma}-3}{n_{\sigma}-1}+
 % \left(\frac{\alpha n_\sigma}{1-\alpha}\right)\left(1-\frac{1}{C^2}\right)^2 =:
-% \tilde{\kappa}_{max} $$
+% \tilde{\kappa}_{\max} $$
 %
 % where $n_{\sigma}$ is the number of sample used to estimate the variance
 % of f, C is the standard deviation inflation factor, and $\alpha$ is the
 % level of uncertainty. Then the answer $\hat{\mu}$ is guaranteed to
 % satisfies the inequality:
 %
-% $$Pr\left(|\mu-\hat{\mu}| \leq \epsilon \right) \geq 1-\alpha$$
+% $$\mathrm{Pr}\left(|\mu-\hat{\mu}| \leq \epsilon \right) \geq 1-\alpha$$
 %
 % where $\epsilon$ is the absolute error tolerance.
 %

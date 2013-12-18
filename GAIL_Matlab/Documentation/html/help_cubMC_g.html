@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>cubMC_g</title><meta name="generator" content="MATLAB 8.1"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2013-12-17"><meta name="DC.source" content="help_cubMC_g.m"><style type="text/css">
+      --><title>cubMC_g</title><meta name="generator" content="MATLAB 8.1"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2013-12-18"><meta name="DC.source" content="help_cubMC_g.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -75,37 +75,37 @@ calculate <span class="string">the</span> <span class="string">mu</span>, the <s
 </pre><pre>                      0   not checked</pre><pre>                      1   checked by cubMC</pre><pre>                      2   checked by meanMC</pre><p><b>Output Arguments</b></p><div><ul><li>Q --- <tt>the estimated value of the the integration.</tt></li></ul></div><div><ul><li>out_param_time_n_sigma_predict --- <tt>the estimated time to get n_sigma                                       samples of the random variable.</tt></li></ul></div><div><ul><li>out_param.n_left_predict --- <tt>using the time left to predict the number                                 of samples left.</tt></li></ul></div><div><ul><li>out_param.nmax --- <tt>the maximum sample budget to estimate mu, it comes                       from both the sample budget and the time budget.</tt></li></ul></div><div><ul><li>out_param.var --- <tt>the sample variance.</tt></li></ul></div><div><ul><li>out_param.kurtmax --- <tt>the upper bound on modified kurtosis.</tt></li></ul></div><div><ul><li>out_param.time --- <tt>the time eclipsed.</tt></li></ul></div><div><ul><li>out_param.n_mu --- <tt>the sample size that needed to estimate the mu.</tt></li></ul></div><div><ul><li>out_param.n --- <tt>the total sample size needed to do the two stage algorithm.</tt></li></ul></div><div><ul><li>out_param.exit --- <tt>the state of program when exiting.</tt></li></ul></div><pre>                       0   success</pre><pre>                       1   No enough samples to estimate the mean</pre><pre>                       2   Initial try out time costs more than
                            10% of time budget</pre><pre>                       3   The estimated time for estimating variance
                            is bigger than half of the time budget</pre><pre>                       10  Interval does not contain numbers</pre><pre>                       11  Interval not 2 x d</pre><pre>                       12  Interval is only a point in one direction</pre><pre>                       13  Interval is infinite when measure is uniform</pre><pre>                       14  Interval is not doubly infinite when measure
-                           is normal</pre><h2>Guarantee<a name="3"></a></h2><p>Suppose the modified kurtosis, <img src="help_cubMC_g_eq56544.png" alt="$\tilde{\kappa}$">, of the integrand f satisfies the inequality:</p><p><img src="help_cubMC_g_eq37836.png" alt="$$ \tilde{\kappa} \leq \frac{n_{\sigma}-3}{n_{\sigma}-1}+&#xA;\left(\frac{\alpha n_\sigma}{1-\alpha}\right)\left(1-\frac{1}{C^2}\right)^2 =:&#xA;\tilde{\kappa}_{max} $$"></p><p>where <img src="help_cubMC_g_eq43074.png" alt="$n_{\sigma}$"> is the number of sample used to estimate the variance of f, C is the standard deviation inflation factor, and <img src="help_cubMC_g_eq87919.png" alt="$\alpha$"> is the level of uncertainty. Then the answer <img src="help_cubMC_g_eq87415.png" alt="$\hat{\mu}$"> is guaranteed to satisfies the inequality:</p><p><img src="help_cubMC_g_eq13095.png" alt="$$Pr\left(|\mu-\hat{\mu}| \leq \epsilon \right) \geq 1-\alpha$$"></p><p>where <img src="help_cubMC_g_eq97780.png" alt="$\epsilon$"> is the absolute error tolerance.</p><h2>Examples<a name="4"></a></h2><p>Example 1: Estimate the integral with integrand f(x) = x^2 in the interval [0,1].</p><pre class="codeinput">    f = @(x) x.^2;interval = [0;1]; Q = cubMC_g(f,interval,<span class="string">'abstol'</span>,1e-2)
+                           is normal</pre><h2>Guarantee<a name="3"></a></h2><p>Suppose the modified kurtosis, <img src="help_cubMC_g_eq56544.png" alt="$\tilde{\kappa}$">, of the integrand f satisfies the inequality:</p><p><img src="help_cubMC_g_eq35277.png" alt="$$ \tilde{\kappa} \leq \frac{n_{\sigma}-3}{n_{\sigma}-1}+&#xA;\left(\frac{\alpha n_\sigma}{1-\alpha}\right)\left(1-\frac{1}{C^2}\right)^2 =:&#xA;\tilde{\kappa}_{\max} $$"></p><p>where <img src="help_cubMC_g_eq43074.png" alt="$n_{\sigma}$"> is the number of sample used to estimate the variance of f, C is the standard deviation inflation factor, and <img src="help_cubMC_g_eq87919.png" alt="$\alpha$"> is the level of uncertainty. Then the answer <img src="help_cubMC_g_eq87415.png" alt="$\hat{\mu}$"> is guaranteed to satisfies the inequality:</p><p><img src="help_cubMC_g_eq45925.png" alt="$$\mathrm{Pr}\left(|\mu-\hat{\mu}| \leq \epsilon \right) \geq 1-\alpha$$"></p><p>where <img src="help_cubMC_g_eq97780.png" alt="$\epsilon$"> is the absolute error tolerance.</p><h2>Examples<a name="4"></a></h2><p>Example 1: Estimate the integral with integrand f(x) = x^2 in the interval [0,1].</p><pre class="codeinput">    f = @(x) x.^2;interval = [0;1]; Q = cubMC_g(f,interval,<span class="string">'abstol'</span>,1e-2)
 </pre><pre class="codeoutput">
 Q =
 
-    0.3331
+   3.3478e-01
 
 </pre><p>Example 2: Estimate the integral with integrand f(x) = exp(x) in the interval [1,2].</p><pre class="codeinput">    f = @(x) exp(x);interval = [1;2]; Q = cubMC_g(f,interval)
 </pre><pre class="codeoutput">
 Q =
 
-    4.6725
+   4.6685e+00
 
 </pre><p>Example 3: Estimate the integral with integrand f(x) = sin(x) in the interval [1,2].</p><pre class="codeinput">    f = @(x) sin(x);interval = [1;2]; Q = cubMC_g(f,interval,<span class="string">'uniform'</span>,1e-3)
 </pre><pre class="codeoutput">
 Q =
 
-    0.9566
+   9.5672e-01
 
 </pre><p>Example 4: Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) in the interval [0 0;1 1],where x is a vector x = [x1 x2].</p><pre class="codeinput">    f = @(x) exp(-x(:,1).^2-x(:,2).^2);interval = [0 0;1 1];
     Q = cubMC_g(f,interval,<span class="string">'uniform'</span>,1e-3)
 </pre><pre class="codeoutput">
 Q =
 
-    0.5573
+   5.5801e-01
 
 </pre><p>Example 5: Estimate the integral with integrand <img src="help_cubMC_g_eq08416.png" alt="$f(x) = 2^d\prod_{j=1}^d x_j+0.555$"> in the interval [zeros(1,d);ones(1,d)], where x is a vector x = [x1 x2 ... xd].</p><pre class="codeinput">    d=3;f=@(x) 2^d*prod(x,2)+0.555;interval = [zeros(1,d);ones(1,d)];
     Q = cubMC_g(f,interval,<span class="string">'uniform'</span>,1e-3)
 </pre><pre class="codeoutput">
 Q =
 
-    1.5549
+   1.5552e+00
 
 </pre><h2>See Also<a name="9"></a></h2><p>
 <a href="help_funappx_g.html">funappx_g</a>
@@ -247,14 +247,14 @@ appear, arXiv:1208.4318 [math.ST]
 %
 % $$ \tilde{\kappa} \leq \frac{n_{\sigma}-3}{n_{\sigma}-1}+
 % \left(\frac{\alpha n_\sigma}{1-\alpha}\right)\left(1-\frac{1}{C^2}\right)^2 =:
-% \tilde{\kappa}_{max} $$
+% \tilde{\kappa}_{\max} $$
 %
 % where $n_{\sigma}$ is the number of sample used to estimate the variance
 % of f, C is the standard deviation inflation factor, and $\alpha$ is the
 % level of uncertainty. Then the answer $\hat{\mu}$ is guaranteed to
 % satisfies the inequality:
 %
-% $$Pr\left(|\mu-\hat{\mu}| \leq \epsilon \right) \geq 1-\alpha$$
+% $$\mathrm{Pr}\left(|\mu-\hat{\mu}| \leq \epsilon \right) \geq 1-\alpha$$
 %
 % where $\epsilon$ is the absolute error tolerance.
 %
