@@ -27,7 +27,7 @@
 %           abstol: 1.0000e-***6
 %            ninit: 52
 %             nmax: 10000000
-%              tau: 101
+%            nstar: 50
 %     exceedbudget: 0
 %          npoints: 7039
 %         errbound: 5.0471e-***9
@@ -48,10 +48,10 @@
 %                f: @(x)x.^2
 %            ninit: 52
 %             nmax: 10000000
-%              tau: 101    
+%            nstar: 50    
 %     exceedbudget: 0
-%          npoints: 70381
-%         errbound: 5.0471e-***11
+%          npoints: 70075
+%         errbound: 5.0913e-***11
 %
 % 
 %   Example 4: 
@@ -69,10 +69,10 @@
 %                f: @(x)x.^2
 %            ninit: 10
 %             nmax: 10000000
-%              tau: 17
+%            nstar: 8
 %     exceedbudget: 0
-%          npoints: 2755
-%         errbound: 3.2962e-***8
+%          npoints: 2683
+%         errbound: 3.4755e-***8
 %   
 %
 %   Example 5:
@@ -90,7 +90,7 @@
 %                f: @(x)x.^2
 %            ninit: 52
 %             nmax: 1000000
-%              tau: 101
+%            nstar: 50
 %     exceedbudget: 0
 %          npoints: 7039
 %         errbound: 5.0471e-***9
@@ -111,10 +111,10 @@
 %                f: @(x)x.^2
 %            ninit: 10
 %             nmax: 1000000
-%              tau: 17
+%            nstar: 8
 %     exceedbudget: 0
-%          npoints: 27505
-%         errbound: 3.3048e-***10
+%          npoints: 26677
+%         errbound: 3.5132e-***10
 %
 %
 %   Example 7:
@@ -131,10 +131,10 @@
 %                f: @(x)x.^2
 %            ninit: 52
 %             nmax: 10000000
-%              tau: 101    
+%            nstar: 50    
 %     exceedbudget: 0
-%          npoints: 70381
-%         errbound: 5.0471e-***11
+%          npoints: 70075
+%         errbound: 5.0913e-***11
 %
 %
 %   Example 8:
@@ -151,10 +151,10 @@
 %                f: @(x)x.^2
 %            ninit: 10
 %             nmax: 10000000
-%              tau: 17
+%            nstar: 8
 %     exceedbudget: 0
-%          npoints: 2755
-%         errbound: 3.2962e-***8
+%          npoints: 2683
+%         errbound: 3.4755e-***8
 %
 %
 %   Example 9:
@@ -171,7 +171,7 @@
 %                f: @(x)x.^2
 %            ninit: 52
 %             nmax: 1000000
-%              tau: 101
+%            nstar: 50
 %     exceedbudget: 0
 %          npoints: 7039
 %         errbound: 5.0471e-***9
@@ -191,10 +191,10 @@
 %                f: @(x)x.^2
 %            ninit: 10
 %             nmax: 1000000
-%              tau: 17
+%            nstar: 8
 %     exceedbudget: 0
-%          npoints: 27505
-%         errbound: 3.3048e-***10
+%          npoints: 26677
+%         errbound: 3.5132e-***10
 %
 %
 %   Example 11:
@@ -210,8 +210,8 @@
 %                f: @(x)x.^2
 %            ninit: 10
 %             nmax: 1000000
-%              tau: 17
+%            nstar: 8
 %     exceedbudget: 0
-%          npoints: 27505
-%         errbound: 3.3048e-***10
+%          npoints: 26677
+%         errbound: 3.5132e-***10
 %
