@@ -1,7 +1,7 @@
 %% cubMC_g
-% |Monte Carlo method to evaluate a multidimentional integral to
-% within a specified absolute error tolerance with guaranteed uncertainy
-% within alpha.|
+% |Monte Carlo method to evaluate a multidimentional integral to within a
+% specified absolute error tolerance with guaranteed uncertainy within
+% alpha.|
 %
 %% Syntax
 % [Q,out_param] = *cubMC_g*(f)
@@ -93,8 +93,7 @@
 %
 % * out_param.n_mu --- |the sample size that needed to estimate the mu.|
 %
-% * out_param.n --- |the total sample size needed to do the two stage
-% algorithm.|
+% * out_param.n --- |the total sample size needed to do the two stage algorithm.|
 %
 % * out_param.exit --- |the state of program when exiting.|
 %
@@ -127,16 +126,15 @@
 % \left(\frac{\alpha n_\sigma}{1-\alpha}\right)\left(1-\frac{1}{C^2}\right)^2 =:
 % \tilde{\kappa}_{\max} $$
 %
-% where $n_{\sigma}$ is the number of sample used to estimate the variance
+% where $n_{\sigma}$ is the number of samples used to estimate the variance
 % of f, C is the standard deviation inflation factor, and $\alpha$ is the
 % level of uncertainty. Then the answer $\hat{\mu}$ is guaranteed to
-% satisfies the inequality:
+% satisfy the inequality:
 %
-% $$\mathrm{Pr}\left(|\mu-\hat{\mu}| \leq \epsilon \right) \geq 1-\alpha$$
+% $$\mathrm{Pr}\left(|\mu-\hat{\mu}| \leq \varepsilon \right) \geq 1-\alpha$$
 %
-% where $\epsilon$ is the absolute error tolerance.
+% where $\varepsilon$ is the absolute error tolerance.
 %
-
 %% Examples
 % Example 1:
 % Estimate the integral with integrand f(x) = x^2 in the interval [0,1].

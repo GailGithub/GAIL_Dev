@@ -93,11 +93,15 @@ function [mu,out_param]=meanMC_g(varargin)
 %
 %  Guarantee
 %
-%  If the modified kurtosis of the random variable Y is less than the kmax,
-%  which is defined in terms of uncertainty(alpha), sample size to estimate
-%  variance(n_sigma) and standard deviation inflation factor(fudge). Then
-%  the inequality Pr(|mu-\hat{mu}| <= tol) >= 1-alpha holds.
-%  For details, please refer to [1].
+%  If the modified kurtosis of the random variable, Y, is less than the kmax,
+%  which is defined in terms of the uncertainty, alpha, the sample size to
+%  estimate variance, n_sigma, and the standard deviation inflation factor,
+%  fudge, then the inequality
+%
+%  Pr(|mu-\hat{mu}| <= tol) >= 1-alpha 
+%  
+%  holds. Here mu is the true mean of Y, and \hat{mu} is the output
+%  of MEANMC_G. For details, please refer to [1].
 %
 %   Examples
 %
@@ -345,10 +349,8 @@ else
     in_param = p.Results;
 end
 
-%out_param.exit=0; %success! until found otherwise
-% Absolute error tolerance 
 if in_param.checked==0
-    if (in_param.abstol <= 0)
+    if (in_param.abstol <= 0)% absolute error tolerance 
         warning('MATLAB:meanMC_g:abstolneg',...
             ['Absolute error tolerance should be greater than 0, ' ...
             'use the absolute value of the error tolerance'])
@@ -360,7 +362,7 @@ if in_param.checked==0
             'use the default value.'])
         in_param.alpha = default.alpha;
     end
-    if (~isposint(in_param.n_sigma)) % initial sample size should be a integer
+    if (~isposint(in_param.n_sigma)) % initial sample size should be an integer
         warning('MATLAB:meanMC_g:nsignotposint',...
             ['the number n_sigma should a positive integer, '...
             'take the absolute value and ceil.'])

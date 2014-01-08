@@ -101,11 +101,15 @@ function [Q,out_param] = cubMC_g(varargin)
 %
 %  Guarantee
 %
-%  If the modified kurtosis of the random variable f is less than the kmax,
-%  which is defined in terms of uncertainty(alpha), sample size to estimate
-%  variance(n_sigma) and standard deviation inflation factor(fudge). Then
-%  the inequality Pr(|mu-\hat{mu}| <= tol) >= 1-alpha holds.
-%  For details, please refer to [1].
+%  If the modified kurtosis of the integrand, f, is less than the kmax,
+%  which is defined in terms of the uncertainty, alpha, the sample size to
+%  estimate variance, n_sigma, and the standard deviation inflation factor,
+%  fudge, then the inequality
+%
+%  Pr(|I-Q| <= tol) >= 1-alpha 
+%  
+%  holds. Here I is the true integral (or mean) of f, and Q is the output
+%  of CUBMC_G. For details, please refer to [1].
 %
 %   Examples
 %
@@ -315,48 +319,50 @@ if strcmp(in_param.measure,'normal')&&any(isfinite(interval(:)))
     %must integrate on an infinite interval with the normal distribution
     out_param.exit=14; out_param = cubMC_g_err(out_param); return;
 end
-if (in_param.abstol <= 0) %error tolerance
-    warning('MATLAB:cubMC_g:abstolneg',...
-        'the absolute error tolerence should be larger than 0, use the absolute value.')
-    in_param.abstol = abs(in_param.abstol);
+if in_param.checked == 0
+    if (in_param.abstol <= 0) %absolute error tolerance
+        warning('MATLAB:cubMC_g:abstolneg',...
+            'the absolute error tolerence should be larger than 0, use the absolute value.')
+        in_param.abstol = abs(in_param.abstol);
+    end
+    if (in_param.alpha <= 0 ||in_param.alpha >= 1) %uncertainty
+        warning('MATLAB:cubMC_g:alphanot01',...
+            ['the uncertainy should be less than 1 and bigger than 0, '...
+            'use the the default value.'])
+        in_param.alpha = default.alpha;
+    end
+    if (~isposint(in_param.n_sigma)) %the sample to estimate sigma
+        warning('MATLAB:cubMC_g:nsignotposint',...
+            ['the number n_sigma should a positive integer,'...
+            'take the absolute value and ceil.'])
+        in_param.n_sigma = ceil(abs(in_param.n_sigma));
+    end
+    if (in_param.fudge <= 1) %standard deviation inflation factor/fudge factor
+        warning('MATLAB:cubMC_g:fudgelessthan1',...
+            'the fudge factor should be bigger than 1, use the default value.')
+        in_param.fudge = default.fudge;
+    end
+    if (in_param.timebudget <= 0) % time budget
+        warning('MATLAB:cubMC_g:timebudgetlneg',...
+            ['Time budget should be bigger than 0, '...
+            'use the absolute value of time budget'])
+        in_param.timebudget = abs(in_param.timebudget);
+    end
+    if (~isposint(in_param.nbudget)) % sample budget should be a postitive integer
+        warning('MATLAB:cubMC_g:nbudgetnotposint',...
+            ['the number of sample budget should be a positive integer,'...
+            'take the absolute value and ceil.'])
+        in_param.nbudget = ceil(abs(in_param.nbudget));
+    end
+    if (~isposint(in_param.npcmax))
+        % maxinum number of scalar values of x per vector should be a positive integer
+        warning('MATLAB:cubMC_g:npcmaxnotposint',...
+            ['the number of each piece of the samples should be' ...
+            'a positive integer, take the absolute value and ceil.'])
+        in_param.npcmax = ceil(abs(in_param.npcmax));
+    end
+    in_param.checked=1;
 end
-if (in_param.alpha <= 0 ||in_param.alpha >= 1) %uncertainty 
-    warning('MATLAB:cubMC_g:alphanot01',...
-        ['the uncertainy should be less than 1 and bigger than 0, '...
-    'use the the default value.'])
-    in_param.alpha = default.alpha;
-end
-if (~isposint(in_param.n_sigma)) %the sample to estimate sigma
-    warning('MATLAB:cubMC_g:nsignotposint',...
-        ['the number n_sigma should a positive integer,'...
-        'take the absolute value and ceil.'])
-    in_param.n_sigma = ceil(abs(in_param.n_sigma));
-end
-if (in_param.fudge <= 1) %standard deviation inflation factor/fudge factor
-    warning('MATLAB:cubMC_g:fudgelessthan1',...
-        'the fudge factor should be bigger than 1, use the default value.')
-    in_param.fudge = default.fudge;
-end
-if (in_param.timebudget <= 0) % time budget
-    warning('MATLAB:cubMC_g:timebudgetlneg',...
-        ['Time budget should be bigger than 0, '...
-        'use the absolute value of time budget'])
-    in_param.timebudget = abs(in_param.timebudget);
-end
-if (~isposint(in_param.nbudget)) % sample budget should be an integer
-    warning('MATLAB:cubMC_g:nbudgetnotposint',...
-        ['the number of sample budget should be a positive integer,'...
-        'take the absolute value and ceil.'])
-    in_param.nbudget = ceil(abs(in_param.nbudget));
-end 
-if (~isposint(in_param.npcmax)) 
-    % maxinum number of scalar values of x per vector should be a integer
-    warning('MATLAB:cubMC_g:npcmaxnotposint',...
-        ['the number of each piece of the samples should be' ...
-    'a positive integer, take the absolute value and ceil.'])
-    in_param.npcmax = ceil(abs(in_param.npcmax));
-end
-in_param.checked=1;
 out_param = in_param; % let the out_param contains all the in_param
 end
 function [out_param,Q]=cubMC_g_err(out_param,tstart)

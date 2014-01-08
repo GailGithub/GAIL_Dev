@@ -59,17 +59,17 @@ function [mu,out_param,in_param]=meanMCBernoulli_g(varargin)
 %   Calculate the mean of a bernoulli random variable with true mu=0.55,with
 %   error tolerance 1e-3 and uncertainty 0.01.
 %
-%   >> in_param.abstol=1e-3; in_param.alpha = 0.01; p=0.55;Yrand=@(n) binornd(1,p,n,1);
+%   >> in_param.abstol=1e-3; in_param.alpha = 0.01; p=1/90;Yrand=@(n) binornd(1,p,n,1);
 %   >> mu=meanMCBernoulli_g(Yrand,in_param) 
-%   mu = 0.55***
+%   mu = 0.01***
 %
 %
 %   Example 2: 
 %   Using the same function as example 1, with the absolute error tolerance
 %   1e-2.
 %
-%   >> mu=meanMCBernoulli_g(Yrand,1e-2) 
-%   mu = 0.5***
+%   >> mu=meanMCBernoulli_g(Yrand,1e-4) 
+%   mu = 0.011***
 %
 %
 %   Example 3: 
@@ -77,10 +77,10 @@ function [mu,out_param,in_param]=meanMCBernoulli_g(varargin)
 %   tolerance 1e-4 and uncertainty 0.005.
 %
 %   >> mu=meanMCBernoulli_g(Yrand,'abstol',1e-4,'alpha',0.005) 
-%   mu = 0.55***
+%   mu = 0.0111***
 %
 %
-%   See also FUNAPPX_G, INTEGRAL_G, CUBMC_G
+%   See also FUNAPPX_G, INTEGRAL_G, CUBMC_G, MEANMC_G
 %
 %   Reference
 %   [1]  F. J. Hickernell, L. Jiang, Y. Liu, and A. B. Owen, Guaranteed
@@ -169,10 +169,7 @@ else
     parse(p,Yrand,varargin{2:end})
     in_param = p.Results;
 end
-
-%out_param.exit=0; %success! until found otherwise
-% Absolute error tolerance 
-    if (in_param.abstol <= 0)
+    if (in_param.abstol <= 0) % absolute error tolerance 
         warning('MATLAB:meanMCBernoulli_g:abstolneg',...
             ['Absolute error tolerance should be greater than 0, ' ...
             'use the absolute value of the error tolerance'])
@@ -185,13 +182,13 @@ end
         in_param.alpha = default.alpha;
     end
     if (~isposint(in_param.npcmax))
-        % maxinum number of scalar values of x per vector should be a integer
+        % maxinum number of scalar values of x per vector should be a positive integer
         warning('MATLAB:meanMCBernoulli_g:npcmaxnotposint',...
             ['the number of each piece of the samples should be' ...
             'a positive integer, take the absolute value and ceil.'])
         in_param.npcmax = ceil(abs(in_param.npcmax));
     end
-    if (~isposint(in_param.nmax)) % sample budget should be an integer
+    if (~isposint(in_param.nmax)) % sample budget should be a positive integer
         warning('MATLAB:meanMCBernoulli_g:nmaxnotposint',...
             ['the number of nmax should be a positive integer,'...
             'take the absolute value and ceil.'])
