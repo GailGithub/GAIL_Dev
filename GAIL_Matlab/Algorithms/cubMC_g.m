@@ -111,6 +111,12 @@ function [Q,out_param] = cubMC_g(varargin)
 %  holds. Here I is the true integral (or mean) of f, and Q is the output
 %  of CUBMC_G. For details, please refer to [1].
 %
+%  The cost of the two-stage algorithm also satisfy the inequality
+%
+%  Pr (N_tot <= N_up) >= 1-beta
+%  
+%  where N_up is roughly propotional to sigma^2/epsilon^2 
+%
 %   Examples
 %
 %   Example 1:

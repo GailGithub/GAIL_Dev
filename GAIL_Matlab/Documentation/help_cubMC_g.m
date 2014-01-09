@@ -135,6 +135,26 @@
 %
 % where $\varepsilon$ is the absolute error tolerance.
 %
+% The probabilistic cost of the algorithm, with uncertainty $\beta$ , for
+% integrands of variance no greater than $\sigma^2_{\max}$ and
+% modified kurtosis no greater than $\tilde{\kappa}_{\max}$ is
+% defined as 
+%
+% $$N_{\text{tot}}(\varepsilon,\alpha,\beta,\tilde{\kappa}_{\max},\sigma_{\max})
+% := \sup_{\substack{\tilde{\kappa} \le \tilde{\kappa}_{\max} \\ \sigma \le
+% \sigma_{\max}} } \min\left\{N :
+% \mathrm{Pr}[N_{\text{tot}}(\varepsilon,\alpha,\tilde{\kappa}_{\max},F) \le N] \ge
+% 1-\beta  \right \}$$
+%
+% The total cost of this two stage algrithm has a probabilistic
+% bound above by
+%
+% $$N_{\text{tot}}(\varepsilon,\alpha, \beta, \tilde{\kappa}_{\max},
+% \sigma_{\max}) \\ \le N_{\text{up}}(\varepsilon,\alpha, \beta,
+% \tilde{\kappa}_{\max}, \sigma_{\max}) :=  n_{\sigma} +
+% N_{\mu}(\varepsilon,\sigma_{\max}v(\tilde{\alpha},\beta,C),\tilde{\alpha},\tilde{\kappa}_{\max}^{3/4})
+% $$
+%
 %% Examples
 % Example 1:
 % Estimate the integral with integrand f(x) = x^2 in the interval [0,1].
