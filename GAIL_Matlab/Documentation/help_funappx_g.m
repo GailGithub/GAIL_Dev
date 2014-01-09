@@ -62,7 +62,9 @@
 % * out_param.errorbound --- |estimation of the approximation absolute error
 % bound|
 % 
-% * out_param.tau --- |latest value of tau|
+% * out_param.nstar --- |final value of the parameter defining the cone of
+% function for which this algorithm is guaranteed, nstar = ninit -2
+% initially and is increased as necessary|
 % 
 % * out_param.abstol --- |guaranteed absolute error|
 % 
@@ -70,13 +72,18 @@
 %   
 % |If the function to be approximated, $f$ satisfies the cone condition|
 %
-% $$\|f''\|_\infty \le \mathrm{out\_param.tau}
+% $$\|f''\|_\infty \le 2\mathrm{out\_param.n}^*
 % \left\|f'-f(1)+f(0)\right\|_\infty,$$
 %
 % |then the|  $fappx$  |output by this algorithm is guaranteed to
 % satisfy|
 %
 % $$\| f-fappx \|_{\infty} \le \mathrm{out\_param.abstol}$$
+%
+% |with cost of the algorithm is|
+%
+% $$\left\lceil \frac{\|f''\|_\infty}{8
+% \mathrm{out\_param.abstol}}\right\rceil+1$$
 %
 % |provided the flag|
 %

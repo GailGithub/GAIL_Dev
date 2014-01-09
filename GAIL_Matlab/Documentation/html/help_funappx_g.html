@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>funappx_g</title><meta name="generator" content="MATLAB 8.1"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2013-12-09"><meta name="DC.source" content="help_funappx_g.m"><style type="text/css">
+      --><title>funappx_g</title><meta name="generator" content="MATLAB 8.1"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-01-06"><meta name="DC.source" content="help_funappx_g.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -65,7 +65,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1>funappx_g</h1><!--introduction--><p><tt>One dimensional guaranteed function recovery on the interval [0,1].</tt></p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Syntax</a></li><li><a href="#2">Description</a></li><li><a href="#3">Guarantee</a></li><li><a href="#4">Examples</a></li><li><a href="#8">See Also</a></li><li><a href="#9">Reference</a></li></ul></div><h2>Syntax<a name="1"></a></h2><p>fappx = <b>funappx_g</b>(f)</p><p>fappx = <b>funappx_g</b>(f,abstol,ninit,nmax)</p><p>fappx = <b>funappx_g</b>(f,'abstol',abstol,'ninit',ninit,'nmax',nmax)</p><p>fappx = <b>funappx_g</b>(f,in_param)</p><p>[fappx, out_param] = <b>funappx_g</b>(f,...)</p><h2>Description<a name="2"></a></h2><p>fappx = <b>funappx_g</b>(f) <tt>recovers function</tt> f  <tt>on the interval [0,1] by a piecewise linear interpolant fappx to within a guaranteed absolute error of 1e-6. Default initial number of points is 52 and default cost budget is 1e7. Input</tt> f <tt>is a function handle. The statement</tt> y=f(x) <tt>should accept a vector argument x and return a vector y of function values that is the same size as x.</tt></p><p>fappx = <b>funappx_g</b>(f,abstol,ninit,nmax) <tt>for given function</tt> f <tt>and the   ordered input parameters with the guaranteed absolute error <i>abstol</i>,   initial number of points <i>ninit</i> and cost budget <i>nmax</i>.</tt></p><p>fappx = <b>funappx_g</b>(f,'abstol',abstol,'ninit',ninit,'nmax',nmax) <tt>recovers   function</tt> f <tt>with the guaranteed absolute error <i>abstol</i>, initial number   of points <i>ninit</i>, and cost budget <i>nmax</i> . All three field-value pairs are   optional and can be supplied in different order.</tt></p><p>fappx = <b>funappx_g</b>(f,in_param) <tt>recovers function</tt>  f  <tt>with the guaranteed absolute error <i>in_param.abstol</i>, initial number of points <i>in_param.nint</i>, and cost budget <i>in_param.nmax</i>. If a field is not specified, the default value is used.</tt></p><p>[fappx, out_param] = <b>funappx_g</b>(f,...) <tt>returns functon approximation</tt> fappx <tt>and an output structure out_param.</tt></p><p><b>Input Arguments</b></p><div><ul><li>f --- <tt>function handle</tt></li></ul></div><div><ul><li>in_param.abstol --- <tt>guaranteed absolute error, default value  is 1e-6</tt></li></ul></div><div><ul><li>in_param.ninit --- <tt>initial number of points, default value is 52</tt></li></ul></div><div><ul><li>in_param.nmax --- <tt>cost budget, default value is 1e7</tt></li></ul></div><p><b>Output Arguments</b></p><div><ul><li>out_param.nmax --- <tt>cost budget</tt></li></ul></div><div><ul><li>out_param.exceedbudget  --- <tt>it is 0 if the number of points used in the   construction of fappx is less than cost budget, 1 otherwise.</tt></li></ul></div><div><ul><li>out_param.ninit --- <tt>initial number of points we used</tt></li></ul></div><div><ul><li>out_param.npoints --- <tt>number of points we need to reach the guaranteed absolute error</tt></li></ul></div><div><ul><li>out_param.errorbound --- <tt>estimation of the approximation absolute error bound</tt></li></ul></div><div><ul><li>out_param.tau --- <tt>latest value of tau</tt></li></ul></div><div><ul><li>out_param.abstol --- <tt>guaranteed absolute error</tt></li></ul></div><h2>Guarantee<a name="3"></a></h2><p><tt>If the function to be approximated, <img src="help_funappx_g_eq85998.png" alt="$f$"> satisfies the cone condition</tt></p><p><img src="help_funappx_g_eq81252.png" alt="$$\|f''\|_\infty \le \mathrm{out\_param.tau}&#xA;\left\|f'-f(1)+f(0)\right\|_\infty,$$"></p><p><tt>then the</tt>  <img src="help_funappx_g_eq29234.png" alt="$fappx$">  <tt>output by this algorithm is guaranteed to satisfy</tt></p><p><img src="help_funappx_g_eq17324.png" alt="$$\| f-fappx \|_{\infty} \le \mathrm{out\_param.abstol}$$"></p><p><tt>provided the flag</tt></p><p><img src="help_funappx_g_eq86716.png" alt="$$\mathrm{out\_param.exceedbudget} = 0.$$"></p><h2>Examples<a name="4"></a></h2><p><b>Example 1</b></p><pre class="codeinput">format <span class="string">short</span>; f = @(x) x.^2; [fappx, out_param] = funappx_g(f)
+  </style></head><body><div class="content"><h1>funappx_g</h1><!--introduction--><p><tt>One dimensional guaranteed function recovery on the interval [0,1].</tt></p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Syntax</a></li><li><a href="#2">Description</a></li><li><a href="#3">Guarantee</a></li><li><a href="#4">Examples</a></li><li><a href="#8">See Also</a></li><li><a href="#9">Reference</a></li></ul></div><h2>Syntax<a name="1"></a></h2><p>fappx = <b>funappx_g</b>(f)</p><p>fappx = <b>funappx_g</b>(f,abstol,ninit,nmax)</p><p>fappx = <b>funappx_g</b>(f,'abstol',abstol,'ninit',ninit,'nmax',nmax)</p><p>fappx = <b>funappx_g</b>(f,in_param)</p><p>[fappx, out_param] = <b>funappx_g</b>(f,...)</p><h2>Description<a name="2"></a></h2><p>fappx = <b>funappx_g</b>(f) <tt>recovers function</tt> f  <tt>on the interval [0,1] by a piecewise linear interpolant fappx to within a guaranteed absolute error of 1e-6. Default initial number of points is 52 and default cost budget is 1e7. Input</tt> f <tt>is a function handle. The statement</tt> y=f(x) <tt>should accept a vector argument x and return a vector y of function values that is the same size as x.</tt></p><p>fappx = <b>funappx_g</b>(f,abstol,ninit,nmax) <tt>for given function</tt> f <tt>and the   ordered input parameters with the guaranteed absolute error <i>abstol</i>,   initial number of points <i>ninit</i> and cost budget <i>nmax</i>.</tt></p><p>fappx = <b>funappx_g</b>(f,'abstol',abstol,'ninit',ninit,'nmax',nmax) <tt>recovers   function</tt> f <tt>with the guaranteed absolute error <i>abstol</i>, initial number   of points <i>ninit</i>, and cost budget <i>nmax</i> . All three field-value pairs are   optional and can be supplied in different order.</tt></p><p>fappx = <b>funappx_g</b>(f,in_param) <tt>recovers function</tt>  f  <tt>with the guaranteed absolute error <i>in_param.abstol</i>, initial number of points <i>in_param.nint</i>, and cost budget <i>in_param.nmax</i>. If a field is not specified, the default value is used.</tt></p><p>[fappx, out_param] = <b>funappx_g</b>(f,...) <tt>returns functon approximation</tt> fappx <tt>and an output structure out_param.</tt></p><p><b>Input Arguments</b></p><div><ul><li>f --- <tt>function handle</tt></li></ul></div><div><ul><li>in_param.abstol --- <tt>guaranteed absolute error, default value  is 1e-6</tt></li></ul></div><div><ul><li>in_param.ninit --- <tt>initial number of points, default value is 52</tt></li></ul></div><div><ul><li>in_param.nmax --- <tt>cost budget, default value is 1e7</tt></li></ul></div><p><b>Output Arguments</b></p><div><ul><li>out_param.nmax --- <tt>cost budget</tt></li></ul></div><div><ul><li>out_param.exceedbudget  --- <tt>it is 0 if the number of points used in the   construction of fappx is less than cost budget, 1 otherwise.</tt></li></ul></div><div><ul><li>out_param.ninit --- <tt>initial number of points we used</tt></li></ul></div><div><ul><li>out_param.npoints --- <tt>number of points we need to reach the guaranteed absolute error</tt></li></ul></div><div><ul><li>out_param.errorbound --- <tt>estimation of the approximation absolute error bound</tt></li></ul></div><div><ul><li>out_param.nstar --- <tt>final value of the parameter defining the cone of function for which this algorithm is guaranteed, nstar = ninit -2 initially and is increased as necessary</tt></li></ul></div><div><ul><li>out_param.abstol --- <tt>guaranteed absolute error</tt></li></ul></div><h2>Guarantee<a name="3"></a></h2><p><tt>If the function to be approximated, <img src="help_funappx_g_eq85998.png" alt="$f$"> satisfies the cone condition</tt></p><p><img src="help_funappx_g_eq77452.png" alt="$$\|f''\|_\infty \le 2\mathrm{out\_param.n}^*&#xA;\left\|f'-f(1)+f(0)\right\|_\infty,$$"></p><p><tt>then the</tt>  <img src="help_funappx_g_eq29234.png" alt="$fappx$">  <tt>output by this algorithm is guaranteed to satisfy</tt></p><p><img src="help_funappx_g_eq17324.png" alt="$$\| f-fappx \|_{\infty} \le \mathrm{out\_param.abstol}$$"></p><p><tt>with cost of the algorithm is</tt></p><p><img src="help_funappx_g_eq36760.png" alt="$$\left\lceil \frac{\|f''\|_\infty}{8&#xA;\mathrm{out\_param.abstol}}\right\rceil+1$$"></p><p><tt>provided the flag</tt></p><p><img src="help_funappx_g_eq86716.png" alt="$$\mathrm{out\_param.exceedbudget} = 0.$$"></p><h2>Examples<a name="4"></a></h2><p><b>Example 1</b></p><pre class="codeinput">format <span class="string">short</span>; f = @(x) x.^2; [fappx, out_param] = funappx_g(f)
 
 <span class="comment">% Approximate function x^2 with default input parameter to make the error</span>
 <span class="comment">% less than 1e-6.</span>
@@ -80,7 +80,7 @@ out_param =
           abstol: 1.0000e-06
            ninit: 52
             nmax: 10000000
-             tau: 101
+           nstar: 50
     exceedbudget: 0
          npoints: 7039
         errbound: 5.0471e-09
@@ -102,10 +102,10 @@ out_param =
                f: @(x)x.^2
            ninit: 10
             nmax: 100000
-             tau: 17
+           nstar: 8
     exceedbudget: 0
-         npoints: 27505
-        errbound: 3.3048e-10
+         npoints: 26677
+        errbound: 3.5132e-10
 
 </pre><p><b>Example 3</b></p><pre class="codeinput">format <span class="string">short</span>; clear <span class="string">in_param</span>; in_param.ninit = 10; in_param.nmax = 1e6;
 in_param.abstol = 1e-7; [fappx, out_param] = funappx_g(@(x) x.^2, in_param)
@@ -124,10 +124,10 @@ out_param =
                f: @(x)x.^2
            ninit: 10
             nmax: 1000000
-             tau: 17
+           nstar: 8
     exceedbudget: 0
-         npoints: 8695
-        errbound: 3.3075e-09
+         npoints: 8443
+        errbound: 3.5079e-09
 
 </pre><p><b>Example 4</b></p><pre class="codeinput">format <span class="string">short</span>; clear <span class="string">in_param</span>;
 [fappx, out_param] = funappx_g(@(x) x.^2,<span class="string">'ninit'</span>,10,<span class="string">'nmax'</span>,1e6,<span class="string">'abstol'</span>,1e-8)
@@ -146,10 +146,10 @@ out_param =
                f: @(x)x.^2
            ninit: 10
             nmax: 1000000
-             tau: 17
+           nstar: 8
     exceedbudget: 0
-         npoints: 27505
-        errbound: 3.3048e-10
+         npoints: 26677
+        errbound: 3.5132e-10
 
 </pre><h2>See Also<a name="8"></a></h2><p>
 <a href="help_integral_g.html">integral_g</a>
@@ -221,7 +221,9 @@ out_param =
 % * out_param.errorbound REPLACE_WITH_DASH_DASH- |estimation of the approximation absolute error
 % bound|
 % 
-% * out_param.tau REPLACE_WITH_DASH_DASH- |latest value of tau|
+% * out_param.nstar REPLACE_WITH_DASH_DASH- |final value of the parameter defining the cone of
+% function for which this algorithm is guaranteed, nstar = ninit -2
+% initially and is increased as necessary|
 % 
 % * out_param.abstol REPLACE_WITH_DASH_DASH- |guaranteed absolute error|
 % 
@@ -229,13 +231,18 @@ out_param =
 %   
 % |If the function to be approximated, $f$ satisfies the cone condition|
 %
-% $$\|f''\|_\infty \le \mathrm{out\_param.tau}
+% $$\|f''\|_\infty \le 2\mathrm{out\_param.n}^*
 % \left\|f'-f(1)+f(0)\right\|_\infty,$$
 %
 % |then the|  $fappx$  |output by this algorithm is guaranteed to
 % satisfy|
 %
 % $$\| f-fappx \|_{\infty} \le \mathrm{out\_param.abstol}$$
+%
+% |with cost of the algorithm is|
+%
+% $$\left\lceil \frac{\|f''\|_\infty}{8
+% \mathrm{out\_param.abstol}}\right\rceil+1$$
 %
 % |provided the flag|
 %

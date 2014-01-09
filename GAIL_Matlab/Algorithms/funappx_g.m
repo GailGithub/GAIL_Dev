@@ -8,9 +8,9 @@ function [fappx,out_param]=funappx_g(varargin)
 %   should accept a vector argument x and return a vector y of function
 %   values that is the same size as x.
 %
-%   fappx = FUNAPPX_G(f,abstol,ninit,nmax) for given function f and the ordered 
-%   input parameters with the guaranteed absolute error abstol, initial number
-%   of points ninit and cost budget nmax.
+%   fappx = FUNAPPX_G(f,abstol,ninit,nmax) for given function f and the
+%   ordered input parameters with the guaranteed absolute error abstol,
+%   initial number of points ninit and cost budget nmax.
 %
 %   fappx = FUNAPPX_G(f,'abstol',abstol,'ninit',ninit,'nmax',nmax) recovers 
 %   function f with the guaranteed absolute error abstol, initial number of 
@@ -46,14 +46,16 @@ function [fappx,out_param]=funappx_g(varargin)
 %   out_param.errorbound --- estimation of the approximation absolute error
 %   bound
 %
-%   out_param.tau --- this field will give latest value of tau
+%   out_param.nstar --- final value of the parameter defining the cone of
+%   function for which this algorithm is guaranteed, nstar = ninit -2
+%   initially and is increased as necessary
 %
 %   out_param.abstol --- guaranteed absolute error
 %
 %  Guarantee
 %    
 %  If the function to be approximated, f satisfies the cone condition
-%  \|f''\|_\infty <= out_param.tau\|f'-f(1)+f(0)\|_\infty
+%  \|f''\|_\infty <= 2 out_param.nstar\|f'-f(1)+f(0)\|_\infty
 %  then the fappx output by this algorithm is guaranteed to satisfy
 %  \| f-fappx \|_{\infty} <= out_param.abstol,
 %  provided the flag out_param.exceedbudget = 0.
@@ -74,7 +76,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %           abstol: 1.0000e-***6
 %            ninit: 52
 %             nmax: 10000000
-%              tau: 101
+%            nstar: 50
 %     exceedbudget: 0
 %          npoints: 7039
 %         errbound: 5.0471e-***9
@@ -87,41 +89,41 @@ function [fappx,out_param]=funappx_g(varargin)
 %   >> in_param.ninit = 10; in_param.nmax = 10^6; 
 %   >> [fappx, out_param] = funappx_g(@(x) x.^2, in_param)
 %
-%   fappx = 
-%
-%       @(x)interp1(x1,y1,x,'linear')
-%
-%   out_param = 
+%    fappx = 
 % 
-%           abstol: 1.0000e-***8
-%                f: @(x)x.^2
-%            ninit: 10
-%             nmax: 1000000
-%              tau: 17
-%     exceedbudget: 0
-%          npoints: 27505
-%         errbound: 3.3048e-***10
+%         @(x)interp1(x1,y1,x,'linear')
+% 
+%    out_param = 
+% 
+%              abstol: 1.0000e-08
+%                   f: @(x)x.^2
+%               ninit: 10
+%                nmax: 1000000
+%               nstar: 8
+%        exceedbudget: 0
+%             npoints: 26677
+%            errbound: 3.5132e-10
 %
 %
 %   Example 3:
 %
 %   >> f = @(x) x.^2; 
-%   >> [fappx, out_param] = funappx_g(f,'ninit',10,'nmax',1e6,'abstol',1e-8)
+%   >> [fappx, out_param] = funappx_g(f,'ninit',10,'nmax',1e6,'abstol',1e-6)
 %
-%   fappx = 
-%
-%       @(x)interp1(x1,y1,x,'linear')
-%
-%   out_param = 
+%    fappx = 
 % 
-%           abstol: 1.0000e-***8
-%                f: @(x)x.^2
-%            ninit: 10
-%             nmax: 1000000
-%              tau: 17
-%     exceedbudget: 0
-%          npoints: 27505
-%         errbound: 3.3048e-***10
+%        @(x)interp1(x1,y1,x,'linear')
+% 
+%    out_param = 
+% 
+%             abstol: 1.0000e-06
+%                  f: @(x)x.^2
+%              ninit: 10
+%               nmax: 1000000
+%              nstar: 8
+%       exceedbudget: 0
+%            npoints: 2683
+%           errbound: 3.4755e-08
 %
 %
 %   See also INTEGRAL_G, MEANMC_G
@@ -139,8 +141,8 @@ function [fappx,out_param]=funappx_g(varargin)
 
 % initialize number of points
 n = out_param.ninit;
-% initialize tau
-out_param.tau = ceil((n-1)*2-1);
+% initialize nstar
+out_param.nstar = n - 2;
 % cost budget flag
 out_param.exceedbudget = 1;
 % tau change flag
@@ -157,36 +159,37 @@ while n < out_param.nmax;
     fn = (n-1)^2*max(abs(diff(diff_y)));
     
     % Stage 2: satisfy necessary condition
-    if out_param.tau*(gn+fn/(2*n-2))>= fn;
+    if 2*out_param.nstar*(gn+fn/(2*n-2))>= fn;
         % Stage 3: check for convergence
-        errbound = 4*out_param.abstol*(n-1)*(2*n-2-out_param.tau)/out_param.tau;
+        errbound = 4*out_param.abstol*(n-1)*(n-1-out_param.nstar)...
+            /out_param.nstar;
         % satisfy convergence
         if errbound >= gn;
             out_param.exceedbudget = 0; break;
         end;
         % otherwise increase number of points
-        m = max(ceil(1/(n-1)*sqrt(gn*out_param.tau/8/out_param.abstol)),2);
+        m = max(ceil(1/(n-1)*sqrt(gn*out_param.nstar/4/out_param.abstol)),2);
         n = m*(n-1)+1;
     % Stage2: do not satisfy necessary condition
     else
         % increase tau
-        out_param.tau = 2*fn/(gn+fn/(2*n-2));
+        out_param.nstar = fn/(2*gn+fn/(n-1));
         % change tau change flag
         tauchange = 1;
         % check if number of points large enough
-        if n >= ((out_param.tau+1)/2);
+        if n >= out_param.nstar + 2;
             % true, go to Stage 3
-            errbound = 4*out_param.abstol*(n-1)*(2*n-2-out_param.tau)...
-                /out_param.tau;
+            errbound = 4*out_param.abstol*(n-1)*(n-1-out_param.nstar)...
+                /out_param.nstar;
             if errbound >= gn;
                 out_param.exceedbudget = 0; break;
             end;
             m = max(ceil(1/(n-1)*...
-                sqrt(gn*out_param.tau/8/out_param.abstol)),2);
+                sqrt(gn*out_param.nstar/4/out_param.abstol)),2);
             n = m*(n-1)+1;
         else
             % otherwise increase number of points, go to Stage 1
-            n = 1 + (n-1)*ceil(out_param.tau+1/(2*n-2));
+            n = 2 + ceil(out_param.nstar);
         end;
     end;
 end;
