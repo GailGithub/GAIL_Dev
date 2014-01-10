@@ -140,17 +140,17 @@
 % modified kurtosis no greater than $\tilde{\kappa}_{\max}$ is
 % defined as 
 %
-% $$N_{\text{tot}}(\varepsilon,\alpha,\beta,\tilde{\kappa}_{\max},\sigma_{\max})
-% := \sup_{\substack{\tilde{\kappa} \le \tilde{\kappa}_{\max} \\ \sigma \le
-% \sigma_{\max}} } \min\left\{N :
-% \mathrm{Pr}[N_{\text{tot}}(\varepsilon,\alpha,\tilde{\kappa}_{\max},F) \le N] \ge
+% $$N_{\mathrm{tot}}(\varepsilon,\alpha,\beta,\tilde{\kappa}_{\max},\sigma_{\max})
+% := \sup_{\tilde{\kappa} \le \tilde{\kappa}_{\max}, \sigma \le
+% \sigma_{\max} } \min\left\{N :
+% \mathrm{Pr}[N_{\mathrm{tot}}(\varepsilon,\alpha,\tilde{\kappa}_{\max},F) \le N] \ge
 % 1-\beta  \right \}$$
 %
 % The total cost of this two stage algrithm has a probabilistic
 % bound above by
 %
-% $$N_{\text{tot}}(\varepsilon,\alpha, \beta, \tilde{\kappa}_{\max},
-% \sigma_{\max}) \\ \le N_{\text{up}}(\varepsilon,\alpha, \beta,
+% $$N_{\mathrm{tot}}(\varepsilon,\alpha, \beta, \tilde{\kappa}_{\max},
+% \sigma_{\max}) \le N_{\mathrm{up}}(\varepsilon,\alpha, \beta,
 % \tilde{\kappa}_{\max}, \sigma_{\max}) :=  n_{\sigma} +
 % N_{\mu}(\varepsilon,\sigma_{\max}v(\tilde{\alpha},\beta,C),\tilde{\alpha},\tilde{\kappa}_{\max}^{3/4})
 % $$
