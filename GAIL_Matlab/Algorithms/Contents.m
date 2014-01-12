@@ -1,8 +1,7 @@
 % ALGORITHMS
 %
 % Folders
-%
-% Deprecated Algorithm  - Obsolete algorithms
+%   Deprecated Algorithm  - Obsolete algorithms
 %
 % Files
 %   cubMC_g           - Monte Carlo method to evaluate a multidimensional integral to
