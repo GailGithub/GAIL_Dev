@@ -1,9 +1,9 @@
 Guaranteed Automatic Integration Library (GAIL)
-GAIL Version 1.0.0, Sept 3, 2013.
+GAIL Version 1.3.0, Jan 30th, 2013.
 See LICENSE.m for copyright and disclaimer.
 
 GAIL is a suite of algorithms for integration problems in one and many
-dimensions, and whose answers are guaranteed to be correct.
+dimensions,3 and whose answers are guaranteed to be correct.
 
 
 Developed by
@@ -11,9 +11,8 @@ Developed by
 
 Fred Hickernell (Illinois Institute of Technology), Sou-Cheng Choi
 (University of Chicago, Argonne National Laboratory, and IIT), and
-their collaborators including Yuhan Ding (IIT), Lan Jiang (IIT), and
-Yizhi Zhang (IIT), Department of Applied Mathematics, Illinois
-Institute of Technology.
+their collaborators including Yuhan Ding (IIT), Lan Jiang (IIT),
+Yizhi Zhang (IIT), Xincheng Sheng(IIT) and Xuan Zhou(IIT) Department of Applied Mathematics, Illinois Institute of Technology.
 
 
 Please cite the following software and papers:
@@ -63,10 +62,10 @@ General Usage Notes
 
 GAIL Version 1.0.0 includes the following three algorithms:
 
-1.  funappx_g: One-dimensional function approximation on unit interval
-2.  integral_g:  One-dimensional integration on unit interval
+1.  funappx_g: One-dimensional function approximation on bounded interval
+2.  integral_g:  One-dimensional integration on bounded interval
 3.  meanMC_g:  Monte Carlo method for estimating mean of a random variable
-
+4.  cubMC_g: Monte Carlo method for numerical integration
 
 Installation Instruction
 ------------------------
@@ -87,9 +86,15 @@ Installation Instruction
 3.  To check if you have installed GAIL successfully, type: help
     funappx_g to see if it shows up.
 
+Alternatively, you could do this:
+
+1.  Download DownloadInstallGail_1_3_0.m and put it where you want GAIL go.
+
+2.  Execute it.
 
 To uninstall GAIL, execute "GAIL_Uninstall".
 
+To reinstall GAIL, execute “GAIL_Reinstall”.
 
 Contact Information
 --------------------

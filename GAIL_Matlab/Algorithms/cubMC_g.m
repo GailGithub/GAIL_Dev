@@ -109,13 +109,15 @@ function [Q,out_param] = cubMC_g(varargin)
 %  Pr(|I-Q| <= tol) >= 1-alpha 
 %  
 %  holds. Here I is the true integral (or mean) of f, and Q is the output
-%  of CUBMC_G. For details, please refer to [1].
+%  of CUBMC_G. 
 %
-%  The cost of the two-stage algorithm also satisfy the inequality
+%  The cost of the two-stage algorithm also satisfies the inequality
 %
 %  Pr (N_tot <= N_up) >= 1-beta
 %  
-%  where N_up is roughly propotional to sigma^2/epsilon^2 
+%  where N_tot is the total cost of samples, N_up is the upper bound on the
+%  cost, which is roughly propotional to sigma^2/epsilon^2, beta is the
+%  level of uncertainty on the cost. For details, please refer to [1].
 %
 %   Examples
 %

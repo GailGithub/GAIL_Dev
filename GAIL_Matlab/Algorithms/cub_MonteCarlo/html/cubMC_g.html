@@ -1,0 +1,884 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>cubMC_g</title><meta name="generator" content="MATLAB 8.1"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2013-12-03"><meta name="DC.source" content="cubMC_g.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> [Q,out_param] = cubMC_g(varargin)
+<span class="comment">% CUBMC_G Monte Carlo method to evaluate a multidimensional integral to</span>
+<span class="comment">% within a specified absolute error tolerance with guaranteed uncertainty</span>
+<span class="comment">% within alpha.</span>
+<span class="comment">%</span>
+<span class="comment">%  The guarantee holds if the modified kurtosis is less than the kmax,</span>
+<span class="comment">%  which is defined in terms of uncertainty(alpha), sample size to estimate</span>
+<span class="comment">%  variance(n_sigma) and standard deviation inflation factor(fudge). For</span>
+<span class="comment">%  details, please refer to our paper.</span>
+<span class="comment">%</span>
+<span class="comment">%   [Q,out_param] = CUBMC_G(f,interval) estimates the integral with</span>
+<span class="comment">%   integrand f to within the absolute error tolerance 1e-2 and with</span>
+<span class="comment">%   guaranteed uncertainty alpha within 1%. Input f a function handle. The</span>
+<span class="comment">%   function Y=f(X) should accept a vector argument X and return a vector</span>
+<span class="comment">%   result Y, the integrand evaluated at each element of X. Input interval</span>
+<span class="comment">%   is 2 x d matrix.</span>
+<span class="comment">%</span>
+<span class="comment">%   Q = CUBMC_G(f,interval,measure,abstol,alpha,n_sigma,fudge) estimates the</span>
+<span class="comment">%   integral with integrand f to within an absolute error tolerance abstol</span>
+<span class="comment">%   with guaranteed uncertainty within alpha using ordered parameter input</span>
+<span class="comment">%   interval, measure, tolerance, uncertainty, n_sigma and fudge factor.If</span>
+<span class="comment">%   an input is not specified, the default value is used.</span>
+<span class="comment">%</span>
+<span class="comment">%   Q =</span>
+<span class="comment">%   CUBMC_G(f,interval,'measure','uniform','abstol',abstol,'alpha',alpha,</span>
+<span class="comment">%   'n_sigma',n_sigma,fudge',fudge) estimates the integral with integrand f</span>
+<span class="comment">%   to within an absolute error tolerance abstol with guaranteed</span>
+<span class="comment">%   uncertainty within alpha. All the field-value pairs are optional and</span>
+<span class="comment">%   can be supplied in different order. If an input is not specified, the</span>
+<span class="comment">%   default value is used.</span>
+<span class="comment">%</span>
+<span class="comment">%   Q = CUBMC_G(f,interval,in_param) estimates the integral with integrand f</span>
+<span class="comment">%   to within an absolute error tolerance in_param.abstol with guaranteed</span>
+<span class="comment">%   uncertainty within in_param.alpha. If a field is not specified, the</span>
+<span class="comment">%   default value is used.</span>
+<span class="comment">%</span>
+<span class="comment">%   f --- the integrand.</span>
+<span class="comment">%</span>
+<span class="comment">%   interval --- the integration interval. The default interval is [0 1]^d.</span>
+<span class="comment">%</span>
+<span class="comment">%   in_param.measure --- the measure for generating the random variable,</span>
+<span class="comment">%   the default is uniform.</span>
+<span class="comment">%</span>
+<span class="comment">%   in_param.abstol --- the absolute error tolerance, default value is 1e-2.</span>
+<span class="comment">%</span>
+<span class="comment">%   in_param.alpha --- the uncertainty, default value is 1%.</span>
+<span class="comment">%</span>
+<span class="comment">%   in_param.n_sigma --- initial sample size for estimating the sample</span>
+<span class="comment">%   variance, the default value is 1e3.</span>
+<span class="comment">%</span>
+<span class="comment">%   in_param.fudge --- the standard deviation inflation factor, the default</span>
+<span class="comment">%   value is 1.1.</span>
+<span class="comment">%</span>
+<span class="comment">%   Q --- the estimated value of the the integration.</span>
+<span class="comment">%</span>
+<span class="comment">%   out_param_time_n_sigma_predict --- the estimated time to get n_sigma</span>
+<span class="comment">%   samples of the random variable.</span>
+<span class="comment">%</span>
+<span class="comment">%   out_param.n_left_predict --- using the time left to predict the number</span>
+<span class="comment">%   of samples left.</span>
+<span class="comment">%</span>
+<span class="comment">%   out_param.nmax --- the maximum sample budget to estimate mu, it comes</span>
+<span class="comment">%   from both the sample budget and the time budget.</span>
+<span class="comment">%</span>
+<span class="comment">%   out_param.var --- the sample variance.</span>
+<span class="comment">%</span>
+<span class="comment">%   out_param.kurtmax --- the upper bound on modified kurtosis.</span>
+<span class="comment">%</span>
+<span class="comment">%   out_param.time --- the time eclipsed.</span>
+<span class="comment">%</span>
+<span class="comment">%   out_param.n_mu --- the sample size that needed to estimate the mu.</span>
+<span class="comment">%</span>
+<span class="comment">%   out_param.n --- the total sample size needed to do the two stage</span>
+<span class="comment">%   algorithm.</span>
+<span class="comment">%</span>
+<span class="comment">%   out_param.exit --- the state of program when exiting.</span>
+<span class="comment">%                         0   success</span>
+<span class="comment">%                         1   No enough samples to estimate the mean.</span>
+<span class="comment">%                         2   Initial try out time costs more than</span>
+<span class="comment">%                             10% of time budget.</span>
+<span class="comment">%                         3   The estimated time for estimating variance</span>
+<span class="comment">%                             is bigger than half of the time budget.</span>
+<span class="comment">%                         10  Interval does not contain numbers.</span>
+<span class="comment">%                         11  Interval not 2 x d.</span>
+<span class="comment">%                         12  Interval is only a point in one direction.</span>
+<span class="comment">%                         13  Interval is infinite when measure is uniform.</span>
+<span class="comment">%                         14  Interval is not doubly infinite when measure</span>
+<span class="comment">%                             is normal.</span>
+<span class="comment">%   Examples:</span>
+<span class="comment">%</span>
+<span class="comment">%   Example 1:</span>
+<span class="comment">%   Estimate the integral with integrand f(x) = x.^2 in the interval [0,1]</span>
+<span class="comment">%</span>
+<span class="comment">%   &gt;&gt; f=@(x) x.^2;interval = [0;1];</span>
+<span class="comment">%   &gt;&gt; Q = cubMC_g(f,interval,'abstol',1e-3)</span>
+<span class="comment">%   Q = 0.33***</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">%   Example 2:</span>
+<span class="comment">%   Estimate the integral with integrand f(x) = exp(x) in the interval [1,2]</span>
+<span class="comment">%</span>
+<span class="comment">%   &gt;&gt; f=@(x) exp(x);interval = [1;2];</span>
+<span class="comment">%   &gt;&gt; Q = cubMC_g(f,interval,'uniform',1e-3)</span>
+<span class="comment">%   Q = 4.67***</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">%   Example 3:</span>
+<span class="comment">%   Estimate the integral with integrand f(x) = sin(x) in the interval [1,2]</span>
+<span class="comment">%</span>
+<span class="comment">%   &gt;&gt; f=@(x) sin(x);interval = [1;2];</span>
+<span class="comment">%   &gt;&gt; Q = cubMC_g(f,interval,'uniform',1e-3)</span>
+<span class="comment">%   Q = 0.95***</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">%   Example 4:</span>
+<span class="comment">%   Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) in the</span>
+<span class="comment">%   interval [0 0;1 1],where x is a vector x = [x1 x2].</span>
+<span class="comment">%</span>
+<span class="comment">%   &gt;&gt; f=@(x) exp(-x(:,1).^2-x(:,2).^2);interval = [0 0;1 1];</span>
+<span class="comment">%   &gt;&gt; Q = cubMC_g(f,interval,'uniform',1e-3)</span>
+<span class="comment">%   Q = 0.55***</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">%   Example 5:</span>
+<span class="comment">%   Estimate the integral with integrand f(x) = 2^n*prod(x1*x2*...*xn)+0.555 in the</span>
+<span class="comment">%   interval [zeros(1,n);ones(1,n)],where x is a vector x = [x1 x2 ... xn].</span>
+<span class="comment">%</span>
+<span class="comment">%   &gt;&gt; n=3;f=@(x) 2^n*prod(x,2)+0.555;interval = [zeros(1,n);ones(1,n)];</span>
+<span class="comment">%   &gt;&gt; Q = cubMC_g(f,interval,'uniform',1e-3)</span>
+<span class="comment">%   Q = 1.5***</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">%   See also FUNAPPX_G, INTEGRAL_G, MEANMC_G</span>
+<span class="comment">%</span>
+<span class="comment">%   Reference:</span>
+<span class="comment">%   [1]  F. J. Hickernell, L. Jiang, Y. Liu, and A. B. Owen, Guaranteed</span>
+<span class="comment">%   conservative fixed width confidence intervals via Monte Carlo sampling,</span>
+<span class="comment">%   Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F. Y. Kuo, G.</span>
+<span class="comment">%   W. Peters, and I. H. Sloan, eds.), Springer-Verlag, Berlin, 2014, to</span>
+<span class="comment">%   appear, arXiv:1208.4318 [math.ST]</span>
+
+tstart=tic;
+[f,interval,in_param,out_param] = cubMC_g_param(varargin{:});<span class="comment">%check validity of inputs</span>
+f=transformIntegrand(f,interval,in_param);
+<span class="comment">% transform integrand so that the interval would not need to be changed</span>
+<span class="keyword">if</span> strcmp(in_param.measure,<span class="string">'uniform'</span>)<span class="comment">% the using uniformly distributed samples</span>
+    [Q,out_param] = meanMC_g(@(nfun)f(rand(nfun,in_param.dim)),in_param);
+    out_param.Q=Q;<span class="comment">% using meanMC_g to get the mean</span>
+<span class="keyword">else</span> strcmp(in_param.measure,<span class="string">'normal'</span>)<span class="comment">% using normally distributed samples</span>
+    [Q,out_param] = meanMC_g(@(nfun)f(randn(nfun,in_param.dim)),in_param);
+    out_param.Q=Q;<span class="comment">% using meanMC_g to get the mean</span>
+<span class="keyword">end</span>
+out_param.time=toc(tstart); <span class="comment">%elapsed time</span>
+<span class="keyword">end</span>
+<span class="keyword">function</span> newf=transformIntegrand(oldf,interval,in_param)
+    <span class="keyword">if</span> strcmp(in_param.measure,<span class="string">'uniform'</span>) <span class="comment">%uniform measure</span>
+        a=interval(1,:); <span class="comment">%left endpoint</span>
+        b=interval(2,:); <span class="comment">%right endpoint</span>
+    <span class="keyword">if</span> all(a==0) &amp;&amp; all(b==1) <span class="comment">%no change needed</span>
+        newf=oldf;
+    <span class="keyword">else</span> <span class="comment">%transform points and integrand</span>
+        bmina=b-a; <span class="comment">%interval width</span>
+        volbox=prod(bmina); <span class="comment">%volume of the interval</span>
+        newf=@(x) oldf(x.*repmat(bmina,size(x,1),1)+repmat(a,size(x,1),1))<span class="keyword">...</span>
+            .*volbox;
+       <span class="comment">%stretch and shift, then multiply by volume</span>
+    <span class="keyword">end</span>
+    <span class="keyword">elseif</span> strcmp(in_param.measure,<span class="string">'normal'</span>)
+        newf=oldf;<span class="comment">% no change if it is normal measure.</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> [f,interval,in_param,out_param] = cubMC_g_param(varargin)
+
+default.measure = <span class="string">'uniform'</span>;<span class="comment">% default measure</span>
+default.dim = 1;<span class="comment">% default dimension</span>
+default.interval = [zeros(1,default.dim);ones(1,default.dim)];<span class="comment">% default interval</span>
+default.abstol  = 1e-2;<span class="comment">% default absolute error tolerence</span>
+default.alpha = 0.01;<span class="comment">% default uncertainty</span>
+default.n_sigma = 1e3; <span class="comment">% default n_sigma</span>
+default.fudge = 1.1; <span class="comment">% default variance inflation factor</span>
+
+<span class="keyword">if</span> isempty(varargin) <span class="comment">% if no input print error message and use the default setting</span>
+    help <span class="string">cubMC_g</span>
+    warning(<span class="string">'MATLAB:cubMC_g:fnotgiven'</span>,[<span class="string">'f must be specified. Now GAIL is using f = @(x) x.^2. '</span><span class="keyword">...</span>
+        <span class="string">'Integration interval must be specified. Now GAIL is using interval [0 1]'</span>])
+    f = @(x) x.^2;
+    interval = default.interval;
+<span class="keyword">elseif</span> numel(varargin)==1
+    <span class="comment">% if there is only function but no interval input. Use default interval.</span>
+    help <span class="string">cubMC_g</span>
+    warning(<span class="string">'MATLAB:cubMC_g:intervalnotgiven'</span>,<span class="keyword">...</span>
+        <span class="string">'the interval must be specified, Now GAIL is using interval [0 1]'</span>)
+    f = varargin{1};
+    interval = default.interval;
+<span class="keyword">else</span>
+    f = varargin{1};
+    interval = varargin{2}; <span class="comment">% the first input is function, the second input is interval.</span>
+<span class="keyword">end</span>
+
+validvarargin=numel(varargin)&gt;2;<span class="comment">% check if there is any optional parameter input</span>
+<span class="keyword">if</span> validvarargin
+    in3=varargin{3}; <span class="comment">% check the third input</span>
+    validvarargin=(isnumeric(in3) || isstruct(in3) || ischar(in3));
+    <span class="comment">% to see if it is numeric structure or character.</span>
+<span class="keyword">end</span>
+
+<span class="keyword">if</span> ~validvarargin
+<span class="comment">% if there is no optional input, use default settings.</span>
+    in_param.measure = default.measure;
+    in_param.abstol = default.abstol;
+    in_param.alpha = default.alpha;
+    in_param.n_sigma = default.n_sigma;
+    in_param.fudge = default.fudge;
+<span class="keyword">else</span> <span class="comment">% if there is some optional input</span>
+    p = inputParser;
+    addRequired(p,<span class="string">'f'</span>,@isfcn);
+    addRequired(p,<span class="string">'interval'</span>,@isnumeric);
+    <span class="keyword">if</span> isnumeric(in3) || ischar(in3)
+        <span class="comment">%if there are multiple inputs with only numeric, they should be put</span>
+        <span class="comment">%in order.</span>
+        addOptional(p,<span class="string">'measure'</span>,default.measure,@(x) any(validatestring(x, {<span class="string">'uniform'</span>,<span class="string">'normal'</span>,<span class="string">'Gaussian'</span>})));
+        addOptional(p,<span class="string">'abstol'</span>,default.abstol,@isnumeric);
+        addOptional(p,<span class="string">'alpha'</span>,default.alpha,@isnumeric);
+        addOptional(p,<span class="string">'n_sigma'</span>,default.n_sigma,@isnumeric);
+        addOptional(p,<span class="string">'fudge'</span>,default.fudge,@isnumeric);
+    <span class="keyword">else</span>
+        <span class="keyword">if</span> isstruct(in3) <span class="comment">%the input is structure</span>
+            p.StructExpand = true;
+            p.KeepUnmatched = true;
+        <span class="keyword">end</span> <span class="comment">% if there are multiple inputs with name and numeric, they</span>
+    <span class="comment">% could be put not in order</span>
+        addParamValue(p,<span class="string">'measure'</span>,default.measure,@(x) any(validatestring(x, {<span class="string">'uniform'</span>,<span class="string">'normal'</span>,<span class="string">'Gaussian'</span>})));
+        addParamValue(p,<span class="string">'abstol'</span>,default.abstol,@isnumeric);
+        addParamValue(p,<span class="string">'alpha'</span>,default.alpha,@isnumeric);
+        addParamValue(p,<span class="string">'n_sigma'</span>,default.n_sigma,@isnumeric);
+        addParamValue(p,<span class="string">'fudge'</span>,default.fudge,@isnumeric);
+    <span class="keyword">end</span>
+    parse(p,f,interval,varargin{3:end})
+    in_param = p.Results;
+<span class="keyword">end</span>
+out_param = in_param; <span class="comment">% let the out_param contains all the in_param</span>
+[two, in_param.dim]=size(interval); <span class="comment">%interval should be 2 x dimension</span>
+<span class="keyword">if</span> two==0 &amp;&amp; isfield(in_param,<span class="string">'interval'</span>);
+    <span class="comment">%if interval specified through in_param structure</span>
+    interval=in_param.interval; <span class="comment">%then get it from there</span>
+    [two, in_param.dim]=size(interval); <span class="comment">%and get the dimension</span>
+<span class="keyword">end</span>
+<span class="keyword">if</span> any(isnan(interval(:))); <span class="comment">%check interval for not a number</span>
+    out_param.exit=10; out_param = cubMC_g_err(out_param); <span class="keyword">return</span>;
+<span class="keyword">end</span>
+<span class="keyword">if</span> two~=2 <span class="comment">%if interval is given as row vector for dimension 1, fix that</span>
+    <span class="keyword">if</span> in_param.dim==2; in_param.dim=two; interval=interval';
+    <span class="keyword">else</span> out_param.exit=11; out_param = cubMC_g_err(out_param); <span class="keyword">return</span>;
+        <span class="comment">%else, return an error</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+interval=[min(interval,[],1); max(interval,[],1)];
+<span class="comment">%ensure left and right endpoints are in order</span>
+<span class="keyword">if</span> any(interval(1,:)==interval(2,:)); <span class="comment">%interval is a point in one direction</span>
+    out_param.exit=12; out_param = cubMC_g_err(out_param); <span class="keyword">return</span>;
+<span class="keyword">end</span>
+in_param.interval=interval; <span class="comment">%copy interval into the param structure</span>
+
+<span class="keyword">if</span> isfield(in_param,<span class="string">'measure'</span>); <span class="comment">% the sample measure</span>
+    in_param.measure=validatestring(in_param.measure,{<span class="string">'uniform'</span>,<span class="string">'normal'</span>,<span class="string">'Gaussian'</span>});
+    <span class="keyword">if</span> strcmpi(in_param.measure,<span class="string">'Gaussian'</span>)
+        in_param.measure=<span class="string">'normal'</span>;
+    <span class="keyword">end</span>
+<span class="keyword">else</span>
+    in_param.measure=default.measure;
+<span class="keyword">end</span>
+<span class="keyword">if</span> strcmp(in_param.measure,<span class="string">'uniform'</span>)&amp;&amp;~all(isfinite(interval(:)))
+    <span class="comment">%cannot integrate on an infinite interval with the uniform distribution</span>
+    out_param.exit=13; out_param = cubMC_g_err(out_param); <span class="keyword">return</span>;
+<span class="keyword">end</span>
+<span class="keyword">if</span> strcmp(in_param.measure,<span class="string">'normal'</span>)&amp;&amp;any(isfinite(interval(:)))
+    <span class="comment">%must integrate on an infinite interval with the normal distribution</span>
+    out_param.exit=14; out_param = cubMC_g_err(out_param); <span class="keyword">return</span>;
+<span class="keyword">end</span>
+<span class="keyword">if</span> (~isposint(in_param.n_sigma)) <span class="comment">%the sample to estimate sigma</span>
+    warning(<span class="string">'MATLAB:cubMC_g:nsignotposint'</span>,<span class="keyword">...</span>
+        [<span class="string">'the number n_sigma should a positive integer,'</span><span class="keyword">...</span>
+        <span class="string">'take the absolute value and ceil.'</span>])
+    in_param.n_sigma = ceil(abs(in_param.n_sigma));
+<span class="keyword">end</span>
+<span class="keyword">if</span> (in_param.fudge &lt;= 1) <span class="comment">%standard deviation inflation factor/fudge factor</span>
+    warning(<span class="string">'MATLAB:cubMC_g:fudgelessthan1'</span>,<span class="keyword">...</span>
+        <span class="string">'the fudge factor should be bigger than 1, use the default value.'</span>)
+    in_param.fudge = default.fudge;
+<span class="keyword">end</span>
+<span class="keyword">if</span> (in_param.abstol &lt;= 0) <span class="comment">%error tolerance</span>
+    warning(<span class="string">'MATLAB:cubMC_g:abstolneg'</span>,<span class="keyword">...</span>
+        <span class="string">'the absolute error tolerence should be larger than 0, use the absolute value.'</span>)
+    in_param.abstol = abs(in_param.abstol);
+<span class="keyword">end</span>
+<span class="keyword">if</span> (in_param.alpha &lt;= 0 ||in_param.alpha &gt;= 1) <span class="comment">%uncertainty</span>
+    warning(<span class="string">'MATLAB:cubMC_g:alphanot01'</span>,<span class="keyword">...</span>
+        [<span class="string">'the uncertainy should be less than 1 and bigger than 0, '</span><span class="keyword">...</span>
+    <span class="string">'use the the default value.'</span>])
+    in_param.alpha = default.alpha;
+<span class="keyword">end</span>
+
+<span class="keyword">end</span>
+<span class="keyword">function</span> [out_param,Q]=cubMC_g_err(out_param,tstart)
+<span class="comment">%Handles errors in cubMC_g and cubMC_g_param</span>
+<span class="comment">%to give an exit with information</span>
+<span class="comment">%out_param.exit = 0   success</span>
+<span class="comment">%             10  interval does not contain numbers</span>
+<span class="comment">%             11  interval not 2 x d</span>
+<span class="comment">%             12  interval is only a point in one direction</span>
+<span class="comment">%             13  interval is infinite when measure is uniform</span>
+<span class="comment">%             14  interval is not doubly infinite when measure is normal</span>
+<span class="keyword">if</span> ~isfield(out_param,<span class="string">'exit'</span>); <span class="keyword">return</span>; <span class="keyword">end</span>
+<span class="keyword">if</span> out_param.exit==0; <span class="keyword">return</span>; <span class="keyword">end</span>
+<span class="keyword">switch</span> out_param.exit
+    <span class="keyword">case</span> 10; error(<span class="string">'MATLAB:cubMC_g:intervalnotnum'</span>,<span class="keyword">...</span>
+            <span class="string">'interval must contain numbers.'</span>);
+    <span class="keyword">case</span> 11; error(<span class="string">'MATLAB:cubMC_g:intervalnot2d'</span>,<span class="keyword">...</span>
+            <span class="string">'interval must be 2 x d.'</span>);
+    <span class="keyword">case</span> 12; error(<span class="string">'MATLAB:cubMC_g:intervalnotlessthan2'</span>,<span class="keyword">...</span>
+            <span class="string">'interval must be more than a point in any coordinate direction.'</span>);
+    <span class="keyword">case</span> 13; error(<span class="string">'MATLAB:cubMC_g:intervalnotfiniteforuniform'</span>,<span class="keyword">...</span>
+            <span class="string">'interval must be finite when measure is uniform.'</span>);
+    <span class="keyword">case</span> 14; error(<span class="string">'MATLAB:cubMC_g:intervalnotinffornormal'</span>,<span class="keyword">...</span>
+            [<span class="string">'interval must be infinite in both directions'</span> <span class="keyword">...</span>
+        <span class="string">' when measure is normal'</span>]);
+<span class="keyword">end</span>
+out_param.Q=NaN;
+Q=out_param.Q;
+<span class="keyword">if</span> nargin&gt;1; out_param.time=toc(tstart); <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">  CUBMC_G Monte Carlo method to evaluate a multidimensional integral to
+  within a specified absolute error tolerance with guaranteed uncertainty
+  within alpha. 
+ 
+   The guarantee holds if the modified kurtosis is less than the kmax,
+   which is defined in terms of uncertainty(alpha), sample size to estimate
+   variance(n_sigma) and standard deviation inflation factor(fudge). For
+   details, please refer to our paper.
+ 
+    [Q,out_param] = CUBMC_G(f,interval) estimates the integral with
+    integrand f to within the absolute error tolerance 1e-2 and with
+    guaranteed uncertainty alpha within 1%. Input f a function handle. The
+    function Y=f(X) should accept a vector argument X and return a vector
+    result Y, the integrand evaluated at each element of X. Input interval
+    is 2 x d matrix. 
+ 
+    Q = CUBMC_G(f,interval,measure,abstol,alpha,n_sigma,fudge) estimates the
+    integral with integrand f to within an absolute error tolerance abstol
+    with guaranteed uncertainty within alpha using ordered parameter input
+    interval, measure, tolerance, uncertainty, n_sigma and fudge factor.If
+    an input is not specified, the default value is used.
+ 
+    Q =
+    CUBMC_G(f,interval,'measure','uniform','abstol',abstol,'alpha',alpha,
+    'n_sigma',n_sigma,fudge',fudge) estimates the integral with integrand f
+    to within an absolute error tolerance abstol with guaranteed
+    uncertainty within alpha. All the field-value pairs are optional and
+    can be supplied in different order. If an input is not specified, the
+    default value is used.
+ 
+    Q = CUBMC_G(f,interval,in_param) estimates the integral with integrand f
+    to within an absolute error tolerance in_param.abstol with guaranteed
+    uncertainty within in_param.alpha. If a field is not specified, the
+    default value is used.
+ 
+    f --- the integrand.
+ 
+    interval --- the integration interval. The default interval is [0 1]^d.
+ 
+    in_param.measure --- the measure for generating the random variable,
+    the default is uniform.
+ 
+    in_param.abstol --- the absolute error tolerance, default value is 1e-2.
+ 
+    in_param.alpha --- the uncertainty, default value is 1%.
+ 
+    in_param.n_sigma --- initial sample size for estimating the sample
+    variance, the default value is 1e3.
+ 
+    in_param.fudge --- the standard deviation inflation factor, the default
+    value is 1.1.
+    
+    Q --- the estimated value of the the integration.
+ 
+    out_param_time_n_sigma_predict --- the estimated time to get n_sigma
+    samples of the random variable.
+ 
+    out_param.n_left_predict --- using the time left to predict the number
+    of samples left.
+ 
+    out_param.nmax --- the maximum sample budget to estimate mu, it comes
+    from both the sample budget and the time budget.
+ 
+    out_param.var --- the sample variance.
+ 
+    out_param.kurtmax --- the upper bound on modified kurtosis.
+ 
+    out_param.time --- the time eclipsed.
+ 
+    out_param.n_mu --- the sample size that needed to estimate the mu.
+ 
+    out_param.n --- the total sample size needed to do the two stage
+    algorithm.
+ 
+    out_param.exit --- the state of program when exiting.
+                          0   success
+                          1   No enough samples to estimate the mean.
+                          2   Initial try out time costs more than
+                              10% of time budget. 
+                          3   The estimated time for estimating variance 
+                              is bigger than half of the time budget.
+                          10  Interval does not contain numbers.
+                          11  Interval not 2 x d.
+                          12  Interval is only a point in one direction.
+                          13  Interval is infinite when measure is uniform.
+                          14  Interval is not doubly infinite when measure
+                              is normal.
+    Examples:
+ 
+    Example 1:
+    Estimate the integral with integrand f(x) = x.^2 in the interval [0,1]
+    
+    &gt;&gt; f=@(x) x.^2;interval = [0;1];
+    &gt;&gt; Q = cubMC_g(f,interval,'abstol',1e-3)
+    Q = 0.33***
+ 
+ 
+    Example 2:
+    Estimate the integral with integrand f(x) = exp(x) in the interval [1,2]
+ 
+    &gt;&gt; f=@(x) exp(x);interval = [1;2];
+    &gt;&gt; Q = cubMC_g(f,interval,'uniform',1e-3)
+    Q = 4.67***
+ 
+ 
+    Example 3:
+    Estimate the integral with integrand f(x) = sin(x) in the interval [1,2]
+ 
+    &gt;&gt; f=@(x) sin(x);interval = [1;2];
+    &gt;&gt; Q = cubMC_g(f,interval,'uniform',1e-3)
+    Q = 0.95***
+ 
+ 
+    Example 4: 
+    Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) in the
+    interval [0 0;1 1],where x is a vector x = [x1 x2].
+ 
+    &gt;&gt; f=@(x) exp(-x(:,1).^2-x(:,2).^2);interval = [0 0;1 1];
+    &gt;&gt; Q = cubMC_g(f,interval,'uniform',1e-3)
+    Q = 0.55***
+ 
+ 
+    Example 5: 
+    Estimate the integral with integrand f(x) = 2^n*prod(x1*x2*...*xn)+0.555 in the
+    interval [zeros(1,n);ones(1,n)],where x is a vector x = [x1 x2 ... xn].
+ 
+    &gt;&gt; n=3;f=@(x) 2^n*prod(x,2)+0.555;interval = [zeros(1,n);ones(1,n)];
+    &gt;&gt; Q = cubMC_g(f,interval,'uniform',1e-3)
+    Q = 1.5***
+ 
+ 
+    See also FUNAPPX_G, INTEGRAL_G, MEANMC_G
+ 
+    Reference:
+    [1]  F. J. Hickernell, L. Jiang, Y. Liu, and A. B. Owen, Guaranteed
+    conservative fixed width confidence intervals via Monte Carlo sampling,
+    Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F. Y. Kuo, G.
+    W. Peters, and I. H. Sloan, eds.), Springer-Verlag, Berlin, 2014, to
+    appear, arXiv:1208.4318 [math.ST]
+
+Warning: f must be specified. Now GAIL is using f =
+@(x) x.^2. Integration interval must be specified.
+Now GAIL is using interval [0 1] 
+
+ans =
+
+    0.3335
+
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2013a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+function [Q,out_param] = cubMC_g(varargin)
+% CUBMC_G Monte Carlo method to evaluate a multidimensional integral to
+% within a specified absolute error tolerance with guaranteed uncertainty
+% within alpha. 
+%
+%  The guarantee holds if the modified kurtosis is less than the kmax,
+%  which is defined in terms of uncertainty(alpha), sample size to estimate
+%  variance(n_sigma) and standard deviation inflation factor(fudge). For
+%  details, please refer to our paper.
+%
+%   [Q,out_param] = CUBMC_G(f,interval) estimates the integral with
+%   integrand f to within the absolute error tolerance 1e-2 and with
+%   guaranteed uncertainty alpha within 1%. Input f a function handle. The
+%   function Y=f(X) should accept a vector argument X and return a vector
+%   result Y, the integrand evaluated at each element of X. Input interval
+%   is 2 x d matrix. 
+%
+%   Q = CUBMC_G(f,interval,measure,abstol,alpha,n_sigma,fudge) estimates the
+%   integral with integrand f to within an absolute error tolerance abstol
+%   with guaranteed uncertainty within alpha using ordered parameter input
+%   interval, measure, tolerance, uncertainty, n_sigma and fudge factor.If
+%   an input is not specified, the default value is used.
+%
+%   Q =
+%   CUBMC_G(f,interval,'measure','uniform','abstol',abstol,'alpha',alpha,
+%   'n_sigma',n_sigma,fudge',fudge) estimates the integral with integrand f
+%   to within an absolute error tolerance abstol with guaranteed
+%   uncertainty within alpha. All the field-value pairs are optional and
+%   can be supplied in different order. If an input is not specified, the
+%   default value is used.
+%
+%   Q = CUBMC_G(f,interval,in_param) estimates the integral with integrand f
+%   to within an absolute error tolerance in_param.abstol with guaranteed
+%   uncertainty within in_param.alpha. If a field is not specified, the
+%   default value is used.
+%
+%   f REPLACE_WITH_DASH_DASH- the integrand.
+%
+%   interval REPLACE_WITH_DASH_DASH- the integration interval. The default interval is [0 1]^d.
+%
+%   in_param.measure REPLACE_WITH_DASH_DASH- the measure for generating the random variable,
+%   the default is uniform.
+%
+%   in_param.abstol REPLACE_WITH_DASH_DASH- the absolute error tolerance, default value is 1e-2.
+%
+%   in_param.alpha REPLACE_WITH_DASH_DASH- the uncertainty, default value is 1%.
+%
+%   in_param.n_sigma REPLACE_WITH_DASH_DASH- initial sample size for estimating the sample
+%   variance, the default value is 1e3.
+%
+%   in_param.fudge REPLACE_WITH_DASH_DASH- the standard deviation inflation factor, the default
+%   value is 1.1.
+%   
+%   Q REPLACE_WITH_DASH_DASH- the estimated value of the the integration.
+%
+%   out_param_time_n_sigma_predict REPLACE_WITH_DASH_DASH- the estimated time to get n_sigma
+%   samples of the random variable.
+%
+%   out_param.n_left_predict REPLACE_WITH_DASH_DASH- using the time left to predict the number
+%   of samples left.
+%
+%   out_param.nmax REPLACE_WITH_DASH_DASH- the maximum sample budget to estimate mu, it comes
+%   from both the sample budget and the time budget.
+%
+%   out_param.var REPLACE_WITH_DASH_DASH- the sample variance.
+%
+%   out_param.kurtmax REPLACE_WITH_DASH_DASH- the upper bound on modified kurtosis.
+%
+%   out_param.time REPLACE_WITH_DASH_DASH- the time eclipsed.
+%
+%   out_param.n_mu REPLACE_WITH_DASH_DASH- the sample size that needed to estimate the mu.
+%
+%   out_param.n REPLACE_WITH_DASH_DASH- the total sample size needed to do the two stage
+%   algorithm.
+%
+%   out_param.exit REPLACE_WITH_DASH_DASH- the state of program when exiting.
+%                         0   success
+%                         1   No enough samples to estimate the mean.
+%                         2   Initial try out time costs more than
+%                             10% of time budget. 
+%                         3   The estimated time for estimating variance 
+%                             is bigger than half of the time budget.
+%                         10  Interval does not contain numbers.
+%                         11  Interval not 2 x d.
+%                         12  Interval is only a point in one direction.
+%                         13  Interval is infinite when measure is uniform.
+%                         14  Interval is not doubly infinite when measure
+%                             is normal.
+%   Examples:
+%
+%   Example 1:
+%   Estimate the integral with integrand f(x) = x.^2 in the interval [0,1]
+%   
+%   >> f=@(x) x.^2;interval = [0;1];
+%   >> Q = cubMC_g(f,interval,'abstol',1e-3)
+%   Q = 0.33***
+%
+%
+%   Example 2:
+%   Estimate the integral with integrand f(x) = exp(x) in the interval [1,2]
+%
+%   >> f=@(x) exp(x);interval = [1;2];
+%   >> Q = cubMC_g(f,interval,'uniform',1e-3)
+%   Q = 4.67***
+%
+%
+%   Example 3:
+%   Estimate the integral with integrand f(x) = sin(x) in the interval [1,2]
+%
+%   >> f=@(x) sin(x);interval = [1;2];
+%   >> Q = cubMC_g(f,interval,'uniform',1e-3)
+%   Q = 0.95***
+%
+%
+%   Example 4: 
+%   Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) in the
+%   interval [0 0;1 1],where x is a vector x = [x1 x2].
+%
+%   >> f=@(x) exp(-x(:,1).^2-x(:,2).^2);interval = [0 0;1 1];
+%   >> Q = cubMC_g(f,interval,'uniform',1e-3)
+%   Q = 0.55***
+%
+%
+%   Example 5: 
+%   Estimate the integral with integrand f(x) = 2^n*prod(x1*x2*...*xn)+0.555 in the
+%   interval [zeros(1,n);ones(1,n)],where x is a vector x = [x1 x2 ... xn].
+%
+%   >> n=3;f=@(x) 2^n*prod(x,2)+0.555;interval = [zeros(1,n);ones(1,n)];
+%   >> Q = cubMC_g(f,interval,'uniform',1e-3)
+%   Q = 1.5***
+%
+%
+%   See also FUNAPPX_G, INTEGRAL_G, MEANMC_G
+%
+%   Reference:
+%   [1]  F. J. Hickernell, L. Jiang, Y. Liu, and A. B. Owen, Guaranteed
+%   conservative fixed width confidence intervals via Monte Carlo sampling,
+%   Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F. Y. Kuo, G.
+%   W. Peters, and I. H. Sloan, eds.), Springer-Verlag, Berlin, 2014, to
+%   appear, arXiv:1208.4318 [math.ST]
+
+tstart=tic;
+[f,interval,in_param,out_param] = cubMC_g_param(varargin{:});%check validity of inputs
+f=transformIntegrand(f,interval,in_param); 
+% transform integrand so that the interval would not need to be changed
+if strcmp(in_param.measure,'uniform')% the using uniformly distributed samples
+    [Q,out_param] = meanMC_g(@(nfun)f(rand(nfun,in_param.dim)),in_param);
+    out_param.Q=Q;% using meanMC_g to get the mean 
+else strcmp(in_param.measure,'normal')% using normally distributed samples
+    [Q,out_param] = meanMC_g(@(nfun)f(randn(nfun,in_param.dim)),in_param);
+    out_param.Q=Q;% using meanMC_g to get the mean
+end
+out_param.time=toc(tstart); %elapsed time
+end
+function newf=transformIntegrand(oldf,interval,in_param) 
+    if strcmp(in_param.measure,'uniform') %uniform measure
+        a=interval(1,:); %left endpoint
+        b=interval(2,:); %right endpoint
+    if all(a==0) && all(b==1) %no change needed
+        newf=oldf; 
+    else %transform points and integrand
+        bmina=b-a; %interval width
+        volbox=prod(bmina); %volume of the interval
+        newf=@(x) oldf(x.*repmat(bmina,size(x,1),1)+repmat(a,size(x,1),1))...
+            .*volbox;
+       %stretch and shift, then multiply by volume
+    end
+    elseif strcmp(in_param.measure,'normal')
+        newf=oldf;% no change if it is normal measure.
+    end   
+end
+
+function [f,interval,in_param,out_param] = cubMC_g_param(varargin)
+
+default.measure = 'uniform';% default measure
+default.dim = 1;% default dimension
+default.interval = [zeros(1,default.dim);ones(1,default.dim)];% default interval
+default.abstol  = 1e-2;% default absolute error tolerence
+default.alpha = 0.01;% default uncertainty
+default.n_sigma = 1e3; % default n_sigma
+default.fudge = 1.1; % default variance inflation factor
+
+if isempty(varargin) % if no input print error message and use the default setting
+    help cubMC_g
+    warning('MATLAB:cubMC_g:fnotgiven',['f must be specified. Now GAIL is using f = @(x) x.^2. '...
+        'Integration interval must be specified. Now GAIL is using interval [0 1]'])
+    f = @(x) x.^2;
+    interval = default.interval;
+elseif numel(varargin)==1
+    % if there is only function but no interval input. Use default interval.
+    help cubMC_g
+    warning('MATLAB:cubMC_g:intervalnotgiven',...
+        'the interval must be specified, Now GAIL is using interval [0 1]')
+    f = varargin{1};
+    interval = default.interval;    
+else
+    f = varargin{1};
+    interval = varargin{2}; % the first input is function, the second input is interval.
+end
+    
+validvarargin=numel(varargin)>2;% check if there is any optional parameter input
+if validvarargin
+    in3=varargin{3}; % check the third input
+    validvarargin=(isnumeric(in3) || isstruct(in3) || ischar(in3));
+    % to see if it is numeric structure or character.
+end
+
+if ~validvarargin
+% if there is no optional input, use default settings.
+    in_param.measure = default.measure;
+    in_param.abstol = default.abstol;
+    in_param.alpha = default.alpha;
+    in_param.n_sigma = default.n_sigma;
+    in_param.fudge = default.fudge;
+else % if there is some optional input 
+    p = inputParser;
+    addRequired(p,'f',@isfcn);
+    addRequired(p,'interval',@isnumeric);
+    if isnumeric(in3) || ischar(in3)
+        %if there are multiple inputs with only numeric, they should be put
+        %in order.
+        addOptional(p,'measure',default.measure,@(x) any(validatestring(x, {'uniform','normal','Gaussian'})));
+        addOptional(p,'abstol',default.abstol,@isnumeric);
+        addOptional(p,'alpha',default.alpha,@isnumeric);
+        addOptional(p,'n_sigma',default.n_sigma,@isnumeric);
+        addOptional(p,'fudge',default.fudge,@isnumeric);
+    else
+        if isstruct(in3) %the input is structure
+            p.StructExpand = true;
+            p.KeepUnmatched = true;
+        end % if there are multiple inputs with name and numeric, they
+    % could be put not in order
+        addParamValue(p,'measure',default.measure,@(x) any(validatestring(x, {'uniform','normal','Gaussian'})));
+        addParamValue(p,'abstol',default.abstol,@isnumeric);
+        addParamValue(p,'alpha',default.alpha,@isnumeric);
+        addParamValue(p,'n_sigma',default.n_sigma,@isnumeric);
+        addParamValue(p,'fudge',default.fudge,@isnumeric);
+    end
+    parse(p,f,interval,varargin{3:end})
+    in_param = p.Results;
+end
+out_param = in_param; % let the out_param contains all the in_param
+[two, in_param.dim]=size(interval); %interval should be 2 x dimension
+if two==0 && isfield(in_param,'interval'); 
+    %if interval specified through in_param structure
+    interval=in_param.interval; %then get it from there
+    [two, in_param.dim]=size(interval); %and get the dimension
+end
+if any(isnan(interval(:))); %check interval for not a number
+    out_param.exit=10; out_param = cubMC_g_err(out_param); return; 
+end
+if two~=2 %if interval is given as row vector for dimension 1, fix that
+    if in_param.dim==2; in_param.dim=two; interval=interval';
+    else out_param.exit=11; out_param = cubMC_g_err(out_param); return; 
+        %else, return an error
+    end
+end
+interval=[min(interval,[],1); max(interval,[],1)]; 
+%ensure left and right endpoints are in order
+if any(interval(1,:)==interval(2,:)); %interval is a point in one direction
+    out_param.exit=12; out_param = cubMC_g_err(out_param); return;
+end
+in_param.interval=interval; %copy interval into the param structure
+
+if isfield(in_param,'measure'); % the sample measure
+    in_param.measure=validatestring(in_param.measure,{'uniform','normal','Gaussian'});
+    if strcmpi(in_param.measure,'Gaussian')
+        in_param.measure='normal'; 
+    end
+else
+    in_param.measure=default.measure;
+end
+if strcmp(in_param.measure,'uniform')&&~all(isfinite(interval(:)))
+    %cannot integrate on an infinite interval with the uniform distribution
+    out_param.exit=13; out_param = cubMC_g_err(out_param); return;
+end
+if strcmp(in_param.measure,'normal')&&any(isfinite(interval(:)))
+    %must integrate on an infinite interval with the normal distribution
+    out_param.exit=14; out_param = cubMC_g_err(out_param); return;
+end
+if (~isposint(in_param.n_sigma)) %the sample to estimate sigma
+    warning('MATLAB:cubMC_g:nsignotposint',...
+        ['the number n_sigma should a positive integer,'...
+        'take the absolute value and ceil.'])
+    in_param.n_sigma = ceil(abs(in_param.n_sigma));
+end
+if (in_param.fudge <= 1) %standard deviation inflation factor/fudge factor
+    warning('MATLAB:cubMC_g:fudgelessthan1',...
+        'the fudge factor should be bigger than 1, use the default value.')
+    in_param.fudge = default.fudge;
+end
+if (in_param.abstol <= 0) %error tolerance
+    warning('MATLAB:cubMC_g:abstolneg',...
+        'the absolute error tolerence should be larger than 0, use the absolute value.')
+    in_param.abstol = abs(in_param.abstol);
+end
+if (in_param.alpha <= 0 ||in_param.alpha >= 1) %uncertainty 
+    warning('MATLAB:cubMC_g:alphanot01',...
+        ['the uncertainy should be less than 1 and bigger than 0, '...
+    'use the the default value.'])
+    in_param.alpha = default.alpha;
+end
+
+end
+function [out_param,Q]=cubMC_g_err(out_param,tstart)
+%Handles errors in cubMC_g and cubMC_g_param
+%to give an exit with information
+%out_param.exit = 0   success
+%             10  interval does not contain numbers
+%             11  interval not 2 x d
+%             12  interval is only a point in one direction
+%             13  interval is infinite when measure is uniform
+%             14  interval is not doubly infinite when measure is normal
+if ~isfield(out_param,'exit'); return; end
+if out_param.exit==0; return; end
+switch out_param.exit
+    case 10; error('MATLAB:cubMC_g:intervalnotnum',...
+            'interval must contain numbers.');
+    case 11; error('MATLAB:cubMC_g:intervalnot2d',...
+            'interval must be 2 x d.');
+    case 12; error('MATLAB:cubMC_g:intervalnotlessthan2',...
+            'interval must be more than a point in any coordinate direction.');
+    case 13; error('MATLAB:cubMC_g:intervalnotfiniteforuniform',...
+            'interval must be finite when measure is uniform.');
+    case 14; error('MATLAB:cubMC_g:intervalnotinffornormal',...
+            ['interval must be infinite in both directions' ...
+        ' when measure is normal']);
+end
+out_param.Q=NaN;
+Q=out_param.Q;
+if nargin>1; out_param.time=toc(tstart); end
+end
+
+##### SOURCE END #####
+--></body></html>

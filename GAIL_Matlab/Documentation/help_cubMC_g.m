@@ -119,6 +119,9 @@
 %                             is normal
 %
 %% Guarantee
+%
+% Error guarantee:
+%
 % Suppose the modified kurtosis, $\tilde{\kappa}$, of the integrand f
 % satisfies the inequality:
 %
@@ -135,26 +138,27 @@
 %
 % where $\varepsilon$ is the absolute error tolerance.
 %
+% Cost guarantee:
+%
 % The probabilistic cost of the algorithm, with uncertainty $\beta$ , for
-% integrands of variance no greater than $\sigma^2_{\max}$ and
-% modified kurtosis no greater than $\tilde{\kappa}_{\max}$ is
-% defined as 
+% integrands of variance no greater than $\sigma^2_{\max}$ and modified
+% kurtosis no greater than $\tilde{\kappa}_{\max}$ is defined as
 %
 % $$N_{\mathrm{tot}}(\varepsilon,\alpha,\beta,\tilde{\kappa}_{\max},\sigma_{\max})
 % := \sup_{\tilde{\kappa} \le \tilde{\kappa}_{\max}, \sigma \le
-% \sigma_{\max} } \min\left\{N :
-% \mathrm{Pr}[N_{\mathrm{tot}}(\varepsilon,\alpha,\tilde{\kappa}_{\max},F) \le N] \ge
-% 1-\beta  \right \}$$
+% \sigma_{\max} } \min\left\{N
+% :\mathrm{Pr}[N_{\mathrm{tot}}(\varepsilon,\alpha,\tilde{\kappa}_{\max},\tilde{\kappa}_{\max}^{3/4})
+% \le N] \ge 1-\beta  \right \}$$
 %
-% The total cost of this two stage algrithm has a probabilistic
-% bound above by
+% The total cost of this two stage algrithm has a probabilistic bound above
+% by
 %
 % $$N_{\mathrm{tot}}(\varepsilon,\alpha, \beta, \tilde{\kappa}_{\max},
 % \sigma_{\max}) \le N_{\mathrm{up}}(\varepsilon,\alpha, \beta,
 % \tilde{\kappa}_{\max}, \sigma_{\max}) :=  n_{\sigma} +
 % N_{\mu}(\varepsilon,\sigma_{\max}v(\tilde{\alpha},\beta,C),\tilde{\alpha},\tilde{\kappa}_{\max}^{3/4})
 % $$
-%
+% with level of uncertainty $\beta$.
 %% Examples
 % Example 1:
 % Estimate the integral with integrand f(x) = x^2 in the interval [0,1].

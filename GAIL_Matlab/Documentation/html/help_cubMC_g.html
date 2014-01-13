@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>cubMC_g</title><meta name="generator" content="MATLAB 8.1"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-01-09"><meta name="DC.source" content="help_cubMC_g.m"><style type="text/css">
+      --><title>cubMC_g</title><meta name="generator" content="MATLAB 8.1"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-01-10"><meta name="DC.source" content="help_cubMC_g.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -68,37 +68,37 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
   </style></head><body><div class="content"><h1>cubMC_g</h1><!--introduction--><p><tt>Monte Carlo method to evaluate a multidimentional integral to within a specified absolute error tolerance with guaranteed uncertainy within alpha.</tt></p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Syntax</a></li><li><a href="#2">Description</a></li><li><a href="#3">Guarantee</a></li><li><a href="#4">Examples</a></li><li><a href="#9">See Also</a></li><li><a href="#10">Reference</a></li></ul></div><h2>Syntax<a name="1"></a></h2><p>[Q,out_param] = <b>cubMC_g</b>(f)</p><p>Q = <b>cubMC_g</b>(f,interval,measure,abstol,alpha,n_sigma,fudge)</p><p>Q = <b>cubMC_g</b>(f,interval,'measure','uniform','abstol',abstol,'alpha',alpha,              'n_sigma',n_sigma,fudge',fudge)</p><p>Q = <b>cubMC_g</b>(f,interval,,in_param)</p><h2>Description<a name="2"></a></h2><p>[Q,out_param] = <b>cubMC_g</b>(f,interval) <tt>estimates the integral with integrand f to within the absolute error tolerance 1e-2 and with guaranteed uncertainty alpha within 1%. Input f a function handle. The function Y=f(X) should accept a vector argument X and return a vector result Y, the integrand evaluated at each element of X.</tt></p><p>Q = <b>cubMC_g</b>(f,interval,measure,abstol,alpha,n_sigma,fudge) <tt>estimates the integral with integrand f to within an absolute error tolerance abstol with guaranteed uncertainty within alpha using ordered parameter input interval, measure, tolerence, uncertainty, n_sigma and fudge factor.</tt></p><p>Q = <b>cubMC_g</b>(f,interval,'measure','uniform','abstol',abstol,'alpha',alpha, 'n_sigma',n_sigma,fudge',fudge) <tt>estimates the integral with integrand f to within an absolute error tolerance abstol with guaranteed uncertainty within alpha. All the field-value pairs are optional and can be supplied in different order.</tt></p><p>Q = <b>cubMC_g</b>(f,interval,in_param) <tt>estimates the integral with integrand f to within an absolute error tolerance in_param.abstol with guaranteed uncertainty within in_param.alpha. If a field is not specified, the default value is used.</tt></p><p><b>Input Arguments</b></p><div><ul><li>f --- <tt>the integrand.</tt></li></ul></div><div><ul><li>interval --- <tt>the integration interval.</tt></li></ul></div><div><ul><li>in_param.measure --- <tt>the measure for generating the random variable,   the default is uniform.</tt></li></ul></div><div><ul><li>in_param.abstol --- <tt>the absolute error tolerance, default value is 1e-2.</tt></li></ul></div><div><ul><li>in_param.alpha --- <tt>the uncertainty, default value is 1%.</tt></li></ul></div><div><ul><li>in_param.n_sigma --- <tt>initial sample size for estimating the sample                         variance, the default value is 1e3.</tt></li></ul></div><div><ul><li>in_param.fudge --- <tt>the standard deviation inflation factor, the                       default value is 1.1.</tt></li></ul></div><div><ul><li>in_param.timebudget --- <tt>the time budget to do the two-stage estimation,   the default value is 100 seconds.</tt></li></ul></div><div><ul><li>in_param.nbudget --- <tt>the sample budget to do the two-stage estimation,   the default value is 1e8.</tt></li></ul></div><div><ul><li>in_param.npcmax --- <tt>number of elements in an array of optimal size to   calculate the mu, the default value is 1e6.</tt></li></ul></div><div><ul><li>in_param.checked --- <tt>the status that the paramtered are checked.</tt></li></ul></div><pre>                      0   not checked</pre><pre>                      1   checked by cubMC</pre><pre>                      2   checked by meanMC</pre><p><b>Output Arguments</b></p><div><ul><li>Q --- <tt>the estimated value of the the integration.</tt></li></ul></div><div><ul><li>out_param_time_n_sigma_predict --- <tt>the estimated time to get n_sigma                                       samples of the random variable.</tt></li></ul></div><div><ul><li>out_param.n_left_predict --- <tt>using the time left to predict the number                                 of samples left.</tt></li></ul></div><div><ul><li>out_param.nmax --- <tt>the maximum sample budget to estimate mu, it comes                       from both the sample budget and the time budget.</tt></li></ul></div><div><ul><li>out_param.var --- <tt>the sample variance.</tt></li></ul></div><div><ul><li>out_param.kurtmax --- <tt>the upper bound on modified kurtosis.</tt></li></ul></div><div><ul><li>out_param.time --- <tt>the time eclipsed.</tt></li></ul></div><div><ul><li>out_param.n_mu --- <tt>the sample size that needed to estimate the mu.</tt></li></ul></div><div><ul><li>out_param.n --- <tt>the total sample size needed to do the two stage algorithm.</tt></li></ul></div><div><ul><li>out_param.exit --- <tt>the state of program when exiting.</tt></li></ul></div><pre>                       0   success</pre><pre>                       1   No enough samples to estimate the mean</pre><pre>                       2   Initial try out time costs more than
                            10% of time budget</pre><pre>                       3   The estimated time for estimating variance
                            is bigger than half of the time budget</pre><pre>                       10  Interval does not contain numbers</pre><pre>                       11  Interval not 2 x d</pre><pre>                       12  Interval is only a point in one direction</pre><pre>                       13  Interval is infinite when measure is uniform</pre><pre>                       14  Interval is not doubly infinite when measure
-                           is normal</pre><h2>Guarantee<a name="3"></a></h2><p>Suppose the modified kurtosis, <img src="help_cubMC_g_eq56544.png" alt="$\tilde{\kappa}$">, of the integrand f satisfies the inequality:</p><p><img src="help_cubMC_g_eq35277.png" alt="$$ \tilde{\kappa} \leq \frac{n_{\sigma}-3}{n_{\sigma}-1}+&#xA;\left(\frac{\alpha n_\sigma}{1-\alpha}\right)\left(1-\frac{1}{C^2}\right)^2 =:&#xA;\tilde{\kappa}_{\max} $$"></p><p>where <img src="help_cubMC_g_eq43074.png" alt="$n_{\sigma}$"> is the number of samples used to estimate the variance of f, C is the standard deviation inflation factor, and <img src="help_cubMC_g_eq87919.png" alt="$\alpha$"> is the level of uncertainty. Then the answer <img src="help_cubMC_g_eq87415.png" alt="$\hat{\mu}$"> is guaranteed to satisfy the inequality:</p><p><img src="help_cubMC_g_eq12786.png" alt="$$\mathrm{Pr}\left(|\mu-\hat{\mu}| \leq \varepsilon \right) \geq 1-\alpha$$"></p><p>where <img src="help_cubMC_g_eq55349.png" alt="$\varepsilon$"> is the absolute error tolerance.</p><p>The probabilistic cost of the algorithm, with uncertainty <img src="help_cubMC_g_eq42727.png" alt="$\beta$"> , for integrands of variance no greater than <img src="help_cubMC_g_eq39856.png" alt="$\sigma^2_{\max}$"> and modified kurtosis no greater than <img src="help_cubMC_g_eq07094.png" alt="$\tilde{\kappa}_{\max}$"> is defined as</p><p><img src="help_cubMC_g_eq68744.png" alt="$$N_{\mathrm{tot}}(\varepsilon,\alpha,\beta,\tilde{\kappa}_{\max},\sigma_{\max})&#xA;:= \sup_{\tilde{\kappa} \le \tilde{\kappa}_{\max}, \sigma \le&#xA;\sigma_{\max} } \min\left\{N :&#xA;\mathrm{Pr}[N_{\mathrm{tot}}(\varepsilon,\alpha,\tilde{\kappa}_{\max},F) \le N] \ge&#xA;1-\beta  \right \}$$"></p><p>The total cost of this two stage algrithm has a probabilistic bound above by</p><p><img src="help_cubMC_g_eq21589.png" alt="$$N_{\mathrm{tot}}(\varepsilon,\alpha, \beta, \tilde{\kappa}_{\max},&#xA;\sigma_{\max}) \le N_{\mathrm{up}}(\varepsilon,\alpha, \beta,&#xA;\tilde{\kappa}_{\max}, \sigma_{\max}) :=  n_{\sigma} +&#xA;N_{\mu}(\varepsilon,\sigma_{\max}v(\tilde{\alpha},\beta,C),\tilde{\alpha},\tilde{\kappa}_{\max}^{3/4})&#xA;$$"></p><h2>Examples<a name="4"></a></h2><p>Example 1: Estimate the integral with integrand f(x) = x^2 in the interval [0,1].</p><pre class="codeinput">    f = @(x) x.^2;interval = [0;1]; Q = cubMC_g(f,interval,<span class="string">'abstol'</span>,1e-2)
+                           is normal</pre><h2>Guarantee<a name="3"></a></h2><p>Error guarantee:</p><p>Suppose the modified kurtosis, <img src="help_cubMC_g_eq56544.png" alt="$\tilde{\kappa}$">, of the integrand f satisfies the inequality:</p><p><img src="help_cubMC_g_eq35277.png" alt="$$ \tilde{\kappa} \leq \frac{n_{\sigma}-3}{n_{\sigma}-1}+&#xA;\left(\frac{\alpha n_\sigma}{1-\alpha}\right)\left(1-\frac{1}{C^2}\right)^2 =:&#xA;\tilde{\kappa}_{\max} $$"></p><p>where <img src="help_cubMC_g_eq43074.png" alt="$n_{\sigma}$"> is the number of samples used to estimate the variance of f, C is the standard deviation inflation factor, and <img src="help_cubMC_g_eq87919.png" alt="$\alpha$"> is the level of uncertainty. Then the answer <img src="help_cubMC_g_eq87415.png" alt="$\hat{\mu}$"> is guaranteed to satisfy the inequality:</p><p><img src="help_cubMC_g_eq12786.png" alt="$$\mathrm{Pr}\left(|\mu-\hat{\mu}| \leq \varepsilon \right) \geq 1-\alpha$$"></p><p>where <img src="help_cubMC_g_eq55349.png" alt="$\varepsilon$"> is the absolute error tolerance.</p><p>Cost guarantee:</p><p>The probabilistic cost of the algorithm, with uncertainty <img src="help_cubMC_g_eq42727.png" alt="$\beta$"> , for integrands of variance no greater than <img src="help_cubMC_g_eq39856.png" alt="$\sigma^2_{\max}$"> and modified kurtosis no greater than <img src="help_cubMC_g_eq07094.png" alt="$\tilde{\kappa}_{\max}$"> is defined as</p><p><img src="help_cubMC_g_eq11783.png" alt="$$N_{\mathrm{tot}}(\varepsilon,\alpha,\beta,\tilde{\kappa}_{\max},\sigma_{\max})&#xA;:= \sup_{\tilde{\kappa} \le \tilde{\kappa}_{\max}, \sigma \le&#xA;\sigma_{\max} } \min\left\{N :&#xA;\mathrm{Pr}[N_{\mathrm{tot}}(\varepsilon,\alpha,\tilde{\kappa}_{\max},\tilde{\kappa}_{\max}^{3/4})&#xA;\le N] \ge 1-\beta  \right \}$$"></p><p>The total cost of this two stage algrithm has a probabilistic bound above by</p><p><img src="help_cubMC_g_eq21589.png" alt="$$N_{\mathrm{tot}}(\varepsilon,\alpha, \beta, \tilde{\kappa}_{\max},&#xA;\sigma_{\max}) \le N_{\mathrm{up}}(\varepsilon,\alpha, \beta,&#xA;\tilde{\kappa}_{\max}, \sigma_{\max}) :=  n_{\sigma} +&#xA;N_{\mu}(\varepsilon,\sigma_{\max}v(\tilde{\alpha},\beta,C),\tilde{\alpha},\tilde{\kappa}_{\max}^{3/4})&#xA;$$"></p><h2>Examples<a name="4"></a></h2><p>Example 1: Estimate the integral with integrand f(x) = x^2 in the interval [0,1].</p><pre class="codeinput">    f = @(x) x.^2;interval = [0;1]; Q = cubMC_g(f,interval,<span class="string">'abstol'</span>,1e-2)
 </pre><pre class="codeoutput">
 Q =
 
-    0.3305
+    0.3335
 
 </pre><p>Example 2: Estimate the integral with integrand f(x) = exp(x) in the interval [1,2].</p><pre class="codeinput">    f = @(x) exp(x);interval = [1;2]; Q = cubMC_g(f,interval)
 </pre><pre class="codeoutput">
 Q =
 
-    4.6670
+    4.6712
 
 </pre><p>Example 3: Estimate the integral with integrand f(x) = sin(x) in the interval [1,2].</p><pre class="codeinput">    f = @(x) sin(x);interval = [1;2]; Q = cubMC_g(f,interval,<span class="string">'uniform'</span>,1e-3)
 </pre><pre class="codeoutput">
 Q =
 
-    0.9568
+    0.9565
 
 </pre><p>Example 4: Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) in the interval [0 0;1 1],where x is a vector x = [x1 x2].</p><pre class="codeinput">    f = @(x) exp(-x(:,1).^2-x(:,2).^2);interval = [0 0;1 1];
     Q = cubMC_g(f,interval,<span class="string">'uniform'</span>,1e-3)
 </pre><pre class="codeoutput">
 Q =
 
-    0.5579
+    0.5574
 
 </pre><p>Example 5: Estimate the integral with integrand <img src="help_cubMC_g_eq08416.png" alt="$f(x) = 2^d\prod_{j=1}^d x_j+0.555$"> in the interval [zeros(1,d);ones(1,d)], where x is a vector x = [x1 x2 ... xd].</p><pre class="codeinput">    d=3;f=@(x) 2^d*prod(x,2)+0.555;interval = [zeros(1,d);ones(1,d)];
     Q = cubMC_g(f,interval,<span class="string">'uniform'</span>,1e-3)
 </pre><pre class="codeoutput">
 Q =
 
-    1.5546
+    1.5551
 
 </pre><h2>See Also<a name="9"></a></h2><p>
 <a href="help_funappx_g.html">funappx_g</a>
@@ -234,6 +234,9 @@ appear, arXiv:1208.4318 [math.ST]
 %                             is normal
 %
 %% Guarantee
+%
+% Error guarantee:
+%
 % Suppose the modified kurtosis, $\tilde{\kappa}$, of the integrand f
 % satisfies the inequality:
 %
@@ -250,19 +253,20 @@ appear, arXiv:1208.4318 [math.ST]
 %
 % where $\varepsilon$ is the absolute error tolerance.
 %
+% Cost guarantee:
+%
 % The probabilistic cost of the algorithm, with uncertainty $\beta$ , for
-% integrands of variance no greater than $\sigma^2_{\max}$ and
-% modified kurtosis no greater than $\tilde{\kappa}_{\max}$ is
-% defined as 
+% integrands of variance no greater than $\sigma^2_{\max}$ and modified
+% kurtosis no greater than $\tilde{\kappa}_{\max}$ is defined as
 %
 % $$N_{\mathrm{tot}}(\varepsilon,\alpha,\beta,\tilde{\kappa}_{\max},\sigma_{\max})
 % := \sup_{\tilde{\kappa} \le \tilde{\kappa}_{\max}, \sigma \le
 % \sigma_{\max} } \min\left\{N :
-% \mathrm{Pr}[N_{\mathrm{tot}}(\varepsilon,\alpha,\tilde{\kappa}_{\max},F) \le N] \ge
-% 1-\beta  \right \}$$
+% \mathrm{Pr}[N_{\mathrm{tot}}(\varepsilon,\alpha,\tilde{\kappa}_{\max},\tilde{\kappa}_{\max}^{3/4})
+% \le N] \ge 1-\beta  \right \}$$
 %
-% The total cost of this two stage algrithm has a probabilistic
-% bound above by
+% The total cost of this two stage algrithm has a probabilistic bound above
+% by
 %
 % $$N_{\mathrm{tot}}(\varepsilon,\alpha, \beta, \tilde{\kappa}_{\max},
 % \sigma_{\max}) \le N_{\mathrm{up}}(\varepsilon,\alpha, \beta,

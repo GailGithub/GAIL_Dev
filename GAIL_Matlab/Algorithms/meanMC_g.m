@@ -101,7 +101,15 @@ function [mu,out_param]=meanMC_g(varargin)
 %  Pr(|mu-\hat{mu}| <= tol) >= 1-alpha 
 %  
 %  holds. Here mu is the true mean of Y, and \hat{mu} is the output
-%  of MEANMC_G. For details, please refer to [1].
+%  of MEANMC_G.
+%
+%  The cost of the two-stage algorithm also satisfies the inequality
+%
+%  Pr (N_tot <= N_up) >= 1-beta
+%  
+%  where N_tot is the total cost of samples, N_up is the upper bound on the
+%  cost, which is roughly propotional to sigma^2/epsilon^2, beta is the
+%  level of uncertainty on the cost. For details, please refer to [1].
 %
 %   Examples
 %

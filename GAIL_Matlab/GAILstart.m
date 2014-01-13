@@ -6,7 +6,7 @@ if nargin < 1
     isverbose =  true;
 end % print the variable names and values
 
-GAILVERSION = 1.0;
+GAILVERSION = 1.3;
 
 Friend = computer;
 
