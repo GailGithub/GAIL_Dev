@@ -7,6 +7,7 @@
             <tocitem target="help_funappx_g.html">funappx_g</tocitem>
             <tocitem target="help_integral_g.html">integral_g</tocitem>
             <tocitem target="help_meanMC_g.html">meanMC_g</tocitem>
+            <tocitem target="help_cubMC_g.html">cubMC_g</tocitem>
         </tocitem>
     </tocitem>
 </toc>

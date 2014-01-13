@@ -95,6 +95,10 @@ f = @(x) x; [q, out_param] = integral_g(f)
 % <a href="help_meanMC_g.html">meanMC_g</a>
 % </html>
 %
+% <html>
+% <a href="help_cubMC_g.html">cubMC_g</a>
+% </html>
+%
 %% Reference
 % [1]  N. Clancy, Y. Ding, C. Hamilton, F. J. Hickernell, and Y. Zhang, 
 %      The complexity of guaranteed automatic algorithms: Cones, not

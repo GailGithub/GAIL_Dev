@@ -118,7 +118,7 @@ x = -sqrt(2).*erfcinv(2*p);
 end
 
 function  [Yrand, in_param,out_param] = meanMCBernoulli_g_param(varargin)
-
+default.reltol = 1e-1;% default relative error tolerance
 default.abstol  = 1e-2;% default absolute error tolerance
 default.alpha = 0.01;% default uncertainty
 default.npcmax = 1e6;% default n piece maximum
@@ -142,8 +142,9 @@ if validvarargin
 end
 
 if ~validvarargin
-%if only have one input which is Yrand, use all the default parameters   
+%if only have one input which is Yrand, use all the default parameters 
     in_param.abstol = default.abstol;
+    in_param.reltol = default.reltol;    
     in_param.alpha = default.alpha;
     in_param.npcmax = default.npcmax;
     in_param.nmax = default.nmax;
@@ -153,6 +154,7 @@ else
     if isnumeric(in2)%if there are multiple inputs with
         %only numeric, they should be put in order.
         addOptional(p,'abstol',default.abstol,@isnumeric);
+        addOptional(p,'reltol',default.reltol,@isnumeric);        
         addOptional(p,'alpha',default.alpha,@isnumeric);
         addOptional(p,'npcmax',default.npcmax,@isnumeric);
         addOptional(p,'nmax',default.nmax,@isnumeric);
@@ -160,8 +162,9 @@ else
         if isstruct(in2) %parse input structure
             p.StructExpand = true;
             p.KeepUnmatched = true;
-        end
+        end     
         addParamValue(p,'abstol',default.abstol,@isnumeric);
+        addParamValue(p,'reltol',default.reltol,@isnumeric);          
         addParamValue(p,'alpha',default.alpha,@isnumeric);
         addParamValue(p,'npcmax',default.npcmax,@isnumeric);
         addParamValue(p,'nmax',default.nmax,@isnumeric);
@@ -169,11 +172,17 @@ else
     parse(p,Yrand,varargin{2:end})
     in_param = p.Results;
 end
-    if (in_param.abstol <= 0) % absolute error tolerance 
+    if (in_param.abstol <= 0) % absolute error tolerance
         warning('MATLAB:meanMCBernoulli_g:abstolneg',...
             ['Absolute error tolerance should be greater than 0, ' ...
             'use the absolute value of the error tolerance'])
         in_param.abstol = abs(in_param.abstol);
+    end
+    if (in_param.reltol <= 0 || in_param.reltol >=1) % relative error tolerance
+        warning('MATLAB:meanMCBernoulli_g:reltolnotin01',...
+            ['Relative error tolerance should be less than 1 and bigger than 0, ' ...
+            'use the default value of the error tolerance'])
+        in_param.reltol = default.reltol;
     end
     if (in_param.alpha <= 0 ||in_param.alpha >= 1) % uncertainty
         warning('MATLAB:meanMCBernoulli_g:alphanotin01',...
