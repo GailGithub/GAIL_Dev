@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>integral_g</title><meta name="generator" content="MATLAB 8.1"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2013-10-17"><meta name="DC.source" content="help_integral_g.m"><style type="text/css">
+      --><title>integral_g</title><meta name="generator" content="MATLAB 8.1"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-01-12"><meta name="DC.source" content="help_integral_g.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -69,16 +69,53 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 <span class="comment">% Integrate function x with default input parameter to make the error</span>
 <span class="comment">% less than 1e-7.</span>
-</pre><pre class="codeoutput">Undefined function 'integral_g' for input arguments of type 'function_handle'.
-Error in help_integral_g (line 74)
-f = @(x) x; [q, out_param] = integral_g(f)</pre><p>Example 2</p><pre class="codeinput">[q, out_param] = integral_g(@(x) 3*x.^2,<span class="string">'ninit'</span>,52,<span class="string">'nmax'</span>,1e7,<span class="string">'abstol'</span>,1e-8)
+</pre><pre class="codeoutput">
+q =
+
+    0.5000
+
+
+out_param = 
+
+          abstol: 1.0000e-06
+           ninit: 52
+            nmax: 10000000
+             tau: 101
+    exceedbudget: 0
+       tauchange: 0
+               q: 0.5000
+         npoints: 52
+          errest: 8.1763e-16
+
+</pre><p>Example 2</p><pre class="codeinput">[q, out_param] = integral_g(@(x) 3*x.^2,<span class="string">'ninit'</span>,52,<span class="string">'nmax'</span>,1e7,<span class="string">'abstol'</span>,1e-8)
 
 <span class="comment">% Integrate function x^2 with starting number of points 52, cost budget 10000000</span>
 <span class="comment">% and error toerence 1e-8</span>
+</pre><pre class="codeoutput">
+q =
+
+    1.0000
+
+
+out_param = 
+
+          abstol: 1.0000e-08
+               f: @(x)3*x.^2
+           ninit: 52
+            nmax: 10000000
+             tau: 101
+    exceedbudget: 0
+       tauchange: 0
+               q: 1.0000
+         npoints: 43555
+          errest: 9.9947e-09
+
 </pre><h2>See Also<a name="5"></a></h2><p>
 <a href="help_funappx_g.html">funappx_g</a>
 </p><p>
 <a href="help_meanMC_g.html">meanMC_g</a>
+</p><p>
+<a href="help_cubMC_g.html">cubMC_g</a>
 </p><h2>Reference<a name="6"></a></h2><p>[1]  N. Clancy, Y. Ding, C. Hamilton, F. J. Hickernell, and Y. Zhang,      The complexity of guaranteed automatic algorithms: Cones, not      balls, Journal of Complexity 2013, to appear, DOI      10.1016/j.jco.2013.09.002.</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2013a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 %% integral_g
@@ -176,6 +213,10 @@ f = @(x) x; [q, out_param] = integral_g(f)
 %
 % <html>
 % <a href="help_meanMC_g.html">meanMC_g</a>
+% </html>
+%
+% <html>
+% <a href="help_cubMC_g.html">cubMC_g</a>
 % </html>
 %
 %% Reference
