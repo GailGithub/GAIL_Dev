@@ -76,7 +76,9 @@
 % * out_param.errorbound --- |estimation of the approximation absolute error
 % bound|
 % 
-% * out_param.tau --- |latest value of tau|
+% * out_param.nstar --- |final value of the parameter defining the cone of
+% function for which this algorithm is guaranteed, nstar = ninit -2
+% initially and is increased as necessary|
 %
 % * out_param.a --- |left end point of interval|
 %
@@ -94,14 +96,19 @@
 %    
 % |If the function to be approximated,|  $f$  |satisfies the cone condition|
 %
-% $$\|f''\|_\infty \le \frac { \mathrm{out\_param.tau} }{b-a} \left\|f'-\frac{f(b)-f(a)}{b-a}\right\|_\infty,$$
+% $$\|f''\|_\infty \le \frac { \mathrm{out\_param.n}^* }{b-a} \left\|f'-\frac{f(b)-f(a)}{b-a}\right\|_\infty,$$
 % 
 % |then the|  $fappx$  |output by this algorithm is guaranteed to
 % satisfy|
 %
 % $$\| f-fappx \|_{\infty} \le \mathrm{out\_param.abstol}$$
 %
-% |provided the flag| 
+% |with upper bound of the cost of the algorithm is|
+%
+% $$\sqrt{ \frac{\mathrm{out\_param.n}^*(\mathrm{out\_param.b}-\mathrm{out\_param.a})^2 
+% \|f''\|_\infty}{2 \mathrm{out\_param.abstol}}}+2\mathrm{out\_param.n}^*+4$$
+%
+% |provided the flag|
 %
 % $$\mathrm{out\_param.exceedbudget} = 0.$$
 %

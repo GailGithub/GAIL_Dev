@@ -80,10 +80,13 @@ function [fappx,out_param]=funappxab_g(varargin)
 %  Guarantee
 %    
 %  If the function to be approximated, f satisfies the cone condition
-%  \|f''\|_\infty <= \frac{out_param.tau}{b-a}\|f'-\frac{f(b)-f(a)}{b-a}\|_\infty,
-%  then the fappx output by this algorithm is guaranteed to satisfy
-%  \| f-fappx \|_{\infty} <= out_param.abstol,
-%  provided the flag out_param.exceedbudget = 0.
+%  \|f''\|_\infty <=
+%  \frac{out_param.nstar}{b-a}\|f'-\frac{f(b)-f(a)}{b-a}\|_\infty, then the
+%  fappx output by this algorithm is guaranteed to satisfy \| f-fappx
+%  \|_{\infty} <= out_param.abstol, provided the flag
+%  out_param.exceedbudget = 0. And the upper bound of the cost is \sqrt{
+%  \frac{out_param.n^* (out_param.b-out_param.a)^2 \|f''\|_\infty}{2
+%  out\_param.abstol}}+2 out_param.n^*+4.
 %   
 %
 %   Examples

@@ -55,10 +55,14 @@ function [fappx,out_param]=funappx_g(varargin)
 %  Guarantee
 %    
 %  If the function to be approximated, f satisfies the cone condition
-%  \|f''\|_\infty <= 2 out_param.nstar\|f'-f(1)+f(0)\|_\infty
-%  then the fappx output by this algorithm is guaranteed to satisfy
-%  \| f-fappx \|_{\infty} <= out_param.abstol,
-%  provided the flag out_param.exceedbudget = 0.
+%  \|f''\|_\infty <= 2 out_param.nstar\|f'-f(1)+f(0)\|_\infty then the
+%  fappx output by this algorithm is guaranteed to satisfy \| f-fappx
+%  \|_{\infty} <= out_param.abstol, provided the flag
+%  out_param.exceedbudget = 0. And the upper bound of the cost is \sqrt{
+%  \frac{out_param.n^* \|f''\|_\infty}{2 out\_param.abstol}}+2
+%  out_param.n^*+4. The optimal cost of this problem is \sqrt{
+%  \frac{(out_param.n^*-1) \|f''\|_\infty}{32 out_param.n^*
+%  out_param.abstol}}.
 %
 %   Examples
 %

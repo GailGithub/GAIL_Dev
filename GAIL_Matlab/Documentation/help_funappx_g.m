@@ -80,14 +80,19 @@
 %
 % $$\| f-fappx \|_{\infty} \le \mathrm{out\_param.abstol}$$
 %
-% |with cost of the algorithm is|
+% |with upper bound of the cost of the algorithm is|
 %
-% $$\left\lceil \frac{\|f''\|_\infty}{8
-% \mathrm{out\_param.abstol}}\right\rceil+1$$
+% $$\sqrt{ \frac{\mathrm{out\_param.n}^* \|f''\|_\infty}{2
+% \mathrm{out\_param.abstol}}}+2\mathrm{out\_param.n}^*+4$$
 %
 % |provided the flag|
 %
 % $$\mathrm{out\_param.exceedbudget} = 0.$$
+%
+% |And the optimal cost of this problem is|
+%
+% $$\sqrt{ \frac{(\mathrm{out\_param.n}^*-1) \|f''\|_\infty}{32
+% \mathrm{out\_param.n}^* \mathrm{out\_param.abstol}}}$$
 %
 %% Examples
 % *Example 1*
