@@ -247,7 +247,7 @@ while true
         end
     else
         multiplier = 5;
-        ntry = multiplier*ntry; % boost the try out sample size five times
+        ntry = multiplier*ntry; % boost the try out sample size at multiplier times
         nsofar=nsofar+ntry; % update the samples that have been used
         tic;
         Yrand(ntry);

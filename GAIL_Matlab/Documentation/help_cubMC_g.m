@@ -6,10 +6,12 @@
 %% Syntax
 % [Q,out_param] = *cubMC_g*(f)
 %
-% Q = *cubMC_g*(f,interval,measure,abstol,alpha,n_sigma,fudge)
+% Q = *cubMC_g*(f,interval,measure,abstol,alpha,n_sigma,fudge,timebudget,
+%               nbudget,npcmax)
 %
 % Q = *cubMC_g*(f,interval,'measure','uniform','abstol',abstol,'alpha',alpha,
-%              'n_sigma',n_sigma,fudge',fudge)
+%              'n_sigma',n_sigma,fudge',fudge,'timebudget',timebudget,
+%              'nbudget',nbudget,'npcmax',npcmax)
 %
 % Q = *cubMC_g*(f,interval,,in_param)
 %
@@ -18,18 +20,24 @@
 % integrand f to within the absolute error tolerance 1e-2 and with
 % guaranteed uncertainty alpha within 1%. Input f a function handle. The
 % function Y=f(X) should accept a vector argument X and return a vector
-% result Y, the integrand evaluated at each element of X.|
+% result Y, the integrand evaluated at each element of X.Input interval
+% is 2 x d matrix.|
 %
-% Q = *cubMC_g*(f,interval,measure,abstol,alpha,n_sigma,fudge) |estimates the
-% integral with integrand f to within an absolute error tolerance abstol
-% with guaranteed uncertainty within alpha using ordered parameter input
-% interval, measure, tolerence, uncertainty, n_sigma and fudge factor.|
+% Q = *cubMC_g*(f,interval,measure,abstol,alpha,n_sigma,fudge,timebudget,
+% nbudget,npcmax) |estimates the integral with integrand f to within an
+% absolute error tolerance abstol with guaranteed uncertainty within alpha
+% using ordered parameter input interval, measure, tolerence, uncertainty,
+% n_sigma, fudge, timebudget, nbudget and npcmax. If an input is not
+% specified, the default value is used.|
 %
-% Q = *cubMC_g*(f,interval,'measure','uniform','abstol',abstol,'alpha',alpha,
-% 'n_sigma',n_sigma,fudge',fudge) |estimates the integral with integrand f
+% Q =
+% *cubMC_g*(f,interval,'measure','uniform','abstol',abstol,'alpha',alpha,
+% 'n_sigma',n_sigma,fudge',fudge,'timebudget',timebudget,'nbudget',nbudget,
+%   'npcmax',npcmax) |estimates the integral with integrand f
 % to within an absolute error tolerance abstol with guaranteed uncertainty
 % within alpha. All the field-value pairs are optional and can be supplied
-% in different order.|
+% in different order.If an input is not specified, the default value is
+%   used.|
 %
 % Q = *cubMC_g*(f,interval,in_param) |estimates the integral with integrand f
 % to within an absolute error tolerance in_param.abstol with guaranteed

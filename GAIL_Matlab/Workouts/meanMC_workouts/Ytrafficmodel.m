@@ -1,5 +1,5 @@
 % this is the Nagel-Schreckenberg traffic model 
-% input --- replication number/sample size
+% input --- replication number/sample size R
 % output --- the average velocity of all the cars during the given period of time
 function b = Ytrafficmodel(R) %input replication number and output average velocity
 vmax = 7;% max velocity
@@ -12,7 +12,9 @@ v = zeros(R,N); % initial velocity for all cars
 %v = round(vmax*rand(R,N)); % initial velocity for all cars
 x = zeros(R,N);% positions for all cars
 for j = 1:R
-    x(j,:) = sort(randperm(M,N))-1; % place N cars into M positions for n samples
+    RandPosition = randperm(M);
+    x(j,:) = sort(RandPosition(1:N))-1; 
+    % place N cars into M positions for each replication
 end
 for t = 1:T
     d = [diff(x,1,2) x(:,1)+M-x(:,N)]; %update distances between vehicles

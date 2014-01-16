@@ -11,7 +11,7 @@ function [Q,out_param] = cubMC_g(varargin)
 %   is 2 x d matrix. 
 %
 %   Q =
-%   CUBMC_G(f,interval,measure,abstol,alpha,n_sigma,fudgetimebudget,nbudget,npcmax)
+%   CUBMC_G(f,interval,measure,abstol,alpha,n_sigma,fudge,timebudget,nbudget,npcmax)
 %   estimates the integral with integrand f to within an absolute error
 %   tolerance abstol with guaranteed uncertainty within alpha using ordered
 %   parameter input interval, measure, tolerance, uncertainty, n_sigma,
@@ -289,14 +289,14 @@ else % if there is some optional input
     parse(p,f,interval,varargin{3:end})
     in_param = p.Results;
 end
+if any(isnan(interval(:))); %check interval for not a number
+    out_param.exit=10; out_param = cubMC_g_err(out_param); return; 
+end
 [two, in_param.dim]=size(interval); %interval should be 2 x dimension
 if two==0 && isfield(in_param,'interval'); 
     %if interval specified through in_param structure
     interval=in_param.interval; %then get it from there
     [two, in_param.dim]=size(interval); %and get the dimension
-end
-if any(isnan(interval(:))); %check interval for not a number
-    out_param.exit=10; out_param = cubMC_g_err(out_param); return; 
 end
 if two~=2 %if interval is given as row vector for dimension 1, fix that
     if in_param.dim==2; in_param.dim=two; interval=interval';
