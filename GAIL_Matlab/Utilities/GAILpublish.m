@@ -1,4 +1,4 @@
-%To generate help html
+%GAILPUBLISH  To generate html files in the GAIL subdirectory Documentation
  publish('GAIL');
  publish('funclist');
  publish('help_funappx_g');

@@ -1,4 +1,4 @@
 function b=ispositive(a)
 %
-% ISPOSITIVE To judge a variable is positive or not
+% ISPOSITIVE To judge if a variable is non-negative or not
 b = isnumeric(a) && (a>=0);

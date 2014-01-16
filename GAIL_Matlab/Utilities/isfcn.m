@@ -1,4 +1,4 @@
 function b=isfcn(h)
 %
-%ISFCN To judge input is a function or not
+%ISFCN To judge if input is a function handle or not
 b = isa(h, 'function_handle');

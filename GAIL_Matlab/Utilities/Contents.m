@@ -1,11 +1,11 @@
 % UTILITIES
 %
 % Files
-%   GAILbuild  - To build doc search database in Matlab help
-%   GAILpublish - To generate help html
-%   isfcn      - To judge input is a function or not
-%   ispositive - To judge a variable is positive or not
-%   isposge2    - To judge a variable is greater or equal than 2
-%   isposint    - To judge input is positive integer or not
-%   isposge3    - To judge a variable is greater or equal than 3
-%   verifyparam - Make sure the parameters defining the functions exist and 
+%   GAILbuild   - To build doc search database in MATLAB help
+%   GAILpublish - To generate html files in the GAIL subdirectory Documentation
+%   isfcn       - To judge if input is a function handle or not
+%   ispositive  - To judge if a variable is non-negative or not
+%   isposge2    - To judge if a variable is greater than or equal to 2
+%   isposint    - To judge if input is a non-negative integer or not
+%   isposge3    - To judge if a variable is greater than or equal to 3
+%   verifyparam - To make sure the parameters defining a function exist  
