@@ -12,7 +12,7 @@ function mu=dt_meanMC_g_TrafficModel(tol)
 % 
 %     4.4***
 % 
-% >> dt_meanMC_g_TrafficModel(1e-3)
+% >> dt_meanMC_g_TrafficModel(5e-3)
 % 
 % ans =
 % 
