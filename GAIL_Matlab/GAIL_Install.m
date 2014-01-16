@@ -1,5 +1,4 @@
-% GAIL_Install.m
-% This script is to install GAIL, to add GAIL path to MATLAB search path.
+% GAIL_INSTALL   Install GAIL. Add GAIL paths to MATLAB search path.
 clear all; close all; clc;
 [GAILPATH,GAILVERSION,PATHNAMESEPARATOR,MATLABVERSION] = GAILstart;
 fprintf('\nWelcome to GAIL version %g.\n', GAILVERSION);

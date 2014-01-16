@@ -1,6 +1,4 @@
-%GAIL_Reinstall.m
-% This script is to reinstall GAIL package. 
-% To remove the old GAIL path and add the new one.
+%GAIL_REINSTALL  Reinstall GAIL. Remove existing GAIL paths and add new ones.
 clear all; close all; clc;
 [GAILPATH,GAILVERSION,PATHNAMESEPARATOR,MATLABVERSION] = GAILstart;
 fprintf('\nYou are reinstalling GAIL version %g.\n\n',GAILVERSION);

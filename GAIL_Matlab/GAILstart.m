@@ -1,5 +1,4 @@
-% GAILstart.m
-% This function is to initialize all the GAIL path and parameters
+% GAILSTART  Initialize all the GAIL paths and parameters
 function [GAILPATH,GAILVERSION,PATHNAMESEPARATOR,MATLABVERSION] = GAILstart(isverbose)
 
 if nargin < 1
