@@ -1,7 +1,7 @@
 % GAIL_MATLAB
 %
 % Files
-%   GAILstart      - Initialize all the GAIL parameters
+%   GAILstart      - Initialize all the GAIL paths and system parameters.
 %   GAIL_Install   - Install GAIL. Add GAIL paths to MATLAB search path.
 %   GAIL_Reinstall - Reinstall GAIL. Remove existing GAIL paths and add new ones.
 %   GAIL_Uninstall - Uninstall GAIL. Remove GAIL paths from MATLAB search path

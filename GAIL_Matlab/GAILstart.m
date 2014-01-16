@@ -1,4 +1,4 @@
-% GAILSTART  Initialize all the GAIL paths and parameters
+% GAILSTART  Initialize all the GAIL paths and system parameters.
 function [GAILPATH,GAILVERSION,PATHNAMESEPARATOR,MATLABVERSION] = GAILstart(isverbose)
 
 if nargin < 1
