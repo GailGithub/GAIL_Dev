@@ -6,7 +6,7 @@
 %   GAIL_Reinstall - Reinstall GAIL
 %   GAIL_Uninstall - Uninstall GAIL
 %   LICENSE        - License of GAIL
-%   README	   - Installation introduction
+%   README         - Installation introduction
 % 
 % Folders
 %   Algorithms     - GAIL algorithms

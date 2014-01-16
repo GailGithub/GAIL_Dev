@@ -1,27 +1,26 @@
 Guaranteed Automatic Integration Library (GAIL)
-GAIL Version 1.3.0, Jan 30th, 2013.
+GAIL Version 1.3.0, Jan 30th, 2014.
 See LICENSE.m for copyright and disclaimer.
 
 GAIL is a suite of algorithms for integration problems in one and many
-dimensions,3 and whose answers are guaranteed to be correct.
+dimensions, and whose answers are guaranteed to be correct.
 
 
 Developed by
 -------------
 
-Fred Hickernell (Illinois Institute of Technology), Sou-Cheng Choi
-(University of Chicago, Argonne National Laboratory, and IIT), and
-their collaborators including Yuhan Ding (IIT), Lan Jiang (IIT),
-Yizhi Zhang (IIT), Xincheng Sheng(IIT) and Xuan Zhou(IIT) Department of Applied Mathematics, Illinois Institute of Technology.
+Fred Hickernell, Sou-Cheng Choi, and their collaborators including
+Yuhan Ding, Lan Jiang, Yizhi Zhang, Xincheng Sheng, and Xuan Zhou,
+Department of Applied Mathematics, Illinois Institute of Technology.
 
 
 Please cite the following software and papers:
 
 
-Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, and
-Yizhi Zhang. "GAIL: Guaranteed Automatic Integration Library (Version
-1)" [MATLAB Software], 2013.  Available from
-http://code.google.com/p/gail/
+Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Xincheng
+Sheng, Yizhi Zhang, and Xuan Zhou, "GAIL: Guaranteed Automatic
+Integration Library (Version 1.3.0)" [MATLAB Software], 2014.  Available
+from http://code.google.com/p/gail/
 
 
 Fred J. Hickernell, Lan Jiang, Yuewei Liu, and Art B. Owen,
@@ -40,9 +39,10 @@ Downloads
 ------------
 GAIL can be downloaded from http://code.google.com/p/gail/.
 
-Alternatively, you can Get a local copy of the gail repository with this command:
+Alternatively, you can get a local copy of the GAIL repository with
+this command:
 
-git clone https://code.google.com/p/gail/
+  git clone https://code.google.com/p/gail/
 
 
 Requirements
@@ -60,17 +60,17 @@ Detailed documentation is available at GAIL_Matlab/Documentation.
 General Usage Notes
 -------------------
 
-GAIL Version 1.0.0 includes the following three algorithms:
+GAIL Version 1.3.0 includes the following four algorithms:
 
 1.  funappx_g: One-dimensional function approximation on bounded interval
 2.  integral_g:  One-dimensional integration on bounded interval
 3.  meanMC_g:  Monte Carlo method for estimating mean of a random variable
-4.  cubMC_g: Monte Carlo method for numerical integration
+4.  cubMC_g: Monte Carlo method for numerical multiple integration
 
 Installation Instruction
 ------------------------
 
-1.  Unzip the contents of the zip file to a directory and maintain the 
+1.  Unzip the contents of the zip file to a directory and maintain the
     existing directory and subdirectory structure. (Please note: If you
     install into the "toolbox" subdirectory of the MATLAB program
     hierarchy, you will need to click the button "Update toolbox path
@@ -83,18 +83,19 @@ Installation Instruction
     select the "Save" button on this dialog so that GAIL is on the
     path automatically in future MATLAB sessions.
 
-3.  To check if you have installed GAIL successfully, type: help
-    funappx_g to see if it shows up.
+3.  To check if you have installed GAIL successfully, type "help
+    funappx_g" to see if its documentation shows up.
 
 Alternatively, you could do this:
 
-1.  Download DownloadInstallGail_1_3_0.m and put it where you want GAIL go.
+1.  Download DownloadInstallGail_1_3_0.m and put it where you want
+    GAIL to be installed.
 
-2.  Execute it.
+2.  Execute it in MATLAB.
 
 To uninstall GAIL, execute "GAIL_Uninstall".
 
-To reinstall GAIL, execute “GAIL_Reinstall”.
+To reinstall GAIL, execute "GAIL_Reinstall".
 
 Contact Information
 --------------------
