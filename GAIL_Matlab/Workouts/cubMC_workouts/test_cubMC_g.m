@@ -1,4 +1,4 @@
-% This is the drive script to test cubMC_g algorithm
+%TEST_CUBMC_G   This is the driver script to test cubMC_g algorithm
 clear all;close all;clc;
 in_param.measure  = 'uniform';
 %f=@(x) exp(-x(1).^2-x(2).^2);% the test function

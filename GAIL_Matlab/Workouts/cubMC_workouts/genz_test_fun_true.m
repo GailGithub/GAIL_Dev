@@ -1,6 +1,6 @@
-%This function provides the true integrals of the seven test functions from
-%Allan Genz and Keister. the test function accepts six inputs and give the
-%output of the integration.
+%GENZ_TEST_FUN_TRUE Provides true integrals of seven test functions
+% from Allan Genz and Keister. the test function accepts six
+%inputs and give the output of the integration.
 % the first API is interval, which is a matrix of size 2 x dim.
 % the second API is index, which identify which test function to use.
 % the third API is the dimension of the integrand.

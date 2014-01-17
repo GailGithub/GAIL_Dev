@@ -1,6 +1,6 @@
 function [testfun,out_param]=choosetestfun(fun,in_param)
-%   This function chooses and sets up a test function from the parameters
-%      input by the user and contained in the structures
+%CHOOSETESTFUN Chooses and sets up a test function
+%      from the parameters input by the user and contained in the structures
 %      fun and param
 %   fun.funtype         = type of test function
 %   param.interval      = domain of test function

@@ -1,6 +1,6 @@
-%This is a suite of test functions from Allan Genz and Keister, which
-%contains seven multidimensional integrands. the test function accepts six
-%inputs and give the output of the function values.
+%GENZ_TEST_FUN  A suite of test functions from Allan Genz and Keister
+%that contains seven multidimensional integrands. the test
+%function accepts six inputs and give the output of the function values.
 % the first API is x, which is the random variable, x should be a matrix
 % of size n x d. n is the sample size, d is the dimension.
 % the second API is index, which identify which test function to use.
