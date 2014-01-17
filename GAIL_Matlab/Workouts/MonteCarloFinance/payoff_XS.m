@@ -1,5 +1,5 @@
 function [pay,out_payparam,out_stparam]=payoff_XS(varargin)
-% PAYOFF generates option payoffs for certain options
+% PAYOFF_XS generates payoffs for certain options
 %
 %   pay = PAYOFF(N,in_payparam,in_stparam) 
 %   generates N payoffs of a European call option with the default
