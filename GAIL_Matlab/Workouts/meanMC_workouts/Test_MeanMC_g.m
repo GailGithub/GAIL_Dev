@@ -1,4 +1,4 @@
-% This is the drive file to test the meanMC_g algorithm
+% This is the driver file to test the meanMC_g algorithm
 clear all; close all; clc;
 y = @(n) rand(n,1).^2;% the test function
 %y = @Ytrafficmodel; % this is the traffic model
