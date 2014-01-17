@@ -11,4 +11,3 @@
 %   integralab_g      - 1-D guaranteed function integration using trapezoidal rule
 %   meanMCBernoulli_g - Monte Carlo method to estimate the mean of a Bernoullii
 %   meanMC_g          - Monte Carlo method to estimate the mean of a random variable to
-%   verifyparam       - Make sure the parameters defining the functions exist and 
