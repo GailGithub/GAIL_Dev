@@ -1,4 +1,4 @@
-%Execution file of automatic guaranteed algorithm for function integration
+%WORKOUT_INTEGRAL_G Calls automatic guaranteed algorithm for univariate integration
 
 %% Garbage cleanup
 format long e

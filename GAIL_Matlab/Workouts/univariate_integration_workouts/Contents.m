@@ -1,4 +1,6 @@
-% INTEGGUAR_WORKOUTS
+% UNIVARIATE_INTEGRATION_WORKOUTS
 %
 % Files
-%   tryoutautoint - try out adapttrap
+%
+%   tryout_integral_g_FJH - Try out adapttrap
+%   workout_integral_g    - Calls automatic guaranteed algorithm for univariate integration
