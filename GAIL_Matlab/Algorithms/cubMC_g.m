@@ -1,11 +1,11 @@
 function [Q,out_param] = cubMC_g(varargin)
 % CUBMC_G Monte Carlo method to evaluate a multidimensional integral to
 % within a specified absolute error tolerance with guaranteed uncertainty
-% within alpha. 
+% alpha.
 %
 %   [Q,out_param] = CUBMC_G(f,interval) estimates the integral with
 %   integrand f to within the absolute error tolerance 1e-2 and with
-%   guaranteed uncertainty alpha within 1%. Input f a function handle. The
+%   guaranteed uncertainty alpha 1%. Input f is a function handle. The
 %   function Y=f(X) should accept a vector argument X and return a vector
 %   result Y, the integrand evaluated at each element of X. Input interval
 %   is 2 x d matrix. 
@@ -34,7 +34,8 @@ function [Q,out_param] = cubMC_g(varargin)
 %
 %   f --- the integrand.
 %
-%   interval --- the integration interval. The default interval is [0 1]^d.
+%   interval --- the integration interval. The default interval is
+%   [zeros(1,d); ones(1:d)], the default d is 1.
 %
 %   in_param.measure --- the measure for generating the random variable,
 %   the default is uniform.
@@ -56,14 +57,14 @@ function [Q,out_param] = cubMC_g(varargin)
 %   the default value is 1e8.
 %
 %   in_param.npcmax --- number of elements in an array of optimal size to
-%   calculate the mu, the default value is 1e6.
+%   calculate the mean, the default value is 1e6.
 %
-%   in_param.checked --- the status that the paramtered are checked.
+%   in_param.checked --- the status that the paramters are checked.
 %                        0   not checked
-%                        1   checked by cubMC
-%                        2   checked by meanMC
+%                        1   checked by cubMC_g
+%                        2   checked by meanMC_g
 %
-%   Q --- the estimated value of the the integration.
+%   Q --- the estimated value of the integral.
 %
 %   out_param_time_n_sigma_predict --- the estimated time to get n_sigma
 %   samples of the random variable.

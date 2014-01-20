@@ -61,8 +61,8 @@ function [mu,out_param]=meanMC_g(varargin)
 %
 %   in_param.checked --- the status that the paramtered are checked.
 %                        0   not checked
-%                        1   checked by cubMC
-%                        2   checked by meanMC
+%                        1   checked by cubMC_g
+%                        2   checked by meanMC_g
 %
 %   out_param_time_n_sigma_predict --- the estimated time to get n_sigma
 %   samples of the random variable.
