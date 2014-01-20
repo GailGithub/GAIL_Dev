@@ -1,13 +1,13 @@
-%DT_FUNAPPX_G small doctest for funappx_g
+%DT_FUNAPPX01_G small doctest for funappx01_g
 %
-%   >> funappx_g
+%   >> funappx01_g
 %
 %   Function f must be specified. Now GAIL is using f(x)=x^2. 
 %
 %
 %   Example 1:
 %   
-%   >> f = @(x) x.^2; fappx = funappx_g(f)
+%   >> f = @(x) x.^2; fappx = funappx01_g(f)
 %
 %   fappx = 
 %
@@ -16,7 +16,7 @@
 %
 %   Example 2:
 %
-%   >> f = @(x) x.^2; [fappx out_param] = funappx_g(f)
+%   >> f = @(x) x.^2; [fappx out_param] = funappx01_g(f)
 %   
 %   fappx = 
 %
@@ -36,7 +36,7 @@
 %   Example 3:
 %
 %   >> clear in_param; in_param.abstol = 10^(-8); 
-%   >> [fappx, out_param] = funappx_g(@(x) x.^2, in_param)
+%   >> [fappx, out_param] = funappx01_g(@(x) x.^2, in_param)
 %
 %   fappx = 
 %
@@ -57,7 +57,7 @@
 %   Example 4: 
 %
 %   >> clear in_param; in_param.ninit = 10; 
-%   >> [fappx, out_param] = funappx_g(@(x) x.^2, in_param)
+%   >> [fappx, out_param] = funappx01_g(@(x) x.^2, in_param)
 %
 %   fappx = 
 %
@@ -78,7 +78,7 @@
 %   Example 5:
 %
 %   >> clear in_param; in_param.Nmax = 10^6; 
-%   >> [fappx, out_param] = funappx_g(@(x) x.^2, in_param)
+%   >> [fappx, out_param] = funappx01_g(@(x) x.^2, in_param)
 %
 %   fappx = 
 %
@@ -100,7 +100,7 @@
 %
 %   >> clear in_param; in_param.abstol = 10^(-8); 
 %   >> in_param.ninit = 10; in_param.Nmax = 10^6; 
-%   >> [fappx, out_param] = funappx_g(@(x) x.^2, in_param)
+%   >> [fappx, out_param] = funappx01_g(@(x) x.^2, in_param)
 %
 %   fappx = 
 %
@@ -119,7 +119,7 @@
 %
 %   Example 7:
 %
-%   >> [fappx, out_param] = funappx_g(@(x) x.^2,'abstol',1e-8)
+%   >> [fappx, out_param] = funappx01_g(@(x) x.^2,'abstol',1e-8)
 %
 %   fappx = 
 %
@@ -139,7 +139,7 @@
 %
 %   Example 8:
 %
-%   >> [fappx, out_param] = funappx_g(@(x) x.^2,'ninit',10)
+%   >> [fappx, out_param] = funappx01_g(@(x) x.^2,'ninit',10)
 %
 %   fappx = 
 %
@@ -159,7 +159,7 @@
 %
 %   Example 9:
 %
-%   >> [fappx, out_param] = funappx_g(@(x) x.^2,'nmax',1e6)
+%   >> [fappx, out_param] = funappx01_g(@(x) x.^2,'nmax',1e6)
 %   
 %   fappx = 
 %
@@ -180,7 +180,7 @@
 %   Example 10:
 %
 %   >> f = @(x) x.^2; 
-%   >> [fappx, out_param] = funappx_g(f,'ninit',10,'nmax',1e6,'abstol',1e-8)
+%   >> [fappx, out_param] = funappx01_g(f,'ninit',10,'nmax',1e6,'abstol',1e-8)
 %
 %   fappx = 
 %
@@ -199,7 +199,7 @@
 %
 %   Example 11:
 %
-%   >> [fappx, out_param] = funappx_g(@(x) x.^2,1e-8,10,1e6)
+%   >> [fappx, out_param] = funappx01_g(@(x) x.^2,1e-8,10,1e6)
 %   
 %   fappx = 
 %

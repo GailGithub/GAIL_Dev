@@ -4,8 +4,8 @@ tic;
 format short
 doctest funappx_g
 doctest funappxtau_g
-doctest funappxab_g
-doctest dt_funappx_g
+doctest funappx01_g
+doctest dt_funappx01_g
 doctest integral_g
 doctest integraltau_g
 doctest integralab_g
