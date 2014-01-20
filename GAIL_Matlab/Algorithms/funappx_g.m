@@ -349,15 +349,15 @@ end;
 
 % let end point of interval not be infinity
 if (out_param.a == inf||out_param.a == -inf||isnan(out_param.a)==1)
-    warning(['MATLAB:funappx_g:anoinfinity',' a can not be infinity. Use default a = ' num2str(default.a)])
+    warning('MATLAB:funappx_g:anoinfinity',['a can not be infinity. Use default a = ' num2str(default.a)])
     out_param.a = default.a;
 end;
 if (out_param.b == inf||out_param.b == -inf||isnan(out_param.b)==1)
-    warning(['MATLAB:funappx_g:anoinfinity',' b can not be infinity. Use default b = ' num2str(default.b)])
+    warning('MATLAB:funappx_g:anoinfinity',['b can not be infinity. Use default b = ' num2str(default.b)])
     out_param.b = default.b;
 end;
 if (out_param.b <= out_param.a)
-    warning(['MATLAB:funappx_g:blea',' b can not be smaller than a. Use b = ' num2str(out_param.a+1)])
+    warning('MATLAB:funappx_g:blea',['b can not be smaller than a. Use b = ' num2str(out_param.a+1)])
     out_param.b = out_param.a+1;
 end;
 
@@ -380,15 +380,14 @@ elseif (length(varargin) == 6)
 end;
 
 if (out_param.nlo > out_param.nhi)
-    warning(['MATLAB:funappx_g:logrhi ','Lower bound of initial number of points is larger than upper'...
-        ' bound of initial number of points; exchange these two' ])
+    warning('MATLAB:funappx_g:logrhi', 'Lower bound of initial number of points is larger than upper bound of initial number of points; exchange these two')
     temp = out_param.nlo;
     out_param.nlo = out_param.nhi;
     out_param.nhi = temp;
 end;
 if (~isposint(out_param.nlo))
     if isposge3(out_param.nlo)
-        warning('MATLAB:funappx_g:lowinitnotint',[' Lower bound of initial number of points should be a positive integer.' ...
+        warning('MATLAB:funappx_g:lowinitnotint',['Lower bound of initial number of points should be a positive integer.' ...
             ' Using ', num2str(ceil(out_param.nlo))])
         out_param.nlo = ceil(out_param.nlo);
     else

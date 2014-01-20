@@ -2,8 +2,7 @@
 classdef ut_funappx_g < matlab.unittest.TestCase
 
   methods(Test)
-    
-         
+             
     function funappx_gOfx(testCase)
       f = @(x) x;
       in_param.abstol = 10^(-8); 
@@ -110,6 +109,17 @@ classdef ut_funappx_g < matlab.unittest.TestCase
       actualerr = abs(appxf(x)-f(x));
       testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
       testCase.verifyLessThanOrEqual(result.npoints,in_param.nmax);
+    end
+    
+    function funappx_gOfblea(testCase)
+      f = @(x) x.^2;
+      in_param.a = 2; 
+      in_param.b = 1;  
+      [appxf, result] = testCase.verifyWarning(@()funappx_g(f,in_param),'MATLAB:funappx_g:blea');
+      x = sqrt(2)*result.b/2;
+      actualerr = abs(appxf(x)-f(x));
+      testCase.verifyLessThanOrEqual(actualerr,result.abstol);
+      testCase.verifyLessThanOrEqual(result.npoints,result.nmax);
     end
     
   end
