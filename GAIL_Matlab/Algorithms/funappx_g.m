@@ -369,6 +369,19 @@ if (out_param.abstol <= 0 )
     out_param.abstol = default.abstol;
 end
 
+% let cost budget be a positive integer
+if (~isposint(out_param.nmax))
+    if ispositive(out_param.nmax)
+        warning('MATLAB:funappx_g:budgetnotint',['Cost budget should be a positive integer.' ...
+            ' Using cost budget ', num2str(ceil(out_param.nmax))])
+        out_param.nmax = ceil(out_param.nmax);
+    else
+        warning('MATLAB:funappx_g:budgetisneg',['Cost budget should be a positive integer.' ...
+            ' Using default cost budget ' int2str(default.nmax)])
+        out_param.nmax = default.nmax;
+    end;
+end
+
 % let initial number of points be a positive integer
 if (length(out_param.nlo) == 2)
     out_param.nmax = out_param.nhi;
@@ -407,18 +420,17 @@ if (~isposint(out_param.nhi))
         out_param.nhi = default.nhi;
     end
 end
+if (out_param.nlo > out_param.nmax)
+    warning('MATLAB:funappx_g:logecost',['Lower bound of initial number of points should be smaller than cost budget.' ...
+            ' Using ', num2str(ceil(out_param.nmax/2))])
+    out_param.nlo = out_param.nmax/2;
+end;
+if (out_param.nhi > out_param.nmax)
+    warning('MATLAB:funappx_g:higecost',['Upper bound of initial number of points should be smaller than cost budget.' ...
+            ' Using ', num2str(out_param.nlo)])
+    out_param.nhi = out_param.nlo;
+end;
 
 h = out_param.b - out_param.a;
 out_param.ninit = ceil(out_param.nhi*(out_param.nlo/out_param.nhi)^(1/(1+h)));
-% let cost budget be a positive integer
-if (~isposint(out_param.nmax))
-    if ispositive(out_param.nmax)
-        warning('MATLAB:funappx_g:budgetnotint',['Cost budget should be a positive integer.' ...
-            ' Using cost budget ', num2str(ceil(out_param.nmax))])
-        out_param.nmax = ceil(out_param.nmax);
-    else
-        warning('MATLAB:funappx_g:budgetisneg',['Cost budget should be a positive integer.' ...
-            ' Using default cost budget ' int2str(default.nmax)])
-        out_param.nmax = default.nmax;
-    end;
-end
+
