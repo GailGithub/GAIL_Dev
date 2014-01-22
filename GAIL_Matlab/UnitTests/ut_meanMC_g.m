@@ -38,5 +38,11 @@ classdef ut_meanMC_g < matlab.unittest.TestCase
       actualerr = abs(meanY-exactY);
       testCase.verifyLessThanOrEqual(actualerr,abs(in_param.abstol));
     end
+    
+    function meanMC_gOfnonRandomInput(testCase)
+        in_param.abstol = 1e-2;
+        meanY = testCase.verifyWarning(@()meanMC_g(@(x) x.^2,...
+            in_param.abstol),'MATLAB:meanMC_g:yrandnotlengthN');
+    end
   end
 end

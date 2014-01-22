@@ -11,18 +11,19 @@ function mu=dt_meanMC_g_TrafficModel(tol)
 % ans =
 % 
 %     4.4***
-% >> in_param.timebudget = 5;
-% >> dt_meanMC_g_TrafficModel(1e-3)
 %
-% Warning:***
+% >> dt_meanMC_g_TrafficModel(5e-3)
+%
+% ans =
+% 
+%     4.45***
 % 
 % >> dt_meanMC_g_TrafficModel('hi')
 % ??? Error using ***meanMC_g***Argument 'abstol' failed validation isnumeric.
 % 
-%
-in_param.timebudget=15;% given time budget 
+in_param.timebudget=60;% given time budget 
 in_param.nbudget=1e6;% given sample budget
-in_param.n0=70;% given intitial sample size to estimate sigma
+in_param.n_sigma=70;% given intitial sample size to estimate sigma
 in_param.fudge=1.1;%given fudge factor
 in_param.alpha=0.01;% given uncertainty
 in_param.abstol=tol;%given error tolerance

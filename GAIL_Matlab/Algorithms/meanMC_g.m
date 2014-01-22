@@ -313,6 +313,12 @@ if isempty(varargin)
     %give the error message
 else
     Yrand = varargin{1};
+    if max(size(Yrand(5)))~=5 || min(size(Yrand(5)))~=1
+        % if the input is not a length n Vector, print warning message
+        warning('MATLAB:meanMC_g:yrandnotlengthN',...
+            ['Yrand should be a random variable vector of length n, '...
+            'but not an integrand or a martix'])
+    end
 end
 
 validvarargin=numel(varargin)>1;
