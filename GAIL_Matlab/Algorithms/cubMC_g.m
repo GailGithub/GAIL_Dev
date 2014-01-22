@@ -2,182 +2,191 @@ function [Q,out_param] = cubMC_g(varargin)
 % CUBMC_G Monte Carlo method to evaluate a multidimensional integral to
 % within a specified absolute error tolerance with guaranteed uncertainty
 % alpha.
+% 
+% [Q,out_param] = CUBMC_G(f,interval) estimates the integral with
+% integrand f to within the absolute error tolerance 1e-2 and with
+% guaranteed uncertainty alpha 1%. Input f is a function handle. The
+% function Y=f(X) should accept a vector argument X and return a vector
+% result Y, the integrand evaluated at each element of X. Input interval
+% is 2 x d matrix, where d is the dimension of the hypercube defined by
+% the limits of the interval. The order of the columns in the interval
+% matrix is corresponding to the order of the interval limits. 
+% 
+% Q =
+% CUBMC_G(f,interval,measure,abstol,alpha,n_sigma,fudge,tbudget,nbudget,npcmax)
+% estimates the integral with integrand f to within an absolute error
+% tolerance abstol with guaranteed uncertainty alpha using ordered
+% parameter input interval, measure, tolerance, uncertainty, n_sigma,
+% fudge, tbudget, nbudget and npcmax. If an input is not specified, the
+% default value is used.
+% 
+% Q =
+% CUBMC_G(f,interval,'measure','uniform','abstol',abstol,'alpha',alpha,
+% 'n_sigma',n_sigma,'fudge',fudge,'tbudget',tbudget,'nbudget',nbudget,
+% 'npcmax',npcmax) estimates the integral with integrand f to within an
+% absolute error tolerance abstol with guaranteed uncertainty alpha. All
+% the field-value pairs are optional and can be supplied in different
+% order. If an input is not specified, the default value is used.
+% 
+% Q = CUBMC_G(f,interval,in_param) estimates the integral with integrand
+% f to within an absolute error tolerance in_param.abstol with guaranteed
+% uncertainty in_param.alpha. If a field is not specified, the default
+% value is used.
+% 
+% f --- the integrand.
+% 
+% interval --- the integration hypercube. The default value is
+% [zeros(1,d); ones(1:d)], the default d is 1.
+% 
+% in_param.measure --- the measure for generating the random variable, the
+% default is uniform. The other measure we could handle is normal/gaussian.
+% 
+% in_param.abstol --- the absolute error tolerance, the default value is
+% 1e-2.
+% 
+% in_param.alpha --- the uncertainty, the default value is 1%.
+% 
+% in_param.n_sigma --- initial sample size for estimating the sample
+% variance, the default value is 1e3.
+% 
+% in_param.fudge --- the standard deviation inflation factor, the default
+% value is 1.1.
+% 
+% in_param.tbudget --- the time budget to do the two-stage estimation,
+% the default value is 100 seconds.
+% 
+% in_param.nbudget --- the sample budget to do the two-stage estimation,
+% the default value is 1e8.
+% 
+% in_param.npcmax --- number of elements in an array of optimal size to
+% calculate the mean, the default value is 1e6.
+% 
+% in_param.checked --- the status that the parameters are checked.
+%                    0   not checked
+%                    1   checked by cubMC_g
+%                    2   checked by meanMC_g
+% 
+% Q --- the estimated value of the integral.
+% 
+% out_param_time_n_sigma_predict --- the estimated time to get n_sigma
+% samples.
+% 
+% out_param.n_left_predict --- using the time left to predict the number
+% of samples left.
+% 
+% out_param.nmax --- the maximum sample budget to estimate the mean, it
+% comes from both the sample budget and the time budget.
+% 
+% out_param.var --- the sample variance.
+% 
+% out_param.kurtmax --- the upper bound on modified kurtosis.
+% 
+% out_param.time --- the time elapsed.
+% 
+% out_param.n_mu --- the sample size that needed to estimate the mean,
+% which comes from Berry-Esseen inequality and Chebyshev inequality.
+% 
+% out_param.n --- the total sample size needed to do the two stage
+% algorithm.
+% 
+% out_param.exit --- the state of program when exiting.
+%                     0   success
+%                     1   No enough samples to estimate the mean.
+%                     2   Initial try out time costs more than
+%                         10% of time budget. 
+%                     3   The estimated time for estimating variance 
+%                         is bigger than half of the time budget.
+%                     10  Interval does not contain numbers.
+%                     11  Interval not 2 x d.
+%                     12  Interval is only a point in one direction.
+%                     13  Interval is infinite when measure is uniform.
+%                     14  Interval is not doubly infinite when measure
+%                         is normal.
+% 
+% Guarantee
+% 
+% If the modified kurtosis of the integrand, f, is less than the kurtmax,
+% which is defined in terms of the uncertainty, alpha, the sample size to
+% estimate variance, n_sigma, and the standard deviation inflation factor,
+% fudge, then the inequality
+% 
+% Pr(|I-Q| <= abstol) >= 1-alpha 
+% 
+% holds. Here I is the true integral (or mean) of f, and Q is the output
+% of CUBMC_G. 
+% 
+% The cost of the two-stage algorithm also satisfies the inequality
+% 
+% Pr (N_tot <= N_up) >= 1-beta
+% 
+% where N_tot is the total cost of samples, N_up is the upper bound on the
+% cost, which is roughly proportional to sigma^2/abstol^2, beta is the
+% level of uncertainty on the cost. For details, please refer to [1].
+% 
+% Examples
+% 
+% Example 1:
+% Estimate the integral with integrand f(x) = x^2 in the interval [0,1]
+% 
+% >> f=@(x) x.^2;interval = [0;1];
+% >> Q = cubMC_g(f,interval,'abstol',1e-3)
+% Q = 0.33***
+% 
+% 
+% Example 2:
+% Estimate the integral with integrand f(x) = exp(x) in the interval [1,2]
+% 
+% >> f=@(x) exp(x);interval = [1;2];
+% >> Q = cubMC_g(f,interval,'uniform',1e-3)
+% Q = 4.67***
+% 
+% 
+% Example 3:
+% Estimate the integral with integrand f(x) = sin(x) in the interval [1,2]
+% 
+% >> f=@(x) sin(x);interval = [1;2];
+% >> Q = cubMC_g(f,interval,'uniform',1e-3)
+% Q = 0.95***
+% 
+% 
+% Example 4: 
+% Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) in the
+% interval [0 0;1 1],where x is a vector x = [x1 x2].
+% 
+% >> f=@(x) exp(-x(:,1).^2-x(:,2).^2);interval = [0 0;1 1];
+% >> Q = cubMC_g(f,interval,'uniform',1e-3)
+% Q = 0.55***
+% 
+% 
+% Example 5: 
+% Estimate the integral with integrand f(x) = 2^d*prod(x1*x2*...*xd)+0.555 in the
+% interval [zeros(1,d);ones(1,d)],where x is a vector x = [x1 x2 ... xd].
+% 
+% >> d=3;f=@(x) 2^d*prod(x,2)+0.555;interval = [zeros(1,d);ones(1,d)];
+% >> Q = cubMC_g(f,interval,'uniform',1e-3)
+% Q = 1.5***
+% 
+% See also FUNAPPX_G, INTEGRAL_G, MEANMC_G
+% 
+% Reference
+% [1]  F. J. Hickernell, L. Jiang, Y. Liu, and A. B. Owen, Guaranteed
+% conservative fixed width confidence intervals via Monte Carlo sampling,
+% Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F. Y. Kuo, G.
+% W. Peters, and I. H. Sloan, eds.), Springer-Verlag, Berlin, 2014, to
+% appear, arXiv:1208.4318 [math.ST]
 %
-%   [Q,out_param] = CUBMC_G(f,interval) estimates the integral with
-%   integrand f to within the absolute error tolerance 1e-2 and with
-%   guaranteed uncertainty alpha 1%. Input f is a function handle. The
-%   function Y=f(X) should accept a vector argument X and return a vector
-%   result Y, the integrand evaluated at each element of X. Input interval
-%   is 2 x d matrix. 
-%
-%   Q =
-%   CUBMC_G(f,interval,measure,abstol,alpha,n_sigma,fudge,timebudget,nbudget,npcmax)
-%   estimates the integral with integrand f to within an absolute error
-%   tolerance abstol with guaranteed uncertainty within alpha using ordered
-%   parameter input interval, measure, tolerance, uncertainty, n_sigma,
-%   fudge, timebudget, nbudget and npcmax. If an input is not specified,
-%   the default value is used.
-%
-%   Q =
-%   CUBMC_G(f,interval,'measure','uniform','abstol',abstol,'alpha',alpha,
-%   'n_sigma',n_sigma,fudge',fudge,'timebudget',timebudget,'nbudget',nbudget,
-%   'npcmax',npcmax) estimates the integral with integrand f to within an
-%   absolute error tolerance abstol with guaranteed uncertainty within
-%   alpha. All the field-value pairs are optional and can be supplied in
-%   different order. If an input is not specified, the default value is
-%   used.
-%
-%   Q = CUBMC_G(f,interval,in_param) estimates the integral with integrand f
-%   to within an absolute error tolerance in_param.abstol with guaranteed
-%   uncertainty within in_param.alpha. If a field is not specified, the
-%   default value is used.
-%
-%   f --- the integrand.
-%
-%   interval --- the integration interval. The default interval is
-%   [zeros(1,d); ones(1:d)], the default d is 1.
-%
-%   in_param.measure --- the measure for generating the random variable,
-%   the default is uniform.
-%
-%   in_param.abstol --- the absolute error tolerance, default value is 1e-2.
-%
-%   in_param.alpha --- the uncertainty, default value is 1%.
-%
-%   in_param.n_sigma --- initial sample size for estimating the sample
-%   variance, the default value is 1e3.
-%
-%   in_param.fudge --- the standard deviation inflation factor, the default
-%   value is 1.1.
-%   
-%   in_param.timebudget --- the time budget to do the two-stage estimation,
-%   the default value is 100 seconds.
-%
-%   in_param.nbudget --- the sample budget to do the two-stage estimation,
-%   the default value is 1e8.
-%
-%   in_param.npcmax --- number of elements in an array of optimal size to
-%   calculate the mean, the default value is 1e6.
-%
-%   in_param.checked --- the status that the paramters are checked.
-%                        0   not checked
-%                        1   checked by cubMC_g
-%                        2   checked by meanMC_g
-%
-%   Q --- the estimated value of the integral.
-%
-%   out_param_time_n_sigma_predict --- the estimated time to get n_sigma
-%   samples of the random variable.
-%
-%   out_param.n_left_predict --- using the time left to predict the number
-%   of samples left.
-%
-%   out_param.nmax --- the maximum sample budget to estimate mu, it comes
-%   from both the sample budget and the time budget.
-%
-%   out_param.var --- the sample variance.
-%
-%   out_param.kurtmax --- the upper bound on modified kurtosis.
-%
-%   out_param.time --- the time eclipsed.
-%
-%   out_param.n_mu --- the sample size that needed to estimate the mu.
-%
-%   out_param.n --- the total sample size needed to do the two stage
-%   algorithm.
-%
-%   out_param.exit --- the state of program when exiting.
-%                         0   success
-%                         1   No enough samples to estimate the mean.
-%                         2   Initial try out time costs more than
-%                             10% of time budget. 
-%                         3   The estimated time for estimating variance 
-%                             is bigger than half of the time budget.
-%                         10  Interval does not contain numbers.
-%                         11  Interval not 2 x d.
-%                         12  Interval is only a point in one direction.
-%                         13  Interval is infinite when measure is uniform.
-%                         14  Interval is not doubly infinite when measure
-%                             is normal.
-%
-%  Guarantee
-%
-%  If the modified kurtosis of the integrand, f, is less than the kmax,
-%  which is defined in terms of the uncertainty, alpha, the sample size to
-%  estimate variance, n_sigma, and the standard deviation inflation factor,
-%  fudge, then the inequality
-%
-%  Pr(|I-Q| <= tol) >= 1-alpha 
-%  
-%  holds. Here I is the true integral (or mean) of f, and Q is the output
-%  of CUBMC_G. 
-%
-%  The cost of the two-stage algorithm also satisfies the inequality
-%
-%  Pr (N_tot <= N_up) >= 1-beta
-%  
-%  where N_tot is the total cost of samples, N_up is the upper bound on the
-%  cost, which is roughly propotional to sigma^2/epsilon^2, beta is the
-%  level of uncertainty on the cost. For details, please refer to [1].
-%
-%   Examples
-%
-%   Example 1:
-%   Estimate the integral with integrand f(x) = x^2 in the interval [0,1]
-%   
-%   >> f=@(x) x.^2;interval = [0;1];
-%   >> Q = cubMC_g(f,interval,'abstol',1e-3)
-%   Q = 0.33***
-%
-%
-%   Example 2:
-%   Estimate the integral with integrand f(x) = exp(x) in the interval [1,2]
-%
-%   >> f=@(x) exp(x);interval = [1;2];
-%   >> Q = cubMC_g(f,interval,'uniform',1e-3)
-%   Q = 4.67***
-%
-%
-%   Example 3:
-%   Estimate the integral with integrand f(x) = sin(x) in the interval [1,2]
-%
-%   >> f=@(x) sin(x);interval = [1;2];
-%   >> Q = cubMC_g(f,interval,'uniform',1e-3)
-%   Q = 0.95***
-%
-%
-%   Example 4: 
-%   Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) in the
-%   interval [0 0;1 1],where x is a vector x = [x1 x2].
-%
-%   >> f=@(x) exp(-x(:,1).^2-x(:,2).^2);interval = [0 0;1 1];
-%   >> Q = cubMC_g(f,interval,'uniform',1e-3)
-%   Q = 0.55***
-%
-%
-%   Example 5: 
-%   Estimate the integral with integrand f(x) = 2^d*prod(x1*x2*...*xd)+0.555 in the
-%   interval [zeros(1,d);ones(1,d)],where x is a vector x = [x1 x2 ... xd].
-%
-%   >> d=3;f=@(x) 2^d*prod(x,2)+0.555;interval = [zeros(1,d);ones(1,d)];
-%   >> Q = cubMC_g(f,interval,'uniform',1e-3)
-%   Q = 1.5***
-%
-%
-%   See also FUNAPPX_G, INTEGRAL_G, MEANMC_G
-%
-%   Reference
-%   [1]  F. J. Hickernell, L. Jiang, Y. Liu, and A. B. Owen, Guaranteed
-%   conservative fixed width confidence intervals via Monte Carlo sampling,
-%   Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F. Y. Kuo, G.
-%   W. Peters, and I. H. Sloan, eds.), Springer-Verlag, Berlin, 2014, to
-%   appear, arXiv:1208.4318 [math.ST]
+% If you find GAIL helpful in your work or our algorithmic research and
+% software appealing, please support us by citing the above paper and the
+% following software: 
+% [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell,
+% Lan Jiang, Xincheng Sheng, and Yizhi Zhang, "GAIL: Guaranteed Automatic
+% Integration Library (Version 1.3.0)" [MATLAB Software], 2014. Available
+% from http://code.google.com/p/gail/
 
 tstart=tic;
 [f,interval,in_param,out_param] = cubMC_g_param(varargin{:});%check validity of inputs
 %in_param.checked = true;
 f=transformIntegrand(f,interval,in_param); 
-% transform integrand so that the interval would not need to be changed
 if strcmp(in_param.measure,'uniform')% the using uniformly distributed samples
     [Q,out_param] = meanMC_g(@(nfun)f(rand(nfun,in_param.dim)),in_param);
     out_param.Q=Q;% using meanMC_g to get the mean 
@@ -187,7 +196,9 @@ else strcmp(in_param.measure,'normal')% using normally distributed samples
 end
 out_param.time=toc(tstart); %elapsed time
 end
-function newf=transformIntegrand(oldf,interval,in_param) 
+
+function newf=transformIntegrand(oldf,interval,in_param)
+% Transform integrand so that the interval would be changed
     if strcmp(in_param.measure,'uniform') %uniform measure
         a=interval(1,:); %left endpoint
         b=interval(2,:); %right endpoint
@@ -206,15 +217,15 @@ function newf=transformIntegrand(oldf,interval,in_param)
 end
 
 function [f,interval,in_param,out_param] = cubMC_g_param(varargin)
-
+% Parameter checking and parsing
 default.measure = 'uniform';% default measure
 default.dim = 1;% default dimension
 default.interval = [zeros(1,default.dim);ones(1,default.dim)];% default interval
-default.abstol  = 1e-2;% default absolute error tolerence
+default.abstol  = 1e-2;% default absolute error tolerance
 default.alpha = 0.01;% default uncertainty
 default.n_sigma = 1e3; % default n_sigma
 default.fudge = 1.1; % default variance inflation factor
-default.timebudget = 100;% default time budget
+default.tbudget = 100;% default time budget
 default.nbudget = 1e8; % default sample budget
 default.npcmax = 1e6;% default n piece maximum
 default.checked = 0;
@@ -250,10 +261,10 @@ if ~validvarargin
     in_param.alpha = default.alpha;
     in_param.n_sigma = default.n_sigma;
     in_param.fudge = default.fudge;
-    in_param.timebudget = default.timebudget;
+    in_param.tbudget = default.tbudget;
     in_param.nbudget = default.nbudget;
     in_param.npcmax = default.npcmax;
-    in_param.checked  =  default.checked;
+    in_param.checked = default.checked;
 else % if there is some optional input 
     p = inputParser;
     addRequired(p,'f',@isfcn);
@@ -266,11 +277,10 @@ else % if there is some optional input
         addOptional(p,'alpha',default.alpha,@isnumeric);
         addOptional(p,'n_sigma',default.n_sigma,@isnumeric);
         addOptional(p,'fudge',default.fudge,@isnumeric);
-        addOptional(p,'timebudget',default.timebudget,@isnumeric);
+        addOptional(p,'tbudget',default.tbudget,@isnumeric);
         addOptional(p,'nbudget',default.nbudget,@isnumeric);
         addOptional(p,'npcmax',default.npcmax,@isnumeric);
         addOptional(p,'checked',default.checked,@isnumeric);
-
     else
         if isstruct(in3) %the input is structure
             p.StructExpand = true;
@@ -282,7 +292,7 @@ else % if there is some optional input
         addParamValue(p,'alpha',default.alpha,@isnumeric);
         addParamValue(p,'n_sigma',default.n_sigma,@isnumeric);
         addParamValue(p,'fudge',default.fudge,@isnumeric);
-        addParamValue(p,'timebudget',default.timebudget,@isnumeric);
+        addParamValue(p,'tbudget',default.tbudget,@isnumeric);
         addParamValue(p,'nbudget',default.nbudget,@isnumeric);
         addParamValue(p,'npcmax',default.npcmax,@isnumeric); 
         addParamValue(p,'checked',default.checked,@isnumeric); 
@@ -310,7 +320,7 @@ interval=[min(interval,[],1); max(interval,[],1)];
 if any(interval(1,:)==interval(2,:)); %interval is a point in one direction
     out_param.exit=12; out_param = cubMC_g_err(out_param); return;
 end
-in_param.interval=interval; %copy interval into the param structure
+in_param.interval=interval; %copy interval into the in_param structure
 
 if isfield(in_param,'measure'); % the sample measure
     in_param.measure=validatestring(in_param.measure,{'uniform','normal','Gaussian'});
@@ -331,7 +341,7 @@ end
 if in_param.checked == 0
     if (in_param.abstol <= 0) %absolute error tolerance
         warning('MATLAB:cubMC_g:abstolneg',...
-            'the absolute error tolerence should be larger than 0, use the absolute value.')
+            'the absolute error tolerance should be larger than 0, use the absolute value.')
         in_param.abstol = abs(in_param.abstol);
     end
     if (in_param.alpha <= 0 ||in_param.alpha >= 1) %uncertainty
@@ -351,11 +361,11 @@ if in_param.checked == 0
             'the fudge factor should be bigger than 1, use the default value.')
         in_param.fudge = default.fudge;
     end
-    if (in_param.timebudget <= 0) % time budget
-        warning('MATLAB:cubMC_g:timebudgetlneg',...
+    if (in_param.tbudget <= 0) % time budget
+        warning('MATLAB:cubMC_g:tbudgetlneg',...
             ['Time budget should be bigger than 0, '...
             'use the absolute value of time budget'])
-        in_param.timebudget = abs(in_param.timebudget);
+        in_param.tbudget = abs(in_param.tbudget);
     end
     if (~isposint(in_param.nbudget)) % sample budget should be a postitive integer
         warning('MATLAB:cubMC_g:nbudgetnotposint',...
@@ -364,7 +374,7 @@ if in_param.checked == 0
         in_param.nbudget = ceil(abs(in_param.nbudget));
     end
     if (~isposint(in_param.npcmax))
-        % maxinum number of scalar values of x per vector should be a positive integer
+        % maximum number of scalar values of x per vector should be a positive integer
         warning('MATLAB:cubMC_g:npcmaxnotposint',...
             ['the number of each piece of the samples should be' ...
             'a positive integer, take the absolute value and ceil.'])
@@ -374,6 +384,7 @@ if in_param.checked == 0
 end
 out_param = in_param; % let the out_param contains all the in_param
 end
+
 function [out_param,Q]=cubMC_g_err(out_param,tstart)
 %Handles errors in cubMC_g and cubMC_g_param
 %to give an exit with information
