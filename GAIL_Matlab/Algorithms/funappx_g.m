@@ -78,14 +78,17 @@ function [fappx,out_param]=funappx_g(varargin)
 %
 %  Guarantee
 %    
-%  If the function to be approximated, f satisfies the cone condition
-%  \|f''\|_\infty <=
-%  \frac{out_param.nstar}{b-a}\|f'-\frac{f(b)-f(a)}{b-a}\|_\infty, then the
-%  fappx output by this algorithm is guaranteed to satisfy \| f-fappx
-%  \|_{\infty} <= out_param.abstol, provided the flag
-%  out_param.exceedbudget = 0. And the upper bound of the cost is \sqrt{
-%  \frac{out_param.n^* (out_param.b-out_param.a)^2 \|f''\|_\infty}{2
-%  out\_param.abstol}}+2 out_param.n^*+4.
+%  If the function to be approximated, f, satisfies the cone condition
+%                         nstar  ||     f(b)-f(a)  ||
+%      ||f''||        <= ------- ||f'- ----------- ||
+%             \infty      b - a  ||       b - a    ||\infty,
+%  then the fappx output by this algorithm is guaranteed to satisfy
+%      ||f-fappx||_\infty <= abstol,
+%  provided the flag exceedbudget = 0. And the upper bound of the cost is
+%          _____________________________ 
+%         / nstar*(b-a)^2 ||f''||_\infty 
+%        / ----------------------------- + 2 nstar + 4
+%      \/          2 abstol
 %   
 %
 %   Examples
@@ -194,17 +197,19 @@ function [fappx,out_param]=funappx_g(varargin)
 %
 %   See also INTEGRAL_G, MEANMC_G, CUBMC_G
 %
-%   Reference
+%   References
 %   [1]  N. Clancy, Y. Ding, C. Hamilton, F. J. Hickernell, and Y. Zhang,
 %        The Cost of Deterministic, Adaptive, Automatic Algorithms:  Cones,
 %        Not Balls, Journal of Complexity 30 (2014) 21–45
 %
-% If you find GAIL helpful in your work or our algorithmic research and
-% software appealing, please support us by citing the above paper and the
-% following software: Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell,
-% Lan Jiang, Xincheng Sheng, and Yizhi Zhang, "GAIL: Guaranteed Automatic
-% Integration Library (Version 1.3.0)" [MATLAB Software], 2014. Available
-% from http://code.google.com/p/gail/
+%   [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
+%        and Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library
+%        (Version 1.3.0)" [MATLAB Software], 2014. Available from
+%        http://code.google.com/p/gail/
+%
+%        If you find GAIL helpful in your work, please support us by citing
+%        the above paper and software.
+%
 
 % check parameter satisfy conditions or not
 [f, out_param] = funappx_g_param(varargin{:});
@@ -301,7 +306,7 @@ default.nmax  = 1e7;
 
 if isempty(varargin)
     help funappx_g
-    warning('MATLAB:funappx_g:nofunction','Function f must be specified. Now GAIL is using f(x)=x^2.')
+    warning('MATLAB:funappx_g:nofunction','Function f must be specified. Now GAIL is using f(x)=x^2 and unit interval [0,1].')
     f = @(x) x.^2;
     out_param.f = f;
 else

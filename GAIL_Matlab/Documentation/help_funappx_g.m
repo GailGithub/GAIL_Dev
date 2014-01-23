@@ -95,21 +95,20 @@
 %    
 % |If the function to be approximated,|  $f$  |satisfies the cone condition|
 %
-% $$\|f''\|_\infty \le \frac { \mathrm{out\_param.n}^* }{b-a} \left\|f'-\frac{f(b)-f(a)}{b-a}\right\|_\infty,$$
+% $$\|f''\|_\infty \le \frac { \mathrm{nstar} }{b-a} \left\|f'-\frac{f(b)-f(a)}{b-a}\right\|_\infty,$$
 % 
 % |then the|  $fappx$  |output by this algorithm is guaranteed to
 % satisfy|
 %
-% $$\| f-fappx \|_{\infty} \le \mathrm{out\_param.abstol}$$
+% $$\| f-fappx \|_{\infty} \le \mathrm{abstol},$$
 %
-% |with upper bound of the cost of the algorithm is|
+% |provided the flag| $\mathrm{exceedbudget} = 0.$
 %
-% $$\sqrt{ \frac{\mathrm{out\_param.n}^*(\mathrm{out\_param.b}-\mathrm{out\_param.a})^2 
-% \|f''\|_\infty}{2 \mathrm{out\_param.abstol}}}+2\mathrm{out\_param.n}^*+4$$
+% |And the upper bound of the cost is|
 %
-% |provided the flag|
+% $$\sqrt{ \frac{\mathrm{nstar}(b-a)^2 
+% \|f''\|_\infty}{2 \times \mathrm{abstol}}} + 2 \times \mathrm{nstar}+4.$$
 %
-% $$\mathrm{out\_param.exceedbudget} = 0.$$
 %
 %% Examples
 % *Example 1*
@@ -163,10 +162,11 @@ clear in_param; f = @(x) x.^2;
 % Cost of Deterministic, Adaptive, Automatic Algorithms:  Cones, Not Balls,
 % Journal of Complexity 30 (2014) 21–45
 %
-% If you find GAIL helpful in your work or our algorithmic research and
-% software appealing, please support us by citing the above paper and the
-% following software: Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell,
-% Lan Jiang, Xincheng Sheng, and Yizhi Zhang, "GAIL: Guaranteed Automatic
-% Integration Library (Version 1.3.0)" [MATLAB Software], 2014. Available
-% from http://code.google.com/p/gail/
+% [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, and
+% Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library (Version
+% 1.3.0)" [MATLAB Software], 2014. Available from
+% http://code.google.com/p/gail/
+%
+% If you find GAIL helpful in your work, please support us by citing the
+% above paper and software.
 %
