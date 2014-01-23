@@ -309,6 +309,8 @@ else
     out_param.f = f;
 end;
 
+
+
 validvarargin=numel(varargin)>1;
 if validvarargin
     in2=varargin{2};
@@ -351,6 +353,36 @@ else
 end;
 
 % let end point of interval not be infinity
+if (length(out_param.a)==2)
+    if (length(varargin)==5)
+        out_param.nhi = out_param.nlo;
+        out_param.nlo = out_param.abstol;
+        out_param.abstol = out_param.b;
+        out_param.b = out_param.a(2);
+        out_param.a = out_param.a(1);
+    elseif(length(varargin)==6)
+        out_param.nmax = out_param.nhi;
+        out_param.nhi = out_param.nlo;
+        out_param.nlo = out_param.abstol;
+        out_param.abstol = out_param.b;
+        out_param.b = out_param.a(2);
+        out_param.a = out_param.a(1);
+    elseif(length(varargin)==4)
+        out_param.nlo = out_param.abstol;
+        out_param.abstol = out_param.b;
+        out_param.b = out_param.a(2);
+        out_param.a = out_param.a(1);
+    elseif(length(varargin)==3)
+        out_param.abstol = out_param.b;
+        out_param.b = out_param.a(2);
+        out_param.a = out_param.a(1);
+    elseif(length(varargin)==2)
+        out_param.b = out_param.a(2);
+        out_param.a = out_param.a(1);
+    end;
+end;
+
+
 if (out_param.a == inf||out_param.a == -inf||isnan(out_param.a)==1)
     warning('MATLAB:funappx_g:anoinfinity',['a can not be infinity. Use default a = ' num2str(default.a)])
     out_param.a = default.a;
@@ -360,7 +392,7 @@ if (out_param.b == inf||out_param.b == -inf||isnan(out_param.b)==1)
     out_param.b = default.b;
 end;
 if (out_param.b < out_param.a)
-    warning('MATLAB:funappx_g:blea',['b can not be smaller than a. Use b = ' num2str(out_param.a)])
+    warning('MATLAB:funappx_g:blea','b can not be smaller than a; exchange these two. ')
     tmp = out_param.b;
     out_param.b = out_param.a;
     out_param.a = tmp;
@@ -391,13 +423,17 @@ if (~isposint(out_param.nmax))
 end
 
 % let initial number of points be a positive integer
-if (length(out_param.nlo) == 2)
+if (length(out_param.nlo) == 2 && length(varargin)==4)
+    out_param.nmax = default.nmax;
+    out_param.nhi = out_param.nlo(2);
+    out_param.nlo = out_param.nlo(1);
+elseif (length(out_param.nlo) == 2 && length(varargin)> 4)   
     out_param.nmax = out_param.nhi;
     out_param.nhi = out_param.nlo(2);
     out_param.nlo = out_param.nlo(1);
-elseif (length(varargin) == 6)
-    out_param.nmax = out_param.nhi;
-    out_param.nhi = out_param.nlo;
+% elseif (length(varargin) == 6)
+%     out_param.nmax = out_param.nhi;
+%     out_param.nhi = out_param.nlo;
 end;
 
 if (out_param.nlo > out_param.nhi)
