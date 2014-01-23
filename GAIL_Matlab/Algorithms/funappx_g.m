@@ -314,8 +314,6 @@ else
     out_param.f = f;
 end;
 
-
-
 validvarargin=numel(varargin)>1;
 if validvarargin
     in2=varargin{2};
@@ -358,7 +356,9 @@ else
 end;
 
 % let end point of interval not be infinity
+flagv = 0;
 if (length(out_param.a)==2)
+    flagv = 1;
     if (length(varargin)==5)
         out_param.nhi = out_param.nlo;
         out_param.nlo = out_param.abstol;
@@ -428,17 +428,24 @@ if (~isposint(out_param.nmax))
 end
 
 % let initial number of points be a positive integer
-if (length(out_param.nlo) == 2 && length(varargin)==4)
-    out_param.nmax = default.nmax;
-    out_param.nhi = out_param.nlo(2);
-    out_param.nlo = out_param.nlo(1);
-elseif (length(out_param.nlo) == 2 && length(varargin)> 4)   
-    out_param.nmax = out_param.nhi;
-    out_param.nhi = out_param.nlo(2);
-    out_param.nlo = out_param.nlo(1);
-% elseif (length(varargin) == 6)
-%     out_param.nmax = out_param.nhi;
-%     out_param.nhi = out_param.nlo;
+if (length(out_param.nlo) == 2 && flagv == 1)
+    if(length(varargin) ==4)
+        out_param.nhi = out_param.nlo(2);
+        out_param.nlo = out_param.nlo(1);
+    else
+        out_param.nmax = out_param.nhi;
+        out_param.nhi = out_param.nlo(2);
+        out_param.nlo = out_param.nlo(1);
+    end;
+elseif (length(out_param.nlo) == 2 && flagv == 0)
+    if(length(varargin) == 5)
+        out_param.nhi = out_param.nlo(2);
+        out_param.nlo = out_param.nlo(1);
+    else
+        out_param.nmax = out_param.nhi;
+        out_param.nhi = out_param.nlo(2);
+        out_param.nlo = out_param.nlo(1);
+    end;
 end;
 
 if (out_param.nlo > out_param.nhi)
