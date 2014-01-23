@@ -10,18 +10,18 @@ Developed by
 -------------
 
 Fred Hickernell, Sou-Cheng Choi, and their collaborators including
-Yuhan Ding, Lan Jiang, Yizhi Zhang, and Xincheng Sheng, Department of 
-Applied Mathematics, Illinois Institute of Technology (IIT). 
-We thank the contributions of Xuan Zhou and the class of Math 573 Reliable 
+Yuhan Ding, Lan Jiang, and Yizhi Zhang, Department of Applied Mathematics, 
+Illinois Institute of Technology (IIT). We thank the contributions of
+Xincheng Sheng, Xuan Zhou, and the class of Math 573 Reliable 
 Mathematical Software, Fall 2013.
 
 
 Please cite the following software and papers:
 
 
-Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Xincheng
-Sheng, and Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library 
-(Version 1.3.0)" [MATLAB Software], 2014.  Available from 
+Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, and Yizhi Zhang,
+"GAIL: Guaranteed Automatic Integration Library (Version 1.3.0)" 
+[MATLAB Software], 2014.  Available from 
 http://code.google.com/p/gail/
 
 
