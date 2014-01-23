@@ -20,6 +20,9 @@ set(0,'defaultTextInterpreter','latex') %latex axis labels
 set(0,'defaultLineMarkerSize',40) %latex axis labels
 
 %% quad's nodes
+
+[GAILPATH,GAILVERSION,PATHNAMESEPARATOR,MATLABVERSION] = GAILstart(false); 
+
 xquad=0.13579; %number used by quad to split interval into three parts
 xleft=[0 xquad/2 xquad 3*xquad/2 2*xquad];
 xctr=[2*xquad 1/4+xquad 1/2 3/4-xquad 1-2*xquad];
@@ -34,7 +37,9 @@ spikyfun=@(x) foolfunmaker(x,@(x,c) fbump((x-c(1))/c(2)),...
     ones(nnode-1,1),[xall(1:nnode-1) diff(xall)]); 
     %spiky function
 integralspiky=16/35;
-MATintegralspiky=integral(spikyfun,0,1,'AbsTol',1e-14);
+if MATLABVERSION >= 8, 
+ MATintegralspiky=integral(spikyfun,0,1,'AbsTol',1e-14);
+end
 MATquadspiky=quad(spikyfun,0,1,1e-14);
 h=plot(xplot,spikyfun(xplot),'k-',xall,zeros(nnode,1),'k.');
 axis([0 1 -0.3 1.1])
@@ -45,7 +50,9 @@ filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
     'ConesPaperOutput',PATHNAMESEPARATOR,'ConesPaperSpikyquad.eps');
 print('-deps',filename)
 fprintf('  Integral of spiky function = %7.5f\n',integralspiky)
-fprintf('By MATLAB''s integral routine = %7.5f\n',MATintegralspiky)
+if MATLABVERSION >= 8, 
+  fprintf('By MATLAB''s integral routine = %7.5f\n',MATintegralspiky)
+end
 fprintf('But by MATLAB''s quad routine = %7.5f\n\n',MATquadspiky)
 
 %% Plot a fluky function
@@ -99,7 +106,9 @@ flukyfun=@(x) foolfunmaker(x,piece,optcoef,centers);
 scale=max(flukyfun(xplot));
 scaledfluky=@(x) flukyfun(x)/scale;
 integralfluky=integpiece(centers)'*optcoef/scale;
-MATintegralfluky=integral(scaledfluky,0,1,'AbsTol',1e-14);
+if MATLABVERSION >= 8, 
+  MATintegralfluky=integral(scaledfluky,0,1,'AbsTol',1e-14);
+end
 MATquadfluky=quad(scaledfluky,0,1,1e-14);
 figure
 h=plot(xplot,scaledfluky(xplot),'k-',xall,scaledfluky(xall),'k.');
@@ -111,5 +120,7 @@ filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
 print('-deps',filename)
 fprintf('  Condition number of matrix = %7.5f\n',cond(A))
 fprintf('  Integral of fluky function = %7.5f\n',integralfluky)
-fprintf('By MATLAB''s integral routine = %7.5f\n',MATintegralfluky)
+if MATLABVERSION >= 8, 
+  fprintf('By MATLAB''s integral routine = %7.5f\n',MATintegralfluky)
+end
 fprintf('But by MATLAB''s quad routine = %7.5f\n\n',MATquadfluky)
