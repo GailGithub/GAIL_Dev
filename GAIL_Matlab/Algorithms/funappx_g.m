@@ -100,7 +100,8 @@ function [fappx,out_param]=funappx_g(varargin)
 %       @(x)interp1(x1,y1,x,'linear')
 %
 %   out_param = 
-% 
+%
+%                f: @(x)x.^2    
 %                a: 0
 %                b: 1
 %           abstol: 1.0000e-06
@@ -302,8 +303,10 @@ if isempty(varargin)
     help funappx_g
     warning('MATLAB:funappx_g:nofunction','Function f must be specified. Now GAIL is using f(x)=x^2.')
     f = @(x) x.^2;
+    out_param.f = f;
 else
     f = varargin{1};
+    out_param.f = f;
 end;
 
 validvarargin=numel(varargin)>1;
@@ -356,8 +359,13 @@ if (out_param.b == inf||out_param.b == -inf||isnan(out_param.b)==1)
     warning('MATLAB:funappx_g:anoinfinity',['b can not be infinity. Use default b = ' num2str(default.b)])
     out_param.b = default.b;
 end;
-if (out_param.b <= out_param.a)
-    warning('MATLAB:funappx_g:blea',['b can not be smaller than a. Use b = ' num2str(out_param.a+1)])
+if (out_param.b < out_param.a)
+    warning('MATLAB:funappx_g:blea',['b can not be smaller than a. Use b = ' num2str(out_param.a)])
+    tmp = out_param.b;
+    out_param.b = out_param.a;
+    out_param.a = tmp;
+elseif(out_param.b == out_param.a)
+    warning('MATLAB:funappx_g:beqa',['b can not equal a. Use b = ' num2str(out_param.a+1)])
     out_param.b = out_param.a+1;
 end;
 

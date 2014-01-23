@@ -122,5 +122,24 @@ classdef ut_funappx_g < matlab.unittest.TestCase
       testCase.verifyLessThanOrEqual(result.npoints,result.nmax);
     end
     
+    function funappx_gOfnofunction(testCase)
+      [appxf, result] = testCase.verifyWarning(@()funappx_g,'MATLAB:funappx_g:nofunction');
+      x = sqrt(2)*result.b/2;
+      actualerr = abs(appxf(x)-result.f(x));
+      testCase.verifyLessThanOrEqual(actualerr,result.abstol);
+      testCase.verifyLessThanOrEqual(result.npoints,result.nmax);
+    end
+    
+    function funappx_gOfbeqa(testCase)
+      f = @(x) x.^2;
+      in_param.a = 1; 
+      in_param.b = 1;  
+      [appxf, result] = testCase.verifyWarning(@()funappx_g(f,in_param),'MATLAB:funappx_g:beqa');
+      x = sqrt(2)*result.b/2;
+      actualerr = abs(appxf(x)-result.f(x));
+      testCase.verifyLessThanOrEqual(actualerr,result.abstol);
+      testCase.verifyLessThanOrEqual(result.npoints,result.nmax);
+    end
+    
   end
 end
