@@ -305,8 +305,8 @@ default.nmax  = 1e7;
 
 
 if isempty(varargin)
-    help funappx_g
     warning('MATLAB:funappx_g:nofunction','Function f must be specified. Now GAIL is using f(x)=x^2 and unit interval [0,1].')
+    help funappx_g
     f = @(x) x.^2;
     out_param.f = f;
 else
@@ -356,36 +356,37 @@ else
 end;
 
 % let end point of interval not be infinity
-flagv = 0;
-if (length(out_param.a)==2)
-    flagv = 1;
-    if (length(varargin)==5)
-        out_param.nhi = out_param.nlo;
-        out_param.nlo = out_param.abstol;
-        out_param.abstol = out_param.b;
-        out_param.b = out_param.a(2);
-        out_param.a = out_param.a(1);
-    elseif(length(varargin)==6)
-        out_param.nmax = out_param.nhi;
-        out_param.nhi = out_param.nlo;
-        out_param.nlo = out_param.abstol;
-        out_param.abstol = out_param.b;
-        out_param.b = out_param.a(2);
-        out_param.a = out_param.a(1);
-    elseif(length(varargin)==4)
-        out_param.nlo = out_param.abstol;
-        out_param.abstol = out_param.b;
-        out_param.b = out_param.a(2);
-        out_param.a = out_param.a(1);
-    elseif(length(varargin)==3)
-        out_param.abstol = out_param.b;
-        out_param.b = out_param.a(2);
-        out_param.a = out_param.a(1);
-    elseif(length(varargin)==2)
-        out_param.b = out_param.a(2);
-        out_param.a = out_param.a(1);
-    end;
-end;
+
+% flagv = 0;
+% if (length(out_param.a)==2)
+%     flagv = 1;
+%     if (length(varargin)==5)
+%         out_param.nhi = out_param.nlo;
+%         out_param.nlo = out_param.abstol;
+%         out_param.abstol = out_param.b;
+%         out_param.b = out_param.a(2);
+%         out_param.a = out_param.a(1);
+%     elseif(length(varargin)==6)
+%         out_param.nmax = out_param.nhi;
+%         out_param.nhi = out_param.nlo;
+%         out_param.nlo = out_param.abstol;
+%         out_param.abstol = out_param.b;
+%         out_param.b = out_param.a(2);
+%         out_param.a = out_param.a(1);
+%     elseif(length(varargin)==4)
+%         out_param.nlo = out_param.abstol;
+%         out_param.abstol = out_param.b;
+%         out_param.b = out_param.a(2);
+%         out_param.a = out_param.a(1);
+%     elseif(length(varargin)==3)
+%         out_param.abstol = out_param.b;
+%         out_param.b = out_param.a(2);
+%         out_param.a = out_param.a(1);
+%     elseif(length(varargin)==2)
+%         out_param.b = out_param.a(2);
+%         out_param.a = out_param.a(1);
+%     end;
+% end;
 
 
 if (out_param.a == inf||out_param.a == -inf||isnan(out_param.a)==1)
@@ -428,25 +429,26 @@ if (~isposint(out_param.nmax))
 end
 
 % let initial number of points be a positive integer
-if (length(out_param.nlo) == 2 && flagv == 1)
-    if(length(varargin) ==4)
-        out_param.nhi = out_param.nlo(2);
-        out_param.nlo = out_param.nlo(1);
-    else
-        out_param.nmax = out_param.nhi;
-        out_param.nhi = out_param.nlo(2);
-        out_param.nlo = out_param.nlo(1);
-    end;
-elseif (length(out_param.nlo) == 2 && flagv == 0)
-    if(length(varargin) == 5)
-        out_param.nhi = out_param.nlo(2);
-        out_param.nlo = out_param.nlo(1);
-    else
-        out_param.nmax = out_param.nhi;
-        out_param.nhi = out_param.nlo(2);
-        out_param.nlo = out_param.nlo(1);
-    end;
-end;
+
+% if (length(out_param.nlo) == 2 && flagv == 1)
+%     if(length(varargin) ==4)
+%         out_param.nhi = out_param.nlo(2);
+%         out_param.nlo = out_param.nlo(1);
+%     else
+%         out_param.nmax = out_param.nhi;
+%         out_param.nhi = out_param.nlo(2);
+%         out_param.nlo = out_param.nlo(1);
+%     end;
+% elseif (length(out_param.nlo) == 2 && flagv == 0)
+%     if(length(varargin) == 5)
+%         out_param.nhi = out_param.nlo(2);
+%         out_param.nlo = out_param.nlo(1);
+%     else
+%         out_param.nmax = out_param.nhi;
+%         out_param.nhi = out_param.nlo(2);
+%         out_param.nlo = out_param.nlo(1);
+%     end;
+% end;
 
 if (out_param.nlo > out_param.nhi)
     warning('MATLAB:funappx_g:logrhi', 'Lower bound of initial number of points is larger than upper bound of initial number of points; exchange these two')
