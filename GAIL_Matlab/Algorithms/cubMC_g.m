@@ -35,7 +35,7 @@ function [Q,out_param] = cubMC_g(varargin)
 % 
 % f --- the integrand.
 % 
-% hyperbox --- the integration hypercube. The default value is
+% hyperbox --- the integration hyperbox. The default value is
 % [zeros(1,d); ones(1:d)], the default d is 1.
 % 
 % in_param.measure --- the measure for generating the random variable, the
@@ -61,7 +61,7 @@ function [Q,out_param] = cubMC_g(varargin)
 % in_param.npcmax --- number of elements in an array of optimal size to
 % calculate the mean, the default value is 1e6.
 % 
-% in_param.checked --- the default value of parameter checking status
+% in_param.checked --- the value corresponding to parameter checking status.
 %                    0   not checked
 %                    1   checked by cubMC_g
 %                    2   checked by meanMC_g
@@ -87,7 +87,7 @@ function [Q,out_param] = cubMC_g(varargin)
 % which comes from Berry-Esseen inequality and Chebyshev inequality.
 % 
 % out_param.n --- the total sample size needed to do the two stage
-% algorithm.
+% estimation.
 %
 % out_param.exit --- the state of program when exiting.
 %                     0   success
@@ -135,7 +135,7 @@ function [Q,out_param] = cubMC_g(varargin)
 % 
 % Example 2: 
 % Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) in the
-% hyperbox [0 0;1 1],where x is a vector x = [x1 x2].
+% hyperbox [0 0;1 1], where x is a vector x = [x1 x2].
 % 
 % >> f=@(x) exp(-x(:,1).^2-x(:,2).^2);hyperbox = [0 0;1 1];
 % >> Q = cubMC_g(f,hyperbox,'uniform',1e-3)
@@ -144,7 +144,7 @@ function [Q,out_param] = cubMC_g(varargin)
 % 
 % Example 3: 
 % Estimate the integral with integrand f(x) = 2^d*prod(x1*x2*...*xd)+0.555 in the
-% hyperbox [zeros(1,d);ones(1,d)],where x is a vector x = [x1 x2 ... xd].
+% hyperbox [zeros(1,d);ones(1,d)], where x is a vector x = [x1 x2 ... xd].
 % 
 % >> d=3;f=@(x) 2^d*prod(x,2)+0.555;hyperbox = [zeros(1,d);ones(1,d)];
 % >> Q = cubMC_g(f,hyperbox,'uniform',1e-3)

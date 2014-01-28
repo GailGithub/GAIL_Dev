@@ -1,13 +1,13 @@
 function [mu,out_param]=meanMC_g(varargin)
 % MEANMC_G Monte Carlo method to estimate the mean of a random variable to
-% within a specified absolute error tolerance with guaranteed confidence
-% level 1-alpha.
+% within a specified absolute error tolerance with guaranteed uncertainty
+% within alpha.
 % 
-% mu = MEANMC_G(Yrand) estimates the mean of a random variable Y to
-% within a specified absolute error tolerance 1e-2 with guaranteed
-% uncertainty within 1%. Input Yrand is a function handle that accepts a
-% positive integer input n and returns an n x 1 vector of IID instances
-% of the random variable Y.
+% mu = MEANMC_G(Yrand) estimates the mean of a random variable Y to within
+% a specified absolute error tolerance 1e-2 with guaranteed uncertainty
+% within 1%. Input Yrand is a function handle that accepts a positive
+% integer input n and returns an n x 1 vector of IID instances of the
+% random variable Y.
 % 
 % mu =
 % MEANMC_G(Yrand,abstol,alpha,n_sigma,fudge,tbudget,nbudget,npcmax,checked)
@@ -58,15 +58,15 @@ function [mu,out_param]=meanMC_g(varargin)
 % in_param.npcmax --- number of elements in an array of optimal size to
 % calculate the mu, the default value is 1e6.
 % 
-% out_param.time_n_sigma_predict --- the estimated time to get n_sigma
-% samples of the random variable.
-% 
-% in_param.checked --- the status that the parameters are checked.
+% in_param.checked --- the value corresponding to parameter checking status.
 %                     0   not checked
 %                     1   checked by cubMC_g
 %                     2   checked by meanMC_g
 %
-% out_param_n_left_predict --- using the time left to predict the number
+% out_param.time_n_sigma_predict --- the estimated time to get n_sigma
+% samples of the random variable.
+%
+% out_param.n_left_predict --- using the time left to predict the number
 % of samples left.
 % 
 % out_param.nmax --- the maximum sample budget to estimate mu, it comes
@@ -85,10 +85,9 @@ function [mu,out_param]=meanMC_g(varargin)
 % 
 % out_param.n_mu --- the sample size that needed to estimate the mu.
 % 
-% out_param.n --- the total sample size needed to do the two stage
-% algorithm.
+% out_param.n --- the total sample size needed to do the two stage estimation.
 % 
-% out_param.time --- the time eclipsed.
+% out_param.time --- the time elapsed.
 % 
 % Guarantee
 % 
@@ -114,7 +113,7 @@ function [mu,out_param]=meanMC_g(varargin)
 % 
 % Example 1: 
 % Calculate the mean of x^2 when x is uniformly distributed in
-% [0,1], with the absolute error tolerance = 1e-2.
+% [0 1], with the absolute error tolerance = 1e-2.
 % 
 % >> in_param.abstol=1e-2; in_param.alpha = 0.01; Yrand=@(n) rand(n,1).^2;
 % >> mu=meanMC_g(Yrand,in_param) 
@@ -433,7 +432,7 @@ switch out_param.exit
         warning('MATLAB:meanMC_g:maxreached',...
             ['tried to evaluate at ' int2str(out_param.n_mu) ...
             ' samples, which is more than the allowed maximum of '...
-            num2str(out_param.nmax) ' samples. Just use the maximum sample budget']);
+            num2str(out_param.nmax) ' samples. Just use the maximum sample budget.']);
         return
     case 2 % initial try out time costs more than 10% of time budget.
         warning('MATLAB:meanMC_g:initialtryoutbudgetreached',...

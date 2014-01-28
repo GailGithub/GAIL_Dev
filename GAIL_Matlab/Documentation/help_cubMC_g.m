@@ -1,57 +1,59 @@
 %% cubMC_g
 % |Monte Carlo method to evaluate a multidimentional integral to within a
-% specified absolute error tolerance with guaranteed uncertainy within
-% alpha.|
+% specified absolute error tolerance with guaranteed confidence
+% level 1-alpha.|
 %
 %% Syntax
 % [Q,out_param] = *cubMC_g*(f)
 %
-% Q = *cubMC_g*(f,interval,measure,abstol,alpha,n_sigma,fudge,timebudget,
-%               nbudget,npcmax)
+% Q = *cubMC_g*(f,hyperbox,measure,abstol,alpha,n_sigma,fudge,tbudget,
+%               nbudget,npcmax,checked)
 %
-% Q = *cubMC_g*(f,interval,'measure','uniform','abstol',abstol,'alpha',alpha,
-%              'n_sigma',n_sigma,fudge',fudge,'timebudget',timebudget,
-%              'nbudget',nbudget,'npcmax',npcmax)
+% Q = *cubMC_g*(f,hyperbox,'measure','uniform','abstol',abstol,'alpha',alpha,
+%              'n_sigma',n_sigma,fudge',fudge,'tbudget',tbudget,
+%              'nbudget',nbudget,'npcmax',npcmax,'checked',checked)
 %
-% Q = *cubMC_g*(f,interval,,in_param)
+% Q = *cubMC_g*(f,hyperbox,,in_param)
 %
 %% Description
-% [Q,out_param] = *cubMC_g*(f,interval) |estimates the integral with
+% [Q,out_param] = *cubMC_g*(f,hyperbox) |estimates the integral with
 % integrand f to within the absolute error tolerance 1e-2 and with
-% guaranteed uncertainty alpha within 1%. Input f a function handle. The
+% guaranteed uncertainty alpha 1%. Input f is a function handle. The
 % function Y=f(X) should accept a vector argument X and return a vector
-% result Y, the integrand evaluated at each element of X.Input interval
-% is 2 x d matrix.|
+% result Y, the integrand evaluated at each element of X.Input hyperbox is
+% 2 x d matrix.|
 %
-% Q = *cubMC_g*(f,interval,measure,abstol,alpha,n_sigma,fudge,timebudget,
-% nbudget,npcmax) |estimates the integral with integrand f to within an
-% absolute error tolerance abstol with guaranteed uncertainty within alpha
-% using ordered parameter input interval, measure, tolerence, uncertainty,
-% n_sigma, fudge, timebudget, nbudget and npcmax. If an input is not
-% specified, the default value is used.|
+% Q = *cubMC_g*(f,hyperbox,measure,abstol,alpha,n_sigma,fudge,tbudget,
+% nbudget,npcmax,checked) |estimates the integral with integrand f in
+% hyperbox to within an absolute error tolerance abstol with guaranteed
+% uncertainty alpha using ordered parameter input measure, tolerance,
+% uncertainty, n_sigma, fudge, tbudget, nbudget and npcmax. If an input is
+% not specified, the default value is used.|
 %
 % Q =
-% *cubMC_g*(f,interval,'measure','uniform','abstol',abstol,'alpha',alpha,
-% 'n_sigma',n_sigma,fudge',fudge,'timebudget',timebudget,'nbudget',nbudget,
-%   'npcmax',npcmax) |estimates the integral with integrand f
-% to within an absolute error tolerance abstol with guaranteed uncertainty
-% within alpha. All the field-value pairs are optional and can be supplied
-% in different order.If an input is not specified, the default value is
-%   used.|
+% *cubMC_g*(f,hyperbox,'measure','uniform','abstol',abstol,'alpha',alpha,
+% 'n_sigma',n_sigma,fudge',fudge,'tbudget',tbudget,'nbudget',nbudget,
+% 'npcmax',npcmax,'checked',checked) |estimates the integral with integrand
+% f in hyperbox to within an absolute error tolerance abstol with
+% guaranteed uncertainty alpha. All the field-value pairs are optional and
+% can be supplied in different order. If an input is not specified, the
+% default value is used.|
 %
-% Q = *cubMC_g*(f,interval,in_param) |estimates the integral with integrand f
-% to within an absolute error tolerance in_param.abstol with guaranteed
-% uncertainty within in_param.alpha. If a field is not specified, the
+% Q = *cubMC_g*(f,hyperbox,in_param) |estimates the integral with integrand
+% f in hyperbox to within an absolute error tolerance in_param.abstol with
+% guaranteed uncertainty in_param.alpha. If a field is not specified, the
 % default value is used.|
 %
 % *Input Arguments*
 %
 % * f --- |the integrand.|
 %
-% * interval --- |the integration interval.|
+% * hyperbox --- |the integration hyperbox. The default value is
+% [zeros(1,d); ones(1:d)], the default d is 1.|
 %
 % * in_param.measure --- |the measure for generating the random variable,
-%   the default is uniform.|
+%   the default is uniform. The other measure we could handle is
+%   normal/Gaussian.|
 %
 % * in_param.abstol --- |the absolute error tolerance, default value is 1e-2.|
 %
@@ -63,45 +65,47 @@
 % * in_param.fudge --- |the standard deviation inflation factor, the
 %                       default value is 1.1.|
 %
-% * in_param.timebudget --- |the time budget to do the two-stage estimation,
+% * in_param.tbudget --- |the time budget to do the two-stage estimation,
 %   the default value is 100 seconds.|
 %
 % * in_param.nbudget --- |the sample budget to do the two-stage estimation,
 %   the default value is 1e8.|
 %
 % * in_param.npcmax --- |number of elements in an array of optimal size to
-%   calculate the mu, the default value is 1e6.|
+%   calculate the mean, the default value is 1e6.|
 %
-% * in_param.checked --- |the status that the paramtered are checked.|
+% * in_param.checked --- |the value corresponding to parameter checking status.|
 %
 %                        0   not checked
 %
-%                        1   checked by cubMC
+%                        1   checked by cubMC_g
 %
-%                        2   checked by meanMC
+%                        2   checked by meanMC_g
 %
 % *Output Arguments*
 %
-% * Q --- |the estimated value of the the integration.|
+% * Q --- |the estimated value of the integral.|
 %
-% * out_param_time_n_sigma_predict --- |the estimated time to get n_sigma
+% * out_param.time_n_sigma_predict --- |the estimated time to get n_sigma
 %                                       samples of the random variable.|
 %
 % * out_param.n_left_predict --- |using the time left to predict the number
 %                                 of samples left.|
 %
-% * out_param.nmax --- |the maximum sample budget to estimate mu, it comes
-%                       from both the sample budget and the time budget.|
+% * out_param.nmax --- |the maximum sample budget to estimate the mean, it
+%                       comes from both the sample budget and the time budget.|
 %
 % * out_param.var --- |the sample variance.|
 %
 % * out_param.kurtmax --- |the upper bound on modified kurtosis.|
 %
-% * out_param.time --- |the time eclipsed.|
+% * out_param.time --- |the time elapsed.|
 %
-% * out_param.n_mu --- |the sample size that needed to estimate the mu.|
+% * out_param.n_mu --- |the sample size that needed to estimate the mean, 
+%                       which comes from Berry-Esseen inequality and 
+%                       Chebyshev inequality.|
 %
-% * out_param.n --- |the total sample size needed to do the two stage algorithm.|
+% * out_param.n --- |the total sample size needed to do the two stage esitmation.|
 %
 % * out_param.exit --- |the state of program when exiting.|
 %
@@ -115,15 +119,15 @@
 %                         3   The estimated time for estimating variance 
 %                             is bigger than half of the time budget
 %
-%                         10  Interval does not contain numbers
+%                         10  Hyperbox does not contain numbers
 %
-%                         11  Interval not 2 x d
+%                         11  Hyperbox not 2 x d
 %
-%                         12  Interval is only a point in one direction
+%                         12  Hyperbox is only a point in one direction
 %
-%                         13  Interval is infinite when measure is uniform
+%                         13  Hyperbox is infinite when measure is uniform
 %
-%                         14  Interval is not doubly infinite when measure
+%                         14  Hyperbox is not doubly infinite when measure
 %                             is normal
 %
 %% Guarantee
@@ -158,7 +162,7 @@
 % :\mathrm{Pr}[N_{\mathrm{tot}}(\varepsilon,\alpha,\tilde{\kappa}_{\max},\tilde{\kappa}_{\max}^{3/4})
 % \le N] \ge 1-\beta  \right \}$$
 %
-% The total cost of this two stage algrithm has a probabilistic bound above
+% The total cost of this two stage algorithm has a probabilistic bound above
 % by
 %
 % $$N_{\mathrm{tot}}(\varepsilon,\alpha, \beta, \tilde{\kappa}_{\max},
@@ -168,39 +172,28 @@
 % $$
 % with level of uncertainty $\beta$.
 %% Examples
+%
 % Example 1:
-% Estimate the integral with integrand f(x) = x^2 in the interval [0,1].
-
-    f = @(x) x.^2;interval = [0;1]; Q = cubMC_g(f,interval,'abstol',1e-2)
-%%
-% Example 2:
-% Estimate the integral with integrand f(x) = exp(x) in the interval
-% [1,2].
-
-    f = @(x) exp(x);interval = [1;2]; Q = cubMC_g(f,interval)
-
-%%
-% Example 3:
 % Estimate the integral with integrand f(x) = sin(x) in the interval
-% [1,2].
+% [1;2].
 
     f = @(x) sin(x);interval = [1;2]; Q = cubMC_g(f,interval,'uniform',1e-3)
 
 %%
-% Example 4:
+% Example 2:
 % Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) in the
-% interval [0 0;1 1],where x is a vector x = [x1 x2].
+% hyperbox [0 0;1 1], where x is a vector x = [x1 x2].
 
-    f = @(x) exp(-x(:,1).^2-x(:,2).^2);interval = [0 0;1 1];
-    Q = cubMC_g(f,interval,'uniform',1e-3)
+    f = @(x) exp(-x(:,1).^2-x(:,2).^2);hyperbox = [0 0;1 1];
+    Q = cubMC_g(f,hyperbox,'uniform',1e-3)
     
 %%
-% Example 5: 
+% Example 3: 
 % Estimate the integral with integrand $f(x) = 2^d\prod_{j=1}^d x_j+0.555$
-% in the interval [zeros(1,d);ones(1,d)], where x is a vector x = [x1 x2 ... xd].
+% in the hyperbox [zeros(1,d);ones(1,d)], where x is a vector x = [x1 x2 ... xd].
 %
-    d=3;f=@(x) 2^d*prod(x,2)+0.555;interval = [zeros(1,d);ones(1,d)];
-    Q = cubMC_g(f,interval,'uniform',1e-3)
+    d=3;f=@(x) 2^d*prod(x,2)+0.555;hyperbox = [zeros(1,d);ones(1,d)];
+    Q = cubMC_g(f,hyperbox,'uniform',1e-3)
 %% See Also
 %
 % <html>  
@@ -215,9 +208,17 @@
 % <a href="help_meanMC_g.html">meanMC_g</a>
 % </html>
 %
-%% Reference
+%% References
 %   [1]  F. J. Hickernell, L. Jiang, Y. Liu, and A. B. Owen, Guaranteed
 %   conservative fixed width confidence intervals via Monte Carlo sampling,
 %   Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F. Y. Kuo, G.
 %   W. Peters, and I. H. Sloan, eds.), Springer-Verlag, Berlin, 2014, to
 %   appear, arXiv:1208.4318 [math.ST]
+%
+%   [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, and
+%   Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library (Version
+%   1.3.0)" [MATLAB Software], 2014. Available from
+%   http://code.google.com/p/gail/
+%
+%   If you find GAIL helpful in your work, please support us by citing the
+%   above paper and software.

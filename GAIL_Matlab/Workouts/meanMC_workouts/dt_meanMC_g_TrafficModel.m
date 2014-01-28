@@ -1,4 +1,4 @@
-function mu=dt_meanMC_g_TrafficModel(tol)
+function [mu, out_param]=dt_meanMC_g_TrafficModel(tol)
 % test traffic model
 %
 % dt_meanMC_g_TrafficModel(tol)
@@ -12,21 +12,21 @@ function mu=dt_meanMC_g_TrafficModel(tol)
 % 
 %     4.4***
 %
-% >> dt_meanMC_g_TrafficModel(5e-3)
+% >> dt_meanMC_g_TrafficModel(1e-3)
 %
-% ans =
-% 
-%     4.45***
+% Warning: tried to evaluate at *** samples, which is more than
+% the allowed maximum of *** samples. Just use the maximum sample
+% budget.
 % 
 % >> dt_meanMC_g_TrafficModel('hi')
 % ??? Error using ***meanMC_g***Argument 'abstol' failed validation isnumeric.
 % 
-in_param.timebudget=60;% given time budget 
+in_param.tbudget=30;% given time budget 
 in_param.nbudget=1e6;% given sample budget
 in_param.n_sigma=70;% given intitial sample size to estimate sigma
 in_param.fudge=1.1;%given fudge factor
 in_param.alpha=0.01;% given uncertainty
 in_param.abstol=tol;%given error tolerance
-in_param.npcmax=1e6;% given piecewise maximum to calculate the mu
-mu=meanMC_g(@Ytrafficmodel,in_param);
+in_param.npcmax=1e6;% given piecewise maximum to calculate the mean
+[mu, out_param] = meanMC_g(@Ytrafficmodel,in_param);
 end
