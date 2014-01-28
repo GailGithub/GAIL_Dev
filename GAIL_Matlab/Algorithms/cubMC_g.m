@@ -1,45 +1,45 @@
 function [Q,out_param] = cubMC_g(varargin)
 % CUBMC_G Monte Carlo method to evaluate a multidimensional integral to
-% within a specified absolute error tolerance with guaranteed uncertainty
-% alpha.
+% within a specified absolute error tolerance with guaranteed confidence
+% level 1-alpha.
 % 
-% [Q,out_param] = CUBMC_G(f,interval) estimates the integral with
-% integrand f to within the absolute error tolerance 1e-2 and with
-% guaranteed uncertainty alpha 1%. Input f is a function handle. The
-% function Y=f(X) should accept a vector argument X and return a vector
-% result Y, the integrand evaluated at each element of X. Input interval
-% is 2 x d matrix, where d is the dimension of the hypercube defined by
-% the limits of the interval. The order of the columns in the interval
-% matrix is corresponding to the order of the interval limits. 
+% [Q,out_param] = CUBMC_G(f,hyperbox) estimates the integral with integrand
+% f to within the absolute error tolerance 1e-2 and with guaranteed
+% uncertainty alpha 1%. Input f is a function handle. The function Y=f(X)
+% should accept a vector argument X and return a vector result Y, the
+% integrand evaluated at each element of X. Input hyperbox is 2 x d matrix,
+% where d is the dimension defined by the limits of the hyperbox. The order
+% of the columns in the hyperbox matrix is corresponding to the order of
+% the hyperbox limits.
 % 
 % Q =
-% CUBMC_G(f,interval,measure,abstol,alpha,n_sigma,fudge,tbudget,nbudget,npcmax)
-% estimates the integral with integrand f to within an absolute error
-% tolerance abstol with guaranteed uncertainty alpha using ordered
-% parameter input interval, measure, tolerance, uncertainty, n_sigma,
-% fudge, tbudget, nbudget and npcmax. If an input is not specified, the
+% CUBMC_G(f,hyperbox,measure,abstol,alpha,n_sigma,fudge,tbudget,nbudget,npcmax,checked)
+% estimates the integral with integrand f in hyperbox to within an absolute
+% error tolerance abstol with guaranteed uncertainty alpha using ordered
+% parameter input measure, tolerance, uncertainty, n_sigma, fudge, tbudget,
+% nbudget, npcmax and checked. If an input is not specified, the default
+% value is used.
+% 
+% Q = CUBMC_G(f,hyperbox,'measure','uniform','abstol',abstol,'alpha',alpha,
+% 'n_sigma',n_sigma,'fudge',fudge,'tbudget',tbudget,'nbudget',nbudget,
+% 'npcmax',npcmax,'checked',checked) estimates the integral with integrand
+% f in hyperbox to within an absolute error tolerance abstol with
+% guaranteed uncertainty alpha. All the field-value pairs are optional and
+% can be supplied in different order. If an input is not specified, the
 % default value is used.
 % 
-% Q =
-% CUBMC_G(f,interval,'measure','uniform','abstol',abstol,'alpha',alpha,
-% 'n_sigma',n_sigma,'fudge',fudge,'tbudget',tbudget,'nbudget',nbudget,
-% 'npcmax',npcmax) estimates the integral with integrand f to within an
-% absolute error tolerance abstol with guaranteed uncertainty alpha. All
-% the field-value pairs are optional and can be supplied in different
-% order. If an input is not specified, the default value is used.
-% 
-% Q = CUBMC_G(f,interval,in_param) estimates the integral with integrand
-% f to within an absolute error tolerance in_param.abstol with guaranteed
-% uncertainty in_param.alpha. If a field is not specified, the default
-% value is used.
+% Q = CUBMC_G(f,hyperbox,in_param) estimates the integral with integrand f
+% in hyperbox to within an absolute error tolerance in_param.abstol with
+% guaranteed uncertainty in_param.alpha. If a field is not specified, the
+% default value is used.
 % 
 % f --- the integrand.
 % 
-% interval --- the integration hypercube. The default value is
+% hyperbox --- the integration hypercube. The default value is
 % [zeros(1,d); ones(1:d)], the default d is 1.
 % 
 % in_param.measure --- the measure for generating the random variable, the
-% default is uniform. The other measure we could handle is normal/gaussian.
+% default is uniform. The other measure we could handle is normal/Gaussian.
 % 
 % in_param.abstol --- the absolute error tolerance, the default value is
 % 1e-2.
@@ -61,14 +61,14 @@ function [Q,out_param] = cubMC_g(varargin)
 % in_param.npcmax --- number of elements in an array of optimal size to
 % calculate the mean, the default value is 1e6.
 % 
-% in_param.checked --- the status that the parameters are checked.
+% in_param.checked --- the default value of parameter checking status
 %                    0   not checked
 %                    1   checked by cubMC_g
 %                    2   checked by meanMC_g
-% 
+%
 % Q --- the estimated value of the integral.
 % 
-% out_param_time_n_sigma_predict --- the estimated time to get n_sigma
+% out_param.time_n_sigma_predict --- the estimated time to get n_sigma
 % samples.
 % 
 % out_param.n_left_predict --- using the time left to predict the number
@@ -88,7 +88,7 @@ function [Q,out_param] = cubMC_g(varargin)
 % 
 % out_param.n --- the total sample size needed to do the two stage
 % algorithm.
-% 
+%
 % out_param.exit --- the state of program when exiting.
 %                     0   success
 %                     1   No enough samples to estimate the mean.
@@ -96,11 +96,11 @@ function [Q,out_param] = cubMC_g(varargin)
 %                         10% of time budget. 
 %                     3   The estimated time for estimating variance 
 %                         is bigger than half of the time budget.
-%                     10  Interval does not contain numbers.
-%                     11  Interval not 2 x d.
-%                     12  Interval is only a point in one direction.
-%                     13  Interval is infinite when measure is uniform.
-%                     14  Interval is not doubly infinite when measure
+%                     10  hyperbox does not contain numbers.
+%                     11  hyperbox not 2 x d.
+%                     12  hyperbox is only a point in one direction.
+%                     13  hyperbox is infinite when measure is uniform.
+%                     14  hyperbox is not doubly infinite when measure
 %                         is normal.
 % 
 % Guarantee
@@ -126,101 +126,87 @@ function [Q,out_param] = cubMC_g(varargin)
 % Examples
 % 
 % Example 1:
-% Estimate the integral with integrand f(x) = x^2 in the interval [0,1]
-% 
-% >> f=@(x) x.^2;interval = [0;1];
-% >> Q = cubMC_g(f,interval,'abstol',1e-3)
-% Q = 0.33***
-% 
-% 
-% Example 2:
-% Estimate the integral with integrand f(x) = exp(x) in the interval [1,2]
-% 
-% >> f=@(x) exp(x);interval = [1;2];
-% >> Q = cubMC_g(f,interval,'uniform',1e-3)
-% Q = 4.67***
-% 
-% 
-% Example 3:
-% Estimate the integral with integrand f(x) = sin(x) in the interval [1,2]
+% Estimate the integral with integrand f(x) = sin(x) in the interval [1;2]
 % 
 % >> f=@(x) sin(x);interval = [1;2];
 % >> Q = cubMC_g(f,interval,'uniform',1e-3)
 % Q = 0.95***
 % 
 % 
-% Example 4: 
+% Example 2: 
 % Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) in the
-% interval [0 0;1 1],where x is a vector x = [x1 x2].
+% hyperbox [0 0;1 1],where x is a vector x = [x1 x2].
 % 
-% >> f=@(x) exp(-x(:,1).^2-x(:,2).^2);interval = [0 0;1 1];
-% >> Q = cubMC_g(f,interval,'uniform',1e-3)
+% >> f=@(x) exp(-x(:,1).^2-x(:,2).^2);hyperbox = [0 0;1 1];
+% >> Q = cubMC_g(f,hyperbox,'uniform',1e-3)
 % Q = 0.55***
 % 
 % 
-% Example 5: 
+% Example 3: 
 % Estimate the integral with integrand f(x) = 2^d*prod(x1*x2*...*xd)+0.555 in the
-% interval [zeros(1,d);ones(1,d)],where x is a vector x = [x1 x2 ... xd].
+% hyperbox [zeros(1,d);ones(1,d)],where x is a vector x = [x1 x2 ... xd].
 % 
-% >> d=3;f=@(x) 2^d*prod(x,2)+0.555;interval = [zeros(1,d);ones(1,d)];
-% >> Q = cubMC_g(f,interval,'uniform',1e-3)
+% >> d=3;f=@(x) 2^d*prod(x,2)+0.555;hyperbox = [zeros(1,d);ones(1,d)];
+% >> Q = cubMC_g(f,hyperbox,'uniform',1e-3)
 % Q = 1.5***
 % 
+%
 % See also FUNAPPX_G, INTEGRAL_G, MEANMC_G
 % 
-% Reference
+% References
+%
 % [1]  F. J. Hickernell, L. Jiang, Y. Liu, and A. B. Owen, Guaranteed
 % conservative fixed width confidence intervals via Monte Carlo sampling,
-% Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F. Y. Kuo, G.
-% W. Peters, and I. H. Sloan, eds.), Springer-Verlag, Berlin, 2014, to
-% appear, arXiv:1208.4318 [math.ST]
+% Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F. Y. Kuo, G. W.
+% Peters, and I. H. Sloan, eds.), Springer-Verlag, Berlin, 2014, to appear,
+% arXiv:1208.4318 [math.ST]
 %
-% If you find GAIL helpful in your work or our algorithmic research and
-% software appealing, please support us by citing the above paper and the
-% following software: 
-% [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell,
-% Lan Jiang, Xincheng Sheng, and Yizhi Zhang, "GAIL: Guaranteed Automatic
-% Integration Library (Version 1.3.0)" [MATLAB Software], 2014. Available
-% from http://code.google.com/p/gail/
+% [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, and
+% Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library (Version
+% 1.3.0)" [MATLAB Software], 2014. Available from
+% http://code.google.com/p/gail/
+%
+% If you find GAIL helpful in your work, please support us by citing the
+% above paper and software.
+
 
 tstart=tic;
-[f,interval,in_param,out_param] = cubMC_g_param(varargin{:});%check validity of inputs
-%in_param.checked = true;
-f=transformIntegrand(f,interval,in_param); 
-if strcmp(in_param.measure,'uniform')% the using uniformly distributed samples
-    [Q,out_param] = meanMC_g(@(nfun)f(rand(nfun,in_param.dim)),in_param);
-    out_param.Q=Q;% using meanMC_g to get the mean 
+[f,hyperbox,out_param] = cubMC_g_param(varargin{:});%check validity of inputs
+f=transformIntegrand(f,hyperbox,out_param); 
+if strcmp(out_param.measure,'uniform')% the using uniformly distributed samples
+    [Q,out_param] = meanMC_g(@(nfun)f(rand(nfun,out_param.dim)),out_param);
+   % out_param.Q=Q;% using meanMC_g to get the mean 
 else strcmp(in_param.measure,'normal')% using normally distributed samples
-    [Q,out_param] = meanMC_g(@(nfun)f(randn(nfun,in_param.dim)),in_param);
-    out_param.Q=Q;% using meanMC_g to get the mean
+    [Q,out_param] = meanMC_g(@(nfun)f(randn(nfun,out_param.dim)),out_param);
+    %out_param.Q=Q;% using meanMC_g to get the mean
 end
 out_param.time=toc(tstart); %elapsed time
 end
 
-function newf=transformIntegrand(oldf,interval,in_param)
-% Transform integrand so that the interval would be changed
-    if strcmp(in_param.measure,'uniform') %uniform measure
-        a=interval(1,:); %left endpoint
-        b=interval(2,:); %right endpoint
+function newf=transformIntegrand(oldf,hyperbox,out_param)
+% Transform integrand linearly so that the hyperbox would not be changed
+    if strcmp(out_param.measure,'uniform') %uniform measure
+        a=hyperbox(1,:); %left endpoint
+        b=hyperbox(2,:); %right endpoint
     if all(a==0) && all(b==1) %no change needed
         newf=oldf; 
     else %transform points and integrand
-        bmina=b-a; %interval width
-        volbox=prod(bmina); %volume of the interval
+        bmina=b-a; %hyperbox width
+        volbox=prod(bmina); %volume of the hyperbox
         newf=@(x) oldf(x.*repmat(bmina,size(x,1),1)+repmat(a,size(x,1),1))...
             .*volbox;
        %stretch and shift, then multiply by volume
     end
-    elseif strcmp(in_param.measure,'normal')
+    elseif strcmp(out_param.measure,'normal')
         newf=oldf;% no change if it is normal measure.
     end   
 end
 
-function [f,interval,in_param,out_param] = cubMC_g_param(varargin)
+function [f,hyperbox,out_param] = cubMC_g_param(varargin)
 % Parameter checking and parsing
 default.measure = 'uniform';% default measure
 default.dim = 1;% default dimension
-default.interval = [zeros(1,default.dim);ones(1,default.dim)];% default interval
+default.hyperbox = [zeros(1,default.dim);ones(1,default.dim)];% default hyperbox
 default.abstol  = 1e-2;% default absolute error tolerance
 default.alpha = 0.01;% default uncertainty
 default.n_sigma = 1e3; % default n_sigma
@@ -228,23 +214,25 @@ default.fudge = 1.1; % default variance inflation factor
 default.tbudget = 100;% default time budget
 default.nbudget = 1e8; % default sample budget
 default.npcmax = 1e6;% default n piece maximum
-default.checked = 0;
+default.checked = 0; % default value of parameter checking status
 if isempty(varargin) % if no input print error message and use the default setting
     help cubMC_g
-    warning('MATLAB:cubMC_g:fnotgiven',['f must be specified. Now GAIL is using f = @(x) x.^2. '...
-        'Integration interval must be specified. Now GAIL is using interval [0 1]'])
+    warning('MATLAB:cubMC_g:fnotgiven',['f must be specified.'...
+        'Now GAIL is using f = @(x) x.^2. '...
+        'Integration hyperbox must be specified.'...
+        'Now GAIL is using interval [0;1] with dimension 1.'])
     f = @(x) x.^2;
-    interval = default.interval;
+    hyperbox = default.hyperbox;
 elseif numel(varargin)==1
-    % if there is only function but no interval input. Use default interval.
+    % if there is only function but no hyperbox input. Use default hyperbox.
     help cubMC_g
-    warning('MATLAB:cubMC_g:intervalnotgiven',...
-        'the interval must be specified, Now GAIL is using interval [0 1]')
+    warning('MATLAB:cubMC_g:hyperboxnotgiven',...
+        'the hyperbox must be specified, Now GAIL is using interval [0;1] with dimension 1')
     f = varargin{1};
-    interval = default.interval;    
+    hyperbox = default.hyperbox;    
 else
     f = varargin{1};
-    interval = varargin{2}; % the first input is function, the second input is interval.
+    hyperbox = varargin{2}; % the first input is function, the second input is hyperbox.
 end
     
 validvarargin=numel(varargin)>2;% check if there is any optional parameter input
@@ -256,23 +244,24 @@ end
 
 if ~validvarargin
 % if there is no optional input, use default settings.
-    in_param.measure = default.measure;
-    in_param.abstol = default.abstol;
-    in_param.alpha = default.alpha;
-    in_param.n_sigma = default.n_sigma;
-    in_param.fudge = default.fudge;
-    in_param.tbudget = default.tbudget;
-    in_param.nbudget = default.nbudget;
-    in_param.npcmax = default.npcmax;
-    in_param.checked = default.checked;
+    out_param.measure = default.measure;
+    out_param.abstol = default.abstol;
+    out_param.alpha = default.alpha;
+    out_param.n_sigma = default.n_sigma;
+    out_param.fudge = default.fudge;
+    out_param.tbudget = default.tbudget;
+    out_param.nbudget = default.nbudget;
+    out_param.npcmax = default.npcmax;
+    out_param.checked = default.checked;
 else % if there is some optional input 
     p = inputParser;
     addRequired(p,'f',@isfcn);
-    addRequired(p,'interval',@isnumeric);
+    addRequired(p,'hyperbox',@isnumeric);
     if isnumeric(in3) || ischar(in3)
         %if there are multiple inputs with only numeric, they should be put
         %in order.
-        addOptional(p,'measure',default.measure,@(x) any(validatestring(x, {'uniform','normal','Gaussian'})));
+        addOptional(p,'measure',default.measure,...
+            @(x) any(validatestring(x, {'uniform','normal','Gaussian'})));
         addOptional(p,'abstol',default.abstol,@isnumeric);
         addOptional(p,'alpha',default.alpha,@isnumeric);
         addOptional(p,'n_sigma',default.n_sigma,@isnumeric);
@@ -287,7 +276,8 @@ else % if there is some optional input
             p.KeepUnmatched = true;
         end % if there are multiple inputs with name and numeric, they
     % could be put not in order
-        addParamValue(p,'measure',default.measure,@(x) any(validatestring(x, {'uniform','normal','Gaussian'})));
+        addParamValue(p,'measure',default.measure,...
+            @(x) any(validatestring(x, {'uniform','normal','Gaussian'})));
         addParamValue(p,'abstol',default.abstol,@isnumeric);
         addParamValue(p,'alpha',default.alpha,@isnumeric);
         addParamValue(p,'n_sigma',default.n_sigma,@isnumeric);
@@ -297,119 +287,115 @@ else % if there is some optional input
         addParamValue(p,'npcmax',default.npcmax,@isnumeric); 
         addParamValue(p,'checked',default.checked,@isnumeric); 
     end
-    parse(p,f,interval,varargin{3:end})
-    in_param = p.Results;
+    parse(p,f,hyperbox,varargin{3:end})
+    out_param = p.Results;
 end
-if any(isnan(interval(:))); %check interval for not a number
+if any(isnan(hyperbox(:))); %check hyperbox for not a number
     out_param.exit=10; out_param = cubMC_g_err(out_param); return; 
 end
-[two, in_param.dim]=size(interval); %interval should be 2 x dimension
-if two==0 && isfield(in_param,'interval'); 
-    %if interval specified through in_param structure
-    interval=in_param.interval; %then get it from there
-    [two, in_param.dim]=size(interval); %and get the dimension
+[two, out_param.dim]=size(hyperbox); %hyperbox should be 2 x dimension
+if two==0 && isfield(out_param,'hyperbox'); 
+    %if hyperbox specified through out_param structure
+    hyperbox=out_param.hyperbox; %then get it from there
+    [two, out_param.dim]=size(hyperbox); %and get the dimension
 end
-if two~=2 %if interval is given as row vector for dimension 1, fix that
-    if in_param.dim==2; in_param.dim=two; interval=interval';
+if two~=2 %if hyperbox is given as row vector for dimension 1, fix that
+    if out_param.dim==2; out_param.dim=two; hyperbox=hyperbox';
     else out_param.exit=11; out_param = cubMC_g_err(out_param); return; 
         %else, return an error
     end
 end
-interval=[min(interval,[],1); max(interval,[],1)]; 
+hyperbox=[min(hyperbox,[],1); max(hyperbox,[],1)]; 
 %ensure left and right endpoints are in order
-if any(interval(1,:)==interval(2,:)); %interval is a point in one direction
+if any(hyperbox(1,:)==hyperbox(2,:)); %hyperbox is a point in one direction
     out_param.exit=12; out_param = cubMC_g_err(out_param); return;
 end
-in_param.interval=interval; %copy interval into the in_param structure
+out_param.hyperbox=hyperbox; %copy hyperbox into the out_param structure
 
-if isfield(in_param,'measure'); % the sample measure
-    in_param.measure=validatestring(in_param.measure,{'uniform','normal','Gaussian'});
-    if strcmpi(in_param.measure,'Gaussian')
-        in_param.measure='normal'; 
+if isfield(out_param,'measure'); % the sample measure
+    out_param.measure=validatestring(out_param.measure,{'uniform','normal','Gaussian'});
+    if strcmpi(out_param.measure,'Gaussian')
+        out_param.measure='normal'; 
     end
 else
-    in_param.measure=default.measure;
+    out_param.measure=default.measure;
 end
-if strcmp(in_param.measure,'uniform')&&~all(isfinite(interval(:)))
-    %cannot integrate on an infinite interval with the uniform distribution
+if strcmp(out_param.measure,'uniform')&&~all(isfinite(hyperbox(:)))
+    %cannot integrate on an infinite hyperbox with the uniform distribution
     out_param.exit=13; out_param = cubMC_g_err(out_param); return;
 end
-if strcmp(in_param.measure,'normal')&&any(isfinite(interval(:)))
-    %must integrate on an infinite interval with the normal distribution
+if strcmp(out_param.measure,'normal')&&any(isfinite(hyperbox(:)))
+    %must integrate on an infinite hyperbox with the normal distribution
     out_param.exit=14; out_param = cubMC_g_err(out_param); return;
 end
-if in_param.checked == 0
-    if (in_param.abstol <= 0) %absolute error tolerance
+if out_param.checked == 0
+    if (out_param.abstol <= 0) %absolute error tolerance
         warning('MATLAB:cubMC_g:abstolneg',...
             'the absolute error tolerance should be larger than 0, use the absolute value.')
-        in_param.abstol = abs(in_param.abstol);
+        out_param.abstol = abs(out_param.abstol);
     end
-    if (in_param.alpha <= 0 ||in_param.alpha >= 1) %uncertainty
+    if (out_param.alpha <= 0 ||out_param.alpha >= 1) %uncertainty
         warning('MATLAB:cubMC_g:alphanot01',...
-            ['the uncertainy should be less than 1 and bigger than 0, '...
+            ['the uncertainty should be less than 1 and bigger than 0, '...
             'use the the default value.'])
-        in_param.alpha = default.alpha;
+        out_param.alpha = default.alpha;
     end
-    if (~isposint(in_param.n_sigma)) %the sample to estimate sigma
+    if (~isposint(out_param.n_sigma)) %the sample to estimate sigma
         warning('MATLAB:cubMC_g:nsignotposint',...
             ['the number n_sigma should a positive integer,'...
             'take the absolute value and ceil.'])
-        in_param.n_sigma = ceil(abs(in_param.n_sigma));
+        out_param.n_sigma = ceil(abs(out_param.n_sigma));
     end
-    if (in_param.fudge <= 1) %standard deviation inflation factor/fudge factor
+    if (out_param.fudge <= 1) %standard deviation inflation factor/fudge factor
         warning('MATLAB:cubMC_g:fudgelessthan1',...
             'the fudge factor should be bigger than 1, use the default value.')
-        in_param.fudge = default.fudge;
+        out_param.fudge = default.fudge;
     end
-    if (in_param.tbudget <= 0) % time budget
+    if (out_param.tbudget <= 0) % time budget
         warning('MATLAB:cubMC_g:tbudgetlneg',...
             ['Time budget should be bigger than 0, '...
             'use the absolute value of time budget'])
-        in_param.tbudget = abs(in_param.tbudget);
+        out_param.tbudget = abs(out_param.tbudget);
     end
-    if (~isposint(in_param.nbudget)) % sample budget should be a postitive integer
+    if (~isposint(out_param.nbudget)) % sample budget should be a postitive integer
         warning('MATLAB:cubMC_g:nbudgetnotposint',...
             ['the number of sample budget should be a positive integer,'...
             'take the absolute value and ceil.'])
-        in_param.nbudget = ceil(abs(in_param.nbudget));
+        out_param.nbudget = ceil(abs(out_param.nbudget));
     end
-    if (~isposint(in_param.npcmax))
+    if (~isposint(out_param.npcmax))
         % maximum number of scalar values of x per vector should be a positive integer
         warning('MATLAB:cubMC_g:npcmaxnotposint',...
             ['the number of each piece of the samples should be' ...
             'a positive integer, take the absolute value and ceil.'])
-        in_param.npcmax = ceil(abs(in_param.npcmax));
+        out_param.npcmax = ceil(abs(out_param.npcmax));
     end
-    in_param.checked=1;
+    out_param.checked=1;
 end
-out_param = in_param; % let the out_param contains all the in_param
 end
 
-function [out_param,Q]=cubMC_g_err(out_param,tstart)
+function  out_param =cubMC_g_err(out_param)
 %Handles errors in cubMC_g and cubMC_g_param
 %to give an exit with information
 %out_param.exit = 0   success
-%                 10  interval does not contain numbers
-%                 11  interval not 2 x d
-%                 12  interval is only a point in one direction
-%                 13  interval is infinite when measure is uniform
-%                 14  interval is not doubly infinite when measure is normal
+%                 10  hyperbox does not contain numbers
+%                 11  hyperbox not 2 x d
+%                 12  hyperbox is only a point in one direction
+%                 13  hyperbox is infinite when measure is uniform
+%                 14  hyperbox is not doubly infinite when measure is normal
 if ~isfield(out_param,'exit'); return; end
 if out_param.exit==0; return; end
 switch out_param.exit
-    case 10; error('MATLAB:cubMC_g:intervalnotnum',...
-            'interval must contain numbers.');
-    case 11; error('MATLAB:cubMC_g:intervalnot2d',...
-            'interval must be 2 x d.');
-    case 12; error('MATLAB:cubMC_g:intervalnotlessthan2',...
-            'interval must be more than a point in any coordinate direction.');
-    case 13; error('MATLAB:cubMC_g:intervalnotfiniteforuniform',...
-            'interval must be finite when measure is uniform.');
-    case 14; error('MATLAB:cubMC_g:intervalnotinffornormal',...
-            ['interval must be infinite in both directions' ...
+    case 10; error('MATLAB:cubMC_g:hyperboxnotnum',...
+            'hyperbox must contain numbers.');
+    case 11; error('MATLAB:cubMC_g:hyperboxnot2d',...
+            'hyperbox must be 2 x d.');
+    case 12; error('MATLAB:cubMC_g:hyperboxnotlessthan2',...
+            'hyperbox must be more than a point in any coordinate direction.');
+    case 13; error('MATLAB:cubMC_g:hyperboxnotfiniteforuniform',...
+            'hyperbox must be finite when measure is uniform.');
+    case 14; error('MATLAB:cubMC_g:hyperboxnotinffornormal',...
+            ['hyperbox must be infinite in both directions' ...
         ' when measure is normal']);
 end
-out_param.Q=NaN;
-Q=out_param.Q;
-if nargin>1; out_param.time=toc(tstart); end
 end

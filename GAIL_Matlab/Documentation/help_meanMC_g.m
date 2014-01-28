@@ -1,16 +1,16 @@
 %% meanMC_g
 % |Monte Carlo method to estimate the mean of a random variable to within a
-% specific absolute error tolerance with guaranteed uncertainty within
-% alpha.|
+% specific absolute error tolerance with guaranteed confidence
+% level 1-alpha.|
 %
 %% Syntax
 %
 % mu = *meanMC_g*(Yrand)
 %
-% mu = *meanMC_g*(Yrand,abstol,alpha,n_sigma,fudge,timebudget,nbudget,npcmax)
+% mu = *meanMC_g*(Yrand,abstol,alpha,n_sigma,fudge,tbudget,nbudget,npcmax,checked)
 %
-% mu = *meanMC_g*(Yrand,'abstol',abstol,'alpha',alpha,'fudge',fudge,'timebudget',
-% timebudget,'nbudget',nbudget,'npcmax',npcmax)
+% mu = *meanMC_g*(Yrand,'abstol',abstol,'alpha',alpha,'fudge',fudge,'tbudget',
+% tbudget,'nbudget',nbudget,'npcmax',npcmax,'checked',checked)
 %
 % mu = *meanMC_g*(Yrand,in_param)
 %
@@ -25,25 +25,25 @@
 % of the random variable Y.|
 %
 % mu =
-% *meanMC_g*(Yrand,abstol,alpha,n_sigma,fudge,timebudget,nbudget,npcmax)
+% *meanMC_g*(Yrand,abstol,alpha,n_sigma,fudge,tbudget,nbudget,npcmax)
 % |estimates the mean of a random variable Y to within an specified
 % absolute error tolerance abstol with uncertainty within alpha using all
-% parsing inputs n_sigma, fudge, timebudget,nbudget and npcmax.|
+% parsing inputs n_sigma, fudge, tbudget,nbudget, npcmax and checked.|
 %
 % mu =
-% *meanMC_g*(Yrand,'abstol',abstol,'alpha',alpha,'fudge',fudge,'timebudget',
-% timebudget,'nbudget',nbudget,'npcmax',npcmax) |estimates the mean of a
-% random variable Y to within a specified absolute error tolerance abstol
-% with untertainty within alpha. All the field-value pairs are optional and
-% can be supplied in different order.|
+% *meanMC_g*(Yrand,'abstol',abstol,'alpha',alpha,'fudge',fudge,'tbudget',
+% tbudget,'nbudget',nbudget,'npcmax',npcmax,'checked',checked)
+% |estimates the mean of a random variable Y to within a specified absolute
+% error tolerance abstol with uncertainty within alpha. All the field-value
+% pairs are optional and can be supplied in different order.|
 %
 % mu = *meanMC_g*(Yrand,in_param) |estimates the mean of a random variable
 % Y to within a specified absolute error tolerence in_param.abstol with
-% uncertainy within in_param.alpha. If a field is not specified, the
+% uncertainty within in_param.alpha. If a field is not specified, the
 % default value is used.|
 %
 % [mu, out_param] = *meanMC_g*(Yrand,in_param) |estimates the mean of a
-% random variable Y to within a specified absolute error tolerence with the
+% random variable Y to within a specified absolute error tolerance with the
 % given parameters in_param and output parameters out_param.|
 %
 % *Input Arguments*
@@ -67,7 +67,7 @@
 % * in_param.fudge --- |the standard deviation inflation factor, the
 % default value is 1.1.|
 %
-% * in_param.timebudget --- |the time budget to do the two-stage
+% * in_param.tbudget --- |the time budget to do the two-stage
 %   estimation, the default value is 100 seconds.|
 %
 % * in_param.nbudget --- |the sample budget to do the two-stage
@@ -76,13 +76,13 @@
 % * in_param.npcmax --- |number of elements in an array of optimal size to
 %   calculate the mu, the default value is 1e6.|
 %
-% * in_param.checked --- |the status that the paramtered are checked.|
+% * in_param.checked --- |the status that the parameters are checked.|
 %
 %                        0   not checked
 %
-%                        1   checked by cubMC
+%                        1   checked by cubMC_g
 %
-%                        2   checked by meanMC
+%                        2   checked by meanMC_g
 %
 % *Output Arguments*
 %
@@ -101,7 +101,7 @@
 %                        3  The estimated time for estimating variance is bigger than 
 %                           half of the time budget
 %
-% * out_param.kurtmax --- |the upper bound on mondified kurtosis.|
+% * out_param.kurtmax --- |the upper bound on modified kurtosis.|
 %
 % * out_param.time --- |the time eclipsed.|
 %
