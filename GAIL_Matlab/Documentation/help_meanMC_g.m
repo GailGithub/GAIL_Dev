@@ -195,16 +195,16 @@ mu = meanMC_g(Yrand,'abstol',1e-3,'alpha',0.01)
 %
 %% References
 %
-%   [1]  F. J. Hickernell, L. Jiang, Y. Liu, and A. B. Owen, Guaranteed
-%   conservative fixed width confidence intervals via Monte Carlo sampling,
-%   Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F. Y. Kuo, G.
-%   W. Peters, and I. H. Sloan, eds.), Springer-Verlag, Berlin, 2014, to
-%   appear, arXiv:1208.4318 [math.ST]
+% [1]  F. J. Hickernell, L. Jiang, Y. Liu, and A. B. Owen, Guaranteed
+% conservative fixed width confidence intervals via Monte Carlo sampling,
+% Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F. Y. Kuo, G.
+% W. Peters, and I. H. Sloan, eds.), Springer-Verlag, Berlin, 2014, to
+% appear, arXiv:1208.4318 [math.ST]
 %
-%   [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, and
-%   Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library (Version
-%   1.3.0)" [MATLAB Software], 2014. Available from
-%   http://code.google.com/p/gail/
+% [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, and
+% Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library (Version
+% 1.3.0)" [MATLAB Software], 2014. Available from
+% http://code.google.com/p/gail/
 %
-%   If you find GAIL helpful in your work, please support us by citing the
-%   above paper and software.
+% If you find GAIL helpful in your work, please support us by citing the
+% above paper and software.
