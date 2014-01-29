@@ -150,7 +150,7 @@
 %
 % where $\varepsilon$ is the absolute error tolerance.
 %
-% Cost guarantee:
+% Cost upper bound guarantee:
 %
 % The probabilistic cost of the algorithm, with uncertainty $\beta$ , for
 % integrands of variance no greater than $\sigma^2_{\max}$ and modified
