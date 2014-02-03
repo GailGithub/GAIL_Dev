@@ -56,17 +56,17 @@ function [Q,out_param] = integraltau_g(varargin)
 %
 %
 %   Example 1: 
-%   >> q = integral_g(@(x) x.^2)
+%   >> q = integraltau_g(@(x) x.^2)
 %   q = 0.3333
 %
 %
 %   Example 2:
-%   >> f = @(x) exp(-x.^2); q = integral_g(f,'abstol',1e-5,'ninit',52,'nmax',1e7)
+%   >> f = @(x) exp(-x.^2); q = integraltau_g(f,'abstol',1e-5,'nmax',1e7)
 %   q = 0.7468
 %
 %
 %   Example 3:
-%   >> q = integral_g()
+%   >> q = integraltau_g()
 %   Warning: Function f must be specified. Now GAIL is giving you a toy example of f(x)=x^2.
 %   >  In ***
 %   q = 0.3333
@@ -115,18 +115,18 @@ while true
     if ntrapok %ntrap large enough for tau
         %compute a reliable error estimate
         errest=out_param.tau*Gf/(4*ntrap*(2*ntrap-out_param.tau));
-        if errest <= out_param.tol %tolerance is satisfied
+        if errest <= out_param.abstol %tolerance is satisfied
             Q=sumf/ntrap; %compute the integral
             break %exit while loop
         else %need to increase number of trapezoids
             %proposed inflation factor to increase ntrap by
-            inflation=max(ceil(1/ntrap*sqrt(out_param.tau*Gf/(8*out_param.tol))),2);
+            inflation=max(ceil(1/ntrap*sqrt(out_param.tau*Gf/(8*out_param.abstol))),2);
         end
     end
     if ntrap*inflation+1 > out_param.nmax
             %cost budget does not allow intended increase in ntrap
         out_param.exceedbudget=true; %tried to exceed budget
-        warning('MATLAB:integraltau_g:exceedbudget','integral_g attempts to exceed the cost budget. The answer may be unreliable.');
+        warning('MATLAB:integraltau_g:exceedbudget','integraltau_g attempts to exceed the cost budget. The answer may be unreliable.');
         inflation=floor((out_param.nmax-1)/ntrap);
             %max possible increase allowed by cost budget
         if inflation == 1 %cannot increase ntrap at all
@@ -159,7 +159,7 @@ out_param.npoints=ntrap+1;  % number of points finally used
 out_param.errest=errest;    % error of integral
 
 function [f, out_param] = integraltau_g_param(varargin)
-% parse the input to the integral_g function
+% parse the input to the integraltau_g function
 
 % Default parameter values
 default.abstol  = 1e-6;
@@ -168,7 +168,7 @@ default.nmax  = 1e7;
 
 
 if isempty(varargin)
-    help integral_g
+    help integraltau_g
     warning('Function f must be specified. Now GAIL is giving you a toy example of f(x)=x^2.')
     f = @(x) x.^2;
 else
@@ -223,11 +223,11 @@ end
 % let cost budget be a positive integer
 if (~isposint(out_param.nmax))
     if ispositive(out_param.nmax)
-        warning('MATLAB:integral_g:budgetnotint',['Cost budget should be a positive integer.' ...
+        warning('MATLAB:integraltau_g:budgetnotint',['Cost budget should be a positive integer.' ...
             ' Using cost budget ', num2str(ceil(out_param.nmax))])
         out_param.nmax = ceil(out_param.nmax);
     else
-        warning('MATLAB:integral_g:budgetisneg',['Cost budget should be a positive integer.' ...
+        warning('MATLAB:integraltau_g:budgetisneg',['Cost budget should be a positive integer.' ...
             ' Using default cost budget ' int2str(default.nmax)])
         out_param.nmax = default.nmax;
     end;
