@@ -1,4 +1,3 @@
-
 %TRYOUT_INTEGRAL_G_FJH  Try out adapttrap
 
 %put the paper name here including the name of the figure or table that it
