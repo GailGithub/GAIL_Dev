@@ -1,17 +1,17 @@
 function [testfun,out_param]=choosetestfun(fun,in_param)
 %CHOOSETESTFUN Chooses and sets up a test function
-%      from the parameters input by the user and contained in the structures
-%      fun and param
-%   fun.funtype         = type of test function
-%   param.interval      = domain of test function
-%   param.dim           = dimension of the domain
-%   param.measure           = probability density function for integration
-%   param.exactintegral = exact value of the integral (scalar)
-%   fun.shape           = shape parameter (1 x param.dim)
-%   fun.scale           = scale parameter (1 x param.dim)
-%   fun.addc            = additive constant (1 x param.dim)
-%   fun.overaddc        = overall additive constant (scalar)
-%   fun.overmultc       = overall multiplicative constant (scalar)
+%      from the parameters input by the user and contained in the
+%      structures fun and in_param
+%   fun.funtype            = type of test function
+%   fun.shape              = shape parameter (1 x param.dim)
+%   fun.scale              = scale parameter (1 x param.dim)
+%   fun.addc               = additive constant (1 x param.dim)
+%   fun.overaddc           = overall additive constant (scalar)
+%   fun.overmultc          = overall multiplicative constant (scalar)
+%   in_param.interval      = domain of test function
+%   in_param.dim           = dimension of the domain
+%   in_param.measure       = probability density function for integration
+%   in_param.exactintegral = exact value of the integral (scalar)
 
 if nargin < 2; %give the basic default parameters 
     in_param.interval=[0;1]; %default integration interval

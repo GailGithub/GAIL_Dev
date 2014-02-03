@@ -54,7 +54,7 @@ for i=1:nrep
     for j=1:ntau
         in_param.tau=tauvec(j);
         tic
-        [Q,out_param]=integral_g_FJH(f,in_param);
+        [Q,out_param]=integraltau_g(f,in_param);
         timemat(i,j)=toc;
         Qmat(i,j)=Q;
         npointsmat(i,j)= out_param.npoints;
@@ -76,7 +76,11 @@ failnowarn = mean((trueerrormat>in_param.tol)&(~budgetmat),1);
 failwarn = mean((trueerrormat>in_param.tol)&(budgetmat),1);
 
 %% Save Output
-save(['ConesPaperIntegrationTest' datestr(now,'dd-mmm-yyyy-HH-MM-SS') '.mat'])
+[GAILPATH,~,PATHNAMESEPARATOR] = GAILstart(0);
+filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
+    'ConesPaperOutput',PATHNAMESEPARATOR','ConesPaperIntegrationTest-',...
+    datestr(now,'dd-mmm-yyyy-HH-MM-SS'),'.mat');
+save(filename)
 
 %% Output the table
 % To just re-display the output, load the .mat file and run this section

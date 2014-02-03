@@ -1,0 +1,6 @@
+*.git
+*.DS_Store
+*.icon
+*meanMCBernoulli_g.m
+*MonteCarloFinance*
+*Scratch_Not_Part_of_Final*
