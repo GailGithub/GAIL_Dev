@@ -10,5 +10,5 @@ copyfile(GAILPATH,newpath)%copy files in repository to new path
 copyfile(GoogleDrivePath,newpath)% copy files in google drive to new path
 
 
-% zip all files recursively excluding hidden file such as .dsstore and .icon  
+% zip all files recursively excluding hidden file such as .ds_store and .icon  
 system('zip -r GAIL_1_3_0 GAIL_Matlab -x@exclude1_3.lst')
