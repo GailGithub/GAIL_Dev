@@ -1,3 +1,4 @@
+
 %TRYOUT_INTEGRAL_G_FJH  Try out adapttrap
 
 %put the paper name here including the name of the figure or table that it
@@ -54,7 +55,7 @@ for i=1:nrep
     for j=1:ntau
         in_param.tau=tauvec(j);
         tic
-        [Q,out_param]=integral_g_FJH(f,in_param);
+        [Q,out_param]=integraltau_g(f,in_param);
         timemat(i,j)=toc;
         Qmat(i,j)=Q;
         npointsmat(i,j)= out_param.npoints;
