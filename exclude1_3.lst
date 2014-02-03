@@ -1,0 +1,4 @@
+*.git
+*.DS_Store
+*meanMCBernoulli_g.m
+*MonteCarloFinance*
