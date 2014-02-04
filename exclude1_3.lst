@@ -1,6 +1,6 @@
 *.git
 *.DS_Store
-*.icon
+*Icon*
 *.m~
 *meanMCBernoulli_g.m
 *MonteCarloFinance*
