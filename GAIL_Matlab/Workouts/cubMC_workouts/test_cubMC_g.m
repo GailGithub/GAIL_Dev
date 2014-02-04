@@ -2,13 +2,13 @@
 %using integrands of dimensions up to 3 
 %clear all;close all;clc;
 in_param.measure  = 'uniform';
-disp(horzcat('Dim ', 'FcnIdx ',   'Error')); 
+disp(horzcat('Dim ', 'FcnIdx ',   ' Error')); 
 disp(        '---------------------------');
 %f=@(x) exp(-x(1).^2-x(2).^2);% the test function
 %f=@(x) x(:,1)+x(:,2);
 for dim=1:3
   in_param.dim =dim;%the function dimension
-  startingpoint = zero(1,in_param.dim);
+  startingpoint = zeros(1,in_param.dim);
   endingpoint = ones(1,in_param.dim);
   hyperbox = [startingpoint;endingpoint];% the integration interval
   in_param.abstol = 1e-3;% the absolute tolerance
@@ -21,7 +21,7 @@ for dim=1:3
   beta = [1/3 1/4 2];
   %beta = ones(1:in_param.dim);% the other coefficent
   r=1;
-  for index= 7;%[2,4:7]
+  for index=1:7%[2,4:7]
     test_function = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
     f_true = genz_test_fun_true (hyperbox,index,in_param.dim,alpha,beta);
     % true solution
