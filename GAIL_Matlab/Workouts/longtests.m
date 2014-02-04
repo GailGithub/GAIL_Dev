@@ -3,7 +3,7 @@ tic;
 % Call doctest 
 format short
 doctest dt_meanMC_g_TrafficModel
-doctest test_cubMC_g
+doctest dt_cubMC_g
  
 
 % Call unit tests
