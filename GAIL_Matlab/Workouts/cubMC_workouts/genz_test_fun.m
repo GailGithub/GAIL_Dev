@@ -41,6 +41,6 @@ switch index
       end
     end
   case 7 % Keister test function
-    f_val = cos(sqrt(sum(norminv(x).^2/2,2)))*pi/2;
+    f_val = cos(sqrt(sum(norminv(x(:,1:dim)).^2/2,2)))*pi/2;
 end
 end
