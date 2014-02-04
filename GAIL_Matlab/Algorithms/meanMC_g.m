@@ -1,7 +1,7 @@
 function [mu,out_param]=meanMC_g(varargin)
 % MEANMC_G Monte Carlo method to estimate the mean of a random variable to
-% within a specified absolute error tolerance with guaranteed uncertainty
-% within alpha.
+% within a specified absolute error tolerance with guaranteed confidence
+% level 1-alpha.
 % 
 % mu = MEANMC_G(Yrand) estimates the mean of a random variable Y to within
 % a specified absolute error tolerance 1e-2 with guaranteed uncertainty
