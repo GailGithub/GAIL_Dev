@@ -21,7 +21,7 @@ for dim=1:3
   beta = [1/3 1/4 2];
   %beta = ones(1:in_param.dim);% the other coefficent
   r=1;
-  for index=1:7%[2,4:7]
+  for index=[2,4:7]
     test_function = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
     f_true = genz_test_fun_true (hyperbox,index,in_param.dim,alpha,beta);
     % true solution
@@ -35,3 +35,24 @@ for dim=1:3
     end
   end
 end
+
+%% The following output was obtained on 2014-January-01 by
+%  
+% >> test_cubMC_g
+% Dim FcnIdx  Error
+% ---------------------------
+% 1   2       0.00033852
+% 1   4       0.00031599
+% 1   5       6.1558e-05
+% 1   6       0.0001926
+% 1   7       0.00020457
+% 2   2       0.00021932
+% 2   4       0.00018337
+% 2   5       4.8054e-05
+% 2   6       0.00045727
+% 2   7       0.0004521
+% 3   2       0.00036581
+% 3   4       0.00023658
+% 3   5       0.00022292
+% 3   6       0.00024788
+% 3   7       0.00067544
