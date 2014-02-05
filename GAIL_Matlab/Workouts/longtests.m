@@ -16,7 +16,9 @@ warning('off','MATLAB:integraltau_g:peaky')
 tryout_integral_g_FJH
 warning('on','MATLAB:integraltau_g:peaky')
 warning('off','MATLAB:integral_g:exceedbudget')
+warning('off','MATLAB:integral_g:peaky')
 workout_integral_g 
+warning('on','MATLAB:integral_g:peaky')
 warning('on','MATLAB:integral_g:exceedbudget')
 
 % Call unit tests
