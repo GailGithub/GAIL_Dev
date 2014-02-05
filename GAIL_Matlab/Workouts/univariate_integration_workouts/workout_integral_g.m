@@ -91,7 +91,10 @@ end
 %% Save Output
 [GAILPATH,~,PATHNAMESEPARATOR] = GAILstart(0);
 path = strcat(GAILPATH,'OutputFiles' , PATHNAMESEPARATOR);
-save([path 'IntegrationTest' datestr(now,'dd-mmm-yyyy-HH-MM-SS') '.mat'])
+filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
+                  'ConesPaperOutput',PATHNAMESEPARATOR','IntegrationTest-',...
+                  datestr(now,'dd-mmm-yyyy-HH-MM-SS'),'.mat');
+save(filename)
 
 toc(tstart)
 
