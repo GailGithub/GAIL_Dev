@@ -1,4 +1,10 @@
 % Drives all lengthy doctests and unit tests
+
+[GAILPATH,~,PATHNAMESEPARATOR] = GAILstart(0);
+filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
+  'gail_workouts-', datestr(now,'dd-mmm-yyyy-HH-MM-SS'),'.txt');
+diary(filename)
+
 tic; 
 % Call doctest 
 format short
@@ -16,3 +22,5 @@ end
 time=toc;
 
 disp(time)
+
+diary off
