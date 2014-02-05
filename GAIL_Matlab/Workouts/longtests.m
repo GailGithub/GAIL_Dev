@@ -15,9 +15,9 @@ Test_MeanMC_g
 warning('off','MATLAB:integraltau_g:peaky')
 tryout_integral_g_FJH
 warning('on','MATLAB:integraltau_g:peaky')
-warning('off',MATLAB:integral_g:exceedbudget')
+warning('off','MATLAB:integral_g:exceedbudget')
 workout_integral_g 
-warning('on',MATLAB:integral_g:exceedbudget')
+warning('on','MATLAB:integral_g:exceedbudget')
 
 % Call unit tests
 [~,~,~,MATLABVERSION]=GAILstart(0);
