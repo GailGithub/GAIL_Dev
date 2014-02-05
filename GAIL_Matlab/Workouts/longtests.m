@@ -10,13 +10,15 @@ tic;
 format short
 doctest dt_meanMC_g_TrafficModel
 doctest dt_cubMC_g
- 
+test_cubMC_g
+Test_MeanMC_g
+tryout_integral_g_FJH
+workout_integral_g 
 
 % Call unit tests
 [~,~,~,MATLABVERSION]=GAILstart(0);
-if MATLABVERSION >= 8 
-    %run(ut_funappx_g)
-     
+if MATLABVERSION >= 8  
+    %run(ut_funappx_g)   
 end
 
 time=toc;
