@@ -10,8 +10,9 @@ tic;
 format short
 doctest dt_meanMC_g_TrafficModel
 doctest dt_cubMC_g
-test_cubMC_g
+
 Test_MeanMC_g
+test_cubMC_g
 warning('off','MATLAB:integraltau_g:peaky')
 tryout_integral_g_FJH
 warning('on','MATLAB:integraltau_g:peaky')
