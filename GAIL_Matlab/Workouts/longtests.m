@@ -1,33 +1,38 @@
-% Drives all lengthy doctests and unit tests
+% LONGTESTS Drives all lengthy doctests, unit tests, workouts, and scripts
 
 [GAILPATH,~,PATHNAMESEPARATOR] = GAILstart(0);
 filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
   'gail_workouts-', datestr(now,'dd-mmm-yyyy-HH-MM-SS'),'.txt');
 diary(filename)
 tic; 
+
 %% Workouts 
-
-warning('off','MATLAB:integraltau_g:peaky')
-tryout_integral_g_FJH
-warning('on','MATLAB:integraltau_g:peaky')
-warning('off','MATLAB:integral_g:exceedbudget')
-warning('off','MATLAB:integral_g:peaky')
-workout_integral_g 
-warning('on','MATLAB:integral_g:peaky')
-warning('on','MATLAB:integral_g:exceedbudget')
-
+% doctests
 format short
 doctest dt_meanMC_g_TrafficModel
 Test_MeanMC_g
 doctest dt_cubMC_g
 test_cubMC_g
 
+% other workouts
+warning('off','MATLAB:integraltau_g:peaky')
+run_handle('tryout_integral_g_FJH')
+warning('on','MATLAB:integraltau_g:peaky')
+warning('off','MATLAB:integral_g:exceedbudget')
+warning('off','MATLAB:integral_g:peaky')
+run_handle('workout_integral_g')
+warning('on','MATLAB:integral_g:peaky')
+warning('on','MATLAB:integral_g:exceedbudget')
+
 
 %% Papers
-ConesPaperFoolFunctions
-conepaper_test_integral_g					
-conepaper_test_funappx_g
+% Cone paper
+run_handle('ConesPaperFoolFunctions')
+run_handle('conepaper_test_integral_g')
+run_handle('conepaper_test_funappx_g')
 
+% MCQMC paper
+run_handle('TestcubMCDiffSettings')
 
 
 %% Unit tests
@@ -37,7 +42,6 @@ if MATLABVERSION >= 8
 end
 
 time=toc;
-
 disp(time)
 
 diary off
