@@ -2,7 +2,8 @@
 %
 % Files
 %
-%   dt_funappx_g      - small doctest for funappx_g
+%   dt_funappx_g      - fast doc tests for funappx_h
+%   dt_integral_g     - fast doc tests for integral_g
 %   ut_funappx_g      - unit test for funappx_g
 %   runtests          - Drives all doctests and unit tests
 %   ut_cubMC_g        - coming soon
