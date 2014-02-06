@@ -12,9 +12,12 @@ doctest funappx_g
 doctest funappxtau_g
 doctest funappx01_g
 doctest dt_funappx_g
+
 doctest integral_g
 doctest integraltau_g
 doctest integralab_g
+doctest dt_integral_g 
+
 doctest meanMC_g
 doctest cubMC_g
 
