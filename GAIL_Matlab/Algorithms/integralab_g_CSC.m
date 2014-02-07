@@ -318,12 +318,12 @@ if (out_param.b == inf||out_param.b == -inf||isnan(out_param.b)==1)
 end;
 
 if (out_param.b < out_param.a)
-    warning('MATLAB:funappx_g:blea','b cannot be smaller than a; exchange these two. The result should be negative of q.')
+    warning('MATLAB:integralab_g_CSC:blea','b cannot be smaller than a; exchange these two. The result should be negative of q.')
     tmp = out_param.b;
     out_param.b = out_param.a;
     out_param.a = tmp;
 elseif(out_param.b == out_param.a)
-    warning('MATLAB:funappx_g:beqa','b equals a.')
+    warning('MATLAB:integralab_g_CSC:beqa','b equals a.')
     out_param.q=0;
     out_param.npoints=0;
     out_param.errest=0;
@@ -420,6 +420,19 @@ if (~isposint(out_param.nmax))
     end;
 end
 
+if (~isfinite(f(out_param.a)))
+  warning('MATLAB:integralab_g_CSC:unboundedfa', ['f(a) seems to be unbounded or undefined. Use a = ' num2str(out_param.a+eps)]);
+  out_param.a = out_param.a+eps;
+end
+
+if (~isfinite(f(out_param.b)))
+  warning('MATLAB:integralab_g_CSC:unboundedfb', ['f(b) seems to be unbounded or undefined. Use b = ' num2str(out_param.b-eps)]);
+  out_param.b = out_param.b-eps;
+end
+
+if (~isfinite(norm(f(out_param.a:1/(out_param.ninit-1):out_param.b))))
+  error('MATLAB:integralab_g_CSC:unboundedf', ['f seems to be unbounded or undefined on x.']);
+end
 
 %% doctest results%%
 % doctest integralab_g_CSC
