@@ -91,8 +91,7 @@ function [q,out_param] = integralab_g_CSC(varargin)
 %   >> f = @(x) exp(-(x-1).^2); q = integralab_g_CSC(f,'a',1,'b',2,'nlo',100,'nhi',10000,'abstol',1e-5,'nmax',1e7)
 %   q = 0.7468
 %
-%   
-%   format long
+%  
 %   >> f = @(x) exp(-x.^2); q = integralab_g_CSC(f,'a',0,'b',2,'nlo',100,'nhi',10000,'abstol',1e-5,'nmax',1e7)
 %   q = 0.8821
 %
@@ -109,28 +108,27 @@ function [q,out_param] = integralab_g_CSC(varargin)
 %   q = 1.7424
 %
 %
-%  >>  [~,out]=integralab_g_CSC(@(x) x.^2)
+%  >>  [~,out]=integralab_g_CSC(@(x) x.^2) 
 % 
-%       out = 
-% 
-%                 abstol: 1.0000e-06
-%                   nmax: 10000000
-%                    nlo: 10
-%                    nhi: 1000
-%                      a: 0
-%                      b: 1
-%                  ninit: 100
-%                    tau: 197
-%           exceedbudget: 0
-%              tauchange: 0
-%                      q: 0.3333
-%                npoints: 5050
-%                 errest: ***e-07
+% out = 
+%                f: @(x)x.^2 
+%                a: 0
+%                b: 1
+%           abstol: 1.0000e-06
+%              nlo: 10
+%              nhi: 1000
+%             nmax: 10000000
+%            ninit: 100
+%              tau: 197
+%     exceedbudget: 0
+%        tauchange: 0
+%                q: 0.3333
+%          npoints: 3565
+%           errest: ***-07
 %
 %
 %   >> f = @(x) exp(-x.^2); [~, out_param] = integralab_g_CSC(f,'a',1,'b',2,'nlo',100,'nhi',10000,'abstol',1e-5,'nmax',1e7)
 %         out_param = 
-% 
 %                        a: 1
 %                   abstol: 1.0000e-05
 %                        b: 2
@@ -143,8 +141,15 @@ function [q,out_param] = integralab_g_CSC(varargin)
 %             exceedbudget: 0
 %                tauchange: 0
 %                        q: 0.1353
-%                  npoints: 5995
+%                  npoints: 2998
 %                   errest: ***e-06      
+%
+%   >> f = @(x) exp(-x.^2); q = integralab_g_CSC(f,1,2,1e-5,100,10000)
+%   q = 0.1353 
+%
+%
+%  >>  inparam.a=0; inparam.b=3; inparam.abstol=1e-13; q=integralab_g_CSC(@(x) exp(2*x),inparam)
+%  q =  201.2144
 %
 %
 % See also funappxab_g, cubMC_g
@@ -157,7 +162,12 @@ function [q,out_param] = integralab_g_CSC(varargin)
 
 %%
 % check parameter satisfy conditions or not
-[f,out_param] = integral_g_param(varargin{:});
+[f,out_param] = integralab_g_CSC_param(varargin{:});
+intervallen=out_param.b-out_param.a;
+if (intervallen==0)
+  q=out_param.q;
+  return;
+end
 
 %% main alg
 out_param.tau=ceil((out_param.ninit-1)*2-1); % computes the minimum requirement of number of points to start
@@ -165,7 +175,7 @@ out_param.exceedbudget=false;   % if the number of points used in the calculatio
 out_param.tauchange=false;  % if the cone constant has been changed
 ntrap=out_param.ninit-1; % number of trapezoids
 n=ntrap+1;
-intervallen=out_param.b-out_param.a;
+
 h=intervallen/(n-1);
 xpts=(out_param.a:h:out_param.b)'; % generate ninit number of uniformly spaced points in [0,1]
 fpts=f(xpts);   % get function values at xpts
@@ -176,8 +186,8 @@ while true
     %Compute approximations to the strong and weak norms
     ntrapok=true; %number of trapezoids is large enough for ninit
     df=diff(fpts); %first difference of points
-    Gf=sum(abs(df-(fpts(ntrap+1)-fpts(1))*ntrap)); %approx weak norm
-    Ff=(intervallen/ntrap)*(sum(abs(diff(df)))); %approx strong norm
+    Gf=sum(abs(df-(fpts(ntrap+1)-fpts(1))/ntrap)); %approx weak norm
+    Ff=ntrap*(sum(abs(diff(df))))/intervallen; %approx strong norm
     
     %Check necessary condition for integrand to lie in cone
     if out_param.tau*(Gf+Ff*intervallen/(2*ntrap)) < Ff %f lies outside cone
@@ -193,13 +203,12 @@ while true
     if ntrapok %ntrap large enough for tau
         %compute a reliable error estimate
         errest=out_param.tau*Gf*intervallen^2/(4*ntrap*(2*ntrap-out_param.tau*intervallen));
-        errest=errest / (ntrap ^2);
-        if errest <= out_param.abstol; %tolerance is satisfied
+        if errest <= out_param.abstol %tolerance is satisfied
             q=intervallen*sumf/ntrap; %compute the integral
             break %exit while loop
         else %need to increase number of trapezoids
             %proposed inflation factor to increase ntrap by
-            inflation=max(ceil(1/ntrap*sqrt(out_param.tau*intervallen*(Gf/ (ntrap ^2))/(8*out_param.abstol))),2);
+            inflation=max(ceil(1/ntrap*sqrt(out_param.tau*intervallen*Gf/(8*out_param.abstol))),2);
         end
     end
     if ntrap*inflation+1 > out_param.nmax
@@ -236,49 +245,50 @@ out_param.q=q;  % integral of functions
 out_param.npoints=ntrap+1;  % number of points finally used
 out_param.errest=errest;    % error of integral
 
-function [f, out_param] = integral_g_param(varargin)
+function [f, out_param] = integralab_g_CSC_param(varargin)
 % parse the input to the integral_g function
 
 % Default parameter values
-default.abstol  = 1e-6;
-default.nmax  = 1e7;
-default.nlo = 10;
-default.nhi = 1000;
 default.a = 0;
 default.b = 1;
+default.abstol  = 1e-6;
+default.nlo = 10;
+default.nhi = 1000;
+default.nmax  = 1e7;
 
 
-if isempty(varargin)
-    help integral_g
-    warning('Function f must be specified. Now GAIL is giving you a toy example of f(x)=x^2.')
+if isempty(varargin)    
+    warning('MATLAB:integralab_g_CSC:nofunction','Function f must be specified. Now GAIL is giving you a toy example of f(x)=x^2.')
+    help integralab_g_CSC
     f = @(x) x.^2;
+    out_param.f = f;
 else
     f = varargin{1};
+     out_param.f = f;
 end;
 
 validvarargin=numel(varargin)>1;
 if validvarargin
     in2=varargin{2};
-    validvarargin=(isnumeric(in2) || isstruct(in2) ...
-        || ischar(in2));
+    validvarargin=(isnumeric(in2) || isstruct(in2) || ischar(in2));
 end
 
 if ~validvarargin
     %if only one input f, use all the default parameters
-    out_param.abstol = default.abstol;
-    out_param.nmax = default.nmax;
-    out_param.nlo = default.nlo;
-    out_param.nhi = default.nhi;
     out_param.a = default.a;
     out_param.b = default.b;
+    out_param.abstol = default.abstol;
+    out_param.nlo = default.nlo;
+    out_param.nhi = default.nhi;
+    out_param.nmax = default.nmax;
 else
     p = inputParser;
     addRequired(p,'f',@isfcn);
     if isnumeric(in2)%if there are multiple inputs with
         %only numeric, they should be put in order.
-        addOptional(p,'abstol',default.abstol,@isnumeric);
         addOptional(p,'a',default.a,@isnumeric);
         addOptional(p,'b',default.b,@isnumeric);
+        addOptional(p,'abstol',default.abstol,@isnumeric);
         addOptional(p,'nlo',default.nlo,@isnumeric);
         addOptional(p,'nhi',default.nhi,@isnumeric);
         addOptional(p,'nmax',default.nmax,@isnumeric);
@@ -287,9 +297,9 @@ else
             p.StructExpand = true;
             p.KeepUnmatched = true;
         end
-        addParamValue(p,'abstol',default.abstol,@isnumeric);
         addParamValue(p,'a',default.a,@isnumeric);
         addParamValue(p,'b',default.b,@isnumeric);
+        addParamValue(p,'abstol',default.abstol,@isnumeric);
         addParamValue(p,'nlo',default.nlo,@isnumeric);
         addParamValue(p,'nhi',default.nhi,@isnumeric);
         addParamValue(p,'nmax',default.nmax,@isnumeric);
@@ -298,35 +308,93 @@ else
     out_param = p.Results;
 end;
 
+if (out_param.a == inf||out_param.a == -inf||isnan(out_param.a)==1)
+    warning('MATLAB:integralab_g_CSC:anoinfinity',['a cannot be infinity or NaN. Use default a = ' num2str(default.a)])
+    out_param.a = default.a;
+end;
+if (out_param.b == inf||out_param.b == -inf||isnan(out_param.b)==1)
+    warning('MATLAB:integralab_g_CSC:anoinfinity',['b cannot be infinity or NaN. Use default b = ' num2str(default.b)])
+    out_param.b = default.b;
+end;
+
+if (out_param.b < out_param.a)
+    warning('MATLAB:funappx_g:blea','b cannot be smaller than a; exchange these two. The result should be negative of q.')
+    tmp = out_param.b;
+    out_param.b = out_param.a;
+    out_param.a = tmp;
+elseif(out_param.b == out_param.a)
+    warning('MATLAB:funappx_g:beqa','b equals a.')
+    out_param.q=0;
+    out_param.npoints=0;
+    out_param.errest=0;
+    return;
+end;
+
+% let cost budget be a positive integer
+if (~isposint(out_param.nmax))
+    if ispositive(out_param.nmax)
+        warning('MATLAB:integralab_g_CSC:budgetnotint',['Cost budget should be a positive integer.' ...
+            ' Using cost budget ', num2str(ceil(out_param.nmax))])
+        out_param.nmax = ceil(out_param.nmax);
+    else
+        warning('MATLAB:integralab_g_CSC:budgetisneg',['Cost budget should be a positive integer.' ...
+            ' Using default cost budget ' int2str(default.nmax)])
+        out_param.nmax = default.nmax;
+    end;
+end
+
 % let error tolerance greater than 0
 if (out_param.abstol <= 0 )
     warning(['Error tolerance should be greater than 0.' ...
             ' Using default error tolerance ' num2str(default.abstol)])
     out_param.abstol = default.abstol;
 end
+
+% let cost budget be a positive integer
+if (~isposint(out_param.nmax))
+    if ispositive(out_param.nmax)
+        warning('MATLAB:integralab_g_CSC:budgetnotint',['Cost budget should be a positive integer.' ...
+            ' Using cost budget ', num2str(ceil(out_param.nmax))])
+        out_param.nmax = ceil(out_param.nmax);
+    else
+        warning('MATLAB:integralab_g_CSC:budgetisneg',['Cost budget should be a positive integer.' ...
+            ' Using default cost budget ' int2str(default.nmax)])
+        out_param.nmax = default.nmax;
+    end;
+end
+
 % let initial number of points be a positive integer
+if (out_param.nlo > out_param.nhi)
+    warning('MATLAB:integralab_g_CSC:logrhi', 'Lower bound of initial number of points is larger than upper bound of initial number of points; exchange these two')
+    temp = out_param.nlo;
+    out_param.nlo = out_param.nhi;
+    out_param.nhi = temp;
+end;
+
 if (~isposint(out_param.nlo))
     if isposge3(out_param.nlo)
-        warning('MATLAB:integralab_g_CSC:lowinitnotint',['Lowest initial number of points should be a positive integer.' ...
+        warning('MATLAB:integralab_g_CSC:lowinitnotint',['Lower initial number of points should be a positive integer.' ...
             ' Using ', num2str(ceil(out_param.nlo))])
         out_param.nlo = ceil(out_param.nlo);
     else
-        warning('MATLAB:integralab_g_CSC:lowinitlt3',['Lowest initial number of points should be a positive integer.' ...
+        warning('MATLAB:integralab_g_CSC:lowinitlt3',['Lower initial number of points should be a positive integer.' ...
             ' Using default number of points ' int2str(default.nlo)])
         out_param.nlo = default.nlo;
     end
 end
+
 if (~isposint(out_param.nhi))
     if isposge3(out_param.nhi)
-        warning('MATLAB:integralab_g_CSC:highinitnotint',['Highest initial number of points should be a positive integer.' ...
+        warning('MATLAB:integralab_g_CSC:highinitnotint',['Upper bound of initial number of points should be a positive integer.' ...
             ' Using ', num2str(ceil(out_param.nhi))])
         out_param.nhi = ceil(out_param.nhi);
     else
-        warning('MATLAB:integralab_g_CSC:highinitlt3',['Highest initial number of points should be a positive integer.' ...
+        warning('MATLAB:integralab_g_CSC:highinitlt3',['Upper bound of initial number of points should be a positive integer.' ...
             ' Using default number of points ' int2str(default.nhi)])
         out_param.nhi = default.nhi;
     end
 end
+
 if (out_param.nlo > out_param.nhi)
     if isposge3(out_param.nhi)
         warning('MATLAB:integralab_g_CSC:nlobtnhi',['Highest initial number of points should be at least equal to to lowest initial number of points.' ...
