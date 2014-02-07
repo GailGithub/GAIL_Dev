@@ -4,23 +4,24 @@ function [mu,out_param]=meanMC_g(varargin)
 % level 1-alpha.
 % 
 % mu = MEANMC_G(Yrand) estimates the mean of a random variable Y to within
-% a specified absolute error tolerance 1e-2 with guaranteed uncertainty
-% within 1%. Input Yrand is a function handle that accepts a positive
+% a specified absolute error tolerance 1e-2 with guaranteed confidence
+% level 99%. Input Yrand is a function handle that accepts a positive
 % integer input n and returns an n x 1 vector of IID instances of the
 % random variable Y.
 % 
 % mu =
 % MEANMC_G(Yrand,abstol,alpha,n_sigma,fudge,tbudget,nbudget,npcmax,checked)
 % estimates the mean of a random variable Y to within an absolute error
-% tolerance abstol with guaranteed uncertainty within alpha using all
-% ordered parsing inputs n_sigma, fudge, tbudget, nbudget, npcmax and checked.
+% tolerance abstol with guaranteed confidence level 1-alpha. using all
+% ordered parsing inputs n_sigma, fudge, tbudget, nbudget, npcmax and
+% checked.
 % 
 % mu = MEANMC_G(Yrand,'abstol',abstol,'alpha',alpha,'n_sigma',n_sigma,...
 % 'fudge',fudge,'tbudget',tbudget,'nbudget',nbudget,'npcmax',npcmax,...
 % 'checked',checked) estimates the mean of a random variable Y to within a
-% specified absolute error tolerance abstol with guaranteed uncertainty
-% within alpha. All the field-value pairs are optional and can be supplied
-% in different order.
+% specified absolute error tolerance abstol with guaranteed confidence
+% level 1-alpha.. All the field-value pairs are optional and can be
+% supplied in different order.
 % 
 % mu = MEANMC_G(Yrand,in_param) estimates the mean of a random variable Y
 % to within a specified absolute error tolerance in_param.abstol with
@@ -29,7 +30,7 @@ function [mu,out_param]=meanMC_g(varargin)
 % 
 % [mu, out_param] = MEANMC_G(Yrand,in_param) estimates the mean of a
 % random variable Y to within a specified absolute error tolerance with
-% the given parameters in_param and output parameters out_param.
+% the given parameters in_param and produce output parameters out_param.
 % 
 % Yrand --- the function for generating IID instances of a random
 % variable Y whose mean we want to estimate. Y is often defined as a

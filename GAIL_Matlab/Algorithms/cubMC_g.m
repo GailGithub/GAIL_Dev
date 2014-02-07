@@ -5,7 +5,7 @@ function [Q,out_param] = cubMC_g(varargin)
 % 
 % [Q,out_param] = CUBMC_G(f,hyperbox) estimates the integral with integrand
 % f to within the absolute error tolerance 1e-2 and with guaranteed
-% uncertainty alpha 1%. Input f is a function handle. The function Y=f(X)
+% confidence level 99%. Input f is a function handle. The function Y=f(X)
 % should accept a vector argument X and return a vector result Y, the
 % integrand evaluated at each element of X. Input hyperbox is 2 x d matrix,
 % where d is the dimension defined by the limits of the hyperbox. The order
@@ -15,22 +15,22 @@ function [Q,out_param] = cubMC_g(varargin)
 % Q =
 % CUBMC_G(f,hyperbox,measure,abstol,alpha,n_sigma,fudge,tbudget,nbudget,npcmax,checked)
 % estimates the integral with integrand f in hyperbox to within an absolute
-% error tolerance abstol with guaranteed uncertainty alpha using ordered
-% parameter input measure, tolerance, uncertainty, n_sigma, fudge, tbudget,
-% nbudget, npcmax and checked. If an input is not specified, the default
-% value is used.
+% error tolerance abstol with guaranteed confidence level 1-alpha. using
+% ordered parameter input measure, tolerance, uncertainty, n_sigma, fudge,
+% tbudget, nbudget, npcmax and checked. If an input is not specified, the
+% default value is used.
 % 
 % Q = CUBMC_G(f,hyperbox,'measure','uniform','abstol',abstol,'alpha',alpha,
 % 'n_sigma',n_sigma,'fudge',fudge,'tbudget',tbudget,'nbudget',nbudget,
 % 'npcmax',npcmax,'checked',checked) estimates the integral with integrand
 % f in hyperbox to within an absolute error tolerance abstol with
-% guaranteed uncertainty alpha. All the field-value pairs are optional and
-% can be supplied in different order. If an input is not specified, the
-% default value is used.
+% guaranteed confidence level 1-alpha. All the field-value pairs are
+% optional and can be supplied in different order. If an input is not
+% specified, the default value is used.
 % 
 % Q = CUBMC_G(f,hyperbox,in_param) estimates the integral with integrand f
-% in hyperbox to within an absolute error tolerance in_param.abstol with
-% guaranteed uncertainty in_param.alpha. If a field is not specified, the
+% in hyperbox to within an absolute error tolerance abstol with guaranteed
+% confidence level 1-in_param.alpha. If a field is not specified, the
 % default value is used.
 % 
 % f --- the integrand.

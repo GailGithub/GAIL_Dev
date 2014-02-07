@@ -45,14 +45,16 @@ switch index
       f_true = prod(f_true_iter);
     end
   case 7 % Keister test function
-    if dim == 1
-      f_true = 1.2238;
-    end
-    if dim == 2
-      f_true = 0.9040;
-    end
-    if dim == 3
-      f_true = 0.6113;
-    end
+      if hyperbox == [zeros(1,dim);ones(1,dim)];
+          if dim == 1
+              f_true = 1.2238;
+          end
+          if dim == 2
+              f_true = 0.9040;
+          end
+          if dim == 3
+              f_true = 0.6113;
+          end
+      end
 end
 end
