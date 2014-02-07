@@ -32,8 +32,9 @@ run_handle('conepaper_test_integral_g')
 run_handle('conepaper_test_funappx_g')
 
 % MCQMC paper
-run_handle('TestcubMCDiffSettings')
-
+run_handle('RunTestcubMConGeoAsianCall')
+run_handle('RunTestcubMConGaussian')
+run_handle('RunTestcubMConGaussiand1')
 
 %% Unit tests
 [~,~,~,MATLABVERSION]=GAILstart(0);

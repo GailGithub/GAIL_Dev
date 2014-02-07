@@ -4,9 +4,6 @@
 %   Results                        - contain graphical output files (.eps)
 %
 % Files
-%   RunTestcubMConGaussian         - driver file to run the test on Gaussian test function with multiple dimension
-%   RunTestcubMConGaussiand1       - driver file to run the test on Gaussian test function with dimension one
-%   RunTestcubMConGeoAsianCall     - driver file to run the test on geometric Asian mean option test function
 %
 % Mat file
 %

@@ -1,6 +1,9 @@
 % MCQMC_PAPER_SCRIPTS
 % 
 % Files
+%   RunTestcubMConGaussian         - driver file to run the test on Gaussian test function with multiple dimension
+%   RunTestcubMConGaussiand1       - driver file to run the test on Gaussian test function with dimension one
+%   RunTestcubMConGeoAsianCall     - driver file to run the test on geometric Asian mean option test function
 %   choosetestfun                  - choose and set up a test function
 %   cubMC                          - main algorithm to evaluate a multidimensional integral
 %   cubMCparam                     - parameter checking
