@@ -11,7 +11,13 @@
 
 %% Garbage collection and initialization
 format compact %remove blank lines from output
-clear all %clear all variables
+%clear all %clear all variables
+clear A            MATquadspiky       fbump              hmid               integval           optcoef            spikyfun           xquad...             
+GAILPATH           PATHNAMESEPARATOR  filename           hright             j                  piece              xall               xrght...              
+GAILVERSION        a                  flukyfun           integpiece         ncent              qval               xctr                    ...
+MATLABVERSION      b                  h                  integralfluky      nconst             scale              xleft                   ...
+MATquadfluky       centers            hleft              integralspiky      nnode              scaledfluky        xplot            
+
 close all %close all figures
 format short %set format
 set(0,'defaultaxesfontsize',24,'defaulttextfontsize',24) %make font larger
