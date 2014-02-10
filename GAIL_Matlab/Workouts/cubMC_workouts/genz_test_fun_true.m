@@ -10,7 +10,7 @@
 % The sixth argument is the parameter r.
 function f_true = genz_test_fun_true (hyperbox,index,dim,alpha,beta,r)
 switch index
-    case 1;
+    case 1; % Genz "Oscillatory"
         if dim == 1;
             f_true = sin(2*pi*r + alpha(1)*hyperbox(2))/alpha(1) - ...
                 sin(2*pi*r + alpha(1)*hyperbox(1))/alpha(1);
@@ -24,12 +24,11 @@ switch index
             f_true = nan;
         end
         
-        
-        
     case 2; % Genz "Product Peak";
         f_true = prod(atan((hyperbox(2,:)-beta(1:dim))./alpha(1:dim))./alpha(1:dim)...
             - atan(hyperbox(1,:)-beta(1:dim)./alpha(1:dim))./alpha(1:dim));
-    case 3;
+        
+    case 3;% Genz "Corner Peak"
         if dim == 1
             f_true = -1/(alpha(1)*r*(1+alpha(1)*hyperbox(2))^r)...
                 +1/(alpha(1)*r*(1+alpha(1)*hyperbox(1))^r);
@@ -42,6 +41,7 @@ switch index
         else
             f_true = nan;
         end
+        
     case 4 % Genz "Gaussian"
         f_true = (sqrt(pi)/2)^dim*prod(1./alpha(1:dim))*...
             prod(erf(hyperbox(2,:).*alpha(1:dim)-alpha(1:dim).*beta(1:dim))-...
@@ -63,6 +63,7 @@ switch index
             end
         end
         f_true = prod(f_true_iter);
+        
     case 6 % Genz "Discontinuous"
         if ( any ( beta(1:dim) < hyperbox(1,:) ))
             f_true = 0;
@@ -74,6 +75,7 @@ switch index
             end
             f_true = prod(f_true_iter);
         end
+        
     case 7 % Keister test function
         if hyperbox == [zeros(1,dim);ones(1,dim)];
             if dim == 1
@@ -85,6 +87,8 @@ switch index
             if dim == 3
                 f_true = 0.6113;
             end
+        else
+            f_true =  nan;
         end
 end
 end
