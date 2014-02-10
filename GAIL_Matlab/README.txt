@@ -1,5 +1,5 @@
 Guaranteed Automatic Integration Library (GAIL)
-GAIL Version 1.3.0, Jan 30th, 2014.
+GAIL Version 1.3.0, Feb 14th, 2014.
 See LICENSE.m for copyright and disclaimer.
 
 GAIL is a suite of algorithms for integration problems in one and many
