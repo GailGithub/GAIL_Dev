@@ -6,7 +6,7 @@ disp(horzcat('Dim ', 'FcnIdx ',   ' Error'));
 disp(        '---------------------------');
 %f=@(x) exp(-x(1).^2-x(2).^2);% the test function
 %f=@(x) x(:,1)+x(:,2);
-for dim=1:3
+for dim=1:2
   in_param.dim =dim;%the function dimension
   startingpoint = zeros(1,in_param.dim);
   endingpoint = ones(1,in_param.dim);
@@ -20,8 +20,8 @@ for dim=1:3
   alpha = ones(1:in_param.dim); % one coefficient
   beta = [1/3 1/4 2];
   %beta = ones(1:in_param.dim);% the other coefficent
-  r=1;
-  for index=[1:2,4:7]
+  r=2;
+  for index=[1:7]
     test_function = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
     f_true = genz_test_fun_true (hyperbox,index,in_param.dim,alpha,beta,r);
     % true solution
