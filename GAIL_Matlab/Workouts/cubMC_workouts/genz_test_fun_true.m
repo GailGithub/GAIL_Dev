@@ -7,9 +7,25 @@
 % The third argument is the dimension of the integrand.
 % The fourth argument is the parameter alpha.
 % The fifth argument is the parameter beta.
-%
-function f_true = genz_test_fun_true (hyperbox,index,dim,alpha,beta)
+% The sixth argument is the parameter r.
+function f_true = genz_test_fun_true (hyperbox,index,dim,alpha,beta,r)
 switch index
+    case 1;
+        if dim == 1;
+            f_true = sin(2*pi*r + alpha(1)*hyperbox(2))/alpha(1) - ...
+                sin(2*pi*r + alpha(1)*hyperbox(1))/alpha(1);
+        elseif dim == 2
+            f_true = ((-cos(2*pi*r + alpha(1)* hyperbox(2,1)+alpha(2)*hyperbox(2,2))+...
+               cos(2*pi*r + alpha(1)* hyperbox(1,1)+alpha(2)*hyperbox(2,2)))...
+               -(-cos(2*pi*r + alpha(1)* hyperbox(2,1)+alpha(2)*hyperbox(1,2))+...
+               cos(2*pi*r + alpha(1)* hyperbox(1,1)+alpha(2)*hyperbox(1,2))))...
+               /(alpha(1)*alpha(2));
+        else
+            f_true = nan;
+        end
+            
+        
+        
   case 2; % Genz "Product Peak";
     f_true = prod(atan((hyperbox(2,:)-beta(1:dim))./alpha(1:dim))./alpha(1:dim)...
       - atan(hyperbox(1,:)-beta(1:dim)./alpha(1:dim))./alpha(1:dim));

@@ -21,9 +21,9 @@ for dim=1:3
   beta = [1/3 1/4 2];
   %beta = ones(1:in_param.dim);% the other coefficent
   r=1;
-  for index=[2,4:7]
+  for index=[1:2,4:7]
     test_function = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
-    f_true = genz_test_fun_true (hyperbox,index,in_param.dim,alpha,beta);
+    f_true = genz_test_fun_true (hyperbox,index,in_param.dim,alpha,beta,r);
     % true solution
     [Q,out_param]=cubMC_g(test_function,hyperbox,in_param);% the results using cubMC_g
     error = abs(Q-f_true);
