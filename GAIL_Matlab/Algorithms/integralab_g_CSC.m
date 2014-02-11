@@ -358,10 +358,10 @@ end
 end
 
 function newf=transformIntegrand(oldf,out_param)
-  % Transform integrand linearly  
-  b=out_param.b;
-  a=out_param.a;
-  len = b-a;
+  % Transform integrand linearly
+  b    = out_param.b;
+  a    = out_param.a;
+  len  = b-a;
   newf = @(x) (len*oldf(x.*len+a));
  
 
