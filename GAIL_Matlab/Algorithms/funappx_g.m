@@ -1,5 +1,5 @@
 function [fappx,out_param]=funappx_g(varargin)
-%FUNAPPX_G One-dimensional guaranteed function recovery on interval [a,b]
+%FUNAPPX_G 1-D guaranteed function recovery on closed interval [a,b]
 %
 %   fappx = FUNAPPX_G(f) recovers function f on the default interval [0,1]
 %   by a piecewise linear interpolant fappx to within the guaranteed
