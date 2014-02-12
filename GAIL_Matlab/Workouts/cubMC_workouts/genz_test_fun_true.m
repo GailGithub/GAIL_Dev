@@ -23,12 +23,12 @@ switch index
         s = zeros(dim,1);
         sign = zeros(dim,1);
         s(1) = 2*pi*r+hyperbox(2,:)*alpha(1:dim)';
-        for i = 1:dim
-            s(2^(i-1)+1:2^i) = s(1:2^(i-1))-alpha(dim-i+1)*(hyperbox(2,dim-i+1)-hyperbox(1,dim-i+1));
-        end
         sign(1) = 1;
-        for i = 1:dim
-            sign(2^(i-1)+1:2^i) = -sign(1:2^(i-1));
+        if dim > 1
+            for i = 1:dim
+                s(2^(i-1)+1:2^i) = s(1:2^(i-1))-alpha(dim-i+1)*(hyperbox(2,dim-i+1)-hyperbox(1,dim-i+1));
+                sign(2^(i-1)+1:2^i) = -sign(1:2^(i-1));
+            end
         end
         switch mod(dim,4)
             case 1
@@ -49,12 +49,12 @@ switch index
         s = zeros(dim,1);
         sign = zeros(dim,1);
         s(1) = 1+hyperbox(2,:)*alpha';
-        for i = 1:dim
-            s(2^(i-1)+1:2^i) = s(1:2^(i-1))-alpha(dim-i+1)*(hyperbox(2,dim-i+1)-hyperbox(1,dim-i+1));
-        end
         sign(1) = 1;
-        for i = 1:dim
-            sign(2^(i-1)+1:2^i) = -sign(1:2^(i-1));
+        if dim > 1
+            for i = 1:dim
+                s(2^(i-1)+1:2^i) = s(1:2^(i-1))-alpha(dim-i+1)*(hyperbox(2,dim-i+1)-hyperbox(1,dim-i+1));
+                sign(2^(i-1)+1:2^i) = -sign(1:2^(i-1));
+            end
         end
         f_true = (-1)^dim*sum(sign.*s.^(-r))/prod(alpha)/prod(r:r+dim-1);
         
