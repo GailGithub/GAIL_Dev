@@ -2,17 +2,18 @@ function x=LanJiangqeq(varargin)
 %LanJiangqeq finds the roots of a quadratic equation a x^2 + b x + c = 0
 %
 %   x = LANJIANGQEQ(a,b,c) find the roots of a quadratic equation with
-%   coefficent a b c in the equation a x^2 + b x + c = 0, a b and c should
-%   be put in order
+%   coefficent a b c in the equation a x^2 + b x + c = 0, where a b and c
+%   should be put in order. The default value for a is 1, for b is 2 and
+%   for c is 1.
 %   
 %
 %   x = LANJIANGQEQ([a,b,c]) find the roots of a quadratic equation with
-%   coefficent a b c in the equation a x^2 + b x + c = 0, a b and c should
-%   be put in order and in a vector form.
+%   coefficent a b c in the equation a x^2 + b x + c = 0, where a b and c
+%   should be put in order and in a vector form.
 %   
 %   x = YLANJIANGQEQ(coef) find the roots of a quadratic equation with
 %   coefficent coeff.a coeff.b cofee.c in the equation a x^2 + b x + c =
-%   0,if a field is not specified, the default value is used.
+%   0. If a field is not specified, the default value is used.
 %
 % Example 1: using the ordered input.
 % >> x = LanJiangqeq(1,2,1)
@@ -41,7 +42,7 @@ function x=LanJiangqeq(varargin)
 %     -1    -1
 %
 %
-% See also, qeq.m
+% See also: qeq.m
 %
 % Reference: MATH 573 Reliable Mathematical Software
 %
@@ -111,6 +112,16 @@ if  coeff.b == 0&& coeff.a == 0
 end
 end
 
+% Lan Jiang ljiang14@hawk.iit.edu
+% 
+% TAP version 13
+% 1..6
+% ok 1 - "x = LanJiangqeq(1,2,1)"
+% ok 2 - "x = LanJiangqeq([1,2,1])"
+% ok 3 - "coeff.a = 1;"
+% ok 4 - "coeff.b = 2;"
+% ok 5 - "coeff.c = 1; "
+% ok 6 - "x = LanJiangqeq(coeff)"
 
 
 
