@@ -1,5 +1,5 @@
 %% funappx_g
-% |One dimensional guaranteed function recovery on the interval [a,b].|
+% |1-D guaranteed function recovery on closed interval [a,b].|
 %% Syntax
 % fappx = *funappx_g*(f)
 %
