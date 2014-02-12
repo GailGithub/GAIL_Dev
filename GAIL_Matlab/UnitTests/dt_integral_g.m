@@ -59,7 +59,7 @@
 %
 %   When a > b, compute negative of the integral.
 %   >> q = integral_g(@(x)x.^2,'a',1,'b',0)
-%   q = 0.3333
+%   q = -0.3333
 %
 %
 %   >> q = integral_g(@(x)x.^2,'a',0,'b',2,'nlo',10,'nhi',100)
