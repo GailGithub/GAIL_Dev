@@ -1,9 +1,9 @@
 function [q,out_param] = integral_g(varargin)
-%  INTEGRALAB_G 1-D guaranteed function integration using trapezoidal rule
+%  INTEGRAL_G 1-D guaranteed function integration using trapezoidal rule
 % 
 %  Description
 %
-%   q = INTEGRALAB_G(f) computes q, the definite integral of function f
+%   q = INTEGRAL_G(f) computes q, the definite integral of function f
 %   on the interval [a,b] by trapezoidal rule with 
 %   in a guaranteed absolute error of 1e-6. Default starting number of
 %   sample points taken is 100 and default cost budget is 1e7. Input f is a 
@@ -11,7 +11,7 @@ function [q,out_param] = integral_g(varargin)
 %   x and return a vector result y, the integrand evaluated at each element
 %   of x.
 %
-%   q = INTEGRALAB_G(f,in_param) computes q, the definite integral of 
+%   q = INTEGRAL_G(f,in_param) computes q, the definite integral of 
 %   function f by trapezoidal rule within a guaranteed absolute error
 %   in_param.abstol, starting number of points in_param.ninit, and cost 
 %   budget in_param.nmax. If a field is not specified, the default value is
@@ -91,23 +91,23 @@ function [q,out_param] = integral_g(varargin)
 %   Examples
 %
 %   Example 1: 
-%   >> q = integralab_g(@(x) x.^2)
+%   >> q = integral_g(@(x) x.^2)
 %   q = 0.3333
 %
 %
 %   Example 2:
-%   >> f = @(x) exp(-x.^2); q = integralab_g(f,'a',1,'b',2,'nlo',100,'nhi',10000,'abstol',1e-5,'nmax',1e7)
+%   >> f = @(x) exp(-x.^2); q = integral_g(f,'a',1,'b',2,'nlo',100,'nhi',10000,'abstol',1e-5,'nmax',1e7)
 %   q = 0.1353
 %
 %
 %   Example 3:
-%   >> q = integralab_g()
+%   >> q = integral_g()
 %   Warning: Function f must be specified. Now GAIL is giving you a toy example of f(x)=x^2.
 %   >  In ***
 %   q = 0.3333
 %
 %
-%   See also funappxab_g, cubMC_g
+%   See also funappx_g, cubMC_g
 %
 %   Reference:
 %   [1]  N. Clancy, Y. Ding, C. Hamilton, F. J. Hickernell, and Y. Zhang, 
