@@ -62,11 +62,16 @@
 %   q = 0.3333
 %
 %
-%  >> q = integral_g(@(x)x.^2,'a',0,'b',2,'nlo',10,'nhi',100)
-%  q = 2.6667
+%   >> q = integral_g(@(x)x.^2,'a',0,'b',2,'nlo',10,'nhi',100)
+%   q = 2.6667
 %
 %
 %  Example from Fred Hickernell's email on 20140206:
-%  >>  inparam.a=0; inparam.b=3; inparam.abstol=1e-13; q=integral_g(@(x) exp(2*x),inparam)
-%  q =  201.2144
+%   >>  inparam.a=0; inparam.b=3; inparam.abstol=1e-13; q=integral_g(@(x) exp(2*x),inparam)
+%   q =  201.2144
+%
+%
+%  Example from Fred Hickernell's email on 20131210:
+%   >> q = integralab_g(@(x) x.^2,'a',-1,'b',1)
+%   q =  0.6667
 %
