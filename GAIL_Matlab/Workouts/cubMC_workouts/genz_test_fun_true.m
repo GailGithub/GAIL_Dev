@@ -5,12 +5,12 @@
 % The first argument is hyperbox, which is a matrix of size 2 x dim.
 % The second argument is index, which identifies a test function to use.
 % The third argument is the dimension of the integrand.
-% The fourth argument is the parameter alpha.
+% The fourth argument is the parameter alpha, which is a dim x 1 vector.
 % The fifth argument is the parameter beta.
 % The sixth argument is the parameter r.
-function f_true = genz_test_fun_true (hyperbox,index,dim,alpha,beta,r)
+function f_true = genz_test_fun_true(hyperbox,index,dim,alpha,beta,r)
 switch index
-    case 1; % Genz "Oscillatory"
+    case 1 % Genz "Oscillatory"
         if dim == 1;
             f_true = sin(2*pi*r + alpha(1)*hyperbox(2))/alpha(1) - ...
                 sin(2*pi*r + alpha(1)*hyperbox(1))/alpha(1);
@@ -21,14 +21,34 @@ switch index
                 cos(2*pi*r + alpha(1)* hyperbox(1,1)+alpha(2)*hyperbox(1,2))))...
                 /(alpha(1)*alpha(2));
         else
-            f_true = nan;
+            s = zeros(dim,1);
+            sign = zeros(dim,1);
+            s(1) = 2*pi*r+hyperbox(2,:)*alpha;
+            for i = 1:dim
+                s(2^(i-1)+1:2^i) = s(1:2^(i-1))-alpha(dim-i+1)*(hyperbox(2,dim-i+1)-hyperbox(1,dim-i+1));
+            end
+            sign(1) = 1;
+            for i = 1:dim
+                sign(2^(i-1)+1:2^i) = -sign(1:2^(i-1));
+            end
+            switch mod(dim,4)
+                case 1
+                    f_true = sum(sign.*sin(s))/prod(alpha);
+                case 2
+                    f_true = sum(sign.*(-cos(s)))/prod(alpha);
+                case 3
+                    f_true = sum(sign.*(-sin(s)))/prod(alpha);
+                case 0
+                    f_true = sum(sign.*cos(s))/prod(alpha);
+            end
+            %f_true = nan;
         end
         
-    case 2; % Genz "Product Peak";
+    case 2 % Genz "Product Peak";
         f_true = prod(atan((hyperbox(2,:)-beta(1:dim))./alpha(1:dim))./alpha(1:dim)...
             - atan(hyperbox(1,:)-beta(1:dim)./alpha(1:dim))./alpha(1:dim));
         
-    case 3;% Genz "Corner Peak"
+    case 3 % Genz "Corner Peak"
         if dim == 1
             f_true = -1/(alpha(1)*r*(1+alpha(1)*hyperbox(2))^r)...
                 +1/(alpha(1)*r*(1+alpha(1)*hyperbox(1))^r);
@@ -39,7 +59,18 @@ switch index
                 ((1+alpha(1)*hyperbox(2,1)+alpha(2)*hyperbox(1,2))^(-r)...
                 -(1+alpha(1)*hyperbox(1,1)+alpha(2)*hyperbox(1,2))^(-r)));
         else
-            f_true = nan;
+            s = zeros(dim,1);
+            sign = zeros(dim,1);
+            s(1) = 1+hyperbox(2,:)*alpha;
+            for i = 1:dim
+                s(2^(i-1)+1:2^i) = s(1:2^(i-1))-alpha(dim-i+1)*(hyperbox(2,dim-i+1)-hyperbox(1,dim-i+1));
+            end
+            sign(1) = 1;
+            for i = 1:dim
+                sign(2^(i-1)+1:2^i) = -sign(1:2^(i-1));
+            end
+            f_true = (-1)^dim*sum(sign.*s.^(-r))/prod(alpha)/prod(r:r+dim-1);
+            %f_true = nan;
         end
         
     case 4 % Genz "Gaussian"
