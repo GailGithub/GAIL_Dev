@@ -59,7 +59,7 @@
 %
 %   When a > b, compute negative of the integral.
 %   >> q = integral_g(@(x)x.^2,'a',1,'b',0)
-%   q = 0.3333
+%   q = -0.3333
 %
 %
 %   >> q = integral_g(@(x)x.^2,'a',0,'b',2,'nlo',10,'nhi',100)
@@ -67,7 +67,7 @@
 %
 %
 %  Example from Fred Hickernell's email on 20140206:
-%*   >>  inparam.a=0; inparam.b=3; inparam.abstol=1e-13; q=integral_g(@(x) exp(2*x),inparam)
+%   >>  inparam.a=0; inparam.b=3; inparam.abstol=1e-13; q=integral_g(@(x) exp(2*x),inparam)
 %   q =  201.2144
 %
 %

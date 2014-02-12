@@ -135,10 +135,10 @@ out_param.exceedbudget=false;   % if the number of points used in the calculatio
 out_param.tauchange=false;  % if the cone constant has been changed
 xpts=linspace(out_param.a,out_param.b,out_param.ninit)'; % generate ninit number of uniformly spaced points in [0,1]
 fpts=f(xpts);   % get function values at xpts
-sumf=(out_param.b-out_param.a)*(fpts(1)+fpts(out_param.ninit))/2+sum(fpts(2:out_param.ninit-1));    % computes the sum of trapezoidal rule
+intervallen=out_param.b-out_param.a;
+sumf=intervallen*(fpts(1)+fpts(out_param.ninit))/2+sum(fpts(2:out_param.ninit-1));    % computes the sum of trapezoidal rule
 ntrap=out_param.ninit-1; % number of trapezoids
 
-intervallen=out_param.b-out_param.a;
 if intervallen
 
     while true
@@ -149,8 +149,8 @@ if intervallen
         Ff=ntrap*(sum(abs(diff(df))))/intervallen; %approx strong norm
 
         %Check necessary condition for integrand to lie in cone
-        if out_param.tau*(Gf+Ff*intervallen/(2*ntrap)) < Ff %f lies outside cone
-            out_param.tau = 2*Ff/(Gf+Ff*intervallen/(2*ntrap)); %increase tau
+        if out_param.tau*(Gf/intervallen+Ff/(2*ntrap)) < Ff %f lies outside cone
+            out_param.tau = 2*Ff/(Gf/intervallen+Ff/(2*ntrap)); %increase tau
             out_param.tauchange=true; %flag the changed tau
             warning('MATLAB:integral_g:peaky','This integrand is peaky relative to ninit. You may wish to increase ninit for similar integrands.');
             if ntrap+1 <= (out_param.tau+1)/2 %the present ntrap is too small for tau
@@ -164,6 +164,7 @@ if intervallen
             errest=out_param.tau*Gf*intervallen/(4*ntrap*(2*ntrap-out_param.tau));
             if errest <= out_param.abstol %tolerance is satisfied
                 q=sumf/ntrap; %compute the integral
+                %keyboard
                 break %exit while loop
             else %need to increase number of trapezoids
                 %proposed inflation factor to increase ntrap by
@@ -184,7 +185,7 @@ if intervallen
 
         %Increase number of sample points
         expand=repmat(xpts(1:end-1),1,inflation-1);
-        addon=repmat((1:inflation-1)'/(inflation*ntrap),1,ntrap)';
+        addon=repmat((1:inflation-1)'*(intervallen/(inflation*ntrap)),1,ntrap)';
         xnew=expand'+addon'; %additional x values
         ynew=f(xnew); %additional f(x) values
         xnew = [xpts(1:end-1)'; xnew];
@@ -192,7 +193,7 @@ if intervallen
         xpts = [xnew(:); xpts(end)];
         fpts = [ynew(:); fpts(end)];
         ntrap=ntrap*inflation; %new number of trapezoids
-        sumf=(out_param.b-out_param.a)*((fpts(1)+fpts(ntrap+1))/2+sum(fpts(2:ntrap)));
+        sumf=intervallen*((fpts(1)+fpts(ntrap+1))/2+sum(fpts(2:ntrap)));
             %updated weighted sum of function values
         if out_param.exceedbudget %tried to exceed cost budget
             q=sumf/ntrap; %compute the integral
