@@ -4,7 +4,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %   fappx = FUNAPPX_G(f) recovers function f on the default interval [0,1]
 %   by a piecewise linear interpolant fappx to within the guaranteed
 %   absolute error tolerance of 1e-6. Default initial number of points is
-%   52 and default cost budget is 1e7.  Input f is a function handle. The
+%   100 and default cost budget is 1e7.  Input f is a function handle. The
 %   statement y=f(x) should accept a vector argument x and return a vector
 %   y of function values that is the same size as x.
 %   
@@ -36,10 +36,10 @@ function [fappx,out_param]=funappx_g(varargin)
 %   is 1e-6
 %
 %   in_param.nlo --- lower bound of initial number of points we used,
-%   default value is 52
+%   default value is 10
 %
 %   in_param.nhi --- upper bound of initial number of points we used,
-%   default value is 52
+%   default value is 1000
 %
 %   in_param.nmax --- cost budget, default value is 1e7
 %
@@ -70,11 +70,9 @@ function [fappx,out_param]=funappx_g(varargin)
 %
 %   out_param.abstol --- guaranteed absolute error tolerance
 %
-%   out_param.nlo --- lower bound of initial number of points we used,
-%   default value is 52
+%   out_param.nlo --- lower bound of initial number of points we used
 %
-%   out_param.nhi --- upper bound of initial number of points we used,
-%   default value is 52
+%   out_param.nhi --- upper bound of initial number of points we used
 %
 %  Guarantee
 %    
@@ -108,14 +106,14 @@ function [fappx,out_param]=funappx_g(varargin)
 %                a: 0
 %                b: 1
 %           abstol: 1.0000e-06
-%              nlo: 52
-%              nhi: 52
+%              nlo: 10
+%              nhi: 1000
 %             nmax: 10000000
-%            ninit: 52
-%            nstar: 50
+%            ninit: 100
+%            nstar: 98
 %     exceedbudget: 0
-%          npoints: 7039
-%       errorbound: 5.0471e-09
+%          npoints: 9901
+%       errorbound: 2.5508e-09
 %
 %
 %   Example 2:
@@ -218,7 +216,7 @@ function [fappx,out_param]=funappx_g(varargin)
 
 % initialize number of points
 n = out_param.ninit;
-% initialize tau
+% initialize nstar
 out_param.nstar = n - 2;
 % cost budget flag
 out_param.exceedbudget = 1;
@@ -299,8 +297,8 @@ function [f, out_param] = funappx_g_param(varargin)
 default.abstol = 1e-6;
 default.a = 0;
 default.b = 1;
-default.nlo = 52;
-default.nhi = 52;
+default.nlo = 10;
+default.nhi = 1000;
 default.nmax  = 1e7;
 
 
@@ -394,7 +392,7 @@ if (out_param.a == inf||out_param.a == -inf||isnan(out_param.a)==1)
     out_param.a = default.a;
 end;
 if (out_param.b == inf||out_param.b == -inf||isnan(out_param.b)==1)
-    warning('MATLAB:funappx_g:anoinfinity',['b can not be infinity. Use default b = ' num2str(default.b)])
+    warning('MATLAB:funappx_g:bnoinfinity',['b can not be infinity. Use default b = ' num2str(default.b)])
     out_param.b = default.b;
 end;
 if (out_param.b < out_param.a)
@@ -451,10 +449,11 @@ end
 % end;
 
 if (out_param.nlo > out_param.nhi)
-    warning('MATLAB:funappx_g:logrhi', 'Lower bound of initial number of points is larger than upper bound of initial number of points; exchange these two')
-    temp = out_param.nlo;
-    out_param.nlo = out_param.nhi;
-    out_param.nhi = temp;
+%     warning('MATLAB:funappx_g:logrhi', 'Lower bound of initial number of points is larger than upper bound of initial number of points; exchange these two')
+%     temp = out_param.nlo;
+%     out_param.nlo = out_param.nhi;
+%     out_param.nhi = temp;
+    out_param.nhi = out_param.nlo;
 end;
 if (~isposint(out_param.nlo))
     if isposge3(out_param.nlo)
