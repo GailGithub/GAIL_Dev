@@ -92,7 +92,7 @@ function [q,out_param] = integralab_g(varargin)
 
 %%
 % check parameter satisfy conditions or not
-[f,out_param] = integral_g_param(varargin{:});
+[f,out_param, flip] = integral_g_param(varargin{:});
 
 %% main alg
 out_param.tau=ceil((out_param.ninit-1)*2-1); % computes the minimum requirement of number of points to start
@@ -102,72 +102,80 @@ xpts=linspace(out_param.a,out_param.b,out_param.ninit)'; % generate ninit number
 fpts=f(xpts);   % get function values at xpts
 sumf=(out_param.b-out_param.a)*(fpts(1)+fpts(out_param.ninit))/2+sum(fpts(2:out_param.ninit-1));    % computes the sum of trapezoidal rule
 ntrap=out_param.ninit-1; % number of trapezoids
+
 intervallen=out_param.b-out_param.a;
+if intervallen
 
-while true
-    %Compute approximations to the strong and weak norms
-    ntrapok=true; %number of trapezoids is large enough for ninit
-    df=diff(fpts); %first difference of points
-    Gf=sum(abs(df-(fpts(ntrap+1)-fpts(1))/ntrap)); %approx weak norm
-    Ff=ntrap*(sum(abs(diff(df))))/intervallen; %approx strong norm
-    
-    %Check necessary condition for integrand to lie in cone
-    if out_param.tau*(Gf+Ff*intervallen/(2*ntrap)) < Ff %f lies outside cone
-        out_param.tau = 2*Ff/(Gf+Ff*intervallen/(2*ntrap)); %increase tau
-        out_param.tauchange=true; %flag the changed tau
-        warning('MATLAB:integral_g:peaky','This integrand is peaky relative to ninit. You may wish to increase ninit for similar integrands.');
-        if ntrap+1 <= (out_param.tau+1)/2 %the present ntrap is too small for tau
-            inflation=ceil((out_param.tau+1)/(2*ntrap)); %prepare to increase ntrap
-            ntrapok=false; %flag the number of trapezoids too small for tau
+    while true
+        %Compute approximations to the strong and weak norms
+        ntrapok=true; %number of trapezoids is large enough for ninit
+        df=diff(fpts); %first difference of points
+        Gf=sum(abs(df-(fpts(ntrap+1)-fpts(1))/ntrap)); %approx weak norm
+        Ff=ntrap*(sum(abs(diff(df))))/intervallen; %approx strong norm
+
+        %Check necessary condition for integrand to lie in cone
+        if out_param.tau*(Gf+Ff*intervallen/(2*ntrap)) < Ff %f lies outside cone
+            out_param.tau = 2*Ff/(Gf+Ff*intervallen/(2*ntrap)); %increase tau
+            out_param.tauchange=true; %flag the changed tau
+            warning('MATLAB:integral_g:peaky','This integrand is peaky relative to ninit. You may wish to increase ninit for similar integrands.');
+            if ntrap+1 <= (out_param.tau+1)/2 %the present ntrap is too small for tau
+                inflation=ceil((out_param.tau+1)/(2*ntrap)); %prepare to increase ntrap
+                ntrapok=false; %flag the number of trapezoids too small for tau
+            end
         end
-    end
-    
-    if ntrapok %ntrap large enough for tau
-        %compute a reliable error estimate
-        errest=out_param.tau*Gf*intervallen^2/(4*ntrap*(2*ntrap-out_param.tau*intervallen));
-        if errest <= out_param.abstol %tolerance is satisfied
+
+        if ntrapok %ntrap large enough for tau
+            %compute a reliable error estimate
+            errest=out_param.tau*Gf*intervallen/(4*ntrap*(2*ntrap-out_param.tau));
+            if errest <= out_param.abstol %tolerance is satisfied
+                q=sumf/ntrap; %compute the integral
+                break %exit while loop
+            else %need to increase number of trapezoids
+                %proposed inflation factor to increase ntrap by
+                inflation=max(ceil(1/ntrap*sqrt(out_param.tau*intervallen*Gf/(8*out_param.abstol))),2);
+            end
+        end
+        if ntrap*inflation+1 > out_param.nmax
+                %cost budget does not allow intended increase in ntrap
+            out_param.exceedbudget=true; %tried to exceed budget
+            warning('MATLAB:integral_g:exceedbudget','integral_g attempts to exceed the cost budget. The answer may be unreliable.');
+            inflation=floor((out_param.nmax-1)/ntrap);
+                %max possible increase allowed by cost budget
+            if inflation == 1 %cannot increase ntrap at all
+                q=sumf/ntrap; %compute the integral                 
+                break %exit while loop
+            end
+        end
+
+        %Increase number of sample points
+        expand=repmat(xpts(1:end-1),1,inflation-1);
+        addon=repmat((1:inflation-1)'/(inflation*ntrap),1,ntrap)';
+        xnew=expand'+addon'; %additional x values
+        ynew=f(xnew); %additional f(x) values
+        xnew = [xpts(1:end-1)'; xnew];
+        ynew = [fpts(1:end-1)'; ynew];
+        xpts = [xnew(:); xpts(end)];
+        fpts = [ynew(:); fpts(end)];
+        ntrap=ntrap*inflation; %new number of trapezoids
+        sumf=(out_param.b-out_param.a)*((fpts(1)+fpts(ntrap+1))/2+sum(fpts(2:ntrap)));
+            %updated weighted sum of function values
+        if out_param.exceedbudget %tried to exceed cost budget
             q=sumf/ntrap; %compute the integral
-            break %exit while loop
-        else %need to increase number of trapezoids
-            %proposed inflation factor to increase ntrap by
-            inflation=max(ceil(1/ntrap*sqrt(out_param.tau*intervallen*Gf/(8*out_param.abstol))),2);
+            break; %exit while loop
         end
     end
-    if ntrap*inflation+1 > out_param.nmax
-            %cost budget does not allow intended increase in ntrap
-        out_param.exceedbudget=true; %tried to exceed budget
-        warning('MATLAB:integral_g:exceedbudget','integral_g attempts to exceed the cost budget. The answer may be unreliable.');
-        inflation=floor((out_param.nmax-1)/ntrap);
-            %max possible increase allowed by cost budget
-        if inflation == 1 %cannot increase ntrap at all
-            q=sumf/ntrap; %compute the integral                 
-            break %exit while loop
-        end
-    end
-    
-    %Increase number of sample points
-    expand=repmat(xpts(1:end-1),1,inflation-1);
-    addon=repmat((1:inflation-1)'/(inflation*ntrap),1,ntrap)';
-    xnew=expand'+addon'; %additional x values
-    ynew=f(xnew); %additional f(x) values
-    xnew = [xpts(1:end-1)'; xnew];
-    ynew = [fpts(1:end-1)'; ynew];
-    xpts = [xnew(:); xpts(end)];
-    fpts = [ynew(:); fpts(end)];
-    ntrap=ntrap*inflation; %new number of trapezoids
-    sumf=(out_param.b-out_param.a)*((fpts(1)+fpts(ntrap+1))/2+sum(fpts(2:ntrap)));
-        %updated weighted sum of function values
-    if out_param.exceedbudget %tried to exceed cost budget
-        q=sumf/ntrap; %compute the integral
-        break; %exit while loop
-    end
+elseif intervallen == 0
+    q = 0;
+    errest = 0;
 end
-
+if flip==1
+    q = -1*q;
+end
 out_param.q=q;  % integral of functions
 out_param.npoints=ntrap+1;  % number of points finally used
 out_param.errest=errest;    % error of integral
 
-function [f, out_param] = integral_g_param(varargin)
+function [f, out_param, flip] = integral_g_param(varargin)
 % parse the input to the integral_g function
 
 % Default parameter values
@@ -177,14 +185,17 @@ default.nlo = 10;
 default.nhi = 1000;
 default.a = 0;
 default.b = 1;
-
+% if a<b, flip = 0; if a>b, flip = 1;
+flip = 0;
 
 if isempty(varargin)
     help integral_g
     warning('Function f must be specified. Now GAIL is giving you a toy example of f(x)=x^2.')
     f = @(x) x.^2;
+    out_param.f=f;
 else
     f = varargin{1};
+    out_param.f=f;
 end;
 
 validvarargin=numel(varargin)>1;
@@ -196,20 +207,20 @@ end
 
 if ~validvarargin
     %if only one input f, use all the default parameters
-    out_param.abstol = default.abstol;
-    out_param.nmax = default.nmax;
-    out_param.nlo = default.nlo;
-    out_param.nhi = default.nhi;
     out_param.a = default.a;
     out_param.b = default.b;
+    out_param.abstol = default.abstol;
+    out_param.nlo = default.nlo;
+    out_param.nhi = default.nhi;    
+    out_param.nmax = default.nmax;
 else
     p = inputParser;
     addRequired(p,'f',@isfcn);
     if isnumeric(in2)%if there are multiple inputs with
         %only numeric, they should be put in order.
-        addOptional(p,'abstol',default.abstol,@isnumeric);
         addOptional(p,'a',default.a,@isnumeric);
         addOptional(p,'b',default.b,@isnumeric);
+        addOptional(p,'abstol',default.abstol,@isnumeric);
         addOptional(p,'nlo',default.nlo,@isnumeric);
         addOptional(p,'nhi',default.nhi,@isnumeric);
         addOptional(p,'nmax',default.nmax,@isnumeric);
@@ -218,9 +229,9 @@ else
             p.StructExpand = true;
             p.KeepUnmatched = true;
         end
-        addParamValue(p,'abstol',default.abstol,@isnumeric);
         addParamValue(p,'a',default.a,@isnumeric);
         addParamValue(p,'b',default.b,@isnumeric);
+        addParamValue(p,'abstol',default.abstol,@isnumeric);
         addParamValue(p,'nlo',default.nlo,@isnumeric);
         addParamValue(p,'nhi',default.nhi,@isnumeric);
         addParamValue(p,'nmax',default.nmax,@isnumeric);
@@ -229,9 +240,24 @@ else
     out_param = p.Results;
 end;
 
+if (out_param.a == inf||out_param.a == -inf||isnan(out_param.a)==1)
+    warning('MATLAB:integralab_g:anoinfinity',['a can not be infinity nor NaN. Use default a = ' num2str(default.a)])
+    out_param.a = default.a;
+end;
+if (out_param.b == inf||out_param.b == -inf||isnan(out_param.b)==1)
+    warning('MATLAB:integralab_g:bnoinfinity',['b can not be infinity not Nan. Use default b = ' num2str(default.b)])
+    out_param.b = default.b;
+end;
+if (out_param.b < out_param.a)
+    tmp = out_param.b;
+    out_param.b = out_param.a;
+    out_param.a = tmp;
+    flip=1;
+end
+
 % let error tolerance greater than 0
 if (out_param.abstol <= 0 )
-    warning(['Error tolerance should be greater than 0.' ...
+    warning(['MATLAB:integralab_g:abstolnonpos','Error tolerance should be greater than 0.' ...
             ' Using default error tolerance ' num2str(default.abstol)])
     out_param.abstol = default.abstol;
 end
@@ -270,7 +296,7 @@ if (out_param.nlo > out_param.nhi)
     end
 end
 
-out_param.ninit = ceil(out_param.nhi*(out_param.nlo/out_param.nhi)^(1/(1+(out_param.b-out_param.a))));
+out_param.ninit = max(ceil(out_param.nhi*(out_param.nlo/out_param.nhi)^(1/(1+(out_param.b-out_param.a)))),3);
 if (~isposint(out_param.nmax))
     if ispositive(out_param.nmax)
         warning('MATLAB:integralab_g:budgetnotint',['Cost budget should be a positive integer.' ...
@@ -282,12 +308,3 @@ if (~isposint(out_param.nmax))
         out_param.nmax = default.nmax;
     end;
 end
-
-
-%% doctest results%%
-% doctest integralab_g
-% TAP version 13
-% 1..3
-% ok 1 - "q = integralab_g(@(x) x.^2)"
-% ok 2 - "f = @(x) exp(-x.^2); q = integralab_g(f,'a',1,'b',2,'nlo',100,'nhi',10000,'abstol',1e-5,'nmax',1e7)"
-% ok 3 - "q = integralab_g()"
