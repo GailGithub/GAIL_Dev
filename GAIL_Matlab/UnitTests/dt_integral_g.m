@@ -72,6 +72,6 @@
 %
 %
 %  Example from Fred Hickernell's email on 20131210:
-%   >> q = integralab_g(@(x) x.^2,'a',-1,'b',1)
+%   >> q = integral_g(@(x) x.^2,'a',-1,'b',1)
 %   q =  0.6667
 %
