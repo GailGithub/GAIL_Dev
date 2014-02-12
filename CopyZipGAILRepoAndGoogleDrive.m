@@ -10,4 +10,4 @@ GoogleDrivePath = '/Users/BabyAudrey/Google Drive/GAIL_Dev/GAIL_Matlab';
 copyfile(GAILPATH,newpath)%copy files in repository to new path
 copyfile(GoogleDrivePath,newpath)% copy files in google drive to new path
 % zip files recursively excluding hidden file such as .ds_store and .icon  
-system(horzcat('zip -r GAIL_PRE_1_3_0.zip ', newfolder, ' -x@exclude1_3.lst'));  
+system(horzcat('zip -r GAIL_1_3_0.zip ', newfolder, ' -x@exclude1_3.lst'));  
