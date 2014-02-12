@@ -1,4 +1,4 @@
-%TEST_CUBMC_G   This is the driver script to test cubMC_g algorithm
+% This is the driver script to test cubMC_g algorithm
 %using integrands of dimensions up to 3 
 %clear all;close all;clc;
 in_param.measure  = 'uniform';
@@ -17,11 +17,11 @@ for dim=1:2
   in_param.fudge =1.1;% standard deviation inflation factor
   in_param.timebudget = 100;% time budget
   in_param.nbudget = 1e9;% sample budget
-  alpha = ones(1:in_param.dim); % one coefficient
-  beta = [1/3 1/4 2];
+  alpha = ones(in_param.dim,1); % one coefficient
+  beta = [1/3  1/4 2];
   %beta = ones(1:in_param.dim);% the other coefficent
   r=2;
-  for index=[1:7]
+  for index=[1]
     test_function = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
     f_true = genz_test_fun_true (hyperbox,index,in_param.dim,alpha,beta,r);
     % true solution
