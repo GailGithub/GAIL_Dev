@@ -15,7 +15,7 @@
 % fappx = *funappx_g*(f) |recovers function|  f  |on the default interval
 %  [0,1] by a piecewise linear interpolant fappx to within a guaranteed
 %  absolute error tolerance of 1e-6. Default initial number of points is
-%  52 and default cost budget is 1e7.  Input| f |is a function handle. The
+%  100 and default cost budget is 1e7.  Input| f |is a function handle. The
 %  statement| y=f(x) |should accept a vector argument x and return a
 %  vector y of function values that is the same size as x.|
 %
@@ -54,10 +54,10 @@
 %  is 1e-6|
 %
 % * in_param.nlo --- |lower bound of initial number of points we used,
-%  default value is 52|
+%  default value is 10|
 %
 % * in_param.nhi --- |upper bound of initial number of points we used,
-%  default value is 52|
+%  default value is 100|
 %
 % * in_param.nmax --- |cost budget, default value is 1e7|
 %
@@ -85,11 +85,9 @@
 %
 % * out_param.abstol --- |guaranteed absolute error|
 % 
-% * out_param.nlo --- |lower bound of initial number of points we used,
-% default value is 52|
+% * out_param.nlo --- |lower bound of initial number of points we used|
 %
-% * out_param.nhi --- |higher bound of initial number of points we used,
-% default value is 52|
+% * out_param.nhi --- |higher bound of initial number of points we used|
 %
 %% Guarantee
 %    
@@ -120,10 +118,10 @@ f = @(x) x.^2; [fappx, out_param] = funappx_g(f)
 %%
 % *Example 2*
 
-[fappx, out_param] = funappx_g(@(x) x.^2,0,100,1e-7,52,52,1e8)
+[fappx, out_param] = funappx_g(@(x) x.^2,0,100,1e-7,10,1000,1e8)
 
 % Approximate function x^2 on [0,100] with error tolerence 1e-7, cost
-% budget 10000000 and initial number of points 52
+% budget 10000000 and initial number of points 100
 
 %%
 % *Example 3*

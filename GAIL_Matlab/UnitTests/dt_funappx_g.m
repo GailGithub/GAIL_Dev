@@ -28,15 +28,15 @@
 %                a: 0
 %                b: 1
 %           abstol: 1.0000e-06
-%              nlo: 52
-%              nhi: 52
+%              nlo: 10
+%              nhi: 1000
 %             nmax: 10000000
-%            ninit: 52
-%            nstar: 50
+%            ninit: 100
+%            nstar: 98
 %     exceedbudget: 0
-%          npoints: 7039
-%       errorbound: 5.0471e-***9
-% 
+%          npoints: 9901
+%       errorbound: 2.5508e-***9 
+%
 %
 %   Example 3:
 %
@@ -52,14 +52,14 @@
 %           abstol: 1.0000e-08
 %                b: 10
 %                f: @(x)x.^2
-%              nhi: 52
-%              nlo: 52
+%              nhi: 1000
+%              nlo: 10
 %             nmax: 10000000
-%            ninit: 52
-%            nstar: 50
+%            ninit: 804
+%            nstar: 802
 %     exceedbudget: 0
-%          npoints: 1400359
-%       errorbound: 5.1001e-***11
+%          npoints: 5661151
+%       errorbound: 3.1282e-***12
 %
 % 
 %   Example 4: 
@@ -127,14 +127,14 @@
 %           abstol: 1.0000e-07
 %                b: 2
 %                f: @(x)x.^2
-%              nhi: 52
-%              nlo: 52
+%              nhi: 1000
+%              nlo: 10
 %             nmax: 10000000
-%            ninit: 52
-%            nstar: 50
+%            ninit: 399
+%            nstar: 397
 %     exceedbudget: 0
-%          npoints: 88639
-%       errorbound: 5.0912e-***10
+%          npoints: 252333
+%       errorbound: 6.2823e-***11
 %
 %
 %   Example 7:
@@ -162,7 +162,7 @@
 %
 %   Example 8:
 %
-%   >> [fappx, out_param] = funappx_g(@(x) x.^2,'a',-30,'b',30,'nmax',1e6)
+%   >> [fappx, out_param] = funappx_g(@(x) x.^2,'a',-30,'b',30,'nmax',1e7)
 %
 %   fappx = 
 %
@@ -173,14 +173,14 @@
 %           abstol: 1.0000e-06
 %                b: 30
 %                f: @(x)x.^2
-%              nhi: 52
-%              nlo: 52
-%             nmax: 1000000
-%            ninit: 52
-%            nstar: 50
+%              nhi: 1000
+%              nlo: 10
+%             nmax: 10000000
+%            ninit: 928
+%            nstar: 926
 %     exceedbudget: 0
-%          npoints: 420139
-%       errorbound: 5.0987e-***9
+%          npoints: 1826191
+%       errorbound: 2.6992e-***10
 % 
 %
 %   Example 9:
@@ -196,14 +196,14 @@
 %           abstol: 1.0000e-06
 %                b: 5
 %                f: @(x)x.^2
-%              nhi: 52
-%              nlo: 52
+%              nhi: 1000
+%              nlo: 10
 %             nmax: 10000000
-%            ninit: 52
-%            nstar: 50
+%            ninit: 563
+%            nstar: 561
 %     exceedbudget: 0
-%          npoints: 49063
-%       errorbound: 5.0892e-***9
+%          npoints: 166353
+%       errorbound: 4.4267e-***10
 %
 %
 %   Example 10:
@@ -220,14 +220,14 @@
 %           abstol: 1.0000e-07
 %                b: 3
 %                f: @(x)x.^2
-%              nhi: 52
-%              nlo: 52
+%              nhi: 1000
+%              nlo: 10
 %             nmax: 10000000
-%            ninit: 52
-%            nstar: 50
+%            ninit: 518
+%            nstar: 516
 %     exceedbudget: 0
-%          npoints: 132907
-%       errorbound: 5.0951e-***10
+%          npoints: 431179
+%       errorbound: 4.8410e-***11
 %
 %
 %   Example 11:
