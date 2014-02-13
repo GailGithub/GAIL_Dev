@@ -2,18 +2,7 @@
 classdef ut_integral_g < matlab.unittest.TestCase    
     methods (Test)
         
-        function tauchange(testCase)
-            a=0.017939121772731;
-            z=0.816268582603015;
-            x0=z-2*a;
-            x1=z+2*a;
-            f = @(x) (1/(4*a^3)).*(4*a^2+(x-z).^2 ...
-                +(x-z-a).*abs(x-z-a)...
-                -(x-z+a).*abs(x-z+a)) ...
-                .*(x>=x0).*(x<=x1); %test function
-            [q,out_param]=integral_g(f,'ninit',52,'abstol',1e-8,'nmax',1e7);
-            testCase.verifyEqual(out_param.tauchange,true);
-        end
+
         
         function testerrorfabstol(testCase)
             f=@(x) 3*x.^2;
@@ -38,8 +27,9 @@ classdef ut_integral_g < matlab.unittest.TestCase
         function testerrorfninit(testCase)
             abstol=1e-7;
             f=@(x) 3*x.^2;
-            ninit=52;
-            actSolution = integral_g(f,'ninit',ninit);
+            nlo=52;
+            nhi=52;
+            actSolution = integral_g(f,'nlo',nlo,'nhi',nhi);
             expSolution = 1;
             import matlab.unittest.constraints.IsLessThanOrEqualTo
             testCase.verifyThat(abs(actSolution-expSolution),...
@@ -61,8 +51,9 @@ classdef ut_integral_g < matlab.unittest.TestCase
         function testerrorfabstolninit(testCase)
             f=@(x) 3*x.^2;
             abstol=1e-7;
-            ninit=52;
-            actSolution = integral_g(f,'abstol',abstol,'ninit',ninit);
+            nlo=52;
+            nhi=52;
+            actSolution = integral_g(f,'abstol',abstol,'nlo',nlo,'nhi',nhi);
             expSolution = 1;
             import matlab.unittest.constraints.IsLessThanOrEqualTo
             testCase.verifyThat(abs(actSolution-expSolution),...

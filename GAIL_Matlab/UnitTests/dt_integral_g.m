@@ -11,7 +11,7 @@
 %   >> f = @(x) exp(-x.^2); q = integral_g(f,'a',1,'b',2,'abstol',1e-5,'nhi',52,'nmax',1e7)
 %   q = 0.1353
 %
-%
+% 
 %   >> f = @(x) exp(-x.^2); q = integral_g(f,'a',0,'b',2,'abstol',1e-5,'nhi',52,'nmax',1e7)
 %   q = 0.8821
 %
@@ -59,7 +59,7 @@
 %
 %   When a > b, compute negative of the integral.
 %   >> q = integral_g(@(x)x.^2,'a',1,'b',0)
-%   q = 0.3333
+%   q = -0.3333
 %
 %
 %   >> q = integral_g(@(x)x.^2,'a',0,'b',2,'nlo',10,'nhi',100)
@@ -72,6 +72,42 @@
 %
 %
 %  Example from Fred Hickernell's email on 20131210:
-%   >> q = integralab_g(@(x) x.^2,'a',-1,'b',1)
+%   >> q = integral_g(@(x) x.^2,'a',-1,'b',1)
 %   q =  0.6667
 %
+% 
+%  >>  [~,out_param]=integral_g(@(x) x.^2) 
+%     out_param =  
+%                f: @(x)x.^2
+%                a: 0
+%                b: 1
+%           abstol: 1.0000e-06
+%              nlo: 10
+%              nhi: 1000
+%             nmax: 10000000
+%            ninit: 100
+%              tau: 197
+%     exceedbudget: 0
+%        tauchange: 0
+%                q: 0.3333
+%          npoints: 3565
+%           errest: 9.9688e-07
+%
+%
+%   >> f = @(x) exp(-x.^2); [~, out_param] = integral_g(f,'a',1,'b',2,'nlo',100,'nhi',10000,'abstol',1e-5,'nmax',1e7)
+%   out_param = 
+%                a: 1
+%           abstol: 1.0000e-05
+%                b: 2
+%                f: @(x)exp(-x.^2)
+%              nhi: 10000
+%              nlo: 100
+%             nmax: 10000000
+%            ninit: 1000
+%              tau: 1997
+%     exceedbudget: 0
+%        tauchange: 0
+%                q: 0.1353
+%          npoints: 2998
+%           errest: 7.3718e-06
+ 
