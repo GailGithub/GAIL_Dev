@@ -17,24 +17,24 @@
 %
 %% Description
 %
-% mu = *meanMC_g*(Yrand) |estimates the mean of a random variable Y to
-% within a specified absolute error tolerance 1e-2 with guaranteed
-% uncertainty within 1%. Input Yrand is a function handle that accepts a
-% positive integer input n and returns an n x 1 vector of IID instances of
-% the random variable Y.|
+% mu = *meanMC_g*(Yrand) |estimates the mean of a random variable Y to within
+% a specified absolute error tolerance 1e-2 with guaranteed confidence
+% level 99%. Input Yrand is a function handle that accepts a positive
+% integer input n and returns an n x 1 vector of IID instances of the
+% random variable Y.|
 %
 % mu = *meanMC_g*(Yrand,abstol,alpha,n_sigma,fudge,tbudget,nbudget,npcmax)
-% |estimates the mean of a random variable Y to within an specified
-% absolute error tolerance abstol with guaranteed uncertainty within alpha
-% using all parsing inputs n_sigma, fudge, tbudget,nbudget, npcmax and
-% checked.|
+% | estimates the mean of a random variable Y to within an specified absolute
+% error tolerance abstol with guaranteed confidence level 1-alpha. using
+% all ordered parsing inputs abstol, n_sigma, fudge, tbudget, nbudget,
+% npcmax and checked.|
 %
 % mu =
 % *meanMC_g*(Yrand,'abstol',abstol,'alpha',alpha,'fudge',fudge,'tbudget',
-% tbudget,'nbudget',nbudget,'npcmax',npcmax,'checked',checked) |estimates
-% the mean of a random variable Y to within a specified absolute error
-% tolerance abstol with guaranteed uncertainty within alpha. All the
-% field-value pairs are optional and can be supplied in different order.|
+% tbudget,'nbudget',nbudget,'npcmax',npcmax,'checked',checked) |estimates the mean of a random variable Y to within a
+% specified absolute error tolerance abstol with guaranteed confidence
+% level 1-alpha. All the field-value pairs are optional and can be
+% supplied in different order.|
 %
 % mu = *meanMC_g*(Yrand,in_param) |estimates the mean of a random variable
 % Y to within a specified absolute error tolerance in_param.abstol with

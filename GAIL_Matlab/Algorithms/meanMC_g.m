@@ -11,16 +11,16 @@ function [mu,out_param]=meanMC_g(varargin)
 % 
 % mu =
 % MEANMC_G(Yrand,abstol,alpha,n_sigma,fudge,tbudget,nbudget,npcmax,checked)
-% estimates the mean of a random variable Y to within an absolute error
-% tolerance abstol with guaranteed confidence level 1-alpha. using all
-% ordered parsing inputs n_sigma, fudge, tbudget, nbudget, npcmax and
-% checked.
+% estimates the mean of a random variable Y to within an specified absolute
+% error tolerance abstol with guaranteed confidence level 1-alpha. using
+% all ordered parsing inputs abstol, n_sigma, fudge, tbudget, nbudget,
+% npcmax and checked.
 % 
 % mu = MEANMC_G(Yrand,'abstol',abstol,'alpha',alpha,'n_sigma',n_sigma,...
 % 'fudge',fudge,'tbudget',tbudget,'nbudget',nbudget,'npcmax',npcmax,...
 % 'checked',checked) estimates the mean of a random variable Y to within a
 % specified absolute error tolerance abstol with guaranteed confidence
-% level 1-alpha.. All the field-value pairs are optional and can be
+% level 1-alpha. All the field-value pairs are optional and can be
 % supplied in different order.
 % 
 % mu = MEANMC_G(Yrand,in_param) estimates the mean of a random variable Y

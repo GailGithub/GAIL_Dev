@@ -4,7 +4,7 @@ close all
 clear all
 load TestcubMCon-gaussian-uniform-Out-17-Aug-2012_13.12.36N500d1tol0.001.mat
 %load TestcubMCon-gaussian-uniform-Out-01-Sep-2013_23.04.44N5d1tol0.001.mat
-plotTest.plotcolor='color';
+plotTest.plotcolor='black';
 plotTest.logerrlo=-5;
 plotTest.logerrhi=0;
 plotTest.logtimelo=-3;
