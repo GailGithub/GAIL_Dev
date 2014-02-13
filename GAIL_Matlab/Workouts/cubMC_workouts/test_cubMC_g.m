@@ -2,8 +2,8 @@
 %using integrands of dimensions up to 3 
 %clear all;close all;clc;
 in_param.measure  = 'uniform';
-disp(horzcat('Dim ', 'FcnIdx ',   ' Error')); 
-disp(        '---------------------------');
+disp(horzcat('Dim ', 'FcnIdx ',  ' Q            f_true         Error')); 
+disp(        '---------------------------------------------------');
 for dim=1:7
   in_param.dim =dim;%the function dimension
   startingpoint = zeros(1,in_param.dim);
@@ -25,7 +25,7 @@ for dim=1:7
     % true solution
     [Q,out_param]=cubMC_g(test_function,hyperbox,in_param);% the results using cubMC_g
     error = abs(Q-f_true);
-    numstr=horzcat(num2str(dim), '   ', num2str(index), '       ', num2str(error));
+    numstr=horzcat(num2str(dim), '   ', num2str(index), '       ', num2str(Q), '       ', num2str(f_true),'       ', num2str(error));
     if error > in_param.abstol,% if error does not meet tolerance, mark it
       disp([numstr,'   ****']);
     else
