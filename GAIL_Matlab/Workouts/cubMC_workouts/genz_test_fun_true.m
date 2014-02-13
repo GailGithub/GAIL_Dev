@@ -5,15 +5,15 @@
 % The first argument is hyperbox, which is a matrix of size 2 x dim.
 %
 % The second argument is index, which identifies a test function to use.
-% the value is 1-7
+% the value is 1,...,7.
 %
 % The third argument is the dimension of the integrand.
 %
 % The fourth argument is the parameter alpha, which should be a row vector of
-% size 1 x d.
+% size 1 x dim.
 %
-% The fifth argument is the parameter beta,  which should be a row vector of
-% size 1 x d.
+% The fifth argument is the parameter beta, which should be a row vector of
+% size 1 x dim.
 %
 % The sixth argument is the paramter r, which sould be a constant.
 %

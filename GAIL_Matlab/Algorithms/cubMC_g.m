@@ -3,40 +3,40 @@ function [Q,out_param] = cubMC_g(varargin)
 % within a specified absolute error tolerance with guaranteed confidence
 % level 1-alpha.
 % 
-% [Q,out_param] = CUBMC_G(f,hyperbox) estimates the integral with integrand
-% f to within the absolute error tolerance 1e-2 and with guaranteed
-% confidence level 99%. Input f is a function handle. The function Y=f(X)
-% should accept a vector argument X and return a vector result Y, the
-% integrand evaluated at each element of X. Input hyperbox is 2 x d matrix,
-% where d is the dimension defined by the limits of the hyperbox. The order
-% of the columns in the hyperbox matrix is corresponding to the order of
-% the hyperbox limits.
+% [Q,out_param] = CUBMC_G(f,hyperbox) estimates the integral of f over
+% hyperbox to within an specified absolute error tolerance 1e-2 and with
+% guaranteed confidence level 99%. Input f is a function handle. The
+% function f should accept an n x d matrix input, where d is the dimension
+% of the hyperbox, and n is the number of points being evaluated
+% simultaneously. The input hyperbox is a 2 x d matrix, where the first row
+% corresponds to the lower limits and the second row corresponds to the
+% upper limits.
 % 
 % Q =
 % CUBMC_G(f,hyperbox,measure,abstol,alpha,n_sigma,fudge,tbudget,nbudget,npcmax,checked)
-% estimates the integral with integrand f in hyperbox to within an absolute
-% error tolerance abstol with guaranteed confidence level 1-alpha. using
-% ordered parameter input measure, tolerance, uncertainty, n_sigma, fudge,
-% tbudget, nbudget, npcmax and checked. If an input is not specified, the
-% default value is used.
+% estimates the integral of f over hyperbox with respect to a given
+% measure. The answer is given to within an specified absolute error
+% tolerance abstol with guaranteed confidence level 1-alpha. All parameters
+% should be input in the order specified above. If an input is not
+% specified, the default value is used.
 % 
 % Q = CUBMC_G(f,hyperbox,'measure','uniform','abstol',abstol,'alpha',alpha,
 % 'n_sigma',n_sigma,'fudge',fudge,'tbudget',tbudget,'nbudget',nbudget,
-% 'npcmax',npcmax,'checked',checked) estimates the integral with integrand
-% f in hyperbox to within an absolute error tolerance abstol with
+% 'npcmax',npcmax,'checked',checked) estimates the integral of f over
+% hyperbox to within an specified absolute error tolerance abstol with
 % guaranteed confidence level 1-alpha. All the field-value pairs are
 % optional and can be supplied in different order. If an input is not
 % specified, the default value is used.
 % 
-% Q = CUBMC_G(f,hyperbox,in_param) estimates the integral with integrand f
-% in hyperbox to within an absolute error tolerance abstol with guaranteed
-% confidence level 1-in_param.alpha. If a field is not specified, the
-% default value is used.
+% Q = CUBMC_G(f,hyperbox,in_param) estimates the integral of f over
+% hyperbox to within an specified absolute error tolerance in_param.abstol
+% with guaranteed confidence level 1-in_param.alpha. If a field is not
+% specified, the default value is used.
 % 
 % f --- the integrand.
 % 
 % hyperbox --- the integration hyperbox. The default value is
-% [zeros(1,d); ones(1:d)], the default d is 1.
+% [zeros(1,d); ones(1,d)], the default d is 1.
 % 
 % in_param.measure --- the measure for generating the random variable, the
 % default is uniform. The other measure we could handle is normal/Gaussian.
@@ -61,7 +61,7 @@ function [Q,out_param] = cubMC_g(varargin)
 % in_param.npcmax --- number of elements in an array of optimal size to
 % calculate the mean, the default value is 1e6.
 % 
-% in_param.checked --- the value corresponding to parameter checking status.
+% in_param.checked --- the value corresponds to parameter checking status.
 %                    0   not checked
 %                    1   checked by cubMC_g
 %                    2   checked by meanMC_g
