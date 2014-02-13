@@ -46,13 +46,13 @@ switch index
     case 3 % Genz "Corner Peak"
         s = zeros(2^dim,1);
         sign = zeros(2^dim,1);
-        s(1) = 1+hyperbox(2,:)*alpha';
+        s(1) = 1+hyperbox(2,:)*alpha(1:dim)';
         sign(1) = 1;
         for i = 1:dim
             s(2^(i-1)+1:2^i) = s(1:2^(i-1))-alpha(dim-i+1)*(hyperbox(2,dim-i+1)-hyperbox(1,dim-i+1));
             sign(2^(i-1)+1:2^i) = -sign(1:2^(i-1));
         end
-        f_true = (-1)^dim*sum(sign.*s.^(-r))/prod(alpha)/prod(r:r+dim-1);
+        f_true = (-1)^dim*sum(sign.*s.^(-r))/prod(alpha(1:dim))/prod(r:r+dim-1);
         
     case 4 % Genz "Gaussian"
         f_true = (sqrt(pi)/2)^dim*prod(1./alpha(1:dim))*...
