@@ -105,11 +105,11 @@
 % $$\|f''\|_1 \le \frac { \mathrm{nstar} }{2(b-a)}
 % \left\|f'-\frac{f(b)-f(a)}{b-a}\right\|_1,$$
 % 
-% |then the |  $q$  |output by this algorithm is guaranteed to satisfy|
+% |then the|  $q$  |output by this algorithm is guaranteed to satisfy|
 %
 % $$\left\| \int_{a}^{b} f(x) dx - q \right\|_{1} \le \mathrm{abstol},$$
 %
-% |provided the flag | $\mathrm{exceedbudget} = 0.$
+% |provided the flag| $\mathrm{exceedbudget} = 0.$
 %
 % |And the upper bound of the cost is|
 %
