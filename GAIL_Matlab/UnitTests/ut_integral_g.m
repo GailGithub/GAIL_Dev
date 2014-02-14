@@ -72,16 +72,20 @@ classdef ut_integral_g < matlab.unittest.TestCase
                 IsLessThanOrEqualTo(abstol));
         end
         
+       
         function testerrorOfExp2x(testCase)
             f=@(x) exp(2*x);
             inparam.a=0; inparam.b=3; inparam.abstol=1e-10;
             [actSolution,out_param] = integral_g(f,inparam);
             expSolution = 201.214396746368;
             import matlab.unittest.constraints.IsLessThanOrEqualTo
-            testCase.verifyThat(abs(actSolution-expSolution),...
+            warning('off','MATLAB:integral_g:exceedbudget')
+            testCase.verifyThat(abs(actSolution-expSolution)*~out_param.exceedbudget,...
                 IsLessThanOrEqualTo(out_param.abstol));
-            testCase.verifyThat(abs(out_param.errest),...
+            testCase.verifyThat(abs(out_param.errest)*~out_param.exceedbudget,...
                 IsLessThanOrEqualTo(out_param.abstol));
+            warning('on','MATLAB:integral_g:exceedbudget')
+
         end
         
     end

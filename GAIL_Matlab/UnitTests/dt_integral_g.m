@@ -89,7 +89,6 @@
 %              tau: 197
 %     exceedbudget: 0
 %        tauchange: 0
-%                q: 0.3333
 %          npoints: 3565
 %           errest: 9.9688e-07
 %
@@ -107,7 +106,6 @@
 %              tau: 1997
 %     exceedbudget: 0
 %        tauchange: 0
-%                q: 0.1353
 %          npoints: 2998
 %           errest: 7.3718e-06
  

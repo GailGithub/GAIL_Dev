@@ -77,9 +77,9 @@ function [fappx,out_param]=funappx_g(varargin)
 %  Guarantee
 %    
 %  If the function to be approximated, f, satisfies the cone condition
-%                         nstar  ||     f(b)-f(a)  ||
-%      ||f''||        <= ------- ||f'- ----------- ||
-%             \infty      b - a  ||       b - a    ||\infty,
+%                          nstar    ||     f(b)-f(a)  ||
+%      ||f''||        <=  --------  ||f'- ----------- ||
+%             \infty      2(b - a)  ||       b - a    ||\infty,
 %  then the fappx output by this algorithm is guaranteed to satisfy
 %      ||f-fappx||_\infty <= abstol,
 %  provided the flag exceedbudget = 0. And the upper bound of the cost is

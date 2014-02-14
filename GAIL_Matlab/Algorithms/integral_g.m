@@ -4,41 +4,48 @@ function [q,out_param] = integral_g(varargin)
 %  Description
 %
 %   q = INTEGRAL_G(f) computes q, the definite integral of function f
-%   on the interval [a,b] by trapezoidal rule with 
+%   on the interval [0,1] by trapezoidal rule with 
 %   in a guaranteed absolute error of 1e-6. Default starting number of
 %   sample points taken is 100 and default cost budget is 1e7. Input f is a 
 %   function handle. The function y = f(x) should accept a vector argument 
 %   x and return a vector result y, the integrand evaluated at each element
 %   of x.
 %
-%   q = INTEGRAL_G(f,in_param) computes q, the definite integral of 
+%   q = INTEGRAL_G(f,in_param) computes q, the definite integral of
 %   function f by trapezoidal rule within a guaranteed absolute error
-%   in_param.abstol, starting number of points in_param.ninit, and cost 
-%   budget in_param.nmax. If a field is not specified, the default value is
-%   used.
+%   in_param.abstol, lower bound of initial number of points in_param.nlo,
+%   higher bound of initial number of points in_param.nhi, and cost budget
+%   in_param.nmax. If a field is not specified, the default value is used.
 %   
-%   in_param.abstol --- absolute error tolerance required by user.
+%   in_param.a --- left end of the integral, default value is 0
 %
-%   in_param.a --- low end of the integral
+%   in_param.b --- right end of the integral, default value is 1
 %
-%   in_param.b --- high end of the integral
+%   in_param.abstol --- guaranteed absolute error tolerance, default value
+%  is 1e-6
 % 
-%   in_param.nlo --- lowest initial number of function values used
+%   in_param.nlo --- lowest initial number of function values used, default
+%   value is 10
 %
-%   in_param.nhi --- highest initial number of function values used
+%   in_param.nhi --- highest initial number of function values used,
+%   default value is 1000
 %
-%   in_param.nmax --- cost budget (maximum number of function values)
+%   in_param.nmax --- cost budget (maximum number of function values),
+%   default value is 1e7
 % 
-%   q = INTEGRAL_G(f,,a,b,abstol,nlo,nhi,nmax) computes q, the definite 
-%   integral of function f by trapezoidal rule with the ordered input 
-%   parameters, guaranteed absolute error tolerance abstol, starting number
-%   of points ninit, and cost budget nmax.
+%   q = INTEGRAL_G(f,a,b,abstol,nlo,nhi,nmax) computes q, the definite
+%   integral of function f on the finite interval [a,b] by trapezoidal rule
+%   with the ordered input parameters, guaranteed absolute error tolerance
+%   abstol, lower bound of initial number of points in_param.nlo, higher
+%   bound of initial number of points in_param.nhi, and cost budget nmax.
 %
-%   q = INTEGRAL_G(f,'a',a,'b',b,'abstol',abstol,'nlo',nlo,'nhi',nhi,,'nmax',nmax) computes
-%   q, the definite integral of function f by trapezoidal rule within a 
-%   guaranteed absolute error tolerance abstol, starting number of points 
-%   ninit, and cost budget nmax. All three field-value pairs are optional 
-%   and can be supplied.
+%   q =
+%   INTEGRAL_G(f,'a',a,'b',b,'abstol',abstol,'nlo',nlo,'nhi',nhi,,'nmax',nmax)
+%   computes q, the definite integral of function f on the finite interval
+%   [a,b] by trapezoidal rule within a guaranteed absolute error tolerance
+%   abstol, lower bound of initial number of points in_param.nlo, higher
+%   bound of initial number of points in_param.nhi, and cost budget nmax.
+%   All three field-value pairs are optional and can be supplied.
 %
 %   [q, out_param] = INTEGRAL_G(f,...) returns the approximated 
 %   integration q and output structure out_param, which includes the 
@@ -64,11 +71,13 @@ function [q,out_param] = integral_g(varargin)
 %   out_param.ninit --- initial number of points we use, computed by nlo
 %   and nhi
 %
-%   out_param.tau --- final value of the parameter defining the cone of
-%   functions for which this algorithm is guaranteed; tau = (ninit-1)*2
+%   out_param.nstar --- final value of the parameter defining the cone of
+%   functions for which this algorithm is guaranteed; nstar = ninit-2
 %   initially and is increased as necessary
 %
 %   out_param.nmax --- cost budget (maximum number of function values)
+%
+%   out_param.abstol --- guaranteed absolute error tolerance
 % 
 %   out_param.a --- low end of the integral
 %
@@ -77,16 +86,16 @@ function [q,out_param] = integral_g(varargin)
 %  Guarantee
 %    
 %  If the function to be integrated, f, satisfies the cone condition
-%                          tau   ||     f(b)-f(a)  ||
-%      ||f''||        <= ------- ||f'- ----------- ||
-%             1           b - a  ||       b - a    ||1,
+%                          nstar   ||     f(b)-f(a)  ||
+%      ||f''||        <=  -------- ||f'- ----------- ||
+%             1           2(b - a) ||       b - a    ||1,
 %  then the q output by this algorithm is guaranteed to satisfy
 %      ||\int_{a}^{b} f(x) dx - q ||_1 <= abstol,
 %  provided the flag exceedbudget = 0. And the upper bound of the cost is
 %          ________________________ 
-%         /   tau*(b-a)^2 Var(f') 
-%        / ------------------------ + tau + 4
-%      \/          4 abstol
+%         /   nstar*(b-a)^2 Var(f') 
+%        / ------------------------ + 2 nstar + 4
+%      \/          2 abstol
 %
 %   Examples
 %
@@ -162,11 +171,12 @@ if intervallen
         if ntrapok %ntrap large enough for tau
             %compute a reliable error estimate
             errest=out_param.tau*Gf*intervallen/(4*ntrap*(2*ntrap-out_param.tau));
-            if errest <= out_param.abstol %tolerance is satisfied
+            if errest <= out_param.abstol || ... %tolerance is satisfied
+                  out_param.exceedbudget %or tried to exceed cost budget
                 q=sumf/ntrap; %compute the integral
                 %keyboard
                 break %exit while loop
-            else %need to increase number of trapezoids
+           else %need to increase number of trapezoids
                 %proposed inflation factor to increase ntrap by
                 inflation=max(ceil(1/ntrap*sqrt(out_param.tau*intervallen*Gf/(8*out_param.abstol))),2);
             end
@@ -195,10 +205,6 @@ if intervallen
         ntrap=ntrap*inflation; %new number of trapezoids
         sumf=intervallen*((fpts(1)+fpts(ntrap+1))/2+sum(fpts(2:ntrap)));
             %updated weighted sum of function values
-        if out_param.exceedbudget %tried to exceed cost budget
-            q=sumf/ntrap; %compute the integral
-            break; %exit while loop
-        end
     end
 elseif intervallen == 0
     q = 0;
@@ -207,7 +213,7 @@ end
 if flip==1
     q = -1*q;
 end
-out_param.q=q;  % integral of functions
+% out_param.q=q;  % integral of functions
 out_param.npoints=ntrap+1;  % number of points finally used
 out_param.errest=errest;    % error of integral
 
