@@ -1,7 +1,7 @@
 % This script is to copy and combine files in both repository and Google drive
 % to make a release zip package.
 clear all; close all; clc;
-newfolder = 'GAIL_PRE_1_3_0';
+newfolder = 'GAIL_1_3_0';
 newpath = horzcat('/Users/BabyAudrey/Documents/Study/Research/GAIL_Dev_vol2/',newfolder);
 % set up a new path where you want to copy things
 GAILPATH = GAILstart;%Get the path of repository from GAILstart
