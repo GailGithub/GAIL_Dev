@@ -7,12 +7,10 @@
 %
 %This file installs GAIL version 1.3.0 in the subdirectory
 %"GAIL_1.3.0/GAIL_Matlab".
-
 %% Download the package and change the directory
 disp('The GAIL package is now being downloaded...')
-unzip('https://gail.googlecode.com/files/GAIL_1.3.0.zip') %download and unzip
-cd('GAIL_1.3.0')  %get to the right subdirectory
-cd('GAIL_Matlab') %get to the right subdirectory
+unzip('https://docs.google.com/uc?id=0B5as28avI00tRnJwRlVvXzg2WU0&export=download') %download and unzip
+cd('GAIL_1_3_0')  %get to the right subdirectory
 
 %% Install GAIL
 GAIL_Install      %this installs GAIL
