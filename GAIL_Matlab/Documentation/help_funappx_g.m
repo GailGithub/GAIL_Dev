@@ -93,7 +93,7 @@
 %    
 % |If the function to be approximated,|  $f$  |satisfies the cone condition|
 %
-% $$\|f''\|_\infty \le \frac { \mathrm{nstar} }{2(b-a)} \left\|f'-\frac{f(b)-f(a)}{b-a}\right\|_\infty,$$
+% $$\|f''\|_\infty \le \frac { 2\mathrm{nstar} }{b-a } \left\|f'-\frac{f(b)-f(a)}{b-a}\right\|_\infty,$$
 % 
 % |then the|  $fappx$  |output by this algorithm is guaranteed to
 % satisfy|
