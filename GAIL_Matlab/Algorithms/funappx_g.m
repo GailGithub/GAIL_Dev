@@ -222,12 +222,24 @@ out_param.nstar = n - 2;
 out_param.exceedbudget = 1;
 % tau change flag
 tauchange = 0;
+% length of interval
+len = out_param.b-out_param.a;
+% add flag
+flag = 0;
 
 while n < out_param.nmax;
-    % Stage 1: estimate weaker and stronger norm
-    len = out_param.b-out_param.a;
-    x = out_param.a:len/(n-1):out_param.b;
-    y = f(x);
+
+    if(flag==0)
+        x = out_param.a:len/(n-1):out_param.b;
+        y = f(x);
+    else
+        xnew = repmat(x(1:end-1),m-1,1)+repmat((1:m-1)'*len/(n-1),1,(n-1)/m);
+        ynew = f(xnew);
+        xnew = [x(1:end-1); xnew];
+        x = [xnew(:); x(end)]';
+        ynew = [y(1:end-1); ynew];
+        y = [ynew(:); y(end)]';
+    end;
     diff_y = diff(y);
     %approximate the weaker norm of input function
     gn = (n-1)/len*max(abs(diff_y-(y(n)-y(1))/(n-1)));
@@ -247,6 +259,7 @@ while n < out_param.nmax;
         m = max(ceil(1/(n-1)*sqrt(gn*out_param.nstar*...
             len/4/out_param.abstol)),2);
         n = m*(n-1)+1;
+        flag = 1;
         % Stage2: do not satisfy necessary condition
     else
         % increase tau
@@ -264,6 +277,7 @@ while n < out_param.nmax;
             m = max(ceil(1/(n-1)*sqrt(gn*out_param.nstar*...
                 len/4/out_param.abstol)),2);
             n = m*(n-1)+1;
+            flag = 1;
         else
             % otherwise increase number of points, go to Stage 1
             n = 2 + ceil(out_param.nstar);

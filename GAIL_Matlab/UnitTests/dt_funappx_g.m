@@ -59,7 +59,7 @@
 %            nstar: 802
 %     exceedbudget: 0
 %          npoints: 5661151
-%       errorbound: 3.1282e-***12
+%       errorbound: 3.1299e-***12
 %
 % 
 %   Example 4: 
@@ -180,7 +180,7 @@
 %            nstar: 926
 %     exceedbudget: 0
 %          npoints: 1826191
-%       errorbound: 2.6992e-***10
+%       errorbound: 2.6994e-***10
 % 
 %
 %   Example 9:
