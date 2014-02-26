@@ -151,6 +151,15 @@ function [Q,out_param] = cubMC_g(varargin)
 % Q = 1.5***
 % 
 %
+% Example 4: 
+% Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) in the
+% hyperbox [-inf -inf;inf inf], where x is a vector x = [x1 x2].
+% 
+% >> f=@(x) exp(-x(:,1).^2-x(:,2).^2);hyperbox = [-inf -inf;inf inf];
+% >> Q = cubMC_g(f,hyperbox,'normal',1e-3)
+% Q = 0.33***
+% 
+% 
 % See also FUNAPPX_G, INTEGRAL_G, MEANMC_G
 % 
 % References
@@ -176,7 +185,7 @@ f=transformIntegrand(f,hyperbox,out_param);
 if strcmp(out_param.measure,'uniform')% the using uniformly distributed samples
     [Q,out_param] = meanMC_g(@(nfun)f(rand(nfun,out_param.dim)),out_param);
    % out_param.Q=Q;% using meanMC_g to get the mean 
-else strcmp(in_param.measure,'normal')% using normally distributed samples
+else strcmp(out_param.measure,'normal')% using normally distributed samples
     [Q,out_param] = meanMC_g(@(nfun)f(randn(nfun,out_param.dim)),out_param);
     %out_param.Q=Q;% using meanMC_g to get the mean
 end
