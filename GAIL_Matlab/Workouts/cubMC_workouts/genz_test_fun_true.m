@@ -87,16 +87,29 @@ switch index
     case 7 % Keister test function
         if hyperbox == [zeros(1,dim);ones(1,dim)];
             if dim == 1
-                f_true = 1.2238;
+                f_true = 1.3803884470431429744;
             end
             if dim == 2
-                f_true = 0.9040;
+                f_true = 1.808186634594926;
             end
             if dim == 3
-                f_true = 0.6113;
+                f_true = pi^(3/2)/(2*exp(1/4));
             end
-        else
-            f_true =  nan;
+            if dim == 4
+                f_true = 2.1659293025745063474;
+            end
+            if dim == 5
+                f_true = pi^(5/2)/(12*exp(1/4));
+            end
+            if dim == 6
+                f_true = -2.3273037292979391292;
+            end
+            if dim == 7
+                f_true = -31*pi^(7/2)/(120*exp(1/4));
+            end
+            if dim == 8
+                f_true = -30.609075003558562675;
+            end
         end
 end
 end

@@ -49,6 +49,6 @@ switch index
     case 7 % Keister test function
         % the integrand should be in [0,1] since the value parse to norminv
         % function
-        f_val = cos(sqrt(sum(norminv(x(:,1:dim)).^2/2,2)))*pi/2;
+        f_val = cos(sqrt(sum(norminv(x(:,1:dim)).^2,2)/2))*pi^(dim/2);
 end
 end
