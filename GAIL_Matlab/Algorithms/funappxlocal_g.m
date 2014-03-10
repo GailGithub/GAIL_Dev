@@ -34,6 +34,7 @@ while(max(err) >= out_param.abstol)
 end;
 out_param.npoints = index(end);
 out_param.errorbound = max(err);
+out_param.x = x;
 % out_param.err = err;
 x1 = x;
 fappx = @(x) interp1(x1,y,x,'linear');
@@ -70,7 +71,7 @@ if ~validvarargin
     out_param.a = default.a;
     out_param.b = default.b;
     out_param.abstol = default.abstol;
-    out_param.minlen = default.minlen;
+    out_param.ninit = default.ninit;
 else
     p = inputParser;
     addRequired(p,'f',@isfcn);
