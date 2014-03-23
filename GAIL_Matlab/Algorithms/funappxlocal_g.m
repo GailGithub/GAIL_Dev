@@ -1,40 +1,89 @@
 function [fappx,out_param]=funappxlocal_g(varargin)
 [f, out_param] = funappx_g_param(varargin{:});
-n = out_param.ninit;
-nstar = n - 2;
-index = [1 n];
 len = out_param.b - out_param.a;
+tau = ceil(out_param.tauhi*(out_param.taulo/out_param.tauhi)^(1/len));
+n = ceil((tau+1)/2)+1;
+index = [1 n];
+err = inf;
 x = out_param.a:len/(n-1):out_param.b;
 y = f(x);
-diff_y = diff(y);
-%approximate the weaker norm of input function
-fn = (n-1)^2/len^2*max(abs(diff(diff_y)));
-err = fn*len^2/(8*(n-1)^2);
 
 while(max(err) >= out_param.abstol)
+    % Stage 1: Find the maximum error
     tmp = find(err==max(err),1);
+    
+    % Stage 2: Computer the norm
     a = index(tmp); b=index(tmp+1);
     n = b-a+1;
-    index = [index(1:tmp) a+n-1 index(tmp+1:end)+n-1];
-    h = (x(b)-x(a))/(2*(n-1));
-    xnew = repmat(x(a:b-1),1,1)+repmat(h,1,n-1);
-    ynew = f(xnew);
-    xnew = [x(a:b-1); xnew];
-    xx = [xnew(:); x(b)]';
-    ynew = [y(a:b-1); ynew];
-    yy = [ynew(:); y(b)]';
-    diff_y = diff(yy);
-    fn = max(abs(diff(diff_y(1:n-1))))/(h^2);
-    err1 = fn*h^2/8;
-    fn = max(abs(diff(diff_y(n:2*(n-1)))))/(h^2);
-    err2 =fn*h^2/8;
-    err = [err(1:tmp-1) err1 err2 err(tmp+1:end)];
-    x = [x(1:a-1) xx x(b+1:end)];
-    y = [y(1:a-1) yy y(b+1:end)];
+    len = x(b)-x(a);
+    diff_y = diff(y(a:b));
+    %approximate the weaker norm of input function
+    gn = (n-1)/len*max(abs(diff_y-(y(b)-y(a))/(n-1)));
+     %approximate the stronger norm of input function
+    fn = (n-1)^2/len^2*max(abs(diff(diff_y)));
+    
+    % Stage 3: satisfy necessary condition
+    if tau(tmp)*(gn+fn*len/2/(n-1)) >= fn*len;
+        % Stage 4: check for convergence
+        err(tmp) = tau(tmp)*len*gn/(4*(n-1)*(2*n-2-tau(tmp)));
+        if err(tmp) >= out_param.abstol;
+            % Stage 5:
+            index = [index(1:tmp) a+n-1 index(tmp+1:end)+n-1];
+            h = (x(b)-x(a))/(2*(n-1));
+            xnew = repmat(x(a:b-1),1,1)+repmat(h,1,n-1);
+            ynew = f(xnew);
+            xnew = [x(a:b-1); xnew];
+            xx = [xnew(:); x(b)]';
+            ynew = [y(a:b-1); ynew];
+            yy = [ynew(:); y(b)]';
+            x = [x(1:a-1) xx x(b+1:end)];
+            y = [y(1:a-1) yy y(b+1:end)];
+            err = [err(1:tmp-1) inf inf err(tmp+1:end)];
+            tau = [tau(1:tmp-1) tau(tmp) tau(tmp) tau(tmp+1:end)];
+        end;
+    else
+        % increase tau
+        tau(tmp) = 2*tau(tmp);
+        % check if number of points large enough
+        if n > (tau+1)/2;
+            % true, go to Stage 4
+            err(tmp) = tau(tmp)*len*gn/(4*(n-1)*(2*n-2-tau(tmp)));
+            if err(tmp) >= out_param.abstol;
+                % Stage 5:
+                index = [index(1:tmp) a+n-1 index(tmp+1:end)+n-1];
+                h = (x(b)-x(a))/(2*(n-1));
+                xnew = repmat(x(a:b-1),1,1)+repmat(h,1,n-1);
+                ynew = f(xnew);
+                xnew = [x(a:b-1); xnew];
+                xx = [xnew(:); x(b)]';
+                ynew = [y(a:b-1); ynew];
+                yy = [ynew(:); y(b)]';
+                x = [x(1:a-1) xx x(b+1:end)];
+                y = [y(1:a-1) yy y(b+1:end)];
+                err = [err(1:tmp-1) inf inf err(tmp+1:end)];
+                tau = [tau(1:tmp-1) tau(tmp) tau(tmp) tau(tmp+1:end)];
+            end;
+        else
+            % Stage 5:
+            index = [index(1:tmp) a+n-1 index(tmp+1:end)+n-1];
+            h = (x(b)-x(a))/(2*(n-1));
+            xnew = repmat(x(a:b-1),1,1)+repmat(h,1,n-1);
+            ynew = f(xnew);
+            xnew = [x(a:b-1); xnew];
+            xx = [xnew(:); x(b)]';
+            ynew = [y(a:b-1); ynew];
+            yy = [ynew(:); y(b)]';
+            x = [x(1:a-1) xx x(b+1:end)];
+            y = [y(1:a-1) yy y(b+1:end)];
+            err = [err(1:tmp-1) inf inf err(tmp+1:end)];
+            tau = [tau(1:tmp-1) tau(tmp) tau(tmp) tau(tmp+1:end)];
+        end;
+    end;    
 end;
 out_param.npoints = index(end);
 out_param.errorbound = max(err);
 out_param.x = x;
+out_param.tau = tau;
 % out_param.err = err;
 x1 = x;
 fappx = @(x) interp1(x1,y,x,'linear');
@@ -48,8 +97,8 @@ function [f, out_param] = funappx_g_param(varargin)
 default.abstol = 1e-6;
 default.a = 0;
 default.b = 1;
-default.ninit = 52;
-
+default.taulo = 9;
+default.tauhi = 100;
 
 if isempty(varargin)
     help funappxablocal_g
@@ -71,7 +120,8 @@ if ~validvarargin
     out_param.a = default.a;
     out_param.b = default.b;
     out_param.abstol = default.abstol;
-    out_param.ninit = default.ninit;
+    out_param.taulo = default.taulo;
+    out_param.tauhi = default.tauhi;
 else
     p = inputParser;
     addRequired(p,'f',@isfcn);
@@ -80,7 +130,8 @@ else
         addOptional(p,'a',default.a,@isnumeric);
         addOptional(p,'b',default.b,@isnumeric);
         addOptional(p,'abstol',default.abstol,@isnumeric);
-        addOptional(p,'ninit',default.ninit,@isnumeric);
+        addOptional(p,'taulo',default.taulo,@isnumeric);
+        addOptional(p,'tauhi',default.tauhi,@isnumeric);
     else
         if isstruct(in2) %parse input structure
             p.StructExpand = true;
@@ -89,7 +140,8 @@ else
         addParamValue(p,'a',default.a,@isnumeric);
         addParamValue(p,'b',default.b,@isnumeric);
         addParamValue(p,'abstol',default.abstol,@isnumeric);
-        addParamValue(p,'ninit',default.ninit,@isnumeric);
+        addParamValue(p,'taulo',default.taulo,@isnumeric);
+        addParamValue(p,'tauhi',default.tauhi,@isnumeric);
     end
     parse(p,f,varargin{2:end})
     out_param = p.Results;
@@ -111,17 +163,31 @@ if (out_param.abstol <= 0 )
         ' Using default error tolerance ' num2str(default.abstol)])
     out_param.abstol = default.abstol;
 end
-% let initial number of points be a positive integer
 
-if (~isposint(out_param.ninit))
-    if isposge3(out_param.ninit)
-        warning('MATLAB:funappx_g:lowinitnotint',['Lower bound of initial number of points should be a positive integer.' ...
-            ' Using ', num2str(ceil(out_param.ninit))])
-        out_param.ninit = ceil(out_param.ninit);
+
+if (out_param.taulo > out_param.tauhi)
+    out_param.tauhi = out_param.taulo;
+end;
+if (~isposint(out_param.taulo))
+    if isposge2(out_param.taulo)
+        warning('MATLAB:funappx_g:lowtau',['Lower bound of cone condition should be a positive integer.' ...
+            ' Using ', num2str(ceil(out_param.taulo))])
+        out_param.taulo = ceil(out_param.taulo);
     else
-        warning('MATLAB:funappx_g:lowinitlt3',['Lower bound of initial number of points should be a positive integer.' ...
-            ' Using default number of points ' int2str(default.ninit)])
-        out_param.ninit = default.ninit;
+        warning('MATLAB:funappx_g:lowtault2',[' Lower bound of cone condition of points should be a positive integer.' ...
+            ' Using default number of points ' int2str(default.taulo)])
+        out_param.taulo = default.nlo;
+    end
+end
+if (~isposint(out_param.tauhi))
+    if isposge2(out_param.tauhi)
+        warning('MATLAB:funappx_g:hitau',['Upper bound of cone condition should be a positive integer.' ...
+            ' Using ', num2str(ceil(out_param.tauhi))])
+        out_param.tauhi = ceil(out_param.tauhi);
+    else
+        warning('MATLAB:funappx_g:hitault2',[' Upper bound of cone condition should be a positive integer.' ...
+            ' Using default number of points ' int2str(default.tauhi)])
+        out_param.tauhi = default.tauhi;
     end
 end
 
