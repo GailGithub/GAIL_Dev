@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>funappx_g</title><meta name="generator" content="MATLAB 8.1"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-02-24"><meta name="DC.source" content="help_funappx_g.m"><style type="text/css">
+      --><title>funappx_g</title><meta name="generator" content="MATLAB 8.1"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-03-23"><meta name="DC.source" content="help_funappx_g.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -93,7 +93,8 @@ out_param =
 </pre><p><b>Example 2</b></p><pre class="codeinput">[fappx, out_param] = funappx_g(@(x) x.^2,0,100,1e-7,10,1000,1e8)
 
 <span class="comment">% Approximate function x^2 on [0,100] with error tolerence 1e-7, cost</span>
-<span class="comment">% budget 10000000 and initial number of points 100</span>
+<span class="comment">% budget 10000000, lower bound of initial number of points 10 and upper</span>
+<span class="comment">% bound of initial number of points 100</span>
 </pre><pre class="codeoutput">
 fappx = 
 
@@ -113,7 +114,7 @@ out_param =
            nstar: 954
     exceedbudget: 0
          npoints: 9763921
-      errorbound: 2.6944e-11
+      errorbound: 2.6830e-11
 
 </pre><p><b>Example 3</b></p><pre class="codeinput">clear <span class="string">in_param</span>; in_param.a = -20; in_param.b = 20; in_param.nlo = 10;
 in_param.nhi = 100; in_param.nmax = 1e8; in_param.abstol = 1e-7;
@@ -141,13 +142,14 @@ out_param =
            nstar: 93
     exceedbudget: 0
          npoints: 1213353
-      errorbound: 2.7174e-10
+      errorbound: 2.7173e-10
 
 </pre><p><b>Example 4</b></p><pre class="codeinput">clear <span class="string">in_param</span>; f = @(x) x.^2;
 [fappx, out_param] = funappx_g(f,<span class="string">'a'</span>,-10,<span class="string">'b'</span>,50,<span class="string">'nmax'</span>,1e6,<span class="string">'abstol'</span>,1e-8)
 
-<span class="comment">% Approximate function x^2 with error tolerence 1e-8, cost budget 1000000</span>
-<span class="comment">% and initial number of points 10</span>
+<span class="comment">% Approximate function x^2 with error tolerence 1e-8, cost budget 1000000,</span>
+<span class="comment">% lower bound of initial number of points 10 and upper</span>
+<span class="comment">% bound of initial number of points 100</span>
 </pre><pre class="codeoutput">Warning: funappx_g attempted to exceed the cost budget. The answer may be
 unreliable. 
 
@@ -302,7 +304,8 @@ f = @(x) x.^2; [fappx, out_param] = funappx_g(f)
 [fappx, out_param] = funappx_g(@(x) x.^2,0,100,1e-7,10,1000,1e8)
 
 % Approximate function x^2 on [0,100] with error tolerence 1e-7, cost
-% budget 10000000 and initial number of points 100
+% budget 10000000, lower bound of initial number of points 10 and upper
+% bound of initial number of points 100
 
 %%
 % *Example 3*
@@ -320,8 +323,9 @@ in_param.nhi = 100; in_param.nmax = 1e8; in_param.abstol = 1e-7;
 clear in_param; f = @(x) x.^2;
 [fappx, out_param] = funappx_g(f,'a',-10,'b',50,'nmax',1e6,'abstol',1e-8)
 
-% Approximate function x^2 with error tolerence 1e-8, cost budget 1000000
-% and initial number of points 10
+% Approximate function x^2 with error tolerence 1e-8, cost budget 1000000,
+% lower bound of initial number of points 10 and upper
+% bound of initial number of points 100
 %% See Also
 %
 % <html>
