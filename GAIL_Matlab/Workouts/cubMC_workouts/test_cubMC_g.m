@@ -1,16 +1,17 @@
 % TEST_CUBMC_G This is the driver script to test cubMC_g algorithm
-%using integrands of dimensions up to 3 
+%using seven integrands of dimensions up to 8
 %clear all;close all;clc;
+format long
 in_param.measure  = 'uniform';
-disp(horzcat('Dim ', 'FcnIdx ',  ' Q            f_true         Error')); 
-disp(        '---------------------------------------------------');
-for dim=1:8
+disp(horzcat('Dim  ', ' FcnIdx ',  ' Q            f_true         Error')); 
+disp(        '------------------------------------------------------------');
+for dim=1:4
   in_param.dim =dim;%the function dimension
   startingpoint = zeros(1,in_param.dim);
   endingpoint = ones(1,in_param.dim);
   hyperbox = [startingpoint;endingpoint];% the integration interval
   in_param.abstol = 1e-2;% the absolute tolerance
-  in_param.alpha = 0.01;% the uncertainty
+  in_param.alpha = 1e-2;% the uncertainty
   in_param.n_sigma = 1e4;% the sample size to estimate sigma
   in_param.fudge =1.1;% standard deviation inflation factor
   in_param.timebudget = 300;% time budget
@@ -25,9 +26,10 @@ for dim=1:8
     % true solution
     [Q,out_param]=cubMC_g(test_function,hyperbox,in_param);% the results using cubMC_g
     error = abs(Q-f_true);
-    numstr=horzcat(num2str(dim), '   ', num2str(index), '       ', num2str(Q), '       ', num2str(f_true),'       ', num2str(error));
+    numstr=horzcat(num2str(dim), '     ', num2str(index), '       ',...
+        num2str(Q), '       ', num2str(f_true),'       ', num2str(error));
     if error > in_param.abstol,% if error does not meet tolerance, mark it
-      disp([numstr,'   ****']);
+      disp([numstr,'     ****']);
     else
       disp(numstr);
     end
