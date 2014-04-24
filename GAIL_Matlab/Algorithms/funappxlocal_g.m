@@ -1,7 +1,7 @@
 function [fappx,out_param]=funappxlocal_g(varargin)
 [f, out_param] = funappx_g_param(varargin{:});
 len = out_param.b - out_param.a;
-tau = ceil(out_param.tauhi*(out_param.taulo/out_param.tauhi)^(1/len));
+tau = ceil(out_param.tauhi*(out_param.taulo/out_param.tauhi)^(1/(1+len)));
 n = ceil((tau+1)/2)+1;
 index = [1 n];
 err = inf;
