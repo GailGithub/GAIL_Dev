@@ -7,20 +7,32 @@
 %
 %   Example 1:
 %   
-%   >> f = @(x) x.^2; fappx = funappx_g(f)
+%   >> f = @(x) x.^2; pp = funappx_g(f)
 %
-%   fappx = 
-%
-%       @(x)interp1(x1,y1,x,'linear')
+% pp = 
+% 
+%       form: 'pp'
+%     breaks: [1x9901 double]
+%      coefs: [9900x2 double]
+%     pieces: 9900
+%      order: 2
+%        dim: 1
+%     orient: 'first'
 %
 %
 %   Example 2:
 %
-%   >> f = @(x) x.^2; [fappx out_param] = funappx_g(f)
+%   >> f = @(x) x.^2; [pp out_param] = funappx_g(f)
 %   
-%   fappx = 
-%
-%       @(x)interp1(x1,y1,x,'linear')
+% pp = 
+% 
+%       form: 'pp'
+%     breaks: [1x9901 double]
+%      coefs: [9900x2 double]
+%     pieces: 9900
+%      order: 2
+%        dim: 1
+%     orient: 'first'
 %
 %   out_param = 
 % 
@@ -41,11 +53,17 @@
 %   Example 3:
 %
 %   >> clear in_param; in_param.a = -10; in_param.b =10; in_param.abstol = 10^(-8); 
-%   >> [fappx, out_param] = funappx_g(@(x) x.^2, in_param)
+%   >> [pp, out_param] = funappx_g(@(x) x.^2, in_param)
 %
-%   fappx = 
-%
-%       @(x)interp1(x1,y1,x,'linear')
+% pp = 
+% 
+%       form: 'pp'
+%     breaks: [1x5661151 double]
+%      coefs: [5661150x2 double]
+%     pieces: 5661150
+%      order: 2
+%        dim: 1
+%     orient: 'first'
 %
 %   out_param = 
 %                a: -10
@@ -66,11 +84,17 @@
 %
 %   >> clear in_param; in_param.a = -5; in_param.b = 5; 
 %   >> in_param.abstol = 10^(-6); in_param.nlo = 100; in_param.nhi = 500;
-%   >> [fappx, out_param] = funappx_g(@(x) x.^2, in_param)
+%   >> [pp, out_param] = funappx_g(@(x) x.^2, in_param)
 %
-%   fappx = 
-%
-%       @(x)interp1(x1,y1,x,'linear')
+% pp = 
+% 
+%       form: 'pp'
+%     breaks: [1x207743 double]
+%      coefs: [207742x2 double]
+%     pieces: 207742
+%      order: 2
+%        dim: 1
+%     orient: 'first'
 %
 %   out_param = 
 % 
@@ -92,11 +116,17 @@
 %
 %   >> clear in_param; in_param.a = -1; in_param.b = 1; in_param.Nmax = 10^6;
 %   >> in_param.abstol = 10^(-6); in_param.nlo = 10; in_param.nhi = 500;  
-%   >> [fappx, out_param] = funappx_g(@(x) x.^2, in_param)
+%   >> [pp, out_param] = funappx_g(@(x) x.^2, in_param)
 %
-%   fappx = 
-%
-%       @(x)interp1(x1,y1,x,'linear')
+% pp = 
+% 
+%       form: 'pp'
+%     breaks: [1x23221 double]
+%      coefs: [23220x2 double]
+%     pieces: 23220
+%      order: 2
+%        dim: 1
+%     orient: 'first'
 %
 %   out_param = 
 % 
@@ -116,11 +146,17 @@
 %
 %   Example 6: 
 %
-%   >> [fappx, out_param] = funappx_g(@(x) x.^2,'a',-2,'b',2,'abstol',1e-7)
+%   >> [pp, out_param] = funappx_g(@(x) x.^2,'a',-2,'b',2,'abstol',1e-7)
 %
-%   fappx = 
-%
-%       @(x)interp1(x1,y1,x,'linear')
+% pp = 
+% 
+%       form: 'pp'
+%     breaks: [1x252333 double]
+%      coefs: [252332x2 double]
+%     pieces: 252332
+%      order: 2
+%        dim: 1
+%     orient: 'first'
 %
 %   out_param = 
 %                a: -2
@@ -139,11 +175,17 @@
 %
 %   Example 7:
 %
-%   >> [fappx, out_param] = funappx_g(@(x) x.^2,'a',-3,'b',0,'nlo',20,'nhi',40)
+%   >> [pp, out_param] = funappx_g(@(x) x.^2,'a',-3,'b',0,'nlo',20,'nhi',40)
 %
-%   fappx = 
-%
-%       @(x)interp1(x1,y1,x,'linear')
+% pp = 
+% 
+%       form: 'pp'
+%     breaks: [1x16765 double]
+%      coefs: [16764x2 double]
+%     pieces: 16764
+%      order: 2
+%        dim: 1
+%     orient: 'first'
 %
 %   out_param = 
 %                a: -3
@@ -162,11 +204,17 @@
 %
 %   Example 8:
 %
-%   >> [fappx, out_param] = funappx_g(@(x) x.^2,'a',-30,'b',30,'nmax',1e7)
+%   >> [pp, out_param] = funappx_g(@(x) x.^2,'a',-30,'b',30,'nmax',1e7)
 %
-%   fappx = 
-%
-%       @(x)interp1(x1,y1,x,'linear')
+% pp = 
+% 
+%       form: 'pp'
+%     breaks: [1x1826191 double]
+%      coefs: [1826190x2 double]
+%     pieces: 1826190
+%      order: 2
+%        dim: 1
+%     orient: 'first'
 %
 %   out_param = 
 %                a: -30
@@ -185,11 +233,17 @@
 %
 %   Example 9:
 %
-%   >> [fappx, out_param] = funappx_g(@(x) x.^2,-2,5)
+%   >> [pp, out_param] = funappx_g(@(x) x.^2,-2,5)
 %   
-%   fappx = 
-%
-%       @(x)interp1(x1,y1,x,'linear')
+% pp = 
+% 
+%       form: 'pp'
+%     breaks: [1x166353 double]
+%      coefs: [166352x2 double]
+%     pieces: 166352
+%      order: 2
+%        dim: 1
+%     orient: 'first'
 %
 %   out_param = 
 %                a: -2
@@ -209,11 +263,17 @@
 %   Example 10:
 %
 %   >> f = @(x) x.^2; 
-%   >> [fappx, out_param] = funappx_g(f,-3,3,1e-7)
+%   >> [pp, out_param] = funappx_g(f,-3,3,1e-7)
 %
-%   fappx = 
-%
-%       @(x)interp1(x1,y1,x,'linear')
+% pp = 
+% 
+%       form: 'pp'
+%     breaks: [1x431179 double]
+%      coefs: [431178x2 double]
+%     pieces: 431178
+%      order: 2
+%        dim: 1
+%     orient: 'first'
 %
 %   out_param = 
 %                a: -3
@@ -233,11 +293,17 @@
 %   Example 11:
 %
 %   >> f = @(x) x.^2; 
-%   >> [fappx, out_param] = funappx_g(f,-5,10,1e-7,10,20)
+%   >> [pp, out_param] = funappx_g(f,-5,10,1e-7,10,20)
 %
-%   fappx = 
-%
-%       @(x)interp1(x1,y1,x,'linear')
+% pp = 
+% 
+%       form: 'pp'
+%     breaks: [1x195891 double]
+%      coefs: [195890x2 double]
+%     pieces: 195890
+%      order: 2
+%        dim: 1
+%     orient: 'first'
 %
 %   out_param = 
 %                a: -5

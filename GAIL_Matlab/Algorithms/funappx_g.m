@@ -1,28 +1,28 @@
-function [fappx,out_param]=funappx_g(varargin)
+function [pp,out_param]=funappx_g(varargin)
 %FUNAPPX_G 1-D guaranteed function recovery on closed interval [a,b]
 %
-%   fappx = FUNAPPX_G(f) recovers function f on the default interval [0,1]
-%   by a piecewise linear interpolant fappx to within the guaranteed
+%   pp = FUNAPPX_G(f) recovers function f on the default interval [0,1]
+%   by a piecewise linear interpolant pp to within the guaranteed
 %   absolute error tolerance of 1e-6. Default initial number of points is
 %   100 and default cost budget is 1e7.  Input f is a function handle. The
 %   statement y=f(x) should accept a vector argument x and return a vector
 %   y of function values that is the same size as x.
 %   
-%   fappx = FUNAPPX_G(f,a,b,abstol,nlo,nhi,nmax) for given function f and
+%   pp = FUNAPPX_G(f,a,b,abstol,nlo,nhi,nmax) for given function f and
 %   the ordered input parameters that define the finite interval [a, b], a
 %   guaranteed absolute error tolerance bstol, lower bound of initial
 %   number of points nlo, upper bound of initial number of points nhi, and
 %   cost budget nmax. nlo and nhi can be input as a vector or just one
 %   value as an initial number of points.
 %
-%   fappx = FUNAPPX_G(f,'a',a,'b',b,'abstol',abstol,'nlo',nlo,'nhi',nhi,'nmax',nmax)
+%   pp = FUNAPPX_G(f,'a',a,'b',b,'abstol',abstol,'nlo',nlo,'nhi',nhi,'nmax',nmax)
 %   recovers function f on the finite interval [a, b], guaranteed absolute
 %   error tolerance abstol, lower bound of initial number of points nlo,
 %   upper bound of initial number of points nhi, and cost budget nmax. All
 %   six field-value pairs are optional and can be supplied in different
 %   order.
 %
-%   fappx = FUNAPPX_G(f,in_param) recovers function f on the finite
+%   pp = FUNAPPX_G(f,in_param) recovers function f on the finite
 %   interval [in_param.a, in_param.b], guaranteed absolute error tolerance
 %   in_param.abstol, lower bound of initial number of points in_param.nlo,
 %   upper bound of initial number of points in_param.nhi, and cost budget
@@ -43,15 +43,15 @@ function [fappx,out_param]=funappx_g(varargin)
 %
 %   in_param.nmax --- cost budget, default value is 1e7
 %
-%   [fappx, out_param] = FUNAPPX_G(f,...) returns a function approximation
-%   fappx and an output structure out_param, which has the following
+%   [pp, out_param] = FUNAPPX_G(f,...) returns a function approximation
+%   pp and an output structure out_param, which has the following
 %   fields.
 %
 %
 %   out_param.nmax --- cost budget
 %
 %   out_param.exceedbudget --- it is 0 if the number of points used in the
-%   construction of fappx is less than cost budget, 1 otherwise.
+%   construction of pp is less than cost budget, 1 otherwise.
 %
 %   out_param.ninit --- initial number of points we use
 %
@@ -80,8 +80,8 @@ function [fappx,out_param]=funappx_g(varargin)
 %                          2 nstar   ||     f(b)-f(a)  ||
 %      ||f''||        <=  ---------  ||f'- ----------- ||
 %             \infty        b - a    ||       b - a    ||\infty,
-%  then the fappx output by this algorithm is guaranteed to satisfy
-%      ||f-fappx||_\infty <= abstol,
+%  then the pp output by this algorithm is guaranteed to satisfy
+%      ||f-pp||_\infty <= abstol,
 %  provided the flag exceedbudget = 0. And the upper bound of the cost is
 %          _____________________________ 
 %         / nstar*(b-a)^2 ||f''||_\infty 
@@ -94,12 +94,18 @@ function [fappx,out_param]=funappx_g(varargin)
 %   Example 1:
 %
 %
-%   >> f = @(x) x.^2; [fappx, out_param] = funappx_g(f)
+%   >> f = @(x) x.^2; [pp, out_param] = funappx_g(f)
 %
-%   fappx =
-%
-%       @(x)interp1(x1,y1,x,'linear')
-%
+%  pp = 
+% 
+%       form: 'pp'
+%     breaks: [1x9901 double]
+%      coefs: [9900x2 double]
+%     pieces: 9900
+%      order: 2
+%        dim: 1
+%     orient: 'first'
+% 
 %   out_param = 
 %
 %                f: @(x)x.^2    
@@ -119,11 +125,17 @@ function [fappx,out_param]=funappx_g(varargin)
 %   Example 2:
 %
 %   >> f = @(x) x.^2;
-%   >> [fappx, out_param] = funappx_g(f,-2,2,1e-7,10,10,1000000)
+%   >> [pp, out_param] = funappx_g(f,-2,2,1e-7,10,10,1000000)
 % 
-%   fappx = 
+% pp = 
 % 
-%         @(x)interp1(x1,y1,x,'linear')
+%       form: 'pp'
+%     breaks: [1x33733 double]
+%      coefs: [33732x2 double]
+%     pieces: 33732
+%      order: 2
+%        dim: 1
+%     orient: 'first'
 % 
 % out_param = 
 % 
@@ -144,12 +156,18 @@ function [fappx,out_param]=funappx_g(varargin)
 %   Example 3:
 %
 %   >> f = @(x) x.^2;
-%   >> [fappx, out_param] = funappx_g(f,'a',-2,'b',2,'nhi',100,'nlo',10)
+%   >> [pp, out_param] = funappx_g(f,'a',-2,'b',2,'nhi',100,'nlo',10)
 %
-%   fappx =
-%   
-%        @(x)interp1(x1,y1,x,'linear')
+% pp = 
 % 
+%       form: 'pp'
+%     breaks: [1x31249 double]
+%      coefs: [31248x2 double]
+%     pieces: 31248
+%      order: 2
+%        dim: 1
+%     orient: 'first'
+%
 %   out_param = 
 % 
 %                a: -2
@@ -171,11 +189,17 @@ function [fappx,out_param]=funappx_g(varargin)
 %   >> clear in_param; in_param.a = -10; in_param.b = 10; 
 %   >> in_param.abstol = 10^(-7); in_param.nlo = 10; in_param.nhi = 100;
 %   >> in_param.nmax = 10^6; f = @(x) x.^2;
-%   >> [fappx, out_param] = funappx_g(f,in_param)
+%   >> [pp, out_param] = funappx_g(f,in_param)
 %
-%   fappx =
-%   
-%        @(x)interp1(x1,y1,x,'linear')
+% pp = 
+% 
+%       form: 'pp'
+%     breaks: [1x590071 double]
+%      coefs: [590070x2 double]
+%     pieces: 590070
+%      order: 2
+%        dim: 1
+%     orient: 'first'
 % 
 %   out_param = 
 % 
@@ -301,7 +325,8 @@ out_param.errorbound = fn*len^2/(8*(n-1)^2);
 %out_param.errbound = fn/(8*(n-1)^2);
 x1 = out_param.a:len/(out_param.npoints-1):out_param.b;
 y1 = f(x1);
-fappx = @(x) interp1(x1,y1,x,'linear');
+pp = interp1(x1,y1,'linear','pp');
+%pp = @(x) interp1(x1,y1,x,'linear');
 
 function [f, out_param] = funappx_g_param(varargin)
 % parse the input to the funappx_g function
