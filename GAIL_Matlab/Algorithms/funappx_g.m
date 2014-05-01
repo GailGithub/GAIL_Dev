@@ -1,16 +1,17 @@
 function [pp,out_param]=funappx_g(varargin)
 %FUNAPPX_G 1-D guaranteed function recovery on closed interval [a,b]
 %
-%   pp = FUNAPPX_G(f) recovers function f on the default interval [0,1]
-%   by a piecewise linear interpolant pp to within the guaranteed
+%   pp = FUNAPPX_G(f) recovers function f on the default interval [0,1] by
+%   the piecewise polynomial f contained in pp within the guaranteed
 %   absolute error tolerance of 1e-6. Default initial number of points is
 %   100 and default cost budget is 1e7.  Input f is a function handle. The
 %   statement y=f(x) should accept a vector argument x and return a vector
-%   y of function values that is the same size as x.
+%   y of function values that is the same size as x. Output pp may be
+%   evaluated via PPVAL.
 %   
 %   pp = FUNAPPX_G(f,a,b,abstol,nlo,nhi,nmax) for given function f and
 %   the ordered input parameters that define the finite interval [a, b], a
-%   guaranteed absolute error tolerance bstol, lower bound of initial
+%   guaranteed absolute error tolerance abstol, lower bound of initial
 %   number of points nlo, upper bound of initial number of points nhi, and
 %   cost budget nmax. nlo and nhi can be input as a vector or just one
 %   value as an initial number of points.
@@ -43,8 +44,9 @@ function [pp,out_param]=funappx_g(varargin)
 %
 %   in_param.nmax --- cost budget, default value is 1e7
 %
-%   [pp, out_param] = FUNAPPX_G(f,...) returns a function approximation
-%   pp and an output structure out_param, which has the following
+%   [pp, out_param] = FUNAPPX_G(f,...) returns the piecewise polynomial f
+%   contained in pp, as constructed INTERP1, which may then be evaluated
+%   via PPVAL, and an output structure out_param, which has the following
 %   fields.
 %
 %
