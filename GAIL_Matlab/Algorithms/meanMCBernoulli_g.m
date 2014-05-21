@@ -1,90 +1,93 @@
 function [p,out_param]=meanMCBernoulli_g(varargin)
 % MEANMCBERNOULLI_G Monte Carlo method to estimate the mean of a Bernoullii
-% random variable to within a specific absolute error tolerance with
-% guaranteed confidence level 1-alpha.
+% random variable to within a specific error tolerance with guaranteed
+% confidence level 1-alpha.
 %
-%   p = MEANMCBERNOULLI_G(Yrand) estimates the mean of a Bernoulli random
-%   variable Y to within a specified error tolerance with guaranteed
-%   confidence level 99%. Input Yrand is a function handle that accepts a
-%   positive integer input n and returns an n x 1 vector of IID instances
-%   of the Bernoulli random variable Y.
-%
-%   p = MEANMCBERNOULLI_G(Yrand,abstol,reltol,index,alpha,nmax)
-%   estimates the mean of a Bernoulli random variable Y to within an error
-%   tolerance with guaranteed confidence level 1-alpha using all ordered
-%   parsing inputs abstol, reltol, index, alpha and nmax.
-%
-%   p =
-%   MEANMCBERNOULLI_G(Yrand,'abstol',abstol,'reltol',reltol,'index',index,
-%   'alpha',alpha,'nmax',nmax) estimates the mean of a Bernoulli random
-%   variable Y to within a specified error tolerance with guaranteed
-%   confidence level 1-alpha. All the field-value pairs are optional and
-%   can be supplied in different order.
-%
-%   p = MEANMCBERNOULLI_G(Yrand,in_param) estimates the mean of a
-%   Bernoulli random variable Y to within a specified error
-%   tolerance in_param.abstol with guaranteed uncertainty within
-%   in_param.alpha. If a field is not specified, the default value is used.
-%
-%   [p, out_param] = MEANMCBERNOULLI_G(Yrand,in_param) estimates the mean
-%   of a Bernoulli random variable Y to within a specified absolute error
-%   tolerance with the given parameters in_param and output parameters
-%   out_param.
-%
-%
-%   Yrand --- the function for generating IID instances of a Bernoulli random
-%   variable Y whose mean we want to estimate.
-%
-%   p --- the estimated mean of Y.
-%
-%   in_param.abstol --- the absolute error tolerance, default value is 1e-2.
-%
-%   in_param.reltol --- the relative error tolerance, default value is 1e-1.
-%
-%   in_param.alpha --- the uncertainty, default value is 1%.
-%
-%   in_param.nmax --- the sample budget.
-%
-%   out_param.n --- the total sample size used.
-%
-%   out_param.time --- the time elapsed.
-%
-%   Examples
-%
-%   Example 1:
-%   Calculate the mean of a bernoulli random variable with true p=0.55,with
-%   error tolerance 1e-3 and uncertainty 0.01.
-%
-%   >> in_param.abstol=1e-3; in_param.alpha = 0.01; p=1/90;Yrand=@(n) binornd(1,p,n,1);
-%   >> phat=meanMCBernoulli_g(Yrand,in_param)
-%   phat = 0.01***
-%
-%
-%   Example 2:
-%   Using the same function as example 1, with the absolute error tolerance
-%   1e-2.
-%
-%   >> p=meanMCBernoulli_g(Yrand,1e-4,1e-2,'abs')
-%   p = 0.011***
-%
-%
-%   Example 3:
-%   Using the sample function as example 1, with the absolute error
-%   tolerance 1e-4 and uncertainty 0.005.
-%
-%   >> p=meanMCBernoulli_g(Yrand,'index','rel','reltol',1e-2,'alpha',0.005)
-%   p = 0.0111***
-%
-%
-%   See also FUNAPPX_G, INTEGRAL_G, CUBMC_G, MEANMC_G
-%
-%   Reference
-%   [1]  F. J. Hickernell, L. Jiang, Y. Liu, and A. B. Owen, Guaranteed
-%   conservative fixed width confidence intervals via Monte Carlo sampling,
-%   Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F. Y. Kuo, G.
-%   W. Peters, and I. H. Sloan, eds.), Springer-Verlag, Berlin, 2014, to
-%   appear, arXiv:1208.4318 [math.ST]
-%
+% p = MEANMCBERNOULLI_G(Yrand) estimates the mean of a Bernoulli random
+% variable Y to within a specified error tolerance with guaranteed
+% confidence level 99%. Input Yrand is a function handle that accepts a
+% positive integer input n and returns an n x 1 vector of IID instances
+% of the Bernoulli random variable Y.
+% 
+% p = MEANMCBERNOULLI_G(Yrand,abstol,reltol,index,alpha,nmax)
+% estimates the mean of a Bernoulli random variable Y to within an error
+% tolerance with guaranteed confidence level 1-alpha using all ordered
+% parsing inputs abstol, reltol, index, alpha and nmax.
+% 
+% p =
+% MEANMCBERNOULLI_G(Yrand,'abstol',abstol,'reltol',reltol,'index',index,
+% 'alpha',alpha,'nmax',nmax) estimates the mean of a Bernoulli random
+% variable Y to within a specified error tolerance with guaranteed
+% confidence level 1-alpha. All the field-value pairs are optional and
+% can be supplied in different order.
+% 
+% p = MEANMCBERNOULLI_G(Yrand,in_param) estimates the mean of a
+% Bernoulli random variable Y to within a specified error
+% tolerance in_param.abstol with guaranteed uncertainty within
+% in_param.alpha. If a field is not specified, the default value is used.
+% 
+% [p, out_param] = MEANMCBERNOULLI_G(Yrand,in_param) estimates the mean
+% of a Bernoulli random variable Y to within a specified absolute error
+% tolerance with the given parameters in_param and output parameters
+% out_param.
+% 
+% 
+% Yrand --- the function for generating IID instances of a Bernoulli random
+% variable Y whose mean we want to estimate.
+% 
+% p --- the estimated mean of Y.
+% 
+% in_param.abstol --- the absolute error tolerance, default value is 1e-2.
+% 
+% in_param.reltol --- the relative error tolerance, default value is 1e-1.
+% 
+% in_param.index --- the error tolerance criterion, default value is
+% 'abs'.
+% 
+% in_param.alpha --- the uncertainty, default value is 1%.
+% 
+% in_param.nmax --- the sample budget, default value is 1e8.
+% 
+% out_param.n --- the total sample size used.
+% 
+% out_param.time --- the time elapsed.
+% 
+% Examples
+% 
+% Example 1:
+% Calculate the mean of a bernoulli random variable with true p=0.55,with
+% error tolerance 1e-3 and uncertainty 0.01.
+% 
+% >> in_param.abstol=1e-3; in_param.alpha = 0.01; p=1/90;Yrand=@(n) binornd(1,p,n,1);
+% >> p=meanMCBernoulli_g(Yrand,in_param)
+% p = 0.01***
+% 
+% 
+% Example 2:
+% Using the same function as example 1, with the absolute error tolerance
+% 1e-4.
+% 
+% >> p=meanMCBernoulli_g(Yrand,1e-4,1e-2,'abs')
+% p = 0.011***
+% 
+% 
+% Example 3:
+% Using the sample function as example 1, with the relative error
+% tolerance 1e-2 and uncertainty 0.005.
+% 
+% >> p=meanMCBernoulli_g(Yrand,'index','rel','reltol',1e-2,'alpha',0.005)
+% p = 0.0111***
+% 
+% 
+% See also FUNAPPX_G, INTEGRAL_G, CUBMC_G, MEANMC_G
+% 
+% Reference
+% [1]  F. J. Hickernell, L. Jiang, Y. Liu, and A. B. Owen, Guaranteed
+% conservative fixed width confidence intervals via Monte Carlo sampling,
+% Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F. Y. Kuo, G.
+% W. Peters, and I. H. Sloan, eds.), Springer-Verlag, Berlin, 2014, to
+% appear, arXiv:1208.4318 [math.ST]
+% 
 tstart = tic; %start the clock
 [Yrand,out_param] = meanMCBernoulli_g_param(varargin{:});
 out_param.npcmax = 1e6;

@@ -1,7 +1,7 @@
 %% cubMC_g
 % |Monte Carlo method to evaluate a multidimentional integral to within a
-% specified absolute error tolerance with guaranteed confidence
-% level 1-alpha.|
+% specified absolute error tolerance with guaranteed confidence level
+% 1-alpha.|
 %
 %% Syntax
 % [Q,out_param] = *cubMC_g*(f)

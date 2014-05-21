@@ -1,6 +1,6 @@
 %% meanMC_g
 % |Monte Carlo method to estimate the mean of a random variable to within a
-% specific absolute error tolerance with guaranteed uncertainty within alpha.|
+% specific absolute error tolerance with guaranteed conficence level 1-alpha.|
 %
 %% Syntax
 %
@@ -114,6 +114,8 @@
 % * out_param.time --- |the time elapsed.|
 %
 %% Guarantee
+%
+% Error guarantee:
 %
 % Suppose the modified kurtosis, $\tilde{\kappa}$, of the random variable Y
 % satisfies the inequality:
