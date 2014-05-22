@@ -1,4 +1,5 @@
-function [fappx,out_param]=funappxlocal_g(varargin)
+function [pp,out_param]=funappxlocal_g(varargin)
+
 [f, out_param] = funappx_g_param(varargin{:});
 len = out_param.b - out_param.a;
 tau = ceil(out_param.tauhi*(out_param.taulo/out_param.tauhi)^(1/(1+len)));
@@ -82,11 +83,12 @@ while(max(err) >= out_param.abstol)
 end;
 out_param.npoints = index(end);
 out_param.errorbound = max(err);
-out_param.x = x;
 out_param.tau = tau;
 % out_param.err = err;
 x1 = x;
-fappx = @(x) interp1(x1,y,x,'linear');
+y1 = f(x1);
+pp = interp1(x1,y1,'linear','pp');
+%fappx = @(x) interp1(x1,y,x,'linear');
 
 
 function [f, out_param] = funappx_g_param(varargin)
