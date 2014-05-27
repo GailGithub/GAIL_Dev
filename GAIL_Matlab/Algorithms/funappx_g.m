@@ -2,79 +2,78 @@ function [pp,out_param]=funappx_g(varargin)
 %FUNAPPX_G 1-D guaranteed function recovery on closed interval [a,b]
 %
 %   pp = FUNAPPX_G(f) recovers function f on the default interval [0,1] by
-%   the piecewise polynomial f contained in pp within the guaranteed
+%   a piecewise polynomial structure pp within the guaranteed
 %   absolute error tolerance of 1e-6. Default initial number of points is
 %   100 and default cost budget is 1e7.  Input f is a function handle. The
 %   statement y=f(x) should accept a vector argument x and return a vector
-%   y of function values that is the same size as x. Output pp may be
+%   y of function values that is of the same size as x. Output pp may be
 %   evaluated via PPVAL.
 %   
-%   pp = FUNAPPX_G(f,a,b,abstol,nlo,nhi,nmax) for given function f and
+%   pp = FUNAPPX_G(f,a,b,abstol,nlo,nhi,nmax) for a given function f and
 %   the ordered input parameters that define the finite interval [a, b], a
-%   guaranteed absolute error tolerance abstol, lower bound of initial
-%   number of points nlo, upper bound of initial number of points nhi, and
-%   cost budget nmax. nlo and nhi can be input as a vector or just one
-%   value as an initial number of points.
+%   guaranteed absolute error tolerance abstol, a lower bound of initial
+%   number of points nlo, an upper bound of initial number of points nhi,
+%   and a cost budget nmax. 
 %
-%   pp = FUNAPPX_G(f,'a',a,'b',b,'abstol',abstol,'nlo',nlo,'nhi',nhi,'nmax',nmax)
-%   recovers function f on the finite interval [a, b], guaranteed absolute
-%   error tolerance abstol, lower bound of initial number of points nlo,
-%   upper bound of initial number of points nhi, and cost budget nmax. All
-%   six field-value pairs are optional and can be supplied in different
-%   order.
+%   pp =
+%   FUNAPPX_G(f,'a',a,'b',b,'abstol',abstol,'nlo',nlo,'nhi',nhi,'nmax',nmax)
+%   recovers function f on the finite interval [a, b], given a guaranteed
+%   absolute error tolerance abstol, a lower bound of initial number of
+%   points nlo, an upper bound of initial number of points nhi, and a cost
+%   budget nmax. All six field-value pairs are optional and can be supplied
+%   in different order.
 %
-%   pp = FUNAPPX_G(f,in_param) recovers function f on the finite
-%   interval [in_param.a, in_param.b], guaranteed absolute error tolerance
-%   in_param.abstol, lower bound of initial number of points in_param.nlo,
-%   upper bound of initial number of points in_param.nhi, and cost budget
-%   in_param.nmax. If a field is not specified, the default value is used.
+%   pp = FUNAPPX_G(f,in_param) recovers function f on the finite interval
+%   [in_param.a, in_param.b], given a guaranteed absolute error tolerance
+%   in_param.abstol, a lower bound of initial number of points
+%   in_param.nlo, an upper bound of initial number of points in_param.nhi,
+%   and a cost budget in_param.nmax. If a field is not specified, the
+%   default value is used.
 %
-%   in_param.a --- left end point of interval, default value is 0
+%     in_param.a --- left end point of interval, default value is 0
 %
-%   in_param.b --- right end point of interval, default value is 1
+%     in_param.b --- right end point of interval, default value is 1
 %
-%   in_param.abstol --- guaranteed absolute error tolerance, default value
-%   is 1e-6
+%     in_param.abstol --- guaranteed absolute error tolerance, default
+%     value is 1e-6
 %
-%   in_param.nlo --- lower bound of initial number of points we used,
-%   default value is 10
+%     in_param.nlo --- lower bound of initial number of points we used,
+%     default value is 10
 %
-%   in_param.nhi --- upper bound of initial number of points we used,
-%   default value is 1000
+%     in_param.nhi --- upper bound of initial number of points we used,
+%     default value is 1000
 %
-%   in_param.nmax --- cost budget, default value is 1e7
+%     in_param.nmax --- cost budget, default value is 1e7
 %
-%   [pp, out_param] = FUNAPPX_G(f,...) returns the piecewise polynomial f
-%   contained in pp, as constructed INTERP1, which may then be evaluated
-%   via PPVAL, and an output structure out_param, which has the following
-%   fields.
+%   [pp, out_param] = FUNAPPX_G(f,...) returns a piecewise polynomial
+%   structure pp for use by PPVAL, and an output structure out_param, which
+%   has the following fields.
 %
+%     out_param.nmax --- cost budget
 %
-%   out_param.nmax --- cost budget
+%     out_param.exceedbudget --- it is 0 if the number of points used in 
+%     the construction of pp is less than cost budget, 1 otherwise.
 %
-%   out_param.exceedbudget --- it is 0 if the number of points used in the
-%   construction of pp is less than cost budget, 1 otherwise.
+%     out_param.ninit --- initial number of points we use
 %
-%   out_param.ninit --- initial number of points we use
+%     out_param.npoints --- number of points we need to reach the 
+%     guaranteed absolute error tolerance
 %
-%   out_param.npoints --- number of points we need to reach the guaranteed
-%   absolute error tolerance
+%     out_param.errorbound --- an upper bound of the absolute error
 %
-%   out_param.errorbound --- an upper bound of the absolute error
+%     out_param.nstar --- final value of the parameter defining the cone of
+%     functions for which this algorithm is guaranteed; nstar = ninit-2
+%     initially and is increased as necessary
 %
-%   out_param.nstar --- final value of the parameter defining the cone of
-%   functions for which this algorithm is guaranteed; nstar = ninit-2
-%   initially and is increased as necessary
+%     out_param.a --- left end point of interval
 %
-%   out_param.a --- left end point of interval
+%     out_param.b --- right end point of interval
 %
-%   out_param.b --- right end point of interval
+%     out_param.abstol --- guaranteed absolute error tolerance
 %
-%   out_param.abstol --- guaranteed absolute error tolerance
+%     out_param.nlo --- lower bound of initial number of points we use
 %
-%   out_param.nlo --- lower bound of initial number of points we used
-%
-%   out_param.nhi --- upper bound of initial number of points we used
+%     out_param.nhi --- upper bound of initial number of points we use
 %
 %  Guarantee
 %    
@@ -83,13 +82,14 @@ function [pp,out_param]=funappx_g(varargin)
 %      ||f''||        <=  ---------  ||f'- ----------- ||
 %             \infty        b - a    ||       b - a    ||\infty,
 %  then the pp output by this algorithm is guaranteed to satisfy
-%      ||f-pp||_\infty <= abstol,
-%  provided the flag exceedbudget = 0. And the upper bound of the cost is
+%      ||f-pp||\infty <= abstol,
+%  and the upper bound of the cost is
 %          _____________________________ 
 %         / nstar*(b-a)^2 ||f''||_\infty 
 %        / ----------------------------- + 2 nstar + 4
 %      \/          2 abstol
-%   
+%
+%  provided the flag exceedbudget = 0.
 %
 %   Examples
 %
@@ -222,9 +222,10 @@ function [pp,out_param]=funappx_g(varargin)
 %   See also INTEGRAL_G, MEANMC_G, CUBMC_G
 %
 %   References
-%   [1]  N. Clancy, Y. Ding, C. Hamilton, F. J. Hickernell, and Y. Zhang,
-%        The Cost of Deterministic, Adaptive, Automatic Algorithms:  Cones,
-%        Not Balls, Journal of Complexity 30 (2014) 21–45
+%   [1]  Nick Clancy, Yuhan. Ding, Caleb Hamilton, Fred J. Hickernell, and 
+%        Yizhi Zhang, The Cost of Deterministic, Adaptive, Automatic 
+%        Algorithms: Cones, Not Balls, Journal of Complexity 30 (2014)
+%        pp. 21–45
 %
 %   [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
 %        and Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library
