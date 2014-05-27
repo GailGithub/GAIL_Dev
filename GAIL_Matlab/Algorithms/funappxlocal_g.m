@@ -40,13 +40,14 @@ while(max(err) >= out_param.abstol)
             x = [x(1:a-1) xx x(b+1:end)];
             y = [y(1:a-1) yy y(b+1:end)];
             err = [err(1:tmp-1) inf inf err(tmp+1:end)];
-            tau = [tau(1:tmp-1) tau(tmp) tau(tmp) tau(tmp+1:end)];
+            tautemp = ceil(out_param.tauhi*(out_param.taulo/out_param.tauhi)^(1/(1+h)));
+            tau = [tau(1:tmp-1) tautemp tautemp tau(tmp+1:end)];
         end;
     else
         % increase tau
         tau(tmp) = 2*tau(tmp);
         % check if number of points large enough
-        if n > (tau+1)/2;
+        if n > (tau(tmp)+1)/2;
             % true, go to Stage 4
             err(tmp) = tau(tmp)*len*gn/(4*(n-1)*(2*n-2-tau(tmp)));
             if err(tmp) >= out_param.abstol;
@@ -62,7 +63,8 @@ while(max(err) >= out_param.abstol)
                 x = [x(1:a-1) xx x(b+1:end)];
                 y = [y(1:a-1) yy y(b+1:end)];
                 err = [err(1:tmp-1) inf inf err(tmp+1:end)];
-                tau = [tau(1:tmp-1) tau(tmp) tau(tmp) tau(tmp+1:end)];
+                tautemp = ceil(out_param.tauhi*(out_param.taulo/out_param.tauhi)^(1/(1+h)));
+                tau = [tau(1:tmp-1) tautemp tautemp tau(tmp+1:end)];
             end;
         else
             % Stage 5:
