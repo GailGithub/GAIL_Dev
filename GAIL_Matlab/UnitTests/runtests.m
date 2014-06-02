@@ -11,7 +11,7 @@ format short
 doctest funappx_g
 doctest funappxtau_g
 doctest funappx01_g
-doctest dt_funappx_g
+clear in_param; doctest dt_funappx_g
 
 doctest integral01_g
 doctest integraltau_g

@@ -189,7 +189,7 @@ function [pp,out_param]=funappx_g(varargin)
 %
 %   Example 4:
 %
-%   >> clear in_param; in_param.a = -10; in_param.b = 10; 
+%   >> in_param.a = -10; in_param.b = 10; 
 %   >> in_param.abstol = 10^(-7); in_param.nlo = 10; in_param.nhi = 100;
 %   >> in_param.nmax = 10^6; f = @(x) x.^2;
 %   >> [pp, out_param] = funappx_g(f,in_param)
@@ -221,6 +221,7 @@ function [pp,out_param]=funappx_g(varargin)
 %
 %
 %   See also INTEGRAL_G, MEANMC_G, CUBMC_G
+%
 %
 %   References
 %
