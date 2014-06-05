@@ -1,46 +1,47 @@
 %% funappx_g
 % |1-D guaranteed function recovery on closed interval [a,b].|
 %% Syntax
-% fappx = *funappx_g*(f)
+% pp = *funappx_g*(f)
 %
-% fappx = *funappx_g*(f,a,b,abstol,nlo,nhi,nmax)
+% pp = *funappx_g*(f,a,b,abstol,nlo,nhi,nmax)
 %
-% fappx = *funappx_g*(f,'a',a,'b',b,'abstol',abstol,'nlo',nlo,'nhi',nhi,'nmax',nmax)
+% pp = *funappx_g*(f,'a',a,'b',b,'abstol',abstol,'nlo',nlo,'nhi',nhi,'nmax',nmax)
 %
-% fappx = *funappx_g*(f,in_param)
+% pp = *funappx_g*(f,in_param)
 %
-% [fappx, out_param] = *funappx_g*(f,...)
+% [pp, out_param] = *funappx_g*(f,...)
 %% Description
 % 
-% fappx = *funappx_g*(f) |recovers function|  f  |on the default interval
-%  [0,1] by a piecewise linear interpolant fappx to within a guaranteed
+% pp = *funappx_g*(f) |recovers function|  f  |on the default interval
+%  [0,1] by a piecewise polynomial structure pp to within the guaranteed
 %  absolute error tolerance of 1e-6. Default initial number of points is
 %  100 and default cost budget is 1e7.  Input| f |is a function handle. The
 %  statement| y=f(x) |should accept a vector argument x and return a
-%  vector y of function values that is the same size as x.|
+%  vector y of function values that is the same size as x. Output pp
+%   may be evaluated via| ppval.
 %
-% fappx = *funappx_g*(f,a,b,abstol,nlo,nhi,nmax) |for given function|  f
-%  |and the ordered input parameters on the finite interval [a, b], a
-%  guaranteed absolute error tolerance bstol, lower bound of initial
-%  number of points nlo, upper bound of initial number of points nhi, and
-%  cost budget nmax. nlo and nhi can be input as a vector or just one
-%  value as an initial number of points.|
+% pp = *funappx_g*(f,a,b,abstol,nlo,nhi,nmax) |for a given function|  f
+%  |and the ordered input parameters that define the finite interval [a,b],
+%  a guaranteed absolute error tolerance bstol, a lower bound of initial
+%  number of points nlo, an upper bound of initial number of points nhi, and
+%  cost budget nmax.|
 %
-% fappx = *funappx_g*(f,'a',a,'b',b,'abstol',abstol,'nlo',nlo,'nhi',nhi,'nmax',nmax)
-%  |recovers function|  f  |on the finite interval [a, b], guaranteed
-%  absolute error tolerance abstol, lower bound of initial number of
-%  points nlo, upper bound of initial number of points nhi, and cost
+% pp = *funappx_g*(f,'a',a,'b',b,'abstol',abstol,'nlo',nlo,'nhi',nhi,'nmax',nmax)
+%  |recovers function|  f  |on the finite interval [a, b], given a guaranteed
+%  absolute error tolerance abstol, a lower bound of initial number of
+%  points nlo, an upper bound of initial number of points nhi, and a cost
 %  budget nmax. All six field-value pairs are optional and can be supplied
 %  in different order.|
 %
-% fappx = *funappx_g*(f,in_param) |recovers function|  f  |on the finite
-%  interval [in_param.a, in_param.b], guaranteed absolute error tolerance
-%  in_param.abstol, lower bound of initial number of points in_param.nlo,
-%  upper bound of initial number of points in_param.nhi, and cost budget
-%  in_param.nmax. If a field is not specified, the default value is used.|
+% pp = *funappx_g*(f,in_param) |recovers function|  f  |on the finite
+%  interval [in_param.a, in_param.b], given a guaranteed absolute error
+%  tolerance in_param.abstol, a lower bound of initial number of points
+%  in_param.nlo, an upper bound of initial number of points in_param.nhi,
+%  and a cost budget in_param.nmax. If a field is not specified, the
+%  default value is used.|
 %
-% [fappx, out_param] = *funappx_g*(f,...) |returns function approximation
-% fappx and an output structure out_param.|
+% [pp, out_param] = *funappx_g*(f,...) |returns a piecewise polynomial
+%   structure pp and an output structure out_param.|
 %
 % *Input Arguments*
 % 
@@ -62,6 +63,20 @@
 % * in_param.nmax --- |cost budget, default value is 1e7|
 %
 % *Output Arguments*
+%
+% * pp.form --- |pp means piecewise polynomials|
+%
+% * pp.breaks --- |show the location of interpolation points|
+%
+% * pp.coefs --- |coefficients for piecewise linear polynomials|
+%
+% * pp.pieces --- |number of piecewise linear polynomials|
+%
+% * pp.order --- |be 2 as we use piecewise linear polynomials|
+%
+% * pp.dim --- |be 1 as we do univariate approximation|
+%
+% * pp.orient --- |always be 'first'|
 %
 % * out_param.nmax --- |cost budget|
 % 
@@ -95,10 +110,10 @@
 %
 % $$\|f''\|_\infty \le \frac { 2\mathrm{nstar} }{b-a } \left\|f'-\frac{f(b)-f(a)}{b-a}\right\|_\infty,$$
 % 
-% |then the|  $fappx$  |output by this algorithm is guaranteed to
+% |then the|  $pp$  |output by this algorithm is guaranteed to
 % satisfy|
 %
-% $$\| f-fappx \|_{\infty} \le \mathrm{abstol},$$
+% $$\| f-ppval(pp,)\|_{\infty} \le \mathrm{abstol},$$
 %
 % |provided the flag| $\mathrm{exceedbudget} = 0.$
 %
@@ -111,14 +126,14 @@
 %% Examples
 % *Example 1*
 
-f = @(x) x.^2; [fappx, out_param] = funappx_g(f)
+f = @(x) x.^2; [pp, out_param] = funappx_g(f)
 
 % Approximate function x^2 with default input parameter to make the error
 % less than 1e-6.
 %%
 % *Example 2*
 
-[fappx, out_param] = funappx_g(@(x) x.^2,0,100,1e-7,10,1000,1e8)
+[pp, out_param] = funappx_g(@(x) x.^2,0,100,1e-7,10,1000,1e8)
 
 % Approximate function x^2 on [0,100] with error tolerence 1e-7, cost
 % budget 10000000, lower bound of initial number of points 10 and upper
@@ -129,7 +144,7 @@ f = @(x) x.^2; [fappx, out_param] = funappx_g(f)
 
 clear in_param; in_param.a = -20; in_param.b = 20; in_param.nlo = 10;
 in_param.nhi = 100; in_param.nmax = 1e8; in_param.abstol = 1e-7; 
-[fappx, out_param] = funappx_g(@(x) x.^2, in_param)
+[pp, out_param] = funappx_g(@(x) x.^2, in_param)
 
 % Approximate function x^2 on [-20,20] with error tolerence 1e-7, cost
 % budget 1000000, lower bound of initial number of points 10 and upper
@@ -138,7 +153,7 @@ in_param.nhi = 100; in_param.nmax = 1e8; in_param.abstol = 1e-7;
 % *Example 4*
 
 clear in_param; f = @(x) x.^2;
-[fappx, out_param] = funappx_g(f,'a',-10,'b',50,'nmax',1e6,'abstol',1e-8)
+[pp, out_param] = funappx_g(f,'a',-10,'b',50,'nmax',1e6,'abstol',1e-8)
 
 % Approximate function x^2 with error tolerence 1e-8, cost budget 1000000,
 % lower bound of initial number of points 10 and upper

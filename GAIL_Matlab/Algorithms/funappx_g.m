@@ -50,7 +50,7 @@ function [pp,out_param]=funappx_g(varargin)
 %
 %     pp.form --- pp means piecewise polynomials
 %
-%     pp.breaks --- show the interpolation points location
+%     pp.breaks --- show the location of interpolation points
 %
 %     pp.coefs --- coefficients for piecewise linear polynomials
 %
@@ -96,7 +96,7 @@ function [pp,out_param]=funappx_g(varargin)
 %      ||f''||        <=  ---------  ||f'- ----------- ||
 %             \infty        b - a    ||       b - a    ||\infty,
 %  then the pp output by this algorithm is guaranteed to satisfy
-%      ||f-pp||\infty <= abstol,
+%      ||f-ppval(pp, )||\infty <= abstol,
 %  and the upper bound of the cost is
 %          ____________________________
 %         / nstar*(b-a)^2 ||f''||\infty 
