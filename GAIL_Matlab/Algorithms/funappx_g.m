@@ -48,6 +48,20 @@ function [pp,out_param]=funappx_g(varargin)
 %   structure pp and an output structure out_param, which has the following
 %   fields:
 %
+%     pp.form --- pp means piecewise polynomials
+%
+%     pp.breaks --- show the interpolation points location
+%
+%     pp.coefs --- coefficients for piecewise linear polynomials
+%
+%     pp.pieces --- number of piecewise linear polynomials
+%
+%     pp.order --- be 2 as we use piecewise linear polynomials
+%
+%     pp.dim --- be 1 as we do univariate approximation
+%
+%     pp.orient --- always be 'first'
+%
 %     out_param.exceedbudget --- it is 0 if the number of points used in 
 %     the construction of pp is less than cost budget, 1 otherwise.
 %
