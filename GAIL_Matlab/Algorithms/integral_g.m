@@ -195,7 +195,7 @@ if intervallen
 
         %Increase number of sample points
         expand=repmat(xpts(1:end-1),1,inflation-1);
-        addon=repmat((1:inflation-1)'*(intervallen/(inflation*ntrap)),1,ntrap)';
+        addon=repmat((1:inflation-1)*(intervallen/(inflation*ntrap)),ntrap,1);
         xnew=expand'+addon'; %additional x values
         ynew=f(xnew); %additional f(x) values
         xnew = [xpts(1:end-1)'; xnew];
