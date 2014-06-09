@@ -1,5 +1,244 @@
 function [pp,out_param]=funappxlocal_g(varargin)
-
+%FUNAPPX_G 1-D guaranteed function recovery on a closed interval [a,b]
+%
+%   pp = FUNAPPX_G(f) approximates function f on the default interval [0,1]
+%   by a piecewise polynomial structure pp within the guaranteed absolute
+%   error tolerance of 1e-6. Default initial number of points is 100 and
+%   default cost budget is 1e7.  Input f is a function handle. The
+%   statement y = f(x) should accept a vector argument x and return a
+%   vector y of function values that is of the same size as x. Output pp
+%   may be evaluated via PPVAL.
+%   
+%   pp = FUNAPPX_G(f,a,b,abstol,nlo,nhi,nmax) for a given function f and
+%   the ordered input parameters that define the finite interval [a,b], a
+%   guaranteed absolute error tolerance abstol, a lower bound of initial
+%   number of points nlo, an upper bound of initial number of points nhi,
+%   and a cost budget nmax. 
+%
+%   pp = FUNAPPX_G(f,'a',a,'b',b,'abstol',abstol,'nlo',nlo,'nhi',nhi,'nmax',nmax)
+%   recovers function f on the finite interval [a,b], given a guaranteed
+%   absolute error tolerance abstol, a lower bound of initial number of
+%   points nlo, an upper bound of initial number of points nhi, and a cost
+%   budget nmax. All six field-value pairs are optional and can be supplied
+%   in different order.
+%
+%   pp = FUNAPPX_G(f,in_param) recovers function f on the finite interval
+%   [in_param.a,in_param.b], given a guaranteed absolute error tolerance
+%   in_param.abstol, a lower bound of initial number of points
+%   in_param.nlo, an upper bound of initial number of points in_param.nhi,
+%   and a cost budget in_param.nmax. If a field is not specified, the
+%   default value is used.
+%
+%     in_param.a --- left end point of interval, default value is 0
+%
+%     in_param.b --- right end point of interval, default value is 1
+%
+%     in_param.abstol --- guaranteed absolute error tolerance, default
+%     value is 1e-6
+%
+%     in_param.nlo --- lower bound of initial number of points we used,
+%     default value is 10
+%
+%     in_param.nhi --- upper bound of initial number of points we used,
+%     default value is 1000
+%
+%     in_param.nmax --- cost budget, default value is 1e7
+%
+%   [pp, out_param] = FUNAPPX_G(f,...) returns a piecewise polynomial
+%   structure pp and an output structure out_param, which has the following
+%   fields:
+%
+%     pp.form --- pp means piecewise polynomials
+%
+%     pp.breaks --- show the location of interpolation points
+%
+%     pp.coefs --- coefficients for piecewise linear polynomials
+%
+%     pp.pieces --- number of piecewise linear polynomials
+%
+%     pp.order --- be 2 as we use piecewise linear polynomials
+%
+%     pp.dim --- be 1 as we do univariate approximation
+%
+%     pp.orient --- always be 'first'
+%
+%     out_param.exceedbudget --- it is 0 if the number of points used in 
+%     the construction of pp is less than cost budget, 1 otherwise.
+%
+%     out_param.ninit --- initial number of points we use
+%
+%     out_param.npoints --- number of points we need to reach the 
+%     guaranteed absolute error tolerance
+%
+%     out_param.errorbound --- an upper bound of the absolute error
+%
+%     out_param.nstar --- final value of the parameter defining the cone of
+%     functions for which this algorithm is guaranteed; nstar = ninit-2
+%     initially and is increased as necessary
+%
+%     out_param.a --- left end point of interval
+%
+%     out_param.b --- right end point of interval
+%
+%     out_param.abstol --- guaranteed absolute error tolerance
+%
+%     out_param.nlo --- a lower bound of initial number of points we use
+%
+%     out_param.nhi --- an upper bound of initial number of points we use
+%
+%     out_param.nmax --- cost budget
+%
+%
+%  Guarantee
+%    
+%  If the function to be approximated, f, satisfies the cone condition
+%                          2 nstar   ||     f(b)-f(a)  ||
+%      ||f''||        <=  ---------  ||f'- ----------- ||
+%             \infty        b - a    ||       b - a    ||\infty,
+%  then the pp output by this algorithm is guaranteed to satisfy
+%      ||f-ppval(pp, )||\infty <= abstol,
+%  and the upper bound of the cost is
+%          ____________________________
+%         / nstar*(b-a)^2 ||f''||\infty 
+%        / ---------------------------- + 2 nstar + 4
+%      \/          2 abstol
+%
+%  provided the flag exceedbudget = 0.
+%
+%
+%   Examples
+%
+%   Example 1:
+%
+%
+%   >> f = @(x) x.^2; [pp, out_param] = funappxlocal_g(f)
+%
+% pp = 
+% 
+%       form: 'pp'
+%     breaks: [1x2049 double]
+%      coefs: [2048x2 double]
+%     pieces: 2048
+%      order: 2
+%        dim: 1
+%     orient: 'first'
+% 
+% out_param = 
+% 
+%              f: @(x)x.^2
+%              a: 0
+%              b: 1
+%         abstol: 1.0000e-06
+%          taulo: 9
+%          tauhi: 100
+%        npoints: 2049
+%     errorbound: 4.0640e-07
+%            tau: [1x128 double]
+%
+%
+%   Example 2:
+%
+%   >> f = @(x) x.^2;
+%   >> [pp, out_param] = funappxlocal_g(f,-2,2,1e-7,10,10)
+% 
+% pp = 
+% 
+%       form: 'pp'
+%     breaks: [1x49153 double]
+%      coefs: [49152x2 double]
+%     pieces: 49152
+%      order: 2
+%        dim: 1
+%     orient: 'first'
+% 
+% out_param = 
+% 
+%              a: -2
+%         abstol: 1.0000e-07
+%              b: 2
+%              f: @(x)x.^2
+%          tauhi: 10
+%          taulo: 10
+%        npoints: 49153
+%     errorbound: 4.1392e-08
+%            tau: [1x8192 double]
+%
+%
+%   Example 3:
+%
+%   >> f = @(x) x.^2;
+%   >> [pp, out_param] = funappxlocal_g(f,'a',-2,'b',2,'tauhi',100,'taulo',10)
+%
+% pp = 
+% 
+%       form: 'pp'
+%     breaks: [1x8449 double]
+%      coefs: [8448x2 double]
+%     pieces: 8448
+%      order: 2
+%        dim: 1
+%     orient: 'first'
+% 
+% out_param = 
+% 
+%              a: -2
+%         abstol: 1.0000e-06
+%              b: 2
+%              f: @(x)x.^2
+%          tauhi: 100
+%          taulo: 10
+%        npoints: 8449
+%     errorbound: 3.5870e-07
+%            tau: [1x256 double]
+%
+%
+%   Example 4:
+%
+%   >> in_param.a = -10; in_param.b = 10; f = @(x) x.^2;
+%   >> in_param.abstol = 10^(-7); in_param.taulo = 10; in_param.tauhi = 100;
+%   >> [pp, out_param] = funappxlocal_g(f,in_param)
+%
+% pp = 
+%       form: 'pp'
+%     breaks: [1x94209 double]
+%      coefs: [94208x2 double]
+%     pieces: 94208
+%      order: 2
+%        dim: 1
+%     orient: 'first'
+%  
+% out_param = 
+% 
+%              a: -10
+%         abstol: 1.0000e-07
+%              b: 10
+%              f: @(x)x.^2
+%          tauhi: 100
+%          taulo: 10
+%        npoints: 94209
+%     errorbound: 6.8856e-08
+%            tau: [1x2048 double]
+%
+%
+%   See also INTEGRAL_G, MEANMC_G, CUBMC_G
+%
+%
+%   References
+%
+%   [1]  Nick Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
+%        Yizhi Zhang, The Cost of Deterministic, Adaptive, Automatic
+%        Algorithms: Cones, Not Balls, Journal of Complexity 30 (2014), 
+%        pp. 21-45.
+%        
+%
+%   [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
+%        and Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library
+%        (Version 2.0)" [MATLAB Software], 2014. Available from
+%        http://code.google.com/p/gail/
+%
+%        If you find GAIL helpful in your work, please support us by citing
+%        the above paper and software.
+%
 [f, out_param] = funappx_g_param(varargin{:});
 len = out_param.b - out_param.a;
 tau = ceil(out_param.tauhi*(out_param.taulo/out_param.tauhi)^(1/(1+len)));
@@ -105,11 +344,13 @@ default.taulo = 9;
 default.tauhi = 100;
 
 if isempty(varargin)
-    help funappxablocal_g
-    warning('Function f must be specified. Now GAIL is using f(x)=exp(-100*(x-0.5).^2).')
+    warning('MATLAB:funappx_g:nofunction','Function f must be specified. Now GAIL is using f(x)=exp(-100*(x-0.5).^2).')
+    help funappxlocal_g
     f = @(x) exp(-100*(x-0.5).^2);
+    out_param.f = f;
 else
     f = varargin{1};
+    out_param.f = f;
 end;
 
 validvarargin=numel(varargin)>1;
@@ -159,6 +400,16 @@ end;
 if (out_param.b == inf||out_param.b == -inf)
     warning(['b can not be infinity. Use default b = ' num2str(default.b)])
     out_param.b = default.b;
+end;
+
+if (out_param.b < out_param.a)
+    warning('MATLAB:funappx_g:blea','b can not be smaller than a; exchange these two. ')
+    tmp = out_param.b;
+    out_param.b = out_param.a;
+    out_param.a = tmp;
+elseif(out_param.b == out_param.a)
+    warning('MATLAB:funappx_g:beqa',['b can not equal a. Use b = ' num2str(out_param.a+1)])
+    out_param.b = out_param.a+1;
 end;
 
 % let error tolerance greater than 0

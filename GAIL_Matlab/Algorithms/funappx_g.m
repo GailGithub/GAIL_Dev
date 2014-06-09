@@ -455,6 +455,7 @@ if (out_param.b == inf||out_param.b == -inf||isnan(out_param.b)==1)
     warning('MATLAB:funappx_g:bnoinfinity',['b can not be infinity. Use default b = ' num2str(default.b)])
     out_param.b = default.b;
 end;
+
 if (out_param.b < out_param.a)
     warning('MATLAB:funappx_g:blea','b can not be smaller than a; exchange these two. ')
     tmp = out_param.b;
@@ -464,7 +465,6 @@ elseif(out_param.b == out_param.a)
     warning('MATLAB:funappx_g:beqa',['b can not equal a. Use b = ' num2str(out_param.a+1)])
     out_param.b = out_param.a+1;
 end;
-
 
 % let error tolerance greater than 0
 if (out_param.abstol <= 0 )
