@@ -9,7 +9,7 @@
 %"GAIL_1.3.0/GAIL_Matlab".
 %% Download the package and change the directory
 disp('The GAIL package is now being downloaded...')
-unzip('https://docs.google.com/uc?id=0B5as28avI00tRnJwRlVvXzg2WU0&export=download') %download and unzip
+unzip('http://math.iit.edu/~openscholar/sites/default/files/meshfree/files/gail_1_3_0.zip') %download and unzip
 cd('GAIL_1_3_0')  %get to the right subdirectory
 
 %% Install GAIL
