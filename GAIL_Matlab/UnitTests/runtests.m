@@ -44,6 +44,6 @@ if MATLABVERSION >= 8
 end
 
 time=toc;
-disp(time)
+% disp(time)
 
 diary off
