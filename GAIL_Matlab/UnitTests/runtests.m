@@ -1,9 +1,9 @@
 % Drives all doctests and unit tests
 
 [GAILPATH,~,PATHNAMESEPARATOR] = GAILstart(0);
-filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
-  'gail_tests-', datestr(now,'dd-mmm-yyyy-HH-MM-SS'),'.txt');
-diary(filename)
+% filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
+%   'gail_tests-', datestr(now,'yyyymmddTHHMMSS'),'.txt');
+% diary(filename)
 
 tic; 
 % Call doctest 
@@ -20,6 +20,8 @@ doctest dt_integral_g
 
 doctest meanMC_g
 doctest cubMC_g
+doctest meanMCBernoulli_g
+doctest funappxlocal_g
 
 % Call unit tests
 [~,~,~,MATLABVERSION]=GAILstart(0);
@@ -36,6 +38,9 @@ if MATLABVERSION >= 8
     warning('on','MATLAB:integral01_g:peaky')
     run(ut_meanMC_g)
     run(ut_cubMC_g)
+    run(ut_meanMCBernoulli_g)
+    run(ut_funappxlocal_g)
+    
 end
 
 time=toc;
