@@ -9,7 +9,7 @@
 
 %% Download the package and change the directory
 disp('The GAIL package is now being downloaded...')
-unzip('https://gail.googlecode.com/files/GAIL_1.0.0.zip') %download and unzip
+unzip('http://math.iit.edu/~openscholar/sites/default/files/meshfree/files/gail_1.0.0.zip') %download and unzip
 cd('GAIL_1.0.0')  %get to the right subdirectory
 cd('GAIL_Matlab') %get to the right subdirectory
 
