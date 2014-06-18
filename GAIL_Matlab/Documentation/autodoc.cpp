@@ -10,24 +10,27 @@ using std::ofstream;
 using std::cout;
 using std::endl;
 
-int main(int argc, char** argv)
+int main()
 {
   const string dataFolder("doc_data");
-  ifstream doclist(dataFolder+"/DocList.txt"), intro(dataFolder+"/intro.m"), website(dataFolder+"/website.m");
+  ifstream ifs(dataFolder+"/DocList.txt");
+  //intro(), website(");
   vector<string> fcnList, introList, websiteList;
   string line;
-  while (doclist >> line) {
+  while (ifs >> line) {
     fcnList.push_back(line);
   }
-  doclist.close();
-  while (getline(intro, line)) {
+  ifs.close();
+  ifs.open(dataFolder+"/intro.m");
+  while (getline(ifs, line)) {
     introList.push_back(line);
   }
-  intro.close();
-  while (getline(website, line)) {
+  ifs.close();
+  ifs.open(dataFolder+"/website.m");
+  while (getline(ifs, line)) {
     websiteList.push_back(line);
   }
-  website.close();
+  ifs.close();
   ofstream gail("GAIL_t.m");
   for (const auto &s : introList) {
     gail << s << "\n";
@@ -45,4 +48,5 @@ int main(int argc, char** argv)
     gail << s << "\n";
   }
   gail << std::flush;
+  gail.close();
 }
