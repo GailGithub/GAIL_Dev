@@ -67,7 +67,7 @@ int main()
 	ofs << *iter;
       }
     }
-    ofs << "|\n%% Syntax" << endl;
+    ofs << ".|" << endl;
     ofs.close();
     fcnDoc.clear();
   }
