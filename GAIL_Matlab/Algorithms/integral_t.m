@@ -1,7 +1,5 @@
 function [q,out_param] = integral_t(varargin)
-%  INTEGRAL_T 1-D guaranteed function integration using trapezoidal rule
-% 
-%  Description
+%INTEGRAL_T 1-D guaranteed function integration using trapezoidal rule
 %
 %   q = INTEGRAL_T(f) computes q, the definite integral of function f
 %   on the interval [0,1] by trapezoidal rule with 
@@ -22,7 +20,7 @@ function [q,out_param] = integral_t(varargin)
 %   in_param.b --- right end of the integral, default value is 1
 %
 %   in_param.abstol --- guaranteed absolute error tolerance, default value
-%  is 1e-6
+%   is 1e-6
 % 
 %   in_param.nlo --- lowest initial number of function values used, default
 %   value is 10
