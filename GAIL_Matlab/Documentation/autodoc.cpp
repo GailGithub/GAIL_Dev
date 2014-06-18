@@ -38,6 +38,7 @@ int main(int argc, char** argv)
   for (const auto &s : fcnList) {
     gail << "% <a href=\"help_" << s << ".html\">" << s << "</a>\n";
   }
+  gail << "</html>\n";
   gail << "%\n";
   gail << "%" << endl;
   for (const auto &s : websiteList) {
