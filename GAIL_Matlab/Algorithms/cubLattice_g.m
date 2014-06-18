@@ -1,4 +1,5 @@
-function [q,err,time,n]=cubLattice(f,d,abstol,density,shift,mmax, fudge,diff)
+function [q,out_param]=cubLattice_g(varargin)
+% (f,d,abstol,density,shift,mmin, mmax, fudge,diff)
 % cubLattice is a Quasi-Monte Carlo method to evaluate a multidimensional integral
 % given a specified absolute error tolerance with guaranteed absolute
 % error, using rank-1 lattices.
@@ -45,60 +46,39 @@ function [q,err,time,n]=cubLattice(f,d,abstol,density,shift,mmax, fudge,diff)
 
 %%
 % Check and initialize parameters
-[f,out_param] = cubLattice_param(varargin{:});
+[f,out_param] = cubLattice_g_param(varargin{:});
 
 tic
-%% Initialize parameters
-if nargin < 8
-   diff='C1sin';
-    if nargin < 7
-        fudge=3;
-        if nargin < 6
-            mmax=24; % Maximum budget of points is 2^mmax. To check with lattice_gen.
-            if nargin < 5
-                shift=rand; % Random shift to our lattice rule.
-                if nargin < 4
-                   density='uniform';
-                   if nargin < 3
-                      abstol=1e-4;
-                      if nargin < 2
-                         d=1;
-                      end
-                   end
-                end
-            end
-        end
-    end
-end
-if strcmp(density,'normal')
+%% Initialize parameters   
+if strcmp(out_param.density,'normal')
    f=@(x) f(norminv(x));
 end
-if strcmp(diff,'Baker')
+if strcmp(out_param.diff,'Baker')
     f=@(x) f(1-2*abs(x-1/2)); % Baker's transform
-elseif strcmp(diff,'C0')
+elseif strcmp(out_param.diff,'C0')
     f=@(x) f(3*x.^2-2*x.^3).*prod(6*x.*(1-x),2); % C^0 transform
-elseif strcmp(diff,'C1')
+elseif strcmp(out_param.diff,'C1')
     f=@(x) f(x.^3.*(10-15*x+6*x.^2)).*prod(30*x.^2.*(1-x).^2,2); % C^1 transform
-elseif strcmp(diff,'C1sin')
+elseif strcmp(out_param.diff,'C1sin')
     f=@(x) f(x-sin(2*pi*x)/(2*pi)).*prod(1-cos(2*pi*x),2); % Sidi C^1 transform
 end
 
-mmin=10; %initial number of points is 2^mmin
+%% Main algorithm
 mlag=4;
-Stilde=zeros(mmax-mmin+1,1);
-errest=zeros(mmax-mmin+1,1);
-appxinteg=zeros(mmax-mmin+1,1);
+Stilde=zeros(out_param.mmax-out_param.mmin+1,1);
+errest=zeros(out_param.mmax-out_param.mmin+1,1);
+appxinteg=zeros(out_param.mmax-out_param.mmin+1,1);
 
 %% Initial points and FWT
-n=2^mmin;
-xpts=mod(lattice_gen(1,n,d)+shift,1); n0=n;
+out_param.n=2^out_param.mmin;
+xpts=mod(GAIL_Internal.lattice_gen(1,out_param.n,out_param.d)+out_param.shift,1); n0=out_param.n;
 y=f(xpts);
 yval=y;
 
 %% Compute initial FFT
-for l=0:mmin-1
+for l=0:out_param.mmin-1
    nl=2^l;
-   nmminlm1=2^(mmin-l-1);
+   nmminlm1=2^(out_param.mmin-l-1);
    ptind=repmat([true(nl,1); false(nl,1)],nmminlm1,1);
    coef=exp(-2*pi()*sqrt(-1)*(0:nl-1)/(2*nl))';
    coefv=repmat(coef,nmminlm1,1);
@@ -113,8 +93,8 @@ q=mean(yval);
 appxinteg(1)=q;
 
 %% Create kappanumap
-kappanumap=(1:n)'; %initialize map
-for l=mmin-1:-1:1
+kappanumap=(1:out_param.n)'; %initialize map
+for l=out_param.mmin-1:-1:1
    nl=2^l;
    oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
    newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa, 
@@ -125,18 +105,18 @@ for l=mmin-1:-1:1
 end
 
 %% Compute Stilde
-nllstart=int64(2^(mmin-mlag-1));
+nllstart=int64(2^(out_param.mmin-mlag-1));
 Stilde(1)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
-err=fudge*2^(-mmin)*Stilde(1);
-errest(1)=err;
-if err <= abstol; time=toc; return, end
+out_param.err=out_param.fudge*2^(-out_param.mmin)*Stilde(1);
+errest(1)=out_param.err;
+if out_param.err <= out_param.abstol; out_param.time=toc; return, end
 
 %% Loop over m
-for m=mmin+1:mmax 
-   n=2^m;
+for m=out_param.mmin+1:out_param.mmax 
+   out_param.n=2^m;
    mnext=m-1;
    nnext=2^mnext;
-   xnext=mod(lattice_gen(nnext+1,2*nnext,d)+shift,1);
+   xnext=mod(GAIL_Internal.lattice_gen(nnext+1,2*nnext,out_param.d)+out_param.shift,1);
    n0=n0+nnext;
    ynext=f(xnext);
    yval=[yval; ynext];
@@ -166,7 +146,7 @@ for m=mmin+1:mmax
    y(~ptind)=(evenval-coefv.*oddval)/2;
 
    %% Update kappanumap
-   kappanumap=[kappanumap; (nnext+1:n)']; %initialize map
+   kappanumap=[kappanumap; (nnext+1:out_param.n)']; %initialize map
    for l=m-1:-1:1
       nl=2^l;
       oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
@@ -179,42 +159,42 @@ for m=mmin+1:mmax
 
    %% Compute Stilde
    nllstart=int64(2^(m-mlag-1));
-   meff=m-mmin+1;
+   meff=m-out_param.mmin+1;
    Stilde(meff)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
-   err=fudge*2^(-m)*Stilde(meff);
-   errest(meff)=err;
+   out_param.err=out_param.fudge*2^(-m)*Stilde(meff);
+   errest(meff)=out_param.err;
 
    %% Approximate integral
    q=mean(yval);
    appxinteg(meff)=q;
-   if err <= abstol; time=toc; break
-    elseif m==mmax; warning('The maximum budget is attained without reaching the tolerance.');
+   if out_param.err <= out_param.abstol; out_param.time=toc; break
+    elseif m==out_param.mmax; warning('The maximum budget is attained without reaching the tolerance.');
    end
 
 end
-time=toc;
+out_param.time=toc;
+end
 
 
 
 
 
-
-
-function [f, out_param] = integral_g_param(varargin)
-% Parsing for the input of cubLattice
+%% Parsing for the input of cubLattice_g
+function [f, out_param] = cubLattice_g_param(varargin)
 
 % Default parameter values
 default.d  = 1;
 default.abstol  = 1e-4;
 default.density  = 'uniform';
 default.shift  = rand;
+default.mmin  = 10;
 default.mmax  = 24;
 default.fudge = 3;
 default.diff = 'C1sin';
 
 if isempty(varargin)
-    help integral_g
-    warning('Function f must be specified. Now GAIL is giving you a toy example of f(x)=x^2.')
+    help cubLattice_g
+    warning('At least, function f must be specified. Example for f(x)=x^2:')
     f = @(x) x.^2;
     out_param.f=f;
 else
@@ -222,113 +202,100 @@ else
     out_param.f=f;
 end;
 
-validvarargin=numel(varargin)>1;
+validvarargin=numel(varargin)>2;
 if validvarargin
-    in2=varargin{2};
-    validvarargin=(isnumeric(in2) || isstruct(in2) ...
-        || ischar(in2));
+    in3=varargin{3};
+    validvarargin=(isnumeric(in3) || isstruct(in3) ...
+        || ischar(in3));
 end
 
 if ~validvarargin
-    %if only one input f, use all the default parameters
-    out_param.a = default.a;
-    out_param.b = default.b;
-    out_param.absabstol = default.abstol;
-    out_param.nlo = default.nlo;
-    out_param.nhi = default.nhi;    
-    out_param.nmax = default.nmax;
+    % If only one input f or in2 is nothing above, use all the default parameters
+    warning(['MATLAB:cubLattice_g:mininputarg',' At least function and dimension must be specified and all parameters must be numeric or strings.'])
+    out_param.d = default.d;
+    out_param.abstol = default.abstol;
+    out_param.density = default.density;
+    out_param.shift = default.shift;
+    out_param.mmin = default.mmin;
+    out_param.mmax = default.mmax;  
+    out_param.fudge = default.fudge;
+    out_param.diff = default.diff;
 else
     p = inputParser;
-    addRequired(p,'f',@isfcn);
+    addRequired(p,'f',@GAIL_Internal.isfcn);
     if isnumeric(in2)%if there are multiple inputs with
         %only numeric, they should be put in order.
-        addOptional(p,'a',default.a,@isnumeric);
-        addOptional(p,'b',default.b,@isnumeric);
+        addOptional(p,'d',default.d,@isnumeric);
         addOptional(p,'abstol',default.abstol,@isnumeric);
-        addOptional(p,'nlo',default.nlo,@isnumeric);
-        addOptional(p,'nhi',default.nhi,@isnumeric);
-        addOptional(p,'nmax',default.nmax,@isnumeric);
+        addOptional(p,'density',default.density,...
+            @(x) any(validatestring(x, {'uniform','normal'})));
+        addOptional(p,'shift',default.shift,@isnumeric);
+        addOptional(p,'mmin',default.mmin,@isnumeric);
+        addOptional(p,'mmax',default.mmax,@isnumeric);
+        addOptional(p,'fudge',default.fudge,@isnumeric);
+        addOptional(p,'diff',default.diff,...
+            @(x) any(validatestring(x, {'Baker','C0','C1','C1sin'})));
     else
         if isstruct(in2) %parse input structure
             p.StructExpand = true;
             p.KeepUnmatched = true;
         end
-        addParamValue(p,'a',default.a,@isnumeric);
-        addParamValue(p,'b',default.b,@isnumeric);
+        addParamValue(p,'d',default.d,@isnumeric);
         addParamValue(p,'abstol',default.abstol,@isnumeric);
-        addParamValue(p,'nlo',default.nlo,@isnumeric);
-        addParamValue(p,'nhi',default.nhi,@isnumeric);
-        addParamValue(p,'nmax',default.nmax,@isnumeric);
+        addParamValue(p,'density',default.density,...
+            @(x) any(validatestring(x, {'uniform','normal'})));
+        addParamValue(p,'shift',default.shift,@isnumeric);
+        addParamValue(p,'mmin',default.mmin,@isnumeric);
+        addParamValue(p,'mmax',default.mmax,@isnumeric);
+        addParamValue(p,'fudge',default.fudge,@isnumeric);
+        addParamValue(p,'diff',default.diff,...
+            @(x) any(validatestring(x, {'Baker','C0','C1','C1sin'})));
     end
     parse(p,f,varargin{2:end})
     out_param = p.Results;
 end;
 
-if (out_param.a == inf||out_param.a == -inf||isnan(out_param.a)==1)
-    warning('MATLAB:integral_g:anoinfinity',['a can not be infinity nor NaN. Use default a = ' num2str(default.a)])
-    out_param.a = default.a;
-end;
-if (out_param.b == inf||out_param.b == -inf||isnan(out_param.b)==1)
-    warning('MATLAB:integral_g:bnoinfinity',['b can not be infinity not Nan. Use default b = ' num2str(default.b)])
-    out_param.b = default.b;
-end;
-if (out_param.b < out_param.a)
-    tmp = out_param.b;
-    out_param.b = out_param.a;
-    out_param.a = tmp;
-    flip=1;
+% For dimension to be positive integer
+if (~GAIL_Internal.isposint(out_param.d)) % Dimension should be a postitive integer
+    warning('MATLAB:cubLattice_g:dnotposint',...
+        ['The dimension should be a positive integer,'...
+        'We take the ceil of the the absolute value.'])
+    out_param.d = ceil(abs(out_param.d));
 end
 
-% let error tolerance greater than 0
+% Force error tolerance greater than 0
 if (out_param.abstol <= 0 )
-    warning(['MATLAB:integral_g:abstolnonpos','Error tolerance should be greater than 0.' ...
+    warning(['MATLAB:cubLattice_g:abstolnonpos','Error tolerance should be greater than 0.' ...
             ' Using default error tolerance ' num2str(default.abstol)])
     out_param.abstol = default.abstol;
 end
-% let initial number of points be a positive integer
-if (~isposint(out_param.nlo))
-    if isposge3(out_param.nlo)
-        warning('MATLAB:integral_g:lowinitnotint',['Lowest initial number of points should be a positive integer.' ...
-            ' Using ', num2str(ceil(out_param.nlo))])
-        out_param.nlo = ceil(out_param.nlo);
-    else
-        warning('MATLAB:integral_g:lowinitlt3',['Lowest initial number of points should be a positive integer.' ...
-            ' Using default number of points ' int2str(default.nlo)])
-        out_param.nlo = default.nlo;
-    end
-end
-if (~isposint(out_param.nhi))
-    if isposge3(out_param.nhi)
-        warning('MATLAB:integral_g:highinitnotint',['Highest initial number of points should be a positive integer.' ...
-            ' Using ', num2str(ceil(out_param.nhi))])
-        out_param.nhi = ceil(out_param.nhi);
-    else
-        warning('MATLAB:integral_g:highinitlt3',['Highest initial number of points should be a positive integer.' ...
-            ' Using default number of points ' int2str(default.nhi)])
-        out_param.nhi = default.nhi;
-    end
-end
-if (out_param.nlo > out_param.nhi)
-    if isposge3(out_param.nhi)
-        warning('MATLAB:integral_g:nlobtnhi',['Highest initial number of points should be at least equal to to lowest initial number of points.' ...
-            ' Using ', num2str(ceil(out_param.nhi)), ' as nlo'])
-        out_param.nlo = ceil(out_param.nhi);
-    else
-        warning('MATLAB:integral_g:highinitlt3',['Highest initial number of points should be a positive integer.' ...
-            ' Using default number of points ' int2str(default.nhi)])
-        out_param.nhi = default.nhi;
-    end
+
+%%%% Check density
+
+% Force mmin to be integer greater than 0
+if (out_param.mmin < 1 || ~GAIL_Internal.isposint(out_param.mmin))
+    warning(['MATLAB:cubLattice_g:lowmmin',' The minimum starting exponent should be an integer greater or equal than 1.' ...
+            ' Using default mmin ' num2str(default.mmin)])
+    out_param.mmin = default.mmin;
 end
 
-out_param.ninit = max(ceil(out_param.nhi*(out_param.nlo/out_param.nhi)^(1/(1+(out_param.b-out_param.a)))),3);
-if (~isposint(out_param.nmax))
-    if ispositive(out_param.nmax)
-        warning('MATLAB:integral_g:budgetnotint',['Cost budget should be a positive integer.' ...
-            ' Using cost budget ', num2str(ceil(out_param.nmax))])
-        out_param.nmax = ceil(out_param.nmax);
-    else
-        warning('MATLAB:integral_g:budgetisneg',['Cost budget should be a positive integer.' ...
-            ' Using default cost budget ' int2str(default.nmax)])
-        out_param.nmax = default.nmax;
-    end;
+% Force exponent budget number of points be a positive integer greater or equal than
+% mmin an smaller than 28
+if ~(GAIL_Internal.isposint(out_param.mmax) && out_param.mmax>=out_param.mmin && out_param.mmax<=27)
+    warning(['MATLAB:cubLattice_g:wrongmmax',' The maximum exponent for the budget should be an integer smaller or equal to 27.' ...
+            ' Using default mmax ' num2str(default.mmax)])
+    out_param.mmax = default.mmax;
 end
+
+% Force fudge factor to be greater than 0
+if (out_param.fudge <= 0 )
+    warning(['MATLAB:cubLattice_g:fudgenonpos','The fudge factor should be greater than 0.' ...
+            ' Using default fudge factor ' num2str(default.fudge)])
+    out_param.fudge = default.fudge;
+end
+
+
+%%%%% Check diff
+
+end
+
