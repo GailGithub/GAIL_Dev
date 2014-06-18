@@ -15,6 +15,7 @@
 % <html>
 % <a href="help_funappx_t.html">funappx_t</a>
 % <a href="help_integral_t.html">integral_t</a>
+% </html>
 %
 %
 %% Website

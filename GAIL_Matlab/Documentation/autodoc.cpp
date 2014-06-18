@@ -1,8 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <list>
-using std::list;
+#include <vector>
+using std::vector;
 using std::string;
 using std::ifstream;
 using std::ofstream;
@@ -14,7 +14,7 @@ int main(int argc, char** argv)
 {
   const string dataFolder("doc_data");
   ifstream doclist(dataFolder+"/DocList.txt"), intro(dataFolder+"/intro.m"), website(dataFolder+"/website.m");
-  list<string> fcnList, introList, websiteList;
+  vector<string> fcnList, introList, websiteList;
   string line;
   while (doclist >> line) {
     fcnList.push_back(line);
@@ -38,7 +38,7 @@ int main(int argc, char** argv)
   for (const auto &s : fcnList) {
     gail << "% <a href=\"help_" << s << ".html\">" << s << "</a>\n";
   }
-  gail << "</html>\n";
+  gail << "% </html>\n";
   gail << "%\n";
   gail << "%" << endl;
   for (const auto &s : websiteList) {
