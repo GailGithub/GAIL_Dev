@@ -223,7 +223,7 @@ if ~validvarargin
 else
     p = inputParser;
     addRequired(p,'f',@GAIL_Internal.isfcn);
-    if isnumeric(in2)%if there are multiple inputs with
+    if isnumeric(in3)%if there are multiple inputs with
         %only numeric, they should be put in order.
         addOptional(p,'d',default.d,@isnumeric);
         addOptional(p,'abstol',default.abstol,@isnumeric);
