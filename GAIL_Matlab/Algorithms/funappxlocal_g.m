@@ -1,33 +1,32 @@
 function [pp,out_param]=funappxlocal_g(varargin)
-%FUNAPPX_G 1-D guaranteed function recovery on a closed interval [a,b]
+%FUNAPPXLOCAL_G 1-D guaranteed function recovery on a closed interval [a,b]
 %
-%   pp = FUNAPPX_G(f) approximates function f on the default interval [0,1]
+%   pp = FUNAPPXLOCAL_G(f) approximates function f on the default interval [0,1]
 %   by a piecewise polynomial structure pp within the guaranteed absolute
-%   error tolerance of 1e-6. Default initial number of points is 100 and
-%   default cost budget is 1e7.  Input f is a function handle. The
+%   error tolerance of 1e-6. Input f is a function handle. The
 %   statement y = f(x) should accept a vector argument x and return a
 %   vector y of function values that is of the same size as x. Output pp
 %   may be evaluated via PPVAL.
 %   
-%   pp = FUNAPPX_G(f,a,b,abstol,nlo,nhi,nmax) for a given function f and
-%   the ordered input parameters that define the finite interval [a,b], a
-%   guaranteed absolute error tolerance abstol, a lower bound of initial
-%   number of points nlo, an upper bound of initial number of points nhi,
-%   and a cost budget nmax. 
+%   pp = FUNAPPXLOCAL_G(f,a,b,abstol,taulo,tauhi) for a given function f
+%   and the ordered input parameters that define the finite interval [a,b],
+%   a guaranteed absolute error tolerance abstol, a lower bound of initial
+%   cone condition taulo, and an upper bound of initial cone condition
+%   tauhi.
 %
-%   pp = FUNAPPX_G(f,'a',a,'b',b,'abstol',abstol,'nlo',nlo,'nhi',nhi,'nmax',nmax)
+%   pp =
+%   FUNAPPXLOCAL_G(f,'a',a,'b',b,'abstol',abstol,'taulo',taulo,'tauhi',tauhi)
 %   recovers function f on the finite interval [a,b], given a guaranteed
-%   absolute error tolerance abstol, a lower bound of initial number of
-%   points nlo, an upper bound of initial number of points nhi, and a cost
-%   budget nmax. All six field-value pairs are optional and can be supplied
-%   in different order.
+%   absolute error tolerance abstol, a lower bound of initial cone
+%   condition taulo, and an upper bound of initial cone condition tauhi.
+%   All five field-value pairs are optional and can be supplied in
+%   different order.
 %
-%   pp = FUNAPPX_G(f,in_param) recovers function f on the finite interval
-%   [in_param.a,in_param.b], given a guaranteed absolute error tolerance
-%   in_param.abstol, a lower bound of initial number of points
-%   in_param.nlo, an upper bound of initial number of points in_param.nhi,
-%   and a cost budget in_param.nmax. If a field is not specified, the
-%   default value is used.
+%   pp = FUNAPPXLOCAL_G(f,in_param) recovers function f on the finite
+%   interval [in_param.a,in_param.b], given a guaranteed absolute error
+%   tolerance in_param.abstol, a lower bound of initial cone condition
+%   in_param.taulo, an upper bound of initial cone condition
+%   in_param.tauhi. If a field is not specified, the default value is used.
 %
 %     in_param.a --- left end point of interval, default value is 0
 %
@@ -36,15 +35,13 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %     in_param.abstol --- guaranteed absolute error tolerance, default
 %     value is 1e-6
 %
-%     in_param.nlo --- lower bound of initial number of points we used,
-%     default value is 10
+%     in_param.taulo --- lower bound of cone condition we used,
+%     default value is 9
 %
-%     in_param.nhi --- upper bound of initial number of points we used,
-%     default value is 1000
+%     in_param.tauhi --- upper bound of cone condition we used,
+%     default value is 100
 %
-%     in_param.nmax --- cost budget, default value is 1e7
-%
-%   [pp, out_param] = FUNAPPX_G(f,...) returns a piecewise polynomial
+%   [pp, out_param] = FUNAPPXLOCAL_G(f,...) returns a piecewise polynomial
 %   structure pp and an output structure out_param, which has the following
 %   fields:
 %
@@ -62,9 +59,6 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %
 %     pp.orient --- always be 'first'
 %
-%     out_param.exceedbudget --- it is 0 if the number of points used in 
-%     the construction of pp is less than cost budget, 1 otherwise.
-%
 %     out_param.ninit --- initial number of points we use
 %
 %     out_param.npoints --- number of points we need to reach the 
@@ -72,9 +66,8 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %
 %     out_param.errorbound --- an upper bound of the absolute error
 %
-%     out_param.nstar --- final value of the parameter defining the cone of
-%     functions for which this algorithm is guaranteed; nstar = ninit-2
-%     initially and is increased as necessary
+%     out_param.tau --- a vector indicate the cone condition of each
+%     subinterval
 %
 %     out_param.a --- left end point of interval
 %
@@ -82,28 +75,9 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %
 %     out_param.abstol --- guaranteed absolute error tolerance
 %
-%     out_param.nlo --- a lower bound of initial number of points we use
+%     out_param.taulo --- a lower bound of cone condtion
 %
-%     out_param.nhi --- an upper bound of initial number of points we use
-%
-%     out_param.nmax --- cost budget
-%
-%
-%  Guarantee
-%    
-%  If the function to be approximated, f, satisfies the cone condition
-%                          2 nstar   ||     f(b)-f(a)  ||
-%      ||f''||        <=  ---------  ||f'- ----------- ||
-%             \infty        b - a    ||       b - a    ||\infty,
-%  then the pp output by this algorithm is guaranteed to satisfy
-%      ||f-ppval(pp, )||\infty <= abstol,
-%  and the upper bound of the cost is
-%          ____________________________
-%         / nstar*(b-a)^2 ||f''||\infty 
-%        / ---------------------------- + 2 nstar + 4
-%      \/          2 abstol
-%
-%  provided the flag exceedbudget = 0.
+%     out_param.tauhi --- an upper bound of cone condition
 %
 %
 %   Examples
@@ -431,7 +405,7 @@ if (~isposint(out_param.taulo))
     else
         warning('MATLAB:funappx_g:lowtault2',[' Lower bound of cone condition of points should be a positive integer.' ...
             ' Using default number of points ' int2str(default.taulo)])
-        out_param.taulo = default.nlo;
+        out_param.taulo = default.taulo;
     end
 end
 if (~isposint(out_param.tauhi))

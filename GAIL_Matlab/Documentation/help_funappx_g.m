@@ -58,7 +58,7 @@
 %  default value is 10|
 %
 % * in_param.nhi --- |upper bound of initial number of points we used,
-%  default value is 100|
+%  default value is 1000|
 %
 % * in_param.nmax --- |cost budget, default value is 1e7|
 %
@@ -100,9 +100,9 @@
 %
 % * out_param.abstol --- |guaranteed absolute error|
 % 
-% * out_param.nlo --- |lower bound of initial number of points we used|
+% * out_param.nlo --- |a lower bound of initial number of points we used|
 %
-% * out_param.nhi --- |higher bound of initial number of points we used|
+% * out_param.nhi --- |an upper bound of initial number of points we used|
 %
 %% Guarantee
 %    

@@ -1,0 +1,305 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>funappxlocal_g</title><meta name="generator" content="MATLAB 8.1"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-06-25"><meta name="DC.source" content="help_funappxlocal_g.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>funappxlocal_g</h1><!--introduction--><p><tt>1-D guaranteed function recovery on closed interval [a,b].</tt></p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Syntax</a></li><li><a href="#2">Description</a></li><li><a href="#3">Guarantee</a></li><li><a href="#4">Examples</a></li><li><a href="#7">See Also</a></li><li><a href="#8">Reference</a></li></ul></div><h2>Syntax<a name="1"></a></h2><p>pp = <b>funappxlocal_g</b>(f)</p><p>pp = <b>funappxlocal_g</b>(f,a,b,abstol,taulo,tauhi)</p><p>pp = <b>funappxlocal_g</b>(f,'a',a,'b',b,'abstol',abstol,'taulo',taulo,'tauhi',tauhi)</p><p>pp = <b>funappxlocal_g</b>(f,in_param)</p><p>[pp, out_param] = <b>funappxlocal_g</b>(f,...)</p><h2>Description<a name="2"></a></h2><p>pp = <b>funappxlocal_g</b>(f) <tt>recovers function</tt>  f  <tt>on the default interval  [0,1] by a piecewise polynomial structure pp to within the guaranteed  absolute error tolerance of 1e-6. Input</tt> f <tt>is a function handle. The  statement</tt> y=f(x) <tt>should accept a vector argument x and return a  vector y of function values that is the same size as x. Output pp   may be evaluated via</tt> ppval.</p><p>pp = <b>funappxlocal_g</b>(f,a,b,abstol,taulo,tauhi,nmax) <tt>for a given function</tt> f <tt>and the ordered input parameters that define the finite interval [a,b], a guaranteed absolute error tolerance bstol, a lower bound of cone condition taulo, and an upper bound of cone condition tauhi.</tt></p><p>pp = <b>funappxlocal_g</b>(f,'a',a,'b',b,'abstol',abstol,'taulo',taulo,'tauhi',tauhi,'nmax',nmax)  <tt>recovers function</tt>  f  <tt>on the finite interval [a, b], given a  guaranteed absolute error tolerance abstol,a lower bound of initial cone  condition taulo, and an upper bound of initial cone condition tauhi.  All five field-value pairs are optional and can be supplied in  different order.</tt></p><p>pp = <b>funappxlocal_g</b>(f,in_param) <tt>recovers function</tt>  f  <tt>on the finite  interval [in_param.a, in_param.b], given a guaranteed absolute error  tolerance in_param.abstol, a lower bound of initial cone condition  in_param.taulo, an upper bound of initial cone condition  in_param.tauhi. If a field is not specified, the default value is  used.</tt></p><p>[pp, out_param] = <b>funappxlocal_g</b>(f,...) <tt>returns a piecewise polynomial   structure pp and an output structure out_param.</tt></p><p><b>Input Arguments</b></p><div><ul><li>f --- <tt>function handle</tt></li></ul></div><div><ul><li>in_param.a --- <tt>left end point of interval, default value is 0</tt></li></ul></div><div><ul><li>in_param.b --- <tt>right end point of interval, default value is 1</tt></li></ul></div><div><ul><li>in_param.abstol --- <tt>guaranteed absolute error tolerance, default value  is 1e-6</tt></li></ul></div><div><ul><li>in_param.taulo --- <tt>lower bound of initial number of points we used,  default value is 9</tt></li></ul></div><div><ul><li>in_param.tauhi --- <tt>upper bound of initial number of points we used,  default value is 100</tt></li></ul></div><p><b>Output Arguments</b></p><div><ul><li>pp.form --- <tt>pp means piecewise polynomials</tt></li></ul></div><div><ul><li>pp.breaks --- <tt>show the location of interpolation points</tt></li></ul></div><div><ul><li>pp.coefs --- <tt>coefficients for piecewise linear polynomials</tt></li></ul></div><div><ul><li>pp.pieces --- <tt>number of piecewise linear polynomials</tt></li></ul></div><div><ul><li>pp.order --- <tt>be 2 as we use piecewise linear polynomials</tt></li></ul></div><div><ul><li>pp.dim --- <tt>be 1 as we do univariate approximation</tt></li></ul></div><div><ul><li>pp.orient --- <tt>always be 'first'</tt></li></ul></div><div><ul><li>out_param.ninit --- <tt>initial number of points we used</tt></li></ul></div><div><ul><li>out_param.npoints --- <tt>number of points we need to reach the guaranteed absolute error</tt></li></ul></div><div><ul><li>out_param.errorbound --- <tt>an upper bound of the absolute error</tt></li></ul></div><div><ul><li>out_param.tau --- <tt>a vector indicate the cone condition of each subinterval</tt></li></ul></div><div><ul><li>out_param.a --- <tt>left end point of interval</tt></li></ul></div><div><ul><li>out_param.b --- <tt>right end point of interval</tt></li></ul></div><div><ul><li>out_param.abstol --- <tt>guaranteed absolute error</tt></li></ul></div><div><ul><li>out_param.taulo --- <tt>a lower bound of cone condtion</tt></li></ul></div><div><ul><li>out_param.tauhi --- <tt>an upper bound of cone condtion</tt></li></ul></div><h2>Guarantee<a name="3"></a></h2><h2>Examples<a name="4"></a></h2><p><b>Example 1</b></p><pre class="codeinput">f = @(x) exp(-100*x.^2); [pp, out_param] = funappxlocal_g(f)
+
+<span class="comment">% Approximate function e^{-100x^2} with default input parameter to make the</span>
+<span class="comment">% error less than 1e-6.</span>
+</pre><pre class="codeoutput">
+pp = 
+
+      form: 'pp'
+    breaks: [1x2769 double]
+     coefs: [2768x2 double]
+    pieces: 2768
+     order: 2
+       dim: 1
+    orient: 'first'
+
+
+out_param = 
+
+             f: @(x)exp(-100*x.^2)
+             a: 0
+             b: 1
+        abstol: 1.0000e-06
+         taulo: 9
+         tauhi: 100
+       npoints: 2769
+    errorbound: 9.9193e-07
+           tau: [1x173 double]
+
+</pre><p><b>Example 2</b></p><pre class="codeinput">[pp, out_param] = funappxlocal_g(@(x) exp(-100*x.^2),0,10,1e-7,10,1000)
+
+<span class="comment">% Approximate function e^{-100x^2} on [0,10] with error tolerence</span>
+<span class="comment">% 1e-7,lower bound of initial number of points 10 and upper bound of</span>
+<span class="comment">% initial number of points 100</span>
+</pre><pre class="codeoutput">
+pp = 
+
+      form: 'pp'
+    breaks: [1x9901 double]
+     coefs: [9900x2 double]
+    pieces: 9900
+     order: 2
+       dim: 1
+    orient: 'first'
+
+
+out_param = 
+
+             a: 0
+        abstol: 1.0000e-07
+             b: 10
+             f: @(x)exp(-100*x.^2)
+         tauhi: 1000
+         taulo: 10
+       npoints: 9901
+    errorbound: 9.9609e-08
+           tau: [1x30 double]
+
+</pre><p><b>Example 3</b></p><pre class="codeinput">clear <span class="string">in_param</span>; in_param.a = -10; in_param.b = 10; in_param.taulo = 10;
+in_param.tauhi = 100; in_param.abstol = 1e-7;
+[pp, out_param] = funappxlocal_g(@(x) exp(-100*x.^2), in_param)
+
+<span class="comment">% Approximate function e^{-100x^2} on [-20,20] with error tolerence 1e-7,</span>
+<span class="comment">% cost budget 1000000, lower bound of initial number of points 10 and upper</span>
+<span class="comment">% bound of initial number of points 100</span>
+</pre><pre class="codeoutput">
+pp = 
+
+      form: 'pp'
+    breaks: [1x17021 double]
+     coefs: [17020x2 double]
+    pieces: 17020
+     order: 2
+       dim: 1
+    orient: 'first'
+
+
+out_param = 
+
+             a: -10
+        abstol: 1.0000e-07
+             b: 10
+             f: @(x)exp(-100*x.^2)
+         tauhi: 100
+         taulo: 10
+       npoints: 17021
+    errorbound: 9.9628e-08
+           tau: [1x370 double]
+
+</pre><h2>See Also<a name="7"></a></h2><p> <a href="help_integral_g.html">integral_g</a> </p><p> <a href="help_meanMC_g.html">meanMC_g</a> </p><p> <a href="help_cubMC_g.html">cubMC_g</a> </p><h2>Reference<a name="8"></a></h2><p>[1]  N. Clancy, Y. Ding, C. Hamilton, F. J. Hickernell, and Y. Zhang, The Cost of Deterministic, Adaptive, Automatic Algorithms:  Cones, Not Balls, Journal of Complexity 30 (2014) 21&#8211;45</p><p>[2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, and Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library (Version 1.3.0)" [MATLAB Software], 2014. Available from <a href="http://code.google.com/p/gail/">http://code.google.com/p/gail/</a></p><p>If you find GAIL helpful in your work, please support us by citing the above paper and software.</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2013a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% funappxlocal_g
+% |1-D guaranteed function recovery on closed interval [a,b].|
+%% Syntax
+% pp = *funappxlocal_g*(f)
+%
+% pp = *funappxlocal_g*(f,a,b,abstol,taulo,tauhi)
+%
+% pp = *funappxlocal_g*(f,'a',a,'b',b,'abstol',abstol,'taulo',taulo,'tauhi',tauhi)
+%
+% pp = *funappxlocal_g*(f,in_param)
+%
+% [pp, out_param] = *funappxlocal_g*(f,...)
+%% Description
+% 
+% pp = *funappxlocal_g*(f) |recovers function|  f  |on the default interval
+%  [0,1] by a piecewise polynomial structure pp to within the guaranteed
+%  absolute error tolerance of 1e-6. Input| f |is a function handle. The
+%  statement| y=f(x) |should accept a vector argument x and return a
+%  vector y of function values that is the same size as x. Output pp
+%   may be evaluated via| ppval.
+%
+% pp = *funappxlocal_g*(f,a,b,abstol,taulo,tauhi,nmax) |for a given
+% function| f |and the ordered input parameters that define the finite 
+% interval [a,b], a guaranteed absolute error tolerance bstol, a lower
+% bound of cone condition taulo, and an upper bound of cone condition tauhi.|
+%
+% pp =
+% *funappxlocal_g*(f,'a',a,'b',b,'abstol',abstol,'taulo',taulo,'tauhi',tauhi,'nmax',nmax)
+%  |recovers function|  f  |on the finite interval [a, b], given a
+%  guaranteed absolute error tolerance abstol,a lower bound of initial cone
+%  condition taulo, and an upper bound of initial cone condition tauhi.
+%  All five field-value pairs are optional and can be supplied in
+%  different order.|
+%
+% pp = *funappxlocal_g*(f,in_param) |recovers function|  f  |on the finite
+%  interval [in_param.a, in_param.b], given a guaranteed absolute error
+%  tolerance in_param.abstol, a lower bound of initial cone condition
+%  in_param.taulo, an upper bound of initial cone condition
+%  in_param.tauhi. If a field is not specified, the default value is
+%  used.|
+%
+% [pp, out_param] = *funappxlocal_g*(f,...) |returns a piecewise polynomial
+%   structure pp and an output structure out_param.|
+%
+% *Input Arguments*
+% 
+% * f REPLACE_WITH_DASH_DASH- |function handle|
+%
+% * in_param.a REPLACE_WITH_DASH_DASH- |left end point of interval, default value is 0|
+%
+% * in_param.b REPLACE_WITH_DASH_DASH- |right end point of interval, default value is 1|
+%
+% * in_param.abstol REPLACE_WITH_DASH_DASH- |guaranteed absolute error tolerance, default value
+%  is 1e-6|
+%
+% * in_param.taulo REPLACE_WITH_DASH_DASH- |lower bound of initial number of points we used,
+%  default value is 9|
+%
+% * in_param.tauhi REPLACE_WITH_DASH_DASH- |upper bound of initial number of points we used,
+%  default value is 100|
+%
+% *Output Arguments*
+%
+% * pp.form REPLACE_WITH_DASH_DASH- |pp means piecewise polynomials|
+%
+% * pp.breaks REPLACE_WITH_DASH_DASH- |show the location of interpolation points|
+%
+% * pp.coefs REPLACE_WITH_DASH_DASH- |coefficients for piecewise linear polynomials|
+%
+% * pp.pieces REPLACE_WITH_DASH_DASH- |number of piecewise linear polynomials|
+%
+% * pp.order REPLACE_WITH_DASH_DASH- |be 2 as we use piecewise linear polynomials|
+%
+% * pp.dim REPLACE_WITH_DASH_DASH- |be 1 as we do univariate approximation|
+%
+% * pp.orient REPLACE_WITH_DASH_DASH- |always be 'first'|
+%
+% * out_param.ninit REPLACE_WITH_DASH_DASH- |initial number of points we used|
+%
+% * out_param.npoints REPLACE_WITH_DASH_DASH- |number of points we need to reach the guaranteed
+% absolute error|
+% 
+% * out_param.errorbound REPLACE_WITH_DASH_DASH- |an upper bound of the absolute error|
+% 
+% * out_param.tau REPLACE_WITH_DASH_DASH- |a vector indicate the cone condition of each
+% subinterval|
+%
+% * out_param.a REPLACE_WITH_DASH_DASH- |left end point of interval|
+%
+% * out_param.b REPLACE_WITH_DASH_DASH- |right end point of interval|
+%
+% * out_param.abstol REPLACE_WITH_DASH_DASH- |guaranteed absolute error|
+% 
+% * out_param.taulo REPLACE_WITH_DASH_DASH- |a lower bound of cone condtion|
+%
+% * out_param.tauhi REPLACE_WITH_DASH_DASH- |an upper bound of cone condtion|
+%
+%% Guarantee
+
+%% Examples
+% *Example 1*
+
+f = @(x) exp(-100*x.^2); [pp, out_param] = funappxlocal_g(f)
+
+% Approximate function e^{-100x^2} with default input parameter to make the
+% error less than 1e-6.
+%%
+% *Example 2*
+
+[pp, out_param] = funappxlocal_g(@(x) exp(-100*x.^2),0,10,1e-7,10,1000)
+
+% Approximate function e^{-100x^2} on [0,10] with error tolerence
+% 1e-7,lower bound of initial number of points 10 and upper bound of
+% initial number of points 100
+
+%%
+% *Example 3*
+
+clear in_param; in_param.a = -10; in_param.b = 10; in_param.taulo = 10;
+in_param.tauhi = 100; in_param.abstol = 1e-7; 
+[pp, out_param] = funappxlocal_g(@(x) exp(-100*x.^2), in_param)
+
+% Approximate function e^{-100x^2} on [-20,20] with error tolerence 1e-7,
+% cost budget 1000000, lower bound of initial number of points 10 and upper
+% bound of initial number of points 100
+%% See Also
+%
+% <html> <a href="help_integral_g.html">integral_g</a> </html>
+%
+% <html> <a href="help_meanMC_g.html">meanMC_g</a> </html>
+%
+% <html> <a href="help_cubMC_g.html">cubMC_g</a> </html>
+%
+%% Reference
+% [1]  N. Clancy, Y. Ding, C. Hamilton, F. J. Hickernell, and Y. Zhang, The
+% Cost of Deterministic, Adaptive, Automatic Algorithms:  Cones, Not Balls,
+% Journal of Complexity 30 (2014) 21–45
+%
+% [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, and
+% Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library (Version
+% 1.3.0)" [MATLAB Software], 2014. Available from
+% http://code.google.com/p/gail/
+%
+% If you find GAIL helpful in your work, please support us by citing the
+% above paper and software.
+%
+##### SOURCE END #####
+--></body></html>
