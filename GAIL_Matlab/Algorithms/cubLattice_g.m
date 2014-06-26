@@ -1,11 +1,10 @@
 function [q,out_param]=cubLattice_g(varargin)
-% (f,d,abstol,density,shift,mmin, mmax, fudge,diff)
-% cubLattice_g is a Quasi-Monte Carlo method using rank-1 lattices to evaluate
-% a multidimensional integration within a specified absolute error 
+% cubLattice_g is a Quasi-Monte Carlo method using rank-1 Lattices cubature
+% over the d-multidimensional region to integrate within a specified absolute error 
 % tolerance with guarantees under Fourier coefficients cone decay assumptions.
 %
 % [q,out_param] = cubLattice_g(f,d) estimates the integral of f over the
-% unit hypercube [0,1)^d to within a predefined absolute error tolerance
+% d-dimensional region to within a predefined absolute error tolerance
 % 1e-4 and with guaranteed error. Input f is a function handle. f should
 % accept an n x d matrix input, where d is the dimension of the hypercube,
 % and n is the number of points being evaluated simultaneously. The input d
@@ -13,27 +12,25 @@ function [q,out_param]=cubLattice_g(varargin)
 % construction of our Lattices, d must be a positive integer with 1<=d<=100.
 %
 % q = cubLattice_g(f,d,abstol,density,shift,mmin,mmax,fudge,diff)
-% estimates the integral of f over [0,1)^d if the denstity is uniform
-% or over R^d if the density is normal. The answer is given within the
-% absolute error tolerance abstol. All parameters should be input in the
-% order specified above. If an input is not specified, the default value is
-% used. Note that if an input is not specified, the remaining tail can not
-% be specified either.
+% estimates the integral of f over the d-dimensional region. The answer
+% is given within the absolute error tolerance abstol. All parameters
+% should be input in the order specified above. If an input is not specified,
+% the default value is used. Note that if an input is not specified,
+% the remaining tail can not be specified either.
 %
 % q = cubLattice_g(f,d,'abstol',abstol,'density',density,'shift',shift,'mmin',mmin,'mmax',mmax,'fudge',fudge,'diff',diff)
-% estimates the integral of f over [0,1)^d if the denstity is uniform
-% or over R^d if the density is normal. The answer is given within the
-% absolute error tolerance abstol. All the field-value pairs are optional
-% and can be supplied with any order. If an input is not specified, the
-% default value is used.
+% estimates the integral of f over the d-dimensional region. The answer
+% is given within the absolute error tolerance abstol. All the field-value
+% pairs are optional and can be supplied with any order. If an input is not
+% specified, the default value is used.
 %
-% q = cubLattice_g(f,d,in_param) estimates the integral of f over [0,1)^d 
-% if the denstity is uniform or over R^d if the density is normal. The
-% answer is given within the absolute error tolerance in_param.abstol
+% q = cubLattice_g(f,d,in_param) estimates the integral of f over the
+% d-dimensional region. The answer is given within the absolute error 
+% tolerance in_param.abstol.
 %
 % f --- the integrand.
 %
-% d --- dimension where f is defined. d must be a positive integer.
+% d --- dimension where f is defined. d must be a positive integer 1<=d<=100.
 %
 % in_param.abstol --- the absolute error tolerance, abstol>0. By default is 1e-4. 
 %
@@ -70,6 +67,9 @@ function [q,out_param]=cubLattice_g(varargin)
 %
 % q --- the estimated value of the integral.
 %
+% out_param.overbudget --- string stating whether the max budget is
+% attained without reaching the guaranteed error tolerance.
+%
 % out_param.n --- number of points used when calling cubLattice_g for f.
 %
 % out_param.pred_err --- predicted bound on the error based on the cone
@@ -99,12 +99,12 @@ function [q,out_param]=cubLattice_g(varargin)
 % 
 % 
 % Example 2:
-% Estimate the integral with integrand f(x) = x1.^2.*x2.^2.*x3.^2
+% Estimate the integral with integrand f(x) = x1.^2.*x2.^2.*x3.^2+0.11
 % in the interval R^3 where x1, x2 and x3 are normally distributed:
 %
-% >> f=@(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2; d=3;
+% >> f=@(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2+0.11; d=3;
 % >> q=cubLattice_g(f,d,1e-3,'normal','diff','C1sin')
-% q=1.00***
+% q=1.1****
 % 
 %
 % Example 3: 
@@ -142,6 +142,7 @@ function [q,out_param]=cubLattice_g(varargin)
 % above paper and software.
 
 
+tic
 %% Check and initialize parameters
 [f,out_param] = cubLattice_g_param(varargin{:});
 
@@ -159,11 +160,11 @@ elseif strcmp(out_param.diff,'C1sin')
 end
 
 %% Main algorithm
-tic
 mlag=4;
 Stilde=zeros(out_param.mmax-out_param.mmin+1,1);
 errest=zeros(out_param.mmax-out_param.mmin+1,1);
 appxinteg=zeros(out_param.mmax-out_param.mmin+1,1);
+out_param.overbudget='Max budget reached with no guarantees.';
 
 %% Initial points and FWT
 out_param.n=2^out_param.mmin;
@@ -205,7 +206,7 @@ nllstart=int64(2^(out_param.mmin-mlag-1));
 Stilde(1)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
 out_param.pred_err=out_param.fudge*2^(-out_param.mmin)*Stilde(1);
 errest(1)=out_param.pred_err;
-if out_param.pred_err <= out_param.abstol; out_param.time=toc; return, end
+if out_param.pred_err <= out_param.abstol; out_param.overbudget='Max budget not reached.'; out_param.time=toc; return, end
 
 %% Loop over m
 for m=out_param.mmin+1:out_param.mmax 
@@ -263,9 +264,7 @@ for m=out_param.mmin+1:out_param.mmax
    %% Approximate integral
    q=mean(yval);
    appxinteg(meff)=q;
-   if out_param.pred_err <= out_param.abstol; out_param.time=toc; break
-    elseif m==out_param.mmax; warning('The maximum budget is attained without reaching the tolerance.');
-   end
+   if out_param.pred_err <= out_param.abstol; out_param.overbudget='Max budget not reached.'; out_param.time=toc; return, end
 
 end
 out_param.time=toc;
