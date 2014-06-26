@@ -264,7 +264,7 @@ if ~validvarargin
     out_param.checked = default.checked;
 else % if there is some optional input 
     p = inputParser;
-    addRequired(p,'f',@isfcn);
+    addRequired(p,'f',@GAIL_Internal.isfcn);
     addRequired(p,'hyperbox',@isnumeric);
     if isnumeric(in3) || ischar(in3)
         %if there are multiple inputs with only numeric, they should be put
@@ -349,7 +349,7 @@ if out_param.checked == 0
             'use the the default value.'])
         out_param.alpha = default.alpha;
     end
-    if (~isposint(out_param.n_sigma)) %the sample to estimate sigma
+    if (~GAIL_Internal.isposint(out_param.n_sigma)) %the sample to estimate sigma
         warning('MATLAB:cubMC_g:nsignotposint',...
             ['the number n_sigma should a positive integer,'...
             'take the absolute value and ceil.'])
@@ -366,13 +366,13 @@ if out_param.checked == 0
             'use the absolute value of time budget'])
         out_param.tbudget = abs(out_param.tbudget);
     end
-    if (~isposint(out_param.nbudget)) % sample budget should be a postitive integer
+    if (~GAIL_Internal.isposint(out_param.nbudget)) % sample budget should be a postitive integer
         warning('MATLAB:cubMC_g:nbudgetnotposint',...
             ['the number of sample budget should be a positive integer,'...
             'take the absolute value and ceil.'])
         out_param.nbudget = ceil(abs(out_param.nbudget));
     end
-    if (~isposint(out_param.npcmax))
+    if (~GAIL_Internal.isposint(out_param.npcmax))
         % maximum number of scalar values of x per vector should be a positive integer
         warning('MATLAB:cubMC_g:npcmaxnotposint',...
             ['the number of each piece of the samples should be' ...
