@@ -58,7 +58,7 @@ function [p,out_param]=meanMCBernoulli_g(varargin)
 % Calculate the mean of a bernoulli random variable with true p=0.55,with
 % error tolerance 1e-3 and uncertainty 0.01.
 % 
-% >> in_param.abstol=1e-3; in_param.alpha = 0.01; p=1/90;Yrand=@(n) binornd(1,p,n,1);
+% >> in_param.abstol=1e-3; in_param.alpha = 0.01; p=1/90;Yrand=@(n) rand(n,1)<p;
 % >> p=meanMCBernoulli_g(Yrand,in_param)
 % p = 0.01***
 % 
@@ -145,9 +145,10 @@ default.nmax = 1e8;% default n maximum
 if isempty(varargin)
     help meanMCBernoulli_g
     warning('MATLAB:meanMCBernoulli_g:yrandnotgiven',...
-        'Yrand must be specified. Now GAIL is using Yrand = (binornd(1,0.5,n,1)).^2.')
-    p = 0.5*2^(-8);
-    Yrand = @(n) (binornd(1,p,n,1)).^2;
+        ['Yrand must be specified. Now GAIL is using Bernoulli random ', ...
+    'variable with parameter 0.0078.'])
+    p = 2^(-7);
+    Yrand = @(n) rand(n,1)<p;
     %give the error message
 else
     Yrand = varargin{1};
