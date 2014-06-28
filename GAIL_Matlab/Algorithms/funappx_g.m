@@ -234,6 +234,8 @@ function [pp,out_param]=funappx_g(varargin)
 %       errorbound: 2.8721e-10
 %
 %
+%   >> bad test TO BE REMOVED 
+%
 %   See also INTEGRAL_G, MEANMC_G, CUBMC_G
 %
 %
