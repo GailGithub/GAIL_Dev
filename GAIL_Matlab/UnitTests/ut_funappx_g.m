@@ -141,5 +141,7 @@ classdef ut_funappx_g < matlab.unittest.TestCase
       testCase.verifyLessThanOrEqual(result.npoints,result.nmax);
     end
     
+    function bad_test(testcase
+    
   end
 end
