@@ -81,7 +81,7 @@ function [q,out_param]=cubSobol_g(varargin)
 %
 % >> f=@(x) x(:,1).*x(:,2); d=2;
 % >> q=cubSobol_g(f,d,1e-5,'uniform')
-% q=0.25**
+% q = 0.25***
 % 
 % 
 % Example 2:
@@ -90,7 +90,7 @@ function [q,out_param]=cubSobol_g(varargin)
 %
 % >> f=@(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2+0.11; d=3;
 % >> q=cubSobol_g(f,d,1e-3,'normal')
-% q=1.1****
+% q = 1.1***
 % 
 %
 % Example 3: 
@@ -99,7 +99,7 @@ function [q,out_param]=cubSobol_g(varargin)
 % 
 % >> f=@(x) exp(-x(:,1).^2-x(:,2).^2); d=2;
 % >> q=cubSobol_g(f,d,1e-3,'uniform')
-% q=0.55***
+% q = 0.55***
 %
 %
 % Example 4: 
@@ -108,7 +108,7 @@ function [q,out_param]=cubSobol_g(varargin)
 % 
 % >> f=@(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); d=1;
 % >> q=cubSobol_g(f,d,1e-4,'normal')
-% q=2.05***
+% q = 2.05***
 %
 %
 %
@@ -258,7 +258,8 @@ default.fudge = 3;
 
 if numel(varargin)<2
     help cubSobol_g
-    warning('At least, function f and dimension d of f must be specified. Example for f(x)=x^2:')
+    warning('MATLAB:cubSobol_g:fdnotgiven',...
+        'At least, function f and dimension d of f must be specified. Example for f(x)=x^2:')
     f = @(x) x.^2;
     out_param.f=f;
     out_param.d=1;
@@ -267,7 +268,8 @@ else
     out_param.f=f;
     d = varargin{2};
     if ~isnumeric(d) || ~GAIL_Internal.isposint(d)
-        warning('The dimension d of f must be a positive integer. Example for f(x)=x^2:')
+        warning('MATLAB:cubSobol_g:dnotposint',...
+            'The dimension d of f must be a positive integer. Example for f(x)=x^2:')
         f = @(x) x.^2;
         out_param.f=f;
         out_param.d=1;

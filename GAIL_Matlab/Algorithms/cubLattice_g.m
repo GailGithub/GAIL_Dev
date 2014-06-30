@@ -95,7 +95,7 @@ function [q,out_param]=cubLattice_g(varargin)
 %
 % >> f=@(x) x(:,1).*x(:,2); d=2;
 % >> q=cubLattice_g(f,d,1e-5,'uniform','diff','C1sin')
-% q=0.25**
+% q = 0.25***
 % 
 % 
 % Example 2:
@@ -104,7 +104,7 @@ function [q,out_param]=cubLattice_g(varargin)
 %
 % >> f=@(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2+0.11; d=3;
 % >> q=cubLattice_g(f,d,1e-3,'normal','diff','C1sin')
-% q=1.1****
+% q = 1.1***
 % 
 %
 % Example 3: 
@@ -113,7 +113,7 @@ function [q,out_param]=cubLattice_g(varargin)
 % 
 % >> f=@(x) exp(-x(:,1).^2-x(:,2).^2); d=2;
 % >> q=cubLattice_g(f,d,1e-3,'uniform','diff','C1')
-% q=0.55***
+% q = 0.55***
 %
 %
 % Example 4: 
@@ -122,7 +122,7 @@ function [q,out_param]=cubLattice_g(varargin)
 % 
 % >> f=@(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); d=1;
 % >> q=cubLattice_g(f,d,1e-4,'normal','diff','C1sin')
-% q=2.05***
+% q = 2.05***
 %
 %
 %
@@ -285,7 +285,8 @@ default.diff = 'id';
 
 if numel(varargin)<2
     help cubLattice_g
-    warning('At least, function f and dimension d of f must be specified. Example for f(x)=x^2:')
+    warning('MATLAB:cubLattice_g:fdnotgiven',...
+        'At least, function f and dimension d of f must be specified. Example for f(x)=x^2:')
     f = @(x) x.^2;
     out_param.f=f;
     out_param.d=1;
@@ -294,7 +295,8 @@ else
     out_param.f=f;
     d = varargin{2};
     if ~isnumeric(d) || ~GAIL_Internal.isposint(d)
-        warning('The dimension d of f must be a positive integer. Example for f(x)=x^2:')
+        warning('MATLAB:cubLattice_g:dnotposint',...
+            'The dimension d of f must be a positive integer. Example for f(x)=x^2:')
         f = @(x) x.^2;
         out_param.f=f;
         out_param.d=1;
