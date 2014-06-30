@@ -37,12 +37,16 @@ int main()
     websiteList.push_back(line);
   }
   ifs.close();
-  ofstream gail("GAIL_t.m"), ofs;
+  ofstream gail("GAIL_t.m"), helptoc("html/helptoc_t.xml"), ofs;
+  helptoc << "<?xml version='1.0' encoding='ISO-8859-1' ?>\n\n<toc version=\"1.0\">\n\n"
+          << "<tocitem target=\"GAIL.html\">GAIL Toolbox\n"
+          << "    <tocitem target=\"funclist.html\" image=\"HelpIcon.FUNCTION\">Functions" << endl;
   for (const auto &s : introList) {
     gail << s << "\n";
   }
   gail << "%% Functions\n" << "%\n" << "% <html>" << endl;
   for (const auto &s : fcnList) {
+    helptoc << "            <tocitem target=\"help_" << s << ".html\">" << s << "</tocitem>\n";
     gail << "% <a href=\"help_" << s << ".html\">" << s << "</a>\n";
     ifs.open("../Algorithms/" + s + ".m");
     while (getline(ifs, line) && line != "") {
@@ -71,6 +75,7 @@ int main()
     ofs.close();
     fcnDoc.clear();
   }
+  helptoc << "        </tocitem>\n    </tocitem>\n</toc>" << endl;
   gail << "% </html>\n" << "%\n" << "%" << endl;
   for (const auto &s : websiteList) {
     gail << s << "\n";
