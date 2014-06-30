@@ -1,1 +1,6 @@
-funappx_t integral_t
+1-D approximation:
+funappx_t
+
+1-D integration:
+integral_t
+
