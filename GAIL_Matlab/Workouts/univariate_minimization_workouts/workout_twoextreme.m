@@ -67,8 +67,18 @@ for i=1:nTolX
         [TolXvec(i) 100*[probfunmin(i) probnowarn(i) probwarn(i)...
         probfminbnd(i)]])) 
 end
+
+%% Save Output
+[GAILPATH,~,PATHNAMESEPARATOR] = GAILstart(0);
+path = strcat(GAILPATH,'OutputFiles' , PATHNAMESEPARATOR);
+filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
+                  'ConesPaperOutput',PATHNAMESEPARATOR','IntegrationTest-',...
+                  datestr(now,'dd-mmm-yyyy-HH-MM-SS'),'.mat');
+save(filename)
+
 toc(tstart)
-% 
+
+%% The following output was obtained on 2014-May
 %            Success    Success    Success    Success
 %  TolX               No Warning   Warning    fminbnd
 % 1e-02     100.00%    100.00%      0.00%     67.28% 

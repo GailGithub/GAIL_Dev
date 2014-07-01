@@ -81,9 +81,18 @@ for i=1:ntau
         [tauvec(i) 100*[probinit(i) probfinl(i) succnowarn(i) ...
         succwarn(i) failnowarn(i) failwarn(i)]])) 
 end
+
+%% Save Output
+[GAILPATH,~,PATHNAMESEPARATOR] = GAILstart(0);
+path = strcat(GAILPATH,'OutputFiles' , PATHNAMESEPARATOR);
+filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
+                  'ConesPaperOutput',PATHNAMESEPARATOR','IntegrationTest-',...
+                  datestr(now,'dd-mmm-yyyy-HH-MM-SS'),'.mat');
+save(filename)
+
 toc(tstart)
 
-% 10^(-8) and 10^(-6)
+%% The following output was obtained on 2014-May
 %         Probability    Success   Success   Failure  Failure
 %  tau      In Cone    No Warning  Warning No Warning Warning
 %    11  1.54%->21.00%   21.00%      0.00%   79.00%    0.00% 
