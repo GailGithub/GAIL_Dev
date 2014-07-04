@@ -71,7 +71,7 @@ appxinteg=zeros(out_param.mmax-out_param.mmin+1,1);
 
 %% Initial points and FWT
 out_param.n=2^out_param.mmin;
-xpts=mod(GAIL_Internal.lattice_gen(1,out_param.n,out_param.d)+out_param.shift,1); n0=out_param.n;
+xpts=mod(lattice_gen(1,out_param.n,out_param.d)+out_param.shift,1); n0=out_param.n;
 y=f(xpts);
 yval=y;
 
@@ -116,7 +116,7 @@ for m=out_param.mmin+1:out_param.mmax
    out_param.n=2^m;
    mnext=m-1;
    nnext=2^mnext;
-   xnext=mod(GAIL_Internal.lattice_gen(nnext+1,2*nnext,out_param.d)+out_param.shift,1);
+   xnext=mod(lattice_gen(nnext+1,2*nnext,out_param.d)+out_param.shift,1);
    n0=n0+nnext;
    ynext=f(xnext);
    yval=[yval; ynext];
@@ -211,7 +211,7 @@ end
 
 if ~validvarargin
     % If only one input f or in2 is nothing above, use all the default parameters
-    warning(['MATLAB:cubLattice_g:mininputarg',' At least function and dimension must be specified and all parameters must be numeric or strings.'])
+    % warning(['MATLAB:cubLattice_g:mininputarg',' At least function and dimension must be specified and all parameters must be numeric or strings.'])
     out_param.d = default.d;
     out_param.abstol = default.abstol;
     out_param.density = default.density;
@@ -222,7 +222,7 @@ if ~validvarargin
     out_param.diff = default.diff;
 else
     p = inputParser;
-    addRequired(p,'f',@GAIL_Internal.isfcn);
+    addRequired(p,'f',@isfcn);
     if isnumeric(in3)%if there are multiple inputs with
         %only numeric, they should be put in order.
         addOptional(p,'d',default.d,@isnumeric);
@@ -256,7 +256,7 @@ else
 end;
 
 % For dimension to be positive integer
-if (~GAIL_Internal.isposint(out_param.d)) % Dimension should be a postitive integer
+if (~isposint(out_param.d)) % Dimension should be a postitive integer
     warning('MATLAB:cubLattice_g:dnotposint',...
         ['The dimension should be a positive integer,'...
         'We take the ceil of the the absolute value.'])
@@ -273,7 +273,7 @@ end
 %%%% Check density
 
 % Force mmin to be integer greater than 0
-if (out_param.mmin < 1 || ~GAIL_Internal.isposint(out_param.mmin))
+if (out_param.mmin < 1 || ~isposint(out_param.mmin))
     warning(['MATLAB:cubLattice_g:lowmmin',' The minimum starting exponent should be an integer greater or equal than 1.' ...
             ' Using default mmin ' num2str(default.mmin)])
     out_param.mmin = default.mmin;
@@ -281,7 +281,7 @@ end
 
 % Force exponent budget number of points be a positive integer greater or equal than
 % mmin an smaller than 28
-if ~(GAIL_Internal.isposint(out_param.mmax) && out_param.mmax>=out_param.mmin && out_param.mmax<=27)
+if ~(isposint(out_param.mmax) && out_param.mmax>=out_param.mmin && out_param.mmax<=27)
     warning(['MATLAB:cubLattice_g:wrongmmax',' The maximum exponent for the budget should be an integer smaller or equal to 27.' ...
             ' Using default mmax ' num2str(default.mmax)])
     out_param.mmax = default.mmax;
