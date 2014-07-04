@@ -283,7 +283,7 @@ default.mmax  = 24;
 default.fudge = 3;
 default.diff = 'id';
 
-if numel(varargin)<2
+if numel(varargin)<1
     help cubLattice_g
     warning('MATLAB:cubLattice_g:fdnotgiven',...
         'At least, function f and dimension d of f must be specified. Example for f(x)=x^2:')
@@ -314,7 +314,7 @@ end
 
 if ~validvarargin
     % If only one input f or in2 is nothing above, use all the default parameters
-    %warning(['MATLAB:cubLattice_g:mininputarg',' Optional parameters must be numeric or strings.'])
+    warning(['MATLAB:cubLattice_g:mininputarg',' Optional parameters must be numeric or strings.'])
     out_param.abstol = default.abstol;
     out_param.density = default.density;
     out_param.shift = default.shift;

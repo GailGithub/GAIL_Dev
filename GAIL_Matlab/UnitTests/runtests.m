@@ -27,7 +27,12 @@ doctest funappxlocal_g
 [~,~,~,MATLABVERSION]=GAILstart(0);
 if MATLABVERSION >= 8 
     try
-    run(ut_funappx_g)
+    Tests = matlab.unittest.TestSuite.fromClass(?ut_funappx_g);
+    results=run(ut_funappx_g);
+    if sum([results.Failed])>0
+        failed=find([results.Failed]>0);
+        Tests(failed).Name
+    end
     catch
         display('Test ut_funappx_g is wrongly coded. We skip it.')
     end
@@ -78,6 +83,17 @@ if MATLABVERSION >= 8
     run(ut_funappxlocal_g)
     catch
         display('Test ut_funappxlocal_g is wrongly coded. We skip it.')
+    end
+    
+    try
+    Tests = matlab.unittest.TestSuite.fromClass(?ut_cubLattice_g);
+    results=run(ut_funappx_g);
+    if sum([results.Failed])>0
+        failed=find([results.Failed]>0);
+        Tests(failed).Name
+    end
+    catch
+        display('Test ut_cubLattice_g is wrongly coded. We skip it.')
     end
     
 end
