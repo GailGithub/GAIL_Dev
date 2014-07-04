@@ -87,7 +87,7 @@ if MATLABVERSION >= 8
     
     try
     Tests = matlab.unittest.TestSuite.fromClass(?ut_cubLattice_g);
-    results=run(ut_funappx_g);
+    results=run(ut_cubLattice_g);
     if sum([results.Failed])>0
         failed=find([results.Failed]>0);
         Tests(failed).Name

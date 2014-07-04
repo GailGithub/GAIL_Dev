@@ -283,7 +283,7 @@ default.mmax  = 24;
 default.fudge = 3;
 default.diff = 'id';
 
-if numel(varargin)<1
+if numel(varargin)<2
     help cubLattice_g
     warning('MATLAB:cubLattice_g:fdnotgiven',...
         'At least, function f and dimension d of f must be specified. Example for f(x)=x^2:')
