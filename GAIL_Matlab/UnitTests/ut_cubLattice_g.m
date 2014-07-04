@@ -8,7 +8,7 @@ classdef ut_cubLattice_g < matlab.unittest.TestCase
       in_param.abstol = 1e-2;
       d=1;
       meanf = cubLattice_g(f,d,in_param);
-      exactf = 1+0.33;
+      exactf = 0.33;
       actualerr = abs(meanf-exactf);
       testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
     end
