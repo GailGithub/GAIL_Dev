@@ -31,7 +31,7 @@ grep -A 3 "not ok" gail_doctests.txt >> test_results_grep.txt
 echo ${nl}${nl}${end}${nl} >> test_results_grep.txt
 cat test_results_grep.txt gail_unittests.txt > Test_Results.txt
 rm test_results_grep.txt
-
+rm gail*
 
 
 # COMPARE TO THE CORRECT EXPECTED RESULTS. IF WRONG, SEND AND EMAIL WITH THE DIFFERENCES
@@ -43,3 +43,4 @@ else
   echo "Tests with ERRORS"
   sh mail_w.sh
 fi
+rm Test_Results.txt
