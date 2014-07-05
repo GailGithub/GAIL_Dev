@@ -25,7 +25,7 @@ mv /home/lantoni/GAIL_tests/repo/gail-development/GAIL_Matlab/OutputFiles/gail_u
 # Preparing results txt files
 begin="------Doc test wrong results were:";
 nl=$'\n';
-end="------Unit tests wrong results were:";
+end="------Unit test wrong results were:";
 echo ${begin}${nl} > test_results_grep.txt
 grep -A 3 "not ok" gail_doctests.txt >> test_results_grep.txt
 echo ${nl}${nl}${end}${nl} >> test_results_grep.txt
