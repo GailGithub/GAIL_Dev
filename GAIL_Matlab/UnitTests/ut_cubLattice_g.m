@@ -8,7 +8,7 @@ classdef ut_cubLattice_g < matlab.unittest.TestCase
       in_param.abstol = 1e-2;
       d=1;
       meanf = cubLattice_g(f,d,in_param);
-      exactf = 1+0.33; % Real solution is 0.33, changed for testing
+      exactf = 0.33;
       actualerr = abs(meanf-exactf);
       testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
     end
@@ -18,7 +18,7 @@ classdef ut_cubLattice_g < matlab.unittest.TestCase
       in_param.abstol = 1e-3;
       d=1;
       meanf = cubLattice_g(f,d,in_param);
-      exactf = 1+exp(1)-1; % Real solution is exp(1)-1, changed for testing
+      exactf = exp(1)-1;
       actualerr = abs(meanf-exactf);
       testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
     end
