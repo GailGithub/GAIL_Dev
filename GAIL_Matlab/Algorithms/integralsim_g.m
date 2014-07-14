@@ -105,8 +105,8 @@ function [q,out_param] = integralsim_g(varargin)
 %
 %
 %   Example 2:
-%   >> f = @(x) exp(-x.^2); q = integralsim_g(f,'a',1,'b',2,'nlo',100,'nhi',10000,'abstol',1e-5,'nmax',1e7)
-%   q = 0.1353
+%   >> f = @(x) exp(-x.^2); q = integralsim_g(f,'abstol',1e-5,'ninit',52,'nmax',1e7)
+%   q = 0.7468
 %
 %
 %   Example 3:
@@ -267,7 +267,7 @@ if (out_param.abstol <= 0 )
     out_param.abstol = default.abstol;
 end
 % let ninit be an odd number
-if ((out_param.nint+1)/2-ceil(out_param.nint/2) ~= 0 )
+if ((out_param.ninit+1)/2-ceil(out_param.ninit/2) ~= 0 )
     warning(['Initial number of points must be an odd number.' ...
             ' Using default number of points ' num2str(default.ninit)])
     out_param.ninit = default.ninit;
