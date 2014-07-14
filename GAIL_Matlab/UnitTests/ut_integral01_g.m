@@ -1,4 +1,4 @@
-%UT_INTEGRAL_G unit test for integral_g
+%UT_INTEGRAL01_G unit test for integral01_g
 classdef ut_integral01_g < matlab.unittest.TestCase    
     methods (Test)
         
@@ -12,7 +12,7 @@ classdef ut_integral01_g < matlab.unittest.TestCase
                 -(x-z+a).*abs(x-z+a)) ...
                 .*(x>=x0).*(x<=x1); %test function
             [q,out_param]=integral01_g(f,'ninit',52,'abstol',1e-8,'nmax',1e7);
-            testCase.verifyEqual(out_param.tauchange,false); % TODO -> true
+            testCase.verifyEqual(out_param.tauchange,true);
         end
         
         function testerrorfabstol(testCase)
