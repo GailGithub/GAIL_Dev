@@ -82,15 +82,18 @@ int main()
 	  auto lPos = (*iter).find(" = " + us + "(");
 	  if (lPos != string::npos) {
 	    ++cnt;
-	    auto rPos = (*iter).find_first_of(')', lPos);
+	    string sReplace = *iter;
+	    sReplace.replace(lPos + 3, s.size(), "*" + s + "*");
+	    auto rPos = sReplace.find_first_of(')', lPos);
 	    if (cnt == 1) {
-	      ofs << "% " << (*iter).substr(4, rPos - 3) << "\n";
+	      ofs << "% " << sReplace.substr(4, rPos - 3) << "\n";
 	    } else {
-	      ofs << "%\n% " << (*iter).substr(4, rPos - 3) << "\n";
+	      ofs << "%\n% " << sReplace.substr(4, rPos - 3) << "\n";
 	    }
 	  }
 	}
       }
+      
       ofs.flush();
       ofs.close();
       fcnDoc.clear();
