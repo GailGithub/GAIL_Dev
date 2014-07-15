@@ -2,7 +2,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
-#include <cctype>
+//#include <cctype>
 //#include <typeinfo>
 #include <algorithm> 
 using std::vector;
@@ -46,6 +46,7 @@ int main()
   }
   gail << "%% Functions\n" << "%\n" << "% <html>" << endl;
   funclist << "%% Functions\n%" << endl;
+  string us;
   for (const auto &s : fcnList) {
     if (s.empty()) {
       funclist << "%\n";
@@ -57,12 +58,6 @@ int main()
       funclist << "% <html>\n% <a href=\"help_" << s << ".html\">meanMC_g</a>\n% </html>\n%\n";
       ifs.open("../Algorithms/" + s + ".m");
       while (getline(ifs, line) && line != "") {
-	// string::size_type pos = 0;
-	// auto uStr = upperString(s);
-	// while ((pos = line.find(uStr, pos)) != string::npos) {
-	// 	line.replace(pos, s.size(), uStr);
-	// 	pos += uStr.length();
-	// }
 	fcnDoc.push_back(line);
       }
       ifs.close();
@@ -78,7 +73,25 @@ int main()
 	  ofs << *iter;
 	}
       }
-      ofs << ".|" << endl;
+      ofs << ".|\n%% Syntax" << endl;
+      auto guarantee = find(++emptyLine1, fcnDoc.cend(), "%  Guarantee");
+      us = upperString(s);
+      {
+	decltype(fcnDoc.size()) cnt = 0;
+	for (auto iter = emptyLine1; iter != guarantee; ++iter) {
+	  auto lPos = (*iter).find(" = " + us + "(");
+	  if (lPos != string::npos) {
+	    ++cnt;
+	    auto rPos = (*iter).find_first_of(')', lPos);
+	    if (cnt == 1) {
+	      ofs << "% " << (*iter).substr(4, rPos - 3) << "\n";
+	    } else {
+	      ofs << "%\n% " << (*iter).substr(4, rPos - 3) << "\n";
+	    }
+	  }
+	}
+      }
+      ofs.flush();
       ofs.close();
       fcnDoc.clear();
     }
@@ -97,8 +110,8 @@ int main()
 
 string upperString(const string &s) noexcept
 {
-  string uStr;
-  for (string::size_type i = 0;i != s.size();++i) {
+  string uStr(s.size(),' ');
+  for (string::size_type i = 0;i != s.size(); ++i) {
     uStr[i] = toupper(s[i]);
   }
   return uStr;
