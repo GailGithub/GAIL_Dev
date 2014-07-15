@@ -33,7 +33,11 @@ function [Q,out_param] = cubMC_g(varargin)
 % with guaranteed confidence level 1-in_param.alpha. If a field is not
 % specified, the default value is used.
 % 
-% f --- the integrand.
+% f --- the integrand, which should be a function handle. The function f
+% should accept an n x d matrix input, where d is the dimension of the
+% hyperbox, and n is the number of points being evaluated simultaneously.
+% For example, f could be defined as f = @(x)sin(x) or f = @(x) x(:,1) +
+% x(:,2).
 % 
 % hyperbox --- the integration hyperbox. The default value is
 % [zeros(1,d); ones(1,d)], the default d is 1.

@@ -349,12 +349,12 @@ default.reltol = 1e-1;% default relative error tolerance
 default.nSig = 1e2;% default initial sample size n_sigma for variance estimation
 default.n1 = 1e3; % default initial sample size n1 for mean estimation
 default.alpha = 0.01;% default uncertainty
-default.tbudget = 100;% default time budget
-default.nbudget = 1e8; % default sample budget
+default.tbudget = 200;% default time budget
+default.nbudget = 1e9; % default sample budget
 default.checked = 0;% default value of parameter checking status
 
 if isempty(varargin)
-    help meanMC_g
+    help meanMCRel_g
     warning('MATLAB:meanMCRel_g:yrandnotgiven',...
         'Yrand must be specified. Now GAIL is using Yrand = rand(n,1).^2.')
     Yrand = @(n) rand(n,1).^2;
@@ -366,6 +366,7 @@ else
         warning('MATLAB:meanMCRel_g:yrandnotlengthN',...
             ['Yrand should be a random variable vector of length n, '...
             'but not an integrand or a matrix'])
+        Yrand = @(n) rand(n,1).^2;
     end
 end
 
@@ -384,7 +385,7 @@ if ~validvarargin
     out_param.n1 = default.n1;
     out_param.nSig = default.nSig;
     out_param.alpha = default.alpha;
-        out_param.tbudget = default.tbudget;
+    out_param.tbudget = default.tbudget;
     out_param.nbudget = default.nbudget;
     out_param.checked = default.checked;
 else
@@ -398,7 +399,7 @@ else
         addOptional(p,'nSig',default.nSig,@isnumeric);
         addOptional(p,'n1',default.n1,@isnumeric);
         addOptional(p,'alpha',default.alpha,@isnumeric);
-                addOptional(p,'tbudget',default.tbudget,@isnumeric);
+        addOptional(p,'tbudget',default.tbudget,@isnumeric);
         addOptional(p,'nbudget',default.nbudget,@isnumeric);
         addOptional(p,'checked',default.checked,@isnumeric);
     else
