@@ -168,7 +168,7 @@ out_param.overbudget='Max budget reached with no guarantees.';
 
 %% Initial points and FWT
 out_param.n=2^out_param.mmin;
-xpts=mod(GAIL_Internal.lattice_gen(1,out_param.n,out_param.d)+out_param.shift,1); n0=out_param.n;
+xpts=mod(lattice_gen(1,out_param.n,out_param.d)+out_param.shift,1); n0=out_param.n;
 y=f(xpts);
 yval=y;
 
@@ -213,7 +213,7 @@ for m=out_param.mmin+1:out_param.mmax
    out_param.n=2^m;
    mnext=m-1;
    nnext=2^mnext;
-   xnext=mod(GAIL_Internal.lattice_gen(nnext+1,2*nnext,out_param.d)+out_param.shift,1);
+   xnext=mod(lattice_gen(nnext+1,2*nnext,out_param.d)+out_param.shift,1);
    n0=n0+nnext;
    ynext=f(xnext);
    yval=[yval; ynext];
@@ -294,7 +294,7 @@ else
     f = varargin{1};
     out_param.f=f;
     d = varargin{2};
-    if ~isnumeric(d) || ~GAIL_Internal.isposint(d)
+    if ~isnumeric(d) || ~isposint(d)
         warning('MATLAB:cubLattice_g:dnotposint',...
             'The dimension d of f must be a positive integer. Example for f(x)=x^2:')
         f = @(x) x.^2;
@@ -324,7 +324,7 @@ if ~validvarargin
     out_param.diff = default.diff;
 else
     p = inputParser;
-    addRequired(p,'f',@GAIL_Internal.isfcn);
+    addRequired(p,'f',@isfcn);
     addRequired(p,'d',@isnumeric);
     if isnumeric(in3) || ischar(in3) %if there are multiple inputs with
         %only numeric, they should be put in order.
@@ -366,7 +366,7 @@ end
 %%%% Check density (to code)
 
 % Force mmin to be integer greater than 0
-if (out_param.mmin < 1 || ~GAIL_Internal.isposint(out_param.mmin))
+if (out_param.mmin < 1 || ~isposint(out_param.mmin))
     warning(['MATLAB:cubLattice_g:lowmmin',' The minimum starting exponent should be an integer greater or equal than 1.' ...
             ' Using default mmin ' num2str(default.mmin)])
     out_param.mmin = default.mmin;
@@ -374,7 +374,7 @@ end
 
 % Force exponent budget number of points be a positive integer greater or equal than
 % mmin an smaller than 28
-if ~(GAIL_Internal.isposint(out_param.mmax) && out_param.mmax>=out_param.mmin && out_param.mmax<=27)
+if ~(isposint(out_param.mmax) && out_param.mmax>=out_param.mmin && out_param.mmax<=27)
     warning(['MATLAB:cubLattice_g:wrongmmax',' The maximum exponent for the budget should be an integer smaller or equal to 27.' ...
             ' Using default mmax ' num2str(default.mmax)])
     out_param.mmax = default.mmax;

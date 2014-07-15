@@ -267,7 +267,7 @@ else
     f = varargin{1};
     out_param.f=f;
     d = varargin{2};
-    if ~isnumeric(d) || ~GAIL_Internal.isposint(d)
+    if ~isnumeric(d) || ~isposint(d)
         warning('MATLAB:cubSobol_g:dnotposint',...
             'The dimension d of f must be a positive integer. Example for f(x)=x^2:')
         f = @(x) x.^2;
@@ -295,7 +295,7 @@ if ~validvarargin
     out_param.fudge = default.fudge;
 else
     p = inputParser;
-    addRequired(p,'f',@GAIL_Internal.isfcn);
+    addRequired(p,'f',@isfcn);
     addRequired(p,'d',@isnumeric);
     if isnumeric(in3) || ischar(in3) %if there are multiple inputs with
         %only numeric, they should be put in order.
@@ -331,7 +331,7 @@ end
 %%%% Check density (to code)
 
 % Force mmin to be integer greater than 0
-if (out_param.mmin < 1 || ~GAIL_Internal.isposint(out_param.mmin))
+if (out_param.mmin < 1 || ~isposint(out_param.mmin))
     warning(['MATLAB:cubSobol_g:lowmmin',' The minimum starting exponent should be an integer greater or equal than 1.' ...
             ' Using default mmin ' num2str(default.mmin)])
     out_param.mmin = default.mmin;
@@ -339,7 +339,7 @@ end
 
 % Force exponent budget number of points be a positive integer greater or equal than
 % mmin an smaller than 54
-if ~(GAIL_Internal.isposint(out_param.mmax) && out_param.mmax>=out_param.mmin && out_param.mmax<=53)
+if ~(isposint(out_param.mmax) && out_param.mmax>=out_param.mmin && out_param.mmax<=53)
     warning(['MATLAB:cubSobol_g:wrongmmax',' The maximum exponent for the budget should be an integer smaller or equal to 53.' ...
             ' Using default mmax ' num2str(default.mmax)])
     out_param.mmax = default.mmax;
