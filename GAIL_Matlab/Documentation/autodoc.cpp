@@ -70,15 +70,16 @@ int main()
       ofs << "%% " << s << "\n% |";
       auto space1 = find(fcnDoc[1].cbegin(), fcnDoc[1].cend(), ' ');
       fcnDoc[1] = fcnDoc[1].substr(space1 - fcnDoc[1].cbegin() + 1, fcnDoc[1].size());
+      ofs << fcnDoc[1];
       auto emptyLine1 = find(fcnDoc.cbegin(), fcnDoc.cend(), "%");
-      for (auto iter = fcnDoc.begin() + 1; iter != emptyLine1; ++iter) {
-	if (iter != emptyLine1 -1) { 
-	  ofs << *iter << "\n";
+      for (auto iter = fcnDoc.begin() + 2; iter != emptyLine1; ++iter) {
+	if (iter != emptyLine1 -1) {
+	  ofs << "\n% " << (*iter).substr(1);
 	} else {
-	  ofs << *iter;
+	  ofs << "\n% " << (*iter).substr(1);
 	}
       }
-      ofs << ".|\n%% Syntax" << endl;
+      ofs << "|\n%% Syntax" << endl;
       auto inputArg = find(++emptyLine1, fcnDoc.cend(), "%   Input Arguments");
       us = upperString(s);
       {

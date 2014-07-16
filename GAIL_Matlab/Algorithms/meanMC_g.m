@@ -64,6 +64,7 @@ function [mu,out_param]=meanMC_g(varargin)
 %                         2   checked by meanMC_g
 %
 %   Output Arguments
+%
 %     mu --- the estimated mean of Y.
 % 
 %     out_param.time_n_sigma_predict --- the estimated time to get n_sigma
