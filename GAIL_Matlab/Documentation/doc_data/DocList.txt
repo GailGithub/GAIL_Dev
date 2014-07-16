@@ -1,4 +1,9 @@
 1-D approximation:
-funappx_t
+funappx_g
 
 1-D integration:
+integral_g
+
+High dimension integration:
+meanMC_g
+cubMC_g

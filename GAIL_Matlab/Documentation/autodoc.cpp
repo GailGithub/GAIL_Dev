@@ -3,16 +3,12 @@
 #include <sstream>
 #include <string>
 #include <vector>
-//#include <cctype>
-//#include <typeinfo>
 #include <algorithm> 
 using std::vector;
 using std::string;
 using std::ifstream;
 using std::ofstream;
 using std::istringstream;
-//using std::fstream;
-using std::cout;
 using std::endl;
 using std::flush;
 using std::find;
@@ -40,7 +36,7 @@ int main()
     websiteList.push_back(line);
   }
   ifs.close();
-  ofstream gail("GAIL_t.m"), helptoc("html/helptoc_t.xml"), funclist("funclist_t.m"), ofs;
+  ofstream gail("GAIL.m"), helptoc("html/helptoc.xml"), funclist("funclist.m"), ofs;
   helptoc << "<?xml version='1.0' encoding='ISO-8859-1' ?>\n\n<toc version=\"1.0\">\n\n"
           << "<tocitem target=\"GAIL.html\">GAIL Toolbox\n"
           << "    <tocitem target=\"funclist.html\" image=\"HelpIcon.FUNCTION\">Functions" << endl;
@@ -51,13 +47,17 @@ int main()
   funclist << "%% Functions\n%" << endl;
   string us;
   for (const auto &s : fcnList) {
-    if (s.empty()) {
-      funclist << "%\n";
-    } else if (*(s.cend()-1) == ':') {
-      funclist << "%% " << s.substr(0,s.size() - 1) << "\n%\n";
-    } else {
+    if (!s.empty() && *(s.cend() - 1) != ':') {
       fcnName.push_back(s);
       uFcnName.push_back(upperString(s));
+    }
+  }
+  for (const auto &s : fcnList) {
+    if (s.empty()) {
+      funclist << "%\n";
+    } else if (*(s.cend() - 1) == ':') {
+      funclist << "%% " << s.substr(0,s.size() - 1) << "\n%\n";
+    } else {
       helptoc << "            <tocitem target=\"help_" << s << ".html\">" << s << "</tocitem>\n";
       gail << "% <a href=\"help_" << s << ".html\">" << s << "</a>\n";
       funclist << "% <html>\n% <a href=\"help_" << s << ".html\">" << s << "</a>\n% </html>\n%\n";
@@ -66,7 +66,7 @@ int main()
 	fcnDoc.push_back(line);
       }
       ifs.close();
-      ofs.open("help_" + s + ".m");
+      ofs.open("help_" + s + "_raw.m");
       ofs << "%% " << s << "\n% |";
       auto space1 = find(fcnDoc[1].cbegin(), fcnDoc[1].cend(), ' ');
       fcnDoc[1] = fcnDoc[1].substr(space1 - fcnDoc[1].cbegin() + 1, fcnDoc[1].size());
@@ -141,7 +141,7 @@ int main()
 	  ofs << "|\n" << *iter << "\n";
 	}
       }
-      ifstream fcnData(dataFolder + "/" + s + "_data.txt");
+      ifstream fcnData(dataFolder + "/" + s + "_data.m");
       while (getline(fcnData, line)) {
 	ofs << line << "\n";
       }
@@ -181,6 +181,7 @@ int main()
   helptoc.close();
   gail.close();
   funclist.close();
+  std::cout << "autodoc: Automatic documentation is comleted." << endl;
 }
 
 string upperString(const string &s) noexcept

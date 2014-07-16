@@ -1,96 +1,98 @@
 function [mu,out_param]=meanMC_g(varargin)
-% MEANMC_G Monte Carlo method to estimate the mean of a random variable to
-% within a specified absolute error tolerance with guaranteed confidence
-% level 1-alpha.
-% 
-% mu = MEANMC_G(Yrand) estimates the mean of a random variable Y to within
-% a specified absolute error tolerance 1e-2 with guaranteed confidence
-% level 99%. Input Yrand is a function handle that accepts a positive
-% integer input n and returns an n x 1 vector of IID instances of the
-% random variable Y.
-% 
-% mu =
-% MEANMC_G(Yrand,abstol,alpha,n_sigma,fudge,tbudget,nbudget,npcmax,checked)
-% estimates the mean of a random variable Y to within an specified absolute
-% error tolerance abstol with guaranteed confidence level 1-alpha. using
-% all ordered parsing inputs abstol, n_sigma, fudge, tbudget, nbudget,
-% npcmax and checked.
-% 
-% mu = MEANMC_G(Yrand,'abstol',abstol,'alpha',alpha,'n_sigma',n_sigma,...
-% 'fudge',fudge,'tbudget',tbudget,'nbudget',nbudget,'npcmax',npcmax,...
-% 'checked',checked) estimates the mean of a random variable Y to within a
-% specified absolute error tolerance abstol with guaranteed confidence
-% level 1-alpha. All the field-value pairs are optional and can be
-% supplied in different order.
-% 
-% mu = MEANMC_G(Yrand,in_param) estimates the mean of a random variable Y
-% to within a specified absolute error tolerance in_param.abstol with
-% guaranteed uncertainty within in_param.alpha. If a field is not
-% specified, the default value is used.
-% 
-% [mu, out_param] = MEANMC_G(Yrand,in_param) estimates the mean of a
-% random variable Y to within a specified absolute error tolerance with
-% the given parameters in_param and produce output parameters out_param.
-% 
-% Yrand --- the function for generating IID instances of a random
-% variable Y whose mean we want to estimate. Y is often defined as a
-% function of some random variable X with a simple distribution.  For
-% example, if Y = X.^2 where X is a standard uniform random variable,
-% then one may define Yrand = @(n) rand(n,1).^2.
-% 
-% mu --- the estimated mean of Y.
-% 
-% in_param.abstol --- the absolute error tolerance, default value is 1e-2.
-% 
-% in_param.alpha --- the uncertainty, default value is 1%.
-% 
-% in_param.n_sigma --- initial sample size for estimating the sample
-% variance, the default value is 1e3.
-% 
-% in_param.fudge --- the standard deviation inflation factor, the default
-% value is 1.1.
-% 
-% in_param.tbudget --- the time budget to do the two-stage estimation,
-% the default value is 100 seconds.
-% 
-% in_param.nbudget --- the sample budget to do the two-stage estimation,
-% the default value is 1e8.
-% 
-% in_param.npcmax --- number of elements in an array of optimal size to
-% calculate the mu, the default value is 1e6.
-% 
-% in_param.checked --- the value corresponding to parameter checking status.
-%                     0   not checked
-%                     1   checked by cubMC_g
-%                     2   checked by meanMC_g
+%MEANMC_G Monte Carlo method to estimate the mean of a random variable to
+%within a specified absolute error tolerance with guaranteed confidence
+%level 1-alpha.
 %
-% out_param.time_n_sigma_predict --- the estimated time to get n_sigma
-% samples of the random variable.
+%   mu = MEANMC_G(Yrand) estimates the mean of a random variable Y to within
+%   a specified absolute error tolerance 1e-2 with guaranteed confidence
+%   level 99%. Input Yrand is a function handle that accepts a positive
+%   integer input n and returns an n x 1 vector of IID instances of the
+%   random variable Y.
 %
-% out_param.n_left_predict --- using the time left to predict the number
-% of samples left.
-% 
-% out_param.nmax --- the maximum sample budget to estimate mu, it comes
-% from both the sample budget and the time budget.
-% 
-% out_param.var --- the sample variance.
+%   mu = MEANMC_G(Yrand,abstol,alpha,n_sigma,fudge,tbudget,nbudget,npcmax,checked)
+%   estimates the mean of a random variable Y to within an specified absolute
+%   error tolerance abstol with guaranteed confidence level 1-alpha. using
+%   all ordered parsing inputs abstol, n_sigma, fudge, tbudget, nbudget,
+%   npcmax and checked.
 %
-% out_param.exit --- the state of program when exiting.
-%                  0   Success.
-%                  1   No enough samples to estimate the mean.                                
-%                  2   Initial try out time costs more than 10% of time budget.                                 
-%                  3   The estimated time for estimating variance is bigger
-%                      than half of the time budget.
+%   mu = MEANMC_G(Yrand,'abstol',abstol,'alpha',alpha,'n_sigma',n_sigma,...
+%   'fudge',fudge,'tbudget',tbudget,'nbudget',nbudget,'npcmax',npcmax,...
+%   'checked',checked) estimates the mean of a random variable Y to within a
+%   specified absolute error tolerance abstol with guaranteed confidence
+%   level 1-alpha. All the field-value pairs are optional and can be
+%   supplied in different order.
+%
+%   mu = MEANMC_G(Yrand,in_param) estimates the mean of a random variable Y
+%   to within a specified absolute error tolerance in_param.abstol with
+%   guaranteed uncertainty within in_param.alpha. If a field is not
+%   specified, the default value is used.
+%
+%   [mu, out_param] = MEANMC_G(Yrand,in_param) estimates the mean of a
+%   random variable Y to within a specified absolute error tolerance with
+%   the given parameters in_param and produce output parameters out_param.
+%
+%   Input Arguments
+%
+%     Yrand --- the function for generating IID instances of a random
+%     variable Y whose mean we want to estimate. Y is often defined as a
+%     function of some random variable X with a simple distribution.  For
+%     example, if Y = X.^2 where X is a standard uniform random variable,
+%     then one may define Yrand = @(n) rand(n,1).^2.
+%
+%     in_param.abstol --- the absolute error tolerance, default value is 1e-2.
 % 
-% out_param.kurtmax --- the upper bound on modified kurtosis.
+%     in_param.alpha --- the uncertainty, default value is 1%.
 % 
-% out_param.n_mu --- the sample size that needed to estimate the mu.
+%     in_param.n_sigma --- initial sample size for estimating the sample
+%     variance, the default value is 1e3.
 % 
-% out_param.n --- the total sample size needed to do the two stage estimation.
+%     in_param.fudge --- the standard deviation inflation factor, the default
+%     value is 1.1.
 % 
-% out_param.time --- the time elapsed.
+%     in_param.tbudget --- the time budget to do the two-stage estimation,
+%     the default value is 100 seconds.
 % 
-% Guarantee
+%     in_param.nbudget --- the sample budget to do the two-stage estimation,
+%     the default value is 1e8.
+% 
+%     in_param.npcmax --- number of elements in an array of optimal size to
+%     calculate the mu, the default value is 1e6.
+% 
+%     in_param.checked --- the value corresponding to parameter checking status.
+%                         0   not checked
+%                         1   checked by cubMC_g
+%                         2   checked by meanMC_g
+%
+%   Output Arguments
+%     mu --- the estimated mean of Y.
+% 
+%     out_param.time_n_sigma_predict --- the estimated time to get n_sigma
+%     samples of the random variable.
+%
+%     out_param.n_left_predict --- using the time left to predict the number
+%     of samples left.
+% 
+%     out_param.nmax --- the maximum sample budget to estimate mu, it comes
+%     from both the sample budget and the time budget.
+% 
+%     out_param.var --- the sample variance.
+%
+%     out_param.exit --- the state of program when exiting.
+%                       0   Success.
+%                       1   No enough samples to estimate the mean.                                
+%                       2   Initial try out time costs more than 10% of time budget.                                 
+%                       3   The estimated time for estimating variance is bigger
+%                           than half of the time budget.
+% 
+%     out_param.kurtmax --- the upper bound on modified kurtosis.
+% 
+%     out_param.n_mu --- the sample size that needed to estimate the mu.
+% 
+%     out_param.n --- the total sample size needed to do the two stage estimation.
+% 
+%     out_param.time --- the time elapsed.
+% 
+%  Guarantee
 % 
 % If the modified kurtosis of the random variable, Y, is less than the kurtmax,
 % which is defined in terms of the uncertainty, alpha, the sample size to
@@ -110,7 +112,7 @@ function [mu,out_param]=meanMC_g(varargin)
 % cost, which is roughly proportional to sigma^2/abstol^2, beta is the
 % level of uncertainty on the cost. For details, please refer to [1].
 % 
-% Examples
+%  Examples
 % 
 % Example 1: 
 % Calculate the mean of x^2 when x is uniformly distributed in
@@ -137,23 +139,23 @@ function [mu,out_param]=meanMC_g(varargin)
 % mu = 0.3***
 % 
 % 
-% See also FUNAPPX_G, INTEGRAL_G, CUBMC_G
-% 
-% References
+%   See also FUNAPPX_G, INTEGRAL_G, CUBMC_G
 %
-% [1]  F. J. Hickernell, L. Jiang, Y. Liu, and A. B. Owen, Guaranteed
-% conservative fixed width confidence intervals via Monte Carlo sampling,
-% Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F. Y. Kuo, G. W.
-% Peters, and I. H. Sloan, eds.), Springer-Verlag, Berlin, 2014, to appear,
-% arXiv:1208.4318 [math.ST]
+%  References
 %
-% [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, and
-% Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library (Version
-% 1.3.0)" [MATLAB Software], 2014. Available from
-% http://code.google.com/p/gail/
+%   [1]  F. J. Hickernell, L. Jiang, Y. Liu, and A. B. Owen, Guaranteed
+%   conservative fixed width confidence intervals via Monte Carlo sampling,
+%   Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F. Y. Kuo, G. W.
+%   Peters, and I. H. Sloan, eds.), Springer-Verlag, Berlin, 2014, to appear,
+%   arXiv:1208.4318 [math.ST]
 %
-% If you find GAIL helpful in your work, please support us by citing the
-% above paper and software.
+%   [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, and
+%   Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library (Version
+%   1.3.0)" [MATLAB Software], 2014. Available from
+%   http://code.google.com/p/gail/
+%
+%   If you find GAIL helpful in your work, please support us by citing the
+%   above paper and software.
 
 tstart = tic; %start the clock
 [Yrand, out_param] = meanMC_g_param(varargin{:});

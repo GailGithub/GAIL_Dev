@@ -19,7 +19,8 @@
 % <html>
 % <a href="help_meanMC_g.html">meanMC_g</a>
 % </html>
-% 
+%
 % <html>
 % <a href="help_cubMC_g.html">cubMC_g</a>
 % </html>
+%
