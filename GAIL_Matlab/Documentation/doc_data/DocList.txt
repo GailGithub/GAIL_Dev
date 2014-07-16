@@ -2,5 +2,3 @@
 funappx_t
 
 1-D integration:
-integral_t
-

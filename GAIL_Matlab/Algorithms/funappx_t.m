@@ -13,7 +13,7 @@ function [pp,out_param]=funappx_t(varargin)
 %   the ordered input parameters that define the finite interval [a,b], a
 %   guaranteed absolute error tolerance abstol, a lower bound of initial
 %   number of points nlo, an upper bound of initial number of points nhi,
-%   and a cost budget nmax. 
+%   and a cost budget nmax.
 %
 %   pp = FUNAPPX_T(f,'a',a,'b',b,'abstol',abstol,'nlo',nlo,'nhi',nhi,'nmax',nmax)
 %   recovers function f on the finite interval [a,b], given a guaranteed
@@ -28,6 +28,11 @@ function [pp,out_param]=funappx_t(varargin)
 %   in_param.nlo, an upper bound of initial number of points in_param.nhi,
 %   and a cost budget in_param.nmax. If a field is not specified, the
 %   default value is used.
+%
+%   [pp, out_param] = FUNAPPX_T(f,...) returns a piecewise polynomial
+%   structure pp and an output structure out_param.
+%
+%   Input Arguments
 %
 %     in_param.a --- left end point of interval, default value is 0
 %
@@ -44,9 +49,7 @@ function [pp,out_param]=funappx_t(varargin)
 %
 %     in_param.nmax --- cost budget, default value is 1e7
 %
-%   [pp, out_param] = FUNAPPX_T(f,...) returns a piecewise polynomial
-%   structure pp and an output structure out_param, which has the following
-%   fields:
+%   Output Arguments
 %
 %     pp.form --- pp means piecewise polynomials
 %
@@ -87,7 +90,6 @@ function [pp,out_param]=funappx_t(varargin)
 %     out_param.nhi --- an upper bound of initial number of points we use
 %
 %     out_param.nmax --- cost budget
-%
 %
 %  Guarantee
 %    
@@ -234,24 +236,24 @@ function [pp,out_param]=funappx_t(varargin)
 %       errorbound: 2.8721e-10
 %
 %
-%   See also INTEGRAL_G, MEANMC_G, CUBMC_G
+%   See also FUNAPPX_T
 %
 %
-%   References
+%  References
 %
 %   [1]  Nick Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
-%        Yizhi Zhang, The Cost of Deterministic, Adaptive, Automatic
-%        Algorithms: Cones, Not Balls, Journal of Complexity 30 (2014), 
-%        pp. 21-45.
+%   Yizhi Zhang, The Cost of Deterministic, Adaptive, Automatic
+%   Algorithms: Cones, Not Balls, Journal of Complexity 30 (2014), 
+%   pp. 21-45.
 %        
 %
 %   [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
-%        and Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library
-%        (Version 2.0)" [MATLAB Software], 2014. Available from
-%        http://code.google.com/p/gail/
+%   and Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library
+%   (Version 2.0)" [MATLAB Software], 2014. Available from
+%   http://code.google.com/p/gail/
 %
-%        If you find GAIL helpful in your work, please support us by citing
-%        the above paper and software.
+%   If you find GAIL helpful in your work, please support us by citing
+%   the above paper and software.
 %
 
 % check parameter satisfy conditions or not

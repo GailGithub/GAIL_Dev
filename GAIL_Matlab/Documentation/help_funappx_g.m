@@ -41,7 +41,7 @@
 %  default value is used.|
 %
 % [pp, out_param] = *funappx_g*(f,...) |returns a piecewise polynomial
-%   structure pp and an output structure out_param.|
+%  structure pp and an output structure out_param.|
 %
 % *Input Arguments*
 % 
@@ -175,7 +175,7 @@ clear in_param; f = @(x) x.^2;
 %% Reference
 % [1]  N. Clancy, Y. Ding, C. Hamilton, F. J. Hickernell, and Y. Zhang, The
 % Cost of Deterministic, Adaptive, Automatic Algorithms:  Cones, Not Balls,
-% Journal of Complexity 30 (2014) 21–45
+% Journal of Complexity 30 (2014) 21ï¿½45
 %
 % [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, and
 % Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library (Version
