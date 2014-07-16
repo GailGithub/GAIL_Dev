@@ -30,7 +30,7 @@ doctest funmin_g
 [~,~,~,MATLABVERSION]=GAILstart(0);
 if MATLABVERSION >= 8 
     try
-    run(ut_funappx_g);
+    run(ut_funappx_g)
     catch
         display('Test ut_funappx_g is wrongly coded. We skip it.')
     end
@@ -84,13 +84,13 @@ if MATLABVERSION >= 8
     end
     
     try
-    run(ut_cubLattice_g);
+    run(ut_cubLattice_g)
     catch
         display('Test ut_cubLattice_g is wrongly coded. We skip it.')
     end
     
     try
-    run(ut_funmin_g);
+    run(ut_funmin_g)
     catch
       display('Test ut_funmin_g is wrongly coded. We skip it.')
     end
