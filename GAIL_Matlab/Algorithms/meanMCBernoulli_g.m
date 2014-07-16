@@ -137,6 +137,7 @@ p=sumY/n; %calculate the mean
 end
 
 function  [Yrand,out_param] = meanMCBernoulli_g_param(varargin)
+
 default.reltol = 1e-1;% default relative error tolerance
 default.abstol  = 1e-2;% default absolute error tolerance
 default.index = 'abs';
@@ -170,7 +171,7 @@ if ~validvarargin
     out_param.nmax = default.nmax;
 else
     p = inputParser;
-    addRequired(p,'Yrand',@GAIL_Internal.isfcn);
+    addRequired(p,'Yrand',@isfcn);
     if isnumeric(in2)%if there are multiple inputs with
         %only numeric, they should be put in order.
         addOptional(p,'abstol',default.abstol,@isnumeric);
@@ -192,15 +193,13 @@ else
     parse(p,Yrand,varargin{2:end})
     out_param = p.Results;
 end
-if (out_param.abstol <= 0) 
-    % absolute error tolerance
+if (out_param.abstol <= 0) % absolute error tolerance
     warning('MATLAB:meanMCBernoulli_g:abstolneg',...
         ['Absolute error tolerance should be greater than 0, ' ...
         'use the absolute value of the error tolerance'])
     out_param.abstol = abs(out_param.abstol);
 end
-if (out_param.reltol <= 0 || out_param.reltol >=1) 
-    % relative error tolerance
+if (out_param.reltol <= 0 || out_param.reltol >=1) % relative error tolerance
     warning('MATLAB:meanMCBernoulli_g:reltolnotin01',...
         ['Relative error tolerance should be less than 1 and bigger than 0, ' ...
         'use the default value of the error tolerance'])
@@ -213,8 +212,7 @@ if (out_param.alpha <= 0 ||out_param.alpha >= 1) % uncertainty
     out_param.alpha = default.alpha;
 end
 
-if (~GAIL_Internal.isposint(out_param.nmax)) 
-    % sample budget should be a positive integer
+if (~isposint(out_param.nmax)) % sample budget should be a positive integer
     warning('MATLAB:meanMCBernoulli_g:nmaxnotposint',...
         ['the number of nmax should be a positive integer,'...
         'take the absolute value and ceil.'])
@@ -265,8 +263,7 @@ if nargin>1; out_param.time=toc(tstart); end
 end
 
 function out_param = NbyAbs(out_param,tstart)
-out_param.n_clt = ceil(stdnorminv(1-out_param.alpha/2)/...
-    (4*out_param.abstol^2));
+out_param.n_clt = ceil(stdnorminv(1-out_param.alpha/2)/(4*out_param.abstol^2));
 out_param.n_hoeff = ceil(log(2/out_param.alpha)/(2*out_param.abstol^2));
 out_param.nabs = max(out_param.n_hoeff,out_param.n_clt);
 if out_param.nabs > out_param.nmax  
@@ -289,6 +286,7 @@ while 1
         out_param.exit=2; % exit the loop
         meanMCBernoulli_g_err(out_param,tstart); % print warning message
         %out_param.ni = out_param.nmax - nsofar; % update n_p
+
         out_param.nrel = out_param.nmax- nsofar;
         break;
     end

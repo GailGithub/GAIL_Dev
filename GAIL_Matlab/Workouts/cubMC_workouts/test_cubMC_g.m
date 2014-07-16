@@ -21,8 +21,8 @@ for dim=1:4
   r=2;
   % three coefficients in genz_test_fun and genz_test_fun_true
   for index=[1:7]
-    test_function = @(x)GAIL_Internal.genz_test_fun(x,index,in_param.dim,alpha,beta,r);
-    f_true = GAIL_Internal.genz_test_fun_true (hyperbox,index,in_param.dim,alpha,beta,r);
+    test_function = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
+    f_true = genz_test_fun_true (hyperbox,index,in_param.dim,alpha,beta,r);
     % true solution
     [Q,out_param]=cubMC_g(test_function,hyperbox,in_param);% the results using cubMC_g
     error = abs(Q-f_true);
