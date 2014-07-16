@@ -134,6 +134,17 @@ if MATLABVERSION >= 8
         fprintf(fid,'Test ut_cubLattice_g is wrongly coded. We skip it.\n');
     end
     
+    try
+      Tests = matlab.unittest.TestSuite.fromClass(?ut_funmin_g);
+      results=run(ut_funmin_g);
+      if sum([results.Failed])>0
+        failed=find([results.Failed]>0);
+        Tests(failed).Name
+      end
+    catch
+      display('Test ut_funmin_g is wrongly coded. We skip it.')
+    end
+    
 end
 
 time=toc;

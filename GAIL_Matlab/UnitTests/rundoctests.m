@@ -24,6 +24,9 @@ doctest meanMC_g
 doctest cubMC_g
 doctest meanMCBernoulli_g
 doctest funappxlocal_g
+
+doctest funmin_g
+
 time=toc;
 % disp(time)
 
