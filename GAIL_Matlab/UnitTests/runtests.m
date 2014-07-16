@@ -23,6 +23,8 @@ doctest cubMC_g
 doctest meanMCBernoulli_g
 doctest funappxlocal_g
 
+doctest funmin_g
+
 % Call unit tests
 [~,~,~,MATLABVERSION]=GAILstart(0);
 if MATLABVERSION >= 8 
@@ -94,6 +96,17 @@ if MATLABVERSION >= 8
     end
     catch
         display('Test ut_cubLattice_g is wrongly coded. We skip it.')
+    end
+    
+    try
+      Tests = matlab.unittest.TestSuite.fromClass(?ut_funmin_g);
+      results=run(ut_funmin_g);
+      if sum([results.Failed])>0
+        failed=find([results.Failed]>0);
+        Tests(failed).Name
+      end
+    catch
+      display('Test ut_funmin_g is wrongly coded. We skip it.')
     end
     
 end
