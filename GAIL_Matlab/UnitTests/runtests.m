@@ -1,9 +1,9 @@
 % Drives all doctests and unit tests
 
-[GAILPATH,~,PATHNAMESEPARATOR] = GAIL_Internal.GAILstart(0);
-% filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
-%   'gail_tests-', datestr(now,'yyyymmddTHHMMSS'),'.txt');
-% diary(filename)
+[GAILPATH,~,PATHNAMESEPARATOR] = GAILstart(0);
+filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
+  'gail_tests-', datestr(now,'yyyymmddTHHMMSS'),'.txt');
+diary(filename)
 
 tic; 
 % Call doctest 
@@ -23,18 +23,14 @@ doctest cubMC_g
 doctest meanMCBernoulli_g
 doctest funappxlocal_g
 
+doctest cubLattice_g
 doctest funmin_g
 
 % Call unit tests
 [~,~,~,MATLABVERSION]=GAILstart(0);
 if MATLABVERSION >= 8 
     try
-    Tests = matlab.unittest.TestSuite.fromClass(?ut_funappx_g);
-    results=run(ut_funappx_g);
-    if sum([results.Failed])>0
-        failed=find([results.Failed]>0);
-        Tests(failed).Name
-    end
+    run(ut_funappx_g);
     catch
         display('Test ut_funappx_g is wrongly coded. We skip it.')
     end
@@ -88,23 +84,13 @@ if MATLABVERSION >= 8
     end
     
     try
-    Tests = matlab.unittest.TestSuite.fromClass(?ut_cubLattice_g);
-    results=run(ut_cubLattice_g);
-    if sum([results.Failed])>0
-        failed=find([results.Failed]>0);
-        Tests(failed).Name
-    end
+    run(ut_cubLattice_g);
     catch
         display('Test ut_cubLattice_g is wrongly coded. We skip it.')
     end
     
     try
-      Tests = matlab.unittest.TestSuite.fromClass(?ut_funmin_g);
-      results=run(ut_funmin_g);
-      if sum([results.Failed])>0
-        failed=find([results.Failed]>0);
-        Tests(failed).Name
-      end
+    run(ut_funmin_g);
     catch
       display('Test ut_funmin_g is wrongly coded. We skip it.')
     end

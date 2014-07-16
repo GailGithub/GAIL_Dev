@@ -25,6 +25,7 @@ doctest cubMC_g
 doctest meanMCBernoulli_g
 doctest funappxlocal_g
 
+doctest cubLattice_g
 doctest funmin_g
 
 time=toc;
