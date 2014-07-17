@@ -71,8 +71,11 @@ function [fmin,out_param]=funmin_g(varargin)
 %  >> f=@(x) (x-0.3).^2+1; [fmin,out_param] = funmin_g(f)
 %
 %  fmin =
-%    1.0000e+00
+% 
+%     1.0000
+% 
 %  out_param = 
+% 
 %           abstol: 1.0000e-06
 %             TolX: 1.0000e-03
 %            ninit: 52
@@ -94,8 +97,11 @@ function [fmin,out_param]=funmin_g(varargin)
 %  >> [fmin,out_param] = funmin_g(f,in_param)
 %
 %  fmin =
-%    1.0000e+00
+% 
+%     1.0000
+% 
 %  out_param = 
+% 
 %           abstol: 1.0000e-08
 %                f: @(x)(x-0.3).^2+1
 %            ninit: 10
@@ -112,22 +118,25 @@ function [fmin,out_param]=funmin_g(varargin)
 %
 %  Example 3:
 %
-%  >>> f=@(x) (x-0.3).^2+1;
-%  >>> [fmin,out_param] = funmin_g(f,'ninit',10,'nmax',1e6,'abstol',1e-4,'TolX',1e-2)
+%  >> f=@(x) (x-0.3).^2+1;
+%  >> [fmin,out_param] = funmin_g(f,'ninit',10,'nmax',1e6,'abstol',1e-4,'TolX',1e-2)
 %
 %  fmin =
-%    1.0000e+00
+% 
+%     1.0000
+% 
 %  out_param = 
+% 
 %           abstol: 1.0000e-04
 %                f: @(x)(x-0.3).^2+1
 %            ninit: 10
 %             nmax: 1000000
-%             TolX: 1.0000e-02
+%             TolX: 0.0100
 %              tau: 17
 %     exceedbudget: 0
 %          npoints: 145
 %            error: 9.4167e-05
-%          volumeX: 1.6961e-02
+%          volumeX: 0.0170
 %        tauchange: 0
 %        intervals: [2x1 double]
 % 
@@ -179,14 +188,14 @@ while n < out_param.nmax;
         ln = (diff_y/2+y(1:n-1))-abs(diff_y).*(Cn+1./Cn)/4;
         % minimum values of each interval
         Ln = min(ln); % lower bound
-        min_endpoint = min(y); % upper bound
-        error = min_endpoint-Ln;
+        Un = min(y); % upper bound
+        error = Un-Ln;
         % find the intervals containing minimum points
-        index = find(cn<1 & ln < min_endpoint);
+        index = find(cn<1 & ln < Un);
         m = size(index,2);
         if m > 0
             delta = (n-1)^2*diff_y(index).^2-2*bn*(diff_y(index)./2 ...
-                +y(index)-bn/8/(n-1)^2-min_endpoint);
+                +y(index)-bn/8/(n-1)^2-Un);
             ints = zeros(2,m);
             ints(1,:)=x(index)+1/2/(n-1)-(n-1)*diff_y(index)./bn ...
                 -sqrt(delta)./bn;
@@ -225,14 +234,14 @@ while n < out_param.nmax;
             ln = (diff_y/2+y(1:n-1))  -abs(diff_y).*(Cn+1./Cn)/4; 
             % minimum values of each interval
             Ln = min(ln); % lower bound
-            min_endpoint = min(y); % upper bound
-            error = min_endpoint-Ln;
+            Un = min(y); % upper bound
+            error = Un-Ln;
             % find the intervals containing minimum points
-            index = find(cn<1 & ln < min_endpoint);
+            index = find(cn<1 & ln < Un);
             m = size(index,2);
             if m > 0
                 delta = (n-1)^2*diff_y(index).^2-2*bn*(diff_y(index)./2 ...
-                    +y(index)-bn/8/(n-1)^2-min_endpoint);
+                    +y(index)-bn/8/(n-1)^2-Un);
                 ints = zeros(2,m);
                 ints(1,:)=x(index)+1/2/(n-1)-(n-1)*diff_y(index)./bn ...
                     -sqrt(delta)./bn;
@@ -275,7 +284,7 @@ if out_param.exceedbudget == 1
     warning('MATLAB:funmin_g:exceedbudget','funmin_g attempted to exceed the cost budget. The answer may be unreliable.')
 end
 
-fmin = min_endpoint;
+fmin = Un;
 out_param.npoints = n;
 out_param.error = error;
 out_param.volumeX = volumeX;
