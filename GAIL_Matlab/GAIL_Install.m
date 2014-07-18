@@ -5,7 +5,9 @@ fprintf('\nWelcome to GAIL version %g.\n', GAILVERSION);
 if MATLABVERSION < 7,
   error('This version is only supported on Matlab 7.x and above.');
 end
-gailp=genpath(GAILPATH);% Generate strings of paths to GAIL subdirectories 
+gailp=genpath(GAILPATH);% Generate strings of paths to GAIL subdirectories
+cd(strcat(GAILPATH,'Utilities'));
+GAILpublish; % Publish searchable html documentation
 docPath = strcat(GAILPATH,'Documentation');
 cd(docPath);
 helpPath = strcat(docPath,PATHNAMESEPARATOR,'html');
