@@ -36,7 +36,7 @@ int main()
     websiteList.push_back(line);
   }
   ifs.close();
-  ofstream gail("GAIL.m"), helptoc("html/helptoc.xml"), funclist("funclist.m"), ofs;
+  ofstream gail("GAIL_raw.m"), helptoc("html/helptoc_raw.xml"), funclist("funclist_raw.m"), ofs;
   helptoc << "<?xml version='1.0' encoding='ISO-8859-1' ?>\n\n<toc version=\"1.0\">\n\n"
           << "<tocitem target=\"GAIL.html\">GAIL Toolbox\n"
           << "    <tocitem target=\"funclist.html\" image=\"HelpIcon.FUNCTION\">Functions" << endl;
