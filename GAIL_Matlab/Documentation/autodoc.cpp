@@ -1,3 +1,9 @@
+/*
+ * This program automatically generates .m files that can be published to html documentation.
+ * Refer to https://sites.google.com/site/gailteam1/project-updates/howtouseautodoctocreatehtmldocumentation
+ * for details.
+*/ 
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
