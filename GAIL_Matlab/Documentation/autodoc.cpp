@@ -188,7 +188,7 @@ int main()
   helptoc.close();
   gail.close();
   funclist.close();
-  std::cout << "autodoc: Automatic documentation is comleted." << endl;
+  std::cout << "autodoc: Automatic documentation is completed." << endl;
 }
 
 string upperString(const string &s) noexcept
