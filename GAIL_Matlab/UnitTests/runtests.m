@@ -8,6 +8,7 @@ diary(filename)
 tic; 
 % Call doctest 
 format short
+
 doctest funappx_g
 doctest funappxlocal_g
 doctest funappxtau_g
@@ -23,11 +24,13 @@ doctest integraltau_g
 doctest dt_integral_g 
 
 doctest meanMC_g
-doctest cubMC_g
+doctest meanMCRel_g
 doctest meanMCBernoulli_g
-doctest funappxlocal_g
+ 
+doctest cubMC_g
 
 doctest cubLattice_g
+%doctest cubSobol_g
 
 % Call unit tests
 [~,~,~,MATLABVERSION]=GAILstart(0);
