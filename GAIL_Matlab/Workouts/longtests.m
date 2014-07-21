@@ -36,6 +36,12 @@ run_handle('RunTestcubMConGeoAsianCall')
 run_handle('RunTestcubMConGaussian')
 run_handle('RunTestcubMConGaussiand1')
 
+% Function minimization
+run_handle('workout_testerrortolerance')
+run_handle('workout_testXtolerance')
+run_handle('workout_testboth')
+run_handle('workout_twoextreme')
+
 %% Unit tests
 [~,~,~,MATLABVERSION]=GAILstart(0);
 if MATLABVERSION >= 8  
