@@ -1,34 +1,35 @@
 function [mu,out_param]=meanMCRel_g(varargin)
-% MEANMCRel_G Monte Carlo method to estimate the mean of a random variable to
+% MEANMCREL_G Monte Carlo method to estimate the mean of a random variable to
 % within a specified generalized error tolerance with guaranteed confidence
 % level 1-alpha.
 %
-% mu = MEANMCRel_G(Yrand) estimates the mean of a random variable Y to within
-% a specified generalized error tolerance 1e-2 with guaranteed confidence
+% mu = MEANMCREL_G(Yrand) estimates the mean of a random variable Y to within
+% a specified generalized error tolerance with guaranteed confidence
 % level 99%. Input Yrand is a function handle that accepts a positive
 % integer input n and returns an n x 1 vector of IID instances of the
 % random variable Y.
 %
 % mu =
-% MEANMCRel_G(Yrand,abstol,alpha,n_sigma,fudge,tbudget,nbudget,npcmax,checked)
-% estimates the mean of a random variable Y to within an specified generalized
-% error tolerance abstol with guaranteed confidence level 1-alpha. using
-% all ordered parsing inputs abstol, n_sigma, fudge, tbudget, nbudget,
-% npcmax and checked.
+% MEANMCREL_G(Yrand,abstol,reltol,alpha,fudge,nSig,n1,tbudget,nbudget,checked)
+% estimates the mean of a random variable Y to within an specified
+% generalized error tolerance abstol with guaranteed confidence level
+% 1-alpha. using all ordered parsing inputs abstol, reltol, alpha, fudge,
+% nSig, n1, tbudget, nbudget, and checked.
 %
-% mu = MEANMCRel_G(Yrand,'abstol',abstol,'alpha',alpha,'n_sigma',n_sigma,...
-% 'fudge',fudge,'tbudget',tbudget,'nbudget',nbudget,'npcmax',npcmax,...
-% 'checked',checked) estimates the mean of a random variable Y to within a
-% specified generalized error tolerance abstol with guaranteed confidence
-% level 1-alpha. All the field-value pairs are optional and can be
-% supplied in different order.
+% mu =
+% MEANMCREL_G(Yrand,'abstol',abstol,'reltol',reltol,'alpha',alpha,'fudge',
+% fudge,'nSig',nSig,'n1',n1,'tbudget',tbudget,'nbudget',nbudget,
+% 'checked',checked) estimates the mean of a random
+% variable Y to within a specified generalized error tolerance which in terms of
+% abstol and reltol with guaranteed confidence level 1-alpha. All the
+% field-value pairs are optional and can be supplied in different order.
 %
-% mu = MEANMCRel_G(Yrand,in_param) estimates the mean of a random variable Y
-% to within a specified generalized error tolerance in_param.abstol with
-% guaranteed uncertainty within in_param.alpha. If a field is not
-% specified, the default value is used.
+% mu = MEANMCREL_G(Yrand,in_param) estimates the mean of a random variable
+% Y to within a specified generalized error tolerance with guaranteed
+% uncertainty within in_param.alpha. If a field is not specified, the
+% default value is used.
 %
-% [mu, out_param] = MEANMCRel_G(Yrand,in_param) estimates the mean of a
+% [mu, out_param] = MEANMCREL_G(Yrand,in_param) estimates the mean of a
 % random variable Y to within a specified generalized error tolerance with
 % the given parameters in_param and produce output parameters out_param.
 %
@@ -45,6 +46,9 @@ function [mu,out_param]=meanMCRel_g(varargin)
 % in_param.reltol --- the relative error tolerance, default value is 1e-1.
 %
 % in_param.alpha --- the uncertainty, default value is 1%.
+%
+% in_param.fudge --- standard deviation inflation factor, default value is
+% 1.1
 %
 % in_param.nSig --- initial sample size for estimating the sample
 % variance, the default value is 1e3.
@@ -84,24 +88,7 @@ function [mu,out_param]=meanMCRel_g(varargin)
 % out_param.time --- the time elapsed.
 %
 % Guarantee
-%
-% If the modified kurtosis of the random variable, Y, is less than the kurtmax,
-% which is defined in terms of the uncertainty, alpha, the sample size to
-% estimate variance, n_sigma, and the standard deviation inflation factor,
-% fudge, then the inequality
-%
-% Pr(|mu-\hat{mu}| <= abstol) >= 1-alpha
-%
-% holds. Here mu is the true mean of Y, and \hat{mu} is the output
-% of MEANMC_G.
-%
-% The cost of the two-stage algorithm also satisfies the inequality
-%
-% Pr (N_tot <= N_up) >= 1-beta
-%
-% where N_tot is the total cost of samples, N_up is the upper bound on the
-% cost, which is roughly proportional to sigma^2/abstol^2, beta is the
-% level of uncertainty on the cost. For details, please refer to [1].
+% ---to be added
 %
 % Examples
 %
@@ -109,24 +96,24 @@ function [mu,out_param]=meanMCRel_g(varargin)
 % Calculate the mean of x^2 when x is uniformly distributed in
 % [0 1], with the absolute error tolerance = 1e-2.
 %
-% >> in_param.abstol=1e-2; in_param.alpha = 0.01; Yrand=@(n) rand(n,1).^2;
+% >> in_param.reltol=1e-1; in_param.alpha = 0.05; Yrand=@(n) rand(n,1).^2;
 % >> mu=meanMCRel_g(Yrand,in_param)
 % mu = 0.3***
 %
 %
 % Example 2:
 % Using the same function as example 1, with the absolute error tolerance
-% 1e-2.
+% 1e-2 and relative tolerance 1e-2.
 %
-% >> mu=meanMCRel_g(Yrand,1e-2,1e-2)
-% mu = 0.33***
+% >> mu=meanMCRel_g(Yrand,1e-1,1e-1)
+% mu = 0.3***
 %
 %
 % Example 3:
 % Using the sample function as example 1, with the absolute error
-% tolerance 1e-2 and uncertainty 0.01.
+% tolerance 1e-1 and uncertainty 0.01.
 %
-% >> mu=meanMCRel_g(Yrand,'abstol',1e-2,'alpha',0.01)
+% >> mu=meanMCRel_g(Yrand,'reltol',1e-1,'alpha',0.01)
 % mu = 0.3***
 %
 %
@@ -151,7 +138,6 @@ function [mu,out_param]=meanMCRel_g(varargin)
 tstart = tic; %start the clock
 [Yrand, out_param] = meanMC_g_param(varargin{:});
 npcmax=1e6;
-fudge=1.1;
 n1 = 2;
 Yrand(n1); %let it run once to load all the data. warm up the machine.
 nsofar = n1;
@@ -165,12 +151,12 @@ while true
         ,ntry,timetry,nsofar,out_param.nbudget);
     %update the nmax after initinal try
     t_sig_predict = timetry/ntry * out_param.nSig;
-    %get the estimated time using n_sigma samples.
+    %get the estimated time using nSig samples.
     if timetry > out_param.tbudget/10;
         %after intial try, found it has already used 10% of the time
         %budget, stop try.
         out_param.exit = 2; % exit the loop
-        out_param = meanMC_g_err(out_param);% print the error message
+        out_param = meanMCRel_g_err(out_param);% print the error message
         out_param.n_mu = out_param.nmax;
         mu = SplitColumnMean(Yrand,out_param.n_mu,npcmax);
         %calculate the mean without guarantee using nmax
@@ -198,12 +184,12 @@ while true
             % update the samples that have been used
             out_param.var = var(Yval);% calculate the sample variance--stage 1
             sig0 = sqrt(out_param.var);% standard deviation
-            sig0up = fudge.*sig0;% upper bound on standard deviation
+            sig0up = out_param.fudge.*sig0;% upper bound on standard deviation
             alpha_sig = out_param.alpha/2;% the uncertainty for variance estimation
             out_param.alphai(1) = (out_param.alpha-alpha_sig)/(2*(1-alpha_sig));
             out_param.kurtmax = (out_param.nSig-3)/(out_param.nSig-1) ...
                 + ((alpha_sig*out_param.nSig)/(1-alpha_sig))...
-                *(1-1/fudge^2)^2;
+                *(1-1/out_param.fudge^2)^2;
             % get the upper bound on the modified kurtosis
             ncbinv = N_CB_inv(out_param.n1,out_param.alphai(1),out_param.kurtmax);
             out_param.tol(1) = sig0up*ncbinv;
@@ -346,9 +332,10 @@ function  [Yrand,out_param] = meanMC_g_param(varargin)
 
 default.abstol  = 1e-2;% default absolute error tolerance
 default.reltol = 1e-1;% default relative error tolerance
-default.nSig = 1e2;% default initial sample size n_sigma for variance estimation
+default.nSig = 1e2;% default initial sample size nSig for variance estimation
 default.n1 = 1e3; % default initial sample size n1 for mean estimation
 default.alpha = 0.01;% default uncertainty
+default.fudge = 1.1;%default fudge factor
 default.tbudget = 200;% default time budget
 default.nbudget = 1e9; % default sample budget
 default.checked = 0;% default value of parameter checking status
@@ -382,9 +369,10 @@ if ~validvarargin
 
     out_param.abstol = default.abstol;% default absolute error tolerance
     out_param.reltol = default.reltol; % default relative error tolerance
-    out_param.n1 = default.n1;
-    out_param.nSig = default.nSig;
     out_param.alpha = default.alpha;
+    out_param.fudge = default.fudge;
+    out_param.nSig = default.nSig;
+    out_param.n1 = default.n1;
     out_param.tbudget = default.tbudget;
     out_param.nbudget = default.nbudget;
     out_param.checked = default.checked;
@@ -396,9 +384,10 @@ else
 
         addOptional(p,'abstol',default.abstol,@isnumeric);
         addOptional(p,'reltol',default.reltol,@isnumeric);
+        addOptional(p,'alpha',default.alpha,@isnumeric);
+        addOptional(p,'fudge',default.fudge,@isnumeric);
         addOptional(p,'nSig',default.nSig,@isnumeric);
         addOptional(p,'n1',default.n1,@isnumeric);
-        addOptional(p,'alpha',default.alpha,@isnumeric);
         addOptional(p,'tbudget',default.tbudget,@isnumeric);
         addOptional(p,'nbudget',default.nbudget,@isnumeric);
         addOptional(p,'checked',default.checked,@isnumeric);
@@ -410,9 +399,10 @@ else
 
         addParamValue(p,'abstol',default.abstol,@isnumeric);
         addParamValue(p,'reltol',default.reltol,@isnumeric);
-        addParamValue(p,'nSig',default.nSig,@isnumeric);
-        addParamValue(p,'n1',default.n1,@isnumeric);
         addParamValue(p,'alpha',default.alpha,@isnumeric);
+        addParamValue(p,'fudge',default.fudge,@isnumeric);
+        addParamValue(p,'nSig',default.nSig,@isnumeric);
+        addParamValue(p,'n1',default.n1,@isnumeric);        
         addParamValue(p,'tbudget',default.tbudget,@isnumeric);
         addParamValue(p,'nbudget',default.nbudget,@isnumeric);        
         addParamValue(p,'checked',default.checked,@isnumeric);
@@ -442,11 +432,23 @@ if out_param.checked==0
             'use the default value.'])
         out_param.alpha = default.alpha;
     end
+     if (out_param.fudge<= 1) % uncertainty
+        warning('MATLAB:meanMCRel_g:fudgelessthan1',...
+            ['the fudge factor should be larger than 1, '...
+            'use the default value.'])
+        out_param.fudge = default.fudge;
+    end   
     if (~isposint(out_param.nSig)) % initial sample size should be an integer
         warning('MATLAB:meanMCRel_g:nsignotposint',...
-            ['the number n_sigma should a positive integer, '...
+            ['the number nSig should a positive integer, '...
             'take the absolute value and ceil.'])
         out_param.nSig = ceil(abs(out_param.nSig));
+    end
+    if (~isposint(out_param.n1)) % initial sample size should be an integer
+        warning('MATLAB:meanMCRel_g:n1notposint',...
+            ['the number n1 should a positive integer, '...
+            'take the absolute value and ceil.'])
+        out_param.n1 = ceil(abs(out_param.n1));
     end
     if (out_param.tbudget <= 0) % time budget should be positive
         warning('MATLAB:meanMCRel_g:timebudgetlneg',...
@@ -491,7 +493,7 @@ switch out_param.exit
         % the estimated time for estimating variance is bigger than half of
         % time budget.
         warning('MATLAB:meanMCRel_g:timebudgetreached',...
-            ['the estimated time using n_sigma samples '...
+            ['the estimated time using nSig samples '...
             'is bigger than half of the time budget, '...
             'could not afford estimating variance, '...
             'use all the time left to estimate the mean.']);
