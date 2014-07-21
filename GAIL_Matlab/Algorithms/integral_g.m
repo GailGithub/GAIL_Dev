@@ -90,7 +90,7 @@ function [q,out_param] = integral_g(varargin)
 %      ||f''||        <=  -------- ||f'- ----------- ||
 %             1           2(b - a) ||       b - a    ||1,
 %  then the q output by this algorithm is guaranteed to satisfy
-%      ||\int_{a}^{b} f(x) dx - q ||_1 <= abstol,
+%      |\int_{a}^{b} f(x) dx - q | <= abstol,
 %  provided the flag exceedbudget = 0. And the upper bound of the cost is
 %          ________________________ 
 %         /   nstar*(b-a)^2 Var(f') 
