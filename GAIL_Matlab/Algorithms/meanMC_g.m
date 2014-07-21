@@ -60,7 +60,6 @@ function [mu,out_param]=meanMC_g(varargin)
 % 
 %     in_param.checked --- the value corresponding to parameter checking status.
 %                         0   not checked
-%                         1   checked by cubMC_g
 %                         2   checked by meanMC_g
 %
 %   Output Arguments
