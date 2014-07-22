@@ -1,6 +1,6 @@
 %GAIL_REINSTALL  Reinstall GAIL. Remove existing GAIL paths and add new ones.
 clear all; close all; clc;
-[GAILPATH,GAILVERSION,PATHNAMESEPARATOR,MATLABVERSION] = GAIL_Internal.GAILstart;
+[GAILPATH,GAILVERSION,PATHNAMESEPARATOR,MATLABVERSION] = GAILstart;
 fprintf('\nYou are reinstalling GAIL version %g.\n\n',GAILVERSION);
 
 if MATLABVERSION < 7,

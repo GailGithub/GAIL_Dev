@@ -1,6 +1,6 @@
 % Drives all doctests and unit tests
 
-[GAILPATH,~,PATHNAMESEPARATOR] = GAIL_Internal.GAILstart(0);
+[GAILPATH,~,PATHNAMESEPARATOR] = GAILstart(0);
 % filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
 %   'gail_tests-', datestr(now,'yyyymmddTHHMMSS'),'.txt');
 % diary(filename)

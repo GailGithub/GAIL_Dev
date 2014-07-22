@@ -11,10 +11,10 @@ Friend = computer;
 
 if isunix % for Mac or unix
     PATHNAMESEPARATOR = '/';
-    GAILPATH=[fileparts(which('GAIL_Install')), PATHNAMESEPARATOR];
+    GAILPATH=[fileparts(which('GAILstart')), PATHNAMESEPARATOR];
 elseif strcmp(Friend(1:2),'PC') % for pc
     PATHNAMESEPARATOR = '\';
-    GAILPATH = [fileparts(which('GAIL_Install')), PATHNAMESEPARATOR];
+    GAILPATH = [fileparts(which('GAILstart')), PATHNAMESEPARATOR];
 else
     error('I don''t recognize this computer.')
 end
