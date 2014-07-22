@@ -24,7 +24,7 @@ doctest meanMCBernoulli_g
 doctest funappxlocal_g
 
 % Call unit tests
-[~,~,~,MATLABVERSION]=GAIL_Internal.GAILstart(0);
+[~,~,~,MATLABVERSION]=GAILstart(0);
 if MATLABVERSION >= 8 
     try
     run(ut_funappx_g)
