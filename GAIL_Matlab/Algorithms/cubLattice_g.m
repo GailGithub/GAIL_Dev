@@ -101,7 +101,7 @@ function [q,out_param]=cubLattice_g(varargin)
 % interval [0,1)^2:
 %
 % >> f=@(x) x(:,1).*x(:,2); d=2;
-% >> q=CUBLATTICE_G(f,d,1e-5,'uniform','diff','C1sin')
+% >> q=cubLattice_g(f,d,1e-5,'uniform','diff','C1sin')
 % q = 0.25***
 % 
 % 
@@ -110,7 +110,7 @@ function [q,out_param]=cubLattice_g(varargin)
 % in the interval R^3 where x1, x2 and x3 are normally distributed:
 %
 % >> f=@(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2+0.11; d=3;
-% >> q=CUBLATTICE_G(f,d,1e-3,'normal','diff','C1sin')
+% >> q=cubLattice_g(f,d,1e-3,'normal','diff','C1sin')
 % q = 1.1***
 % 
 %
@@ -119,7 +119,7 @@ function [q,out_param]=cubLattice_g(varargin)
 % interval [0,1)^2:
 % 
 % >> f=@(x) exp(-x(:,1).^2-x(:,2).^2); d=2;
-% >> q=CUBLATTICE_G(f,d,1e-3,'uniform','diff','C1')
+% >> q=cubLattice_g(f,d,1e-3,'uniform','diff','C1')
 % q = 0.55***
 %
 %
@@ -128,7 +128,7 @@ function [q,out_param]=cubLattice_g(varargin)
 % sigma=0.05 and T=1.
 % 
 % >> f=@(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); d=1;
-% >> q=CUBLATTICE_G(f,d,1e-4,'normal','diff','C1sin')
+% >> q=cubLattice_g(f,d,1e-4,'normal','diff','C1sin')
 % q = 2.05***
 %
 %
@@ -154,7 +154,7 @@ tic
 [f,out_param] = cubLattice_g_param(varargin{:});
 
 if strcmp(out_param.density,'normal')
-   f=@(x) f(norminv(x));
+   f=@(x) f(stdnorminv(x));
 end
 if strcmp(out_param.diff,'Baker')
     f=@(x) f(1-2*abs(x-1/2)); % Baker's transform

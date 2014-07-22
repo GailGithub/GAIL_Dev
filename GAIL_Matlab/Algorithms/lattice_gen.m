@@ -1,7 +1,9 @@
-function xlat = lattice_gen(nmin,nmax, d)
+function xlat = lattice_gen(nmin,nmax,d)
 % d: dimension of the problem, 1<=d<=100.
 % nmin,nmax: minimum and maximum indexes of the sequence:
 %       xlat=[x_nmin,...,x_nmax]. 1<=nmin<=nmax<=2^27.
+%       nmax must be defined as a power of 2 and we can only have
+%       nmin=1 or nmin=nmax/2+1
 
 z=[1, 55469281, 30027329, 8602267, 54785287, 14414253, 12439749,...
     66155523, 49958529, 50678183, 55082445, 11596735, 56686781,...
@@ -19,12 +21,19 @@ z=[1, 55469281, 30027329, 8602267, 54785287, 14414253, 12439749,...
     57054517, 52011193, 5277525, 12672943, 7978621, 56166235, 26118131,...
     29491449, 29833283, 54467951, 33420145, 41944363]; % generating vector from L'Ecuyer generator
 
-p=sobolset(1,'Skip',nmin-1); % Van der Corput sequence from positions nmin to nmax
 nelem=nmax-nmin+1;
-y=net(p,nelem);
+
+% p=sobolset(1,'Skip',nmin-1); % Faster than below but requires Statistical Toolbox
+% y=net(p,nelem);
+
+if nmin==1 % vdc points using our own vdc function
+    y=vdc(nelem);
+else
+    y=vdc(nelem)+1/(2*(nmin-1));
+end
 
 %Rank-1 lattice points
-xlat=zeros(nelem,d);
-for j=1:d
+xlat=[y,zeros(nelem,d-1)];
+for j=2:d
 xlat(:,j)=mod(y*z(j),1);
 end

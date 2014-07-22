@@ -133,7 +133,7 @@ tic
 [f,out_param] = cubSobol_g_param(varargin{:});
 
 if strcmp(out_param.density,'normal')
-   f=@(x) f(norminv(x));
+   f=@(x) f(stdnorminv(x));
 end
 
 %% Main algorithm
