@@ -1,41 +1,45 @@
 function [q,out_param]=cubLattice_g(varargin)
-% cubLattice_g is a Quasi-Monte Carlo method using rank-1 Lattices cubature
+% CUBLATTICE_G is a Quasi-Monte Carlo method using rank-1 Lattices cubature
 % over the d-multidimensional region to integrate within a specified absolute error 
 % tolerance with guarantees under Fourier coefficients cone decay assumptions.
 %
-% [q,out_param] = cubLattice_g(f,d) estimates the integral of f over the
-% d-dimensional region to within a predefined absolute error tolerance
-% 1e-4 and with guaranteed error. Input f is a function handle. f should
+% [q,out_param] = CUBLATTICE_G(f,d) estimates the integral of f over the
+% d-dimensional region with an error guaranteed not to be greater than the
+% predefined error tolerance 1e-4. Input f is a function handle. f should
 % accept an n x d matrix input, where d is the dimension of the hypercube,
 % and n is the number of points being evaluated simultaneously. The input d
 % is the dimension in which the function f is defined. Given the
 % construction of our Lattices, d must be a positive integer with 1<=d<=100.
 %
-% q = cubLattice_g(f,d,abstol,density,shift,mmin,mmax,fudge,diff)
+% q = CUBLATTICE_G(f,d,abstol,density,shift,mmin,mmax,fudge,diff)
 % estimates the integral of f over the d-dimensional region. The answer
 % is given within the absolute error tolerance abstol. All parameters
 % should be input in the order specified above. If an input is not specified,
 % the default value is used. Note that if an input is not specified,
 % the remaining tail can not be specified either.
 %
-% q = cubLattice_g(f,d,'abstol',abstol,'density',density,'shift',shift,'mmin',mmin,'mmax',mmax,'fudge',fudge,'diff',diff)
+% q = CUBLATTICE_G(f,d,'abstol',abstol,'density',density,'shift',shift,'mmin',mmin,'mmax',mmax,'fudge',fudge,'diff',diff)
 % estimates the integral of f over the d-dimensional region. The answer
 % is given within the absolute error tolerance abstol. All the field-value
 % pairs are optional and can be supplied with any order. If an input is not
 % specified, the default value is used.
 %
-% q = cubLattice_g(f,d,in_param) estimates the integral of f over the
+% q = CUBLATTICE_G(f,d,in_param) estimates the integral of f over the
 % d-dimensional region. The answer is given within the absolute error 
 % tolerance in_param.abstol.
 %
-% f --- the integrand.
+% INPUT
+% -----
+%
+% f --- the integrand whose input should be a matrix mxd where m is the
+% number of data points and d the dimension.
 %
 % d --- dimension where f is defined. d must be a positive integer 1<=d<=100.
 %
 % in_param.abstol --- the absolute error tolerance, abstol>0. By default is 1e-4. 
 %
-% in_param.density --- for f(x), we can define x uniform in [0,1)^d or
-% normally distributed with covariance matrix Id^d. By default is
+% in_param.density --- for f(x), we can define x uniformly in [0,1)^d or
+% normally distributed with covariance matrix I_d. By default is
 % 'uniform'. The only possible values are 'uniform' or 'normal'.
 %
 % in_param.shift --- the Rank-1 lattices can be shifted to avoid the origin
@@ -67,6 +71,9 @@ function [q,out_param]=cubLattice_g(varargin)
 %
 % q --- the estimated value of the integral.
 %
+% OUTPUT
+% ------
+%
 % out_param.overbudget --- string stating whether the max budget is
 % attained without reaching the guaranteed error tolerance.
 %
@@ -94,7 +101,7 @@ function [q,out_param]=cubLattice_g(varargin)
 % interval [0,1)^2:
 %
 % >> f=@(x) x(:,1).*x(:,2); d=2;
-% >> q=cubLattice_g(f,d,1e-5,'uniform','diff','C1sin')
+% >> q=CUBLATTICE_G(f,d,1e-5,'uniform','diff','C1sin')
 % q = 0.25***
 % 
 % 
@@ -103,7 +110,7 @@ function [q,out_param]=cubLattice_g(varargin)
 % in the interval R^3 where x1, x2 and x3 are normally distributed:
 %
 % >> f=@(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2+0.11; d=3;
-% >> q=cubLattice_g(f,d,1e-3,'normal','diff','C1sin')
+% >> q=CUBLATTICE_G(f,d,1e-3,'normal','diff','C1sin')
 % q = 1.1***
 % 
 %
@@ -112,7 +119,7 @@ function [q,out_param]=cubLattice_g(varargin)
 % interval [0,1)^2:
 % 
 % >> f=@(x) exp(-x(:,1).^2-x(:,2).^2); d=2;
-% >> q=cubLattice_g(f,d,1e-3,'uniform','diff','C1')
+% >> q=CUBLATTICE_G(f,d,1e-3,'uniform','diff','C1')
 % q = 0.55***
 %
 %
@@ -121,13 +128,13 @@ function [q,out_param]=cubLattice_g(varargin)
 % sigma=0.05 and T=1.
 % 
 % >> f=@(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); d=1;
-% >> q=cubLattice_g(f,d,1e-4,'normal','diff','C1sin')
+% >> q=CUBLATTICE_G(f,d,1e-4,'normal','diff','C1sin')
 % q = 2.05***
 %
 %
 %
 %
-% See also cubSobol_g, cubMC_g, meanMC_g, integral_g
+% See also CUBSOBOL_G, CUBMC_G, MEANMC_G, INTEGRAL_G
 % 
 % References
 %
