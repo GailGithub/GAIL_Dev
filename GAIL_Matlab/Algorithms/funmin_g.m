@@ -23,6 +23,12 @@ function [fmin,out_param]=funmin_g(varargin)
 %  interval [0,1] with a structure input parameters in_param. If a field is
 %  not specified, the default value is used.
 %
+%  [fmin, out_param] = FUNMIN_G(f,...) returns minimum value fmin of
+%  function f and an output structure out_param, which has the following
+%  fields.
+%
+%  Input Arguments
+%
 %    in_param.abstol --- guaranteed absolute error tolerance, default value
 %                        is 1e-6.
 %
@@ -32,9 +38,7 @@ function [fmin,out_param]=funmin_g(varargin)
 %
 %    in_param.nmax --- cost budget, default value is 1e7.
 %
-%  [fmin, out_param] = FUNMIN_G(f,...) returns minimum value fmin of
-%  function f and an output structure out_param, which has the following
-%  fields.
+%  Output Arguments
 %
 %    out_param.abstol --- guaranteed absolute error tolerance
 %
@@ -62,6 +66,14 @@ function [fmin,out_param]=funmin_g(varargin)
 %
 %    out_param.tauchange --- it is 1 if tau is too small, and the algorithm
 %    has used a larger tau.
+%
+%  Guarantee
+%    
+%  If the function to be minimized, f, satisfies the cone condition
+%      ||f''||_\infty <= \tau ||f'-f(1)+f(0)||_\infty,
+%  then the fmin output by this algorithm is guaranteed to satisfy
+%      ||min(f)-fmin||_\infty <= abstol,
+%  provided the flag exceedbudget = 0.
 %
 %
 %  Examples
@@ -141,7 +153,7 @@ function [fmin,out_param]=funmin_g(varargin)
 %        intervals: [2x1 double]
 % 
 %
-%  Sea also FUNAPPX_G
+%  Sea also FUNAPPX_G, INTEGRAL_G
 %
 %  Reference
 %  [1]  Nicholas Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, 
@@ -152,6 +164,10 @@ function [fmin,out_param]=funmin_g(varargin)
 %       and Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library
 %       (Version 1.3.0)" [MATLAB Software], 2014. Available from
 %       http://code.google.com/p/gail/
+%
+%   If you find GAIL helpful in your work, please support us by citing
+%   the above paper and software.
+%
 
 
 % Parse and check the validity of input parameters
@@ -272,6 +288,10 @@ while n < out_param.nmax;
         end;
     end;
 end;
+Ln
+min(Cn)
+
+
 
 % check tau change flag
 if tauchange == 1
