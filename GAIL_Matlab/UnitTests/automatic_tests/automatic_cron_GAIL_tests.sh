@@ -10,7 +10,7 @@ cd /home/lantoni/GAIL_tests/repo/gail-development/
 # MATLAB
 # Set the directory for running our matlab test
 # Run the file that installs GAIL and run the tests. The output files are in OutputFiles. We put all togehter since there is a permission not letting us install the path
-cd /home/lantoni/GAIL_tests/repo/gail-development/GAIL_Matlab/UnitTests/automatic_tests/
+cd /home/lantoni/GAIL_tests/repo/gail-development/GAIL_Matlab/Tests/automatic_tests/
 # /export/apps/matlab/R2013a/bin/matlab -nojvm < tautomatic.m > /home/lantoni/GAIL_tests/test_results.txt Former line
 /export/apps/matlab/R2013a/bin/matlab -nojvm < tautomatic.m
 
@@ -20,7 +20,8 @@ cd /home/lantoni/GAIL_tests/repo/gail-development/GAIL_Matlab/UnitTests/automati
 # Delete the lines containing "seconds testing time" from the test_results.txt file
 # sed --in-place '/seconds testing time/d' test_results.txt 
 # Former code above. Now below:
-mv /home/lantoni/GAIL_tests/repo/gail-development/GAIL_Matlab/OutputFiles/gail_doctests.txt gail_doctests.txt
+cp /home/lantoni/GAIL_tests/repo/gail-development/GAIL_Matlab/OutputFiles/gail_tests-* gail_doctests.txt
+mv /home/lantoni/GAIL_tests/repo/gail-development/GAIL_Matlab/OutputFiles/gail_tests-* /home/lantoni/GAIL_tests/test_reports/
 mv /home/lantoni/GAIL_tests/repo/gail-development/GAIL_Matlab/OutputFiles/gail_unittests.txt gail_unittests.txt
 # Preparing results txt files
 begin="------Doc test wrong results were:";

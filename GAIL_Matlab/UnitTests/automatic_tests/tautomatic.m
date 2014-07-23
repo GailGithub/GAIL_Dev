@@ -3,7 +3,6 @@ cd /home/lantoni/GAIL_tests/repo/gail-development/GAIL_Matlab/
 % Install the latest
 GAIL_Install
 % Go to the tests direcoty (% is comment in matlab environment)
-cd /home/lantoni/GAIL_tests/repo/gail-development/GAIL_Matlab/UnitTests/
+cd /home/lantoni/GAIL_tests/repo/gail-development/GAIL_Matlab/Tests/
 %runtests %> /home/lantoni/GAIL_tests/test_results.txt former tests
-rundoctests
-rununittests
+runtests
