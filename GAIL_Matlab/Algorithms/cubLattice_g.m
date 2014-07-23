@@ -317,11 +317,12 @@ if validvarargin
     in3=varargin(3:end);
     for j=1:numel(varargin)-2
     validvarargin=validvarargin && (isnumeric(in3{j}) ...
-        || ischar(in3{j}));
+        || ischar(in3{j}) || isstruct(in3{j}));
     end
     if ~validvarargin
-        warning('MATLAB:cubLattice_g:validvarargin','Optional parameters must be numeric or strings.')
+        warning('MATLAB:cubLattice_g:validvarargin','Optional parameters must be numeric or strings. We will use the default optional parameters.')
     end
+    in3=varargin{3};
 end
 
 if ~validvarargin
