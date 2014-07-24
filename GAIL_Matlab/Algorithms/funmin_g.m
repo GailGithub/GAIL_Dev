@@ -288,9 +288,6 @@ while n < out_param.nmax;
         end;
     end;
 end;
-Ln
-min(Cn)
-
 
 
 % check tau change flag
