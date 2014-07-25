@@ -1,4 +1,4 @@
-%% Experiment 2: Bump test functions with epsilon=0 & delta=10^(-6)
+%% Experiment 1: Bump test functions with epsilon=10^(-8) & delta=0
 
 %% Garbage collection and initialization
 format compact %remove blank lines from output
@@ -8,12 +8,12 @@ close all %close all figures
 tstart = tic;
 
 %% Program parameters
-in_param.abstol = 0; %error tolerance
-in_param.TolX = 10^(-6);
+in_param.abstol = 10^(-8); %error tolerance
+in_param.TolX = 0;
 in_param.nmax = 10^7; %cost budget
 
 %% Simulation parameters
-nrep = 10000;
+nrep = 100;
 if (nrep >= 1000)
     warning('off','MATLAB:funmin_g:exceedbudget');
     warning('off','MATLAB:funmin_g:peaky');
@@ -27,15 +27,14 @@ ntau = length(tauvec);
 ratio = 1./a;
 gnorm = 1./a;
 exactmin = -1;
-exactsolu = z;
 
 %% Simulation
 ntrapmat = zeros(nrep,ntau);
+trueerrormat = ntrapmat;
 truesolumat = ntrapmat;
 newtaumat = ntrapmat;
 tauchangemat = ntrapmat;
 exceedmat = ntrapmat;
-intnum = ntrapmat;
 
 for i=1:ntau;
     for j=1:nrep;
@@ -47,25 +46,18 @@ for i=1:ntau;
         ntrapmat(j,i) = out_param.npoints;
         newtaumat(j,i) = out_param.tau;
         estmin = fmin;
+        trueerrormat(j,i) = abs(estmin-exactmin);
         tauchangemat(j,i) = out_param.tauchange;
         exceedmat(j,i) = out_param.exceedbudget;
-        intnum(j,i) = size(out_param.intervals,2);
-        for k=1:intnum(j,i)
-            if exactsolu(j) <= out_param.intervals(2,k) && exactsolu(j) ... 
-                    >= out_param.intervals(1,k) 
-                truesolumat(j,i) = 1;
-            end
-        end
     end
 end
 
 probinit = mean(repmat(ratio,1,ntau)<=repmat(tauvec,nrep,1),1); 
 probfinl = mean(repmat(ratio,1,ntau)<=newtaumat,1); 
-succnowarn = mean((truesolumat)&(~exceedmat),1); 
-succwarn = mean((truesolumat)&(exceedmat),1);    
-failnowarn = mean((~truesolumat)&(~exceedmat),1);   
-failwarn = mean((~truesolumat)&(exceedmat),1);
-
+succnowarn = mean((trueerrormat<=in_param.abstol)&(~exceedmat),1); 
+succwarn = mean((trueerrormat<=in_param.abstol)&(exceedmat),1);    
+failnowarn = mean((trueerrormat>in_param.abstol)&(~exceedmat),1);  
+failwarn = mean((trueerrormat>in_param.abstol)&(exceedmat),1);
 
 %% Output the table
 % To just re-display the output, load the .mat file and run this section
@@ -75,27 +67,28 @@ display('        Probability    Success   Success   Failure  Failure')
 display(' tau      In Cone    No Warning  Warning No Warning Warning')
 for i=1:ntau
     display(sprintf(['%5.0f %5.2f%%->%5.2f%% %7.2f%%' ...
-        '%10.2f%% %7.2f%% %7.2f%%'],...
+        '%10.2f%% %7.2f%% %7.2f%% '],...
         [tauvec(i) 100*[probinit(i) probfinl(i) succnowarn(i) ...
-        succwarn(i) failnowarn(i) failwarn(i) ]])) 
+        succwarn(i) failnowarn(i) failwarn(i)]])) 
 end
 
+ 
 %% Save Output
 [GAILPATH,~,PATHNAMESEPARATOR] = GAILstart(0);
 path = strcat(GAILPATH,'OutputFiles' , PATHNAMESEPARATOR);
 filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
-                  'ConesPaperOutput',PATHNAMESEPARATOR','IntegrationTest-',...
+                  'UniFunctionMinimization',PATHNAMESEPARATOR',...
+                  'ErrorToleranceTest-',...
                   datestr(now,'dd-mmm-yyyy-HH-MM-SS'),'.mat');
 save(filename)
 
 toc(tstart)
 
 %% The following output was obtained on 2014-May
-%         Probability    Success   Success   Failure  Failure
+%        Probability    Success   Success   Failure  Failure
 %  tau      In Cone    No Warning  Warning No Warning Warning
-%    11  1.52%->20.92%   20.92%      0.00%   79.08%    0.00%
-%   101 32.80%->52.19%   52.19%      0.00%   47.81%    0.00%
-%  1001 65.93%->84.92%   80.31%      4.64%   15.05%    0.00%
-% Elapsed time is 6127.763619 seconds.
-
+%    11  1.28%->21.22%   21.22%      0.00%   78.78%    0.00% 
+%   101 34.02%->53.20%   53.18%      0.02%   46.79%    0.01% 
+%  1001 67.04%->85.79%   81.20%      2.59%   14.19%    2.02% 
+% Elapsed time is 4383.064010 seconds.
 
