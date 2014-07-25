@@ -13,7 +13,7 @@ in_param.TolX = 0;
 in_param.nmax = 10^7; %cost budget
 
 %% Simulation parameters
-nrep = 100;
+nrep = 10000;
 if (nrep >= 1000)
     warning('off','MATLAB:funmin_g:exceedbudget');
     warning('off','MATLAB:funmin_g:peaky');
