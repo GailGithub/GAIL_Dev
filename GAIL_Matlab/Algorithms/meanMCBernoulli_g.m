@@ -171,7 +171,7 @@ if ~validvarargin
     out_param.nmax = default.nmax;
 else
     p = inputParser;
-    addRequired(p,'Yrand',@isfcn);
+    addRequired(p,'Yrand',@gail.isfcn);
     if isnumeric(in2)%if there are multiple inputs with
         %only numeric, they should be put in order.
         addOptional(p,'abstol',default.abstol,@isnumeric);
@@ -212,7 +212,7 @@ if (out_param.alpha <= 0 ||out_param.alpha >= 1) % uncertainty
     out_param.alpha = default.alpha;
 end
 
-if (~isposint(out_param.nmax)) % sample budget should be a positive integer
+if (~gail.isposint(out_param.nmax)) % sample budget should be a positive integer
     warning('MATLAB:meanMCBernoulli_g:nmaxnotposint',...
         ['the number of nmax should be a positive integer,'...
         'take the absolute value and ceil.'])

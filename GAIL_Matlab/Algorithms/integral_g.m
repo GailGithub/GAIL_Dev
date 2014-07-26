@@ -258,7 +258,7 @@ if ~validvarargin
     out_param.nmax = default.nmax;
 else
     p = inputParser;
-    addRequired(p,'f',@isfcn);
+    addRequired(p,'f',@gail.isfcn);
     if isnumeric(in2)%if there are multiple inputs with
         %only numeric, they should be put in order.
         addOptional(p,'a',default.a,@isnumeric);
@@ -305,7 +305,7 @@ if (out_param.abstol <= 0 )
     out_param.abstol = default.abstol;
 end
 % let initial number of points be a positive integer
-if (~isposint(out_param.nlo))
+if (~gail.isposint(out_param.nlo))
     if isposge3(out_param.nlo)
         warning('MATLAB:integral_g:lowinitnotint',['Lowest initial number of points should be a positive integer.' ...
             ' Using ', num2str(ceil(out_param.nlo))])
@@ -316,7 +316,7 @@ if (~isposint(out_param.nlo))
         out_param.nlo = default.nlo;
     end
 end
-if (~isposint(out_param.nhi))
+if (~gail.isposint(out_param.nhi))
     if isposge3(out_param.nhi)
         warning('MATLAB:integral_g:highinitnotint',['Highest initial number of points should be a positive integer.' ...
             ' Using ', num2str(ceil(out_param.nhi))])
@@ -340,7 +340,7 @@ if (out_param.nlo > out_param.nhi)
 end
 
 out_param.ninit = max(ceil(out_param.nhi*(out_param.nlo/out_param.nhi)^(1/(1+(out_param.b-out_param.a)))),3);
-if (~isposint(out_param.nmax))
+if (~gail.isposint(out_param.nmax))
     if ispositive(out_param.nmax)
         warning('MATLAB:integral_g:budgetnotint',['Cost budget should be a positive integer.' ...
             ' Using cost budget ', num2str(ceil(out_param.nmax))])

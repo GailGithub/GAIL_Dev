@@ -135,7 +135,7 @@ function [fappx,out_param]=funappx01_g(varargin)
 %   Reference
 %   [1]  N. Clancy, Y. Ding, C. Hamilton, F. J. Hickernell, and Y. Zhang,
 %        The Cost of Deterministic, Adaptive, Automatic Algorithms:  Cones,
-%        Not Balls, Journal of Complexity 30 (2014) 21–45
+%        Not Balls, Journal of Complexity 30 (2014) 21-45
 %
 
 % check parameter satisfy conditions or not
@@ -247,7 +247,7 @@ if ~validvarargin
     out_param.nmax = default.nmax;
 else
     p = inputParser;
-    addRequired(p,'f',@GAIL_Internal.isfcn);
+    addRequired(p,'f',@gail.isfcn);
     if isnumeric(in2)%if there are multiple inputs with
         %only numeric, they should be put in order.
         addOptional(p,'abstol',default.abstol,@isnumeric);
@@ -273,8 +273,8 @@ if (out_param.abstol <= 0 )
     out_param.abstol = default.abstol;
 end
 % let initial number of points be a positive integer
-if (~GAIL_Internal.isposint(out_param.ninit))
-    if GAIL_Internal.isposge3(out_param.ninit)
+if (~gail.isposint(out_param.ninit))
+    if gail.isposge3(out_param.ninit)
         warning('MATLAB:funappx01_g:initnotint',['Initial number of points should be a positive integer.' ...
             ' Using ', num2str(ceil(out_param.ninit))])
         out_param.ninit = ceil(out_param.ninit);
@@ -285,8 +285,8 @@ if (~GAIL_Internal.isposint(out_param.ninit))
     end
 end
 % let cost budget be a positive integer
-if (~GAIL_Internal.isposint(out_param.nmax))
-    if GAIL_Internal.ispositive(out_param.nmax)
+if (~gail.isposint(out_param.nmax))
+    if gail.ispositive(out_param.nmax)
         warning('MATLAB:funappx01_g:budgetnotint',['Cost budget should be a positive integer.' ...
             ' Using cost budget ', num2str(ceil(out_param.nmax))])
         out_param.nmax = ceil(out_param.nmax);
