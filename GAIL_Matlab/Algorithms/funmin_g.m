@@ -339,7 +339,7 @@ if ~validvarargin
     out_param.nmax = default.nmax;
 else
     p = inputParser;
-    addRequired(p,'f',@isfcn);
+    addRequired(p,'f',@GAIL_Interval.isfcn);
     if isnumeric(in2) % more inputs of numerical type. Put them in order.
         addOptional(p,'abstol',default.abstol,@isnumeric);
         addOptional(p,'TolX',default.TolX,@isnumeric);
@@ -375,8 +375,8 @@ if out_param.TolX < 0
 end
         
 % Check whether the initial number of points is a positive integer
-if (~isposint(out_param.ninit))
-    if ispositive(out_param.ninit)
+if (~GAIL_Interval.isposint(out_param.ninit))
+    if GAIL_Interval.ispositive(out_param.ninit)
         warning(['Initial number of points should be a integer.' ...
             ' funmin_g will use ' num2str(ceil(out_param.ninit))]);
         out_param.ninit = ceil(out_param.ninit);
@@ -389,8 +389,8 @@ if (~isposint(out_param.ninit))
 end
         
 % Check whether the cost budget is a positive integer
-if (~isposint(out_param.nmax))
-    if ispositive(out_param.nmax)
+if (~GAIL_Interval.isposint(out_param.nmax))
+    if GAIL_Interval.ispositive(out_param.nmax)
         warning(['Cost budget should be a integer.'' funmin_g will use ' ...
             num2str(ceil(out_param.nmax))]);
         out_param.nmax = ceil(out_param.nmax);

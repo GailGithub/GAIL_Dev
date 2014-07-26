@@ -343,7 +343,7 @@ if ~validvarargin
     out_param.tauhi = default.tauhi;
 else
     p = inputParser;
-    addRequired(p,'f',@isfcn);
+    addRequired(p,'f',@gail.isfcn);
     if isnumeric(in2)%if there are multiple inputs with
         %only numeric, they should be put in order.
         addOptional(p,'a',default.a,@isnumeric);
@@ -397,8 +397,8 @@ end
 if (out_param.taulo > out_param.tauhi)
     out_param.tauhi = out_param.taulo;
 end;
-if (~isposint(out_param.taulo))
-    if isposge2(out_param.taulo)
+if (~gail.isposint(out_param.taulo))
+    if gail.isposge2(out_param.taulo)
         warning('MATLAB:funappx_g:lowtau',['Lower bound of cone condition should be a positive integer.' ...
             ' Using ', num2str(ceil(out_param.taulo))])
         out_param.taulo = ceil(out_param.taulo);
@@ -408,8 +408,8 @@ if (~isposint(out_param.taulo))
         out_param.taulo = default.taulo;
     end
 end
-if (~isposint(out_param.tauhi))
-    if isposge2(out_param.tauhi)
+if (~gail.isposint(out_param.tauhi))
+    if gail.isposge2(out_param.tauhi)
         warning('MATLAB:funappx_g:hitau',['Upper bound of cone condition should be a positive integer.' ...
             ' Using ', num2str(ceil(out_param.tauhi))])
         out_param.tauhi = ceil(out_param.tauhi);

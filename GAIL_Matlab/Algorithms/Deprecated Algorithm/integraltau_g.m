@@ -189,7 +189,7 @@ if ~validvarargin
     out_param.nmax = default.nmax;
 else
     p = inputParser;
-    addRequired(p,'f',@isfcn);
+    addRequired(p,'f',@gail.isfcn);
     if isnumeric(in2)%if there are multiple inputs with
         %only numeric, they should be put in order.
         addOptional(p,'abstol',default.abstol,@isnumeric);
@@ -221,7 +221,7 @@ if (out_param.tau < 2)
     out_param.tau = default.tau;
 end
 % let cost budget be a positive integer
-if (~isposint(out_param.nmax))
+if (~gail.isposint(out_param.nmax))
     if ispositive(out_param.nmax)
         warning('MATLAB:integraltau_g:budgetnotint',['Cost budget should be a positive integer.' ...
             ' Using cost budget ', num2str(ceil(out_param.nmax))])

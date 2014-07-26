@@ -342,7 +342,7 @@ if ~validvarargin
     out_param.checked = default.checked;
 else
     p = inputParser;
-    addRequired(p,'Yrand',@isfcn);
+    addRequired(p,'Yrand',@gail.isfcn);
     if isnumeric(in2)%if there are multiple inputs with
         %only numeric, they should be put in order.
         addOptional(p,'abstol',default.abstol,@isnumeric);
@@ -385,7 +385,7 @@ if out_param.checked==0
             'use the default value.'])
         out_param.alpha = default.alpha;
     end
-    if (~isposint(out_param.n_sigma)) % initial sample size should be an integer
+    if (~gail.isposint(out_param.n_sigma)) % initial sample size should be an integer
         warning('MATLAB:meanMC_g:nsignotposint',...
             ['the number n_sigma should a positive integer, '...
             'take the absolute value and ceil.'])
@@ -403,13 +403,13 @@ if out_param.checked==0
             'use the absolute value of time budget'])
         out_param.tbudget = abs(out_param.tbudget);
     end
-    if (~isposint(out_param.nbudget)) % sample budget should be an integer
+    if (~gail.isposint(out_param.nbudget)) % sample budget should be an integer
         warning('MATLAB:meanMC_g:nbudgetnotposint',...
             ['the number of sample budget should be a positive integer,'...
             'take the absolute value and ceil.'])
         out_param.nbudget = ceil(abs(out_param.nbudget));
     end
-    if (~isposint(out_param.npcmax))
+    if (~gail.isposint(out_param.npcmax))
         % maximum number of scalar values of x per vector should be a integer
         warning('MATLAB:meanMC_g:npcmaxnotposint',...
             ['the number of each piece of the samples should be' ...

@@ -58,7 +58,11 @@ function [p,out_param]=meanMCBernoulli_g(varargin)
 % Calculate the mean of a bernoulli random variable with true p=0.55,with
 % error tolerance 1e-3 and uncertainty 0.01.
 % 
+<<<<<<< HEAD
 % >> in_param.abstol=1e-2; in_param.alpha = 0.01; p=1/90;Yrand=@(n) rand(n,1)<p;
+=======
+% >> in_param.abstol=1e-3; in_param.alpha = 0.01; p=1/90;Yrand=@(n) rand(n,1)<p;
+>>>>>>> package
 % >> p=meanMCBernoulli_g(Yrand,in_param)
 % p = 0.01***
 % 
@@ -171,7 +175,7 @@ if ~validvarargin
     out_param.nmax = default.nmax;
 else
     p = inputParser;
-    addRequired(p,'Yrand',@isfcn);
+    addRequired(p,'Yrand',@gail.isfcn);
     if isnumeric(in2)%if there are multiple inputs with
         %only numeric, they should be put in order.
         addOptional(p,'abstol',default.abstol,@isnumeric);
@@ -212,7 +216,7 @@ if (out_param.alpha <= 0 ||out_param.alpha >= 1) % uncertainty
     out_param.alpha = default.alpha;
 end
 
-if (~isposint(out_param.nmax)) % sample budget should be a positive integer
+if (~gail.isposint(out_param.nmax)) % sample budget should be a positive integer
     warning('MATLAB:meanMCBernoulli_g:nmaxnotposint',...
         ['the number of nmax should be a positive integer,'...
         'take the absolute value and ceil.'])
