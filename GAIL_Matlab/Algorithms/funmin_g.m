@@ -1,71 +1,71 @@
 function [fmin,out_param]=funmin_g(varargin)
 %FUNMIN_G Guaranteed global minimum value of univariate function
-%  on interval [0,1] and the subset containing optimal solutions
+%on interval [0,1] and the subset containing optimal solutions
 %
-%  fmin = FUNMIN_G(f) finds minimum value of function f on the interval
-%  [0,1] within a guatanteed absolute error tolerance of 1e-6 and X
-%  tolerance of 1e-3. The default initial number of points is 52 and
-%  default cost budget is 1e7. Input f is a function handle.
+%   fmin = FUNMIN_G(f) finds minimum value of function f on the interval
+%   [0,1] within a guatanteed absolute error tolerance of 1e-6 and X
+%   tolerance of 1e-3. The default initial number of points is 52 and
+%   default cost budget is 1e7. Input f is a function handle.
 %
-%  fmin = FUNMIN_G(f,abstol,TolX,ninit,nmax) finds minimum value of
-%  function f on the interval [0,1] with ordered input parameters:
-%  guaranteed absolute error tolerance abstol, guaranteed absolute X
-%  tolerance TolX, initial number of points ninit and cost budget nmax.
+%   fmin = FUNMIN_G(f,abstol,TolX,ninit,nmax) finds minimum value of
+%   function f on the interval [0,1] with ordered input parameters:
+%   guaranteed absolute error tolerance abstol, guaranteed absolute X
+%   tolerance TolX, initial number of points ninit and cost budget nmax.
 %
-%  fmin = FUNMIN_G(f,'abstol',abstol,'TolX',TolX,'ninit',ninit,'nmax',
-%  nmax) finds minimum value of function f on the interval [0,1] with a
-%  guaranteed absolute error tolerance abstol, guaranteed absolute X
-%  tolerance TolX, initial number of points ninit and cost budget nmax. All
-%  the three field-value pairs are optional and can be supplied in
-%  different order.
+%   fmin = FUNMIN_G(f,'abstol',abstol,'TolX',TolX,'ninit',ninit,'nmax',
+%   nmax) finds minimum value of function f on the interval [0,1] with a
+%   guaranteed absolute error tolerance abstol, guaranteed absolute X
+%   tolerance TolX, initial number of points ninit and cost budget nmax. All
+%   the three field-value pairs are optional and can be supplied in
+%   different order.
 %
-%  fmin = FUNMIN_G(f,in_param) finds minimum value of function f on the
-%  interval [0,1] with a structure input parameters in_param. If a field is
-%  not specified, the default value is used.
+%   fmin = FUNMIN_G(f,in_param) finds minimum value of function f on the
+%   interval [0,1] with a structure input parameters in_param. If a field is
+%   not specified, the default value is used.
 %
-%  [fmin, out_param] = FUNMIN_G(f,...) returns minimum value fmin of
-%  function f and an output structure out_param, which has the following
-%  fields.
+%   [fmin, out_param] = FUNMIN_G(f,...) returns minimum value fmin of
+%   function f and an output structure out_param, which has the following
+%   fields.
 %
-%  Input Arguments
+%   Input Arguments
 %
-%    in_param.abstol --- guaranteed absolute error tolerance, default value
-%                        is 1e-6.
+%     in_param.abstol --- guaranteed absolute error tolerance, default value
+%     is 1e-6.
 %
-%    in_param.TolX --- guaranteed X tolerance, default value is 1e-3.
+%     in_param.TolX --- guaranteed X tolerance, default value is 1e-3.
 %
-%    in_param.ninit --- initial number of points, default value is 52.
+%     in_param.ninit --- initial number of points, default value is 52.
 %
-%    in_param.nmax --- cost budget, default value is 1e7.
+%     in_param.nmax --- cost budget, default value is 1e7.
 %
-%  Output Arguments
+%   Output Arguments
 %
-%    out_param.abstol --- guaranteed absolute error tolerance
+%     out_param.abstol --- guaranteed absolute error tolerance
 %
-%    out_param.ninit --- initial number of points
+%     out_param.ninit --- initial number of points
 %
-%    out_param.nmax --- cost budget
+%     out_param.nmax --- cost budget
 %
-%    out_param.TolX --- guaranteed X tolerance
+%     out_param.TolX --- guaranteed X tolerance
 %
-%    out_param.tau --- latest value of tau
+%     out_param.tau --- latest value of tau
 %
-%    out_param.exceedbudget --- 0 if the number of points used to find the
-%    minimux value is less than the cost budget; 1, otherwise.
+%     out_param.exceedbudget --- 0 if the number of points used to find the
+%     minimux value is less than the cost budget; 1, otherwise.
 %
-%    out_param.npoints --- number of points needed to reach the guaranteed
-%    absolute error tolerance or the guaranteed X tolerance
+%     out_param.npoints --- number of points needed to reach the guaranteed
+%     absolute error tolerance or the guaranteed X tolerance
 %
-%    out_param.error --- estimation of the absolute error bound
+%     out_param.error --- estimation of the absolute error bound
 %
-%    out_param.intervals --- the intervals containing point(s) where the
-%    minimum occurs
+%     out_param.intervals --- the intervals containing point(s) where the
+%     minimum occurs
 %
-%    out_param.volumeX --- the volume of intervals containing the point(s)
-%    where the minimum occurs
+%     out_param.volumeX --- the volume of intervals containing the point(s)
+%     where the minimum occurs
 %
-%    out_param.tauchange --- it is 1 if tau is too small, and the algorithm
-%    has used a larger tau.
+%     out_param.tauchange --- it is 1 if tau is too small, and the algorithm
+%     has used a larger tau.
 %
 %  Guarantee
 %    
@@ -153,17 +153,17 @@ function [fmin,out_param]=funmin_g(varargin)
 %        intervals: [2x1 double]
 % 
 %
-%  Sea also FUNAPPX_G, INTEGRAL_G
+%   Sea also FUNAPPX_G, INTEGRAL_G
 %
-%  Reference
-%  [1]  Nicholas Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, 
-%       and Yizhi Zhang. The Cost of Deterministic, Adaptive, Automatic 
-%       Algorithms: Cones, Not Balls. Journal of Complexity, 30:21–45, 2014
+%  References
+%   [1]  Nicholas Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, 
+%   and Yizhi Zhang. The Cost of Deterministic, Adaptive, Automatic 
+%   Algorithms: Cones, Not Balls. Journal of Complexity, 30:21ï¿½45, 2014
 %
-%  [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
-%       and Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library
-%       (Version 1.3.0)" [MATLAB Software], 2014. Available from
-%       http://code.google.com/p/gail/
+%   [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
+%   and Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library
+%   (Version 1.3.0)" [MATLAB Software], 2014. Available from
+%   http://code.google.com/p/gail/
 %
 %   If you find GAIL helpful in your work, please support us by citing
 %   the above paper and software.
