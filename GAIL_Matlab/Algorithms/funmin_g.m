@@ -24,8 +24,7 @@ function [fmin,out_param]=funmin_g(varargin)
 %   not specified, the default value is used.
 %
 %   [fmin, out_param] = FUNMIN_G(f,...) returns minimum value fmin of
-%   function f and an output structure out_param, which has the following
-%   fields.
+%   function f and an output structure out_param.
 %
 %   Input Arguments
 %
@@ -158,7 +157,7 @@ function [fmin,out_param]=funmin_g(varargin)
 %  References
 %   [1]  Nicholas Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, 
 %   and Yizhi Zhang. The Cost of Deterministic, Adaptive, Automatic 
-%   Algorithms: Cones, Not Balls. Journal of Complexity, 30:21�45, 2014
+%   Algorithms: Cones, Not Balls. Journal of Complexity, 30:21-45, 2014
 %
 %   [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
 %   and Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library
