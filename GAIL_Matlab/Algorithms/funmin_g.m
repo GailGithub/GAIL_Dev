@@ -153,7 +153,7 @@ function [fmin,out_param]=funmin_g(varargin)
 %        intervals: [2x1 double]
 % 
 %
-%   Sea also FUNAPPX_G, INTEGRAL_G
+%   See also FUNAPPX_G, INTEGRAL_G
 %
 %  References
 %   [1]  Nicholas Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, 
