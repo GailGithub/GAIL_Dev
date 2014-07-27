@@ -58,11 +58,7 @@ function [p,out_param]=meanMCBernoulli_g(varargin)
 % Calculate the mean of a bernoulli random variable with true p=0.55,with
 % error tolerance 1e-3 and uncertainty 0.01.
 % 
-<<<<<<< HEAD
-% >> in_param.abstol=1e-2; in_param.alpha = 0.01; p=1/90;Yrand=@(n) rand(n,1)<p;
-=======
 % >> in_param.abstol=1e-3; in_param.alpha = 0.01; p=1/90;Yrand=@(n) rand(n,1)<p;
->>>>>>> package
 % >> p=meanMCBernoulli_g(Yrand,in_param)
 % p = 0.01***
 % 

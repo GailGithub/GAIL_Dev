@@ -377,7 +377,7 @@ if ~validvarargin
     out_param.checked = default.checked;
 else
     p = inputParser;
-    addRequired(p,'Yrand',@GAIL_Internal.isfcn);
+    addRequired(p,'Yrand',@gail.isfcn);
     if isnumeric(in2)%if there are multiple inputs with
         %only numeric, they should be put in order.
 
@@ -431,23 +431,19 @@ if out_param.checked==0
             'use the default value.'])
         out_param.alpha = default.alpha;
     end
-<<<<<<< HEAD
      if (out_param.fudge<= 1) % uncertainty
         warning('MATLAB:meanMCRel_g:fudgelessthan1',...
             ['the fudge factor should be larger than 1, '...
             'use the default value.'])
         out_param.fudge = default.fudge;
     end   
-    if (~isposint(out_param.nSig)) % initial sample size should be an integer
-=======
-    if (~GAIL_Internal.isposint(out_param.nSig)) % initial sample size should be an integer
->>>>>>> package
+    if (~gail.isposint(out_param.nSig)) % initial sample size should be an integer
         warning('MATLAB:meanMCRel_g:nsignotposint',...
             ['the number nSig should a positive integer, '...
             'take the absolute value and ceil.'])
         out_param.nSig = ceil(abs(out_param.nSig));
     end
-    if (~isposint(out_param.n1)) % initial sample size should be an integer
+    if (~gail.isposint(out_param.n1)) % initial sample size should be an integer
         warning('MATLAB:meanMCRel_g:n1notposint',...
             ['the number n1 should a positive integer, '...
             'take the absolute value and ceil.'])
@@ -459,7 +455,7 @@ if out_param.checked==0
             'use the absolute value of time budget'])
         out_param.tbudget = abs(out_param.tbudget);
     end
-    if (~GAIL_Internal.isposint(out_param.nbudget)) % sample budget should be an integer
+    if (~gail.isposint(out_param.nbudget)) % sample budget should be an integer
         warning('MATLAB:meanMCRel_g:nbudgetnotposint',...
             ['the number of sample budget should be a positive integer,'...
             'take the absolute value and ceil.'])
