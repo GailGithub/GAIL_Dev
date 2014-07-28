@@ -27,9 +27,9 @@ nelem=nmax-nmin+1;
 % y=net(p,nelem);
 
 if nmin==1 % vdc points using our own vdc function
-    y=vdc(nelem);
+    y=gail.vdc(nelem);
 else
-    y=vdc(nelem)+1/(2*(nmin-1));
+    y=gail.vdc(nelem)+1/(2*(nmin-1));
 end
 
 %Rank-1 lattice points
