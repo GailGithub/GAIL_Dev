@@ -1,10 +1,9 @@
 %% Experiment 3: Bump test functions with epsilon=10^(-8) & delta=10^(-6)
 
 %% Garbage collection and initialization
-format compact %remove blank lines from output
-format long e %lots of digits
-clear all %clear all variables
-close all %close all figures
+format long e 
+clear all 
+close all 
 tstart = tic;
 
 %% Program parameters
@@ -86,7 +85,7 @@ end
 [GAILPATH,~,PATHNAMESEPARATOR] = GAILstart(0);
 path = strcat(GAILPATH,'OutputFiles' , PATHNAMESEPARATOR);
 filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
-                  'UniFunctionMinimization',PATHNAMESEPARATOR',...
+                  'UniFunMinOutput',PATHNAMESEPARATOR',...
                   'Error&XToleranceTest-',...
                   datestr(now,'dd-mmm-yyyy-HH-MM-SS'),'.mat');
 save(filename)

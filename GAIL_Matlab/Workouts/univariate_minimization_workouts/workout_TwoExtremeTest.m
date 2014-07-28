@@ -1,16 +1,16 @@
 %% Experiment 4: Functions with two local minimum points 
 
 %% Garbage collection and initialization
-format compact %remove blank lines from output
-format long e %lots of digits
-clear all %clear all variables
-close all %close all figures
+format long e
+clear all 
+close all 
+tstart = tic;
 
 %% Program parameters
 TolXvec = [10^(-2) 10^(-4) 10^(-7)];
 in_param.abstol = 0; %error tolerance
 in_param.nmax = 10^7; %cost budget
-tstart = tic;
+
 
 %% Simulation parameters
 nrep = 10000;
@@ -72,7 +72,7 @@ end
 [GAILPATH,~,PATHNAMESEPARATOR] = GAILstart(0);
 path = strcat(GAILPATH,'OutputFiles' , PATHNAMESEPARATOR);
 filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
-                  'UniFunctionMinimization',PATHNAMESEPARATOR',...
+                  'UniFunMinOutput',PATHNAMESEPARATOR',...
                   'TwoExtremeTest-',...
                   datestr(now,'dd-mmm-yyyy-HH-MM-SS'),'.mat');
 save(filename)
