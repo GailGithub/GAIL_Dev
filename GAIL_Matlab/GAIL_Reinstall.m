@@ -9,4 +9,5 @@ gailp=genpath(GAILPATH); % Generate strings of paths to GAIL subdirectories
 rmpath(gailp);  % Remove GAIL paths from MATLAB search path.
 addpath(gailp); % Add GAIL paths to MATLAB search path.
 savepath;       % Save the changes.
+builddocsearchdb(strcat(GAILPATH,'Documentation',PATHNAMESEPARATOR,'html'));
 fprintf('\nGAIL version %g has been reinstalled successfully.\n\n',GAILVERSION);
