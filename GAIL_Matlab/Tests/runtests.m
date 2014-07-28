@@ -31,7 +31,6 @@ doctest meanMCBernoulli_g
 doctest cubMC_g
 doctest cubLattice_g
 doctest cubSobol_g
-doctest meanMCRel_g
 
 % CALL UNIT TESTS
 [~,~,~,MATLABVERSION]=GAILstart(0);
