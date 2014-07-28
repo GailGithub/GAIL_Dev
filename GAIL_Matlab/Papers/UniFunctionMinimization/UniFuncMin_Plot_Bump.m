@@ -18,6 +18,7 @@ set(0,'defaultTextInterpreter','latex') %latex axis labels
 set(0,'defaultLineLineWidth',3) %thick lines
 set(0,'defaultLineMarkerSize',40) %large dots
 
+%% Plot
 a = 0.03;z=0.4;
 f=@(x) 0.5/a^2*(-4*a^2-(x-z).^2-(x-z-a).*abs(x-z-a)+(x-z+a).*...
     abs(x-z+a)).*(x>=z-2*a).*(x<=z+2*a);
