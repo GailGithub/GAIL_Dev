@@ -13,7 +13,8 @@ classdef ut_meanMCRel_g < matlab.unittest.TestCase
     end
     
     function meanMCRel_gOfxsquare(testCase)
-      in_param.reltol = 5e-2;
+      in_param.reltol = 1e-2;
+      in_param.tbudget = 10;
       meanY = testCase.verifyWarning(@()meanMCRel_g(@(n) rand(n,1).^2,...
         in_param.reltol),'MATLAB:meanMCRel_g:maxreached');
       exactY = 1/3;
@@ -23,6 +24,7 @@ classdef ut_meanMCRel_g < matlab.unittest.TestCase
     
     function meanMCRel_gOfsin(testCase)
       in_param.reltol = 1e-2;
+      in_param.tbudget = 10;
       meanY = testCase.verifyWarning(@()meanMCRel_g(@(n) sin(rand(n,1)),...
         in_param.reltol),'MATLAB:meanMCRel_g:maxreached');
     exactY = 1-cos(1);
@@ -32,6 +34,7 @@ classdef ut_meanMCRel_g < matlab.unittest.TestCase
     
     function meanMCRel_gOfparsing(testCase)
       in_param.abstol = -1e-2;
+      
       meanY = testCase.verifyWarning(@()meanMCRel_g(@(n) rand(n,1).^2,...
         in_param.abstol),'MATLAB:meanMCRel_g:abstolneg');
       exactY = 1/3;

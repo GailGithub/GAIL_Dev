@@ -31,7 +31,6 @@ doctest meanMCBernoulli_g
 doctest cubMC_g
 doctest cubLattice_g
 doctest cubSobol_g
-doctest meanMCRel_g
 
 % CALL UNIT TESTS
 [~,~,~,MATLABVERSION]=GAILstart(0);
@@ -197,7 +196,7 @@ if MATLABVERSION >= 8
         fprintf(fid,'Test ut_funmin_g is wrongly coded. We skip it.\n');
     end
     
-    warning('off','MATLAB:meanMCRel_g:maxreached')
+    %warning('off','MATLAB:meanMCRel_g:maxreached')
     try
     Tests = matlab.unittest.TestSuite.fromClass(?ut_meanMCRel_g);
     results=run(ut_meanMCRel_g)
