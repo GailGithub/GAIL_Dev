@@ -8,12 +8,5 @@ end
 gailp=genpath(GAILPATH);% Generate strings of paths to GAIL subdirectories
 addpath(gailp);           % Add GAIL directories and subdirectories
 savepath;                 % Save the changes
-cd(strcat(GAILPATH,'Utilities'));
-GAILpublish; % Publish searchable html documentation
-docPath = strcat(GAILPATH,'Documentation');
-cd(docPath);
-helpPath = strcat(docPath,PATHNAMESEPARATOR,'html');
-builddocsearchdb(helpPath);
-cd('..');
 fprintf('\nGAIL version %g has been installed successfully.\n\n', GAILVERSION);
 
