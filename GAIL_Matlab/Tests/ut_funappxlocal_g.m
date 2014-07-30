@@ -6,8 +6,8 @@ classdef ut_funappxlocal_g < matlab.unittest.TestCase
     function funappx_gOfx(testCase)
       f = @(x) x;
       in_param.abstol = 10^(-8); 
-      in_param.taulo = 10;
-      in_param.tauhi = 10;
+      in_param.nlo = 10;
+      in_param.nhi = 100;
       [pp, ~] = funappxlocal_g(f,in_param);
       x = rand(10000,1);
       actualerr = max(abs(ppval(pp,x)-f(x)));
@@ -18,7 +18,7 @@ classdef ut_funappxlocal_g < matlab.unittest.TestCase
       f = @(x) x.^2;
       in_param.abstol = 10^(-8); 
       in_param.nlo = 10;
-      in_param.nhi = 10;
+      in_param.nhi = 100;
       [pp, ~] = funappxlocal_g(f,in_param);
       x = rand(10000,1);
       actualerr = max(abs(ppval(pp,x)-f(x)));
@@ -28,8 +28,8 @@ classdef ut_funappxlocal_g < matlab.unittest.TestCase
     function funappx_gOfsin(testCase)
       f = @(x) sin(x);
       in_param.abstol = 10^(-8); 
-      in_param.taulo = 10;
-      in_param.tauhi = 10;
+      in_param.nlo = 10;
+      in_param.nhi = 10;
       [pp, ~] = funappx_g(f,in_param);
       x = rand(10000,1);
       actualerr = max(abs(ppval(pp,x)-f(x)));
@@ -39,7 +39,7 @@ classdef ut_funappxlocal_g < matlab.unittest.TestCase
     function funappx_gOfexponential(testCase)
       f = @(x) exp(-100*(x-0.7).^2);
       in_param.abstol = 10^(-8); 
-      in_param.nlo = 100;
+      in_param.nlo = 10;
       in_param.nhi = 100;
       [pp, ~] = funappxlocal_g(f,in_param);
       x = rand(10000,1);
@@ -52,7 +52,6 @@ classdef ut_funappxlocal_g < matlab.unittest.TestCase
       in_param.a = 0; 
       in_param.b = 10;
       in_param.abstol = 10^(-6);
-      in_param.nmax = 10^6;
       [pp,result] = funappxlocal_g(f,in_param);
       x = rand(10000,1)*(result.b-result.a)+result.a;
       actualerr = max(abs(ppval(pp,x)-f(x)));
@@ -75,8 +74,8 @@ classdef ut_funappxlocal_g < matlab.unittest.TestCase
       in_param.a = 0; 
       in_param.b = 10;
       in_param.abstol = 10^(-6);
-      in_param.taulo = 100;
-      in_param.tauhi = 1000;
+      in_param.nlo = 10;
+      in_param.nhi = 100;
       [pp, result] = funappxlocal_g(f,in_param);
       x = rand(10000,1)*(result.b-result.a)+result.a;
       actualerr = max(abs(ppval(pp,x)-f(x)));
@@ -88,8 +87,8 @@ classdef ut_funappxlocal_g < matlab.unittest.TestCase
       in_param.a = 0; 
       in_param.b = 10;
       in_param.abstol = 10^(-6);
-      in_param.taulo = 100;
-      in_param.tauhi = 1000;
+      in_param.nlo = 10;
+      in_param.nhi = 100;
       [pp, result] = funappxlocal_g(f,in_param);
       x = rand(10000,1)*(result.b-result.a)+result.a;
       actualerr = max(abs(ppval(pp,x)-f(x)));
