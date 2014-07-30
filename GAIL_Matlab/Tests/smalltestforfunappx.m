@@ -63,6 +63,6 @@ display(' ')
 display('   Test        # Points          Time Used')
 display(' Function    Global   Local    Global     Local')
 for i=1:n
-    display(sprintf(['%5.0f %7.0f  %7.0f %10.5f  %10.5f'],...
+    display(sprintf(['%8.0f %8.0f  %7.0f %10.6f  %10.6f'],...
         [i npoints(i,1) npoints(i,2) time(i,1)/nrep time(i,2)/nrep])) 
 end
