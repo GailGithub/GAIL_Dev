@@ -331,24 +331,28 @@ while n < out_param.nmax;
     end;
 end;
 
+if tauchange == 1;
+    warning('MATLAB:funappx_g:peaky','This function is peaky relative to nlo and nhi. You may wish to increase nlo and nhi for similar functions.')
+end;
+
 % Check cost budget flag
 if out_param.exceedbudget == 1;
     n = 1 + (n-1)/m*floor((out_param.nmax-1)*m/(n-1));
     warning('MATLAB:funappx_g:exceedbudget','funappx_g attempted to exceed the cost budget. The answer may be unreliable.')
+    out_param.npoints = n;
+    out_param.errorbound = fn*len^2/(8*(n-1)^2);
+    %out_param.errbound = fn/(8*(n-1)^2);
+    %out_param.ballradius = 2*out_param.abstol*(out_param.nmax-2)*(out_param.nmax...
+    %    -2-out_param.tau)/out_param.tau;
+    x1 = out_param.a:len/(out_param.npoints-1):out_param.b;
+    y1 = f(x1);
+    pp = interp1(x1,y1,'linear','pp');
+else
+    out_param.npoints = n;
+    out_param.errorbound = fn*len^2/(8*(n-1)^2);
+    pp = interp1(x,y,'linear','pp');
 end;
 
-if tauchange == 1;
-    warning('MATLAB:funappx_g:peaky','This function is peaky relative to nlo and nhi. You may wish to increase nlo and nhi for similar functions.')
-end;
-%out_param.ballradius = 2*out_param.abstol*(out_param.nmax-2)*(out_param.nmax...
-%    -2-out_param.tau)/out_param.tau;
-out_param.npoints = n;
-out_param.errorbound = fn*len^2/(8*(n-1)^2);
-%out_param.errbound = fn/(8*(n-1)^2);
-x1 = out_param.a:len/(out_param.npoints-1):out_param.b;
-y1 = f(x1);
-pp = interp1(x1,y1,'linear','pp');
-%pp = @(x) interp1(x1,y1,x,'linear');
 
 function [f, out_param] = funappx_g_param(varargin)
 % parse the input to the funappx_g function
