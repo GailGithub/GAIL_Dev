@@ -432,35 +432,36 @@ end
 %         out_param.tauhi = default.tauhi;
 %     end
 % end
-if (out_param.nlo > out_param.nhi)
-%     warning('MATLAB:funappx_g:logrhi', 'Lower bound of initial number of points is larger than upper bound of initial number of points; exchange these two')
-%     temp = out_param.nlo;
-%     out_param.nlo = out_param.nhi;
-%     out_param.nhi = temp;
-    out_param.nhi = out_param.nlo;
-end;
 if (~gail.isposint(out_param.nlo))
     if gail.isposge3(out_param.nlo)
         warning('MATLAB:funappx_g:lowinitnotint',['Lower bound of initial number of points should be a positive integer.' ...
-            ' Using ', num2str(ceil(out_param.nlo))])
+            ' Using ', num2str(ceil(out_param.nlo)) ' as nlo '])
         out_param.nlo = ceil(out_param.nlo);
     else
-        warning('MATLAB:funappx_g:lowinitlt3',[' Lower bound of initial number of points should be a positive integer.' ...
-            ' Using default number of points ' int2str(default.nlo)])
-        out_param.nlo = default.nlo;
+        warning('MATLAB:funappx_g:lowinitlt3',[' Lower bound of initial number of points should be a positive integer greater than 3.' ...
+            ' Using 3 as nlo'])
+        out_param.nlo = 3;
     end
 end
 if (~gail.isposint(out_param.nhi))
     if gail.isposge3(out_param.nhi)
         warning('MATLAB:funappx_g:hiinitnotint',['Upper bound of initial number of points should be a positive integer.' ...
-            ' Using ', num2str(ceil(out_param.nhi))])
+            ' Using ', num2str(ceil(out_param.nhi)) ' as nhi' ])
         out_param.nhi = ceil(out_param.nhi);
     else
-        warning('MATLAB:funappx_g:hiinitlt3',[' Upper bound of points should be a positive integer.' ...
-            ' Using default number of points ' int2str(default.nhi)])
+        warning('MATLAB:funappx_g:hiinitlt3',[' Upper bound of points should be a positive integer greater than 3.' ...
+            ' Using default number of points ' int2str(default.nhi) ' as nhi' ])
         out_param.nhi = default.nhi;
     end
 end
+
+if (out_param.nlo > out_param.nhi)
+     warning('MATLAB:funappx_g:logrhi', 'Lower bound of initial number of points is larger than upper bound of initial number of points; Use nhi as nlo')
+%     temp = out_param.nlo;
+%     out_param.nlo = out_param.nhi;
+%     out_param.nhi = temp;
+    out_param.nhi = out_param.nlo;
+end;
 
 h = out_param.b - out_param.a;
 out_param.ninit = max(ceil(out_param.nhi*(out_param.nlo/out_param.nhi)^(1/(1+h))),3);
