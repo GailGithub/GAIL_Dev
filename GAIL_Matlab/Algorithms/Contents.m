@@ -10,5 +10,5 @@
 %   funappx_g         - 1-D guaranteed function recovery on a closed interval [a,b]
 %   funmin_g          - Guaranteed global minimum value of univariate function on [a,b]
 %   integral_g        - 1-D guaranteed function integration using trapezoidal rule
-%   meanMC_g          - Monte Carlo method to estimate the mean of a random variable to
-%   meanMCBernoulli_g - Monte Carlo method to estimate the mean of a Bernoullii
+%   meanMC_g          - Monte Carlo method to estimate the mean of a random variable
+%   meanMCBernoulli_g - Monte Carlo method to estimate the mean of a Bernoulli variable
