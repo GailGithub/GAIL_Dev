@@ -97,54 +97,33 @@ function [p,out_param]=meanMCBernoulli_g(varargin)
 %
 tstart = tic; %start the clock
 [Yrand,out_param] = meanMCBernoulli_g_param(varargin{:});
-out_param.npcmax = 1e6;
-nsofar = 0;
-if strcmpi(out_param.errtype,'abs')
-    out_param = NbyAbs(out_param,tstart);
-    out_param.n = out_param.nabs;
+%parse and verify parameters
+nsofar = 0;% sample used so far
+out_param.npcmax = 1e6; %
+if strcmpi(out_param.errtype,'abs') % absolute error type
+    out_param = nabs(out_param,tstart);
+    %get how many samples needed to reach absolute error tolerance
+    out_param.n = out_param.nabs;%update n
 end
-if strcmpi(out_param.errtype,'rel')
-    [nsofar,out_param] = NbyRel(out_param,Yrand,tstart);
-    out_param.n = out_param.nrel;
+if strcmpi(out_param.errtype,'rel')% relative error type
+    [nsofar,out_param] = nrel(out_param,Yrand,tstart);
+    %get how many samples needed to reach relative error tolerance
+    out_param.n = out_param.nrel;%update n
 end
 
-if strcmpi(out_param.errtype,'either')
-    out_param = NbyAbs(out_param,tstart);
-    [nsofar,out_param] = NbyRel(out_param,Yrand,tstart);
+if strcmpi(out_param.errtype,'either')% to satisfy either absolute or relative error 
+    out_param = nabs(out_param,tstart);
+    [nsofar,out_param] = nrel(out_param,Yrand,tstart);
     out_param.n = min(out_param.nabs,out_param.nrel);
 end
-
-out_param.p = SplitColumnMean(Yrand,out_param.n,out_param.npcmax);
-p=out_param.p; %assign answer
-out_param.n = out_param.n+nsofar;
+out_param.p = gail.evalmean(Yrand,out_param.n,out_param.npcmax);
+% evalute the mean 
+p=out_param.p; % assign answer
+out_param.n = out_param.n+nsofar; % update total sample used
 out_param.time=toc(tstart); %elapsed time
 end
 
-function x = stdnorminv(p)
-% this function is the inverse function of CDF of standard normal distribution
-x = -sqrt(2).*erfcinv(2*p);
-end
-
-function p =SplitColumnMean(RV,n,npcmax)
-%%  Split The Param.n into columns
-nopt=min(npcmax,n);
-% numbers of samples per loop step
-nn=floor(n/nopt); % number of loop steps
-nremain=n-nn*nopt;
-% number of samples in last loop step
-nloop=repmat(nopt,1,nn);
-%vector of numbers of samples per loop step
-if nremain>0; nloop=[nloop nremain]; nn=nn+1; end
-sumY=0;
-for iloop=1:nn %loops to save memory
-    sumY=sumY+sum(RV(nloop(iloop)));
-end
-%%  Estimate p
-p=sumY/n; %calculate the mean
-end
-
 function  [Yrand,out_param] = meanMCBernoulli_g_param(varargin)
-
 default.reltol = 1e-1;% default relative error tolerance
 default.abstol  = 1e-2;% default absolute error tolerance
 default.errtype = 'abs';% degault errtype 
@@ -200,7 +179,7 @@ else
     parse(p,Yrand,varargin{2:end})
     out_param = p.Results;
 end
-if (out_param.abstol <= 0) % absolute error tolerance
+if (out_param.abstol <= 0) % absolute error tolerance negative
     warning('MATLAB:meanMCBernoulli_g:abstolneg',...
         ['Absolute error tolerance should be greater than 0, ' ...
         'use the absolute value of the error tolerance'])
@@ -272,51 +251,57 @@ p=out_param.p;
 if nargin>1; out_param.time=toc(tstart); end
 end
 
-function out_param = NbyAbs(out_param,tstart)
-out_param.n_clt = ceil(stdnorminv(1-out_param.alpha/2)/(4*out_param.abstol^2));
+function out_param = nabs(out_param,tstart)
+% this function is to calculate the sample size n needed to satisfy
+% absolute error critera.
+out_param.n_clt = ceil(gail.stdnorminv(1-out_param.alpha/2)/(4*out_param.abstol^2));
+% use central limit theorem to get n
 out_param.n_hoeff = ceil(log(2/out_param.alpha)/(2*out_param.abstol^2));
+%use Hoeffding's inequality to get n
 out_param.nabs = max(out_param.n_hoeff,out_param.n_clt);
-if out_param.nabs > out_param.nmax 
-    out_param.exit=1; % show the error message 
-    meanMCBernoulli_g_err(out_param,tstart);
-    out_param.nabs = out_param.nmax;
+% take the max of Hoeffding's n and CLT n
+if out_param.nabs > out_param.nmax % if the sample needed is is bigger than nmax
+    out_param.exit=1; % pass a flag
+    meanMCBernoulli_g_err(out_param,tstart);% print warning message
+    out_param.nabs = out_param.nmax;% update nabs
 end
 end
 
-function [nsofar,out_param] = NbyRel(out_param,Yrand,tstart)
-i = 1;
-nsofar = 0;
+function [nsofar,out_param] = nrel(out_param,Yrand,tstart)
+i = 1;% initial iteration step
+nsofar = 0;% sample used
 while 1
-    out_param.alphap = 1e-3;
-    a=2;
+    out_param.alphap = 1e-3;% the uncertainty for the last step to evalute the mean
+    a=2;% parameter to get uncertainty in each step
     out_param.alphai = 1-(1-out_param.alpha+out_param.alphap)^((a-1)*a^-i);
-    out_param.toli = out_param.reltol*2^-i;
+    %uncertainty in each step
+    out_param.toli = out_param.reltol*2^-i;%tolerance in each step
     out_param.ni = ceil(-log(out_param.alphai)/(2*out_param.toli^2));
-    if out_param.ni > out_param.nmax- nsofar;
-        out_param.exit=2; % exit the loop
+    if out_param.ni > out_param.nmax- nsofar;% if ni is bigger than sample left
+        out_param.exit=2; % pass a flag 
         meanMCBernoulli_g_err(out_param,tstart); % print warning message
-        %out_param.ni = out_param.nmax - nsofar; % update n_p
-
-        out_param.nrel = out_param.nmax- nsofar;
+        out_param.nrel = out_param.nmax- nsofar;%update nrel using all sample left
         break;
     end
-    meanY = SplitColumnMean(Yrand,out_param.ni,out_param.npcmax);
-    nsofar = nsofar+out_param.ni;
-    c = max(meanY-out_param.toli,0);
-    delta = 1/2;
-    if c > (meanY+out_param.toli)*delta
-        out_param.tau = i;
+    meanY = gail.evalmean(Yrand,out_param.ni,out_param.npcmax);%evalute mean
+    nsofar = nsofar+out_param.ni;%update n used so far 
+    c = max(meanY-out_param.toli,0); % parameter to determine the stopping time
+    delta = 1/2; % constant to determine stopping time
+    if c > (meanY+out_param.toli)*delta % stopping criterion
+        out_param.tau = i;%stop time(step) tau
         out_param.nrel = ceil(-log(out_param.alphap/2)/(2*(c*out_param.reltol)^2));
+        % calculate nrel needed
         if  out_param.nrel > out_param.nmax-nsofar
-            out_param.exit=3; % exit the loop
-            meanMCBernoulli_g_err(out_param,tstart);
-            out_param.nrel = out_param.nmax- nsofar;
+            %if nrel is bigger than sample left
+            out_param.exit=3; % pass a flag
+            meanMCBernoulli_g_err(out_param,tstart);% print warning message
+            out_param.nrel = out_param.nmax- nsofar;%update nrel
             break;
         else
             break;
         end
     else
-        i=i+1;
+        i=i+1;% go to next step
     end
 end
 end
