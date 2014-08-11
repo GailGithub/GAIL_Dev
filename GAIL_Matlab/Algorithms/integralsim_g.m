@@ -99,71 +99,77 @@ out_param.tauchange=false;  % if the cone constant has been changed
 xpts=linspace(0,1,out_param.ninit)'; % generate ninit number of uniformly spaced points in [0,1]
 fpts=f(xpts);   % get function values at xpts
 sum1=reshape(fpts(2:out_param.ninit),2,(out_param.ninit-1)/2); %compute the 4 time part of Simpson's rule
-sumf=(fpts(1)+fpts(out_param.ninit))/2+sum(fpts(2:out_param.ninit-1))+sum(sum1(2,:));    % computes the sum of Simpson's rule
-ntrap=out_param.ninit-1; % number of intevals
+sumf=(fpts(1)+fpts(out_param.ninit))+2*sum(fpts(2:out_param.ninit-1))+2*sum(sum1(1,:));    % computes the sum of Simpson's rule
+nint=out_param.ninit-1; % number of intevals
 
 while true
     %Compute approximations to the strong and weak norms
-    ntrapok=true; %number of trapezoids is large enough for ninit
+    nintok=true; %ninit is large enough for tau
     df=diff(fpts); %first difference of points
-    Gf=sum(abs(df-(fpts(ntrap+1)-fpts(1))/ntrap)); %approx weak norm
-    Ff=ntrap*(sum(abs(diff(df)))); %approx strong norm
+    Gf=sum(abs(df-(fpts(nint+1)-fpts(1))/nint)); %approx weak norm
+    Ff=nint*(sum(abs(diff(df)))); %approx strong norm
     
     %Check necessary condition for integrand to lie in cone
-    if out_param.tau*(Gf+Ff/(2*ntrap)) < Ff %f lies outside cone
-        out_param.tau = 2*Ff/(Gf+Ff/(2*ntrap)); %increase tau
+    if out_param.tau*(Gf+Ff/(2*nint)) < Ff %f lies outside cone
+        out_param.tau = 2*Ff/(Gf+Ff/(2*nint)); %increase tau
         out_param.tauchange=true; %flag the changed tau
-        warning('MATLAB:integral01_g:peaky','This integrand is peaky relative to ninit. You may wish to increase ninit for similar integrands.');
-        if ntrap+1 <= (out_param.tau+1)/2 %the present ntrap is too small for tau
-            inflation=ceil((out_param.tau+1)/(2*ntrap)); %prepare to increase ntrap
-            ntrapok=false; %flag the number of trapezoids too small for tau
+        warning('MATLAB:integralsim_g:peaky','This integrand is peaky relative to ninit. You may wish to increase ninit for similar integrands.');
+        if nint+1 <= (out_param.tau+1)/2 %the present ntrap is too small for tau
+            inflation=ceil((out_param.tau+1)/(2*nint)); %prepare to increase ntrap
+            nintok=false; %flag the number of trapezoids too small for tau
         end
     end
     
-    if ntrapok %ntrap large enough for tau
+    if nintok %ntrap large enough for tau
         %compute a reliable error estimate
-        errest=out_param.tau*Gf/(4*ntrap*(2*ntrap-out_param.tau));
+        errest=out_param.tau*Gf/(4*nint*(2*nint-out_param.tau));
         if errest <= out_param.abstol %tolerance is satisfied
-            q=1.5*sumf/ntrap; %compute the integral
+            q=sumf/nint/3; %compute the integral
             break %exit while loop
         else %need to increase number of trapezoids
             %proposed inflation factor to increase ntrap by
-            inflation=max(ceil(1/ntrap*sqrt(out_param.tau*Gf/(8*out_param.abstol))),2);
+            inflation=max(ceil(1/nint*sqrt(out_param.tau*Gf/(8*out_param.abstol))),2);
         end
     end
-    if ntrap*inflation+1 > out_param.nmax
+    if nint*inflation+1 > out_param.nmax
             %cost budget does not allow intended increase in ntrap
         out_param.exceedbudget=true; %tried to exceed budget
-        warning('MATLAB:integral01_g:exceedbudget','integral_g attempts to exceed the cost budget. The answer may be unreliable.');
-        inflation=floor((out_param.nmax-1)/ntrap);
+        warning('MATLAB:integralsim_g:exceedbudget','integralsim_g attempts to exceed the cost budget. The answer may be unreliable.');
+        inflation=floor((out_param.nmax-1)/nint);
             %max possible increase allowed by cost budget
         if inflation == 1 %cannot increase ntrap at all
-            q=1.5*sumf/ntrap; %compute the integral                 
+            q=sumf/nint/3; %compute the integral                 
             break %exit while loop
         end
     end
     
     %Increase number of sample points
-    expand=repmat(xpts(1:end-1),1,inflation-1);
-    addon=repmat((1:inflation-1)'/(inflation*ntrap),1,ntrap)';
-    xnew=expand'+addon'; %additional x values
-    ynew=f(xnew); %additional f(x) values
-    xnew = [xpts(1:end-1)'; xnew];
-    ynew = [fpts(1:end-1)'; ynew];
-    xpts = [xnew(:); xpts(end)];
-    fpts = [ynew(:); fpts(end)];
-    ntrap=ntrap*inflation; %new number of trapezoids
-    sumf=(fpts(1)+fpts(ntrap+1))/2+sum(fpts(2:ntrap));
+%     expand=repmat(xpts(1:end-1),1,inflation-1);
+%     addon=repmat((1:inflation-1)'/(inflation*nint),1,nint)';
+%     xnew=expand'+addon'; %additional x values
+%     ynew=f(xnew); %additional f(x) values
+%     xnew = [xpts(1:end-1)'; xnew];
+%     ynew = [fpts(1:end-1)'; ynew];
+%     xpts = [xnew(:); xpts(end)];
+%     fpts = [ynew(:); fpts(end)];
+    nint=nint*inflation; %new number of trapezoids
+    if (nint+2)/2-ceil((nint-1)/2) == 0  %check if new number of points is odd
+        nint=nint+1;
+    end
+    xpts=linspace(0,1,nint+1)'; % generate ninit number of uniformly spaced points in [0,1]
+    fpts=f(xpts);   % get function values at xpts
+    sum1=reshape(fpts(2:nint+1),2,nint/2);
+    sumf=(fpts(1)+fpts(nint+1))+2*sum(fpts(2:nint))+2*sum(sum1(1,:));    
         %updated weighted sum of function values
     if out_param.exceedbudget %tried to exceed cost budget
-        q=1.5*sumf/ntrap; %compute the integral
+        q=sumf/nint/3; %compute the integral
         break; %exit while loop
     end
     
 end
 
 out_param.q=q;  % integral of functions
-out_param.npoints=ntrap+1;  % number of points finally used
+out_param.npoints=nint+1;  % number of points finally used
 out_param.errest=errest;    % error of integral
 
 function [f, out_param] = integralsim_g_param(varargin)
