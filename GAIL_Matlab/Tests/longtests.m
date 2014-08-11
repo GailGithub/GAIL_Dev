@@ -28,8 +28,6 @@ warning('on','MATLAB:integral_g:exceedbudget')
 %% Papers
 % Cone paper
 run_handle('ConesPaperFoolFunctions')
-run_handle('conepaper_test_integral_g')
-run_handle('conepaper_test_funappx_g')
 
 % MCQMC paper
 run_handle('RunTestcubMConGeoAsianCall')
@@ -45,7 +43,7 @@ run_handle('workout_twoextreme')
 %% Unit tests
 [~,~,~,MATLABVERSION]=GAILstart(0);
 if MATLABVERSION >= 8  
-    %run(ut_funappx_g)   
+    run(ut_ConesPaper)   
 end
 
 time=toc;
