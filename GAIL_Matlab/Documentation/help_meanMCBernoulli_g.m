@@ -1,6 +1,6 @@
 %% meanMCBernoulli_g
-% Monte Carlo method to estimate the mean of a Bernoullii random variable
-% to within a specific error tolerance with guaranteed confidence level
+% Monte Carlo method to estimate the mean of a Bernoulli random variable
+% to within a specified error tolerance with guaranteed confidence level
 % 1-alpha.
 %% Syntax
 %
@@ -8,7 +8,7 @@
 %
 % mu = *meanMCBernoulli_g*(Yrand,abstol,reltol,index,alpha,nmax)
 %
-% mu = *meanMCBernoulli_g*(Yrand,'abstol',abstol,'reltol',reltol,'index',index,
+% mu = *meanMCBernoulli_g*(Yrand,'abstol',abstol,'reltol',reltol,'errtype',errtype,
 %   'alpha',alpha,'nmax',nmax)
 %
 % mu = *meanMCBernoulli_g*(Yrand,in_param)

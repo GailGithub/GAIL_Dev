@@ -17,7 +17,7 @@ classdef ut_meanMCBernoulli_g < matlab.unittest.TestCase
             p=1/90;
             Yrand=@(n) rand(n,1)<p;
             in_param.reltol = 1e-1;
-            meanp = meanMCBernoulli_g(Yrand,'index','rel','reltol',1e-1);
+            meanp = meanMCBernoulli_g(Yrand,'errtype','rel','reltol',1e-1);
             actualerr = abs(meanp-p)/p;
             testCase.verifyLessThanOrEqual(actualerr,in_param.reltol);
         end

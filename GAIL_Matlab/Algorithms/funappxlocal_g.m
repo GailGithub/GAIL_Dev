@@ -41,8 +41,8 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %     default value is 100
 %
 %   [pp, out_param] = FUNAPPXLOCAL_G(f,...) returns a piecewise polynomial
-%   structure pp and an output structure out_param, which has the following
-%   fields:
+%   structure pp and an output structure out_param, which have the
+%   following fields:
 %
 %     pp.form --- pp means piecewise polynomials
 %
@@ -64,6 +64,10 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %     guaranteed absolute error tolerance
 %
 %     out_param.errorbound --- an upper bound of the absolute error
+%
+%     out_param.nstar --- final value of the parameter defining the cone of
+%     functions for which this algorithm is guaranteed for each
+%     subinterval; nstar = ninit-2 initially
 %
 %     out_param.a --- left end point of interval
 %
@@ -195,7 +199,7 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %          nstar: [1x512 double]
 %
 %
-%   See also INTEGRAL_G, MEANMC_G, CUBMC_G
+%   See also INTEGRAL_G, MEANMC_G, CUBMC_G, FUNMIN_G
 %
 %
 %   References
@@ -207,8 +211,9 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %        
 %
 %   [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
-%        and Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library
-%        (Version 2.0)" [MATLAB Software], 2014. Available from
+%        Lluís Antoni Jiménez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
+%        "GAIL: Guaranteed Automatic Integration Library (Version 2.0)" 
+%        [MATLAB Software], 2014. Available from 
 %        http://code.google.com/p/gail/
 %
 %        If you find GAIL helpful in your work, please support us by citing
@@ -253,17 +258,20 @@ while(max(err) >= out_param.abstol)
         % Stage 4: check for convergence
         err(tmp) = nstar(tmp)*len*gn/(4*(n-1)*(n-1-nstar(tmp)));
         if err(tmp) >= out_param.abstol;
-            % Stage 5:
+            % Stage 5:          
             index = [index(1:tmp) a+n-1 index(tmp+1:end)+n-1];
             h = (x(b)-x(a))/(2*(n-1));
-            xnew = repmat(x(a:b-1),1,1)+repmat(h,1,n-1);
+            %xnew = repmat(x(a:b-1),1,1)+repmat(h,1,n-1);
+            xnew = x(a:b-1)+h;
             ynew = f(xnew);
-            xnew = [x(a:b-1); xnew];
-            xx = [xnew(:); x(b)]';
-            ynew = [y(a:b-1); ynew];
-            yy = [ynew(:); y(b)]';
-            x = [x(1:a-1) xx x(b+1:end)];
-            y = [y(1:a-1) yy y(b+1:end)];
+            xnew1 = [x(a:b-1); xnew];
+            xx = xnew1(:)';
+            ynew1 = [y(a:b-1); ynew];
+            yy = ynew1(:)';
+%             xx = x(a):h:x(b);
+%             yy = f(xx);
+            x = [x(1:a-1) xx x(b:end)];
+            y = [y(1:a-1) yy y(b:end)];
             err = [err(1:tmp-1) inf inf err(tmp+1:end)];
             ntemp=max(ceil(out_param.nhi*(out_param.nlo/out_param.nhi)^(1/(1+h))),3);
             nstar = [nstar(1:tmp-1) ntemp-2 ntemp-2 nstar(tmp+1:end)];
@@ -312,9 +320,9 @@ out_param.npoints = index(end);
 out_param.errorbound = max(err);
 out_param.nstar = nstar;
 % out_param.err = err;
-x1 = x;
-y1 = f(x1);
-pp = interp1(x1,y1,'linear','pp');
+% x1 = x;
+% y1 = f(x1);
+pp = interp1(x,y,'linear','pp');
 %fappx = @(x) interp1(x1,y,x,'linear');
 
 
@@ -330,7 +338,7 @@ default.nlo = 9;
 default.nhi = 100;
 
 if isempty(varargin)
-    warning('MATLAB:funappx_g:nofunction','Function f must be specified. Now GAIL is using f(x)=exp(-100*(x-0.5).^2).')
+    warning('MATLAB:funappx_g:nofunction','Function f must be specified. Now GAIL is using f(x)=exp(-100*(x-0.5)^2) and unit interval [0,1].')
     help funappxlocal_g
     f = @(x) exp(-100*(x-0.5).^2);
     out_param.f = f;

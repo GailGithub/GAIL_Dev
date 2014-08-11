@@ -1,156 +1,141 @@
 function [p,out_param]=meanMCBernoulli_g(varargin)
-% MEANMCBERNOULLI_G Monte Carlo method to estimate the mean of a Bernoullii
-% random variable to within a specific error tolerance with guaranteed
-% confidence level 1-alpha.
+%MEANMCBERNOULLI_G Monte Carlo method to estimate the mean of a Bernoulli
+%random variable to within a specified error tolerance with guaranteed
+%confidence level 1-alpha.
 %
-% p = MEANMCBERNOULLI_G(Yrand) estimates the mean of a Bernoulli random
-% variable Y to within a specified error tolerance with guaranteed
-% confidence level 99%. Input Yrand is a function handle that accepts a
-% positive integer input n and returns an n x 1 vector of IID instances
-% of the Bernoulli random variable Y.
+%   p = MEANMCBERNOULLI_G(Yrand) estimates the mean of a Bernoulli random
+%   variable Y to within a specified error tolerance with guaranteed
+%   confidence level 99%. Input Yrand is a function handle that accepts a
+%   positive integer input n and returns a n x 1 vector of IID instances
+%   of the Bernoulli random variable Y.
 % 
-% p = MEANMCBERNOULLI_G(Yrand,abstol,reltol,index,alpha,nmax)
-% estimates the mean of a Bernoulli random variable Y to within an error
-% tolerance with guaranteed confidence level 1-alpha using all ordered
-% parsing inputs abstol, reltol, index, alpha and nmax.
+%   p = MEANMCBERNOULLI_G(Yrand,abstol,reltol,errtype,alpha,nmax) estimates
+%   the mean of a Bernoulli random variable Y to within a specified error
+%   tolerance with guaranteed confidence level 1-alpha using all ordered
+%   parsing inputs abstol, reltol, errtype, alpha and nmax.
 % 
-% p =
-% MEANMCBERNOULLI_G(Yrand,'abstol',abstol,'reltol',reltol,'index',index,
-% 'alpha',alpha,'nmax',nmax) estimates the mean of a Bernoulli random
-% variable Y to within a specified error tolerance with guaranteed
-% confidence level 1-alpha. All the field-value pairs are optional and
-% can be supplied in different order.
+%   p = MEANMCBERNOULLI_G(Yrand,'abstol',abstol,'reltol',reltol,'errtype',errtype,
+%   'alpha',alpha,'nmax',nmax) estimates the mean of a Bernoulli random
+%   variable Y to within a specified error tolerance with guaranteed
+%   confidence level 1-alpha. All the field-value pairs are optional and
+%   can be supplied in different order.
 % 
-% p = MEANMCBERNOULLI_G(Yrand,in_param) estimates the mean of a
-% Bernoulli random variable Y to within a specified error
-% tolerance in_param.abstol with guaranteed uncertainty within
-% in_param.alpha. If a field is not specified, the default value is used.
+%   [p, out_param] = MEANMCBERNOULLI_G(Yrand,in_param) estimates the mean
+%   of a Bernoulli random variable Y to within a specified error tolerance
+%   with the given parameters in_param and output parameters out_param.
 % 
-% [p, out_param] = MEANMCBERNOULLI_G(Yrand,in_param) estimates the mean
-% of a Bernoulli random variable Y to within a specified absolute error
-% tolerance with the given parameters in_param and output parameters
-% out_param.
+%   Input Arguments
+%
+%     Yrand --- the function for generating IID instances of a Bernoulli random
+%      variable Y whose mean we want to estimate.
 % 
+%     p --- the estimated mean of Y.
 % 
-% Yrand --- the function for generating IID instances of a Bernoulli random
-% variable Y whose mean we want to estimate.
+%     in_param.abstol --- the absolute error tolerance, default value is 1e-2.
 % 
-% p --- the estimated mean of Y.
+%     in_param.reltol --- the relative error tolerance, default value is 1e-1.
 % 
-% in_param.abstol --- the absolute error tolerance, default value is 1e-2.
+%     in_param.errtype --- the error type, default value is 'abs'.
+%                          'abs'--- absolute error criterion
+%                          'rel'--- relative error criterion
+%                          'either'---absolute OR relative criterion
 % 
-% in_param.reltol --- the relative error tolerance, default value is 1e-1.
+%     in_param.alpha --- the uncertainty, default value is 1%.
 % 
-% in_param.index --- the error tolerance criterion, default value is
-% 'abs'.
+%     in_param.nmax --- the sample budget, default value is 1e8.
 % 
-% in_param.alpha --- the uncertainty, default value is 1%.
+%   Output Arguments
+%
+%     out_param.n --- the total sample used.
 % 
-% in_param.nmax --- the sample budget, default value is 1e8.
+%     out_param.time --- the time elapsed.
 % 
-% out_param.n --- the total sample size used.
+%   Examples
 % 
-% out_param.time --- the time elapsed.
+%   Example 1:
+%   Calculate the mean of a bernoulli random variable with true p=0.55,with
+%   error tolerance 1e-3 and uncertainty 0.01.
 % 
-% Examples
-% 
-% Example 1:
-% Calculate the mean of a bernoulli random variable with true p=0.55,with
-% error tolerance 1e-3 and uncertainty 0.01.
-% 
-% >> in_param.abstol=1e-3; in_param.alpha = 0.01; p=1/90;Yrand=@(n) rand(n,1)<p;
-% >> p=meanMCBernoulli_g(Yrand,in_param)
-% p = 0.01***
+%   >> in_param.abstol=1e-3; in_param.alpha = 0.01; p=1/90;Yrand=@(n) rand(n,1)<p;
+%   >> p=meanMCBernoulli_g(Yrand,in_param)
+%   p = 0.01***
 % 
 % 
-% Example 2:
-% Using the same function as example 1, with the absolute error tolerance
-% 1e-4.
+%   Example 2:
+%   Using the same function as example 1, with the absolute error tolerance
+%   1e-4.
 % 
-% >> p=meanMCBernoulli_g(Yrand,1e-3,1e-2,'abs')
-% p = 0.01***
-% 
-% 
-% Example 3:
-% Using the sample function as example 1, with the relative error
-% tolerance 1e-2 and uncertainty 0.005.
-% 
-% >> p=meanMCBernoulli_g(Yrand,'index','rel','reltol',1e-1,'alpha',0.05)
-% p = 0.011***
+%   >> p=meanMCBernoulli_g(Yrand,1e-3,1e-2,'abs')
+%   p = 0.01***
 % 
 % 
-% See also FUNAPPX_G, INTEGRAL_G, CUBMC_G, MEANMC_G
+%   Example 3:
+%   Using the sample function as example 1, with the relative error
+%   tolerance 1e-2 and uncertainty 0.005.
 % 
-% Reference
-% [1]  F. J. Hickernell, L. Jiang, Y. Liu, and A. B. Owen, Guaranteed
-% conservative fixed width confidence intervals via Monte Carlo sampling,
-% Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F. Y. Kuo, G.
-% W. Peters, and I. H. Sloan, eds.), Springer-Verlag, Berlin, 2014, to
-% appear, arXiv:1208.4318 [math.ST]
+%   >> p=meanMCBernoulli_g(Yrand,'errtype','rel','reltol',1e-1,'alpha',0.05)
+%   p = 0.011***
 % 
+% 
+%   See also FUNAPPX_G, INTEGRAL_G, CUBMC_G, MEANMC_G
+% 
+%  References
+%
+%   [1]  F. J. Hickernell, L. Jiang, Y. Liu, and A. B. Owen, Guaranteed
+%   conservative fixed width confidence intervals via Monte Carlo sampling,
+%   Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F. Y. Kuo, G. W.
+%   Peters, and I. H. Sloan, eds.), Springer-Verlag, Berlin, 2014, to appear,
+%   arXiv:1208.4318 [math.ST]
+%
+%   [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, and
+%   Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library (Version
+%   1.3.0)" [MATLAB Software], 2014. Available from
+%   http://code.google.com/p/gail/
+%
+%   If you find GAIL helpful in your work, please support us by citing the
+%   above paper and software.
+%
 tstart = tic; %start the clock
 [Yrand,out_param] = meanMCBernoulli_g_param(varargin{:});
-out_param.npcmax = 1e6;
-nsofar = 0;
-if strcmpi(out_param.index,'abs')
-    out_param = NbyAbs(out_param,tstart);
-    out_param.n = out_param.nabs;
+%parse and verify parameters
+nsofar = 0;% sample used so far
+out_param.npcmax = 1e6; %
+if strcmpi(out_param.errtype,'abs') % absolute error type
+    out_param = nabs(out_param,tstart);
+    %get how many samples needed to reach absolute error tolerance
+    out_param.n = out_param.nabs;%update n
 end
-if strcmpi(out_param.index,'rel')
-    [nsofar,out_param] = NbyRel(out_param,Yrand,tstart);
-    out_param.n = out_param.nrel;
-end
-
-if strcmpi(out_param.index,'both')
-    out_param = NbyAbs(out_param,tstart);
-    [nsofar,out_param] = NbyRel(out_param,Yrand,tstart);
-    out_param.n = max(out_param.nabs,out_param.nrel);
+if strcmpi(out_param.errtype,'rel')% relative error type
+    [nsofar,out_param] = nrel(out_param,Yrand,tstart);
+    %get how many samples needed to reach relative error tolerance
+    out_param.n = out_param.nrel;%update n
 end
 
-out_param.p = SplitColumnMean(Yrand,out_param.n,out_param.npcmax);
-p=out_param.p; %assign answer
-out_param.n = out_param.n+nsofar;
+if strcmpi(out_param.errtype,'either')% to satisfy either absolute or relative error 
+    out_param = nabs(out_param,tstart);
+    [nsofar,out_param] = nrel(out_param,Yrand,tstart);
+    out_param.n = min(out_param.nabs,out_param.nrel);
+end
+out_param.p = gail.evalmean(Yrand,out_param.n,out_param.npcmax);
+% evaluate the mean 
+p=out_param.p; % assign answer
+out_param.n = out_param.n+nsofar; % update total sample used
 out_param.time=toc(tstart); %elapsed time
 end
 
-function x = stdnorminv(p)
-% this function is the inverse function of CDF of standard normal distribution
-x = -sqrt(2).*erfcinv(2*p);
-end
-
-function p =SplitColumnMean(RV,n,npcmax)
-%%  Split The Param.n into columns
-nopt=min(npcmax,n);
-% numbers of samples per loop step
-nn=floor(n/nopt); % number of loop steps
-nremain=n-nn*nopt;
-% number of samples in last loop step
-nloop=repmat(nopt,1,nn);
-%vector of numbers of samples per loop step
-if nremain>0; nloop=[nloop nremain]; nn=nn+1; end
-sumY=0;
-for iloop=1:nn %loops to save memory
-    sumY=sumY+sum(RV(nloop(iloop)));
-end
-%%  Estimate p
-p=sumY/n; %calculate the mean
-end
-
 function  [Yrand,out_param] = meanMCBernoulli_g_param(varargin)
-
 default.reltol = 1e-1;% default relative error tolerance
 default.abstol  = 1e-2;% default absolute error tolerance
-default.index = 'abs';
+default.errtype = 'abs';% degault errtype 
 default.alpha = 1e-2;% default uncertainty
 default.nmax = 1e8;% default n maximum
-if isempty(varargin)
-    help meanMCBernoulli_g
+if isempty(varargin) % if no parsing value
+    help meanMCBernoulli_g % print documentation
     warning('MATLAB:meanMCBernoulli_g:yrandnotgiven',...
         ['Yrand must be specified. Now GAIL is using Bernoulli random ', ...
-    'variable with parameter 0.0078.'])
+    'variable with parameter 0.0078.'])%print warning message
     p = 2^(-7);
-    Yrand = @(n) rand(n,1)<p;
-    %give the error message
+    Yrand = @(n) rand(n,1)<p;% use default function
 else
     Yrand = varargin{1};
 end
@@ -166,7 +151,7 @@ if ~validvarargin
     %if only have one input which is Yrand, use all the default parameters
     out_param.abstol = default.abstol;
     out_param.reltol = default.reltol;
-    out_param.index = default.index;
+    out_param.errtype = default.errtype;
     out_param.alpha = default.alpha;
     out_param.nmax = default.nmax;
 else
@@ -176,7 +161,7 @@ else
         %only numeric, they should be put in order.
         addOptional(p,'abstol',default.abstol,@isnumeric);
         addOptional(p,'reltol',default.reltol,@isnumeric);
-        addOptional(p,'index',default.index,@ischar);
+        addOptional(p,'errtype',default.errtype,@ischar);
         addOptional(p,'alpha',default.alpha,@isnumeric);
         addOptional(p,'nmax',default.nmax,@isnumeric);
     else
@@ -186,33 +171,36 @@ else
         end
         addParamValue(p,'abstol',default.abstol,@isnumeric);
         addParamValue(p,'reltol',default.reltol,@isnumeric);
-        addParamValue(p,'index',default.index,@ischar);
+        addParamValue(p,'errtype',default.errtype,@ischar);
         addParamValue(p,'alpha',default.alpha,@isnumeric);
         addParamValue(p,'nmax',default.nmax,@isnumeric);
     end
     parse(p,Yrand,varargin{2:end})
     out_param = p.Results;
 end
-if (out_param.abstol <= 0) % absolute error tolerance
+if (out_param.abstol <= 0) % absolute error tolerance negative
     warning('MATLAB:meanMCBernoulli_g:abstolneg',...
         ['Absolute error tolerance should be greater than 0, ' ...
         'use the absolute value of the error tolerance'])
     out_param.abstol = abs(out_param.abstol);
 end
-if (out_param.reltol <= 0 || out_param.reltol >=1) % relative error tolerance
+if (out_param.reltol <= 0 || out_param.reltol >=1)
+    % relative error tolerance is not in (0,1)
     warning('MATLAB:meanMCBernoulli_g:reltolnotin01',...
         ['Relative error tolerance should be less than 1 and bigger than 0, ' ...
         'use the default value of the error tolerance'])
     out_param.reltol = default.reltol;
 end
-if (out_param.alpha <= 0 ||out_param.alpha >= 1) % uncertainty
+if (out_param.alpha <= 0 ||out_param.alpha >= 1) 
+    % uncertainty is not in (0,1)
     warning('MATLAB:meanMCBernoulli_g:alphanotin01',...
         ['the uncertainty should be less than 1 and bigger than 0, '...
         'use the default value.'])
     out_param.alpha = default.alpha;
 end
 
-if (~gail.isposint(out_param.nmax)) % sample budget should be a positive integer
+if (~gail.isposint(out_param.nmax)) 
+    % sample budget should be a positive integer
     warning('MATLAB:meanMCBernoulli_g:nmaxnotposint',...
         ['the number of nmax should be a positive integer,'...
         'take the absolute value and ceil.'])
@@ -231,7 +219,7 @@ if out_param.exit==0; return; end
 switch out_param.exit
     case 1 % nabs exceed nmax.
         warning('MATLAB:meanMCBernoulli_g:nabsexceednmax',...
-            [' To guarantee the absolute error, tried to evalute at '...
+            [' To guarantee the absolute error, tried to evaluate at '...
             int2str(out_param.nabs) ...
             ' samples, which is more than the allowed maximum of '...
             num2str(out_param.nmax) ...
@@ -240,7 +228,7 @@ switch out_param.exit
         return;
     case 2 % ni exceed nmax.
         warning('MATLAB:meanMCBernoulli_g:niexceednmax',...
-            [' To guarantee the lower bound of p, tried to evalute at '...
+            [' To guarantee the lower bound of p, tried to evaluate at '...
             int2str(out_param.ni) ...
             ' samples, which is more than the allowed maximum of '...
             num2str(out_param.nmax) ...
@@ -249,7 +237,7 @@ switch out_param.exit
         return;
     case 3 % nrel exceed nmax.
         warning('MATLAB:meanMCBernoulli_g:nrelexceednmax',...
-            [' To guarantee the relative error, tried to evalute at '...
+            [' To guarantee the relative error, tried to evaluate at '...
             int2str(out_param.nrel) ...
             ' samples, which is more than the allowed maximum of '...
             num2str(out_param.nmax) ...
@@ -262,51 +250,57 @@ p=out_param.p;
 if nargin>1; out_param.time=toc(tstart); end
 end
 
-function out_param = NbyAbs(out_param,tstart)
-out_param.n_clt = ceil(stdnorminv(1-out_param.alpha/2)/(4*out_param.abstol^2));
+function out_param = nabs(out_param,tstart)
+% this function is to calculate the sample size n needed to satisfy
+% absolute error critera.
+out_param.n_clt = ceil(gail.stdnorminv(1-out_param.alpha/2)/(4*out_param.abstol^2));
+% use central limit theorem to get n
 out_param.n_hoeff = ceil(log(2/out_param.alpha)/(2*out_param.abstol^2));
+%use Hoeffding's inequality to get n
 out_param.nabs = max(out_param.n_hoeff,out_param.n_clt);
-if out_param.nabs > out_param.nmax  
-    out_param.exit=1; % exit the loop
-    meanMCBernoulli_g_err(out_param,tstart);
-    out_param.nabs = out_param.nmax;
+% take the max of Hoeffding's n and CLT n
+if out_param.nabs > out_param.nmax % if the sample needed is is bigger than nmax
+    out_param.exit=1; % pass a flag
+    meanMCBernoulli_g_err(out_param,tstart);% print warning message
+    out_param.nabs = out_param.nmax;% update nabs
 end
 end
 
-function [nsofar,out_param] = NbyRel(out_param,Yrand,tstart)
-i = 1;
-nsofar = 0;
+function [nsofar,out_param] = nrel(out_param,Yrand,tstart)
+i = 1;% initial iteration step
+nsofar = 0;% sample used
 while 1
-    out_param.alphap = 1e-3;
-    a=2;
+    out_param.alphap = 1e-3;% the uncertainty for the last step to evaluate the mean
+    a=2;% parameter to get uncertainty in each step
     out_param.alphai = 1-(1-out_param.alpha+out_param.alphap)^((a-1)*a^-i);
-    out_param.toli = out_param.reltol*2^-i;
+    %uncertainty in each step
+    out_param.toli = out_param.reltol*2^-i;%tolerance in each step
     out_param.ni = ceil(-log(out_param.alphai)/(2*out_param.toli^2));
-    if out_param.ni > out_param.nmax- nsofar;
-        out_param.exit=2; % exit the loop
+    if out_param.ni > out_param.nmax- nsofar;% if ni is bigger than sample left
+        out_param.exit=2; % pass a flag 
         meanMCBernoulli_g_err(out_param,tstart); % print warning message
-        %out_param.ni = out_param.nmax - nsofar; % update n_p
-
-        out_param.nrel = out_param.nmax- nsofar;
+        out_param.nrel = out_param.nmax- nsofar;%update nrel using all sample left
         break;
     end
-    meanY = SplitColumnMean(Yrand,out_param.ni,out_param.npcmax);
-    nsofar = nsofar+out_param.ni;
-    c = max(meanY-out_param.toli,0);
-    delta = 1/2;
-    if c > (meanY+out_param.toli)*delta
-        out_param.tau = i;
+    meanY = gail.evalmean(Yrand,out_param.ni,out_param.npcmax);%evaluate mean
+    nsofar = nsofar+out_param.ni;%update n used so far 
+    c = max(meanY-out_param.toli,0); % parameter to determine the stopping time
+    delta = 1/2; % constant to determine stopping time
+    if c > (meanY+out_param.toli)*delta % stopping criterion
+        out_param.tau = i;%stop time(step) tau
         out_param.nrel = ceil(-log(out_param.alphap/2)/(2*(c*out_param.reltol)^2));
+        % calculate nrel needed
         if  out_param.nrel > out_param.nmax-nsofar
-            out_param.exit=3; % exit the loop
-            meanMCBernoulli_g_err(out_param,tstart);
-            out_param.nrel = out_param.nmax- nsofar;
+            %if nrel is bigger than sample left
+            out_param.exit=3; % pass a flag
+            meanMCBernoulli_g_err(out_param,tstart);% print warning message
+            out_param.nrel = out_param.nmax- nsofar;%update nrel
             break;
         else
             break;
         end
     else
-        i=i+1;
+        i=i+1;% go to next step
     end
 end
 end
