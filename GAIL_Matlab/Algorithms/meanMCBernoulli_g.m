@@ -1,5 +1,5 @@
 function [p,out_param]=meanMCBernoulli_g(varargin)
-%MEANMCBERNOULLI_G Monte Carlo method to estimate the mean of a Bernoullii
+%MEANMCBERNOULLI_G Monte Carlo method to estimate the mean of a Bernoulli
 %random variable to within a specified error tolerance with guaranteed
 %confidence level 1-alpha.
 %
@@ -117,7 +117,7 @@ if strcmpi(out_param.errtype,'either')% to satisfy either absolute or relative e
     out_param.n = min(out_param.nabs,out_param.nrel);
 end
 out_param.p = gail.evalmean(Yrand,out_param.n,out_param.npcmax);
-% evalute the mean 
+% evaluate the mean 
 p=out_param.p; % assign answer
 out_param.n = out_param.n+nsofar; % update total sample used
 out_param.time=toc(tstart); %elapsed time
@@ -129,14 +129,13 @@ default.abstol  = 1e-2;% default absolute error tolerance
 default.errtype = 'abs';% degault errtype 
 default.alpha = 1e-2;% default uncertainty
 default.nmax = 1e8;% default n maximum
-if isempty(varargin)
-    help meanMCBernoulli_g
+if isempty(varargin) % if no parsing value
+    help meanMCBernoulli_g % print documentation
     warning('MATLAB:meanMCBernoulli_g:yrandnotgiven',...
         ['Yrand must be specified. Now GAIL is using Bernoulli random ', ...
-    'variable with parameter 0.0078.'])
+    'variable with parameter 0.0078.'])%print warning message
     p = 2^(-7);
-    Yrand = @(n) rand(n,1)<p;
-    %give the error message
+    Yrand = @(n) rand(n,1)<p;% use default function
 else
     Yrand = varargin{1};
 end
@@ -220,7 +219,7 @@ if out_param.exit==0; return; end
 switch out_param.exit
     case 1 % nabs exceed nmax.
         warning('MATLAB:meanMCBernoulli_g:nabsexceednmax',...
-            [' To guarantee the absolute error, tried to evalute at '...
+            [' To guarantee the absolute error, tried to evaluate at '...
             int2str(out_param.nabs) ...
             ' samples, which is more than the allowed maximum of '...
             num2str(out_param.nmax) ...
@@ -229,7 +228,7 @@ switch out_param.exit
         return;
     case 2 % ni exceed nmax.
         warning('MATLAB:meanMCBernoulli_g:niexceednmax',...
-            [' To guarantee the lower bound of p, tried to evalute at '...
+            [' To guarantee the lower bound of p, tried to evaluate at '...
             int2str(out_param.ni) ...
             ' samples, which is more than the allowed maximum of '...
             num2str(out_param.nmax) ...
@@ -238,7 +237,7 @@ switch out_param.exit
         return;
     case 3 % nrel exceed nmax.
         warning('MATLAB:meanMCBernoulli_g:nrelexceednmax',...
-            [' To guarantee the relative error, tried to evalute at '...
+            [' To guarantee the relative error, tried to evaluate at '...
             int2str(out_param.nrel) ...
             ' samples, which is more than the allowed maximum of '...
             num2str(out_param.nmax) ...
@@ -271,7 +270,7 @@ function [nsofar,out_param] = nrel(out_param,Yrand,tstart)
 i = 1;% initial iteration step
 nsofar = 0;% sample used
 while 1
-    out_param.alphap = 1e-3;% the uncertainty for the last step to evalute the mean
+    out_param.alphap = 1e-3;% the uncertainty for the last step to evaluate the mean
     a=2;% parameter to get uncertainty in each step
     out_param.alphai = 1-(1-out_param.alpha+out_param.alphap)^((a-1)*a^-i);
     %uncertainty in each step
@@ -283,7 +282,7 @@ while 1
         out_param.nrel = out_param.nmax- nsofar;%update nrel using all sample left
         break;
     end
-    meanY = gail.evalmean(Yrand,out_param.ni,out_param.npcmax);%evalute mean
+    meanY = gail.evalmean(Yrand,out_param.ni,out_param.npcmax);%evaluate mean
     nsofar = nsofar+out_param.ni;%update n used so far 
     c = max(meanY-out_param.toli,0); % parameter to determine the stopping time
     delta = 1/2; % constant to determine stopping time

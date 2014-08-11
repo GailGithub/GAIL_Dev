@@ -7,6 +7,7 @@ integral_g
 High dimension integration:
 meanMC_g
 cubMC_g
+meanMCBernoulli_g
 
 1-D minimization:
 funmin_g
