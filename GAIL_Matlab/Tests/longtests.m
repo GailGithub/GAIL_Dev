@@ -15,9 +15,6 @@ doctest dt_cubMC_g
 test_cubMC_g
 
 % other workouts
-warning('off','MATLAB:integraltau_g:peaky')
-run_handle('tryout_integral_g_FJH')
-warning('on','MATLAB:integraltau_g:peaky')
 warning('off','MATLAB:integral_g:exceedbudget')
 warning('off','MATLAB:integral_g:peaky')
 run_handle('workout_integral_g')
