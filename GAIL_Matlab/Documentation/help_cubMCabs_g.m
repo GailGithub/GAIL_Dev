@@ -1,22 +1,22 @@
-%% cubMC_g
+%% cubMCabs_g
 % |Monte Carlo method to evaluate a multidimentional integral to within a
 % specified absolute error tolerance with guaranteed confidence level
 % 1-alpha.|
 %
 %% Syntax
-% [Q,out_param] = *cubMC_g*(f)
+% [Q,out_param] = *cubMCabs_g*(f)
 %
-% Q = *cubMC_g*(f,hyperbox,measure,abstol,alpha,n_sigma,fudge,tbudget,
+% Q = *cubMCabs_g*(f,hyperbox,measure,abstol,alpha,n_sigma,fudge,tbudget,
 %               nbudget,npcmax,checked)
 %
-% Q = *cubMC_g*(f,hyperbox,'measure','uniform','abstol',abstol,'alpha',alpha,
+% Q = *cubMCabs_g*(f,hyperbox,'measure','uniform','abstol',abstol,'alpha',alpha,
 %              'n_sigma',n_sigma,fudge',fudge,'tbudget',tbudget,
 %              'nbudget',nbudget,'npcmax',npcmax,'checked',checked)
 %
-% Q = *cubMC_g*(f,hyperbox,,in_param)
+% Q = *cubMCabs_g*(f,hyperbox,,in_param)
 %
 %% Description
-% [Q,out_param] = *cubMC_g*(f,hyperbox) |eestimates the integral of f over
+% [Q,out_param] = *cubMCabs_g*(f,hyperbox) |eestimates the integral of f over
 % hyperbox to within an specified absolute error tolerance 1e-2 and with
 % guaranteed confidence level 99%. Input f is a function handle. The
 % function f should accept an n x d matrix input, where d is the dimension
@@ -25,7 +25,7 @@
 % corresponds to the lower limits and the second row corresponds to the
 % upper limits.|
 %
-% Q = *cubMC_g*(f,hyperbox,measure,abstol,alpha,n_sigma,fudge,tbudget,
+% Q = *cubMCabs_g*(f,hyperbox,measure,abstol,alpha,n_sigma,fudge,tbudget,
 % nbudget,npcmax,checked) |% estimates the integral of f over hyperbox with respect to a given
 % measure. The answer is given to within an specified absolute error
 % tolerance abstol with guaranteed confidence level 1-alpha. All parameters
@@ -33,7 +33,7 @@
 % specified, the default value is used.|
 %
 % Q =
-% *cubMC_g*(f,hyperbox,'measure','uniform','abstol',abstol,'alpha',alpha,
+% *cubMCabs_g*(f,hyperbox,'measure','uniform','abstol',abstol,'alpha',alpha,
 % 'n_sigma',n_sigma,fudge',fudge,'tbudget',tbudget,'nbudget',nbudget,
 % 'npcmax',npcmax,'checked',checked) |estimates the integral of f over
 % hyperbox to within an specified absolute error tolerance abstol with
@@ -41,7 +41,7 @@
 % optional and can be supplied in different order. If an input is not
 % specified, the default value is used.|
 %
-% Q = *cubMC_g*(f,hyperbox,in_param) |estimates the integral of f over
+% Q = *cubMCabs_g*(f,hyperbox,in_param) |estimates the integral of f over
 % hyperbox to within an specified absolute error tolerance in_param.abstol
 % with guaranteed confidence level 1-in_param.alpha. If a field is not
 % specified, the default value is used.|
@@ -80,9 +80,9 @@
 %
 %                        0   not checked
 %
-%                        1   checked by cubMC_g
+%                        1   checked by meanMCabs_g
 %
-%                        2   checked by meanMC_g
+%                        2   checked by cubMCabs_g
 %
 % *Output Arguments*
 %
@@ -179,7 +179,7 @@
 % Estimate the integral with integrand f(x) = sin(x) in the interval
 % [1;2].
 
-    f = @(x) sin(x);interval = [1;2]; Q = cubMC_g(f,interval,'uniform',1e-3)
+    f = @(x) sin(x);interval = [1;2]; Q = cubMCabs_g(f,interval,'uniform',1e-3)
 
 %%
 % Example 2:
@@ -187,7 +187,7 @@
 % hyperbox [0 0;1 1], where x is a vector x = [x1 x2].
 
     f = @(x) exp(-x(:,1).^2-x(:,2).^2);hyperbox = [0 0;1 1];
-    Q = cubMC_g(f,hyperbox,'uniform',1e-3)
+    Q = cubMCabs_g(f,hyperbox,'uniform',1e-3)
     
 %%
 % Example 3: 
@@ -195,7 +195,7 @@
 % in the hyperbox [zeros(1,d);ones(1,d)], where x is a vector x = [x1 x2 ... xd].
 %
     d=3;f=@(x) 2^d*prod(x,2)+0.555;hyperbox = [zeros(1,d);ones(1,d)];
-    Q = cubMC_g(f,hyperbox,'uniform',1e-3)
+    Q = cubMCabs_g(f,hyperbox,'uniform',1e-3)
 %% See Also
 %
 % <html>  
@@ -207,7 +207,7 @@
 % </html>
 %
 % <html>
-% <a href="help_meanMC_g.html">meanMC_g</a>
+% <a href="help_meanMCabs_g.html">meanMC_g</a>
 % </html>
 %
 %% References

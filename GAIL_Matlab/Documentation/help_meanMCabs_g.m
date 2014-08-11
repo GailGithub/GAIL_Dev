@@ -1,47 +1,47 @@
-%% meanMC_g
+%% meanMCabs_g
 % |Monte Carlo method to estimate the mean of a random variable to within a
-% specific absolute error tolerance with guaranteed conficence level 1-alpha.|
+% specified absolute error tolerance with guaranteed conficence level 1-alpha.|
 %
 %% Syntax
 %
-% mu = *meanMC_g*(Yrand)
+% mu = *meanMCabs_g*(Yrand)
 %
-% mu = *meanMC_g*(Yrand,abstol,alpha,n_sigma,fudge,tbudget,nbudget,npcmax,checked)
+% mu = *meanMCabs_g*(Yrand,abstol,alpha,n_sigma,fudge,tbudget,nbudget,npcmax,checked)
 %
-% mu = *meanMC_g*(Yrand,'abstol',abstol,'alpha',alpha,'fudge',fudge,'tbudget',
+% mu = *meanMCabs_g*(Yrand,'abstol',abstol,'alpha',alpha,'fudge',fudge,'tbudget',
 % tbudget,'nbudget',nbudget,'npcmax',npcmax,'checked',checked)
 %
-% mu = *meanMC_g*(Yrand,in_param)
+% mu = *meanMCabs_g*(Yrand,in_param)
 %
-% [mu, out_param] = *meanMC_g*(Yrand,in_param)
+% [mu, out_param] = *meanMCabs_g*(Yrand,in_param)
 %
 %% Description
 %
-% mu = *meanMC_g*(Yrand) |estimates the mean of a random variable Y to within
+% mu = *meanMCabs_g*(Yrand) |estimates the mean of a random variable Y to within
 % a specified absolute error tolerance 1e-2 with guaranteed confidence
 % level 99%. Input Yrand is a function handle that accepts a positive
 % integer input n and returns an n x 1 vector of IID instances of the
 % random variable Y.|
 %
-% mu = *meanMC_g*(Yrand,abstol,alpha,n_sigma,fudge,tbudget,nbudget,npcmax)
+% mu = *meanMCabs_g*(Yrand,abstol,alpha,n_sigma,fudge,tbudget,nbudget,npcmax)
 % | estimates the mean of a random variable Y to within an specified absolute
 % error tolerance abstol with guaranteed confidence level 1-alpha. using
 % all ordered parsing inputs abstol, n_sigma, fudge, tbudget, nbudget,
 % npcmax and checked.|
 %
 % mu =
-% *meanMC_g*(Yrand,'abstol',abstol,'alpha',alpha,'fudge',fudge,'tbudget',
+% *meanMCabs_g*(Yrand,'abstol',abstol,'alpha',alpha,'fudge',fudge,'tbudget',
 % tbudget,'nbudget',nbudget,'npcmax',npcmax,'checked',checked) |estimates the mean of a random variable Y to within a
 % specified absolute error tolerance abstol with guaranteed confidence
 % level 1-alpha. All the field-value pairs are optional and can be
 % supplied in different order.|
 %
-% mu = *meanMC_g*(Yrand,in_param) |estimates the mean of a random variable
+% mu = *meanMCabs_g*(Yrand,in_param) |estimates the mean of a random variable
 % Y to within a specified absolute error tolerance in_param.abstol with
 % guaranteed uncertainty within in_param.alpha. If a field is not
 % specified, the default value is used.|
 %
-% [mu, out_param] = *meanMC_g*(Yrand,in_param) |estimates the mean of a
+% [mu, out_param] = *meanMCabs_g*(Yrand,in_param) |estimates the mean of a
 % random variable Y to within a specified absolute error tolerance with the
 % given parameters in_param and output parameters out_param.|
 %
@@ -79,9 +79,7 @@
 %
 %                        0   not checked
 %
-%                        1   checked by cubMC_g
-%
-%                        2   checked by meanMC_g
+%                        1   checked by meanMCabs_g
 %
 % *Output Arguments*
 %
@@ -162,7 +160,7 @@
 % the absolute error tolerance = 1e-2.
 
 in_param.abstol=1e-2; in_param.alpha = 0.01; Yrand = @(n) rand(n,1).^2; 
-mu = meanMC_g(Yrand,in_param)
+mu = meanMCabs_g(Yrand,in_param)
 
 
 %%
@@ -170,7 +168,7 @@ mu = meanMC_g(Yrand,in_param)
 % Using the same function as example 1, with the absolute error tolerance
 % 1e-2.
 
-mu = meanMC_g(Yrand,1e-2)
+mu = meanMCabs_g(Yrand,1e-2)
 
 
 %%
@@ -178,7 +176,7 @@ mu = meanMC_g(Yrand,1e-2)
 % Using the sample function as example 1, with the absolute error tolerance
 % 1e-2 and uncertainty 0.01.
 
-mu = meanMC_g(Yrand,'abstol',1e-3,'alpha',0.01)
+mu = meanMCabs_g(Yrand,'abstol',1e-3,'alpha',0.01)
 
 
 %% See Also
@@ -192,7 +190,7 @@ mu = meanMC_g(Yrand,'abstol',1e-3,'alpha',0.01)
 % </html>
 %
 % <html>
-% <a href="help_cubMC_g.html">cubMC_g</a>
+% <a href="help_cubMCabs_g.html">cubMC_g</a>
 % </html>
 %
 %% References
