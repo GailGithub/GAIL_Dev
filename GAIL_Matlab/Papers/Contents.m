@@ -1,5 +1,5 @@
 % PAPERS
 %
 % Folders
-%   ConesNotBallsPaper            - code in Cones Not Balls Paper  
-%   MCQMC2012Paper                - code and paper in MCQMC 
+%   ConesNotBallsPaper  - code of examples in Cones Not Balls Paper  
+%   MCQMC2012Paper      - code of examples in MCQMC paper

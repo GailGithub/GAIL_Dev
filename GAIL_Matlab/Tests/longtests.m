@@ -15,9 +15,6 @@ doctest dt_cubMC_g
 test_cubMC_g
 
 % other workouts
-warning('off','MATLAB:integraltau_g:peaky')
-run_handle('tryout_integral_g_FJH')
-warning('on','MATLAB:integraltau_g:peaky')
 warning('off','MATLAB:integral_g:exceedbudget')
 warning('off','MATLAB:integral_g:peaky')
 run_handle('workout_integral_g')
@@ -28,8 +25,6 @@ warning('on','MATLAB:integral_g:exceedbudget')
 %% Papers
 % Cone paper
 run_handle('ConesPaperFoolFunctions')
-run_handle('conepaper_test_integral_g')
-run_handle('conepaper_test_funappx_g')
 
 % MCQMC paper
 run_handle('RunTestcubMConGeoAsianCall')
@@ -45,7 +40,7 @@ run_handle('workout_twoextreme')
 %% Unit tests
 [~,~,~,MATLABVERSION]=GAILstart(0);
 if MATLABVERSION >= 8  
-    %run(ut_funappx_g)   
+    run(ut_ConesPaper)   
 end
 
 time=toc;
