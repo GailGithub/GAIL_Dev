@@ -11,7 +11,7 @@ classdef ut_integralsim_g < matlab.unittest.TestCase
                 +(x-z-a).*abs(x-z-a)...
                 -(x-z+a).*abs(x-z+a)) ...
                 .*(x>=x0).*(x<=x1); %test function
-            [q,out_param]=integralsim_g(f,'ninit',52,'abstol',1e-8,'nmax',1e7);
+            [q,out_param]=integralsim_g(f,'ninit',53,'abstol',1e-8,'nmax',1e7);
             testCase.verifyEqual(out_param.tauchange,true);
         end
         
@@ -38,7 +38,7 @@ classdef ut_integralsim_g < matlab.unittest.TestCase
         function testerrorfninit(testCase)
             abstol=1e-7;
             f=@(x) 3*x.^2;
-            ninit=52;
+            ninit=53;
             actSolution = integralsim_g(f,'ninit',ninit);
             expSolution = 1;
             import matlab.unittest.constraints.IsLessThanOrEqualTo
@@ -61,7 +61,7 @@ classdef ut_integralsim_g < matlab.unittest.TestCase
         function testerrorfabstolninit(testCase)
             f=@(x) 3*x.^2;
             abstol=1e-7;
-            ninit=52;
+            ninit=53;
             actSolution = integralsim_g(f,'abstol',abstol,'ninit',ninit);
             expSolution = 1;
             import matlab.unittest.constraints.IsLessThanOrEqualTo

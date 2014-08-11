@@ -60,7 +60,7 @@ function [q,out_param] = integralsim_g(varargin)
 %
 %
 %   Example 2:
-%   >> f = @(x) exp(-x.^2); q = integralsim_g(f,'abstol',1e-5,'ninit',52,'nmax',1e7)
+%   >> f = @(x) exp(-x.^2); q = integralsim_g(f,'abstol',1e-5,'ninit',53,'nmax',1e7)
 %   q = 0.7468
 %
 %
@@ -203,7 +203,7 @@ if ~validvarargin
     out_param.nmax = default.nmax;
 else
     p = inputParser;
-    addRequired(p,'f',@isfcn);
+    addRequired(p,'f',@gail.isfcn);
     if isnumeric(in2)%if there are multiple inputs with
         %only numeric, they should be put in order.
         addOptional(p,'abstol',default.abstol,@isnumeric);
@@ -235,8 +235,8 @@ if ((out_param.ninit+1)/2-ceil(out_param.ninit/2) ~= 0 )
     out_param.ninit = default.ninit;
 end
 % let initial number of points be a positive integer
-if (~isposint(out_param.ninit))
-    if isposge3(out_param.ninit)
+if (~gail.isposint(out_param.ninit))
+    if gail.isposge3(out_param.ninit)
         warning('MATLAB:integralsim_g:initnotint',['Initial number of points should be a positive integer.' ...
             ' Using ', num2str(ceil(out_param.ninit))])
         out_param.ninit = ceil(out_param.ninit);
@@ -247,8 +247,8 @@ if (~isposint(out_param.ninit))
     end
 end
 % let cost budget be a positive integer
-if (~isposint(out_param.nmax))
-    if ispositive(out_param.nmax)
+if (~gail.isposint(out_param.nmax))
+    if gail.ispositive(out_param.nmax)
         warning('MATLAB:integralsim_g:budgetnotint',['Cost budget should be a positive integer.' ...
             ' Using cost budget ', num2str(ceil(out_param.nmax))])
         out_param.nmax = ceil(out_param.nmax);
