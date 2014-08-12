@@ -141,7 +141,7 @@ sobstr=scramble(sobstr,'MatousekAffineOwen'); %scramble it
 Stilde=zeros(out_param.mmax-out_param.mmin+1,1);
 errest=zeros(out_param.mmax-out_param.mmin+1,1);
 appxinteg=zeros(out_param.mmax-out_param.mmin+1,1);
-out_param.overbudget=true;
+out_param.overbudget='Max budget reached with no guarantees.';
 
 %% Initial points and FWT
 out_param.n=2^out_param.mmin;
@@ -182,11 +182,7 @@ nllstart=2^(out_param.mmin-mlag-1);
 Stilde(1)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
 out_param.pred_err=out_param.fudge*2^(-out_param.mmin)*Stilde(1);
 errest(1)=out_param.pred_err;
-if out_param.pred_err <= out_param.abstol; 
-   out_param.overbudget=false; 
-   out_param.time=toc; 
-   return, 
-end
+if out_param.pred_err <= out_param.abstol; out_param.overbudget='Max budget not reached.'; out_param.time=toc; return, end
 
 %% Loop over m
 for m=out_param.mmin+1:out_param.mmax 
@@ -221,8 +217,7 @@ for m=out_param.mmin+1:out_param.mmax
 
    %% Update kappanumap
    kappanumap=[kappanumap; (nnext+1:out_param.n)']; %initialize map
-%   for l=m-1:-1:1
-   for l=m-1:-1:m-mlag-1 %update just some, not exactly sure about this
+   for l=m-1:-1:1
       nl=2^l;
       oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
       newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa, 
@@ -242,11 +237,7 @@ for m=out_param.mmin+1:out_param.mmax
    %% Approximate integral
    q=mean(yval);
    appxinteg(meff)=q;
-   if out_param.pred_err <= out_param.abstol; 
-      out_param.overbudget=false; 
-      out_param.time=toc; 
-      return 
-   end
+   if out_param.pred_err <= out_param.abstol; out_param.overbudget='Max budget not reached.'; out_param.time=toc; return, end
 
 end
 out_param.time=toc;
@@ -261,8 +252,7 @@ default.abstol  = 1e-4;
 default.density  = 'uniform';
 default.mmin  = 10;
 default.mmax  = 24;
-%default.fudge = 3;
-default.fudge = 5;
+default.fudge = 3;
 
 if numel(varargin)<2
     help cubSobol_g
