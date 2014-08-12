@@ -122,7 +122,7 @@ while true
     
     if nintok %ntrap large enough for tau
         %compute a reliable error estimate
-        errest=out_param.tau*Gf/(4*nint*(2*nint-out_param.tau));
+        errest=out_param.tau*Gf/(1152*nint.^3*(nint-out_param.tau));
         if errest <= out_param.abstol %tolerance is satisfied
             q=sumf/nint/3; %compute the integral
             break %exit while loop
