@@ -80,8 +80,7 @@ function [q,out_param] = cubSobol_g(varargin)
 % Example 1:
 % Estimate the integral with integrand f(x) = x1.*x2 in the interval [0,1)^2:
 %
-% >> f=@(x) x(:,1).*x(:,2); d=2;
-% >> q = cubSobol_g(f,d,1e-5,'uniform')
+% >> f=@(x) x(:,1).*x(:,2); d=2; q = cubSobol_g(f,d,1e-5,'uniform')
 % q = 0.25***
 % 
 % 
@@ -89,8 +88,7 @@ function [q,out_param] = cubSobol_g(varargin)
 % Estimate the integral with integrand f(x) = x1.^2.*x2.^2.*x3.^2+0.11
 % in the interval R^3 where x1, x2 and x3 are normally distributed:
 %
-% >> f=@(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2+0.11; d=3;
-% >> q = cubSobol_g(f,d,1e-3,'normal')
+% >> f=@(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2+0.11; d=3; q = cubSobol_g(f,d,1e-3,'normal')
 % q = 1.1***
 % 
 %
@@ -98,8 +96,7 @@ function [q,out_param] = cubSobol_g(varargin)
 % Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) in the
 % interval [0,1)^2:
 % 
-% >> f=@(x) exp(-x(:,1).^2-x(:,2).^2); d=2;
-% >> q = cubSobol_g(f,d,1e-3,'uniform')
+% >> f=@(x) exp(-x(:,1).^2-x(:,2).^2); d=2; q = cubSobol_g(f,d,1e-3,'uniform')
 % q = 0.55***
 %
 %
@@ -138,15 +135,16 @@ end
 mlag=4; %distance between coefficients summed and those computed
 sobstr=sobolset(out_param.d); %generate a Sobol' sequence
 sobstr=scramble(sobstr,'MatousekAffineOwen'); %scramble it
-Stilde=zeros(out_param.mmax-out_param.mmin+1,1);
-errest=zeros(out_param.mmax-out_param.mmin+1,1);
-appxinteg=zeros(out_param.mmax-out_param.mmin+1,1);
-out_param.overbudget=true;
+Stilde=zeros(out_param.mmax-out_param.mmin+1,1); %initialize sum of DFWT terms
+errest=zeros(out_param.mmax-out_param.mmin+1,1); %initialize error estimates
+appxinteg=zeros(out_param.mmax-out_param.mmin+1,1); %initialize approximations to integral
+out_param.overbudget=true; %we have overrun our budget, until indicated otherwise
 
 %% Initial points and FWT
-out_param.n=2^out_param.mmin;
-xpts=sobstr(1:out_param.n,1:out_param.d); n0=out_param.n;
-y=f(xpts);
+out_param.n=2^out_param.mmin; %total number of points to start with
+n0=out_param.n; %initial number of points
+xpts=sobstr(1:n0,1:out_param.d); %grab Sobol' points
+y=f(xpts); %evaluate integrand
 yval=y;
 
 %% Compute initial FWT
@@ -165,16 +163,16 @@ end
 q=mean(yval);
 appxinteg(1)=q;
 
-%% Create kappanumap
+%% Create kappanumap implicitly from the data
 kappanumap=(1:out_param.n)'; %initialize map
 for l=out_param.mmin-1:-1:1
    nl=2^l;
    oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
    newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa, 
-   flip=find(newone>oldone);
-   temp=kappanumap(nl+1+flip);
-   kappanumap(nl+1+flip)=kappanumap(1+flip);
-   kappanumap(1+flip)=temp;
+   flip=find(newone>oldone); %which in the pair are the larger ones
+   temp=kappanumap(nl+1+flip); %then flip 
+   kappanumap(nl+1+flip)=kappanumap(1+flip); %them
+   kappanumap(1+flip)=temp; %around
 end
 
 %% Compute Stilde
