@@ -3,88 +3,90 @@ function [mu,out_param]=meanMCRel_g(varargin)
 % within a specified generalized error tolerance with guaranteed confidence
 % level 1-alpha.
 %
-% mu = MEANMCREL_G(Yrand) estimates the mean of a random variable Y to within
-% a specified generalized error tolerance with guaranteed confidence
-% level 99%. Input Yrand is a function handle that accepts a positive
-% integer input n and returns an n x 1 vector of IID instances of the
-% random variable Y.
+%   mu = MEANMCREL_G(Yrand) estimates the mean of a random variable Y to within
+%   a specified generalized error tolerance with guaranteed confidence
+%   level 99%. Input Yrand is a function handle that accepts a positive
+%   integer input n and returns an n x 1 vector of IID instances of the
+%   random variable Y.
 %
-% mu =
-% MEANMCREL_G(Yrand,abstol,reltol,alpha,fudge,nSig,n1,tbudget,nbudget,checked)
-% estimates the mean of a random variable Y to within an specified
-% generalized error tolerance abstol with guaranteed confidence level
-% 1-alpha. using all ordered parsing inputs abstol, reltol, alpha, fudge,
-% nSig, n1, tbudget, nbudget, and checked.
+%   mu = MEANMCREL_G(Yrand,abstol,reltol,alpha,fudge,nSig,n1,tbudget,nbudget,checked)
+%   estimates the mean of a random variable Y to within an specified
+%   generalized error tolerance abstol with guaranteed confidence level
+%   1-alpha. using all ordered parsing inputs abstol, reltol, alpha, fudge,
+%   nSig, n1, tbudget, nbudget, and checked.
 %
-% mu =
-% MEANMCREL_G(Yrand,'abstol',abstol,'reltol',reltol,'alpha',alpha,'fudge',
-% fudge,'nSig',nSig,'n1',n1,'tbudget',tbudget,'nbudget',nbudget,
-% 'checked',checked) estimates the mean of a random
-% variable Y to within a specified generalized error tolerance which in terms of
-% abstol and reltol with guaranteed confidence level 1-alpha. All the
-% field-value pairs are optional and can be supplied in different order.
+%   mu = MEANMCREL_G(Yrand,'abstol',abstol,'reltol',reltol,'alpha',alpha,'fudge',
+%   fudge,'nSig',nSig,'n1',n1,'tbudget',tbudget,'nbudget',nbudget,
+%   'checked',checked) estimates the mean of a random
+%   variable Y to within a specified generalized error tolerance which in terms of
+%   abstol and reltol with guaranteed confidence level 1-alpha. All the
+%   field-value pairs are optional and can be supplied in different order.
 %
-% mu = MEANMCREL_G(Yrand,in_param) estimates the mean of a random variable
-% Y to within a specified generalized error tolerance with guaranteed
-% uncertainty within in_param.alpha. If a field is not specified, the
-% default value is used.
+%   mu = MEANMCREL_G(Yrand,in_param) estimates the mean of a random variable
+%   Y to within a specified generalized error tolerance with guaranteed
+%   uncertainty within in_param.alpha. If a field is not specified, the
+%   default value is used.
 %
-% [mu, out_param] = MEANMCREL_G(Yrand,in_param) estimates the mean of a
-% random variable Y to within a specified generalized error tolerance with
-% the given parameters in_param and produce output parameters out_param.
+%   [mu, out_param] = MEANMCREL_G(Yrand,in_param) estimates the mean of a
+%   random variable Y to within a specified generalized error tolerance with
+%   the given parameters in_param and produce output parameters out_param.
 %
-% Yrand --- the function for generating IID instances of a random
-% variable Y whose mean we want to estimate. Y is often defined as a
-% function of some random variable X with a simple distribution.  For
-% example, if Y = X.^2 where X is a standard uniform random variable,
-% then one may define Yrand = @(n) rand(n,1).^2.
+%   Input Arguments
 %
-% mu --- the estimated mean of Y.
+%    Yrand --- the function for generating IID instances of a random
+%    variable Y whose mean we want to estimate. Y is often defined as a
+%    function of some random variable X with a simple distribution.  For
+%    example, if Y = X.^2 where X is a standard uniform random variable,
+%    then one may define Yrand = @(n) rand(n,1).^2.
 %
-% in_param.abstol --- the absolute error tolerance, default value is 1e-2.
+%    in_param.abstol --- the absolute error tolerance, default value is 1e-2.
 %
-% in_param.reltol --- the relative error tolerance, default value is 1e-1.
+%    in_param.reltol --- the relative error tolerance, default value is 1e-1.
 %
-% in_param.alpha --- the uncertainty, default value is 1%.
+%    in_param.alpha --- the uncertainty, default value is 1%.
 %
-% in_param.fudge --- standard deviation inflation factor, default value is
-% 1.1
+%    in_param.fudge --- standard deviation inflation factor, default value is
+%    1.1
 %
-% in_param.nSig --- initial sample size for estimating the sample
-% variance, the default value is 1e3.
+%    in_param.nSig --- initial sample size for estimating the sample
+%    variance, the default value is 1e3.
 %
-% in_param.n1 --- initial sample size for estimating the sample
-% mean, the default value is 1e4.
+%    in_param.n1 --- initial sample size for estimating the sample
+%    mean, the default value is 1e4.
 %
-% in_param.tbudget --- the time budget to do the two-stage estimation,
-% the default value is 100 seconds.
+%    in_param.tbudget --- the time budget to do the two-stage estimation,
+%    the default value is 100 seconds.
 %
-% in_param.nbudget --- the sample budget to do the two-stage estimation,
-% the default value is 1e8.
+%    in_param.nbudget --- the sample budget to do the two-stage estimation,
+%    the default value is 1e8.
 %
-% in_param.checked --- the value corresponding to parameter checking status.
-%                     0   not checked
-%                     2   checked by meanMC_g
+%    in_param.checked --- the value corresponding to parameter checking status.
+%                         0   not checked
+%                         1   checked by meanMC_g
 %
-% out_param.nmax --- the maximum sample budget to estimate mu, it comes
-% from both the sample budget and the time budget.
+%   Output Arguments
 %
-% out_param.var --- the sample variance.
+%    mu --- the estimated mean of Y.
 %
-% out_param.exit --- the state of program when exiting.
-%                  0   Success.
-%                  1   No enough samples to estimate the mean.
-%                  2   Initial try out time costs more than 10% of time budget.
-%                  3   The estimated time for estimating variance is bigger
-%                      than half of the time budget.
+%    out_param.nmax --- the maximum sample budget to estimate mu, it comes
+%    from both the sample budget and the time budget.
 %
-% out_param.kurtmax --- the upper bound on modified kurtosis.
+%    out_param.var --- the sample variance.
 %
-% out_param.n_mu --- the sample size that needed to estimate the mu.
+%    out_param.exit --- the state of program when exiting.
+%                     0   Success.
+%                     1   No enough samples to estimate the mean.
+%                     2   Initial try out time costs more than 10% of time budget.
+%                     3   The estimated time for estimating variance is bigger
+%                         than half of the time budget.
 %
-% out_param.n --- the total sample size used to do the two stage estimation.
+%    out_param.kurtmax --- the upper bound on modified kurtosis.
 %
-% out_param.time --- the time elapsed.
+%    out_param.n_mu --- the sample size that needed to estimate the mu.
+%
+%    out_param.n --- the total sample size used to do the two stage estimation.
+%
+%    out_param.time --- the time elapsed.
 %
 % Guarantee
 % ---to be added
@@ -102,7 +104,7 @@ function [mu,out_param]=meanMCRel_g(varargin)
 %
 % Example 2:
 % Using the same function as example 1, with the absolute error tolerance
-% 1e-2 and relative tolerance 1e-2.
+% 1e-2 and relative tolerance 1e-1.
 %
 % >> mu=meanMCRel_g(Yrand,1e-1,1e-1)
 % mu = 0.3***
@@ -116,23 +118,23 @@ function [mu,out_param]=meanMCRel_g(varargin)
 % mu = 0.3***
 %
 %
-% See also FUNAPPX_G, INTEGRAL_G, CUBMC_G
+%   See also FUNAPPX_G, INTEGRAL_G, CUBMC_G
 %
-% References
+%  References
 %
-% [1]  F. J. Hickernell, L. Jiang, Y. Liu, and A. B. Owen, Guaranteed
-% conservative fixed width confidence intervals via Monte Carlo sampling,
-% Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F. Y. Kuo, G. W.
-% Peters, and I. H. Sloan, eds.), Springer-Verlag, Berlin, 2014, to appear,
-% arXiv:1208.4318 [math.ST]
+%   [1]  F. J. Hickernell, L. Jiang, Y. Liu, and A. B. Owen, Guaranteed
+%   conservative fixed width confidence intervals via Monte Carlo sampling,
+%   Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F. Y. Kuo, G. W.
+%   Peters, and I. H. Sloan, eds.), Springer-Verlag, Berlin, 2014, to appear,
+%   arXiv:1208.4318 [math.ST]
 %
-% [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, and
-% Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library (Version
-% 1.3.0)" [MATLAB Software], 2014. Available from
-% http://code.google.com/p/gail/
+%   [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, and
+%   Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library (Version
+%   1.3.0)" [MATLAB Software], 2014. Available from
+%   http://code.google.com/p/gail/
 %
-% If you find GAIL helpful in your work, please support us by citing the
-% above paper and software.
+%   If you find GAIL helpful in your work, please support us by citing the
+%   above paper and software.
 
 tstart = tic; %start the clock
 [Yrand, out_param] = meanMC_g_param(varargin{:});
@@ -154,10 +156,10 @@ while true
     if timetry > out_param.tbudget/10;
         %after intial try, found it has already used 10% of the time
         %budget, stop try.
-        out_param.exit = 2; % exit the loop
+        out_param.exit = 2; % add a flag
         out_param = meanMCRel_g_err(out_param);% print the error message
         out_param.n_mu = out_param.nmax;
-        mu = SplitColumnMean(Yrand,out_param.n_mu,npcmax);
+        mu = gail.evalmean(Yrand,out_param.n_mu,npcmax);
         %calculate the mean without guarantee using nmax
         out_param.ntot = out_param.n_mu+nsofar;%update the total sample used
         break;
@@ -168,10 +170,10 @@ while true
             % the estimated time using nSig samples is bigger than half
             % of the time budget, could not afford computing variance.
             % using all the sample left to compute the mean.
-            out_param.exit = 3; % exit the loop
+            out_param.exit = 3; % add a flag
             out_param = meanMC_g_err(out_param);% print error message
             out_param.n_mu = out_param.nmax;
-            mu = SplitColumnMean(Yrand,out_param.n_mu,npcmax);
+            mu = gail.evalmean(Yrand,out_param.n_mu,npcmax);
             out_param.ntot = out_param.n_mu+nsofar;
             break;
         else
@@ -205,21 +207,21 @@ while true
                     out_param.exit=1; % exit the loop
                     meanMC_g_err(out_param); % print warning message
                     out_param.n(i) = out_param.nmax;% update n1
-                    mu = SplitColumnMean(Yrand,out_param.n(i),npcmax);
+                    mu = gail.evalmean(Yrand,out_param.n(i),npcmax);
                     out_param.ntot = out_param.n(i)+nsofar;
                     break;
                 end
                 out_param.alphai(i+1) = (out_param.alpha-alpha_sig)/...
                     (1-alpha_sig)*2.^(-i-1);
-                out_param.mu(i) = SplitColumnMean(Yrand,out_param.n(i),npcmax);
+                out_param.mu(i) = gail.evalmean(Yrand,out_param.n(i),npcmax);
                 nsofar = out_param.n(i)+nsofar;
                 out_param.nmax = out_param.nmax-out_param.n(i);
                 theta = 2;
-                index = 1;
+                errtype = 'max';
                 out_param.DeltaPlus(i) = (tol_fun(out_param.abstol,out_param.reltol,...
-                    theta,out_param.mu(i) - out_param.tol(i),index)...
+                    theta,out_param.mu(i) - out_param.tol(i),errtype)...
                     +tol_fun(out_param.abstol,out_param.reltol,...
-                    theta,out_param.mu(i) + out_param.tol(i),index))/2;
+                    theta,out_param.mu(i) + out_param.tol(i),errtype))/2;
                 if out_param.DeltaPlus(i) >= out_param.tol(i)
                     T = i;
                     mu = out_param.mu(T);
@@ -251,35 +253,17 @@ out_param.ntot=sum(out_param.n)+out_param.nSig;
 out_param.time=toc(tstart); %elapsed time
 end
 
-function mu =SplitColumnMean(RV,n,npcmax)
-%%  Split The Param.n into columns and calculate the mean
-nopt=min(npcmax,n);
-% numbers of samples per loop step
-nn=floor(n/nopt); % number of loop steps
-nremain=n-nn*nopt;
-% number of samples in last loop step
-nloop=repmat(nopt,1,nn);
-%vector of numbers of samples per loop step
-if nremain>0; nloop=[nloop nremain]; nn=nn+1; end
-sumY=0;
-for iloop=1:nn %loops to save memory
-    sumY=sumY+sum(RV(nloop(iloop)));
-end
-%%  Estimate mu
-mu=sumY/n; %calculate the mean
-end
-
 function ncb = N_CB(toloversig,alpha,kmax)
 ncheb = ceil(1/(toloversig^2*alpha));
 A=18.1139;
 A1=0.3328;
 A2=0.429; % three constants in Berry-Esseen inequality
 M3upper = kmax^(3/4);
-BEfun2=@(logsqrtn)stdnormcdf(-exp(logsqrtn).*toloversig)...
+BEfun2=@(logsqrtn)gail.stdnormcdf(-exp(logsqrtn).*toloversig)...
     +exp(-logsqrtn).*min(A1*(M3upper+A2), ...
     A*M3upper./(1+(exp(logsqrtn).*toloversig).^3))- ...
     alpha/2;
-logsqrtnCLT=log(stdnorminv(1-alpha/2)/toloversig);
+logsqrtnCLT=log(gail.stdnorminv(1-alpha/2)/toloversig);
 % get log of sqrt of n
 nbe=ceil(exp(2*fzero(BEfun2,logsqrtnCLT)));
 ncb = min(ncheb,nbe);
@@ -293,38 +277,25 @@ A1=0.3328;
 A2=0.429; % three constants in Berry-Esseen inequality
 M3upper=kmax^(3/4);%using Jensen inequality to
 % bound the third moment
-BEfun=@(logsqrtb)stdnormcdf(n1.*logsqrtb)...
+BEfun=@(logsqrtb)gail.stdnormcdf(n1.*logsqrtb)...
     +min(A1*(M3upper+A2), ...
     A*M3upper./(1+(sqrt(n1).*logsqrtb).^3))/sqrt(n1)...
     - alpha1/2;
 % Berry-Esseen Inequality
-logsqrtb_clt=log(sqrt(stdnorminv(1-alpha1/2)/sqrt(n1)));
+logsqrtb_clt=log(sqrt(gail.stdnorminv(1-alpha1/2)/sqrt(n1)));
 NBE_inv = exp(2*fzero(BEfun,logsqrtb_clt));
 ncbinv = min(NCheb_inv,NBE_inv);
 end
 
-function eps = tol_fun(abstol,reltol,theta,mu,index)
-switch index
-    case 1 % the theta case
+function eps = tol_fun(abstol,reltol,theta,mu,errtype)
+switch errtype
+    case 'theta' % the theta case
         %theta=0---absolute error
         %theta=1---relative error
         eps  = theta*abstol+(1-theta)*reltol;
-    case 2 % the max case
+    case 'max' % the max case
         eps  = max(abstol,reltol*abs(mu));
 end
-end
-
-function p = stdnormcdf(z)
-% this function is to define cumulative distribution function (CDF) of the
-% standard normal distribution.
-p = 0.5*erfc(-z./sqrt(2));
-% Use the complementary error function, rather than .5*(1+erf(z/sqrt(2))),
-% to produce accurate near-zero results for large negative x.
-end
-
-function x = stdnorminv(p)
-% this function is the inverse function of CDF of standard normal distribution
-x = -sqrt(2).*erfcinv(2*p);
 end
 
 function  [Yrand,out_param] = meanMC_g_param(varargin)
@@ -334,7 +305,7 @@ default.reltol = 1e-1;% default relative error tolerance
 default.nSig = 1e2;% default initial sample size nSig for variance estimation
 default.n1 = 1e3; % default initial sample size n1 for mean estimation
 default.alpha = 0.01;% default uncertainty
-default.fudge = 1.1;%default fudge factor
+default.fudge = 1.1;% default fudge factor
 default.tbudget = 200;% default time budget
 default.nbudget = 1e9; % default sample budget
 default.checked = 0;% default value of parameter checking status
@@ -461,7 +432,7 @@ if out_param.checked==0
             'take the absolute value and ceil.'])
         out_param.nbudget = ceil(abs(out_param.nbudget));
     end
-    out_param.checked = 2;
+    out_param.checked = 1;
 end
 end
 
