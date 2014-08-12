@@ -1,5 +1,11 @@
 function [q]=vdc(n)
-% Van der Corput sequence in base 2 where n is a power of 2
+% Van der Corput sequence in base 2 where n is a power of 2. We do it this
+% way because of our own VDC construction: is much faster and cubLattice
+% does not need more.
+
+if exist('sobolset','class')==8 % We check whether the statistical toolbox is active
+    q=net(sobolset(1),n);
+else % We build it ourselves in cost in nlog(n)
     if n>1
         k=log2(n); % We compute the VDC seq part by part of power 2 size
         q=zeros(2^k,1);
@@ -12,4 +18,5 @@ function [q]=vdc(n)
     else
     q=0;
     end 
+end
 end
