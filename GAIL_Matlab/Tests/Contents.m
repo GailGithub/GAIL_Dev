@@ -8,6 +8,7 @@
 % Files
 %
 %   dt_funappx_g         - fast doc tests for funappx_g
+%   dt_funappxlocal_g    - fast doc tests for funappxlcoal_g
 %   dt_integral_g        - fast doc tests for integral_g
 %
 %   ut_funappx_g         - fast unit tests for funappx_g
