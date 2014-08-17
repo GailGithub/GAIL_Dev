@@ -9,7 +9,7 @@ function eps = tolfun(abstol,reltol,theta,mu,errtype)
 % errtype --- different option of tolerance function
 
 switch errtype
-    case 'theta' % the theta case
+    case 'comb' % the linear combination of two tolerances
         %theta=0---absolute error
         %theta=1---relative error
         eps  = theta*abstol+(1-theta)*reltol;

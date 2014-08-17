@@ -382,7 +382,7 @@ if out_param.checked == 0
             'a positive integer, take the absolute value and ceil.'])
         out_param.npcmax = ceil(abs(out_param.npcmax));
     end
-    out_param.checked=1;
+    out_param.checked=2;
 end
 end
 
