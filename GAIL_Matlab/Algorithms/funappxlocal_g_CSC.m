@@ -241,7 +241,7 @@ y = f(x);
 
 while(max(err) >= out_param.abstol)
     % Stage 1: Find the maximum error
-    tmp = find(err > out_param.abstol));
+    tmp = find(err > out_param.abstol);
     
     % Stage 2: Computer the norm
     a = index(min(tmp));
