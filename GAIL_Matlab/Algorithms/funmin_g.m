@@ -1,78 +1,79 @@
 function [fmin,out_param]=funmin_g(varargin)
 %FUNMIN_G Guaranteed global minimum value of univariate function
-%  on interval [0,1] and the subset containing optimal solutions
+%on interval [0,1] and the subset containing optimal solutions
 %
-%  fmin = FUNMIN_G(f) finds minimum value of function f on the interval
-%  [0,1] within a guatanteed absolute error tolerance of 1e-6 and X
-%  tolerance of 1e-3. The default initial number of points is 52 and
-%  default cost budget is 1e7. Input f is a function handle.
+%   fmin = FUNMIN_G(f) finds minimum value of function f on the interval
+%   [0,1] within a guatanteed absolute error tolerance of 1e-6 and X
+%   tolerance of 1e-3. The default initial number of points is 52 and
+%   default cost budget is 1e7. Input f is a function handle.
 %
-%  fmin = FUNMIN_G(f,abstol,TolX,ninit,nmax) finds minimum value of
-%  function f on the interval [0,1] with ordered input parameters:
-%  guaranteed absolute error tolerance abstol, guaranteed absolute X
-%  tolerance TolX, initial number of points ninit and cost budget nmax.
+%   fmin = FUNMIN_G(f,abstol,TolX,ninit,nmax) finds minimum value of
+%   function f on the interval [0,1] with ordered input parameters:
+%   guaranteed absolute error tolerance abstol, guaranteed absolute X
+%   tolerance TolX, initial number of points ninit and cost budget nmax.
 %
-%  fmin = FUNMIN_G(f,'abstol',abstol,'TolX',TolX,'ninit',ninit,'nmax',
-%  nmax) finds minimum value of function f on the interval [0,1] with a
-%  guaranteed absolute error tolerance abstol, guaranteed absolute X
-%  tolerance TolX, initial number of points ninit and cost budget nmax. All
-%  the three field-value pairs are optional and can be supplied in
-%  different order.
+%   fmin = FUNMIN_G(f,'abstol',abstol,'TolX',TolX,'ninit',ninit,'nmax',
+%   nmax) finds minimum value of function f on the interval [0,1] with a
+%   guaranteed absolute error tolerance abstol, guaranteed absolute X
+%   tolerance TolX, initial number of points ninit and cost budget nmax. All
+%   the three field-value pairs are optional and can be supplied in
+%   different order.
 %
-%  fmin = FUNMIN_G(f,in_param) finds minimum value of function f on the
-%  interval [0,1] with a structure input parameters in_param. If a field is
-%  not specified, the default value is used.
+%   fmin = FUNMIN_G(f,in_param) finds minimum value of function f on the
+%   interval [0,1] with a structure input parameters in_param. If a field is
+%   not specified, the default value is used.
 %
-%  [fmin, out_param] = FUNMIN_G(f,...) returns minimum value fmin of
-%  function f and an output structure out_param, which has the following
-%  fields.
+%   [fmin, out_param] = FUNMIN_G(f,...) returns minimum value fmin of
+%   function f and an output structure out_param.
 %
-%  Input Arguments
+%   Input Arguments
 %
-%    in_param.abstol --- guaranteed absolute error tolerance, default value
-%                        is 1e-6.
+%     in_param.abstol --- guaranteed absolute error tolerance, default value
+%     is 1e-6.
 %
-%    in_param.TolX --- guaranteed X tolerance, default value is 1e-3.
+%     in_param.TolX --- guaranteed X tolerance, default value is 1e-3.
 %
-%    in_param.ninit --- initial number of points, default value is 52.
+%     in_param.ninit --- initial number of points, default value is 52.
 %
-%    in_param.nmax --- cost budget, default value is 1e7.
+%     in_param.nmax --- cost budget, default value is 1e7.
 %
-%  Output Arguments
+%   Output Arguments
 %
-%    out_param.abstol --- guaranteed absolute error tolerance
+%     out_param.abstol --- guaranteed absolute error tolerance
 %
-%    out_param.ninit --- initial number of points
+%     out_param.ninit --- initial number of points
 %
-%    out_param.nmax --- cost budget
+%     out_param.nmax --- cost budget
 %
-%    out_param.TolX --- guaranteed X tolerance
+%     out_param.TolX --- guaranteed X tolerance
 %
-%    out_param.tau --- latest value of tau
+%     out_param.tau --- latest value of tau
 %
-%    out_param.exceedbudget --- 0 if the number of points used to find the
-%    minimux value is less than the cost budget; 1, otherwise.
+%     out_param.exceedbudget --- 0 if the number of points used to find the
+%     minimux value is less than the cost budget; 1, otherwise.
 %
-%    out_param.npoints --- number of points needed to reach the guaranteed
-%    absolute error tolerance or the guaranteed X tolerance
+%     out_param.npoints --- number of points needed to reach the guaranteed
+%     absolute error tolerance or the guaranteed X tolerance
 %
-%    out_param.error --- estimation of the absolute error bound
+%     out_param.error --- estimation of the absolute error bound
 %
-%    out_param.intervals --- the intervals containing point(s) where the
-%    minimum occurs
+%     out_param.intervals --- the intervals containing point(s) where the
+%     minimum occurs
 %
-%    out_param.volumeX --- the volume of intervals containing the point(s)
-%    where the minimum occurs
+%     out_param.volumeX --- the volume of intervals containing the point(s)
+%     where the minimum occurs
 %
-%    out_param.tauchange --- it is 1 if tau is too small, and the algorithm
-%    has used a larger tau.
+%     out_param.tauchange --- it is 1 if tau is too small, and the algorithm
+%     has used a larger tau.
 %
 %  Guarantee
 %    
 %  If the function to be minimized, f, satisfies the cone condition
 %      ||f''||_\infty <= \tau ||f'-f(1)+f(0)||_\infty,
 %  then the fmin output by this algorithm is guaranteed to satisfy
-%      ||min(f)-fmin||_\infty <= abstol,
+%      ||min(f)-fmin||_\infty <= abstol
+%  or 
+%      volumeX <= TolX,
 %  provided the flag exceedbudget = 0.
 %
 %
@@ -153,17 +154,20 @@ function [fmin,out_param]=funmin_g(varargin)
 %        intervals: [2x1 double]
 % 
 %
-%  Sea also FUNAPPX_G, INTEGRAL_G
+%   See also FUNAPPX_G, INTEGRAL_G
 %
-%  Reference
-%  [1]  Nicholas Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, 
-%       and Yizhi Zhang. The Cost of Deterministic, Adaptive, Automatic 
-%       Algorithms: Cones, Not Balls. Journal of Complexity, 30:21–45, 2014
+%  References
+%   [1]  Nicholas Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, 
+%   and Yizhi Zhang. The Cost of Deterministic, Adaptive, Automatic 
+%   Algorithms: Cones, Not Balls. Journal of Complexity, 30:21-45, 2014
 %
-%  [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
-%       and Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library
-%       (Version 1.3.0)" [MATLAB Software], 2014. Available from
-%       http://code.google.com/p/gail/
+%   [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
+%   and Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library
+%   (Version 1.3.0)" [MATLAB Software], 2014. Available from
+%   http://code.google.com/p/gail/
+%
+%   [3]  Xin Tong. A Guaranteed, Adaptive, Automatic Algorithm for
+%   Univariate Function Minimization. 2014
 %
 %   If you find GAIL helpful in your work, please support us by citing
 %   the above paper and software.
@@ -195,19 +199,20 @@ while n < out_param.nmax;
     %approximate the stronger norm of input function
     fn = (n-1)^2*max(abs(diff(diff_y)));
     
-    % Stage 2: satisfy necessary condition of cone
+    % Stage 2: satisfy necessary condition of conev
     if out_param.tau*(gn+fn/(2*n-2))>= fn;
         % Stage 3: check for convergence
         bn = 2*(n-1)*out_param.tau/(2*(n-1)-out_param.tau)*gn;
-        cn = 2*(n-1)^2*abs(diff_y)./bn;
-        Cn = min(cn,1); % check the conditions for each interval
-        ln = (diff_y/2+y(1:n-1))-abs(diff_y).*(Cn+1./Cn)/4;
+        min_index = 2*(n-1)^2.*abs(diff_y) < bn;
+        min_in = min_index.*(diff_y/2+y(1:n-1)-0.25*(2*(n-1)^2*diff_y.^2/bn+bn/2/(n-1)^2));
+        min_end = (~min_index).*(diff_y/2+y(1:n-1)-abs(diff_y)/2);
+        ln = min_in+min_end;
         % minimum values of each interval
         Ln = min(ln); % lower bound
         Un = min(y); % upper bound
         error = Un-Ln;
         % find the intervals containing minimum points
-        index = find(cn<1 & ln < Un);
+        index = find(min_index ==1 & ln < Un);
         m = size(index,2);
         if m > 0
             delta = (n-1)^2*diff_y(index).^2-2*bn*(diff_y(index)./2 ...
@@ -245,15 +250,16 @@ while n < out_param.nmax;
         if n >= ((out_param.tau+1)/2);
             % large enough, go to Stage 3
             bn = 2*(n-1)*out_param.tau/(2*(n-1)-out_param.tau)*gn;
-            cn = 2*(n-1)^2*abs(diff_y)./bn;
-            Cn = min(cn,1); % check the conditions for each interval
-            ln = (diff_y/2+y(1:n-1))  -abs(diff_y).*(Cn+1./Cn)/4; 
+            min_index = 2*(n-1)^2.*abs(diff_y) < bn;
+            min_in = min_index.*(diff_y/2+y(1:n-1)-0.25*(2*(n-1)^2*diff_y.^2/bn+bn/2/(n-1)^2));
+            min_end = (~min_index).*(diff_y/2+y(1:n-1)-abs(diff_y)/2);
+            ln = min_in+min_end;
             % minimum values of each interval
             Ln = min(ln); % lower bound
             Un = min(y); % upper bound
             error = Un-Ln;
             % find the intervals containing minimum points
-            index = find(cn<1 & ln < Un);
+            index = find(min_index ==1 & ln < Un);
             m = size(index,2);
             if m > 0
                 delta = (n-1)^2*diff_y(index).^2-2*bn*(diff_y(index)./2 ...
@@ -280,7 +286,6 @@ while n < out_param.nmax;
             % otherwise increase points number
             l = n;
             n = 2*(n-1)+1;
-            
         else
             % not large enough, increase points number, and go to Stage 1
             l = n;
@@ -339,7 +344,7 @@ if ~validvarargin
     out_param.nmax = default.nmax;
 else
     p = inputParser;
-    addRequired(p,'f',@isfcn);
+    addRequired(p,'f',@gail.isfcn);
     if isnumeric(in2) % more inputs of numerical type. Put them in order.
         addOptional(p,'abstol',default.abstol,@isnumeric);
         addOptional(p,'TolX',default.TolX,@isnumeric);
@@ -375,8 +380,8 @@ if out_param.TolX < 0
 end
         
 % Check whether the initial number of points is a positive integer
-if (~isposint(out_param.ninit))
-    if ispositive(out_param.ninit)
+if (~gail.isposint(out_param.ninit))
+    if gail.ispositive(out_param.ninit)
         warning(['Initial number of points should be a integer.' ...
             ' funmin_g will use ' num2str(ceil(out_param.ninit))]);
         out_param.ninit = ceil(out_param.ninit);
@@ -389,8 +394,8 @@ if (~isposint(out_param.ninit))
 end
         
 % Check whether the cost budget is a positive integer
-if (~isposint(out_param.nmax))
-    if ispositive(out_param.nmax)
+if (~gail.isposint(out_param.nmax))
+    if gail.ispositive(out_param.nmax)
         warning(['Cost budget should be a integer.'' funmin_g will use ' ...
             num2str(ceil(out_param.nmax))]);
         out_param.nmax = ceil(out_param.nmax);
