@@ -42,7 +42,7 @@ function [p,out_param]=meanMCBernoulli_g(varargin)
 % 
 %     in_param.alpha --- the uncertainty, default value is 1%.
 % 
-%     in_param.nmax --- the sample budget, default value is 1e8.
+%     in_param.nmax --- the sample budget, default value is 1e9.
 % 
 %   Output Arguments
 %
@@ -138,7 +138,7 @@ default.reltol = 1e-1;% default relative error tolerance
 default.abstol  = 1e-2;% default absolute error tolerance
 default.errtype = 'abs';% default errtype 
 default.alpha = 1e-2;% default uncertainty
-default.nmax = 1e8;% default the sample budget
+default.nmax = 1e9;% default the sample budget
 if isempty(varargin) % if no parsing value
     help meanMCBernoulli_g % print documentation
     warning('MATLAB:meanMCBernoulli_g:yrandnotgiven',...
