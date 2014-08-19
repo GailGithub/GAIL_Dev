@@ -1,35 +1,36 @@
 function [mu,out_param]=meanMCRel_g(varargin)
-% MEANMCREL_G Monte Carlo method to estimate the mean of a random variable to
-% within a specified generalized error tolerance with guaranteed confidence
-% level 1-alpha.
+% MEANMCREL_G Monte Carlo method to estimate the mean of a random variable
+% to within a specified generalized error tolerance tol=
+% max(abstol,reltol|mu|) with guaranteed confidence level 1-alpha.
 %
-%   mu = MEANMCREL_G(Yrand) estimates the mean of a random variable Y to within
-%   a specified generalized error tolerance with guaranteed confidence
-%   level 99%. Input Yrand is a function handle that accepts a positive
-%   integer input n and returns an n x 1 vector of IID instances of the
-%   random variable Y.
+%   mu = MEANMCREL_G(Yrand) estimates the mean of a random variable Y to
+%   within a specified generalized error tolerance with guaranteed
+%   confidence level 99%. Input Yrand is a function handle that accepts a
+%   positive integer input n and returns an n x 1 vector of IID instances
+%   of the random variable Y.
 %
-%   mu = MEANMCREL_G(Yrand,abstol,reltol,alpha,fudge,nSig,n1,tbudget,nbudget,checked)
-%   estimates the mean of a random variable Y to within an specified
-%   generalized error tolerance abstol with guaranteed confidence level
-%   1-alpha. using all ordered parsing inputs abstol, reltol, alpha, fudge,
-%   nSig, n1, tbudget, nbudget, and checked.
+%   mu = MEANMCREL_G(Yrand,abstol,reltol,alpha,fudge,nSig,n1,tbudget,...
+%   nbudget,checked) estimates the mean of a random variable Y to within an
+%   specified generalized error tolerance tolfun with guaranteed confidence
+%   level 1-alpha. using all ordered parsing inputs abstol, reltol, alpha,
+%   fudge, nSig, n1, tbudget, nbudget.
 %
-%   mu = MEANMCREL_G(Yrand,'abstol',abstol,'reltol',reltol,'alpha',alpha,'fudge',
-%   fudge,'nSig',nSig,'n1',n1,'tbudget',tbudget,'nbudget',nbudget,
-%   'checked',checked) estimates the mean of a random
-%   variable Y to within a specified generalized error tolerance which in terms of
-%   abstol and reltol with guaranteed confidence level 1-alpha. All the
-%   field-value pairs are optional and can be supplied in different order.
+%   mu = MEANMCREL_G(Yrand,'abstol',abstol,'reltol',reltol,'alpha',...
+%   alpha,'fudge', fudge,'nSig',nSig,'n1',n1,'tbudget',tbudget,'nbudget',...
+%   nbudget) estimates the mean of a random variable Y to
+%   within a specified generalized error tolerance tolfun with guaranteed
+%   confidence level 1-alpha. All the field-value pairs are optional and
+%   can be supplied in different order.
 %
 %   mu = MEANMCREL_G(Yrand,in_param) estimates the mean of a random variable
-%   Y to within a specified generalized error tolerance with guaranteed
-%   uncertainty within in_param.alpha. If a field is not specified, the
-%   default value is used.
+%   Y to within a specified generalized error tolerance tolfun with
+%   guaranteed confidence level 1-in_param.alpha. If a field is not
+%   specified, the default value is used.
 %
 %   [mu, out_param] = MEANMCREL_G(Yrand,in_param) estimates the mean of a
-%   random variable Y to within a specified generalized error tolerance with
-%   the given parameters in_param and produce output parameters out_param.
+%   random variable Y to within a specified generalized error tolerance
+%   with the given parameters in_param and produce output parameters
+%   out_param.
 %
 %   Input Arguments
 %
@@ -60,9 +61,6 @@ function [mu,out_param]=meanMCRel_g(varargin)
 %    in_param.nbudget --- the sample budget to do the two-stage estimation,
 %    the default value is 1e8.
 %
-%    in_param.checked --- the value corresponding to parameter checking status.
-%                         0   not checked
-%                         1   checked by meanMC_g
 %
 %   Output Arguments
 %
@@ -136,51 +134,31 @@ function [mu,out_param]=meanMCRel_g(varargin)
 
 tstart = tic; %start the clock
 [Yrand, out_param] = meanMC_g_param(varargin{:});
-npcmax=1e6;
+
 n1 = 2;
 Yrand(n1); %let it run once to load all the data. warm up the machine.
 nsofar = n1;
-ntry = 4; %initial try out sample size to get the time.
-nsofar = nsofar + ntry;%the sample size has been used so far
+
+ntry = 20;
 tic;
 Yrand(ntry);
-ttry = toc; %count the time elapsed to do ntry samples
-while ntry <= out_param.nSig/100
-    %try out sample size is less than 1% of nSig that is used to
-    %estimate the variance.'
-    out_param.nmax = gail.estsamplebudget(out_param.tbudget,...
-        out_param.nbudget,ntry,nsofar,tstart,ttry);
-    %update the nmax after initinal try
-    tsigpredict = ttry/ntry * out_param.nSig;
-    if ttry > out_param.tbudget/10
-        %after intial try, found it has already used 10% of the time
-        %budget, stop try.
-        out_param.exit = 2; % pass a flag
-        out_param = meanMCRel_g_err(out_param);% print the error message
-        out_param.n_mu = out_param.nmax;
-        mu = gail.evalmean(Yrand,out_param.n_mu,npcmax);
-        %calculate the mean without guarantee using nmax
-        out_param.ntot = out_param.n_mu+nsofar;%update the total sample used
-        break;
-    end
-    if  tsigpredict > out_param.tbudget/2;
-        % the estimated time using nSig samples is bigger than half
-        % of the time budget, could not afford computing variance.
-        % using all the sample left to compute the mean.
-        out_param.exit = 3; % add a flag
-        out_param = meanMC_g_err(out_param);% print error message
-        out_param.n_mu = out_param.nmax;
-        mu = gail.evalmean(Yrand,out_param.n_mu,npcmax);
-        out_param.ntot = out_param.n_mu+nsofar;
-        break;
-    end
-    multiplier = 5;
-    ntry = multiplier*ntry; % boost the try out sample size at multiplier times
-    nsofar=nsofar+ntry; % update the samples that have been used
-    tic;
-    Yrand(ntry);
-    ttry = toc;% get the time for calculating ntry function values
+ttry=toc;
+tpern = ttry/ntry;
+
+nsofar = nsofar+ntry;
+
+if tpern<1e-5;%each sample use rather little time
+    [mu,out_param] =  meanmctolfun(Yrand,out_param,ntry,ttry,nsofar,tstart);
+elseif tpern>=1e-3 %each sample use a lot of time
+    [mu,out_param] =  meanmctolfun(Yrand,out_param,ntry,ttry,nsofar,tstart);
+else %each sample takes moderate time
+    [mu,out_param] =  meanmctolfun(Yrand,out_param,ntry,ttry,nsofar,tstart);
 end
+
+end
+
+function [mu,out_param] =  meanmctolfun(Yrand,out_param,ntry,ttry,nsofar,tstart)
+npcmax = 1e6;
 tic;
 Yval = Yrand(out_param.nSig); % get the function values
 t_sig = toc;
@@ -188,7 +166,7 @@ t_sig = toc;
 nsofar = nsofar+out_param.nSig;
 % update the samples that have been used
 out_param.nmax = gail.estsamplebudget(out_param.tbudget,...
-    out_param.nbudget,out_param.nSig,nsofar,tstart,t_sig);
+    out_param.nbudget,[ntry out_param.nSig 0],nsofar,tstart,[ttry t_sig 0]);
 out_param.var = var(Yval);% calculate the sample variance--stage 1
 sig0 = sqrt(out_param.var);% standard deviation
 sig0up = out_param.fudge.*sig0;% upper bound on the standard deviation
@@ -203,7 +181,7 @@ out_param.tol(1) = sig0up*eps1;
 % the width of initial confidence interval for the mean
 i=1;
 out_param.n(i) = out_param.n1;
-while true 
+while true
     out_param.step = i;
     if out_param.n(i) > out_param.nmax;
         % if the sample size used for initial estimation is
@@ -217,8 +195,8 @@ while true
         break;
     end
     out_param.mu(i) = gail.evalmean(Yrand,out_param.n(i),npcmax);
-    theta = 0;
     errtype = 'comb';
+    theta  = 0;% relative error case
     deltaplus = (gail.tolfun(out_param.abstol,out_param.reltol,...
         theta,out_param.mu(i) - out_param.tol(i),errtype)...
         +gail.tolfun(out_param.abstol,out_param.reltol,...
@@ -238,7 +216,7 @@ while true
         delta=0.3;
         out_param.tol(i+1) = max(min(deltaplus*deltat, ...
             deltah*out_param.tol(i)),delta*out_param.tol(i));
-        toloversig = out_param.tol(i+1)/sig0up;
+toloversig = out_param.tol(i+1)/sig0up;
         alphai = (out_param.alpha-alpha_sig)/(1-alpha_sig)*2.^(-i-1);
         out_param.n(i+1) = nchebe(toloversig,alphai...
             ,out_param.kurtmax);
@@ -250,19 +228,20 @@ out_param.time=toc(tstart); %elapsed time
 end
 
 function ncb = nchebe(toloversig,alpha,kmax)
-ncheb = ceil(1/(toloversig^2*alpha));
+%this function uses Chebyshev and Berry-Eseen Inequality to calculate the
+%sample size needed
+ncheb = ceil(1/(toloversig^2*alpha));%sample size by Cheybshev's Inequality
 A=18.1139;
 A1=0.3328;
 A2=0.429; % three constants in Berry-Esseen inequality
-M3upper = kmax^(3/4);
+M3upper = kmax^(3/4);%the upper bound on the third moment by Jensen's inequality
 BEfun2=@(logsqrtn)gail.stdnormcdf(-exp(logsqrtn).*toloversig)...
     +exp(-logsqrtn).*min(A1*(M3upper+A2), ...
     A*M3upper./(1+(exp(logsqrtn).*toloversig).^3))- ...
-    alpha/2;
-logsqrtnCLT=log(gail.stdnorminv(1-alpha/2)/toloversig);
-% get log of sqrt of n
-nbe=ceil(exp(2*fzero(BEfun2,logsqrtnCLT)));
-ncb = min(ncheb,nbe);
+    alpha/2; % Berry-Eseen function, whose solution is the sample size needed
+logsqrtnCLT=log(gail.stdnorminv(1-alpha/2)/toloversig);%sample size by CLT
+nbe=ceil(exp(2*fzero(BEfun2,logsqrtnCLT)));%calculate Berry-Eseen n by fzero function
+ncb = min(ncheb,nbe);%take the min of two sample sizes.
 end
 
 function eps = ncbinv(n1,alpha1,kmax)

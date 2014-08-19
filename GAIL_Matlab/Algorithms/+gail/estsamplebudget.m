@@ -13,7 +13,8 @@ function nmax= estsamplebudget(tbudget,nbudget,ntry,nsofar,tstart,ttry)
             timeleft = tbudget-toc(tstart);
             % update the time left by subtracting the time used from time
             % budget
-            nleft = floor(timeleft*ntry/ttry);
+            p = polyfit(ntry,ttry,1);
+            nleft = floor((timeleft-p(2))/p(1));
             % estimate sample left by linear regression          
             nmax = max(min(nbudget-nsofar,nleft),1);
             % update the sample left 
