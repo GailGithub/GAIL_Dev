@@ -136,7 +136,7 @@ end
 function  [Yrand,out_param] = meanMCBernoulli_g_param(varargin)
 default.reltol = 1e-1;% default relative error tolerance
 default.abstol  = 1e-2;% default absolute error tolerance
-default.errtype = 'abs';% default errtype 
+default.errtype = 'abs';% default error type 
 default.alpha = 1e-2;% default uncertainty
 default.nmax = 1e9;% default the sample budget
 if isempty(varargin) % if no parsing value
