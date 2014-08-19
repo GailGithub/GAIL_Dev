@@ -66,7 +66,7 @@ function [mu,out_param]=meanMCRel_g(varargin)
 %
 %    mu --- the estimated mean of Y.
 %
-%    out_param.step --- iteration step.
+%    out_param.tau --- iteration step.
 %
 %    out_param.n --- sample used in each iteration.
 %
@@ -188,7 +188,7 @@ i=1;
 npcmax = 1e6;%constant to do iteration and mean calculation
 out_param.n(i) = out_param.n1;% initial sample size to do iteration
 while true
-    out_param.step = i;%step of the iteration
+    out_param.tau = i;%step of the iteration
     if out_param.n(i) > out_param.nmax;
         % if the sample size used for initial estimation is
         % larger than nmax, print warning message and use nmax
@@ -421,7 +421,7 @@ if ~isfield(out_param,'exit'); return; end
 if out_param.exit==0; return; end
 switch out_param.exit
     case 1 % not enough samples to estimate the mean.
-        nexceed = out_param.n(out_param.step);
+        nexceed = out_param.n(out_param.tau);
         warning('MATLAB:meanMCRel_g:maxreached',...
             ['tried to evaluate at ' int2str(nexceed) ...
             ' samples, which is more than the allowed maximum of '...
