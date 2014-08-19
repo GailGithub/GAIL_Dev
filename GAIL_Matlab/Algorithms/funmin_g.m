@@ -15,21 +15,21 @@ function [fmin,out_param]=funmin_g(varargin)
 %   fmin = FUNMIN_G(f,'abstol',abstol,'TolX',TolX,'ninit',ninit,'nmax',
 %   nmax) finds minimum value of function f on the interval [0,1] with a
 %   guaranteed absolute error tolerance abstol, guaranteed absolute X
-%   tolerance TolX, initial number of points ninit and cost budget nmax. All
-%   the three field-value pairs are optional and can be supplied in
+%   tolerance TolX, initial number of points ninit and cost budget nmax. 
+%   All the three field-value pairs are optional and can be supplied in
 %   different order.
 %
 %   fmin = FUNMIN_G(f,in_param) finds minimum value of function f on the
-%   interval [0,1] with a structure input parameters in_param. If a field is
-%   not specified, the default value is used.
+%   interval [0,1] with a structure input parameters in_param. If a field
+%   is not specified, the default value is used.
 %
 %   [fmin, out_param] = FUNMIN_G(f,...) returns minimum value fmin of
 %   function f and an output structure out_param.
 %
 %   Input Arguments
 %
-%     in_param.abstol --- guaranteed absolute error tolerance, default value
-%     is 1e-6.
+%     in_param.abstol --- guaranteed absolute error tolerance, default 
+%     value is 1e-6.
 %
 %     in_param.TolX --- guaranteed X tolerance, default value is 1e-3.
 %
@@ -63,8 +63,8 @@ function [fmin,out_param]=funmin_g(varargin)
 %     out_param.volumeX --- the volume of intervals containing the point(s)
 %     where the minimum occurs
 %
-%     out_param.tauchange --- it is 1 if tau is too small, and the algorithm
-%     has used a larger tau.
+%     out_param.tauchange --- it is 1 if tau is too small, and the 
+%     algorithm has used a larger tau.
 %
 %  Guarantee
 %    

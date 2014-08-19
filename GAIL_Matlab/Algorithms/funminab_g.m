@@ -1,15 +1,239 @@
-function [fmin,out_param]=funmin_gab(varargin)
+function [fmin,out_param]=funminab_g(varargin)
+%FUNMIN_G Guaranteed global minimum value of univariate function
+%on a closed interval [a,b] and the subset containing optimal solutions
+%
+%   fmin = FUNMIN_G(f) finds minimum value of function f on the default
+%   interval [0,1] within the guatanteed absolute error tolerance of 1e-6
+%   and the X tolerance of 1e-3. Default initial number of points is 100
+%   and default cost budget is 1e7. Input f is a function handle.
+%
+%   fmin = FUNMIN_G(f,a,b,abstol,TolX,nlo,nhi,nmax) finds minimum value of
+%   function f with ordered input parameters that define the finite
+%   interval [a,b], a guaranteed absolute error tolerance abstol, a
+%   quaranteed X tolerance TolX, a lower bound of initial number of points
+%   nlo, an upper bound of initial number of points nhi, and a cost budget
+%   nmax.
+%
+%   fmin = FUNMIN_G(f,'a',a,'b',b,'abstol',abstol,'TolX',TolX,'nlo',nlo,
+%   'nhi',nhi,'nmax',nmax) finds minimum value of function f on the
+%   interval [a,b] with a guaranteed absolute error tolerance abstol, a
+%   guaranteed X tolerance TolX, a lower bound of initial number of points
+%   nlo, an upper bound of initial number of points nhi, and a cost budget
+%   nmax. All six field-value pairs are optional and can be supplied in
+%   different order.
+%
+%   fmin = FUNMIN_G(f,in_param) finds minimum value of function f on the
+%   interval [in_param.a,in_param.b] with a guaranteed absolute error
+%   tolerance in_param.abstol, a guranteed X tolerance in_param.TolX, a
+%   lower bound of initial number of points in_param.nlo, an upper bound of
+%   initial number of points in_param.nhi, and a cost budget in_param.nmax.
+%   If a field is not specified, the default value is used.
+%
+%   [fmin, out_param] = FUNMIN_G(f,...) returns minimum value fmin of
+%   function f and an output structure out_param.
+%
+%   Input Arguments
+%
+%     in_param.a --- left end point of interval, default value is 0
+%
+%     in_param.b --- right end point of interval, default value is 1
+%
+%     in_param.abstol --- guaranteed absolute error tolerance, default
+%     value is 1e-6.
+%
+%     in_param.TolX --- guaranteed X tolerance, default value is 1e-3.
+%
+%     in_param.nlo --- lower bound of initial number of points we used,
+%     default value is 10
+%
+%     in_param.nhi --- upper bound of initial number of points we used,
+%     default value is 1000
+%
+%     in_param.nmax --- cost budget, default value is 1e7.
+%
+%   Output Arguments
+%
+%     out_param.a --- left end point of interval
+%
+%     out_param.b --- right end point of interval
+%
+%     out_param.abstol --- guaranteed absolute error tolerance
+%
+%     out_param.TolX --- guaranteed X tolerance
+%
+%     out_param.nlo --- a lower bound of initial number of points we use
+%
+%     out_param.nhi --- an upper bound of initial number of points we use
+%
+%     out_param.nmax --- cost budget
+%
+%     out_param.ninit --- initial number of points we use
+%
+%     out_param.tau --- latest value of tau
+%
+%     out_param.exceedbudget --- 0 if the number of points used is less
+%     than the cost budget; 1, otherwise.
+%
+%     out_param.npoints --- number of points needed to reach the guaranteed
+%     absolute error tolerance or the guaranteed X tolerance
+%
+%     out_param.error --- estimation of the absolute error bound
+%
+%     out_param.volumeX --- the volume of intervals containing the point(s)
+%     where the minimum occurs
+%
+%     out_param.tauchange --- it is 1 if tau is too small, and the
+%     algorithm has used a larger tau.
+%
+%     out_param.intervals --- the intervals containing point(s) where the
+%     minimum occurs
+%
+%
+%  Guarantee
+%
+%  If the function to be minimized, f, satisfies the cone condition
+%      ||f''||_\infty <= \tau ||f'-f(1)+f(0)||_\infty,
+%  then the fmin output by this algorithm is guaranteed to satisfy
+%      ||min(f)-fmin||_\infty <= abstol
+%  or
+%      volumeX <= TolX,
+%  provided the flag exceedbudget = 0.
+%
+%
+%  Examples
+%
+%  Example 1:
+%
+%  >> f=@(x) (x-0.3).^2+1; [fmin,out_param] = funmin_gab(f)
+%
+%  fmin =
+%
+%     1.0000
+%
+%  out_param =
+%
+%                a: 0
+%                b: 1
+%           abstol: 1.0000e-06
+%             TolX: 1.0000e-03
+%              nlo: 10
+%              nhi: 1000
+%             nmax: 10000000
+%            ninit: 100
+%              tau: 197
+%     exceedbudget: 0
+%          npoints: 6337
+%            error: 6.1554e-07
+%          volumeX: 0.0015
+%        tauchange: 0
+%        intervals: [2x1 double]
+%
+%
+%  Example 2:
+%
+%  >> f=@(x) (x-0.3).^2+1;
+%  >> [fmin,out_param] = funminab_g(f,-2,2,1e-7,10,10,1000000)
+%
+%  fmin =
+%
+%     1.0000
+%
+%  out_param =
+%
+%                a: -1
+%           abstol: 1.0000e-07
+%                b: 2
+%                f: @(x)(x-0.3).^2+1
+%              nhi: 10
+%              nlo: 10
+%             nmax: 1000000
+%             TolX: 1.0000e-04
+%            ninit: 10
+%              tau: 17
+%     exceedbudget: 0
+%          npoints: 9217
+%            error: 6.4896e-08
+%          volumeX: 5.7451e-04
+%        tauchange: 0
+%        intervals: [2x1 double]
+%
+%
+%  Example 3:
+%
+%  >> f=@(x) (x+1.3).^2+1;
+%  >> in_param.a = -13; in_param.b = 8;
+%  >> in_param.abstol = 10^(-7); in_param.TolX = 1e-4;
+%  >> in_param.nlo = 10; in_param.nhi = 100;
+%  >> in_param.nmax = 10^6;
+%  >> [fmin,out_param] = funminab_g(f,in_param)
+%
+%  fmin =
+%
+%     1.0000
+%
+%  out_param =
+%
+%                a: -13
+%           abstol: 1.0000e-07
+%                b: 8
+%                f: @(x)(x+1.3).^2+1
+%              nhi: 100
+%              nlo: 10
+%             nmax: 1000000
+%             TolX: 1.0000e-04
+%            ninit: 91
+%              tau: 179
+%     exceedbudget: 0
+%          npoints: 92161
+%            error: 4.4808e-08
+%          volumeX: 4.5064e-04
+%        tauchange: 0
+%        intervals: [2x1 double]
+%
+%
+%  Example 4:
+%
+%  >> f=@(x) (x-0.3).^2+1;
+%  >> [fmin,out_param] = funminab_g(f,'a',-2,'b',2,'nhi',100,'nlo',10,'nmax',1e6,'abstol',1e-4,'TolX',1e-2)
+%
+%  fmin =
+%
+%     1.0000
+%
+%  out_param =
+%
+%                a: -2
+%           abstol: 1.0000e-04
+%                b: 2
+%                f: @(x)(x-0.3).^2+1
+%              nhi: 100
+%              nlo: 10
+%             nmax: 1000000
+%             TolX: 0.0100
+%            ninit: 64
+%              tau: 125
+%     exceedbudget: 0
+%          npoints: 1009
+%            error: 6.3948e-05
+%          volumeX: 0.0154
+%        tauchange: 0
+%        intervals: [2x1 double]
+%
+%
 %   See also FUNAPPX_G, INTEGRAL_G
 %
 %  References
-%   [1]  Nicholas Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, 
-%   and Yizhi Zhang. The Cost of Deterministic, Adaptive, Automatic 
+%   [1]  Nicholas Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell,
+%   and Yizhi Zhang. The Cost of Deterministic, Adaptive, Automatic
 %   Algorithms: Cones, Not Balls. Journal of Complexity, 30:21-45, 2014
 %
 %   [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
 %   and Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library
 %   (Version 1.3.0)" [MATLAB Software], 2014. Available from
 %   http://code.google.com/p/gail/
+%
+%   [3]  Xin Tong. A Guaranteed, Adaptive, Automatic Algorithm for
+%   Univariate Function Minimization. 2014
 %
 %   If you find GAIL helpful in your work, please support us by citing
 %   the above paper and software.
@@ -49,15 +273,16 @@ while n < out_param.nmax;
     if out_param.tau*(gn/len+fn/(2*n-2))>= fn;
         % Stage 3: check for convergence
         bn = 2*(n-1)*out_param.tau/(2*(n-1)-out_param.tau)*gn;
-        cn = 2*(n-1)^2*abs(diff_y)./bn/len;
-        Cn = min(cn,1); % check the conditions for each interval
-        ln = (diff_y/2+y(1:n-1))-abs(diff_y).*(Cn+1./Cn)/4;
+        min_index = (2*(n-1)^2.*abs(diff_y)) < (bn*len);
+        min_in = min_index.*(diff_y/2+y(1:n-1)-0.25*(2*(n-1)^2*diff_y.^2/bn+bn/2/(n-1)^2));
+        min_end = (~min_index).*(diff_y/2+y(1:n-1)-abs(diff_y)/2);
+        ln = min_in+min_end;
         % minimum values of each interval
         Ln = min(ln); % lower bound
         Un = min(y); % upper bound
         error = Un-Ln;
         % find the intervals containing minimum points
-        index = find(cn<1 & ln < Un);
+        index = find(min_index ==1 & ln < Un);
         m = size(index,2);
         if m > 0
             delta = (n-1)^2/len^2*diff_y(index).^2-2*bn/len*(diff_y(index)./2 ...
@@ -95,15 +320,16 @@ while n < out_param.nmax;
         if n >= ((out_param.tau+1)/2);
             % large enough, go to Stage 3
             bn = 2*(n-1)*out_param.tau/(2*(n-1)-out_param.tau)*gn;
-            cn = 2*(n-1)^2*abs(diff_y)./bn/len;
-            Cn = min(cn,1); % check the conditions for each interval
-            ln = (diff_y/2+y(1:n-1))-abs(diff_y).*(Cn+1./Cn)/4;
+            min_index = (2*(n-1)^2.*abs(diff_y)) < (bn*len);
+            min_in = min_index.*(diff_y/2+y(1:n-1)-0.25*(2*(n-1)^2*diff_y.^2/bn+bn/2/(n-1)^2));
+            min_end = (~min_index).*(diff_y/2+y(1:n-1)-abs(diff_y)/2);
+            ln = min_in+min_end;
             % minimum values of each interval
             Ln = min(ln); % lower bound
             Un = min(y); % upper bound
             error = Un-Ln;
             % find the intervals containing minimum points
-            index = find(cn<1 & ln < Un);
+            index = find(min_index ==1 & ln < Un);
             m = size(index,2);
             if m > 0
                 delta = (n-1)^2/len^2*diff_y(index).^2-2*bn/len*(diff_y(index)./2 ...
