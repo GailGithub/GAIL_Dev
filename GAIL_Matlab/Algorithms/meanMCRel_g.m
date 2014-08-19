@@ -59,7 +59,7 @@ function [mu,out_param]=meanMCRel_g(varargin)
 %    the default value is 100 seconds.
 %
 %    in_param.nbudget --- the sample budget to do the two-stage estimation,
-%    the default value is 1e8.
+%    the default value is 1e9.
 %
 %
 %   Output Arguments
@@ -279,7 +279,7 @@ function  [Yrand,out_param] = meanMC_g_param(varargin)
 default.abstol  = 1e-2;% default absolute error tolerance
 default.reltol = 1e-1;% default relative error tolerance
 default.nSig = 1e3;% default initial sample size nSig for variance estimation
-default.n1 = 1e3; % default initial sample size n1 for mean estimation
+default.n1 = 1e4; % default initial sample size n1 for mean estimation
 default.alpha = 0.01;% default uncertainty
 default.fudge = 1.1;% default fudge factor
 default.tbudget = 100;% default time budget
