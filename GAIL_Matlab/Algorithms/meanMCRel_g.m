@@ -10,21 +10,21 @@ function [mu,out_param]=meanMCRel_g(varargin)
 %   of the random variable Y.
 %
 %   mu = MEANMCREL_G(Yrand,abstol,reltol,alpha,fudge,nSig,n1,tbudget,...
-%   nbudget,checked) estimates the mean of a random variable Y to within an
+%   nbudget) estimates the mean of a random variable Y to within an
 %   specified generalized error tolerance tolfun with guaranteed confidence
 %   level 1-alpha. using all ordered parsing inputs abstol, reltol, alpha,
 %   fudge, nSig, n1, tbudget, nbudget.
 %
 %   mu = MEANMCREL_G(Yrand,'abstol',abstol,'reltol',reltol,'alpha',...
-%   alpha,'fudge', fudge,'nSig',nSig,'n1',n1,'tbudget',tbudget,'nbudget',...
-%   nbudget) estimates the mean of a random variable Y to
+%   alpha,'fudge',fudge,'nSig',nSig,'n1',n1,'tbudget',tbudget,...
+%   'nbudget',... nbudget) estimates the mean of a random variable Y to
 %   within a specified generalized error tolerance tolfun with guaranteed
 %   confidence level 1-alpha. All the field-value pairs are optional and
 %   can be supplied in different order.
 %
-%   mu = MEANMCREL_G(Yrand,in_param) estimates the mean of a random variable
-%   Y to within a specified generalized error tolerance tolfun with
-%   guaranteed confidence level 1-in_param.alpha. If a field is not
+%   mu = MEANMCREL_G(Yrand,in_param) estimates the mean of a random
+%   variable Y to within a specified generalized error tolerance tolfun
+%   with guaranteed confidence level 1-in_param.alpha. If a field is not
 %   specified, the default value is used.
 %
 %   [mu, out_param] = MEANMCREL_G(Yrand,in_param) estimates the mean of a
@@ -88,9 +88,10 @@ function [mu,out_param]=meanMCRel_g(varargin)
 %
 %    out_param.kurtmax --- the upper bound on modified kurtosis.
 %
-%    out_param.n --- the total sample size used to do the two stage estimation.
+%    out_param.time --- the time elapsed
 %
-%    out_param.time --- the time elapsed.
+%    out_param.checked --- parameter checking status
+%                        1  checked by meanMC_g
 %
 % Guarantee
 % ---to be added
@@ -159,7 +160,7 @@ if tpern<1e-5;%each sample use rather little time
     [mu,out_param] =  meanmctolfun(Yrand,out_param,ntry,ttry,nsofar,tstart);
 elseif tpern>=1e-3 %each sample use a lot of time
     [mu,out_param] =  meanmctolfun(Yrand,out_param,ntry,ttry,nsofar,tstart);
-else %each sample takes moderate time
+else %each sample uses moderate time
     [mu,out_param] =  meanmctolfun(Yrand,out_param,ntry,ttry,nsofar,tstart);
 end
 
@@ -405,6 +406,7 @@ if (~gail.isposint(out_param.nbudget)) % sample budget should be a positive inte
         'take the absolute value and ceil.'])
     out_param.nbudget = ceil(abs(out_param.nbudget));
 end
+out_param.checked = 1; % pass the signal indicate the parameters have been checked
 end
 
 function out_param = meanMC_g_err(out_param)
