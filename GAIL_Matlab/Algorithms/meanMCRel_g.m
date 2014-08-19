@@ -201,7 +201,7 @@ while true
     out_param.mu(i) = gail.evalmean(Yrand,out_param.n(i),npcmax);%evaluate mean
     nsofar = nsofar+out_param.n(i);
     out_param.nmax = out_param.nmax-out_param.n(i);%update n so far and nmax
-    errtype = 'comb';
+    errtype = 'max';
     % error type, see the function 'tolfun' at +gail directory for more info
     theta  = 0;% relative error case
     deltaplus = (gail.tolfun(out_param.abstol,out_param.reltol,...
@@ -439,6 +439,6 @@ switch out_param.exit
 %             'is bigger than half of the time budget, '...
 %             'could not afford estimating variance, '...
 %             'use all the time left to estimate the mean.']);
-        return
+%       return
 end
 end
