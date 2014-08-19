@@ -46,6 +46,17 @@ function [p,out_param]=meanMCBernoulli_g(varargin)
 % 
 %   Output Arguments
 %
+%     out_param.n_clt --- sample size calculated by Central Limit Theorem.
+%
+%     out_param.n_hoeff --- sample size calculated by Hoeffding's
+%      Inequality.
+% 
+%     out_param.nabs --- sample size needed to satisfy absolute error
+%     tolerance
+%
+%     out_param.nrel --- sample size needed to satisfy relative error
+%     tolerance 
+%
 %     out_param.n --- the total sample used.
 % 
 %     out_param.time --- the time elapsed.
@@ -99,7 +110,6 @@ tstart = tic; %start the clock
 [Yrand,out_param] = meanMCBernoulli_g_param(varargin{:});
 %parameter checking and parsing
 nsofar = 0;%sample used so far
-out_param.npcmax = 1e6; %
 if strcmpi(out_param.errtype,'abs') % absolute error type
     out_param = nabs(out_param,tstart);%calculate the sample needed
     out_param.n = out_param.nabs;%update n
@@ -115,7 +125,8 @@ if strcmpi(out_param.errtype,'either')%either absolute or relative error toleran
     [nsofar,out_param] = nrel(out_param,Yrand,tstart);
     out_param.n = min(out_param.nabs,out_param.nrel);
 end
-out_param.p = gail.evalmean(Yrand,out_param.n,out_param.npcmax);
+npcmax = 1e6;
+out_param.p = gail.evalmean(Yrand,out_param.n,npcmax);
 % evaluate the mean 
 p=out_param.p; % assign answer
 out_param.n = out_param.n+nsofar; % update total sample used
@@ -272,7 +283,7 @@ while 1
     alphap = 1e-3;% the uncertainty for the last step to evaluate the mean
     a=2;% parameter to get uncertainty in each step
     npcmax = 1e6;
-    alphai = 1-(1-out_param.alpha+out_param.alphap)^((a-1)*a^-i);
+    alphai = 1-(1-out_param.alpha+alphap)^((a-1)*a^-i);
     %uncertainty in each step
     toli = out_param.reltol*2^-i;%tolerance in each step
     ni = ceil(-log(alphai)/(2*toli^2));
@@ -280,7 +291,7 @@ while 1
         out_param.exit=2; % pass a flag 
         meanMCBernoulli_g_err(out_param,tstart); % print warning message
         out_param.nrel = out_param.nmax- nsofar;%update nrel using all sample left
-        break;
+        break
     end
     meanY = gail.evalmean(Yrand,ni,npcmax);%evaluate mean
     nsofar = nsofar+ni;%update n used so far 
@@ -295,7 +306,7 @@ while 1
             out_param.exit=3; % pass a flag
             meanMCBernoulli_g_err(out_param,tstart);% print warning message
             out_param.nrel = out_param.nmax- nsofar;%update nrel
-            break;
+            break
         end
         break
     else
