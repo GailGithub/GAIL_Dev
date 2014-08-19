@@ -30,7 +30,7 @@ classdef ut_funappxlocal_g < matlab.unittest.TestCase
       in_param.abstol = 10^(-8); 
       in_param.nlo = 10;
       in_param.nhi = 10;
-      [pp, ~] = funappx_g(f,in_param);
+      [pp, ~] = funappxlocal_g(f,in_param);
       x = rand(10000,1);
       actualerr = max(abs(ppval(pp,x)-f(x)));
       testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
