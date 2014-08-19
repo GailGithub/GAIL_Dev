@@ -81,7 +81,7 @@ function [mu,out_param]=meanMCRel_g(varargin)
 %
 %    out_param.exit --- the state of program when exiting.
 %                     0   Success.
-%                     1   No enough samples to estimate the mean.
+%                     1   Not enough samples to estimate the mean.
 %                     2   Initial try out time costs more than 10% of time budget.
 %                     3   The estimated time for estimating variance is bigger
 %                         than half of the time budget.
