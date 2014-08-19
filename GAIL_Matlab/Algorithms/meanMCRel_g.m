@@ -245,21 +245,23 @@ ncb = min(ncheb,nbe);%take the min of two sample sizes.
 end
 
 function eps = ncbinv(n1,alpha1,kmax)
+%This function calculate error tolerance when given Chebyshev and
+%Berry-Esseen inequality and sample size n.
 NCheb_inv = 1/sqrt(n1*alpha1);
 % use Chebyshev inequality
 A=18.1139;
 A1=0.3328;
 A2=0.429; % three constants in Berry-Esseen inequality
-M3upper=kmax^(3/4);%using Jensen inequality to
+M3upper=kmax^(3/4);%using Jensen's inequality to
 % bound the third moment
 BEfun=@(logsqrtb)gail.stdnormcdf(n1.*logsqrtb)...
     +min(A1*(M3upper+A2), ...
     A*M3upper./(1+(sqrt(n1).*logsqrtb).^3))/sqrt(n1)...
     - alpha1/2;
-% Berry-Esseen Inequality
-logsqrtb_clt=log(sqrt(gail.stdnorminv(1-alpha1/2)/sqrt(n1)));
-NBE_inv = exp(2*fzero(BEfun,logsqrtb_clt));
-eps = min(NCheb_inv,NBE_inv);
+% Berry-Esseen inequality
+logsqrtb_clt=log(sqrt(gail.stdnorminv(1-alpha1/2)/sqrt(n1)));%CLT to get tolerance
+NBE_inv = exp(2*fzero(BEfun,logsqrtb_clt));%use fzero to get Berry-Eseen tolerance
+eps = min(NCheb_inv,NBE_inv);%take the min of Chebyshev and Berry Eseen tolerance
 end
 
 function  [Yrand,out_param] = meanMC_g_param(varargin)
