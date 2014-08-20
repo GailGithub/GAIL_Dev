@@ -7,7 +7,7 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %   statement y = f(x) should accept a vector argument x and return a
 %   vector y of function values that is of the same size as x. Output pp
 %   may be evaluated via PPVAL.
-%   
+%
 %   pp = FUNAPPXLOCAL_G(f,a,b,abstol,nlo,nhi) for a given function f and
 %   the ordered input parameters that define the finite interval [a,b], a
 %   guaranteed absolute error tolerance abstol, a lower bound of initial
@@ -60,7 +60,7 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %
 %     out_param.ninit --- initial number of points we use
 %
-%     out_param.npoints --- number of points we need to reach the 
+%     out_param.npoints --- number of points we need to reach the
 %     guaranteed absolute error tolerance
 %
 %     out_param.errorbound --- an upper bound of the absolute error
@@ -87,8 +87,8 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %
 %   >> f = @(x) x.^2; [pp, out_param] = funappxlocal_g(f)
 %
-% pp = 
-% 
+% pp =
+%
 %       form: 'pp'
 %     breaks: [1x1857 double]
 %      coefs: [1856x2 double]
@@ -96,9 +96,9 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %      order: 2
 %        dim: 1
 %     orient: 'first'
-% 
-% out_param = 
-% 
+%
+% out_param =
+%
 %              f: @(x)x.^2
 %              a: 0
 %              b: 1
@@ -115,9 +115,9 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %
 %   >> f = @(x) x.^2;
 %   >> [pp, out_param] = funappxlocal_g(f,-2,2,1e-7,10,20)
-% 
-% pp = 
-% 
+%
+% pp =
+%
 %       form: 'pp'
 %     breaks: [1x34817 double]
 %      coefs: [34816x2 double]
@@ -125,9 +125,9 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %      order: 2
 %        dim: 1
 %     orient: 'first'
-% 
-% out_param = 
-% 
+%
+% out_param =
+%
 %              a: -2
 %         abstol: 1.0000e-07
 %              b: 2
@@ -145,8 +145,8 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %   >> f = @(x) x.^2;
 %   >> [pp, out_param] = funappxlocal_g(f,'a',-2,'b',2,'nhi',100,'nlo',10)
 %
-% pp = 
-% 
+% pp =
+%
 %       form: 'pp'
 %     breaks: [1x8065 double]
 %      coefs: [8064x2 double]
@@ -154,9 +154,9 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %      order: 2
 %        dim: 1
 %     orient: 'first'
-% 
-% out_param = 
-% 
+%
+% out_param =
+%
 %              a: -2
 %         abstol: 1.0000e-06
 %              b: 2
@@ -175,8 +175,8 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %   >> in_param.abstol = 10^(-6); in_param.nlo = 10; in_param.nhi = 100;
 %   >> [pp, out_param] = funappxlocal_g(f,in_param)
 %
-% pp = 
-% 
+% pp =
+%
 %       form: 'pp'
 %     breaks: [1x45569 double]
 %      coefs: [45568x2 double]
@@ -184,9 +184,9 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %      order: 2
 %        dim: 1
 %     orient: 'first'
-% 
-% out_param = 
-% 
+%
+% out_param =
+%
 %              a: -10
 %         abstol: 1.0000e-06
 %              b: 10
@@ -206,14 +206,14 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %
 %   [1]  Nick Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
 %        Yizhi Zhang, The Cost of Deterministic, Adaptive, Automatic
-%        Algorithms: Cones, Not Balls, Journal of Complexity 30 (2014), 
+%        Algorithms: Cones, Not Balls, Journal of Complexity 30 (2014),
 %        pp. 21-45.
-%        
+%
 %
 %   [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
 %        Lluís Antoni Jiménez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
-%        "GAIL: Guaranteed Automatic Integration Library (Version 2.0)" 
-%        [MATLAB Software], 2014. Available from 
+%        "GAIL: Guaranteed Automatic Integration Library (Version 2.0)"
+%        [MATLAB Software], 2014. Available from
 %        http://code.google.com/p/gail/
 %
 %        If you find GAIL helpful in your work, please support us by citing
@@ -222,7 +222,10 @@ function [pp,out_param]=funappxlocal_g(varargin)
 
 % check parameter satisfy conditions or not
 [f, out_param] = funappx_g_param(varargin{:});
-
+[~,~,~,MATLABVERSION]=GAILstart(0);
+if MATLABVERSION >= 8.3
+    warning('off', 'MATLAB:interp1:ppGriddedInterpolant');
+end;
 %%main algorithm
 
 % tau = ceil(out_param.tauhi*(out_param.taulo/out_param.tauhi)^(1/(1+len)));
@@ -250,7 +253,7 @@ while(max(err) >= out_param.abstol)
     diff_y = diff(y(a:b));
     %approximate the weaker norm of input function
     gn = (n-1)/len*max(abs(diff_y-(y(b)-y(a))/(n-1)));
-     %approximate the stronger norm of input function
+    %approximate the stronger norm of input function
     fn = (n-1)^2/len^2*max(abs(diff(diff_y)));
     
     % Stage 3: satisfy necessary condition
@@ -258,7 +261,7 @@ while(max(err) >= out_param.abstol)
         % Stage 4: check for convergence
         err(tmp) = nstar(tmp)*len*gn/(4*(n-1)*(n-1-nstar(tmp)));
         if err(tmp) >= out_param.abstol;
-            % Stage 5:          
+            % Stage 5:
             index = [index(1:tmp) a+n-1 index(tmp+1:end)+n-1];
             h = (x(b)-x(a))/(2*(n-1));
             %xnew = repmat(x(a:b-1),1,1)+repmat(h,1,n-1);
@@ -268,8 +271,8 @@ while(max(err) >= out_param.abstol)
             xx = xnew1(:)';
             ynew1 = [y(a:b-1); ynew];
             yy = ynew1(:)';
-%             xx = x(a):h:x(b);
-%             yy = f(xx);
+            %             xx = x(a):h:x(b);
+            %             yy = f(xx);
             x = [x(1:a-1) xx x(b:end)];
             y = [y(1:a-1) yy y(b:end)];
             err = [err(1:tmp-1) inf inf err(tmp+1:end)];
@@ -314,7 +317,7 @@ while(max(err) >= out_param.abstol)
             err = [err(1:tmp-1) inf inf err(tmp+1:end)];
             nstar = [nstar(1:tmp-1) nstar(tmp) nstar(tmp) nstar(tmp+1:end)];
         end;
-    end;    
+    end;
 end;
 out_param.npoints = index(end);
 out_param.errorbound = max(err);
@@ -323,6 +326,10 @@ out_param.nstar = nstar;
 % x1 = x;
 % y1 = f(x1);
 pp = interp1(x,y,'linear','pp');
+if MATLABVERSION >= 8.3
+    warning('on', 'MATLAB:interp1:ppGriddedInterpolant');
+end;
+
 %fappx = @(x) interp1(x1,y,x,'linear');
 
 
@@ -464,10 +471,10 @@ if (~gail.isposint(out_param.nhi))
 end
 
 if (out_param.nlo > out_param.nhi)
-     warning('MATLAB:funappx_g:logrhi', 'Lower bound of initial number of points is larger than upper bound of initial number of points; Use nhi as nlo')
-%     temp = out_param.nlo;
-%     out_param.nlo = out_param.nhi;
-%     out_param.nhi = temp;
+    warning('MATLAB:funappx_g:logrhi', 'Lower bound of initial number of points is larger than upper bound of initial number of points; Use nhi as nlo')
+    %     temp = out_param.nlo;
+    %     out_param.nlo = out_param.nhi;
+    %     out_param.nhi = temp;
     out_param.nhi = out_param.nlo;
 end;
 

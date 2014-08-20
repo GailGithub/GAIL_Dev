@@ -65,12 +65,12 @@ function [pp,out_param]=funappx_g(varargin)
 %
 %     pp.orient --- always be 'first'
 %
-%     out_param.exceedbudget --- it is 0 if the number of points used in 
+%     out_param.exceedbudget --- it is 0 if the number of points used in
 %     the construction of pp is less than cost budget, 1 otherwise.
 %
 %     out_param.ninit --- initial number of points we use
 %
-%     out_param.npoints --- number of points we need to reach the 
+%     out_param.npoints --- number of points we need to reach the
 %     guaranteed absolute error tolerance
 %
 %     out_param.errorbound --- an upper bound of the absolute error
@@ -92,7 +92,7 @@ function [pp,out_param]=funappx_g(varargin)
 %     out_param.nmax --- cost budget
 %
 %  Guarantee
-%    
+%
 %  If the function to be approximated, f, satisfies the cone condition
 %                          2 nstar   ||     f(b)-f(a)  ||
 %      ||f''||        <=  ---------  ||f'- ----------- ||
@@ -101,7 +101,7 @@ function [pp,out_param]=funappx_g(varargin)
 %      ||f-ppval(pp, )||\infty <= abstol,
 %  and the upper bound of the cost is
 %          ____________________________
-%         / nstar*(b-a)^2 ||f''||\infty 
+%         / nstar*(b-a)^2 ||f''||\infty
 %        / ---------------------------- + 2 nstar + 4
 %      \/          2 abstol
 %
@@ -115,8 +115,8 @@ function [pp,out_param]=funappx_g(varargin)
 %
 %   >> f = @(x) x.^2; [pp, out_param] = funappx_g(f)
 %
-%  pp = 
-% 
+%  pp =
+%
 %       form: 'pp'
 %     breaks: [1x9901 double]
 %      coefs: [9900x2 double]
@@ -124,10 +124,10 @@ function [pp,out_param]=funappx_g(varargin)
 %      order: 2
 %        dim: 1
 %     orient: 'first'
-% 
-%   out_param = 
 %
-%                f: @(x)x.^2    
+%   out_param =
+%
+%                f: @(x)x.^2
 %                a: 0
 %                b: 1
 %           abstol: 1.0000e-06
@@ -145,9 +145,9 @@ function [pp,out_param]=funappx_g(varargin)
 %
 %   >> f = @(x) x.^2;
 %   >> [pp, out_param] = funappx_g(f,-2,2,1e-7,10,10,1000000)
-% 
-% pp = 
-% 
+%
+% pp =
+%
 %       form: 'pp'
 %     breaks: [1x33733 double]
 %      coefs: [33732x2 double]
@@ -155,9 +155,9 @@ function [pp,out_param]=funappx_g(varargin)
 %      order: 2
 %        dim: 1
 %     orient: 'first'
-% 
-% out_param = 
-% 
+%
+% out_param =
+%
 %                a: -2
 %           abstol: 1.0000e-07
 %                b: 2
@@ -177,8 +177,8 @@ function [pp,out_param]=funappx_g(varargin)
 %   >> f = @(x) x.^2;
 %   >> [pp, out_param] = funappx_g(f,'a',-2,'b',2,'nhi',100,'nlo',10)
 %
-% pp = 
-% 
+% pp =
+%
 %       form: 'pp'
 %     breaks: [1x31249 double]
 %      coefs: [31248x2 double]
@@ -187,8 +187,8 @@ function [pp,out_param]=funappx_g(varargin)
 %        dim: 1
 %     orient: 'first'
 %
-%   out_param = 
-% 
+%   out_param =
+%
 %                a: -2
 %           abstol: 1.0000e-06
 %                b: 2
@@ -205,13 +205,13 @@ function [pp,out_param]=funappx_g(varargin)
 %
 %   Example 4:
 %
-%   >> in_param.a = -10; in_param.b = 10; 
+%   >> in_param.a = -10; in_param.b = 10;
 %   >> in_param.abstol = 10^(-7); in_param.nlo = 10; in_param.nhi = 100;
 %   >> in_param.nmax = 10^6; f = @(x) x.^2;
 %   >> [pp, out_param] = funappx_g(f,in_param)
 %
-% pp = 
-% 
+% pp =
+%
 %       form: 'pp'
 %     breaks: [1x590071 double]
 %      coefs: [590070x2 double]
@@ -219,9 +219,9 @@ function [pp,out_param]=funappx_g(varargin)
 %      order: 2
 %        dim: 1
 %     orient: 'first'
-% 
-%   out_param = 
-% 
+%
+%   out_param =
+%
 %                a: -10
 %           abstol: 1.0000e-07
 %                b: 10
@@ -242,9 +242,9 @@ function [pp,out_param]=funappx_g(varargin)
 %
 %   [1]  Nick Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
 %   Yizhi Zhang, The Cost of Deterministic, Adaptive, Automatic
-%   Algorithms: Cones, Not Balls, Journal of Complexity 30 (2014), 
+%   Algorithms: Cones, Not Balls, Journal of Complexity 30 (2014),
 %   pp. 21-45.
-%        
+%
 %
 %   [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
 %   and Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library
@@ -257,6 +257,11 @@ function [pp,out_param]=funappx_g(varargin)
 
 % check parameter satisfy conditions or not
 [f, out_param] = funappx_g_param(varargin{:});
+
+[~,~,~,MATLABVERSION]=GAILstart(0);
+if MATLABVERSION >= 8.3
+    warning('off', 'MATLAB:interp1:ppGriddedInterpolant');
+end;
 
 %% main algorithm
 
@@ -274,7 +279,7 @@ len = out_param.b-out_param.a;
 flag = 0;
 
 while n < out_param.nmax;
-
+    
     if(flag==0)
         x = out_param.a:len/(n-1):out_param.b;
         y = f(x);
@@ -351,6 +356,11 @@ else
     out_param.npoints = n;
     out_param.errorbound = fn*len^2/(8*(n-1)^2);
     pp = interp1(x,y,'linear','pp');
+    
+    
+end;
+if MATLABVERSION >= 8.3
+    warning('on', 'MATLAB:interp1:ppGriddedInterpolant');
 end;
 
 
@@ -384,7 +394,7 @@ if validvarargin
 end
 
 if ~validvarargin
-    %if only one input f, use all the default parameters 
+    %if only one input f, use all the default parameters
     out_param.a = default.a;
     out_param.b = default.b;
     out_param.abstol = default.abstol;
@@ -537,20 +547,20 @@ if (~gail.isposint(out_param.nhi))
 end
 
 if (out_param.nlo > out_param.nhi)
-     warning('MATLAB:funappx_g:logrhi', 'Lower bound of initial number of points is larger than upper bound of initial number of points; Use nhi as nlo')
-%     temp = out_param.nlo;
-%     out_param.nlo = out_param.nhi;
-%     out_param.nhi = temp;
+    warning('MATLAB:funappx_g:logrhi', 'Lower bound of initial number of points is larger than upper bound of initial number of points; Use nhi as nlo')
+    %     temp = out_param.nlo;
+    %     out_param.nlo = out_param.nhi;
+    %     out_param.nhi = temp;
     out_param.nhi = out_param.nlo;
 end;
 if (out_param.nlo > out_param.nmax)
     warning('MATLAB:funappx_g:logecost',['Lower bound of initial number of points should be smaller than cost budget.' ...
-            ' Using ', num2str(ceil(out_param.nmax/2))])
+        ' Using ', num2str(ceil(out_param.nmax/2))])
     out_param.nlo = out_param.nmax/2;
 end;
 if (out_param.nhi > out_param.nmax)
     warning('MATLAB:funappx_g:higecost',['Upper bound of initial number of points should be smaller than cost budget.' ...
-            ' Using ', num2str(out_param.nlo)])
+        ' Using ', num2str(out_param.nlo)])
     out_param.nhi = out_param.nlo;
 end;
 

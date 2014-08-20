@@ -140,6 +140,10 @@ function [fappx,out_param]=funappx01_g(varargin)
 
 % check parameter satisfy conditions or not
 [f, out_param] = funappx_g_param(varargin{:});
+[~,~,~,MATLABVERSION]=GAILstart(0);
+if MATLABVERSION >= 8.3
+    warning('off', 'MATLAB:interp1:ppGriddedInterpolant');
+end;
 
 %% main algorithm
 
@@ -214,6 +218,10 @@ out_param.errbound = fn/(8*(n-1)^2);
 x1 = 0:1/(out_param.npoints-1):1;
 y1 = f(x1);
 fappx = @(x) interp1(x1,y1,x,'linear');
+
+if MATLABVERSION >= 8.3
+    warning('on', 'MATLAB:interp1:ppGriddedInterpolant');
+end;
 
 function [f, out_param] = funappx_g_param(varargin)
 % parse the input to the funappx01_g function
