@@ -9,5 +9,12 @@ gailp=genpath(GAILPATH); % Generate strings of paths to GAIL subdirectories
 rmpath(gailp);  % Remove GAIL paths from MATLAB search path.
 addpath(gailp); % Add GAIL paths to MATLAB search path.
 savepath;       % Save the changes.
-builddocsearchdb(strcat(GAILPATH,'Documentation',PATHNAMESEPARATOR,'html'));
-fprintf('\nGAIL version %g has been reinstalled successfully.\n\n',GAILVERSION);
+reply = input('\nDo you want to install html documentation files?\n (Your answer is not case sensitive.) Y/N [N]: ', 's');
+    if any(strcmpi(reply,{'yes','y'}));
+        GAILpublish;        
+        builddocsearchdb(strcat(GAILPATH,'Documentation',PATHNAMESEPARATOR,'html'));
+        fprintf('\nYou can go to help documentation ---> Supplemental Software to learn how to use GAIL.\n');
+    else
+        fprintf('\nYou can use test documentation to learn how to use GAIL.\n');
+    end
+fprintf('\nGAIL version %g has been installed successfully.\n\n', GAILVERSION);
