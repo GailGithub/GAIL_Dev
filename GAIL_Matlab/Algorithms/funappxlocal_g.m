@@ -228,94 +228,83 @@ function [pp,out_param]=funappxlocal_g(varargin)
 % tau = ceil(out_param.tauhi*(out_param.taulo/out_param.tauhi)^(1/(1+len)));
 % n = ceil((tau+1)/2)+1;
 % initialize number of points
-n = out_param.ninit;
-index = [1 n];
+index = [1 out_param.ninit];
 % initialize nstar
-nstar = n - 2;
-% initialize error
-err = inf;
+nstar = out_param.ninit - 2;
 % length of interval
 len = out_param.b - out_param.a;
-x = out_param.a:len/(n-1):out_param.b;
+x = out_param.a:len/(out_param.ninit-1):out_param.b;
 y = f(x);
+diff_y = diff(y);
+%approximate the weaker norm of input function
+gn = (out_param.ninit-1)/len*max(abs(diff_y-(y(end)-y(1))/(out_param.ninit-1)));
+% initialize error
+err = nstar*len*gn/(4*(out_param.ninit-1)*(out_param.ninit-1-nstar));
 
-while(max(err) >= out_param.abstol)
-    % Stage 1: Find the maximum error
-    tmp = find(err==max(err),1);
+
+while(max(err) >= out_param.abstol)    
+    whbad = (err > out_param.abstol);
+    start = find(diff([0 whbad])==1);
+    endindex = find(diff([whbad 0])==-1);
+    n = 1;
+    for i=1:length(start)
+        a = index(start(i)) + n - 1;
+        b = index(endindex(i)+1)+ n - 1;
+        n = b-a+1;
+        len = x(b) - x(a);
+        h = (x(b)-x(a))/(2*(n-1));
+        %xnew = repmat(x(a:b-1),1,1)+repmat(h,1,n-1);
+        xnew = x(a:b-1)+h;
+        ynew = f(xnew);
+        xnew1 = [x(a:b-1); xnew];
+        xx = xnew1(:)';
+        ynew1 = [y(a:b-1); ynew];
+        yy = ynew1(:)';
+        diff_y = diff([yy y(b)]);
+        %approximate the weaker norm of input function
+        gn = (out_param.ninit-1)/len*max(abs(diff_y-(y(b)-y(a))/(out_param.ninit-1)));
+        %approximate the stronger norm of input function
+        %fn = (n-1)^2/len^2*max(abs(diff(diff_y)));
+        err(start(i):endindex(i)) = nstar*len*gn/(4*(out_param.ninit-1)*(out_param.ninit-1-nstar));
+        x = [x(1:a-1) xx x(b:end)];
+        y = [y(1:a-1) yy y(b:end)];   
+        errnew = [err(start(i):endindex(i)); err(start(i):endindex(i))];
+        errnew1 = errnew(:)';
+        err = [err(1:start(i)-1) errnew1 err(endindex(i)+1:end)];
+%         nstarnew = [nstar(start(i):endindex(i)); nstar(start(i):endindex(i))];
+%         nstarnew1 = nstarnew(:)';
+%         nstar = [nstar(1:start(i)-1) nstarnew1 nstar(endindex(i)+1:end)];
+    end;
+    index(2:end) = index(2:end) + cumsum(whbad)*(out_param.ninit-1);
+    indexbeg = index(1:end-1) + whbad*(out_param.ninit-1);
+    indexnew = [index(1:end-1); indexbeg];
+    indexnew = indexnew(:)';
+    index = unique([indexnew index(end)]);
     
-    % Stage 2: Computer the norm
-    a = index(tmp); b=index(tmp+1);
-    n = b-a+1;
-    len = x(b)-x(a);
-    diff_y = diff(y(a:b));
-    %approximate the weaker norm of input function
-    gn = (n-1)/len*max(abs(diff_y-(y(b)-y(a))/(n-1)));
-     %approximate the stronger norm of input function
-    fn = (n-1)^2/len^2*max(abs(diff(diff_y)));
-    
-    % Stage 3: satisfy necessary condition
-    if nstar(tmp)*(2*gn+fn*len/(n-1)) >= fn*len;
-        % Stage 4: check for convergence
-        err(tmp) = nstar(tmp)*len*gn/(4*(n-1)*(n-1-nstar(tmp)));
-        if err(tmp) >= out_param.abstol;
-            % Stage 5:          
-            index = [index(1:tmp) a+n-1 index(tmp+1:end)+n-1];
-            h = (x(b)-x(a))/(2*(n-1));
-            %xnew = repmat(x(a:b-1),1,1)+repmat(h,1,n-1);
-            xnew = x(a:b-1)+h;
-            ynew = f(xnew);
-            xnew1 = [x(a:b-1); xnew];
-            xx = xnew1(:)';
-            ynew1 = [y(a:b-1); ynew];
-            yy = ynew1(:)';
-%             xx = x(a):h:x(b);
-%             yy = f(xx);
-            x = [x(1:a-1) xx x(b:end)];
-            y = [y(1:a-1) yy y(b:end)];
-            err = [err(1:tmp-1) inf inf err(tmp+1:end)];
-            ntemp=max(ceil(out_param.nhi*(out_param.nlo/out_param.nhi)^(1/(1+h))),3);
-            nstar = [nstar(1:tmp-1) ntemp-2 ntemp-2 nstar(tmp+1:end)];
-        end;
-    else
-        % increase nstar
-        nstar(tmp) = 2*nstar(tmp);
-        % check if number of points large enough
-        if n >= nstar(tmp) + 2;
-            % true, go to Stage 4
-            err(tmp) = nstar(tmp)*len*gn/(4*(n-1)*(n-1-nstar(tmp)));
-            if err(tmp) >= out_param.abstol;
-                % Stage 5:
-                index = [index(1:tmp) a+n-1 index(tmp+1:end)+n-1];
-                h = (x(b)-x(a))/(2*(n-1));
-                xnew = repmat(x(a:b-1),1,1)+repmat(h,1,n-1);
-                ynew = f(xnew);
-                xnew = [x(a:b-1); xnew];
-                xx = [xnew(:); x(b)]';
-                ynew = [y(a:b-1); ynew];
-                yy = [ynew(:); y(b)]';
-                x = [x(1:a-1) xx x(b+1:end)];
-                y = [y(1:a-1) yy y(b+1:end)];
-                err = [err(1:tmp-1) inf inf err(tmp+1:end)];
-                ntemp=max(ceil(out_param.nhi*(out_param.nlo/out_param.nhi)^(1/(1+h))),3);
-                nstar = [nstar(1:tmp-1) ntemp-2 ntemp-2 nstar(tmp+1:end)];
-            end;
-        else
-            % Stage 5:
-            index = [index(1:tmp) a+n-1 index(tmp+1:end)+n-1];
-            h = (x(b)-x(a))/(2*(n-1));
-            xnew = repmat(x(a:b-1),1,1)+repmat(h,1,n-1);
-            ynew = f(xnew);
-            xnew = [x(a:b-1); xnew];
-            xx = [xnew(:); x(b)]';
-            ynew = [y(a:b-1); ynew];
-            yy = [ynew(:); y(b)]';
-            x = [x(1:a-1) xx x(b+1:end)];
-            y = [y(1:a-1) yy y(b+1:end)];
-            err = [err(1:tmp-1) inf inf err(tmp+1:end)];
-            nstar = [nstar(1:tmp-1) nstar(tmp) nstar(tmp) nstar(tmp+1:end)];
-        end;
-    end;    
+%     tmp = find(err > out_param.abstol);
+%     for i = 1:length(tmp);
+%         len = x(index(tmp(i)+1))-x(index(tmp(i)));
+%         diff_y = diff(y(index(tmp(i)):index(tmp(i)+1)));
+%         %approximate the weaker norm of input function
+%         gn = (out_param.ninit-1)/len*max(abs(diff_y-(y(index(tmp(i)+1))-y(index(tmp(i))))/(out_param.ninit-1)));
+%         %approximate the stronger norm of input function
+%         fn = (n-1)^2/len^2*max(abs(diff(diff_y)));
+%         Stage 3: satisfy necessary condition
+%         if nstar*(2*gn+fn*len/(out_param.ninit-1)) >= fn*len;
+%             Stage 4: check for convergence
+%             err(tmp(i)) = nstar*len*gn/(4*(out_param.ninit-1)*(out_param.ninit-1-nstar));
+%         else
+%             % increase nstar
+%             nstar(tmp(i)) = 2*nstar(tmp(i));
+%             % check if number of points large enough
+%             if out_param.ninit >= nstar(tmp(i)) + 2;
+%                 % true, go to Stage 4
+%                 err(tmp(i)) = nstar(tmp(i))*len*gn/(4*(out_param.ninit-1)*(out_param.ninit-1-nstar(tmp(i))));
+%             end;
+%         end;
+%     end;
 end;
+
 out_param.npoints = index(end);
 out_param.errorbound = max(err);
 out_param.nstar = nstar;
