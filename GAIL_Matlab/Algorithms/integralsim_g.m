@@ -106,8 +106,12 @@ while true
     %Compute approximations to the strong and weak norms
     nintok=true; %ninit is large enough for tau
     df=diff(fpts); %first difference of points
-    Gf=sum(abs(df-(fpts(nint+1)-fpts(1))/nint)); %approx weak norm
-    Ff=nint*(sum(abs(diff(df)))); %approx strong norm
+    df1=reshape(df,2,length(df)/2); %matrix operation
+    df1=df1(2,:)-df1(1,:); %matrix operation
+    Gf=sum(abs(2*nint*df1-8*(fpts(nint+1)-f(0.5)+fpts(1))/nint)); %approx weak norm
+    Ff=nint^2*(sum(abs(diff(diff(df))))); %approx strong norm
+%     Gf=sum(abs(df-(fpts(nint+1)-fpts(1))/nint)); %approx weak norm
+%     Ff=nint*(sum(abs(diff(df)))); %approx strong norm
     
     %Check necessary condition for integrand to lie in cone
     if out_param.tau*(Gf+Ff/(2*nint)) < Ff %f lies outside cone
@@ -122,7 +126,7 @@ while true
     
     if nintok %ntrap large enough for tau
         %compute a reliable error estimate
-        errest=out_param.tau*Gf/(1152*nint.^3*(nint-out_param.tau));
+        errest=out_param.tau^2*Gf/(72*nint.^3*(4*nint-out_param.tau));
         if errest <= out_param.abstol %tolerance is satisfied
             q=sumf/nint/3; %compute the integral
             break %exit while loop
