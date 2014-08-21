@@ -61,7 +61,6 @@ function [mu,out_param]=meanMC_g(varargin)
 %    in_param.nbudget --- the sample budget to do the two-stage estimation,
 %    the default value is 1e9.
 %
-%
 %   Output Arguments
 %
 %    mu --- the estimated mean of Y.

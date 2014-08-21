@@ -310,7 +310,7 @@ while 1
         end
         break
     else
-        i=i+1;% go to the next step
+        i=i+1;%go to the next step
     end
 end
 end

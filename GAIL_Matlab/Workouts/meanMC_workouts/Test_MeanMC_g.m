@@ -2,7 +2,9 @@
 clear all; close all; clc;
 %y = @(n) rand(n,1).^2;% the test function
 y = @Ytrafficmodel; % this is the traffic model
-in_param.abstol = 1e-2;% the absolute error tolerance
+in_param.abstol = 1e-1;% the absolute error tolerance
+in_param.reltol = 1e-14;
+in_param.tbudget = 50;
 % in_param.alpha = 0.01;% uncertainty
 % in_param.n_sigma = 1e3;% sample size to estimate the variance
 % in_param.fudge = 1.1;% variance inflation factor
