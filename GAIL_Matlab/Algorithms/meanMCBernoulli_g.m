@@ -14,11 +14,11 @@ function [p,out_param]=meanMCBernoulli_g(varargin)
 %   tolerance with guaranteed confidence level 1-alpha using all ordered
 %   parsing inputs abstol, reltol, errtype, alpha and nmax.
 % 
-%   p = MEANMCBERNOULLI_G(Yrand,'abstol',abstol,'reltol',reltol,'errtype',errtype,
-%   'alpha',alpha,'nmax',nmax) estimates the mean of a Bernoulli random
-%   variable Y to within a specified error tolerance with guaranteed
-%   confidence level 1-alpha. All the field-value pairs are optional and
-%   can be supplied in different order.
+%   p = MEANMCBERNOULLI_G(Yrand,'abstol',abstol,'reltol',reltol,...
+%   'errtype',errtype,'alpha',alpha,'nmax',nmax) estimates the mean of a
+%   Bernoulli random variable Y to within a specified error tolerance with
+%   guaranteed confidence level 1-alpha. All the field-value pairs are
+%   optional and can be supplied in different order.
 % 
 %   [p, out_param] = MEANMCBERNOULLI_G(Yrand,in_param) estimates the mean
 %   of a Bernoulli random variable Y to within a specified error tolerance
@@ -26,8 +26,8 @@ function [p,out_param]=meanMCBernoulli_g(varargin)
 % 
 %   Input Arguments
 %
-%     Yrand --- the function for generating IID instances of a Bernoulli random
-%      variable Y whose mean we want to estimate.
+%     Yrand --- the function for generating IID instances of a Bernoulli
+%               random variable Y whose mean we want to estimate.
 % 
 %     p --- the estimated mean of Y.
 % 
@@ -42,9 +42,20 @@ function [p,out_param]=meanMCBernoulli_g(varargin)
 % 
 %     in_param.alpha --- the uncertainty, default value is 1%.
 % 
-%     in_param.nmax --- the sample budget, default value is 1e8.
+%     in_param.nmax --- the sample budget, default value is 1e9.
 % 
 %   Output Arguments
+%
+%     out_param.n_clt --- sample size calculated by Central Limit Theorem.
+%
+%     out_param.n_hoeff --- sample size calculated by Hoeffding's
+%      Inequality.
+% 
+%     out_param.nabs --- sample size needed to satisfy absolute error
+%     tolerance
+%
+%     out_param.nrel --- sample size needed to satisfy relative error
+%     tolerance 
 %
 %     out_param.n --- the total sample used.
 % 
@@ -73,7 +84,7 @@ function [p,out_param]=meanMCBernoulli_g(varargin)
 %   Using the sample function as example 1, with the relative error
 %   tolerance 1e-2 and uncertainty 0.005.
 % 
-%   >> p=meanMCBernoulli_g(Yrand,'errtype','rel','reltol',1e-1,'alpha',0.05)
+%   >> p=meanMCBernoulli_g(Yrand,'errtype','rel','reltol',1e-2,'alpha',0.05)
 %   p = 0.011***
 % 
 % 
@@ -97,26 +108,25 @@ function [p,out_param]=meanMCBernoulli_g(varargin)
 %
 tstart = tic; %start the clock
 [Yrand,out_param] = meanMCBernoulli_g_param(varargin{:});
-%parse and verify parameters
-nsofar = 0;% sample used so far
-out_param.npcmax = 1e6; %
+%parameter checking and parsing
+nsofar = 0;%sample used so far
 if strcmpi(out_param.errtype,'abs') % absolute error type
-    out_param = nabs(out_param,tstart);
-    %get how many samples needed to reach absolute error tolerance
+    out_param = nabs(out_param,tstart);%calculate the sample needed
     out_param.n = out_param.nabs;%update n
 end
 if strcmpi(out_param.errtype,'rel')% relative error type
     [nsofar,out_param] = nrel(out_param,Yrand,tstart);
-    %get how many samples needed to reach relative error tolerance
+    %calculate the sample needed
     out_param.n = out_param.nrel;%update n
 end
 
-if strcmpi(out_param.errtype,'either')% to satisfy either absolute or relative error 
+if strcmpi(out_param.errtype,'either')%either absolute or relative error tolerance
     out_param = nabs(out_param,tstart);
     [nsofar,out_param] = nrel(out_param,Yrand,tstart);
     out_param.n = min(out_param.nabs,out_param.nrel);
 end
-out_param.p = gail.evalmean(Yrand,out_param.n,out_param.npcmax);
+npcmax = 1e6;
+out_param.p = gail.evalmean(Yrand,out_param.n,npcmax);
 % evaluate the mean 
 p=out_param.p; % assign answer
 out_param.n = out_param.n+nsofar; % update total sample used
@@ -126,16 +136,16 @@ end
 function  [Yrand,out_param] = meanMCBernoulli_g_param(varargin)
 default.reltol = 1e-1;% default relative error tolerance
 default.abstol  = 1e-2;% default absolute error tolerance
-default.errtype = 'abs';% degault errtype 
+default.errtype = 'abs';% default error type 
 default.alpha = 1e-2;% default uncertainty
-default.nmax = 1e8;% default n maximum
+default.nmax = 1e9;% default the sample budget
 if isempty(varargin) % if no parsing value
     help meanMCBernoulli_g % print documentation
     warning('MATLAB:meanMCBernoulli_g:yrandnotgiven',...
         ['Yrand must be specified. Now GAIL is using Bernoulli random ', ...
     'variable with parameter 0.0078.'])%print warning message
     p = 2^(-7);
-    Yrand = @(n) rand(n,1)<p;% use default function
+    Yrand = @(n) rand(n,1)<p;% use the default function
 else
     Yrand = varargin{1};
 end
@@ -252,7 +262,7 @@ end
 
 function out_param = nabs(out_param,tstart)
 % this function is to calculate the sample size n needed to satisfy
-% absolute error critera.
+% absolute error criteria.
 out_param.n_clt = ceil(gail.stdnorminv(1-out_param.alpha/2)/(4*out_param.abstol^2));
 % use central limit theorem to get n
 out_param.n_hoeff = ceil(log(2/out_param.alpha)/(2*out_param.abstol^2));
@@ -268,39 +278,39 @@ end
 
 function [nsofar,out_param] = nrel(out_param,Yrand,tstart)
 i = 1;% initial iteration step
-nsofar = 0;% sample used
+nsofar = 0;% sample used so far
 while 1
-    out_param.alphap = 1e-3;% the uncertainty for the last step to evaluate the mean
+    alphap = 1e-3;% the uncertainty for the last step to evaluate the mean
     a=2;% parameter to get uncertainty in each step
-    out_param.alphai = 1-(1-out_param.alpha+out_param.alphap)^((a-1)*a^-i);
+    npcmax = 1e6;
+    alphai = 1-(1-out_param.alpha+alphap)^((a-1)*a^-i);
     %uncertainty in each step
-    out_param.toli = out_param.reltol*2^-i;%tolerance in each step
-    out_param.ni = ceil(-log(out_param.alphai)/(2*out_param.toli^2));
-    if out_param.ni > out_param.nmax- nsofar;% if ni is bigger than sample left
+    toli = out_param.reltol*2^-i;%tolerance in each step
+    ni = ceil(-log(alphai)/(2*toli^2));
+    if ni > out_param.nmax-nsofar;% if ni is bigger than sample left
         out_param.exit=2; % pass a flag 
         meanMCBernoulli_g_err(out_param,tstart); % print warning message
         out_param.nrel = out_param.nmax- nsofar;%update nrel using all sample left
-        break;
+        break
     end
-    meanY = gail.evalmean(Yrand,out_param.ni,out_param.npcmax);%evaluate mean
-    nsofar = nsofar+out_param.ni;%update n used so far 
-    c = max(meanY-out_param.toli,0); % parameter to determine the stopping time
+    meanY = gail.evalmean(Yrand,ni,npcmax);%evaluate mean
+    nsofar = nsofar+ni;%update n used so far 
+    c = max(meanY-toli,0); % parameter to determine the stopping time
     delta = 1/2; % constant to determine stopping time
-    if c > (meanY+out_param.toli)*delta % stopping criterion
-        out_param.tau = i;%stop time(step) tau
-        out_param.nrel = ceil(-log(out_param.alphap/2)/(2*(c*out_param.reltol)^2));
+    if c > (meanY+toli)*delta % stopping criterion
+        out_param.tau = i;%stopping time tau
+        out_param.nrel = ceil(-log(alphap/2)/(2*(c*out_param.reltol)^2));
         % calculate nrel needed
         if  out_param.nrel > out_param.nmax-nsofar
             %if nrel is bigger than sample left
             out_param.exit=3; % pass a flag
             meanMCBernoulli_g_err(out_param,tstart);% print warning message
             out_param.nrel = out_param.nmax- nsofar;%update nrel
-            break;
-        else
-            break;
+            break
         end
+        break
     else
-        i=i+1;% go to next step
+        i=i+1;% go to the next step
     end
 end
 end

@@ -67,7 +67,8 @@ function [mu,out_param]=meanMCRel_g(varargin)
 %    mu --- the estimated mean of Y.
 %
 %    out_param.nmax --- the maximum sample budget to estimate mu, it comes
-%    from both the sample budget and the time budget.
+%    from both the sample budget and the time budget and sample has been
+%    used.
 %
 %    out_param.var --- the sample variance.
 %
@@ -83,6 +84,8 @@ function [mu,out_param]=meanMCRel_g(varargin)
 %    out_param.n --- the total sample size used to do the two stage estimation.
 %
 %    out_param.time --- the time elapsed.
+%   
+%    out_param.tau --- iteration step when given relative error tolerance.
 %
 % Guarantee
 % ---to be added
@@ -182,7 +185,7 @@ out_param.tol(1) = sig0up*eps1;
 i=1;
 out_param.n(i) = out_param.n1;
 while true
-    out_param.step = i;
+    out_param.tau = i;
     if out_param.n(i) > out_param.nmax;
         % if the sample size used for initial estimation is
         % larger than nmax, print warning message and use nmax
@@ -412,7 +415,7 @@ if ~isfield(out_param,'exit'); return; end
 if out_param.exit==0; return; end
 switch out_param.exit
     case 1 % not enough samples to estimate the mean.
-        nexceed = out_param.n(out_param.step);
+        nexceed = out_param.n(out_param.tau);
         warning('MATLAB:meanMCRel_g:maxreached',...
             ['tried to evaluate at ' int2str(nexceed) ...
             ' samples, which is more than the allowed maximum of '...
