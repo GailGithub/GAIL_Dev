@@ -14,7 +14,7 @@ function [p,out_param]=meanMCBernoulli_g(varargin)
 %   tolerance with guaranteed confidence level 1-alpha using all ordered
 %   parsing inputs abstol, reltol, errtype, alpha and nmax.
 % 
-%   p = MEANMCBERNOULLI_G(Yrand,'abstol',abstol,'reltol',reltol,...
+%   p = MEANMCBERNOULLI_G(Yrand,'abstol',abstol,'reltol',reltol,
 %   'errtype',errtype,'alpha',alpha,'nmax',nmax) estimates the mean of a
 %   Bernoulli random variable Y to within a specified error tolerance with
 %   guaranteed confidence level 1-alpha. All the field-value pairs are

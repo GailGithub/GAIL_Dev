@@ -1,49 +1,49 @@
 %UT_MEANMC_G  unit test for meanMC_g
-classdef ut_meanMCRel_g < matlab.unittest.TestCase
+classdef ut_meanMC_g < matlab.unittest.TestCase
   
   methods(Test)
     
-    function meanMCRel_gOfexp(testCase)
+    function meanMC_gOfexp(testCase)
       in_param.abstol = 1e-2;
       in_param.reltol = 1e-13;
-      meanY = meanMCRel_g(@(n) exp(rand(n,1)),in_param);
+      meanY = meanMC_g(@(n) exp(rand(n,1)),in_param);
       exactY = exp(1)-1;
       actualerr = abs(meanY-exactY);
       testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
     end
     
-    function meanMCRel_gOfxsquare(testCase)
+    function meanMC_gOfxsquare(testCase)
       in_param.reltol = 1e-1;
       in_param.abstol = 1e-13;
-      meanY = meanMCRel_g(@(n) rand(n,1).^2,in_param);
+      meanY = meanMC_g(@(n) rand(n,1).^2,in_param);
       exactY = 1/3;
       actualerr = abs(meanY-exactY)/exactY;
       testCase.verifyLessThanOrEqual(actualerr,in_param.reltol);
     end
     
-    function meanMCRel_gOfsin(testCase)
+    function meanMC_gOfsin(testCase)
       in_param.reltol = 1e-2;
       in_param.abstol = 1e-13;
-      meanY = meanMCRel_g(@(n) sin(rand(n,1)),in_param);
+      meanY = meanMC_g(@(n) sin(rand(n,1)),in_param);
       exactY = 1-cos(1);
       actualerr = abs(meanY-exactY)/exactY;
       testCase.verifyLessThanOrEqual(actualerr,in_param.reltol);
     end
     
-    function meanMCRel_gOfparsing(testCase)
+    function meanMC_gOfparsing(testCase)
       in_param.abstol = -1e-2;  
       in_param.reltol = 1e-13;
-      meanY = testCase.verifyWarning(@()meanMCRel_g(@(n) rand(n,1).^2,...
-        in_param),'MATLAB:meanMCRel_g:abstolneg');
+      meanY = testCase.verifyWarning(@()meanMC_g(@(n) rand(n,1).^2,...
+        in_param),'MATLAB:meanMC_g:abstolneg');
       exactY = 1/3;
       actualerr = abs(meanY-exactY);
       testCase.verifyLessThanOrEqual(actualerr,abs(in_param.abstol));
     end
     
-    function meanMCRel_gOfnonRandomInput(testCase)
+    function meanMC_gOfnonRandomInput(testCase)
         in_param.abstol = 1e-2;
-        testCase.verifyWarning(@()meanMCRel_g(@(x) x.^2,...
-            in_param),'MATLAB:meanMCRel_g:yrandnotlengthN');
+        testCase.verifyWarning(@()meanMC_g(@(x) x.^2,...
+            in_param),'MATLAB:meanMC_g:yrandnotlengthN');
         
     end
   end
