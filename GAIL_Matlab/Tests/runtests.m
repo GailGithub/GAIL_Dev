@@ -21,6 +21,7 @@ clear in_param;
 doctest dt_funappx_g
 doctest dt_funappxlocal_g
 doctest funmin_g
+doctest funminab_g
 doctest integral_g
 doctest integralsim_g
 doctest integral01_g
