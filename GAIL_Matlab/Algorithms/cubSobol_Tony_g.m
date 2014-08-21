@@ -50,10 +50,9 @@ function [q,out_param] = cubSobol_g(varargin)
 %     Sobol' generator, mmax is a positive integer such that mmin<=mmax<=53.
 %     The default value is 24.
 %
-%     in_param.fudge --- the positive function multiplying the finite 
-%     sum of Fast Walsh coefficients specified in the cone of functions.
-%     For more information about this parameter, refer to the references.
-%     By default is @(x) 5*2^-x.
+%     in_param.fudge --- the constant multiplying the cone of functions. For more
+%     information about this parameter, refer to the references. It should be a
+%     real positve number. By default is 3.
 %
 %   Output Arguments
 %
@@ -81,7 +80,8 @@ function [q,out_param] = cubSobol_g(varargin)
 % Example 1:
 % Estimate the integral with integrand f(x) = x1.*x2 in the interval [0,1)^2:
 %
-% >> f=@(x) x(:,1).*x(:,2); d=2; q = cubSobol_g(f,d,1e-5,'uniform')
+% >> f=@(x) x(:,1).*x(:,2); d=2;
+% >> q = cubSobol_g(f,d,1e-5,'uniform')
 % q = 0.25***
 % 
 % 
@@ -89,7 +89,8 @@ function [q,out_param] = cubSobol_g(varargin)
 % Estimate the integral with integrand f(x) = x1.^2.*x2.^2.*x3.^2+0.11
 % in the interval R^3 where x1, x2 and x3 are normally distributed:
 %
-% >> f=@(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2+0.11; d=3; q = cubSobol_g(f,d,1e-3,'normal')
+% >> f=@(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2+0.11; d=3;
+% >> q = cubSobol_g(f,d,1e-3,'normal')
 % q = 1.1***
 % 
 %
@@ -97,7 +98,8 @@ function [q,out_param] = cubSobol_g(varargin)
 % Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) in the
 % interval [0,1)^2:
 % 
-% >> f=@(x) exp(-x(:,1).^2-x(:,2).^2); d=2; q = cubSobol_g(f,d,1e-3,'uniform')
+% >> f=@(x) exp(-x(:,1).^2-x(:,2).^2); d=2;
+% >> q = cubSobol_g(f,d,1e-3,'uniform')
 % q = 0.55***
 %
 %
@@ -136,16 +138,15 @@ end
 mlag=4; %distance between coefficients summed and those computed
 sobstr=sobolset(out_param.d); %generate a Sobol' sequence
 sobstr=scramble(sobstr,'MatousekAffineOwen'); %scramble it
-Stilde=zeros(out_param.mmax-out_param.mmin+1,1); %initialize sum of DFWT terms
-errest=zeros(out_param.mmax-out_param.mmin+1,1); %initialize error estimates
-appxinteg=zeros(out_param.mmax-out_param.mmin+1,1); %initialize approximations to integral
-out_param.overbudget=true; %we have overrun our budget, until indicated otherwise
+Stilde=zeros(out_param.mmax-out_param.mmin+1,1);
+errest=zeros(out_param.mmax-out_param.mmin+1,1);
+appxinteg=zeros(out_param.mmax-out_param.mmin+1,1);
+out_param.overbudget='Max budget reached with no guarantees.';
 
 %% Initial points and FWT
-out_param.n=2^out_param.mmin; %total number of points to start with
-n0=out_param.n; %initial number of points
-xpts=sobstr(1:n0,1:out_param.d); %grab Sobol' points
-y=f(xpts); %evaluate integrand
+out_param.n=2^out_param.mmin;
+xpts=sobstr(1:out_param.n,1:out_param.d); n0=out_param.n;
+y=f(xpts);
 yval=y;
 
 %% Compute initial FWT
@@ -164,28 +165,24 @@ end
 q=mean(yval);
 appxinteg(1)=q;
 
-%% Create kappanumap implicitly from the data
+%% Create kappanumap
 kappanumap=(1:out_param.n)'; %initialize map
 for l=out_param.mmin-1:-1:1
    nl=2^l;
    oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
    newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa, 
-   flip=find(newone>oldone); %which in the pair are the larger ones
-   temp=kappanumap(nl+1+flip); %then flip 
-   kappanumap(nl+1+flip)=kappanumap(1+flip); %them
-   kappanumap(1+flip)=temp; %around
+   flip=find(newone>oldone);
+   temp=kappanumap(nl+1+flip);
+   kappanumap(nl+1+flip)=kappanumap(1+flip);
+   kappanumap(1+flip)=temp;
 end
 
 %% Compute Stilde
 nllstart=2^(out_param.mmin-mlag-1);
 Stilde(1)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
-out_param.pred_err=out_param.fudge(out_param.mmin)*Stilde(1);
+out_param.pred_err=out_param.fudge*2^(-out_param.mmin)*Stilde(1);
 errest(1)=out_param.pred_err;
-if out_param.pred_err <= out_param.abstol; 
-   out_param.overbudget=false; 
-   out_param.time=toc; 
-   return, 
-end
+if out_param.pred_err <= out_param.abstol; out_param.overbudget='Max budget not reached.'; out_param.time=toc; return, end
 
 %% Loop over m
 for m=out_param.mmin+1:out_param.mmax 
@@ -220,8 +217,7 @@ for m=out_param.mmin+1:out_param.mmax
 
    %% Update kappanumap
    kappanumap=[kappanumap; (nnext+1:out_param.n)']; %initialize map
-%   for l=m-1:-1:1
-   for l=m-1:-1:m-mlag-1 %update just some, not exactly sure about this
+   for l=m-1:-1:1
       nl=2^l;
       oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
       newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa, 
@@ -235,17 +231,13 @@ for m=out_param.mmin+1:out_param.mmax
    nllstart=2^(m-mlag-1);
    meff=m-out_param.mmin+1;
    Stilde(meff)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
-   out_param.pred_err=out_param.fudge(m)*Stilde(meff);
+   out_param.pred_err=out_param.fudge*2^(-m)*Stilde(meff);
    errest(meff)=out_param.pred_err;
 
    %% Approximate integral
    q=mean(yval);
    appxinteg(meff)=q;
-   if out_param.pred_err <= out_param.abstol; 
-      out_param.overbudget=false; 
-      out_param.time=toc; 
-      return 
-   end
+   if out_param.pred_err <= out_param.abstol; out_param.overbudget='Max budget not reached.'; out_param.time=toc; return, end
 
 end
 out_param.time=toc;
@@ -260,7 +252,7 @@ default.abstol  = 1e-4;
 default.density  = 'uniform';
 default.mmin  = 10;
 default.mmax  = 24;
-default.fudge = @(x) 5*2^-x;
+default.fudge = 3;
 
 if numel(varargin)<2
     help cubSobol_g
@@ -371,8 +363,8 @@ if ~(gail.isposint(out_param.mmax) && out_param.mmax>=out_param.mmin && out_para
 end
 
 % Force fudge factor to be greater than 0
-if ~gail.isfcn(out_param.fudge)
-    warning('MATLAB:cubSobol_g:fudgenofcn',['The fudge factor should be a positve function.' ...
+if (out_param.fudge <= 0 )
+    warning('MATLAB:cubSobol_g:fudgenonpos',['The fudge factor should be greater than 0.' ...
             ' Using default fudge factor ' num2str(default.fudge)])
     out_param.fudge = default.fudge;
 end
