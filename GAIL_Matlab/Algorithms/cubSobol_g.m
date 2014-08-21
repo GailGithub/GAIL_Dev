@@ -50,9 +50,10 @@ function [q,out_param] = cubSobol_g(varargin)
 %     Sobol' generator, mmax is a positive integer such that mmin<=mmax<=53.
 %     The default value is 24.
 %
-%     in_param.fudge --- the constant multiplying the cone of functions. For more
-%     information about this parameter, refer to the references. It should be a
-%     real positve number. By default is 3.
+%     in_param.fudge --- the positive function multiplying the finite 
+%     sum of Fast Walsh coefficients specified in the cone of functions.
+%     For more information about this parameter, refer to the references.
+%     By default is @(x) 5*2^-x.
 %
 %   Output Arguments
 %
@@ -178,7 +179,7 @@ end
 %% Compute Stilde
 nllstart=2^(out_param.mmin-mlag-1);
 Stilde(1)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
-out_param.pred_err=out_param.fudge*2^(-out_param.mmin)*Stilde(1);
+out_param.pred_err=out_param.fudge(out_param.mmin)*Stilde(1);
 errest(1)=out_param.pred_err;
 if out_param.pred_err <= out_param.abstol; 
    out_param.overbudget=false; 
@@ -234,7 +235,7 @@ for m=out_param.mmin+1:out_param.mmax
    nllstart=2^(m-mlag-1);
    meff=m-out_param.mmin+1;
    Stilde(meff)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
-   out_param.pred_err=out_param.fudge*2^(-m)*Stilde(meff);
+   out_param.pred_err=out_param.fudge(m)*Stilde(meff);
    errest(meff)=out_param.pred_err;
 
    %% Approximate integral
@@ -259,8 +260,7 @@ default.abstol  = 1e-4;
 default.density  = 'uniform';
 default.mmin  = 10;
 default.mmax  = 24;
-%default.fudge = 3;
-default.fudge = 5;
+default.fudge = @(x) 5*2^-x;
 
 if numel(varargin)<2
     help cubSobol_g
@@ -371,8 +371,8 @@ if ~(gail.isposint(out_param.mmax) && out_param.mmax>=out_param.mmin && out_para
 end
 
 % Force fudge factor to be greater than 0
-if (out_param.fudge <= 0 )
-    warning('MATLAB:cubSobol_g:fudgenonpos',['The fudge factor should be greater than 0.' ...
+if ~gail.isfcn(out_param.fudge)
+    warning('MATLAB:cubSobol_g:fudgenofcn',['The fudge factor should be a positve function.' ...
             ' Using default fudge factor ' num2str(default.fudge)])
     out_param.fudge = default.fudge;
 end
