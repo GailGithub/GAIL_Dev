@@ -3,7 +3,7 @@ function [fmin,out_param]=funminab_g(varargin)
 %on a closed interval [a,b] and the subset containing optimal solutions
 %
 %   fmin = FUNMIN_G(f) finds minimum value of function f on the default
-%   interval [0,1] within the guatanteed absolute error tolerance of 1e-6
+%   interval [0,1] within the guaranteed absolute error tolerance of 1e-6
 %   and the X tolerance of 1e-3. Default initial number of points is 100
 %   and default cost budget is 1e7. Input f is a function handle.
 %
@@ -19,7 +19,7 @@ function [fmin,out_param]=funminab_g(varargin)
 %   interval [a,b] with a guaranteed absolute error tolerance abstol, a
 %   guaranteed X tolerance TolX, a lower bound of initial number of points
 %   nlo, an upper bound of initial number of points nhi, and a cost budget
-%   nmax. All six field-value pairs are optional and can be supplied in
+%   nmax. All seven field-value pairs are optional and can be supplied in
 %   different order.
 %
 %   fmin = FUNMIN_G(f,in_param) finds minimum value of function f on the
@@ -86,7 +86,8 @@ function [fmin,out_param]=funminab_g(varargin)
 %     algorithm has used a larger tau.
 %
 %     out_param.intervals --- the intervals containing point(s) where the
-%     minimum occurs
+%     minimum occurs. Each column indicates one interval where the first
+%     row is the left point and the second row is the right point.  
 %
 %
 %  Guarantee
@@ -104,7 +105,7 @@ function [fmin,out_param]=funminab_g(varargin)
 %
 %  Example 1:
 %
-%  >> f=@(x) (x-0.3).^2+1; [fmin,out_param] = funmin_gab(f)
+%  >> f=@(x) (x-0.3).^2+1; [fmin,out_param] = funminab_g(f)
 %
 %  fmin =
 %
@@ -132,7 +133,7 @@ function [fmin,out_param]=funminab_g(varargin)
 %  Example 2:
 %
 %  >> f=@(x) (x-0.3).^2+1;
-%  >> [fmin,out_param] = funminab_g(f,-2,2,1e-7,10,10,1000000)
+%  >> [fmin,out_param] = funminab_g(f,-2,2,1e-7,1e-4,10,10,1000000)
 %
 %  fmin =
 %
