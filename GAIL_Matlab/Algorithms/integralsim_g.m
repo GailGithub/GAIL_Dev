@@ -98,7 +98,7 @@ out_param.exceedbudget=false;   % if the number of points used in the calculatio
 out_param.tauchange=false;  % if the cone constant has been changed
 xpts=linspace(0,1,out_param.ninit)'; % generate ninit number of uniformly spaced points in [0,1]
 fpts=f(xpts);   % get function values at xpts
-sum1=reshape(fpts(2:out_param.ninit),2,(out_param.ninit-1)/2); %compute the 4 time part of Simpson's rule
+sum1=reshape(fpts(2:out_param.ninit),2,(out_param.ninit-1)/2); %compute the 4-time part of Simpson's rule
 sumf=(fpts(1)+fpts(out_param.ninit))+2*sum(fpts(2:out_param.ninit-1))+2*sum(sum1(1,:));    % computes the sum of Simpson's rule
 nint=out_param.ninit-1; % number of intevals
 
@@ -108,7 +108,7 @@ while true
     df=diff(fpts); %first difference of points
     df1=reshape(df,2,length(df)/2); %matrix operation
     df1=df1(2,:)-df1(1,:); %matrix operation
-    Gf=sum(abs(2*nint*df1-8*(fpts(nint+1)-f(0.5)+fpts(1))/nint)); %approx weak norm
+    Gf=sum(abs(2*nint*df1-8*(fpts(nint+1)-2*f(0.5)+fpts(1))/nint)); %approx weak norm   
     Ff=nint^2*(sum(abs(diff(diff(df))))); %approx strong norm
 %     Gf=sum(abs(df-(fpts(nint+1)-fpts(1))/nint)); %approx weak norm
 %     Ff=nint*(sum(abs(diff(df)))); %approx strong norm
