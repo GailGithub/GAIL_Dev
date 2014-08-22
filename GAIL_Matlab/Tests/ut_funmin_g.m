@@ -101,7 +101,6 @@ classdef ut_funmin_g < matlab.unittest.TestCase
             intnum = size(result.intervals,2);
             testflag1 = 1;
             testflag2 = 1;
-            testflag = 1;
             for k=1:intnum
                 if exactsolu1 <= result.intervals(2,k) && exactsolu1 >= ...
                         result.intervals(1,k)
