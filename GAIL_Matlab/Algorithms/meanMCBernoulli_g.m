@@ -58,9 +58,40 @@ function [p,out_param]=meanMCBernoulli_g(varargin)
 %     tolerance 
 %
 %     out_param.n --- the total sample used.
+%
+%     out_param.tau --- the iteration step.
 % 
 %     out_param.time --- the time elapsed.
 % 
+%  Guarantee
+%
+% Case 1: errtype = 'abs'
+%
+% If the sample was taken as according to Hoeffding's inequality, which is 
+% ceil(log(2/out_param.alpha)/(2*out_param.abstol^2)), then the following
+% inequality must be satisfied
+%
+% Pr(|p-\hat{p}| <= abstol) >= 1-alpha.
+% 
+% Here p is the true mean of Y, and \hat{mu} is the output
+% of MEANMCBERNOULLI_G with errtype = 'abs'
+%
+% Also, the cost is deterministic and bounded.
+% 
+% Case 2: errtype = 'rel'
+%
+% If the algorithm terminated without any warning messages, the result p
+% would satisfy the following inequality:
+%
+% Pr(|p-\hat{p}| <= abstol*p) >= 1-alpha.
+%
+% Here p is the true mean of Y, and \hat{mu} is the output of
+% MEANMCBERNOULLI_G with errtype = 'rel'
+% 
+% Addtionally, the cost of the algorithm would be bounded by N_up, which is
+% in terms of the true mean p, uncertainty alpha and relative tolerance
+% reltol. For details, please refer to the paper.
+%
 %   Examples
 % 
 %   Example 1:
@@ -262,13 +293,9 @@ end
 
 function out_param = nabs(out_param,tstart)
 % this function is to calculate the sample size n needed to satisfy
-% absolute error criteria.
-out_param.n_clt = ceil(gail.stdnorminv(1-out_param.alpha/2)/(4*out_param.abstol^2));
-% use central limit theorem to get n
-out_param.n_hoeff = ceil(log(2/out_param.alpha)/(2*out_param.abstol^2));
-%use Hoeffding's inequality to get n
-out_param.nabs = max(out_param.n_hoeff,out_param.n_clt);
-% take the max of Hoeffding's n and CLT n
+% absolute error criterion
+out_param.nabs = ceil(log(2/out_param.alpha)/(2*out_param.abstol^2));
+% take the sample size by Hoeffding's inequality
 if out_param.nabs > out_param.nmax % if the sample needed is is bigger than nmax
     out_param.exit=1; % pass a flag
     meanMCBernoulli_g_err(out_param,tstart);% print warning message
