@@ -1,17 +1,17 @@
 function [mu,out_param]=meanMC_g(varargin)
 % MEANMC_G Monte Carlo method to estimate the mean of a random variable
-% to within a specified generalized error tolerance tol=
+% to within a specified generalized error tolerance tolfun=
 % max(abstol,reltol|mu|) with guaranteed confidence level 1-alpha.
 %
 %   mu = MEANMC_G(Yrand) estimates the mean of a random variable Y to
-%   within a specified generalized error tolerance with guaranteed
-%   confidence level 99%. Input Yrand is a function handle that accepts a
-%   positive integer input n and returns an n x 1 vector of IID instances
-%   of the random variable Y.
+%   within a specified generalized error tolerance tolfun =
+%   max(abstol,reltol|mu|) with guaranteed confidence level 99%. Input
+%   Yrand is a function handle that accepts a positive integer input n and
+%   returns an n x 1 vector of IID instances of the random variable Y.
 %
-%   mu = MEANMC_G(Yrand,abstol,reltol,alpha,fudge,nSig,n1,tbudget,...
-%   nbudget) estimates the mean of a random variable Y to within an
-%   specified generalized error tolerance tolfun with guaranteed confidence
+%   mu = MEANMC_G(Yrand,abstol,reltol,alpha,fudge,nSig,n1,tbudget,nbudget)
+%    estimates the mean of a random variable Y to within an specified
+%    generalized error tolerance tolfun with guaranteed confidence
 %   level 1-alpha. using all ordered parsing inputs abstol, reltol, alpha,
 %   fudge, nSig, n1, tbudget, nbudget.
 %
@@ -29,7 +29,7 @@ function [mu,out_param]=meanMC_g(varargin)
 %
 %   [mu, out_param] = MEANMC_G(Yrand,in_param) estimates the mean of a
 %   random variable Y to within a specified generalized error tolerance
-%   with the given parameters in_param and produce output parameters
+%   tolfun with the given parameters in_param and produce output parameters
 %   out_param.
 %
 %   Input Arguments
@@ -65,7 +65,7 @@ function [mu,out_param]=meanMC_g(varargin)
 %
 %    mu --- the estimated mean of Y.
 %
-%    out_param.tau --- iteration step.
+%    out_param.tau --- the iteration step.
 %
 %    out_param.n --- sample used in each iteration.
 %
@@ -94,7 +94,24 @@ function [mu,out_param]=meanMC_g(varargin)
 %                        1  checked by meanMC_g
 %
 % Guarantee
-% ---to be added
+% This algorithm attampts to calculate the mean of a random variable to a
+% certain tolerance with guaranteed confidence level 1-alpha. If the
+% algorithm terminated without showing any warning messages and provide an
+% answer \hat{mu}, then the follow inequality would be satisfied:
+% 
+% Pr(|mu-\hat{mu}| <= max(abstol,reltol|mu|)) >= 1-alpha
+%
+% where abstol is the absolute error tolerance and reltol is the relative
+% error tolerance, if the true mean mu is rather small as well as the
+% reltol, then the abstol would be satisfied, and vice versa. 
+%
+% The cost of the algorithms is also bounded above by N_up, which is in
+% terms of abstol, reltol, n_sigma, n_1, fudge, alpha_sigma, kmax, beta.
+% And the following inequality would hold:
+% 
+% Pr (N_tot <= N_up) >= 1-beta
+%
+% Please refer to our paper for detailed arguments and proofs.
 %
 % Examples
 %

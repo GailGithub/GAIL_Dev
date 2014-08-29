@@ -80,8 +80,8 @@ function [p,out_param]=meanMCBernoulli_g(varargin)
 % 
 % Case 2: errtype = 'rel'
 %
-% If the algorithm terminated without any warning messages, the result p
-% would satisfy the following inequality:
+% If the algorithm terminated without any warning messages, the result
+% \hat{p} would satisfy the following inequality:
 %
 % Pr(|p-\hat{p}| <= abstol*p) >= 1-alpha.
 %
