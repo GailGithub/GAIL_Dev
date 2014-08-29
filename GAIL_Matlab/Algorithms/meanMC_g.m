@@ -116,16 +116,22 @@ function [mu,out_param]=meanMC_g(varargin)
 % Examples
 %
 % Example 1:
+% If no parsing any parameter, help text will show up as following
+% >> meanMC_g
+% ***Monte Carlo method to estimate***
+%
+%
+% Example 2:
 % Calculate the mean of x^2 when x is uniformly distributed in
 % [0 1], with the relative error tolerance = 1e-3 and uncertainty 5%.
 %
-% >> in_param.reltol=1e-3; in_param.abstol = 1e-13;
+% >> in_param.reltol=1e-3; in_param.abstol = 1e-3;
 % >> in_param.alpha = 0.05; Yrand=@(n) rand(n,1).^2;
 % >> mu=meanMC_g(Yrand,in_param)
 % mu = 0.33***
 %
 %
-% Example 2:
+% Example 3:
 % Calculate the mean of exp(x) when x is uniformly distributed in
 % [0 1], with the absolute error tolerance 1e-3.
 %
@@ -133,7 +139,7 @@ function [mu,out_param]=meanMC_g(varargin)
 % mu = 1.71***
 %
 %
-% Example 3:
+% Example 4:
 % Calculate the mean of sin(x) when x is uniformly distributed in
 % [0 1], with the relative error tolerance 1e-2 and uncertainty 0.05.
 %
@@ -175,10 +181,22 @@ tpern = ttry/ntry; % calculate time per sample
 nsofar = nsofar+ntry; % update n so far
 
 if tpern<1e-5;%each sample use rather little time
+    booster = 8;
+    tic;Yrand(ntry*booster);ttry2 = toc;
+    ntry = ntry*[1 booster];
+    ttry = [ttry ttry2];% take eight times more samples to try
     [mu,out_param] =  meanmctolfun(Yrand,out_param,ntry,ttry,nsofar,tstart);
 elseif tpern>=1e-3 %each sample use a lot of time
+    booster = 2;
+    tic;Yrand(ntry*booster);ttry2 = toc;
+    ntry = ntry*[1 booster];
+    ttry = [ttry ttry2];% take two times more samples to try
     [mu,out_param] =  meanmctolfun(Yrand,out_param,ntry,ttry,nsofar,tstart);
 else %each sample uses moderate time
+    booster = 5;
+    tic;Yrand(ntry*booster);ttry2 = toc;
+    ntry = ntry*[1 booster];
+    ttry = [ttry ttry2];% take five times more samples to try
     [mu,out_param] =  meanmctolfun(Yrand,out_param,ntry,ttry,nsofar,tstart);
 end
 end

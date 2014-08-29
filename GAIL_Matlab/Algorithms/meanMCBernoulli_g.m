@@ -95,28 +95,28 @@ function [p,out_param]=meanMCBernoulli_g(varargin)
 %   Examples
 % 
 %   Example 1:
-%   Calculate the mean of a bernoulli random variable with true p=0.55,with
-%   error tolerance 1e-3 and uncertainty 0.01.
+%   Calculate the mean of a bernoulli random variable with true p=1/90,
+%   absolute error tolerance 1e-3 and uncertainty 0.01.
 % 
-%   >> in_param.abstol=1e-3; in_param.alpha = 0.01; p=1/90;Yrand=@(n) rand(n,1)<p;
+%   >> in_param.abstol=1e-3; in_param.alpha = 0.01; p=1/9;Yrand=@(n) rand(n,1)<p;
 %   >> p=meanMCBernoulli_g(Yrand,in_param)
-%   p = 0.01***
+%   p = 0.1***
 % 
 % 
 %   Example 2:
-%   Using the same function as example 1, with the absolute error tolerance
-%   1e-4.
+%   Using the same function as example 1, with the relative error tolerance
+%   1e-2.
 % 
-%   >> p=meanMCBernoulli_g(Yrand,1e-3,1e-2,'abs')
-%   p = 0.01***
+%   >> p=meanMCBernoulli_g(Yrand,1e-13,1e-2,'rel')
+%   p = 0.1***
 % 
 % 
 %   Example 3:
 %   Using the sample function as example 1, with the relative error
-%   tolerance 1e-2 and uncertainty 0.005.
+%   tolerance 1e-3 and uncertainty 0.05.
 % 
 %   >> p=meanMCBernoulli_g(Yrand,'errtype','rel','reltol',1e-2,'alpha',0.05)
-%   p = 0.011***
+%   p = 0.11***
 % 
 % 
 %   See also FUNAPPX_G, INTEGRAL_G, CUBMC_G, MEANMC_G
