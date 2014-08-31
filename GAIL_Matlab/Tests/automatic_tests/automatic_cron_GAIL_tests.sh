@@ -47,5 +47,4 @@ fi
 rm Test_Results.txt
 
 # KEEPING ONLY THE LAST 30 REPORTS
-find /home/lantoni/GAIL_tests/test_reports/gail_tests* -mtime +31 -exec 
-rm {} \;
+find /home/lantoni/GAIL_tests/test_reports/gail_tests* -mtime +31 -exec rm {} \;
