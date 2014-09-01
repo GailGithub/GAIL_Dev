@@ -70,10 +70,10 @@
 % Example 7: 
 % Estimate the integral with integrand Keister test function in
 % genz_test_fun, index 7.
-% >> index = 7; in_param.dim = 4;
+% >> index = 7; in_param.dim = 3;
 % >> f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
-% >> Q = cubMC_g(f,hyperbox,'uniform',1e-2,1e-13)
-% Q = 0.61***
+% >> Q = cubMC_g(f,hyperbox,'uniform',1e-3,1e-4)
+% Q = 2.16***
 %
 %
 % Example 8: 

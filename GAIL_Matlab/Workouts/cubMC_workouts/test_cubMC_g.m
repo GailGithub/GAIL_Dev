@@ -22,7 +22,7 @@ for dim=1:4
   beta = 1./ (1:in_param.dim); 
   r=2;
   % three coefficients in genz_test_fun and genz_test_fun_true
-  for index=[1:7]
+  for index=1:7
     test_function = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
     f_true = genz_test_fun_true (hyperbox,index,in_param.dim,alpha,beta,r);
     % true solution

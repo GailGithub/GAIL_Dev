@@ -74,30 +74,23 @@ function [Q,out_param] = cubMC_g(varargin)
 %
 %     Q --- the estimated value of the integral.
 % 
-%     out_param.time_n_sigma_predict --- the estimated time to get n_sigma
-%     samples.
-% 
-%     out_param.n_left_predict --- using the time left to predict the number
-%     of samples left.
-% 
-%     out_param.nmax --- the maximum sample budget to estimate the mean, it
-%     comes from both the sample budget and the time budget.
-% 
-%     out_param.var --- the sample variance.
-% 
+%     out_param.n --- sample used in each iteration.
+%
+%     out_param.ntot --- total sample used.
+%
+%     out_param.tau --- the iteration step.
+%
+%     out_param.mu --- estimated mean in each iteration
+%
+%     out_param.tol --- the tolerance for each iteration
+%  
 %     out_param.kurtmax --- the upper bound on modified kurtosis.
 % 
 %     out_param.time --- the time elapsed.
-% 
-%     out_param.n_mu --- the sample size that needed to estimate the mean,
-%     which comes from Berry-Esseen inequality and Chebyshev inequality.
-% 
-%     out_param.n --- the total sample size needed to do the two stage
-%     estimation.
 %
 %     out_param.exit --- the state of program when exiting.
 %                       0   success
-%                       1   No enough samples to estimate the mean.
+%                       1   Not enough samples to estimate the mean.
 %                       2   Initial try out time costs more than
 %                           10% of time budget. 
 %                       3   The estimated time for estimating variance 

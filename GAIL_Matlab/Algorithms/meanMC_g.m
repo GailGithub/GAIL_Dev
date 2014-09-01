@@ -77,6 +77,8 @@ function [mu,out_param]=meanMC_g(varargin)
 %
 %    out_param.mu --- estimated mean in each iteration
 %
+%    out_param.tol --- the tolerance for each iteration
+%
 %    out_param.var --- the sample variance.
 %
 %    out_param.exit --- the state of program when exiting.
