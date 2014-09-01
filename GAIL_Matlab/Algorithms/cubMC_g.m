@@ -132,23 +132,29 @@ function [Q,out_param] = cubMC_g(varargin)
 %  Examples
 % 
 % Example 1:
+% If no parsing any parameter, help text will show up as following
+% >> cubMC_g
+% ***Monte Carlo method to estimate***
+%
+%
+% Example 2:
 % Estimate the integral with integrand f(x) = sin(x) in the interval [1;2]
 % 
 % >> f=@(x) sin(x);interval = [1;2];
-% >> Q = cubMC_g(f,interval,'uniform',1e-3)
+% >> Q = cubMC_g(f,interval,'uniform',1e-3,1e-2)
 % Q = 0.95***
 % 
 % 
-% Example 2: 
+% Example 3: 
 % Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) in the
 % hyperbox [0 0;1 1], where x is a vector x = [x1 x2].
 % 
 % >> f=@(x) exp(-x(:,1).^2-x(:,2).^2);hyperbox = [0 0;1 1];
 % >> Q = cubMC_g(f,hyperbox,'uniform',1e-3)
-% Q = 0.55***
+% Q = 0.5***
 % 
 % 
-% Example 3: 
+% Example 4: 
 % Estimate the integral with integrand f(x) = 2^d*prod(x1*x2*...*xd)+0.555 in the
 % hyperbox [zeros(1,d);ones(1,d)], where x is a vector x = [x1 x2 ... xd].
 % 
@@ -162,7 +168,7 @@ function [Q,out_param] = cubMC_g(varargin)
 % hyperbox [-inf -inf;inf inf], where x is a vector x = [x1 x2].
 % 
 % >> f=@(x) exp(-x(:,1).^2-x(:,2).^2);hyperbox = [-inf -inf;inf inf];
-% >> Q = cubMC_g(f,hyperbox,'normal',1e-3)
+% >> Q = cubMC_g(f,hyperbox,'normal',1e-3,1e-2)
 % Q = 0.33***
 % 
 % 
