@@ -1,4 +1,4 @@
-%UT_CUBMC_G  unit test for cubMC_g
+%UT_CUBMCabs_G  unit test for cubMCabs_g
 classdef ut_cubMCabs_g < matlab.unittest.TestCase
   
   methods(Test)
@@ -8,7 +8,7 @@ classdef ut_cubMCabs_g < matlab.unittest.TestCase
       in_param.abstol = 1e-2;
       interval=[0;1];
       meanf = cubMCabs_g(f,interval,in_param);
-      exactf = 0.33;
+      exactf = 1/3;
       actualerr = abs(meanf-exactf);
       testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
     end
@@ -23,7 +23,7 @@ classdef ut_cubMCabs_g < matlab.unittest.TestCase
       testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
     end
     
-    function cubMC_gOfsin(testCase)
+    function cubMCabs_gOfsin(testCase)
       f = @(x) sin(x);
       in_param.abstol = 1e-3;
       interval=[0;1];
@@ -33,7 +33,7 @@ classdef ut_cubMCabs_g < matlab.unittest.TestCase
       testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
     end
     
-    function cubMC_gOfmultierrfun(testCase)
+    function cubMCabs_gOfmultierrfun(testCase)
       f = @(x) exp(-x(:,1).^2-x(:,2).^2);
       in_param.abstol = 1e-3;
       interval=[0 0;1 1];
@@ -43,27 +43,27 @@ classdef ut_cubMCabs_g < matlab.unittest.TestCase
       testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
     end
     
-    function cubMC_gOfwarning(testCase)
+    function cubMCabs_gOfwarning(testCase)
         testCase.verifyWarning(@()cubMCabs_g,'MATLAB:cubMCabs_g:fnotgiven');
     end
-    function cubMC_gOferror10(testCase)
+    function cubMCabs_gOferror10(testCase)
         testCase.verifyError(@()cubMCabs_g(@(x)x.^2,nan),...
             'MATLAB:cubMCabs_g:hyperboxnotnum');
     end
     
-    function cubMC_gOferror11(testCase)
+    function cubMCabs_gOferror11(testCase)
         testCase.verifyError(@()cubMCabs_g(@(x)x.^2,1),...
             'MATLAB:cubMCabs_g:hyperboxnot2d');
     end
-    function cubMC_gOferror12(testCase)
+    function cubMCabs_gOferror12(testCase)
         testCase.verifyError(@()cubMCabs_g(@(x)x.^2,[1 1]),...
             'MATLAB:cubMCabs_g:hyperboxnotlessthan2');
     end
-    function cubMC_gOferror13(testCase)
+    function cubMCabs_gOferror13(testCase)
         testCase.verifyError(@()cubMCabs_g(@(x)x.^2,[-inf,1],...
             'measure','uniform'),'MATLAB:cubMCabs_g:hyperboxnotfiniteforuniform');
     end
-    function cubMC_gOferror14(testCase)
+    function cubMCabs_gOferror14(testCase)
         testCase.verifyError(@()cubMCabs_g(@(x)x.^2,[0,1],...
             'measure','normal'),'MATLAB:cubMCabs_g:hyperboxnotinffornormal');
     end

@@ -113,7 +113,7 @@ function [Q,out_param] = cubMC_g(varargin)
 % 
 % If the modified kurtosis of the integrand, f, is less than the kurtmax,
 % which is defined in terms of the uncertainty, alpha, the sample size to
-% estimate variance, n_sigma, and the standard deviation inflation factor,
+% estimate variance, nSig, and the standard deviation inflation factor,
 % fudge, then the inequality
 % 
 % Pr(|I-Q| <= abstol) >= 1-alpha 
@@ -150,20 +150,21 @@ function [Q,out_param] = cubMC_g(varargin)
 % hyperbox [0 0;1 1], where x is a vector x = [x1 x2].
 % 
 % >> f=@(x) exp(-x(:,1).^2-x(:,2).^2);hyperbox = [0 0;1 1];
-% >> Q = cubMC_g(f,hyperbox,'uniform',1e-3)
-% Q = 0.5***
+% >> Q = cubMC_g(f,hyperbox,'measure','uniform','abstol',1e-3,'reltol',1e-13)
+% Q = 0.55***
 % 
 % 
 % Example 4: 
 % Estimate the integral with integrand f(x) = 2^d*prod(x1*x2*...*xd)+0.555 in the
 % hyperbox [zeros(1,d);ones(1,d)], where x is a vector x = [x1 x2 ... xd].
 % 
-% >> d=3;f=@(x) 2^d*prod(x,2)+0.555;hyperbox = [zeros(1,d);ones(1,d)];
-% >> Q = cubMC_g(f,hyperbox,'uniform',1e-3,1e-2)
+% >> d=3;f=@(x) 2^d*prod(x,2)+0.555;hyperbox =[zeros(1,d);ones(1,d)];
+% >> in_param.abstol = 1e-3;in_param.reltol=1e-3;
+% >> Q = cubMC_g(f,hyperbox,in_param)
 % Q = 1.5***
 % 
 %
-% Example 4: 
+% Example 5: 
 % Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) in the
 % hyperbox [-inf -inf;inf inf], where x is a vector x = [x1 x2].
 % 
@@ -287,7 +288,7 @@ else % if there is some optional input
         addParamValue(p,'reltol',default.reltol,@isnumeric);
         addParamValue(p,'alpha',default.alpha,@isnumeric);
         addParamValue(p,'fudge',default.fudge,@isnumeric);
-        addParamValue(p,'nSig',default.n_sigma,@isnumeric);
+        addParamValue(p,'nSig',default.nSig,@isnumeric);
         addParamValue(p,'n1',default.n1,@isnumeric);
         addParamValue(p,'tbudget',default.tbudget,@isnumeric);
         addParamValue(p,'nbudget',default.nbudget,@isnumeric);
@@ -365,7 +366,7 @@ end
     if (~gail.isposint(out_param.nSig))
         %the sample to estimate sigma should be a positive integer
         warning('MATLAB:cubMC_g:nsignotposint',...
-            ['the number n_sigma should a positive integer,'...
+            ['the number nSig should a positive integer,'...
             'take the absolute value and ceil.'])
         out_param.nSig = ceil(abs(out_param.nSig));
     end

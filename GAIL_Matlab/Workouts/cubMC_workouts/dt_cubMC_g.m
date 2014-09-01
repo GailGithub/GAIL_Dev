@@ -8,7 +8,7 @@
 % >> f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
 % >> f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.001
 % f_true = 0.06***
-% >> Q = cubMC_g(f,hyperbox,'uniform',1e-3)+0.001
+% >> Q = cubMC_g(f,hyperbox,'uniform',1e-3,1e-2)+0.001
 % Q = 0.06***
 % 
 %
@@ -19,7 +19,7 @@
 % >> f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
 % >> f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.001
 % f_true = 0.66***
-% >> Q = cubMC_g(f,hyperbox,'uniform',1e-3)+0.001
+% >> Q = cubMC_g(f,hyperbox,'uniform',1e-3,1e-2)+0.001
 % Q = 0.66***
 % 
 %
@@ -30,7 +30,7 @@
 % >> f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
 % >> f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.001
 % f_true = 0.04***
-% >> Q = cubMC_g(f,hyperbox,'uniform',1e-3)+0.001
+% >> Q = cubMC_g(f,hyperbox,'uniform',1e-3,1e-2)+0.001
 % Q = 0.04***
 % 
 %
@@ -41,7 +41,7 @@
 % >> f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
 % >> f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.001
 % f_true = 0.62***
-% >> Q = cubMC_g(f,hyperbox,'uniform',1e-3)+0.001
+% >> Q = cubMC_g(f,hyperbox,'uniform',1e-3,1e-2)+0.001
 % Q = 0.62***
 %
 %
@@ -52,7 +52,7 @@
 % >> f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
 % >> f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)
 % f_true = 0.38***
-% >> Q = cubMC_g(f,hyperbox,'uniform',1e-3)
+% >> Q = cubMC_g(f,hyperbox,'uniform',1e-3,1e-3)
 % Q = 0.38***
 %
 %
@@ -63,16 +63,16 @@
 % >> f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
 % >> f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)
 % f_true = 0.44***
-% >> Q = cubMC_g(f,hyperbox,'uniform',1e-3)
+% >> Q = cubMC_g(f,hyperbox,'uniform',1e-3,1e-13)
 % Q = 0.44***
 %
 %
 % Example 7: 
-% Estimate the integral with integrand Kesiter test function in
+% Estimate the integral with integrand Keister test function in
 % genz_test_fun, index 7.
-% >> index = 7;
+% >> index = 7; in_param.dim = 4;
 % >> f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
-% >> Q = cubMC_g(f,hyperbox,'uniform',1e-3)
+% >> Q = cubMC_g(f,hyperbox,'uniform',1e-2,1e-13)
 % Q = 0.61***
 %
 %
@@ -84,7 +84,7 @@
 % >> f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
 % >> f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)
 % f_true = 4.76***
-% >> Q = cubMC_g(f,hyperbox,'uniform',1e-2)
+% >> Q = cubMC_g(f,hyperbox,'uniform',1e-2,1e-13)
 % Q = 4.76***
 %
 %%
@@ -95,7 +95,7 @@
 % >> f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
 % >> f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)
 % f_true = 2.4***
-% >> Q = cubMC_g(f,hyperbox,'uniform',1e-2)
+% >> Q = cubMC_g(f,hyperbox,'uniform',1e-2,1e-13)
 % Q = 2.4***
 % 
 %
@@ -106,7 +106,7 @@
 % >> f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
 % >> f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)
 % f_true = 0.00***
-% >> Q = cubMC_g(f,hyperbox,'uniform',1e-2)
+% >> Q = cubMC_g(f,hyperbox,'uniform',1e-2,1e-3)
 % Q = 0.00***
 % 
 %
@@ -117,7 +117,7 @@
 % >> f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
 % >> f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.005
 % f_true = 1.30***
-% >> Q = cubMC_g(f,hyperbox,'uniform',1e-2)+0.005
+% >> Q = cubMC_g(f,hyperbox,'uniform',1e-2,1e-13)+0.005
 % Q = 1.30***
 %
 %
@@ -128,7 +128,7 @@
 % >> f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
 % >> f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.005
 % f_true = 0.84***
-% >> Q = cubMC_g(f,hyperbox,'uniform',1e-2)+0.005
+% >> Q = cubMC_g(f,hyperbox,'uniform',1e-2,1e-13)+0.005
 % Q = 0.84***
 %
 %
@@ -139,7 +139,7 @@
 % >> f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
 % >> f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)
 % f_true = 1.73***
-% >> Q = cubMC_g(f,hyperbox,'uniform',1e-2)
+% >> Q = cubMC_g(f,hyperbox,'uniform',1e-2,1e-13)
 % Q = 1.73***
 %
 %

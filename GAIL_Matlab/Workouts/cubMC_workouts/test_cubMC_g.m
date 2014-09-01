@@ -10,9 +10,11 @@ for dim=1:4
   startingpoint = zeros(1,in_param.dim);
   endingpoint = ones(1,in_param.dim);
   hyperbox = [startingpoint;endingpoint];% the integration interval
-  in_param.abstol = 1e-2;% the absolute tolerance
+  in_param.abstol = 1e-3;% the absolute tolerance
+  in_param.reltol = 1e-2;% the relative tolerance
   in_param.alpha = 1e-2;% the uncertainty
-  in_param.n_sigma = 1e4;% the sample size to estimate sigma
+  in_param.nSig = 1e4;% the sample size to estimate sigma
+  in_param.n1 = 1e4;% the initial sample size to estimate Q
   in_param.fudge =1.1;% standard deviation inflation factor
   in_param.timebudget = 300;% time budget
   in_param.nbudget = 1e10;% sample budget
@@ -25,13 +27,19 @@ for dim=1:4
     f_true = genz_test_fun_true (hyperbox,index,in_param.dim,alpha,beta,r);
     % true solution
     [Q,out_param]=cubMC_g(test_function,hyperbox,in_param);% the results using cubMC_g
-    error = abs(Q-f_true);
+    abserr = abs(Q-f_true);
+    relerr = abs((Q-f_true)/f_true);
     numstr=horzcat(num2str(dim), '     ', num2str(index), '       ',...
-        num2str(Q), '       ', num2str(f_true),'       ', num2str(error));
-    if error > in_param.abstol,% if error does not meet tolerance, mark it
-      disp([numstr,'     ****']);
+        num2str(Q), '       ', num2str(f_true),'       ', num2str(abserr));
+    if abserr > in_param.abstol && relerr > in_param.reltol,
+        % if error does not meet tolerance, mark it
+      disp([numstr,'     botherrexceed']);
+    elseif abserr < in_param.abstol && relerr > in_param.reltol,
+        disp([numstr,'     relerrexceed']);
+    elseif abserr > in_param.abstol && relerr < in_param.reltol,
+        disp([numstr,'     abstolexceed']);
     else
-      disp(numstr);
+      disp([numstr,'     ok']);
     end
   end
 end
