@@ -108,7 +108,7 @@ function [mu,out_param]=meanMC_g(varargin)
 % reltol, then the abstol would be satisfied, and vice versa. 
 %
 % The cost of the algorithms is also bounded above by N_up, which is in
-% terms of abstol, reltol, n_sigma, n_1, fudge, alpha_sigma, kmax, beta.
+% terms of abstol, reltol, nSig, n_1, fudge, alpha_sigma, kmax, beta.
 % And the following inequality would hold:
 % 
 % Pr (N_tot <= N_up) >= 1-beta
