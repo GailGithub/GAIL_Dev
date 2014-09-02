@@ -19,7 +19,7 @@
 % >> f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
 % >> f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.001
 % f_true = 0.66***
-% >> Q = cubMC_g(f,hyperbox,'uniform',1e-3,1e-2)+0.001
+% >> Q = cubMC_g(f,hyperbox,'uniform',1e-3,1e-3)+0.001
 % Q = 0.66***
 % 
 %
@@ -41,7 +41,7 @@
 % >> f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
 % >> f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.001
 % f_true = 0.62***
-% >> Q = cubMC_g(f,hyperbox,'uniform',1e-3,1e-2)+0.001
+% >> Q = cubMC_g(f,hyperbox,'uniform',1e-3,1e-3)+0.001
 % Q = 0.62***
 %
 %
@@ -63,7 +63,7 @@
 % >> f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
 % >> f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)
 % f_true = 0.44***
-% >> Q = cubMC_g(f,hyperbox,'uniform',1e-3,1e-13)
+% >> Q = cubMC_g(f,hyperbox,'uniform',1e-3,1e-3)
 % Q = 0.44***
 %
 %
@@ -117,7 +117,7 @@
 % >> f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
 % >> f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.005
 % f_true = 1.30***
-% >> Q = cubMC_g(f,hyperbox,'uniform',1e-2,1e-13)+0.005
+% >> Q = cubMC_g(f,hyperbox,'uniform',1e-2,1e-3)+0.005
 % Q = 1.30***
 %
 %
@@ -128,7 +128,7 @@
 % >> f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
 % >> f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.005
 % f_true = 0.84***
-% >> Q = cubMC_g(f,hyperbox,'uniform',1e-2,1e-13)+0.005
+% >> Q = cubMC_g(f,hyperbox,'uniform',1e-2,1e-2)+0.005
 % Q = 0.84***
 %
 %
@@ -139,7 +139,7 @@
 % >> f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
 % >> f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)
 % f_true = 1.73***
-% >> Q = cubMC_g(f,hyperbox,'uniform',1e-2,1e-13)
+% >> Q = cubMC_g(f,hyperbox,'uniform',1e-2,1e-3)
 % Q = 1.73***
 %
 %

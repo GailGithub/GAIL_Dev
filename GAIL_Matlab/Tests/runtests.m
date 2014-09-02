@@ -230,6 +230,20 @@ if MATLABVERSION >= 8
         display('Test ut_meanMC_g is wrongly coded. We skip it.')
         fprintf(fid,'Test ut_meanMC_g is wrongly coded. We skip it.\n');
     end
+    
+     try
+    Tests = matlab.unittest.TestSuite.fromClass(?ut_cubMC_g);
+    results=run(ut_cubMC_g)
+    if sum([results.Failed])>0
+        failed=find([results.Failed]>0);
+        for i=1:size(failed,2)
+            fprintf(fid,'%s\n',Tests(failed(i)).Name);
+        end
+    end
+    catch
+        display('Test utcubMC_g is wrongly coded. We skip it.')
+        fprintf(fid,'Test ut_cubMC_g is wrongly coded. We skip it.\n');
+    end
 end
 
 time=toc;
