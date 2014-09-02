@@ -28,7 +28,7 @@ doctest integral01_g
 doctest integraltau_g
 doctest dt_integral_g 
 doctest meanMCabs_g
-doctest meanMCRel_g
+doctest meanMC_g
 doctest meanMCBernoulli_g
 doctest cubMCabs_g
 doctest cubLattice_g
@@ -217,10 +217,9 @@ if MATLABVERSION >= 8
         fprintf(fid,'Test ut_funmin_g is wrongly coded. We skip it.\n');
     end
     
-    %warning('off','MATLAB:meanMCRel_g:maxreached')
     try
-    Tests = matlab.unittest.TestSuite.fromClass(?ut_meanMCRel_g);
-    results=run(ut_meanMCRel_g)
+    Tests = matlab.unittest.TestSuite.fromClass(?ut_meanMC_g);
+    results=run(ut_meanMC_g)
     if sum([results.Failed])>0
         failed=find([results.Failed]>0);
         for i=1:size(failed,2)
@@ -228,11 +227,9 @@ if MATLABVERSION >= 8
         end
     end
     catch
-        display('Test ut_meanMCRel_g is wrongly coded. We skip it.')
-        fprintf(fid,'Test ut_meanMCRel_g is wrongly coded. We skip it.\n');
+        display('Test ut_meanMC_g is wrongly coded. We skip it.')
+        fprintf(fid,'Test ut_meanMC_g is wrongly coded. We skip it.\n');
     end
-    warning('on','MATLAB:meanMCRel_g:maxreached')
-     
 end
 
 time=toc;
