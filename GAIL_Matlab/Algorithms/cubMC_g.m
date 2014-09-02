@@ -102,25 +102,25 @@ function [Q,out_param] = cubMC_g(varargin)
 %                       14  hyperbox is not doubly infinite when measure
 %                           is normal.
 % 
-%  Guarantee
+% Guarantee
+% This algorithm attampts to calculate the mean of a random variable to a
+% certain tolerance with guaranteed confidence level 1-alpha. If the
+% algorithm terminated without showing any warning messages and provide an
+% answer \hat{mu}, then the follow inequality would be satisfied:
 % 
-% If the modified kurtosis of the integrand, f, is less than the kurtmax,
-% which is defined in terms of the uncertainty, alpha, the sample size to
-% estimate variance, nSig, and the standard deviation inflation factor,
-% fudge, then the inequality
-% 
-% Pr(|I-Q| <= abstol) >= 1-alpha 
-% 
-% holds. Here I is the true integral (or mean) of f, and Q is the output
-% of CUBMC_G. 
-% 
-% The cost of the two-stage algorithm also satisfies the inequality
+% Pr(|mu-\hat{mu}| <= max(abstol,reltol|mu|)) >= 1-alpha
+%
+% where abstol is the absolute error tolerance and reltol is the relative
+% error tolerance, if the true mean mu is rather small as well as the
+% reltol, then the abstol would be satisfied, and vice versa. 
+%
+% The cost of the algorithms is also bounded above by N_up, which is in
+% terms of abstol, reltol, nSig, n_1, fudge, alpha_sigma, kmax, beta.
+% And the following inequality would hold:
 % 
 % Pr (N_tot <= N_up) >= 1-beta
-% 
-% where N_tot is the total cost of samples, N_up is the upper bound on the
-% cost, which is roughly proportional to sigma^2/abstol^2, beta is the
-% level of uncertainty on the cost. For details, please refer to [1].
+%
+% Please refer to our paper for detailed arguments and proofs.
 % 
 %  Examples
 % 
