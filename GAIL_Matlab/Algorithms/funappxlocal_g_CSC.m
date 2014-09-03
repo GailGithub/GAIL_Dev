@@ -238,8 +238,10 @@ err = inf;
 len = out_param.b - out_param.a;
 x = out_param.a:len/(n-1):out_param.b;
 y = f(x);
+iter = 0;
 
 while(max(err) >= out_param.abstol)
+    iter = iter + 1;
     % Stage 1: Find the maximum error
     tmp = find(err > out_param.abstol);
     
@@ -320,6 +322,7 @@ end;
 out_param.npoints = index(end);
 out_param.errorbound = max(err);
 out_param.nstar = nstar;
+out_param.iter = iter;
 % out_param.err = err;
 % x1 = x;
 % y1 = f(x1);

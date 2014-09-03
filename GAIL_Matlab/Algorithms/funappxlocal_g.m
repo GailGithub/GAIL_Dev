@@ -326,8 +326,8 @@ function [f, out_param] = funappx_g_param(varargin)
 default.abstol = 1e-6;
 default.a = 0;
 default.b = 1;
-default.nlo = 5;
-default.nhi = 10;
+default.nlo = 9;
+default.nhi = 100;
 
 if isempty(varargin)
     warning('MATLAB:funappx_g:nofunction','Function f must be specified. Now GAIL is using f(x)=exp(-100*(x-0.5)^2) and unit interval [0,1].')
