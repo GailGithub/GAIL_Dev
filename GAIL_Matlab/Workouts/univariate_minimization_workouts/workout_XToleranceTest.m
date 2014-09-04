@@ -1,4 +1,4 @@
-%% Experiment 2: Bump test functions with epsilon=0 & delta=10^(-6)
+%% Experiment 2: Bump test functions with abstol=0 & TolX=10^(-6)
 
 %% Garbage collection and initialization
 format long e 
