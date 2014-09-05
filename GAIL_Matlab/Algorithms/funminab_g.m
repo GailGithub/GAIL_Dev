@@ -141,7 +141,7 @@ function [fmin,out_param]=funminab_g(varargin)
 %
 %  out_param =
 %
-%                a: -1
+%                a: -2
 %           abstol: 1.0000e-07
 %                b: 2
 %                f: @(x)(x-0.3).^2+1
@@ -153,8 +153,8 @@ function [fmin,out_param]=funminab_g(varargin)
 %              tau: 17
 %     exceedbudget: 0
 %          npoints: 9217
-%            error: 6.4896e-08
-%          volumeX: 5.7451e-04
+%            error: 5.1616e-08
+%          volumeX: 7.6601e-04
 %        tauchange: 0
 %        intervals: [2x1 double]
 %
