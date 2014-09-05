@@ -63,7 +63,7 @@ function [mu,out_param]=meanMC_g(varargin)
 %
 %   Output Arguments
 %
-%    mu --- the estimated mean of Y.
+%    mu_tilde --- the estimated mean of Y.
 %
 %    out_param.tau --- the iteration step.
 %
@@ -101,14 +101,14 @@ function [mu,out_param]=meanMC_g(varargin)
 % algorithm terminated without showing any warning messages and provide an
 % answer \hat{mu}, then the follow inequality would be satisfied:
 % 
-% Pr(|mu-\hat{mu}| <= max(abstol,reltol|mu|)) >= 1-alpha
+% Pr(|mu-mu_tilde| <= max(abstol,reltol|mu|)) >= 1-alpha
 %
 % where abstol is the absolute error tolerance and reltol is the relative
 % error tolerance, if the true mean mu is rather small as well as the
 % reltol, then the abstol would be satisfied, and vice versa. 
 %
-% The cost of the algorithms is also bounded above by N_up, which is in
-% terms of abstol, reltol, nSig, n_1, fudge, alpha_sigma, kmax, beta.
+% The cost of the algorithm is also bounded above by N_up, which is 
+% defined in terms of abstol, reltol, nSig, n_1, fudge, alpha_sigma, kmax, beta.
 % And the following inequality would hold:
 % 
 % Pr (N_tot <= N_up) >= 1-beta
