@@ -53,9 +53,10 @@ function [q,out_param] = cubLattice_g(varargin)
 %     Lattices generator, mmax is a positive integer such that mmin<=mmax<=27.
 %     The default value is 24.
 % 
-%     in_param.fudge --- the constant multiplying the cone of functions. For more
-%     information about this parameter, refer to the references. It should be a
-%     real positve number. By default is 3.
+%     in_param.fudge --- the positive function multiplying the finite 
+%     sum of Fast Fourier coefficients specified in the cone of functions.
+%     For more information about this parameter, refer to the references.
+%     By default is @(x) 5*2^-x.
 % 
 %     in_param.diff --- the algorithm is defined for continuous periodic functions. If the
 %     input function f is not, there are 5 types of transform to periodize it
@@ -94,8 +95,7 @@ function [q,out_param] = cubLattice_g(varargin)
 % Example 1:
 % Estimate the integral with integrand f(x) = x1.*x2 in the interval [0,1)^2:
 % 
-% >> f=@(x) x(:,1).*x(:,2); d=2;
-% >> q = cubLattice_g(f,d,1e-5,'uniform','diff','C1sin')
+% >> f=@(x) x(:,1).*x(:,2); d=2; q = cubLattice_g(f,d,1e-5,'uniform','diff','C1sin')
 % q = 0.25***
 % 
 % 
@@ -103,8 +103,7 @@ function [q,out_param] = cubLattice_g(varargin)
 % Estimate the integral with integrand f(x) = x1.^2.*x2.^2.*x3.^2+0.11
 % in the interval R^3 where x1, x2 and x3 are normally distributed:
 % 
-% >> f=@(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2+0.11; d=3;
-% >> q = cubLattice_g(f,d,1e-3,'normal','diff','C1sin')
+% >> f=@(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2+0.11; d=3; q = cubLattice_g(f,d,1e-3,'normal','diff','C1sin')
 % q = 1.1***
 % 
 % 
@@ -112,8 +111,7 @@ function [q,out_param] = cubLattice_g(varargin)
 % Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) in the
 % interval [0,1)^2:
 % 
-% >> f=@(x) exp(-x(:,1).^2-x(:,2).^2); d=2;
-% >> q = cubLattice_g(f,d,1e-3,'uniform','diff','C1')
+% >> f=@(x) exp(-x(:,1).^2-x(:,2).^2); d=2; q = cubLattice_g(f,d,1e-3,'uniform','diff','C1')
 % q = 0.55***
 %
 %
@@ -121,8 +119,7 @@ function [q,out_param] = cubLattice_g(varargin)
 % Estimate the price of an European call with S0=100, K=100, r=sigma^2/2,
 % sigma=0.05 and T=1.
 % 
-% >> f=@(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); d=1;
-% >> q = cubLattice_g(f,d,1e-4,'normal','diff','C1sin')
+% >> f=@(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); d=1; q = cubLattice_g(f,d,1e-4,'normal','fudge',@(x) 2^-(2*x),'diff','C1sin')
 % q = 2.05***
 %
 %
@@ -133,7 +130,7 @@ function [q,out_param] = cubLattice_g(varargin)
 %   [1]  F. J. Hickernell, Lluis Antoni Jimenez Rugama
 %
 %   [2] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang,
-%   Lluís Antoni Jiménez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
+%   Lluï¿½s Antoni Jimï¿½nez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
 %   "GAIL: Guaranteed Automatic Integration Library (Version 2.0.0)"
 %   [MATLAB Software], 2014. Available from http://code.google.com/p/gail/
 %
@@ -160,15 +157,16 @@ end
 
 %% Main algorithm
 mlag=4;
-Stilde=zeros(out_param.mmax-out_param.mmin+1,1);
-errest=zeros(out_param.mmax-out_param.mmin+1,1);
-appxinteg=zeros(out_param.mmax-out_param.mmin+1,1);
-out_param.overbudget='Max budget reached with no guarantees.';
+Stilde=zeros(out_param.mmax-out_param.mmin+1,1); %initialize sum of DFT terms
+errest=zeros(out_param.mmax-out_param.mmin+1,1); %initialize error estimates
+appxinteg=zeros(out_param.mmax-out_param.mmin+1,1); %initialize approximations to integral
+out_param.overbudget=true; %we have overrun our budget, until indicated otherwise
 
 %% Initial points and FWT
-out_param.n=2^out_param.mmin;
-xpts=mod(gail.lattice_gen(1,out_param.n,out_param.d)+out_param.shift,1); n0=out_param.n;
-y=f(xpts);
+out_param.n=2^out_param.mmin; %total number of points to start with
+n0=out_param.n; %initial number of points
+xpts=mod(gail.lattice_gen(1,out_param.n,out_param.d)+out_param.shift,1); %grab Lattice points
+y=f(xpts); %evaluate integrand
 yval=y;
 
 %% Compute initial FFT
@@ -182,30 +180,35 @@ for l=0:out_param.mmin-1
    oddval=y(~ptind);
    y(ptind)=(evenval+coefv.*oddval)/2;
    y(~ptind)=(evenval-coefv.*oddval)/2;
-end % 'y' now contains the FWT coefficients
+end
+% y now contains the FFT coefficients
 
 %% Approximate integral
 q=mean(yval);
 appxinteg(1)=q;
 
-%% Create kappanumap
+%% Create kappanumap implicitly from the data
 kappanumap=(1:out_param.n)'; %initialize map
 for l=out_param.mmin-1:-1:1
    nl=2^l;
    oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
    newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa, 
-   flip=find(newone>oldone); %
-   temp=kappanumap(nl+1+flip);
-   kappanumap(nl+1+flip)=kappanumap(1+flip);
-   kappanumap(1+flip)=temp;
+   flip=find(newone>oldone); %which in the pair are the larger ones
+   temp=kappanumap(nl+1+flip); %then flip
+   kappanumap(nl+1+flip)=kappanumap(1+flip); %them
+   kappanumap(1+flip)=temp; %around
 end
 
 %% Compute Stilde
 nllstart=int64(2^(out_param.mmin-mlag-1));
 Stilde(1)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
-out_param.pred_err=out_param.fudge*2^(-out_param.mmin)*Stilde(1);
+out_param.pred_err=out_param.fudge(out_param.mmin)*Stilde(1);
 errest(1)=out_param.pred_err;
-if out_param.pred_err <= out_param.abstol; out_param.overbudget='Max budget not reached.'; out_param.time=toc; return, end
+if out_param.pred_err <= out_param.abstol
+   out_param.overbudget=false;
+   out_param.time=toc;
+   return
+end
 
 %% Loop over m
 for m=out_param.mmin+1:out_param.mmax 
@@ -243,7 +246,8 @@ for m=out_param.mmin+1:out_param.mmax
 
    %% Update kappanumap
    kappanumap=[kappanumap; (nnext+1:out_param.n)']; %initialize map
-   for l=m-1:-1:1
+%   for l=m-1:-1:1
+   for l=m-1:-1:m-mlag-1 %update just some, not exactly sure about this
       nl=2^l;
       oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
       newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa, 
@@ -257,13 +261,17 @@ for m=out_param.mmin+1:out_param.mmax
    nllstart=int64(2^(m-mlag-1));
    meff=m-out_param.mmin+1;
    Stilde(meff)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
-   out_param.pred_err=out_param.fudge*2^(-m)*Stilde(meff);
+   out_param.pred_err=out_param.fudge(m)*Stilde(meff);
    errest(meff)=out_param.pred_err;
 
    %% Approximate integral
    q=mean(yval);
    appxinteg(meff)=q;
-   if out_param.pred_err <= out_param.abstol; out_param.overbudget='Max budget not reached.'; out_param.time=toc; return, end
+   if out_param.pred_err <= out_param.abstol
+      out_param.overbudget=false;
+      out_param.time=toc;
+      return
+   end
 
 end
 out_param.time=toc;
@@ -279,13 +287,13 @@ default.density  = 'uniform';
 default.shift  = rand;
 default.mmin  = 10;
 default.mmax  = 24;
-default.fudge = 3;
+default.fudge = @(x) 5*2^-x;
 default.diff = 'id';
 
 if numel(varargin)<2
     help cubLattice_g
     warning('MATLAB:cubLattice_g:fdnotgiven',...
-        'At least, function f and dimension d need to be specified. Example for f(x)=x^2:')
+        ['At least, function f and dimension d need to be specified. Example for f(x)=x^2:'])
     f = @(x) x.^2;
     out_param.f=f;
     out_param.d=1;
@@ -293,7 +301,7 @@ else
     f = varargin{1};
     if ~gail.isfcn(f)
         warning('MATLAB:cubLattice_g:fnotfcn',...
-            'The given input f was not a function. Example for f(x)=x^2:')
+            ['The given input f was not a function. Example for f(x)=x^2:'])
         f = @(x) x.^2;
         out_param.f=f;
         out_param.d=1;
@@ -302,7 +310,7 @@ else
         d = varargin{2};
         if ~isnumeric(d) || ~gail.isposint(d)
             warning('MATLAB:cubLattice_g:dnotposint',...
-                'The dimension d of f must be a positive integer. Example for f(x)=x^2:')
+                ['The dimension d of f must be a positive integer. Example for f(x)=x^2:'])
             f = @(x) x.^2;
             out_param.f=f;
             out_param.d=1;
@@ -317,10 +325,10 @@ if validvarargin
     in3=varargin(3:end);
     for j=1:numel(varargin)-2
     validvarargin=validvarargin && (isnumeric(in3{j}) ...
-        || ischar(in3{j}) || isstruct(in3{j}));
+        || ischar(in3{j}) || isstruct(in3{j}) || gail.isfcn(in3{j}));
     end
     if ~validvarargin
-        warning('MATLAB:cubLattice_g:validvarargin','Optional parameters must be numeric or strings. We will use the default optional parameters.')
+        warning('MATLAB:cubLattice_g:validvarargin',['Optional parameters must be numeric or strings. We will use the default optional parameters.'])
     end
     in3=varargin{3};
 end
@@ -347,7 +355,7 @@ else
         addOptional(p,'shift',default.shift,@isnumeric);
         addOptional(p,'mmin',default.mmin,@isnumeric);
         addOptional(p,'mmax',default.mmax,@isnumeric);
-        addOptional(p,'fudge',default.fudge,@isnumeric);
+        addOptional(p,'fudge',default.fudge,@gail.isfcn);
         addOptional(p,'diff',default.diff,...
             @(x) any(validatestring(x, {'id','Baker','C0','C1','C1sin'})));
     else
@@ -361,7 +369,7 @@ else
         addParamValue(p,'shift',default.shift,@isnumeric);
         addParamValue(p,'mmin',default.mmin,@isnumeric);
         addParamValue(p,'mmax',default.mmax,@isnumeric);
-        addParamValue(p,'fudge',default.fudge,@isnumeric);
+        addParamValue(p,'fudge',default.fudge,@gail.isfcn);
         addParamValue(p,'diff',default.diff,...
             @(x) any(validatestring(x, {'id','Baker','C0','C1','C1sin'})));
     end
@@ -399,7 +407,7 @@ if ~(gail.isposint(out_param.mmax) && out_param.mmax>=out_param.mmin && out_para
 end
 
 % Force fudge factor to be greater than 0
-if (out_param.fudge <= 0 )
+if ~gail.isfcn(out_param.fudge)
     warning('MATLAB:cubLattice_g:fudgenonpos',['The fudge factor should be greater than 0.' ...
             ' Using default fudge factor ' num2str(default.fudge)])
     out_param.fudge = default.fudge;

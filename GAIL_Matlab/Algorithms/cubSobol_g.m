@@ -105,8 +105,7 @@ function [q,out_param] = cubSobol_g(varargin)
 % Estimate the price of an European call with S0=100, K=100, r=sigma^2/2,
 % sigma=0.05 and T=1.
 % 
-% >> f=@(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); d=1;
-% >> q = cubSobol_g(f,d,1e-4,'normal')
+% >> f=@(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); d=1; q = cubSobol_g(f,d,1e-4,'normal','fudge',@(x) 2^-(2*x))
 % q = 2.05***
 %
 %
@@ -117,7 +116,7 @@ function [q,out_param] = cubSobol_g(varargin)
 %   [1]  F. J. Hickernell, Lluis Antoni Jimenez Rugama
 %
 %   [2] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang,
-%   Lluís Antoni Jiménez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
+%   Lluï¿½s Antoni Jimï¿½nez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
 %   "GAIL: Guaranteed Automatic Integration Library (Version 2.0.0)"
 %   [MATLAB Software], 2014. Available from http://code.google.com/p/gail/
 %
@@ -181,10 +180,10 @@ nllstart=2^(out_param.mmin-mlag-1);
 Stilde(1)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
 out_param.pred_err=out_param.fudge(out_param.mmin)*Stilde(1);
 errest(1)=out_param.pred_err;
-if out_param.pred_err <= out_param.abstol; 
+if out_param.pred_err <= out_param.abstol
    out_param.overbudget=false; 
    out_param.time=toc; 
-   return, 
+   return
 end
 
 %% Loop over m
@@ -225,7 +224,7 @@ for m=out_param.mmin+1:out_param.mmax
       nl=2^l;
       oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
       newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa, 
-      flip=find(newone>oldone); %
+      flip=find(newone>oldone);
       temp=kappanumap(nl+1+flip);
       kappanumap(nl+1+flip)=kappanumap(1+flip);
       kappanumap(1+flip)=temp;
@@ -241,7 +240,7 @@ for m=out_param.mmin+1:out_param.mmax
    %% Approximate integral
    q=mean(yval);
    appxinteg(meff)=q;
-   if out_param.pred_err <= out_param.abstol; 
+   if out_param.pred_err <= out_param.abstol
       out_param.overbudget=false; 
       out_param.time=toc; 
       return 
@@ -265,7 +264,7 @@ default.fudge = @(x) 5*2^-x;
 if numel(varargin)<2
     help cubSobol_g
     warning('MATLAB:cubSobol_g:fdnotgiven',...
-        'At least, function f and dimension d need to be specified. Example for f(x)=x^2:')
+        ['At least, function f and dimension d need to be specified. Example for f(x)=x^2:'])
     f = @(x) x.^2;
     out_param.f=f;
     out_param.d=1;
@@ -273,7 +272,7 @@ else
     f = varargin{1};
     if ~gail.isfcn(f)
         warning('MATLAB:cubSobol_g:fnotfcn',...
-            'The given input f was not a function. Example for f(x)=x^2:')
+            ['The given input f was not a function. Example for f(x)=x^2:'])
         f = @(x) x.^2;
         out_param.f=f;
         out_param.d=1;
@@ -282,7 +281,7 @@ else
         d = varargin{2};
         if ~isnumeric(d) || ~gail.isposint(d)
             warning('MATLAB:cubSobol_g:dnotposint',...
-                'The dimension d of f must be a positive integer. Example for f(x)=x^2:')
+                ['The dimension d of f must be a positive integer. Example for f(x)=x^2:'])
             f = @(x) x.^2;
             out_param.f=f;
             out_param.d=1;
@@ -297,10 +296,10 @@ if validvarargin
     in3=varargin(3:end);
     for j=1:numel(varargin)-2
     validvarargin=validvarargin && (isnumeric(in3{j}) ...
-        || ischar(in3{j}) || isstruct(in3{j}));
+        || ischar(in3{j}) || isstruct(in3{j}) || gail.isfcn(in3{j}));
     end
     if ~validvarargin
-        warning('MATLAB:cubLattice_g:validvarargin','Optional parameters must be numeric or strings. We will use the default optional parameters.')
+        warning('MATLAB:cubSobol_g:validvarargin',['Optional parameters must be numeric or strings. We will use the default optional parameters.'])
     end
     in3=varargin{3};
 end
@@ -324,7 +323,7 @@ else
             @(x) any(validatestring(x, {'uniform','normal'})));
         addOptional(p,'mmin',default.mmin,@isnumeric);
         addOptional(p,'mmax',default.mmax,@isnumeric);
-        addOptional(p,'fudge',default.fudge,@isnumeric);
+        addOptional(p,'fudge',default.fudge,@gail.isfcn);
     else
         if isstruct(in3) %parse input structure
             p.StructExpand = true;
@@ -335,7 +334,7 @@ else
             @(x) any(validatestring(x, {'uniform','normal'})));
         addParamValue(p,'mmin',default.mmin,@isnumeric);
         addParamValue(p,'mmax',default.mmax,@isnumeric);
-        addParamValue(p,'fudge',default.fudge,@isnumeric);
+        addParamValue(p,'fudge',default.fudge,@gail.isfcn);
     end
     parse(p,f,d,varargin{3:end})
     out_param = p.Results;
@@ -350,7 +349,7 @@ end
 
 % Force density to be uniform or normal only
 if ~(strcmp(out_param.density,'uniform') || strcmp(out_param.density,'normal') )
-    warning('MATLAB:cubLattice_g:notdensity',['The density can only be uniform or normal.' ...
+    warning('MATLAB:cubSobol_g:notdensity',['The density can only be uniform or normal.' ...
             ' Using default error tolerance ' num2str(default.density)])
     out_param.density = default.density;
 end
