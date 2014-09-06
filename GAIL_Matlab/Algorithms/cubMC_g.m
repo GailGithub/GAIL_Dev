@@ -47,10 +47,10 @@ function [Q,out_param] = cubMC_g(varargin)
 % in_param.alpha --- the uncertainty, the default value is 1%.
 % 
 % in_param.n_sigma --- initial sample size for estimating the sample
-% variance, the default value is 1e3.
+% variance, the default value is 1e4.
 % 
 % in_param.fudge --- the standard deviation inflation factor, the default
-% value is 1.1.
+% value is 1.2.
 % 
 % in_param.tbudget --- the time budget to do the two-stage estimation,
 % the default value is 100 seconds.
@@ -209,8 +209,8 @@ default.dim = 1;% default dimension
 default.hyperbox = [zeros(1,default.dim);ones(1,default.dim)];% default hyperbox
 default.abstol  = 1e-2;% default absolute error tolerance
 default.alpha = 0.01;% default uncertainty
-default.n_sigma = 1e3; % default n_sigma
-default.fudge = 1.1; % default variance inflation factor
+default.n_sigma = 1e4; % default n_sigma
+default.fudge = 1.2; % default variance inflation factor
 default.tbudget = 100;% default time budget
 default.nbudget = 1e8; % default sample budget
 default.npcmax = 1e6;% default n piece maximum
