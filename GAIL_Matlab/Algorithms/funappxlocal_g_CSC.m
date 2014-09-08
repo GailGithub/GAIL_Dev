@@ -276,7 +276,7 @@ while(max(err) >= out_param.abstol)
             x = [x(1:a-1) xx x(b:end)];
             y = [y(1:a-1) yy y(b:end)];
             err = [err(1:tmp-1) inf inf err(tmp+1:end)];
-            ntemp=max(ceil(out_param.nhi*(out_param.nlo/out_param.nhi)^(1/(1+h))),3);
+            ntemp=max(ceil(out_param.nhi*(out_param.nlo/out_param.nhi)^(1/(1+len))),3);
             nstar = [nstar(1:tmp-1) ntemp-2 ntemp-2 nstar(tmp+1:end)];
         end;
     else

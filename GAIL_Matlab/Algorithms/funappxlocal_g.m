@@ -109,6 +109,7 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %        npoints: 1857
 %     errorbound: 7.7413e-07
 %          nstar: [1x64 double]
+%           iter: 7
 %
 %
 %   Example 2:
@@ -138,6 +139,7 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %        npoints: 34817
 %     errorbound: 5.9398e-08
 %          nstar: [1x2048 double]
+%           iter: 12
 %
 %
 %   Example 3:
@@ -145,28 +147,29 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %   >> f = @(x) x.^2;
 %   >> [pp, out_param] = funappxlocal_g(f,'a',-2,'b',2,'nhi',20,'nlo',10)
 %
-% pp =
-%
+% pp = 
+% 
 %       form: 'pp'
-%     breaks: [1x8065 double]
-%      coefs: [8064x2 double]
-%     pieces: 8064
+%     breaks: [1x8705 double]
+%      coefs: [8704x2 double]
+%     pieces: 8704
 %      order: 2
 %        dim: 1
 %     orient: 'first'
-%
-% out_param =
-%
+% 
+% out_param = 
+% 
 %              a: -2
 %         abstol: 1.0000e-06
 %              b: 2
 %              f: @(x)x.^2
-%            nhi: 100
+%            nhi: 20
 %            nlo: 10
-%          ninit: 64
-%        npoints: 8065
-%     errorbound: 6.3562e-07
-%          nstar: [1x128 double]
+%          ninit: 18
+%        npoints: 8705
+%     errorbound: 9.5037e-07
+%          nstar: [1x512 double]
+%           iter: 10
 %
 %
 %   Example 4:
@@ -175,28 +178,29 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %   >> in_param.abstol = 10^(-6); in_param.nlo = 10; in_param.nhi = 20;
 %   >> [pp, out_param] = funappxlocal_g(f,in_param)
 %
-% pp =
-%
+% pp = 
+% 
 %       form: 'pp'
-%     breaks: [1x45569 double]
-%      coefs: [45568x2 double]
-%     pieces: 45568
+%     breaks: [1x36865 double]
+%      coefs: [36864x2 double]
+%     pieces: 36864
 %      order: 2
 %        dim: 1
 %     orient: 'first'
-%
-% out_param =
-%
-%              a: -10
+% 
+% out_param = 
+% 
+%              a: -5
 %         abstol: 1.0000e-06
-%              b: 10
+%              b: 5
 %              f: @(x)x.^2
-%            nhi: 100
+%            nhi: 20
 %            nlo: 10
-%          ninit: 90
-%        npoints: 45569
-%     errorbound: 4.7678e-07
-%          nstar: [1x512 double]
+%          ninit: 19
+%        npoints: 36865
+%     errorbound: 3.1274e-07
+%          nstar: [1x2048 double]
+%           iter: 12
 %
 %
 %   See also INTEGRAL_G, MEANMC_G, CUBMC_G, FUNMIN_G
@@ -251,8 +255,12 @@ while(max(err) > abstol)
     gn = (ninit-1)./len.*max(abs(diffy-repmat((y(index(2:end))-y(index(1:end-1)))/(ninit-1),ninit-1,1)),[],1);
     %approximate the stronger norm of input function at different subinterval
     fn = (ninit-1)^2./(len.^2).*max(abs(diff(diffy)),[],1);
-    if nstar*(2*gn+fn.*len/(ninit-1)) >= (fn.*len);
-        err = nstar*len.*gn/(4*(ninit-1)*(ninit-1-nstar));
+    %update cone condition every iteration
+    ntemp=max(ceil(out_param.nhi*(out_param.nlo/out_param.nhi).^(1./(1+len))),3);
+    nstar = ntemp -2;
+    
+    if nstar.*(2*gn+fn.*len/(ninit-1)) >= (fn.*len);
+        err = nstar.*len.*gn./(4*(ninit-1).*(ninit-1-nstar));
 %     else
 %         smallconeindex = find(nstar*(2*gn+fn.*len/(ninit-1)) < (fn.*len));
 %         err(smllconeindex) = abstol + 1;

@@ -93,7 +93,6 @@
 %        dim: 1
 %     orient: 'first'
 % 
-% 
 % out_param = 
 % 
 %              a: -5
@@ -104,8 +103,9 @@
 %            nlo: 100
 %          ninit: 432
 %        npoints: 110337
-%     errorbound: 2.6331e-07
+%     errorbound: 2.8441e-07
 %          nstar: [1x256 double]
+%           iter: 9
 %   
 %
 %   Example 5:
@@ -150,7 +150,6 @@
 %        dim: 1
 %     orient: 'first'
 % 
-% 
 % out_param = 
 % 
 %              a: -3
@@ -178,7 +177,6 @@
 %      order: 2
 %        dim: 1
 %     orient: 'first'
-% 
 % 
 % out_param = 
 % 
@@ -208,7 +206,6 @@
 %        dim: 1
 %     orient: 'first'
 % 
-% 
 % out_param = 
 % 
 %              a: -3
@@ -236,7 +233,6 @@
 %      order: 2
 %        dim: 1
 %     orient: 'first'
-% 
 % 
 % out_param = 
 % 
