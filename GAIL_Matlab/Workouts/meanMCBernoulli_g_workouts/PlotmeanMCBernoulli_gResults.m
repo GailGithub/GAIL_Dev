@@ -6,7 +6,7 @@ clear all
 %load TestmeanMCBernoulli-on-abs-27-Mar-2014_11.42.48.mat
 %load TestmeanMCBernoulli-on-abs-23-Mar-2014_10.44.02.mat
 %load TestmeanMCBernoulli-on-abs-clt-21-Mar-2014_23.30.21.mat
-load TestmeanMCBernoulli-on-rel-23-Mar-2014_11.50.44.mat
+load TestmeanMCBernoulli-on-abs-06-Sep-2014_00.32.17.mat
 %load TestmeanMCBernoulli-on-both-23-Mar-2014_15.06.33.mat
 standard = true(nrep,1);
 maxsample=res(:,5)== res(:,6);
