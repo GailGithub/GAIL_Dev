@@ -59,8 +59,9 @@ function [q,out_param] = cubSobol_g(varargin)
 %
 %     q --- the estimated value of the integral.
 %
-%     out_param.overbudget --- string stating whether the max budget is
-%     attained without reaching the guaranteed error tolerance.
+%     out_param.overbudget --- boolean stating whether the max budget is
+%     attained without reaching the guaranteed error tolerance. Output 1
+%     means we have overrun our budget.
 %
 %     out_param.n --- number of points used when calling cubSobol_g for f.
 %
