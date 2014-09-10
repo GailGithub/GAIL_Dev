@@ -8,24 +8,25 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %   vector y of function values that is of the same size as x. Output pp
 %   may be evaluated via PPVAL.
 %
-%   pp = FUNAPPXLOCAL_G(f,a,b,abstol,nlo,nhi) for a given function f and
+%   pp = FUNAPPXLOCAL_G(f,a,b,abstol,nlo,nhi,nmax) for a given function f and
 %   the ordered input parameters that define the finite interval [a,b], a
 %   guaranteed absolute error tolerance abstol, a lower bound of initial
-%   number of points nlo, and an upper bound of initial number of points
-%   nhi.
+%   number of points nlo, an upper bound of initial number of points nhi,
+%   and a cost budget nmax.
 %
-%   pp = FUNAPPXLOCAL_G(f,'a',a,'b',b,'abstol',abstol,'nlo',nlo,'nhi',nhi)
+%   pp = FUNAPPXLOCAL_G(f,'a',a,'b',b,'abstol',abstol,'nlo',nlo,'nhi',nhi,'nmax',nmax)
 %   recovers function f on the finite interval [a,b], given a guaranteed
 %   absolute error tolerance abstol, a lower bound of initial number of
-%   points nlo, and an upper bound of initial number of points nhi. All
-%   five field-value pairs are optional and can be supplied in different
-%   order.
+%   points nlo, an upper bound of initial number of points nhi, and a cost
+%   budget nmax. All six field-value pairs are optional and can be supplied
+%   in different order.
 %
 %   pp = FUNAPPXLOCAL_G(f,in_param) recovers function f on the finite
 %   interval [in_param.a,in_param.b], given a guaranteed absolute error
 %   tolerance in_param.abstol, a lower bound of initial number of points
-%   in_param.nlo, and an upper bound of initial number of points
-%   in_param.nhi. If a field is not specified, the default value is used.
+%   in_param.nlo, an upper bound of initial number of points in_param.nhi,
+%   and a cost budget in_param.nmax. If a field is not specified, the
+%   default value is used.
 %
 %     in_param.a --- left end point of interval, default value is 0
 %
@@ -39,6 +40,8 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %
 %     in_param.nhi --- upper bound of initial number of points we used,
 %     default value is 100
+%
+%     in_param.nmax --- cost budget, default value is 1e7
 %
 %   [pp, out_param] = FUNAPPXLOCAL_G(f,...) returns a piecewise polynomial
 %   structure pp and an output structure out_param, which have the
@@ -57,6 +60,9 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %     pp.dim --- be 1 as we do univariate approximation
 %
 %     pp.orient --- always be 'first'
+%
+%     out_param.exceedbudget --- it is 0 if the number of points used in 
+%     the construction of pp is less than cost budget, 1 otherwise.
 %
 %     out_param.ninit --- initial number of points we use
 %
@@ -79,6 +85,7 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %
 %     out_param.nhi --- an upper bound of initial number of points we use
 %
+%     out_param.nmax --- cost budget
 %
 %   Examples
 %
@@ -230,6 +237,7 @@ function [pp,out_param]=funappxlocal_g(varargin)
 if MATLABVERSION >= 8.3
     warning('off', 'MATLAB:interp1:ppGriddedInterpolant');
 end;
+
 %%main algorithm
 % initialize number of points
 ninit = out_param.ninit;
@@ -242,7 +250,6 @@ err = abstol + 1;
 len = out_param.b - out_param.a;
 x = out_param.a:len/(ninit-1):out_param.b;
 y = f(x);
-
 iter = 0;
 
 while(max(err) > abstol)
@@ -310,6 +317,14 @@ while(max(err) > abstol)
     else
         break;
     end;
+    if(iter>=1000)
+        warning('MATLAB:funappx_g:exceediter','Iteration exceeds 1000 times.')
+        break;
+    end;
+    if(index(end) >= out_param.nmax)
+        warning('MATLAB:funappx_g:exceedbudget','funappx_g attempted to exceed the cost budget. The answer may be unreliable.')
+        break;
+    end;
 end;
 out_param.npoints = index(end);
 out_param.errorbound = max(err);
@@ -336,6 +351,7 @@ default.a = 0;
 default.b = 1;
 default.nlo = 9;
 default.nhi = 100;
+default.nmax = 1e7;
 
 if isempty(varargin)
     warning('MATLAB:funappx_g:nofunction','Function f must be specified. Now GAIL is using f(x)=exp(-100*(x-0.5)^2) and unit interval [0,1].')
@@ -362,6 +378,7 @@ if ~validvarargin
     out_param.abstol = default.abstol;
     out_param.nlo = default.nlo;
     out_param.nhi = default.nhi;
+    out_param.nmax = default.nmax ;
 else
     p = inputParser;
     addRequired(p,'f',@gail.isfcn);
@@ -372,6 +389,7 @@ else
         addOptional(p,'abstol',default.abstol,@isnumeric);
         addOptional(p,'nlo',default.nlo,@isnumeric);
         addOptional(p,'nhi',default.nhi,@isnumeric);
+        addOptional(p,'nmax',default.nmax,@isnumeric)
     else
         if isstruct(in2) %parse input structure
             p.StructExpand = true;
@@ -382,6 +400,7 @@ else
         addParamValue(p,'abstol',default.abstol,@isnumeric);
         addParamValue(p,'nlo',default.nlo,@isnumeric);
         addParamValue(p,'nhi',default.nhi,@isnumeric);
+        addParamValue(p,'nmax',default.nmax,@isnumeric);
     end
     parse(p,f,varargin{2:end})
     out_param = p.Results;
@@ -440,6 +459,19 @@ end
 %         out_param.tauhi = default.tauhi;
 %     end
 % end
+% let cost budget be a positive integer
+if (~gail.isposint(out_param.nmax))
+    if gail.isposintive(out_param.nmax)
+        warning('MATLAB:funappx_g:budgetnotint',['Cost budget should be a positive integer.' ...
+            ' Using cost budget ', num2str(ceil(out_param.nmax))])
+        out_param.nmax = ceil(out_param.nmax);
+    else
+        warning('MATLAB:funappx_g:budgetisneg',['Cost budget should be a positive integer.' ...
+            ' Using default cost budget ' int2str(default.nmax)])
+        out_param.nmax = default.nmax;
+    end;
+end
+
 if (~gail.isposint(out_param.nlo))
     if gail.isposge3(out_param.nlo)
         warning('MATLAB:funappx_g:lowinitnotint',['Lower bound of initial number of points should be a positive integer.' ...
@@ -451,6 +483,7 @@ if (~gail.isposint(out_param.nlo))
         out_param.nlo = 3;
     end
 end
+
 if (~gail.isposint(out_param.nhi))
     if gail.isposge3(out_param.nhi)
         warning('MATLAB:funappx_g:hiinitnotint',['Upper bound of initial number of points should be a positive integer.' ...
