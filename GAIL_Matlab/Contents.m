@@ -1,4 +1,5 @@
-% GAIL_MATLAB
+% Guaranteed Automatic Integration Library
+% Version 1.3.1 05-Sep-2014
 %
 % Files
 %   GAILstart      - Initialize all the GAIL paths and system parameters.
