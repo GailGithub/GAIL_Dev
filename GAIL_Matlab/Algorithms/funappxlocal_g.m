@@ -8,24 +8,25 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %   vector y of function values that is of the same size as x. Output pp
 %   may be evaluated via PPVAL.
 %
-%   pp = FUNAPPXLOCAL_G(f,a,b,abstol,nlo,nhi) for a given function f and
+%   pp = FUNAPPXLOCAL_G(f,a,b,abstol,nlo,nhi,nmax) for a given function f and
 %   the ordered input parameters that define the finite interval [a,b], a
 %   guaranteed absolute error tolerance abstol, a lower bound of initial
-%   number of points nlo, and an upper bound of initial number of points
-%   nhi.
+%   number of points nlo, an upper bound of initial number of points nhi,
+%   and a cost budget nmax.
 %
-%   pp = FUNAPPXLOCAL_G(f,'a',a,'b',b,'abstol',abstol,'nlo',nlo,'nhi',nhi)
+%   pp = FUNAPPXLOCAL_G(f,'a',a,'b',b,'abstol',abstol,'nlo',nlo,'nhi',nhi,'nmax',nmax)
 %   recovers function f on the finite interval [a,b], given a guaranteed
 %   absolute error tolerance abstol, a lower bound of initial number of
-%   points nlo, and an upper bound of initial number of points nhi. All
-%   five field-value pairs are optional and can be supplied in different
-%   order.
+%   points nlo, an upper bound of initial number of points nhi, and a cost
+%   budget nmax. All six field-value pairs are optional and can be supplied
+%   in different order.
 %
 %   pp = FUNAPPXLOCAL_G(f,in_param) recovers function f on the finite
 %   interval [in_param.a,in_param.b], given a guaranteed absolute error
 %   tolerance in_param.abstol, a lower bound of initial number of points
-%   in_param.nlo, and an upper bound of initial number of points
-%   in_param.nhi. If a field is not specified, the default value is used.
+%   in_param.nlo, an upper bound of initial number of points in_param.nhi,
+%   and a cost budget in_param.nmax. If a field is not specified, the
+%   default value is used.
 %
 %     in_param.a --- left end point of interval, default value is 0
 %
@@ -39,6 +40,8 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %
 %     in_param.nhi --- upper bound of initial number of points we used,
 %     default value is 100
+%
+%     in_param.nmax --- cost budget, default value is 1e7
 %
 %   [pp, out_param] = FUNAPPXLOCAL_G(f,...) returns a piecewise polynomial
 %   structure pp and an output structure out_param, which have the
@@ -57,6 +60,9 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %     pp.dim --- be 1 as we do univariate approximation
 %
 %     pp.orient --- always be 'first'
+%
+%     out_param.exceedbudget --- it is 0 if the number of points used in 
+%     the construction of pp is less than cost budget, 1 otherwise.
 %
 %     out_param.ninit --- initial number of points we use
 %
@@ -79,6 +85,7 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %
 %     out_param.nhi --- an upper bound of initial number of points we use
 %
+%     out_param.nmax --- cost budget
 %
 %   Examples
 %
@@ -105,10 +112,12 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %         abstol: 1.0000e-06
 %            nlo: 9
 %            nhi: 100
+%           nmax: 10000000
 %          ninit: 30
 %        npoints: 1857
 %     errorbound: 7.7413e-07
 %          nstar: [1x64 double]
+%           iter: 7
 %
 %
 %   Example 2:
@@ -134,69 +143,75 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %              f: @(x)x.^2
 %            nhi: 20
 %            nlo: 10
+%           nmax: 10000000
 %          ninit: 18
 %        npoints: 34817
 %     errorbound: 5.9398e-08
 %          nstar: [1x2048 double]
+%           iter: 12
 %
 %
 %   Example 3:
 %
 %   >> f = @(x) x.^2;
-%   >> [pp, out_param] = funappxlocal_g(f,'a',-2,'b',2,'nhi',100,'nlo',10)
+%   >> [pp, out_param] = funappxlocal_g(f,'a',-2,'b',2,'nhi',20,'nlo',10)
 %
-% pp =
-%
+% pp = 
+% 
 %       form: 'pp'
-%     breaks: [1x8065 double]
-%      coefs: [8064x2 double]
-%     pieces: 8064
+%     breaks: [1x8705 double]
+%      coefs: [8704x2 double]
+%     pieces: 8704
 %      order: 2
 %        dim: 1
 %     orient: 'first'
-%
-% out_param =
-%
+% 
+% out_param = 
+% 
 %              a: -2
 %         abstol: 1.0000e-06
 %              b: 2
 %              f: @(x)x.^2
-%            nhi: 100
+%            nhi: 20
 %            nlo: 10
-%          ninit: 64
-%        npoints: 8065
-%     errorbound: 6.3562e-07
-%          nstar: [1x128 double]
+%           nmax: 10000000
+%          ninit: 18
+%        npoints: 8705
+%     errorbound: 9.5037e-07
+%          nstar: [1x512 double]
+%           iter: 10
 %
 %
 %   Example 4:
 %
-%   >> in_param.a = -10; in_param.b = 10; f = @(x) x.^2;
-%   >> in_param.abstol = 10^(-6); in_param.nlo = 10; in_param.nhi = 100;
+%   >> in_param.a = -5; in_param.b = 5; f = @(x) x.^2;
+%   >> in_param.abstol = 10^(-6); in_param.nlo = 10; in_param.nhi = 20;
 %   >> [pp, out_param] = funappxlocal_g(f,in_param)
 %
-% pp =
-%
+% pp = 
+% 
 %       form: 'pp'
-%     breaks: [1x45569 double]
-%      coefs: [45568x2 double]
-%     pieces: 45568
+%     breaks: [1x36865 double]
+%      coefs: [36864x2 double]
+%     pieces: 36864
 %      order: 2
 %        dim: 1
 %     orient: 'first'
-%
-% out_param =
-%
-%              a: -10
+% 
+% out_param = 
+% 
+%              a: -5
 %         abstol: 1.0000e-06
-%              b: 10
+%              b: 5
 %              f: @(x)x.^2
-%            nhi: 100
+%            nhi: 20
 %            nlo: 10
-%          ninit: 90
-%        npoints: 45569
-%     errorbound: 4.7678e-07
-%          nstar: [1x512 double]
+%           nmax: 10000000
+%          ninit: 19
+%        npoints: 36865
+%     errorbound: 3.1274e-07
+%          nstar: [1x2048 double]
+%           iter: 12
 %
 %
 %   See also INTEGRAL_G, MEANMC_G, CUBMC_G, FUNMIN_G
@@ -226,102 +241,99 @@ function [pp,out_param]=funappxlocal_g(varargin)
 if MATLABVERSION >= 8.3
     warning('off', 'MATLAB:interp1:ppGriddedInterpolant');
 end;
+
 %%main algorithm
-
-% tau = ceil(out_param.tauhi*(out_param.taulo/out_param.tauhi)^(1/(1+len)));
-% n = ceil((tau+1)/2)+1;
 % initialize number of points
-n = out_param.ninit;
-index = [1 n];
+ninit = out_param.ninit;
+index = [1 ninit];
 % initialize nstar
-nstar = n - 2;
+nstar = ninit - 2;
 % initialize error
-err = inf;
-% length of interval
+abstol = out_param.abstol;
+err = abstol + 1;
 len = out_param.b - out_param.a;
-x = out_param.a:len/(n-1):out_param.b;
+x = out_param.a:len/(ninit-1):out_param.b;
 y = f(x);
+iter = 0;
 
-while(max(err) >= out_param.abstol)
-    % Stage 1: Find the maximum error
-    tmp = find(err==max(err),1);
+while(max(err) > abstol)
+    iter = iter + 1;
+    % length of each subinterval
+    len = x(index(2:end))-x(index(1:end-1));
+    reshapey = reshape(y(1:end-1),ninit - 1, (index(end) - 1)/(ninit -1));
+    diffy = diff([reshapey;y(index(2:end))]);
+    %approximate the weaker norm of input function at different subinterval
+    gn = (ninit-1)./len.*max(abs(diffy-repmat((y(index(2:end))-y(index(1:end-1)))/(ninit-1),ninit-1,1)),[],1);
+    %approximate the stronger norm of input function at different subinterval
+    fn = (ninit-1)^2./(len.^2).*max(abs(diff(diffy)),[],1);
+    %update cone condition every iteration
+    ntemp=max(ceil(out_param.nhi*(out_param.nlo/out_param.nhi).^(1./(1+len))),3);
+    nstar = ntemp -2;
     
-    % Stage 2: Computer the norm
-    a = index(tmp); b=index(tmp+1);
-    n = b-a+1;
-    len = x(b)-x(a);
-    diff_y = diff(y(a:b));
-    %approximate the weaker norm of input function
-    gn = (n-1)/len*max(abs(diff_y-(y(b)-y(a))/(n-1)));
-    %approximate the stronger norm of input function
-    fn = (n-1)^2/len^2*max(abs(diff(diff_y)));
-    
-    % Stage 3: satisfy necessary condition
-    if nstar(tmp)*(2*gn+fn*len/(n-1)) >= fn*len;
-        % Stage 4: check for convergence
-        err(tmp) = nstar(tmp)*len*gn/(4*(n-1)*(n-1-nstar(tmp)));
-        if err(tmp) >= out_param.abstol;
-            % Stage 5:
-            index = [index(1:tmp) a+n-1 index(tmp+1:end)+n-1];
-            h = (x(b)-x(a))/(2*(n-1));
-            %xnew = repmat(x(a:b-1),1,1)+repmat(h,1,n-1);
-            xnew = x(a:b-1)+h;
-            ynew = f(xnew);
-            xnew1 = [x(a:b-1); xnew];
-            xx = xnew1(:)';
-            ynew1 = [y(a:b-1); ynew];
-            yy = ynew1(:)';
-            %             xx = x(a):h:x(b);
-            %             yy = f(xx);
-            x = [x(1:a-1) xx x(b:end)];
-            y = [y(1:a-1) yy y(b:end)];
-            err = [err(1:tmp-1) inf inf err(tmp+1:end)];
-            ntemp=max(ceil(out_param.nhi*(out_param.nlo/out_param.nhi)^(1/(1+h))),3);
-            nstar = [nstar(1:tmp-1) ntemp-2 ntemp-2 nstar(tmp+1:end)];
-        end;
+    if nstar.*(2*gn+fn.*len/(ninit-1)) >= (fn.*len);
+        err = nstar.*len.*gn./(4*(ninit-1).*(ninit-1-nstar));
+%     else
+%         smallconeindex = find(nstar*(2*gn+fn.*len/(ninit-1)) < (fn.*len));
+%         err(smllconeindex) = abstol + 1;
+    end
+    if max(err) > abstol;
+        whbad = err > abstol;
+        whgood = (whbad ==0);
+        %update x and y
+        reshapex =  reshape(x(1:end-1),ninit -1,(index(end) - 1)/(ninit -1));
+        h = len/2/(ninit-1);
+        badind = find(whbad == 1);
+        goodind = find(whgood == 1);
+        temp = cumsum(whbad);
+        cumbad = temp(badind);
+        newindex = [badind + [0 cumbad(1:end-1)]; badind + cumbad];
+        newindex = newindex(:)';
+        newx = reshapex(:,badind) + repmat(h(badind),ninit-1,1);
+        newy = f(newx);
+        ll = zeros(2*(ninit-1),sum(whbad));
+        ll(1:2:end-1,:) = reshapex(:,badind);
+        ll(2:2:end,:) = newx;
+        llreshapex = reshape(ll, ninit - 1, 2*sum(whbad));
+        newreshapex = zeros(ninit - 1, 2*sum(whbad)+sum(whgood));
+        newreshapex(:,newindex) = llreshapex;
+        newreshapex(:,goodind + temp(goodind)) = reshapex(:,goodind);
+        x = [newreshapex(:)' x(end)];
+        ll(1:2:end-1,:) = reshapey(:,badind);
+        ll(2:2:end,:) = newy;
+        llreshapey = reshape(ll, ninit - 1, 2*sum(whbad));
+        newreshapey = zeros(ninit - 1, 2*sum(whbad)+sum(whgood));
+        newreshapey(:,newindex) = llreshapey;
+        newreshapey(:,goodind + temp(goodind)) = reshapey(:,goodind);
+        y = [newreshapey(:)' y(end)];
+        %update err
+        cumwhbad = cumsum(whbad+1);
+        c = zeros(1,cumwhbad(end));
+        newerr = [err(badind); err(badind)];
+        c(newindex)=newerr(:)';
+        c(goodind + temp(goodind)) = err(goodind);
+        err = c;
+        %upadte index
+        index(2:end) = index(2:end) + cumsum(whbad)*(ninit-1);
+        indexbeg = index(1:end-1) + whbad*(ninit-1);
+        indexnew = [index(1:end-1); indexbeg];
+        indexnew = indexnew(:)';
+        index = unique([indexnew index(end)]);
     else
-        % increase nstar
-        nstar(tmp) = 2*nstar(tmp);
-        % check if number of points large enough
-        if n >= nstar(tmp) + 2;
-            % true, go to Stage 4
-            err(tmp) = nstar(tmp)*len*gn/(4*(n-1)*(n-1-nstar(tmp)));
-            if err(tmp) >= out_param.abstol;
-                % Stage 5:
-                index = [index(1:tmp) a+n-1 index(tmp+1:end)+n-1];
-                h = (x(b)-x(a))/(2*(n-1));
-                xnew = repmat(x(a:b-1),1,1)+repmat(h,1,n-1);
-                ynew = f(xnew);
-                xnew = [x(a:b-1); xnew];
-                xx = [xnew(:); x(b)]';
-                ynew = [y(a:b-1); ynew];
-                yy = [ynew(:); y(b)]';
-                x = [x(1:a-1) xx x(b+1:end)];
-                y = [y(1:a-1) yy y(b+1:end)];
-                err = [err(1:tmp-1) inf inf err(tmp+1:end)];
-                ntemp=max(ceil(out_param.nhi*(out_param.nlo/out_param.nhi)^(1/(1+h))),3);
-                nstar = [nstar(1:tmp-1) ntemp-2 ntemp-2 nstar(tmp+1:end)];
-            end;
-        else
-            % Stage 5:
-            index = [index(1:tmp) a+n-1 index(tmp+1:end)+n-1];
-            h = (x(b)-x(a))/(2*(n-1));
-            xnew = repmat(x(a:b-1),1,1)+repmat(h,1,n-1);
-            ynew = f(xnew);
-            xnew = [x(a:b-1); xnew];
-            xx = [xnew(:); x(b)]';
-            ynew = [y(a:b-1); ynew];
-            yy = [ynew(:); y(b)]';
-            x = [x(1:a-1) xx x(b+1:end)];
-            y = [y(1:a-1) yy y(b+1:end)];
-            err = [err(1:tmp-1) inf inf err(tmp+1:end)];
-            nstar = [nstar(1:tmp-1) nstar(tmp) nstar(tmp) nstar(tmp+1:end)];
-        end;
+        break;
+    end;
+    if(iter>=1000)
+        warning('MATLAB:funappx_g:exceediter','Iteration exceeds 1000 times.')
+        break;
+    end;
+    if(index(end) >= out_param.nmax)
+        warning('MATLAB:funappx_g:exceedbudget','funappx_g attempted to exceed the cost budget. The answer may be unreliable.')
+        break;
     end;
 end;
 out_param.npoints = index(end);
 out_param.errorbound = max(err);
 out_param.nstar = nstar;
+out_param.iter = iter;
 % out_param.err = err;
 % x1 = x;
 % y1 = f(x1);
@@ -343,6 +355,7 @@ default.a = 0;
 default.b = 1;
 default.nlo = 9;
 default.nhi = 100;
+default.nmax = 1e7;
 
 if isempty(varargin)
     warning('MATLAB:funappx_g:nofunction','Function f must be specified. Now GAIL is using f(x)=exp(-100*(x-0.5)^2) and unit interval [0,1].')
@@ -369,6 +382,7 @@ if ~validvarargin
     out_param.abstol = default.abstol;
     out_param.nlo = default.nlo;
     out_param.nhi = default.nhi;
+    out_param.nmax = default.nmax ;
 else
     p = inputParser;
     addRequired(p,'f',@gail.isfcn);
@@ -379,6 +393,7 @@ else
         addOptional(p,'abstol',default.abstol,@isnumeric);
         addOptional(p,'nlo',default.nlo,@isnumeric);
         addOptional(p,'nhi',default.nhi,@isnumeric);
+        addOptional(p,'nmax',default.nmax,@isnumeric)
     else
         if isstruct(in2) %parse input structure
             p.StructExpand = true;
@@ -389,6 +404,7 @@ else
         addParamValue(p,'abstol',default.abstol,@isnumeric);
         addParamValue(p,'nlo',default.nlo,@isnumeric);
         addParamValue(p,'nhi',default.nhi,@isnumeric);
+        addParamValue(p,'nmax',default.nmax,@isnumeric);
     end
     parse(p,f,varargin{2:end})
     out_param = p.Results;
@@ -447,6 +463,19 @@ end
 %         out_param.tauhi = default.tauhi;
 %     end
 % end
+% let cost budget be a positive integer
+if (~gail.isposint(out_param.nmax))
+    if gail.isposintive(out_param.nmax)
+        warning('MATLAB:funappx_g:budgetnotint',['Cost budget should be a positive integer.' ...
+            ' Using cost budget ', num2str(ceil(out_param.nmax))])
+        out_param.nmax = ceil(out_param.nmax);
+    else
+        warning('MATLAB:funappx_g:budgetisneg',['Cost budget should be a positive integer.' ...
+            ' Using default cost budget ' int2str(default.nmax)])
+        out_param.nmax = default.nmax;
+    end;
+end
+
 if (~gail.isposint(out_param.nlo))
     if gail.isposge3(out_param.nlo)
         warning('MATLAB:funappx_g:lowinitnotint',['Lower bound of initial number of points should be a positive integer.' ...
@@ -458,6 +487,7 @@ if (~gail.isposint(out_param.nlo))
         out_param.nlo = 3;
     end
 end
+
 if (~gail.isposint(out_param.nhi))
     if gail.isposge3(out_param.nhi)
         warning('MATLAB:funappx_g:hiinitnotint',['Upper bound of initial number of points should be a positive integer.' ...
@@ -480,5 +510,7 @@ end;
 
 h = out_param.b - out_param.a;
 out_param.ninit = max(ceil(out_param.nhi*(out_param.nlo/out_param.nhi)^(1/(1+h))),3);
+
+
 
 

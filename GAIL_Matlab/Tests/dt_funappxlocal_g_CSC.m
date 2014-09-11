@@ -1,13 +1,13 @@
-%DT_FUNAPPXLOCAL_G small doctest for funappxlocal_g
+%DT_FUNAPPXLOCAL_G small doctest for funappxlocal_g_CSC
 %
-%   >> funappxlocal_g
+%   >> funappxlocal_g_CSC
 %
 %   Function f must be specified. Now GAIL is using f(x)=exp(-100*(x-0.5)^2) and unit interval [0,1].
 %
 %
 %   Example 1:
 %   
-%   >> f = @(x) x.^2; pp = funappxlocal_g(f)
+%   >> f = @(x) x.^2; pp = funappxlocal_g_CSC(f)
 %
 % pp = 
 % 
@@ -22,7 +22,7 @@
 %
 %   Example 2:
 %
-%   >> f = @(x) x.^2; [pp out_param] = funappxlocal_g(f)
+%   >> f = @(x) x.^2; [pp out_param] = funappxlocal_g_CSC(f)
 %   
 % pp = 
 % 
@@ -42,18 +42,16 @@
 %         abstol: 1.0000e-06
 %            nlo: 9
 %            nhi: 100
-%           nmax: 10000000
 %          ninit: 30
 %        npoints: 1857
 %     errorbound: 7.7413e-07
 %          nstar: [1x64 double]
-%           iter: 7
 %
 %
 %   Example 3:
 %
 %   >> clear in_param; in_param.a = -10; in_param.b =10; in_param.abstol = 10^(-8); 
-%   >> [pp, out_param] = funappxlocal_g(@(x) x.^2, in_param)
+%   >> [pp, out_param] = funappxlocal_g_CSC(@(x) x.^2, in_param)
 %
 % pp = 
 % 
@@ -73,19 +71,17 @@
 %              f: @(x)x.^2
 %            nhi: 100
 %            nlo: 9
-%           nmax: 10000000
 %          ninit: 90
 %        npoints: 364545
 %     errorbound: 6.5402e-09
 %          nstar: [1x4096 double]
-%           iter: 13
 %
 % 
 %   Example 4: 
 %
 %   >> clear in_param; in_param.a = -5; in_param.b = 5; 
 %   >> in_param.abstol = 10^(-6); in_param.nlo = 100; in_param.nhi = 500;
-%   >> [pp, out_param] = funappxlocal_g(@(x) x.^2, in_param)
+%   >> [pp, out_param] = funappxlocal_g_CSC(@(x) x.^2, in_param)
 %
 % pp = 
 % 
@@ -105,17 +101,15 @@
 %              f: @(x)x.^2
 %            nhi: 500
 %            nlo: 100
-%           nmax: 10000000
 %          ninit: 432
 %        npoints: 110337
-%     errorbound: 2.8441e-07
+%     errorbound: 2.6331e-07
 %          nstar: [1x256 double]
-%           iter: 9
 %   
 %
 %   Example 5:
 %
-%   >> [pp, out_param] = funappxlocal_g(@(x) x.^2,'a',-2,'b',2,'abstol',1e-7)
+%   >> [pp, out_param] = funappxlocal_g_CSC(@(x) x.^2,'a',-2,'b',2,'abstol',1e-7)
 %
 % pp = 
 % 
@@ -135,17 +129,15 @@
 %              f: @(x)x.^2
 %            nhi: 100
 %            nlo: 9
-%           nmax: 10000000
 %          ninit: 62
 %        npoints: 31233
 %     errorbound: 3.7139e-08
 %          nstar: [1x512 double]
-%           iter: 10
 %
 %
 %   Example 6:
 %
-%   >> [pp, out_param] = funappxlocal_g(@(x) x.^2,'a',-3,'b',0,'nlo',20,'nhi',40)
+%   >> [pp, out_param] = funappxlocal_g_CSC(@(x) x.^2,'a',-3,'b',0,'nlo',20,'nhi',40)
 %
 % pp = 
 % 
@@ -165,17 +157,15 @@
 %              f: @(x)x.^2
 %            nhi: 40
 %            nlo: 20
-%           nmax: 10000000
 %          ninit: 34
 %        npoints: 16897
 %     errorbound: 3.4229e-07
 %          nstar: [1x512 double]
-%           iter: 10
 %
 %
 %   Example 7:
 %
-%   >> [pp, out_param] = funappxlocal_g(@(x) x.^2,-2,5)
+%   >> [pp, out_param] = funappxlocal_g_CSC(@(x) x.^2,-2,5)
 %   
 % pp = 
 % 
@@ -195,17 +185,15 @@
 %              f: @(x)x.^2
 %            nhi: 100
 %            nlo: 9
-%           nmax: 10000000
 %          ninit: 75
 %        npoints: 18945
 %     errorbound: 3.0204e-07
 %          nstar: [1x256 double]
-%           iter: 9
 %
 %
 %   Example 8:
 %
-%   >> [pp, out_param] = funappxlocal_g(@(x) x.^2,-3,3,1e-7)
+%   >> [pp, out_param] = funappxlocal_g_CSC(@(x) x.^2,-3,3,1e-7)
 %
 % pp = 
 % 
@@ -225,17 +213,15 @@
 %              f: @(x)x.^2
 %            nhi: 100
 %            nlo: 9
-%           nmax: 10000000
 %          ninit: 71
 %        npoints: 35841
 %     errorbound: 6.2381e-08
 %          nstar: [1x512 double]
-%           iter: 10
 %
 %
 %   Example 9:
 %
-%   >> [pp, out_param] = funappxlocal_g(@(x) x.^2,-5,10,1e-7,10,20)
+%   >> [pp, out_param] = funappxlocal_g_CSC(@(x) x.^2,-5,10,1e-7,10,20)
 %
 % pp = 
 % 
@@ -246,7 +232,7 @@
 %      order: 2
 %        dim: 1
 %     orient: 'first'
-% 
+%  
 % out_param = 
 % 
 %              a: -5
@@ -255,10 +241,8 @@
 %              f: @(x)x.^2
 %            nhi: 20
 %            nlo: 10
-%           nmax: 10000000
 %          ninit: 20
 %        npoints: 155649
 %     errorbound: 3.7614e-08
 %          nstar: [1x8192 double]
-%           iter: 14
 %
