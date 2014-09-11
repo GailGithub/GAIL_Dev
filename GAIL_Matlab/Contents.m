@@ -1,4 +1,4 @@
-% Guaranteed Automatic Integration Library
+% Guaranteed Automatic Integration Library (GAIL)
 % Version 2.0 beta 01-Oct-2014
 %
 % Files
