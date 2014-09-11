@@ -1,13 +1,14 @@
 %define test function
-f1 = @(x) x;
-f2 = @(x) x.^2;
-f3 = @(x,a) exp(-1000*(x-a).^2);
+f1 = @(x) x.^2;
+f2 = @(x) exp(-1./(x-0.5).^2);
+f3 = @(x,a) exp(-10000*(x-a).^2);
 f4 = @(x,a) 1/4*a*exp(-2*x).*(a-2*exp(x).*(-1 + a*cos(x) - a*sin(x))...
     +exp(2*x).*(a + 2*cos(x) - 2* sin(x) - a *sin(2*x)));
-n = 4;
+f5 = @(x) sin(pi*x);
+n = 5;
 time = zeros(n,2);
 npoints = zeros(n,2);
-nrep = 10;
+nrep = 50;
 a = -2;
 b = 2;
 randa = rand(nrep,1)*(b-a)+a;
@@ -57,6 +58,16 @@ for i = 1:nrep;
     t=toc;
     time(4,2) = time(4,2) + t;
     npoints(4,2) = out_param.npoints;
+    tic;
+    [~, out_param] = funappx_g(f5,a,b,1e-6,9,25);
+    t=toc;
+    time(5,1) = time(5,1) + t;
+    npoints(5,1) = out_param.npoints;
+    tic;
+    [~, out_param] = funappxlocal_g(f5,a,b,1e-6,9,25);
+    t=toc;
+    time(5,2) = time(5,2) + t;
+    npoints(5,2) = out_param.npoints;
 end;
 
 display(' ')

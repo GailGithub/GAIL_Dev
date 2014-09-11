@@ -61,9 +61,6 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %
 %     pp.orient --- always be 'first'
 %
-%     out_param.exceedbudget --- it is 0 if the number of points used in 
-%     the construction of pp is less than cost budget, 1 otherwise.
-%
 %     out_param.ninit --- initial number of points we use
 %
 %     out_param.npoints --- number of points we need to reach the
