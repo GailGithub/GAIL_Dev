@@ -1,5 +1,5 @@
-% Guarantted Automatic Integration Library
-% Version 2.0 01-Oct-2014
+% Guaranteed Automatic Integration Library
+% Version 2.0 beta 01-Oct-2014
 %
 % Files
 %   GAILstart      - Initialize all the GAIL paths and system parameters.
