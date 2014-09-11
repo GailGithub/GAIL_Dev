@@ -42,10 +42,12 @@
 %         abstol: 1.0000e-06
 %            nlo: 9
 %            nhi: 100
+%           nmax: 10000000
 %          ninit: 30
 %        npoints: 1857
 %     errorbound: 7.7413e-07
 %          nstar: [1x64 double]
+%           iter: 7
 %
 %
 %   Example 3:
@@ -71,10 +73,12 @@
 %              f: @(x)x.^2
 %            nhi: 100
 %            nlo: 9
+%           nmax: 10000000
 %          ninit: 90
 %        npoints: 364545
 %     errorbound: 6.5402e-09
 %          nstar: [1x4096 double]
+%           iter: 13
 %
 % 
 %   Example 4: 
@@ -101,6 +105,7 @@
 %              f: @(x)x.^2
 %            nhi: 500
 %            nlo: 100
+%           nmax: 10000000
 %          ninit: 432
 %        npoints: 110337
 %     errorbound: 2.8441e-07
@@ -130,10 +135,12 @@
 %              f: @(x)x.^2
 %            nhi: 100
 %            nlo: 9
+%           nmax: 10000000
 %          ninit: 62
 %        npoints: 31233
 %     errorbound: 3.7139e-08
 %          nstar: [1x512 double]
+%           iter: 10
 %
 %
 %   Example 6:
@@ -158,10 +165,12 @@
 %              f: @(x)x.^2
 %            nhi: 40
 %            nlo: 20
+%           nmax: 10000000
 %          ninit: 34
 %        npoints: 16897
 %     errorbound: 3.4229e-07
 %          nstar: [1x512 double]
+%           iter: 10
 %
 %
 %   Example 7:
@@ -186,10 +195,12 @@
 %              f: @(x)x.^2
 %            nhi: 100
 %            nlo: 9
+%           nmax: 10000000
 %          ninit: 75
 %        npoints: 18945
 %     errorbound: 3.0204e-07
 %          nstar: [1x256 double]
+%           iter: 9
 %
 %
 %   Example 8:
@@ -214,10 +225,12 @@
 %              f: @(x)x.^2
 %            nhi: 100
 %            nlo: 9
+%           nmax: 10000000
 %          ninit: 71
 %        npoints: 35841
 %     errorbound: 6.2381e-08
 %          nstar: [1x512 double]
+%           iter: 10
 %
 %
 %   Example 9:
@@ -242,8 +255,10 @@
 %              f: @(x)x.^2
 %            nhi: 20
 %            nlo: 10
+%           nmax: 10000000
 %          ninit: 20
 %        npoints: 155649
 %     errorbound: 3.7614e-08
 %          nstar: [1x8192 double]
+%           iter: 14
 %

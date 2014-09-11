@@ -112,6 +112,7 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %         abstol: 1.0000e-06
 %            nlo: 9
 %            nhi: 100
+%           nmax: 10000000
 %          ninit: 30
 %        npoints: 1857
 %     errorbound: 7.7413e-07
@@ -142,6 +143,7 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %              f: @(x)x.^2
 %            nhi: 20
 %            nlo: 10
+%           nmax: 10000000
 %          ninit: 18
 %        npoints: 34817
 %     errorbound: 5.9398e-08
@@ -172,6 +174,7 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %              f: @(x)x.^2
 %            nhi: 20
 %            nlo: 10
+%           nmax: 10000000
 %          ninit: 18
 %        npoints: 8705
 %     errorbound: 9.5037e-07
@@ -203,6 +206,7 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %              f: @(x)x.^2
 %            nhi: 20
 %            nlo: 10
+%           nmax: 10000000
 %          ninit: 19
 %        npoints: 36865
 %     errorbound: 3.1274e-07
