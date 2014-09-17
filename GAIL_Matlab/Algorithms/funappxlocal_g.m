@@ -91,12 +91,12 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %
 %   >> f = @(x) x.^2; [pp, out_param] = funappxlocal_g(f)
 %
-% pp =
-%
+% pp = 
+% 
 %       form: 'pp'
-%     breaks: [1x1857 double]
-%      coefs: [1856x2 double]
-%     pieces: 1856
+%     breaks: [1x3969 double]
+%      coefs: [3968x2 double]
+%     pieces: 3968
 %      order: 2
 %        dim: 1
 %     orient: 'first'
@@ -107,16 +107,16 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %              a: 0
 %              b: 1
 %         abstol: 1.0000e-06
-%            nlo: 9
-%            nhi: 100
+%            nlo: 20
+%            nhi: 50
 %           nmax: 10000000
-%          ninit: 30
-%        npoints: 1857
-%     errorbound: 7.7413e-07
-%          nstar: [8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8]
-%           iter: 7
-%
-%
+%          ninit: 32
+%        npoints: 3969
+%     errorbound: 7.5421e-07
+%          nstar: [1x128 double]
+%           iter: 8
+% 
+% 
 %   Example 2:
 %
 %   >> f = @(x) x.^2;
@@ -365,8 +365,8 @@ function [f, out_param] = funappx_g_param(varargin)
 default.abstol = 1e-6;
 default.a = 0;
 default.b = 1;
-default.nlo = 9;
-default.nhi = 100;
+default.nlo = 20;
+default.nhi = 50;
 default.nmax = 1e7;
 
 if isempty(varargin)
