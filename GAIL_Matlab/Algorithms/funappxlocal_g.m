@@ -101,8 +101,8 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %        dim: 1
 %     orient: 'first'
 %
-% out_param =
-%
+% out_param = 
+% 
 %              f: @(x)x.^2
 %              a: 0
 %              b: 1
@@ -113,7 +113,7 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %          ninit: 30
 %        npoints: 1857
 %     errorbound: 7.7413e-07
-%          nstar: [1x64 double]
+%          nstar: [8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8]
 %           iter: 7
 %
 %
@@ -267,26 +267,40 @@ while(max(err) > abstol)
     ntemp=max(ceil(out_param.nhi*(out_param.nlo/out_param.nhi).^(1./(1+len))),3);
     nstar = ntemp -2;
     
-    if nstar.*(2*gn+fn.*len/(ninit-1)) >= (fn.*len);
-        err = nstar.*len.*gn./(4*(ninit-1).*(ninit-1-nstar));
-%     else
-%         smallconeindex = find(nstar*(2*gn+fn.*len/(ninit-1)) < (fn.*len));
-%         err(smllconeindex) = abstol + 1;
-    end
+    %find nstar not large enough then double it
+    smallconeind = find(nstar.*(2*gn+fn.*len/(ninit-1)) <(fn.*len));
+    nstar(smallconeind) = 2*nstar(smallconeind);
+    
+    %check necessary condition if satisfied then compute error
+    %otherwise just use the error from last iteration
+    largeconeind = find(nstar.*(2*gn+fn.*len/(ninit-1)) >= (fn.*len));
+    err(largeconeind) = nstar(largeconeind).*len(largeconeind).*gn(largeconeind)./...
+        (4*(ninit-1).*(ninit-1-nstar(largeconeind)));
+    
+    %check if error satisfy the error tolerance 
     if max(err) > abstol;
+        %flag sub interval error not satisfy error tolerance 1 in whbad
         whbad = err > abstol;
-        whgood = (whbad ==0);
-        %update x and y
-        reshapex =  reshape(x(1:end-1),ninit -1,(index(end) - 1)/(ninit -1));
-        h = len/2/(ninit-1);
+        %add index for bad sub interval
         badind = find(whbad == 1);
-        goodind = find(whgood == 1);
+        %flag sub interval error satisfy error tolerance 1 in whgood
+        whgood = (whbad ==0);
+        %add index for good sub interval
+        goodind = find(whgood == 1);   
+        %find how many sub intervals need to be split
         temp = cumsum(whbad);
         cumbad = temp(badind);
         newindex = [badind + [0 cumbad(1:end-1)]; badind + cumbad];
         newindex = newindex(:)';
+        %find the length of subinterval need to add points
+        h = len/2/(ninit-1);
+        %reshape x to a matrix of ninit-1 by # of intervals
+        reshapex =  reshape(x(1:end-1),ninit -1,(index(end) - 1)/(ninit -1));
+        %find new points newx need to be added
         newx = reshapex(:,badind) + repmat(h(badind),ninit-1,1);
+        %compute value newy of newx
         newy = f(newx);
+        %insert newx back into x at correct position
         ll = zeros(2*(ninit-1),sum(whbad));
         ll(1:2:end-1,:) = reshapex(:,badind);
         ll(2:2:end,:) = newx;
@@ -295,6 +309,7 @@ while(max(err) > abstol)
         newreshapex(:,newindex) = llreshapex;
         newreshapex(:,goodind + temp(goodind)) = reshapex(:,goodind);
         x = [newreshapex(:)' x(end)];
+        %insert newy back into y at correct position
         ll(1:2:end-1,:) = reshapey(:,badind);
         ll(2:2:end,:) = newy;
         llreshapey = reshape(ll, ninit - 1, 2*sum(whbad));
@@ -302,14 +317,14 @@ while(max(err) > abstol)
         newreshapey(:,newindex) = llreshapey;
         newreshapey(:,goodind + temp(goodind)) = reshapey(:,goodind);
         y = [newreshapey(:)' y(end)];
-        %update err
+        %use the same error for splitted bad interval
         cumwhbad = cumsum(whbad+1);
         c = zeros(1,cumwhbad(end));
         newerr = [err(badind); err(badind)];
         c(newindex)=newerr(:)';
         c(goodind + temp(goodind)) = err(goodind);
         err = c;
-        %upadte index
+        %upadte index to x 
         index(2:end) = index(2:end) + cumsum(whbad)*(ninit-1);
         indexbeg = index(1:end-1) + whbad*(ninit-1);
         indexnew = [index(1:end-1); indexbeg];
