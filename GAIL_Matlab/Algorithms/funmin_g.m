@@ -105,7 +105,7 @@ function [fmin,out_param]=funmin_g(varargin)
 %
 %  Example 1:
 %
-%  >> f=@(x) (x-0.3).^2+1; [fmin,out_param] = funminab_g(f)
+%  >> f=@(x) (x-0.3).^2+1; [fmin,out_param] = funmin_g(f)
 %
 %  fmin =
 %
@@ -133,7 +133,7 @@ function [fmin,out_param]=funmin_g(varargin)
 %  Example 2:
 %
 %  >> f=@(x) (x-0.3).^2+1;
-%  >> [fmin,out_param] = funminab_g(f,-2,2,1e-7,1e-4,10,10,1000000)
+%  >> [fmin,out_param] = funmin_g(f,-2,2,1e-7,1e-4,10,10,1000000)
 %
 %  fmin =
 %
@@ -166,7 +166,7 @@ function [fmin,out_param]=funmin_g(varargin)
 %  >> in_param.abstol = 10^(-7); in_param.TolX = 1e-4;
 %  >> in_param.nlo = 10; in_param.nhi = 100;
 %  >> in_param.nmax = 10^6;
-%  >> [fmin,out_param] = funminab_g(f,in_param)
+%  >> [fmin,out_param] = funmin_g(f,in_param)
 %
 %  fmin =
 %
@@ -195,7 +195,7 @@ function [fmin,out_param]=funmin_g(varargin)
 %  Example 4:
 %
 %  >> f=@(x) (x-0.3).^2+1;
-%  >> [fmin,out_param] = funminab_g(f,'a',-2,'b',2,'nhi',100,'nlo',10,'nmax',1e6,'abstol',1e-4,'TolX',1e-2)
+%  >> [fmin,out_param] = funmin_g(f,'a',-2,'b',2,'nhi',100,'nlo',10,'nmax',1e6,'abstol',1e-4,'TolX',1e-2)
 %
 %  fmin =
 %
