@@ -12,9 +12,9 @@
 % pp = 
 % 
 %       form: 'pp'
-%     breaks: [1x1857 double]
-%      coefs: [1856x2 double]
-%     pieces: 1856
+%     breaks: [1x3969 double]
+%      coefs: [3968x2 double]
+%     pieces: 3968
 %      order: 2
 %        dim: 1
 %     orient: 'first'
@@ -27,27 +27,27 @@
 % pp = 
 % 
 %       form: 'pp'
-%     breaks: [1x1857 double]
-%      coefs: [1856x2 double]
-%     pieces: 1856
+%     breaks: [1x3969 double]
+%      coefs: [3968x2 double]
+%     pieces: 3968
 %      order: 2
 %        dim: 1
 %     orient: 'first'
-% 
+%
 % out_param = 
 % 
 %              f: @(x)x.^2
 %              a: 0
 %              b: 1
 %         abstol: 1.0000e-06
-%            nlo: 9
-%            nhi: 100
+%            nlo: 20
+%            nhi: 50
 %           nmax: 10000000
-%          ninit: 30
-%        npoints: 1857
-%     errorbound: 7.7413e-07
-%          nstar: [1x64 double]
-%           iter: 7
+%          ninit: 32
+%        npoints: 3969
+%     errorbound: 7.5421e-07
+%          nstar: [1x128 double]
+%           iter: 8
 %
 %
 %   Example 3:
@@ -58,9 +58,9 @@
 % pp = 
 % 
 %       form: 'pp'
-%     breaks: [1x364545 double]
-%      coefs: [364544x2 double]
-%     pieces: 364544
+%     breaks: [1x770049 double]
+%      coefs: [770048x2 double]
+%     pieces: 770048
 %      order: 2
 %        dim: 1
 %     orient: 'first'
@@ -71,14 +71,14 @@
 %         abstol: 1.0000e-08
 %              b: 10
 %              f: @(x)x.^2
-%            nhi: 100
-%            nlo: 9
+%            nhi: 50
+%            nlo: 20
 %           nmax: 10000000
-%          ninit: 90
-%        npoints: 364545
-%     errorbound: 6.5402e-09
-%          nstar: [1x4096 double]
-%           iter: 13
+%          ninit: 48
+%        npoints: 770049
+%     errorbound: 5.2640e-09
+%          nstar: [1x16384 double]
+%           iter: 15
 %
 % 
 %   Example 4: 
@@ -120,12 +120,13 @@
 % pp = 
 % 
 %       form: 'pp'
-%     breaks: [1x31233 double]
-%      coefs: [31232x2 double]
-%     pieces: 31232
+%     breaks: [1x41985 double]
+%      coefs: [41984x2 double]
+%     pieces: 41984
 %      order: 2
 %        dim: 1
 %     orient: 'first'
+% 
 % 
 % out_param = 
 % 
@@ -133,14 +134,14 @@
 %         abstol: 1.0000e-07
 %              b: 2
 %              f: @(x)x.^2
-%            nhi: 100
-%            nlo: 9
+%            nhi: 50
+%            nlo: 20
 %           nmax: 10000000
-%          ninit: 62
-%        npoints: 31233
-%     errorbound: 3.7139e-08
-%          nstar: [1x512 double]
-%           iter: 10
+%          ninit: 42
+%        npoints: 41985
+%     errorbound: 7.8394e-08
+%          nstar: [1x1024 double]
+%           iter: 11
 %
 %
 %   Example 6:
@@ -180,12 +181,13 @@
 % pp = 
 % 
 %       form: 'pp'
-%     breaks: [1x18945 double]
-%      coefs: [18944x2 double]
-%     pieces: 18944
+%     breaks: [1x22529 double]
+%      coefs: [22528x2 double]
+%     pieces: 22528
 %      order: 2
 %        dim: 1
 %     orient: 'first'
+% 
 % 
 % out_param = 
 % 
@@ -193,14 +195,14 @@
 %         abstol: 1.0000e-06
 %              b: 5
 %              f: @(x)x.^2
-%            nhi: 100
-%            nlo: 9
+%            nhi: 50
+%            nlo: 20
 %           nmax: 10000000
-%          ninit: 75
-%        npoints: 18945
-%     errorbound: 3.0204e-07
-%          nstar: [1x256 double]
-%           iter: 9
+%          ninit: 45
+%        npoints: 22529
+%     errorbound: 7.8881e-07
+%          nstar: [1x512 double]
+%           iter: 10
 %
 %
 %   Example 8:
@@ -210,12 +212,13 @@
 % pp = 
 % 
 %       form: 'pp'
-%     breaks: [1x35841 double]
-%      coefs: [35840x2 double]
-%     pieces: 35840
+%     breaks: [1x88065 double]
+%      coefs: [88064x2 double]
+%     pieces: 88064
 %      order: 2
 %        dim: 1
 %     orient: 'first'
+% 
 % 
 % out_param = 
 % 
@@ -223,14 +226,14 @@
 %         abstol: 1.0000e-07
 %              b: 3
 %              f: @(x)x.^2
-%            nhi: 100
-%            nlo: 9
+%            nhi: 50
+%            nlo: 20
 %           nmax: 10000000
-%          ninit: 71
-%        npoints: 35841
-%     errorbound: 6.2381e-08
-%          nstar: [1x512 double]
-%           iter: 10
+%          ninit: 44
+%        npoints: 88065
+%     errorbound: 3.8587e-08
+%          nstar: [1x2048 double]
+%           iter: 12
 %
 %
 %   Example 9:
