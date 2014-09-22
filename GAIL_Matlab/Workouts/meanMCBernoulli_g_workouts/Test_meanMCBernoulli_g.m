@@ -1,7 +1,7 @@
 % This script is to test meanMCBernoulli_g algorithm
 clear all;close all;clc
 %format long e
-in_param.index = 'abs';
+in_param.errtype = 'rel';
 % if strcmp(in_param.index,'abs')
 %     disp(horzcat('index       abstol            abserr          p_hat             p_true             n           nmax '));
 %     disp(        '-------------------------------------------------------------------------------------------------------');
@@ -23,12 +23,12 @@ res = zeros(nrep,10);
 for k = 1:nrep
     k
     p_true = 10^(-3+u(k)*2);
-    %in_param.abstol = 10^(-5+3*uu(k));
     in_param.abstol = 10^(-5+3*uu(k));
     in_param.reltol = 10^(-2+uu(k));
     Yrand=@(n) binornd(1,p_true,n,1);
-    if strcmp(in_param.index,'abs')
-        [p,out_param]=meanMCBernoulli_g(Yrand,in_param);% the results using cubMC_g
+    if strcmp(in_param.errtype,'abs')
+        [p,out_param]=meanMCBernoulli_g(Yrand,in_param);
+        % the results using meanMCBernoulli_g
         abserr = abs(p-p_true);
         %         numstr=horzcat((in_param.index), '       ',...
         %             num2str(in_param.abstol,'%10.5e'),'       ', num2str(abserr,'%10.5e'),'     ',...
@@ -47,7 +47,7 @@ for k = 1:nrep
         res(k,6) = out_param.nmax;
         res(k,7) = abserr./in_param.abstol;
     end
-    if strcmp(in_param.index,'rel')
+    if strcmp(in_param.errtype,'rel')
         [p,out_param]=meanMCBernoulli_g(Yrand,in_param);% the results using cubMC_g
         abserr = abs(p-p_true);
         relerr = abs(p-p_true)/p;
@@ -108,5 +108,5 @@ timestamp(timestamp==' ')='_';
 timestamp(timestamp==':')='.';
 %end
 %loglog(res(:,4),res(:,7),'r*')
-filename = strcat('TestmeanMCBernoulli-on-', in_param.index ,'-',timestamp,'.mat');
+filename = strcat('TestmeanMCBernoulli-on-', in_param.errtype ,'-',timestamp,'.mat');
 save(filename)
