@@ -1,44 +1,42 @@
-function [mu,out_param]=meanMC_g(varargin)
+function [tmu,out_param]=meanMC_g(varargin)
 % MEANMC_G Monte Carlo method to estimate the mean of a random variable
-% to within a specified generalized error tolerance tolfun=
-% max(abstol,reltol|mu|) with guaranteed confidence level 1-alpha.
+% to within a specified generalized error tolerance 
+% tolfun = max(abstol,reltol|mu|) with guaranteed confidence level 1-alpha.
 %
-%   mu = MEANMC_G(Yrand) estimates the mean of a random variable Y to
+%   tmu = MEANMC_G(Yrand) estimates the mean of a random variable Y to
 %   within a specified generalized error tolerance tolfun =
 %   max(abstol,reltol|mu|) with guaranteed confidence level 99%. Input
 %   Yrand is a function handle that accepts a positive integer input n and
 %   returns an n x 1 vector of IID instances of the random variable Y.
 %
-%   mu = MEANMC_G(Yrand,abstol,reltol,alpha,fudge,nSig,n1,tbudget,nbudget)
+%   tmu = MEANMC_G(Yrand,abstol,reltol,alpha,fudge,nSig,n1,tbudget,nbudget)
 %    estimates the mean of a random variable Y to within an specified
 %    generalized error tolerance tolfun with guaranteed confidence
-%   level 1-alpha. using all ordered parsing inputs abstol, reltol, alpha,
+%   level 1-alpha using all ordered parsing inputs abstol, reltol, alpha,
 %   fudge, nSig, n1, tbudget, nbudget.
 %
-%   mu = MEANMC_G(Yrand,'abstol',abstol,'reltol',reltol,'alpha',...
-%   alpha,'fudge',fudge,'nSig',nSig,'n1',n1,'tbudget',tbudget,...
-%   'nbudget', nbudget) estimates the mean of a random variable Y to
-%   within a specified generalized error tolerance tolfun with guaranteed
-%   confidence level 1-alpha. All the field-value pairs are optional and
-%   can be supplied in different order.
+%   tmu = MEANMC_G(Yrand,'abstol',abstol,'reltol',reltol,'alpha',alpha,
+%   'fudge',fudge,'nSig',nSig,'n1',n1,'tbudget',tbudget,'nbudget', nbudget)
+%   estimates the mean of a random variable Y to within a specified
+%   generalized error tolerance tolfun with guaranteed confidence level
+%   1-alpha. All the field-value pairs are optional and can be supplied in
+%   different order, if a field is not supplied, the default value is used.
 %
-%   mu = MEANMC_G(Yrand,in_param) estimates the mean of a random
-%   variable Y to within a specified generalized error tolerance tolfun
-%   with guaranteed confidence level 1-in_param.alpha. If a field is not
-%   specified, the default value is used.
-%
-%   [mu, out_param] = MEANMC_G(Yrand,in_param) estimates the mean of a
+%   [tmu, out_param] = MEANMC_G(Yrand,in_param) estimates the mean of a
 %   random variable Y to within a specified generalized error tolerance
-%   tolfun with the given parameters in_param and produce output parameters
-%   out_param.
+%   tolfun with the given parameters in_param and produce the estimated
+%   mean tmu and output parameters out_param. If a field is not specified,
+%   the default value is used.
 %
 %   Input Arguments
 %
-%    Yrand --- the function for generating IID instances of a random
+%    Yrand --- the function for generating n IID instances of a random
 %    variable Y whose mean we want to estimate. Y is often defined as a
-%    function of some random variable X with a simple distribution.  For
-%    example, if Y = X.^2 where X is a standard uniform random variable,
-%    then one may define Yrand = @(n) rand(n,1).^2.
+%    function of some random variable X with a simple distribution. The
+%    input of Yrand should be the number of random variables n, the output
+%    of Yrand should be n function values. For example, if Y = X.^2 where X
+%    is a standard uniform random variable, then one may define Yrand =
+%    @(n) rand(n,1).^2.
 %
 %    in_param.abstol --- the absolute error tolerance, default value is 1e-2.
 %
@@ -63,7 +61,7 @@ function [mu,out_param]=meanMC_g(varargin)
 %
 %   Output Arguments
 %
-%    mu_tilde --- the estimated mean of Y.
+%    tmu--- the estimated mean of Y.
 %
 %    out_param.tau --- the iteration step.
 %
@@ -75,7 +73,7 @@ function [mu,out_param]=meanMC_g(varargin)
 %
 %    out_param.ntot --- total sample used.
 %
-%    out_param.mu --- estimated mean in each iteration
+%    out_param.hmu --- estimated mean in each iteration
 %
 %    out_param.tol --- the tolerance for each iteration
 %
@@ -99,16 +97,16 @@ function [mu,out_param]=meanMC_g(varargin)
 % This algorithm attampts to calculate the mean of a random variable to a
 % certain tolerance with guaranteed confidence level 1-alpha. If the
 % algorithm terminated without showing any warning messages and provide an
-% answer \hat{mu}, then the follow inequality would be satisfied:
+% answer tmu, then the follow inequality would be satisfied:
 % 
-% Pr(|mu-mu_tilde| <= max(abstol,reltol|mu|)) >= 1-alpha
+% Pr(|mu-tmu| <= max(abstol,reltol|mu|)) >= 1-alpha
 %
 % where abstol is the absolute error tolerance and reltol is the relative
 % error tolerance, if the true mean mu is rather small as well as the
 % reltol, then the abstol would be satisfied, and vice versa. 
 %
 % The cost of the algorithm is also bounded above by N_up, which is 
-% defined in terms of abstol, reltol, nSig, n_1, fudge, alpha_sigma, kmax, beta.
+% defined in terms of abstol, reltol, nSig, n1, fudge, alpha_sigma, kmax, beta.
 % And the following inequality would hold:
 % 
 % Pr (N_tot <= N_up) >= 1-beta
@@ -129,24 +127,24 @@ function [mu,out_param]=meanMC_g(varargin)
 %
 % >> in_param.reltol=1e-3; in_param.abstol = 1e-3;
 % >> in_param.alpha = 0.05; Yrand=@(n) rand(n,1).^2;
-% >> mu=meanMC_g(Yrand,in_param)
-% mu = 0.33***
+% >> tmu=meanMC_g(Yrand,in_param)
+% tmu = 0.33***
 %
 %
 % Example 3:
 % Calculate the mean of exp(x) when x is uniformly distributed in
 % [0 1], with the absolute error tolerance 1e-3.
 %
-% >> mu=meanMC_g(@(n)exp(rand(n,1)),1e-3,1e-13)
-% mu = 1.71***
+% >> tmu=meanMC_g(@(n)exp(rand(n,1)),1e-3,1e-13)
+% tmu = 1.71***
 %
 %
 % Example 4:
 % Calculate the mean of sin(x) when x is uniformly distributed in
 % [0 1], with the relative error tolerance 1e-2 and uncertainty 0.05.
 %
-% >> mu=meanMC_g(@(n)cos(rand(n,1)),'reltol',1e-3,'abstol',1e-13,'alpha',0.05)
-% mu = 0.84***
+% >> tmu=meanMC_g(@(n)cos(rand(n,1)),'reltol',1e-3,'abstol',1e-13,'alpha',0.05)
+% tmu = 0.84***
 %
 %
 %   See also FUNAPPX_G, INTEGRAL_G, CUBMC_G
@@ -187,23 +185,23 @@ if tpern<1e-5;%each sample use rather little time
     tic;Yrand(ntry*booster);ttry2 = toc;
     ntry = ntry*[1 booster];
     ttry = [ttry ttry2];% take eight times more samples to try
-    [mu,out_param] =  meanmctolfun(Yrand,out_param,ntry,ttry,nsofar,tstart);
+    [tmu,out_param] =  meanmctolfun(Yrand,out_param,ntry,ttry,nsofar,tstart);
 elseif tpern>=1e-3 %each sample use a lot of time
     booster = 2;
     tic;Yrand(ntry*booster);ttry2 = toc;
     ntry = ntry*[1 booster];
     ttry = [ttry ttry2];% take two times more samples to try
-    [mu,out_param] =  meanmctolfun(Yrand,out_param,ntry,ttry,nsofar,tstart);
+    [tmu,out_param] =  meanmctolfun(Yrand,out_param,ntry,ttry,nsofar,tstart);
 else %each sample uses moderate time
     booster = 5;
     tic;Yrand(ntry*booster);ttry2 = toc;
     ntry = ntry*[1 booster];
     ttry = [ttry ttry2];% take five times more samples to try
-    [mu,out_param] =  meanmctolfun(Yrand,out_param,ntry,ttry,nsofar,tstart);
+    [tmu,out_param] =  meanmctolfun(Yrand,out_param,ntry,ttry,nsofar,tstart);
 end
 end
 
-function [mu,out_param] =  meanmctolfun(Yrand,out_param,ntry,ttry,nsofar,tstart)
+function [tmu,out_param] =  meanmctolfun(Yrand,out_param,ntry,ttry,nsofar,tstart)
 tic;
 Yval = Yrand(out_param.nSig);% get samples to estimate variance 
 t_sig = toc;%get the time for calculating nSig function values.
@@ -232,28 +230,28 @@ while true
         out_param.exit=1; %pass a flag
         meanMC_g_err(out_param); % print warning message
         out_param.n(i) = out_param.nmax;% update n
-        mu = gail.evalmean(Yrand,out_param.n(i),npcmax);%evaluate the mean
+        tmu = gail.evalmean(Yrand,out_param.n(i),npcmax);%evaluate the mean
         nsofar = nsofar+out_param.n(i);%total sample used
         break;
     end
-    out_param.mu(i) = gail.evalmean(Yrand,out_param.n(i),npcmax);%evaluate mean
+    out_param.hmu(i) = gail.evalmean(Yrand,out_param.n(i),npcmax);%evaluate mean
     nsofar = nsofar+out_param.n(i);
     out_param.nmax = out_param.nmax-out_param.n(i);%update n so far and nmax
     errtype = 'max';
     % error type, see the function 'tolfun' at +gail directory for more info
     theta  = 0;% relative error case
     deltaplus = (gail.tolfun(out_param.abstol,out_param.reltol,...
-        theta,out_param.mu(i) - out_param.tol(i),errtype)...
+        theta,out_param.hmu(i) - out_param.tol(i),errtype)...
         +gail.tolfun(out_param.abstol,out_param.reltol,...
-        theta,out_param.mu(i) + out_param.tol(i),errtype))/2;
+        theta,out_param.hmu(i) + out_param.tol(i),errtype))/2;
     % a combination of tolfun, which used to decide stopping time
     if deltaplus >= out_param.tol(i) % stopping criteria
         deltaminus= (gail.tolfun(out_param.abstol,out_param.reltol,...
-            theta,out_param.mu(i) - out_param.tol(i),errtype)...
+            theta,out_param.hmu(i) - out_param.tol(i),errtype)...
             -gail.tolfun(out_param.abstol,out_param.reltol,...
-            theta,out_param.mu(i) + out_param.tol(i),errtype))/2;
-        % the other combination fo tolfun, which adjust the mu a bit
-        mu = out_param.mu(i)+deltaminus;
+            theta,out_param.hmu(i) + out_param.tol(i),errtype))/2;
+        % the other combination of tolfun, which adjust the hmu a bit
+        tmu = out_param.hmu(i)+deltaminus;
         break;
     else
         i=i+1;
