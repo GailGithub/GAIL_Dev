@@ -1,11 +1,11 @@
 function [Q,out_param] = cubMC_g(varargin)
 %CUBMC_G Monte Carlo method to evaluate a multidimensional integral to
-%within a specified generalized error tolerance tolfun = max(abstol,
-%reltol|I|) with guaranteed confidence level 1-alpha.
+%within a specified generalized error tolerance 
+%tolfun = max(abstol, reltol|I|) with guaranteed confidence level 1-alpha.
 %
 %   [Q,out_param] = CUBMC_G(f,hyperbox) estimates the integral of f over
-%   hyperbox to within an specified generalized error tolerance tolfun =
-%   max(abstol, reltol|I|) and with guaranteed confidence level 99%. Input
+%   hyperbox to within a specified generalized error tolerance tolfun =
+%   max(abstol, reltol|I|) with guaranteed confidence level 99%. Input
 %   f is a function handle. The function f should accept an n x d matrix
 %   input, where d is the dimension of the hyperbox, and n is the number of
 %   points being evaluated simultaneously. The input hyperbox is a 2 x d
@@ -13,11 +13,12 @@ function [Q,out_param] = cubMC_g(varargin)
 %   second row corresponds to the upper limits.
 % 
 %   Q = CUBMC_G(f,hyperbox,measure,abstol,reltol,alpha,fudge,nSig,n1,
-%   tbudget,nbudget,checked) estimates the integral of f over hyperbox with
-%   respect to a given measure. The answer is given to within an specified
-%   generalized error tolerance tolfun with guaranteed confidence level
-%   1-alpha. All parameters should be input in the order specified above.
-%   If an input is not specified, the default value is used.
+%   tbudget,nbudget,checked) estimates the integral of function f over
+%   hyperbox to within a specified generalized error tolerance tolfun with
+%   guaranteed confidence level 1-alpha using all ordered parsing inputs f,
+%   hyperbox, measure, abstol, reltol, alpha, fudge, nSig, n1, tbudget,
+%   nbudget, checked. The input f and hyperbox are required and others are
+%   optional.
 % 
 %   Q = CUBMC_G(f,hyperbox,'measure','uniform','abstol',abstol,'reltol',
 %   reltol,'alpha',alpha,'fudge',fudge,'nSig',nSig,'n1',n1,'tbudget',
@@ -30,7 +31,7 @@ function [Q,out_param] = cubMC_g(varargin)
 %   [Q out_param] = CUBMC_G(f,hyperbox,in_param) estimates the integral of
 %   f over hyperbox to within a specified generalized error tolerance
 %   tolfun with the given parameters in_param and produce output parameters
-%   out_param.
+%   out_param and the integral Q.
 % 
 %   Input Arguments
 %
@@ -39,31 +40,32 @@ function [Q,out_param] = cubMC_g(varargin)
 %     hyperbox --- the integration hyperbox. The default value is
 %     [zeros(1,d); ones(1,d)], the default d is 1.
 % 
-%     in_param.measure --- the measure for generating the random variable, the
-%     default is uniform. The other measure could be handled is normal/Gaussian.
+%     in_param.measure --- the measure for generating the random variable,
+%     the default is uniform. The other measure could be handled is
+%     normal/Gaussian.
 % 
-%     in_param.abstol --- the absolute error tolerance, the default value is
-%     1e-2.
+%     in_param.abstol --- the absolute error tolerance, the default value
+%     is 1e-2.
 %
-%     in_param.reltol --- the relative error tolerance, the default value is
-%     1e-1.
+%     in_param.reltol --- the relative error tolerance, the default value
+%     is 1e-1.
 % 
 %     in_param.alpha --- the uncertainty, the default value is 1%.
 % 
-%     in_param.fudge --- the standard deviation inflation factor, the default
-%     value is 1.1.
+%     in_param.fudge --- the standard deviation inflation factor, the
+%     default value is 1.2.
 %
 %     in_param.nSig --- initial sample size for estimating the sample
-%     variance, the default value is 1e3.
+%     variance, the default value is 1e4.
 % 
-%     in_param.n1 --- initial sample size for estimating the sample
-%     mean, the default value is 1e4.
+%     in_param.n1 --- initial sample size for estimating the sample mean,
+%     the default value is 1e4.
 % 
 %     in_param.tbudget --- the time budget to do the estimation, the
 %     default value is 100 seconds.
 % 
 %     in_param.nbudget --- the sample budget to do the estimation, the
-%     default value is 1e8.
+%     default value is 1e9.
 % 
 %     in_param.checked --- the value corresponds to parameter checking status.
 %                         0   not checked
@@ -103,20 +105,20 @@ function [Q,out_param] = cubMC_g(varargin)
 %                           is normal.
 % 
 % Guarantee
-% This algorithm attampts to calculate the mean of a random variable to a
-% certain tolerance with guaranteed confidence level 1-alpha. If the
-% algorithm terminated without showing any warning messages and provide an
-% answer \hat{mu}, then the follow inequality would be satisfied:
+% This algorithm attempts to calculate the integral of function f over a
+% hyperbox to a prescribed error tolerance with guaranteed confidence level
+% 1-alpha. If the algorithm terminated without showing any warning messages
+% and provide an answer Q, then the follow inequality would be satisfied:
 % 
-% Pr(|mu-\hat{mu}| <= max(abstol,reltol|mu|)) >= 1-alpha
+% Pr(|Q-I| <= max(abstol,reltol|I|)) >= 1-alpha
 %
 % where abstol is the absolute error tolerance and reltol is the relative
-% error tolerance, if the true mean mu is rather small as well as the
+% error tolerance, if the true integral I is rather small as well as the
 % reltol, then the abstol would be satisfied, and vice versa. 
 %
-% The cost of the algorithms is also bounded above by N_up, which is in
-% terms of abstol, reltol, nSig, n_1, fudge, alpha_sigma, kmax, beta.
-% And the following inequality would hold:
+% The cost of the algorithm is also bounded above by N_up, which is
+% function in terms of abstol, reltol, nSig, n1, fudge, kmax, beta. And
+% the following inequality holds:
 % 
 % Pr (N_tot <= N_up) >= 1-beta
 %
@@ -125,13 +127,13 @@ function [Q,out_param] = cubMC_g(varargin)
 %  Examples
 % 
 % Example 1:
-% If no parsing any parameter, help text will show up as following
+% If no parameters are parsed, help text will show up as follows:
 % >> cubMC_g
 % ***Monte Carlo method to estimate***
 %
 %
 % Example 2:
-% Estimate the integral with integrand f(x) = sin(x) in the interval [1;2]
+% Estimate the integral with integrand f(x) = sin(x) over the interval [1;2]
 % 
 % >> f=@(x) sin(x);interval = [1;2];
 % >> Q = cubMC_g(f,interval,'uniform',1e-3,1e-2)
@@ -139,7 +141,7 @@ function [Q,out_param] = cubMC_g(varargin)
 % 
 % 
 % Example 3: 
-% Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) in the
+% Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) over the
 % hyperbox [0 0;1 1], where x is a vector x = [x1 x2].
 % 
 % >> f=@(x) exp(-x(:,1).^2-x(:,2).^2);hyperbox = [0 0;1 1];
@@ -148,8 +150,9 @@ function [Q,out_param] = cubMC_g(varargin)
 % 
 % 
 % Example 4: 
-% Estimate the integral with integrand f(x) = 2^d*prod(x1*x2*...*xd)+0.555 in the
-% hyperbox [zeros(1,d);ones(1,d)], where x is a vector x = [x1 x2 ... xd].
+% Estimate the integral with integrand f(x) = 2^d*prod(x1*x2*...*xd)+0.555
+% over the hyperbox [zeros(1,d);ones(1,d)], where x is a vector 
+% x = [x1 x2... xd].
 % 
 % >> d=3;f=@(x) 2^d*prod(x,2)+0.555;hyperbox =[zeros(1,d);ones(1,d)];
 % >> in_param.abstol = 1e-3;in_param.reltol=1e-3;
@@ -162,7 +165,7 @@ function [Q,out_param] = cubMC_g(varargin)
 % hyperbox [-inf -inf;inf inf], where x is a vector x = [x1 x2].
 % 
 % >> f=@(x) exp(-x(:,1).^2-x(:,2).^2);hyperbox = [-inf -inf;inf inf];
-% >> Q = cubMC_g(f,hyperbox,'normal',1e-3,1e-2)
+% >> Q = cubMC_g(f,hyperbox,'normal',0,1e-2)
 % Q = 0.33***
 % 
 % 
@@ -206,11 +209,11 @@ default.hyperbox = [zeros(1,default.dim);ones(1,default.dim)];% default hyperbox
 default.abstol  = 1e-2;% default absolute error tolerance
 default.reltol  = 1e-1;% default absolute error tolerance
 default.alpha = 0.01;% default uncertainty
-default.fudge = 1.1; % default variance inflation factor
-default.nSig = 1e3; % default nSig initial sample size to estimate sigma
+default.fudge = 1.2; % default variance inflation factor
+default.nSig = 1e4; % default nSig initial sample size to estimate sigma
 default.n1 = 1e4; % default n1 initial sample size to estimate Q
 default.tbudget = 100;% default time budget
-default.nbudget = 1e8; % default sample budget
+default.nbudget = 1e9; % default sample budget
 default.checked = 0; % default value of parameter checking status
 if isempty(varargin) % if no input, print error message and use the default setting
     help cubMC_g
@@ -329,13 +332,13 @@ if strcmp(out_param.measure,'normal')&&any(isfinite(hyperbox(:)))
     out_param.exit=14; out_param = cubMC_g_err(out_param); return;
 end
 if out_param.checked == 0
-    if (out_param.abstol <= 0) 
+    if (out_param.abstol < 0) 
         %absolute error tolerance should be positive
         warning('MATLAB:cubMC_g:abstolneg',...
             'the absolute error tolerance should be larger than 0, use the absolute value.')
         out_param.abstol = abs(out_param.abstol);
     end
-if (out_param.reltol <= 0 || out_param.reltol >= 1)
+if (out_param.reltol < 0 || out_param.reltol > 1)
     % relative error tolerance should be in (0,1)
     warning('MATLAB:cubMC_g:reltolneg',...
         ['Relative error tolerance should be between 0 and 1, ' ...

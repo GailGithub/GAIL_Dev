@@ -30,7 +30,7 @@ classdef ut_cubMC_g < matlab.unittest.TestCase
         function cubMC_gOfxsquare(testCase)
             f = @(x) x.^2;
             in_param.abstol = 1e-3;
-            in_param.reltol = 1e-13;
+            in_param.reltol = 0;
             interval=[0;1];
             meanf = cubMC_g(f,interval,in_param);
             exactf = 1/3;
@@ -40,7 +40,7 @@ classdef ut_cubMC_g < matlab.unittest.TestCase
         
         function cubMC_gOfexp(testCase)
             f = @(x) exp(x);
-            in_param.abstol = 1e-13;
+            in_param.abstol = 0;
             in_param.reltol = 1e-2;
             interval=[0;1];
             meanf = cubMC_g(f,interval,in_param);
@@ -69,8 +69,6 @@ classdef ut_cubMC_g < matlab.unittest.TestCase
             exactf = pi/4*erf(1)^2;
             actualerr = abs(meanf-exactf);
             testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
-        end
-        
-        
+        end         
     end
 end

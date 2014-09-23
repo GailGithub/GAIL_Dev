@@ -45,7 +45,7 @@ function [tmu,out_param]=meanMC_g(varargin)
 %    in_param.alpha --- the uncertainty, default value is 1%.
 %
 %    in_param.fudge --- standard deviation inflation factor, default value is
-%    1.1
+%    1.2.
 %
 %    in_param.nSig --- initial sample size for estimating the sample
 %    variance, the default value is 1e3.
@@ -94,7 +94,7 @@ function [tmu,out_param]=meanMC_g(varargin)
 %                        1  checked by meanMC_g
 %
 % Guarantee
-% This algorithm attampts to calculate the mean of a random variable to a
+% This algorithm attempts to calculate the mean of a random variable to a
 % prescribed error tolerance with guaranteed confidence level 1-alpha. If
 % the algorithm terminated without showing any warning messages and provide
 % an answer tmu, then the follow inequality would be satisfied:
@@ -107,7 +107,7 @@ function [tmu,out_param]=meanMC_g(varargin)
 %
 % The cost of the algorithm is also bounded above by N_up, which is defined
 % in terms of abstol, reltol, nSig, n1, fudge, kmax, beta. And the
-% following inequality would hold:
+% following inequality holds:
 % 
 % Pr (N_tot <= N_up) >= 1-beta
 %
@@ -116,7 +116,7 @@ function [tmu,out_param]=meanMC_g(varargin)
 % Examples
 %
 % Example 1:
-% If no parsing any parameter, help text will show up as following
+% If no parameters are parsed, help text will show up as follows:
 % >> meanMC_g
 % ***Monte Carlo method to estimate***
 %
@@ -125,7 +125,7 @@ function [tmu,out_param]=meanMC_g(varargin)
 % Calculate the mean of x^2 when x is uniformly distributed in
 % [0 1], with the relative error tolerance = 1e-3 and uncertainty 5%.
 %
-% >> in_param.reltol=1e-3; in_param.abstol = 1e-3;
+% >> in_param.reltol=0; in_param.abstol = 1e-3;
 % >> in_param.alpha = 0.05; Yrand=@(n) rand(n,1).^2;
 % >> tmu=meanMC_g(Yrand,in_param)
 % tmu = 0.33***
@@ -135,7 +135,7 @@ function [tmu,out_param]=meanMC_g(varargin)
 % Calculate the mean of exp(x) when x is uniformly distributed in
 % [0 1], with the absolute error tolerance 1e-3.
 %
-% >> tmu=meanMC_g(@(n)exp(rand(n,1)),1e-3,1e-13)
+% >> tmu=meanMC_g(@(n)exp(rand(n,1)),1e-3,0)
 % tmu = 1.71***
 %
 %
@@ -143,7 +143,7 @@ function [tmu,out_param]=meanMC_g(varargin)
 % Calculate the mean of sin(x) when x is uniformly distributed in
 % [0 1], with the relative error tolerance 1e-2 and uncertainty 0.05.
 %
-% >> tmu=meanMC_g(@(n)cos(rand(n,1)),'reltol',1e-3,'abstol',1e-13,'alpha',0.05)
+% >> tmu=meanMC_g(@(n)cos(rand(n,1)),'reltol',1e-2,'abstol',0,'alpha',0.05)
 % tmu = 0.84***
 %
 %
@@ -180,7 +180,7 @@ tpern = ttry/ntry; % calculate time per sample
 
 nsofar = nsofar+ntry; % update n so far
 
-if tpern<1e-5;%each sample use rather little time
+if tpern<1e-6;%each sample use rather little time
     booster = 8;
     tic;Yrand(ntry*booster);ttry2 = toc;
     ntry = ntry*[1 booster];
@@ -245,7 +245,7 @@ while true
         +gail.tolfun(out_param.abstol,out_param.reltol,...
         theta,out_param.hmu(i) + out_param.tol(i),errtype))/2;
     % a combination of tolfun, which used to decide stopping time
-    if deltaplus >= out_param.tol(i) % stopping criteria
+    if deltaplus >= out_param.tol(i) % stopping criterion
         deltaminus= (gail.tolfun(out_param.abstol,out_param.reltol,...
             theta,out_param.hmu(i) - out_param.tol(i),errtype)...
             -gail.tolfun(out_param.abstol,out_param.reltol,...
@@ -313,10 +313,10 @@ function  [Yrand,out_param] = meanMC_g_param(varargin)
 
 default.abstol  = 1e-2;% default absolute error tolerance
 default.reltol = 1e-1;% default relative error tolerance
-default.nSig = 1e3;% default initial sample size nSig for variance estimation
+default.nSig = 1e4;% default initial sample size nSig for variance estimation
 default.n1 = 1e4; % default initial sample size n1 for mean estimation
 default.alpha = 0.01;% default uncertainty
-default.fudge = 1.1;% default fudge factor
+default.fudge = 1.2;% default fudge factor
 default.tbudget = 100;% default time budget
 default.nbudget = 1e9; % default sample budget
 
@@ -386,14 +386,14 @@ else
     out_param = p.Results;
 end
 
-if (out_param.abstol <= 0)
+if (out_param.abstol < 0)
     %absolute error tolerance should be positive
     warning('MATLAB:meanMC_g:abstolneg',...
         ['Absolute error tolerance should be greater than 0, ' ...
         'use the absolute value of the error tolerance'])
     out_param.abstol = abs(out_param.abstol);
 end
-if (out_param.reltol <= 0 || out_param.reltol >= 1)
+if (out_param.reltol < 0 || out_param.reltol > 1)
     % relative error tolerance should be in (0,1)
     warning('MATLAB:meanMC_g:reltolneg',...
         ['Relative error tolerance should be between 0 and 1, ' ...
