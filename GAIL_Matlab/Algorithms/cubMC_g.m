@@ -104,7 +104,7 @@ function [Q,out_param] = cubMC_g(varargin)
 %                       14  hyperbox is not doubly infinite when measure
 %                           is normal.
 % 
-% Guarantee
+%  Guarantee
 % This algorithm attempts to calculate the integral of function f over a
 % hyperbox to a prescribed error tolerance with guaranteed confidence level
 % 1-alpha. If the algorithm terminated without showing any warning messages

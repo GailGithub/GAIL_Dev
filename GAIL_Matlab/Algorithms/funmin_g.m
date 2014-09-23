@@ -89,7 +89,6 @@ function [fmin,out_param]=funmin_g(varargin)
 %     minimum occurs. Each column indicates one interval where the first
 %     row is the left point and the second row is the right point.  
 %
-%
 %  Guarantee
 %
 %  If the function to be minimized, f, satisfies the cone condition

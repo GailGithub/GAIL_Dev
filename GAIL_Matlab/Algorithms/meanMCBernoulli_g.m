@@ -137,6 +137,7 @@ function [p,out_param]=meanMCBernoulli_g(varargin)
 %   If you find GAIL helpful in your work, please support us by citing the
 %   above paper and software.
 %
+
 tstart = tic; %start the clock
 [Yrand,out_param] = meanMCBernoulli_g_param(varargin{:});
 %parameter checking and parsing

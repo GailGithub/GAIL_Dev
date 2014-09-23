@@ -93,7 +93,7 @@ function [tmu,out_param]=meanMC_g(varargin)
 %    out_param.checked --- parameter checking status
 %                        1  checked by meanMC_g
 %
-% Guarantee
+%  Guarantee
 % This algorithm attempts to calculate the mean of a random variable to a
 % prescribed error tolerance with guaranteed confidence level 1-alpha. If
 % the algorithm terminated without showing any warning messages and provide

@@ -24,3 +24,7 @@
 % <a href="help_cubMC_g.html">cubMC_g</a>
 % </html>
 %
+% <html>
+% <a href="help_meanMCBernoulli_g.html">meanMCBernoulli_g</a>
+% </html>
+%
