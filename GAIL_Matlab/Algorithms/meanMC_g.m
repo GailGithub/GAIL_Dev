@@ -10,7 +10,7 @@ function [tmu,out_param]=meanMC_g(varargin)
 %   returns an n x 1 vector of IID instances of the random variable Y.
 %
 %   tmu = MEANMC_G(Yrand,abstol,reltol,alpha,fudge,nSig,n1,tbudget,nbudget)
-%    estimates the mean of a random variable Y to within an specified
+%    estimates the mean of a random variable Y to within a specified
 %    generalized error tolerance tolfun with guaranteed confidence
 %   level 1-alpha using all ordered parsing inputs abstol, reltol, alpha,
 %   fudge, nSig, n1, tbudget, nbudget.
@@ -95,9 +95,9 @@ function [tmu,out_param]=meanMC_g(varargin)
 %
 % Guarantee
 % This algorithm attampts to calculate the mean of a random variable to a
-% certain tolerance with guaranteed confidence level 1-alpha. If the
-% algorithm terminated without showing any warning messages and provide an
-% answer tmu, then the follow inequality would be satisfied:
+% prescribed error tolerance with guaranteed confidence level 1-alpha. If
+% the algorithm terminated without showing any warning messages and provide
+% an answer tmu, then the follow inequality would be satisfied:
 % 
 % Pr(|mu-tmu| <= max(abstol,reltol|mu|)) >= 1-alpha
 %
@@ -105,9 +105,9 @@ function [tmu,out_param]=meanMC_g(varargin)
 % error tolerance, if the true mean mu is rather small as well as the
 % reltol, then the abstol would be satisfied, and vice versa. 
 %
-% The cost of the algorithm is also bounded above by N_up, which is 
-% defined in terms of abstol, reltol, nSig, n1, fudge, alpha_sigma, kmax, beta.
-% And the following inequality would hold:
+% The cost of the algorithm is also bounded above by N_up, which is defined
+% in terms of abstol, reltol, nSig, n1, fudge, kmax, beta. And the
+% following inequality would hold:
 % 
 % Pr (N_tot <= N_up) >= 1-beta
 %
