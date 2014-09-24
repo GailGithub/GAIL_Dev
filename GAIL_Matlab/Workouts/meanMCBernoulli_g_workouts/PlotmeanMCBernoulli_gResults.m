@@ -1,13 +1,8 @@
 set(0,'defaultaxesfontsize',20,'defaulttextfontsize',20)
 close all
 clear all
-%load TestmeanMCBernoulli-on-abs-27-Mar-2014_22.19.32.mat
-%load TestmeanMCBernoulli-on-abs-27-Mar-2014_11.57.54.mat
-%load TestmeanMCBernoulli-on-abs-27-Mar-2014_11.42.48.mat
-%load TestmeanMCBernoulli-on-abs-23-Mar-2014_10.44.02.mat
-%load TestmeanMCBernoulli-on-abs-clt-21-Mar-2014_23.30.21.mat
 load TestmeanMCBernoulli-on-rel-09-Sep-2014_00.15.30.mat
-%load TestmeanMCBernoulli-on-both-23-Mar-2014_15.06.33.mat
+%load TestmeanMCBernoulli-on-abs-06-Sep-2014_03.18.10.mat
 standard = true(nrep,1);
 maxsample=res(:,5)== res(:,6);
 %maxsample=res(:,7)== res(:,8);
@@ -22,11 +17,9 @@ standard = standard &~maxsample;
 % hold off;
 loglog(res(maxsample,4),res(maxsample,7),'k*', ...
     'linewidth',1);
-%legend('sample budget exceed, no guarantee')
 hold on;
 loglog(res(standard,4),res(standard,7),'k.', ...
     'linewidth',1);
-% loglog(res(standard,4),res(standard,1),'b');
 legend('Budget exceeded','Guaranteed','location','SouthEast')
 hold off;
 
@@ -37,7 +30,3 @@ ylabel('relerr/reltol')
 title('The rato of relative error and error tolerance for different p')
 
 print('-depsc', ['./Figures/',out_param.errtype,'.eps'])
-%print('-depsc', 'weishenme.eps')
-%title('clt results')
-%if res(:,5)==res(:,6)
-%loglog(res(:,4),res(:,7),'r*')
