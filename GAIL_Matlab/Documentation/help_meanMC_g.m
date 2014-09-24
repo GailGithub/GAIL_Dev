@@ -70,8 +70,7 @@
 %
 % *Output Arguments*
 %
-
-%  tmu--- the estimated mean of Y.|
+% * tmu --- |the estimated mean of Y.|
 %
 % * out_param.tau --- |the iteration step.|
 %
@@ -89,30 +88,24 @@
 %
 % * out_param.var --- |the sample variance.|
 %
-% * out_param.exit --- |the state of program when exiting.|
-%
-
-%                   0   Success|
-%
-
-%                   1   Not enough samples to estimate the mean|
-%
-
+% * out_param.exit --- |the state of program when exiting.
+%   
+%                   0   Success
+%   
+%                   1   Not enough samples to estimate the mean
+%   
 %                   2   Initial try out time costs more than 10% of time
-%                       budget|
-%
-
+%                       budget
+%   
 %                   3   The estimated time for estimating variance is
 %                       bigger than half of the time budget|
 %
-
-%                      % * out_param.kurtmax --- |the upper bound on modified kurtosis.|
+% * out_param.kurtmax --- |the upper bound on modified kurtosis.|
 %
 % * out_param.time --- |the time elapsed|
 %
-% * out_param.checked --- |parameter checking status|
-%
-
+% * out_param.checked --- |parameter checking status
+%   
 %                      1  checked by meanMC_g|
 %
 %  Guarantee
