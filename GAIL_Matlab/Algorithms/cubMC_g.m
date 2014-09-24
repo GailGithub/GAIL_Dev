@@ -68,8 +68,11 @@ function [Q,out_param] = cubMC_g(varargin)
 %     default value is 1e9.
 % 
 %     in_param.checked --- the value corresponds to parameter checking status.
+%
 %                         0   not checked
+%
 %                         1   checked by meanMC_g
+%
 %                         2   checked by cubMC_g
 %
 %   Output Arguments
@@ -91,18 +94,27 @@ function [Q,out_param] = cubMC_g(varargin)
 %     out_param.time --- the time elapsed.
 %
 %     out_param.exit --- the state of program when exiting.
+%
 %                       0   success
-%                       1   Not enough samples to estimate the mean.
+%
+%                       1   Not enough samples to estimate the mean
+%
 %                       2   Initial try out time costs more than
-%                           10% of time budget. 
+%                           10% of time budget
+%
 %                       3   The estimated time for estimating variance 
-%                           is bigger than half of the time budget.
-%                       10  hyperbox does not contain numbers.
-%                       11  hyperbox not 2 x d.
-%                       12  hyperbox is only a point in one direction.
-%                       13  hyperbox is infinite when measure is uniform.
+%                           is bigger than half of the time budget
+%
+%                       10  hyperbox does not contain numbers
+%
+%                       11  hyperbox not 2 x d
+%
+%                       12  hyperbox is only a point in one direction
+%
+%                       13  hyperbox is infinite when measure is uniform
+%
 %                       14  hyperbox is not doubly infinite when measure
-%                           is normal.
+%                           is normal
 % 
 %  Guarantee
 % This algorithm attempts to calculate the integral of function f over a
@@ -169,7 +181,7 @@ function [Q,out_param] = cubMC_g(varargin)
 % Q = 0.33***
 % 
 % 
-%   See also FUNAPPX_G, INTEGRAL_G, MEANMC_G
+%   See also FUNAPPX_G, INTEGRAL_G, MEANMC_G, MEANMCBERNOULLI_G
 % 
 %  References
 %

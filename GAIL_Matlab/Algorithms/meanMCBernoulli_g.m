@@ -37,8 +37,11 @@ function [pHat,out_param]=meanMCBernoulli_g(varargin)
 %     in_param.reltol --- the relative error tolerance, default value is 1e-1.
 % 
 %     in_param.errtype --- the error type, default value is 'abs'.
+%
 %                          'abs'--- absolute error criterion
+%
 %                          'rel'--- relative error criterion
+%
 %                          'either'---absolute OR relative criterion
 % 
 %     in_param.alpha --- the uncertainty, default value is 1%.
@@ -47,11 +50,11 @@ function [pHat,out_param]=meanMCBernoulli_g(varargin)
 % 
 %   Output Arguments
 %
-%     out_param.nabs --- sample size needed to satisfy absolute error
-%     tolerance
+%     out_param.nabs --- sample size needed to satisfy absolute error 
+%                        tolerance.
 %
 %     out_param.nrel --- sample size needed to satisfy relative error
-%     tolerance 
+%                        tolerance.
 %
 %     out_param.n --- the total sample used.
 %

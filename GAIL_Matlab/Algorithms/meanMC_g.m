@@ -73,24 +73,31 @@ function [tmu,out_param]=meanMC_g(varargin)
 %
 %    out_param.ntot --- total sample used.
 %
-%    out_param.hmu --- estimated mean in each iteration
+%    out_param.hmu --- estimated mean in each iteration.
 %
-%    out_param.tol --- the tolerance for each iteration
+%    out_param.tol --- the tolerance for each iteration.
 %
 %    out_param.var --- the sample variance.
 %
 %    out_param.exit --- the state of program when exiting.
-%                     0   Success.
-%                     1   Not enough samples to estimate the mean.
-%                     2   Initial try out time costs more than 10% of time budget.
-%                     3   The estimated time for estimating variance is bigger
-%                         than half of the time budget.
 %
+%                     0   Success
+%
+%                     1   Not enough samples to estimate the mean
+%
+%                     2   Initial try out time costs more than 10% of time
+%                         budget
+%
+%                     3   The estimated time for estimating variance is
+%                         bigger than half of the time budget
+%
+%                         
 %    out_param.kurtmax --- the upper bound on modified kurtosis.
 %
 %    out_param.time --- the time elapsed
 %
 %    out_param.checked --- parameter checking status
+%
 %                        1  checked by meanMC_g
 %
 %  Guarantee
@@ -147,7 +154,7 @@ function [tmu,out_param]=meanMC_g(varargin)
 % tmu = 0.84***
 %
 %
-%   See also FUNAPPX_G, INTEGRAL_G, CUBMC_G
+%   See also FUNAPPX_G, INTEGRAL_G, CUBMC_G, MEANMCBERNOULLI_G
 %
 %  References
 %
