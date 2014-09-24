@@ -70,8 +70,7 @@
 %
 % *Output Arguments*
 %
-
-%  tmu--- the estimated mean of Y.|
+% * tmu --- |the estimated mean of Y.|
 %
 % * out_param.tau --- |the iteration step.|
 %
@@ -90,30 +89,24 @@
 % * out_param.var --- |the sample variance.|
 %
 % * out_param.exit --- |the state of program when exiting.|
-%
-
-%                   0   Success|
-%
-
-%                   1   Not enough samples to estimate the mean|
-%
-
+%    
+%                   0   Success
+%   
+%                   1   Not enough samples to estimate the mean
+%   
 %                   2   Initial try out time costs more than 10% of time
-%                       budget|
-%
-
+%                       budget
+%   
 %                   3   The estimated time for estimating variance is
-%                       bigger than half of the time budget|
+%                       bigger than half of the time budget
 %
-
-%                      % * out_param.kurtmax --- |the upper bound on modified kurtosis.|
+% * out_param.kurtmax --- |the upper bound on modified kurtosis.|
 %
 % * out_param.time --- |the time elapsed|
 %
 % * out_param.checked --- |parameter checking status|
-%
-
-%                      1  checked by meanMC_g|
+%   
+%                      1  checked by meanMC_g
 %
 %  Guarantee
 % This algorithm attempts to calculate the mean of a random variable to a
@@ -135,41 +128,33 @@
 %
 % Please refer to our paper for detailed arguments and proofs.
 %
-% Examples
+%% Examples
 %
-% Example 1:
-% If no parameters are parsed, help text will show up as follows:
+%%
+% *Example 1*
 
-  meanMC_g
-
-%
-%
-% Example 2:
 % Calculate the mean of x^2 when x is uniformly distributed in
 % [0 1], with the relative error tolerance = 1e-3 and uncertainty 5%.
-%
 
   in_param.reltol=0; in_param.abstol = 1e-3;
   in_param.alpha = 0.05; Yrand=@(n) rand(n,1).^2;
   tmu = meanMC_g(Yrand,in_param)
 
-%
-%
-% Example 3:
+%%
+% *Example 2*
+
 % Calculate the mean of exp(x) when x is uniformly distributed in
 % [0 1], with the absolute error tolerance 1e-3.
-%
 
   tmu = meanMC_g(@(n)exp(rand(n,1)),1e-3,0)
 
-%
-%
-% Example 4:
+%%
+% *Example 3*
+
 % Calculate the mean of sin(x) when x is uniformly distributed in
 % [0 1], with the relative error tolerance 1e-2 and uncertainty 0.05.
-%
 
-   tmu = meanMC_g(@(n)cos(rand(n,1)),'reltol',1e-2,'abstol',0,'alpha',0.05)
+  tmu = meanMC_g(@(n)cos(rand(n,1)),'reltol',1e-2,'abstol',0,'alpha',0.05)
 %% See Also
 %
 % <html>
