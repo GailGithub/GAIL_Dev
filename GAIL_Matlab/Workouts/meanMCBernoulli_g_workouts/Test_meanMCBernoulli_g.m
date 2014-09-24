@@ -1,7 +1,7 @@
 % This script is to test meanMCBernoulli_g algorithm
 clear all;close all;clc
 format long e
-in_param.errtype = 'either';
+in_param.errtype = 'abs';
 if strcmp(in_param.errtype,'abs')
     disp(horzcat('errtype       abstol            abserr          pHat             p             n           nmax '));
     disp(        '-------------------------------------------------------------------------------------------------------');
