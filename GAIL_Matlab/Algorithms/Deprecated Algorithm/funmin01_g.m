@@ -1,29 +1,29 @@
 function [fmin,out_param]=funmin01_g(varargin)
-%FUNMIN_G Guaranteed global minimum value of univariate function
+%FUNMIN01_G Guaranteed global minimum value of univariate function
 %on interval [0,1] and the subset containing optimal solutions
 %
-%   fmin = FUNMIN_G(f) finds minimum value of function f on the interval
+%   fmin = FUNMIN01_G(f) finds minimum value of function f on the interval
 %   [0,1] within a guatanteed absolute error tolerance of 1e-6 and X
 %   tolerance of 1e-3. The default initial number of points is 52 and
 %   default cost budget is 1e7. Input f is a function handle.
 %
-%   fmin = FUNMIN_G(f,abstol,TolX,ninit,nmax) finds minimum value of
+%   fmin = FUNMIN01_G(f,abstol,TolX,ninit,nmax) finds minimum value of
 %   function f on the interval [0,1] with ordered input parameters:
 %   guaranteed absolute error tolerance abstol, guaranteed absolute X
 %   tolerance TolX, initial number of points ninit and cost budget nmax.
 %
-%   fmin = FUNMIN_G(f,'abstol',abstol,'TolX',TolX,'ninit',ninit,'nmax',
+%   fmin = FUNMIN01_G(f,'abstol',abstol,'TolX',TolX,'ninit',ninit,'nmax',
 %   nmax) finds minimum value of function f on the interval [0,1] with a
 %   guaranteed absolute error tolerance abstol, guaranteed absolute X
 %   tolerance TolX, initial number of points ninit and cost budget nmax. All
 %   the three field-value pairs are optional and can be supplied in
 %   different order.
 %
-%   fmin = FUNMIN_G(f,in_param) finds minimum value of function f on the
+%   fmin = FUNMIN01_G(f,in_param) finds minimum value of function f on the
 %   interval [0,1] with a structure input parameters in_param. If a field is
 %   not specified, the default value is used.
 %
-%   [fmin, out_param] = FUNMIN_G(f,...) returns minimum value fmin of
+%   [fmin, out_param] = FUNMIN01_G(f,...) returns minimum value fmin of
 %   function f and an output structure out_param.
 %
 %   Input Arguments
@@ -87,7 +87,7 @@ function [fmin,out_param]=funmin01_g(varargin)
 %
 %  Example 1:
 %
-%  >> f=@(x) (x-0.3).^2+1; [fmin,out_param] = funmin_g(f)
+%  >> f=@(x) (x-0.3).^2+1; [fmin,out_param] = funmin01_g(f)
 %
 %  fmin =
 % 
@@ -113,7 +113,7 @@ function [fmin,out_param]=funmin01_g(varargin)
 %  >> f=@(x) (x-0.3).^2+1; in_param.abstol = 1e-8;
 %  >> in_param.ninit = 10; in_param.nmax = 1e6;
 %  >> in_param.TolX = 1e-4;
-%  >> [fmin,out_param] = funmin_g(f,in_param)
+%  >> [fmin,out_param] = funmin01_g(f,in_param)
 %
 %  fmin =
 % 
@@ -138,7 +138,7 @@ function [fmin,out_param]=funmin01_g(varargin)
 %  Example 3:
 %
 %  >> f=@(x) (x-0.3).^2+1;
-%  >> [fmin,out_param] = funmin_g(f,'ninit',10,'nmax',1e6,'abstol',1e-4,'TolX',1e-2)
+%  >> [fmin,out_param] = funmin01_g(f,'ninit',10,'nmax',1e6,'abstol',1e-4,'TolX',1e-2)
 %
 %  fmin =
 % 
@@ -181,7 +181,7 @@ function [fmin,out_param]=funmin01_g(varargin)
 
 
 % Parse and check the validity of input parameters
-[f,out_param] = funmin_g_param(varargin{:});
+[f,out_param] = funmin01_g_param(varargin{:});
 
 
 %% Main algorithm
@@ -303,13 +303,13 @@ end;
 
 % check tau change flag
 if tauchange == 1
-    warning('MATLAB:funmin_g:peaky','This function is peaky relative to ninit. You may wish to increase ninit for similar functions.')
+    warning('MATLAB:funmin01_g:peaky','This function is peaky relative to ninit. You may wish to increase ninit for similar functions.')
 end;
 
 % check cost budget flag
 if out_param.exceedbudget == 1
     n = l;
-    warning('MATLAB:funmin_g:exceedbudget','funmin_g attempted to exceed the cost budget. The answer may be unreliable.')
+    warning('MATLAB:funmin_g:exceedbudget','funmin01_g attempted to exceed the cost budget. The answer may be unreliable.')
 end
 
 fmin = Un;
@@ -320,16 +320,16 @@ out_param.tauchange = tauchange;
 out_param.intervals = interval;
 
 
-function [f, out_param] = funmin_g_param(varargin)
-% Parse the input to the funmin_g.m function
+function [f, out_param] = funmin01_g_param(varargin)
+% Parse the input to the funmin01_g.m function
 default.abstol = 1e-6;
 default.TolX = 1e-3;
 default.ninit = 52;
 default.nmax = 1e7;
     
 if isempty(varargin)
-    help funmin_g
-    warning('Function f must be specified. Now funmin_g will use f(x)=(x-0.3)^2+1.')
+    help funmin01_g
+    warning('Function f must be specified. Now funmin01_g will use f(x)=(x-0.3)^2+1.')
     f = @(x) (x-0.3).^2+1;
 else
     f = varargin{1};
@@ -373,7 +373,7 @@ end
 % Check whether the error tolerance is positive
 if out_param.abstol < 0
     warning(['Error tolerance should be greater than or equal to 0.'...
-        ' funmin_g will use the default error tolerance' ... 
+        ' funmin01_g will use the default error tolerance' ... 
         num2str(default.abstol)]);
     out_param.abstol = default.abstol;
 end
@@ -381,7 +381,7 @@ end
 % Check whether the length tolerance is positive
 if out_param.TolX < 0
     warning(['Tolerance on X should be greater than or equal to 0.'...
-    ' funmin_g will use the default X tolerance ' num2str(default.TolX)]);
+    ' funmin01_g will use the default X tolerance ' num2str(default.TolX)]);
     out_param.abstol = default.TolX;
 end
         
@@ -389,11 +389,11 @@ end
 if (~gail.isposint(out_param.ninit))
     if gail.ispositive(out_param.ninit)
         warning(['Initial number of points should be a integer.' ...
-            ' funmin_g will use ' num2str(ceil(out_param.ninit))]);
+            ' funmin01_g will use ' num2str(ceil(out_param.ninit))]);
         out_param.ninit = ceil(out_param.ninit);
     else
         warning(['Initial number of points should be a positive integer.' ...
-            ' funmin_g will use the default initial number of points ' ...
+            ' funmin01_g will use the default initial number of points ' ...
             num2str(out_param.ninit)]);
         out_param.ninit = default.ninit;
     end
@@ -402,12 +402,12 @@ end
 % Check whether the cost budget is a positive integer
 if (~gail.isposint(out_param.nmax))
     if gail.ispositive(out_param.nmax)
-        warning(['Cost budget should be a integer.'' funmin_g will use ' ...
+        warning(['Cost budget should be a integer.'' funmin01_g will use ' ...
             num2str(ceil(out_param.nmax))]);
         out_param.nmax = ceil(out_param.nmax);
     else
         warning(['Cost budget should be a positive integer.'...
-        ' funmin_g will use the default budget' num2str(out_param.nmax)]);
+        ' funmin01_g will use the default budget' num2str(out_param.nmax)]);
         out_param.nmax = default.nmax;
     end
 end
