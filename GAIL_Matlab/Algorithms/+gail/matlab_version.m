@@ -1,3 +1,4 @@
+function MATLABVERSION = matlab_version
 V = version;
 wh = strfind(V,'.');
 wh = wh(2)-1;
