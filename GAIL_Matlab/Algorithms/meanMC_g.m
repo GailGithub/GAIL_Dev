@@ -30,75 +30,75 @@ function [tmu,out_param]=meanMC_g(varargin)
 %
 %   Input Arguments
 %
-%    Yrand --- the function for generating n IID instances of a random
-%    variable Y whose mean we want to estimate. Y is often defined as a
-%    function of some random variable X with a simple distribution. The
-%    input of Yrand should be the number of random variables n, the output
-%    of Yrand should be n function values. For example, if Y = X.^2 where X
-%    is a standard uniform random variable, then one may define Yrand =
-%    @(n) rand(n,1).^2.
+%     Yrand --- the function for generating n IID instances of a random
+%     variable Y whose mean we want to estimate. Y is often defined as a
+%     function of some random variable X with a simple distribution. The
+%     input of Yrand should be the number of random variables n, the output
+%     of Yrand should be n function values. For example, if Y = X.^2 where X
+%     is a standard uniform random variable, then one may define Yrand =
+%     @(n) rand(n,1).^2.
 %
-%    in_param.abstol --- the absolute error tolerance, default value is 1e-2.
+%     in_param.abstol --- the absolute error tolerance, default value is 1e-2.
 %
-%    in_param.reltol --- the relative error tolerance, default value is 1e-1.
+%     in_param.reltol --- the relative error tolerance, default value is 1e-1.
 %
-%    in_param.alpha --- the uncertainty, default value is 1%.
+%     in_param.alpha --- the uncertainty, default value is 1%.
 %
-%    in_param.fudge --- standard deviation inflation factor, default value is
-%    1.2.
+%     in_param.fudge --- standard deviation inflation factor, default value is
+%     1.2.
 %
-%    in_param.nSig --- initial sample size for estimating the sample
-%    variance, the default value is 1e3.
+%     in_param.nSig --- initial sample size for estimating the sample
+%     variance, the default value is 1e3.
 %
-%    in_param.n1 --- initial sample size for estimating the sample
-%    mean, the default value is 1e4.
+%     in_param.n1 --- initial sample size for estimating the sample
+%     mean, the default value is 1e4.
 %
-%    in_param.tbudget --- the time budget to do the two-stage estimation,
-%    the default value is 100 seconds.
+%     in_param.tbudget --- the time budget to do the two-stage estimation,
+%     the default value is 100 seconds.
 %
-%    in_param.nbudget --- the sample budget to do the two-stage estimation,
-%    the default value is 1e9.
+%     in_param.nbudget --- the sample budget to do the two-stage estimation,
+%     the default value is 1e9.
 %
 %   Output Arguments
 %
-%    tmu--- the estimated mean of Y.
+%     tmu--- the estimated mean of Y.
 %
-%    out_param.tau --- the iteration step.
+%     out_param.tau --- the iteration step.
 %
-%    out_param.n --- sample used in each iteration.
+%     out_param.n --- sample used in each iteration.
 %
-%    out_param.nmax --- the maximum sample budget to estimate mu, it comes
-%    from both the sample budget and the time budget and sample has been
-%    used.
+%     out_param.nmax --- the maximum sample budget to estimate mu, it comes
+%     from both the sample budget and the time budget and sample has been
+%     used.
 %
-%    out_param.ntot --- total sample used.
+%     out_param.ntot --- total sample used.
 %
-%    out_param.hmu --- estimated mean in each iteration.
+%     out_param.hmu --- estimated mean in each iteration.
 %
-%    out_param.tol --- the tolerance for each iteration.
+%     out_param.tol --- the tolerance for each iteration.
 %
-%    out_param.var --- the sample variance.
+%     out_param.var --- the sample variance.
 %
-%    out_param.exit --- the state of program when exiting.
+%     out_param.exit --- the state of program when exiting.
 %
-%                     0   Success
+%                      0   Success
 %
-%                     1   Not enough samples to estimate the mean
+%                      1   Not enough samples to estimate the mean
 %
-%                     2   Initial try out time costs more than 10% of time
-%                         budget
+%                      2   Initial try out time costs more than 10% of time
+%                          budget
 %
-%                     3   The estimated time for estimating variance is
-%                         bigger than half of the time budget
+%                      3   The estimated time for estimating variance is
+%                          bigger than half of the time budget
 %
 %                         
-%    out_param.kurtmax --- the upper bound on modified kurtosis.
+%     out_param.kurtmax --- the upper bound on modified kurtosis.
 %
-%    out_param.time --- the time elapsed
+%     out_param.time --- the time elapsed
 %
-%    out_param.checked --- parameter checking status
+%     out_param.checked --- parameter checking status
 %
-%                        1  checked by meanMC_g
+%                         1  checked by meanMC_g
 %
 %  Guarantee
 % This algorithm attempts to calculate the mean of a random variable to a

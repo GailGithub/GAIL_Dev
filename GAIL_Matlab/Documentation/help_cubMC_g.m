@@ -76,9 +76,15 @@
 % * in_param.nbudget --- |the sample budget to do the estimation, the
 %  default value is 1e9.|
 % 
-% * in_param.checked --- |the value corresponds to parameter checking status.
-%                      0   not checked
-%                      1   checked by meanMC_g
+% * in_param.checked --- |the value corresponds to parameter checking status.|
+%
+
+%                      0   not checked|
+%
+
+%                      1   checked by meanMC_g|
+%
+
 %                      2   checked by cubMC_g|
 %
 % *Output Arguments*
@@ -99,84 +105,107 @@
 % 
 % * out_param.time --- |the time elapsed.|
 %
-% * out_param.exit --- |the state of program when exiting.
-%                    0   success
-%                    1   Not enough samples to estimate the mean.
+% * out_param.exit --- |the state of program when exiting.|
+%
+
+%                    0   success|
+%
+
+%                    1   Not enough samples to estimate the mean|
+%
+
 %                    2   Initial try out time costs more than
-%                        10% of time budget. 
+%                        10% of time budget|
+%
+
 %                    3   The estimated time for estimating variance 
-%                        is bigger than half of the time budget.
-%                    10  hyperbox does not contain numbers.
-%                    11  hyperbox not 2 x d.
-%                    12  hyperbox is only a point in one direction.
-%                    13  hyperbox is infinite when measure is uniform.
+%                        is bigger than half of the time budget|
+%
+
+%                    10  hyperbox does not contain numbers|
+%
+
+%                    11  hyperbox not 2 x d|
+%
+
+%                    12  hyperbox is only a point in one direction|
+%
+
+%                    13  hyperbox is infinite when measure is uniform|
+%
+
 %                    14  hyperbox is not doubly infinite when measure
-%                        is normal.|
+%                        is normal|
 % 
-%% Guarantee
+%  Guarantee
+% This algorithm attempts to calculate the integral of function f over a
+% hyperbox to a prescribed error tolerance with guaranteed confidence level
+% 1-alpha. If the algorithm terminated without showing any warning messages
+% and provide an answer Q, then the follow inequality would be satisfied:
+% 
+% Pr(|Q-I| <= max(abstol,reltol|I|)) >= 1-alpha
 %
-% Error guarantee:
+% where abstol is the absolute error tolerance and reltol is the relative
+% error tolerance, if the true integral I is rather small as well as the
+% reltol, then the abstol would be satisfied, and vice versa. 
 %
-% Suppose the modified kurtosis, $\tilde{\kappa}$, of the integrand f
-% satisfies the inequality:
+% The cost of the algorithm is also bounded above by N_up, which is
+% function in terms of abstol, reltol, nSig, n1, fudge, kurtmax, beta. And
+% the following inequality holds:
+% 
+% Pr (N_tot <= N_up) >= 1-beta
 %
-% $$ \tilde{\kappa} \leq \frac{n_{\sigma}-3}{n_{\sigma}-1}+
-% \left(\frac{\alpha n_\sigma}{1-\alpha}\right)\left(1-\frac{1}{C^2}\right)^2 =:
-% \tilde{\kappa}_{\max} $$
-%
-% where $n_{\sigma}$ is the number of samples used to estimate the variance
-% of f, C is the standard deviation inflation factor, and $\alpha$ is the
-% level of uncertainty. Then the answer $\hat{\mu}$ is guaranteed to
-% satisfy the inequality:
-%
-% $$\mathrm{Pr}\left(|\mu-\hat{\mu}| \leq \varepsilon \right) \geq 1-\alpha$$
-%
-% where $\varepsilon$ is the absolute error tolerance.
-%
-% Cost upper bound guarantee:
-%
-% The probabilistic cost of the algorithm, with uncertainty $\beta$ , for
-% integrands of variance no greater than $\sigma^2_{\max}$ and modified
-% kurtosis no greater than $\tilde{\kappa}_{\max}$ is defined as
-%
-% $$N_{\mathrm{tot}}(\varepsilon,\alpha,\beta,\tilde{\kappa}_{\max},\sigma_{\max})
-% := \sup_{\tilde{\kappa} \le \tilde{\kappa}_{\max}, \sigma \le
-% \sigma_{\max} } \min\left\{N
-% :\mathrm{Pr}[N_{\mathrm{tot}}(\varepsilon,\alpha,\tilde{\kappa}_{\max},\tilde{\kappa}_{\max}^{3/4})
-% \le N] \ge 1-\beta  \right \}$$
-%
-% The total cost of this two stage algorithm has a probabilistic bound above
-% by
-%
-% $$N_{\mathrm{tot}}(\varepsilon,\alpha, \beta, \tilde{\kappa}_{\max},
-% \sigma_{\max}) \le N_{\mathrm{up}}(\varepsilon,\alpha, \beta,
-% \tilde{\kappa}_{\max}, \sigma_{\max}) :=  n_{\sigma} +
-% N_{\mu}(\varepsilon,\sigma_{\max}v(\tilde{\alpha},\beta,C),\tilde{\alpha},\tilde{\kappa}_{\max}^{3/4})
-% $$
-% with level of uncertainty $\beta$.
-%% Examples
-%
+% Please refer to our paper for detailed arguments and proofs.
+% 
+%  Examples
+% 
 % Example 1:
-% Estimate the integral with integrand f(x) = sin(x) in the interval
-% [1;2].
+% If no parameters are parsed, help text will show up as follows:
 
-    f = @(x) sin(x);interval = [1;2]; Q = cubMC_g(f,interval,'uniform',1e-3)
+   cubMC_g
 
-%%
-% Example 2:
-% Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) in the
-% hyperbox [0 0;1 1], where x is a vector x = [x1 x2].
-
-    f = @(x) exp(-x(:,1).^2-x(:,2).^2);hyperbox = [0 0;1 1];
-    Q = cubMC_g(f,hyperbox,'uniform',1e-3)
-    
-%%
-% Example 3: 
-% Estimate the integral with integrand $f(x) = 2^d\prod_{j=1}^d x_j+0.555$
-% in the hyperbox [zeros(1,d);ones(1,d)], where x is a vector x = [x1 x2 ... xd].
 %
-    d=3;f=@(x) 2^d*prod(x,2)+0.555;hyperbox = [zeros(1,d);ones(1,d)];
-    Q = cubMC_g(f,hyperbox,'uniform',1e-3)
+%
+% Example 2:
+% Estimate the integral with integrand f(x) = sin(x) over the interval [1;2]
+% 
+
+ f=@(x) sin(x);interval = [1;2];
+ Q = cubMC_g(f,interval,'uniform',1e-3,1e-2)
+ 
+% 
+% 
+% Example 3: 
+% Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) over the
+% hyperbox [0 0;1 1], where x is a vector x = [x1 x2].
+% 
+
+ f=@(x) exp(-x(:,1).^2-x(:,2).^2);hyperbox = [0 0;1 1];
+ Q = cubMC_g(f,hyperbox,'measure','uniform','abstol',1e-3,'reltol',1e-13)
+
+% 
+% 
+% Example 4: 
+% Estimate the integral with integrand f(x) = 2^d*prod(x1*x2*...*xd)+0.555
+% over the hyperbox [zeros(1,d);ones(1,d)], where x is a vector 
+% x = [x1 x2... xd].
+% 
+
+  d=3;f=@(x) 2^d*prod(x,2)+0.555;hyperbox =[zeros(1,d);ones(1,d)];
+  in_param.abstol = 1e-3;in_param.reltol=1e-3;
+  Q = cubMC_g(f,hyperbox,in_param)
+
+% 
+%
+% Example 5: 
+% Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) in the
+% hyperbox [-inf -inf;inf inf], where x is a vector x = [x1 x2].
+% 
+
+ f=@(x) exp(-x(:,1).^2-x(:,2).^2);hyperbox = [-inf -inf;inf inf];
+ Q = cubMC_g(f,hyperbox,'normal',0,1e-2)
+
+% 
 %% See Also
 %
 % <html>
@@ -189,6 +218,10 @@
 %
 % <html>
 % <a href="help_meanMC_g.html">meanMC_g</a>
+% </html>
+%
+% <html>
+% <a href="help_meanMCBernoulli_g.html">meanMCBernoulli_g</a>
 % </html>
 %
 %% References
