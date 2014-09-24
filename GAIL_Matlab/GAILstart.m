@@ -19,10 +19,7 @@ else
     error('I don''t recognize this computer.')
 end
 
-V = version;
-wh = strfind(V,'.');
-wh = wh(2)-1;
-MATLABVERSION = str2double(V(1:wh));
+matlab_version
 if(isverbose)
     fprintf('Setting Output:\n');
     fprintf('   MATLABVERSION = %g\n',        MATLABVERSION)
