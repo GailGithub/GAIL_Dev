@@ -106,7 +106,7 @@ function [tmu,out_param]=meanMC_g(varargin)
 % reltol, then the abstol would be satisfied, and vice versa. 
 %
 % The cost of the algorithm is also bounded above by N_up, which is defined
-% in terms of abstol, reltol, nSig, n1, fudge, kmax, beta. And the
+% in terms of abstol, reltol, nSig, n1, fudge, kurtmax, beta. And the
 % following inequality holds:
 % 
 % Pr (N_tot <= N_up) >= 1-beta
@@ -272,24 +272,24 @@ out_param.ntot = nsofar;%total sample size used
 out_param.time=toc(tstart); %elapsed time
 end
 
-function ncb = nchebe(toloversig,alpha,kmax)
-%this function uses Chebyshev and Berry-Eseen Inequality to calculate the
+function ncb = nchebe(toloversig,alpha,kurtmax)
+%this function uses Chebyshev and Berry-Esseen Inequality to calculate the
 %sample size needed
-ncheb = ceil(1/(toloversig^2*alpha));%sample size by Cheybshev's Inequality
+ncheb = ceil(1/(toloversig^2*alpha));%sample size by Chebyshev's Inequality
 A=18.1139;
 A1=0.3328;
 A2=0.429; % three constants in Berry-Esseen inequality
-M3upper = kmax^(3/4);%the upper bound on the third moment by Jensen's inequality
+M3upper = kurtmax^(3/4);%the upper bound on the third moment by Jensen's inequality
 BEfun2=@(logsqrtn)gail.stdnormcdf(-exp(logsqrtn).*toloversig)...
     +exp(-logsqrtn).*min(A1*(M3upper+A2), ...
     A*M3upper./(1+(exp(logsqrtn).*toloversig).^3))- ...
     alpha/2; % Berry-Eseen function, whose solution is the sample size needed
 logsqrtnCLT=log(gail.stdnorminv(1-alpha/2)/toloversig);%sample size by CLT
-nbe=ceil(exp(2*fzero(BEfun2,logsqrtnCLT)));%calculate Berry-Eseen n by fzero function
+nbe=ceil(exp(2*fzero(BEfun2,logsqrtnCLT)));%calculate Berry-Esseen n by fzero function
 ncb = min(ncheb,nbe);%take the min of two sample sizes.
 end
 
-function eps = ncbinv(n1,alpha1,kmax)
+function eps = ncbinv(n1,alpha1,kurtmax)
 %This function calculate error tolerance when given Chebyshev and
 %Berry-Esseen inequality and sample size n.
 NCheb_inv = 1/sqrt(n1*alpha1);
@@ -297,7 +297,7 @@ NCheb_inv = 1/sqrt(n1*alpha1);
 A=18.1139;
 A1=0.3328;
 A2=0.429; % three constants in Berry-Esseen inequality
-M3upper=kmax^(3/4);%using Jensen's inequality to
+M3upper=kurtmax^(3/4);%using Jensen's inequality to
 % bound the third moment
 BEfun=@(logsqrtb)gail.stdnormcdf(n1.*logsqrtb)...
     +min(A1*(M3upper+A2), ...

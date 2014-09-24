@@ -117,7 +117,7 @@ function [Q,out_param] = cubMC_g(varargin)
 % reltol, then the abstol would be satisfied, and vice versa. 
 %
 % The cost of the algorithm is also bounded above by N_up, which is
-% function in terms of abstol, reltol, nSig, n1, fudge, kmax, beta. And
+% function in terms of abstol, reltol, nSig, n1, fudge, kurtmax, beta. And
 % the following inequality holds:
 % 
 % Pr (N_tot <= N_up) >= 1-beta
@@ -191,10 +191,10 @@ function [Q,out_param] = cubMC_g(varargin)
 tstart=tic;
 [f,hyperbox,out_param] = cubMC_g_param(varargin{:});%check validity of inputs
 f=gail.transformIntegrand(f,hyperbox,out_param); 
-if strcmp(out_param.measure,'uniform')% the using uniformly distributed samples
+if strcmpi(out_param.measure,'uniform')% the using uniformly distributed samples
     [Q,out_param] = meanMC_g(@(nfun)f(rand(nfun,out_param.dim)),out_param);
    % out_param.Q=Q;% using meanMC_g to get the mean 
-else strcmp(out_param.measure,'normal')% using normally distributed samples
+else strcmpi(out_param.measure,'normal')% using normally distributed samples
     [Q,out_param] = meanMC_g(@(nfun)f(randn(nfun,out_param.dim)),out_param);
     %out_param.Q=Q;% using meanMC_g to get the mean
 end
@@ -323,11 +323,11 @@ if isfield(out_param,'measure'); % the sample measure
 else
     out_param.measure=default.measure;
 end
-if strcmp(out_param.measure,'uniform')&&~all(isfinite(hyperbox(:)))
+if strcmpi(out_param.measure,'uniform')&&~all(isfinite(hyperbox(:)))
     %cannot integrate on an infinite hyperbox with the uniform distribution
     out_param.exit=13; out_param = cubMC_g_err(out_param); return;
 end
-if strcmp(out_param.measure,'normal')&&any(isfinite(hyperbox(:)))
+if strcmpi(out_param.measure,'normal')&&any(isfinite(hyperbox(:)))
     %must integrate on an infinite hyperbox with the normal distribution
     out_param.exit=14; out_param = cubMC_g_err(out_param); return;
 end
@@ -367,7 +367,7 @@ end
         out_param.nSig = ceil(abs(out_param.nSig));
     end
     if (~gail.isposint(out_param.n1)) 
-    %initial sample size to estimate Q should be a posotive integer
+    %initial sample size to estimate Q should be a positive integer
     warning('MATLAB:cubMC_g:n1notposint',...
         ['the number n1 should a positive integer, '...
         'take the absolute value and ceil.'])
@@ -380,7 +380,7 @@ end
         out_param.tbudget = abs(out_param.tbudget);
     end
     if (~gail.isposint(out_param.nbudget)) 
-        % sample budget should be a postitive integer
+        % sample budget should be a positive integer
         warning('MATLAB:cubMC_g:nbudgetnotposint',...
             ['the number of sample budget should be a positive integer,'...
             'take the absolute value and ceil.'])
