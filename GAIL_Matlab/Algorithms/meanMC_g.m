@@ -80,7 +80,7 @@ function [tmu,out_param]=meanMC_g(varargin)
 %     out_param.var --- the sample variance.
 %
 %     out_param.exit --- the state of program when exiting.
-%      
+%       
 %                      0   Success
 %      
 %                      1   Not enough samples to estimate the mean

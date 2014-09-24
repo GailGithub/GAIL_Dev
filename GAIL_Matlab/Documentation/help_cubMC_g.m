@@ -76,16 +76,14 @@
 % * in_param.nbudget --- |the sample budget to do the estimation, the
 %  default value is 1e9.|
 % 
-% * in_param.checked --- |the value corresponds to parameter checking status.|
-%
-
-%                      0   not checked|
-%
-
-%                      1   checked by meanMC_g|
-%
-
-%                      2   checked by cubMC_g|
+% * in_param.checked --- |the value corresponds to parameter checking
+% status.|
+%   
+%                      0   not checked
+%   
+%                      1   checked by meanMC_g
+%   
+%                      2   checked by cubMC_g
 %
 % *Output Arguments*
 %
@@ -106,36 +104,27 @@
 % * out_param.time --- |the time elapsed.|
 %
 % * out_param.exit --- |the state of program when exiting.|
-%
-
-%                    0   success|
-%
-
-%                    1   Not enough samples to estimate the mean|
-%
-
+%   
+%                    0   success
+%   
+%                    1   Not enough samples to estimate the mean
+%   
 %                    2   Initial try out time costs more than
-%                        10% of time budget|
-%
-
+%                        10% of time budget
+%   
 %                    3   The estimated time for estimating variance 
-%                        is bigger than half of the time budget|
-%
-
-%                    10  hyperbox does not contain numbers|
-%
-
-%                    11  hyperbox not 2 x d|
-%
-
-%                    12  hyperbox is only a point in one direction|
-%
-
-%                    13  hyperbox is infinite when measure is uniform|
-%
-
+%                        is bigger than half of the time budget
+%   
+%                    10  hyperbox does not contain numbers
+%   
+%                    11  hyperbox not 2 x d
+%   
+%                    12  hyperbox is only a point in one direction
+%   
+%                    13  hyperbox is infinite when measure is uniform
+%   
 %                    14  hyperbox is not doubly infinite when measure
-%                        is normal|
+%                        is normal
 % 
 %  Guarantee
 % This algorithm attempts to calculate the integral of function f over a
@@ -157,25 +146,17 @@
 %
 % Please refer to our paper for detailed arguments and proofs.
 % 
-%  Examples
-% 
-% Example 1:
-% If no parameters are parsed, help text will show up as follows:
+%%  Examples
+% *Example 1*
 
-   cubMC_g
-
-%
-%
-% Example 2:
 % Estimate the integral with integrand f(x) = sin(x) over the interval [1;2]
 % 
 
  f=@(x) sin(x);interval = [1;2];
  Q = cubMC_g(f,interval,'uniform',1e-3,1e-2)
  
-% 
-% 
-% Example 3: 
+%% 
+% *Example 2*
 % Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) over the
 % hyperbox [0 0;1 1], where x is a vector x = [x1 x2].
 % 
@@ -183,9 +164,9 @@
  f=@(x) exp(-x(:,1).^2-x(:,2).^2);hyperbox = [0 0;1 1];
  Q = cubMC_g(f,hyperbox,'measure','uniform','abstol',1e-3,'reltol',1e-13)
 
-% 
-% 
-% Example 4: 
+%%
+% *Example 3*
+
 % Estimate the integral with integrand f(x) = 2^d*prod(x1*x2*...*xd)+0.555
 % over the hyperbox [zeros(1,d);ones(1,d)], where x is a vector 
 % x = [x1 x2... xd].
@@ -195,17 +176,15 @@
   in_param.abstol = 1e-3;in_param.reltol=1e-3;
   Q = cubMC_g(f,hyperbox,in_param)
 
-% 
-%
-% Example 5: 
+%%
+% *Example 4* 
+
 % Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) in the
 % hyperbox [-inf -inf;inf inf], where x is a vector x = [x1 x2].
 % 
 
  f=@(x) exp(-x(:,1).^2-x(:,2).^2);hyperbox = [-inf -inf;inf inf];
  Q = cubMC_g(f,hyperbox,'normal',0,1e-2)
-
-% 
 %% See Also
 %
 % <html>

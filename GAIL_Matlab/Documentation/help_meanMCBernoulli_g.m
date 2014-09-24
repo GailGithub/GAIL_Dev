@@ -38,23 +38,20 @@
 %
 % * Yrand --- |the function for generating IID instances of a Bernoulli
 %            random variable Y whose mean we want to estimate.|
-% 
+%
 % * pHat --- |the estimated mean of Y.|
-% 
+%
 % * in_param.abstol --- |the absolute error tolerance, default value is 1e-2.|
-% 
+%
 % * in_param.reltol --- |the relative error tolerance, default value is 1e-1.|
-% 
+%
 % * in_param.errtype --- |the error type, default value is 'abs'.|
-%
-
-%                       'abs'--- absolute error criterion|
-%
-
-%                       'rel'--- relative error criterion|
-%
-
-%                       'either'---absolute OR relative criterion|
+%   
+%                       'abs'--- absolute error criterion
+%   
+%                       'rel'--- relative error criterion
+%   
+%                       'either'---absolute OR relative criterion
 % 
 % * in_param.alpha --- |the uncertainty, default value is 1%.|
 % 
@@ -103,29 +100,33 @@
 % defined in terms of the true mean p, uncertainty alpha and relative
 % tolerance reltol. For details, please refer to the paper.
 %
-%   Examples
-% 
-%   Example 1:
-%   Calculate the mean of a Bernoulli random variable with true p=1/90,
-%   absolute error tolerance 1e-3 and uncertainty 0.01.
-% 
-    in_param.abstol=1e-3; in_param.alpha = 0.01; p=1/9;Yrand=@(n) rand(n,1)<p;
-    pHat = meanMCBernoulli_g(Yrand,in_param)
-% 
-% 
-%   Example 2:
-%   Using the same function as example 1, with the relative error tolerance
-%   1e-2.
-% 
-    pHat = meanMCBernoulli_g(Yrand,0,1e-2,'rel')
-    
-% 
-% 
-%   Example 3:
-%   Using the same function as example 1, with the relative error
-%   tolerance 1e-2 and uncertainty 0.05.
-% 
-    pHat = meanMCBernoulli_g(Yrand,'errtype','rel','reltol',1e-2,'alpha',0.05)
+%% Examples
+%
+%%
+% *Example 1*
+
+% Calculate the mean of x^2 when x is uniformly distributed in
+% [0 1], with the relative error tolerance = 1e-3 and uncertainty 5%.
+
+  in_param.reltol=0; in_param.abstol = 1e-3;
+  in_param.alpha = 0.05; Yrand=@(n) rand(n,1).^2;
+  tmu = meanMC_g(Yrand,in_param)
+
+%%
+% *Example 2*
+
+% Calculate the mean of exp(x) when x is uniformly distributed in
+% [0 1], with the absolute error tolerance 1e-3.
+
+  tmu = meanMC_g(@(n)exp(rand(n,1)),1e-3,0)
+
+%%
+% *Example 3*
+
+% Calculate the mean of sin(x) when x is uniformly distributed in
+% [0 1], with the relative error tolerance 1e-2 and uncertainty 0.05.
+
+  tmu = meanMC_g(@(n)cos(rand(n,1)),'reltol',1e-2,'abstol',0,'alpha',0.05)
 %% See Also
 %
 % <html>
@@ -141,7 +142,7 @@
 % </html>
 %
 % <html>
-% <a href="help_meanMC_g.html">meanMC_g</a>
+% <a href="help_meanMCBernoulli_g.html">meanMCBernoulli_g</a>
 % </html>
 %
 %% References
@@ -159,4 +160,3 @@
 %
 % If you find GAIL helpful in your work, please support us by citing the
 % above paper and software.
-%

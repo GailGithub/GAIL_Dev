@@ -29,19 +29,19 @@ function [pHat,out_param]=meanMCBernoulli_g(varargin)
 %
 %     Yrand --- the function for generating IID instances of a Bernoulli
 %               random variable Y whose mean we want to estimate.
-% 
+%
 %     pHat --- the estimated mean of Y.
-% 
+%
 %     in_param.abstol --- the absolute error tolerance, default value is 1e-2.
-% 
+%
 %     in_param.reltol --- the relative error tolerance, default value is 1e-1.
-% 
+%
 %     in_param.errtype --- the error type, default value is 'abs'.
-%
+%      
 %                          'abs'--- absolute error criterion
-%
+%      
 %                          'rel'--- relative error criterion
-%
+%      
 %                          'either'---absolute OR relative criterion
 % 
 %     in_param.alpha --- the uncertainty, default value is 1%.

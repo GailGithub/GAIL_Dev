@@ -18,38 +18,30 @@
 %
 % Please refer to our paper for detailed arguments and proofs.
 %
-% Examples
+%% Examples
 %
-% Example 1:
-% If no parameters are parsed, help text will show up as follows:
+%%
+% *Example 1*
 
-  meanMC_g
-
-%
-%
-% Example 2:
 % Calculate the mean of x^2 when x is uniformly distributed in
 % [0 1], with the relative error tolerance = 1e-3 and uncertainty 5%.
-%
 
   in_param.reltol=0; in_param.abstol = 1e-3;
   in_param.alpha = 0.05; Yrand=@(n) rand(n,1).^2;
   tmu = meanMC_g(Yrand,in_param)
 
-%
-%
-% Example 3:
+%%
+% *Example 2*
+
 % Calculate the mean of exp(x) when x is uniformly distributed in
 % [0 1], with the absolute error tolerance 1e-3.
-%
 
   tmu = meanMC_g(@(n)exp(rand(n,1)),1e-3,0)
 
-%
-%
-% Example 4:
+%%
+% *Example 3*
+
 % Calculate the mean of sin(x) when x is uniformly distributed in
 % [0 1], with the relative error tolerance 1e-2 and uncertainty 0.05.
-%
 
-   tmu = meanMC_g(@(n)cos(rand(n,1)),'reltol',1e-2,'abstol',0,'alpha',0.05)
+  tmu = meanMC_g(@(n)cos(rand(n,1)),'reltol',1e-2,'abstol',0,'alpha',0.05)
