@@ -5,7 +5,7 @@ classdef ut_meanMC_g < matlab.unittest.TestCase
     
     function meanMC_gOfexp(testCase)
       in_param.abstol = 1e-2;
-      in_param.reltol = 1e-13;
+      in_param.reltol = 0;
       meanY = meanMC_g(@(n) exp(rand(n,1)),in_param);
       exactY = exp(1)-1;
       actualerr = abs(meanY-exactY);
@@ -14,7 +14,7 @@ classdef ut_meanMC_g < matlab.unittest.TestCase
     
     function meanMC_gOfxsquare(testCase)
       in_param.reltol = 1e-1;
-      in_param.abstol = 1e-13;
+      in_param.abstol = 0;
       meanY = meanMC_g(@(n) rand(n,1).^2,in_param);
       exactY = 1/3;
       actualerr = abs(meanY-exactY)/exactY;
@@ -23,7 +23,7 @@ classdef ut_meanMC_g < matlab.unittest.TestCase
     
     function meanMC_gOfsin(testCase)
       in_param.reltol = 1e-2;
-      in_param.abstol = 1e-13;
+      in_param.abstol = 0;
       meanY = meanMC_g(@(n) sin(rand(n,1)),in_param);
       exactY = 1-cos(1);
       actualerr = abs(meanY-exactY)/exactY;
@@ -32,7 +32,7 @@ classdef ut_meanMC_g < matlab.unittest.TestCase
     
     function meanMC_gOfparsing(testCase)
       in_param.abstol = -1e-2;  
-      in_param.reltol = 1e-13;
+      in_param.reltol = 0;
       meanY = testCase.verifyWarning(@()meanMC_g(@(n) rand(n,1).^2,...
         in_param),'MATLAB:meanMC_g:abstolneg');
       exactY = 1/3;

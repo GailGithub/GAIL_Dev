@@ -9,8 +9,8 @@ classdef ut_meanMCBernoulli_g < matlab.unittest.TestCase
             in_param.errtype = 'abs';
             p=1/90;
             Yrand=@(n) rand(n,1)<p;
-            meanp = meanMCBernoulli_g(Yrand,in_param);
-            actualerr = abs(meanp-p);
+            pHat = meanMCBernoulli_g(Yrand,in_param);
+            actualerr = abs(pHat-p);
             testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
         end
         
@@ -18,8 +18,8 @@ classdef ut_meanMCBernoulli_g < matlab.unittest.TestCase
             p=1/90;
             Yrand=@(n) rand(n,1)<p;
             in_param.reltol = 5e-2;
-            meanp = meanMCBernoulli_g(Yrand,'errtype','rel','reltol',in_param.reltol);
-            actualerr = abs(meanp-p)/p;
+            pHat = meanMCBernoulli_g(Yrand,'errtype','rel','reltol',in_param.reltol);
+            actualerr = abs(pHat-p)/p;
             testCase.verifyLessThanOrEqual(actualerr,in_param.reltol);
         end
         
@@ -27,10 +27,10 @@ classdef ut_meanMCBernoulli_g < matlab.unittest.TestCase
             p=1/90;
             in_param.abstol = -1e-2;
             in_param.errtype = 'abs';
-            meanp = testCase.verifyWarning(@()meanMCBernoulli_g...
+            pHat = testCase.verifyWarning(@()meanMCBernoulli_g...
                 (@(n) (rand(n,1)<p).^2,...
                 in_param),'MATLAB:meanMCBernoulli_g:abstolneg');
-            actualerr = abs(meanp-p);
+            actualerr = abs(pHat-p);
             testCase.verifyLessThanOrEqual(actualerr,abs(in_param.abstol));
         end
     end

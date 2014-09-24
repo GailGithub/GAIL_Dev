@@ -1,35 +1,36 @@
-function [p,out_param]=meanMCBernoulli_g(varargin)
+function [pHat,out_param]=meanMCBernoulli_g(varargin)
 %MEANMCBERNOULLI_G Monte Carlo method to estimate the mean of a Bernoulli
 %random variable to within a specified error tolerance with guaranteed
 %confidence level 1-alpha.
 %
-%   p = MEANMCBERNOULLI_G(Yrand) estimates the mean of a Bernoulli random
+%   pHat = MEANMCBERNOULLI_G(Yrand) estimates the mean of a Bernoulli random
 %   variable Y to within a specified error tolerance with guaranteed
 %   confidence level 99%. Input Yrand is a function handle that accepts a
 %   positive integer input n and returns a n x 1 vector of IID instances
 %   of the Bernoulli random variable Y.
 % 
-%   p = MEANMCBERNOULLI_G(Yrand,abstol,reltol,errtype,alpha,nmax) estimates
+%   pHat = MEANMCBERNOULLI_G(Yrand,abstol,reltol,errtype,alpha,nmax) estimates
 %   the mean of a Bernoulli random variable Y to within a specified error
 %   tolerance with guaranteed confidence level 1-alpha using all ordered
 %   parsing inputs abstol, reltol, errtype, alpha and nmax.
 % 
-%   p = MEANMCBERNOULLI_G(Yrand,'abstol',abstol,'reltol',reltol,
+%   pHat = MEANMCBERNOULLI_G(Yrand,'abstol',abstol,'reltol',reltol,
 %   'errtype',errtype,'alpha',alpha,'nmax',nmax) estimates the mean of a
 %   Bernoulli random variable Y to within a specified error tolerance with
 %   guaranteed confidence level 1-alpha. All the field-value pairs are
 %   optional and can be supplied in different order.
 % 
-%   [p, out_param] = MEANMCBERNOULLI_G(Yrand,in_param) estimates the mean
+%   [pHat, out_param] = MEANMCBERNOULLI_G(Yrand,in_param) estimates the mean
 %   of a Bernoulli random variable Y to within a specified error tolerance
-%   with the given parameters in_param and output parameters out_param.
+%   with the given parameters in_param and produce the estimated mean pHat
+%   and output parameters out_param.
 % 
 %   Input Arguments
 %
 %     Yrand --- the function for generating IID instances of a Bernoulli
 %               random variable Y whose mean we want to estimate.
 % 
-%     p --- the estimated mean of Y.
+%     pHat --- the estimated mean of Y.
 % 
 %     in_param.abstol --- the absolute error tolerance, default value is 1e-2.
 % 
@@ -46,11 +47,6 @@ function [p,out_param]=meanMCBernoulli_g(varargin)
 % 
 %   Output Arguments
 %
-%     out_param.n_clt --- sample size calculated by Central Limit Theorem.
-%
-%     out_param.n_hoeff --- sample size calculated by Hoeffding's
-%      Inequality.
-% 
 %     out_param.nabs --- sample size needed to satisfy absolute error
 %     tolerance
 %
@@ -67,56 +63,56 @@ function [p,out_param]=meanMCBernoulli_g(varargin)
 %
 % Case 1: errtype = 'abs'
 %
-% If the sample was taken as according to Hoeffding's inequality, which is 
-% ceil(log(2/out_param.alpha)/(2*out_param.abstol^2)), then the following
-% inequality must be satisfied
+% If the sample size is calculated according Hoeffding's inequality, which
+% equals to ceil(log(2/out_param.alpha)/(2*out_param.abstol^2)), then the
+% following inequality must be satisfied:
 %
-% Pr(|p-\hat{p}| <= abstol) >= 1-alpha.
+% Pr(|p-pHat| <= abstol) >= 1-alpha.
 % 
-% Here p is the true mean of Y, and \hat{mu} is the output
-% of MEANMCBERNOULLI_G with errtype = 'abs'
+% Here p is the true mean of Yrand, and pHat is the output of
+% MEANMCBERNOULLI_G with errtype = 'abs'
 %
 % Also, the cost is deterministic and bounded.
 % 
 % Case 2: errtype = 'rel'
 %
-% If the algorithm terminated without any warning messages, the result
-% \hat{p} would satisfy the following inequality:
+% If the algorithm terminated without any warning messages, the estimated
+% mean pHat would satisfy the following inequality:
 %
-% Pr(|p-\hat{p}| <= abstol*p) >= 1-alpha.
+% Pr(|p-pHat| <= abstol*p) >= 1-alpha.
 %
-% Here p is the true mean of Y, and \hat{mu} is the output of
-% MEANMCBERNOULLI_G with errtype = 'rel'
+% Here p is the true mean of Y, and pHat is the output of MEANMCBERNOULLI_G
+% with errtype = 'rel'.
 % 
-% Addtionally, the cost of the algorithm would be bounded by N_up, which is
-% in terms of the true mean p, uncertainty alpha and relative tolerance
-% reltol. For details, please refer to the paper.
+% Additionally, the cost of the algorithm would be bounded by N_up, which is
+% defined in terms of the true mean p, uncertainty alpha and relative
+% tolerance reltol. For details, please refer to the paper.
 %
 %   Examples
 % 
 %   Example 1:
-%   Calculate the mean of a bernoulli random variable with true p=1/90,
+%   Calculate the mean of a Bernoulli random variable with true p=1/90,
 %   absolute error tolerance 1e-3 and uncertainty 0.01.
 % 
 %   >> in_param.abstol=1e-3; in_param.alpha = 0.01; p=1/9;Yrand=@(n) rand(n,1)<p;
-%   >> p=meanMCBernoulli_g(Yrand,in_param)
-%   p = 0.1***
+%   >> pHat=meanMCBernoulli_g(Yrand,in_param)
+%   pHat = 0.1***
 % 
 % 
 %   Example 2:
 %   Using the same function as example 1, with the relative error tolerance
 %   1e-2.
 % 
-%   >> p=meanMCBernoulli_g(Yrand,1e-13,1e-2,'rel')
-%   p = 0.1***
+%   >> pHat = meanMCBernoulli_g(Yrand,0,1e-2,'rel')
+%   pHat = 0.1***
 % 
 % 
 %   Example 3:
-%   Using the sample function as example 1, with the relative error
-%   tolerance 1e-3 and uncertainty 0.05.
+%   Using the same function as example 1, with the relative error
+%   tolerance 1e-2 and uncertainty 0.05.
 % 
-%   >> p=meanMCBernoulli_g(Yrand,'errtype','rel','reltol',1e-2,'alpha',0.05)
-%   p = 0.11***
+%   >> pHat = meanMCBernoulli_g(Yrand,'errtype','rel','reltol',1e-2,'alpha',0.05)
+%   pHat = 0.11***
 % 
 % 
 %   See also FUNAPPX_G, INTEGRAL_G, CUBMC_G, MEANMC_G
@@ -152,15 +148,16 @@ if strcmpi(out_param.errtype,'rel')% relative error type
     out_param.n = out_param.nrel;%update n
 end
 
-if strcmpi(out_param.errtype,'either')%either absolute or relative error tolerance
+if strcmpi(out_param.errtype,'either')
+    %either absolute or relative error tolerance, which satisfies first
     out_param = nabs(out_param,tstart);
     [nsofar,out_param] = nrel(out_param,Yrand,tstart);
     out_param.n = min(out_param.nabs,out_param.nrel);
 end
 npcmax = 1e6;
-out_param.p = gail.evalmean(Yrand,out_param.n,npcmax);
+out_param.pHat = gail.evalmean(Yrand,out_param.n,npcmax);
 % evaluate the mean 
-p=out_param.p; % assign answer
+pHat=out_param.pHat; % assign answer
 out_param.n = out_param.n+nsofar; % update total sample used
 out_param.time=toc(tstart); %elapsed time
 end
@@ -177,7 +174,7 @@ if isempty(varargin) % if no parsing value
         ['Yrand must be specified. Now GAIL is using Bernoulli random ', ...
     'variable with parameter 0.0078.'])%print warning message
     p = 2^(-7);
-    Yrand = @(n) rand(n,1)<p;% use the default function
+    Yrand = @(n) rand(n,1)<p;% use the default random variable
 else
     Yrand = varargin{1};
 end
@@ -197,46 +194,46 @@ if ~validvarargin
     out_param.alpha = default.alpha;
     out_param.nmax = default.nmax;
 else
-    p = inputParser;
-    addRequired(p,'Yrand',@gail.isfcn);
+    pHat = inputParser;
+    addRequired(pHat,'Yrand',@gail.isfcn);
     if isnumeric(in2)%if there are multiple inputs with
         %only numeric, they should be put in order.
-        addOptional(p,'abstol',default.abstol,@isnumeric);
-        addOptional(p,'reltol',default.reltol,@isnumeric);
-        addOptional(p,'errtype',default.errtype,@ischar);
-        addOptional(p,'alpha',default.alpha,@isnumeric);
-        addOptional(p,'nmax',default.nmax,@isnumeric);
+        addOptional(pHat,'abstol',default.abstol,@isnumeric);
+        addOptional(pHat,'reltol',default.reltol,@isnumeric);
+        addOptional(pHat,'errtype',default.errtype,@ischar);
+        addOptional(pHat,'alpha',default.alpha,@isnumeric);
+        addOptional(pHat,'nmax',default.nmax,@isnumeric);
     else
         if isstruct(in2) %parse input structure
-            p.StructExpand = true;
-            p.KeepUnmatched = true;
+            pHat.StructExpand = true;
+            pHat.KeepUnmatched = true;
         end
-        addParamValue(p,'abstol',default.abstol,@isnumeric);
-        addParamValue(p,'reltol',default.reltol,@isnumeric);
-        addParamValue(p,'errtype',default.errtype,@ischar);
-        addParamValue(p,'alpha',default.alpha,@isnumeric);
-        addParamValue(p,'nmax',default.nmax,@isnumeric);
+        addParamValue(pHat,'abstol',default.abstol,@isnumeric);
+        addParamValue(pHat,'reltol',default.reltol,@isnumeric);
+        addParamValue(pHat,'errtype',default.errtype,@ischar);
+        addParamValue(pHat,'alpha',default.alpha,@isnumeric);
+        addParamValue(pHat,'nmax',default.nmax,@isnumeric);
     end
-    parse(p,Yrand,varargin{2:end})
-    out_param = p.Results;
+    parse(pHat,Yrand,varargin{2:end})
+    out_param = pHat.Results;
 end
-if (out_param.abstol <= 0) % absolute error tolerance negative
+if (out_param.abstol < 0) %absolute error tolerance negative
     warning('MATLAB:meanMCBernoulli_g:abstolneg',...
         ['Absolute error tolerance should be greater than 0, ' ...
         'use the absolute value of the error tolerance'])
     out_param.abstol = abs(out_param.abstol);
 end
-if (out_param.reltol <= 0 || out_param.reltol >=1)
-    % relative error tolerance is not in (0,1)
+if (out_param.reltol < 0 || out_param.reltol >1)
+    % relative error tolerance is not in [0,1]
     warning('MATLAB:meanMCBernoulli_g:reltolnotin01',...
-        ['Relative error tolerance should be less than 1 and bigger than 0, ' ...
+        ['Relative error tolerance should be between 0 and 1, ' ...
         'use the default value of the error tolerance'])
     out_param.reltol = default.reltol;
 end
 if (out_param.alpha <= 0 ||out_param.alpha >= 1) 
     % uncertainty is not in (0,1)
     warning('MATLAB:meanMCBernoulli_g:alphanotin01',...
-        ['the uncertainty should be less than 1 and bigger than 0, '...
+        ['the uncertainty should be in (0,1), '...
         'use the default value.'])
     out_param.alpha = default.alpha;
 end
@@ -250,7 +247,7 @@ if (~gail.isposint(out_param.nmax))
 end
 end
 
-function [out_param,p]=meanMCBernoulli_g_err(out_param,tstart)
+function [out_param,pHat]=meanMCBernoulli_g_err(out_param,tstart)
 % Handles errors in meanMCBernoulli_g to give an exit with information.
 % out_param.exit = 0   success
 %                  1   nabs exceed nmax
@@ -287,8 +284,8 @@ switch out_param.exit
             'without guarantee.']);
         return;        
 end
-out_param.p=NaN;
-p=out_param.p;
+out_param.pHat=NaN;
+pHat=out_param.pHat;
 if nargin>1; out_param.time=toc(tstart); end
 end
 
@@ -296,8 +293,8 @@ function out_param = nabs(out_param,tstart)
 % this function is to calculate the sample size n needed to satisfy
 % absolute error criterion
 out_param.nabs = ceil(log(2/out_param.alpha)/(2*out_param.abstol^2));
-% take the sample size by Hoeffding's inequality
-if out_param.nabs > out_param.nmax % if the sample needed is is bigger than nmax
+% calculate the sample size by Hoeffding's inequality
+if out_param.nabs > out_param.nmax % if the sample needed is bigger than nmax
     out_param.exit=1; % pass a flag
     meanMCBernoulli_g_err(out_param,tstart);% print warning message
     out_param.nabs = out_param.nmax;% update nabs
@@ -315,20 +312,21 @@ while 1
     %uncertainty in each step
     toli = out_param.reltol*2^-i;%tolerance in each step
     ni = ceil(-log(alphai)/(2*toli^2));
+    %sample size obtained by one side Hoeffding's inequality
     if ni > out_param.nmax-nsofar;% if ni is bigger than sample left
         out_param.exit=2; % pass a flag 
         meanMCBernoulli_g_err(out_param,tstart); % print warning message
         out_param.nrel = out_param.nmax- nsofar;%update nrel using all sample left
         break
     end
-    meanY = gail.evalmean(Yrand,ni,npcmax);%evaluate mean
+    meanP = gail.evalmean(Yrand,ni,npcmax);%evaluate mean
     nsofar = nsofar+ni;%update n used so far 
-    c = max(meanY-toli,0); % parameter to determine the stopping time
+    c = max(meanP-toli,0); % parameter to determine the stopping time
     delta = 1/2; % constant to determine stopping time
-    if c > (meanY+toli)*delta % stopping criterion
+    if c > (meanP+toli)*delta % stopping criterion
         out_param.tau = i;%stopping time tau
         out_param.nrel = ceil(-log(alphap/2)/(2*(c*out_param.reltol)^2));
-        % calculate nrel needed
+        % calculate nrel by Hoeffding's inequality
         if  out_param.nrel > out_param.nmax-nsofar
             %if nrel is bigger than sample left
             out_param.exit=3; % pass a flag

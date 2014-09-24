@@ -10,9 +10,9 @@ tic;
 % doctests
 format short
 doctest dt_meanMC_g_TrafficModel
-Test_MeanMC_g
+Test_meanMC_g
 doctest dt_cubMC_g
-test_cubMC_g
+Test_cubMC_g
 
 % other workouts
 warning('off','MATLAB:integral_g:exceedbudget')

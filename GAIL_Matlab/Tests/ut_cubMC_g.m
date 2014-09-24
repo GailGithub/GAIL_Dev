@@ -9,8 +9,7 @@ classdef ut_cubMC_g < matlab.unittest.TestCase
         function cubMC_gOferror10(testCase)
             testCase.verifyError(@()cubMC_g(@(x)x.^2,nan),...
                 'MATLAB:cubMC_g:hyperboxnotnum');
-        end
-        
+        end      
         function cubMC_gOferror11(testCase)
             testCase.verifyError(@()cubMC_g(@(x)x.^2,1),...
                 'MATLAB:cubMC_g:hyperboxnot2d');
@@ -36,8 +35,7 @@ classdef ut_cubMC_g < matlab.unittest.TestCase
             exactf = 1/3;
             actualerr = abs(meanf-exactf);
             testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
-        end
-        
+        end       
         function cubMC_gOfexp(testCase)
             f = @(x) exp(x);
             in_param.abstol = 0;
@@ -47,8 +45,7 @@ classdef ut_cubMC_g < matlab.unittest.TestCase
             exactf = exp(1)-1;
             actualerr = abs(meanf-exactf)/exactf;
             testCase.verifyLessThanOrEqual(actualerr,in_param.reltol);
-        end
-        
+        end        
         function cubMC_gOfsin(testCase)
             f = @(x) sin(x);
             in_param.abstol = 1e-3;
@@ -58,8 +55,7 @@ classdef ut_cubMC_g < matlab.unittest.TestCase
             exactf = 1-cos(1);
             actualerr = abs(meanf-exactf);
             testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
-        end
-        
+        end        
         function cubMC_gOfmultierrfun(testCase)
             f = @(x) exp(-x(:,1).^2-x(:,2).^2);
             in_param.abstol = 1e-3;
