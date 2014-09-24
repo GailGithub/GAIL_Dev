@@ -3,42 +3,43 @@
 % random variable to within a specified error tolerance with guaranteed
 % confidence level 1-alpha.|
 %% Syntax
-% p = *meanMCBernoulli_g*(Yrand)
+% pHat = *meanMCBernoulli_g*(Yrand)
 %
-% p = *meanMCBernoulli_g*(Yrand,abstol,reltol,errtype,alpha,nmax)
+% pHat = *meanMCBernoulli_g*(Yrand,abstol,reltol,errtype,alpha,nmax)
 %
-% p = *meanMCBernoulli_g*(Yrand,'abstol',abstol,'reltol',reltol,
+% pHat = *meanMCBernoulli_g*(Yrand,'abstol',abstol,'reltol',reltol,
 %
-% [p, out_param] = *meanMCBernoulli_g*(Yrand,in_param)
+% [pHat, out_param] = *meanMCBernoulli_g*(Yrand,in_param)
 %% Description
 %
-% p = *meanMCBernoulli_g*(Yrand) estimates the mean of a Bernoulli random
+% pHat = *meanMCBernoulli_g*(Yrand) estimates the mean of a Bernoulli random
 %  variable Y to within a specified error tolerance with guaranteed
 %  confidence level 99%. Input Yrand is a function handle that accepts a
 %  positive integer input n and returns a n x 1 vector of IID instances
 %  of the Bernoulli random variable Y.
 % 
-% p = *meanMCBernoulli_g*(Yrand,abstol,reltol,errtype,alpha,nmax) estimates
+% pHat = *meanMCBernoulli_g*(Yrand,abstol,reltol,errtype,alpha,nmax) estimates
 %  the mean of a Bernoulli random variable Y to within a specified error
 %  tolerance with guaranteed confidence level 1-alpha using all ordered
 %  parsing inputs abstol, reltol, errtype, alpha and nmax.
 % 
-% p = *meanMCBernoulli_g*(Yrand,'abstol',abstol,'reltol',reltol,
+% pHat = *meanMCBernoulli_g*(Yrand,'abstol',abstol,'reltol',reltol,
 %  'errtype',errtype,'alpha',alpha,'nmax',nmax) estimates the mean of a
 %  Bernoulli random variable Y to within a specified error tolerance with
 %  guaranteed confidence level 1-alpha. All the field-value pairs are
 %  optional and can be supplied in different order.
 % 
-% [p, out_param] = *meanMCBernoulli_g*(Yrand,in_param) estimates the mean
+% [pHat, out_param] = *meanMCBernoulli_g*(Yrand,in_param) estimates the mean
 %  of a Bernoulli random variable Y to within a specified error tolerance
-%  with the given parameters in_param and output parameters out_param.
+%  with the given parameters in_param and produce the estimated mean pHat
+%  and output parameters out_param.
 % 
 % *Input Arguments*
 %
 % * Yrand --- |the function for generating IID instances of a Bernoulli
 %            random variable Y whose mean we want to estimate.|
 % 
-% * p --- |the estimated mean of Y.|
+% * pHat --- |the estimated mean of Y.|
 % 
 % * in_param.abstol --- |the absolute error tolerance, default value is 1e-2.|
 % 
@@ -55,11 +56,6 @@
 % 
 % *Output Arguments*
 %
-% * out_param.n_clt --- |sample size calculated by Central Limit Theorem.|
-%
-% * out_param.n_hoeff --- |sample size calculated by Hoeffding's
-%   Inequality.|
-% 
 % * out_param.nabs --- |sample size needed to satisfy absolute error
 %  tolerance|
 %
