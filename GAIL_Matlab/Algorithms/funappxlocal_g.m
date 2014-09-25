@@ -110,32 +110,33 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %   Example 1:
 %
 %
-%   >> f = @(x) x.^2; [pp, out_param] = funappxlocal_g(f)
+%   >> f = @(x) exp(-100*(x-sqrt(2)/2).^2); [pp, out_param] = funappxlocal_g(f)
 %
 % pp = 
 % 
 %       form: 'pp'
-%     breaks: [1x3969 double]
-%      coefs: [3968x2 double]
-%     pieces: 3968
+%     breaks: [1x6733 double]
+%      coefs: [6732x2 double]
+%     pieces: 6732
 %      order: 2
 %        dim: 1
 %     orient: 'first'
-%
+% 
+% 
 % out_param = 
 % 
-%              f: @(x)x.^2
+%              f: @(x)exp(-100*(x-1/sqrt(2)).^2)
 %              a: 0
 %              b: 1
 %         abstol: 1.0000e-06
-%            nlo: 20
-%            nhi: 50
+%            nlo: 10
+%            nhi: 1000
 %           nmax: 10000000
 %        maxiter: 1000
-%          ninit: 32
-%        npoints: 3969
-%     errorbound: 7.5421e-07
-%          nstar: [1x128 double]
+%          ninit: 100
+%        npoints: 6733
+%     errorbound: 9.4644e-07
+%          nstar: [1x68 double]
 % 
 % 
 %   Example 2:
@@ -288,16 +289,19 @@ while(max(err) > abstol)
     ntemp=max(ceil(out_param.nhi*(out_param.nlo/out_param.nhi).^(1./(1+len))),3);
     nstar = ntemp -2;
     
+    gn(gn<eps/2)=0;
+    fn(fn<eps/2)=0;
+    
     %find nstar not large enough then double it
     smallconeind = find(nstar.*(2*gn+fn.*len/(ninit-1)) <(fn.*len));
     nstar(smallconeind) = 2*nstar(smallconeind);
     
     %check necessary condition if satisfied then compute error
     %otherwise just use the error from last iteration
-    largeconeind = find(nstar.*(2*gn+fn.*len/(ninit-1)) >= (fn.*len));
-    err(largeconeind) = nstar(largeconeind).*len(largeconeind).*gn(largeconeind)./...
-        (4*(ninit-1).*(ninit-1-nstar(largeconeind)));
-    
+%     largeconeind = find(nstar.*(2*gn+fn.*len/(ninit-1)) >= (fn.*len));
+%     err(largeconeind) = nstar(largeconeind).*len(largeconeind).*gn(largeconeind)./...
+%         (4*(ninit-1).*(ninit-1-nstar(largeconeind)));
+    err = nstar.*len.*gn./(4*(ninit-1).*(ninit-1-nstar));
     %check if error satisfy the error tolerance 
     if max(err) > abstol;
         %flag sub interval error not satisfy error tolerance 1 in whbad
