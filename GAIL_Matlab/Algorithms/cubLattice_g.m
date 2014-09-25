@@ -128,10 +128,11 @@ function [q,out_param] = cubLattice_g(varargin)
 % 
 %  References
 %
-%   [1]  F. J. Hickernell, Lluis Antoni Jimenez Rugama
+%   [1] Jimenez Rugama, Ll.A., Hickernell, F.J.: Adaptive Multidimensional
+%   Integration Based on Rank-1 Lattices (2014). In preparation.
 %
 %   [2] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang,
-%   Llu�s Antoni Jim�nez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
+%   Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
 %   "GAIL: Guaranteed Automatic Integration Library (Version 2.0.0)"
 %   [MATLAB Software], 2014. Available from http://code.google.com/p/gail/
 %

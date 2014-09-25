@@ -114,10 +114,11 @@ function [q,out_param] = cubSobol_g(varargin)
 % 
 %  References
 %
-%   [1]  F. J. Hickernell, Lluis Antoni Jimenez Rugama
+%   [1] Hickernell, F.J., Jimenez Rugama, Ll.A.: Reliable adaptive cubature
+%   using digital sequences (2014). In preparation.
 %
 %   [2] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang,
-%   Llu�s Antoni Jim�nez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
+%   Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
 %   "GAIL: Guaranteed Automatic Integration Library (Version 2.0.0)"
 %   [MATLAB Software], 2014. Available from http://code.google.com/p/gail/
 %
