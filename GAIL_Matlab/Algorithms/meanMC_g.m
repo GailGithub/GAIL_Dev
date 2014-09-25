@@ -1,17 +1,18 @@
 function [tmu,out_param]=meanMC_g(varargin)
 % MEANMC_G Monte Carlo method to estimate the mean of a random variable
-% to within a specified generalized error tolerance 
-% tolfun = max(abstol,reltol|mu|) with guaranteed confidence level 1-alpha.
 %
-%   tmu = MEANMC_G(Yrand) estimates the mean of a random variable Y to
-%   within a specified generalized error tolerance tolfun =
-%   max(abstol,reltol|mu|) with guaranteed confidence level 99%. Input
-%   Yrand is a function handle that accepts a positive integer input n and
-%   returns an n x 1 vector of IID instances of the random variable Y.
+%   tmu = MEANMC_G(Yrand) estimates the mean, mu, of a random variable
+%   to within a specified generalized error tolerance, i.e., 
+%      |mu - tmu| <= max(abstol,reltol|mu|) 
+%   with probability at least 1-alpha, where abstol is the absolute tolerance, 
+%   and reltol is the relative error tolerance. The default values are
+%   abstol=1e-2, reltol=1e-1, and alpha=1%. Input Yrand is a function 
+%   handle that accepts a positive integer input n and returns an n x 1 
+%   vector of IID instances of the random variable Y.
 %
 %   tmu = MEANMC_G(Yrand,abstol,reltol,alpha,fudge,nSig,n1,tbudget,nbudget)
-%    estimates the mean of a random variable Y to within a specified
-%    generalized error tolerance tolfun with guaranteed confidence
+%   estimates the mean of a random variable Y to within a specified
+%   generalized error tolerance tolfun with guaranteed confidence
 %   level 1-alpha using all ordered parsing inputs abstol, reltol, alpha,
 %   fudge, nSig, n1, tbudget, nbudget.
 %
@@ -261,9 +262,9 @@ while true
         break;
     else
         i=i+1;
-        deltat=0.7;
+        deltat=0.8;
         deltah=0.5;
-        delta=0.3;% constant to decide the next tolerance
+        delta=0;% constant to decide the next tolerance
         out_param.tol(i) = max(min(deltaplus*deltat, ...
             deltah*out_param.tol(i-1)),delta*out_param.tol(i-1));
         %update the next tolerance
