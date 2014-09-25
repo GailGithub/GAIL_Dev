@@ -122,7 +122,7 @@ function [fappx,out_param]=funappxtau_g(varargin)
 
 % check parameter satisfy conditions or not
 [f, out_param] = funappxtau_g_param(varargin{:});
-[~,~,~,MATLABVERSION]=GAILstart(0);
+MATLABVERSION= gail.matlab_version;
 if MATLABVERSION >= 8.3
     warning('off', 'MATLAB:interp1:ppGriddedInterpolant');
 end;

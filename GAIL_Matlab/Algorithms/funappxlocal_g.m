@@ -1,32 +1,34 @@
 function [pp,out_param]=funappxlocal_g(varargin)
 %FUNAPPXLOCAL_G 1-D guaranteed function recovery on a closed interval [a,b]
 %
-%   pp = FUNAPPXLOCAL_G(f) approximates function f on the default interval [0,1]
-%   by a piecewise polynomial structure pp within the guaranteed absolute
-%   error tolerance of 1e-6. Input f is a function handle. The
+%   pp = FUNAPPXLOCAL_G(f) approximates function f on the default interval
+%   [0,1] by a piecewise polynomial structure pp within the guaranteed
+%   absolute error tolerance of 1e-6. Input f is a function handle. The
 %   statement y = f(x) should accept a vector argument x and return a
 %   vector y of function values that is of the same size as x. Output pp
 %   may be evaluated via PPVAL.
 %
-%   pp = FUNAPPXLOCAL_G(f,a,b,abstol,nlo,nhi,nmax) for a given function f and
-%   the ordered input parameters that define the finite interval [a,b], a
-%   guaranteed absolute error tolerance abstol, a lower bound of initial
-%   number of points nlo, an upper bound of initial number of points nhi,
-%   and a cost budget nmax.
+%   pp = FUNAPPXLOCAL_G(f,a,b,abstol,nlo,nhi,nmax,maxiter) for a given
+%   function f and the ordered input parameters that define the finite
+%   interval [a,b], a guaranteed absolute error tolerance abstol, a lower
+%   bound of initial number of points nlo, an upper bound of initial number
+%   of points nhi, a cost budget nmax and max number of iteration maxiter.
 %
-%   pp = FUNAPPXLOCAL_G(f,'a',a,'b',b,'abstol',abstol,'nlo',nlo,'nhi',nhi,'nmax',nmax)
+%   pp =
+%   FUNAPPXLOCAL_G(f,'a',a,'b',b,'abstol',abstol,'nlo',nlo,'nhi',nhi,'nmax',nmax,'maxiter',maxiter)
 %   recovers function f on the finite interval [a,b], given a guaranteed
 %   absolute error tolerance abstol, a lower bound of initial number of
-%   points nlo, an upper bound of initial number of points nhi, and a cost
-%   budget nmax. All six field-value pairs are optional and can be supplied
-%   in different order.
+%   points nlo, an upper bound of initial number of points nhi, a cost
+%   budget nmax and max number of iteration maxiter. All seven field-value
+%   pairs are optional and can be supplied in different order.
 %
 %   pp = FUNAPPXLOCAL_G(f,in_param) recovers function f on the finite
 %   interval [in_param.a,in_param.b], given a guaranteed absolute error
 %   tolerance in_param.abstol, a lower bound of initial number of points
 %   in_param.nlo, an upper bound of initial number of points in_param.nhi,
-%   and a cost budget in_param.nmax. If a field is not specified, the
-%   default value is used.
+%   a cost budget in_param.nmax and max number of iteration
+%   in_param.maxiter. If a field is not specified, the default value is
+%   used.
 %
 %     in_param.a --- left end point of interval, default value is 0
 %
@@ -41,7 +43,10 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %     in_param.nhi --- upper bound of initial number of points we used,
 %     default value is 100
 %
-%     in_param.nmax --- cost budget, default value is 1e7
+%     in_param.nmax --- when number of points hits the value, iteration
+%     will stop, default value is 1e7
+%
+%     in_param.maxiter --- max number of interation, default value is 1000
 %
 %   [pp, out_param] = FUNAPPXLOCAL_G(f,...) returns a piecewise polynomial
 %   structure pp and an output structure out_param, which have the
@@ -61,7 +66,8 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %
 %     pp.orient --- always be 'first'
 %
-%     out_param.ninit --- initial number of points we use
+%     out_param.ninit --- initial number of points we use for each sub
+%     interval
 %
 %     out_param.npoints --- number of points we need to reach the
 %     guaranteed absolute error tolerance
@@ -82,7 +88,22 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %
 %     out_param.nhi --- an upper bound of initial number of points we use
 %
-%     out_param.nmax --- cost budget
+%     out_param.nmax --- when number of points hits the value, iteration
+%     will stop
+%
+%     out_param.maxiter --- max number of interation
+%
+%  Guarantee
+%
+%  For [a,b] there exists a partition, P={[t_0,t_1], [t_1,t_2], ...,
+%  [t_{L-1},t_L]}, where a=t_0 < t_1 < ... < t_L=b. If the function to be
+%  approximated, f, satisfies the cone condition
+%                              2 nstar    ||     f(t_l)-f(t_{l-1})||
+%      ||f''||        <=  --------------  ||f'- ----------------- ||
+%             \infty       t_l - t_{l-1}  ||        t_l - t_{l-1} ||\infty,
+%  for each sub interval [t_{l-1},t_l], where 1 <= l <= L, then the pp
+%  output by this algorithm is guaranteed to satisfy
+%      ||f-ppval(pp, )||\infty <= abstol.
 %
 %   Examples
 %
@@ -110,11 +131,11 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %            nlo: 20
 %            nhi: 50
 %           nmax: 10000000
+%        maxiter: 1000
 %          ninit: 32
 %        npoints: 3969
 %     errorbound: 7.5421e-07
 %          nstar: [1x128 double]
-%           iter: 8
 % 
 % 
 %   Example 2:
@@ -138,6 +159,7 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %         abstol: 1.0000e-07
 %              b: 2
 %              f: @(x)x.^2
+%        maxiter: 1000
 %            nhi: 20
 %            nlo: 10
 %           nmax: 10000000
@@ -145,7 +167,6 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %        npoints: 34817
 %     errorbound: 5.9398e-08
 %          nstar: [1x2048 double]
-%           iter: 12
 %
 %
 %   Example 3:
@@ -169,6 +190,7 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %         abstol: 1.0000e-06
 %              b: 2
 %              f: @(x)x.^2
+%        maxiter: 1000
 %            nhi: 20
 %            nlo: 10
 %           nmax: 10000000
@@ -176,7 +198,6 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %        npoints: 8705
 %     errorbound: 9.5037e-07
 %          nstar: [1x512 double]
-%           iter: 10
 %
 %
 %   Example 4:
@@ -201,6 +222,7 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %         abstol: 1.0000e-06
 %              b: 5
 %              f: @(x)x.^2
+%        maxiter: 1000
 %            nhi: 20
 %            nlo: 10
 %           nmax: 10000000
@@ -208,7 +230,6 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %        npoints: 36865
 %     errorbound: 3.1274e-07
 %          nstar: [1x2048 double]
-%           iter: 12
 %
 %
 %   See also INTEGRAL_G, MEANMC_G, CUBMC_G, FUNMIN_G
@@ -223,7 +244,7 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %
 %
 %   [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
-%        Lluís Antoni Jiménez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
+%        Llu¨ªs Antoni Jim¨¦nez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
 %        "GAIL: Guaranteed Automatic Integration Library (Version 2.0)"
 %        [MATLAB Software], 2014. Available from
 %        http://code.google.com/p/gail/
@@ -234,7 +255,7 @@ function [pp,out_param]=funappxlocal_g(varargin)
 
 % check parameter satisfy conditions or not
 [f, out_param] = funappx_g_param(varargin{:});
-[~,~,~,MATLABVERSION]=GAILstart(0);
+MATLABVERSION= gail.matlab_version;
 if MATLABVERSION >= 8.3
     warning('off', 'MATLAB:interp1:ppGriddedInterpolant');
 end;
@@ -287,54 +308,92 @@ while(max(err) > abstol)
         whgood = (whbad ==0);
         %add index for good sub interval
         goodind = find(whgood == 1);   
-        %find how many sub intervals need to be split
-        temp = cumsum(whbad);
-        cumbad = temp(badind);
+        %find # of new sub intervals need to be added at each sub
+        %interval
+        badcumsum = cumsum(whbad);
+        %pickup # of new sub intervals at bad intervals
+        cumbad = badcumsum(badind);
+        %generate new index of sub intervals splitted from bad intervals
         newindex = [badind + [0 cumbad(1:end-1)]; badind + cumbad];
         newindex = newindex(:)';
-        %find the length of subinterval need to add points
+        %find the length of each sub interval
         h = len/2/(ninit-1);
-        %reshape x to a matrix of ninit-1 by # of intervals
+        %reshape x without end point to a matrix of ninit-1 by # of intervals
         reshapex =  reshape(x(1:end-1),ninit -1,(index(end) - 1)/(ninit -1));
-        %find new points newx need to be added
+        %generate new points newx need to be added
         newx = reshapex(:,badind) + repmat(h(badind),ninit-1,1);
         %compute value newy of newx
         newy = f(newx);
-        %insert newx back into x at correct position
-        ll = zeros(2*(ninit-1),sum(whbad));
-        ll(1:2:end-1,:) = reshapex(:,badind);
-        ll(2:2:end,:) = newx;
-        llreshapex = reshape(ll, ninit - 1, 2*sum(whbad));
+        %initialize a zero matrix of 2*(ninit-1) by # of bad sub intervals
+        %to store all the points after splitting bad sub intervals
+        badmatrix = zeros(2*(ninit-1),sum(whbad));
+        %insert x at bad sub intervals in badmatrix as the row 1,
+        %3,..., end-1
+        badmatrix(1:2:end-1,:) = reshapex(:,badind);
+        %insert newx at bad sub intervals in badmatrix as the row 2,
+        %4,..., end
+        badmatrix(2:2:end,:) = newx;
+        %reshape badmatrix to the size of ninit -1 by 2*# of bad sub
+        %intervals
+        badmatreshape = reshape(badmatrix, ninit - 1, 2*sum(whbad));
+        %initialize a matrix of ninit - 1 by # of sub intervals after
+        %splitting bad sub intervals for x
         newreshapex = zeros(ninit - 1, 2*sum(whbad)+sum(whgood));
-        newreshapex(:,newindex) = llreshapex;
-        newreshapex(:,goodind + temp(goodind)) = reshapex(:,goodind);
+        %insert all the points after splitting bad sub intervals to correct
+        %column
+        newreshapex(:,newindex) = badmatreshape;
+        %insert all the points on good sub intervals to correct column
+        newreshapex(:,goodind + badcumsum(goodind)) = reshapex(:,goodind);
+        %obtain all the points in vector x
         x = [newreshapex(:)' x(end)];
-        %insert newy back into y at correct position
-        ll(1:2:end-1,:) = reshapey(:,badind);
-        ll(2:2:end,:) = newy;
-        llreshapey = reshape(ll, ninit - 1, 2*sum(whbad));
+        %insert y at bad sub intervals in badmatrix as the row 1,
+        %3,..., end-1
+        badmatrix(1:2:end-1,:) = reshapey(:,badind);
+        %insert newy at bad sub intervals in badmatrix as the row 2,
+        %4,..., end
+        badmatrix(2:2:end,:) = newy;
+        %reshape badmatrix to the size of ninit -1 by 2*# of bad sub
+        %intervals
+        badmatreshape = reshape(badmatrix, ninit - 1, 2*sum(whbad));
+        %initialize a matrix of ninit - 1 by # of sub intervals after
+        %splitting bad sub intervals for y
         newreshapey = zeros(ninit - 1, 2*sum(whbad)+sum(whgood));
-        newreshapey(:,newindex) = llreshapey;
-        newreshapey(:,goodind + temp(goodind)) = reshapey(:,goodind);
+        %insert all the values after splitting bad sub intervals to correct
+        %column
+        newreshapey(:,newindex) = badmatreshape;
+        %insert all the original y on good sub intervals to correct column
+        newreshapey(:,goodind + badcumsum(goodind)) = reshapey(:,goodind);
+        %obtain all the values in vector y
         y = [newreshapey(:)' y(end)];
+        
+        %generate error for new sub intervals
+        %initialize a vertor of # of sub intervals after splitting
+        newerr = zeros(1,2*sum(whbad)+sum(whgood));
         %use the same error for splitted bad interval
-        cumwhbad = cumsum(whbad+1);
-        c = zeros(1,cumwhbad(end));
-        newerr = [err(badind); err(badind)];
-        c(newindex)=newerr(:)';
-        c(goodind + temp(goodind)) = err(goodind);
-        err = c;
-        %upadte index to x 
-        index(2:end) = index(2:end) + cumsum(whbad)*(ninit-1);
+        baderr = [err(badind); err(badind)];
+        %insert error after splitting bad sub intervals to correct
+        %position
+        newerr(newindex)=baderr(:)';
+        newerr(goodind + badcumsum(goodind)) = err(goodind);
+        %obtain error for all sub intervals
+        err = newerr;
+        
+        %upadte index w.p.t x after splitting
+        %update index of the original endpoints 
+        index(2:end) = index(2:end) + badcumsum*(ninit-1);
+        %obtain the index of new endpoins after splitting
+        %if one interval not splitted, will get the same index as in
+        %previous line
         indexbeg = index(1:end-1) + whbad*(ninit-1);
+        %combine two index together and emlinate duplicate indices
         indexnew = [index(1:end-1); indexbeg];
         indexnew = indexnew(:)';
         index = unique([indexnew index(end)]);
     else
         break;
     end;
-    if(iter>=1000)
-        warning('MATLAB:funappx_g:exceediter','Iteration exceeds 1000 times.')
+    if(iter>= out_param.maxiter)
+        warning(['MATLAB:funappx_g:exceediter','Iteration exceeds max iteration' num2str(out_param.maxiter)])
         break;
     end;
     if(index(end) >= out_param.nmax)
@@ -345,16 +404,11 @@ end;
 out_param.npoints = index(end);
 out_param.errorbound = max(err);
 out_param.nstar = nstar;
-out_param.iter = iter;
-% out_param.err = err;
-% x1 = x;
-% y1 = f(x1);
 pp = interp1(x,y,'linear','pp');
 if MATLABVERSION >= 8.3
     warning('on', 'MATLAB:interp1:ppGriddedInterpolant');
 end;
 
-%fappx = @(x) interp1(x1,y,x,'linear');
 
 
 function [f, out_param] = funappx_g_param(varargin)
@@ -368,6 +422,7 @@ default.b = 1;
 default.nlo = 20;
 default.nhi = 50;
 default.nmax = 1e7;
+default.maxiter = 1000;
 
 if isempty(varargin)
     warning('MATLAB:funappx_g:nofunction','Function f must be specified. Now GAIL is using f(x)=exp(-100*(x-0.5)^2) and unit interval [0,1].')
@@ -395,6 +450,7 @@ if ~validvarargin
     out_param.nlo = default.nlo;
     out_param.nhi = default.nhi;
     out_param.nmax = default.nmax ;
+    out_param.maxiter = default.maxiter;
 else
     p = inputParser;
     addRequired(p,'f',@gail.isfcn);
@@ -406,6 +462,7 @@ else
         addOptional(p,'nlo',default.nlo,@isnumeric);
         addOptional(p,'nhi',default.nhi,@isnumeric);
         addOptional(p,'nmax',default.nmax,@isnumeric)
+        addOptional(p,'maxiter',default.maxiter,@isnumeric)
     else
         if isstruct(in2) %parse input structure
             p.StructExpand = true;
@@ -417,6 +474,7 @@ else
         addParamValue(p,'nlo',default.nlo,@isnumeric);
         addParamValue(p,'nhi',default.nhi,@isnumeric);
         addParamValue(p,'nmax',default.nmax,@isnumeric);
+        addParamValue(p,'maxiter',default.maxiter,@isnumeric);
     end
     parse(p,f,varargin{2:end})
     out_param = p.Results;
@@ -424,21 +482,21 @@ end;
 
 % let end point of interval not be infinity
 if (out_param.a == inf||out_param.a == -inf)
-    warning(['a can not be infinity. Use default a = ' num2str(default.a)])
+    warning('MATLAB:funappx_g:aisinf',['a cannot be infinity. Use default a = ' num2str(default.a)])
     out_param.a = default.a;
 end;
 if (out_param.b == inf||out_param.b == -inf)
-    warning(['b can not be infinity. Use default b = ' num2str(default.b)])
+    warning(['MATLAB:funappx_g:bisinf','b cannot be infinity. Use default b = ' num2str(default.b)])
     out_param.b = default.b;
 end;
 
 if (out_param.b < out_param.a)
-    warning('MATLAB:funappx_g:blea','b can not be smaller than a; exchange these two. ')
+    warning('MATLAB:funappx_g:blea','b cannot be smaller than a; exchange these two. ')
     tmp = out_param.b;
     out_param.b = out_param.a;
     out_param.a = tmp;
 elseif(out_param.b == out_param.a)
-    warning('MATLAB:funappx_g:beqa',['b can not equal a. Use b = ' num2str(out_param.a+1)])
+    warning('MATLAB:funappx_g:beqa',['b cannot equal a. Use b = ' num2str(out_param.a+1)])
     out_param.b = out_param.a+1;
 end;
 
@@ -523,6 +581,17 @@ end;
 h = out_param.b - out_param.a;
 out_param.ninit = max(ceil(out_param.nhi*(out_param.nlo/out_param.nhi)^(1/(1+h))),3);
 
+if (~gail.isposint(out_param.maxiter))
+    if gail.isposintive(out_param.maxiter)
+        warning('MATLAB:funappx_g:maxiternotint',['Max iteration should be a positive integer.' ...
+            ' Using max iteration as  ', num2str(ceil(out_param.maxiter))])
+        out_param.nmax = ceil(out_param.nmax);
+    else
+        warning('MATLAB:funappx_g:budgetisneg',['Max iteration should be a positive integer.' ...
+            ' Using default max iteration as ' int2str(default.maxiter)])
+        out_param.nmax = default.nmax;
+    end;
+end
 
 
 

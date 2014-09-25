@@ -37,6 +37,15 @@ run_handle('workout_testXtolerance')
 run_handle('workout_testboth')
 run_handle('workout_twoextreme')
 
+run_handle('UniFunMin_Plot_Bump')
+run_handle('UniFunMin_Plot_Flat')
+run_handle('UniFunMin_Plot_TwoExtreme')
+run_handle('UniFunMin_test_ErrorTolerance')
+run_handle('UniFunMin_test_ErrorXTolerance')
+run_handle('UniFunMin_test_TwoExtreme')
+run_handle('UniFunMin_test_XTolerance')
+ 
+
 %% Unit tests
 [~,~,~,MATLABVERSION]=GAILstart(0);
 if MATLABVERSION >= 8  
