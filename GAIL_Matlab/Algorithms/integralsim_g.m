@@ -1,5 +1,5 @@
 function [q,out_param] = integralsim_g(varargin)
-%  INTEGRAL_G 1-D guaranteed function integration using trapezoidal rule
+%  INTEGRALSIM_G 1-D guaranteed function integration using Simpson's rule
 % 
 %  Description
 %
@@ -24,13 +24,13 @@ function [q,out_param] = integralsim_g(varargin)
 %   in_param.nmax --- cost budget (maximum number of function values)
 % 
 %   q = INTEGRAL_G(f,'abstol',abstol,'ninit',ninit,'nmax',nmax) computes
-%   q, the definite integral of function f by trapezoidal rule within a 
+%   q, the definite integral of function f by Simpson's rule within a 
 %   guaranteed absolute error tolerance abstol, starting number of points 
 %   ninit, and cost budget nmax. All three field-value pairs are optional 
 %   and can be supplied.
 %
 %   q = INTEGRAL_G(f,abstol,ninit, nmax) computes q, the definite 
-%   integral of function f by trapezoidal rule with the ordered input 
+%   integral of function f by Simpson's rule with the ordered input 
 %   parameters, guaranteed absolute error tolerance abstol, starting number
 %   of points ninit, and cost budget nmax.
 %
@@ -42,7 +42,7 @@ function [q,out_param] = integralsim_g(varargin)
 %   more points than cost budget, false otherwise.
 % 
 %   out_param.tauchange --- it is true if the cone constant has been
-%   changed, false otherwise. See [1] for details. If true, you may wish to
+%   changed, false otherwise. If true, you may wish to
 %   change the input in_param.ninit to a larger number.
 % 
 %   out_param.npoints --- number of points we need to 
@@ -98,7 +98,7 @@ out_param.exceedbudget=false;   % if the number of points used in the calculatio
 out_param.tauchange=false;  % if the cone constant has been changed
 xpts=linspace(0,1,out_param.ninit)'; % generate ninit number of uniformly spaced points in [0,1]
 fpts=f(xpts);   % get function values at xpts
-sum1=reshape(fpts(2:out_param.ninit),2,(out_param.ninit-1)/2); %compute the 4 time part of Simpson's rule
+sum1=reshape(fpts(2:out_param.ninit),2,(out_param.ninit-1)/2); %compute the 4-time part of Simpson's rule
 sumf=(fpts(1)+fpts(out_param.ninit))+2*sum(fpts(2:out_param.ninit-1))+2*sum(sum1(1,:));    % computes the sum of Simpson's rule
 nint=out_param.ninit-1; % number of intevals
 
@@ -106,8 +106,12 @@ while true
     %Compute approximations to the strong and weak norms
     nintok=true; %ninit is large enough for tau
     df=diff(fpts); %first difference of points
-    Gf=sum(abs(df-(fpts(nint+1)-fpts(1))/nint)); %approx weak norm
-    Ff=nint*(sum(abs(diff(df)))); %approx strong norm
+    df1=reshape(df,2,length(df)/2); %matrix operation
+    df1=df1(2,:)-df1(1,:); %matrix operation
+    Gf=sum(abs(2*nint*df1-8*(fpts(nint+1)-2*f(0.5)+fpts(1))/nint)); %approx weak norm   
+    Ff=nint^2*(sum(abs(diff(diff(df))))); %approx strong norm
+%     Gf=sum(abs(df-(fpts(nint+1)-fpts(1))/nint)); %approx weak norm
+%     Ff=nint*(sum(abs(diff(df)))); %approx strong norm
     
     %Check necessary condition for integrand to lie in cone
     if out_param.tau*(Gf+Ff/(2*nint)) < Ff %f lies outside cone
@@ -122,7 +126,7 @@ while true
     
     if nintok %ntrap large enough for tau
         %compute a reliable error estimate
-        errest=out_param.tau*Gf/(4*nint*(2*nint-out_param.tau));
+        errest=out_param.tau^2*Gf/(36*nint.^3*(2*nint-out_param.tau));
         if errest <= out_param.abstol %tolerance is satisfied
             q=sumf/nint/3; %compute the integral
             break %exit while loop

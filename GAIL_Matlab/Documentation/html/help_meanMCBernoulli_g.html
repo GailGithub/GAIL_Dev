@@ -1,0 +1,271 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>meanMCBernoulli_g</title><meta name="generator" content="MATLAB 8.1"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-09-25"><meta name="DC.source" content="help_meanMCBernoulli_g.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>meanMCBernoulli_g</h1><!--introduction--><p><tt>Monte Carlo method to estimate the mean of a Bernoulli random variable to within a specified error tolerance with guaranteed confidence level 1-alpha.</tt></p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Syntax</a></li><li><a href="#2">Description</a></li><li><a href="#3">Examples</a></li><li><a href="#7">See Also</a></li><li><a href="#8">References</a></li></ul></div><h2>Syntax<a name="1"></a></h2><p>pHat = <b>meanMCBernoulli_g</b>(Yrand)</p><p>pHat = <b>meanMCBernoulli_g</b>(Yrand,abstol,reltol,errtype,alpha,nmax)</p><p>pHat = <b>meanMCBernoulli_g</b>(Yrand,'abstol',abstol,'reltol',reltol,</p><p>[pHat, out_param] = <b>meanMCBernoulli_g</b>(Yrand,in_param)</p><h2>Description<a name="2"></a></h2><p>pHat = <b>meanMCBernoulli_g</b>(Yrand) estimates the mean of a Bernoulli random  variable Y to within a specified error tolerance with guaranteed  confidence level 99%. Input Yrand is a function handle that accepts a  positive integer input n and returns a n x 1 vector of IID instances  of the Bernoulli random variable Y.</p><p>pHat = <b>meanMCBernoulli_g</b>(Yrand,abstol,reltol,errtype,alpha,nmax) estimates  the mean of a Bernoulli random variable Y to within a specified error  tolerance with guaranteed confidence level 1-alpha using all ordered  parsing inputs abstol, reltol, errtype, alpha and nmax.</p><p>pHat = <b>meanMCBernoulli_g</b>(Yrand,'abstol',abstol,'reltol',reltol,  'errtype',errtype,'alpha',alpha,'nmax',nmax) estimates the mean of a  Bernoulli random variable Y to within a specified error tolerance with  guaranteed confidence level 1-alpha. All the field-value pairs are  optional and can be supplied in different order.</p><p>[pHat, out_param] = <b>meanMCBernoulli_g</b>(Yrand,in_param) estimates the mean  of a Bernoulli random variable Y to within a specified error tolerance  with the given parameters in_param and produce the estimated mean pHat  and output parameters out_param.</p><p><b>Input Arguments</b></p><div><ul><li>Yrand --- <tt>the function for generating IID instances of a Bernoulli            random variable Y whose mean we want to estimate.</tt></li></ul></div><div><ul><li>pHat --- <tt>the estimated mean of Y.</tt></li></ul></div><div><ul><li>in_param.abstol --- <tt>the absolute error tolerance, default value is 1e-2.</tt></li></ul></div><div><ul><li>in_param.reltol --- <tt>the relative error tolerance, default value is 1e-1.</tt></li></ul></div><div><ul><li>in_param.errtype --- <tt>the error type, default value is 'abs'.</tt></li></ul></div><pre>                     'abs'--- absolute error criterion</pre><pre>                     'rel'--- relative error criterion</pre><pre>                     'either'---absolute OR relative criterion</pre><div><ul><li>in_param.alpha --- <tt>the uncertainty, default value is 1%.</tt></li></ul></div><div><ul><li>in_param.nmax --- <tt>the sample budget, default value is 1e9.</tt></li></ul></div><p><b>Output Arguments</b></p><div><ul><li>out_param.nabs --- <tt>sample size needed to satisfy absolute error                     tolerance.</tt></li></ul></div><div><ul><li>out_param.nrel --- <tt>sample size needed to satisfy relative error                     tolerance.</tt></li></ul></div><div><ul><li>out_param.n --- <tt>the total sample used.</tt></li></ul></div><div><ul><li>out_param.tau --- <tt>the iteration step.</tt></li></ul></div><div><ul><li>out_param.time --- <tt>the time elapsed.</tt></li></ul></div><pre>Guarantee</pre><p>Case 1: errtype = 'abs'</p><p>If the sample size is calculated according Hoeffding's inequality, which equals to ceil(log(2/out_param.alpha)/(2*out_param.abstol^2)), then the following inequality must be satisfied:</p><p>Pr(<tt>p-pHat</tt> &lt;= abstol) &gt;= 1-alpha.</p><p>Here p is the true mean of Yrand, and pHat is the output of MEANMCBERNOULLI_G with errtype = 'abs'</p><p>Also, the cost is deterministic and bounded.</p><p>Case 2: errtype = 'rel'</p><p>If the algorithm terminated without any warning messages, the estimated mean pHat would satisfy the following inequality:</p><p>Pr(<tt>p-pHat</tt> &lt;= abstol*p) &gt;= 1-alpha.</p><p>Here p is the true mean of Y, and pHat is the output of MEANMCBERNOULLI_G with errtype = 'rel'.</p><p>Additionally, the cost of the algorithm would be bounded by N_up, which is defined in terms of the true mean p, uncertainty alpha and relative tolerance reltol. For details, please refer to the paper.</p><h2>Examples<a name="3"></a></h2><p><b>Example 1</b></p><pre class="codeinput"><span class="comment">% Calculate the mean of x^2 when x is uniformly distributed in</span>
+<span class="comment">% [0 1], with the relative error tolerance = 1e-3 and uncertainty 5%.</span>
+
+  in_param.reltol=0; in_param.abstol = 1e-3;
+  in_param.alpha = 0.05; Yrand=@(n) rand(n,1).^2;
+  tmu = meanMC_g(Yrand,in_param)
+</pre><pre class="codeoutput">
+tmu =
+
+    0.3334
+
+</pre><p><b>Example 2</b></p><pre class="codeinput"><span class="comment">% Calculate the mean of exp(x) when x is uniformly distributed in</span>
+<span class="comment">% [0 1], with the absolute error tolerance 1e-3.</span>
+
+  tmu = meanMC_g(@(n)exp(rand(n,1)),1e-3,0)
+</pre><pre class="codeoutput">
+tmu =
+
+    1.7184
+
+</pre><p><b>Example 3</b></p><pre class="codeinput"><span class="comment">% Calculate the mean of sin(x) when x is uniformly distributed in</span>
+<span class="comment">% [0 1], with the relative error tolerance 1e-2 and uncertainty 0.05.</span>
+
+  tmu = meanMC_g(@(n)cos(rand(n,1)),<span class="string">'reltol'</span>,1e-2,<span class="string">'abstol'</span>,0,<span class="string">'alpha'</span>,0.05)
+</pre><pre class="codeoutput">
+tmu =
+
+    0.8421
+
+</pre><h2>See Also<a name="7"></a></h2><p>
+<a href="help_funappx_g.html">funappx_g</a>
+</p><p>
+<a href="help_integral_g.html">integral_g</a>
+</p><p>
+<a href="help_cubMC_g.html">cubMC_g</a>
+</p><p>
+<a href="help_meanMCBernoulli_g.html">meanMCBernoulli_g</a>
+</p><h2>References<a name="8"></a></h2><p>[1]  F. J. Hickernell, L. Jiang, Y. Liu, and A. B. Owen, Guaranteed conservative fixed width confidence intervals via Monte Carlo sampling, Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F. Y. Kuo, G. W. Peters, and I. H. Sloan, eds.), Springer-Verlag, Berlin, 2014, to appear, arXiv:1208.4318 [math.ST]</p><p>[2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, and Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library (Version 1.3.0)" [MATLAB Software], 2014. Available from <a href="http://code.google.com/p/gail/">http://code.google.com/p/gail/</a></p><p>If you find GAIL helpful in your work, please support us by citing the above paper and software.</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2013a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% meanMCBernoulli_g
+% |Monte Carlo method to estimate the mean of a Bernoulli
+% random variable to within a specified error tolerance with guaranteed
+% confidence level 1-alpha.|
+%% Syntax
+% pHat = *meanMCBernoulli_g*(Yrand)
+%
+% pHat = *meanMCBernoulli_g*(Yrand,abstol,reltol,errtype,alpha,nmax)
+%
+% pHat = *meanMCBernoulli_g*(Yrand,'abstol',abstol,'reltol',reltol,
+%
+% [pHat, out_param] = *meanMCBernoulli_g*(Yrand,in_param)
+%% Description
+%
+% pHat = *meanMCBernoulli_g*(Yrand) estimates the mean of a Bernoulli random
+%  variable Y to within a specified error tolerance with guaranteed
+%  confidence level 99%. Input Yrand is a function handle that accepts a
+%  positive integer input n and returns a n x 1 vector of IID instances
+%  of the Bernoulli random variable Y.
+% 
+% pHat = *meanMCBernoulli_g*(Yrand,abstol,reltol,errtype,alpha,nmax) estimates
+%  the mean of a Bernoulli random variable Y to within a specified error
+%  tolerance with guaranteed confidence level 1-alpha using all ordered
+%  parsing inputs abstol, reltol, errtype, alpha and nmax.
+% 
+% pHat = *meanMCBernoulli_g*(Yrand,'abstol',abstol,'reltol',reltol,
+%  'errtype',errtype,'alpha',alpha,'nmax',nmax) estimates the mean of a
+%  Bernoulli random variable Y to within a specified error tolerance with
+%  guaranteed confidence level 1-alpha. All the field-value pairs are
+%  optional and can be supplied in different order.
+% 
+% [pHat, out_param] = *meanMCBernoulli_g*(Yrand,in_param) estimates the mean
+%  of a Bernoulli random variable Y to within a specified error tolerance
+%  with the given parameters in_param and produce the estimated mean pHat
+%  and output parameters out_param.
+% 
+% *Input Arguments*
+%
+% * Yrand REPLACE_WITH_DASH_DASH- |the function for generating IID instances of a Bernoulli
+%            random variable Y whose mean we want to estimate.|
+%
+% * pHat REPLACE_WITH_DASH_DASH- |the estimated mean of Y.|
+%
+% * in_param.abstol REPLACE_WITH_DASH_DASH- |the absolute error tolerance, default value is 1e-2.|
+%
+% * in_param.reltol REPLACE_WITH_DASH_DASH- |the relative error tolerance, default value is 1e-1.|
+%
+% * in_param.errtype REPLACE_WITH_DASH_DASH- |the error type, default value is 'abs'.|
+%   
+%                       'abs'REPLACE_WITH_DASH_DASH- absolute error criterion
+%   
+%                       'rel'REPLACE_WITH_DASH_DASH- relative error criterion
+%   
+%                       'either'REPLACE_WITH_DASH_DASH-absolute OR relative criterion
+% 
+% * in_param.alpha REPLACE_WITH_DASH_DASH- |the uncertainty, default value is 1%.|
+% 
+% * in_param.nmax REPLACE_WITH_DASH_DASH- |the sample budget, default value is 1e9.|
+% 
+% *Output Arguments*
+%
+% * out_param.nabs REPLACE_WITH_DASH_DASH- |sample size needed to satisfy absolute error 
+%                     tolerance.|
+%
+% * out_param.nrel REPLACE_WITH_DASH_DASH- |sample size needed to satisfy relative error
+%                     tolerance.|
+%
+% * out_param.n REPLACE_WITH_DASH_DASH- |the total sample used.|
+%
+% * out_param.tau REPLACE_WITH_DASH_DASH- |the iteration step.|
+% 
+% * out_param.time REPLACE_WITH_DASH_DASH- |the time elapsed.|
+% 
+%  Guarantee
+%
+% Case 1: errtype = 'abs'
+%
+% If the sample size is calculated according Hoeffding's inequality, which
+% equals to ceil(log(2/out_param.alpha)/(2*out_param.abstol^2)), then the
+% following inequality must be satisfied:
+%
+% Pr(|p-pHat| <= abstol) >= 1-alpha.
+% 
+% Here p is the true mean of Yrand, and pHat is the output of
+% MEANMCBERNOULLI_G with errtype = 'abs'
+%
+% Also, the cost is deterministic and bounded.
+% 
+% Case 2: errtype = 'rel'
+%
+% If the algorithm terminated without any warning messages, the estimated
+% mean pHat would satisfy the following inequality:
+%
+% Pr(|p-pHat| <= abstol*p) >= 1-alpha.
+%
+% Here p is the true mean of Y, and pHat is the output of MEANMCBERNOULLI_G
+% with errtype = 'rel'.
+% 
+% Additionally, the cost of the algorithm would be bounded by N_up, which is
+% defined in terms of the true mean p, uncertainty alpha and relative
+% tolerance reltol. For details, please refer to the paper.
+%
+%% Examples
+%
+%%
+% *Example 1*
+
+% Calculate the mean of x^2 when x is uniformly distributed in
+% [0 1], with the relative error tolerance = 1e-3 and uncertainty 5%.
+
+  in_param.reltol=0; in_param.abstol = 1e-3;
+  in_param.alpha = 0.05; Yrand=@(n) rand(n,1).^2;
+  tmu = meanMC_g(Yrand,in_param)
+
+%%
+% *Example 2*
+
+% Calculate the mean of exp(x) when x is uniformly distributed in
+% [0 1], with the absolute error tolerance 1e-3.
+
+  tmu = meanMC_g(@(n)exp(rand(n,1)),1e-3,0)
+
+%%
+% *Example 3*
+
+% Calculate the mean of sin(x) when x is uniformly distributed in
+% [0 1], with the relative error tolerance 1e-2 and uncertainty 0.05.
+
+  tmu = meanMC_g(@(n)cos(rand(n,1)),'reltol',1e-2,'abstol',0,'alpha',0.05)
+%% See Also
+%
+% <html>
+% <a href="help_funappx_g.html">funappx_g</a>
+% </html>
+%
+% <html>
+% <a href="help_integral_g.html">integral_g</a>
+% </html>
+%
+% <html>
+% <a href="help_cubMC_g.html">cubMC_g</a>
+% </html>
+%
+% <html>
+% <a href="help_meanMCBernoulli_g.html">meanMCBernoulli_g</a>
+% </html>
+%
+%% References
+%
+% [1]  F. J. Hickernell, L. Jiang, Y. Liu, and A. B. Owen, Guaranteed
+% conservative fixed width confidence intervals via Monte Carlo sampling,
+% Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F. Y. Kuo, G. W.
+% Peters, and I. H. Sloan, eds.), Springer-Verlag, Berlin, 2014, to appear,
+% arXiv:1208.4318 [math.ST]
+%
+% [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, and
+% Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library (Version
+% 1.3.0)" [MATLAB Software], 2014. Available from
+% http://code.google.com/p/gail/
+%
+% If you find GAIL helpful in your work, please support us by citing the
+% above paper and software.
+
+##### SOURCE END #####
+--></body></html>

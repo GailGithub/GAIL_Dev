@@ -38,10 +38,10 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %     value is 1e-6
 %
 %     in_param.nlo --- lower bound of initial number of points we used,
-%     default value is 9
+%     default value is 10
 %
 %     in_param.nhi --- upper bound of initial number of points we used,
-%     default value is 100
+%     default value is 1000
 %
 %     in_param.nmax --- when number of points hits the value, iteration
 %     will stop, default value is 1e7
@@ -419,8 +419,8 @@ function [f, out_param] = funappx_g_param(varargin)
 default.abstol = 1e-6;
 default.a = 0;
 default.b = 1;
-default.nlo = 20;
-default.nhi = 50;
+default.nlo = 10;
+default.nhi = 1000;
 default.nmax = 1e7;
 default.maxiter = 1000;
 
