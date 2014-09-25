@@ -9,6 +9,8 @@
             <tocitem target="help_meanMC_g.html">meanMC_g</tocitem>
             <tocitem target="help_cubMC_g.html">cubMC_g</tocitem>
             <tocitem target="help_meanMCBernoulli_g.html">meanMCBernoulli_g</tocitem>
+            <tocitem target="help_cubSobol_g.html">cubSobol_g</tocitem>
+            <tocitem target="help_cubLattice_g.html">cubLattice_g</tocitem>
         </tocitem>
     </tocitem>
 </toc>

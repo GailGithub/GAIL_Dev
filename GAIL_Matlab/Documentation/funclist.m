@@ -28,3 +28,11 @@
 % <a href="help_meanMCBernoulli_g.html">meanMCBernoulli_g</a>
 % </html>
 %
+% <html>
+% <a href="help_cubSobol_g.html">cubSobol_g</a>
+% </html>
+%
+% <html>
+% <a href="help_cubLattice_g.html">cubLattice_g</a>
+% </html>
+%
