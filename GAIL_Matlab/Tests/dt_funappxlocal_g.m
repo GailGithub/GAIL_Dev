@@ -43,11 +43,11 @@
 %            nlo: 20
 %            nhi: 50
 %           nmax: 10000000
+%        maxiter: 1000
 %          ninit: 32
 %        npoints: 3969
 %     errorbound: 7.5421e-07
 %          nstar: [1x128 double]
-%           iter: 8
 %
 %
 %   Example 3:
@@ -71,6 +71,7 @@
 %         abstol: 1.0000e-08
 %              b: 10
 %              f: @(x)x.^2
+%        maxiter: 1000
 %            nhi: 50
 %            nlo: 20
 %           nmax: 10000000
@@ -78,7 +79,6 @@
 %        npoints: 770049
 %     errorbound: 5.2640e-09
 %          nstar: [1x16384 double]
-%           iter: 15
 %
 % 
 %   Example 4: 
@@ -103,6 +103,7 @@
 %         abstol: 1.0000e-06
 %              b: 5
 %              f: @(x)x.^2
+%        maxiter: 1000
 %            nhi: 500
 %            nlo: 100
 %           nmax: 10000000
@@ -110,7 +111,6 @@
 %        npoints: 110337
 %     errorbound: 2.8441e-07
 %          nstar: [1x256 double]
-%           iter: 9
 %   
 %
 %   Example 5:
@@ -134,6 +134,7 @@
 %         abstol: 1.0000e-07
 %              b: 2
 %              f: @(x)x.^2
+%        maxiter: 1000
 %            nhi: 50
 %            nlo: 20
 %           nmax: 10000000
@@ -141,7 +142,6 @@
 %        npoints: 41985
 %     errorbound: 7.8394e-08
 %          nstar: [1x1024 double]
-%           iter: 11
 %
 %
 %   Example 6:
@@ -164,6 +164,7 @@
 %         abstol: 1.0000e-06
 %              b: 0
 %              f: @(x)x.^2
+%        maxiter: 1000
 %            nhi: 40
 %            nlo: 20
 %           nmax: 10000000
@@ -171,7 +172,6 @@
 %        npoints: 16897
 %     errorbound: 3.4229e-07
 %          nstar: [1x512 double]
-%           iter: 10
 %
 %
 %   Example 7:
@@ -195,6 +195,7 @@
 %         abstol: 1.0000e-06
 %              b: 5
 %              f: @(x)x.^2
+%        maxiter: 1000
 %            nhi: 50
 %            nlo: 20
 %           nmax: 10000000
@@ -202,7 +203,6 @@
 %        npoints: 22529
 %     errorbound: 7.8881e-07
 %          nstar: [1x512 double]
-%           iter: 10
 %
 %
 %   Example 8:
@@ -226,6 +226,7 @@
 %         abstol: 1.0000e-07
 %              b: 3
 %              f: @(x)x.^2
+%        maxiter: 1000
 %            nhi: 50
 %            nlo: 20
 %           nmax: 10000000
@@ -233,7 +234,6 @@
 %        npoints: 88065
 %     errorbound: 3.8587e-08
 %          nstar: [1x2048 double]
-%           iter: 12
 %
 %
 %   Example 9:
@@ -256,6 +256,7 @@
 %         abstol: 1.0000e-07
 %              b: 10
 %              f: @(x)x.^2
+%        maxiter: 1000
 %            nhi: 20
 %            nlo: 10
 %           nmax: 10000000
@@ -263,5 +264,4 @@
 %        npoints: 155649
 %     errorbound: 3.7614e-08
 %          nstar: [1x8192 double]
-%           iter: 14
 %
