@@ -11,7 +11,7 @@ npoints = zeros(n,2);
 nrep = 10;
 a = -2;
 b = 2;
-abstol = 1e-12;
+abstol = 1e-6;
 randa = rand(nrep,1)*(b-a)+a;
 warning('off','MATLAB:funappx_g:peaky')
 for i = 1:nrep;
