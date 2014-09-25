@@ -1,32 +1,34 @@
 function [pp,out_param]=funappxlocal_g(varargin)
 %FUNAPPXLOCAL_G 1-D guaranteed function recovery on a closed interval [a,b]
 %
-%   pp = FUNAPPXLOCAL_G(f) approximates function f on the default interval [0,1]
-%   by a piecewise polynomial structure pp within the guaranteed absolute
-%   error tolerance of 1e-6. Input f is a function handle. The
+%   pp = FUNAPPXLOCAL_G(f) approximates function f on the default interval
+%   [0,1] by a piecewise polynomial structure pp within the guaranteed
+%   absolute error tolerance of 1e-6. Input f is a function handle. The
 %   statement y = f(x) should accept a vector argument x and return a
 %   vector y of function values that is of the same size as x. Output pp
 %   may be evaluated via PPVAL.
 %
-%   pp = FUNAPPXLOCAL_G(f,a,b,abstol,nlo,nhi,nmax) for a given function f and
-%   the ordered input parameters that define the finite interval [a,b], a
-%   guaranteed absolute error tolerance abstol, a lower bound of initial
-%   number of points nlo, an upper bound of initial number of points nhi,
-%   and a cost budget nmax.
+%   pp = FUNAPPXLOCAL_G(f,a,b,abstol,nlo,nhi,nmax,maxiter) for a given
+%   function f and the ordered input parameters that define the finite
+%   interval [a,b], a guaranteed absolute error tolerance abstol, a lower
+%   bound of initial number of points nlo, an upper bound of initial number
+%   of points nhi, a cost budget nmax and max number of iteration maxiter.
 %
-%   pp = FUNAPPXLOCAL_G(f,'a',a,'b',b,'abstol',abstol,'nlo',nlo,'nhi',nhi,'nmax',nmax)
+%   pp =
+%   FUNAPPXLOCAL_G(f,'a',a,'b',b,'abstol',abstol,'nlo',nlo,'nhi',nhi,'nmax',nmax,'maxiter',maxiter)
 %   recovers function f on the finite interval [a,b], given a guaranteed
 %   absolute error tolerance abstol, a lower bound of initial number of
-%   points nlo, an upper bound of initial number of points nhi, and a cost
-%   budget nmax. All six field-value pairs are optional and can be supplied
-%   in different order.
+%   points nlo, an upper bound of initial number of points nhi, a cost
+%   budget nmax and max number of iteration maxiter. All seven field-value
+%   pairs are optional and can be supplied in different order.
 %
 %   pp = FUNAPPXLOCAL_G(f,in_param) recovers function f on the finite
 %   interval [in_param.a,in_param.b], given a guaranteed absolute error
 %   tolerance in_param.abstol, a lower bound of initial number of points
 %   in_param.nlo, an upper bound of initial number of points in_param.nhi,
-%   and a cost budget in_param.nmax. If a field is not specified, the
-%   default value is used.
+%   a cost budget in_param.nmax and max number of iteration
+%   in_param.maxiter. If a field is not specified, the default value is
+%   used.
 %
 %     in_param.a --- left end point of interval, default value is 0
 %
@@ -64,7 +66,8 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %
 %     pp.orient --- always be 'first'
 %
-%     out_param.ninit --- initial number of points we use
+%     out_param.ninit --- initial number of points we use for each sub
+%     interval
 %
 %     out_param.npoints --- number of points we need to reach the
 %     guaranteed absolute error tolerance
@@ -89,6 +92,18 @@ function [pp,out_param]=funappxlocal_g(varargin)
 %     will stop
 %
 %     out_param.maxiter --- max number of interation
+%
+%  Guarantee
+%
+%  For [a,b] there exists a partition, P={[t_0,t_1], [t_1,t_2], ...,
+%  [t_{L-1},t_L]}, where a=t_0 < t_1 < ... < t_L=b. If the function to be
+%  approximated, f, satisfies the cone condition
+%                              2 nstar    ||     f(t_l)-f(t_{l-1})||
+%      ||f''||        <=  --------------  ||f'- ----------------- ||
+%             \infty       t_l - t_{l-1}  ||        t_l - t_{l-1} ||\infty,
+%  for each sub interval [t_{l-1},t_l], where 1 <= l <= L, then the pp
+%  output by this algorithm is guaranteed to satisfy
+%      ||f-ppval(pp, )||\infty <= abstol.
 %
 %   Examples
 %

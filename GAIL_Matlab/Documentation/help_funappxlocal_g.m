@@ -3,9 +3,9 @@
 %% Syntax
 % pp = *funappxlocal_g*(f)
 %
-% pp = *funappxlocal_g*(f,a,b,abstol,taulo,tauhi)
+% pp = *funappxlocal_g*(f,a,b,abstol,nlo,nhi,nmax,maxiter)
 %
-% pp = *funappxlocal_g*(f,'a',a,'b',b,'abstol',abstol,'taulo',taulo,'tauhi',tauhi)
+% pp = *funappxlocal_g*(f,'a',a,'b',b,'abstol',abstol,'nlo',nlo,'nhi',nhi,'nmax',nmax,'maxiter',maxiter)
 %
 % pp = *funappxlocal_g*(f,in_param)
 %
@@ -22,22 +22,23 @@
 % pp = *funappxlocal_g*(f,a,b,abstol,taulo,tauhi,nmax) |for a given
 % function| f |and the ordered input parameters that define the finite 
 % interval [a,b], a guaranteed absolute error tolerance bstol, a lower
-% bound of cone condition taulo, and an upper bound of cone condition tauhi.|
+%   bound of initial number of points nlo, an upper bound of initial number
+%   of points nhi, a cost budget nmax and max number of iteration maxiter.|
 %
 % pp =
-% *funappxlocal_g*(f,'a',a,'b',b,'abstol',abstol,'taulo',taulo,'tauhi',tauhi,'nmax',nmax)
+% *funappxlocal_g*(f,'a',a,'b',b,'abstol',abstol,'nlo',nlo,'nhi',nhi,'nmax',nmax,'maxiter',maxiter)
 %  |recovers function|  f  |on the finite interval [a, b], given a
-%  guaranteed absolute error tolerance abstol,a lower bound of initial cone
-%  condition taulo, and an upper bound of initial cone condition tauhi.
-%  All five field-value pairs are optional and can be supplied in
-%  different order.|
+%  guaranteed absolute error tolerance abstol, a lower bound of initial
+%  number of points nlo, an upper bound of initial number of points nhi, a
+%  cost budget nmax and max number of iteration maxiter. All seven
+%  field-value pairs are optional and can be supplied in different order.|
 %
 % pp = *funappxlocal_g*(f,in_param) |recovers function|  f  |on the finite
 %  interval [in_param.a, in_param.b], given a guaranteed absolute error
-%  tolerance in_param.abstol, a lower bound of initial cone condition
-%  in_param.taulo, an upper bound of initial cone condition
-%  in_param.tauhi. If a field is not specified, the default value is
-%  used.|
+%  tolerance in_param.abstol, a lower bound of initial number of points
+%  in_param.nlo, an upper bound of initial number of points in_param.nhi, a
+%  cost budget in_param.nmax and max number of iteration in_param.maxiter.
+%  If a field is not specified, the default value is used.|
 %
 % [pp, out_param] = *funappxlocal_g*(f,...) |returns a piecewise polynomial
 %   structure pp and an output structure out_param.|
@@ -53,11 +54,17 @@
 % * in_param.abstol --- |guaranteed absolute error tolerance, default value
 %  is 1e-6|
 %
-% * in_param.taulo --- |lower bound of initial number of points we used,
+% * in_param.nlo --- |lower bound of initial number of points we used,
 %  default value is 9|
 %
-% * in_param.tauhi --- |upper bound of initial number of points we used,
+% * in_param.nhi --- |upper bound of initial number of points we used,
 %  default value is 100|
+%
+% * in_param.nmax --- |when number of points hits the value, iteration
+%  will stop, default value is 1e7|
+%
+% * in_param.maxiter --- |max number of interation, default value is 1000|
+%
 %
 % *Output Arguments*
 %
@@ -75,15 +82,17 @@
 %
 % * pp.orient --- |always be 'first'|
 %
-% * out_param.ninit --- |initial number of points we used|
+% * out_param.ninit --- |initial number of points we used for each sub
+% interval|
 %
 % * out_param.npoints --- |number of points we need to reach the guaranteed
 % absolute error|
 % 
 % * out_param.errorbound --- |an upper bound of the absolute error|
 % 
-% * out_param.tau --- |a vector indicate the cone condition of each
-% subinterval|
+% * out_param.nstar --- |final value of the parameter defining the cone of
+% functions for which this algorithm is guaranteed for each
+% subinterval; nstar = ninit-2 initially|
 %
 % * out_param.a --- |left end point of interval|
 %
@@ -91,12 +100,31 @@
 %
 % * out_param.abstol --- |guaranteed absolute error|
 % 
-% * out_param.taulo --- |a lower bound of cone condtion|
+% * out_param.nlo --- |a lower bound of initial number of points we use|
 %
-% * out_param.tauhi --- |an upper bound of cone condtion|
+% * out_param.nhi --- |an upper bound of initial number of points we use|
+%
+% * out_param.nmax --- |when number of points hits the value, iteration
+% will stop|
+%
+% * out_param.maxiter --- |an upper bound of initial number of points we
+% use|
 %
 %% Guarantee
-
+%
+% |For| $[a,b]$, |there exists a partition|
+%
+% $$ P=\{[t_0,t_1], [t_1,t_2],  \ldots, [t_{L-1},t_L]\},  a=t_0 < t_1 < \cdots < t_L=b.$$
+% 
+% |If the function to be approximated,|  $f$  |satisfies the cone condition|
+%
+% $$\|f''\|_\infty \le \frac { 2\mathrm{nstar} }{t_l-t_{l-1} } \left\|f'-\frac{f(t_l)-f(t_{l-1})}{t_l-t_{l-1}}\right\|_\infty$$
+% 
+% |for each sub interval| $[t_{l-1},t_l]$, |where| $1 \le l \le L$,
+% |then the| $pp$ |output by this algorithm is guaranteed to satisfy|
+%
+% $$\| f-ppval(pp,)\|_{\infty} \le \mathrm{abstol}.$$
+%
 %% Examples
 % *Example 1*
 
@@ -107,7 +135,7 @@ f = @(x) exp(-100*x.^2); [pp, out_param] = funappxlocal_g(f)
 %%
 % *Example 2*
 
-[pp, out_param] = funappxlocal_g(@(x) exp(-100*x.^2),0,10,1e-7,10,1000)
+[pp, out_param] = funappxlocal_g(@(x) exp(-100*x.^2),0,10,1e-7,10,100)
 
 % Approximate function e^{-100x^2} on [0,10] with error tolerence
 % 1e-7,lower bound of initial number of points 10 and upper bound of
@@ -116,8 +144,8 @@ f = @(x) exp(-100*x.^2); [pp, out_param] = funappxlocal_g(f)
 %%
 % *Example 3*
 
-clear in_param; in_param.a = -10; in_param.b = 10; in_param.taulo = 10;
-in_param.tauhi = 100; in_param.abstol = 1e-7; 
+clear in_param; in_param.a = -10; in_param.b = 10; in_param.nlo = 10;
+in_param.nhi = 100; in_param.abstol = 1e-7; 
 [pp, out_param] = funappxlocal_g(@(x) exp(-100*x.^2), in_param)
 
 % Approximate function e^{-100x^2} on [-20,20] with error tolerence 1e-7,
@@ -134,12 +162,12 @@ in_param.tauhi = 100; in_param.abstol = 1e-7;
 %% Reference
 % [1]  N. Clancy, Y. Ding, C. Hamilton, F. J. Hickernell, and Y. Zhang, The
 % Cost of Deterministic, Adaptive, Automatic Algorithms:  Cones, Not Balls,
-% Journal of Complexity 30 (2014) 21–45
+% Journal of Complexity 30 (2014) 21?5
 %
-% [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, and
-% Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library (Version
-% 1.3.0)" [MATLAB Software], 2014. Available from
-% http://code.google.com/p/gail/
+% [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Llu¨ªs
+% Antoni Jim¨¦nez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou, "GAIL:
+% Guaranteed Automatic Integration Library (Version 2.0)" [MATLAB
+% Software], 2014. Available from http://code.google.com/p/gail/
 %
 % If you find GAIL helpful in your work, please support us by citing the
 % above paper and software.
