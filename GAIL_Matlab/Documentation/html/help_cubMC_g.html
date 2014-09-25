@@ -1,0 +1,353 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>cubMC_g</title><meta name="generator" content="MATLAB 8.1"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-09-25"><meta name="DC.source" content="help_cubMC_g.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>cubMC_g</h1><!--introduction--><p><tt>Monte Carlo method to evaluate a multidimensional integral to within a specified generalized error tolerance tolfun = max(abstol, reltol|I</tt>) with guaranteed confidence level 1-alpha.|</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Syntax</a></li><li><a href="#2">Description</a></li><li><a href="#3">Examples</a></li><li><a href="#7">See Also</a></li><li><a href="#8">References</a></li></ul></div><h2>Syntax<a name="1"></a></h2><p>[Q,out_param] = <b>cubMC_g</b>(f,hyperbox)</p><p>Q = <b>cubMC_g</b>(f,hyperbox,measure,abstol,reltol,alpha,fudge,nSig,n1,</p><p>Q = <b>cubMC_g</b>(f,hyperbox,'measure','uniform','abstol',abstol,'reltol',</p><p>[Q out_param] = <b>cubMC_g</b>(f,hyperbox,in_param)</p><h2>Description<a name="2"></a></h2><p>[Q,out_param] = <b>cubMC_g</b>(f,hyperbox) estimates the integral of f over  hyperbox to within a specified generalized error tolerance tolfun =  max(abstol, reltol|I|) with guaranteed confidence level 99%. Input  f is a function handle. The function f should accept an n x d matrix  input, where d is the dimension of the hyperbox, and n is the number of  points being evaluated simultaneously. The input hyperbox is a 2 x d  matrix, where the first row corresponds to the lower limits and the  second row corresponds to the upper limits.</p><p>Q = <b>cubMC_g</b>(f,hyperbox,measure,abstol,reltol,alpha,fudge,nSig,n1,  tbudget,nbudget,checked) estimates the integral of function f over  hyperbox to within a specified generalized error tolerance tolfun with  guaranteed confidence level 1-alpha using all ordered parsing inputs f,  hyperbox, measure, abstol, reltol, alpha, fudge, nSig, n1, tbudget,  nbudget, checked. The input f and hyperbox are required and others are  optional.</p><p>Q = <b>cubMC_g</b>(f,hyperbox,'measure','uniform','abstol',abstol,'reltol',  reltol,'alpha',alpha,'fudge',fudge,'nSig',nSig,'n1',n1,'tbudget',  tbudget,'nbudget',nbudget,'checked',checked) estimates the integral of  f over hyperbox to within a specified generalized error tolerance  tolfun with guaranteed confidence level 1-alpha. All the field-value  pairs are optional and can be supplied in different order. If an input  is not specified, the default value is used.</p><p>[Q out_param] = <b>cubMC_g</b>(f,hyperbox,in_param) estimates the integral of  f over hyperbox to within a specified generalized error tolerance  tolfun with the given parameters in_param and produce output parameters  out_param and the integral Q.</p><p><b>Input Arguments</b></p><div><ul><li>f --- <tt>the integrand.</tt></li></ul></div><div><ul><li>hyperbox --- <tt>the integration hyperbox. The default value is  [zeros(1,d); ones(1,d)], the default d is 1.</tt></li></ul></div><div><ul><li>in_param.measure --- <tt>the measure for generating the random variable,  the default is uniform. The other measure could be handled is  normal/Gaussian.</tt></li></ul></div><div><ul><li>in_param.abstol --- <tt>the absolute error tolerance, the default value  is 1e-2.</tt></li></ul></div><div><ul><li>in_param.reltol --- <tt>the relative error tolerance, the default value  is 1e-1.</tt></li></ul></div><div><ul><li>in_param.alpha --- <tt>the uncertainty, the default value is 1%.</tt></li></ul></div><div><ul><li>in_param.fudge --- <tt>the standard deviation inflation factor, the  default value is 1.2.</tt></li></ul></div><div><ul><li>in_param.nSig --- <tt>initial sample size for estimating the sample  variance, the default value is 1e4.</tt></li></ul></div><div><ul><li>in_param.n1 --- <tt>initial sample size for estimating the sample mean,  the default value is 1e4.</tt></li></ul></div><div><ul><li>in_param.tbudget --- <tt>the time budget to do the estimation, the  default value is 100 seconds.</tt></li></ul></div><div><ul><li>in_param.nbudget --- <tt>the sample budget to do the estimation, the  default value is 1e9.</tt></li></ul></div><div><ul><li>in_param.checked --- <tt>the value corresponds to parameter checking status.</tt></li></ul></div><pre>                    0   not checked</pre><pre>                    1   checked by meanMC_g</pre><pre>                    2   checked by cubMC_g</pre><p><b>Output Arguments</b></p><div><ul><li>Q --- <tt>the estimated value of the integral.</tt></li></ul></div><div><ul><li>out_param.n --- <tt>sample used in each iteration.</tt></li></ul></div><div><ul><li>out_param.ntot --- <tt>total sample used.</tt></li></ul></div><div><ul><li>out_param.tau --- <tt>the iteration step.</tt></li></ul></div><div><ul><li>out_param.mu --- <tt>estimated mean in each iteration</tt></li></ul></div><div><ul><li>out_param.tol --- <tt>the tolerance for each iteration</tt></li></ul></div><div><ul><li>out_param.kurtmax --- <tt>the upper bound on modified kurtosis.</tt></li></ul></div><div><ul><li>out_param.time --- <tt>the time elapsed.</tt></li></ul></div><div><ul><li>out_param.exit --- <tt>the state of program when exiting.</tt></li></ul></div><pre>                  0   success</pre><pre>                  1   Not enough samples to estimate the mean</pre><pre>                  2   Initial try out time costs more than
+                      10% of time budget</pre><pre>                  3   The estimated time for estimating variance
+                      is bigger than half of the time budget</pre><pre>                  10  hyperbox does not contain numbers</pre><pre>                  11  hyperbox not 2 x d</pre><pre>                  12  hyperbox is only a point in one direction</pre><pre>                  13  hyperbox is infinite when measure is uniform</pre><pre>                  14  hyperbox is not doubly infinite when measure
+                      is normal</pre><pre>Guarantee
+This algorithm attempts to calculate the integral of function f over a
+hyperbox to a prescribed error tolerance with guaranteed confidence level
+1-alpha. If the algorithm terminated without showing any warning messages
+and provide an answer Q, then the follow inequality would be satisfied:</pre><p>Pr(<tt>Q-I</tt> &lt;= max(abstol,reltol|I|)) &gt;= 1-alpha</p><p>where abstol is the absolute error tolerance and reltol is the relative error tolerance, if the true integral I is rather small as well as the reltol, then the abstol would be satisfied, and vice versa.</p><p>The cost of the algorithm is also bounded above by N_up, which is function in terms of abstol, reltol, nSig, n1, fudge, kurtmax, beta. And the following inequality holds:</p><p>Pr (N_tot &lt;= N_up) &gt;= 1-beta</p><p>Please refer to our paper for detailed arguments and proofs.</p><h2>Examples<a name="3"></a></h2><p><b>Example 1</b></p><pre class="codeinput"><span class="comment">% Estimate the integral with integrand f(x) = sin(x) over the interval [1;2]</span>
+<span class="comment">%</span>
+
+ f=@(x) sin(x);interval = [1;2];
+ Q = cubMC_g(f,interval,<span class="string">'uniform'</span>,1e-3,1e-2)
+</pre><pre class="codeoutput">
+Q =
+
+    0.9566
+
+</pre><p><b>Example 2</b> Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) over the hyperbox [0 0;1 1], where x is a vector x = [x1 x2].</p><pre class="codeinput"> f=@(x) exp(-x(:,1).^2-x(:,2).^2);hyperbox = [0 0;1 1];
+ Q = cubMC_g(f,hyperbox,<span class="string">'measure'</span>,<span class="string">'uniform'</span>,<span class="string">'abstol'</span>,1e-3,<span class="string">'reltol'</span>,1e-13)
+</pre><pre class="codeoutput">
+Q =
+
+    0.5581
+
+</pre><p><b>Example 3</b></p><pre class="codeinput"><span class="comment">% Estimate the integral with integrand f(x) = 2^d*prod(x1*x2*...*xd)+0.555</span>
+<span class="comment">% over the hyperbox [zeros(1,d);ones(1,d)], where x is a vector</span>
+<span class="comment">% x = [x1 x2... xd].</span>
+<span class="comment">%</span>
+
+  d=3;f=@(x) 2^d*prod(x,2)+0.555;hyperbox =[zeros(1,d);ones(1,d)];
+  in_param.abstol = 1e-3;in_param.reltol=1e-3;
+  Q = cubMC_g(f,hyperbox,in_param)
+</pre><pre class="codeoutput">
+Q =
+
+    1.5545
+
+</pre><p><b>Example 4</b></p><pre class="codeinput"><span class="comment">% Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) in the</span>
+<span class="comment">% hyperbox [-inf -inf;inf inf], where x is a vector x = [x1 x2].</span>
+<span class="comment">%</span>
+
+ f=@(x) exp(-x(:,1).^2-x(:,2).^2);hyperbox = [-inf -inf;inf inf];
+ Q = cubMC_g(f,hyperbox,<span class="string">'normal'</span>,0,1e-2)
+</pre><pre class="codeoutput">
+ans =
+
+     1
+
+
+Q =
+
+    0.3331
+
+</pre><h2>See Also<a name="7"></a></h2><p>
+<a href="help_funappx_g.html">funappx_g</a>
+</p><p>
+<a href="help_integral_g.html">integral_g</a>
+</p><p>
+<a href="help_meanMC_g.html">meanMC_g</a>
+</p><p>
+<a href="help_meanMCBernoulli_g.html">meanMCBernoulli_g</a>
+</p><h2>References<a name="8"></a></h2><p>[1]  F. J. Hickernell, L. Jiang, Y. Liu, and A. B. Owen, Guaranteed conservative fixed width confidence intervals via Monte Carlo sampling, Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F. Y. Kuo, G. W. Peters, and I. H. Sloan, eds.), Springer-Verlag, Berlin, 2014, to appear, arXiv:1208.4318 [math.ST]</p><p>[2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, and Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library (Version 1.3.0)" [MATLAB Software], 2014. Available from <a href="http://code.google.com/p/gail/">http://code.google.com/p/gail/</a></p><p>If you find GAIL helpful in your work, please support us by citing the above paper and software.</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2013a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% cubMC_g
+% |Monte Carlo method to evaluate a multidimensional integral to
+% within a specified generalized error tolerance 
+% tolfun = max(abstol, reltol|I|) with guaranteed confidence level 1-alpha.|
+%% Syntax
+% [Q,out_param] = *cubMC_g*(f,hyperbox)
+%
+% Q = *cubMC_g*(f,hyperbox,measure,abstol,reltol,alpha,fudge,nSig,n1,
+%
+% Q = *cubMC_g*(f,hyperbox,'measure','uniform','abstol',abstol,'reltol',
+%
+% [Q out_param] = *cubMC_g*(f,hyperbox,in_param)
+%% Description
+%
+% [Q,out_param] = *cubMC_g*(f,hyperbox) estimates the integral of f over
+%  hyperbox to within a specified generalized error tolerance tolfun =
+%  max(abstol, reltol|I|) with guaranteed confidence level 99%. Input
+%  f is a function handle. The function f should accept an n x d matrix
+%  input, where d is the dimension of the hyperbox, and n is the number of
+%  points being evaluated simultaneously. The input hyperbox is a 2 x d
+%  matrix, where the first row corresponds to the lower limits and the
+%  second row corresponds to the upper limits.
+% 
+% Q = *cubMC_g*(f,hyperbox,measure,abstol,reltol,alpha,fudge,nSig,n1,
+%  tbudget,nbudget,checked) estimates the integral of function f over
+%  hyperbox to within a specified generalized error tolerance tolfun with
+%  guaranteed confidence level 1-alpha using all ordered parsing inputs f,
+%  hyperbox, measure, abstol, reltol, alpha, fudge, nSig, n1, tbudget,
+%  nbudget, checked. The input f and hyperbox are required and others are
+%  optional.
+% 
+% Q = *cubMC_g*(f,hyperbox,'measure','uniform','abstol',abstol,'reltol',
+%  reltol,'alpha',alpha,'fudge',fudge,'nSig',nSig,'n1',n1,'tbudget',
+%  tbudget,'nbudget',nbudget,'checked',checked) estimates the integral of
+%  f over hyperbox to within a specified generalized error tolerance
+%  tolfun with guaranteed confidence level 1-alpha. All the field-value
+%  pairs are optional and can be supplied in different order. If an input
+%  is not specified, the default value is used.
+% 
+% [Q out_param] = *cubMC_g*(f,hyperbox,in_param) estimates the integral of
+%  f over hyperbox to within a specified generalized error tolerance
+%  tolfun with the given parameters in_param and produce output parameters
+%  out_param and the integral Q.
+% 
+% *Input Arguments*
+%
+% * f REPLACE_WITH_DASH_DASH- |the integrand.|
+% 
+% * hyperbox REPLACE_WITH_DASH_DASH- |the integration hyperbox. The default value is
+%  [zeros(1,d); ones(1,d)], the default d is 1.|
+% 
+% * in_param.measure REPLACE_WITH_DASH_DASH- |the measure for generating the random variable,
+%  the default is uniform. The other measure could be handled is
+%  normal/Gaussian.|
+% 
+% * in_param.abstol REPLACE_WITH_DASH_DASH- |the absolute error tolerance, the default value
+%  is 1e-2.|
+%
+% * in_param.reltol REPLACE_WITH_DASH_DASH- |the relative error tolerance, the default value
+%  is 1e-1.|
+% 
+% * in_param.alpha REPLACE_WITH_DASH_DASH- |the uncertainty, the default value is 1%.|
+% 
+% * in_param.fudge REPLACE_WITH_DASH_DASH- |the standard deviation inflation factor, the
+%  default value is 1.2.|
+%
+% * in_param.nSig REPLACE_WITH_DASH_DASH- |initial sample size for estimating the sample
+%  variance, the default value is 1e4.|
+% 
+% * in_param.n1 REPLACE_WITH_DASH_DASH- |initial sample size for estimating the sample mean,
+%  the default value is 1e4.|
+% 
+% * in_param.tbudget REPLACE_WITH_DASH_DASH- |the time budget to do the estimation, the
+%  default value is 100 seconds.|
+% 
+% * in_param.nbudget REPLACE_WITH_DASH_DASH- |the sample budget to do the estimation, the
+%  default value is 1e9.|
+% 
+% * in_param.checked REPLACE_WITH_DASH_DASH- |the value corresponds to parameter checking
+% status.|
+%   
+%                      0   not checked
+%   
+%                      1   checked by meanMC_g
+%   
+%                      2   checked by cubMC_g
+%
+% *Output Arguments*
+%
+% * Q REPLACE_WITH_DASH_DASH- |the estimated value of the integral.|
+% 
+% * out_param.n REPLACE_WITH_DASH_DASH- |sample used in each iteration.|
+%
+% * out_param.ntot REPLACE_WITH_DASH_DASH- |total sample used.|
+%
+% * out_param.tau REPLACE_WITH_DASH_DASH- |the iteration step.|
+%
+% * out_param.mu REPLACE_WITH_DASH_DASH- |estimated mean in each iteration|
+%
+% * out_param.tol REPLACE_WITH_DASH_DASH- |the tolerance for each iteration|
+%  
+% * out_param.kurtmax REPLACE_WITH_DASH_DASH- |the upper bound on modified kurtosis.|
+% 
+% * out_param.time REPLACE_WITH_DASH_DASH- |the time elapsed.|
+%
+% * out_param.exit REPLACE_WITH_DASH_DASH- |the state of program when exiting.|
+%   
+%                    0   success
+%   
+%                    1   Not enough samples to estimate the mean
+%   
+%                    2   Initial try out time costs more than
+%                        10% of time budget
+%   
+%                    3   The estimated time for estimating variance 
+%                        is bigger than half of the time budget
+%   
+%                    10  hyperbox does not contain numbers
+%   
+%                    11  hyperbox not 2 x d
+%   
+%                    12  hyperbox is only a point in one direction
+%   
+%                    13  hyperbox is infinite when measure is uniform
+%   
+%                    14  hyperbox is not doubly infinite when measure
+%                        is normal
+% 
+%  Guarantee
+% This algorithm attempts to calculate the integral of function f over a
+% hyperbox to a prescribed error tolerance with guaranteed confidence level
+% 1-alpha. If the algorithm terminated without showing any warning messages
+% and provide an answer Q, then the follow inequality would be satisfied:
+% 
+% Pr(|Q-I| <= max(abstol,reltol|I|)) >= 1-alpha
+%
+% where abstol is the absolute error tolerance and reltol is the relative
+% error tolerance, if the true integral I is rather small as well as the
+% reltol, then the abstol would be satisfied, and vice versa. 
+%
+% The cost of the algorithm is also bounded above by N_up, which is
+% function in terms of abstol, reltol, nSig, n1, fudge, kurtmax, beta. And
+% the following inequality holds:
+% 
+% Pr (N_tot <= N_up) >= 1-beta
+%
+% Please refer to our paper for detailed arguments and proofs.
+% 
+%%  Examples
+% *Example 1*
+
+% Estimate the integral with integrand f(x) = sin(x) over the interval [1;2]
+% 
+
+ f=@(x) sin(x);interval = [1;2];
+ Q = cubMC_g(f,interval,'uniform',1e-3,1e-2)
+ 
+%% 
+% *Example 2*
+% Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) over the
+% hyperbox [0 0;1 1], where x is a vector x = [x1 x2].
+% 
+
+ f=@(x) exp(-x(:,1).^2-x(:,2).^2);hyperbox = [0 0;1 1];
+ Q = cubMC_g(f,hyperbox,'measure','uniform','abstol',1e-3,'reltol',1e-13)
+
+%%
+% *Example 3*
+
+% Estimate the integral with integrand f(x) = 2^d*prod(x1*x2*...*xd)+0.555
+% over the hyperbox [zeros(1,d);ones(1,d)], where x is a vector 
+% x = [x1 x2... xd].
+% 
+
+  d=3;f=@(x) 2^d*prod(x,2)+0.555;hyperbox =[zeros(1,d);ones(1,d)];
+  in_param.abstol = 1e-3;in_param.reltol=1e-3;
+  Q = cubMC_g(f,hyperbox,in_param)
+
+%%
+% *Example 4* 
+
+% Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) in the
+% hyperbox [-inf -inf;inf inf], where x is a vector x = [x1 x2].
+% 
+
+ f=@(x) exp(-x(:,1).^2-x(:,2).^2);hyperbox = [-inf -inf;inf inf];
+ Q = cubMC_g(f,hyperbox,'normal',0,1e-2)
+%% See Also
+%
+% <html>
+% <a href="help_funappx_g.html">funappx_g</a>
+% </html>
+%
+% <html>
+% <a href="help_integral_g.html">integral_g</a>
+% </html>
+%
+% <html>
+% <a href="help_meanMC_g.html">meanMC_g</a>
+% </html>
+%
+% <html>
+% <a href="help_meanMCBernoulli_g.html">meanMCBernoulli_g</a>
+% </html>
+%
+%% References
+%
+% [1]  F. J. Hickernell, L. Jiang, Y. Liu, and A. B. Owen, Guaranteed
+% conservative fixed width confidence intervals via Monte Carlo sampling,
+% Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F. Y. Kuo, G. W.
+% Peters, and I. H. Sloan, eds.), Springer-Verlag, Berlin, 2014, to appear,
+% arXiv:1208.4318 [math.ST]
+%
+% [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, and
+% Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library (Version
+% 1.3.0)" [MATLAB Software], 2014. Available from
+% http://code.google.com/p/gail/
+%
+% If you find GAIL helpful in your work, please support us by citing the
+% above paper and software.
+
+##### SOURCE END #####
+--></body></html>
