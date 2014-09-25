@@ -292,7 +292,7 @@ default.abstol  = 1e-4;
 default.density  = 'uniform';
 default.shift  = rand;
 default.mmin  = 10;
-default.mmax  = 24;
+default.mmax  = 20;
 default.fudge = @(x) 5*2^-x;
 default.diff = 'Baker';
 
