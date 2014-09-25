@@ -248,7 +248,7 @@ function [pp,out_param]=funappx_g(varargin)
 %
 %   [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
 %   and Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library
-%   (Version 2.0)" [MATLAB Software], 2014. Available from
+%   (Version 1.3)" [MATLAB Software], 2014. Available from
 %   http://code.google.com/p/gail/
 %
 %   If you find GAIL helpful in your work, please support us by citing
@@ -258,7 +258,7 @@ function [pp,out_param]=funappx_g(varargin)
 % check parameter satisfy conditions or not
 [f, out_param] = funappx_g_param(varargin{:});
 
-[~,~,~,MATLABVERSION]=GAILstart(0);
+MATLABVERSION= gail.matlab_version;
 if MATLABVERSION >= 8.3
     warning('off', 'MATLAB:interp1:ppGriddedInterpolant');
 end;
