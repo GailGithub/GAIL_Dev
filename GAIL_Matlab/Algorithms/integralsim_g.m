@@ -1,5 +1,5 @@
 function [q,out_param] = integralsim_g(varargin)
-%  INTEGRAL_G 1-D guaranteed function integration using trapezoidal rule
+%  INTEGRALSIM_G 1-D guaranteed function integration using Simpson's rule
 % 
 %  Description
 %
@@ -24,13 +24,13 @@ function [q,out_param] = integralsim_g(varargin)
 %   in_param.nmax --- cost budget (maximum number of function values)
 % 
 %   q = INTEGRAL_G(f,'abstol',abstol,'ninit',ninit,'nmax',nmax) computes
-%   q, the definite integral of function f by trapezoidal rule within a 
+%   q, the definite integral of function f by Simpson's rule within a 
 %   guaranteed absolute error tolerance abstol, starting number of points 
 %   ninit, and cost budget nmax. All three field-value pairs are optional 
 %   and can be supplied.
 %
 %   q = INTEGRAL_G(f,abstol,ninit, nmax) computes q, the definite 
-%   integral of function f by trapezoidal rule with the ordered input 
+%   integral of function f by Simpson's rule with the ordered input 
 %   parameters, guaranteed absolute error tolerance abstol, starting number
 %   of points ninit, and cost budget nmax.
 %
@@ -42,7 +42,7 @@ function [q,out_param] = integralsim_g(varargin)
 %   more points than cost budget, false otherwise.
 % 
 %   out_param.tauchange --- it is true if the cone constant has been
-%   changed, false otherwise. See [1] for details. If true, you may wish to
+%   changed, false otherwise. If true, you may wish to
 %   change the input in_param.ninit to a larger number.
 % 
 %   out_param.npoints --- number of points we need to 
