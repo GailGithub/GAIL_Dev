@@ -8,3 +8,5 @@ High dimension integration:
 meanMC_g
 cubMC_g
 meanMCBernoulli_g
+cubSobol_g
+cubLattice_g

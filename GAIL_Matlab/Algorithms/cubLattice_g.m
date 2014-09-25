@@ -86,10 +86,14 @@ function [q,out_param] = cubLattice_g(varargin)
 %     out_param.time --- time elapsed when calling cubLattice_g for f.
 % 
 %  Guarantee
-% 
-% The guarantee is based on the decay of the Fourier coefficients of the
-% given inegrand. For more details on how the cone is defined, please refer
-% to the references below.
+% This algorithm computes the integral of real valued functions in [0,1)^d 
+% with a prescribed absolute error tolerance. The Fourier coefficients of 
+% the integrand are assumed to be absolutely convergent.
+% If the algorithm terminates without warning messages, the output is 
+% given with guarantees under the assumption that the integrand lies inside
+% a cone of functions. The guarantee is based on the decay rate of the 
+% Fourier coefficients. For more details on how the cone is defined, 
+% please refer to the references below.
 % 
 %  Examples
 % 
