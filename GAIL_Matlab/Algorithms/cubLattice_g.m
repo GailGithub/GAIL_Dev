@@ -60,7 +60,7 @@ function [q,out_param] = cubLattice_g(varargin)
 % 
 %     in_param.diff --- the algorithm is defined for continuous periodic functions. If the
 %     input function f is not, there are 5 types of transform to periodize it
-%     without modifying the result. By default is C1sin. The options:
+%     without modifying the result. By default is Baker. The options:
 %       'id' : no transformation. Choice by default.
 %       'Baker' : Baker's transform or tent map in each coordinate. Preserving
 %                 only continuity but simple to compute.
@@ -294,7 +294,7 @@ default.shift  = rand;
 default.mmin  = 10;
 default.mmax  = 24;
 default.fudge = @(x) 5*2^-x;
-default.diff = 'C1sin';
+default.diff = 'Baker';
 
 if numel(varargin)<2
     help cubLattice_g
