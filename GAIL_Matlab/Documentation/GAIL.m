@@ -19,6 +19,7 @@
 % <a href="help_meanMCBernoulli_g.html">meanMCBernoulli_g</a>
 % <a href="help_cubSobol_g.html">cubSobol_g</a>
 % <a href="help_cubLattice_g.html">cubLattice_g</a>
+% <a href="help_funmin_g.html">funmin_g</a>
 % </html>
 %
 %

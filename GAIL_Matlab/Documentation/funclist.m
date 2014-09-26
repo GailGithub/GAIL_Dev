@@ -36,3 +36,10 @@
 % <a href="help_cubLattice_g.html">cubLattice_g</a>
 % </html>
 %
+%
+%% 1_D minimization
+%
+% <html>
+% <a href="help_funmin_g.html">funmin_g</a>
+% </html>
+%
