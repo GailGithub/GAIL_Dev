@@ -71,8 +71,8 @@ function [fmin,out_param]=funmin_g(varargin)
 %
 %     out_param.tau --- latest value of tau
 %
-%     out_param.exceedbudget --- 0 if the number of points used is less
-%     than the cost budget; 1, otherwise.
+%     out_param.exceedbudget --- 0 if the number of points used in
+%     estimationg fmin is less than the cost budget; 1, otherwise.
 %
 %     out_param.npoints --- number of points needed to reach the guaranteed
 %     absolute error tolerance or the guaranteed X tolerance
@@ -82,22 +82,30 @@ function [fmin,out_param]=funmin_g(varargin)
 %     out_param.volumeX --- the volume of intervals containing the point(s)
 %     where the minimum occurs
 %
-%     out_param.tauchange --- it is 1 if tau is too small, and the
-%     algorithm has used a larger tau.
+%     out_param.tauchange --- it is 1 if out_param.tau changes, otherwise
+%     it is 0
 %
 %     out_param.intervals --- the intervals containing point(s) where the
 %     minimum occurs. Each column indicates one interval where the first
-%     row is the left point and the second row is the right point.  
+%     point is the left point and the second row is the right point.  
 %
 %  Guarantee
 %
-%  If the function to be minimized, f, satisfies the cone condition
-%      ||f''||_\infty <= \tau ||f'-f(1)+f(0)||_\infty,
-%  then the fmin output by this algorithm is guaranteed to satisfy
-%      ||min(f)-fmin||_\infty <= abstol
+%  |If the function to be minimized,|  $f$  |satisfies the cone condition|
+%
+%  $$\|f''\|_\infty \le  \frac {\tau}{b-a}\left\|f'-\frac{f(b)-f(a)}{b-a}
+%  \right\|_\infty,$$
+%      
+%  |then the|  $\mathrm{fmin}$  |output by this algorithm is guaranteed to
+%  satisfy|
+%
+%  $$| \min f-\mathrm{fmin}| \le \mathrm{abstol},$$
+%
 %  or
-%      volumeX <= TolX,
-%  provided the flag exceedbudget = 0.
+%
+%      \mathrm{volumeX} \le \mathrm{TolX},
+%
+%  |provided the flag| $\mathrm{exceedbudget} = 0.$
 %
 %
 %  Examples
@@ -225,18 +233,19 @@ function [fmin,out_param]=funmin_g(varargin)
 %  References
 %   [1]  Nicholas Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell,
 %   and Yizhi Zhang. The Cost of Deterministic, Adaptive, Automatic
-%   Algorithms: Cones, Not Balls. Journal of Complexity, 30:21-45, 2014
+%   Algorithms: Cones, Not Balls. Journal of Complexity, 30:21-45, 2014.
 %
-%   [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
-%   and Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library
-%   (Version 1.3.0)" [MATLAB Software], 2014. Available from
+%   [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, and
+%   Yizhi Zhang. GAIL: Guaranteed Automatic Integration Library (Version
+%   1.3.1), MATLAB Software, 2014. Available from
 %   http://code.google.com/p/gail/
 %
 %   [3]  Xin Tong. A Guaranteed, Adaptive, Automatic Algorithm for
-%   Univariate Function Minimization. 2014
+%   Univariate Function Minimization. MS thesis, Illinois Institute of 
+%   Technology, 2014.
 %
 %   If you find GAIL helpful in your work, please support us by citing
-%   the above paper and software.
+%   the above papers and software.
 %
 
 
@@ -274,7 +283,7 @@ while n < out_param.nmax;
         % Stage 3: check for convergence
         bn = 2*(n-1)*out_param.tau/(2*(n-1)-out_param.tau)*gn;
         min_index = (2*(n-1)^2.*abs(diff_y)) < (bn*len);
-        min_in = min_index.*(diff_y/2+y(1:n-1)-0.25*(2*(n-1)^2*diff_y.^2/bn+bn/2/(n-1)^2));
+        min_in = min_index.*(diff_y/2+y(1:n-1)-0.25*(2*(n-1)^2*diff_y.^2/bn/len+bn*len/2/(n-1)^2));
         min_end = (~min_index).*(diff_y/2+y(1:n-1)-abs(diff_y)/2);
         ln = min_in+min_end;
         % minimum values of each interval
@@ -321,7 +330,7 @@ while n < out_param.nmax;
             % large enough, go to Stage 3
             bn = 2*(n-1)*out_param.tau/(2*(n-1)-out_param.tau)*gn;
             min_index = (2*(n-1)^2.*abs(diff_y)) < (bn*len);
-            min_in = min_index.*(diff_y/2+y(1:n-1)-0.25*(2*(n-1)^2*diff_y.^2/bn+bn/2/(n-1)^2));
+            min_in = min_index.*(diff_y/2+y(1:n-1)-0.25*(2*(n-1)^2*diff_y.^2/bn/len+bn*len/2/(n-1)^2));
             min_end = (~min_index).*(diff_y/2+y(1:n-1)-abs(diff_y)/2);
             ln = min_in+min_end;
             % minimum values of each interval
@@ -364,7 +373,7 @@ while n < out_param.nmax;
         end;
     end;
 end;
-
+delta
 
 % check tau change flag
 if tauchange == 1
@@ -398,8 +407,8 @@ default.nhi = 1000;
 default.nmax = 1e7;
     
 if isempty(varargin)
+    warning('MATLAB:funappx_g:nofunction','Function f must be specified. Now funmin_g will use f(x)=(x-0.3)^2+1.')
     help funmin_g
-    warning('Function f must be specified. Now funmin_g will use f(x)=(x-0.3)^2+1.')
     f = @(x) (x-0.3).^2+1;
 else
     f = varargin{1};
@@ -451,35 +460,35 @@ end
 
 % a and b can't be infinity
 if (out_param.a == inf||out_param.a == -inf||isnan(out_param.a)==1)
-    warning('MATLAB:funmin_g:anoinfinity',['a can not be infinity. Use default a = ' num2str(default.a)])
+    warning('MATLAB:funmin_g:anoinfinity',['a cannot be infinity. Use default a = ' num2str(default.a)])
     out_param.a = default.a;
 end;
 if (out_param.b == inf||out_param.b == -inf||isnan(out_param.b)==1)
-    warning('MATLAB:funmin_g:bnoinfinity',['b can not be infinity. Use default b = ' num2str(default.b)])
+    warning('MATLAB:funmin_g:bnoinfinity',['b cannot be infinity. Use default b = ' num2str(default.b)])
     out_param.b = default.b;
 end;
 
 % b is greater than a
 if (out_param.b < out_param.a)
-    warning('MATLAB:funmin_g:blea','b can not be smaller than a; exchange these two. ')
+    warning('MATLAB:funmin_g:blea','b cannot be smaller than a; exchange these two. ')
     tmp = out_param.b;
     out_param.b = out_param.a;
     out_param.a = tmp;
 elseif(out_param.b == out_param.a)
-    warning('MATLAB:funmin_g:beqa',['b can not equal to a. Use b = ' num2str(out_param.a+1)])
+    warning('MATLAB:funmin_g:beqa',['b cannot equal to a. Use b = ' num2str(out_param.a+1)])
     out_param.b = out_param.a+1;
 end;
 
 % Check whether the error tolerance is nonnegative
 if out_param.abstol < 0
-    warning(['MATLAB:funmin_g:abstolnegat ','Error tolerance should be greater than or equal to 0.' ...
+    warning(['MATLAB:funmin_g:abstolnonpos','Error tolerance should be greater than or equal to 0.' ...
         ' Using default error tolerance ', num2str(default.abstol)])
     out_param.abstol = default.abstol;
 end
 
 % Check whether the length tolerance is nonnegative
 if out_param.TolX < 0
-    warning(['MATLAB:funmin_g:Xtolernegat ','X tolerance should be greater than or equal to 0.' ...
+    warning(['MATLAB:funmin_g:Xtolnonpos','X tolerance should be greater than or equal to 0.' ...
         ' Using default X tolerance ' num2str(default.TolX)]);
     out_param.abstol = default.TolX;
 end
