@@ -8,7 +8,7 @@ publish('help_integral_g');
 publish('help_meanMC_g');
 publish('help_meanMCBernoulli_g');
 publish('help_cubMC_g');
-publish('help_funmin_g');
+%publish('help_funmin_g');
 publish('help_cubLattice_g');
 publish('help_cubSobol_g');
 set(0, 'DefaultFigureVisible', 'on')
