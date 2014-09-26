@@ -91,21 +91,17 @@ function [fmin,out_param]=funmin_g(varargin)
 %
 %  Guarantee
 %
-%  |If the function to be minimized,|  $f$  |satisfies the cone condition|
+%   If the function to be minimized, f satisfies the cone condition
 %
-%  $$\|f''\|_\infty \le  \frac {\tau}{b-a}\left\|f'-\frac{f(b)-f(a)}{b-a}
-%  \right\|_\infty,$$
+%   ||f''||_\infty <=  tau/(b-a)||f'-(f(b)-f(a)/(b-a)||__\infty,
 %      
-%  |then the|  $\mathrm{fmin}$  |output by this algorithm is guaranteed to
-%  satisfy|
+%   then the fmin output by this algorithm is guaranteed to satisfy
 %
-%  $$| \min f-\mathrm{fmin}| \le \mathrm{abstol},$$
+%       | min(f)-fmin| <= abstol,
+%   or
+%       volumeX <= TolX,
 %
-%  or
-%
-%      \mathrm{volumeX} \le \mathrm{TolX},
-%
-%  |provided the flag| $\mathrm{exceedbudget} = 0.$
+%   provided the flag exceedbudget = 0. 
 %
 %
 %  Examples
@@ -231,22 +227,18 @@ function [fmin,out_param]=funmin_g(varargin)
 %   See also FUNAPPX_G, INTEGRAL_G
 %
 %  References
-%   [1]  Nicholas Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell,
-%   and Yizhi Zhang. The Cost of Deterministic, Adaptive, Automatic
-%   Algorithms: Cones, Not Balls. Journal of Complexity, 30:21-45, 2014.
-%
-%   [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, and
-%   Yizhi Zhang. GAIL: Guaranteed Automatic Integration Library (Version
-%   1.3.1), MATLAB Software, 2014. Available from
-%   http://code.google.com/p/gail/
-%
 %   [3]  Xin Tong. A Guaranteed, Adaptive, Automatic Algorithm for
 %   Univariate Function Minimization. MS thesis, Illinois Institute of 
 %   Technology, 2014.
+% 
+%   [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
+%   Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou, 
+%   "GAIL: Guaranteed Automatic Integration Library (Version 2.0)"
+%   [MATLAB Software], 2014. Available from http://code.google.com/p/gail/
 %
 %   If you find GAIL helpful in your work, please support us by citing
-%   the above papers and software.
-%
+%   the above paper and software.
+
 
 
 % Parse and check the validity of input parameters
@@ -373,7 +365,7 @@ while n < out_param.nmax;
         end;
     end;
 end;
-delta
+
 
 % check tau change flag
 if tauchange == 1
