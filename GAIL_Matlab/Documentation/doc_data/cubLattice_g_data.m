@@ -1,4 +1,5 @@
-%  Guarantee
+%%  Guarantee
+%
 % This algorithm computes the integral of real valued functions in [0,1)^d 
 % with a prescribed absolute error tolerance. The Fourier coefficients of 
 % the integrand are assumed to be absolutely convergent.
