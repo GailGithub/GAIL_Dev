@@ -1,0 +1,11 @@
+*~
+*.pdf
+*.mat
+*.o
+*.cfs
+*#
+*.sav
+*.png
+*.html
+GAIL_Matlab/Documentation/html/helpsearch/segments
+GAIL_Matlab/Documentation/html/helpsearch/deletable
