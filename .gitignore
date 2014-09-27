@@ -7,5 +7,7 @@
 *.sav
 *.png
 *.html
+*_raw.m
+*_raw.xml
 GAIL_Matlab/Documentation/html/helpsearch/segments
 GAIL_Matlab/Documentation/html/helpsearch/deletable
