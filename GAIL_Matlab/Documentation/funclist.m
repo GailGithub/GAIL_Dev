@@ -37,7 +37,7 @@
 % </html>
 %
 %
-%% 1_D minimization
+%% 1-D minimization
 %
 % <html>
 % <a href="help_funmin_g.html">funmin_g</a>

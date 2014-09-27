@@ -11,5 +11,5 @@ meanMCBernoulli_g
 cubSobol_g
 cubLattice_g
 
-1_D minimization:
+1-D minimization:
 funmin_g
