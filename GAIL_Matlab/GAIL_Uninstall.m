@@ -1,6 +1,6 @@
 % GAIL_UNINSTALL  Uninstall GAIL. Remove GAIL paths from MATLAB search path
 % and/or delete all the GAIL files and folders.
-clear all;close all;clc;
+%clear all;close all;clc;
 [GAILPATH,GAILVERSION,PATHNAMESEPARATOR,MATLABVERSION] = GAILstart(0);
 if MATLABVERSION < 7,
   error('This version is only supported on Matlab 7.x and above.');
