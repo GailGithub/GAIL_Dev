@@ -111,11 +111,11 @@ function [fmin,out_param]=funmin_g(varargin)
 %  >> f=@(x) (x-0.3).^2+1; [fmin,out_param] = funmin_g(f)
 %
 %  fmin =
-%
+% 
 %     1.0000
-%
-%  out_param =
-%
+%  
+%  out_param = 
+% 
 %                a: 0
 %                b: 1
 %           abstol: 1.0000e-06
@@ -139,11 +139,11 @@ function [fmin,out_param]=funmin_g(varargin)
 %  >> [fmin,out_param] = funmin_g(f,-2,2,1e-7,1e-4,10,10,1000000)
 %
 %  fmin =
-%
+% 
 %     1.0000
-%
-%  out_param =
-%
+% 
+%  out_param = 
+% 
 %                a: -2
 %           abstol: 1.0000e-07
 %                b: 2
@@ -155,9 +155,9 @@ function [fmin,out_param]=funmin_g(varargin)
 %            ninit: 10
 %              tau: 17
 %     exceedbudget: 0
-%          npoints: 9217
-%            error: 5.1616e-08
-%          volumeX: 7.6601e-04
+%          npoints: 18433
+%            error: 9.5464e-08
+%          volumeX: 5.4175e-04
 %        tauchange: 0
 %        intervals: [2x1 double]
 %
@@ -170,13 +170,13 @@ function [fmin,out_param]=funmin_g(varargin)
 %  >> in_param.nlo = 10; in_param.nhi = 100;
 %  >> in_param.nmax = 10^6;
 %  >> [fmin,out_param] = funmin_g(f,in_param)
-%
+% 
 %  fmin =
-%
+% 
 %     1.0000
-%
-%  out_param =
-%
+% 
+%  out_param = 
+% 
 %                a: -13
 %           abstol: 1.0000e-07
 %                b: 8
@@ -188,9 +188,9 @@ function [fmin,out_param]=funmin_g(varargin)
 %            ninit: 91
 %              tau: 179
 %     exceedbudget: 0
-%          npoints: 92161
-%            error: 4.4808e-08
-%          volumeX: 4.5064e-04
+%          npoints: 368641
+%            error: 7.1473e-08
+%          volumeX: 5.2354e-04
 %        tauchange: 0
 %        intervals: [2x1 double]
 %
@@ -201,11 +201,11 @@ function [fmin,out_param]=funmin_g(varargin)
 %  >> [fmin,out_param] = funmin_g(f,'a',-2,'b',2,'nhi',100,'nlo',10,'nmax',1e6,'abstol',1e-4,'TolX',1e-2)
 %
 %  fmin =
-%
+% 
 %     1.0000
 %
-%  out_param =
-%
+%  out_param = 
+% 
 %                a: -2
 %           abstol: 1.0000e-04
 %                b: 2
@@ -217,9 +217,9 @@ function [fmin,out_param]=funmin_g(varargin)
 %            ninit: 64
 %              tau: 125
 %     exceedbudget: 0
-%          npoints: 1009
-%            error: 6.3948e-05
-%          volumeX: 0.0154
+%          npoints: 2017
+%            error: 6.2273e-05
+%          volumeX: 0.0146
 %        tauchange: 0
 %        intervals: [2x1 double]
 %
