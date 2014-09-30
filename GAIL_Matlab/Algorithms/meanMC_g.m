@@ -1,14 +1,16 @@
 function [tmu,out_param]=meanMC_g(varargin)
 % MEANMC_G Monte Carlo method to estimate the mean of a random variable
 %
-%   tmu = MEANMC_G(Yrand) estimates the mean, mu, of a random variable
-%   to within a specified generalized error tolerance, i.e., 
-%      |mu - tmu| <= max(abstol,reltol|mu|) 
-%   with probability at least 1-alpha, where abstol is the absolute tolerance, 
-%   and reltol is the relative error tolerance. The default values are
-%   abstol=1e-2, reltol=1e-1, and alpha=1%. Input Yrand is a function 
-%   handle that accepts a positive integer input n and returns an n x 1 
-%   vector of IID instances of the random variable Y.
+%   tmu = MEANMC_G(Yrand) estimates the mean, mu, of a random variable Y to
+%   within a specified generalized error tolerance, 
+%   tolfun:=max(abstol,reltol*|mu|), i.e., |mu - tmu| <= tolfun with
+%   probability at least 1-alpha, where abstol is the absolute error
+%   tolerance, and reltol is the relative error tolerance. Usually the
+%   reltol determines the accuracy of the estimation, however, if the |mu|
+%   is rather small, the abstol determines the accuracy of the estimation.
+%   The default values are abstol=1e-2, reltol=1e-1, and alpha=1%. Input
+%   Yrand is a function handle that accepts a positive integer input n and
+%   returns an n x 1 vector of IID instances of the random variable Y.
 %
 %   tmu = MEANMC_G(Yrand,abstol,reltol,alpha,fudge,nSig,n1,tbudget,nbudget)
 %   estimates the mean of a random variable Y to within a specified
@@ -39,26 +41,32 @@ function [tmu,out_param]=meanMC_g(varargin)
 %     is a standard uniform random variable, then one may define Yrand =
 %     @(n) rand(n,1).^2.
 %
-%     in_param.abstol --- the absolute error tolerance, default value is 1e-2.
+%     in_param.abstol --- the absolute error tolerance, which should be
+%     positive, default value is 1e-2.
 %
-%     in_param.reltol --- the relative error tolerance, default value is 1e-1.
+%     in_param.reltol --- the relative error tolerance, which should be
+%     between 0 and 1, default value is 1e-1.
 %
-%     in_param.alpha --- the uncertainty, default value is 1%.
+%     in_param.alpha --- the uncertainty, which should be a small positive
+%     percentage. default value is 1%.
 %
-%     in_param.fudge --- standard deviation inflation factor, default value is
-%     1.2.
+%     in_param.fudge --- standard deviation inflation factor, which should
+%     be larger than 1, default value is 1.2.
 %
 %     in_param.nSig --- initial sample size for estimating the sample
-%     variance, the default value is 1e3.
+%     variance, which should be a moderate large integer, the default
+%     value is 1e4.
 %
-%     in_param.n1 --- initial sample size for estimating the sample
-%     mean, the default value is 1e4.
+%     in_param.n1 --- initial sample size for estimating the sample mean,
+%     which should be a moderate large positive integer, the default value
+%     is 1e4.
 %
-%     in_param.tbudget --- the time budget to do the two-stage estimation,
-%     the default value is 100 seconds.
+%     in_param.tbudget --- the time budget in seconds to do the two-stage
+%     estimation, which should be positive, the default value is 100 seconds.
 %
-%     in_param.nbudget --- the sample budget to do the two-stage estimation,
-%     the default value is 1e9.
+%     in_param.nbudget --- the sample budget to do the two-stage
+%     estimation, which should be a large positive integer, the default
+%     value is 1e9.
 %
 %   Output Arguments
 %
@@ -66,7 +74,7 @@ function [tmu,out_param]=meanMC_g(varargin)
 %
 %     out_param.tau --- the iteration step.
 %
-%     out_param.n --- sample used in each iteration.
+%     out_param.n --- sample size used in each iteration.
 %
 %     out_param.nmax --- the maximum sample budget to estimate mu, it comes
 %     from both the sample budget and the time budget and sample has been
@@ -76,7 +84,7 @@ function [tmu,out_param]=meanMC_g(varargin)
 %
 %     out_param.hmu --- estimated mean in each iteration.
 %
-%     out_param.tol --- the tolerance for each iteration.
+%     out_param.tol --- the reliable upper bound on error for each iteration.
 %
 %     out_param.var --- the sample variance.
 %
@@ -85,36 +93,31 @@ function [tmu,out_param]=meanMC_g(varargin)
 %                      0   Success
 %      
 %                      1   Not enough samples to estimate the mean
-%      
-%                      2   Initial try out time costs more than 10% of time
-%                          budget
-%      
-%                      3   The estimated time for estimating variance is
-%                          bigger than half of the time budget
 %
 %     out_param.kurtmax --- the upper bound on modified kurtosis.
 %
-%     out_param.time --- the time elapsed
+%     out_param.time --- the time elapsed in seconds.
 %
 %     out_param.checked --- parameter checking status
 %      
-%                         1  checked by meanMC_g
+%                           1  checked by meanMC_g
 %
 %  Guarantee
-% This algorithm attempts to calculate the mean of a random variable to a
-% prescribed error tolerance with guaranteed confidence level 1-alpha. If
-% the algorithm terminated without showing any warning messages and provide
-% an answer tmu, then the follow inequality would be satisfied:
+% This algorithm attempts to calculate the mean, mu, of a random variable
+% to a prescribed error tolerance, tolfun:= max(abstol,reltol|mu|), with
+% guaranteed confidence level 1-alpha. If the algorithm terminated without
+% showing any warning messages and provide an answer tmu, then the follow
+% inequality would be satisfied:
 % 
-% Pr(|mu-tmu| <= max(abstol,reltol|mu|)) >= 1-alpha
+% Pr(|mu-tmu| <= tolfun) >= 1-alpha
 %
 % where abstol is the absolute error tolerance and reltol is the relative
 % error tolerance, if the true mean mu is rather small as well as the
 % reltol, then the abstol would be satisfied, and vice versa. 
 %
-% The cost of the algorithm is also bounded above by N_up, which is defined
-% in terms of abstol, reltol, nSig, n1, fudge, kurtmax, beta. And the
-% following inequality holds:
+% The cost of the algorithm, N_tot, is also bounded above by N_up, which is
+% defined in terms of abstol, reltol, nSig, n1, fudge, kurtmax, beta. And
+% the following inequality holds:
 % 
 % Pr (N_tot <= N_up) >= 1-beta
 %
@@ -154,7 +157,8 @@ function [tmu,out_param]=meanMC_g(varargin)
 % tmu = 0.84***
 %
 %
-%   See also FUNAPPX_G, INTEGRAL_G, CUBMC_G, MEANMCBERNOULLI_G
+%   See also FUNAPPX_G, INTEGRAL_G, CUBMC_G, MEANMCBERNOULLI_G, CUBSOBOL_G,
+%   CUBLATTICE_G
 %
 %  References
 %
@@ -164,10 +168,10 @@ function [tmu,out_param]=meanMC_g(varargin)
 %   Peters, and I. H. Sloan, eds.), Springer-Verlag, Berlin, 2014, to appear,
 %   arXiv:1208.4318 [math.ST]
 %
-%   [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, and
-%   Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library (Version
-%   1.3.0)" [MATLAB Software], 2014. Available from
-%   http://code.google.com/p/gail/
+%   [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluís
+%   Antoni Jiménez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou, "GAIL:
+%   Guaranteed Automatic Integration Library (Version 2.0)" [MATLAB
+%   Software], 2014. Available from http://code.google.com/p/gail/
 %
 %   If you find GAIL helpful in your work, please support us by citing the
 %   above paper and software.
@@ -186,7 +190,7 @@ ttry=toc;
 tpern = ttry/ntry; % calculate time per sample
 
 nsofar = nsofar+ntry; % update n so far
-
+out_param.exit = 0;
 if tpern<1e-6;%each sample use rather little time
     booster = 8;
     tic;Yrand(ntry*booster);ttry2 = toc;
@@ -332,11 +336,12 @@ if isempty(varargin)
     warning('MATLAB:meanMC_g:yrandnotgiven',...
         'Yrand must be specified. Now GAIL is using Yrand = rand(n,1).^2.')
     Yrand = @(n) rand(n,1).^2;
-    %give the error message
+    %if no values are parsed, print warning message and use the default
+    %random variable    
 else
     Yrand = varargin{1};
     if max(size(Yrand(5)))~=5 || min(size(Yrand(5)))~=1
-        % if the input is not a length n Vector, print warning message
+        % if the input is not a length n vector, print the warning message
         warning('MATLAB:meanMC_g:yrandnotlengthN',...
             ['Yrand should be a random variable vector of length n, '...
             'but not an integrand or a matrix'])
@@ -352,21 +357,20 @@ if validvarargin
 end
 
 if ~validvarargin
-    %if only have one input which is Yrand, use all the default parameters
-    
+    %if there is only input which is Yrand, use all the default parameters  
     out_param.abstol = default.abstol;% default absolute error tolerance
     out_param.reltol = default.reltol; % default relative error tolerance
-    out_param.alpha = default.alpha;
-    out_param.fudge = default.fudge;
-    out_param.nSig = default.nSig;
-    out_param.n1 = default.n1;
-    out_param.tbudget = default.tbudget;
-    out_param.nbudget = default.nbudget;
+    out_param.alpha = default.alpha;% default uncertainty
+    out_param.fudge = default.fudge;% default standard deviation inflation factor
+    out_param.nSig = default.nSig;% default the sample size to estimate the variance
+    out_param.n1 = default.n1;% default the initial sample size to estimate the mean
+    out_param.tbudget = default.tbudget;% default time budget
+    out_param.nbudget = default.nbudget;% default sample budget
 else
     p = inputParser;
     addRequired(p,'Yrand',@gail.isfcn);
-    if isnumeric(in2)%if there are multiple inputs with
-        %only numeric, they should be put in order.        
+    if isnumeric(in2)
+    %if there are multiple inputs with only numeric, they should be put in order.        
         addOptional(p,'abstol',default.abstol,@isnumeric);
         addOptional(p,'reltol',default.reltol,@isnumeric);
         addOptional(p,'alpha',default.alpha,@isnumeric);
@@ -401,7 +405,7 @@ if (out_param.abstol < 0)
     out_param.abstol = abs(out_param.abstol);
 end
 if (out_param.reltol < 0 || out_param.reltol > 1)
-    % relative error tolerance should be in (0,1)
+    % relative error tolerance should be in [0,1]
     warning('MATLAB:meanMC_g:reltolneg',...
         ['Relative error tolerance should be between 0 and 1, ' ...
         'use the default value of the error tolerance'])
@@ -415,7 +419,7 @@ if (out_param.alpha <= 0 ||out_param.alpha >= 1)
     out_param.alpha = default.alpha;
 end
 if (out_param.fudge<= 1) 
-    %standard deviation factor should be bigger than 1
+    %standard deviation inflation factor should be bigger than 1
     warning('MATLAB:meanMC_g:fudgelessthan1',...
         ['the fudge factor should be larger than 1, '...
         'use the default value.'])
@@ -436,19 +440,21 @@ if (~gail.isposint(out_param.n1))
     out_param.n1 = ceil(abs(out_param.n1));
 end
 if (out_param.tbudget <= 0) 
-    %time budget should be positive
+    %time budget in seconds should be positive
     warning('MATLAB:meanMC_g:timebudgetlneg',...
         ['Time budget should be bigger than 0, '...
         'use the absolute value of time budget'])
     out_param.tbudget = abs(out_param.tbudget);
 end
-if (~gail.isposint(out_param.nbudget)) % sample budget should be a positive integer
+if (~gail.isposint(out_param.nbudget)) 
+    %sample budget should be a positive integer
     warning('MATLAB:meanMC_g:nbudgetnotposint',...
         ['the number of sample budget should be a positive integer,'...
         'take the absolute value and ceil.'])
     out_param.nbudget = ceil(abs(out_param.nbudget));
 end
-out_param.checked = 1; % pass the signal indicate the parameters have been checked
+out_param.checked = 1; 
+%pass the signal indicating the parameters have been checked
 end
 
 function out_param = meanMC_g_err(out_param)
@@ -456,9 +462,7 @@ function out_param = meanMC_g_err(out_param)
 %  information.
 %            out_param.exit = 0   success
 %                             1   too many samples required
-%                             2   too much try out time
-%                             3   too much time required to estimate
-%                                 variance
+
 if ~isfield(out_param,'exit'); return; end
 if out_param.exit==0; return; end
 switch out_param.exit
@@ -469,20 +473,5 @@ switch out_param.exit
             ' samples, which is more than the allowed maximum of '...
             num2str(out_param.nmax) ' samples. Just use the maximum sample budget.']);
         return
-%     case 2 % initial try out time costs more than 10% of time budget.
-%         warning('MATLAB:meanMC_g:initialtryoutbudgetreached',...
-%             ['initial try costs more than 10 percent '...
-%             'of time budget, stop try and return an answer '...
-%             'without guarantee.']);
-%         return
-%     case 3
-%         % the estimated time for estimating variance is bigger than half of
-%         % time budget.
-%         warning('MATLAB:meanMC_g:timebudgetreached',...
-%             ['the estimated time using nSig samples '...
-%             'is bigger than half of the time budget, '...
-%             'could not afford estimating variance, '...
-%             'use all the time left to estimate the mean.']);
-%       return
 end
 end
