@@ -289,8 +289,8 @@ while(max(err) > abstol)
     ntemp=max(ceil(out_param.nhi*(out_param.nlo/out_param.nhi).^(1./(1+len))),3);
     nstar = ntemp -2;
     
-    gn(gn<eps/2)=0;
-    fn(fn<eps/2)=0;
+%     gn(gn<eps/2)=0;
+%     fn(fn<eps/2)=0;
     
     %find nstar not large enough then double it
     smallconeind = find(nstar.*(2*gn+fn.*len/(ninit-1)) <(fn.*len));
