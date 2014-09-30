@@ -294,30 +294,33 @@ M3upper = kurtmax^(3/4);%the upper bound on the third moment by Jensen's inequal
 BEfun2=@(logsqrtn)gail.stdnormcdf(-exp(logsqrtn).*toloversig)...
     +exp(-logsqrtn).*min(A1*(M3upper+A2), ...
     A*M3upper./(1+(exp(logsqrtn).*toloversig).^3))- ...
-    alpha/2; % Berry-Eseen function, whose solution is the sample size needed
+    alpha/2; % Berry-Esseen function, whose solution is the sample size needed
 logsqrtnCLT=log(gail.stdnorminv(1-alpha/2)/toloversig);%sample size by CLT
 nbe=ceil(exp(2*fzero(BEfun2,logsqrtnCLT)));%calculate Berry-Esseen n by fzero function
 ncb = min(ncheb,nbe);%take the min of two sample sizes.
 end
 
 function eps = ncbinv(n1,alpha1,kurtmax)
-%This function calculate error tolerance when given Chebyshev and
-%Berry-Esseen inequality and sample size n.
+%This function calculate the reliable upper bound on error when given
+%Chebyshev and Berry-Esseen inequality and sample size n.
 NCheb_inv = 1/sqrt(n1*alpha1);
 % use Chebyshev inequality
 A=18.1139;
 A1=0.3328;
 A2=0.429; % three constants in Berry-Esseen inequality
-M3upper=kurtmax^(3/4);%using Jensen's inequality to
-% bound the third moment
+M3upper=kurtmax^(3/4);
+%using Jensen's inequality to bound the third moment
 BEfun=@(logsqrtb)gail.stdnormcdf(n1.*logsqrtb)...
     +min(A1*(M3upper+A2), ...
     A*M3upper./(1+(sqrt(n1).*logsqrtb).^3))/sqrt(n1)...
     - alpha1/2;
 % Berry-Esseen inequality
-logsqrtb_clt=log(sqrt(gail.stdnorminv(1-alpha1/2)/sqrt(n1)));%CLT to get tolerance
-NBE_inv = exp(2*fzero(BEfun,logsqrtb_clt));%use fzero to get Berry-Eseen tolerance
-eps = min(NCheb_inv,NBE_inv);%take the min of Chebyshev and Berry Eseen tolerance
+logsqrtb_clt=log(sqrt(gail.stdnorminv(1-alpha1/2)/sqrt(n1)));
+%use CLT to get tolerance
+NBE_inv = exp(2*fzero(BEfun,logsqrtb_clt));
+%use fzero to get Berry-Esseen tolerance
+eps = min(NCheb_inv,NBE_inv);
+%take the min of Chebyshev and Berry Esseen tolerance
 end
 
 function  [Yrand,out_param] = meanMC_g_param(varargin)
