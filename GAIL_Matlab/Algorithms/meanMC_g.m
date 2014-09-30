@@ -224,12 +224,16 @@ out_param.var = var(Yval);% calculate the sample variance--stage 1
 sig0 = sqrt(out_param.var);% standard deviation
 sig0up = out_param.fudge.*sig0;% upper bound on the standard deviation
 alpha_sig = out_param.alpha/2;% the uncertainty for variance estimation
-alphai = (out_param.alpha-alpha_sig)/(2*(1-alpha_sig));%uncertainty to do iteration
+alphai = (out_param.alpha-alpha_sig)/(2*(1-alpha_sig));
+%uncertainty to do iteration
 out_param.kurtmax = (out_param.nSig-3)/(out_param.nSig-1) ...
     + ((alpha_sig*out_param.nSig)/(1-alpha_sig))...
-    *(1-1/out_param.fudge^2)^2;%the upper bound on the modified kurtosis
-eps1 = ncbinv(out_param.n1,alphai,out_param.kurtmax);%tolerance for initial estimation
-out_param.tol(1) = sig0up*eps1;%the width of initial confidence interval for the mean
+    *(1-1/out_param.fudge^2)^2;
+%the upper bound on the modified kurtosis
+eps1 = ncbinv(out_param.n1,alphai,out_param.kurtmax);
+%tolerance for initial estimation
+out_param.tol(1) = sig0up*eps1;
+%the width of initial confidence interval for the mean
 i=1;
 npcmax = 1e6;%constant to do iteration and mean calculation
 out_param.n(i) = out_param.n1;% initial sample size to do iteration
@@ -290,13 +294,15 @@ ncheb = ceil(1/(toloversig^2*alpha));%sample size by Chebyshev's Inequality
 A=18.1139;
 A1=0.3328;
 A2=0.429; % three constants in Berry-Esseen inequality
-M3upper = kurtmax^(3/4);%the upper bound on the third moment by Jensen's inequality
+M3upper = kurtmax^(3/4);
+%the upper bound on the third moment by Jensen's inequality
 BEfun2=@(logsqrtn)gail.stdnormcdf(-exp(logsqrtn).*toloversig)...
     +exp(-logsqrtn).*min(A1*(M3upper+A2), ...
-    A*M3upper./(1+(exp(logsqrtn).*toloversig).^3))- ...
-    alpha/2; % Berry-Esseen function, whose solution is the sample size needed
+    A*M3upper./(1+(exp(logsqrtn).*toloversig).^3))-alpha/2; 
+% Berry-Esseen function, whose solution is the sample size needed
 logsqrtnCLT=log(gail.stdnorminv(1-alpha/2)/toloversig);%sample size by CLT
-nbe=ceil(exp(2*fzero(BEfun2,logsqrtnCLT)));%calculate Berry-Esseen n by fzero function
+nbe=ceil(exp(2*fzero(BEfun2,logsqrtnCLT)));
+%calculate Berry-Esseen n by fzero function
 ncb = min(ncheb,nbe);%take the min of two sample sizes.
 end
 
