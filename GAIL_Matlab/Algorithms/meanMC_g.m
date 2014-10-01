@@ -74,7 +74,7 @@ function [tmu,out_param]=meanMC_g(varargin)
 %
 %     out_param.tau --- the iteration step.
 %
-%     out_param.n --- sample size used in each iteration.
+%     out_param.n --- the sample size used in each iteration.
 %
 %     out_param.nmax --- the maximum sample budget to estimate mu, it comes
 %     from both the sample budget and the time budget and sample has been
@@ -104,16 +104,12 @@ function [tmu,out_param]=meanMC_g(varargin)
 %
 %  Guarantee
 % This algorithm attempts to calculate the mean, mu, of a random variable
-% to a prescribed error tolerance, tolfun:= max(abstol,reltol|mu|), with
+% to a prescribed error tolerance, tolfun:= max(abstol,reltol*|mu|), with
 % guaranteed confidence level 1-alpha. If the algorithm terminated without
 % showing any warning messages and provide an answer tmu, then the follow
 % inequality would be satisfied:
 % 
 % Pr(|mu-tmu| <= tolfun) >= 1-alpha
-%
-% where abstol is the absolute error tolerance and reltol is the relative
-% error tolerance, if the true mean mu is rather small as well as the
-% reltol, then the abstol would be satisfied, and vice versa. 
 %
 % The cost of the algorithm, N_tot, is also bounded above by N_up, which is
 % defined in terms of abstol, reltol, nSig, n1, fudge, kurtmax, beta. And

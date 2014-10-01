@@ -59,10 +59,12 @@ function [Q,out_param] = cubMC_g(varargin)
 %     default value is 1.2.
 %
 %     in_param.nSig --- initial sample size for estimating the sample
-%     variance, the default value is 1e4.
-% 
+%     variance, which should be a moderate large integer at least 30, the
+%     default value is 1e4.
+%
 %     in_param.n1 --- initial sample size for estimating the sample mean,
-%     the default value is 1e4.
+%     which should be a moderate large positive integer at least 30, the
+%     default value is 1e4.
 % 
 %     in_param.tbudget --- the time budget to do the estimation, the
 %     default value is 100 seconds.
@@ -82,7 +84,7 @@ function [Q,out_param] = cubMC_g(varargin)
 %
 %     Q --- the estimated value of the integral.
 % 
-%     out_param.n --- sample used in each iteration.
+%     out_param.n --- the sample size used in each iteration.
 %
 %     out_param.ntot --- total sample used.
 %
@@ -94,7 +96,7 @@ function [Q,out_param] = cubMC_g(varargin)
 %  
 %     out_param.kurtmax --- the upper bound on modified kurtosis.
 % 
-%     out_param.time --- the time elapsed.
+%     out_param.time --- the time elapsed in seconds.
 %
 %     out_param.exit --- the state of program when exiting.
 %      
@@ -121,17 +123,14 @@ function [Q,out_param] = cubMC_g(varargin)
 % 
 %  Guarantee
 % This algorithm attempts to calculate the integral of function f over a
-% hyperbox to a prescribed error tolerance with guaranteed confidence level
-% 1-alpha. If the algorithm terminated without showing any warning messages
-% and provide an answer Q, then the follow inequality would be satisfied:
+% hyperbox to a prescribed error tolerance tolfun:= max(abstol,reltol*|I|)
+% with guaranteed confidence level 1-alpha. If the algorithm terminated
+% without showing any warning messages and provide an answer Q, then the
+% follow inequality would be satisfied:
 % 
-% Pr(|Q-I| <= max(abstol,reltol*|I|)) >= 1-alpha
+% Pr(|Q-I| <= tolfun) >= 1-alpha
 %
-% where abstol is the absolute error tolerance and reltol is the relative
-% error tolerance, if the true integral I is rather small as well as the
-% reltol, then the abstol would be satisfied, and vice versa. 
-%
-% The cost of the algorithm is also bounded above by N_up, which is
+% The cost of the algorithm, N_tot, is also bounded above by N_up, which is
 % function in terms of abstol, reltol, nSig, n1, fudge, kurtmax, beta. And
 % the following inequality holds:
 % 
@@ -195,10 +194,10 @@ function [Q,out_param] = cubMC_g(varargin)
 %   Peters, and I. H. Sloan, eds.), Springer-Verlag, Berlin, 2014, to appear,
 %   arXiv:1208.4318 [math.ST]
 %
-%   [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, and
-%   Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library (Version
-%   1.3.0)" [MATLAB Software], 2014. Available from
-%   http://code.google.com/p/gail/
+%   [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluís
+%   Antoni Jiménez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou, "GAIL:
+%   Guaranteed Automatic Integration Library (Version 2.0)" [MATLAB
+%   Software], 2014. Available from http://code.google.com/p/gail/
 %
 %   If you find GAIL helpful in your work, please support us by citing the
 %   above paper and software.
@@ -293,8 +292,9 @@ else % if there is some optional input
             p.StructExpand = true;
             p.KeepUnmatched = true;
         end
-        % if there are multiple inputs with name and numeric, they
-    %         addParamValue(p,'measure',default.measure,...
+        % if there are multiple inputs with name and numeric, they should
+        % be put in order.
+        addParamValue(p,'measure',default.measure,...
             @(x) any(validatestring(x, {'uniform','normal','Gaussian'})));
         addParamValue(p,'abstol',default.abstol,@isnumeric);        
         addParamValue(p,'reltol',default.reltol,@isnumeric);
