@@ -90,9 +90,9 @@ function [Q,out_param] = cubMC_g(varargin)
 %
 %     out_param.tau --- the iteration step.
 %
-%     out_param.mu --- estimated mean in each iteration
+%     out_param.mu --- estimated integral in each iteration.
 %
-%     out_param.tol --- the tolerance for each iteration
+%     out_param.tol --- the reliable upper bound on error for each iteration.
 %  
 %     out_param.kurtmax --- the upper bound on modified kurtosis.
 % 
