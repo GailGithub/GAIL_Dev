@@ -1,5 +1,5 @@
 function [tmu,out_param]=meanMC_g(varargin)
-% MEANMC_G Monte Carlo method to estimate the mean of a random variable
+% MEANMC_G Monte Carlo method to estimate the mean of a random variable.
 %
 %   tmu = MEANMC_G(Yrand) estimates the mean, mu, of a random variable Y to
 %   within a specified generalized error tolerance, 
@@ -54,12 +54,12 @@ function [tmu,out_param]=meanMC_g(varargin)
 %     be larger than 1, default value is 1.2.
 %
 %     in_param.nSig --- initial sample size for estimating the sample
-%     variance, which should be a moderate large integer, the default
-%     value is 1e4.
+%     variance, which should be a moderate large integer at least 30, the
+%     default value is 1e4.
 %
 %     in_param.n1 --- initial sample size for estimating the sample mean,
-%     which should be a moderate large positive integer, the default value
-%     is 1e4.
+%     which should be a moderate large positive integer at least 30, the
+%     default value is 1e4.
 %
 %     in_param.tbudget --- the time budget in seconds to do the two-stage
 %     estimation, which should be positive, the default value is 100 seconds.
@@ -253,7 +253,8 @@ while true
     nsofar = nsofar+out_param.n(i);
     out_param.nmax = out_param.nmax-out_param.n(i);%update n so far and nmax
     errtype = 'max';
-    % error type, see the function 'tolfun' at +gail directory for more info
+    % error type, see the function 'tolfun' at Algoithms/+gail/ directory
+    % for more info
     theta  = 0;% relative error case
     deltaplus = (gail.tolfun(out_param.abstol,out_param.reltol,...
         theta,out_param.hmu(i) - out_param.tol(i),errtype)...
@@ -409,57 +410,57 @@ end
 if (out_param.abstol < 0)
     %absolute error tolerance should be positive
     warning('MATLAB:meanMC_g:abstolneg',...
-        ['Absolute error tolerance should be greater than 0, ' ...
-        'use the absolute value of the error tolerance'])
+        ['Absolute error tolerance should be greater than 0; ' ...
+        'We will use the default value of the absolute error tolerance 1e-2.'])
     out_param.abstol = abs(out_param.abstol);
 end
 if (out_param.reltol < 0 || out_param.reltol > 1)
     % relative error tolerance should be in [0,1]
     warning('MATLAB:meanMC_g:reltolneg',...
-        ['Relative error tolerance should be between 0 and 1, ' ...
-        'use the default value of the error tolerance'])
+        ['Relative error tolerance should be between 0 and 1; ' ...
+        'We will use the default value of the relative error tolerance 1e-1.'])
     out_param.abstol = abs(out_param.abstol);
 end
 if (out_param.alpha <= 0 ||out_param.alpha >= 1) 
     %uncertainty should be in (0,1)
     warning('MATLAB:meanMC_g:alphanotin01',...
-        ['the uncertainty should be between 0 and 1, '...
-        'use the default value.'])
+        ['The uncertainty should be between 0 and 1; '...
+        'We will use the default value 1%.'])
     out_param.alpha = default.alpha;
 end
 if (out_param.fudge<= 1) 
     %standard deviation inflation factor should be bigger than 1
     warning('MATLAB:meanMC_g:fudgelessthan1',...
-        ['the fudge factor should be larger than 1, '...
-        'use the default value.'])
+        ['The fudge factor should be larger than 1; '...
+        'We will use the default value 1.2.'])
     out_param.fudge = default.fudge;
 end
-if (~gail.isposint(out_param.nSig)) 
-    %initial sample size should be a positive integer
+if (~gail.isposge30(out_param.nSig)) 
+    %initial sample size should be a positive integer at least 30
     warning('MATLAB:meanMC_g:nsignotposint',...
-        ['the number nSig should a positive integer, '...
-        'take the absolute value and ceil.'])
+        ['The number nSig should a positive integer at least 30; '...
+        'We will use the default value 1e4.'])
     out_param.nSig = ceil(abs(out_param.nSig));
 end
-if (~gail.isposint(out_param.n1)) 
-    %initial sample size should be a posotive integer
+if (~gail.isposge30(out_param.n1)) 
+    %initial sample size should be a posotive integer at least 30
     warning('MATLAB:meanMC_g:n1notposint',...
-        ['the number n1 should a positive integer, '...
-        'take the absolute value and ceil.'])
+        ['The number n1 should a positive integer at least 30; '...
+        'We will use the default value 1e4.'])
     out_param.n1 = ceil(abs(out_param.n1));
 end
 if (out_param.tbudget <= 0) 
     %time budget in seconds should be positive
     warning('MATLAB:meanMC_g:timebudgetlneg',...
-        ['Time budget should be bigger than 0, '...
-        'use the absolute value of time budget'])
+        ['Time budget in seconds should be positive; '...
+        'We will take the absolute value of time budget'])
     out_param.tbudget = abs(out_param.tbudget);
 end
-if (~gail.isposint(out_param.nbudget)) 
-    %sample budget should be a positive integer
+if (~gail.isposge30(out_param.nbudget)) 
+    %sample budget should be a large positive integer
     warning('MATLAB:meanMC_g:nbudgetnotposint',...
-        ['the number of sample budget should be a positive integer,'...
-        'take the absolute value and ceil.'])
+        ['The number of sample budget should be a large positive integer; '...
+        'We will use the default value 1e9.'])
     out_param.nbudget = ceil(abs(out_param.nbudget));
 end
 out_param.checked = 1; 

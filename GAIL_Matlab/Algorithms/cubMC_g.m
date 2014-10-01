@@ -1,16 +1,19 @@
 function [Q,out_param] = cubMC_g(varargin)
-%CUBMC_G Monte Carlo method to evaluate a multidimensional integral to
-%within a specified generalized error tolerance 
-%tolfun = max(abstol, reltol|I|) with guaranteed confidence level 1-alpha.
+%CUBMC_G Monte Carlo method to evaluate a multidimensional integral.
 %
 %   [Q,out_param] = CUBMC_G(f,hyperbox) estimates the integral of f over
-%   hyperbox to within a specified generalized error tolerance tolfun =
-%   max(abstol, reltol|I|) with guaranteed confidence level 99%. Input
-%   f is a function handle. The function f should accept an n x d matrix
-%   input, where d is the dimension of the hyperbox, and n is the number of
-%   points being evaluated simultaneously. The input hyperbox is a 2 x d
-%   matrix, where the first row corresponds to the lower limits and the
-%   second row corresponds to the upper limits.
+%   hyperbox to within a specified generalized error tolerance, tolfun =
+%   max(abstol, reltol*|I|), i.e., |I - Q| <= tolfun with probability at
+%   least 1-alpha, where abstol is the absolute error tolerance, and reltol
+%   is the relative error tolerance. Usually the reltol determines the
+%   accuracy of the estimation, however, if the |mu| is rather small, the
+%   abstol determines the accuracy of the estimation. The default values
+%   are abstol=1e-2, reltol=1e-1, and alpha=1%. Input f is a function
+%   handle that accepts an n x d matrix input, where d is the dimension of
+%   the hyperbox, and n is the number of points being evaluated
+%   simultaneously. The input hyperbox is a 2 x d matrix, where the first
+%   row corresponds to the lower limits and the second row corresponds to
+%   the upper limits.
 % 
 %   Q = CUBMC_G(f,hyperbox,measure,abstol,reltol,alpha,fudge,nSig,n1,
 %   tbudget,nbudget,checked) estimates the integral of function f over
@@ -122,7 +125,7 @@ function [Q,out_param] = cubMC_g(varargin)
 % 1-alpha. If the algorithm terminated without showing any warning messages
 % and provide an answer Q, then the follow inequality would be satisfied:
 % 
-% Pr(|Q-I| <= max(abstol,reltol|I|)) >= 1-alpha
+% Pr(|Q-I| <= max(abstol,reltol*|I|)) >= 1-alpha
 %
 % where abstol is the absolute error tolerance and reltol is the relative
 % error tolerance, if the true integral I is rather small as well as the
@@ -181,7 +184,8 @@ function [Q,out_param] = cubMC_g(varargin)
 % Q = 0.33***
 % 
 % 
-%   See also FUNAPPX_G, INTEGRAL_G, MEANMC_G, MEANMCBERNOULLI_G
+%   See also FUNAPPX_G, INTEGRAL_G, MEANMC_G, MEANMCBERNOULLI_G,
+%   CUBLATTICE_G, CUBSOBOL_G
 % 
 %  References
 %
@@ -205,10 +209,10 @@ tstart=tic;
 f=gail.transformIntegrand(f,hyperbox,out_param); 
 if strcmpi(out_param.measure,'uniform')% the using uniformly distributed samples
     [Q,out_param] = meanMC_g(@(nfun)f(rand(nfun,out_param.dim)),out_param);
-   % out_param.Q=Q;% using meanMC_g to get the mean 
+% using meanMC_g to get the mean 
 else strcmpi(out_param.measure,'normal')% using normally distributed samples
     [Q,out_param] = meanMC_g(@(nfun)f(randn(nfun,out_param.dim)),out_param);
-    %out_param.Q=Q;% using meanMC_g to get the mean
+% using meanMC_g to get the mean
 end
 out_param.time=toc(tstart); %elapsed time
 end
@@ -224,7 +228,7 @@ default.alpha = 0.01;% default uncertainty
 default.fudge = 1.2; % default variance inflation factor
 default.nSig = 1e4; % default nSig initial sample size to estimate sigma
 default.n1 = 1e4; % default n1 initial sample size to estimate Q
-default.tbudget = 100;% default time budget
+default.tbudget = 100;% default time budget in seconds
 default.nbudget = 1e9; % default sample budget
 default.checked = 0; % default value of parameter checking status
 if isempty(varargin) % if no input, print error message and use the default setting
@@ -288,9 +292,9 @@ else % if there is some optional input
         if isstruct(in3) %the input is structure
             p.StructExpand = true;
             p.KeepUnmatched = true;
-        end % if there are multiple inputs with name and numeric, they
-    % could be put not in order
-        addParamValue(p,'measure',default.measure,...
+        end
+        % if there are multiple inputs with name and numeric, they
+    %         addParamValue(p,'measure',default.measure,...
             @(x) any(validatestring(x, {'uniform','normal','Gaussian'})));
         addParamValue(p,'abstol',default.abstol,@isnumeric);        
         addParamValue(p,'reltol',default.reltol,@isnumeric);
@@ -347,55 +351,58 @@ if out_param.checked == 0
     if (out_param.abstol < 0) 
         %absolute error tolerance should be positive
         warning('MATLAB:cubMC_g:abstolneg',...
-            'the absolute error tolerance should be larger than 0, use the absolute value.')
+            ['The absolute error tolerance should be positive; '...
+            'We will take the absolute value.'])
         out_param.abstol = abs(out_param.abstol);
     end
 if (out_param.reltol < 0 || out_param.reltol > 1)
-    % relative error tolerance should be in (0,1)
+    % relative error tolerance should be in [0,1]
     warning('MATLAB:cubMC_g:reltolneg',...
-        ['Relative error tolerance should be between 0 and 1, ' ...
-        'use the default value of the error tolerance'])
+        ['Relative error tolerance should be in [0,1]; ' ...
+        'We will use the default value of the error tolerance 1e-1.'])
     out_param.abstol = abs(out_param.abstol);
 end    
     if (out_param.alpha <= 0 ||out_param.alpha >= 1) 
         %uncertainty should be 1 (0,1)
         warning('MATLAB:cubMC_g:alphanot01',...
-            ['the uncertainty should be less than 1 and bigger than 0, '...
-            'use the the default value.'])
+            ['The uncertainty should be in (0,1); '...
+            'We will use the default value 1e-2.'])
         out_param.alpha = default.alpha;
     end
     if (out_param.fudge <= 1) 
         %standard deviation inflation factor should be a number bigger than
         %1
         warning('MATLAB:cubMC_g:fudgelessthan1',...
-            'the fudge factor should be bigger than 1, use the default value.')
+            ['The fudge factor should be bigger than 1; '...
+            'We will use the default value 1.2.'])
         out_param.fudge = default.fudge;
     end    
-    if (~gail.isposint(out_param.nSig))
+    if (~gail.isposge30(out_param.nSig))
         %the sample to estimate sigma should be a positive integer
         warning('MATLAB:cubMC_g:nsignotposint',...
-            ['the number nSig should a positive integer,'...
-            'take the absolute value and ceil.'])
+            ['The number nSig should a positive integer greater than 30; '...
+            'We will take the default value 1e4.'])
         out_param.nSig = ceil(abs(out_param.nSig));
     end
-    if (~gail.isposint(out_param.n1)) 
+    if (~gail.isposge30(out_param.n1)) 
     %initial sample size to estimate Q should be a positive integer
     warning('MATLAB:cubMC_g:n1notposint',...
-        ['the number n1 should a positive integer, '...
-        'take the absolute value and ceil.'])
+        ['The number n1 should a positive integer greater than 30; '...
+        'We will use the default value 1e4.'])
     out_param.n1 = ceil(abs(out_param.n1));
     end
-    if (out_param.tbudget <= 0) % time budget should be positive
+    if (out_param.tbudget <= 0) 
+        %the time budget in seconds should be positive
         warning('MATLAB:cubMC_g:tbudgetlneg',...
-            ['Time budget should be bigger than 0, '...
-            'use the absolute value of time budget'])
+            ['Time budget should be bigger than 0; '...
+            'We will use the absolute value of the time budget'])
         out_param.tbudget = abs(out_param.tbudget);
     end
     if (~gail.isposint(out_param.nbudget)) 
-        % sample budget should be a positive integer
+        %the sample budget should be a positive integer
         warning('MATLAB:cubMC_g:nbudgetnotposint',...
-            ['the number of sample budget should be a positive integer,'...
-            'take the absolute value and ceil.'])
+            ['The number of sample budget should be a positive integer;'...
+            'We will take the absolute value and ceil.'])
         out_param.nbudget = ceil(abs(out_param.nbudget));
     end
     out_param.checked=2;

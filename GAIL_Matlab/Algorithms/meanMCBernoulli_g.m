@@ -60,7 +60,7 @@ function [pHat,out_param]=meanMCBernoulli_g(varargin)
 %
 %     out_param.tau --- the iteration step.
 % 
-%     out_param.time --- the time elapsed.
+%     out_param.time --- the time elapsed in seconds.
 % 
 %  Guarantee
 %
@@ -118,7 +118,8 @@ function [pHat,out_param]=meanMCBernoulli_g(varargin)
 %   pHat = 0.11***
 % 
 % 
-%   See also FUNAPPX_G, INTEGRAL_G, CUBMC_G, MEANMC_G
+%   See also FUNAPPX_G, INTEGRAL_G, CUBMC_G, MEANMC_G, CUBLATTICE_G,
+%   CUBSOBOL_G
 % 
 %  References
 %
@@ -128,9 +129,10 @@ function [pHat,out_param]=meanMCBernoulli_g(varargin)
 %   Peters, and I. H. Sloan, eds.), Springer-Verlag, Berlin, 2014, to appear,
 %   arXiv:1208.4318 [math.ST]
 %
-%   [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, and
-%   Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library (Version
-%   1.3.0)" [MATLAB Software], 2014. Available from
+%   [2] Sou-Cheng T.  Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
+%   Lluís Antoni Jiménez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
+%   "GAIL: Guaranteed Automatic Integration Library (Version 2.0)"
+%   [MATLAB Software], 2014. Available from
 %   http://code.google.com/p/gail/
 %
 %   If you find GAIL helpful in your work, please support us by citing the
@@ -138,9 +140,11 @@ function [pHat,out_param]=meanMCBernoulli_g(varargin)
 %
 
 tstart = tic; %start the clock
+
 [Yrand,out_param] = meanMCBernoulli_g_param(varargin{:});
 %parameter checking and parsing
 nsofar = 0;%sample used so far
+out_param.exit = 0;
 if strcmpi(out_param.errtype,'abs') % absolute error type
     out_param = nabs(out_param,tstart);%calculate the sample needed
     out_param.n = out_param.nabs;%update n
@@ -190,7 +194,7 @@ if validvarargin
 end
 
 if ~validvarargin
-    %if only have one input which is Yrand, use all the default parameters
+    %if there is only one input which is Yrand, use all the default parameters
     out_param.abstol = default.abstol;
     out_param.reltol = default.reltol;
     out_param.errtype = default.errtype;
@@ -199,8 +203,8 @@ if ~validvarargin
 else
     pHat = inputParser;
     addRequired(pHat,'Yrand',@gail.isfcn);
-    if isnumeric(in2)%if there are multiple inputs with
-        %only numeric, they should be put in order.
+    if isnumeric(in2)
+    %if there are multiple inputs with only numeric, they should be put in order.
         addOptional(pHat,'abstol',default.abstol,@isnumeric);
         addOptional(pHat,'reltol',default.reltol,@isnumeric);
         addOptional(pHat,'errtype',default.errtype,@ischar);
@@ -222,30 +226,30 @@ else
 end
 if (out_param.abstol < 0) %absolute error tolerance negative
     warning('MATLAB:meanMCBernoulli_g:abstolneg',...
-        ['Absolute error tolerance should be greater than 0, ' ...
-        'use the absolute value of the error tolerance'])
+        ['Absolute error tolerance should be greater than 0; ' ...
+        'We will use the absolute value of the error tolerance'])
     out_param.abstol = abs(out_param.abstol);
 end
 if (out_param.reltol < 0 || out_param.reltol >1)
     % relative error tolerance is not in [0,1]
     warning('MATLAB:meanMCBernoulli_g:reltolnotin01',...
-        ['Relative error tolerance should be between 0 and 1, ' ...
-        'use the default value of the error tolerance'])
+        ['Relative error tolerance should be between 0 and 1; ' ...
+        'We will use the default value of the error tolerance'])
     out_param.reltol = default.reltol;
 end
 if (out_param.alpha <= 0 ||out_param.alpha >= 1) 
     % uncertainty is not in (0,1)
     warning('MATLAB:meanMCBernoulli_g:alphanotin01',...
-        ['the uncertainty should be in (0,1), '...
-        'use the default value.'])
+        ['the uncertainty should be in (0,1); '...
+        'We will use the default value.'])
     out_param.alpha = default.alpha;
 end
 
 if (~gail.isposint(out_param.nmax)) 
     % sample budget should be a positive integer
     warning('MATLAB:meanMCBernoulli_g:nmaxnotposint',...
-        ['the number of nmax should be a positive integer,'...
-        'take the absolute value and ceil.'])
+        ['the number of nmax should be a positive integer; '...
+        'We will take the absolute value and ceil.'])
     out_param.nbudget = ceil(abs(out_param.nmax));
 end
 end
@@ -265,7 +269,7 @@ switch out_param.exit
             int2str(out_param.nabs) ...
             ' samples, which is more than the allowed maximum of '...
             num2str(out_param.nmax) ...
-            ' samples. Just use the maximum sample budget to estimate p,'...
+            ' samples. We will use the maximum sample budget to estimate p '...
             'without guarantee.']);
         return;
     case 2 % ni exceed nmax.
@@ -274,7 +278,7 @@ switch out_param.exit
             int2str(out_param.ni) ...
             ' samples, which is more than the allowed maximum of '...
             num2str(out_param.nmax) ...
-            ' samples. Just use the maximum sample budget to estimate p,'...
+            ' samples. We will use the maximum sample budget to estimate p '...
             'without guarantee.']);
         return;
     case 3 % nrel exceed nmax.
@@ -283,7 +287,7 @@ switch out_param.exit
             int2str(out_param.nrel) ...
             ' samples, which is more than the allowed maximum of '...
             num2str(out_param.nmax) ...
-            ' samples. Just use the maximum sample budget to estimate p,',...
+            ' samples. We will use the maximum sample budget to estimate p ',...
             'without guarantee.']);
         return;        
 end
@@ -297,6 +301,8 @@ function out_param = nabs(out_param,tstart)
 % absolute error criterion
 out_param.nabs = ceil(log(2/out_param.alpha)/(2*out_param.abstol^2));
 % calculate the sample size by Hoeffding's inequality
+out_param.tau = 1;
+% it is one step estimation
 if out_param.nabs > out_param.nmax % if the sample needed is bigger than nmax
     out_param.exit=1; % pass a flag
     meanMCBernoulli_g_err(out_param,tstart);% print warning message
