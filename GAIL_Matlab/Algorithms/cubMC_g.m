@@ -168,17 +168,13 @@ function [Q,out_param] = cubMC_g(varargin)
 %
 % If you find GAIL helpful in your work, please support us by citing the
 % above paper and software.
-
-
 tstart=tic;
 [f,hyperbox,out_param] = cubMC_g_param(varargin{:});%check validity of inputs
 f=transformIntegrand(f,hyperbox,out_param); 
-if strcmp(out_param.measure,'uniform')% the using uniformly distributed samples
+if strcmp(out_param.measure,'uniform'); % the using uniformly distributed samples
     [Q,out_param] = meanMC_g(@(nfun)f(rand(nfun,out_param.dim)),out_param);
-   % out_param.Q=Q;% using meanMC_g to get the mean 
-else strcmp(in_param.measure,'normal')% using normally distributed samples
+else strcmp(out_param.measure,'normal'); % using normally distributed samples
     [Q,out_param] = meanMC_g(@(nfun)f(randn(nfun,out_param.dim)),out_param);
-    %out_param.Q=Q;% using meanMC_g to get the mean
 end
 out_param.time=toc(tstart); %elapsed time
 end

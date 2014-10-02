@@ -166,6 +166,7 @@ nsofar = nsofar + ntry;%the sample size has been used so far
 tic;
 Yrand(ntry);
 timetry = toc; %count the time eclipsed to do ntry samples
+out_param.exit=0; %success until determined otherwise
 while true
     timeleft = out_param.tbudget - toc(tstart);%update the time budget.
     out_param.n_left_predict = floor(timeleft*ntry/timetry);
