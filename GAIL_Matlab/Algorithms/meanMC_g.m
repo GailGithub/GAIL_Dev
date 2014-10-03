@@ -18,8 +18,7 @@ function [tmu,out_param]=meanMC_g(varargin)
 %   level 1-alpha using all ordered parsing inputs abstol, reltol, alpha,
 %   fudge, nSig, n1, tbudget, nbudget.
 %
-%   tmu = MEANMC_G(Yrand,'abstol',abstol,'reltol',reltol,'alpha',alpha,
-%   'fudge',fudge,'nSig',nSig,'n1',n1,'tbudget',tbudget,'nbudget', nbudget)
+%   tmu = MEANMC_G(Yrand,'abstol',abstol,'reltol',reltol,'alpha',alpha,'fudge',fudge,'nSig',nSig,'n1',n1,'tbudget',tbudget,'nbudget',nbudget)
 %   estimates the mean of a random variable Y to within a specified
 %   generalized error tolerance tolfun with guaranteed confidence level
 %   1-alpha. All the field-value pairs are optional and can be supplied in
@@ -164,8 +163,8 @@ function [tmu,out_param]=meanMC_g(varargin)
 %   Peters, and I. H. Sloan, eds.), Springer-Verlag, Berlin, 2014, to appear,
 %   arXiv:1208.4318 [math.ST]
 %
-%   [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluís
-%   Antoni Jiménez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou, "GAIL:
+%   [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
+%   Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou, "GAIL:
 %   Guaranteed Automatic Integration Library (Version 2.0)" [MATLAB
 %   Software], 2014. Available from http://code.google.com/p/gail/
 %

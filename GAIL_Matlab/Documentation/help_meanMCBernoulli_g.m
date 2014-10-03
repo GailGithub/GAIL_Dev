@@ -7,7 +7,7 @@
 %
 % pHat = *meanMCBernoulli_g*(Yrand,abstol,reltol,errtype,alpha,nmax)
 %
-% pHat = *meanMCBernoulli_g*(Yrand,'abstol',abstol,'reltol',reltol,
+% pHat = *meanMCBernoulli_g*(Yrand,'abstol',abstol,'reltol',reltol,'errtype',errtype,'alpha',alpha,'nmax',nmax)
 %
 % [pHat, out_param] = *meanMCBernoulli_g*(Yrand,in_param)
 %% Description
@@ -23,11 +23,10 @@
 %  tolerance with guaranteed confidence level 1-alpha using all ordered
 %  parsing inputs abstol, reltol, errtype, alpha and nmax.
 % 
-% pHat = *meanMCBernoulli_g*(Yrand,'abstol',abstol,'reltol',reltol,
-%  'errtype',errtype,'alpha',alpha,'nmax',nmax) estimates the mean of a
-%  Bernoulli random variable Y to within a specified error tolerance with
-%  guaranteed confidence level 1-alpha. All the field-value pairs are
-%  optional and can be supplied in different order.
+% pHat = *meanMCBernoulli_g*(Yrand,'abstol',abstol,'reltol',reltol,'errtype',errtype,'alpha',alpha,'nmax',nmax)
+%  estimates the mean of a Bernoulli random variable Y to within a 
+%  specified error tolerance with guaranteed confidence level 1-alpha. All
+%  the field-value pairs are optional and can be supplied in different order.
 % 
 % [pHat, out_param] = *meanMCBernoulli_g*(Yrand,in_param) estimates the mean
 %  of a Bernoulli random variable Y to within a specified error tolerance
@@ -69,9 +68,9 @@
 %
 % * out_param.tau --- |the iteration step.|
 % 
-% * out_param.time --- |the time elapsed.|
+% * out_param.time --- |the time elapsed in seconds.|
 % 
-%  Guarantee
+%%  Guarantee
 %
 % Case 1: errtype = 'abs'
 %
@@ -100,33 +99,30 @@
 % defined in terms of the true mean p, uncertainty alpha and relative
 % tolerance reltol. For details, please refer to the paper.
 %
-%% Examples
-%
-%%
-% *Example 1*
+%%   Examples
+%   *Example 1*
 
-% Calculate the mean of x^2 when x is uniformly distributed in
-% [0 1], with the relative error tolerance = 1e-3 and uncertainty 5%.
+%   Calculate the mean of a Bernoulli random variable with true p=1/90,
+%   absolute error tolerance 1e-3 and uncertainty 0.01.
+% 
+    in_param.abstol=1e-3; in_param.alpha = 0.01; p=1/9;Yrand=@(n) rand(n,1)<p;
+    pHat = meanMCBernoulli_g(Yrand,in_param)
+ 
+%% 
+%   *Example 2*
 
-  in_param.reltol=0; in_param.abstol = 1e-3;
-  in_param.alpha = 0.05; Yrand=@(n) rand(n,1).^2;
-  tmu = meanMC_g(Yrand,in_param)
+%   Using the same function as example 1, with the relative error tolerance
+%   1e-2.
+% 
+    pHat = meanMCBernoulli_g(Yrand,0,1e-2,'rel')
+    
+%% 
+%   *Example 3*
 
-%%
-% *Example 2*
-
-% Calculate the mean of exp(x) when x is uniformly distributed in
-% [0 1], with the absolute error tolerance 1e-3.
-
-  tmu = meanMC_g(@(n)exp(rand(n,1)),1e-3,0)
-
-%%
-% *Example 3*
-
-% Calculate the mean of sin(x) when x is uniformly distributed in
-% [0 1], with the relative error tolerance 1e-2 and uncertainty 0.05.
-
-  tmu = meanMC_g(@(n)cos(rand(n,1)),'reltol',1e-2,'abstol',0,'alpha',0.05)
+%   Using the same function as example 1, with the relative error
+%   tolerance 1e-2 and uncertainty 0.05.
+% 
+    pHat = meanMCBernoulli_g(Yrand,'errtype','rel','reltol',1e-2,'alpha',0.05)
 %% See Also
 %
 % <html>
@@ -142,7 +138,11 @@
 % </html>
 %
 % <html>
-% <a href="help_meanMCBernoulli_g.html">meanMCBernoulli_g</a>
+% <a href="help_meanMC_g.html">meanMC_g</a>
+% </html>
+%
+% <html>
+% <a href="help_cubLattice_g.html">cubLattice_g</a>
 % </html>
 %
 %% References
@@ -153,10 +153,12 @@
 % Peters, and I. H. Sloan, eds.), Springer-Verlag, Berlin, 2014, to appear,
 % arXiv:1208.4318 [math.ST]
 %
-% [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, and
-% Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library (Version
-% 1.3.0)" [MATLAB Software], 2014. Available from
+% [2] Sou-Cheng T.  Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
+% Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
+% "GAIL: Guaranteed Automatic Integration Library (Version 2.0)"
+% [MATLAB Software], 2014. Available from
 % http://code.google.com/p/gail/
 %
 % If you find GAIL helpful in your work, please support us by citing the
 % above paper and software.
+%

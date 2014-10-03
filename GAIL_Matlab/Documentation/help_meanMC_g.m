@@ -1,26 +1,29 @@
 %% meanMC_g
-% |MEANMC_G Monte Carlo method to estimate the mean of a random variable
-%  to within a specified generalized error tolerance 
-%  tolfun = max(abstol,reltol|mu|) with guaranteed confidence level 1-alpha.|
+% |MEANMC_G Monte Carlo method to estimate the mean of a random variable.|
 %% Syntax
 % tmu = *meanMC_g*(Yrand)
 %
 % tmu = *meanMC_g*(Yrand,abstol,reltol,alpha,fudge,nSig,n1,tbudget,nbudget)
 %
-% tmu = *meanMC_g*(Yrand,'abstol',abstol,'reltol',reltol,'alpha',alpha,
+% tmu = *meanMC_g*(Yrand,'abstol',abstol,'reltol',reltol,'alpha',alpha,'fudge',fudge,'nSig',nSig,'n1',n1,'tbudget',tbudget,'nbudget',nbudget)
 %
 % [tmu, out_param] = *meanMC_g*(Yrand,in_param)
 %% Description
 %
-% tmu = *meanMC_g*(Yrand) estimates the mean of a random variable Y to
-%  within a specified generalized error tolerance tolfun =
-%  max(abstol,reltol|mu|) with guaranteed confidence level 99%. Input
+% tmu = *meanMC_g*(Yrand) estimates the mean, mu, of a random variable Y to
+%  within a specified generalized error tolerance, 
+%  tolfun:=max(abstol,reltol*|mu|), i.e., |mu - tmu| <= tolfun with
+%  probability at least 1-alpha, where abstol is the absolute error
+%  tolerance, and reltol is the relative error tolerance. Usually the
+%  reltol determines the accuracy of the estimation, however, if the |mu|
+%  is rather small, the abstol determines the accuracy of the estimation.
+%  The default values are abstol=1e-2, reltol=1e-1, and alpha=1%. Input
 %  Yrand is a function handle that accepts a positive integer input n and
 %  returns an n x 1 vector of IID instances of the random variable Y.
 %
 % tmu = *meanMC_g*(Yrand,abstol,reltol,alpha,fudge,nSig,n1,tbudget,nbudget)
-%   estimates the mean of a random variable Y to within a specified
-%   generalized error tolerance tolfun with guaranteed confidence
+%  estimates the mean of a random variable Y to within a specified
+%  generalized error tolerance tolfun with guaranteed confidence
 %  level 1-alpha using all ordered parsing inputs abstol, reltol, alpha,
 %  fudge, nSig, n1, tbudget, nbudget.
 %
@@ -47,26 +50,32 @@
 %  is a standard uniform random variable, then one may define Yrand =
 %  @(n) rand(n,1).^2.|
 %
-% * in_param.abstol --- |the absolute error tolerance, default value is 1e-2.|
+% * in_param.abstol --- |the absolute error tolerance, which should be
+%  positive, default value is 1e-2.|
 %
-% * in_param.reltol --- |the relative error tolerance, default value is 1e-1.|
+% * in_param.reltol --- |the relative error tolerance, which should be
+%  between 0 and 1, default value is 1e-1.|
 %
-% * in_param.alpha --- |the uncertainty, default value is 1%.|
+% * in_param.alpha --- |the uncertainty, which should be a small positive
+%  percentage. default value is 1%.|
 %
-% * in_param.fudge --- |standard deviation inflation factor, default value is
-%  1.2.|
+% * in_param.fudge --- |standard deviation inflation factor, which should
+%  be larger than 1, default value is 1.2.|
 %
 % * in_param.nSig --- |initial sample size for estimating the sample
-%  variance, the default value is 1e3.|
+%  variance, which should be a moderate large integer at least 30, the
+%  default value is 1e4.|
 %
-% * in_param.n1 --- |initial sample size for estimating the sample
-%  mean, the default value is 1e4.|
+% * in_param.n1 --- |initial sample size for estimating the sample mean,
+%  which should be a moderate large positive integer at least 30, the
+%  default value is 1e4.|
 %
-% * in_param.tbudget --- |the time budget to do the two-stage estimation,
-%  the default value is 100 seconds.|
+% * in_param.tbudget --- |the time budget in seconds to do the two-stage
+%  estimation, which should be positive, the default value is 100 seconds.|
 %
-% * in_param.nbudget --- |the sample budget to do the two-stage estimation,
-%  the default value is 1e9.|
+% * in_param.nbudget --- |the sample budget to do the two-stage
+%  estimation, which should be a large positive integer, the default
+%  value is 1e9.|
 %
 % *Output Arguments*
 %
@@ -74,7 +83,7 @@
 %
 % * out_param.tau --- |the iteration step.|
 %
-% * out_param.n --- |sample used in each iteration.|
+% * out_param.n --- |the sample size used in each iteration.|
 %
 % * out_param.nmax --- |the maximum sample budget to estimate mu, it comes
 %  from both the sample budget and the time budget and sample has been
@@ -84,7 +93,7 @@
 %
 % * out_param.hmu --- |estimated mean in each iteration.|
 %
-% * out_param.tol --- |the tolerance for each iteration.|
+% * out_param.tol --- |the reliable upper bound on error for each iteration.|
 %
 % * out_param.var --- |the sample variance.|
 %
@@ -93,22 +102,16 @@
 %                   0   Success
 %   
 %                   1   Not enough samples to estimate the mean
-%   
-%                   2   Initial try out time costs more than 10% of time
-%                       budget
-%   
-%                   3   The estimated time for estimating variance is
-%                       bigger than half of the time budget
 %
 % * out_param.kurtmax --- |the upper bound on modified kurtosis.|
 %
-% * out_param.time --- |the time elapsed|
+% * out_param.time --- |the time elapsed in seconds.|
 %
-% * out_param.checked --- |parameter checking status|
+% * out_param.checked --- |parameter checking status
 %   
-%                      1  checked by meanMC_g
+%                        1  checked by meanMC_g|
 %
-%  Guarantee
+%%  Guarantee
 % This algorithm attempts to calculate the mean of a random variable to a
 % prescribed error tolerance with guaranteed confidence level 1-alpha. If
 % the algorithm terminated without showing any warning messages and provide
@@ -173,6 +176,10 @@
 % <a href="help_meanMCBernoulli_g.html">meanMCBernoulli_g</a>
 % </html>
 %
+% <html>
+% <a href="help_cubSobol_g.html">cubSobol_g</a>
+% </html>
+%
 %% References
 %
 % [1]  F. J. Hickernell, L. Jiang, Y. Liu, and A. B. Owen, Guaranteed
@@ -181,10 +188,10 @@
 % Peters, and I. H. Sloan, eds.), Springer-Verlag, Berlin, 2014, to appear,
 % arXiv:1208.4318 [math.ST]
 %
-% [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, and
-% Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library (Version
-% 1.3.0)" [MATLAB Software], 2014. Available from
-% http://code.google.com/p/gail/
+% [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
+% Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou, "GAIL:
+% Guaranteed Automatic Integration Library (Version 2.0)" [MATLAB
+% Software], 2014. Available from http://code.google.com/p/gail/
 %
 % If you find GAIL helpful in your work, please support us by citing the
 % above paper and software.

@@ -3,7 +3,7 @@ function [Q,out_param] = cubMC_g(varargin)
 %
 %   [Q,out_param] = CUBMC_G(f,hyperbox) estimates the integral of f over
 %   hyperbox to within a specified generalized error tolerance, tolfun =
-%   max(abstol, reltol*|I|), i.e., |I - Q| <= tolfun with probability at
+%   max(abstol, reltol*|I|), i.e., | I - Q | <= tolfun with probability at
 %   least 1-alpha, where abstol is the absolute error tolerance, and reltol
 %   is the relative error tolerance. Usually the reltol determines the
 %   accuracy of the estimation, however, if the |mu| is rather small, the
@@ -15,21 +15,18 @@ function [Q,out_param] = cubMC_g(varargin)
 %   row corresponds to the lower limits and the second row corresponds to
 %   the upper limits.
 % 
-%   Q = CUBMC_G(f,hyperbox,measure,abstol,reltol,alpha,fudge,nSig,n1,
-%   tbudget,nbudget,checked) estimates the integral of function f over
-%   hyperbox to within a specified generalized error tolerance tolfun with
-%   guaranteed confidence level 1-alpha using all ordered parsing inputs f,
-%   hyperbox, measure, abstol, reltol, alpha, fudge, nSig, n1, tbudget,
-%   nbudget, checked. The input f and hyperbox are required and others are
-%   optional.
+%   Q = CUBMC_G(f,hyperbox,measure,abstol,reltol,alpha,fudge,nSig,n1,tbudget,nbudget,checked)
+%   estimates the integral of function f over hyperbox to within a 
+%   specified generalized error tolerance tolfun with guaranteed confidence
+%   level 1-alpha using all ordered parsing inputs f, hyperbox, measure, 
+%   abstol, reltol, alpha, fudge, nSig, n1, tbudget, nbudget, checked. The 
+%   input f and hyperbox are required and others are optional.
 % 
-%   Q = CUBMC_G(f,hyperbox,'measure','uniform','abstol',abstol,'reltol',
-%   reltol,'alpha',alpha,'fudge',fudge,'nSig',nSig,'n1',n1,'tbudget',
-%   tbudget,'nbudget',nbudget,'checked',checked) estimates the integral of
-%   f over hyperbox to within a specified generalized error tolerance
-%   tolfun with guaranteed confidence level 1-alpha. All the field-value
-%   pairs are optional and can be supplied in different order. If an input
-%   is not specified, the default value is used.
+%   Q = CUBMC_G(f,hyperbox,'measure','uniform','abstol',abstol,'reltol',reltol,'alpha',alpha,'fudge',fudge,'nSig',nSig,'n1',n1,'tbudget',tbudget,'nbudget',nbudget,'checked',checked)
+%   estimates the integral of f over hyperbox to within a specified 
+%   generalized error tolerance tolfun with guaranteed confidence level
+%   1-alpha. All the field-value pairs are optional and can be supplied in 
+%   different order. If an input is not specified, the default value is used.
 % 
 %   [Q out_param] = CUBMC_G(f,hyperbox,in_param) estimates the integral of
 %   f over hyperbox to within a specified generalized error tolerance
@@ -194,8 +191,8 @@ function [Q,out_param] = cubMC_g(varargin)
 %   Peters, and I. H. Sloan, eds.), Springer-Verlag, Berlin, 2014, to appear,
 %   arXiv:1208.4318 [math.ST]
 %
-%   [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluís
-%   Antoni Jiménez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou, "GAIL:
+%   [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
+%   Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou, "GAIL:
 %   Guaranteed Automatic Integration Library (Version 2.0)" [MATLAB
 %   Software], 2014. Available from http://code.google.com/p/gail/
 %

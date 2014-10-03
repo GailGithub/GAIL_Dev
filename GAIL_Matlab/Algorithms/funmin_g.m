@@ -14,13 +14,12 @@ function [fmin,out_param]=funmin_g(varargin)
 %   nlo, an upper bound of initial number of points nhi, and a cost budget
 %   nmax.
 %
-%   fmin = FUNMIN_G(f,'a',a,'b',b,'abstol',abstol,'TolX',TolX,'nlo',nlo,
-%   'nhi',nhi,'nmax',nmax) finds minimum value of function f on the
-%   interval [a,b] with a guaranteed absolute error tolerance abstol, a
-%   guaranteed X tolerance TolX, a lower bound of initial number of points
-%   nlo, an upper bound of initial number of points nhi, and a cost budget
-%   nmax. All seven field-value pairs are optional and can be supplied in
-%   different order.
+%   fmin = FUNMIN_G(f,'a',a,'b',b,'abstol',abstol,'TolX',TolX,'nlo',nlo,'nhi',nhi,'nmax',nmax)
+%   finds minimum value of function f on the interval [a,b] with a 
+%   guaranteed absolute error tolerance abstol, a guaranteed X tolerance 
+%   TolX, a lower bound of initial number of points nlo, an upper bound of 
+%   initial number of points nhi, and a cost budget nmax. All seven 
+%   field-value pairs are optional and can be supplied in different order.
 %
 %   fmin = FUNMIN_G(f,in_param) finds minimum value of function f on the
 %   interval [in_param.a,in_param.b] with a guaranteed absolute error
@@ -87,7 +86,7 @@ function [fmin,out_param]=funmin_g(varargin)
 %
 %     out_param.intervals --- the intervals containing point(s) where the
 %     minimum occurs. Each column indicates one interval where the first
-%     point is the left point and the second row is the right point.  
+%     point is the left point and the second row is the right point.
 %
 %  Guarantee
 %
@@ -227,7 +226,7 @@ function [fmin,out_param]=funmin_g(varargin)
 %   See also FUNAPPX_G, INTEGRAL_G
 %
 %  References
-%   [3]  Xin Tong. A Guaranteed, Adaptive, Automatic Algorithm for
+%   [1]  Xin Tong. A Guaranteed, Adaptive, Automatic Algorithm for
 %   Univariate Function Minimization. MS thesis, Illinois Institute of 
 %   Technology, 2014.
 % 

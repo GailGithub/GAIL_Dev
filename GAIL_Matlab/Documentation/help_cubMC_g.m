@@ -1,25 +1,28 @@
 %% cubMC_g
-% |Monte Carlo method to evaluate a multidimensional integral to
-% within a specified generalized error tolerance 
-% tolfun = max(abstol, reltol|I|) with guaranteed confidence level 1-alpha.|
+% |Monte Carlo method to evaluate a multidimensional integral.|
 %% Syntax
 % [Q,out_param] = *cubMC_g*(f,hyperbox)
 %
-% Q = *cubMC_g*(f,hyperbox,measure,abstol,reltol,alpha,fudge,nSig,n1,
+% Q = *cubMC_g*(f,hyperbox,measure,abstol,reltol,alpha,fudge,nSig,n1,tbudget,nbudget,checked)
 %
-% Q = *cubMC_g*(f,hyperbox,'measure','uniform','abstol',abstol,'reltol',
+% Q = *cubMC_g*(f,hyperbox,'measure','uniform','abstol',abstol,'reltol',reltol,'alpha',alpha,'fudge',fudge,'nSig',nSig,'n1',n1,'tbudget',tbudget,'nbudget',nbudget,'checked',checked)
 %
 % [Q out_param] = *cubMC_g*(f,hyperbox,in_param)
 %% Description
 %
 % [Q,out_param] = *cubMC_g*(f,hyperbox) estimates the integral of f over
-%  hyperbox to within a specified generalized error tolerance tolfun =
-%  max(abstol, reltol|I|) with guaranteed confidence level 99%. Input
-%  f is a function handle. The function f should accept an n x d matrix
-%  input, where d is the dimension of the hyperbox, and n is the number of
-%  points being evaluated simultaneously. The input hyperbox is a 2 x d
-%  matrix, where the first row corresponds to the lower limits and the
-%  second row corresponds to the upper limits.
+%  hyperbox to within a specified generalized error tolerance, tolfun =
+%  max(abstol, reltol*|I|), i.e., | I - Q | <= tolfun with probability at
+%  least 1-alpha, where abstol is the absolute error tolerance, and reltol
+%  is the relative error tolerance. Usually the reltol determines the
+%  accuracy of the estimation, however, if the |mu| is rather small, the
+%  abstol determines the accuracy of the estimation. The default values
+%  are abstol=1e-2, reltol=1e-1, and alpha=1%. Input f is a function
+%  handle that accepts an n x d matrix input, where d is the dimension of
+%  the hyperbox, and n is the number of points being evaluated
+%  simultaneously. The input hyperbox is a 2 x d matrix, where the first
+%  row corresponds to the lower limits and the second row corresponds to
+%  the upper limits.
 % 
 % Q = *cubMC_g*(f,hyperbox,measure,abstol,reltol,alpha,fudge,nSig,n1,
 %  tbudget,nbudget,checked) estimates the integral of function f over
@@ -29,13 +32,11 @@
 %  nbudget, checked. The input f and hyperbox are required and others are
 %  optional.
 % 
-% Q = *cubMC_g*(f,hyperbox,'measure','uniform','abstol',abstol,'reltol',
-%  reltol,'alpha',alpha,'fudge',fudge,'nSig',nSig,'n1',n1,'tbudget',
-%  tbudget,'nbudget',nbudget,'checked',checked) estimates the integral of
-%  f over hyperbox to within a specified generalized error tolerance
-%  tolfun with guaranteed confidence level 1-alpha. All the field-value
-%  pairs are optional and can be supplied in different order. If an input
-%  is not specified, the default value is used.
+% Q = *cubMC_g*(f,hyperbox,'measure','uniform','abstol',abstol,'reltol',reltol,'alpha',alpha,'fudge',fudge,'nSig',nSig,'n1',n1,'tbudget',tbudget,'nbudget',nbudget,'checked',checked)
+%  estimates the integral of f over hyperbox to within a specified 
+%  generalized error tolerance tolfun with guaranteed confidence level
+%  1-alpha. All the field-value pairs are optional and can be supplied in 
+%  different order. If an input is not specified, the default value is used.
 % 
 % [Q out_param] = *cubMC_g*(f,hyperbox,in_param) estimates the integral of
 %  f over hyperbox to within a specified generalized error tolerance
@@ -65,10 +66,12 @@
 %  default value is 1.2.|
 %
 % * in_param.nSig --- |initial sample size for estimating the sample
-%  variance, the default value is 1e4.|
-% 
+%  variance, which should be a moderate large integer at least 30, the
+%  default value is 1e4.|
+%
 % * in_param.n1 --- |initial sample size for estimating the sample mean,
-%  the default value is 1e4.|
+%  which should be a moderate large positive integer at least 30, the
+%  default value is 1e4.|
 % 
 % * in_param.tbudget --- |the time budget to do the estimation, the
 %  default value is 100 seconds.|
@@ -76,8 +79,7 @@
 % * in_param.nbudget --- |the sample budget to do the estimation, the
 %  default value is 1e9.|
 % 
-% * in_param.checked --- |the value corresponds to parameter checking
-% status.|
+% * in_param.checked --- |the value corresponds to parameter checking status.|
 %   
 %                      0   not checked
 %   
@@ -89,19 +91,19 @@
 %
 % * Q --- |the estimated value of the integral.|
 % 
-% * out_param.n --- |sample used in each iteration.|
+% * out_param.n --- |the sample size used in each iteration.|
 %
 % * out_param.ntot --- |total sample used.|
 %
 % * out_param.tau --- |the iteration step.|
 %
-% * out_param.mu --- |estimated mean in each iteration|
+% * out_param.mu --- |estimated integral in each iteration.|
 %
-% * out_param.tol --- |the tolerance for each iteration|
+% * out_param.tol --- |the reliable upper bound on error for each iteration.|
 %  
 % * out_param.kurtmax --- |the upper bound on modified kurtosis.|
 % 
-% * out_param.time --- |the time elapsed.|
+% * out_param.time --- |the time elapsed in seconds.|
 %
 % * out_param.exit --- |the state of program when exiting.|
 %   
@@ -126,7 +128,7 @@
 %                    14  hyperbox is not doubly infinite when measure
 %                        is normal
 % 
-%  Guarantee
+%%  Guarantee
 % This algorithm attempts to calculate the integral of function f over a
 % hyperbox to a prescribed error tolerance with guaranteed confidence level
 % 1-alpha. If the algorithm terminated without showing any warning messages
@@ -211,10 +213,10 @@
 % Peters, and I. H. Sloan, eds.), Springer-Verlag, Berlin, 2014, to appear,
 % arXiv:1208.4318 [math.ST]
 %
-% [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, and
-% Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library (Version
-% 1.3.0)" [MATLAB Software], 2014. Available from
-% http://code.google.com/p/gail/
+% [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
+% Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou, "GAIL:
+% Guaranteed Automatic Integration Library (Version 2.0)" [MATLAB
+% Software], 2014. Available from http://code.google.com/p/gail/
 %
 % If you find GAIL helpful in your work, please support us by citing the
 % above paper and software.

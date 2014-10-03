@@ -1,4 +1,4 @@
-%  Guarantee
+%%  Guarantee
 % This algorithm attempts to calculate the mean of a random variable to a
 % prescribed error tolerance with guaranteed confidence level 1-alpha. If
 % the algorithm terminated without showing any warning messages and provide

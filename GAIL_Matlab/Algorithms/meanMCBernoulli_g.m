@@ -14,11 +14,10 @@ function [pHat,out_param]=meanMCBernoulli_g(varargin)
 %   tolerance with guaranteed confidence level 1-alpha using all ordered
 %   parsing inputs abstol, reltol, errtype, alpha and nmax.
 % 
-%   pHat = MEANMCBERNOULLI_G(Yrand,'abstol',abstol,'reltol',reltol,
-%   'errtype',errtype,'alpha',alpha,'nmax',nmax) estimates the mean of a
-%   Bernoulli random variable Y to within a specified error tolerance with
-%   guaranteed confidence level 1-alpha. All the field-value pairs are
-%   optional and can be supplied in different order.
+%   pHat = MEANMCBERNOULLI_G(Yrand,'abstol',abstol,'reltol',reltol,'errtype',errtype,'alpha',alpha,'nmax',nmax)
+%   estimates the mean of a Bernoulli random variable Y to within a 
+%   specified error tolerance with guaranteed confidence level 1-alpha. All
+%   the field-value pairs are optional and can be supplied in different order.
 % 
 %   [pHat, out_param] = MEANMCBERNOULLI_G(Yrand,in_param) estimates the mean
 %   of a Bernoulli random variable Y to within a specified error tolerance
@@ -130,7 +129,7 @@ function [pHat,out_param]=meanMCBernoulli_g(varargin)
 %   arXiv:1208.4318 [math.ST]
 %
 %   [2] Sou-Cheng T.  Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
-%   Lluís Antoni Jiménez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
+%   Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
 %   "GAIL: Guaranteed Automatic Integration Library (Version 2.0)"
 %   [MATLAB Software], 2014. Available from
 %   http://code.google.com/p/gail/

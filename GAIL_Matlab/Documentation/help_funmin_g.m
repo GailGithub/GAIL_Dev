@@ -6,7 +6,7 @@
 %
 % fmin = *funmin_g*(f,a,b,abstol,TolX,nlo,nhi,nmax)
 %
-% fmin = *funmin_g*(f,'a',a,'b',b,'abstol',abstol,'TolX',TolX,'nlo',nlo,
+% fmin = *funmin_g*(f,'a',a,'b',b,'abstol',abstol,'TolX',TolX,'nlo',nlo,'nhi',nhi,'nmax',nmax)
 %
 % fmin = *funmin_g*(f,in_param)
 %
@@ -25,13 +25,12 @@
 %  nlo, an upper bound of initial number of points nhi, and a cost budget
 %  nmax.
 %
-% fmin = *funmin_g*(f,'a',a,'b',b,'abstol',abstol,'TolX',TolX,'nlo',nlo,
-%  'nhi',nhi,'nmax',nmax) finds minimum value of function f on the
-%  interval [a,b] with a guaranteed absolute error tolerance abstol, a
-%  guaranteed X tolerance TolX, a lower bound of initial number of points
-%  nlo, an upper bound of initial number of points nhi, and a cost budget
-%  nmax. All seven field-value pairs are optional and can be supplied in
-%  different order.
+% fmin = *funmin_g*(f,'a',a,'b',b,'abstol',abstol,'TolX',TolX,'nlo',nlo,'nhi',nhi,'nmax',nmax)
+%  finds minimum value of function f on the interval [a,b] with a 
+%  guaranteed absolute error tolerance abstol, a guaranteed X tolerance 
+%  TolX, a lower bound of initial number of points nlo, an upper bound of 
+%  initial number of points nhi, and a cost budget nmax. All seven 
+%  field-value pairs are optional and can be supplied in different order.
 %
 % fmin = *funmin_g*(f,in_param) finds minimum value of function f on the
 %  interval [in_param.a,in_param.b] with a guaranteed absolute error
@@ -82,8 +81,8 @@
 %
 % * out_param.tau --- |latest value of tau|
 %
-% * out_param.exceedbudget --- |0 if the number of points used is less
-%  than the cost budget; 1, otherwise.|
+% * out_param.exceedbudget --- |0 if the number of points used in
+%  estimationg fmin is less than the cost budget; 1, otherwise.|
 %
 % * out_param.npoints --- |number of points needed to reach the guaranteed
 %  absolute error tolerance or the guaranteed X tolerance|
@@ -93,12 +92,12 @@
 % * out_param.volumeX --- |the volume of intervals containing the point(s)
 %  where the minimum occurs|
 %
-% * out_param.tauchange --- |it is 1 if tau is too small, and the
-%  algorithm has used a larger tau.|
+% * out_param.tauchange --- |it is 1 if out_param.tau changes, otherwise
+%  it is 0|
 %
 % * out_param.intervals --- |the intervals containing point(s) where the
 %  minimum occurs. Each column indicates one interval where the first
-%  row is the left point and the second row is the right point.  |
+%  point is the left point and the second row is the right point.|
 %
 %% Guarantee
 %    
@@ -159,7 +158,6 @@ f=@(x) (x-0.3).^2+1;
 % Minimize function (x-0.3)^2+1 on [-2,2] with error tolerence 1e-4, X
 % tolerance 1e-2, cost budget 1000000, lower bound of initial number of
 % points 10 and upper bound of initial number of points 100
-
 %% See Also
 %
 % <html>
@@ -171,18 +169,14 @@ f=@(x) (x-0.3).^2+1;
 % </html>
 %
 %% References
-% [1]  Nicholas Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell,
-% and Yizhi Zhang. The Cost of Deterministic, Adaptive, Automatic
-% Algorithms: Cones, Not Balls. Journal of Complexity, 30:21-45, 2014
-%
+% [1]  Xin Tong. A Guaranteed, Adaptive, Automatic Algorithm for
+% Univariate Function Minimization. MS thesis, Illinois Institute of 
+% Technology, 2014.
+% 
 % [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
-% and Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library
-% (Version 1.3.0)" [MATLAB Software], 2014. Available from
-% http://code.google.com/p/gail/
-%
-% [3]  Xin Tong. A Guaranteed, Adaptive, Automatic Algorithm for
-% Univariate Function Minimization. 2014
+% Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou, 
+% "GAIL: Guaranteed Automatic Integration Library (Version 2.0)"
+% [MATLAB Software], 2014. Available from http://code.google.com/p/gail/
 %
 % If you find GAIL helpful in your work, please support us by citing
 % the above paper and software.
-%

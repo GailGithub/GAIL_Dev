@@ -1,4 +1,4 @@
-%  Guarantee
+%%  Guarantee
 %
 % Case 1: errtype = 'abs'
 %
