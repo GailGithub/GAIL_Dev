@@ -3,43 +3,50 @@
 %clear all;close all;clc;
 format long
 in_param.measure  = 'uniform';
-disp(horzcat('Dim  ', ' FcnIdx ',  ' Q            f_true         Error')); 
-disp(        '------------------------------------------------------------');
-for dim=1:4
+disp(horzcat('Dim  ', ' FcnIdx ',  '      Q    ','        f_true     ',...
+    '        Error      ','      Sample Used    ', '    status  ')); 
+disp(        '----------------------------------------------------------------------------------------------');
+for dim=1:8
   in_param.dim =dim;%the function dimension
-  startingpoint = zeros(1,in_param.dim);
-  endingpoint = ones(1,in_param.dim);
+  startingpoint = zeros(1,in_param.dim);%the lower limits of the integral
+  endingpoint = ones(1,in_param.dim);%the upper limits of the integral
   hyperbox = [startingpoint;endingpoint];% the integration interval
   in_param.abstol = 1e-3;% the absolute tolerance
-  in_param.reltol = 1e-2;% the relative tolerance
+  in_param.reltol = 1e-3;% the relative tolerance
   in_param.alpha = 1e-2;% the uncertainty
   in_param.nSig = 1e4;% the sample size to estimate sigma
   in_param.n1 = 1e4;% the initial sample size to estimate Q
-  in_param.fudge =1.1;% standard deviation inflation factor
+  in_param.fudge =1.2;% standard deviation inflation factor
   in_param.timebudget = 300;% time budget
   in_param.nbudget = 1e10;% sample budget
-  alpha = ones(1,in_param.dim); 
+  alpha = ones(1,in_param.dim);
   beta = 1./ (1:in_param.dim); 
-  r=2;
-  % three coefficients in genz_test_fun and genz_test_fun_true
-  for index=1:7
+  r=2; % three coefficients in genz_test_fun and genz_test_fun_true
+  for index=1:7 % index refers to different integrands in genz_test_fun
     test_function = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
+    % the test function
     f_true = genz_test_fun_true (hyperbox,index,in_param.dim,alpha,beta,r);
-    % true solution
-    [Q,out_param]=cubMC_g(test_function,hyperbox,in_param);% the results using cubMC_g
-    abserr = abs(Q-f_true);
-    relerr = abs((Q-f_true)/f_true);
+    % true integral of the test function
+    [Q,out_param]=cubMC_g(test_function,hyperbox,in_param);
+    % the results by using cubMC_g
+    abserr = abs(Q-f_true);% the absolute error
+    relerr = abs((Q-f_true)/f_true);% the relative error
     numstr=horzcat(num2str(dim), '     ', num2str(index), '       ',...
-        num2str(Q), '       ', num2str(f_true),'       ', num2str(abserr));
+        num2str(Q,'%10.5e'), '       ', num2str(f_true,'%10.5e'),...
+        '       ', num2str(abserr,'%10.5e'),...
+        '         ', num2str(out_param.ntot));
+    % print the results
     if abserr > in_param.abstol && relerr > in_param.reltol,
-        % if error does not meet tolerance, mark it
-      disp([numstr,'     botherrexceed']);
+    %if both absolute error and relative error does not meet tolerance
+      disp([numstr,'     BothErrExceed']);% mark it as "both err exceed"
     elseif abserr < in_param.abstol && relerr > in_param.reltol,
-        disp([numstr,'     relerrexceed']);
+        % if only relative error does not meet the tolerance
+        disp([numstr,'     RelErrExceed']);% mark it as "rel err exceed"
     elseif abserr > in_param.abstol && relerr < in_param.reltol,
-        disp([numstr,'     abstolexceed']);
+        %if only the absolute error does not meet the tolerance
+        disp([numstr,'     AbsErrExceed  ']);% mark it as "abs err exceed"
     else
-      disp([numstr,'     ok']);
+      disp([numstr,'             OK']);% otherwise disp "OK"
     end
   end
 end
