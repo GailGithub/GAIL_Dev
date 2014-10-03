@@ -44,10 +44,10 @@ function [mu,out_param]=meanMCabs_g(varargin)
 %     in_param.alpha --- the uncertainty, default value is 1%.
 % 
 %     in_param.n_sigma --- initial sample size for estimating the sample
-%     variance, the default value is 1e3.
+%     variance, the default value is 1e4.
 % 
 %     in_param.fudge --- the standard deviation inflation factor, the default
-%     value is 1.1.
+%     value is 1.2.
 % 
 %     in_param.tbudget --- the time budget to do the two-stage estimation,
 %     the default value is 100 seconds.
@@ -139,7 +139,7 @@ function [mu,out_param]=meanMCabs_g(varargin)
 % mu = 0.3***
 % 
 % 
-%   See also FUNAPPX_G, INTEGRAL_G, CUBMC_G
+%   See also FUNAPPX_G, INTEGRAL_G, CUBMCABS_G
 %
 %  References
 %
@@ -168,6 +168,7 @@ nsofar = nsofar + ntry;%the sample size has been used so far
 tic;
 Yrand(ntry);
 timetry = toc; %count the time elapsed to do ntry samples
+out_param.exit = 0;%assume success until finding error
 while true
     timeleft = out_param.tbudget - toc(tstart);%update the time budget.
     out_param.n_left_predict = floor(timeleft*ntry/timetry);
@@ -301,8 +302,8 @@ function  [Yrand,out_param] = meanMCabs_g_param(varargin)
 default.tbudget = 100;% default time budget
 default.nbudget = 1e8; % default sample budget
 default.abstol  = 1e-2;% default absolute error tolerance
-default.n_sigma = 1e3;% default initial sample size n_sigma
-default.fudge = 1.1;% default fudge factor
+default.n_sigma = 1e4;% default initial sample size n_sigma
+default.fudge = 1.2;% default fudge factor
 default.alpha = 0.01;% default uncertainty
 default.npcmax = 1e6;% default n piece maximum
 default.checked = 0;% default value of parameter checking status

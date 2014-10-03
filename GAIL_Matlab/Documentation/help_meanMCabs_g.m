@@ -61,10 +61,10 @@
 % * in_param.alpha --- |the uncertainty, default value is 1%.|
 %
 % * in_param.n_sigma --- |initial sample size for estimating the sample
-%   variance, the default value is 1e3.|
+%   variance, the default value is 1e4.|
 %
 % * in_param.fudge --- |the standard deviation inflation factor, the
-% default value is 1.1.|
+% default value is 1.2.|
 %
 % * in_param.tbudget --- |the time budget to do the two-stage
 %   estimation, the default value is 100 seconds.|
@@ -190,7 +190,7 @@ mu = meanMCabs_g(Yrand,'abstol',1e-3,'alpha',0.01)
 % </html>
 %
 % <html>
-% <a href="help_cubMCabs_g.html">cubMC_g</a>
+% <a href="help_cubMCabs_g.html">cubMCabs_g</a>
 % </html>
 %
 %% References
