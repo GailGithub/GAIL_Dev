@@ -1,6 +1,6 @@
 function [q,out_param] = cubSobol_g(varargin)
 %CUBSOBOL_G is a Quasi-Monte Carlo method using Sobol' cubature over the
-%d-multidimensional region to integrate within a specified absolute error 
+%d-dimensional region to integrate within a specified absolute error 
 %tolerance with guarantees under Walsh-Fourier coefficients cone decay assumptions.
 %
 %   [q,out_param] = CUBSOBOL_G(f,d) estimates the integral of f over the
@@ -12,14 +12,14 @@ function [q,out_param] = cubSobol_g(varargin)
 %   construction of Sobol', d must be a positive integer with 1<=d<=1111.
 %
 %   q = CUBSOBOL_G(f,d,abstol,density,mmin,mmax,fudge)
-%   estimates the integral of f over the d-dimensional region. The answer
+%   estimates the integral of f over a d-dimensional region. The answer
 %   is given within the absolute error tolerance abstol. All parameters
 %   should be input in the order specified above. If an input is not specified,
 %   the default value is used. Note that if an input is not specified,
 %   the remaining tail can not be specified either.
 %
 %   q = CUBSOBOL_G(f,d,'abstol',abstol,'density',density,'mmin',mmin,'mmax',mmax,'fudge',fudge)
-%   estimates the integral of f over the d-dimensional region. The answer
+%   estimates the integral of f over a d-dimensional region. The answer
 %   is given within the absolute error tolerance abstol. All the field-value
 %   pairs are optional and can be supplied with any order. If an input is not
 %   specified, the default value is used.
@@ -30,21 +30,24 @@ function [q,out_param] = cubSobol_g(varargin)
 % 
 %   Input Arguments
 %
-%     f --- the integrand whose input should be a matrix mxd where m is the
-%     number of data points and d the dimension.
+%     f --- the integrand whose input should be a matrix nxd where n is the
+%     number of data points and d the dimension. By default it is the
+%     quadratic function.
 %
-%     d --- dimension where f is defined. d must be a positive integer 1<=d<=1111.
+%     d --- dimension of domain on which f is defined. d must be a positive
+%     integer 1<=d<=1111. By default it is 1.
 %
-%     in_param.abstol --- the absolute error tolerance, abstol>0. By default is 1e-4. 
+%     in_param.abstol --- the absolute error tolerance, abstol>0. By 
+%     default it is 1e-4. 
 %
-%     in_param.density --- for f(x), we can define x uniform in [0,1)^d or
-%     normally distributed with covariance matrix I_d. By default is
+%     in_param.density --- for f(x), we can define x uniformly in [0,1)^d or
+%     normally distributed with covariance matrix I_d. By default it is
 %     'uniform'. The only possible values are 'uniform' or 'normal'.
 %
 %     in_param.mmin --- the minimum number of points to start is 2^mmin. The
 %     cone condition on the Fourier coefficients decay requires a minimum
 %     number of points to start. The advice is to consider at least mmin=10.
-%     mmin needs to be a positive integer with mmin<=mmax. By default is 10.
+%     mmin needs to be a positive integer with mmin<=mmax. By default it is 10.
 %
 %     in_param.mmax --- the maximum budget is 2^mmax. By construction of the
 %     Sobol' generator, mmax is a positive integer such that mmin<=mmax<=53.
@@ -53,7 +56,7 @@ function [q,out_param] = cubSobol_g(varargin)
 %     in_param.fudge --- the positive function multiplying the finite 
 %     sum of Fast Walsh coefficients specified in the cone of functions.
 %     For more information about this parameter, refer to the references.
-%     By default is @(x) 5*2^-x.
+%     By default it is @(x) 5*2^-x.
 %
 %   Output Arguments
 %
@@ -69,7 +72,7 @@ function [q,out_param] = cubSobol_g(varargin)
 %     condition. If the function lies in the cone, the real error should be
 %     smaller than this predicted error.
 %
-%     out_param.time --- time elapsed when calling cubSobol_g for f.
+%     out_param.time --- time elapsed in seconds when calling cubSobol_g for f.
 % 
 %  Guarantee
 % This algorithm computes the integral of real valued functions in [0,1)^d 
@@ -118,8 +121,8 @@ function [q,out_param] = cubSobol_g(varargin)
 % 
 %  References
 %
-%   [1] Hickernell, F.J., Jimenez Rugama, Ll.A.: Reliable adaptive cubature
-%   using digital sequences (2014). In preparation.
+%   [1] Fred J. Hickernell and Lluis Antoni Jimenez Rugama: Reliable adaptive
+%   cubature using digital sequences (2014).
 %
 %   [2] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang,
 %   Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
@@ -270,7 +273,7 @@ default.fudge = @(x) 5*2^-x;
 if numel(varargin)<2
     help cubSobol_g
     warning('MATLAB:cubSobol_g:fdnotgiven',...
-        ['At least, function f and dimension d need to be specified. Example for f(x)=x^2:'])
+        'At least, function f and dimension d need to be specified. Example for f(x)=x^2:')
     f = @(x) x.^2;
     out_param.f=f;
     out_param.d=1;
@@ -278,16 +281,16 @@ else
     f = varargin{1};
     if ~gail.isfcn(f)
         warning('MATLAB:cubSobol_g:fnotfcn',...
-            ['The given input f was not a function. Example for f(x)=x^2:'])
+            'The given input f was not a function. Example for f(x)=x^2:')
         f = @(x) x.^2;
         out_param.f=f;
         out_param.d=1;
     else
         out_param.f=f;
         d = varargin{2};
-        if ~isnumeric(d) || ~gail.isposint(d)
+        if ~isnumeric(d) || ~gail.isposint(d) || ~(d<101)
             warning('MATLAB:cubSobol_g:dnotposint',...
-                ['The dimension d of f must be a positive integer. Example for f(x)=x^2:'])
+                'The dimension d must be a positive integer less than 101. Example for f(x)=x^2:')
             f = @(x) x.^2;
             out_param.f=f;
             out_param.d=1;
@@ -305,14 +308,12 @@ if validvarargin
         || ischar(in3{j}) || isstruct(in3{j}) || gail.isfcn(in3{j}));
     end
     if ~validvarargin
-        warning('MATLAB:cubSobol_g:validvarargin',['Optional parameters must be numeric or strings. We will use the default optional parameters.'])
+        warning('MATLAB:cubSobol_g:validvarargin','Optional parameters must be numeric or strings. We will use the default optional parameters.')
     end
     in3=varargin{3};
 end
 
-if ~validvarargin
-    % If we do not have all the parameters or some optional parameters are
-    % wrongly defined, we take the default options.    
+if ~validvarargin   
     out_param.abstol = default.abstol;
     out_param.density = default.density;
     out_param.mmin = default.mmin;
@@ -356,19 +357,20 @@ end
 % Force density to be uniform or normal only
 if ~(strcmp(out_param.density,'uniform') || strcmp(out_param.density,'normal') )
     warning('MATLAB:cubSobol_g:notdensity',['The density can only be uniform or normal.' ...
-            ' Using default error tolerance ' num2str(default.density)])
+            ' Using default density ' num2str(default.density)])
     out_param.density = default.density;
 end
 
 % Force mmin to be integer greater than 0
-if (out_param.mmin < 1 || ~gail.isposint(out_param.mmin))
-    warning('MATLAB:cubSobol_g:lowmmin',['The minimum starting exponent should be an integer greater or equal than 1.' ...
+if (~gail.isposint(out_param.mmin) || ~(out_param.mmin < out_param.mmax+1))
+    warning('MATLAB:cubSobol_g:lowmmin',['The minimum starting exponent ' ...
+            'should be an integer greater than 0 and smaller or equal than the maxium.' ...
             ' Using default mmin ' num2str(default.mmin)])
     out_param.mmin = default.mmin;
 end
 
-% Force exponent budget number of points be a positive integer greater or equal than
-% mmin an smaller than 54
+% Force exponent budget number of points be a positive integer greater than
+% or equal to mmin an smaller than 54
 if ~(gail.isposint(out_param.mmax) && out_param.mmax>=out_param.mmin && out_param.mmax<=53)
     warning('MATLAB:cubSobol_g:wrongmmax',['The maximum exponent for the budget should be an integer smaller or equal to 53.' ...
             ' Using default mmax ' num2str(default.mmax)])
@@ -376,9 +378,9 @@ if ~(gail.isposint(out_param.mmax) && out_param.mmax>=out_param.mmin && out_para
 end
 
 % Force fudge factor to be greater than 0
-if ~gail.isfcn(out_param.fudge)
+if ~((gail.isfcn(out_param.fudge) && (out_param.fudge(1)>0)))
     warning('MATLAB:cubSobol_g:fudgenofcn',['The fudge factor should be a positve function.' ...
-            ' Using default fudge factor ' num2str(default.fudge)])
+            ' Using default fudge factor ' func2str(default.fudge)])
     out_param.fudge = default.fudge;
 end
 end

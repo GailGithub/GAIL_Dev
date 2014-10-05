@@ -1,6 +1,6 @@
 function [q,out_param] = cubLattice_g(varargin)
 %CUBLATTICE_G is a Quasi-Monte Carlo method using rank-1 Lattices cubature
-%over the d-multidimensional region to integrate within a specified absolute error 
+%over a d-dimensional region to integrate within a specified absolute error 
 %tolerance with guarantees under Fourier coefficients cone decay assumptions.
 %
 %   [q,out_param] = CUBLATTICE_G(f,d) estimates the integral of f over the
@@ -11,15 +11,15 @@ function [q,out_param] = cubLattice_g(varargin)
 %   is the dimension in which the function f is defined. Given the
 %   construction of our Lattices, d must be a positive integer with 1<=d<=100.
 % 
-%   q = CUBLATTICE_G(f,d,abstol,density,shift,mmin,mmax,fudge,diff)
-%   estimates the integral of f over the d-dimensional region. The answer
+%   q = CUBLATTICE_G(f,d,abstol,density,shift,mmin,mmax,fudge,transform)
+%   estimates the integral of f over a d-dimensional region. The answer
 %   is given within the absolute error tolerance abstol. All parameters
 %   should be input in the order specified above. If an input is not specified,
 %   the default value is used. Note that if an input is not specified,
 %   the remaining tail can not be specified either.
 % 
-%   q = CUBLATTICE_G(f,d,'abstol',abstol,'density',density,'shift',shift,'mmin',mmin,'mmax',mmax,'fudge',fudge,'diff',diff)
-%   estimates the integral of f over the d-dimensional region. The answer
+%   q = CUBLATTICE_G(f,d,'abstol',abstol,'density',density,'shift',shift,'mmin',mmin,'mmax',mmax,'fudge',fudge,'transform',transform)
+%   estimates the integral of f over a d-dimensional region. The answer
 %   is given within the absolute error tolerance abstol. All the field-value
 %   pairs are optional and can be supplied with any order. If an input is not
 %   specified, the default value is used.
@@ -30,37 +30,41 @@ function [q,out_param] = cubLattice_g(varargin)
 % 
 %   Input Arguments
 %
-%     f --- the integrand whose input should be a matrix mxd where m is the
-%     number of data points and d the dimension.
+%     f --- the integrand whose input should be a matrix nxd where n is the
+%     number of data points and d the dimension. By default it is the
+%     quadratic function.
 % 
-%     d --- dimension where f is defined. d must be a positive integer 1<=d<=100.
+%     d --- dimension of domain on which f is defined. d must be a positive
+%     integer 1<=d<=100. By default it is 1.
 % 
-%     in_param.abstol --- the absolute error tolerance, abstol>0. By default is 1e-4. 
+%     in_param.abstol --- the absolute error tolerance, abstol>0. By 
+%     default it is 1e-4. 
 % 
 %     in_param.density --- for f(x), we can define x uniformly in [0,1)^d or
-%     normally distributed with covariance matrix I_d. By default is
+%     normally distributed with covariance matrix I_d. By default it is
 %     'uniform'. The only possible values are 'uniform' or 'normal'.
 % 
 %     in_param.shift --- the Rank-1 lattices can be shifted to avoid the origin
-%     or other particular points. By default we consider a uniformily random shift.
+%     or other particular points. By default we consider a uniformly [0,1)
+%     random shift.
 % 
 %     in_param.mmin --- the minimum number of points to start is 2^mmin. The
 %     cone condition on the Fourier coefficients decay requires a minimum
 %     number of points to start. The advice is to consider at least mmin=10.
-%     mmin needs to be a positive integer with mmin<=mmax. By default is 10.
+%     mmin needs to be a positive integer with mmin<=mmax. By default it is 10.
 % 
 %     in_param.mmax --- the maximum budget is 2^mmax. By construction of our
 %     Lattices generator, mmax is a positive integer such that mmin<=mmax<=27.
-%     The default value is 24.
+%     The default value is 20.
 % 
 %     in_param.fudge --- the positive function multiplying the finite 
 %     sum of Fast Fourier coefficients specified in the cone of functions.
 %     For more information about this parameter, refer to the references.
-%     By default is @(x) 5*2^-x.
+%     By default it is @(x) 5*2^-x.
 % 
-%     in_param.diff --- the algorithm is defined for continuous periodic functions. If the
+%     in_param.transform --- the algorithm is defined for continuous periodic functions. If the
 %     input function f is not, there are 5 types of transform to periodize it
-%     without modifying the result. By default is Baker. The options:
+%     without modifying the result. By default it is Baker. The options:
 %       'id' : no transformation. Choice by default.
 %       'Baker' : Baker's transform or tent map in each coordinate. Preserving
 %                 only continuity but simple to compute.
@@ -83,7 +87,7 @@ function [q,out_param] = cubLattice_g(varargin)
 %     condition. If the function lies in the cone, the real error should be
 %     smaller than this predicted error.
 % 
-%     out_param.time --- time elapsed when calling cubLattice_g for f.
+%     out_param.time --- time elapsed in seconds when calling cubLattice_g for f.
 % 
 %  Guarantee
 % This algorithm computes the integral of real valued functions in [0,1)^d 
@@ -100,7 +104,7 @@ function [q,out_param] = cubLattice_g(varargin)
 % Example 1:
 % Estimate the integral with integrand f(x) = x1.*x2 in the interval [0,1)^2:
 % 
-% >> f=@(x) x(:,1).*x(:,2); d=2; q = cubLattice_g(f,d,1e-5,'uniform','diff','C1sin')
+% >> f=@(x) x(:,1).*x(:,2); d=2; q = cubLattice_g(f,d,1e-5,'uniform','transform','C1sin')
 % q = 0.25***
 % 
 % 
@@ -108,7 +112,7 @@ function [q,out_param] = cubLattice_g(varargin)
 % Estimate the integral with integrand f(x) = x1.^2.*x2.^2.*x3.^2+0.11
 % in the interval R^3 where x1, x2 and x3 are normally distributed:
 % 
-% >> f=@(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2+0.11; d=3; q = cubLattice_g(f,d,1e-3,'normal','diff','C1sin')
+% >> f=@(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2+0.11; d=3; q = cubLattice_g(f,d,1e-3,'normal','transform','C1sin')
 % q = 1.1***
 % 
 % 
@@ -116,7 +120,7 @@ function [q,out_param] = cubLattice_g(varargin)
 % Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) in the
 % interval [0,1)^2:
 % 
-% >> f=@(x) exp(-x(:,1).^2-x(:,2).^2); d=2; q = cubLattice_g(f,d,1e-3,'uniform','diff','C1')
+% >> f=@(x) exp(-x(:,1).^2-x(:,2).^2); d=2; q = cubLattice_g(f,d,1e-3,'uniform','transform','C1')
 % q = 0.55***
 %
 %
@@ -124,7 +128,7 @@ function [q,out_param] = cubLattice_g(varargin)
 % Estimate the price of an European call with S0=100, K=100, r=sigma^2/2,
 % sigma=0.05 and T=1.
 % 
-% >> f=@(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); d=1; q = cubLattice_g(f,d,1e-4,'normal','fudge',@(x) 2^-(2*x),'diff','C1sin')
+% >> f=@(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); d=1; q = cubLattice_g(f,d,1e-4,'normal','fudge',@(x) 2^-(2*x),'transform','C1sin')
 % q = 2.05***
 %
 %
@@ -132,8 +136,8 @@ function [q,out_param] = cubLattice_g(varargin)
 % 
 %  References
 %
-%   [1] Jimenez Rugama, Ll.A., Hickernell, F.J.: Adaptive Multidimensional
-%   Integration Based on Rank-1 Lattices (2014). In preparation.
+%   [1] Lluis Antoni Jimenez Rugama and Fred J. Hickernell: Adaptive Multidimensional
+%   Integration Based on Rank-1 Lattices (2014).
 %
 %   [2] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang,
 %   Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
@@ -151,13 +155,13 @@ tic
 if strcmp(out_param.density,'normal')
    f=@(x) f(gail.stdnorminv(x));
 end
-if strcmp(out_param.diff,'Baker')
+if strcmp(out_param.transform,'Baker')
     f=@(x) f(1-2*abs(x-1/2)); % Baker's transform
-elseif strcmp(out_param.diff,'C0')
+elseif strcmp(out_param.transform,'C0')
     f=@(x) f(3*x.^2-2*x.^3).*prod(6*x.*(1-x),2); % C^0 transform
-elseif strcmp(out_param.diff,'C1')
+elseif strcmp(out_param.transform,'C1')
     f=@(x) f(x.^3.*(10-15*x+6*x.^2)).*prod(30*x.^2.*(1-x).^2,2); % C^1 transform
-elseif strcmp(out_param.diff,'C1sin')
+elseif strcmp(out_param.transform,'C1sin')
     f=@(x) f(x-sin(2*pi*x)/(2*pi)).*prod(1-cos(2*pi*x),2); % Sidi C^1 transform
 end
 
@@ -294,12 +298,12 @@ default.shift  = rand;
 default.mmin  = 10;
 default.mmax  = 20;
 default.fudge = @(x) 5*2^-x;
-default.diff = 'Baker';
+default.transform = 'Baker';
 
 if numel(varargin)<2
     help cubLattice_g
     warning('MATLAB:cubLattice_g:fdnotgiven',...
-        ['At least, function f and dimension d need to be specified. Example for f(x)=x^2:'])
+        'At least, function f and dimension d need to be specified. Example for f(x)=x^2:')
     f = @(x) x.^2;
     out_param.f=f;
     out_param.d=1;
@@ -307,16 +311,16 @@ else
     f = varargin{1};
     if ~gail.isfcn(f)
         warning('MATLAB:cubLattice_g:fnotfcn',...
-            ['The given input f was not a function. Example for f(x)=x^2:'])
+            'The given input f was not a function. Example for f(x)=x^2:')
         f = @(x) x.^2;
         out_param.f=f;
         out_param.d=1;
     else
         out_param.f=f;
         d = varargin{2};
-        if ~isnumeric(d) || ~gail.isposint(d)
+        if ~isnumeric(d) || ~gail.isposint(d) || ~(d<101)
             warning('MATLAB:cubLattice_g:dnotposint',...
-                ['The dimension d of f must be a positive integer. Example for f(x)=x^2:'])
+                'The dimension d must be a positive integer less than 101. Example for f(x)=x^2:')
             f = @(x) x.^2;
             out_param.f=f;
             out_param.d=1;
@@ -324,7 +328,7 @@ else
         out_param.d=d;
         end
     end
-end;
+end
 
 validvarargin=numel(varargin)>2;
 if validvarargin
@@ -334,21 +338,19 @@ if validvarargin
         || ischar(in3{j}) || isstruct(in3{j}) || gail.isfcn(in3{j}));
     end
     if ~validvarargin
-        warning('MATLAB:cubLattice_g:validvarargin',['Optional parameters must be numeric or strings. We will use the default optional parameters.'])
+        warning('MATLAB:cubLattice_g:validvarargin','Optional parameters must be numeric or strings. We will use the default optional parameters.')
     end
     in3=varargin{3};
 end
 
 if ~validvarargin
-    % If we do not have all the parameters or some optional parameters are
-    % wrongly defined, we take the default options.
     out_param.abstol = default.abstol;
     out_param.density = default.density;
     out_param.shift = default.shift;
     out_param.mmin = default.mmin;
     out_param.mmax = default.mmax;  
     out_param.fudge = default.fudge;
-    out_param.diff = default.diff;
+    out_param.transform = default.transform;
 else
     p = inputParser;
     addRequired(p,'f',@gail.isfcn);
@@ -362,7 +364,7 @@ else
         addOptional(p,'mmin',default.mmin,@isnumeric);
         addOptional(p,'mmax',default.mmax,@isnumeric);
         addOptional(p,'fudge',default.fudge,@gail.isfcn);
-        addOptional(p,'diff',default.diff,...
+        addOptional(p,'transform',default.transform,...
             @(x) any(validatestring(x, {'id','Baker','C0','C1','C1sin'})));
     else
         if isstruct(in3) %parse input structure
@@ -376,10 +378,10 @@ else
         addParamValue(p,'mmin',default.mmin,@isnumeric);
         addParamValue(p,'mmax',default.mmax,@isnumeric);
         addParamValue(p,'fudge',default.fudge,@gail.isfcn);
-        addParamValue(p,'diff',default.diff,...
+        addParamValue(p,'transform',default.transform,...
             @(x) any(validatestring(x, {'id','Baker','C0','C1','C1sin'})));
     end
-    parse(p,f,d,varargin{3:end})
+    parse(p,f,d,varargin{3:end});
     out_param = p.Results;
 end;
 
@@ -393,19 +395,20 @@ end
 % Force density to be uniform or normal only
 if ~(strcmp(out_param.density,'uniform') || strcmp(out_param.density,'normal') )
     warning('MATLAB:cubLattice_g:notdensity',['The density can only be uniform or normal.' ...
-            ' Using default error tolerance ' num2str(default.density)])
+            ' Using default density ' num2str(default.density)])
     out_param.density = default.density;
 end
 
 % Force mmin to be integer greater than 0
-if (out_param.mmin < 1 || ~gail.isposint(out_param.mmin))
-    warning('MATLAB:cubLattice_g:lowmmin',['The minimum starting exponent should be an integer greater or equal than 1.' ...
+if (~gail.isposint(out_param.mmin) || ~(out_param.mmin < out_param.mmax+1))
+    warning('MATLAB:cubLattice_g:lowmmin',['The minimum starting exponent ' ...
+            'should be an integer greater than 0 and smaller or equal than the maxium.' ...
             ' Using default mmin ' num2str(default.mmin)])
     out_param.mmin = default.mmin;
 end
 
-% Force exponent budget number of points be a positive integer greater or equal than
-% mmin an smaller than 28
+% Force exponent budget number of points be a positive integer greater than
+% or equal to mmin an smaller than 28
 if ~(gail.isposint(out_param.mmax) && out_param.mmax>=out_param.mmin && out_param.mmax<=27)
     warning('MATLAB:cubLattice_g:wrongmmax',['The maximum exponent for the budget should be an integer smaller or equal to 27.' ...
             ' Using default mmax ' num2str(default.mmax)])
@@ -413,17 +416,17 @@ if ~(gail.isposint(out_param.mmax) && out_param.mmax>=out_param.mmin && out_para
 end
 
 % Force fudge factor to be greater than 0
-if ~gail.isfcn(out_param.fudge)
-    warning('MATLAB:cubLattice_g:fudgenonpos',['The fudge factor should be greater than 0.' ...
-            ' Using default fudge factor ' num2str(default.fudge)])
+if ~((gail.isfcn(out_param.fudge) && (out_param.fudge(1)>0)))
+    warning('MATLAB:cubLattice_g:fudgenonpos',['The fudge factor should be a positive function.' ...
+            ' Using default fudge factor ' func2str(default.fudge)])
     out_param.fudge = default.fudge;
 end
 
-% Force diff to only be id, Baker, C0, C1 or C1sin
-if ~(strcmp(out_param.diff,'id') || strcmp(out_param.diff,'Baker') || strcmp(out_param.diff,'C0') || strcmp(out_param.diff,'C1') || strcmp(out_param.diff,'C1sin') )
+% Force transform to only be id, Baker, C0, C1 or C1sin
+if ~(strcmp(out_param.transform,'id') || strcmp(out_param.transform,'Baker') || strcmp(out_param.transform,'C0') || strcmp(out_param.transform,'C1') || strcmp(out_param.transform,'C1sin') )
     warning('MATLAB:cubLattice_g:notdensity',['The periodizing transformations can only be id, Baker, C0, C1 or C1sin.' ...
-            ' Using default error tolerance ' num2str(default.diff)])
-    out_param.diff = default.diff;
+            ' Using default error tolerance ' num2str(default.transform)])
+    out_param.transform = default.transform;
 end
 end
 
