@@ -115,6 +115,48 @@ classdef ut_funmin_g < matlab.unittest.TestCase
             testCase.verifyLessThan(testflag,1);
             testCase.verifyLessThanOrEqual(result.volumeX,in_param.TolX);
             testCase.verifyLessThanOrEqual(result.npoints,in_param.nmax);
+        end
+        
+        function funmin_gEXM6(testCase)
+            in_param.abstol = 0; 
+            in_param.TolX = 10^(-4);
+            in_param.nmax = 10^7; 
+            in_param.a = -5;
+            in_param.b = 5;
+            f=@(x) sin(pi*x);
+            exactsolu1 = -4.5;
+            exactsolu2 = -2.5;
+            exactsolu3 = -0.5;
+            exactsolu4 = 1.5;
+            exactsolu5 = 3.5;
+            [fmin, result] = funmin_g(f,in_param); 
+            intnum = size(result.intervals,2);
+            testflag = ones(5,1);
+            for k=1:intnum
+                if exactsolu1 <= result.intervals(2,k) && exactsolu1 >= ...
+                        result.intervals(1,k)
+                 testflag(1) = 0;
+                end
+                if exactsolu2 <= result.intervals(2,k) && exactsolu2 >= ...
+                        result.intervals(1,k)
+                 testflag(2) = 0;
+                end
+                if exactsolu3 <= result.intervals(2,k) && exactsolu3 >= ...
+                        result.intervals(1,k)
+                 testflag(3) = 0;
+                end
+                if exactsolu4 <= result.intervals(2,k) && exactsolu4 >= ...
+                        result.intervals(1,k)
+                 testflag(4) = 0;
+                end
+                if exactsolu5 <= result.intervals(2,k) && exactsolu5 >= ...
+                        result.intervals(1,k)
+                 testflag(5) = 0;
+                end
+            end
+            testCase.verifyEqual(sum(testflag),0);
+            testCase.verifyLessThanOrEqual(result.volumeX,in_param.TolX);
+            testCase.verifyLessThanOrEqual(result.npoints,in_param.nmax);
         end  
         
   end
