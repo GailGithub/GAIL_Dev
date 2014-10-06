@@ -11,8 +11,8 @@ cd /home/lantoni/GAIL_tests/repo/gail-development/
 # Set the directory for running our matlab test
 # Run the file that installs GAIL and run the tests. The output files are in OutputFiles. We put all togehter since there is a permission not letting us install the path
 cd /home/lantoni/GAIL_tests/repo/gail-development/GAIL_Matlab/Tests/automatic_tests/
-# /export/apps/matlab/R2013a/bin/matlab -nojvm < tautomatic.m > /home/lantoni/GAIL_tests/test_results.txt Former line
-/export/apps/matlab/R2013a/bin/matlab -nojvm < tautomatic.m
+# /export/apps/matlab/R2013a/bin/matlab -nojvm < automatictests.m > /home/lantoni/GAIL_tests/test_results.txt Former line
+/export/apps/matlab/R2013a/bin/matlab -nojvm < automatictests.m
 
 # SETTING THE TEST OUTPUT FILE FOR COMPARING
 # Delete all the lines before first word "TAP" in our output file
@@ -47,4 +47,4 @@ fi
 rm Test_Results.txt
 
 # KEEPING ONLY THE LAST 30 REPORTS
-find /home/lantoni/GAIL_tests/test_reports/gail_tests* -mtime +31 -exec rm {} \;
+find /home/lantoni/GAIL_tests/test_reports/gail_tests* -mtime +30 -exec rm {} \;

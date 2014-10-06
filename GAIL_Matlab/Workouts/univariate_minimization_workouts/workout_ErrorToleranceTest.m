@@ -76,9 +76,8 @@ end
 [GAILPATH,~,PATHNAMESEPARATOR] = GAILstart(0);
 path = strcat(GAILPATH,'OutputFiles' , PATHNAMESEPARATOR);
 filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
-                  'UniFunMinOutput',PATHNAMESEPARATOR',...
                   'ErrorToleranceTest-',...
-                  datestr(now,'dd-mmm-yyyy-HH-MM-SS'),'.mat');
+                  datestr(now,'yyyymmdd'),'.mat');
 save(filename)
 
 toc(tstart)

@@ -93,7 +93,7 @@ end
 path = strcat(GAILPATH,'OutputFiles' , PATHNAMESEPARATOR);
 filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
                   'ConesPaperOutput',PATHNAMESEPARATOR','IntegrationTest-',...
-                  datestr(now,'dd-mmm-yyyy-HH-MM-SS'),'.mat');
+                  datestr(now,'yyyymmdd'),'.mat');
 save(filename)
 
 toc(tstart)
