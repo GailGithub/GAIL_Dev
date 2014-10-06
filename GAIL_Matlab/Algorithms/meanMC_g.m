@@ -75,9 +75,8 @@ function [tmu,out_param]=meanMC_g(varargin)
 %
 %     out_param.n --- the sample size used in each iteration.
 %
-%     out_param.nmax --- the maximum sample budget to estimate mu, it comes
-%     from both the sample budget and the time budget and sample has been
-%     used.
+%     out_param.nmax --- the maximum sample budget to estimate mu. It was
+%     calculated by the sample left and time left.
 %
 %     out_param.ntot --- total sample used.
 %
@@ -97,7 +96,7 @@ function [tmu,out_param]=meanMC_g(varargin)
 %
 %     out_param.time --- the time elapsed in seconds.
 %
-%     out_param.checked --- parameter checking status
+%     out_param.flag --- parameter checking status
 %      
 %                           1  checked by meanMC_g
 %
@@ -406,7 +405,7 @@ if (out_param.abstol < 0)
     %absolute error tolerance should be positive
     warning('MATLAB:meanMC_g:abstolneg',...
         ['Absolute error tolerance should be greater than 0; ' ...
-        'We will use the default value of the absolute error tolerance 1e-2.'])
+        'We will take the aosolute value of the absolute error tolerance provided.'])
     out_param.abstol = abs(out_param.abstol);
 end
 if (out_param.reltol < 0 || out_param.reltol > 1)
@@ -414,7 +413,7 @@ if (out_param.reltol < 0 || out_param.reltol > 1)
     warning('MATLAB:meanMC_g:reltolneg',...
         ['Relative error tolerance should be between 0 and 1; ' ...
         'We will use the default value of the relative error tolerance 1e-1.'])
-    out_param.abstol = abs(out_param.abstol);
+    out_param.reltol = default.reltol;
 end
 if (out_param.alpha <= 0 ||out_param.alpha >= 1) 
     %uncertainty should be in (0,1)
@@ -423,7 +422,7 @@ if (out_param.alpha <= 0 ||out_param.alpha >= 1)
         'We will use the default value 1%.'])
     out_param.alpha = default.alpha;
 end
-if (out_param.fudge<= 1) 
+if (out_param.fudge <= 1) 
     %standard deviation inflation factor should be bigger than 1
     warning('MATLAB:meanMC_g:fudgelessthan1',...
         ['The fudge factor should be larger than 1; '...
@@ -435,20 +434,20 @@ if (~gail.isposge30(out_param.nSig))
     warning('MATLAB:meanMC_g:nsignotposint',...
         ['The number nSig should a positive integer at least 30; '...
         'We will use the default value 1e4.'])
-    out_param.nSig = ceil(abs(out_param.nSig));
+    out_param.nSig = default.nSig;
 end
 if (~gail.isposge30(out_param.n1)) 
     %initial sample size should be a posotive integer at least 30
     warning('MATLAB:meanMC_g:n1notposint',...
         ['The number n1 should a positive integer at least 30; '...
         'We will use the default value 1e4.'])
-    out_param.n1 = ceil(abs(out_param.n1));
+    out_param.n1 = default.n1;
 end
 if (out_param.tbudget <= 0) 
     %time budget in seconds should be positive
     warning('MATLAB:meanMC_g:timebudgetlneg',...
         ['Time budget in seconds should be positive; '...
-        'We will take the absolute value of time budget'])
+        'We will take the absolute value of time budget provided'])
     out_param.tbudget = abs(out_param.tbudget);
 end
 if (~gail.isposge30(out_param.nbudget)) 
@@ -456,9 +455,9 @@ if (~gail.isposge30(out_param.nbudget))
     warning('MATLAB:meanMC_g:nbudgetnotposint',...
         ['The number of sample budget should be a large positive integer; '...
         'We will use the default value 1e9.'])
-    out_param.nbudget = ceil(abs(out_param.nbudget));
+    out_param.nbudget =default.out_param.nbudget;
 end
-out_param.checked = 1; 
+out_param.flag = 1; 
 %pass the signal indicating the parameters have been checked
 end
 
