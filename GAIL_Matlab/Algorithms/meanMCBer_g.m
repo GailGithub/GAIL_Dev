@@ -109,7 +109,7 @@ tstart = tic; %start the clock
 [Yrand,out_param] = meanMCBer_g_param(varargin{:});
 %parameter checking and parsing
 out_param.exit = 0;
-out_param = nabs(out_param,tstart);%calculate the sample needed
+out_param = nabs(out_param);%calculate the sample needed
 npcmax = 1e6;
 out_param.pHat = gail.evalmean(Yrand,out_param.n,npcmax);
 % evaluate the mean 
