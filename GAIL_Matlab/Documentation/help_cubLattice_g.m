@@ -5,9 +5,9 @@
 %% Syntax
 % [q,out_param] = *cubLattice_g*(f,d)
 %
-% q = *cubLattice_g*(f,d,abstol,density,shift,mmin,mmax,fudge,diff)
+% q = *cubLattice_g*(f,d,abstol,density,shift,mmin,mmax,fudge,transform)
 %
-% q = *cubLattice_g*(f,d,'abstol',abstol,'density',density,'shift',shift,'mmin',mmin,'mmax',mmax,'fudge',fudge,'diff',diff)
+% q = *cubLattice_g*(f,d,'abstol',abstol,'density',density,'shift',shift,'mmin',mmin,'mmax',mmax,'fudge',fudge,'transform',transform)
 %
 % q = *cubLattice_g*(f,d,in_param)
 %% Description
@@ -20,14 +20,14 @@
 %  is the dimension in which the function f is defined. Given the
 %  construction of our Lattices, d must be a positive integer with 1<=d<=100.
 % 
-% q = *cubLattice_g*(f,d,abstol,density,shift,mmin,mmax,fudge,diff)
+% q = *cubLattice_g*(f,d,abstol,density,shift,mmin,mmax,fudge,transform)
 %  estimates the integral of f over the d-dimensional region. The answer
 %  is given within the absolute error tolerance abstol. All parameters
 %  should be input in the order specified above. If an input is not specified,
 %  the default value is used. Note that if an input is not specified,
 %  the remaining tail can not be specified either.
 % 
-% q = *cubLattice_g*(f,d,'abstol',abstol,'density',density,'shift',shift,'mmin',mmin,'mmax',mmax,'fudge',fudge,'diff',diff)
+% q = *cubLattice_g*(f,d,'abstol',abstol,'density',density,'shift',shift,'mmin',mmin,'mmax',mmax,'fudge',fudge,'transform',transform)
 %  estimates the integral of f over the d-dimensional region. The answer
 %  is given within the absolute error tolerance abstol. All the field-value
 %  pairs are optional and can be supplied with any order. If an input is not
@@ -67,7 +67,7 @@
 %  For more information about this parameter, refer to the references.
 %  By default is @(x) 5*2^-x.|
 % 
-% * in_param.diff --- |the algorithm is defined for continuous periodic functions. If the
+% * in_param.transform --- |the algorithm is defined for continuous periodic functions. If the
 %  input function f is not, there are 5 types of transform to periodize it
 %  without modifying the result. The options:
 %    'id' : no transformation. Choice by default.
@@ -113,7 +113,7 @@
 % Estimate the integral with integrand f(x) = x1.*x2 in the interval [0,1)^2:
 
   f=@(x) x(:,1).*x(:,2); d=2;
-  q = cubLattice_g(f,d,1e-5,'uniform','diff','C1sin')
+  q = cubLattice_g(f,d,1e-5,'uniform','transform','C1sin')
 
 %%
 % *Example 2*
@@ -122,7 +122,7 @@
 % in the interval R^3 where x1, x2 and x3 are normally distributed:
 
   f=@(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2+0.11; d=3;
-  q = cubLattice_g(f,d,1e-3,'normal','diff','C1sin')
+  q = cubLattice_g(f,d,1e-3,'normal','transform','C1sin')
 
 %%
 % *Example 3*
@@ -131,7 +131,7 @@
 % interval [0,1)^2:
 
   f=@(x) exp(-x(:,1).^2-x(:,2).^2); d=2;
-  q = cubLattice_g(f,d,1e-3,'uniform','diff','C1')
+  q = cubLattice_g(f,d,1e-3,'uniform','transform','C1')
 
 %%
 % *Example 4*
@@ -140,7 +140,7 @@
 % sigma=0.05 and T=1.
 
   f=@(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); d=1;
-  q = cubLattice_g(f,d,1e-4,'normal','fudge',@(x) 2^-(2*x),'diff','C1sin')
+  q = cubLattice_g(f,d,1e-4,'normal','fudge',@(x) 2^-(2*x),'transform','C1sin')
 %% See Also
 %
 % <html>
