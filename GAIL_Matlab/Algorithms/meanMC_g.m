@@ -159,7 +159,7 @@ function [tmu,out_param]=meanMC_g(varargin)
 %   [1]  F. J. Hickernell, L. Jiang, Y. Liu, and A. B. Owen, Guaranteed
 %   conservative fixed width confidence intervals via Monte Carlo sampling,
 %   Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F. Y. Kuo, G. W.
-%   Peters, and I. H. Sloan, eds.), Springer-Verlag, Berlin, 2014, to appear,
+%   Peters, and I. H. Sloan, eds.), Springer-Verlag, Berlin, 2014.
 %   arXiv:1208.4318 [math.ST]
 %
 %   [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
