@@ -13,13 +13,13 @@ fid = fopen(shortutestreport,'wt');
 tic; 
 % CALL DOCTESTS 
 
+doctest funappxglobal_g
 doctest funappx_g
-doctest funappxlocal_g
 doctest funappxtau_g
 doctest funappx01_g
 clear in_param;
+doctest dt_funappxglobal_g
 doctest dt_funappx_g
-doctest dt_funappxlocal_g
 doctest funmin_g
 doctest funminab_g
 doctest integral_g
@@ -38,8 +38,8 @@ doctest cubSobol_g
 [~,~,~,MATLABVERSION]=GAILstart(0);
 if MATLABVERSION >= 8
     try
-    Tests = matlab.unittest.TestSuite.fromClass(?ut_funappx_g);
-    results=run(ut_funappx_g)
+    Tests = matlab.unittest.TestSuite.fromClass(?ut_funappxglobal_g);
+    results=run(ut_funappxglobal_g)
     if sum([results.Failed])>0
         failed=find([results.Failed]>0);
         for i=1:size(failed,2)
@@ -47,8 +47,8 @@ if MATLABVERSION >= 8
         end
     end
     catch
-        display('Test ut_funappx_g is wrongly coded. We skip it.')
-        fprintf(fid,'Test ut_funappx_g is wrongly coded. We skip it.\n');
+        display('Test ut_funappxglobal_g is wrongly coded. We skip it.')
+        fprintf(fid,'Test ut_funappxglobal_g is wrongly coded. We skip it.\n');
     end
     
     try
@@ -161,8 +161,8 @@ if MATLABVERSION >= 8
     end
 
     try
-    Tests = matlab.unittest.TestSuite.fromClass(?ut_funappxlocal_g);
-    results=run(ut_funappxlocal_g)
+    Tests = matlab.unittest.TestSuite.fromClass(?ut_funappx_g);
+    results=run(ut_funappx_g)
     if sum([results.Failed])>0
         failed=find([results.Failed]>0);
         for i=1:size(failed,2)
@@ -170,8 +170,8 @@ if MATLABVERSION >= 8
         end
     end
     catch
-        display('Test ut_funappxlocal_g is wrongly coded. We skip it.')
-        fprintf(fid,'Test ut_funappxlocal_g is wrongly coded. We skip it.\n');
+        display('Test ut_funappx_g is wrongly coded. We skip it.')
+        fprintf(fid,'Test ut_funappx_g is wrongly coded. We skip it.\n');
     end
     
     try
