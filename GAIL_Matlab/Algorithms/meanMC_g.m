@@ -419,7 +419,7 @@ if (out_param.alpha <= 0 ||out_param.alpha >= 1)
     %uncertainty should be in (0,1)
     warning('MATLAB:meanMC_g:alphanotin01',...
         ['The uncertainty should be between 0 and 1; '...
-        'We will use the default value 1%.'])
+        'We will use the default value 0.01.'])
     out_param.alpha = default.alpha;
 end
 if (out_param.fudge <= 1) 
@@ -443,11 +443,19 @@ if (~gail.isposge30(out_param.n1))
         'We will use the default value 1e4.'])
     out_param.n1 = default.n1;
 end
-if (out_param.tbudget <= 0) 
+if (out_param.tbudget < 0) 
     %time budget in seconds should be positive
-    warning('MATLAB:meanMC_g:timebudgetlneg',...
+    warning('MATLAB:meanMC_g:timebudgetneg',...
         ['Time budget in seconds should be positive; '...
         'We will take the absolute value of time budget provided'])
+    out_param.tbudget = abs(out_param.tbudget);
+end
+
+if (out_param.tbudget == 0) 
+    %time budget in seconds should be positive
+    warning('MATLAB:meanMC_g:timebudget0',...
+        ['Time budget in seconds should be positive rather than zero; '...
+        'We will take the default value of time budget 100 seconds'])
     out_param.tbudget = abs(out_param.tbudget);
 end
 if (~gail.isposge30(out_param.nbudget)) 
@@ -455,7 +463,7 @@ if (~gail.isposge30(out_param.nbudget))
     warning('MATLAB:meanMC_g:nbudgetnotposint',...
         ['The number of sample budget should be a large positive integer; '...
         'We will use the default value 1e9.'])
-    out_param.nbudget =default.out_param.nbudget;
+    out_param.nbudget =default.nbudget;
 end
 out_param.flag = 1; 
 %pass the signal indicating the parameters have been checked

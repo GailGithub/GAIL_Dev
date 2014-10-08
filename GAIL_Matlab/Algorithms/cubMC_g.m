@@ -392,12 +392,19 @@ end
         'We will use the default value 1e4.'])
     out_param.n1 = default.n1;
     end
-    if (out_param.tbudget <= 0) 
+    if (out_param.tbudget < 0) 
         %the time budget in seconds should be positive
-        warning('MATLAB:cubMC_g:tbudgetlneg',...
-            ['Time budget should be bigger than 0; '...
+        warning('MATLAB:cubMC_g:tbudgetneg',...
+            ['Time budget should be positive; '...
             'We will use the absolute value of the time budget'])
         out_param.tbudget = abs(out_param.tbudget);
+    end
+    if (out_param.tbudget == 0)
+        %the time budget in seconds should be positive
+        warning('MATLAB:cubMC_g:tbudget0',...
+            ['Time budget should be positive rather than 0; '...
+            'We will use the default value of the time budget 100 seconds.'])
+        out_param.tbudget = default.tbudget;
     end
     if (~gail.isposge30(out_param.nbudget)) 
         %the sample budget should be a positive integer
