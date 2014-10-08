@@ -30,6 +30,11 @@ function [pp,out_param]=funappx_g(varargin)
 %   in_param.maxiter. If a field is not specified, the default value is
 %   used.
 %
+%   [pp, out_param] = FUNAPPX_G(f,...) returns a piecewise polynomial
+%   structure pp and an output structure out_param.
+%
+%   Input Arguments
+%
 %     in_param.a --- left end point of interval, default value is 0
 %
 %     in_param.b --- right end point of interval, default value is 1
@@ -48,9 +53,7 @@ function [pp,out_param]=funappx_g(varargin)
 %
 %     in_param.maxiter --- max number of interation, default value is 1000
 %
-%   [pp, out_param] = FUNAPPX_G(f,...) returns a piecewise polynomial
-%   structure pp and an output structure out_param, which have the
-%   following fields:
+%   Output Arguments
 %
 %     pp.form --- pp means piecewise polynomials
 %
@@ -236,22 +239,20 @@ function [pp,out_param]=funappx_g(varargin)
 %   See also INTEGRAL_G, MEANMC_G, CUBMC_G, FUNMIN_G
 %
 %
-%   References
+%  References
 %
 %   [1]  Nick Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
-%        Yizhi Zhang, The Cost of Deterministic, Adaptive, Automatic
-%        Algorithms: Cones, Not Balls, Journal of Complexity 30 (2014),
-%        pp. 21-45.
+%   Yizhi Zhang, The Cost of Deterministic, Adaptive, Automatic Algorithms:
+%   Cones, Not Balls, Journal of Complexity 30 (2014), pp. 21-45.
 %
 %
 %   [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
-%        Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
-%        "GAIL: Guaranteed Automatic Integration Library (Version 2.0)"
-%        [MATLAB Software], 2014. Available from
-%        http://code.google.com/p/gail/
+%   Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
+%   "GAIL: Guaranteed Automatic Integration Library (Version 2.0)" [MATLAB
+%   Software], 2014. Available from http://code.google.com/p/gail/
 %
-%        If you find GAIL helpful in your work, please support us by citing
-%        the above paper and software.
+%   If you find GAIL helpful in your work, please support us by citing the
+%   above paper and software.
 %
 
 % check parameter satisfy conditions or not
