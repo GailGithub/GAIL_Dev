@@ -245,7 +245,7 @@ function [pp,out_param]=funappx_g(varargin)
 %
 %
 %   [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
-%        Llu¨ªs Antoni Jim¨¦nez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
+%        Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
 %        "GAIL: Guaranteed Automatic Integration Library (Version 2.0)"
 %        [MATLAB Software], 2014. Available from
 %        http://code.google.com/p/gail/

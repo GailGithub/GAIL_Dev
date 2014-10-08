@@ -185,8 +185,7 @@ function [Q,out_param] = cubMC_g(varargin)
 % Q = 0.33***
 % 
 % 
-%   See also FUNAPPX_G, INTEGRAL_G, MEANMC_G, MEANMCBERNOULLI_G,
-%   CUBLATTICE_G, CUBSOBOL_G
+%   See also FUNAPPX_G, INTEGRAL_G, MEANMC_G, MEANMCBER_G, CUBLATTICE_G, CUBSOBOL_G
 % 
 %  References
 %

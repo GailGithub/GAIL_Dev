@@ -83,8 +83,7 @@ function [pHat,out_param]=meanMCBer_g(varargin)
 %   pHat = 0.1***
 % 
 % 
-%   See also FUNAPPX_G, INTEGRAL_G, CUBMC_G, MEANMC_G, CUBLATTICE_G,
-%   CUBSOBOL_G
+%   See also FUNAPPX_G, INTEGRAL_G, CUBMC_G, MEANMC_G, CUBLATTICE_G, CUBSOBOL_G
 % 
 %  References
 %

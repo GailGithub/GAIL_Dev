@@ -151,8 +151,7 @@ function [tmu,out_param]=meanMC_g(varargin)
 % tmu = 0.84***
 %
 %
-%   See also FUNAPPX_G, INTEGRAL_G, CUBMC_G, MEANMCBERNOULLI_G, CUBSOBOL_G,
-%   CUBLATTICE_G
+%   See also FUNAPPX_G, INTEGRAL_G, CUBMC_G, MEANMCBER_G, CUBSOBOL_G, CUBLATTICE_G
 %
 %  References
 %
