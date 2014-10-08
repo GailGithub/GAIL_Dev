@@ -29,7 +29,7 @@ doctest integraltau_g
 doctest dt_integral_g 
 doctest meanMCabs_g
 doctest meanMC_g
-doctest meanMCBernoulli_g
+doctest meanMCBer_g
 doctest cubMCabs_g
 doctest cubLattice_g
 doctest cubSobol_g
@@ -147,8 +147,8 @@ if MATLABVERSION >= 8
     end
     
     try
-    Tests = matlab.unittest.TestSuite.fromClass(?ut_meanMCBernoulli_g);
-    results=run(ut_meanMCBernoulli_g)
+    Tests = matlab.unittest.TestSuite.fromClass(?ut_meanMCBer_g);
+    results=run(ut_meanMCBer_g)
     if sum([results.Failed])>0
         failed=find([results.Failed]>0);
         for i=1:size(failed,2)
@@ -156,8 +156,8 @@ if MATLABVERSION >= 8
         end
     end
     catch
-        display('Test ut_meanMCBernoulli_g is wrongly coded. We skip it.')
-        fprintf(fid,'Test ut_meanMCBernoulli_g is wrongly coded. We skip it.\n');
+        display('Test ut_meanMCBer_g is wrongly coded. We skip it.')
+        fprintf(fid,'Test ut_meanMCBer_g is wrongly coded. We skip it.\n');
     end
 
     try
