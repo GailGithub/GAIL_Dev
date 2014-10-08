@@ -19,5 +19,5 @@ cd /home/lantoni/GAIL_tests/repo/gail-development/GAIL_Matlab/Workouts/automatic
 # Former code above. Now below:
 mv /home/lantoni/GAIL_tests/repo/gail-development/GAIL_Matlab/OutputFiles/*.mat /home/lantoni/GAIL_tests/workout_reports/
 
-# KEEPING ONLY THE LAST 4*10 REPORTS
-find /home/lantoni/GAIL_tests/workout_reports/*.mat -mtime +40 -exec rm {} \;
+# KEEPING ONLY THE LAST 30 DAYS REPORTS
+find /home/lantoni/GAIL_tests/workout_reports/*.mat -mtime +30 -exec rm {} \;

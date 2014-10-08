@@ -10,11 +10,12 @@ function [fmin,out_param]=funmin_g(varargin)
 %   fmin = FUNMIN_G(f,a,b,abstol,TolX,nlo,nhi,nmax) finds minimum value of
 %   function f with ordered input parameters that define the finite
 %   interval [a,b], a guaranteed absolute error tolerance abstol, a
-%   quaranteed X tolerance TolX, a lower bound of initial number of points
+%   guaranteed X tolerance TolX, a lower bound of initial number of points
 %   nlo, an upper bound of initial number of points nhi, and a cost budget
 %   nmax.
 %
-%   fmin = FUNMIN_G(f,'a',a,'b',b,'abstol',abstol,'TolX',TolX,'nlo',nlo,'nhi',nhi,'nmax',nmax)
+%   fmin = FUNMIN_G(f,'a',a,'b',b,'abstol',abstol,'TolX',TolX,'nlo',nlo,...
+%   'nhi',nhi,'nmax',nmax)
 %   finds minimum value of function f on the interval [a,b] with a 
 %   guaranteed absolute error tolerance abstol, a guaranteed X tolerance 
 %   TolX, a lower bound of initial number of points nlo, an upper bound of 
@@ -86,13 +87,13 @@ function [fmin,out_param]=funmin_g(varargin)
 %
 %     out_param.intervals --- the intervals containing point(s) where the
 %     minimum occurs. Each column indicates one interval where the first
-%     point is the left point and the second row is the right point.
+%     row is the left point and the second row is the right point.
 %
 %  Guarantee
 %
 %   If the function to be minimized, f satisfies the cone condition
 %
-%   ||f''||_\infty <=  tau/(b-a)||f'-(f(b)-f(a)/(b-a)||__\infty,
+%   ||f''||_\infty <=  tau/(b-a)||f'-(f(b)-f(a))/(b-a)||__\infty,
 %      
 %   then the fmin output by this algorithm is guaranteed to satisfy
 %
@@ -481,7 +482,7 @@ end
 if out_param.TolX < 0
     warning(['MATLAB:funmin_g:Xtolnonpos','X tolerance should be greater than or equal to 0.' ...
         ' Using default X tolerance ' num2str(default.TolX)]);
-    out_param.abstol = default.TolX;
+    out_param.TolX = default.TolX;
 end
 
 % Check whether the cost budget is a positive integer
@@ -521,6 +522,7 @@ if (~gail.isposint(out_param.nhi))
     end
 end
 if (out_param.nlo > out_param.nhi)
+    warning('MATLAB:funmin_g:logrhi', 'Lower bound of initial number of points is larger than upper bound of initial number of points; Use nhi as nlo')
     out_param.nhi = out_param.nlo;
 end;
 if (out_param.nlo > out_param.nmax)
