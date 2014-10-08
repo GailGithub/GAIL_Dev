@@ -2,7 +2,7 @@
 
 [GAILPATH,~,PATHNAMESEPARATOR] = GAILstart(0);
 filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
-  'gail_workouts-', datestr(now,'dd-mmm-yyyy-HH-MM-SS'),'.txt');
+  'gail_workouts-', datestr(now,'yyyymmdd'),'.txt');
 diary(filename)
 tic; 
 
