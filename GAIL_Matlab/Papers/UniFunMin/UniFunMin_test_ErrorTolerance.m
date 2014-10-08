@@ -17,7 +17,7 @@ in_param.TolX = 0; %X tolerance
 in_param.nmax = 10^7; %cost budget
 
 %% Simulation parameters
-nrep = 100; %number of times to test used in the thesis
+nrep = 10000; %number of times to test used in the thesis
 if (nrep >= 1000)
     warning(' Need more than one hour to replicate the result! ')
     warning('off','MATLAB:funmin_g:exceedbudget');
@@ -46,7 +46,8 @@ for i=1:ntau;
         f = @(x) 0.5/a(j)^2*(-4*a(j)^2-(x-z(j)).^2-(x-z(j)-a(j)).*...
             abs(x-z(j)-a(j))+(x-z(j)+a(j)).*abs(x-z(j)+a(j))).*...
             (x>=z(j)-2*a(j)).*(x<=z(j)+2*a(j)); %test function
-        in_param.ninit = (tauvec(i)+1)/2+1;
+        in_param.nlo = (tauvec(i)+1)/2+1;
+        in_param.nhi = in_param.nlo;
         [fmin,out_param] = funmin_g(f,in_param);
         ntrapmat(j,i) = out_param.npoints;
         newtaumat(j,i) = out_param.tau;
