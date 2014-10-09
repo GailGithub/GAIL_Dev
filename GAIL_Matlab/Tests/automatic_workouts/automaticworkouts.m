@@ -9,5 +9,4 @@ workout_ErrorToleranceTest
 workout_ErrorXToleranceTest
 workout_TwoExtremeTest
 workout_XToleranceTest
-
 longtests
