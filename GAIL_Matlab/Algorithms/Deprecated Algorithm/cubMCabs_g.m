@@ -185,9 +185,9 @@ function [Q,out_param] = cubMCabs_g(varargin)
 tstart=tic;
 [f,hyperbox,out_param] = cubMCabs_g_param(varargin{:});%check validity of inputs
 f=transformIntegrand(f,hyperbox,out_param); 
-if strcmp(out_param.measure,'uniform')% the using uniformly distributed samples
+if strcmpi(out_param.measure,'uniform')% the using uniformly distributed samples
     [Q,out_param] = meanMCabs_g(@(nfun)f(rand(nfun,out_param.dim)),out_param);
-else strcmp(out_param.measure,'normal')% using normally distributed samples
+else strcmpi(out_param.measure,'normal')% using normally distributed samples
     [Q,out_param] = meanMCabs_g(@(nfun)f(randn(nfun,out_param.dim)),out_param);
 end
 out_param.time=toc(tstart); %elapsed time
@@ -195,7 +195,7 @@ end
 
 function newf=transformIntegrand(oldf,hyperbox,out_param)
 % Transform integrand linearly so that the hyperbox would not be changed
-    if strcmp(out_param.measure,'uniform') %uniform measure
+    if strcmpi(out_param.measure,'uniform') %uniform measure
         a=hyperbox(1,:); %left endpoint
         b=hyperbox(2,:); %right endpoint
     if all(a==0) && all(b==1) %no change needed
@@ -207,7 +207,7 @@ function newf=transformIntegrand(oldf,hyperbox,out_param)
             .*volbox;
        %stretch and shift, then multiply by volume
     end
-    elseif strcmp(out_param.measure,'normal')
+    elseif strcmpi(out_param.measure,'normal')
         newf=oldf;% no change if it is normal measure.
     end   
 end
@@ -330,11 +330,11 @@ if isfield(out_param,'measure'); % the sample measure
 else
     out_param.measure=default.measure;
 end
-if strcmp(out_param.measure,'uniform')&&~all(isfinite(hyperbox(:)))
+if strcmpi(out_param.measure,'uniform')&&~all(isfinite(hyperbox(:)))
     %cannot integrate on an infinite hyperbox with the uniform distribution
     out_param.exit=13; out_param = cubMCabs_g_err(out_param); return;
 end
-if strcmp(out_param.measure,'normal')&&any(isfinite(hyperbox(:)))
+if strcmpi(out_param.measure,'normal')&&any(isfinite(hyperbox(:)))
     %must integrate on an infinite hyperbox with the normal distribution
     out_param.exit=14; out_param = cubMCabs_g_err(out_param); return;
 end

@@ -3,7 +3,7 @@ clear all, close all
 clc
 format compact
 
-test.nrep=5;
+test.nrep=50;
 fun.funtype='gaussian';
 param.dim=1;
 param.measure='uniform';
