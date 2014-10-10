@@ -9,7 +9,8 @@ try
   disp(horzcat('Running ', filename, ' ...'));
   run(filename)
 catch err
-  warning(['Runtime rror executing ',filename, ':']);
+  % warning(['Runtime error executing ',filename, ':']); % This line is
+  % giving errors due to clearing the variable filename by try/catch
   disp(err.message);
   for e=1:length(err.stack)
     stack_str = horzcat(...
