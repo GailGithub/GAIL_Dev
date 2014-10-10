@@ -162,10 +162,10 @@ in_param.nhi = 100; in_param.abstol = 1e-7;
 %% Reference
 % [1]  N. Clancy, Y. Ding, C. Hamilton, F. J. Hickernell, and Y. Zhang, The
 % Cost of Deterministic, Adaptive, Automatic Algorithms:  Cones, Not Balls,
-% Journal of Complexity 30 (2014) 21?5
+% Journal of Complexity 30 (2014) 21-45
 %
-% [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Llu¨ªs
-% Antoni Jim¨¦nez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou, "GAIL:
+% [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
+% Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou, "GAIL:
 % Guaranteed Automatic Integration Library (Version 2.0)" [MATLAB
 % Software], 2014. Available from http://code.google.com/p/gail/
 %

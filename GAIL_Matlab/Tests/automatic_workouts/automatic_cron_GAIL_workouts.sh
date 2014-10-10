@@ -8,7 +8,7 @@ cd /home/lantoni/GAIL_tests/repo/gail-development/
 # MATLAB
 # Set the directory for running our matlab workouts
 # Run the file that installs GAIL and run the tests. The output files are in OutputFiles. We put all togehter since there is a permission not letting us install the path
-cd /home/lantoni/GAIL_tests/repo/gail-development/GAIL_Matlab/Workouts/automatic_workouts
+cd /home/lantoni/GAIL_tests/repo/gail-development/GAIL_Matlab/Tests/automatic_workouts
 /export/apps/matlab/R2013a/bin/matlab -nojvm < automaticworkouts.m
 
 # SETTING THE TEST OUTPUT FILE FOR COMPARING
@@ -18,6 +18,7 @@ cd /home/lantoni/GAIL_tests/repo/gail-development/GAIL_Matlab/Workouts/automatic
 # sed --in-place '/seconds testing time/d' test_results.txt 
 # Former code above. Now below:
 mv /home/lantoni/GAIL_tests/repo/gail-development/GAIL_Matlab/OutputFiles/*.mat /home/lantoni/GAIL_tests/workout_reports/
+mv /home/lantoni/GAIL_tests/repo/gail-development/GAIL_Matlab/OutputFiles/*.txt /home/lantoni/GAIL_tests/workout_reports/
 
 # KEEPING ONLY THE LAST 30 DAYS REPORTS
 find /home/lantoni/GAIL_tests/workout_reports/*.mat -mtime +30 -exec rm {} \;
