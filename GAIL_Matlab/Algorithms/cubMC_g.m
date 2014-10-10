@@ -85,7 +85,7 @@ function [Q,out_param] = cubMC_g(varargin)
 %
 %     out_param.ntot --- total sample used.
 %
-%     out_param.nmax --- the maximum sample budget to estimate I. It was
+%     out_param.nremain --- the remaining sample budget to estimate I. It was
 %     calculated by the sample left and time left.
 %
 %     out_param.tau --- the iteration step.
@@ -185,8 +185,7 @@ function [Q,out_param] = cubMC_g(varargin)
 % Q = 0.33***
 % 
 % 
-%   See also FUNAPPX_G, INTEGRAL_G, MEANMC_G, MEANMCBERNOULLI_G,
-%   CUBLATTICE_G, CUBSOBOL_G
+%   See also FUNAPPX_G, INTEGRAL_G, MEANMC_G, MEANMCBER_G, CUBLATTICE_G, CUBSOBOL_G
 % 
 %  References
 %
@@ -240,14 +239,16 @@ if isempty(varargin) % if no input, print error message and use the default sett
         'Now GAIL is using interval [0;1] with dimension 1.'])
     f = @(x) x.^2;
     hyperbox = default.hyperbox;
-elseif numel(varargin)==1
+end
+if numel(varargin)==1
     % if there is only function but no hyperbox input. Use default hyperbox.
     help cubMC_g
     warning('MATLAB:cubMC_g:hyperboxnotgiven',...
         'the hyperbox must be specified, Now GAIL is using interval [0;1] with dimension 1')
     f = varargin{1};
-    hyperbox = default.hyperbox;    
-else
+    hyperbox = default.hyperbox; 
+end
+if numel(varargin) >= 2
     f = varargin{1};
     hyperbox = varargin{2}; % the first input is function, the second input is hyperbox.
 end
@@ -311,6 +312,14 @@ else % if there is some optional input
     parse(p,f,hyperbox,varargin{3:end})
     out_param = p.Results;
 end
+if (~gail.isfcn(f))
+    warning('MATLAB:cubMC_g:ynotfcn',...
+        ['f must be a function handle.'...
+        ' Now GAIL is using default f = @(x) x.^2 .'])
+    %print warning message
+    f = @(x) x.^2;
+end
+    
 if any(isnan(hyperbox(:))); %check hyperbox for not a number
     out_param.exit=10; out_param = cubMC_g_err(out_param); return; 
 end

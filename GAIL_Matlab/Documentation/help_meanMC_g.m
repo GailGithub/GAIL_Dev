@@ -85,9 +85,8 @@
 %
 % * out_param.n --- |the sample size used in each iteration.|
 %
-% * out_param.nmax --- |the maximum sample budget to estimate mu, it comes
-%  from both the sample budget and the time budget and sample has been
-%  used.|
+% * out_param.nmax --- |the maximum sample budget to estimate mu. It was
+%   calculated by the sample left and time left.|
 %
 % * out_param.ntot --- |total sample used.|
 %
@@ -107,7 +106,7 @@
 %
 % * out_param.time --- |the time elapsed in seconds.|
 %
-% * out_param.checked --- |parameter checking status
+% * out_param.flag --- |parameter checking status
 %   
 %                        1  checked by meanMC_g|
 %
@@ -117,7 +116,7 @@
 % the algorithm terminated without showing any warning messages and provide
 % an answer tmu, then the follow inequality would be satisfied:
 % 
-% Pr(|mu-tmu| <= max(abstol,reltol|mu|)) >= 1-alpha
+% Pr(|mu-tmu| <= max(abstol,reltol*|mu|)) >= 1-alpha
 %
 % where abstol is the absolute error tolerance and reltol is the relative
 % error tolerance, if the true mean mu is rather small as well as the

@@ -75,7 +75,7 @@ function [tmu,out_param]=meanMC_g(varargin)
 %
 %     out_param.n --- the sample size used in each iteration.
 %
-%     out_param.nmax --- the maximum sample budget to estimate mu. It was
+%     out_param.nremain --- the remaining sample budget to estimate mu. It was
 %     calculated by the sample left and time left.
 %
 %     out_param.ntot --- total sample used.
@@ -151,8 +151,7 @@ function [tmu,out_param]=meanMC_g(varargin)
 % tmu = 0.84***
 %
 %
-%   See also FUNAPPX_G, INTEGRAL_G, CUBMC_G, MEANMCBERNOULLI_G, CUBSOBOL_G,
-%   CUBLATTICE_G
+%   See also FUNAPPX_G, INTEGRAL_G, CUBMC_G, MEANMCBER_G, CUBSOBOL_G, CUBLATTICE_G
 %
 %  References
 %
@@ -211,9 +210,9 @@ tic;
 Yval = Yrand(out_param.nSig);% get samples to estimate variance 
 t_sig = toc;%get the time for calculating nSig function values.
 nsofar = nsofar+out_param.nSig;% update the samples that have been used
-out_param.nmax = gail.estsamplebudget(out_param.tbudget,...
+out_param.nremain = gail.estsamplebudget(out_param.tbudget,...
     out_param.nbudget,[ntry out_param.nSig 0],nsofar,tstart,[ttry t_sig 0]);
-%update the nmax could afford until now
+%update the nremain could afford until now
 out_param.var = var(Yval);% calculate the sample variance--stage 1
 sig0 = sqrt(out_param.var);% standard deviation
 sig0up = out_param.fudge.*sig0;% upper bound on the standard deviation
@@ -233,19 +232,19 @@ npcmax = 1e6;%constant to do iteration and mean calculation
 out_param.n(i) = out_param.n1;% initial sample size to do iteration
 while true
     out_param.tau = i;%step of the iteration
-    if out_param.n(i) > out_param.nmax;
+    if out_param.n(i) > out_param.nremain;
         % if the sample size used for initial estimation is
-        % larger than nmax, print warning message and use nmax
+        % larger than nremain, print warning message and use nremain
         out_param.exit=1; %pass a flag
         meanMC_g_err(out_param); % print warning message
-        out_param.n(i) = out_param.nmax;% update n
+        out_param.n(i) = out_param.nremain;% update n
         tmu = gail.evalmean(Yrand,out_param.n(i),npcmax);%evaluate the mean
         nsofar = nsofar+out_param.n(i);%total sample used
         break;
     end
     out_param.hmu(i) = gail.evalmean(Yrand,out_param.n(i),npcmax);%evaluate mean
     nsofar = nsofar+out_param.n(i);
-    out_param.nmax = out_param.nmax-out_param.n(i);%update n so far and nmax
+    out_param.nremain = out_param.nremain-out_param.n(i);%update n so far and nremain
     errtype = 'max';
     % error type, see the function 'tolfun' at Algoithms/+gail/ directory
     % for more info
@@ -334,23 +333,15 @@ default.alpha = 0.01;% default uncertainty
 default.fudge = 1.2;% default fudge factor
 default.tbudget = 100;% default time budget
 default.nbudget = 1e9; % default sample budget
-
 if isempty(varargin)
     help meanMC_g
     warning('MATLAB:meanMC_g:yrandnotgiven',...
-        'Yrand must be specified. Now GAIL is using Yrand = rand(n,1).^2.')
+        'Yrand must be specified. Now GAIL is using Yrand =@(n) rand(n,1).^2.')
     Yrand = @(n) rand(n,1).^2;
     %if no values are parsed, print warning message and use the default
     %random variable    
 else
     Yrand = varargin{1};
-    if max(size(Yrand(5)))~=5 || min(size(Yrand(5)))~=1
-        % if the input is not a length n vector, print the warning message
-        warning('MATLAB:meanMC_g:yrandnotlengthN',...
-            ['Yrand should be a random variable vector of length n, '...
-            'but not an integrand or a matrix'])
-        Yrand = @(n) rand(n,1).^2;
-    end
 end
 
 validvarargin=numel(varargin)>1;
@@ -399,6 +390,21 @@ else
     end
     parse(p,Yrand,varargin{2:end})
     out_param = p.Results;
+end
+if (~gail.isfcn(Yrand))
+    warning('MATLAB:meanMC_g:yrandnotfcn',...
+        ['Yrand must be a function handle.'...
+        ' Now GAIL is using default Yrand =@(n) rand(n,1).^2 .'])
+    %print warning message
+    Yrand = @(n) rand(n,1).^2;
+end
+if max(size(Yrand(5)))~=5 || min(size(Yrand(5)))~=1
+    % if the input is not a length n vector, print the warning message
+    warning('MATLAB:meanMC_g:yrandnotlengthN',...
+        ['Yrand should be a random variable vector of length n, '...
+        'but not an integrand or a matrix.'...
+        ' Now GAIL is using the default Yrand =@(n) rand(n,1).^2.'])
+    Yrand = @(n) rand(n,1).^2;
 end
 
 if (out_param.abstol < 0)
@@ -483,7 +489,7 @@ switch out_param.exit
         warning('MATLAB:meanMC_g:maxreached',...
             ['tried to evaluate at ' int2str(nexceed) ...
             ' samples, which is more than the allowed maximum of '...
-            num2str(out_param.nmax) ' samples. Just use the maximum sample budget.']);
+            num2str(out_param.nremain) ' samples. Just use the maximum sample budget.']);
         return
 end
 end
