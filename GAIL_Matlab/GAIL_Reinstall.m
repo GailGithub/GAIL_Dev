@@ -6,7 +6,9 @@ if MATLABVERSION < 7,
   error('This version is only supported on Matlab 7.x and above.');
 end
 gailp=genpath(GAILPATH); % Generate strings of paths to GAIL subdirectories 
+warning('off', 'MATLAB:rmpath:DirNotFound')
 rmpath(gailp);  % Remove GAIL paths from MATLAB search path.
+warning('on', 'MATLAB:rmpath:DirNotFound')
 addpath(gailp); % Add GAIL paths to MATLAB search path.
 savepath;       % Save the changes.
 reply = input('\nDo you want to install html documentation files?\n (Your answer is not case sensitive.) Y/N [N]: ', 's');

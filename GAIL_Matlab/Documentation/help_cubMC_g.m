@@ -3,9 +3,9 @@
 %% Syntax
 % [Q,out_param] = *cubMC_g*(f,hyperbox)
 %
-% Q = *cubMC_g*(f,hyperbox,measure,abstol,reltol,alpha,fudge,nSig,n1,tbudget,nbudget,checked)
+% Q = *cubMC_g*(f,hyperbox,measure,abstol,reltol,alpha,fudge,nSig,n1,tbudget,nbudget,flag)
 %
-% Q = *cubMC_g*(f,hyperbox,'measure','uniform','abstol',abstol,'reltol',reltol,'alpha',alpha,'fudge',fudge,'nSig',nSig,'n1',n1,'tbudget',tbudget,'nbudget',nbudget,'checked',checked)
+% Q = *cubMC_g*(f,hyperbox,'measure','uniform','abstol',abstol,'reltol',reltol,'alpha',alpha,'fudge',fudge,'nSig',nSig,'n1',n1,'tbudget',tbudget,'nbudget',nbudget,'flag',flag)
 %
 % [Q out_param] = *cubMC_g*(f,hyperbox,in_param)
 %% Description
@@ -25,18 +25,19 @@
 %  the upper limits.
 % 
 % Q = *cubMC_g*(f,hyperbox,measure,abstol,reltol,alpha,fudge,nSig,n1,
-%  tbudget,nbudget,checked) estimates the integral of function f over
+%  tbudget,nbudget,flag) estimates the integral of function f over
 %  hyperbox to within a specified generalized error tolerance tolfun with
 %  guaranteed confidence level 1-alpha using all ordered parsing inputs f,
 %  hyperbox, measure, abstol, reltol, alpha, fudge, nSig, n1, tbudget,
-%  nbudget, checked. The input f and hyperbox are required and others are
+%  nbudget, flag. The input f and hyperbox are required and others are
 %  optional.
 % 
-% Q = *cubMC_g*(f,hyperbox,'measure','uniform','abstol',abstol,'reltol',reltol,'alpha',alpha,'fudge',fudge,'nSig',nSig,'n1',n1,'tbudget',tbudget,'nbudget',nbudget,'checked',checked)
-%  estimates the integral of f over hyperbox to within a specified 
+% Q = *cubMC_g*(f,hyperbox,'measure','uniform','abstol',abstol,'reltol',reltol,'alpha',alpha,'fudge',fudge,'nSig',nSig,'n1',n1,'tbudget',tbudget,'nbudget',nbudget,'flag',flag)
+%  estimates the integral of f over hyperbox to within a specified
 %  generalized error tolerance tolfun with guaranteed confidence level
-%  1-alpha. All the field-value pairs are optional and can be supplied in 
-%  different order. If an input is not specified, the default value is used.
+%  1-alpha. All the field-value pairs are optional and can be supplied in
+%  different order. If an input is not specified, the default value is
+%  used.
 % 
 % [Q out_param] = *cubMC_g*(f,hyperbox,in_param) estimates the integral of
 %  f over hyperbox to within a specified generalized error tolerance
@@ -79,7 +80,7 @@
 % * in_param.nbudget --- |the sample budget to do the estimation, the
 %  default value is 1e9.|
 % 
-% * in_param.checked --- |the value corresponds to parameter checking status.|
+% * in_param.flag --- |the value corresponds to parameter checking status.|
 %   
 %                      0   not checked
 %   
@@ -97,7 +98,7 @@
 %
 % * out_param.tau --- |the iteration step.|
 %
-% * out_param.mu --- |estimated integral in each iteration.|
+% * out_param.hmu --- |estimated integral in each iteration.|
 %
 % * out_param.tol --- |the reliable upper bound on error for each iteration.|
 %  
@@ -134,7 +135,7 @@
 % 1-alpha. If the algorithm terminated without showing any warning messages
 % and provide an answer Q, then the follow inequality would be satisfied:
 % 
-% Pr(|Q-I| <= max(abstol,reltol|I|)) >= 1-alpha
+% Pr(|Q-I| <= max(abstol,reltol*|I|)) >= 1-alpha
 %
 % where abstol is the absolute error tolerance and reltol is the relative
 % error tolerance, if the true integral I is rather small as well as the

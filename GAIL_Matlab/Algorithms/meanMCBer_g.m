@@ -163,6 +163,21 @@ else
     parse(pHat,Yrand,varargin{2:end})
     out_param = pHat.Results;
 end
+if (~gail.isfcn(Yrand))
+    warning('MATLAB:meanMCBer_g:yrandnotfcn',...
+        ['The input must be a function handle.',...
+        ' Now GAIL is using default Bernoulli random variable with parameter 0.0078.'])%print warning message
+    p = 2^(-7);
+    Yrand = @(n) rand(n,1)<p;% use the default random variable
+end
+if max(size(Yrand(5)))~=5 || min(size(Yrand(5)))~=1
+    % if the input is not a length n vector, print the warning message
+    warning('MATLAB:meanMCBer_g:yrandnotlengthN',...
+        ['Yrand should be a random variable vector of length n, '...
+        'but not an integrand or a matrix. Now GAIL is using the default Yrand.'])
+    p = 2^(-7);
+    Yrand = @(n) rand(n,1)<p;% use the default random variable
+end
 if (out_param.abstol < 0) %absolute error tolerance negative
     warning('MATLAB:meanMCBer_g:abstolneg',...
         ['Absolute error tolerance should be greater than 0; ' ...
@@ -214,7 +229,7 @@ out_param.tau = 1;
 % it is one step estimation
 if out_param.n > out_param.nmax % if the sample needed is bigger than nmax
     out_param.exit=1; % pass a flag
-    meanMCBernoulli_g_err(out_param,tstart);% print warning message
+    meanMCBernoulli_g_err(out_param);% print warning message
     out_param.n = out_param.nmax;% update nabs
 end
 end
