@@ -10,7 +10,9 @@ end
 fprintf('\nYou are going to remove GAIL version %g path.\n', GAILVERSION);
 reply = input('\nDo you want to remove GAIL path from MATLAB search path?\n(Your answer is not case sensitive.) Y/N [N]:','s');
 if any(strcmpi(reply,{'yes','y'}));
+    warning('off', 'MATLAB:rmpath:DirNotFound')
     rmpath(gailp);% Remove path from MATLAB search path
+    warning('on', 'MATLAB:rmpath:DirNotFound')
     savepath; % Save the changes
     fprintf('\nGAIL path has been removed from MATLAB search path successfully.\n')
     fprintf('\nYou are going to delete GAIL version %g files.\n ', GAILVERSION);
