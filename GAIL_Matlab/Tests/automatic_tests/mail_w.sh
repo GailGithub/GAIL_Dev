@@ -4,4 +4,4 @@
 nl=$'\n\n';
 begin=" We got some errors in our daily tests:";
 changes=$(< Test_Results.txt);
-uuencode Test_Results.txt Test_Results.txt | mail -s "GAIL daily test results with ERRORS" gail_dev@googlegroups.com -- -r "ljimene1@hawk.iit.edu" <<< "${begin}${nl}${changes}"
+(echo "${begin}${nl}${changes}";uuencode Test_Results.txt Test_Results.txt) | mail -s "GAIL daily test results with ERRORS" gail_dev@googlegroups.com -- -r "ljimene1@hawk.iit.edu"
