@@ -47,9 +47,10 @@ run_handle('UniFunMin_test_XTolerance')
  
 
 %% Unit tests
-[~,~,~,MATLABVERSION]=GAILstart(0);
+MATLABVERSION = gail.matlab_version
 if MATLABVERSION >= 8  
-    run(ut_ConesPaper)   
+    Tests = matlab.unittest.TestSuite.fromClass(?ut_ConesPaper);
+    run(ut_ConesPaper)
 end
 
 time=toc;
