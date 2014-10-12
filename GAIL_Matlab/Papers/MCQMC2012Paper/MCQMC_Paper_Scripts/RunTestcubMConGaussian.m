@@ -3,7 +3,7 @@ clear all, close all
 clc
 format compact
 
-test.nrep=5;
+test.nrep=50;
 fun.funtype='gaussian';
 %param.dim=ceil(1+rand(1)*7);
 param.measure='uniform';
@@ -15,7 +15,7 @@ ndim=size(dimchoice,1);
 test.randch.dimoverall=dimchoice(randi(ndim,test.nrep,1));
 
 param.impyes=false;
-param.tol=1e-3;
+param.tol=1e-2;
 param.n0=2^13;
 test.howoftenrep=2;
 shapemin=1e-6;
