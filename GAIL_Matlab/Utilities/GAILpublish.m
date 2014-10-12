@@ -6,7 +6,7 @@ publish('help_funappx_g');
 %publish('help_funappxlocal_g');
 publish('help_integral_g');
 publish('help_meanMC_g');
-publish('help_meanMCBernoulli_g');
+publish('help_meanMCBer_g');
 publish('help_cubMC_g');
 publish('help_funmin_g');
 publish('help_cubLattice_g');
