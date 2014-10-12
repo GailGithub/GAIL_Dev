@@ -32,11 +32,6 @@ run_handle('RunTestcubMConGaussian')
 run_handle('RunTestcubMConGaussiand1')
 
 % Function minimization
-run_handle('workout_testerrortolerance')
-run_handle('workout_testXtolerance')
-run_handle('workout_testboth')
-run_handle('workout_twoextreme')
-
 if usejava('jvm')
   run_handle('UniFunMin_Plot_Bump')
   run_handle('UniFunMin_Plot_Flat')
