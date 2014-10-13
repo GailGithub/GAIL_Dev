@@ -22,7 +22,7 @@ cd /home/lantoni/GAIL_tests/repo/gail-development/GAIL_Matlab/Tests/automatic_te
 # Former code above. Now below:
 cp /home/lantoni/GAIL_tests/repo/gail-development/GAIL_Matlab/OutputFiles/gail_tests-* gail_doctests.txt
 mv /home/lantoni/GAIL_tests/repo/gail-development/GAIL_Matlab/OutputFiles/gail_tests-* /home/lantoni/GAIL_tests/test_reports/
-mv /home/lantoni/GAIL_tests/repo/gail-development/GAIL_Matlab/OutputFiles/gail_workouts-* /home/lantoni/GAIL_tests/test_reports/
+# mv /home/lantoni/GAIL_tests/repo/gail-development/GAIL_Matlab/OutputFiles/gail_workouts-* /home/lantoni/GAIL_tests/test_reports/
 mv /home/lantoni/GAIL_tests/repo/gail-development/GAIL_Matlab/OutputFiles/gail_unittests.txt gail_unittests.txt
 # Preparing results txt files
 begin="------Doc test wrong results were:";

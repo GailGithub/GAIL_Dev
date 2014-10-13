@@ -17,8 +17,8 @@ cd /home/lantoni/GAIL_tests/repo/gail-development/GAIL_Matlab/Tests/automatic_wo
 # Delete the lines containing "seconds testing time" from the test_results.txt file
 # sed --in-place '/seconds testing time/d' test_results.txt 
 # Former code above. Now below:
-mv /home/lantoni/GAIL_tests/repo/gail-development/GAIL_Matlab/OutputFiles/*.mat /home/lantoni/GAIL_tests/workout_reports/
-mv /home/lantoni/GAIL_tests/repo/gail-development/GAIL_Matlab/OutputFiles/*.txt /home/lantoni/GAIL_tests/workout_reports/
+# mv "/home/lantoni/GAIL_tests/repo/gail-development/GAIL_Matlab/OutputFiles"/*.mat /home/lantoni/GAIL_tests/workout_reports/
+mv /home/lantoni/GAIL_tests/repo/gail-development/GAIL_Matlab/OutputFiles/gail_workouts-* /home/lantoni/GAIL_tests/workout_reports/
 
 # KEEPING ONLY THE LAST 30 DAYS REPORTS
 find /home/lantoni/GAIL_tests/workout_reports/*.mat -mtime +30 -exec rm {} \;
