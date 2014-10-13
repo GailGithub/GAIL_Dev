@@ -38,15 +38,15 @@ for dim=1:8
     % print the results
     if abserr > in_param.abstol && relerr > in_param.reltol,
     %if both absolute error and relative error does not meet tolerance
-      disp([numstr,'     BothErrExceed']);% mark it as "both err exceed"
+      disp([numstr,'     NoErrMet']);% mark it as "both err exceed"
     elseif abserr < in_param.abstol && relerr > in_param.reltol,
         % if only relative error does not meet the tolerance
-        disp([numstr,'     RelErrExceed']);% mark it as "rel err exceed"
+        disp([numstr,'     AbsErrMet']);% mark it as "rel err exceed"
     elseif abserr > in_param.abstol && relerr < in_param.reltol,
         %if only the absolute error does not meet the tolerance
-        disp([numstr,'     AbsErrExceed']);% mark it as "abs err exceed"
+        disp([numstr,'     RelErrMet']);% mark it as "abs err exceed"
     else
-        disp([numstr,'             OK']);% otherwise disp "OK"
+        disp([numstr,'             BothErrMet']);% otherwise disp "OK"
     end
   end
 end
