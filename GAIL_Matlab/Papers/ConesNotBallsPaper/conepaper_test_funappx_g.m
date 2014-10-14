@@ -8,7 +8,8 @@
 %
 
 %% Preliminaries
-clear all, close all
+%clear all, close all
+clearvars -except testCase
 tstart = tic;
 
 %% Program parameters
