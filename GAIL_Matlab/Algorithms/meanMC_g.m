@@ -176,33 +176,37 @@ n1 = 2;
 Yrand(n1); %let it run once to load all the data. warm up the machine.
 nsofar = n1;
 
-ntry = 20;% try several samples to get the time
+ntry = 10;% try several samples to get the time
 tic;
 Yrand(ntry);
 ttry=toc;
 tpern = ttry/ntry; % calculate time per sample
-
 nsofar = nsofar+ntry; % update n so far
 out_param.exit = 0;
-if tpern<1e-6;%each sample use rather little time
+if tpern<1e-7;%each sample use very little time
     booster = 8;
     tic;Yrand(ntry*booster);ttry2 = toc;
     ntry = ntry*[1 booster];
     ttry = [ttry ttry2];% take eight times more samples to try
-    [tmu,out_param] =  meanmctolfun(Yrand,out_param,ntry,ttry,nsofar,tstart);
-elseif tpern>=1e-3 %each sample use a lot of time
+elseif tpern>=1e-7 && tpern<1e-5 %each sample use little time
+    booster = 6;
+    tic;Yrand(ntry*booster);ttry2 = toc;
+    ntry = ntry*[1 booster];
+    ttry = [ttry ttry2];% take six times more samples to try    
+elseif tpern>=1e-5 && tpern<1e-3 %each sample use little time
+    booster = 4;
+    tic;Yrand(ntry*booster);ttry2 = toc;
+    ntry = ntry*[1 booster];
+    ttry = [ttry ttry2];% take four times more samples to try
+elseif  tpern>=1e-3 && tpern<1e-1 %each sample use moderate time
     booster = 2;
     tic;Yrand(ntry*booster);ttry2 = toc;
     ntry = ntry*[1 booster];
     ttry = [ttry ttry2];% take two times more samples to try
-    [tmu,out_param] =  meanmctolfun(Yrand,out_param,ntry,ttry,nsofar,tstart);
-else %each sample uses moderate time
-    booster = 5;
-    tic;Yrand(ntry*booster);ttry2 = toc;
-    ntry = ntry*[1 booster];
-    ttry = [ttry ttry2];% take five times more samples to try
-    [tmu,out_param] =  meanmctolfun(Yrand,out_param,ntry,ttry,nsofar,tstart);
+else %each sample use lots of time, stop try
 end
+    [tmu,out_param] =  meanmctolfun(Yrand,out_param,ntry,ttry,nsofar,tstart);
+
 end
 
 function [tmu,out_param] =  meanmctolfun(Yrand,out_param,ntry,ttry,nsofar,tstart)
@@ -211,7 +215,7 @@ Yval = Yrand(out_param.nSig);% get samples to estimate variance
 t_sig = toc;%get the time for calculating nSig function values.
 nsofar = nsofar+out_param.nSig;% update the samples that have been used
 out_param.nremain = gail.estsamplebudget(out_param.tbudget,...
-    out_param.nbudget,[ntry out_param.nSig 0],nsofar,tstart,[ttry t_sig 0]);
+    out_param.nbudget,[ntry out_param.nSig],nsofar,tstart,[ttry t_sig]);
 %update the nremain could afford until now
 out_param.var = var(Yval);% calculate the sample variance--stage 1
 sig0 = sqrt(out_param.var);% standard deviation
@@ -487,9 +491,9 @@ switch out_param.exit
     case 1 % not enough samples to estimate the mean.
         nexceed = out_param.n(out_param.tau);
         warning('MATLAB:meanMC_g:maxreached',...
-            ['tried to evaluate at ' int2str(nexceed) ...
-            ' samples, which is more than the allowed maximum of '...
-            num2str(out_param.nremain) ' samples. Just use the maximum sample budget.']);
+            ['At step ' int2str(out_param.tau) ', tried to evaluate at ' int2str(nexceed) ...
+            ' samples, which is more than the remaining '...
+            int2str(out_param.nremain) ' samples. We will use all the sample left to estimate the mean.']);
         return
 end
 end
