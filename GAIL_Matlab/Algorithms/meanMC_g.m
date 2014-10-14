@@ -183,12 +183,12 @@ ttry=toc;
 tpern = ttry/ntry; % calculate time per sample
 nsofar = nsofar+ntry; % update n so far
 out_param.exit = 0;
-if tpern<1e-7;%each sample use very little time
+if tpern<1e-7;%each sample use very very little time
     booster = 8;
     tic;Yrand(ntry*booster);ttry2 = toc;
     ntry = ntry*[1 booster];
     ttry = [ttry ttry2];% take eight times more samples to try
-elseif tpern>=1e-7 && tpern<1e-5 %each sample use little time
+elseif tpern>=1e-7 && tpern<1e-5 %each sample use very little time
     booster = 6;
     tic;Yrand(ntry*booster);ttry2 = toc;
     ntry = ntry*[1 booster];

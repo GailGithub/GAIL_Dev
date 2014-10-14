@@ -22,13 +22,15 @@ function [mu, out_param]=dt_meanMC_g_TrafficModel(tol)
 % left to estimate the mean. ***
 %
 % 
-in_param.tbudget=30;% given time budget 
-in_param.nbudget=1e6;% given sample budget
-in_param.nSig=70;% given intitial sample size to estimate sigma
+in_param.tbudget=30;% given the time budget 
+in_param.nbudget=1e6;% given the sample budget
+in_param.nSig=70;% given the intitial sample size to estimate sigma
 in_param.n1 = 70;% the initial sample size to estimate the mean
-in_param.fudge=1.1;%given fudge factor
-in_param.alpha=0.05;% given uncertainty
+in_param.fudge=1.1;%given the fudge factor
+in_param.alpha=0.05;% given the uncertainty 
 in_param.abstol=tol;%given error tolerance
-in_param.reltol = 0; % set relative tolerance 0
-[mu, out_param] = meanMC_g(@Ytrafficmodel,in_param);
+in_param.reltol = 0; 
+% set relative error tolerance zero, which means only require the error
+% meets absolute error tolerance
+[mu, out_param] = meanMC_g(@Ytrafficmodel,in_param);%Call Ytrafficmodel to get the results
 end
