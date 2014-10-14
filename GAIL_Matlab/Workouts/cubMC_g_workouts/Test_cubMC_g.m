@@ -51,91 +51,91 @@ for dim=1:8
   end
 end
 
-%% The following output was obtained on 2014-10-04  by Lan Jiang
+%% The following output was obtained on 2014-10-13  by Lan Jiang
 %  
 % Dim   FcnIdx       Q            f_true             Error            Sample Used        status  
 % ----------------------------------------------------------------------------------------------
-% 1     1       8.41343e-01       8.41471e-01       1.28378e-04         987270             OK
-% 1     2       7.85419e-01       7.85398e-01       2.10586e-05         1240479             OK
-% 1     3       3.75075e-01       3.75000e-01       7.54451e-05         2123305             OK
-% 1     4       7.46753e-01       7.46824e-01       7.12502e-05         1717254             OK
-% 1     5       6.32131e-01       6.32121e-01       1.05773e-05         1470892             OK
-% 1     6       1.71827e+00       1.71828e+00       9.18923e-06         2926898             OK
-% 1     7       1.38024e+00       1.38039e+00       1.44901e-04         4288514             OK
-% 2     1       4.96534e-01       4.96751e-01       2.17433e-04         3674991             OK
-% 2     2       7.28306e-01       7.28296e-01       9.94141e-06         1198115             OK
-% 2     3       1.02018e-01       1.01852e-01       1.65905e-04         735294     RelErrExceed
-% 2     4       6.88943e-01       6.88992e-01       4.82295e-05         1619323             OK
-% 2     5       4.97712e-01       4.97440e-01       2.71680e-04         1224954             OK
-% Warning: tried to evaluate at 26284672 samples, which is more than the allowed maximum of 19195890
-% samples. Just use the maximum sample budget. 
-% > In meanMC_g>meanMC_g_err at 476
-%   In meanMC_g>meanmctolfun at 241
-%   In meanMC_g at 206
-%   In cubMC_g at 207
+% 1     1       8.41429e-01       8.41471e-01       4.16988e-05         975445             BothErrMet
+% 1     2       7.85471e-01       7.85398e-01       7.25717e-05         1236277             BothErrMet
+% 1     3       3.75266e-01       3.75000e-01       2.65681e-04         2129675             BothErrMet
+% 1     4       7.46756e-01       7.46824e-01       6.76680e-05         1728700             BothErrMet
+% 1     5       6.32161e-01       6.32121e-01       4.03169e-05         1462142             BothErrMet
+% 1     6       1.71795e+00       1.71828e+00       3.29683e-04         2997628             BothErrMet
+% 1     7       1.38083e+00       1.38039e+00       4.39163e-04         4339991             BothErrMet
+% 2     1       4.96824e-01       4.96751e-01       7.24267e-05         3649273             BothErrMet
+% 2     2       7.28163e-01       7.28296e-01       1.33307e-04         1179211             BothErrMet
+% 2     3       1.01966e-01       1.01852e-01       1.14565e-04         707289     AbsErrMet
+% 2     4       6.89122e-01       6.88992e-01       1.30139e-04         1604731             BothErrMet
+% 2     5       4.97274e-01       4.97440e-01       1.65640e-04         1241193             BothErrMet
+% Warning: At step 2, tried to evaluate at 27050414 samples, which is more than the remaining
+% 16945370 samples. We will use all the sample left to estimate the mean. 
+% > In meanMC_g>meanMC_g_err at 493
+%   In meanMC_g>meanmctolfun at 243
+%   In meanMC_g at 208
+%   In cubMC_g at 211
 %   In Test_cubMC_g at 30 
-% 2     6       1.11448e+00       1.11469e+00       2.07804e-04         19215912             OK
-% 2     7       1.80842e+00       1.80819e+00       2.33968e-04         11062714             OK
-% 3     1       6.25176e-02       6.23593e-02       1.58278e-04         6125806     RelErrExceed
-% 3     2       6.62386e-01       6.62570e-01       1.83902e-04         1206712             OK
-% 3     3       2.18969e-02       2.17014e-02       1.95497e-04         156042     RelErrExceed
-% 3     4       6.20775e-01       6.20903e-01       1.28494e-04         1567173             OK
-% 3     5       3.82914e-01       3.83055e-01       1.40058e-04         1042065             OK
-% Warning: tried to evaluate at 29202842 samples, which is more than the allowed maximum of 23732368
-% samples. Just use the maximum sample budget. 
-% > In meanMC_g>meanMC_g_err at 476
-%   In meanMC_g>meanmctolfun at 241
-%   In meanMC_g at 206
-%   In cubMC_g at 207
+% 2     6       1.11489e+00       1.11469e+00       2.08576e-04         16965382             BothErrMet
+% 2     7       1.80862e+00       1.80819e+00       4.32649e-04         10925304             BothErrMet
+% 3     1       6.21012e-02       6.23593e-02       2.58075e-04         6206320     AbsErrMet
+% 3     2       6.62509e-01       6.62570e-01       6.02562e-05         1193449             BothErrMet
+% 3     3       2.17371e-02       2.17014e-02       3.57372e-05         160438     AbsErrMet
+% 3     4       6.20919e-01       6.20903e-01       1.52024e-05         1596268             BothErrMet
+% 3     5       3.82965e-01       3.83055e-01       8.95927e-05         1042167             BothErrMet
+% Warning: At step 2, tried to evaluate at 27836133 samples, which is more than the remaining
+% 18770218 samples. We will use all the sample left to estimate the mean. 
+% > In meanMC_g>meanMC_g_err at 493
+%   In meanMC_g>meanmctolfun at 243
+%   In meanMC_g at 208
+%   In cubMC_g at 211
 %   In Test_cubMC_g at 30 
-% 3     6       4.41391e-01       4.40984e-01       4.07293e-04         23752390             OK
-% 3     7       2.16808e+00       2.16831e+00       2.26099e-04         27881870             OK
-% 4     1       -3.51893e-01       -3.51764e-01       1.28932e-04         6565204             OK
-% 4     2       5.88906e-01       5.88680e-01       2.26208e-04         1201652             OK
-% 4     3       3.81270e-03       3.80556e-03       7.14627e-06         46144     RelErrExceed
-% 4     4       5.43207e-01       5.43373e-01       1.66097e-04         1516906             OK
-% 4     5       2.86845e-01       2.86844e-01       1.55998e-06         838936             OK
-% 4     6       1.25211e-01       1.25251e-01       3.97478e-05         10934471             OK
-% 4     7       2.16650e+00       2.16593e+00       5.70649e-04         87430732             OK
-% 5     1       -6.49099e-01       -6.49331e-01       2.31641e-04         4551358             OK
-% 5     2       5.13471e-01       5.13409e-01       6.19648e-05         1212369             OK
-% 5     3       5.54533e-04       5.67130e-04       1.25967e-05         20022     RelErrExceed
-% 5     4       4.64712e-01       4.64603e-01       1.09414e-04         1445830             OK
-% 5     5       2.10056e-01       2.09952e-01       1.03099e-04         651357             OK
-% 5     6       2.77204e-02       2.77308e-02       1.04365e-05         3558925             OK
-% Warning: tried to evaluate at 351256589 samples, which is more than the allowed maximum of
-% 207329933 samples. Just use the maximum sample budget. 
-% > In meanMC_g>meanMC_g_err at 476
-%   In meanMC_g>meanmctolfun at 241
-%   In meanMC_g at 206
-%   In cubMC_g at 207
+% 3     6       4.40912e-01       4.40984e-01       7.16979e-05         18790230             BothErrMet
+% 3     7       2.16887e+00       2.16831e+00       5.59135e-04         28582950             BothErrMet
+% 4     1       -3.52095e-01       -3.51764e-01       3.31374e-04         6517309             BothErrMet
+% 4     2       5.88689e-01       5.88680e-01       9.02213e-06         1225452             BothErrMet
+% 4     3       3.76752e-03       3.80556e-03       3.80333e-05         40451     AbsErrMet
+% 4     4       5.43599e-01       5.43373e-01       2.25590e-04         1516358             BothErrMet
+% 4     5       2.86912e-01       2.86844e-01       6.78729e-05         853151             BothErrMet
+% 4     6       1.25321e-01       1.25251e-01       7.07149e-05         11047422             BothErrMet
+% 4     7       2.16562e+00       2.16593e+00       3.11327e-04         93662781             BothErrMet
+% 5     1       -6.49227e-01       -6.49331e-01       1.03821e-04         4553095             BothErrMet
+% 5     2       5.13536e-01       5.13409e-01       1.27207e-04         1212257             BothErrMet
+% 5     3       5.44026e-04       5.67130e-04       2.31041e-05         20012     AbsErrMet
+% 5     4       4.64590e-01       4.64603e-01       1.29513e-05         1455926             BothErrMet
+% 5     5       2.09824e-01       2.09952e-01       1.28909e-04         680797             BothErrMet
+% 5     6       2.77841e-02       2.77308e-02       5.33210e-05         3955141     AbsErrMet
+% Warning: At step 2, tried to evaluate at 363333179 samples, which is more than the remaining
+% 156107201 samples. We will use all the sample left to estimate the mean. 
+% > In meanMC_g>meanMC_g_err at 493
+%   In meanMC_g>meanmctolfun at 243
+%   In meanMC_g at 208
+%   In cubMC_g at 211
 %   In Test_cubMC_g at 30 
-% 5     7       1.13577e+00       1.13532e+00       4.49289e-04         207349955             OK
-% 6     1       -7.69107e-01       -7.69376e-01       2.69869e-04         2809603             OK
-% 6     2       4.41452e-01       4.41474e-01       2.14539e-05         1154627             OK
-% 6     3       6.71034e-05       7.34937e-05       6.39027e-06         20022     RelErrExceed
-% 6     4       3.90184e-01       3.90227e-01       4.34789e-05         1356084             OK
-% 6     5       1.50864e-01       1.50939e-01       7.51571e-05         507202             OK
-% 6     6       4.98953e-03       5.02927e-03       3.97454e-05         1292676     RelErrExceed
-% Warning: tried to evaluate at 412039854 samples, which is more than the allowed maximum of
-% 169339672 samples. Just use the maximum sample budget. 
-% > In meanMC_g>meanMC_g_err at 476
-%   In meanMC_g>meanmctolfun at 241
-%   In meanMC_g at 206
-%   In cubMC_g at 207
+% 5     7       1.13488e+00       1.13532e+00       4.41697e-04         156127213             BothErrMet
+% 6     1       -7.69317e-01       -7.69376e-01       5.96515e-05         2903377             BothErrMet
+% 6     2       4.41269e-01       4.41474e-01       2.04762e-04         1134235             BothErrMet
+% 6     3       8.33814e-05       7.34937e-05       9.88770e-06         20012     AbsErrMet
+% 6     4       3.90190e-01       3.90227e-01       3.73760e-05         1342631             BothErrMet
+% 6     5       1.51006e-01       1.50939e-01       6.71353e-05         508574             BothErrMet
+% 6     6       5.35235e-03       5.02927e-03       3.23080e-04         998551     AbsErrMet
+% Warning: At step 2, tried to evaluate at 369500174 samples, which is more than the remaining
+% 138997141 samples. We will use all the sample left to estimate the mean. 
+% > In meanMC_g>meanMC_g_err at 493
+%   In meanMC_g>meanmctolfun at 243
+%   In meanMC_g at 208
+%   In cubMC_g at 211
 %   In Test_cubMC_g at 30 
-% 6     7       -2.32639e+00       -2.32730e+00       9.18060e-04         169359694             OK
-% 7     1       -6.97792e-01       -6.97824e-01       3.16745e-05         4254664             OK
-% 7     2       3.75514e-01       3.75484e-01       3.04815e-05         1097426             OK
-% 7     3       7.87780e-06       8.42590e-06       5.48093e-07         20022     RelErrExceed
-% 7     4       3.23409e-01       3.23235e-01       1.73487e-04         1211068             OK
-% 7     5       1.07006e-01       1.06978e-01       2.81095e-05         360319             OK
-% 7     6       9.11923e-04       7.72320e-04       1.39602e-04         480750     RelErrExceed
-% 7     7       -1.10596e+01       -1.10568e+01       2.71187e-03         109936324     AbsErrExceed
-% 8     1       -4.66671e-01       -4.67036e-01       3.65306e-04         7898153             OK
-% 8     2       3.16850e-01       3.16602e-01       2.48055e-04         964833             OK
-% 8     3       7.98513e-07       8.66209e-07       6.76959e-08         20022     RelErrExceed
-% 8     4       2.64834e-01       2.64801e-01       3.27813e-05         1030309             OK
-% 8     5       7.48311e-02       7.49531e-02       1.22054e-04         251055     RelErrExceed
-% 8     6       0.00000e+00       1.02833e-04       1.02833e-04         20022     RelErrExceed
-% 8     7       -3.06156e+01       -3.06091e+01       6.56798e-03         41933007     AbsErrExceed
+% 6     7       -2.32827e+00       -2.32730e+00       9.70403e-04         139017153             BothErrMet
+% 7     1       -6.97541e-01       -6.97824e-01       2.82984e-04         4242250             BothErrMet
+% 7     2       3.75388e-01       3.75484e-01       9.57243e-05         1067298             BothErrMet
+% 7     3       8.01023e-06       8.42590e-06       4.15666e-07         20012     AbsErrMet
+% 7     4       3.23245e-01       3.23235e-01       9.80560e-06         1195993             BothErrMet
+% 7     5       1.06979e-01       1.06978e-01       1.26088e-06         359100             BothErrMet
+% 7     6       8.80028e-04       7.72320e-04       1.07708e-04         434550     AbsErrMet
+% 7     7       -1.10547e+01       -1.10568e+01       2.12771e-03         97127597     RelErrMet
+% 8     1       -4.66861e-01       -4.67036e-01       1.74775e-04         7976409             BothErrMet
+% 8     2       3.16567e-01       3.16602e-01       3.49663e-05         943146             BothErrMet
+% 8     3       9.37483e-07       8.66209e-07       7.12746e-08         20012     AbsErrMet
+% 8     4       2.64938e-01       2.64801e-01       1.37326e-04         1044264             BothErrMet
+% 8     5       7.49463e-02       7.49531e-02       6.81415e-06         254752             BothErrMet
+% 8     6       5.80123e-04       1.02833e-04       4.77290e-04         20012     AbsErrMet
+% 8     7       -3.06063e+01       -3.06091e+01       2.80834e-03         41618674     RelErrMet
