@@ -8,7 +8,7 @@
 
 %% Preliminaries
 format long e
-clear all
+clearvars -except testCase
 close all
 tstart = tic;
 
