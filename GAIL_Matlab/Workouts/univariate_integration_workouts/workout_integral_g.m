@@ -12,8 +12,8 @@ in_param.abstol=1e-8; %error tolerance
 
 %% Simulation parameters
 
-nrep = 100; %number of times to test, takes about a minute, can be changed 
-% nrep = 10000; %number of times to test used in the paper
+nrep = 10000; %number of times to test used in the paper
+%nrep = 100; %number of times to test, takes about a minute, can be changed 
 avec = 10.^(rand(nrep,1).*3-4);
 zvec = rand(nrep,1).*(1-4.*avec)+2.*avec;
 x0vec = zvec-2*avec;
@@ -54,7 +54,7 @@ for i=1:nrep
     for j=1:nninit
         in_param.ninit=ninitvec(j);
         tic
-        [q,out_param]=integral_g(f,in_param);
+        [q,out_param]=integral01_g(f,in_param);
         timemat(i,j)=toc;
         Qmat(i,j)=q;
         npointsmat(i,j)= out_param.npoints;
