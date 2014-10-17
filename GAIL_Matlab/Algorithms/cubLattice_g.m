@@ -9,7 +9,7 @@ function [q,out_param] = cubLattice_g(varargin)
 %   accept an n x d matrix input, where d is the dimension of the hypercube,
 %   and n is the number of points being evaluated simultaneously. The input d
 %   is the dimension in which the function f is defined. Given the
-%   construction of our Lattices, d must be a positive integer with 1<=d<=100.
+%   construction of our Lattices, d must be a positive integer with 1<=d<=250.
 % 
 %   q = CUBLATTICE_G(f,d,abstol,density,shift,mmin,mmax,fudge,transform)
 %   estimates the integral of f over a d-dimensional region. The answer
@@ -35,7 +35,7 @@ function [q,out_param] = cubLattice_g(varargin)
 %     quadratic function.
 % 
 %     d --- dimension of domain on which f is defined. d must be a positive
-%     integer 1<=d<=100. By default it is 1.
+%     integer 1<=d<=250. By default it is 1.
 % 
 %     in_param.abstol --- the absolute error tolerance, abstol>0. By 
 %     default it is 1e-4. 
@@ -54,8 +54,8 @@ function [q,out_param] = cubLattice_g(varargin)
 %     mmin needs to be a positive integer with mmin<=mmax. By default it is 10.
 % 
 %     in_param.mmax --- the maximum budget is 2^mmax. By construction of our
-%     Lattices generator, mmax is a positive integer such that mmin<=mmax<=27.
-%     The default value is 20.
+%     Lattices generator, mmax is a positive integer such that mmin<=mmax<=26.
+%     The default value is 24.
 % 
 %     in_param.fudge --- the positive function multiplying the finite 
 %     sum of Fast Fourier coefficients specified in the cone of functions.
@@ -296,7 +296,7 @@ default.abstol  = 1e-4;
 default.density  = 'uniform';
 default.shift  = rand;
 default.mmin  = 10;
-default.mmax  = 20;
+default.mmax  = 24;
 default.fudge = @(x) 5*2^-x;
 default.transform = 'Baker';
 
@@ -318,7 +318,7 @@ else
     else
         out_param.f=f;
         d = varargin{2};
-        if ~isnumeric(d) || ~gail.isposint(d) || ~(d<101)
+        if ~isnumeric(d) || ~gail.isposint(d) || ~(d<251)
             warning('MATLAB:cubLattice_g:dnotposint',...
                 'The dimension d must be a positive integer less than 101. Example for f(x)=x^2:')
             f = @(x) x.^2;
@@ -408,8 +408,8 @@ if (~gail.isposint(out_param.mmin) || ~(out_param.mmin < out_param.mmax+1))
 end
 
 % Force exponent budget number of points be a positive integer greater than
-% or equal to mmin an smaller than 28
-if ~(gail.isposint(out_param.mmax) && out_param.mmax>=out_param.mmin && out_param.mmax<=27)
+% or equal to mmin an smaller than 27
+if ~(gail.isposint(out_param.mmax) && out_param.mmax>=out_param.mmin && out_param.mmax<=26)
     warning('MATLAB:cubLattice_g:wrongmmax',['The maximum exponent for the budget should be an integer smaller or equal to 27.' ...
             ' Using default mmax ' num2str(default.mmax)])
     out_param.mmax = default.mmax;
