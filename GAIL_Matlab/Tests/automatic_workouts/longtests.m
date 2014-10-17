@@ -24,7 +24,9 @@ warning('on','MATLAB:integral_g:exceedbudget')
 
 %% Papers
 % Cone paper
-run_handle('ConesPaperFoolFunctions')
+if usejava('jvm')
+  run_handle('ConesPaperFoolFunctions')
+end
 
 % MCQMC paper
 run_handle('RunTestcubMConGeoAsianCall')
