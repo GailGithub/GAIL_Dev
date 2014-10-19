@@ -15,11 +15,7 @@ doctest dt_cubMC_g
 Test_cubMC_g
 
 % other workouts
-warning('off','MATLAB:integral_g:exceedbudget')
-warning('off','MATLAB:integral_g:peaky')
 run_handle('workout_integral_g')
-warning('on','MATLAB:integral_g:peaky')
-warning('on','MATLAB:integral_g:exceedbudget')
 
 
 %% Papers
