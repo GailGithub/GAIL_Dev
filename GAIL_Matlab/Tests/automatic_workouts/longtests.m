@@ -6,15 +6,18 @@ filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
 diary(filename)
 tic; 
 
-%% Workouts 
-% doctests
 format short
-doctest dt_meanMC_g_TrafficModel
-Test_meanMC_g
-doctest dt_cubMC_g
-Test_cubMC_g
 
-% other workouts
+%% Workouts 
+% meanMC_g
+doctest dt_meanMC_g_TrafficModel
+run_handle('Test_meanMC_g')
+
+% cubMC_g
+doctest dt_cubMC_g
+run_handle('Test_cubMC_g')
+
+% integral_g
 run_handle('workout_integral_g')
 
 
@@ -22,6 +25,9 @@ run_handle('workout_integral_g')
 % Cone paper
 if usejava('jvm')
   run_handle('ConesPaperFoolFunctions')
+end
+if MATLABVERSION >= 8  
+    run(ut_ConesPaper)
 end
 
 % MCQMC paper
@@ -35,11 +41,7 @@ if usejava('jvm')
   run_handle('UniFunMin_Plot_Flat')
   run_handle('UniFunMin_Plot_TwoExtreme')
 end
- 
-
-%% Unit tests
 if MATLABVERSION >= 8  
-    run(ut_ConesPaper)
     run(ut_UniFunMin)
 end
 
