@@ -1,6 +1,6 @@
 % LONGTESTS Drives all lengthy doctests, unit tests, workouts, and scripts
 
-[GAILPATH,~,PATHNAMESEPARATOR] = GAILstart(0);
+[GAILPATH,GAILVERSION,PATHNAMESEPARATOR,MATLABVERSION]  = GAILstart(0);
 filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
   'gail_workouts-', datestr(now,'yyyymmdd'),'.txt');
 diary(filename)
@@ -39,16 +39,12 @@ if usejava('jvm')
   run_handle('UniFunMin_Plot_Flat')
   run_handle('UniFunMin_Plot_TwoExtreme')
 end
-run_handle('UniFunMin_test_ErrorTolerance')
-run_handle('UniFunMin_test_ErrorXTolerance')
-run_handle('UniFunMin_test_TwoExtreme')
-run_handle('UniFunMin_test_XTolerance')
  
 
 %% Unit tests
-MATLABVERSION = gail.matlab_version
 if MATLABVERSION >= 8  
     run(ut_ConesPaper)
+    run(ut_UniFunMin)
 end
 
 time=toc;

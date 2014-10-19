@@ -7,7 +7,7 @@
 %  Function Minimization, July 2014.
 
 %% Garbage collection and initialization
-clear all 
+clearvars -except testCase  %clear all variables except testCase
 close all 
 tstart = tic;
 
