@@ -14,6 +14,11 @@ in_param.abstol=1e-8; %error tolerance
 
 nrep = 10000; %number of times to test used in the paper
 %nrep = 100; %number of times to test, takes about a minute, can be changed 
+if (nrep > 100)
+    warning(' Need more than one hour to run this workout.')
+    warning('off','MATLAB:integral01_g:exceedbudget');
+    warning('off','MATLAB:integral01_g:peaky');
+end;
 avec = 10.^(rand(nrep,1).*3-4);
 zvec = rand(nrep,1).*(1-4.*avec)+2.*avec;
 x0vec = zvec-2*avec;
@@ -97,6 +102,11 @@ filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
 save(filename)
 
 toc(tstart)
+
+if nrep > 100
+    warning('on','MATLAB:integral01_g:exceedbudget');
+    warning('on','MATLAB:integral01_g:peaky');
+end
 
 %% The following output was obtained on 2013-August-06 by
 %  from the data in
