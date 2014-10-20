@@ -1,5 +1,5 @@
 Guaranteed Automatic Integration Library (GAIL)
-GAIL Version 1.3.0, Feb 14th, 2014.
+GAIL Version 2.0, Oct 12th, 2014.
 See LICENSE.m for copyright and disclaimer.
 
 GAIL is a suite of algorithms for integration problems in one and many
@@ -10,19 +10,20 @@ Developed by
 -------------
 
 Fred Hickernell, Sou-Cheng Choi, and their collaborators including
-Yuhan Ding, Lan Jiang, and Yizhi Zhang, Department of Applied Mathematics, 
-Illinois Institute of Technology (IIT). We thank the contributions of
-Xincheng Sheng, Xuan Zhou, and the class of Math 573 Reliable 
+Yuhan Ding, Lan Jiang, Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi 
+Zhang and Xuan Zhou, Department of Applied Mathematics, Illinois 
+Institute of Technology (IIT). We thank the contributions of
+Xincheng Sheng, and the class of Math 573 Reliable 
 Mathematical Software, Fall 2013.
 
 
 Please cite the following software and papers:
 
 
-Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, and Yizhi Zhang,
-"GAIL: Guaranteed Automatic Integration Library (Version 1.3.0)" 
-[MATLAB Software], 2014.  Available from 
-http://code.google.com/p/gail/
+Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
+Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou, "GAIL: 
+Guaranteed Automatic Integration Library (Version 2.0)" [MATLAB Software],
+2014. Available from http://code.google.com/p/gail/
 
 
 Fred J. Hickernell, Lan Jiang, Yuewei Liu, and Art B. Owen,
@@ -33,8 +34,8 @@ Springer-Verlag, Berlin, 2014, to appear, arXiv:1208.4318 [math.ST]
 
 
 Nicholas Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
-Yizhi Zhang, "The complexity of guaranteed automatic algorithms:
-Cones, not balls", preprint, 2013 arXiv:1303.2412 [math.ST].
+Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic Algorithms:
+Cones, Not Balls", Journal of Complexity 30 (2014), pp. 21-45.
 
 
 Downloads
@@ -62,12 +63,15 @@ Detailed documentation is available at GAIL_Matlab/Documentation.
 General Usage Notes
 -------------------
 
-GAIL Version 1.3.0 includes the following four algorithms:
+GAIL Version 2.0 includes the following four algorithms:
 
 1.  funappx_g: One-dimensional function approximation on bounded interval
 2.  integral_g:  One-dimensional integration on bounded interval
 3.  meanMC_g:  Monte Carlo method for estimating mean of a random variable
 4.  cubMC_g: Monte Carlo method for numerical multiple integration
+5.  funmin_g: global minimum value of univariate function on a closed interval
+6.  cubSobol_g: Quasi-Monte Carlo method using Sobol' cubature for a d-dimensional integration
+7.  cubLattice_g: Quasi-Monte Carlo method using rank-1 Lattices cubature for a d-dimensional integration
 
 Installation Instruction
 ------------------------
@@ -90,7 +94,7 @@ Installation Instruction
 
 Alternatively, you could do this:
 
-1.  Download DownloadInstallGail_1_3_0.m and put it where you want
+1.  Download DownloadInstallGail_2_0_0.m and put it where you want
     GAIL to be installed.
 
 2.  Execute it in MATLAB.
