@@ -159,6 +159,25 @@ classdef ut_funmin_g < matlab.unittest.TestCase
             testCase.verifyLessThanOrEqual(result.npoints,in_param.nmax);
         end  
         
-  end
+        function funmin_gEXM7(testCase)
+            in_param.abstol = 10^(-3); 
+            in_param.TolX = 0;
+            in_param.nmax = 10^7;  
+            z = 0.5;
+            f = @(x) exp(-1./((x-z).^2)); % flat bottom
+            [fmin,result] = funmin_g(f,in_param);
+            testCase.verifyLessThanOrEqual(result.error,in_param.abstol);
+            testCase.verifyLessThanOrEqual(result.npoints,in_param.nmax);
+            v=sqrt(-1/(log(in_param.abstol)));
+            exactsolu1 =[.5-v, .5+v];
+            % verify guarantee |min(f)-fmin| <= abstol
+            testCase.verifyLessThanOrEqual(abs(fmin-0), in_param.abstol)
+            % verify result.intervals is a subinterval of exactsolu1
+            testCase.verifyLessThanOrEqual(exactsolu1(1),result.intervals(1));
+            testCase.verifyLessThanOrEqual(result.intervals(1),result.intervals(2));
+            testCase.verifyLessThanOrEqual(result.intervals(2),exactsolu1(2));
+        end
+        
+    end
 end
 
