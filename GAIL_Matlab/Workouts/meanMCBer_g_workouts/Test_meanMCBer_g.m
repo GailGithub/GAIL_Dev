@@ -3,7 +3,7 @@ clear all;close all;clc
 format long e
     disp(horzcat('errtype            abstol          abserr            pHat             p             n           nmax '));
     disp(        '-------------------------------------------------------------------------------------------------------');
-nrep = 2;
+nrep = 10;
 u = rand(nrep,1);
 uu = rand(nrep,1);
 in_param.alpha = 0.05;% default uncertainty
@@ -12,7 +12,6 @@ res = zeros(nrep,10);
 for k = 1:nrep
     p = 10^(-3+u(k)*2);
     in_param.abstol = 10^(-5+3*uu(k));
-    in_param.reltol = 10^(-2+uu(k));
     Yrand=@(n) binornd(1,p,n,1);
         [pHat,out_param]=meanMCBer_g(Yrand,in_param);
         % the results using meanMCBernoulli_g
