@@ -83,3 +83,11 @@ save(filename)
 
 toc(tstart)
 
+%% The following output was obtained on 2014-May
+%            Success    Success    Success    Success
+%  TolX               No Warning   Warning    fminbnd
+% 1e-02     100.00%    100.00%      0.00%     67.28% 
+% 1e-04     100.00%    100.00%      0.00%     67.28% 
+% 1e-07     100.00%      0.00%    100.00%     67.28% 
+% Elapsed time is 10873.821636 seconds.
+

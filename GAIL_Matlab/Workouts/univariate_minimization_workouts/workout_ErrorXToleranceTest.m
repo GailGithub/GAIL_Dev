@@ -92,10 +92,4 @@ save(filename)
 
 toc(tstart)
 
-%% The following output was obtained on 2014-May
-%         Probability    Success   Success   Failure  Failure
-%  tau      In Cone    No Warning  Warning No Warning Warning
-%    11  1.54%->21.00%   21.00%      0.00%   79.00%    0.00% 
-%   101 33.42%->52.28%   52.28%      0.00%   47.72%    0.00% 
-%  1001 66.15%->85.32%   85.33%      0.00%   14.67%    0.00% 
-% Elapsed time is 1936.495643 seconds.
+

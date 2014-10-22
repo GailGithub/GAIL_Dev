@@ -89,3 +89,11 @@ filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
 save(filename)
 
 toc(tstart)
+
+%% The following output was obtained on 2014-May
+%        Probability    Success   Success   Failure  Failure
+%  tau      In Cone    No Warning  Warning No Warning Warning
+%    11  1.28%->21.22%   21.22%      0.00%   78.78%    0.00% 
+%   101 34.02%->53.20%   53.18%      0.02%   46.79%    0.01% 
+%  1001 67.04%->85.79%   81.20%      2.59%   14.19%    2.02% 
+% Elapsed time is 4383.064010 seconds.
