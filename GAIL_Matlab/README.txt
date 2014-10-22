@@ -63,15 +63,16 @@ Detailed documentation is available at GAIL_Matlab/Documentation.
 General Usage Notes
 -------------------
 
-GAIL Version 2.0 includes the following four algorithms:
+GAIL Version 2.0 includes the following eight algorithms:
 
 1.  funappx_g: One-dimensional function approximation on bounded interval
 2.  integral_g:  One-dimensional integration on bounded interval
 3.  meanMC_g:  Monte Carlo method for estimating mean of a random variable
 4.  cubMC_g: Monte Carlo method for numerical multiple integration
-5.  funmin_g: global minimum value of univariate function on a closed interval
-6.  cubSobol_g: Quasi-Monte Carlo method using Sobol' cubature for a d-dimensional integration
-7.  cubLattice_g: Quasi-Monte Carlo method using rank-1 Lattices cubature for a d-dimensional integration
+5.  meanMCBer_g:  Monte Carlo method to estimate the mean of a Bernoulli random variable
+6.  funmin_g: global minimum value of univariate function on a closed interval
+7.  cubSobol_g: Quasi-Monte Carlo method using Sobol' cubature for a d-dimensional integration
+8.  cubLattice_g: Quasi-Monte Carlo method using rank-1 Lattices cubature for a d-dimensional integration
 
 Installation Instruction
 ------------------------
