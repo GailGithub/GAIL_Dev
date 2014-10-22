@@ -9,7 +9,7 @@
 %% Preliminaries
 format long e
 clearvars -except testCase
-close all
+% close all
 tstart = tic;
 
 %% Program parameters
