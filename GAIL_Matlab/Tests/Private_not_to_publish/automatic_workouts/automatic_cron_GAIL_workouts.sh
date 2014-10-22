@@ -8,7 +8,7 @@ cd /home/lantoni/GAIL_tests/repo/gail-development/
 # MATLAB
 # Set the directory for running our matlab workouts
 # Run the file that installs GAIL and run the tests. The output files are in OutputFiles. We put all togehter since there is a permission not letting us install the path
-cd /home/lantoni/GAIL_tests/repo/gail-development/GAIL_Matlab/Tests/automatic_workouts
+cd /home/lantoni/GAIL_tests/repo/gail-development/GAIL_Matlab/Tests/Private_not_to_publish/automatic_workouts
 /export/apps/matlab/R2013a/bin/matlab -nojvm < automaticworkouts.m
 
 # SETTING THE TEST OUTPUT FILE FOR COMPARING
