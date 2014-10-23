@@ -78,4 +78,11 @@ save(filename)
 
 toc(tstart)
 
+%% The following output was obtained on 2014-October
+%            Success    Success    Success    Success
+%  TolX               No Warning   Warning    fminbnd
+% 1e-02     100.00%    100.00%      0.00%     67.79% 
+% 1e-04     100.00%    100.00%      0.00%     67.79% 
+% 1e-07     100.00%      0.00%    100.00%     67.79% 
+
 

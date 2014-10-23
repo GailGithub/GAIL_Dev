@@ -19,8 +19,6 @@ if (nrep >= 1000)
 end;
 a = 10.^(-4+3*rand(nrep,1));
 z = 2.*a+(1-4*a).*rand(nrep,1);
-x0 = z-2*a;
-x1 = z+2*a;
 tauvec = [11 101 1001]; %cone condition tau
 ntau = length(tauvec);
 ratio = 1./a;
@@ -90,5 +88,10 @@ save(filename)
 
 toc(tstart)
 
-
+%% The following output was obtained on 2014-October
+%         Probability    Success   Success   Failure  Failure
+%  tau      In Cone    No Warning  Warning No Warning Warning
+%    11  1.35%->21.01%   21.01%      0.00%   78.99%    0.00%
+%   101 33.51%->52.35%   52.35%      0.00%   47.65%    0.00%
+%  1001 66.73%->85.20%   80.95%      4.27%   14.78%    0.00%
 

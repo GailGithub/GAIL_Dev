@@ -20,8 +20,6 @@ if (nrep >= 1000)
 end;
 a = 10.^(-4+3*rand(nrep,1));
 z = 2.*a+(1-4*a).*rand(nrep,1);
-x0 = z-2*a;
-x1 = z+2*a;
 tauvec = [11 101 1001]; %cone condition tau
 ntau = length(tauvec);
 ratio = 1./a;
@@ -62,8 +60,8 @@ for i=1:ntau;
     end
 end
 
-probinit = mean(repmat(ratio,1,ntau)<=repmat(tauvec,nrep,1),1); %probability in initial cone
-probfinl = mean(repmat(ratio,1,ntau)<=newtaumat,1); %probability in final cone
+probinit = mean(repmat(ratio,1,ntau)<=repmat(tauvec,nrep,1),1); 
+probfinl = mean(repmat(ratio,1,ntau)<=newtaumat,1); 
 succnowarn=mean((trueerrormat<=in_param.abstol|truesolumat)&(~exceedmat),1); 
 succwarn=mean((trueerrormat<=in_param.abstol|truesolumat)&(exceedmat),1);    
 failnowarn=mean((trueerrormat>in_param.abstol&~truesolumat)&(~exceedmat),1);  
@@ -92,4 +90,9 @@ save(filename)
 
 toc(tstart)
 
-
+%% The following output was obtained on 2014-October
+%         Probability    Success   Success   Failure  Failure
+%  tau      In Cone    No Warning  Warning No Warning Warning
+%    11  1.49%->20.99%   20.99%      0.00%   79.01%    0.00% 
+%   101 33.24%->51.96%   51.96%      0.00%   48.04%    0.00% 
+%  1001 66.00%->85.07%   85.08%      0.00%   14.92%    0.00% 

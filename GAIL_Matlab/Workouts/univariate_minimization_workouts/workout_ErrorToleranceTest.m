@@ -19,8 +19,6 @@ if (nrep >= 1000)
 end;
 a = 10.^(-4+3*rand(nrep,1));
 z = 2.*a+(1-4*a).*rand(nrep,1);
-x0 = z-2*a;
-x1 = z+2*a;
 tauvec = [11 101 1001]; %cone condition tau
 ntau = length(tauvec);
 ratio = 1./a;
@@ -54,10 +52,10 @@ end
 
 probinit = mean(repmat(ratio,1,ntau)<=repmat(tauvec,nrep,1),1); 
 probfinl = mean(repmat(ratio,1,ntau)<=newtaumat,1); 
-succnowarn = mean((trueerrormat<=in_param.abstol)&(~exceedmat),1); 
-succwarn = mean((trueerrormat<=in_param.abstol)&(exceedmat),1);    
-failnowarn = mean((trueerrormat>in_param.abstol)&(~exceedmat),1);  
-failwarn = mean((trueerrormat>in_param.abstol)&(exceedmat),1);
+succnowarn=mean((trueerrormat<=in_param.abstol|truesolumat)&(~exceedmat),1); 
+succwarn=mean((trueerrormat<=in_param.abstol|truesolumat)&(exceedmat),1);    
+failnowarn=mean((trueerrormat>in_param.abstol&~truesolumat)&(~exceedmat),1);  
+failwarn=mean((trueerrormat>in_param.abstol&~truesolumat)&(exceedmat),1);  
 
 %% Output the table
 % To just re-display the output, load the .mat file and run this section
@@ -83,4 +81,9 @@ save(filename)
 
 toc(tstart)
 
+%         Probability    Success   Success   Failure  Failure
+%  tau      In Cone    No Warning  Warning No Warning Warning
+%    11  1.24%->57.53%   47.82%      3.87%   42.47%    5.84% 
+%   101 33.03%->75.35%   66.50%      3.32%   24.65%    5.53% 
+%  1001 66.70%->93.64%   82.23%      5.25%    6.36%    6.16% 
 
