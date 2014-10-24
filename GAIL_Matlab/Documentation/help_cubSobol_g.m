@@ -1,6 +1,6 @@
 %% cubSobol_g
 % |is a Quasi-Monte Carlo method using Sobol' cubature over the
-% d-multidimensional region to integrate within a specified absolute error 
+% d-dimensional region to integrate within a specified absolute error 
 % tolerance with guarantees under Walsh-Fourier coefficients cone decay assumptions.|
 %% Syntax
 % [q,out_param] = *cubSobol_g*(f,d)
@@ -21,14 +21,14 @@
 %  construction of Sobol', d must be a positive integer with 1<=d<=1111.
 %
 % q = *cubSobol_g*(f,d,abstol,density,mmin,mmax,fudge)
-%  estimates the integral of f over the d-dimensional region. The answer
+%  estimates the integral of f over a d-dimensional region. The answer
 %  is given within the absolute error tolerance abstol. All parameters
 %  should be input in the order specified above. If an input is not specified,
 %  the default value is used. Note that if an input is not specified,
 %  the remaining tail can not be specified either.
 %
 % q = *cubSobol_g*(f,d,'abstol',abstol,'density',density,'mmin',mmin,'mmax',mmax,'fudge',fudge)
-%  estimates the integral of f over the d-dimensional region. The answer
+%  estimates the integral of f over a d-dimensional region. The answer
 %  is given within the absolute error tolerance abstol. All the field-value
 %  pairs are optional and can be supplied with any order. If an input is not
 %  specified, the default value is used.
@@ -39,21 +39,24 @@
 % 
 % *Input Arguments*
 %
-% * f --- |the integrand whose input should be a matrix mxd where m is the
-%  number of data points and d the dimension.|
+% * f --- |the integrand whose input should be a matrix nxd where n is the
+%  number of data points and d the dimension. By default it is the
+%  quadratic function.|
 %
-% * d --- |dimension where f is defined. d must be a positive integer 1<=d<=1111.|
+% * d --- |dimension of domain on which f is defined. d must be a positive
+%  integer 1<=d<=1111. By default it is 1.|
 %
-% * in_param.abstol --- |the absolute error tolerance, abstol>0. By default is 1e-4. |
+% * in_param.abstol --- |the absolute error tolerance, abstol>0. By 
+%  default it is 1e-4. |
 %
-% * in_param.density --- |for f(x), we can define x uniform in [0,1)^d or
-%  normally distributed with covariance matrix I_d. By default is
+% * in_param.density --- |for f(x), we can define x uniformly in [0,1)^d or
+%  normally distributed with covariance matrix I_d. By default it is
 %  'uniform'. The only possible values are 'uniform' or 'normal'.|
 %
 % * in_param.mmin --- |the minimum number of points to start is 2^mmin. The
 %  cone condition on the Fourier coefficients decay requires a minimum
 %  number of points to start. The advice is to consider at least mmin=10.
-%  mmin needs to be a positive integer with mmin<=mmax. By default is 10.|
+%  mmin needs to be a positive integer with mmin<=mmax. By default it is 10.|
 %
 % * in_param.mmax --- |the maximum budget is 2^mmax. By construction of the
 %  Sobol' generator, mmax is a positive integer such that mmin<=mmax<=53.
@@ -62,7 +65,7 @@
 % * in_param.fudge --- |the positive function multiplying the finite 
 %  sum of Fast Walsh coefficients specified in the cone of functions.
 %  For more information about this parameter, refer to the references.
-%  By default is @(x) 5*2^-x.|
+%  By default it is @(x) 5*2^-x.|
 %
 % *Output Arguments*
 %
@@ -78,7 +81,7 @@
 %  condition. If the function lies in the cone, the real error should be
 %  smaller than this predicted error.|
 %
-% * out_param.time --- |time elapsed when calling cubSobol_g for f.|
+% * out_param.time --- |time elapsed in seconds when calling cubSobol_g for f.|
 % 
 %%  Guarantee
 %
@@ -147,8 +150,8 @@
 %
 %% References
 %
-% [1] Hickernell, F.J., Jimenez Rugama, Ll.A.: Reliable adaptive cubature
-% using digital sequences (2014). In preparation.
+% [1] Fred J. Hickernell and Lluis Antoni Jimenez Rugama: Reliable adaptive
+% cubature using digital sequences (2014). Submitted for publication.
 %
 % [2] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang,
 % Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,

@@ -34,7 +34,7 @@
 %   absolute error tolerance 1e-3 and uncertainty 0.01.
 % 
     in_param.abstol=1e-3; in_param.alpha = 0.01; p=1/9;Yrand=@(n) rand(n,1)<p;
-    pHat = meanMCBernoulli_g(Yrand,in_param)
+    pHat = meanMCBer_g(Yrand,in_param)
  
 %% 
 %   *Example 2*
@@ -42,7 +42,7 @@
 %   Using the same function as example 1, with the relative error tolerance
 %   1e-2.
 % 
-    pHat = meanMCBernoulli_g(Yrand,0,1e-2,'rel')
+    pHat = meanMCBer_g(Yrand,0,1e-2,'rel')
     
 %% 
 %   *Example 3*
@@ -50,4 +50,4 @@
 %   Using the same function as example 1, with the relative error
 %   tolerance 1e-2 and uncertainty 0.05.
 % 
-    pHat = meanMCBernoulli_g(Yrand,'errtype','rel','reltol',1e-2,'alpha',0.05)
+    pHat = meanMCBer_g(Yrand,'errtype','rel','reltol',1e-2,'alpha',0.05)

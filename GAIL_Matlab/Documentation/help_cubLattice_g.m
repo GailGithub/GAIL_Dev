@@ -1,6 +1,6 @@
 %% cubLattice_g
 % |is a Quasi-Monte Carlo method using rank-1 Lattices cubature
-% over the d-multidimensional region to integrate within a specified absolute error 
+% over a d-dimensional region to integrate within a specified absolute error 
 % tolerance with guarantees under Fourier coefficients cone decay assumptions.|
 %% Syntax
 % [q,out_param] = *cubLattice_g*(f,d)
@@ -18,17 +18,17 @@
 %  accept an n x d matrix input, where d is the dimension of the hypercube,
 %  and n is the number of points being evaluated simultaneously. The input d
 %  is the dimension in which the function f is defined. Given the
-%  construction of our Lattices, d must be a positive integer with 1<=d<=100.
+%  construction of our Lattices, d must be a positive integer with 1<=d<=250.
 % 
 % q = *cubLattice_g*(f,d,abstol,density,shift,mmin,mmax,fudge,transform)
-%  estimates the integral of f over the d-dimensional region. The answer
+%  estimates the integral of f over a d-dimensional region. The answer
 %  is given within the absolute error tolerance abstol. All parameters
 %  should be input in the order specified above. If an input is not specified,
 %  the default value is used. Note that if an input is not specified,
 %  the remaining tail can not be specified either.
 % 
 % q = *cubLattice_g*(f,d,'abstol',abstol,'density',density,'shift',shift,'mmin',mmin,'mmax',mmax,'fudge',fudge,'transform',transform)
-%  estimates the integral of f over the d-dimensional region. The answer
+%  estimates the integral of f over a d-dimensional region. The answer
 %  is given within the absolute error tolerance abstol. All the field-value
 %  pairs are optional and can be supplied with any order. If an input is not
 %  specified, the default value is used.
@@ -39,37 +39,41 @@
 % 
 % *Input Arguments*
 %
-% * f --- |the integrand whose input should be a matrix mxd where m is the
-%  number of data points and d the dimension.|
+% * f --- |the integrand whose input should be a matrix nxd where n is the
+%  number of data points and d the dimension. By default it is the
+%  quadratic function.|
 % 
-% * d --- |dimension where f is defined. d must be a positive integer 1<=d<=100.|
+% * d --- |dimension of domain on which f is defined. d must be a positive
+%  integer 1<=d<=250. By default it is 1.|
 % 
-% * in_param.abstol --- |the absolute error tolerance, abstol>0. By default is 1e-4. |
+% * in_param.abstol --- |the absolute error tolerance, abstol>0. By 
+%  default it is 1e-4. |
 % 
 % * in_param.density --- |for f(x), we can define x uniformly in [0,1)^d or
-%  normally distributed with covariance matrix I_d. By default is
+%  normally distributed with covariance matrix I_d. By default it is
 %  'uniform'. The only possible values are 'uniform' or 'normal'.|
 % 
 % * in_param.shift --- |the Rank-1 lattices can be shifted to avoid the origin
-%  or other particular points. By default we consider a uniformily random shift.|
+%  or other particular points. By default we consider a uniformly [0,1)
+%  random shift.|
 % 
 % * in_param.mmin --- |the minimum number of points to start is 2^mmin. The
 %  cone condition on the Fourier coefficients decay requires a minimum
 %  number of points to start. The advice is to consider at least mmin=10.
-%  mmin needs to be a positive integer with mmin<=mmax. By default is 10.|
+%  mmin needs to be a positive integer with mmin<=mmax. By default it is 10.|
 % 
 % * in_param.mmax --- |the maximum budget is 2^mmax. By construction of our
-%  Lattices generator, mmax is a positive integer such that mmin<=mmax<=27.
+%  Lattices generator, mmax is a positive integer such that mmin<=mmax<=26.
 %  The default value is 24.|
 % 
 % * in_param.fudge --- |the positive function multiplying the finite 
 %  sum of Fast Fourier coefficients specified in the cone of functions.
 %  For more information about this parameter, refer to the references.
-%  By default is @(x) 5*2^-x.|
+%  By default it is @(x) 5*2^-x.|
 % 
 % * in_param.transform --- |the algorithm is defined for continuous periodic functions. If the
 %  input function f is not, there are 5 types of transform to periodize it
-%  without modifying the result. The options:
+%  without modifying the result. By default it is Baker. The options:
 %    'id' : no transformation. Choice by default.
 %    'Baker' : Baker's transform or tent map in each coordinate. Preserving
 %              only continuity but simple to compute.
@@ -92,7 +96,7 @@
 %  condition. If the function lies in the cone, the real error should be
 %  smaller than this predicted error.|
 % 
-% * out_param.time --- |time elapsed when calling cubLattice_g for f.|
+% * out_param.time --- |time elapsed in seconds when calling cubLattice_g for f.|
 % 
 %%  Guarantee
 %
@@ -161,8 +165,8 @@
 %
 %% References
 %
-% [1] Jimenez Rugama, Ll.A., Hickernell, F.J.: Adaptive Multidimensional
-% Integration Based on Rank-1 Lattices (2014). In preparation.
+% [1] Lluis Antoni Jimenez Rugama and Fred J. Hickernell: Adaptive Multidimensional
+% Integration Based on Rank-1 Lattices (2014). Submitted for publication.
 %
 % [2] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang,
 % Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,

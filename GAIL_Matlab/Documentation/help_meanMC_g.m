@@ -27,8 +27,7 @@
 %  level 1-alpha using all ordered parsing inputs abstol, reltol, alpha,
 %  fudge, nSig, n1, tbudget, nbudget.
 %
-% tmu = *meanMC_g*(Yrand,'abstol',abstol,'reltol',reltol,'alpha',alpha,
-%  'fudge',fudge,'nSig',nSig,'n1',n1,'tbudget',tbudget,'nbudget', nbudget)
+% tmu = *meanMC_g*(Yrand,'abstol',abstol,'reltol',reltol,'alpha',alpha,'fudge',fudge,'nSig',nSig,'n1',n1,'tbudget',tbudget,'nbudget',nbudget)
 %  estimates the mean of a random variable Y to within a specified
 %  generalized error tolerance tolfun with guaranteed confidence level
 %  1-alpha. All the field-value pairs are optional and can be supplied in
@@ -85,8 +84,8 @@
 %
 % * out_param.n --- |the sample size used in each iteration.|
 %
-% * out_param.nmax --- |the maximum sample budget to estimate mu. It was
-%   calculated by the sample left and time left.|
+% * out_param.nremain --- |the remaining sample budget to estimate mu. It was
+%  calculated by the sample left and time left.|
 %
 % * out_param.ntot --- |total sample used.|
 %
@@ -96,11 +95,11 @@
 %
 % * out_param.var --- |the sample variance.|
 %
-% * out_param.exit --- |the state of program when exiting.|
+% * out_param.exit --- |the state of program when exiting.
 %    
 %                   0   Success
 %   
-%                   1   Not enough samples to estimate the mean
+%                   1   Not enough samples to estimate the mean|
 %
 % * out_param.kurtmax --- |the upper bound on modified kurtosis.|
 %
@@ -116,7 +115,7 @@
 % the algorithm terminated without showing any warning messages and provide
 % an answer tmu, then the follow inequality would be satisfied:
 % 
-% Pr(|mu-tmu| <= max(abstol,reltol*|mu|)) >= 1-alpha
+% Pr(|mu-tmu| <= max(abstol,reltol|mu|)) >= 1-alpha
 %
 % where abstol is the absolute error tolerance and reltol is the relative
 % error tolerance, if the true mean mu is rather small as well as the
@@ -172,11 +171,15 @@
 % </html>
 %
 % <html>
-% <a href="help_meanMCBernoulli_g.html">meanMCBernoulli_g</a>
+% <a href="help_meanMCBer_g.html">meanMCBer_g</a>
 % </html>
 %
 % <html>
 % <a href="help_cubSobol_g.html">cubSobol_g</a>
+% </html>
+%
+% <html>
+% <a href="help_cubLattice_g.html">cubLattice_g</a>
 % </html>
 %
 %% References
@@ -184,7 +187,7 @@
 % [1]  F. J. Hickernell, L. Jiang, Y. Liu, and A. B. Owen, Guaranteed
 % conservative fixed width confidence intervals via Monte Carlo sampling,
 % Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F. Y. Kuo, G. W.
-% Peters, and I. H. Sloan, eds.), Springer-Verlag, Berlin, 2014, to appear,
+% Peters, and I. H. Sloan, eds.), Springer-Verlag, Berlin, 2014.
 % arXiv:1208.4318 [math.ST]
 %
 % [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis

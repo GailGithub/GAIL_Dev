@@ -25,7 +25,7 @@
 % </html>
 %
 % <html>
-% <a href="help_meanMCBernoulli_g.html">meanMCBernoulli_g</a>
+% <a href="help_meanMCBer_g.html">meanMCBer_g</a>
 % </html>
 %
 % <html>

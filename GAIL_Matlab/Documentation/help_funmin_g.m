@@ -6,7 +6,7 @@
 %
 % fmin = *funmin_g*(f,a,b,abstol,TolX,nlo,nhi,nmax)
 %
-% fmin = *funmin_g*(f,'a',a,'b',b,'abstol',abstol,'TolX',TolX,'nlo',nlo,'nhi',nhi,'nmax',nmax)
+% fmin = *funmin_g*(f,'a',a,'b',b,'abstol',abstol,'TolX',TolX,'nlo',nlo,...
 %
 % fmin = *funmin_g*(f,in_param)
 %
@@ -21,11 +21,12 @@
 % fmin = *funmin_g*(f,a,b,abstol,TolX,nlo,nhi,nmax) finds minimum value of
 %  function f with ordered input parameters that define the finite
 %  interval [a,b], a guaranteed absolute error tolerance abstol, a
-%  quaranteed X tolerance TolX, a lower bound of initial number of points
+%  guaranteed X tolerance TolX, a lower bound of initial number of points
 %  nlo, an upper bound of initial number of points nhi, and a cost budget
 %  nmax.
 %
-% fmin = *funmin_g*(f,'a',a,'b',b,'abstol',abstol,'TolX',TolX,'nlo',nlo,'nhi',nhi,'nmax',nmax)
+% fmin = *funmin_g*(f,'a',a,'b',b,'abstol',abstol,'TolX',TolX,'nlo',nlo,...
+%  'nhi',nhi,'nmax',nmax)
 %  finds minimum value of function f on the interval [a,b] with a 
 %  guaranteed absolute error tolerance abstol, a guaranteed X tolerance 
 %  TolX, a lower bound of initial number of points nlo, an upper bound of 
@@ -97,7 +98,7 @@
 %
 % * out_param.intervals --- |the intervals containing point(s) where the
 %  minimum occurs. Each column indicates one interval where the first
-%  point is the left point and the second row is the right point.|
+%  row is the left point and the second row is the right point.|
 %
 %% Guarantee
 %    

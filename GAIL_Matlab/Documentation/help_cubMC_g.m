@@ -24,20 +24,18 @@
 %  row corresponds to the lower limits and the second row corresponds to
 %  the upper limits.
 % 
-% Q = *cubMC_g*(f,hyperbox,measure,abstol,reltol,alpha,fudge,nSig,n1,
-%  tbudget,nbudget,flag) estimates the integral of function f over
-%  hyperbox to within a specified generalized error tolerance tolfun with
-%  guaranteed confidence level 1-alpha using all ordered parsing inputs f,
-%  hyperbox, measure, abstol, reltol, alpha, fudge, nSig, n1, tbudget,
-%  nbudget, flag. The input f and hyperbox are required and others are
-%  optional.
+% Q = *cubMC_g*(f,hyperbox,measure,abstol,reltol,alpha,fudge,nSig,n1,tbudget,nbudget,flag)
+%  estimates the integral of function f over hyperbox to within a 
+%  specified generalized error tolerance tolfun with guaranteed confidence
+%  level 1-alpha using all ordered parsing inputs f, hyperbox, measure, 
+%  abstol, reltol, alpha, fudge, nSig, n1, tbudget, nbudget, flag. The 
+%  input f and hyperbox are required and others are optional.
 % 
 % Q = *cubMC_g*(f,hyperbox,'measure','uniform','abstol',abstol,'reltol',reltol,'alpha',alpha,'fudge',fudge,'nSig',nSig,'n1',n1,'tbudget',tbudget,'nbudget',nbudget,'flag',flag)
-%  estimates the integral of f over hyperbox to within a specified
+%  estimates the integral of f over hyperbox to within a specified 
 %  generalized error tolerance tolfun with guaranteed confidence level
-%  1-alpha. All the field-value pairs are optional and can be supplied in
-%  different order. If an input is not specified, the default value is
-%  used.
+%  1-alpha. All the field-value pairs are optional and can be supplied in 
+%  different order. If an input is not specified, the default value is used.
 % 
 % [Q out_param] = *cubMC_g*(f,hyperbox,in_param) estimates the integral of
 %  f over hyperbox to within a specified generalized error tolerance
@@ -80,13 +78,13 @@
 % * in_param.nbudget --- |the sample budget to do the estimation, the
 %  default value is 1e9.|
 % 
-% * in_param.flag --- |the value corresponds to parameter checking status.|
+% * in_param.flag --- |the value corresponds to parameter checking status.
 %   
 %                      0   not checked
 %   
 %                      1   checked by meanMC_g
 %   
-%                      2   checked by cubMC_g
+%                      2   checked by cubMC_g|
 %
 % *Output Arguments*
 %
@@ -95,6 +93,9 @@
 % * out_param.n --- |the sample size used in each iteration.|
 %
 % * out_param.ntot --- |total sample used.|
+%
+% * out_param.nremain --- |the remaining sample budget to estimate I. It was
+%  calculated by the sample left and time left.|
 %
 % * out_param.tau --- |the iteration step.|
 %
@@ -106,7 +107,9 @@
 % 
 % * out_param.time --- |the time elapsed in seconds.|
 %
-% * out_param.exit --- |the state of program when exiting.|
+% * out_param.var --- |the sample variance.|
+%
+% * out_param.exit --- |the state of program when exiting.
 %   
 %                    0   success
 %   
@@ -127,7 +130,7 @@
 %                    13  hyperbox is infinite when measure is uniform
 %   
 %                    14  hyperbox is not doubly infinite when measure
-%                        is normal
+%                        is normal|
 % 
 %%  Guarantee
 % This algorithm attempts to calculate the integral of function f over a
@@ -135,7 +138,7 @@
 % 1-alpha. If the algorithm terminated without showing any warning messages
 % and provide an answer Q, then the follow inequality would be satisfied:
 % 
-% Pr(|Q-I| <= max(abstol,reltol*|I|)) >= 1-alpha
+% Pr(|Q-I| <= max(abstol,reltol|I|)) >= 1-alpha
 %
 % where abstol is the absolute error tolerance and reltol is the relative
 % error tolerance, if the true integral I is rather small as well as the
@@ -203,16 +206,24 @@
 % </html>
 %
 % <html>
-% <a href="help_meanMCBernoulli_g.html">meanMCBernoulli_g</a>
+% <a href="help_meanMCBer_g.html">meanMCBer_g</a>
+% </html>
+%
+% <html>
+% <a href="help_cubLattice_g.html">cubLattice_g</a>
+% </html>
+%
+% <html>
+% <a href="help_cubSobol_g.html">cubSobol_g</a>
 % </html>
 %
 %% References
 %
 % [1]  F. J. Hickernell, L. Jiang, Y. Liu, and A. B. Owen, Guaranteed
 % conservative fixed width confidence intervals via Monte Carlo sampling,
-% Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F. Y. Kuo, G. W.
-% Peters, and I. H. Sloan, eds.), Springer-Verlag, Berlin, 2014, to appear,
-% arXiv:1208.4318 [math.ST]
+% Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F. Y. Kuo, G.
+% W. Peters, and I. H. Sloan, eds.), pp. 105-128, Springer-Verlag,
+% Berlin, 2014 DOI: 10.1007/978-3-642-41095-6_5
 %
 % [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 % Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou, "GAIL:
