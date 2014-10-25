@@ -1,31 +1,14 @@
 %%  Guarantee
 %
-% Case 1: errtype = 'abs'
-%
 % If the sample size is calculated according Hoeffding's inequality, which
 % equals to ceil(log(2/out_param.alpha)/(2*out_param.abstol^2)), then the
 % following inequality must be satisfied:
 %
 % Pr(|p-pHat| <= abstol) >= 1-alpha.
 % 
-% Here p is the true mean of Yrand, and pHat is the output of
-% MEANMCBERNOULLI_G with errtype = 'abs'
+% Here p is the true mean of Yrand, and pHat is the output of MEANMCBER_G
 %
-% Also, the cost is deterministic and bounded.
-% 
-% Case 2: errtype = 'rel'
-%
-% If the algorithm terminated without any warning messages, the estimated
-% mean pHat would satisfy the following inequality:
-%
-% Pr(|p-pHat| <= abstol*p) >= 1-alpha.
-%
-% Here p is the true mean of Y, and pHat is the output of MEANMCBERNOULLI_G
-% with errtype = 'rel'.
-% 
-% Additionally, the cost of the algorithm would be bounded by N_up, which is
-% defined in terms of the true mean p, uncertainty alpha and relative
-% tolerance reltol. For details, please refer to the paper.
+% Also, the cost is deterministic.
 %
 %%   Examples
 %   *Example 1*
@@ -39,15 +22,15 @@
 %% 
 %   *Example 2*
 
-%   Using the same function as example 1, with the relative error tolerance
-%   1e-2.
+%   Using the same function as example 1, with the absolute error tolerance
+%   1e-4.
 % 
-    pHat = meanMCBer_g(Yrand,0,1e-2,'rel')
+    pHat = meanMCBer_g(Yrand,1e-4)
     
 %% 
 %   *Example 3*
 
-%   Using the same function as example 1, with the relative error
+%   Using the same function as example 1, with the absolute error
 %   tolerance 1e-2 and uncertainty 0.05.
 % 
-    pHat = meanMCBer_g(Yrand,'errtype','rel','reltol',1e-2,'alpha',0.05)
+    pHat = meanMCBer_g(Yrand,'abstol',1e-2,'alpha',0.05)
