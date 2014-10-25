@@ -114,7 +114,7 @@ function [Q,out_param] = cubMC_g(varargin)
 %      
 %                       10  hyperbox does not contain numbers
 %      
-%                       11  hyperbox not 2 x d
+%                       11  hyperbox is not 2 x d
 %      
 %                       12  hyperbox is only a point in one direction
 %      
@@ -133,7 +133,7 @@ function [Q,out_param] = cubMC_g(varargin)
 % Pr(|Q-I| <= tolfun) >= 1-alpha
 %
 % The cost of the algorithm, N_tot, is also bounded above by N_up, which is
-% function in terms of abstol, reltol, nSig, n1, fudge, kurtmax, beta. And
+% a function in terms of abstol, reltol, nSig, n1, fudge, kurtmax, beta. And
 % the following inequality holds:
 % 
 % Pr (N_tot <= N_up) >= 1-beta
