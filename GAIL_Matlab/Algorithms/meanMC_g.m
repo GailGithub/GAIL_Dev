@@ -127,9 +127,9 @@ function [tmu,out_param]=meanMC_g(varargin)
 %
 % Example 2:
 % Calculate the mean of x^2 when x is uniformly distributed in
-% [0 1], with the relative error tolerance = 1e-3 and uncertainty 5%.
+% [0 1], with the absolute error tolerance = 1e-3 and uncertainty 5%.
 %
-% >> in_param.reltol=0; in_param.abstol = 1e-3;
+% >> in_param.reltol=0; in_param.abstol = 1e-3;in_param.reltol=0;
 % >> in_param.alpha = 0.05; Yrand=@(n) rand(n,1).^2;
 % >> tmu=meanMC_g(Yrand,in_param)
 % tmu = 0.33***
@@ -144,7 +144,7 @@ function [tmu,out_param]=meanMC_g(varargin)
 %
 %
 % Example 4:
-% Calculate the mean of sin(x) when x is uniformly distributed in
+% Calculate the mean of cos(x) when x is uniformly distributed in
 % [0 1], with the relative error tolerance 1e-2 and uncertainty 0.05.
 %
 % >> tmu=meanMC_g(@(n)cos(rand(n,1)),'reltol',1e-2,'abstol',0,'alpha',0.05)
