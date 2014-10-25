@@ -23,7 +23,7 @@ doctest dt_funappx_g
 doctest funmin_g
 doctest funminab_g
 doctest integral_g
-doctest integralsim_g
+%doctest integralsim_g
 doctest integral01_g
 doctest integraltau_g
 doctest dt_integral_g 
@@ -83,23 +83,23 @@ if MATLABVERSION >= 8
     warning('on','MATLAB:integral_g:peaky')
     warning('on','MATLAB:integral_g:exceedbudget')
   
-    warning('off','MATLAB:integralsim_g:peaky')
-    warning('off','MATLAB:integralsim_g:exceedbudget')
-    try
-    Tests = matlab.unittest.TestSuite.fromClass(?ut_integralsim_g);
-    results=run(ut_integralsim_g)
-    if sum([results.Failed])>0
-        failed=find([results.Failed]>0);
-        for i=1:size(failed,2)
-            fprintf(fid,'%s\n',Tests(failed(i)).Name);
-        end
-    end
-    catch
-        display('Test ut_integralsim_g is wrongly coded. We skip it.')
-        fprintf(fid,'Test ut_integralsim_g is wrongly coded. We skip it.\n');
-    end
-    warning('on','MATLAB:integralsim_g:peaky')
-    warning('on','MATLAB:integralsim_g:exceedbudget')
+%     warning('off','MATLAB:integralsim_g:peaky')
+%     warning('off','MATLAB:integralsim_g:exceedbudget')
+%     try
+%     Tests = matlab.unittest.TestSuite.fromClass(?ut_integralsim_g);
+%     results=run(ut_integralsim_g)
+%     if sum([results.Failed])>0
+%         failed=find([results.Failed]>0);
+%         for i=1:size(failed,2)
+%             fprintf(fid,'%s\n',Tests(failed(i)).Name);
+%         end
+%     end
+%     catch
+%         display('Test ut_integralsim_g is wrongly coded. We skip it.')
+%         fprintf(fid,'Test ut_integralsim_g is wrongly coded. We skip it.\n');
+%     end
+%     warning('on','MATLAB:integralsim_g:peaky')
+%     warning('on','MATLAB:integralsim_g:exceedbudget')
 
     
     warning('off','MATLAB:integral01_g:peaky')
