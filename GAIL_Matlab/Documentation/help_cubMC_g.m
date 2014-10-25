@@ -78,13 +78,13 @@
 % * in_param.nbudget --- |the sample budget to do the estimation, the
 %  default value is 1e9.|
 % 
-% * in_param.flag --- |the value corresponds to parameter checking status.
+% * in_param.flag --- |the value corresponds to parameter checking status.|
 %   
 %                      0   not checked
 %   
 %                      1   checked by meanMC_g
 %   
-%                      2   checked by cubMC_g|
+%                      2   checked by cubMC_g
 %
 % *Output Arguments*
 %
@@ -109,7 +109,7 @@
 %
 % * out_param.var --- |the sample variance.|
 %
-% * out_param.exit --- |the state of program when exiting.
+% * out_param.exit --- |the state of program when exiting.|
 %   
 %                    0   success
 %   
@@ -123,35 +123,32 @@
 %   
 %                    10  hyperbox does not contain numbers
 %   
-%                    11  hyperbox not 2 x d
+%                    11  hyperbox is not 2 x d
 %   
 %                    12  hyperbox is only a point in one direction
 %   
 %                    13  hyperbox is infinite when measure is uniform
 %   
 %                    14  hyperbox is not doubly infinite when measure
-%                        is normal|
+%                        is normal
 % 
 %%  Guarantee
 % This algorithm attempts to calculate the integral of function f over a
-% hyperbox to a prescribed error tolerance with guaranteed confidence level
-% 1-alpha. If the algorithm terminated without showing any warning messages
-% and provide an answer Q, then the follow inequality would be satisfied:
+% hyperbox to a prescribed error tolerance tolfun:= max(abstol,reltol*|I|)
+% with guaranteed confidence level 1-alpha. If the algorithm terminated
+% without showing any warning messages and provide an answer Q, then the
+% follow inequality would be satisfied:
 % 
-% Pr(|Q-I| <= max(abstol,reltol|I|)) >= 1-alpha
+% Pr(|Q-I| <= tolfun) >= 1-alpha
 %
-% where abstol is the absolute error tolerance and reltol is the relative
-% error tolerance, if the true integral I is rather small as well as the
-% reltol, then the abstol would be satisfied, and vice versa. 
-%
-% The cost of the algorithm is also bounded above by N_up, which is
-% function in terms of abstol, reltol, nSig, n1, fudge, kurtmax, beta. And
+% The cost of the algorithm, N_tot, is also bounded above by N_up, which is
+% a function in terms of abstol, reltol, nSig, n1, fudge, kurtmax, beta. And
 % the following inequality holds:
 % 
 % Pr (N_tot <= N_up) >= 1-beta
 %
 % Please refer to our paper for detailed arguments and proofs.
-% 
+%
 %%  Examples
 % *Example 1*
 

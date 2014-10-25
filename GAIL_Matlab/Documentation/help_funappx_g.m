@@ -23,8 +23,7 @@
 %  bound of initial number of points nlo, an upper bound of initial number
 %  of points nhi, a cost budget nmax and max number of iteration maxiter.
 %
-%  pp =
-%  FUNAPPX_G(f,'a',a,'b',b,'abstol',abstol,'nlo',nlo,'nhi',nhi,'nmax',nmax,'maxiter',maxiter)
+% pp = *funappx_g*(f,'a',a,'b',b,'abstol',abstol,'nlo',nlo,'nhi',nhi,'nmax',nmax,'maxiter',maxiter)
 %  recovers function f on the finite interval [a,b], given a guaranteed
 %  absolute error tolerance abstol, a lower bound of initial number of
 %  points nlo, an upper bound of initial number of points nhi, a cost

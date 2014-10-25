@@ -38,7 +38,7 @@ function [q,out_param] = cubLattice_g(varargin)
 %     integer 1<=d<=250. By default it is 1.
 % 
 %     in_param.abstol --- the absolute error tolerance, abstol>0. By 
-%     default it is 1e-4. 
+%     default it is 1e-4.
 % 
 %     in_param.density --- for f(x), we can define x uniformly in [0,1)^d or
 %     normally distributed with covariance matrix I_d. By default it is
