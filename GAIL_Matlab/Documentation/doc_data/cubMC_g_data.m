@@ -1,23 +1,20 @@
 %%  Guarantee
 % This algorithm attempts to calculate the integral of function f over a
-% hyperbox to a prescribed error tolerance with guaranteed confidence level
-% 1-alpha. If the algorithm terminated without showing any warning messages
-% and provide an answer Q, then the follow inequality would be satisfied:
+% hyperbox to a prescribed error tolerance tolfun:= max(abstol,reltol*|I|)
+% with guaranteed confidence level 1-alpha. If the algorithm terminated
+% without showing any warning messages and provide an answer Q, then the
+% follow inequality would be satisfied:
 % 
-% Pr(|Q-I| <= max(abstol,reltol|I|)) >= 1-alpha
+% Pr(|Q-I| <= tolfun) >= 1-alpha
 %
-% where abstol is the absolute error tolerance and reltol is the relative
-% error tolerance, if the true integral I is rather small as well as the
-% reltol, then the abstol would be satisfied, and vice versa. 
-%
-% The cost of the algorithm is also bounded above by N_up, which is
-% function in terms of abstol, reltol, nSig, n1, fudge, kurtmax, beta. And
+% The cost of the algorithm, N_tot, is also bounded above by N_up, which is
+% a function in terms of abstol, reltol, nSig, n1, fudge, kurtmax, beta. And
 % the following inequality holds:
 % 
 % Pr (N_tot <= N_up) >= 1-beta
 %
 % Please refer to our paper for detailed arguments and proofs.
-% 
+%
 %%  Examples
 % *Example 1*
 
