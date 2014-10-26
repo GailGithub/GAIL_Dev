@@ -1,7 +1,7 @@
 % GAIL_INSTALL   Install GAIL. Add GAIL paths to MATLAB search path.
 %clear all; close all; clc;
 [GAILPATH,GAILVERSION,PATHNAMESEPARATOR,MATLABVERSION] = GAILstart;
-fprintf('\nWelcome to GAIL version %g.\n\n', GAILVERSION);
+fprintf('\nWelcome to GAIL version %s.\n\n', GAILVERSION);
 if MATLABVERSION < 7,
   error('This version is only supported on Matlab 7.x and above.');
 end
@@ -17,5 +17,5 @@ if any(strcmpi(reply,{'yes','y'}));
 else
     fprintf('\nYou can use test documentation to learn how to use GAIL.\n');
 end
-fprintf('\nGAIL version %g has been installed successfully.\n\n', GAILVERSION);
+fprintf('\nGAIL version %s has been installed successfully.\n\n', GAILVERSION);
 
