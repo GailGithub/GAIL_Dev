@@ -1,6 +1,6 @@
 function p =evalmean(RV,n,npcmax)
-%%  Split n samples into columns and evalute the mean recursively
-% RV --- the nx1 samples whose mean we want to estimate
+%%  Split n samples into columns and evaluate the mean recursively
+% RV --- the function to generate the random variables
 % n --- the number of samples
 % npcmax --- the maximum samples per loop
 nopt=min(npcmax,n);
