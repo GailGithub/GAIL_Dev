@@ -21,7 +21,7 @@ Please cite the following software and papers:
 
 
 Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
-Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou, "GAIL: 
+Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang, and Xuan Zhou, "GAIL: 
 Guaranteed Automatic Integration Library (Version 2.0)" [MATLAB Software],
 2014. Available from http://code.google.com/p/gail/
 
