@@ -12,7 +12,7 @@ nloop=repmat(nopt,1,nn);
 %vector of numbers of samples per loop step
 if nremain>0; nloop=[nloop nremain]; nn=nn+1; end
 sumY=0;
-parfor iloop=1:nn %loops to save memory
+for iloop=1:nn %loops to save memory
     sumY=sumY+sum(RV(nloop(iloop)));
 end
 %%  Estimate p
