@@ -11,12 +11,9 @@ rmpath(gailp);  % Remove GAIL paths from MATLAB search path.
 warning('on', 'MATLAB:rmpath:DirNotFound')
 addpath(gailp); % Add GAIL paths to MATLAB search path.
 savepath;       % Save the changes.
-reply = input('\nDo you want to install html documentation files?\n (Your answer is not case sensitive.) Y/N [N]: ', 's');
-    if any(strcmpi(reply,{'yes','y'}));
-        GAILpublish;        
-        builddocsearchdb(strcat(GAILPATH,'Documentation',PATHNAMESEPARATOR,'html'));
-        fprintf('\nYou can go to help documentation ---> Supplemental Software to learn how to use GAIL.\n');
-    else
-        fprintf('\nYou can use test documentation to learn how to use GAIL.\n');
-    end
-fprintf('\nGAIL version %g has been installed successfully.\n\n', GAILVERSION);
+warninfo = warning('query','MATLAB:doc:DocNotInstalled');
+warning('off', warninfo.identifier);
+builddocsearchdb(strcat(GAILPATH,'Documentation',PATHNAMESEPARATOR,'html'));
+warning(warninfo.state, warninfo.identifier);
+fprintf('\nYou can go to help documentation ---> Supplemental Software to learn how to use GAIL.\n');
+fprintf('\nGAIL version %g has been reinstalled successfully.\n\n', GAILVERSION);
