@@ -37,13 +37,13 @@ Carlo sampling", Monte Carlo and Quasi-Monte Carlo Methods 2012
 Springer-Verlag, Berlin, 2014, pp. 105-128. 
 (describes meanMC_g.m and cubMC_g.m)
 
-Fred J. Hickernell and Lluis Antoni Jimenez Rugama, Reliable Adaptive Cubature Using Digital Sequences, submitted for publication, 2014.
+Fred J. Hickernell and Lluis Antoni Jimenez Rugama, "Reliable Adaptive Cubature Using Digital Sequences", submitted for publication, 2014.
 (describes cubSobol_g.m)
 
-Lan Jiang and Fred J. Hickernell, Guaranteed Conservative Confidence Intervals for Means of Bernoulli Random Variables, submitted for publication, 2014.
+Lan Jiang and Fred J. Hickernell, "Guaranteed Conservative Confidence Intervals for Means of Bernoulli Random Variables", submitted for publication, 2014.
 (describes meanMCBer_g)
 
-Lluis Antoni Jimenez Rugama and Fred J. Hickernell, Adaptive Multidimensional Integration Based on Rank-1 Lattices, submitted for publication, 2014.
+Lluis Antoni Jimenez Rugama and Fred J. Hickernell, "Adaptive Multidimensional Integration Based on Rank-1 Lattices", submitted for publication, 2014.
 (describes cubLattice_g.m)
 
 Downloads
