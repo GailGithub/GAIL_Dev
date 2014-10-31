@@ -30,13 +30,16 @@ Fred J. Hickernell, Lan Jiang, Yuewei Liu, and Art B. Owen,
 "Guaranteed conservative fixed width confidence intervals via Monte
 Carlo sampling", Monte Carlo and Quasi-Monte Carlo Methods 2012
 (J. Dick, F. Y. Kuo, G. W. Peters, and I. H. Sloan, eds.),
-Springer-Verlag, Berlin, 2014, to appear, arXiv:1208.4318 [math.ST]
-
+Springer-Verlag, Berlin, 2014, pp. 105-128. 
+(describes meanMC_g.m and cubMC_g.m)
 
 Nicholas Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
 Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic Algorithms:
 Cones, Not Balls", Journal of Complexity 30 (2014), pp. 21-45.
+(describes integral_g.m and funappx_g.m)
 
+Fred. J. Hickernell and Lluis Antoni Jimenez Rugama, “Reliable Adaptive Cubature Using Digital Sequences”, submitted for publication, 2014.
+(describes cubSobol_g.m)
 
 Downloads
 ------------
