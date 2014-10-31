@@ -25,6 +25,10 @@ Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang, and Xuan Zhou, "GAIL:
 Guaranteed Automatic Integration Library (Version 2.0)" [MATLAB Software],
 2014. Available from http://code.google.com/p/gail/
 
+Nicholas Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
+Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic Algorithms:
+Cones, Not Balls", Journal of Complexity 30 (2014), pp. 21-45.
+(describes integral_g.m and funappx_g.m)
 
 Fred J. Hickernell, Lan Jiang, Yuewei Liu, and Art B. Owen,
 "Guaranteed conservative fixed width confidence intervals via Monte
@@ -33,13 +37,14 @@ Carlo sampling", Monte Carlo and Quasi-Monte Carlo Methods 2012
 Springer-Verlag, Berlin, 2014, pp. 105-128. 
 (describes meanMC_g.m and cubMC_g.m)
 
-Nicholas Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
-Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic Algorithms:
-Cones, Not Balls", Journal of Complexity 30 (2014), pp. 21-45.
-(describes integral_g.m and funappx_g.m)
-
-Fred. J. Hickernell and Lluis Antoni Jimenez Rugama, “Reliable Adaptive Cubature Using Digital Sequences”, submitted for publication, 2014.
+Fred J. Hickernell and Lluis Antoni Jimenez Rugama, “Reliable Adaptive Cubature Using Digital Sequences”, submitted for publication, 2014.
 (describes cubSobol_g.m)
+
+Lan Jiang and Fred J. Hickernell, “Guaranteed Conservative Confidence Intervals for Means of Bernoulli Random Variables”, submitted for publication, 2014.
+(describes cubLattice_g.m)
+
+Lluis Antoni Jimenez Rugama and Fred J. Hickernell, “Adaptive Multidimensional Integration Based on Rank-1 Lattices”, submitted for publication, 2014.
+(describes meanMCBer_g)
 
 Downloads
 ------------
