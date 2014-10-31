@@ -41,10 +41,10 @@ Fred J. Hickernell and Lluis Antoni Jimenez Rugama, “Reliable Adaptive Cubatur
 (describes cubSobol_g.m)
 
 Lan Jiang and Fred J. Hickernell, “Guaranteed Conservative Confidence Intervals for Means of Bernoulli Random Variables”, submitted for publication, 2014.
-(describes cubLattice_g.m)
+(describes meanMCBer_g)
 
 Lluis Antoni Jimenez Rugama and Fred J. Hickernell, “Adaptive Multidimensional Integration Based on Rank-1 Lattices”, submitted for publication, 2014.
-(describes meanMCBer_g)
+(describes cubLattice_g.m)
 
 Downloads
 ------------
