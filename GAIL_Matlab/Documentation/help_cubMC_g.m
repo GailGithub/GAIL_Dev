@@ -15,7 +15,7 @@
 %  max(abstol, reltol*|I|), i.e., | I - Q | <= tolfun with probability at
 %  least 1-alpha, where abstol is the absolute error tolerance, and reltol
 %  is the relative error tolerance. Usually the reltol determines the
-%  accuracy of the estimation, however, if the | Q | is rather small, the
+%  accuracy of the estimation, however, if the | I | is rather small, the
 %  abstol determines the accuracy of the estimation. The default values
 %  are abstol=1e-2, reltol=1e-1, and alpha=1%. Input f is a function
 %  handle that accepts an n x d matrix input, where d is the dimension of
