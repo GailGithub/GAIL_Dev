@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>meanMCBer_g</title><meta name="generator" content="MATLAB 8.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-10-24"><meta name="DC.source" content="help_meanMCBer_g.m"><style type="text/css">
+      --><title>meanMCBer_g</title><meta name="generator" content="MATLAB 8.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-10-31"><meta name="DC.source" content="help_meanMCBer_g.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -66,8 +66,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1>meanMCBer_g</h1><!--introduction--><p><tt>Monte Carlo method to estimate the mean of a Bernoulli random variable to within a specified absolute error tolerance with guaranteed confidence level 1-alpha.</tt></p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Syntax</a></li><li><a href="#2">Description</a></li><li><a href="#3">Guarantee</a></li><li><a href="#4">Examples</a></li><li><a href="#7">See Also</a></li><li><a href="#8">References</a></li></ul></div><h2>Syntax<a name="1"></a></h2><p>pHat = <b>meanMCBer_g</b>(Yrand)</p><p>pHat = <b>meanMCBer_g</b>(Yrand,abstol,alpha,nmax)</p><p>pHat = <b>meanMCBer_g</b>(Yrand,'abstol',abstol,'alpha',alpha,'nmax',nmax)</p><p>[pHat, out_param] = <b>meanMCBer_g</b>(Yrand,in_param)</p><h2>Description<a name="2"></a></h2><p>pHat = <b>meanMCBer_g</b>(Yrand) estimates the mean of a Bernoulli random  variable Y to within a specified absolute error tolerance with  guaranteed confidence level 99%. Input Yrand is a function handle that  accepts a positive integer input n and returns a n x 1 vector of IID  instances of the Bernoulli random variable Y.</p><p>pHat = <b>meanMCBer_g</b>(Yrand,abstol,alpha,nmax) estimates the mean  of a Bernoulli random variable Y to within a specified absolute error  tolerance with guaranteed confidence level 1-alpha using all ordered  parsing inputs abstol, alpha and nmax.</p><p>pHat = <b>meanMCBer_g</b>(Yrand,'abstol',abstol,'alpha',alpha,'nmax',nmax)  estimates the mean of a Bernoulli random variable Y to within a  specified absolute error tolerance with guaranteed confidence level  1-alpha. All the field-value pairs are optional and can be supplied in  different order.</p><p>[pHat, out_param] = <b>meanMCBer_g</b>(Yrand,in_param) estimates the mean  of a Bernoulli random variable Y to within a specified absolute error  tolerance with the given parameters in_param and produce the estimated  mean pHat and output parameters out_param.</p><p><b>Input Arguments</b></p><div><ul><li>Yrand --- <tt>the function for generating IID instances of a Bernoulli            random variable Y whose mean we want to estimate.</tt></li></ul></div><div><ul><li>pHat --- <tt>the estimated mean of Y.</tt></li></ul></div><div><ul><li>in_param.abstol --- <tt>the absolute error tolerance, the default value is 1e-2.</tt></li></ul></div><div><ul><li>in_param.alpha --- <tt>the uncertainty, the default value is 1%.</tt></li></ul></div><div><ul><li>in_param.nmax --- <tt>the sample budget, the default value is 1e9.</tt></li></ul></div><p><b>Output Arguments</b></p><div><ul><li>out_param.n --- <tt>the total sample used.</tt></li></ul></div><div><ul><li>out_param.time --- <tt>the time elapsed in seconds.</tt></li></ul></div><h2>Guarantee<a name="3"></a></h2><p>If the sample size is calculated according Hoeffding's inequality, which equals to ceil(log(2/out_param.alpha)/(2*out_param.abstol^2)), then the following inequality must be satisfied:</p><p>Pr(<tt>p-pHat</tt> &lt;= abstol) &gt;= 1-alpha.</p><p>Here p is the true mean of Yrand, and pHat is the output of MEANMCBER_G</p><p>Also, the cost is deterministic.</p><h2>Examples<a name="4"></a></h2><pre class="language-matlab">*Example 1*
-</pre><pre class="codeinput"><span class="comment">%   Calculate the mean of a Bernoulli random variable with true p=1/90,</span>
+  </style></head><body><div class="content"><h1>meanMCBer_g</h1><!--introduction--><p><tt>Monte Carlo method to estimate the mean of a Bernoulli random variable to within a specified absolute error tolerance with guaranteed confidence level 1-alpha.</tt></p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Syntax</a></li><li><a href="#2">Description</a></li><li><a href="#3">Guarantee</a></li><li><a href="#4">Examples</a></li><li><a href="#7">See Also</a></li><li><a href="#8">References</a></li></ul></div><h2>Syntax<a name="1"></a></h2><p>pHat = <b>meanMCBer_g</b>(Yrand)</p><p>pHat = <b>meanMCBer_g</b>(Yrand,abstol,alpha,nmax)</p><p>pHat = <b>meanMCBer_g</b>(Yrand,'abstol',abstol,'alpha',alpha,'nmax',nmax)</p><p>[pHat, out_param] = <b>meanMCBer_g</b>(Yrand,in_param)</p><h2>Description<a name="2"></a></h2><p>pHat = <b>meanMCBer_g</b>(Yrand) estimates the mean of a Bernoulli random  variable Y to within a specified absolute error tolerance with  guaranteed confidence level 99%. Input Yrand is a function handle that  accepts a positive integer input n and returns a n x 1 vector of IID  instances of the Bernoulli random variable Y.</p><p>pHat = <b>meanMCBer_g</b>(Yrand,abstol,alpha,nmax) estimates the mean  of a Bernoulli random variable Y to within a specified absolute error  tolerance with guaranteed confidence level 1-alpha using all ordered  parsing inputs abstol, alpha and nmax.</p><p>pHat = <b>meanMCBer_g</b>(Yrand,'abstol',abstol,'alpha',alpha,'nmax',nmax)  estimates the mean of a Bernoulli random variable Y to within a  specified absolute error tolerance with guaranteed confidence level  1-alpha. All the field-value pairs are optional and can be supplied in  different order.</p><p>[pHat, out_param] = <b>meanMCBer_g</b>(Yrand,in_param) estimates the mean  of a Bernoulli random variable Y to within a specified absolute error  tolerance with the given parameters in_param and produce the estimated  mean pHat and output parameters out_param.</p><p><b>Input Arguments</b></p><div><ul><li>Yrand --- <tt>the function for generating IID instances of a Bernoulli            random variable Y whose mean we want to estimate.</tt></li></ul></div><div><ul><li>pHat --- <tt>the estimated mean of Y.</tt></li></ul></div><div><ul><li>in_param.abstol --- <tt>the absolute error tolerance, the default value is 1e-2.</tt></li></ul></div><div><ul><li>in_param.alpha --- <tt>the uncertainty, the default value is 1%.</tt></li></ul></div><div><ul><li>in_param.nmax --- <tt>the sample budget, the default value is 1e9.</tt></li></ul></div><p><b>Output Arguments</b></p><div><ul><li>out_param.n --- <tt>the total sample used.</tt></li></ul></div><div><ul><li>out_param.time --- <tt>the time elapsed in seconds.</tt></li></ul></div><h2>Guarantee<a name="3"></a></h2><p>If the sample size is calculated according Hoeffding's inequality, which equals to ceil(log(2/out_param.alpha)/(2*out_param.abstol^2)), then the following inequality must be satisfied:</p><p>Pr(| p-pHat | &lt;= abstol) &gt;= 1-alpha.</p><p>Here p is the true mean of Yrand, and pHat is the output of <b>meanMCBer_g</b></p><p>Also, the cost is deterministic.</p><h2>Examples<a name="4"></a></h2><p><b>Example 1</b></p><pre class="codeinput"><span class="comment">%   Calculate the mean of a Bernoulli random variable with true p=1/90,</span>
 <span class="comment">%   absolute error tolerance 1e-3 and uncertainty 0.01.</span>
 <span class="comment">%</span>
     in_param.abstol=1e-3; in_param.alpha = 0.01; p=1/9;Yrand=@(n) rand(n,1)&lt;p;
@@ -75,10 +74,9 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 </pre><pre class="codeoutput">
 pHat =
 
-    0.1114
+    0.1110
 
-</pre><pre class="language-matlab">*Example 2*
-</pre><pre class="codeinput"><span class="comment">%   Using the same function as example 1, with the absolute error tolerance</span>
+</pre><p><b>Example 2</b></p><pre class="codeinput"><span class="comment">%   Using the same function as example 1, with the absolute error tolerance</span>
 <span class="comment">%   1e-4.</span>
 <span class="comment">%</span>
     pHat = meanMCBer_g(Yrand,1e-4)
@@ -87,15 +85,14 @@ pHat =
 
     0.1112
 
-</pre><pre class="language-matlab">*Example 3*
-</pre><pre class="codeinput"><span class="comment">%   Using the same function as example 1, with the absolute error</span>
+</pre><p><b>Example 3</b></p><pre class="codeinput"><span class="comment">%   Using the same function as example 1, with the absolute error</span>
 <span class="comment">%   tolerance 1e-2 and uncertainty 0.05.</span>
 <span class="comment">%</span>
     pHat = meanMCBer_g(Yrand,<span class="string">'abstol'</span>,1e-2,<span class="string">'alpha'</span>,0.05)
 </pre><pre class="codeoutput">
 pHat =
 
-    0.1078
+    0.1138
 
 </pre><h2>See Also<a name="7"></a></h2><p>
 <a href="help_funappx_g.html">funappx_g</a>
@@ -172,14 +169,14 @@ pHat =
 % equals to ceil(log(2/out_param.alpha)/(2*out_param.abstol^2)), then the
 % following inequality must be satisfied:
 %
-% Pr(|p-pHat| <= abstol) >= 1-alpha.
+% Pr(| p-pHat | <= abstol) >= 1-alpha.
 % 
-% Here p is the true mean of Yrand, and pHat is the output of MEANMCBER_G
+% Here p is the true mean of Yrand, and pHat is the output of *meanMCBer_g*
 %
 % Also, the cost is deterministic.
 %
 %%   Examples
-%   *Example 1*
+% *Example 1*
 
 %   Calculate the mean of a Bernoulli random variable with true p=1/90,
 %   absolute error tolerance 1e-3 and uncertainty 0.01.
@@ -188,7 +185,7 @@ pHat =
     pHat = meanMCBer_g(Yrand,in_param)
  
 %% 
-%   *Example 2*
+% *Example 2*
 
 %   Using the same function as example 1, with the absolute error tolerance
 %   1e-4.
@@ -196,7 +193,7 @@ pHat =
     pHat = meanMCBer_g(Yrand,1e-4)
     
 %% 
-%   *Example 3*
+% *Example 3*
 
 %   Using the same function as example 1, with the absolute error
 %   tolerance 1e-2 and uncertainty 0.05.
