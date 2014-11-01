@@ -77,14 +77,14 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 </pre><pre class="codeoutput">
 Q =
 
-    0.9565
+    0.9558
 
 </pre><p><b>Example 2</b> Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) over the hyperbox [0 0;1 1], where x is a vector x = [x1 x2].</p><pre class="codeinput"> f=@(x) exp(-x(:,1).^2-x(:,2).^2);hyperbox = [0 0;1 1];
  Q = cubMC_g(f,hyperbox,<span class="string">'measure'</span>,<span class="string">'uniform'</span>,<span class="string">'abstol'</span>,1e-3,<span class="string">'reltol'</span>,1e-13)
 </pre><pre class="codeoutput">
 Q =
 
-    0.5580
+    0.5577
 
 </pre><p><b>Example 3</b></p><pre class="codeinput"><span class="comment">% Estimate the integral with integrand f(x) = 2^d*prod(x1*x2*...*xd)+0.555</span>
 <span class="comment">% over the hyperbox [zeros(1,d);ones(1,d)], where x is a vector</span>
@@ -106,14 +106,9 @@ Q =
  f=@(x) exp(-x(:,1).^2-x(:,2).^2);hyperbox = [-inf -inf;inf inf];
  Q = cubMC_g(f,hyperbox,<span class="string">'normal'</span>,0,1e-2)
 </pre><pre class="codeoutput">
-ans =
-
-     1
-
-
 Q =
 
-    0.3328
+    0.3333
 
 </pre><h2>See Also<a name="8"></a></h2><p>
 <a href="help_funappx_g.html">funappx_g</a>
