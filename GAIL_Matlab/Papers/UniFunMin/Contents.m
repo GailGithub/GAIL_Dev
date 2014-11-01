@@ -1,4 +1,4 @@
-% CONESNOTBALLSPAPER
+% UniFunMin
 %
 % Files
 %   UniFunMin_Plot_Bump   
