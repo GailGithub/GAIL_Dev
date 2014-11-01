@@ -2,4 +2,4 @@
 %
 %Files 
 %
-%  Test_meanMCBer_g - the driver file to test meanMCBernoulli_g algorithm
+%  Test_meanMCBer_g - the driver file to test meanMCBer_g algorithm
