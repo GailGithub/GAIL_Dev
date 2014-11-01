@@ -6,4 +6,4 @@
 %
 % Files
 %
-%   AdaptiveMCProbErrAnal_rev_m.pdf - Monte Carlo and Quasi-Monte Carlo Methods 2012 paper 
+%   MCQMC2012GuaranteedFixedWidthConfidenceIntervals.pdf - Monte Carlo and Quasi-Monte Carlo Methods 2012 paper 
