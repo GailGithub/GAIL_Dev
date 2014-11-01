@@ -208,10 +208,10 @@ function [Q,out_param] = cubMC_g(varargin)
 tstart=tic;
 [f,hyperbox,out_param] = cubMC_g_param(varargin{:});%check validity of inputs
 f=gail.transformIntegrand(f,hyperbox,out_param); 
-if strcmpi(out_param.measure,'uniform')% the using uniformly distributed samples
+if strcmpi(out_param.measure,'uniform');% the using uniformly distributed samples
     [Q,out_param] = meanMC_g(@(nfun)f(rand(nfun,out_param.dim)),out_param);
 % using meanMC_g to get the mean 
-else strcmpi(out_param.measure,'normal')% using normally distributed samples
+else strcmpi(out_param.measure,'normal');% using normally distributed samples
     [Q,out_param] = meanMC_g(@(nfun)f(randn(nfun,out_param.dim)),out_param);
 % using meanMC_g to get the mean
 end
@@ -355,7 +355,7 @@ if strcmpi(out_param.measure,'uniform')&&~all(isfinite(hyperbox(:)))
     %cannot integrate on an infinite hyperbox with the uniform distribution
     out_param.exit=13; out_param = cubMC_g_err(out_param); return;
 end
-if strcmpi(out_param.measure,'normal')&&any(isfinite(hyperbox(:)))
+if strcmpi(out_param.measure,'normal')&&any(isfinite(hyperbox(:)));
     %must integrate on an infinite hyperbox with the normal distribution
     out_param.exit=14; out_param = cubMC_g_err(out_param); return;
 end
