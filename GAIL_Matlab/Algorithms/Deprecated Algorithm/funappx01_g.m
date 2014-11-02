@@ -135,11 +135,15 @@ function [fappx,out_param]=funappx01_g(varargin)
 %   Reference
 %   [1]  N. Clancy, Y. Ding, C. Hamilton, F. J. Hickernell, and Y. Zhang,
 %        The Cost of Deterministic, Adaptive, Automatic Algorithms:  Cones,
-%        Not Balls, Journal of Complexity 30 (2014) 21–45
+%        Not Balls, Journal of Complexity 30 (2014) 21-45
 %
 
 % check parameter satisfy conditions or not
 [f, out_param] = funappx_g_param(varargin{:});
+MATLABVERSION= gail.matlab_version;
+if MATLABVERSION >= 8.3
+    warning('off', 'MATLAB:interp1:ppGriddedInterpolant');
+end;
 
 %% main algorithm
 
@@ -215,6 +219,10 @@ x1 = 0:1/(out_param.npoints-1):1;
 y1 = f(x1);
 fappx = @(x) interp1(x1,y1,x,'linear');
 
+if MATLABVERSION >= 8.3
+    warning('on', 'MATLAB:interp1:ppGriddedInterpolant');
+end;
+
 function [f, out_param] = funappx_g_param(varargin)
 % parse the input to the funappx01_g function
 
@@ -247,7 +255,7 @@ if ~validvarargin
     out_param.nmax = default.nmax;
 else
     p = inputParser;
-    addRequired(p,'f',@isfcn);
+    addRequired(p,'f',@gail.isfcn);
     if isnumeric(in2)%if there are multiple inputs with
         %only numeric, they should be put in order.
         addOptional(p,'abstol',default.abstol,@isnumeric);
@@ -273,8 +281,8 @@ if (out_param.abstol <= 0 )
     out_param.abstol = default.abstol;
 end
 % let initial number of points be a positive integer
-if (~isposint(out_param.ninit))
-    if isposge3(out_param.ninit)
+if (~gail.isposint(out_param.ninit))
+    if gail.isposge3(out_param.ninit)
         warning('MATLAB:funappx01_g:initnotint',['Initial number of points should be a positive integer.' ...
             ' Using ', num2str(ceil(out_param.ninit))])
         out_param.ninit = ceil(out_param.ninit);
@@ -285,8 +293,8 @@ if (~isposint(out_param.ninit))
     end
 end
 % let cost budget be a positive integer
-if (~isposint(out_param.nmax))
-    if ispositive(out_param.nmax)
+if (~gail.isposint(out_param.nmax))
+    if gail.ispositive(out_param.nmax)
         warning('MATLAB:funappx01_g:budgetnotint',['Cost budget should be a positive integer.' ...
             ' Using cost budget ', num2str(ceil(out_param.nmax))])
         out_param.nmax = ceil(out_param.nmax);

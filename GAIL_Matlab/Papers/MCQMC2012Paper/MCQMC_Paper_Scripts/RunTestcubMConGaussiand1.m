@@ -3,7 +3,7 @@ clear all, close all
 clc
 format compact
 
-test.nrep=5;
+test.nrep=10;
 fun.funtype='gaussian';
 param.dim=1;
 param.measure='uniform';
@@ -56,7 +56,15 @@ test.randch.overaddcoverall=ones(test.nrep,1)-...
 
 
 test.randchoicefun=@randchoicegaussiand1;
-
-test.whichsample={'iid','iidheavy','Sobol','Sobolheavy','quad','quadgk','chebfun','chebfunheavy'};
+test.whichsample={'iid','iidheavy'};
+if exist('chebfun','class')==8 && exist('sobolset','class')==8
+    test.whichsample={'iid','iidheavy','Sobol','Sobolheavy','quad','quadgk','chebfun','chebfunheavy'};
+elseif exist('chebfun','class')==8 && exist('sobolset','class')~= 8
+    test.whichsample={'iid','iidheavy','quad','quadgk','chebfun','chebfunheavy'};
+elseif exist('chebfun','class')~=8 && exist('sobolset','class')==8
+    test.whichsample={'iid','iidheavy','Sobol','Sobolheavy','quad','quadgk',};
+else
+    test.whichsample={'iid','iidheavy','quad','quadgk'};
+end
 %test.whichsample={'iid','iidheavy','Sobol','Sobolheavy'};
 res=TestcubMCDiffSettings(test,fun,param);

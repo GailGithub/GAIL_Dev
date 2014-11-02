@@ -1,0 +1,385 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>funmin_g</title><meta name="generator" content="MATLAB 8.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-10-24"><meta name="DC.source" content="help_funmin_g.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>funmin_g</h1><!--introduction--><p><tt>Guaranteed global minimum value of univariate function on a closed interval [a,b] and the subset containing optimal solutions</tt></p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Syntax</a></li><li><a href="#2">Description</a></li><li><a href="#3">Guarantee</a></li><li><a href="#4">Examples</a></li><li><a href="#8">See Also</a></li><li><a href="#9">References</a></li></ul></div><h2>Syntax<a name="1"></a></h2><p>fmin = <b>funmin_g</b>(f)</p><p>fmin = <b>funmin_g</b>(f,a,b,abstol,TolX,nlo,nhi,nmax)</p><p>fmin = <b>funmin_g</b>(f,'a',a,'b',b,'abstol',abstol,'TolX',TolX,'nlo',nlo,...</p><p>fmin = <b>funmin_g</b>(f,in_param)</p><p>[fmin, out_param] = <b>funmin_g</b>(f,...)</p><h2>Description<a name="2"></a></h2><p>fmin = <b>funmin_g</b>(f) finds minimum value of function f on the default  interval [0,1] within the guaranteed absolute error tolerance of 1e-6  and the X tolerance of 1e-3. Default initial number of points is 100  and default cost budget is 1e7. Input f is a function handle.</p><p>fmin = <b>funmin_g</b>(f,a,b,abstol,TolX,nlo,nhi,nmax) finds minimum value of  function f with ordered input parameters that define the finite  interval [a,b], a guaranteed absolute error tolerance abstol, a  guaranteed X tolerance TolX, a lower bound of initial number of points  nlo, an upper bound of initial number of points nhi, and a cost budget  nmax.</p><p>fmin = <b>funmin_g</b>(f,'a',a,'b',b,'abstol',abstol,'TolX',TolX,'nlo',nlo,...  'nhi',nhi,'nmax',nmax)  finds minimum value of function f on the interval [a,b] with a  guaranteed absolute error tolerance abstol, a guaranteed X tolerance  TolX, a lower bound of initial number of points nlo, an upper bound of  initial number of points nhi, and a cost budget nmax. All seven  field-value pairs are optional and can be supplied in different order.</p><p>fmin = <b>funmin_g</b>(f,in_param) finds minimum value of function f on the  interval [in_param.a,in_param.b] with a guaranteed absolute error  tolerance in_param.abstol, a guranteed X tolerance in_param.TolX, a  lower bound of initial number of points in_param.nlo, an upper bound of  initial number of points in_param.nhi, and a cost budget in_param.nmax.  If a field is not specified, the default value is used.</p><p>[fmin, out_param] = <b>funmin_g</b>(f,...) returns minimum value fmin of  function f and an output structure out_param.</p><p><b>Input Arguments</b></p><div><ul><li>in_param.a --- <tt>left end point of interval, default value is 0</tt></li></ul></div><div><ul><li>in_param.b --- <tt>right end point of interval, default value is 1</tt></li></ul></div><div><ul><li>in_param.abstol --- <tt>guaranteed absolute error tolerance, default  value is 1e-6.</tt></li></ul></div><div><ul><li>in_param.TolX --- <tt>guaranteed X tolerance, default value is 1e-3.</tt></li></ul></div><div><ul><li>in_param.nlo --- <tt>lower bound of initial number of points we used,  default value is 10</tt></li></ul></div><div><ul><li>in_param.nhi --- <tt>upper bound of initial number of points we used,  default value is 1000</tt></li></ul></div><div><ul><li>in_param.nmax --- <tt>cost budget, default value is 1e7.</tt></li></ul></div><p><b>Output Arguments</b></p><div><ul><li>out_param.a --- <tt>left end point of interval</tt></li></ul></div><div><ul><li>out_param.b --- <tt>right end point of interval</tt></li></ul></div><div><ul><li>out_param.abstol --- <tt>guaranteed absolute error tolerance</tt></li></ul></div><div><ul><li>out_param.TolX --- <tt>guaranteed X tolerance</tt></li></ul></div><div><ul><li>out_param.nlo --- <tt>a lower bound of initial number of points we use</tt></li></ul></div><div><ul><li>out_param.nhi --- <tt>an upper bound of initial number of points we use</tt></li></ul></div><div><ul><li>out_param.nmax --- <tt>cost budget</tt></li></ul></div><div><ul><li>out_param.ninit --- <tt>initial number of points we use</tt></li></ul></div><div><ul><li>out_param.tau --- <tt>latest value of tau</tt></li></ul></div><div><ul><li>out_param.exceedbudget --- <tt>0 if the number of points used in  estimationg fmin is less than the cost budget; 1, otherwise.</tt></li></ul></div><div><ul><li>out_param.npoints --- <tt>number of points needed to reach the guaranteed  absolute error tolerance or the guaranteed X tolerance</tt></li></ul></div><div><ul><li>out_param.error --- <tt>estimation of the absolute error bound</tt></li></ul></div><div><ul><li>out_param.volumeX --- <tt>the volume of intervals containing the point(s)  where the minimum occurs</tt></li></ul></div><div><ul><li>out_param.tauchange --- <tt>it is 1 if out_param.tau changes, otherwise  it is 0</tt></li></ul></div><div><ul><li>out_param.intervals --- <tt>the intervals containing point(s) where the  minimum occurs. Each column indicates one interval where the first  row is the left point and the second row is the right point.</tt></li></ul></div><h2>Guarantee<a name="3"></a></h2><p><tt>If the function to be minimized,</tt>  <img src="help_funmin_g_eq85998.png" alt="$f$">  <tt>satisfies the cone condition</tt></p><p><img src="help_funmin_g_eq29168.png" alt="$$\|f''\|_\infty \le  \frac {\tau}{b-a}\left\|f'-\frac{f(b)-f(a)}{b-a}&#xA;\right\|_\infty,$$"></p><p><tt>then the</tt>  <img src="help_funmin_g_eq38234.png" alt="$\mathrm{fmin}$">  <tt>output by this algorithm is guaranteed to satisfy</tt></p><p><img src="help_funmin_g_eq72210.png" alt="$$| \min f-\mathrm{fmin}| \le \mathrm{abstol},$$"></p><p>or</p><pre>    \mathrm{volumeX} \le \mathrm{TolX},</pre><p><tt>provided the flag</tt> <img src="help_funmin_g_eq42341.png" alt="$\mathrm{exceedbudget} = 0.$"></p><h2>Examples<a name="4"></a></h2><pre class="codeinput"><span class="comment">% *Example 1*</span>
+
+f=@(x) (x-0.3).^2+1; [fmin,out_param] = funmin_g(f)
+
+<span class="comment">% Minimize function (x-0.3)^2+1 with default input parameter.</span>
+</pre><pre class="codeoutput">
+fmin =
+
+    1.0000
+
+
+out_param = 
+
+               a: 0
+               b: 1
+          abstol: 1.0000e-06
+            TolX: 1.0000e-03
+             nlo: 10
+             nhi: 1000
+            nmax: 10000000
+           ninit: 100
+             tau: 197
+    exceedbudget: 0
+         npoints: 6337
+           error: 6.1554e-07
+         volumeX: 0.0015
+       tauchange: 0
+       intervals: [2x1 double]
+
+</pre><p><b>Example 2</b></p><pre class="codeinput">f=@(x) (x-0.3).^2+1;
+[fmin,out_param] = funmin_g(f,-2,2,1e-7,1e-4,10,10,1000000)
+
+<span class="comment">% Minimize function (x-0.3)^2+1 on [-2,2] with error tolerence 1e-4, X</span>
+<span class="comment">% tolerance 1e-2, cost budget 1000000, lower bound of initial number of</span>
+<span class="comment">% points 10 and upper bound of initial number of points 10</span>
+</pre><pre class="codeoutput">
+fmin =
+
+    1.0000
+
+
+out_param = 
+
+               a: -2
+          abstol: 1.0000e-07
+               b: 2
+               f: @(x)(x-0.3).^2+1
+             nhi: 10
+             nlo: 10
+            nmax: 1000000
+            TolX: 1.0000e-04
+           ninit: 10
+             tau: 17
+    exceedbudget: 0
+         npoints: 18433
+           error: 9.5464e-08
+         volumeX: 5.4175e-04
+       tauchange: 0
+       intervals: [2x1 double]
+
+</pre><p><b>Example 3</b></p><pre class="codeinput">clear <span class="string">in_param</span>; in_param.a = -13; in_param.b = 8;
+in_param.abstol = 1e-7; in_param.TolX = 1e-4;
+in_param.nlo = 10; in_param.nhi = 100;
+in_param.nmax = 10^6;
+[fmin,out_param] = funmin_g(f,in_param)
+
+<span class="comment">% Minimize function (x-0.3)^2+1 on [-13,8] with error tolerence 1e-7, X</span>
+<span class="comment">% tolerance 1e-4, cost budget 1000000, lower bound of initial number of</span>
+<span class="comment">% points 10 and upper bound of initial number of points 100</span>
+</pre><pre class="codeoutput">
+fmin =
+
+     1
+
+
+out_param = 
+
+               a: -13
+          abstol: 1.0000e-07
+               b: 8
+               f: @(x)(x-0.3).^2+1
+             nhi: 100
+             nlo: 10
+            nmax: 1000000
+            TolX: 1.0000e-04
+           ninit: 91
+             tau: 179
+    exceedbudget: 0
+         npoints: 368641
+           error: 7.1014e-08
+         volumeX: 5.2445e-04
+       tauchange: 0
+       intervals: [2x1 double]
+
+</pre><p><b>Example 4</b></p><pre class="codeinput">f=@(x) (x-0.3).^2+1;
+[fmin,out_param] = funmin_g(f,<span class="string">'a'</span>,-2,<span class="string">'b'</span>,2,<span class="string">'nhi'</span>,100,<span class="string">'nlo'</span>,10,<span class="string">'nmax'</span>,1e6,<span class="string">'abstol'</span>,1e-4,<span class="string">'TolX'</span>,1e-2)
+
+<span class="comment">% Minimize function (x-0.3)^2+1 on [-2,2] with error tolerence 1e-4, X</span>
+<span class="comment">% tolerance 1e-2, cost budget 1000000, lower bound of initial number of</span>
+<span class="comment">% points 10 and upper bound of initial number of points 100</span>
+</pre><pre class="codeoutput">
+fmin =
+
+    1.0000
+
+
+out_param = 
+
+               a: -2
+          abstol: 1.0000e-04
+               b: 2
+               f: @(x)(x-0.3).^2+1
+             nhi: 100
+             nlo: 10
+            nmax: 1000000
+            TolX: 0.0100
+           ninit: 64
+             tau: 125
+    exceedbudget: 0
+         npoints: 2017
+           error: 6.2273e-05
+         volumeX: 0.0146
+       tauchange: 0
+       intervals: [2x1 double]
+
+</pre><h2>See Also<a name="8"></a></h2><p>
+<a href="help_funappx_g.html">funappx_g</a>
+</p><p>
+<a href="help_integral_g.html">integral_g</a>
+</p><h2>References<a name="9"></a></h2><p>[1]  Xin Tong. A Guaranteed, Adaptive, Automatic Algorithm for Univariate Function Minimization. MS thesis, Illinois Institute of Technology, 2014.</p><p>[2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou, "GAIL: Guaranteed Automatic Integration Library (Version 2.0)" [MATLAB Software], 2014. Available from <a href="http://code.google.com/p/gail/">http://code.google.com/p/gail/</a></p><p>If you find GAIL helpful in your work, please support us by citing the above paper and software.</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% funmin_g
+% |Guaranteed global minimum value of univariate function
+% on a closed interval [a,b] and the subset containing optimal solutions|
+%% Syntax
+% fmin = *funmin_g*(f)
+%
+% fmin = *funmin_g*(f,a,b,abstol,TolX,nlo,nhi,nmax)
+%
+% fmin = *funmin_g*(f,'a',a,'b',b,'abstol',abstol,'TolX',TolX,'nlo',nlo,...
+%
+% fmin = *funmin_g*(f,in_param)
+%
+% [fmin, out_param] = *funmin_g*(f,...)
+%% Description
+%
+% fmin = *funmin_g*(f) finds minimum value of function f on the default
+%  interval [0,1] within the guaranteed absolute error tolerance of 1e-6
+%  and the X tolerance of 1e-3. Default initial number of points is 100
+%  and default cost budget is 1e7. Input f is a function handle.
+%
+% fmin = *funmin_g*(f,a,b,abstol,TolX,nlo,nhi,nmax) finds minimum value of
+%  function f with ordered input parameters that define the finite
+%  interval [a,b], a guaranteed absolute error tolerance abstol, a
+%  guaranteed X tolerance TolX, a lower bound of initial number of points
+%  nlo, an upper bound of initial number of points nhi, and a cost budget
+%  nmax.
+%
+% fmin = *funmin_g*(f,'a',a,'b',b,'abstol',abstol,'TolX',TolX,'nlo',nlo,...
+%  'nhi',nhi,'nmax',nmax)
+%  finds minimum value of function f on the interval [a,b] with a 
+%  guaranteed absolute error tolerance abstol, a guaranteed X tolerance 
+%  TolX, a lower bound of initial number of points nlo, an upper bound of 
+%  initial number of points nhi, and a cost budget nmax. All seven 
+%  field-value pairs are optional and can be supplied in different order.
+%
+% fmin = *funmin_g*(f,in_param) finds minimum value of function f on the
+%  interval [in_param.a,in_param.b] with a guaranteed absolute error
+%  tolerance in_param.abstol, a guranteed X tolerance in_param.TolX, a
+%  lower bound of initial number of points in_param.nlo, an upper bound of
+%  initial number of points in_param.nhi, and a cost budget in_param.nmax.
+%  If a field is not specified, the default value is used.
+%
+% [fmin, out_param] = *funmin_g*(f,...) returns minimum value fmin of
+%  function f and an output structure out_param.
+%
+% *Input Arguments*
+%
+% * in_param.a REPLACE_WITH_DASH_DASH- |left end point of interval, default value is 0|
+%
+% * in_param.b REPLACE_WITH_DASH_DASH- |right end point of interval, default value is 1|
+%
+% * in_param.abstol REPLACE_WITH_DASH_DASH- |guaranteed absolute error tolerance, default
+%  value is 1e-6.|
+%
+% * in_param.TolX REPLACE_WITH_DASH_DASH- |guaranteed X tolerance, default value is 1e-3.|
+%
+% * in_param.nlo REPLACE_WITH_DASH_DASH- |lower bound of initial number of points we used,
+%  default value is 10|
+%
+% * in_param.nhi REPLACE_WITH_DASH_DASH- |upper bound of initial number of points we used,
+%  default value is 1000|
+%
+% * in_param.nmax REPLACE_WITH_DASH_DASH- |cost budget, default value is 1e7.|
+%
+% *Output Arguments*
+%
+% * out_param.a REPLACE_WITH_DASH_DASH- |left end point of interval|
+%
+% * out_param.b REPLACE_WITH_DASH_DASH- |right end point of interval|
+%
+% * out_param.abstol REPLACE_WITH_DASH_DASH- |guaranteed absolute error tolerance|
+%
+% * out_param.TolX REPLACE_WITH_DASH_DASH- |guaranteed X tolerance|
+%
+% * out_param.nlo REPLACE_WITH_DASH_DASH- |a lower bound of initial number of points we use|
+%
+% * out_param.nhi REPLACE_WITH_DASH_DASH- |an upper bound of initial number of points we use|
+%
+% * out_param.nmax REPLACE_WITH_DASH_DASH- |cost budget|
+%
+% * out_param.ninit REPLACE_WITH_DASH_DASH- |initial number of points we use|
+%
+% * out_param.tau REPLACE_WITH_DASH_DASH- |latest value of tau|
+%
+% * out_param.exceedbudget REPLACE_WITH_DASH_DASH- |0 if the number of points used in
+%  estimationg fmin is less than the cost budget; 1, otherwise.|
+%
+% * out_param.npoints REPLACE_WITH_DASH_DASH- |number of points needed to reach the guaranteed
+%  absolute error tolerance or the guaranteed X tolerance|
+%
+% * out_param.error REPLACE_WITH_DASH_DASH- |estimation of the absolute error bound|
+%
+% * out_param.volumeX REPLACE_WITH_DASH_DASH- |the volume of intervals containing the point(s)
+%  where the minimum occurs|
+%
+% * out_param.tauchange REPLACE_WITH_DASH_DASH- |it is 1 if out_param.tau changes, otherwise
+%  it is 0|
+%
+% * out_param.intervals REPLACE_WITH_DASH_DASH- |the intervals containing point(s) where the
+%  minimum occurs. Each column indicates one interval where the first
+%  row is the left point and the second row is the right point.|
+%
+%% Guarantee
+%    
+% |If the function to be minimized,|  $f$  |satisfies the cone condition|
+%
+% $$\|f''\|_\infty \le  \frac {\tau}{b-a}\left\|f'-\frac{f(b)-f(a)}{b-a}
+% \right\|_\infty,$$
+%      
+% |then the|  $\mathrm{fmin}$  |output by this algorithm is guaranteed to
+% satisfy|
+%
+% $$| \min f-\mathrm{fmin}| \le \mathrm{abstol},$$
+%
+% or
+%
+%      \mathrm{volumeX} \le \mathrm{TolX},
+%
+% |provided the flag| $\mathrm{exceedbudget} = 0.$
+%
+%
+%% Examples
+
+% *Example 1*
+
+f=@(x) (x-0.3).^2+1; [fmin,out_param] = funmin_g(f)
+
+% Minimize function (x-0.3)^2+1 with default input parameter.
+
+%%
+% *Example 2*
+
+f=@(x) (x-0.3).^2+1;
+[fmin,out_param] = funmin_g(f,-2,2,1e-7,1e-4,10,10,1000000)
+
+% Minimize function (x-0.3)^2+1 on [-2,2] with error tolerence 1e-4, X
+% tolerance 1e-2, cost budget 1000000, lower bound of initial number of
+% points 10 and upper bound of initial number of points 10
+
+%%
+% *Example 3*
+
+clear in_param; in_param.a = -13; in_param.b = 8;
+in_param.abstol = 1e-7; in_param.TolX = 1e-4;
+in_param.nlo = 10; in_param.nhi = 100;
+in_param.nmax = 10^6;
+[fmin,out_param] = funmin_g(f,in_param)
+
+% Minimize function (x-0.3)^2+1 on [-13,8] with error tolerence 1e-7, X
+% tolerance 1e-4, cost budget 1000000, lower bound of initial number of
+% points 10 and upper bound of initial number of points 100
+
+%%
+% *Example 4*
+
+f=@(x) (x-0.3).^2+1;
+[fmin,out_param] = funmin_g(f,'a',-2,'b',2,'nhi',100,'nlo',10,'nmax',1e6,'abstol',1e-4,'TolX',1e-2)
+
+% Minimize function (x-0.3)^2+1 on [-2,2] with error tolerence 1e-4, X
+% tolerance 1e-2, cost budget 1000000, lower bound of initial number of
+% points 10 and upper bound of initial number of points 100
+%% See Also
+%
+% <html>
+% <a href="help_funappx_g.html">funappx_g</a>
+% </html>
+%
+% <html>
+% <a href="help_integral_g.html">integral_g</a>
+% </html>
+%
+%% References
+% [1]  Xin Tong. A Guaranteed, Adaptive, Automatic Algorithm for
+% Univariate Function Minimization. MS thesis, Illinois Institute of 
+% Technology, 2014.
+% 
+% [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
+% Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou, 
+% "GAIL: Guaranteed Automatic Integration Library (Version 2.0)"
+% [MATLAB Software], 2014. Available from http://code.google.com/p/gail/
+%
+% If you find GAIL helpful in your work, please support us by citing
+% the above paper and software.
+
+##### SOURCE END #####
+--></body></html>

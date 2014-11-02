@@ -1,0 +1,282 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>cubSobol_g</title><meta name="generator" content="MATLAB 8.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-10-31"><meta name="DC.source" content="help_cubSobol_g.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>cubSobol_g</h1><!--introduction--><p><tt>Quasi-Monte Carlo method using Sobol' cubature over the d-dimensional region to integrate within a specified absolute error tolerance with guarantees under Walsh-Fourier coefficients cone decay assumptions.</tt></p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Syntax</a></li><li><a href="#2">Description</a></li><li><a href="#3">Guarantee</a></li><li><a href="#4">Examples</a></li><li><a href="#9">See Also</a></li><li><a href="#10">References</a></li></ul></div><h2>Syntax<a name="1"></a></h2><p>[q,out_param] = <b>cubSobol_g</b>(f,d)</p><p>q = <b>cubSobol_g</b>(f,d,abstol,density,mmin,mmax,fudge)</p><p>q = <b>cubSobol_g</b>(f,d,'abstol',abstol,'density',density,'mmin',mmin,'mmax',mmax,'fudge',fudge)</p><p>q = <b>cubSobol_g</b>(f,d,in_param)</p><h2>Description<a name="2"></a></h2><p>[q,out_param] = <b>cubSobol_g</b>(f,d) estimates the integral of f over the  d-dimensional region with an error guaranteed not to be greater than the  predefined error tolerance 1e-4. Input f is a function handle. f should  accept an n x d matrix input, where d is the dimension of the hypercube,  and n is the number of points being evaluated simultaneously. The input d  is the dimension in which the function f is defined. Given the  construction of Sobol', d must be a positive integer with 1&lt;=d&lt;=1111.</p><p>q = <b>cubSobol_g</b>(f,d,abstol,density,mmin,mmax,fudge)  estimates the integral of f over a d-dimensional region. The answer  is given within the absolute error tolerance abstol. All parameters  should be input in the order specified above. If an input is not specified,  the default value is used. Note that if an input is not specified,  the remaining tail can not be specified either.</p><p>q = <b>cubSobol_g</b>(f,d,'abstol',abstol,'density',density,'mmin',mmin,'mmax',mmax,'fudge',fudge)  estimates the integral of f over a d-dimensional region. The answer  is given within the absolute error tolerance abstol. All the field-value  pairs are optional and can be supplied with any order. If an input is not  specified, the default value is used.</p><p>q = <b>cubSobol_g</b>(f,d,in_param) estimates the integral of f over the  d-dimensional region. The answer is given within the absolute error  tolerance in_param.abstol.</p><p><b>Input Arguments</b></p><div><ul><li>f --- <tt>the integrand whose input should be a matrix nxd where n is the  number of data points and d the dimension. By default it is the  quadratic function.</tt></li></ul></div><div><ul><li>d --- <tt>dimension of domain on which f is defined. d must be a positive  integer 1&lt;=d&lt;=1111. By default it is 1.</tt></li></ul></div><div><ul><li>in_param.abstol --- <tt>the absolute error tolerance, abstol&gt;0. By  default it is 1e-4.</tt></li></ul></div><div><ul><li>in_param.density --- <tt>for f(x), we can define x uniformly in [0,1)^d or  normally distributed with covariance matrix I_d. By default it is  'uniform'. The only possible values are 'uniform' or 'normal'.</tt></li></ul></div><div><ul><li>in_param.mmin --- <tt>the minimum number of points to start is 2^mmin. The  cone condition on the Fourier coefficients decay requires a minimum  number of points to start. The advice is to consider at least mmin=10.  mmin needs to be a positive integer with mmin&lt;=mmax. By default it is 10.</tt></li></ul></div><div><ul><li>in_param.mmax --- <tt>the maximum budget is 2^mmax. By construction of the  Sobol' generator, mmax is a positive integer such that mmin&lt;=mmax&lt;=53.  The default value is 24.</tt></li></ul></div><div><ul><li>in_param.fudge --- <tt>the positive function multiplying the finite  sum of Fast Walsh coefficients specified in the cone of functions.  For more information about this parameter, refer to the references.  By default it is @(x) 5*2^-x.</tt></li></ul></div><p><b>Output Arguments</b></p><div><ul><li>q --- <tt>the estimated value of the integral.</tt></li></ul></div><div><ul><li>out_param.overbudget --- <tt>boolean stating whether the max budget is  attained without reaching the guaranteed error tolerance. Output 1  means we have overrun our budget.</tt></li></ul></div><div><ul><li>out_param.n --- <tt>number of points used when calling cubSobol_g for f.</tt></li></ul></div><div><ul><li>out_param.pred_err --- <tt>predicted bound on the error based on the cone  condition. If the function lies in the cone, the real error should be  smaller than this predicted error.</tt></li></ul></div><div><ul><li>out_param.time --- <tt>time elapsed in seconds when calling cubSobol_g for f.</tt></li></ul></div><h2>Guarantee<a name="3"></a></h2><p>This algorithm computes the integral of real valued functions in [0,1)^d with a prescribed absolute error tolerance. The Walsh-Fourier coefficients of the integrand are assumed to be absolutely convergent. If the algorithm terminates without warning messages, the output is given with guarantees under the assumption that the integrand lies inside a cone of functions. The guarantee is based on the decay rate of the Walsh-Fourier coefficients. For more details on how the cone is defined, please refer to the references below.</p><h2>Examples<a name="4"></a></h2><p><b>Example 1</b></p><pre class="codeinput"><span class="comment">% Estimate the integral with integrand f(x) = x1.*x2 in the interval [0,1)^2:</span>
+
+  f=@(x) x(:,1).*x(:,2); d=2;
+  q = cubSobol_g(f,d,1e-5,<span class="string">'uniform'</span>)
+</pre><pre class="codeoutput">
+q =
+
+    0.2500
+
+</pre><p><b>Example 2</b></p><pre class="codeinput"><span class="comment">% Estimate the integral with integrand f(x) = x1.^2.*x2.^2.*x3.^2+0.11</span>
+<span class="comment">% in the interval R^3 where x1, x2 and x3 are normally distributed:</span>
+
+  f=@(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2+0.11; d=3;
+  q = cubSobol_g(f,d,1e-3,<span class="string">'normal'</span>)
+</pre><pre class="codeoutput">
+q =
+
+    1.1113
+
+</pre><p><b>Example 3</b></p><pre class="codeinput"><span class="comment">% Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) in the</span>
+<span class="comment">% interval [0,1)^2:</span>
+
+  f=@(x) exp(-x(:,1).^2-x(:,2).^2); d=2;
+  q = cubSobol_g(f,d,1e-3,<span class="string">'uniform'</span>)
+</pre><pre class="codeoutput">
+q =
+
+    0.5577
+
+</pre><p><b>Example 4</b></p><pre class="codeinput"><span class="comment">% Estimate the price of an European call with S0=100, K=100, r=sigma^2/2,</span>
+<span class="comment">% sigma=0.05 and T=1.</span>
+
+  f=@(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); d=1;
+  q = cubSobol_g(f,d,1e-4,<span class="string">'normal'</span>,<span class="string">'fudge'</span>,@(x) 2^-(2*x))
+</pre><pre class="codeoutput">
+q =
+
+    2.0547
+
+</pre><h2>See Also<a name="9"></a></h2><p>
+<a href="help_cubLattice_g.html">cubLattice_g</a>
+</p><p>
+<a href="help_cubMC_g.html">cubMC_g</a>
+</p><p>
+<a href="help_meanMC_g.html">meanMC_g</a>
+</p><p>
+<a href="help_integral_g.html">integral_g</a>
+</p><h2>References<a name="10"></a></h2><p>[1] Fred J. Hickernell and Lluis Antoni Jimenez Rugama: Reliable adaptive cubature using digital sequences (2014). Submitted for publication.</p><p>[2] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang, Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou, "GAIL: Guaranteed Automatic Integration Library (Version 2.0.0)" [MATLAB Software], 2014. Available from <a href="http://code.google.com/p/gail/">http://code.google.com/p/gail/</a></p><p>If you find GAIL helpful in your work, please support us by citing the above paper and software.</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% cubSobol_g
+% |Quasi-Monte Carlo method using Sobol' cubature over the
+% d-dimensional region to integrate within a specified absolute error 
+% tolerance with guarantees under Walsh-Fourier coefficients cone decay assumptions.|
+%% Syntax
+% [q,out_param] = *cubSobol_g*(f,d)
+%
+% q = *cubSobol_g*(f,d,abstol,density,mmin,mmax,fudge)
+%
+% q = *cubSobol_g*(f,d,'abstol',abstol,'density',density,'mmin',mmin,'mmax',mmax,'fudge',fudge)
+%
+% q = *cubSobol_g*(f,d,in_param)
+%% Description
+%
+% [q,out_param] = *cubSobol_g*(f,d) estimates the integral of f over the
+%  d-dimensional region with an error guaranteed not to be greater than the
+%  predefined error tolerance 1e-4. Input f is a function handle. f should
+%  accept an n x d matrix input, where d is the dimension of the hypercube,
+%  and n is the number of points being evaluated simultaneously. The input d
+%  is the dimension in which the function f is defined. Given the
+%  construction of Sobol', d must be a positive integer with 1<=d<=1111.
+%
+% q = *cubSobol_g*(f,d,abstol,density,mmin,mmax,fudge)
+%  estimates the integral of f over a d-dimensional region. The answer
+%  is given within the absolute error tolerance abstol. All parameters
+%  should be input in the order specified above. If an input is not specified,
+%  the default value is used. Note that if an input is not specified,
+%  the remaining tail can not be specified either.
+%
+% q = *cubSobol_g*(f,d,'abstol',abstol,'density',density,'mmin',mmin,'mmax',mmax,'fudge',fudge)
+%  estimates the integral of f over a d-dimensional region. The answer
+%  is given within the absolute error tolerance abstol. All the field-value
+%  pairs are optional and can be supplied with any order. If an input is not
+%  specified, the default value is used.
+%
+% q = *cubSobol_g*(f,d,in_param) estimates the integral of f over the
+%  d-dimensional region. The answer is given within the absolute error 
+%  tolerance in_param.abstol.
+% 
+% *Input Arguments*
+%
+% * f REPLACE_WITH_DASH_DASH- |the integrand whose input should be a matrix nxd where n is the
+%  number of data points and d the dimension. By default it is the
+%  quadratic function.|
+%
+% * d REPLACE_WITH_DASH_DASH- |dimension of domain on which f is defined. d must be a positive
+%  integer 1<=d<=1111. By default it is 1.|
+%
+% * in_param.abstol REPLACE_WITH_DASH_DASH- |the absolute error tolerance, abstol>0. By 
+%  default it is 1e-4.|
+%
+% * in_param.density REPLACE_WITH_DASH_DASH- |for f(x), we can define x uniformly in [0,1)^d or
+%  normally distributed with covariance matrix I_d. By default it is
+%  'uniform'. The only possible values are 'uniform' or 'normal'.|
+%
+% * in_param.mmin REPLACE_WITH_DASH_DASH- |the minimum number of points to start is 2^mmin. The
+%  cone condition on the Fourier coefficients decay requires a minimum
+%  number of points to start. The advice is to consider at least mmin=10.
+%  mmin needs to be a positive integer with mmin<=mmax. By default it is 10.|
+%
+% * in_param.mmax REPLACE_WITH_DASH_DASH- |the maximum budget is 2^mmax. By construction of the
+%  Sobol' generator, mmax is a positive integer such that mmin<=mmax<=53.
+%  The default value is 24.|
+%
+% * in_param.fudge REPLACE_WITH_DASH_DASH- |the positive function multiplying the finite 
+%  sum of Fast Walsh coefficients specified in the cone of functions.
+%  For more information about this parameter, refer to the references.
+%  By default it is @(x) 5*2^-x.|
+%
+% *Output Arguments*
+%
+% * q REPLACE_WITH_DASH_DASH- |the estimated value of the integral.|
+%
+% * out_param.overbudget REPLACE_WITH_DASH_DASH- |boolean stating whether the max budget is
+%  attained without reaching the guaranteed error tolerance. Output 1
+%  means we have overrun our budget.|
+%
+% * out_param.n REPLACE_WITH_DASH_DASH- |number of points used when calling cubSobol_g for f.|
+%
+% * out_param.pred_err REPLACE_WITH_DASH_DASH- |predicted bound on the error based on the cone
+%  condition. If the function lies in the cone, the real error should be
+%  smaller than this predicted error.|
+%
+% * out_param.time REPLACE_WITH_DASH_DASH- |time elapsed in seconds when calling cubSobol_g for f.|
+% 
+%%  Guarantee
+%
+% This algorithm computes the integral of real valued functions in [0,1)^d 
+% with a prescribed absolute error tolerance. The Walsh-Fourier 
+% coefficients of the integrand are assumed to be absolutely convergent.
+% If the algorithm terminates without warning messages, the output is 
+% given with guarantees under the assumption that the integrand lies inside
+% a cone of functions. The guarantee is based on the decay rate of the 
+% Walsh-Fourier coefficients. For more details on how the cone is defined, 
+% please refer to the references below.
+%
+%% Examples
+%
+%%
+% *Example 1*
+
+% Estimate the integral with integrand f(x) = x1.*x2 in the interval [0,1)^2:
+
+  f=@(x) x(:,1).*x(:,2); d=2;
+  q = cubSobol_g(f,d,1e-5,'uniform')
+
+%%
+% *Example 2*
+
+% Estimate the integral with integrand f(x) = x1.^2.*x2.^2.*x3.^2+0.11
+% in the interval R^3 where x1, x2 and x3 are normally distributed:
+
+  f=@(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2+0.11; d=3;
+  q = cubSobol_g(f,d,1e-3,'normal')
+
+%%
+% *Example 3*
+
+% Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) in the
+% interval [0,1)^2:
+
+  f=@(x) exp(-x(:,1).^2-x(:,2).^2); d=2;
+  q = cubSobol_g(f,d,1e-3,'uniform')
+
+%%
+% *Example 4*
+
+% Estimate the price of an European call with S0=100, K=100, r=sigma^2/2,
+% sigma=0.05 and T=1.
+
+  f=@(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); d=1;
+  q = cubSobol_g(f,d,1e-4,'normal','fudge',@(x) 2^-(2*x))
+%% See Also
+%
+% <html>
+% <a href="help_cubLattice_g.html">cubLattice_g</a>
+% </html>
+%
+% <html>
+% <a href="help_cubMC_g.html">cubMC_g</a>
+% </html>
+%
+% <html>
+% <a href="help_meanMC_g.html">meanMC_g</a>
+% </html>
+%
+% <html>
+% <a href="help_integral_g.html">integral_g</a>
+% </html>
+%
+%% References
+%
+% [1] Fred J. Hickernell and Lluis Antoni Jimenez Rugama: Reliable adaptive
+% cubature using digital sequences (2014). Submitted for publication.
+%
+% [2] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang,
+% Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
+% "GAIL: Guaranteed Automatic Integration Library (Version 2.0.0)"
+% [MATLAB Software], 2014. Available from http://code.google.com/p/gail/
+%
+% If you find GAIL helpful in your work, please support us by citing the
+% above paper and software.
+
+##### SOURCE END #####
+--></body></html>

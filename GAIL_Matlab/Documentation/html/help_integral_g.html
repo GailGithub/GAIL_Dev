@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>integral_g</title><meta name="generator" content="MATLAB 8.1"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-02-14"><meta name="DC.source" content="help_integral_g.m"><style type="text/css">
+      --><title>integral_g</title><meta name="generator" content="MATLAB 8.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-10-24"><meta name="DC.source" content="help_integral_g.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -23,7 +23,7 @@ a:visited { color:#004aa0; text-decoration:none; }
 
 p { padding:0px; margin:0px 0px 20px; }
 img { padding:0px; margin:0px 0px 20px; border:none; }
-p img, pre img, tt img, li img { margin-bottom:0px; } 
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
 
 ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
 ul li { padding:0px; margin:0px 0px 7px 0px; }
@@ -38,11 +38,12 @@ ol li ul li { list-style:square; }
 
 .content { font-size:1.2em; line-height:140%; padding: 20px; }
 
-pre, tt, code { font-size:12px; }
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
 pre { margin:0px 0px 20px; }
-pre.error { color:red; }
 pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
 pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
 
 @media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
 
@@ -65,7 +66,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1>integral_g</h1><!--introduction--><p>1-D guaranteed function integration using trapezoidal rule</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Syntax</a></li><li><a href="#2">Description</a></li><li><a href="#3">Guarantee</a></li><li><a href="#4">Examples</a></li><li><a href="#6">See Also</a></li><li><a href="#7">Reference</a></li></ul></div><h2>Syntax<a name="1"></a></h2><p>q = <b>integral_g</b>(f)</p><p>q = <b>integral_g</b>(f,a,b,abstol,nlo,nhi,nmax)</p><p>q = <b>integral_g</b>(f,'abstol',abstol,'nlo',nlo,'nhi',nhi,'nmax',nmax)</p><p>q = <b>integral_g</b>(f,in_param)</p><p>[q, out_param] = <b>integral_g</b>(f,...)</p><h2>Description<a name="2"></a></h2><p>q = <b>integral_g</b>(f) <tt>computes q, the definite integral of function f   on the interval [0,1] by trapezoidal rule with in a guaranteed absolute   error of 1e-6. Default starting number of sample points taken is 100   and default cost budget is 1e7. Input f is a function handle. The   function y = f(x) should accept a vector argument x and return a vector   result y, the integrand evaluated at each element of x.</tt></p><p>q = <b>integral_g</b>(f,in_param) <tt>computes q, the definite integral of   function f by trapezoidal rule within a guaranteed absolute error   in_param.abstol, lower bound of initial number of points in_param.nlo,   higher bound of initial number of points in_param.nhi, and cost budget   in_param.nmax. If a field is not specified, the default value is used.</tt></p><p>q = <b>integral_g</b>(f,a,b,abstol,nlo,nhi,nmax) <tt>computes q, the definite   integral of function f on the finite interval [a,b] by trapezoidal rule   with the ordered input parameters, guaranteed absolute error tolerance   abstol, lower bound of initial number of points in_param.nlo, higher   bound of initial number of points in_param.nhi, and cost budget nmax.</tt></p><p>q = <b>integral_g</b>(f,'a',a,'b',b,'abstol',abstol,'nlo',nlo,'nhi',nhi,,'nmax',nmax) <tt>computes q, the definite integral of function f on the finite interval   [a,b] by trapezoidal rule within a guaranteed absolute error tolerance   abstol, lower bound of initial number of points in_param.nlo, higher   bound of initial number of points in_param.nhi, and cost budget nmax.   All three field-value pairs are optional and can be supplied.</tt></p><p>[q, out_param] = <b>integral_g</b>(f,...) <tt>returns the approximated integration q and output structure out_param, which includes the fields in_param.</tt></p><p><b>Input Arguments</b></p><div><ul><li>f --- <tt>function handle</tt></li></ul></div><div><ul><li>in_param.a --- <tt>left end point of interval, default value is 0</tt></li></ul></div><div><ul><li>in_param.b --- <tt>right end point of interval, default value is 1</tt></li></ul></div><div><ul><li>in_param.abstol --- <tt>guaranteed absolute error tolerance, default value  is 1e-6</tt></li></ul></div><div><ul><li>in_param.nlo --- <tt>lower bound of initial number of points we used,  default value is 10</tt></li></ul></div><div><ul><li>in_param.nhi --- <tt>upper bound of initial number of points we used,  default value is 1000</tt></li></ul></div><div><ul><li>in_param.nmax --- <tt>cost budget, default value is 1e7</tt></li></ul></div><p><b>Output Arguments</b></p><div><ul><li>out_param.exceedbudget --- <tt>it is true if the algorithm tries to use more points than cost budget, false otherwise.</tt></li></ul></div><div><ul><li>out_param.nlo --- <tt>lowest initial number of function values.</tt></li></ul></div><div><ul><li>out_param.nhi --- <tt>highest initial number of function values.</tt></li></ul></div><div><ul><li>out_param.ninit --- <tt>initial number of points we use, computed by nlo   and nhi.</tt></li></ul></div><div><ul><li>out_param.nstar --- <tt>final value of the parameter defining the cone of   functions for which this algorithm is guaranteed; nstar = ninit-2   initially and is increased as necessary.</tt></li></ul></div><div><ul><li>out_param.nmax --- <tt>cost budget (maximum number of function values).</tt></li></ul></div><div><ul><li>out_param.a --- <tt>left end of the integral.</tt></li></ul></div><div><ul><li>out_param.b --- <tt>right end of the integral.</tt></li></ul></div><div><ul><li>out_param.abstol --- <tt>guaranteed absolute error tolerance.</tt></li></ul></div><div><ul><li>out_param.tauchange --- <tt>it is true if the cone constant has been changed, false otherwise. See [1] for details.  If true, you may wish to change the input in_param.ninit to a larger number.</tt></li></ul></div><div><ul><li>out_param.npoints --- <tt>number of points we need to reach the guaranteed absolute error tolerance abstol.</tt></li></ul></div><div><ul><li>out_param.errest --- <tt>approximation error defined as the differences between the true value and the approximated value of the integral.</tt></li></ul></div><h2>Guarantee<a name="3"></a></h2><p><tt>If the function to be integrated,</tt>  <img src="help_integral_g_eq85998.png" alt="$f$">  <tt>satisfies the cone condition</tt></p><p><img src="help_integral_g_eq58146.png" alt="$$\|f''\|_1 \le \frac { \mathrm{nstar} }{2(b-a)}&#xA;\left\|f'-\frac{f(b)-f(a)}{b-a}\right\|_1,$$"></p><p><tt>then the</tt>  <img src="help_integral_g_eq50913.png" alt="$q$">  <tt>output by this algorithm is guaranteed to satisfy</tt></p><p><img src="help_integral_g_eq81621.png" alt="$$\left\| \int_{a}^{b} f(x) dx - q \right\|_{1} \le \mathrm{abstol},$$"></p><p><tt>provided the flag</tt> <img src="help_integral_g_eq42341.png" alt="$\mathrm{exceedbudget} = 0.$"></p><p><tt>And the upper bound of the cost is</tt></p><p><img src="help_integral_g_eq60362.png" alt="$$\sqrt{ \frac{\mathrm{nstar}* (b-a)^2 \mathrm{Var}(f')}{2 \times \mathrm{abstol}}}&#xA;+ 2 \times \mathrm{nstar} +4.$$"></p><h2>Examples<a name="4"></a></h2><pre>Example 1</pre><pre class="codeinput">f = @(x) x.^2; [q, out_param] = integral_g(f)
+  </style></head><body><div class="content"><h1>integral_g</h1><!--introduction--><p><tt>1-D guaranteed function integration using trapezoidal rule</tt></p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Syntax</a></li><li><a href="#2">Description</a></li><li><a href="#3">Guarantee</a></li><li><a href="#4">Examples</a></li><li><a href="#6">See Also</a></li><li><a href="#7">References</a></li></ul></div><h2>Syntax<a name="1"></a></h2><p>q = <b>integral_g</b>(f)</p><p>q = <b>integral_g</b>(f,in_param)</p><p>q = <b>integral_g</b>(f,a,b,abstol,nlo,nhi,nmax)</p><p>q = <b>integral_g</b>(f,'a',a,'b',b,'abstol',abstol,'nlo',nlo,'nhi',nhi,,'nmax',nmax)</p><p>[q, out_param] = <b>integral_g</b>(f,...)</p><h2>Description<a name="2"></a></h2><p>q = <b>integral_g</b>(f) computes q, the definite integral of function f  on the interval [a,b] by trapezoidal rule with  in a guaranteed absolute error of 1e-6. Default starting number of  sample points taken is 100 and default cost budget is 1e7. Input f is a  function handle. The function y = f(x) should accept a vector argument  x and return a vector result y, the integrand evaluated at each element  of x.</p><p>q = <b>integral_g</b>(f,in_param) computes q, the definite integral of  function f by trapezoidal rule within a guaranteed absolute error  in_param.abstol, lower bound of initial number of points in_param.nlo,  higher bound of initial number of points in_param.nhi, and cost budget  in_param.nmax. If a field is not specified, the default value is used.</p><p>q = <b>integral_g</b>(f,a,b,abstol,nlo,nhi,nmax) computes q, the definite  integral of function f on the finite interval [a,b] by trapezoidal rule  with the ordered input parameters, guaranteed absolute error tolerance  abstol, lower bound of initial number of points in_param.nlo, higher  bound of initial number of points in_param.nhi, and cost budget nmax.</p><p>q = <b>integral_g</b>(f,'a',a,'b',b,'abstol',abstol,'nlo',nlo,'nhi',nhi,,'nmax',nmax)  computes q, the definite integral of function f on the finite interval  [a,b] by trapezoidal rule within a guaranteed absolute error tolerance  abstol, lower bound of initial number of points in_param.nlo, higher  bound of initial number of points in_param.nhi, and cost budget nmax.  All three field-value pairs are optional and can be supplied.</p><p>[q, out_param] = <b>integral_g</b>(f,...) returns the approximated  integration q and output structure out_param.</p><p><b>Input Arguments</b></p><div><ul><li>in_param.a --- <tt>left end of the integral, default value is 0</tt></li></ul></div><div><ul><li>in_param.b --- <tt>right end of the integral, default value is 1</tt></li></ul></div><div><ul><li>in_param.abstol --- <tt>guaranteed absolute error tolerance, default value  is 1e-6</tt></li></ul></div><div><ul><li>in_param.nlo --- <tt>lowest initial number of function values used, default  value is 10</tt></li></ul></div><div><ul><li>in_param.nhi --- <tt>highest initial number of function values used,  default value is 1000</tt></li></ul></div><div><ul><li>in_param.nmax --- <tt>cost budget (maximum number of function values),  default value is 1e7</tt></li></ul></div><p><b>Output Arguments</b></p><div><ul><li>out_param.exceedbudget --- <tt>it is true if the algorithm tries to use   more points than cost budget, false otherwise.</tt></li></ul></div><div><ul><li>out_param.tauchange --- <tt>it is true if the cone constant has been  changed, false otherwise. See [1] for details. If true, you may wish to  change the input in_param.ninit to a larger number.</tt></li></ul></div><div><ul><li>out_param.npoints --- <tt>number of points we need to  reach the guaranteed absolute error tolerance abstol.</tt></li></ul></div><div><ul><li>out_param.errest --- <tt>approximation error defined as the differences  between the true value and the approximated value of the integral.</tt></li></ul></div><div><ul><li>out_param.nlo --- <tt>lowest initial number of function values</tt></li></ul></div><div><ul><li>out_param.nhi --- <tt>highest initial number of function values</tt></li></ul></div><div><ul><li>out_param.ninit --- <tt>initial number of points we use, computed by nlo  and nhi</tt></li></ul></div><div><ul><li>out_param.nstar --- <tt>final value of the parameter defining the cone of  functions for which this algorithm is guaranteed; nstar = ninit-2  initially and is increased as necessary</tt></li></ul></div><div><ul><li>out_param.nmax --- <tt>cost budget (maximum number of function values)</tt></li></ul></div><div><ul><li>out_param.abstol --- <tt>guaranteed absolute error tolerance</tt></li></ul></div><div><ul><li>out_param.a --- <tt>low end of the integral</tt></li></ul></div><div><ul><li>out_param.b --- <tt>high end of the integral</tt></li></ul></div><h2>Guarantee<a name="3"></a></h2><p><tt>If the function to be integrated,</tt>  <img src="help_integral_g_eq85998.png" alt="$f$">  <tt>satisfies the cone condition</tt></p><p><img src="help_integral_g_eq58146.png" alt="$$\|f''\|_1 \le \frac { \mathrm{nstar} }{2(b-a)}&#xA;\left\|f'-\frac{f(b)-f(a)}{b-a}\right\|_1,$$"></p><p><tt>then the</tt>  <img src="help_integral_g_eq50913.png" alt="$q$">  <tt>output by this algorithm is guaranteed to satisfy</tt></p><p><img src="help_integral_g_eq81621.png" alt="$$\left\| \int_{a}^{b} f(x) dx - q \right\|_{1} \le \mathrm{abstol},$$"></p><p><tt>provided the flag</tt> <img src="help_integral_g_eq42341.png" alt="$\mathrm{exceedbudget} = 0.$"></p><p><tt>And the upper bound of the cost is</tt></p><p><img src="help_integral_g_eq60362.png" alt="$$\sqrt{ \frac{\mathrm{nstar}* (b-a)^2 \mathrm{Var}(f')}{2 \times \mathrm{abstol}}}&#xA;+ 2 \times \mathrm{nstar} +4.$$"></p><h2>Examples<a name="4"></a></h2><pre>Example 1</pre><pre class="codeinput">f = @(x) x.^2; [q, out_param] = integral_g(f)
 
 <span class="comment">% Integrate function x with default input parameter to make the error less</span>
 <span class="comment">% than 1e-7.</span>
@@ -117,107 +118,107 @@ out_param =
          npoints: 2998
           errest: 7.3718e-06
 
-</pre><h2>See Also<a name="6"></a></h2><p> <a href="help_funappx_g.html">funappx_g</a> </p><p> <a href="help_meanMC_g.html">meanMC_g</a> </p><p> <a href="help_cubMC_g.html">cubMC_g</a> </p><h2>Reference<a name="7"></a></h2><p>[1]  N. Clancy, Y. Ding, C. Hamilton, F. J. Hickernell, and Y. Zhang, The Cost of Deterministic, Adaptive, Automatic Algorithms:  Cones, Not Balls, Journal of Complexity 30 (2014) 21&#8211;45</p><p>[2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, and Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library (Version 1.3.0)" [MATLAB Software], 2014. Available from <a href="http://code.google.com/p/gail/">http://code.google.com/p/gail/</a></p><p>If you find GAIL helpful in your work, please support us by citing the above paper and software.</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2013a</a><br></p></div><!--
+</pre><h2>See Also<a name="6"></a></h2><p>
+<a href="help_funappx_g.html">funappx_g</a>
+</p><p>
+<a href="help_cubMC_g.html">cubMC_g</a>
+</p><h2>References<a name="7"></a></h2><p>[1]  N. Clancy, Y. Ding, C. Hamilton, F. J. Hickernell, and Y. Zhang, The complexity of guaranteed automatic algorithms: Cones, not balls, Journal of Complexity 2013, to appear, DOI 10.1016/j.jco.2013.09.002.</p><p>[2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, and Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library (Version 1.3.0)" [MATLAB Software], 2014. Available from <a href="http://code.google.com/p/gail/">http://code.google.com/p/gail/</a></p><p>If you find GAIL helpful in your work, please support us by citing the above paper and software.</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 %% integral_g
-% 1-D guaranteed function integration using trapezoidal rule
-%
+% |1-D guaranteed function integration using trapezoidal rule|
 %% Syntax
 % q = *integral_g*(f)
 %
-% q = *integral_g*(f,a,b,abstol,nlo,nhi,nmax)
-%   
-% q = *integral_g*(f,'abstol',abstol,'nlo',nlo,'nhi',nhi,'nmax',nmax)
-%
 % q = *integral_g*(f,in_param)
 %
-% [q, out_param] = *integral_g*(f,...)
+% q = *integral_g*(f,a,b,abstol,nlo,nhi,nmax)
 %
+% q = *integral_g*(f,'a',a,'b',b,'abstol',abstol,'nlo',nlo,'nhi',nhi,,'nmax',nmax)
+%
+% [q, out_param] = *integral_g*(f,...)
 %% Description
 %
-% q = *integral_g*(f) |computes q, the definite integral of function f
-%   on the interval [0,1] by trapezoidal rule with in a guaranteed absolute
-%   error of 1e-6. Default starting number of sample points taken is 100
-%   and default cost budget is 1e7. Input f is a function handle. The
-%   function y = f(x) should accept a vector argument x and return a vector
-%   result y, the integrand evaluated at each element of x.|
+% q = *integral_g*(f) computes q, the definite integral of function f
+%  on the interval [a,b] by trapezoidal rule with 
+%  in a guaranteed absolute error of 1e-6. Default starting number of
+%  sample points taken is 100 and default cost budget is 1e7. Input f is a 
+%  function handle. The function y = f(x) should accept a vector argument 
+%  x and return a vector result y, the integrand evaluated at each element
+%  of x.
 %
-% q = *integral_g*(f,in_param) |computes q, the definite integral of
-%   function f by trapezoidal rule within a guaranteed absolute error
-%   in_param.abstol, lower bound of initial number of points in_param.nlo,
-%   higher bound of initial number of points in_param.nhi, and cost budget
-%   in_param.nmax. If a field is not specified, the default value is used.|
+% q = *integral_g*(f,in_param) computes q, the definite integral of
+%  function f by trapezoidal rule within a guaranteed absolute error
+%  in_param.abstol, lower bound of initial number of points in_param.nlo,
+%  higher bound of initial number of points in_param.nhi, and cost budget
+%  in_param.nmax. If a field is not specified, the default value is used.
 %
-% q = *integral_g*(f,a,b,abstol,nlo,nhi,nmax) |computes q, the definite
-%   integral of function f on the finite interval [a,b] by trapezoidal rule
-%   with the ordered input parameters, guaranteed absolute error tolerance
-%   abstol, lower bound of initial number of points in_param.nlo, higher
-%   bound of initial number of points in_param.nhi, and cost budget nmax.|
-% 
-% q =
-% *integral_g*(f,'a',a,'b',b,'abstol',abstol,'nlo',nlo,'nhi',nhi,,'nmax',nmax)
-% |computes q, the definite integral of function f on the finite interval
-%   [a,b] by trapezoidal rule within a guaranteed absolute error tolerance
-%   abstol, lower bound of initial number of points in_param.nlo, higher
-%   bound of initial number of points in_param.nhi, and cost budget nmax.
-%   All three field-value pairs are optional and can be supplied.|
+% q = *integral_g*(f,a,b,abstol,nlo,nhi,nmax) computes q, the definite
+%  integral of function f on the finite interval [a,b] by trapezoidal rule
+%  with the ordered input parameters, guaranteed absolute error tolerance
+%  abstol, lower bound of initial number of points in_param.nlo, higher
+%  bound of initial number of points in_param.nhi, and cost budget nmax.
 %
-% [q, out_param] = *integral_g*(f,...) |returns the approximated
-% integration q and output structure out_param, which includes the fields
-% in_param.|
+% q = *integral_g*(f,'a',a,'b',b,'abstol',abstol,'nlo',nlo,'nhi',nhi,,'nmax',nmax)
+%  computes q, the definite integral of function f on the finite interval
+%  [a,b] by trapezoidal rule within a guaranteed absolute error tolerance
+%  abstol, lower bound of initial number of points in_param.nlo, higher
+%  bound of initial number of points in_param.nhi, and cost budget nmax.
+%  All three field-value pairs are optional and can be supplied.
+%
+% [q, out_param] = *integral_g*(f,...) returns the approximated 
+%  integration q and output structure out_param.
 %
 % *Input Arguments*
-%   
-% * f REPLACE_WITH_DASH_DASH- |function handle|
 %
-% * in_param.a REPLACE_WITH_DASH_DASH- |left end point of interval, default value is 0|
+% * in_param.a REPLACE_WITH_DASH_DASH- |left end of the integral, default value is 0|
 %
-% * in_param.b REPLACE_WITH_DASH_DASH- |right end point of interval, default value is 1|
+% * in_param.b REPLACE_WITH_DASH_DASH- |right end of the integral, default value is 1|
 %
 % * in_param.abstol REPLACE_WITH_DASH_DASH- |guaranteed absolute error tolerance, default value
 %  is 1e-6|
+% 
+% * in_param.nlo REPLACE_WITH_DASH_DASH- |lowest initial number of function values used, default
+%  value is 10|
 %
-% * in_param.nlo REPLACE_WITH_DASH_DASH- |lower bound of initial number of points we used,
-%  default value is 10|
-%
-% * in_param.nhi REPLACE_WITH_DASH_DASH- |upper bound of initial number of points we used,
+% * in_param.nhi REPLACE_WITH_DASH_DASH- |highest initial number of function values used,
 %  default value is 1000|
 %
-% * in_param.nmax REPLACE_WITH_DASH_DASH- |cost budget, default value is 1e7|
-%
+% * in_param.nmax REPLACE_WITH_DASH_DASH- |cost budget (maximum number of function values),
+%  default value is 1e7|
+% 
 % *Output Arguments*
 %
-% * out_param.exceedbudget REPLACE_WITH_DASH_DASH- |it is true if the algorithm tries to use
-% more points than cost budget, false otherwise.|
-%
-% * out_param.nlo REPLACE_WITH_DASH_DASH- |lowest initial number of function values.|
-%
-% * out_param.nhi REPLACE_WITH_DASH_DASH- |highest initial number of function values.|
+% * out_param.exceedbudget REPLACE_WITH_DASH_DASH- |it is true if the algorithm tries to use 
+%   more points than cost budget, false otherwise.|
 % 
-% * out_param.ninit REPLACE_WITH_DASH_DASH- |initial number of points we use, computed by nlo
-%   and nhi.|
-%
-% * out_param.nstar REPLACE_WITH_DASH_DASH- |final value of the parameter defining the cone of
-%   functions for which this algorithm is guaranteed; nstar = ninit-2
-%   initially and is increased as necessary.|
-%
-% * out_param.nmax REPLACE_WITH_DASH_DASH- |cost budget (maximum number of function values).|
-% 
-% * out_param.a REPLACE_WITH_DASH_DASH- |left end of the integral.|
-%
-% * out_param.b REPLACE_WITH_DASH_DASH- |right end of the integral.|
-%
-% * out_param.abstol REPLACE_WITH_DASH_DASH- |guaranteed absolute error tolerance.|
-%
 % * out_param.tauchange REPLACE_WITH_DASH_DASH- |it is true if the cone constant has been
-% changed, false otherwise. See [1] for details.  If true, you may wish to
-% change the input in_param.ninit to a larger number.|
+%  changed, false otherwise. See [1] for details. If true, you may wish to
+%  change the input in_param.ninit to a larger number.|
 % 
-% * out_param.npoints REPLACE_WITH_DASH_DASH- |number of points we need to reach the guaranteed
-% absolute error tolerance abstol.|
+% * out_param.npoints REPLACE_WITH_DASH_DASH- |number of points we need to 
+%  reach the guaranteed absolute error tolerance abstol.|
 %
 % * out_param.errest REPLACE_WITH_DASH_DASH- |approximation error defined as the differences
-% between the true value and the approximated value of the integral.|
+%  between the true value and the approximated value of the integral.|
+%
+% * out_param.nlo REPLACE_WITH_DASH_DASH- |lowest initial number of function values|
+%
+% * out_param.nhi REPLACE_WITH_DASH_DASH- |highest initial number of function values|
+%
+% * out_param.ninit REPLACE_WITH_DASH_DASH- |initial number of points we use, computed by nlo
+%  and nhi|
+%
+% * out_param.nstar REPLACE_WITH_DASH_DASH- |final value of the parameter defining the cone of
+%  functions for which this algorithm is guaranteed; nstar = ninit-2
+%  initially and is increased as necessary|
+%
+% * out_param.nmax REPLACE_WITH_DASH_DASH- |cost budget (maximum number of function values)|
+%
+% * out_param.abstol REPLACE_WITH_DASH_DASH- |guaranteed absolute error tolerance|
+% 
+% * out_param.a REPLACE_WITH_DASH_DASH- |low end of the integral|
+%
+% * out_param.b REPLACE_WITH_DASH_DASH- |high end of the integral|
 % 
 %% Guarantee
 %    
@@ -253,28 +254,31 @@ f = @(x) x.^2; [q, out_param] = integral_g(f)
 
 % Integrate function x^2 with starting number of points 52, cost budget
 % 10000000 and error toerence 1e-8
-
-
 %% See Also
 %
-% <html> <a href="help_funappx_g.html">funappx_g</a> </html>
+% <html>
+% <a href="help_funappx_g.html">funappx_g</a>
+% </html>
 %
-% <html> <a href="help_meanMC_g.html">meanMC_g</a> </html>
+% <html>
+% <a href="help_cubMC_g.html">cubMC_g</a>
+% </html>
 %
-% <html> <a href="help_cubMC_g.html">cubMC_g</a> </html>
+%% References
 %
-%% Reference
-% [1]  N. Clancy, Y. Ding, C. Hamilton, F. J. Hickernell, and Y. Zhang, The
-% Cost of Deterministic, Adaptive, Automatic Algorithms:  Cones, Not Balls,
-% Journal of Complexity 30 (2014) 21–45
+% [1]  N. Clancy, Y. Ding, C. Hamilton, F. J. Hickernell, and Y. Zhang, 
+% The complexity of guaranteed automatic algorithms: Cones, not
+% balls, Journal of Complexity 2013, to appear, DOI
+% 10.1016/j.jco.2013.09.002.
 %
-% [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, and
-% Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library (Version
-% 1.3.0)" [MATLAB Software], 2014. Available from
+% [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
+% and Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library
+% (Version 1.3.0)" [MATLAB Software], 2014. Available from
 % http://code.google.com/p/gail/
 %
-% If you find GAIL helpful in your work, please support us by citing the
-% above paper and software.
+% If you find GAIL helpful in your work, please support us by citing
+% the above paper and software.
 %
+
 ##### SOURCE END #####
 --></body></html>

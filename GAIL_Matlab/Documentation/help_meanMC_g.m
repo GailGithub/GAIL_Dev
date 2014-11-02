@@ -1,184 +1,158 @@
 %% meanMC_g
-% |Monte Carlo method to estimate the mean of a random variable to within a
-% specific absolute error tolerance with guaranteed uncertainty within alpha.|
-%
+% |Monte Carlo method to estimate the mean of a random variable.|
 %% Syntax
+% tmu = *meanMC_g*(Yrand)
 %
-% mu = *meanMC_g*(Yrand)
+% tmu = *meanMC_g*(Yrand,abstol,reltol,alpha,fudge,nSig,n1,tbudget,nbudget)
 %
-% mu = *meanMC_g*(Yrand,abstol,alpha,n_sigma,fudge,tbudget,nbudget,npcmax,checked)
+% tmu = *meanMC_g*(Yrand,'abstol',abstol,'reltol',reltol,'alpha',alpha,'fudge',fudge,'nSig',nSig,'n1',n1,'tbudget',tbudget,'nbudget',nbudget)
 %
-% mu = *meanMC_g*(Yrand,'abstol',abstol,'alpha',alpha,'fudge',fudge,'tbudget',
-% tbudget,'nbudget',nbudget,'npcmax',npcmax,'checked',checked)
-%
-% mu = *meanMC_g*(Yrand,in_param)
-%
-% [mu, out_param] = *meanMC_g*(Yrand,in_param)
-%
+% [tmu, out_param] = *meanMC_g*(Yrand,in_param)
 %% Description
 %
-% mu = *meanMC_g*(Yrand) |estimates the mean of a random variable Y to within
-% a specified absolute error tolerance 1e-2 with guaranteed confidence
-% level 99%. Input Yrand is a function handle that accepts a positive
-% integer input n and returns an n x 1 vector of IID instances of the
-% random variable Y.|
+% tmu = *meanMC_g*(Yrand) estimates the mean, mu, of a random variable Y to
+%  within a specified generalized error tolerance, 
+%  tolfun:=max(abstol,reltol*|mu|), i.e., | mu - tmu | <= tolfun with
+%  probability at least 1-alpha, where abstol is the absolute error
+%  tolerance, and reltol is the relative error tolerance. Usually the
+%  reltol determines the accuracy of the estimation, however, if the | mu |
+%  is rather small, the abstol determines the accuracy of the estimation.
+%  The default values are abstol=1e-2, reltol=1e-1, and alpha=1%. Input
+%  Yrand is a function handle that accepts a positive integer input n and
+%  returns an n x 1 vector of IID instances of the random variable Y.
 %
-% mu = *meanMC_g*(Yrand,abstol,alpha,n_sigma,fudge,tbudget,nbudget,npcmax)
-% | estimates the mean of a random variable Y to within an specified absolute
-% error tolerance abstol with guaranteed confidence level 1-alpha. using
-% all ordered parsing inputs abstol, n_sigma, fudge, tbudget, nbudget,
-% npcmax and checked.|
+% tmu = *meanMC_g*(Yrand,abstol,reltol,alpha,fudge,nSig,n1,tbudget,nbudget)
+%  estimates the mean of a random variable Y to within a specified
+%  generalized error tolerance tolfun with guaranteed confidence
+%  level 1-alpha using all ordered parsing inputs abstol, reltol, alpha,
+%  fudge, nSig, n1, tbudget, nbudget.
 %
-% mu =
-% *meanMC_g*(Yrand,'abstol',abstol,'alpha',alpha,'fudge',fudge,'tbudget',
-% tbudget,'nbudget',nbudget,'npcmax',npcmax,'checked',checked) |estimates the mean of a random variable Y to within a
-% specified absolute error tolerance abstol with guaranteed confidence
-% level 1-alpha. All the field-value pairs are optional and can be
-% supplied in different order.|
+% tmu = *meanMC_g*(Yrand,'abstol',abstol,'reltol',reltol,'alpha',alpha,'fudge',fudge,'nSig',nSig,'n1',n1,'tbudget',tbudget,'nbudget',nbudget)
+%  estimates the mean of a random variable Y to within a specified
+%  generalized error tolerance tolfun with guaranteed confidence level
+%  1-alpha. All the field-value pairs are optional and can be supplied in
+%  different order, if a field is not supplied, the default value is used.
 %
-% mu = *meanMC_g*(Yrand,in_param) |estimates the mean of a random variable
-% Y to within a specified absolute error tolerance in_param.abstol with
-% guaranteed uncertainty within in_param.alpha. If a field is not
-% specified, the default value is used.|
-%
-% [mu, out_param] = *meanMC_g*(Yrand,in_param) |estimates the mean of a
-% random variable Y to within a specified absolute error tolerance with the
-% given parameters in_param and output parameters out_param.|
+% [tmu, out_param] = *meanMC_g*(Yrand,in_param) estimates the mean of a
+%  random variable Y to within a specified generalized error tolerance
+%  tolfun with the given parameters in_param and produce the estimated
+%  mean tmu and output parameters out_param. If a field is not specified,
+%  the default value is used.
 %
 % *Input Arguments*
 %
-% * Yrand --- |the function for generating IID instances of a random
-%   variable Y whose mean we want to estimate. Y is often defined as a
-%   function of some random variable X with a simple distribution.  For
-%   example, if Y = X.^2 where X is a standard uniform random variable,
-%   then one may define Yrand = @(n) rand(n,1).^2.|
+% * Yrand --- |the function for generating n IID instances of a random
+%  variable Y whose mean we want to estimate. Y is often defined as a
+%  function of some random variable X with a simple distribution. The
+%  input of Yrand should be the number of random variables n, the output
+%  of Yrand should be n function values. For example, if Y = X.^2 where X
+%  is a standard uniform random variable, then one may define Yrand =
+%  @(n) rand(n,1).^2.|
 %
-% * mu --- |the estimated mean of Y.|
+% * in_param.abstol --- |the absolute error tolerance, which should be
+%  positive, default value is 1e-2.|
 %
-% * in_param.abstol --- |the absolute error tolerance, default value is
-%   1e-2.|
+% * in_param.reltol --- |the relative error tolerance, which should be
+%  between 0 and 1, default value is 1e-1.|
 %
-% * in_param.alpha --- |the uncertainty, default value is 1%.|
+% * in_param.alpha --- |the uncertainty, which should be a small positive
+%  percentage. default value is 1%.|
 %
-% * in_param.n_sigma --- |initial sample size for estimating the sample
-%   variance, the default value is 1e4.|
+% * in_param.fudge --- |standard deviation inflation factor, which should
+%  be larger than 1, default value is 1.2.|
 %
-% * in_param.fudge --- |the standard deviation inflation factor, the
-% default value is 1.2.|
+% * in_param.nSig --- |initial sample size for estimating the sample
+%  variance, which should be a moderate large integer at least 30, the
+%  default value is 1e4.|
 %
-% * in_param.tbudget --- |the time budget to do the two-stage
-%   estimation, the default value is 100 seconds.|
+% * in_param.n1 --- |initial sample size for estimating the sample mean,
+%  which should be a moderate large positive integer at least 30, the
+%  default value is 1e4.|
+%
+% * in_param.tbudget --- |the time budget in seconds to do the two-stage
+%  estimation, which should be positive, the default value is 100 seconds.|
 %
 % * in_param.nbudget --- |the sample budget to do the two-stage
-%   estimation, the default value is 1e8.|
-%
-% * in_param.npcmax --- |number of elements in an array of optimal size to
-%   calculate the mu, the default value is 1e6.|
-%
-% * in_param.checked --- |the value corresponding to parameter checking status.|
-%
-%                        0   not checked
-%
-%                        1   checked by cubMC_g
-%
-%                        2   checked by meanMC_g
+%  estimation, which should be a large positive integer, the default
+%  value is 1e9.|
 %
 % *Output Arguments*
 %
-% * out_param.time_n_sigma_predict --- |the estimated time to get n_sigma
-%   samples of the random variable.|
+% * tmu --- |the estimated mean of Y.|
 %
-% * out_param.n_left_predict --- |using the time left to predict the number
-%   of samples left.|
+% * out_param.tau --- |the iteration step.|
 %
-% * out_param.nmax --- |the maximum sample budget to estimate mu, it comes
-%   from both the sample budget and the time budget.|
+% * out_param.n --- |the sample size used in each iteration.|
+%
+% * out_param.nremain --- |the remaining sample budget to estimate mu. It was
+%  calculated by the sample left and time left.|
+%
+% * out_param.ntot --- |total sample used.|
+%
+% * out_param.hmu --- |estimated mean in each iteration.|
+%
+% * out_param.tol --- |the reliable upper bound on error for each iteration.|
 %
 % * out_param.var --- |the sample variance.|
 %
 % * out_param.exit --- |the state of program when exiting.|
-%
-%                        1  No enough samples to estimate the mean
-%
-%                        2  Initial try out time costs more than 10% of time budget
-%
-%                        3  The estimated time for estimating variance is bigger than 
-%                           half of the time budget
+%    
+%                   0   Success
+%   
+%                   1   Not enough samples to estimate the mean
 %
 % * out_param.kurtmax --- |the upper bound on modified kurtosis.|
 %
-% * out_param.n_mu --- |the sample needed to estimate the mu.|
+% * out_param.time --- |the time elapsed in seconds.|
 %
-% * out_param.n --- |the total sample needed to do the two stage estimation.|
+% * out_param.flag --- |parameter checking status|
+%   
+%                        1  checked by meanMC_g
 %
-% * out_param.time --- |the time elapsed.|
+%%  Guarantee
+% This algorithm attempts to calculate the mean, mu, of a random variable
+% to a prescribed error tolerance, tolfun:= max(abstol,reltol*|mu|), with
+% guaranteed confidence level 1-alpha. If the algorithm terminated without
+% showing any warning messages and provide an answer tmu, then the follow
+% inequality would be satisfied:
+% 
+% Pr(| mu-tmu | <= tolfun) >= 1-alpha
 %
-%% Guarantee
+% The cost of the algorithm, N_tot, is also bounded above by N_up, which is
+% defined in terms of abstol, reltol, nSig, n1, fudge, kurtmax, beta. And
+% the following inequality holds:
+% 
+% Pr (N_tot <= N_up) >= 1-beta
 %
-% Suppose the modified kurtosis, $\tilde{\kappa}$, of the random variable Y
-% satisfies the inequality:
-%
-% $$\tilde{\kappa} \leq \frac{n_{\sigma}-3}{n_{\sigma}-1}+
-% \left(\frac{\alpha n_\sigma}{1-\alpha}\right)\left(1-\frac{1}{C^2}\right)^2 =:
-% \tilde{\kappa}_{\max}$$
-%
-% where $n_{\sigma}$ is the number of samples used to estimate the variance
-% of Y, C is the standard deviation inflation factor, and $\alpha$ is the
-% level of uncertainty. Then the answer $\hat{\mu}$ is guaranteed to
-% satisfy the inequality:
-%
-% $$\mathrm{Pr}\left(|\mu-\hat{\mu}| \leq \varepsilon \right) \geq 1-\alpha$$
-%
-% where $\varepsilon$ is the absolute error tolerance.
-%
-% Cost upper bound guarantee:
-%
-% The probabilistic cost of the algorithm, with uncertainty $\beta$ , for
-% random variables of variance no greater than $\sigma^2_{\max}$ and modified
-% kurtosis no greater than $\tilde{\kappa}_{\max}$ is defined as
-%
-% $$N_{\mathrm{tot}}(\varepsilon,\alpha,\beta,\tilde{\kappa}_{\max},\sigma_{\max})
-% := \sup_{\tilde{\kappa} \le \tilde{\kappa}_{\max}, \sigma \le
-% \sigma_{\max} } \min\left\{N
-% :\mathrm{Pr}[N_{\mathrm{tot}}(\varepsilon,\alpha,\tilde{\kappa}_{\max},\tilde{\kappa}_{\max}^{3/4})
-% \le N] \ge 1-\beta  \right \}$$
-%
-% The total cost of this two stage algorithm has a probabilistic bound above
-% by
-%
-% $$N_{\mathrm{tot}}(\varepsilon,\alpha, \beta, \tilde{\kappa}_{\max},
-% \sigma_{\max}) \le N_{\mathrm{up}}(\varepsilon,\alpha, \beta,
-% \tilde{\kappa}_{\max}, \sigma_{\max}) :=  n_{\sigma} +
-% N_{\mu}(\varepsilon,\sigma_{\max}v(\tilde{\alpha},\beta,C),\tilde{\alpha},\tilde{\kappa}_{\max}^{3/4})
-% $$
-% with level of uncertainty $\beta$.
+% Please refer to our paper for detailed arguments and proofs.
 %
 %% Examples
 %
-% Example 1:
-% Calculate the mean of x^2 when x is uniformly distributed in [0 1], with
-% the absolute error tolerance = 1e-2.
+%%
+% *Example 1*
 
-in_param.abstol=1e-2; in_param.alpha = 0.01; Yrand = @(n) rand(n,1).^2; 
-mu = meanMC_g(Yrand,in_param)
+% Calculate the mean of x^2 when x is uniformly distributed in
+% [0 1], with the absolute error tolerance = 1e-3 and uncertainty 5%.
 
+  in_param.reltol=0; in_param.abstol = 1e-3;in_param.reltol = 0;
+  in_param.alpha = 0.05; Yrand=@(n) rand(n,1).^2;
+  tmu = meanMC_g(Yrand,in_param)
 
 %%
-% Example 2:
-% Using the same function as example 1, with the absolute error tolerance
-% 1e-2.
+% *Example 2*
 
-mu = meanMC_g(Yrand,1e-2)
+% Calculate the mean of exp(x) when x is uniformly distributed in
+% [0 1], with the absolute error tolerance 1e-3.
 
+  tmu = meanMC_g(@(n)exp(rand(n,1)),1e-3,0)
 
 %%
-% Example 3:
-% Using the sample function as example 1, with the absolute error tolerance
-% 1e-2 and uncertainty 0.01.
+% *Example 3*
 
-mu = meanMC_g(Yrand,'abstol',1e-3,'alpha',0.01)
+% Calculate the mean of cos(x) when x is uniformly distributed in
+% [0 1], with the relative error tolerance 1e-2 and uncertainty 0.05.
 
-
+  tmu = meanMC_g(@(n)cos(rand(n,1)),'reltol',1e-2,'abstol',0,'alpha',0.05)
 %% See Also
 %
 % <html>
@@ -193,18 +167,30 @@ mu = meanMC_g(Yrand,'abstol',1e-3,'alpha',0.01)
 % <a href="help_cubMC_g.html">cubMC_g</a>
 % </html>
 %
+% <html>
+% <a href="help_meanMCBer_g.html">meanMCBer_g</a>
+% </html>
+%
+% <html>
+% <a href="help_cubSobol_g.html">cubSobol_g</a>
+% </html>
+%
+% <html>
+% <a href="help_cubLattice_g.html">cubLattice_g</a>
+% </html>
+%
 %% References
 %
 % [1]  F. J. Hickernell, L. Jiang, Y. Liu, and A. B. Owen, Guaranteed
 % conservative fixed width confidence intervals via Monte Carlo sampling,
-% Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F. Y. Kuo, G.
-% W. Peters, and I. H. Sloan, eds.), Springer-Verlag, Berlin, 2014, to
-% appear, arXiv:1208.4318 [math.ST]
+% Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F. Y. Kuo, G. W.
+% Peters, and I. H. Sloan, eds.), Springer-Verlag, Berlin, 2014.
+% arXiv:1208.4318 [math.ST]
 %
-% [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, and
-% Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library (Version
-% 1.3.0)" [MATLAB Software], 2014. Available from
-% http://code.google.com/p/gail/
+% [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
+% Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou, "GAIL:
+% Guaranteed Automatic Integration Library (Version 2.0)" [MATLAB
+% Software], 2014. Available from http://code.google.com/p/gail/
 %
 % If you find GAIL helpful in your work, please support us by citing the
 % above paper and software.

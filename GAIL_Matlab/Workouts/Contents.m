@@ -1,9 +1,7 @@
 % WORKOUTS
 %
 % Folders
-%   cubMC_workouts                  - workouts of cubMC_g method
-%   meanMC_workouts                 - workouts of meanMC_g method
-%   univariate_integration_workouts - workouts of univariate integration
-%
-% Files
-%   longtests                       - lengthy tests of GAIL algorithms
+%   cubMC_workouts                   - workouts of cubMC_g method
+%   meanMC_workouts                  - workouts of meanMC_g method
+%   meanMCBer_g_workouts             - workouts of meanMCBer_g method
+%   univariate_minimization_workouts - workouts of funmin_g method

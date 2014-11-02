@@ -1,5 +1,0 @@
-Yizhi Zhang (yzhang97@hawk.iit.edu)
-
-Title: Extent integral_g in GAIL from [0,1] to [a,b]
-
-Description: integral_g can do integration on interval [0, 1]. We can easily shrink any function on [a, b] to [0, 1]. But this could affect the cone condition from original cone which the function satisfied. Thus, we want to establish a new algorithm of integration in [a, b]. Moreover, if a or b is infinity, what adjustment should be made from a or b being very large? We also need to build the documentation, input parsing, doctests, unit tests, other relative maintenance for this new algorithm. 

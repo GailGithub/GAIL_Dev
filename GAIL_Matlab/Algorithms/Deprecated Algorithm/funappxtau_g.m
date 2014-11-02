@@ -122,6 +122,10 @@ function [fappx,out_param]=funappxtau_g(varargin)
 
 % check parameter satisfy conditions or not
 [f, out_param] = funappxtau_g_param(varargin{:});
+MATLABVERSION= gail.matlab_version;
+if MATLABVERSION >= 8.3
+    warning('off', 'MATLAB:interp1:ppGriddedInterpolant');
+end;
 
 %% main algorithm
 
@@ -194,6 +198,11 @@ x1 = 0:1/(out_param.npoints-1):1;
 y1 = f(x1);
 fappx = @(x) interp1(x1,y1,x,'linear');
 
+if MATLABVERSION >= 8.3
+    warning('on', 'MATLAB:interp1:ppGriddedInterpolant');
+end;
+
+
 function [f, out_param] = funappxtau_g_param(varargin)
 % parse the input to the funappxtau_g function
 
@@ -225,7 +234,7 @@ if ~validvarargin
     out_param.nmax = default.nmax;
 else
     p = inputParser;
-    addRequired(p,'f',@isfcn);
+    addRequired(p,'f',@gail.isfcn);
     if isnumeric(in2)%if there are multiple inputs with
         %only numeric, they should be put in order.
         addOptional(p,'abstol',default.abstol,@isnumeric);
@@ -258,11 +267,11 @@ if (out_param.tau < 2)
     out_param.tau = default.tau;
 end
 % let cost budget be a positive integer
-if (~isposint(out_param.nmax) && ispositive(out_param.nmax))
+if (~gail.isposint(out_param.nmax) && gail.ispositive(out_param.nmax))
     warning(['Cost budget should be a positive integer.' ...
              ' Using cost budget ', num2str(ceil(out_param.nmax))])
     out_param.nmax = ceil(out_param.nmax);
-elseif(~isposint(out_param.nmax) && ~ispositive(out_param.nmax))
+elseif(~gail.isposint(out_param.nmax) && ~gail.ispositive(out_param.nmax))
     warning(['Cost budget should be a positive integer.' ...
              ' Using default cost budget ' int2str(default.nmax)])
     out_param.nmax = default.nmax;

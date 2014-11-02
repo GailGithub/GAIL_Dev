@@ -8,8 +8,8 @@
 
 %% Preliminaries
 format long e
-clear all
-close all
+clearvars -except testCase
+% close all
 tstart = tic;
 
 %% Program parameters
