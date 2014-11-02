@@ -27,6 +27,7 @@ disp('the next line, or press the spacebar to advance to the next page...');
 pause
 
 %% Print out README.txt
+moreStatus = get(0,'More');
 more on
 type('README.txt')
-more off
+more(moreStatus);
