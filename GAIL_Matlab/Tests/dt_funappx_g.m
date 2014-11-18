@@ -6,38 +6,12 @@
 %
 %
 %   Example 1:
-%   
-%   >> f = @(x) x.^2; pp = funappx_g(f)
 %
-% pp = 
-% 
-%       form: 'pp'
-%     breaks: [1x3169 double]
-%      coefs: [3168x2 double]
-%     pieces: 3168
-%      order: 2
-%        dim: 1
-%     orient: 'first'
+%   >> f = @(x) exp(-100*(x-sqrt(2)/2).^2); [~, out_param] = funappx_g(f) 
 %
-%
-%   Example 2:
-%
-%   >> f = @(x) exp(-100*(x-sqrt(2)/2).^2); [pp, out_param] = funappx_g(f)
-%
-% pp = 
-% 
-%       form: 'pp'
-%     breaks: [1x6733 double]
-%      coefs: [6732x2 double]
-%     pieces: 6732
-%      order: 2
-%        dim: 1
-%     orient: 'first'
-% 
-% 
 % out_param = 
 % 
-%              f: @(x)exp(-100*(x-1/sqrt(2)).^2)
+%              f: @(x)exp(-100*(x-sqrt(2)/2).^2)
 %              a: 0
 %              b: 1
 %         abstol: 1.0000e-06
@@ -54,19 +28,8 @@
 %   Example 3:
 %
 %   >> clear in_param; in_param.a = -10; in_param.b =10; in_param.abstol = 10^(-8); 
-%   >> [pp, out_param] = funappx_g(@(x) x.^2, in_param)
+%   >> [~, out_param] = funappx_g(@(x) x.^2, in_param)
 %
-% pp = 
-% 
-%       form: 'pp'
-%     breaks: [1x411137 double]
-%      coefs: [411136x2 double]
-%     pieces: 411136
-%      order: 2
-%        dim: 1
-%     orient: 'first'
-% 
-% 
 % out_param = 
 % 
 %              a: -10
@@ -87,19 +50,8 @@
 %
 %   >> clear in_param; in_param.a = -5; in_param.b = 5; 
 %   >> in_param.abstol = 10^(-6); in_param.nlo = 10; in_param.nhi = 500;
-%   >> [pp, out_param] = funappx_g(@(x) x.^2, in_param)
+%   >> [~, out_param] = funappx_g(@(x) x.^2, in_param)
 %
-% pp = 
-% 
-%       form: 'pp'
-%     breaks: [1x22401 double]
-%      coefs: [22400x2 double]
-%     pieces: 22400
-%      order: 2
-%        dim: 1
-%     orient: 'first'
-% 
-% 
 % out_param = 
 % 
 %              a: -5
@@ -118,19 +70,8 @@
 %
 %   Example 5:
 %
-%   >> [pp, out_param] = funappx_g(@(x) x.^2,'a',-2,'b',2,'abstol',1e-7,'nlo',20,'nhi',50)
+%   >> [~, out_param] = funappx_g(@(x) x.^2,'a',-2,'b',2,'abstol',1e-7,'nlo',20,'nhi',50)
 %
-% pp = 
-% 
-%       form: 'pp'
-%     breaks: [1x41985 double]
-%      coefs: [41984x2 double]
-%     pieces: 41984
-%      order: 2
-%        dim: 1
-%     orient: 'first'
-% 
-% 
 % out_param = 
 % 
 %              a: -2
@@ -149,18 +90,8 @@
 %
 %   Example 6:
 %
-%   >> [pp, out_param] = funappx_g(@(x) x.^2,'a',-3,'b',0,'nlo',20,'nhi',40)
+%   >> [~, out_param] = funappx_g(@(x) x.^2,'a',-3,'b',0,'nlo',20,'nhi',40)
 %
-% pp = 
-% 
-%       form: 'pp'
-%     breaks: [1x16897 double]
-%      coefs: [16896x2 double]
-%     pieces: 16896
-%      order: 2
-%        dim: 1
-%     orient: 'first'
-% 
 % out_param = 
 % 
 %              a: -3
@@ -179,19 +110,8 @@
 %
 %   Example 7:
 %
-%   >> [pp, out_param] = funappx_g(@(x) x.^2,-2,5,1e-6,20,50)
+%   >> [~, out_param] = funappx_g(@(x) x.^2,-2,5,1e-6,20,50)
 %   
-% pp = 
-% 
-%       form: 'pp'
-%     breaks: [1x22529 double]
-%      coefs: [22528x2 double]
-%     pieces: 22528
-%      order: 2
-%        dim: 1
-%     orient: 'first'
-% 
-% 
 % out_param = 
 % 
 %              a: -2
@@ -210,19 +130,8 @@
 %
 %   Example 8:
 %
-%   >> [pp, out_param] = funappx_g(@(x) x.^2,-3,3,1e-7,20,50)
+%   >> [~, out_param] = funappx_g(@(x) x.^2,-3,3,1e-7,20,50)
 %
-% pp = 
-% 
-%       form: 'pp'
-%     breaks: [1x88065 double]
-%      coefs: [88064x2 double]
-%     pieces: 88064
-%      order: 2
-%        dim: 1
-%     orient: 'first'
-% 
-% 
 % out_param = 
 % 
 %              a: -3
@@ -241,18 +150,8 @@
 %
 %   Example 9:
 %
-%   >> [pp, out_param] = funappx_g(@(x) x.^2,-5,10,1e-7,10,20)
+%   >> [~, out_param] = funappx_g(@(x) x.^2,-5,10,1e-7,10,20)
 %
-% pp = 
-% 
-%       form: 'pp'
-%     breaks: [1x155649 double]
-%      coefs: [155648x2 double]
-%     pieces: 155648
-%      order: 2
-%        dim: 1
-%     orient: 'first'
-% 
 % out_param = 
 % 
 %              a: -5

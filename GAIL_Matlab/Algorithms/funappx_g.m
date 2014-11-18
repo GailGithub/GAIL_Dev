@@ -1,4 +1,4 @@
-function [pp,out_param]=funappx_g(varargin)
+function [fappx,out_param]=funappx_g(varargin)
 %FUNAPPX_G 1-D guaranteed function recovery on a closed interval [a,b]
 %
 %   pp = FUNAPPX_G(f) approximates function f on the default interval
@@ -112,22 +112,11 @@ function [pp,out_param]=funappx_g(varargin)
 %   Example 1:
 %
 %
-%   >> f = @(x) exp(-100*(x-sqrt(2)/2).^2); [pp, out_param] = funappx_g(f)
+%   >> f = @(x) exp(-100*(x-sqrt(2)/2).^2); [~, out_param] = funappx_g(f)
 %
-% pp = 
-% 
-%       form: 'pp'
-%     breaks: [1x6733 double]
-%      coefs: [6732x2 double]
-%     pieces: 6732
-%      order: 2
-%        dim: 1
-%     orient: 'first'
-% 
-% 
 % out_param = 
 % 
-%              f: @(x)exp(-100*(x-1/sqrt(2)).^2)
+%              f: @(x)exp(-100*(x-sqrt(2)/2).^2)
 %              a: 0
 %              b: 1
 %         abstol: 1.0000e-06
@@ -144,17 +133,7 @@ function [pp,out_param]=funappx_g(varargin)
 %   Example 2:
 %
 %   >> f = @(x) x.^2;
-%   >> [pp, out_param] = funappx_g(f,-2,2,1e-7,10,20)
-%
-% pp =
-%
-%       form: 'pp'
-%     breaks: [1x34817 double]
-%      coefs: [34816x2 double]
-%     pieces: 34816
-%      order: 2
-%        dim: 1
-%     orient: 'first'
+%   >> [~, out_param] = funappx_g(f,-2,2,1e-7,10,20)
 %
 % out_param =
 %
@@ -175,18 +154,8 @@ function [pp,out_param]=funappx_g(varargin)
 %   Example 3:
 %
 %   >> f = @(x) x.^2;
-%   >> [pp, out_param] = funappx_g(f,'a',-2,'b',2,'nhi',20,'nlo',10)
+%   >> [~, out_param] = funappx_g(f,'a',-2,'b',2,'nhi',20,'nlo',10)
 %
-% pp = 
-% 
-%       form: 'pp'
-%     breaks: [1x8705 double]
-%      coefs: [8704x2 double]
-%     pieces: 8704
-%      order: 2
-%        dim: 1
-%     orient: 'first'
-% 
 % out_param = 
 % 
 %              a: -2
@@ -207,18 +176,8 @@ function [pp,out_param]=funappx_g(varargin)
 %
 %   >> in_param.a = -5; in_param.b = 5; f = @(x) x.^2;
 %   >> in_param.abstol = 10^(-6); in_param.nlo = 10; in_param.nhi = 20;
-%   >> [pp, out_param] = funappx_g(f,in_param)
+%   >> [~, out_param] = funappx_g(f,in_param)
 %
-% pp = 
-% 
-%       form: 'pp'
-%     breaks: [1x36865 double]
-%      coefs: [36864x2 double]
-%     pieces: 36864
-%      order: 2
-%        dim: 1
-%     orient: 'first'
-% 
 % out_param = 
 % 
 %              a: -5
@@ -257,9 +216,9 @@ function [pp,out_param]=funappx_g(varargin)
 % check parameter satisfy conditions or not
 [f, out_param] = funappx_g_param(varargin{:});
 MATLABVERSION= gail.matlab_version;
-if MATLABVERSION >= 8.3
-    warning('off', 'MATLAB:interp1:ppGriddedInterpolant');
-end;
+% if MATLABVERSION >= 8.3
+%     warning('off', 'MATLAB:interp1:ppGriddedInterpolant');
+% end;
 
 %%main algorithm
 % initialize number of points
@@ -408,12 +367,12 @@ end;
 out_param.npoints = index(end);
 out_param.errorbound = max(err);
 out_param.nstar = nstar;
-pp = interp1(x,y,'linear','pp');
 if MATLABVERSION >= 8.3
-    warning('on', 'MATLAB:interp1:ppGriddedInterpolant');
+    fappx = griddedInterpolant(x,y,'linear');
+else
+    pp = interp1(x,y,'linear','pp');
+    fappx =@(x) ppval(pp,x);    
 end;
-
-
 
 function [f, out_param] = funappx_g_param(varargin)
 % parse the input to the funappx_g function
