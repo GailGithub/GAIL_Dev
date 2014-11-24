@@ -1,4 +1,5 @@
 %GAILPUBLISH  To generate html files in the GAIL subdirectory Documentation
+function GAIL_Publish()
 set(0, 'DefaultFigureVisible', 'off')
 publish('GAIL');
 publish('funclist');
@@ -11,3 +12,4 @@ publish('help_funmin_g');
 publish('help_cubLattice_g');
 publish('help_cubSobol_g');
 set(0, 'DefaultFigureVisible', 'on')
+end
