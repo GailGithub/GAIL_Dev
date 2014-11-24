@@ -1,5 +1,5 @@
-% GAIL_INSTALL   Install GAIL. Add GAIL paths to MATLAB search path.
 function GAIL_Install()
+% GAIL_INSTALL   Install GAIL. Add GAIL paths to MATLAB search path.
 [GAILPATH,GAILVERSION,PATHNAMESEPARATOR,MATLABVERSION] = GAILstart;
 fprintf('\nWelcome to Guaranteed Automatic Integration Library (GAIL).\nYou are installing GAIL v%s.\n', GAILVERSION);
 if MATLABVERSION < 7,

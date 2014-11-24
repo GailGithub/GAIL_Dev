@@ -1,5 +1,5 @@
-%GAILPUBLISH  To generate html files in the GAIL subdirectory Documentation
 function GAIL_Publish()
+% GAIL_PUBLISH  To generate html files in the GAIL subdirectory Documentation
 set(0, 'DefaultFigureVisible', 'off')
 publish('GAIL');
 publish('funclist');
