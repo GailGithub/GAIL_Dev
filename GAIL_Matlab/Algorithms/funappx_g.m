@@ -93,7 +93,15 @@ function [fappx,out_param]=funappx_g(varargin)
 %     out_param.nmax --- when number of points hits the value, iteration
 %     will stop
 %
+%     out_param.exceedbudget --- it is 0 if the number of points used is
+%     less than out_param.nmax, 1 otherwise
+%
 %     out_param.maxiter --- max number of interation
+%
+%     out_param.iter --- number of interation
+%
+%     out_param.exceediter --- it is 0 if the number of out_param.iter is
+%     less than out_param.maxiter, 1 otherwise
 %
 %  Guarantee
 %
@@ -116,18 +124,21 @@ function [fappx,out_param]=funappx_g(varargin)
 %
 % out_param = 
 % 
-%              f: @(x)exp(-100*(x-sqrt(2)/2).^2)
-%              a: 0
-%              b: 1
-%         abstol: 1.0000e-06
-%            nlo: 10
-%            nhi: 1000
-%           nmax: 10000000
-%        maxiter: 1000
-%          ninit: 100
-%        npoints: 6733
-%     errorbound: 9.4644e-07
-%          nstar: [1x68 double]
+%                f: @(x)exp(-100*(x-sqrt(2)/2).^2)
+%                a: 0
+%                b: 1
+%           abstol: 1.0000e-06
+%              nlo: 10
+%              nhi: 1000
+%             nmax: 10000000
+%          maxiter: 1000
+%            ninit: 100
+%       exceediter: 0
+%     exceedbudget: 0
+%             iter: 9
+%          npoints: 6733
+%       errorbound: 9.4644e-07
+%            nstar: [1x68 double]
 % 
 % 
 %   Example 2:
@@ -136,19 +147,22 @@ function [fappx,out_param]=funappx_g(varargin)
 %   >> [~, out_param] = funappx_g(f,-2,2,1e-7,10,20)
 %
 % out_param =
-%
-%              a: -2
-%         abstol: 1.0000e-07
-%              b: 2
-%              f: @(x)x.^2
-%        maxiter: 1000
-%            nhi: 20
-%            nlo: 10
-%           nmax: 10000000
-%          ninit: 18
-%        npoints: 34817
-%     errorbound: 5.9398e-08
-%          nstar: [1x2048 double]
+% %
+%                a: -2
+%           abstol: 1.0000e-07
+%                b: 2
+%                f: @(x)x.^2
+%          maxiter: 1000
+%              nhi: 20
+%              nlo: 10
+%             nmax: 10000000
+%            ninit: 18
+%       exceediter: 0
+%     exceedbudget: 0
+%             iter: 12
+%          npoints: 34817
+%       errorbound: 5.9398e-08
+%            nstar: [1x2048 double]
 %
 %
 %   Example 3:
@@ -158,18 +172,21 @@ function [fappx,out_param]=funappx_g(varargin)
 %
 % out_param = 
 % 
-%              a: -2
-%         abstol: 1.0000e-06
-%              b: 2
-%              f: @(x)x.^2
-%        maxiter: 1000
-%            nhi: 20
-%            nlo: 10
-%           nmax: 10000000
-%          ninit: 18
-%        npoints: 8705
-%     errorbound: 9.5037e-07
-%          nstar: [1x512 double]
+%                a: -2
+%           abstol: 1.0000e-06
+%                b: 2
+%                f: @(x)x.^2
+%          maxiter: 1000
+%              nhi: 20
+%              nlo: 10
+%             nmax: 10000000
+%            ninit: 18
+%       exceediter: 0
+%     exceedbudget: 0
+%             iter: 10
+%          npoints: 8705
+%       errorbound: 9.5037e-07
+%            nstar: [1x512 double]
 %
 %
 %   Example 4:
@@ -180,18 +197,21 @@ function [fappx,out_param]=funappx_g(varargin)
 %
 % out_param = 
 % 
-%              a: -5
-%         abstol: 1.0000e-06
-%              b: 5
-%              f: @(x)x.^2
-%        maxiter: 1000
-%            nhi: 20
-%            nlo: 10
-%           nmax: 10000000
-%          ninit: 19
-%        npoints: 36865
-%     errorbound: 3.1274e-07
-%          nstar: [1x2048 double]
+%                a: -5
+%           abstol: 1.0000e-06
+%                b: 5
+%                f: @(x)x.^2
+%          maxiter: 1000
+%              nhi: 20
+%              nlo: 10
+%             nmax: 10000000
+%            ninit: 19
+%       exceediter: 0
+%     exceedbudget: 0
+%             iter: 12
+%          npoints: 36865
+%       errorbound: 3.1274e-07
+%            nstar: [1x2048 double]
 %
 %
 %   See also INTEGRAL_G, MEANMC_G, CUBMC_G, FUNMIN_G
@@ -233,6 +253,8 @@ len = out_param.b - out_param.a;
 x = out_param.a:len/(ninit-1):out_param.b;
 y = f(x);
 iter = 0;
+out_param.exceediter = 0;
+out_param.exceedbudget = 0;
 
 while(max(err) > abstol)
     iter = iter + 1;
@@ -355,15 +377,18 @@ while(max(err) > abstol)
     else
         break;
     end;
-    if(iter>= out_param.maxiter)
-        warning(['MATLAB:funappx_g:exceediter','Iteration exceeds max iteration' num2str(out_param.maxiter)])
+    if(iter> out_param.maxiter)
+        out_param.exceediter = 1;
+        warning('MATLAB:funappx_g:exceediter',' Iteration exceeds max iteration ')
         break;
     end;
     if(index(end) >= out_param.nmax)
-        warning('MATLAB:funappx_g:exceedbudget','funappx_g attempted to exceed the cost budget. The answer may be unreliable.')
+        out_param.exceedbudget = 1;
+        warning('MATLAB:funappx_g:exceedbudget',' funappx_g attempted to exceed the cost budget. The answer may be unreliable.')
         break;
     end;
 end;
+out_param.iter = iter;
 out_param.npoints = index(end);
 out_param.errorbound = max(err);
 out_param.nstar = nstar;
