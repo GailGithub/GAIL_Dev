@@ -12,10 +12,10 @@
 %
 % tmu = *meanMC_g*(Yrand) estimates the mean, mu, of a random variable Y to
 %  within a specified generalized error tolerance, 
-%  tolfun:=max(abstol,reltol*|mu|), i.e., |mu - tmu| <= tolfun with
+%  tolfun:=max(abstol,reltol*|mu|), i.e., | mu - tmu | <= tolfun with
 %  probability at least 1-alpha, where abstol is the absolute error
 %  tolerance, and reltol is the relative error tolerance. Usually the
-%  reltol determines the accuracy of the estimation, however, if the |mu|
+%  reltol determines the accuracy of the estimation, however, if the | mu |
 %  is rather small, the abstol determines the accuracy of the estimation.
 %  The default values are abstol=1e-2, reltol=1e-1, and alpha=1%. Input
 %  Yrand is a function handle that accepts a positive integer input n and
@@ -116,7 +116,7 @@
 % showing any warning messages and provide an answer tmu, then the follow
 % inequality would be satisfied:
 % 
-% Pr(|mu-tmu| <= tolfun) >= 1-alpha
+% Pr(| mu-tmu | <= tolfun) >= 1-alpha
 %
 % The cost of the algorithm, N_tot, is also bounded above by N_up, which is
 % defined in terms of abstol, reltol, nSig, n1, fudge, kurtmax, beta. And

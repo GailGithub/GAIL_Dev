@@ -9,8 +9,8 @@
 %"GAIL_2.0.0/GAIL_Matlab".
 %% Download the package and change the directory
 disp('The GAIL package is now being downloaded...')
-unzip('http://math.iit.edu/~openscholar/sites/default/files/meshfree/files/gail_1_3_0.zip') %download and unzip
-cd('GAIL_2_0_0')  %get to the right subdirectory
+unzip('http://math.iit.edu/~openscholar/sites/default/files/meshfree/files/gail_2_0.zip') %download and unzip
+cd('GAIL_2_0')  %get to the right subdirectory
 
 %% Install GAIL
 GAIL_Install      %this installs GAIL
@@ -27,6 +27,7 @@ disp('the next line, or press the spacebar to advance to the next page...');
 pause
 
 %% Print out README.txt
+moreStatus = get(0,'More');
 more on
 type('README.txt')
-more off
+more(moreStatus);

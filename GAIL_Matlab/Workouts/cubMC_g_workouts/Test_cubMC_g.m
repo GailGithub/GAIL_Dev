@@ -4,8 +4,8 @@
 format long
 in_param.measure  = 'uniform';
 disp(horzcat('Dim  ', ' FcnIdx ',  '      Q    ','        f_true     ',...
-    '        Error      ','      Sample Used    ', '    status  ')); 
-disp(        '----------------------------------------------------------------------------------------------');
+    '        Error      ','      Sample Used    ', '      status  ')); 
+disp(        '--------------------------------------------------------------------------------------------------');
 for dim=1:8
   in_param.dim =dim;%the function dimension
   startingpoint = zeros(1,in_param.dim);%the lower limits of the integral

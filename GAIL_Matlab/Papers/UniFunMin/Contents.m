@@ -1,4 +1,4 @@
-% CONESNOTBALLSPAPER
+% UniFunMin
 %
 % Files
 %   UniFunMin_Plot_Bump   
@@ -22,6 +22,8 @@
 %   UniFunMin_test_TwoExtreme
 %           - Generate Table 3.1 in the thesis for Functions with two local
 %             minimum points.
+%   XinTong's Master Thesis.pdf
+
 
 
 
