@@ -49,9 +49,10 @@
 % * in_param.abstol --- |the absolute error tolerance, abstol>0. By 
 %  default it is 1e-4.|
 %
-% * in_param.density --- |for f(x), we can define x uniformly in [0,1)^d or
-%  normally distributed with covariance matrix I_d. By default it is
-%  'uniform'. The only possible values are 'uniform' or 'normal'.|
+% * in_param.density --- |for f(x)*mu(dx), we can define mu(dx) to be the
+%  density function of a uniformly distributed random variable in [0,1)^d
+%  or normally distributed with covariance matrix I_d. By default it 
+%  is 'uniform'. The only possible values are 'uniform' or 'normal'.|
 %
 % * in_param.mmin --- |the minimum number of points to start is 2^mmin. The
 %  cone condition on the Fourier coefficients decay requires a minimum

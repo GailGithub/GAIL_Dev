@@ -3,7 +3,7 @@ function [q]=vdc(n)
 % way because of our own VDC construction: is much faster and cubLattice
 % does not need more.
 
-if exist('sobolset','class')==8 % We check whether the statistical toolbox is active
+if license('test','Statistics_Toolbox') % We check whether the statistics toolbox is active
     q=net(sobolset(1),n);
 else % We build it ourselves in cost in nlog(n)
     if n>1
