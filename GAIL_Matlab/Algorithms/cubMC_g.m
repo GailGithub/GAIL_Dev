@@ -106,12 +106,6 @@ function [Q,out_param] = cubMC_g(varargin)
 %      
 %                       1   Not enough samples to estimate the mean
 %      
-%                       2   Initial try out time costs more than
-%                           10% of time budget
-%      
-%                       3   The estimated time for estimating variance 
-%                           is bigger than half of the time budget
-%      
 %                       10  hyperbox does not contain numbers
 %      
 %                       11  hyperbox is not 2 x d
