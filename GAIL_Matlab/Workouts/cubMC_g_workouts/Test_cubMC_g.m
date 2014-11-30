@@ -1,18 +1,26 @@
 % TEST_CUBMC_G This is the driver script to test cubMC_g algorithm
 %using seven integrands of dimensions up to 8
 %clear all;close all;clc;
+function [ut_abserr,ut_relerr,abstol,reltol] = Test_cubMC_g
+%[
+dimsize = 3;
+indexsize = 2;
+abstol = 1e-3;
+reltol = abstol;
 format long
 in_param.measure  = 'uniform';
 disp(horzcat('Dim  ', ' FcnIdx ',  '      Q    ','         f_true     ',...
-    '          Err      ','      Sample Used    ', '         stats  ')); 
+    '          Err      ','      Sample Used    ', '         Stats  ')); 
 disp(        '-----------------------------------------------------------------------------------------------------');
-for dim=1:8
+ut_abserr = nan(dimsize,indexsize);
+ut_relerr = nan(dimsize,indexsize);
+for dim=1:dimsize
   in_param.dim =dim;%the function dimension
   startingpoint = zeros(1,in_param.dim);%the lower limits of the integral
   endingpoint = ones(1,in_param.dim);%the upper limits of the integral
   hyperbox = [startingpoint;endingpoint];% the integration interval
-  in_param.abstol = 1e-3;% the absolute tolerance
-  in_param.reltol = 1e-3;% the relative tolerance
+  in_param.abstol = abstol;% the absolute tolerance
+  in_param.reltol = reltol;% the relative tolerance
   in_param.alpha = 1e-2;% the uncertainty
   in_param.nSig = 1e4;% the sample size to estimate sigma
   in_param.n1 = 1e4;% the initial sample size to estimate Q
@@ -22,7 +30,7 @@ for dim=1:8
   alpha = ones(1,in_param.dim);
   beta = 1./ (1:in_param.dim); 
   r=2; % three coefficients in genz_test_fun and genz_test_fun_true
-  for index=1:7 % index refers to different integrands in genz_test_fun
+  for index=1:indexsize % index refers to different integrands in genz_test_fun
     test_function = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
     % the test function
     f_true = genz_test_fun_true (hyperbox,index,in_param.dim,alpha,beta,r);
@@ -38,18 +46,23 @@ for dim=1:8
     % print the results
     if abserr > in_param.abstol && relerr > in_param.reltol,
     %if both absolute error and relative error does not meet tolerance
-      disp([numstr,'     NoErrMet']);% mark it as "both err exceed"
+      disp([numstr,'            NoErrMet']);% mark it as "both err exceed"
     elseif abserr < in_param.abstol && relerr > in_param.reltol,
         % if only relative error does not meet the tolerance
-        disp([numstr,'     AbsErrMet']);% mark it as "rel err exceed"
+        disp([numstr,'             AbsErrMet']);% mark it as "rel err exceed"
     elseif abserr > in_param.abstol && relerr < in_param.reltol,
         %if only the absolute error does not meet the tolerance
-        disp([numstr,'     RelErrMet']);% mark it as "abs err exceed"
+        disp([numstr,'            RelErrMet']);% mark it as "abs err exceed"
     else
         disp([numstr,'             BothErrMet']);% otherwise disp "OK"
     end
+    ut_abserr(dim,index) = abserr;
+    ut_relerr(dim,index) = relerr;
   end
 end
+end
+
+
 
 %% The following output was obtained on 2014-10-13  by Lan Jiang
 %  
