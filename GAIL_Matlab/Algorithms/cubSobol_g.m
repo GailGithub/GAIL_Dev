@@ -123,7 +123,8 @@ function [q,out_param] = cubSobol_g(varargin)
 %  References
 %
 %   [1] Fred J. Hickernell and Lluis Antoni Jimenez Rugama: Reliable adaptive
-%   cubature using digital sequences (2014). Submitted for publication.
+%   cubature using digital sequences (2014). Submitted for publication:
+%   arXiv:1410.8615.
 %
 %   [2] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang,
 %   Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,

@@ -138,7 +138,8 @@ function [q,out_param] = cubLattice_g(varargin)
 %  References
 %
 %   [1] Lluis Antoni Jimenez Rugama and Fred J. Hickernell: Adaptive Multidimensional
-%   Integration Based on Rank-1 Lattices (2014). Submitted for publication.
+%   Integration Based on Rank-1 Lattices (2014). Submitted for publication:
+%   arXiv:1411.1966.
 %
 %   [2] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang,
 %   Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
