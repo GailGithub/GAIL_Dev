@@ -65,6 +65,12 @@ classdef ut_cubMC_g < matlab.unittest.TestCase
             exactf = pi/4*erf(1)^2;
             actualerr = abs(meanf-exactf);
             testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
-        end         
+        end
+        function cubMC_gOfWorkouts(testCase)
+            [ut_abserr,ut_relerr,abstol,reltol] = Test_cubMC_g;
+            verifyabserr = ut_abserr<=abstol;
+            verifyrelerr = ut_relerr<=reltol;
+            testCase.verifyTrue(min(min(verifyabserr + verifyrelerr))>0);
+        end
     end
 end
