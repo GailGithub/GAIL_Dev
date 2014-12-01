@@ -1,6 +1,7 @@
 % This is the driver script to test the meanMC_g algorithm
-clear all; close all; clc;
+%clear all; close all; clc;
 %y = @(n) rand(n,1).^2;% the test function
+function [mu,out_param] = Test_meanMC_g
 y = @Ytrafficmodel; % this is the traffic model
 in_param.abstol = 1e-2;% the absolute error tolerance
 in_param.reltol = 0;%the relative error tolerance
@@ -10,6 +11,7 @@ in_param.n1 = 1e2;%the initial sample size to estimate the mean
 in_param.alpha = 0.05;% uncertainty
 in_param.fudge = 1.1;%standard deviation inflation factor
 [mu, out_param] = meanMC_g(y,in_param) % the results
+end
 
 %% The following output was obtain on 2014-9-30
 % 
