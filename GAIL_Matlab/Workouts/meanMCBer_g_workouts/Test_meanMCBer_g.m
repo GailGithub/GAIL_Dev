@@ -1,14 +1,17 @@
 % This script is to test meanMCBer_g algorithm
-clear all;close all;clc
+%clear all;close all;clc
+function [ut_abserr, ut_abstol]=Test_meanMCBer_g
 format long e
-    disp(horzcat('errtype            abstol          abserr            pHat             p             n           nmax '));
+    disp(horzcat(' abstol             abserr            pHat                p               n               nmax '));
     disp(        '-------------------------------------------------------------------------------------------------------');
-nrep = 10;
+nrep = 3;
 u = rand(nrep,1);
 uu = rand(nrep,1);
 in_param.alpha = 0.05;% default uncertainty
 in_param.nmax = 1e10;
 res = zeros(nrep,10);
+ut_abserr = zeros(nrep,1);
+ut_abstol = zeros(nrep,1);
 for k = 1:nrep
     p = 10^(-3+u(k)*2);
     in_param.abstol = 10^(-5+3*uu(k));
@@ -16,6 +19,8 @@ for k = 1:nrep
         [pHat,out_param]=meanMCBer_g(Yrand,in_param);
         % the results using meanMCBernoulli_g
         abserr = abs(pHat-p);
+        ut_abserr(k) = abserr;
+        ut_abstol(k) = in_param.abstol;
                 numstr=horzcat(num2str(in_param.abstol,'%10.5e'),'       ', num2str(abserr,'%10.5e'),'     ',...
                     num2str(pHat,'%10.5e'), '       ', num2str(p,'%10.5e'),'      ', ...
                     num2str(out_param.n,'%10.5e'),'      ', num2str(out_param.nmax));
@@ -39,3 +44,4 @@ timestamp(timestamp==':')='.';
 %loglog(res(:,4),res(:,7),'r*')
 filename = strcat('TestmeanMCBernoulli-on-abs-',timestamp,'.mat');
 save(filename)
+end
