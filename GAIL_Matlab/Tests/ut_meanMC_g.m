@@ -43,8 +43,11 @@ classdef ut_meanMC_g < matlab.unittest.TestCase
     function meanMC_gOfnonRandomInput(testCase)
         in_param.abstol = 1e-2;
         testCase.verifyWarning(@()meanMC_g(@(x) x.^2,...
-            in_param),'MATLAB:meanMC_g:yrandnotlengthN');
-        
+            in_param),'MATLAB:meanMC_g:yrandnotlengthN');  
+    end
+    function meanMC_gOfWorkouts(testCase)
+        mu = Test_meanMC_g;
+        testCase.verifyTrue(mu>0);
     end
   end
 end
