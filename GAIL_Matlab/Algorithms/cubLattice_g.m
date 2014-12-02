@@ -172,6 +172,9 @@ mlag=4;
 Stilde=zeros(out_param.mmax-out_param.mmin+1,1); %initialize sum of DFT terms
 errest=zeros(out_param.mmax-out_param.mmin+1,1); %initialize error estimates
 appxinteg=zeros(out_param.mmax-out_param.mmin+1,1); %initialize approximations to integral
+xpts=zeros(2^out_param.mmin,out_param.d); %initialize first lattice points
+y=zeros(2^out_param.mmin,1); %initialize first evaluation points for DFT
+yval=zeros(2^out_param.mmax,1); %initialize first evaluation points
 out_param.overbudget=true; %we have overrun our budget, until indicated otherwise
 
 %% Initial points and FWT
@@ -179,7 +182,7 @@ out_param.n=2^out_param.mmin; %total number of points to start with
 n0=out_param.n; %initial number of points
 xpts=mod(gail.lattice_gen(1,out_param.n,out_param.d)+out_param.shift,1); %grab Lattice points
 y=f(xpts); %evaluate integrand
-yval=y;
+yval(1:2^out_param.mmin,1)=y;
 
 %% Compute initial FFT
 for l=0:out_param.mmin-1
@@ -196,7 +199,7 @@ end
 % y now contains the FFT coefficients
 
 %% Approximate integral
-q=mean(yval);
+q=mean(yval(1:2^out_param.mmin,1));
 appxinteg(1)=q;
 
 %% Create kappanumap implicitly from the data
@@ -223,14 +226,16 @@ if out_param.pred_err <= out_param.abstol
 end
 
 %% Loop over m
+xnext=zeros(2^(out_param.mmax-1),1);
+ynext=zeros(2^(out_param.mmax-1),1);
 for m=out_param.mmin+1:out_param.mmax 
    out_param.n=2^m;
    mnext=m-1;
    nnext=2^mnext;
-   xnext=mod(gail.lattice_gen(nnext+1,2*nnext,out_param.d)+out_param.shift,1);
+   xnext(1:nnext)=mod(gail.lattice_gen(nnext+1,2*nnext,out_param.d)+out_param.shift,1);
    n0=n0+nnext;
-   ynext=f(xnext);
-   yval=[yval; ynext];
+   ynext(1:nnext)=f(xnext(1:nnext));
+   yval(2^(m-1)+1:2^m,1)=ynext(1:nnext);
 
    %% Compute initial FFT on next points
    for l=0:mnext-1
@@ -246,7 +251,7 @@ for m=out_param.mmin+1:out_param.mmax
    end
 
    %% Compute FFT on all points
-   y=[y;ynext];
+   y(2^(m-1)+1:2^m,1)=ynext(1:nnext);
    nl=2^mnext;
    ptind=[true(nl,1); false(nl,1)];
    coef=exp(-2*pi()*sqrt(-1)*(0:nl-1)/(2*nl))';
@@ -258,8 +263,7 @@ for m=out_param.mmin+1:out_param.mmax
 
    %% Update kappanumap
    kappanumap=[kappanumap; (nnext+1:out_param.n)']; %initialize map
-%   for l=m-1:-1:1
-   for l=m-1:-1:m-mlag-1 %update just some, not exactly sure about this
+   for l=m-1:-1:m-mlag-1 %update just some, the last ones according to mapping
       nl=2^l;
       oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
       newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa, 
