@@ -24,7 +24,7 @@
 %     exceedbudget: 0
 %             iter: 9
 %          npoints: 6733
-%       errorbound: 9.4644e-07
+%           errest: 9.4644e-07
 %            nstar: [1x68 double]
 % 
 %
@@ -48,7 +48,7 @@
 %   exceedbudget: 0
 %           iter: 10
 %        npoints: 411137
-%     errorbound: 5.9832e-09
+%         errest: 5.9832e-09
 %          nstar: [1x512 double]
 %
 % 
@@ -73,7 +73,7 @@
 %     exceedbudget: 0
 %             iter: 7
 %          npoints: 22401
-%       errorbound: 7.7860e-07
+%           errest: 7.7860e-07
 %            nstar: [1x64 double]
 %   
 %
@@ -96,7 +96,7 @@
 %     exceedbudget: 0
 %             iter: 11
 %          npoints: 41985
-%       errorbound: 7.8394e-08
+%           errest: 7.8394e-08
 %            nstar: [1x1024 double]
 %
 %
@@ -119,7 +119,7 @@
 %     exceedbudget: 0
 %             iter: 10
 %          npoints: 16897
-%       errorbound: 3.4229e-07
+%           errest: 3.4229e-07
 %            nstar: [1x512 double]
 %
 %
@@ -142,7 +142,7 @@
 %     exceedbudget: 0
 %             iter: 10
 %          npoints: 22529
-%       errorbound: 7.8881e-07
+%           errest: 7.8881e-07
 %            nstar: [1x512 double]
 %
 %
@@ -151,8 +151,21 @@
 %   >> [~, out_param] = funappx_g(@(x) x.^2,-3,3,1e-7,20,50)
 %
 % out_param = 
-% 
-
+%                a: -3
+%           abstol: 1.0000e-07
+%                b: 3
+%                f: @(x)x.^2
+%          maxiter: 1000
+%              nhi: 50
+%              nlo: 20
+%             nmax: 10000000
+%            ninit: 44
+%       exceediter: 0
+%     exceedbudget: 0
+%             iter: 12
+%          npoints: 88065
+%           errest: 3.8587e-08
+%            nstar: [1x2048 double]
 %
 %
 %   Example 9:
@@ -174,6 +187,6 @@
 %     exceedbudget: 0
 %             iter: 14
 %          npoints: 155649
-%       errorbound: 3.7614e-08
+%           errest: 3.7614e-08
 %            nstar: [1x8192 double]
 %

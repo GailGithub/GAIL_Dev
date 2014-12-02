@@ -54,19 +54,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %
 %   Output Arguments
 %
-%     pp.form --- pp means piecewise polynomials
-%
-%     pp.breaks --- show the location of interpolation points
-%
-%     pp.coefs --- coefficients for piecewise linear polynomials
-%
-%     pp.pieces --- number of piecewise linear polynomials
-%
-%     pp.order --- be 2 as we use piecewise linear polynomials
-%
-%     pp.dim --- be 1 as we do univariate approximation
-%
-%     pp.orient --- always be 'first'
+%     fappx --- approximated function
 %
 %     out_param.ninit --- initial number of points we use for each sub
 %     interval
@@ -74,7 +62,8 @@ function [fappx,out_param]=funappx_g(varargin)
 %     out_param.npoints --- number of points we need to reach the
 %     guaranteed absolute error tolerance
 %
-%     out_param.errorbound --- an upper bound of the absolute error
+%     out_param.errest --- an estimation of the absolute error for the
+%     approximation
 %
 %     out_param.nstar --- final value of the parameter defining the cone of
 %     functions for which this algorithm is guaranteed for each
@@ -137,7 +126,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %     exceedbudget: 0
 %             iter: 9
 %          npoints: 6733
-%       errorbound: 9.4644e-07
+%           errest: 9.4644e-07
 %            nstar: [1x68 double]
 % 
 % 
@@ -161,7 +150,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %     exceedbudget: 0
 %             iter: 12
 %          npoints: 34817
-%       errorbound: 5.9398e-08
+%           errest: 5.9398e-08
 %            nstar: [1x2048 double]
 %
 %
@@ -185,7 +174,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %     exceedbudget: 0
 %             iter: 10
 %          npoints: 8705
-%       errorbound: 9.5037e-07
+%           errest: 9.5037e-07
 %            nstar: [1x512 double]
 %
 %
@@ -210,7 +199,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %     exceedbudget: 0
 %             iter: 12
 %          npoints: 36865
-%       errorbound: 3.1274e-07
+%           errest: 3.1274e-07
 %            nstar: [1x2048 double]
 %
 %
@@ -390,7 +379,7 @@ while(max(err) > abstol)
 end;
 out_param.iter = iter;
 out_param.npoints = index(end);
-out_param.errorbound = max(err);
+out_param.errest = max(err);
 out_param.nstar = nstar;
 if MATLABVERSION >= 8.3
     fappx = griddedInterpolant(x,y,'linear');
