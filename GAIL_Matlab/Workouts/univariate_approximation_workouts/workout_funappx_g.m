@@ -1,9 +1,9 @@
 %comparison between funappx_g and funappxlocal_g
-nrep = 100;
+function [timeratio,npointsratio]=workout_funappx_g(nrep,abstol,nlo,nhi)
+% user can choose absolut error tolerance, initial number of points, number
+% of iteration or can use the following parameters
+% nrep = 100; abstol = 1e-7; nlo = 100; nhi = 1000;
 c = rand(nrep,1)*4;
-abstol = 1e-7;
-nlo = 100;
-nhi = 1000;
 n = 4;
 npoints = zeros(n,2,nrep);
 time = zeros(n,2,nrep);
