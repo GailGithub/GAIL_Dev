@@ -315,6 +315,13 @@ if validvarargin
     in3=varargin{3};
 end
 
+MATLABVERSION = gail.matlab_version;
+if MATLABVERSION >= 8.3
+  f_addParamVal = @addParameter;
+else
+  f_addParamVal = @addParamValue;
+end
+
 if ~validvarargin   
     out_param.abstol = default.abstol;
     out_param.density = default.density;
@@ -338,12 +345,12 @@ else
             p.StructExpand = true;
             p.KeepUnmatched = true;
         end
-        addParamValue(p,'abstol',default.abstol,@isnumeric);
-        addParamValue(p,'density',default.density,...
+        f_addParamVal(p,'abstol',default.abstol,@isnumeric);
+        f_addParamVal(p,'density',default.density,...
             @(x) any(validatestring(x, {'uniform','normal'})));
-        addParamValue(p,'mmin',default.mmin,@isnumeric);
-        addParamValue(p,'mmax',default.mmax,@isnumeric);
-        addParamValue(p,'fudge',default.fudge,@gail.isfcn);
+        f_addParamVal(p,'mmin',default.mmin,@isnumeric);
+        f_addParamVal(p,'mmax',default.mmax,@isnumeric);
+        f_addParamVal(p,'fudge',default.fudge,@gail.isfcn);
     end
     parse(p,f,d,varargin{3:end})
     out_param = p.Results;
