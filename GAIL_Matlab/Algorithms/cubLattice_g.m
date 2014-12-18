@@ -1,32 +1,35 @@
 function [q,out_param] = cubLattice_g(varargin)
 %CUBLATTICE_G is a Quasi-Monte Carlo method using rank-1 Lattices cubature
-%over a d-dimensional region to integrate within a specified absolute error 
+%over a d-dimensional region to integrate within a specified generalized error 
 %tolerance with guarantees under Fourier coefficients cone decay assumptions.
 %
 %   [q,out_param] = CUBLATTICE_G(f,d) estimates the integral of f over the
-%   d-dimensional region with an error guaranteed not to be greater than the
-%   predefined error tolerance 1e-4. Input f is a function handle. f should
+%   d-dimensional region with an error guaranteed not to be greater than 
+%   a specific generalized error tolerance, 
+%   tolfun:=max(abstol,reltol*|integral(f)|). The generalized tolerance function can
+%   aslo be cosen as tolfun:=theta*abstol+(1-theta)*reltol*|integral(f)| 
+%   where theta is another input parameter. Input f is a function handle. f should
 %   accept an n x d matrix input, where d is the dimension of the hypercube,
 %   and n is the number of points being evaluated simultaneously. The input d
 %   is the dimension in which the function f is defined. Given the
 %   construction of our Lattices, d must be a positive integer with 1<=d<=250.
 % 
-%   q = CUBLATTICE_G(f,d,abstol,density,shift,mmin,mmax,fudge,transform)
+%   q = CUBLATTICE_G(f,d,abstol,reltol,density,shift,mmin,mmax,fudge,transform,errtype,theta)
 %   estimates the integral of f over a d-dimensional region. The answer
-%   is given within the absolute error tolerance abstol. All parameters
+%   is given within the generalized error tolerance tolfun. All parameters
 %   should be input in the order specified above. If an input is not specified,
 %   the default value is used. Note that if an input is not specified,
 %   the remaining tail can not be specified either.
 % 
-%   q = CUBLATTICE_G(f,d,'abstol',abstol,'density',density,'shift',shift,'mmin',mmin,'mmax',mmax,'fudge',fudge,'transform',transform)
+%   q = CUBLATTICE_G(f,d,'abstol',abstol,'reltol',reltol,'density',density,'shift',shift,'mmin',mmin,'mmax',mmax,'fudge',fudge,'transform',transform,'errtype',errtype,'theta',theta)
 %   estimates the integral of f over a d-dimensional region. The answer
-%   is given within the absolute error tolerance abstol. All the field-value
+%   is given within the generalized error tolerance tolfun. All the field-value
 %   pairs are optional and can be supplied with any order. If an input is not
 %   specified, the default value is used.
 % 
 %   q = CUBLATTICE_G(f,d,in_param) estimates the integral of f over the
-%   d-dimensional region. The answer is given within the absolute error 
-%   tolerance in_param.abstol.
+%   d-dimensional region. The answer is given within the generalized error 
+%   tolerance tolfun.
 % 
 %   Input Arguments
 %
@@ -39,6 +42,9 @@ function [q,out_param] = cubLattice_g(varargin)
 % 
 %     in_param.abstol --- the absolute error tolerance, abstol>0. By 
 %     default it is 1e-4.
+%
+%     in_param.reltol --- the relative error tolerance, which should be
+%     in (0,1]. Default value is 1e-1.
 % 
 %     in_param.density --- for f(x)*mu(dx), we can define mu(dx) to be the
 %     density function of a uniformly distributed random variable in [0,1)^d
@@ -74,6 +80,20 @@ function [q,out_param] = cubLattice_g(varargin)
 %       'C1sin' : Sidi transform with sinus preserving the first derivative.
 %                 This is in general a better option than 'C1'.
 %
+%     in_param.errtype --- this is the tolerance function. There are two
+%     choices, 'max' (chosen by default) which takes
+%     max(abstol,reltol*|integral(f)|) and 'comb' which is a linear combination
+%     theta*abstol+(1-theta)*reltol*|integral(f)|. Theta is another 
+%     parameter that can be specified (see below).
+% 
+%     in_param.theta --- this input is parametrizing the errtype 
+%     'comb'. Thus, it is only afecting when the errtype
+%     chosen is 'comb'. It stablishes the linear combination weight
+%     between the absolute and relative tolerances
+%     theta*abstol+(1-theta)*reltol*|integral(f)|. Note that for theta=1, 
+%     we have pure absolute tolerance while for theta=0, we have pure 
+%     relative tolerance. By default, theta=1.
+%
 %   Output Arguments
 %
 %     q --- the estimated value of the integral.
@@ -92,7 +112,7 @@ function [q,out_param] = cubLattice_g(varargin)
 % 
 %  Guarantee
 % This algorithm computes the integral of real valued functions in [0,1)^d 
-% with a prescribed absolute error tolerance. The Fourier coefficients of 
+% with a prescribed generalized error tolerance. The Fourier coefficients of 
 % the integrand are assumed to be absolutely convergent.
 % If the algorithm terminates without warning messages, the output is 
 % given with guarantees under the assumption that the integrand lies inside
@@ -105,7 +125,7 @@ function [q,out_param] = cubLattice_g(varargin)
 % Example 1:
 % Estimate the integral with integrand f(x) = x1.*x2 in the interval [0,1)^2:
 % 
-% >> f=@(x) x(:,1).*x(:,2); d=2; q = cubLattice_g(f,d,1e-5,'uniform','transform','C1sin')
+% >> f=@(x) prod(x,2); d=2; q = cubLattice_g(f,d,1e-5,'uniform','transform','C1sin')
 % q = 0.25***
 % 
 % 
@@ -131,6 +151,14 @@ function [q,out_param] = cubLattice_g(varargin)
 % 
 % >> f=@(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); d=1; q = cubLattice_g(f,d,1e-4,'normal','fudge',@(x) 2^-(2*x),'transform','C1sin')
 % q = 2.05***
+%
+%
+% Example 5:
+% Estimate the integral with integrand f(x) = 8*x1.*x2.*x3.*x4.*x5 in the interval
+% [0,1)^5 with pure absolute error 1e-5.
+% 
+% >> f=@(x) 8*prod(x,2); d=5; q = cubLattice_g(f,d,1e-5,'errtype','comb','theta',1)
+% q = 0.25***
 %
 %
 %   See also CUBSOBOL_G, CUBMC_G, MEANMC_G, INTEGRAL_G
@@ -216,8 +244,20 @@ nllstart=int64(2^(out_param.mmin-mlag-1));
 Stilde(1)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
 out_param.pred_err=out_param.fudge(out_param.mmin)*Stilde(1);
 errest(1)=out_param.pred_err;
-if out_param.pred_err <= out_param.abstol
+
+deltaplus = 0.5*(gail.tolfun(out_param.abstol,...
+    out_param.reltol,out_param.theta,abs(q-errest(1)),...
+    out_param.errtype)+gail.tolfun(out_param.abstol,out_param.reltol,...
+    out_param.theta,abs(q+errest(1)),out_param.errtype));
+deltaminus = 0.5*(gail.tolfun(out_param.abstol,...
+    out_param.reltol,out_param.theta,abs(q-errest(1)),...
+    out_param.errtype)-gail.tolfun(out_param.abstol,out_param.reltol,...
+    out_param.theta,abs(q+errest(1)),out_param.errtype));
+
+if out_param.pred_err <= deltaplus
    out_param.overbudget=false;
+   q=q+deltaminus;
+   appxinteg(1)=q;
    out_param.time=toc;
    return
 end
@@ -255,11 +295,10 @@ for m=out_param.mmin+1:out_param.mmax
    oddval=y(~ptind);
    y(ptind)=(evenval+coefv.*oddval)/2;
    y(~ptind)=(evenval-coefv.*oddval)/2;
-
+   
    %% Update kappanumap
    kappanumap=[kappanumap; (nnext+1:out_param.n)']; %initialize map
-%   for l=m-1:-1:1
-   for l=m-1:-1:m-mlag-1 %update just some, not exactly sure about this
+   for l=m-1:-1:m-mlag-1
       nl=2^l;
       oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
       newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa, 
@@ -275,16 +314,27 @@ for m=out_param.mmin+1:out_param.mmax
    Stilde(meff)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
    out_param.pred_err=out_param.fudge(m)*Stilde(meff);
    errest(meff)=out_param.pred_err;
-
+   
    %% Approximate integral
    q=mean(yval);
    appxinteg(meff)=q;
-   if out_param.pred_err <= out_param.abstol
+
+    deltaplus = 0.5*(gail.tolfun(out_param.abstol,...
+        out_param.reltol,out_param.theta,abs(q-errest(meff)),...
+        out_param.errtype)+gail.tolfun(out_param.abstol,out_param.reltol,...
+        out_param.theta,abs(q+errest(meff)),out_param.errtype));
+    deltaminus = 0.5*(gail.tolfun(out_param.abstol,...
+        out_param.reltol,out_param.theta,abs(q-errest(meff)),...
+        out_param.errtype)-gail.tolfun(out_param.abstol,out_param.reltol,...
+        out_param.theta,abs(q+errest(meff)),out_param.errtype));
+
+   if out_param.pred_err <= deltaplus
       out_param.overbudget=false;
+      q=q+deltaminus;
+      appxinteg(meff)=q;
       out_param.time=toc;
       return
    end
-
 end
 out_param.time=toc;
 end
@@ -295,12 +345,15 @@ function [f, out_param] = cubLattice_g_param(varargin)
 
 % Default parameter values
 default.abstol  = 1e-4;
+default.reltol  = 1e-1;
 default.density  = 'uniform';
 default.shift  = rand;
 default.mmin  = 10;
 default.mmax  = 24;
 default.fudge = @(x) 5*2^-x;
 default.transform = 'Baker';
+default.errtype  = 'max';
+default.theta  = 1;
 
 if numel(varargin)<2
     help cubLattice_g
@@ -354,19 +407,22 @@ end
 
 if ~validvarargin
     out_param.abstol = default.abstol;
+    out_param.reltol = default.reltol;
     out_param.density = default.density;
     out_param.shift = default.shift;
     out_param.mmin = default.mmin;
     out_param.mmax = default.mmax;  
     out_param.fudge = default.fudge;
     out_param.transform = default.transform;
+    out_param.errtype = default.errtype;
+    out_param.theta = default.theta;
 else
     p = inputParser;
     addRequired(p,'f',@gail.isfcn);
     addRequired(p,'d',@isnumeric);
-    if isnumeric(in3) || ischar(in3) %if there are multiple inputs with
-        %only numeric, they should be put in order.
+    if isnumeric(in3) || ischar(in3)
         addOptional(p,'abstol',default.abstol,@isnumeric);
+        addOptional(p,'reltol',default.reltol,@isnumeric);
         addOptional(p,'density',default.density,...
             @(x) any(validatestring(x, {'uniform','normal'})));
         addOptional(p,'shift',default.shift,@isnumeric);
@@ -375,12 +431,17 @@ else
         addOptional(p,'fudge',default.fudge,@gail.isfcn);
         addOptional(p,'transform',default.transform,...
             @(x) any(validatestring(x, {'id','Baker','C0','C1','C1sin'})));
+        addOptional(p,'errtype',default.errtype,...
+            @(x) any(validatestring(x, {'max','comb'})));
+        addOptional(p,'theta',default.theta,@isnumeric);
+        
     else
         if isstruct(in3) %parse input structure
             p.StructExpand = true;
             p.KeepUnmatched = true;
         end
         f_addParamVal(p,'abstol',default.abstol,@isnumeric);
+        f_addParamVal(p,'reltol',default.reltol,@isnumeric);
         f_addParamVal(p,'density',default.density,...
             @(x) any(validatestring(x, {'uniform','normal'})));
         f_addParamVal(p,'shift',default.shift,@isnumeric);
@@ -389,16 +450,27 @@ else
         f_addParamVal(p,'fudge',default.fudge,@gail.isfcn);
         f_addParamVal(p,'transform',default.transform,...
             @(x) any(validatestring(x, {'id','Baker','C0','C1','C1sin'})));
+        f_addParamVal(p,'errtype',default.errtype,...
+            @(x) any(validatestring(x, {'max','comb'})));
+        f_addParamVal(p,'theta',default.theta,@isnumeric);
+        
     end
     parse(p,f,d,varargin{3:end});
     out_param = p.Results;
 end;
 
-% Force error tolerance greater than 0
+% Force absolute tolerance greater than 0
 if (out_param.abstol <= 0 )
     warning('MATLAB:cubLattice_g:abstolnonpos',['Error tolerance should be greater than 0.' ...
-            ' Using default error tolerance ' num2str(default.abstol)])
+            ' Using default absolut tolerance ' num2str(default.abstol)])
     out_param.abstol = default.abstol;
+end
+
+% Force relative tolerance greater than 0 and smaller than 1
+if (out_param.reltol <= 0) || (out_param.reltol > 1)
+    warning('MATLAB:cubLattice_g:reltolnonunit',['Relative tolerance should be chosen in (0,1].' ...
+            ' Using default relative tolerance ' num2str(default.reltol)])
+    out_param.reltol = default.reltol;
 end
 
 % Force density to be uniform or normal only
@@ -437,5 +509,20 @@ if ~(strcmp(out_param.transform,'id') || strcmp(out_param.transform,'Baker') || 
             ' Using default error tolerance ' num2str(default.transform)])
     out_param.transform = default.transform;
 end
+
+% Force errtype to be max or comb
+if ~(strcmp(out_param.errtype,'max') || strcmp(out_param.errtype,'comb') )
+    warning('MATLAB:cubLattice_g:noterrtype',['The error type can only be max or comb.' ...
+            ' Using default errtype ' num2str(default.errtype)])
+    out_param.errtype = default.errtype;
+end
+
+% Force theta to be in [0,1]
+if (out_param.theta < 0) || (out_param.theta > 1)
+    warning('MATLAB:cubLattice_g:thetanonunit',['Theta should be chosen in [0,1].' ...
+            ' Using default theta ' num2str(default.theta)])
+    out_param.theta = default.theta;
+end
+
 end
 
