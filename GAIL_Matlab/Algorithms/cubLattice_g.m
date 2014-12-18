@@ -11,14 +11,14 @@ function [q,out_param] = cubLattice_g(varargin)
 %   is the dimension in which the function f is defined. Given the
 %   construction of our Lattices, d must be a positive integer with 1<=d<=250.
 % 
-%   q = CUBLATTICE_G(f,d,abstol,density,shift,mmin,mmax,fudge,transform)
+%   q = CUBLATTICE_G(f,d,abstol,reltol,density,shift,mmin,mmax,fudge,transform,errtype,theta)
 %   estimates the integral of f over a d-dimensional region. The answer
 %   is given within the absolute error tolerance abstol. All parameters
 %   should be input in the order specified above. If an input is not specified,
 %   the default value is used. Note that if an input is not specified,
 %   the remaining tail can not be specified either.
 % 
-%   q = CUBLATTICE_G(f,d,'abstol',abstol,'density',density,'shift',shift,'mmin',mmin,'mmax',mmax,'fudge',fudge,'transform',transform)
+%   q = CUBLATTICE_G(f,d,'abstol',abstol,'reltol',reltol,'density',density,'shift',shift,'mmin',mmin,'mmax',mmax,'fudge',fudge,'transform',transform,'errtype',errtype,'theta',theta)
 %   estimates the integral of f over a d-dimensional region. The answer
 %   is given within the absolute error tolerance abstol. All the field-value
 %   pairs are optional and can be supplied with any order. If an input is not
@@ -39,6 +39,9 @@ function [q,out_param] = cubLattice_g(varargin)
 % 
 %     in_param.abstol --- the absolute error tolerance, abstol>0. By 
 %     default it is 1e-4.
+%
+%     in_param.reltol --- the relative error tolerance, which should be
+%     between 0 and 1. Default value is 1e-1.
 % 
 %     in_param.density --- for f(x)*mu(dx), we can define mu(dx) to be the
 %     density function of a uniformly distributed random variable in [0,1)^d
@@ -73,6 +76,20 @@ function [q,out_param] = cubLattice_g(varargin)
 %       'C1' : polynomial transformation preserving the first derivative.
 %       'C1sin' : Sidi transform with sinus preserving the first derivative.
 %                 This is in general a better option than 'C1'.
+%
+%     in_param.errtype --- this is the tolerance function. There are two
+%     choices, 'max' (chosen by default) which takes
+%     max(abstol,reltol*int(f)) and 'comb' which is a linear combination
+%     theta*abstol+(1-theta)*reltol*mu. Theta is another parameter that can
+%     be specified (see below).
+% 
+%     in_param.theta --- this parameter is parametrizing the tolerance
+%     function 'comb'. Thus, it is only afecting when the errtype
+%     is chosen to be 'comb'. It stablishes the linear combination weight
+%     between the absolute and relative tolerances
+%     " theta*abstol+(1-theta)*reltol*mu ". Note that for theta=1, 
+%     we have pure absolute tolerance and for theta=0, we have pure 
+%     relative tolerance. By default is 1. 
 %
 %   Output Arguments
 %
@@ -216,8 +233,19 @@ nllstart=int64(2^(out_param.mmin-mlag-1));
 Stilde(1)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
 out_param.pred_err=out_param.fudge(out_param.mmin)*Stilde(1);
 errest(1)=out_param.pred_err;
-if out_param.pred_err <= out_param.abstol
+deltaplus = 0.5*(gail.tolfun(out_param.abstol,...
+    out_param.reltol*abs(q-errest(1)),out_param.theta,...
+    out_param.errtype)+gail.tolfun(out_param.abstol,out_param.reltol*abs(q+errest(1)),...
+    out_param.theta,out_param.errtype));
+deltaminus = 0.5*(gail.tolfun(out_param.abstol,...
+    out_param.reltol*abs(q-errest(1)),out_param.theta,...
+    out_param.errtype)-gail.tolfun(out_param.abstol,out_param.reltol*abs(q+errest(1)),...
+    out_param.theta,out_param.errtype));
+
+if out_param.pred_err <= deltaplus
    out_param.overbudget=false;
+   q=q+deltaminus;
+   appxinteg(1)=q;
    out_param.time=toc;
    return
 end
@@ -255,7 +283,7 @@ for m=out_param.mmin+1:out_param.mmax
    oddval=y(~ptind);
    y(ptind)=(evenval+coefv.*oddval)/2;
    y(~ptind)=(evenval-coefv.*oddval)/2;
-
+   
    %% Update kappanumap
    kappanumap=[kappanumap; (nnext+1:out_param.n)']; %initialize map
 %   for l=m-1:-1:1
@@ -275,16 +303,27 @@ for m=out_param.mmin+1:out_param.mmax
    Stilde(meff)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
    out_param.pred_err=out_param.fudge(m)*Stilde(meff);
    errest(meff)=out_param.pred_err;
-
+   
    %% Approximate integral
    q=mean(yval);
    appxinteg(meff)=q;
-   if out_param.pred_err <= out_param.abstol
+
+    deltaplus = 0.5*(gail.tolfun(out_param.abstol,...
+        out_param.reltol*abs(q-errest(meff)),out_param.theta,...
+        out_param.errtype)+gail.tolfun(out_param.abstol,out_param.reltol*abs(q+errest(meff)),...
+        out_param.theta,out_param.errtype));
+    deltaminus = 0.5*(gail.tolfun(out_param.abstol,...
+        out_param.reltol*abs(q-errest(meff)),out_param.theta,...
+        out_param.errtype)-gail.tolfun(out_param.abstol,out_param.reltol*abs(q+errest(meff)),...
+        out_param.theta,out_param.errtype));
+
+   if out_param.pred_err <= deltaplus
       out_param.overbudget=false;
+      q=q+detlaminus;
+      appxinteg(meff)=q;
       out_param.time=toc;
       return
    end
-
 end
 out_param.time=toc;
 end
@@ -295,12 +334,15 @@ function [f, out_param] = cubLattice_g_param(varargin)
 
 % Default parameter values
 default.abstol  = 1e-4;
+default.reltol  = 1e-1;
 default.density  = 'uniform';
 default.shift  = rand;
 default.mmin  = 10;
 default.mmax  = 24;
 default.fudge = @(x) 5*2^-x;
 default.transform = 'Baker';
+default.errtype  = 'max';
+default.theta  = 1;
 
 if numel(varargin)<2
     help cubLattice_g
@@ -347,12 +389,15 @@ end
 
 if ~validvarargin
     out_param.abstol = default.abstol;
+    out_param.reltol = default.reltol;
     out_param.density = default.density;
     out_param.shift = default.shift;
     out_param.mmin = default.mmin;
     out_param.mmax = default.mmax;  
     out_param.fudge = default.fudge;
     out_param.transform = default.transform;
+    out_param.errtype = default.errtype;
+    out_param.theta = default.theta;
 else
     p = inputParser;
     addRequired(p,'f',@gail.isfcn);
@@ -360,6 +405,7 @@ else
     if isnumeric(in3) || ischar(in3) %if there are multiple inputs with
         %only numeric, they should be put in order.
         addOptional(p,'abstol',default.abstol,@isnumeric);
+        addOptional(p,'reltol',default.reltol,@isnumeric);
         addOptional(p,'density',default.density,...
             @(x) any(validatestring(x, {'uniform','normal'})));
         addOptional(p,'shift',default.shift,@isnumeric);
@@ -368,30 +414,45 @@ else
         addOptional(p,'fudge',default.fudge,@gail.isfcn);
         addOptional(p,'transform',default.transform,...
             @(x) any(validatestring(x, {'id','Baker','C0','C1','C1sin'})));
+        addOptional(p,'errtype',default.errtype,...
+            @(x) any(validatestring(x, {'max','comb'})));
+        addOptional(p,'theta',default.theta,@isnumeric);
+        
     else
         if isstruct(in3) %parse input structure
             p.StructExpand = true;
             p.KeepUnmatched = true;
         end
-        addParamValue(p,'abstol',default.abstol,@isnumeric);
-        addParamValue(p,'density',default.density,...
+        addParameter(p,'abstol',default.abstol,@isnumeric);
+        addParameter(p,'reltol',default.reltol,@isnumeric);
+        addParameter(p,'density',default.density,...
             @(x) any(validatestring(x, {'uniform','normal'})));
-        addParamValue(p,'shift',default.shift,@isnumeric);
-        addParamValue(p,'mmin',default.mmin,@isnumeric);
-        addParamValue(p,'mmax',default.mmax,@isnumeric);
-        addParamValue(p,'fudge',default.fudge,@gail.isfcn);
-        addParamValue(p,'transform',default.transform,...
+        addParameter(p,'shift',default.shift,@isnumeric);
+        addParameter(p,'mmin',default.mmin,@isnumeric);
+        addParameter(p,'mmax',default.mmax,@isnumeric);
+        addParameter(p,'fudge',default.fudge,@gail.isfcn);
+        addParameter(p,'transform',default.transform,...
             @(x) any(validatestring(x, {'id','Baker','C0','C1','C1sin'})));
+        addParameter(p,'errtype',default.errtype,...
+            @(x) any(validatestring(x, {'max','comb'})));
+        addParameter(p,'theta',default.theta,@isnumeric);
     end
     parse(p,f,d,varargin{3:end});
     out_param = p.Results;
 end;
 
-% Force error tolerance greater than 0
+% Force absolute tolerance greater than 0
 if (out_param.abstol <= 0 )
     warning('MATLAB:cubLattice_g:abstolnonpos',['Error tolerance should be greater than 0.' ...
-            ' Using default error tolerance ' num2str(default.abstol)])
+            ' Using default absolut tolerance ' num2str(default.abstol)])
     out_param.abstol = default.abstol;
+end
+
+% Force relative tolerance greater than 0 and smaller than 1
+if (out_param.reltol <= 0) || (out_param.reltol > 1)
+    warning('MATLAB:cubLattice_g:reltolnonunit',['Relative tolerance should be chosen in (0,1].' ...
+            ' Using default relative tolerance ' num2str(default.reltol)])
+    out_param.reltol = default.reltol;
 end
 
 % Force density to be uniform or normal only
@@ -430,5 +491,20 @@ if ~(strcmp(out_param.transform,'id') || strcmp(out_param.transform,'Baker') || 
             ' Using default error tolerance ' num2str(default.transform)])
     out_param.transform = default.transform;
 end
+
+% Force errtype to be max or comb
+if ~(strcmp(out_param.errtype,'max') || strcmp(out_param.errtype,'comb') )
+    warning('MATLAB:cubLattice_g:noterrtype',['The error type can only be max or comb.' ...
+            ' Using default errtype ' num2str(default.errtype)])
+    out_param.errtype = default.errtype;
+end
+
+% Force theta to be in [0,1]
+if (out_param.theta < 0) || (out_param.theta > 1)
+    warning('MATLAB:cubLattice_g:thetanonunit',['Theta should be chosen in [0,1].' ...
+            ' Using default theta ' num2str(default.theta)])
+    out_param.theta = default.theta;
+end
+
 end
 
