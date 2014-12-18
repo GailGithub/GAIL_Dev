@@ -1,27 +1,26 @@
 function [fappx,out_param]=funappx_g(varargin)
 %FUNAPPX_G 1-D guaranteed function recovery on a closed interval [a,b]
 %
-%   pp = FUNAPPX_G(f) approximates function f on the default interval
-%   [0,1] by a piecewise polynomial structure pp within the guaranteed
-%   absolute error tolerance of 1e-6. Input f is a function handle. The
-%   statement y = f(x) should accept a vector argument x and return a
-%   vector y of function values that is of the same size as x. Output pp
-%   may be evaluated via PPVAL.
+%   fappx = FUNAPPX_G(f) approximates function f on the default interval
+%   [0,1] by an approximated function fappx within the guaranteed absolute
+%   error tolerance of 1e-6. Input f is a function handle. The statement y
+%   = f(x) should accept a vector argument x and return a vector y of
+%   function values that is of the same size as x.
 %
-%   pp = FUNAPPX_G(f,a,b,abstol,nlo,nhi,nmax,maxiter) for a given
+%   fappx = FUNAPPX_G(f,a,b,abstol,nlo,nhi,nmax,maxiter) for a given
 %   function f and the ordered input parameters that define the finite
 %   interval [a,b], a guaranteed absolute error tolerance abstol, a lower
 %   bound of initial number of points nlo, an upper bound of initial number
 %   of points nhi, a cost budget nmax and max number of iteration maxiter.
 %
-%   pp = FUNAPPX_G(f,'a',a,'b',b,'abstol',abstol,'nlo',nlo,'nhi',nhi,'nmax',nmax,'maxiter',maxiter)
+%   fappx = FUNAPPX_G(f,'a',a,'b',b,'abstol',abstol,'nlo',nlo,'nhi',nhi,'nmax',nmax,'maxiter',maxiter)
 %   recovers function f on the finite interval [a,b], given a guaranteed
 %   absolute error tolerance abstol, a lower bound of initial number of
 %   points nlo, an upper bound of initial number of points nhi, a cost
 %   budget nmax and max number of iteration maxiter. All seven field-value
 %   pairs are optional and can be supplied in different order.
 %
-%   pp = FUNAPPX_G(f,in_param) recovers function f on the finite
+%   fappx = FUNAPPX_G(f,in_param) recovers function f on the finite
 %   interval [in_param.a,in_param.b], given a guaranteed absolute error
 %   tolerance in_param.abstol, a lower bound of initial number of points
 %   in_param.nlo, an upper bound of initial number of points in_param.nhi,
@@ -29,8 +28,8 @@ function [fappx,out_param]=funappx_g(varargin)
 %   in_param.maxiter. If a field is not specified, the default value is
 %   used.
 %
-%   [pp, out_param] = FUNAPPX_G(f,...) returns a piecewise polynomial
-%   structure pp and an output structure out_param.
+%   [fappx, out_param] = FUNAPPX_G(f,...) returns an approximated function
+%   fappx and an output structure out_param.
 %
 %   Input Arguments
 %
@@ -82,15 +81,14 @@ function [fappx,out_param]=funappx_g(varargin)
 %     out_param.nmax --- when number of points hits the value, iteration
 %     will stop
 %
-%     out_param.exceedbudget --- it is 0 if the number of points used is
-%     less than out_param.nmax, 1 otherwise
+%     out_param.maxiter --- max number of iterations
 %
-%     out_param.maxiter --- max number of interation
+%     out_param.iter --- number of iterations
 %
-%     out_param.iter --- number of interation
-%
-%     out_param.exceediter --- it is 0 if the number of out_param.iter is
-%     less than out_param.maxiter, 1 otherwise
+%     out_param.exit --- the state of program when exiting
+%              0  Success
+%              1  Nnumber of points used is greater than out_param.nmax
+%              2  Nnumber of iterations is greater than out_param.maxiter
 %
 %  Guarantee
 %
@@ -100,9 +98,9 @@ function [fappx,out_param]=funappx_g(varargin)
 %                              2 nstar    ||     f(t_l)-f(t_{l-1})||
 %      ||f''||        <=  --------------  ||f'- ----------------- ||
 %             \infty       t_l - t_{l-1}  ||        t_l - t_{l-1} ||\infty,
-%  for each sub interval [t_{l-1},t_l], where 1 <= l <= L, then the pp
-%  output by this algorithm is guaranteed to satisfy
-%      ||f-ppval(pp, )||\infty <= abstol.
+%  for each sub interval [t_{l-1},t_l], where 1 <= l <= L, then the output
+%  fappx by this algorithm is guaranteed to satisfy
+%      ||f-fappx||\infty <= abstol.
 %
 %   Examples
 %
@@ -122,8 +120,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %             nmax: 10000000
 %          maxiter: 1000
 %            ninit: 100
-%       exceediter: 0
-%     exceedbudget: 0
+%             exit: 0
 %             iter: 9
 %          npoints: 6733
 %           errest: 9.4644e-07
@@ -135,8 +132,8 @@ function [fappx,out_param]=funappx_g(varargin)
 %   >> f = @(x) x.^2;
 %   >> [~, out_param] = funappx_g(f,-2,2,1e-7,10,20)
 %
-% out_param =
-% %
+%  out_param =
+% 
 %                a: -2
 %           abstol: 1.0000e-07
 %                b: 2
@@ -146,8 +143,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %              nlo: 10
 %             nmax: 10000000
 %            ninit: 18
-%       exceediter: 0
-%     exceedbudget: 0
+%             exit: 0
 %             iter: 12
 %          npoints: 34817
 %           errest: 5.9398e-08
@@ -170,8 +166,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %              nlo: 10
 %             nmax: 10000000
 %            ninit: 18
-%       exceediter: 0
-%     exceedbudget: 0
+%             exit: 0
 %             iter: 10
 %          npoints: 8705
 %           errest: 9.5037e-07
@@ -195,8 +190,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %              nlo: 10
 %             nmax: 10000000
 %            ninit: 19
-%       exceediter: 0
-%     exceedbudget: 0
+%             exit: 0
 %             iter: 12
 %          npoints: 36865
 %           errest: 3.1274e-07
@@ -242,8 +236,7 @@ len = out_param.b - out_param.a;
 x = out_param.a:len/(ninit-1):out_param.b;
 y = f(x);
 iter = 0;
-out_param.exceediter = 0;
-out_param.exceedbudget = 0;
+out_param.exit = 0;
 
 while(max(err) > abstol)
     iter = iter + 1;
@@ -367,12 +360,12 @@ while(max(err) > abstol)
         break;
     end;
     if(iter> out_param.maxiter)
-        out_param.exceediter = 1;
+        out_param.exit = 2;
         warning('MATLAB:funappx_g:exceediter',' Iteration exceeds max iteration ')
         break;
     end;
     if(index(end) >= out_param.nmax)
-        out_param.exceedbudget = 1;
+        out_param.exit = 1;
         warning('MATLAB:funappx_g:exceedbudget',' funappx_g attempted to exceed the cost budget. The answer may be unreliable.')
         break;
     end;

@@ -20,8 +20,7 @@
 %             nmax: 10000000
 %          maxiter: 1000
 %            ninit: 100
-%       exceediter: 0
-%     exceedbudget: 0
+%             exit: 0
 %             iter: 9
 %          npoints: 6733
 %           errest: 9.4644e-07
@@ -44,8 +43,7 @@
 %            nlo: 10
 %           nmax: 10000000
 %          ninit: 804
-%     exceediter: 0
-%   exceedbudget: 0
+%           exit: 0
 %           iter: 10
 %        npoints: 411137
 %         errest: 5.9832e-09
@@ -69,8 +67,7 @@
 %              nlo: 10
 %             nmax: 10000000
 %            ninit: 351
-%       exceediter: 0
-%     exceedbudget: 0
+%             exit: 0
 %             iter: 7
 %          npoints: 22401
 %           errest: 7.7860e-07
@@ -92,8 +89,7 @@
 %              nlo: 20
 %             nmax: 10000000
 %            ninit: 42
-%       exceediter: 0
-%     exceedbudget: 0
+%             exit: 0
 %             iter: 11
 %          npoints: 41985
 %           errest: 7.8394e-08
@@ -115,8 +111,7 @@
 %              nlo: 20
 %             nmax: 10000000
 %            ninit: 34
-%       exceediter: 0
-%     exceedbudget: 0
+%             exit: 0
 %             iter: 10
 %          npoints: 16897
 %           errest: 3.4229e-07
@@ -138,8 +133,7 @@
 %              nlo: 20
 %             nmax: 10000000
 %            ninit: 45
-%       exceediter: 0
-%     exceedbudget: 0
+%             exit: 0
 %             iter: 10
 %          npoints: 22529
 %           errest: 7.8881e-07
@@ -160,8 +154,7 @@
 %              nlo: 20
 %             nmax: 10000000
 %            ninit: 44
-%       exceediter: 0
-%     exceedbudget: 0
+%             exit: 0
 %             iter: 12
 %          npoints: 88065
 %           errest: 3.8587e-08
@@ -183,8 +176,7 @@
 %              nlo: 10
 %             nmax: 10000000
 %            ninit: 20
-%       exceediter: 0
-%     exceedbudget: 0
+%             exit: 0
 %             iter: 14
 %          npoints: 155649
 %           errest: 3.7614e-08

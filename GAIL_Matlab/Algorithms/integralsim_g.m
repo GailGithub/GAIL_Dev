@@ -17,12 +17,6 @@ function [q,out_param] = integralsim_g(varargin)
 %   budget in_param.nmax. If a field is not specified, the default value is
 %   used.
 %   
-%   in_param.abstol --- absolute error tolerance required by user.
-% 
-%   in_param.ninit --- initial number of function values used
-%
-%   in_param.nmax --- cost budget (maximum number of function values)
-% 
 %   q = INTEGRAL_G(f,'abstol',abstol,'ninit',ninit,'nmax',nmax) computes
 %   q, the definite integral of function f by Simpson's rule within a 
 %   guaranteed absolute error tolerance abstol, starting number of points 
@@ -38,54 +32,65 @@ function [q,out_param] = integralsim_g(varargin)
 %   integration q and output structure out_param, which includes the 
 %   fileds in_param plus the following fields:
 %
-%   out_param.exceedbudget --- it is true if the algorithm tries to use 
-%   more points than cost budget, false otherwise.
-% 
-%   out_param.tauchange --- it is true if the cone constant has been
-%   changed, false otherwise. If true, you may wish to
-%   change the input in_param.ninit to a larger number.
-% 
-%   out_param.npoints --- number of points we need to 
-%   reach the guaranteed absolute error tolerance abstol.
 %
-%   out_param.errest --- approximation error defined as the differences
-%   between the true value and the approximated value of the integral.
+%   Input Arguments
+%
+%     in_param.abstol --- absolute error tolerance required by user.
+% 
+%     in_param.ninit --- initial number of function values used
+%
+%     in_param.nmax --- cost budget (maximum number of function values)
+%
+%   Output Arguments
+% 
+%     out_param.exceedbudget --- it is true if the algorithm tries to use 
+%     more points than cost budget, false otherwise.
+% 
+%     out_param.tauchange --- it is true if the cone constant has been
+%     changed, false otherwise. If true, you may wish to
+%     change the input in_param.ninit to a larger number.
+% 
+%     out_param.npoints --- number of points we need to 
+%     reach the guaranteed absolute error tolerance abstol.
+%
+%     out_param.errest --- approximation error defined as the differences
+%     between the true value and the approximated value of the integral.
 % 
 %
 %   Examples
 %
-%   Example 1: 
-%   >> q = integralsim_g(@(x) x.^2)
-%   q = 0.3333
+%     Example 1: 
+%     >> q = integralsim_g(@(x) x.^2)
+%     q = 0.3333
 %
 %
 %   Example 2:
-%   >> f = @(x) exp(-x.^2); q = integralsim_g(f,'abstol',1e-5,'ninit',53,'nmax',1e7)
-%   q = 0.7468
+%     >> f = @(x) exp(-x.^2); q = integralsim_g(f,'abstol',1e-5,'ninit',53,'nmax',1e7)
+%     q = 0.7468
 %
 %
 %   Example 3:
-%   >> q = integralsim_g()
-%   Warning: Function f must be specified. Now GAIL is giving you a toy example of f(x)=x^2.
-%   >  In ***
-%   q = 0.3333
+%     >> q = integralsim_g()
+%     Warning: Function f must be specified. Now GAIL is giving you a toy example of f(x)=x^2.
+%     >  In ***
+%     q = 0.3333
 %
 %
 %   See also funappx_g, cubMC_g
 %
 %   Reference:
-%   [1]  N. Clancy, Y. Ding, C. Hamilton, F. J. Hickernell, and Y. Zhang, 
-%        The complexity of guaranteed automatic algorithms: Cones, not
-%        balls, Journal of Complexity 2013, to appear, DOI
-%        10.1016/j.jco.2013.09.002.
+%     [1]  N. Clancy, Y. Ding, C. Hamilton, F. J. Hickernell, and Y. Zhang, 
+%          The complexity of guaranteed automatic algorithms: Cones, not
+%          balls, Journal of Complexity 2013, to appear, DOI
+%          10.1016/j.jco.2013.09.002.
 %
-%   [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
-%        and Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library
-%        (Version 1.3.0)" [MATLAB Software], 2014. Available from
-%        http://code.google.com/p/gail/
+%     [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
+%          and Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library
+%          (Version 1.3.0)" [MATLAB Software], 2014. Available from
+%          http://code.google.com/p/gail/
 %
-%        If you find GAIL helpful in your work, please support us by citing
-%        the above paper and software.
+%          If you find GAIL helpful in your work, please support us by citing
+%          the above paper and software.
 %
 
 
@@ -94,7 +99,7 @@ function [q,out_param] = integralsim_g(varargin)
 
 %% main alg
 out_param.tau=out_param.ninit-1; % computes the minimum requirement of number of points to start
-out_param.exceedbudget=false;   % if the number of points used in the calculation of q is less than cost budget
+out_param.exceedbudget=false; ß  % if the number of points used in the calculation of q is less than cost budget
 out_param.tauchange=false;  % if the cone constant has been changed
 xpts=linspace(0,1,out_param.ninit)'; % generate ninit number of uniformly spaced points in [0,1]
 fpts=f(xpts);   % get function values at xpts

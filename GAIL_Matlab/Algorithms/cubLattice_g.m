@@ -345,6 +345,13 @@ if validvarargin
     in3=varargin{3};
 end
 
+MATLABVERSION = gail.matlab_version;
+if MATLABVERSION >= 8.3
+  f_addParamVal = @addParameter;
+else
+  f_addParamVal = @addParamValue;
+end
+
 if ~validvarargin
     out_param.abstol = default.abstol;
     out_param.density = default.density;
@@ -373,14 +380,14 @@ else
             p.StructExpand = true;
             p.KeepUnmatched = true;
         end
-        addParamValue(p,'abstol',default.abstol,@isnumeric);
-        addParamValue(p,'density',default.density,...
+        f_addParamVal(p,'abstol',default.abstol,@isnumeric);
+        f_addParamVal(p,'density',default.density,...
             @(x) any(validatestring(x, {'uniform','normal'})));
-        addParamValue(p,'shift',default.shift,@isnumeric);
-        addParamValue(p,'mmin',default.mmin,@isnumeric);
-        addParamValue(p,'mmax',default.mmax,@isnumeric);
-        addParamValue(p,'fudge',default.fudge,@gail.isfcn);
-        addParamValue(p,'transform',default.transform,...
+        f_addParamVal(p,'shift',default.shift,@isnumeric);
+        f_addParamVal(p,'mmin',default.mmin,@isnumeric);
+        f_addParamVal(p,'mmax',default.mmax,@isnumeric);
+        f_addParamVal(p,'fudge',default.fudge,@gail.isfcn);
+        f_addParamVal(p,'transform',default.transform,...
             @(x) any(validatestring(x, {'id','Baker','C0','C1','C1sin'})));
     end
     parse(p,f,d,varargin{3:end});

@@ -1,7 +1,9 @@
 %comparison between funappx_g and funappxlocal_g
-nrep = 100;
-c = rand(100,1)*4;
-abstol = 1e-7;
+function [timeratio,npointsratio]=workout_funappx_g(nrep,abstol,nlo,nhi)
+% user can choose absolut error tolerance, initial number of points, number
+% of iteration or can use the following parameters
+% nrep = 100; abstol = 1e-7; nlo = 100; nhi = 1000;
+c = rand(nrep,1)*4;
 n = 4;
 npoints = zeros(n,2,nrep);
 time = zeros(n,2,nrep);
@@ -18,42 +20,42 @@ for i = 1:nrep;
         c(i)*cos(x) - c(i)*sin(x))+exp(2*x).*(c(i) + 2*cos(x)...
         - 2* sin(x) - c(i)*sin(2*x)));
     tic;
-    [~, out_param] = funappx_g(f1,a,b,abstol,100,1000);
+    [~, out_param] = funappx_g(f1,a,b,abstol,nlo,nhi);
     t=toc;
     time(1,1,i) = t;
     npoints(1,1,i) = out_param.npoints;
     tic;
-    [~, out_param] = funappxglobal_g(f1,a,b,abstol,100,1000);
+    [~, out_param] = funappxglobal_g(f1,a,b,abstol,nlo,nhi);
     t=toc;
     time(1,2,i) = t;
     npoints(1,2,i) = out_param.npoints;
     tic;
-    [~, out_param] = funappx_g(f2,a,b,abstol,100,1000);
+    [~, out_param] = funappx_g(f2,a,b,abstol,nlo,nhi);
     t=toc;
     time(2,1,i) =  t;
     npoints(2,1,i) = out_param.npoints;
     tic;
-    [~, out_param] = funappxglobal_g(f2,a,b,abstol,100,1000);
+    [~, out_param] = funappxglobal_g(f2,a,b,abstol,nlo,nhi);
     t=toc;
     time(2,2,i) =  t;
     npoints(2,2,i) = out_param.npoints;
     tic;
-    [~, out_param] = funappx_g(f3,a,b,abstol,100,1000);
+    [~, out_param] = funappx_g(f3,a,b,abstol,nlo,nhi);
     t=toc;
     time(3,1,i) =   t;
     npoints(3,1,i) = out_param.npoints;
     tic;
-    [~, out_param] = funappxglobal_g(f3,a,b,abstol,100,1000);
+    [~, out_param] = funappxglobal_g(f3,a,b,abstol,nlo,nhi);
     t=toc;
     time(3,2,i) =   t;
     npoints(3,2,i) = out_param.npoints;
     tic;
-    [~, out_param] = funappx_g(f4,a,b,abstol,100,1000);
+    [~, out_param] = funappx_g(f4,a,b,abstol,nlo,nhi);
     t=toc;
     time(4,1,i) = t;
     npoints(4,1,i) = out_param.npoints;
     tic;
-    [~, out_param] = funappxglobal_g(f4,a,b,abstol,100,1000);
+    [~, out_param] = funappxglobal_g(f4,a,b,abstol,nlo,nhi);
     t=toc;
     time(4,2,i) =   t;
     npoints(4,2,i) = out_param.npoints;
@@ -88,6 +90,6 @@ display(' ')
 display('   Test        # Points          Time Used')
 display(' Function   Local    Global     Local    Global')
 for i=1:n
-    display(sprintf(['%8.0f %8.0f  %7.0f %10.6f  %10.6f'],...
+    display(sprintf('%8.0f %8.0f  %7.0f %10.6f  %10.6f',...
         [i mean(npoints(i,1,:)) mean(npoints(i,2,:)) mean(time(i,1,:)) mean(time(i,2,:))])) 
 end
