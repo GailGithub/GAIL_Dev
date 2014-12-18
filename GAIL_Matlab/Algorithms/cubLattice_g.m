@@ -19,7 +19,7 @@ function [q,out_param] = cubLattice_g(varargin)
 %   is given within the generalized error tolerance tolfun. All parameters
 %   should be input in the order specified above. If an input is not specified,
 %   the default value is used. Note that if an input is not specified,
-%   the remaining tail can not be specified either.
+%   the remaining tail cannot be specified either.
 % 
 %   q = CUBLATTICE_G(f,d,'abstol',abstol,'reltol',reltol,'density',density,'shift',shift,'mmin',mmin,'mmax',mmax,'fudge',fudge,'transform',transform,'errtype',errtype,'theta',theta)
 %   estimates the integral of f over a d-dimensional region. The answer
@@ -133,7 +133,7 @@ function [q,out_param] = cubLattice_g(varargin)
 % Estimate the integral with integrand f(x) = x1.^2.*x2.^2.*x3.^2+0.11
 % in the interval R^3 where x1, x2 and x3 are normally distributed:
 % 
-% >> f=@(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2+0.11; d=3; q = cubLattice_g(f,d,1e-3,1e-1,'normal','transform','C1sin')
+% >> f=@(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2+0.11; d=3; q = cubLattice_g(f,d,1e-3,1e-3,'normal','transform','C1sin')
 % q = 1.1***
 % 
 % 
@@ -335,6 +335,7 @@ for m=out_param.mmin+1:out_param.mmax
       out_param.time=toc;
       return
    end
+   
 end
 out_param.time=toc;
 end
@@ -453,7 +454,6 @@ else
         f_addParamVal(p,'errtype',default.errtype,...
             @(x) any(validatestring(x, {'max','comb'})));
         f_addParamVal(p,'theta',default.theta,@isnumeric);
-        
     end
     parse(p,f,d,varargin{3:end});
     out_param = p.Results;
@@ -525,4 +525,3 @@ if (out_param.theta < 0) || (out_param.theta > 1)
 end
 
 end
-

@@ -1,32 +1,35 @@
 function [q,out_param] = cubSobol_g(varargin)
 %CUBSOBOL_G is a Quasi-Monte Carlo method using Sobol' cubature over the
-%d-dimensional region to integrate within a specified absolute error 
+%d-dimensional region to integrate within a specified generalized error
 %tolerance with guarantees under Walsh-Fourier coefficients cone decay assumptions.
 %
 %   [q,out_param] = CUBSOBOL_G(f,d) estimates the integral of f over the
-%   d-dimensional region with an error guaranteed not to be greater than the
-%   predefined error tolerance 1e-4. Input f is a function handle. f should
+%   d-dimensional region with an error guaranteed not to be greater than 
+%   a specific generalized error tolerance, 
+%   tolfun:=max(abstol,reltol*|integral(f)|). The generalized tolerance function can
+%   aslo be cosen as tolfun:=theta*abstol+(1-theta)*reltol*|integral(f)| 
+%   where theta is another input parameter. Input f is a function handle. f should
 %   accept an n x d matrix input, where d is the dimension of the hypercube,
 %   and n is the number of points being evaluated simultaneously. The input d
 %   is the dimension in which the function f is defined. Given the
 %   construction of Sobol', d must be a positive integer with 1<=d<=1111.
 %
-%   q = CUBSOBOL_G(f,d,abstol,density,mmin,mmax,fudge)
+%   q = CUBSOBOL_G(f,d,abstol,reltol,density,mmin,mmax,fudge,errtype,theta)
 %   estimates the integral of f over a d-dimensional region. The answer
-%   is given within the absolute error tolerance abstol. All parameters
+%   is given within the generalized error tolerance tolfun. All parameters
 %   should be input in the order specified above. If an input is not specified,
 %   the default value is used. Note that if an input is not specified,
-%   the remaining tail can not be specified either.
+%   the remaining tail cannot be specified either.
 %
-%   q = CUBSOBOL_G(f,d,'abstol',abstol,'density',density,'mmin',mmin,'mmax',mmax,'fudge',fudge)
+%   q = CUBSOBOL_G(f,d,'abstol',abstol,'reltol',reltol,'density',density,'mmin',mmin,'mmax',mmax,'fudge',fudge,'errtype',errtype,'theta',theta)
 %   estimates the integral of f over a d-dimensional region. The answer
-%   is given within the absolute error tolerance abstol. All the field-value
+%   is given within the generalized error tolerance tolfun. All the field-value
 %   pairs are optional and can be supplied with any order. If an input is not
 %   specified, the default value is used.
 %
 %   q = CUBSOBOL_G(f,d,in_param) estimates the integral of f over the
-%   d-dimensional region. The answer is given within the absolute error 
-%   tolerance in_param.abstol.
+%   d-dimensional region. The answer is given within the generalized error 
+%   tolerance tolfun.
 % 
 %   Input Arguments
 %
@@ -39,6 +42,9 @@ function [q,out_param] = cubSobol_g(varargin)
 %
 %     in_param.abstol --- the absolute error tolerance, abstol>0. By 
 %     default it is 1e-4.
+%
+%     in_param.reltol --- the relative error tolerance, which should be
+%     in (0,1]. Default value is 1e-1.
 %
 %     in_param.density --- for f(x)*mu(dx), we can define mu(dx) to be the
 %     density function of a uniformly distributed random variable in [0,1)^d
@@ -59,6 +65,20 @@ function [q,out_param] = cubSobol_g(varargin)
 %     For more information about this parameter, refer to the references.
 %     By default it is @(x) 5*2^-x.
 %
+%     in_param.errtype --- this is the tolerance function. There are two
+%     choices, 'max' (chosen by default) which takes
+%     max(abstol,reltol*|integral(f)|) and 'comb' which is a linear combination
+%     theta*abstol+(1-theta)*reltol*|integral(f)|. Theta is another 
+%     parameter that can be specified (see below).
+% 
+%     in_param.theta --- this input is parametrizing the errtype 
+%     'comb'. Thus, it is only afecting when the errtype
+%     chosen is 'comb'. It stablishes the linear combination weight
+%     between the absolute and relative tolerances
+%     theta*abstol+(1-theta)*reltol*|integral(f)|. Note that for theta=1, 
+%     we have pure absolute tolerance while for theta=0, we have pure 
+%     relative tolerance. By default, theta=1.
+%
 %   Output Arguments
 %
 %     q --- the estimated value of the integral.
@@ -77,7 +97,7 @@ function [q,out_param] = cubSobol_g(varargin)
 % 
 %  Guarantee
 % This algorithm computes the integral of real valued functions in [0,1)^d 
-% with a prescribed absolute error tolerance. The Walsh-Fourier 
+% with a prescribed generalized error tolerance. The Walsh-Fourier 
 % coefficients of the integrand are assumed to be absolutely convergent.
 % If the algorithm terminates without warning messages, the output is 
 % given with guarantees under the assumption that the integrand lies inside
@@ -90,7 +110,7 @@ function [q,out_param] = cubSobol_g(varargin)
 % Example 1:
 % Estimate the integral with integrand f(x) = x1.*x2 in the interval [0,1)^2:
 %
-% >> f=@(x) x(:,1).*x(:,2); d=2; q = cubSobol_g(f,d,1e-5,'uniform')
+% >> f=@(x) x(:,1).*x(:,2); d=2; q = cubSobol_g(f,d,1e-5,1e-1,'uniform')
 % q = 0.25***
 % 
 % 
@@ -98,7 +118,7 @@ function [q,out_param] = cubSobol_g(varargin)
 % Estimate the integral with integrand f(x) = x1.^2.*x2.^2.*x3.^2+0.11
 % in the interval R^3 where x1, x2 and x3 are normally distributed:
 %
-% >> f=@(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2+0.11; d=3; q = cubSobol_g(f,d,1e-3,'normal')
+% >> f=@(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2+0.11; d=3; q = cubSobol_g(f,d,1e-3,1e-3,'normal')
 % q = 1.1***
 % 
 %
@@ -106,7 +126,7 @@ function [q,out_param] = cubSobol_g(varargin)
 % Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) in the
 % interval [0,1)^2:
 % 
-% >> f=@(x) exp(-x(:,1).^2-x(:,2).^2); d=2; q = cubSobol_g(f,d,1e-3,'uniform')
+% >> f=@(x) exp(-x(:,1).^2-x(:,2).^2); d=2; q = cubSobol_g(f,d,1e-3,1e-1,'uniform')
 % q = 0.55***
 %
 %
@@ -114,8 +134,16 @@ function [q,out_param] = cubSobol_g(varargin)
 % Estimate the price of an European call with S0=100, K=100, r=sigma^2/2,
 % sigma=0.05 and T=1.
 % 
-% >> f=@(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); d=1; q = cubSobol_g(f,d,1e-4,'normal','fudge',@(x) 2^-(2*x))
+% >> f=@(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); d=1; q = cubSobol_g(f,d,1e-4,1e-1,'normal','fudge',@(x) 2^-(2*x))
 % q = 2.05***
+%
+%
+% Example 5:
+% Estimate the integral with integrand f(x) = 8*x1.*x2.*x3.*x4.*x5 in the interval
+% [0,1)^5 with pure absolute error 1e-5.
+% 
+% >> f=@(x) 8*prod(x,2); d=5; q = cubSobol_g(f,d,1e-5,'errtype','comb','theta',1)
+% q = 0.25***
 %
 %
 %   See also CUBLATTICE_G, CUBMC_G, MEANMC_G, INTEGRAL_G
@@ -191,9 +219,21 @@ nllstart=2^(out_param.mmin-mlag-1);
 Stilde(1)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
 out_param.pred_err=out_param.fudge(out_param.mmin)*Stilde(1);
 errest(1)=out_param.pred_err;
-if out_param.pred_err <= out_param.abstol
-   out_param.overbudget=false; 
-   out_param.time=toc; 
+
+deltaplus = 0.5*(gail.tolfun(out_param.abstol,...
+    out_param.reltol,out_param.theta,abs(q-errest(1)),...
+    out_param.errtype)+gail.tolfun(out_param.abstol,out_param.reltol,...
+    out_param.theta,abs(q+errest(1)),out_param.errtype));
+deltaminus = 0.5*(gail.tolfun(out_param.abstol,...
+    out_param.reltol,out_param.theta,abs(q-errest(1)),...
+    out_param.errtype)-gail.tolfun(out_param.abstol,out_param.reltol,...
+    out_param.theta,abs(q+errest(1)),out_param.errtype));
+
+if out_param.pred_err <= deltaplus
+   out_param.overbudget=false;
+   q=q+deltaminus;
+   appxinteg(1)=q;
+   out_param.time=toc;
    return
 end
 
@@ -226,12 +266,10 @@ for m=out_param.mmin+1:out_param.mmax
    oddval=y(~ptind);
    y(ptind)=(evenval+oddval)/2;
    y(~ptind)=(evenval-oddval)/2;
-   %disp('line 100')
 
    %% Update kappanumap
    kappanumap=[kappanumap; (nnext+1:out_param.n)']; %initialize map
-%   for l=m-1:-1:1
-   for l=m-1:-1:m-mlag-1 %update just some, not exactly sure about this
+   for l=m-1:-1:m-mlag-1
       nl=2^l;
       oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
       newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa, 
@@ -251,10 +289,22 @@ for m=out_param.mmin+1:out_param.mmax
    %% Approximate integral
    q=mean(yval);
    appxinteg(meff)=q;
-   if out_param.pred_err <= out_param.abstol
-      out_param.overbudget=false; 
-      out_param.time=toc; 
-      return 
+   
+    deltaplus = 0.5*(gail.tolfun(out_param.abstol,...
+        out_param.reltol,out_param.theta,abs(q-errest(meff)),...
+        out_param.errtype)+gail.tolfun(out_param.abstol,out_param.reltol,...
+        out_param.theta,abs(q+errest(meff)),out_param.errtype));
+    deltaminus = 0.5*(gail.tolfun(out_param.abstol,...
+        out_param.reltol,out_param.theta,abs(q-errest(meff)),...
+        out_param.errtype)-gail.tolfun(out_param.abstol,out_param.reltol,...
+        out_param.theta,abs(q+errest(meff)),out_param.errtype));
+   
+   if out_param.pred_err <= deltaplus
+      out_param.overbudget=false;
+      q=q+deltaminus;
+      appxinteg(meff)=q;
+      out_param.time=toc;
+      return
    end
 
 end
@@ -267,10 +317,13 @@ function [f, out_param] = cubSobol_g_param(varargin)
 
 % Default parameter values
 default.abstol  = 1e-4;
+default.reltol  = 1e-1;
 default.density  = 'uniform';
 default.mmin  = 10;
 default.mmax  = 24;
 default.fudge = @(x) 5*2^-x;
+default.errtype  = 'max';
+default.theta  = 1;
 
 if numel(varargin)<2
     help cubSobol_g
@@ -324,10 +377,13 @@ end
 
 if ~validvarargin   
     out_param.abstol = default.abstol;
+    out_param.reltol = default.reltol;
     out_param.density = default.density;
     out_param.mmin = default.mmin;
     out_param.mmax = default.mmax;  
     out_param.fudge = default.fudge;
+    out_param.errtype = default.errtype;
+    out_param.theta = default.theta;
 else
     p = inputParser;
     addRequired(p,'f',@gail.isfcn);
@@ -335,32 +391,47 @@ else
     if isnumeric(in3) || ischar(in3) %if there are multiple inputs with
         %only numeric, they should be put in order.
         addOptional(p,'abstol',default.abstol,@isnumeric);
+        addOptional(p,'reltol',default.reltol,@isnumeric);
         addOptional(p,'density',default.density,...
             @(x) any(validatestring(x, {'uniform','normal'})));
         addOptional(p,'mmin',default.mmin,@isnumeric);
         addOptional(p,'mmax',default.mmax,@isnumeric);
         addOptional(p,'fudge',default.fudge,@gail.isfcn);
+        addOptional(p,'errtype',default.errtype,...
+            @(x) any(validatestring(x, {'max','comb'})));
+        addOptional(p,'theta',default.theta,@isnumeric);
     else
         if isstruct(in3) %parse input structure
             p.StructExpand = true;
             p.KeepUnmatched = true;
         end
         f_addParamVal(p,'abstol',default.abstol,@isnumeric);
+        f_addParamVal(p,'reltol',default.reltol,@isnumeric);
         f_addParamVal(p,'density',default.density,...
             @(x) any(validatestring(x, {'uniform','normal'})));
         f_addParamVal(p,'mmin',default.mmin,@isnumeric);
         f_addParamVal(p,'mmax',default.mmax,@isnumeric);
         f_addParamVal(p,'fudge',default.fudge,@gail.isfcn);
+        f_addParamVal(p,'errtype',default.errtype,...
+            @(x) any(validatestring(x, {'max','comb'})));
+        f_addParamVal(p,'theta',default.theta,@isnumeric);
     end
     parse(p,f,d,varargin{3:end})
     out_param = p.Results;
 end;
 
-% Force error tolerance greater than 0
+% Force absolute tolerance greater than 0
 if (out_param.abstol <= 0 )
     warning('MATLAB:cubSobol_g:abstolnonpos',['Error tolerance should be greater than 0.' ...
             ' Using default error tolerance ' num2str(default.abstol)])
     out_param.abstol = default.abstol;
+end
+
+% Force relative tolerance greater than 0 and smaller than 1
+if (out_param.reltol <= 0) || (out_param.reltol > 1)
+    warning('MATLAB:cubSobol_g:reltolnonunit',['Relative tolerance should be chosen in (0,1].' ...
+            ' Using default relative tolerance ' num2str(default.reltol)])
+    out_param.reltol = default.reltol;
 end
 
 % Force density to be uniform or normal only
@@ -392,4 +463,19 @@ if ~((gail.isfcn(out_param.fudge) && (out_param.fudge(1)>0)))
             ' Using default fudge factor ' func2str(default.fudge)])
     out_param.fudge = default.fudge;
 end
+
+% Force errtype to be max or comb
+if ~(strcmp(out_param.errtype,'max') || strcmp(out_param.errtype,'comb') )
+    warning('MATLAB:cubSobol_g:noterrtype',['The error type can only be max or comb.' ...
+            ' Using default errtype ' num2str(default.errtype)])
+    out_param.errtype = default.errtype;
+end
+
+% Force theta to be in [0,1]
+if (out_param.theta < 0) || (out_param.theta > 1)
+    warning('MATLAB:cubSobol_g:thetanonunit',['Theta should be chosen in [0,1].' ...
+            ' Using default theta ' num2str(default.theta)])
+    out_param.theta = default.theta;
+end
+
 end
