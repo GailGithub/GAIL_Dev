@@ -388,8 +388,7 @@ else
     p = inputParser;
     addRequired(p,'f',@gail.isfcn);
     addRequired(p,'d',@isnumeric);
-    if isnumeric(in3) || ischar(in3) %if there are multiple inputs with
-        %only numeric, they should be put in order.
+    if isnumeric(in3) || ischar(in3)
         addOptional(p,'abstol',default.abstol,@isnumeric);
         addOptional(p,'reltol',default.reltol,@isnumeric);
         addOptional(p,'density',default.density,...
