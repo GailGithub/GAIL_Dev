@@ -42,7 +42,7 @@ timemat=Qmat;
 % computes integrals for each function, each ninit
 for i=1:nrep
     if floor(i/100) == i/100
-        display(i);
+        %display(i);
     end;
     %% Integrand
     a=avec(i);
