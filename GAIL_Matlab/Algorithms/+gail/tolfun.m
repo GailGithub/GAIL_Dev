@@ -12,7 +12,7 @@ switch errtype
     case 'comb' % the linear combination of two tolerances
         %theta=0---absolute error
         %theta=1---relative error
-        eps  = theta*abstol+(1-theta)*reltol;
+        eps  = theta*abstol+(1-theta)*reltol*abs(mu);
     case 'max' % the max case
         eps  = max(abstol,reltol*abs(mu));
 end
