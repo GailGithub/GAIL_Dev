@@ -219,9 +219,7 @@ function [fappx,out_param]=funappx_g(varargin)
 % check parameter satisfy conditions or not
 [f, out_param] = funappx_g_param(varargin{:});
 MATLABVERSION= gail.matlab_version;
-% if MATLABVERSION >= 8.3
-%     warning('off', 'MATLAB:interp1:ppGriddedInterpolant');
-% end;
+
 
 %%main algorithm
 % initialize number of points
@@ -394,6 +392,14 @@ default.nhi = 1000;
 default.nmax = 1e7;
 default.maxiter = 1000;
 
+MATLABVERSION= gail.matlab_version;
+if MATLABVERSION >= 8.3
+    f_addParamVal = @addParameter;
+else
+    f_addParamVal = @addParamValue;
+end;
+
+
 if isempty(varargin)
     warning('MATLAB:funappx_g:nofunction','Function f must be specified. Now GAIL is using f(x)=exp(-100*(x-0.5)^2) and unit interval [0,1].')
     help funappx_g
@@ -438,13 +444,13 @@ else
             p.StructExpand = true;
             p.KeepUnmatched = true;
         end
-        addParamValue(p,'a',default.a,@isnumeric);
-        addParamValue(p,'b',default.b,@isnumeric);
-        addParamValue(p,'abstol',default.abstol,@isnumeric);
-        addParamValue(p,'nlo',default.nlo,@isnumeric);
-        addParamValue(p,'nhi',default.nhi,@isnumeric);
-        addParamValue(p,'nmax',default.nmax,@isnumeric);
-        addParamValue(p,'maxiter',default.maxiter,@isnumeric);
+        f_addParamVal(p,'a',default.a,@isnumeric);
+        f_addParamVal(p,'b',default.b,@isnumeric);
+        f_addParamVal(p,'abstol',default.abstol,@isnumeric);
+        f_addParamVal(p,'nlo',default.nlo,@isnumeric);
+        f_addParamVal(p,'nhi',default.nhi,@isnumeric);
+        f_addParamVal(p,'nmax',default.nmax,@isnumeric);
+        f_addParamVal(p,'maxiter',default.maxiter,@isnumeric);
     end
     parse(p,f,varargin{2:end})
     out_param = p.Results;
