@@ -45,6 +45,11 @@ if MATLABVERSION >= 8
     run(ut_UniFunMin)
 end
 
+%Workout of function approximation
+if MATLABVERSION >= 8  
+    run(ut_workoutfunappx_g)
+end
+
 time=toc;
 disp(time)
 
