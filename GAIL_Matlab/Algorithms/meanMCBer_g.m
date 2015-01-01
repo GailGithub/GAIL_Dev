@@ -137,11 +137,14 @@ if validvarargin
     validvarargin=(isnumeric(in2) || isstruct(in2) ...
         || ischar(in2));
 end
+
+MATLABVERSION = gail.matlab_version;
 if MATLABVERSION >= 8.3
   f_addParamVal= @addParameter;
 else
   f_addParamVal = @addParamValue;
 end
+
 if ~validvarargin
     %if there is only one input which is Yrand, use all the default parameters
     out_param.abstol = default.abstol;
