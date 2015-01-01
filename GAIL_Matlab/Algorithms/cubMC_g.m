@@ -254,6 +254,13 @@ if validvarargin
     validvarargin=(isnumeric(in3) || isstruct(in3) || ischar(in3));
     % to see if it is numeric structure or character.
 end
+MATLABVERSION = gail.matlab_version;
+
+if MATLABVERSION >= 8.3
+  f_addParamVal= @addParameter;
+else
+  f_addParamVal = @addParamValue;
+end
 
 if ~validvarargin
 % if there is no optional input, use default settings.
@@ -292,17 +299,17 @@ else % if there is some optional input
         end
         % if there are multiple inputs with name and numeric, they should
         % be put in order.
-        addParamValue(p,'measure',default.measure,...
+        f_addParamVal(p,'measure',default.measure,...
             @(x) any(validatestring(x, {'uniform','normal','Gaussian'})));
-        addParamValue(p,'abstol',default.abstol,@isnumeric);        
-        addParamValue(p,'reltol',default.reltol,@isnumeric);
-        addParamValue(p,'alpha',default.alpha,@isnumeric);
-        addParamValue(p,'fudge',default.fudge,@isnumeric);
-        addParamValue(p,'nSig',default.nSig,@isnumeric);
-        addParamValue(p,'n1',default.n1,@isnumeric);
-        addParamValue(p,'tbudget',default.tbudget,@isnumeric);
-        addParamValue(p,'nbudget',default.nbudget,@isnumeric);
-        addParamValue(p,'flag',default.flag,@isnumeric); 
+        f_addParamVal(p,'abstol',default.abstol,@isnumeric);        
+        f_addParamVal(p,'reltol',default.reltol,@isnumeric);
+        f_addParamVal(p,'alpha',default.alpha,@isnumeric);
+        f_addParamVal(p,'fudge',default.fudge,@isnumeric);
+        f_addParamVal(p,'nSig',default.nSig,@isnumeric);
+        f_addParamVal(p,'n1',default.n1,@isnumeric);
+        f_addParamVal(p,'tbudget',default.tbudget,@isnumeric);
+        f_addParamVal(p,'nbudget',default.nbudget,@isnumeric);
+        f_addParamVal(p,'flag',default.flag,@isnumeric); 
     end
     parse(p,f,hyperbox,varargin{3:end})
     out_param = p.Results;

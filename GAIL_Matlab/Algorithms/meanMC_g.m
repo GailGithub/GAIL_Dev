@@ -129,7 +129,7 @@ function [tmu,out_param]=meanMC_g(varargin)
 % Calculate the mean of x^2 when x is uniformly distributed in
 % [0 1], with the absolute error tolerance = 1e-3 and uncertainty 5%.
 %
-% >> in_param.reltol=0; in_param.abstol = 1e-3;in_param.reltol=0;
+% >> in_param.reltol=0; in_param.abstol = 1e-3;
 % >> in_param.alpha = 0.05; Yrand=@(n) rand(n,1).^2;
 % >> tmu=meanMC_g(Yrand,in_param)
 % tmu = 0.33***
@@ -268,7 +268,7 @@ while true
         break;
     else
         i=i+1;
-        deltat=0.8;
+        deltat=0.7;
         deltah=0.5;
         delta=0;% constant to decide the next tolerance
         out_param.tol(i) = max(min(deltaplus*deltat, ...
@@ -354,6 +354,12 @@ if validvarargin
     validvarargin=(isnumeric(in2) || isstruct(in2) ...
         || ischar(in2));
 end
+MATLABVERSION = gail.matlab_version;
+if MATLABVERSION >= 8.3
+  f_addParamVal= @addParameter;
+else
+  f_addParamVal = @addParamValue;
+end
 
 if ~validvarargin
     %if there is only input which is Yrand, use all the default parameters  
@@ -383,14 +389,14 @@ else
             p.StructExpand = true;
             p.KeepUnmatched = true;
         end
-        addParamValue(p,'abstol',default.abstol,@isnumeric);
-        addParamValue(p,'reltol',default.reltol,@isnumeric);
-        addParamValue(p,'alpha',default.alpha,@isnumeric);
-        addParamValue(p,'fudge',default.fudge,@isnumeric);
-        addParamValue(p,'nSig',default.nSig,@isnumeric);
-        addParamValue(p,'n1',default.n1,@isnumeric);
-        addParamValue(p,'tbudget',default.tbudget,@isnumeric);
-        addParamValue(p,'nbudget',default.nbudget,@isnumeric);
+        f_addParamVal(p,'abstol',default.abstol,@isnumeric);
+        f_addParamVal(p,'reltol',default.reltol,@isnumeric);
+        f_addParamVal(p,'alpha',default.alpha,@isnumeric);
+        f_addParamVal(p,'fudge',default.fudge,@isnumeric);
+        f_addParamVal(p,'nSig',default.nSig,@isnumeric);
+        f_addParamVal(p,'n1',default.n1,@isnumeric);
+        f_addParamVal(p,'tbudget',default.tbudget,@isnumeric);
+        f_addParamVal(p,'nbudget',default.nbudget,@isnumeric);
     end
     parse(p,Yrand,varargin{2:end})
     out_param = p.Results;

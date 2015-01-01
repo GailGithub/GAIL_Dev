@@ -137,7 +137,11 @@ if validvarargin
     validvarargin=(isnumeric(in2) || isstruct(in2) ...
         || ischar(in2));
 end
-
+if MATLABVERSION >= 8.3
+  f_addParamVal= @addParameter;
+else
+  f_addParamVal = @addParamValue;
+end
 if ~validvarargin
     %if there is only one input which is Yrand, use all the default parameters
     out_param.abstol = default.abstol;
@@ -156,9 +160,9 @@ else
             pHat.StructExpand = true;
             pHat.KeepUnmatched = true;
         end
-        addParamValue(pHat,'abstol',default.abstol,@isnumeric);
-        addParamValue(pHat,'alpha',default.alpha,@isnumeric);
-        addParamValue(pHat,'nmax',default.nmax,@isnumeric);
+        f_addParamVal(pHat,'abstol',default.abstol,@isnumeric);
+        f_addParamVal(pHat,'alpha',default.alpha,@isnumeric);
+        f_addParamVal(pHat,'nmax',default.nmax,@isnumeric);
     end
     parse(pHat,Yrand,varargin{2:end})
     out_param = pHat.Results;
