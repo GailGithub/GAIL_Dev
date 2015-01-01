@@ -11,3 +11,5 @@
 *_raw.xml
 GAIL_Matlab/Documentation/html/helpsearch/segments
 GAIL_Matlab/Documentation/html/helpsearch/deletable
+*.prj
+*.mltbx
