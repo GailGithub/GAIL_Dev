@@ -67,7 +67,7 @@ function [q,out_param] = cubLattice_g(varargin)
 %     in_param.fudge --- the positive function multiplying the finite 
 %     sum of Fast Fourier coefficients specified in the cone of functions.
 %     For more information about this parameter, refer to the references.
-%     By default it is @(x) 5*2^-x.
+%     By default it is @(x) 5*2.^-x.
 % 
 %     in_param.transform --- the algorithm is defined for continuous periodic functions. If the
 %     input function f is not, there are 5 types of transform to periodize it
@@ -107,6 +107,13 @@ function [q,out_param] = cubLattice_g(varargin)
 %     out_param.pred_err --- predicted bound on the error based on the cone
 %     condition. If the function lies in the cone, the real error should be
 %     smaller than this predicted error.
+%
+%     out_param.outside_cone --- boolean stating whether we did not meet
+%     the necessary conditions for the integrand to be inside the cone. If
+%     the value is true, the function is outside the cone. Otherwise, we do
+%     not know. Note that this parameter is computed on the transformed
+%     function, not the input function. For more information on the
+%     transforms, check the input parameter in_param.transform.
 % 
 %     out_param.time --- time elapsed in seconds when calling cubLattice_g for f.
 % 
@@ -198,9 +205,13 @@ end
 %% Main algorithm
 mlag=4;
 Stilde=zeros(out_param.mmax-out_param.mmin+1,1); %initialize sum of DFT terms
+StildeNC=zeros(out_param.mmax-out_param.mmin+1,mlag); %initialize various sums of DFT terms for necessary conditions
+cond1=(1+out_param.fudge(mlag))*(1+2*out_param.fudge(mlag-(1:mlag)))./(1+out_param.fudge(mlag-(1:mlag))); % Factors for the necessary conditions
+cond2=(1+out_param.fudge(mlag-(1:mlag)))*(1+2*out_param.fudge(mlag))/(1+out_param.fudge(mlag)); % Factors for the necessary conditions
 errest=zeros(out_param.mmax-out_param.mmin+1,1); %initialize error estimates
 appxinteg=zeros(out_param.mmax-out_param.mmin+1,1); %initialize approximations to integral
 out_param.overbudget=true; %we have overrun our budget, until indicated otherwise
+out_param.outside_cone=false; %we do not know if we are outside the cone, until indicated otherwise
 
 %% Initial points and FWT
 out_param.n=2^out_param.mmin; %total number of points to start with
@@ -242,6 +253,10 @@ end
 %% Compute Stilde
 nllstart=int64(2^(out_param.mmin-mlag-1));
 Stilde(1)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
+for i = 1:mlag % Storing the information for the necessary conditions
+    nllstart=2*nllstart;
+    StildeNC(i,i)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
+end
 out_param.pred_err=out_param.fudge(out_param.mmin)*Stilde(1);
 errest(1)=out_param.pred_err;
 
@@ -312,6 +327,15 @@ for m=out_param.mmin+1:out_param.mmax
    nllstart=int64(2^(m-mlag-1));
    meff=m-out_param.mmin+1;
    Stilde(meff)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
+   for i = 1:mlag % Storing the information for the necessary conditions
+       nllstart=2*nllstart;
+       StildeNC(i+meff-1,i)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
+   end
+   % disp((Stilde(meff)*cond1(1:min(meff-1,mlag)))>=(StildeNC(meff-1,1:min(meff-1,mlag)))) % Displaying necessary condition 1 results (1 if satisfied)
+   % disp((StildeNC(meff-1,1:min(meff-1,mlag)).*cond2(1:min(meff-1,mlag)))>=(Stilde(meff)*ones(1,min(meff-1,mlag)))) % Displaying necessary condition 2 results (1 if satisfied)
+   if ~(prod((Stilde(meff)*cond1(1:min(meff-1,mlag)))>=(StildeNC(meff-1,1:min(meff-1,mlag))))*prod((StildeNC(meff-1,1:min(meff-1,mlag)).*cond2(1:min(meff-1,mlag)))>=(Stilde(meff)*ones(1,min(meff-1,mlag)))))
+        out_param.outside_cone=true; % We are outside the cone
+   end
    out_param.pred_err=out_param.fudge(m)*Stilde(meff);
    errest(meff)=out_param.pred_err;
    
@@ -351,7 +375,7 @@ default.density  = 'uniform';
 default.shift  = rand;
 default.mmin  = 10;
 default.mmax  = 24;
-default.fudge = @(x) 5*2^-x;
+default.fudge = @(x) 5*2.^-x;
 default.transform = 'Baker';
 default.errtype  = 'max';
 default.theta  = 1;
