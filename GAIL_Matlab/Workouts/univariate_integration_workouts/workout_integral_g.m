@@ -15,7 +15,7 @@ in_param.abstol=1e-8; %error tolerance
 nrep = 10000; %number of times to test used in the paper
 %nrep = 100; %number of times to test, takes about a minute, can be changed 
 if (nrep > 100)
-    warning(' Need more than one hour to run this workout.')
+%    warning(' Need more than one hour to run this workout.')
     warning('off','MATLAB:integral01_g:exceedbudget');
     warning('off','MATLAB:integral01_g:peaky');
 end;
