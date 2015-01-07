@@ -34,7 +34,7 @@ function [q,out_param] = integralsim_g(varargin)
 %   q = INTEGRAL_G(f,abstol,ninit, nmax,maxiter) computes q, the definite 
 %   integral of function f by Simpson's rule with the ordered input 
 %   parameters, guaranteed absolute error tolerance abstol, starting number
-%   of points ninit, cost budget nmax and max number of iterations maxiter.
+%   of points ninit, and cost budget nmax.
 %
 %   [q, out_param] = INTEGRAL_G(f,...) returns the approximated 
 %   integration q and output structure out_param, which includes the 
@@ -70,7 +70,7 @@ function [q,out_param] = integralsim_g(varargin)
 %
 %
 %   Example 2:
-%   >> f = @(x) exp(-x.^2); q = integralsim_g(f,'abstol',1e-5,'ninit',53,'nmax',1e7,'maxiter',500)
+%   >> f = @(x) exp(-x.^2); q = integralsim_g(f,'abstol',1e-5,'ninit',53,'nmax',1e7)
 %   q = 0.7468
 %
 %
@@ -190,7 +190,6 @@ while true
 
 end
 
-out_param.iter = iter;
 out_param.q=q;  % integral of functions
 out_param.npoints=nint+1;  % number of points finally used
 out_param.errest=errest;    % error of integral
