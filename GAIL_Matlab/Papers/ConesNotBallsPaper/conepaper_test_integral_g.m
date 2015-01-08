@@ -21,7 +21,7 @@ in_param.tol=1e-8; %error tolerance
 % nrep = 100; %number of times to test, takes about a minute, can be changed 
 nrep = 10000; %number of times to test used in the paper
 if (nrep >= 1000)
-    warning(' Need more than one hour to replicate the result in the paper! ')
+%     warning(' Need more than one hour to replicate the result in the paper! ')
     warning('off','MATLAB:integraltau_g:exceedbudget');
     warning('off','MATLAB:integraltau_g:peaky');
 end;
@@ -54,7 +54,7 @@ timemat=Qmat;
 % computes integrals for each function, each tau
 for i=1:nrep
     if floor(i/100) == i/100
-        display(i);
+%         display(i);
     end;
     %% Integrand
     a=avec(i);

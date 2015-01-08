@@ -13,8 +13,8 @@ function [q,out_param] = integralsim_g(varargin)
 %
 %   q = INTEGRAL_G(f,in_param) computes q, the definite integral of 
 %   function f by Simpson's rule within a guaranteed absolute error
-%   in_param.abstol, starting number of points in_param.ninit, and cost 
-%   budget in_param.nmax. If a field is not specified, the default value is
+%   in_param.abstol, starting number of points in_param.ninit, cost 
+%   budget in_param.nmax and max number of iterations maxiter. If a field is not specified, the default value is
 %   used.
 %   
 %   in_param.abstol --- absolute error tolerance required by user.
@@ -22,17 +22,19 @@ function [q,out_param] = integralsim_g(varargin)
 %   in_param.ninit --- initial number of function values used
 %
 %   in_param.nmax --- cost budget (maximum number of function values)
+%
+%   in_param.maxiter --- max number of interations, default value is 1000
 % 
-%   q = INTEGRAL_G(f,'abstol',abstol,'ninit',ninit,'nmax',nmax) computes
+%   q = INTEGRAL_G(f,'abstol',abstol,'ninit',ninit,'nmax',nmax,'maxiter',maxiter) computes
 %   q, the definite integral of function f by Simpson's rule within a 
 %   guaranteed absolute error tolerance abstol, starting number of points 
-%   ninit, and cost budget nmax. All three field-value pairs are optional 
+%   ninit, cost budget nmax and max number of iterations maxiter. All three field-value pairs are optional 
 %   and can be supplied.
 %
-%   q = INTEGRAL_G(f,abstol,ninit, nmax) computes q, the definite 
+%   q = INTEGRAL_G(f,abstol,ninit, nmax,maxiter) computes q, the definite 
 %   integral of function f by Simpson's rule with the ordered input 
 %   parameters, guaranteed absolute error tolerance abstol, starting number
-%   of points ninit, and cost budget nmax.
+%   of points ninit, cost budget nmax and max number of iterations maxiter.
 %
 %   [q, out_param] = INTEGRAL_G(f,...) returns the approximated 
 %   integration q and output structure out_param, which includes the 
@@ -51,6 +53,14 @@ function [q,out_param] = integralsim_g(varargin)
 %   out_param.errest --- approximation error defined as the differences
 %   between the true value and the approximated value of the integral.
 % 
+%   out_param.maxiter --- max number of iterations
+%
+%   out_param.iter --- number of iterations
+%
+%   out_param.exit --- the state of program when exiting
+%            0  Success
+%            1  Nnumber of points used is greater than out_param.nmax
+%            2  Nnumber of iterations is greater than out_param.maxiter
 %
 %   Examples
 %
@@ -60,7 +70,7 @@ function [q,out_param] = integralsim_g(varargin)
 %
 %
 %   Example 2:
-%   >> f = @(x) exp(-x.^2); q = integralsim_g(f,'abstol',1e-5,'ninit',53,'nmax',1e7)
+%   >> f = @(x) exp(-x.^2); q = integralsim_g(f,'abstol',1e-5,'ninit',53,'nmax',1e7,'maxiter',500)
 %   q = 0.7468
 %
 %
@@ -91,6 +101,7 @@ function [q,out_param] = integralsim_g(varargin)
 
 % check parameter satisfy conditions or not
 [f,out_param] = integralsim_g_param(varargin{:});
+MATLABVERSION= gail.matlab_version;
 
 %% main alg
 out_param.tau=out_param.ninit-1; % computes the minimum requirement of number of points to start
@@ -101,8 +112,10 @@ fpts=f(xpts);   % get function values at xpts
 sum1=reshape(fpts(2:out_param.ninit),2,(out_param.ninit-1)/2); %compute the 4-time part of Simpson's rule
 sumf=(fpts(1)+fpts(out_param.ninit))+2*sum(fpts(2:out_param.ninit-1))+2*sum(sum1(1,:));    % computes the sum of Simpson's rule
 nint=out_param.ninit-1; % number of intevals
+iter = 0; % number of iteration used
 
 while true
+    iter = iter +1;
     %Compute approximations to the strong and weak norms
     nintok=true; %ninit is large enough for tau
     df=diff(fpts); %first difference of points
@@ -137,7 +150,7 @@ while true
     end
     if nint*inflation+1 > out_param.nmax
             %cost budget does not allow intended increase in ntrap
-        out_param.exceedbudget=true; %tried to exceed budget
+        out_param.exit=1; %tried to exceed budget
         warning('MATLAB:integralsim_g:exceedbudget','integralsim_g attempts to exceed the cost budget. The answer may be unreliable.');
         inflation=floor((out_param.nmax-1)/nint);
             %max possible increase allowed by cost budget
@@ -169,9 +182,15 @@ while true
         q=sumf/nint/3; %compute the integral
         break; %exit while loop
     end
-    
+    if(iter> out_param.maxiter)
+        out_param.exit = 2;
+        warning('MATLAB:funappx_g:exceediter',' Iteration exceeds max iteration ')
+        break;
+    end;
+
 end
 
+out_param.iter = iter;
 out_param.q=q;  % integral of functions
 out_param.npoints=nint+1;  % number of points finally used
 out_param.errest=errest;    % error of integral
@@ -183,7 +202,14 @@ function [f, out_param] = integralsim_g_param(varargin)
 default.abstol  = 1e-6;
 default.ninit  = 53; % must be an odd number
 default.nmax  = 1e7;
+default.maxiter = 1000;
 
+MATLABVERSION= gail.matlab_version;
+if MATLABVERSION >= 8.3
+    f_addParamVal = @addParameter;
+else
+    f_addParamVal = @addParamValue;
+end;
 
 if isempty(varargin)
     help integralsim_g
@@ -205,6 +231,7 @@ if ~validvarargin
     out_param.abstol = default.abstol;
     out_param.ninit = default.ninit;
     out_param.nmax = default.nmax;
+    out_param.maxiter = default.maxiter;
 else
     p = inputParser;
     addRequired(p,'f',@gail.isfcn);
@@ -213,14 +240,16 @@ else
         addOptional(p,'abstol',default.abstol,@isnumeric);
         addOptional(p,'ninit',default.ninit,@isnumeric);
         addOptional(p,'nmax',default.nmax,@isnumeric);
+        addOptional(p,'maxiter',default.maxiter,@isnumeric)
     else
         if isstruct(in2) %parse input structure
             p.StructExpand = true;
             p.KeepUnmatched = true;
         end
-        addParamValue(p,'abstol',default.abstol,@isnumeric);
-        addParamValue(p,'ninit',default.ninit,@isnumeric);
-        addParamValue(p,'nmax',default.nmax,@isnumeric);
+        f_addParamVal(p,'abstol',default.abstol,@isnumeric);
+        f_addParamVal(p,'ninit',default.ninit,@isnumeric);
+        f_addParamVal(p,'nmax',default.nmax,@isnumeric);
+        f_addParamVal(p,'maxiter',default.maxiter,@isnumeric);
     end
     parse(p,f,varargin{2:end})
     out_param = p.Results;

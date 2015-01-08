@@ -11,20 +11,20 @@ function [fappx,out_param]=funappx_g(varargin)
 %   function f and the ordered input parameters that define the finite
 %   interval [a,b], a guaranteed absolute error tolerance abstol, a lower
 %   bound of initial number of points nlo, an upper bound of initial number
-%   of points nhi, a cost budget nmax and max number of iteration maxiter.
+%   of points nhi, a cost budget nmax and max number of iterations maxiter.
 %
 %   fappx = FUNAPPX_G(f,'a',a,'b',b,'abstol',abstol,'nlo',nlo,'nhi',nhi,'nmax',nmax,'maxiter',maxiter)
 %   recovers function f on the finite interval [a,b], given a guaranteed
 %   absolute error tolerance abstol, a lower bound of initial number of
 %   points nlo, an upper bound of initial number of points nhi, a cost
-%   budget nmax and max number of iteration maxiter. All seven field-value
+%   budget nmax and max number of iterations maxiter. All seven field-value
 %   pairs are optional and can be supplied in different order.
 %
 %   fappx = FUNAPPX_G(f,in_param) recovers function f on the finite
 %   interval [in_param.a,in_param.b], given a guaranteed absolute error
 %   tolerance in_param.abstol, a lower bound of initial number of points
 %   in_param.nlo, an upper bound of initial number of points in_param.nhi,
-%   a cost budget in_param.nmax and max number of iteration
+%   a cost budget in_param.nmax and max number of iterations
 %   in_param.maxiter. If a field is not specified, the default value is
 %   used.
 %
@@ -49,7 +49,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %     in_param.nmax --- when number of points hits the value, iteration
 %     will stop, default value is 1e7
 %
-%     in_param.maxiter --- max number of interation, default value is 1000
+%     in_param.maxiter --- max number of interations, default value is 1000
 %
 %   Output Arguments
 %
@@ -359,7 +359,7 @@ while(max(err) > abstol)
     end;
     if(iter> out_param.maxiter)
         out_param.exit = 2;
-        warning('MATLAB:funappx_g:exceediter',' Iteration exceeds max iteration ')
+        warning('MATLAB:funappx_g:exceediter',' Iteration exceeds max number of iterations ')
         break;
     end;
     if(index(end) >= out_param.nmax)
@@ -559,12 +559,12 @@ out_param.ninit = max(ceil(out_param.nhi*(out_param.nlo/out_param.nhi)^(1/(1+h))
 
 if (~gail.isposint(out_param.maxiter))
     if gail.isposintive(out_param.maxiter)
-        warning('MATLAB:funappx_g:maxiternotint',['Max iteration should be a positive integer.' ...
-            ' Using max iteration as  ', num2str(ceil(out_param.maxiter))])
+        warning('MATLAB:funappx_g:maxiternotint',['Max number of iterations should be a positive integer.' ...
+            ' Using max number of iterations as  ', num2str(ceil(out_param.maxiter))])
         out_param.nmax = ceil(out_param.nmax);
     else
-        warning('MATLAB:funappx_g:budgetisneg',['Max iteration should be a positive integer.' ...
-            ' Using default max iteration as ' int2str(default.maxiter)])
+        warning('MATLAB:funappx_g:budgetisneg',['Max number of iterations should be a positive integer.' ...
+            ' Using max number of iterations as ' int2str(default.maxiter)])
         out_param.nmax = default.nmax;
     end;
 end
