@@ -156,7 +156,7 @@ function [q,out_param] = cubLattice_g(varargin)
 % Estimate the price of an European call with S0=100, K=100, r=sigma^2/2,
 % sigma=0.05 and T=1.
 % 
-% >> f=@(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); d=1; q = cubLattice_g(f,d,1e-4,1e-1,'normal','fudge',@(m) 2^-(2*m),'transform','C1sin')
+% >> f=@(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); d=1; q = cubLattice_g(f,d,1e-4,1e-1,'normal','fudge',@(m) 2.^-(2*m),'transform','C1sin')
 % q = 2.05***
 %
 %
