@@ -18,10 +18,13 @@ if MATLABVERSION >= 8
     run(ut_meanMCBer_g)
 end
 
-
 % cubMC_g
 doctest dt_cubMC_g
 run_handle('Test_cubMC_g')
+
+% cubSolbol_g
+run_handle('RunTestCubatureonGeoAsianCall')
+run_handle('RunTestCubatureonKeister')
 
 % integral_g
 run_handle('workout_integral_g')
