@@ -13,18 +13,9 @@ format short
 doctest dt_meanMC_g_TrafficModel
 run_handle('Test_meanMC_g')
 
-% meanMCBer_g
-if MATLABVERSION >= 8  
-    run(ut_meanMCBer_g)
-end
-
 % cubMC_g
 doctest dt_cubMC_g
 run_handle('Test_cubMC_g')
-
-% cubSolbol_g
-run_handle('RunTestCubatureonGeoAsianCall')
-run_handle('RunTestCubatureonKeister')
 
 % integral_g
 run_handle('workout_integral_g')
@@ -43,6 +34,21 @@ end
 run_handle('RunTestcubMConGeoAsianCall')
 run_handle('RunTestcubMConGaussian')
 run_handle('RunTestcubMConGaussiand1')
+
+% meanMCBer_g paper
+if MATLABVERSION >= 8  
+    run(ut_meanMCBer_g)
+end
+
+% cubSobol_g paper
+run_handle('RunTestCubatureonGeoAsianCall')
+run_handle('RunTestCubatureonKeister')
+
+% cubLattice_g paper
+run_handle('TestFourierTransform');
+run_handle('test_cubLattice');
+run_handle('RunTestCubatureonGeoAsianCall');
+run_handle('RunTestCubatureonKeister')
 
 % Function minimization
 if usejava('jvm')
