@@ -1,5 +1,5 @@
 Guaranteed Automatic Integration Library (GAIL)
-GAIL Version 2.0, Nov 1, 2014.
+GAIL Version 2.1, Feb 14, 2015.
 See LICENSE.m for copyright and disclaimer.
 
 GAIL is a suite of algorithms for integration problems in one and many
@@ -13,8 +13,8 @@ Fred Hickernell, Sou-Cheng Choi, and their collaborators including
 Yuhan Ding, Lan Jiang, Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi 
 Zhang and Xuan Zhou, Department of Applied Mathematics, Illinois 
 Institute of Technology (IIT). We thank the contributions of
-Xincheng Sheng, and the class of Math 573 Reliable 
-Mathematical Software, Fall 2013.
+Xincheng Sheng, and the class of Math 573 Reliable Mathematical 
+Software, Fall 2013.
 
 
 Please cite the following software and papers:
@@ -22,7 +22,7 @@ Please cite the following software and papers:
 
 Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang, and Xuan Zhou, "GAIL: 
-Guaranteed Automatic Integration Library (Version 2.0)" [MATLAB Software],
+Guaranteed Automatic Integration Library (Version 2.1)" [MATLAB Software],
 2014. Available from http://code.google.com/p/gail/
 
 Nicholas Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
@@ -74,7 +74,7 @@ Detailed documentation is available at GAIL_Matlab/Documentation.
 General Usage Notes
 -------------------
 
-GAIL Version 2.0 includes the following eight algorithms:
+GAIL Version 2.1 includes the following eight algorithms:
 
 1.  funappx_g: One-dimensional function approximation on bounded interval
 2.  integral_g:  One-dimensional integration on bounded interval
@@ -106,14 +106,13 @@ Installation Instruction
 
 Alternatively, you could do this:
 
-1.  Download DownloadInstallGail_2_0_0.m and put it where you want
+1.  Download DownloadInstallGail_2_1.m and put it where you want
     GAIL to be installed.
 
 2.  Execute it in MATLAB.
 
-To uninstall GAIL, execute "GAIL_Uninstall".
+To uninstall or reinstall GAIL, execute "GAIL_Uninstall".
 
-To reinstall GAIL, execute "GAIL_Reinstall".
 
 Contact Information
 --------------------
