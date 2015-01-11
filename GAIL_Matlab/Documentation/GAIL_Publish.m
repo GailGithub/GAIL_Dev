@@ -2,6 +2,8 @@ function GAIL_Publish()
 % GAIL_PUBLISH  To generate html files in the GAIL subdirectory Documentation
 oldStatus = get(0,'DefaultFigureVisible');
 set(0, 'DefaultFigureVisible', 'off')
+[GAILPATH,GAILVERSION,PATHNAMESEPARATOR,MATLABVERSION] = GAILstart(0);
+delete(strcat(GAILPATH,'Documentation',PATHNAMESEPARATOR,'html',PATHNAMESEPARATOR,'*.png'))
 publish('GAIL');
 publish('funclist');
 publish('help_funappx_g');
