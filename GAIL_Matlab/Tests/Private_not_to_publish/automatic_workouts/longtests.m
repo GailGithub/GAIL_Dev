@@ -13,6 +13,12 @@ format short
 doctest dt_meanMC_g_TrafficModel
 run_handle('Test_meanMC_g')
 
+% meanMCBer_g
+if MATLABVERSION >= 8  
+    run(ut_meanMCBer_g)
+end
+
+
 % cubMC_g
 doctest dt_cubMC_g
 run_handle('Test_cubMC_g')
