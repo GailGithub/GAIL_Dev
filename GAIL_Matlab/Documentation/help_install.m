@@ -1,4 +1,5 @@
-% 
+%% Installation Instructions
+%
 % 1.  Unzip the contents of the zip file to a directory and maintain the
 %     existing directory and subdirectory structure. (Please note: If you
 %     install into the *toolbox* subdirectory of the MATLAB program
