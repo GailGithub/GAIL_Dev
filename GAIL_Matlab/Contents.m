@@ -15,5 +15,4 @@
 %   Papers         - Papers and slides related to GAIL
 %   Tests          - Unit tests, stress tests, automated tests of GAIL algorithms
 %   ThirdParty     - Open-source tools used but not produced by the GAIL team
-%   Utilities      - Tools for the GAIL package
 %   Workouts       - Workouts of GAIL algorithms
