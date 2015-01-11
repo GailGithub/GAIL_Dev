@@ -14,6 +14,7 @@ addpath(gailp);           % Add GAIL directories and subdirectories
 savepath;                 % Save the changes
 warninfo = warning('query','MATLAB:doc:DocNotInstalled');
 warning('off', warninfo.identifier);
+GAIL_Publish; 
 builddocsearchdb(strcat(GAILPATH,'Documentation',PATHNAMESEPARATOR,'html'));
 warning(warninfo.state, warninfo.identifier);
 fprintf('\nYou can go to help documentation ---> Supplemental Software to learn how to use GAIL.\n');
