@@ -23,7 +23,7 @@ Please cite the following software and papers:
 Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang, and Xuan Zhou, "GAIL: 
 Guaranteed Automatic Integration Library (Version 2.1)" [MATLAB Software],
-2014. Available from http://code.google.com/p/gail/
+2015. Available from http://code.google.com/p/gail/
 
 Nicholas Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
 Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic Algorithms:
