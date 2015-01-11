@@ -111,8 +111,9 @@ Alternatively, you could do this:
 
 2.  Execute it in MATLAB.
 
-To uninstall or reinstall GAIL, execute "GAIL_Uninstall".
+To uninstall GAIL, execute "GAIL_Uninstall".
 
+To reinstall GAIL, execute "GAIL_Install".
 
 Contact Information
 --------------------
