@@ -1,5 +1,6 @@
 function GAIL_Publish()
 % GAIL_PUBLISH  To generate html files in the GAIL subdirectory Documentation
+oldStatus = get(0,'DefaultFigureVisible');
 set(0, 'DefaultFigureVisible', 'off')
 publish('GAIL');
 publish('funclist');
@@ -12,5 +13,5 @@ publish('help_funmin_g');
 publish('help_cubLattice_g');
 publish('help_cubSobol_g');
 publish('help_install');
-set(0, 'DefaultFigureVisible', 'on')
+set(0, 'DefaultFigureVisible', oldStatus)
 end
