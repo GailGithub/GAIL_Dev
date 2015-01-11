@@ -1,4 +1,3 @@
-
 function GAIL_Publish()
 % GAIL_PUBLISH  To generate html files in the GAIL subdirectory Documentation
 oldStatus = get(0,'DefaultFigureVisible');
