@@ -11,5 +11,6 @@ publish('help_cubMC_g');
 publish('help_funmin_g');
 publish('help_cubLattice_g');
 publish('help_cubSobol_g');
+publish('help_install');
 set(0, 'DefaultFigureVisible', 'on')
 end
