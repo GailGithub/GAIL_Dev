@@ -17,7 +17,6 @@ doctest funappxglobal_g
 doctest funappx_g
 doctest funappxtau_g
 doctest funappx01_g
-clear in_param;
 doctest dt_funappxglobal_g
 doctest dt_funappx_g
 doctest funmin_g
