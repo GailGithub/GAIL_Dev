@@ -13,6 +13,9 @@ format short
 doctest dt_meanMC_g_TrafficModel
 run_handle('Test_meanMC_g')
 
+% meanMCBer_g
+run_handle('Test_MeanMCBer_g')
+
 % cubMC_g
 doctest dt_cubMC_g
 run_handle('Test_cubMC_g')
@@ -20,6 +23,10 @@ run_handle('Test_cubMC_g')
 % integral_g
 run_handle('workout_integral_g')
 
+%Workout of function approximation
+if MATLABVERSION >= 8  
+    run(ut_workoutfunappx_g)
+end
 
 %% Papers
 % Cone paper
@@ -60,10 +67,6 @@ if MATLABVERSION >= 8
     run(ut_UniFunMin)
 end
 
-%Workout of function approximation
-if MATLABVERSION >= 8  
-    run(ut_workoutfunappx_g)
-end
 
 time=toc;
 disp(time)
