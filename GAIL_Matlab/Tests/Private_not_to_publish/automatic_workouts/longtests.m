@@ -23,10 +23,17 @@ run_handle('Test_cubMC_g')
 % integral_g
 run_handle('workout_integral_g')
 
-%Workout of function approximation
+% funappx_g
 if MATLABVERSION >= 8  
     run(ut_workoutfunappx_g)
 end
+
+% funmin_g
+run_handle('workout_ErrorXToleranceTest')	
+run_handle('workout_XToleranceTest.m')
+run_handle('workout_ErrorToleranceTest.m')
+run_handle('workout_TwoExtremeTest.m')
+
 
 %% Papers
 % Cone paper
