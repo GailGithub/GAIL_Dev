@@ -1,3 +1,4 @@
+function dt_funappx_g
 %DT_FUNAPPX_G small doctest for funappx_g
 %
 %   >> funappx_g
