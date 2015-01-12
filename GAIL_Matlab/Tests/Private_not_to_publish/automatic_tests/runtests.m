@@ -32,6 +32,8 @@ doctest meanMCBer_g
 doctest cubMCabs_g
 doctest cubLattice_g
 doctest cubSobol_g
+doctest cubLattice_old_g
+doctest cubSobol_old_g
 
 % CALL UNIT TESTS
 [~,~,~,MATLABVERSION]=GAILstart(0);
