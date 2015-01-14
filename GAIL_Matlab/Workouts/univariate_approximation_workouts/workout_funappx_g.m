@@ -103,6 +103,7 @@ end
 %% Save Output
 
 [GAILPATH,~,PATHNAMESEPARATOR] = GAILstart(0);
+if usejava('jvm')
 figure
 subplot(2,1,1);
 plot(1:nrep*n,timeratio,'blue',1:nrep*n,ones(nrep*n,1),'red');
@@ -124,3 +125,4 @@ filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
 save(filename, ...
     'npoints','time','c','timeratio','npointsratio','npointslgratio',...
     'timelgratio')
+end

@@ -3,6 +3,7 @@
 % Files
 %   funclist          - Functions
 %   GAIL              - GAIL
+%   GAILpublish       - To generate html files in the GAIL subdirectory Documentation
 %   help_cubLattice_g - cubLattice_g
 %   help_cubMC_g      - cubMC_g
 %   help_cubSobol_g   - cubSobol_g
@@ -13,4 +14,4 @@
 %   help_meanMCBer_g  - meanMCBer_g
 %
 % Folders
-%   html            - folder of all html files
+%   html              - folder of all html files

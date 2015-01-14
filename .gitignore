@@ -9,5 +9,10 @@
 *.html
 *_raw.m
 *_raw.xml
-GAIL_Matlab/Documentation/html/helpsearch/segments
-GAIL_Matlab/Documentation/html/helpsearch/deletable
+*.gen
+*.si
+*.cfe
+GAIL_Matlab/Documentation/html/helpsearch*
+*.prj
+*.mltbx
+GAIL_Matlab/ThirdParty

@@ -13,12 +13,26 @@ format short
 doctest dt_meanMC_g_TrafficModel
 run_handle('Test_meanMC_g')
 
+% meanMCBer_g
+run_handle('Test_MeanMCBer_g')
+
 % cubMC_g
 doctest dt_cubMC_g
 run_handle('Test_cubMC_g')
 
 % integral_g
 run_handle('workout_integral_g')
+
+% funappx_g
+if MATLABVERSION >= 8  
+    run(ut_workoutfunappx_g)
+end
+
+% funmin_g
+run_handle('workout_ErrorXToleranceTest')	
+run_handle('workout_XToleranceTest.m')
+run_handle('workout_ErrorToleranceTest.m')
+run_handle('workout_TwoExtremeTest.m')
 
 
 %% Papers
@@ -35,6 +49,21 @@ run_handle('RunTestcubMConGeoAsianCall')
 run_handle('RunTestcubMConGaussian')
 run_handle('RunTestcubMConGaussiand1')
 
+% meanMCBer_g paper
+if MATLABVERSION >= 8  
+    run(ut_meanMCBer_g)
+end
+
+% cubSobol_g paper
+run_handle('RunTestCubatureonGeoAsianCall')
+run_handle('RunTestCubatureonKeister')
+
+% cubLattice_g paper
+run_handle('TestFourierTransform');
+run_handle('test_cubLattice');
+run_handle('RunTestCubatureonGeoAsianCall');
+run_handle('RunTestCubatureonKeister')
+
 % Function minimization
 if usejava('jvm')
   run_handle('UniFunMin_Plot_Bump')
@@ -45,10 +74,6 @@ if MATLABVERSION >= 8
     run(ut_UniFunMin)
 end
 
-%Workout of function approximation
-if MATLABVERSION >= 8  
-    run(ut_workoutfunappx_g)
-end
 
 time=toc;
 disp(time)

@@ -63,7 +63,7 @@ function [q,out_param] = cubSobol_g(varargin)
 %     in_param.fudge --- the positive function multiplying the finite 
 %     sum of Fast Walsh coefficients specified in the cone of functions.
 %     For more information about this parameter, refer to the references.
-%     By default it is @(x) 5*2^-x.
+%     By default it is @(x) 5*2.^-x.
 %
 %     in_param.errtype --- this is the tolerance function. There are two
 %     choices, 'max' (chosen by default) which takes
@@ -92,6 +92,13 @@ function [q,out_param] = cubSobol_g(varargin)
 %     out_param.pred_err --- predicted bound on the error based on the cone
 %     condition. If the function lies in the cone, the real error should be
 %     smaller than this predicted error.
+%
+%     out_param.outside_cone --- boolean stating whether we did not meet
+%     the necessary conditions for the integrand to be inside the cone. If
+%     the value is true, the function is outside the cone. Otherwise, we do
+%     not know. Note that this parameter is computed on the transformed
+%     function, not the input function. For more information on the
+%     transforms, check the input parameter in_param.transform.
 %
 %     out_param.time --- time elapsed in seconds when calling cubSobol_g for f.
 % 
@@ -134,7 +141,7 @@ function [q,out_param] = cubSobol_g(varargin)
 % Estimate the price of an European call with S0=100, K=100, r=sigma^2/2,
 % sigma=0.05 and T=1.
 % 
-% >> f=@(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); d=1; q = cubSobol_g(f,d,1e-4,1e-1,'normal','fudge',@(x) 2^-(2*x))
+% >> f=@(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); d=1; q = cubSobol_g(f,d,1e-4,1e-1,'normal','fudge',@(m) 2.^-(2*m))
 % q = 2.05***
 %
 %
@@ -156,8 +163,8 @@ function [q,out_param] = cubSobol_g(varargin)
 %
 %   [2] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang,
 %   Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
-%   "GAIL: Guaranteed Automatic Integration Library (Version 2.0.0)"
-%   [MATLAB Software], 2014. Available from http://code.google.com/p/gail/
+%   "GAIL: Guaranteed Automatic Integration Library (Version 2.1)"
+%   [MATLAB Software], 2015. Available from http://code.google.com/p/gail/
 %
 %   If you find GAIL helpful in your work, please support us by citing the
 %   above paper and software.
@@ -175,9 +182,14 @@ mlag=4; %distance between coefficients summed and those computed
 sobstr=sobolset(out_param.d); %generate a Sobol' sequence
 sobstr=scramble(sobstr,'MatousekAffineOwen'); %scramble it
 Stilde=zeros(out_param.mmax-out_param.mmin+1,1); %initialize sum of DFWT terms
+StildeNC=zeros(out_param.mmax-out_param.mmin+1,mlag); %initialize various sums of DFWT terms for necessary conditions
+cond1=(1+out_param.fudge(mlag))*(1+2*out_param.fudge(mlag-(1:mlag)))./(1+out_param.fudge(mlag-(1:mlag))); % Factors for the necessary conditions
+cond2=(1+out_param.fudge(mlag-(1:mlag)))*(1+2*out_param.fudge(mlag))/(1+out_param.fudge(mlag)); % Factors for the necessary conditions
 errest=zeros(out_param.mmax-out_param.mmin+1,1); %initialize error estimates
 appxinteg=zeros(out_param.mmax-out_param.mmin+1,1); %initialize approximations to integral
 out_param.overbudget=true; %we have overrun our budget, until indicated otherwise
+out_param.outside_cone=false; %we do not know if we are outside the cone, until indicated otherwise
+
 
 %% Initial points and FWT
 out_param.n=2^out_param.mmin; %total number of points to start with
@@ -217,6 +229,10 @@ end
 %% Compute Stilde
 nllstart=2^(out_param.mmin-mlag-1);
 Stilde(1)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
+for i = 1:mlag % Storing the information for the necessary conditions
+    nllstart=2*nllstart;
+    StildeNC(i,i)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
+end
 out_param.pred_err=out_param.fudge(out_param.mmin)*Stilde(1);
 errest(1)=out_param.pred_err;
 
@@ -283,6 +299,15 @@ for m=out_param.mmin+1:out_param.mmax
    nllstart=2^(m-mlag-1);
    meff=m-out_param.mmin+1;
    Stilde(meff)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
+   for i = 1:mlag % Storing the information for the necessary conditions
+       nllstart=2*nllstart;
+       StildeNC(i+meff-1,i)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
+   end
+   % disp((Stilde(meff)*cond1(1:min(meff-1,mlag)))>=(StildeNC(meff-1,1:min(meff-1,mlag)))) % Displaying necessary condition 1 results (1 if satisfied)
+   % disp((StildeNC(meff-1,1:min(meff-1,mlag)).*cond2(1:min(meff-1,mlag)))>=(Stilde(meff)*ones(1,min(meff-1,mlag)))) % Displaying necessary condition 2 results (1 if satisfied)
+   if ~(prod((Stilde(meff)*cond1(1:min(meff-1,mlag)))>=(StildeNC(meff-1,1:min(meff-1,mlag))))*prod((StildeNC(meff-1,1:min(meff-1,mlag)).*cond2(1:min(meff-1,mlag)))>=(Stilde(meff)*ones(1,min(meff-1,mlag)))))
+        out_param.outside_cone=true; % We are outside the cone
+   end
    out_param.pred_err=out_param.fudge(m)*Stilde(meff);
    errest(meff)=out_param.pred_err;
 
@@ -321,7 +346,7 @@ default.reltol  = 1e-1;
 default.density  = 'uniform';
 default.mmin  = 10;
 default.mmax  = 24;
-default.fudge = @(x) 5*2^-x;
+default.fudge = @(m) 5*2.^-m;
 default.errtype  = 'max';
 default.theta  = 1;
 

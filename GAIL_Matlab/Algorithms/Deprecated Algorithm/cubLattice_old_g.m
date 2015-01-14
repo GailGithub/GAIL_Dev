@@ -1,4 +1,4 @@
-function [q,out_param] = cubLattice_g(varargin)
+function [q,out_param] = cubLattice_old_g(varargin)
 %CUBLATTICE_G is a Quasi-Monte Carlo method using rank-1 Lattices cubature
 %over a d-dimensional region to integrate within a specified absolute error 
 %tolerance with guarantees under Fourier coefficients cone decay assumptions.
@@ -82,13 +82,13 @@ function [q,out_param] = cubLattice_g(varargin)
 %     attained without reaching the guaranteed error tolerance. Output 1
 %     means we have overrun our budget.
 % 
-%     out_param.n --- number of points used when calling cubLattice_g for f.
+%     out_param.n --- number of points used when calling cubLattice_old_g for f.
 % 
 %     out_param.pred_err --- predicted bound on the error based on the cone
 %     condition. If the function lies in the cone, the real error should be
 %     smaller than this predicted error.
 % 
-%     out_param.time --- time elapsed in seconds when calling cubLattice_g for f.
+%     out_param.time --- time elapsed in seconds when calling cubLattice_old_g for f.
 % 
 %  Guarantee
 % This algorithm computes the integral of real valued functions in [0,1)^d 
@@ -105,7 +105,7 @@ function [q,out_param] = cubLattice_g(varargin)
 % Example 1:
 % Estimate the integral with integrand f(x) = x1.*x2 in the interval [0,1)^2:
 % 
-% >> f=@(x) x(:,1).*x(:,2); d=2; q = cubLattice_g(f,d,1e-5,'uniform','transform','C1sin')
+% >> f=@(x) x(:,1).*x(:,2); d=2; q = cubLattice_old_g(f,d,1e-5,'uniform','transform','C1sin')
 % q = 0.25***
 % 
 % 
@@ -113,7 +113,7 @@ function [q,out_param] = cubLattice_g(varargin)
 % Estimate the integral with integrand f(x) = x1.^2.*x2.^2.*x3.^2+0.11
 % in the interval R^3 where x1, x2 and x3 are normally distributed:
 % 
-% >> f=@(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2+0.11; d=3; q = cubLattice_g(f,d,1e-3,'normal','transform','C1sin')
+% >> f=@(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2+0.11; d=3; q = cubLattice_old_g(f,d,1e-3,'normal','transform','C1sin')
 % q = 1.1***
 % 
 % 
@@ -121,7 +121,7 @@ function [q,out_param] = cubLattice_g(varargin)
 % Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) in the
 % interval [0,1)^2:
 % 
-% >> f=@(x) exp(-x(:,1).^2-x(:,2).^2); d=2; q = cubLattice_g(f,d,1e-3,'uniform','transform','C1')
+% >> f=@(x) exp(-x(:,1).^2-x(:,2).^2); d=2; q = cubLattice_old_g(f,d,1e-3,'uniform','transform','C1')
 % q = 0.55***
 %
 %
@@ -129,7 +129,7 @@ function [q,out_param] = cubLattice_g(varargin)
 % Estimate the price of an European call with S0=100, K=100, r=sigma^2/2,
 % sigma=0.05 and T=1.
 % 
-% >> f=@(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); d=1; q = cubLattice_g(f,d,1e-4,'normal','fudge',@(x) 2^-(2*x),'transform','C1sin')
+% >> f=@(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); d=1; q = cubLattice_old_g(f,d,1e-4,'normal','fudge',@(x) 2^-(2*x),'transform','C1sin')
 % q = 2.05***
 %
 %
@@ -152,7 +152,7 @@ function [q,out_param] = cubLattice_g(varargin)
 
 tic
 %% Check and initialize parameters
-[f,out_param] = cubLattice_g_param(varargin{:});
+[f,out_param] = cubLattice_old_g_param(varargin{:});
 
 if strcmp(out_param.density,'normal')
    f=@(x) f(gail.stdnorminv(x));
@@ -290,8 +290,8 @@ out_param.time=toc;
 end
 
 
-%% Parsing for the input of cubLattice_g
-function [f, out_param] = cubLattice_g_param(varargin)
+%% Parsing for the input of cubLattice_old_g
+function [f, out_param] = cubLattice_old_g_param(varargin)
 
 % Default parameter values
 default.abstol  = 1e-4;
@@ -303,8 +303,8 @@ default.fudge = @(x) 5*2^-x;
 default.transform = 'Baker';
 
 if numel(varargin)<2
-    help cubLattice_g
-    warning('MATLAB:cubLattice_g:fdnotgiven',...
+    help cubLattice_old_g
+    warning('MATLAB:cubLattice_old_g:fdnotgiven',...
         'At least, function f and dimension d need to be specified. Example for f(x)=x^2:')
     f = @(x) x.^2;
     out_param.f=f;
@@ -312,7 +312,7 @@ if numel(varargin)<2
 else
     f = varargin{1};
     if ~gail.isfcn(f)
-        warning('MATLAB:cubLattice_g:fnotfcn',...
+        warning('MATLAB:cubLattice_old_g:fnotfcn',...
             'The given input f was not a function. Example for f(x)=x^2:')
         f = @(x) x.^2;
         out_param.f=f;
@@ -321,7 +321,7 @@ else
         out_param.f=f;
         d = varargin{2};
         if ~isnumeric(d) || ~gail.isposint(d) || ~(d<251)
-            warning('MATLAB:cubLattice_g:dnotposint',...
+            warning('MATLAB:cubLattice_old_g:dnotposint',...
                 'The dimension d must be a positive integer less than 101. Example for f(x)=x^2:')
             f = @(x) x.^2;
             out_param.f=f;
@@ -340,7 +340,7 @@ if validvarargin
         || ischar(in3{j}) || isstruct(in3{j}) || gail.isfcn(in3{j}));
     end
     if ~validvarargin
-        warning('MATLAB:cubLattice_g:validvarargin','Optional parameters must be numeric or strings. We will use the default optional parameters.')
+        warning('MATLAB:cubLattice_old_g:validvarargin','Optional parameters must be numeric or strings. We will use the default optional parameters.')
     end
     in3=varargin{3};
 end
@@ -389,21 +389,21 @@ end;
 
 % Force error tolerance greater than 0
 if (out_param.abstol <= 0 )
-    warning('MATLAB:cubLattice_g:abstolnonpos',['Error tolerance should be greater than 0.' ...
+    warning('MATLAB:cubLattice_old_g:abstolnonpos',['Error tolerance should be greater than 0.' ...
             ' Using default error tolerance ' num2str(default.abstol)])
     out_param.abstol = default.abstol;
 end
 
 % Force density to be uniform or normal only
 if ~(strcmp(out_param.density,'uniform') || strcmp(out_param.density,'normal') )
-    warning('MATLAB:cubLattice_g:notdensity',['The density can only be uniform or normal.' ...
+    warning('MATLAB:cubLattice_old_g:notdensity',['The density can only be uniform or normal.' ...
             ' Using default density ' num2str(default.density)])
     out_param.density = default.density;
 end
 
 % Force mmin to be integer greater than 0
 if (~gail.isposint(out_param.mmin) || ~(out_param.mmin < out_param.mmax+1))
-    warning('MATLAB:cubLattice_g:lowmmin',['The minimum starting exponent ' ...
+    warning('MATLAB:cubLattice_old_g:lowmmin',['The minimum starting exponent ' ...
             'should be an integer greater than 0 and smaller or equal than the maxium.' ...
             ' Using default mmin ' num2str(default.mmin)])
     out_param.mmin = default.mmin;
@@ -412,21 +412,21 @@ end
 % Force exponent budget number of points be a positive integer greater than
 % or equal to mmin an smaller than 27
 if ~(gail.isposint(out_param.mmax) && out_param.mmax>=out_param.mmin && out_param.mmax<=26)
-    warning('MATLAB:cubLattice_g:wrongmmax',['The maximum exponent for the budget should be an integer smaller or equal to 27.' ...
+    warning('MATLAB:cubLattice_old_g:wrongmmax',['The maximum exponent for the budget should be an integer smaller or equal to 27.' ...
             ' Using default mmax ' num2str(default.mmax)])
     out_param.mmax = default.mmax;
 end
 
 % Force fudge factor to be greater than 0
 if ~((gail.isfcn(out_param.fudge) && (out_param.fudge(1)>0)))
-    warning('MATLAB:cubLattice_g:fudgenonpos',['The fudge factor should be a positive function.' ...
+    warning('MATLAB:cubLattice_old_g:fudgenonpos',['The fudge factor should be a positive function.' ...
             ' Using default fudge factor ' func2str(default.fudge)])
     out_param.fudge = default.fudge;
 end
 
 % Force transform to only be id, Baker, C0, C1 or C1sin
 if ~(strcmp(out_param.transform,'id') || strcmp(out_param.transform,'Baker') || strcmp(out_param.transform,'C0') || strcmp(out_param.transform,'C1') || strcmp(out_param.transform,'C1sin') )
-    warning('MATLAB:cubLattice_g:notdensity',['The periodizing transformations can only be id, Baker, C0, C1 or C1sin.' ...
+    warning('MATLAB:cubLattice_old_g:notdensity',['The periodizing transformations can only be id, Baker, C0, C1 or C1sin.' ...
             ' Using default error tolerance ' num2str(default.transform)])
     out_param.transform = default.transform;
 end
