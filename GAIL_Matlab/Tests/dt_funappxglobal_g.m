@@ -1,3 +1,4 @@
+function dt_funappxglobal_g()
 %DT_FUNAPPXGLOBAL_G small doctest for funappxglobal_g
 %
 %   >> funappxglobal_g
@@ -319,3 +320,4 @@
 %          npoints: 195891
 %       errorbound: 1.4659e-***9
 %
+end
