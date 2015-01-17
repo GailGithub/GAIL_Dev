@@ -1,6 +1,6 @@
 function GAIL_Publish()
+% GAIL_PUBLISH  To generate html files in the GAIL subdirectory Documentation
 if usejava('jvm')
-  % GAIL_PUBLISH  To generate html files in the GAIL subdirectory Documentation
   oldStatus = get(0,'DefaultFigureVisible');
   set(0, 'DefaultFigureVisible', 'off')
   [GAILPATH,GAILVERSION,PATHNAMESEPARATOR,MATLABVERSION] = GAILstart(0);
