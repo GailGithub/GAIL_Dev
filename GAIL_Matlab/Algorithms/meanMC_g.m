@@ -12,13 +12,12 @@ function [tmu,out_param]=meanMC_g(varargin)
 %   Yrand is a function handle that accepts a positive integer input n and
 %   returns an n x 1 vector of IID instances of the random variable Y.
 %
-%   tmu = MEANMC_G(Yrand,abstol,reltol,alpha,fudge,nSig,n1,tbudget,nbudget)
-%   estimates the mean of a random variable Y to within a specified
-%   generalized error tolerance tolfun with guaranteed confidence
-%   level 1-alpha using all ordered parsing inputs abstol, reltol, alpha,
-%   fudge, nSig, n1, tbudget, nbudget.
-%
-%   tmu = MEANMC_G(Yrand,'abstol',abstol,'reltol',reltol,'alpha',alpha,'fudge',fudge,'nSig',nSig,'n1',n1,'tbudget',tbudget,'nbudget',nbudget)
+%   tmu = MEANMC_G(Yrand,abstol,reltol,alpha) estimates the mean of a
+%   random variable Y to within a specified generalized error tolerance
+%   tolfun with guaranteed confidence level 1-alpha using all ordered
+%   parsing inputs abstol, reltol, alpha.
+%   
+%   tmu = MEANMC_G(Yrand,'abstol',abstol,'reltol',reltol,'alpha',alpha)
 %   estimates the mean of a random variable Y to within a specified
 %   generalized error tolerance tolfun with guaranteed confidence level
 %   1-alpha. All the field-value pairs are optional and can be supplied in
@@ -48,6 +47,8 @@ function [tmu,out_param]=meanMC_g(varargin)
 %
 %     in_param.alpha --- the uncertainty, which should be a small positive
 %     percentage. default value is 1%.
+%
+%     Optional input parameters:
 %
 %     in_param.fudge --- standard deviation inflation factor, which should
 %     be larger than 1, default value is 1.2.
@@ -227,9 +228,9 @@ out_param.kurtmax = (out_param.nSig-3)/(out_param.nSig-1) ...
     + ((alpha_sig*out_param.nSig)/(1-alpha_sig))...
     *(1-1/out_param.fudge^2)^2;
 %the upper bound on the modified kurtosis
-eps1 = ncbinv(out_param.n1,alphai,out_param.kurtmax);
+tol1 = ncbinv(out_param.n1,alphai,out_param.kurtmax);
 %tolerance for initial estimation
-out_param.tol(1) = sig0up*eps1;
+out_param.tol(1) = sig0up*tol1;
 %the width of initial confidence interval for the mean
 i=1;
 npcmax = 1e6;%constant to do iteration and mean calculation
@@ -249,20 +250,20 @@ while true
     out_param.hmu(i) = gail.evalmean(Yrand,out_param.n(i),npcmax);%evaluate mean
     nsofar = nsofar+out_param.n(i);
     out_param.nremain = out_param.nremain-out_param.n(i);%update n so far and nremain
-    errtype = 'max';
+    toltype = 'max';
     % error type, see the function 'tolfun' at Algoithms/+gail/ directory
     % for more info
-    theta  = 0;% relative error case
+    theta  = 0;% relative error tolerance case
     deltaplus = (gail.tolfun(out_param.abstol,out_param.reltol,...
-        theta,out_param.hmu(i) - out_param.tol(i),errtype)...
+        theta,out_param.hmu(i) - out_param.tol(i),toltype)...
         +gail.tolfun(out_param.abstol,out_param.reltol,...
-        theta,out_param.hmu(i) + out_param.tol(i),errtype))/2;
+        theta,out_param.hmu(i) + out_param.tol(i),toltype))/2;
     % a combination of tolfun, which used to decide stopping time
     if deltaplus >= out_param.tol(i) % stopping criterion
         deltaminus= (gail.tolfun(out_param.abstol,out_param.reltol,...
-            theta,out_param.hmu(i) - out_param.tol(i),errtype)...
+            theta,out_param.hmu(i) - out_param.tol(i),toltype)...
             -gail.tolfun(out_param.abstol,out_param.reltol,...
-            theta,out_param.hmu(i) + out_param.tol(i),errtype))/2;
+            theta,out_param.hmu(i) + out_param.tol(i),toltype))/2;
         % the other combination of tolfun, which adjust the hmu a bit
         tmu = out_param.hmu(i)+deltaminus;
         break;
@@ -304,7 +305,7 @@ nbe=ceil(exp(2*fzero(BEfun2,logsqrtnCLT)));
 ncb = min(ncheb,nbe);%take the min of two sample sizes.
 end
 
-function eps = ncbinv(n1,alpha1,kurtmax)
+function tol1 = ncbinv(n1,alpha1,kurtmax)
 %This function calculate the reliable upper bound on error when given
 %Chebyshev and Berry-Esseen inequality and sample size n.
 NCheb_inv = 1/sqrt(n1*alpha1);
@@ -323,7 +324,7 @@ logsqrtb_clt=log(sqrt(gail.stdnorminv(1-alpha1/2)/sqrt(n1)));
 %use CLT to get tolerance
 NBE_inv = exp(2*fzero(BEfun,logsqrtb_clt));
 %use fzero to get Berry-Esseen tolerance
-eps = min(NCheb_inv,NBE_inv);
+tol1 = min(NCheb_inv,NBE_inv);
 %take the min of Chebyshev and Berry Esseen tolerance
 end
 
