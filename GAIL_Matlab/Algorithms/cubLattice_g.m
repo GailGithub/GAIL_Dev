@@ -98,24 +98,31 @@ function [q,out_param] = cubLattice_g(varargin)
 %
 %     q --- the estimated value of the integral.
 % 
-%     out_param.overbudget --- boolean stating whether the max budget is
-%     attained without reaching the guaranteed error tolerance. Output 1
-%     means we have overrun our budget.
-% 
 %     out_param.n --- number of points used when calling cubLattice_g for f.
 % 
 %     out_param.pred_err --- predicted bound on the error based on the cone
 %     condition. If the function lies in the cone, the real error should be
 %     smaller than this predicted error.
-%
-%     out_param.outside_cone --- boolean stating whether we did not meet
-%     the necessary conditions for the integrand to be inside the cone. If
-%     the value is true, the function is outside the cone. Otherwise, we do
-%     not know. Note that this parameter is computed on the transformed
-%     function, not the input function. For more information on the
-%     transforms, check the input parameter in_param.transform.
 % 
 %     out_param.time --- time elapsed in seconds when calling cubLattice_g for f.
+%
+%     out_param.exit --- this is a number defining the conditions of
+%     success or failure satisfied when finishing the algorithm. The 
+%     algorithm is considered successful (with out_param.exit == 1) if no 
+%     other flags arise warning that the results are certainly not 
+%     guaranteed. The initial value is 1 and the final value of this
+%     parameter is encoded as follows:
+%     
+%                       + 2^1    If reaching overbudget. It states whether
+%                       the max budget is attained without reaching the
+%                       guaranteed error tolerance.
+%      
+%                       + 2^2    If the function lies outside the cone. In
+%                       this case, results are not guaranteed. Note that
+%                       this parameter is computed on the transformed
+%                       function, not the input function. For more
+%                       information on the transforms, check the input
+%                       parameter in_param.transfrom.
 % 
 %  Guarantee
 % This algorithm computes the integral of real valued functions in [0,1)^d 
@@ -210,8 +217,8 @@ cond1=(1+out_param.fudge(mlag))*(1+2*out_param.fudge(mlag-(1:mlag)))./(1+out_par
 cond2=(1+out_param.fudge(mlag-(1:mlag)))*(1+2*out_param.fudge(mlag))/(1+out_param.fudge(mlag)); % Factors for the necessary conditions
 errest=zeros(out_param.mmax-out_param.mmin+1,1); %initialize error estimates
 appxinteg=zeros(out_param.mmax-out_param.mmin+1,1); %initialize approximations to integral
-out_param.overbudget=true; %we have overrun our budget, until indicated otherwise
-out_param.outside_cone=false; %we do not know if we are outside the cone, until indicated otherwise
+out_param.exit=true; %we start the algorithm with all warning flags down
+outside_cone=false; %internal flag that becomes true if the function lies outside the cone
 
 %% Initial points and FWT
 out_param.n=2^out_param.mmin; %total number of points to start with
@@ -270,11 +277,12 @@ deltaminus = 0.5*(gail.tolfun(out_param.abstol,...
     out_param.theta,abs(q+errest(1)),out_param.errtype));
 
 if out_param.pred_err <= deltaplus
-   out_param.overbudget=false;
    q=q+deltaminus;
    appxinteg(1)=q;
    out_param.time=toc;
    return
+elseif out_param.mmin == out_param.mmax % We are on our max budget and did not meet the error condition => overbudget
+       out_param.exit = out_param.exit+2^1;
 end
 
 %% Loop over m
@@ -333,8 +341,9 @@ for m=out_param.mmin+1:out_param.mmax
    end
    % disp((Stilde(meff)*cond1(1:min(meff-1,mlag)))>=(StildeNC(meff-1,1:min(meff-1,mlag)))) % Displaying necessary condition 1 results (1 if satisfied)
    % disp((StildeNC(meff-1,1:min(meff-1,mlag)).*cond2(1:min(meff-1,mlag)))>=(Stilde(meff)*ones(1,min(meff-1,mlag)))) % Displaying necessary condition 2 results (1 if satisfied)
-   if ~(prod((Stilde(meff)*cond1(1:min(meff-1,mlag)))>=(StildeNC(meff-1,1:min(meff-1,mlag))))*prod((StildeNC(meff-1,1:min(meff-1,mlag)).*cond2(1:min(meff-1,mlag)))>=(Stilde(meff)*ones(1,min(meff-1,mlag)))))
-        out_param.outside_cone=true; % We are outside the cone
+   if ~(prod((Stilde(meff)*cond1(1:min(meff-1,mlag)))>=(StildeNC(meff-1,1:min(meff-1,mlag))))*prod((StildeNC(meff-1,1:min(meff-1,mlag)).*cond2(1:min(meff-1,mlag)))>=(Stilde(meff)*ones(1,min(meff-1,mlag))))) && outside_cone == false
+        outside_cone = true; % We are outside the cone
+        out_param.exit = out_param.exit + 2^2;
    end
    out_param.pred_err=out_param.fudge(m)*Stilde(meff);
    errest(meff)=out_param.pred_err;
@@ -353,13 +362,13 @@ for m=out_param.mmin+1:out_param.mmax
         out_param.theta,abs(q+errest(meff)),out_param.errtype));
 
    if out_param.pred_err <= deltaplus
-      out_param.overbudget=false;
       q=q+deltaminus;
       appxinteg(meff)=q;
       out_param.time=toc;
       return
+   elseif m == out_param.mmax % We are on our max budget and did not meet the error condition => overbudget
+       out_param.exit = out_param.exit+2^1;
    end
-   
 end
 out_param.time=toc;
 end
