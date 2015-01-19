@@ -10,7 +10,7 @@ cd /home/lantoni/GAIL_tests/repo/gail-development/
 # MATLAB
 # Set the directory for running our matlab test
 # Run the file that installs GAIL and run the tests. The output files are in OutputFiles. We put all togehter since there is a permission not letting us install the path
-cd /home/lantoni/GAIL_tests/repo/gail-development/GAIL_Matlab/Tests/Private_not_to_publish/automatic_tests/
+cd /home/lantoni/GAIL_tests/repo/gail-development/GAIL_Matlab/Tests/Developers_only/automatic_tests/
 # /export/apps/matlab/R2013a/bin/matlab -nojvm < automatictests.m > /home/lantoni/GAIL_tests/test_results.txt Former line
 /export/apps/matlab/R2013a/bin/matlab -nojvm < automatictests.m
 
