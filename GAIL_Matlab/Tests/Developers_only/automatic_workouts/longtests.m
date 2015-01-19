@@ -14,7 +14,7 @@ doctest dt_meanMC_g_TrafficModel
 run_handle('Test_meanMC_g')
 
 % meanMCBer_g
-run_handle('Test_MeanMCBer_g')
+run_handle('Test_meanMCBer_g')
 
 % cubMC_g
 doctest dt_cubMC_g
