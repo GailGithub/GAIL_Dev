@@ -1,8 +1,5 @@
 % MCQMC2014 cubLattice_p paper
 %
-% Folders: Images/
-%    - Scripts for the images for the paper and example
-%
 % Files
 %
 %	RunTestCubatureonGeoAsianCall.m - Runs the tests for the geometric Brownian motion Asian option call and creates a file with all the results

@@ -16,7 +16,7 @@
 %   UniFunMin_test_XTolerance
 %           - Generate Table 3.2 in the thesis for Bump test functions with
 %             epsilon=0 & delta=10^(-6).
-%   UniFunMin_test_Error&XTolerance
+%   UniFunMin_test_Error_XTolerance
 %           - Generate Table 3.3 in the thesis for Bump test functions with
 %             epsilon=10^(-8) & delta=10^(-6).
 %   UniFunMin_test_TwoExtreme

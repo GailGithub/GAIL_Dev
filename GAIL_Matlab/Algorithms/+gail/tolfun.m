@@ -1,4 +1,4 @@
-function eps = tolfun(abstol,reltol,theta,mu,errtype)
+function tol = tolfun(abstol,reltol,theta,mu,toltype)
 % TOLFUN generalized error tolerance function.
 %
 % Input Parameters:
@@ -6,14 +6,14 @@ function eps = tolfun(abstol,reltol,theta,mu,errtype)
 % reltol --- relative error tolerance
 % theta --- parameter in 'theta' case
 % mu --- true mean
-% errtype --- different option of tolerance function
+% toltype --- different options of tolerance function
 
-switch errtype
+switch toltype
     case 'comb' % the linear combination of two tolerances
-        %theta=0---absolute error
-        %theta=1---relative error
-        eps  = theta*abstol+(1-theta)*reltol*abs(mu);
+        %theta=0---relative error tolarance
+        %theta=1---absolute error tolerance
+        tol  = theta*abstol+(1-theta)*reltol*abs(mu);
     case 'max' % the max case
-        eps  = max(abstol,reltol*abs(mu));
+        tol  = max(abstol,reltol*abs(mu));
 end
 end

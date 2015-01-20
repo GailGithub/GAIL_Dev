@@ -15,14 +15,14 @@ function [Q,out_param] = cubMC_g(varargin)
 %   row corresponds to the lower limits and the second row corresponds to
 %   the upper limits.
 % 
-%   Q = CUBMC_G(f,hyperbox,measure,abstol,reltol,alpha,fudge,nSig,n1,tbudget,nbudget,flag)
+%   Q = CUBMC_G(f,hyperbox,measure,abstol,reltol,alpha)
 %   estimates the integral of function f over hyperbox to within a 
 %   specified generalized error tolerance tolfun with guaranteed confidence
 %   level 1-alpha using all ordered parsing inputs f, hyperbox, measure, 
 %   abstol, reltol, alpha, fudge, nSig, n1, tbudget, nbudget, flag. The 
 %   input f and hyperbox are required and others are optional.
 % 
-%   Q = CUBMC_G(f,hyperbox,'measure','uniform','abstol',abstol,'reltol',reltol,'alpha',alpha,'fudge',fudge,'nSig',nSig,'n1',n1,'tbudget',tbudget,'nbudget',nbudget,'flag',flag)
+%   Q = CUBMC_G(f,hyperbox,'measure','uniform','abstol',abstol,'reltol',reltol,'alpha',alpha)
 %   estimates the integral of f over hyperbox to within a specified 
 %   generalized error tolerance tolfun with guaranteed confidence level
 %   1-alpha. All the field-value pairs are optional and can be supplied in 
@@ -52,6 +52,8 @@ function [Q,out_param] = cubMC_g(varargin)
 % 
 %     in_param.alpha --- the uncertainty, the default value is 1%.
 % 
+%     Optional input parameters:
+%
 %     in_param.fudge --- the standard deviation inflation factor, the
 %     default value is 1.2.
 %
@@ -192,8 +194,8 @@ function [Q,out_param] = cubMC_g(varargin)
 %
 %   [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 %   Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou, "GAIL:
-%   Guaranteed Automatic Integration Library (Version 2.0)" [MATLAB
-%   Software], 2014. Available from http://code.google.com/p/gail/
+%   Guaranteed Automatic Integration Library (Version 2.1)" [MATLAB
+%   Software], 2015. Available from http://code.google.com/p/gail/
 %
 %   If you find GAIL helpful in your work, please support us by citing the
 %   above paper and software.

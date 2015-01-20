@@ -7,31 +7,26 @@ function [fappx,out_param]=funappx_g(varargin)
 %   = f(x) should accept a vector argument x and return a vector y of
 %   function values that is of the same size as x.
 %
-%   fappx = FUNAPPX_G(f,a,b,abstol,nlo,nhi,nmax,maxiter) for a given
-%   function f and the ordered input parameters that define the finite
-%   interval [a,b], a guaranteed absolute error tolerance abstol, a lower
-%   bound of initial number of points nlo, an upper bound of initial number
-%   of points nhi, a cost budget nmax and max number of iterations maxiter.
+%   fappx = FUNAPPX_G(f,a,b,abstol) for a given function f and the ordered
+%   input parameters that define the finite interval [a,b], and a
+%   guaranteed absolute error tolerance abstol.
 %
-%   fappx = FUNAPPX_G(f,'a',a,'b',b,'abstol',abstol,'nlo',nlo,'nhi',nhi,'nmax',nmax,'maxiter',maxiter)
-%   recovers function f on the finite interval [a,b], given a guaranteed
-%   absolute error tolerance abstol, a lower bound of initial number of
-%   points nlo, an upper bound of initial number of points nhi, a cost
-%   budget nmax and max number of iterations maxiter. All seven field-value
-%   pairs are optional and can be supplied in different order.
+%   fappx = FUNAPPX_G(f,'a',a,'b',b,'abstol',abstol) recovers function f on
+%   the finite interval [a,b], given a guaranteed absolute error tolerance
+%   abstol. All four field-value pairs are optional and can be supplied in
+%   different order.
 %
 %   fappx = FUNAPPX_G(f,in_param) recovers function f on the finite
 %   interval [in_param.a,in_param.b], given a guaranteed absolute error
-%   tolerance in_param.abstol, a lower bound of initial number of points
-%   in_param.nlo, an upper bound of initial number of points in_param.nhi,
-%   a cost budget in_param.nmax and max number of iterations
-%   in_param.maxiter. If a field is not specified, the default value is
-%   used.
+%   tolerance in_param.abstol. If a field is not specified, the default
+%   value is used.
 %
 %   [fappx, out_param] = FUNAPPX_G(f,...) returns an approximated function
 %   fappx and an output structure out_param.
 %
 %   Input Arguments
+%
+%     f --- input function
 %
 %     in_param.a --- left end point of interval, default value is 0
 %
@@ -39,6 +34,8 @@ function [fappx,out_param]=funappx_g(varargin)
 %
 %     in_param.abstol --- guaranteed absolute error tolerance, default
 %     value is 1e-6
+%
+%  Opitional Input Arguments (Recommended not to change very often) 
 %
 %     in_param.nlo --- lower bound of initial number of points we used,
 %     default value is 10
@@ -55,18 +52,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %
 %     fappx --- approximated function
 %
-%     out_param.ninit --- initial number of points we use for each sub
-%     interval
-%
-%     out_param.npoints --- number of points we need to reach the
-%     guaranteed absolute error tolerance
-%
-%     out_param.errest --- an estimation of the absolute error for the
-%     approximation
-%
-%     out_param.nstar --- final value of the parameter defining the cone of
-%     functions for which this algorithm is guaranteed for each
-%     subinterval; nstar = ninit-2 initially
+%     out_param.f --- input function
 %
 %     out_param.a --- left end point of interval
 %
@@ -83,12 +69,25 @@ function [fappx,out_param]=funappx_g(varargin)
 %
 %     out_param.maxiter --- max number of iterations
 %
-%     out_param.iter --- number of iterations
+%     out_param.ninit --- initial number of points we use for each sub
+%     interval
 %
 %     out_param.exit --- the state of program when exiting
 %              0  Success
 %              1  Nnumber of points used is greater than out_param.nmax
 %              2  Nnumber of iterations is greater than out_param.maxiter
+%
+%     out_param.iter --- number of iterations
+%
+%     out_param.npoints --- number of points we need to reach the
+%     guaranteed absolute error tolerance
+%
+%     out_param.errest --- an estimation of the absolute error for the
+%     approximation
+%
+%     out_param.nstar --- final value of the parameter defining the cone of
+%     functions for which this algorithm is guaranteed for each
+%     subinterval; nstar = ninit-2 initially
 %
 %  Guarantee
 %
@@ -206,11 +205,10 @@ function [fappx,out_param]=funappx_g(varargin)
 %   Yizhi Zhang, The Cost of Deterministic, Adaptive, Automatic Algorithms:
 %   Cones, Not Balls, Journal of Complexity 30 (2014), pp. 21-45.
 %
-%
 %   [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
 %   Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
-%   "GAIL: Guaranteed Automatic Integration Library (Version 2.0)" [MATLAB
-%   Software], 2014. Available from http://code.google.com/p/gail/
+%   "GAIL: Guaranteed Automatic Integration Library (Version 2.1)" [MATLAB
+%   Software], 2015. Available from http://code.google.com/p/gail/
 %
 %   If you find GAIL helpful in your work, please support us by citing the
 %   above paper and software.
@@ -354,6 +352,7 @@ while(max(err) > abstol)
         indexnew = [index(1:end-1); indexbeg];
         indexnew = indexnew(:)';
         index = unique([indexnew index(end)]);
+        counterr = sum(err > abstol);
     else
         break;
     end;
@@ -362,7 +361,7 @@ while(max(err) > abstol)
         warning('MATLAB:funappx_g:exceediter',' Iteration exceeds max number of iterations ')
         break;
     end;
-    if(index(end) >= out_param.nmax)
+    if(index(end) + counterr*(ninit - 1) >= out_param.nmax)
         out_param.exit = 1;
         warning('MATLAB:funappx_g:exceedbudget',' funappx_g attempted to exceed the cost budget. The answer may be unreliable.')
         break;

@@ -120,15 +120,14 @@ function [q,out_param] = integral_g(varargin)
 %
 %  References
 %
-%   [1]  N. Clancy, Y. Ding, C. Hamilton, F. J. Hickernell, and Y. Zhang, 
-%   The complexity of guaranteed automatic algorithms: Cones, not
-%   balls, Journal of Complexity 2013, to appear, DOI
-%   10.1016/j.jco.2013.09.002.
+%   [1]  Nick Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
+%   Yizhi Zhang, The Cost of Deterministic, Adaptive, Automatic Algorithms:
+%   Cones, Not Balls, Journal of Complexity 30 (2014), pp. 21-45.
 %
 %   [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
-%   and Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library
-%   (Version 1.3.0)" [MATLAB Software], 2014. Available from
-%   http://code.google.com/p/gail/
+%   Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
+%   "GAIL: Guaranteed Automatic Integration Library (Version 2.1)" [MATLAB
+%   Software], 2015. Available from http://code.google.com/p/gail/
 %
 %   If you find GAIL helpful in your work, please support us by citing
 %   the above paper and software.

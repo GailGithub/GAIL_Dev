@@ -14,14 +14,14 @@ function [q,out_param] = cubSobol_g(varargin)
 %   is the dimension in which the function f is defined. Given the
 %   construction of Sobol', d must be a positive integer with 1<=d<=1111.
 %
-%   q = CUBSOBOL_G(f,d,abstol,reltol,density,mmin,mmax,fudge,errtype,theta)
+%   q = CUBSOBOL_G(f,d,abstol,reltol,measure,mmin,mmax,fudge,toltype,theta)
 %   estimates the integral of f over a d-dimensional region. The answer
 %   is given within the generalized error tolerance tolfun. All parameters
 %   should be input in the order specified above. If an input is not specified,
 %   the default value is used. Note that if an input is not specified,
 %   the remaining tail cannot be specified either.
 %
-%   q = CUBSOBOL_G(f,d,'abstol',abstol,'reltol',reltol,'density',density,'mmin',mmin,'mmax',mmax,'fudge',fudge,'errtype',errtype,'theta',theta)
+%   q = CUBSOBOL_G(f,d,'abstol',abstol,'reltol',reltol,'measure',measure,'mmin',mmin,'mmax',mmax,'fudge',fudge,'toltype',toltype,'theta',theta)
 %   estimates the integral of f over a d-dimensional region. The answer
 %   is given within the generalized error tolerance tolfun. All the field-value
 %   pairs are optional and can be supplied with any order. If an input is not
@@ -46,11 +46,13 @@ function [q,out_param] = cubSobol_g(varargin)
 %     in_param.reltol --- the relative error tolerance, which should be
 %     in (0,1]. Default value is 1e-1.
 %
-%     in_param.density --- for f(x)*mu(dx), we can define mu(dx) to be the
-%     density function of a uniformly distributed random variable in [0,1)^d
+%     in_param.measure --- for f(x)*mu(dx), we can define mu(dx) to be the
+%     measure of a uniformly distributed random variable in [0,1)^d
 %     or normally distributed with covariance matrix I_d. By default it 
 %     is 'uniform'. The only possible values are 'uniform' or 'normal'.
-%
+% 
+%     Optional input parameters:
+% 
 %     in_param.mmin --- the minimum number of points to start is 2^mmin. The
 %     cone condition on the Fourier coefficients decay requires a minimum
 %     number of points to start. The advice is to consider at least mmin=10.
@@ -65,14 +67,14 @@ function [q,out_param] = cubSobol_g(varargin)
 %     For more information about this parameter, refer to the references.
 %     By default it is @(x) 5*2.^-x.
 %
-%     in_param.errtype --- this is the tolerance function. There are two
+%     in_param.toltype --- this is the tolerance function. There are two
 %     choices, 'max' (chosen by default) which takes
 %     max(abstol,reltol*|integral(f)|) and 'comb' which is a linear combination
 %     theta*abstol+(1-theta)*reltol*|integral(f)|. Theta is another 
 %     parameter that can be specified (see below).
 % 
-%     in_param.theta --- this input is parametrizing the errtype 
-%     'comb'. Thus, it is only afecting when the errtype
+%     in_param.theta --- this input is parametrizing the toltype 
+%     'comb'. Thus, it is only afecting when the toltype
 %     chosen is 'comb'. It stablishes the linear combination weight
 %     between the absolute and relative tolerances
 %     theta*abstol+(1-theta)*reltol*|integral(f)|. Note that for theta=1, 
@@ -83,24 +85,31 @@ function [q,out_param] = cubSobol_g(varargin)
 %
 %     q --- the estimated value of the integral.
 %
-%     out_param.overbudget --- boolean stating whether the max budget is
-%     attained without reaching the guaranteed error tolerance. Output 1
-%     means we have overrun our budget.
-%
 %     out_param.n --- number of points used when calling cubSobol_g for f.
 %
 %     out_param.pred_err --- predicted bound on the error based on the cone
 %     condition. If the function lies in the cone, the real error should be
 %     smaller than this predicted error.
 %
-%     out_param.outside_cone --- boolean stating whether we did not meet
-%     the necessary conditions for the integrand to be inside the cone. If
-%     the value is true, the function is outside the cone. Otherwise, we do
-%     not know. Note that this parameter is computed on the transformed
-%     function, not the input function. For more information on the
-%     transforms, check the input parameter in_param.transform.
-%
 %     out_param.time --- time elapsed in seconds when calling cubSobol_g for f.
+%
+%     out_param.exit --- this is a number defining the conditions of
+%     success or failure satisfied when finishing the algorithm. The 
+%     algorithm is considered successful (with out_param.exit == 1) if no 
+%     other flags arise warning that the results are certainly not 
+%     guaranteed. The initial value is 1 and the final value of this
+%     parameter is encoded as follows:
+%     
+%                       + 2^1    If reaching overbudget. It states whether
+%                       the max budget is attained without reaching the
+%                       guaranteed error tolerance.
+%      
+%                       + 2^2    If the function lies outside the cone. In
+%                       this case, results are not guaranteed. Note that
+%                       this parameter is computed on the transformed
+%                       function, not the input function. For more
+%                       information on the transforms, check the input
+%                       parameter in_param.transfrom.
 % 
 %  Guarantee
 % This algorithm computes the integral of real valued functions in [0,1)^d 
@@ -117,7 +126,7 @@ function [q,out_param] = cubSobol_g(varargin)
 % Example 1:
 % Estimate the integral with integrand f(x) = x1.*x2 in the interval [0,1)^2:
 %
-% >> f=@(x) x(:,1).*x(:,2); d=2; q = cubSobol_g(f,d,1e-5,1e-1,'uniform')
+% >> f = @(x) x(:,1).*x(:,2); d = 2; q = cubSobol_g(f,d,1e-5,1e-1,'uniform')
 % q = 0.25***
 % 
 % 
@@ -125,7 +134,7 @@ function [q,out_param] = cubSobol_g(varargin)
 % Estimate the integral with integrand f(x) = x1.^2.*x2.^2.*x3.^2+0.11
 % in the interval R^3 where x1, x2 and x3 are normally distributed:
 %
-% >> f=@(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2+0.11; d=3; q = cubSobol_g(f,d,1e-3,1e-3,'normal')
+% >> f = @(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2+0.11; d = 3; q = cubSobol_g(f,d,1e-3,1e-3,'normal')
 % q = 1.1***
 % 
 %
@@ -133,7 +142,7 @@ function [q,out_param] = cubSobol_g(varargin)
 % Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) in the
 % interval [0,1)^2:
 % 
-% >> f=@(x) exp(-x(:,1).^2-x(:,2).^2); d=2; q = cubSobol_g(f,d,1e-3,1e-1,'uniform')
+% >> f = @(x) exp(-x(:,1).^2-x(:,2).^2); d = 2; q = cubSobol_g(f,d,1e-3,1e-1,'uniform')
 % q = 0.55***
 %
 %
@@ -141,7 +150,7 @@ function [q,out_param] = cubSobol_g(varargin)
 % Estimate the price of an European call with S0=100, K=100, r=sigma^2/2,
 % sigma=0.05 and T=1.
 % 
-% >> f=@(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); d=1; q = cubSobol_g(f,d,1e-4,1e-1,'normal','fudge',@(m) 2^-(2*m))
+% >> f = @(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); d = 1; q = cubSobol_g(f,d,1e-4,1e-1,'normal','fudge',@(m) 2.^-(2*m))
 % q = 2.05***
 %
 %
@@ -149,7 +158,7 @@ function [q,out_param] = cubSobol_g(varargin)
 % Estimate the integral with integrand f(x) = 8*x1.*x2.*x3.*x4.*x5 in the interval
 % [0,1)^5 with pure absolute error 1e-5.
 % 
-% >> f=@(x) 8*prod(x,2); d=5; q = cubSobol_g(f,d,1e-5,'errtype','comb','theta',1)
+% >> f = @(x) 8*prod(x,2); d = 5; q = cubSobol_g(f,d,1e-5,'toltype','comb','theta',1)
 % q = 0.25***
 %
 %
@@ -163,8 +172,8 @@ function [q,out_param] = cubSobol_g(varargin)
 %
 %   [2] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang,
 %   Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
-%   "GAIL: Guaranteed Automatic Integration Library (Version 2.0.0)"
-%   [MATLAB Software], 2014. Available from http://code.google.com/p/gail/
+%   "GAIL: Guaranteed Automatic Integration Library (Version 2.1)"
+%   [MATLAB Software], 2015. Available from http://code.google.com/p/gail/
 %
 %   If you find GAIL helpful in your work, please support us by citing the
 %   above paper and software.
@@ -173,7 +182,7 @@ tic
 %% Check and initialize parameters
 [f,out_param] = cubSobol_g_param(varargin{:});
 
-if strcmp(out_param.density,'normal')
+if strcmp(out_param.measure,'normal')
    f=@(x) f(gail.stdnorminv(x));
 end
 
@@ -187,8 +196,8 @@ cond1=(1+out_param.fudge(mlag))*(1+2*out_param.fudge(mlag-(1:mlag)))./(1+out_par
 cond2=(1+out_param.fudge(mlag-(1:mlag)))*(1+2*out_param.fudge(mlag))/(1+out_param.fudge(mlag)); % Factors for the necessary conditions
 errest=zeros(out_param.mmax-out_param.mmin+1,1); %initialize error estimates
 appxinteg=zeros(out_param.mmax-out_param.mmin+1,1); %initialize approximations to integral
-out_param.overbudget=true; %we have overrun our budget, until indicated otherwise
-out_param.outside_cone=false; %we do not know if we are outside the cone, until indicated otherwise
+out_param.exit=true; %we start the algorithm with all warning flags down
+outside_cone=false; %internal flag that becomes true if the function lies outside the cone
 
 
 %% Initial points and FWT
@@ -238,19 +247,20 @@ errest(1)=out_param.pred_err;
 
 deltaplus = 0.5*(gail.tolfun(out_param.abstol,...
     out_param.reltol,out_param.theta,abs(q-errest(1)),...
-    out_param.errtype)+gail.tolfun(out_param.abstol,out_param.reltol,...
-    out_param.theta,abs(q+errest(1)),out_param.errtype));
+    out_param.toltype)+gail.tolfun(out_param.abstol,out_param.reltol,...
+    out_param.theta,abs(q+errest(1)),out_param.toltype));
 deltaminus = 0.5*(gail.tolfun(out_param.abstol,...
     out_param.reltol,out_param.theta,abs(q-errest(1)),...
-    out_param.errtype)-gail.tolfun(out_param.abstol,out_param.reltol,...
-    out_param.theta,abs(q+errest(1)),out_param.errtype));
+    out_param.toltype)-gail.tolfun(out_param.abstol,out_param.reltol,...
+    out_param.theta,abs(q+errest(1)),out_param.toltype));
 
 if out_param.pred_err <= deltaplus
-   out_param.overbudget=false;
    q=q+deltaminus;
    appxinteg(1)=q;
    out_param.time=toc;
    return
+elseif out_param.mmin == out_param.mmax % We are on our max budget and did not meet the error condition => overbudget
+       out_param.exit = out_param.exit+2^1;
 end
 
 %% Loop over m
@@ -305,8 +315,9 @@ for m=out_param.mmin+1:out_param.mmax
    end
    % disp((Stilde(meff)*cond1(1:min(meff-1,mlag)))>=(StildeNC(meff-1,1:min(meff-1,mlag)))) % Displaying necessary condition 1 results (1 if satisfied)
    % disp((StildeNC(meff-1,1:min(meff-1,mlag)).*cond2(1:min(meff-1,mlag)))>=(Stilde(meff)*ones(1,min(meff-1,mlag)))) % Displaying necessary condition 2 results (1 if satisfied)
-   if ~(prod((Stilde(meff)*cond1(1:min(meff-1,mlag)))>=(StildeNC(meff-1,1:min(meff-1,mlag))))*prod((StildeNC(meff-1,1:min(meff-1,mlag)).*cond2(1:min(meff-1,mlag)))>=(Stilde(meff)*ones(1,min(meff-1,mlag)))))
-        out_param.outside_cone=true; % We are outside the cone
+   if ~(prod((Stilde(meff)*cond1(1:min(meff-1,mlag)))>=(StildeNC(meff-1,1:min(meff-1,mlag))))*prod((StildeNC(meff-1,1:min(meff-1,mlag)).*cond2(1:min(meff-1,mlag)))>=(Stilde(meff)*ones(1,min(meff-1,mlag))))) && outside_cone == false
+        outside_cone = true; % We are outside the cone
+        out_param.exit = out_param.exit + 2^2;
    end
    out_param.pred_err=out_param.fudge(m)*Stilde(meff);
    errest(meff)=out_param.pred_err;
@@ -317,19 +328,20 @@ for m=out_param.mmin+1:out_param.mmax
    
     deltaplus = 0.5*(gail.tolfun(out_param.abstol,...
         out_param.reltol,out_param.theta,abs(q-errest(meff)),...
-        out_param.errtype)+gail.tolfun(out_param.abstol,out_param.reltol,...
-        out_param.theta,abs(q+errest(meff)),out_param.errtype));
+        out_param.toltype)+gail.tolfun(out_param.abstol,out_param.reltol,...
+        out_param.theta,abs(q+errest(meff)),out_param.toltype));
     deltaminus = 0.5*(gail.tolfun(out_param.abstol,...
         out_param.reltol,out_param.theta,abs(q-errest(meff)),...
-        out_param.errtype)-gail.tolfun(out_param.abstol,out_param.reltol,...
-        out_param.theta,abs(q+errest(meff)),out_param.errtype));
+        out_param.toltype)-gail.tolfun(out_param.abstol,out_param.reltol,...
+        out_param.theta,abs(q+errest(meff)),out_param.toltype));
    
    if out_param.pred_err <= deltaplus
-      out_param.overbudget=false;
       q=q+deltaminus;
       appxinteg(meff)=q;
       out_param.time=toc;
       return
+   elseif m == out_param.mmax % We are on our max budget and did not meet the error condition => overbudget
+      out_param.exit = out_param.exit+2^1;
    end
 
 end
@@ -341,13 +353,15 @@ end
 function [f, out_param] = cubSobol_g_param(varargin)
 
 % Default parameter values
+default.d = 1;
+default.hyperbox = [zeros(1,default.d);ones(1,default.d)];% default hyperbox
 default.abstol  = 1e-4;
 default.reltol  = 1e-1;
-default.density  = 'uniform';
+default.measure  = 'uniform';
 default.mmin  = 10;
 default.mmax  = 24;
 default.fudge = @(m) 5*2.^-m;
-default.errtype  = 'max';
+default.toltype  = 'max';
 default.theta  = 1;
 
 if numel(varargin)<2
@@ -403,11 +417,11 @@ end
 if ~validvarargin   
     out_param.abstol = default.abstol;
     out_param.reltol = default.reltol;
-    out_param.density = default.density;
+    out_param.measure = default.measure;
     out_param.mmin = default.mmin;
     out_param.mmax = default.mmax;  
     out_param.fudge = default.fudge;
-    out_param.errtype = default.errtype;
+    out_param.toltype = default.toltype;
     out_param.theta = default.theta;
 else
     p = inputParser;
@@ -416,12 +430,12 @@ else
     if isnumeric(in3) || ischar(in3)
         addOptional(p,'abstol',default.abstol,@isnumeric);
         addOptional(p,'reltol',default.reltol,@isnumeric);
-        addOptional(p,'density',default.density,...
+        addOptional(p,'measure',default.measure,...
             @(x) any(validatestring(x, {'uniform','normal'})));
         addOptional(p,'mmin',default.mmin,@isnumeric);
         addOptional(p,'mmax',default.mmax,@isnumeric);
         addOptional(p,'fudge',default.fudge,@gail.isfcn);
-        addOptional(p,'errtype',default.errtype,...
+        addOptional(p,'toltype',default.toltype,...
             @(x) any(validatestring(x, {'max','comb'})));
         addOptional(p,'theta',default.theta,@isnumeric);
     else
@@ -431,12 +445,12 @@ else
         end
         f_addParamVal(p,'abstol',default.abstol,@isnumeric);
         f_addParamVal(p,'reltol',default.reltol,@isnumeric);
-        f_addParamVal(p,'density',default.density,...
+        f_addParamVal(p,'measure',default.measure,...
             @(x) any(validatestring(x, {'uniform','normal'})));
         f_addParamVal(p,'mmin',default.mmin,@isnumeric);
         f_addParamVal(p,'mmax',default.mmax,@isnumeric);
         f_addParamVal(p,'fudge',default.fudge,@gail.isfcn);
-        f_addParamVal(p,'errtype',default.errtype,...
+        f_addParamVal(p,'toltype',default.toltype,...
             @(x) any(validatestring(x, {'max','comb'})));
         f_addParamVal(p,'theta',default.theta,@isnumeric);
     end
@@ -458,11 +472,11 @@ if (out_param.reltol <= 0) || (out_param.reltol > 1)
     out_param.reltol = default.reltol;
 end
 
-% Force density to be uniform or normal only
-if ~(strcmp(out_param.density,'uniform') || strcmp(out_param.density,'normal') )
-    warning('MATLAB:cubSobol_g:notdensity',['The density can only be uniform or normal.' ...
-            ' Using default density ' num2str(default.density)])
-    out_param.density = default.density;
+% Force measure to be uniform or normal only
+if ~(strcmp(out_param.measure,'uniform') || strcmp(out_param.measure,'normal') )
+    warning('MATLAB:cubSobol_g:notmeasure',['The measure can only be uniform or normal.' ...
+            ' Using default measure ' num2str(default.measure)])
+    out_param.measure = default.measure;
 end
 
 % Force mmin to be integer greater than 0
@@ -488,11 +502,11 @@ if ~((gail.isfcn(out_param.fudge) && (out_param.fudge(1)>0)))
     out_param.fudge = default.fudge;
 end
 
-% Force errtype to be max or comb
-if ~(strcmp(out_param.errtype,'max') || strcmp(out_param.errtype,'comb') )
-    warning('MATLAB:cubSobol_g:noterrtype',['The error type can only be max or comb.' ...
-            ' Using default errtype ' num2str(default.errtype)])
-    out_param.errtype = default.errtype;
+% Force toltype to be max or comb
+if ~(strcmp(out_param.toltype,'max') || strcmp(out_param.toltype,'comb') )
+    warning('MATLAB:cubSobol_g:nottoltype',['The error type can only be max or comb.' ...
+            ' Using default toltype ' num2str(default.toltype)])
+    out_param.toltype = default.toltype;
 end
 
 % Force theta to be in [0,1]
