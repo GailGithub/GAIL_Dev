@@ -17,6 +17,7 @@ run_handle('Test_meanMC_g')
 run_handle('Test_meanMCBer_g')
 
 % cubMC_g
+format short
 doctest dt_cubMC_g
 run_handle('Test_cubMC_g')
 
