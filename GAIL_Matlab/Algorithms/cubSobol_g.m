@@ -14,14 +14,14 @@ function [q,out_param] = cubSobol_g(varargin)
 %   is the dimension in which the function f is defined. Given the
 %   construction of Sobol', d must be a positive integer with 1<=d<=1111.
 %
-%   q = CUBSOBOL_G(f,d,abstol,reltol,density,mmin,mmax,fudge,errtype,theta)
+%   q = CUBSOBOL_G(f,d,abstol,reltol,measure,mmin,mmax,fudge,toltype,theta)
 %   estimates the integral of f over a d-dimensional region. The answer
 %   is given within the generalized error tolerance tolfun. All parameters
 %   should be input in the order specified above. If an input is not specified,
 %   the default value is used. Note that if an input is not specified,
 %   the remaining tail cannot be specified either.
 %
-%   q = CUBSOBOL_G(f,d,'abstol',abstol,'reltol',reltol,'density',density,'mmin',mmin,'mmax',mmax,'fudge',fudge,'errtype',errtype,'theta',theta)
+%   q = CUBSOBOL_G(f,d,'abstol',abstol,'reltol',reltol,'measure',measure,'mmin',mmin,'mmax',mmax,'fudge',fudge,'toltype',toltype,'theta',theta)
 %   estimates the integral of f over a d-dimensional region. The answer
 %   is given within the generalized error tolerance tolfun. All the field-value
 %   pairs are optional and can be supplied with any order. If an input is not
@@ -46,11 +46,13 @@ function [q,out_param] = cubSobol_g(varargin)
 %     in_param.reltol --- the relative error tolerance, which should be
 %     in (0,1]. Default value is 1e-1.
 %
-%     in_param.density --- for f(x)*mu(dx), we can define mu(dx) to be the
-%     density function of a uniformly distributed random variable in [0,1)^d
+%     in_param.measure --- for f(x)*mu(dx), we can define mu(dx) to be the
+%     measure of a uniformly distributed random variable in [0,1)^d
 %     or normally distributed with covariance matrix I_d. By default it 
 %     is 'uniform'. The only possible values are 'uniform' or 'normal'.
-%
+% 
+%     Optional input parameters:
+% 
 %     in_param.mmin --- the minimum number of points to start is 2^mmin. The
 %     cone condition on the Fourier coefficients decay requires a minimum
 %     number of points to start. The advice is to consider at least mmin=10.
@@ -65,14 +67,14 @@ function [q,out_param] = cubSobol_g(varargin)
 %     For more information about this parameter, refer to the references.
 %     By default it is @(x) 5*2.^-x.
 %
-%     in_param.errtype --- this is the tolerance function. There are two
+%     in_param.toltype --- this is the tolerance function. There are two
 %     choices, 'max' (chosen by default) which takes
 %     max(abstol,reltol*|integral(f)|) and 'comb' which is a linear combination
 %     theta*abstol+(1-theta)*reltol*|integral(f)|. Theta is another 
 %     parameter that can be specified (see below).
 % 
-%     in_param.theta --- this input is parametrizing the errtype 
-%     'comb'. Thus, it is only afecting when the errtype
+%     in_param.theta --- this input is parametrizing the toltype 
+%     'comb'. Thus, it is only afecting when the toltype
 %     chosen is 'comb'. It stablishes the linear combination weight
 %     between the absolute and relative tolerances
 %     theta*abstol+(1-theta)*reltol*|integral(f)|. Note that for theta=1, 
@@ -156,7 +158,7 @@ function [q,out_param] = cubSobol_g(varargin)
 % Estimate the integral with integrand f(x) = 8*x1.*x2.*x3.*x4.*x5 in the interval
 % [0,1)^5 with pure absolute error 1e-5.
 % 
-% >> f = @(x) 8*prod(x,2); d = 5; q = cubSobol_g(f,d,1e-5,'errtype','comb','theta',1)
+% >> f = @(x) 8*prod(x,2); d = 5; q = cubSobol_g(f,d,1e-5,'toltype','comb','theta',1)
 % q = 0.25***
 %
 %
@@ -180,7 +182,7 @@ tic
 %% Check and initialize parameters
 [f,out_param] = cubSobol_g_param(varargin{:});
 
-if strcmp(out_param.density,'normal')
+if strcmp(out_param.measure,'normal')
    f=@(x) f(gail.stdnorminv(x));
 end
 
@@ -245,12 +247,12 @@ errest(1)=out_param.pred_err;
 
 deltaplus = 0.5*(gail.tolfun(out_param.abstol,...
     out_param.reltol,out_param.theta,abs(q-errest(1)),...
-    out_param.errtype)+gail.tolfun(out_param.abstol,out_param.reltol,...
-    out_param.theta,abs(q+errest(1)),out_param.errtype));
+    out_param.toltype)+gail.tolfun(out_param.abstol,out_param.reltol,...
+    out_param.theta,abs(q+errest(1)),out_param.toltype));
 deltaminus = 0.5*(gail.tolfun(out_param.abstol,...
     out_param.reltol,out_param.theta,abs(q-errest(1)),...
-    out_param.errtype)-gail.tolfun(out_param.abstol,out_param.reltol,...
-    out_param.theta,abs(q+errest(1)),out_param.errtype));
+    out_param.toltype)-gail.tolfun(out_param.abstol,out_param.reltol,...
+    out_param.theta,abs(q+errest(1)),out_param.toltype));
 
 if out_param.pred_err <= deltaplus
    q=q+deltaminus;
@@ -326,12 +328,12 @@ for m=out_param.mmin+1:out_param.mmax
    
     deltaplus = 0.5*(gail.tolfun(out_param.abstol,...
         out_param.reltol,out_param.theta,abs(q-errest(meff)),...
-        out_param.errtype)+gail.tolfun(out_param.abstol,out_param.reltol,...
-        out_param.theta,abs(q+errest(meff)),out_param.errtype));
+        out_param.toltype)+gail.tolfun(out_param.abstol,out_param.reltol,...
+        out_param.theta,abs(q+errest(meff)),out_param.toltype));
     deltaminus = 0.5*(gail.tolfun(out_param.abstol,...
         out_param.reltol,out_param.theta,abs(q-errest(meff)),...
-        out_param.errtype)-gail.tolfun(out_param.abstol,out_param.reltol,...
-        out_param.theta,abs(q+errest(meff)),out_param.errtype));
+        out_param.toltype)-gail.tolfun(out_param.abstol,out_param.reltol,...
+        out_param.theta,abs(q+errest(meff)),out_param.toltype));
    
    if out_param.pred_err <= deltaplus
       q=q+deltaminus;
@@ -351,13 +353,15 @@ end
 function [f, out_param] = cubSobol_g_param(varargin)
 
 % Default parameter values
+default.d = 1;
+default.hyperbox = [zeros(1,default.d);ones(1,default.d)];% default hyperbox
 default.abstol  = 1e-4;
 default.reltol  = 1e-1;
-default.density  = 'uniform';
+default.measure  = 'uniform';
 default.mmin  = 10;
 default.mmax  = 24;
 default.fudge = @(m) 5*2.^-m;
-default.errtype  = 'max';
+default.toltype  = 'max';
 default.theta  = 1;
 
 if numel(varargin)<2
@@ -413,11 +417,11 @@ end
 if ~validvarargin   
     out_param.abstol = default.abstol;
     out_param.reltol = default.reltol;
-    out_param.density = default.density;
+    out_param.measure = default.measure;
     out_param.mmin = default.mmin;
     out_param.mmax = default.mmax;  
     out_param.fudge = default.fudge;
-    out_param.errtype = default.errtype;
+    out_param.toltype = default.toltype;
     out_param.theta = default.theta;
 else
     p = inputParser;
@@ -426,12 +430,12 @@ else
     if isnumeric(in3) || ischar(in3)
         addOptional(p,'abstol',default.abstol,@isnumeric);
         addOptional(p,'reltol',default.reltol,@isnumeric);
-        addOptional(p,'density',default.density,...
+        addOptional(p,'measure',default.measure,...
             @(x) any(validatestring(x, {'uniform','normal'})));
         addOptional(p,'mmin',default.mmin,@isnumeric);
         addOptional(p,'mmax',default.mmax,@isnumeric);
         addOptional(p,'fudge',default.fudge,@gail.isfcn);
-        addOptional(p,'errtype',default.errtype,...
+        addOptional(p,'toltype',default.toltype,...
             @(x) any(validatestring(x, {'max','comb'})));
         addOptional(p,'theta',default.theta,@isnumeric);
     else
@@ -441,12 +445,12 @@ else
         end
         f_addParamVal(p,'abstol',default.abstol,@isnumeric);
         f_addParamVal(p,'reltol',default.reltol,@isnumeric);
-        f_addParamVal(p,'density',default.density,...
+        f_addParamVal(p,'measure',default.measure,...
             @(x) any(validatestring(x, {'uniform','normal'})));
         f_addParamVal(p,'mmin',default.mmin,@isnumeric);
         f_addParamVal(p,'mmax',default.mmax,@isnumeric);
         f_addParamVal(p,'fudge',default.fudge,@gail.isfcn);
-        f_addParamVal(p,'errtype',default.errtype,...
+        f_addParamVal(p,'toltype',default.toltype,...
             @(x) any(validatestring(x, {'max','comb'})));
         f_addParamVal(p,'theta',default.theta,@isnumeric);
     end
@@ -468,11 +472,11 @@ if (out_param.reltol <= 0) || (out_param.reltol > 1)
     out_param.reltol = default.reltol;
 end
 
-% Force density to be uniform or normal only
-if ~(strcmp(out_param.density,'uniform') || strcmp(out_param.density,'normal') )
-    warning('MATLAB:cubSobol_g:notdensity',['The density can only be uniform or normal.' ...
-            ' Using default density ' num2str(default.density)])
-    out_param.density = default.density;
+% Force measure to be uniform or normal only
+if ~(strcmp(out_param.measure,'uniform') || strcmp(out_param.measure,'normal') )
+    warning('MATLAB:cubSobol_g:notmeasure',['The measure can only be uniform or normal.' ...
+            ' Using default measure ' num2str(default.measure)])
+    out_param.measure = default.measure;
 end
 
 % Force mmin to be integer greater than 0
@@ -498,11 +502,11 @@ if ~((gail.isfcn(out_param.fudge) && (out_param.fudge(1)>0)))
     out_param.fudge = default.fudge;
 end
 
-% Force errtype to be max or comb
-if ~(strcmp(out_param.errtype,'max') || strcmp(out_param.errtype,'comb') )
-    warning('MATLAB:cubSobol_g:noterrtype',['The error type can only be max or comb.' ...
-            ' Using default errtype ' num2str(default.errtype)])
-    out_param.errtype = default.errtype;
+% Force toltype to be max or comb
+if ~(strcmp(out_param.toltype,'max') || strcmp(out_param.toltype,'comb') )
+    warning('MATLAB:cubSobol_g:nottoltype',['The error type can only be max or comb.' ...
+            ' Using default toltype ' num2str(default.toltype)])
+    out_param.toltype = default.toltype;
 end
 
 % Force theta to be in [0,1]
