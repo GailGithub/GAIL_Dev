@@ -6,25 +6,18 @@
 %  Not Balls, submitted for publication, arXiv.org:1303.2412 [math.NA]}, 
 %  2013.
 
+function []=conepaper_test_integral_g(nrep,nmax,abstol)
 %% Preliminaries
 format long e
-clearvars -except testCase
+% clearvars -except testCase
 % close all
 tstart = tic;
 
-%% Program parameters
-in_param.nmax=1e7; %maximum number of sample points
-in_param.tol=1e-8; %error tolerance
 
 %% Simulation parameters
 
-% nrep = 100; %number of times to test, takes about a minute, can be changed 
-nrep = 10000; %number of times to test used in the paper
-if (nrep >= 1000)
-%     warning(' Need more than one hour to replicate the result in the paper! ')
-    warning('off','MATLAB:integraltau_g:exceedbudget');
-    warning('off','MATLAB:integraltau_g:peaky');
-end;
+warning('off','MATLAB:integraltau_g:exceedbudget');
+warning('off','MATLAB:integraltau_g:peaky');
 avec = 10.^(rand(nrep,1).*3-4);
 zvec = rand(nrep,1).*(1-4.*avec)+2.*avec;
 x0vec = zvec-2*avec;
@@ -53,9 +46,6 @@ timemat=Qmat;
 
 % computes integrals for each function, each tau
 for i=1:nrep
-    if floor(i/100) == i/100
-%         display(i);
-    end;
     %% Integrand
     a=avec(i);
     z=zvec(i);
@@ -69,9 +59,9 @@ for i=1:nrep
 
     %%Integrate
     for j=1:ntau
-        in_param.tau=tauvec(j);
+        tau=tauvec(j);
         tic
-        [Q,out_param]=integraltau_g(f,in_param);
+        [Q,out_param]=integraltau_g(f,'nmax',nmax,'abstol',abstol,'tau',tau);
         timemat(i,j)=toc;
         Qmat(i,j)=Q;
         npointsmat(i,j)= out_param.npoints;
@@ -98,11 +88,11 @@ trueerrormat=abs(exactintmat-Qmat); % differences between true value and approxi
 
 pini = mean(repmat(ratio,1,ntau)<=repmat(tauvec,nrep,1),1); %probability in initial cone
 pfin = mean(repmat(ratio,1,ntau)<=newtaumat,1); %probability in final cone
-exactsucc = mean(trueerrormat<=in_param.tol,1); %percentage of successful instants
-succnowarn = mean((trueerrormat<=in_param.tol)&(~budgetmat),1); %percentage of successful instants for which the functions are in the cone
-succwarn = mean((trueerrormat<=in_param.tol)&(budgetmat),1);    %percentage of successful instants for which the functions are not in the cone
-failnowarn = mean((trueerrormat>in_param.tol)&(~budgetmat),1);  %percentage of failed instants for which the functions are in the cone
-failwarn = mean((trueerrormat>in_param.tol)&(budgetmat),1); %percentage of failed instants for which the functions are not in the cone
+% exactsucc = mean(trueerrormat<=abstol,1); %percentage of successful instants
+succnowarn = mean((trueerrormat<=abstol)&(~budgetmat),1); %percentage of successful instants for which the functions are in the cone
+succwarn = mean((trueerrormat<=abstol)&(budgetmat),1);    %percentage of successful instants for which the functions are not in the cone
+failnowarn = mean((trueerrormat>abstol)&(~budgetmat),1);  %percentage of failed instants for which the functions are in the cone
+failwarn = mean((trueerrormat>abstol)&(budgetmat),1); %percentage of failed instants for which the functions are not in the cone
 
 % quadtrueerrorvec=abs(exactintmat(:,1)-Qquadvec);   % error of quad
 % quadsuccessrate=mean(quadtrueerrorvec<=in_param.tol,1); % percentage of successful instants of quad
@@ -155,3 +145,4 @@ warning('on','MATLAB:integraltau_g:peaky');
 %   100 23.22%->58.04%   56.38%      1.66%   41.96%    0.00% 
 %  1000 56.98%->87.61%   67.94%     19.84%   12.22%    0.00% 
 
+end

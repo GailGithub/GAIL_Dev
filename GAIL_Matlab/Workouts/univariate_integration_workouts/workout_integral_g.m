@@ -1,24 +1,19 @@
 %WORKOUT_INTEGRAL_G Calls automatic guaranteed algorithm for univariate integration
 
+function []=workout_integral_g(nrep,nmax,abstol)
 %% Garbage cleanup
 format long e
-clear all
-close all
 tstart = tic;
+warning('off','MATLAB:integral01_g:exceedbudget');
+warning('off','MATLAB:integral01_g:peaky');
 
 %% Program parameters
-in_param.nmax=1e7; %maximum number of sample points
-in_param.abstol=1e-8; %error tolerance
+% in_param.nmax=1e7; %maximum number of sample points
+% in_param.abstol=1e-8; %error tolerance
 
 %% Simulation parameters
 
-nrep = 10000; %number of times to test used in the paper
-%nrep = 100; %number of times to test, takes about a minute, can be changed 
-if (nrep > 100)
-%    warning(' Need more than one hour to run this workout.')
-    warning('off','MATLAB:integral01_g:exceedbudget');
-    warning('off','MATLAB:integral01_g:peaky');
-end;
+%nrep = 100; %number of times to test, takes about a minute 
 avec = 10.^(rand(nrep,1).*3-4);
 zvec = rand(nrep,1).*(1-4.*avec)+2.*avec;
 x0vec = zvec-2*avec;
@@ -41,9 +36,9 @@ timemat=Qmat;
 
 % computes integrals for each function, each ninit
 for i=1:nrep
-    if floor(i/100) == i/100
-        %display(i);
-    end;
+%     if floor(i/100) == i/100
+%         display(i);
+%     end;
     %% Integrand
     a=avec(i);
     z=zvec(i);
@@ -57,15 +52,15 @@ for i=1:nrep
 
     %%Integrate
     for j=1:nninit
-        in_param.ninit=ninitvec(j);
+        ninit=ninitvec(j);
         tic
-        [q,out_param]=integral01_g(f,in_param);
+        [q,out_param]=integral01_g(f,'nmax',nmax,'abstol',abstol,'ninit',ninit);
         timemat(i,j)=toc;
         Qmat(i,j)=q;
         npointsmat(i,j)= out_param.npoints;
         newtaumat(i,j) = out_param.tau;
         budgetmat(i,j) = out_param.exceedbudget;
-        errestmat(i,j)=out_param.errest;
+        errestmat(i,j) = out_param.errest;
         tauchangemat(i,j) = out_param.tauchange;
     end
 end
@@ -74,11 +69,11 @@ trueerrormat=abs(exactintmat-Qmat); % differences between true value and approxi
 
 pini = mean(repmat(ratio,1,nninit)<=repmat(tauvec,nrep,1),1); %probability in initial cone
 pfin = mean(repmat(ratio,1,nninit)<=newtaumat,1); %probability in final cone
-exactsucc = mean(trueerrormat<=in_param.abstol,1); %percentage of successful instants
-succnowarn = mean((trueerrormat<=in_param.abstol)&(~budgetmat),1); %percentage of successful instants for which the functions are in the cone
-succwarn = mean((trueerrormat<=in_param.abstol)&(budgetmat),1);    %percentage of successful instants for which the functions are not in the cone
-failnowarn = mean((trueerrormat>in_param.abstol)&(~budgetmat),1);  %percentage of failed instants for which the functions are in the cone
-failwarn = mean((trueerrormat>in_param.abstol)&(budgetmat),1); %percentage of failed instants for which the functions are not in the cone
+% exactsucc = mean(trueerrormat<=abstol,1); %percentage of successful instants
+succnowarn = mean((trueerrormat<=abstol)&(~budgetmat),1); %percentage of successful instants for which the functions are in the cone
+succwarn = mean((trueerrormat<=abstol)&(budgetmat),1);    %percentage of successful instants for which the functions are not in the cone
+failnowarn = mean((trueerrormat>abstol)&(~budgetmat),1);  %percentage of failed instants for which the functions are in the cone
+failwarn = mean((trueerrormat>abstol)&(budgetmat),1); %percentage of failed instants for which the functions are not in the cone
 
 %% Output the table
 % To just re-display the output, load the .mat file and run this section
@@ -103,10 +98,8 @@ save(filename)
 
 toc(tstart)
 
-if nrep > 100
-    warning('on','MATLAB:integral01_g:exceedbudget');
-    warning('on','MATLAB:integral01_g:peaky');
-end
+warning('on','MATLAB:integral01_g:exceedbudget');
+warning('on','MATLAB:integral01_g:peaky');
 
 %% The following output was obtained on 2013-August-06 by
 %  from the data in
@@ -120,3 +113,4 @@ end
 %   100 23.01%->57.56%   55.81%      1.75%   42.44%    0.00% 
 %  1000 56.81%->88.45%   68.06%     20.54%   11.40%    0.00% 
 
+end
