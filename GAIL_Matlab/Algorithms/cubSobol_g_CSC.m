@@ -98,11 +98,11 @@ function [q,out_param] = cubSobol_g(varargin)
 %     guaranteed. The initial value is 1 and the final value of this
 %     parameter is encoded as follows:
 %     
-%                       + 2^1    If reaching overbudget. It states whether
+%                       1    If reaching overbudget. It states whether
 %                       the max budget is attained without reaching the
 %                       guaranteed error tolerance.
 %      
-%                       + 2^2    If the function lies outside the cone. In
+%                       2   If the function lies outside the cone. In
 %                       this case, results are not guaranteed. Note that
 %                       this parameter is computed on the transformed
 %                       function, not the input function. For more
@@ -194,7 +194,8 @@ cond1=(1+out_param.fudge(mlag))*(1+2*out_param.fudge(mlag-(1:mlag)))./(1+out_par
 cond2=(1+out_param.fudge(mlag-(1:mlag)))*(1+2*out_param.fudge(mlag))/(1+out_param.fudge(mlag)); % Factors for the necessary conditions
 errest=zeros(out_param.mmax-out_param.mmin+1,1); %initialize error estimates
 appxinteg=zeros(out_param.mmax-out_param.mmin+1,1); %initialize approximations to integral
-out_param.exit=zeros(2,1); %we start the algorithm with all warning flags down
+exit_len = 2;
+out_param.exit=zeros(exit_len,1); %we start the algorithm with all warning flags down
 outside_cone=false; %internal flag that becomes true if the function lies outside the cone
 
 
@@ -347,6 +348,18 @@ for m=out_param.mmin+1:out_param.mmax
    end
 
 end
+
+exit_str='';
+if sum(out_param.exit) == 0
+  out_param.exitflag = '0';
+else
+  for i=1:exit_len
+    if out_param.exit(i)==1,
+      exit_str = strcat(exit_str,{num2str(i)}, {' '});
+    end
+  end
+end
+out_param.exitflag = exit_str
 out_param.time=toc;
 end
 
