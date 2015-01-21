@@ -141,7 +141,7 @@ function [q,out_param] = cubLattice_g(varargin)
 % Example 1:
 % Estimate the integral with integrand f(x) = x1.*x2 in the interval [0,1)^2:
 % 
-% >> f = @(x) prod(x,2); d = 2; q = cubLattice_g(f,d,1e-5,1e-1,'uniform','transform','C1sin')
+% >> f = @(x) prod(x,2); hyperbox = [zeros(1,2);ones(1,2)]; q = cubLattice_g(f,hyperbox,1e-5,1e-1,'uniform','transform','C1sin')
 % q = 0.25***
 % 
 % 
@@ -149,7 +149,7 @@ function [q,out_param] = cubLattice_g(varargin)
 % Estimate the integral with integrand f(x) = x1.^2.*x2.^2.*x3.^2+0.11
 % in the interval R^3 where x1, x2 and x3 are normally distributed:
 % 
-% >> f = @(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2+0.11; d = 3; q = cubLattice_g(f,d,1e-3,1e-3,'normal','transform','C1sin')
+% >> f = @(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2+0.11; hyperbox = [zeros(1,3);ones(1,3)]; q = cubLattice_g(f,hyperbox,1e-3,1e-3,'normal','transform','C1sin')
 % q = 1.1***
 % 
 % 
@@ -157,7 +157,7 @@ function [q,out_param] = cubLattice_g(varargin)
 % Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) in the
 % interval [0,1)^2:
 % 
-% >> f = @(x) exp(-x(:,1).^2-x(:,2).^2); d = 2; q = cubLattice_g(f,d,1e-3,1e-1,'uniform','transform','C1')
+% >> f = @(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [zeros(1,2);ones(1,2)]; q = cubLattice_g(f,hyperbox,1e-3,1e-1,'uniform','transform','C1')
 % q = 0.55***
 %
 %
@@ -165,7 +165,7 @@ function [q,out_param] = cubLattice_g(varargin)
 % Estimate the price of an European call with S0=100, K=100, r=sigma^2/2,
 % sigma=0.05 and T=1.
 % 
-% >> f = @(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); d = 1; q = cubLattice_g(f,d,1e-4,1e-1,'normal','fudge',@(m) 2.^-(2*m),'transform','C1sin')
+% >> f = @(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); hyperbox = [zeros(1,1);ones(1,1)]; q = cubLattice_g(f,hyperbox,1e-4,1e-1,'normal','fudge',@(m) 2.^-(2*m),'transform','C1sin')
 % q = 2.05***
 %
 %
@@ -173,7 +173,7 @@ function [q,out_param] = cubLattice_g(varargin)
 % Estimate the integral with integrand f(x) = 8*x1.*x2.*x3.*x4.*x5 in the interval
 % [0,1)^5 with pure absolute error 1e-5.
 % 
-% >> f = @(x) 8*prod(x,2); d = 5; q = cubLattice_g(f,d,1e-5,'toltype','comb','theta',1)
+% >> f = @(x) 8*prod(x,2); hyperbox = [zeros(1,5);ones(1,5)]; q = cubLattice_g(f,hyperbox,1e-5,'toltype','comb','theta',1)
 % q = 0.25***
 %
 %
@@ -196,7 +196,7 @@ function [q,out_param] = cubLattice_g(varargin)
 
 tic
 %% Check and initialize parameters
-[f,out_param] = cubLattice_g_param(varargin{:});
+[f,hyperbox,out_param] = cubLattice_g_param(varargin{:});
 
 if strcmp(out_param.measure,'normal')
    f=@(x) f(gail.stdnorminv(x));
@@ -223,6 +223,7 @@ out_param.exit=true; %we start the algorithm with all warning flags down
 outside_cone=false; %internal flag that becomes true if the function lies outside the cone
 
 %% Initial points and FWT
+out_param.d = size(hyperbox,2);
 out_param.n=2^out_param.mmin; %total number of points to start with
 n0=out_param.n; %initial number of points
 xpts=mod(gail.lattice_gen(1,out_param.n,out_param.d)+out_param.shift,1); %grab Lattice points
@@ -377,11 +378,10 @@ end
 
 
 %% Parsing for the input of cubLattice_g
-function [f, out_param] = cubLattice_g_param(varargin)
+function [f, hyperbox, out_param] = cubLattice_g_param(varargin)
 
 % Default parameter values
-default.d = 1;
-default.hyperbox = [zeros(1,default.d);ones(1,default.d)];% default hyperbox
+default.hyperbox = [zeros(1,1);ones(1,1)];% default hyperbox
 default.abstol  = 1e-4;
 default.reltol  = 1e-1;
 default.measure  = 'uniform';
@@ -399,8 +399,7 @@ if numel(varargin)<2
         'At least, function f and hyperbox need to be specified. Example for f(x)=x^2:')
     f = @(x) x.^2;
     out_param.f=f;
-    out_param.d=1;
-    hyperbox = [zeros(1,default.d);ones(1,default.d)];
+    hyperbox = default.hyperbox;
 else
     f = varargin{1};
     if ~gail.isfcn(f)
@@ -408,19 +407,16 @@ else
             'The given input f was not a function. Example for f(x)=x^2:')
         f = @(x) x.^2;
         out_param.f=f;
-        out_param.d=1;
-        hyperbox = [zeros(1,default.d);ones(1,default.d)];
+        hyperbox =  default.hyperbox;
     else
         out_param.f=f;
         hyperbox = varargin{2};
-        out_param.d = size(hyperbox,2);
-        if ~(d<251)
+        if ~(size(hyperbox,2)<251)
             warning('MATLAB:cubLattice_g:dnotposint',...
                 'The dimension d must be less than 251. Example for f(x)=x^2:')
             f = @(x) x.^2;
             out_param.f=f;
-            out_param.d=1;
-            hyperbox = [zeros(1,default.d);ones(1,default.d)];
+            hyperbox =  default.hyperbox;
         end
     end
 end
@@ -446,6 +442,7 @@ else
 end
 
 if ~validvarargin
+    hyperbox = default.hyperbox;
     out_param.abstol = default.abstol;
     out_param.reltol = default.reltol;
     out_param.measure = default.measure;
@@ -474,7 +471,6 @@ else
         addOptional(p,'toltype',default.toltype,...
             @(x) any(validatestring(x, {'max','comb'})));
         addOptional(p,'theta',default.theta,@isnumeric);
-        
     else
         if isstruct(in3) %parse input structure
             p.StructExpand = true;
@@ -493,35 +489,19 @@ else
         f_addParamVal(p,'toltype',default.toltype,...
             @(x) any(validatestring(x, {'max','comb'})));
         f_addParamVal(p,'theta',default.theta,@isnumeric);
+        f_addParamVal(p,'d',default.d,@isnumeric);
     end
     parse(p,f,hyperbox,varargin{3:end});
     out_param = p.Results;
 end;
 
-
 % Checking hyperbox definition
-if any(isnan(hyperbox(:))); %check hyperbox for not a number
-    out_param.exit=10; out_param = cubMC_g_err(out_param); return; 
+if any(isnan(hyperbox(:))) || size(hyperbox,1)~=2; %check hyperbox for not a number or wrong size
+    warning('MATLAB:cubLattice_g:hyperboxerror',['Hyperbox should be a real matrix indicating the limits of integration, whose size is 2xdimension.'...
+            ' Using default hyperbox:'])
+    disp(default.hyperbox)
+    hyperbox = default.hyperbox;
 end
-[two, out_param.dim]=size(hyperbox); %hyperbox should be 2 x dimension
-if two==0 && isfield(out_param,'hyperbox'); 
-    %if hyperbox specified through out_param structure
-    hyperbox=out_param.hyperbox; %then get it from there
-    [two, out_param.dim]=size(hyperbox); %and get the dimension
-end
-if two~=2 %if hyperbox is given as row vector for dimension 1, fix that
-    if out_param.dim==2; out_param.dim=two; hyperbox=hyperbox';
-    else out_param.exit=11; out_param = cubMC_g_err(out_param); return; 
-        %else, return an error
-    end
-end
-hyperbox=[min(hyperbox,[],1); max(hyperbox,[],1)]; 
-%ensure left and right endpoints are in order
-if any(hyperbox(1,:)==hyperbox(2,:)); %hyperbox is a point in one direction
-    out_param.exit=12; out_param = cubMC_g_err(out_param); return;
-end
-out_param.hyperbox=hyperbox; %copy hyperbox into the out_param structure
-
 
 % Force absolute tolerance greater than 0
 if (out_param.abstol <= 0 )
