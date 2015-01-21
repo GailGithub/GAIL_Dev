@@ -1,4 +1,4 @@
-function save_mat(subdir, filename, varargin)
+function fullfilename = save_mat(subdir, filename, varargin)
 % SAVE_MAT: Save data to a MAT file in a subdirectory in 'OutputFiles'
 % 
 % Inputs:
@@ -11,7 +11,7 @@ function save_mat(subdir, filename, varargin)
 %   'tauvec','pini','pfin','succnowarn', 'succwarn','failnowarn','failwarn');
 
 [GAILPATH,~,PATHNAMESEPARATOR] = GAILstart(0);
-filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
+fullfilename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
     subdir, PATHNAMESEPARATOR', filename,'-',...
-    datestr(now,'dd-mmm-yyyy-HH-MM-SS'),'.mat');
-save(filename, varargin)
+    datestr(now,'yyyy-mmm-dd-HH-MM-SS'),'.mat');
+save(fullfilename, varargin)

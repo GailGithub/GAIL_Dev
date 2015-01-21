@@ -1,4 +1,4 @@
-function save_eps(subdir, filename)
+function path = save_eps(subdir, filename)
 % SAVE_MAT: Save figure to an eps file in a subdirectory in 'OutputFiles'
 % 
 % Inputs:
@@ -12,5 +12,5 @@ function save_eps(subdir, filename)
 [GAILPATH,~,PATHNAMESEPARATOR] = GAILstart(0);
 path = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
     subdir, PATHNAMESEPARATOR, filename, '-',...
-    datestr(now,'dd-mmm-yyyy-HH-MM-SS'),'.eps');
+    datestr(now,'yyyy-mmm-dd-HH-MM-SS'),'.eps');
 print('-depsc', path)
