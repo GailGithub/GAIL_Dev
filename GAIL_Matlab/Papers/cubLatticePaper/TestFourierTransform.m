@@ -10,7 +10,7 @@ n=2^15;
 latticeseq_b2('init0');
 xpts=latticeseq_b2(1,n);
 ynu=f(xpts);
-[Y,I]=sort(xpts)
+[Y,I]=sort(xpts);
 yff=f(sort(xpts));
 nfftr=nufft(2,ynu);
 fftr=fft(yff)/n;
