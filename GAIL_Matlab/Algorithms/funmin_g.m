@@ -77,7 +77,7 @@ function [fmin,out_param]=funmin_g(varargin)
 %     out_param.npoints --- number of points needed to reach the guaranteed
 %     absolute error tolerance or the guaranteed X tolerance
 %
-%     out_param.error --- estimation of the absolute error bound
+%     out_param.errest --- estimation of the absolute error bound
 %
 %     out_param.volumeX --- the volume of intervals containing the point(s)
 %     where the minimum occurs
@@ -127,7 +127,7 @@ function [fmin,out_param]=funmin_g(varargin)
 %              tau: 197
 %     exceedbudget: 0
 %          npoints: 6337
-%            error: 6.1554e-07
+%           errest: 6.1554e-07
 %          volumeX: 0.0015
 %        tauchange: 0
 %        intervals: [2x1 double]
@@ -156,7 +156,7 @@ function [fmin,out_param]=funmin_g(varargin)
 %              tau: 17
 %     exceedbudget: 0
 %          npoints: 18433
-%            error: 9.5464e-08
+%           errest: 9.5464e-08
 %          volumeX: 5.4175e-04
 %        tauchange: 0
 %        intervals: [2x1 double]
@@ -189,7 +189,7 @@ function [fmin,out_param]=funmin_g(varargin)
 %              tau: 179
 %     exceedbudget: 0
 %          npoints: 368641
-%            error: 7.1473e-08
+%           errest: 7.1473e-08
 %          volumeX: 5.2354e-04
 %        tauchange: 0
 %        intervals: [2x1 double]
@@ -218,7 +218,7 @@ function [fmin,out_param]=funmin_g(varargin)
 %              tau: 125
 %     exceedbudget: 0
 %          npoints: 2017
-%            error: 6.2273e-05
+%           errest: 6.2273e-05
 %          volumeX: 0.0146
 %        tauchange: 0
 %        intervals: [2x1 double]
@@ -380,7 +380,7 @@ end
 
 fmin = Un;
 out_param.npoints = n;
-out_param.error = error;
+out_param.errest = error;
 out_param.volumeX = volumeX;
 out_param.tauchange = tauchange;
 out_param.intervals = interval;
