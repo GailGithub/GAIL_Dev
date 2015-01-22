@@ -361,7 +361,7 @@ while(max(err) > abstol)
         warning('MATLAB:funappx_g:exceediter',' Iteration exceeds max number of iterations ')
         break;
     end;
-    if(index(end) + counterr*(ninit - 1) >= out_param.nmax)
+    if(index(end) >= out_param.nmax)
         out_param.exit = 1;
         warning('MATLAB:funappx_g:exceedbudget',' funappx_g attempted to exceed the cost budget. The answer may be unreliable.')
         break;
