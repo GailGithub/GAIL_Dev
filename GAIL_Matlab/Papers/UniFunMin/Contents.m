@@ -10,13 +10,13 @@
 %   UniFunMin_Plot_Flat 
 %           - Generate Figure 4.1 in the thesis to construct an example
 %             of a flat function.
-%   UniFunMin_test_ErrorTolerance
+%   UniFunMin_test_ErrTolerance
 %           - Generate Table 3.1 in the thesis for Bump test functions with
 %             epsilon=10^(-8) & delta=0.
 %   UniFunMin_test_XTolerance
 %           - Generate Table 3.2 in the thesis for Bump test functions with
 %             epsilon=0 & delta=10^(-6).
-%   UniFunMin_test_Error_XTolerance
+%   UniFunMin_test_ErrXTolerance
 %           - Generate Table 3.3 in the thesis for Bump test functions with
 %             epsilon=10^(-8) & delta=10^(-6).
 %   UniFunMin_test_TwoExtreme
