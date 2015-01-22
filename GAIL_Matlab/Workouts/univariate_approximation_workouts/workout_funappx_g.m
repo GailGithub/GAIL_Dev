@@ -102,7 +102,6 @@ end
 
 %% Save Output
 
-[GAILPATH,~,PATHNAMESEPARATOR] = GAILstart(0);
 if usejava('jvm')
 figure
 subplot(2,1,1);
@@ -114,15 +113,9 @@ subplot(2,1,2);
 plot(1:nrep*n,npointsratio,'blue',1:nrep*n,ones(nrep*n,1),'red');
 ylabel('Points ratio of local/global')
 xlabel('# of tests')
-filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
-    'WorkoutFunappxOutput',PATHNAMESEPARATOR,'WorkoutFunAppxTest-',...
-    datestr(now,'dd-mmm-yyyy-HH-MM-SS'),'.eps');
-print('-deps',filename)
 
-filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
-    'WorkoutFunappxOutput',PATHNAMESEPARATOR','WorkoutFunAppxTest-',...
-    datestr(now,'dd-mmm-yyyy-HH-MM-SS'),'.mat');
-save(filename, ...
-    'npoints','time','c','timeratio','npointsratio','npointslgratio',...
-    'timelgratio')
+save_eps('WorkoutFunappxOutput', 'WorkoutFunAppxTest');
+
+save_mat('WorkoutFunappxOutput', 'WorkoutFunAppxTest', 'npoints','time','c','timeratio','npointsratio','npointslgratio',...
+    'timelgratio');
 end
