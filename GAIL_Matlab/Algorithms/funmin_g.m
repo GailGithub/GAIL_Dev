@@ -241,8 +241,9 @@ function [fmin,out_param]=funmin_g(varargin)
 
 
 
-% Parse and check the validity of input parameters
+% Parse and check parameter satisfy conditions or not
 [f,out_param] = funmin_g_param(varargin{:});
+MATLABVERSION = gail.matlab_version;
 
 
 %% Main algorithm
@@ -397,13 +398,21 @@ default.TolX = 1e-3;
 default.nlo = 10;
 default.nhi = 1000;
 default.nmax = 1e7;
+
+MATLABVERSION = gail.matlab_version;
+if MATLABVERSION >= 8.3
+    f_addParamVal = @addParameter;
+else
+    f_addParamVal = @addParamValue;
+end;
     
 if isempty(varargin)
-    warning('MATLAB:funappx_g:nofunction','Function f must be specified. Now funmin_g will use f(x)=(x-0.3)^2+1.')
+    warning('MATLAB:funmin_g:nofunction','Function f must be specified. Now funmin_g will use f(x)=(x-0.3)^2+1.')
     help funmin_g
-    f = @(x) (x-0.3).^2+1;
+    out_param.f = @(x) (x-0.3).^2+1;
 else
     f = varargin{1};
+    out_param.f = f;
 end
      
 validvarargin=numel(varargin)>1;
@@ -438,13 +447,13 @@ else
             p.StructExpand = true;
             p.KeepUnmatched = true;
         end
-        addParamValue(p,'a',default.a,@isnumeric);
-        addParamValue(p,'b',default.b,@isnumeric);
-        addParamValue(p,'abstol',default.abstol,@isnumeric);
-        addParamValue(p,'TolX',default.TolX,@isnumeric);
-        addParamValue(p,'nlo',default.nlo,@isnumeric);
-        addParamValue(p,'nhi',default.nhi,@isnumeric);
-        addParamValue(p,'nmax',default.nmax,@isnumeric);
+        f_addParamVal(p,'a',default.a,@isnumeric);
+        f_addParamVal(p,'b',default.b,@isnumeric);
+        f_addParamVal(p,'abstol',default.abstol,@isnumeric);
+        f_addParamVal(p,'TolX',default.TolX,@isnumeric);
+        f_addParamVal(p,'nlo',default.nlo,@isnumeric);
+        f_addParamVal(p,'nhi',default.nhi,@isnumeric);
+        f_addParamVal(p,'nmax',default.nmax,@isnumeric);
     end
     parse(p,f,varargin{2:end});
     out_param = p.Results;
