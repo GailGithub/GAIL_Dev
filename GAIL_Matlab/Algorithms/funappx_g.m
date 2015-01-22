@@ -262,6 +262,12 @@ while(max(err) > abstol)
 %         (4*(ninit-1).*(ninit-1-nstar(largeconeind)));
     err = nstar.*len.*gn./(4*(ninit-1).*(ninit-1-nstar));
     %check if error satisfy the error tolerance 
+    counterr = sum(err > abstol);
+    if(length(x) + counterr *(ninit -1) > out_param.nmax)
+        out_param.exit = 1;
+        warning('MATLAB:funappx_g:exceedbudget',' funappx_g attempted to exceed the cost budget. The answer may be unreliable.')
+        break;
+    end;
     if max(err) > abstol;
         %flag sub interval error not satisfy error tolerance 1 in whbad
         whbad = err > abstol;
@@ -352,18 +358,12 @@ while(max(err) > abstol)
         indexnew = [index(1:end-1); indexbeg];
         indexnew = indexnew(:)';
         index = unique([indexnew index(end)]);
-        counterr = sum(err > abstol);
     else
         break;
     end;
     if(iter> out_param.maxiter)
         out_param.exit = 2;
         warning('MATLAB:funappx_g:exceediter',' Iteration exceeds max number of iterations ')
-        break;
-    end;
-    if(index(end) >= out_param.nmax)
-        out_param.exit = 1;
-        warning('MATLAB:funappx_g:exceedbudget',' funappx_g attempted to exceed the cost budget. The answer may be unreliable.')
         break;
     end;
 end;
