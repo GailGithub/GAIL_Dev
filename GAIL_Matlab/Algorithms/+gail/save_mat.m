@@ -14,4 +14,8 @@ function fullfilename = save_mat(subdir, filename, varargin)
 fullfilename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
     subdir, PATHNAMESEPARATOR', filename,'-',...
     datestr(now,'yyyy-mmm-dd-HH-MM-SS'),'.mat');
-save(fullfilename, varargin{:})
+ 
+for k = 2:length(varargin)
+    eval([varargin{1}{k-1}, ' = varargin{k}']);
+end
+save(fullfilename, varargin{1}{:});
