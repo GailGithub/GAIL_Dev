@@ -256,7 +256,7 @@ if MATLABVERSION >= 8
       end
     end
   catch
-    display('Test utcubMC_g is wrongly coded. We skip it.')
+    display('Test ut_cubMC_g is wrongly coded. We skip it.')
     fprintf(fid,'Test ut_cubMC_g is wrongly coded. We skip it.\n');
   end
 end
@@ -266,3 +266,5 @@ time=toc;
 
 diary off
 fclose(fid);
+
+exit
