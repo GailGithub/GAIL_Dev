@@ -355,11 +355,16 @@ if sum(out_param.exit) == 0
 else
   for i=1:exit_len
     if out_param.exit(i)==1,
-      exit_str = strcat(exit_str,{num2str(i)}, {' '});
+      if i<exit_len 
+        exit_str = strcat(exit_str,{num2str(i)}, {' '});
+      else
+        exit_str = strcat(exit_str,{num2str(i)});
+      end
     end
   end
 end
-out_param.exitflag = exit_str
+out_param.exitflag = exit_str;
+out_param = rmfield(out_param,'exit');
 out_param.time=toc;
 end
 
