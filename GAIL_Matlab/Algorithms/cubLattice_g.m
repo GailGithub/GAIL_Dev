@@ -108,7 +108,7 @@ function [q,out_param] = cubLattice_g(varargin)
 % 
 %     out_param.time --- time elapsed in seconds when calling cubLattice_g for f.
 %
-%     out_param.exitflag --- this is a binary vector stating whether 
+%     out_param.exit --- this is a binary vector stating whether 
 %     warning flags arise. These flags tell about which conditions make the
 %     final result certainly not guaranteed. One flag is considered arisen
 %     when its value is 1. The following list explains the flags in the
@@ -221,7 +221,7 @@ cond2=(1+out_param.fudge(mlag-(1:mlag)))*(1+2*out_param.fudge(mlag))/(1+out_para
 errest=zeros(out_param.mmax-out_param.mmin+1,1); %initialize error estimates
 appxinteg=zeros(out_param.mmax-out_param.mmin+1,1); %initialize approximations to integral
 exit_len = 2;
-out_param.exitflag = zeros(exit_len,1); %we start the algorithm with all warning flags down
+out_param.exit = zeros(exit_len,1); %we start the algorithm with all warning flags down
 
 %% Initial points and FWT
 out_param.n=2^out_param.mmin; %total number of points to start with
@@ -285,7 +285,7 @@ if out_param.pred_err <= deltaplus
    out_param.time=toc;
    return
 elseif out_param.mmin == out_param.mmax % We are on our max budget and did not meet the error condition => overbudget
-       out_param.exitflag(1) = true;
+       out_param.exit(1) = true;
 end
 
 %% Loop over m
@@ -349,7 +349,7 @@ for m=out_param.mmin+1:out_param.mmax
         all((StildeNC(meff-1,1:min(meff-1,mlag)).*cond2(1:min(meff-1,mlag))) ...
             >=(Stilde(meff)*ones(1,min(meff-1,mlag)))))
         
-        out_param.exitflag(2) = true;
+        out_param.exit(2) = true;
    end
    out_param.pred_err=out_param.fudge(m)*Stilde(meff);
    errest(meff)=out_param.pred_err;
@@ -373,9 +373,27 @@ for m=out_param.mmin+1:out_param.mmax
       out_param.time=toc;
       return
    elseif m == out_param.mmax % We are on our max budget and did not meet the error condition => overbudget
-       out_param.exitflag(1) = true;
+       out_param.exit(1) = true;
    end
 end
+disp('here')
+exit_str='';
+if sum(out_param.exit) == 0
+  out_param.exitflag = '0';
+else
+  for i=1:exit_len
+    if out_param.exit(i)==1,
+      if i<exit_len 
+        exit_str = strcat(exit_str,{num2str(i)}, {' '});
+      else
+        exit_str = strcat(exit_str,{num2str(i)});
+      end
+    end
+  end
+end
+out_param.exitflag = exit_str;
+out_param = rmfield(out_param,'exit');
+
 out_param.time=toc;
 end
 
