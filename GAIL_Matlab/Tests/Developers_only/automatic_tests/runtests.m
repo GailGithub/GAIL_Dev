@@ -266,5 +266,3 @@ time=toc;
 
 diary off
 fclose(fid);
-
-exit

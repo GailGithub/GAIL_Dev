@@ -80,5 +80,3 @@ time=toc;
 disp(time)
 
 diary off
-
-exit

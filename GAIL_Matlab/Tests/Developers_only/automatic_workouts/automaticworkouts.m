@@ -6,3 +6,4 @@ GAIL_Install
 cd /home/lantoni/GAIL_tests/repo/gail-development/GAIL_Matlab/Tests/Developers_only/
 
 longtests
+exit
