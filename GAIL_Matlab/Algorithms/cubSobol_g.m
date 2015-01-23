@@ -382,14 +382,14 @@ else
     else
         out_param.f=f;
         d = varargin{2};
-        if ~isnumeric(d) || ~gail.isposint(d) || ~(d<101)
+        if ~isnumeric(d) || ~gail.isposint(d) || ~(d<1112)
             warning('MATLAB:cubSobol_g:dnotposint',...
-                'The dimension d must be a positive integer less than 101. Example for f(x)=x^2:')
+                'The dimension d must be a positive integer less than 1112. Example for f(x)=x^2:')
             f = @(x) x.^2;
             out_param.f=f;
             out_param.d=1;
         else
-        out_param.d=d;
+            out_param.d=d;
         end
     end
 end;
