@@ -103,19 +103,20 @@ end
 %% Save Output
 
 if usejava('jvm')
-figure
-subplot(2,1,1);
-plot(1:nrep*n,timeratio,'blue',1:nrep*n,ones(nrep*n,1),'red');
-title('Comparison between funappx\_g and funappxglobal\_g')
-ylabel('Time ratio of local/global')
-xlabel('# of tests')
-subplot(2,1,2);
-plot(1:nrep*n,npointsratio,'blue',1:nrep*n,ones(nrep*n,1),'red');
-ylabel('Points ratio of local/global')
-xlabel('# of tests')
-
-gail.save_eps('WorkoutFunappxOutput', 'WorkoutFunAppxTest');
-
-gail.save_mat('WorkoutFunappxOutput', 'WorkoutFunAppxTest', npoints,time,...
-    c,timeratio,npointsratio,npointslgratio,timelgratio);
+    figure
+    subplot(2,1,1);
+    plot(1:nrep*n,timeratio,'blue',1:nrep*n,ones(nrep*n,1),'red');
+    title('Comparison between funappx\_g and funappxglobal\_g')
+    ylabel('Time ratio of local/global')
+    xlabel('# of tests')
+    subplot(2,1,2);
+    plot(1:nrep*n,npointsratio,'blue',1:nrep*n,ones(nrep*n,1),'red');
+    ylabel('Points ratio of local/global')
+    xlabel('# of tests')
+    
+    gail.save_eps('WorkoutFunappxOutput', 'WorkoutFunAppxTest');
+    
+    gail.save_mat('WorkoutFunappxOutput', 'WorkoutFunAppxTest', npoints,time,...
+        c,timeratio,npointsratio,npointslgratio,timelgratio);
+end;
 end

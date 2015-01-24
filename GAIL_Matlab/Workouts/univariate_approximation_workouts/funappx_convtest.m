@@ -1,4 +1,5 @@
-clear all; clf; format compact
+function [npoints,errest,t,npointsglobal,errestglobal,tglobal]=funappx_convtest()
+format compact
 tol = zeros(1,15);
 errest = tol;
 npoints = tol;
@@ -10,19 +11,19 @@ j=1;
 %f = @(x) x.^2; 
 f = @(x) exp(-100*(x-sqrt(2)/2).^2);
 for i=-15:-1,
-  tol(j) = 10^(i)
+  tol(j) = 10^(i);
   in_param.abstol = 10^(i);
   tic,
   [~, out_param] = funappx_g(f, in_param);
-  t(j) = toc
-  errest(j) = out_param.errest   
-  npoints(j) = out_param.npoints
+  t(j) = toc;
+  errest(j) = out_param.errest;
+  npoints(j) = out_param.npoints;
   
   tic,
   [~, out_param] = funappxglobal_g(f, in_param);
-  tglobal(j) = toc
-  errestglobal(j) = out_param.errorbound   
-  npointsglobal(j) = out_param.npoints
+  tglobal(j) = toc;
+  errestglobal(j) = out_param.errorbound;
+  npointsglobal(j) = out_param.npoints;
   
   j=j+1;
 end
@@ -34,9 +35,13 @@ loglog(npoints, errest)
 subplot(2,1,2)
 loglog(t, errest)
 
+gail.save_eps('WorkoutFunappxOutput', 'WorkoutFunAppxConvTest1');
+
 figure(2)
 subplot(2,1,1)
 loglog(npointsglobal, errestglobal)
 
 subplot(2,1,2)
 loglog(tglobal, errestglobal)
+gail.save_eps('WorkoutFunappxOutput', 'WorkoutFunAppxConvTest2');
+end
