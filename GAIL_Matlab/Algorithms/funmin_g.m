@@ -113,9 +113,10 @@ function [fmin,out_param]=funmin_g(varargin)
 %  fmin =
 % 
 %     1.0000
-%  
+% 
 %  out_param = 
 % 
+%                f: @(x)(x-0.3).^2+1
 %                a: 0
 %                b: 1
 %           abstol: 1.0000e-06
@@ -203,7 +204,7 @@ function [fmin,out_param]=funmin_g(varargin)
 %  fmin =
 % 
 %     1.0000
-%
+% 
 %  out_param = 
 % 
 %                a: -2
@@ -224,7 +225,7 @@ function [fmin,out_param]=funmin_g(varargin)
 %        intervals: [2x1 double]
 %
 %
-%   See also FUNAPPX_G, INTEGRAL_G
+%  See also FUNAPPX_G, INTEGRAL_G
 %
 %  References
 %   [1]  Xin Tong. A Guaranteed, Adaptive, Automatic Algorithm for
