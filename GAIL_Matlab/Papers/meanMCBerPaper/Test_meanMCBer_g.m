@@ -4,7 +4,7 @@ function [ut_abserr, ut_abstol]=Test_meanMCBer_g
 format long e
     disp(horzcat(' abstol             abserr            pHat                p               n               nmax '));
     disp(        '-------------------------------------------------------------------------------------------------------');
-nrep = 3;
+nrep = 500;
 u = rand(nrep,1);
 uu = rand(nrep,1);
 in_param.alpha = 0.05;% default uncertainty
@@ -36,12 +36,6 @@ for k = 1:nrep
         res(k,5) = out_param.n;
         res(k,6) = out_param.nmax;
         res(k,7) = abserr./in_param.abstol;
- end
-timestamp=datestr(now);
-timestamp(timestamp==' ')='_';
-timestamp(timestamp==':')='.';
-%end
-%loglog(res(:,4),res(:,7),'r*')
-filename = strcat('TestmeanMCBernoulli-on-abs-',timestamp,'.mat');
-save(filename)
+end
+gail.save_mat('meanMCBerPaperOutput','TestmeanMCBer-on-abs-',ut_abstol,ut_abserr,res)
 end
