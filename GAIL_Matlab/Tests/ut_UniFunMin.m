@@ -3,14 +3,14 @@ classdef ut_UniFunMin < matlab.unittest.TestCase
 
   methods(Test)
       
-    function testUniFunMin_test_ErrorTolerance(testCase)
-      UniFunMin_test_ErrorTolerance
+    function testUniFunMin_test_ErrTolerance(testCase)
+      UniFunMin_test_ErrTolerance
       succrates = succnowarn + succwarn;   
       testCase.verifyGreaterThanOrEqual(succrates,[0.2,0.5,0.8]);
     end
     
-    function testUniFunMin_test_ErrorXTolerance(testCase)
-      UniFunMin_test_ErrorXTolerance
+    function testUniFunMin_test_ErrXTolerance(testCase)
+      UniFunMin_test_ErrXTolerance
       succrates = succnowarn + succwarn;   
       testCase.verifyGreaterThanOrEqual(succrates,[0.2,0.5,0.8]);
     end
