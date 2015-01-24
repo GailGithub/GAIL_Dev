@@ -15,7 +15,7 @@ fullfilename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
     subdir, PATHNAMESEPARATOR', filename,'-',...
     datestr(now,'yyyy-mmm-dd-HH-MM-SS'),'.mat');
  
-varnames={} 
+varnames={};
 for k = 1:length(varargin)
     varname = inputname(k+2);
     eval([varname, ' = varargin{k}']);
