@@ -15,16 +15,11 @@ tic;
 
 doctest funappxglobal_g
 doctest funappx_g
-doctest funappxtau_g
-doctest funappx01_g
 doctest dt_funappxglobal_g
 doctest dt_funappx_g
 doctest funmin_g
-doctest funmin01_g
 doctest integral_g
 doctest integralsim_g
-doctest integral01_g
-doctest integraltau_g
 doctest dt_integral_g 
 doctest meanMCabs_g
 doctest meanMC_g
@@ -52,19 +47,6 @@ if MATLABVERSION >= 8
     fprintf(fid,'Test ut_funappxglobal_g is wrongly coded. We skip it.\n');
   end
   
-  try
-    Tests = matlab.unittest.TestSuite.fromClass(?ut_funappx01_g);
-    results=run(ut_funappx01_g)
-    if sum([results.Failed])>0
-      failed=find([results.Failed]>0);
-      for i=1:size(failed,2)
-        fprintf(fid,'%s\n',Tests(failed(i)).Name);
-      end
-    end
-  catch
-    display('Test ut_funappx01_g is wrongly coded. We skip it.')
-    fprintf(fid,'Test ut_funappx01_g is wrongly coded. We skip it.\n');
-  end
   
   warning('off','MATLAB:integral_g:peaky')
   warning('off','MATLAB:integral_g:exceedbudget')
@@ -102,22 +84,6 @@ if MATLABVERSION >= 8
   warning('on','MATLAB:integralsim_g:peaky')
   warning('on','MATLAB:integralsim_g:exceedbudget')
   
-  
-  warning('off','MATLAB:integral01_g:peaky')
-  try
-    Tests = matlab.unittest.TestSuite.fromClass(?ut_integral01_g);
-    results=run(ut_integral01_g)
-    if sum([results.Failed])>0
-      failed=find([results.Failed]>0);
-      for i=1:size(failed,2)
-        fprintf(fid,'%s\n',Tests(failed(i)).Name);
-      end
-    end
-  catch
-    display('Test ut_integral01_g is wrongly coded. We skip it.')
-    fprintf(fid,'Test ut_integral01_g is wrongly coded. We skip it.\n');
-  end
-  warning('on','MATLAB:integral01_g:peaky')
   
   try
     Tests = matlab.unittest.TestSuite.fromClass(?ut_meanMCabs_g);
@@ -218,19 +184,6 @@ if MATLABVERSION >= 8
     fprintf(fid,'Test ut_funmin_g is wrongly coded. We skip it.\n');
   end
   
-  try
-    Tests = matlab.unittest.TestSuite.fromClass(?ut_funmin01_g);
-    results=run(ut_funmin01_g)
-    if sum([results.Failed])>0
-      failed=find([results.Failed]>0);
-      for i=1:size(failed,2)
-        fprintf(fid,'%s\n',Tests(failed(i)).Name);
-      end
-    end
-  catch
-    display('Test ut_funmin01_g is wrongly coded. We skip it.')
-    fprintf(fid,'Test ut_funmin01_g is wrongly coded. We skip it.\n');
-  end 
   
   try
     Tests = matlab.unittest.TestSuite.fromClass(?ut_meanMC_g);

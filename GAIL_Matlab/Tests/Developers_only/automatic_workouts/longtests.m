@@ -7,7 +7,7 @@ diary(filename)
 tic; 
 
 format short
-
+  
 %% Workouts 
 % meanMC_g
 doctest dt_meanMC_g_TrafficModel
@@ -75,6 +75,57 @@ if MATLABVERSION >= 8
     run(ut_UniFunMin)
 end
 
+
+%% doctests and unit tests for deprecated algos
+doctest funappxtau_g
+doctest funappx01_g
+doctest funmin01_g
+doctest integral01_g
+doctest integraltau_g
+
+try
+    Tests = matlab.unittest.TestSuite.fromClass(?ut_funappx01_g);
+    results=run(ut_funappx01_g)
+    if sum([results.Failed])>0
+        failed=find([results.Failed]>0);
+        for i=1:size(failed,2)
+            fprintf(fid,'%s\n',Tests(failed(i)).Name);
+        end
+    end
+catch
+    display('Test ut_funappx01_g is wrongly coded. We skip it.')
+    fprintf(fid,'Test ut_funappx01_g is wrongly coded. We skip it.\n');
+end
+  
+warning('off','MATLAB:integral01_g:peaky')
+try
+    Tests = matlab.unittest.TestSuite.fromClass(?ut_integral01_g);
+    results=run(ut_integral01_g)
+    if sum([results.Failed])>0
+        failed=find([results.Failed]>0);
+        for i=1:size(failed,2)
+            fprintf(fid,'%s\n',Tests(failed(i)).Name);
+        end
+    end
+catch
+    display('Test ut_integral01_g is wrongly coded. We skip it.')
+    fprintf(fid,'Test ut_integral01_g is wrongly coded. We skip it.\n');
+end
+warning('on','MATLAB:integral01_g:peaky')
+
+try
+    Tests = matlab.unittest.TestSuite.fromClass(?ut_funmin01_g);
+    results=run(ut_funmin01_g)
+    if sum([results.Failed])>0
+        failed=find([results.Failed]>0);
+        for i=1:size(failed,2)
+            fprintf(fid,'%s\n',Tests(failed(i)).Name);
+        end
+    end
+catch
+    display('Test ut_funmin01_g is wrongly coded. We skip it.')
+    fprintf(fid,'Test ut_funmin01_g is wrongly coded. We skip it.\n');
+end
 
 time=toc;
 disp(time)
