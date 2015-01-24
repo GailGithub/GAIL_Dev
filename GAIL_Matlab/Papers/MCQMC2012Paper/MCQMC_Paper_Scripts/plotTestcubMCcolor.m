@@ -58,11 +58,6 @@ axes('Position',get(ax1,'Position'),...
            'XLim',[0 1],'Linewidth',plotTest.linewidth);
 %xlabel('Probability')
 line(probaug,timeaug,'color','m','linewidth',plotTest.linewidth)
-[GAILPATH,~,PATHNAMESEPARATOR] = GAILstart(0);
-path = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
-    'MCQMCPaperOutput',PATHNAMESEPARATOR,'Results',PATHNAMESEPARATOR);
-print('-depsc',[path,...
-     plotTest.name '.eps'])
-% print('-depsc', ['./Results/' plotTest.name '.eps'])
+gail.save_eps('MCQMCPaperOutput/Results',plotTest.name);
 
 
