@@ -9,16 +9,17 @@
 
 %% Preliminaries
 %clear all, close all
-clearvars -except testCase
+%clearvars -except testCase
+function [succnowarn,succwarn]=conepaper_test_funappx_g(nrep,nmax,abstol)
 tstart = tic;
 
 %% Program parameters
-in_param.abstol = 10^(-8); %error tolerance
-in_param.nmax = 10^7; %cost budget
+in_param.abstol = abstol; %error tolerance
+in_param.nmax = nmax; %cost budget
 
 %% Simulation parameters
 %nrep = 100; %number of times to test, takes about a minute, can change
-nrep = 10000; %number of times to test used in the paper
+%nrep = 10000; %number of times to test used in the paper
 if (nrep >= 1000)
     warning(' Need more than one hour to replicate the result in the paper! ')
     warning('off','MATLAB:funappxtau_g:exceedbudget');
@@ -106,7 +107,7 @@ gail.save_mat('ConesPaperOutput', 'ConesPaperFunAppxTest', tauvec,pini,...
 toc(tstart)
 warning('on','MATLAB:funappxtau_g:exceedbudget');
 warning('on','MATLAB:funappxtau_g:peaky');
-
+end
 %% The following output was obtained on 2013-August-17 by
 %  from the data in
 %       ConesPaperFunAppxTest-03-Sep-2013-18-37-05.mat
