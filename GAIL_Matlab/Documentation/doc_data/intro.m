@@ -1,4 +1,4 @@
-%% GAIL
+%% Guaranteed Automatic Integration Library (GAIL) 2.1 User Guide
 %
 % GAIL (Guaranteed Automatic Integration Library) is created, developed, 
 % and maintained by Fred Hickernell (Illinois Institute of Technology), 
@@ -9,4 +9,4 @@
 %
 % GAIL is a suite of algorithms for integration problems in one, many, and 
 % infinite dimensions, and whose answers are guaranteed to be correct.
-%
+%help GAU
