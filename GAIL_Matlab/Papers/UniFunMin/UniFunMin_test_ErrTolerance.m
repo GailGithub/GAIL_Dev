@@ -54,7 +54,7 @@ for i=1:ntau;
         estmin = fmin;
         trueerrormat(j,i) = abs(estmin-exactmin);
         tauchangemat(j,i) = out_param.tauchange;
-        exceedmat(j,i) = out_param.exceedbudget;
+        exceedmat(j,i) = out_param.exitflag;
     end
 end
 

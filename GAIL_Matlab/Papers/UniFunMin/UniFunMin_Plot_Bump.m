@@ -27,4 +27,4 @@ plot(t,f(t),'LineWidth',2)
 xlim([0 1])
 ylim([-1.2 0.2])
 
-save_eps('UniFunMinOutput', 'UniFunMinPlotBump');
+gail.save_eps('UniFunMinOutput', 'UniFunMinPlotBump');

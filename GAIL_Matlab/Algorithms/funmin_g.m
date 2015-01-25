@@ -79,7 +79,7 @@ function [fmin,out_param]=funmin_g(varargin)
 %
 %     out_param.exitflag --- the state of program when exiting
 %              0  Success
-%              1  Nnumber of points used is greater than out_param.nmax
+%              1  Number of points used is greater than out_param.nmax
 %
 %     out_param.errest --- estimation of the absolute error bound
 %
