@@ -4,12 +4,12 @@ if usejava('jvm')
     oldStatus = get(0,'DefaultFigureVisible');
     set(0, 'DefaultFigureVisible', 'off')
     [GAILPATH,GAILVERSION,PATHNAMESEPARATOR,MATLABVERSION] = GAILstart(0);
+    mfile_list = {'GAIL','funclist','help_funappx_g','help_funmin_g',...
+        'help_integral_g', 'help_meanMC_g','help_meanMCBer_g', ...
+        'help_cubMC_g','help_cubLattice_g','help_cubSobol_g','help_install'};
     
     %% generate GAIL User Guide in HTML format
     delete(strcat(GAILPATH,'Documentation',PATHNAMESEPARATOR,'html',PATHNAMESEPARATOR,'*.png'))
-    mfile_list = {'GAIL','funclist','help_funappx_g','help_funmin_g',...
-        'help_integral_g', 'help_meanMC_g','help_meanMCBer_g', ...
-        'help_cubMC_g','help_install'};
     for i=1:length(mfile_list),
         publish(mfile_list{i});
     end
