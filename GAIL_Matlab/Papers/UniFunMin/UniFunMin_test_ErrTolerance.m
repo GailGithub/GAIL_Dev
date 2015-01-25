@@ -80,13 +80,15 @@ end
 
  
 %% Save Output
-[GAILPATH,~,PATHNAMESEPARATOR] = GAILstart(0);
-path = strcat(GAILPATH,'OutputFiles' , PATHNAMESEPARATOR);
-filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
-                  'UniFunMinOutput',PATHNAMESEPARATOR',...
-                  'ErrorToleranceTest-',...
-                  datestr(now,'dd-mmm-yyyy-HH-MM-SS'),'.mat');
-save(filename)
+% [GAILPATH,~,PATHNAMESEPARATOR] = GAILstart(0);
+% path = strcat(GAILPATH,'OutputFiles' , PATHNAMESEPARATOR);
+% filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
+%                   'ErrToleranceTest-',...
+%                   datestr(now,'yyyymmdd'),'.mat');
+% save(filename)
+
+gail.save_mat('UniFunMinOutput', 'ErrToleranceTest',tauvec,probinit,...
+    probfinl,succnowarn,succwarn,failnowarn,failwarn);
 
 toc(tstart)
 

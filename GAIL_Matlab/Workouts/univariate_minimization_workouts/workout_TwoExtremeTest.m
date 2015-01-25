@@ -69,12 +69,15 @@ for i=1:nTolX
 end
 
 %% Save Output
-[GAILPATH,~,PATHNAMESEPARATOR] = GAILstart(0);
-path = strcat(GAILPATH,'OutputFiles' , PATHNAMESEPARATOR);
-filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
-                  'TwoExtremeTest-',...
-                  datestr(now,'yyyymmdd'),'.mat');
-save(filename)
+% [GAILPATH,~,PATHNAMESEPARATOR] = GAILstart(0);
+% path = strcat(GAILPATH,'OutputFiles' , PATHNAMESEPARATOR);
+% filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
+%                   'TwoExtremeTest-',...
+%                   datestr(now,'yyyymmdd'),'.mat');
+% save(filename)
+
+gail.save_mat('UniFunMinOutput', 'TwoExtremeTest',TolXvec,probfunmin,...
+    probnowarn,probwarn,probfminbnd);
 
 toc(tstart)
 

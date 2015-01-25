@@ -26,3 +26,4 @@ plot(t,f(t),'LineWidth',2)
 xlim([0 1])
 ylim([-6 1])
 
+save_eps('UniFunMinOutput', 'UniFunMinTwoExtreme');

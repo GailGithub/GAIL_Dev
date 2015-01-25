@@ -46,7 +46,7 @@ for i=1:ntau;
         estmin = fmin;
         trueerrormat(j,i) = abs(estmin-exactmin);
         tauchangemat(j,i) = out_param.tauchange;
-        exceedmat(j,i) = out_param.exceedbudget;
+        exceedmat(j,i) = out_param.exitflag;
     end
 end
 
@@ -70,14 +70,16 @@ for i=1:ntau
         succwarn(i) failnowarn(i) failwarn(i)]])) 
 end
 
- 
 %% Save Output
-[GAILPATH,~,PATHNAMESEPARATOR] = GAILstart(0);
-path = strcat(GAILPATH,'OutputFiles' , PATHNAMESEPARATOR);
-filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
-                  'ErrorToleranceTest-',...
-                  datestr(now,'yyyymmdd'),'.mat');
-save(filename)
+% [GAILPATH,~,PATHNAMESEPARATOR] = GAILstart(0);
+% path = strcat(GAILPATH,'OutputFiles' , PATHNAMESEPARATOR);
+% filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
+%                   'ErrToleranceTest-',...
+%                   datestr(now,'yyyymmdd'),'.mat');
+% save(filename)
+
+gail.save_mat('UniFunMinOutput', 'ErrToleranceTest',tauvec,probinit,...
+    probfinl,succnowarn,succwarn,failnowarn,failwarn);
 
 toc(tstart)
 

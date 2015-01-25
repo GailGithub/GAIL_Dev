@@ -22,3 +22,5 @@ f=@(x) exp(-1./(x-0.5).^2);
 t=0:0.000001:1;
 plot(t,f(t),'LineWidth',2)
 xlim([0 1])
+
+save_eps('UniFunMinOutput', 'UniFunMinPlotFlat');

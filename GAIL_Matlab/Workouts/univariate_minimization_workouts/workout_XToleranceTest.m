@@ -79,14 +79,15 @@ for i=1:ntau
 end
 
 %% Save Output
-[GAILPATH,~,PATHNAMESEPARATOR] = GAILstart(0);
-path = strcat(GAILPATH,'OutputFiles' , PATHNAMESEPARATOR);
-filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
-                  'XToleranceTest-',...
-                  datestr(now,'yyyymmdd'),'.mat');
-save(filename)
+% [GAILPATH,~,PATHNAMESEPARATOR] = GAILstart(0);
+% path = strcat(GAILPATH,'OutputFiles' , PATHNAMESEPARATOR);
+% filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
+%                   'XToleranceTest-',...
+%                   datestr(now,'yyyymmdd'),'.mat');
+% save(filename)
 
-toc(tstart)
+gail.save_mat('UniFunMinOutput', 'XToleranceTest',tauvec,probinit,...
+    probfinl,succnowarn,succwarn,failnowarn,failwarn);
 
 %% The following output was obtained on 2014-October
 %         Probability    Success   Success   Failure  Failure

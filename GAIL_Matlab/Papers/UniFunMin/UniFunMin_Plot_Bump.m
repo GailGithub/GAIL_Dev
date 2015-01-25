@@ -26,3 +26,5 @@ t=0:0.00001:1;
 plot(t,f(t),'LineWidth',2)
 xlim([0 1])
 ylim([-1.2 0.2])
+
+save_eps('UniFunMinOutput', 'UniFunMinPlotBump');

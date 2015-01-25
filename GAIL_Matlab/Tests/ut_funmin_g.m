@@ -166,7 +166,7 @@ classdef ut_funmin_g < matlab.unittest.TestCase
             z = 0.5;
             f = @(x) exp(-1./((x-z).^2)); % flat bottom
             [fmin,result] = funmin_g(f,in_param);
-            testCase.verifyLessThanOrEqual(result.error,in_param.abstol);
+            testCase.verifyLessThanOrEqual(result.errest,in_param.abstol);
             testCase.verifyLessThanOrEqual(result.npoints,in_param.nmax);
             v=sqrt(-1/(log(in_param.abstol)));
             exactsolu1 =[.5-v, .5+v];
