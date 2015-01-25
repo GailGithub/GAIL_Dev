@@ -71,9 +71,6 @@ function [fmin,out_param]=funmin_g(varargin)
 %
 %     out_param.tau --- latest value of tau
 %
-% %     out_param.exceedbudget --- 0 if the number of points used in
-% %     estimationg fmin is less than the cost budget; 1, otherwise.
-%
 %     out_param.npoints --- number of points needed to reach the guaranteed
 %     absolute error tolerance or the guaranteed X tolerance
 %
