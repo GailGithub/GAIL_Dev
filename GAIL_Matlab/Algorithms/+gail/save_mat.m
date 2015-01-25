@@ -21,4 +21,5 @@ for k = 1:length(varargin)
     eval([varname, ' = varargin{k}']);
     varnames{k} = varname;
 end
+clear subdir filename GAILPATH PATHNAMESEPARATOR varname
 save(fullfilename, varnames{:});
