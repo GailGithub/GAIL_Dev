@@ -14,7 +14,7 @@ Yuhan Ding, Lan Jiang, Lluis Antoni Jimenez Rugama, Yizhi
 Zhang and Xuan Zhou, Department of Applied Mathematics, Illinois 
 Institute of Technology (IIT) and  Xin Tong, Department of Mathematics, 
 Statistics, and Computer Science, University of Illinois at Chicago. 
-We thank the contributions of Xincheng Sheng, and the class of Math 
+We thank the contributions of Xincheng Sheng, and the IIT class of Math 
 573 Reliable Mathematical Software, Fall 2013.
 
 
