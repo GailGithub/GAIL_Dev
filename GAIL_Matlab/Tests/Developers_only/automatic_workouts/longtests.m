@@ -75,8 +75,37 @@ if MATLABVERSION >= 8
     run(ut_UniFunMin)
 end
 
+  try
+    Tests = matlab.unittest.TestSuite.fromClass(?ut_meanMC_g);
+    results=run(ut_meanMC_g)
+    if sum([results.Failed])>0
+      failed=find([results.Failed]>0);
+      for i=1:size(failed,2)
+        fprintf(fid,'%s\n',Tests(failed(i)).Name);
+      end
+    end
+  catch
+    display('Test ut_meanMC_g is wrongly coded. We skip it.')
+    fprintf(fid,'Test ut_meanMC_g is wrongly coded. We skip it.\n');
+  end
 
+ try
+    Tests = matlab.unittest.TestSuite.fromClass(?ut_meanMCBer_g);
+    results=run(ut_meanMCBer_g)
+    if sum([results.Failed])>0
+      failed=find([results.Failed]>0);
+      for i=1:size(failed,2)
+        fprintf(fid,'%s\n',Tests(failed(i)).Name);
+      end
+    end
+  catch
+    display('Test ut_meanMCBer_g is wrongly coded. We skip it.')
+    fprintf(fid,'Test ut_meanMCBer_g is wrongly coded. We skip it.\n');
+ end
+  
 %% doctests and unit tests for deprecated algos
+doctest funappxglobal_g
+doctest dt_funappxglobal_g
 doctest funappxtau_g
 doctest funappx01_g
 doctest funmin01_g

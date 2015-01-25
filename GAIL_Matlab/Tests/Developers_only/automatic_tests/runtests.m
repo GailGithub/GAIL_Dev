@@ -13,22 +13,21 @@ fid = fopen(shortutestreport,'wt');
 tic; 
 % CALL DOCTESTS 
 
-doctest funappxglobal_g
-doctest funappx_g
-doctest dt_funappxglobal_g
-doctest dt_funappx_g
-doctest funmin_g
-doctest integral_g
-doctest integralsim_g
-doctest dt_integral_g 
-doctest meanMCabs_g
-doctest meanMC_g
-doctest meanMCBer_g
-doctest cubMCabs_g
-doctest cubLattice_g
-doctest cubSobol_g
-doctest cubLattice_old_g
-doctest cubSobol_old_g
+
+doctest funappx_g; time=toc
+doctest dt_funappx_g; time=toc
+doctest funmin_g; time=toc
+doctest integral_g; time=toc
+doctest integralsim_g; time=toc
+doctest dt_integral_g ; time=toc
+doctest meanMCabs_g; time=toc
+doctest meanMC_g; time=toc
+doctest meanMCBer_g; time=toc
+doctest cubMCabs_g; time=toc
+doctest cubLattice_g; time=toc
+doctest cubSobol_g; time=toc
+doctest cubLattice_old_g; time=toc
+doctest cubSobol_old_g; time=toc
 
 % CALL UNIT TESTS
 [~,~,~,MATLABVERSION]=GAILstart(0);
@@ -113,19 +112,7 @@ if MATLABVERSION >= 8
     fprintf(fid,'Test ut_cubMCabs_g is wrongly coded. We skip it.\n');
   end
   
-  try
-    Tests = matlab.unittest.TestSuite.fromClass(?ut_meanMCBer_g);
-    results=run(ut_meanMCBer_g)
-    if sum([results.Failed])>0
-      failed=find([results.Failed]>0);
-      for i=1:size(failed,2)
-        fprintf(fid,'%s\n',Tests(failed(i)).Name);
-      end
-    end
-  catch
-    display('Test ut_meanMCBer_g is wrongly coded. We skip it.')
-    fprintf(fid,'Test ut_meanMCBer_g is wrongly coded. We skip it.\n');
-  end
+ 
   
   try
     Tests = matlab.unittest.TestSuite.fromClass(?ut_funappx_g);
@@ -185,19 +172,7 @@ if MATLABVERSION >= 8
   end
   
   
-  try
-    Tests = matlab.unittest.TestSuite.fromClass(?ut_meanMC_g);
-    results=run(ut_meanMC_g)
-    if sum([results.Failed])>0
-      failed=find([results.Failed]>0);
-      for i=1:size(failed,2)
-        fprintf(fid,'%s\n',Tests(failed(i)).Name);
-      end
-    end
-  catch
-    display('Test ut_meanMC_g is wrongly coded. We skip it.')
-    fprintf(fid,'Test ut_meanMC_g is wrongly coded. We skip it.\n');
-  end
+
   
   try
     Tests = matlab.unittest.TestSuite.fromClass(?ut_cubMC_g);
