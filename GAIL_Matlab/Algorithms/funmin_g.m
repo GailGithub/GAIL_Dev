@@ -71,11 +71,15 @@ function [fmin,out_param]=funmin_g(varargin)
 %
 %     out_param.tau --- latest value of tau
 %
-%     out_param.exceedbudget --- 0 if the number of points used in
-%     estimationg fmin is less than the cost budget; 1, otherwise.
+% %     out_param.exceedbudget --- 0 if the number of points used in
+% %     estimationg fmin is less than the cost budget; 1, otherwise.
 %
 %     out_param.npoints --- number of points needed to reach the guaranteed
 %     absolute error tolerance or the guaranteed X tolerance
+%
+%     out_param.exitflag --- the state of program when exiting
+%              0  Success
+%              1  Nnumber of points used is greater than out_param.nmax
 %
 %     out_param.errest --- estimation of the absolute error bound
 %
@@ -116,22 +120,22 @@ function [fmin,out_param]=funmin_g(varargin)
 % 
 %  out_param = 
 % 
-%                f: @(x)(x-0.3).^2+1
-%                a: 0
-%                b: 1
-%           abstol: 1.0000e-06
-%             TolX: 1.0000e-03
-%              nlo: 10
-%              nhi: 1000
-%             nmax: 10000000
-%            ninit: 100
-%              tau: 197
-%     exceedbudget: 0
-%          npoints: 6337
-%           errest: 6.1554e-07
-%          volumeX: 0.0015
-%        tauchange: 0
-%        intervals: [2x1 double]
+%             f: @(x)(x-0.3).^2+1
+%             a: 0
+%             b: 1
+%        abstol: 1.0000e-06
+%          TolX: 1.0000e-03
+%           nlo: 10
+%           nhi: 1000
+%          nmax: 10000000
+%         ninit: 100
+%           tau: 197
+%      exitflag: 0
+%       npoints: 6337
+%        errest: 6.1554e-07
+%       volumeX: 0.0015
+%     tauchange: 0
+%     intervals: [2x1 double]
 %
 %
 %  Example 2:
@@ -145,22 +149,22 @@ function [fmin,out_param]=funmin_g(varargin)
 % 
 %  out_param = 
 % 
-%                a: -2
-%           abstol: 1.0000e-07
-%                b: 2
-%                f: @(x)(x-0.3).^2+1
-%              nhi: 10
-%              nlo: 10
-%             nmax: 1000000
-%             TolX: 1.0000e-04
-%            ninit: 10
-%              tau: 17
-%     exceedbudget: 0
-%          npoints: 18433
-%           errest: 9.5464e-08
-%          volumeX: 5.4175e-04
-%        tauchange: 0
-%        intervals: [2x1 double]
+%             a: -2
+%        abstol: 1.0000e-07
+%             b: 2
+%             f: @(x)(x-0.3).^2+1
+%           nhi: 10
+%           nlo: 10
+%          nmax: 1000000
+%          TolX: 1.0000e-04
+%         ninit: 10
+%           tau: 17
+%      exitflag: 0
+%       npoints: 18433
+%        errest: 9.5464e-08
+%       volumeX: 5.4175e-04
+%     tauchange: 0
+%     intervals: [2x1 double]
 %
 %
 %  Example 3:
@@ -178,22 +182,22 @@ function [fmin,out_param]=funmin_g(varargin)
 % 
 %  out_param = 
 % 
-%                a: -13
-%           abstol: 1.0000e-07
-%                b: 8
-%                f: @(x)(x+1.3).^2+1
-%              nhi: 100
-%              nlo: 10
-%             nmax: 1000000
-%             TolX: 1.0000e-04
-%            ninit: 91
-%              tau: 179
-%     exceedbudget: 0
-%          npoints: 368641
-%           errest: 7.1473e-08
-%          volumeX: 5.2354e-04
-%        tauchange: 0
-%        intervals: [2x1 double]
+%             a: -13
+%        abstol: 1.0000e-07
+%             b: 8
+%             f: @(x)(x+1.3).^2+1
+%           nhi: 100
+%           nlo: 10
+%          nmax: 1000000
+%          TolX: 1.0000e-04
+%         ninit: 91
+%           tau: 179
+%      exitflag: 0
+%       npoints: 368641
+%        errest: 7.1473e-08
+%       volumeX: 5.2354e-04
+%     tauchange: 0
+%     intervals: [2x1 double]
 %
 %
 %  Example 4:
@@ -207,22 +211,22 @@ function [fmin,out_param]=funmin_g(varargin)
 % 
 %  out_param = 
 % 
-%                a: -2
-%           abstol: 1.0000e-04
-%                b: 2
-%                f: @(x)(x-0.3).^2+1
-%              nhi: 100
-%              nlo: 10
-%             nmax: 1000000
-%             TolX: 0.0100
-%            ninit: 64
-%              tau: 125
-%     exceedbudget: 0
-%          npoints: 2017
-%           errest: 6.2273e-05
-%          volumeX: 0.0146
-%        tauchange: 0
-%        intervals: [2x1 double]
+%             a: -2
+%        abstol: 1.0000e-04
+%             b: 2
+%             f: @(x)(x-0.3).^2+1
+%           nhi: 100
+%           nlo: 10
+%          nmax: 1000000
+%          TolX: 0.0100
+%         ninit: 64
+%           tau: 125
+%      exitflag: 0
+%       npoints: 2017
+%        errest: 6.2273e-05
+%       volumeX: 0.0146
+%     tauchange: 0
+%     intervals: [2x1 double]
 %
 %
 %  See also FUNAPPX_G, INTEGRAL_G
@@ -254,13 +258,12 @@ n = out_param.ninit;
 % initialize tau
 out_param.tau = 2*(n-1)-1;
 % cost budget flag
-out_param.exceedbudget = 1;
+out_param.exitflag = 1;
 % tau change flag
 tauchange = 0;
 % length of interval
 len = out_param.b-out_param.a;
-% % add flag
-% flag = 0;
+
 
 while n < out_param.nmax;
     % Stage 1: estimate weaker and stronger norm
@@ -307,7 +310,7 @@ while n < out_param.nmax;
         volumeX = sum(interval(2,:)-interval(1,:));
         % satisfy convergence
         if error < out_param.abstol || volumeX < out_param.TolX
-            out_param.exceedbudget = 0; break;
+            out_param.exitflag = 0; break;
         end
         % otherwise increase points number
         l = n;
@@ -354,7 +357,7 @@ while n < out_param.nmax;
             volumeX = sum(interval(2,:)-interval(1,:));
             % satisfy convergence
             if error < out_param.abstol || volumeX < out_param.TolX
-                out_param.exceedbudget = 0; break;
+                out_param.exitflag = 0; break;
             end
             % otherwise increase points number
             l = n;
@@ -375,7 +378,7 @@ if tauchange == 1
 end;
 
 % check cost budget flag
-if out_param.exceedbudget == 1
+if out_param.exitflag == 1
     n = l;
     warning('MATLAB:funmin_g:exceedbudget','funmin_g attempted to exceed the cost budget. The answer may be unreliable.')
 end
