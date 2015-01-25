@@ -22,7 +22,7 @@ doctest dt_cubMC_g
 run_handle('Test_cubMC_g')
 
 % integral_g
-run_handle('workout_integral_g')
+run('ut_workout_integral_g')
 
 % funappx_g
 if MATLABVERSION >= 8  
