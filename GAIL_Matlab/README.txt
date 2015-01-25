@@ -10,11 +10,12 @@ Developed by
 -------------
 
 Fred Hickernell, Sou-Cheng Choi, and their collaborators including
-Yuhan Ding, Lan Jiang, Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi 
+Yuhan Ding, Lan Jiang, Lluis Antoni Jimenez Rugama, Yizhi 
 Zhang and Xuan Zhou, Department of Applied Mathematics, Illinois 
-Institute of Technology (IIT). We thank the contributions of
-Xincheng Sheng, and the class of Math 573 Reliable Mathematical 
-Software, Fall 2013.
+Institute of Technology (IIT) and  Xin Tong, Department of Mathematics, 
+Statistics, and Computer Science, University of Illinois at Chicago. 
+We thank the contributions of Xincheng Sheng, and the class of Math 
+573 Reliable Mathematical Software, Fall 2013.
 
 
 Please cite the following software and papers:
