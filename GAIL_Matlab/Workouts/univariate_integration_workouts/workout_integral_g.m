@@ -1,6 +1,6 @@
 %WORKOUT_INTEGRAL_G Calls automatic guaranteed algorithm for univariate integration
 
-function []=workout_integral_g(nrep,nmax,abstol)
+function [succnowarn, succwarn]=workout_integral_g(nrep,nmax,abstol)
 %% Garbage cleanup
 format long e
 tstart = tic;
