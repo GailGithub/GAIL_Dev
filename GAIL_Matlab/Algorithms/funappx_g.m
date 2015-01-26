@@ -72,10 +72,21 @@ function [fappx,out_param]=funappx_g(varargin)
 %     out_param.ninit --- initial number of points we use for each sub
 %     interval
 %
-%     out_param.exit --- the state of program when exiting
-%              0  Success
-%              1  Nnumber of points used is greater than out_param.nmax
-%              2  Nnumber of iterations is greater than out_param.maxiter
+%     out_param.exit --- this is a number defining the conditions of
+%     success or failure satisfied when finishing the algorithm. The 
+%     algorithm is considered successful (with out_param.exit == 0) if no 
+%     other flags arise warning that the results are certainly not 
+%     guaranteed. The initial value is 0 and the final value of this
+%     parameter is encoded as follows:
+%     
+%                       1    If reaching overbudget. It states whether
+%                       the max budget is attained without reaching the
+%                       guaranteed error tolerance.
+%      
+%                       2   If reaching overiteration. It states whether
+%                       the max iterations is attained without reaching the
+%                       guaranteed error tolerance.
+%
 %
 %     out_param.iter --- number of iterations
 %
@@ -105,29 +116,6 @@ function [fappx,out_param]=funappx_g(varargin)
 %
 %   Example 1:
 %
-%
-%   >> f = @(x) exp(-100*(x-sqrt(2)/2).^2); [~, out_param] = funappx_g(f)
-%
-% out_param = 
-% 
-%                f: @(x)exp(-100*(x-sqrt(2)/2).^2)
-%                a: 0
-%                b: 1
-%           abstol: 1.0000e-06
-%              nlo: 10
-%              nhi: 1000
-%             nmax: 10000000
-%          maxiter: 1000
-%            ninit: 100
-%             exit: 0
-%             iter: 9
-%          npoints: 6733
-%           errest: 9.4644e-07
-%            nstar: [1x68 double]
-% 
-% 
-%   Example 2:
-%
 %   >> f = @(x) x.^2;
 %   >> [~, out_param] = funappx_g(f,-2,2,1e-7,10,20)
 %
@@ -142,14 +130,14 @@ function [fappx,out_param]=funappx_g(varargin)
 %              nlo: 10
 %             nmax: 10000000
 %            ninit: 18
-%             exit: 0
+%             exit: [2x1 logical]
 %             iter: 12
 %          npoints: 34817
 %           errest: 5.9398e-08
 %            nstar: [1x2048 double]
 %
 %
-%   Example 3:
+%   Example 2:
 %
 %   >> f = @(x) x.^2;
 %   >> [~, out_param] = funappx_g(f,'a',-2,'b',2,'nhi',20,'nlo',10)
@@ -165,14 +153,14 @@ function [fappx,out_param]=funappx_g(varargin)
 %              nlo: 10
 %             nmax: 10000000
 %            ninit: 18
-%             exit: 0
+%             exit: [2x1 logical]
 %             iter: 10
 %          npoints: 8705
 %           errest: 9.5037e-07
 %            nstar: [1x512 double]
 %
 %
-%   Example 4:
+%   Example 3:
 %
 %   >> in_param.a = -5; in_param.b = 5; f = @(x) x.^2;
 %   >> in_param.abstol = 10^(-6); in_param.nlo = 10; in_param.nhi = 20;
@@ -189,7 +177,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %              nlo: 10
 %             nmax: 10000000
 %            ninit: 19
-%             exit: 0
+%             exit: [2x1 logical]
 %             iter: 12
 %          npoints: 36865
 %           errest: 3.1274e-07
@@ -232,7 +220,8 @@ len = out_param.b - out_param.a;
 x = out_param.a:len/(ninit-1):out_param.b;
 y = f(x);
 iter = 0;
-out_param.exit = 0;
+exit_len = 2;
+out_param.exit=logical(zeros(exit_len,1)); %we start the algorithm with all warning flags down
 
 while(max(err) > abstol)
     iter = iter + 1;
@@ -264,7 +253,7 @@ while(max(err) > abstol)
     %check if error satisfy the error tolerance 
     counterr = sum(err > abstol);
     if(length(x) + counterr *(ninit -1) > out_param.nmax)
-        out_param.exit = 1;
+        out_param.exit(1) = 1;
         warning('MATLAB:funappx_g:exceedbudget',' funappx_g attempted to exceed the cost budget. The answer may be unreliable.')
         break;
     end;
@@ -362,7 +351,7 @@ while(max(err) > abstol)
         break;
     end;
     if(iter> out_param.maxiter)
-        out_param.exit = 2;
+        out_param.exit(2) = 1;
         warning('MATLAB:funappx_g:exceediter',' Iteration exceeds max number of iterations ')
         break;
     end;
