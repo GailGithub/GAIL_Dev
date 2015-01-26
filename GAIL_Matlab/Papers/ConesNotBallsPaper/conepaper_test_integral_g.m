@@ -122,14 +122,11 @@ end
 % display(['  success rate of chebfun = ', num2str(geomean(chebsuccessrate))])
 
 %% Save Output
-[GAILPATH,~,PATHNAMESEPARATOR] = GAILstart(0);
-filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
-    'ConesPaperOutput',PATHNAMESEPARATOR','ConesPaperIntegralTest-',...
-    datestr(now,'dd-mmm-yyyy-HH-MM-SS'),'.mat');
-save(filename, ...
-    'tauvec','pini','pfin','succnowarn', ...
-    'succwarn','failnowarn','failwarn')
-toc(tstart)
+time = toc(tstart);
+
+gail.save_mat('ConesNotBallsPaper', 'ConePaperIntegralTest', nrep,time,...
+        tauvec,pini,pfin,succnowarn,succwarn,failnowarn,failwarn);
+
 warning('on','MATLAB:integraltau_g:exceedbudget');
 warning('on','MATLAB:integraltau_g:peaky');
 

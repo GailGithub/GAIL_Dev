@@ -89,14 +89,11 @@ for i=1:nninit
 end
  
 %% Save Output
-[GAILPATH,~,PATHNAMESEPARATOR] = GAILstart(0);
-path = strcat(GAILPATH,'OutputFiles' , PATHNAMESEPARATOR);
-filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
-                  'ConesPaperOutput',PATHNAMESEPARATOR','IntegrationTest-',...
-                  datestr(now,'yyyymmdd'),'.mat');
-save(filename)
 
-toc(tstart)
+time = toc(tstart);
+
+gail.save_mat('WorkoutIntegralOutput', 'WorkoutIntegralTest', nrep,time,...
+        succnowarn,succwarn,failnowarn,failwarn);
 
 warning('on','MATLAB:integral01_g:exceedbudget');
 warning('on','MATLAB:integral01_g:peaky');
