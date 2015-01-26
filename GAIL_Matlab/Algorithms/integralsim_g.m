@@ -101,7 +101,7 @@ function [q,out_param] = integralsim_g(varargin)
 
 % check parameter satisfy conditions or not
 [f,out_param] = integralsim_g_param(varargin{:});
-MATLABVERSION= gail.matlab_version;
+% MATLABVERSION= gail.matlab_version;
 
 %% main alg
 out_param.tau=out_param.ninit-1; % computes the minimum requirement of number of points to start

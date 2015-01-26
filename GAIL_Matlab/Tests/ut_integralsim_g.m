@@ -11,7 +11,7 @@ classdef ut_integralsim_g < matlab.unittest.TestCase
                 +(x-z-a).*abs(x-z-a)...
                 -(x-z+a).*abs(x-z+a)) ...
                 .*(x>=x0).*(x<=x1); %test function
-            [q,out_param]=integralsim_g(f,'ninit',53,'abstol',1e-8,'nmax',1e7);
+            [~,out_param]=integralsim_g(f,'ninit',53,'abstol',1e-8,'nmax',1e7);
             testCase.verifyEqual(out_param.tauchange,true);
         end
         
