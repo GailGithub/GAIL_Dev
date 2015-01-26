@@ -71,8 +71,8 @@ function [pHat,out_param]=meanMCBer_g(varargin)
 %   Using the same function as example 1, with the absolute error tolerance
 %   1e-4.
 % 
-%   >> pHat = meanMCBer_g(Yrand,1e-4)
-%   pHat = 0.111***
+%   >> pHat = meanMCBer_g(Yrand,1e-3)
+%   pHat = 0.11***
 % 
 % 
 %   Example 3:
