@@ -1,17 +1,17 @@
 #!/bin/sh
 
-cd /home/lantoni/GAIL_tests/repo/gail-development/
+cd /home/gail/GAIL_tests/repo/gail-development/
 # GIT
 # Pulling the latest repository before testing
-# /usr/local/bin/git --git-dir /home/lantoni/GAIL_tests/repo/gail-development/.git checkout .
-/usr/local/bin/git --git-dir /home/lantoni/GAIL_tests/repo/gail-development/.git pull
-# /usr/local/bin/git --git-dir /home/lantoni/GAIL_tests/repo/gail-development/.git checkout .
+# /usr/local/bin/git --git-dir /home/gail/GAIL_tests/repo/gail-development/.git checkout .
+/usr/local/bin/git --git-dir /home/gail/GAIL_tests/repo/gail-development/.git pull
+# /usr/local/bin/git --git-dir /home/gail/GAIL_tests/repo/gail-development/.git checkout .
 
 # MATLAB
 # Set the directory for running our matlab test
 # Run the file that installs GAIL and run the tests. The output files are in OutputFiles. We put all togehter since there is a permission not letting us install the path
-cd /home/lantoni/GAIL_tests/repo/gail-development/GAIL_Matlab/Tests/Developers_only/automatic_tests/
-# /export/apps/matlab/R2013a/bin/matlab -nojvm < automatictests.m > /home/lantoni/GAIL_tests/test_results.txt Former line
+cd /home/gail/GAIL_tests/repo/gail-development/GAIL_Matlab/Tests/Developers_only/automatic_tests/
+# /export/apps/matlab/R2013a/bin/matlab -nojvm < automatictests.m > /home/gail/GAIL_tests/test_results.txt Former line
 /export/apps/matlab/R2013a/bin/matlab -nojvm < automatictests.m
 
 # SETTING THE TEST OUTPUT FILE FOR COMPARING
@@ -20,10 +20,10 @@ cd /home/lantoni/GAIL_tests/repo/gail-development/GAIL_Matlab/Tests/Developers_o
 # Delete the lines containing "seconds testing time" from the test_results.txt file
 # sed --in-place '/seconds testing time/d' test_results.txt 
 # Former code above. Now below:
-cp /home/lantoni/GAIL_tests/repo/gail-development/GAIL_Matlab/OutputFiles/gail_tests-* gail_doctests.txt
-mv /home/lantoni/GAIL_tests/repo/gail-development/GAIL_Matlab/OutputFiles/gail_tests-* /home/lantoni/GAIL_tests/test_reports/
-# mv /home/lantoni/GAIL_tests/repo/gail-development/GAIL_Matlab/OutputFiles/gail_workouts-* /home/lantoni/GAIL_tests/test_reports/
-mv /home/lantoni/GAIL_tests/repo/gail-development/GAIL_Matlab/OutputFiles/gail_unittests.txt gail_unittests.txt
+cp /home/gail/GAIL_tests/repo/gail-development/GAIL_Matlab/OutputFiles/gail_tests-* gail_doctests.txt
+mv /home/gail/GAIL_tests/repo/gail-development/GAIL_Matlab/OutputFiles/gail_tests-* /home/gail/GAIL_tests/test_reports/
+# mv /home/gail/GAIL_tests/repo/gail-development/GAIL_Matlab/OutputFiles/gail_workouts-* /home/gail/GAIL_tests/test_reports/
+mv /home/gail/GAIL_tests/repo/gail-development/GAIL_Matlab/OutputFiles/gail_unittests.txt gail_unittests.txt
 # Preparing results txt files
 begin="------Doc test wrong results were:";
 nl=$'\n';
@@ -48,4 +48,4 @@ fi
 rm Test_Results.txt
 
 # KEEPING ONLY THE LAST 30 DAYS REPORTS
-find /home/lantoni/GAIL_tests/test_reports/gail_tests* -mtime +30 -exec rm {} \;
+find /home/gail/GAIL_tests/test_reports/gail_tests* -mtime +30 -exec rm {} \;

@@ -1,4 +1,4 @@
-#echo "Tests gave errors. See the output attached." | mutt -a "/home/lantoni/GAIL_tests/test_results.txt" -s "subject of message" -- gail_dev@googlegroups.com
+#echo "Tests gave errors. See the output attached." | mutt -a "/home/gail/GAIL_tests/test_results.txt" -s "subject of message" -- gail_dev@googlegroups.com
 
 # And if you want mail to read the content from a file:
 nl=$'\n\n';
