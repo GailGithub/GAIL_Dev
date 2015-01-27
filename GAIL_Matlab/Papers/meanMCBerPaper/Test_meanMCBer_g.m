@@ -4,7 +4,7 @@ function [ut_abserr, ut_abstol]=Test_meanMCBer_g
 format long e
     disp(horzcat(' abstol             abserr            pHat                p               n               nmax '));
     disp(        '-------------------------------------------------------------------------------------------------------');
-nrep = 10;
+nrep = 500;
 u = rand(nrep,1);
 uu = rand(nrep,1);
 in_param.alpha = 0.05;% default uncertainty
