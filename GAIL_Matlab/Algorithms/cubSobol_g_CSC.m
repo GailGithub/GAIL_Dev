@@ -344,12 +344,11 @@ for m=out_param.mmin+1:out_param.mmax
       q=q+deltaminus;
       appxinteg(meff)=q;
       out_param.time=toc;
-      is_done = false;
+      is_done = true;
    elseif m == out_param.mmax % We are on our max budget and did not meet the error condition => overbudget
       out_param.exit(1) = 1;
    end
 
-   is_done = any(out_param.exit);
 end
 
 exit_str='';
