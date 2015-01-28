@@ -93,7 +93,6 @@ function [q,out_param] = cubSobol_g(varargin)
 %
 %     out_param.time --- time elapsed in seconds when calling cubSobol_g for f.
 %
-
 %     out_param.exitflag --- this is a binary vector stating whether 
 %     warning flags arise. These flags tell about which conditions make the
 %     final result certainly not guaranteed. One flag is considered arisen
@@ -128,7 +127,7 @@ function [q,out_param] = cubSobol_g(varargin)
 % Example 1:
 % Estimate the integral with integrand f(x) = x1.*x2 in the interval [0,1)^2:
 %
-% >> f = @(x) x(:,1).*x(:,2); d = 2; q = cubSobol_g(f,d,1e-5,1e-1,'uniform')
+% >> f = @(x) prod(x,2); d = 2; q = cubSobol_g(f,d,1e-5,1e-1,'uniform')
 % q = 0.25***
 % 
 % 
