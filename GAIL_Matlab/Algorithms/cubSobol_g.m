@@ -199,7 +199,7 @@ cond2=(1+out_param.fudge(mlag-(1:mlag)))*(1+2*out_param.fudge(mlag))/(1+out_para
 errest=zeros(out_param.mmax-out_param.mmin+1,1); %initialize error estimates
 appxinteg=zeros(out_param.mmax-out_param.mmin+1,1); %initialize approximations to integral
 exit_len = 2;
-out_param.exit = zeros(exit_len,1); %we start the algorithm with all warning flags down
+out_param.exit=logical(zeros(exit_len,1)); %we start the algorithm with all warning flags down
 
 %% Initial points and FWT
 out_param.n=2^out_param.mmin; %total number of points to start with
@@ -255,17 +255,21 @@ deltaminus = 0.5*(gail.tolfun(out_param.abstol,...
     out_param.toltype)-gail.tolfun(out_param.abstol,out_param.reltol,...
     out_param.theta,abs(q+errest(1)),out_param.toltype));
 
+is_done = false;
 if out_param.pred_err <= deltaplus
    q=q+deltaminus;
    appxinteg(1)=q;
    out_param.time=toc;
-   return
+   is_done = true;
 elseif out_param.mmin == out_param.mmax % We are on our max budget and did not meet the error condition => overbudget
-       out_param.exit(1) = true;
+   out_param.exit(1) = true;
 end
 
 %% Loop over m
-for m=out_param.mmin+1:out_param.mmax 
+for m=out_param.mmin+1:out_param.mmax
+   if is_done,
+       break;
+   end
    out_param.n=2^m;
    mnext=m-1;
    nnext=2^mnext;
@@ -316,11 +320,8 @@ for m=out_param.mmin+1:out_param.mmax
    end
    % disp((Stilde(meff)*cond1(1:min(meff-1,mlag)))>=(StildeNC(meff-1,1:min(meff-1,mlag)))) % Displaying necessary condition 1 results (1 if satisfied)
    % disp((StildeNC(meff-1,1:min(meff-1,mlag)).*cond2(1:min(meff-1,mlag)))>=(Stilde(meff)*ones(1,min(meff-1,mlag)))) % Displaying necessary condition 2 results (1 if satisfied)
-   if ~(all((Stilde(meff)*cond1(1:min(meff-1,mlag))) >= ...
-           (StildeNC(meff-1,1:min(meff-1,mlag)))) * ...
-        all((StildeNC(meff-1,1:min(meff-1,mlag)).*cond2(1:min(meff-1,mlag))) ...
-            >=(Stilde(meff)*ones(1,min(meff-1,mlag)))))
-        
+   if ~(all((Stilde(meff)*cond1(1:min(meff-1,mlag)))>=(StildeNC(meff-1,1:min(meff-1,mlag))))*   ...
+    all((StildeNC(meff-1,1:min(meff-1,mlag)).*cond2(1:min(meff-1,mlag)))>=(Stilde(meff)*ones(1,min(meff-1,mlag))))),
         out_param.exit(2) = true;
    end
    out_param.pred_err=out_param.fudge(m)*Stilde(meff);
@@ -343,7 +344,7 @@ for m=out_param.mmin+1:out_param.mmax
       q=q+deltaminus;
       appxinteg(meff)=q;
       out_param.time=toc;
-      return
+      is_done = true;
    elseif m == out_param.mmax % We are on our max budget and did not meet the error condition => overbudget
       out_param.exit(1) = true;
    end
@@ -351,7 +352,7 @@ end
 
 exit_str='';
 if sum(out_param.exit) == 0
-  out_param.exitflag = '0';
+  exit_str = '0';
 else
   for i=1:exit_len
     if out_param.exit(i)==1,
