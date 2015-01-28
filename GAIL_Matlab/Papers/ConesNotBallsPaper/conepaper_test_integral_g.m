@@ -10,7 +10,7 @@ function [succnowarn, succwarn]=conepaper_test_integral_g(nrep,nmax,abstol)
 %% Preliminaries
 format long e
 % clearvars -except testCase
-% close all
+close all;
 tstart = tic;
 
 
@@ -124,7 +124,7 @@ end
 %% Save Output
 time = toc(tstart);
 
-gail.save_mat('ConesNotBallsPaper', 'ConePaperIntegralTest', nrep,time,...
+gail.save_mat('WorkoutIntegralOutput', 'ConePaperIntegralTest', nrep,time,...
         tauvec,pini,pfin,succnowarn,succwarn,failnowarn,failwarn);
 
 warning('on','MATLAB:integraltau_g:exceedbudget');

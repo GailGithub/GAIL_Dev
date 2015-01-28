@@ -3,6 +3,7 @@
 function [succnowarn, succwarn]=workout_integral_g(nrep,nmax,abstol)
 %% Garbage cleanup
 format long e
+close all;
 tstart = tic;
 warning('off','MATLAB:integral01_g:exceedbudget');
 warning('off','MATLAB:integral01_g:peaky');
