@@ -11,10 +11,12 @@ function fullfilename = save_mat(subdir, filename, varargin)
 %   tauvec,pini,pfin,succnowarn');
 
 [GAILPATH,~,PATHNAMESEPARATOR] = GAILstart(0);
+if exist(subdir) ~= 7,
+  mkdir(strcat([GAILPATH,'OutputFiles',PATHNAMESEPARATOR], subdir));
+end
 fullfilename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
     subdir, PATHNAMESEPARATOR', filename,'-',...
     datestr(now,'yyyy-mmm-dd-HH-MM-SS'),'.mat');
- 
 varnames={};
 for k = 1:length(varargin)
     varname = inputname(k+2);
