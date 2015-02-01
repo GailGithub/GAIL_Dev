@@ -1,29 +1,27 @@
-%% Experiment 3: Bump test functions with abstol=10^(-8) & TolX=10^(-6)
+function [tauvec,prob] =workout_ErrXToleranceTest(nrep,abstol,TolX,nmax)
+% user can choose number of iteration, absolut error tolerance, X
+% tolerance, and cost budget nmax. 
+%
+% Experiment 3: Bump test functions with abstol=10^(-8), TolX=10^(-6), 
+% nrep=10000 and nmax=10^7 
 
-%% Garbage collection and initialization
-format long e 
-clear all 
-close all 
-tstart = tic;
 
 %% Program parameters
-in_param.abstol = 10^(-8); %error tolerance
-in_param.TolX = 10^(-6);
-in_param.nmax = 10^7; %cost budget
-tic
+in_param.abstol = abstol; %error tolerance
+in_param.TolX = TolX;
+in_param.nmax = nmax; %cost budget
 
 %% Simulation parameters
-nrep = 10000;
-if (nrep >= 1000)
+n = nrep;
+if (n >= 100)
     warning('off','MATLAB:funmin_g:exceedbudget');
     warning('off','MATLAB:funmin_g:peaky');
 end;
-a = 10.^(-4+3*rand(nrep,1));
-z = 2.*a+(1-4*a).*rand(nrep,1);
+a = 10.^(-4+3*rand(n,1));
+z = 2.*a+(1-4*a).*rand(n,1);
 tauvec = [11 101 1001]; %cone condition tau
 ntau = length(tauvec);
 ratio = 1./a;
-gnorm = 1./a;
 exactmin = -1;
 exactsolu = z;
 
@@ -60,12 +58,15 @@ for i=1:ntau;
     end
 end
 
-probinit = mean(repmat(ratio,1,ntau)<=repmat(tauvec,nrep,1),1); 
-probfinl = mean(repmat(ratio,1,ntau)<=newtaumat,1); 
-succnowarn=mean((trueerrormat<=in_param.abstol|truesolumat)&(~exceedmat),1); 
-succwarn=mean((trueerrormat<=in_param.abstol|truesolumat)&(exceedmat),1);    
-failnowarn=mean((trueerrormat>in_param.abstol&~truesolumat)&(~exceedmat),1);  
-failwarn=mean((trueerrormat>in_param.abstol&~truesolumat)&(exceedmat),1);  
+warning('on','MATLAB:funmin_g:exceedbudget');
+warning('on','MATLAB:funmin_g:peaky');
+
+prob.probinit = mean(repmat(ratio,1,ntau)<=repmat(tauvec,nrep,1),1); 
+prob.probfinl = mean(repmat(ratio,1,ntau)<=newtaumat,1); 
+prob.succnowarn=mean((trueerrormat<=in_param.abstol|truesolumat)&(~exceedmat),1); 
+prob.succwarn=mean((trueerrormat<=in_param.abstol|truesolumat)&(exceedmat),1);    
+prob.failnowarn=mean((trueerrormat>in_param.abstol&~truesolumat)&(~exceedmat),1);  
+prob.failwarn=mean((trueerrormat>in_param.abstol&~truesolumat)&(exceedmat),1);  
 
 %% Output the table
 % To just re-display the output, load the .mat file and run this section
@@ -76,26 +77,13 @@ display(' tau      In Cone    No Warning  Warning No Warning Warning')
 for i=1:ntau
     display(sprintf(['%5.0f %5.2f%%->%5.2f%% %7.2f%%' ...
         '%10.2f%% %7.2f%% %7.2f%% '],...
-        [tauvec(i) 100*[probinit(i) probfinl(i) succnowarn(i) ...
-        succwarn(i) failnowarn(i) failwarn(i)]])) 
+        [tauvec(i) 100*[prob.probinit(i) prob.probfinl(i) ...
+        prob.succnowarn(i) prob.succwarn(i) prob.failnowarn(i)... 
+        prob.failwarn(i)]])) 
 end
 
-%% Save Output
-% [GAILPATH,~,PATHNAMESEPARATOR] = GAILstart(0);
-% path = strcat(GAILPATH,'OutputFiles' , PATHNAMESEPARATOR);
-% filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
-%                   'ErrorXToleranceTest-',...
-%                   datestr(now,'yyyymmdd'),'.mat');
-% save(filename)
 
-gail.save_mat('UniFunMinOutput', 'ErrXToleranceTest',tauvec,probinit,...
-    probfinl,succnowarn,succwarn,failnowarn,failwarn);
+%% Save output
+gail.save_mat('WorkoutFunminOutput', 'ErrXToleranceTest',tauvec,prob,ntau);
 
-toc(tstart)
-
-%% The following output was obtained on 2014-October
-%         Probability    Success   Success   Failure  Failure
-%  tau      In Cone    No Warning  Warning No Warning Warning
-%    11  1.49%->20.99%   20.99%      0.00%   79.01%    0.00% 
-%   101 33.24%->51.96%   51.96%      0.00%   48.04%    0.00% 
-%  1001 66.00%->85.07%   85.08%      0.00%   14.92%    0.00% 
+end
