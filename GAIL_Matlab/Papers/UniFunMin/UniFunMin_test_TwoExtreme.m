@@ -1,24 +1,25 @@
-%This script describes the Experiment 4:  
-%  Functions with two local minimum points.
+%This function describes the Experiment 4
 % 
-%  Generates Table 3.4 in the thesis
+%  Generates Table 3.4 in the thesis with TolX=[10^(-2) 10^(-4) 10^(-7)], 
+%  nrep=10000 and nmax=10^7 
 %
 %  Xin Tong, A Guaranteed, Adaptive, Automatic Algorithm for Univatiate
 %  Function Minimization, July 2014.
 
 %% Garbage collection and initialization
-clearvars -except testCase  %clear all variables except testCase
-close all 
-tstart = tic;
+% clearvars -except testCase  %clear all variables except testCase
+% close all 
+function [TolXvec,prob]=UniFunMin_test_TwoExtreme(nrep,TolX,nmax)
 
 %% Program parameters
-TolXvec = [10^(-2) 10^(-4) 10^(-7)];
+TolXvec = TolX;
 in_param.abstol = 0; %error tolerance
-in_param.nmax = 10^7; %cost budget
+in_param.nmax = nmax; %cost budget
+tstart = tic;
 
 %% Simulation parameters
-nrep = 10000;
-if (nrep >= 1000)
+n = nrep;
+if (n >= 100)
     warning('off','MATLAB:funmin_g:exceedbudget');
     warning('off','MATLAB:funmin_g:peaky');
 end;
@@ -54,11 +55,10 @@ for i=1:nTolX
     end
 end
 
-probfunmin=mean(succfunmin,1); %probability find the solution by funmin_g 
-probnowarn=mean(succfunmin&(~exceedmat),1); 
-probwarn=mean(succfunmin&(exceedmat),1); 
-probfminbnd=mean(succfminbnd,1); 
-
+prob.probfunmin=mean(succfunmin,1); %probability find the solution by funmin_g 
+prob.probnowarn=mean(succfunmin&(~exceedmat),1); 
+prob.probwarn=mean(succfunmin&(exceedmat),1); 
+prob.probfminbnd=mean(succfminbnd,1); 
 
 %% Output the table
 % To just re-display the output, load the .mat file and run this section
@@ -68,22 +68,17 @@ display('           Success    Success    Success    Success')
 display(' TolX               No Warning   Warning    fminbnd' )
 for i=1:nTolX
     display(sprintf([ '%1.0e    %7.2f%%   %7.2f%%   %7.2f%%   %7.2f%% '],...
-        [TolXvec(i) 100*[probfunmin(i) probnowarn(i) probwarn(i)...
-        probfminbnd(i)]])) 
+        [TolXvec(i) 100*[prob.probfunmin(i) prob.probnowarn(i) ...
+        prob.probwarn(i) prob.probfminbnd(i)]])) 
 end
 
-%% Save Output
-% [GAILPATH,~,PATHNAMESEPARATOR] = GAILstart(0);
-% path = strcat(GAILPATH,'OutputFiles' , PATHNAMESEPARATOR);
-% filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
-%                   'TwoExtremeTest-',...
-%                   datestr(now,'yyyymmdd'),'.mat');
-% save(filename)
-
-gail.save_mat('UniFunMinOutput', 'TwoExtremeTest',TolXvec,probfunmin,...
-    probnowarn,probwarn,probfminbnd);
+%% Save output
+gail.save_mat('UniFunMinOutput', 'TwoExtremeTest',TolXvec,prob,nTolX);
 
 toc(tstart)
+
+warning('on','MATLAB:funmin_g:exceedbudget');
+warning('on','MATLAB:funmin_g:peaky');
 
 %% The following output was obtained on 2014-May
 %            Success    Success    Success    Success
@@ -92,4 +87,3 @@ toc(tstart)
 % 1e-04     100.00%    100.00%      0.00%     67.28% 
 % 1e-07     100.00%      0.00%    100.00%     67.28% 
 % Elapsed time is 10873.821636 seconds.
-
