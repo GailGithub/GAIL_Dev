@@ -104,9 +104,9 @@ end
  end
   
 %% doctests and unit tests for deprecated algos
+doctest funappxtau_g
 doctest funappxglobal_g
 doctest dt_funappxglobal_g
-doctest funappxtau_g
 doctest funappx01_g
 doctest funmin01_g
 doctest integral01_g
