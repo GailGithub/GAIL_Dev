@@ -11,17 +11,17 @@ function fullfilename = save_mat(subdir, filename, varargin)
 %   tauvec,pini,pfin,succnowarn');
 
 [GAILPATH,~,PATHNAMESEPARATOR] = GAILstart(0);
-if exist(subdir) ~= 7,
-  mkdir(strcat([GAILPATH,'OutputFiles',PATHNAMESEPARATOR], subdir));
+outputfolder =  [GAILPATH,'OutputFiles',PATHNAMESEPARATOR,subdir];
+if exist(outputfolder) ~= 7,
+  mkdir(outputfolder);
 end
-fullfilename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
-    subdir, PATHNAMESEPARATOR', filename,'-',...
+fullfilename = strcat(outputfolder, PATHNAMESEPARATOR', filename,'-',...
     datestr(now,'yyyy-mmm-dd-HH-MM-SS'),'.mat');
 varnames={};
 for k = 1:length(varargin)
     varname = inputname(k+2);
-    eval([varname, ' = varargin{k}']);
+    eval([varname, ' = varargin{k};']);
     varnames{k} = varname;
 end
-clear subdir filename GAILPATH PATHNAMESEPARATOR varname
+clear subdir filename GAILPATH PATHNAMESEPARATOR varname outputfolder
 save(fullfilename, varnames{:});
