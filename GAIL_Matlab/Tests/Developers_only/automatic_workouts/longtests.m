@@ -30,10 +30,9 @@ if MATLABVERSION >= 8
 end
 
 % funmin_g
-run_handle('workout_ErrXToleranceTest')	
-run_handle('workout_XToleranceTest.m')
-run_handle('workout_ErrToleranceTest.m')
-run_handle('workout_TwoExtremeTest.m')
+if MATLABVERSION >= 8  
+    run(ut_UniFunMinWorkout)
+end
 
 
 %% Papers
