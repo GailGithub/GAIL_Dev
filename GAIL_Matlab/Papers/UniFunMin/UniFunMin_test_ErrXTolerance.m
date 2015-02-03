@@ -20,8 +20,8 @@ in_param.nmax = nmax; %cost budget
 %% Simulation parameters
 n = nrep;
 if (n >= 100)
-    warning('off','MATLAB:funmin_g:exceedbudget');
-    warning('off','MATLAB:funmin_g:peaky');
+    warning('off','MATLAB:funmin01_g:exceedbudget');
+    warning('off','MATLAB:funmin01_g:peaky');
 end;
 a = 10.^(-4+3*rand(n,1));
 z = 2.*a+(1-4*a).*rand(n,1);
@@ -89,8 +89,8 @@ gail.save_mat('UniFunMinOutput', 'ErrXToleranceTest',tauvec,prob,ntau);
 
 toc(tstart)
 
-warning('on','MATLAB:funmin_g:exceedbudget');
-warning('on','MATLAB:funmin_g:peaky');
+warning('on','MATLAB:funmin01_g:exceedbudget');
+warning('on','MATLAB:funmin01_g:peaky');
 
 %% The following output was obtained on 2014-May
 %         Probability    Success   Success   Failure  Failure
