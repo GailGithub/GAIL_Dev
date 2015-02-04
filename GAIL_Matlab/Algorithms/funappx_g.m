@@ -279,7 +279,8 @@ while(max(err) > abstol)
         %reshape x without end point to a matrix of ninit-1 by # of intervals
         reshapex =  reshape(x(1:end-1),ninit -1,(index(end) - 1)/(ninit -1));
         %generate new points newx need to be added
-        newx = reshapex(:,badind) + repmat(h(badind),ninit-1,1);
+        %newx = reshapex(:,badind) + repmat(h(badind),ninit-1,1);
+        newx = bsxfun(@plus,reshapex(:,badind),h(badind));
         %compute value newy of newx
         newy = f(newx);
         %initialize a zero matrix of 2*(ninit-1) by # of bad sub intervals

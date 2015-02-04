@@ -7,32 +7,28 @@ function [fmin,out_param]=funmin_g(varargin)
 %   and the X tolerance of 1e-3. Default initial number of points is 100
 %   and default cost budget is 1e7. Input f is a function handle.
 %
-%   fmin = FUNMIN_G(f,a,b,abstol,TolX,nlo,nhi,nmax) finds minimum value of
+%   fmin = FUNMIN_G(f,a,b,abstol,TolX) finds minimum value of
 %   function f with ordered input parameters that define the finite
-%   interval [a,b], a guaranteed absolute error tolerance abstol, a
-%   guaranteed X tolerance TolX, a lower bound of initial number of points
-%   nlo, an upper bound of initial number of points nhi, and a cost budget
-%   nmax.
+%   interval [a,b], a guaranteed absolute error tolerance abstol and a
+%   guaranteed X tolerance TolX.
 %
-%   fmin = FUNMIN_G(f,'a',a,'b',b,'abstol',abstol,'TolX',TolX,'nlo',nlo,...
-%   'nhi',nhi,'nmax',nmax)
+%   fmin = FUNMIN_G(f,'a',a,'b',b,'abstol',abstol,'TolX',TolX)
 %   finds minimum value of function f on the interval [a,b] with a 
-%   guaranteed absolute error tolerance abstol, a guaranteed X tolerance 
-%   TolX, a lower bound of initial number of points nlo, an upper bound of 
-%   initial number of points nhi, and a cost budget nmax. All seven 
+%   guaranteed absolute error tolerance abstol and a guaranteed X tolerance 
+%   TolX. All five
 %   field-value pairs are optional and can be supplied in different order.
 %
 %   fmin = FUNMIN_G(f,in_param) finds minimum value of function f on the
 %   interval [in_param.a,in_param.b] with a guaranteed absolute error
-%   tolerance in_param.abstol, a guranteed X tolerance in_param.TolX, a
-%   lower bound of initial number of points in_param.nlo, an upper bound of
-%   initial number of points in_param.nhi, and a cost budget in_param.nmax.
+%   tolerance in_param.abstol and a guranteed X tolerance in_param.TolX.
 %   If a field is not specified, the default value is used.
 %
 %   [fmin, out_param] = FUNMIN_G(f,...) returns minimum value fmin of
 %   function f and an output structure out_param.
 %
 %   Input Arguments
+%
+%     f --- input function
 %
 %     in_param.a --- left end point of interval, default value is 0
 %
@@ -43,6 +39,8 @@ function [fmin,out_param]=funmin_g(varargin)
 %
 %     in_param.TolX --- guaranteed X tolerance, default value is 1e-3.
 %
+%  Opitional Input Arguments (Recommended not to change very often) 
+%
 %     in_param.nlo --- lower bound of initial number of points we used,
 %     default value is 10
 %
@@ -52,6 +50,8 @@ function [fmin,out_param]=funmin_g(varargin)
 %     in_param.nmax --- cost budget, default value is 1e7.
 %
 %   Output Arguments
+%
+%     out_param.f --- input function
 %
 %     out_param.a --- left end point of interval
 %
@@ -102,7 +102,7 @@ function [fmin,out_param]=funmin_g(varargin)
 %   or
 %       volumeX <= TolX,
 %
-%   provided the flag exceedbudget = 0. 
+%   provided the flag exitflag = 0. 
 %
 %
 %  Examples
@@ -392,6 +392,7 @@ function [f, out_param] = funmin_g_param(varargin)
 % Parse the input to the funmin_g.m function
 
 %% Default parameter values
+
 default.a = 0;
 default.b = 1;
 default.abstol = 1e-6;
@@ -410,7 +411,8 @@ end;
 if isempty(varargin)
     warning('MATLAB:funmin_g:nofunction','Function f must be specified. Now funmin_g will use f(x)=(x-0.3)^2+1.')
     help funmin_g
-    out_param.f = @(x) (x-0.3).^2+1;
+    f = @(x) (x-0.3).^2+1;
+    out_param.f = f;
 else
     f = varargin{1};
     out_param.f = f;

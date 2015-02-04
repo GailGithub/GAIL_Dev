@@ -1,35 +1,35 @@
-%ut_UniFunMin unit test for Xin Tong's thesis
-classdef ut_UniFunMin < matlab.unittest.TestCase
+%ut_UniFunMinWorkout unit test for funmin_g Workouts
+classdef ut_UniFunMinWorkout < matlab.unittest.TestCase
 
   methods(Test)
       
-    function testUniFunMin_test_ErrTolerance(testCase)
+    function testWorkout_ErrToleranceTest(testCase)
       nrep=10000; abstol=10^(-8); TolX=0; nmax=10^7;
-      [tauvec,prob] = UniFunMin_test_ErrTolerance(nrep,abstol,TolX,nmax);
+      [tauvec,prob] = workout_ErrToleranceTest(nrep,abstol,TolX,nmax);
       succrates = prob.succnowarn + prob.succwarn;   
       testCase.verifyGreaterThanOrEqual(succrates,[0.2,0.5,0.8]);
       testCase.verifyLessThanOrEqual(succrates,[1,1,1]);
     end
     
-    function testUniFunMin_test_ErrXTolerance(testCase)
+    function testWorkout_ErrXToleranceTest(testCase)
       nrep=10000; abstol=10^(-8); TolX=10^(-6); nmax=10^7;
-      [tauvec,prob] = UniFunMin_test_ErrXTolerance(nrep,abstol,TolX,nmax);
+      [tauvec,prob] = workout_ErrXToleranceTest(nrep,abstol,TolX,nmax)
       succrates = prob.succnowarn + prob.succwarn;   
       testCase.verifyGreaterThanOrEqual(succrates,[0.2,0.5,0.8]);
       testCase.verifyLessThanOrEqual(succrates,[1,1,1]);
     end
     
-    function testUniFunMin_test_TwoExtreme(testCase)
+    function testWorkout_TwoExtremeTest(testCase)
       nrep=10000; TolX=[10^(-2) 10^(-4) 10^(-7)]; nmax=10^7; 
-      [TolXvec,prob] = UniFunMin_test_TwoExtreme(nrep,TolX,nmax);
+      [TolXvec,prob] = workout_TwoExtremeTest(nrep,TolX,nmax);
       succrates = prob.probfunmin;   
       testCase.verifyGreaterThanOrEqual(succrates,[0.2,0.5,0.8]);
       testCase.verifyLessThanOrEqual(succrates,[1,1,1]);
     end
     
-    function testUniFunMin_test_XTolerance(testCase)
+    function testWorkout_XToleranceTest(testCase)
       nrep=10000; abstol=0; TolX=10^(-6);  nmax=10^7;
-      [tauvec,prob] = UniFunMin_test_XTolerance(nrep,abstol,TolX,nmax);
+      [tauvec,prob] = workout_XToleranceTest(nrep,abstol,TolX,nmax);
       succrates = prob.succnowarn + prob.succwarn;   
       testCase.verifyGreaterThanOrEqual(succrates,[0.2,0.5,0.8]);
       testCase.verifyLessThanOrEqual(succrates,[1,1,1]);

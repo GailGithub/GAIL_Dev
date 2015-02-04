@@ -30,10 +30,9 @@ if MATLABVERSION >= 8
 end
 
 % funmin_g
-run_handle('workout_ErrXToleranceTest')	
-run_handle('workout_XToleranceTest.m')
-run_handle('workout_ErrToleranceTest.m')
-run_handle('workout_TwoExtremeTest.m')
+if MATLABVERSION >= 8  
+    run(ut_UniFunMinWorkout)
+end
 
 
 %% Papers
@@ -104,9 +103,9 @@ end
  end
   
 %% doctests and unit tests for deprecated algos
+doctest funappxtau_g
 doctest funappxglobal_g
 doctest dt_funappxglobal_g
-doctest funappxtau_g
 doctest funappx01_g
 doctest funmin01_g
 doctest integral01_g

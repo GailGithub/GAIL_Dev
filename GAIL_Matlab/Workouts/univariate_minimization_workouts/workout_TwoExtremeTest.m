@@ -1,20 +1,18 @@
-%% Experiment 4: Functions with two local minimum points 
+function [TolXvec,prob] =workout_TwoExtremeTest(nrep,TolX,nmax)
+% user can choose number of iteration, X tolerance, and cost budget nmax. 
+%
+%  Experiment 4: Functions with two local minimum points 
+%  TolX=[10^(-2) 10^(-4) 10^(-7)], nrep=10000 and nmax=10^7 
 
-%% Garbage collection and initialization
-format long e
-clear all 
-close all 
-tstart = tic;
 
 %% Program parameters
-TolXvec = [10^(-2) 10^(-4) 10^(-7)];
+TolXvec = TolX;
 in_param.abstol = 0; %error tolerance
 in_param.nmax = 10^7; %cost budget
 
-
 %% Simulation parameters
-nrep = 10000;
-if (nrep >= 1000)
+n = nrep;
+if (n >= 100)
     warning('off','MATLAB:funmin_g:exceedbudget');
     warning('off','MATLAB:funmin_g:peaky');
 end;
@@ -50,11 +48,13 @@ for i=1:nTolX
     end
 end
 
-probfunmin=mean(succfunmin,1); %probability find the solution by funmin_g 
-probnowarn=mean(succfunmin&(~exceedmat),1); 
-probwarn=mean(succfunmin&(exceedmat),1); 
-probfminbnd=mean(succfminbnd,1); 
+warning('on','MATLAB:funmin_g:exceedbudget');
+warning('on','MATLAB:funmin_g:peaky');
 
+prob.probfunmin=mean(succfunmin,1); %probability find the solution by funmin_g 
+prob.probnowarn=mean(succfunmin&(~exceedmat),1); 
+prob.probwarn=mean(succfunmin&(exceedmat),1); 
+prob.probfminbnd=mean(succfminbnd,1); 
 
 %% Output the table
 % To just re-display the output, load the .mat file and run this section
@@ -64,28 +64,12 @@ display('           Success    Success    Success    Success')
 display(' TolX               No Warning   Warning    fminbnd' )
 for i=1:nTolX
     display(sprintf([ '%1.0e    %7.2f%%   %7.2f%%   %7.2f%%   %7.2f%% '],...
-        [TolXvec(i) 100*[probfunmin(i) probnowarn(i) probwarn(i)...
-        probfminbnd(i)]])) 
+        [TolXvec(i) 100*[prob.probfunmin(i) prob.probnowarn(i) ...
+        prob.probwarn(i) prob.probfminbnd(i)]])) 
 end
 
-%% Save Output
-% [GAILPATH,~,PATHNAMESEPARATOR] = GAILstart(0);
-% path = strcat(GAILPATH,'OutputFiles' , PATHNAMESEPARATOR);
-% filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
-%                   'TwoExtremeTest-',...
-%                   datestr(now,'yyyymmdd'),'.mat');
-% save(filename)
+%% Save output
+gail.save_mat('WorkoutFunminOutput', 'TwoExtremeTest',TolXvec,prob,nTolX);
 
-gail.save_mat('UniFunMinOutput', 'TwoExtremeTest',TolXvec,probfunmin,...
-    probnowarn,probwarn,probfminbnd);
-
-toc(tstart)
-
-%% The following output was obtained on 2014-October
-%            Success    Success    Success    Success
-%  TolX               No Warning   Warning    fminbnd
-% 1e-02     100.00%    100.00%      0.00%     67.79% 
-% 1e-04     100.00%    100.00%      0.00%     67.79% 
-% 1e-07     100.00%      0.00%    100.00%     67.79% 
-
+end
 
