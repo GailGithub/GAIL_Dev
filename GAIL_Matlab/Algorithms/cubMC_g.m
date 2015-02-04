@@ -22,7 +22,7 @@ function [Q,out_param] = cubMC_g(varargin)
 %   abstol, reltol, alpha, fudge, nSig, n1, tbudget, nbudget, flag. The 
 %   input f and hyperbox are required and others are optional.
 % 
-%   Q = CUBMC_G(f,hyperbox,'measure','uniform','abstol',abstol,'reltol',reltol,'alpha',alpha)
+%   Q = CUBMC_G(f,hyperbox,'measure',measure,'abstol',abstol,'reltol',reltol,'alpha',alpha)
 %   estimates the integral of f over hyperbox to within a specified 
 %   generalized error tolerance tolfun with guaranteed confidence level
 %   1-alpha. All the field-value pairs are optional and can be supplied in 
@@ -41,8 +41,9 @@ function [Q,out_param] = cubMC_g(varargin)
 %     [zeros(1,d); ones(1,d)], the default d is 1.
 % 
 %     in_param.measure --- the measure for generating the random variable,
-%     the default is uniform. The other measure could be handled is
-%     normal/Gaussian.
+%     the default is 'uniform'. The other measure could be handled is
+%     'normal'/'Gaussian'. The input should be a string type, hence with
+%     quotes.
 % 
 %     in_param.abstol --- the absolute error tolerance, the default value
 %     is 1e-2.
@@ -114,10 +115,10 @@ function [Q,out_param] = cubMC_g(varargin)
 %      
 %                       12  hyperbox is only a point in one direction
 %      
-%                       13  hyperbox is infinite when measure is uniform
+%                       13  hyperbox is infinite when measure is 'uniform'
 %      
 %                       14  hyperbox is not doubly infinite when measure
-%                           is normal
+%                           is 'normal'
 % 
 %  Guarantee
 % This algorithm attempts to calculate the integral of function f over a
