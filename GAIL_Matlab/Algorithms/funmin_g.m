@@ -411,7 +411,8 @@ end;
 if isempty(varargin)
     warning('MATLAB:funmin_g:nofunction','Function f must be specified. Now funmin_g will use f(x)=(x-0.3)^2+1.')
     help funmin_g
-    out_param.f = @(x) (x-0.3).^2+1;
+    f = @(x) (x-0.3).^2+1;
+    out_param.f = f;
 else
     f = varargin{1};
     out_param.f = f;
