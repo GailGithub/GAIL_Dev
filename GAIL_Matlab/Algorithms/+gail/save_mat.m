@@ -16,7 +16,7 @@ if exist(outputfolder) ~= 7,
   mkdir(outputfolder);
 end
 fullfilename = strcat(outputfolder, PATHNAMESEPARATOR', filename,'-',...
-    datestr(now,'yyyy-mmm-dd-HH-MM-SS'),'.mat');
+    datestr(now,'yyyy-mm-dd-HH-MM-SS'),'.mat');
 varnames={};
 for k = 1:length(varargin)
     varname = inputname(k+2);

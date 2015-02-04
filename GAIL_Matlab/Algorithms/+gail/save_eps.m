@@ -15,5 +15,5 @@ if exist(subdir) ~= 7,
 end
 path = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
     subdir, PATHNAMESEPARATOR, filename, '-',...
-    datestr(now,'yyyy-mmm-dd-HH-MM-SS'),'.eps');
+    datestr(now,'yyyy-mm-dd-HH-MM-SS'),'.eps');
 print('-depsc', path)
