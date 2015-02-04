@@ -47,8 +47,9 @@ classdef ut_meanMC_g < matlab.unittest.TestCase
             in_param),'MATLAB:meanMC_g:yrandnotlengthN');  
     end
     function meanMC_gOfWorkouts(testCase)
-        mu = Test_meanMC_g;
+         mu = Test_meanMC_g;
         testCase.verifyTrue(mu>4.4);
+        testCase.verifyTrue(mu<4.5);  
     end
   end
 end
