@@ -3,7 +3,7 @@ format short
 
 [GAILPATH,~,PATHNAMESEPARATOR] = GAILstart(0);
 completereport = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
-  'gail_tests-', datestr(now,'yyyymmdd'),'.txt');
+  'gail_tests-', datestr(now,'yyyy-mm-dd-HH-MM-SS'),'.txt');
 diary(completereport)
 
 shortutestreport = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
