@@ -35,7 +35,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %     in_param.abstol --- guaranteed absolute error tolerance, default
 %     value is 1e-6
 %
-%  Opitional Input Arguments (Recommended not to change very often) 
+%  Optional Input Arguments (Recommended not to change very often) 
 %
 %     in_param.nlo --- lower bound of initial number of points we used,
 %     default value is 10
@@ -212,7 +212,8 @@ MATLABVERSION= gail.matlab_version;
 ninit = out_param.ninit;
 index = [1 ninit];
 % initialize nstar
-nstar = ninit - 2;
+%nstar = ninit - 2;
+nstar = floor(ninit/2);
 % initialize error
 abstol = out_param.abstol;
 err = abstol + 1;

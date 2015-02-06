@@ -27,6 +27,7 @@ run('ut_workout_integral_g')
 % funappx_g
 if MATLABVERSION >= 8  
     run(ut_workoutfunappx_g)
+    run(ut_convtest_funappx_g)
 end
 
 % funmin_g
