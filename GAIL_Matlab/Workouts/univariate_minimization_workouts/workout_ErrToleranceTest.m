@@ -1,14 +1,13 @@
-function [tauvec,prob] =workout_ErrToleranceTest(nrep,abstol,TolX,nmax)
-% user can choose number of iteration, absolut error tolerance, X
-% tolerance, and cost budget nmax. 
-%
-% Experiment 1: Bump test functions with abstol=10^(-8), TolX=0, nrep=10000
-% and nmax=10^7 
-
+function [tauvec,prob] =workout_ErrToleranceTest(nrep,abstol,nmax)
+% user can choose number of iteration, absolut error tolerance, and cost 
+% budget nmax. 
+% 
+% Experiment 1: Bump test functions with abstol=10^(-8), nrep=10000 and 
+% nmax=10^7 
 
 %% Program parameters
 in_param.abstol = abstol; %error tolerance
-in_param.TolX = TolX;
+in_param.TolX = 0;
 in_param.nmax = nmax; %cost budget
 
 %% Simulation parameters
@@ -74,7 +73,7 @@ end
 
 
 %% Save output
-gail.save_mat('WorkoutFunminOutput', 'ErrToleranceTest',tauvec,prob,ntau);
+gail.save_mat('WorkoutFunminOutput', 'workout_ErrToleranceTest',tauvec,prob,ntau);
 
 end
 

@@ -84,6 +84,6 @@ end
 
 
 %% Save output
-gail.save_mat('WorkoutFunminOutput', 'ErrXToleranceTest',tauvec,prob,ntau);
+gail.save_mat('WorkoutFunminOutput', 'workout_ErrXToleranceTest',tauvec,prob,ntau);
 
 end
