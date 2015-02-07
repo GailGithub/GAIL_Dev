@@ -2,8 +2,9 @@
 %  
 %  Generates Figure 3.2 in the thesis with a1=0.3 and a2=0.75
 %
-%  Xin Tong, A Guaranteed, Adaptive, Automatic Algorithm for Univatiate
-%  Function Minimization, July 2014.
+%  Xin Tong. A Guaranteed, Adaptive, Automatic Algorithm for Univariate
+%  Function Minimization. MS thesis, Illinois Institute of Technology,
+%  2014.
 
 function y=UniFunMin_Plot_TwoExtreme(a1,a2)
 

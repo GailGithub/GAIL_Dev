@@ -3,12 +3,10 @@
 %  Generates Table 3.4 in the thesis with TolX=[10^(-2) 10^(-4) 10^(-7)], 
 %  nrep=10000 and nmax=10^7 
 %
-%  Xin Tong, A Guaranteed, Adaptive, Automatic Algorithm for Univatiate
-%  Function Minimization, July 2014.
+%  Xin Tong. A Guaranteed, Adaptive, Automatic Algorithm for Univariate
+%  Function Minimization. MS thesis, Illinois Institute of Technology,
+%  2014.
 
-%% Garbage collection and initialization
-% clearvars -except testCase  %clear all variables except testCase
-% close all 
 function [TolXvec,prob]=UniFunMin_test_TwoExtreme(nrep,TolX,nmax)
 
 %% Program parameters

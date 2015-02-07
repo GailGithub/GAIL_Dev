@@ -3,12 +3,10 @@
 %  Generates Table 3.3 in the thesis with abstol=10^(-8), TolX=10^(-6), 
 %  nrep=10000 and nmax=10^7
 %
-%  Xin Tong, A Guaranteed, Adaptive, Automatic Algorithm for Univatiate
-%  Function Minimization, July 2014. 
+%  Xin Tong. A Guaranteed, Adaptive, Automatic Algorithm for Univariate
+%  Function Minimization. MS thesis, Illinois Institute of Technology,
+%  2014.
 
-%% Garbage collection and initialization
-% clearvars -except testCase  %clear all variables except testCase
-% close all %close all figures
 function [tauvec,prob]=UniFunMin_test_ErrXTolerance(nrep,abstol,TolX,nmax)
 tstart = tic;
 
