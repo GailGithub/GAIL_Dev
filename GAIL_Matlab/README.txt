@@ -50,7 +50,9 @@ Lluis Antoni Jimenez Rugama and Fred J. Hickernell, "Adaptive Multidimensional
 Integration Based on Rank-1 Lattices", submitted for publication, 2014.
 (describes cubLattice_g.m)
 
-Xin Tong, "A Guaranteed, Adaptive, Automatic Algorithm for Univariate Function Minimization". MS thesis, Illinois Institute of Technology, 2014. (describes funmin_g.m)
+Xin Tong, "A Guaranteed, Adaptive, Automatic Algorithm for Univariate 
+Function Minimization". MS thesis, Illinois Institute of Technology, 2014. 
+(describes funmin_g.m)
 
 Downloads
 ------------
