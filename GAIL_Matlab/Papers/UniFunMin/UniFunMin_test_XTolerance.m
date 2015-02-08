@@ -7,11 +7,11 @@
 %  Function Minimization. MS thesis, Illinois Institute of Technology,
 %  2014.
 
-function [tauvec,prob]=UniFunMin_test_XTolerance(nrep,abstol,TolX,nmax)
+function [tauvec,prob]=UniFunMin_test_XTolerance(nrep,TolX,nmax)
 tstart = tic;
 
 %% Program parameters
-in_param.abstol = abstol; %error tolerance
+in_param.abstol = 0; %error tolerance
 in_param.TolX = TolX;
 in_param.nmax = nmax; %cost budget
 
