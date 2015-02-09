@@ -226,7 +226,7 @@ function [fmin,out_param]=funmin_g(varargin)
 %     intervals: [2x1 double]
 %
 %
-%  See also FUNAPPX_G, INTEGRAL_G
+%   See also FUNAPPX_G, INTEGRAL_G
 %
 %  References
 %   [1]  Xin Tong. A Guaranteed, Adaptive, Automatic Algorithm for
