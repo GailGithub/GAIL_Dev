@@ -19,6 +19,7 @@ cd /home/gail/GAIL_tests/repo/gail-development/GAIL_Matlab/Tests/Developers_only
 # Former code above. Now below:
 cd /home/gail/GAIL_tests/repo/gail-development/GAIL_Matlab/OutputFiles/
 find -name '*.mat' -exec mv {} /home/gail/GAIL_tests/workout_reports/ \; # Finds all the files in directories and subdirectories with extension .mat
+find -name '*.eps' -exec mv {} /home/gail/GAIL_tests/workout_reports/ \; # Finds all the files in directories and subdirectories with extension .eps
 # mv "/home/gail/GAIL_tests/repo/gail-development/GAIL_Matlab/OutputFiles"/*.mat /home/gail/GAIL_tests/workout_reports/
 mv /home/gail/GAIL_tests/repo/gail-development/GAIL_Matlab/OutputFiles/gail_workouts-* /home/gail/GAIL_tests/workout_reports/
 
