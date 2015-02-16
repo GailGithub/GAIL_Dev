@@ -24,4 +24,4 @@ find -name '*.eps' -exec mv {} /home/gail/GAIL_tests/workout_reports/ \; # Finds
 mv /home/gail/GAIL_tests/repo/gail-development/GAIL_Matlab/OutputFiles/gail_workouts-* /home/gail/GAIL_tests/workout_reports/
 
 # KEEPING ONLY THE LAST 30 DAYS REPORTS
-find /home/gail/GAIL_tests/workout_reports/*.mat -mtime +30 -exec rm {} \;
+find /home/gail/GAIL_tests/workout_reports/* -mtime +30 -exec rm {} \;

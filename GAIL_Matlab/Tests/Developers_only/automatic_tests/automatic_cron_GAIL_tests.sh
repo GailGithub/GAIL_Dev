@@ -48,4 +48,4 @@ fi
 rm Test_Results.txt
 
 # KEEPING ONLY THE LAST 30 DAYS REPORTS
-find /home/gail/GAIL_tests/test_reports/gail_tests* -mtime +30 -exec rm {} \;
+find /home/gail/GAIL_tests/test_reports/* -mtime +30 -exec rm {} \;
