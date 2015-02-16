@@ -66,15 +66,20 @@ run_handle('RunTestCubatureonGeoAsianCall');
 run_handle('RunTestCubatureonKeister')
 
 % Function minimization
-if usejava('jvm')
-  run_handle('UniFunMin_Plot_Bump')
-  run_handle('UniFunMin_Plot_Flat')
-  run_handle('UniFunMin_Plot_TwoExtreme')
+try
+    if usejava('jvm')
+        run_handle('UniFunMin_Plot_Bump')
+        run_handle('UniFunMin_Plot_Flat')
+        run_handle('UniFunMin_Plot_TwoExtreme')
+    end
+    if MATLABVERSION >= 8
+        run(ut_workout_UniFunMin)
+    end
+catch
+    display('Test for Papers/UniFunMin is wrongly coded. We skip it.')
+    fprintf(fid,'Test for Papers/UniFunMin is wrongly coded. We skip it.\n');
 end
-if MATLABVERSION >= 8  
-    run(ut_workout_UniFunMin)
-end
-
+  
   try
     Tests = matlab.unittest.TestSuite.fromClass(?ut_meanMC_g);
     results=run(ut_meanMC_g)
