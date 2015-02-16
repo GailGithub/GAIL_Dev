@@ -72,7 +72,7 @@ if usejava('jvm')
   run_handle('UniFunMin_Plot_TwoExtreme')
 end
 if MATLABVERSION >= 8  
-    run(ut_UniFunMin)
+    run(ut_workout_UniFunMin)
 end
 
   try
