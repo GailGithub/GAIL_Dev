@@ -232,10 +232,9 @@ end
 if flip
     q = -1*q;
 end
-%ii
-nshould=sqrt(Varfpup(ii+1)/(8*out_param.abstol))
 out_param.npoints=ntrap+1;  % number of points finally used
 out_param.errest=errest;    % error of integral
+out_param.VarfpCI=[Varfp(ii) Varfpup(ii+1)];
 
 function [f, out_param, flip] = integral_g_param(varargin)
 % parse the input to the integral_g function
