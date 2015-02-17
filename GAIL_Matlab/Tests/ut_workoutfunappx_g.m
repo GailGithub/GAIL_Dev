@@ -5,7 +5,7 @@ classdef ut_workoutfunappx_g < matlab.unittest.TestCase
                
     function testworkout_timetest_funappx_g(testCase)
       [timelgratio,~]=workout_funappx_g(100,1e-7,100,1000);
-      testCase.verifyGreaterThanOrEqual(timelgratio,[0.4,2.0,0.1,0.8]);
+      testCase.verifyGreaterThanOrEqual(timelgratio,[0.4,2.0,0.1,0.75]);
     end
     
     function testworkout_npointstest_funappx_g(testCase)

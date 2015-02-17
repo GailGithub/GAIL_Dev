@@ -87,7 +87,7 @@ failwarn = mean((trueerrormat>in_param.abstol)&(exceedmat),1);
 display(' ')
 display('        Probability    Success   Success   Failure  Failure')
 display(' tau      In Cone    No Warning  Warning No Warning Warning')
-for i=1:ntau
+for i=1:3
     display(sprintf(['%5.0f %5.2f%%->%5.2f%% %7.2f%%' ...
         '%10.2f%% %7.2f%% %7.2f%% '],...
         [tauvec(i) 100*[pini(i) pfin(i) succnowarn(i) ...
@@ -108,7 +108,7 @@ toc(tstart)
 warning('on','MATLAB:funappxtau_g:exceedbudget');
 warning('on','MATLAB:funappxtau_g:peaky');
 end
-%% The following output was obtained on 2013-August-17 by
+%% The following output was obtained on 2013-Sep-03 by
 %  from the data in
 %       ConesPaperFunAppxTest-03-Sep-2013-18-37-05.mat
 %  by running the output section
@@ -119,3 +119,14 @@ end
 %   10  0.00%->26.12%   25.75%      0.24%   73.88%    0.13% 
 %  100 32.95%->57.74%   56.30%      0.76%   42.26%    0.68% 
 % 1000 66.59%->88.21%   75.82%      4.68%   11.78%    7.72% 
+%% The following output was obtained on 2015-Jan-24 by
+%  from the data in
+%       ConesPaperFunAppxTest-2015-Jan-24-13-34-24.mat
+%  by running the output section
+%
+%
+%         Probability    Success   Success   Failure  Failure
+%  tau      In Cone    No Warning  Warning No Warning Warning
+%    10  0.00%->25.38%   25.13%      0.17%   74.62%    0.08% 
+%   100 32.84%->57.65%   56.36%      0.62%   42.35%    0.67% 
+%  1000 66.70%->88.62%   75.71%      4.52%   11.38%    8.39% 
