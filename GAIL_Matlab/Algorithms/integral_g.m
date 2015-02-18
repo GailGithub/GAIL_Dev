@@ -1,13 +1,12 @@
 function [q,out_param] = integral_g(varargin)
 %INTEGRAL_G 1-D guaranteed function integration using trapezoidal rule
 %
-%   q = INTEGRAL_G(f) computes q, the definite integral of function f
-%   on the interval [a,b] by trapezoidal rule with 
-%   in a guaranteed absolute error of 1e-6. Default starting number of
-%   sample points taken is 100 and default cost budget is 1e7. Input f is a 
-%   function handle. The function y = f(x) should accept a vector argument 
-%   x and return a vector result y, the integrand evaluated at each element
-%   of x.
+%   q = INTEGRAL_G(f) computes q, the definite integral of function f on
+%   the interval [a,b] by trapezoidal rule with in a guaranteed absolute
+%   error of 1e-6. Default starting number of sample points taken is 100
+%   and default cost budget is 1e7. Input f is a function handle. The
+%   function y = f(x) should accept a vector argument x and return a vector
+%   result y, the integrand evaluated at each element of x.
 %
 %   q = INTEGRAL_G(f,in_param) computes q, the definite integral of
 %   function f by trapezoidal rule within a guaranteed absolute error
