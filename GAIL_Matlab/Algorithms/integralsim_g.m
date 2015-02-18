@@ -9,6 +9,7 @@ function [q,out_param] = integralsim_g(varargin)
 %   and default cost budget is 1e7. Input f is a function handle. The
 %   function y = f(x) should accept a vector argument x and return a vector
 %   result y, the integrand evaluated at each element of x.
+<<<<<<< HEAD
 %
 %   q = INTEGRAL_G(f,abstol,ninit, nmax,maxiter) computes q, the definite 
 %   integral of function f by Simpson's rule with the ordered input 
@@ -20,6 +21,8 @@ function [q,out_param] = integralsim_g(varargin)
 %   guaranteed absolute error tolerance abstol, starting number of points 
 %   ninit, cost budget nmax and max number of iterations maxiter. All three field-value pairs are optional 
 %   and can be supplied.
+=======
+>>>>>>> GAIL_User_Guide_V2.1
 %
 %   q = INTEGRAL_G(f,in_param) computes q, the definite integral of 
 %   function f by Simpson's rule within a guaranteed absolute error
@@ -60,8 +63,8 @@ function [q,out_param] = integralsim_g(varargin)
 %
 %   out_param.exit --- the state of program when exiting
 %            0  Success
-%            1  Nnumber of points used is greater than out_param.nmax
-%            2  Nnumber of iterations is greater than out_param.maxiter
+%            1  Number of points used is greater than out_param.nmax
+%            2  Number of iterations is greater than out_param.maxiter
 %
 %   Examples
 %
