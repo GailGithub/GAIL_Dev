@@ -1,13 +1,12 @@
 function [q,out_param] = integral_g(varargin)
 %INTEGRAL_G 1-D guaranteed function integration using trapezoidal rule
 %
-%   q = INTEGRAL_G(f) computes q, the definite integral of function f
-%   on the interval [a,b] by trapezoidal rule with 
-%   in a guaranteed absolute error of 1e-6. Default starting number of
-%   sample points taken is 100 and default cost budget is 1e7. Input f is a 
-%   function handle. The function y = f(x) should accept a vector argument 
-%   x and return a vector result y, the integrand evaluated at each element
-%   of x.
+%   q = INTEGRAL_G(f) computes q, the definite integral of function f on
+%   the interval [a,b] by trapezoidal rule with in a guaranteed absolute
+%   error of 1e-6. Default starting number of sample points taken is 100
+%   and default cost budget is 1e7. Input f is a function handle. The
+%   function y = f(x) should accept a vector argument x and return a vector
+%   result y, the integrand evaluated at each element of x.
 %
 %   q = INTEGRAL_G(f,a,b,abstol) computes q, the definite
 %   integral of function f on the finite interval [a,b] by trapezoidal rule
@@ -40,7 +39,7 @@ function [q,out_param] = integral_g(varargin)
 %     in_param.abstol --- guaranteed absolute error tolerance, default value
 %     is 1e-6
 % 
-%  Opitional Input Arguments (Recommended not to change very often) 
+%  Optional Input Arguments (Recommended not to change very often) 
 %
 %     in_param.nlo --- lowest initial number of function values used, default
 %     value is 10
@@ -76,9 +75,6 @@ function [q,out_param] = integral_g(varargin)
 %     out_param.ninit --- initial number of points we use, computed by nlo
 %     and nhi
 %
-%     out_param.exceedbudget --- it is true if the algorithm tries to use 
-%      more points than cost budget, false otherwise.
-% 
 %     out_param.tauchange --- it is true if the cone constant has been
 %     changed, false otherwise. See [1] for details. If true, you may wish to
 %     change the input in_param.ninit to a larger number.
@@ -94,6 +90,11 @@ function [q,out_param] = integral_g(varargin)
 %     out_param.nstar --- final value of the parameter defining the cone of
 %     functions for which this algorithm is guaranteed; nstar = ninit-2
 %     initially and is increased as necessary
+%
+%     out_param.exit --- the state of program when exiting
+%            0  Success
+%            1  Nnumber of points used is greater than out_param.nmax
+%            2  Nnumber of iterations is greater than out_param.maxiter
 %
 %  Guarantee
 %    
@@ -117,7 +118,7 @@ function [q,out_param] = integral_g(varargin)
 %
 %
 %   Example 2:
-%   >> f = @(x) exp(-x.^2); q = integral_g(f,'a',1,'b',2,'nlo',100,'nhi',10000,'abstol',1e-5,'nmax',1e7)
+%   >> f = @(x) exp(-x.^2); q = integral_g(f,'a',1,'b',2,'abstol',1e-5)
 %   q = 0.1353
 %
 %
@@ -159,10 +160,12 @@ fpts=f(xpts);   % get function values at xpts
 intervallen=out_param.b-out_param.a;
 sumf=intervallen*(fpts(1)+fpts(out_param.ninit))/2+sum(fpts(2:out_param.ninit-1));    % computes the sum of trapezoidal rule
 ntrap=out_param.ninit-1; % number of trapezoids
+iter=0;
 
 if intervallen
 
     while true
+        iter=iter+1;
         %Compute approximations to the strong and weak norms
         ntrapok=true; %number of trapezoids is large enough for ninit
         df=diff(fpts); %first difference of points
@@ -195,7 +198,7 @@ if intervallen
         end
         if ntrap*inflation+1 > out_param.nmax
                 %cost budget does not allow intended increase in ntrap
-            out_param.exceedbudget=true; %tried to exceed budget
+            out_param.exit=1; %tried to exceed budget
             warning('MATLAB:integral_g:exceedbudget','integral_g attempts to exceed the cost budget. The answer may be unreliable.');
             inflation=floor((out_param.nmax-1)/ntrap);
                 %max possible increase allowed by cost budget
@@ -218,14 +221,20 @@ if intervallen
         ntrap=ntrap*inflation; %new number of trapezoids
         sumf=intervallen*((fpts(1)+fpts(ntrap+1))/2+sum(fpts(2:ntrap)));
             %updated weighted sum of function values
+        if(iter> out_param.maxiter)
+            out_param.exit = 2;
+            warning('MATLAB:funappx_g:exceediter',' Iteration exceeds max iteration ')
+            break;
+        end;
+
     end
-elseif intervallen == 0
-    q = 0;
-    errest = 0;
+    elseif intervallen == 0
+        q = 0;
+        errest = 0;
 end
-if flip==1
-    q = -1*q;
-end
+    if flip==1
+        q = -1*q;
+    end
 % out_param.q=q;  % integral of functions
 out_param.npoints=ntrap+1;  % number of points finally used
 out_param.errest=errest;    % error of integral
@@ -240,8 +249,17 @@ default.nlo = 10;
 default.nhi = 1000;
 default.a = 0;
 default.b = 1;
+default.maxiter = 1000;
+
 % if a<b, flip = 0; if a>b, flip = 1;
 flip = 0;
+
+MATLABVERSION= gail.matlab_version;
+if MATLABVERSION >= 8.3
+    f_addParamVal = @addParameter;
+else
+    f_addParamVal = @addParamValue;
+end;
 
 if isempty(varargin)
     help integral_g
@@ -268,6 +286,7 @@ if ~validvarargin
     out_param.nlo = default.nlo;
     out_param.nhi = default.nhi;    
     out_param.nmax = default.nmax;
+    out_param.maxiter = default.maxiter;
 else
     p = inputParser;
     addRequired(p,'f',@gail.isfcn);
@@ -279,17 +298,19 @@ else
         addOptional(p,'nlo',default.nlo,@isnumeric);
         addOptional(p,'nhi',default.nhi,@isnumeric);
         addOptional(p,'nmax',default.nmax,@isnumeric);
+        addOptional(p,'maxiter',default.maxiter,@isnumeric)
     else
         if isstruct(in2) %parse input structure
             p.StructExpand = true;
             p.KeepUnmatched = true;
         end
-        addParamValue(p,'a',default.a,@isnumeric);
-        addParamValue(p,'b',default.b,@isnumeric);
-        addParamValue(p,'abstol',default.abstol,@isnumeric);
-        addParamValue(p,'nlo',default.nlo,@isnumeric);
-        addParamValue(p,'nhi',default.nhi,@isnumeric);
-        addParamValue(p,'nmax',default.nmax,@isnumeric);
+        f_addParamVal(p,'a',default.a,@isnumeric);
+        f_addParamVal(p,'b',default.b,@isnumeric);
+        f_addParamVal(p,'abstol',default.abstol,@isnumeric);
+        f_addParamVal(p,'nlo',default.nlo,@isnumeric);
+        f_addParamVal(p,'nhi',default.nhi,@isnumeric);
+        f_addParamVal(p,'nmax',default.nmax,@isnumeric);
+        f_addParamVal(p,'maxiter',default.maxiter,@isnumeric);
     end
     parse(p,f,varargin{2:end})
     out_param = p.Results;

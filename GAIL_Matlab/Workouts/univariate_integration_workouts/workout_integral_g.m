@@ -1,12 +1,12 @@
 %WORKOUT_INTEGRAL_G Calls automatic guaranteed algorithm for univariate integration
 
-function [succnowarn, succwarn]=workout_integral_g(nrep,nmax,abstol)
+function [succnowarn, succwarn,pfin]=workout_integral_g(nrep,nmax,abstol)
 %% Garbage cleanup
 format long e
 close all;
 tstart = tic;
-warning('off','MATLAB:integral01_g:exceedbudget');
-warning('off','MATLAB:integral01_g:peaky');
+warning('off','MATLAB:integral_g:exceedbudget');
+warning('off','MATLAB:integral_g:peaky');
 
 %% Program parameters
 % in_param.nmax=1e7; %maximum number of sample points
@@ -55,7 +55,7 @@ for i=1:nrep
     for j=1:nninit
         ninit=ninitvec(j);
         tic
-        [q,out_param]=integral01_g(f,'nmax',nmax,'abstol',abstol,'ninit',ninit);
+        [q,out_param]=integral_g(f,'nmax',nmax,'abstol',abstol,'a',0,'b',1);
         timemat(i,j)=toc;
         Qmat(i,j)=q;
         npointsmat(i,j)= out_param.npoints;
@@ -96,8 +96,8 @@ time = toc(tstart);
 gail.save_mat('WorkoutIntegralOutput', 'WorkoutIntegralTest', nrep,time,...
         succnowarn,succwarn,failnowarn,failwarn);
 
-warning('on','MATLAB:integral01_g:exceedbudget');
-warning('on','MATLAB:integral01_g:peaky');
+warning('on','MATLAB:integral_g:exceedbudget');
+warning('on','MATLAB:integral_g:peaky');
 
 %% The following output was obtained on 2013-August-06 by
 %  from the data in
