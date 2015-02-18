@@ -1,7 +1,12 @@
 % This is the driver script to test the meanMC_g algorithm
+<<<<<<< HEAD
 %clear all; close all; clc;
 %y = @(n) rand(n,1).^2;% the test function
 function [mu,out_param] = Test_meanMC_g
+=======
+clear all; close all; clc;
+%y = @(n) rand(n,1).^2;% the test function
+>>>>>>> parent of 07589aa... test
 y = @Ytrafficmodel; % this is the traffic model
 in_param.abstol = 1e-2;% the absolute error tolerance
 in_param.reltol = 0;%the relative error tolerance
