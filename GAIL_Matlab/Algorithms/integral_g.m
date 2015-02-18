@@ -8,9 +8,9 @@ function [q,out_param] = integral_g(varargin)
 %   function y = f(x) should accept a vector argument x and return a vector
 %   result y, the integrand evaluated at each element of x.
 %
-<<<<<<< HEAD
+%
 %   q = INTEGRAL_G(f,a,b,abstol) computes q, the definite
-=======
+%
 %   q = INTEGRAL_G(f,in_param) computes q, the definite integral of
 %   function f by trapezoidal rule within a guaranteed absolute error
 %   in_param.abstol, lower bound of initial number of points in_param.nlo,
@@ -18,7 +18,7 @@ function [q,out_param] = integral_g(varargin)
 %   in_param.nmax. If a field is not specified, the default value is used.
 %
 %   q = INTEGRAL_G(f,a,b,abstol,nlo,nhi,nmax) computes q, the definite
->>>>>>> GAIL_User_Guide_V2.1
+%
 %   integral of function f on the finite interval [a,b] by trapezoidal rule
 %   with the ordered input parameters, and guaranteed absolute error tolerance
 %   abstol.
