@@ -1,5 +1,5 @@
 function path = save_eps(subdir, filename)
-% SAVE_MAT: Save figure to an eps file in a subdirectory in 'OutputFiles'
+% SAVE_EPS: Save figure to an eps file in a subdirectory in 'OutputFiles'
 % 
 % Inputs:
 %   subdir          string, name of subdirectory 
