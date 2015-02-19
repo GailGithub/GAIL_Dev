@@ -1,10 +1,10 @@
-function RunTestCubatureonKeister
+function RunTestCubatureonKeisterSobol
 clear all, close all
 format compact
 
 fun.funtype='Keister';
 param.measure='uniform';
-param.abstol=2e-2;
+param.abstol=0.001;%2e-2;
 param.reltol=0.; % 0 reltol means all absolut error
 param.toltype  = 'max';
 param_indicator=10^0;
@@ -14,17 +14,19 @@ test.howoftenrep=10;
 test.randch.a=sqrt(2);
 test.randch.dim=floor(20.^rand(test.nrep,1)); %random dimensions to 20
 test.randchoicefun=@randchoiceKeister;
-test.whichsample={'cubLattice'};
+test.whichsample={'cubSobol'};
+
 
 %% TestCubatureDiffSettings
+
 tempinitial=zeros(test.nrep,1);
 res.dim=tempinitial;
-if any(strcmp('cubLattice',test.whichsample))
-    res.Latticeexit=tempinitial;
-    res.LatticeQ=tempinitial;
-    res.Latticeerr=tempinitial;
-    res.Latticetime=tempinitial;
-    res.Latticeneval=tempinitial;
+if any(strcmp('cubSobol',test.whichsample))
+    res.Sobolexit=tempinitial;
+    res.SobolQ=tempinitial;
+    res.Sobolerr=tempinitial;
+    res.Soboltime=tempinitial;
+    res.Sobolneval=tempinitial;
 end
 
 for irep=1:test.nrep
@@ -32,27 +34,26 @@ for irep=1:test.nrep
     param.sample='qmc';
     [testfunqmc,fun,param]= ...
           test.randchoicefun(fun,param,test.randch,irep);
-    res.dim(irep)=param.dim;
-  
-    % Evaluate integral using cubLattice
+     res.dim(irep)=param.dim;
+     % Evaluate integral using cubSobol
         [q,out_param]=...
-           cubLattice_g(testfunqmc,param.dim,...
-           'abstol',param.abstol,'reltol',param.reltol,'measure',param.measure,'transform','Baker');
-        %res.Latticeexit(irep)=cellstr(out_param.exitflag); % we have problems saving this info
-        res.LatticeQ(irep)=q;
-        res.Latticeerr(irep)=abs(param.exactintegral-q)/gail.tolfun(param.abstol,...
+           cubSobol_g(testfunqmc,param.dim,...
+           'abstol',param.abstol,'reltol',param.reltol,'measure',param.measure);
+        %res.Sobolexit(irep)=cellstr(out_param.exitflag); % we have problems saving this info
+        res.SobolQ(irep)=q;
+        res.Sobolerr(irep)=abs(param.exactintegral-q)/gail.tolfun(param.abstol,...
     param.reltol,0,param.exactintegral,param.toltype)*param_indicator;
-        res.Latticetime(irep)=out_param.time;
-        res.Latticeneval(irep)=out_param.n;
-
-% timestamp=datestr(now,'yyyy-mm-dd-HH-MM');
+        res.Soboltime(irep)=out_param.time;
+        res.Sobolneval(irep)=out_param.n;
+        
+%      timestamp=datestr(now,'yyyy-mm-dd-HH-MM');
 % save(['TestCubature-' fun.funtype '-' param.measure '-' timestamp ...
 %    '-N-' int2str(test.nrep) '-d-' int2str(param.dim)  ...
 %     '-tol-' num2str(param.abstol) '.mat'])
 end
 
 %% Display test results
-%Display TestMCDiffSettings results
+%Display TestDiffSettings results
 set(0,'defaultaxesfontsize',20,'defaulttextfontsize',20) %make font larger
 set(0,'defaultLineLineWidth',3) %thick lines
 set(0,'defaultTextInterpreter','tex') %tex axis labels
@@ -72,25 +73,25 @@ plotTest.linewidth=2;
 plotTest.nrep=test.nrep;
 plotTest.namepref=fun.funtype;
 
-% Plot Lattice results
-if any(strcmp('cubLattice',test.whichsample))
-    plotTest.err=res.Latticeerr;
-    plotTest.time=res.Latticetime;
-    plotTest.exit=res.Latticeexit;
-    plotTest.name=[plotTest.namepref 'cubLatticeErrTime_d_' ...
+% Plot Sobol results
+if any(strcmp('cubSobol',test.whichsample))
+    plotTest.err=res.Sobolerr;
+    plotTest.time=res.Soboltime;
+    plotTest.exit=res.Sobolexit;
+    plotTest.name=[plotTest.namepref 'cubSobolErrTime_d_'...
        int2str(max(res.dim))];
     plotTest.defaultcolor=[1 0 0];
     if any(strcmp('black',plotTest.plotcolor))
-    plotTest.ptsize=150;
-    plotTestcubMCblack(plotTest,param)
+    plotTest.ptsize=200;
+    plotTestcubMCblack_FJH(plotTest,param)
     end
     if any(strcmp('color',plotTest.plotcolor))
     plotTest.ptsize=400;
     plotTestColor(plotTest,param)
     end
-    Latticepercentright=mean(res.Latticeerr<=param_indicator)
+    Sobolsuccess=mean(res.Sobolerr<=param_indicator)
 end
-gail.save_mat('Paper_cubLattice_g', 'Paper_cubLattice_g_TestKeister', Latticepercentright,...
+gail.save_mat('Paper_cubSobol_g', 'Paper_cubSobol_g_TestKeister', Sobolsuccess,...
         fun,irep,res,test);
 end
 
@@ -157,7 +158,7 @@ axes('Position',get(ax1,'Position'),...
            'XLim',[0 1],'Linewidth',plotTest.linewidth);
 %xlabel('Probability')
 line(probaug,timeaug,'color','m','linewidth',plotTest.linewidth)
-gail.save_eps('Paper_cubLattice_g', 'Paper_cubLattice_g_TestKeister');
+gail.save_eps('Paper_cubSobol_g', 'Paper_cubSobol_g_TestKeister');
 %print('-depsc',[plotTest.name '.eps'])
 % print('-depsc', ['./Results/' plotTest.name '.eps'])
 close all
@@ -198,5 +199,3 @@ for j=3:d
 end
 I=(2*(pi.^(d/2))/gamma(d/2))*cosinteg(d);
 end
-
-

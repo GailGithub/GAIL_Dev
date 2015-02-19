@@ -1,13 +1,9 @@
-function RunTestCubatureonGeoAsianCall
+function RunTestCubatureonKeisterLattice
 clear all, close all
 format compact
 
-fun.funtype='geomean';
-fun.S0=100;
-fun.K=100;
-fun.T=1;
-fun.r=0.03;
-param.measure='normal';
+fun.funtype='Keister';
+param.measure='uniform';
 param.abstol=2e-2;
 param.reltol=0.; % 0 reltol means all absolut error
 param.toltype  = 'max';
@@ -15,13 +11,9 @@ param_indicator=10^0;
 
 test.nrep=500;
 test.howoftenrep=10;
-dimchoice=[1 2 4 8 16 32 64]';
-ndim=size(dimchoice,1);
-test.randch.dim=dimchoice(randi(ndim,test.nrep,1));
-sigmin=0.1;
-sigmax=0.7;
-test.randch.sigoverall=sigmin+(sigmax-sigmin).*rand(test.nrep,1);
-test.randchoicefun=@randchoiceGeoCall;
+test.randch.a=sqrt(2);
+test.randch.dim=floor(20.^rand(test.nrep,1)); %random dimensions to 20
+test.randchoicefun=@randchoiceKeister;
 test.whichsample={'cubLattice'};
 
 %% TestCubatureDiffSettings
@@ -41,7 +33,7 @@ for irep=1:test.nrep
     [testfunqmc,fun,param]= ...
           test.randchoicefun(fun,param,test.randch,irep);
     res.dim(irep)=param.dim;
-    
+  
     % Evaluate integral using cubLattice
         [q,out_param]=...
            cubLattice_g(testfunqmc,param.dim,...
@@ -52,15 +44,15 @@ for irep=1:test.nrep
     param.reltol,0,param.exactintegral,param.toltype)*param_indicator;
         res.Latticetime(irep)=out_param.time;
         res.Latticeneval(irep)=out_param.n;
-end
+
 % timestamp=datestr(now,'yyyy-mm-dd-HH-MM');
 % save(['TestCubature-' fun.funtype '-' param.measure '-' timestamp ...
 %    '-N-' int2str(test.nrep) '-d-' int2str(param.dim)  ...
 %     '-tol-' num2str(param.abstol) '.mat'])
-
+end
 
 %% Display test results
-%Display TestDiffSettings results
+%Display TestMCDiffSettings results
 set(0,'defaultaxesfontsize',20,'defaulttextfontsize',20) %make font larger
 set(0,'defaultLineLineWidth',3) %thick lines
 set(0,'defaultTextInterpreter','tex') %tex axis labels
@@ -96,10 +88,10 @@ if any(strcmp('cubLattice',test.whichsample))
     plotTest.ptsize=400;
     plotTestColor(plotTest,param)
     end
-    Latticesuccess=mean(res.Latticeerr<=param_indicator)
+    Latticepercentright=mean(res.Latticeerr<=param_indicator)
 end
-gail.save_mat('Paper_cubLattice_g', 'Paper_cubLattice_g_TestGeoAsianCall', Latticesuccess,dimchoice,...
-        fun,irep,res,test,testfunqmc);    
+gail.save_mat('Paper_cubLattice_g', 'Paper_cubLattice_g_TestKeister', Latticepercentright,...
+        fun,irep,res,test);
 end
 
 %%%%% Above is all execution. Below is just function definitions
@@ -165,124 +157,46 @@ axes('Position',get(ax1,'Position'),...
            'XLim',[0 1],'Linewidth',plotTest.linewidth);
 %xlabel('Probability')
 line(probaug,timeaug,'color','m','linewidth',plotTest.linewidth)
-gail.save_eps('Paper_cubLattice_g', 'Paper_cubLattice_g_TestGeoAsianCall');
+gail.save_eps('Paper_cubLattice_g', 'Paper_cubLattice_g_TestKeister');
 %print('-depsc',[plotTest.name '.eps'])
 % print('-depsc', ['./Results/' plotTest.name '.eps'])
 close all
 end
 
-%% Random choice GeoCall
-function [testfun,fun,out_param]=randchoiceGeoCall(fun,in_param,rchparam,irep)
-out_param=in_param;
-out_param.dim=rchparam.dim(irep);
-out_param.interval=[-Inf(1,out_param.dim); Inf(1,out_param.dim)];
+%% Random choice Keister
+function [testfun,fun,param]=randchoiceKeister(fun,param,rchparam,irep)
+%Choose Keister function
+param.a=rchparam.a;
+param.dim=rchparam.dim(irep);
+param.interval=[zeros(1,param.dim); ones(1,param.dim)];
+param.exactintegral = Keistertrue(param.dim);
+testfun = @(x) Keisterfun(x,param.dim,param.a)./param.exactintegral; 
+   %normalize to unity
+param.exactintegral=1;
 %keyboard
-[testfun,out_param]=geomMeanAsianCall(fun,out_param);
 end
 
-%% GeoMean Asian Call
-function [testfun,param]=geomMeanAsianCall(fun,param)
-%   This function chooses and sets up a test function from the parameters
-%      input by the user and contained in the structures
-%      fun and param
-%   fun.funtype         = type of test function
-%   param.interval      = domain of test function
-%   param.dim           = dimension of the domain
-%   param.measure       = probability density function for integration
-%   param.exactintegral = exact value of the integral (scalar)
-%   fun.shape           = shape parameter (1 x param.dim)
-%   fun.scale           = scale parameter (1 x param.dim)
-%   fun.addc            = additive constant (1 x param.dim)
-%   fun.overaddc        = overall additive constant (scalar)
-%   fun.overmultc       = overall multiplicative constant (scalar)
-
-if nargin < 2; %give the basic default parameters 
-    param.interval=[0;1]; %default integration interval
-    if nargin < 1; fun.funtype='exp'; end %exponential test function
-end
-if ~isfield(param,'interval'); param.interval=[0;1]; end %default interval
-
-%[~,param]=cubMCparam([],param,'fun'); %check validity of some parameters
+function f=Keisterfun(x,d,a) %a must be bigger than sqrt(2)
+sumsq=sum(norminv(x(:,1:d)).^2,2);
+f=((sqrt(2*pi)/a).^d).*exp(-(1./(a.^2)-1./2)*sumsq).*cos(sqrt(sumsq)/a);
 %keyboard
-
-if strcmp(fun.funtype,'geomean') %geometric mean Asian call test function
-    [testfun,param]=makeGeometricMeanTestFun(fun,param);
-else
-    error('Function type not recognized')
-end
 end
 
-%% Geometric Mean Call Integrand
-function [testfun,param]=makeGeometricMeanTestFun(fun,param)
-%Create the exponential test function
-fun=verifyparam(fun,{'S0','K','T','d','r','sigma'}, ...
-    {[1 1],[1 1],[1 1],[1 1],[1 1],[1 1]}, ...
-    {100,100,1,1,0.03,0.5});
-param.fun=fun; %copy of the function parameters
-
-%if false %Force bb
-if strcmp(param.sample,'iid') %Time discretization calculations
-   rT=fun.r*fun.T;
-   rTfac=((fun.r-fun.sigma^2/2)*fun.T/param.dim)*(1:param.dim);
-   Delta=fun.sigma*sqrt(fun.T/param.dim);
-   %keyboard
-   testfun=@(x) geomeancalltd(x,fun.S0,fun.K,rT,param.dim,rTfac,Delta);
-else %Brownian bridge calculations for qMC
-   log2d=log2(param.dim);
-   rT=fun.r*fun.T;
-   rTfac=((fun.r-fun.sigma^2/2)*fun.T/param.dim)*(1:param.dim);
-   dov2l=param.dim;
-   ramp=zeros(log2d+1,param.dim);
-   ramp(1,:)=(fun.sigma*sqrt(fun.T)/dov2l)*(1:dov2l);
-   twolmin1=1;
-   Deltal=fun.T/4;
-   dov2lmin1=zeros(log2d,1);
-   for l=1:log2d
-       dov2lmin1(l)=dov2l;
-       dov2l=dov2l/2;
-       ramppc=(fun.sigma*sqrt(Deltal)/dov2l)*[1:dov2l dov2l-1:-1:0];
-       ramp(l+1,:)=repmat(ramppc,1,twolmin1);
-       Deltal=Deltal/2;
-       twolmin1=twolmin1*2;
-   end
-   testfun=@(x) geomeancallbb(x,fun.S0,fun.K,rT,param.dim,log2d,rTfac,ramp,dov2lmin1);
+function I = Keistertrue(d)
+%KEISTERTRUE computes the true value of the Keister integral in dimension d
+%  accuracy might degrade as d increases due to round-off error
+cosinteg=zeros(1,d);
+cosinteg(1)=sqrt(pi)/(2*exp(1/4));
+sininteg=zeros(1,d);
+%sininteg(1)=integral(@(x) exp(-x.*x).*sin(x),0,inf);
+sininteg(1)=4.244363835020225e-01;
+cosinteg(2)=(1-sininteg(1))/2;
+sininteg(2)=cosinteg(1)/2;
+for j=3:d
+   cosinteg(j)=((j-2)*cosinteg(j-2)-sininteg(j-1))/2;
+   sininteg(j)=((j-2)*sininteg(j-2)+cosinteg(j-1))/2;
+end
+I=(2*(pi.^(d/2))/gamma(d/2))*cosinteg(d);
 end
 
-%% Compute exact integral of this function
-rTmod=(fun.r-fun.sigma^2/2)*fun.T/2;
-sigrootTmod=fun.sigma*sqrt(fun.T*(1-1/(2*param.dim)^2)/3);
-x0=(log(fun.K/fun.S0)-rTmod)/sigrootTmod;
-param.exactintegral=exp(-fun.r*fun.T)*(fun.S0*exp(rTmod+sigrootTmod^2/2)...
-    *normcdf(sigrootTmod-x0) - fun.K*normcdf(-x0));
-end
 
-function payoff=geomeancalltd(x,S0,K,rT,d,rTfac,Delta)
-    n=size(x,1);
-    %Create stock paths
-    %keyboard
-    Smatrix=repmat(rTfac,n,1)+cumsum(Delta*x,2);
-    %Compute payoff
-    loggmean=sum([Smatrix(:,1:d-1) Smatrix(:,d)/2],2)/d;
-    %keyboard
-    payoff=max(S0*exp(loggmean)-K,zeros(n,1))*exp(-rT);
-end 
-
-function payoff=geomeancallbb(x,S0,K,rT,d,log2d,rTfac,ramp,dov2lmin1)
-    n=size(x,1);
-    %Create stock paths
-    Smatrix=repmat(rTfac,n,1);
-    Smatrix=Smatrix+x(:,1)*ramp(1,:);
-    twolmin1=1;
-    for l=1:log2d
-        jvec=twolmin1+(1:twolmin1);
-        %keyboard
-        weight=reshape(repmat(x(:,jvec),dov2lmin1(l),1),n,d);
-        %keyboard
-        Smatrix=Smatrix+weight.*repmat(ramp(l+1,:),n,1);
-        twolmin1=twolmin1*2;
-    end
-    %Compute payoff
-    loggmean=sum([Smatrix(:,1:d-1) Smatrix(:,d)/2],2)/d;
-    %keyboard
-    payoff=max(S0*exp(loggmean)-K,zeros(n,1))*exp(-rT);
-end

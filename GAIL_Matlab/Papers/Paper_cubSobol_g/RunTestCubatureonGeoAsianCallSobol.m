@@ -1,4 +1,4 @@
-function RunTestCubatureonGeoAsianCall
+function RunTestCubatureonGeoAsianCallSobol
 clear all, close all
 format compact
 
