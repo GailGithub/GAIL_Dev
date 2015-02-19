@@ -12,6 +12,8 @@ param.impyes=false;
 param.abstol=2e-2;
 param.reltol=0;
 param.n_sigma=1e4;
+param.toltype  = 'max';
+param_indicator=10^-3;
 
 test.nrep=500;
 test.howoftenrep=10;
@@ -20,7 +22,6 @@ ndim=size(dimchoice,1);
 test.randch.dim=dimchoice(randi(ndim,test.nrep,1));
 sigmin=0.1;
 sigmax=0.7;
-%test.randch.sigoverall=sigmin*(sigmax/sigmin).^rand(test.nrep,1);
 test.randch.sigoverall=sigmin+(sigmax-sigmin).*rand(test.nrep,1);
 test.randchoicefun=@randchoiceGeoCall;
 test.whichsample={'cubLattice'};
@@ -52,7 +53,8 @@ for irep=1:test.nrep
            'abstol',param.abstol,'reltol',param.reltol,'measure',param.measure,'transform','Baker');
         %res.Latticeexit(irep)=out_param.overbudget;
         res.LatticeQ(irep)=q;
-        res.Latticeerr(irep)=abs(param.exactintegral-q);
+        res.Latticeerr(irep)=abs(param.exactintegral-q)/gail.tolfun(param.abstol,...
+    param.reltol,0,param.exactintegral,param.toltype)*param_indicator;
         res.Latticetime(irep)=out_param.time;
         res.Latticeneval(irep)=out_param.n;
 end
@@ -74,7 +76,7 @@ set(0,'defaultLineMarkerSize',40) %larger markersset(0,'defaultaxesfontsize',20,
 plotTest.logerrlo=-6;
 plotTest.logerrhi=-1;
 
-param.tol=param.abstol;
+param.tol=param_indicator;
 plotTest.plotcolor='color';
 plotTest.logtimelo=-3;
 plotTest.logtimehi=2;
@@ -100,7 +102,7 @@ if any(strcmp('cubLattice',test.whichsample))
     end
     if any(strcmp('color',plotTest.plotcolor))
     plotTest.ptsize=400;
-    plotTestcubMCcolor(plotTest,param)
+    plotTestColor(plotTest,param)
     end
-    Latticepercentright=mean(res.Latticeerr<=param.abstol)
+    Latticepercentright=mean(res.Latticeerr<=param_indicator)
 end
