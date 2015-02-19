@@ -3,13 +3,23 @@ function [q,out_param] = integralsim_g(varargin)
 % 
 %  Description
 %
-%   q = INTEGRALSIM_G(f) computes q, the definite integral of function f
-%   on the interval [0,1] by Simpson's rule with 
-%   in a guaranteed absolute error of 1e-6. Default starting number of
-%   sample points taken is 100 and default cost budget is 1e7. Input f is a 
-%   function handle. The function y = f(x) should accept a vector argument 
-%   x and return a vector result y, the integrand evaluated at each element
-%   of x.
+%   q = INTEGRALSIM_G(f) computes q, the definite integral of function f on
+%   the interval [0,1] by Simpson's rule with in a guaranteed absolute
+%   error of 1e-6. Default starting number of sample points taken is 100
+%   and default cost budget is 1e7. Input f is a function handle. The
+%   function y = f(x) should accept a vector argument x and return a vector
+%   result y, the integrand evaluated at each element of x.
+%
+%   q = INTEGRAL_G(f,abstol,ninit, nmax,maxiter) computes q, the definite 
+%   integral of function f by Simpson's rule with the ordered input 
+%   parameters, guaranteed absolute error tolerance abstol, starting number
+%   of points ninit, cost budget nmax and max number of iterations maxiter.
+%
+%   q = INTEGRAL_G(f,'abstol',abstol,'ninit',ninit,'nmax',nmax,'maxiter',maxiter) computes
+%   q, the definite integral of function f by Simpson's rule within a 
+%   guaranteed absolute error tolerance abstol, starting number of points 
+%   ninit, cost budget nmax and max number of iterations maxiter. All three field-value pairs are optional 
+%   and can be supplied.
 %
 %   q = INTEGRAL_G(f,in_param) computes q, the definite integral of 
 %   function f by Simpson's rule within a guaranteed absolute error
@@ -17,6 +27,11 @@ function [q,out_param] = integralsim_g(varargin)
 %   budget in_param.nmax and max number of iterations maxiter. If a field is not specified, the default value is
 %   used.
 %   
+%   [q, out_param] = INTEGRAL_G(f,...) returns the approximated 
+%   integration q and output structure out_param.
+%
+%   Input Arguments
+%
 %   in_param.abstol --- absolute error tolerance required by user.
 % 
 %   in_param.ninit --- initial number of function values used
@@ -25,24 +40,10 @@ function [q,out_param] = integralsim_g(varargin)
 %
 %   in_param.maxiter --- max number of interations, default value is 1000
 % 
-%   q = INTEGRAL_G(f,'abstol',abstol,'ninit',ninit,'nmax',nmax,'maxiter',maxiter) computes
-%   q, the definite integral of function f by Simpson's rule within a 
-%   guaranteed absolute error tolerance abstol, starting number of points 
-%   ninit, cost budget nmax and max number of iterations maxiter. All three field-value pairs are optional 
-%   and can be supplied.
-%
-%   q = INTEGRAL_G(f,abstol,ninit, nmax,maxiter) computes q, the definite 
-%   integral of function f by Simpson's rule with the ordered input 
-%   parameters, guaranteed absolute error tolerance abstol, starting number
-%   of points ninit, cost budget nmax and max number of iterations maxiter.
-%
 %   [q, out_param] = INTEGRAL_G(f,...) returns the approximated 
 %   integration q and output structure out_param, which includes the 
 %   fileds in_param plus the following fields:
 %
-%   out_param.exceedbudget --- it is true if the algorithm tries to use 
-%   more points than cost budget, false otherwise.
-% 
 %   out_param.tauchange --- it is true if the cone constant has been
 %   changed, false otherwise. If true, you may wish to
 %   change the input in_param.ninit to a larger number.
@@ -59,8 +60,8 @@ function [q,out_param] = integralsim_g(varargin)
 %
 %   out_param.exit --- the state of program when exiting
 %            0  Success
-%            1  Nnumber of points used is greater than out_param.nmax
-%            2  Nnumber of iterations is greater than out_param.maxiter
+%            1  Number of points used is greater than out_param.nmax
+%            2  Number of iterations is greater than out_param.maxiter
 %
 %   Examples
 %
@@ -184,7 +185,7 @@ while true
     end
     if(iter> out_param.maxiter)
         out_param.exit = 2;
-        warning('MATLAB:funappx_g:exceediter',' Iteration exceeds max iteration ')
+        warning('MATLAB:integralsim_g:exceediter',' Iteration exceeds max iteration ')
         break;
     end;
 
