@@ -1,4 +1,4 @@
-%Automatic cubature with Sobol sequences
+function WalshFourierCoeffDecay
 
 %% Garbage collection and initialization
 format compact %remove blank lines from output
@@ -9,27 +9,20 @@ set(0,'defaultaxesfontsize',24,'defaulttextfontsize',24) %make font larger
 set(0,'defaultLineLineWidth',3) %thick lines
 set(0,'defaultTextInterpreter','latex') %latex axis labels
 set(0,'defaultLineMarkerSize',40) %latex axis labels
-tic
+printc = 'color'; % choose between color and bnw
 
 %% Initialize parameters
 mmax=20; %maximum number of points is 2^mmax
-mdualvec=10:13;
+mdualvec=12:12;
 mplot=16;
 % mmax=16; %maximum number of points is 2^mmax
 % mdualvec=11;
 % mplot=14;
 mlag=4;
-%testfun=@(x) x; exactinteg=1/2; d=1; %test function
-%testfun=@(x) x.^2; exactinteg=1/3; d=1; %test function
 testfun=@(x) exp(-3*x).*sin(10*x.^2); d=1; %test function
-%a=20; testfun=@(x) sin(a*x); exactinteg=(1-cos(a))/a; d=1; %test function
-%testfun=@(x) x(:,1).*x(:,2); exactinteg=1/4; d=2; %test function
-%testfun=@(x) sin(x(:,1)).*x(:,2)+exp(x(:,1)); exactinteg=(1-cos(1))/2 + (exp(1)-1); d=2; %test function
-%a=3; d=5; testfun=@(x) exp(a*sum(x,2))./(((exp(a)-1)/a).^d); exactinteg=1; %test function
 sobstr=sobolset(d);
 sobstr=scramble(sobstr,'MatousekAffineOwen');
 sobol=qrandstream(sobstr);
-%Stilde=zeros(mmax-mmin+1,1);
 
 %% Plot function
 figure
@@ -39,10 +32,10 @@ plot(xplot,yplot,'b-');
 ymin=1.1*min(yplot);
 ymax=1.1*max(yplot);
 axis([0 1 ymin ymax])
+gail.save_eps('Paper_cubSobol_g', 'Paper_cubSobol_g_FunctionWalshFourierCoeffDecay');
 
 %% Evaluate Function and FWT
 n=2^mmax;
-%xpts=qrand(sobol,n);
 xpts=sobstr(1:n,1:d);
 y=testfun(xpts);
 yval=y;
@@ -74,7 +67,6 @@ end
 ymap=y(kappanumap);
 
 
-
 %% Plot FW coefficients
 ltgray=0.8*ones(1,3);
 gray=0.5*ones(1,3);
@@ -91,20 +83,24 @@ for mdual=mdualvec
    nuse=2^muse;
    whuse=nuse/2:nuse-1;
    figure
-%    h=loglog(whsmall,yfwtabs(whsmall+1),'g.',...
-%       whbig,yfwtabs(whbig+1),'k.',...
-%       whuse,yfwtabs(whuse+1),'b.',...
-%       whdual,yfwtabs(whdual+1),'r.','MarkerSize',10);
-%    set(h([3 4]),'MarkerSize',20)
-   h=zeros(4,1);
-   h(1)=loglog(whsmall,yfwtabs(whsmall+1),'.',...
-      'MarkerSize',10,'MarkerFaceColor',ltgray,'MarkerEdgeColor',ltgray);
-   hold on
-   h(2)=loglog(whbig,yfwtabs(whbig+1),'.','MarkerSize',10,...
-      'MarkerFaceColor',gray,'MarkerEdgeColor',gray);
-   h(3)=loglog(whuse,yfwtabs(whuse+1),'sk','MarkerSize',7,...
-      'MarkerFaceColor','k');
-   h(4)=loglog(whdual,yfwtabs(whdual+1),'.k','MarkerSize',30);
+   switch printc
+       case 'color'
+           h=loglog(whsmall,yfwtabs(whsmall+1),'g.',...
+              whbig,yfwtabs(whbig+1),'k.',...
+              whuse,yfwtabs(whuse+1),'b.',...
+              whdual,yfwtabs(whdual+1),'r.','MarkerSize',10);
+           set(h([3 4]),'MarkerSize',20)
+       case 'bnw'
+           h=zeros(4,1);
+           h(1)=loglog(whsmall,yfwtabs(whsmall+1),'.',...
+              'MarkerSize',10,'MarkerFaceColor',ltgray,'MarkerEdgeColor',ltgray);
+           hold on
+           h(2)=loglog(whbig,yfwtabs(whbig+1),'.','MarkerSize',10,...
+              'MarkerFaceColor',gray,'MarkerEdgeColor',gray);
+           h(3)=loglog(whuse,yfwtabs(whuse+1),'sk','MarkerSize',7,...
+              'MarkerFaceColor','k');
+           h(4)=loglog(whdual,yfwtabs(whdual+1),'.k','MarkerSize',30);
+   end
    maxexp=floor(log10(nplot-1));
    set(gca,'Xtick',10.^(0:maxexp))
    axis([1 nplot-1 ymin ymax])
@@ -116,11 +112,10 @@ for mdual=mdualvec
       'location','southwest')
    legend('boxoff')
    set(gca,'Position',[0.2 0.155 0.75 0.77])
-   eval(['print -depsc PlotFWTCoefUse' int2str(nuse) '.eps'])
+   gail.save_eps('Paper_cubSobol_g', 'Paper_cubSobol_g_WalshFourierCoeffDecay');
 end
-
-
-toc 
+close all
+end
 
 
 

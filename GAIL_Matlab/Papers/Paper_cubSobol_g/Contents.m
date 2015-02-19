@@ -1,10 +1,16 @@
-% MCQMC2014 cubSobol_p paper
+% MCQMC2014 cubSobol_g article
+% Articles:
+%   - Reliable Adaptive Cubature Using Digital Sequences
 %
 % Files
 %
-%	RunTestCubatureonGeoAsianCall.m - Runs the tests for the geometric Brownian motion Asian option call and creates a file with all the results
-%	RunTestCubatureonKeister.m - Runs the tests for Keister example and creates a file with all the results
-%	DisplayTestResults_BlacknColor.m - Displays the results created in the functions above.
-%	SobolWalshPict.m - Makes the plots displayed in the paper for some of the Walsh functions and examples of sobol points.
-%	*.eps - the images used in the paper.
-%	SobolErrEstWalshCoeffPict.m - makes the plot for the Walsh-Fourier coefficients decay cone conditions.
+%	- RunTestCubatureonGeoAsianCall.m - Runs the test for the geometric 
+%   Brownian motion Asian option call, stores the results in a .mat file
+%   and generates the plot in .eps format.
+%	- RunTestCubatureonKeister.m - Runs the test for the geometric 
+%   Brownian motion Asian option call, stores the results in a .mat file
+%   and generates the plot in .eps format (article Figure 3).
+%	- SobolWalshPict.m - produces the plot of the Sobol points and the
+%   scrambled and shifted Sobol points in .eps format (article Figure 1).
+%	- WalshFourierCoeffDecay.m - produces the plot of the Walsh-Fourier
+%   coefficients decay in .eps format (article Figure 2).

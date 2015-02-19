@@ -60,7 +60,7 @@ end
 
 
 %% Display test results
-%Display TestMCDiffSettings results
+%Display TestDiffSettings results
 set(0,'defaultaxesfontsize',20,'defaulttextfontsize',20) %make font larger
 set(0,'defaultLineLineWidth',3) %thick lines
 set(0,'defaultTextInterpreter','tex') %tex axis labels
@@ -96,9 +96,9 @@ if any(strcmp('cubLattice',test.whichsample))
     plotTest.ptsize=400;
     plotTestColor(plotTest,param)
     end
-    Latticepercentright=mean(res.Latticeerr<=param_indicator)
+    Latticesuccess=mean(res.Latticeerr<=param_indicator)
 end
-gail.save_mat('Paper_cubLattice_g', 'Paper_cubLattice_g_TestGeoAsianCall', Latticepercentright,dimchoice,...
+gail.save_mat('Paper_cubLattice_g', 'Paper_cubLattice_g_TestGeoAsianCall', Latticesuccess,dimchoice,...
         fun,irep,res,test,testfunqmc);    
 end
 
