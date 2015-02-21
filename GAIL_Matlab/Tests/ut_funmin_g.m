@@ -20,8 +20,8 @@ classdef ut_funmin_g < matlab.unittest.TestCase
         
         function funmin_gEXM2(testCase)
             in_param.abstol = 0; 
-            in_param.TolX = 10^(-6);
-            in_param.nmax = 10^7; 
+            in_param.TolX = 10^(-5);
+            in_param.nmax = 10^6; 
             a = 0.012;
             z = 0.33;
             f = @(x) 0.5/a^2.*(-4*a.^2-(x-z).^2-(x-z-a).*abs(x-z-a)...
@@ -70,8 +70,8 @@ classdef ut_funmin_g < matlab.unittest.TestCase
         
         function funmin_gEXM4(testCase)
             in_param.abstol = 0; 
-            in_param.TolX = 10^(-6);
-            in_param.nmax = 10^7; 
+            in_param.TolX = 10^(-5);
+            in_param.nmax = 10^6; 
             a1=5; b1=10; c1=0.5-0.5*rand(1,1);
             a2=1; b2=10; c2=0.5+0.5*rand(1,1);
             f=@(x) -a1*exp(-(b1*(x-c1)).^2)-a2*exp(-(b2*(x-c2)).^2);
@@ -93,7 +93,7 @@ classdef ut_funmin_g < matlab.unittest.TestCase
         function funmin_gEXM5(testCase)
             in_param.abstol = 0; 
             in_param.TolX = 10^(-5);
-            in_param.nmax = 10^7; 
+            in_param.nmax = 10^6; 
             f=@(x) cos(4*pi*(x-0.2));
             exactsolu1 = 0.45;
             exactsolu2 = 0.95;
@@ -119,8 +119,8 @@ classdef ut_funmin_g < matlab.unittest.TestCase
         
         function funmin_gEXM6(testCase)
             in_param.abstol = 0; 
-            in_param.TolX = 10^(-4);
-            in_param.nmax = 10^7; 
+            in_param.TolX = 10^(-3);
+            in_param.nmax = 10^6; 
             in_param.a = -5;
             in_param.b = 5;
             f=@(x) sin(pi*x);
