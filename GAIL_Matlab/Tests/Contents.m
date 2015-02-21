@@ -11,9 +11,11 @@
 %   ut_cubMCabs_g        - fast unit test for cubMCabs_g
 %   ut_cubSobol_g        - fast unit tests for cubSobol_g
 %   ut_funappx_g         - fast unit tests for funappx_g
-%   ut_funappxglobal_g   - fast unit test for funappxglobal_g
-%   ut_funmin01_g        - fast unit test for funmin01_g
+%   ut_funappxglobal_g   - fast unit tests for funappxglobal_g
+%   ut_funmin01_g        - fast unit tests for funmin01_g
 %   ut_funmin_g          - fast unit tests for funmin_g
+%   ut_workout_funmin_g  - long unit tests for funmin_g workouts
+%   ut_workout_UniFunMin - long unit tests for funmin01_g thesis
 %   ut_integral01_g      - fast unit tests for integral01_g
 %   ut_integral_g        - fast unit tests for integral_g
 %   ut_integralsim_g     - fast unit tests for integralsim_g
