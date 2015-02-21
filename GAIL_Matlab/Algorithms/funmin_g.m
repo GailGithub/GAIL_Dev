@@ -39,7 +39,7 @@ function [fmin,out_param]=funmin_g(varargin)
 %
 %     in_param.TolX --- guaranteed X tolerance, default value is 1e-3.
 %
-%  Opitional Input Arguments (Recommended not to change very often) 
+%  Optional Input Arguments (Recommended not to change very often) 
 %
 %     in_param.nlo --- lower bound of initial number of points we used,
 %     default value is 10
