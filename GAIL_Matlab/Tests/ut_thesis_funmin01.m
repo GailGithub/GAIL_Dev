@@ -1,4 +1,4 @@
-%ut_workout_UniFunMin unit test for funmin_g Workouts
+%ut_thesis_funmin01 unit test for funmin_g thesis 
 classdef ut_workout_UniFunMin < matlab.unittest.TestCase
 
   methods(Test)
