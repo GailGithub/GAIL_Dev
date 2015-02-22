@@ -28,7 +28,6 @@ function [q,out_param] = integral_g(varargin)
 %
 %   Input Arguments
 %
-%
 %     f --- input function
 %
 %     in_param.a --- left end of the integral, default value is 0
