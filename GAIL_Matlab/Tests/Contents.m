@@ -15,7 +15,7 @@
 %   ut_funmin01_g        - fast unit tests for funmin01_g
 %   ut_funmin_g          - fast unit tests for funmin_g
 %   ut_workout_funmin_g  - long unit tests for funmin_g workouts
-%   ut_workout_UniFunMin - long unit tests for funmin01_g thesis
+%   ut_thesis_funmin01   - long unit tests for funmin01_g thesis
 %   ut_integral01_g      - fast unit tests for integral01_g
 %   ut_integral_g        - fast unit tests for integral_g
 %   ut_integralsim_g     - fast unit tests for integralsim_g
