@@ -124,7 +124,7 @@ end
 %% Save Output
 time = toc(tstart);
 
-gail.save_mat('WorkoutIntegralOutput', 'ConePaperIntegralTest', nrep,time,...
+gail.save_mat('ConesPaperOutput', 'ConePaperIntegralTest', nrep,time,...
         tauvec,pini,pfin,succnowarn,succwarn,failnowarn,failwarn);
 
 warning('on','MATLAB:integraltau_g:exceedbudget');

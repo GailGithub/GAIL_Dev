@@ -44,7 +44,7 @@ function [q,out_param] = cubSobol_g(varargin)
 %     default it is 1e-4.
 %
 %     in_param.reltol --- the relative error tolerance, which should be
-%     in (0,1]. Default value is 1e-1.
+%     in [0,1]. Default value is 1e-1.
 %
 %     in_param.measure --- for f(x)*mu(dx), we can define mu(dx) to be the
 %     measure of a uniformly distributed random variable in [0,1)^d
@@ -159,7 +159,7 @@ function [q,out_param] = cubSobol_g(varargin)
 % Estimate the integral with integrand f(x) = 8*x1.*x2.*x3.*x4.*x5 in the interval
 % [0,1)^5 with pure absolute error 1e-5.
 % 
-% >> f = @(x) 8*prod(x,2); d = 5; q = cubSobol_g(f,d,1e-5,'toltype','comb','theta',1)
+% >> f = @(x) 8*prod(x,2); d = 5; q = cubSobol_g(f,d,1e-5,0)
 % q = 0.25***
 %
 %
@@ -486,8 +486,8 @@ if (out_param.abstol <= 0 )
 end
 
 % Force relative tolerance greater than 0 and smaller than 1
-if (out_param.reltol <= 0) || (out_param.reltol > 1)
-    warning('MATLAB:cubSobol_g:reltolnonunit',['Relative tolerance should be chosen in (0,1].' ...
+if (out_param.reltol < 0) || (out_param.reltol > 1)
+    warning('MATLAB:cubSobol_g:reltolnonunit',['Relative tolerance should be chosen in [0,1].' ...
             ' Using default relative tolerance ' num2str(default.reltol)])
     out_param.reltol = default.reltol;
 end

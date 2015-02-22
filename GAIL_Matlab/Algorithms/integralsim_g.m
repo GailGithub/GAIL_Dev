@@ -60,8 +60,8 @@ function [q,out_param] = integralsim_g(varargin)
 %
 %   out_param.exit --- the state of program when exiting
 %            0  Success
-%            1  Nnumber of points used is greater than out_param.nmax
-%            2  Nnumber of iterations is greater than out_param.maxiter
+%            1  Number of points used is greater than out_param.nmax
+%            2  Number of iterations is greater than out_param.maxiter
 %
 %   Examples
 %

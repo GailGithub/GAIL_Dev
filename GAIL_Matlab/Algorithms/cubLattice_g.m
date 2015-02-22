@@ -44,7 +44,7 @@ function [q,out_param] = cubLattice_g(varargin)
 %     default it is 1e-4.
 %
 %     in_param.reltol --- the relative error tolerance, which should be
-%     in (0,1]. Default value is 1e-1.
+%     in [0,1]. Default value is 1e-1.
 % 
 %     in_param.measure --- for f(x)*mu(dx), we can define mu(dx) to be the
 %     measure of a uniformly distributed random variable in [0,1)^d
@@ -102,7 +102,7 @@ function [q,out_param] = cubLattice_g(varargin)
 % 
 %     out_param.n --- number of points used when calling cubLattice_g for f.
 % 
-%     out_param.pred_err --- predicted bound on the error based on the cone
+%     out_param.bound_err --- predicted bound on the error based on the cone
 %     condition. If the function lies in the cone, the real error should be
 %     smaller than this predicted error.
 % 
@@ -174,7 +174,7 @@ function [q,out_param] = cubLattice_g(varargin)
 % Estimate the integral with integrand f(x) = 8*x1.*x2.*x3.*x4.*x5 in the interval
 % [0,1)^5 with pure absolute error 1e-5.
 % 
-% >> f = @(x) 8*prod(x,2); d = 5; q = cubLattice_g(f,d,1e-5,'toltype','comb','theta',1)
+% >> f = @(x) 8*prod(x,2); d = 5; q = cubLattice_g(f,d,1e-5,0)
 % q = 0.25***
 %
 %
@@ -267,8 +267,8 @@ for i = 1:mlag % Storing the information for the necessary conditions
     nllstart=2*nllstart;
     StildeNC(i,i)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
 end
-out_param.pred_err=out_param.fudge(out_param.mmin)*Stilde(1);
-errest(1)=out_param.pred_err;
+out_param.bound_err=out_param.fudge(out_param.mmin)*Stilde(1);
+errest(1)=out_param.bound_err;
 
 deltaplus = 0.5*(gail.tolfun(out_param.abstol,...
     out_param.reltol,out_param.theta,abs(q-errest(1)),...
@@ -280,7 +280,7 @@ deltaminus = 0.5*(gail.tolfun(out_param.abstol,...
     out_param.theta,abs(q+errest(1)),out_param.toltype));
 
 is_done = false;
-if out_param.pred_err <= deltaplus
+if out_param.bound_err <= deltaplus
    q=q+deltaminus;
    appxinteg(1)=q;
    out_param.time=toc;
@@ -352,8 +352,8 @@ for m=out_param.mmin+1:out_param.mmax
     all((StildeNC(meff-1,1:min(meff-1,mlag)).*cond2(1:min(meff-1,mlag)))>=(Stilde(meff)*ones(1,min(meff-1,mlag))))),
         out_param.exit(2) = true;
    end
-   out_param.pred_err=out_param.fudge(m)*Stilde(meff);
-   errest(meff)=out_param.pred_err;
+   out_param.bound_err=out_param.fudge(m)*Stilde(meff);
+   errest(meff)=out_param.bound_err;
    
    %% Approximate integral
    q=mean(yval);
@@ -368,7 +368,7 @@ for m=out_param.mmin+1:out_param.mmax
         out_param.toltype)-gail.tolfun(out_param.abstol,out_param.reltol,...
         out_param.theta,abs(q+errest(meff)),out_param.toltype));
 
-   if out_param.pred_err <= deltaplus
+   if out_param.bound_err <= deltaplus
       q=q+deltaminus;
       appxinteg(meff)=q;
       out_param.time=toc;
@@ -525,8 +525,8 @@ if (out_param.abstol <= 0 )
 end
 
 % Force relative tolerance greater than 0 and smaller than 1
-if (out_param.reltol <= 0) || (out_param.reltol > 1)
-    warning('MATLAB:cubLattice_g:reltolnonunit',['Relative tolerance should be chosen in (0,1].' ...
+if (out_param.reltol < 0) || (out_param.reltol > 1)
+    warning('MATLAB:cubLattice_g:reltolnonunit',['Relative tolerance should be chosen in [0,1].' ...
             ' Using default relative tolerance ' num2str(default.reltol)])
     out_param.reltol = default.reltol;
 end
