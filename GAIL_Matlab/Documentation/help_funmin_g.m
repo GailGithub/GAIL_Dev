@@ -4,9 +4,9 @@
 %% Syntax
 % fmin = *funmin_g*(f)
 %
-% fmin = *funmin_g*(f,a,b,abstol,TolX,nlo,nhi,nmax)
+% fmin = *funmin_g*(f,a,b,abstol,TolX)
 %
-% fmin = *funmin_g*(f,'a',a,'b',b,'abstol',abstol,'TolX',TolX,'nlo',nlo,...
+% fmin = *funmin_g*(f,'a',a,'b',b,'abstol',abstol,'TolX',TolX)
 %
 % fmin = *funmin_g*(f,in_param)
 %
@@ -18,32 +18,28 @@
 %  and the X tolerance of 1e-3. Default initial number of points is 100
 %  and default cost budget is 1e7. Input f is a function handle.
 %
-% fmin = *funmin_g*(f,a,b,abstol,TolX,nlo,nhi,nmax) finds minimum value of
+% fmin = *funmin_g*(f,a,b,abstol,TolX) finds minimum value of
 %  function f with ordered input parameters that define the finite
-%  interval [a,b], a guaranteed absolute error tolerance abstol, a
-%  guaranteed X tolerance TolX, a lower bound of initial number of points
-%  nlo, an upper bound of initial number of points nhi, and a cost budget
-%  nmax.
+%  interval [a,b], a guaranteed absolute error tolerance abstol and a
+%  guaranteed X tolerance TolX.
 %
-% fmin = *funmin_g*(f,'a',a,'b',b,'abstol',abstol,'TolX',TolX,'nlo',nlo,...
-%  'nhi',nhi,'nmax',nmax)
+% fmin = *funmin_g*(f,'a',a,'b',b,'abstol',abstol,'TolX',TolX)
 %  finds minimum value of function f on the interval [a,b] with a 
-%  guaranteed absolute error tolerance abstol, a guaranteed X tolerance 
-%  TolX, a lower bound of initial number of points nlo, an upper bound of 
-%  initial number of points nhi, and a cost budget nmax. All seven 
+%  guaranteed absolute error tolerance abstol and a guaranteed X tolerance 
+%  TolX. All five
 %  field-value pairs are optional and can be supplied in different order.
 %
 % fmin = *funmin_g*(f,in_param) finds minimum value of function f on the
 %  interval [in_param.a,in_param.b] with a guaranteed absolute error
-%  tolerance in_param.abstol, a guranteed X tolerance in_param.TolX, a
-%  lower bound of initial number of points in_param.nlo, an upper bound of
-%  initial number of points in_param.nhi, and a cost budget in_param.nmax.
+%  tolerance in_param.abstol and a guranteed X tolerance in_param.TolX.
 %  If a field is not specified, the default value is used.
 %
 % [fmin, out_param] = *funmin_g*(f,...) returns minimum value fmin of
 %  function f and an output structure out_param.
 %
 % *Input Arguments*
+%
+% * f --- |input function|
 %
 % * in_param.a --- |left end point of interval, default value is 0|
 %
@@ -54,6 +50,9 @@
 %
 % * in_param.TolX --- |guaranteed X tolerance, default value is 1e-3.|
 %
+
+%  tional Input Arguments (Recommended not to change very often) |
+%
 % * in_param.nlo --- |lower bound of initial number of points we used,
 %  default value is 10|
 %
@@ -63,6 +62,8 @@
 % * in_param.nmax --- |cost budget, default value is 1e7.|
 %
 % *Output Arguments*
+%
+% * out_param.f --- |input function|
 %
 % * out_param.a --- |left end point of interval|
 %
@@ -82,13 +83,14 @@
 %
 % * out_param.tau --- |latest value of tau|
 %
-% * out_param.exceedbudget --- |0 if the number of points used in
-%  estimationg fmin is less than the cost budget; 1, otherwise.|
-%
 % * out_param.npoints --- |number of points needed to reach the guaranteed
 %  absolute error tolerance or the guaranteed X tolerance|
 %
-% * out_param.error --- |estimation of the absolute error bound|
+% * out_param.exitflag --- |the state of program when exiting
+%           0  Success
+%           1  Number of points used is greater than out_param.nmax|
+%
+% * out_param.errest --- |estimation of the absolute error bound|
 %
 % * out_param.volumeX --- |the volume of intervals containing the point(s)
 %  where the minimum occurs|
@@ -176,8 +178,8 @@ f=@(x) (x-0.3).^2+1;
 % 
 % [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
 % Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou, 
-% "GAIL: Guaranteed Automatic Integration Library (Version 2.0)"
-% [MATLAB Software], 2014. Available from http://code.google.com/p/gail/
+% "GAIL: Guaranteed Automatic Integration Library (Version 2.1)"
+% [MATLAB Software], 2015. Available from http://code.google.com/p/gail/
 %
 % If you find GAIL helpful in your work, please support us by citing
 % the above paper and software.
