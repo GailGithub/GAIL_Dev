@@ -112,17 +112,17 @@ function [q,out_param] = integralNoPenalty_g(varargin)
 %  Examples
 %
 %   Example 1: 
-%   >> q = integral_g(@(x) x.^2)
+%   >> q = integralNoPenalty_g(@(x) x.^2)
 %   q = 0.3333
 %
 %
 %   Example 2:
-%   >> f = @(x) exp(-x.^2); q = integral_g(f,'a',1,'b',2,'nlo',100,'nhi',10000,'abstol',1e-5,'nmax',1e7)
+%   >> f = @(x) exp(-x.^2); q = integralNoPenalty_g(f,'a',1,'b',2,'nlo',100,'nhi',10000,'abstol',1e-5,'nmax',1e7)
 %   q = 0.1353
 %
 %
 %   Example 3:
-%   >> q = integral_g()
+%   >> q = integralNoPenalty_g()
 %   Warning: Function f must be specified. Now GAIL is giving you a toy example of f(x)=x^2.
 %   >  In ***
 %   q = 0.3333
