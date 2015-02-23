@@ -71,7 +71,9 @@ function [q,out_param] = cubSobol_g(varargin)
 %     choices, 'max' (chosen by default) which takes
 %     max(abstol,reltol*|integral(f)|) and 'comb' which is a linear combination
 %     theta*abstol+(1-theta)*reltol*|integral(f)|. Theta is another 
-%     parameter that can be specified (see below).
+%     parameter that can be specified (see below). For pure absolute error,
+%     either choose 'max' and set reltol=0 or choose 'comb' and set
+%     theta=1.
 % 
 %     in_param.theta --- this input is parametrizing the toltype 
 %     'comb'. Thus, it is only afecting when the toltype
