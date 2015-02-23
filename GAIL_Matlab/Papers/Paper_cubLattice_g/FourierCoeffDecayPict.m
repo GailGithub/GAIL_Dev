@@ -1,6 +1,7 @@
 function FourierCoeffDecayPict
 
 %% Garbage collection and initialization
+
 format compact %remove blank lines from output
 format long e %lots of digits
 clear all %clear all variables
@@ -9,6 +10,7 @@ set(0,'defaultaxesfontsize',15,'defaulttextfontsize',16) %make font larger
 set(0,'defaultLineLineWidth',3) %thick lines
 set(0,'defaultTextInterpreter','latex') %latex axis labels
 set(0,'defaultLineMarkerSize',40) %latex axis labels
+printc = 'color'; % choose between color and bnw
 
 %% Initialize parameters
 mmax=17; %maximum number of points is 2^mmax
@@ -65,10 +67,12 @@ ymap=y(kappanumap);
 
 
 %% Plot FW coefficients
+ltgray=0.8*ones(1,3);
+gray=0.5*ones(1,3);
 nplot=2^mplot;
 yfftabs=abs(ymap(1:nplot));
 ymin=max(1e-15,min(yfftabs));
-zmax=max([1; yfftabs]);
+ymax=max([1; yfftabs]);
 for mdual=mdualvec
    ndual=2^mdual;
    whdual=ndual*(1:2^(mplot-mdual)-1);
@@ -76,21 +80,34 @@ for mdual=mdualvec
    whbig=ndual:nplot-1;
    muse=mdual-mlag;
    nuse=2^muse;
-   whuse=nuse:2*nuse-1;
+   whuse=nuse/2:nuse-1;
    figure
-   h=loglog(whsmall,yfftabs(whsmall+1),'g.',...
-      whbig,yfftabs(whbig+1),'k.',...
-      whuse,yfftabs(whuse+1),'b.',...
-      whdual,yfftabs(whdual+1),'r.','MarkerSize',10);
-   set(h([3 4]),'MarkerSize',20)
+   switch printc
+       case 'color'
+           h=loglog(whsmall,yfftabs(whsmall+1),'g.',...
+              whbig,yfftabs(whbig+1),'k.',...
+              whuse,yfftabs(whuse+1),'b.',...
+              whdual,yfftabs(whdual+1),'r.','MarkerSize',10);
+           set(h([3 4]),'MarkerSize',20)
+       case 'bnw'
+           h=zeros(4,1);
+           h(1)=loglog(whsmall,yfftabs(whsmall+1),'.',...
+              'MarkerSize',10,'MarkerFaceColor',ltgray,'MarkerEdgeColor',ltgray);
+           hold on
+           h(2)=loglog(whbig,yfftabs(whbig+1),'.','MarkerSize',10,...
+              'MarkerFaceColor',gray,'MarkerEdgeColor',gray);
+           h(3)=loglog(whuse,yfftabs(whuse+1),'sk','MarkerSize',7,...
+              'MarkerFaceColor','k');
+           h(4)=loglog(whdual,yfftabs(whdual+1),'.k','MarkerSize',30);
+   end
    maxexp=floor(log10(nplot-1));
    set(gca,'Xtick',10.^(0:maxexp))
-   axis([1 nplot-1 ymin zmax])
+   axis([1 nplot-1 ymin ymax])
    xlabel('$\kappa$')
    ylabel('$|\hat{f}_{\kappa}|$')
-   legend(h([4 2 3]),{['err $\le \hat{S}(0,' int2str(mdual) ')$'],...
-      ['$\check{S}(' int2str(mdual) ')$'],...
-      ['$S(' int2str(mdual-mlag) ')$']},...
+   legend(h([4 2 3]),{['error $\le \hat{S}_{0,' int2str(mdual) '}(f)$'],...
+      ['$\check{S}_{' int2str(mdual) '}(f)$'],...
+      ['$S_{' int2str(mdual-mlag) '}(f)$']},...
       'location','southwest')
    legend('boxoff')
    set(gca,'Position',[0.2 0.155 0.75 0.67])

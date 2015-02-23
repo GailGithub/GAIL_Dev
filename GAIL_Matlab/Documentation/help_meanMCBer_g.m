@@ -59,14 +59,14 @@
 % equals to ceil(log(2/out_param.alpha)/(2*out_param.abstol^2)), then the
 % following inequality must be satisfied:
 %
-% Pr(| p-pHat | <= abstol) >= 1-alpha.
+% Pr(|p-pHat| <= abstol) >= 1-alpha.
 % 
-% Here p is the true mean of Yrand, and pHat is the output of *meanMCBer_g*
+% Here p is the true mean of Yrand, and pHat is the output of MEANMCBER_G
 %
 % Also, the cost is deterministic.
 %
 %%   Examples
-% *Example 1*
+%   *Example 1*
 
 %   Calculate the mean of a Bernoulli random variable with true p=1/90,
 %   absolute error tolerance 1e-3 and uncertainty 0.01.
@@ -75,7 +75,7 @@
     pHat = meanMCBer_g(Yrand,in_param)
  
 %% 
-% *Example 2*
+%   *Example 2*
 
 %   Using the same function as example 1, with the absolute error tolerance
 %   1e-4.
@@ -83,7 +83,7 @@
     pHat = meanMCBer_g(Yrand,1e-4)
     
 %% 
-% *Example 3*
+%   *Example 3*
 
 %   Using the same function as example 1, with the absolute error
 %   tolerance 1e-2 and uncertainty 0.05.
@@ -125,8 +125,8 @@
 %
 % [2] Sou-Cheng T.  Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
 % Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
-% "GAIL: Guaranteed Automatic Integration Library (Version 2.0)"
-% [MATLAB Software], 2014. Available from
+% "GAIL: Guaranteed Automatic Integration Library (Version 2.1)"
+% [MATLAB Software], 2015. Available from
 % http://code.google.com/p/gail/
 %
 % If you find GAIL helpful in your work, please support us by citing the

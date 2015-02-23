@@ -3,9 +3,9 @@
 %% Syntax
 % [Q,out_param] = *cubMC_g*(f,hyperbox)
 %
-% Q = *cubMC_g*(f,hyperbox,measure,abstol,reltol,alpha,fudge,nSig,n1,tbudget,nbudget,flag)
+% Q = *cubMC_g*(f,hyperbox,measure,abstol,reltol,alpha)
 %
-% Q = *cubMC_g*(f,hyperbox,'measure','uniform','abstol',abstol,'reltol',reltol,'alpha',alpha,'fudge',fudge,'nSig',nSig,'n1',n1,'tbudget',tbudget,'nbudget',nbudget,'flag',flag)
+% Q = *cubMC_g*(f,hyperbox,'measure',measure,'abstol',abstol,'reltol',reltol,'alpha',alpha)
 %
 % [Q out_param] = *cubMC_g*(f,hyperbox,in_param)
 %% Description
@@ -24,14 +24,14 @@
 %  row corresponds to the lower limits and the second row corresponds to
 %  the upper limits.
 % 
-% Q = *cubMC_g*(f,hyperbox,measure,abstol,reltol,alpha,fudge,nSig,n1,tbudget,nbudget,flag)
+% Q = *cubMC_g*(f,hyperbox,measure,abstol,reltol,alpha)
 %  estimates the integral of function f over hyperbox to within a 
 %  specified generalized error tolerance tolfun with guaranteed confidence
 %  level 1-alpha using all ordered parsing inputs f, hyperbox, measure, 
 %  abstol, reltol, alpha, fudge, nSig, n1, tbudget, nbudget, flag. The 
 %  input f and hyperbox are required and others are optional.
 % 
-% Q = *cubMC_g*(f,hyperbox,'measure','uniform','abstol',abstol,'reltol',reltol,'alpha',alpha,'fudge',fudge,'nSig',nSig,'n1',n1,'tbudget',tbudget,'nbudget',nbudget,'flag',flag)
+% Q = *cubMC_g*(f,hyperbox,'measure',measure,'abstol',abstol,'reltol',reltol,'alpha',alpha)
 %  estimates the integral of f over hyperbox to within a specified 
 %  generalized error tolerance tolfun with guaranteed confidence level
 %  1-alpha. All the field-value pairs are optional and can be supplied in 
@@ -50,8 +50,9 @@
 %  [zeros(1,d); ones(1,d)], the default d is 1.|
 % 
 % * in_param.measure --- |the measure for generating the random variable,
-%  the default is uniform. The other measure could be handled is
-%  normal/Gaussian.|
+%  the default is 'uniform'. The other measure could be handled is
+%  'normal'/'Gaussian'. The input should be a string type, hence with
+%  quotes.|
 % 
 % * in_param.abstol --- |the absolute error tolerance, the default value
 %  is 1e-2.|
@@ -61,6 +62,9 @@
 % 
 % * in_param.alpha --- |the uncertainty, the default value is 1%.|
 % 
+
+%  Optional input parameters:|
+%
 % * in_param.fudge --- |the standard deviation inflation factor, the
 %  default value is 1.2.|
 %
@@ -78,13 +82,13 @@
 % * in_param.nbudget --- |the sample budget to do the estimation, the
 %  default value is 1e9.|
 % 
-% * in_param.flag --- |the value corresponds to parameter checking status.|
+% * in_param.flag --- |the value corresponds to parameter checking status.
 %   
 %                      0   not checked
 %   
 %                      1   checked by meanMC_g
 %   
-%                      2   checked by cubMC_g
+%                      2   checked by cubMC_g|
 %
 % *Output Arguments*
 %
@@ -109,17 +113,11 @@
 %
 % * out_param.var --- |the sample variance.|
 %
-% * out_param.exit --- |the state of program when exiting.|
+% * out_param.exit --- |the state of program when exiting.
 %   
 %                    0   success
 %   
 %                    1   Not enough samples to estimate the mean
-%   
-%                    2   Initial try out time costs more than
-%                        10% of time budget
-%   
-%                    3   The estimated time for estimating variance 
-%                        is bigger than half of the time budget
 %   
 %                    10  hyperbox does not contain numbers
 %   
@@ -127,10 +125,10 @@
 %   
 %                    12  hyperbox is only a point in one direction
 %   
-%                    13  hyperbox is infinite when measure is uniform
+%                    13  hyperbox is infinite when measure is 'uniform'
 %   
 %                    14  hyperbox is not doubly infinite when measure
-%                        is normal
+%                        is 'normal'|
 % 
 %%  Guarantee
 % This algorithm attempts to calculate the integral of function f over a
@@ -139,7 +137,7 @@
 % without showing any warning messages and provide an answer Q, then the
 % follow inequality would be satisfied:
 % 
-% Pr(| Q-I | <= tolfun) >= 1-alpha
+% Pr(|Q-I| <= tolfun) >= 1-alpha
 %
 % The cost of the algorithm, N_tot, is also bounded above by N_up, which is
 % a function in terms of abstol, reltol, nSig, n1, fudge, kurtmax, beta. And
@@ -224,8 +222,8 @@
 %
 % [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 % Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou, "GAIL:
-% Guaranteed Automatic Integration Library (Version 2.0)" [MATLAB
-% Software], 2014. Available from http://code.google.com/p/gail/
+% Guaranteed Automatic Integration Library (Version 2.1)" [MATLAB
+% Software], 2015. Available from http://code.google.com/p/gail/
 %
 % If you find GAIL helpful in your work, please support us by citing the
 % above paper and software.

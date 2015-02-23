@@ -1,47 +1,43 @@
 %% funappx_g
 % |1-D guaranteed function recovery on a closed interval [a,b]|
 %% Syntax
-% pp = *funappx_g*(f)
+% fappx = *funappx_g*(f)
 %
-% pp = *funappx_g*(f,a,b,abstol,nlo,nhi,nmax,maxiter)
+% fappx = *funappx_g*(f,a,b,abstol)
 %
-% pp = *funappx_g*(f,in_param)
+% fappx = *funappx_g*(f,'a',a,'b',b,'abstol',abstol)
 %
-% [pp, out_param] = *funappx_g*(f,...)
+% fappx = *funappx_g*(f,in_param)
+%
+% [fappx, out_param] = *funappx_g*(f,...)
 %% Description
 %
-% pp = *funappx_g*(f) approximates function f on the default interval
-%  [0,1] by a piecewise polynomial structure pp within the guaranteed
-%  absolute error tolerance of 1e-6. Input f is a function handle. The
-%  statement y = f(x) should accept a vector argument x and return a
-%  vector y of function values that is of the same size as x. Output pp
-%  may be evaluated via PPVAL.
+% fappx = *funappx_g*(f) approximates function f on the default interval
+%  [0,1] by an approximated function fappx within the guaranteed absolute
+%  error tolerance of 1e-6. Input f is a function handle. The statement y
+%  = f(x) should accept a vector argument x and return a vector y of
+%  function values that is of the same size as x.
 %
-% pp = *funappx_g*(f,a,b,abstol,nlo,nhi,nmax,maxiter) for a given
-%  function f and the ordered input parameters that define the finite
-%  interval [a,b], a guaranteed absolute error tolerance abstol, a lower
-%  bound of initial number of points nlo, an upper bound of initial number
-%  of points nhi, a cost budget nmax and max number of iteration maxiter.
+% fappx = *funappx_g*(f,a,b,abstol) for a given function f and the ordered
+%  input parameters that define the finite interval [a,b], and a
+%  guaranteed absolute error tolerance abstol.
 %
-% pp = *funappx_g*(f,'a',a,'b',b,'abstol',abstol,'nlo',nlo,'nhi',nhi,'nmax',nmax,'maxiter',maxiter)
-%  recovers function f on the finite interval [a,b], given a guaranteed
-%  absolute error tolerance abstol, a lower bound of initial number of
-%  points nlo, an upper bound of initial number of points nhi, a cost
-%  budget nmax and max number of iteration maxiter. All seven field-value
-%  pairs are optional and can be supplied in different order.
+% fappx = *funappx_g*(f,'a',a,'b',b,'abstol',abstol) recovers function f on
+%  the finite interval [a,b], given a guaranteed absolute error tolerance
+%  abstol. All four field-value pairs are optional and can be supplied in
+%  different order.
 %
-% pp = *funappx_g*(f,in_param) recovers function f on the finite
+% fappx = *funappx_g*(f,in_param) recovers function f on the finite
 %  interval [in_param.a,in_param.b], given a guaranteed absolute error
-%  tolerance in_param.abstol, a lower bound of initial number of points
-%  in_param.nlo, an upper bound of initial number of points in_param.nhi,
-%  a cost budget in_param.nmax and max number of iteration
-%  in_param.maxiter. If a field is not specified, the default value is
-%  used.
+%  tolerance in_param.abstol. If a field is not specified, the default
+%  value is used.
 %
-% [pp, out_param] = *funappx_g*(f,...) returns a piecewise polynomial
-%  structure pp and an output structure out_param.
+% [fappx, out_param] = *funappx_g*(f,...) returns an approximated function
+%  fappx and an output structure out_param.
 %
 % *Input Arguments*
+%
+% * f --- |input function|
 %
 % * in_param.a --- |left end point of interval, default value is 0|
 %
@@ -49,6 +45,9 @@
 %
 % * in_param.abstol --- |guaranteed absolute error tolerance, default
 %  value is 1e-6|
+%
+
+%  ional Input Arguments (Recommended not to change very often) |
 %
 % * in_param.nlo --- |lower bound of initial number of points we used,
 %  default value is 10|
@@ -59,35 +58,13 @@
 % * in_param.nmax --- |when number of points hits the value, iteration
 %  will stop, default value is 1e7|
 %
-% * in_param.maxiter --- |max number of interation, default value is 1000|
+% * in_param.maxiter --- |max number of interations, default value is 1000|
 %
 % *Output Arguments*
 %
-% * pp.form --- |pp means piecewise polynomials|
+% * fappx --- |approximated function|
 %
-% * pp.breaks --- |show the location of interpolation points|
-%
-% * pp.coefs --- |coefficients for piecewise linear polynomials|
-%
-% * pp.pieces --- |number of piecewise linear polynomials|
-%
-% * pp.order --- |be 2 as we use piecewise linear polynomials|
-%
-% * pp.dim --- |be 1 as we do univariate approximation|
-%
-% * pp.orient --- |always be 'first'|
-%
-% * out_param.ninit --- |initial number of points we use for each sub
-%  interval|
-%
-% * out_param.npoints --- |number of points we need to reach the
-%  guaranteed absolute error tolerance|
-%
-% * out_param.errorbound --- |an upper bound of the absolute error|
-%
-% * out_param.nstar --- |final value of the parameter defining the cone of
-%  functions for which this algorithm is guaranteed for each
-%  subinterval; nstar = ninit-2 initially|
+% * out_param.f --- |input function|
 %
 % * out_param.a --- |left end point of interval|
 %
@@ -102,7 +79,40 @@
 % * out_param.nmax --- |when number of points hits the value, iteration
 %  will stop|
 %
-% * out_param.maxiter --- |max number of interation|
+% * out_param.maxiter --- |max number of iterations|
+%
+% * out_param.ninit --- |initial number of points we use for each sub
+%  interval|
+%
+% * out_param.exit --- |this is a number defining the conditions of
+%  success or failure satisfied when finishing the algorithm. The 
+%  algorithm is considered successful (with out_param.exit == 0) if no 
+%  other flags arise warning that the results are certainly not 
+%  guaranteed. The initial value is 0 and the final value of this
+%  parameter is encoded as follows:|
+%     
+
+%                    1    If reaching overbudget. It states whether
+%                    the max budget is attained without reaching the
+%                    guaranteed error tolerance.
+%   
+%                    2   If reaching overiteration. It states whether
+%                    the max iterations is attained without reaching the
+%                    guaranteed error tolerance.|
+%
+|
+%
+% * out_param.iter --- |number of iterations|
+%
+% * out_param.npoints --- |number of points we need to reach the
+%  guaranteed absolute error tolerance|
+%
+% * out_param.errest --- |an estimation of the absolute error for the
+%  approximation|
+%
+% * out_param.nstar --- |final value of the parameter defining the cone of
+%  functions for which this algorithm is guaranteed for each
+%  subinterval; nstar = ninit-2 initially|
 %
 %% Guarantee
 %
@@ -118,6 +128,7 @@
 % |then the| $pp$ |output by this algorithm is guaranteed to satisfy|
 %
 % $$\| f-ppval(pp,)\|_{\infty} \le \mathrm{abstol}.$$
+%
 %
 %% Examples
 % *Example 1*
@@ -178,11 +189,10 @@ clear in_param; f = @(x) x.^2;
 % Yizhi Zhang, The Cost of Deterministic, Adaptive, Automatic Algorithms:
 % Cones, Not Balls, Journal of Complexity 30 (2014), pp. 21-45.
 %
-%
 % [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
 % Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
-% "GAIL: Guaranteed Automatic Integration Library (Version 2.0)" [MATLAB
-% Software], 2014. Available from http://code.google.com/p/gail/
+% "GAIL: Guaranteed Automatic Integration Library (Version 2.1)" [MATLAB
+% Software], 2015. Available from http://code.google.com/p/gail/
 %
 % If you find GAIL helpful in your work, please support us by citing the
 % above paper and software.

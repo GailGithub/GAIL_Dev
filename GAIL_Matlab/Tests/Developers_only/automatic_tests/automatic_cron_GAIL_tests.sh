@@ -8,6 +8,14 @@ cd /home/gail/GAIL_tests/repo/gail-development/
 # /usr/local/bin/git --git-dir /home/gail/GAIL_tests/repo/gail-development/.git checkout .
 
 # MATLAB
+# Generate files necessary for creating HTML documentation
+g++ -std=c++11 autodoc.cpp -o autodoc
+./autodoc
+git add /home/gail/GAIL_tests/repo/gail-development/GAIL_Matlab/Documentation
+git add /home/gail/GAIL_tests/repo/gail-development/GAIL_Matlab/Documentation/html
+git commit -m 'Update automatically generated Matlab files for HTML documentation'
+git push origin develop
+
 # Set the directory for running our matlab test
 # Run the file that installs GAIL and run the tests. The output files are in OutputFiles. We put all togehter since there is a permission not letting us install the path
 cd /home/gail/GAIL_tests/repo/gail-development/GAIL_Matlab/Tests/Developers_only/automatic_tests/

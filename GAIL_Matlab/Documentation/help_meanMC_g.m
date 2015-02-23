@@ -3,31 +3,30 @@
 %% Syntax
 % tmu = *meanMC_g*(Yrand)
 %
-% tmu = *meanMC_g*(Yrand,abstol,reltol,alpha,fudge,nSig,n1,tbudget,nbudget)
+% tmu = *meanMC_g*(Yrand,abstol,reltol,alpha)
 %
-% tmu = *meanMC_g*(Yrand,'abstol',abstol,'reltol',reltol,'alpha',alpha,'fudge',fudge,'nSig',nSig,'n1',n1,'tbudget',tbudget,'nbudget',nbudget)
+% tmu = *meanMC_g*(Yrand,'abstol',abstol,'reltol',reltol,'alpha',alpha)
 %
 % [tmu, out_param] = *meanMC_g*(Yrand,in_param)
 %% Description
 %
 % tmu = *meanMC_g*(Yrand) estimates the mean, mu, of a random variable Y to
 %  within a specified generalized error tolerance, 
-%  tolfun:=max(abstol,reltol*|mu|), i.e., | mu - tmu | <= tolfun with
+%  tolfun:=max(abstol,reltol*|mu|), i.e., |mu - tmu| <= tolfun with
 %  probability at least 1-alpha, where abstol is the absolute error
 %  tolerance, and reltol is the relative error tolerance. Usually the
-%  reltol determines the accuracy of the estimation, however, if the | mu |
+%  reltol determines the accuracy of the estimation, however, if the |mu|
 %  is rather small, the abstol determines the accuracy of the estimation.
 %  The default values are abstol=1e-2, reltol=1e-1, and alpha=1%. Input
 %  Yrand is a function handle that accepts a positive integer input n and
 %  returns an n x 1 vector of IID instances of the random variable Y.
 %
-% tmu = *meanMC_g*(Yrand,abstol,reltol,alpha,fudge,nSig,n1,tbudget,nbudget)
-%  estimates the mean of a random variable Y to within a specified
-%  generalized error tolerance tolfun with guaranteed confidence
-%  level 1-alpha using all ordered parsing inputs abstol, reltol, alpha,
-%  fudge, nSig, n1, tbudget, nbudget.
-%
-% tmu = *meanMC_g*(Yrand,'abstol',abstol,'reltol',reltol,'alpha',alpha,'fudge',fudge,'nSig',nSig,'n1',n1,'tbudget',tbudget,'nbudget',nbudget)
+% tmu = *meanMC_g*(Yrand,abstol,reltol,alpha) estimates the mean of a
+%  random variable Y to within a specified generalized error tolerance
+%  tolfun with guaranteed confidence level 1-alpha using all ordered
+%  parsing inputs abstol, reltol, alpha.
+%   
+% tmu = *meanMC_g*(Yrand,'abstol',abstol,'reltol',reltol,'alpha',alpha)
 %  estimates the mean of a random variable Y to within a specified
 %  generalized error tolerance tolfun with guaranteed confidence level
 %  1-alpha. All the field-value pairs are optional and can be supplied in
@@ -57,6 +56,9 @@
 %
 % * in_param.alpha --- |the uncertainty, which should be a small positive
 %  percentage. default value is 1%.|
+%
+
+%  Optional input parameters:|
 %
 % * in_param.fudge --- |standard deviation inflation factor, which should
 %  be larger than 1, default value is 1.2.|
@@ -95,19 +97,19 @@
 %
 % * out_param.var --- |the sample variance.|
 %
-% * out_param.exit --- |the state of program when exiting.|
+% * out_param.exit --- |the state of program when exiting.
 %    
 %                   0   Success
 %   
-%                   1   Not enough samples to estimate the mean
+%                   1   Not enough samples to estimate the mean|
 %
 % * out_param.kurtmax --- |the upper bound on modified kurtosis.|
 %
 % * out_param.time --- |the time elapsed in seconds.|
 %
-% * out_param.flag --- |parameter checking status|
+% * out_param.flag --- |parameter checking status
 %   
-%                        1  checked by meanMC_g
+%                        1  checked by meanMC_g|
 %
 %%  Guarantee
 % This algorithm attempts to calculate the mean, mu, of a random variable
@@ -116,7 +118,7 @@
 % showing any warning messages and provide an answer tmu, then the follow
 % inequality would be satisfied:
 % 
-% Pr(| mu-tmu | <= tolfun) >= 1-alpha
+% Pr(|mu-tmu| <= tolfun) >= 1-alpha
 %
 % The cost of the algorithm, N_tot, is also bounded above by N_up, which is
 % defined in terms of abstol, reltol, nSig, n1, fudge, kurtmax, beta. And
@@ -189,8 +191,8 @@
 %
 % [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 % Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou, "GAIL:
-% Guaranteed Automatic Integration Library (Version 2.0)" [MATLAB
-% Software], 2014. Available from http://code.google.com/p/gail/
+% Guaranteed Automatic Integration Library (Version 2.1)" [MATLAB
+% Software], 2015. Available from http://code.google.com/p/gail/
 %
 % If you find GAIL helpful in your work, please support us by citing the
 % above paper and software.

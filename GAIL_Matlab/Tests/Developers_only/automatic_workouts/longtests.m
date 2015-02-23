@@ -32,7 +32,7 @@ end
 
 % funmin_g
 if MATLABVERSION >= 8  
-    run(ut_UniFunMinWorkout)
+    run(ut_workout_funmin_g)
 end
 
 
@@ -56,16 +56,15 @@ if MATLABVERSION >= 8
 end
 
 % cubSobol_g paper
-run_handle('RunTestCubatureonGeoAsianCall')
-run_handle('RunTestCubatureonKeister')
+run_handle('RunTestCubatureonGeoAsianCallSobol');
+run_handle('RunTestCubatureonKeisterSobol')
 
 % cubLattice_g paper
-run_handle('TestFourierTransform');
-run_handle('test_cubLattice');
-run_handle('RunTestCubatureonGeoAsianCall');
-run_handle('RunTestCubatureonKeister')
+run_handle('RunTestCubatureonGeoAsianCallLattice');
+run_handle('RunTestCubatureonKeisterLattice');
 
-% Function minimization
+
+% Function minimization thesis
 try
     if usejava('jvm')
         run_handle('UniFunMin_Plot_Bump')
@@ -73,7 +72,7 @@ try
         run_handle('UniFunMin_Plot_TwoExtreme')
     end
     if MATLABVERSION >= 8
-        run(ut_workout_UniFunMin)
+        run(ut_thesis_funmin01)
     end
 catch
     display('Test for Papers/UniFunMin is wrongly coded. We skip it.')

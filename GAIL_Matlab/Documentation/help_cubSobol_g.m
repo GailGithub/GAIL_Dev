@@ -5,9 +5,9 @@
 %% Syntax
 % [q,out_param] = *cubSobol_g*(f,d)
 %
-% q = *cubSobol_g*(f,d,abstol,reltol,density,mmin,mmax,fudge,errtype,theta)
+% q = *cubSobol_g*(f,d,abstol,reltol,measure,mmin,mmax,fudge,toltype,theta)
 %
-% q = *cubSobol_g*(f,d,'abstol',abstol,'reltol',reltol,'density',density,'mmin',mmin,'mmax',mmax,'fudge',fudge,'errtype',errtype,'theta',theta)
+% q = *cubSobol_g*(f,d,'abstol',abstol,'reltol',reltol,'measure',measure,'mmin',mmin,'mmax',mmax,'fudge',fudge,'toltype',toltype,'theta',theta)
 %
 % q = *cubSobol_g*(f,d,in_param)
 %% Description
@@ -23,14 +23,14 @@
 %  is the dimension in which the function f is defined. Given the
 %  construction of Sobol', d must be a positive integer with 1<=d<=1111.
 %
-% q = *cubSobol_g*(f,d,abstol,reltol,density,mmin,mmax,fudge,errtype,theta)
+% q = *cubSobol_g*(f,d,abstol,reltol,measure,mmin,mmax,fudge,toltype,theta)
 %  estimates the integral of f over a d-dimensional region. The answer
 %  is given within the generalized error tolerance tolfun. All parameters
 %  should be input in the order specified above. If an input is not specified,
 %  the default value is used. Note that if an input is not specified,
 %  the remaining tail cannot be specified either.
 %
-% q = *cubSobol_g*(f,d,'abstol',abstol,'reltol',reltol,'density',density,'mmin',mmin,'mmax',mmax,'fudge',fudge,'errtype',errtype,'theta',theta)
+% q = *cubSobol_g*(f,d,'abstol',abstol,'reltol',reltol,'measure',measure,'mmin',mmin,'mmax',mmax,'fudge',fudge,'toltype',toltype,'theta',theta)
 %  estimates the integral of f over a d-dimensional region. The answer
 %  is given within the generalized error tolerance tolfun. All the field-value
 %  pairs are optional and can be supplied with any order. If an input is not
@@ -55,11 +55,14 @@
 % * in_param.reltol --- |the relative error tolerance, which should be
 %  in (0,1]. Default value is 1e-1.|
 %
-% * in_param.density --- |for f(x)*mu(dx), we can define mu(dx) to be the
-%  density function of a uniformly distributed random variable in [0,1)^d
+% * in_param.measure --- |for f(x)*mu(dx), we can define mu(dx) to be the
+%  measure of a uniformly distributed random variable in [0,1)^d
 %  or normally distributed with covariance matrix I_d. By default it 
 %  is 'uniform'. The only possible values are 'uniform' or 'normal'.|
-%
+% 
+
+%  Optional input parameters:|
+% 
 % * in_param.mmin --- |the minimum number of points to start is 2^mmin. The
 %  cone condition on the Fourier coefficients decay requires a minimum
 %  number of points to start. The advice is to consider at least mmin=10.
@@ -74,14 +77,14 @@
 %  For more information about this parameter, refer to the references.
 %  By default it is @(x) 5*2.^-x.|
 %
-% * in_param.errtype --- |this is the tolerance function. There are two
+% * in_param.toltype --- |this is the tolerance function. There are two
 %  choices, 'max' (chosen by default) which takes
 %  max(abstol,reltol*|integral(f)|) and 'comb' which is a linear combination
 %  theta*abstol+(1-theta)*reltol*|integral(f)|. Theta is another 
 %  parameter that can be specified (see below).|
 % 
-% * in_param.theta --- |this input is parametrizing the errtype 
-%  'comb'. Thus, it is only afecting when the errtype
+% * in_param.theta --- |this input is parametrizing the toltype 
+%  'comb'. Thus, it is only afecting when the toltype
 %  chosen is 'comb'. It stablishes the linear combination weight
 %  between the absolute and relative tolerances
 %  theta*abstol+(1-theta)*reltol*|integral(f)|. Note that for theta=1, 
@@ -92,24 +95,33 @@
 %
 % * q --- |the estimated value of the integral.|
 %
-% * out_param.overbudget --- |boolean stating whether the max budget is
-%  attained without reaching the guaranteed error tolerance. Output 1
-%  means we have overrun our budget.|
-%
 % * out_param.n --- |number of points used when calling cubSobol_g for f.|
 %
 % * out_param.pred_err --- |predicted bound on the error based on the cone
 %  condition. If the function lies in the cone, the real error should be
 %  smaller than this predicted error.|
 %
-% * out_param.outside_cone --- |boolean stating whether we did not meet
-%  the necessary conditions for the integrand to be inside the cone. If
-%  the value is true, the function is outside the cone. Otherwise, we do
-%  not know. Note that this parameter is computed on the transformed
-%  function, not the input function. For more information on the
-%  transforms, check the input parameter in_param.transform.|
-%
 % * out_param.time --- |time elapsed in seconds when calling cubSobol_g for f.|
+%
+% * out_param.exitflag --- |this is a binary vector stating whether 
+%  warning flags arise. These flags tell about which conditions make the
+%  final result certainly not guaranteed. One flag is considered arisen
+%  when its value is 1. The following list explains the flags in the
+%  respective vector order:|
+%
+
+%                    1    If reaching overbudget. It states whether
+%                    the max budget is attained without reaching the
+%                    guaranteed error tolerance.
+%   
+%                    2   If the function lies outside the cone. In
+%                    this case, results are not guaranteed. Note that
+%                    this parameter is computed on the transformed
+%                    function, not the input function. For more
+%                    information on the transforms, check the input
+%                    parameter in_param.transfrom; for information about
+%                    the cone definition, check the article mentioned
+%                    below.|
 % 
 %%  Guarantee
 %

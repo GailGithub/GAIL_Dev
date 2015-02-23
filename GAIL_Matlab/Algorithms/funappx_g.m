@@ -87,7 +87,6 @@ function [fappx,out_param]=funappx_g(varargin)
 %                       the max iterations is attained without reaching the
 %                       guaranteed error tolerance.
 %
-%
 %     out_param.iter --- number of iterations
 %
 %     out_param.npoints --- number of points we need to reach the
