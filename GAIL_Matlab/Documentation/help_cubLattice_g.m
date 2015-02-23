@@ -53,7 +53,7 @@
 %  default it is 1e-4.|
 %
 % * in_param.reltol --- |the relative error tolerance, which should be
-%  in (0,1]. Default value is 1e-1.|
+%  in [0,1]. Default value is 1e-1.|
 % 
 % * in_param.measure --- |for f(x)*mu(dx), we can define mu(dx) to be the
 %  measure of a uniformly distributed random variable in [0,1)^d
@@ -96,7 +96,9 @@
 %  choices, 'max' (chosen by default) which takes
 %  max(abstol,reltol*|integral(f)|) and 'comb' which is a linear combination
 %  theta*abstol+(1-theta)*reltol*|integral(f)|. Theta is another 
-%  parameter that can be specified (see below).|
+%  parameter that can be specified (see below). For pure absolute error,
+%  either choose 'max' and set reltol=0 or choose 'comb' and set
+%  theta=1.|
 % 
 % * in_param.theta --- |this input is parametrizing the toltype 
 %  'comb'. Thus, it is only afecting when the toltype
@@ -112,7 +114,7 @@
 % 
 % * out_param.n --- |number of points used when calling cubLattice_g for f.|
 % 
-% * out_param.pred_err --- |predicted bound on the error based on the cone
+% * out_param.bound_err --- |predicted bound on the error based on the cone
 %  condition. If the function lies in the cone, the real error should be
 %  smaller than this predicted error.|
 % 
@@ -193,7 +195,7 @@
 % [0,1)^5 with pure absolute error 1e-5.
 
   f = @(x) 8*prod(x,2); d = 5;
-  q = cubLattice_g(f,d,1e-5,'errtype','comb','theta',1)
+  q = cubLattice_g(f,d,1e-5,0)
 %% See Also
 %
 % <html>
