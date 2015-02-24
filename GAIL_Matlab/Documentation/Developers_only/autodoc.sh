@@ -9,6 +9,7 @@ cd /home/gail/GAIL_tests/repo/gail-development/
 
 # MATLAB
 # Generate files necessary for creating HTML documentation
+cd GAIL_Matlab/Documentation/
 g++ -std=c++11 autodoc.cpp -o autodoc
 ./autodoc
 git add /home/gail/GAIL_tests/repo/gail-development/GAIL_Matlab/Documentation
