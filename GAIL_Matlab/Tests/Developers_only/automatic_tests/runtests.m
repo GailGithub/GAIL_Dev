@@ -183,12 +183,12 @@ if MATLABVERSION >= 8
       for i=1:size(failed,2)
         fprintf(fid,'%s\n',Tests(failed(i)).Name);
       end
-    end
+    endr
   catch
     display('Test ut_cubMC_g is wrongly coded. We skip it.')
     fprintf(fid,'Test ut_cubMC_g is wrongly coded. We skip it.\n');
   end
-
+%run_handle_ut(fid,'ut_cubMC_g')
 
   try
     Tests = matlab.unittest.TestSuite.fromClass(?ut_integralNoPenalty_g);
@@ -203,6 +203,7 @@ if MATLABVERSION >= 8
     display('Test ut_integralNoPenalty_g is wrongly coded. We skip it.')
     fprintf(fid,'Test ut_integralNoPenalty_g is wrongly coded. We skip it.\n');
   end
+% run_handle_ut(fid,'ut_integralNoPenalty_g')
 
 
 
