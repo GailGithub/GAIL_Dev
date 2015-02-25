@@ -46,8 +46,7 @@
 % * in_param.abstol --- |guaranteed absolute error tolerance, default
 %  value is 1e-6|
 %
-
-%  ional Input Arguments (Recommended not to change very often) |
+% *Optional Input Arguments (Recommended not to change very often)*
 %
 % * in_param.nlo --- |lower bound of initial number of points we used,
 %  default value is 10|
@@ -90,17 +89,15 @@
 %  other flags arise warning that the results are certainly not 
 %  guaranteed. The initial value is 0 and the final value of this
 %  parameter is encoded as follows:|
-%     
-
-%                    1    If reaching overbudget. It states whether
+%
+%                    1  |If reaching overbudget. It states whether
 %                    the max budget is attained without reaching the
 %                    guaranteed error tolerance.
 %   
-%                    2   If reaching overiteration. It states whether
+%                    2   |If reaching overiteration. It states whether
 %                    the max iterations is attained without reaching the
 %                    guaranteed error tolerance.|
 %
-|
 %
 % * out_param.iter --- |number of iterations|
 %

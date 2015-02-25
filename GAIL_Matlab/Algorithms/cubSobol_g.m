@@ -71,7 +71,9 @@ function [q,out_param] = cubSobol_g(varargin)
 %     choices, 'max' (chosen by default) which takes
 %     max(abstol,reltol*|integral(f)|) and 'comb' which is a linear combination
 %     theta*abstol+(1-theta)*reltol*|integral(f)|. Theta is another 
-%     parameter that can be specified (see below).
+%     parameter that can be specified (see below). For pure absolute error,
+%     either choose 'max' and set reltol=0 or choose 'comb' and set
+%     theta=1.
 % 
 %     in_param.theta --- this input is parametrizing the toltype 
 %     'comb'. Thus, it is only afecting when the toltype
@@ -198,7 +200,7 @@ cond2=(1+out_param.fudge(mlag-(1:mlag)))*(1+2*out_param.fudge(mlag))/(1+out_para
 errest=zeros(out_param.mmax-out_param.mmin+1,1); %initialize error estimates
 appxinteg=zeros(out_param.mmax-out_param.mmin+1,1); %initialize approximations to integral
 exit_len = 2;
-out_param.exit=logical(zeros(exit_len,1)); %we start the algorithm with all warning flags down
+out_param.exit=false(1,exit_len); %we start the algorithm with all warning flags down
 
 %% Initial points and FWT
 out_param.n=2^out_param.mmin; %total number of points to start with
@@ -349,22 +351,32 @@ for m=out_param.mmin+1:out_param.mmax
    end
 end
 
-exit_str='';
-if sum(out_param.exit) == 0
-  exit_str = '0';
+% Alternative
+exit_str=2.^(0:exit_len-1).*out_param.exit;
+exit_str(out_param.exit==0)=[];
+if numel(exit_str)==0;
+    out_param.exitflag=0;
 else
-  for i=1:exit_len
-    if out_param.exit(i)==1,
-      if i<exit_len 
-        exit_str = strcat(exit_str,{num2str(i)}, {' '});
-      else
-        exit_str = strcat(exit_str,{num2str(i)});
-      end
-    end
-  end
+    out_param.exitflag=exit_str;
 end
-out_param.exitflag = exit_str;
-out_param = rmfield(out_param,'exit');
+
+% Original
+% exit_str='';
+% if sum(out_param.exit) == 0
+%   exit_str = '0';
+% else
+%   for i=1:exit_len
+%     if out_param.exit(i)==1,
+%       if i<exit_len 
+%         exit_str = strcat(exit_str,{num2str(i)}, {' '});
+%       else
+%         exit_str = strcat(exit_str,{num2str(i)});
+%       end
+%     end
+%   end
+% end
+% out_param.exitflag = exit_str;
+% out_param = rmfield(out_param,'exit');
 
 out_param.time=toc;
 end

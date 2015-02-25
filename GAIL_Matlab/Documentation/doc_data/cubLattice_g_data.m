@@ -53,4 +53,4 @@
 % [0,1)^5 with pure absolute error 1e-5.
 
   f = @(x) 8*prod(x,2); d = 5;
-  q = cubLattice_g(f,d,1e-5,'errtype','comb','theta',1)
+  q = cubLattice_g(f,d,1e-5,0)

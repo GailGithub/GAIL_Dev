@@ -28,6 +28,7 @@ doctest cubLattice_g; time=toc
 doctest cubSobol_g; time=toc
 doctest cubLattice_old_g; time=toc
 doctest cubSobol_old_g; time=toc
+doctest dt_integralNoPenalty_g; time=toc
 
 % CALL UNIT TESTS
 [~,~,~,MATLABVERSION]=GAILstart(0);
@@ -182,11 +183,30 @@ if MATLABVERSION >= 8
       for i=1:size(failed,2)
         fprintf(fid,'%s\n',Tests(failed(i)).Name);
       end
-    end
+    endr
   catch
     display('Test ut_cubMC_g is wrongly coded. We skip it.')
     fprintf(fid,'Test ut_cubMC_g is wrongly coded. We skip it.\n');
   end
+%run_handle_ut(fid,'ut_cubMC_g')
+
+  try
+    Tests = matlab.unittest.TestSuite.fromClass(?ut_integralNoPenalty_g);
+    results=run(ut_integralNoPenalty_g)
+    if sum([results.Failed])>0
+      failed=find([results.Failed]>0);
+      for i=1:size(failed,2)
+        fprintf(fid,'%s\n',Tests(failed(i)).Name);
+      end
+    end
+  catch
+    display('Test ut_integralNoPenalty_g is wrongly coded. We skip it.')
+    fprintf(fid,'Test ut_integralNoPenalty_g is wrongly coded. We skip it.\n');
+  end
+% run_handle_ut(fid,'ut_integralNoPenalty_g')
+
+
+
 end
 
 time=toc;

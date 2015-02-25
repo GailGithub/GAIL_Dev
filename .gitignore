@@ -1,4 +1,5 @@
 *~
+*.asv
 *.pdf
 *.mat
 *.o
@@ -12,7 +13,8 @@
 *.gen
 *.si
 *.cfe
-GAIL_Matlab/Documentation/html/helpsearch*
 *.prj
 *.mltbx
+GAIL_Matlab/Documentation/html/helpsearch*
 GAIL_Matlab/ThirdParty
+GAIL_Matlab/OutputFiles/gail_unittests.txt
