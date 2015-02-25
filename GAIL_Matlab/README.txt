@@ -29,30 +29,31 @@ Guaranteed Automatic Integration Library (Version 2.1)" [MATLAB Software],
 
 Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible Research via 
 Supportable Scientific Software", Journal of Open Research Software, Volume 2, 
-Number 1 (2014), e22, pp. 1-7, DOI: http://dx.doi.org/10.5334/jors.bb
-(describes principles of Reliable Reproducible Research and 
-Supportable Scientific Software)
+Number 1, e22, pp. 1-7, DOI: http://dx.doi.org/10.5334/jors.bb, 2014.
+(describes principles of Reliable Reproducible Research and Supportable 
+Scientific Software)
 
 Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable Mathematical
 Software" [Course Slides], Illinois Institute of Technology, Chicago, IL, 2013.
-(develops practices of Reliable Reproducible Research and 
-Supportable Scientific Software)
+(develops practices of Reliable Reproducible Research and Supportable 
+Scientific Software)
 
 Sou-Cheng T. Choi, "Summary of the First Workshop On Sustainable Software 
 for Science: Practice And Experiences (WSSSPE1)", Journal of Open Research 
-Software, Volume 2, Number 1, e6, pp. 1-21, DOI: http://dx.doi.org/10.5334/jors.an
+Software, Volume 2, Number 1, e6, pp. 1-21, DOI: 
+http://dx.doi.org/10.5334/jors.an, 2014.
 (discusses practice and challenges in Sustainable Software for Science)
 
 Nicholas Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
 Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic Algorithms:
-Cones, Not Balls", Journal of Complexity 30 (2014), pp. 21-45.
+Cones, Not Balls", Journal of Complexity 30, pp. 21-45, 2014.
 (describes integral_g.m and funappx_g.m)
 
 Fred J. Hickernell, Lan Jiang, Yuewei Liu, and Art B. Owen,
 "Guaranteed conservative fixed width confidence intervals via Monte
 Carlo sampling", Monte Carlo and Quasi-Monte Carlo Methods 2012
 (J. Dick, F. Y. Kuo, G. W. Peters, and I. H. Sloan, eds.),
-Springer-Verlag, Berlin, 2014, pp. 105-128. 
+Springer-Verlag, Berlin, pp. 105-128, 2014.
 (describes meanMC_g.m and cubMC_g.m)
 
 Fred J. Hickernell and Lluis Antoni Jimenez Rugama, "Reliable Adaptive 
