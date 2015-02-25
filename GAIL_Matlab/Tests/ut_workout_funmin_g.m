@@ -13,21 +13,21 @@ classdef ut_workout_funmin_g < matlab.unittest.TestCase
     
     function test_workout_funmin_g_XTolerance(testCase)
       nrep=10000; TolX=10^(-6);  nmax=10^7;
-      [tauvec,prob] = workout_XTolerance(nrep,TolX,nmax);
+      [tauvec,prob] = workout_XToleranceTest(nrep,TolX,nmax);
       succrates = prob.succnowarn + prob.succwarn;   
       testCase.verifyLessThanOrEqual(succrates,[1,1,1]);
     end
     
     function test_workout_funmin_g_ErrXTolerance(testCase)
       nrep=10000; abstol=10^(-8); TolX=10^(-6); nmax=10^7;
-      [tauvec,prob] = workout_ErrXTolerance(nrep,abstol,TolX,nmax);
+      [tauvec,prob] = workout_ErrXToleranceTest(nrep,abstol,TolX,nmax);
       succrates = prob.succnowarn + prob.succwarn;   
       testCase.verifyLessThanOrEqual(succrates,[1,1,1]);
     end
     
     function test_workout_funmin_g_TwoExtreme(testCase)
       nrep=10000; TolX=[10^(-2) 10^(-4) 10^(-7)]; nmax=10^7; 
-      [TolXvec,prob] = workout__TwoExtreme(nrep,TolX,nmax);
+      [TolXvec,prob] = workout_TwoExtremeTest(nrep,TolX,nmax);
       succrates1 = prob.probfunmin;   
       succrates2 = prob.probfminbnd;
       testCase.verifyLessThanOrEqual(succrates1,[1,1,1]);
