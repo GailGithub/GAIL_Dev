@@ -35,6 +35,7 @@ Scientific Software)
 
 Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable Mathematical
 Software" [Course Slides], Illinois Institute of Technology, Chicago, IL, 2013.
+Available from http://code.google.com/p/gail/
 (develops practices of Reliable Reproducible Research and Supportable 
 Scientific Software)
 
