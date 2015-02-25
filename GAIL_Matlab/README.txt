@@ -1,5 +1,5 @@
 Guaranteed Automatic Integration Library (GAIL)
-GAIL Version 2.1, Feb 14, 2015.
+GAIL Version 2.1, Mar 14, 2015.
 See LICENSE.m for copyright and disclaimer.
 
 GAIL is a suite of algorithms for integration problems in one and many
@@ -18,13 +18,24 @@ We thank the contributions of Xincheng Sheng, and the IIT class of Math
 573 Reliable Mathematical Software, Fall 2013.
 
 
-Please cite the following software and papers:
+Please cite the following software, papers, and materials:
 
 
 Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang, and Xuan Zhou, "GAIL: 
 Guaranteed Automatic Integration Library (Version 2.1)" [MATLAB Software],
 2015. Available from http://code.google.com/p/gail/
+
+Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible Research via 
+Supportable Scientific Software", Journal of Open Research Software, Volume 2, 
+Number 1 (2014), e22, pp. 1-7, DOI: http://dx.doi.org/10.5334/jors.bb
+(describes principles of Reliable Reproducible Research and 
+Supportable Scientific Software)
+
+Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable Mathematical
+Software" [Course Slides], Illinois Institute of Technology, Chicago, IL, 2013.
+(develops practices of Reliable Reproducible Research and 
+Supportable Scientific Software)
 
 Nicholas Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
 Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic Algorithms:
@@ -61,7 +72,7 @@ GAIL can be downloaded from http://code.google.com/p/gail/.
 Alternatively, you can get a local copy of the GAIL repository with
 this command:
 
-  git clone https://code.google.com/p/gail/
+  git clone https://github.com/GailGithub/GAIL_Dev.git
 
 
 Requirements

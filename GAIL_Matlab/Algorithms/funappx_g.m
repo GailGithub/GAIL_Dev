@@ -35,7 +35,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %     in_param.abstol --- guaranteed absolute error tolerance, default
 %     value is 1e-6
 %
-%   Optional Input Arguments (Recommended not to change very often) 
+%   Optional input arguments (Recommended not to change very often):
 %
 %     in_param.nlo --- lower bound of initial number of points we used,
 %     default value is 10
@@ -197,8 +197,19 @@ function [fappx,out_param]=funappx_g(varargin)
 %   "GAIL: Guaranteed Automatic Integration Library (Version 2.1)" [MATLAB
 %   Software], 2015. Available from http://code.google.com/p/gail/
 %
+%   [3] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
+%   Research via Supportable Scientific Software", Journal of Open Research
+%   Software, Volume 2, Number 1 (2014), e22, pp. 1-7, DOI:
+%   http://dx.doi.org/10.5334/jors.bb (describes principles of Reliable
+%   Reproducible Research and Supportable Scientific Software)
+%
+%   [4] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable
+%   Mathematical Software" [Course Slides], Illinois Institute of
+%   Technology, Chicago, IL, 2013. (develops practices of Reliable
+%   Reproducible Research and Supportable Scientific Software)
+%
 %   If you find GAIL helpful in your work, please support us by citing the
-%   above paper and software.
+%   above papers, software, and materials.
 %
 
 % check parameter satisfy conditions or not
