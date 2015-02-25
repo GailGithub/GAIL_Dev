@@ -9,7 +9,7 @@ cd /home/gail/GAIL_tests/repo/gail-development/
 
 # MATLAB
 # Generate files necessary for creating HTML documentation
-./GAIL_Matlab/Documentation/Developers_only/autodoc.sh
+#./GAIL_Matlab/Documentation/Developers_only/autodoc.sh
 
 # Set the directory for running our matlab test
 # Run the file that installs GAIL and run the tests. The output files are in OutputFiles. We put all togehter since there is a permission not letting us install the path
