@@ -120,45 +120,60 @@ int main()
 	  ofs << "\n% " << sReplace.substr(4);
 	}
       }
+
       ofs << "\n% *Input Arguments*\n%" << endl;
       auto optInputArg = find(++inputArg, fcnDoc.cend(), "%   Optional Input Arguments");
-      for (auto iter = ++inputArg; iter != optInputArg; ++iter) {
-	if (iter->size() > 6) {
-	  if (auto pos = iter->find(" --- ")) {
-	    ofs << "% * " << iter->substr(6);
+      auto outputArg = find(inputArg, fcnDoc.cend(), "%   Output Arguments");
+      if (optInputArg != fcnDoc.cend()) {
+	for (auto iter = ++inputArg; iter != optInputArg; ++iter) {
+	  if (iter->size() > 6) {
+	    if (auto pos = iter->find(" --- ")) {
+	      ofs << "% * " << iter->substr(6);
+	    } else {
+	      ofs << "\n%  " << iter->substr(6);
+	    }
 	  } else {
-	    ofs << "\n%  " << iter->substr(6);
+	    ofs << "\n" << *iter << "\n";
 	  }
-	} else {
-	  ofs << "\n" << *iter << "\n";
+	}
+	ofs << "% *Optional Input Arguments*\n%" << endl;
+	for (auto iter = optInputArg + 2; iter != outputArg; ++iter) {
+	  if (iter->size() > 6) {
+	    if (auto pos = iter->find(" --- ")) {
+	      ofs << "% * " << iter->substr(6);
+	    } else {
+	      ofs << "\n%  " << iter->substr(6);
+	    }
+	  } else {
+	    ofs << "\n" << *iter << "\n";
+	  }
+	}
+      } else {
+	for (auto iter = ++inputArg; iter != outputArg; ++iter) {
+	  if (iter->size() > 6) {
+	    if (auto pos = iter->find(" --- ")) {
+	      ofs << "% * " << iter->substr(6);
+	    } else {
+	      ofs << "\n%  " << iter->substr(6);
+	    }
+	  } else {
+	    ofs << "\n" << *iter << "\n";
+	  }
 	}
       }
-      ofs << "% *Optional Input Arguments*\n%" << endl;
-      auto outputArg = find(++optInputArg, fcnDoc.cend(), "%   Output Arguments");
-      for (auto iter = ++optInputArg; iter != outputArg; ++iter) {
-	if ((*iter).size() > 6) {
-	  auto pos = (*iter).find(" --- ");
-	  if (pos != string::npos) {
-	    ofs << "% * " << (*iter).substr(6, pos - 1) << "|" << (*iter).substr(pos + 5);
-	  } else {
-	    ofs << "\n%  " << (*iter).substr(6);
-	  }
-	} else {
-	  ofs << "|\n" << *iter << "\n";
-	}
-      }
+
       ofs << "% *Output Arguments*\n%" << endl;
       auto guarantee = find(++outputArg, fcnDoc.cend(), "%  Guarantee");
       for (auto iter = ++outputArg; iter != guarantee; ++iter) {
 	if ((*iter).size() > 6) {
 	  auto pos = (*iter).find(" --- ");
 	  if (pos != string::npos) {
-	    ofs << "% * " << (*iter).substr(6, pos - 1) << "|" << (*iter).substr(pos + 5);
+	    ofs << "% * " << iter->substr(6);
 	  } else {
-	    ofs << "\n%  " << (*iter).substr(6);
+	    ofs << "\n%  " << iter->substr(6);
 	  }
 	} else {
-	  ofs << "|\n" << *iter << "\n";
+	  ofs << "\n" << *iter << "\n";
 	}
       }
       ifstream fcnData(dataFolder + "/" + s + "_data.m");
