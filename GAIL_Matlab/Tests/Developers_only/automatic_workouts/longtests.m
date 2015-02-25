@@ -127,7 +127,6 @@ try
     end
 catch
     display('Test ut_funappx01_g is wrongly coded. We skip it.')
-    fprintf(fid,'Test ut_funappx01_g is wrongly coded. We skip it.\n');
 end
   
 warning('off','MATLAB:integral01_g:peaky')
@@ -142,7 +141,6 @@ try
     end
 catch
     display('Test ut_integral01_g is wrongly coded. We skip it.')
-    fprintf(fid,'Test ut_integral01_g is wrongly coded. We skip it.\n');
 end
 warning('on','MATLAB:integral01_g:peaky')
 
@@ -157,7 +155,6 @@ try
     end
 catch
     display('Test ut_funmin01_g is wrongly coded. We skip it.')
-    fprintf(fid,'Test ut_funmin01_g is wrongly coded. We skip it.\n');
 end
 
   try
