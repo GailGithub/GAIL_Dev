@@ -183,7 +183,7 @@ if MATLABVERSION >= 8
       for i=1:size(failed,2)
         fprintf(fid,'%s\n',Tests(failed(i)).Name);
       end
-    endr
+    end
   catch
     display('Test ut_cubMC_g is wrongly coded. We skip it.')
     fprintf(fid,'Test ut_cubMC_g is wrongly coded. We skip it.\n');
