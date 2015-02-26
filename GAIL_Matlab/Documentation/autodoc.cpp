@@ -127,7 +127,7 @@ int main()
       if (optInputArg != fcnDoc.cend()) {
 	for (auto iter = ++inputArg; iter != optInputArg; ++iter) {
 	  if (iter->size() > 6) {
-	    if (auto pos = iter->find(" --- ")) {
+	    if (iter->find(" --- ") != string::npos) {
 	      ofs << "% * " << iter->substr(6);
 	    } else {
 	      ofs << "\n%  " << iter->substr(6);
@@ -139,7 +139,7 @@ int main()
 	ofs << "% *Optional Input Arguments*\n%" << endl;
 	for (auto iter = optInputArg + 2; iter != outputArg; ++iter) {
 	  if (iter->size() > 6) {
-	    if (auto pos = iter->find(" --- ")) {
+	    if (iter->find(" --- ") != string::npos) {
 	      ofs << "% * " << iter->substr(6);
 	    } else {
 	      ofs << "\n%  " << iter->substr(6);
@@ -151,7 +151,7 @@ int main()
       } else {
 	for (auto iter = ++inputArg; iter != outputArg; ++iter) {
 	  if (iter->size() > 6) {
-	    if (auto pos = iter->find(" --- ")) {
+	    if (iter->find(" --- ") != string::npos) {
 	      ofs << "% * " << iter->substr(6);
 	    } else {
 	      ofs << "\n%  " << iter->substr(6);

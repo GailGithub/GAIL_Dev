@@ -36,22 +36,22 @@
 % 
 % *Input Arguments*
 %
-% * Yrand --- |the function for generating IID instances of a Bernoulli
-%            random variable Y whose mean we want to estimate.|
+% * Yrand --- the function for generating IID instances of a Bernoulli
+%            random variable Y whose mean we want to estimate.
 %
-% * pHat --- |the estimated mean of Y.|
+% * pHat --- the estimated mean of Y.
 %
-% * in_param.abstol --- |the absolute error tolerance, the default value is 1e-2.|
+% * in_param.abstol --- the absolute error tolerance, the default value is 1e-2.
 % 
-% * in_param.alpha --- |the uncertainty, the default value is 1%.|
+% * in_param.alpha --- the uncertainty, the default value is 1%.
 % 
-% * in_param.nmax --- |the sample budget, the default value is 1e9.|
+% * in_param.nmax --- the sample budget, the default value is 1e9.
 % 
 % *Output Arguments*
 %
-% * out_param.n --- |the total sample used.|
+% * out_param.n --- the total sample used.
 %
-% * out_param.time --- |the time elapsed in seconds.|
+% * out_param.time --- the time elapsed in seconds.
 % 
 %%  Guarantee
 %
@@ -129,6 +129,21 @@
 % [MATLAB Software], 2015. Available from
 % http://code.google.com/p/gail/
 %
+% [3] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
+% Research via Supportable Scientific Software", Journal of Open Research
+% Software, Volume 2, Number 1, e22, pp. 1-7, DOI:
+% http://dx.doi.org/10.5334/jors.bb, 2014.
+%
+% [4] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable
+% Mathematical Software" [Course Slides], Illinois Institute of
+% Technology, Chicago, IL, 2013. Available from
+% http://code.google.com/p/gail/ 
+%
+% [5] Sou-Cheng T. Choi, "Summary of the First Workshop On Sustainable
+% Software for Science: Practice And Experiences (WSSSPE1)", Journal of
+% Open Research Software, Volume 2, Number 1, e6, pp. 1-21, DOI:
+% http://dx.doi.org/10.5334/jors.an, 2014.
+%
 % If you find GAIL helpful in your work, please support us by citing the
-% above paper and software.
+% above papers, software, and materials.
 %

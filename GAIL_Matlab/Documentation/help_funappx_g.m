@@ -37,79 +37,78 @@
 %
 % *Input Arguments*
 %
-% * f --- |input function|
+% * f --- input function
 %
-% * in_param.a --- |left end point of interval, default value is 0|
+% * in_param.a --- left end point of interval, default value is 0
 %
-% * in_param.b --- |right end point of interval, default value is 1|
+% * in_param.b --- right end point of interval, default value is 1
 %
-% * in_param.abstol --- |guaranteed absolute error tolerance, default
-%  value is 1e-6|
+% * in_param.abstol --- guaranteed absolute error tolerance, default
+%  value is 1e-6
 %
-% *Optional Input Arguments (Recommended not to change very often)*
+% *Optional Input Arguments*
 %
-% * in_param.nlo --- |lower bound of initial number of points we used,
-%  default value is 10|
+% * in_param.nlo --- lower bound of initial number of points we used,
+%  default value is 10
 %
-% * in_param.nhi --- |upper bound of initial number of points we used,
-%  default value is 1000|
+% * in_param.nhi --- upper bound of initial number of points we used,
+%  default value is 1000
 %
-% * in_param.nmax --- |when number of points hits the value, iteration
-%  will stop, default value is 1e7|
+% * in_param.nmax --- when number of points hits the value, iteration
+%  will stop, default value is 1e7
 %
-% * in_param.maxiter --- |max number of interations, default value is 1000|
+% * in_param.maxiter --- max number of interations, default value is 1000
 %
 % *Output Arguments*
 %
-% * fappx --- |approximated function|
+% * fappx --- approximated function
 %
-% * out_param.f --- |input function|
+% * out_param.f --- input function
 %
-% * out_param.a --- |left end point of interval|
+% * out_param.a --- left end point of interval
 %
-% * out_param.b --- |right end point of interval|
+% * out_param.b --- right end point of interval
 %
-% * out_param.abstol --- |guaranteed absolute error tolerance|
+% * out_param.abstol --- guaranteed absolute error tolerance
 %
-% * out_param.nlo --- |a lower bound of initial number of points we use|
+% * out_param.nlo --- a lower bound of initial number of points we use
 %
-% * out_param.nhi --- |an upper bound of initial number of points we use|
+% * out_param.nhi --- an upper bound of initial number of points we use
 %
-% * out_param.nmax --- |when number of points hits the value, iteration
-%  will stop|
+% * out_param.nmax --- when number of points hits the value, iteration
+%  will stop
 %
-% * out_param.maxiter --- |max number of iterations|
+% * out_param.maxiter --- max number of iterations
 %
-% * out_param.ninit --- |initial number of points we use for each sub
-%  interval|
+% * out_param.ninit --- initial number of points we use for each sub
+%  interval
 %
-% * out_param.exit --- |this is a number defining the conditions of
+% * out_param.exit --- this is a number defining the conditions of
 %  success or failure satisfied when finishing the algorithm. The 
 %  algorithm is considered successful (with out_param.exit == 0) if no 
 %  other flags arise warning that the results are certainly not 
 %  guaranteed. The initial value is 0 and the final value of this
-%  parameter is encoded as follows:|
-%
-%                    1  |If reaching overbudget. It states whether
+%  parameter is encoded as follows:
+%    
+%                    1    If reaching overbudget. It states whether
 %                    the max budget is attained without reaching the
 %                    guaranteed error tolerance.
-%   
-%                    2   |If reaching overiteration. It states whether
+%     
+%                    2   If reaching overiteration. It states whether
 %                    the max iterations is attained without reaching the
-%                    guaranteed error tolerance.|
+%                    guaranteed error tolerance.
 %
+% * out_param.iter --- number of iterations
 %
-% * out_param.iter --- |number of iterations|
+% * out_param.npoints --- number of points we need to reach the
+%  guaranteed absolute error tolerance
 %
-% * out_param.npoints --- |number of points we need to reach the
-%  guaranteed absolute error tolerance|
+% * out_param.errest --- an estimation of the absolute error for the
+%  approximation
 %
-% * out_param.errest --- |an estimation of the absolute error for the
-%  approximation|
-%
-% * out_param.nstar --- |final value of the parameter defining the cone of
+% * out_param.nstar --- final value of the parameter defining the cone of
 %  functions for which this algorithm is guaranteed for each
-%  subinterval; nstar = ninit-2 initially|
+%  subinterval; nstar = ninit-2 initially
 %
 %% Guarantee
 %
@@ -191,6 +190,21 @@ clear in_param; f = @(x) x.^2;
 % "GAIL: Guaranteed Automatic Integration Library (Version 2.1)" [MATLAB
 % Software], 2015. Available from http://code.google.com/p/gail/
 %
+% [3] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
+% Research via Supportable Scientific Software", Journal of Open Research
+% Software, Volume 2, Number 1, e22, pp. 1-7, DOI:
+% http://dx.doi.org/10.5334/jors.bb, 2014.
+%
+% [4] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable
+% Mathematical Software" [Course Slides], Illinois Institute of
+% Technology, Chicago, IL, 2013. Available from
+% http://code.google.com/p/gail/ 
+%
+% [5] Sou-Cheng T. Choi, "Summary of the First Workshop On Sustainable
+% Software for Science: Practice And Experiences (WSSSPE1)", Journal of
+% Open Research Software, Volume 2, Number 1, e6, pp. 1-21, DOI:
+% http://dx.doi.org/10.5334/jors.an, 2014.
+%
 % If you find GAIL helpful in your work, please support us by citing the
-% above paper and software.
+% above papers, software, and materials.
 %
