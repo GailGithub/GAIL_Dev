@@ -10,10 +10,10 @@ function path = save_eps(subdir, filename)
 %   'tauvec','pini','pfin','succnowarn', 'succwarn','failnowarn','failwarn');
 
 [GAILPATH,~,PATHNAMESEPARATOR] = GAILstart(0);
-if exist(subdir) ~= 7,
-  mkdir(strcat([GAILPATH,'OutputFiles',PATHNAMESEPARATOR], subdir));
+dirpath=strcat([GAILPATH,'OutputFiles',PATHNAMESEPARATOR], subdir)
+if exist(dirpath) ~= 7,
+  mkdir(dirpath);
 end
-path = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
-    subdir, PATHNAMESEPARATOR, filename, '-',...
+path = strcat(dirpath, PATHNAMESEPARATOR, filename, '-',...
     datestr(now,'yyyy-mm-dd-HH-MM-SS'),'.eps');
 print('-depsc', path)
