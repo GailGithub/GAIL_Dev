@@ -16,7 +16,6 @@ warninfo = warning('query','MATLAB:doc:DocNotInstalled');
 warning('off', warninfo.identifier);
 GAIL_Publish; 
 warning(warninfo.state, warninfo.identifier);
-fprintf('\nYou can go to help documentation ---> Supplemental Software to learn how to use GAIL.\n');
 %addpath(strcat(GAILPATH,'Documentation',PATHNAMESEPARATOR,'html',PATHNAMESEPARATOR,'helpsearch'));
 fprintf('\nGAIL version %s has been installed successfully.\n\n', GAILVERSION);
 end

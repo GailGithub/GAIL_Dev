@@ -29,5 +29,6 @@ if usejava('jvm')
     set(0, 'DefaultFigureVisible', oldStatus)
     
     builddocsearchdb(strcat(GAILPATH,'Documentation',PATHNAMESEPARATOR,'html'));
+    fprintf('\nYou can go to help documentation ---> Supplemental Software to learn how to use GAIL.\n');
 end
 end
