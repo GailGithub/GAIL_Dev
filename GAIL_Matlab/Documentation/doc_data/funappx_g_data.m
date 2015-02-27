@@ -1,15 +1,15 @@
 %% Guarantee
 %
-% |For| $[a,b]$, |there exists a partition|
+% For $[a,b]$, there exists a partition
 %
 % $$ P=\{[t_0,t_1], [t_1,t_2],  \ldots, [t_{L-1},t_L]\},  a=t_0 < t_1 < \cdots < t_L=b.$$
 % 
-% |If the function to be approximated,|  $f$  |satisfies the cone condition|
+% If the function to be approximated,  $f$ satisfies the cone condition
 %
 % $$\|f''\|_\infty \le \frac { 2\mathrm{nstar} }{t_l-t_{l-1} } \left\|f'-\frac{f(t_l)-f(t_{l-1})}{t_l-t_{l-1}}\right\|_\infty$$
 % 
-% |for each sub interval| $[t_{l-1},t_l]$, |where| $1 \le l \le L$,
-% |then the| $pp$ |output by this algorithm is guaranteed to satisfy|
+% for each sub interval $[t_{l-1},t_l]$, where $1 \le l \le L$,
+% then the $pp$ |output by this algorithm is guaranteed to satisfy
 %
 % $$\| f-ppval(pp,)\|_{\infty} \le \mathrm{abstol}.$$
 %
