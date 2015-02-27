@@ -1,5 +1,5 @@
 function [fappx,out_param]=funappx_g(varargin)
-%FUNAPPX_G 1-D guaranteed function recovery on a closed interval [a,b]
+%FUNAPPX_G 1-D guaranteed function approximation (or function recovery) on [a,b]
 %
 %   fappx = FUNAPPX_G(f) approximates function f on the default interval
 %   [0,1] by an approximated function fappx within the guaranteed absolute
