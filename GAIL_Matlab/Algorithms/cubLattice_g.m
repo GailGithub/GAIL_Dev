@@ -51,7 +51,7 @@ function [q,out_param] = cubLattice_g(varargin)
 %     or normally distributed with covariance matrix I_d. By default it 
 %     is 'uniform'. The only possible values are 'uniform' or 'normal'.
 % 
-%     Optional input parameters:
+%   Optional Input Arguments
 % 
 %     in_param.shift --- the Rank-1 lattices can be shifted to avoid the origin
 %     or other particular points. By default we consider a uniformly [0,1)

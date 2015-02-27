@@ -48,7 +48,7 @@ function [tmu,out_param]=meanMC_g(varargin)
 %     in_param.alpha --- the uncertainty, which should be a small positive
 %     percentage. default value is 1%.
 %
-%     Optional input parameters:
+%   Optional Input Arguments
 %
 %     in_param.fudge --- standard deviation inflation factor, which should
 %     be larger than 1, default value is 1.2.

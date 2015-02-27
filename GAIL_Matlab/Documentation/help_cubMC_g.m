@@ -44,76 +44,75 @@
 % 
 % *Input Arguments*
 %
-% * f --- |the integrand.|
+% * f --- the integrand.
 % 
-% * hyperbox --- |the integration hyperbox. The default value is
-%  [zeros(1,d); ones(1,d)], the default d is 1.|
+% * hyperbox --- the integration hyperbox. The default value is
+%  [zeros(1,d); ones(1,d)], the default d is 1.
 % 
-% * in_param.measure --- |the measure for generating the random variable,
+% * in_param.measure --- the measure for generating the random variable,
 %  the default is 'uniform'. The other measure could be handled is
 %  'normal'/'Gaussian'. The input should be a string type, hence with
-%  quotes.|
+%  quotes.
 % 
-% * in_param.abstol --- |the absolute error tolerance, the default value
-%  is 1e-2.|
+% * in_param.abstol --- the absolute error tolerance, the default value
+%  is 1e-2.
 %
-% * in_param.reltol --- |the relative error tolerance, the default value
-%  is 1e-1.|
+% * in_param.reltol --- the relative error tolerance, the default value
+%  is 1e-1.
 % 
-% * in_param.alpha --- |the uncertainty, the default value is 1%.|
+% * in_param.alpha --- the uncertainty, the default value is 1%.
 % 
-
-%  Optional input parameters:|
+% *Optional Input Arguments*
 %
-% * in_param.fudge --- |the standard deviation inflation factor, the
-%  default value is 1.2.|
+% * in_param.fudge --- the standard deviation inflation factor, the
+%  default value is 1.2.
 %
-% * in_param.nSig --- |initial sample size for estimating the sample
+% * in_param.nSig --- initial sample size for estimating the sample
 %  variance, which should be a moderate large integer at least 30, the
-%  default value is 1e4.|
+%  default value is 1e4.
 %
-% * in_param.n1 --- |initial sample size for estimating the sample mean,
+% * in_param.n1 --- initial sample size for estimating the sample mean,
 %  which should be a moderate large positive integer at least 30, the
-%  default value is 1e4.|
+%  default value is 1e4.
 % 
-% * in_param.tbudget --- |the time budget to do the estimation, the
-%  default value is 100 seconds.|
+% * in_param.tbudget --- the time budget to do the estimation, the
+%  default value is 100 seconds.
 % 
-% * in_param.nbudget --- |the sample budget to do the estimation, the
-%  default value is 1e9.|
+% * in_param.nbudget --- the sample budget to do the estimation, the
+%  default value is 1e9.
 % 
-% * in_param.flag --- |the value corresponds to parameter checking status.
+% * in_param.flag --- the value corresponds to parameter checking status.
 %   
 %                      0   not checked
 %   
 %                      1   checked by meanMC_g
 %   
-%                      2   checked by cubMC_g|
+%                      2   checked by cubMC_g
 %
 % *Output Arguments*
 %
-% * Q --- |the estimated value of the integral.|
+% * Q --- the estimated value of the integral.
 % 
-% * out_param.n --- |the sample size used in each iteration.|
+% * out_param.n --- the sample size used in each iteration.
 %
-% * out_param.ntot --- |total sample used.|
+% * out_param.ntot --- total sample used.
 %
-% * out_param.nremain --- |the remaining sample budget to estimate I. It was
-%  calculated by the sample left and time left.|
+% * out_param.nremain --- the remaining sample budget to estimate I. It was
+%  calculated by the sample left and time left.
 %
-% * out_param.tau --- |the iteration step.|
+% * out_param.tau --- the iteration step.
 %
-% * out_param.hmu --- |estimated integral in each iteration.|
+% * out_param.hmu --- estimated integral in each iteration.
 %
-% * out_param.tol --- |the reliable upper bound on error for each iteration.|
+% * out_param.tol --- the reliable upper bound on error for each iteration.
 %  
-% * out_param.kurtmax --- |the upper bound on modified kurtosis.|
+% * out_param.kurtmax --- the upper bound on modified kurtosis.
 % 
-% * out_param.time --- |the time elapsed in seconds.|
+% * out_param.time --- the time elapsed in seconds.
 %
-% * out_param.var --- |the sample variance.|
+% * out_param.var --- the sample variance.
 %
-% * out_param.exit --- |the state of program when exiting.
+% * out_param.exit --- the state of program when exiting.
 %   
 %                    0   success
 %   
@@ -128,7 +127,7 @@
 %                    13  hyperbox is infinite when measure is 'uniform'
 %   
 %                    14  hyperbox is not doubly infinite when measure
-%                        is 'normal'|
+%                        is 'normal'
 % 
 %%  Guarantee
 % This algorithm attempts to calculate the integral of function f over a
@@ -225,5 +224,21 @@
 % Guaranteed Automatic Integration Library (Version 2.1)" [MATLAB
 % Software], 2015. Available from http://code.google.com/p/gail/
 %
+% [3] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
+% Research via Supportable Scientific Software", Journal of Open Research
+% Software, Volume 2, Number 1, e22, pp. 1-7, DOI:
+% http://dx.doi.org/10.5334/jors.bb, 2014.
+%
+% [4] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable
+% Mathematical Software" [Course Slides], Illinois Institute of
+% Technology, Chicago, IL, 2013. Available from
+% http://code.google.com/p/gail/ 
+%
+% [5] Sou-Cheng T. Choi, "Summary of the First Workshop On Sustainable
+% Software for Science: Practice And Experiences (WSSSPE1)", Journal of
+% Open Research Software, Volume 2, Number 1, e6, pp. 1-21, DOI:
+% http://dx.doi.org/10.5334/jors.an, 2014.
+%
 % If you find GAIL helpful in your work, please support us by citing the
-% above paper and software.
+% above papers, software, and materials.
+%

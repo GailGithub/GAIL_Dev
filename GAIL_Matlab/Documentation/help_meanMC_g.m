@@ -40,76 +40,75 @@
 %
 % *Input Arguments*
 %
-% * Yrand --- |the function for generating n IID instances of a random
+% * Yrand --- the function for generating n IID instances of a random
 %  variable Y whose mean we want to estimate. Y is often defined as a
 %  function of some random variable X with a simple distribution. The
 %  input of Yrand should be the number of random variables n, the output
 %  of Yrand should be n function values. For example, if Y = X.^2 where X
 %  is a standard uniform random variable, then one may define Yrand =
-%  @(n) rand(n,1).^2.|
+%  @(n) rand(n,1).^2.
 %
-% * in_param.abstol --- |the absolute error tolerance, which should be
-%  positive, default value is 1e-2.|
+% * in_param.abstol --- the absolute error tolerance, which should be
+%  positive, default value is 1e-2.
 %
-% * in_param.reltol --- |the relative error tolerance, which should be
-%  between 0 and 1, default value is 1e-1.|
+% * in_param.reltol --- the relative error tolerance, which should be
+%  between 0 and 1, default value is 1e-1.
 %
-% * in_param.alpha --- |the uncertainty, which should be a small positive
-%  percentage. default value is 1%.|
+% * in_param.alpha --- the uncertainty, which should be a small positive
+%  percentage. default value is 1%.
 %
-
-%  Optional input parameters:|
+% *Optional Input Arguments*
 %
-% * in_param.fudge --- |standard deviation inflation factor, which should
-%  be larger than 1, default value is 1.2.|
+% * in_param.fudge --- standard deviation inflation factor, which should
+%  be larger than 1, default value is 1.2.
 %
-% * in_param.nSig --- |initial sample size for estimating the sample
+% * in_param.nSig --- initial sample size for estimating the sample
 %  variance, which should be a moderate large integer at least 30, the
-%  default value is 1e4.|
+%  default value is 1e4.
 %
-% * in_param.n1 --- |initial sample size for estimating the sample mean,
+% * in_param.n1 --- initial sample size for estimating the sample mean,
 %  which should be a moderate large positive integer at least 30, the
-%  default value is 1e4.|
+%  default value is 1e4.
 %
-% * in_param.tbudget --- |the time budget in seconds to do the two-stage
-%  estimation, which should be positive, the default value is 100 seconds.|
+% * in_param.tbudget --- the time budget in seconds to do the two-stage
+%  estimation, which should be positive, the default value is 100 seconds.
 %
-% * in_param.nbudget --- |the sample budget to do the two-stage
+% * in_param.nbudget --- the sample budget to do the two-stage
 %  estimation, which should be a large positive integer, the default
-%  value is 1e9.|
+%  value is 1e9.
 %
 % *Output Arguments*
 %
-% * tmu --- |the estimated mean of Y.|
+% * tmu --- the estimated mean of Y.
 %
-% * out_param.tau --- |the iteration step.|
+% * out_param.tau --- the iteration step.
 %
-% * out_param.n --- |the sample size used in each iteration.|
+% * out_param.n --- the sample size used in each iteration.
 %
-% * out_param.nremain --- |the remaining sample budget to estimate mu. It was
-%  calculated by the sample left and time left.|
+% * out_param.nremain --- the remaining sample budget to estimate mu. It was
+%  calculated by the sample left and time left.
 %
-% * out_param.ntot --- |total sample used.|
+% * out_param.ntot --- total sample used.
 %
-% * out_param.hmu --- |estimated mean in each iteration.|
+% * out_param.hmu --- estimated mean in each iteration.
 %
-% * out_param.tol --- |the reliable upper bound on error for each iteration.|
+% * out_param.tol --- the reliable upper bound on error for each iteration.
 %
-% * out_param.var --- |the sample variance.|
+% * out_param.var --- the sample variance.
 %
-% * out_param.exit --- |the state of program when exiting.
+% * out_param.exit --- the state of program when exiting.
 %    
 %                   0   Success
 %   
-%                   1   Not enough samples to estimate the mean|
+%                   1   Not enough samples to estimate the mean
 %
-% * out_param.kurtmax --- |the upper bound on modified kurtosis.|
+% * out_param.kurtmax --- the upper bound on modified kurtosis.
 %
-% * out_param.time --- |the time elapsed in seconds.|
+% * out_param.time --- the time elapsed in seconds.
 %
-% * out_param.flag --- |parameter checking status
+% * out_param.flag --- parameter checking status
 %   
-%                        1  checked by meanMC_g|
+%                        1  checked by meanMC_g
 %
 %%  Guarantee
 % This algorithm attempts to calculate the mean, mu, of a random variable
@@ -194,5 +193,21 @@
 % Guaranteed Automatic Integration Library (Version 2.1)" [MATLAB
 % Software], 2015. Available from http://code.google.com/p/gail/
 %
+% [3] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
+% Research via Supportable Scientific Software", Journal of Open Research
+% Software, Volume 2, Number 1, e22, pp. 1-7, DOI:
+% http://dx.doi.org/10.5334/jors.bb, 2014.
+%
+% [4] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable
+% Mathematical Software" [Course Slides], Illinois Institute of
+% Technology, Chicago, IL, 2013. Available from
+% http://code.google.com/p/gail/ 
+%
+% [5] Sou-Cheng T. Choi, "Summary of the First Workshop On Sustainable
+% Software for Science: Practice And Experiences (WSSSPE1)", Journal of
+% Open Research Software, Volume 2, Number 1, e6, pp. 1-21, DOI:
+% http://dx.doi.org/10.5334/jors.an, 2014.
+%
 % If you find GAIL helpful in your work, please support us by citing the
-% above paper and software.
+% above papers, software, and materials.
+%
