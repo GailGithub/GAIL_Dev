@@ -73,7 +73,7 @@ int main()
       }
       ifs.close();
       ofs.open("help_" + s + "_raw.m");
-      ofs << "%% " << s << "\n% |";
+      ofs << "%% " << s << "\n% ";
       auto space1 = find(fcnDoc[1].cbegin(), fcnDoc[1].cend(), ' ');
       fcnDoc[1] = fcnDoc[1].substr(space1 - fcnDoc[1].cbegin() + 1, fcnDoc[1].size());
       ofs << fcnDoc[1];
@@ -85,7 +85,7 @@ int main()
 	  ofs << "\n% " << (*iter).substr(1);
 	}
       }
-      ofs << "|\n%% Syntax" << endl;
+      ofs << "\n%% Syntax" << endl;
       auto inputArg = find(++emptyLine1, fcnDoc.cend(), "%   Input Arguments");
       us = upperString(s);
       {
