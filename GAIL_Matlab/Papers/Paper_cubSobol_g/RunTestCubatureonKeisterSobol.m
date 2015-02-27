@@ -4,7 +4,7 @@ format compact
 
 fun.funtype='Keister';
 param.measure='uniform';
-param.abstol=0; % 0 abstol means all relative error
+param.abstol=0.0001; % 0 abstol means all relative error
 param.reltol=0.01; % 0 reltol means all absolute error
 param.toltype  = 'max';
 param_indicator=10^0;
