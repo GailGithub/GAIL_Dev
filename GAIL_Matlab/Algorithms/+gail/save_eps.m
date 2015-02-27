@@ -10,7 +10,7 @@ function path = save_eps(subdir, filename)
 %   'tauvec','pini','pfin','succnowarn', 'succwarn','failnowarn','failwarn');
 
 [GAILPATH,~,PATHNAMESEPARATOR] = GAILstart(0);
-dirpath=strcat([GAILPATH,'OutputFiles',PATHNAMESEPARATOR], subdir)
+dirpath=strcat([GAILPATH,'OutputFiles',PATHNAMESEPARATOR], subdir);
 if exist(dirpath) ~= 7,
   mkdir(dirpath);
 end
