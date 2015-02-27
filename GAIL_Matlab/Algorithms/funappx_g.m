@@ -11,12 +11,12 @@ function [fappx,out_param]=funappx_g(varargin)
 %   input parameters that define the finite interval [a,b], and a
 %   guaranteed absolute error tolerance abstol.
 %
-%   fappx = FUNAPPX_G(f,'a',a,'b',b,'abstol',abstol) recovers function f on
-%   the finite interval [a,b], given a guaranteed absolute error tolerance
-%   abstol. All four field-value pairs are optional and can be supplied in
-%   different order.
+%   fappx = FUNAPPX_G(f,'a',a,'b',b,'abstol',abstol) approximates function
+%   f on the finite interval [a,b], given a guaranteed absolute error
+%   tolerance abstol. All four field-value pairs are optional and can be
+%   supplied in different order.
 %
-%   fappx = FUNAPPX_G(f,in_param) recovers function f on the finite
+%   fappx = FUNAPPX_G(f,in_param) approximates function f on the finite
 %   interval [in_param.a,in_param.b], given a guaranteed absolute error
 %   tolerance in_param.abstol. If a field is not specified, the default
 %   value is used.
