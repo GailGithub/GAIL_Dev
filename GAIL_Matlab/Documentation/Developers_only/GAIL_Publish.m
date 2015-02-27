@@ -27,6 +27,7 @@ if usejava('jvm')
     system(cat_cmd);
     publish(gailug_filename,'pdf');
     set(0, 'DefaultFigureVisible', oldStatus)
+    
+    builddocsearchdb(strcat(GAILPATH,'Documentation',PATHNAMESEPARATOR,'html'));
 end
-
 end
