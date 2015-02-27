@@ -51,7 +51,7 @@ function [q,out_param] = cubSobol_g(varargin)
 %     or normally distributed with covariance matrix I_d. By default it 
 %     is 'uniform'. The only possible values are 'uniform' or 'normal'.
 % 
-%     Optional input parameters:
+%   Optional Input Arguments
 % 
 %     in_param.mmin --- the minimum number of points to start is 2^mmin. The
 %     cone condition on the Fourier coefficients decay requires a minimum

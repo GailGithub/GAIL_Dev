@@ -42,46 +42,45 @@
 % 
 % *Input Arguments*
 %
-% * f --- |the integrand whose input should be a matrix nxd where n is the
+% * f --- the integrand whose input should be a matrix nxd where n is the
 %  number of data points and d the dimension. By default it is the
-%  quadratic function.|
+%  quadratic function.
 % 
-% * d --- |dimension of domain on which f is defined. d must be a positive
-%  integer 1<=d<=250. By default it is 1.|
+% * d --- dimension of domain on which f is defined. d must be a positive
+%  integer 1<=d<=250. By default it is 1.
 % 
-% * in_param.abstol --- |the absolute error tolerance, abstol>0. By 
-%  default it is 1e-4.|
+% * in_param.abstol --- the absolute error tolerance, abstol>0. By 
+%  default it is 1e-4.
 %
-% * in_param.reltol --- |the relative error tolerance, which should be
-%  in [0,1]. Default value is 1e-1.|
+% * in_param.reltol --- the relative error tolerance, which should be
+%  in [0,1]. Default value is 1e-1.
 % 
-% * in_param.measure --- |for f(x)*mu(dx), we can define mu(dx) to be the
+% * in_param.measure --- for f(x)*mu(dx), we can define mu(dx) to be the
 %  measure of a uniformly distributed random variable in [0,1)^d
 %  or normally distributed with covariance matrix I_d. By default it 
-%  is 'uniform'. The only possible values are 'uniform' or 'normal'.|
+%  is 'uniform'. The only possible values are 'uniform' or 'normal'.
 % 
-
-%  Optional input parameters:|
-% 
-% * in_param.shift --- |the Rank-1 lattices can be shifted to avoid the origin
+% *Optional Input Arguments*
+%
+% * in_param.shift --- the Rank-1 lattices can be shifted to avoid the origin
 %  or other particular points. By default we consider a uniformly [0,1)
-%  random shift.|
+%  random shift.
 % 
-% * in_param.mmin --- |the minimum number of points to start is 2^mmin. The
+% * in_param.mmin --- the minimum number of points to start is 2^mmin. The
 %  cone condition on the Fourier coefficients decay requires a minimum
 %  number of points to start. The advice is to consider at least mmin=10.
-%  mmin needs to be a positive integer with mmin<=mmax. By default it is 10.|
+%  mmin needs to be a positive integer with mmin<=mmax. By default it is 10.
 % 
-% * in_param.mmax --- |the maximum budget is 2^mmax. By construction of our
+% * in_param.mmax --- the maximum budget is 2^mmax. By construction of our
 %  Lattices generator, mmax is a positive integer such that mmin<=mmax<=26.
-%  The default value is 24.|
+%  The default value is 24.
 % 
-% * in_param.fudge --- |the positive function multiplying the finite 
+% * in_param.fudge --- the positive function multiplying the finite 
 %  sum of Fast Fourier coefficients specified in the cone of functions.
 %  For more information about this parameter, refer to the references.
-%  By default it is @(x) 5*2.^-x.|
+%  By default it is @(x) 5*2.^-x.
 % 
-% * in_param.transform --- |the algorithm is defined for continuous periodic functions. If the
+% * in_param.transform --- the algorithm is defined for continuous periodic functions. If the
 %  input function f is not, there are 5 types of transform to periodize it
 %  without modifying the result. By default it is Baker. The options:
 %    'id' : no transformation. Choice by default.
@@ -90,41 +89,41 @@
 %    'C0' : polynomial transformation only preserving continuity.
 %    'C1' : polynomial transformation preserving the first derivative.
 %    'C1sin' : Sidi transform with sinus preserving the first derivative.
-%              This is in general a better option than 'C1'.|
+%              This is in general a better option than 'C1'.
 %
-% * in_param.toltype --- |this is the tolerance function. There are two
+% * in_param.toltype --- this is the tolerance function. There are two
 %  choices, 'max' (chosen by default) which takes
 %  max(abstol,reltol*|integral(f)|) and 'comb' which is a linear combination
 %  theta*abstol+(1-theta)*reltol*|integral(f)|. Theta is another 
 %  parameter that can be specified (see below). For pure absolute error,
 %  either choose 'max' and set reltol=0 or choose 'comb' and set
-%  theta=1.|
+%  theta=1.
 % 
-% * in_param.theta --- |this input is parametrizing the toltype 
+% * in_param.theta --- this input is parametrizing the toltype 
 %  'comb'. Thus, it is only afecting when the toltype
 %  chosen is 'comb'. It stablishes the linear combination weight
 %  between the absolute and relative tolerances
 %  theta*abstol+(1-theta)*reltol*|integral(f)|. Note that for theta=1, 
 %  we have pure absolute tolerance while for theta=0, we have pure 
-%  relative tolerance. By default, theta=1.|
+%  relative tolerance. By default, theta=1.
 %
 % *Output Arguments*
 %
-% * q --- |the estimated value of the integral.|
+% * q --- the estimated value of the integral.
 % 
-% * out_param.n --- |number of points used when calling cubLattice_g for f.|
+% * out_param.n --- number of points used when calling cubLattice_g for f.
 % 
-% * out_param.bound_err --- |predicted bound on the error based on the cone
+% * out_param.bound_err --- predicted bound on the error based on the cone
 %  condition. If the function lies in the cone, the real error should be
-%  smaller than this predicted error.|
+%  smaller than this predicted error.
 % 
-% * out_param.time --- |time elapsed in seconds when calling cubLattice_g for f.|
+% * out_param.time --- time elapsed in seconds when calling cubLattice_g for f.
 %
-% * out_param.exitflag --- |this is a binary vector stating whether 
+% * out_param.exitflag --- this is a binary vector stating whether 
 %  warning flags arise. These flags tell about which conditions make the
 %  final result certainly not guaranteed. One flag is considered arisen
 %  when its value is 1. The following list explains the flags in the
-%  respective vector order:|
+%  respective vector order:
 %
 
 %                    1    If reaching overbudget. It states whether
@@ -138,7 +137,7 @@
 %                    information on the transforms, check the input
 %                    parameter in_param.transfrom; for information about
 %                    the cone definition, check the article mentioned
-%                    below.|
+%                    below.
 % 
 %%  Guarantee
 %
@@ -225,5 +224,21 @@
 % "GAIL: Guaranteed Automatic Integration Library (Version 2.1)"
 % [MATLAB Software], 2015. Available from http://code.google.com/p/gail/
 %
+% [3] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
+% Research via Supportable Scientific Software", Journal of Open Research
+% Software, Volume 2, Number 1, e22, pp. 1-7, DOI:
+% http://dx.doi.org/10.5334/jors.bb, 2014.
+%
+% [4] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable
+% Mathematical Software" [Course Slides], Illinois Institute of
+% Technology, Chicago, IL, 2013. Available from
+% http://code.google.com/p/gail/ 
+%
+% [5] Sou-Cheng T. Choi, "Summary of the First Workshop On Sustainable
+% Software for Science: Practice And Experiences (WSSSPE1)", Journal of
+% Open Research Software, Volume 2, Number 1, e6, pp. 1-21, DOI:
+% http://dx.doi.org/10.5334/jors.an, 2014.
+%
 % If you find GAIL helpful in your work, please support us by citing the
-% above paper and software.
+% above papers, software, and materials.
+%

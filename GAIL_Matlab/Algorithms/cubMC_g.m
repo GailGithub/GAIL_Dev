@@ -53,7 +53,7 @@ function [Q,out_param] = cubMC_g(varargin)
 % 
 %     in_param.alpha --- the uncertainty, the default value is 1%.
 % 
-%     Optional input parameters:
+%   Optional Input Arguments
 %
 %     in_param.fudge --- the standard deviation inflation factor, the
 %     default value is 1.2.
