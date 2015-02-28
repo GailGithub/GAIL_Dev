@@ -1,5 +1,5 @@
 %% cubMC_g
-% |Monte Carlo method to evaluate a multidimensional integral.|
+% Monte Carlo method to evaluate a multidimensional integral.
 %% Syntax
 % [Q,out_param] = *cubMC_g*(f,hyperbox)
 %
@@ -139,8 +139,8 @@
 % Pr(|Q-I| <= tolfun) >= 1-alpha
 %
 % The cost of the algorithm, N_tot, is also bounded above by N_up, which is
-% a function in terms of abstol, reltol, nSig, n1, fudge, kurtmax, beta. And
-% the following inequality holds:
+% a function in terms of abstol, reltol, nSig, n1, fudge, kurtmax, beta.
+% And the following inequality holds:
 % 
 % Pr (N_tot <= N_up) >= 1-beta
 %

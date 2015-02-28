@@ -1,7 +1,7 @@
 %% cubLattice_g
-% |is a Quasi-Monte Carlo method using rank-1 Lattices cubature
+% is a Quasi-Monte Carlo method using rank-1 Lattices cubature
 % over a d-dimensional region to integrate within a specified generalized error 
-% tolerance with guarantees under Fourier coefficients cone decay assumptions.|
+% tolerance with guarantees under Fourier coefficients cone decay assumptions.
 %% Syntax
 % [q,out_param] = *cubLattice_g*(f,d)
 %

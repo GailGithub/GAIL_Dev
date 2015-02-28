@@ -1,7 +1,7 @@
 %% cubSobol_g
-% |is a Quasi-Monte Carlo method using Sobol' cubature over the
+% is a Quasi-Monte Carlo method using Sobol' cubature over the
 % d-dimensional region to integrate within a specified generalized error
-% tolerance with guarantees under Walsh-Fourier coefficients cone decay assumptions.|
+% tolerance with guarantees under Walsh-Fourier coefficients cone decay assumptions.
 %% Syntax
 % [q,out_param] = *cubSobol_g*(f,d)
 %

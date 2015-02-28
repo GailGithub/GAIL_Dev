@@ -1,7 +1,7 @@
 %% meanMCBer_g
-% |Monte Carlo method to estimate the mean of a Bernoulli random
+% Monte Carlo method to estimate the mean of a Bernoulli random
 % variable to within a specified absolute error tolerance with guaranteed
-% confidence level 1-alpha.|
+% confidence level 1-alpha.
 %% Syntax
 % pHat = *meanMCBer_g*(Yrand)
 %

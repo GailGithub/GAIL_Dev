@@ -1,5 +1,5 @@
 %% meanMC_g
-% |MEANMC_G Monte Carlo method to estimate the mean of a random variable.|
+% MEANMC_G Monte Carlo method to estimate the mean of a random variable.
 %% Syntax
 % tmu = *meanMC_g*(Yrand)
 %

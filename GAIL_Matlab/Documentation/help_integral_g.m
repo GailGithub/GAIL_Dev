@@ -1,5 +1,5 @@
 %% integral_g
-% |1-D guaranteed function integration using trapezoidal rule|
+% 1-D guaranteed function integration using trapezoidal rule
 %% Syntax
 % q = *integral_g*(f)
 %
@@ -111,18 +111,18 @@
 %
 %% Guarantee
 %    
-% |If the function to be integrated,|  $f$  |satisfies the cone condition|
+% If the function to be integrated, $f$ satisfies the cone condition
 %
 % $$\|f''\|_1 \le \frac { \mathrm{nstar} }{2(b-a)}
 % \left\|f'-\frac{f(b)-f(a)}{b-a}\right\|_1,$$
 % 
-% |then the|  $q$  |output by this algorithm is guaranteed to satisfy|
+% then the $q$ output by this algorithm is guaranteed to satisfy
 %
 % $$\left\| \int_{a}^{b} f(x) dx - q \right\|_{1} \le \mathrm{abstol},$$
 %
-% |provided the flag| $\mathrm{exceedbudget} = 0.$
+% provided the flag $\mathrm{exceedbudget} = 0.$
 %
-% |And the upper bound of the cost is|
+% And the upper bound of the cost is
 %
 % $$\sqrt{ \frac{\mathrm{nstar}* (b-a)^2 \mathrm{Var}(f')}{2 \times \mathrm{abstol}}}
 % + 2 \times \mathrm{nstar} +4.$$
