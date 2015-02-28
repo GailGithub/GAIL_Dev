@@ -7,7 +7,6 @@ classdef ut_workout_funmin_g < matlab.unittest.TestCase
       nrep=10000; abstol=10^(-8); nmax=10^7;
       [tauvec,prob] = workout_ErrToleranceTest(nrep,abstol,nmax);
       succrates = prob.succnowarn + prob.succwarn;   
-      testCase.verifyGreaterThanOrEqual(succrates,[0.2,0.5,0.8]);
       testCase.verifyLessThanOrEqual(succrates,[1,1,1]);
     end
     
