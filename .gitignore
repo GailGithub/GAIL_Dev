@@ -20,3 +20,4 @@ GAIL_Matlab/Documentation/autodoc2
 GAIL_Matlab/Documentation/html/helpsearch*
 GAIL_Matlab/OutputFiles/gail_unittests.txt
 GAIL_Matlab/ThirdParty
+GAIL_Matlab/Documentation/*_raw.m
