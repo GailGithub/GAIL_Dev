@@ -44,8 +44,8 @@ in_param.nhi = 100; in_param.nmax = 1e8; in_param.abstol = 1e-7;
 % *Example 4*
 
 clear in_param; f = @(x) x.^2;
-[fappx, out_param] = funappx_g(f,'a',-10,'b',50,'nmax',1e6,'abstol',1e-8)
+[fappx, out_param] = funappx_g(f,'a',-10,'b',50,'nmax',1e6,'abstol',1e-7)
 
-% Approximate function x^2 with error tolerence 1e-8, cost budget 1000000,
+% Approximate function x^2 with error tolerence 1e-7, cost budget 1000000,
 % lower bound of initial number of points 10 and upper
 % bound of initial number of points 100
