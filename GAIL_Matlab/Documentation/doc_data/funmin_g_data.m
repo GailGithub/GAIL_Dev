@@ -14,7 +14,7 @@
 %
 %     $$\mathrm{volumeX} \le \mathrm{TolX},$$
 %
-% provided the flag $\mathrm{exceedbudget} = 0.$
+% provided the flag $\mathrm{exitflag} = 0.$
 %
 %
 %% Examples
