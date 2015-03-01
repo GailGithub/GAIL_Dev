@@ -15,20 +15,24 @@ if usejava('jvm')
     end
     
     %% generate GAIL User Guide in PDF format
-    delete(strcat(GAILPATH,'Documentation',PATHNAMESEPARATOR,'html',PATHNAMESEPARATOR,'gail_ug.*'))
-    cat_cmd = 'cat ';
-    for i=1:length(mfile_list),
-        cat_cmd = strcat([cat_cmd, ' ', GAILPATH,'Documentation',PATHNAMESEPARATOR,mfile_list{i},'.m', ' ']);
+    s = computer;
+    if prod(s(1:2)=='PC') ~= 0
+        delete(strcat(GAILPATH,'Documentation',PATHNAMESEPARATOR,'html',PATHNAMESEPARATOR,'gail_ug.*'))
+        cat_cmd = 'cat ';
+        for i=1:length(mfile_list),
+            cat_cmd = strcat([cat_cmd, ' ', GAILPATH,'Documentation',PATHNAMESEPARATOR,mfile_list{i},'.m', ' ']);
+        end
+        gailug_filename = strcat([GAILPATH,'Documentation',PATHNAMESEPARATOR,...
+            'gail_ug',strrep(GAILVERSION, '.', '_'),'.m']);
+        delete(gailug_filename)
+        cat_cmd = strcat([cat_cmd, '>> ', gailug_filename]);
+        system(cat_cmd);
+        publish(gailug_filename,'pdf');
+        set(0, 'DefaultFigureVisible', oldStatus)
     end
-    gailug_filename = strcat([GAILPATH,'Documentation',PATHNAMESEPARATOR,...
-        'gail_ug',strrep(GAILVERSION, '.', '_'),'.m']);
-    delete(gailug_filename)
-    cat_cmd = strcat([cat_cmd, '>> ', gailug_filename]);
-    system(cat_cmd);
-    publish(gailug_filename,'pdf');
-    set(0, 'DefaultFigureVisible', oldStatus)
     
     builddocsearchdb(strcat(GAILPATH,'Documentation',PATHNAMESEPARATOR,'html'));
     fprintf('\nYou can go to help documentation ---> Supplemental Software to learn how to use GAIL.\n');
+   
 end
 end
