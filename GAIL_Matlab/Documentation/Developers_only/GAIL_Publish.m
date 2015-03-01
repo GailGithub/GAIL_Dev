@@ -16,7 +16,7 @@ if usejava('jvm')
     
     %% generate GAIL User Guide in PDF format
     s = computer;
-    if prod(s(1:2)=='PC') ~= 0
+    if prod(s(1:2)=='PC') == 0
         delete(strcat(GAILPATH,'Documentation',PATHNAMESEPARATOR,'html',PATHNAMESEPARATOR,'gail_ug.*'))
         cat_cmd = 'cat ';
         for i=1:length(mfile_list),
@@ -28,6 +28,7 @@ if usejava('jvm')
         cat_cmd = strcat([cat_cmd, '>> ', gailug_filename]);
         system(cat_cmd);
         publish(gailug_filename,'pdf');
+        publish(gailug_filename,'latex');
         set(0, 'DefaultFigureVisible', oldStatus)
     end
     
