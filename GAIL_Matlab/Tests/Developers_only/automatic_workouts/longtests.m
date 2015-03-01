@@ -78,7 +78,7 @@ try
     end
 catch
     display('Test for Papers/UniFunMin is wrongly coded. We skip it.')
-    fprintf(fid,'Test for Papers/UniFunMin is wrongly coded. We skip it.\n');
+    %fprintf(fid,'Test for Papers/UniFunMin is wrongly coded. We skip it.\n');
 end
   
   try
@@ -86,13 +86,13 @@ end
     results=run(ut_meanMC_g)
     if sum([results.Failed])>0
       failed=find([results.Failed]>0);
-      for i=1:size(failed,2)
-        fprintf(fid,'%s\n',Tests(failed(i)).Name);
-      end
+      %for i=1:size(failed,2)
+      %  fprintf(fid,'%s\n',Tests(failed(i)).Name);
+      %end
     end
   catch
     display('Test ut_meanMC_g is wrongly coded. We skip it.')
-    fprintf(fid,'Test ut_meanMC_g is wrongly coded. We skip it.\n');
+    %fprintf(fid,'Test ut_meanMC_g is wrongly coded. We skip it.\n');
   end
 
  try
@@ -100,13 +100,13 @@ end
     results=run(ut_meanMCBer_g)
     if sum([results.Failed])>0
       failed=find([results.Failed]>0);
-      for i=1:size(failed,2)
-        fprintf(fid,'%s\n',Tests(failed(i)).Name);
-      end
+      %for i=1:size(failed,2)
+      %  fprintf(fid,'%s\n',Tests(failed(i)).Name);
+      %end
     end
   catch
     display('Test ut_meanMCBer_g is wrongly coded. We skip it.')
-    fprintf(fid,'Test ut_meanMCBer_g is wrongly coded. We skip it.\n');
+    %fprintf(fid,'Test ut_meanMCBer_g is wrongly coded. We skip it.\n');
  end
   
 %% doctests and unit tests for deprecated algos
@@ -123,9 +123,9 @@ try
     results=run(ut_funappx01_g)
     if sum([results.Failed])>0
         failed=find([results.Failed]>0);
-        for i=1:size(failed,2)
-            fprintf(fid,'%s\n',Tests(failed(i)).Name);
-        end
+       % for i=1:size(failed,2)
+       %    fprintf(fid,'%s\n',Tests(failed(i)).Name);
+       % end
     end
 catch
     display('Test ut_funappx01_g is wrongly coded. We skip it.')
@@ -137,9 +137,9 @@ try
     results=run(ut_integral01_g)
     if sum([results.Failed])>0
         failed=find([results.Failed]>0);
-        for i=1:size(failed,2)
-            fprintf(fid,'%s\n',Tests(failed(i)).Name);
-        end
+        %for i=1:size(failed,2)
+        %    fprintf(fid,'%s\n',Tests(failed(i)).Name);
+        %end
     end
 catch
     display('Test ut_integral01_g is wrongly coded. We skip it.')
@@ -151,9 +151,9 @@ try
     results=run(ut_funmin01_g)
     if sum([results.Failed])>0
         failed=find([results.Failed]>0);
-        for i=1:size(failed,2)
-            fprintf(fid,'%s\n',Tests(failed(i)).Name);
-        end
+        %for i=1:size(failed,2)
+        %    fprintf(fid,'%s\n',Tests(failed(i)).Name);
+        %end
     end
 catch
     display('Test ut_funmin01_g is wrongly coded. We skip it.')
