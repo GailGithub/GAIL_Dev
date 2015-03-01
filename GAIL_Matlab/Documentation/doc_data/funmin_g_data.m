@@ -12,19 +12,17 @@
 %
 % or
 %
-%      \mathrm{volumeX} \le \mathrm{TolX},
+%     $$\mathrm{volumeX} \le \mathrm{TolX},$$
 %
 % provided the flag $\mathrm{exceedbudget} = 0.$
 %
 %
 %% Examples
-
 % *Example 1*
 
 f=@(x) (x-0.3).^2+1; [fmin,out_param] = funmin_g(f)
 
 % Minimize function (x-0.3)^2+1 with default input parameter.
-
 %%
 % *Example 2*
 
