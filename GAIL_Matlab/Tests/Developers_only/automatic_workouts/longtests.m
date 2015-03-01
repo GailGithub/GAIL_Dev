@@ -2,13 +2,13 @@
 
 [GAILPATH,GAILVERSION,PATHNAMESEPARATOR,MATLABVERSION]  = GAILstart(0);
 filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
-  'gail_workouts-', datestr(now,'yyyy-mm-dd-HH-MM-SS'),'.txt');
+    'gail_workouts-', datestr(now,'yyyy-mm-dd-HH-MM-SS'),'.txt');
 diary(filename)
-tic; 
+tic;
 
 format short
-  
-%% Workouts 
+
+%% Workouts
 % meanMC_g
 doctest dt_meanMC_g_TrafficModel
 run_handle('Test_meanMC_g')
@@ -25,13 +25,13 @@ run_handle('Test_cubMC_g')
 run('ut_workout_integral_g')
 
 % funappx_g
-if MATLABVERSION >= 8  
+if MATLABVERSION >= 8
     run(ut_workoutfunappx_g)
     run(ut_convtest_funappx_g)
 end
 
 % funmin_g
-if MATLABVERSION >= 8  
+if MATLABVERSION >= 8
     run(ut_workout_funmin_g)
 end
 
@@ -39,9 +39,9 @@ end
 %% Papers
 % Cone paper
 if usejava('jvm')
-  run_handle('ConesPaperFoolFunctions')
+    run_handle('ConesPaperFoolFunctions')
 end
-if MATLABVERSION >= 8  
+if MATLABVERSION >= 8
     run(ut_ConesPaper)
 end
 
@@ -51,7 +51,7 @@ run_handle('RunTestcubMConGaussian')
 run_handle('RunTestcubMConGaussiand1')
 
 % meanMCBer_g paper
-if MATLABVERSION >= 8  
+if MATLABVERSION >= 8
     run(ut_meanMCBer_g)
 end
 
@@ -78,35 +78,35 @@ catch
     display('Test for Papers/UniFunMin is wrongly coded. We skip it.')
     %fprintf(fid,'Test for Papers/UniFunMin is wrongly coded. We skip it.\n');
 end
-  
-  try
+
+try
     Tests = matlab.unittest.TestSuite.fromClass(?ut_meanMC_g);
     results=run(ut_meanMC_g)
     if sum([results.Failed])>0
-      failed=find([results.Failed]>0);
-      %for i=1:size(failed,2)
-      %  fprintf(fid,'%s\n',Tests(failed(i)).Name);
-      %end
+        failed=find([results.Failed]>0);
+        %for i=1:size(failed,2)
+        %  fprintf(fid,'%s\n',Tests(failed(i)).Name);
+        %end
     end
-  catch
+catch
     display('Test ut_meanMC_g is wrongly coded. We skip it.')
     %fprintf(fid,'Test ut_meanMC_g is wrongly coded. We skip it.\n');
-  end
+end
 
- try
+try
     Tests = matlab.unittest.TestSuite.fromClass(?ut_meanMCBer_g);
     results=run(ut_meanMCBer_g)
     if sum([results.Failed])>0
-      failed=find([results.Failed]>0);
-      %for i=1:size(failed,2)
-      %  fprintf(fid,'%s\n',Tests(failed(i)).Name);
-      %end
+        failed=find([results.Failed]>0);
+        %for i=1:size(failed,2)
+        %  fprintf(fid,'%s\n',Tests(failed(i)).Name);
+        %end
     end
-  catch
+catch
     display('Test ut_meanMCBer_g is wrongly coded. We skip it.')
     %fprintf(fid,'Test ut_meanMCBer_g is wrongly coded. We skip it.\n');
- end
-  
+end
+
 %% doctests and unit tests for deprecated algos
 doctest funappxtau_g
 doctest funappxglobal_g
@@ -121,14 +121,14 @@ try
     results=run(ut_funappx01_g)
     if sum([results.Failed])>0
         failed=find([results.Failed]>0);
-       % for i=1:size(failed,2)
-       %    fprintf(fid,'%s\n',Tests(failed(i)).Name);
-       % end
+        % for i=1:size(failed,2)
+        %    fprintf(fid,'%s\n',Tests(failed(i)).Name);
+        % end
     end
 catch
     display('Test ut_funappx01_g is wrongly coded. We skip it.')
 end
-  
+
 warning('off','MATLAB:integral01_g:peaky')
 try
     Tests = matlab.unittest.TestSuite.fromClass(?ut_integral01_g);
