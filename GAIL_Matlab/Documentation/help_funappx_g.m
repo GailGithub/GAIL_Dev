@@ -1,5 +1,5 @@
 %% funappx_g
-% |1-D guaranteed function approximation (or function recovery) on [a,b]|
+% 1-D guaranteed function approximation (or function recovery) on [a,b]
 %% Syntax
 % fappx = *funappx_g*(f)
 %
@@ -182,27 +182,31 @@ clear in_param; f = @(x) x.^2;
 %% References
 %
 % [1]  Nick Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
-% Yizhi Zhang, The Cost of Deterministic, Adaptive, Automatic Algorithms:
-% Cones, Not Balls, Journal of Complexity 30 (2014), pp. 21-45.
-%
-% [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
+% Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic Algorithms:
+% Cones, Not Balls", Journal of Complexity 30 (2014), pp. 21-45.
+%  
+% [2]  Yuhan Ding, Fred J. Hickernell, and Sou-Cheng T. Choi, "Locally
+% Adaptive Method for Approximating Univariate Functions in Cones with a
+% Guarantee for Accuracy", working, 2015.
+%          
+% [3]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
 % Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
 % "GAIL: Guaranteed Automatic Integration Library (Version 2.1)" [MATLAB
 % Software], 2015. Available from http://code.google.com/p/gail/
 %
-% [3] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
+% [4] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
 % Research via Supportable Scientific Software", Journal of Open Research
-% Software, Volume 2, Number 1, e22, pp. 1-7, DOI:
+% Software, Volume 2, Number 1, e22, pp. 1-7, DOI: 
 % http://dx.doi.org/10.5334/jors.bb, 2014.
 %
-% [4] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable
+% [5] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable
 % Mathematical Software" [Course Slides], Illinois Institute of
 % Technology, Chicago, IL, 2013. Available from
 % http://code.google.com/p/gail/ 
 %
-% [5] Sou-Cheng T. Choi, "Summary of the First Workshop On Sustainable
+% [6] Sou-Cheng T. Choi, "Summary of the First Workshop On Sustainable
 % Software for Science: Practice And Experiences (WSSSPE1)", Journal of
-% Open Research Software, Volume 2, Number 1, e6, pp. 1-21, DOI:
+% Open Research Software, Volume 2, Number 1, e6, pp. 1-21, DOI: 
 % http://dx.doi.org/10.5334/jors.an, 2014.
 %
 % If you find GAIL helpful in your work, please support us by citing the
