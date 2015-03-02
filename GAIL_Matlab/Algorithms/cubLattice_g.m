@@ -218,6 +218,8 @@ tic
 
 if strcmp(out_param.measure,'normal')
    f=@(x) f(gail.stdnorminv(x));
+elseif strcmp(out_param.measure,'uniform')
+   f=@(x) f(x); % a + (b-a)x = u
 end
 if strcmp(out_param.transform,'Baker')
     f=@(x) f(1-2*abs(x-1/2)); % Baker's transform
@@ -230,11 +232,12 @@ elseif strcmp(out_param.transform,'C1sin')
 end
 
 %% Main algorithm
-mlag=4;
+r_lag=4; %distance between coefficients summed and those computed
+l_star=out_param.mmin-r_lag;
 Stilde=zeros(out_param.mmax-out_param.mmin+1,1); %initialize sum of DFT terms
-StildeNC=zeros(out_param.mmax-out_param.mmin+1,mlag); %initialize various sums of DFT terms for necessary conditions
-cond1=(1+out_param.fudge(mlag))*(1+2*out_param.fudge(mlag-(1:mlag)))./(1+out_param.fudge(mlag-(1:mlag))); % Factors for the necessary conditions
-cond2=(1+out_param.fudge(mlag-(1:mlag)))*(1+2*out_param.fudge(mlag))/(1+out_param.fudge(mlag)); % Factors for the necessary conditions
+StildeNC=zeros(out_param.mmax-out_param.mmin+1,r_lag); %initialize various sums of DFT terms for necessary conditions
+cond1=(1+out_param.fudge(r_lag))*(1+2*out_param.fudge(r_lag-(1:r_lag)))./(1+out_param.fudge(r_lag-(1:r_lag))); % Factors for the necessary conditions
+cond2=(1+out_param.fudge(r_lag-(1:r_lag)))*(1+2*out_param.fudge(r_lag))/(1+out_param.fudge(r_lag)); % Factors for the necessary conditions
 errest=zeros(out_param.mmax-out_param.mmin+1,1); %initialize error estimates
 appxinteg=zeros(out_param.mmax-out_param.mmin+1,1); %initialize approximations to integral
 exit_len = 2;
@@ -278,9 +281,9 @@ for l=out_param.mmin-1:-1:1
 end
 
 %% Compute Stilde
-nllstart=int64(2^(out_param.mmin-mlag-1));
+nllstart=int64(2^(out_param.mmin-r_lag-1));
 Stilde(1)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
-for i = 1:mlag % Storing the information for the necessary conditions
+for i = 1:r_lag % Storing the information for the necessary conditions
     nllstart=2*nllstart;
     StildeNC(i,i)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
 end
@@ -345,7 +348,7 @@ for m=out_param.mmin+1:out_param.mmax
    
    %% Update kappanumap
    kappanumap=[kappanumap; (nnext+1:out_param.n)']; %initialize map
-   for l=m-1:-1:m-mlag-1
+   for l=m-1:-1:m-r_lag-1
       nl=2^l;
       oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
       newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa, 
@@ -356,17 +359,17 @@ for m=out_param.mmin+1:out_param.mmax
    end
 
    %% Compute Stilde
-   nllstart=int64(2^(m-mlag-1));
+   nllstart=int64(2^(m-r_lag-1));
    meff=m-out_param.mmin+1;
    Stilde(meff)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
-   for i = 1:mlag % Storing the information for the necessary conditions
+   for i = 1:r_lag % Storing the information for the necessary conditions
        nllstart=2*nllstart;
        StildeNC(i+meff-1,i)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
    end
-   % disp((Stilde(meff)*cond1(1:min(meff-1,mlag)))>=(StildeNC(meff-1,1:min(meff-1,mlag)))) % Displaying necessary condition 1 results (1 if satisfied)
-   % disp((StildeNC(meff-1,1:min(meff-1,mlag)).*cond2(1:min(meff-1,mlag)))>=(Stilde(meff)*ones(1,min(meff-1,mlag)))) % Displaying necessary condition 2 results (1 if satisfied)
-   if ~(all((Stilde(meff)*cond1(1:min(meff-1,mlag)))>=(StildeNC(meff-1,1:min(meff-1,mlag))))*   ...
-    all((StildeNC(meff-1,1:min(meff-1,mlag)).*cond2(1:min(meff-1,mlag)))>=(Stilde(meff)*ones(1,min(meff-1,mlag))))),
+   % disp((Stilde(meff)*cond1(1:min(meff-1,r_lag)))>=(StildeNC(meff-1,1:min(meff-1,r_lag)))) % Displaying necessary condition 1 results (1 if satisfied)
+   % disp((StildeNC(meff-1,1:min(meff-1,r_lag)).*cond2(1:min(meff-1,r_lag)))>=(Stilde(meff)*ones(1,min(meff-1,r_lag)))) % Displaying necessary condition 2 results (1 if satisfied)
+   if ~(all((Stilde(meff)*cond1(1:min(meff-1,r_lag)))>=(StildeNC(meff-1,1:min(meff-1,r_lag))))*   ...
+    all((StildeNC(meff-1,1:min(meff-1,r_lag)).*cond2(1:min(meff-1,r_lag)))>=(Stilde(meff)*ones(1,min(meff-1,r_lag))))),
         out_param.exit(2) = true;
    end
    out_param.bound_err=out_param.fudge(m)*Stilde(meff);
