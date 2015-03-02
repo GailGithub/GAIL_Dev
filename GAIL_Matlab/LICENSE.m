@@ -1,4 +1,4 @@
-% Copyright ï¿½ 2014, Illinois Institute of Technology. All rights reserved.
+% Copyright © 2014, Illinois Institute of Technology. All rights reserved.
 %  
 % Redistribution and use in source and binary forms, with or without 
 % modification, are permitted provided that the following conditions are 

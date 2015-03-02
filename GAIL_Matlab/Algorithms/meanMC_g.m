@@ -1,5 +1,5 @@
 function [tmu,out_param]=meanMC_g(varargin)
-% MEANMC_G Monte Carlo method to estimate the mean of a random variable.
+%MEANMC_G Monte Carlo method to estimate the mean of a random variable
 %
 %   tmu = MEANMC_G(Yrand) estimates the mean, mu, of a random variable Y to
 %   within a specified generalized error tolerance, 

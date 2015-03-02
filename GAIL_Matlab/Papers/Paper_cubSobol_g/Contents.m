@@ -1,4 +1,5 @@
-% MCQMC2014 cubSobol_g article
+% PAPER_CUBSOBOL_G
+% 
 % Articles:
 %   - Reliable Adaptive Cubature Using Digital Sequences
 %

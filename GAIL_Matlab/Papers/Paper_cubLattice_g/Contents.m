@@ -1,4 +1,5 @@
-% MCQMC2014 cubLattice_g article
+% PAPER_CUBLATTICE_G
+%
 % Articles:
 %   - Adaptive Multidimensional Integration Based on Rank-1 Lattices
 %

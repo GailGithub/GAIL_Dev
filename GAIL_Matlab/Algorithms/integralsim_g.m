@@ -1,5 +1,5 @@
 function [q,out_param] = integralsim_g(varargin)
-%  INTEGRALSIM_G 1-D guaranteed function integration using Simpson's rule
+%INTEGRALSIM_G 1-D guaranteed function integration using Simpson's rule
 % 
 %  Description
 %

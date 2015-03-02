@@ -1,5 +1,5 @@
 function [Q,out_param] = cubMC_g(varargin)
-%CUBMC_G Monte Carlo method to evaluate a multidimensional integral.
+%CUBMC_G Monte Carlo method to evaluate a multidimensional integral
 %
 %   [Q,out_param] = CUBMC_G(f,hyperbox) estimates the integral of f over
 %   hyperbox to within a specified generalized error tolerance, tolfun =

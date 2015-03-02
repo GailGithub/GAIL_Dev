@@ -1,7 +1,7 @@
 function [q,out_param] = cubSobol_g(varargin)
-%CUBSOBOL_G is a Quasi-Monte Carlo method using Sobol' cubature over the
+%CUBSOBOL_G Quasi-Monte Carlo method using Sobol' cubature over the
 %d-dimensional region to integrate within a specified generalized error
-%tolerance with guarantees under Walsh-Fourier coefficients cone decay assumptions.
+%tolerance with guarantees under Walsh-Fourier coefficients cone decay assumptions
 %
 %   [q,out_param] = CUBSOBOL_G(f,d) estimates the integral of f over the
 %   d-dimensional region with an error guaranteed not to be greater than 
