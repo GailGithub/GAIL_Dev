@@ -41,4 +41,5 @@
 % Calculate the mean of cos(x) when x is uniformly distributed in
 % [0 1], with the relative error tolerance 1e-2 and uncertainty 0.05.
 
-  tmu = meanMC_g(@(n)cos(rand(n,1)),'reltol',1e-2,'abstol',0,'alpha',0.05)
+  tmu = meanMC_g(@(n)cos(rand(n,1)),'reltol',1e-2,'abstol',0,...
+      'alpha',0.05)
