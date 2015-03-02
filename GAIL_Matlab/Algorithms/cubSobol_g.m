@@ -6,15 +6,15 @@ function [q,out_param] = cubSobol_g(varargin)
 %
 %   [q,out_param] = CUBSOBOL_G(f,d) estimates the integral of f over the
 %   d-dimensional region with an error guaranteed not to be greater than a
-%   specific generalized error tolerance,
-%   tolfun:=max(abstol,reltol*|integral(f)|). The generalized tolerance
-%   function can aslo be cosen as
-%   tolfun:=theta*abstol+(1-theta)*reltol*|integral(f)| where theta is
-%   another input parameter. Input f is a function handle. f should accept
-%   an n x d matrix input, where d is the dimension of the hypercube, and n
-%   is the number of points being evaluated simultaneously. The input d is
-%   the dimension in which the function f is defined. Given the
-%   construction of Sobol', d must be a positive integer with 1<=d<=1111.
+%   specific generalized error tolerance, tolfun := max(abstol, reltol *
+%   abs(integral(f))). The generalized tolerance function can aslo be cosen
+%   as tolfun := theta * abstol + (1 - theta) * reltol* abs(integral(f))
+%   where theta is another input parameter. Input f is a function handle. f
+%   should accept an n x d matrix input, where d is the dimension of the
+%   hypercube, and n is the number of points being evaluated
+%   simultaneously. The input d is the dimension in which the function f is
+%   defined. Given the construction of Sobol', d must be a positive integer
+%   with 1<=d<=1111.
 %
 %   q = CUBSOBOL_G(f,d,abstol,reltol,measure,mmin,mmax,fudge,toltype,theta)
 %   estimates the integral of f over a d-dimensional region. The answer is
