@@ -17,21 +17,12 @@ function [q,out_param] = cubLattice_g(varargin)
 %   integer with
 %   1<=d<=250.
 % 
-%   q = CUBLATTICE_G(f,d,abstol,reltol,measure,shift,mmin,mmax,fudge,...
-%   transform,toltype,theta) estimates the integral of f over a
-%   d-dimensional region. The answer is given within the generalized error
-%   tolerance tolfun. All parameters should be input in the order specified
-%   above. If an input is not specified, the default value is used. Note
-%   that if an input is not specified, the remaining tail cannot be
-%   specified either.
-% 
-%   q = CUBLATTICE_G(f,d,'abstol',abstol,'reltol',reltol,'measure',...
-%   measure,'shift',shift,'mmin',mmin,'mmax',mmax,'fudge',fudge,...
-%   'transform',transform,'toltype',toltype,'theta',theta) estimates the
-%   integral of f over a d-dimensional region. The answer is given within
-%   the generalized error tolerance tolfun. All the field-value pairs are
-%   optional and can be supplied with any order. If an input is not
-%   specified, the default value is used.
+%   q = CUBLATTICE_G(f,d,abstol,reltol,measure,shift,mmin,mmax,fudge,transform,toltype,theta) 
+%   estimates the integral of f over a d-dimensional region. The answer is
+%   given within the generalized error tolerance tolfun. All parameters
+%   should be input in the order specified above. If an input is not
+%   specified, the default value is used. Note that if an input is not
+%   specified, the remaining tail cannot be specified either.
 % 
 %   q = CUBLATTICE_G(f,d,in_param) estimates the integral of f over the
 %   d-dimensional region. The answer is given within the generalized error

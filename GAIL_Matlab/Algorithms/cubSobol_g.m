@@ -23,13 +23,6 @@ function [q,out_param] = cubSobol_g(varargin)
 %   specified, the default value is used. Note that if an input is not
 %   specified, the remaining tail cannot be specified either.
 %
-%   q = CUBSOBOL_G(f,d,'abstol',abstol,'reltol',reltol,'measure',measure,
-%   'mmin',mmin,'mmax',mmax,'fudge',fudge,'toltype',toltype,'theta',theta)
-%   estimates the integral of f over a d-dimensional region. The answer is
-%   given within the generalized error tolerance tolfun. All the
-%   field-value pairs are optional and can be supplied with any order. If
-%   an input is not specified, the default value is used.
-%
 %   q = CUBSOBOL_G(f,d,in_param) estimates the integral of f over the
 %   d-dimensional region. The answer is given within the generalized error
 %   tolerance tolfun.
