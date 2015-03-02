@@ -139,7 +139,8 @@ f = @(x) x.^2; [q, out_param] = integral_g(f)
 %%
 % *Example 2*
 
-[q, out_param] = integral_g(@(x) exp(-x.^2),'a',1,'b',2,'nlo',100,'nhi',10000,'abstol',1e-5,'nmax',1e7)
+[q, out_param] = integral_g(@(x) exp(-x.^2),'a',1,'b',2,...
+   'nlo',100,'nhi',10000,'abstol',1e-5,'nmax',1e7)
 
 % Integrate function x^2 with starting number of points 52, cost budget
 % 10000000 and error toerence 1e-8

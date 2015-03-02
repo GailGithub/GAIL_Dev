@@ -1,43 +1,37 @@
 %% cubLattice_g
 % Quasi-Monte Carlo method using rank-1 Lattices cubature
-% over a d-dimensional region to integrate within a specified generalized error 
-% tolerance with guarantees under Fourier coefficients cone decay assumptions.
+% over a d-dimensional region to integrate within a specified generalized
+% error tolerance with guarantees under Fourier coefficients cone decay
+% assumptions.
 %% Syntax
 % [q,out_param] = *cubLattice_g*(f,d)
 %
 % q = *cubLattice_g*(f,d,abstol,reltol,measure,shift,mmin,mmax,fudge,transform,toltype,theta)
 %
-% q = *cubLattice_g*(f,d,'abstol',abstol,'reltol',reltol,'measure',measure,'shift',shift,'mmin',mmin,'mmax',mmax,'fudge',fudge,'transform',transform,'toltype',toltype,'theta',theta)
-%
 % q = *cubLattice_g*(f,d,in_param)
 %% Description
 %
 % [q,out_param] = *cubLattice_g*(f,d) estimates the integral of f over the
-%  d-dimensional region with an error guaranteed not to be greater than 
-%  a specific generalized error tolerance, 
-%  tolfun:=max(abstol,reltol*|integral(f)|). The generalized tolerance function can
-%  aslo be cosen as tolfun:=theta*abstol+(1-theta)*reltol*|integral(f)| 
-%  where theta is another input parameter. Input f is a function handle. f should
-%  accept an n x d matrix input, where d is the dimension of the hypercube,
-%  and n is the number of points being evaluated simultaneously. The input d
-%  is the dimension in which the function f is defined. Given the
-%  construction of our Lattices, d must be a positive integer with 1<=d<=250.
+%  d-dimensional region with an error guaranteed not to be greater than a
+%  specific generalized error tolerance, tolfun := max(abstol, reltol *
+%  abs(integral(f))). The generalized tolerance function can aslo be
+%  chosen as tolfun := theta * abstol + (1-theta) * reltol *
+%  abs(integral(f)) where theta is another input parameter. Input f is a
+%  function handle. f should accept an n x d matrix input, where d is the
+%  dimension of the hypercube, and n is the number of points being
+%  evaluated simultaneously. The input d is the dimension in which the
+%  function f is defined. Given the construction of our Lattices, d must
+%  be a positive integer with 1<=d<=250.
 % 
-% q = *cubLattice_g*(f,d,abstol,reltol,measure,shift,mmin,mmax,fudge,transform,toltype,theta)
-%  estimates the integral of f over a d-dimensional region. The answer
-%  is given within the generalized error tolerance tolfun. All parameters
-%  should be input in the order specified above. If an input is not specified,
-%  the default value is used. Note that if an input is not specified,
-%  the remaining tail cannot be specified either.
-% 
-% q = *cubLattice_g*(f,d,'abstol',abstol,'reltol',reltol,'measure',measure,'shift',shift,'mmin',mmin,'mmax',mmax,'fudge',fudge,'transform',transform,'toltype',toltype,'theta',theta)
-%  estimates the integral of f over a d-dimensional region. The answer
-%  is given within the generalized error tolerance tolfun. All the field-value
-%  pairs are optional and can be supplied with any order. If an input is not
-%  specified, the default value is used.
+% q = *cubLattice_g*(f,d,abstol,reltol,measure,shift,mmin,mmax,fudge,transform,toltype,theta) 
+%  estimates the integral of f over a d-dimensional region. The answer is
+%  given within the generalized error tolerance tolfun. All parameters
+%  should be input in the order specified above. If an input is not
+%  specified, the default value is used. Note that if an input is not
+%  specified, the remaining tail cannot be specified either.
 % 
 % q = *cubLattice_g*(f,d,in_param) estimates the integral of f over the
-%  d-dimensional region. The answer is given within the generalized error 
+%  d-dimensional region. The answer is given within the generalized error
 %  tolerance tolfun.
 % 
 % *Input Arguments*
@@ -62,64 +56,67 @@
 % 
 % *Optional Input Arguments*
 %
-% * in_param.shift --- the Rank-1 lattices can be shifted to avoid the origin
-%  or other particular points. By default we consider a uniformly [0,1)
-%  random shift.
+% * in_param.shift --- the Rank-1 lattices can be shifted to avoid the
+%  origin or other particular points. By default we consider a uniformly
+%  [0,1) random shift.
 % 
-% * in_param.mmin --- the minimum number of points to start is 2^mmin. The
-%  cone condition on the Fourier coefficients decay requires a minimum
-%  number of points to start. The advice is to consider at least mmin=10.
-%  mmin needs to be a positive integer with mmin<=mmax. By default it is 10.
+% * in_param.mmin --- the minimum number of points to start is 2^mmin.
+%  The cone condition on the Fourier coefficients decay requires a
+%  minimum number of points to start. The advice is to consider at least
+%  mmin=10. mmin needs to be a positive integer with mmin<=mmax. By
+%  default it is 10.
 % 
-% * in_param.mmax --- the maximum budget is 2^mmax. By construction of our
-%  Lattices generator, mmax is a positive integer such that mmin<=mmax<=26.
-%  The default value is 24.
+% * in_param.mmax --- the maximum budget is 2^mmax. By construction of
+%  our Lattices generator, mmax is a positive integer such that
+%  mmin<=mmax<=26. The default value is 24.
 % 
-% * in_param.fudge --- the positive function multiplying the finite 
-%  sum of Fast Fourier coefficients specified in the cone of functions.
-%  For more information about this parameter, refer to the references.
-%  By default it is @(x) 5*2.^-x.
+% * in_param.fudge --- the positive function multiplying the finite sum
+%  of Fast Fourier coefficients specified in the cone of functions. For
+%  more information about this parameter, refer to the references. By
+%  default it is @(x) 5*2.^-x.
 % 
-% * in_param.transform --- the algorithm is defined for continuous periodic functions. If the
-%  input function f is not, there are 5 types of transform to periodize it
-%  without modifying the result. By default it is Baker. The options:
-%    'id' : no transformation. Choice by default.
-%    'Baker' : Baker's transform or tent map in each coordinate. Preserving
-%              only continuity but simple to compute.
-%    'C0' : polynomial transformation only preserving continuity.
-%    'C1' : polynomial transformation preserving the first derivative.
-%    'C1sin' : Sidi transform with sinus preserving the first derivative.
-%              This is in general a better option than 'C1'.
+% * in_param.transform --- the algorithm is defined for continuous
+%  periodic functions. If the input function f is not, there are 5 types
+%  of transform to periodize it without modifying the result. By default
+%  it is Baker. The options:
+%    'id'   : no transformation. Choice by default.
+%    'Baker': Baker's transform or tent map in each coordinate. 
+%             Preserving only continuity but simple to compute.
+%    'C0'   : polynomial transformation only preserving continuity.
+%    'C1'   : polynomial transformation preserving the first derivative.
+%    'C1sin': Sidi transform with sinus preserving the first derivative.
+%             This is in general a better option than 'C1'.
 %
 % * in_param.toltype --- this is the tolerance function. There are two
 %  choices, 'max' (chosen by default) which takes
-%  max(abstol,reltol*|integral(f)|) and 'comb' which is a linear combination
-%  theta*abstol+(1-theta)*reltol*|integral(f)|. Theta is another 
-%  parameter that can be specified (see below). For pure absolute error,
-%  either choose 'max' and set reltol=0 or choose 'comb' and set
-%  theta=1.
+%  max(abstol,reltol*|integral(f)|) and 'comb' which is a linear
+%  combination theta*abstol+(1-theta)*reltol*|integral(f)|. Theta is
+%  another parameter that can be specified (see below). For pure
+%  absolute error, either choose 'max' and set reltol=0 or choose 'comb'
+%  and set theta=1.
 % 
-% * in_param.theta --- this input is parametrizing the toltype 
-%  'comb'. Thus, it is only afecting when the toltype
-%  chosen is 'comb'. It stablishes the linear combination weight
-%  between the absolute and relative tolerances
-%  theta*abstol+(1-theta)*reltol*|integral(f)|. Note that for theta=1, 
-%  we have pure absolute tolerance while for theta=0, we have pure 
-%  relative tolerance. By default, theta=1.
+% * in_param.theta --- this input is parametrizing the toltype 'comb'.
+%  Thus, it is only afecting when the toltype chosen is 'comb'. It
+%  stablishes the linear combination weight between the absolute and
+%  relative tolerances theta*abstol+(1-theta)*reltol*|integral(f)|. Note
+%  that for theta=1, we have pure absolute tolerance while for theta=0,
+%  we have pure relative tolerance. By default, theta=1.
 %
 % *Output Arguments*
 %
 % * q --- the estimated value of the integral.
 % 
-% * out_param.n --- number of points used when calling cubLattice_g for f.
+% * out_param.n --- number of points used when calling cubLattice_g for
+%  f.
 % 
-% * out_param.bound_err --- predicted bound on the error based on the cone
-%  condition. If the function lies in the cone, the real error should be
-%  smaller than this predicted error.
+% * out_param.bound_err --- predicted bound on the error based on the
+%  cone condition. If the function lies in the cone, the real error
+%  should be smaller than this predicted error.
 % 
-% * out_param.time --- time elapsed in seconds when calling cubLattice_g for f.
+% * out_param.time --- time elapsed in seconds when calling cubLattice_g
+%  for f.
 %
-% * out_param.exitflag --- this is a binary vector stating whether 
+% * out_param.exitflag --- this is a binary vector stating whether
 %  warning flags arise. These flags tell about which conditions make the
 %  final result certainly not guaranteed. One flag is considered arisen
 %  when its value is 1. The following list explains the flags in the
