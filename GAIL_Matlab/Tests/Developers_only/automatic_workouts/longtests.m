@@ -14,7 +14,9 @@ doctest dt_meanMC_g_TrafficModel
 run_handle('Test_meanMC_g')
 
 % meanMCBer_g
-run_handle('Test_meanMCBer_g')
+if MATLABVERSION >= 8
+    run(ut_meanMCBer_g)
+end
 
 % cubMC_g
 format short
@@ -49,11 +51,12 @@ end
 run_handle('RunTestcubMConGeoAsianCall')
 run_handle('RunTestcubMConGaussian')
 run_handle('RunTestcubMConGaussiand1')
+%run_handle('DisplayTestResults_BlacknColor')
 
 % meanMCBer_g paper
-if MATLABVERSION >= 8
-    run(ut_meanMCBer_g)
-end
+run_handle('Test_meanMCBer_g')
+%run_handle('PlotmeanMCBernoulli_gResults')
+run_handle('PlotRatioHoeffCLT')
 
 % cubSobol_g paper
 run_handle('RunTestCubatureonGeoAsianCallSobol');
