@@ -14,4 +14,5 @@ figure
 semilogx(alpha,r_hoeffCLT,'k','linewidth',2)
 xlabel('$\alpha$')
 ylabel('$n_{\mbox{Hoeff}}/n_{\mbox{CLT}}$')
-print('-depsc', ['./Figures/plotHoeffCLTr','.eps'])
+gail.save_eps('meanMCBerPaperOutput','plotHoeffCLTr');
+%print('-depsc', ['./Figures/plotHoeffCLTr','.eps'])
