@@ -72,7 +72,7 @@
 % Calculate the mean of a Bernoulli random variable with true p=1/90,
 % absolute error tolerance 1e-3 and uncertainty 0.01.
  
-    in_param.abstol=1e-3; in_param.alpha = 0.01;in_param.nmax = 1e9; 
+    in_param.abstol=1e-3; in_param.alpha = 0.01; in_param.nmax = 1e9; 
     p=1/9; Yrand=@(n) rand(n,1)<p;
     pHat = meanMCBer_g(Yrand,in_param)
  
