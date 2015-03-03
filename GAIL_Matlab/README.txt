@@ -29,7 +29,7 @@ Guaranteed Automatic Integration Library (Version 2.1)" [MATLAB Software],
 
 Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible Research via 
 Supportable Scientific Software", Journal of Open Research Software, Volume 2, 
-Number 1, e22, pp. 1-7, DOI: http://dx.doi.org/10.5334/jors.bb, 2014.
+Number 1, e22, pp. 1-7, 2014.
 (describes principles of Reliable Reproducible Research and Supportable 
 Scientific Software)
 
@@ -39,10 +39,13 @@ Available from http://code.google.com/p/gail/
 (develops practices of Reliable Reproducible Research and Supportable 
 Scientific Software)
 
-Sou-Cheng T. Choi, "Summary of the First Workshop On Sustainable Software 
-for Science: Practice And Experiences (WSSSPE1)", Journal of Open Research 
-Software, Volume 2, Number 1, e6, pp. 1-21, DOI: 
-http://dx.doi.org/10.5334/jors.an, 2014.
+Daniel S. Katz, Sou-Cheng T. Choi, Hilmar Lapp, Ketan Maheshwari,
+Frank Loffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr,
+James Hetherington, James Howison, Shel Swenson, Gabrielle D. Allen,
+Anne C. Elster, Bruce Berriman, Colin Venters, "Summary of the First
+Workshop On Sustainable Software for Science: Practice And Experiences
+(WSSSPE1)", Journal of Open Research Software, Volume 2, Number 1, e6,
+pp. 1-21, 2014.
 (discusses practice and challenges in Sustainable Software for Science)
 
 Nicholas Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and

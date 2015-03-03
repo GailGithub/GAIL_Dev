@@ -72,7 +72,7 @@
 % Calculate the mean of a Bernoulli random variable with true p=1/90,
 % absolute error tolerance 1e-3 and uncertainty 0.01.
  
-    in_param.abstol=1e-3; in_param.alpha = 0.01;in_param.nmax = 1e9; 
+    in_param.abstol=1e-3; in_param.alpha = 0.01; in_param.nmax = 1e9; 
     p=1/9; Yrand=@(n) rand(n,1)<p;
     pHat = meanMCBer_g(Yrand,in_param)
  
@@ -133,18 +133,20 @@
 %
 % [3] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
 % Research via Supportable Scientific Software", Journal of Open Research
-% Software, Volume 2, Number 1, e22, pp. 1-7, DOI:
-% http://dx.doi.org/10.5334/jors.bb, 2014.
+% Software, Volume 2, Number 1, e22, pp. 1-7, 2014.
 %
 % [4] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable
 % Mathematical Software" [Course Slides], Illinois Institute of
 % Technology, Chicago, IL, 2013. Available from
 % http://code.google.com/p/gail/ 
 %
-% [5] Sou-Cheng T. Choi, "Summary of the First Workshop On Sustainable
-% Software for Science: Practice And Experiences (WSSSPE1)", Journal of
-% Open Research Software, Volume 2, Number 1, e6, pp. 1-21, DOI:
-% http://dx.doi.org/10.5334/jors.an, 2014.
+% [5] Daniel S. Katz, Sou-Cheng T. Choi, Hilmar Lapp, Ketan Maheshwari,
+% Frank Loffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr,
+% James Hetherington, James Howison, Shel Swenson, Gabrielle D. Allen,
+% Anne C. Elster, Bruce Berriman, Colin Venters, "Summary of the First
+% Workshop On Sustainable Software for Science: Practice And Experiences
+% (WSSSPE1)", Journal of Open Research Software, Volume 2, Number 1, e6,
+% pp. 1-21, 2014.
 %
 % If you find GAIL helpful in your work, please support us by citing the
 % above papers, software, and materials.
