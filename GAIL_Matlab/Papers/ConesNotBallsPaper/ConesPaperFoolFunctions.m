@@ -1,4 +1,4 @@
-%This script will use the nodes for quad
+%CONESPAPERFOOLFUNCTIONS Generate Figure 1. in Cones not ball paper Construct functions that fool QUAD or INTEGRAL like Lyness says
 %	to construct a functions that fools it like Lyness says
 %   Needs foolfunmaker.m
 %

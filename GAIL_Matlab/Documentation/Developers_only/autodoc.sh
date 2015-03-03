@@ -26,12 +26,12 @@ mv -f help_funappx_g_raw.m help_funappx_g.m
 mv -f help_funmin_g_raw.m help_funmin_g.m
 mv -f help_integral_g_raw.m help_integral_g.m
 mv -f help_meanMCBer_g_raw.m help_meanMCBer_g.m
-mv -f help_meanMC_g_raw.m help_meanMC_g.
+mv -f help_meanMC_g_raw.m help_meanMC_g.m
 
 # exit from karlin
 exit
 rm -r Documentation
-scp gail@karlin.math.iit.edu:/home/gail/GAIL_tests/repo/gail-development/GAIL_Matlab/Documentation .
+scp -r gail@karlin.math.iit.edu:/home/gail/GAIL_tests/repo/gail-development/GAIL_Matlab/Documentation .
 
 # exit from anubis
 exit

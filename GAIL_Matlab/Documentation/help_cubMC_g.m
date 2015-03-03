@@ -12,7 +12,7 @@
 %
 % [Q,out_param] = *cubMC_g*(f,hyperbox) estimates the integral of f over
 %  hyperbox to within a specified generalized error tolerance, tolfun =
-%  max(abstol, reltol*|I|), i.e., | I - Q | <= tolfun with probability at
+%  max(abstol, reltol*| I |), i.e., | I - Q | <= tolfun with probability at
 %  least 1-alpha, where abstol is the absolute error tolerance, and reltol
 %  is the relative error tolerance. Usually the reltol determines the
 %  accuracy of the estimation, however, if the | I | is rather small, the
@@ -131,12 +131,12 @@
 % 
 %%  Guarantee
 % This algorithm attempts to calculate the integral of function f over a
-% hyperbox to a prescribed error tolerance tolfun:= max(abstol,reltol*|I|)
+% hyperbox to a prescribed error tolerance tolfun:= max(abstol,reltol*| I |)
 % with guaranteed confidence level 1-alpha. If the algorithm terminated
 % without showing any warning messages and provide an answer Q, then the
 % follow inequality would be satisfied:
 % 
-% Pr(|Q-I| <= tolfun) >= 1-alpha
+% Pr(| Q - I | <= tolfun) >= 1-alpha
 %
 % The cost of the algorithm, N_tot, is also bounded above by N_up, which is
 % a function in terms of abstol, reltol, nSig, n1, fudge, kurtmax, beta.
@@ -153,7 +153,7 @@
 % [1;2]
 % 
 
- f=@(x) sin(x);interval = [1;2];
+ f = @(x) sin(x); interval = [1;2];
  Q = cubMC_g(f,interval,'uniform',1e-3,1e-2)
  
 %% 
@@ -175,8 +175,8 @@
 % [x1 x2... xd].
 
 
-  d=3;f=@(x) 2^d*prod(x,2)+0.555; hyperbox =[zeros(1,d);ones(1,d)];
-  in_param.abstol = 1e-3;in_param.reltol=1e-3;
+  d = 3;f = @(x) 2^d*prod(x,2)+0.555; hyperbox = [zeros(1,d);ones(1,d)];
+  in_param.abstol = 1e-3; in_param.reltol=1e-3;
   Q = cubMC_g(f,hyperbox,in_param)
 
 %%
@@ -186,7 +186,7 @@
 % hyperbox [-inf -inf;inf inf], where x is a vector x = [x1 x2].
 
 
- f=@(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [-inf -inf;inf inf];
+ f = @(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [-inf -inf;inf inf];
  Q = cubMC_g(f,hyperbox,'normal',0,1e-2)
 %% See Also
 %
@@ -229,18 +229,20 @@
 %
 % [3] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
 % Research via Supportable Scientific Software", Journal of Open Research
-% Software, Volume 2, Number 1, e22, pp. 1-7, DOI:
-% http://dx.doi.org/10.5334/jors.bb, 2014.
+% Software, Volume 2, Number 1, e22, pp. 1-7, 2014.
 %
 % [4] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable
 % Mathematical Software" [Course Slides], Illinois Institute of
 % Technology, Chicago, IL, 2013. Available from
 % http://code.google.com/p/gail/ 
 %
-% [5] Sou-Cheng T. Choi, "Summary of the First Workshop On Sustainable
-% Software for Science: Practice And Experiences (WSSSPE1)", Journal of
-% Open Research Software, Volume 2, Number 1, e6, pp. 1-21, DOI:
-% http://dx.doi.org/10.5334/jors.an, 2014.
+% [5] Daniel S. Katz, Sou-Cheng T. Choi, Hilmar Lapp, Ketan Maheshwari,
+% Frank Loffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr,
+% James Hetherington, James Howison, Shel Swenson, Gabrielle D. Allen,
+% Anne C. Elster, Bruce Berriman, Colin Venters, "Summary of the First
+% Workshop On Sustainable Software for Science: Practice And Experiences
+% (WSSSPE1)", Journal of Open Research Software, Volume 2, Number 1, e6,
+% pp. 1-21, 2014.
 %
 % If you find GAIL helpful in your work, please support us by citing the
 % above papers, software, and materials.

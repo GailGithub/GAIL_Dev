@@ -1,4 +1,4 @@
-%Execution file of automatic guaranteed algorithm for function integration
+%CONEPAPER_TEST_INTEGRAL_G Generate Table 2. in Cones not ball paper Run automatic guaranteed algorithm for function integration
 %  Generates Table 3 in the paper
 %
 %  N. Clancy, Y. Ding, C. Hamilton, F. J. Hickernell and Y. Zhang,
