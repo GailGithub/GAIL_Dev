@@ -16,7 +16,7 @@ if usejava('jvm')
     
     %% generate GAIL User Guide in PDF format
     s = computer;
-    if prod(s(1:2)=='PC') == 0
+    if all(s(1:2)=='PC') == 0
         delete(strcat(GAILPATH,'Documentation',PATHNAMESEPARATOR,'html',PATHNAMESEPARATOR,'gail_ug.*'))
         cat_cmd = 'cat ';
         for i=1:length(mfile_list),
