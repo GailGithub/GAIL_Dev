@@ -1,4 +1,4 @@
-%ut_ConesPaper unit test for Cone Paper
+%UT_CONESPAPER unit test for Cone Paper
 classdef ut_ConesPaper < matlab.unittest.TestCase
 
   methods(Test)

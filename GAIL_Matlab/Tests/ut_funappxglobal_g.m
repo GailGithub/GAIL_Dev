@@ -1,4 +1,4 @@
-%UT_FUNAPPXGLOBAL_G unit test for funappxglobal_g
+%UT_FUNAPPXGLOBAL_G fast unit tests for funappxglobal_g
 classdef ut_funappxglobal_g < matlab.unittest.TestCase
 
   methods(Test)
