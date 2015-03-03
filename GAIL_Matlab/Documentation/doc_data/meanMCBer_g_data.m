@@ -4,7 +4,7 @@
 % equals to ceil(log(2/out_param.alpha)/(2*out_param.abstol^2)), then the
 % following inequality must be satisfied:
 %
-% Pr(|p-pHat| <= abstol) >= 1-alpha.
+% Pr(| p - pHat | <= abstol) >= 1-alpha.
 % 
 % Here p is the true mean of Yrand, and pHat is the output of MEANMCBER_G
 %
