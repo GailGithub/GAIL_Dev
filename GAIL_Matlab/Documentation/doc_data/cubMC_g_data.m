@@ -22,7 +22,7 @@
 % [1;2]
 % 
 
- f=@(x) sin(x);interval = [1;2];
+ f = @(x) sin(x); interval = [1;2];
  Q = cubMC_g(f,interval,'uniform',1e-3,1e-2)
  
 %% 
@@ -44,8 +44,8 @@
 % [x1 x2... xd].
 
 
-  d=3;f=@(x) 2^d*prod(x,2)+0.555; hyperbox =[zeros(1,d);ones(1,d)];
-  in_param.abstol = 1e-3;in_param.reltol=1e-3;
+  d = 3;f = @(x) 2^d*prod(x,2)+0.555; hyperbox = [zeros(1,d);ones(1,d)];
+  in_param.abstol = 1e-3; in_param.reltol=1e-3;
   Q = cubMC_g(f,hyperbox,in_param)
 
 %%
