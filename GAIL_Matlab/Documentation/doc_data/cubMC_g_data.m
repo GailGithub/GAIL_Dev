@@ -55,5 +55,5 @@
 % hyperbox [-inf -inf;inf inf], where x is a vector x = [x1 x2].
 
 
- f=@(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [-inf -inf;inf inf];
+ f = @(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [-inf -inf;inf inf];
  Q = cubMC_g(f,hyperbox,'normal',0,1e-2)
