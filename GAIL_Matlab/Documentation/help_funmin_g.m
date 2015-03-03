@@ -115,7 +115,7 @@
 %
 % or
 %
-%     $$\mathrm{volumeX} \le \mathrm{TolX},$$
+% $$\mathrm{volumeX} \le \mathrm{TolX},$$
 %
 % provided the flag $\mathrm{exitflag} = 0.$
 %
