@@ -21,7 +21,6 @@
 % <a href="help_cubMC_g.html">cubMC_g</a>
 % <a href="help_cubLattice_g.html">cubLattice_g</a>
 % <a href="help_cubSobol_g.html">cubSobol_g</a>
-
 % </html>
 %
 %
