@@ -26,7 +26,7 @@ mv -f help_funappx_g_raw.m help_funappx_g.m
 mv -f help_funmin_g_raw.m help_funmin_g.m
 mv -f help_integral_g_raw.m help_integral_g.m
 mv -f help_meanMCBer_g_raw.m help_meanMCBer_g.m
-mv -f help_meanMC_g_raw.m help_meanMC_g.
+mv -f help_meanMC_g_raw.m help_meanMC_g.m
 
 # exit from karlin
 exit
