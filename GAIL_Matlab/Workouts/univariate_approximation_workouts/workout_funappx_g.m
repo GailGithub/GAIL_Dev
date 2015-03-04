@@ -108,15 +108,15 @@ if usejava('jvm')
     plot(1:nrep*n,timeratio,'blue',1:nrep*n,ones(nrep*n,1),'red');
     title('Comparison between funappx\_g and funappxglobal\_g')
     ylabel('Time ratio of local/global')
-    xlabel('# of tests')
+    xlabel('No. of tests')
     subplot(2,1,2);
     plot(1:nrep*n,npointsratio,'blue',1:nrep*n,ones(nrep*n,1),'red');
     ylabel('Points ratio of local/global')
-    xlabel('# of tests')
+    xlabel('No. of tests')
     
     gail.save_eps('WorkoutFunappxOutput', 'WorkoutFunAppxTest');
-    
-    gail.save_mat('WorkoutFunappxOutput', 'WorkoutFunAppxTest', npoints,time,...
-        c,timeratio,npointsratio,npointslgratio,timelgratio);
 end;
+gail.save_mat('WorkoutFunappxOutput', 'WorkoutFunAppxTest', npoints,time,...
+    c,timeratio,npointsratio,npointslgratio,timelgratio);
+
 end

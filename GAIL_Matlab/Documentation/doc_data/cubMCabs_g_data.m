@@ -30,8 +30,8 @@
 % :\mathrm{Pr}[N_{\mathrm{tot}}(\varepsilon,\alpha,\tilde{\kappa}_{\max},\tilde{\kappa}_{\max}^{3/4})
 % \le N] \ge 1-\beta  \right \}$$
 %
-% The total cost of this two stage algorithm has a probabilistic bound above
-% by
+% The total cost of this two stage algorithm has a probabilistic bound
+% above by
 %
 % $$N_{\mathrm{tot}}(\varepsilon,\alpha, \beta, \tilde{\kappa}_{\max},
 % \sigma_{\max}) \le N_{\mathrm{up}}(\varepsilon,\alpha, \beta,

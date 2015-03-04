@@ -1,4 +1,4 @@
-%Execution file of automatic guaranteed algorithm for function approximation
+%CONEPAPER_TEST_FUNAPPX_G Generate Table 3. in Cones not ball paper Run automatic guaranteed algorithm for function approximation
 %  Generates Table 3 in the paper
 %
 %  N. Clancy, Y. Ding, C. Hamilton, F. J. Hickernell and Y. Zhang,

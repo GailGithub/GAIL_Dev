@@ -31,6 +31,7 @@ classdef ut_meanMCBer_g < matlab.unittest.TestCase
             actualerr = abs(pHat-p);
             testCase.verifyLessThanOrEqual(actualerr,abs(in_param.abstol));
         end
+        
         function meanMCBer_gOfWorkouts(testCase)
             [ut_abserr,ut_abstol] = Test_meanMCBer_g;
             testCase.verifyLessThanOrEqual(ut_abserr,ut_abstol);

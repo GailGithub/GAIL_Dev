@@ -1,5 +1,5 @@
 Guaranteed Automatic Integration Library (GAIL)
-GAIL Version 2.1, Feb 14, 2015.
+GAIL Version 2.1, Mar 14, 2015.
 See LICENSE.m for copyright and disclaimer.
 
 GAIL is a suite of algorithms for integration problems in one and many
@@ -18,24 +18,46 @@ We thank the contributions of Xincheng Sheng, and the IIT class of Math
 573 Reliable Mathematical Software, Fall 2013.
 
 
-Please cite the following software and papers:
+Please cite the following software, papers, and materials:
 
 
 Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang, and Xuan Zhou, "GAIL: 
 Guaranteed Automatic Integration Library (Version 2.1)" [MATLAB Software],
 2015. Available from http://code.google.com/p/gail/
+(this software)
+
+Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible Research via 
+Supportable Scientific Software", Journal of Open Research Software, Volume 2, 
+Number 1, e22, pp. 1-7, 2014.
+(describes principles of Reliable Reproducible Research and Supportable 
+Scientific Software)
+
+Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable Mathematical
+Software" [Course Slides], Illinois Institute of Technology, Chicago, IL, 2013.
+Available from http://code.google.com/p/gail/
+(develops practices of Reliable Reproducible Research and Supportable 
+Scientific Software)
+
+Daniel S. Katz, Sou-Cheng T. Choi, Hilmar Lapp, Ketan Maheshwari,
+Frank Loffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr,
+James Hetherington, James Howison, Shel Swenson, Gabrielle D. Allen,
+Anne C. Elster, Bruce Berriman, Colin Venters, "Summary of the First
+Workshop On Sustainable Software for Science: Practice And Experiences
+(WSSSPE1)", Journal of Open Research Software, Volume 2, Number 1, e6,
+pp. 1-21, 2014.
+(discusses practice and challenges in Sustainable Software for Science)
 
 Nicholas Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
 Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic Algorithms:
-Cones, Not Balls", Journal of Complexity 30 (2014), pp. 21-45.
+Cones, Not Balls", Journal of Complexity 30, pp. 21-45, 2014.
 (describes integral_g.m and funappx_g.m)
 
 Fred J. Hickernell, Lan Jiang, Yuewei Liu, and Art B. Owen,
 "Guaranteed conservative fixed width confidence intervals via Monte
 Carlo sampling", Monte Carlo and Quasi-Monte Carlo Methods 2012
 (J. Dick, F. Y. Kuo, G. W. Peters, and I. H. Sloan, eds.),
-Springer-Verlag, Berlin, 2014, pp. 105-128. 
+Springer-Verlag, Berlin, pp. 105-128, 2014.
 (describes meanMC_g.m and cubMC_g.m)
 
 Fred J. Hickernell and Lluis Antoni Jimenez Rugama, "Reliable Adaptive 
@@ -61,7 +83,7 @@ GAIL can be downloaded from http://code.google.com/p/gail/.
 Alternatively, you can get a local copy of the GAIL repository with
 this command:
 
-  git clone https://code.google.com/p/gail/
+  git clone https://github.com/GailGithub/GAIL_Dev.git
 
 
 Requirements

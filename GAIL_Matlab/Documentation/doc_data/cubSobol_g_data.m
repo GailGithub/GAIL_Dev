@@ -1,20 +1,21 @@
 %%  Guarantee
 %
-% This algorithm computes the integral of real valued functions in dimension d 
-% with a prescribed generalized error tolerance. The Walsh-Fourier 
-% coefficients of the integrand are assumed to be absolutely convergent.
-% If the algorithm terminates without warning messages, the output is 
-% given with guarantees under the assumption that the integrand lies inside
-% a cone of functions. The guarantee is based on the decay rate of the 
-% Walsh-Fourier coefficients. For more details on how the cone is defined, 
-% please refer to the references below.
+% This algorithm computes the integral of real valued functions in
+% dimension d with a prescribed generalized error tolerance. The
+% Walsh-Fourier coefficients of the integrand are assumed to be absolutely
+% convergent. If the algorithm terminates without warning messages, the
+% output is given with guarantees under the assumption that the integrand
+% lies inside a cone of functions. The guarantee is based on the decay rate
+% of the Walsh-Fourier coefficients. For more details on how the cone is
+% defined, please refer to the references below.
 %
 %% Examples
 %
 %%
 % *Example 1*
 
-% Estimate the integral with integrand f(x) = x1.*x2 in the interval [0,1)^2:
+% Estimate the integral with integrand f(x) = x1.*x2 in the interval
+% [0,1)^2:
 
   f = @(x) x(:,1).*x(:,2); d = 2;
   q = cubSobol_g(f,d,1e-5,1e-1,'uniform')
@@ -49,8 +50,8 @@
 %%
 % *Example 5*
 
-% Estimate the integral with integrand f(x) = 8*x1.*x2.*x3.*x4.*x5 in the interval
-% [0,1)^5 with pure absolute error 1e-5.
+% Estimate the integral with integrand f(x) = 8*x1.*x2.*x3.*x4.*x5 in the
+% interval [0,1)^5 with pure absolute error 1e-5.
 
   f = @(x) 8*prod(x,2); d = 5;
-  q = cubSobol_g(f,d,1e-5,'errtype','comb','theta',1)
+  q = cubSobol_g(f,d,1e-5,0)

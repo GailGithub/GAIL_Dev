@@ -1,5 +1,5 @@
 function GAIL_Install()
-% GAIL_INSTALL   Install GAIL. Add GAIL paths to MATLAB search path.
+%GAIL_INSTALL Install or reinstall GAIL. Add GAIL paths to MATLAB search path.
 [GAILPATH,GAILVERSION,PATHNAMESEPARATOR,MATLABVERSION] = GAILstart;
 fprintf('\nWelcome to Guaranteed Automatic Integration Library (GAIL).\nYou are installing GAIL v%s.\n\n', GAILVERSION);
 if MATLABVERSION < 7,
@@ -15,10 +15,9 @@ savepath;                 % Save the changes
 warninfo = warning('query','MATLAB:doc:DocNotInstalled');
 warning('off', warninfo.identifier);
 GAIL_Publish; 
-builddocsearchdb(strcat(GAILPATH,'Documentation',PATHNAMESEPARATOR,'html'));
 warning(warninfo.state, warninfo.identifier);
-fprintf('\nYou can go to help documentation ---> Supplemental Software to learn how to use GAIL.\n');
 %addpath(strcat(GAILPATH,'Documentation',PATHNAMESEPARATOR,'html',PATHNAMESEPARATOR,'helpsearch'));
 fprintf('\nGAIL version %s has been installed successfully.\n\n', GAILVERSION);
 end
 
+ 

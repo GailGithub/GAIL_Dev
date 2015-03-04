@@ -1,13 +1,13 @@
 function RunTestCubatureonKeisterLattice
-clear all, close all
+clearvars, close all
 format compact
 
 fun.funtype='Keister';
 param.measure='uniform';
-param.abstol=2e-2;
-param.reltol=0.; % 0 reltol means all absolut error
+param.abstol=2e-2; % 0 abstol means all relative error
+param.reltol=0; % 0 reltol means all absolute error
 param.toltype  = 'max';
-param_indicator=10^0;
+param_indicator=1;
 
 test.nrep=500;
 test.howoftenrep=10;
@@ -57,8 +57,8 @@ set(0,'defaultaxesfontsize',20,'defaulttextfontsize',20) %make font larger
 set(0,'defaultLineLineWidth',3) %thick lines
 set(0,'defaultTextInterpreter','tex') %tex axis labels
 set(0,'defaultLineMarkerSize',40) %larger markersset(0,'defaultaxesfontsize',20,'defaulttextfontsize',20)
-plotTest.logerrlo=-6;
-plotTest.logerrhi=1;
+plotTest.logerrlo=-4;
+plotTest.logerrhi=2;
 
 param.tol=param_indicator;
 plotTest.plotcolor='color';

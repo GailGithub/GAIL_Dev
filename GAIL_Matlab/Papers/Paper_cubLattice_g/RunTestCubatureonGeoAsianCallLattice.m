@@ -9,9 +9,9 @@ fun.T=1;
 fun.r=0.03;
 param.measure='normal';
 param.abstol=2e-2;
-param.reltol=0.; % 0 reltol means all absolut error
+param.reltol=0; % 0 reltol means all absolut error
 param.toltype  = 'max';
-param_indicator=10^0;
+param_indicator=1;
 
 test.nrep=500;
 test.howoftenrep=10;

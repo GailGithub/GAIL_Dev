@@ -99,8 +99,25 @@ function [pHat,out_param]=meanMCBer_g(varargin)
 %   [MATLAB Software], 2015. Available from
 %   http://code.google.com/p/gail/
 %
+%   [3] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
+%   Research via Supportable Scientific Software", Journal of Open Research
+%   Software, Volume 2, Number 1, e22, pp. 1-7, 2014.
+%
+%   [4] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable
+%   Mathematical Software" [Course Slides], Illinois Institute of
+%   Technology, Chicago, IL, 2013. Available from
+%   http://code.google.com/p/gail/ 
+%
+%   [5] Daniel S. Katz, Sou-Cheng T. Choi, Hilmar Lapp, Ketan Maheshwari,
+%   Frank Loffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr,
+%   James Hetherington, James Howison, Shel Swenson, Gabrielle D. Allen,
+%   Anne C. Elster, Bruce Berriman, Colin Venters, "Summary of the First
+%   Workshop On Sustainable Software for Science: Practice And Experiences
+%   (WSSSPE1)", Journal of Open Research Software, Volume 2, Number 1, e6,
+%   pp. 1-21, 2014.
+%
 %   If you find GAIL helpful in your work, please support us by citing the
-%   above paper and software.
+%   above papers, software, and materials.
 %
 
 tstart = tic; %start the clock
@@ -217,7 +234,8 @@ if out_param.exit==0; return; end
 switch out_param.exit
     case 1 % nabs exceed nmax.
         warning('MATLAB:meanMCBer_g:nabsexceednmax',...
-            [' To guarantee the absolute error, tried to evaluate at '...
+            [' To achieve the guaranteed accuracy of absolute error tolerance '...
+            num2str(out_param.abstol) ', tried to evaluate at '...
             int2str(out_param.n) ...
             ' samples, which is more than the allowed maximum of '...
             num2str(out_param.nmax) ...

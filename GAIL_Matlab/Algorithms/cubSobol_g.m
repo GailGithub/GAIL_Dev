@@ -1,34 +1,30 @@
 function [q,out_param] = cubSobol_g(varargin)
-%CUBSOBOL_G is a Quasi-Monte Carlo method using Sobol' cubature over the
+%CUBSOBOL_G Quasi-Monte Carlo method using Sobol' cubature over the
 %d-dimensional region to integrate within a specified generalized error
-%tolerance with guarantees under Walsh-Fourier coefficients cone decay assumptions.
+%tolerance with guarantees under Walsh-Fourier coefficients cone decay
+%assumptions
 %
 %   [q,out_param] = CUBSOBOL_G(f,d) estimates the integral of f over the
-%   d-dimensional region with an error guaranteed not to be greater than 
-%   a specific generalized error tolerance, 
-%   tolfun:=max(abstol,reltol*|integral(f)|). The generalized tolerance function can
-%   aslo be cosen as tolfun:=theta*abstol+(1-theta)*reltol*|integral(f)| 
-%   where theta is another input parameter. Input f is a function handle. f should
-%   accept an n x d matrix input, where d is the dimension of the hypercube,
-%   and n is the number of points being evaluated simultaneously. The input d
-%   is the dimension in which the function f is defined. Given the
-%   construction of Sobol', d must be a positive integer with 1<=d<=1111.
+%   d-dimensional region with an error guaranteed not to be greater than a
+%   specific generalized error tolerance, tolfun := max(abstol, reltol *
+%   abs(integral(f))). The generalized tolerance function can aslo be cosen
+%   as tolfun := theta * abstol + (1 - theta) * reltol* abs(integral(f))
+%   where theta is another input parameter. Input f is a function handle. f
+%   should accept an n x d matrix input, where d is the dimension of the
+%   hypercube, and n is the number of points being evaluated
+%   simultaneously. The input d is the dimension in which the function f is
+%   defined. Given the construction of Sobol', d must be a positive integer
+%   with 1<=d<=1111.
 %
 %   q = CUBSOBOL_G(f,d,abstol,reltol,measure,mmin,mmax,fudge,toltype,theta)
-%   estimates the integral of f over a d-dimensional region. The answer
-%   is given within the generalized error tolerance tolfun. All parameters
-%   should be input in the order specified above. If an input is not specified,
-%   the default value is used. Note that if an input is not specified,
-%   the remaining tail cannot be specified either.
-%
-%   q = CUBSOBOL_G(f,d,'abstol',abstol,'reltol',reltol,'measure',measure,'mmin',mmin,'mmax',mmax,'fudge',fudge,'toltype',toltype,'theta',theta)
-%   estimates the integral of f over a d-dimensional region. The answer
-%   is given within the generalized error tolerance tolfun. All the field-value
-%   pairs are optional and can be supplied with any order. If an input is not
-%   specified, the default value is used.
+%   estimates the integral of f over a d-dimensional region. The answer is
+%   given within the generalized error tolerance tolfun. All parameters
+%   should be input in the order specified above. If an input is not
+%   specified, the default value is used. Note that if an input is not
+%   specified, the remaining tail cannot be specified either.
 %
 %   q = CUBSOBOL_G(f,d,in_param) estimates the integral of f over the
-%   d-dimensional region. The answer is given within the generalized error 
+%   d-dimensional region. The answer is given within the generalized error
 %   tolerance tolfun.
 % 
 %   Input Arguments
@@ -51,35 +47,37 @@ function [q,out_param] = cubSobol_g(varargin)
 %     or normally distributed with covariance matrix I_d. By default it 
 %     is 'uniform'. The only possible values are 'uniform' or 'normal'.
 % 
-%     Optional input parameters:
+%   Optional Input Arguments
 % 
-%     in_param.mmin --- the minimum number of points to start is 2^mmin. The
-%     cone condition on the Fourier coefficients decay requires a minimum
-%     number of points to start. The advice is to consider at least mmin=10.
-%     mmin needs to be a positive integer with mmin<=mmax. By default it is 10.
+%     in_param.mmin --- the minimum number of points to start is 2^mmin.
+%     The cone condition on the Fourier coefficients decay requires a
+%     minimum number of points to start. The advice is to consider at least
+%     mmin=10. mmin needs to be a positive integer with mmin<=mmax. By
+%     default it is 10.
 %
-%     in_param.mmax --- the maximum budget is 2^mmax. By construction of the
-%     Sobol' generator, mmax is a positive integer such that mmin<=mmax<=53.
-%     The default value is 24.
+%     in_param.mmax --- the maximum budget is 2^mmax. By construction of
+%     the Sobol' generator, mmax is a positive integer such that
+%     mmin<=mmax<=53. The default value is 24.
 %
-%     in_param.fudge --- the positive function multiplying the finite 
-%     sum of Fast Walsh coefficients specified in the cone of functions.
-%     For more information about this parameter, refer to the references.
-%     By default it is @(x) 5*2.^-x.
+%     in_param.fudge --- the positive function multiplying the finite sum
+%     of Fast Walsh coefficients specified in the cone of functions. For
+%     more information about this parameter, refer to the references. By
+%     default it is @(x) 5*2.^-x.
 %
 %     in_param.toltype --- this is the tolerance function. There are two
 %     choices, 'max' (chosen by default) which takes
-%     max(abstol,reltol*|integral(f)|) and 'comb' which is a linear combination
-%     theta*abstol+(1-theta)*reltol*|integral(f)|. Theta is another 
-%     parameter that can be specified (see below).
+%     max(abstol,reltol*|integral(f)|) and 'comb' which is a linear
+%     combination theta*abstol+(1-theta)*reltol*|integral(f)|. Theta is
+%     another parameter that can be specified (see below). For pure
+%     absolute error, either choose 'max' and set reltol=0 or choose 'comb'
+%     and set theta=1.
 % 
-%     in_param.theta --- this input is parametrizing the toltype 
-%     'comb'. Thus, it is only afecting when the toltype
-%     chosen is 'comb'. It stablishes the linear combination weight
-%     between the absolute and relative tolerances
-%     theta*abstol+(1-theta)*reltol*|integral(f)|. Note that for theta=1, 
-%     we have pure absolute tolerance while for theta=0, we have pure 
-%     relative tolerance. By default, theta=1.
+%     in_param.theta --- this input is parametrizing the toltype 'comb'.
+%     Thus, it is only afecting when the toltype chosen is 'comb'. It
+%     stablishes the linear combination weight between the absolute and
+%     relative tolerances theta*abstol+(1-theta)*reltol*|integral(f)|. Note
+%     that for theta=1, we have pure absolute tolerance while for theta=0,
+%     we have pure relative tolerance. By default, theta=1.
 %
 %   Output Arguments
 %
@@ -91,9 +89,10 @@ function [q,out_param] = cubSobol_g(varargin)
 %     condition. If the function lies in the cone, the real error should be
 %     smaller than this predicted error.
 %
-%     out_param.time --- time elapsed in seconds when calling cubSobol_g for f.
+%     out_param.time --- time elapsed in seconds when calling cubSobol_g
+%     for f.
 %
-%     out_param.exitflag --- this is a binary vector stating whether 
+%     out_param.exitflag --- this is a binary vector stating whether
 %     warning flags arise. These flags tell about which conditions make the
 %     final result certainly not guaranteed. One flag is considered arisen
 %     when its value is 1. The following list explains the flags in the
@@ -113,13 +112,13 @@ function [q,out_param] = cubSobol_g(varargin)
 %                       below.
 % 
 %  Guarantee
-% This algorithm computes the integral of real valued functions in [0,1)^d 
-% with a prescribed generalized error tolerance. The Walsh-Fourier 
-% coefficients of the integrand are assumed to be absolutely convergent.
-% If the algorithm terminates without warning messages, the output is 
-% given with guarantees under the assumption that the integrand lies inside
-% a cone of functions. The guarantee is based on the decay rate of the 
-% Walsh-Fourier coefficients. For more details on how the cone is defined, 
+% This algorithm computes the integral of real valued functions in [0,1)^d
+% with a prescribed generalized error tolerance. The Walsh-Fourier
+% coefficients of the integrand are assumed to be absolutely convergent. If
+% the algorithm terminates without warning messages, the output is given
+% with guarantees under the assumption that the integrand lies inside a
+% cone of functions. The guarantee is based on the decay rate of the
+% Walsh-Fourier coefficients. For more details on how the cone is defined,
 % please refer to the references below.
 % 
 %  Examples
@@ -176,8 +175,26 @@ function [q,out_param] = cubSobol_g(varargin)
 %   "GAIL: Guaranteed Automatic Integration Library (Version 2.1)"
 %   [MATLAB Software], 2015. Available from http://code.google.com/p/gail/
 %
+%   [3] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
+%   Research via Supportable Scientific Software", Journal of Open Research
+%   Software, Volume 2, Number 1, e22, pp. 1-7, 2014.
+%
+%   [4] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable
+%   Mathematical Software" [Course Slides], Illinois Institute of
+%   Technology, Chicago, IL, 2013. Available from
+%   http://code.google.com/p/gail/ 
+%
+%   [5] Daniel S. Katz, Sou-Cheng T. Choi, Hilmar Lapp, Ketan Maheshwari,
+%   Frank Loffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr,
+%   James Hetherington, James Howison, Shel Swenson, Gabrielle D. Allen,
+%   Anne C. Elster, Bruce Berriman, Colin Venters, "Summary of the First
+%   Workshop On Sustainable Software for Science: Practice And Experiences
+%   (WSSSPE1)", Journal of Open Research Software, Volume 2, Number 1, e6,
+%   pp. 1-21, 2014.
+%
 %   If you find GAIL helpful in your work, please support us by citing the
-%   above paper and software.
+%   above papers, software, and materials.
+%
 
 tic
 %% Check and initialize parameters
@@ -188,17 +205,18 @@ if strcmp(out_param.measure,'normal')
 end
 
 %% Main algorithm
-mlag=4; %distance between coefficients summed and those computed
+r_lag=4; %distance between coefficients summed and those computed
+l_star=out_param.mmin-r_lag;
 sobstr=sobolset(out_param.d); %generate a Sobol' sequence
 sobstr=scramble(sobstr,'MatousekAffineOwen'); %scramble it
 Stilde=zeros(out_param.mmax-out_param.mmin+1,1); %initialize sum of DFWT terms
-StildeNC=zeros(out_param.mmax-out_param.mmin+1,mlag); %initialize various sums of DFWT terms for necessary conditions
-cond1=(1+out_param.fudge(mlag))*(1+2*out_param.fudge(mlag-(1:mlag)))./(1+out_param.fudge(mlag-(1:mlag))); % Factors for the necessary conditions
-cond2=(1+out_param.fudge(mlag-(1:mlag)))*(1+2*out_param.fudge(mlag))/(1+out_param.fudge(mlag)); % Factors for the necessary conditions
+StildeNC=zeros(out_param.mmax-out_param.mmin+1,r_lag); %initialize various sums of DFWT terms for necessary conditions
+cond1=(1+out_param.fudge(r_lag))*(1+2*out_param.fudge(r_lag-(1:r_lag)))./(1+out_param.fudge(r_lag-(1:r_lag))); % Factors for the necessary conditions
+cond2=(1+out_param.fudge(r_lag-(1:r_lag)))*(1+2*out_param.fudge(r_lag))/(1+out_param.fudge(r_lag)); % Factors for the necessary conditions
 errest=zeros(out_param.mmax-out_param.mmin+1,1); %initialize error estimates
 appxinteg=zeros(out_param.mmax-out_param.mmin+1,1); %initialize approximations to integral
 exit_len = 2;
-out_param.exit=logical(zeros(exit_len,1)); %we start the algorithm with all warning flags down
+out_param.exit=false(1,exit_len); %we start the algorithm with all warning flags down
 
 %% Initial points and FWT
 out_param.n=2^out_param.mmin; %total number of points to start with
@@ -236,9 +254,9 @@ for l=out_param.mmin-1:-1:1
 end
 
 %% Compute Stilde
-nllstart=2^(out_param.mmin-mlag-1);
+nllstart=2^(out_param.mmin-r_lag-1);
 Stilde(1)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
-for i = 1:mlag % Storing the information for the necessary conditions
+for i = 1:r_lag % Storing the information for the necessary conditions
     nllstart=2*nllstart;
     StildeNC(i,i)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
 end
@@ -299,7 +317,7 @@ for m=out_param.mmin+1:out_param.mmax
 
    %% Update kappanumap
    kappanumap=[kappanumap; (nnext+1:out_param.n)']; %initialize map
-   for l=m-1:-1:m-mlag-1
+   for l=m-1:-1:m-r_lag-1
       nl=2^l;
       oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
       newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa, 
@@ -310,17 +328,17 @@ for m=out_param.mmin+1:out_param.mmax
    end
 
    %% Compute Stilde
-   nllstart=2^(m-mlag-1);
+   nllstart=2^(m-r_lag-1);
    meff=m-out_param.mmin+1;
    Stilde(meff)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
-   for i = 1:mlag % Storing the information for the necessary conditions
+   for i = 1:r_lag % Storing the information for the necessary conditions
        nllstart=2*nllstart;
        StildeNC(i+meff-1,i)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
    end
-   % disp((Stilde(meff)*cond1(1:min(meff-1,mlag)))>=(StildeNC(meff-1,1:min(meff-1,mlag)))) % Displaying necessary condition 1 results (1 if satisfied)
-   % disp((StildeNC(meff-1,1:min(meff-1,mlag)).*cond2(1:min(meff-1,mlag)))>=(Stilde(meff)*ones(1,min(meff-1,mlag)))) % Displaying necessary condition 2 results (1 if satisfied)
-   if ~(all((Stilde(meff)*cond1(1:min(meff-1,mlag)))>=(StildeNC(meff-1,1:min(meff-1,mlag))))*   ...
-    all((StildeNC(meff-1,1:min(meff-1,mlag)).*cond2(1:min(meff-1,mlag)))>=(Stilde(meff)*ones(1,min(meff-1,mlag))))),
+   % disp((Stilde(meff)*cond1(1:min(meff-1,r_lag)))>=(StildeNC(meff-1,1:min(meff-1,r_lag)))) % Displaying necessary condition 1 results (1 if satisfied)
+   % disp((StildeNC(meff-1,1:min(meff-1,r_lag)).*cond2(1:min(meff-1,r_lag)))>=(Stilde(meff)*ones(1,min(meff-1,r_lag)))) % Displaying necessary condition 2 results (1 if satisfied)
+   if ~(all((Stilde(meff)*cond1(1:min(meff-1,r_lag)))>=(StildeNC(meff-1,1:min(meff-1,r_lag))))*   ...
+    all((StildeNC(meff-1,1:min(meff-1,r_lag)).*cond2(1:min(meff-1,r_lag)))>=(Stilde(meff)*ones(1,min(meff-1,r_lag))))),
         out_param.exit(2) = true;
    end
    out_param.pred_err=out_param.fudge(m)*Stilde(meff);
@@ -349,22 +367,32 @@ for m=out_param.mmin+1:out_param.mmax
    end
 end
 
-exit_str='';
-if sum(out_param.exit) == 0
-  exit_str = '0';
+% Alternative
+exit_str=2.^(0:exit_len-1).*out_param.exit;
+exit_str(out_param.exit==0)=[];
+if numel(exit_str)==0;
+    out_param.exitflag=0;
 else
-  for i=1:exit_len
-    if out_param.exit(i)==1,
-      if i<exit_len 
-        exit_str = strcat(exit_str,{num2str(i)}, {' '});
-      else
-        exit_str = strcat(exit_str,{num2str(i)});
-      end
-    end
-  end
+    out_param.exitflag=exit_str;
 end
-out_param.exitflag = exit_str;
-out_param = rmfield(out_param,'exit');
+
+% Original
+% exit_str='';
+% if sum(out_param.exit) == 0
+%   exit_str = '0';
+% else
+%   for i=1:exit_len
+%     if out_param.exit(i)==1,
+%       if i<exit_len 
+%         exit_str = strcat(exit_str,{num2str(i)}, {' '});
+%       else
+%         exit_str = strcat(exit_str,{num2str(i)});
+%       end
+%     end
+%   end
+% end
+% out_param.exitflag = exit_str;
+% out_param = rmfield(out_param,'exit');
 
 out_param.time=toc;
 end

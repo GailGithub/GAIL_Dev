@@ -1,34 +1,30 @@
 function [q,out_param] = cubLattice_g(varargin)
-%CUBLATTICE_G is a Quasi-Monte Carlo method using rank-1 Lattices cubature
-%over a d-dimensional region to integrate within a specified generalized error 
-%tolerance with guarantees under Fourier coefficients cone decay assumptions.
+%CUBLATTICE_G Quasi-Monte Carlo method using rank-1 Lattices cubature
+%over a d-dimensional region to integrate within a specified generalized
+%error tolerance with guarantees under Fourier coefficients cone decay
+%assumptions.
 %
 %   [q,out_param] = CUBLATTICE_G(f,d) estimates the integral of f over the
-%   d-dimensional region with an error guaranteed not to be greater than 
-%   a specific generalized error tolerance, 
-%   tolfun:=max(abstol,reltol*|integral(f)|). The generalized tolerance function can
-%   aslo be cosen as tolfun:=theta*abstol+(1-theta)*reltol*|integral(f)| 
-%   where theta is another input parameter. Input f is a function handle. f should
-%   accept an n x d matrix input, where d is the dimension of the hypercube,
-%   and n is the number of points being evaluated simultaneously. The input d
-%   is the dimension in which the function f is defined. Given the
-%   construction of our Lattices, d must be a positive integer with 1<=d<=250.
+%   d-dimensional region with an error guaranteed not to be greater than a
+%   specific generalized error tolerance, tolfun := max(abstol, reltol *
+%   abs(integral(f))). The generalized tolerance function can aslo be
+%   chosen as tolfun := theta * abstol + (1-theta) * reltol *
+%   abs(integral(f)) where theta is another input parameter. Input f is a
+%   function handle. f should accept an n x d matrix input, where d is the
+%   dimension of the hypercube, and n is the number of points being
+%   evaluated simultaneously. The input d is the dimension in which the
+%   function f is defined. Given the construction of our Lattices, d must
+%   be a positive integer with 1<=d<=250.
 % 
-%   q = CUBLATTICE_G(f,d,abstol,reltol,measure,shift,mmin,mmax,fudge,transform,toltype,theta)
-%   estimates the integral of f over a d-dimensional region. The answer
-%   is given within the generalized error tolerance tolfun. All parameters
-%   should be input in the order specified above. If an input is not specified,
-%   the default value is used. Note that if an input is not specified,
-%   the remaining tail cannot be specified either.
-% 
-%   q = CUBLATTICE_G(f,d,'abstol',abstol,'reltol',reltol,'measure',measure,'shift',shift,'mmin',mmin,'mmax',mmax,'fudge',fudge,'transform',transform,'toltype',toltype,'theta',theta)
-%   estimates the integral of f over a d-dimensional region. The answer
-%   is given within the generalized error tolerance tolfun. All the field-value
-%   pairs are optional and can be supplied with any order. If an input is not
-%   specified, the default value is used.
+%   q = CUBLATTICE_G(f,d,abstol,reltol,measure,shift,mmin,mmax,fudge,transform,toltype,theta) 
+%   estimates the integral of f over a d-dimensional region. The answer is
+%   given within the generalized error tolerance tolfun. All parameters
+%   should be input in the order specified above. If an input is not
+%   specified, the default value is used. Note that if an input is not
+%   specified, the remaining tail cannot be specified either.
 % 
 %   q = CUBLATTICE_G(f,d,in_param) estimates the integral of f over the
-%   d-dimensional region. The answer is given within the generalized error 
+%   d-dimensional region. The answer is given within the generalized error
 %   tolerance tolfun.
 % 
 %   Input Arguments
@@ -51,64 +47,69 @@ function [q,out_param] = cubLattice_g(varargin)
 %     or normally distributed with covariance matrix I_d. By default it 
 %     is 'uniform'. The only possible values are 'uniform' or 'normal'.
 % 
-%     Optional input parameters:
+%   Optional Input Arguments
 % 
-%     in_param.shift --- the Rank-1 lattices can be shifted to avoid the origin
-%     or other particular points. By default we consider a uniformly [0,1)
-%     random shift.
+%     in_param.shift --- the Rank-1 lattices can be shifted to avoid the
+%     origin or other particular points. By default we consider a uniformly
+%     [0,1) random shift.
 % 
-%     in_param.mmin --- the minimum number of points to start is 2^mmin. The
-%     cone condition on the Fourier coefficients decay requires a minimum
-%     number of points to start. The advice is to consider at least mmin=10.
-%     mmin needs to be a positive integer with mmin<=mmax. By default it is 10.
+%     in_param.mmin --- the minimum number of points to start is 2^mmin.
+%     The cone condition on the Fourier coefficients decay requires a
+%     minimum number of points to start. The advice is to consider at least
+%     mmin=10. mmin needs to be a positive integer with mmin<=mmax. By
+%     default it is 10.
 % 
-%     in_param.mmax --- the maximum budget is 2^mmax. By construction of our
-%     Lattices generator, mmax is a positive integer such that mmin<=mmax<=26.
-%     The default value is 24.
+%     in_param.mmax --- the maximum budget is 2^mmax. By construction of
+%     our Lattices generator, mmax is a positive integer such that
+%     mmin<=mmax<=26. The default value is 24.
 % 
-%     in_param.fudge --- the positive function multiplying the finite 
-%     sum of Fast Fourier coefficients specified in the cone of functions.
-%     For more information about this parameter, refer to the references.
-%     By default it is @(x) 5*2.^-x.
+%     in_param.fudge --- the positive function multiplying the finite sum
+%     of Fast Fourier coefficients specified in the cone of functions. For
+%     more information about this parameter, refer to the references. By
+%     default it is @(x) 5*2.^-x.
 % 
-%     in_param.transform --- the algorithm is defined for continuous periodic functions. If the
-%     input function f is not, there are 5 types of transform to periodize it
-%     without modifying the result. By default it is Baker. The options:
-%       'id' : no transformation. Choice by default.
-%       'Baker' : Baker's transform or tent map in each coordinate. Preserving
-%                 only continuity but simple to compute.
-%       'C0' : polynomial transformation only preserving continuity.
-%       'C1' : polynomial transformation preserving the first derivative.
-%       'C1sin' : Sidi transform with sinus preserving the first derivative.
-%                 This is in general a better option than 'C1'.
+%     in_param.transform --- the algorithm is defined for continuous
+%     periodic functions. If the input function f is not, there are 5 types
+%     of transform to periodize it without modifying the result. By default
+%     it is Baker. The options:
+%       'id'   : no transformation. Choice by default.
+%       'Baker': Baker's transform or tent map in each coordinate. 
+%                Preserving only continuity but simple to compute.
+%       'C0'   : polynomial transformation only preserving continuity.
+%       'C1'   : polynomial transformation preserving the first derivative.
+%       'C1sin': Sidi transform with sinus preserving the first derivative.
+%                This is in general a better option than 'C1'.
 %
 %     in_param.toltype --- this is the tolerance function. There are two
 %     choices, 'max' (chosen by default) which takes
-%     max(abstol,reltol*|integral(f)|) and 'comb' which is a linear combination
-%     theta*abstol+(1-theta)*reltol*|integral(f)|. Theta is another 
-%     parameter that can be specified (see below).
+%     max(abstol,reltol*|integral(f)|) and 'comb' which is a linear
+%     combination theta*abstol+(1-theta)*reltol*|integral(f)|. Theta is
+%     another parameter that can be specified (see below). For pure
+%     absolute error, either choose 'max' and set reltol=0 or choose 'comb'
+%     and set theta=1.
 % 
-%     in_param.theta --- this input is parametrizing the toltype 
-%     'comb'. Thus, it is only afecting when the toltype
-%     chosen is 'comb'. It stablishes the linear combination weight
-%     between the absolute and relative tolerances
-%     theta*abstol+(1-theta)*reltol*|integral(f)|. Note that for theta=1, 
-%     we have pure absolute tolerance while for theta=0, we have pure 
-%     relative tolerance. By default, theta=1.
+%     in_param.theta --- this input is parametrizing the toltype 'comb'.
+%     Thus, it is only afecting when the toltype chosen is 'comb'. It
+%     stablishes the linear combination weight between the absolute and
+%     relative tolerances theta*abstol+(1-theta)*reltol*|integral(f)|. Note
+%     that for theta=1, we have pure absolute tolerance while for theta=0,
+%     we have pure relative tolerance. By default, theta=1.
 %
 %   Output Arguments
 %
 %     q --- the estimated value of the integral.
 % 
-%     out_param.n --- number of points used when calling cubLattice_g for f.
+%     out_param.n --- number of points used when calling cubLattice_g for
+%     f.
 % 
-%     out_param.bound_err --- predicted bound on the error based on the cone
-%     condition. If the function lies in the cone, the real error should be
-%     smaller than this predicted error.
+%     out_param.bound_err --- predicted bound on the error based on the
+%     cone condition. If the function lies in the cone, the real error
+%     should be smaller than this predicted error.
 % 
-%     out_param.time --- time elapsed in seconds when calling cubLattice_g for f.
+%     out_param.time --- time elapsed in seconds when calling cubLattice_g
+%     for f.
 %
-%     out_param.exitflag --- this is a binary vector stating whether 
+%     out_param.exitflag --- this is a binary vector stating whether
 %     warning flags arise. These flags tell about which conditions make the
 %     final result certainly not guaranteed. One flag is considered arisen
 %     when its value is 1. The following list explains the flags in the
@@ -128,14 +129,14 @@ function [q,out_param] = cubLattice_g(varargin)
 %                       below.
 % 
 %  Guarantee
-% This algorithm computes the integral of real valued functions in [0,1)^d 
-% with a prescribed generalized error tolerance. The Fourier coefficients of 
-% the integrand are assumed to be absolutely convergent.
-% If the algorithm terminates without warning messages, the output is 
-% given with guarantees under the assumption that the integrand lies inside
-% a cone of functions. The guarantee is based on the decay rate of the 
-% Fourier coefficients. For more details on how the cone is defined, 
-% please refer to the references below.
+% This algorithm computes the integral of real valued functions in [0,1)^d
+% with a prescribed generalized error tolerance. The Fourier coefficients
+% of the integrand are assumed to be absolutely convergent. If the
+% algorithm terminates without warning messages, the output is given with
+% guarantees under the assumption that the integrand lies inside a cone of
+% functions. The guarantee is based on the decay rate of the Fourier
+% coefficients. For more details on how the cone is defined, please refer
+% to the references below.
 % 
 %  Examples
 % 
@@ -182,18 +183,35 @@ function [q,out_param] = cubLattice_g(varargin)
 % 
 %  References
 %
-%   [1] Lluis Antoni Jimenez Rugama and Fred J. Hickernell: Adaptive Multidimensional
-%   Integration Based on Rank-1 Lattices (2014). Submitted for publication:
-%   arXiv:1411.1966.
+%   [1] Lluis Antoni Jimenez Rugama and Fred J. Hickernell: Adaptive
+%   Multidimensional Integration Based on Rank-1 Lattices (2014). Submitted
+%   for publication: arXiv:1411.1966.
 %
 %   [2] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang,
 %   Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
 %   "GAIL: Guaranteed Automatic Integration Library (Version 2.1)"
 %   [MATLAB Software], 2015. Available from http://code.google.com/p/gail/
 %
+%   [3] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
+%   Research via Supportable Scientific Software", Journal of Open Research
+%   Software, Volume 2, Number 1, e22, pp. 1-7, 2014.
+%
+%   [4] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable
+%   Mathematical Software" [Course Slides], Illinois Institute of
+%   Technology, Chicago, IL, 2013. Available from
+%   http://code.google.com/p/gail/ 
+%
+%   [5] Daniel S. Katz, Sou-Cheng T. Choi, Hilmar Lapp, Ketan Maheshwari,
+%   Frank Loffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr,
+%   James Hetherington, James Howison, Shel Swenson, Gabrielle D. Allen,
+%   Anne C. Elster, Bruce Berriman, Colin Venters, "Summary of the First
+%   Workshop On Sustainable Software for Science: Practice And Experiences
+%   (WSSSPE1)", Journal of Open Research Software, Volume 2, Number 1, e6,
+%   pp. 1-21, 2014.
+%
 %   If you find GAIL helpful in your work, please support us by citing the
-%   above paper and software.
-
+%   above papers, software, and materials.
+%
 
 tic
 %% Check and initialize parameters
@@ -201,6 +219,8 @@ tic
 
 if strcmp(out_param.measure,'normal')
    f=@(x) f(gail.stdnorminv(x));
+elseif strcmp(out_param.measure,'uniform')
+   f=@(x) f(x); % a + (b-a)x = u
 end
 if strcmp(out_param.transform,'Baker')
     f=@(x) f(1-2*abs(x-1/2)); % Baker's transform
@@ -213,11 +233,12 @@ elseif strcmp(out_param.transform,'C1sin')
 end
 
 %% Main algorithm
-mlag=4;
+r_lag=4; %distance between coefficients summed and those computed
+l_star=out_param.mmin-r_lag;
 Stilde=zeros(out_param.mmax-out_param.mmin+1,1); %initialize sum of DFT terms
-StildeNC=zeros(out_param.mmax-out_param.mmin+1,mlag); %initialize various sums of DFT terms for necessary conditions
-cond1=(1+out_param.fudge(mlag))*(1+2*out_param.fudge(mlag-(1:mlag)))./(1+out_param.fudge(mlag-(1:mlag))); % Factors for the necessary conditions
-cond2=(1+out_param.fudge(mlag-(1:mlag)))*(1+2*out_param.fudge(mlag))/(1+out_param.fudge(mlag)); % Factors for the necessary conditions
+StildeNC=zeros(out_param.mmax-out_param.mmin+1,r_lag); %initialize various sums of DFT terms for necessary conditions
+cond1=(1+out_param.fudge(r_lag))*(1+2*out_param.fudge(r_lag-(1:r_lag)))./(1+out_param.fudge(r_lag-(1:r_lag))); % Factors for the necessary conditions
+cond2=(1+out_param.fudge(r_lag-(1:r_lag)))*(1+2*out_param.fudge(r_lag))/(1+out_param.fudge(r_lag)); % Factors for the necessary conditions
 errest=zeros(out_param.mmax-out_param.mmin+1,1); %initialize error estimates
 appxinteg=zeros(out_param.mmax-out_param.mmin+1,1); %initialize approximations to integral
 exit_len = 2;
@@ -261,9 +282,9 @@ for l=out_param.mmin-1:-1:1
 end
 
 %% Compute Stilde
-nllstart=int64(2^(out_param.mmin-mlag-1));
+nllstart=int64(2^(out_param.mmin-r_lag-1));
 Stilde(1)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
-for i = 1:mlag % Storing the information for the necessary conditions
+for i = 1:r_lag % Storing the information for the necessary conditions
     nllstart=2*nllstart;
     StildeNC(i,i)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
 end
@@ -328,7 +349,7 @@ for m=out_param.mmin+1:out_param.mmax
    
    %% Update kappanumap
    kappanumap=[kappanumap; (nnext+1:out_param.n)']; %initialize map
-   for l=m-1:-1:m-mlag-1
+   for l=m-1:-1:m-r_lag-1
       nl=2^l;
       oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
       newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa, 
@@ -339,17 +360,17 @@ for m=out_param.mmin+1:out_param.mmax
    end
 
    %% Compute Stilde
-   nllstart=int64(2^(m-mlag-1));
+   nllstart=int64(2^(m-r_lag-1));
    meff=m-out_param.mmin+1;
    Stilde(meff)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
-   for i = 1:mlag % Storing the information for the necessary conditions
+   for i = 1:r_lag % Storing the information for the necessary conditions
        nllstart=2*nllstart;
        StildeNC(i+meff-1,i)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
    end
-   % disp((Stilde(meff)*cond1(1:min(meff-1,mlag)))>=(StildeNC(meff-1,1:min(meff-1,mlag)))) % Displaying necessary condition 1 results (1 if satisfied)
-   % disp((StildeNC(meff-1,1:min(meff-1,mlag)).*cond2(1:min(meff-1,mlag)))>=(Stilde(meff)*ones(1,min(meff-1,mlag)))) % Displaying necessary condition 2 results (1 if satisfied)
-   if ~(all((Stilde(meff)*cond1(1:min(meff-1,mlag)))>=(StildeNC(meff-1,1:min(meff-1,mlag))))*   ...
-    all((StildeNC(meff-1,1:min(meff-1,mlag)).*cond2(1:min(meff-1,mlag)))>=(Stilde(meff)*ones(1,min(meff-1,mlag))))),
+   % disp((Stilde(meff)*cond1(1:min(meff-1,r_lag)))>=(StildeNC(meff-1,1:min(meff-1,r_lag)))) % Displaying necessary condition 1 results (1 if satisfied)
+   % disp((StildeNC(meff-1,1:min(meff-1,r_lag)).*cond2(1:min(meff-1,r_lag)))>=(Stilde(meff)*ones(1,min(meff-1,r_lag)))) % Displaying necessary condition 2 results (1 if satisfied)
+   if ~(all((Stilde(meff)*cond1(1:min(meff-1,r_lag)))>=(StildeNC(meff-1,1:min(meff-1,r_lag))))*   ...
+    all((StildeNC(meff-1,1:min(meff-1,r_lag)).*cond2(1:min(meff-1,r_lag)))>=(Stilde(meff)*ones(1,min(meff-1,r_lag))))),
         out_param.exit(2) = true;
    end
    out_param.bound_err=out_param.fudge(m)*Stilde(meff);

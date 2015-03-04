@@ -112,17 +112,17 @@ function [q,out_param] = integralNoPenalty_g(varargin)
 %  Examples
 %
 %   Example 1: 
-%   >> q = integral_g(@(x) x.^2)
+%   >> q = integralNoPenalty_g(@(x) x.^2)
 %   q = 0.3333
 %
 %
 %   Example 2:
-%   >> f = @(x) exp(-x.^2); q = integral_g(f,'a',1,'b',2,'nlo',100,'nhi',10000,'abstol',1e-5,'nmax',1e7)
+%   >> f = @(x) exp(-x.^2); q = integralNoPenalty_g(f,'a',1,'b',2,'nlo',100,'nhi',10000,'abstol',1e-5,'nmax',1e7)
 %   q = 0.1353
 %
 %
 %   Example 3:
-%   >> q = integral_g()
+%   >> q = integralNoPenalty_g()
 %   Warning: Function f must be specified. Now GAIL is giving you a toy example of f(x)=x^2.
 %   >  In ***
 %   q = 0.3333
@@ -141,8 +141,25 @@ function [q,out_param] = integralNoPenalty_g(varargin)
 %   "GAIL: Guaranteed Automatic Integration Library (Version 2.1)" [MATLAB
 %   Software], 2015. Available from http://code.google.com/p/gail/
 %
-%   If you find GAIL helpful in your work, please support us by citing
-%   the above paper and software.
+%   [3] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
+%   Research via Supportable Scientific Software", Journal of Open Research
+%   Software, Volume 2, Number 1, e22, pp. 1-7, 2014.
+%
+%   [4] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable
+%   Mathematical Software" [Course Slides], Illinois Institute of
+%   Technology, Chicago, IL, 2013. Available from
+%   http://code.google.com/p/gail/ 
+%
+%   [5] Daniel S. Katz, Sou-Cheng T. Choi, Hilmar Lapp, Ketan Maheshwari,
+%   Frank Loffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr,
+%   James Hetherington, James Howison, Shel Swenson, Gabrielle D. Allen,
+%   Anne C. Elster, Bruce Berriman, Colin Venters, "Summary of the First
+%   Workshop On Sustainable Software for Science: Practice And Experiences
+%   (WSSSPE1)", Journal of Open Research Software, Volume 2, Number 1, e6,
+%   pp. 1-21, 2014.
+%
+%   If you find GAIL helpful in your work, please support us by citing the
+%   above papers, software, and materials.
 %
 
 
@@ -156,20 +173,19 @@ out_param.exceedbudget=false;   % if the number of points used in the calculatio
 out_param.conechange=false;  % if the cone constant has been changed
 ntrap=out_param.ninit-1; % number of trapezoids
 intervallen=out_param.b-out_param.a; % length of integration interval (>=0)
-steplen=intervallen/ntrap; % length of subinterval
-steplenvec=zeros(10,1); %vector to record subinterval lengths
-hcut=2*intervallen/(ntrap-1); %minimum interval size
-inflatelim=1.5;
-xpts=(out_param.a:steplen:out_param.b)'; % generate ninit uniformly spaced points in [a,b]
-fpts=f(xpts);   % get function values at xpts
-sumf=(fpts(1)+fpts(out_param.ninit))/2+sum(fpts(2:ntrap)); % computes the sum of trapezoidal rule
+Varfp=zeros(10,1); %initialize vector of approximations to Var(f')
+Varfpup=[inf; zeros(10,1)]; %initialize vector of upper bounds to Var(f')
+ii=1; %index
 
-if steplen>0
-    Varfp=zeros(10,1); %initialize vector of approximations to Var(f')
-    Varfpup=[inf; zeros(10,1)]; %initialize vector of upper bounds to Var(f')
-    ii=0; %index
+if intervallen>0   
+    steplen=intervallen/ntrap; % length of subinterval
+    steplenvec=zeros(10,1); %vector to record subinterval lengths
+    hcut=2*intervallen/(ntrap-1); %minimum interval size
+    inflatelim=1.5;
+    xpts=(out_param.a:steplen:out_param.b)'; % generate ninit uniformly spaced points in [a,b]
+    fpts=f(xpts);   % get function values at xpts
+    sumf=(fpts(1)+fpts(out_param.ninit))/2+sum(fpts(2:ntrap)); % computes the sum of trapezoidal rule
     while true
-        ii=ii+1; %increment the counter
         steplenvec(ii)=steplen;
         
         %Compute approximation to Var(f')
@@ -223,7 +239,8 @@ if steplen>0
         xpts = [reshape([xpts(1:ntrap)'; xnew],ntrapnew,1); xpts(ntrap+1)];
         fpts = [reshape([fpts(1:ntrap)'; ynew],ntrapnew,1); fpts(ntrap+1)];
         ntrap=ntrapnew; %new number of trapezoids
-        
+        ii=ii+1; %increment the counter
+
     end
 else
     q = 0;

@@ -28,7 +28,6 @@ hold off;
 legend boxoff
 xlabel('$p$')
 ylabel('$|p-\hat{p}_n|/\varepsilon$')
+gail.save_eps('meanMCBerPaperOutput',out_param.errtype);
 
-
-
-print('-depsc', ['./Figures/',out_param.errtype,'.eps'])
+%print('-depsc', ['./Figures/',out_param.errtype,'.eps'])
