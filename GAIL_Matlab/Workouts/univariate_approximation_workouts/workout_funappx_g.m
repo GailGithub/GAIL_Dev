@@ -89,8 +89,8 @@ npointsratio = sort(npointsratio(:));
 % To just re-display the output, load the .mat file and run this section
 % only
 display(' ')
-display('   Test        # Points          Time Used')
-display(' Function   Local    Global     Local    Global')
+display('   Test      Number of Points       Time Used')
+display(' Function   Local      Global     Local    Global')
 npointslgratio = zeros(1,n);
 timelgratio = zeros(1,n);
 for i=1:n
@@ -108,11 +108,11 @@ if usejava('jvm')
     plot(1:nrep*n,timeratio,'blue',1:nrep*n,ones(nrep*n,1),'red');
     title('Comparison between funappx\_g and funappxglobal\_g')
     ylabel('Time ratio of local/global')
-    xlabel('No. of tests')
+    xlabel('Number of tests')
     subplot(2,1,2);
     plot(1:nrep*n,npointsratio,'blue',1:nrep*n,ones(nrep*n,1),'red');
     ylabel('Points ratio of local/global')
-    xlabel('No. of tests')
+    xlabel('Number of tests')
     
     gail.save_eps('WorkoutFunappxOutput', 'WorkoutFunAppxTest');
 end;
