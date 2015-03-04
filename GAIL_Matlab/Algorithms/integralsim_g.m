@@ -82,7 +82,7 @@ function [q,out_param] = integralsim_g(varargin)
 %   q = 0.3333
 %
 %
-%   See also funappx_g, cubMC_g
+%   See also FUNAPPX_G, MEANMC_G, CUBMC_G, FUNMIN_G
 %
 %   Reference:
 %

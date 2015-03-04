@@ -131,7 +131,7 @@ function [q,out_param] = integral_g(varargin)
 %   q = 0.3333
 %
 %
-%   See also FUNAPPX_G, CUBMC_G
+%   See also FUNAPPX_G, MEANMC_G, CUBMC_G, FUNMIN_G
 %
 %  References
 %
