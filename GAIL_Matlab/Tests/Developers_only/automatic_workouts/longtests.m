@@ -48,15 +48,48 @@ catch
 end
 
 % funappx_g
-if MATLABVERSION >= 8
-    run(ut_workout_funappx_g)
-    run(ut_convtest_funappx_g)
+try
+    Tests = matlab.unittest.TestSuite.fromClass(?ut_workout_funappx_g);
+    results=run(ut_workout_funappx_g)
+    if sum([results.Failed])>0
+        failed=find([results.Failed]>0);
+        %for i=1:size(failed,2)
+        %  fprintf(fid,'%s\n',Tests(failed(i)).Name);
+        %end
+    end
+catch
+    display('Test ut_workout_funappx_g is wrongly coded. We skip it.')
+    %fprintf(fid,'Test ut_workout_funappx_g is wrongly coded. We skip it.\n');
 end
+try
+    Tests = matlab.unittest.TestSuite.fromClass(?ut_convtest_funappx_g);
+    results=run(ut_convtest_funappx_g)
+    if sum([results.Failed])>0
+        failed=find([results.Failed]>0);
+        %for i=1:size(failed,2)
+        %  fprintf(fid,'%s\n',Tests(failed(i)).Name);
+        %end
+    end
+catch
+    display('Test ut_convtest_funappx_g is wrongly coded. We skip it.')
+    %fprintf(fid,'Test ut_convtest_funappx_g is wrongly coded. We skip it.\n');
+end    
+ 
 
 % funmin_g
-if MATLABVERSION >= 8
-    run(ut_workout_funmin_g)
-end
+try
+    Tests = matlab.unittest.TestSuite.fromClass(?ut_workout_funmin_g);
+    results=run(ut_workout_funmin_g)
+    if sum([results.Failed])>0
+        failed=find([results.Failed]>0);
+        %for i=1:size(failed,2)
+        %  fprintf(fid,'%s\n',Tests(failed(i)).Name);
+        %end
+    end
+catch
+    display('Test ut_workout_funmin_g is wrongly coded. We skip it.')
+    %fprintf(fid,'Test ut_workout_funmin_g is wrongly coded. We skip it.\n');
+end    
 
 
 %% Papers
@@ -64,9 +97,19 @@ end
 if usejava('jvm')
     run_handle('ConesPaperFoolFunctions')
 end
-if MATLABVERSION >= 8
-    run(ut_ConesPaper)
-end
+try
+    Tests = matlab.unittest.TestSuite.fromClass(?ut_ConesPaper);
+    results=run(ut_ConesPaper)
+    if sum([results.Failed])>0
+        failed=find([results.Failed]>0);
+        %for i=1:size(failed,2)
+        %  fprintf(fid,'%s\n',Tests(failed(i)).Name);
+        %end
+    end
+catch
+    display('Test ut_ConesPaper is wrongly coded. We skip it.')
+    %fprintf(fid,'Test ut_ConesPaper is wrongly coded. We skip it.\n');
+end  
 
 % MCQMC paper
 run_handle('RunTestcubMConGeoAsianCall')
@@ -113,8 +156,6 @@ catch
     display('Test for Papers/UniFunMin is wrongly coded. We skip it.')
     %fprintf(fid,'Test for Papers/UniFunMin is wrongly coded. We skip it.\n');
 end
-
-
 
 %% doctests and unit tests for deprecated algos
 doctest funappxtau_g
