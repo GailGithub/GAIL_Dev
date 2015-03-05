@@ -21,8 +21,8 @@ try
         %end
     end
 catch
-    display('Test ut_meanMC_g is wrongly coded. We skip it.')
-    %fprintf(fid,'Test ut_meanMC_g is wrongly coded. We skip it.\n');
+    display('Error: Test ut_meanMC_g is wrongly coded. We skip it.')
+    %fprintf(fid,'Error: Test ut_meanMC_g is wrongly coded. We skip it.\n');
 end
 
 % meanMCBer_g
@@ -43,8 +43,8 @@ try
         %end
     end
 catch
-    display('Test ut_workout_integral_g is wrongly coded. We skip it.')
-    %fprintf(fid,'Test ut_workout_integral_g is wrongly coded. We skip it.\n');
+    display('Error: Test ut_workout_integral_g is wrongly coded. We skip it.')
+    %fprintf(fid,'Error: Test ut_workout_integral_g is wrongly coded. We skip it.\n');
 end
 
 % funappx_g
@@ -58,8 +58,8 @@ try
         %end
     end
 catch
-    display('Test ut_workout_funappx_g is wrongly coded. We skip it.')
-    %fprintf(fid,'Test ut_workout_funappx_g is wrongly coded. We skip it.\n');
+    display('Error: Test ut_workout_funappx_g is wrongly coded. We skip it.')
+    %fprintf(fid,'Error: Test ut_workout_funappx_g is wrongly coded. We skip it.\n');
 end
 try
     Tests = matlab.unittest.TestSuite.fromClass(?ut_convtest_funappx_g);
@@ -71,8 +71,8 @@ try
         %end
     end
 catch
-    display('Test ut_convtest_funappx_g is wrongly coded. We skip it.')
-    %fprintf(fid,'Test ut_convtest_funappx_g is wrongly coded. We skip it.\n');
+    display('Error: Test ut_convtest_funappx_g is wrongly coded. We skip it.')
+    %fprintf(fid,'Error: Test ut_convtest_funappx_g is wrongly coded. We skip it.\n');
 end    
  
 
@@ -87,8 +87,8 @@ try
         %end
     end
 catch
-    display('Test ut_workout_funmin_g is wrongly coded. We skip it.')
-    %fprintf(fid,'Test ut_workout_funmin_g is wrongly coded. We skip it.\n');
+    display('Error: Test ut_workout_funmin_g is wrongly coded. We skip it.')
+    %fprintf(fid,'Error: Test ut_workout_funmin_g is wrongly coded. We skip it.\n');
 end    
 
 
@@ -107,8 +107,8 @@ try
         %end
     end
 catch
-    display('Test ut_ConesPaper is wrongly coded. We skip it.')
-    %fprintf(fid,'Test ut_ConesPaper is wrongly coded. We skip it.\n');
+    display('Error: Test ut_ConesPaper is wrongly coded. We skip it.')
+    %fprintf(fid,'Error: Test ut_ConesPaper is wrongly coded. We skip it.\n');
 end  
 
 % MCQMC paper
@@ -130,8 +130,8 @@ try
         %end
     end
 catch
-    display('Test ut_meanMCBer_g is wrongly coded. We skip it.')
-    %fprintf(fid,'Test ut_meanMCBer_g is wrongly coded. We skip it.\n');
+    display('Error: Test ut_meanMCBer_g is wrongly coded. We skip it.')
+    %fprintf(fid,'Error: Test ut_meanMCBer_g is wrongly coded. We skip it.\n');
 end
 
 % cubSobol_g paper
@@ -153,8 +153,8 @@ try
         run(ut_thesis_funmin01)
     end
 catch
-    display('Test for Papers/UniFunMin is wrongly coded. We skip it.')
-    %fprintf(fid,'Test for Papers/UniFunMin is wrongly coded. We skip it.\n');
+    display('Error: Test for Papers/UniFunMin is wrongly coded. We skip it.')
+    %fprintf(fid,'Error: Test for Papers/UniFunMin is wrongly coded. We skip it.\n');
 end
 
 %% doctests and unit tests for deprecated algos
@@ -176,7 +176,7 @@ try
         % end
     end
 catch
-    display('Test ut_funappx01_g is wrongly coded. We skip it.')
+    display('Error: Test ut_funappx01_g is wrongly coded. We skip it.')
 end
 
 warning('off','MATLAB:integral01_g:peaky')
@@ -190,7 +190,7 @@ try
         %end
     end
 catch
-    display('Test ut_integral01_g is wrongly coded. We skip it.')
+    display('Error: Test ut_integral01_g is wrongly coded. We skip it.')
 end
 warning('on','MATLAB:integral01_g:peaky')
 
@@ -204,7 +204,7 @@ try
         %end
     end
 catch
-    display('Test ut_funmin01_g is wrongly coded. We skip it.')
+    display('Error: Test ut_funmin01_g is wrongly coded. We skip it.')
 end
 
 %   try
@@ -217,7 +217,7 @@ end
 %       end
 %     end
 %   catch
-%     display('Test ut_integralNoPenalty_g is wrongly coded. We skip it.')
+%     display('Error: Test ut_integralNoPenalty_g is wrongly coded. We skip it.')
 %   end
 
 time=toc;
