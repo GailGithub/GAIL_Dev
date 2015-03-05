@@ -33,7 +33,19 @@ doctest dt_cubMC_g
 run_handle('Test_cubMC_g')
 
 % integral_g
-run('ut_workout_integral_g')
+try
+    Tests = matlab.unittest.TestSuite.fromClass(?ut_workout_integral_g);
+    results=run(ut_workout_integral_g)
+    if sum([results.Failed])>0
+        failed=find([results.Failed]>0);
+        %for i=1:size(failed,2)
+        %  fprintf(fid,'%s\n',Tests(failed(i)).Name);
+        %end
+    end
+catch
+    display('Test ut_workout_integral_g is wrongly coded. We skip it.')
+    %fprintf(fid,'Test ut_workout_integral_g is wrongly coded. We skip it.\n');
+end
 
 % funappx_g
 if MATLABVERSION >= 8
