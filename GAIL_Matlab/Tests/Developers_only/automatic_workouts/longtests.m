@@ -11,7 +11,19 @@ format short
 %% Workouts
 % meanMC_g
 doctest dt_meanMC_g_TrafficModel
-run_handle('Test_meanMC_g')
+try
+    Tests = matlab.unittest.TestSuite.fromClass(?ut_meanMC_g);
+    results=run(ut_meanMC_g)
+    if sum([results.Failed])>0
+        failed=find([results.Failed]>0);
+        %for i=1:size(failed,2)
+        %  fprintf(fid,'%s\n',Tests(failed(i)).Name);
+        %end
+    end
+catch
+    display('Test ut_meanMC_g is wrongly coded. We skip it.')
+    %fprintf(fid,'Test ut_meanMC_g is wrongly coded. We skip it.\n');
+end
 
 % meanMCBer_g
  
@@ -78,19 +90,6 @@ catch
     %fprintf(fid,'Test for Papers/UniFunMin is wrongly coded. We skip it.\n');
 end
 
-try
-    Tests = matlab.unittest.TestSuite.fromClass(?ut_meanMC_g);
-    results=run(ut_meanMC_g)
-    if sum([results.Failed])>0
-        failed=find([results.Failed]>0);
-        %for i=1:size(failed,2)
-        %  fprintf(fid,'%s\n',Tests(failed(i)).Name);
-        %end
-    end
-catch
-    display('Test ut_meanMC_g is wrongly coded. We skip it.')
-    %fprintf(fid,'Test ut_meanMC_g is wrongly coded. We skip it.\n');
-end
 
 try
     Tests = matlab.unittest.TestSuite.fromClass(?ut_meanMCBer_g);
