@@ -65,6 +65,19 @@ run_handle('RunTestcubMConGaussiand1')
 % meanMCBer_g paper
 %run_handle('PlotmeanMCBernoulli_gResults')
 run_handle('PlotRatioHoeffCLT')
+try
+    Tests = matlab.unittest.TestSuite.fromClass(?ut_meanMCBer_g);
+    results=run(ut_meanMCBer_g)
+    if sum([results.Failed])>0
+        failed=find([results.Failed]>0);
+        %for i=1:size(failed,2)
+        %  fprintf(fid,'%s\n',Tests(failed(i)).Name);
+        %end
+    end
+catch
+    display('Test ut_meanMCBer_g is wrongly coded. We skip it.')
+    %fprintf(fid,'Test ut_meanMCBer_g is wrongly coded. We skip it.\n');
+end
 
 % cubSobol_g paper
 run_handle('RunTestCubatureonGeoAsianCallSobol');
@@ -73,7 +86,6 @@ run_handle('RunTestCubatureonKeisterSobol')
 % cubLattice_g paper
 run_handle('RunTestCubatureonGeoAsianCallLattice');
 run_handle('RunTestCubatureonKeisterLattice');
-
 
 % Function minimization thesis
 try
@@ -91,19 +103,6 @@ catch
 end
 
 
-try
-    Tests = matlab.unittest.TestSuite.fromClass(?ut_meanMCBer_g);
-    results=run(ut_meanMCBer_g)
-    if sum([results.Failed])>0
-        failed=find([results.Failed]>0);
-        %for i=1:size(failed,2)
-        %  fprintf(fid,'%s\n',Tests(failed(i)).Name);
-        %end
-    end
-catch
-    display('Test ut_meanMCBer_g is wrongly coded. We skip it.')
-    %fprintf(fid,'Test ut_meanMCBer_g is wrongly coded. We skip it.\n');
-end
 
 %% doctests and unit tests for deprecated algos
 doctest funappxtau_g
