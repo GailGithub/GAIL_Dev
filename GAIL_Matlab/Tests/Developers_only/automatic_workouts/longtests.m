@@ -14,10 +14,7 @@ doctest dt_meanMC_g_TrafficModel
 run_handle('Test_meanMC_g')
 
 % meanMCBer_g
-if MATLABVERSION >= 8
-    run(ut_meanMCBer_g)
-end
-
+ 
 % cubMC_g
 format short
 doctest dt_cubMC_g
@@ -54,7 +51,6 @@ run_handle('RunTestcubMConGaussiand1')
 %run_handle('DisplayTestResults_BlacknColor')
 
 % meanMCBer_g paper
-run_handle('Test_meanMCBer_g')
 %run_handle('PlotmeanMCBernoulli_gResults')
 run_handle('PlotRatioHoeffCLT')
 
