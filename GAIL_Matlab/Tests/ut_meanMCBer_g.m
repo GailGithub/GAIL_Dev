@@ -1,4 +1,4 @@
-%UT_MEANMCBERNOULLI_G  unit test for meanMCBernoulli_g
+%UT_MEANMCBERNOULLI_G  unit tests for meanMCBer_g and Test_meanMCBer_g 
 classdef ut_meanMCBer_g < matlab.unittest.TestCase
     
     methods(Test)

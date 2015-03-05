@@ -32,7 +32,7 @@ info.c=1;
 info.sign=1; %sign of the peaks
 
 %% Ways to call a function
-fname='quadgk' %insert the automatic algorithm that you want to call
+fname='quad' %insert the automatic algorithm that you want to call
 switch fname %give the calling sequence
     case 'quadgk'
         callautoalg = @(fun,lower,upper) quadgk(fun,lower,upper,'AbsTol',1e-14);

@@ -1,4 +1,4 @@
-%UT_MEANMC_G  unit test for meanMC_g
+%UT_MEANMC_G  unit tests for meanMC_g and Test_meanMC_g (workouts)
 
 classdef ut_meanMC_g < matlab.unittest.TestCase
   
