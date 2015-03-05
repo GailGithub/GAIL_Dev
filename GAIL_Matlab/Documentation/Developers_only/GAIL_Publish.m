@@ -29,9 +29,8 @@ if usejava('jvm')
         system(cat_cmd);
 %        publish(gailug_filename,'pdf');
         publish(gailug_filename,'latex');
-        set(0, 'DefaultFigureVisible', oldStatus)
     end
-    
+    set(0, 'DefaultFigureVisible', oldStatus)
     builddocsearchdb(strcat(GAILPATH,'Documentation',PATHNAMESEPARATOR,'html'));
     fprintf('\nYou can go to help documentation ---> Supplemental Software to learn how to use GAIL.\n');
    
