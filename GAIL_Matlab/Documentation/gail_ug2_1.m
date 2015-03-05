@@ -516,7 +516,7 @@ f=@(x) (x-0.3).^2+1;
 %
 % *Input Arguments*
 %
-|
+%
 %
 % * f --- |input function|
 %
