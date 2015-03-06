@@ -190,9 +190,9 @@ int main()
 	}  
 	auto num = find(uFcnName.cbegin(), uFcnName.cend(), word);    
     if (std::find(fcnList.begin(), fcnList.end(), word) != fcnList.end()) {
-       ofs << "% <html>\n% <a href=\"http://www.mathworks.com/help/matlab/ref/interp1.html\">" << fcnName[num - uFcnName.begin()] << "</a>\n% </html>\n%\n";
+      ofs << "% <html>\n% <a href=\"http://www.mathworks.com/help/matlab/ref/interp1.html\">" << "interp1" << "</a>\n% </html>\n%\n"; 
     } else{
-    	ofs << "% <html>\n% <a href=\"help_" << fcnName[num - uFcnName.begin()] << ".html\">" << fcnName[num - uFcnName.begin()] << "</a>\n% </html>\n%\n";
+      ofs << "% <html>\n% <a href=\"help_" << fcnName[num - uFcnName.begin()] << ".html\">" << fcnName[num - uFcnName.begin()] << "</a>\n% </html>\n%\n";
     }
   }
       
