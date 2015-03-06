@@ -3,53 +3,59 @@ function [q,out_param] = cubLattice_g(varargin)
 %over a d-dimensional region to integrate within a specified generalized error 
 %tolerance with guarantees under Fourier coefficients cone decay assumptions.
 %
-%   [q,out_param] = CUBLATTICE_G(f,d) estimates the integral of f over the
-%   d-dimensional region with an error guaranteed not to be greater than 
-%   a specific generalized error tolerance, 
-%   tolfun:=max(abstol,reltol*|integral(f)|). The generalized tolerance function can
-%   aslo be cosen as tolfun:=theta*abstol+(1-theta)*reltol*|integral(f)| 
-%   where theta is another input parameter. Input f is a function handle. f should
-%   accept an n x d matrix input, where d is the dimension of the hypercube,
-%   and n is the number of points being evaluated simultaneously. The input d
-%   is the dimension in which the function f is defined. Given the
-%   construction of our Lattices, d must be a positive integer with 1<=d<=250.
+%   [q,out_param] = CUBLATTICE_G(f,hyperbox) estimates the integral of f
+%   over the d-dimensional region described by hyperbox, and with an error
+%   guaranteed not to be greater than a specific generalized error tolerance,
+%   tolfun:=max(abstol,reltol*| integral(f) |). Input f is a function handle. f should
+%   accept an n x d matrix input, where d is the dimension and n is the 
+%   number of points being evaluated simultaneously. The input hyperbox is
+%   a 2 x d matrix, where the first row corresponds to the lower limits 
+%   and the second row corresponds to the upper limits of the integral.
+%   Given the construction of our Lattices, d must be a positive integer
+%   with 1<=d<=250.
 % 
-%   q = CUBLATTICE_G(f,d,abstol,reltol,measure,shift,mmin,mmax,fudge,transform,toltype,theta)
-%   estimates the integral of f over a d-dimensional region. The answer
+%   q = CUBLATTICE_G(f,hyperbox,measure,abstol,reltol)
+%   estimates the integral of f over the hyperbox. The answer
 %   is given within the generalized error tolerance tolfun. All parameters
 %   should be input in the order specified above. If an input is not specified,
 %   the default value is used. Note that if an input is not specified,
-%   the remaining tail cannot be specified either.
+%   the remaining tail cannot be specified either. Inputs f and hyperbox 
+%   are required. The other optional inputs are in the correct order:
+%   measure,abstol,reltol,shift,mmin,mmax,fudge,transform,toltype and
+%   theta.
 % 
-%   q = CUBLATTICE_G(f,d,'abstol',abstol,'reltol',reltol,'measure',measure,'shift',shift,'mmin',mmin,'mmax',mmax,'fudge',fudge,'transform',transform,'toltype',toltype,'theta',theta)
-%   estimates the integral of f over a d-dimensional region. The answer
+%   q = CUBLATTICE_G(f,hyperbox,'measure',measure,'abstol',abstol,'reltol',reltol)
+%   estimates the integral of f over the hyperbox. The answer
 %   is given within the generalized error tolerance tolfun. All the field-value
-%   pairs are optional and can be supplied with any order. If an input is not
+%   pairs are optional and can be supplied in any order. If an input is not
 %   specified, the default value is used.
 % 
-%   q = CUBLATTICE_G(f,d,in_param) estimates the integral of f over the
-%   d-dimensional region. The answer is given within the generalized error 
-%   tolerance tolfun.
+%   q = CUBLATTICE_G(f,hyperbox,in_param) estimates the integral of f over the
+%   hyperbox. The answer is given within the generalized error tolerance tolfun.
 % 
 %   Input Arguments
 %
-%     f --- the integrand whose input should be a matrix nxd where n is the
-%     number of data points and d the dimension. By default it is the
-%     quadratic function.
+%     f --- the integrand whose input should be a matrix n x d where n is
+%     the number of data points and d the dimension, which cannot be
+%     greater than 250. By default f is f=@ x.^2.
+%
+%     hyperbox --- the integration region defined by its bounds. It must be
+%     a 2 x d matrix, where the first row corresponds to the lower limits 
+%     and the second row corresponds to the upper limits of the integral.
+%     The default value is [0;1].
 % 
-%     d --- dimension of domain on which f is defined. d must be a positive
-%     integer 1<=d<=250. By default it is 1.
-% 
-%     in_param.abstol --- the absolute error tolerance, abstol>0. By 
+%     in_param.abstol --- the absolute error tolerance, abstol>=0. By 
 %     default it is 1e-4.
 %
 %     in_param.reltol --- the relative error tolerance, which should be
 %     in [0,1]. Default value is 1e-1.
 % 
 %     in_param.measure --- for f(x)*mu(dx), we can define mu(dx) to be the
-%     measure of a uniformly distributed random variable in [0,1)^d
-%     or normally distributed with covariance matrix I_d. By default it 
-%     is 'uniform'. The only possible values are 'uniform' or 'normal'.
+%     measure of a uniformly distributed random variable in they hyperbox
+%     or normally distributed with covariance matrix I_d. The only possible
+%     values are 'uniform' or 'normal'. For 'uniform', the hyperbox must be
+%     finite while for 'normal', the hyperbox can only be defined as 
+%     (-Inf,Inf)^d. By default it is 'uniform'.
 % 
 %   Optional Input Arguments
 % 
@@ -69,46 +75,52 @@ function [q,out_param] = cubLattice_g(varargin)
 %     in_param.fudge --- the positive function multiplying the finite 
 %     sum of Fast Fourier coefficients specified in the cone of functions.
 %     For more information about this parameter, refer to the references.
-%     By default it is @(x) 5*2.^-x.
+%     By default it is @(m) 5*2.^-m.
 % 
-%     in_param.transform --- the algorithm is defined for continuous periodic functions. If the
-%     input function f is not, there are 5 types of transform to periodize it
-%     without modifying the result. By default it is Baker. The options:
-%       'id' : no transformation. Choice by default.
+%     in_param.transform --- the algorithm is defined for continuous
+%     periodic functions. If the input function f is not, there are 5
+%     types of transform to periodize it without modifying the result. 
+%     By default it is the Baker's transform. The options are:
+%       'id' : no transformation.
 %       'Baker' : Baker's transform or tent map in each coordinate. Preserving
-%                 only continuity but simple to compute.
+%                 only continuity but simple to compute. Chosen by default.
 %       'C0' : polynomial transformation only preserving continuity.
 %       'C1' : polynomial transformation preserving the first derivative.
-%       'C1sin' : Sidi transform with sinus preserving the first derivative.
+%       'C1sin' : Sidi's transform with sine, preserving the first derivative.
 %                 This is in general a better option than 'C1'.
 %
-%     in_param.toltype --- this is the tolerance function. There are two
-%     choices, 'max' (chosen by default) which takes
-%     max(abstol,reltol*|integral(f)|) and 'comb' which is a linear combination
-%     theta*abstol+(1-theta)*reltol*|integral(f)|. Theta is another 
-%     parameter that can be specified (see below). For pure absolute error,
-%     either choose 'max' and set reltol=0 or choose 'comb' and set
-%     theta=1.
+%     in_param.toltype --- this is the generalized tolerance function.
+%     There are two choices, 'max' which takes
+%     max(abstol,reltol*| integral(f) |) and 'comb' which is the linear combination
+%     theta*abstol+(1-theta)*reltol*| integral(f) |. Theta is another 
+%     parameter to be specified with 'comb'(see below). For pure absolute
+%     error, either choose 'max' and set reltol = 0 or choose 'comb' and set
+%     theta = 1. For pure relative error, either choose 'max' and set 
+%     abstol = 0 or choose 'comb' and set theta = 0. Note that with 'max',
+%     the user can not input abstol = reltol = 0 and with 'comb', if theta = 1
+%     abstol con not be 0 while if theta = 0, reltol can not be 0.
+%     By default toltype is 'max'.
 % 
 %     in_param.theta --- this input is parametrizing the toltype 
 %     'comb'. Thus, it is only afecting when the toltype
 %     chosen is 'comb'. It stablishes the linear combination weight
 %     between the absolute and relative tolerances
-%     theta*abstol+(1-theta)*reltol*|integral(f)|. Note that for theta=1, 
-%     we have pure absolute tolerance while for theta=0, we have pure 
+%     theta*abstol+(1-theta)*reltol*| integral(f) |. Note that for theta = 1, 
+%     we have pure absolute tolerance while for theta = 0, we have pure 
 %     relative tolerance. By default, theta=1.
 %
 %   Output Arguments
 %
 %     q --- the estimated value of the integral.
 % 
-%     out_param.n --- number of points used when calling cubLattice_g for f.
+%     out_param.n --- number of Rank-1 lattice points used for comupting
+%     the integral of f.
 % 
 %     out_param.bound_err --- predicted bound on the error based on the cone
-%     condition. If the function lies in the cone, the real error should be
-%     smaller than this predicted error.
+%     condition. If the function lies in the cone, the real error will be
+%     smaller than generalized tolerance.
 % 
-%     out_param.time --- time elapsed in seconds when calling cubLattice_g for f.
+%     out_param.time --- time elapsed in seconds when calling cubLattice_g.
 %
 %     out_param.exitflag --- this is a binary vector stating whether 
 %     warning flags arise. These flags tell about which conditions make the
@@ -144,7 +156,7 @@ function [q,out_param] = cubLattice_g(varargin)
 % Example 1:
 % Estimate the integral with integrand f(x) = x1.*x2 in the interval [0,1)^2:
 % 
-% >> f = @(x) prod(x,2); d = 2; q = cubLattice_g(f,d,1e-5,1e-1,'uniform','transform','C1sin')
+% >> f = @(x) prod(x,2); hyperbox = [zeros(1,2);ones(1,2)]; q = cubLattice_g(f,hyperbox,'uniform',1e-5,1e-1,'transform','C1sin')
 % q = 0.25***
 % 
 % 
@@ -152,7 +164,7 @@ function [q,out_param] = cubLattice_g(varargin)
 % Estimate the integral with integrand f(x) = x1.^2.*x2.^2.*x3.^2+0.11
 % in the interval R^3 where x1, x2 and x3 are normally distributed:
 % 
-% >> f = @(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2+0.11; d = 3; q = cubLattice_g(f,d,1e-3,1e-3,'normal','transform','C1sin')
+% >> f = @(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2+0.11; hyperbox = [zeros(1,3);ones(1,3)]; q = cubLattice_g(f,hyperbox,'normal',1e-3,1e-3,'transform','C1sin')
 % q = 1.1***
 % 
 % 
@@ -160,7 +172,7 @@ function [q,out_param] = cubLattice_g(varargin)
 % Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) in the
 % interval [0,1)^2:
 % 
-% >> f = @(x) exp(-x(:,1).^2-x(:,2).^2); d = 2; q = cubLattice_g(f,d,1e-3,1e-1,'uniform','transform','C1')
+% >> f = @(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [zeros(1,2);ones(1,2)]; q = cubLattice_g(f,hyperbox,'uniform',1e-3,1e-1,'transform','C1')
 % q = 0.55***
 %
 %
@@ -168,7 +180,7 @@ function [q,out_param] = cubLattice_g(varargin)
 % Estimate the price of an European call with S0=100, K=100, r=sigma^2/2,
 % sigma=0.05 and T=1.
 % 
-% >> f = @(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); d = 1; q = cubLattice_g(f,d,1e-4,1e-1,'normal','fudge',@(m) 2.^-(2*m),'transform','C1sin')
+% >> f = @(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); hyperbox = [zeros(1,1);ones(1,1)]; q = cubLattice_g(f,hyperbox,'normal',1e-4,1e-1,'fudge',@(m) 2.^-(2*m),'transform','C1sin')
 % q = 2.05***
 %
 %
@@ -176,7 +188,7 @@ function [q,out_param] = cubLattice_g(varargin)
 % Estimate the integral with integrand f(x) = 8*x1.*x2.*x3.*x4.*x5 in the interval
 % [0,1)^5 with pure absolute error 1e-5.
 % 
-% >> f = @(x) 8*prod(x,2); d = 5; q = cubLattice_g(f,d,1e-5,0)
+% >> f = @(x) 8*prod(x,2); hyperbox = [zeros(1,5);ones(1,5)]; q = cubLattice_g(f,hyperbox,'uniform',1e-5,0)
 % q = 0.25***
 %
 %
@@ -214,13 +226,15 @@ function [q,out_param] = cubLattice_g(varargin)
 
 tic
 %% Check and initialize parameters
-[f,out_param] = cubLattice_g_param(varargin{:});
+[f,hyperbox,out_param] = cubLattice_g_param(varargin{:});
 
 if strcmp(out_param.measure,'normal')
    f=@(x) f(gail.stdnorminv(x));
 elseif strcmp(out_param.measure,'uniform')
-   f=@(x) f(x); % a + (b-a)x = u
+   Cnorm = prod(hyperbox(2,:)-hyperbox(1,:));
+   f=@(x) Cnorm*f(bsxfun(@plus,hyperbox(1,:),bsxfun(@times,(hyperbox(2,:)-hyperbox(1,:)),x))); % a + (b-a)x = u
 end
+
 if strcmp(out_param.transform,'Baker')
     f=@(x) f(1-2*abs(x-1/2)); % Baker's transform
 elseif strcmp(out_param.transform,'C0')
@@ -420,13 +434,13 @@ end
 
 
 %% Parsing for the input of cubLattice_g
-function [f, out_param] = cubLattice_g_param(varargin)
+function [f,hyperbox, out_param] = cubLattice_g_param(varargin)
 
 % Default parameter values
-default.d = 1;
+default.hyperbox = [zeros(1,1);ones(1,1)];% default hyperbox
+default.measure  = 'uniform';
 default.abstol  = 1e-4;
 default.reltol  = 1e-1;
-default.measure  = 'uniform';
 default.shift  = rand;
 default.mmin  = 10;
 default.mmax  = 24;
@@ -438,10 +452,10 @@ default.theta  = 1;
 if numel(varargin)<2
     help cubLattice_g
     warning('MATLAB:cubLattice_g:fdnotgiven',...
-        'At least, function f and dimension d need to be specified. Example for f(x)=x^2:')
+        'At least, function f and hyperbox need to be specified. Example for f(x)=x^2:')
     f = @(x) x.^2;
     out_param.f=f;
-    out_param.d=1;
+    hyperbox = default.hyperbox;
 else
     f = varargin{1};
     if ~gail.isfcn(f)
@@ -449,18 +463,16 @@ else
             'The given input f was not a function. Example for f(x)=x^2:')
         f = @(x) x.^2;
         out_param.f=f;
-        out_param.d=1;
+        hyperbox = default.hyperbox;
     else
         out_param.f=f;
-        d = varargin{2};
-        if ~isnumeric(d) || ~gail.isposint(d) || ~(d<251)
-            warning('MATLAB:cubLattice_g:dnotposint',...
-                'The dimension d must be a positive integer less than 251. Example for f(x)=x^2:')
+        hyperbox = varargin{2};
+        if ~isnumeric(hyperbox) || ~(size(hyperbox,1)==2) || ~(size(hyperbox,2)<251)
+            warning('MATLAB:cubLattice_g:cubLattice_g:hyperbox_error1',...
+                'The hyperbox must be a real matrix of size 2xd where d can not be greater than 250. Example for f(x)=x^2:')
             f = @(x) x.^2;
             out_param.f=f;
-            out_param.d=1;
-        else
-            out_param.d=d;
+            hyperbox = default.hyperbox;
         end
     end
 end
@@ -486,9 +498,9 @@ else
 end
 
 if ~validvarargin
+    out_param.measure = default.measure;
     out_param.abstol = default.abstol;
     out_param.reltol = default.reltol;
-    out_param.measure = default.measure;
     out_param.shift = default.shift;
     out_param.mmin = default.mmin;
     out_param.mmax = default.mmax;  
@@ -499,12 +511,12 @@ if ~validvarargin
 else
     p = inputParser;
     addRequired(p,'f',@gail.isfcn);
-    addRequired(p,'d',@isnumeric);
+    addRequired(p,'hyperbox',@isnumeric);
     if isnumeric(in3) || ischar(in3)
-        addOptional(p,'abstol',default.abstol,@isnumeric);
-        addOptional(p,'reltol',default.reltol,@isnumeric);
         addOptional(p,'measure',default.measure,...
             @(x) any(validatestring(x, {'uniform','normal'})));
+        addOptional(p,'abstol',default.abstol,@isnumeric);
+        addOptional(p,'reltol',default.reltol,@isnumeric);
         addOptional(p,'shift',default.shift,@isnumeric);
         addOptional(p,'mmin',default.mmin,@isnumeric);
         addOptional(p,'mmax',default.mmax,@isnumeric);
@@ -519,10 +531,10 @@ else
             p.StructExpand = true;
             p.KeepUnmatched = true;
         end
-        f_addParamVal(p,'abstol',default.abstol,@isnumeric);
-        f_addParamVal(p,'reltol',default.reltol,@isnumeric);
         f_addParamVal(p,'measure',default.measure,...
             @(x) any(validatestring(x, {'uniform','normal'})));
+        f_addParamVal(p,'abstol',default.abstol,@isnumeric);
+        f_addParamVal(p,'reltol',default.reltol,@isnumeric);
         f_addParamVal(p,'shift',default.shift,@isnumeric);
         f_addParamVal(p,'mmin',default.mmin,@isnumeric);
         f_addParamVal(p,'mmax',default.mmax,@isnumeric);
@@ -533,9 +545,18 @@ else
             @(x) any(validatestring(x, {'max','comb'})));
         f_addParamVal(p,'theta',default.theta,@isnumeric);
     end
-    parse(p,f,d,varargin{3:end});
+    parse(p,f,hyperbox,varargin{3:end});
     out_param = p.Results;
 end;
+
+[two, out_param.d]=size(hyperbox); %hyperbox should be 2 x dimension
+if ~isnumeric(hyperbox) || ~(size(hyperbox,1)==2) || ~(size(hyperbox,2)<251)
+    warning('MATLAB:cubLattice_g:hyperbox_error2',...
+        'The hyperbox must be a real matrix of size 2xd where d can not be greater than 250. Example for f(x)=x^2:')
+    f = @(x) x.^2;
+    out_param.f=f;
+    hyperbox = default.hyperbox;
+end
 
 % Force absolute tolerance greater than 0
 if (out_param.abstol <= 0 )
@@ -601,5 +622,4 @@ if (out_param.theta < 0) || (out_param.theta > 1)
             ' Using default theta ' num2str(default.theta)])
     out_param.theta = default.theta;
 end
-
 end
