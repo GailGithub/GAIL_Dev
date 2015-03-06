@@ -58,6 +58,6 @@ axes('Position',get(ax1,'Position'),...
            'XLim',[0 1],'Linewidth',plotTest.linewidth);
 %xlabel('Probability')
 line(probaug,timeaug,'color','m','linewidth',plotTest.linewidth)
-gail.save_eps('MCQMCPaperOutput/Results',plotTest.name);
+gail.save_eps('MCQMCPaper2012Output/Results',plotTest.name);
 
 
