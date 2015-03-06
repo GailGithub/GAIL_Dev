@@ -182,10 +182,7 @@ int main()
       }
       ofs << "%% See Also\n%" << endl;
         
-      string url_pre = "\"help_";
-      if (std::find(fcnList.begin(), fcnList.end(), uFcnName) != fcnList.end()) {
-        url_pre = "\"http://www.mathworks.com/help/matlab/ref/"
-      }
+
 
       auto see = find_if(++guarantee, fcnDoc.cend(), [](const string &a) { return a.size() >= 12 && a.substr(4,8) == "See also"; });
       istringstream sa((*see).substr(13));
@@ -194,7 +191,11 @@ int main()
 	  word.erase(word.end() - 1);
 	}
 	auto num = find(uFcnName.cbegin(), uFcnName.cend(), word);
-    ofs << "% <html>\n% <a href=" + url_pre  << fcnName[num - uFcnName.begin()] << ".html\">" << fcnName[num - uFcnName.begin()] << "</a>\n% </html>\n%\n";
+    string url_pre = "\"help_";
+    if (std::find(fcnList.begin(), fcnList.end(), fcnName[num - uFcnName.begin()]) != fcnList.end()) {
+      url_pre = "\"http://www.mathworks.com/help/matlab/ref/";
+    }
+    ofs << "% <html>\n% <a href=" + url_pre << fcnName[num - uFcnName.begin()] << ".html\">" << fcnName[num - uFcnName.begin()] << "</a>\n% </html>\n%\n";
 
       }
       ofs << "%% References" << endl;
