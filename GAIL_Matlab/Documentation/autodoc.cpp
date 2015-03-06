@@ -183,24 +183,25 @@ int main()
       ofs << "%% See Also\n%" << endl;
 
       auto see = find_if(++guarantee, fcnDoc.cend(), [](const string &a) { return a.size() >= 12 && a.substr(4,8) == "See also"; });
-      istringstream sa((*see).substr(13));
+      istringstream sa(see->substr(13));
       while (sa >> word) {
         if (*(word.end() - 1) == ',') {
 	  word.erase(word.end() - 1);
 	}  
 	auto num = find(uFcnName.cbegin(), uFcnName.cend(), word);    
-    if (std::find(fcnList.begin(), fcnList.end(), word) != fcnList.end()) {
-      ofs << "% <html>\n% <a href=\"http://www.mathworks.com/help/matlab/ref/interp1.html\">" << "interp1" << "</a>\n% </html>\n%\n"; 
-    } else{
-      ofs << "% <html>\n% <a href=\"help_" << fcnName[num - uFcnName.begin()] << ".html\">" << fcnName[num - uFcnName.begin()] << "</a>\n% </html>\n%\n";
-    }
-  }
+	if (num == uFcnName.cend()) {
+	  auto lword = lowerString(word);
+	  ofs << "% <html>\n% <a href=\"http://www.mathworks.com/help/matlab/ref/" << lword << ".html\">" << lword << "</a>\n% </html>\n%\n"; 
+	} else {
+	  ofs << "% <html>\n% <a href=\"help_" << fcnName[num - uFcnName.begin()] << ".html\">" << fcnName[num - uFcnName.begin()] << "</a>\n% </html>\n%\n";
+	}
+      }
       
       ofs << "%% References" << endl;
       auto ref = find(++see, fcnDoc.cend(), "%  References");
       for (auto iter = ++ref; iter != fcnDoc.cend(); ++iter) {
-	if ((*iter).size() > 4) {
-	  ofs << "% " << (*iter).substr(4) << "\n";
+	if (iter->size() > 4) {
+	  ofs << "% " << iter->substr(4) << "\n";
 	} else {
 	ofs << *iter << "\n";
 	}
