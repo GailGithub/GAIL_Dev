@@ -31,7 +31,7 @@
 %   FoolAutomaticAlgorithms        
 %   snooper
 %   peakyfunction
-%   MCQMC2012Figs 
+%   MCQMC2012Figs                 
 
 
 
