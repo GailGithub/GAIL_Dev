@@ -1,7 +1,8 @@
 % Make some plots for MCQMC 2012 paper
 %% Garbage collection
+function MCQMC2012Figs()
 set(0,'defaultaxesfontsize',20,'defaulttextfontsize',20)
-clearvars, close all
+%clearvars, close all
 format compact
 
 %% Set fixed constants
@@ -102,7 +103,8 @@ xlabel('{\it N}_{CLT}')
 ylabel('Cost Ratios')
 %ylabel('{\it N_{\mu}}/{\it N}_{CLT}')
 axis([1e4 1e9 1 100])
-print -deps 'MCSampleSizes.eps'
+gail.save_eps('MCQMCPaperOutput/Results','MCSampleSizes');
+%print -deps 'MCSampleSizes.eps'
 
 %% Plot optima nsigma and fudge
 figure;
@@ -127,7 +129,8 @@ axes('Position',get(ax1,'Position'),...
     'XTick',[],'YTick',10.^(4:9));
 ylabel('{\it n_{\sigma}}')
 line(NCLTvec,nsigoptvec,'color','k','linestyle','-','linewidth',2)
-print -deps 'MCnsigmafudge.eps'
-
+%print -deps 'MCnsigmafudge.eps'
+gail.save_eps('MCQMC2012PaperOutput/Results','MCnsigmafudge');
+end
 
 
