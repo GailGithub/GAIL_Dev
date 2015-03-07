@@ -11,19 +11,6 @@ format short
 %% Workouts
 % meanMC_g
 doctest dt_meanMC_g_TrafficModel
-try
-    Tests = matlab.unittest.TestSuite.fromClass(?ut_meanMC_g);
-    results=run(ut_meanMC_g)
-    if sum([results.Failed])>0
-        failed=find([results.Failed]>0);
-        %for i=1:size(failed,2)
-        %  fprintf(fid,'%s\n',Tests(failed(i)).Name);
-        %end
-    end
-catch
-    display('Error: Test ut_meanMC_g is wrongly coded. We skip it.')
-    %fprintf(fid,'Error: Test ut_meanMC_g is wrongly coded. We skip it.\n');
-end
 
 % meanMCBer_g
  
@@ -112,16 +99,16 @@ catch
 end  
 
 % MCQMC paper
-%run_handle('MCQMC2012Figs')
-%run_handle('FoolAutomaticAlgorithms')
+run_handle('MCQMC2012Figs')
+run_handle('FoolAutomaticAlgorithms')
 run_handle('RunTestcubMConGeoAsianCall')
 run_handle('RunTestcubMConGaussian')
 run_handle('RunTestcubMConGaussiand1')
-%run_handle('DisplayTestResults_BlacknColor({'ex1' 'ex2' 'ex3'},'black')')
+run_handle('DisplayTestResults_BlacknColor({'ex1' 'ex2' 'ex3'},'black')')
 
 % meanMCBer_g paper
-%run_handle('PlotmeanMCBernoulli_gResults')
-%run_handle('PlotRatioHoeffCLT')
+run_handle('PlotmeanMCBernoulli_gResults')
+run_handle('PlotRatioHoeffCLT')
 try
     Tests = matlab.unittest.TestSuite.fromClass(?ut_meanMCBer_g);
     results=run(ut_meanMCBer_g)
@@ -151,12 +138,21 @@ try
         run_handle('UniFunMin_Plot_Flat')
         run_handle('UniFunMin_Plot_TwoExtreme')
     end
-    if MATLABVERSION >= 8
-        run(ut_thesis_funmin01_g)
-    end
 catch
     display('Error: Test for Papers/UniFunMin is wrongly coded. We skip it.')
     %fprintf(fid,'Error: Test for Papers/UniFunMin is wrongly coded. We skip it.\n');
+end
+try
+    Tests = matlab.unittest.TestSuite.fromClass(?ut_thesis_funmin01_g);
+    results=run(ut_thesis_funmin01_g)
+    if sum([results.Failed])>0
+        failed=find([results.Failed]>0);
+        % for i=1:size(failed,2)
+        %    fprintf(fid,'%s\n',Tests(failed(i)).Name);
+        % end
+    end
+catch
+    display('Error: Test ut_thesis_funmin01_g is wrongly coded. We skip it.')
 end
 
 %% doctests and unit tests for deprecated algos
@@ -167,6 +163,10 @@ doctest funappx01_g
 doctest funmin01_g
 doctest integral01_g
 doctest integraltau_g
+doctest meanMCabs_g
+doctest cubMCabs_g;  
+doctest cubLattice_old_g;  
+doctest cubSobol_old_g;  
 
 try
     Tests = matlab.unittest.TestSuite.fromClass(?ut_funappx01_g);
@@ -208,6 +208,35 @@ try
 catch
     display('Error: Test ut_funmin01_g is wrongly coded. We skip it.')
 end
+
+try
+    Tests = matlab.unittest.TestSuite.fromClass(?ut_meanMCabs_g);
+    results=run(ut_meanMCabs_g)
+    if sum([results.Failed])>0
+        failed=find([results.Failed]>0);
+        for i=1:size(failed,2)
+            fprintf(fid,'%s\n',Tests(failed(i)).Name);
+        end
+    end
+catch
+    display('Test ut_meanMCabs_g is wrongly coded. We skip it.')
+    fprintf(fid,'Test ut_meanMCabs_g is wrongly coded. We skip it.\n');
+end
+
+try
+    Tests = matlab.unittest.TestSuite.fromClass(?ut_cubMCabs_g);
+    results=run(ut_cubMCabs_g)
+    if sum([results.Failed])>0
+        failed=find([results.Failed]>0);
+        for i=1:size(failed,2)
+            fprintf(fid,'%s\n',Tests(failed(i)).Name);
+        end
+    end
+catch
+    display('Test ut_cubMCabs_g is wrongly coded. We skip it.')
+    fprintf(fid,'Test ut_cubMCabs_g is wrongly coded. We skip it.\n');
+end
+
 
 %   try
 %     Tests = matlab.unittest.TestSuite.fromClass(?ut_integralNoPenalty_g);
