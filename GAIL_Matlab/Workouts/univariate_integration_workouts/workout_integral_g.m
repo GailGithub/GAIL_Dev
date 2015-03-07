@@ -55,7 +55,7 @@ for i=1:nrep
     for j=1:nninit
         ninit=ninitvec(j);
         tic
-        [q,out_param]=integral_g(f,'nmax',nmax,'abstol',abstol,'a',0,'b',1);
+        [q,out_param]=integral_g(f,'nmax',nmax,'abstol',abstol,'a',0,'b',1,'nlo',ninit,'nhi',ninit);
         timemat(i,j)=toc;
         Qmat(i,j)=q;
         npointsmat(i,j)= out_param.npoints;
