@@ -4,6 +4,7 @@ cd /home/gail/GAIL_tests/repo/gail-development/
 # GIT
 # Pulling the latest repository before testing
 # /usr/local/bin/git --git-dir /home/gail/GAIL_tests/repo/gail-development/.git checkout .
+git clean -f
 /usr/local/bin/git --git-dir /home/gail/GAIL_tests/repo/gail-development/.git pull
 # /usr/local/bin/git --git-dir /home/gail/GAIL_tests/repo/gail-development/.git checkout .
 
