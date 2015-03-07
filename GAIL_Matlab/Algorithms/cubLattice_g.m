@@ -172,10 +172,10 @@ function [q,out_param] = cubLattice_g(varargin)
 % 
 % Example 3: 
 % Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) in the
-% interval [0,1)^2:
+% interval [-1,2)^2:
 % 
-% >> f = @(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [zeros(1,2);ones(1,2)]; q = cubLattice_g(f,hyperbox,'uniform',1e-3,1e-1,'transform','C1')
-% q = 0.55***
+% >> f = @(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [-ones(1,2);2*ones(1,2)]; q = cubLattice_g(f,hyperbox,'uniform',1e-3,1e-1,'transform','C1')
+% q = 2.65***
 %
 %
 % Example 4: 
@@ -480,7 +480,7 @@ else
         out_param.f=f;
         hyperbox = varargin{2};
         if ~isnumeric(hyperbox) || ~(size(hyperbox,1)==2) || ~(size(hyperbox,2)<251)
-            warning('MATLAB:cubLattice_g:cubLattice_g:hyperbox_error1',...
+            warning('MATLAB:cubLattice_g:hyperbox_error1',...
                 'The hyperbox must be a real matrix of size 2xd where d can not be greater than 250. Example for f(x)=x^2:')
             f = @(x) x.^2;
             out_param.f=f;
@@ -572,6 +572,13 @@ if ~isnumeric(hyperbox) || ~(size(hyperbox,1)==2) || ~(out_param.d<251)
     hyperbox = default.hyperbox;
 end
 
+% Force measure to be uniform or normal only
+if ~(strcmp(out_param.measure,'uniform') || strcmp(out_param.measure,'normal') )
+    warning('MATLAB:cubLattice_g:notmeasure',['The measure can only be uniform or normal.' ...
+            ' Using default measure ' num2str(default.measure)])
+    out_param.measure = default.measure;
+end
+
 % Force absolute tolerance greater than 0
 if (out_param.abstol < 0 )
     warning('MATLAB:cubLattice_g:abstolnonpos',['Absolute tolerance cannot be negative.' ...
@@ -586,13 +593,6 @@ if (out_param.reltol < 0) || (out_param.reltol > 1)
     out_param.reltol = default.reltol;
 end
 
-% Force measure to be uniform or normal only
-if ~(strcmp(out_param.measure,'uniform') || strcmp(out_param.measure,'normal') )
-    warning('MATLAB:cubLattice_g:notmeasure',['The measure can only be uniform or normal.' ...
-            ' Using default measure ' num2str(default.measure)])
-    out_param.measure = default.measure;
-end
-
 % Force mmin to be integer greater than 0
 if (~gail.isposint(out_param.mmin) || ~(out_param.mmin < out_param.mmax+1))
     warning('MATLAB:cubLattice_g:lowmmin',['The minimum starting exponent ' ...
@@ -603,7 +603,7 @@ end
 
 % Force exponent budget number of points be a positive integer greater than
 % or equal to mmin an smaller than 26
-if ~(gail.isposint(out_param.mmax) && out_param.mmax>=out_param.mmin && out_param.mmax<=26 && out_param.mmax>=out_param.mmin)
+if ~(gail.isposint(out_param.mmax) && out_param.mmax>=out_param.mmin && out_param.mmax<=26)
     warning('MATLAB:cubLattice_g:wrongmmax',['The maximum exponent for the budget should be an integer biger than mmin and smaller than 27.' ...
             ' Using default mmax ' num2str(default.mmax)])
     out_param.mmax = default.mmax;
