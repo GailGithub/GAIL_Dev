@@ -152,7 +152,7 @@ try
         run_handle('UniFunMin_Plot_TwoExtreme')
     end
     if MATLABVERSION >= 8
-        run(ut_thesis_funmin01)
+        run(ut_thesis_funmin01_g)
     end
 catch
     display('Error: Test for Papers/UniFunMin is wrongly coded. We skip it.')
