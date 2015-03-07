@@ -36,9 +36,10 @@ for irep=1:test.nrep
           test.randchoicefun(fun,param,test.randch,irep);
      res.dim(irep)=param.dim;
      % Evaluate integral using cubSobol
+     hyperbox = [zeros(1,param.dim);ones(1,param.dim)];
         [q,out_param]=...
-           cubSobol_g(testfunqmc,param.dim,...
-           'abstol',param.abstol,'reltol',param.reltol,'measure',param.measure);
+           cubSobol_g(testfunqmc,hyperbox,...
+           'measure',param.measure,'abstol',param.abstol,'reltol',param.reltol);
         %res.Sobolexit(irep)=cellstr(out_param.exitflag); % we have problems saving this info
         res.SobolQ(irep)=q;
         res.Sobolerr(irep)=abs(param.exactintegral-q)/gail.tolfun(param.abstol,...
@@ -161,7 +162,6 @@ line(probaug,timeaug,'color','m','linewidth',plotTest.linewidth)
 gail.save_eps('Paper_cubSobol_g', 'Paper_cubSobol_g_TestKeister');
 %print('-depsc',[plotTest.name '.eps'])
 % print('-depsc', ['./Results/' plotTest.name '.eps'])
-close all
 end
 
 %% Random choice Keister

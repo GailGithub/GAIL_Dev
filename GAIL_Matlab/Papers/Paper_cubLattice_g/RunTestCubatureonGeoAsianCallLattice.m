@@ -43,9 +43,10 @@ for irep=1:test.nrep
     res.dim(irep)=param.dim;
     
     % Evaluate integral using cubLattice
+    hyperbox = [-inf(1,param.dim);inf(1,param.dim)];
         [q,out_param]=...
-           cubLattice_g(testfunqmc,param.dim,...
-           'abstol',param.abstol,'reltol',param.reltol,'measure',param.measure,'transform','Baker');
+           cubLattice_g(testfunqmc,hyperbox,...
+           'measure',param.measure,'abstol',param.abstol,'reltol',param.reltol,'transform','Baker');
         %res.Latticeexit(irep)=cellstr(out_param.exitflag); % we have problems saving this info
         res.LatticeQ(irep)=q;
         res.Latticeerr(irep)=abs(param.exactintegral-q)/gail.tolfun(param.abstol,...
@@ -168,7 +169,6 @@ line(probaug,timeaug,'color','m','linewidth',plotTest.linewidth)
 gail.save_eps('Paper_cubLattice_g', 'Paper_cubLattice_g_TestGeoAsianCall');
 %print('-depsc',[plotTest.name '.eps'])
 % print('-depsc', ['./Results/' plotTest.name '.eps'])
-close all
 end
 
 %% Random choice GeoCall
