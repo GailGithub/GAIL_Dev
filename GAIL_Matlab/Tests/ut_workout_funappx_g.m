@@ -1,4 +1,4 @@
-%UT_WORKOUTFUNAPPX_G long unit tests for workoutfunappx_g
+%UT_WORKOUTFUNAPPX_G long unit tests for workout_funappx_g
 classdef ut_workout_funappx_g < matlab.unittest.TestCase
 
   methods(Test)
