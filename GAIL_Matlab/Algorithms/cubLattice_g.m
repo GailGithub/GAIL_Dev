@@ -43,19 +43,19 @@ function [q,out_param] = cubLattice_g(varargin)
 %     a 2 x d matrix, where the first row corresponds to the lower limits 
 %     and the second row corresponds to the upper limits of the integral.
 %     The default value is [0;1].
-% 
-%     in_param.abstol --- the absolute error tolerance, abstol>=0. By 
-%     default it is 1e-4.
 %
-%     in_param.reltol --- the relative error tolerance, which should be
-%     in [0,1]. Default value is 1e-1.
-% 
 %     in_param.measure --- for f(x)*mu(dx), we can define mu(dx) to be the
 %     measure of a uniformly distributed random variable in they hyperbox
 %     or normally distributed with covariance matrix I_d. The only possible
 %     values are 'uniform' or 'normal'. For 'uniform', the hyperbox must be
-%     finite while for 'normal', the hyperbox can only be defined as 
+%     a finite volume while for 'normal', the hyperbox can only be defined as 
 %     (-Inf,Inf)^d. By default it is 'uniform'.
+%
+%     in_param.abstol --- the absolute error tolerance, abstol>=0. By 
+%     default it is 1e-4.
+%
+%     in_param.reltol --- the relative error tolerance, which should be
+%     in [0,1]. Default value is 1e-2.
 % 
 %   Optional Input Arguments
 % 
@@ -74,7 +74,9 @@ function [q,out_param] = cubLattice_g(varargin)
 % 
 %     in_param.fudge --- the positive function multiplying the finite 
 %     sum of Fast Fourier coefficients specified in the cone of functions.
-%     For more information about this parameter, refer to the references.
+%     This input is a function handle. The fudge should accept an array of
+%     nonnegative integers being evaluated simultaneously. For more
+%     technical information about this parameter, refer to the references.
 %     By default it is @(m) 5*2.^-m.
 % 
 %     in_param.transform --- the algorithm is defined for continuous
@@ -255,7 +257,7 @@ cond2=(1+out_param.fudge(r_lag-(1:r_lag)))*(1+2*out_param.fudge(r_lag))/(1+out_p
 errest=zeros(out_param.mmax-out_param.mmin+1,1); %initialize error estimates
 appxinteg=zeros(out_param.mmax-out_param.mmin+1,1); %initialize approximations to integral
 exit_len = 2;
-out_param.exit=logical(zeros(exit_len,1)); %we start the algorithm with all warning flags down
+out_param.exit=false(1,exit_len); %we start the algorithm with all warning flags down
 
 %% Initial points and FWT
 out_param.n=2^out_param.mmin; %total number of points to start with
@@ -412,22 +414,32 @@ for m=out_param.mmin+1:out_param.mmax
    end
 end
 
-exit_str='';
-if sum(out_param.exit) == 0
-  exit_str = '0';
+% Alternative
+exit_str=2.^(0:exit_len-1).*out_param.exit;
+exit_str(out_param.exit==0)=[];
+if numel(exit_str)==0;
+    out_param.exitflag=0;
 else
-  for i=1:exit_len
-    if out_param.exit(i)==1,
-      if i<exit_len 
-        exit_str = strcat(exit_str,{num2str(i)}, {' '});
-      else
-        exit_str = strcat(exit_str,{num2str(i)});
-      end
-    end
-  end
+    out_param.exitflag=exit_str;
 end
-out_param.exitflag = exit_str;
-out_param = rmfield(out_param,'exit');
+
+% Original
+% exit_str='';
+% if sum(out_param.exit) == 0
+%   exit_str = '0';
+% else
+%   for i=1:exit_len
+%     if out_param.exit(i)==1,
+%       if i<exit_len 
+%         exit_str = strcat(exit_str,{num2str(i)}, {' '});
+%       else
+%         exit_str = strcat(exit_str,{num2str(i)});
+%       end
+%     end
+%   end
+% end
+% out_param.exitflag = exit_str;
+% out_param = rmfield(out_param,'exit');
 
 out_param.time=toc;
 end
@@ -440,7 +452,7 @@ function [f,hyperbox, out_param] = cubLattice_g_param(varargin)
 default.hyperbox = [zeros(1,1);ones(1,1)];% default hyperbox
 default.measure  = 'uniform';
 default.abstol  = 1e-4;
-default.reltol  = 1e-1;
+default.reltol  = 1e-2;
 default.shift  = rand;
 default.mmin  = 10;
 default.mmax  = 24;
@@ -547,21 +559,23 @@ else
     end
     parse(p,f,hyperbox,varargin{3:end});
     out_param = p.Results;
-end;
+end
 
-[two, out_param.d]=size(hyperbox); %hyperbox should be 2 x dimension
-if ~isnumeric(hyperbox) || ~(size(hyperbox,1)==2) || ~(size(hyperbox,2)<251)
+out_param.d = size(hyperbox,2);
+
+%hyperbox should be 2 x dimension
+if ~isnumeric(hyperbox) || ~(size(hyperbox,1)==2) || ~(out_param.d<251)
     warning('MATLAB:cubLattice_g:hyperbox_error2',...
-        'The hyperbox must be a real matrix of size 2xd where d can not be greater than 250. Example for f(x)=x^2:')
+        'The hyperbox must be a real matrix of size 2 x d where d can not be greater than 250. Example for f(x)=x^2:')
     f = @(x) x.^2;
     out_param.f=f;
     hyperbox = default.hyperbox;
 end
 
 % Force absolute tolerance greater than 0
-if (out_param.abstol <= 0 )
-    warning('MATLAB:cubLattice_g:abstolnonpos',['Error tolerance should be greater than 0.' ...
-            ' Using default absolut tolerance ' num2str(default.abstol)])
+if (out_param.abstol < 0 )
+    warning('MATLAB:cubLattice_g:abstolnonpos',['Absolute tolerance cannot be negative.' ...
+            ' Using default absolute tolerance ' num2str(default.abstol)])
     out_param.abstol = default.abstol;
 end
 
@@ -588,9 +602,9 @@ if (~gail.isposint(out_param.mmin) || ~(out_param.mmin < out_param.mmax+1))
 end
 
 % Force exponent budget number of points be a positive integer greater than
-% or equal to mmin an smaller than 27
-if ~(gail.isposint(out_param.mmax) && out_param.mmax>=out_param.mmin && out_param.mmax<=26)
-    warning('MATLAB:cubLattice_g:wrongmmax',['The maximum exponent for the budget should be an integer smaller or equal to 27.' ...
+% or equal to mmin an smaller than 26
+if ~(gail.isposint(out_param.mmax) && out_param.mmax>=out_param.mmin && out_param.mmax<=26 && out_param.mmax>=out_param.mmin)
+    warning('MATLAB:cubLattice_g:wrongmmax',['The maximum exponent for the budget should be an integer biger than mmin and smaller than 27.' ...
             ' Using default mmax ' num2str(default.mmax)])
     out_param.mmax = default.mmax;
 end
@@ -622,4 +636,43 @@ if (out_param.theta < 0) || (out_param.theta > 1)
             ' Using default theta ' num2str(default.theta)])
     out_param.theta = default.theta;
 end
+
+% Checking on pure absolute/relative error
+if (out_param.abstol==0) && (out_param.reltol==0)
+    warning('MATLAB:cubLattice_g:tolzeros',['Absolute and relative error tolerances can not be simultaniusly 0.' ...
+            ' Using default absolute tolerance ' num2str(default.abstol) ' and relative tolerance ' num2str(default.reltol)])
+    out_param.abstol = default.abstol;
+    out_param.reltol = default.reltol;
+end
+if (strcmp(out_param.toltype,'comb')) && (out_param.theta==1) && (out_param.abstol==0)
+    warning('MATLAB:cubLattice_g:abstolzero',['When choosing toltype comb, if theta=1 then abstol>0.' ...
+            ' Using default absolute tolerance ' num2str(default.abstol) ])
+    out_param.abstol = default.abstol;
+end
+if (strcmp(out_param.toltype,'comb')) && (out_param.theta==0) && (out_param.reltol==0)
+    warning('MATLAB:cubLattice_g:reltolzero',['When choosing toltype comb, if theta=0 then reltol>0.' ...
+            ' Using default relative tolerance ' num2str(default.reltol) ])
+    out_param.reltol = default.reltol;
+end
+
+% Checking on the hyperbox given the measure
+if (strcmp(out_param.measure,'uniform')) && ~prod(prod(isfinite(hyperbox)))
+    warning('MATLAB:cubLattice_g:hyperboxnotfinite',['If uniform measure, hyperbox must be of finite volume.' ...
+            ' Using default hyperbox:'])
+    disp([zeros(1,out_param.d);ones(1,out_param.d)])
+    hyperbox = [zeros(1,out_param.d);ones(1,out_param.d)];
+end
+if (strcmp(out_param.measure,'normal')) && (sum(sum(isfinite(hyperbox)))>0)
+    warning('MATLAB:cubLattice_g:hyperboxfinite',['If normal measure, hyperbox must be defined as (-Inf,Inf)^d.' ...
+            ' Using default hyperbox:'])
+    disp([-inf*ones(1,out_param.d);inf*ones(1,out_param.d)])
+    hyperbox = [-inf*ones(1,out_param.d);inf*ones(1,out_param.d)];
+end
+if (strcmp(out_param.measure,'normal')) && (any(hyperbox(1,:)==hyperbox(2,:)) || any(hyperbox(1,:)>hyperbox(2,:)))
+    warning('MATLAB:cubLattice_g:hyperboxnormalwrong',['If normal measure, hyperbox must be defined as (-Inf,Inf)^d.' ...
+            ' Using default hyperbox:'])
+    disp([-inf*ones(1,out_param.d);inf*ones(1,out_param.d)])
+    hyperbox = [-inf*ones(1,out_param.d);inf*ones(1,out_param.d)];
+end
+
 end
