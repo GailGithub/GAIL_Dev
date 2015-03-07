@@ -104,7 +104,12 @@ run_handle('FoolAutomaticAlgorithms')
 run_handle('RunTestcubMConGeoAsianCall')
 run_handle('RunTestcubMConGaussian')
 run_handle('RunTestcubMConGaussiand1')
-run_handle('DisplayTestResults_BlacknColor({'ex1' 'ex2' 'ex3'},'black')')
+try
+    DisplayTestResults_BlacknColor({'ex1', 'ex2', 'ex3'},'black')
+catch
+    display('Error: DisplayTestResults_BlacknColor is wrongly coded. We skip it.')
+    %fprintf(fid,'Error: DisplayTestResults_BlacknColor is wrongly coded. We skip it.\n');
+end
 
 % meanMCBer_g paper
 run_handle('PlotmeanMCBer_gResults')
@@ -213,8 +218,8 @@ try
         end
     end
 catch
-    display('Test ut_funappxglobal_g is wrongly coded. We skip it.')
-    fprintf(fid,'Test ut_funappxglobal_g is wrongly coded. We skip it.\n');
+    display('Error: Test ut_funappxglobal_g is wrongly coded. We skip it.')
+    fprintf(fid,'Error: Test ut_funappxglobal_g is wrongly coded. We skip it.\n');
 end
     
 warning('off','MATLAB:integral01_g:peaky')
@@ -255,8 +260,8 @@ try
         end
     end
 catch
-    display('Test ut_meanMCabs_g is wrongly coded. We skip it.')
-    fprintf(fid,'Test ut_meanMCabs_g is wrongly coded. We skip it.\n');
+    display('Error: Test ut_meanMCabs_g is wrongly coded. We skip it.')
+    %fprintf(fid,'Error: Test ut_meanMCabs_g is wrongly coded. We skip it.\n');
 end
 
 try
@@ -269,8 +274,8 @@ try
         end
     end
 catch
-    display('Test ut_cubMCabs_g is wrongly coded. We skip it.')
-    fprintf(fid,'Test ut_cubMCabs_g is wrongly coded. We skip it.\n');
+    display('Error: Test ut_cubMCabs_g is wrongly coded. We skip it.')
+    %fprintf(fid,'Error: Test ut_cubMCabs_g is wrongly coded. We skip it.\n');
 end
 
 
