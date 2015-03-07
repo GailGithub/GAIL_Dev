@@ -168,6 +168,7 @@ doctest cubMCabs_g;
 doctest cubLattice_old_g;  
 doctest cubSobol_old_g;  
 
+
 try
     Tests = matlab.unittest.TestSuite.fromClass(?ut_funappx01_g);
     results=run(ut_funappx01_g)
@@ -181,6 +182,21 @@ catch
     display('Error: Test ut_funappx01_g is wrongly coded. We skip it.')
 end
 
+
+try
+    Tests = matlab.unittest.TestSuite.fromClass(?ut_funappxglobal_g);
+    results=run(ut_funappxglobal_g)
+    if sum([results.Failed])>0
+        failed=find([results.Failed]>0);
+        for i=1:size(failed,2)
+            fprintf(fid,'%s\n',Tests(failed(i)).Name);
+        end
+    end
+catch
+    display('Test ut_funappxglobal_g is wrongly coded. We skip it.')
+    fprintf(fid,'Test ut_funappxglobal_g is wrongly coded. We skip it.\n');
+end
+    
 warning('off','MATLAB:integral01_g:peaky')
 try
     Tests = matlab.unittest.TestSuite.fromClass(?ut_integral01_g);
