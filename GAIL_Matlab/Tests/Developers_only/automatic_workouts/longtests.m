@@ -124,14 +124,30 @@ catch
 end
 
 % cubSobol_g paper
-if usejava('jvm') || MATLABVERSION <= 7.12
-  run_handle(SobolWalshPict)
+try
+  SobolWalshPict;
+catch
+    display('Error: SobolWalshPict is wrongly coded. We skip it.')
 end
-run_handle(WalshFourierCoeffDecay)
+try
+  WalshFourierCoeffDecay;
+catch
+    display('Error: WalshFourierCoeffDecay is wrongly coded. We skip it.')
+end
 run_handle('RunTestCubatureonGeoAsianCallSobol');
 run_handle('RunTestCubatureonKeisterSobol')
 
 % cubLattice_g paper
+try
+  lattice_example;
+catch
+    display('Error: lattice_example is wrongly coded. We skip it.')
+end
+try
+  FourierCoeffDecayPict;
+catch
+    display('Error: FourierCoeffDecayPict is wrongly coded. We skip it.')
+end
 run_handle('RunTestCubatureonGeoAsianCallLattice');
 run_handle('RunTestCubatureonKeisterLattice');
 
