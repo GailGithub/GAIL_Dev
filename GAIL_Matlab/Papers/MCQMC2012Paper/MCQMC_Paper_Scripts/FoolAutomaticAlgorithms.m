@@ -7,7 +7,7 @@
 %The last addition was finding the "real" integral so we could get an error
 
 %% Garbage collection
-clear all, close all, format long, format compact
+clearvars, close all, format long, format compact
 set(0,'defaulttextfontsize',24,'defaultaxesfontsize',24)
 hold all
 
@@ -39,6 +39,7 @@ switch fname %give the calling sequence
     case 'quad'
         callautoalg = @(fun,lower,upper) quad(fun,lower,upper,1e-14);
     case 'chebint'
+        assert(exist('chebfun','file')==2,'You must install the chebfun package')
         callautoalg = @(fun,lower,upper) sum(chebfun(fun,[lower upper]));
     case 'fminbnd'
         callautoalg = @(fun,lower,upper) fminbnd(fun,lower,upper);
