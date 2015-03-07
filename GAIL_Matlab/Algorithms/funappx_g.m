@@ -574,7 +574,7 @@ h = out_param.b - out_param.a;
 out_param.ninit = max(ceil(out_param.nhi*(out_param.nlo/out_param.nhi)^(1/(1+h))),3);
 
 if (~gail.isposint(out_param.maxiter))
-    if gail.isposintive(out_param.maxiter)
+    if gail.ispositive(out_param.maxiter)
         warning('MATLAB:funappx_g:maxiternotint',['Max number of iterations should be a positive integer.' ...
             ' Using max number of iterations as  ', num2str(ceil(out_param.maxiter))])
         out_param.nmax = ceil(out_param.nmax);
