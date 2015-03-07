@@ -106,28 +106,31 @@ realintegral=info.c*(sum(withbumps))+info.coefficient/(info.degree+1)*...
 error=abs((realintegral-failintegral)/realintegral)
 hold off
 
-figure
-if strcmp(fname,'quadgk') %too many peaks
-    x=info.lower:.00001:info.upper*0.01; 
-    yplot=peaks(x);
-    axisright=info.upper*0.01; 
-else
-    axisright=info.upper;
+[~,GAILVERSION,~,~] = GAILstart();
+if usejava('jvm') || GAILVERSION <= 7.12
+    figure
+    if strcmp(fname,'quadgk') %too many peaks
+        x=info.lower:.00001:info.upper*0.01;
+        yplot=peaks(x);
+        axisright=info.upper*0.01;
+    else
+        axisright=info.upper;
+    end
+    %This one is for slides
+    plot(x,yplot/realintegral,'b-',...
+        info.sortedX,peaks(info.sortedX)/realintegral,'r.',...
+        'linewidth',3,'markersize',30)
+    axis([info.lower axisright 0 3])
+    gail.save_eps('MCQMC2012PaperOutput/Results',[fname 'color']);
+    %eval(['print -depsc Fool' fname 'color.eps'])
+    %This one is for printing in articles
+    plot(x,yplot/realintegral,'k-',...
+        info.sortedX,peaks(info.sortedX)/realintegral,'k.',....
+        'linewidth',3,'markersize',30)
+    axis([info.lower axisright 0 3])
+    gail.save_eps('MCQMC2012PaperOutput/Results',[fname 'bw']);
+    %eval(['print -depsc Fool' fname 'bw.eps'])
 end
-%This one is for slides
-plot(x,yplot/realintegral,'b-',...
-    info.sortedX,peaks(info.sortedX)/realintegral,'r.',...
-    'linewidth',3,'markersize',30)
-axis([info.lower axisright 0 3])
-gail.save_eps('MCQMC2012PaperOutput/Results',[fname 'color']);
-%eval(['print -depsc Fool' fname 'color.eps'])
-%This one is for printing in articles
-plot(x,yplot/realintegral,'k-',...
-    info.sortedX,peaks(info.sortedX)/realintegral,'k.',....
-    'linewidth',3,'markersize',30)
-axis([info.lower axisright 0 3])
-gail.save_eps('MCQMC2012PaperOutput/Results',[fname 'bw']);
-%eval(['print -depsc Fool' fname 'bw.eps'])
 end
 
 
