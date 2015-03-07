@@ -189,7 +189,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %            nstar: [1x2048 double]
 %
 %
-%   See also INTERP1, INTEGRAL_G, MEANMC_G, CUBMC_G, FUNMIN_G
+%   See also INTERP1, GRIDDEDINTERPOLANT, INTEGRAL_G, MEANMC_G, CUBMC_G, FUNMIN_G
 %
 %
 %  References
