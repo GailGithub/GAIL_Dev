@@ -239,12 +239,11 @@ if intervallen
         fpts = [ynew(:); fpts(end)];
         ntrap=ntrap*inflation; %new number of trapezoids
         sumf=intervallen*((fpts(1)+fpts(ntrap+1))/2+sum(fpts(2:ntrap)));
-            %updated weighted sum of function values
-        %TODO if(iter> out_param.maxiter)
-        %    out_param.exit = 2;
-        %    warning('MATLAB:funappx_g:exceediter',' Iteration exceeds max iteration ')
-        %    break;
-        %end;
+        if(iter> out_param.maxiter)
+           out_param.exit = 2;
+           warning('MATLAB:integral_g:exceediter',' Iteration exceeds max iteration ')
+           break;
+        end;
 
     end
 elseif intervallen == 0
@@ -254,7 +253,9 @@ end
 if flip==1
     q = -1*q;
 end
-% out_param.q=q;  % integral of functions
+
+out_param.iter=iter;
+out_param.q=q;  % integral of functions
 out_param.npoints=ntrap+1;  % number of points finally used
 out_param.errest=errest;    % error of integral
 
@@ -304,7 +305,7 @@ if ~validvarargin
     out_param.nlo = default.nlo;
     out_param.nhi = default.nhi;    
     out_param.nmax = default.nmax;
-    %TODO out_param.maxiter = default.maxiter;
+    out_param.maxiter = default.maxiter;
 else
     p = inputParser;
     addRequired(p,'f',@gail.isfcn);
@@ -316,7 +317,7 @@ else
         addOptional(p,'nlo',default.nlo,@isnumeric);
         addOptional(p,'nhi',default.nhi,@isnumeric);
         addOptional(p,'nmax',default.nmax,@isnumeric);
-        %TODO addOptional(p,'maxiter',default.maxiter,@isnumeric)
+        addOptional(p,'maxiter',default.maxiter,@isnumeric)
     else
         if isstruct(in2) %parse input structure
             p.StructExpand = true;
@@ -328,7 +329,7 @@ else
         f_addParamVal(p,'nlo',default.nlo,@isnumeric);
         f_addParamVal(p,'nhi',default.nhi,@isnumeric);
         f_addParamVal(p,'nmax',default.nmax,@isnumeric);
-        %TODO f_addParamVal(p,'maxiter',default.maxiter,@isnumeric);
+        f_addParamVal(p,'maxiter',default.maxiter,@isnumeric);
     end
     parse(p,f,varargin{2:end})
     out_param = p.Results;
@@ -383,9 +384,6 @@ if (out_param.nlo > out_param.nhi)
         warning('MATLAB:integral_g:nlobtnhi',['Highest initial number of points should be at least equal to to lowest initial number of points.' ...
             ' Using ', num2str(ceil(out_param.nlo)), ' as ninit'])
         out_param.nhi = ceil(out_param.nlo);
-%         warning('MATLAB:integral_g:nlobtnhi',['Highest initial number of points should be at least equal to to lowest initial number of points.' ...
-%             ' Using ', num2str(ceil(out_param.nhi)), ' as nlo'])
-%         out_param.nlo = ceil(out_param.nhi);
     else
         warning('MATLAB:integral_g:highinitlt3',['Highest initial number of points should be a positive integer.' ...
             ' Using default number of points ' int2str(default.nhi)])
@@ -394,6 +392,7 @@ if (out_param.nlo > out_param.nhi)
 end
 
 out_param.ninit = max(ceil(out_param.nhi*(out_param.nlo/out_param.nhi)^(1/(1+(out_param.b-out_param.a)))),3);
+
 if (~gail.isposint(out_param.nmax))
     if gail.ispositive(out_param.nmax)
         warning('MATLAB:integral_g:budgetnotint',['Cost budget should be a positive integer.' ...
@@ -405,3 +404,16 @@ if (~gail.isposint(out_param.nmax))
         out_param.nmax = default.nmax;
     end;
 end
+
+if (~gail.isposint(out_param.maxiter))
+    if gail.ispositive(out_param.maxiter)
+        warning('MATLAB:integral_g:maxiternotint',['Max number of iterations should be a positive integer.' ...
+            ' Using max number of iterations as  ', num2str(ceil(out_param.maxiter))])
+        out_param.maxiter = ceil(out_param.maxiter);
+    else
+        warning('MATLAB:integral_g:budgetisneg',['Max number of iterations should be a positive integer.' ...
+            ' Using max number of iterations as ' int2str(default.maxiter)])
+        out_param.maxiter = default.maxiter;
+    end;
+end
+
