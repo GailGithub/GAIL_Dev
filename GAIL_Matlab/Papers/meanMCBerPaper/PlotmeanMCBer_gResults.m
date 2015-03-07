@@ -1,9 +1,7 @@
+function PlotmeanMCBer_gResults()
 set(0,'defaultaxesfontsize',24,'defaulttextfontsize',24) %make font larger
 set(0,'defaultLineLineWidth',3) %thick lines
 set(0,'defaultTextInterpreter','latex') %latex axis labels
-close all
-clear all
-%load TestmeanMCBernoulli-on-rel-09-Sep-2014_00.15.30.mat
 load TestmeanMCBernoulli-on-abs-06-Sep-2014_03.18.10.mat
 standard = true(nrep,1);
 maxsample=res(:,5)== res(:,6);
@@ -29,5 +27,4 @@ legend boxoff
 xlabel('$p$')
 ylabel('$|p-\hat{p}_n|/\varepsilon$')
 gail.save_eps('meanMCBerPaperOutput',out_param.errtype);
-
-%print('-depsc', ['./Figures/',out_param.errtype,'.eps'])
+end

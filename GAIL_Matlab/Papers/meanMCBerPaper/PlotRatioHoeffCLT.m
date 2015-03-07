@@ -1,4 +1,4 @@
-close all, clear all
+function PlotRatioHoeffCLT()
 set(0,'defaultaxesfontsize',24,'defaulttextfontsize',24) %make font larger
 set(0,'defaultLineLineWidth',3) %thick lines
 set(0,'defaultTextInterpreter','latex') %latex axis labels
@@ -15,4 +15,4 @@ semilogx(alpha,r_hoeffCLT,'k','linewidth',2)
 xlabel('$\alpha$')
 ylabel('$n_{\mbox{Hoeff}}/n_{\mbox{CLT}}$')
 gail.save_eps('meanMCBerPaperOutput','plotHoeffCLTr');
-%print('-depsc', ['./Figures/plotHoeffCLTr','.eps'])
+end
