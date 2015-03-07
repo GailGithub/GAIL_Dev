@@ -81,7 +81,7 @@ end
 
 %% Papers
 % Cone paper
-if usejava('jvm')
+if usejava('jvm') || GAILVERSION <= 7.12
     run_handle('ConesPaperFoolFunctions')
 end
 try
@@ -133,7 +133,8 @@ run_handle('RunTestCubatureonKeisterLattice');
 
 % Function minimization thesis
 try
-    if usejava('jvm')
+    if usejava('jvm') || GAILVERSION <= 7.12
+
         run_handle('UniFunMin_Plot_Bump')
         run_handle('UniFunMin_Plot_Flat')
         run_handle('UniFunMin_Plot_TwoExtreme')

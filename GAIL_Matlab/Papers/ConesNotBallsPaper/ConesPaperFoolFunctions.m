@@ -41,7 +41,7 @@ if MATLABVERSION >= 8,
  MATintegralspiky=integral(spikyfun,0,1,'AbsTol',1e-14);
 end
 MATquadspiky=quad(spikyfun,0,1,1e-14);
-if usejava('jvm')
+if usejava('jvm') || GAILVERSION <= 7.12
   h=plot(xplot,spikyfun(xplot),'k-',xall,zeros(nnode,1),'k.');
 end
 axis([0 1 -0.3 1.1])

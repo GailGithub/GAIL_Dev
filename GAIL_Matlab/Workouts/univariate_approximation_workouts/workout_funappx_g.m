@@ -102,7 +102,7 @@ end
 
 %% Save Output
 
-if usejava('jvm')
+if usejava('jvm') || GAILVERSION <= 7.12
     figure
     subplot(2,1,1);
     plot(1:nrep*n,timeratio,'blue',1:nrep*n,ones(nrep*n,1),'red');
