@@ -61,8 +61,7 @@ int main()
   }
   
   std::map<string, string> fcn_url;
-  fcn_url["GRIDDEDINTERPOLANT"] = "http://www.mathworks.com/help/matlab/ref/griddedinterpolant-class.html ";
-
+  fcn_url["GRIDDEDINTERPOLANT"] = "http://www.mathworks.com/help/matlab/ref/griddedinterpolant-class.html";
   
   for (const auto &s : fcnList) {
     if (s.empty()) {
@@ -197,11 +196,11 @@ int main()
 	auto num = find(uFcnName.cbegin(), uFcnName.cend(), word);    
 	if (num == uFcnName.cend()) {
 	  auto lword = lowerString(word);
-      if (fcn_url.find(word) != fcn_url.end()) {// found
-         ofs << "% <html>\n% <a href=\""+ fcn_url[word] +"\">" << lword << "</a>\n% </html>\n%\n";
-      }else{
+	  if (fcn_url.find(word) != fcn_url.end()) {// found
+	    ofs << "% <html>\n% <a href=\""+ fcn_url[word] +"\">" << lword << "</a>\n% </html>\n%\n";
+	  } else {
 	    ofs << "% <html>\n% <a href=\"http://www.mathworks.com/help/matlab/ref/" << lword << ".html\">" << lword << "</a>\n% </html>\n%\n";
-      }
+	  }
 	} else {
 	  ofs << "% <html>\n% <a href=\"help_" << fcnName[num - uFcnName.begin()] << ".html\">" << fcnName[num - uFcnName.begin()] << "</a>\n% </html>\n%\n";
 	}
@@ -233,7 +232,7 @@ int main()
   helptoc.close();
   gail.close();
   funclist.close();
-  std::cout << "autodoc: Automatic documentation is completed." << endl;
+  std::cout << "autodoc2: Automatic documentation is completed." << endl;
 }
 
 string upperString(const string &s) noexcept
