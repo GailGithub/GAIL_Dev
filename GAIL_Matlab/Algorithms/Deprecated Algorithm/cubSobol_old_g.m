@@ -1,5 +1,5 @@
 function [q,out_param] = cubSobol_old_g(varargin)
-%CUBSOBOL_G Quasi-Monte Carlo method using Sobol' cubature over the
+%CUBSOBOL_OLD_G Quasi-Monte Carlo method using Sobol' cubature over the
 %d-dimensional region to integrate within a specified absolute error 
 %tolerance with guarantees under Walsh-Fourier coefficients cone decay assumptions.
 %
