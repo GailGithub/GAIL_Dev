@@ -80,10 +80,9 @@ toc(tstart)
 warning('on','MATLAB:funmin01_g:exceedbudget');
 warning('on','MATLAB:funmin01_g:peaky');
 
-%% The following output was obtained on 2014-May
-%        Probability    Success   Success   Failure  Failure
+%% The following output was obtained on 2015-Feb
+%         Probability    Success   Success   Failure  Failure
 %  tau      In Cone    No Warning  Warning No Warning Warning
-%    11  1.28%->21.22%   21.22%      0.00%   78.78%    0.00% 
-%   101 34.02%->53.20%   53.18%      0.02%   46.79%    0.01% 
-%  1001 67.04%->85.79%   81.20%      2.59%   14.19%    2.02% 
-% Elapsed time is 4383.064010 seconds.
+%    11  1.30%->56.85%   47.62%      3.58%   43.13%    5.67% 
+%   101 33.39%->75.11%   66.35%      3.42%   24.88%    5.35% 
+%  1001 66.69%->93.29%   81.37%      5.72%    6.70%    6.21% 

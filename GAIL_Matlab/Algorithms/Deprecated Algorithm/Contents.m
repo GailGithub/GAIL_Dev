@@ -4,7 +4,7 @@
 %   funappxtau_g     - 1-D guaranteed function recovery on [0,1] with cone condition tau
 %   funappx01_g      - 1-D guaranteed function recovery on [0,1]
 %   funappxglobal_g  - 1-D guaranteed function recovery on [a,b]
-%   funmin01_g       - 1-D guaranteed global minimum value(s) of univariate function on [0,1]
+%   funmin01_g       - 1-D guaranteed global minimum value(s) on [0,1] and the subset containing optimal solutions
 %   integraltau_g    - 1-D guaranteed function integration using trapezoidal rule on [0,1] with cone condition tau
 %   integral01_g     - 1-D guaranteed function integration using trapezoidal rule on [0,1]
 %   integralab_g     - 1-D guaranteed function integration using trapezoidal rule on [a,b]

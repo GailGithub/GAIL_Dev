@@ -41,16 +41,18 @@ if MATLABVERSION >= 8,
  MATintegralspiky=integral(spikyfun,0,1,'AbsTol',1e-14);
 end
 MATquadspiky=quad(spikyfun,0,1,1e-14);
-if usejava('jvm')
-  h=plot(xplot,spikyfun(xplot),'k-',xall,zeros(nnode,1),'k.');
+
+if usejava('jvm') || MATLABVERSION <= 7.12
+    h=plot(xplot,spikyfun(xplot),'k-',xall,zeros(nnode,1),'k.');
+    
+    axis([0 1 -0.3 1.1])
+    set(gca,'Ytick',-0.2:0.2:1)
+    legend(h,{'$f$','data'},'location','southeast')
+    
+    filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
+        'ConesPaperOutput',PATHNAMESEPARATOR,'ConesPaperSpikyquad.eps');
+    print('-deps',filename)
 end
-axis([0 1 -0.3 1.1])
-set(gca,'Ytick',-0.2:0.2:1)
-legend(h,{'$f$','data'},'location','southeast')
-[GAILPATH,~,PATHNAMESEPARATOR] = GAILstart(0);
-filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
-    'ConesPaperOutput',PATHNAMESEPARATOR,'ConesPaperSpikyquad.eps');
-print('-deps',filename)
 fprintf('  Integral of spiky function = %7.5f\n',integralspiky)
 if MATLABVERSION >= 8, 
   fprintf('By MATLAB''s integral routine = %7.5f\n',MATintegralspiky)
@@ -112,14 +114,17 @@ if MATLABVERSION >= 8,
   MATintegralfluky=integral(scaledfluky,0,1,'AbsTol',1e-14);
 end
 MATquadfluky=quad(scaledfluky,0,1,1e-14);
-figure
-h=plot(xplot,scaledfluky(xplot),'k-',xall,scaledfluky(xall),'k.');
-axis([0 1 -0.8 1.2])
-set(gca,'Ytick',-0.8:0.4:1.2)
-legend(h,{'$f$','data'},'location','north')
-filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
-    'ConesPaperOutput',PATHNAMESEPARATOR,'ConesPaperFlukyquad.eps');
-print('-deps',filename)
+
+if usejava('jvm') || MATLABVERSION <= 7.12
+    figure
+    h=plot(xplot,scaledfluky(xplot),'k-',xall,scaledfluky(xall),'k.');
+    axis([0 1 -0.8 1.2])
+    set(gca,'Ytick',-0.8:0.4:1.2)
+    legend(h,{'$f$','data'},'location','north')
+    filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
+        'ConesPaperOutput',PATHNAMESEPARATOR,'ConesPaperFlukyquad.eps');
+    print('-deps',filename)
+end
 fprintf('  Condition number of matrix = %7.5f\n',cond(A))
 fprintf('  Integral of fluky function = %7.5f\n',integralfluky)
 if MATLABVERSION >= 8, 

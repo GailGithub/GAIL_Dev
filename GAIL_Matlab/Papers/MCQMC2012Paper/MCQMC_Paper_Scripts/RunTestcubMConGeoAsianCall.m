@@ -1,5 +1,6 @@
 %Run TestcubMC on the step function
-clear all, close all
+%clear all, close all
+function RunTestcubMConGeoAsianCall()
 format compact
 
 fun.funtype='geomean';
@@ -12,8 +13,8 @@ param.impyes=false;
 param.tol=2e-2;
 param.n0=1024;
 
-test.nrep=50;
-test.howoftenrep=5;
+test.nrep=500;
+test.howoftenrep=10;
 dimchoice=[1 2 4 8 16 32 64]';
 ndim=size(dimchoice,1);
 test.randch.dim=dimchoice(randi(ndim,test.nrep,1));
@@ -24,3 +25,4 @@ test.randchoicefun=@randchoiceGeoCall;
 %test.whichsample={'iid','iidheavy','Sobol'};
 test.whichsample={'iid','iidheavy','Sobol','Sobolheavy'};
 TestcubMCDiffSettings(test,fun,param);
+end

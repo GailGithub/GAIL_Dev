@@ -1,15 +1,25 @@
 % MCQMC_PAPER_SCRIPTS
-% 
+%
 % Files
-%   RunTestcubMConGaussian         - driver file to run the test on Gaussian test function with multiple dimension
-%   RunTestcubMConGaussiand1       - driver file to run the test on Gaussian test function with dimension one
-%   RunTestcubMConGeoAsianCall     - driver file to run the test on geometric Asian mean option test function
+%   DisplayTestResults_BlacknColor - display the plots in black or color
+%                                    format using the mat files in dir
+%                                    OutputFiles/MCQMC2012PaperOutput, load
+%                                    different MAT files to generate
+%                                    figures 3-6 in paper
+%   RunTestcubMConGaussiand1       - driver file to run the test on
+%                                    Gaussian test function with dimension
+%                                    one to generate a MAT file
+%   RunTestcubMConGaussian         - driver file to run the test on 
+%                                    Gaussian test function with dimension
+%                                    2-8,to generate a MAT file
+%   RunTestcubMConGeoAsianCall     - driver file to run the test on
+%                                    geometric Asian mean option test
+%                                    function to generate a MAT file
 %   choosetestfun                  - choose and set up a test function
-%   cubMC                          - main algorithm to evaluate a multidimensional integral
+%   cubMC                          - main algorithm to evaluate a
+%                                    multidimensional integral
 %   cubMCparam                     - parameter checking
 %   cubMCerr                       - handle errors in cubMC and cubMCparam
-%   DisplayTestResults_BlacknColor - display the plots in black and color
-%                                    format using the mat files.
 %   geomMeanAsianCall              - the test function of geometric Asian mean option
 %   plotTestcubMCblack             - plot the mat file in black
 %   plotTestcubMCcolor             - plot the mat file in color
@@ -18,7 +28,10 @@
 %   randchoiceGeoCall              - randomly choose parameters in geometric asian mean option test function
 %   TestcubMCDiffSettings          - using different random sampling methods to test
 %   verifyparam                    - make sure the parameters defining the functions exist
-
+%   FoolAutomaticAlgorithms        - plot fooling function of figure 2 in paper
+%   snooper                        - function record all the x data points
+%   peakyfunction                  - construct peaky function
+%   MCQMC2012Figs                  - plot figure 1 in paper             
 
 
 

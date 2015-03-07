@@ -102,7 +102,8 @@ end
 
 %% Save Output
 
-if usejava('jvm')
+[~,~,~,MATLABVERSION] = GAILstart(false); 
+if usejava('jvm') || MATLABVERSION <= 7.12
     figure
     subplot(2,1,1);
     plot(1:nrep*n,timeratio,'blue',1:nrep*n,ones(nrep*n,1),'red');

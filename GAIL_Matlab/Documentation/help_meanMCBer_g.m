@@ -61,7 +61,7 @@
 %
 % Pr(| p - pHat | <= abstol) >= 1-alpha.
 % 
-% Here p is the true mean of Yrand, and pHat is the output of MEANMCBER_G
+% Here p is the true mean of Yrand, and pHat is the output of MEANMCBER_G.
 %
 % Also, the cost is deterministic.
 %

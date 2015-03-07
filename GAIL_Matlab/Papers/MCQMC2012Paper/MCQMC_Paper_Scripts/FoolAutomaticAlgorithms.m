@@ -7,7 +7,8 @@
 %The last addition was finding the "real" integral so we could get an error
 
 %% Garbage collection
-clearvars, close all, format long, format compact
+function FoolAutomaticAlgorithms()
+clear all, close all, format long, format compact
 set(0,'defaulttextfontsize',24,'defaultaxesfontsize',24)
 hold all
 
@@ -32,7 +33,7 @@ info.c=1;
 info.sign=1; %sign of the peaks
 
 %% Ways to call a function
-fname='quad' %insert the automatic algorithm that you want to call
+fname='chebint' %insert the automatic algorithm that you want to call
 switch fname %give the calling sequence
     case 'quadgk'
         callautoalg = @(fun,lower,upper) quadgk(fun,lower,upper,'AbsTol',1e-14);
@@ -106,25 +107,31 @@ realintegral=info.c*(sum(withbumps))+info.coefficient/(info.degree+1)*...
 error=abs((realintegral-failintegral)/realintegral)
 hold off
 
-figure
-if strcmp(fname,'quadgk') %too many peaks
-    x=info.lower:.00001:info.upper*0.01; 
-    yplot=peaks(x);
-    axisright=info.upper*0.01; 
-else
-    axisright=info.upper;
+[~,~,~,MATLABVERSION] = GAILstart(false); 
+if usejava('jvm') || MATLABVERSION <= 7.12
+    figure
+    if strcmp(fname,'quadgk') %too many peaks
+        x=info.lower:.00001:info.upper*0.01;
+        yplot=peaks(x);
+        axisright=info.upper*0.01;
+    else
+        axisright=info.upper;
+    end
+    %This one is for slides
+    plot(x,yplot/realintegral,'b-',...
+        info.sortedX,peaks(info.sortedX)/realintegral,'r.',...
+        'linewidth',3,'markersize',30)
+    axis([info.lower axisright 0 3])
+    gail.save_eps('MCQMC2012PaperOutput/Results',[fname 'color']);
+    %eval(['print -depsc Fool' fname 'color.eps'])
+    %This one is for printing in articles
+    plot(x,yplot/realintegral,'k-',...
+        info.sortedX,peaks(info.sortedX)/realintegral,'k.',....
+        'linewidth',3,'markersize',30)
+    axis([info.lower axisright 0 3])
+    gail.save_eps('MCQMC2012PaperOutput/Results',[fname 'bw']);
+    %eval(['print -depsc Fool' fname 'bw.eps'])
 end
-%This one is for slides
-plot(x,yplot/realintegral,'b-',...
-    info.sortedX,peaks(info.sortedX)/realintegral,'r.',...
-    'linewidth',3,'markersize',30)
-axis([info.lower axisright 0 3])
-eval(['print -depsc Fool' fname 'color.eps'])
-%This one is for printing in articles
-plot(x,yplot/realintegral,'k-',...
-    info.sortedX,peaks(info.sortedX)/realintegral,'k.',....
-    'linewidth',3,'markersize',30)
-axis([info.lower axisright 0 3])
-eval(['print -depsc Fool' fname 'bw.eps'])
+end
 
 

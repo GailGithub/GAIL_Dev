@@ -1,9 +1,8 @@
 %Run TestcubMC on the step function
-clear all, close all
-clc
+function RunTestcubMConGaussiand1()
 format compact
 
-test.nrep=10;
+test.nrep=500;
 fun.funtype='gaussian';
 param.dim=1;
 param.measure='uniform';
@@ -15,7 +14,7 @@ param.tol=1e-3;
 param.n0=2^13;
 param.interval=[zeros(1,param.dim);ones(1,param.dim)];
 param.bmina=param.interval(2,:)-param.interval(1,:);
-test.howoftenrep=2;
+test.howoftenrep=10;
 shapemin=1e-6;
 shapemax=1;
 
@@ -67,4 +66,5 @@ else
     test.whichsample={'iid','iidheavy','quad','quadgk'};
 end
 %test.whichsample={'iid','iidheavy','Sobol','Sobolheavy'};
-res=TestcubMCDiffSettings(test,fun,param);
+TestcubMCDiffSettings(test,fun,param);
+end

@@ -38,7 +38,8 @@ warning('on','MATLAB:funappx_g:peaky')
 warning('on','MATLAB:funappx_g:exceedbudget')
 warning('on','MATLAB:funappxglobal_g:peaky')
 
-if usejava('jvm')
+[~,~,~,MATLABVERSION] = GAILstart(false); 
+if usejava('jvm') || MATLABVERSION <= 7.12
     figure(1)
     subplot(2,1,1)
     loglog(npoints, errest)

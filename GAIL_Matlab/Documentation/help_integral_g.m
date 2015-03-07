@@ -147,11 +147,27 @@ f = @(x) x.^2; [q, out_param] = integral_g(f)
 %% See Also
 %
 % <html>
+% <a href="http://www.mathworks.com/help/matlab/ref/integral.html">integral</a>
+% </html>
+%
+% <html>
+% <a href="http://www.mathworks.com/help/matlab/ref/quad.html">quad</a>
+% </html>
+%
+% <html>
 % <a href="help_funappx_g.html">funappx_g</a>
 % </html>
 %
 % <html>
+% <a href="help_meanMC_g.html">meanMC_g</a>
+% </html>
+%
+% <html>
 % <a href="help_cubMC_g.html">cubMC_g</a>
+% </html>
+%
+% <html>
+% <a href="help_funmin_g.html">funmin_g</a>
 % </html>
 %
 %% References

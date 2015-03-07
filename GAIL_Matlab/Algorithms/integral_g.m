@@ -131,21 +131,21 @@ function [q,out_param] = integral_g(varargin)
 %   q = 0.3333
 %
 %
-%   See also FUNAPPX_G, MEANMC_G, CUBMC_G, FUNMIN_G
+%   See also INTEGRAL, QUAD, FUNAPPX_G, MEANMC_G, CUBMC_G, FUNMIN_G
 %
 %  References
 %
 %   [1]  Nick Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
-%   Yizhi Zhang, The Cost of Deterministic, Adaptive, Automatic Algorithms:
-%   Cones, Not Balls, Journal of Complexity 30 (2014), pp. 21-45.
+%   Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic Algorithms:
+%   Cones, Not Balls," Journal of Complexity 30, pp. 21-45, 2014.
 %
-%   [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
+%   [2] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang,
 %   Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
-%   "GAIL: Guaranteed Automatic Integration Library (Version 2.1)" [MATLAB
-%   Software], 2015. Available from http://code.google.com/p/gail/
+%   GAIL: Guaranteed Automatic Integration Library (Version 2.1)
+%   [MATLAB Software], 2015. Available from http://code.google.com/p/gail/
 %
 %   [3] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
-%   Research via Supportable Scientific Software", Journal of Open Research
+%   Research via Supportable Scientific Software," Journal of Open Research
 %   Software, Volume 2, Number 1, e22, pp. 1-7, 2014.
 %
 %   [4] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable
@@ -158,7 +158,7 @@ function [q,out_param] = integral_g(varargin)
 %   James Hetherington, James Howison, Shel Swenson, Gabrielle D. Allen,
 %   Anne C. Elster, Bruce Berriman, Colin Venters, "Summary of the First
 %   Workshop On Sustainable Software for Science: Practice And Experiences
-%   (WSSSPE1)", Journal of Open Research Software, Volume 2, Number 1, e6,
+%   (WSSSPE1)," Journal of Open Research Software, Volume 2, Number 1, e6,
 %   pp. 1-21, 2014.
 %
 %   If you find GAIL helpful in your work, please support us by citing the

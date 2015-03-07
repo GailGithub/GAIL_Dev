@@ -162,6 +162,10 @@ f=@(x) (x-0.3).^2+1;
 %% See Also
 %
 % <html>
+% <a href="http://www.mathworks.com/help/matlab/ref/fminbnd.html">fminbnd</a>
+% </html>
+%
+% <html>
 % <a href="help_funappx_g.html">funappx_g</a>
 % </html>
 %

@@ -3,16 +3,16 @@
 % 
 % Files
 %
-% ErrToleranceTest.mat --- dataset of Table 3.1 in the thesis for Bump test
+% ErrToleranceTest-2015-02-21-00-43-19.mat --- dataset of Table 3.1 in the thesis for Bump test
 % functions with with abstol=10^(-8) & TolX=0
 %
-% XToleranceTest.mat --- dataset of Table 3.2 in the thesis for Bump test 
+% XToleranceTest-2015-02-21-04-25-29.mat --- dataset of Table 3.2 in the thesis for Bump test 
 % functions with abstol=0 & TolX=10^(-6)
 %
-% ErrXToleranceTest.mat --- dataset of Table 3.3 in the thesis for Bump 
+% ErrXToleranceTest-2015-02-21-05-32-32.mat --- dataset of Table 3.3 in the thesis for Bump 
 % test functions with abstol=10^(-8) & TolX=10^(-6)
 % 
-% TwoExtremeTest.mat --- dataset of Table 3.4 in the thesis for Functions 
+% TwoExtremeTest-2015-02-21-13-51-03.mat --- dataset of Table 3.4 in the thesis for Functions 
 % with two local minimum points 
 % 
 % UniFunMinPlotBump.eps --- dataset of Figure 3.1 in the thesis using
