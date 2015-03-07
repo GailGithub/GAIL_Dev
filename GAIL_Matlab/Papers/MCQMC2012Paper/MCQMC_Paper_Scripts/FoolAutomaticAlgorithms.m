@@ -8,7 +8,7 @@
 
 %% Garbage collection
 function FoolAutomaticAlgorithms()
-clear all, close all, format long, format compact
+clearvars, close all, format long, format compact
 set(0,'defaulttextfontsize',24,'defaultaxesfontsize',24)
 hold all
 
