@@ -7,6 +7,7 @@ if exist('TestmeanMCBernoulli-on-abs-06-Sep-2014_03.18.10.mat')
     load TestmeanMCBernoulli-on-abs-06-Sep-2014_03.18.10.mat
 else
     warning('TestmeanMCBernoulli-on-abs-06-Sep-2014_03.18.10.mat does not exist.')
+    % TOOD call function that produce the required variables
 end
 standard = true(nrep,1);
 maxsample=res(:,5)== res(:,6);
