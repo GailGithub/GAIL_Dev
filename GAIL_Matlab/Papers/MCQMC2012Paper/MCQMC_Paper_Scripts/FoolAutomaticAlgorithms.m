@@ -40,6 +40,7 @@ switch fname %give the calling sequence
     case 'quad'
         callautoalg = @(fun,lower,upper) quad(fun,lower,upper,1e-14);
     case 'chebint'
+        assert(exist('chebfun','file')==2,'You must install the chebfun package')
         callautoalg = @(fun,lower,upper) sum(chebfun(fun,[lower upper]));
     case 'fminbnd'
         callautoalg = @(fun,lower,upper) fminbnd(fun,lower,upper);
