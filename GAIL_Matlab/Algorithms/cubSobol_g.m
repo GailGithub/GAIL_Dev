@@ -527,6 +527,15 @@ end
 
 out_param.d = size(hyperbox,2);
 
+fdgyes = 0; % We store how many functions are in varargin. There can only
+            % two functions as input, the function f and the fudge factor.
+for j = 1:size(varargin,2)
+    fdgyes = gail.isfcn(varargin{j})+fdgyes;
+end
+if fdgyes < 2 % No fudge factor given as input
+    default.fudge = @(m) 5*2.^-(m/d);
+end
+
 %hyperbox should be 2 x dimension
 if ~isnumeric(hyperbox) || ~(size(hyperbox,1)==2) || ~(out_param.d<1111)
     warning('MATLAB:cubSobol_g:hyperbox_error2',...
