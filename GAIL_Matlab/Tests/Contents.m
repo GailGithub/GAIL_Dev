@@ -22,6 +22,7 @@
 %   ut_meanMCabs_g         - fast unit test for meanMCabs_g
 %   ut_meanMCBer_g         - long unit test for meanMCBer_g
 %   ut_thesis_funmin01_g   - long unit tests for funmin01_g thesis
+%   ut_workout_funappx_g   - long unit tests for workoutfunappx_g
 %   ut_workout_funmin_g    - long unit tests for funmin_g workouts
 %   ut_workout_integral_g  - unit test for workout_integral_g
 %
