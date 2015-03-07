@@ -14,12 +14,15 @@ for i = 1:length(NumericalExample)
     switch NumericalExample{i}
         case 'ex1'
             load TestcubMCon-gaussian-uniform-Out-17-Aug-2012_13.12.36N500d1tol0.001.mat
+            functiontype = 'gaussian';
             % this MAT file is to plot figure 3&4 in paper
         case 'ex2'
             load TestcubMCon-gaussian-uniform-Out-17-Aug-2012_17.46.40N500d6tol0.001.mat
+            functiontype = 'gaussian';
             % this MAT file is to plot figure 5 in paper
         case 'ex3'
             load TestcubMCon-geomean-Out-17-Aug-2012_20.38.24N500d1tol0.05.mat
+            functiontype = 'geomean';
             % this MAT file is to plot figure 6 in paper
     end    
     plotTest.plotcolor=coloroption;
@@ -33,12 +36,12 @@ for i = 1:length(NumericalExample)
     plotTest.timehilimit=10^plotTest.logtimehi;
     plotTest.linewidth=2;
     plotTest.nrep=test.nrep;
-    plotTest.namepref=fun.funtype;
-    if strcmp(fun.funtype,'step')
+    plotTest.namepref=functiontype;
+    if strcmp(functiontype,'step')
         plotTest.kurtvec=res.exactkurtosis;
         plotTest.namepref=[plotTest.namepref 'd=' int2str(param.dim)];
     end
-    if strcmp(fun.funtype,'gaussian')
+    if strcmp(functiontype,'gaussian')
         plotTest.kurtvec=res.exactkurtosis;
         plotTest.namepref=[plotTest.namepref 'd=' int2str(param.dim)];
     end
