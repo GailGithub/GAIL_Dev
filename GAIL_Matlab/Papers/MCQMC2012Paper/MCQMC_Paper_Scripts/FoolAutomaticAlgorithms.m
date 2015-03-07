@@ -106,8 +106,8 @@ realintegral=info.c*(sum(withbumps))+info.coefficient/(info.degree+1)*...
 error=abs((realintegral-failintegral)/realintegral)
 hold off
 
-[~,GAILVERSION,~,~] = GAILstart();
-if usejava('jvm') || GAILVERSION <= 7.12
+[~,~,~,MATLABVERSION] = GAILstart(false); 
+if usejava('jvm') || MATLABVERSION <= 7.12
     figure
     if strcmp(fname,'quadgk') %too many peaks
         x=info.lower:.00001:info.upper*0.01;

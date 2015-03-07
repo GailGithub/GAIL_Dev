@@ -1,6 +1,6 @@
 % LONGTESTS Drives all lengthy doctests, unit tests, workouts, and scripts
 
-[GAILPATH,GAILVERSION,PATHNAMESEPARATOR,MATLABVERSION]  = GAILstart(0);
+[GAILPATH,GAILVERSION,PATHNAMESEPARATOR,MATLABVERSION]  = GAILstart(false);
 filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
     'gail_workouts-', datestr(now,'yyyy-mm-dd-HH-MM-SS'),'.txt');
 diary(filename)
@@ -124,6 +124,10 @@ catch
 end
 
 % cubSobol_g paper
+if usejava('jvm') || MATLABVERSION <= 7.12
+  run_handle(SobolWalshPict)
+end
+run_handle(WalshFourierCoeffDecay)
 run_handle('RunTestCubatureonGeoAsianCallSobol');
 run_handle('RunTestCubatureonKeisterSobol')
 
@@ -133,8 +137,7 @@ run_handle('RunTestCubatureonKeisterLattice');
 
 % Function minimization thesis
 try
-    if usejava('jvm') || GAILVERSION <= 7.12
-
+    if usejava('jvm') || MATLABVERSION <= 7.12
         run_handle('UniFunMin_Plot_Bump')
         run_handle('UniFunMin_Plot_Flat')
         run_handle('UniFunMin_Plot_TwoExtreme')

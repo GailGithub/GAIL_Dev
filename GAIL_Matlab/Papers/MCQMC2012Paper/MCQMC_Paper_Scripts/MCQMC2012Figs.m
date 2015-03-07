@@ -93,8 +93,8 @@ for k=1:nkappa
 end
 
 %% Plot ratios of sample sizes
-[~,GAILVERSION,~,~] = GAILstart();
-if usejava('jvm') || GAILVERSION <= 7.12
+[~,~,~,MATLABVERSION] = GAILstart(false); 
+if usejava('jvm') || MATLABVERSION <= 7.12
     figure;
     h=loglog( ... %NCLTvec,NChebBEvec./repmat(NCLTvec,1,nkappa),'k-.',...
         NCLTvec,Ntotvec0./repmat(NCLTvec,1,nkappa),'k--',...

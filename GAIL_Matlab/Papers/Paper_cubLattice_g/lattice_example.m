@@ -5,7 +5,8 @@ function lattice_example
 % Matlab again.
 
 % set(0,'defaultLineMarkerSize',5) %large dots
-
+[~,~,~,MATLABVERSION] = GAILstart(false); 
+if usejava('jvm') || MATLABVERSION <= 7.12
 a = 23;
 b = 30;
 %% Node set
@@ -34,3 +35,4 @@ title('Dual Lattice')
 view(a,b)
 gail.save_eps('Paper_cubLattice_g', 'Paper_cubLattice_g_DualSetExample');
 close all
+end
