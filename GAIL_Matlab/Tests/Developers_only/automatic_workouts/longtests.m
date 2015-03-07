@@ -107,7 +107,7 @@ run_handle('RunTestcubMConGaussiand1')
 run_handle('DisplayTestResults_BlacknColor({'ex1' 'ex2' 'ex3'},'black')')
 
 % meanMCBer_g paper
-run_handle('PlotmeanMCBernoulli_gResults')
+run_handle('PlotmeanMCBer_gResults')
 run_handle('PlotRatioHoeffCLT')
 try
     Tests = matlab.unittest.TestSuite.fromClass(?ut_meanMCBer_g);
