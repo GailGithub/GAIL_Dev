@@ -112,14 +112,16 @@ catch
 end  
 
 % MCQMC paper
+%run_handle('MCQMC2012Figs')
+%run_handle('FoolAutomaticAlgorithms')
 run_handle('RunTestcubMConGeoAsianCall')
 run_handle('RunTestcubMConGaussian')
 run_handle('RunTestcubMConGaussiand1')
-%run_handle('DisplayTestResults_BlacknColor')
+%run_handle('DisplayTestResults_BlacknColor({'ex1' 'ex2' 'ex3'},'black')')
 
 % meanMCBer_g paper
 %run_handle('PlotmeanMCBernoulli_gResults')
-run_handle('PlotRatioHoeffCLT')
+%run_handle('PlotRatioHoeffCLT')
 try
     Tests = matlab.unittest.TestSuite.fromClass(?ut_meanMCBer_g);
     results=run(ut_meanMCBer_g)
