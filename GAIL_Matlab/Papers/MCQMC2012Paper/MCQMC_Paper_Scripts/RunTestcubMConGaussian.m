@@ -1,7 +1,6 @@
 %Run TestcubMC on the step function
 function RunTestcubMConGaussian()
 format compact
-
 test.nrep=500;
 fun.funtype='gaussian';
 %param.dim=ceil(1+rand(1)*7);

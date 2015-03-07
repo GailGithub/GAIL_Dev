@@ -28,10 +28,10 @@
 %   randchoiceGeoCall              - randomly choose parameters in geometric asian mean option test function
 %   TestcubMCDiffSettings          - using different random sampling methods to test
 %   verifyparam                    - make sure the parameters defining the functions exist
-%   FoolAutomaticAlgorithms        
-%   snooper
-%   peakyfunction
-%   MCQMC2012Figs                 
+%   FoolAutomaticAlgorithms        - plot fooling function of figure 2 in paper
+%   snooper                        - function record all the x data points
+%   peakyfunction                  - construct peaky function
+%   MCQMC2012Figs                  - plot figure 1 in paper             
 
 
 
