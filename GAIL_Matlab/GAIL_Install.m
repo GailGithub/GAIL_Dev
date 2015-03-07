@@ -16,7 +16,11 @@ warninfo = warning('query','MATLAB:doc:DocNotInstalled');
 warning('off', warninfo.identifier);
 GAIL_Publish; 
 warning(warninfo.state, warninfo.identifier);
-%addpath(strcat(GAILPATH,'Documentation',PATHNAMESEPARATOR,'html',PATHNAMESEPARATOR,'helpsearch'));
+if usejava('jvm')
+    builddocsearchdb(strcat(GAILPATH,'Documentation',PATHNAMESEPARATOR,'html'));
+    fprintf('\nYou can go to help documentation ---> Supplemental Software to learn how to use GAIL.\n');
+    %addpath(strcat(GAILPATH,'Documentation',PATHNAMESEPARATOR,'html',PATHNAMESEPARATOR,'helpsearch'));
+end
 fprintf('\nGAIL version %s has been installed successfully.\n\n', GAILVERSION);
 end
 

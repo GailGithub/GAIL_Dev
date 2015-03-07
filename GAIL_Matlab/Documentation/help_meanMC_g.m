@@ -1,5 +1,5 @@
 %% meanMC_g
-% MEANMC_G Monte Carlo method to estimate the mean of a random variable.
+% Monte Carlo method to estimate the mean of a random variable
 %% Syntax
 % tmu = *meanMC_g*(Yrand)
 %
@@ -12,10 +12,10 @@
 %
 % tmu = *meanMC_g*(Yrand) estimates the mean, mu, of a random variable Y to
 %  within a specified generalized error tolerance, 
-%  tolfun:=max(abstol,reltol*|mu|), i.e., |mu - tmu| <= tolfun with
+%  tolfun:=max(abstol,reltol*| mu |), i.e., | mu - tmu | <= tolfun with
 %  probability at least 1-alpha, where abstol is the absolute error
 %  tolerance, and reltol is the relative error tolerance. Usually the
-%  reltol determines the accuracy of the estimation, however, if the |mu|
+%  reltol determines the accuracy of the estimation, however, if the | mu |
 %  is rather small, the abstol determines the accuracy of the estimation.
 %  The default values are abstol=1e-2, reltol=1e-1, and alpha=1%. Input
 %  Yrand is a function handle that accepts a positive integer input n and
@@ -112,13 +112,13 @@
 %
 %%  Guarantee
 % This algorithm attempts to calculate the mean, mu, of a random variable
-% to a prescribed error tolerance, tolfun:= max(abstol,reltol*|mu|), with
+% to a prescribed error tolerance, tolfun:= max(abstol,reltol*| mu |), with
 % guaranteed confidence level 1-alpha. If the algorithm terminated without
 % showing any warning messages and provide an answer tmu, then the follow
 % inequality would be satisfied:
 % 
-% Pr(|mu-tmu| <= tolfun) >= 1-alpha
-%
+% Pr(| mu - tmu | <= tolfun) >= 1-alpha
+% 
 % The cost of the algorithm, N_tot, is also bounded above by N_up, which is
 % defined in terms of abstol, reltol, nSig, n1, fudge, kurtmax, beta. And
 % the following inequality holds:
@@ -153,7 +153,8 @@
 % Calculate the mean of cos(x) when x is uniformly distributed in
 % [0 1], with the relative error tolerance 1e-2 and uncertainty 0.05.
 
-  tmu = meanMC_g(@(n)cos(rand(n,1)),'reltol',1e-2,'abstol',0,'alpha',0.05)
+  tmu = meanMC_g(@(n)cos(rand(n,1)),'reltol',1e-2,'abstol',0,...
+      'alpha',0.05)
 %% See Also
 %
 % <html>
@@ -195,18 +196,20 @@
 %
 % [3] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
 % Research via Supportable Scientific Software", Journal of Open Research
-% Software, Volume 2, Number 1, e22, pp. 1-7, DOI:
-% http://dx.doi.org/10.5334/jors.bb, 2014.
+% Software, Volume 2, Number 1, e22, pp. 1-7, 2014.
 %
 % [4] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable
 % Mathematical Software" [Course Slides], Illinois Institute of
 % Technology, Chicago, IL, 2013. Available from
 % http://code.google.com/p/gail/ 
 %
-% [5] Sou-Cheng T. Choi, "Summary of the First Workshop On Sustainable
-% Software for Science: Practice And Experiences (WSSSPE1)", Journal of
-% Open Research Software, Volume 2, Number 1, e6, pp. 1-21, DOI:
-% http://dx.doi.org/10.5334/jors.an, 2014.
+% [5] Daniel S. Katz, Sou-Cheng T. Choi, Hilmar Lapp, Ketan Maheshwari,
+% Frank Loffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr,
+% James Hetherington, James Howison, Shel Swenson, Gabrielle D. Allen,
+% Anne C. Elster, Bruce Berriman, Colin Venters, "Summary of the First
+% Workshop On Sustainable Software for Science: Practice And Experiences
+% (WSSSPE1)", Journal of Open Research Software, Volume 2, Number 1, e6,
+% pp. 1-21, 2014.
 %
 % If you find GAIL helpful in your work, please support us by citing the
 % above papers, software, and materials.

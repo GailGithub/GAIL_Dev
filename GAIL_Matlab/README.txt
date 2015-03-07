@@ -22,14 +22,14 @@ Please cite the following software, papers, and materials:
 
 
 Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
-Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang, and Xuan Zhou, "GAIL: 
-Guaranteed Automatic Integration Library (Version 2.1)" [MATLAB Software],
+Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang, and Xuan Zhou, GAIL: 
+Guaranteed Automatic Integration Library (Version 2.1) [MATLAB Software],
 2015. Available from http://code.google.com/p/gail/
 (this software)
 
 Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible Research via 
-Supportable Scientific Software", Journal of Open Research Software, Volume 2, 
-Number 1, e22, pp. 1-7, DOI: http://dx.doi.org/10.5334/jors.bb, 2014.
+Supportable Scientific Software," Journal of Open Research Software, Volume 2, 
+Number 1, e22, pp. 1-7, 2014.
 (describes principles of Reliable Reproducible Research and Supportable 
 Scientific Software)
 
@@ -39,38 +39,46 @@ Available from http://code.google.com/p/gail/
 (develops practices of Reliable Reproducible Research and Supportable 
 Scientific Software)
 
-Sou-Cheng T. Choi, "Summary of the First Workshop On Sustainable Software 
-for Science: Practice And Experiences (WSSSPE1)", Journal of Open Research 
-Software, Volume 2, Number 1, e6, pp. 1-21, DOI: 
-http://dx.doi.org/10.5334/jors.an, 2014.
+Daniel S. Katz, Sou-Cheng T. Choi, Hilmar Lapp, Ketan Maheshwari,
+Frank Loffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr,
+James Hetherington, James Howison, Shel Swenson, Gabrielle D. Allen,
+Anne C. Elster, Bruce Berriman, Colin Venters, "Summary of the First
+Workshop On Sustainable Software for Science: Practice And Experiences
+(WSSSPE1)," Journal of Open Research Software, Volume 2, Number 1, e6,
+pp. 1-21, 2014.
 (discusses practice and challenges in Sustainable Software for Science)
 
 Nicholas Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
 Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic Algorithms:
-Cones, Not Balls", Journal of Complexity 30, pp. 21-45, 2014.
+Cones, Not Balls," Journal of Complexity 30, pp. 21-45, 2014.
 (describes integral_g.m and funappx_g.m)
+
+Yuhan Ding, Fred J. Hickernell, and Sou-Cheng T. Choi, "Locally
+Adaptive Method for Approximating Univariate Functions in Cones with a
+Guarantee for Accuracy," working, 2015.
+(describes funappx_g.m)
 
 Fred J. Hickernell, Lan Jiang, Yuewei Liu, and Art B. Owen,
 "Guaranteed conservative fixed width confidence intervals via Monte
-Carlo sampling", Monte Carlo and Quasi-Monte Carlo Methods 2012
+Carlo sampling," Monte Carlo and Quasi-Monte Carlo Methods 2012
 (J. Dick, F. Y. Kuo, G. W. Peters, and I. H. Sloan, eds.),
 Springer-Verlag, Berlin, pp. 105-128, 2014.
 (describes meanMC_g.m and cubMC_g.m)
 
 Fred J. Hickernell and Lluis Antoni Jimenez Rugama, "Reliable Adaptive 
-Cubature Using Digital Sequences", submitted for publication, 2014.
+Cubature Using Digital Sequences," submitted for publication, 2014.
 (describes cubSobol_g.m)
 
 Lan Jiang and Fred J. Hickernell, "Guaranteed Conservative Confidence Intervals 
-for Means of Bernoulli Random Variables", submitted for publication, 2014.
+for Means of Bernoulli Random Variables," submitted for publication, 2014.
 (describes meanMCBer_g)
 
 Lluis Antoni Jimenez Rugama and Fred J. Hickernell, "Adaptive Multidimensional 
-Integration Based on Rank-1 Lattices", submitted for publication, 2014.
+Integration Based on Rank-1 Lattices," submitted for publication, 2014.
 (describes cubLattice_g.m)
 
 Xin Tong, "A Guaranteed, Adaptive, Automatic Algorithm for Univariate 
-Function Minimization". MS thesis, Illinois Institute of Technology, 2014. 
+Function Minimization," MS thesis, Illinois Institute of Technology, 2014. 
 (describes funmin_g.m)
 
 Downloads

@@ -38,13 +38,14 @@ warning('on','MATLAB:funappx_g:peaky')
 warning('on','MATLAB:funappx_g:exceedbudget')
 warning('on','MATLAB:funappxglobal_g:peaky')
 
-if usejava('jvm')
+[~,~,~,MATLABVERSION] = GAILstart(false); 
+if usejava('jvm') || MATLABVERSION <= 7.12
     figure(1)
     subplot(2,1,1)
     loglog(npoints, errest)
     title('Time and Computational Cost of funappx\_g VS error tolerance')
     ylabel('error estimation')
-    xlabel('# of points')
+    xlabel('Number of points')
     
     subplot(2,1,2)
     loglog(t, errest)
@@ -58,7 +59,7 @@ if usejava('jvm')
     loglog(npointsglobal, errestglobal)
     title('Time and Computational Cost of funappxglobal\_g VS error tolerance')
     ylabel('error estimation')
-    xlabel('# of points')
+    xlabel('Number of points')
     
     subplot(2,1,2)
     loglog(tglobal, errestglobal)

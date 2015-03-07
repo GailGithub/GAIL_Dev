@@ -8,6 +8,9 @@ classdef ut_workout_integral_g < matlab.unittest.TestCase
       [succnowarn, succwarn, pfin] = workout_integral_g(nrep,nmax,abstol);
       succrates = succnowarn + succwarn;   
       testCase.verifyGreaterThanOrEqual(succrates,pfin);
+      for i=2:len(succrates)-1
+        testCase.verifyGreaterThan(succrates(i), succrates(i-1));
+      end
     end
     
   end

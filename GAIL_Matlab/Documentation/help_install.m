@@ -13,7 +13,7 @@
 %     select the "Save" button on this dialog so that GAIL is on the
 %     path automatically in future MATLAB sessions.
 % 
-% 3.  To check if you have installed GAIL successfully, type *help
+% 3.  To check if  GAIL is installed successfully, type *help
 %     funappx_g* to see if its documentation shows up.
 % 
 % Alternatively, you could do this:

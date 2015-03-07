@@ -1,5 +1,5 @@
 function [q,out_param] = cubLattice_old_g(varargin)
-%CUBLATTICE_G is a Quasi-Monte Carlo method using rank-1 Lattices cubature
+%CUBLATTICE_OLD_G Quasi-Monte Carlo method using rank-1 Lattices cubature
 %over a d-dimensional region to integrate within a specified absolute error 
 %tolerance with guarantees under Fourier coefficients cone decay assumptions.
 %

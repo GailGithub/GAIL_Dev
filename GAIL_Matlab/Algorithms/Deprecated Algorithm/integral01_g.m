@@ -1,5 +1,5 @@
 function [q,out_param] = integral01_g(varargin)
-%  INTEGRAL_G 1-D guaranteed function integration using trapezoidal rule
+%INTEGRAL_G 1-D guaranteed function integration using trapezoidal rule
 % 
 %  Description
 %

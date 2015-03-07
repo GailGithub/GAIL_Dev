@@ -89,12 +89,12 @@ npointsratio = sort(npointsratio(:));
 % To just re-display the output, load the .mat file and run this section
 % only
 display(' ')
-display('   Test        # Points          Time Used')
-display(' Function   Local    Global     Local    Global')
+display('   Test      Number of Points       Time Used')
+display(' Function   Local      Global     Local    Global')
 npointslgratio = zeros(1,n);
 timelgratio = zeros(1,n);
 for i=1:n
-    display(sprintf('%8.0f %8.0f  %7.0f %10.6f  %10.6f',...
+    display(sprintf('%9.0f %9.0f  %9.0f %11.7f  %11.7f',...
         [i mean(npoints(i,1,:)) mean(npoints(i,2,:)) mean(time(i,1,:)) mean(time(i,2,:))])) 
     npointslgratio(i) = mean(npoints(i,1,:))/mean(npoints(i,2,:));
     timelgratio(i) = mean(time(i,1,:))/mean(time(i,2,:));
@@ -102,21 +102,22 @@ end
 
 %% Save Output
 
-if usejava('jvm')
+[~,~,~,MATLABVERSION] = GAILstart(false); 
+if usejava('jvm') || MATLABVERSION <= 7.12
     figure
     subplot(2,1,1);
     plot(1:nrep*n,timeratio,'blue',1:nrep*n,ones(nrep*n,1),'red');
     title('Comparison between funappx\_g and funappxglobal\_g')
     ylabel('Time ratio of local/global')
-    xlabel('# of tests')
+    xlabel('Number of tests')
     subplot(2,1,2);
     plot(1:nrep*n,npointsratio,'blue',1:nrep*n,ones(nrep*n,1),'red');
     ylabel('Points ratio of local/global')
-    xlabel('# of tests')
+    xlabel('Number of tests')
     
     gail.save_eps('WorkoutFunappxOutput', 'WorkoutFunAppxTest');
-    
-    gail.save_mat('WorkoutFunappxOutput', 'WorkoutFunAppxTest', npoints,time,...
-        c,timeratio,npointsratio,npointslgratio,timelgratio);
 end;
+gail.save_mat('WorkoutFunappxOutput', 'WorkoutFunAppxTest', npoints,time,...
+    c,timeratio,npointsratio,npointslgratio,timelgratio);
+
 end

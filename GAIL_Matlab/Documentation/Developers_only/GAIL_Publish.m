@@ -8,15 +8,15 @@ if usejava('jvm')
         'help_integral_g', 'help_meanMC_g','help_meanMCBer_g', ...
         'help_cubMC_g','help_cubLattice_g','help_cubSobol_g','help_install'};
     
-    %% generate GAIL User Guide in HTML format
+    %% generate GAIL Documentation in HTML format
     delete(strcat(GAILPATH,'Documentation',PATHNAMESEPARATOR,'html',PATHNAMESEPARATOR,'*.png'))
     for i=1:length(mfile_list),
         publish(mfile_list{i});
     end
     
-    %% generate GAIL User Guide in PDF format
+    %% generate GAIL Documentation in PDF format
     s = computer;
-    if prod(s(1:2)=='PC') == 0
+    if all(s(1:2)=='PC') == 0
         delete(strcat(GAILPATH,'Documentation',PATHNAMESEPARATOR,'html',PATHNAMESEPARATOR,'gail_ug.*'))
         cat_cmd = 'cat ';
         for i=1:length(mfile_list),
@@ -27,11 +27,10 @@ if usejava('jvm')
         delete(gailug_filename)
         cat_cmd = strcat([cat_cmd, '>> ', gailug_filename]);
         system(cat_cmd);
-        publish(gailug_filename,'pdf');
+%        publish(gailug_filename,'pdf');
         publish(gailug_filename,'latex');
-        set(0, 'DefaultFigureVisible', oldStatus)
     end
-    
+    set(0, 'DefaultFigureVisible', oldStatus)
     builddocsearchdb(strcat(GAILPATH,'Documentation',PATHNAMESEPARATOR,'html'));
     fprintf('\nYou can go to help documentation ---> Supplemental Software to learn how to use GAIL.\n');
    

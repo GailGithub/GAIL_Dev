@@ -25,14 +25,17 @@ sobstr=scramble(sobstr,'MatousekAffineOwen');
 sobol=qrandstream(sobstr);
 
 %% Plot function
-figure
-xplot=(0:0.002:1);
-yplot=testfun(xplot);
-plot(xplot,yplot,'b-');
-ymin=1.1*min(yplot);
-ymax=1.1*max(yplot);
-axis([0 1 ymin ymax])
-gail.save_eps('Paper_cubSobol_g', 'Paper_cubSobol_g_FunctionWalshFourierCoeffDecay');
+[~,~,~,MATLABVERSION] = GAILstart(false); 
+if usejava('jvm') || MATLABVERSION <= 7.12
+    figure
+    xplot=(0:0.002:1);
+    yplot=testfun(xplot);
+    plot(xplot,yplot,'b-');
+    ymin=1.1*min(yplot);
+    ymax=1.1*max(yplot);
+    axis([0 1 ymin ymax])
+    gail.save_eps('Paper_cubSobol_g', 'Paper_cubSobol_g_FunctionWalshFourierCoeffDecay');
+end
 
 %% Evaluate Function and FWT
 n=2^mmax;
@@ -68,6 +71,7 @@ ymap=y(kappanumap);
 
 
 %% Plot FW coefficients
+if usejava('jvm') || MATLABVERSION <= 7.12
 ltgray=0.8*ones(1,3);
 gray=0.5*ones(1,3);
 nplot=2^mplot;
@@ -113,6 +117,7 @@ for mdual=mdualvec
    legend('boxoff')
    set(gca,'Position',[0.2 0.155 0.75 0.77])
    gail.save_eps('Paper_cubSobol_g', 'Paper_cubSobol_g_WalshFourierCoeffDecay');
+end
 end
 close all
 end

@@ -17,9 +17,10 @@ function [mu, out_param]=dt_meanMC_g_TrafficModel(tol)
 %
 % >> dt_meanMC_g_TrafficModel(1e-3)
 %
-% Warning: At step ***, tried to evaluate at *** samples, which is more
-% than the remaining *** samples. We will use all the sample
-% left to estimate the mean. ***
+% Warning: In order to achieve the guaranteed accuracy, at step ***, tried to
+% evaluate at *** samples, which is more than the remaining ***
+% samples. We will use all the samples left to estimate the mean without
+% guarantee.***
 %
 % 
 in_param.tbudget=30;% given the time budget 

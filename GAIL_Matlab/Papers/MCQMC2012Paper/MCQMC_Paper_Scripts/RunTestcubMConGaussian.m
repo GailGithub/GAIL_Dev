@@ -1,9 +1,7 @@
 %Run TestcubMC on the step function
-clear all, close all
-clc
+function RunTestcubMConGaussian()
 format compact
-
-test.nrep=50;
+test.nrep=500;
 fun.funtype='gaussian';
 %param.dim=ceil(1+rand(1)*7);
 param.measure='uniform';
@@ -17,7 +15,7 @@ test.randch.dimoverall=dimchoice(randi(ndim,test.nrep,1));
 param.impyes=false;
 param.tol=1e-2;
 param.n0=2^13;
-test.howoftenrep=2;
+test.howoftenrep=10;
 shapemin=1e-6;
 shapemax=1;
 test.randch.shapeoverall=nan(test.nrep,max(dimchoice));
@@ -93,4 +91,5 @@ test.randchoicefun=@randchoicegaussian;
 
 %test.whichsample={'iid','iidheavy','Sobol','Sobolheavy','quad','quadgk','chebfun','chebfunheavy'};
 test.whichsample={'iid','iidheavy','Sobol','Sobolheavy'};
-res=TestcubMCDiffSettings(test,fun,param);
+TestcubMCDiffSettings(test,fun,param);
+end

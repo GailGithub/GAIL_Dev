@@ -131,33 +131,35 @@ function [q,out_param] = integral_g(varargin)
 %   q = 0.3333
 %
 %
-%   See also FUNAPPX_G, CUBMC_G
+%   See also INTEGRAL, QUAD, FUNAPPX_G, MEANMC_G, CUBMC_G, FUNMIN_G
 %
 %  References
 %
 %   [1]  Nick Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
-%   Yizhi Zhang, The Cost of Deterministic, Adaptive, Automatic Algorithms:
-%   Cones, Not Balls, Journal of Complexity 30 (2014), pp. 21-45.
+%   Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic Algorithms:
+%   Cones, Not Balls," Journal of Complexity 30, pp. 21-45, 2014.
 %
-%   [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
+%   [2] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang,
 %   Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
-%   "GAIL: Guaranteed Automatic Integration Library (Version 2.1)" [MATLAB
-%   Software], 2015. Available from http://code.google.com/p/gail/
+%   GAIL: Guaranteed Automatic Integration Library (Version 2.1)
+%   [MATLAB Software], 2015. Available from http://code.google.com/p/gail/
 %
 %   [3] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
-%   Research via Supportable Scientific Software", Journal of Open Research
-%   Software, Volume 2, Number 1, e22, pp. 1-7, DOI:
-%   http://dx.doi.org/10.5334/jors.bb, 2014.
+%   Research via Supportable Scientific Software," Journal of Open Research
+%   Software, Volume 2, Number 1, e22, pp. 1-7, 2014.
 %
 %   [4] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable
 %   Mathematical Software" [Course Slides], Illinois Institute of
 %   Technology, Chicago, IL, 2013. Available from
 %   http://code.google.com/p/gail/ 
 %
-%   [5] Sou-Cheng T. Choi, "Summary of the First Workshop On Sustainable
-%   Software for Science: Practice And Experiences (WSSSPE1)", Journal of
-%   Open Research Software, Volume 2, Number 1, e6, pp. 1-21, DOI:
-%   http://dx.doi.org/10.5334/jors.an, 2014.
+%   [5] Daniel S. Katz, Sou-Cheng T. Choi, Hilmar Lapp, Ketan Maheshwari,
+%   Frank Loffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr,
+%   James Hetherington, James Howison, Shel Swenson, Gabrielle D. Allen,
+%   Anne C. Elster, Bruce Berriman, Colin Venters, "Summary of the First
+%   Workshop On Sustainable Software for Science: Practice And Experiences
+%   (WSSSPE1)," Journal of Open Research Software, Volume 2, Number 1, e6,
+%   pp. 1-21, 2014.
 %
 %   If you find GAIL helpful in your work, please support us by citing the
 %   above papers, software, and materials.
@@ -355,7 +357,7 @@ if (out_param.abstol <= 0 )
 end
 % let initial number of points be a positive integer
 if (~gail.isposint(out_param.nlo))
-    if isposge3(out_param.nlo)
+    if gail.isposge3(out_param.nlo)
         warning('MATLAB:integral_g:lowinitnotint',['Lowest initial number of points should be a positive integer.' ...
             ' Using ', num2str(ceil(out_param.nlo))])
         out_param.nlo = ceil(out_param.nlo);
@@ -366,7 +368,7 @@ if (~gail.isposint(out_param.nlo))
     end
 end
 if (~gail.isposint(out_param.nhi))
-    if isposge3(out_param.nhi)
+    if gail.isposge3(out_param.nhi)
         warning('MATLAB:integral_g:highinitnotint',['Highest initial number of points should be a positive integer.' ...
             ' Using ', num2str(ceil(out_param.nhi))])
         out_param.nhi = ceil(out_param.nhi);
@@ -377,10 +379,13 @@ if (~gail.isposint(out_param.nhi))
     end
 end
 if (out_param.nlo > out_param.nhi)
-    if isposge3(out_param.nhi)
+    if gail.isposge3(out_param.nhi)
         warning('MATLAB:integral_g:nlobtnhi',['Highest initial number of points should be at least equal to to lowest initial number of points.' ...
-            ' Using ', num2str(ceil(out_param.nhi)), ' as nlo'])
-        out_param.nlo = ceil(out_param.nhi);
+            ' Using ', num2str(ceil(out_param.nlo)), ' as ninit'])
+        out_param.nhi = ceil(out_param.nlo);
+%         warning('MATLAB:integral_g:nlobtnhi',['Highest initial number of points should be at least equal to to lowest initial number of points.' ...
+%             ' Using ', num2str(ceil(out_param.nhi)), ' as nlo'])
+%         out_param.nlo = ceil(out_param.nhi);
     else
         warning('MATLAB:integral_g:highinitlt3',['Highest initial number of points should be a positive integer.' ...
             ' Using default number of points ' int2str(default.nhi)])
@@ -390,7 +395,7 @@ end
 
 out_param.ninit = max(ceil(out_param.nhi*(out_param.nlo/out_param.nhi)^(1/(1+(out_param.b-out_param.a)))),3);
 if (~gail.isposint(out_param.nmax))
-    if ispositive(out_param.nmax)
+    if gail.ispositive(out_param.nmax)
         warning('MATLAB:integral_g:budgetnotint',['Cost budget should be a positive integer.' ...
             ' Using cost budget ', num2str(ceil(out_param.nmax))])
         out_param.nmax = ceil(out_param.nmax);

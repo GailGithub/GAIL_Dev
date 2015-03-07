@@ -1,43 +1,37 @@
 %% cubSobol_g
-% is a Quasi-Monte Carlo method using Sobol' cubature over the
+% Quasi-Monte Carlo method using Sobol' cubature over the
 % d-dimensional region to integrate within a specified generalized error
-% tolerance with guarantees under Walsh-Fourier coefficients cone decay assumptions.
+% tolerance with guarantees under Walsh-Fourier coefficients cone decay
+% assumptions
 %% Syntax
 % [q,out_param] = *cubSobol_g*(f,d)
 %
 % q = *cubSobol_g*(f,d,abstol,reltol,measure,mmin,mmax,fudge,toltype,theta)
 %
-% q = *cubSobol_g*(f,d,'abstol',abstol,'reltol',reltol,'measure',measure,'mmin',mmin,'mmax',mmax,'fudge',fudge,'toltype',toltype,'theta',theta)
-%
 % q = *cubSobol_g*(f,d,in_param)
 %% Description
 %
 % [q,out_param] = *cubSobol_g*(f,d) estimates the integral of f over the
-%  d-dimensional region with an error guaranteed not to be greater than 
-%  a specific generalized error tolerance, 
-%  tolfun:=max(abstol,reltol*|integral(f)|). The generalized tolerance function can
-%  aslo be cosen as tolfun:=theta*abstol+(1-theta)*reltol*|integral(f)| 
-%  where theta is another input parameter. Input f is a function handle. f should
-%  accept an n x d matrix input, where d is the dimension of the hypercube,
-%  and n is the number of points being evaluated simultaneously. The input d
-%  is the dimension in which the function f is defined. Given the
-%  construction of Sobol', d must be a positive integer with 1<=d<=1111.
+%  d-dimensional region with an error guaranteed not to be greater than a
+%  specific generalized error tolerance, tolfun := max(abstol, reltol *
+%  abs(integral(f))). The generalized tolerance function can aslo be cosen
+%  as tolfun := theta * abstol + (1 - theta) * reltol* abs(integral(f))
+%  where theta is another input parameter. Input f is a function handle. f
+%  should accept an n x d matrix input, where d is the dimension of the
+%  hypercube, and n is the number of points being evaluated
+%  simultaneously. The input d is the dimension in which the function f is
+%  defined. Given the construction of Sobol', d must be a positive integer
+%  with 1<=d<=1111.
 %
 % q = *cubSobol_g*(f,d,abstol,reltol,measure,mmin,mmax,fudge,toltype,theta)
-%  estimates the integral of f over a d-dimensional region. The answer
-%  is given within the generalized error tolerance tolfun. All parameters
-%  should be input in the order specified above. If an input is not specified,
-%  the default value is used. Note that if an input is not specified,
-%  the remaining tail cannot be specified either.
-%
-% q = *cubSobol_g*(f,d,'abstol',abstol,'reltol',reltol,'measure',measure,'mmin',mmin,'mmax',mmax,'fudge',fudge,'toltype',toltype,'theta',theta)
-%  estimates the integral of f over a d-dimensional region. The answer
-%  is given within the generalized error tolerance tolfun. All the field-value
-%  pairs are optional and can be supplied with any order. If an input is not
-%  specified, the default value is used.
+%  estimates the integral of f over a d-dimensional region. The answer is
+%  given within the generalized error tolerance tolfun. All parameters
+%  should be input in the order specified above. If an input is not
+%  specified, the default value is used. Note that if an input is not
+%  specified, the remaining tail cannot be specified either.
 %
 % q = *cubSobol_g*(f,d,in_param) estimates the integral of f over the
-%  d-dimensional region. The answer is given within the generalized error 
+%  d-dimensional region. The answer is given within the generalized error
 %  tolerance tolfun.
 % 
 % *Input Arguments*
@@ -62,35 +56,35 @@
 % 
 % *Optional Input Arguments*
 %
-% * in_param.mmin --- the minimum number of points to start is 2^mmin. The
-%  cone condition on the Fourier coefficients decay requires a minimum
-%  number of points to start. The advice is to consider at least mmin=10.
-%  mmin needs to be a positive integer with mmin<=mmax. By default it is 10.
+% * in_param.mmin --- the minimum number of points to start is 2^mmin.
+%  The cone condition on the Fourier coefficients decay requires a
+%  minimum number of points to start. The advice is to consider at least
+%  mmin=10. mmin needs to be a positive integer with mmin<=mmax. By
+%  default it is 10.
 %
-% * in_param.mmax --- the maximum budget is 2^mmax. By construction of the
-%  Sobol' generator, mmax is a positive integer such that mmin<=mmax<=53.
-%  The default value is 24.
+% * in_param.mmax --- the maximum budget is 2^mmax. By construction of
+%  the Sobol' generator, mmax is a positive integer such that
+%  mmin<=mmax<=53. The default value is 24.
 %
-% * in_param.fudge --- the positive function multiplying the finite 
-%  sum of Fast Walsh coefficients specified in the cone of functions.
-%  For more information about this parameter, refer to the references.
-%  By default it is @(x) 5*2.^-x.
+% * in_param.fudge --- the positive function multiplying the finite sum
+%  of Fast Walsh coefficients specified in the cone of functions. For
+%  more information about this parameter, refer to the references. By
+%  default it is @(x) 5*2.^-x.
 %
 % * in_param.toltype --- this is the tolerance function. There are two
 %  choices, 'max' (chosen by default) which takes
-%  max(abstol,reltol*|integral(f)|) and 'comb' which is a linear combination
-%  theta*abstol+(1-theta)*reltol*|integral(f)|. Theta is another 
-%  parameter that can be specified (see below). For pure absolute error,
-%  either choose 'max' and set reltol=0 or choose 'comb' and set
-%  theta=1.
+%  max(abstol,reltol*|integral(f)|) and 'comb' which is a linear
+%  combination theta*abstol+(1-theta)*reltol*|integral(f)|. Theta is
+%  another parameter that can be specified (see below). For pure
+%  absolute error, either choose 'max' and set reltol=0 or choose 'comb'
+%  and set theta=1.
 % 
-% * in_param.theta --- this input is parametrizing the toltype 
-%  'comb'. Thus, it is only afecting when the toltype
-%  chosen is 'comb'. It stablishes the linear combination weight
-%  between the absolute and relative tolerances
-%  theta*abstol+(1-theta)*reltol*|integral(f)|. Note that for theta=1, 
-%  we have pure absolute tolerance while for theta=0, we have pure 
-%  relative tolerance. By default, theta=1.
+% * in_param.theta --- this input is parametrizing the toltype 'comb'.
+%  Thus, it is only afecting when the toltype chosen is 'comb'. It
+%  stablishes the linear combination weight between the absolute and
+%  relative tolerances theta*abstol+(1-theta)*reltol*|integral(f)|. Note
+%  that for theta=1, we have pure absolute tolerance while for theta=0,
+%  we have pure relative tolerance. By default, theta=1.
 %
 % *Output Arguments*
 %
@@ -102,9 +96,10 @@
 %  condition. If the function lies in the cone, the real error should be
 %  smaller than this predicted error.
 %
-% * out_param.time --- time elapsed in seconds when calling cubSobol_g for f.
+% * out_param.time --- time elapsed in seconds when calling cubSobol_g
+%  for f.
 %
-% * out_param.exitflag --- this is a binary vector stating whether 
+% * out_param.exitflag --- this is a binary vector stating whether
 %  warning flags arise. These flags tell about which conditions make the
 %  final result certainly not guaranteed. One flag is considered arisen
 %  when its value is 1. The following list explains the flags in the
@@ -126,21 +121,22 @@
 % 
 %%  Guarantee
 %
-% This algorithm computes the integral of real valued functions in dimension d 
-% with a prescribed generalized error tolerance. The Walsh-Fourier 
-% coefficients of the integrand are assumed to be absolutely convergent.
-% If the algorithm terminates without warning messages, the output is 
-% given with guarantees under the assumption that the integrand lies inside
-% a cone of functions. The guarantee is based on the decay rate of the 
-% Walsh-Fourier coefficients. For more details on how the cone is defined, 
-% please refer to the references below.
+% This algorithm computes the integral of real valued functions in
+% dimension d with a prescribed generalized error tolerance. The
+% Walsh-Fourier coefficients of the integrand are assumed to be absolutely
+% convergent. If the algorithm terminates without warning messages, the
+% output is given with guarantees under the assumption that the integrand
+% lies inside a cone of functions. The guarantee is based on the decay rate
+% of the Walsh-Fourier coefficients. For more details on how the cone is
+% defined, please refer to the references below.
 %
 %% Examples
 %
 %%
 % *Example 1*
 
-% Estimate the integral with integrand f(x) = x1.*x2 in the interval [0,1)^2:
+% Estimate the integral with integrand f(x) = x1.*x2 in the interval
+% [0,1)^2:
 
   f = @(x) x(:,1).*x(:,2); d = 2;
   q = cubSobol_g(f,d,1e-5,1e-1,'uniform')
@@ -175,8 +171,8 @@
 %%
 % *Example 5*
 
-% Estimate the integral with integrand f(x) = 8*x1.*x2.*x3.*x4.*x5 in the interval
-% [0,1)^5 with pure absolute error 1e-5.
+% Estimate the integral with integrand f(x) = 8*x1.*x2.*x3.*x4.*x5 in the
+% interval [0,1)^5 with pure absolute error 1e-5.
 
   f = @(x) 8*prod(x,2); d = 5;
   q = cubSobol_g(f,d,1e-5,0)
@@ -211,18 +207,20 @@
 %
 % [3] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
 % Research via Supportable Scientific Software", Journal of Open Research
-% Software, Volume 2, Number 1, e22, pp. 1-7, DOI:
-% http://dx.doi.org/10.5334/jors.bb, 2014.
+% Software, Volume 2, Number 1, e22, pp. 1-7, 2014.
 %
 % [4] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable
 % Mathematical Software" [Course Slides], Illinois Institute of
 % Technology, Chicago, IL, 2013. Available from
 % http://code.google.com/p/gail/ 
 %
-% [5] Sou-Cheng T. Choi, "Summary of the First Workshop On Sustainable
-% Software for Science: Practice And Experiences (WSSSPE1)", Journal of
-% Open Research Software, Volume 2, Number 1, e6, pp. 1-21, DOI:
-% http://dx.doi.org/10.5334/jors.an, 2014.
+% [5] Daniel S. Katz, Sou-Cheng T. Choi, Hilmar Lapp, Ketan Maheshwari,
+% Frank Loffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr,
+% James Hetherington, James Howison, Shel Swenson, Gabrielle D. Allen,
+% Anne C. Elster, Bruce Berriman, Colin Venters, "Summary of the First
+% Workshop On Sustainable Software for Science: Practice And Experiences
+% (WSSSPE1)", Journal of Open Research Software, Volume 2, Number 1, e6,
+% pp. 1-21, 2014.
 %
 % If you find GAIL helpful in your work, please support us by citing the
 % above papers, software, and materials.

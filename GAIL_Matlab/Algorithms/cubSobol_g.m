@@ -1,7 +1,8 @@
 function [q,out_param] = cubSobol_g(varargin)
-%CUBSOBOL_G is a Quasi-Monte Carlo method using Sobol' cubature over the
+%CUBSOBOL_G Quasi-Monte Carlo method using Sobol' cubature over the
 %d-dimensional region to integrate within a specified generalized error
-%tolerance with guarantees under Walsh-Fourier coefficients cone decay assumptions.
+%tolerance with guarantees under Walsh-Fourier coefficients cone decay
+%assumptions
 %
 %   [q,out_param] = CUBSOBOL_G(f,hyperbox) estimates the integral of f
 %   over the d-dimensional region described by hyperbox, and with an error
@@ -59,14 +60,15 @@ function [q,out_param] = cubSobol_g(varargin)
 % 
 %   Optional Input Arguments
 % 
-%     in_param.mmin --- the minimum number of points to start is 2^mmin. The
-%     cone condition on the Fourier coefficients decay requires a minimum
-%     number of points to start. The advice is to consider at least mmin=10.
-%     mmin needs to be a positive integer with mmin<=mmax. By default it is 10.
+%     in_param.mmin --- the minimum number of points to start is 2^mmin.
+%     The cone condition on the Fourier coefficients decay requires a
+%     minimum number of points to start. The advice is to consider at least
+%     mmin=10. mmin needs to be a positive integer with mmin<=mmax. By
+%     default it is 10.
 %
-%     in_param.mmax --- the maximum budget is 2^mmax. By construction of the
-%     Sobol' generator, mmax is a positive integer such that mmin<=mmax<=53.
-%     The default value is 24.
+%     in_param.mmax --- the maximum budget is 2^mmax. By construction of
+%     the Sobol' generator, mmax is a positive integer such that
+%     mmin<=mmax<=53. The default value is 24.
 %
 %     in_param.fudge --- the positive function multiplying the finite 
 %     sum of Fast Walsh Fourier coefficients specified in the cone of functions.
@@ -108,7 +110,7 @@ function [q,out_param] = cubSobol_g(varargin)
 %
 %     out_param.time --- time elapsed in seconds when calling cubSobol_g.
 %
-%     out_param.exitflag --- this is a binary vector stating whether 
+%     out_param.exitflag --- this is a binary vector stating whether
 %     warning flags arise. These flags tell about which conditions make the
 %     final result certainly not guaranteed. One flag is considered arisen
 %     when its value is 1. The following list explains the flags in the
@@ -128,13 +130,13 @@ function [q,out_param] = cubSobol_g(varargin)
 %                       below.
 % 
 %  Guarantee
-% This algorithm computes the integral of real valued functions in [0,1)^d 
-% with a prescribed generalized error tolerance. The Walsh-Fourier 
-% coefficients of the integrand are assumed to be absolutely convergent.
-% If the algorithm terminates without warning messages, the output is 
-% given with guarantees under the assumption that the integrand lies inside
-% a cone of functions. The guarantee is based on the decay rate of the 
-% Walsh-Fourier coefficients. For more details on how the cone is defined, 
+% This algorithm computes the integral of real valued functions in [0,1)^d
+% with a prescribed generalized error tolerance. The Walsh-Fourier
+% coefficients of the integrand are assumed to be absolutely convergent. If
+% the algorithm terminates without warning messages, the output is given
+% with guarantees under the assumption that the integrand lies inside a
+% cone of functions. The guarantee is based on the decay rate of the
+% Walsh-Fourier coefficients. For more details on how the cone is defined,
 % please refer to the references below.
 % 
 %  Examples
@@ -182,29 +184,31 @@ function [q,out_param] = cubSobol_g(varargin)
 % 
 %  References
 %
-%   [1] Fred J. Hickernell and Lluis Antoni Jimenez Rugama: Reliable adaptive
-%   cubature using digital sequences (2014). Submitted for publication:
+%   [1] Fred J. Hickernell and Lluis Antoni Jimenez Rugama, "Reliable adaptive
+%   cubature using digital sequences," 2014. Submitted for publication:
 %   arXiv:1410.8615.
 %
 %   [2] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang,
 %   Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
-%   "GAIL: Guaranteed Automatic Integration Library (Version 2.1)"
+%   GAIL: Guaranteed Automatic Integration Library (Version 2.1)
 %   [MATLAB Software], 2015. Available from http://code.google.com/p/gail/
 %
 %   [3] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
-%   Research via Supportable Scientific Software", Journal of Open Research
-%   Software, Volume 2, Number 1, e22, pp. 1-7, DOI:
-%   http://dx.doi.org/10.5334/jors.bb, 2014.
+%   Research via Supportable Scientific Software," Journal of Open Research
+%   Software, Volume 2, Number 1, e22, pp. 1-7, 2014.
 %
 %   [4] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable
 %   Mathematical Software" [Course Slides], Illinois Institute of
 %   Technology, Chicago, IL, 2013. Available from
 %   http://code.google.com/p/gail/ 
 %
-%   [5] Sou-Cheng T. Choi, "Summary of the First Workshop On Sustainable
-%   Software for Science: Practice And Experiences (WSSSPE1)", Journal of
-%   Open Research Software, Volume 2, Number 1, e6, pp. 1-21, DOI:
-%   http://dx.doi.org/10.5334/jors.an, 2014.
+%   [5] Daniel S. Katz, Sou-Cheng T. Choi, Hilmar Lapp, Ketan Maheshwari,
+%   Frank Loffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr,
+%   James Hetherington, James Howison, Shel Swenson, Gabrielle D. Allen,
+%   Anne C. Elster, Bruce Berriman, Colin Venters, "Summary of the First
+%   Workshop On Sustainable Software for Science: Practice And Experiences
+%   (WSSSPE1)," Journal of Open Research Software, Volume 2, Number 1, e6,
+%   pp. 1-21, 2014.
 %
 %   If you find GAIL helpful in your work, please support us by citing the
 %   above papers, software, and materials.
