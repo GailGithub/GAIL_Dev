@@ -22,6 +22,8 @@ using std::find;
 
 string upperString(const string &) noexcept;
 string lowerString(const string &) noexcept;
+string substituteQuotation(string, bool &) noexcept;
+string substituteQuotationSimple(string) noexcept;
 
 int main()
 {
@@ -208,20 +210,22 @@ int main()
       
       ofs << "%% References" << endl;
       auto ref = find(++see, fcnDoc.cend(), "%  References");
+      //bool isQuotation = false;
       for (auto iter = ++ref; iter != fcnDoc.cend(); ++iter) {
 	if (iter->size() > 4) {
-	  ofs << "% " << iter->substr(4) << "\n";
+	  string newLine = substituteQuotationSimple(*iter);
+	  ofs << "% " << newLine.substr(4) << "\n";
 	} else {
 	ofs << *iter << "\n";
 	}
       }
-	
      
       ofs.flush();
       ofs.close();
       fcnDoc.clear();
     }
   }
+
   helptoc << "        </tocitem>\n    </tocitem>\n</toc>" << endl;
   gail << "% </html>\n" << "%\n" << "%" << endl;
   for (const auto &s : websiteList) {
@@ -251,4 +255,37 @@ string lowerString(const string &s) noexcept
     lStr[i] = tolower(s[i]);
   }
   return lStr;
+}
+
+string substituteQuotation(string s, bool &isQ) noexcept
+{
+  auto firstMatch = s.find_first_of("\"");
+  auto lastMatch = s.find_last_of("\"");
+  if (firstMatch == string::npos) {
+    return s;
+  } else {
+    s.replace(lastMatch, 1, isQ ? "</|>" : "<|>");
+    if (firstMatch == lastMatch) {
+      isQ = !isQ;
+      return s;
+    } else {
+      return s.replace(firstMatch, 1, isQ ? "</|>" : "<|>");
+    }
+  }
+}
+      
+string substituteQuotationSimple(string s) noexcept
+{
+  auto firstMatch = s.find_first_of("\"");
+  auto lastMatch = s.find_last_of("\"");
+  if (firstMatch == string::npos) {
+    return s;
+  } else {
+    s.replace(lastMatch, 1, "_");
+    if (firstMatch == lastMatch) {
+      return s;
+    } else {
+      return s.replace(firstMatch, 1, "_");
+    }
+  }
 }
