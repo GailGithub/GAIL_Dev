@@ -14,6 +14,13 @@
 % </html>
 %
 %
+%% 1-D minimization
+%
+% <html>
+% <a href="help_funmin_g.html">funmin_g</a>
+% </html>
+%
+%
 %% High dimension integration
 %
 % <html>
@@ -36,10 +43,4 @@
 % <a href="help_cubLattice_g.html">cubLattice_g</a>
 % </html>
 %
-%
-%% 1-D minimization
-%
-% <html>
-% <a href="help_funmin_g.html">funmin_g</a>
-% </html>
 %
