@@ -44,6 +44,12 @@ function [pHat,out_param]=meanMCBer_g(varargin)
 %
 %     out_param.time --- the time elapsed in seconds.
 % 
+%     out_param.exit --- the state of program when exiting.
+%      
+%                       0   success
+%      
+%                       1   Not enough samples to estimate p with guarantee
+%
 %  Guarantee
 %
 % If the sample size is calculated according Hoeffding's inequality, which
@@ -253,8 +259,6 @@ function out_param = nabs(out_param)
 % absolute error criterion
 out_param.n = ceil(log(2/out_param.alpha)/(2*out_param.abstol^2));
 % calculate the sample size by Hoeffding's inequality
-out_param.tau = 1;
-% it is one step estimation
 if out_param.n > out_param.nmax % if the sample needed is bigger than nmax
     out_param.exit=1; % pass a flag
     meanMCBernoulli_g_err(out_param);% print warning message
