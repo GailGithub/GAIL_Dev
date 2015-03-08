@@ -89,20 +89,24 @@
 % * out_param.ninit --- initial number of points we use for each sub
 %  interval
 %
-% * out_param.exit --- this is a number defining the conditions of
+% <html>
+% <ul type="square">
+%  <li>out_param.exit --- this is a number defining the conditions of
 %  success or failure satisfied when finishing the algorithm. The 
 %  algorithm is considered successful (with out_param.exit == 0) if no 
 %  other flags arise warning that the results are certainly not 
 %  guaranteed. The initial value is 0 and the final value of this
-%  parameter is encoded as follows:
-%    
-%                    1    If reaching overbudget. It states whether
-%                    the max budget is attained without reaching the
-%                    guaranteed error tolerance.
-%     
-%                    2   If reaching overiteration. It states whether
+%  parameter is encoded as follows:</li>
+%   <ul type="circle">
+%    <li>1   If reaching overbudget. It states whether
+%                 the max budget is attained without reaching the
+%                    guaranteed error tolerance.</li>
+%    <li>2   If reaching overiteration. It states whether
 %                    the max iterations is attained without reaching the
-%                    guaranteed error tolerance.
+%                    guaranteed error tolerance.</li>
+%   </ul>
+% </ul>
+% </html>
 %
 % * out_param.iter --- number of iterations
 %
@@ -197,19 +201,19 @@ clear in_param; f = @(x) x.^2;
 %
 % [1]  Nick Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
 % Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic Algorithms:
-% Cones, Not Balls", Journal of Complexity 30, pp. 21-45, 2014.
+% Cones, Not Balls," Journal of Complexity 30, pp. 21-45, 2014.
 %  
 % [2]  Yuhan Ding, Fred J. Hickernell, and Sou-Cheng T. Choi, "Locally
 % Adaptive Method for Approximating Univariate Functions in Cones with a
-% Guarantee for Accuracy", working, 2015.
+% Guarantee for Accuracy," working, 2015.
 %          
 % [3]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
 % Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
-% "GAIL: Guaranteed Automatic Integration Library (Version 2.1)" [MATLAB
+% GAIL: Guaranteed Automatic Integration Library (Version 2.1) [MATLAB
 % Software], 2015. Available from http://code.google.com/p/gail/
 %
 % [4] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
-% Research via Supportable Scientific Software", Journal of Open Research
+% Research via Supportable Scientific Software," Journal of Open Research
 % Software, Volume 2, Number 1, e22, pp. 1-7, 2014.
 %
 % [5] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable
@@ -222,7 +226,7 @@ clear in_param; f = @(x) x.^2;
 % James Hetherington, James Howison, Shel Swenson, Gabrielle D. Allen,
 % Anne C. Elster, Bruce Berriman, Colin Venters, "Summary of the First
 % Workshop On Sustainable Software for Science: Practice And Experiences
-% (WSSSPE1)", Journal of Open Research Software, Volume 2, Number 1, e6,
+% (WSSSPE1)," Journal of Open Research Software, Volume 2, Number 1, e6,
 % pp. 1-21, 2014.
 %
 % If you find GAIL helpful in your work, please support us by citing the

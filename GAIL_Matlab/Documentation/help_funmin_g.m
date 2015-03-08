@@ -85,9 +85,15 @@
 % * out_param.npoints --- number of points needed to reach the guaranteed
 %  absolute error tolerance or the guaranteed X tolerance
 %
-% * out_param.exitflag --- the state of program when exiting
-%           0  Success
-%           1  Number of points used is greater than out_param.nmax
+% <html>
+% <ul type="square">
+%  <li>out_param.exitflag --- the state of program when exiting:</li>
+%   <ul type="circle">
+%    <li>0  Success</li>
+%    <li>1  Number of points used is greater than out_param.nmax</li>
+%   </ul>
+% </ul>
+% </html>
 %
 % * out_param.errest --- estimation of the absolute error bound
 %
@@ -174,17 +180,17 @@ f=@(x) (x-0.3).^2+1;
 % </html>
 %
 %% References
-% [1]  Xin Tong. A Guaranteed, Adaptive, Automatic Algorithm for
-% Univariate Function Minimization. MS thesis, Illinois Institute of 
+% [1]  Xin Tong. A Guaranteed, "Adaptive, Automatic Algorithm for
+% Univariate Function Minimization," MS thesis, Illinois Institute of 
 % Technology, 2014.
 % 
-% [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
-% Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou, 
-% "GAIL: Guaranteed Automatic Integration Library (Version 2.1)"
+% [2] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang,
+% Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
+% GAIL: Guaranteed Automatic Integration Library (Version 2.1)
 % [MATLAB Software], 2015. Available from http://code.google.com/p/gail/
 %
 % [3] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
-% Research via Supportable Scientific Software", Journal of Open Research
+% Research via Supportable Scientific Software," Journal of Open Research
 % Software, Volume 2, Number 1, e22, pp. 1-7, 2014.
 %
 % [4] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable
@@ -197,7 +203,7 @@ f=@(x) (x-0.3).^2+1;
 % James Hetherington, James Howison, Shel Swenson, Gabrielle D. Allen,
 % Anne C. Elster, Bruce Berriman, Colin Venters, "Summary of the First
 % Workshop On Sustainable Software for Science: Practice And Experiences
-% (WSSSPE1)", Journal of Open Research Software, Volume 2, Number 1, e6,
+% (WSSSPE1)," Journal of Open Research Software, Volume 2, Number 1, e6,
 % pp. 1-21, 2014.
 %
 % If you find GAIL helpful in your work, please support us by citing the

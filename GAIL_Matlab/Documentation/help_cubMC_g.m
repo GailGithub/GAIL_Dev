@@ -81,13 +81,16 @@
 % * in_param.nbudget --- the sample budget to do the estimation, the
 %  default value is 1e9.
 % 
-% * in_param.flag --- the value corresponds to parameter checking status.
-%   
-%                      0   not checked
-%   
-%                      1   checked by meanMC_g
-%   
-%                      2   checked by cubMC_g
+% <html>
+% <ul type="square">
+%  <li>in_param.flag --- the value corresponds to parameter checking status:</li>
+%   <ul type="circle">
+%    <li>0   not checked</li>
+%    <li>1   checked by meanMC_g</li>
+%    <li>2   checked by cubMC_g</li>
+%   </ul>
+% </ul>
+% </html>
 %
 % *Output Arguments*
 %
@@ -112,22 +115,21 @@
 %
 % * out_param.var --- the sample variance.
 %
-% * out_param.exit --- the state of program when exiting.
-%   
-%                    0   success
-%   
-%                    1   Not enough samples to estimate the mean
-%   
-%                    10  hyperbox does not contain numbers
-%   
-%                    11  hyperbox is not 2 x d
-%   
-%                    12  hyperbox is only a point in one direction
-%   
-%                    13  hyperbox is infinite when measure is 'uniform'
-%   
-%                    14  hyperbox is not doubly infinite when measure
-%                        is 'normal'
+% <html>
+% <ul type="square">
+%  <li>out_param.exit --- the state of program when exiting:</li>
+%   <ul type="circle">
+%    <li>0   success</li>
+%    <li>1   Not enough samples to estimate the mean</li>
+%    <li>10  hyperbox does not contain numbers</li>
+%    <li>11  hyperbox is not 2 x d</li>
+%    <li>12  hyperbox is only a point in one direction</li>
+%    <li>13  hyperbox is infinite when measure is 'uniform'</li>
+%    <li>14  hyperbox is not doubly infinite when measure
+%                        is 'normal'</li>
+%   </ul>
+% </ul>
+% </html>
 % 
 %%  Guarantee
 % This algorithm attempts to calculate the integral of function f over a
@@ -216,19 +218,19 @@
 %
 %% References
 %
-% [1]  F. J. Hickernell, L. Jiang, Y. Liu, and A. B. Owen, Guaranteed
-% conservative fixed width confidence intervals via Monte Carlo sampling,
-% Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F. Y. Kuo, G.
-% W. Peters, and I. H. Sloan, eds.), pp. 105-128, Springer-Verlag,
-% Berlin, 2014 DOI: 10.1007/978-3-642-41095-6_5
+% [1]  F. J. Hickernell, L. Jiang, Y. Liu, and A. B. Owen, "Guaranteed
+% conservative fixed width confidence intervals via Monte Carlo
+% sampling," Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F.
+% Y. Kuo, G. W. Peters, and I. H. Sloan, eds.), pp. 105-128,
+% Springer-Verlag, Berlin, 2014. DOI: 10.1007/978-3-642-41095-6_5
 %
-% [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
-% Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou, "GAIL:
-% Guaranteed Automatic Integration Library (Version 2.1)" [MATLAB
-% Software], 2015. Available from http://code.google.com/p/gail/
+% [2] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang,
+% Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
+% GAIL: Guaranteed Automatic Integration Library (Version 2.1)
+% [MATLAB Software], 2015. Available from http://code.google.com/p/gail/
 %
 % [3] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
-% Research via Supportable Scientific Software", Journal of Open Research
+% Research via Supportable Scientific Software," Journal of Open Research
 % Software, Volume 2, Number 1, e22, pp. 1-7, 2014.
 %
 % [4] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable
@@ -241,7 +243,7 @@
 % James Hetherington, James Howison, Shel Swenson, Gabrielle D. Allen,
 % Anne C. Elster, Bruce Berriman, Colin Venters, "Summary of the First
 % Workshop On Sustainable Software for Science: Practice And Experiences
-% (WSSSPE1)", Journal of Open Research Software, Volume 2, Number 1, e6,
+% (WSSSPE1)," Journal of Open Research Software, Volume 2, Number 1, e6,
 % pp. 1-21, 2014.
 %
 % If you find GAIL helpful in your work, please support us by citing the
