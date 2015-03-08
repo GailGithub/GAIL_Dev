@@ -1,6 +1,6 @@
 function GAIL_Install()
 %GAIL_INSTALL Install or reinstall GAIL. Add GAIL paths to MATLAB search path.
-[GAILPATH,GAILVERSION,PATHNAMESEPARATOR,MATLABVERSION] = GAILstart;
+[GAILPATH,GAILVERSION,~,MATLABVERSION] = GAILstart;
 fprintf('\nWelcome to Guaranteed Automatic Integration Library (GAIL).\nYou are installing GAIL v%s.\n\n', GAILVERSION);
 if MATLABVERSION < 7,
   error('This version is only supported on Matlab 7.x and above.');
@@ -12,10 +12,7 @@ rmpath(gailp);% Remove path from MATLAB search path
 warning(warninfo.state, warninfo.identifier);
 addpath(gailp);           % Add GAIL directories and subdirectories
 savepath;                 % Save the changes
-warninfo = warning('query','MATLAB:doc:DocNotInstalled');
-warning('off', warninfo.identifier);
 GAIL_Publish; 
-warning(warninfo.state, warninfo.identifier);
 fprintf('\nGAIL version %s has been installed successfully.\n\n', GAILVERSION);
 end
 

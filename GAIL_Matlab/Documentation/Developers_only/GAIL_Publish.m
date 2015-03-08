@@ -31,8 +31,10 @@ if usejava('jvm')
         publish(gailug_filename,'latex');
     end
     set(0, 'DefaultFigureVisible', oldStatus)
+    warninfo = warning('query','MATLAB:doc:DocNotInstalled');
+    warning('off', warninfo.identifier);
     builddocsearchdb(strcat(GAILPATH,'Documentation',PATHNAMESEPARATOR,'html'));
+    warning(warninfo.state,warninfo.identifier);
     fprintf('\nYou can go to help documentation ---> Supplemental Software to learn how to use GAIL.\n');
-   
 end
 end
