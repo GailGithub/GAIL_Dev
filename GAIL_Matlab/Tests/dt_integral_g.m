@@ -86,10 +86,13 @@ function dt_integral_g()
 %              nlo: 10
 %              nhi: 1000
 %             nmax: 10000000
+%          maxiter: 1000
 %            ninit: 100
 %              tau: 197
 %     exceedbudget: 0
 %        tauchange: 0
+%             iter: 2 
+%                q: 0.3333
 %          npoints: 3565
 %           errest: 9.9688e-07
 %
@@ -100,6 +103,7 @@ function dt_integral_g()
 %           abstol: 1.0000e-05
 %                b: 2
 %                f: @(x)exp(-x.^2)
+%          maxiter: 1000
 %              nhi: 10000
 %              nlo: 100
 %             nmax: 10000000
@@ -107,6 +111,8 @@ function dt_integral_g()
 %              tau: 1997
 %     exceedbudget: 0
 %        tauchange: 0
+%             iter: 2
+%                q: 0.1353
 %          npoints: 2998
 %           errest: 7.3718e-06
 end
