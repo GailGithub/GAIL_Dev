@@ -669,7 +669,7 @@ if (strcmp(out_param.toltype,'comb')) && (out_param.theta==0) && (out_param.relt
 end
 
 % Checking on the hyperbox given the measure
-if (strcmp(out_param.measure,'uniform')) && ~prod(prod(isfinite(hyperbox)))
+if (strcmp(out_param.measure,'uniform')) && ~all(all(isfinite(hyperbox)))
     warning('MATLAB:cubLattice_g:hyperboxnotfinite',['If uniform measure, hyperbox must be of finite volume.' ...
             ' Using default hyperbox:'])
     disp([zeros(1,out_param.d);ones(1,out_param.d)])
