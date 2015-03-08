@@ -93,9 +93,9 @@ function [pHat,out_param]=meanMCBer_g(varargin)
 %   Y. Kuo, G. W. Peters, and I. H. Sloan, eds.), Springer-Verlag, Berlin,
 %   2014. arXiv:1208.4318 [math.ST]
 %
-%   [2]  Yuhan Ding, Fred J. Hickernell, and Sou-Cheng T. Choi, "Locally
-%   Adaptive Method for Approximating Univariate Functions in Cones with a
-%   Guarantee for Accuracy," working, 2015.
+%   [2]  Lan Jiang and Fred J. Hickernell, "Guaranteed Conservative
+%   Confidence Intervals for Means of Bernoulli Random Variables,"
+%   submitted for publication, 2014.
 %            
 %   [3]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
 %   Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
