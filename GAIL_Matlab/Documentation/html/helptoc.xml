@@ -3,15 +3,17 @@
 <toc version="1.0">
 
 <tocitem target="GAIL.html">GAIL Toolbox
+    <tocitem target="help_license.html" image="HelpIcon.FUNCTION">License</tocitem>
+    <tocitem target="help_readme.html" image="HelpIcon.FUNCTION">README</tocitem>
     <tocitem target="funclist.html" image="HelpIcon.FUNCTION">Functions
             <tocitem target="help_funappx_g.html">funappx_g</tocitem>
+            <tocitem target="help_funmin_g.html">funmin_g</tocitem>
             <tocitem target="help_integral_g.html">integral_g</tocitem>
             <tocitem target="help_meanMC_g.html">meanMC_g</tocitem>
-            <tocitem target="help_cubMC_g.html">cubMC_g</tocitem>
             <tocitem target="help_meanMCBer_g.html">meanMCBer_g</tocitem>
-            <tocitem target="help_cubSobol_g.html">cubSobol_g</tocitem>
+            <tocitem target="help_cubMC_g.html">cubMC_g</tocitem>
             <tocitem target="help_cubLattice_g.html">cubLattice_g</tocitem>
-            <tocitem target="help_funmin_g.html">funmin_g</tocitem>
+            <tocitem target="help_cubSobol_g.html">cubSobol_g</tocitem>
         </tocitem>
     </tocitem>
 </toc>
