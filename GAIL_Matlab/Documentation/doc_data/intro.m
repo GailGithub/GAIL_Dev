@@ -9,4 +9,3 @@
 %
 % GAIL is a suite of algorithms for integration problems in one, many, and 
 % infinite dimensions, and whose answers are guaranteed to be correct.
-%help GAU
