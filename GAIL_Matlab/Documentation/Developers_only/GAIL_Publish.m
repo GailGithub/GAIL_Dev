@@ -6,7 +6,8 @@ if usejava('jvm')
     [GAILPATH,GAILVERSION,PATHNAMESEPARATOR,MATLABVERSION] = GAILstart(0);
     mfile_list = {'GAIL','funclist','help_funappx_g','help_funmin_g',...
         'help_integral_g', 'help_meanMC_g','help_meanMCBer_g', ...
-        'help_cubMC_g','help_cubLattice_g','help_cubSobol_g','help_install'};
+        'help_cubMC_g','help_cubLattice_g','help_cubSobol_g',...
+        'help_license','help_readme','help_tests'};
     
     %% generate GAIL Documentation in HTML format
     delete(strcat(GAILPATH,'Documentation',PATHNAMESEPARATOR,'html',PATHNAMESEPARATOR,'*.png'))
