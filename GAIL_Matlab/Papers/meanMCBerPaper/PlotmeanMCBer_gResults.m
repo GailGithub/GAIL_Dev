@@ -6,7 +6,9 @@ set(0,'defaultTextInterpreter','latex') %latex axis labels
 if exist('TestmeanMCBernoulli-on-abs-06-Sep-2014_03.18.10.mat')
     load TestmeanMCBernoulli-on-abs-06-Sep-2014_03.18.10.mat
 else
-    warning('TestmeanMCBernoulli-on-abs-06-Sep-2014_03.18.10.mat does not exist.')
+    warning(['TestmeanMCBernoulli-on-abs-06-Sep-2014_03.18.10.mat does not exist. '...
+        'call function Test_meanMCBer_g to produce the MAT file.'])
+    %Test_meanMCBer_g
     % TOOD call function that produce the required variables
 end
 standard = true(nrep,1);
