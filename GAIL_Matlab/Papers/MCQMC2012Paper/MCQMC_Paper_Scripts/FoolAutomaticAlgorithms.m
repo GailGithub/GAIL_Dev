@@ -39,9 +39,12 @@ switch fname %give the calling sequence
         callautoalg = @(fun,lower,upper) quadgk(fun,lower,upper,'AbsTol',1e-14);
     case 'quad'
         callautoalg = @(fun,lower,upper) quad(fun,lower,upper,1e-14);
-    case 'chebint'
-        assert(exist('chebfun','file')==2,'You must install the chebfun package')
-        callautoalg = @(fun,lower,upper) sum(chebfun(fun,[lower upper]));
+    case 'chebint'        
+        if exist('chebfun','file') 
+          callautoalg = @(fun,lower,upper) sum(chebfun(fun,[lower upper]));
+        else 
+           warning('Please install the chebfun package to plot this figure.')
+        end
     case 'fminbnd'
         callautoalg = @(fun,lower,upper) fminbnd(fun,lower,upper);
     case '???' %put the NAG algorithm here
@@ -52,15 +55,18 @@ end
 
 %% Call the automatic algorithm to fool
 tic
-Original=callautoalg(@(x) snooper(x,info),info.lower,info.upper)
-
+if exist('chebfun','file') 
+  Original=callautoalg(@(x) snooper(x,info),info.lower,info.upper)
+end
 %% Construct the peaks with zeros at the points called by the
 %  auotmatic algorithm
 peaks=@(x) peakyfunction(x,info);
 
 %% -----------------Fooling the Automatic Algorithm----------
 %The following function needs to be the one you are tricking
-inaccurate=callautoalg(peaks,info.lower,info.upper);
+if exist('chebfun','file') 
+  inaccurate=callautoalg(peaks,info.lower,info.upper);
+end
 
 %if 'inaccurate' = 'Original' then peakyfunction successfully broke quad, or
 %quadgk, etc.
@@ -100,15 +106,15 @@ ratio=dubmax/primemax
 upperbnd=info.sortedX(2:end);
 lowerbnd=info.sortedX(1:end-1);
 withbumps=(upperbnd-lowerbnd)/2*(sqrt(pi)*gamma(info.p+1)/gamma(1.5+info.p));
-failintegral=inaccurate
-realintegral=info.c*(sum(withbumps))+info.coefficient/(info.degree+1)*...
-    (info.upper^(info.degree+1)-info.lower^(info.degree+1))
-%relative error
-error=abs((realintegral-failintegral)/realintegral)
-hold off
-
-[~,~,~,MATLABVERSION] = GAILstart(false); 
-if usejava('jvm') || MATLABVERSION <= 7.12
+[~,~,~,MATLABVERSION] = GAILstart(false);
+if exist('chebfun','file') && (usejava('jvm') || MATLABVERSION <= 7.12)
+    failintegral=inaccurate
+    realintegral=info.c*(sum(withbumps))+info.coefficient/(info.degree+1)*...
+        (info.upper^(info.degree+1)-info.lower^(info.degree+1))
+    %relative error
+    error=abs((realintegral-failintegral)/realintegral)
+    hold off
+    
     figure
     if strcmp(fname,'quadgk') %too many peaks
         x=info.lower:.00001:info.upper*0.01;
