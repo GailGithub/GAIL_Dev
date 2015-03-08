@@ -1,4 +1,4 @@
-function RunTestCubatureonGeoAsianCallLattice
+function Latticesuccess = RunTestCubatureonGeoAsianCallLattice
 clear all, close all
 format compact
 
@@ -169,6 +169,7 @@ line(probaug,timeaug,'color','m','linewidth',plotTest.linewidth)
 gail.save_eps('Paper_cubLattice_g', 'Paper_cubLattice_g_TestGeoAsianCall');
 %print('-depsc',[plotTest.name '.eps'])
 % print('-depsc', ['./Results/' plotTest.name '.eps'])
+close all
 end
 
 %% Random choice GeoCall

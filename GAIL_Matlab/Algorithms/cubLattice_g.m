@@ -116,6 +116,8 @@ function [q,out_param] = cubLattice_g(varargin)
 %   Output Arguments
 %
 %     q --- the estimated value of the integral.
+%
+%     out_param.d --- dimension over which the algorithm integrated.
 % 
 %     out_param.n --- number of Rank-1 lattice points used for comupting
 %     the integral of f.
@@ -443,7 +445,7 @@ end
 %   end
 % end
 % out_param.exitflag = exit_str;
-% out_param = rmfield(out_param,'exit');
+out_param = rmfield(out_param,'exit');
 
 out_param.time=toc;
 end

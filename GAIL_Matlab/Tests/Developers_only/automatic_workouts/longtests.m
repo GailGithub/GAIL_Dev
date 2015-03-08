@@ -139,8 +139,21 @@ try
 catch
     display('Error: WalshFourierCoeffDecay is wrongly coded. We skip it.')
 end
-run_handle('RunTestCubatureonGeoAsianCallSobol');
-run_handle('RunTestCubatureonKeisterSobol')
+%run_handle('RunTestCubatureonGeoAsianCallSobol');
+%run_handle('RunTestCubatureonKeisterSobol')
+try
+    Tests = matlab.unittest.TestSuite.fromClass(?ut_Papers_cubSobol_g);
+    results=run(ut_Papers_cubSobol_g)
+    if sum([results.Failed])>0
+        failed=find([results.Failed]>0);
+        %for i=1:size(failed,2)
+        %  fprintf(fid,'%s\n',Tests(failed(i)).Name);
+        %end
+    end
+catch
+    display('Error: Test ut_Papers_cubSobol_g is wrongly coded. We skip it.')
+    %fprintf(fid,'Error: Test ut_Papers_cubSobol_g is wrongly coded. We skip it.\n');
+end
 
 % cubLattice_g paper
 try
@@ -153,8 +166,21 @@ try
 catch
     display('Error: FourierCoeffDecayPict is wrongly coded. We skip it.')
 end
-run_handle('RunTestCubatureonGeoAsianCallLattice');
-run_handle('RunTestCubatureonKeisterLattice');
+%run_handle('RunTestCubatureonGeoAsianCallLattice');
+%run_handle('RunTestCubatureonKeisterLattice');
+try
+    Tests = matlab.unittest.TestSuite.fromClass(?ut_Papers_cubLattice_g);
+    results=run(ut_Papers_cubLattice_g)
+    if sum([results.Failed])>0
+        failed=find([results.Failed]>0);
+        %for i=1:size(failed,2)
+        %  fprintf(fid,'%s\n',Tests(failed(i)).Name);
+        %end
+    end
+catch
+    display('Error: Test ut_Papers_cubLattice_g is wrongly coded. We skip it.')
+    %fprintf(fid,'Error: Test ut_Papers_cubLattice_g is wrongly coded. We skip it.\n');
+end
 
 % Function minimization thesis
 try
