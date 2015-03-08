@@ -1,8 +1,5 @@
 % PAPER_CUBLATTICE_G
 %
-% Articles:
-%   - Adaptive Multidimensional Integration Based on Rank-1 Lattices
-%
 % Files
 %
 %	RunTestCubatureonGeoAsianCallLattice - Runs the test for the geometric 
@@ -22,3 +19,5 @@
 %   FourierCoeffDecayPict - produces the plot of the Fourier coefficients
 %	decay in .eps format (article Figure 2). The name of the eps file is
 %   Paper_cubLattice_g_FourierCoeffDecay-*.eps.
+%   
+%   Adaptive Multidimensional Integration Based on Rank-1 Lattices.pdf - Paper 

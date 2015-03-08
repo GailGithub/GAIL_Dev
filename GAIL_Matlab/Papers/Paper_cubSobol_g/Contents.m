@@ -1,7 +1,7 @@
 % PAPER_CUBSOBOL_G
 % 
 % Articles:
-%   - Reliable Adaptive Cubature Using Digital Sequences
+%   - 
 %
 % Files
 %
@@ -23,3 +23,5 @@
 %   WalshFourierCoeffDecay - produces the plot of the Walsh-Fourier
 %   coefficients decay in .eps format (article Figure 2). The name of the
 %   eps file is Paper_cubSobol_g_WalshFourierCoeffDecay-*.eps
+% 
+%   Reliable Adaptive Cubature Using Digital Sequences.pdf - Paper
