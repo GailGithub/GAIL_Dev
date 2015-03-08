@@ -3,7 +3,7 @@
 %
 % Files
 %
-%	RunTestCubatureonGeoAsianCallSobol - Runs the test for the geometric 
+%   RunTestCubatureonGeoAsianCallSobol - Runs the test for the geometric 
 %   Brownian motion Asian option call, stores the results in a .mat file
 %   and generates the plot in .eps format.
 %	
@@ -17,7 +17,7 @@
 %   The names of the eps files are
 %   Paper_cubSobol_g_256ScrambledShiftedSobolPoints-*.eps and
 %   Paper_cubSobol_g_256SobolPoints-*.eps
-%	
+%   
 %   WalshFourierCoeffDecay - produces the plot of the Walsh-Fourier
 %   coefficients decay in .eps format (article Figure 2). The name of the
 %   eps file is Paper_cubSobol_g_WalshFourierCoeffDecay-*.eps
