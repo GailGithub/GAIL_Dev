@@ -126,6 +126,8 @@
 %
 % * q --- the estimated value of the integral.
 % 
+% * out_param.d --- dimension over which the algorithm integrated.
+%
 % * out_param.n --- number of Rank-1 lattice points used for comupting
 %  the integral of f.
 % 
