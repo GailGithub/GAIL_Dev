@@ -1,6 +1,8 @@
 % MCQMC_PAPER_SCRIPTS
 %
 % Files
+%   MCQMC2012Figs                  - plot figure 1 in paper   
+%   FoolAutomaticAlgorithms        - plot fooling function of figure 2 in paper
 %   DisplayTestResults_BlacknColor - display the plots in black or color
 %                                    format using the mat files in dir
 %                                    OutputFiles/MCQMC2012PaperOutput, load
@@ -8,13 +10,16 @@
 %                                    figures 3-6 in paper
 %   RunTestcubMConGaussiand1       - driver file to run the test on
 %                                    Gaussian test function with dimension
-%                                    one to generate a MAT file
+%                                    one to generate a MAT file used to
+%                                    plot figure 3 and 4
 %   RunTestcubMConGaussian         - driver file to run the test on 
 %                                    Gaussian test function with dimension
-%                                    2-8,to generate a MAT file
+%                                    2-8,to generate a MAT file used to
+%                                    plot figure 5
 %   RunTestcubMConGeoAsianCall     - driver file to run the test on
 %                                    geometric Asian mean option test
-%                                    function to generate a MAT file
+%                                    function to generate a MAT file used to
+%                                    plot figure 6
 %   choosetestfun                  - choose and set up a test function
 %   cubMC                          - main algorithm to evaluate a
 %                                    multidimensional integral
@@ -28,10 +33,9 @@
 %   randchoiceGeoCall              - randomly choose parameters in geometric asian mean option test function
 %   TestcubMCDiffSettings          - using different random sampling methods to test
 %   verifyparam                    - make sure the parameters defining the functions exist
-%   FoolAutomaticAlgorithms        - plot fooling function of figure 2 in paper
 %   snooper                        - function record all the x data points
 %   peakyfunction                  - construct peaky function
-%   MCQMC2012Figs                  - plot figure 1 in paper             
+         
 
 
 
