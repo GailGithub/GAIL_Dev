@@ -1,7 +1,5 @@
 % PAPER_CUBSOBOL_G
 % 
-% Articles:
-%   - 
 %
 % Files
 %
