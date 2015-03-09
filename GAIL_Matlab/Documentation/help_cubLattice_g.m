@@ -55,7 +55,7 @@
 %  The default value is [0;1].
 %
 % * in_param.measure --- for f(x)*mu(dx), we can define mu(dx) to be the
-%  measure of a uniformly distributed random variable in they hyperbox
+%  measure of a uniformly distributed random variable in the hyperbox
 %  or normally distributed with covariance matrix I_d. The only possible
 %  values are 'uniform' or 'normal'. For 'uniform', the hyperbox must be
 %  a finite volume while for 'normal', the hyperbox can only be defined as 
@@ -115,8 +115,8 @@
 %  By default toltype is 'max'.
 % 
 % * in_param.theta --- this input is parametrizing the toltype 
-%  'comb'. Thus, it is only afecting when the toltype
-%  chosen is 'comb'. It stablishes the linear combination weight
+%  'comb'. Thus, it is only active when the toltype
+%  chosen is 'comb'. It establishes the linear combination weight
 %  between the absolute and relative tolerances
 %  theta*abstol+(1-theta)*reltol*| integral(f) |. Note that for theta = 1, 
 %  we have pure absolute tolerance while for theta = 0, we have pure 
@@ -128,7 +128,7 @@
 %
 % * out_param.d --- dimension over which the algorithm integrated.
 % 
-% * out_param.n --- number of Rank-1 lattice points used for comupting
+% * out_param.n --- number of Rank-1 lattice points used for computing
 %  the integral of f.
 % 
 % * out_param.bound_err --- predicted bound on the error based on the cone
@@ -137,28 +137,25 @@
 % 
 % * out_param.time --- time elapsed in seconds when calling cubLattice_g.
 %
-% <html>
-% <ul type="square">
-% <li>out_param.exitflag --- this is a binary vector stating whether
-% warning flags arise. These flags tell about which conditions make the
-% final result certainly not guaranteed. One flag is considered arisen
-% when its value is 1. The following list explains the flags in the
-% respective vector order:</li>
-%   <ul type="circle">
-%    <li>1    If reaching overbudget. It states whether
-%                  the max budget is attained without reaching the
-%                  guaranteed error tolerance.</li>
-%    <li>2   If the function lies outside the cone. In
-%                  this case, results are not guaranteed. Note that
-%                  this parameter is computed on the transformed
-%                  function, not the input function. For more
-%                  information on the transforms, check the input
-%                  parameter in_param.transfrom; for information about
-%                  the cone definition, check the article mentioned
-%                  below.</li>
-%   </ul>
-% </ul>
-% </html>
+% * out_param.exitflag --- this is a binary vector stating whether
+%  warning flags arise. These flags tell about which conditions make the
+%  final result certainly not guaranteed. One flag is considered arisen
+%  when its value is 1. The following list explains the flags in the
+%  respective vector order:
+%
+
+%                    1    If reaching overbudget. It states whether
+%                    the max budget is attained without reaching the
+%                    guaranteed error tolerance.
+%   
+%                    2   If the function lies outside the cone. In
+%                    this case, results are not guaranteed. Note that
+%                    this parameter is computed on the transformed
+%                    function, not the input function. For more
+%                    information on the transforms, check the input
+%                    parameter in_param.transfrom; for information about
+%                    the cone definition, check the article mentioned
+%                    below.
 % 
 %%  Guarantee
 %
@@ -217,7 +214,16 @@
 
   f = @(x) 8*prod(x,2); hyperbox = [zeros(1,5);ones(1,5)];
   q = cubLattice_g(f,hyperbox,'uniform',1e-5,0)
-  
+
+%%
+% *Example 6*
+
+% Estimate the integral with integrand f(x) = 3./(5-4*(cos(2*pi*x))) in the interval
+% [0,1) with pure absolute error 1e-5.
+
+  f = @(x) 3./(5-4*(cos(2*pi*x))); hyperbox = [0;1];
+  q = cubLattice_g(f,hyperbox,'uniform',1e-5,0,'transform','id')
+
 %% See Also
 %
 % <html>
@@ -230,6 +236,10 @@
 %
 % <html>
 % <a href="help_meanMC_g.html">meanMC_g</a>
+% </html>
+%
+% <html>
+% <a href="help_meanMCBer_g.html">meanMCBer_g</a>
 % </html>
 %
 % <html>

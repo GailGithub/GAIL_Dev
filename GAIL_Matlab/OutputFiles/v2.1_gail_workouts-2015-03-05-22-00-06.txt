@@ -1,0 +1,900 @@
+TAP version 13
+1..3
+ok 1 - "dt_meanMC_g_TrafficModel('hi')"
+ok 2 - "dt_meanMC_g_TrafficModel(1e-2)"
+not ok 3 - "dt_meanMC_g_TrafficModel(1e-3)"
+    in <a href="matlab:editorservices.openAndGoToLine('/home/gail/GAIL_tests/repo/gail-development/GAIL_Matlab/Workouts/meanMC_g_workouts/dt_meanMC_g_TrafficModel.m', 1);">dt_meanMC_g_TrafficModel</a>
+    expected: Warning: At step ***, tried to evaluate at *** samples, which is more than the remaining *** samples. We will use all the sample left to estimate the mean. ***
+    got     : [Warning: In order to achieve the guaranteed accuracy, at step 2, tried to evaluate at 155326 samples, which is more than the remaining 3347 samples. We will use all the samples left to estimate the mean without guarantee.] [> In <a href="matlab: opentoline('/home/gail/GAIL_tests/repo/gail-development/GAIL_Matlab/Algorithms/meanMC_g.m',518,1)">meanMC_g>meanMC_g_err at 518</a> In <a href="matlab: opentoline('/home/gail/GAIL_tests/repo/gail-development/GAIL_Matlab/Algorithms/meanMC_g.m',262,1)">meanMC_g>meanmctolfun at 262</a> In <a href="matlab: opentoline('/home/gail/GAIL_tests/repo/gail-development/GAIL_Matlab/Algorithms/meanMC_g.m',227,1)">meanMC_g at 227</a> In <a href="matlab: opentoline('/home/gail/GAIL_tests/repo/gail-development/GAIL_Matlab/Workouts/meanMC_g_workouts/dt_meanMC_g_TrafficModel.m',35,1)">dt_meanMC_g_TrafficModel at 35</a> In <a href="matlab: opentoline('/home/gail/GAIL_tests/repo/gail-development/GAIL_Matlab/ThirdParty/doctest-for-matlab/doctest_run.m',57,1)">doctest_run>DOCTEST__evalc at 57</a> In <a href="matlab: opentoline('/home/gail/GAIL_tests/repo/gail-development/GAIL_Matlab/ThirdParty/doctest-for-matlab/doctest_run.m',25,1)">doctest_run at 25</a> In <a href="matlab: opentoline('/home/gail/GAIL_tests/repo/gail-development/GAIL_Matlab/ThirdParty/doctest-for-matlab/doctest.m',174,1)">doctest at 174</a> In <a href="matlab: opentoline('/home/gail/GAIL_tests/repo/gail-development/GAIL_Matlab/Tests/Developers_only/automatic_workouts/longtests.m',13,1)">longtests at 13</a>] ans = 4.4587
+Running ut_meanMC_g
+......
+Done ut_meanMC_g
+__________
+
+
+results = 
+
+  1x6 TestResult array with properties:
+
+    Name
+    Passed
+    Failed
+    Incomplete
+    Duration
+
+Totals:
+   6 Passed, 0 Failed, 0 Incomplete.
+   2.4063 seconds testing time.
+
+TAP version 13
+1..53
+ok 1 - " in_param.dim = 3;alpha = ones(1,in_param.dim); beta = 1./ (1:in_param.dim);r=1;"
+ok 2 - "hyperbox = [zeros(1,in_param.dim);ones(1,in_param.dim)];index = 1;"
+ok 3 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 4 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.001"
+ok 5 - "Q = cubMC_g(f,hyperbox,'uniform',1e-3,1e-2)+0.001"
+ok 6 - "index = 2;"
+ok 7 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 8 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.001"
+ok 9 - "Q = cubMC_g(f,hyperbox,'uniform',1e-3,1e-3)+0.001"
+ok 10 - "index = 3;"
+ok 11 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 12 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.001"
+ok 13 - "Q = cubMC_g(f,hyperbox,'uniform',1e-3,1e-2)+0.001"
+ok 14 - "index = 4;"
+ok 15 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 16 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.001"
+ok 17 - "Q = cubMC_g(f,hyperbox,'uniform',1e-3,1e-3)+0.001"
+ok 18 - "index = 5;"
+ok 19 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 20 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 21 - "Q = cubMC_g(f,hyperbox,'uniform',1e-3,1e-3)"
+ok 22 - "index = 6;"
+ok 23 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 24 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 25 - "Q = cubMC_g(f,hyperbox,'uniform',1e-3,1e-3)"
+ok 26 - "index = 7; in_param.dim = 3;"
+ok 27 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 28 - "Q = cubMC_g(f,hyperbox,'uniform',1e-3,1e-4)"
+ok 29 - "in_param.dim = 3;alpha = ones(1,in_param.dim); beta = 1./ (1:in_param.dim);r=1;"
+ok 30 - "hyperbox = [-ones(1,in_param.dim);ones(1,in_param.dim)];index = 1;"
+ok 31 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 32 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 33 - "Q = cubMC_g(f,hyperbox,'uniform',1e-2,1e-13)"
+ok 34 - "index = 2;hyperbox = [-ones(1,in_param.dim);ones(1,in_param.dim)];"
+ok 35 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 36 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 37 - "Q = cubMC_g(f,hyperbox,'uniform',1e-2,1e-13)"
+ok 38 - "index = 3;hyperbox = [ones(1,in_param.dim)/2;2*ones(1,in_param.dim)];"
+ok 39 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 40 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 41 - "Q = cubMC_g(f,hyperbox,'uniform',1e-2,1e-3)"
+ok 42 - "index = 4;hyperbox = [-ones(1,in_param.dim)/2;ones(1,in_param.dim)];"
+ok 43 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 44 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.005"
+ok 45 - "Q = cubMC_g(f,hyperbox,'uniform',1e-2,1e-3)+0.005"
+ok 46 - "index = 5;hyperbox = [-ones(1,in_param.dim)/2;ones(1,in_param.dim)];"
+ok 47 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 48 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.005"
+ok 49 - "Q = cubMC_g(f,hyperbox,'uniform',1e-2,1e-2)+0.005"
+ok 50 - "index = 6;"
+ok 51 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 52 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 53 - "Q = cubMC_g(f,hyperbox,'uniform',1e-2,1e-3)"
+Running Test_cubMC_g ...
+Dim   FcnIdx       Q             f_true               Err            Sample Used             Stats  
+-----------------------------------------------------------------------------------------------------
+1     1       8.41371e-01       8.41471e-01       1.00245e-04         1228857             BothErrMet
+1     2       7.85532e-01       7.85398e-01       1.34093e-04         1526487             BothErrMet
+2     1       4.96617e-01       4.96751e-01       1.34335e-04         4553785             BothErrMet
+2     2       7.28432e-01       7.28296e-01       1.36320e-04         1456775             BothErrMet
+3     1       6.26152e-02       6.23593e-02       2.55877e-04         7930100             AbsErrMet
+3     2       6.62521e-01       6.62570e-01       4.84590e-05         1447254             BothErrMet
+Running ut_workout_integral_g
+ 
+        Probability    Success   Success   Failure  Failure
+ ninit    In Cone    No Warning  Warning No Warning Warning
+    7  0.00%->62.00%   62.00%      0.00%   38.00%    0.00% 
+   52 16.00%->62.00%   62.00%      0.00%   38.00%    0.00% 
+  502 47.00%->62.00%   62.00%      0.00%   38.00%    0.00% 
+.
+Done ut_workout_integral_g
+__________
+
+
+results = 
+
+  TestResult with properties:
+
+          Name: 'ut_workout_integral_g/testWorkout_integral_g'
+        Passed: 1
+        Failed: 0
+    Incomplete: 0
+      Duration: 8.780895500000001e+01
+
+Totals:
+   1 Passed, 0 Failed, 0 Incomplete.
+   87.809 seconds testing time.
+
+Error: Test ut_workout_funappx_g is wrongly coded. We skip it.
+Running ut_convtest_funappx_g
+...
+Done ut_convtest_funappx_g
+__________
+
+results = 
+  1x3 TestResult array with properties:
+
+    Name
+    Passed
+    Failed
+    Incomplete
+    Duration
+Totals:
+   3 Passed, 0 Failed, 0 Incomplete.
+   64.6909 seconds testing time.
+Running ut_workout_funmin_g
+ 
+        Probability    Success   Success   Failure  Failure
+ tau      In Cone    No Warning  Warning No Warning Warning
+   11  1.36%->57.14%   47.79%      3.66%   42.85%    5.70% 
+  101 33.41%->75.60%   66.24%      3.83%   24.40%    5.53% 
+ 1001 66.05%->93.64%   81.57%      5.90%    6.35%    6.18% 
+. 
+        Probability    Success   Success   Failure  Failure
+ tau      In Cone    No Warning  Warning No Warning Warning
+   11  1.34%->21.01%   21.01%      0.00%   78.99%    0.00% 
+  101 34.02%->53.03%   53.03%      0.00%   46.97%    0.00% 
+ 1001 67.81%->86.26%   81.83%      4.43%   13.74%    0.00% 
+. 
+        Probability    Success   Success   Failure  Failure
+ tau      In Cone    No Warning  Warning No Warning Warning
+   11  1.29%->20.45%   20.45%      0.00%   79.55%    0.00% 
+  101 32.94%->52.55%   52.55%      0.00%   47.45%    0.00% 
+ 1001 66.39%->84.84%   84.85%      0.00%   15.15%    0.00% 
+. 
+           Success    Success    Success    Success
+ TolX               No Warning   Warning    fminbnd
+1e-02     100.00%    100.00%      0.00%     68.36% 
+1e-04     100.00%    100.00%      0.00%     68.36% 
+1e-07     100.00%      0.00%    100.00%     68.36% 
+.
+Done ut_workout_funmin_g
+__________
+
+results = 
+  1x4 TestResult array with properties:
+
+    Name
+    Passed
+    Failed
+    Incomplete
+    Duration
+Totals:
+   4 Passed, 0 Failed, 0 Incomplete.
+   38855.0223 seconds testing time.
+Running ut_ConesPaper
+ 
+        Probability    Success   Success   Failure  Failure
+ tau      In Cone    No Warning  Warning No Warning Warning
+   10  0.00%->26.17%   26.00%      0.17%   73.83%    0.00% 
+  100 23.42%->58.47%   56.56%      1.92%   41.52%    0.00% 
+ 1000 57.45%->88.53%   68.89%     19.83%   11.28%    0.00% 
+.[Warning:  Need more than one hour to replicate the result in the paper! ] 
+[> In conepaper_test_funappx_g at 24
+  In ut_ConesPaper>ut_ConesPaper.testConepaper_test_funappx_g at 15
+  In TestRunner>TestRunner.evaluateMethod at 511
+  In TestRunner>TestRunner.runMethodSettingCurrentException at 504
+  In TestRunner>TestRunner.runMethod at 601
+  In TestRunnerPlugin>TestRunnerPlugin.runMethod at 88
+  In TestRunnerPlugin>TestRunnerPlugin.runMethod at 88
+  In TestRunner>TestRunner.runMethodOnPlugins at 463
+  In TestRunner>TestRunner.runSingleMethodOnTestContentAndHandleException at 487
+  In TestRunner>TestRunner.runAllMethods at 497
+  In TestRunner>TestRunner.runMethodsOnTestContent at 474
+  In TestRunner>TestRunner.runTestMethod at 652
+  In TestRunnerPlugin>TestRunnerPlugin.runTestMethod at 84
+  In TestRunnerPlugin>TestRunnerPlugin.runTestMethod at 84
+  In TestRunner>TestRunner.runMethodOnPlugins at 463
+  In TestRunner>TestRunner.runTestSuite at 578
+  In TestRunnerPlugin>TestRunnerPlugin.runTestSuite at 52
+  In TestRunnerPlugin>TestRunnerPlugin.runTestSuite at 52
+  In FailureDiagnosticsPlugin>FailureDiagnosticsPlugin.runTestSuite at 77
+  In TestRunner>TestRunner.runMethodOnPlugins at 463
+  In TestRunner>TestRunner.run at 171
+  In TestSuite>TestSuite.run at 311
+  In RunnableTestContent>RunnableTestContent.run at 43
+  In longtests at 102] 
+ 
+        Probability    Success   Success   Failure  Failure
+ tau      In Cone    No Warning  Warning No Warning Warning
+   10  0.00%->26.39%   26.13%      0.18%   73.61%    0.08% 
+  100 33.86%->58.36%   56.99%      0.56%   41.64%    0.81% 
+ 1000 67.38%->88.69%   76.02%      4.64%   11.31%    8.03% 
+Elapsed time is 3562.802418 seconds.
+.
+Done ut_ConesPaper
+__________
+
+results = 
+  1x2 TestResult array with properties:
+
+    Name
+    Passed
+    Failed
+    Incomplete
+    Duration
+Totals:
+   2 Passed, 0 Failed, 0 Incomplete.
+   8364.7126 seconds testing time.
+Running RunTestcubMConGeoAsianCall ...
+irep =
+     5
+irep =
+    10
+irep =
+    15
+irep =
+    20
+irep =
+    25
+irep =
+    30
+irep =
+    35
+irep =
+    40
+irep =
+    45
+irep =
+    50
+Elapsed time is 277.586603 seconds.
+Running RunTestcubMConGaussian ...
+irep =
+     2
+irep =
+     4
+irep =
+     6
+irep =
+     8
+irep =
+    10
+irep =
+    12
+irep =
+    14
+irep =
+    16
+irep =
+    18
+irep =
+    20
+irep =
+    22
+irep =
+    24
+irep =
+    26
+irep =
+    28
+irep =
+    30
+irep =
+    32
+irep =
+    34
+irep =
+    36
+irep =
+    38
+irep =
+    40
+irep =
+    42
+irep =
+    44
+irep =
+    46
+irep =
+    48
+irep =
+    50
+Elapsed time is 42.664384 seconds.
+Running RunTestcubMConGaussiand1 ...
+irep =
+     2
+Warning: tried to evaluate at 1030767170 samples,
+which is more than the allowed maximum of 1000000000 samples
+irep =
+     4
+irep =
+     6
+irep =
+     8
+Warning: tried to evaluate at 2784741246 samples,
+which is more than the allowed maximum of 1000000000 samples
+irep =
+    10
+Elapsed time is 127.935099 seconds.
+Running PlotRatioHoeffCLT ...
+This functionality is no longer supported under the -nojvm startup option. For more information, see "Changes to -nojvm Startup Option" in the MATLAB Release Notes. To view the release note in your system browser, run  web('http://www.mathworks.com/help/matlab/release-notes.html#btsurqv-6', '-browser').
+  File: PlotRatioHoeffCLT, Line 13
+  File: run, Line 64
+  File: run_handle, Line 10
+  File: longtests, Line 122
+Running ut_meanMCBer_g
+... abstol             abserr            pHat                p               n               nmax 
+-------------------------------------------------------------------------------------------------------
+4.07539e-04       1.00835e-05     1.02249e-03       1.01241e-03      1.11052e+07      10000000000
+3.73665e-03       3.06479e-05     5.04921e-03       5.01856e-03      1.32100e+05      10000000000
+2.14579e-03       2.92080e-05     1.12337e-03       1.15258e-03      4.00579e+05      10000000000
+1.25574e-03       2.52187e-05     1.91703e-02       1.91451e-02      1.16967e+06      10000000000
+2.28607e-04       7.18411e-06     5.26513e-02       5.26441e-02      3.52929e+07      10000000000
+5.09345e-04       9.51033e-07     2.58189e-03       2.58094e-03      7.10953e+06      10000000000
+3.02892e-04       5.17795e-05     6.66874e-02       6.67391e-02      2.01043e+07      10000000000
+6.35339e-04       2.10926e-04     8.19803e-02       8.17693e-02      4.56934e+06      10000000000
+2.40037e-03       1.58759e-04     2.00239e-03       2.16115e-03      3.20118e+05      10000000000
+1.76863e-03       7.84624e-05     4.24661e-03       4.32507e-03      5.89647e+05      10000000000
+ans =
+/home/gail/GAIL_tests/repo/gail-development/GAIL_Matlab/OutputFiles/meanMCBerPaperOutput/TestmeanMCBer-on-abs--2015-03-06-14-18-13.mat
+.
+Done ut_meanMCBer_g
+__________
+
+results = 
+  1x4 TestResult array with properties:
+
+    Name
+    Passed
+    Failed
+    Incomplete
+    Duration
+Totals:
+   4 Passed, 0 Failed, 0 Incomplete.
+   10563.3268 seconds testing time.
+Running RunTestCubatureonGeoAsianCallSobol ...
+irep =
+    10
+irep =
+    20
+irep =
+    30
+irep =
+    40
+irep =
+    50
+irep =
+    60
+irep =
+    70
+irep =
+    80
+irep =
+    90
+irep =
+   100
+irep =
+   110
+irep =
+   120
+irep =
+   130
+irep =
+   140
+irep =
+   150
+irep =
+   160
+irep =
+   170
+irep =
+   180
+irep =
+   190
+irep =
+   200
+irep =
+   210
+irep =
+   220
+irep =
+   230
+irep =
+   240
+irep =
+   250
+irep =
+   260
+irep =
+   270
+irep =
+   280
+irep =
+   290
+irep =
+   300
+irep =
+   310
+irep =
+   320
+irep =
+   330
+irep =
+   340
+irep =
+   350
+irep =
+   360
+irep =
+   370
+irep =
+   380
+irep =
+   390
+irep =
+   400
+irep =
+   410
+irep =
+   420
+irep =
+   430
+irep =
+   440
+irep =
+   450
+irep =
+   460
+irep =
+   470
+irep =
+   480
+irep =
+   490
+irep =
+   500
+This functionality is no longer supported under the -nojvm startup option. For more information, see "Changes to -nojvm Startup Option" in the MATLAB Release Notes. To view the release note in your system browser, run  web('http://www.mathworks.com/help/matlab/release-notes.html#btsurqv-6', '-browser').
+  File: plotTestColor, Line 110
+  File: RunTestCubatureonGeoAsianCallSobol, Line 97
+  File: run, Line 64
+  File: run_handle, Line 10
+  File: longtests, Line 138
+Running RunTestCubatureonKeisterSobol ...
+irep =
+    10
+irep =
+    20
+irep =
+    30
+irep =
+    40
+irep =
+    50
+irep =
+    60
+irep =
+    70
+irep =
+    80
+irep =
+    90
+irep =
+   100
+irep =
+   110
+irep =
+   120
+irep =
+   130
+irep =
+   140
+irep =
+   150
+irep =
+   160
+irep =
+   170
+irep =
+   180
+irep =
+   190
+irep =
+   200
+irep =
+   210
+irep =
+   220
+irep =
+   230
+irep =
+   240
+irep =
+   250
+irep =
+   260
+irep =
+   270
+irep =
+   280
+irep =
+   290
+irep =
+   300
+irep =
+   310
+irep =
+   320
+irep =
+   330
+irep =
+   340
+irep =
+   350
+irep =
+   360
+irep =
+   370
+irep =
+   380
+irep =
+   390
+irep =
+   400
+irep =
+   410
+irep =
+   420
+irep =
+   430
+irep =
+   440
+irep =
+   450
+irep =
+   460
+irep =
+   470
+irep =
+   480
+irep =
+   490
+irep =
+   500
+This functionality is no longer supported under the -nojvm startup option. For more information, see "Changes to -nojvm Startup Option" in the MATLAB Release Notes. To view the release note in your system browser, run  web('http://www.mathworks.com/help/matlab/release-notes.html#btsurqv-6', '-browser').
+  File: plotTestColor, Line 102
+  File: RunTestCubatureonKeisterSobol, Line 90
+  File: run, Line 64
+  File: run_handle, Line 10
+  File: longtests, Line 139
+Running RunTestCubatureonGeoAsianCallLattice ...
+irep =
+    10
+irep =
+    20
+irep =
+    30
+irep =
+    40
+irep =
+    50
+irep =
+    60
+irep =
+    70
+irep =
+    80
+irep =
+    90
+irep =
+   100
+irep =
+   110
+irep =
+   120
+irep =
+   130
+irep =
+   140
+irep =
+   150
+irep =
+   160
+irep =
+   170
+irep =
+   180
+irep =
+   190
+irep =
+   200
+irep =
+   210
+irep =
+   220
+irep =
+   230
+irep =
+   240
+irep =
+   250
+irep =
+   260
+irep =
+   270
+irep =
+   280
+irep =
+   290
+irep =
+   300
+irep =
+   310
+irep =
+   320
+irep =
+   330
+irep =
+   340
+irep =
+   350
+irep =
+   360
+irep =
+   370
+irep =
+   380
+irep =
+   390
+irep =
+   400
+irep =
+   410
+irep =
+   420
+irep =
+   430
+irep =
+   440
+irep =
+   450
+irep =
+   460
+irep =
+   470
+irep =
+   480
+irep =
+   490
+irep =
+   500
+This functionality is no longer supported under the -nojvm startup option. For more information, see "Changes to -nojvm Startup Option" in the MATLAB Release Notes. To view the release note in your system browser, run  web('http://www.mathworks.com/help/matlab/release-notes.html#btsurqv-6', '-browser').
+  File: plotTestColor, Line 109
+  File: RunTestCubatureonGeoAsianCallLattice, Line 97
+  File: run, Line 64
+  File: run_handle, Line 10
+  File: longtests, Line 142
+Running RunTestCubatureonKeisterLattice ...
+irep =
+    10
+irep =
+    20
+irep =
+    30
+irep =
+    40
+irep =
+    50
+irep =
+    60
+irep =
+    70
+irep =
+    80
+irep =
+    90
+irep =
+   100
+irep =
+   110
+irep =
+   120
+irep =
+   130
+irep =
+   140
+irep =
+   150
+irep =
+   160
+irep =
+   170
+irep =
+   180
+irep =
+   190
+irep =
+   200
+irep =
+   210
+irep =
+   220
+irep =
+   230
+irep =
+   240
+irep =
+   250
+irep =
+   260
+irep =
+   270
+irep =
+   280
+irep =
+   290
+irep =
+   300
+irep =
+   310
+irep =
+   320
+irep =
+   330
+irep =
+   340
+irep =
+   350
+irep =
+   360
+irep =
+   370
+irep =
+   380
+irep =
+   390
+irep =
+   400
+irep =
+   410
+irep =
+   420
+irep =
+   430
+irep =
+   440
+irep =
+   450
+irep =
+   460
+irep =
+   470
+irep =
+   480
+irep =
+   490
+irep =
+   500
+This functionality is no longer supported under the -nojvm startup option. For more information, see "Changes to -nojvm Startup Option" in the MATLAB Release Notes. To view the release note in your system browser, run  web('http://www.mathworks.com/help/matlab/release-notes.html#btsurqv-6', '-browser').
+  File: plotTestColor, Line 101
+  File: RunTestCubatureonKeisterLattice, Line 89
+  File: run, Line 64
+  File: run_handle, Line 10
+  File: longtests, Line 143
+Error: Test for Papers/UniFunMin is wrongly coded. We skip it.
+TAP version 13
+1..6
+ok 1 - "format short; f = @(x) x.^2; [fappx, out_param] = funappxtau_g(f)"
+ok 2 - "clear in_param; format short; in_param.abstol = 10^(-8); "
+ok 3 - "in_param.tau = 15; in_param.nmax = 10^6; "
+ok 4 - "[fappx, out_param] = funappxtau_g(@(x) x.^2, in_param)"
+ok 5 - "format short; f = @(x) x.^2; "
+ok 6 - "[fappx, out_param] = funappxtau_g(f,'tau',15,'nmax',1e6,'abstol',1e-8)"
+TAP version 13
+1..9
+ok 1 - "f = @(x) x.^2; [pp, out_param] = funappxglobal_g(f)"
+ok 2 - "f = @(x) x.^2;"
+ok 3 - "[pp, out_param] = funappxglobal_g(f,-2,2,1e-7,10,10,1000000)"
+ok 4 - "f = @(x) x.^2;"
+ok 5 - "[pp, out_param] = funappxglobal_g(f,'a',-2,'b',2,'nhi',100,'nlo',10)"
+ok 6 - "in_param.a = -10; in_param.b = 10;"
+ok 7 - "in_param.abstol = 10^(-7); in_param.nlo = 10; in_param.nhi = 100;"
+ok 8 - "in_param.nmax = 10^6; f = @(x) x.^2;"
+ok 9 - "[pp, out_param] =funappxglobal_g(f,in_param)"
+TAP version 13
+1..19
+ok 1 - "funappxglobal_g"
+ok 2 - "f = @(x) x.^2; pp = funappxglobal_g(f)"
+ok 3 - "f = @(x) x.^2; [pp out_param] = funappxglobal_g(f)"
+ok 4 - "clear in_param; in_param.a = -10; in_param.b =10; in_param.abstol = 10^(-8); "
+ok 5 - "[pp, out_param] = funappxglobal_g(@(x) x.^2, in_param)"
+ok 6 - "clear in_param; in_param.a = -5; in_param.b = 5; "
+ok 7 - "in_param.abstol = 10^(-6); in_param.nlo = 100; in_param.nhi = 500;"
+ok 8 - "[pp, out_param] = funappxglobal_g(@(x) x.^2, in_param)"
+ok 9 - "clear in_param; in_param.a = -1; in_param.b = 1; in_param.Nmax = 10^6;"
+ok 10 - "in_param.abstol = 10^(-6); in_param.nlo = 10; in_param.nhi = 500;  "
+ok 11 - "[pp, out_param] = funappxglobal_g(@(x) x.^2, in_param)"
+ok 12 - "[pp, out_param] = funappxglobal_g(@(x) x.^2,'a',-2,'b',2,'abstol',1e-7)"
+ok 13 - "[pp, out_param] = funappxglobal_g(@(x) x.^2,'a',-3,'b',0,'nlo',20,'nhi',40)"
+ok 14 - "[pp, out_param] = funappxglobal_g(@(x) x.^2,'a',-30,'b',30,'nmax',1e7)"
+ok 15 - "[pp, out_param] = funappxglobal_g(@(x) x.^2,-2,5)"
+ok 16 - "f = @(x) x.^2; "
+ok 17 - "[pp, out_param] = funappxglobal_g(f,-3,3,1e-7)"
+ok 18 - "f = @(x) x.^2; "
+ok 19 - "[pp, out_param] = funappxglobal_g(f,-5,10,1e-7,10,20)"
+TAP version 13
+1..6
+ok 1 - "f = @(x) x.^2; [fappx, out_param] = funappx01_g(f)"
+ok 2 - "clear in_param; in_param.abstol = 10^(-8); "
+ok 3 - "in_param.ninit = 10; in_param.nmax = 10^6; "
+ok 4 - "[fappx, out_param] = funappx01_g(@(x) x.^2, in_param)"
+ok 5 - "f = @(x) x.^2; "
+ok 6 - "[fappx, out_param] = funappx01_g(f,'ninit',10,'nmax',1e6,'abstol',1e-6)"
+TAP version 13
+1..7
+ok 1 - "f=@(x) (x-0.3).^2+1; [fmin,out_param] = funmin01_g(f)"
+ok 2 - "f=@(x) (x-0.3).^2+1; in_param.abstol = 1e-8;"
+ok 3 - "in_param.ninit = 10; in_param.nmax = 1e6;"
+ok 4 - "in_param.TolX = 1e-4;"
+ok 5 - "[fmin,out_param] = funmin01_g(f,in_param)"
+ok 6 - "f=@(x) (x-0.3).^2+1;"
+ok 7 - "[fmin,out_param] = funmin01_g(f,'ninit',10,'nmax',1e6,'abstol',1e-4,'TolX',1e-2)"
+TAP version 13
+1..3
+ok 1 - "q = integral01_g(@(x) x.^2)"
+ok 2 - "f = @(x) exp(-x.^2); q = integral01_g(f,'abstol',1e-5,'ninit',52,'nmax',1e7)"
+ok 3 - "q = integral01_g()"
+TAP version 13
+1..3
+ok 1 - "q = integraltau_g(@(x) x.^2)"
+ok 2 - "f = @(x) exp(-x.^2); q = integraltau_g(f,'abstol',1e-5,'nmax',1e7)"
+ok 3 - "q = integraltau_g()"
+Running ut_funappx01_g
+....
+Done ut_funappx01_g
+__________
+
+results = 
+  1x4 TestResult array with properties:
+
+    Name
+    Passed
+    Failed
+    Incomplete
+    Duration
+Totals:
+   4 Passed, 0 Failed, 0 Incomplete.
+   0.11437 seconds testing time.
+Running ut_integral01_g
+.......
+Done ut_integral01_g
+__________
+
+results = 
+  1x7 TestResult array with properties:
+
+    Name
+    Passed
+    Failed
+    Incomplete
+    Duration
+Totals:
+   7 Passed, 0 Failed, 0 Incomplete.
+   0.26342 seconds testing time.
+Running ut_funmin01_g
+.....
+Done ut_funmin01_g
+__________
+
+results = 
+  1x5 TestResult array with properties:
+
+    Name
+    Passed
+    Failed
+    Incomplete
+    Duration
+Totals:
+   5 Passed, 0 Failed, 0 Incomplete.
+   1.6213 seconds testing time.
+    5.1061

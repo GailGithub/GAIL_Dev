@@ -46,7 +46,7 @@ function [q,out_param] = cubSobol_g(varargin)
 %     The default value is [0;1].
 %
 %     in_param.measure --- for f(x)*mu(dx), we can define mu(dx) to be the
-%     measure of a uniformly distributed random variable in they hyperbox
+%     measure of a uniformly distributed random variable in the hyperbox
 %     or normally distributed with covariance matrix I_d. The only possible
 %     values are 'uniform' or 'normal'. For 'uniform', the hyperbox must be
 %     a finite volume while for 'normal', the hyperbox can only be defined as 
@@ -90,8 +90,8 @@ function [q,out_param] = cubSobol_g(varargin)
 %     By default toltype is 'max'.
 % 
 %     in_param.theta --- this input is parametrizing the toltype 
-%     'comb'. Thus, it is only afecting when the toltype
-%     chosen is 'comb'. It stablishes the linear combination weight
+%     'comb'. Thus, it is only active when the toltype
+%     chosen is 'comb'. It establishes the linear combination weight
 %     between the absolute and relative tolerances
 %     theta*abstol+(1-theta)*reltol*| integral(f) |. Note that for theta = 1, 
 %     we have pure absolute tolerance while for theta = 0, we have pure 
@@ -103,7 +103,7 @@ function [q,out_param] = cubSobol_g(varargin)
 %
 %     out_param.d --- dimension over which the algorithm integrated.
 %
-%     out_param.n --- number of Sobol' points used for comupting the
+%     out_param.n --- number of Sobol' points used for computing the
 %     integral of f.
 %
 %     out_param.bound_err --- predicted bound on the error based on the cone
@@ -123,13 +123,9 @@ function [q,out_param] = cubSobol_g(varargin)
 %                       guaranteed error tolerance.
 %      
 %                       2   If the function lies outside the cone. In
-%                       this case, results are not guaranteed. Note that
-%                       this parameter is computed on the transformed
-%                       function, not the input function. For more
-%                       information on the transforms, check the input
-%                       parameter in_param.transfrom; for information about
-%                       the cone definition, check the article mentioned
-%                       below.
+%                       this case, results are not guaranteed. For more
+%                       information about the cone definition, check the
+%                       article mentioned below.
 % 
 %  Guarantee
 % This algorithm computes the integral of real valued functions in [0,1)^d
@@ -182,7 +178,7 @@ function [q,out_param] = cubSobol_g(varargin)
 % q = 0.25***
 %
 %
-%   See also CUBLATTICE_G, CUBMC_G, MEANMC_G, INTEGRAL_G
+%   See also CUBLATTICE_G, CUBMC_G, MEANMC_G, MEANMCBER_G, INTEGRAL_G
 % 
 %  References
 %
