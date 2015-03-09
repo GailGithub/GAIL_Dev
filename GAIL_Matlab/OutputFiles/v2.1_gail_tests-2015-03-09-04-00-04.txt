@@ -1,0 +1,284 @@
+TAP version 13
+1..7
+ok 1 - "f = @(x) x.^2;"
+ok 2 - "[~, out_param] = funappx_g(f,-2,2,1e-7,10,20)"
+ok 3 - "f = @(x) x.^2;"
+ok 4 - "[~, out_param] = funappx_g(f,'a',-2,'b',2,'nhi',20,'nlo',10)"
+ok 5 - "in_param.a = -5; in_param.b = 5; f = @(x) x.^2;"
+ok 6 - "in_param.abstol = 10^(-6); in_param.nlo = 10; in_param.nhi = 20;"
+ok 7 - "[~, out_param] = funappx_g(f,in_param)"
+
+time =
+
+    0.4998
+
+TAP version 13
+1..11
+ok 1 - "funappx_g"
+ok 2 - "clear in_param; in_param.a = -10; in_param.b =10; in_param.abstol = 10^(-8); "
+ok 3 - "[~, out_param] = funappx_g(@(x) x.^2, in_param)"
+ok 4 - "clear in_param; in_param.a = -5; in_param.b = 5; "
+ok 5 - "in_param.abstol = 10^(-8); in_param.nlo = 10; in_param.nhi = 500;"
+ok 6 - "[~, out_param] = funappx_g(@(x) x.^2, in_param)"
+ok 7 - "[~, out_param] = funappx_g(@(x) x.^2,'a',-2,'b',2,'abstol',1e-7,'nlo',20,'nhi',50)"
+ok 8 - "[~, out_param] = funappx_g(@(x) x.^2,'a',-3,'b',0,'nlo',20,'nhi',40)"
+ok 9 - "[~, out_param] = funappx_g(@(x) x.^2,-2,5,1e-6,20,50)"
+ok 10 - "[~, out_param] = funappx_g(@(x) x.^2,-3,3,1e-7,20,50)"
+ok 11 - "[~, out_param] = funappx_g(@(x) x.^2,-5,10,1e-7,10,20)"
+
+time =
+
+    0.9180
+
+TAP version 13
+1..11
+ok 1 - "f=@(x) (x-0.3).^2+1; [fmin,out_param] = funmin_g(f)"
+ok 2 - "f=@(x) (x-0.3).^2+1;"
+ok 3 - "[fmin,out_param] = funmin_g(f,-2,2,1e-7,1e-4,10,10,1000000)"
+ok 4 - "f=@(x) (x+1.3).^2+1;"
+ok 5 - "in_param.a = -13; in_param.b = 8;"
+ok 6 - "in_param.abstol = 10^(-7); in_param.TolX = 1e-4;"
+ok 7 - "in_param.nlo = 10; in_param.nhi = 100;"
+ok 8 - "in_param.nmax = 10^6;"
+ok 9 - "[fmin,out_param] = funmin_g(f,in_param)"
+ok 10 - "f=@(x) (x-0.3).^2+1;"
+ok 11 - "[fmin,out_param] = funmin_g(f,'a',-2,'b',2,'nhi',100,'nlo',10,'nmax',1e6,'abstol',1e-4,'TolX',1e-2)"
+
+time =
+
+    1.0678
+
+TAP version 13
+1..3
+ok 1 - "q = integral_g(@(x) x.^2)"
+ok 2 - "f = @(x) exp(-x.^2); q = integral_g(f,'a',1,'b',2,'abstol',1e-5)"
+ok 3 - "q = integral_g()"
+
+time =
+
+    1.1894
+
+TAP version 13
+1..19
+ok 1 - "f = @(x) exp(-(x-1).^2); q = integral_g(f,'a',1,'b',2,'nlo',100,'nhi',10000,'abstol',1e-5,'nmax',1e7)"
+ok 2 - "f = @(x) exp(-x.^2); q = integral_g(f,'abstol',1e-5,'nhi',52,'nmax',1e7)"
+ok 3 - "f = @(x) exp(-x.^2); q = integral_g(f,'a',1,'b',2,'abstol',1e-5,'nhi',52,'nmax',1e7)"
+ok 4 - "f = @(x) exp(-x.^2); q = integral_g(f,'a',0,'b',2,'abstol',1e-5,'nhi',52,'nmax',1e7)"
+ok 5 - "f = @(x) exp(-x.^2); q = integral_g(f,'a',0,'b',2,'nlo',100,'nhi',10000,'abstol',1e-5,'nmax',1e7)"
+ok 6 - "f = @(x) exp(-x.^2); q = integral_g(f,'a',0,'b',3,'nlo',100,'nhi',10000,'abstol',1e-5,'nmax',1e7)"
+ok 7 - "f = @(x) exp(-x.^2); q = integral_g(f,'a',-1,'b',3,'nlo',100,'nhi',10000,'abstol',1e-5,'nmax',1e7)"
+ok 8 - "f = @(x) exp(-x.^2); q = integral_g(f,'a',-4.5,'b',1.5,'nlo',100,'nhi',10000,'abstol',1e-5,'nmax',1e7)"
+ok 9 - "q = integral_g(@(x)x.^2,'a',1)"
+ok 10 - "q = integral_g(@(x)x.^2,'a',0,'b',Inf)"
+ok 11 - "q = integral_g(@(x)x.^2,'a',Inf)"
+ok 12 - "q = integral_g(@(x)x.^2,'a',NaN)"
+ok 13 - "q = integral_g(@(x)x.^2,'a',0,'b',NaN)"
+ok 14 - "q = integral_g(@(x)x.^2,'a',1,'b',0)"
+ok 15 - "q = integral_g(@(x)x.^2,'a',0,'b',2,'nlo',10,'nhi',100)"
+ok 16 - " inparam.a=0; inparam.b=3; inparam.abstol=1e-13; q=integral_g(@(x) exp(2*x),inparam)"
+ok 17 - "q = integral_g(@(x) x.^2,'a',-1,'b',1)"
+ok 18 - " [~,out_param]=integral_g(@(x) x.^2) "
+ok 19 - "f = @(x) exp(-x.^2); [~, out_param] = integral_g(f,'a',1,'b',2,'nlo',100,'nhi',10000,'abstol',1e-5,'nmax',1e7)"
+
+time =
+
+    2.1085
+
+TAP version 13
+1..6
+ok 1 - "meanMC_g"
+ok 2 - "in_param.reltol=0; in_param.abstol = 1e-3;"
+ok 3 - "in_param.alpha = 0.05; Yrand=@(n) rand(n,1).^2;"
+ok 4 - "tmu=meanMC_g(Yrand,in_param)"
+ok 5 - "tmu=meanMC_g(@(n)exp(rand(n,1)),1e-3,0)"
+ok 6 - "tmu=meanMC_g(@(n)cos(rand(n,1)),'reltol',1e-2,'abstol',0,'alpha',0.05)"
+
+time =
+
+    0.0212
+
+TAP version 13
+1..4
+ok 1 - "in_param.abstol=1e-3; in_param.alpha = 0.01; p=1/9;Yrand=@(n) rand(n,1)<p;"
+ok 2 - "pHat=meanMCBer_g(Yrand,in_param)"
+ok 3 - "pHat = meanMCBer_g(Yrand,1e-3)"
+ok 4 - "pHat = meanMCBer_g(Yrand,'abstol',1e-2,'alpha',0.05)"
+
+time =
+
+    0.1423
+
+TAP version 13
+1..5
+ok 1 - "f = @(x) prod(x,2); hyperbox = [zeros(1,2);ones(1,2)]; q = cubLattice_g(f,hyperbox,'uniform',1e-5,1e-1,'transform','C1sin')"
+ok 2 - "f = @(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2+0.11; hyperbox = [-inf(1,3);inf(1,3)]; q = cubLattice_g(f,hyperbox,'normal',1e-3,1e-3,'transform','C1sin')"
+ok 3 - "f = @(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [-ones(1,2);2*ones(1,2)]; q = cubLattice_g(f,hyperbox,'uniform',1e-3,1e-1,'transform','C1')"
+ok 4 - "f = @(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); hyperbox = [-inf(1,1);inf(1,1)]; q = cubLattice_g(f,hyperbox,'normal',1e-4,1e-1,'fudge',@(m) 2.^-(2*m),'transform','C1sin')"
+ok 5 - "f = @(x) 8*prod(x,2); hyperbox = [zeros(1,5);ones(1,5)]; q = cubLattice_g(f,hyperbox,'uniform',1e-5,0)"
+
+time =
+
+    0.4744
+
+TAP version 13
+1..5
+ok 1 - "f = @(x) prod(x,2); hyperbox = [zeros(1,2);ones(1,2)]; q = cubSobol_g(f,hyperbox,'uniform',1e-5,1e-1)"
+ok 2 - "f = @(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2+0.11; hyperbox = [-inf(1,3);inf(1,3)]; q = cubSobol_g(f,hyperbox,'normal',1e-3,1e-3)"
+ok 3 - "f = @(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [-ones(1,2);2*ones(1,2)]; q = cubSobol_g(f,hyperbox,'uniform',1e-3,1e-1)"
+ok 4 - "f = @(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); hyperbox = [-inf(1,1);inf(1,1)]; q = cubSobol_g(f,hyperbox,'normal',1e-4,1e-1,'fudge',@(m) 2.^-(2*m))"
+ok 5 - "f = @(x) 8*prod(x,2); hyperbox = [zeros(1,5);ones(1,5)]; q = cubSobol_g(f,hyperbox,'uniform',1e-5,0)"
+
+time =
+
+    0.2929
+
+Running ut_integral_g
+.......
+Done ut_integral_g
+__________
+
+
+results = 
+
+  1x7 TestResult array with properties:
+
+    Name
+    Passed
+    Failed
+    Incomplete
+    Duration
+
+Totals:
+   7 Passed, 0 Failed, 0 Incomplete.
+   0.84194 seconds testing time.
+
+Running ut_funappx_g
+..........
+...
+Done ut_funappx_g
+__________
+
+
+results = 
+
+  1x13 TestResult array with properties:
+
+    Name
+    Passed
+    Failed
+    Incomplete
+    Duration
+
+Totals:
+   13 Passed, 0 Failed, 0 Incomplete.
+   0.69497 seconds testing time.
+
+Running ut_funmin_g
+.......
+Done ut_funmin_g
+__________
+
+
+results = 
+
+  1x7 TestResult array with properties:
+
+    Name
+    Passed
+    Failed
+    Incomplete
+    Duration
+
+Totals:
+   7 Passed, 0 Failed, 0 Incomplete.
+   1.0504 seconds testing time.
+
+Running ut_meanMC_g
+......
+Done ut_meanMC_g
+__________
+
+
+results = 
+
+  1x6 TestResult array with properties:
+
+    Name
+    Passed
+    Failed
+    Incomplete
+    Duration
+
+Totals:
+   6 Passed, 0 Failed, 0 Incomplete.
+   2.0995 seconds testing time.
+
+Running ut_cubMC_g
+..........
+Dim   FcnIdx       Q             f_true               Err            Sample Used             Stats  
+-----------------------------------------------------------------------------------------------------
+1     1       8.41478e-01       8.41471e-01       6.60824e-06         1200387             BothErrMet
+1     2       7.85452e-01       7.85398e-01       5.36931e-05         1516389             BothErrMet
+2     1       4.96971e-01       4.96751e-01       2.19766e-04         4583748             BothErrMet
+2     2       7.28334e-01       7.28296e-01       3.85311e-05         1457351             BothErrMet
+3     1       6.27452e-02       6.23593e-02       3.85881e-04         7831442             AbsErrMet
+3     2       6.62577e-01       6.62570e-01       7.64309e-06         1477425             BothErrMet
+.
+Done ut_cubMC_g
+__________
+
+
+results = 
+
+  1x11 TestResult array with properties:
+
+    Name
+    Passed
+    Failed
+    Incomplete
+    Duration
+
+Totals:
+   11 Passed, 0 Failed, 0 Incomplete.
+   2.1245 seconds testing time.
+
+Running ut_cubLattice_g
+......
+Done ut_cubLattice_g
+__________
+
+
+results = 
+
+  1x6 TestResult array with properties:
+
+    Name
+    Passed
+    Failed
+    Incomplete
+    Duration
+
+Totals:
+   6 Passed, 0 Failed, 0 Incomplete.
+   0.19444 seconds testing time.
+
+Running ut_cubSobol_g
+......
+Done ut_cubSobol_g
+__________
+
+
+results = 
+
+  1x6 TestResult array with properties:
+
+    Name
+    Passed
+    Failed
+    Incomplete
+    Duration
+
+Totals:
+   6 Passed, 0 Failed, 0 Incomplete.
+   0.1975 seconds testing time.
+
