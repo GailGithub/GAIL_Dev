@@ -1,6 +1,6 @@
 % This script is to test meanMCBer_g algorithm
 %clear all;close all;clc
-function [ut_abserr, ut_abstol]=Test_meanMCBer_g
+function [ut_abserr, ut_abstol, nrep, res]=Test_meanMCBer_g
 format long e
 disp(horzcat(' abstol             abserr            pHat                p               n               nmax '));
 disp(        '-------------------------------------------------------------------------------------------------------');

@@ -8,21 +8,12 @@ if exist('TestmeanMCBernoulli-on-abs-06-Sep-2014_03.18.10.mat')
 else
     warning(['TestmeanMCBernoulli-on-abs-06-Sep-2014_03.18.10.mat does not exist. '...
         'call function Test_meanMCBer_g to produce the MAT file.'])
-    %Test_meanMCBer_g
-    % TOOD call function that produce the required variables
+    [~, ~, nrep, res] = Test_meanMCBer_g;
 end
 standard = true(nrep,1);
 maxsample=res(:,5)== res(:,6);
-%maxsample=res(:,7)== res(:,8);
 standard = standard &~maxsample;
-% loglog(res(maxsample,5),res(maxsample,9),'k*', ...
-%     res(maxsample,5),res(maxsample,10),'go',...
-%     'linewidth',1);
-% hold on;
-% loglog(res(standard,5),res(standard,9),'r*', ...
-%     res(standard,5),res(standard,10),'bo',...
-%     'linewidth',1);
-% hold off;
+
 if usejava('jvm') || MATLABVERSION <= 7.12
     loglog(res(maxsample,4),res(maxsample,7),'k*', ...
         'linewidth',1);
