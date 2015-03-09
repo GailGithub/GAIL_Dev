@@ -53,6 +53,16 @@
 %
 % * out_param.time --- the time elapsed in seconds.
 % 
+% <html>
+% <ul type="square">
+%  <li>out_param.exit --- the state of program when exiting:</li>
+%   <ul type="circle">
+%    <li>0   success</li>
+%    <li>1   Not enough samples to estimate p with guarantee</li>
+%   </ul>
+% </ul>
+% </html>                    
+%
 %%  Guarantee
 %
 % If the sample size is calculated according Hoeffding's inequality, which
@@ -119,36 +129,36 @@
 %
 %% References
 %
-% [1]  F. J. Hickernell, L. Jiang, Y. Liu, and A. B. Owen, "Guaranteed
+% [1]  F. J. Hickernell, L. Jiang, Y. Liu, and A. B. Owen, _Guaranteed
 % conservative fixed width confidence intervals via Monte Carlo
-% sampling," Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F.
+% sampling,_ Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F.
 % Y. Kuo, G. W. Peters, and I. H. Sloan, eds.), Springer-Verlag, Berlin,
 % 2014. arXiv:1208.4318 [math.ST]
 %
-% [2]  Yuhan Ding, Fred J. Hickernell, and Sou-Cheng T. Choi, "Locally
-% Adaptive Method for Approximating Univariate Functions in Cones with a
-% Guarantee for Accuracy," working, 2015.
+% [2]  Lan Jiang and Fred J. Hickernell, _Guaranteed Conservative
+% Confidence Intervals for Means of Bernoulli Random Variables,_
+% submitted for publication, 2014.
 %          
 % [3]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
 % Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
 % GAIL: Guaranteed Automatic Integration Library (Version 2.1) [MATLAB
 % Software], 2015. Available from http://code.google.com/p/gail/
 %
-% [4] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
-% Research via Supportable Scientific Software," Journal of Open Research
+% [4] Sou-Cheng T. Choi, _MINRES-QLP Pack and Reliable Reproducible
+% Research via Supportable Scientific Software,_ Journal of Open Research
 % Software, Volume 2, Number 1, e22, pp. 1-7, 2014.
 %
-% [5] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable
-% Mathematical Software" [Course Slides], Illinois Institute of
+% [5] Sou-Cheng T. Choi and Fred J. Hickernell, _IIT MATH-573 Reliable
+% Mathematical Software_ [Course Slides], Illinois Institute of
 % Technology, Chicago, IL, 2013. Available from
 % http://code.google.com/p/gail/ 
 %
 % [6] Daniel S. Katz, Sou-Cheng T. Choi, Hilmar Lapp, Ketan Maheshwari,
 % Frank Loffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr,
 % James Hetherington, James Howison, Shel Swenson, Gabrielle D. Allen,
-% Anne C. Elster, Bruce Berriman, Colin Venters, "Summary of the First
+% Anne C. Elster, Bruce Berriman, Colin Venters, _Summary of the First
 % Workshop On Sustainable Software for Science: Practice And Experiences
-% (WSSSPE1)," Journal of Open Research Software, Volume 2, Number 1, e6,
+% (WSSSPE1),_ Journal of Open Research Software, Volume 2, Number 1, e6,
 % pp. 1-21, 2014.
 %
 % If you find GAIL helpful in your work, please support us by citing the

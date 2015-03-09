@@ -218,9 +218,9 @@
 %
 %% References
 %
-% [1]  F. J. Hickernell, L. Jiang, Y. Liu, and A. B. Owen, "Guaranteed
+% [1]  F. J. Hickernell, L. Jiang, Y. Liu, and A. B. Owen, _Guaranteed
 % conservative fixed width confidence intervals via Monte Carlo
-% sampling," Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F.
+% sampling,_ Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F.
 % Y. Kuo, G. W. Peters, and I. H. Sloan, eds.), pp. 105-128,
 % Springer-Verlag, Berlin, 2014. DOI: 10.1007/978-3-642-41095-6_5
 %
@@ -229,21 +229,21 @@
 % GAIL: Guaranteed Automatic Integration Library (Version 2.1)
 % [MATLAB Software], 2015. Available from http://code.google.com/p/gail/
 %
-% [3] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
-% Research via Supportable Scientific Software," Journal of Open Research
+% [3] Sou-Cheng T. Choi, _MINRES-QLP Pack and Reliable Reproducible
+% Research via Supportable Scientific Software,_ Journal of Open Research
 % Software, Volume 2, Number 1, e22, pp. 1-7, 2014.
 %
-% [4] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable
-% Mathematical Software" [Course Slides], Illinois Institute of
+% [4] Sou-Cheng T. Choi and Fred J. Hickernell, _IIT MATH-573 Reliable
+% Mathematical Software_ [Course Slides], Illinois Institute of
 % Technology, Chicago, IL, 2013. Available from
 % http://code.google.com/p/gail/ 
 %
 % [5] Daniel S. Katz, Sou-Cheng T. Choi, Hilmar Lapp, Ketan Maheshwari,
 % Frank Loffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr,
 % James Hetherington, James Howison, Shel Swenson, Gabrielle D. Allen,
-% Anne C. Elster, Bruce Berriman, Colin Venters, "Summary of the First
+% Anne C. Elster, Bruce Berriman, Colin Venters, _Summary of the First
 % Workshop On Sustainable Software for Science: Practice And Experiences
-% (WSSSPE1)," Journal of Open Research Software, Volume 2, Number 1, e6,
+% (WSSSPE1),_ Journal of Open Research Software, Volume 2, Number 1, e6,
 % pp. 1-21, 2014.
 %
 % If you find GAIL helpful in your work, please support us by citing the
