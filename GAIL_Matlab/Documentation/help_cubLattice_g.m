@@ -153,7 +153,7 @@
 %                    this parameter is computed on the transformed
 %                    function, not the input function. For more
 %                    information on the transforms, check the input
-%                    parameter in_param.transfrom; for information about
+%                    parameter in_param.transform; for information about
 %                    the cone definition, check the article mentioned
 %                    below.
 % 
