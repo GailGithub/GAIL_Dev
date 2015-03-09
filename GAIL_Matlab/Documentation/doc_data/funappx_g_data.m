@@ -26,7 +26,7 @@ f = @(x) x.^2; [fappx, out_param] = funappx_g(f)
 
 [fappx, out_param] = funappx_g(@(x) x.^2,0,100,1e-7,10,1000,1e8)
 
-% Approximate function x^2 on [0,100] with error tolerence 1e-7, cost
+% Approximate function x^2 on [0,100] with error tolerance 1e-7, cost
 % budget 10000000, lower bound of initial number of points 10 and upper
 % bound of initial number of points 100
 
@@ -37,7 +37,7 @@ clear in_param; in_param.a = -20; in_param.b = 20; in_param.nlo = 10;
 in_param.nhi = 100; in_param.nmax = 1e8; in_param.abstol = 1e-7; 
 [fappx, out_param] = funappx_g(@(x) x.^2, in_param)
 
-% Approximate function x^2 on [-20,20] with error tolerence 1e-7, cost
+% Approximate function x^2 on [-20,20] with error tolerance 1e-7, cost
 % budget 1000000, lower bound of initial number of points 10 and upper
 % bound of initial number of points 100
 %%
@@ -46,6 +46,6 @@ in_param.nhi = 100; in_param.nmax = 1e8; in_param.abstol = 1e-7;
 clear in_param; f = @(x) x.^2;
 [fappx, out_param] = funappx_g(f,'a',-10,'b',50,'nmax',1e6,'abstol',1e-7)
 
-% Approximate function x^2 with error tolerence 1e-7, cost budget 1000000,
+% Approximate function x^2 with error tolerance 1e-7, cost budget 1000000,
 % lower bound of initial number of points 10 and upper
 % bound of initial number of points 100

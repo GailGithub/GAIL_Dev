@@ -31,7 +31,7 @@
 %
 % fmin = *funmin_g*(f,in_param) finds minimum value of function f on the
 %  interval [in_param.a,in_param.b] with a guaranteed absolute error
-%  tolerance in_param.abstol and a guranteed X tolerance in_param.TolX.
+%  tolerance in_param.abstol and a guaranteed X tolerance in_param.TolX.
 %  If a field is not specified, the default value is used.
 %
 % [fmin, out_param] = *funmin_g*(f,...) returns minimum value fmin of
@@ -138,7 +138,7 @@ f=@(x) (x-0.3).^2+1; [fmin,out_param] = funmin_g(f)
 f=@(x) (x-0.3).^2+1;
 [fmin,out_param] = funmin_g(f,-2,2,1e-7,1e-4,10,10,1000000)
 
-% Minimize function (x-0.3)^2+1 on [-2,2] with error tolerence 1e-4, X
+% Minimize function (x-0.3)^2+1 on [-2,2] with error tolerance 1e-4, X
 % tolerance 1e-2, cost budget 1000000, lower bound of initial number of
 % points 10 and upper bound of initial number of points 10
 
@@ -151,7 +151,7 @@ in_param.nlo = 10; in_param.nhi = 100;
 in_param.nmax = 10^6;
 [fmin,out_param] = funmin_g(f,in_param)
 
-% Minimize function (x-0.3)^2+1 on [-13,8] with error tolerence 1e-7, X
+% Minimize function (x-0.3)^2+1 on [-13,8] with error tolerance 1e-7, X
 % tolerance 1e-4, cost budget 1000000, lower bound of initial number of
 % points 10 and upper bound of initial number of points 100
 
@@ -162,7 +162,7 @@ f=@(x) (x-0.3).^2+1;
 [fmin,out_param] = funmin_g(f,'a',-2,'b',2,'nhi',100,'nlo',10,...
     'nmax',1e6,'abstol',1e-4,'TolX',1e-2)
 
-% Minimize function (x-0.3)^2+1 on [-2,2] with error tolerence 1e-4, X
+% Minimize function (x-0.3)^2+1 on [-2,2] with error tolerance 1e-4, X
 % tolerance 1e-2, cost budget 1000000, lower bound of initial number of
 % points 10 and upper bound of initial number of points 100
 %% See Also
