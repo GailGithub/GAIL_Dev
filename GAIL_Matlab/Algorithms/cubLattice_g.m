@@ -198,6 +198,14 @@ function [q,out_param] = cubLattice_g(varargin)
 % q = 0.25***
 %
 %
+% Example 6:
+% Estimate the integral with integrand f(x) = 3./(5-4*(cos(2*pi*x))) in the interval
+% [0,1) with pure absolute error 1e-5.
+% 
+% >> f = @(x) 3./(5-4*(cos(2*pi*x))); hyperbox = [0;1]; q = cubLattice_g(f,hyperbox,'uniform',1e-5,0,'transform','id')
+% q = 1.00***
+%
+%
 %   See also CUBSOBOL_G, CUBMC_G, MEANMC_G, INTEGRAL_G
 % 
 %  References
@@ -254,12 +262,15 @@ elseif strcmp(out_param.transform,'C1sin')
 end
 
 %% Main algorithm
-r_lag=4; %distance between coefficients summed and those computed
-l_star=out_param.mmin-r_lag;
+l_star = 6; % Minimum gathering of points for the sums of DFT
+r_lag=out_param.mmin-l_star; %distance between coefficients summed and those computed
 Stilde=zeros(out_param.mmax-out_param.mmin+1,1); %initialize sum of DFT terms
-StildeNC=zeros(out_param.mmax-out_param.mmin+1,r_lag); %initialize various sums of DFT terms for necessary conditions
-cond1=(1+out_param.fudge(r_lag))*(1+2*out_param.fudge(r_lag-(1:r_lag)))./(1+out_param.fudge(r_lag-(1:r_lag))); % Factors for the necessary conditions
-cond2=(1+out_param.fudge(r_lag-(1:r_lag)))*(1+2*out_param.fudge(r_lag))/(1+out_param.fudge(r_lag)); % Factors for the necessary conditions
+CStilde_low = []; %initialize various sums of DFT terms for necessary conditions
+CStilde_up = []; %initialize various sums of DFT terms for necessary conditions
+lower = 0;% variable storing the maximum for the necessary conditions
+upper = Inf;% variable storing the minimum for the necessary conditions
+C_low = 0; %variable that will be used to store fudge factors
+C_up = 0; %variable that will be used to store fudge factors
 errest=zeros(out_param.mmax-out_param.mmin+1,1); %initialize error estimates
 appxinteg=zeros(out_param.mmax-out_param.mmin+1,1); %initialize approximations to integral
 exit_len = 2;
@@ -305,13 +316,29 @@ end
 %% Compute Stilde
 nllstart=int64(2^(out_param.mmin-r_lag-1));
 Stilde(1)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
-for i = 1:r_lag % Storing the information for the necessary conditions
-    nllstart=2*nllstart;
-    StildeNC(i,i)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
-end
 out_param.bound_err=out_param.fudge(out_param.mmin)*Stilde(1);
 errest(1)=out_param.bound_err;
 
+% Necessary conditions
+for l = l_star:out_param.mmin % Storing the information for the necessary conditions
+    C_low = (1+out_param.fudge(out_param.mmin-l))/(1+2*out_param.fudge(out_param.mmin-l));
+    C_up = (1+out_param.fudge(out_param.mmin-l));
+    CStilde_low=[CStilde_low C_low*sum(abs(y(kappanumap(nllstart+1:2*nllstart))))];
+    CStilde_up=[CStilde_up C_up*sum(abs(y(kappanumap(nllstart+1:2*nllstart))))];
+    nllstart=2*nllstart;
+end
+lower = max(lower, max(CStilde_low));
+upper = min(upper, min(CStilde_up));
+if lower > upper
+   out_param.exit(2) = true;
+end
+% disp(CStilde_low)
+% disp(CStilde_up)
+% disp(sprintf('Lower %d <= %d upper.',lower,upper)); % To display the updated bounds
+CStilde_low = []; % need to initialize it to reuse again for the following m
+Cstilde_up = [];
+
+% Check the end of the algorithm
 deltaplus = 0.5*(gail.tolfun(out_param.abstol,...
     out_param.reltol,out_param.theta,abs(q-errest(1)),...
     out_param.toltype)+gail.tolfun(out_param.abstol,out_param.reltol,...
@@ -384,23 +411,34 @@ for m=out_param.mmin+1:out_param.mmax
    nllstart=int64(2^(m-r_lag-1));
    meff=m-out_param.mmin+1;
    Stilde(meff)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
-   for i = 1:r_lag % Storing the information for the necessary conditions
-       nllstart=2*nllstart;
-       StildeNC(i+meff-1,i)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
-   end
-   % disp((Stilde(meff)*cond1(1:min(meff-1,r_lag)))>=(StildeNC(meff-1,1:min(meff-1,r_lag)))) % Displaying necessary condition 1 results (1 if satisfied)
-   % disp((StildeNC(meff-1,1:min(meff-1,r_lag)).*cond2(1:min(meff-1,r_lag)))>=(Stilde(meff)*ones(1,min(meff-1,r_lag)))) % Displaying necessary condition 2 results (1 if satisfied)
-   if ~(all((Stilde(meff)*cond1(1:min(meff-1,r_lag)))>=(StildeNC(meff-1,1:min(meff-1,r_lag))))*   ...
-    all((StildeNC(meff-1,1:min(meff-1,r_lag)).*cond2(1:min(meff-1,r_lag)))>=(Stilde(meff)*ones(1,min(meff-1,r_lag))))),
-        out_param.exit(2) = true;
-   end
    out_param.bound_err=out_param.fudge(m)*Stilde(meff);
    errest(meff)=out_param.bound_err;
+   
+   % Necessary conditions
+   nllstart=int64(2^(out_param.mmin-r_lag-1));
+   for l = l_star:m % Storing the information for the necessary conditions
+        C_low = (1+out_param.fudge(m-l))/(1+2*out_param.fudge(m-l));
+        C_up = (1+out_param.fudge(m-l));
+        CStilde_low=[CStilde_low C_low*sum(abs(y(kappanumap(nllstart+1:2*nllstart))))];
+        CStilde_up=[CStilde_up C_up*sum(abs(y(kappanumap(nllstart+1:2*nllstart))))];
+        nllstart=2*nllstart;
+   end
+   lower = max(lower, max(CStilde_low));
+   upper = min(upper, min(CStilde_up));
+   if lower > upper
+       out_param.exit(2) = true;
+   end
+%    disp(CStilde_low)
+%    disp(CStilde_up)
+%    disp(sprintf('Lower %d <= %d upper.',lower,upper)); % To display the updated bounds
+   CStilde_low = [];
+   Cstilde_up = [];
    
    %% Approximate integral
    q=mean(yval);
    appxinteg(meff)=q;
 
+   % Check the end of the algorithm
     deltaplus = 0.5*(gail.tolfun(out_param.abstol,...
         out_param.reltol,out_param.theta,abs(q-errest(meff)),...
         out_param.toltype)+gail.tolfun(out_param.abstol,out_param.reltol,...
