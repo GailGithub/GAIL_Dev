@@ -10,7 +10,8 @@ classdef ut_cubLattice_g < matlab.unittest.TestCase
       [meanf,out_param] = cubLattice_g(f,hyperbox,in_param);
       exactf = 0.33;
       actualerr = abs(meanf-exactf);
-      testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
+      tolerance = gail.tolfun(out_param.abstol,out_param.reltol,out_param.theta,exactf,out_param.toltype);
+      testCase.verifyLessThanOrEqual(actualerr,tolerance);
     end
     
     function cubLattice_gOfexp(testCase)
@@ -20,7 +21,8 @@ classdef ut_cubLattice_g < matlab.unittest.TestCase
       [meanf,out_param] = cubLattice_g(f,hyperbox,in_param);
       exactf = exp(1)-1;
       actualerr = abs(meanf-exactf);
-      testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
+      tolerance = gail.tolfun(out_param.abstol,out_param.reltol,out_param.theta,exactf,out_param.toltype);
+      testCase.verifyLessThanOrEqual(actualerr,tolerance);
       testCase.verifyTrue(out_param.d==1);
     end
     
@@ -31,7 +33,8 @@ classdef ut_cubLattice_g < matlab.unittest.TestCase
       [meanf,out_param] = cubLattice_g(f,hyperbox,in_param);
       exactf = 1-cos(1);
       actualerr = abs(meanf-exactf);
-      testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
+      tolerance = gail.tolfun(out_param.abstol,out_param.reltol,out_param.theta,exactf,out_param.toltype);
+      testCase.verifyLessThanOrEqual(actualerr,tolerance);
       testCase.verifyTrue(out_param.d==1);
     end
     
@@ -42,7 +45,8 @@ classdef ut_cubLattice_g < matlab.unittest.TestCase
       [meanf,out_param] = cubLattice_g(f,hyperbox,in_param);
       exactf = pi/4*erf(1)^2;
       actualerr = abs(meanf-exactf);
-      testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
+      tolerance = gail.tolfun(out_param.abstol,out_param.reltol,out_param.theta,exactf,out_param.toltype);
+      testCase.verifyLessThanOrEqual(actualerr,tolerance);
       testCase.verifyTrue(out_param.d==2);
     end
     

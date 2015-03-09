@@ -10,7 +10,8 @@ classdef ut_cubSobol_g < matlab.unittest.TestCase
       [meanf,out_param] = cubSobol_g(f,hyperbox,in_param);
       exactf = 0.33;
       actualerr = abs(meanf-exactf);
-      testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
+      tolerance = gail.tolfun(out_param.abstol,out_param.reltol,out_param.theta,exactf,out_param.toltype);
+      testCase.verifyLessThanOrEqual(actualerr,tolerance);
       testCase.verifyTrue(out_param.d==1);
     end
     
@@ -21,7 +22,8 @@ classdef ut_cubSobol_g < matlab.unittest.TestCase
       [meanf,out_param] = cubSobol_g(f,hyperbox,in_param);
       exactf = exp(1)-1;
       actualerr = abs(meanf-exactf);
-      testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
+      tolerance = gail.tolfun(out_param.abstol,out_param.reltol,out_param.theta,exactf,out_param.toltype);
+      testCase.verifyLessThanOrEqual(actualerr,tolerance);
       testCase.verifyTrue(out_param.d==1);
     end
     
@@ -32,7 +34,8 @@ classdef ut_cubSobol_g < matlab.unittest.TestCase
       [meanf,out_param] = cubSobol_g(f,hyperbox,in_param);
       exactf = 1-cos(1);
       actualerr = abs(meanf-exactf);
-      testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
+      tolerance = gail.tolfun(out_param.abstol,out_param.reltol,out_param.theta,exactf,out_param.toltype);
+      testCase.verifyLessThanOrEqual(actualerr,tolerance);
       testCase.verifyTrue(out_param.d==1);
     end
     
@@ -40,10 +43,11 @@ classdef ut_cubSobol_g < matlab.unittest.TestCase
       f = @(x) exp(-x(:,1).^2-x(:,2).^2);
       in_param.abstol = 1e-3;
       hyperbox = [0 0;1 1];
-      meanf = cubSobol_g(f,hyperbox,in_param);
+      [meanf,out_param] = cubSobol_g(f,hyperbox,in_param);
       exactf = pi/4*erf(1)^2;
       actualerr = abs(meanf-exactf);
-      testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
+      tolerance = gail.tolfun(out_param.abstol,out_param.reltol,out_param.theta,exactf,out_param.toltype);
+      testCase.verifyLessThanOrEqual(actualerr,tolerance);
       testCase.verifyTrue(out_param.d==2);
     end
     
