@@ -31,7 +31,7 @@
 %
 % fmin = *funmin_g*(f,in_param) finds minimum value of function f on the
 %  interval [in_param.a,in_param.b] with a guaranteed absolute error
-%  tolerance in_param.abstol and a guranteed X tolerance in_param.TolX.
+%  tolerance in_param.abstol and a guaranteed X tolerance in_param.TolX.
 %  If a field is not specified, the default value is used.
 %
 % [fmin, out_param] = *funmin_g*(f,...) returns minimum value fmin of
