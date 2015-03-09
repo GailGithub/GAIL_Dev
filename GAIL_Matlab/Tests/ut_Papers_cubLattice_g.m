@@ -1,4 +1,4 @@
-% ut_Papers_cubLattice_g  unit test for Papers for cubLattice_g
+% UT_PAPERS_CUBLATTICE_G unit test for Papers for cubLattice_g
 classdef ut_Papers_cubLattice_g < matlab.unittest.TestCase
   
   methods(Test)

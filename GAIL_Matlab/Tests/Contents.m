@@ -21,6 +21,8 @@
 %   ut_meanMC_g            - fast unit tests for meanMC_g
 %   ut_meanMCabs_g         - fast unit test for meanMCabs_g
 %   ut_meanMCBer_g         - long unit test for meanMCBer_g
+%   ut_Papers_cubLattice_g - unit test for Papers for cubLattice_g
+%   ut_Papers_cubSobol_g   - unit test for Papers for cubSobol_g
 %   ut_thesis_funmin01_g   - long unit tests for funmin01_g thesis
 %   ut_workout_funappx_g   - long unit tests for workoutfunappx_g
 %   ut_workout_funmin_g    - long unit tests for funmin_g workouts

@@ -1,4 +1,4 @@
-% ut_Papers_cubSobol_g  unit test for Papers for cubSobol_g
+% UT_PAPERS_CUBSOBOL_G unit test for Papers for cubSobol_g
 classdef ut_Papers_cubSobol_g < matlab.unittest.TestCase
   
   methods(Test)
