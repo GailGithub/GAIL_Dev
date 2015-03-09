@@ -60,7 +60,7 @@
 % * in_param.nmax --- when number of points hits the value, iteration
 %  will stop, default value is 1e7
 %
-% * in_param.maxiter --- max number of interations, default value is 1000
+% * in_param.maxiter --- max number of iterations, default value is 1000
 %
 % *Output Arguments*
 %

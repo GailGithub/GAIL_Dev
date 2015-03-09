@@ -38,7 +38,7 @@ function [q,out_param] = integralsim_g(varargin)
 %
 %   in_param.nmax --- cost budget (maximum number of function values)
 %
-%   in_param.maxiter --- max number of interations, default value is 1000
+%   in_param.maxiter --- max number of iterations, default value is 1000
 % 
 %   [q, out_param] = INTEGRAL_G(f,...) returns the approximated 
 %   integration q and output structure out_param, which includes the 
