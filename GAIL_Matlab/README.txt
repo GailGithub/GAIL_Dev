@@ -157,10 +157,6 @@ funappx_g.
 We also provide unit tests for MATLAB version 8 or later. To run unit
 tests for funmin_g, for instance, execute run(ut_funmin_g).
 
-To run all the fast doctests and unit tests in the suite, execute the 
-script runtests.m. 
-
-A collection of long tests are contained in longtests.m. 
 
 
 Contact Information
