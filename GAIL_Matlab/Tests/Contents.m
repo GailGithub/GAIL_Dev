@@ -27,8 +27,5 @@
 %   ut_workout_funappx_g   - long unit tests for workoutfunappx_g
 %   ut_workout_funmin_g    - long unit tests for funmin_g workouts
 %   ut_workout_integral_g  - unit test for workout_integral_g
-%
-% Folder
-%   
-%   Developers_only	       - drivers for fast and long tests 
+
 
