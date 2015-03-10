@@ -142,7 +142,7 @@ function [q,out_param] = cubSobol_g(varargin)
 % Example 1:
 % Estimate the integral with integrand f(x) = x1.*x2 in the interval [0,1)^2:
 %
-% >> f = @(x) prod(x,2); hyperbox = [zeros(1,2);ones(1,2)]; q = cubSobol_g(f,hyperbox,'uniform',1e-5,1e-1)
+% >> f = @(x) prod(x,2); hyperbox = [zeros(1,2);ones(1,2)]; q = cubSobol_g(f,hyperbox,'uniform',1e-5,0)
 % q = 0.25***
 % 
 % 

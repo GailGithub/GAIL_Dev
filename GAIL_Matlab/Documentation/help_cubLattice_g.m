@@ -177,7 +177,7 @@
 % [0,1)^2:
 
   f = @(x) prod(x,2); hyperbox = [zeros(1,2);ones(1,2)];
-  q = cubLattice_g(f,hyperbox,'uniform',1e-5,1e-1,'transform','C1sin')
+  q = cubLattice_g(f,hyperbox,'uniform',1e-5,0,'transform','C1sin')
 
 %%
 % *Example 2*
