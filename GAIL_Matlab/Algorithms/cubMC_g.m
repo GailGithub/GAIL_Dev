@@ -133,7 +133,7 @@ function [Q,out_param] = cubMC_g(varargin)
 % a function in terms of abstol, reltol, nSig, n1, fudge, kurtmax, beta. And
 % the following inequality holds:
 % 
-% Pr (N_tot <= N_up) >= 1-beta
+% Pr(N_tot <= N_up) >= 1-beta
 %
 % Please refer to our paper for detailed arguments and proofs.
 % 
