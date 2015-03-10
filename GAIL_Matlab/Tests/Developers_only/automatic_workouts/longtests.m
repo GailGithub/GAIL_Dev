@@ -81,7 +81,7 @@ end
 
 %% Papers
 % Cone paper
-if usejava('jvm') || GAILVERSION <= 7.12
+if usejava('jvm') || MATLABVERSION <= 7.12
     run_handle('ConesPaperFoolFunctions')
 end
 try
