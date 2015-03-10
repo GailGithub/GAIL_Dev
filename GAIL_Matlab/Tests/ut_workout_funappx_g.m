@@ -3,11 +3,11 @@ classdef ut_workout_funappx_g < matlab.unittest.TestCase
 
   methods(Test)
                
-    function testworkout_timetest_funappx_g(testCase)
-      [timelgratio,~]=workout_funappx_g(100,1e-7,100,1000);
-      testCase.verifyLessThanOrEqual(timelgratio,[1.0,3.0,1.0,1.0]);
-      testCase.verifyGreaterThanOrEqual(timelgratio,[0,1.0,0,0]);
-    end
+%     function testworkout_timetest_funappx_g(testCase)
+%       [timelgratio,~]=workout_funappx_g(100,1e-7,100,1000);
+%       testCase.verifyLessThanOrEqual(timelgratio,[1.0,3.0,1.0,1.0]);
+%       testCase.verifyGreaterThanOrEqual(timelgratio,[0,1.0,0,0]);
+%     end
     
     function testworkout_npointstest_funappx_g(testCase)
       [~,npointslgratio]=workout_funappx_g(100,1e-7,100,1000);
