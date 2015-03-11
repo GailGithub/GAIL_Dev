@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>cubLattice_g</title><meta name="generator" content="MATLAB 8.1"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-03-10"><meta name="DC.source" content="help_cubLattice_g.m"><style type="text/css">
+      --><title>cubLattice_g</title><meta name="generator" content="MATLAB 8.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-03-11"><meta name="DC.source" content="help_cubLattice_g.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -23,7 +23,7 @@ a:visited { color:#004aa0; text-decoration:none; }
 
 p { padding:0px; margin:0px 0px 20px; }
 img { padding:0px; margin:0px 0px 20px; border:none; }
-p img, pre img, tt img, li img { margin-bottom:0px; } 
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
 
 ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
 ul li { padding:0px; margin:0px 0px 7px 0px; }
@@ -38,11 +38,12 @@ ol li ul li { list-style:square; }
 
 .content { font-size:1.2em; line-height:140%; padding: 20px; }
 
-pre, tt, code { font-size:12px; }
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
 pre { margin:0px 0px 20px; }
-pre.error { color:red; }
 pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
 pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
 
 @media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
 
@@ -81,12 +82,12 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 </pre><h2>Guarantee<a name="3"></a></h2><p>This algorithm computes the integral of real valued functions in dimension d with a prescribed generalized error tolerance. The Fourier coefficients of the integrand are assumed to be absolutely convergent. If the algorithm terminates without warning messages, the output is given with guarantees under the assumption that the integrand lies inside a cone of functions. The guarantee is based on the decay rate of the Fourier coefficients. For more details on how the cone is defined, please refer to the references below.</p><h2>Examples<a name="4"></a></h2><p><b>Example 1</b></p><pre class="codeinput"><span class="comment">% Estimate the integral with integrand f(x) = x1.*x2 in the interval</span>
 <span class="comment">% [0,1)^2:</span>
 
-  f = @(x) prod(x,2); hyperbox = [zeros(1,2);ones(1,2)];
+  f = @(x) prod(x,2)+1e-3; hyperbox = [zeros(1,2);ones(1,2)];
   q = cubLattice_g(f,hyperbox,<span class="string">'uniform'</span>,1e-5,0,<span class="string">'transform'</span>,<span class="string">'C1sin'</span>)
 </pre><pre class="codeoutput">
 q =
 
-    0.2500
+    0.2510
 
 </pre><p><b>Example 2</b></p><pre class="codeinput"><span class="comment">% Estimate the integral with integrand f(x) = x1.^2.*x2.^2.*x3.^2+0.11</span>
 <span class="comment">% in the interval R^3 where x1, x2 and x3 are normally distributed:</span>
@@ -102,17 +103,17 @@ q =
 <span class="comment">% interval [-1,2)^2:</span>
 
   f = @(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [-ones(1,2);2*ones(1,2)];
-  q = cubLattice_g(f,hyperbox,<span class="string">'uniform'</span>,1e-3,1e-1,<span class="string">'transform'</span>,<span class="string">'C1'</span>)
+  q = cubLattice_g(f,hyperbox,<span class="string">'uniform'</span>,1e-3,1e-2,<span class="string">'transform'</span>,<span class="string">'C1'</span>)
 </pre><pre class="codeoutput">
 q =
 
-    2.6524
+    2.6532
 
 </pre><p><b>Example 4</b></p><pre class="codeinput"><span class="comment">% Estimate the price of an European call with S0=100, K=100, r=sigma^2/2,</span>
 <span class="comment">% sigma=0.05 and T=1.</span>
 
   f = @(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); hyperbox = [-inf(1,1);inf(1,1)];
-  q = cubLattice_g(f,hyperbox,<span class="string">'normal'</span>,1e-4,1e-1,<span class="string">'fudge'</span>,@(m) 2.^-(2*m),<span class="string">'transform'</span>,<span class="string">'C1sin'</span>)
+  q = cubLattice_g(f,hyperbox,<span class="string">'normal'</span>,1e-4,1e-2,<span class="string">'fudge'</span>,@(m) 2.^-(2*m),<span class="string">'transform'</span>,<span class="string">'C1sin'</span>)
 </pre><pre class="codeoutput">
 q =
 
@@ -131,12 +132,12 @@ q =
 </pre><p><b>Example 6</b></p><pre class="codeinput"><span class="comment">% Estimate the integral with integrand f(x) = 3./(5-4*(cos(2*pi*x))) in the interval</span>
 <span class="comment">% [0,1) with pure absolute error 1e-5.</span>
 
-  f = @(x) 3./(5-4*(cos(2*pi*x))); hyperbox = [0;1];
+  f = @(x) 3./(5-4*(cos(2*pi*x)))+1e-3; hyperbox = [0;1];
   q = cubLattice_g(f,hyperbox,<span class="string">'uniform'</span>,1e-5,0,<span class="string">'transform'</span>,<span class="string">'id'</span>)
 </pre><pre class="codeoutput">
 q =
 
-    1.0000
+    1.0010
 
 </pre><h2>See Also<a name="11"></a></h2><p>
 <a href="help_cubSobol_g.html">cubSobol_g</a>
@@ -148,7 +149,7 @@ q =
 <a href="help_meanMCBer_g.html">meanMCBer_g</a>
 </p><p>
 <a href="help_integral_g.html">integral_g</a>
-</p><h2>References<a name="12"></a></h2><p>[1] Lluis Antoni Jimenez Rugama and Fred J. Hickernell, <i>Adaptive Multidimensional Integration Based on Rank-1 Lattices,</i> 2014. Submitted for publication: arXiv:1411.1966.</p><p>[2] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang, Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou, GAIL: Guaranteed Automatic Integration Library (Version 2.1) [MATLAB Software], 2015. Available from <a href="http://code.google.com/p/gail/">http://code.google.com/p/gail/</a></p><p>[3] Sou-Cheng T. Choi, <i>MINRES-QLP Pack and Reliable Reproducible Research via Supportable Scientific Software,</i> Journal of Open Research Software, Volume 2, Number 1, e22, pp. 1-7, 2014.</p><p>[4] Sou-Cheng T. Choi and Fred J. Hickernell, <i>IIT MATH-573 Reliable Mathematical Software</i> [Course Slides], Illinois Institute of Technology, Chicago, IL, 2013. Available from <a href="http://code.google.com/p/gail/">http://code.google.com/p/gail/</a></p><p>[5] Daniel S. Katz, Sou-Cheng T. Choi, Hilmar Lapp, Ketan Maheshwari, Frank Loffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr, James Hetherington, James Howison, Shel Swenson, Gabrielle D. Allen, Anne C. Elster, Bruce Berriman, Colin Venters, <i>Summary of the First Workshop On Sustainable Software for Science: Practice And Experiences (WSSSPE1),</i> Journal of Open Research Software, Volume 2, Number 1, e6, pp. 1-21, 2014.</p><p>If you find GAIL helpful in your work, please support us by citing the above papers, software, and materials.</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2013a</a><br></p></div><!--
+</p><h2>References<a name="12"></a></h2><p>[1] Lluis Antoni Jimenez Rugama and Fred J. Hickernell, <i>Adaptive Multidimensional Integration Based on Rank-1 Lattices,</i> 2014. Submitted for publication: arXiv:1411.1966.</p><p>[2] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang, Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou, GAIL: Guaranteed Automatic Integration Library (Version 2.1) [MATLAB Software], 2015. Available from <a href="http://code.google.com/p/gail/">http://code.google.com/p/gail/</a></p><p>[3] Sou-Cheng T. Choi, <i>MINRES-QLP Pack and Reliable Reproducible Research via Supportable Scientific Software,</i> Journal of Open Research Software, Volume 2, Number 1, e22, pp. 1-7, 2014.</p><p>[4] Sou-Cheng T. Choi and Fred J. Hickernell, <i>IIT MATH-573 Reliable Mathematical Software</i> [Course Slides], Illinois Institute of Technology, Chicago, IL, 2013. Available from <a href="http://code.google.com/p/gail/">http://code.google.com/p/gail/</a></p><p>[5] Daniel S. Katz, Sou-Cheng T. Choi, Hilmar Lapp, Ketan Maheshwari, Frank Loffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr, James Hetherington, James Howison, Shel Swenson, Gabrielle D. Allen, Anne C. Elster, Bruce Berriman, Colin Venters, <i>Summary of the First Workshop On Sustainable Software for Science: Practice And Experiences (WSSSPE1),</i> Journal of Open Research Software, Volume 2, Number 1, e6, pp. 1-21, 2014.</p><p>If you find GAIL helpful in your work, please support us by citing the above papers, software, and materials.</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 %% cubLattice_g
 % Quasi-Monte Carlo method using rank-1 Lattices cubature
@@ -328,7 +329,7 @@ q =
 % Estimate the integral with integrand f(x) = x1.*x2 in the interval
 % [0,1)^2:
 
-  f = @(x) prod(x,2); hyperbox = [zeros(1,2);ones(1,2)];
+  f = @(x) prod(x,2)+1e-3; hyperbox = [zeros(1,2);ones(1,2)];
   q = cubLattice_g(f,hyperbox,'uniform',1e-5,0,'transform','C1sin')
 
 %%
@@ -347,7 +348,7 @@ q =
 % interval [-1,2)^2:
 
   f = @(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [-ones(1,2);2*ones(1,2)];
-  q = cubLattice_g(f,hyperbox,'uniform',1e-3,1e-1,'transform','C1')
+  q = cubLattice_g(f,hyperbox,'uniform',1e-3,1e-2,'transform','C1')
 
 %%
 % *Example 4*
@@ -356,7 +357,7 @@ q =
 % sigma=0.05 and T=1.
 
   f = @(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); hyperbox = [-inf(1,1);inf(1,1)];
-  q = cubLattice_g(f,hyperbox,'normal',1e-4,1e-1,'fudge',@(m) 2.^-(2*m),'transform','C1sin')
+  q = cubLattice_g(f,hyperbox,'normal',1e-4,1e-2,'fudge',@(m) 2.^-(2*m),'transform','C1sin')
 
 %%
 % *Example 5*
@@ -373,7 +374,7 @@ q =
 % Estimate the integral with integrand f(x) = 3./(5-4*(cos(2*pi*x))) in the interval
 % [0,1) with pure absolute error 1e-5.
 
-  f = @(x) 3./(5-4*(cos(2*pi*x))); hyperbox = [0;1];
+  f = @(x) 3./(5-4*(cos(2*pi*x)))+1e-3; hyperbox = [0;1];
   q = cubLattice_g(f,hyperbox,'uniform',1e-5,0,'transform','id')
 
 %% See Also
