@@ -309,7 +309,7 @@ end;
 % check cost budget flag
 if out_param.exceedbudget == 1
     n = l;
-    warning('MATLAB:funmin_g:exceedbudget','funmin01_g attempted to exceed the cost budget. The answer may be unreliable.')
+    warning('MATLAB:funmin_g01:exceedbudget','funmin01_g attempted to exceed the cost budget. The answer may be unreliable.')
 end
 
 fmin = Un;
