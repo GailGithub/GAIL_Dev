@@ -157,7 +157,7 @@
 % [0,1)^2:
 
   f = @(x) prod(x,2); hyperbox = [zeros(1,2);ones(1,2)];
-  q = cubSobol_g(f,hyperbox,'uniform',1e-5,1e-1)
+  q = cubSobol_g(f,hyperbox,'uniform',1e-5,0)
 
 %%
 % *Example 2*
