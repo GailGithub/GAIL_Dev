@@ -1,5 +1,5 @@
 %Run TestcubMC on the step function
-function RunTestcubMConGaussian()
+function [res,test,fun,param] = RunTestcubMConGaussian()
 format compact
 test.nrep=500;
 fun.funtype='gaussian';
@@ -91,5 +91,5 @@ test.randchoicefun=@randchoicegaussian;
 
 %test.whichsample={'iid','iidheavy','Sobol','Sobolheavy','quad','quadgk','chebfun','chebfunheavy'};
 test.whichsample={'iid','iidheavy','Sobol','Sobolheavy'};
-TestcubMCDiffSettings(test,fun,param);
+res = TestcubMCDiffSettings(test,fun,param);
 end
