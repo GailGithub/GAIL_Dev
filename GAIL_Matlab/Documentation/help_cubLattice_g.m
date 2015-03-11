@@ -221,7 +221,7 @@
 % Estimate the integral with integrand f(x) = 3./(5-4*(cos(2*pi*x))) in the interval
 % [0,1) with pure absolute error 1e-5.
 
-  f = @(x) 3./(5-4*(cos(2*pi*x))); hyperbox = [0;1];
+  f = @(x) 3./(5-4*(cos(2*pi*x)))+1e-3; hyperbox = [0;1];
   q = cubLattice_g(f,hyperbox,'uniform',1e-5,0,'transform','id')
 
 %% See Also
