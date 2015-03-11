@@ -90,17 +90,23 @@
 %  technical information about this parameter, refer to the references.
 %  By default it is @(m) 5*2.^-m.
 % 
-% * in_param.transform --- the algorithm is defined for continuous
+% <html>
+% <ul type="square">
+%  <li>in_param.transform --- the algorithm is defined for continuous
 %  periodic functions. If the input function f is not, there are 5
 %  types of transform to periodize it without modifying the result. 
-%  By default it is the Baker's transform. The options are:
-%    'id' : no transformation.
-%    'Baker' : Baker's transform or tent map in each coordinate. Preserving
-%              only continuity but simple to compute. Chosen by default.
-%    'C0' : polynomial transformation only preserving continuity.
-%    'C1' : polynomial transformation preserving the first derivative.
-%    'C1sin' : Sidi's transform with sine, preserving the first derivative.
-%              This is in general a better option than 'C1'.
+%  By default it is the Baker's transform. The options are:</li>
+%   <ul type="circle">
+%    <li>'id' : no transformation.</li>
+%    <li>'Baker' : Baker's transform or tent map in each coordinate. Preserving
+%              only continuity but simple to compute. Chosen by default.</li>
+%    <li>'C0' : polynomial transformation only preserving continuity.</li>
+%    <li>'C1' : polynomial transformation preserving the first derivative.</li>
+%    <li>'C1sin' : Sidi's transform with sine, preserving the first derivative.
+%              This is in general a better option than 'C1'.</li>
+%   </ul>
+%  </ul>
+% </html>
 %
 % * in_param.toltype --- this is the generalized tolerance function.
 %  There are two choices, 'max' which takes
@@ -137,26 +143,29 @@
 % 
 % * out_param.time --- time elapsed in seconds when calling cubLattice_g.
 %
-% * out_param.exitflag --- this is a binary vector stating whether
+% <html>
+% <ul type="square">
+%  <li>out_param.exitflag --- this is a binary vector stating whether
 %  warning flags arise. These flags tell about which conditions make the
 %  final result certainly not guaranteed. One flag is considered arisen
 %  when its value is 1. The following list explains the flags in the
-%  respective vector order:
-%
-
-%                    1    If reaching overbudget. It states whether
+%  respective vector order:</li>
+%   <ul type="circle">
+%                    <li>1    If reaching overbudget. It states whether
 %                    the max budget is attained without reaching the
-%                    guaranteed error tolerance.
-%   
-%                    2   If the function lies outside the cone. In
+%                    guaranteed error tolerance.</li> 
+%                    <li>2   If the function lies outside the cone. In
 %                    this case, results are not guaranteed. Note that
 %                    this parameter is computed on the transformed
 %                    function, not the input function. For more
 %                    information on the transforms, check the input
 %                    parameter in_param.transform; for information about
 %                    the cone definition, check the article mentioned
-%                    below.
-% 
+%                    below.</li>
+%   </ul>
+%  </ul>
+% </html>
+%
 %%  Guarantee
 %
 % This algorithm computes the integral of real valued functions in

@@ -121,22 +121,25 @@
 %
 % * out_param.time --- time elapsed in seconds when calling cubSobol_g.
 %
-% * out_param.exitflag --- this is a binary vector stating whether
+% <html>
+% <ul type="square">
+%  <li>out_param.exitflag --- this is a binary vector stating whether
 %  warning flags arise. These flags tell about which conditions make the
 %  final result certainly not guaranteed. One flag is considered arisen
 %  when its value is 1. The following list explains the flags in the
-%  respective vector order:
-%
-
-%                    1    If reaching overbudget. It states whether
+%  respective vector order:</li>
+%   <ul type="circle">
+%                    <li>1    If reaching overbudget. It states whether
 %                    the max budget is attained without reaching the
-%                    guaranteed error tolerance.
-%   
-%                    2   If the function lies outside the cone. In
+%                    guaranteed error tolerance.</li>
+%                    <li>2   If the function lies outside the cone. In
 %                    this case, results are not guaranteed. For more
 %                    information about the cone definition, check the
-%                    article mentioned below.
-% 
+%                    article mentioned below.</li>
+%   </ul>
+%  </ul>
+% </html>
+%
 %%  Guarantee
 %
 % This algorithm computes the integral of real valued functions in
