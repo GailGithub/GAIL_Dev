@@ -176,7 +176,7 @@
 % Estimate the integral with integrand f(x) = x1.*x2 in the interval
 % [0,1)^2:
 
-  f = @(x) prod(x,2); hyperbox = [zeros(1,2);ones(1,2)];
+  f = @(x) prod(x,2)+1e-3; hyperbox = [zeros(1,2);ones(1,2)];
   q = cubLattice_g(f,hyperbox,'uniform',1e-5,0,'transform','C1sin')
 
 %%
@@ -195,7 +195,7 @@
 % interval [-1,2)^2:
 
   f = @(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [-ones(1,2);2*ones(1,2)];
-  q = cubLattice_g(f,hyperbox,'uniform',1e-3,1e-1,'transform','C1')
+  q = cubLattice_g(f,hyperbox,'uniform',1e-3,1e-2,'transform','C1')
 
 %%
 % *Example 4*
@@ -204,7 +204,7 @@
 % sigma=0.05 and T=1.
 
   f = @(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); hyperbox = [-inf(1,1);inf(1,1)];
-  q = cubLattice_g(f,hyperbox,'normal',1e-4,1e-1,'fudge',@(m) 2.^-(2*m),'transform','C1sin')
+  q = cubLattice_g(f,hyperbox,'normal',1e-4,1e-2,'fudge',@(m) 2.^-(2*m),'transform','C1sin')
 
 %%
 % *Example 5*
@@ -221,7 +221,7 @@
 % Estimate the integral with integrand f(x) = 3./(5-4*(cos(2*pi*x))) in the interval
 % [0,1) with pure absolute error 1e-5.
 
-  f = @(x) 3./(5-4*(cos(2*pi*x))); hyperbox = [0;1];
+  f = @(x) 3./(5-4*(cos(2*pi*x)))+1e-3; hyperbox = [0;1];
   q = cubLattice_g(f,hyperbox,'uniform',1e-5,0,'transform','id')
 
 %% See Also
