@@ -24,23 +24,22 @@ for i = 1:length(NumericalExample)
         case 'ex2'
             if exist('TestcubMCon-gaussian-uniform-Out-17-Aug-2012_17.46.40N500d6tol0.001.mat')
                 load TestcubMCon-gaussian-uniform-Out-17-Aug-2012_17.46.40N500d6tol0.001.mat
-                % this MAT file is to plot figure 3&4 in paper
+                % this MAT file is to plot figure 5 in paper
             else
                 warning(['TestcubMCon-gaussian-uniform-Out-17-Aug-2012_17.46.40N500d6tol0.001.mat does not exist. '...
                     'need to call function RunTestcubMConGaussian to produce the MAT file.'])
                 [res,test,fun,param] = RunTestcubMConGaussian;
             end
-            % this MAT file is to plot figure 5 in paper
         case 'ex3'
             if exist('TestcubMCon-geomean-Out-17-Aug-2012_20.38.24N500d1tol0.05.mat')
                 load TestcubMCon-geomean-Out-17-Aug-2012_20.38.24N500d1tol0.05.mat
-                % this MAT file is to plot figure 3&4 in paper
+           % this MAT file is to plot figure 6 in paper
             else
                 warning(['TestcubMCon-geomean-Out-17-Aug-2012_20.38.24N500d1tol0.05.mat does not exist. '...
                     'need to call function RunTestcubMConGeoAsianCall to produce the MAT file.'])
                 [res,test,fun,param] = RunTestcubMConGeoAsianCall;
             end
-            % this MAT file is to plot figure 6 in paper
+            
     end    
     plotTest.plotcolor=coloroption;
     plotTest.logerrlo=-5;

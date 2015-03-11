@@ -13,7 +13,7 @@ param.impyes=false;
 param.tol=2e-2;
 param.n0=1024;
 
-test.nrep=5;
+test.nrep=500;
 test.howoftenrep=10;
 dimchoice=[1 2 4 8 16 32 64]';
 ndim=size(dimchoice,1);

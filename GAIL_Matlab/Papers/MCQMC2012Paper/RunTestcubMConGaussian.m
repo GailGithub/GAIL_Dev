@@ -3,7 +3,7 @@ function [res,test,fun,param] = RunTestcubMConGaussian()
 format compact
 test.nrep=500;
 fun.funtype='gaussian';
-%param.dim=ceil(1+rand(1)*7);
+param.dim=8;
 param.measure='uniform';
 
 % param.measure='normal';
