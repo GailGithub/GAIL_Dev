@@ -162,7 +162,7 @@ function [q,out_param] = cubLattice_g(varargin)
 % Example 1:
 % Estimate the integral with integrand f(x) = x1.*x2 in the interval [0,1)^2:
 % 
-% >> f = @(x) prod(x,2); hyperbox = [zeros(1,2);ones(1,2)]; q = cubLattice_g(f,hyperbox,'uniform',1e-5,0,'transform','C1sin')
+% >> f = @(x) prod(x,2)+1e-3; hyperbox = [zeros(1,2);ones(1,2)]; q = cubLattice_g(f,hyperbox,'uniform',1e-5,0,'transform','C1sin')
 % q = 0.25***
 % 
 % 
