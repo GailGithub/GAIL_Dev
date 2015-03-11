@@ -1,5 +1,5 @@
 %Run TestcubMC on the step function
-function RunTestcubMConGaussiand1()
+function [res,test,fun,param]=RunTestcubMConGaussiand1()
 format compact
 
 test.nrep=500;
@@ -66,5 +66,5 @@ else
     test.whichsample={'iid','iidheavy','quad','quadgk'};
 end
 %test.whichsample={'iid','iidheavy','Sobol','Sobolheavy'};
-TestcubMCDiffSettings(test,fun,param);
+res = TestcubMCDiffSettings(test,fun,param);
 end

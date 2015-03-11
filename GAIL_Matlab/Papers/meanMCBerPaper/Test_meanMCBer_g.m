@@ -1,6 +1,6 @@
 % This script is to test meanMCBer_g algorithm
 %clear all;close all;clc
-function [ut_abserr, ut_abstol, nrep, res]=Test_meanMCBer_g
+function [ut_abserr, ut_abstol, nrep, res, out_param]=Test_meanMCBer_g
 format long e
 disp(horzcat(' abstol             abserr            pHat                p               n               nmax '));
 disp(        '-------------------------------------------------------------------------------------------------------');
@@ -40,6 +40,6 @@ for k = 1:nrep
     res(k,6) = out_param.nmax;
     res(k,7) = abserr./in_param.abstol;
 end
-gail.save_mat('meanMCBerPaperOutput','TestmeanMCBer-on-abs-',ut_abstol,ut_abserr,res,nrep)
+gail.save_mat('meanMCBerPaperOutput','TestmeanMCBer-on-abs-',ut_abstol,ut_abserr,res,nrep,out_param)
 warning('on','MATLAB:meanMCBer_g:nabsexceednmax')
 end
