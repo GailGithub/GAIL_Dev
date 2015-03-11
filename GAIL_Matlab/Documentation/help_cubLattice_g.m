@@ -195,7 +195,7 @@
 % interval [-1,2)^2:
 
   f = @(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [-ones(1,2);2*ones(1,2)];
-  q = cubLattice_g(f,hyperbox,'uniform',1e-3,1e-1,'transform','C1')
+  q = cubLattice_g(f,hyperbox,'uniform',1e-3,1e-2,'transform','C1')
 
 %%
 % *Example 4*
@@ -204,7 +204,7 @@
 % sigma=0.05 and T=1.
 
   f = @(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); hyperbox = [-inf(1,1);inf(1,1)];
-  q = cubLattice_g(f,hyperbox,'normal',1e-4,1e-1,'fudge',@(m) 2.^-(2*m),'transform','C1sin')
+  q = cubLattice_g(f,hyperbox,'normal',1e-4,1e-2,'fudge',@(m) 2.^-(2*m),'transform','C1sin')
 
 %%
 % *Example 5*
