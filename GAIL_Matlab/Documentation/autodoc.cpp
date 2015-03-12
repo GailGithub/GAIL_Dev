@@ -47,18 +47,18 @@ int main()
   ifs.close();
   ofstream gail("GAIL_raw.m"), helptoc("html/helptoc_raw.xml"), funclist("funclist_raw.m"), ofs;
   helptoc << "<?xml version='1.0' encoding='ISO-8859-1' ?>\n\n<toc version=\"1.0\">\n\n\
-              <tocitem target=\"GAIL.html\">GAIL Toolbox\n\
-              <tocitem target=\"funclist.html\" image=\"HelpIcon.FUNCTION\">Functions" << endl;
+<tocitem target=\"GAIL.html\">GAIL Toolbox\n\
+    <tocitem target=\"funclist.html\" image=\"HelpIcon.FUNCTION\">Functions" << endl;
   for (const auto &s : introList) {
     gail << s << "\n";
   }
   gail << "%% Introduction\n%\n\
-           % <html>\n\
-           % <a href=\"help_license.html\">GAIL License</a>\n\
-           % <a href=\"help_readme.html\">README</a>\n\
-           % </html>\n%\n\
-           %% Functions\n%\n\
-           % <html>" << endl;
+% <html>\n							\
+% <a href=\"help_license.html\">GAIL License</a>\n\
+% <a href=\"help_readme.html\">README</a>\n\
+% </html>\n%\n\
+%% Functions\n%\n\
+% <html>" << endl;
   funclist << "%% Functions\n%" << endl;
   string us;
   for (const auto &s : fcnList) {
