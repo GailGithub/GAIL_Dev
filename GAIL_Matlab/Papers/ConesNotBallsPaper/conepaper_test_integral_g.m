@@ -6,7 +6,7 @@
 %  Not Balls, submitted for publication, arXiv.org:1303.2412 [math.NA]}, 
 %  2013.
 
-function [succnowarn, succwarn]=conepaper_test_integral_g(nrep,nmax,abstol)
+function [succnowarn, succwarn, pfin]=conepaper_test_integral_g(nrep,nmax,abstol)
 %% Preliminaries
 format long e
 % clearvars -except testCase
