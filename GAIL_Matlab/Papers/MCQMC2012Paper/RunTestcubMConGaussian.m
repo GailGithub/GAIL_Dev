@@ -1,7 +1,8 @@
 %Run TestcubMC on the step function
 function [res,test,fun,param] = RunTestcubMConGaussian()
 format compact
-test.nrep=500;
+%test.nrep=500; in the paper, we use 500 repilcation numbers
+test.nrep = 50;
 fun.funtype='gaussian';
 param.dim=8;
 param.measure='uniform';
