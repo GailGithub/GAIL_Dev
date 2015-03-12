@@ -37,3 +37,4 @@
 %   verifyparam                    - make sure the parameters defining the functions exist
 %   snooper                        - function record all the x data points
 %   peakyfunction                  - construct peaky function
+%   saveMCQMC2012peakyfundir       - save peaky function output to the right directory
