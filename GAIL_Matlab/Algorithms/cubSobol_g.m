@@ -238,11 +238,9 @@ l_star = 6; % Minimum gathering of points for the sums of DFT
 r_lag=out_param.mmin-l_star; %distance between coefficients summed and those computed
 sobstr=sobolset(out_param.d); %generate a Sobol' sequence
 sobstr=scramble(sobstr,'MatousekAffineOwen'); %scramble it
-Stilde=zeros(out_param.mmax-out_param.mmin+1,1); %initialize sum of DFWT terms
-CStilde_low = []; %initialize various sums of DFT terms for necessary conditions
-CStilde_up = []; %initialize various sums of DFT terms for necessary conditions
-lower = 0;% variable storing the maximum for the necessary conditions
-upper = Inf;% variable storing the minimum for the necessary conditions
+Stilde=zeros(out_param.mmax-out_param.mmin+1,1); %initialize sum of DFT terms
+CStilde_low = -inf(1,out_param.mmax-l_star+1); %initialize various sums of DFT terms for necessary conditions
+CStilde_up = inf(1,out_param.mmax-l_star+1); %initialize various sums of DFT terms for necessary conditions
 C_low = 0; %variable that will be used to store fudge factors
 C_up = 0; %variable that will be used to store fudge factors
 errest=zeros(out_param.mmax-out_param.mmin+1,1); %initialize error estimates
@@ -286,9 +284,13 @@ for l=out_param.mmin-1:-1:1
        kappanumap(1+flip)=temp; %around
    end
 end
+%%% realk=rem(kappanumap+2^(out_param.mmin-1)-1,2^(out_param.mmin))-2^(out_param.mmin-1);
+%%% disp([kappanumap realk abs(y(kappanumap))]')
+%%% disp(' ')
+
 
 %% Compute Stilde
-nllstart=2^(out_param.mmin-r_lag-1);
+nllstart=int64(2^(out_param.mmin-r_lag-1));
 Stilde(1)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
 out_param.bound_err=out_param.fudge(out_param.mmin)*Stilde(1);
 errest(1)=out_param.bound_err;
@@ -297,20 +299,15 @@ errest(1)=out_param.bound_err;
 for l = l_star:out_param.mmin % Storing the information for the necessary conditions
     C_low = (1+out_param.fudge(out_param.mmin-l))/(1+2*out_param.fudge(out_param.mmin-l));
     C_up = (1+out_param.fudge(out_param.mmin-l));
-    CStilde_low=[CStilde_low C_low*sum(abs(y(kappanumap(nllstart+1:2*nllstart))))];
-    CStilde_up=[CStilde_up C_up*sum(abs(y(kappanumap(nllstart+1:2*nllstart))))];
-    nllstart=2*nllstart;
+    CStilde_low(l-l_star+1) = C_low*sum(abs(y(kappanumap(2^(l-1)+1:2^l))));
+    CStilde_up(l-l_star+1) = C_up*sum(abs(y(kappanumap(2^(l-1)+1:2^l))));
 end
-lower = max(lower, max(CStilde_low));
-upper = min(upper, min(CStilde_up));
-if lower > upper
+if any(CStilde_low(:) > CStilde_up(:))
    out_param.exit(2) = true;
 end
-% disp(CStilde_low)
-% disp(CStilde_up)
-% disp(sprintf('Lower %d <= %d upper.',lower,upper)); % To display the updated bounds
-CStilde_low = []; % need to initialize it to reuse again for the following m
-Cstilde_up = [];
+%%% disp([l_star:out_param.mmin; ...
+%%%    CStilde_low(1:out_param.mmin-l_star+1);CStilde_up(1:out_param.mmin-l_star+1)])
+%%% disp(' ')
 
 % Check the end of the algorithm
 deltaplus = 0.5*(gail.tolfun(out_param.abstol,...
@@ -331,6 +328,10 @@ if out_param.bound_err <= deltaplus
 elseif out_param.mmin == out_param.mmax % We are on our max budget and did not meet the error condition => overbudget
    out_param.exit(1) = true;
 end
+
+%%% disp(out_param.mmin)
+%%% disp([CStilde_low(1:out_param.mmin-l_star+1);CStilde_up(1:out_param.mmin-l_star+1)])
+
 
 %% Loop over m
 for m=out_param.mmin+1:out_param.mmax
@@ -366,50 +367,57 @@ for m=out_param.mmin+1:out_param.mmax
    y(~ptind)=(evenval-oddval)/2;
 
    %% Update kappanumap
-   kappanumap=[kappanumap; (nnext+1:out_param.n)']; %initialize map
-   for l=m-1:-1:m-r_lag-1
+   kappanumap=[kappanumap; 2^(m-1)+kappanumap]; %initialize map
+   for l=m-1:-1:l_star
       nl=2^l;
       oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
       newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa, 
       flip=find(newone>oldone);
+%%%       realk=rem(kappanumap+2^(m-1)-1,2^(m))-2^(m-1);
+%%%       disp([kappanumap(2:nl) realk(2:nl) oldone]')
+%%%       disp(' ')
+%%%       disp([kappanumap(nl+2:2*nl) realk(nl+2:2*nl) newone newone>oldone]')
+%%%       disp(flip')
+%%%       disp(' ')
       if ~isempty(flip)
           temp=kappanumap(nl+1+flip);
           kappanumap(nl+1+flip)=kappanumap(1+flip);
           kappanumap(1+flip)=temp;
       end
+%%%       realk=rem(kappanumap+2^(m-1)-1,2^(m))-2^(m-1);
+%%%       disp([kappanumap realk abs(y(kappanumap))]')
    end
 
    %% Compute Stilde
-   nllstart=2^(m-r_lag-1);
+   nllstart=int64(2^(m-r_lag-1));
    meff=m-out_param.mmin+1;
    Stilde(meff)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
    out_param.bound_err=out_param.fudge(m)*Stilde(meff);
    errest(meff)=out_param.bound_err;
    
    % Necessary conditions
-   nllstart=int64(2^(out_param.mmin-r_lag-1));
    for l = l_star:m % Storing the information for the necessary conditions
         C_low = (1+out_param.fudge(m-l))/(1+2*out_param.fudge(m-l));
         C_up = (1+out_param.fudge(m-l));
-        CStilde_low=[CStilde_low C_low*sum(abs(y(kappanumap(nllstart+1:2*nllstart))))];
-        CStilde_up=[CStilde_up C_up*sum(abs(y(kappanumap(nllstart+1:2*nllstart))))];
-        nllstart=2*nllstart;
+        CStilde_low(l-l_star+1) = max(CStilde_low(l-l_star+1),C_low*sum(abs(y(kappanumap(2^(l-1)+1:2^l)))));
+        CStilde_up(l-l_star+1) = min(CStilde_up(l-l_star+1),C_up*sum(abs(y(kappanumap(2^(l-1)+1:2^l)))));
    end
-   lower = max(lower, max(CStilde_low));
-   upper = min(upper, min(CStilde_up));
-   if lower > upper
+%%%    disp(m)
+%%%    disp([CStilde_low(1:m-l_star+1);CStilde_up(1:m-l_star+1)])
+   
+   if any(CStilde_low(:) > CStilde_up(:))
        out_param.exit(2) = true;
    end
-%    disp(CStilde_low)
-%    disp(CStilde_up)
-%    disp(sprintf('Lower %d <= %d upper.',lower,upper)); % To display the updated bounds
-   CStilde_low = [];
-   Cstilde_up = [];
+%%% realk=rem(kappanumap+2^(m-1)-1,2^(m))-2^(m-1);
+%%% disp([kappanumap realk abs(y(kappanumap))]')
+%%% disp([l_star:m; ...
+%%%    CStilde_low(1:m-l_star+1);CStilde_up(1:m-l_star+1)])
 
    %% Approximate integral
    q=mean(yval);
    appxinteg(meff)=q;
    
+   % Check the end of the algorithm
     deltaplus = 0.5*(gail.tolfun(out_param.abstol,...
         out_param.reltol,out_param.theta,abs(q-errest(meff)),...
         out_param.toltype)+gail.tolfun(out_param.abstol,out_param.reltol,...
