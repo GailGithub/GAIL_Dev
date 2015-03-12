@@ -320,9 +320,11 @@ for l=out_param.mmin-1:-1:1
    oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
    newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa, 
    flip=find(newone>oldone); %which in the pair are the larger ones
-   temp=kappanumap(nl+1+flip); %then flip
-   kappanumap(nl+1+flip)=kappanumap(1+flip); %them
-   kappanumap(1+flip)=temp; %around
+   if ~isempty(flip)
+       temp=kappanumap(nl+1+flip); %then flip
+       kappanumap(nl+1+flip)=kappanumap(1+flip); %them
+       kappanumap(1+flip)=temp; %around
+   end
 end
 
 %% Compute Stilde
@@ -414,9 +416,11 @@ for m=out_param.mmin+1:out_param.mmax
       oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
       newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa, 
       flip=find(newone>oldone);
-      temp=kappanumap(nl+1+flip);
-      kappanumap(nl+1+flip)=kappanumap(1+flip);
-      kappanumap(1+flip)=temp;
+      if ~isempty(flip)
+          temp=kappanumap(nl+1+flip);
+          kappanumap(nl+1+flip)=kappanumap(1+flip);
+          kappanumap(1+flip)=temp;
+      end
    end
 
    %% Compute Stilde
