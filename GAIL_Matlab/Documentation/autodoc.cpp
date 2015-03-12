@@ -46,8 +46,12 @@ int main()
   }
   ifs.close();
   ofstream gail("GAIL_raw.m"), helptoc("html/helptoc_raw.xml"), funclist("funclist_raw.m"), ofs;
-  helptoc << "<?xml version='1.0' encoding='ISO-8859-1' ?>\n\n<toc version=\"1.0\">\n\n\
+  helptoc << "<?xml version='1.0' encoding='ISO-8859-1' ?>\n\n<toc version=\"3.0\">\n\n\
 <tocitem target=\"GAIL.html\">GAIL Toolbox\n\
+    <tocitem target=\"help_license.html\">License\n\
+    </tocitem>\n\
+    <tocitem target=\"help_readme.html\">README\n\
+    </tocitem>\n\
     <tocitem target=\"funclist.html\" image=\"HelpIcon.FUNCTION\">Functions" << endl;
   for (const auto &s : introList) {
     gail << s << "\n";
@@ -77,7 +81,7 @@ int main()
     } else if (*(s.cend() - 1) == ':') {
       funclist << "%% " << s.substr(0,s.size() - 1) << "\n%\n";
     } else {
-      helptoc << "            <tocitem target=\"help_" << s << ".html\">" << s << "</tocitem>\n";
+      helptoc << "        <tocitem target=\"help_" << s << ".html\">" << s << "</tocitem>\n";
       gail << "% <a href=\"help_" << s << ".html\">" << s << "</a>\n";
       funclist << "% <html>\n% <a href=\"help_" << s << ".html\">" << s << "</a>\n% </html>\n%\n";
       ifs.open("../Algorithms/" + s + ".m");
@@ -231,7 +235,7 @@ int main()
     }
   }
 
-  helptoc << "        </tocitem>\n    </tocitem>\n</toc>" << endl;
+  helptoc << "    </tocitem>\n</tocitem>\n\n</toc>" << endl;
   gail << "% </html>\n" << "%\n" << "%" << endl;
   for (const auto &s : websiteList) {
     gail << s << "\n";
@@ -241,7 +245,7 @@ int main()
   helptoc.close();
   gail.close();
   funclist.close();
-  std::cout << "autodoc2: Automatic documentation is completed." << endl;
+  std::cout << "autodoc3: Automatic documentation is completed." << endl;
 }
 
 string upperString(const string &s) noexcept
