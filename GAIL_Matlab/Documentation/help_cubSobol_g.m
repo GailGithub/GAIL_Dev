@@ -159,16 +159,16 @@
 % Estimate the integral with integrand f(x) = x1.*x2 in the interval
 % [0,1)^2:
 
-  f = @(x) prod(x,2)+1e-3; hyperbox = [zeros(1,2);ones(1,2)];
+  f = @(x) prod(x,2); hyperbox = [zeros(1,2);ones(1,2)];
   q = cubSobol_g(f,hyperbox,'uniform',1e-5,0)
 
 %%
 % *Example 2*
 
-% Estimate the integral with integrand f(x) = x1.^2.*x2.^2.*x3.^2+0.11
+% Estimate the integral with integrand f(x) = x1.^2.*x2.^2.*x3.^2
 % in the interval R^3 where x1, x2 and x3 are normally distributed:
 
-  f = @(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2+0.11; hyperbox = [-inf(1,3);inf(1,3)];
+  f = @(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2; hyperbox = [-inf(1,3);inf(1,3)];
   q = cubSobol_g(f,hyperbox,'normal',1e-3,1e-3)
 
 %%

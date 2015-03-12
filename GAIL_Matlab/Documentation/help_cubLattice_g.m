@@ -97,12 +97,12 @@
 %  types of transform to periodize it without modifying the result. 
 %  By default it is the Baker's transform. The options are:</li>
 %   <ul type="circle">
-%    <li>'id' : no transformation.</li>
-%    <li>'Baker' : Baker's transform or tent map in each coordinate. Preserving
+%    <li>id : no transformation.</li>
+%    <li>Baker : Baker's transform or tent map in each coordinate. Preserving
 %              only continuity but simple to compute. Chosen by default.</li>
-%    <li>'C0' : polynomial transformation only preserving continuity.</li>
-%    <li>'C1' : polynomial transformation preserving the first derivative.</li>
-%    <li>'C1sin' : Sidi's transform with sine, preserving the first derivative.
+%    <li>C0 : polynomial transformation only preserving continuity.</li>
+%    <li>C1 : polynomial transformation preserving the first derivative.</li>
+%    <li>C1sin : Sidi's transform with sine, preserving the first derivative.
 %              This is in general a better option than 'C1'.</li>
 %   </ul>
 %  </ul>
@@ -151,10 +151,10 @@
 %  when its value is 1. The following list explains the flags in the
 %  respective vector order:</li>
 %   <ul type="circle">
-%                    <li>1    If reaching overbudget. It states whether
+%                    <li>1 : If reaching overbudget. It states whether
 %                    the max budget is attained without reaching the
 %                    guaranteed error tolerance.</li> 
-%                    <li>2   If the function lies outside the cone. In
+%                    <li>2 : If the function lies outside the cone. In
 %                    this case, results are not guaranteed. Note that
 %                    this parameter is computed on the transformed
 %                    function, not the input function. For more
@@ -185,16 +185,16 @@
 % Estimate the integral with integrand f(x) = x1.*x2 in the interval
 % [0,1)^2:
 
-  f = @(x) prod(x,2)+1e-3; hyperbox = [zeros(1,2);ones(1,2)];
+  f = @(x) prod(x,2); hyperbox = [zeros(1,2);ones(1,2)];
   q = cubLattice_g(f,hyperbox,'uniform',1e-5,0,'transform','C1sin')
 
 %%
 % *Example 2*
 
-% Estimate the integral with integrand f(x) = x1.^2.*x2.^2.*x3.^2+0.11
+% Estimate the integral with integrand f(x) = x1.^2.*x2.^2.*x3.^2
 % in the interval R^3 where x1, x2 and x3 are normally distributed:
 
-  f = @(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2+0.11; hyperbox = [-inf(1,3);inf(1,3)];
+  f = @(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2; hyperbox = [-inf(1,3);inf(1,3)];
   q = cubLattice_g(f,hyperbox,'normal',1e-3,1e-3,'transform','C1sin')
 
 %%
@@ -230,9 +230,8 @@
 % Estimate the integral with integrand f(x) = 3./(5-4*(cos(2*pi*x))) in the interval
 % [0,1) with pure absolute error 1e-5.
 
-  f = @(x) 3./(5-4*(cos(2*pi*x)))+1e-3; hyperbox = [0;1];
+  f = @(x) 3./(5-4*(cos(2*pi*x))); hyperbox = [0;1];
   q = cubLattice_g(f,hyperbox,'uniform',1e-5,0,'transform','id')
-
 %% See Also
 %
 % <html>
