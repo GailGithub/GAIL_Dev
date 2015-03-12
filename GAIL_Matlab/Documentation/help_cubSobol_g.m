@@ -121,22 +121,25 @@
 %
 % * out_param.time --- time elapsed in seconds when calling cubSobol_g.
 %
-% * out_param.exitflag --- this is a binary vector stating whether
+% <html>
+% <ul type="square">
+%  <li>out_param.exitflag --- this is a binary vector stating whether
 %  warning flags arise. These flags tell about which conditions make the
 %  final result certainly not guaranteed. One flag is considered arisen
 %  when its value is 1. The following list explains the flags in the
-%  respective vector order:
-%
-
-%                    1    If reaching overbudget. It states whether
+%  respective vector order:</li>
+%   <ul type="circle">
+%                    <li>1    If reaching overbudget. It states whether
 %                    the max budget is attained without reaching the
-%                    guaranteed error tolerance.
-%   
-%                    2   If the function lies outside the cone. In
+%                    guaranteed error tolerance.</li>
+%                    <li>2   If the function lies outside the cone. In
 %                    this case, results are not guaranteed. For more
 %                    information about the cone definition, check the
-%                    article mentioned below.
-% 
+%                    article mentioned below.</li>
+%   </ul>
+%  </ul>
+% </html>
+%
 %%  Guarantee
 %
 % This algorithm computes the integral of real valued functions in
@@ -156,16 +159,16 @@
 % Estimate the integral with integrand f(x) = x1.*x2 in the interval
 % [0,1)^2:
 
-  f = @(x) prod(x,2)+1e-3; hyperbox = [zeros(1,2);ones(1,2)];
+  f = @(x) prod(x,2); hyperbox = [zeros(1,2);ones(1,2)];
   q = cubSobol_g(f,hyperbox,'uniform',1e-5,0)
 
 %%
 % *Example 2*
 
-% Estimate the integral with integrand f(x) = x1.^2.*x2.^2.*x3.^2+0.11
+% Estimate the integral with integrand f(x) = x1.^2.*x2.^2.*x3.^2
 % in the interval R^3 where x1, x2 and x3 are normally distributed:
 
-  f = @(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2+0.11; hyperbox = [-inf(1,3);inf(1,3)];
+  f = @(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2; hyperbox = [-inf(1,3);inf(1,3)];
   q = cubSobol_g(f,hyperbox,'normal',1e-3,1e-3)
 
 %%
