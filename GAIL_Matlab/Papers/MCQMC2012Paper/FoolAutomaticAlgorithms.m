@@ -14,9 +14,7 @@ hold all
 
 info.filename='scriptValues.mat'; %This file name will be passed throughout the script
 xsample=[];
-save(info.filename,'xsample')
-%gail.save_mat('MCQMC2012PaperOutput/Results','scriptValues')
-
+saveMCQMC2012peakyfundir(info.filename,xsample)
 %% ---------------Function and Bounds----------
 %Pick the function you want to put peaks into.
 info.degree=2;

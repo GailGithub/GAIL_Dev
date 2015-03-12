@@ -1,7 +1,11 @@
 function [y, yprime, ydubprime,info]=peakyfunction(x0,info)
 %This function takes a vector x0 of x values and loads specific x values from
 %a file. This is used most easily in the script for fooling function.
-load(info.filename) %load nodes recorded
+[GAILPATH,~,PATHNAMESEPARATOR] = GAILstart(0);
+outputfolder =  [GAILPATH,'OutputFiles',PATHNAMESEPARATOR,'MCQMC2012PaperOutput'];
+fullfilename = strcat(outputfolder, PATHNAMESEPARATOR', info.filename);
+load(fullfilename,'xsample')
+ %load nodes recorded
 info.sortedX=sort([info.lower; xsample; info.upper]); %add endpoints
 % sort and remove duplicates
 info.sortedX=[info.sortedX((diff(info.sortedX))~=0); max(info.sortedX)];%This makes it chebfun compatible
