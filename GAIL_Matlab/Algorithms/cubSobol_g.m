@@ -118,11 +118,11 @@ function [q,out_param] = cubSobol_g(varargin)
 %     when its value is 1. The following list explains the flags in the
 %     respective vector order:
 %
-%                       1    If reaching overbudget. It states whether
+%                       1 : If reaching overbudget. It states whether
 %                       the max budget is attained without reaching the
 %                       guaranteed error tolerance.
 %      
-%                       2   If the function lies outside the cone. In
+%                       2 : If the function lies outside the cone. In
 %                       this case, results are not guaranteed. For more
 %                       information about the cone definition, check the
 %                       article mentioned below.
@@ -141,41 +141,51 @@ function [q,out_param] = cubSobol_g(varargin)
 % 
 % Example 1:
 % Estimate the integral with integrand f(x) = x1.*x2 in the interval [0,1)^2:
-%
-% >> f = @(x) prod(x,2)+1e-3; hyperbox = [zeros(1,2);ones(1,2)]; q = cubSobol_g(f,hyperbox,'uniform',1e-5,0)
-% q = 0.2****
+% 
+% >> f = @(x) prod(x,2); hyperbox = [zeros(1,2);ones(1,2)]; 
+% >> q = cubSobol_g(f,hyperbox,'uniform',1e-5,0); exactsol = 1/4;
+% >> check = abs(exactsol-q) < 1e-5
+% check = 1
 % 
 % 
 % Example 2:
-% Estimate the integral with integrand f(x) = x1.^2.*x2.^2.*x3.^2+0.11
+% Estimate the integral with integrand f(x) = x1.^2.*x2.^2.*x3.^2
 % in the interval R^3 where x1, x2 and x3 are normally distributed:
-%
-% >> f = @(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2+0.11; hyperbox = [-inf(1,3);inf(1,3)]; q = cubSobol_g(f,hyperbox,'normal',1e-3,1e-3)
-% q = 1.1***
 % 
-%
+% >> f = @(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2; hyperbox = [-inf(1,3);inf(1,3)];
+% >> q = cubSobol_g(f,hyperbox,'normal',1e-3,1e-3); exactsol = 1;
+% >> check = abs(exactsol-q) < gail.tolfun(1e-3,1e-3,1,exactsol,'max')
+% check = 1
+% 
+% 
 % Example 3: 
 % Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) in the
 % interval [-1,2)^2:
 % 
-% >> f = @(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [-ones(1,2);2*ones(1,2)]; q = cubSobol_g(f,hyperbox,'uniform',1e-3,1e-2)
-% q = 2.6****
+% >> f = @(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [-ones(1,2);2*ones(1,2)];
+% >> q = cubSobol_g(f,hyperbox,'uniform',1e-3,1e-2); exactsol = (sqrt(pi)/2*(erf(2)+erf(1)))^2;
+% >> check = abs(exactsol-q) < gail.tolfun(1e-3,1e-2,1,exactsol,'max')
+% check = 1
 %
 %
 % Example 4: 
 % Estimate the price of an European call with S0=100, K=100, r=sigma^2/2,
 % sigma=0.05 and T=1.
 % 
-% >> f = @(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); hyperbox = [-inf(1,1);inf(1,1)]; q = cubSobol_g(f,hyperbox,'normal',1e-4,1e-2,'fudge',@(m) 2.^-(2*m))
-% q = 2.0****
+% >> f = @(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); hyperbox = [-inf(1,1);inf(1,1)];
+% >> q = cubSobol_g(f,hyperbox,'normal',1e-4,1e-2,'fudge',@(m) 2.^-(2*m)); price = normcdf(0.05)*100 - 0.5*100*exp(-0.05^2/2);
+% >> check = abs(price-q) < gail.tolfun(1e-4,1e-2,1,price,'max')
+% check = 1
 %
 %
 % Example 5:
 % Estimate the integral with integrand f(x) = 8*x1.*x2.*x3.*x4.*x5 in the interval
 % [0,1)^5 with pure absolute error 1e-5.
 % 
-% >> f = @(x) 8*prod(x,2); hyperbox = [zeros(1,5);ones(1,5)]; q = cubSobol_g(f,hyperbox,'uniform',1e-5,0)
-% q = 0.2****
+% >> f = @(x) 8*prod(x,2); hyperbox = [zeros(1,5);ones(1,5)];
+% >> q = cubSobol_g(f,hyperbox,'uniform',1e-5,0); exactsol = 1/4;
+% >> check = abs(exactsol-q) < 1e-5
+% check = 1
 %
 %
 %   See also CUBLATTICE_G, CUBMC_G, MEANMC_G, MEANMCBER_G, INTEGRAL_G
@@ -270,9 +280,11 @@ for l=out_param.mmin-1:-1:1
    oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
    newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa, 
    flip=find(newone>oldone); %which in the pair are the larger ones
-   temp=kappanumap(nl+1+flip); %then flip 
-   kappanumap(nl+1+flip)=kappanumap(1+flip); %them
-   kappanumap(1+flip)=temp; %around
+   if ~isempty(flip)
+       temp=kappanumap(nl+1+flip); %then flip 
+       kappanumap(nl+1+flip)=kappanumap(1+flip); %them
+       kappanumap(1+flip)=temp; %around
+   end
 end
 
 %% Compute Stilde
@@ -360,9 +372,11 @@ for m=out_param.mmin+1:out_param.mmax
       oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
       newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa, 
       flip=find(newone>oldone);
-      temp=kappanumap(nl+1+flip);
-      kappanumap(nl+1+flip)=kappanumap(1+flip);
-      kappanumap(1+flip)=temp;
+      if ~isempty(flip)
+          temp=kappanumap(nl+1+flip);
+          kappanumap(nl+1+flip)=kappanumap(1+flip);
+          kappanumap(1+flip)=temp;
+      end
    end
 
    %% Compute Stilde
