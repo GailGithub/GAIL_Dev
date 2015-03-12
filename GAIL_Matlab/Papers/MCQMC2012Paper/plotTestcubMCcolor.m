@@ -1,4 +1,6 @@
 function plotTestcubMCcolor(plotTest,param)
+[~,~,~,MATLABVERSION] = GAILstart(false); 
+if usejava('jvm') || MATLABVERSION <= 7.12
 figure
 ntot=length(plotTest.err);
 colorscatter=repmat(plotTest.defaultcolor,ntot,1);
@@ -59,5 +61,7 @@ axes('Position',get(ax1,'Position'),...
 %xlabel('Probability')
 line(probaug,timeaug,'color','m','linewidth',plotTest.linewidth)
 gail.save_eps('MCQMC2012PaperOutput/Results',plotTest.name);
+end
+end
 
 
