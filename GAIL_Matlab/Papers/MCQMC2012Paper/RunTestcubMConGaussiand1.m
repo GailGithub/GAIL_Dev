@@ -2,7 +2,8 @@
 function [res,test,fun,param]=RunTestcubMConGaussiand1()
 format compact
 
-test.nrep=500;
+test.nrep=500;%in the paper, we use 500 repilcation numbers
+test.nrep = 50;
 fun.funtype='gaussian';
 param.dim=1;
 param.measure='uniform';

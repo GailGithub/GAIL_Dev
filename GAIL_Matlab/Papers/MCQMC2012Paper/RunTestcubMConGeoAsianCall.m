@@ -13,7 +13,8 @@ param.impyes=false;
 param.tol=2e-2;
 param.n0=1024;
 
-test.nrep=500;
+test.nrep=500;%in the paper, we use 500 repilcation numbers
+test.nrep = 50;
 test.howoftenrep=10;
 dimchoice=[1 2 4 8 16 32 64]';
 ndim=size(dimchoice,1);
