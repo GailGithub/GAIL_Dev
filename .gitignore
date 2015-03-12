@@ -1,10 +1,12 @@
 *~
+*#
 *.asv
+*.bak
+*.cfe
+*.cfs
 *.pdf
 *.mat
 *.o
-*.cfs
-*#
 *.sav
 *.png
 *.html
@@ -12,17 +14,13 @@
 *_raw.xml
 *.gen
 *.si
-*.cfe
 *.prj
 *.mltbx
 GAIL_Matlab/Documentation/autodoc
 GAIL_Matlab/Documentation/autodoc2
 GAIL_Matlab/Documentation/html/helpsearch*
 GAIL_Matlab/OutputFiles/gail_unittests.txt
-<<<<<<< HEAD
 GAIL_Matlab/OutputFiles/gail_tests-2015-02-23-01-14-44.txt
 GAIL_Matlab/OutputFiles/gail_tests-2015-02-23-01-24-10.txt
-=======
 GAIL_Matlab/ThirdParty
-GAIL_Matlab/Documentation/*_raw.m
->>>>>>> a53fde2a913fb3bc58aea48eca66e9a2b288755b
+
