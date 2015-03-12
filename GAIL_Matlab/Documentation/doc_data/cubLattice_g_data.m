@@ -17,16 +17,16 @@
 % Estimate the integral with integrand f(x) = x1.*x2 in the interval
 % [0,1)^2:
 
-  f = @(x) prod(x,2)+1e-3; hyperbox = [zeros(1,2);ones(1,2)];
+  f = @(x) prod(x,2); hyperbox = [zeros(1,2);ones(1,2)];
   q = cubLattice_g(f,hyperbox,'uniform',1e-5,0,'transform','C1sin')
 
 %%
 % *Example 2*
 
-% Estimate the integral with integrand f(x) = x1.^2.*x2.^2.*x3.^2+0.11
+% Estimate the integral with integrand f(x) = x1.^2.*x2.^2.*x3.^2
 % in the interval R^3 where x1, x2 and x3 are normally distributed:
 
-  f = @(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2+0.11; hyperbox = [-inf(1,3);inf(1,3)];
+  f = @(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2; hyperbox = [-inf(1,3);inf(1,3)];
   q = cubLattice_g(f,hyperbox,'normal',1e-3,1e-3,'transform','C1sin')
 
 %%
@@ -62,6 +62,5 @@
 % Estimate the integral with integrand f(x) = 3./(5-4*(cos(2*pi*x))) in the interval
 % [0,1) with pure absolute error 1e-5.
 
-  f = @(x) 3./(5-4*(cos(2*pi*x)))+1e-3; hyperbox = [0;1];
+  f = @(x) 3./(5-4*(cos(2*pi*x))); hyperbox = [0;1];
   q = cubLattice_g(f,hyperbox,'uniform',1e-5,0,'transform','id')
-
