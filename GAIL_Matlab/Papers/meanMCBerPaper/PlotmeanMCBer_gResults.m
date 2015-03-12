@@ -13,7 +13,7 @@ end
 standard = true(nrep,1);
 maxsample=res(:,5)== res(:,6);
 standard = standard &~maxsample;
-
+[~,~,~,MATLABVERSION] = GAILstart(false); 
 if usejava('jvm') || MATLABVERSION <= 7.12
     loglog(res(maxsample,4),res(maxsample,7),'k*', ...
         'linewidth',1);

@@ -1,4 +1,6 @@
 function plotTestcubMCblack(plotTest,param)
+[~,~,~,MATLABVERSION] = GAILstart(false); 
+if usejava('jvm') || MATLABVERSION <= 7.12
 figure
 ntot=length(plotTest.err);
 standard=true(size(plotTest.err));
@@ -67,3 +69,5 @@ axes('Position',get(ax1,'Position'),...
 %xlabel('Probability')
 line(probaug,timeaug,'color','k','linestyle','-.','linewidth',plotTest.linewidth)
 gail.save_eps('MCQMC2012PaperOutput/Results',plotTest.name);
+end
+end
