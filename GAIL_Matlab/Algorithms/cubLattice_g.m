@@ -253,8 +253,11 @@ function [q,out_param] = cubLattice_g(varargin)
 %
 
 tic
-%% Check and initialize parameters
-[f,hyperbox,out_param] = cubLattice_g_param(varargin{:});
+%% Initial important cone factors and Check-initialize parameters
+r_lag = 2; %distance between coefficients summed and those computed
+[f,hyperbox,out_param] = cubLattice_g_param(r_lag,varargin{:});
+l_star = out_param.mmin - r_lag; % Minimum gathering of points for the sums of DFT
+%r_lag=out_param.mmin-l_star; %distance between coefficients summed and those computed
 
 if strcmp(out_param.measure,'normal')
    f=@(x) f(gail.stdnorminv(x));
@@ -273,25 +276,24 @@ elseif strcmp(out_param.transform,'C1sin')
     f=@(x) f(x-sin(2*pi*x)/(2*pi)).*prod(1-cos(2*pi*x),2); % Sidi C^1 transform
 end
 
-%% Main algorithm
-l_star = 6; % Minimum gathering of points for the sums of DFT
-r_lag=out_param.mmin-l_star; %distance between coefficients summed and those computed
+%% Main algorithm - Preallocation
 Stilde=zeros(out_param.mmax-out_param.mmin+1,1); %initialize sum of DFT terms
 CStilde_low = -inf(1,out_param.mmax-l_star+1); %initialize various sums of DFT terms for necessary conditions
 CStilde_up = inf(1,out_param.mmax-l_star+1); %initialize various sums of DFT terms for necessary conditions
-C_low = 0; %variable that will be used to store fudge factors
-C_up = 0; %variable that will be used to store fudge factors
 errest=zeros(out_param.mmax-out_param.mmin+1,1); %initialize error estimates
 appxinteg=zeros(out_param.mmax-out_param.mmin+1,1); %initialize approximations to integral
 exit_len = 2;
 out_param.exit=false(1,exit_len); %we start the algorithm with all warning flags down
+y = zeros(2^out_param.mmax,1); %storing the values of the DFT
+yval = zeros(2^out_param.mmax,1); %storing values of f(x)
+kappanumap = zeros(2^out_param.mmax,1); %storing the values of the mapping
 
 %% Initial points and FFT
 out_param.n=2^out_param.mmin; %total number of points to start with
 n0=out_param.n; %initial number of points
-xpts=mod(gail.lattice_gen(1,out_param.n,out_param.d)+out_param.shift,1); %grab Lattice points
-y=f(xpts); %evaluate integrand
-yval=y;
+xpts=mod(gail.lattice_gen(1,n0,out_param.d)+out_param.shift,1); %grab Lattice points
+y(1:n0)=f(xpts); %evaluate integrand
+yval(1:n0)=y(1:n0);
 
 %% Compute initial FFT
 for l=0:out_param.mmin-1
@@ -308,25 +310,27 @@ end
 % y now contains the FFT coefficients
 
 %% Approximate integral
-q=mean(yval);
+q=mean(yval(1:n0));
 appxinteg(1)=q;
 
 %% Create kappanumap implicitly from the data
-kappanumap=(1:out_param.n)'; %initialize map
+kappanumap(1:n0)=(1:n0); %initialize map
 for l=out_param.mmin-1:-1:1
    nl=2^l;
    oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
    newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa, 
    flip=find(newone>oldone); %which in the pair are the larger ones
    if ~isempty(flip)
-       temp=kappanumap(nl+1+flip); %then flip
-       kappanumap(nl+1+flip)=kappanumap(1+flip); %them
-       kappanumap(1+flip)=temp; %around
+       flipall=bsxfun(@plus,flip,0:2^(l+1):2^out_param.mmin-1);
+       flipall=flipall(:);
+       temp=kappanumap(nl+1+flipall); %then flip 
+       kappanumap(nl+1+flipall)=kappanumap(1+flipall); %them
+       kappanumap(1+flipall)=temp; %around
    end
 end
-%%% realk=rem(kappanumap+2^(out_param.mmin-1)-1,2^(out_param.mmin))-2^(out_param.mmin-1);
-%%% disp([kappanumap realk abs(y(kappanumap))]')
-%%% disp(' ')
+%%%  realk=kappanumap-1;
+%%%  disp([kappanumap realk abs(y(kappanumap))]')
+%%%  disp(' ')
 
 
 %% Compute Stilde
@@ -369,7 +373,6 @@ elseif out_param.mmin == out_param.mmax % We are on our max budget and did not m
    out_param.exit(1) = true;
 end
 
-%%% disp(out_param.mmin)
 %%% disp([CStilde_low(1:out_param.mmin-l_star+1);CStilde_up(1:out_param.mmin-l_star+1)])
 
 
@@ -384,7 +387,7 @@ for m=out_param.mmin+1:out_param.mmax
    xnext=mod(gail.lattice_gen(nnext+1,2*nnext,out_param.d)+out_param.shift,1);
    n0=n0+nnext;
    ynext=f(xnext);
-   yval=[yval; ynext];
+   yval((nnext+1):2*nnext)=ynext;
 
    %% Compute initial FFT on next points
    for l=0:mnext-1
@@ -400,7 +403,7 @@ for m=out_param.mmin+1:out_param.mmax
    end
 
    %% Compute FFT on all points
-   y=[y;ynext];
+   y((nnext+1):2*nnext)=ynext;
    nl=2^mnext;
    ptind=[true(nl,1); false(nl,1)];
    coef=exp(-2*pi()*sqrt(-1)*(0:nl-1)/(2*nl))';
@@ -411,7 +414,7 @@ for m=out_param.mmin+1:out_param.mmax
    y(~ptind)=(evenval-coefv.*oddval)/2;
    
    %% Update kappanumap
-   kappanumap=[kappanumap; 2^(m-1)+kappanumap]; %initialize map
+   kappanumap(nnext+1:2*nnext)=2^(m-1)+kappanumap(1:nnext); %initialize map
    for l=m-1:-1:l_star
       nl=2^l;
       oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
@@ -424,12 +427,15 @@ for m=out_param.mmin+1:out_param.mmax
 %%%       disp(flip')
 %%%       disp(' ')
       if ~isempty(flip)
-          temp=kappanumap(nl+1+flip);
-          kappanumap(nl+1+flip)=kappanumap(1+flip);
-          kappanumap(1+flip)=temp;
+          flipall=bsxfun(@plus,flip,0:2^(l+1):2^m-1);
+          flipall=flipall(:);
+          temp=kappanumap(nl+1+flipall);
+          kappanumap(nl+1+flipall)=kappanumap(1+flipall);
+          kappanumap(1+flipall)=temp;
       end
-%%%       realk=rem(kappanumap+2^(m-1)-1,2^(m))-2^(m-1);
+%%%       realk=kappanumap-1;
 %%%       disp([kappanumap realk abs(y(kappanumap))]')
+%%%       disp(' ')
    end
 
    %% Compute Stilde
@@ -446,8 +452,7 @@ for m=out_param.mmin+1:out_param.mmax
         CStilde_low(l-l_star+1) = max(CStilde_low(l-l_star+1),C_low*sum(abs(y(kappanumap(2^(l-1)+1:2^l)))));
         CStilde_up(l-l_star+1) = min(CStilde_up(l-l_star+1),C_up*sum(abs(y(kappanumap(2^(l-1)+1:2^l)))));
    end
-%%%    disp(m)
-%%%    disp([CStilde_low(1:m-l_star+1);CStilde_up(1:m-l_star+1)])
+%%%   disp([CStilde_low(1:m-l_star+1);CStilde_up(1:m-l_star+1)])
    
    if any(CStilde_low(:) > CStilde_up(:))
        out_param.exit(2) = true;
@@ -458,7 +463,7 @@ for m=out_param.mmin+1:out_param.mmax
 %%%    CStilde_low(1:m-l_star+1);CStilde_up(1:m-l_star+1)])
    
    %% Approximate integral
-   q=mean(yval);
+   q=mean(yval(1:2^m));
    appxinteg(meff)=q;
 
    % Check the end of the algorithm
@@ -513,7 +518,7 @@ end
 
 
 %% Parsing for the input of cubLattice_g
-function [f,hyperbox, out_param] = cubLattice_g_param(varargin)
+function [f,hyperbox, out_param] = cubLattice_g_param(r_lag,varargin)
 
 % Default parameter values
 default.hyperbox = [zeros(1,1);ones(1,1)];% default hyperbox
@@ -673,6 +678,14 @@ end
 if (~gail.isposint(out_param.mmin) || ~(out_param.mmin < out_param.mmax+1))
     warning('MATLAB:cubLattice_g:lowmmin',['The minimum starting exponent ' ...
             'should be an integer greater than 0 and smaller or equal than the maxium.' ...
+            ' Using default mmin ' num2str(default.mmin)])
+    out_param.mmin = default.mmin;
+end
+
+% Force mmin to be integer greater than r_lag (so that l_star=mmin-r_lag>=0)
+if out_param.mmin < r_lag
+    warning('MATLAB:cubLattice_g:lowmminrlag',['The minimum starting exponent ' ...
+            'should be at least ' num2str(r_lag) '.' ...
             ' Using default mmin ' num2str(default.mmin)])
     out_param.mmin = default.mmin;
 end
