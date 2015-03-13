@@ -97,7 +97,7 @@ if any(strcmp('cubSobol',test.whichsample))
     plotTest.ptsize=400;
     plotTestColor(plotTest,param)
     end
-    Sobolsuccess=mean(res.Sobolerr<=param_indicator)
+    Sobolsuccess=mean(res.Sobolerr<=param_indicator);
 end
 gail.save_mat('Paper_cubSobol_g', 'Paper_cubSobol_g_TestGeoAsianCall', Sobolsuccess,dimchoice,...
         fun,irep,res,test,testfunqmc);
@@ -108,6 +108,8 @@ end
 
 %% Defining function plotTestColor
 function plotTestColor(plotTest,param)
+[~,~,~,MATLABVERSION] = GAILstart(false);
+if usejava('jvm') || MATLABVERSION <= 7.12
 figure
 ntot=length(plotTest.err);
 colorscatter=repmat(plotTest.defaultcolor,ntot,1);
@@ -171,6 +173,7 @@ gail.save_eps('Paper_cubSobol_g', 'Paper_cubSobol_g_TestGeoAsianCall');
 %print('-depsc',[plotTest.name '.eps'])
 % print('-depsc', ['./Results/' plotTest.name '.eps'])
 close all
+end
 end
 
 %% Random choice GeoCall

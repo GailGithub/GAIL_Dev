@@ -234,11 +234,11 @@ elseif strcmp(out_param.measure,'uniform')
 end
 
 %% Main algorithm
-r_lag = 1; %distance between coefficients summed and those computed
+r_lag = 2; %distance between coefficients summed and those computed
 l_star = out_param.mmin - r_lag; % Minimum gathering of points for the sums of DFT
 %r_lag=out_param.mmin-l_star; %distance between coefficients summed and those computed
 sobstr=sobolset(out_param.d); %generate a Sobol' sequence
-%sobstr=scramble(sobstr,'MatousekAffineOwen'); %scramble it
+sobstr=scramble(sobstr,'MatousekAffineOwen'); %scramble it
 Stilde=zeros(out_param.mmax-out_param.mmin+1,1); %initialize sum of DFT terms
 CStilde_low = -inf(1,out_param.mmax-l_star+1); %initialize various sums of DFT terms for necessary conditions
 CStilde_up = inf(1,out_param.mmax-l_star+1); %initialize various sums of DFT terms for necessary conditions
@@ -281,14 +281,16 @@ for l=out_param.mmin-1:-1:1
    newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa, 
    flip=find(newone>oldone); %which in the pair are the larger ones
    if ~isempty(flip)
-       temp=kappanumap(nl+1+flip); %then flip 
-       kappanumap(nl+1+flip)=kappanumap(1+flip); %them
-       kappanumap(1+flip)=temp; %around
+       flipall=bsxfun(@plus,flip,0:2^(l+1):2^out_param.mmin-1);
+       flipall=flipall(:);
+       temp=kappanumap(nl+1+flipall); %then flip 
+       kappanumap(nl+1+flipall)=kappanumap(1+flipall); %them
+       kappanumap(1+flipall)=temp; %around
    end
 end
- realk=kappanumap-1;
-% disp([kappanumap realk abs(y(kappanumap))]')
-% disp(' ')
+%  realk=kappanumap-1;
+%  disp([kappanumap realk abs(y(kappanumap))]')
+%  disp(' ')
 
 
 %% Compute Stilde
@@ -383,12 +385,15 @@ for m=out_param.mmin+1:out_param.mmax
 %%%       disp(flip')
 %%%       disp(' ')
       if ~isempty(flip)
-          temp=kappanumap(nl+1+flip);
-          kappanumap(nl+1+flip)=kappanumap(1+flip);
-          kappanumap(1+flip)=temp;
+          flipall=bsxfun(@plus,flip,0:2^(l+1):2^m-1);
+          flipall=flipall(:);
+          temp=kappanumap(nl+1+flipall);
+          kappanumap(nl+1+flipall)=kappanumap(1+flipall);
+          kappanumap(1+flipall)=temp;
       end
-       realk=kappanumap-1;
+%       realk=kappanumap-1;
 %       disp([kappanumap realk abs(y(kappanumap))]')
+%       disp(' ')
    end
 
    %% Compute Stilde
@@ -482,7 +487,6 @@ default.reltol  = 1e-2;
 default.mmin  = 10;
 default.mmax  = 24;
 default.fudge = @(m) 5*2.^-m;
-%default.fudge = @(m) 10*2.^(-m/2);
 default.toltype  = 'max';
 default.theta  = 1;
 
