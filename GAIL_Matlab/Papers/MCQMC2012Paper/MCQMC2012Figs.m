@@ -101,11 +101,12 @@ if usejava('jvm') || MATLABVERSION <= 7.12
         NCLTvec,Ntotoptvec./repmat(NCLTvec,1,nkappa),'k-',...
         'linewidth',2);
     set(gca,'Linewidth',2);
-    xlabel('{\it N}_{CLT}')
+    xlabel('$N_{CLT}$','Interpreter','latex','FontSize',20)
+    %xlabel('${\it N}_{CLT}$')
     ylabel('Cost Ratios')
     %ylabel('{\it N_{\mu}}/{\it N}_{CLT}')
     axis([1e4 1e9 1 100])
-    gail.save_eps('MCQMCPaperOutput/Results','MCSampleSizes');
+    gail.save_eps('MCQMC2012PaperOutput/Results','MCSampleSizes');
     %print -deps 'MCSampleSizes.eps'
     
     %% Plot optima nsigma and fudge
@@ -117,7 +118,8 @@ if usejava('jvm') || MATLABVERSION <= 7.12
         'Xscale','log','Xtick',10.^(4:9),...
         'Yscale','linear','Ytick',1:0.1:1.7, ...
         'YLim',[1 1.7],'Linewidth',2);
-    xlabel('{\it N}_{CLT}')
+    %xlabel('${\it N}_{CLT}$')
+    xlabel('$N_{CLT}$','Interpreter','latex','FontSize',20)
     ylabel('{\it C}')
     axes('Position',get(ax1,'Position'),...
         'XAxisLocation','top',...
@@ -129,7 +131,7 @@ if usejava('jvm') || MATLABVERSION <= 7.12
         'LineWidth',2, ...
         'XScale','log','Yscale','log', ...
         'XTick',[],'YTick',10.^(4:9));
-    ylabel('{\it n_{\sigma}}')
+    ylabel('$n_{\sigma}$','Interpreter','latex','FontSize',20)
     line(NCLTvec,nsigoptvec,'color','k','linestyle','-','linewidth',2)
     %print -deps 'MCnsigmafudge.eps'
     gail.save_eps('MCQMC2012PaperOutput/Results','MCnsigmafudge');
