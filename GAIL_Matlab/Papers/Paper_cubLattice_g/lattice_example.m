@@ -39,5 +39,5 @@ if usejava('jvm') || MATLABVERSION <= 7.12
     title('Dual Lattice')
     view(a,b)
     gail.save_eps('Paper_cubLattice_g', 'Paper_cubLattice_g_DualSetExample');
-    %close all
+    close all
 end
