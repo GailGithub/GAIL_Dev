@@ -193,7 +193,7 @@ function [q,out_param] = cubLattice_g(varargin)
 % sigma=0.05 and T=1.
 % 
 % >> f = @(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); hyperbox = [-inf(1,1);inf(1,1)];
-% >> q = cubLattice_g(f,hyperbox,'normal',1e-4,1e-2,'fudge',@(m) 2.^-(2*m),'transform','C1sin'); price = normcdf(0.05)*100 - 0.5*100*exp(-0.05^2/2);
+% >> q = cubLattice_g(f,hyperbox,'normal',1e-4,1e-2,'transform','C1sin'); price = normcdf(0.05)*100 - 0.5*100*exp(-0.05^2/2);
 % >> check = abs(price-q) < gail.tolfun(1e-4,1e-2,1,price,'max')
 % check = 1
 %
