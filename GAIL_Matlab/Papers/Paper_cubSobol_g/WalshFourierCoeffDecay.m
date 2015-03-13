@@ -1,5 +1,7 @@
 function WalshFourierCoeffDecay
 [~,~,~,MATLABVERSION] = GAILstart(false);
+disp(usejava('jvm'))
+disp(MATLABVERSION)
 if usejava('jvm') || MATLABVERSION <= 7.12
 
     %% Garbage collection and initialization
