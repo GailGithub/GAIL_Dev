@@ -45,7 +45,7 @@
 % sigma=0.05 and T=1.
 
   f = @(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); hyperbox = [-inf(1,1);inf(1,1)];
-  q = cubSobol_g(f,hyperbox,'normal',1e-4,1e-2,'fudge',@(m) 2.^-(2*m))
+  q = cubSobol_g(f,hyperbox,'normal',1e-4,1e-2)
 
 %%
 % *Example 5*
