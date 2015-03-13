@@ -281,14 +281,16 @@ for l=out_param.mmin-1:-1:1
    newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa, 
    flip=find(newone>oldone); %which in the pair are the larger ones
    if ~isempty(flip)
-       temp=kappanumap(nl+1+flip); %then flip 
-       kappanumap(nl+1+flip)=kappanumap(1+flip); %them
-       kappanumap(1+flip)=temp; %around
+       flipall=bsxfun(@plus,flip,0:2^(l+1):2^out_param.mmin-1);
+       flipall=flipall(:);
+       temp=kappanumap(nl+1+flipall); %then flip 
+       kappanumap(nl+1+flipall)=kappanumap(1+flipall); %them
+       kappanumap(1+flipall)=temp; %around
    end
 end
  realk=kappanumap-1;
-% disp([kappanumap realk abs(y(kappanumap))]')
-% disp(' ')
+ disp([kappanumap realk abs(y(kappanumap))]')
+ disp(' ')
 
 
 %% Compute Stilde
@@ -383,13 +385,16 @@ for m=out_param.mmin+1:out_param.mmax
 %%%       disp(flip')
 %%%       disp(' ')
       if ~isempty(flip)
-          temp=kappanumap(nl+1+flip);
-          kappanumap(nl+1+flip)=kappanumap(1+flip);
-          kappanumap(1+flip)=temp;
+          flipall=bsxfun(@plus,flip,0:2^(l+1):2^m-1);
+          flipall=flipall(:);
+          temp=kappanumap(nl+1+flipall);
+          kappanumap(nl+1+flipall)=kappanumap(1+flipall);
+          kappanumap(1+flipall)=temp;
       end
-       realk=kappanumap-1;
-%       disp([kappanumap realk abs(y(kappanumap))]')
-   end
+      realk=kappanumap-1;
+      disp([kappanumap realk abs(y(kappanumap))]')
+      disp(' ')
+ end
 
    %% Compute Stilde
    nllstart=int64(2^(m-r_lag-1));
