@@ -325,8 +325,6 @@ elseif out_param.mmin == out_param.mmax % We are on our max budget and did not m
    out_param.exit(1) = true;
 end
 
-%%% disp([CStilde_low(1:out_param.mmin-l_star+1);CStilde_up(1:out_param.mmin-l_star+1)])
-
 
 %% Loop over m
 for m=out_param.mmin+1:out_param.mmax
