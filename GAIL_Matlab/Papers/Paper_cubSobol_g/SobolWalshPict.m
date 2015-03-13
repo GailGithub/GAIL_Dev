@@ -37,6 +37,9 @@ set(0,'defaultLineMarkerSize',40) %large dots
 %    % eval(['print -depsc walshk' int2str(k) 'fun.eps'])
 % end
 
+[~,~,~,MATLABVERSION] = GAILstart(false);
+if usejava('jvm') || MATLABVERSION <= 7.12
+
 %% Plot Sobol points
 mvec=(8:8); %powers of 2
 nm=length(mvec); %number of plots
@@ -89,4 +92,5 @@ gail.save_eps('Paper_cubSobol_g', 'Paper_cubSobol_g_256ScrambledShiftedSobolPoin
    %eval(['print -depsc scrsob' int2str(n) 'pts.eps'])
 end
 close all
+end
 end

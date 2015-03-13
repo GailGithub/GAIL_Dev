@@ -89,7 +89,7 @@ if any(strcmp('cubLattice',test.whichsample))
     plotTest.ptsize=400;
     plotTestColor(plotTest,param)
     end
-    Latticesuccess=mean(res.Latticeerr<=param_indicator)
+    Latticesuccess=mean(res.Latticeerr<=param_indicator);
 end
 gail.save_mat('Paper_cubLattice_g', 'Paper_cubLattice_g_TestKeister', Latticesuccess,...
         fun,irep,res,test);
@@ -99,6 +99,8 @@ end
 
 %% Defining function plotTestColor
 function plotTestColor(plotTest,param)
+[~,~,~,MATLABVERSION] = GAILstart(false);
+if usejava('jvm') || MATLABVERSION <= 7.12
 figure
 ntot=length(plotTest.err);
 colorscatter=repmat(plotTest.defaultcolor,ntot,1);
@@ -162,6 +164,7 @@ gail.save_eps('Paper_cubLattice_g', 'Paper_cubLattice_g_TestKeister');
 %print('-depsc',[plotTest.name '.eps'])
 % print('-depsc', ['./Results/' plotTest.name '.eps'])
 close all
+end
 end
 
 %% Random choice Keister

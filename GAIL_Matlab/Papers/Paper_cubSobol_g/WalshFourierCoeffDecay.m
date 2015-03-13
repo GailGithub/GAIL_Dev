@@ -71,6 +71,7 @@ ymap=y(kappanumap);
 
 
 %% Plot FW coefficients
+[~,~,~,MATLABVERSION] = GAILstart(false);
 if usejava('jvm') || MATLABVERSION <= 7.12
 ltgray=0.8*ones(1,3);
 gray=0.5*ones(1,3);
@@ -121,7 +122,6 @@ end
 end
 close all
 end
-
 
 
 
