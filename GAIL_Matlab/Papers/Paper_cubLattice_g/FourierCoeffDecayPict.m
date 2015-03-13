@@ -22,6 +22,10 @@ mplot=16;
 mlag=4;
 testfun=@(x) sin(20*sqrt((x(:,1)-0.5).^2+(x(:,2)-0.5).^2)+eps)./(20*sqrt((x(:,1)-0.5).^2+(x(:,2)-0.5).^2)+eps); d=2; %test function
 
+
+%% Plot the function
+[~,~,~,MATLABVERSION] = GAILstart(false);
+if usejava('jvm') || MATLABVERSION <= 7.12
 [X,Y] = meshgrid(0:.01:1);
 R = sqrt((X-0.5).^2 + (Y-0.5).^2) + eps;
 Z = sin(20*R)./(20*R);
@@ -31,6 +35,8 @@ axis([0 1 0 1 zmin zmax])
 mesh(X,Y,Z)
 title('$\frac{\sin\left(20\sqrt{x^2+y^2}\right)}{20\sqrt{x^2+y^2}}$')
 gail.save_eps('Paper_cubLattice_g', 'Paper_cubLattice_g_FunctionFourierCoeffDecay');
+end
+
 shift=rand;
 
 %% Evaluate Function and FFT
@@ -63,7 +69,6 @@ for l=mmax-1:-1:1
     kappanumap(1+flip)=temp;
 end
 ymap=y(kappanumap);
-
 
 
 %% Plot FW coefficients
