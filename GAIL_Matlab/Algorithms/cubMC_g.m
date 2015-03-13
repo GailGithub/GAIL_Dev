@@ -222,13 +222,14 @@ function [Q,out_param] = cubMC_g(varargin)
 
 tstart=tic;
 [f,hyperbox,out_param] = cubMC_g_param(varargin{:});%check validity of inputs
-f=gail.transformIntegrand(f,hyperbox,out_param); 
+f=gail.transformIntegrand(f,hyperbox,out_param);
 if strcmpi(out_param.measure,'uniform')% the using uniformly distributed samples
     [Q,out_param] = meanMC_g(@(nfun)f(rand(nfun,out_param.dim)),out_param);
-% using meanMC_g to get the mean 
-else strcmpi(out_param.measure,'normal')% using normally distributed samples
+    % using meanMC_g to get the mean
+end
+if strcmpi(out_param.measure,'normal')% using normally distributed samples
     [Q,out_param] = meanMC_g(@(nfun)f(randn(nfun,out_param.dim)),out_param);
-% using meanMC_g to get the mean
+    % using meanMC_g to get the mean
 end
 out_param.time=toc(tstart); %elapsed time
 end
