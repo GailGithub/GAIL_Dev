@@ -257,6 +257,7 @@ tic
 r_lag = 4; %distance between coefficients summed and those computed
 [f,hyperbox,out_param] = cubLattice_g_param(r_lag,varargin{:});
 l_star = out_param.mmin - r_lag; % Minimum gathering of points for the sums of DFT
+%r_lag=out_param.mmin-l_star; %distance between coefficients summed and those computed
 
 if strcmp(out_param.measure,'normal')
    f=@(x) f(gail.stdnorminv(x));
@@ -327,6 +328,10 @@ for l=out_param.mmin-1:-1:1
        kappanumap(1+flipall)=temp; %around
    end
 end
+%%%  realk=kappanumap-1;
+%%%  disp([kappanumap realk abs(y(kappanumap))]')
+%%%  disp(' ')
+
 
 %% Compute Stilde
 nllstart=int64(2^(out_param.mmin-r_lag-1));
@@ -367,6 +372,9 @@ if out_param.bound_err <= deltaplus
 elseif out_param.mmin == out_param.mmax % We are on our max budget and did not meet the error condition => overbudget
    out_param.exit(1) = true;
 end
+
+%%% disp([CStilde_low(1:out_param.mmin-l_star+1);CStilde_up(1:out_param.mmin-l_star+1)])
+
 
 %% Loop over m
 for m=out_param.mmin+1:out_param.mmax
@@ -412,6 +420,12 @@ for m=out_param.mmin+1:out_param.mmax
       oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
       newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa,
       flip=find(newone>oldone);
+%%%       realk=rem(kappanumap+2^(m-1)-1,2^(m))-2^(m-1);
+%%%       disp([kappanumap(2:nl) realk(2:nl) oldone]')
+%%%       disp(' ')
+%%%       disp([kappanumap(nl+2:2*nl) realk(nl+2:2*nl) newone newone>oldone]')
+%%%       disp(flip')
+%%%       disp(' ')
       if ~isempty(flip)
           flipall=bsxfun(@plus,flip,0:2^(l+1):2^m-1);
           flipall=flipall(:);
@@ -419,6 +433,9 @@ for m=out_param.mmin+1:out_param.mmax
           kappanumap(nl+1+flipall)=kappanumap(1+flipall);
           kappanumap(1+flipall)=temp;
       end
+%%%       realk=kappanumap-1;
+%%%       disp([kappanumap realk abs(y(kappanumap))]')
+%%%       disp(' ')
    end
 
    %% Compute Stilde
@@ -435,10 +452,15 @@ for m=out_param.mmin+1:out_param.mmax
         CStilde_low(l-l_star+1) = max(CStilde_low(l-l_star+1),C_low*sum(abs(y(kappanumap(2^(l-1)+1:2^l)))));
         CStilde_up(l-l_star+1) = min(CStilde_up(l-l_star+1),C_up*sum(abs(y(kappanumap(2^(l-1)+1:2^l)))));
    end
+%%%   disp([CStilde_low(1:m-l_star+1);CStilde_up(1:m-l_star+1)])
    
    if any(CStilde_low(:) > CStilde_up(:))
        out_param.exit(2) = true;
    end
+%%% realk=rem(kappanumap+2^(m-1)-1,2^(m))-2^(m-1);
+%%% disp([kappanumap realk abs(y(kappanumap))]')
+%%% disp([l_star:m; ...
+%%%    CStilde_low(1:m-l_star+1);CStilde_up(1:m-l_star+1)])
    
    %% Approximate integral
    q=mean(yval(1:2^m));
@@ -464,7 +486,7 @@ for m=out_param.mmin+1:out_param.mmax
    end
 end
 
-% Decode the exit structure
+% Alternative
 exit_str=2.^(0:exit_len-1).*out_param.exit;
 exit_str(out_param.exit==0)=[];
 if numel(exit_str)==0;
@@ -473,6 +495,22 @@ else
     out_param.exitflag=exit_str;
 end
 
+% Original
+% exit_str='';
+% if sum(out_param.exit) == 0
+%   exit_str = '0';
+% else
+%   for i=1:exit_len
+%     if out_param.exit(i)==1,
+%       if i<exit_len 
+%         exit_str = strcat(exit_str,{num2str(i)}, {' '});
+%       else
+%         exit_str = strcat(exit_str,{num2str(i)});
+%       end
+%     end
+%   end
+% end
+% out_param.exitflag = exit_str;
 out_param = rmfield(out_param,'exit');
 
 out_param.time=toc;
