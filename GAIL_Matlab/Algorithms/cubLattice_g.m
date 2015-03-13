@@ -193,7 +193,7 @@ function [q,out_param] = cubLattice_g(varargin)
 % sigma=0.05 and T=1.
 % 
 % >> f = @(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); hyperbox = [-inf(1,1);inf(1,1)];
-% >> q = cubLattice_g(f,hyperbox,'normal',1e-4,1e-2,'fudge',@(m) 2.^-(2*m),'transform','C1sin'); price = normcdf(0.05)*100 - 0.5*100*exp(-0.05^2/2);
+% >> q = cubLattice_g(f,hyperbox,'normal',1e-4,1e-2,'transform','C1sin'); price = normcdf(0.05)*100 - 0.5*100*exp(-0.05^2/2);
 % >> check = abs(price-q) < gail.tolfun(1e-4,1e-2,1,price,'max')
 % check = 1
 %
@@ -277,10 +277,8 @@ end
 l_star = 6; % Minimum gathering of points for the sums of DFT
 r_lag=out_param.mmin-l_star; %distance between coefficients summed and those computed
 Stilde=zeros(out_param.mmax-out_param.mmin+1,1); %initialize sum of DFT terms
-CStilde_low = []; %initialize various sums of DFT terms for necessary conditions
-CStilde_up = []; %initialize various sums of DFT terms for necessary conditions
-lower = 0;% variable storing the maximum for the necessary conditions
-upper = Inf;% variable storing the minimum for the necessary conditions
+CStilde_low = -inf(1,out_param.mmax-l_star+1); %initialize various sums of DFT terms for necessary conditions
+CStilde_up = inf(1,out_param.mmax-l_star+1); %initialize various sums of DFT terms for necessary conditions
 C_low = 0; %variable that will be used to store fudge factors
 C_up = 0; %variable that will be used to store fudge factors
 errest=zeros(out_param.mmax-out_param.mmin+1,1); %initialize error estimates
@@ -288,7 +286,7 @@ appxinteg=zeros(out_param.mmax-out_param.mmin+1,1); %initialize approximations t
 exit_len = 2;
 out_param.exit=false(1,exit_len); %we start the algorithm with all warning flags down
 
-%% Initial points and FWT
+%% Initial points and FFT
 out_param.n=2^out_param.mmin; %total number of points to start with
 n0=out_param.n; %initial number of points
 xpts=mod(gail.lattice_gen(1,out_param.n,out_param.d)+out_param.shift,1); %grab Lattice points
@@ -326,6 +324,10 @@ for l=out_param.mmin-1:-1:1
        kappanumap(1+flip)=temp; %around
    end
 end
+%%% realk=rem(kappanumap+2^(out_param.mmin-1)-1,2^(out_param.mmin))-2^(out_param.mmin-1);
+%%% disp([kappanumap realk abs(y(kappanumap))]')
+%%% disp(' ')
+
 
 %% Compute Stilde
 nllstart=int64(2^(out_param.mmin-r_lag-1));
@@ -337,20 +339,15 @@ errest(1)=out_param.bound_err;
 for l = l_star:out_param.mmin % Storing the information for the necessary conditions
     C_low = (1+out_param.fudge(out_param.mmin-l))/(1+2*out_param.fudge(out_param.mmin-l));
     C_up = (1+out_param.fudge(out_param.mmin-l));
-    CStilde_low=[CStilde_low C_low*sum(abs(y(kappanumap(nllstart+1:2*nllstart))))];
-    CStilde_up=[CStilde_up C_up*sum(abs(y(kappanumap(nllstart+1:2*nllstart))))];
-    nllstart=2*nllstart;
+    CStilde_low(l-l_star+1) = C_low*sum(abs(y(kappanumap(2^(l-1)+1:2^l))));
+    CStilde_up(l-l_star+1) = C_up*sum(abs(y(kappanumap(2^(l-1)+1:2^l))));
 end
-lower = max(lower, max(CStilde_low));
-upper = min(upper, min(CStilde_up));
-if lower > upper
+if any(CStilde_low(:) > CStilde_up(:))
    out_param.exit(2) = true;
 end
-% disp(CStilde_low)
-% disp(CStilde_up)
-% disp(sprintf('Lower %d <= %d upper.',lower,upper)); % To display the updated bounds
-CStilde_low = []; % need to initialize it to reuse again for the following m
-Cstilde_up = [];
+%%% disp([l_star:out_param.mmin; ...
+%%%    CStilde_low(1:out_param.mmin-l_star+1);CStilde_up(1:out_param.mmin-l_star+1)])
+%%% disp(' ')
 
 % Check the end of the algorithm
 deltaplus = 0.5*(gail.tolfun(out_param.abstol,...
@@ -371,6 +368,10 @@ if out_param.bound_err <= deltaplus
 elseif out_param.mmin == out_param.mmax % We are on our max budget and did not meet the error condition => overbudget
    out_param.exit(1) = true;
 end
+
+%%% disp(out_param.mmin)
+%%% disp([CStilde_low(1:out_param.mmin-l_star+1);CStilde_up(1:out_param.mmin-l_star+1)])
+
 
 %% Loop over m
 for m=out_param.mmin+1:out_param.mmax
@@ -410,17 +411,25 @@ for m=out_param.mmin+1:out_param.mmax
    y(~ptind)=(evenval-coefv.*oddval)/2;
    
    %% Update kappanumap
-   kappanumap=[kappanumap; (nnext+1:out_param.n)']; %initialize map
-   for l=m-1:-1:m-r_lag-1
+   kappanumap=[kappanumap; 2^(m-1)+kappanumap]; %initialize map
+   for l=m-1:-1:l_star
       nl=2^l;
       oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
-      newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa, 
+      newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa,
       flip=find(newone>oldone);
+%%%       realk=rem(kappanumap+2^(m-1)-1,2^(m))-2^(m-1);
+%%%       disp([kappanumap(2:nl) realk(2:nl) oldone]')
+%%%       disp(' ')
+%%%       disp([kappanumap(nl+2:2*nl) realk(nl+2:2*nl) newone newone>oldone]')
+%%%       disp(flip')
+%%%       disp(' ')
       if ~isempty(flip)
           temp=kappanumap(nl+1+flip);
           kappanumap(nl+1+flip)=kappanumap(1+flip);
           kappanumap(1+flip)=temp;
       end
+%%%       realk=rem(kappanumap+2^(m-1)-1,2^(m))-2^(m-1);
+%%%       disp([kappanumap realk abs(y(kappanumap))]')
    end
 
    %% Compute Stilde
@@ -431,24 +440,22 @@ for m=out_param.mmin+1:out_param.mmax
    errest(meff)=out_param.bound_err;
    
    % Necessary conditions
-   nllstart=int64(2^(out_param.mmin-r_lag-1));
    for l = l_star:m % Storing the information for the necessary conditions
         C_low = (1+out_param.fudge(m-l))/(1+2*out_param.fudge(m-l));
         C_up = (1+out_param.fudge(m-l));
-        CStilde_low=[CStilde_low C_low*sum(abs(y(kappanumap(nllstart+1:2*nllstart))))];
-        CStilde_up=[CStilde_up C_up*sum(abs(y(kappanumap(nllstart+1:2*nllstart))))];
-        nllstart=2*nllstart;
+        CStilde_low(l-l_star+1) = max(CStilde_low(l-l_star+1),C_low*sum(abs(y(kappanumap(2^(l-1)+1:2^l)))));
+        CStilde_up(l-l_star+1) = min(CStilde_up(l-l_star+1),C_up*sum(abs(y(kappanumap(2^(l-1)+1:2^l)))));
    end
-   lower = max(lower, max(CStilde_low));
-   upper = min(upper, min(CStilde_up));
-   if lower > upper
+%%%    disp(m)
+%%%    disp([CStilde_low(1:m-l_star+1);CStilde_up(1:m-l_star+1)])
+   
+   if any(CStilde_low(:) > CStilde_up(:))
        out_param.exit(2) = true;
    end
-%    disp(CStilde_low)
-%    disp(CStilde_up)
-%    disp(sprintf('Lower %d <= %d upper.',lower,upper)); % To display the updated bounds
-   CStilde_low = [];
-   Cstilde_up = [];
+%%% realk=rem(kappanumap+2^(m-1)-1,2^(m))-2^(m-1);
+%%% disp([kappanumap realk abs(y(kappanumap))]')
+%%% disp([l_star:m; ...
+%%%    CStilde_low(1:m-l_star+1);CStilde_up(1:m-l_star+1)])
    
    %% Approximate integral
    q=mean(yval);
@@ -470,7 +477,7 @@ for m=out_param.mmin+1:out_param.mmax
       out_param.time=toc;
       is_done = true;
    elseif m == out_param.mmax % We are on our max budget and did not meet the error condition => overbudget
-       out_param.exit(1) = true;
+      out_param.exit(1) = true;
    end
 end
 
