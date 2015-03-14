@@ -271,15 +271,6 @@ while true
             out_param.reltol*(abs(out_param.hmu(i))+out_param.tol(i))));
         i=i+1;
     end
-%     elseif out_param.abstol >= out_param.reltol*(abs(out_param.hmu(i))...
-%             +out_param.tol(i))/2;
-%         out_param.tol(i+1) = out_param.abstol;
-%         i=i+1;
-%     else
-%         out_param.tol(i+1) = min(out_param.tol(i),...
-%             out_param.reltol*abs(out_param.hmu(i)))/2;
-%         i=i+1;
-%     end
     toloversig = out_param.tol(i)/sig0up;%next tolerance over sigma
     alphai = (out_param.alpha-alpha_sig)/(1-alpha_sig)*2.^(-i);
     %update the next uncertainty
