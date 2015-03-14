@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>cubMC_g</title><meta name="generator" content="MATLAB 8.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-03-11"><meta name="DC.source" content="help_cubMC_g.m"><style type="text/css">
+      --><title>cubMC_g</title><meta name="generator" content="MATLAB 8.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-03-13"><meta name="DC.source" content="help_cubMC_g.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -98,7 +98,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 </pre><pre class="codeoutput">
 Q =
 
-    0.9565
+   0.956121995143524
 
 </pre><p><b>Example 2</b></p><pre class="codeinput"><span class="comment">% Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) over the</span>
 <span class="comment">% hyperbox [0 0;1 1], where x is a vector x = [x1 x2].</span>
@@ -110,7 +110,7 @@ Q =
 </pre><pre class="codeoutput">
 Q =
 
-    0.5579
+   0.557915019554153
 
 </pre><p><b>Example 3</b></p><pre class="codeinput"><span class="comment">% Estimate the integral with integrand f(x) = 2^d*prod(x1*x2*...*xd) +</span>
 <span class="comment">% 0.555 over the hyperbox [zeros(1,d);ones(1,d)], where x is a vector x =</span>
@@ -123,7 +123,7 @@ Q =
 </pre><pre class="codeoutput">
 Q =
 
-    1.5549
+   1.554855848660463
 
 </pre><p><b>Example 4</b></p><pre class="codeinput"><span class="comment">% Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) in the</span>
 <span class="comment">% hyperbox [-inf -inf;inf inf], where x is a vector x = [x1 x2].</span>
@@ -132,14 +132,9 @@ Q =
  f = @(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [-inf -inf;inf inf];
  Q = cubMC_g(f,hyperbox,<span class="string">'normal'</span>,0,1e-2)
 </pre><pre class="codeoutput">
-ans =
-
-     1
-
-
 Q =
 
-    0.3332
+   0.332898311690839
 
 </pre><h2>See Also<a name="8"></a></h2><p>
 <a href="help_funappx_g.html">funappx_g</a>
