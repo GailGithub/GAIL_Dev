@@ -5,11 +5,11 @@ classdef ut_Papers_cubSobol_g < matlab.unittest.TestCase
     
     function cubSobol_AsianSuccessrate(testCase)
       Sobolsuccess = RunTestCubatureonGeoAsianCallSobol;
-      testCase.verifyLessThanOrEqual(0.95,Sobolsuccess);
+      testCase.verifyLessThanOrEqual(0.93,Sobolsuccess);
     end
     function cubSobol_KesiterSuccessrate(testCase)
       Sobolsuccess = RunTestCubatureonKeisterSobol;
-      testCase.verifyLessThanOrEqual(0.95,Sobolsuccess);
+      testCase.verifyLessThanOrEqual(0.93,Sobolsuccess);
     end
     
   end
