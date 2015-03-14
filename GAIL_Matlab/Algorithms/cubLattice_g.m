@@ -344,9 +344,6 @@ end
 if any(CStilde_low(:) > CStilde_up(:))
    out_param.exit(2) = true;
 end
-%%% disp([l_star:out_param.mmin; ...
-%%%    CStilde_low(1:out_param.mmin-l_star+1);CStilde_up(1:out_param.mmin-l_star+1)])
-%%% disp(' ')
 
 % Check the end of the algorithm
 deltaplus = 0.5*(gail.tolfun(out_param.abstol,...
