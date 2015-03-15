@@ -1,20 +1,21 @@
-% UniFunMinOutput
+% univariate_minimization_workouts
 % 
 %
 % Files
 %
-% workout_ErrorToleranceTest.m --- test for Bump test functions with 
-% abstol=10^(-8) & TolX=0
+% workout_ErrToleranceTest.m --- test for Bump test functions with specific
+% number of iteration, absolut error tolerance and cost budget nmax
 %
-% workout_XToleranceTest.m --- test for Bump test functions with abstol=0 
-% & TolX=10^(-6)
+% workout_XToleranceTest.m --- test for Bump test functions with specific 
+% number of iteration, X tolerance and cost budget nmax
 %
-% workout_ErrorXToleranceTest.m --- test for Bump test functions with 
-% abstol=10^(-8) & TolX=10^(-6)
-% 
+% workout_ErrXToleranceTest.m --- test for Bump test functions with a 
+% specific number of iteration, absolut error tolerance, X tolerance and
+% cost budget nmax
+%  
 % workout_TwoExtremeTest.m --- test for Functions with two local minimum 
-% points 
-
+% points with specific number of iteration, X tolerance, and cost budget 
+% nmax
 
 
 

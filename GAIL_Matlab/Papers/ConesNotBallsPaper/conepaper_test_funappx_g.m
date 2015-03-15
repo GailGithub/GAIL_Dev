@@ -1,4 +1,4 @@
-%Execution file of automatic guaranteed algorithm for function approximation
+%CONEPAPER_TEST_FUNAPPX_G Generate Table 3. in Cones not ball paper Run automatic guaranteed algorithm for function approximation
 %  Generates Table 3 in the paper
 %
 %  N. Clancy, Y. Ding, C. Hamilton, F. J. Hickernell and Y. Zhang,
@@ -9,16 +9,17 @@
 
 %% Preliminaries
 %clear all, close all
-clearvars -except testCase
+%clearvars -except testCase
+function [succnowarn,succwarn]=conepaper_test_funappx_g(nrep,nmax,abstol)
 tstart = tic;
 
 %% Program parameters
-in_param.abstol = 10^(-8); %error tolerance
-in_param.nmax = 10^7; %cost budget
+in_param.abstol = abstol; %error tolerance
+in_param.nmax = nmax; %cost budget
 
 %% Simulation parameters
 %nrep = 100; %number of times to test, takes about a minute, can change
-nrep = 10000; %number of times to test used in the paper
+%nrep = 10000; %number of times to test used in the paper
 if (nrep >= 1000)
     warning(' Need more than one hour to replicate the result in the paper! ')
     warning('off','MATLAB:funappxtau_g:exceedbudget');
@@ -86,7 +87,7 @@ failwarn = mean((trueerrormat>in_param.abstol)&(exceedmat),1);
 display(' ')
 display('        Probability    Success   Success   Failure  Failure')
 display(' tau      In Cone    No Warning  Warning No Warning Warning')
-for i=1:ntau
+for i=1:3
     display(sprintf(['%5.0f %5.2f%%->%5.2f%% %7.2f%%' ...
         '%10.2f%% %7.2f%% %7.2f%% '],...
         [tauvec(i) 100*[pini(i) pfin(i) succnowarn(i) ...
@@ -94,18 +95,20 @@ for i=1:ntau
 end
 
 %% Save Output
-[GAILPATH,~,PATHNAMESEPARATOR] = GAILstart(0);
-filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
-    'ConesPaperOutput',PATHNAMESEPARATOR','ConesPaperFunAppxTest-',...
-    datestr(now,'dd-mmm-yyyy-HH-MM-SS'),'.mat');
-save(filename, ...
-    'tauvec','pini','pfin','succnowarn', ...
-    'succwarn','failnowarn','failwarn')
+% [GAILPATH,~,PATHNAMESEPARATOR] = GAILstart(0);
+% filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
+%     'ConesPaperOutput',PATHNAMESEPARATOR','ConesPaperFunAppxTest-',...
+%     datestr(now,'dd-mmm-yyyy-HH-MM-SS'),'.mat');
+% save(filename, ...
+%     'tauvec','pini','pfin','succnowarn', ...
+%     'succwarn','failnowarn','failwarn')
+gail.save_mat('ConesPaperOutput', 'ConesPaperFunAppxTest', tauvec,pini,...
+    pfin,succnowarn,succwarn,failnowarn,failwarn);
 toc(tstart)
 warning('on','MATLAB:funappxtau_g:exceedbudget');
 warning('on','MATLAB:funappxtau_g:peaky');
-
-%% The following output was obtained on 2013-August-17 by
+end
+%% The following output was obtained on 2013-Sep-03 by
 %  from the data in
 %       ConesPaperFunAppxTest-03-Sep-2013-18-37-05.mat
 %  by running the output section
@@ -116,3 +119,14 @@ warning('on','MATLAB:funappxtau_g:peaky');
 %   10  0.00%->26.12%   25.75%      0.24%   73.88%    0.13% 
 %  100 32.95%->57.74%   56.30%      0.76%   42.26%    0.68% 
 % 1000 66.59%->88.21%   75.82%      4.68%   11.78%    7.72% 
+%% The following output was obtained on 2015-Jan-24 by
+%  from the data in
+%       ConesPaperFunAppxTest-2015-Jan-24-13-34-24.mat
+%  by running the output section
+%
+%
+%         Probability    Success   Success   Failure  Failure
+%  tau      In Cone    No Warning  Warning No Warning Warning
+%    10  0.00%->25.38%   25.13%      0.17%   74.62%    0.08% 
+%   100 32.84%->57.65%   56.36%      0.62%   42.35%    0.67% 
+%  1000 66.70%->88.62%   75.71%      4.52%   11.38%    8.39% 

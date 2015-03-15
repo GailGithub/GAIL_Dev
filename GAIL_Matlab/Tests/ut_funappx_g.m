@@ -1,4 +1,4 @@
-%UT_FUNAPPX_G unit test for funappx_g
+%UT_FUNAPPX_G fast unit tests for funappx_g
 classdef ut_funappx_g < matlab.unittest.TestCase
 
   methods(Test)
@@ -8,9 +8,9 @@ classdef ut_funappx_g < matlab.unittest.TestCase
       in_param.abstol = 10^(-8); 
       in_param.nlo = 10;
       in_param.nhi = 100;
-      [pp, ~] = funappx_g(f,in_param);
+      [fappx, ~] = funappx_g(f,in_param);
       x = rand(10000,1);
-      actualerr = max(abs(ppval(pp,x)-f(x)));
+      actualerr = max(abs(fappx(x)-f(x)));
       testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
     end
     
@@ -19,9 +19,9 @@ classdef ut_funappx_g < matlab.unittest.TestCase
       in_param.abstol = 10^(-8); 
       in_param.nlo = 10;
       in_param.nhi = 100;
-      [pp, ~] = funappx_g(f,in_param);
+      [fappx, ~] = funappx_g(f,in_param);
       x = rand(10000,1);
-      actualerr = max(abs(ppval(pp,x)-f(x)));
+      actualerr = max(abs(fappx(x)-f(x)));
       testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
     end
     
@@ -30,9 +30,9 @@ classdef ut_funappx_g < matlab.unittest.TestCase
       in_param.abstol = 10^(-8); 
       in_param.nlo = 10;
       in_param.nhi = 10;
-      [pp, ~] = funappx_g(f,in_param);
+      [fappx, ~] = funappx_g(f,in_param);
       x = rand(10000,1);
-      actualerr = max(abs(ppval(pp,x)-f(x)));
+      actualerr = max(abs(fappx(x)-f(x)));
       testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
     end
     
@@ -41,9 +41,9 @@ classdef ut_funappx_g < matlab.unittest.TestCase
       in_param.abstol = 10^(-8); 
       in_param.nlo = 10;
       in_param.nhi = 100;
-      [pp, ~] = funappx_g(f,in_param);
+      [fappx, ~] = funappx_g(f,in_param);
       x = rand(10000,1);
-      actualerr = max(abs(ppval(pp,x)-f(x)));
+      actualerr = max(abs(fappx(x)-f(x)));
       testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
     end
           
@@ -52,9 +52,9 @@ classdef ut_funappx_g < matlab.unittest.TestCase
       in_param.a = 0; 
       in_param.b = 10;
       in_param.abstol = 10^(-6);
-      [pp,result] = funappx_g(f,in_param);
+      [fappx,result] = funappx_g(f,in_param);
       x = rand(10000,1)*(result.b-result.a)+result.a;
-      actualerr = max(abs(ppval(pp,x)-f(x)));
+      actualerr = max(abs(fappx(x)-f(x)));
       testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
     end
     
@@ -63,9 +63,9 @@ classdef ut_funappx_g < matlab.unittest.TestCase
       in_param.a = 0; 
       in_param.b = 0.001;
       in_param.abstol = 10^(-8);
-      [pp, result] = funappx_g(f,in_param);
+      [fappx, result] = funappx_g(f,in_param);
       x = rand(10000,1)*(result.b-result.a)+result.a;
-      actualerr = max(abs(ppval(pp,x)-f(x)));
+      actualerr = max(abs(fappx(x)-f(x)));
       testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
     end
     
@@ -76,9 +76,9 @@ classdef ut_funappx_g < matlab.unittest.TestCase
       in_param.abstol = 10^(-6);
       in_param.nlo = 10;
       in_param.nhi = 100;
-      [pp, result] = funappx_g(f,in_param);
+      [fappx, result] = funappx_g(f,in_param);
       x = rand(10000,1)*(result.b-result.a)+result.a;
-      actualerr = max(abs(ppval(pp,x)-f(x)));
+      actualerr = max(abs(fappx(x)-f(x)));
       testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
     end
     
@@ -89,9 +89,9 @@ classdef ut_funappx_g < matlab.unittest.TestCase
       in_param.abstol = 10^(-6);
       in_param.nlo = 10;
       in_param.nhi = 100;
-      [pp, result] = funappx_g(f,in_param);
+      [fappx, result] = funappx_g(f,in_param);
       x = rand(10000,1)*(result.b-result.a)+result.a;
-      actualerr = max(abs(ppval(pp,x)-f(x)));
+      actualerr = max(abs(fappx(x)-f(x)));
       testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
     end
     
@@ -99,16 +99,16 @@ classdef ut_funappx_g < matlab.unittest.TestCase
       f = @(x) x.^2;
       in_param.a = 2; 
       in_param.b = 1;  
-      [pp, result] = testCase.verifyWarning(@()funappx_g(f,in_param),'MATLAB:funappx_g:blea');
+      [fappx, result] = testCase.verifyWarning(@()funappx_g(f,in_param),'MATLAB:funappx_g:blea');
       x = rand(10000,1)*(result.b-result.a)+result.a;
-      actualerr = max(abs(ppval(pp,x)-f(x)));
+      actualerr = max(abs(fappx(x)-f(x)));
       testCase.verifyLessThanOrEqual(actualerr,result.abstol);
     end
     
     function funappx_gOfnofunction(testCase)
-      [pp, result] = testCase.verifyWarning(@()funappx_g,'MATLAB:funappx_g:nofunction');
+      [fappx, result] = testCase.verifyWarning(@()funappx_g,'MATLAB:funappx_g:nofunction');
       x = rand(10000,1)*(result.b-result.a)+result.a;
-      actualerr = max(abs(ppval(pp,x)-result.f(x)));
+      actualerr = max(abs(fappx(x)-result.f(x)));
       testCase.verifyLessThanOrEqual(actualerr,result.abstol);
     end
     
@@ -116,10 +116,24 @@ classdef ut_funappx_g < matlab.unittest.TestCase
       f = @(x) x.^2;
       in_param.a = 1; 
       in_param.b = 1;  
-      [pp, result] = testCase.verifyWarning(@()funappx_g(f,in_param),'MATLAB:funappx_g:beqa');
+      [fappx, result] = testCase.verifyWarning(@()funappx_g(f,in_param),'MATLAB:funappx_g:beqa');
       x = rand(10000,1)*(result.b-result.a)+result.a;
-      actualerr = max(abs(ppval(pp,x)-f(x)));
+      actualerr = max(abs(fappx(x)-f(x)));
       testCase.verifyLessThanOrEqual(actualerr,result.abstol);
+    end
+    
+    function funappx_gOfexceedbudget(testCase)
+      f = @(x) x.^2;
+      in_param.nmax = 1000; 
+      [~, result] = testCase.verifyWarning(@()funappx_g(f,in_param),'MATLAB:funappx_g:exceedbudget');
+      testCase.verifyLessThanOrEqual(result.npoints,result.nmax);
+    end
+    
+    function funappx_gOfexceediter(testCase)
+      f = @(x) x.^2;
+      in_param.maxiter = 2;
+      [~, result] = testCase.verifyWarning(@()funappx_g(f,in_param),'MATLAB:funappx_g:exceediter');
+      testCase.verifyLessThan(result.maxiter,result.iter);
     end
     
   end

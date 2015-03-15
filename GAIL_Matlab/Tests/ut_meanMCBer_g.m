@@ -1,4 +1,4 @@
-%UT_MEANMCBERNOULLI_G  unit test for meanMCBernoulli_g
+%UT_MEANMCBERNOULLI_G  unit tests for meanMCBer_g and Test_meanMCBer_g 
 classdef ut_meanMCBer_g < matlab.unittest.TestCase
     
     methods(Test)
@@ -30,6 +30,11 @@ classdef ut_meanMCBer_g < matlab.unittest.TestCase
                 in_param),'MATLAB:meanMCBer_g:abstolneg');
             actualerr = abs(pHat-p);
             testCase.verifyLessThanOrEqual(actualerr,abs(in_param.abstol));
+        end
+        
+        function meanMCBer_gOfWorkouts(testCase)
+            [ut_abserr,ut_abstol] = Test_meanMCBer_g;
+            testCase.verifyLessThanOrEqual(ut_abserr,ut_abstol);
         end
     end
 end

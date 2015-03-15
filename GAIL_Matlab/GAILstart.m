@@ -5,7 +5,7 @@ if nargin < 1
     isverbose =  true;
 end % print the variable names and values
 
-GAILVERSION = 2.0;
+GAILVERSION = '2.1';
 
 Friend = computer;
 
@@ -26,7 +26,7 @@ MATLABVERSION = str2double(V(1:wh));
 if(isverbose)
     fprintf('Setting Output:\n');
     fprintf('   MATLABVERSION = %g\n',        MATLABVERSION)
-    fprintf('   GAILVERSION = %g\n',          GAILVERSION)
+    fprintf('   GAILVERSION = %s\n',          GAILVERSION)
     fprintf('   GAILPATH = %s\n',             GAILPATH)
     fprintf('   PATHNAMESEPARATOR = "%s"\n',  PATHNAMESEPARATOR)
 end

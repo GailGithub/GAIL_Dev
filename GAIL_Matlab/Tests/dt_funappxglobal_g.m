@@ -1,3 +1,4 @@
+function dt_funappxglobal_g
 %DT_FUNAPPXGLOBAL_G small doctest for funappxglobal_g
 %
 %   >> funappxglobal_g

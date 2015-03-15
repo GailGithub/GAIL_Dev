@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>funappx_g</title><meta name="generator" content="MATLAB 8.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-10-29"><meta name="DC.source" content="help_funappx_g.m"><style type="text/css">
+      --><title>funappx_g</title><meta name="generator" content="MATLAB 8.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-03-11"><meta name="DC.source" content="help_funappx_g.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -66,139 +66,162 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1>funappx_g</h1><!--introduction--><p><tt>1-D guaranteed function recovery on a closed interval [a,b]</tt></p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Syntax</a></li><li><a href="#2">Description</a></li><li><a href="#3">Guarantee</a></li><li><a href="#4">Examples</a></li><li><a href="#8">See Also</a></li><li><a href="#9">References</a></li></ul></div><h2>Syntax<a name="1"></a></h2><p>pp = <b>funappx_g</b>(f)</p><p>pp = <b>funappx_g</b>(f,a,b,abstol,nlo,nhi,nmax,maxiter)</p><p>pp = <b>funappx_g</b>(f,in_param)</p><p>[pp, out_param] = <b>funappx_g</b>(f,...)</p><h2>Description<a name="2"></a></h2><p>pp = <b>funappx_g</b>(f) approximates function f on the default interval  [0,1] by a piecewise polynomial structure pp within the guaranteed  absolute error tolerance of 1e-6. Input f is a function handle. The  statement y = f(x) should accept a vector argument x and return a  vector y of function values that is of the same size as x. Output pp  may be evaluated via PPVAL.</p><p>pp = <b>funappx_g</b>(f,a,b,abstol,nlo,nhi,nmax,maxiter) for a given  function f and the ordered input parameters that define the finite  interval [a,b], a guaranteed absolute error tolerance abstol, a lower  bound of initial number of points nlo, an upper bound of initial number  of points nhi, a cost budget nmax and max number of iteration maxiter.</p><p>pp = <b>funappx_g</b>(f,'a',a,'b',b,'abstol',abstol,'nlo',nlo,'nhi',nhi,'nmax',nmax,'maxiter',maxiter)  recovers function f on the finite interval [a,b], given a guaranteed  absolute error tolerance abstol, a lower bound of initial number of  points nlo, an upper bound of initial number of points nhi, a cost  budget nmax and max number of iteration maxiter. All seven field-value  pairs are optional and can be supplied in different order.</p><p>pp = <b>funappx_g</b>(f,in_param) recovers function f on the finite  interval [in_param.a,in_param.b], given a guaranteed absolute error  tolerance in_param.abstol, a lower bound of initial number of points  in_param.nlo, an upper bound of initial number of points in_param.nhi,  a cost budget in_param.nmax and max number of iteration  in_param.maxiter. If a field is not specified, the default value is  used.</p><p>[pp, out_param] = <b>funappx_g</b>(f,...) returns a piecewise polynomial  structure pp and an output structure out_param.</p><p><b>Input Arguments</b></p><div><ul><li>in_param.a --- <tt>left end point of interval, default value is 0</tt></li></ul></div><div><ul><li>in_param.b --- <tt>right end point of interval, default value is 1</tt></li></ul></div><div><ul><li>in_param.abstol --- <tt>guaranteed absolute error tolerance, default  value is 1e-6</tt></li></ul></div><div><ul><li>in_param.nlo --- <tt>lower bound of initial number of points we used,  default value is 10</tt></li></ul></div><div><ul><li>in_param.nhi --- <tt>upper bound of initial number of points we used,  default value is 1000</tt></li></ul></div><div><ul><li>in_param.nmax --- <tt>when number of points hits the value, iteration  will stop, default value is 1e7</tt></li></ul></div><div><ul><li>in_param.maxiter --- <tt>max number of interation, default value is 1000</tt></li></ul></div><p><b>Output Arguments</b></p><div><ul><li>pp.form --- <tt>pp means piecewise polynomials</tt></li></ul></div><div><ul><li>pp.breaks --- <tt>show the location of interpolation points</tt></li></ul></div><div><ul><li>pp.coefs --- <tt>coefficients for piecewise linear polynomials</tt></li></ul></div><div><ul><li>pp.pieces --- <tt>number of piecewise linear polynomials</tt></li></ul></div><div><ul><li>pp.order --- <tt>be 2 as we use piecewise linear polynomials</tt></li></ul></div><div><ul><li>pp.dim --- <tt>be 1 as we do univariate approximation</tt></li></ul></div><div><ul><li>pp.orient --- <tt>always be 'first'</tt></li></ul></div><div><ul><li>out_param.ninit --- <tt>initial number of points we use for each sub  interval</tt></li></ul></div><div><ul><li>out_param.npoints --- <tt>number of points we need to reach the  guaranteed absolute error tolerance</tt></li></ul></div><div><ul><li>out_param.errorbound --- <tt>an upper bound of the absolute error</tt></li></ul></div><div><ul><li>out_param.nstar --- <tt>final value of the parameter defining the cone of  functions for which this algorithm is guaranteed for each  subinterval; nstar = ninit-2 initially</tt></li></ul></div><div><ul><li>out_param.a --- <tt>left end point of interval</tt></li></ul></div><div><ul><li>out_param.b --- <tt>right end point of interval</tt></li></ul></div><div><ul><li>out_param.abstol --- <tt>guaranteed absolute error tolerance</tt></li></ul></div><div><ul><li>out_param.nlo --- <tt>a lower bound of initial number of points we use</tt></li></ul></div><div><ul><li>out_param.nhi --- <tt>an upper bound of initial number of points we use</tt></li></ul></div><div><ul><li>out_param.nmax --- <tt>when number of points hits the value, iteration  will stop</tt></li></ul></div><div><ul><li>out_param.maxiter --- <tt>max number of interation</tt></li></ul></div><h2>Guarantee<a name="3"></a></h2><p><tt>For</tt> <img src="help_funappx_g_eq50527.png" alt="$[a,b]$">, <tt>there exists a partition</tt></p><p><img src="help_funappx_g_eq46427.png" alt="$$ P=\{[t_0,t_1], [t_1,t_2],  \ldots, [t_{L-1},t_L]\},  a=t_0 < t_1 < \cdots < t_L=b.$$"></p><p><tt>If the function to be approximated,</tt>  <img src="help_funappx_g_eq85998.png" alt="$f$">  <tt>satisfies the cone condition</tt></p><p><img src="help_funappx_g_eq34343.png" alt="$$\|f''\|_\infty \le \frac { 2\mathrm{nstar} }{t_l-t_{l-1} } \left\|f'-\frac{f(t_l)-f(t_{l-1})}{t_l-t_{l-1}}\right\|_\infty$$"></p><p><tt>for each sub interval</tt> <img src="help_funappx_g_eq57133.png" alt="$[t_{l-1},t_l]$">, <tt>where</tt> <img src="help_funappx_g_eq52859.png" alt="$1 \le l \le L$">, <tt>then the</tt> <img src="help_funappx_g_eq28805.png" alt="$pp$"> <tt>output by this algorithm is guaranteed to satisfy</tt></p><p><img src="help_funappx_g_eq21338.png" alt="$$\| f-ppval(pp,)\|_{\infty} \le \mathrm{abstol}.$$"></p><h2>Examples<a name="4"></a></h2><p><b>Example 1</b></p><pre class="codeinput">f = @(x) x.^2; [pp, out_param] = funappx_g(f)
+  </style></head><body><div class="content"><h1>funappx_g</h1><!--introduction--><p>1-D guaranteed locally adaptive function approximation (or function recovery) on [a,b]</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Syntax</a></li><li><a href="#2">Description</a></li><li><a href="#3">Guarantee</a></li><li><a href="#4">Examples</a></li><li><a href="#8">See Also</a></li><li><a href="#9">References</a></li></ul></div><h2>Syntax<a name="1"></a></h2><p>fappx = <b>funappx_g</b>(f)</p><p>fappx = <b>funappx_g</b>(f,a,b,abstol)</p><p>fappx = <b>funappx_g</b>(f,'a',a,'b',b,'abstol',abstol)</p><p>fappx = <b>funappx_g</b>(f,in_param)</p><p>[fappx, out_param] = <b>funappx_g</b>(f,...)</p><h2>Description<a name="2"></a></h2><p>fappx = <b>funappx_g</b>(f) approximates function f on the default interval  [0,1] by an approximated function handle fappx within the guaranteed  absolute error tolerance of 1e-6. When Matlab version is higher or  equal to 8.3, fappx is an interpolant generated by griddedInterpolant.  When Matlab version is lower than 8.3, fappx is a function handle  generated by ppval and interp1. Input f is a function handle. The  statement y = f(x) should accept a vector argument x and return a  vector y of function values that is of the same size as x.</p><p>fappx = <b>funappx_g</b>(f,a,b,abstol) for a given function f and the ordered  input parameters that define the finite interval [a,b], and a  guaranteed absolute error tolerance abstol.</p><p>fappx = <b>funappx_g</b>(f,'a',a,'b',b,'abstol',abstol) approximates function  f on the finite interval [a,b], given a guaranteed absolute error  tolerance abstol. All four field-value pairs are optional and can be  supplied in different order.</p><p>fappx = <b>funappx_g</b>(f,in_param) approximates function f on the finite  interval [in_param.a,in_param.b], given a guaranteed absolute error  tolerance in_param.abstol. If a field is not specified, the default  value is used.</p><p>[fappx, out_param] = <b>funappx_g</b>(f,...) returns an approximated function  fappx and an output structure out_param.</p><p><b>Input Arguments</b></p><div><ul><li>f --- input function</li></ul></div><div><ul><li>in_param.a --- left end point of interval, default value is 0</li></ul></div><div><ul><li>in_param.b --- right end point of interval, default value is 1</li></ul></div><div><ul><li>in_param.abstol --- guaranteed absolute error tolerance, default  value is 1e-6</li></ul></div><p><b>Optional Input Arguments</b></p><div><ul><li>in_param.nlo --- lower bound of initial number of points we used,  default value is 10</li></ul></div><div><ul><li>in_param.nhi --- upper bound of initial number of points we used,  default value is 1000</li></ul></div><div><ul><li>in_param.nmax --- when number of points hits the value, iteration  will stop, default value is 1e7</li></ul></div><div><ul><li>in_param.maxiter --- max number of iterations, default value is 1000</li></ul></div><p><b>Output Arguments</b></p><div><ul><li>fappx --- approximated function handle (Note: When Matlab version is  higher or equal to 8.3, fappx is an interpolant generated by  griddedInterpolant. When Matlab version is lower than 8.3, fappx is a  function handle generated by ppval and interp1.)</li></ul></div><div><ul><li>out_param.f --- input function</li></ul></div><div><ul><li>out_param.a --- left end point of interval</li></ul></div><div><ul><li>out_param.b --- right end point of interval</li></ul></div><div><ul><li>out_param.abstol --- guaranteed absolute error tolerance</li></ul></div><div><ul><li>out_param.nlo --- a lower bound of initial number of points we use</li></ul></div><div><ul><li>out_param.nhi --- an upper bound of initial number of points we use</li></ul></div><div><ul><li>out_param.nmax --- when number of points hits the value, iteration  will stop</li></ul></div><div><ul><li>out_param.maxiter --- max number of iterations</li></ul></div><div><ul><li>out_param.ninit --- initial number of points we use for each sub  interval</li></ul></div><p>
+<ul type="square">
+ <li>out_param.exit --- this is a number defining the conditions of
+ success or failure satisfied when finishing the algorithm. The
+ algorithm is considered successful (with out_param.exit == 0) if no
+ other flags arise warning that the results are certainly not
+ guaranteed. The initial value is 0 and the final value of this
+ parameter is encoded as follows:</li>
+  <ul type="circle">
+   <li>1   If reaching overbudget. It states whether
+                the max budget is attained without reaching the
+                   guaranteed error tolerance.</li>
+   <li>2   If reaching overiteration. It states whether
+                   the max iterations is attained without reaching the
+                   guaranteed error tolerance.</li>
+  </ul>
+</ul>
+</p><div><ul><li>out_param.iter --- number of iterations</li></ul></div><div><ul><li>out_param.npoints --- number of points we need to reach the  guaranteed absolute error tolerance</li></ul></div><div><ul><li>out_param.errest --- an estimation of the absolute error for the  approximation</li></ul></div><div><ul><li>out_param.nstar --- final value of the parameter defining the cone of  functions for which this algorithm is guaranteed for each  subinterval; nstar = ninit-2 initially</li></ul></div><h2>Guarantee<a name="3"></a></h2><p>For <img src="help_funappx_g_eq50527.png" alt="$[a,b]$">, there exists a partition</p><p><img src="help_funappx_g_eq46427.png" alt="$$ P=\{[t_0,t_1], [t_1,t_2],  \ldots, [t_{L-1},t_L]\},  a=t_0 < t_1 < \cdots < t_L=b.$$"></p><p>If the function to be approximated,  <img src="help_funappx_g_eq85998.png" alt="$f$"> satisfies the cone condition</p><p><img src="help_funappx_g_eq34343.png" alt="$$\|f''\|_\infty \le \frac { 2\mathrm{nstar} }{t_l-t_{l-1} } \left\|f'-\frac{f(t_l)-f(t_{l-1})}{t_l-t_{l-1}}\right\|_\infty$$"></p><p>for each sub interval <img src="help_funappx_g_eq57133.png" alt="$[t_{l-1},t_l]$">, where <img src="help_funappx_g_eq52859.png" alt="$1 \le l \le L$">, then the <img src="help_funappx_g_eq29234.png" alt="$fappx$"> |output by this algorithm is guaranteed to satisfy</p><p><img src="help_funappx_g_eq28942.png" alt="$$\| f-fappx \|_{\infty} \le \mathrm{abstol}.$$"></p><h2>Examples<a name="4"></a></h2><p><b>Example 1</b></p><pre class="codeinput">f = @(x) x.^2; [fappx, out_param] = funappx_g(f)
 
 <span class="comment">% Approximate function x^2 with default input parameter to make the error</span>
 <span class="comment">% less than 1e-6.</span>
 </pre><pre class="codeoutput">
-pp = 
+fappx = 
 
-      form: 'pp'
-    breaks: [1x3169 double]
-     coefs: [3168x2 double]
-    pieces: 3168
-     order: 2
-       dim: 1
-    orient: 'first'
+  griddedInterpolant with properties:
+
+            GridVectors: {[1x3169 double]}
+                 Values: [1x3169 double]
+                 Method: 'linear'
+    ExtrapolationMethod: 'linear'
 
 
 out_param = 
 
-             f: @(x)x.^2
-             a: 0
-             b: 1
-        abstol: 1.0000e-06
-           nlo: 10
-           nhi: 1000
-          nmax: 10000000
-       maxiter: 1000
-         ninit: 100
-       npoints: 3169
-    errorbound: 2.7429e-07
-         nstar: [1x32 double]
+          f: @(x)x.^2
+          a: 0
+          b: 1
+     abstol: 1.0000e-06
+        nlo: 10
+        nhi: 1000
+       nmax: 10000000
+    maxiter: 1000
+      ninit: 100
+       exit: [2x1 logical]
+       iter: 6
+    npoints: 3169
+     errest: 2.7429e-07
+      nstar: [1x32 double]
 
-</pre><p><b>Example 2</b></p><pre class="codeinput">[pp, out_param] = funappx_g(@(x) x.^2,0,100,1e-7,10,1000,1e8)
+</pre><p><b>Example 2</b></p><pre class="codeinput">[fappx, out_param] = funappx_g(@(x) x.^2,0,100,1e-7,10,1000,1e8)
 
-<span class="comment">% Approximate function x^2 on [0,100] with error tolerence 1e-7, cost</span>
+<span class="comment">% Approximate function x^2 on [0,100] with error tolerance 1e-7, cost</span>
 <span class="comment">% budget 10000000, lower bound of initial number of points 10 and upper</span>
 <span class="comment">% bound of initial number of points 100</span>
 </pre><pre class="codeoutput">
-pp = 
+fappx = 
 
-      form: 'pp'
-    breaks: [1x977921 double]
-     coefs: [977920x2 double]
-    pieces: 977920
-     order: 2
-       dim: 1
-    orient: 'first'
+  griddedInterpolant with properties:
+
+            GridVectors: {[1x977921 double]}
+                 Values: [1x977921 double]
+                 Method: 'linear'
+    ExtrapolationMethod: 'linear'
 
 
 out_param = 
 
-             a: 0
-        abstol: 1.0000e-07
-             b: 100
-             f: @(x)x.^2
-       maxiter: 1000
-           nhi: 1000
-           nlo: 10
-          nmax: 100000000
-         ninit: 956
-       npoints: 977921
-    errorbound: 3.7104e-08
-         nstar: [1x1024 double]
+          a: 0
+     abstol: 1.0000e-07
+          b: 100
+          f: @(x)x.^2
+    maxiter: 1000
+        nhi: 1000
+        nlo: 10
+       nmax: 100000000
+      ninit: 956
+       exit: [2x1 logical]
+       iter: 11
+    npoints: 977921
+     errest: 3.7104e-08
+      nstar: [1x1024 double]
 
 </pre><p><b>Example 3</b></p><pre class="codeinput">clear <span class="string">in_param</span>; in_param.a = -20; in_param.b = 20; in_param.nlo = 10;
 in_param.nhi = 100; in_param.nmax = 1e8; in_param.abstol = 1e-7;
-[pp, out_param] = funappx_g(@(x) x.^2, in_param)
+[fappx, out_param] = funappx_g(@(x) x.^2, in_param)
 
-<span class="comment">% Approximate function x^2 on [-20,20] with error tolerence 1e-7, cost</span>
+<span class="comment">% Approximate function x^2 on [-20,20] with error tolerance 1e-7, cost</span>
 <span class="comment">% budget 1000000, lower bound of initial number of points 10 and upper</span>
 <span class="comment">% bound of initial number of points 100</span>
 </pre><pre class="codeoutput">
-pp = 
+fappx = 
 
-      form: 'pp'
-    breaks: [1x385025 double]
-     coefs: [385024x2 double]
-    pieces: 385024
-     order: 2
-       dim: 1
-    orient: 'first'
+  griddedInterpolant with properties:
+
+            GridVectors: {[1x385025 double]}
+                 Values: [1x385025 double]
+                 Method: 'linear'
+    ExtrapolationMethod: 'linear'
 
 
 out_param = 
 
-             a: -20
-        abstol: 1.0000e-07
-             b: 20
-             f: @(x)x.^2
-       maxiter: 1000
-           nhi: 100
-           nlo: 10
-          nmax: 100000000
-         ninit: 95
-       npoints: 385025
-    errorbound: 2.6570e-08
-         nstar: [1x4096 double]
+          a: -20
+     abstol: 1.0000e-07
+          b: 20
+          f: @(x)x.^2
+    maxiter: 1000
+        nhi: 100
+        nlo: 10
+       nmax: 100000000
+      ninit: 95
+       exit: [2x1 logical]
+       iter: 13
+    npoints: 385025
+     errest: 2.6570e-08
+      nstar: [1x4096 double]
 
 </pre><p><b>Example 4</b></p><pre class="codeinput">clear <span class="string">in_param</span>; f = @(x) x.^2;
-[pp, out_param] = funappx_g(f,<span class="string">'a'</span>,-10,<span class="string">'b'</span>,50,<span class="string">'nmax'</span>,1e6,<span class="string">'abstol'</span>,1e-8)
+[fappx, out_param] = funappx_g(f,<span class="string">'a'</span>,-10,<span class="string">'b'</span>,50,<span class="string">'nmax'</span>,1e6,<span class="string">'abstol'</span>,1e-7)
 
-<span class="comment">% Approximate function x^2 with error tolerence 1e-8, cost budget 1000000,</span>
+<span class="comment">% Approximate function x^2 with error tolerance 1e-7, cost budget 1000000,</span>
 <span class="comment">% lower bound of initial number of points 10 and upper</span>
 <span class="comment">% bound of initial number of points 100</span>
-</pre><pre class="codeoutput">Warning: funappx_g attempted to exceed the cost budget. The answer may be
-unreliable. 
+</pre><pre class="codeoutput">
+fappx = 
 
-pp = 
+  griddedInterpolant with properties:
 
-      form: 'pp'
-    breaks: [1x1898497 double]
-     coefs: [1898496x2 double]
-    pieces: 1898496
-     order: 2
-       dim: 1
-    orient: 'first'
+            GridVectors: {[1x474625 double]}
+                 Values: [1x474625 double]
+                 Method: 'linear'
+    ExtrapolationMethod: 'linear'
 
 
 out_param = 
 
-             a: -10
-        abstol: 1.0000e-08
-             b: 50
-             f: @(x)x.^2
-       maxiter: 1000
-           nhi: 1000
-           nlo: 10
-          nmax: 1000000
-         ninit: 928
-       npoints: 1898497
-    errorbound: 1.1107e-08
-         nstar: [1x1024 double]
+          a: -10
+     abstol: 1.0000e-07
+          b: 50
+          f: @(x)x.^2
+    maxiter: 1000
+        nhi: 1000
+        nlo: 10
+       nmax: 1000000
+      ninit: 928
+       exit: [2x1 logical]
+       iter: 10
+    npoints: 474625
+     errest: 6.0849e-08
+      nstar: [1x512 double]
 
 </pre><h2>See Also<a name="8"></a></h2><p>
+<a href="http://www.mathworks.com/help/matlab/ref/interp1.html">interp1</a>
+</p><p>
+<a href="http://www.mathworks.com/help/matlab/ref/griddedinterpolant-class.html">griddedinterpolant</a>
+</p><p>
 <a href="help_integral_g.html">integral_g</a>
 </p><p>
 <a href="help_meanMC_g.html">meanMC_g</a>
@@ -206,141 +229,159 @@ out_param =
 <a href="help_cubMC_g.html">cubMC_g</a>
 </p><p>
 <a href="help_funmin_g.html">funmin_g</a>
-</p><h2>References<a name="9"></a></h2><p>[1]  Nick Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and Yizhi Zhang, The Cost of Deterministic, Adaptive, Automatic Algorithms: Cones, Not Balls, Journal of Complexity 30 (2014), pp. 21-45.</p><p>[2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou, "GAIL: Guaranteed Automatic Integration Library (Version 2.0)" [MATLAB Software], 2014. Available from <a href="http://code.google.com/p/gail/">http://code.google.com/p/gail/</a></p><p>If you find GAIL helpful in your work, please support us by citing the above paper and software.</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014a</a><br></p></div><!--
+</p><h2>References<a name="9"></a></h2><p>[1]  Nick Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and Yizhi Zhang, <i>The Cost of Deterministic, Adaptive, Automatic Algorithms: Cones, Not Balls,</i> Journal of Complexity 30, pp. 21-45, 2014.</p><p>[2]  Yuhan Ding, Fred J. Hickernell, and Sou-Cheng T. Choi, <i>Locally Adaptive Method for Approximating Univariate Functions in Cones with a Guarantee for Accuracy,</i> working, 2015.</p><p>[3]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou, GAIL: Guaranteed Automatic Integration Library (Version 2.1) [MATLAB Software], 2015. Available from <a href="http://code.google.com/p/gail/">http://code.google.com/p/gail/</a></p><p>[4] Sou-Cheng T. Choi, <i>MINRES-QLP Pack and Reliable Reproducible Research via Supportable Scientific Software,</i> Journal of Open Research Software, Volume 2, Number 1, e22, pp. 1-7, 2014.</p><p>[5] Sou-Cheng T. Choi and Fred J. Hickernell, <i>IIT MATH-573 Reliable Mathematical Software</i> [Course Slides], Illinois Institute of Technology, Chicago, IL, 2013. Available from <a href="http://code.google.com/p/gail/">http://code.google.com/p/gail/</a></p><p>[6] Daniel S. Katz, Sou-Cheng T. Choi, Hilmar Lapp, Ketan Maheshwari, Frank Loffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr, James Hetherington, James Howison, Shel Swenson, Gabrielle D. Allen, Anne C. Elster, Bruce Berriman, Colin Venters, <i>Summary of the First Workshop On Sustainable Software for Science: Practice And Experiences (WSSSPE1),</i> Journal of Open Research Software, Volume 2, Number 1, e6, pp. 1-21, 2014.</p><p>If you find GAIL helpful in your work, please support us by citing the above papers, software, and materials.</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 %% funappx_g
-% |1-D guaranteed function recovery on a closed interval [a,b]|
+% 1-D guaranteed locally adaptive function approximation (or function recovery) on [a,b]
 %% Syntax
-% pp = *funappx_g*(f)
+% fappx = *funappx_g*(f)
 %
-% pp = *funappx_g*(f,a,b,abstol,nlo,nhi,nmax,maxiter)
+% fappx = *funappx_g*(f,a,b,abstol)
 %
-% pp = *funappx_g*(f,in_param)
+% fappx = *funappx_g*(f,'a',a,'b',b,'abstol',abstol)
 %
-% [pp, out_param] = *funappx_g*(f,...)
+% fappx = *funappx_g*(f,in_param)
+%
+% [fappx, out_param] = *funappx_g*(f,...)
 %% Description
 %
-% pp = *funappx_g*(f) approximates function f on the default interval
-%  [0,1] by a piecewise polynomial structure pp within the guaranteed
-%  absolute error tolerance of 1e-6. Input f is a function handle. The
+% fappx = *funappx_g*(f) approximates function f on the default interval
+%  [0,1] by an approximated function handle fappx within the guaranteed
+%  absolute error tolerance of 1e-6. When Matlab version is higher or
+%  equal to 8.3, fappx is an interpolant generated by griddedInterpolant.
+%  When Matlab version is lower than 8.3, fappx is a function handle
+%  generated by ppval and interp1. Input f is a function handle. The
 %  statement y = f(x) should accept a vector argument x and return a
-%  vector y of function values that is of the same size as x. Output pp
-%  may be evaluated via PPVAL.
+%  vector y of function values that is of the same size as x.
 %
-% pp = *funappx_g*(f,a,b,abstol,nlo,nhi,nmax,maxiter) for a given
-%  function f and the ordered input parameters that define the finite
-%  interval [a,b], a guaranteed absolute error tolerance abstol, a lower
-%  bound of initial number of points nlo, an upper bound of initial number
-%  of points nhi, a cost budget nmax and max number of iteration maxiter.
+% fappx = *funappx_g*(f,a,b,abstol) for a given function f and the ordered
+%  input parameters that define the finite interval [a,b], and a
+%  guaranteed absolute error tolerance abstol.
 %
-% pp = *funappx_g*(f,'a',a,'b',b,'abstol',abstol,'nlo',nlo,'nhi',nhi,'nmax',nmax,'maxiter',maxiter)
-%  recovers function f on the finite interval [a,b], given a guaranteed
-%  absolute error tolerance abstol, a lower bound of initial number of
-%  points nlo, an upper bound of initial number of points nhi, a cost
-%  budget nmax and max number of iteration maxiter. All seven field-value
-%  pairs are optional and can be supplied in different order.
+% fappx = *funappx_g*(f,'a',a,'b',b,'abstol',abstol) approximates function
+%  f on the finite interval [a,b], given a guaranteed absolute error
+%  tolerance abstol. All four field-value pairs are optional and can be
+%  supplied in different order.
 %
-% pp = *funappx_g*(f,in_param) recovers function f on the finite
+% fappx = *funappx_g*(f,in_param) approximates function f on the finite
 %  interval [in_param.a,in_param.b], given a guaranteed absolute error
-%  tolerance in_param.abstol, a lower bound of initial number of points
-%  in_param.nlo, an upper bound of initial number of points in_param.nhi,
-%  a cost budget in_param.nmax and max number of iteration
-%  in_param.maxiter. If a field is not specified, the default value is
-%  used.
+%  tolerance in_param.abstol. If a field is not specified, the default
+%  value is used.
 %
-% [pp, out_param] = *funappx_g*(f,...) returns a piecewise polynomial
-%  structure pp and an output structure out_param.
+% [fappx, out_param] = *funappx_g*(f,...) returns an approximated function
+%  fappx and an output structure out_param.
 %
 % *Input Arguments*
 %
-% * in_param.a REPLACE_WITH_DASH_DASH- |left end point of interval, default value is 0|
+% * f REPLACE_WITH_DASH_DASH- input function
 %
-% * in_param.b REPLACE_WITH_DASH_DASH- |right end point of interval, default value is 1|
+% * in_param.a REPLACE_WITH_DASH_DASH- left end point of interval, default value is 0
 %
-% * in_param.abstol REPLACE_WITH_DASH_DASH- |guaranteed absolute error tolerance, default
-%  value is 1e-6|
+% * in_param.b REPLACE_WITH_DASH_DASH- right end point of interval, default value is 1
 %
-% * in_param.nlo REPLACE_WITH_DASH_DASH- |lower bound of initial number of points we used,
-%  default value is 10|
+% * in_param.abstol REPLACE_WITH_DASH_DASH- guaranteed absolute error tolerance, default
+%  value is 1e-6
 %
-% * in_param.nhi REPLACE_WITH_DASH_DASH- |upper bound of initial number of points we used,
-%  default value is 1000|
+% *Optional Input Arguments*
 %
-% * in_param.nmax REPLACE_WITH_DASH_DASH- |when number of points hits the value, iteration
-%  will stop, default value is 1e7|
+% * in_param.nlo REPLACE_WITH_DASH_DASH- lower bound of initial number of points we used,
+%  default value is 10
 %
-% * in_param.maxiter REPLACE_WITH_DASH_DASH- |max number of interation, default value is 1000|
+% * in_param.nhi REPLACE_WITH_DASH_DASH- upper bound of initial number of points we used,
+%  default value is 1000
+%
+% * in_param.nmax REPLACE_WITH_DASH_DASH- when number of points hits the value, iteration
+%  will stop, default value is 1e7
+%
+% * in_param.maxiter REPLACE_WITH_DASH_DASH- max number of iterations, default value is 1000
 %
 % *Output Arguments*
 %
-% * pp.form REPLACE_WITH_DASH_DASH- |pp means piecewise polynomials|
+% * fappx REPLACE_WITH_DASH_DASH- approximated function handle (Note: When Matlab version is
+%  higher or equal to 8.3, fappx is an interpolant generated by
+%  griddedInterpolant. When Matlab version is lower than 8.3, fappx is a
+%  function handle generated by ppval and interp1.)
 %
-% * pp.breaks REPLACE_WITH_DASH_DASH- |show the location of interpolation points|
+% * out_param.f REPLACE_WITH_DASH_DASH- input function
 %
-% * pp.coefs REPLACE_WITH_DASH_DASH- |coefficients for piecewise linear polynomials|
+% * out_param.a REPLACE_WITH_DASH_DASH- left end point of interval
 %
-% * pp.pieces REPLACE_WITH_DASH_DASH- |number of piecewise linear polynomials|
+% * out_param.b REPLACE_WITH_DASH_DASH- right end point of interval
 %
-% * pp.order REPLACE_WITH_DASH_DASH- |be 2 as we use piecewise linear polynomials|
+% * out_param.abstol REPLACE_WITH_DASH_DASH- guaranteed absolute error tolerance
 %
-% * pp.dim REPLACE_WITH_DASH_DASH- |be 1 as we do univariate approximation|
+% * out_param.nlo REPLACE_WITH_DASH_DASH- a lower bound of initial number of points we use
 %
-% * pp.orient REPLACE_WITH_DASH_DASH- |always be 'first'|
+% * out_param.nhi REPLACE_WITH_DASH_DASH- an upper bound of initial number of points we use
 %
-% * out_param.ninit REPLACE_WITH_DASH_DASH- |initial number of points we use for each sub
-%  interval|
+% * out_param.nmax REPLACE_WITH_DASH_DASH- when number of points hits the value, iteration
+%  will stop
 %
-% * out_param.npoints REPLACE_WITH_DASH_DASH- |number of points we need to reach the
-%  guaranteed absolute error tolerance|
+% * out_param.maxiter REPLACE_WITH_DASH_DASH- max number of iterations
 %
-% * out_param.errorbound REPLACE_WITH_DASH_DASH- |an upper bound of the absolute error|
+% * out_param.ninit REPLACE_WITH_DASH_DASH- initial number of points we use for each sub
+%  interval
 %
-% * out_param.nstar REPLACE_WITH_DASH_DASH- |final value of the parameter defining the cone of
+% <html>
+% <ul type="square">
+%  <li>out_param.exit REPLACE_WITH_DASH_DASH- this is a number defining the conditions of
+%  success or failure satisfied when finishing the algorithm. The 
+%  algorithm is considered successful (with out_param.exit == 0) if no 
+%  other flags arise warning that the results are certainly not 
+%  guaranteed. The initial value is 0 and the final value of this
+%  parameter is encoded as follows:</li>
+%   <ul type="circle">
+%    <li>1   If reaching overbudget. It states whether
+%                 the max budget is attained without reaching the
+%                    guaranteed error tolerance.</li>
+%    <li>2   If reaching overiteration. It states whether
+%                    the max iterations is attained without reaching the
+%                    guaranteed error tolerance.</li>
+%   </ul>
+% </ul>
+% </html>
+%
+% * out_param.iter REPLACE_WITH_DASH_DASH- number of iterations
+%
+% * out_param.npoints REPLACE_WITH_DASH_DASH- number of points we need to reach the
+%  guaranteed absolute error tolerance
+%
+% * out_param.errest REPLACE_WITH_DASH_DASH- an estimation of the absolute error for the
+%  approximation
+%
+% * out_param.nstar REPLACE_WITH_DASH_DASH- final value of the parameter defining the cone of
 %  functions for which this algorithm is guaranteed for each
-%  subinterval; nstar = ninit-2 initially|
-%
-% * out_param.a REPLACE_WITH_DASH_DASH- |left end point of interval|
-%
-% * out_param.b REPLACE_WITH_DASH_DASH- |right end point of interval|
-%
-% * out_param.abstol REPLACE_WITH_DASH_DASH- |guaranteed absolute error tolerance|
-%
-% * out_param.nlo REPLACE_WITH_DASH_DASH- |a lower bound of initial number of points we use|
-%
-% * out_param.nhi REPLACE_WITH_DASH_DASH- |an upper bound of initial number of points we use|
-%
-% * out_param.nmax REPLACE_WITH_DASH_DASH- |when number of points hits the value, iteration
-%  will stop|
-%
-% * out_param.maxiter REPLACE_WITH_DASH_DASH- |max number of interation|
+%  subinterval; nstar = ninit-2 initially
 %
 %% Guarantee
 %
-% |For| $[a,b]$, |there exists a partition|
+% For $[a,b]$, there exists a partition
 %
 % $$ P=\{[t_0,t_1], [t_1,t_2],  \ldots, [t_{L-1},t_L]\},  a=t_0 < t_1 < \cdots < t_L=b.$$
 % 
-% |If the function to be approximated,|  $f$  |satisfies the cone condition|
+% If the function to be approximated,  $f$ satisfies the cone condition
 %
 % $$\|f''\|_\infty \le \frac { 2\mathrm{nstar} }{t_l-t_{l-1} } \left\|f'-\frac{f(t_l)-f(t_{l-1})}{t_l-t_{l-1}}\right\|_\infty$$
 % 
-% |for each sub interval| $[t_{l-1},t_l]$, |where| $1 \le l \le L$,
-% |then the| $pp$ |output by this algorithm is guaranteed to satisfy|
+% for each sub interval $[t_{l-1},t_l]$, where $1 \le l \le L$, then the
+% $fappx$ |output by this algorithm is guaranteed to satisfy
 %
-% $$\| f-ppval(pp,)\|_{\infty} \le \mathrm{abstol}.$$
+% $$\| f-fappx \|_{\infty} \le \mathrm{abstol}.$$
+%
+%
 %% Examples
 % *Example 1*
 
-f = @(x) x.^2; [pp, out_param] = funappx_g(f)
+f = @(x) x.^2; [fappx, out_param] = funappx_g(f)
 
 % Approximate function x^2 with default input parameter to make the error
 % less than 1e-6.
 %%
 % *Example 2*
 
-[pp, out_param] = funappx_g(@(x) x.^2,0,100,1e-7,10,1000,1e8)
+[fappx, out_param] = funappx_g(@(x) x.^2,0,100,1e-7,10,1000,1e8)
 
-% Approximate function x^2 on [0,100] with error tolerence 1e-7, cost
+% Approximate function x^2 on [0,100] with error tolerance 1e-7, cost
 % budget 10000000, lower bound of initial number of points 10 and upper
 % bound of initial number of points 100
 
@@ -349,21 +390,29 @@ f = @(x) x.^2; [pp, out_param] = funappx_g(f)
 
 clear in_param; in_param.a = -20; in_param.b = 20; in_param.nlo = 10;
 in_param.nhi = 100; in_param.nmax = 1e8; in_param.abstol = 1e-7; 
-[pp, out_param] = funappx_g(@(x) x.^2, in_param)
+[fappx, out_param] = funappx_g(@(x) x.^2, in_param)
 
-% Approximate function x^2 on [-20,20] with error tolerence 1e-7, cost
+% Approximate function x^2 on [-20,20] with error tolerance 1e-7, cost
 % budget 1000000, lower bound of initial number of points 10 and upper
 % bound of initial number of points 100
 %%
 % *Example 4*
 
 clear in_param; f = @(x) x.^2;
-[pp, out_param] = funappx_g(f,'a',-10,'b',50,'nmax',1e6,'abstol',1e-8)
+[fappx, out_param] = funappx_g(f,'a',-10,'b',50,'nmax',1e6,'abstol',1e-7)
 
-% Approximate function x^2 with error tolerence 1e-8, cost budget 1000000,
+% Approximate function x^2 with error tolerance 1e-7, cost budget 1000000,
 % lower bound of initial number of points 10 and upper
 % bound of initial number of points 100
 %% See Also
+%
+% <html>
+% <a href="http://www.mathworks.com/help/matlab/ref/interp1.html">interp1</a>
+% </html>
+%
+% <html>
+% <a href="http://www.mathworks.com/help/matlab/ref/griddedinterpolant-class.html">griddedinterpolant</a>
+% </html>
 %
 % <html>
 % <a href="help_integral_g.html">integral_g</a>
@@ -384,17 +433,37 @@ clear in_param; f = @(x) x.^2;
 %% References
 %
 % [1]  Nick Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
-% Yizhi Zhang, The Cost of Deterministic, Adaptive, Automatic Algorithms:
-% Cones, Not Balls, Journal of Complexity 30 (2014), pp. 21-45.
-%
-%
-% [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
+% Yizhi Zhang, _The Cost of Deterministic, Adaptive, Automatic Algorithms:
+% Cones, Not Balls,_ Journal of Complexity 30, pp. 21-45, 2014.
+%  
+% [2]  Yuhan Ding, Fred J. Hickernell, and Sou-Cheng T. Choi, _Locally
+% Adaptive Method for Approximating Univariate Functions in Cones with a
+% Guarantee for Accuracy,_ working, 2015.
+%          
+% [3]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
 % Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
-% "GAIL: Guaranteed Automatic Integration Library (Version 2.0)" [MATLAB
-% Software], 2014. Available from http://code.google.com/p/gail/
+% GAIL: Guaranteed Automatic Integration Library (Version 2.1) [MATLAB
+% Software], 2015. Available from http://code.google.com/p/gail/
+%
+% [4] Sou-Cheng T. Choi, _MINRES-QLP Pack and Reliable Reproducible
+% Research via Supportable Scientific Software,_ Journal of Open Research
+% Software, Volume 2, Number 1, e22, pp. 1-7, 2014.
+%
+% [5] Sou-Cheng T. Choi and Fred J. Hickernell, _IIT MATH-573 Reliable
+% Mathematical Software_ [Course Slides], Illinois Institute of
+% Technology, Chicago, IL, 2013. Available from
+% http://code.google.com/p/gail/ 
+%
+% [6] Daniel S. Katz, Sou-Cheng T. Choi, Hilmar Lapp, Ketan Maheshwari,
+% Frank Loffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr,
+% James Hetherington, James Howison, Shel Swenson, Gabrielle D. Allen,
+% Anne C. Elster, Bruce Berriman, Colin Venters, _Summary of the First
+% Workshop On Sustainable Software for Science: Practice And Experiences
+% (WSSSPE1),_ Journal of Open Research Software, Volume 2, Number 1, e6,
+% pp. 1-21, 2014.
 %
 % If you find GAIL helpful in your work, please support us by citing the
-% above paper and software.
+% above papers, software, and materials.
 %
 
 ##### SOURCE END #####

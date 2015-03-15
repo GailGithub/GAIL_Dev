@@ -44,13 +44,19 @@ function [pHat,out_param]=meanMCBer_g(varargin)
 %
 %     out_param.time --- the time elapsed in seconds.
 % 
+%     out_param.exit --- the state of program when exiting.
+%      
+%                       0   success
+%      
+%                       1   Not enough samples to estimate p with guarantee
+%
 %  Guarantee
 %
 % If the sample size is calculated according Hoeffding's inequality, which
 % equals to ceil(log(2/out_param.alpha)/(2*out_param.abstol^2)), then the
 % following inequality must be satisfied:
 %
-% Pr(|p-pHat| <= abstol) >= 1-alpha.
+% Pr(| p - pHat | <= abstol) >= 1-alpha.
 % 
 % Here p is the true mean of Yrand, and pHat is the output of MEANMCBER_G
 %
@@ -71,8 +77,8 @@ function [pHat,out_param]=meanMCBer_g(varargin)
 %   Using the same function as example 1, with the absolute error tolerance
 %   1e-4.
 % 
-%   >> pHat = meanMCBer_g(Yrand,1e-4)
-%   pHat = 0.111***
+%   >> pHat = meanMCBer_g(Yrand,1e-3)
+%   pHat = 0.11***
 % 
 % 
 %   Example 3:
@@ -87,20 +93,40 @@ function [pHat,out_param]=meanMCBer_g(varargin)
 % 
 %  References
 %
-%   [1]  F. J. Hickernell, L. Jiang, Y. Liu, and A. B. Owen, Guaranteed
-%   conservative fixed width confidence intervals via Monte Carlo sampling,
-%   Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F. Y. Kuo, G. W.
-%   Peters, and I. H. Sloan, eds.), Springer-Verlag, Berlin, 2014.
-%   arXiv:1208.4318 [math.ST]
+%   [1]  F. J. Hickernell, L. Jiang, Y. Liu, and A. B. Owen, "Guaranteed
+%   conservative fixed width confidence intervals via Monte Carlo
+%   sampling," Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F.
+%   Y. Kuo, G. W. Peters, and I. H. Sloan, eds.), Springer-Verlag, Berlin,
+%   2014. arXiv:1208.4318 [math.ST]
 %
-%   [2] Sou-Cheng T.  Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
+%   [2]  Lan Jiang and Fred J. Hickernell, "Guaranteed Conservative
+%   Confidence Intervals for Means of Bernoulli Random Variables,"
+%   submitted for publication, 2014.
+%            
+%   [3]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
 %   Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
-%   "GAIL: Guaranteed Automatic Integration Library (Version 2.0)"
-%   [MATLAB Software], 2014. Available from
-%   http://code.google.com/p/gail/
+%   GAIL: Guaranteed Automatic Integration Library (Version 2.1) [MATLAB
+%   Software], 2015. Available from http://code.google.com/p/gail/
+%
+%   [4] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
+%   Research via Supportable Scientific Software," Journal of Open Research
+%   Software, Volume 2, Number 1, e22, pp. 1-7, 2014.
+%
+%   [5] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable
+%   Mathematical Software" [Course Slides], Illinois Institute of
+%   Technology, Chicago, IL, 2013. Available from
+%   http://code.google.com/p/gail/ 
+%
+%   [6] Daniel S. Katz, Sou-Cheng T. Choi, Hilmar Lapp, Ketan Maheshwari,
+%   Frank Loffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr,
+%   James Hetherington, James Howison, Shel Swenson, Gabrielle D. Allen,
+%   Anne C. Elster, Bruce Berriman, Colin Venters, "Summary of the First
+%   Workshop On Sustainable Software for Science: Practice And Experiences
+%   (WSSSPE1)," Journal of Open Research Software, Volume 2, Number 1, e6,
+%   pp. 1-21, 2014.
 %
 %   If you find GAIL helpful in your work, please support us by citing the
-%   above paper and software.
+%   above papers, software, and materials.
 %
 
 tstart = tic; %start the clock
@@ -138,6 +164,13 @@ if validvarargin
         || ischar(in2));
 end
 
+MATLABVERSION = gail.matlab_version;
+if MATLABVERSION >= 8.3
+  f_addParamVal= @addParameter;
+else
+  f_addParamVal = @addParamValue;
+end
+
 if ~validvarargin
     %if there is only one input which is Yrand, use all the default parameters
     out_param.abstol = default.abstol;
@@ -156,9 +189,9 @@ else
             pHat.StructExpand = true;
             pHat.KeepUnmatched = true;
         end
-        addParamValue(pHat,'abstol',default.abstol,@isnumeric);
-        addParamValue(pHat,'alpha',default.alpha,@isnumeric);
-        addParamValue(pHat,'nmax',default.nmax,@isnumeric);
+        f_addParamVal(pHat,'abstol',default.abstol,@isnumeric);
+        f_addParamVal(pHat,'alpha',default.alpha,@isnumeric);
+        f_addParamVal(pHat,'nmax',default.nmax,@isnumeric);
     end
     parse(pHat,Yrand,varargin{2:end})
     out_param = pHat.Results;
@@ -210,7 +243,8 @@ if out_param.exit==0; return; end
 switch out_param.exit
     case 1 % nabs exceed nmax.
         warning('MATLAB:meanMCBer_g:nabsexceednmax',...
-            [' To guarantee the absolute error, tried to evaluate at '...
+            [' To achieve the guaranteed accuracy of absolute error tolerance '...
+            num2str(out_param.abstol) ', tried to evaluate at '...
             int2str(out_param.n) ...
             ' samples, which is more than the allowed maximum of '...
             num2str(out_param.nmax) ...
@@ -225,8 +259,6 @@ function out_param = nabs(out_param)
 % absolute error criterion
 out_param.n = ceil(log(2/out_param.alpha)/(2*out_param.abstol^2));
 % calculate the sample size by Hoeffding's inequality
-out_param.tau = 1;
-% it is one step estimation
 if out_param.n > out_param.nmax % if the sample needed is bigger than nmax
     out_param.exit=1; % pass a flag
     meanMCBernoulli_g_err(out_param);% print warning message
