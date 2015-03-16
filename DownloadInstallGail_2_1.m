@@ -1,16 +1,14 @@
 % This scripts is to download and install GAIL version 2.1 into the
 % location you choose
 %
-%   Step 1.  Place this M-file where you want GAIL to go
+%   Step 1.  Place this M-file to the directory where you want GAIL to go
 %
 %   Step 2.  Run this M-file in MATLAB
 %
-%This file installs GAIL version 2.1 in the subdirectory
-%"GAIL_2.1/GAIL_Matlab".
-%% Download the package and change the directory
+%This file installs GAIL version 2.1 in the directory you choose
+%% Download the package
 disp('The GAIL package is now being downloaded...')
-unzip('http://math.iit.edu/~openscholar/sites/default/files/meshfree/files/gail_2_1.zip') %download and unzip
-cd('GAIL_2_1')  %get to the right subdirectory
+unzip('http://math.iit.edu/~openscholar/sites/default/files/meshfree/files/gail_2_1_1.zip') %download and unzip
 
 %% Install GAIL
 GAIL_Install      %this installs GAIL
