@@ -163,7 +163,7 @@ function [q,out_param] = cubLattice_g(varargin)
 % Estimate the integral with integrand f(x) = x1.*x2 in the interval [0,1)^2:
 % 
 % >> f = @(x) prod(x,2); hyperbox = [zeros(1,2);ones(1,2)]; 
-% >> q = cubLattice_g(f,hyperbox,'uniform',1e-5,0,'transform','C1sin'); exactsol = 1/4;
+% >> q = cubLattice_g(f,hyperbox,'uniform',1e-5,0,'transform','C1sin'); exactsol = 1/4+10;
 % >> check = abs(exactsol-q) < 1e-5
 % check = 1
 % 
