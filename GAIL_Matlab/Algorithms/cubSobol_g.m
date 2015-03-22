@@ -245,16 +245,13 @@ errest=zeros(out_param.mmax-out_param.mmin+1,1); %initialize error estimates
 appxinteg=zeros(out_param.mmax-out_param.mmin+1,1); %initialize approximations to integral
 exit_len = 2;
 out_param.exit=false(1,exit_len); %we start the algorithm with all warning flags down
-y = zeros(2^out_param.mmax,1); %storing the values of the DFWT
-yval = zeros(2^out_param.mmax,1); %storing values of f(x)
-kappanumap = zeros(2^out_param.mmax,1); %storing the values of the mapping
 
 %% Initial points and FWT
 out_param.n=2^out_param.mmin; %total number of points to start with
 n0=out_param.n; %initial number of points
 xpts=sobstr(1:n0,1:out_param.d); %grab Sobol' points
-y(1:n0)=f(xpts); %evaluate integrand
-yval(1:n0)=y(1:n0);
+y=f(xpts); %evaluate integrand
+yval=y;
 
 %% Compute initial FWT
 for l=0:out_param.mmin-1
@@ -269,11 +266,11 @@ end
 %y now contains the FWT coefficients
 
 %% Approximate integral
-q=mean(yval(1:n0));
+q=mean(yval);
 appxinteg(1)=q;
 
 %% Create kappanumap implicitly from the data
-kappanumap(1:n0)=(1:n0); %initialize map
+kappanumap=(1:out_param.n)'; %initialize map
 for l=out_param.mmin-1:-1:1
    nl=2^l;
    oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
@@ -337,7 +334,7 @@ for m=out_param.mmin+1:out_param.mmax
    xnext=sobstr(n0+(1:nnext),1:out_param.d); 
    n0=n0+nnext;
    ynext=f(xnext);
-   yval((nnext+1):2*nnext)=ynext;
+   yval=[yval; ynext];
 
    %% Compute initial FWT on next points
    for l=0:mnext-1
@@ -351,7 +348,7 @@ for m=out_param.mmin+1:out_param.mmax
    end
 
    %% Compute FWT on all points
-   y((nnext+1):2*nnext)=ynext;
+   y=[y;ynext];
    nl=2^mnext;
    ptind=[true(nl,1); false(nl,1)];
    evenval=y(ptind);
@@ -360,7 +357,7 @@ for m=out_param.mmin+1:out_param.mmax
    y(~ptind)=(evenval-oddval)/2;
 
    %% Update kappanumap
-   kappanumap(nnext+1:2*nnext)=2^(m-1)+kappanumap(1:nnext); %initialize map
+   kappanumap=[kappanumap; 2^(m-1)+kappanumap]; %initialize map
    for l=m-1:-1:l_star
       nl=2^l;
       oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
@@ -395,7 +392,7 @@ for m=out_param.mmin+1:out_param.mmax
    end
 
    %% Approximate integral
-   q=mean(yval(1:2^m));
+   q=mean(yval);
    appxinteg(meff)=q;
    
    % Check the end of the algorithm
