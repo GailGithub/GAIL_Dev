@@ -373,7 +373,7 @@ for m=out_param.mmin+1:out_param.mmax
    xnext=mod(gail.lattice_gen(nnext+1,2*nnext,out_param.d)+out_param.shift,1);
    n0=n0+nnext;
    ynext=f(xnext);
-   yval=[yval; ynext];
+   yval=[yval; ynext]; %#ok<*AGROW>
 
    %% Compute initial FFT on next points
    for l=0:mnext-1

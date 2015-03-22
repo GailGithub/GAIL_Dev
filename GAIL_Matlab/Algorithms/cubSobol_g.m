@@ -334,7 +334,7 @@ for m=out_param.mmin+1:out_param.mmax
    xnext=sobstr(n0+(1:nnext),1:out_param.d); 
    n0=n0+nnext;
    ynext=f(xnext);
-   yval=[yval; ynext];
+   yval=[yval; ynext]; %#ok<*AGROW>
 
    %% Compute initial FWT on next points
    for l=0:mnext-1
