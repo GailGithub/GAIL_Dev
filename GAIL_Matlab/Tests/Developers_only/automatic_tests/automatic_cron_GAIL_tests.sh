@@ -44,7 +44,7 @@ rm gail*
 # Compare the results obtain and send an email if different
 if diff Test_Results.txt Test_Results_correct.txt >/dev/null ; then
   echo "Tests OK"
-#  sh mail_c.sh
+  sh mail_c.sh
 else
   echo "Tests with ERRORS"
   sh mail_w.sh
