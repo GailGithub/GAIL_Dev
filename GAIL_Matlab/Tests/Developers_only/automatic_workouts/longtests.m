@@ -305,18 +305,18 @@ catch
 end
 
 
-  try
+try
     Tests = matlab.unittest.TestSuite.fromClass(?ut_integralNoPenalty_g);
     results=run(ut_integralNoPenalty_g)
     if sum([results.Failed])>0
-      failed=find([results.Failed]>0);
-      for i=1:size(failed,2)
-        fprintf(fid,'%s\n',Tests(failed(i)).Name);
-      end
+        failed=find([results.Failed]>0);
+        for i=1:size(failed,2)
+            fprintf(fid,'%s\n',Tests(failed(i)).Name);
+        end
     end
-  catch
+catch
     display('Error: Test ut_integralNoPenalty_g is wrongly coded. We skip it.')
-  end
+end
 
 time=toc;
 disp(time)
