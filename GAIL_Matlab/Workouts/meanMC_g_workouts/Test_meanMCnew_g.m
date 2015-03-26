@@ -24,7 +24,7 @@ t_meanMCnew_g = toc;
 tic
 [mumeanMCnew2, out_param_meanMCnew2] = meanMCnew2_g(y,in_param); % the results
 t_meanMCnew2_g = toc;
-disp('meanMC   meanMCabs    meanMCFred    meanMCLan')
+disp('meanMC   meanMCabs    meanMCthreeif    meanMConeif')
 timevec = [t_meanMC_g t_meanMCabs_g t_meanMCnew_g t_meanMCnew2_g]
 
 %end
