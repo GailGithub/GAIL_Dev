@@ -318,6 +318,10 @@ catch
     display('Error: Test ut_integralNoPenalty_g is wrongly coded. We skip it.')
 end
 
+%% utilties
+run_handle_ut('ut_save_mat')
+run_handle_ut('ut_save_eps')
+
 time=toc;
 disp(time)
 
