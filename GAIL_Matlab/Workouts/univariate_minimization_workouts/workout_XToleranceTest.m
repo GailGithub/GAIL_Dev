@@ -78,6 +78,6 @@ for i=1:ntau
 end
 
 %% Save output
-gail.save_mat('WorkoutFunminOutput', 'workout_XToleranceTest',tauvec,prob,ntau);
+gail.save_mat('WorkoutFunminOutput', 'workout_XToleranceTest',true,tauvec,prob,ntau);
 
 end

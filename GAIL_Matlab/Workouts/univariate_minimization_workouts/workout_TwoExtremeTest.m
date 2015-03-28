@@ -69,7 +69,7 @@ for i=1:nTolX
 end
 
 %% Save output
-gail.save_mat('WorkoutFunminOutput', 'workout_TwoExtremeTest',TolXvec,prob,nTolX);
+gail.save_mat('WorkoutFunminOutput', 'workout_TwoExtremeTest',true,TolXvec,prob,nTolX);
 
 end
 
