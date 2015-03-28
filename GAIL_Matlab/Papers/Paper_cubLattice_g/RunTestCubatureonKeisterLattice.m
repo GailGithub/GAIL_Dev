@@ -91,7 +91,7 @@ if any(strcmp('cubLattice',test.whichsample))
     end
     Latticesuccess=mean(res.Latticeerr<=param_indicator);
 end
-gail.save_mat('Paper_cubLattice_g', 'Paper_cubLattice_g_TestKeister', Latticesuccess,...
+gail.save_mat('Paper_cubLattice_g', 'Paper_cubLattice_g_TestKeister',true, Latticesuccess,...
         fun,irep,res,test);
 end
 

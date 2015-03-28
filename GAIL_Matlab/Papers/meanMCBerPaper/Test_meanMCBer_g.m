@@ -41,6 +41,6 @@ for k = 1:nrep
     res(k,6) = out_param.nmax;
     res(k,7) = abserr./in_param.abstol;
 end
-gail.save_mat('meanMCBerPaperOutput','TestmeanMCBer-on-abs-',ut_abstol,ut_abserr,res,nrep,out_param)
+gail.save_mat('meanMCBerPaperOutput','TestmeanMCBer-on-abs-',true,ut_abstol,ut_abserr,res,nrep,out_param)
 warning('on','MATLAB:meanMCBer_g:nabsexceednmax')
 end

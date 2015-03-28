@@ -117,7 +117,7 @@ if usejava('jvm') || MATLABVERSION <= 7.12
     
     gail.save_eps('WorkoutFunappxOutput', 'WorkoutFunAppxTest');
 end;
-gail.save_mat('WorkoutFunappxOutput', 'WorkoutFunAppxTest', npoints,time,...
+gail.save_mat('WorkoutFunappxOutput', 'WorkoutFunAppxTest', true, npoints,time,...
     c,timeratio,npointsratio,npointslgratio,timelgratio);
 
 end

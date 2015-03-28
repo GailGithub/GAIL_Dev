@@ -73,7 +73,7 @@ for i=1:ntau
 end
 
 %% Save output
-gail.save_mat('UniFunMinOutput', 'ErrToleranceTest',tauvec,prob,ntau);
+gail.save_mat('UniFunMinOutput', 'ErrToleranceTest',true,tauvec,prob,ntau);
 
 toc(tstart)
 

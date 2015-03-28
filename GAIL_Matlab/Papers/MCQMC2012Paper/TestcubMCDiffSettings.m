@@ -191,5 +191,5 @@ subdir = 'MCQMC2012PaperOutput';
 filename = ['TestcubMCon-' fun.funtype '-' param.measure  '-N'...
     int2str(test.nrep) 'd' int2str(param.dim)  ...
     'tol' num2str(param.tol)];
-gail.save_mat(subdir, filename, res,test,fun,param);
+gail.save_mat(subdir, filename, true, res,test,fun,param);
 toc(tstartwhole)

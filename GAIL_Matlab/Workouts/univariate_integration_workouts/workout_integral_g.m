@@ -93,7 +93,7 @@ end
 
 time = toc(tstart);
 
-gail.save_mat('WorkoutIntegralOutput', 'WorkoutIntegralTest', nrep,time,...
+gail.save_mat('WorkoutIntegralOutput', 'WorkoutIntegralTest',true, nrep,time,...
         succnowarn,succwarn,failnowarn,failwarn);
 
 warning('on','MATLAB:integral_g:exceedbudget');

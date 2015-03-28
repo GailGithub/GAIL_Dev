@@ -71,7 +71,7 @@ for i=1:nTolX
 end
 
 %% Save output
-gail.save_mat('UniFunMinOutput', 'TwoExtremeTest',TolXvec,prob,nTolX);
+gail.save_mat('UniFunMinOutput', 'TwoExtremeTest',true,TolXvec,prob,nTolX);
 
 toc(tstart)
 
