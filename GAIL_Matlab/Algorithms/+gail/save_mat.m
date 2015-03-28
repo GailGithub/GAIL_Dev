@@ -4,16 +4,17 @@ function fullfilename = save_mat(subdir, filename, varargin)
 % Inputs:
 %   subdir          name of subdirectory 
 %   filename        filename of mat file
-%   isTimeStamped   boolean, default or set to true to include 
-%                   a timestamp in the filename
+%   isTimeStamped   boolean, set to true to include a timestamp in filename
 %   variable_names  variables in workspace of calling function to persist
 %   
 % Example:
 %   save_mat('ConesPaperOutput','ConesPaperFunAppxTest', ...
 %      tauvec,pini,pfin,succnowarn);
 
-if nargin <= 2 
-    isTimeStamped = true;
+if nargin <= 2
+    error('Input values for isTimeStamped and variables to save.');
+elseif nargin == 3 
+    error('Input variables to save.');
 else 
     isTimeStamped = varargin{1};
 end
