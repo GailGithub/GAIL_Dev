@@ -10,7 +10,7 @@ classdef ut_save_mat < matlab.unittest.TestCase
             mat_file_name = gail.save_mat('temp', 'x_y', true, x, y);
             clear x y;
             load(mat_file_name);
-            testCase.verifyGreaterThan(length(mat_file_name), length(strcat(dir_name,'x_y.mat')));
+            testCase.verifyEqual(length(mat_file_name), 20 + length(strcat(dir_name,'x_y.mat')));
             testCase.verifyEqual([x,y],[1,2]);
             rmdir(dir_name,'s');
         end
