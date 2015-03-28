@@ -1,17 +1,30 @@
-% ut_save_mat unit tests for gail.save_mat 
+% ut_save_mat unit tests for gail.save_mat
 classdef ut_save_mat < matlab.unittest.TestCase
-
-  methods(Test)
-      
-    function test_save_mat_1(testCase)
-      x = 1; y = 2; 
-      mat_file_name = gail.save_mat('temp', 'x_y', x, y);
-      clear x y;
-      load(mat_file_name);
-      testCase.verifyEqual([x,y],[1,2]);
-      delete(mat_file_name);
-      rmdir('temp')
-    end
     
-  end
+    methods(Test)
+        
+        function test_save_mat_1(testCase)
+            [GAILPATH,~,PATHNAMESEPARATOR,~] = GAILstart(false);
+            dir_name = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,'temp',PATHNAMESEPARATOR);
+            x = 1; y = 2;
+            mat_file_name = gail.save_mat('temp', 'x_y', true, x, y);
+            clear x y;
+            load(mat_file_name);
+            testCase.verifyGreaterThan(length(mat_file_name), length(strcat(dir_name,'x_y.mat')));
+            testCase.verifyEqual([x,y],[1,2]);
+            rmdir(dir_name,'s');
+        end
+        
+        function test_save_mat_2(testCase)
+            [GAILPATH,~,PATHNAMESEPARATOR,~] = GAILstart(false);
+            dir_name = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,'temp',PATHNAMESEPARATOR);
+            x = 1; y = 2;
+            mat_file_name = gail.save_mat('temp', 'x_y', false, x, y);
+            clear x y;
+            load(mat_file_name);
+            testCase.verifyEqual(mat_file_name, strcat(dir_name,'x_y.mat'));
+            testCase.verifyEqual([x,y],[1,2]);
+            rmdir(dir_name,'s');
+        end
+    end
 end

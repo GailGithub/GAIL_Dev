@@ -4,26 +4,38 @@ function fullfilename = save_mat(subdir, filename, varargin)
 % Inputs:
 %   subdir          name of subdirectory 
 %   filename        filename of mat file
+%   isTimeStamped   boolean, default or set to true to include 
+%                   a timestamp in the filename
 %   variable_names  variables in workspace of calling function to persist
 %   
 % Example:
 %   save_mat('ConesPaperOutput','ConesPaperFunAppxTest', ...
 %      tauvec,pini,pfin,succnowarn);
 
+if nargin <= 2 
+    isTimeStamped = true;
+else 
+    isTimeStamped = varargin{1};
+end
+
 [GAILPATH,~,PATHNAMESEPARATOR] = GAILstart(0);
 outputfolder =  [GAILPATH,'OutputFiles',PATHNAMESEPARATOR,subdir];
-if exist(outputfolder) ~= 7,
+if exist(outputfolder,'dir') ~= 7,
   mkdir(outputfolder);
 end
-fullfilename = strcat(outputfolder, PATHNAMESEPARATOR', filename,'-',...
-    datestr(now,'yyyy-mm-dd-HH-MM-SS'),'.mat');
-varnames={};
-for k = 1:length(varargin)
-    varname = inputname(k+2);
-    eval([varname, ' = varargin{k};']);
+if isTimeStamped == true,
+    fullfilename = strcat(outputfolder, PATHNAMESEPARATOR', filename,'-',...
+        datestr(now,'yyyy-mm-dd-HH-MM-SS'),'.mat');
+else
+    fullfilename = strcat(outputfolder, PATHNAMESEPARATOR', filename,'.mat');
+end
+varnames=cell(1,length(varargin)-1);
+for k = 1:(nargin-3)
+    varname = inputname(k+3);
+    eval([varname, ' = varargin{k+1};']);
     varnames{k} = varname;
 end
-clear subdir filename GAILPATH PATHNAMESEPARATOR varname outputfolder k varargin
+clear subdir filename GAILPATH PATHNAMESEPARATOR varname outputfolder isTimeStamped k varargin;
 if length(varnames) > 0
    save(fullfilename, varnames{:});
 else 
