@@ -3,7 +3,8 @@ function run_handle_ut(filename, varargin)
 %
 % Input:
 %   filename   String of Matlab filename
-%   fid        Name of file .txt where results are written.
+%   fid        Name of file .txt where results are written. Default to
+%              standard output (screen)
 %
 % Example:
 %    run_handle_ut('ut_save_eps')
