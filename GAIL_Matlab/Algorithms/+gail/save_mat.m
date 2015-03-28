@@ -4,11 +4,11 @@ function fullfilename = save_mat(subdir, filename, varargin)
 % Inputs:
 %   subdir          name of subdirectory 
 %   filename        filename of mat file
-%   variable_names  variables in workspace to save
+%   variable_names  variables in workspace of calling function to persist
 %   
 % Example:
 %   save_mat('ConesPaperOutput','ConesPaperFunAppxTest', ...
-%   tauvec,pini,pfin,succnowarn');
+%      tauvec,pini,pfin,succnowarn);
 
 [GAILPATH,~,PATHNAMESEPARATOR] = GAILstart(0);
 outputfolder =  [GAILPATH,'OutputFiles',PATHNAMESEPARATOR,subdir];
@@ -23,5 +23,12 @@ for k = 1:length(varargin)
     eval([varname, ' = varargin{k};']);
     varnames{k} = varname;
 end
-clear subdir filename GAILPATH PATHNAMESEPARATOR varname outputfolder
-save(fullfilename, varnames{:});
+clear subdir filename GAILPATH PATHNAMESEPARATOR varname outputfolder k varargin
+if length(varnames) > 0
+   save(fullfilename, varnames{:});
+else 
+   warning('No variables saved.')
+end
+clear varnames;
+
+
