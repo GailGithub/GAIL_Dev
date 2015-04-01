@@ -8,7 +8,7 @@ for i=1:100
     if check==0 || isfinite(q) ==0 || out_param.exitflag > 0,
         i, exactsol, q, exitflag = out_param.exitflag,
         abserr = abs(exactsol-q), tol = gail.tolfun(1e-3,1e-3,1,exactsol,'max')
-        disp(['-----'])
+        disp('-----');
         count = count + 1;
         %keyboard
     end;
