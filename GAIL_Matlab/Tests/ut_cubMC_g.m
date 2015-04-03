@@ -72,5 +72,27 @@ classdef ut_cubMC_g < matlab.unittest.TestCase
             verifyrelerr = ut_relerr<=reltol;
             testCase.verifyTrue(min(min(verifyabserr + verifyrelerr))>0);
         end
+        
+        function cubMC_gNormal(testCase)
+            format compact
+            warning('off','MATLAB:meanMC_g:maxreached')
+            f = @(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2; hyperbox = [-inf(1,3);inf(1,3)];
+            count = 0;
+            for i=1:20
+                [q,out_param] = cubMC_g(f,hyperbox,'normal',1e-3,1e-3);
+                exactsol = 1; check = abs(exactsol-q) < gail.tolfun(1e-3,1e-3,1,exactsol,'max');
+                if check==0 || isfinite(q) ==0,
+                    i, exactsol, q, exitflag = out_param.exit,
+                    abserr = abs(exactsol-q), tol = gail.tolfun(1e-3,1e-3,1,exactsol,'max')
+                    disp('-----');
+                    count = count + 1;
+                    %keyboard
+                else
+                    i
+                end;
+            end;
+            warning('on','MATLAB:meanMC_g:maxreached')
+            testCase.verifyTrue(count==0);
+        end
     end
 end
