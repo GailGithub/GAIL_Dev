@@ -173,7 +173,7 @@ function [q,out_param] = cubLattice_g(varargin)
 % in the interval R^3 where x1, x2 and x3 are normally distributed:
 % 
 % >> f = @(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2; hyperbox = [-inf(1,3);inf(1,3)];
-% >> q = cubLattice_g(f,hyperbox,'normal',1e-3,1e-3,'transform','C1sin'); exactsol = 1;
+% >> q = cubLattice_g(f,hyperbox,'normal',1e-3,1e-3,'transform','C1sin','shift',2^(-25)); exactsol = 1;
 % >> check = abs(exactsol-q) < gail.tolfun(1e-3,1e-3,1,exactsol,'max')
 % check = 1
 % 
