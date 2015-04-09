@@ -46,7 +46,7 @@ if nargin < 3
       end
    end
 end
-nSig=1e4;
+nSig=1e2;
 nMax=1e8;
 out_param.alpha = alpha;
 out_param.fudge = 1.2;
@@ -58,8 +58,8 @@ sig0up = out_param.fudge.*sig0;% upper bound on the standard deviation
 alpha1 = 1-sqrt(1-out_param.alpha);% the uncertainty for variance estimation
 nmu = max(1,ceil((-norminv(alpha1)*sig0up/abstol).^2));
 assert(nmu<nMax,['nmu = ' int2str(nmu) ', which is too big'])
-tmu=mean(Yrand(nmu));
-out_param.ntot=nSig+nmu;
+tmu=mean(Yrand(nmu)); %estimated mean
+out_param.ntot=nSig+nmu; %total samples required
 out_param.time=toc(tstart); %elapsed time
 end
 
