@@ -78,6 +78,11 @@ catch
     %fprintf(fid,'Error: Test ut_workout_funmin_g is wrongly coded. We skip it.\n');
 end    
 
+%cubQMC
+doctest dt_cubSobol_g
+doctest dt_cubLattice_g
+run_handle('Test_cubSobol_g')
+run_handle('Test_cubLattice_g')
 
 %% Papers
 % Cone paper
