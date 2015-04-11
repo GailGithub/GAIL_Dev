@@ -3,7 +3,7 @@ format compact
 f = @(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2; hyperbox = [-inf(1,3);inf(1,3)];
 count = 0;
 for i=1:100
-    [q,out_param] = cubLattice_g(f,hyperbox,'normal',1e-3,1e-3);
+    [q,out_param] = cubLattice_g(f,hyperbox,'normal',1e-3,1e-3,'shift',2^(-25));
     exactsol = 1; check = abs(exactsol-q) < gail.tolfun(1e-3,1e-3,1,exactsol,'max');
     if check==0 || isfinite(q) ==0 %|| out_param.exitflag > 0,
         i, exactsol, q, exitflag = out_param.exitflag,
