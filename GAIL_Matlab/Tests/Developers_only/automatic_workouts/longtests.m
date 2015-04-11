@@ -17,8 +17,7 @@ doctest dt_meanMC_g_TrafficModel
 % cubMC_g
 format short
 doctest dt_cubMC_g
-run_handle('Test_cubMC_g')
-
+ 
 % integral_g
 try
     Tests = matlab.unittest.TestSuite.fromClass(?ut_workout_integral_g);
@@ -80,9 +79,7 @@ end
 
 %cubQMC
 doctest dt_cubSobol_g
-doctest dt_cubLattice_g
-run_handle('Test_cubSobol_g')
-run_handle('Test_cubLattice_g')
+doctest dt_cubLattice_g 
 
 %% Papers
 % Cone paper
