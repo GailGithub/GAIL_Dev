@@ -267,17 +267,17 @@ while true
         tmu = out_param.hmu(i)+deltaminus;
         break;
     elseif out_param.abstol >= out_param.reltol*(abs(out_param.hmu(i))...
-            +out_param.tol(i))/2;
+            +out_param.tol(i))/0.9;
         out_param.tol(i+1) = out_param.abstol;
         i=i+1;
-    elseif out_param.abstol <= out_param.reltol*abs(abs(out_param.hmu(i))...
-            -out_param.tol(i))/2;
-        out_param.tol(i+1) = out_param.reltol*...
+    elseif out_param.abstol <= 0.9*out_param.reltol*abs(abs(out_param.hmu(i))...
+            -out_param.tol(i));
+        out_param.tol(i+1) =0.95*out_param.reltol*...
             max(abs(out_param.hmu(i)),out_param.tol(i));
         i=i+1;   
     else
-        out_param.tol(i+1) = 0.7*min(out_param.tol(i),...
-            (out_param.reltol*(abs(out_param.hmu(i))+out_param.tol(i))+out_param.abstol)/2);
+        out_param.tol(i+1) = min(out_param.tol(i)/2,...
+            0.85*(out_param.reltol*(abs(out_param.hmu(i))+out_param.tol(i))+out_param.abstol)/2);
         i=i+1;
     end
     toloversig = out_param.tol(i)/sig0up;%next tolerance over sigma

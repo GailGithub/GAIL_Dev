@@ -268,7 +268,7 @@ while true
         break;
     else
         out_param.tol(i+1) = min(out_param.tol(i)/2,max(out_param.abstol,...
-            out_param.reltol*(abs(out_param.hmu(i))+out_param.tol(i))));
+            0.95*out_param.reltol*abs(out_param.hmu(i))));
         i=i+1;
     end
     toloversig = out_param.tol(i)/sig0up;%next tolerance over sigma
