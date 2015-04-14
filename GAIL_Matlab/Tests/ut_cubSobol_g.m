@@ -54,8 +54,16 @@ classdef ut_cubSobol_g < matlab.unittest.TestCase
     function cubSobol_gOfwarning(testCase)
         testCase.verifyWarning(@()cubSobol_g,'MATLAB:cubSobol_g:fdnotgiven');
     end
+    
     function cubSobol_gOdwarning(testCase)
         testCase.verifyWarning(@()cubSobol_g(@(x)x.^2,1.5),'MATLAB:cubSobol_g:hyperbox_error1');
+    end
+    
+    function cubSobol_Workouts(testCase)
+        [ut_abserr,ut_relerr,abstol,reltol] = Test_cubSobol_g;
+        verifyabserr = ut_abserr<=abstol;
+        verifyrelerr = ut_relerr<=reltol;
+        testCase.verifyTrue(min(min(verifyabserr + verifyrelerr))>0);
     end
   end
 end

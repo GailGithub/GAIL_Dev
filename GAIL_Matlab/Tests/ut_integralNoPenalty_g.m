@@ -86,5 +86,17 @@ classdef ut_integralNoPenalty_g < matlab.unittest.TestCase
 
         end
         
+        
+        function testsinefunction(testCase)
+            f=@(x) sin(x);
+            abstol=1e-5;
+            nmax=1e4;
+            actSolution = integralNoPenalty_g(f,'nmax',nmax,'abstol',abstol);
+            expSolution =  0.459697666988838;
+            import matlab.unittest.constraints.IsLessThanOrEqualTo
+            testCase.verifyThat(abs(actSolution-expSolution),...
+                IsLessThanOrEqualTo(abstol));
+        end
+        
     end
 end

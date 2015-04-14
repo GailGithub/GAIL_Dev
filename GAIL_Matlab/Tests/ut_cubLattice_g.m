@@ -80,5 +80,12 @@ classdef ut_cubLattice_g < matlab.unittest.TestCase
         end;
         testCase.verifyTrue(count==0);
     end
+    
+    function cubLattice_Workouts(testCase)
+        [ut_abserr,ut_relerr,abstol,reltol] = Test_cubLattice_g;
+        verifyabserr = ut_abserr<=abstol;
+        verifyrelerr = ut_relerr<=reltol;
+        testCase.verifyTrue(min(min(verifyabserr + verifyrelerr))>0);
+    end
   end
 end
