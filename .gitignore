@@ -1,10 +1,10 @@
 *~
 *.asv
-*.pdf
+*.cfs
 *.mat
 *.o
-*.cfs
-*#
+*.out
+*.pdf
 *.sav
 *.png
 *.html

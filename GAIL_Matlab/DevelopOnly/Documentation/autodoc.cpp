@@ -20,6 +20,8 @@ using std::endl;
 using std::flush;
 using std::find;
 
+//using std::cout;
+
 string upperString(const string &) noexcept;
 string lowerString(const string &) noexcept;
 string substituteQuotation(string, bool &) noexcept;
@@ -27,25 +29,27 @@ string substituteQuotationSimple(string) noexcept;
 
 int main()
 {
-  const string dataFolder("doc_data");
-  ifstream ifs(dataFolder + "/DocList.txt");
+  const string gailFolder("../../");
+  const string rawFolder(gailFolder + "Documentation/");
+  const string dataFolder(rawFolder + "doc_data/");
+  ifstream ifs(dataFolder + "DocList.txt");
   vector<string> fcnList, fcnName, uFcnName, introList, websiteList, fcnDoc;
   string line, word;
   while (getline(ifs,line)) {
     fcnList.push_back(line);
   }
   ifs.close();
-  ifs.open(dataFolder + "/intro.m");
+  ifs.open(dataFolder + "intro.m");
   while (getline(ifs, line)) {
     introList.push_back(line);
   }
   ifs.close();
-  ifs.open(dataFolder + "/website.m");
+  ifs.open(dataFolder + "website.m");
   while (getline(ifs, line)) {
     websiteList.push_back(line);
   }
   ifs.close();
-  ofstream gail("GAIL_raw.m"), helptoc("html/helptoc_raw.xml"), funclist("funclist_raw.m"), ofs;
+  ofstream gail(rawFolder + "GAIL_raw.m"), helptoc(rawFolder + "html/helptoc_raw.xml"), funclist(rawFolder + "funclist_raw.m"), ofs;
   helptoc << "<?xml version='1.0' encoding='ISO-8859-1' ?>\n\n<toc version=\"3.0\">\n\n\
 <tocitem target=\"GAIL.html\">GAIL Toolbox\n\
     <tocitem target=\"help_license.html\">License\n\
@@ -57,14 +61,14 @@ int main()
     gail << s << "\n";
   }
   gail << "%% Introduction\n%\n\
-% <html>\n							\
+% <html>\n\
 % <a href=\"help_license.html\">GAIL License</a>\n\
 % <a href=\"help_readme.html\">README</a>\n\
 % </html>\n%\n\
 %% Functions\n%\n\
 % <html>" << endl;
   funclist << "%% Functions\n%" << endl;
-  string us;
+  //string us;
   for (const auto &s : fcnList) {
     if (!s.empty() && *(s.cend() - 1) != ':') {
       fcnName.push_back(s);
@@ -84,12 +88,12 @@ int main()
       helptoc << "        <tocitem target=\"help_" << s << ".html\">" << s << "</tocitem>\n";
       gail << "% <a href=\"help_" << s << ".html\">" << s << "</a>\n";
       funclist << "% <html>\n% <a href=\"help_" << s << ".html\">" << s << "</a>\n% </html>\n%\n";
-      ifs.open("../Algorithms/" + s + ".m");
+      ifs.open(gailFolder + "Algorithms/" + s + ".m");
       while (getline(ifs, line) && line != "") {
 	fcnDoc.push_back(line);
       }
       ifs.close();
-      ofs.open("help_" + s + "_raw.m");
+      ofs.open(rawFolder + "help_" + s + "_raw.m");
       ofs << "%% " << s << "\n% ";
       auto space1 = find(fcnDoc[1].cbegin(), fcnDoc[1].cend(), ' ');
       fcnDoc[1] = fcnDoc[1].substr(space1 - fcnDoc[1].cbegin() + 1, fcnDoc[1].size());
@@ -104,7 +108,7 @@ int main()
       }
       ofs << "\n%% Syntax" << endl;
       auto inputArg = find(++emptyLine1, fcnDoc.cend(), "%   Input Arguments");
-      us = upperString(s);
+      string us = upperString(s);
       {
 	decltype(fcnDoc.size()) cnt = 0;
 	for (auto iter = emptyLine1; iter != inputArg; ++iter) {
@@ -193,7 +197,7 @@ int main()
 	  ofs << "\n" << *iter << "\n";
 	}
       }
-      ifstream fcnData(dataFolder + "/" + s + "_data.m");
+      ifstream fcnData(dataFolder + s + "_data.m");
       while (getline(fcnData, line)) {
 	ofs << line << "\n";
       }
