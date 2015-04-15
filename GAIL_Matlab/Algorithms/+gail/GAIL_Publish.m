@@ -4,7 +4,7 @@ if usejava('jvm')
 
     oldStatus = get(0,'DefaultFigureVisible');
     set(0, 'DefaultFigureVisible', 'off')
-    [GAILPATH,GAILVERSION,PATHNAMESEPARATOR,MATLABVERSION] = GAILstart(0);
+    [GAILPATH,GAILVERSION,PATHNAMESEPARATOR,~] = GAILstart(0);
     mfile_list = {'GAIL','help_license','help_readme','funclist',...
         'help_funappx_g','help_funmin_g',...
         'help_integral_g', 'help_meanMC_g','help_meanMCBer_g', ...
@@ -39,16 +39,15 @@ if usejava('jvm')
         end
     end
     set(0, 'DefaultFigureVisible', oldStatus)
-    warninfo = warning('query','MATLAB:doc:DocNotInstalled');
-    warning('off', warninfo.identifier);
     
     %% build search index
     if ifBuildSearchIndex,
-      builddocsearchdb(strcat(GAILPATH,'Documentation',PATHNAMESEPARATOR,'html'));
+        warninfo = warning('query','MATLAB:doc:DocNotInstalled');
+        warning('off', warninfo.identifier);
+        builddocsearchdb(strcat(GAILPATH,'Documentation',PATHNAMESEPARATOR,'html'));
+        warning(warninfo.state,warninfo.identifier);
     end
     
-    
-    warning(warninfo.state,warninfo.identifier);
     fprintf('\nYou can go to help documentation ---> Supplemental Software to learn how to use GAIL.\n');
 end
 end

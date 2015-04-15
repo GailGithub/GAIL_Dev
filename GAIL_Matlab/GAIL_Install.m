@@ -12,7 +12,7 @@ rmpath(gailp);% Remove path from MATLAB search path
 warning(warninfo.state, warninfo.identifier);
 addpath(gailp);           % Add GAIL directories and subdirectories
 savepath;                 % Save the changes
-GAIL_Publish(true,true,true); 
+gail.GAIL_Publish(true,true,true); 
 fprintf('\nGAIL version %s has been installed successfully.\n\n', GAILVERSION);
 end
 
