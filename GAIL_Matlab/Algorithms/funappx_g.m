@@ -257,12 +257,13 @@ while(max(err) > abstol)
     reshapey = reshape(y(1:end-1),ninit - 1, (index(end) - 1)/(ninit -1));
     diffy = diff([reshapey;y(index(2:end))]);
     %approximate the weaker norm of input function at different subinterval
-    gn = (ninit-1)./len.*max(abs(diffy-repmat((y(index(2:end))-y(index(1:end-1)))/(ninit-1),ninit-1,1)),[],1);
+    %gn = (ninit-1)./len.*max(abs(diffy-repmat((y(index(2:end))-y(index(1:end-1)))/(ninit-1),ninit-1,1)),[],1);
+    gn = (ninit-1)./len.*max(abs(bsxfun(@minus,diffy,(y(index(2:end))-y(index(1:end-1)))/(ninit-1))),[],1);
     %approximate the stronger norm of input function at different subinterval
     fn = (ninit-1)^2./(len.^2).*max(abs(diff(diffy)),[],1);
     %update cone condition every iteration
     ntemp=max(ceil(out_param.nhi*(out_param.nlo/out_param.nhi).^(1./(1+len))),3);
-    nstar = ntemp -2;
+    nstar = ntemp - 2;
     
 %     gn(gn<eps/2)=0;
 %     fn(fn<eps/2)=0;
