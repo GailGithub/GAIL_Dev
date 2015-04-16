@@ -29,7 +29,7 @@ string substituteQuotationSimple(string) noexcept;
 
 int main()
 {
-  const string gailFolder("../../");
+  const string gailFolder("../../../GAIL_Matlab/");
   const string rawFolder(gailFolder + "Documentation/");
   const string dataFolder(rawFolder + "doc_data/");
   ifstream ifs(dataFolder + "DocList.txt");
