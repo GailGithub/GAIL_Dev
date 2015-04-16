@@ -22,7 +22,7 @@ MATLABVERSION= gail.matlab_version;
 
 % Default tolerance
 if nargin < 4
-    tol = 1.e-3;
+    tol = 1.e-7;
     nlo = 10;
     nhi = 1000;
 end
@@ -50,7 +50,7 @@ y = f(x);
 maxy = max(y);
 miny = min(y);
 set(gcf,'doublebuffer','on','userdata',0)
-plot(x,y,'.','markersize',6);
+plot(x,y,'.','markersize',15);
 hold on
 p(1) = fill(a,fa,'k');
 p(2) = fill(b,fb,'k');
@@ -239,6 +239,6 @@ else
     fappx =@(x) ppval(pp,x);
 end;
 %delete(p)
-delete(q);
+%delete(q);
 
 % ---------------------------------------------------------
