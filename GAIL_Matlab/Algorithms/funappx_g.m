@@ -248,7 +248,7 @@ x = out_param.a:len/(ninit-1):out_param.b;
 y = f(x);
 iter = 0;
 exit_len = 2;
-out_param.exit=logical(zeros(exit_len,1)); %we start the algorithm with all warning flags down
+out_param.exit= false(exit_len,1); %we start the algorithm with all warning flags down
 
 while(max(err) > abstol)
     iter = iter + 1;
