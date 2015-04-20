@@ -12,7 +12,7 @@ warning('off','MATLAB:funappx_g:exceedbudget')
 warning('off','MATLAB:funappxglobal_g:peaky')
 warning('off','MATLAB:funappxglobal_g:exceedbudget')
 for i = 1:nrep;
-    a = -c(i) -1;
+    a = -c(i)-1;
     b = c(i)+1;
     f1 = @(x) c(i)*x.^2;
     f2 = @(x) sin(c(i)*pi*x);
@@ -40,6 +40,9 @@ for i = 1:nrep;
     t=toc;
     time(2,2,i) =  t;
     npoints(2,2,i) = out_param.npoints;
+    %if npoints(2,1,i)*1.0/npoints(2,2,i) > 3
+    %    disp(['slow']), c(i), a, b
+    %end
     tic;
     [~, out_param] = funappx_g(f3,a,b,abstol,nlo,nhi);
     t=toc;
@@ -50,6 +53,9 @@ for i = 1:nrep;
     t=toc;
     time(3,2,i) =   t;
     npoints(3,2,i) = out_param.npoints;
+    %if npoints(3,1,i)*1.0/npoints(3,2,i) < 0.05
+    %    disp(['fast']), c(i), a, b
+    %end
     tic;
     [~, out_param] = funappx_g(f4,a,b,abstol,nlo,nhi);
     t=toc;
@@ -121,3 +127,21 @@ gail.save_mat('WorkoutFunappxOutput', 'WorkoutFunAppxTest', true, npoints,time,.
     c,timeratio,npointsratio,npointslgratio,timelgratio);
 
 end
+
+% Sample output for nrep=1000; abstol = 1e-7; nlo = 100; nhi = 1000;
+%    Test      Number of Points       Time Used
+%  Function   Local      Global     Local    Global
+%         1    225201     730546   0.0637602    0.0832041
+%         2    596313     413558   0.1081802    0.0375299
+%         3     75938    1032953   0.0244367    0.1176585
+%         4   1845347    5159658   0.5526649    0.6400267
+% 
+% timelgratio =
+% 
+%     0.7663    2.8825    0.2077    0.8635
+% 
+% 
+% npointslgratio =
+% 
+%     0.3083    1.4419    0.0735    0.3576
+
