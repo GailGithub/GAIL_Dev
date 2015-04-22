@@ -4,7 +4,7 @@ if usejava('jvm')
 
     oldStatus = get(0,'DefaultFigureVisible');
     set(0, 'DefaultFigureVisible', 'off')
-    [GAILPATH,GAILVERSION,PATHNAMESEPARATOR,~] = GAILstart(0);
+    [GAILPATH,GAILVERSION] = GAILstart(0);
     mfile_list = {'GAIL','help_license','help_readme','funclist',...
         'help_funappx_g','help_funmin_g',...
         'help_integral_g', 'help_meanMC_g','help_meanMCBer_g', ...
@@ -12,7 +12,7 @@ if usejava('jvm')
     
     %% generate GAIL Documentation in HTML format
     if ifGenerateHtml
-      delete(strcat(GAILPATH,'Documentation',PATHNAMESEPARATOR,'html',PATHNAMESEPARATOR,'*.png'))
+      delete(strcat(GAILPATH,'Documentation',filesep,'html',filesep,'*.png'))
       for i=1:length(mfile_list),
         publish(mfile_list{i});
       end
@@ -22,12 +22,12 @@ if usejava('jvm')
     if ifGenerateLateX
         s = computer;
         if all(s(1:2)=='PC') == 0
-            delete(strcat(GAILPATH,'Documentation',PATHNAMESEPARATOR,'html',PATHNAMESEPARATOR,'gail_ug.*'))
+            delete(strcat(GAILPATH,'Documentation',filesep,'html',filesep,'gail_ug.*'))
             cat_cmd = 'cat ';
             for i=1:length(mfile_list),
-                cat_cmd = strcat([cat_cmd, ' ', GAILPATH,'Documentation',PATHNAMESEPARATOR,mfile_list{i},'.m', ' ']);
+                cat_cmd = strcat([cat_cmd, ' ', GAILPATH,'Documentation',filesep,mfile_list{i},'.m', ' ']);
             end
-            gailug_filename = strcat([GAILPATH,'Documentation',PATHNAMESEPARATOR,...
+            gailug_filename = strcat([GAILPATH,'Documentation',filesep,...
                 'gail_ug',strrep(GAILVERSION, '.', '_'),'.m']);
             if exist(gailug_filename,'file') > 0
                 delete(gailug_filename)
@@ -44,7 +44,7 @@ if usejava('jvm')
     if ifBuildSearchIndex,
         warninfo = warning('query','MATLAB:doc:DocNotInstalled');
         warning('off', warninfo.identifier);
-        builddocsearchdb(strcat(GAILPATH,'Documentation',PATHNAMESEPARATOR,'html'));
+        builddocsearchdb(strcat(GAILPATH,'Documentation',filesep,'html'));
         warning(warninfo.state,warninfo.identifier);
     end
     

@@ -3,7 +3,7 @@ function GAIL_Install(isBuild)
 if nargin < 1
     isBuild =  false;
 end
-[GAILPATH,GAILVERSION,~,MATLABVERSION] = GAILstart;
+[GAILPATH,GAILVERSION,MATLABVERSION] = GAILstart;
 fprintf('\nWelcome to Guaranteed Automatic Integration Library (GAIL).\nYou are installing GAIL v%s.\n\n', GAILVERSION);
 if MATLABVERSION < 7,
     error('This version is only supported on Matlab 7.x and above.');
