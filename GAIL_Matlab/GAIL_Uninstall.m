@@ -19,7 +19,7 @@ if any(strcmpi(reply,{'yes','y'}));
     fprintf('\nYou are going to delete GAIL version %s files.\n ', GAILVERSION);
     reply = input('\nDo you want to delete ALL GAIL files?\n (Your answer is not case sensitive.) Y/N [N]: ', 's');
     if any(strcmpi(reply,{'yes','y'}));
-        delete('GAILPATH/*.*') % delete all GAIL files
+        delete([GAILPATH,'*.*']) % delete all GAIL files
         rmdir(GAILPATH,'s')
         fprintf('\nAll GAIL version %s files have been deleted successfully.\n', GAILVERSION);
     else
