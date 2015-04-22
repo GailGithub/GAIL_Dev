@@ -21,7 +21,7 @@ pause
 %% Run a quick test
 fprintf('\nmuhat=meanMC_g(@(n) rand(n,1))\n');
 muhat=meanMC_g(@(n) rand(n,1)); %run meanMC_g once
-fprintf('muhat = %.4f\n',muhat);
+fprintf('\nmuhat = %.4f\n',muhat);
 fprintf('\nThis answer should be close to 0.5.\n\n');
 %Then you should be ready to use GAIL
 disp('Next README.txt will be displayed. Press RETURN to continue to ');
