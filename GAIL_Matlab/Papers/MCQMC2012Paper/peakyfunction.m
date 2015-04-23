@@ -1,9 +1,9 @@
 function [y, yprime, ydubprime,info]=peakyfunction(x0,info)
 %This function takes a vector x0 of x values and loads specific x values from
 %a file. This is used most easily in the script for fooling function.
-[GAILPATH,~,PATHNAMESEPARATOR] = GAILstart(0);
-outputfolder =  [GAILPATH,'OutputFiles',PATHNAMESEPARATOR,'MCQMC2012PaperOutput'];
-fullfilename = strcat(outputfolder, PATHNAMESEPARATOR', info.filename);
+GAILPATH = GAILstart(0);
+outputfolder =  [GAILPATH,'OutputFiles',filesep,'MCQMC2012PaperOutput'];
+fullfilename = strcat(outputfolder, filesep', info.filename);
 load(fullfilename,'xsample')
  %load nodes recorded
 info.sortedX=sort([info.lower; xsample; info.upper]); %add endpoints

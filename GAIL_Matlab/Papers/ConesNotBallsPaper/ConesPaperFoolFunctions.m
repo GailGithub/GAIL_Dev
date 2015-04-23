@@ -21,7 +21,7 @@ set(0,'defaultLineMarkerSize',40) %latex axis labels
 
 %% quad's nodes
 
-[GAILPATH,GAILVERSION,PATHNAMESEPARATOR,MATLABVERSION] = GAILstart(false); 
+[GAILPATH,~,MATLABVERSION] = GAILstart(false); 
 
 xquad=0.13579; %number used by quad to split interval into three parts
 xleft=[0 xquad/2 xquad 3*xquad/2 2*xquad];
@@ -49,8 +49,8 @@ if usejava('jvm') || MATLABVERSION <= 7.12
     set(gca,'Ytick',-0.2:0.2:1)
     legend(h,{'$f$','data'},'location','southeast')
     
-    filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
-        'ConesPaperOutput',PATHNAMESEPARATOR,'ConesPaperSpikyquad.eps');
+    filename = strcat(GAILPATH,'OutputFiles',filesep,...
+        'ConesPaperOutput',filesep,'ConesPaperSpikyquad.eps');
     print('-deps',filename)
 end
 fprintf('  Integral of spiky function = %7.5f\n',integralspiky)
@@ -121,8 +121,8 @@ if usejava('jvm') || MATLABVERSION <= 7.12
     axis([0 1 -0.8 1.2])
     set(gca,'Ytick',-0.8:0.4:1.2)
     legend(h,{'$f$','data'},'location','north')
-    filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
-        'ConesPaperOutput',PATHNAMESEPARATOR,'ConesPaperFlukyquad.eps');
+    filename = strcat(GAILPATH,'OutputFiles',filesep,...
+        'ConesPaperOutput',filesep,'ConesPaperFlukyquad.eps');
     print('-deps',filename)
 end
 fprintf('  Condition number of matrix = %7.5f\n',cond(A))
@@ -134,7 +134,7 @@ fprintf('But by MATLAB''s quad routine = %7.5f\n\n',MATquadfluky)
 
 
 clear A            MATquadspiky       fbump              hmid               integval           optcoef            spikyfun           xquad...             
-GAILPATH           PATHNAMESEPARATOR  filename           hright             j                  piece              xall               xrght...              
+GAILPATH           filename           hright             j                  piece              xall               xrght...              
 GAILVERSION        a                  flukyfun           integpiece         ncent              qval               xctr                    ...
 MATLABVERSION      b                  h                  integralfluky      nconst             scale              xleft                   ...
 MATquadfluky       centers            hleft              integralspiky      nnode              scaledfluky        xplot            

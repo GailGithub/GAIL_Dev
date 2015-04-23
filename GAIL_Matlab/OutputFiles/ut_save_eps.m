@@ -4,8 +4,8 @@ classdef ut_save_eps < matlab.unittest.TestCase
     methods(Test)
         
         function test_save_eps_1(testCase)
-            [GAILPATH,~,PATHNAMESEPARATOR,~] = GAILstart(false);
-            dir_name = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,'temp',PATHNAMESEPARATOR);
+            GAILPATH = GAILstart(false);
+            dir_name = strcat(GAILPATH,'OutputFiles',filesep,'temp',filesep);
             x = 0:0.1:1; y = sin(x);
             h = figure(1);
             plot(x,y)
@@ -17,8 +17,8 @@ classdef ut_save_eps < matlab.unittest.TestCase
         end
         
         function test_save_eps_2a(testCase)
-            [GAILPATH,~,PATHNAMESEPARATOR,~] = GAILstart(false);
-            dir_name = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,'temp',PATHNAMESEPARATOR);
+            GAILPATH = GAILstart(false);
+            dir_name = strcat(GAILPATH,'OutputFiles',filesep,'temp',filesep);
             x = 0:0.1:1; y = sin(x);
             h = figure(1);
             plot(x,y)
@@ -30,8 +30,8 @@ classdef ut_save_eps < matlab.unittest.TestCase
         end
         
         function test_save_eps_2b(testCase)
-            [GAILPATH,~,PATHNAMESEPARATOR,~] = GAILstart(false);
-            dir_name = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,'temp',PATHNAMESEPARATOR);
+            GAILPATH = GAILstart(false);
+            dir_name = strcat(GAILPATH,'OutputFiles',filesep,'temp',filesep);
             x = 0:0.1:1; y = sin(x);
             h = figure(1);
             plot(x,y)

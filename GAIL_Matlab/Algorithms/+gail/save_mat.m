@@ -19,16 +19,16 @@ else
     isTimeStamped = varargin{1};
 end
 
-[GAILPATH,~,PATHNAMESEPARATOR] = GAILstart(0);
-outputfolder =  [GAILPATH,'OutputFiles',PATHNAMESEPARATOR,subdir];
+GAILPATH = GAILstart(0);
+outputfolder =  [GAILPATH,'OutputFiles',filesep,subdir];
 if exist(outputfolder,'dir') ~= 7,
   mkdir(outputfolder);
 end
 if isTimeStamped == true,
-    fullfilename = strcat(outputfolder, PATHNAMESEPARATOR', filename,'-',...
+    fullfilename = strcat(outputfolder, filesep', filename,'-',...
         datestr(now,'yyyy-mm-dd-HH-MM-SS'),'.mat');
 else
-    fullfilename = strcat(outputfolder, PATHNAMESEPARATOR', filename,'.mat');
+    fullfilename = strcat(outputfolder, filesep', filename,'.mat');
 end
 varnames=cell(1,length(varargin)-1);
 for k = 1:(nargin-3)
@@ -36,7 +36,7 @@ for k = 1:(nargin-3)
     eval([varname, ' = varargin{k+1};']);
     varnames{k} = varname;
 end
-clear subdir filename GAILPATH PATHNAMESEPARATOR varname outputfolder isTimeStamped k varargin;
+clear subdir filename GAILPATH varname outputfolder isTimeStamped k varargin;
 if length(varnames) > 0
    save(fullfilename, varnames{:});
 else 

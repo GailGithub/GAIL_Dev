@@ -108,7 +108,7 @@ end
 
 %% Save Output
 
-[~,~,~,MATLABVERSION] = GAILstart(false); 
+[~,~,MATLABVERSION] = GAILstart(false); 
 if usejava('jvm') || MATLABVERSION <= 7.12
     figure
     subplot(2,1,1);
