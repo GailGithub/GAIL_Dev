@@ -99,12 +99,19 @@ display('   Test      Number of Points       Time Used')
 display(' Function   Local      Global     Local    Global')
 npointslgratio = zeros(1,n);
 timelgratio = zeros(1,n);
+
 for i=1:n
     display(sprintf('%9.0f %9.0f  %9.0f %11.7f  %11.7f',...
         [i mean(npoints(i,1,:)) mean(npoints(i,2,:)) mean(time(i,1,:)) mean(time(i,2,:))])) 
     npointslgratio(i) = mean(npoints(i,1,:))/mean(npoints(i,2,:));
     timelgratio(i) = mean(time(i,1,:))/mean(time(i,2,:));
 end
+idx=find(timeratio<1);
+max_idx_t = max(idx);
+timeratio(1:max_idx_t) = 1./timeratio(1:max_idx_t);
+idx=find(npointsratio<1);
+max_idx_n = max(idx);
+npointsratio(1:max_idx_n) = 1.0 ./npointsratio(1:max_idx_n);
 
 %% Save Output
 
