@@ -389,6 +389,9 @@ out_param.iter = iter;
 out_param.npoints = index(end);
 out_param.errest = max(err);
 out_param.nstar = nstar;
+%add compute memory parameter
+w = whos;
+out_param.bytes = sum([w.bytes]);
 if MATLABVERSION >= 8.3
     fappx = griddedInterpolant(x,y,'linear');
 else

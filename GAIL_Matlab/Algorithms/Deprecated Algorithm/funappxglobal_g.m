@@ -147,7 +147,6 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %   >> [pp, out_param] = funappxglobal_g(f,-2,2,1e-7,10,10,1000000)
 %
 % pp =
-%
 %       form: 'pp'
 %     breaks: [1x33733 double]
 %      coefs: [33732x2 double]
@@ -155,9 +154,7 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %      order: 2
 %        dim: 1
 %     orient: 'first'
-%
 % out_param =
-%
 %                a: -2
 %           abstol: 1.0000e-07
 %                b: 2
@@ -355,10 +352,13 @@ if out_param.exceedbudget == 1;
 else
     out_param.npoints = n;
     out_param.errorbound = fn*len^2/(8*(n-1)^2);
-    pp = interp1(x,y,'linear','pp');
-    
-    
+    pp = interp1(x,y,'linear','pp');    
 end;
+
+%add compute memory parameter
+w = whos;
+out_param.bytes = sum([w.bytes]);
+
 if MATLABVERSION >= 8.3
     warning('on', 'MATLAB:interp1:ppGriddedInterpolant');
 end;
