@@ -132,25 +132,26 @@ if usejava('jvm') || MATLABVERSION <= 7.12
     t =1:nrep*n;
     
     %show two y-axis in one graph
-    ax = plotyy(t,timeratio,t,npointsratio,'plot','plot');
-    ylabel(ax(1),'Time ratio of local/global') % label left y-axis
-    ylabel(ax(2),'Points ratio of local/global') % label right y-axis
-    xlabel(ax(2),'Number of tests') % label x-axis
-    %     p1.LineStyle = '--';
-    %     p1.LineWidth = 2;
-    %     p2.LineWidth = 2;
-    grid(ax(1),'on')
-    
+%     ax = plotyy(t,timeratio,t,npointsratio,'plot','plot');
+%     ylabel(ax(1),'Time ratio of local/global') % label left y-axis
+%     ylabel(ax(2),'Points ratio of local/global') % label right y-axis
+%     xlabel(ax(2),'Number of tests') % label x-axis
+%     %     p1.LineStyle = '--';
+%     %     p1.LineWidth = 2;
+%     %     p2.LineWidth = 2;
+%     grid(ax(1),'on')
+%     gail.save_eps('WorkoutFunappxOutput', 'WorkoutFunAppxTest');
     %show tow x-axis and y-axis in one graph
-%     line(t,timeratio,'Color','r')
-%     ax1 = gca;
-%     set(ax1,'XColor','r','YColor','r')
-%     ax2 = axes('Position',get(ax1,'Position'),...
-%         'XAxisLocation','top',...
-%         'YAxisLocation','right',...
-%         'Color','none',...
-%         'XColor','b','YColor','b');
-%     line(t,npointsratio,'Color','b','Parent',ax2);
+    line(t,timeratio,'Color','r')
+    ax1 = gca;
+    set(ax1,'XColor','r','YColor','r')
+    ax2 = axes('Position',get(ax1,'Position'),...
+        'XAxisLocation','top',...
+        'YAxisLocation','right',...
+        'Color','none',...
+        'XColor','b','YColor','b');
+    line(t,npointsratio,'Color','b','Parent',ax2);
+    gail.save_eps('WorkoutFunappxOutput', 'WorkoutFunAppxTest');   
 end;
 gail.save_mat('WorkoutFunappxOutput', 'WorkoutFunAppxTest', true, npoints,time,...
     c,timeratio,npointsratio,npointslgratio,timelgratio);
