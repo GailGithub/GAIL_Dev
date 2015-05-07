@@ -13,7 +13,7 @@ function [q,out_param] = cubLattice_g(varargin)
 %   a 2 x d matrix, where the first row corresponds to the lower limits 
 %   and the second row corresponds to the upper limits of the integral.
 %   Given the construction of our Lattices, d must be a positive integer
-%   with 1<=d<=250.
+%   with 1<=d<=100.
 % 
 %   q = CUBLATTICE_G(f,hyperbox,measure,abstol,reltol)
 %   estimates the integral of f over the hyperbox. The answer
@@ -38,7 +38,7 @@ function [q,out_param] = cubLattice_g(varargin)
 %
 %     f --- the integrand whose input should be a matrix n x d where n is
 %     the number of data points and d the dimension, which cannot be
-%     greater than 250. By default f is f=@ x.^2.
+%     greater than 100. By default f is f=@ x.^2.
 %
 %     hyperbox --- the integration region defined by its bounds. It must be
 %     a 2 x d matrix, where the first row corresponds to the lower limits 
@@ -507,9 +507,9 @@ else
     else
         out_param.f=f;
         hyperbox = varargin{2};
-        if ~isnumeric(hyperbox) || ~(size(hyperbox,1)==2) || ~(size(hyperbox,2)<251)
+        if ~isnumeric(hyperbox) || ~(size(hyperbox,1)==2) || ~(size(hyperbox,2)<101)
             warning('MATLAB:cubLattice_g:hyperbox_error1',...
-                'The hyperbox must be a real matrix of size 2xd where d can not be greater than 250. Example for f(x)=x^2:')
+                'The hyperbox must be a real matrix of size 2xd where d can not be greater than 100. Example for f(x)=x^2:')
             f = @(x) x.^2;
             out_param.f=f;
             hyperbox = default.hyperbox;
@@ -601,9 +601,9 @@ if fdgyes < 2 % No fudge factor given as input
 end
 
 %hyperbox should be 2 x dimension
-if ~isnumeric(hyperbox) || ~(size(hyperbox,1)==2) || ~(out_param.d<251)
+if ~isnumeric(hyperbox) || ~(size(hyperbox,1)==2) || ~(out_param.d<101)
     warning('MATLAB:cubLattice_g:hyperbox_error2',...
-        'The hyperbox must be a real matrix of size 2 x d where d can not be greater than 250. Example for f(x)=x^2:')
+        'The hyperbox must be a real matrix of size 2 x d where d can not be greater than 100. Example for f(x)=x^2:')
     f = @(x) x.^2;
     out_param.f=f;
     hyperbox = default.hyperbox;
