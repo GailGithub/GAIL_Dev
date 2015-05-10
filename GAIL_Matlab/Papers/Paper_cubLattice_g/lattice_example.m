@@ -10,7 +10,7 @@ set(0,'defaultTextInterpreter','factory') %tex axis labels
 set(0,'defaultLineMarkerSize','factory') %larger markersset(0,'defaultaxesfontsize',20,'defaulttextfontsize',20)
 
 
-[~,~,~,MATLABVERSION] = GAILstart(false);
+[~,~,MATLABVERSION] = GAILstart(false);
 if usejava('jvm') || MATLABVERSION <= 7.12
     a = 23;
     b = 30;

@@ -24,7 +24,7 @@ testfun=@(x) sin(20*sqrt((x(:,1)-0.5).^2+(x(:,2)-0.5).^2)+eps)./(20*sqrt((x(:,1)
 
 
 %% Plot the function
-[~,~,~,MATLABVERSION] = GAILstart(false);
+[~,~,MATLABVERSION] = GAILstart(false);
 if usejava('jvm') || MATLABVERSION <= 7.12
 [X,Y] = meshgrid(0:.01:1);
 R = sqrt((X-0.5).^2 + (Y-0.5).^2) + eps;

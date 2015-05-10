@@ -4,8 +4,8 @@ classdef ut_save_mat < matlab.unittest.TestCase
     methods(Test)
         
         function test_save_mat_1(testCase)
-            [GAILPATH,~,PATHNAMESEPARATOR,~] = GAILstart(false);
-            dir_name = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,'temp',PATHNAMESEPARATOR);
+            GAILPATH = GAILstart(false);
+            dir_name = strcat(GAILPATH,'OutputFiles',filesep,'temp',filesep);
             x = 1; y = 2;
             mat_file_name = gail.save_mat('temp', 'x_y', true, x, y);
             clear x y;
@@ -16,8 +16,8 @@ classdef ut_save_mat < matlab.unittest.TestCase
         end
         
         function test_save_mat_2(testCase)
-            [GAILPATH,~,PATHNAMESEPARATOR,~] = GAILstart(false);
-            dir_name = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,'temp',PATHNAMESEPARATOR);
+            GAILPATH = GAILstart(false);
+            dir_name = strcat(GAILPATH,'OutputFiles',filesep,'temp',filesep);
             x = 1; y = 2;
             mat_file_name = gail.save_mat('temp', 'x_y', false, x, y);
             clear x y;

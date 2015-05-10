@@ -1,12 +1,12 @@
 % Drives all doctests and unit tests
 format short
 
-[GAILPATH,~,PATHNAMESEPARATOR] = GAILstart(0);
-completereport = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
+GAILPATH = GAILstart(0);
+completereport = strcat(GAILPATH,'OutputFiles',filesep,...
   'gail_tests-', datestr(now,'yyyy-mm-dd-HH-MM-SS'),'.txt');
 diary(completereport)
 
-shortutestreport = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
+shortutestreport = strcat(GAILPATH,'OutputFiles',filesep,...
    'gail_unittests','.txt');
 fid = fopen(shortutestreport,'wt');
 

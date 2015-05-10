@@ -1,7 +1,7 @@
 % LONGTESTS Drives all lengthy doctests, unit tests, workouts, and scripts
 
-[GAILPATH,GAILVERSION,PATHNAMESEPARATOR,MATLABVERSION]  = GAILstart(false);
-filename = strcat(GAILPATH,'OutputFiles',PATHNAMESEPARATOR,...
+[GAILPATH,GAILVERSION,MATLABVERSION]  = GAILstart(false);
+filename = strcat(GAILPATH,'OutputFiles',filesep,...
     'gail_workouts-', datestr(now,'yyyy-mm-dd-HH-MM-SS'),'.txt');
 diary(filename)
 tic;
@@ -78,6 +78,7 @@ catch
 end    
 
 %cubQMC
+format short
 doctest dt_cubSobol_g
 doctest dt_cubLattice_g 
 

@@ -1,5 +1,5 @@
 %comparison between funappx_g and funappxlocal_g
-function [timelgratio,npointslgratio]=workout_funappx_g(nrep,abstol,nlo,nhi)
+function [timeratio,timelgratio,npointsratio,npointslgratio]=workout_funappx_g(nrep,abstol,nlo,nhi)
 % user can choose absolut error tolerance, initial number of points, number
 % of iteration or can use the following parameters
 % nrep = 100; abstol = 1e-7; nlo = 100; nhi = 1000;
@@ -99,29 +99,59 @@ display('   Test      Number of Points       Time Used')
 display(' Function   Local      Global     Local    Global')
 npointslgratio = zeros(1,n);
 timelgratio = zeros(1,n);
+
 for i=1:n
     display(sprintf('%9.0f %9.0f  %9.0f %11.7f  %11.7f',...
         [i mean(npoints(i,1,:)) mean(npoints(i,2,:)) mean(time(i,1,:)) mean(time(i,2,:))])) 
     npointslgratio(i) = mean(npoints(i,1,:))/mean(npoints(i,2,:));
     timelgratio(i) = mean(time(i,1,:))/mean(time(i,2,:));
 end
+idx=find(timeratio<1);
+max_idx_t = max(idx);
+timeratio(1:max_idx_t) = 1./timeratio(1:max_idx_t);
+idx=find(npointsratio<1);
+max_idx_n = max(idx);
+npointsratio(1:max_idx_n) = 1.0 ./npointsratio(1:max_idx_n);
 
 %% Save Output
 
-[~,~,~,MATLABVERSION] = GAILstart(false); 
+[~,~,MATLABVERSION] = GAILstart(false);
 if usejava('jvm') || MATLABVERSION <= 7.12
     figure
-    subplot(2,1,1);
-    plot(1:nrep*n,timeratio,'blue',1:nrep*n,ones(nrep*n,1),'red');
-    title('Comparison between funappx\_g and funappxglobal\_g')
-    ylabel('Time ratio of local/global')
-    xlabel('Number of tests')
-    subplot(2,1,2);
-    plot(1:nrep*n,npointsratio,'blue',1:nrep*n,ones(nrep*n,1),'red');
-    ylabel('Points ratio of local/global')
-    xlabel('Number of tests')
+    %     subplot(2,1,1);
+    %     plot(1:nrep*n,timeratio,'blue',1:nrep*n,ones(nrep*n,1),'red');
+    %     title('Comparison between funappx\_g and funappxglobal\_g')
+    %     ylabel('Time ratio of local/global')
+    %     xlabel('Number of tests')
+    %     subplot(2,1,2);
+    %     plot(1:nrep*n,npointsratio,'blue',1:nrep*n,ones(nrep*n,1),'red');
+    %     ylabel('Points ratio of local/global')
+    %     xlabel('Number of tests')
+    %
+    %     gail.save_eps('WorkoutFunappxOutput', 'WorkoutFunAppxTest');
+    t =1:nrep*n;
     
-    gail.save_eps('WorkoutFunappxOutput', 'WorkoutFunAppxTest');
+    %show two y-axis in one graph
+%     ax = plotyy(t,timeratio,t,npointsratio,'plot','plot');
+%     ylabel(ax(1),'Time ratio of local/global') % label left y-axis
+%     ylabel(ax(2),'Points ratio of local/global') % label right y-axis
+%     xlabel(ax(2),'Number of tests') % label x-axis
+%     %     p1.LineStyle = '--';
+%     %     p1.LineWidth = 2;
+%     %     p2.LineWidth = 2;
+%     grid(ax(1),'on')
+%     gail.save_eps('WorkoutFunappxOutput', 'WorkoutFunAppxTest');
+    %show tow x-axis and y-axis in one graph
+    line(t,timeratio,'Color','r')
+    ax1 = gca;
+    set(ax1,'XColor','r','YColor','r')
+    ax2 = axes('Position',get(ax1,'Position'),...
+        'XAxisLocation','top',...
+        'YAxisLocation','right',...
+        'Color','none',...
+        'XColor','b','YColor','b');
+    line(t,npointsratio,'Color','b','Parent',ax2);
+    gail.save_eps('WorkoutFunappxOutput', 'WorkoutFunAppxTest');   
 end;
 gail.save_mat('WorkoutFunappxOutput', 'WorkoutFunAppxTest', true, npoints,time,...
     c,timeratio,npointsratio,npointslgratio,timelgratio);

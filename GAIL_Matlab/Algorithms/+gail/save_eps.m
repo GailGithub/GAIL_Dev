@@ -17,16 +17,16 @@ else
     isTimeStamped = varargin{1};
 end
 
-[GAILPATH,~,PATHNAMESEPARATOR] = GAILstart(0);
-dirpath=strcat([GAILPATH,'OutputFiles',PATHNAMESEPARATOR], subdir);
+GAILPATH = GAILstart(0);
+dirpath=strcat([GAILPATH,'OutputFiles',filesep], subdir);
 if exist(dirpath) ~= 7,
   mkdir(dirpath);
 end
 if isTimeStamped == true,
-    path = strcat(dirpath, PATHNAMESEPARATOR, filename, '-',...
+    path = strcat(dirpath, filesep, filename, '-',...
         datestr(now,'yyyy-mm-dd-HH-MM-SS'),'.eps');
 else
-    path = strcat(dirpath, PATHNAMESEPARATOR, filename,'.eps');
+    path = strcat(dirpath, filesep, filename,'.eps');
 end
 
 print('-depsc', path)
