@@ -23,7 +23,8 @@ copyfile(GAILPATH,newpath) % copy files in Google drive to new path
 copyfile(GoogleDrivePath1,newpath)
 
 % zip files recursively excluding hidden file such as .ds_store and .icon
-% in current foldersystem(horzcat('zip -r ',zipfilename,' ',newpath,' -x@',excludefilelist));  
+% in current folder
+system(horzcat('zip -r ',zipfilename,' ',newpath,' -x@',excludefilelist));  
 
 movefile(zipfilename, GoogleDrivePath,'f') % move zip to Google drive path
 display(horzcat(zipfilename,' is already put in ',GoogleDrivePath))

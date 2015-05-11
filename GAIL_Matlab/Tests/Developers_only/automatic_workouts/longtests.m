@@ -78,6 +78,7 @@ catch
 end    
 
 %cubQMC
+format short
 doctest dt_cubSobol_g
 doctest dt_cubLattice_g 
 
