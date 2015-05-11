@@ -6,7 +6,7 @@ function CopyZipGAILGoogleDrive(GoogleDrivePath,zipFile)
 %
 % zipFile --- the name of zip file, e.g., 'GAIL_2_0.zip' for GAIL 2.0
 %
-% CopyZipGAILGoogleDrive('E:\GoogleDrive\GAIL_Dev','GAIL_2_0.zip')
+% CopyZipGAILGoogleDrive('E:\GoogleDrive\GAIL_Dev','GAIL_Build.zip')
 
 currentPath = pwd;
 cd(GoogleDrivePath);
