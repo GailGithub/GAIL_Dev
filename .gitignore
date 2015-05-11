@@ -1,6 +1,7 @@
 *.asv
 *.cfe
 *.cfs
+*.eps
 *.gen
 *.html
 *.mat
@@ -14,6 +15,7 @@
 *_raw.m
 *_raw.xml
 *.si
+*.zip
 GAIL_Matlab/Documentation/autodoc?
 GAIL_Matlab/Documentation/html/gail_ug2_1.tex
 GAIL_Matlab/Documentation/html/helpsearch*
