@@ -11,10 +11,12 @@ function y=UniFunMin_Plot_TwoExtreme(a1,a2)
 f=@(x) -5*exp(-(10*(x-a1)).^2)-exp(-(10*(x-a2)).^2);
 
 %% Plot
-t=0:0.00001:1;
-y=f(t);
-plot(t,y,'LineWidth',2)
-xlim([0 1])
-ylim([-6 1])
-
-gail.save_eps('UniFunMinOutput', 'UniFunMinTwoExtreme');
+if usejava('jvm') || MATLABVERSION <= 7.12
+  t=0:0.00001:1;
+  y=f(t);
+  plot(t,y,'LineWidth',2)
+  xlim([0 1])
+  ylim([-6 1])
+  
+  gail.save_eps('UniFunMinOutput', 'UniFunMinTwoExtreme');
+end

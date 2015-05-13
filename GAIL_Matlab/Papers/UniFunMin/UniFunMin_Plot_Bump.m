@@ -13,11 +13,13 @@ f=@(x) 0.5/a^2*(-4*a^2-(x-z).^2-(x-z-a).*abs(x-z-a)+(x-z+a).*...
     abs(x-z+a)).*(x>=z-2*a).*(x<=z+2*a);
 
 %% Plot
-t=0:0.00001:1;
-y=f(t);
-plot(t,y,'LineWidth',2)
-xlim([0 1])
-ylim([-1.2 0.2])
-
-%% Save output 
-gail.save_eps('UniFunMinOutput', 'UniFunMinPlotBump');
+if usejava('jvm') || MATLABVERSION <= 7.12
+  t=0:0.00001:1;
+  y=f(t);
+  plot(t,y,'LineWidth',2)
+  xlim([0 1])
+  ylim([-1.2 0.2])
+  
+  %% Save output
+  gail.save_eps('UniFunMinOutput', 'UniFunMinPlotBump');
+end
