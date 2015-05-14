@@ -11,6 +11,7 @@ function y=UniFunMin_Plot_Flat(a,b)
 f=@(x) exp(-b./(x-a).^2);
 
 %% Plot
+[~,~,MATLABVERSION]=GAILstart(0);
 if usejava('jvm') || MATLABVERSION <= 7.12
   t=0:0.000001:1;
   y=f(t);

@@ -13,6 +13,8 @@ f=@(x) 0.5/a^2*(-4*a^2-(x-z).^2-(x-z-a).*abs(x-z-a)+(x-z+a).*...
     abs(x-z+a)).*(x>=z-2*a).*(x<=z+2*a);
 
 %% Plot
+[~,~,MATLABVERSION]=GAILstart(0);
+[~,~,MATLABVERSION]=GAILstart(0);
 if usejava('jvm') || MATLABVERSION <= 7.12
   t=0:0.00001:1;
   y=f(t);
