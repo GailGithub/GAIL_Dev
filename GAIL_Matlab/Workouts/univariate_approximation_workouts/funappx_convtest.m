@@ -12,8 +12,8 @@ j=1;
 %f = @(x) x.^2; 
 
 if nargin > 1,
-  in_param.a = a
-  in_param.b = b
+  in_param.a = a;
+  in_param.b = b;
 end
 
 if nargin == 0,
@@ -62,7 +62,6 @@ if usejava('jvm') || MATLABVERSION <= 7.12
     ylabel('error estimation')
     xlabel('time cost')
     hold on
-    gail.save_eps('WorkoutFunappxOutput', 'WorkoutFunAppxConvTest1');
     
     %figure(2)
     subplot(2,1,1)
@@ -70,11 +69,14 @@ if usejava('jvm') || MATLABVERSION <= 7.12
     title('Time and Computational Cost of funappxglobal\_g VS error tolerance')
     ylabel('error estimation')
     xlabel('Number of points')
+    legend('funappx\_g','funappxglobal\_g')
     
     subplot(2,1,2)
     loglog(tglobal, errestglobal,'r')
-    gail.save_eps('WorkoutFunappxOutput', 'WorkoutFunAppxConvTest2');
     ylabel('error estimation')
     xlabel('time cost')
+    legend('funappx\_g','funappxglobal\_g')
+    
+    gail.save_eps('WorkoutFunappxOutput', 'WorkoutFunAppxConvTest');
 end
 end

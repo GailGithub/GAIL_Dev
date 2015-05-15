@@ -1,4 +1,5 @@
-f=@(t) sin(2 * t) .* cos(2 * t)
+f=@(t) sin(2 * t) .* cos(2 * t);
+t=0:0.0001:2*pi;
 subplot(1,2,1)
 polar(t,f(t),'b')
 hold on;
