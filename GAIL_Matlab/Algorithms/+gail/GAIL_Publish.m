@@ -1,7 +1,7 @@
 function GAIL_Publish(ifGenerateHtml, ifGenerateLateX, ifBuildSearchIndex)
 % GAIL_PUBLISH  To generate html files in the GAIL subdirectory Documentation
+[GAILPATH,GAILVERSION,MATLABVERSION] = GAILstart;
 if usejava('jvm')
-
     oldStatus = get(0,'DefaultFigureVisible');
     set(0, 'DefaultFigureVisible', 'off')
     [GAILPATH,GAILVERSION] = GAILstart(0);
@@ -12,9 +12,10 @@ if usejava('jvm')
     
     %% generate GAIL Documentation in HTML format
     if ifGenerateHtml
+      opts.stylesheet = strcat(GAILPATH,'Algorithms',filesep','+gail',filesep,'mxdom2mathjax.xsl');
       delete(strcat(GAILPATH,'Documentation',filesep,'html',filesep,'*.png'))
       for i=1:length(mfile_list),
-        publish(mfile_list{i});
+        publish(mfile_list{i}, opts);
       end
     end
     
