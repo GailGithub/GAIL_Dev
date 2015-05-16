@@ -1,7 +1,7 @@
 function [tmu,out_param]=meanMC_CLT(Yrand,abstol,alpha,nSig,fudge)
 %MEANMC_CLT Monte Carlo method to estimate the mean of a random variable
 %
-%   tmu = MEANMC_CLT(Yrand) estimates the mean, mu, of a random variable Y to
+%   tmu = MEANMC_CLT(Yrand,abstol,alpha,nSig,fudge) estimates the mean, mu, of a random variable Y to
 %   within a specified error tolerance, i.e., | mu - tmu | <= abstol with
 %   probability at least 1-alpha, where abstol is the absolute error
 %   tolerance.  The default values are abstol=1e-2 and alpha=1%. Input
@@ -22,7 +22,11 @@ function [tmu,out_param]=meanMC_CLT(Yrand,abstol,alpha,nSig,fudge)
 %     positive, default value is 1e-2.
 %
 %     alpha --- the uncertainty, which should be a small positive
-%     percentage. default value is 1%.
+%     percentage. The default value is 1%.
+%
+%     nSig --- the number of samples used to compute the sample variance
+%
+%     fudge --- the standard deviation invlation factor
 %
 %   Output Arguments
 %
@@ -53,7 +57,7 @@ if nargin < 5
    end
 end
 nMax=1e8; %maximum number of samples allowed.
-out_param.alpha = alpha; %save parameters to a structure
+out_param.alpha = alpha; %save the input parameters to a structure
 out_param.fudge = fudge;
 out_param.nSig = nSig;
 tstart = tic; %start the clock
