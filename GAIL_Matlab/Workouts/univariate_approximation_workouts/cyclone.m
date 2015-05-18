@@ -9,6 +9,7 @@ f3 = @(x) f1(x).*sin(x);
 [q2,out2]=funappx_g(f2, a, b);
 [q3,out3]=funappx_g(f3, a, b);
 
+figure
 subplot(1,2,1);
 x=a:0.0001:b;
 plot3(f2(x),f3(x),f1(x))
@@ -23,8 +24,16 @@ plot3(q2(x),q3(x),q1(x),'r')
 axis square
 axis tight
 
-
 subplot(1,2,2);
 plot3(q2(x),q3(x),abs(f1(x)-q1(x))+abs(f2(x)-q2(x))+abs(f3(x)-q3(x)),'r')
 axis square
 axis tight
+gail.save_eps('WorkoutFunappxOutput', 'WorkoutFunAppxCyclone');
+
+% figure(2)
+% subplot(1,3,1);
+% plot(x,abs(f2(x)-q2(x)),'r');
+% subplot(1,3,2);
+% plot(x,abs(f3(x)-q3(x)),'r');
+% subplot(1,3,3);
+% plot(x,abs(f1(x)-q1(x)),'r');

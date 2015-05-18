@@ -19,3 +19,4 @@ x=0:0.0001:2*pi;
 plot(x,err(x))
 axis square
 axis tight
+gail.save_eps('WorkoutFunappxOutput', 'WorkoutFunAppxFloret');

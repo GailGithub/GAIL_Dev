@@ -113,14 +113,17 @@ hold on;
 [fappx,~]=funappx_g(f2,a2(2),b2(2),abstol);
 t = a2(2):h:b2(2);
 plot(t,fappx(t),'k*');
+axis equal
+gail.save_eps('WorkoutFunappxOutput', 'FunAppxBatman1');
+
 negx = [negx t];
 negy = [negy fappx(t)];
 figure(2)
 hold on
 plot(posx,posy,'LineWidth', 5);
 plot(negx,negy, 'LineWidth', 5);
-
 axis equal
+gail.save_eps('WorkoutFunappxOutput', 'FunAppxBatman2');
 
 figure(3)
 rev_neg_x  = negx(end:-1:1);
@@ -128,7 +131,7 @@ rev_neg_y  = negy(end:-1:1);
 x = [posx rev_neg_x];
 y = [posy rev_neg_y];
 fill(x,y, 'k');
-
 axis equal
+gail.save_eps('WorkoutFunappxOutput', 'FunAppxBatman3');
 
 
