@@ -1,5 +1,5 @@
-function [fappx,npoints] = funappxlocalgui(f,a,b,tol,nlo,nhi)
-%FUNAPPXLOCALGUI  Demonstrate numerical approximation of an univaraite function.
+function [fappx,npoints] = funappx_g_gui(f,a,b,tol,nlo,nhi)
+%funappx_g_gui  Demonstrate numerical approximation of an univaraite function.
 %   fappx = FUNAPPXGUI(f,a,b) shows the steps in approximating the function
 %   f(x) from a to b by locally adaptive guaranteed method.
 %   The color switches to green when the desired accuracy is obtained.
@@ -11,15 +11,15 @@ function [fappx,npoints] = funappxlocalgui(f,a,b,tol,nlo,nhi)
 %   needed of approximation.
 %
 %   Examples:
-%  [fappx,out_param]=funappxlocalgui(@(x) x.^2,0,1,1e-2,10,20)
-%  [fappx,out_param]=funappxlocalgui(@(x) exp(-1000*(x-0.2).^2),0,1,1e-2,10,20)
+%  [fappx,out_param]=funappx_g_gui(@(x) x.^2,0,1,1e-2,10,20)
+%  [fappx,out_param]=funappx_g_gui(@(x) exp(-1000*(x-0.2).^2),0,1,1e-2,10,20)
 %   Flat function:
-%  [fappx,out_param]=funappxlocalgui(@(x) exp(-1./(x - 0.5).^2),0,1,1e-5,10,20)
-%  [fappx,out_param]=funappxlocalgui(@(x) sin(x),0,pi,1e-3,10,20)
-%  [fappx,out_param]=funappxlocalgui(@(x) cos(x),0,pi,1e-3,10,20)
-%  [fappx,out_param]=funappxlocalgui(@(x) sin(2*pi*x),0,1,1e-3,10,20)
+%  [fappx,out_param]=funappx_g_gui(@(x) exp(-1./(x - 0.5).^2),0,1,1e-5,10,20)
+%  [fappx,out_param]=funappx_g_gui(@(x) sin(x),0,pi,1e-3,10,20)
+%  [fappx,out_param]=funappx_g_gui(@(x) cos(x),0,pi,1e-3,10,20)
+%  [fappx,out_param]=funappx_g_gui(@(x) sin(2*pi*x),0,1,1e-3,10,20)
 %  Two local min:
-%  [fappx,out_param]=funappxlocalgui(@(x) -5 * exp(-(10*(x - .3)).^2) - exp(-(10*(x - 0.75)).^2),0,1,1e-3,10,20)
+%  [fappx,out_param]=funappx_g_gui(@(x) -5 * exp(-(10*(x - .3)).^2) - exp(-(10*(x - 0.75)).^2),0,1,1e-3,10,20)
 %  
 shg
 clf reset
