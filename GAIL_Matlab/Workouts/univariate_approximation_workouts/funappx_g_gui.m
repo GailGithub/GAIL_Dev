@@ -1,25 +1,25 @@
 function [fappx,npoints] = funappx_g_gui(f,a,b,tol,nlo,nhi)
 %funappx_g_gui  Demonstrate numerical approximation of an univaraite function.
-%   fappx = FUNAPPXGUI(f,a,b) shows the steps in approximating the function
+%   fappx = FUNAPPX_G_GUI(f,a,b) shows the steps in approximating the function
 %   f(x) from a to b by locally adaptive guaranteed method.
 %   The color switches to green when the desired accuracy is obtained.
 %
-%   fappx = FUNAPPXGUI(f,a,b,tol) uses the given tolerance instead of 1.e-3
+%   fappx = FUNAPPX_G_GUI(f,a,b,tol) uses the given tolerance instead of 1.e-3
 %   and returns an approximated function fappx%
 %
-%   [fappx, npoints] = FUNAPPXGUI(f,...) also gives the number points
+%   [fappx, npoints] = FUNAPPX_G_GUI(f,...) also gives the number points
 %   needed of approximation.
 %
 %   Examples:
-%  [fappx,out_param]=funappx_g_gui(@(x) x.^2,0,1,1e-2,10,20)
-%  [fappx,out_param]=funappx_g_gui(@(x) exp(-1000*(x-0.2).^2),0,1,1e-2,10,20)
+%  [fappx,npoints]=funappx_g_gui(@(x) x.^2,-1,1,1e-2,10,20)
+%  [fappx,npoints]=funappx_g_gui(@(x) exp(-1000*(x-0.2).^2),0,1,1e-2,10,20)
 %   Flat function:
-%  [fappx,out_param]=funappx_g_gui(@(x) exp(-1./(x - 0.5).^2),0,1,1e-5,10,20)
-%  [fappx,out_param]=funappx_g_gui(@(x) sin(x),0,pi,1e-3,10,20)
-%  [fappx,out_param]=funappx_g_gui(@(x) cos(x),0,pi,1e-3,10,20)
-%  [fappx,out_param]=funappx_g_gui(@(x) sin(2*pi*x),0,1,1e-3,10,20)
+%  [fappx,npoints]=funappx_g_gui(@(x) exp(-1./(x - 0.5).^2),0,1,1e-5,10,20)
+%  [fappx,npoints]=funappx_g_gui(@(x) sin(x),0,pi,1e-3,10,20)
+%  [fappx,npoints]=funappx_g_gui(@(x) cos(x),0,pi,1e-3,10,20)
+%  [fappx,npoints]=funappx_g_gui(@(x) sin(2*pi*x),0,1,1e-3,10,20)
 %  Two local min:
-%  [fappx,out_param]=funappx_g_gui(@(x) -5 * exp(-(10*(x - .3)).^2) - exp(-(10*(x - 0.75)).^2),0,1,1e-3,10,20)
+%  [fappx,npoints]=funappx_g_gui(@(x) -5 * exp(-(10*(x - .3)).^2) - exp(-(10*(x - 0.75)).^2),0,1,1e-3,10,20)
 %  
 shg
 clf reset
@@ -244,6 +244,6 @@ else
     fappx =@(x) ppval(pp,x);
 end;
 %delete(p)
-%delete(q);
+delete(q);
 
 % ---------------------------------------------------------
