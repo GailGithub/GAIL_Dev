@@ -120,8 +120,8 @@ negx = [negx t];
 negy = [negy fappx(t)];
 figure(2)
 hold on
-plot(posx,posy,'LineWidth', 5);
-plot(negx,negy, 'LineWidth', 5);
+plot(posx,posy,'b*');
+plot(negx,negy,'b*');
 axis equal
 gail.save_eps('WorkoutFunappxOutput', 'FunAppxBatman2');
 
