@@ -26,6 +26,11 @@ clf reset
 MATLABVERSION= gail.matlab_version;
 
 % Default tolerance
+if nargin < 5
+    nlo = 10;
+    nhi = 1000;
+end
+
 if nargin < 4
     tol = 1.e-7;
     nlo = 10;
