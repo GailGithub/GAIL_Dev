@@ -11,14 +11,14 @@ function [fappx,npoints,errest] = funappx_g_gui(f,a,b,tol,nlo,nhi)
 %   needed of approximation.
 %
 %   Examples:
-%  [fappx,npoints,errest]=funappx_g_gui(@(x) x.^2,-1,1,1e-2,10,20)
-%  [fappx,npoints,errest]=funappx_g_gui(@(x) exp(-1000*(x-0.2).^2),0,1,1e-3,10,20)
-%  [fappx,npoints,errest]=funappx_g_gui(@(x) exp(-1000*(x-0.2).^2),0,1,1e-6,10,20)
+%  [fappx,npoints,errest] = funappx_g_gui(@(x) x.^2,-1,1,1e-2,10,20)
+%  [fappx,npoints,errest] = funappx_g_gui(@(x) exp(-1000*(x-0.2).^2),0,1,1e-3,10,20)
+%  [fappx,npoints,errest] = funappx_g_gui(@(x) exp(-1000*(x-0.2).^2),0,1,1e-6,10,20)
 %   Flat function:
-%  [fappx,npoints,errest]=funappx_g_gui(@(x) exp(-1./(x - 0.5).^2),0,1,1e-5,5,5)
-%  [fappx,npoints,errest]=funappx_g_gui(@(x) sin(2*pi*x),0,1,1e-3,10,20)
+%  [fappx,npoints,errest] = funappx_g_gui(@(x) exp(-1./(x - 0.5).^2),0,1,1e-5,5,5)
+%  [fappx,npoints,errest] = funappx_g_gui(@(x) sin(2*pi*x),0,1,1e-3,10,20)
 %  Two local min:
-%  [fappx,npoints]=funappx_g_gui(@(x) -5 * exp(-(10*(x - .3)).^2) - exp(-(10*(x - 0.75)).^2),0,1,1e-3,10,20)
+%  [fappx,npoints] = funappx_g_gui(@(x) -5 * exp(-(10*(x - .3)).^2) - exp(-(10*(x - 0.75)).^2),0,1,1e-3,10,20)
 %  
 shg
 clf reset
