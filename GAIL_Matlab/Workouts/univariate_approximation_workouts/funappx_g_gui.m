@@ -46,10 +46,10 @@ if nargin < 3
     nhi = 1000;
 end
 
-
 % Initialization
 fa = f(a);
 fb = f(b);
+k = 1;
 
 % Scale the plot
 h = b - a;
@@ -105,7 +105,7 @@ while(max(err) > tol)
         %             set(p(i+1),'xdata',u,'ydata',v,'facecolor',color)
         %         end;
         set(gca,'xtick',x,'xticklabel',[]);
-        title(['error estimation is ' num2str(max(err))])
+        title(['error estimation is ' num2str(max(err)) ' in iteration ' num2str(k)])
         pause(.25)
         while get(gcf,'userdata') == 0
             pause(.25)
@@ -232,7 +232,7 @@ while(max(err) > tol)
         indexnew = indexnew(:)';
         index = unique([indexnew index(end)]);
         %        tt = length(index)-1;
-        
+        k = k + 1;
     else
         break;
     end;
@@ -240,7 +240,7 @@ end;
 p = flipud(get(gca,'child'));
 set(p(1),'xdata',x,'ydata',y)
 set(gca,'xtick',x,'xticklabel',[]);
-title(['error estimation is ' num2str(max(err))])
+title(['error estimation is ' num2str(max(err)) ' in iteration ' num2str(k)])
 pause(.25)
 while get(gcf,'userdata') == 0
     pause(.25)
@@ -258,5 +258,12 @@ end;
 errest = max(err);
 %delete(p)
 delete(q);
+
+hold on;
+delta = 0.00001;
+x=a:delta:b; 
+plot(x,f(x));
+hold off;
+gail.save_eps('WorkoutFunappxOutput', 'funappx_g_gui');
 
 % ---------------------------------------------------------
