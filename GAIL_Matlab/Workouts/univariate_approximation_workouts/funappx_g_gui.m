@@ -1,4 +1,4 @@
-function [fappx,npoints] = funappx_g_gui(f,a,b,tol,nlo,nhi)
+function [fappx,npoints,errest] = funappx_g_gui(f,a,b,tol,nlo,nhi)
 %funappx_g_gui  Demonstrate numerical approximation of an univaraite function.
 %   fappx = FUNAPPX_G_GUI(f,a,b) shows the steps in approximating the function
 %   f(x) from a to b by locally adaptive guaranteed method.
@@ -11,13 +11,12 @@ function [fappx,npoints] = funappx_g_gui(f,a,b,tol,nlo,nhi)
 %   needed of approximation.
 %
 %   Examples:
-%  [fappx,npoints]=funappx_g_gui(@(x) x.^2,-1,1,1e-2,10,20)
-%  [fappx,npoints]=funappx_g_gui(@(x) exp(-1000*(x-0.2).^2),0,1,1e-2,10,20)
+%  [fappx,npoints,errest]=funappx_g_gui(@(x) x.^2,-1,1,1e-2,10,20)
+%  [fappx,npoints,errest]=funappx_g_gui(@(x) exp(-1000*(x-0.2).^2),0,1,1e-3,10,20)
+%  [fappx,npoints,errest]=funappx_g_gui(@(x) exp(-1000*(x-0.2).^2),0,1,1e-6,10,20)
 %   Flat function:
-%  [fappx,npoints]=funappx_g_gui(@(x) exp(-1./(x - 0.5).^2),0,1,1e-5,10,20)
-%  [fappx,npoints]=funappx_g_gui(@(x) sin(x),0,pi,1e-3,10,20)
-%  [fappx,npoints]=funappx_g_gui(@(x) cos(x),0,pi,1e-3,10,20)
-%  [fappx,npoints]=funappx_g_gui(@(x) sin(2*pi*x),0,1,1e-3,10,20)
+%  [fappx,npoints,errest]=funappx_g_gui(@(x) exp(-1./(x - 0.5).^2),0,1,1e-5,5,5)
+%  [fappx,npoints,errest]=funappx_g_gui(@(x) sin(2*pi*x),0,1,1e-3,10,20)
 %  Two local min:
 %  [fappx,npoints]=funappx_g_gui(@(x) -5 * exp(-(10*(x - .3)).^2) - exp(-(10*(x - 0.75)).^2),0,1,1e-3,10,20)
 %  
@@ -62,15 +61,22 @@ p(2) = fill(b,fb,'k');
 hold off
 s = (maxy - miny)/5;
 axis([a b miny-s maxy+s])
+% q(1) = uicontrol('string','step', ...
+%     'units','normal','pos',[.65 .02 .08 .04], ...
+%     'callback','set(gcf,''userdata'',1)');
+% q(2) = uicontrol('string','auto', ...
+%     'units','normal','pos',[.75 .02 .08 .04], ...
+%     'callback','set(gcf,''userdata'',2)');
+% q(3) = uicontrol('string','quit', ...
+%     'units','normal','pos',[.85 .02 .08 .04], ...
+%     'callback','set(gcf,''userdata'',3)');
 q(1) = uicontrol('string','step', ...
-    'units','normal','pos',[.65 .02 .08 .04], ...
+    'units','normal','pos',[.75 .02 .08 .04], ...
     'callback','set(gcf,''userdata'',1)');
 q(2) = uicontrol('string','auto', ...
-    'units','normal','pos',[.75 .02 .08 .04], ...
+     'units','normal','pos',[.85 .02 .08 .04], ...
     'callback','set(gcf,''userdata'',2)');
-q(3) = uicontrol('string','quit', ...
-    'units','normal','pos',[.85 .02 .08 .04], ...
-    'callback','set(gcf,''userdata'',3)');
+
 index = [1 ninit];
 % initialize nstar
 %nstar = ninit - 2;
@@ -78,6 +84,30 @@ index = [1 ninit];
 % initialize error
 err = tol + 1;
 while(max(err) > tol)
+    p = flipud(get(gca,'children'));
+        %         p = flipud(allchild(gca));
+        set(p(1),'xdata',x,'ydata',y)
+        %         for i =1:tt;
+        %             if err(i) < tol;
+        %                 color = [0 .5 0];
+        %             else
+        %                 color = [.6 .6 .6];
+        %             end
+        %             left = index(i);
+        %             right = index(i+1);
+        %             u = [x(left) x(left:right) x(right)];
+        %             v = [0 y(left:right) 0];
+        %             set(p(i+1),'xdata',u,'ydata',v,'facecolor',color)
+        %         end;
+        set(gca,'xtick',x,'xticklabel',[]);
+        title(['error estimation is ' num2str(max(err))])
+        pause(.25)
+        while get(gcf,'userdata') == 0
+            pause(.25)
+        end
+        if get(gcf,'userdata') == 1
+            set(gcf,'userdata',0)
+        end
     % length of each subinterval
     len = x(index(2:end))-x(index(1:end-1));
     reshapey = reshape(y(1:end-1),ninit - 1, (index(end) - 1)/(ninit -1));
@@ -197,30 +227,7 @@ while(max(err) > tol)
         indexnew = indexnew(:)';
         index = unique([indexnew index(end)]);
         %        tt = length(index)-1;
-        p = flipud(get(gca,'children'));
-        %         p = flipud(allchild(gca));
-        set(p(1),'xdata',x,'ydata',y)
-        %         for i =1:tt;
-        %             if err(i) < tol;
-        %                 color = [0 .5 0];
-        %             else
-        %                 color = [.6 .6 .6];
-        %             end
-        %             left = index(i);
-        %             right = index(i+1);
-        %             u = [x(left) x(left:right) x(right)];
-        %             v = [0 y(left:right) 0];
-        %             set(p(i+1),'xdata',u,'ydata',v,'facecolor',color)
-        %         end;
-        set(gca,'xtick',x,'xticklabel',[]);
-        title(['error estimation is ' num2str(max(err))])
-        pause(.25)
-        while get(gcf,'userdata') == 0
-            pause(.25)
-        end
-        if get(gcf,'userdata') == 1
-            set(gcf,'userdata',0)
-        end
+        
     else
         break;
     end;
@@ -243,6 +250,7 @@ else
     pp = interp1(x,y,'linear','pp');
     fappx =@(x) ppval(pp,x);
 end;
+errest = max(err);
 %delete(p)
 delete(q);
 
