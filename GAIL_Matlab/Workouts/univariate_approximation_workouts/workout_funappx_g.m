@@ -141,7 +141,7 @@ if usejava('jvm') || MATLABVERSION <= 7.12
 %     %     p2.LineWidth = 2;
 %     grid(ax(1),'on')
 %     gail.save_eps('WorkoutFunappxOutput', 'WorkoutFunAppxTest');
-    %show tow x-axis and y-axis in one graph
+    %show two x-axis and y-axis in one graph
     line(t,timeratio,'Color','r')
     ax1 = gca;
     set(ax1,'XColor','r','YColor','r')
