@@ -5,11 +5,11 @@ classdef ut_funappx_g < matlab.unittest.TestCase
         function funappx_gofConstantFunction(testCase)
             f = @(x) 3;
             in_param.maxiter = 1;
-            [g, result] = funappx_g(f,in_param);
+            [fappx, result] = funappx_g(f,in_param);
             testCase.verifyLessThanOrEqual(result.iter, 1);
             testCase.verifyEqual(result.npoints,2);
             x = 0:0.1:1;
-            testCase.verifyLessThanOrEqual(norm(g(x)-f(x)), eps);
+            testCase.verifyLessThanOrEqual(norm(fappx(x)-f(x)), eps);
         end
         
         function funappx_gOfx(testCase)
@@ -17,10 +17,14 @@ classdef ut_funappx_g < matlab.unittest.TestCase
             in_param.abstol = 10^(-8);
             in_param.nlo = 10;
             in_param.nhi = 100;
-            [fappx, ~] = funappx_g(f,in_param);
+            [fappx, result] = funappx_g(f,in_param);
             x = rand(10000,1);
             actualerr = max(abs(fappx(x)-f(x)));
             testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
+            testCase.verifyLessThanOrEqual(result.iter, 1);
+            testCase.verifyEqual(result.npoints,2);
+            x = 0:0.1:1;
+            testCase.verifyLessThanOrEqual(norm(fappx(x)-f(x)), eps);
         end
         
         function funappx_gOfxsquare(testCase)
