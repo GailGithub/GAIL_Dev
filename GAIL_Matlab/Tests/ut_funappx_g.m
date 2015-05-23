@@ -27,6 +27,21 @@ classdef ut_funappx_g < matlab.unittest.TestCase
             testCase.verifyLessThanOrEqual(norm(fappx(x)-f(x)), eps);
         end
         
+        function funappx_gOf100000x(testCase)
+            f = @(x) 100000 .* x;
+            in_param.abstol = 10^(-8);
+            in_param.nlo = 10;
+            in_param.nhi = 100;
+            [fappx, result] = funappx_g(f,in_param);
+            x = rand(10000,1);
+            actualerr = max(abs(fappx(x)-f(x)));
+            testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
+            testCase.verifyLessThanOrEqual(result.iter, 1);
+            testCase.verifyEqual(result.npoints,2);
+            x = 0:0.1:1;
+            testCase.verifyLessThanOrEqual(norm(fappx(x)-f(x)), eps);
+         end
+        
         function funappx_gOfxsquare(testCase)
             f = @(x) x.^2;
             in_param.abstol = 10^(-8);
