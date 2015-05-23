@@ -246,6 +246,12 @@ err = abstol + 1;
 len = out_param.b - out_param.a;
 x = out_param.a:len/(ninit-1):out_param.b;
 y = f(x);
+if length(y) == 1
+    % probably f is a constant function and Matlab would  
+    % reutrn only a scalar y = f(x) even if x is a vector 
+    f = @(x) f(x) + 0 * x;
+    y = f(x);
+end
 iter = 0;
 exit_len = 2;
 out_param.exit= false(exit_len,1); %we start the algorithm with all warning flags down
