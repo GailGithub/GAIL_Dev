@@ -251,6 +251,9 @@ if length(y) == 1
     % reutrn only a scalar y = f(x) even if x is a vector 
     f = @(x) f(x) + 0 * x;
     y = f(x);
+    out_param.nlo=2;
+    out_param.nhi=2;
+    out_param.ninit=2;
 end
 iter = 0;
 exit_len = 2;
