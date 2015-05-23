@@ -250,13 +250,6 @@ if length(y) == 1
     % probably f is a constant function and Matlab would  
     % reutrn only a scalar y = f(x) even if x is a vector 
     f = @(x) f(x) + 0 * x;
-    out_param.nlo = 3;
-    out_param.nhi = 3;
-    out_param.ninit = 3;
-    ninit = out_param.ninit;
-    index = [1 ninit];
-    nstar = floor(ninit/2);
-    x = out_param.a:len/(ninit-1):out_param.b;
     y = f(x);
 end
 iter = 0;

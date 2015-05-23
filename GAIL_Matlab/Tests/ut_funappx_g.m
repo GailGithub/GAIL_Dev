@@ -5,6 +5,8 @@ classdef ut_funappx_g < matlab.unittest.TestCase
         function funappx_gofConstantFunction(testCase)
             f = @(x) 3;
             in_param.maxiter = 1;
+            in_param.nlo = 3;
+            in_param.nhi = 3;
             [fappx, result] = funappx_g(f,in_param);
             testCase.verifyLessThanOrEqual(result.iter, 1);
             testCase.verifyEqual(result.npoints,3);
