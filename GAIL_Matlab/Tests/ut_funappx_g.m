@@ -7,7 +7,7 @@ classdef ut_funappx_g < matlab.unittest.TestCase
             in_param.maxiter = 1;
             [fappx, result] = funappx_g(f,in_param);
             testCase.verifyLessThanOrEqual(result.iter, 1);
-            testCase.verifyEqual(result.npoints,2);
+            testCase.verifyEqual(result.npoints,3);
             x = 0:0.1:1;
             testCase.verifyLessThanOrEqual(norm(fappx(x)-f(x)), eps);
         end
@@ -21,25 +21,20 @@ classdef ut_funappx_g < matlab.unittest.TestCase
             x = rand(10000,1);
             actualerr = max(abs(fappx(x)-f(x)));
             testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
-            testCase.verifyLessThanOrEqual(result.iter, 1);
-            testCase.verifyEqual(result.npoints,2);
-            x = 0:0.1:1;
-            testCase.verifyLessThanOrEqual(norm(fappx(x)-f(x)), eps);
-        end
+            testCase.verifyLessThanOrEqual(result.iter, 1); 
+        end 
         
         function funappx_gOf100000x(testCase)
             f = @(x) 100000 .* x;
             in_param.abstol = 10^(-8);
-            in_param.nlo = 10;
-            in_param.nhi = 100;
+            in_param.nlo = 3;
+            in_param.nhi = 3;
             [fappx, result] = funappx_g(f,in_param);
             x = rand(10000,1);
             actualerr = max(abs(fappx(x)-f(x)));
             testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
             testCase.verifyLessThanOrEqual(result.iter, 1);
-            testCase.verifyEqual(result.npoints,2);
-            x = 0:0.1:1;
-            testCase.verifyLessThanOrEqual(norm(fappx(x)-f(x)), eps);
+            testCase.verifyLessThanOrEqual(result.npoints, 3);
          end
         
         function funappx_gOfxsquare(testCase)

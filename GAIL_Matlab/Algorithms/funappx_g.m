@@ -250,15 +250,14 @@ if length(y) == 1
     % probably f is a constant function and Matlab would  
     % reutrn only a scalar y = f(x) even if x is a vector 
     f = @(x) f(x) + 0 * x;
-    out_param.nlo = 2;
-    out_param.nhi = 2;
-    out_param.ninit = 2;
+    out_param.nlo = 3;
+    out_param.nhi = 3;
+    out_param.ninit = 3;
     ninit = out_param.ninit;
     index = [1 ninit];
     nstar = floor(ninit/2);
     x = out_param.a:len/(ninit-1):out_param.b;
     y = f(x);
-    err = 0;
 end
 iter = 0;
 exit_len = 2;
@@ -270,21 +269,6 @@ while(max(err) > abstol)
     len = x(index(2:end))-x(index(1:end-1));
     reshapey = reshape(y(1:end-1),ninit - 1, (index(end) - 1)/(ninit -1));
     diffy = diff([reshapey;y(index(2:end))]);
-    if abs(max(diffy)-min(diffy)) < 100 * abs(max(diffy)) * eps,
-        % f is (very close) to a linear function
-        out_param.nlo = 2;
-        out_param.nhi = 2;
-        out_param.ninit = 2;
-        ninit = out_param.ninit;
-        index = [1 ninit];
-        nstar = floor(ninit/2);
-        x = out_param.a:len/(ninit-1):out_param.b;
-        y = f(x);
-        % length of the only interval
-        len = x(index(2:end))-x(index(1:end-1));
-        reshapey = reshape(y(1:end-1),ninit - 1, (index(end) - 1)/(ninit -1));
-        diffy = diff([reshapey;y(index(2:end))]);
-    end
     
     %approximate the weaker norm of input function at different subinterval
     %gn = (ninit-1)./len.*max(abs(diffy-repmat((y(index(2:end))-y(index(1:end-1)))/(ninit-1),ninit-1,1)),[],1);
