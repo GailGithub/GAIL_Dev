@@ -135,6 +135,13 @@ classdef ut_funappx_g < matlab.unittest.TestCase
       [~, result] = testCase.verifyWarning(@()funappx_g(f,in_param),'MATLAB:funappx_g:exceediter');
       testCase.verifyLessThan(result.maxiter,result.iter);
     end
-    
+      
+    function funappx_gofConstantFunction(testCase)
+      f = @(x) 3;
+      in_param.maxiter = 1;
+      [~, result] = funappx_g(f,in_param);
+      testCase.verifyLessThanOrEqual(result.iter, 1);
+      testCase.verifyEqual(result.npoints,2);
+    end  
   end
 end
