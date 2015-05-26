@@ -90,32 +90,36 @@ function [q,out_param] = cubSobol_old_g(varargin)
 % Example 1:
 % Estimate the integral with integrand f(x) = x1.*x2 in the interval [0,1)^2:
 %
-% >> f=@(x) x(:,1).*x(:,2); d=2; q = cubSobol_old_g(f,d,1e-5,'uniform')
-% q = 0.25***
+% >> f=@(x) x(:,1).*x(:,2); d=2; q = cubSobol_old_g(f,d,1e-5,'uniform'); exactsol = 1/4;
+% >> check = abs(exactsol-q) < 1e-5
+% check = 1
 % 
 % 
 % Example 2:
-% Estimate the integral with integrand f(x) = x1.^2.*x2.^2.*x3.^2+0.11
+% Estimate the integral with integrand f(x) = x1.^2.*x2.^2.*x3.^2
 % in the interval R^3 where x1, x2 and x3 are normally distributed:
 %
-% >> f=@(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2+0.11; d=3; q = cubSobol_old_g(f,d,1e-3,'normal')
-% q = 1.1***
+% >> f=@(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2; d=3; q = cubSobol_old_g(f,d,1e-3,'normal'); exactsol = 1;
+% >> check = abs(exactsol-q) < 1e-3
+% check = 1
 % 
 %
 % Example 3: 
 % Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) in the
 % interval [0,1)^2:
 % 
-% >> f=@(x) exp(-x(:,1).^2-x(:,2).^2); d=2; q = cubSobol_old_g(f,d,1e-3,'uniform')
-% q = 0.55***
+% >> f=@(x) exp(-x(:,1).^2-x(:,2).^2); d=2; q = cubSobol_old_g(f,d,1e-3,'uniform'); exactsol = (sqrt(pi)/2*(erf(2)+erf(1)))^2;
+% >> check = abs(exactsol-q) < 1e-3
+% check = 1
 %
 %
 % Example 4: 
 % Estimate the price of an European call with S0=100, K=100, r=sigma^2/2,
 % sigma=0.05 and T=1.
 % 
-% >> f=@(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); d=1; q = cubSobol_old_g(f,d,1e-4,'normal','fudge',@(x) 2^-(2*x))
-% q = 2.05***
+% >> f=@(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); d=1; q = cubSobol_old_g(f,d,1e-4,'normal','fudge',@(x) 2^-(2*x)); price = normcdf(0.05)*100 - 0.5*100*exp(-0.05^2/2);
+% >> check = abs(price-q) < 1e-4
+% check = 1
 %
 %
 %   See also CUBLATTICE_G, CUBMC_G, MEANMC_G, INTEGRAL_G
