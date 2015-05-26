@@ -64,11 +64,6 @@ stopifnot(nmu<nMax)
 tmu = mean(Yrand(nmu)); #estimated mean
 out_param.ntot = nSig + nmu; #total samples required
 out_param.time = proc.time() - tstart; #elapsed time
-output = c(tmu,out_param.ntot,out_param.var,out_param.time[3]/1.000000000)
+output = c(tmu,out_param.ntot,out_param.var,out_param.time[3])
 return(output)
 }
-timer = system.time(meanMC_CLT())
-timer["elapsed"]/1.000000000
-microbenchmark(meanMC_CLT())
-benchmark(meanMC_CLT())
-
