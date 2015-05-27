@@ -4,7 +4,7 @@ function [timeratio,timelgratio,npointsratio,npointslgratio]=workout_funappx_g(n
 % of iteration or can use the following parameters
 % nrep = 100; abstol = 1e-7; nlo = 100; nhi = 1000;
 c = rand(nrep,1)*4;
-n = 4;
+n = 3;
 npoints = zeros(n,2,nrep);
 time = zeros(n,2,nrep);
 warning('off','MATLAB:funappx_g:peaky')
@@ -12,11 +12,11 @@ warning('off','MATLAB:funappx_g:exceedbudget')
 warning('off','MATLAB:funappxglobal_g:peaky')
 warning('off','MATLAB:funappxglobal_g:exceedbudget')
 for i = 1:nrep;
-    a = -c(i)-1;
+    a = 0;
     b = c(i)+1;
     f1 = @(x) c(i)*x.^2;
     f2 = @(x) sin(c(i)*pi*x);
-    f3 = @(x) exp(-1000*(x-c(i)).^2);
+    f3 = @(x) 10*exp(-1000*(x-c(i)).^2);
     f4 = @(x) 1/4*c(i)*exp(-2*x).*(c(i)-2*exp(x).*(-1 +...
         c(i)*cos(x) - c(i)*sin(x))+exp(2*x).*(c(i) + 2*cos(x)...
         - 2* sin(x) - c(i)*sin(2*x)));
@@ -56,22 +56,39 @@ for i = 1:nrep;
     %if npoints(3,1,i)*1.0/npoints(3,2,i) < 0.05
     %    disp(['fast']), c(i), a, b
     %end
-    tic;
-    [~, out_param] = funappx_g(f4,a,b,abstol,nlo,nhi);
-    t=toc;
-    time(4,1,i) = t;
-    npoints(4,1,i) = out_param.npoints;
-    tic;
-    [~, out_param] = funappxglobal_g(f4,a,b,abstol,nlo,nhi);
-    t=toc;
-    time(4,2,i) =   t;
-    npoints(4,2,i) = out_param.npoints;
-    tic;
+%     tic;
+%     [~, out_param] = funappx_g(f4,a,b,abstol,nlo,nhi);
+%     t=toc;
+%     time(4,1,i) = t;
+%     npoints(4,1,i) = out_param.npoints;
+%     tic;
+%     [~, out_param] = funappxglobal_g(f4,a,b,abstol,nlo,nhi);
+%     t=toc;
+%     time(4,2,i) =   t;
+%     npoints(4,2,i) = out_param.npoints;
+%     tic;
 end;
 warning('on','MATLAB:funappxglobal_g:exceedbudget')
 warning('on','MATLAB:funappx_g:peaky')
 warning('on','MATLAB:funappx_g:exceedbudget')
 warning('on','MATLAB:funappxglobal_g:peaky')
+
+cc = 2.5;
+test1 = @(x) x.^2;
+test2 = @(x) cc*sin(cc*pi*x);
+test3 = @(x) 20*exp(-1000*(x-cc).^2);
+% test4 = @(x) 1/4*cc*exp(-2*x).*(cc-2*exp(x).*(-1 +...
+%     cc*cos(x) - cc*sin(x))+exp(2*x).*(cc + 2*cos(x)...
+%     - 2* sin(x) - cc*sin(2*x)));
+x = 0:0.05:3.5;
+y1 = test1(x);
+y2 = test2(x);
+y3 = test3(x);
+% y4 = test4(x);
+figure
+plot(x,y1,'g--+',x,y2,'b--x',x,y3,'m--o')
+legend('Quadratic','Perodic','Peaky')
+gail.save_eps('WorkoutFunappxOutput', 'testfun');
 
 timeratio = zeros(nrep,n);
 npointsratio = zeros(nrep,n);
@@ -130,7 +147,9 @@ if usejava('jvm') || MATLABVERSION <= 7.12
     %
     %     gail.save_eps('WorkoutFunappxOutput', 'WorkoutFunAppxTest');
     t =1:nrep*n;
-    
+    plot(t,timeratio,'r',t,npointsratio,'b:');
+    legend('time ratio','points ratio');
+    gail.save_eps('WorkoutFunappxOutput', 'WorkoutFunAppxTest');
     %show two y-axis in one graph
 %     ax = plotyy(t,timeratio,t,npointsratio,'plot','plot');
 %     ylabel(ax(1),'Time ratio of local/global') % label left y-axis
@@ -142,16 +161,16 @@ if usejava('jvm') || MATLABVERSION <= 7.12
 %     grid(ax(1),'on')
 %     gail.save_eps('WorkoutFunappxOutput', 'WorkoutFunAppxTest');
     %show two x-axis and y-axis in one graph
-    line(t,timeratio,'Color','r')
-    ax1 = gca;
-    set(ax1,'XColor','r','YColor','r')
-    ax2 = axes('Position',get(ax1,'Position'),...
-        'XAxisLocation','top',...
-        'YAxisLocation','right',...
-        'Color','none',...
-        'XColor','b','YColor','b');
-    line(t,npointsratio,'Color','b','Parent',ax2);
-    gail.save_eps('WorkoutFunappxOutput', 'WorkoutFunAppxTest');   
+%     line(t,timeratio,'Color','r','LineStyle','--o')
+%     ax1 = gca;
+%     set(ax1,'XColor','r','YColor','r')
+%     ax2 = axes('Position',get(ax1,'Position'),...
+%         'XAxisLocation','top',...
+%         'YAxisLocation','right',...
+%         'Color','none',...
+%         'XColor','b','YColor','b');
+%     line(t,npointsratio,'Color','b','LineStyle','--x','Parent',ax2);
+%     gail.save_eps('WorkoutFunappxOutput', 'WorkoutFunAppxTest');   
 end;
 gail.save_mat('WorkoutFunappxOutput', 'WorkoutFunAppxTest', true, npoints,time,...
     c,timeratio,npointsratio,npointslgratio,timelgratio);
