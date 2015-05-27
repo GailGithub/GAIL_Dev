@@ -37,7 +37,8 @@ classdef optPayoff < assetPath
          'putCallType', {{'call'}}, ... %put or call
          'strike', 10, ... %strike price
          'barrier', 12, ... %barrier
-         'digitalRate', 0.1); %digital payoff rate
+         'digitalRate', 0.1, ...%digital payoff rate
+         'cashAssetType',{{'cash'}}); %digital payoff asset type
       
    end
 
@@ -47,6 +48,9 @@ classdef optPayoff < assetPath
          %kinds of payoffs that we can generate
       allowPutCallType = {'call','put'} 
          %kinds of payoffs that we can generate
+         allowCashAssetType = {'cash','asset'}
+         %kinds of payoffs that we can generate with digital options
+         
    end
 
    properties (Dependent = true, SetAccess = private)
@@ -270,6 +274,26 @@ classdef optPayoff < assetPath
             val(wheurocall) = eurocall;
             val(wheuroput) = europut;
          end
+         
+         %Pricing digital option
+         whdigit = strcmp(obj.payoffParam.optType, 'digital');
+         whcall = strcmp(obj.payoffParam.putCallType, 'call');
+         whput = strcmp(obj.payoffParam.putCallType, 'put');
+         whcash=strcmp(obj.payoffParam.cashAssetType,'cash');
+         whasset=strcmp(obi.payoffParam.cashAssetType,'asset');
+         whdigitcashcall = whdigit & whcash & whcall;
+         whdigitassetcall= whdigit &  whasset & whcall;
+         whdigitcashput = whdigit & whcash & whput;
+         ehdigitassetput = whdigit & whasset & whput;
+         if any(whdigit); 
+            [digitcashcall,digitassetcall,digitcashput,digitassetput] = digitgbmprice(obj.assetParam.initPrice, ...
+               obj.assetParam.interest, obj.timeDim.endTime, ...
+               obj.assetParam.volatility, obj.payoffParam.strike);
+            val(whdigitcashcall) = digitcashcall;
+            val(whdigitassetcall) = digitassetcall;
+            val(whdigitcashput) = digitcashput;
+            val(whdigitassetput) = digitassetput;
+         end
 
          %Pricing Asian geometric mean
          whgmean = strcmp(obj.payoffParam.optType, 'gmean');
@@ -298,7 +322,7 @@ classdef optPayoff < assetPath
             putprice = S0 .* (priceratio.*normcdf(xbig) - normcdf(xsmall));
             callprice = putprice + S0 * (1-priceratio);        
          end
-                 
+         
       end
       
       function varargout = plot(obj,varargin)
