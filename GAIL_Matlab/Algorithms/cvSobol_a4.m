@@ -1,4 +1,4 @@
-function [q,out_param] = cvSobol_a2(varargin)
+function [q,out_param] = cvSobol_a4(varargin)
 
 tic
 
