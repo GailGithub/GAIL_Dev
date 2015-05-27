@@ -117,7 +117,7 @@
 % then the \(\mathrm{fmin}\) output by this algorithm is guaranteed to
 % satisfy
 %
-% \[| \min f-\mathrm{fmin}| \le \mathrm{abstol},\]
+% \[ \left| \min\limits_{a\le x \le b}f(x)-\mathrm{fmin} \right| \le \mathrm{abstol},\]
 %
 % or
 %
