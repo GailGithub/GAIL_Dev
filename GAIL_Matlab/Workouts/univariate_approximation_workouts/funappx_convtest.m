@@ -18,7 +18,8 @@ if nargin > 1,
 end
 
 if nargin == 0,
-  f = @(x) exp(-100*(x-sqrt(2)/2).^2);
+  f = @(x) exp(-1000*(x-sqrt(2)/2).^2);
+  nmax = 1e7;
 end
    
 warning('off','MATLAB:funappx_g:peaky')
