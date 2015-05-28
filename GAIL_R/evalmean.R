@@ -3,6 +3,7 @@ evalmean = function(RV,n,npcmax) {
 # RV --- the function to generate the random variables
 # n --- the number of samples
 # npcmax --- the maximum samples per loop
+library(pracma);
 nopt=min(npcmax,n);
 # numbers of samples per loop step
 nn=floor(n/nopt); # number of loop steps
@@ -13,7 +14,7 @@ nloop=repmat(nopt,1,nn); #Requires Package: "pracma"
 if(nremain>0) {nloop=c(nloop,nremain); nn=nn+1}
 sumY=0;
 for(iloop in 1:nn) {#loops to save memory
-sumY=sumY+sum(RV(nloop(iloop)));
+sumY=sumY+sum(RV(nloop[iloop]));
 }
 ##  Estimate p
 p=sumY/n; #calculate the mean
