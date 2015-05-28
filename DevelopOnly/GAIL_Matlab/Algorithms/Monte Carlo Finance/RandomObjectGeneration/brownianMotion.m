@@ -57,7 +57,7 @@ classdef brownianMotion < whiteNoise
       % Generate Brownian Motion paths
       function paths=genPaths(obj,val)
          paths = genPaths@whiteNoise(obj,val);
-         if strcmp(obj.bmParam.assembleType,'diff')
+         if strcmp(obj.bmParam.assembleType,'asd')
             for idx=1:obj.timeDim.dim
                colRange = ...
                   ((idx-1)*obj.timeDim.nSteps+1):idx*obj.timeDim.nSteps;
@@ -65,7 +65,18 @@ classdef brownianMotion < whiteNoise
                   sqrt([obj.timeDim.timeVector(1) obj.timeDim.timeIncrement]), ...
                   paths(:,colRange)),2);
             end
+%######################################################
+%Beginning of part added:
+%######################################################
+         elseif strcmp(obj.bmParam.assembleType,'diff')
+             Sigma=bsxfun(@min,obj.timeDim.timeVector',obj.timeDim.timeVector);
+             [Eigenvectors,Eigenvalues]=eig(Sigma);
+             A = Eigenvectors*Eigenvalues.^(1/2);
+             paths=paths*A';
          end
+%######################################################
+%End of part added.
+%######################################################
        end
                  
    end
