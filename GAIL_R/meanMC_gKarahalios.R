@@ -189,134 +189,156 @@
 #Create function with default values given
 meanMC_g = function(Yrand = function(n) {runif(n)^2},abstol = 1e-2, reltol = 1e-1, nSig = 1e4, n1 = 1e4, alpha = 0.01, fudge = 1.2, tbudget = 100, nbudget = 1e9)
 {
-####tstart = proc.time(); #start the clock
-####[Yrand, out_param] = meanMC_g_param(varargin{:})
-out_param = c(abstol,reltol,nSig,n1,alpha,fudge,tbucket,nbucket)
-
-n1 = 2 #let it run once to load all the data. warm up the machine.
-Yrand(n1);
-nsofar = n1;
-
-ntry = 10; #try several samples to get the time
-tstart = proc.time()
-Yran(ntry); 
-ttry = proc.time() = tstart;
-tpern = ttry/ntry; # calculate time per sample
-nsofar = nsofar+ntry; # update n so far
-out_param.exit = 0;
-
-if(tpern<1e-7); #each sample use very very little time
-booster = 8;
-tstart2 = proc.time();Yrand(ntry*booster);ttry2 = proc.time() - tstart2;
-ntry = ntry*c(1,booster);
-ttry = c(ttry,ttry2);# take eight times more samples to try
-else if(tpern>=1e-7 && tpern<1e-5) #each sample use very little time
-booster = 6;
-tstart3 = proc.time();Yrand(ntry*booster);ttry2 = proc.time() - tstart3;
-ntry = ntry*c(1,booster);
-ttry = c(ttry,ttry2);# take six times more samples to try    
-else if(tpern>=1e-5 && tpern<1e-3) #each sample use little time
-booster = 4;
-tstart4 = proc.time();Yrand(ntry*booster);ttry2 = proc.time() - tstart4;
-ntry = ntry*c(1,booster);
-ttry = c(ttry,ttry2);# take four times more samples to try
-else if(tpern>=1e-3 && tpern<1e-1) #each sample use moderate time
-booster = 2;
-tstart5 = proc.time();Yrand(ntry*booster);ttry2 = proc.time() - tstart5;
-ntry = ntry*c(1,booster);
-ttry = c(ttry,ttry2);# take two times more samples to try
-else #each sample use lots of time, stop try
-end()
-#####[tmu,out_param] =  meanmctolfun(Yrand,out_param,ntry,ttry,nsofar,tstart);
-#####end
-
-meanmctolfun = function(Yrand(),out_param,ntry,ttry,nsofar,tstart) {
-tstart6 = proc.time();
-Yval = Yrand(out_param[3]);# get samples to estimate variance 
-t_sig = toc;#get the time for calculating nSig function values.
-nsofar = nsofar+out_param.nSig;# update the samples that have been used
-out_param.nremain = gail.estsamplebudget(out_param.tbudget,...
-                                         out_param.nbudget,[ntry out_param.nSig],nsofar,tstart,[ttry t_sig]);
-%update the nremain could afford until now
-out_param.var = var(Yval);% calculate the sample variance--stage 1
-sig0 = sqrt(out_param.var);% standard deviation
-sig0up = out_param.fudge.*sig0;% upper bound on the standard deviation
-alpha_sig = out_param.alpha/2;% the uncertainty for variance estimation
-alphai = (out_param.alpha-alpha_sig)/(2*(1-alpha_sig));
-%uncertainty to do iteration
-out_param.kurtmax = (out_param.nSig-3)/(out_param.nSig-1) ...
-+ ((alpha_sig*out_param.nSig)/(1-alpha_sig))...
-*(1-1/out_param.fudge^2)^2;
-%the upper bound on the modified kurtosis
-tol1 = ncbinv(out_param.n1,alphai,out_param.kurtmax);
-%tolerance for initial estimation
+  tstart = proc.time(); #start the clock
+  ####[Yrand, out_param] = meanMC_g_param(varargin{:})
+  meanMC_g_param();
+  ####out_param = c(abstol,reltol,nSig,n1,alpha,fudge,tbucket,nbucket)
+  
+  n1 = 2 #let it run once to load all the data. warm up the machine.
+  Yrand(n1);
+  nsofar = n1;
+  
+  ntry = 10; #try several samples to get the time
+  tstart1 = proc.time()
+  Yran(ntry); 
+  ttry = proc.time() = tstart1;
+  tpern = ttry/ntry; # calculate time per sample
+  nsofar = nsofar+ntry; # update n so far
+  out_param.exit = 0;
+  
+  if(tpern<1e-7); #each sample use very very little time
+  booster = 8;
+  tstart2 = proc.time();Yrand(ntry*booster);ttry2 = proc.time() - tstart2;
+  ntry = ntry*c(1,booster);
+  ttry = c(ttry,ttry2);# take eight times more samples to try
+  else if(tpern>=1e-7 && tpern<1e-5) #each sample use very little time
+    booster = 6;
+  tstart3 = proc.time();Yrand(ntry*booster);ttry2 = proc.time() - tstart3;
+  ntry = ntry*c(1,booster);
+  ttry = c(ttry,ttry2);# take six times more samples to try    
+  else if(tpern>=1e-5 && tpern<1e-3) #each sample use little time
+    booster = 4;
+  tstart4 = proc.time();Yrand(ntry*booster);ttry2 = proc.time() - tstart4;
+  ntry = ntry*c(1,booster);
+  ttry = c(ttry,ttry2);# take four times more samples to try
+  else if(tpern>=1e-3 && tpern<1e-1) #each sample use moderate time
+    booster = 2;
+  tstart5 = proc.time();Yrand(ntry*booster);ttry2 = proc.time() - tstart5;
+  ntry = ntry*c(1,booster);
+  ttry = c(ttry,ttry2);# take two times more samples to try
+  else #each sample use lots of time, stop try
+    end()
+  #####[tmu,out_param] =  meanmctolfun(Yrand,out_param,ntry,ttry,nsofar,tstart);
+  #####end
+  
+  meanmctolfun = function(Yrand(),out_param,ntry,ttry,nsofar,tstart) {
+    tstart6 = proc.time();
+    Yval = Yrand(out_param[4]);# get samples to estimate variance 
+    t_sig = proc.time()-tstart6;#get the time for calculating nSig function values.
+    nsofar = nsofar+out_param[4];# update the samples that have been used
+    ####out_param.nremain = gail.estsamplebudget(out_param.tbudget,...
+    out_param.nbudget,[ntry out_param.nSig],nsofar,tstart,[ttry t_sig]);
+#update the nremain could afford until now
+out_param.var = var(Yval);# calculate the sample variance--stage 1
+sig0 = sqrt(out_param.var);# standard deviation
+sig0up = out_param[7].*sig0;# upper bound on the standard deviation
+alpha_sig = out_param[6]/2;# the uncertainty for variance estimation
+alphai = (out_param[6]-alpha_sig)/(2*(1-alpha_sig));
+#uncertainty to do iteration
+out_param.kurtmax = (out_param[4]-3)/(out_param[4]-1) ...
++ ((alpha_sig*out_param[4])/(1-alpha_sig))...
+*(1-1/out_param[7]^2)^2;
+#the upper bound on the modified kurtosis
+####tol1 = ncbinv(out_param.n1,alphai,out_param.kurtmax);
+#tolerance for initial estimation
 out_param.tol(1) = sig0up*tol1;
-%the width of initial confidence interval for the mean
+#the width of initial confidence interval for the mean
 i=1;
-npcmax = 1e6;%constant to do iteration and mean calculation
-out_param.n(i) = out_param.n1;% initial sample size to do iteration
-while true
-out_param.tau = i;%step of the iteration
-if out_param.n(i) > out_param.nremain;
-% if the sample size used for initial estimation is
-% larger than nremain, print warning message and use nremain
-out_param.exit=1; %pass a flag
-meanMC_g_err(out_param); % print warning message
-out_param.n(i) = out_param.nremain;% update n
-tmu = gail.evalmean(Yrand,out_param.n(i),npcmax);%evaluate the mean
-nsofar = nsofar+out_param.n(i);%total sample used
-break;
-end
-out_param.hmu(i) = gail.evalmean(Yrand,out_param.n(i),npcmax);%evaluate mean
-nsofar = nsofar+out_param.n(i);
-out_param.nremain = out_param.nremain-out_param.n(i);%update n so far and nremain
-toltype = 'max';
-% error type, see the function 'tolfun' at Algoithms/+gail/ directory
-% for more info
-theta  = 0;% relative error tolerance case
-deltaplus = (gail.tolfun(out_param.abstol,out_param.reltol,...
-                         theta,out_param.hmu(i) - out_param.tol(i),toltype)...
-             +gail.tolfun(out_param.abstol,out_param.reltol,...
-                          theta,out_param.hmu(i) + out_param.tol(i),toltype))/2;
-% a combination of tolfun, which used to decide stopping time
-if deltaplus >= out_param.tol(i) % stopping criterion
-deltaminus= (gail.tolfun(out_param.abstol,out_param.reltol,...
-                         theta,out_param.hmu(i) - out_param.tol(i),toltype)...
-             -gail.tolfun(out_param.abstol,out_param.reltol,...
-                          theta,out_param.hmu(i) + out_param.tol(i),toltype))/2;
-% the other combination of tolfun, which adjust the hmu a bit
-tmu = out_param.hmu(i)+deltaminus;
-break;
-else
-  i=i+1;
-deltat=0.7;
-deltah=0.5;
-delta=0;% constant to decide the next tolerance
-out_param.tol(i) = max(min(deltaplus*deltat, ...
-                           deltah*out_param.tol(i-1)),delta*out_param.tol(i-1));
-%update the next tolerance
-toloversig = out_param.tol(i)/sig0up;%next tolerance over sigma
-alphai = (out_param.alpha-alpha_sig)/(1-alpha_sig)*2.^(-i);
-%update the next uncertainty
-out_param.n(i) = nchebe(toloversig,alphai,out_param.kurtmax);
-%get the next sample size needed
-end
-end
-out_param.ntot = nsofar;%total sample size used
-out_param.time=toc(tstart); %elapsed time
-end
+npcmax = 1e6;#constant to do iteration and mean calculation
+out_param.n(i) = out_param[5];# initial sample size to do iteration
+while(out_param.tau == i) {
+  #step of the iteration
+  if(out_param.n(i) > out_param.nremain) {
+    # if the sample size used for initial estimation is
+    # larger than nremain, print warning message and use nremain
+    out_param.exit=1; #pass a flag
+    ####meanMC_g_err(out_param); # print warning message
+    ####out_param.n(i) = out_param.nremain;# update n
+    ####tmu = gail.evalmean(Yrand,out_param.n(i),npcmax);#evaluate the mean
+    nsofar = nsofar+out_param.n(i);#total sample used
+    break;
+  }
+  ####out_param.hmu(i) = gail.evalmean(Yrand,out_param.n(i),npcmax);#evaluate mean
+  nsofar = nsofar+out_param.n(i);
+  out_param.nremain = out_param.nremain-out_param.n(i);#update n so far and nremain
+  toltype = 'max';
+  # error type, see the function 'tolfun' at Algoithms/+gail/ directory
+  # for more info
+  theta  = 0;# relative error tolerance case
+  deltaplus = (gail.tolfun(out_param.abstol,out_param.reltol,...
+                           theta,out_param.hmu(i) - out_param.tol(i),toltype)...
+               +gail.tolfun(out_param.abstol,out_param.reltol,...
+                            theta,out_param.hmu(i) + out_param.tol(i),toltype))/2;
+  % a combination of tolfun, which used to decide stopping time
+  if deltaplus >= out_param.tol(i) % stopping criterion
+  deltaminus= (gail.tolfun(out_param.abstol,out_param.reltol,...
+                           theta,out_param.hmu(i) - out_param.tol(i),toltype)...
+               -gail.tolfun(out_param.abstol,out_param.reltol,...
+                            theta,out_param.hmu(i) + out_param.tol(i),toltype))/2;
+  % the other combination of tolfun, which adjust the hmu a bit
+  tmu = out_param.hmu(i)+deltaminus;
+  break;
+  else
+    i=i+1;
+  deltat=0.7;
+  deltah=0.5;
+  delta=0;% constant to decide the next tolerance
+  out_param.tol(i) = max(min(deltaplus*deltat, ...
+                             deltah*out_param.tol(i-1)),delta*out_param.tol(i-1));
+  %update the next tolerance
+  toloversig = out_param.tol(i)/sig0up;%next tolerance over sigma
+  alphai = (out_param.alpha-alpha_sig)/(1-alpha_sig)*2.^(-i);
+  %update the next uncertainty
+  out_param.n(i) = nchebe(toloversig,alphai,out_param.kurtmax);
+  %get the next sample size needed
+  end
+  end
+  out_param.ntot = nsofar;%total sample size used
+  out_param.time=toc(tstart); %elapsed time
+  end
 }
 
-####meanMC_g_param = function(Yrand,abstol,reltol,nSig,n1,alpha,fudge,tbudget,nbudget) {
-####out_param.Yrand = Yrand
-####out_param.abstol = abstol
-####out_param.reltol = reltol
-####out_param.nSig = nSig
-####out_param.n1 = n1
-####out_param.alpha = alpha
-####out_param.fudge = fudge
-####out_param.tbudget = tbudget
-####out_param.nbudget = nbudget
-####out_param = c(out_param.Yrand,out_param.abstol,out_param.reltol,out_param.nSig,out_param.n1,out_param.alpha,out_param.fudge,out_param.tbudget,out_param.nbudget)
-####return(out_param)
-####}
+meanMC_g_param = function(Yrand,abstol,reltol,nSig,n1,alpha,fudge,tbudget,nbudget) {
+  out_param.Yrand = Yrand
+  out_param.abstol = abstol
+  out_param.reltol = reltol
+  out_param.nSig = nSig
+  out_param.n1 = n1
+  out_param.alpha = alpha
+  out_param.fudge = fudge
+  out_param.tbudget = tbudget
+  out_param.nbudget = nbudget
+  out_param = c(out_param.Yrand,out_param.abstol,out_param.reltol,out_param.nSig,out_param.n1,out_param.alpha,out_param.fudge,out_param.tbudget,out_param.nbudget)
+  return(out_param)
+}
+
+meanMC_g_err = function(out_param)
+  # Handles errors in meanMC_g and meanMC_g_param to give an exit with
+  #  information.
+  #            out_param.exit = 0   success
+  #                             1   too many samples required
+  
+  if ~isfield(out_param,'exit'); return; end
+if out_param.exit==0; return; end
+switch out_param.exit
+case 1 % not enough samples to estimate the mean.
+nexceed = out_param.n(out_param.tau);
+warning('MATLAB:meanMC_g:maxreached',...
+        [' In order to achieve the guaranteed accuracy, at step '...
+         int2str(out_param.tau) ', tried to evaluate at ' int2str(nexceed) ...
+         ' samples, which is more than the remaining '...
+         int2str(out_param.nremain) ...
+         ' samples. We will use all the samples left to estimate the mean without guarantee.']);
+return
+  }
+}
