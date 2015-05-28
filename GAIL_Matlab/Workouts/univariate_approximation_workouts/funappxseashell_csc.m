@@ -161,3 +161,9 @@ else
         drawnow
     end
 end
+
+errmat = sqrt((x-x1).^2+(y-y1).^2+(z-z1).^2);
+figure(5)
+surf(x,y,z,errmat);
+colorbar;
+gail.save_eps('WorkoutFunappxOutput', 'Seashellsurfyerror');
