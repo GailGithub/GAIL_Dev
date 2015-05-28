@@ -14,12 +14,12 @@ warning('off','MATLAB:funappxglobal_g:exceedbudget')
 for i = 1:nrep;
     a = 0;
     b = c(i)+1;
-    f1 = @(x) c(i)*x.^2;
-    f2 = @(x) sin(c(i)*pi*x);
+    f1 = @(x) (x-c(i)).^2;
+    f2 = @(x) c(i)*sin(c(i)*pi*x);
     f3 = @(x) 10*exp(-1000*(x-c(i)).^2);
-    f4 = @(x) 1/4*c(i)*exp(-2*x).*(c(i)-2*exp(x).*(-1 +...
-        c(i)*cos(x) - c(i)*sin(x))+exp(2*x).*(c(i) + 2*cos(x)...
-        - 2* sin(x) - c(i)*sin(2*x)));
+%     f4 = @(x) 1/4*c(i)*exp(-2*x).*(c(i)-2*exp(x).*(-1 +...
+%         c(i)*cos(x) - c(i)*sin(x))+exp(2*x).*(c(i) + 2*cos(x)...
+%         - 2* sin(x) - c(i)*sin(2*x)));
     tic;
     [~, out_param] = funappx_g(f1,a,b,abstol,nlo,nhi);
     t=toc;
@@ -74,9 +74,9 @@ warning('on','MATLAB:funappx_g:exceedbudget')
 warning('on','MATLAB:funappxglobal_g:peaky')
 
 cc = 2.5;
-test1 = @(x) x.^2;
+test1 = @(x) (x-cc).^2;
 test2 = @(x) cc*sin(cc*pi*x);
-test3 = @(x) 20*exp(-1000*(x-cc).^2);
+test3 = @(x) 10*exp(-1000*(x-cc).^2);
 % test4 = @(x) 1/4*cc*exp(-2*x).*(cc-2*exp(x).*(-1 +...
 %     cc*cos(x) - cc*sin(x))+exp(2*x).*(cc + 2*cos(x)...
 %     - 2* sin(x) - cc*sin(2*x)));
@@ -85,10 +85,6 @@ y1 = test1(x);
 y2 = test2(x);
 y3 = test3(x);
 % y4 = test4(x);
-figure
-plot(x,y1,'g--+',x,y2,'b--x',x,y3,'m--o')
-legend('Quadratic','Perodic','Peaky')
-gail.save_eps('WorkoutFunappxOutput', 'testfun');
 
 timeratio = zeros(nrep,n);
 npointsratio = zeros(nrep,n);
@@ -135,6 +131,11 @@ npointsratio(1:max_idx_n) = 1.0 ./npointsratio(1:max_idx_n);
 [~,~,MATLABVERSION] = GAILstart(false);
 if usejava('jvm') || MATLABVERSION <= 7.12
     figure
+    plot(x,y1,'g--+',x,y2,'b--x',x,y3,'m--o')
+    legend('Quadratic','Perodic','Peaky')
+    gail.save_eps('WorkoutFunappxOutput', 'testfun');
+    
+    figure
     %     subplot(2,1,1);
     %     plot(1:nrep*n,timeratio,'blue',1:nrep*n,ones(nrep*n,1),'red');
     %     title('Comparison between funappx\_g and funappxglobal\_g')
@@ -177,20 +178,20 @@ gail.save_mat('WorkoutFunappxOutput', 'WorkoutFunAppxTest', true, npoints,time,.
 
 end
 
-% Sample output for nrep=1000; abstol = 1e-7; nlo = 100; nhi = 1000;
-%    Test      Number of Points       Time Used
-%  Function   Local      Global     Local    Global
-%         1    225201     730546   0.0637602    0.0832041
-%         2    596313     413558   0.1081802    0.0375299
-%         3     75938    1032953   0.0244367    0.1176585
-%         4   1845347    5159658   0.5526649    0.6400267
-% 
-% timelgratio =
-% 
-%     0.7663    2.8825    0.2077    0.8635
-% 
-% 
-% npointslgratio =
-% 
-%     0.3083    1.4419    0.0735    0.3576
+% % Sample output for nrep=1000; abstol = 1e-7; nlo = 100; nhi = 1000;
+% %    Test      Number of Points       Time Used
+% %  Function   Local      Global     Local    Global
+% %         1    225201     730546   0.0637602    0.0832041
+% %         2    596313     413558   0.1081802    0.0375299
+% %         3     75938    1032953   0.0244367    0.1176585
+% %         4   1845347    5159658   0.5526649    0.6400267
+% % 
+% % timelgratio =
+% % 
+% %     0.7663    2.8825    0.2077    0.8635
+% % 
+% % 
+% % npointslgratio =
+% % 
+% %     0.3083    1.4419    0.0735    0.3576
 
