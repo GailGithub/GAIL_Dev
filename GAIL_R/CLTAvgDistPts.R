@@ -51,10 +51,11 @@ meandist = meanMC_CLT(distfun,0.02)
 # E.g. consider the example
 
 a=1e2; # a parameter
-Y = function(n){runif(n) + a*(a*runif(n)<1)} #a mixture distribution with mean 1
+Y = function(n){rnorm(n) + a*(a*runif(n)<1)} #a mixture distribution with mean 1
 for (i in 1:4){
-muhat = meanMC_CLT(Y,0.01)} #try out multiple times with tolerance 0.01
-
+muhat = meanMC_CLT(Y,0.01)
+print(muhat)} 
+#try out multiple times with tolerance 0.01
 #
 # Note that the answers \(\pm\) 0.01 do not overlap.  Thus, they must be
 # wrong. The problem is that the number of samples used to estimate the
@@ -62,9 +63,9 @@ muhat = meanMC_CLT(Y,0.01)} #try out multiple times with tolerance 0.01
 # kurtosis. If we increase the number of samples used to estimate the
 # variance to 10000, then the answers are correct.
 
-for (i in 1:4)
+for (i in 1:4) {
 muhat = meanMC_CLT(Y,0.01,0.01,10000) #try out multiple times with tolerance 0.01
-end
+}
 
 #
 # The true mean in this case is 1.
