@@ -37,6 +37,11 @@ classdef brownianMotion < whiteNoise
       bmParam = struct('assembleType', 'diff') %method for assembling browniam Motion from white noise
    end
 
+   properties (Constant, Hidden) %do not change & not seen
+      allowassembleType = {'diff','PCA'} 
+   end
+   
+   
 %% Methods
 % The constructor for |brownianMotion| uses the |whiteNoise| constructor
 % and then parses the other properties. The function |genBMPaths| generates
@@ -47,6 +52,11 @@ classdef brownianMotion < whiteNoise
       % Creating a Brownian Motion process
       function obj = brownianMotion(varargin)         
          obj@whiteNoise(varargin{:}) %parse basic input
+         if isfield(obj.restInput,'bmParam')
+            val = obj.restInput.bmParam;
+            obj.bmParam = val;
+            obj.restInput = rmfield(obj.restInput,'bmParam');
+         end
          obj.wnParam = struct('distribName','Gaussian');
             %must have Gaussian whiteNoise paths input   
          assert(obj.timeDim.startTime >= 0) %Brownian motion goes forward in time
@@ -79,7 +89,16 @@ classdef brownianMotion < whiteNoise
 %######################################################
        end
                  
+      function set.bmParam(obj,val)
+         if isfield(val,'assembleType') %data for assemble Type
+            assert(any(strcmp(val.assembleType,obj.allowassembleType)))
+            obj.bmParam.assembleType = val.assembleType;
+         end
+      end
+      
    end
+   
+
    
    methods (Access = protected)
 
