@@ -54,7 +54,6 @@ a=1e2; # a parameter
 Y = function(n){runif(n) + a*(a*runif(n)<1)} #a mixture distribution with mean 1
 for (i in 1:4){
 muhat = meanMC_CLT(Y,0.01)} #try out multiple times with tolerance 0.01
-end
 
 #
 # Note that the answers \(\pm\) 0.01 do not overlap.  Thus, they must be
