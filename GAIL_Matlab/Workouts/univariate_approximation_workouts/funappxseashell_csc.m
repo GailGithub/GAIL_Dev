@@ -122,6 +122,9 @@ else
     end
 end
 
+
+gail.save_eps('WorkoutFunappxOutput', 'seashell');
+
 %% use funappx
 % plot the surface
 
@@ -152,6 +155,9 @@ lighting gouraud
 lightangle(80, -40)
 lightangle(-90, 60)
 
+
+gail.save_eps('WorkoutFunappxOutput', 'funappxseashell');
+
 % fix the view, or spin the seashell
 if (isfinite (azimuth))
     view([azimuth elevation])
@@ -162,8 +168,9 @@ else
     end
 end
 
+figure(3)
 errmat = sqrt((x-x1).^2+(y-y1).^2+(z-z1).^2);
-figure(5)
 surf(x,y,z,errmat);
 colorbar;
+
 gail.save_eps('WorkoutFunappxOutput', 'Seashellsurfyerror');
