@@ -1,5 +1,5 @@
 classdef optPayoff < assetPath
-
+ 
 %% optPayoff
 % is a class of option payoffs based on asset paths.
 % 
@@ -26,12 +26,12 @@ classdef optPayoff < assetPath
 %     payoffParam_putCallType: {'call'}
 %          payoffParam_strike: 10
 %                  exactPrice: 3.4501
-
+ 
 %% Properties
 % This process inherits properties from the |stochProcess| class.  Below are 
 % values assigned to that are abstractly defined in that class plus some
 % properties particulary for this class
-
+ 
    properties (SetAccess=public) %so they can only be set by the constructor
       payoffParam = struct('optType', {{'euro'}}, ... %type of option
          'putCallType', {{'call'}}, ... %put or call
@@ -41,7 +41,7 @@ classdef optPayoff < assetPath
          'cashAssetType',{{'cash'}}); %digital payoff asset type
       
    end
-
+ 
    properties (Constant, Hidden) %do not change & not seen
       allowOptType = {'euro','upin', 'downin' 'upout', 'downout', 'look', ...
          'amean', 'gmean', 'digital'} 
@@ -52,7 +52,7 @@ classdef optPayoff < assetPath
          %kinds of payoffs that we can generate with digital options
          
    end
-
+ 
    properties (Dependent = true, SetAccess = private)
       exactPrice
    end
@@ -65,7 +65,7 @@ classdef optPayoff < assetPath
 % The constructor for |assetPath| uses the |brownianMotion| constructor
 % and then parses the other properties. The function |genStockPaths| generates
 % the asset paths based on |whiteNoise| paths.
-
+ 
    methods
         
       % Creating an asset path process
@@ -109,7 +109,7 @@ classdef optPayoff < assetPath
             obj.payoffParam.digitalRate=val.digitalRate; %row
          end
       end
-
+ 
            
       % Generate payoffs of options
       function payoffs=genOptPayoffs(obj,val)
@@ -152,7 +152,7 @@ classdef optPayoff < assetPath
                - obj.payoffParam.strike, 0) ...
                .* exp(- obj.assetParam.interest .* obj.timeDim.endTime);
          end
-
+ 
          wheurobarrierput = wheurobarrier  ...
             & strcmp(obj.payoffParam.putCallType,'put');
          if any(wheurobarrierput); %put payoff
@@ -168,7 +168,7 @@ classdef optPayoff < assetPath
                   .* any(paths >= obj.payParam.barrier,2);
             end
          end
-
+ 
          wh=strcmp(obj.payoffParam.optType,'downin');
          if any(wh); %down and in barrier
             if obj.assetParam.initPrice > obj.payParam.barrier;
@@ -176,7 +176,7 @@ classdef optPayoff < assetPath
                   .* any(paths <= obj.payParam.barrier,2);
             end
          end
-
+ 
          wh=strcmp(obj.payoffParam.optType,'upout');
          if any(wh); %up and out barrier
             if obj.assetParam.initPrice < obj.payParam.barrier;
@@ -186,7 +186,7 @@ classdef optPayoff < assetPath
                tempPay(:,wh) = zeros(nPaths,sum(wh));
             end
          end
-
+ 
          wh=strcmp(obj.payoffParam.optType,'downout');
          if any(wh); %down and out barrier
             if obj.assetParam.initPrice > obj.payParam.barrier;
@@ -205,7 +205,7 @@ classdef optPayoff < assetPath
                =  max(paths(:,obj.timeDim.nSteps) - K, 0) ...
                .* exp(- obj.assetParam.interest .* obj.timeDim.endTime);
          end
-
+ 
          wh = whlook & strcmp(obj.payoffParam.putCallType,'put');
          if any(wh)
             K = min([repmat(obj.assetParam.initPrice,nPaths,1) paths],[ ],2);
@@ -213,7 +213,7 @@ classdef optPayoff < assetPath
                =  max(K - paths(:,obj.timeDim.nSteps), 0) ...
                .* exp(- obj.assetParam.interest .* obj.timeDim.endTime);
          end
-
+ 
          whamean=strcmp(obj.payoffParam.optType,'amean');
          if any(whamean); %arithmetic mean
             meanstock=mean(paths,2);
@@ -260,7 +260,7 @@ classdef optPayoff < assetPath
                exp(obj.assetParam.interest * ...
                obj.timeDim.endTime);
          end
-
+ 
          %Pricing European geometric brownian motion
          wheuro = strcmp(obj.payoffParam.optType, 'euro');
          whcall = strcmp(obj.payoffParam.putCallType, 'call');
@@ -279,22 +279,24 @@ classdef optPayoff < assetPath
          whdigit = strcmp(obj.payoffParam.optType, 'digital');
          whcall = strcmp(obj.payoffParam.putCallType, 'call');
          whput = strcmp(obj.payoffParam.putCallType, 'put');
-         whcash=strcmp(obj.payoffParam.cashAssetType,'cash');
-         whasset=strcmp(obi.payoffParam.cashAssetType,'asset');
+         whcash = strcmp(obj.payoffParam.cashAssetType,'cash');
+         whasset = strcmp(obj.payoffParam.cashAssetType,'asset');
          whdigitcashcall = whdigit & whcash & whcall;
          whdigitassetcall= whdigit &  whasset & whcall;
          whdigitcashput = whdigit & whcash & whput;
-         ehdigitassetput = whdigit & whasset & whput;
+         whdigitassetput = whdigit & whasset & whput;
          if any(whdigit); 
-            [digitcashcall,digitassetcall,digitcashput,digitassetput] = digitgbmprice(obj.assetParam.initPrice, ...
+            [digitcashcall,digitassetcall,digitcashput,digitassetput] ...
+             = digitgbmprice(obj.assetParam.initPrice, ...
                obj.assetParam.interest, obj.timeDim.endTime, ...
-               obj.assetParam.volatility, obj.payoffParam.strike);
+               obj.assetParam.volatility, obj.payoffParam.strike, ...
+               obj.payoffParam.digitalRate);
             val(whdigitcashcall) = digitcashcall;
             val(whdigitassetcall) = digitassetcall;
             val(whdigitcashput) = digitcashput;
             val(whdigitassetput) = digitassetput;
          end
-
+ 
          %Pricing Asian geometric mean
          whgmean = strcmp(obj.payoffParam.optType, 'gmean');
          whgmeancall = whgmean & whcall;
@@ -314,7 +316,7 @@ classdef optPayoff < assetPath
             val(whgmeancall) = gmeancall;
             val(whgmeanput) = gmeanput;
          end
-
+ 
          function [callprice,putprice]=eurogbmprice(S0,r,T,sigma,K)
             priceratio = K * exp(-r * T) ./ S0;
             xbig = log(priceratio) ./ (sigma * sqrt(T)) + sigma * sqrt(T)/2;
@@ -323,6 +325,16 @@ classdef optPayoff < assetPath
             callprice = putprice + S0 * (1-priceratio);        
          end
          
+         function [digitcashcall,digitassetcall,digitcashput, ...
+                 digitassetput] = digitgbmprice(S0,r,T,sigma,K,q)
+            digitpriceratio1 = (log(S0./K)+((r-q+sigma^2)/2)*T)/(sigma*sqrt(T));
+            digitpriceratio2 = digitpriceratio1-sigma*sqrt(T);
+            digitcashcall = exp(-r*T)*normcdf(digitpriceratio2);
+            digitcashput = exp(-r*T)*normcdf(-digitpriceratio2);
+            digitassetcall = S0.*exp(-q*T).*normcdf(digitpriceratio1);
+            digitassetput = S0.*exp(-q*T).*normcdf(-digitpriceratio1);
+         end
+ 
       end
       
       function varargout = plot(obj,varargin)
@@ -352,7 +364,7 @@ classdef optPayoff < assetPath
    end
     
    methods (Access = protected)
-
+ 
       function propList = getPropertyList(obj)
          propList = getPropertyList@assetPath(obj);
          propList.payoffParam_optType = obj.payoffParam.optType;
@@ -360,10 +372,13 @@ classdef optPayoff < assetPath
          propList.payoffParam_strike = obj.payoffParam.strike;
          if numel(obj.payoffParam.digitalRate)
             propList.payoffParam_digitalRate = obj.payoffParam.digitalRate;
-         end 
+         end
+         propList.payoffParam_cashAssetType = obj.payoffParam.cashAssetType;
          propList.exactPrice = obj.exactPrice;
       end
-
+ 
    end
 end
+ 
+
 
