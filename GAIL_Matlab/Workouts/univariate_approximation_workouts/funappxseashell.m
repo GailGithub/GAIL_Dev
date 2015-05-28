@@ -156,11 +156,50 @@ else
         drawnow
     end
 end
+gail.save_eps('WorkoutFunappxOutput', 'Seashellsurfx');
 
+figure(3)
 errmat =sqrt((x-xapprox).^2+(y-yapprox).^2+(z-zapprox).^2);
-figure(3);
 surf(x,y,z,errmat);
 colorbar;
+gail.save_eps('WorkoutFunappxOutput', 'Seashellsurfxerror');
 
+for i = 1:res;
+    [xfappx,~]=funappx_g(@(x) f1(t(i),x),0,2*pi);
+    xapprox(:,i) = xfappx(t);
+    [yfappx,~]=funappx_g(@(x) f2(t(i),x),0,2*pi);
+    yapprox(:,i) = yfappx(t);
+    [zfappx,~]=funappx_g(@(x) f3(t(i),x),0,2*pi);
+    zapprox(:,i) = zfappx(t); 
+end;
 
+% plot the surface
+figure(4)
+surf(xapprox,yapprox,zapprox,yapprox)
+shading interp
+
+axis off
+axis equal
+colormap(hsv(1024))
+material shiny
+lighting gouraud
+lightangle(80, -40)
+lightangle(-90, 60)
+
+% fix the view, or spin the seashell
+if (isfinite (azimuth))
+    view([azimuth elevation])
+else
+    for az = -180:10:180
+        view ([az elevation])
+        drawnow
+    end
+end
+gail.save_eps('WorkoutFunappxOutput', 'Seashellsurfy');
+
+errmat =sqrt((x-xapprox).^2+(y-yapprox).^2+(z-zapprox).^2);
+figure(5)
+surf(x,y,z,errmat);
+colorbar;
+gail.save_eps('WorkoutFunappxOutput', 'Seashellsurfyerror');
 
