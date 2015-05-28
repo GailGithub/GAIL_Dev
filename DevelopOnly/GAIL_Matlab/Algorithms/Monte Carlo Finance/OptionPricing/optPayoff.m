@@ -48,7 +48,7 @@ classdef optPayoff < assetPath
          %kinds of payoffs that we can generate
       allowPutCallType = {'call','put'} 
          %kinds of payoffs that we can generate
-         allowCashAssetType = {'cash','asset'}
+      allowCashAssetType = {'cash','asset'}
          %kinds of payoffs that we can generate with digital options
          
    end
