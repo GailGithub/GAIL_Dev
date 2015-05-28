@@ -200,9 +200,9 @@ meanMC_g = function(Yrand = function(n) {runif(n)^2},abstol = 1e-2, reltol = 1e-
   
   ntry = 10; #try several samples to get the time
   tstart1 = proc.time()
-  Yran(ntry); 
-  ttry = proc.time() = tstart1;
-  tpern = ttry/ntry; # calculate time per sample
+  Yrand(ntry); 
+  ttry = proc.time() - tstart1;
+  tpern = ttry[3]/ntry; # calculate time per sample
   nsofar = nsofar+ntry; # update n so far
   out_param.exit = 0;
   
@@ -231,13 +231,14 @@ meanMC_g = function(Yrand = function(n) {runif(n)^2},abstol = 1e-2, reltol = 1e-
   #####[tmu,out_param] =  meanmctolfun(Yrand,out_param,ntry,ttry,nsofar,tstart);
   #####end
   
-  meanmctolfun = function(Yrand(),out_param,ntry,ttry,nsofar,tstart) {
-    tstart6 = proc.time();
-    Yval = Yrand(out_param[4]);# get samples to estimate variance 
-    t_sig = proc.time()-tstart6;#get the time for calculating nSig function values.
-    nsofar = nsofar+out_param[4];# update the samples that have been used
-    ####out_param.nremain = gail.estsamplebudget(out_param.tbudget,...
-    out_param.nbudget,[ntry out_param.nSig],nsofar,tstart,[ttry t_sig]);
+meanmctolfun = function(Yrand(),out_param,ntry,ttry,nsofar,tstart) {
+  tstart6 = proc.time();
+  Yval = Yrand(out_param[4]);# get samples to estimate variance 
+  t_sig = proc.time()-tstart6;#get the time for calculating nSig function values.
+  nsofar = nsofar+out_param[4];# update the samples that have been used
+  source('estsamplebudget.R') #File needs to be in Working Directory
+  out_param.nremain = estsamplebudget(out_param[8],
+  out_param[9],c(ntry,out_param[4]),nsofar,tstart,c(ttry[3],t_sig[3]);
 #update the nremain could afford until now
 out_param.var = var(Yval);# calculate the sample variance--stage 1
 sig0 = sqrt(out_param.var);# standard deviation
@@ -306,6 +307,30 @@ while(out_param.tau == i) {
   out_param.ntot = nsofar;%total sample size used
   out_param.time=toc(tstart); %elapsed time
   end
+}
+
+ncbinv = function(n1,alpha1,output_param.kurtmax) {
+#This function calculate the reliable upper bound on error when given
+#Chebyshev and Berry-Esseen inequality and sample size n.
+NCheb_inv = 1/sqrt(n1*alpha1);
+#use Chebyshev inequality
+A=18.1139;
+A1=0.3328;
+A2=0.429; # three constants in Berry-Esseen inequality
+M3upper=output_param.kurtmax^(3/4);
+#using Jensen's inequality to bound the third moment
+BEfun=@(logsqrtb)gail.stdnormcdf(n1.*logsqrtb)...
+    +min(A1*(M3upper+A2), ...
+    A*M3upper./(1+(sqrt(n1).*logsqrtb).^3))/sqrt(n1)...
+    - alpha1/2;
+# Berry-Esseen inequality
+logsqrtb_clt=log(sqrt(gail.stdnorminv(1-alpha1/2)/sqrt(n1)));
+#use CLT to get tolerance
+NBE_inv = exp(2*fzero(BEfun,logsqrtb_clt));
+#use fzero to get Berry-Esseen tolerance
+tol1 = min(NCheb_inv,NBE_inv);
+#take the min of Chebyshev and Berry Esseen tolerance
+return(tol1)
 }
 
 meanMC_g_param = function(Yrand,abstol,reltol,nSig,n1,alpha,fudge,tbudget,nbudget) {
