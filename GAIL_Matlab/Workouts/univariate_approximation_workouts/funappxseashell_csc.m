@@ -123,7 +123,7 @@ else
 end
 
 
-gail.save_eps('WorkoutFunappxOutput', 'seashell');
+%gail.save_eps('WorkoutFunappxOutput', 'seashell');
 
 %% use funappx
 % plot the surface
@@ -133,8 +133,8 @@ t = a1: b1 / (res-1) : b1;
 [~,v] = meshgrid(t) ;
 
 t0  = a1: b1 / (res-1) : 2*b1;
-[cosappx, out1] = funappx_g( @(x) cos(x), a1, 2*b1, 1e-1)
-[sinappx, out2] = funappx_g( @(x) sin(x), a1, 2*b1, 1e-1)
+[cosappx, out1] = funappx_g( @(x) cos(x), a1, 2*b1, 1e-2);
+[sinappx, out2] = funappx_g( @(x) sin(x), a1, 2*b1, 1e-2);
 
 tic, 
 w = cosappx(t0);
@@ -145,12 +145,12 @@ w = sinappx(t0);
 sinu  = repmat(w(1:res),res,1);
 sinnv = repmat(w(1:2:end),res,1)';
 
-w = a * (1-v/b1);
-v3 = w .* (1+cosu) + c;
+w1 = a * (1-v/b1);
+v3 = w1 .* (1+cosu) + c;
 
 x1 = v3 .* cosnv;
 y1 = v3 .* sinnv;
-z1 = (b/b1) * v + w .* sinu;
+z1 = (b/b1) * v + w1 .* sinu;
 toc
 
 errest_cos = out1.errest
@@ -179,7 +179,7 @@ else
     end
 end
 
-gail.save_eps('WorkoutFunappxOutput', 'funappxseashell');
+%gail.save_eps('WorkoutFunappxOutput', 'funappxseashell');
 
 figure(3)
 errmat = sqrt((x-x1).^2+(y-y1).^2+(z-z1).^2);
@@ -197,4 +197,4 @@ else
 end
 
 
-gail.save_eps('WorkoutFunappxOutput', 'Seashellsurfyerror');
+%gail.save_eps('WorkoutFunappxOutput', 'Seashellsurfyerror');
