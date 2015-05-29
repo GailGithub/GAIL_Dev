@@ -88,6 +88,7 @@ if (n <= 0)
 end
 
 % construct the res-by-res mesh
+tic,
 a1 = 0 ; b1 = 2 * pi;
 t = a1: b1 / (res-1) : b1;
 [u,v] = meshgrid(t) ;
@@ -98,6 +99,7 @@ f2 = @(x) sin(x);
 x = (a*(1-v/(b1)).*(1+f1(u)) + c) .* f1(n*v) ;
 y = (a*(1-v/(b1)).*(1+f1(u)) + c) .* f2(n*v) ;
 z = (b/b1)*v + a*(1-v*(1/b1)) .* f2(u) ;
+toc, 
 
 % plot the surface
 % 7th Edition was surf(x,y,z,y)
@@ -127,24 +129,33 @@ gail.save_eps('WorkoutFunappxOutput', 'seashell');
 
 %% use funappx
 % plot the surface
+tic, 
+a1 = 0 ; b1 = 2 * pi;
+t = a1: b1 / (res-1) : b1;
+[~,v] = meshgrid(t) ;
 
-[cosappx, out1] = funappx_g( @(x) cos(x), a1, b1);
-[sinappx, out2] = funappx_g( @(x) sin(x), a1, b1);
-[cosappx2, out1] = funappx_g( @(x) cos(2*x), a1, 2*b1);
-[sinappx2, out2] = funappx_g( @(x) sin(2*x), a1, 2*b1);
-%u = repmat(t,res,1); v = u';
- 
-%w = ones(res,1);
-%cosu = bsxfun(@times,cosappx(t),w);
-cosu  = repmat(cosappx(t),res,1);
-sinu  = repmat(sinappx(t),res,1);
-cosnv = repmat(cosappx2(t),res,1)'; 
-sinnv = repmat(sinappx2(t),res,1)';
-v2 = a * (1-v/b1);
-v3 = v2 .* (1+cosu) + c;
+t0  = a1: b1 / (res-1) :  2*b1;
+[cosappx, out1] = funappx_g( @(x) cos(x), a1, 2*b1);
+[sinappx, out2] = funappx_g( @(x) sin(x), a1, 2*b1);
+
+errest_cos =  out1.errest
+errest_sin =  out2.errest
+
+w = cosappx(t0);
+cosu  = repmat(w(1:res),res,1);
+cosnv = repmat(w(1:2:end),res,1)'; 
+
+w = sinappx(t0);
+sinu  = repmat(w(1:res),res,1);
+sinnv = repmat(w(1:2:end),res,1)';
+
+w = a * (1-v/b1);
+v3 = w .* (1+cosu) + c;
+
 x1 = v3 .* cosnv;
 y1 = v3 .* sinnv;
-z1 = (b/b1) * v + v2 .* sinu;
+z1 = (b/b1) * v + w .* sinu;
+toc
 
 figure(2)
 surf(x1,y1,z1,y1-2*x1)
@@ -159,8 +170,6 @@ lightangle(80, -40)
 lightangle(-90, 60)
 
 
-gail.save_eps('WorkoutFunappxOutput', 'funappxseashell');
-
 % fix the view, or spin the seashell
 if (isfinite (azimuth))
     view([azimuth elevation])
@@ -171,9 +180,22 @@ else
     end
 end
 
+gail.save_eps('WorkoutFunappxOutput', 'funappxseashell');
+
 figure(3)
 errmat = sqrt((x-x1).^2+(y-y1).^2+(z-z1).^2);
 surf(x,y,z,errmat);
+axis equal
 colorbar;
+
+if (isfinite (azimuth))
+    view([azimuth elevation])
+else
+    for az = -180:10:180
+        view ([az elevation])
+        drawnow
+    end
+end
+
 
 gail.save_eps('WorkoutFunappxOutput', 'Seashellsurfyerror');
