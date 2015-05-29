@@ -106,12 +106,12 @@ a1 = 0 ; b1 = 2 * pi;
 
 tic, 
 t0  = a1: b1 / (res-1) : 2*b1;
-v = repmat(t(1:res),res,1)';
+v = repmat((1/(2*pi))*t(1:res), res,1)';
 w = cosappx(t0);
 w2 = sinappx(t0);
-x1 = (a*(1-v/(2*pi)).*(1+repmat(w(1:res),res,1)) + c) .* repmat(w(1:2:end),res,1)' ;
-y1 = (a*(1-v/(2*pi)).*(1+repmat(w(1:res),res,1)) + c) .* repmat(w2(1:2:end),res,1)' ;
-z1 = b*v/(2*pi) + a*(1-v/(2*pi)) .* repmat(w2(1:res),res,1) ;
+x1 = (a*(1-v).*(repmat(1+w(1:res),res,1)) + c) .* repmat(w(1:2:end),res,1)' ;
+y1 = (a*(1-v).*(repmat(1+w(1:res),res,1)) + c) .* repmat(w2(1:2:end),res,1)' ;
+z1 = b*v + a*(1-v) .* repmat(w2(1:res),res,1) ;
 toc
 
 errest_cos = out1.errest
