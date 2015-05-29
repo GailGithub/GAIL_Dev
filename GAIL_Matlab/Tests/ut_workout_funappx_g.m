@@ -11,7 +11,7 @@ classdef ut_workout_funappx_g < matlab.unittest.TestCase
     
     function testworkout_npointstest_funappx_g(testCase)
       [~,npointslgratio]=workout_funappx_g(100,1e-7,100,1000);
-      testCase.verifyGreaterThanOrEqual(npointslgratio,[0.25,1.3,0.065,0.3]);
+      testCase.verifyGreaterThanOrEqual(npointslgratio,[0.25,1.3,0.065]);
     end
     
   end
