@@ -134,14 +134,17 @@ gail.save_eps('WorkoutFunappxOutput', 'seashell');
 [sinappx2, out2] = funappx_g( @(x) sin(2*x), a1, 2*b1);
 %u = repmat(t,res,1); v = u';
  
+%w = ones(res,1);
+%cosu = bsxfun(@times,cosappx(t),w);
 cosu  = repmat(cosappx(t),res,1);
 sinu  = repmat(sinappx(t),res,1);
 cosnv = repmat(cosappx2(t),res,1)'; 
 sinnv = repmat(sinappx2(t),res,1)';
- 
-x1 = (a*(1-v/b1).*(1+cosu) + c) .* cosnv ;
-y1 = (a*(1-v/b1).*(1+cosu) + c) .* sinnv ;
-z1 = (b/b1)*v + a*(1-v/b1) .* sinu;
+v2 = a * (1-v/b1);
+v3 = v2 .* (1+cosu) + c;
+x1 = v3 .* cosnv;
+y1 = v3 .* sinnv;
+z1 = (b/b1) * v + v2 .* sinu;
 
 figure(2)
 surf(x1,y1,z1,y1-2*x1)
