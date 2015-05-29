@@ -89,17 +89,15 @@ end
 
 % construct the res-by-res mesh
 tic,
-a1 = 0 ; b1 = 2 * pi;
-t = a1: b1 / (res-1) : b1;
+% construct the res-by-res mesh
+t = linspace(0, 2*pi, res) ;
 [u,v] = meshgrid(t) ;
 
 % define the surface
-f1 = @(x) cos(x);
-f2 = @(x) sin(x);
-x = (a*(1-v/(b1)).*(1+f1(u)) + c) .* f1(n*v) ;
-y = (a*(1-v/(b1)).*(1+f1(u)) + c) .* f2(n*v) ;
-z = (b/b1)*v + a*(1-v*(1/b1)) .* f2(u) ;
-toc, 
+x = (a*(1-v/(2*pi)).*(1+cos(u)) + c) .* cos(n*v) ;
+y = (a*(1-v/(2*pi)).*(1+cos(u)) + c) .* sin(n*v) ;
+z = b*v/(2*pi) + a*(1-v/(2*pi)) .* sin(u) ;
+toc
 
 % plot the surface
 % 7th Edition was surf(x,y,z,y)
@@ -129,18 +127,16 @@ gail.save_eps('WorkoutFunappxOutput', 'seashell');
 
 %% use funappx
 % plot the surface
-tic, 
+
 a1 = 0 ; b1 = 2 * pi;
 t = a1: b1 / (res-1) : b1;
 [~,v] = meshgrid(t) ;
 
-t0  = a1: b1 / (res-1) :  2*b1;
-[cosappx, out1] = funappx_g( @(x) cos(x), a1, 2*b1);
-[sinappx, out2] = funappx_g( @(x) sin(x), a1, 2*b1);
+t0  = a1: b1 / (res-1) : 2*b1;
+[cosappx, out1] = funappx_g( @(x) cos(x), a1, 2*b1, 1e-1)
+[sinappx, out2] = funappx_g( @(x) sin(x), a1, 2*b1, 1e-1)
 
-errest_cos =  out1.errest
-errest_sin =  out2.errest
-
+tic, 
 w = cosappx(t0);
 cosu  = repmat(w(1:res),res,1);
 cosnv = repmat(w(1:2:end),res,1)'; 
@@ -156,6 +152,9 @@ x1 = v3 .* cosnv;
 y1 = v3 .* sinnv;
 z1 = (b/b1) * v + w .* sinu;
 toc
+
+errest_cos = out1.errest
+errest_sin = out2.errest
 
 figure(2)
 surf(x1,y1,z1,y1-2*x1)
