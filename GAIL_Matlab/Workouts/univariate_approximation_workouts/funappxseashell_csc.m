@@ -101,32 +101,21 @@ toc
 
 %% use funappx
 a1 = 0 ; b1 = 2 * pi;
-[cosappx, out1] = funappx_g( @(x) cos(x), a1, 2*b1, 1e-2);
-[sinappx, out2] = funappx_g( @(x) sin(x), a1, 2*b1, 1e-2);
+[cosappx, out1] = funappx_g( @(x) cos(x), a1, 2*b1, 1e-1);
+[sinappx, out2] = funappx_g( @(x) sin(x), a1, 2*b1, 1e-1);
 
 tic, 
 t0  = a1: b1 / (res-1) : 2*b1;
 v = repmat(t(1:res),res,1)';
-
 w = cosappx(t0);
-cosu  = repmat(w(1:res),res,1);
-cosnv = repmat(w(1:2:end),res,1)'; 
-
-w = sinappx(t0);
-sinu  = repmat(w(1:res),res,1);
-sinnv = repmat(w(1:2:end),res,1)';
-
-w = a * (1-v/b1);
-v3 = w .* (1+cosu) + c;
-
-x1 = v3 .* cosnv;
-y1 = v3 .* sinnv;
-z1 = (b/b1) * v + w .* sinu;
+w2 = sinappx(t0);
+x1 = (a*(1-v/(2*pi)).*(1+repmat(w(1:res),res,1)) + c) .* repmat(w(1:2:end),res,1)' ;
+y1 = (a*(1-v/(2*pi)).*(1+repmat(w(1:res),res,1)) + c) .* repmat(w2(1:2:end),res,1)' ;
+z1 = b*v/(2*pi) + a*(1-v/(2*pi)) .* repmat(w2(1:res),res,1) ;
 toc
 
 errest_cos = out1.errest
 errest_sin = out2.errest
-
 
 % plot the surface
 % 7th Edition was surf(x,y,z,y)
