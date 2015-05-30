@@ -101,8 +101,8 @@ toc
 
 %% use funappx
 a1 = 0 ; b1 = 2 * pi;
-[cosappx, out1] = funappx_g( @(x) cos(x), a1, 2*b1, 1e-1);
-[sinappx, out2] = funappx_g( @(x) sin(x), a1, 2*b1, 1e-1);
+[cosappx, out1] = funappx_g( @(x) cos(x), a1, 2*b1, 1e-1, 'nhi', res);
+[sinappx, out2] = funappx_g( @(x) sin(x), a1, 2*b1, 1e-1, 'nhi', res);
 
 tic, 
 t0  = a1: b1 / (res-1) : 2*b1;
@@ -117,7 +117,6 @@ x1 = bsxfun(@times,a*bsxfun(@times,1-vv,1+w(1:res))+c,w(1:2:end)');
 y1 = bsxfun(@times,a*bsxfun(@times,1-vv,1+w(1:res))+c,w2(1:2:end)');
 z1 = b*vv +a*bsxfun(@times,1-vv,w2(1:res));
 toc
-
 
 
 errest_cos = out1.errest
