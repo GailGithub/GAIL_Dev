@@ -106,13 +106,19 @@ a1 = 0 ; b1 = 2 * pi;
 
 tic, 
 t0  = a1: b1 / (res-1) : 2*b1;
-v = repmat((1/(2*pi))*t(1:res), res,1)';
 w = cosappx(t0);
 w2 = sinappx(t0);
-x1 = (a*(1-v).*(repmat(1+w(1:res),res,1)) + c) .* repmat(w(1:2:end),res,1)' ;
-y1 = (a*(1-v).*(repmat(1+w(1:res),res,1)) + c) .* repmat(w2(1:2:end),res,1)' ;
-z1 = b*v + a*(1-v) .* repmat(w2(1:res),res,1) ;
+%v = repmat((1/(2*pi))*t(1:res), res,1)';
+% x1 = (a*(1-v).*(repmat(1+w(1:res),res,1)) + c) .* repmat(w(1:2:end),res,1)' ;
+% y1 = (a*(1-v).*(repmat(1+w(1:res),res,1)) + c) .* repmat(w2(1:2:end),res,1)' ;
+% z1 = b*v + a*(1-v) .* repmat(w2(1:res),res,1) ;
+vv = v/(2*pi);
+x1 = bsxfun(@times,a*bsxfun(@times,1-vv,1+w(1:res))+c,w(1:2:end)');
+y1 = bsxfun(@times,a*bsxfun(@times,1-vv,1+w(1:res))+c,w2(1:2:end)');
+z1 = b*vv +a*bsxfun(@times,1-vv,w2(1:res));
 toc
+
+
 
 errest_cos = out1.errest
 errest_sin = out2.errest
