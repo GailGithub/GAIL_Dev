@@ -120,12 +120,12 @@ classdef whiteNoise < stochProcess
             validateattributes(val,{'numeric'},{'scalar','positive'})
             if strcmp(obj.wnParam.sampleKind,'IID') %IID samples
                if strcmp(obj.wnParam.xDistrib,'Uniform') %uniform IID
-                  paths=rand(val,obj.timeDim.nSteps);
+                  paths=rand(val,obj.timeDim.nCols);
                elseif strcmp(obj.wnParam.xDistrib,'Gaussian') %Gaussian IID
-                  paths=randn(val,obj.timeDim.nSteps);
+                  paths=randn(val,obj.timeDim.nCols);
                end
             elseif strcmp(obj.wnParam.sampleKind,'Sobol') %Sobol samples
-               paths=rand(obj.qrandState,val,obj.timeDim.nSteps); 
+               paths=rand(obj.qrandState,val,obj.timeDim.nCols); 
                   %uniform Sobol
             end
          else
