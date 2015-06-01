@@ -124,7 +124,8 @@ errest_sin = out2.errest
 
 % plot the surface
 % 7th Edition was surf(x,y,z,y)
-surf(x,y,z,y-2*x)
+figure;
+surf(x,y,z,y)
 shading interp
 
 axis off
@@ -151,7 +152,7 @@ gail.save_eps('WorkoutFunappxOutput', 'seashell');
 % plot the surface from funappx_G
 % 7th Edition was surf(x,y,z,y)
 figure(2)
-surf(x1,y1,z1,y1-2*x1)
+surf(x1,y1,z1,y1)
 shading interp
 
 axis off
