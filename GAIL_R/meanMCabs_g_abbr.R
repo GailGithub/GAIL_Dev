@@ -1,4 +1,4 @@
-
+library(pracma)
 #MEANMCabs_g_abbr Monte Carlo method to estimate the mean of a random variable
 #
 #   tmu = MEANMCabs_g_abbr(Yrand,abstol,alpha,nSig,fudge) estimates the mean, mu, of a random variable Y to
