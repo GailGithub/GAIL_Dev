@@ -75,16 +75,14 @@ BEfun= function(logsqrtn) {pnorm(-exp(logsqrtn)*toloversig)+
 }
 # Berry-Esseen Inequality
 logsqrtnCLT=log(qnorm(1-alpha1/2)/toloversig);
-nmu=min(ncheb,ceiling(exp(2*uniroot(BEfun,logsqrtnCLT))));
+nmu=min(ncheb,ceiling(exp(2*fzero(BEfun,logsqrtnCLT)$x)));
 #get the min n (used to estimate mu) by using cheb and BEfun
 stopifnot(nmu<nMax) 
 #don't exceed sample budget
 tmu=mean(Yrand(nmu)); #estimated mean
 out_param.ntot=nSig+nmu; #total samples required
 out_param.time=proc.time()-tstart; #elapsed time
-return(c(tmu,out_param.ntot,out_param.var,out_param.time))
+return(c(tmu,out_param.ntot,out_param.var,out_param.time[3]))
 }
-
-
 
 
