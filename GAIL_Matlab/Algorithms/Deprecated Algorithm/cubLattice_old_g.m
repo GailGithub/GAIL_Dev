@@ -123,7 +123,7 @@ function [q,out_param] = cubLattice_old_g(varargin)
 % Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) in the
 % interval [0,1)^2:
 % 
-% >> f=@(x) exp(-x(:,1).^2-x(:,2).^2); d=2; q = cubLattice_old_g(f,d,1e-3,'uniform','transform','C1'); exactsol = (sqrt(pi)/2*(erf(2)+erf(1)))^2;
+% >> f=@(x) exp(-x(:,1).^2-x(:,2).^2); d=2; q = cubLattice_old_g(f,d,1e-3,'uniform','transform','C1'); exactsol = (sqrt(pi)/2*(erf(1)+erf(0)))^2;
 % >> check = abs(exactsol-q) < 1e-3
 % check = 1
 %
@@ -172,7 +172,8 @@ elseif strcmp(out_param.transform,'C1sin')
 end
 
 %% Main algorithm
-mlag=4;
+r_lag = 4; %distance between coefficients summed and those computed
+l_star = out_param.mmin - r_lag; % Minimum gathering of points for the sums of DFT
 Stilde=zeros(out_param.mmax-out_param.mmin+1,1); %initialize sum of DFT terms
 errest=zeros(out_param.mmax-out_param.mmin+1,1); %initialize error estimates
 appxinteg=zeros(out_param.mmax-out_param.mmin+1,1); %initialize approximations to integral
@@ -210,13 +211,17 @@ for l=out_param.mmin-1:-1:1
    oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
    newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa, 
    flip=find(newone>oldone); %which in the pair are the larger ones
-   temp=kappanumap(nl+1+flip); %then flip
-   kappanumap(nl+1+flip)=kappanumap(1+flip); %them
-   kappanumap(1+flip)=temp; %around
+   if ~isempty(flip)
+       flipall=bsxfun(@plus,flip,0:2^(l+1):2^out_param.mmin-1);
+       flipall=flipall(:);
+       temp=kappanumap(nl+1+flipall); %then flip 
+       kappanumap(nl+1+flipall)=kappanumap(1+flipall); %them
+       kappanumap(1+flipall)=temp; %around
+   end
 end
 
 %% Compute Stilde
-nllstart=int64(2^(out_param.mmin-mlag-1));
+nllstart=int64(2^(out_param.mmin-r_lag-1));
 Stilde(1)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
 out_param.pred_err=out_param.fudge(out_param.mmin)*Stilde(1);
 errest(1)=out_param.pred_err;
@@ -261,20 +266,23 @@ for m=out_param.mmin+1:out_param.mmax
    y(~ptind)=(evenval-coefv.*oddval)/2;
 
    %% Update kappanumap
-   kappanumap=[kappanumap; (nnext+1:out_param.n)']; %initialize map
-%   for l=m-1:-1:1
-   for l=m-1:-1:m-mlag-1 %update just some, not exactly sure about this
+   kappanumap=[kappanumap; 2^(m-1)+kappanumap]; %initialize map
+   for l=m-1:-1:l_star
       nl=2^l;
       oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
-      newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa, 
+      newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa,
       flip=find(newone>oldone);
-      temp=kappanumap(nl+1+flip);
-      kappanumap(nl+1+flip)=kappanumap(1+flip);
-      kappanumap(1+flip)=temp;
+      if ~isempty(flip)
+          flipall=bsxfun(@plus,flip,0:2^(l+1):2^m-1);
+          flipall=flipall(:);
+          temp=kappanumap(nl+1+flipall);
+          kappanumap(nl+1+flipall)=kappanumap(1+flipall);
+          kappanumap(1+flipall)=temp;
+      end
    end
 
    %% Compute Stilde
-   nllstart=int64(2^(m-mlag-1));
+   nllstart=int64(2^(m-r_lag-1));
    meff=m-out_param.mmin+1;
    Stilde(meff)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
    out_param.pred_err=out_param.fudge(m)*Stilde(meff);
