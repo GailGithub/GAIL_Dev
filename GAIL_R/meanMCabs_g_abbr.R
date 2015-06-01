@@ -44,7 +44,7 @@
 #This is a heuristic algorithm based on a Central Limit Theorem
 #approximation
 
-meanMCabs_g_abbr = function (Yrand = function(n) {runif(n)^2},abstol=0.01,alpha=0.01,nSig=1e2,fudge=1.2)
+meanMCabs_g_abbr = function (Yrand = function(n) {runif(n)^2},abstol=0.01,alpha=0.01,nSig=1e2,fudge=1.2){
 
 nMax=1e8; #maximum number of samples allowed.
 out_param.alpha = alpha; #save the input parameters to a structure
@@ -55,7 +55,7 @@ tstart = proc.time(); #start the clock
 Yval = Yrand(nSig); # get samples to estimate variance
 out_param.var = var(Yval); #calculate the sample variance--stage 1
 sig0 = sqrt(out_param.var); #standard deviation
-sig0up = out_param.fudge.*sig0; #upper bound on the standard deviation
+sig0up = out_param.fudge*sig0; #upper bound on the standard deviation
 alpha1 = 1-sqrt(1-out_param.alpha); # one side of the uncertainty
 out_param.kurtmax = (out_param.nSig-3)/(out_param.nSig-1) 
      + ((alpha1*out_param.nSig)/(1-alpha1))*(1-1/out_param.fudge^2)^2;
@@ -68,16 +68,13 @@ A1=0.3328;
 A2=0.429; # three constants in Berry-Esseen inequality
 M3upper=out_param.kurtmax^(3/4); #using Jensen inequality to 
 #                                       bound the third moment
-####BEfun=@(logsqrtn)stdnormcdf(-exp(logsqrtn).*toloversig)...
-####+exp(-logsqrtn).*min(A1*(M3upper+A2), ...
-####                     A*M3upper./(1+(exp(logsqrtn).*toloversig).^3))- alpha1/2;
 
 BEfun= function(logsqrtn) {pnorm(-exp(logsqrtn)*toloversig)+
                              exp(-logsqrtn)*min(A1*(M3upper+A2),
               A*M3upper/(1+(exp(logsqrtn)*toloversig)^3))- alpha1/2;
 }
 # Berry-Esseen Inequality
-####logsqrtnCLT=log(stdnorminv(1-alpha1/2)/toloversig);
+logsqrtnCLT=log(qnorm(1-alpha1/2)/toloversig);
 nmu=min(ncheb,ceiling(exp(2*uniroot(BEfun,logsqrtnCLT))));
 #get the min n (used to estimate mu) by using cheb and BEfun
 stopifnot(nmu<nMax) 
@@ -85,20 +82,9 @@ stopifnot(nmu<nMax)
 tmu=mean(Yrand(nmu)); #estimated mean
 out_param.ntot=nSig+nmu; #total samples required
 out_param.time=proc.time()-tstart; #elapsed time
+return(c(tmu,out_param.ntot,out_param.var,out_param.time))
 }
 
-#####function p = stdnormcdf(z)
-### this function is to define cumulative distribution function (CDF) of the
-### standard normal distribution.
-#####p = 0.5*erfc(-z./sqrt(2));
-### Use the complementary error function, rather than .5*(1+erf(z/sqrt(2))),
-###to produce accurate near-zero results for large negative x.
-#####end
-
-#####function x = stdnorminv(p)
-###this function is the inverse function of CDF of standard normal distribution
-###x = -sqrt(2).*erfcinv(2*p);
-#####end
 
 
 
