@@ -64,6 +64,6 @@ stopifnot(nmu<nMax)
 tmu = mean(Yrand(nmu)); #estimated mean
 out_param.ntot = nSig + nmu; #total samples required
 out_param.time = proc.time() - tstart; #elapsed time
-output = c("estimated mean" = tmu,"total samples" = out_param.ntot,"variance" = out_param.var,"time" = out_param.time[3])
+output = c("tmu" = tmu,"out_param.ntot" = out_param.ntot,"out_param.var" = out_param.var,"out_param.time" = out_param.time[3])
 return(output)
 }
