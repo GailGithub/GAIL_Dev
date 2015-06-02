@@ -24,7 +24,7 @@
 \end{frame}
 
 \begin{frame}
-\frametitle{Examples form optPayoff.m}
+\frametitle{What changed in optPayoff.m}
 \begin{itemize}
 \item classdef optPayoff $<$ assetPath
 \item properties (SetAccess=public) \\
@@ -49,24 +49,14 @@
 Digital Option is an option whose payout is fixed after the underlying stock exceeds the predetermined threshold or strike price. 
 \end{frame}
 
-\begin{frame}
-\frametitle{Process}
-\begin{itemize}
-\item Set default properties
-\item Set the properties of the payoff object
-\item Generate payoffs of options
-\item Calculate exact price
-\item Add new properties to the list 
-\item Generate option prices using Monte Carlo Method and compare if the error is within expected tolerance
-\end{itemize}
-\end{frame}
+
 
 \begin{frame}
 \frametitle{Formula}
 In the Black–Scholes model, the price of the option can be found by the formulas below.
 $$\Phi(x)=1/\sqrt{(2\pi)}\int_{-\infty}^{x}e^{-\frac{1}{2}z^2}dz$$
 and,
-$$d_1=\frac{ln(\frac{S}{K})+(r-q+\sigma^2/2)T}{\sigma\sqrt{T}}, d_2=d_1-\sigma\sqrt{T}$$
+$$d_1=\frac{\ln(\frac{S}{K})+(r-q+\sigma^2/2)T}{\sigma\sqrt{T}},\quad\quad d_2=d_1-\sigma\sqrt{T}$$
 Where:\\
 $S$ - initial stock price\\
 $K$ - strike price\\
@@ -82,12 +72,25 @@ Cash-or-nothing call\\
 $$C=e^{-rT}\Phi(d_2)$$
 Cash-or-nothing put\\
 $$P=e^{-rT}\Phi(-d_2)$$
+
 Asset-or-nothing call\\
 $$C=Se^{-qT}\Phi(d_1)$$
 Asset-or-nothing put\\
 $$P=Se^{-qT}\Phi(-d_1)$$
+\\
 \end{frame}
 
+\begin{frame}
+\frametitle{Process}
+\begin{itemize}
+\item Set default properties
+\item Set the properties of the payoff object
+\item Generate payoffs of options
+\item Calculate exact price
+\item Add new properties to the list 
+\item Generate option prices using Monte Carlo Method and compare if the error is within expected tolerance
+\end{itemize}
+\end{frame}
 
 
 \begin{frame}
