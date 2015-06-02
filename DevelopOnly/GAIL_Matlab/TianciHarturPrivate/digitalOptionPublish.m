@@ -54,10 +54,17 @@
 
 %% Example of pricing digital option for cash
 % _optPrice_ is a MATLAB(R) class that uses _optPayoff_ parameters.
+%
 % Creating the _inp_ structure
 
-inp.payoffParam.optType = {'digital'};
-inp.priceParam.absTol = 0.01;
+inp.payoffParam.optType = {'digital'};      %Defining the Option Type
+inp.payoffParam.cashAssetType = {'cash'};   %Defining the Digital Option Type
+inp.assetParam.initPrice = 9;               %Defining the Inicial Stock Price as $9.00
+inp.payoffParam.strike = 12;                %Defining the Strike Price as $12.00
+inp.timeDim.timeVector = (0.25:0.25:1);     %Defining the Time as four trimesters.
+inp.assetParam.interest = 0.01;             %Defining Interest Rate as 1%
+inp.assetParam.volatility = 0.5;            %Defining the Volatility as 50%
+inp.priceParam.absTol = 0.01;               %Defining the Absolute Tolerance as 1%
 %%
 % _tianci_ is the _optPrice_ class
 
@@ -76,9 +83,14 @@ hartur = genOptPrice(tianci)
 % _optPrice_ is a MATLAB(R) class that uses _optPayoff_ parameters.
 % Creating the _inp_ structure
 
-inp.payoffParam.optType={'digital'};
-inp.payoffParam.cashAssetType={'asset'};
-inp.priceParam.absTol=0.01;
+inp.payoffParam.optType = {'digital'};      %Defining the Option Type
+inp.payoffParam.cashAssetType = {'asset'};  %Defining the Digital Option Type
+inp.assetParam.initPrice = 9;               %Defining the Inicial Stock Price as $9.00
+inp.payoffParam.strike = 12;                %Defining the Strike Price as $12.00
+inp.timeDim.timeVector = (0.25:0.25:1);     %Defining the Time as four trimesters.
+inp.assetParam.interest = 0.01;             %Defining Interest Rate as 1%
+inp.assetParam.volatility = 0.5;            %Defining the Volatility as 50%
+inp.priceParam.absTol = 0.01;               %Defining the Absolute Tolerance as 1%
 %%
 % _tianci_ is the _optPrice_ class
 
