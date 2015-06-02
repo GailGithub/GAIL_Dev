@@ -1,0 +1,97 @@
+\documentclass[10pt,Compress]{beamer}
+\usetheme{Warsaw}
+\usecolortheme{dolphin}
+\title[Options]{Summer Research Presentation - Digital Options}
+\author{Tianci Zhu \and Hartur Santi}
+\institute[IIT]{Illinois Institute of Technology}
+\begin{document}
+\titlepage
+
+
+\begin{frame}
+\frametitle{Overview}
+\tableofcontents
+\end{frame}
+
+\section{Matlab Class}
+\begin{frame}
+\frametitle{Matlab class}
+\begin{itemize}
+\item Class definition: Description of what is common to every instance of a class.
+\item Properties: Data storage for class instances
+\item Methods: Special functions that implement operations that are usually performed only on instances of the class
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Examples form optPayoff.m}
+\begin{itemize}
+\item classdef optPayoff $<$ assetPath
+\item properties (SetAccess=public) \\
+\hspace{0.5 cm} payoffParam = struct('optType', {{'euro'}}, ...\\
+ \hspace{1.2cm}  'putCallType', {{'call'}}, ...\\ 
+ \hspace{1.2cm}       'strike', 10, ... \\
+ \hspace{1.2cm}        'barrier', 12, ... \\
+ \hspace{1.2cm}      'digitalRate', 0.5, ...\\
+ \hspace{1.2cm}     'cashAssetType',{{'cash'}}); 
+ \item  methods (Access = protected)\\
+ 
+      \hspace{0.5 cm}function propList = getPropertyList(obj)\\
+     \hspace{0.5 cm} ......\\
+         \hspace{0.5 cm}end\\
+   end
+ \end{itemize}
+\end{frame}
+
+\section{Digital Option}
+\begin{frame}
+\frametitle{Definition}
+Digital Option is an option whose payout is fixed after the underlying stock exceeds the predetermined threshold or strike price. 
+\end{frame}
+
+\begin{frame}
+\frametitle{Process}
+\begin{itemize}
+\item Set default properties
+\item Set the properties of the payoff object
+\item Generate payoffs of options
+\item Calculate exact price
+\item Add new properties to the list 
+\item Generate option prices using Monte Carlo Method and compare if the error is within expected tolerance
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Formula}
+In the Black–Scholes model, the price of the option can be found by the formulas below.
+$$\Phi(x)=1/\sqrt{(2\pi)}\int_{-\infty}^{x}e^{-\frac{1}{2}z^2}dz$$
+and,
+$$d_1=\frac{ln(\frac{S}{K})+(r-q+\sigma^2/2)T}{\sigma\sqrt{T}}, d_2=d_1-\sigma\sqrt{T}$$
+Where:\\
+$S$ - initial stock price\\
+$K$ - strike price\\
+$T$ - time to maturity\\
+$q$ - dividend rate\\
+$r$ - risk-free interest rate\\
+$\sigma$ - volatility\\
+$\Phi$ - cumulative distribution function of the normal distribution
+\end{frame}
+
+\begin{frame}
+Cash-or-nothing call\\
+$$C=e^{-rT}\Phi(d_2)$$
+Cash-or-nothing put\\
+$$P=e^{-rT}\Phi(-d_2)$$
+Asset-or-nothing call\\
+$$C=Se^{-qT}\Phi(d_1)$$
+Asset-or-nothing put\\
+$$P=Se^{-qT}\Phi(-d_1)$$
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Next Step}
+
+\end{frame}
+\end{document}
