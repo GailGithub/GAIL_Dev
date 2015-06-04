@@ -65,6 +65,7 @@ print(muhat)}
 
 for (i in 1:4) {
 muhat = meanMC_CLT(Y,0.01,0.01,10000) #try out multiple times with tolerance 0.01
+print(muhat)
 }
 
 #
