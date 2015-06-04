@@ -12,12 +12,12 @@
 % The following formulas are from the BlackScholes model and them give the
 % Exact Value for an Digital Option:
 %
-% $$\Phi(x)=1/\sqrt{(2\pi)}\int_{-\infty}^{x}e^{-\frac{1}{2}z^2}dz $$
-%
+% \[\Phi(x)=1/\sqrt{(2\pi)}\int_{-\infty}^{x}e^{-\frac{1}{2}z^2}dz\]
+% 
 % and,
 %
-% $$ d_1=\frac{\ln(\frac{S}{K})+(r-q+\sigma^2/2)T}{\sigma\sqrt{T}} $$
-% $$\quad d_2=d_1-\sigma\sqrt{T} $$
+% \[ d_1=\frac{\ln(\frac{S}{K})+(r-q+\sigma^2/2)T}{\sigma\sqrt{T}} \]
+% \[\quad d_2=d_1-\sigma\sqrt{T} \]
 %
 % Where:
 %
