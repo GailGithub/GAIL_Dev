@@ -15,7 +15,7 @@
 % function.  Let
 %
 % \begin{gather*} \Phi(x)
-% =\frac{1}{\sqrt{(2\pi)}}\int_{-\infty}^{x}e^{-\frac{1}{2}z^2} \, {\rm
+% =\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{x}e^{-\frac{1}{2}z^2} \, {\rm
 % d}z, \\ 
 % d_1=\frac{\ln \Bigl(\frac{S_0}{K} \Bigr)+(r-q+\sigma^2/2)T}{\sigma\sqrt{T}} \\
 % d_2=d_1-\sigma\sqrt{T}
