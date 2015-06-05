@@ -1,7 +1,7 @@
 \documentclass[10pt,Compress]{beamer}
 \usetheme{Warsaw}
 \usecolortheme{dolphin}
-\title[Options]{Summer Research Presentation - Digital Options}
+\title[Options]{\huge{Summer Research Presentation - Digital Options}}
 \author{Tianci Zhu \and Hartur Santi}
 \institute[IIT]{Illinois Institute of Technology}
 \begin{document}
@@ -92,9 +92,14 @@ $$P=Se^{-qT}\Phi(-d_1)$$
 \end{itemize}
 \end{frame}
 
-
+\section{Next Step}
 \begin{frame}
-\frametitle{Next Step}
-
+\frametitle{Next Step - Basket Option}
+\begin{itemize}
+\item Adjust assetPath.m file to make it fit more dimensions
+\item Add basket option to optPayoff.m file
+\item Use genOptPrice function to calculate the approximate price of basket option using Monte Carlo Simulation
+\item Compare results of genOptPrice and exactPrice
+\end{itemize}
 \end{frame}
 \end{document}
