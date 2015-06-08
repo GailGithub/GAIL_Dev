@@ -46,7 +46,7 @@ classdef variableTransform < whiteNoise
       function points=genVTPoints(obj,val)
          if strcmp(obj.vtParam.shape,'ball') && obj.timeDim.nSteps==2 %circle
             assert(strcmp(obj.wnParam.distribName,'Uniform'))
-            pts = genWNPaths(obj,val); %get IID on square
+            pts = genPaths(obj,val); %get IID on square
             twopitheta = (2*pi)*pts(:,2);
             points = bsxfun(@times,sqrt(pts(:,1)), ...
                [cos(twopitheta) sin(twopitheta)]); %fix r
