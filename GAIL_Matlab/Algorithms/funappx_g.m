@@ -426,7 +426,7 @@ else
     f_addParamVal = @addParamValue;
 end;
 
-
+ 
 if isempty(varargin)
     warning('MATLAB:funappx_g:nofunction','Function f must be specified. Now GAIL is using f(x)=exp(-100*(x-0.5)^2) and unit interval [0,1].')
     help funappx_g
@@ -505,7 +505,7 @@ end;
 
 % let error tolerance greater than 0
 if (out_param.abstol <= 0 )
-    warning(['Error tolerance should be greater than 0.' ...
+    warning('MATLAB:funappx_g:tolneg', ['Error tolerance should be greater than 0.' ...
         ' Using default error tolerance ' num2str(default.abstol)])
     out_param.abstol = default.abstol;
 end
