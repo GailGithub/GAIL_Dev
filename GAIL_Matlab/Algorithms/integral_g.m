@@ -282,7 +282,7 @@ end;
 
 if isempty(varargin)
     help integral_g
-    warning('Function f must be specified. Now GAIL is giving you a toy example of f(x)=x^2.')
+    warning('GAIL:integral_g:nofunction','Function f must be specified. Now GAIL is giving you a toy example of f(x)=x^2.')
     f = @(x) x.^2;
     out_param.f=f;
 else
@@ -290,7 +290,7 @@ else
     f = varargin{1};
     out_param.f = f;
   else
-    warning('GAIL:funappx_g:notfunction','Function f must be a function handle. Now GAIL is giving you a toy example of f(x)=x^2.')
+    warning('GAIL:integral_g:notfunction','Function f must be a function handle. Now GAIL is giving you a toy example of f(x)=x^2.')
     f = @(x) x.^2;
     out_param.f = f;
   end
