@@ -160,6 +160,20 @@ classdef ut_funappx_g < matlab.unittest.TestCase
             [~, result] = testCase.verifyWarning(@()funappx_g(f,in_param),'GAIL:funappx_g:exceediter');
             testCase.verifyLessThan(result.maxiter,result.iter);
         end
+        
+         function funappx_gOnpointsoflinear(testCase)
+            f = @(x) 3*x + 5;
+            in_param.nlo = 3; in_param.nhi =3;
+            [~, result] = funappx_g(f,in_param);
+            testCase.verifyEqual(result.npoints,3);
+         end
+        
+         function funappx_gOnpointsofconstent(testCase)
+            f = @(x) 5;
+            in_param.nlo = 3; in_param.nhi =3;
+            [~, result] = funappx_g(f,in_param);
+            testCase.verifyEqual(result.npoints,3);
+        end
 
     end
 end
