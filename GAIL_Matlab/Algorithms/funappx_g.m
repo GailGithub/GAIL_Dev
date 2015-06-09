@@ -78,18 +78,18 @@ function [fappx,out_param]=funappx_g(varargin)
 %     out_param.ninit --- initial number of points we use for each sub
 %     interval
 %
-%     out_param.exit --- this is a number defining the conditions of
-%     success or failure satisfied when finishing the algorithm. The 
-%     algorithm is considered successful (with out_param.exit == 0) if no 
-%     other flags arise warning that the results are certainly not 
-%     guaranteed. The initial value is 0 and the final value of this
-%     parameter is encoded as follows:
+%     out_param.exit --- this is a vector with two elements, defining the
+%     conditions of success or failure satisfied when finishing the
+%     algorithm. The algorithm is considered successful (with
+%     out_param.exit == [0 0]) if no other flags arise warning that the
+%     results are certainly not guaranteed. The initial value is [0 0] and
+%     the final value of this parameter is encoded as follows:
 %       
-%                       1    If reaching overbudget. It states whether
+%                       [1 0]   If reaching overbudget. It states whether
 %                       the max budget is attained without reaching the
 %                       guaranteed error tolerance.
 %        
-%                       2   If reaching overiteration. It states whether
+%                       [0 1]   If reaching overiteration. It states whether
 %                       the max iterations is attained without reaching the
 %                       guaranteed error tolerance.
 %
