@@ -162,7 +162,7 @@ while n < nmax;
 end;
 
 if tauchange == 1;
-    warning('MATLAB:funappxglobal_g:peaky','This function is peaky relative to nlo and nhi. You may wish to increase nlo and nhi for similar functions.')
+    warning('GAIL:funappxglobal_g:peaky','This function is peaky relative to nlo and nhi. You may wish to increase nlo and nhi for similar functions.')
 end;
 errorbound = fn*h^2/(8*(n-1)^2);
 p = flipud(get(gca,'child'));

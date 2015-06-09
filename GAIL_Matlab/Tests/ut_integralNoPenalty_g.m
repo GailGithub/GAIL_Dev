@@ -77,12 +77,12 @@ classdef ut_integralNoPenalty_g < matlab.unittest.TestCase
             [actSolution,out_param] = integralNoPenalty_g(f,inparam);
             expSolution = 201.214396746368;
             import matlab.unittest.constraints.IsLessThanOrEqualTo
-            warning('off','MATLAB:integralNoPenalty_g:exceedbudget')
+            warning('off','GAIL:integralNoPenalty_g:exceedbudget')
             testCase.verifyThat(abs(actSolution-expSolution)*~out_param.exceedbudget,...
                 IsLessThanOrEqualTo(out_param.abstol));
             testCase.verifyThat(abs(out_param.errest)*~out_param.exceedbudget,...
                 IsLessThanOrEqualTo(out_param.abstol));
-            warning('on','MATLAB:integralNoPenalty_g:exceedbudget')
+            warning('on','GAIL:integralNoPenalty_g:exceedbudget')
 
         end
         

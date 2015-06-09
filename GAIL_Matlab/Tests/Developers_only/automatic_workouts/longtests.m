@@ -254,10 +254,10 @@ try
     end
 catch
     display('Error: Test ut_funappxglobal_g is wrongly coded. We skip it.')
-    fprintf(fid,'Error: Test ut_funappxglobal_g is wrongly coded. We skip it.\n');
+    %fprintf(fid,'Error: Test ut_funappxglobal_g is wrongly coded. We skip it.\n');
 end
     
-warning('off','MATLAB:integral01_g:peaky')
+warning('off','GAIL:integral01_g:peaky')
 try
     Tests = matlab.unittest.TestSuite.fromClass(?ut_integral01_g);
     results=run(ut_integral01_g)
@@ -270,7 +270,7 @@ try
 catch
     display('Error: Test ut_integral01_g is wrongly coded. We skip it.')
 end
-warning('on','MATLAB:integral01_g:peaky')
+warning('on','GAIL:integral01_g:peaky')
 
 try
     Tests = matlab.unittest.TestSuite.fromClass(?ut_funmin01_g);

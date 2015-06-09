@@ -11,10 +11,10 @@ classdef ut_integralsim_g < matlab.unittest.TestCase
                 +(x-z-a).*abs(x-z-a)...
                 -(x-z+a).*abs(x-z+a)) ...
                 .*(x>=x0).*(x<=x1); %test function
-            warning('off','MATLAB:integralsim_g:peaky')
+            warning('off','GAIL:integralsim_g:peaky')
             [~,out_param]=integralsim_g(f,'ninit',53,'abstol',1e-8,'nmax',1e7);
             testCase.verifyEqual(out_param.tauchange,true);
-            warning('on','MATLAB:integralsim_g:peaky')
+            warning('on','GAIL:integralsim_g:peaky')
         end
         
         function testerrorfabstol(testCase)

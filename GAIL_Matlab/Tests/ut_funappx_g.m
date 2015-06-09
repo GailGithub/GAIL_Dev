@@ -124,14 +124,14 @@ classdef ut_funappx_g < matlab.unittest.TestCase
             f = @(x) x.^2;
             in_param.a = 2;
             in_param.b = 1;
-            [fappx, result] = testCase.verifyWarning(@()funappx_g(f,in_param),'MATLAB:funappx_g:blea');
+            [fappx, result] = testCase.verifyWarning(@()funappx_g(f,in_param),'GAIL:funappx_g:blea');
             x = rand(10000,1)*(result.b-result.a)+result.a;
             actualerr = max(abs(fappx(x)-f(x)));
             testCase.verifyLessThanOrEqual(actualerr,result.abstol);
         end
         
         function funappx_gOfnofunction(testCase)
-            [fappx, result] = testCase.verifyWarning(@()funappx_g,'MATLAB:funappx_g:nofunction');
+            [fappx, result] = testCase.verifyWarning(@()funappx_g,'GAIL:funappx_g:nofunction');
             x = rand(10000,1)*(result.b-result.a)+result.a;
             actualerr = max(abs(fappx(x)-result.f(x)));
             testCase.verifyLessThanOrEqual(actualerr,result.abstol);
@@ -141,7 +141,7 @@ classdef ut_funappx_g < matlab.unittest.TestCase
             f = @(x) x.^2;
             in_param.a = 1;
             in_param.b = 1;
-            [fappx, result] = testCase.verifyWarning(@()funappx_g(f,in_param),'MATLAB:funappx_g:beqa');
+            [fappx, result] = testCase.verifyWarning(@()funappx_g(f,in_param),'GAIL:funappx_g:beqa');
             x = rand(10000,1)*(result.b-result.a)+result.a;
             actualerr = max(abs(fappx(x)-f(x)));
             testCase.verifyLessThanOrEqual(actualerr,result.abstol);
@@ -150,15 +150,29 @@ classdef ut_funappx_g < matlab.unittest.TestCase
         function funappx_gOfexceedbudget(testCase)
             f = @(x) x.^2;
             in_param.nmax = 1000;
-            [~, result] = testCase.verifyWarning(@()funappx_g(f,in_param),'MATLAB:funappx_g:exceedbudget');
+            [~, result] = testCase.verifyWarning(@()funappx_g(f,in_param),'GAIL:funappx_g:exceedbudget');
             testCase.verifyLessThanOrEqual(result.npoints,result.nmax);
         end
         
         function funappx_gOfexceediter(testCase)
             f = @(x) x.^2;
             in_param.maxiter = 2;
-            [~, result] = testCase.verifyWarning(@()funappx_g(f,in_param),'MATLAB:funappx_g:exceediter');
+            [~, result] = testCase.verifyWarning(@()funappx_g(f,in_param),'GAIL:funappx_g:exceediter');
             testCase.verifyLessThan(result.maxiter,result.iter);
+        end
+        
+         function funappx_gOnpointsoflinear(testCase)
+            f = @(x) 3*x + 5;
+            in_param.nlo = 3; in_param.nhi =3;
+            [~, result] = funappx_g(f,in_param);
+            testCase.verifyEqual(result.npoints,3);
+         end
+        
+         function funappx_gOnpointsofconstent(testCase)
+            f = @(x) 5;
+            in_param.nlo = 3; in_param.nhi =3;
+            [~, result] = funappx_g(f,in_param);
+            testCase.verifyEqual(result.npoints,3);
         end
 
     end
