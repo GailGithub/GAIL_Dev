@@ -18,8 +18,8 @@ tstart = tic;
 %% Simulation parameters
 n = nrep;
 if (n >= 100)
-    warning('off','MATLAB:funmin01_g:exceedbudget');
-    warning('off','MATLAB:funmin01_g:peaky');
+    warning('off','GAIL:funmin01_g:exceedbudget');
+    warning('off','GAIL:funmin01_g:peaky');
 end;
 a1=5; b1=10; c1=0.5-0.5*rand(nrep,1);
 a2=1; b2=10; c2=0.5+0.5*rand(nrep,1);
@@ -75,8 +75,8 @@ gail.save_mat('UniFunMinOutput', 'TwoExtremeTest',true,TolXvec,prob,nTolX);
 
 toc(tstart)
 
-warning('on','MATLAB:funmin01_g:exceedbudget');
-warning('on','MATLAB:funmin01_g:peaky');
+warning('on','GAIL:funmin01_g:exceedbudget');
+warning('on','GAIL:funmin01_g:peaky');
 
 %% The following output was obtained on 2015-Feb
 %            Success    Success    Success    Success
