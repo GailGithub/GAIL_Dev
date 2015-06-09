@@ -430,8 +430,14 @@ if isempty(varargin)
     f = @(x) (x-0.3).^2+1;
     out_param.f = f;
 else
+  if gail.isfcn(varargin{1})
     f = varargin{1};
     out_param.f = f;
+  else
+    warning('GAIL:funmin_g:notfunction','Function f must be a function handle. Now funmin_g will use f(x)=(x-0.3)^2+1.')
+    f = @(x) (x-0.3).^2+1;;
+    out_param.f = f;
+  end
 end
      
 validvarargin=numel(varargin)>1;
