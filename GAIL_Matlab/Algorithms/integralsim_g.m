@@ -236,10 +236,12 @@ if isempty(varargin)
     f = @(x) x.^2;
 else
   if gail.isfcn(varargin{1})
-    out_param.f = varargin{1};
+    f = varargin{1};
+    out_param.f = f;
   else
     warning('GAIL:integralsim_g:notfunction','Function f must be a function handle. Now GAIL is giving you a toy example of f(x)=x^2.')
-    out_param.f = @(x) x.^2;
+    f = varargin{1};
+    out_param.f = f;
   end
 end;
 
