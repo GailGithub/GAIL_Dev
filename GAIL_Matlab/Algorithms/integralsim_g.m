@@ -149,7 +149,7 @@ while true
     if out_param.tau*(Gf+Ff/(2*nint)) < Ff %f lies outside cone
         out_param.tau = 2*Ff/(Gf+Ff/(2*nint)); %increase tau
         out_param.tauchange=true; %flag the changed tau
-        warning('MATLAB:integralsim_g:peaky','This integrand is peaky relative to ninit. You may wish to increase ninit for similar integrands.');
+        warning('GAIL:integralsim_g:peaky','This integrand is peaky relative to ninit. You may wish to increase ninit for similar integrands.');
         if nint+1 <= (out_param.tau+1)/2 %the present ntrap is too small for tau
             inflation=ceil((out_param.tau+1)/(2*nint)); %prepare to increase ntrap
             nintok=false; %flag the number of trapezoids too small for tau
@@ -170,7 +170,7 @@ while true
     if nint*inflation+1 > out_param.nmax
             %cost budget does not allow intended increase in ntrap
         out_param.exit=1; %tried to exceed budget
-        warning('MATLAB:integralsim_g:exceedbudget','integralsim_g attempts to exceed the cost budget. The answer may be unreliable.');
+        warning('GAIL:integralsim_g:exceedbudget','integralsim_g attempts to exceed the cost budget. The answer may be unreliable.');
         inflation=floor((out_param.nmax-1)/nint);
             %max possible increase allowed by cost budget
         if inflation == 1 %cannot increase ntrap at all
@@ -203,7 +203,7 @@ while true
     end
     if(iter> out_param.maxiter)
         out_param.exit = 2;
-        warning('MATLAB:integralsim_g:exceediter',' Iteration exceeds max iteration ')
+        warning('GAIL:integralsim_g:exceediter',' Iteration exceeds max iteration ')
         break;
     end;
 
@@ -282,18 +282,18 @@ if (out_param.abstol <= 0 )
 end
 % let ninit be an odd number
 if ((out_param.ninit+1)/2-ceil(out_param.ninit/2) ~= 0 )
-    warning('MATLAB:integralsim_g:initnotodd',['Initial number of points must be an odd number.' ...
+    warning('GAIL:integralsim_g:initnotodd',['Initial number of points must be an odd number.' ...
             ' Using default number of points ' num2str(default.ninit)])
     out_param.ninit = default.ninit;
 end
 % let initial number of points be a positive integer
 if (~gail.isposint(out_param.ninit))
     if gail.isposge3(out_param.ninit)
-        warning('MATLAB:integralsim_g:initnotint',['Initial number of points should be a positive integer.' ...
+        warning('GAIL:integralsim_g:initnotint',['Initial number of points should be a positive integer.' ...
             ' Using ', num2str(ceil(out_param.ninit))])
         out_param.ninit = ceil(out_param.ninit);
     else
-        warning('MATLAB:integralsim_g:initlt3',['Initial number of points should be a positive integer.' ...
+        warning('GAIL:integralsim_g:initlt3',['Initial number of points should be a positive integer.' ...
             ' Using default number of points ' int2str(default.ninit)])
         out_param.ninit = default.ninit;
     end
@@ -301,11 +301,11 @@ end
 % let cost budget be a positive integer
 if (~gail.isposint(out_param.nmax))
     if gail.ispositive(out_param.nmax)
-        warning('MATLAB:integralsim_g:budgetnotint',['Cost budget should be a positive integer.' ...
+        warning('GAIL:integralsim_g:budgetnotint',['Cost budget should be a positive integer.' ...
             ' Using cost budget ', num2str(ceil(out_param.nmax))])
         out_param.nmax = ceil(out_param.nmax);
     else
-        warning('MATLAB:integralsim_g:budgetisneg',['Cost budget should be a positive integer.' ...
+        warning('GAIL:integralsim_g:budgetisneg',['Cost budget should be a positive integer.' ...
             ' Using default cost budget ' int2str(default.nmax)])
         out_param.nmax = default.nmax;
     end;

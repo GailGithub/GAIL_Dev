@@ -200,7 +200,7 @@ if intervallen>0
             whpos=find(tempa>0,1,'first');
             hcut=min(steplenvec(whpos:ii)./tempa(whpos:ii));
             out_param.conechange=true; %flag the changed tau
-            warning('MATLAB:integral_g:spiky','This integrand is spiky relative to ninit. You may wish to increase ninit for similar integrands.');
+            warning('GAIL:integral_g:spiky','This integrand is spiky relative to ninit. You may wish to increase ninit for similar integrands.');
             
             %Update Varfpup
             Varfpup(whpos+1:ii+1)=min(Varfp(whpos:ii)*inflatelim*hcut/(hcut-2*steplenvec(whpos:ii)));
@@ -221,7 +221,7 @@ if intervallen>0
         if ntrap*inflation+1 > out_param.nmax
                 %cost budget does not allow intended increase in ntrap
             out_param.exceedbudget=true; %tried to exceed budget
-            warning('MATLAB:integral_g:exceedbudget','integral_g attempts to exceed the cost budget. The answer may be unreliable.');
+            warning('GAIL:integral_g:exceedbudget','integral_g attempts to exceed the cost budget. The answer may be unreliable.');
             inflation=floor((out_param.nmax-1)/ntrap);
                 %max possible increase allowed by cost budget
             if inflation == 1 %cannot increase ntrap at all
@@ -319,11 +319,11 @@ else
 end;
 
 if (out_param.a == inf||out_param.a == -inf||isnan(out_param.a)==1)
-    warning('MATLAB:integral_g:anoinfinity',['a can not be infinity nor NaN. Use default a = ' num2str(default.a)])
+    warning('GAIL:integral_g:anoinfinity',['a can not be infinity nor NaN. Use default a = ' num2str(default.a)])
     out_param.a = default.a;
 end;
 if (out_param.b == inf||out_param.b == -inf||isnan(out_param.b)==1)
-    warning('MATLAB:integral_g:bnoinfinity',['b can not be infinity not Nan. Use default b = ' num2str(default.b)])
+    warning('GAIL:integral_g:bnoinfinity',['b can not be infinity not Nan. Use default b = ' num2str(default.b)])
     out_param.b = default.b;
 end;
 if (out_param.b < out_param.a)
@@ -335,40 +335,40 @@ end
 
 % let error tolerance greater than 0
 if (out_param.abstol <= 0 )
-    warning(['MATLAB:integral_g:abstolnonpos','Error tolerance should be greater than 0.' ...
+    warning(['GAIL:integral_g:abstolnonpos','Error tolerance should be greater than 0.' ...
             ' Using default error tolerance ' num2str(default.abstol)])
     out_param.abstol = default.abstol;
 end
 % let initial number of points be a positive integer
 if (~gail.isposint(out_param.nlo))
     if isposge3(out_param.nlo)
-        warning('MATLAB:integral_g:lowinitnotint',['Lowest initial number of points should be a positive integer.' ...
+        warning('GAIL:integral_g:lowinitnotint',['Lowest initial number of points should be a positive integer.' ...
             ' Using ', num2str(ceil(out_param.nlo))])
         out_param.nlo = ceil(out_param.nlo);
     else
-        warning('MATLAB:integral_g:lowinitlt3',['Lowest initial number of points should be a positive integer.' ...
+        warning('GAIL:integral_g:lowinitlt3',['Lowest initial number of points should be a positive integer.' ...
             ' Using default number of points ' int2str(default.nlo)])
         out_param.nlo = default.nlo;
     end
 end
 if (~gail.isposint(out_param.nhi))
     if isposge3(out_param.nhi)
-        warning('MATLAB:integral_g:highinitnotint',['Highest initial number of points should be a positive integer.' ...
+        warning('GAIL:integral_g:highinitnotint',['Highest initial number of points should be a positive integer.' ...
             ' Using ', num2str(ceil(out_param.nhi))])
         out_param.nhi = ceil(out_param.nhi);
     else
-        warning('MATLAB:integral_g:highinitlt3',['Highest initial number of points should be a positive integer.' ...
+        warning('GAIL:integral_g:highinitlt3',['Highest initial number of points should be a positive integer.' ...
             ' Using default number of points ' int2str(default.nhi)])
         out_param.nhi = default.nhi;
     end
 end
 if (out_param.nlo > out_param.nhi)
     if isposge3(out_param.nhi)
-        warning('MATLAB:integral_g:nlobtnhi',['Highest initial number of points should be at least equal to to lowest initial number of points.' ...
+        warning('GAIL:integral_g:nlobtnhi',['Highest initial number of points should be at least equal to to lowest initial number of points.' ...
             ' Using ', num2str(ceil(out_param.nhi)), ' as nlo'])
         out_param.nlo = ceil(out_param.nhi);
     else
-        warning('MATLAB:integral_g:highinitlt3',['Highest initial number of points should be a positive integer.' ...
+        warning('GAIL:integral_g:highinitlt3',['Highest initial number of points should be a positive integer.' ...
             ' Using default number of points ' int2str(default.nhi)])
         out_param.nhi = default.nhi;
     end
@@ -377,11 +377,11 @@ end
 out_param.ninit = max(ceil(out_param.nhi*(out_param.nlo/out_param.nhi)^(1/(1+(out_param.b-out_param.a)))),3);
 if (~gail.isposint(out_param.nmax))
     if ispositive(out_param.nmax)
-        warning('MATLAB:integral_g:budgetnotint',['Cost budget should be a positive integer.' ...
+        warning('GAIL:integral_g:budgetnotint',['Cost budget should be a positive integer.' ...
             ' Using cost budget ', num2str(ceil(out_param.nmax))])
         out_param.nmax = ceil(out_param.nmax);
     else
-        warning('MATLAB:integral_g:budgetisneg',['Cost budget should be a positive integer.' ...
+        warning('GAIL:integral_g:budgetisneg',['Cost budget should be a positive integer.' ...
             ' Using default cost budget ' int2str(default.nmax)])
         out_param.nmax = default.nmax;
     end;

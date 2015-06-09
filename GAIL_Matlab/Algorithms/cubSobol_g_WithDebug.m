@@ -490,7 +490,7 @@ default.theta  = 1;
 
 if numel(varargin)<2
     help cubSobol_g
-    warning('MATLAB:cubSobol_g:fdnotgiven',...
+    warning('GAIL:cubSobol_g:fdnotgiven',...
         'At least, function f and hyperbox need to be specified. Example for f(x)=x^2:')
     f = @(x) x.^2;
     out_param.f=f;
@@ -498,7 +498,7 @@ if numel(varargin)<2
 else
     f = varargin{1};
     if ~gail.isfcn(f)
-        warning('MATLAB:cubSobol_g:fnotfcn',...
+        warning('GAIL:cubSobol_g:fnotfcn',...
             'The given input f was not a function. Example for f(x)=x^2:')
         f = @(x) x.^2;
         out_param.f=f;
@@ -507,7 +507,7 @@ else
         out_param.f=f;
         hyperbox = varargin{2};
         if ~isnumeric(hyperbox) || ~(size(hyperbox,1)==2) || ~(size(hyperbox,2)<1111)
-            warning('MATLAB:cubSobol_g:hyperbox_error1',...
+            warning('GAIL:cubSobol_g:hyperbox_error1',...
                 'The hyperbox must be a real matrix of size 2xd where d can not be greater than 1111. Example for f(x)=x^2:')
             f = @(x) x.^2;
             out_param.f=f;
@@ -524,7 +524,7 @@ if validvarargin
         || ischar(in3{j}) || isstruct(in3{j}) || gail.isfcn(in3{j}));
     end
     if ~validvarargin
-        warning('MATLAB:cubSobol_g:validvarargin','Optional parameters must be numeric or strings. We will use the default optional parameters.')
+        warning('GAIL:cubSobol_g:validvarargin','Optional parameters must be numeric or strings. We will use the default optional parameters.')
     end
     in3=varargin{3};
 end
@@ -593,7 +593,7 @@ end
 
 %hyperbox should be 2 x dimension
 if ~isnumeric(hyperbox) || ~(size(hyperbox,1)==2) || ~(out_param.d<1111)
-    warning('MATLAB:cubSobol_g:hyperbox_error2',...
+    warning('GAIL:cubSobol_g:hyperbox_error2',...
         'The hyperbox must be a real matrix of size 2 x d where d can not be greater than 1111. Example for f(x)=x^2:')
     f = @(x) x.^2;
     out_param.f=f;
@@ -602,28 +602,28 @@ end
 
 % Force measure to be uniform or normal only
 if ~(strcmp(out_param.measure,'uniform') || strcmp(out_param.measure,'normal') )
-    warning('MATLAB:cubSobol_g:notmeasure',['The measure can only be uniform or normal.' ...
+    warning('GAIL:cubSobol_g:notmeasure',['The measure can only be uniform or normal.' ...
             ' Using default measure ' num2str(default.measure)])
     out_param.measure = default.measure;
 end
 
 % Force absolute tolerance greater than 0
 if (out_param.abstol < 0 )
-    warning('MATLAB:cubSobol_g:abstolnonpos',['Absolute tolerance cannot be negative.' ...
+    warning('GAIL:cubSobol_g:abstolnonpos',['Absolute tolerance cannot be negative.' ...
             ' Using default absolute tolerance ' num2str(default.abstol)])
     out_param.abstol = default.abstol;
 end
 
 % Force relative tolerance greater than 0 and smaller than 1
 if (out_param.reltol < 0) || (out_param.reltol > 1)
-    warning('MATLAB:cubSobol_g:reltolnonunit',['Relative tolerance should be chosen in [0,1].' ...
+    warning('GAIL:cubSobol_g:reltolnonunit',['Relative tolerance should be chosen in [0,1].' ...
             ' Using default relative tolerance ' num2str(default.reltol)])
     out_param.reltol = default.reltol;
 end
 
 % Force mmin to be integer greater than 0
 if (~gail.isposint(out_param.mmin) || ~(out_param.mmin < out_param.mmax+1))
-    warning('MATLAB:cubSobol_g:lowmmin',['The minimum starting exponent ' ...
+    warning('GAIL:cubSobol_g:lowmmin',['The minimum starting exponent ' ...
             'should be an integer greater than 0 and smaller or equal than the maxium.' ...
             ' Using default mmin ' num2str(default.mmin)])
     out_param.mmin = default.mmin;
@@ -631,7 +631,7 @@ end
 
 % Force mmin to be integer greater than r_lag (so that l_star=mmin-r_lag>=0)
 if out_param.mmin < r_lag
-    warning('MATLAB:cubSobol_g:lowmminrlag',['The minimum starting exponent ' ...
+    warning('GAIL:cubSobol_g:lowmminrlag',['The minimum starting exponent ' ...
             'should be at least ' num2str(r_lag) '.' ...
             ' Using default mmin ' num2str(default.mmin)])
     out_param.mmin = default.mmin;
@@ -640,65 +640,65 @@ end
 % Force exponent budget number of points be a positive integer greater than
 % or equal to mmin an smaller than 54
 if ~(gail.isposint(out_param.mmax) && out_param.mmax>=out_param.mmin && out_param.mmax<=53)
-    warning('MATLAB:cubSobol_g:wrongmmax',['The maximum exponent for the budget should be an integer biger than mmin and smaller than 54.' ...
+    warning('GAIL:cubSobol_g:wrongmmax',['The maximum exponent for the budget should be an integer biger than mmin and smaller than 54.' ...
             ' Using default mmax ' num2str(default.mmax)])
     out_param.mmax = default.mmax;
 end
 
 % Force fudge factor to be greater than 0
 if ~((gail.isfcn(out_param.fudge) && (out_param.fudge(1)>0)))
-    warning('MATLAB:cubSobol_g:fudgenonpos',['The fudge factor should be a positive function.' ...
+    warning('GAIL:cubSobol_g:fudgenonpos',['The fudge factor should be a positive function.' ...
             ' Using default fudge factor ' func2str(default.fudge)])
     out_param.fudge = default.fudge;
 end
 
 % Force toltype to be max or comb
 if ~(strcmp(out_param.toltype,'max') || strcmp(out_param.toltype,'comb') )
-    warning('MATLAB:cubSobol_g:nottoltype',['The error type can only be max or comb.' ...
+    warning('GAIL:cubSobol_g:nottoltype',['The error type can only be max or comb.' ...
             ' Using default toltype ' num2str(default.toltype)])
     out_param.toltype = default.toltype;
 end
 
 % Force theta to be in [0,1]
 if (out_param.theta < 0) || (out_param.theta > 1)
-    warning('MATLAB:cubSobol_g:thetanonunit',['Theta should be chosen in [0,1].' ...
+    warning('GAIL:cubSobol_g:thetanonunit',['Theta should be chosen in [0,1].' ...
             ' Using default theta ' num2str(default.theta)])
     out_param.theta = default.theta;
 end
 
 % Checking on pure absolute/relative error
 if (out_param.abstol==0) && (out_param.reltol==0)
-    warning('MATLAB:cubSobol_g:tolzeros',['Absolute and relative error tolerances can not be simultaniusly 0.' ...
+    warning('GAIL:cubSobol_g:tolzeros',['Absolute and relative error tolerances can not be simultaniusly 0.' ...
             ' Using default absolute tolerance ' num2str(default.abstol) ' and relative tolerance ' num2str(default.reltol)])
     out_param.abstol = default.abstol;
     out_param.reltol = default.reltol;
 end
 if (strcmp(out_param.toltype,'comb')) && (out_param.theta==1) && (out_param.abstol==0)
-    warning('MATLAB:cubSobol_g:abstolzero',['When choosing toltype comb, if theta=1 then abstol>0.' ...
+    warning('GAIL:cubSobol_g:abstolzero',['When choosing toltype comb, if theta=1 then abstol>0.' ...
             ' Using default absolute tolerance ' num2str(default.abstol) ])
     out_param.abstol = default.abstol;
 end
 if (strcmp(out_param.toltype,'comb')) && (out_param.theta==0) && (out_param.reltol==0)
-    warning('MATLAB:cubSobol_g:reltolzero',['When choosing toltype comb, if theta=0 then reltol>0.' ...
+    warning('GAIL:cubSobol_g:reltolzero',['When choosing toltype comb, if theta=0 then reltol>0.' ...
             ' Using default relative tolerance ' num2str(default.reltol) ])
     out_param.reltol = default.reltol;
 end
 
 % Checking on the hyperbox given the measure
 if (strcmp(out_param.measure,'uniform')) && ~all(all(isfinite(hyperbox)))
-    warning('MATLAB:cubSobol_g:hyperboxnotfinite',['If uniform measure, hyperbox must be of finite volume.' ...
+    warning('GAIL:cubSobol_g:hyperboxnotfinite',['If uniform measure, hyperbox must be of finite volume.' ...
             ' Using default hyperbox:'])
     disp([zeros(1,out_param.d);ones(1,out_param.d)])
     hyperbox = [zeros(1,out_param.d);ones(1,out_param.d)];
 end
 if (strcmp(out_param.measure,'normal')) && (sum(sum(isfinite(hyperbox)))>0)
-    warning('MATLAB:cubSobol_g:hyperboxfinite',['If normal measure, hyperbox must be defined as (-Inf,Inf)^d.' ...
+    warning('GAIL:cubSobol_g:hyperboxfinite',['If normal measure, hyperbox must be defined as (-Inf,Inf)^d.' ...
             ' Using default hyperbox:'])
     disp([-inf*ones(1,out_param.d);inf*ones(1,out_param.d)])
     hyperbox = [-inf*ones(1,out_param.d);inf*ones(1,out_param.d)];
 end
 if (strcmp(out_param.measure,'normal')) && (any(hyperbox(1,:)==hyperbox(2,:)) || any(hyperbox(1,:)>hyperbox(2,:)))
-    warning('MATLAB:cubSobol_g:hyperboxnormalwrong',['If normal measure, hyperbox must be defined as (-Inf,Inf)^d.' ...
+    warning('GAIL:cubSobol_g:hyperboxnormalwrong',['If normal measure, hyperbox must be defined as (-Inf,Inf)^d.' ...
             ' Using default hyperbox:'])
     disp([-inf*ones(1,out_param.d);inf*ones(1,out_param.d)])
     hyperbox = [-inf*ones(1,out_param.d);inf*ones(1,out_param.d)];

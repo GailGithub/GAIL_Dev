@@ -289,7 +289,7 @@ while(max(err) > abstol)
     counterr = sum(err > abstol);
     if(length(x) + counterr *(ninit -1) > out_param.nmax)
         out_param.exit(1) = 1;
-        warning('MATLAB:funappx_g:exceedbudget',' funappx_g attempted to exceed the cost budget. The answer may be unreliable.')
+        warning('GAIL:funappx_g:exceedbudget',' funappx_g attempted to exceed the cost budget. The answer may be unreliable.')
         break;
     end;
     if max(err) > abstol;
@@ -388,7 +388,7 @@ while(max(err) > abstol)
     end;
     if(iter> out_param.maxiter)
         out_param.exit(2) = 1;
-        warning('MATLAB:funappx_g:exceediter',' Iteration exceeds max number of iterations ')
+        warning('GAIL:funappx_g:exceediter',' Iteration exceeds max number of iterations ')
         break;
     end;
 end;
@@ -428,7 +428,7 @@ end;
 
  
 if isempty(varargin)
-    warning('MATLAB:funappx_g:nofunction','Function f must be specified. Now GAIL is using f(x)=exp(-100*(x-0.5)^2) and unit interval [0,1].')
+    warning('GAIL:funappx_g:nofunction','Function f must be specified. Now GAIL is using f(x)=exp(-100*(x-0.5)^2) and unit interval [0,1].')
     help funappx_g
     f = @(x) exp(-100*(x-0.5).^2);
     out_param.f = f;
@@ -446,7 +446,7 @@ end
 
 if ~validvarargin
     %if only one input f, use all the default parameters
-    %warning('MATLAB:funappx_g:inputnotcorr','Input can not be recognized. Use default parameters in GAIL.')
+    %warning('GAIL:funappx_g:inputnotcorr','Input can not be recognized. Use default parameters in GAIL.')
     out_param.a = default.a;
     out_param.b = default.b;
     out_param.abstol = default.abstol;
@@ -485,27 +485,27 @@ end;
 
 % let end point of interval not be infinity
 if (out_param.a == inf||out_param.a == -inf)
-    warning('MATLAB:funappx_g:aisinf',['a cannot be infinity. Use default a = ' num2str(default.a)])
+    warning('GAIL:funappx_g:aisinf',['a cannot be infinity. Use default a = ' num2str(default.a)])
     out_param.a = default.a;
 end;
 if (out_param.b == inf||out_param.b == -inf)
-    warning(['MATLAB:funappx_g:bisinf','b cannot be infinity. Use default b = ' num2str(default.b)])
+    warning(['GAIL:funappx_g:bisinf','b cannot be infinity. Use default b = ' num2str(default.b)])
     out_param.b = default.b;
 end;
 
 if (out_param.b < out_param.a)
-    warning('MATLAB:funappx_g:blea','b cannot be smaller than a; exchange these two. ')
+    warning('GAIL:funappx_g:blea','b cannot be smaller than a; exchange these two. ')
     tmp = out_param.b;
     out_param.b = out_param.a;
     out_param.a = tmp;
 elseif(out_param.b == out_param.a)
-    warning('MATLAB:funappx_g:beqa',['b cannot equal a. Use b = ' num2str(out_param.a+1)])
+    warning('GAIL:funappx_g:beqa',['b cannot equal a. Use b = ' num2str(out_param.a+1)])
     out_param.b = out_param.a+1;
 end;
 
 % let error tolerance greater than 0
 if (out_param.abstol <= 0 )
-    warning('MATLAB:funappx_g:tolneg', ['Error tolerance should be greater than 0.' ...
+    warning('GAIL:funappx_g:tolneg', ['Error tolerance should be greater than 0.' ...
         ' Using default error tolerance ' num2str(default.abstol)])
     out_param.abstol = default.abstol;
 end
@@ -516,22 +516,22 @@ end
 % end;
 % if (~gail.isposint(out_param.taulo))
 %     if gail.isposge2(out_param.taulo)
-%         warning('MATLAB:funappx_g:lowtau',['Lower bound of cone condition should be a positive integer.' ...
+%         warning('GAIL:funappx_g:lowtau',['Lower bound of cone condition should be a positive integer.' ...
 %             ' Using ', num2str(ceil(out_param.taulo))])
 %         out_param.taulo = ceil(out_param.taulo);
 %     else
-%         warning('MATLAB:funappx_g:lowtault2',[' Lower bound of cone condition of points should be a positive integer.' ...
+%         warning('GAIL:funappx_g:lowtault2',[' Lower bound of cone condition of points should be a positive integer.' ...
 %             ' Using default number of points ' int2str(default.taulo)])
 %         out_param.taulo = default.taulo;
 %     end
 % end
 % if (~gail.isposint(out_param.tauhi))
 %     if gail.isposge2(out_param.tauhi)
-%         warning('MATLAB:funappx_g:hitau',['Upper bound of cone condition should be a positive integer.' ...
+%         warning('GAIL:funappx_g:hitau',['Upper bound of cone condition should be a positive integer.' ...
 %             ' Using ', num2str(ceil(out_param.tauhi))])
 %         out_param.tauhi = ceil(out_param.tauhi);
 %     else
-%         warning('MATLAB:funappx_g:hitault2',[' Upper bound of cone condition should be a positive integer.' ...
+%         warning('GAIL:funappx_g:hitault2',[' Upper bound of cone condition should be a positive integer.' ...
 %             ' Using default number of points ' int2str(default.tauhi)])
 %         out_param.tauhi = default.tauhi;
 %     end
@@ -539,11 +539,11 @@ end
 % let cost budget be a positive integer
 if (~gail.isposint(out_param.nmax))
     if gail.isposintive(out_param.nmax)
-        warning('MATLAB:funappx_g:budgetnotint',['Cost budget should be a positive integer.' ...
+        warning('GAIL:funappx_g:budgetnotint',['Cost budget should be a positive integer.' ...
             ' Using cost budget ', num2str(ceil(out_param.nmax))])
         out_param.nmax = ceil(out_param.nmax);
     else
-        warning('MATLAB:funappx_g:budgetisneg',['Cost budget should be a positive integer.' ...
+        warning('GAIL:funappx_g:budgetisneg',['Cost budget should be a positive integer.' ...
             ' Using default cost budget ' int2str(default.nmax)])
         out_param.nmax = default.nmax;
     end;
@@ -551,11 +551,11 @@ end
 
 if (~gail.isposint(out_param.nlo))
     if gail.isposge3(out_param.nlo)
-        warning('MATLAB:funappx_g:lowinitnotint',['Lower bound of initial number of points should be a positive integer.' ...
+        warning('GAIL:funappx_g:lowinitnotint',['Lower bound of initial number of points should be a positive integer.' ...
             ' Using ', num2str(ceil(out_param.nlo)) ' as nlo '])
         out_param.nlo = ceil(out_param.nlo);
     else
-        warning('MATLAB:funappx_g:lowinitlt3',[' Lower bound of initial number of points should be a positive integer greater than 3.' ...
+        warning('GAIL:funappx_g:lowinitlt3',[' Lower bound of initial number of points should be a positive integer greater than 3.' ...
             ' Using 3 as nlo'])
         out_param.nlo = 3;
     end
@@ -563,18 +563,18 @@ end
 
 if (~gail.isposint(out_param.nhi))
     if gail.isposge3(out_param.nhi)
-        warning('MATLAB:funappx_g:hiinitnotint',['Upper bound of initial number of points should be a positive integer.' ...
+        warning('GAIL:funappx_g:hiinitnotint',['Upper bound of initial number of points should be a positive integer.' ...
             ' Using ', num2str(ceil(out_param.nhi)) ' as nhi' ])
         out_param.nhi = ceil(out_param.nhi);
     else
-        warning('MATLAB:funappx_g:hiinitlt3',[' Upper bound of points should be a positive integer greater than 3.' ...
+        warning('GAIL:funappx_g:hiinitlt3',[' Upper bound of points should be a positive integer greater than 3.' ...
             ' Using default number of points ' int2str(default.nhi) ' as nhi' ])
         out_param.nhi = default.nhi;
     end
 end
 
 if (out_param.nlo > out_param.nhi)
-    warning('MATLAB:funappx_g:logrhi', 'Lower bound of initial number of points is larger than upper bound of initial number of points; Use nhi as nlo')
+    warning('GAIL:funappx_g:logrhi', 'Lower bound of initial number of points is larger than upper bound of initial number of points; Use nhi as nlo')
     %     temp = out_param.nlo;
     %     out_param.nlo = out_param.nhi;
     %     out_param.nhi = temp;
@@ -586,11 +586,11 @@ out_param.ninit = max(ceil(out_param.nhi*(out_param.nlo/out_param.nhi)^(1/(1+h))
 
 if (~gail.isposint(out_param.maxiter))
     if gail.ispositive(out_param.maxiter)
-        warning('MATLAB:funappx_g:maxiternotint',['Max number of iterations should be a positive integer.' ...
+        warning('GAIL:funappx_g:maxiternotint',['Max number of iterations should be a positive integer.' ...
             ' Using max number of iterations as  ', num2str(ceil(out_param.maxiter))])
         out_param.nmax = ceil(out_param.nmax);
     else
-        warning('MATLAB:funappx_g:budgetisneg',['Max number of iterations should be a positive integer.' ...
+        warning('GAIL:funappx_g:budgetisneg',['Max number of iterations should be a positive integer.' ...
             ' Using max number of iterations as ' int2str(default.maxiter)])
         out_param.nmax = default.nmax;
     end;

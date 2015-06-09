@@ -387,13 +387,13 @@ end;
 
 % check tau change flag
 if tauchange == 1
-    warning('MATLAB:funmin_g:peaky','This function is peaky relative to ninit. You may wish to increase ninit for similar functions.')
+    warning('GAIL:funmin_g:peaky','This function is peaky relative to ninit. You may wish to increase ninit for similar functions.')
 end;
 
 % check cost budget flag
 if out_param.exitflag == 1
     n = l;
-    warning('MATLAB:funmin_g:exceedbudget','funmin_g attempted to exceed the cost budget. The answer may be unreliable.')
+    warning('GAIL:funmin_g:exceedbudget','funmin_g attempted to exceed the cost budget. The answer may be unreliable.')
 end
 
 fmin = Un;
@@ -425,7 +425,7 @@ else
 end;
     
 if isempty(varargin)
-    warning('MATLAB:funmin_g:nofunction','Function f must be specified. Now funmin_g will use f(x)=(x-0.3)^2+1.')
+    warning('GAIL:funmin_g:nofunction','Function f must be specified. Now funmin_g will use f(x)=(x-0.3)^2+1.')
     help funmin_g
     f = @(x) (x-0.3).^2+1;
     out_param.f = f;
@@ -480,35 +480,35 @@ end
 
 % a and b can't be infinity
 if (out_param.a == inf||out_param.a == -inf||isnan(out_param.a)==1)
-    warning('MATLAB:funmin_g:anoinfinity',['a cannot be infinity. Use default a = ' num2str(default.a)])
+    warning('GAIL:funmin_g:anoinfinity',['a cannot be infinity. Use default a = ' num2str(default.a)])
     out_param.a = default.a;
 end;
 if (out_param.b == inf||out_param.b == -inf||isnan(out_param.b)==1)
-    warning('MATLAB:funmin_g:bnoinfinity',['b cannot be infinity. Use default b = ' num2str(default.b)])
+    warning('GAIL:funmin_g:bnoinfinity',['b cannot be infinity. Use default b = ' num2str(default.b)])
     out_param.b = default.b;
 end;
 
 % b is greater than a
 if (out_param.b < out_param.a)
-    warning('MATLAB:funmin_g:blea','b cannot be smaller than a; exchange these two. ')
+    warning('GAIL:funmin_g:blea','b cannot be smaller than a; exchange these two. ')
     tmp = out_param.b;
     out_param.b = out_param.a;
     out_param.a = tmp;
 elseif(out_param.b == out_param.a)
-    warning('MATLAB:funmin_g:beqa',['b cannot equal to a. Use b = ' num2str(out_param.a+1)])
+    warning('GAIL:funmin_g:beqa',['b cannot equal to a. Use b = ' num2str(out_param.a+1)])
     out_param.b = out_param.a+1;
 end;
 
 % Check whether the error tolerance is nonnegative
 if out_param.abstol < 0
-    warning(['MATLAB:funmin_g:abstolnonpos','Error tolerance should be greater than or equal to 0.' ...
+    warning(['GAIL:funmin_g:abstolnonpos','Error tolerance should be greater than or equal to 0.' ...
         ' Using default error tolerance ', num2str(default.abstol)])
     out_param.abstol = default.abstol;
 end
 
 % Check whether the length tolerance is nonnegative
 if out_param.TolX < 0
-    warning(['MATLAB:funmin_g:Xtolnonpos','X tolerance should be greater than or equal to 0.' ...
+    warning(['GAIL:funmin_g:Xtolnonpos','X tolerance should be greater than or equal to 0.' ...
         ' Using default X tolerance ' num2str(default.TolX)]);
     out_param.TolX = default.TolX;
 end
@@ -516,7 +516,7 @@ end
 % Check whether the cost budget is a positive integer
 if (~gail.isposint(out_param.nmax))
     if gail.ispositive(out_param.nmax)
-        warning('MATLAB:funmin_g:budgetnotint',['Cost budget should be a positive integer.' ...
+        warning('GAIL:funmin_g:budgetnotint',['Cost budget should be a positive integer.' ...
             ' Using cost budget ', num2str(ceil(out_param.nmax))]);
         out_param.nmax = ceil(out_param.nmax);
     else
@@ -529,32 +529,32 @@ end
 % Check nlo and nhi
 if (~gail.isposint(out_param.nlo))
     if gail.isposge3(out_param.nlo)
-        warning('MATLAB:funmin_g:lowinitnotint',['Lower bound of initial number of points should be a positive integer.' ...
+        warning('GAIL:funmin_g:lowinitnotint',['Lower bound of initial number of points should be a positive integer.' ...
             ' Using ', num2str(ceil(out_param.nlo)) ' as nlo '])
         out_param.nlo = ceil(out_param.nlo);
     else
-        warning('MATLAB:funmin_g:lowinitlt3',[' Lower bound of initial number of points should be a positive integer.' ...
+        warning('GAIL:funmin_g:lowinitlt3',[' Lower bound of initial number of points should be a positive integer.' ...
             ' Using default number of points ' int2str(default.nlo)])
         out_param.nlo = default.nlo;
     end
 end
 if (~gail.isposint(out_param.nhi))
     if gail.isposge3(out_param.nhi)
-        warning('MATLAB:funmin_g:hiinitnotint',['Upper bound of initial number of points should be a positive integer.' ...
+        warning('GAIL:funmin_g:hiinitnotint',['Upper bound of initial number of points should be a positive integer.' ...
             ' Using ', num2str(ceil(out_param.nhi))])
         out_param.nhi = ceil(out_param.nhi);
     else
-        warning('MATLAB:funmin_g:hiinitlt3',[' Upper bound of points should be a positive integer.' ...
+        warning('GAIL:funmin_g:hiinitlt3',[' Upper bound of points should be a positive integer.' ...
             ' Using default number of points ' int2str(default.nhi)])
         out_param.nhi = default.nhi;
     end
 end
 if (out_param.nlo > out_param.nhi)
-    warning('MATLAB:funmin_g:logrhi', 'Lower bound of initial number of points is larger than upper bound of initial number of points; Use nhi as nlo')
+    warning('GAIL:funmin_g:logrhi', 'Lower bound of initial number of points is larger than upper bound of initial number of points; Use nhi as nlo')
     out_param.nhi = out_param.nlo;
 end;
 if (out_param.nlo > out_param.nmax)
-    warning('MATLAB:funmin_g:logecost',['Lower bound of initial number of points should be smaller than cost budget.' ...
+    warning('GAIL:funmin_g:logecost',['Lower bound of initial number of points should be smaller than cost budget.' ...
             ' Using ', num2str(ceil(out_param.nmax/2))])
     out_param.nlo = ceil(out_param.nmax/2);
     out_param.nhi = out_param.nlo;
