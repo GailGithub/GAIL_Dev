@@ -286,8 +286,14 @@ if isempty(varargin)
     f = @(x) x.^2;
     out_param.f=f;
 else
+  if gail.isfcn(varargin{1})
     f = varargin{1};
-    out_param.f=f;
+    out_param.f = f;
+  else
+    warning('GAIL:funappx_g:notfunction','Function f must be a function handle. Now GAIL is giving you a toy example of f(x)=x^2.')
+    f = @(x) x.^2;
+    out_param.f = f;
+  end
 end;
 
 validvarargin=numel(varargin)>1;
@@ -352,7 +358,7 @@ end
 
 % let error tolerance greater than 0
 if (out_param.abstol <= 0 )
-    warning(['GAIL:integral_g:abstolnonpos','Error tolerance should be greater than 0.' ...
+    warning('GAIL:integral_g:abstolnonpos', ['Error tolerance should be greater than 0.' ...
             ' Using default error tolerance ' num2str(default.abstol)])
     out_param.abstol = default.abstol;
 end
