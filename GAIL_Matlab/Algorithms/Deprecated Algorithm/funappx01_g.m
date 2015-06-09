@@ -142,7 +142,7 @@ function [fappx,out_param]=funappx01_g(varargin)
 [f, out_param] = funappx_g_param(varargin{:});
 MATLABVERSION= gail.matlab_version;
 if MATLABVERSION >= 8.3
-    warning('off', 'MATLAB:interp1:ppGriddedInterpolant');
+    warning('off', 'GAIL:interp1:ppGriddedInterpolant');
 end;
 
 %% main algorithm
@@ -205,11 +205,11 @@ end;
 % Check cost budget flag
 if out_param.exceedbudget == 1;
     n = 1 + (n-1)/m*floor((out_param.nmax-1)*m/(n-1));
-    warning('MATLAB:funappx01_g:exceedbudget','funappx01_g attemped to exceed the cost bugdet. The answer may be unreliable.')
+    warning('GAIL:funappx01_g:exceedbudget','funappx01_g attemped to exceed the cost bugdet. The answer may be unreliable.')
 end;
 
 if tauchange == 1;
-    warning('MATLAB:funappx01_g:peaky','This function is peaky relative to ninit. You may wish to increase ninit for similiar functions.')
+    warning('GAIL:funappx01_g:peaky','This function is peaky relative to ninit. You may wish to increase ninit for similiar functions.')
 end;
 %out_param.ballradius = 2*out_param.abstol*(out_param.nmax-2)*(out_param.nmax...
 %    -2-out_param.tau)/out_param.tau;
@@ -220,7 +220,7 @@ y1 = f(x1);
 fappx = @(x) interp1(x1,y1,x,'linear');
 
 if MATLABVERSION >= 8.3
-    warning('on', 'MATLAB:interp1:ppGriddedInterpolant');
+    warning('on', 'GAIL:interp1:ppGriddedInterpolant');
 end;
 
 function [f, out_param] = funappx_g_param(varargin)
@@ -283,11 +283,11 @@ end
 % let initial number of points be a positive integer
 if (~gail.isposint(out_param.ninit))
     if gail.isposge3(out_param.ninit)
-        warning('MATLAB:funappx01_g:initnotint',['Initial number of points should be a positive integer.' ...
+        warning('GAIL:funappx01_g:initnotint',['Initial number of points should be a positive integer.' ...
             ' Using ', num2str(ceil(out_param.ninit))])
         out_param.ninit = ceil(out_param.ninit);
     else
-        warning('MATLAB:funappx01_g:initlt3',['Initial number of points should be a positive integer.' ...
+        warning('GAIL:funappx01_g:initlt3',['Initial number of points should be a positive integer.' ...
             ' Using default number of points ' int2str(default.ninit)])
         out_param.ninit = default.ninit;
     end
@@ -295,11 +295,11 @@ end
 % let cost budget be a positive integer
 if (~gail.isposint(out_param.nmax))
     if gail.ispositive(out_param.nmax)
-        warning('MATLAB:funappx01_g:budgetnotint',['Cost budget should be a positive integer.' ...
+        warning('GAIL:funappx01_g:budgetnotint',['Cost budget should be a positive integer.' ...
             ' Using cost budget ', num2str(ceil(out_param.nmax))])
         out_param.nmax = ceil(out_param.nmax);
     else
-        warning('MATLAB:funappx01_g:budgetisneg',['Cost budget should be a positive integer.' ...
+        warning('GAIL:funappx01_g:budgetisneg',['Cost budget should be a positive integer.' ...
             ' Using default cost budget ' int2str(default.nmax)])
         out_param.nmax = default.nmax;
     end;

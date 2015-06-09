@@ -22,8 +22,8 @@ in_param.nmax = nmax; %cost budget
 %nrep = 10000; %number of times to test used in the paper
 if (nrep >= 1000)
     warning(' Need more than one hour to replicate the result in the paper! ')
-    warning('off','MATLAB:funappxtau_g:exceedbudget');
-    warning('off','MATLAB:funappxtau_g:peaky');
+    warning('off','GAIL:funappxtau_g:exceedbudget');
+    warning('off','GAIL:funappxtau_g:peaky');
 end;
 a = 10.^(rand(nrep,1).*3-4);
 z = rand(nrep,1).*(1-4*a)+2*a;
@@ -105,8 +105,8 @@ end
 gail.save_mat('ConesPaperOutput', 'ConesPaperFunAppxTest', true, tauvec,pini,...
     pfin,succnowarn,succwarn,failnowarn,failwarn);
 toc(tstart)
-warning('on','MATLAB:funappxtau_g:exceedbudget');
-warning('on','MATLAB:funappxtau_g:peaky');
+warning('on','GAIL:funappxtau_g:exceedbudget');
+warning('on','GAIL:funappxtau_g:peaky');
 end
 %% The following output was obtained on 2013-Sep-03 by
 %  from the data in

@@ -13,8 +13,8 @@ in_param.nmax = 10^7; %cost budget
 %% Simulation parameters
 n = nrep;
 if (n >= 100)
-    warning('off','MATLAB:funmin_g:exceedbudget');
-    warning('off','MATLAB:funmin_g:peaky');
+    warning('off','GAIL:funmin_g:exceedbudget');
+    warning('off','GAIL:funmin_g:peaky');
 end;
 a1=5; b1=10; c1=0.5-0.5*rand(nrep,1);
 a2=1; b2=10; c2=0.5+0.5*rand(nrep,1);
@@ -48,8 +48,8 @@ for i=1:nTolX
     end
 end
 
-warning('on','MATLAB:funmin_g:exceedbudget');
-warning('on','MATLAB:funmin_g:peaky');
+warning('on','GAIL:funmin_g:exceedbudget');
+warning('on','GAIL:funmin_g:peaky');
 
 prob.probfunmin=mean(succfunmin,1); %probability find the solution by funmin_g 
 prob.probnowarn=mean(succfunmin&(~exceedmat),1); 

@@ -257,7 +257,7 @@ function [pp,out_param]=funappxglobal_g(varargin)
 
 MATLABVERSION= gail.matlab_version;
 if MATLABVERSION >= 8.3
-    warning('off', 'MATLAB:interp1:ppGriddedInterpolant');
+    warning('off', 'GAIL:interp1:ppGriddedInterpolant');
 end;
 
 %% main algorithm
@@ -334,13 +334,13 @@ while n < out_param.nmax;
 end;
 
 if tauchange == 1;
-    warning('MATLAB:funappxglobal_g:peaky','This function is peaky relative to nlo and nhi. You may wish to increase nlo and nhi for similar functions.')
+    warning('GAIL:funappxglobal_g:peaky','This function is peaky relative to nlo and nhi. You may wish to increase nlo and nhi for similar functions.')
 end;
 
 % Check cost budget flag
 if out_param.exceedbudget == 1;
     n = 1 + (n-1)/m*floor((out_param.nmax-1)*m/(n-1));
-    warning('MATLAB:funappxglobal_g:exceedbudget','funappxglobal_g attempted to exceed the cost budget. The answer may be unreliable.')
+    warning('GAIL:funappxglobal_g:exceedbudget','funappxglobal_g attempted to exceed the cost budget. The answer may be unreliable.')
     out_param.npoints = n;
     out_param.errorbound = fn*len^2/(8*(n-1)^2);
     %out_param.errbound = fn/(8*(n-1)^2);
@@ -360,7 +360,7 @@ w = whos;
 out_param.bytes = sum([w.bytes]);
 
 if MATLABVERSION >= 8.3
-    warning('on', 'MATLAB:interp1:ppGriddedInterpolant');
+    warning('on', 'GAIL:interp1:ppGriddedInterpolant');
 end;
 
 
@@ -378,7 +378,7 @@ default.nmax  = 1e7;
 
 
 if isempty(varargin)
-    warning('MATLAB:funappxglobal_g:nofunction','Function f must be specified. Now GAIL is using f(x)=x^2 and unit interval [0,1].')
+    warning('GAIL:funappxglobal_g:nofunction','Function f must be specified. Now GAIL is using f(x)=x^2 and unit interval [0,1].')
     help funappxglobal_g
     f = @(x) x.^2;
     out_param.f = f;
@@ -463,27 +463,27 @@ end;
 
 
 if (out_param.a == inf||out_param.a == -inf||isnan(out_param.a)==1)
-    warning('MATLAB:funappxglobal_g:anoinfinity',['a can not be infinity. Use default a = ' num2str(default.a)])
+    warning('GAIL:funappxglobal_g:anoinfinity',['a can not be infinity. Use default a = ' num2str(default.a)])
     out_param.a = default.a;
 end;
 if (out_param.b == inf||out_param.b == -inf||isnan(out_param.b)==1)
-    warning('MATLAB:funappxglobal_g:bnoinfinity',['b can not be infinity. Use default b = ' num2str(default.b)])
+    warning('GAIL:funappxglobal_g:bnoinfinity',['b can not be infinity. Use default b = ' num2str(default.b)])
     out_param.b = default.b;
 end;
 
 if (out_param.b < out_param.a)
-    warning('MATLAB:funappxglobal_g:blea','b can not be smaller than a; exchange these two. ')
+    warning('GAIL:funappxglobal_g:blea','b can not be smaller than a; exchange these two. ')
     tmp = out_param.b;
     out_param.b = out_param.a;
     out_param.a = tmp;
 elseif(out_param.b == out_param.a)
-    warning('MATLAB:funappxglobal_g:beqa',['b can not equal a. Use b = ' num2str(out_param.a+1)])
+    warning('GAIL:funappxglobal_g:beqa',['b can not equal a. Use b = ' num2str(out_param.a+1)])
     out_param.b = out_param.a+1;
 end;
 
 % let error tolerance greater than 0
 if (out_param.abstol <= 0 )
-    warning(['MATLAB:funappxglobal_g:abstolnonpos ','Error tolerance should be greater than 0.' ...
+    warning(['GAIL:funappxglobal_g:abstolnonpos ','Error tolerance should be greater than 0.' ...
         ' Using default error tolerance ' num2str(default.abstol)])
     out_param.abstol = default.abstol;
 end
@@ -491,11 +491,11 @@ end
 % let cost budget be a positive integer
 if (~gail.isposint(out_param.nmax))
     if gail.isposintive(out_param.nmax)
-        warning('MATLAB:funappxglobal_g:budgetnotint',['Cost budget should be a positive integer.' ...
+        warning('GAIL:funappxglobal_g:budgetnotint',['Cost budget should be a positive integer.' ...
             ' Using cost budget ', num2str(ceil(out_param.nmax))])
         out_param.nmax = ceil(out_param.nmax);
     else
-        warning('MATLAB:funappxglobal_g:budgetisneg',['Cost budget should be a positive integer.' ...
+        warning('GAIL:funappxglobal_g:budgetisneg',['Cost budget should be a positive integer.' ...
             ' Using default cost budget ' int2str(default.nmax)])
         out_param.nmax = default.nmax;
     end;
@@ -525,41 +525,41 @@ end
 
 if (~gail.isposint(out_param.nlo))
     if gail.isposge3(out_param.nlo)
-        warning('MATLAB:funappxglobal_g:lowinitnotint',['Lower bound of initial number of points should be a positive integer.' ...
+        warning('GAIL:funappxglobal_g:lowinitnotint',['Lower bound of initial number of points should be a positive integer.' ...
             ' Using ', num2str(ceil(out_param.nlo)) ' as nlo '])
         out_param.nlo = ceil(out_param.nlo);
     else
-        warning('MATLAB:funappxglobal_g:lowinitlt3',[' Lower bound of initial number of points should be a positive integer greater than 3.' ...
+        warning('GAIL:funappxglobal_g:lowinitlt3',[' Lower bound of initial number of points should be a positive integer greater than 3.' ...
             ' Using 3 as nlo'])
         out_param.nlo = 3;
     end
 end
 if (~gail.isposint(out_param.nhi))
     if gail.isposge3(out_param.nhi)
-        warning('MATLAB:funappxglobal_g:hiinitnotint',['Upper bound of initial number of points should be a positive integer.' ...
+        warning('GAIL:funappxglobal_g:hiinitnotint',['Upper bound of initial number of points should be a positive integer.' ...
             ' Using ', num2str(ceil(out_param.nhi)) ' as nhi' ])
         out_param.nhi = ceil(out_param.nhi);
     else
-        warning('MATLAB:funappxglobal_g:hiinitlt3',[' Upper bound of points should be a positive integer greater than 3.' ...
+        warning('GAIL:funappxglobal_g:hiinitlt3',[' Upper bound of points should be a positive integer greater than 3.' ...
             ' Using default number of points ' int2str(default.nhi) ' as nhi' ])
         out_param.nhi = default.nhi;
     end
 end
 
 if (out_param.nlo > out_param.nhi)
-    warning('MATLAB:funappxglobal_g:logrhi', 'Lower bound of initial number of points is larger than upper bound of initial number of points; Use nhi as nlo')
+    warning('GAIL:funappxglobal_g:logrhi', 'Lower bound of initial number of points is larger than upper bound of initial number of points; Use nhi as nlo')
     %     temp = out_param.nlo;
     %     out_param.nlo = out_param.nhi;
     %     out_param.nhi = temp;
     out_param.nhi = out_param.nlo;
 end;
 if (out_param.nlo > out_param.nmax)
-    warning('MATLAB:funappxglobal_g:logecost',['Lower bound of initial number of points should be smaller than cost budget.' ...
+    warning('GAIL:funappxglobal_g:logecost',['Lower bound of initial number of points should be smaller than cost budget.' ...
         ' Using ', num2str(ceil(out_param.nmax/2))])
     out_param.nlo = out_param.nmax/2;
 end;
 if (out_param.nhi > out_param.nmax)
-    warning('MATLAB:funappxglobal_g:higecost',['Upper bound of initial number of points should be smaller than cost budget.' ...
+    warning('GAIL:funappxglobal_g:higecost',['Upper bound of initial number of points should be smaller than cost budget.' ...
         ' Using ', num2str(out_param.nlo)])
     out_param.nhi = out_param.nlo;
 end;

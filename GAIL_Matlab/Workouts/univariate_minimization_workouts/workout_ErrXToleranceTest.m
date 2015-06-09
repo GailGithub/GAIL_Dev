@@ -14,8 +14,8 @@ in_param.nmax = nmax; %cost budget
 %% Simulation parameters
 n = nrep;
 if (n >= 100)
-    warning('off','MATLAB:funmin_g:exceedbudget');
-    warning('off','MATLAB:funmin_g:peaky');
+    warning('off','GAIL:funmin_g:exceedbudget');
+    warning('off','GAIL:funmin_g:peaky');
 end;
 a = 10.^(-4+3*rand(n,1));
 z = 2.*a+(1-4*a).*rand(n,1);
@@ -58,8 +58,8 @@ for i=1:ntau;
     end
 end
 
-warning('on','MATLAB:funmin_g:exceedbudget');
-warning('on','MATLAB:funmin_g:peaky');
+warning('on','GAIL:funmin_g:exceedbudget');
+warning('on','GAIL:funmin_g:peaky');
 
 prob.probinit = mean(repmat(ratio,1,ntau)<=repmat(tauvec,nrep,1),1); 
 prob.probfinl = mean(repmat(ratio,1,ntau)<=newtaumat,1); 

@@ -4,27 +4,27 @@ classdef ut_cubMC_g < matlab.unittest.TestCase
     methods(Test)
         
         function cubMC_gOfwarning(testCase)
-            testCase.verifyWarning(@()cubMC_g,'MATLAB:cubMC_g:fnotgiven');
+            testCase.verifyWarning(@()cubMC_g,'GAIL:cubMC_g:fnotgiven');
         end
         function cubMC_gOferror10(testCase)
             testCase.verifyError(@()cubMC_g(@(x)x.^2,nan),...
-                'MATLAB:cubMC_g:hyperboxnotnum');
+                'GAIL:cubMC_g:hyperboxnotnum');
         end      
         function cubMC_gOferror11(testCase)
             testCase.verifyError(@()cubMC_g(@(x)x.^2,1),...
-                'MATLAB:cubMC_g:hyperboxnot2d');
+                'GAIL:cubMC_g:hyperboxnot2d');
         end
         function cubMC_gOferror12(testCase)
             testCase.verifyError(@()cubMC_g(@(x)x.^2,[1 1]),...
-                'MATLAB:cubMC_g:hyperboxnotlessthan2');
+                'GAIL:cubMC_g:hyperboxnotlessthan2');
         end
         function cubMC_gOferror13(testCase)
             testCase.verifyError(@()cubMC_g(@(x)x.^2,[-inf,1],...
-                'measure','uniform'),'MATLAB:cubMC_g:hyperboxnotfiniteforuniform');
+                'measure','uniform'),'GAIL:cubMC_g:hyperboxnotfiniteforuniform');
         end
         function cubMC_gOferror14(testCase)
             testCase.verifyError(@()cubMC_g(@(x)x.^2,[0,1],...
-                'measure','normal'),'MATLAB:cubMC_g:hyperboxnotinffornormal');
+                'measure','normal'),'GAIL:cubMC_g:hyperboxnotinffornormal');
         end
         function cubMC_gOfxsquare(testCase)
             f = @(x) x.^2;
@@ -76,7 +76,7 @@ classdef ut_cubMC_g < matlab.unittest.TestCase
         
         function cubMC_gNormal(testCase)
             format compact
-            warning('off','MATLAB:meanMC_g:maxreached')
+            warning('off','GAIL:meanMC_g:maxreached')
             f = @(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2; hyperbox = [-inf(1,3);inf(1,3)];
             count = 0;
             for i=1:20
@@ -92,7 +92,7 @@ classdef ut_cubMC_g < matlab.unittest.TestCase
                     i
                 end;
             end;
-            warning('on','MATLAB:meanMC_g:maxreached')
+            warning('on','GAIL:meanMC_g:maxreached')
             testCase.verifyTrue(count==0);
         end
     end

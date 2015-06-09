@@ -33,7 +33,7 @@ classdef ut_meanMCabs_g < matlab.unittest.TestCase
     function meanMCabs_gOfparsing(testCase)
       in_param.abstol = -1e-2;
       meanY = testCase.verifyWarning(@()meanMCabs_g(@(n) rand(n,1).^2,...
-        in_param.abstol),'MATLAB:meanMCabs_g:abstolneg');
+        in_param.abstol),'GAIL:meanMCabs_g:abstolneg');
       exactY = 1/3;
       actualerr = abs(meanY-exactY);
       testCase.verifyLessThanOrEqual(actualerr,abs(in_param.abstol));
@@ -42,7 +42,7 @@ classdef ut_meanMCabs_g < matlab.unittest.TestCase
     function meanMC_gOfnonRandomInput(testCase)
         in_param.abstol = 1e-2;
         meanY = testCase.verifyWarning(@()meanMCabs_g(@(x) x.^2,...
-            in_param.abstol),'MATLAB:meanMCabs_g:yrandnotlengthN');
+            in_param.abstol),'GAIL:meanMCabs_g:yrandnotlengthN');
     end
   end
 end
