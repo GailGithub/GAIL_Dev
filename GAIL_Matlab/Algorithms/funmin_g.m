@@ -507,14 +507,14 @@ end;
 
 % Check whether the error tolerance is nonnegative
 if out_param.abstol < 0
-    warning(['GAIL:funmin_g:abstolnonpos','Error tolerance should be greater than or equal to 0.' ...
+    warning('GAIL:funmin_g:abstolnonpos', ['Error tolerance should be greater than or equal to 0.' ...
         ' Using default error tolerance ', num2str(default.abstol)])
     out_param.abstol = default.abstol;
 end
 
 % Check whether the length tolerance is nonnegative
 if out_param.TolX < 0
-    warning(['GAIL:funmin_g:Xtolnonpos','X tolerance should be greater than or equal to 0.' ...
+    warning('GAIL:funmin_g:Xtolnonpos', ['X tolerance should be greater than or equal to 0.' ...
         ' Using default X tolerance ' num2str(default.TolX)]);
     out_param.TolX = default.TolX;
 end
@@ -526,7 +526,7 @@ if (~gail.isposint(out_param.nmax))
             ' Using cost budget ', num2str(ceil(out_param.nmax))]);
         out_param.nmax = ceil(out_param.nmax);
     else
-        warning(['Cost budget should be a positive integer.'...
+        warning('GAIL:funmin_g:budgetnotposint', ['Cost budget should be a positive integer.'...
         ' funmin_g will use the default budget' num2str(out_param.nmax)]);
         out_param.nmax = default.nmax;
     end
