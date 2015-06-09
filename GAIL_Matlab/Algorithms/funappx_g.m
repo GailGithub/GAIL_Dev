@@ -428,13 +428,19 @@ end;
 
  
 if isempty(varargin)
-    warning('GAIL:funappx_g:nofunction','Function f must be specified. Now GAIL is using f(x)=exp(-100*(x-0.5)^2) and unit interval [0,1].')
-    help funappx_g
-    f = @(x) exp(-100*(x-0.5).^2);
-    out_param.f = f;
+  warning('GAIL:funappx_g:nofunction','Function f must be specified. Now GAIL is using f(x)=exp(-100*(x-0.5)^2) and unit interval [0,1].')
+  help funappx_g
+  f = @(x) exp(-100*(x-0.5).^2);
+  out_param.f = f;
 else
+  if gail.isfcn(varargin{1})
     f = varargin{1};
     out_param.f = f;
+  else
+    warning('GAIL:funappx_g:notfunction','Function f must be a function handle. Now GAIL is using f(x)=exp(-100*(x-0.5)^2).')
+    f = @(x) exp(-100*(x-0.5).^2);
+    out_param.f = f;
+  end
 end;
 
 validvarargin=numel(varargin)>1;
