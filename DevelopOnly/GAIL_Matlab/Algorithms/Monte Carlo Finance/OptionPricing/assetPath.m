@@ -37,7 +37,9 @@ classdef assetPath < brownianMotion
       assetParam = struct('pathType', 'GBM', ... %type of asset path
          'initPrice', 10, ... %initial asset price
          'interest', 0.01, ... %interest rate
-         'volatility', 0.5) %volatility      
+         'volatility', 0.5,... %volatility
+         'nAsset', 1,... %number of assets 
+         'sqCorr', 1) %A transpose     
    end
    
    properties (Constant, Hidden) %do not change & not seen
@@ -63,7 +65,8 @@ classdef assetPath < brownianMotion
             obj.restInput = rmfield(obj.restInput,'assetParam');
          end
          obj.timeDim = struct('initTime',0, ...
-            'initValue',obj.assetParam.initPrice);
+            'initValue',obj.assetParam.initPrice,...
+            'dim',obj.assetParam.nAsset);
       end
            
       % Set the properties of the payoff object
@@ -91,11 +94,24 @@ classdef assetPath < brownianMotion
       
       % Generate Brownian Motion paths
       function paths=genPaths(obj,val)
-         paths = genPaths@brownianMotion(obj,val);
+         bmpaths = genPaths@brownianMotion(obj,val);
          if strcmp(obj.assetParam.pathType,'GBM')
-            paths = obj.assetParam.initPrice * ...
-               exp(bsxfun(@plus,(obj.assetParam.interest - obj.assetParam.volatility.^2/2) ...
-               .* obj.timeDim.timeVector, obj.assetParam.volatility .* paths));
+             tempc=zeros(val,obj.timeDim.nSteps);
+             paths=zeros(val,obj.timeDim.nCols);
+           for idx=1:obj.timeDim.dim
+               colRange = ...
+                  ((idx-1)*obj.timeDim.nSteps+1):idx*obj.timeDim.nSteps;
+              tempa=repmat(obj.assetParam.sqCorr(:,idx)',1,nAsset);
+              tempa=transpose(tempa(:));
+              tempb=bsxfun(@ times,bmpaths,tempa);
+              for j=1:obj.timeDim.nSteps
+                  tempc(:,j)=sum(tempb(:,j:obj.timeDim.nSteps:obj.timeDim.nCols),2);
+              end
+               paths(:,colRange) = obj.assetParam.initPrice(idx) * ...
+               exp(bsxfun(@plus,(obj.assetParam.interest(idx) - obj.assetParam.volatility(idx).^2/2) ...
+               .* obj.timeDim.timeVector, obj.assetParam.volatility(idx)...
+               .* tempc));
+           end
          end
       end
                  
