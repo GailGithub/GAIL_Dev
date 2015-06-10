@@ -90,6 +90,16 @@ classdef assetPath < brownianMotion
                {'nonnegative'})
             obj.assetParam.volatility=val.volatility; %row
          end
+         if isfield(val,'nAsset') %data for number of assets
+            validateattributes(val.nAsset,{'numeric'}, ...
+               {'nonnegative'})
+            obj.assetParam.nAsset=val.nAsset; %row
+         end
+         if isfield(val,'sqCorr') %data for A
+            validateattributes(val.sqCorr,{'numeric'}, ...
+               {'nonnegative'})
+            obj.assetParam.sqCorr=val.sqCorr; %row
+         end
       end
       
       % Generate Brownian Motion paths
