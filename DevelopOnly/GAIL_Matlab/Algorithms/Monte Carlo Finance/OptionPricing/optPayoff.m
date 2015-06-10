@@ -37,19 +37,16 @@ classdef optPayoff < assetPath
          'putCallType', {{'call'}}, ... %put or call
          'strike', 10, ... %strike price
          'barrier', 12, ... %barrier
-         'digitalRate', 0.5, ...%digital payoff rate
-         'cashAssetType',{{'cash'}}); %digital payoff asset type
+         'digitalPay', 0.7)%digital payoff rate
       
    end
  
    properties (Constant, Hidden) %do not change & not seen
       allowOptType = {'euro','upin', 'downin' 'upout', 'downout', 'look', ...
-         'amean', 'gmean', 'digital'} 
+         'amean', 'gmean', 'digitalcash', 'digitalasset'} 
          %kinds of payoffs that we can generate
       allowPutCallType = {'call','put'} 
          %kinds of payoffs that we can generate
-      allowCashAssetType = {'cash','asset'}
-         %kinds of payoffs that we can generate with digital options
          
    end
  
@@ -103,17 +100,11 @@ classdef optPayoff < assetPath
                {'nonnegative'})
             obj.payoffParam.barrier=val.barrier; %row
          end
-         if isfield(val,'digitalRate') %data for type of option
-            validateattributes(val.digitalRate,{'numeric'}, ...
+         if isfield(val,'digitalPay') %data for type of option
+            validateattributes(val.digitalPay,{'numeric'}, ...
                {'nonnegative'})
-            obj.payoffParam.digitalRate=val.digitalRate; %row
+            obj.payoffParam.digitalPay=val.digitalPay; %row
          end
-          if isfield(val,'cashAssetType') %data for type of cash or asset
-            assert(all(any(strcmp( ...
-               repmat(val.cashAssetType,numel(obj.allowCashAssetType),1), ...
-               repmat(obj.allowCashAssetType',1,numel(val.cashAssetType))),1),2))
-            obj.payoffParam.cashAssetType=val.cashAssetType; %row
-          end
       end
  
            
@@ -130,27 +121,39 @@ classdef optPayoff < assetPath
                .* exp(- obj.assetParam.interest .* obj.timeDim.endTime);
          end
          
-         whdigitalcall = strcmp(obj.payoffParam.optType,'digital') ...
-             & strcmp(obj.payoffParam.putCallType,'call'); %digital call
-         if strcmp(obj.payoffParam.cashAssetType,'cash')
-             digitalPay=obj.payoffParam.digitalRate;
-         else 
-             digitalPay=paths(:,obj.timeDim.nSteps);
-         end
-         if any(whdigitalcall) %digital option
-             tempPay(:,whdigitalcall) ...
-               =  (paths(:,obj.timeDim.nSteps) >= obj.payoffParam.strike) ...
-               .* (digitalPay .* ...
-               exp(- obj.assetParam.interest .* obj.timeDim.endTime));
+         whdigitalcashcall = strcmp(obj.payoffParam.optType,'digitalcash') ...
+             & strcmp(obj.payoffParam.putCallType,'call'); %digital cash call
+             digitalPay=obj.payoffParam.digitalPay;
+
+         if any(whdigitalcashcall) %digitalcash option
+             tempPay(:,whdigitalcashcall) ...
+               =  (paths(:,obj.timeDim.nSteps) > obj.payoffParam.strike) ...
+               .* ((digitalPay + 1).*obj.exactPrice);
          end
          
-         whdigitalput = strcmp(obj.payoffParam.optType,'digital') ...
-             & strcmp(obj.payoffParam.putCallType,'put'); %digital put
-         if any(whdigitalput) %digital option
-             tempPay(:,whdigitalput) ...
+         whdigitalcashput = strcmp(obj.payoffParam.optType,'digitalcash') ...
+             & strcmp(obj.payoffParam.putCallType,'put'); %digital cash put
+         if any(whdigitalcashput) %digital option
+             tempPay(:,whdigitalcashput) ...
                =  (paths(:,obj.timeDim.nSteps) <= obj.payoffParam.strike) ...
-               .* (digitalPay.* ...
-               exp(- obj.assetParam.interest .* obj.timeDim.endTime));
+               .* ((digitalPay + 1).*obj.exactPrice);
+         end
+         
+         whdigitalassetcall = strcmp(obj.payoffParam.optType,'digitalasset') ...
+             & strcmp(obj.payoffParam.putCallType,'call'); %digitalasset call
+
+         if any(whdigitalassetcall) %digitalasset option
+             tempPay(:,whdigitalassetcall) ...
+               =  (paths(:,obj.timeDim.nSteps) > obj.payoffParam.strike) ...
+               .* (paths(:,obj.timeDim.nSteps));
+         end
+         
+         whdigitalassetput = strcmp(obj.payoffParam.optType,'digitalasset') ...
+             & strcmp(obj.payoffParam.putCallType,'put'); %digital put
+         if any(whdigitalassetput) %digital option
+             tempPay(:,whdigitalassetput) ...
+               =  (paths(:,obj.timeDim.nSteps) <= obj.payoffParam.strike) ...
+               .* (paths(:,obj.timeDim.nSteps));
          end
       
          wheurobarrier = any(strcmp(repmat(obj.payoffParam.optType,5,1), ...
@@ -287,21 +290,19 @@ classdef optPayoff < assetPath
          end
          
          %Pricing digital option
-         whdigit = strcmp(obj.payoffParam.optType, 'digital');
+         whdigitcash = strcmp(obj.payoffParam.optType, 'digitalcash');
+         whdigitasset = strcmp(obj.payoffParam.optType, 'digitalasset');
          whcall = strcmp(obj.payoffParam.putCallType, 'call');
          whput = strcmp(obj.payoffParam.putCallType, 'put');
-         whcash = strcmp(obj.payoffParam.cashAssetType,'cash');
-         whasset = strcmp(obj.payoffParam.cashAssetType,'asset');
-         whdigitcashcall = whdigit & whcash & whcall;
-         whdigitassetcall= whdigit &  whasset & whcall;
-         whdigitcashput = whdigit & whcash & whput;
-         whdigitassetput = whdigit & whasset & whput;
-         if any(whdigit); 
+         whdigitcashcall = whdigitcash & whcall;
+         whdigitassetcall= whdigitasset & whcall;
+         whdigitcashput = whdigitcash & whput;
+         whdigitassetput = whdigitasset & whput;
+         if any(whdigitcash | whdigitasset); 
             [digitcashcall,digitassetcall,digitcashput,digitassetput] ...
              = digitgbmprice(obj.assetParam.initPrice, ...
                obj.assetParam.interest, obj.timeDim.endTime, ...
-               obj.assetParam.volatility, obj.payoffParam.strike, ...
-               obj.payoffParam.digitalRate,0);
+               obj.assetParam.volatility, obj.payoffParam.strike,0);
             val(whdigitcashcall) = digitcashcall;
             val(whdigitassetcall) = digitassetcall;
             val(whdigitcashput) = digitcashput;
@@ -337,11 +338,11 @@ classdef optPayoff < assetPath
          end
          
          function [digitcashcall,digitassetcall,digitcashput, ...
-                 digitassetput] = digitgbmprice(S0,r,T,sigma,K,digitalrate, q)
+                 digitassetput] = digitgbmprice(S0,r,T,sigma,K,q)
             digitpriceratio1 = (log(S0./K)+(r-q+(sigma^2)/2)*T)/(sigma*sqrt(T));
             digitpriceratio2 = digitpriceratio1-sigma*sqrt(T);
-            digitcashcall = digitalrate*exp(-r*T)*normcdf(digitpriceratio2);
-            digitcashput = digitalrate*exp(-r*T)*normcdf(-digitpriceratio2);
+            digitcashcall = exp(-r*T)*normcdf(digitpriceratio2);
+            digitcashput = exp(-r*T)*normcdf(-digitpriceratio2);
             digitassetcall = S0.*exp(-q*T).*normcdf(digitpriceratio1);
             digitassetput = S0.*exp(-q*T).*normcdf(-digitpriceratio1);
          end
@@ -381,10 +382,9 @@ classdef optPayoff < assetPath
          propList.payoffParam_optType = obj.payoffParam.optType;
          propList.payoffParam_putCallType = obj.payoffParam.putCallType;
          propList.payoffParam_strike = obj.payoffParam.strike;
-         if numel(obj.payoffParam.digitalRate)
-            propList.payoffParam_digitalRate = obj.payoffParam.digitalRate;
-         end
-         propList.payoffParam_cashAssetType = obj.payoffParam.cashAssetType;
+             if numel(obj.payoffParam.digitalPay)
+                propList.payoffParam_digitalPay = obj.payoffParam.digitalPay;
+             end
          propList.exactPrice = obj.exactPrice;
       end
  
