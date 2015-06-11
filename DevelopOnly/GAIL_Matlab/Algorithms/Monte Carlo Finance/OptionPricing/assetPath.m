@@ -111,7 +111,7 @@ classdef assetPath < brownianMotion
            for idx=1:obj.timeDim.dim
                colRange = ...
                   ((idx-1)*obj.timeDim.nSteps+1):idx*obj.timeDim.nSteps;
-              tempa=repmat(obj.assetParam.sqCorr(:,idx)',1,nAsset);
+              tempa=repmat(obj.assetParam.sqCorr(:,idx)',1,obj.assetParam.nAsset);
               tempa=transpose(tempa(:));
               tempb=bsxfun(@ times,bmpaths,tempa);
               for j=1:obj.timeDim.nSteps
