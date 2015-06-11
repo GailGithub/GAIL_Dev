@@ -3,7 +3,7 @@
 function [tmu,out_param]=meanMC_CLT_AIS_AOP(d,So,K, r, sigma, T,abstol,alpha,nSig,fudge)
 %MEANMC_CLT Monte Carlo method to estimate the mean of a random variable
 %
-%   tmu = meanMC_CLT(fx,abstol,alpha,nSig,fudge) estimates the mean, of a random fuction to
+%   Estimates the mean, of a random fuction to
 %   within a specified error tolerance, i.e., | mu - tmu | <= abstol with
 %   probability at least 1-alpha, where abstol is the absolute error
 %   tolerance using the adaptive importance sampling.  
