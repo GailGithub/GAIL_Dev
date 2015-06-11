@@ -37,7 +37,7 @@ classdef optPayoff < assetPath
          'putCallType', {{'call'}}, ... %put or call
          'strike', 10, ... %strike price
          'barrier', 12, ... %barrier
-         'digitalPay', 100)%digital payoff rate
+         'digitalPay', 100)%digital payoff 
       
    end
  
@@ -128,7 +128,7 @@ classdef optPayoff < assetPath
          if any(whdigitalcashcall) %digitalcash option
              tempPay(:,whdigitalcashcall) ...
                =  (paths(:,obj.timeDim.nSteps) > obj.payoffParam.strike) ...
-               .* ((digitalPay + 1).*obj.exactPrice) ...
+               .* digitalPay...
                .*exp(- obj.assetParam.interest .* obj.timeDim.endTime);
          end
          
@@ -137,7 +137,7 @@ classdef optPayoff < assetPath
          if any(whdigitalcashput) %digital option
              tempPay(:,whdigitalcashput) ...
                =  (paths(:,obj.timeDim.nSteps) <= obj.payoffParam.strike) ...
-               .* ((digitalPay + 1).*obj.exactPrice)...
+               .* digitalPay...
                .*exp(- obj.assetParam.interest .* obj.timeDim.endTime);
          end
          
@@ -304,7 +304,7 @@ classdef optPayoff < assetPath
          whdigitassetput = whdigitasset & whput;
          if any(whdigitcash | whdigitasset); 
             [digitcashcall,digitassetcall,digitcashput,digitassetput] ...
-             = digitgbmprice(obj.assetParam.initPrice, ...
+             = digitgbmprice(obj.payoffParam.digitalPay,obj.assetParam.initPrice, ...
                obj.assetParam.interest, obj.timeDim.endTime, ...
                obj.assetParam.volatility, obj.payoffParam.strike,0);
             val(whdigitcashcall) = digitcashcall;
@@ -342,11 +342,11 @@ classdef optPayoff < assetPath
          end
          
          function [digitcashcall,digitassetcall,digitcashput, ...
-                 digitassetput] = digitgbmprice(S0,r,T,sigma,K,q)
+                 digitassetput] = digitgbmprice(digitalPay,S0,r,T,sigma,K,q)
             digitpriceratio1 = (log(S0./K)+(r-q+(sigma^2)/2)*T)/(sigma*sqrt(T));
             digitpriceratio2 = digitpriceratio1-sigma*sqrt(T);
-            digitcashcall = exp(-r*T)*normcdf(digitpriceratio2);
-            digitcashput = exp(-r*T)*normcdf(-digitpriceratio2);
+            digitcashcall = digitalPay*exp(-r*T)*normcdf(digitpriceratio2);
+            digitcashput = digitalPay*digitalPay*exp(-r*T)*normcdf(-digitpriceratio2);
             digitassetcall = S0.*exp(-q*T).*normcdf(digitpriceratio1);
             digitassetput = S0.*exp(-q*T).*normcdf(-digitpriceratio1);
          end
