@@ -60,10 +60,10 @@
 % Creating the _input_ structure
 
 %Payoff Parameters
-input.payoffParam.optType = {'digital'};      %Defining the Option Type
+input.payoffParam.optType = {'digitalcash'};  %Defining the Option Type
 input.payoffParam.putCallType = {'call'};     %Defining the Option Type
-input.payoffParam.cashAssetType = {'cash'};   %Defining the Digital Option Type
 input.payoffParam.strike = 12;                %Defining the Strike Price as $12.00
+input.payoffParam.digitalPay = 0.82;          %Defining the Digital Pay (profit) as 82% of the Investment
 
 %Asset Path Parameters
 input.assetParam.initPrice = 9;               %Defining the Inicial Stock Price as $9.00
@@ -71,7 +71,7 @@ input.assetParam.interest = 0.01;             %Defining Interest Rate as 1%
 input.assetParam.volatility = 0.5;            %Defining the Volatility as 50%
 
 %Option Price Parameters
-input.priceParam.absTol = 0.01;               %Defining the Absolute Tolerance as 1%
+input.priceParam.relTol = 0.001;               %Defining the Absolute Tolerance as 1%
 
 %Stochastic Process
 input.timeDim.timeVector = (0.25:0.25:1);     %Defining the Time as four trimesters.
@@ -101,9 +101,8 @@ tic, mcResult_DigOption1 = genOptPrice(DigOption1), toc
 % Creating the _input2_ structure
 
 %Payoff Parameters
-input2.payoffParam.optType = {'digital'};      %Defining the Option Type
+input2.payoffParam.optType = {'digitalasset'}; %Defining the Option Type
 input2.payoffParam.putCallType = {'call'};     %Defining the Option Type
-input2.payoffParam.cashAssetType = {'asset'};  %Defining the Digital Option Type
 input2.payoffParam.strike = 15;                %Defining the Strike Price as $15.00
 
 %Asset Path Parameters
@@ -112,7 +111,7 @@ input2.assetParam.interest = 0.01;             %Defining Interest Rate as 1%
 input2.assetParam.volatility = 0.65;           %Defining the Volatility as 65%
 
 %Option Price Parameters
-input2.priceParam.absTol = 0.01;               %Defining the Absolute Tolerance as 1%
+input2.priceParam.relTol = 0.001;               %Defining the Absolute Tolerance as 1%
 
 %Stochastic Process
 input2.timeDim.timeVector = [1 2 3];           %Defining the Time as three years.
