@@ -1,4 +1,4 @@
-function [tmu,out_param]=meanMC_CLT_AIS(fx,abstol,alpha,nSig,fudge)
+function [tmu,out_param]=meanMC_CLT_AIS_AlternateTransformation(fx,abstol,alpha,nSig,fudge)
 %MEANMC_CLT Monte Carlo method to estimate the mean of a random variable
 %
 %   tmu = meanMC_CLT(fx,abstol,alpha,nSig,fudge) estimates the mean, of a random fuction to
