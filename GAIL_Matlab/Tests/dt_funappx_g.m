@@ -27,8 +27,9 @@ function dt_funappx_g
 %           exit: [2x1 logical]
 %           iter: 10
 %        npoints: 411137
-%         errest: 5.9832e-09
+%         errest: 3.5719e-09
 %          nstar: [1x512 double]
+%          bytes: 31309738
 %
 % 
 %   Example 3: 
@@ -51,9 +52,10 @@ function dt_funappx_g
 %        exit: [2x1 logical]
 %        iter: 10
 %     npoints: 179201
-%      errest: 7.1710e-09
+%      errest: 3.9377e-09
 %       nstar: [1x512 double]
-%   
+%       bytes: 13682970
+%
 %
 %   Example 4:
 %
@@ -73,8 +75,9 @@ function dt_funappx_g
 %             exit: [2x1 logical]
 %             iter: 11
 %          npoints: 41985
-%           errest: 7.8394e-08
+%           errest: 2.9281e-08
 %            nstar: [1x1024 double]
+%            bytes: 3314614
 %
 %
 %   Example 5:
@@ -93,10 +96,11 @@ function dt_funappx_g
 %             nmax: 10000000
 %            ninit: 34
 %             exit: [2x1 logical]
-%             iter: 10
-%          npoints: 16897
-%           errest: 3.4229e-07
-%            nstar: [1x512 double]
+%             iter: 9
+%          npoints: 8449
+%           errest: 4.3863e-07
+%            nstar: [1x256 double]
+%            bytes: 675778
 %
 %
 %   Example 6:
@@ -117,8 +121,9 @@ function dt_funappx_g
 %        exit: [2x1 logical]
 %        iter: 10
 %     npoints: 22529
-%      errest: 7.8881e-07
+%      errest: 3.0527e-07
 %       nstar: [1x512 double]
+%       bytes: 1775466
 % 
 %
 %   Example 7:
@@ -136,10 +141,11 @@ function dt_funappx_g
 %             nmax: 10000000
 %            ninit: 44
 %             exit: [2x1 logical]
-%             iter: 12
-%          npoints: 88065
-%           errest: 3.8587e-08
-%            nstar: [1x2048 double]
+%             iter: 11
+%          npoints: 44033
+%           errest: 5.9080e-08
+%            nstar: [1x1024 double]
+%            bytes: 3469674
 %
 %
 %   Example 8:
@@ -158,8 +164,8 @@ function dt_funappx_g
 %             nmax: 10000000
 %            ninit: 20
 %             exit: [2x1 logical]
-%             iter: 14
-%          npoints: 155649
-%           errest: 3.7614e-08
-%            nstar: [1x8192 double]
-%
+%             iter: 13
+%          npoints: 77825
+%           errest: 5.9705e-08
+%            nstar: [1x4096 double]
+%            bytes: 6397290
