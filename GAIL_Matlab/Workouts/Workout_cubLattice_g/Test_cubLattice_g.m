@@ -4,7 +4,7 @@
 function [ut_abserr,ut_relerr,abstol,reltol] = Test_cubLattice_g
 %[
 dimsize = 8;
-indexsize = 7;
+indexsize = 5;
 abstol = 1e-3;
 reltol = abstol;
 format long
