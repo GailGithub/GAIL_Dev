@@ -6,7 +6,7 @@ end
 [GAILPATH,GAILVERSION,MATLABVERSION] = GAILstart(false);
 fprintf('\nWelcome to Guaranteed Automatic Integration Library (GAIL).\nYou are installing GAIL v%s.\n\n', GAILVERSION);
 if MATLABVERSION < 7,
-    error('This version is only supported on Matlab 7.x and above.');
+    error('This version is only supported on MATLAB 7 and above.');
 end
 gailp=genpath(GAILPATH);% Generate strings of paths to GAIL subdirectories
 warninfo = warning('query','GAIL:rmpath:DirNotFound');
