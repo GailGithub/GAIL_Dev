@@ -85,15 +85,9 @@
 % * out_param.npoints --- number of points needed to reach the guaranteed
 %  absolute error tolerance or the guaranteed X tolerance
 %
-% <html>
-% <ul type="square">
-%  <li>out_param.exitflag --- the state of program when exiting:</li>
-%   <ul type="circle">
-%    <li>0  Success</li>
-%    <li>1  Number of points used is greater than out_param.nmax</li>
-%   </ul>
-% </ul>
-% </html>
+% * out_param.exitflag --- the state of program when exiting
+%           0  Success
+%           1  Number of points used is greater than out_param.nmax
 %
 % * out_param.errest --- estimation of the absolute error bound
 %
@@ -117,7 +111,7 @@
 % then the \(\mathrm{fmin}\) output by this algorithm is guaranteed to
 % satisfy
 %
-% \[ \left| \min\limits_{a\le x \le b}f(x)-\mathrm{fmin} \right| \le \mathrm{abstol},\]
+% \[| \min f-\mathrm{fmin}| \le \mathrm{abstol},\]
 %
 % or
 %
