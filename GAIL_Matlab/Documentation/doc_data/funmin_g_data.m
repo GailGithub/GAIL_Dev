@@ -1,20 +1,20 @@
 %% Guarantee
 %    
-% If the function to be minimized, $f$ satisfies the cone condition
+% If the function to be minimized, \(f\) satisfies the cone condition
 %
-% $$\|f''\|_\infty \le  \frac {\tau}{b-a}\left\|f'-\frac{f(b)-f(a)}{b-a}
-% \right\|_\infty,$$
+% \[\|f''\|_\infty \le  \frac {\tau}{b-a}\left\|f'-\frac{f(b)-f(a)}{b-a}
+% \right\|_\infty,\]
 %      
-% then the $\mathrm{fmin}$ output by this algorithm is guaranteed to
+% then the \(\mathrm{fmin}\) output by this algorithm is guaranteed to
 % satisfy
 %
-% $$| \min f-\mathrm{fmin}| \le \mathrm{abstol},$$
+% \[| \min f-\mathrm{fmin}| \le \mathrm{abstol},\]
 %
 % or
 %
-% $$\mathrm{volumeX} \le \mathrm{TolX},$$
+% \[\mathrm{volumeX} \le \mathrm{TolX},\]
 %
-% provided the flag $\mathrm{exitflag} = 0.$
+% provided the flag \(\mathrm{exitflag} = 0.\)
 %
 %
 %% Examples
