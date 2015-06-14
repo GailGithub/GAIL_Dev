@@ -7,6 +7,7 @@
 #include <math.h>
 #include <matrix.h>
 #include <mex.h>
+#include <iterator> 
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -22,6 +23,7 @@ using std::istringstream;
 using std::endl;
 using std::flush;
 using std::find;
+using std::next;
 
 //using std::cout;
 
@@ -29,12 +31,17 @@ string upperString(const string &);
 string lowerString(const string &);
 string substituteQuotation(string, bool &);
 string substituteQuotationSimple(string);
+void autodoc_readme(const string &, const string &);
+void autodoc_license(const string &, const string &);
 
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
-  const string gailFolder("../../../GAIL_Matlab/");
-  const string rawFolder(gailFolder + "Documentation/");
-  const string dataFolder(rawFolder + "doc_data/");
+    const string gailFolder("../../../GAIL_Matlab/");
+    const string rawFolder(gailFolder + "Documentation/");
+    const string dataFolder(rawFolder + "doc_data/");
+    autodoc_readme(gailFolder, rawFolder);
+    autodoc_license(gailFolder, rawFolder);
+
   ifstream ifs(dataFolder + "DocList.txt");
   vector<string> fcnList, fcnName, uFcnName, introList, websiteList, fcnDoc;
   string line, word;
@@ -304,4 +311,37 @@ string substituteQuotationSimple(string s)
       return s.replace(firstMatch, 1, "_");
     }
   }
+}
+
+void autodoc_readme(const string &gailFolder, const string &rawFolder)
+{
+    ifstream ifs(gailFolder + "README.txt");
+    vector<string> text;
+    string line;
+    while (getline(ifs,line)) {
+        text.push_back(line);
+    }
+    ifs.close();
+    ofstream ofs(rawFolder + "help_readme_raw.m");
+    for (auto it = text.cbegin(); it != text.cend(); ++it) {
+        if (next(it) != text.cend() && (*next(it)).substr(0,4) == "----") {
+            ofs << "%% " << *it++ << "\n";
+        } else {
+            ofs << "% " << *it << "\n";
+        }
+    }
+    ofs.close();
+}
+
+void autodoc_license(const string &gailFolder, const string &rawFolder)
+{
+    ifstream ifs(gailFolder + "license.m");
+    ofstream ofs(rawFolder + "help_license_raw.m");
+    ofs << "%% GAIL License\n";
+    string line;
+    while (getline(ifs,line)) {
+        ofs << line << "\n";
+    }
+    ifs.close();
+    ofs.close();
 }
