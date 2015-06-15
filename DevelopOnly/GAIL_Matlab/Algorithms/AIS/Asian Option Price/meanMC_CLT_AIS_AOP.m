@@ -1,5 +1,3 @@
-
-
 function [tmu,out_param]=meanMC_CLT_AIS_AOP(d,So,K, r, sigma, T,abstol,alpha,nSig,fudge)
 %MEANMC_CLT Monte Carlo method to estimate the mean of a random variable
 %
@@ -87,26 +85,34 @@ out_param.nSig = nSig;
 
 tstart=tic; %starts the clock.
 
-b=[-1,0,1];%estimated values for standard deviation.
+b=0.2*[-1,0,1];%estimated values for standard deviation.
 
-for j=1:d; 
-    tj=j.*T./d;
-    %sum of S-K:
-    SK=@(z,b)(So.*exp(r-((sigma.^2)./2)).*tj + sigma.*sqrt(T./d).*z-b)-K;
-end
+%z is a d dimensional normal random vector
+%b is the shift in the mean
+deltaT = T./d;
+
+SK=@(z,bval) max(mean(So.*exp(cumsum((r-((sigma.^2)./2)).*deltaT + ...
+   sigma.*sqrt(deltaT).*(z-bval),2)),2)-K,0);
+% 
+% for j=1:d; 
+%     tj=j.*T./d;
+%     %sum of S-K:
+%     SK=@(z,b)(So.*exp(r-((sigma.^2)./2)).*tj + sigma.*sqrt(T./d).*z-b)-K;
+% end
 
 %integrand:
-fx=@(z,b)max((1./d).*sum(SK(z,b)),0).*exp(-r.*T).*exp(z.*b-(d.*(b.^2)./2)); 
+fx=@(z,bval) SK(z,bval).*exp(-r.*T).*exp(sum(z,2).*bval-(d.*(bval.^2)./2)); 
 
-z=(randn(nSig,1));%generate the pseudorandom values drawn
+z=randn(nSig,d);%generate the pseudorandom values drawn
 % from the standard normal distribution
 %computes each value of tj
+var_b=b;
 for i=1:numel(b)
     b_value=b(i);    
     var_b(i)=var(fx(z,b_value));
 end
-
-[S_var,S_pos]=min(var_b);
+var_b
+[S_var,S_pos]=min(var_b)
 out_param.var = S_var; %calculate the sample variance--stage 1
 out_param.b_value=b(S_pos);%best variance
 sig0 = sqrt(out_param.var); %standard deviation
