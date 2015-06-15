@@ -140,7 +140,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %          npoints: 17409
 %           errest: 8.7998e-08
 %            nstar: [1x1024 double]
-%            bytes: 1446250
+%            bytes: 1433962
 %
 %
 %   Example 2:
@@ -164,7 +164,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %          npoints: 8705
 %           errest: 3.5199e-07
 %            nstar: [1x512 double]
-%            bytes: 725186
+%            bytes: 719042
 %
 %
 %   Example 3:
@@ -189,7 +189,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %          npoints: 18433
 %           errest: 4.8114e-07
 %            nstar: [1x1024 double]
-%            bytes: 1524506
+%            bytes: 1512218
 %
 %
 %   See also INTERP1, GRIDDEDINTERPOLANT, INTEGRAL_G, MEANMC_G, CUBMC_G, FUNMIN_G
@@ -379,16 +379,17 @@ while(max(err) > abstol)
         err = newerr;
         
         %upadte index w.p.t x after splitting
+        index = 1:(ninit-1):length(err)*(ninit-1)+1;
         %update index of the original endpoints 
-        index(2:end) = index(2:end) + badcumsum*(ninit-1);
-        %obtain the index of new endpoins after splitting
-        %if one interval not splitted, will get the same index as in
-        %previous line
-        indexbeg = index(1:end-1) + whbad*(ninit-1);
-        %combine two index together and emlinate duplicate indices
-        indexnew = [index(1:end-1); indexbeg];
-        indexnew = indexnew(:)';
-        index = unique([indexnew index(end)]);
+%         index(2:end) = index(2:end) + badcumsum*(ninit-1);
+%         %obtain the index of new endpoins after splitting
+%         %if one interval not splitted, will get the same index as in
+%         %previous line
+%         indexbeg = index(1:end-1) + whbad*(ninit-1);
+%         %combine two index together and emlinate duplicate indices
+%         indexnew = [index(1:end-1); indexbeg];
+%         indexnew = indexnew(:)';
+%         index = unique([indexnew index(end)]);
     else
         break;
     end;
@@ -402,6 +403,7 @@ out_param.iter = iter;
 out_param.npoints = index(end);
 out_param.errest = max(err);
 out_param.nstar = nstar;
+%out_param.index = index;
 %add compute memory parameter
 w = whos;
 out_param.bytes = sum([w.bytes]);
