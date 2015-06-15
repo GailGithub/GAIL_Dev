@@ -3,15 +3,18 @@ function [q,out_param] = cvSobol_a1(varargin)
 %% cubSobol with control variates 
 % [q,out]= cvSobol_a1( f, g, d, abstol, reltol, measure, r, reg, update,...
 %                     mmin, mmax, fudge, toltype, theta)
-
 tic
 
 %% Check and initialize parameters
 [f,g,out_param] = cubSobol_g_param(varargin{:});
 
+[gm,gn]=size(g);
+
 if strcmp(out_param.measure,'normal')
-   f=@(x) f(gail.stdnorminv(x));
-   g=@(x) g(gail.stdnorminv(x));
+   f = @(x) f(gail.stdnorminv(x));
+   if gn == 1
+	   g = @(x) g(gail.stdnorminv(x));
+   end	   
 end
 
 %% Main algorithm
@@ -32,20 +35,40 @@ out_param.exit=false(1,exit_len); %we start the algorithm with all warning flags
 out_param.n=2^out_param.mmin; %total number of points to start with
 n0=out_param.n; %initial number of points
 xpts=sobstr(1:n0,1:out_param.d); %grab Sobol' points
+
+% with multi cv, update xpts if measure=normal
+if strcmp(out_param.measure,'normal') & gn>1
+	xptsG = gail.stdnorminv(xpts);
+else
+	xptsG = xpts;
+end
+
+
 % initialize beta
-temp =(2^(out_param.mmin-r_lag-1)+1:2^(out_param.mmin));
-A=g(xpts); b=f(xpts);
+b = f(xpts);
+temp =(2^(out_param.mmin-r_lag-1)+1:2^(out_param.mmin))';
+temp1 =(1: gn)';
+if gn == 1
+	A = g(xptsG);
+else
+	gval = cellfun(@(c) c(xptsG), g, 'UniformOutput', false); A = cell2mat(gval);
+end
+out_param.A=A;
 % chose one from two computing methods
 if strcmp(out_param.reg,'L2')
-	beta=A(temp)\b(temp);
+	beta=A(temp,temp1)\b(temp);
 else
-	beta=L1Reg(A(temp), b(temp));
+	beta=L1Reg(A(temp,temp1), b(temp));
 end
-% redefine func with cv
-f1=@(x) f(x) - g(x)*beta;
-y=f1(xpts); %evaluate integrand
-yval=y;
 
+% redefine func with cv
+if gn==1
+	f1=@(x) f(x) - g(x)*beta;
+	y=f1(xpts); yval=y;
+else
+	y = b - A*beta; yval = y;
+end
+out_param.beta=beta;
 %% Compute initial FWT
 for l=0:out_param.mmin-1
    nl=2^l;
@@ -113,9 +136,20 @@ for m=out_param.mmin+1:out_param.mmax
    mnext=m-1;
    nnext=2^mnext;
    xnext=sobstr(n0+(1:nnext),1:out_param.d); 
+   if gn==1
+	   xnextG=xnext;
+   else
+	   xnextG=gail.stdnorminv(xnext);
+   end
    n0=n0+nnext;
-   ynext=f1(xnext);
-   yval=[yval; ynext];
+   if gn==1
+	   ynext=f1(xnext);
+	   yval=[yval; ynext];
+   else
+	   gval=cellfun(@(c) c(xnextG), g, 'UniformOutput', false); A=cell2mat(gval);
+	   ynext=f(xnext) -A*beta;
+	   yval=[yval; ynext];
+   end
 
    %% Compute initial FWT on next points
    for l=0:mnext-1
@@ -190,7 +224,7 @@ for m=out_param.mmin+1:out_param.mmax
 end
 
 else
-%% Loop over m with updates of beta
+%% Loop over m with updates of beta--not finished
 for m=out_param.mmin+1:out_param.mmax
    if is_done,
        break;
@@ -393,7 +427,7 @@ if ~validvarargin
 else
     p = inputParser;
     addRequired(p,'f',@gail.isfcn);
-    addRequired(p,'g',@gail.isfcn);
+    addRequired(p,'g');
     addRequired(p,'d',@isnumeric);
     if isnumeric(in3) || ischar(in3)
         addOptional(p,'abstol',default.abstol,@isnumeric);

@@ -138,7 +138,7 @@ while(max(err) > tol)
     %     counterr = sum(err > abstol);
     %     if(length(x) + counterr *(ninit -1) > out_param.nmax)
     %         out_param.exit(1) = 1;
-    %         warning('MATLAB:funappx_g:exceedbudget',' funappx_g attempted to exceed the cost budget. The answer may be unreliable.')
+    %         warning('GAIL:funappx_g:exceedbudget',' funappx_g attempted to exceed the cost budget. The answer may be unreliable.')
     %         break;
     %     end;
     if max(err) > tol;

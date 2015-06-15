@@ -18,14 +18,14 @@ if nargin > 1,
 end
 
 if nargin == 0,
-  f = @(x) exp(-1000*(x-sqrt(2)/2).^2);
+  f = @(x) exp(-100*(x-sqrt(2)/2).^2);
   nmax = 1e7;
 end
    
-warning('off','MATLAB:funappx_g:peaky')
-warning('off','MATLAB:funappx_g:exceedbudget')
-warning('off','MATLAB:funappxglobal_g:peaky')
-warning('off','MATLAB:funappxglobal_g:exceedbudget')
+warning('off','GAIL:funappx_g:peaky')
+warning('off','GAIL:funappx_g:exceedbudget')
+warning('off','GAIL:funappxglobal_g:peaky')
+warning('off','GAIL:funappxglobal_g:exceedbudget')
 
 for i=-15:-1,
   tol(j) = 10^(i);
@@ -46,10 +46,10 @@ for i=-15:-1,
   j=j+1;
 end
 
-warning('on','MATLAB:funappxglobal_g:exceedbudget')
-warning('on','MATLAB:funappx_g:peaky')
-warning('on','MATLAB:funappx_g:exceedbudget')
-warning('on','MATLAB:funappxglobal_g:peaky')
+warning('on','GAIL:funappxglobal_g:exceedbudget')
+warning('on','GAIL:funappx_g:peaky')
+warning('on','GAIL:funappx_g:exceedbudget')
+warning('on','GAIL:funappxglobal_g:peaky')
 
 [~,~,MATLABVERSION] = GAILstart(false); 
 if usejava('jvm') || MATLABVERSION <= 7.12
