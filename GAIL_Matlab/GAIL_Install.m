@@ -18,7 +18,6 @@ savepath;                 % Save the changes
 if isBuild
     unzip('http://www.math.iit.edu/~Meshfree-methods-seminar/GAIL/GAIL_Build.zip',[GAILPATH,'..',filesep]);
 end
-ifGenerateHtml=true; ifGenerateLateX=true; ifBuildSearchIndex=true;
-gail.GAIL_Publish(ifGenerateHtml, ifGenerateLateX, ifBuildSearchIndex);
+gail.GAIL_Publish(false,false,true);
 fprintf('\nGAIL version %s has been installed successfully.\n\n', GAILVERSION);
 end
