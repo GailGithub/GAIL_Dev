@@ -9,7 +9,7 @@ if MATLABVERSION < 7,
     error('This version is only supported on MATLAB 7 and above.');
 end
 gailp=genpath(GAILPATH);% Generate strings of paths to GAIL subdirectories
-warninfo = warning('query','GAIL:rmpath:DirNotFound');
+warninfo = warning('query','MATLAB:rmpath:DirNotFound');
 warning('off',warninfo.identifier);
 rmpath(gailp);% Remove path from MATLAB search path
 warning(warninfo.state, warninfo.identifier);
