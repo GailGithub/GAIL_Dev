@@ -75,25 +75,40 @@ classdef assetPath < brownianMotion
             assert(any(strcmp(val.optType,obj.allowPathType)))
             obj.assetParam.pathType=val.pathType; %row
          end
-         if isfield(val,'initPrice') %data for type of option
-            validateattributes(val.initPrice,{'numeric'}, ...
-               {'nonnegative'})
-            obj.assetParam.initPrice=val.initPrice; %row
-         end
-         if isfield(val,'interest') %data for type of option
-            validateattributes(val.interest,{'numeric'}, ...
-               {'nonnegative'})
-            obj.assetParam.interest=val.interest; %row
-         end
-         if isfield(val,'volatility') %data for type of option
-            validateattributes(val.volatility,{'numeric'}, ...
-               {'nonnegative'})
-            obj.assetParam.volatility=val.volatility; %row
-         end
          if isfield(val,'nAsset') %data for number of assets
             validateattributes(val.nAsset,{'numeric'}, ...
                {'nonnegative'})
             obj.assetParam.nAsset=val.nAsset; %row
+         end
+         if isfield(val,'initPrice') %data for type of option
+            validateattributes(val.initPrice,{'numeric'}, ...
+               {'nonnegative'})
+            if numel(val.initPrice) == obj.assetParam.nAsset
+                obj.assetParam.initPrice=val.initPrice(:);
+            else
+                obj.assetParam.initPrice ...
+                    =repmat(val.initPrice(1),obj.assetParam.nAsset,1);
+            end
+         end
+         if isfield(val,'interest') %data for type of option
+            validateattributes(val.interest,{'numeric'}, ...
+               {'nonnegative'})
+           if numel(val.interest) == obj.assetParam.nAsset
+            obj.assetParam.interest=val.interest(:); %row
+           else
+                obj.assetParam.interest ...
+                    =repmat(val.interest(1),obj.assetParam.nAsset,1);
+           end
+         end
+         if isfield(val,'volatility') %data for type of option
+            validateattributes(val.volatility,{'numeric'}, ...
+               {'nonnegative'})
+           if numel(val.volatility) == obj.assetParam.nAsset
+            obj.assetParam.volatility=val.volatility(:); %row
+           else
+                obj.assetParam.volatility ...
+                    =repmat(val.volatility(1),obj.assetParam.nAsset,1);
+           end
          end
          if isfield(val,'sqCorr') %data for A
             validateattributes(val.sqCorr,{'numeric'}, ...
@@ -102,26 +117,25 @@ classdef assetPath < brownianMotion
          end
       end
       
-      % Generate Brownian Motion paths
+      % Generate asset paths
       function paths=genPaths(obj,val)
          bmpaths = genPaths@brownianMotion(obj,val);
          if strcmp(obj.assetParam.pathType,'GBM')
-             tempc=zeros(val,obj.timeDim.nSteps);
-             paths=zeros(val,obj.timeDim.nCols);
-           for idx=1:obj.timeDim.dim
-               colRange = ...
-                  ((idx-1)*obj.timeDim.nSteps+1):idx*obj.timeDim.nSteps;
-              tempa=repmat(obj.assetParam.sqCorr(:,idx)',1,obj.assetParam.nAsset);
-              tempa=transpose(tempa(:));
-              tempb=bsxfun(@ times,bmpaths,tempa);
+            tempc=zeros(val,obj.timeDim.nSteps);
+            paths=zeros(val,obj.timeDim.nCols);
+            for idx=1:obj.assetParam.nAsset
+              colRange = ...
+                 ((idx-1)*obj.timeDim.nSteps+1):idx*obj.timeDim.nSteps;
               for j=1:obj.timeDim.nSteps
-                  tempc(:,j)=sum(tempb(:,j:obj.timeDim.nSteps:obj.timeDim.nCols),2);
+                 tempc(:,j)=bmpaths(:,j:obj.timeDim.nSteps:obj.timeDim.nCols) ...
+                    * obj.assetParam.sqCorr(idx,:)';
               end
-               paths(:,colRange) = obj.assetParam.initPrice(idx) * ...
-               exp(bsxfun(@plus,(obj.assetParam.interest(idx) - obj.assetParam.volatility(idx).^2/2) ...
-               .* obj.timeDim.timeVector, obj.assetParam.volatility(idx)...
-               .* tempc));
-           end
+              paths(:,colRange) = obj.assetParam.initPrice(idx) * ...
+                 exp(bsxfun(@plus,(obj.assetParam.interest(idx) ...
+                 - obj.assetParam.volatility(idx).^2/2) ...
+                 .* obj.timeDim.timeVector, obj.assetParam.volatility(idx)...
+                 .* tempc));
+             end
          end
       end
                  
