@@ -37,13 +37,14 @@ classdef optPayoff < assetPath
          'putCallType', {{'call'}}, ... %put or call
          'strike', 10, ... %strike price
          'barrier', 12, ... %barrier
-         'digitalPay', 100)%digital payoff 
+         'digitalPay', 100,...%digital payoff 
+         'basketWeight',1)%basket constants
       
    end
  
    properties (Constant, Hidden) %do not change & not seen
       allowOptType = {'euro','upin', 'downin' 'upout', 'downout', 'look', ...
-         'amean', 'gmean', 'digitalcash', 'digitalasset'} 
+         'amean', 'gmean', 'digitalcash', 'digitalasset','basket'} 
          %kinds of payoffs that we can generate
       allowPutCallType = {'call','put'} 
          %kinds of payoffs that we can generate
@@ -105,6 +106,11 @@ classdef optPayoff < assetPath
                {'nonnegative'})
             obj.payoffParam.digitalPay=val.digitalPay; %row
          end
+         if isfield(val,'basketWeight') %data for type of option
+            validateattributes(val.basketWeight,{'numeric'}, ...
+               {'nonnegative'})
+            obj.payoffParam.basketWeight=val.basketWeight; %row
+         end
       end
  
            
@@ -160,6 +166,26 @@ classdef optPayoff < assetPath
                .*exp(- obj.assetParam.interest .* obj.timeDim.endTime);
          end
       
+          whbasketcall = strcmp(obj.payoffParam.optType,'basket') ...
+             & strcmp(obj.payoffParam.putCallType,'call'); %basket call
+             weight=obj.payoffParam.basketWeight;
+
+         if any(whbasketcall) %basket option
+             tempPay(:,whbasketcall) ...
+               =  max(weight .* paths(:,obj.timeDim.nSteps) ...
+               - obj.payoffParam.strike, 0) ...
+               .* exp(- obj.assetParam.interest .* obj.timeDim.endTime);
+         end
+         
+         whbasketput= strcmp(obj.payoffParam.optType,'basket') ...
+             & strcmp(obj.payoffParam.putCallType,'put'); %basket put
+         if any(whbasketput) %basket option
+             tempPay(:,whbasketput) ...
+               =  (max( obj.payoffParam.strike ...
+               -weight .* paths(:,obj.timeDim.nSteps), 0)) ...
+               .* exp(- obj.assetParam.interest .* obj.timeDim.endTime);
+         end
+         
          wheurobarrier = any(strcmp(repmat(obj.payoffParam.optType,5,1), ...
             repmat({'euro','upin','upout','downin','downout'}',1,nOptType)),1);
          wheurobarriercall = wheurobarrier  ...
@@ -326,13 +352,25 @@ classdef optPayoff < assetPath
             [gmeancall,gmeanput]=eurogbmprice(obj.assetParam.initPrice, ...
                rbar,Tbar,sigmabar,obj.payoffParam.strike);
             gmeancall=gmeancall * exp(rbar * Tbar ...
-               - obj.assetParam.interest*obj.timeDim.endTime);
+               - obj.assetParam.interest.*obj.timeDim.endTime);
             gmeanput=gmeanput * exp(rbar * Tbar ...
-               - obj.assetParam.interest*obj.timeDim.endTime);
+               - obj.assetParam.interest.*obj.timeDim.endTime);
             val(whgmeancall) = gmeancall;
             val(whgmeanput) = gmeanput;
          end
  
+          %Pricing Basket Option
+         whbasket = strcmp(obj.payoffParam.optType, 'basket');
+         whcall = strcmp(obj.payoffParam.putCallType, 'call');
+         whput = strcmp(obj.payoffParam.putCallType, 'put');
+         whbasketcall = whbasket & whcall;
+         whbasketput = whbasket & whput;
+         if any(whbasket); 
+            [basketcall,basketput] = basketgbmprice();
+            val(whbasketcall) = basketcall;
+            val(whbasketput) = basketput;
+         end
+         
          function [callprice,putprice]=eurogbmprice(S0,r,T,sigma,K)
             priceratio = K * exp(-r * T) ./ S0;
             xbig = log(priceratio) ./ (sigma * sqrt(T)) + sigma * sqrt(T)/2;
@@ -351,6 +389,10 @@ classdef optPayoff < assetPath
             digitassetput = S0.*exp(-q*T).*normcdf(-digitpriceratio1);
          end
  
+         function [basketcall,basketput] = basketgbmprice()
+            basketcall=1;
+            basketput=1;
+         end
       end
       
       function varargout = plot(obj,varargin)

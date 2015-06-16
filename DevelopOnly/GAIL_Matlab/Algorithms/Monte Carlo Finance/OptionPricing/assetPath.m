@@ -135,6 +135,7 @@ classdef assetPath < brownianMotion
          propList.assetParam_initPrice = obj.assetParam.initPrice;
          propList.assetParam_interest = obj.assetParam.interest;
          propList.assetParam_volatility = obj.assetParam.volatility;
+         propList.assetParam_nAsset = obj.assetParam.nAsset;
       end
 
    end
