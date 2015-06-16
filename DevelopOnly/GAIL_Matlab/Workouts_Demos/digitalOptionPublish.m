@@ -1,8 +1,21 @@
 %% Digital Option in Matlab
 % An option whose payout is fixed after the underlying stock exceeds 
-% the predetermined threshold or strike price. It is the type of option 
+% the predetermined strike price. It is the type of option 
 % in which the payoff can take only two possible outcomes, either 
-% some fixed monetary amount or nothing at all.
+% some fixed monetary amount or nothing at all, the characteristic
+% function below describes it in math terms:
+%
+% \[\mathbb{1}_{[K,\infty)}(S_{(T)})=
+% \begin{cases}
+% 1, & S_{(T)} > K \\
+% 0, & S_{(T)} \leq K\\
+% \end{cases}\]
+% 
+% If the Stock Price at the maturity time \(S_{(T)}\) is above
+% the Strike Price \(K\), the payoff of the option is $1.00. It does not
+% depend if it closes $0.01 or $100.00 above the line, the digital option is 
+% still worth $1.00. If \(S_{(T)}\) closes below the underlying, then the option
+% expires worthless, or nothing at all.
 % 
 % There are two different types of Digital Options called _Cash_ and
 % _Asset_ and both exists for calls and puts.
@@ -25,13 +38,13 @@
 %
 % \(S_0\) - initial stock price
 %
-% _K_ - strike price
+% \(K\) - strike price
 %
-% _T_ - time to maturity
+% \(T\) - maturity time
 %
-% _q_ - dividend rate
+% \(q\) - dividend rate
 %
-% _r_ - risk-free interest rate
+% \(r\) - risk-free interest rate
 %
 % $\sigma$ - volatility
 %
@@ -60,21 +73,21 @@
 % Creating the _input_ structure
 
 %Payoff Parameters
-input.payoffParam.optType = {'digitalcash'};  %Defining the Option Type
-input.payoffParam.putCallType = {'call'};     %Defining the Option Type
-input.payoffParam.strike = 12;                %Defining the Strike Price as $12.00
-input.payoffParam.digitalPay = 0.82;          %Defining the Digital Pay (profit) as 82% of the Investment
+input.payoffParam.optType = {'digitalcash'};   %Defining the Option Type
+input.payoffParam.putCallType = {'call'};      %Defining the Option Type
+input.payoffParam.strike = 12;                 %Defining the Strike Price as $12.00
+input.payoffParam.digitalPay = 1.1;            %Defining the Digital Pay (profit) as 82% of the Investment
 
 %Asset Path Parameters
-input.assetParam.initPrice = 9;               %Defining the Inicial Stock Price as $9.00
-input.assetParam.interest = 0.01;             %Defining Interest Rate as 1%
-input.assetParam.volatility = 0.5;            %Defining the Volatility as 50%
+input.assetParam.initPrice = 9;                %Defining the Inicial Stock Price as $9.00
+input.assetParam.interest = 0.01;              %Defining Interest Rate as 1%
+input.assetParam.volatility = 0.5;             %Defining the Volatility as 50%
 
 %Option Price Parameters
-input.priceParam.relTol = 0.001;               %Defining the Absolute Tolerance as 1%
+input.priceParam.relTol = 0.01;                %Defining the Absolute Tolerance as 1%
 
 %Stochastic Process
-input.timeDim.timeVector = (0.25:0.25:1);     %Defining the Time as four trimesters.
+input.timeDim.timeVector = (0.25:0.25:1);      %Defining the Time as four trimesters.
 
 %%
 % _DigOption1_ is the _optPrice_ class
@@ -103,15 +116,15 @@ tic, mcResult_DigOption1 = genOptPrice(DigOption1), toc
 %Payoff Parameters
 input2.payoffParam.optType = {'digitalasset'}; %Defining the Option Type
 input2.payoffParam.putCallType = {'call'};     %Defining the Option Type
-input2.payoffParam.strike = 15;                %Defining the Strike Price as $15.00
+input2.payoffParam.strike = 5.85;              %Defining the Strike Price as $15.00
 
 %Asset Path Parameters
-input2.assetParam.initPrice = 11;              %Defining the Inicial Stock Price as $11.00
+input2.assetParam.initPrice = 4.50;            %Defining the Inicial Stock Price as $11.00
 input2.assetParam.interest = 0.01;             %Defining Interest Rate as 1%
-input2.assetParam.volatility = 0.65;           %Defining the Volatility as 65%
+input2.assetParam.volatility = 0.30;           %Defining the Volatility as 65%
 
 %Option Price Parameters
-input2.priceParam.relTol = 0.001;               %Defining the Absolute Tolerance as 1%
+input2.priceParam.absTol = 0.01;               %Defining the Absolute Tolerance as 1%
 
 %Stochastic Process
 input2.timeDim.timeVector = [1 2 3];           %Defining the Time as three years.
@@ -130,4 +143,8 @@ tic, mcResult_DigOption2 = genOptPrice(DigOption2), toc
 %% References
 %
 % "Binary Option." Wikipedia. Accessed June 5, 2015.
+%
+% "What Are Binary Options?" Binary Options. Accessed June 16, 2015.
+
+
 
