@@ -8,6 +8,7 @@ tic
 %% Check and initialize parameters
 [f,g,out_param] = cubSobol_g_param(varargin{:});
 
+%% gn is no use here, gm is used as flag of mult cv mode
 [gm,gn]=size(g);
 
 if strcmp(out_param.measure,'normal')
