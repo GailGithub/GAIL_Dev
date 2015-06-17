@@ -1,5 +1,5 @@
 clc;clearvars;
-iter=10;
+iter=5;
 t=0; n=0;   t1=0;t2=0;t3=0;t4=0;    n1=0; n2=0;n3=0;n4=0;
 randtype='SOBOL'; %IID, SOBOL, or LATTICE sampling
 path_param.disctype='BB'; %timestep or BB time differencing
@@ -26,6 +26,20 @@ path_param1.drift=-3; %drift in mean
 path_param1.anti=false; %antithetic variates
 pay_param1.K=110; %strike price
 pay_param1.barrier=250; %barrier price
+
+% param for control variates 2
+path_param2.disctype='BB'; %timestep or BB time differencing
+path_param2.d=8; %number of trading periods
+path_param2.T=8/52; %time to expiry
+path_param2.S0=100; %initial stock price
+path_param2.sig=0.5; %volatility
+path_param2.r=0.015; %interest rate
+path_param2.meanshift=false; %mean shift importance sampling
+path_param2.drift=-3; %drift in mean
+path_param2.anti=false; %antithetic variates
+pay_param2.K=110; %strike price
+pay_param2.barrier=250; %barrier price
+
 r_lag=8;
 abstol=1e-3; %absolute error tolerance
 fprintf('\n abstol=%d \n', abstol);
@@ -35,19 +49,25 @@ fprintf('\n abstol=%d \n', abstol);
 pay_param.paytype=['ameanput']; name='ameanput';
 pay_param.control={}; %no control variates
 f=@(x) payoffx(x, pay_param, path_param);
+
 %hyperbox=[-inf(1,path_param.d);inf(1,path_param.d)];
 
 %% define cv func 
 %pay_param1.paytype=['europut']; name='europut';
-pay_param1.paytype=['gmeanput']; name='gmeanput';
+pay_param1.paytype=['gmeanput']; name1='gmeanput';
 pay_param1.control={}; %no control variates
-%[call, put]= blsprice(path_param1.S0, pay_param1.K, path_param1.r, path_param1.T, path_param1.sig);
-% exact price of europut
-put=exactoptionprice(path_param1, pay_param1, pay_param1.paytype); put=put(1);
-%[call, put]= blsprice(path_param1.S0, pay_param1.K, path_param1.r1, path_param1.T1, path_param1.sig1);
-%put1 = put*exp(path_param1.r1*path_param1.T1 - path_param1.r*path_param1.T);
-g=@(x) payoffx(x, pay_param1,path_param1)-put; % europut as cv
-%g=@(x) payoffx(x, pay_param1,path_param1)-put1; % gmeanput as dv
+pay_param2.paytype=['gmeancall']; name2='gmeancall';
+pay_param2.control={}; %no control variates
+
+
+% exact price of options chosen as cv 
+%put1=exactoptionprice(path_param1, pay_param1, pay_param1.paytype); put1=put1(1);
+%g=@(x) payoffx(x, pay_param1,path_param1)-put1;
+
+% multi cv example
+put1=exactoptionprice(path_param1, pay_param1, pay_param1.paytype); put1=put1(1);
+put2=exactoptionprice(path_param2, pay_param2, pay_param2.paytype); put2=put2(1);
+g={@(x) payoffx(x, pay_param1,path_param1)-put1, @(x) payoffx(x, pay_param2, path_param2)-put2};
 
 
 % run it a couple times first to elimiate start up error
@@ -81,21 +101,21 @@ for i=1:iter
 end
 fprintf('\n Results of cvSobol_a1(L2 reg): \n');
 fprintf('q1=%8.5f  \n',q1);
-fprintf('q1-q=%f  \n',q1-q);
+fprintf('q1-q=%.7f  \n',q1-q);
 fprintf('avg time of cvSobol_a1: %s \n', num2str(t1/iter) ); 
 fprintf('avg n of cvSobol_a1: %s \n', num2str(n1/iter) );
 
-
+%{
 %% cvSobol_a2
 
 % run it a couple times first to elimiate start up error
 for i=1:5
-	cvSobol_a2(f,g,path_param.d, abstol,0,'normal', r_lag);
+	cvSobol_a1(f,g,path_param.d, abstol,0,'normal', r_lag);
 end
 
 % begin testing
 for i=1:iter
-	[q2,out2]=cvSobol_a2(f,g,path_param.d, abstol,0,'normal', r_lag);
+	[q2,out2]=cvSobol_a1(f,g,path_param.d, abstol,0,'normal', r_lag);
 	t2=t2+out2.time;
     n2=n2+out2.n;
 end
@@ -105,7 +125,7 @@ fprintf('q2-q1=%f, q2-q=%f,  \n',q2-q1, q2-q);
 fprintf('avg time of cvSobol_a2: %s \n', num2str(t2/iter) ); 
 fprintf('avg n of cvSobol_a2: %s \n', num2str(n2/iter) );
 
-%{
+
 %% cvSobol_a3
 
 % run it a couple times first to elimiate start up error

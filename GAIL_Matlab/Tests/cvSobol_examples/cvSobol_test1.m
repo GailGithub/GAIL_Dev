@@ -27,10 +27,10 @@ t=0; n=0;   t1=0;t2=0;t3=0;t4=0;    n1=0; n2=0;n3=0;n4=0;
 f=@(x) x(:,1)+ x(:,2).^2 +0.01*x(:,3).^3; g={@(x) x(:,1)-1/2, @(x) x(:,2).^2- 1/3}; d=3; 
 % comparison between multi cv and single cv
 %f=@(x) x(:,1)+ x(:,2).^2 +0.01*x(:,3).^3; g=@(x) (x(:,1)-1/2)+ (x(:,2).^2- 1/3); d=3; 
-
+ 
 r_lag=0;
 abstol=1e-6;
-
+fprintf('\n abstol: %d \n', abstol);
 %% cubSobol
 % run it a couple times first to stablize it 
 for i=1:5
@@ -44,7 +44,7 @@ for i=1:iter
     n=n+out.n;
 end
 fprintf('\n Results of CubSobol_g: \n');
-fprintf('q=%d  \n',q);
+fprintf('q=%.10f \n',q);
 fprintf('avg time of cubSobol: %s \n', num2str(t/iter) ); 
 fprintf('avg n of cubSobol: %s \n', num2str(n/iter) );
 
@@ -63,7 +63,8 @@ for i=1:iter
     n1=n1+out1.n;
 end
 fprintf('\n Results of cvSobol_a1(L2 Reg): \n');
-fprintf('q1=%d  \n',q1);
+fprintf('q1=%.10f  \n',q1);
+fprintf('q1-q=%d  \n',q1-q);
 fprintf('avg time of cvSobol_a1: %s \n', num2str(t1/iter) ); 
 fprintf('avg n of cvSobol_a1: %s \n', num2str(n1/iter) );
 
