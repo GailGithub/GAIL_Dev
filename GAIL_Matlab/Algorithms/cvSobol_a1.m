@@ -137,10 +137,10 @@ for m=out_param.mmin+1:out_param.mmax
    mnext=m-1;
    nnext=2^mnext;
    xnext=sobstr(n0+(1:nnext),1:out_param.d); 
-   if gn==1
-	   xnextG=xnext;
+   if strcmp(out_param.measure,'normal') & gn>1
+   	   xnextG = gail.stdnorminv(xnext);
    else
-	   xnextG=gail.stdnorminv(xnext);
+   	   xnextG = xnext;
    end
    n0=n0+nnext;
    if gn==1
