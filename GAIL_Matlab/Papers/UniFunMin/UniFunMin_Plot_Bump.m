@@ -21,6 +21,9 @@ if usejava('jvm') || MATLABVERSION <= 7.12
   plot(t,y,'LineWidth',2)
   xlim([0 1])
   ylim([-1.2 0.2])
+  title('An example of the bump test functions')
+  xlabel('X');ylabel('Y');
+  
   
   %% Save output
   gail.save_eps('UniFunMinOutput', 'UniFunMinPlotBump');
