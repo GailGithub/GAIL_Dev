@@ -393,9 +393,9 @@ while(max(err) > abstol)
     else
         break;
     end;
-    if(iter> out_param.maxiter)
+    if(iter==out_param.maxiter)
         out_param.exit(2) = 1;
-        warning('GAIL:funappx_g:exceediter',' Iteration exceeds max number of iterations ')
+        warning('GAIL:funappx_g:exceediter',' Iteration will exceed max number of iterations ')
         break;
     end;
 end;

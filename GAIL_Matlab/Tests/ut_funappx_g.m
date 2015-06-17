@@ -158,7 +158,7 @@ classdef ut_funappx_g < matlab.unittest.TestCase
             f = @(x) x.^2;
             in_param.maxiter = 2;
             [~, result] = testCase.verifyWarning(@()funappx_g(f,in_param),'GAIL:funappx_g:exceediter');
-            testCase.verifyLessThan(result.maxiter,result.iter);
+            testCase.verifyEqual(result.maxiter,result.iter);
         end
         
          function funappx_gOnpointsoflinear(testCase)
