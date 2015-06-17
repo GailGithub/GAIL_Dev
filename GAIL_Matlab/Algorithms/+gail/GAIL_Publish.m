@@ -12,7 +12,7 @@ if usejava('jvm')
     
     %% generate GAIL Documentation in HTML format
     if ifGenerateHtml
-      opts.stylesheet = strcat(GAILPATH,'Algorithms',filesep','+gail',filesep,'mxdom2mathjax.xsl');
+      opts.stylesheet = strcat(GAILPATH,'Documentation',filesep,'mxdom2mathjaxbigfont.xsl');
       delete(strcat(GAILPATH,'Documentation',filesep,'html',filesep,'*.png'))
       for i=1:length(mfile_list),
         publish(mfile_list{i}, opts);

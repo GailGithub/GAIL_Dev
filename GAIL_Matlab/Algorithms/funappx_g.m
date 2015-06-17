@@ -136,10 +136,11 @@ function [fappx,out_param]=funappx_g(varargin)
 %             nmax: 10000000
 %            ninit: 18
 %             exit: [2x1 logical]
-%             iter: 12
-%          npoints: 34817
-%           errest: 5.9398e-08
-%            nstar: [1x2048 double]
+%             iter: 11 
+%          npoints: 17409
+%           errest: 8.7998e-08
+%            nstar: [1x1024 double]
+%            bytes: 1433962
 %
 %
 %   Example 2:
@@ -161,8 +162,9 @@ function [fappx,out_param]=funappx_g(varargin)
 %             exit: [2x1 logical]
 %             iter: 10
 %          npoints: 8705
-%           errest: 9.5037e-07
+%           errest: 3.5199e-07
 %            nstar: [1x512 double]
+%            bytes: 719042
 %
 %
 %   Example 3:
@@ -183,10 +185,11 @@ function [fappx,out_param]=funappx_g(varargin)
 %             nmax: 10000000
 %            ninit: 19
 %             exit: [2x1 logical]
-%             iter: 12
-%          npoints: 36865
-%           errest: 3.1274e-07
-%            nstar: [1x2048 double]
+%             iter: 11
+%          npoints: 18433
+%           errest: 4.8114e-07
+%            nstar: [1x1024 double]
+%            bytes: 1512218
 %
 %
 %   See also INTERP1, GRIDDEDINTERPOLANT, INTEGRAL_G, MEANMC_G, CUBMC_G, FUNMIN_G
@@ -260,7 +263,8 @@ while(max(err) > abstol)
     iter = iter + 1;
     % length of each subinterval
     len = x(index(2:end))-x(index(1:end-1));
-    reshapey = reshape(y(1:end-1),ninit - 1, (index(end) - 1)/(ninit -1));
+    %reshapey = reshape(y(1:end-1),ninit - 1, (index(end) - 1)/(ninit -1));
+    reshapey = reshape(y(1:end-1),ninit - 1, length(index)-1);
     diffy = diff([reshapey;y(index(2:end))]);
     
     %approximate the weaker norm of input function at different subinterval
@@ -270,7 +274,8 @@ while(max(err) > abstol)
     fn = (ninit-1)^2./(len.^2).*max(abs(diff(diffy)),[],1);
     %update cone condition every iteration
     ntemp=max(ceil(out_param.nhi*(out_param.nlo/out_param.nhi).^(1./(1+len))),3);
-    nstar = ntemp - 2;
+%   nstar = ntemp - 2;
+    nstar = floor(ntemp/2);
     
 %     gn(gn<eps/2)=0;
 %     fn(fn<eps/2)=0;
@@ -292,7 +297,8 @@ while(max(err) > abstol)
         warning('GAIL:funappx_g:exceedbudget',' funappx_g attempted to exceed the cost budget. The answer may be unreliable.')
         break;
     end;
-    if max(err) > abstol;
+    %if max(err) > abstol;
+    if counterr >= 1;
         %flag sub interval error not satisfy error tolerance 1 in whbad
         whbad = err > abstol;
         %add index for bad sub interval
@@ -373,22 +379,23 @@ while(max(err) > abstol)
         err = newerr;
         
         %upadte index w.p.t x after splitting
+        index = 1:(ninit-1):length(err)*(ninit-1)+1;
         %update index of the original endpoints 
-        index(2:end) = index(2:end) + badcumsum*(ninit-1);
-        %obtain the index of new endpoins after splitting
-        %if one interval not splitted, will get the same index as in
-        %previous line
-        indexbeg = index(1:end-1) + whbad*(ninit-1);
-        %combine two index together and emlinate duplicate indices
-        indexnew = [index(1:end-1); indexbeg];
-        indexnew = indexnew(:)';
-        index = unique([indexnew index(end)]);
+%         index(2:end) = index(2:end) + badcumsum*(ninit-1);
+%         %obtain the index of new endpoins after splitting
+%         %if one interval not splitted, will get the same index as in
+%         %previous line
+%         indexbeg = index(1:end-1) + whbad*(ninit-1);
+%         %combine two index together and emlinate duplicate indices
+%         indexnew = [index(1:end-1); indexbeg];
+%         indexnew = indexnew(:)';
+%         index = unique([indexnew index(end)]);
     else
         break;
     end;
-    if(iter> out_param.maxiter)
+    if(iter==out_param.maxiter)
         out_param.exit(2) = 1;
-        warning('GAIL:funappx_g:exceediter',' Iteration exceeds max number of iterations ')
+        warning('GAIL:funappx_g:exceediter',' Iteration will exceed max number of iterations ')
         break;
     end;
 end;
@@ -396,6 +403,7 @@ out_param.iter = iter;
 out_param.npoints = index(end);
 out_param.errest = max(err);
 out_param.nstar = nstar;
+%out_param.index = index;
 %add compute memory parameter
 w = whos;
 out_param.bytes = sum([w.bytes]);

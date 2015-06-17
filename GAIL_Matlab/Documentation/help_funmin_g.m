@@ -85,15 +85,9 @@
 % * out_param.npoints --- number of points needed to reach the guaranteed
 %  absolute error tolerance or the guaranteed X tolerance
 %
-% <html>
-% <ul type="square">
-%  <li>out_param.exitflag --- the state of program when exiting:</li>
-%   <ul type="circle">
-%    <li>0  Success</li>
-%    <li>1  Number of points used is greater than out_param.nmax</li>
-%   </ul>
-% </ul>
-% </html>
+% * out_param.exitflag --- the state of program when exiting
+%           0  Success
+%           1  Number of points used is greater than out_param.nmax
 %
 % * out_param.errest --- estimation of the absolute error bound
 %
@@ -109,21 +103,21 @@
 %
 %% Guarantee
 %    
-% If the function to be minimized, $f$ satisfies the cone condition
+% If the function to be minimized, \(f\) satisfies the cone condition
 %
-% $$\|f''\|_\infty \le  \frac {\tau}{b-a}\left\|f'-\frac{f(b)-f(a)}{b-a}
-% \right\|_\infty,$$
+% \[\|f''\|_\infty \le  \frac {\tau}{b-a}\left\|f'-\frac{f(b)-f(a)}{b-a}
+% \right\|_\infty,\]
 %      
-% then the $\mathrm{fmin}$ output by this algorithm is guaranteed to
+% then the \(\mathrm{fmin}\) output by this algorithm is guaranteed to
 % satisfy
 %
-% $$| \min f-\mathrm{fmin}| \le \mathrm{abstol},$$
+% \[| \min f-\mathrm{fmin}| \le \mathrm{abstol},\]
 %
 % or
 %
-% $$\mathrm{volumeX} \le \mathrm{TolX},$$
+% \[\mathrm{volumeX} \le \mathrm{TolX},\]
 %
-% provided the flag $\mathrm{exitflag} = 0.$
+% provided the flag \(\mathrm{exitflag} = 0.\)
 %
 %
 %% Examples
