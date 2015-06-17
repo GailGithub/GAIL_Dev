@@ -72,7 +72,7 @@ classdef assetPath < brownianMotion
       % Set the properties of the payoff object
       function set.assetParam(obj,val)
          if isfield(val,'pathType') %data for type of option
-            assert(any(strcmp(val.optType,obj.allowPathType)))
+            assert(any(strcmp(val.pathType,obj.allowPathType)))
             obj.assetParam.pathType=val.pathType; %row
          end
          if isfield(val,'nAsset') %data for number of assets

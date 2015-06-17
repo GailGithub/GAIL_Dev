@@ -343,7 +343,7 @@ classdef optPayoff < assetPath
          whgmean = strcmp(obj.payoffParam.optType, 'gmean');
          whgmeancall = whgmean & whcall;
          whgmeanput = whgmean & whput;
-         if any(whcall | whput); 
+         if any(whgmean) 
             Tbar=(1+1/obj.timeDim.nSteps) * obj.timeDim.endTime / 2; 
             sigmabar=obj.assetParam.volatility * sqrt((2 + 1 ...
                / obj.timeDim.nSteps) / 3);
@@ -371,12 +371,13 @@ classdef optPayoff < assetPath
             val(whbasketput) = basketput;
          end
          
+           
          function [callprice,putprice]=eurogbmprice(S0,r,T,sigma,K)
             priceratio = K * exp(-r * T) ./ S0;
             xbig = log(priceratio) ./ (sigma * sqrt(T)) + sigma * sqrt(T)/2;
             xsmall = log(priceratio) ./ (sigma * sqrt(T)) - sigma * sqrt(T)/2;
             putprice = S0 .* (priceratio.*normcdf(xbig) - normcdf(xsmall));
-            callprice = putprice + S0 * (1-priceratio);        
+            callprice = putprice + S0 .* (1-priceratio);        
          end
          
          function [digitcashcall,digitassetcall,digitcashput, ...
