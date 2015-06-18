@@ -41,7 +41,7 @@ pay_param2.K=110; %strike price
 pay_param2.barrier=250; %barrier price
 
 r_lag=8;
-abstol=1e-3; %absolute error tolerance
+abstol=1e-4; %absolute error tolerance
 fprintf('\n abstol=%d \n', abstol);
 
 %% define target func 
@@ -65,9 +65,9 @@ pay_param2.control={}; %no control variates
 %g=@(x) payoffx(x, pay_param1,path_param1)-put1;
 
 % multi cv example
-put1=exactoptionprice(path_param1, pay_param1, pay_param1.paytype); put1=put1(1);
-put2=exactoptionprice(path_param2, pay_param2, pay_param2.paytype); put2=put2(1);
-g={@(x) payoffx(x, pay_param1,path_param1)-put1, @(x) payoffx(x, pay_param2, path_param2)-put2};
+put=exactoptionprice(path_param1, pay_param1, pay_param1.paytype); put=put(1);
+call=exactoptionprice(path_param2, pay_param2, pay_param2.paytype); call=call(1);
+g={@(x) payoffx(x, pay_param1,path_param1)-put, @(x) payoffx(x, pay_param2, path_param2)-call};
 
 
 % run it a couple times first to elimiate start up error
@@ -105,17 +105,17 @@ fprintf('q1-q=%.7f  \n',q1-q);
 fprintf('avg time of cvSobol_a1: %s \n', num2str(t1/iter) ); 
 fprintf('avg n of cvSobol_a1: %s \n', num2str(n1/iter) );
 
-%{
+
 %% cvSobol_a2
 
 % run it a couple times first to elimiate start up error
 for i=1:5
-	cvSobol_a1(f,g,path_param.d, abstol,0,'normal', r_lag);
+	cvSobol_a1(f,g,path_param.d, abstol,0,'normal', r_lag, 'L2', 'T');
 end
 
 % begin testing
 for i=1:iter
-	[q2,out2]=cvSobol_a1(f,g,path_param.d, abstol,0,'normal', r_lag);
+	[q2,out2]=cvSobol_a1(f,g,path_param.d, abstol,0,'normal', r_lag, 'L2', 'T');
 	t2=t2+out2.time;
     n2=n2+out2.n;
 end
@@ -125,7 +125,7 @@ fprintf('q2-q1=%f, q2-q=%f,  \n',q2-q1, q2-q);
 fprintf('avg time of cvSobol_a2: %s \n', num2str(t2/iter) ); 
 fprintf('avg n of cvSobol_a2: %s \n', num2str(n2/iter) );
 
-
+%{
 %% cvSobol_a3
 
 % run it a couple times first to elimiate start up error
