@@ -232,16 +232,33 @@ for m=out_param.mmin+1:out_param.mmax
    end
    out_param.n=2^m;
    xpts=sobstr(1:2^m, 1:out_param.d);
-   temp = (2^(m-r_lag-1)+1:2^m);
-   A=g(xpts);b=f(xpts);
-   if strcmp(out_param.reg,'L2')
-	   beta=A(temp)\b(temp);
+   if strcmp(out_param.measure,'normal') & gn>1
+   	   xptsG = gail.stdnorminv(xpts);
    else
-   	   beta=L1Reg(A(temp), b(temp));
+   	   xptsG = xpts;
    end
-   f1=@(x) f(x) - g(x)*beta;
-   y=f1(xpts); yval=y;
-   
+   b = f(xpts);
+   temp =(2^(m-r_lag-1)+1:2^m)';
+   if gn == 1
+   	   A = g(xptsG);
+   else
+   	   gval = cellfun(@(c) c(xptsG), g, 'UniformOutput', false); A = cell2mat(gval);
+   end
+   % chose one from two computing methods
+   if strcmp(out_param.reg,'L2')
+   	   beta=A(temp,temp1)\b(temp);
+   else
+   	   beta=L1Reg(A(temp,temp1), b(temp));
+   end
+   % redefine func with cv
+   if gn==1
+   	   f1=@(x) f(x) - g(x)*beta;
+   	   y=f1(xpts); yval=y;
+   else
+   	   y = b - A*beta; yval = y;
+   end
+   out_param.beta=beta;
+
    %% Compute initial FWT on next points
    for l=0:m-1
       nl=2^l;
