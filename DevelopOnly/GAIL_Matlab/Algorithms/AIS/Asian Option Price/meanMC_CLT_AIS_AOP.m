@@ -85,7 +85,7 @@ out_param.nSig = nSig;
 
 tstart=tic; %starts the clock.
 
-b=0.2*[-1,0,1];%estimated values for standard deviation.
+b=0.5*[-1,0,1]/d;%estimated values for standard deviation.
 
 %z is a d dimensional normal random vector
 %b is the shift in the mean

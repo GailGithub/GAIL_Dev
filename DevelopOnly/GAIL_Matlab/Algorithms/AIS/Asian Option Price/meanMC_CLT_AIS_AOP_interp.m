@@ -55,7 +55,7 @@ if nargin < 10
       if nargin < 8
          alpha = 0.01; %uncertainty
          if nargin < 7
-            abstol = 0.01; %absolute error tolerance
+            abstol = 0.002; %absolute error tolerance
             if nargin < 6
                 T = 1;
                 if nargin < 5
@@ -85,7 +85,7 @@ out_param.nSig = nSig;
 
 tstart=tic; %starts the clock.
 
-b=[-1,0,1]./d;%estimated values for standard deviation.
+b=[-4,0,0.5]./d;%estimated values for standard deviation.
 
 %z is a d dimensional normal random vector
 %b is the shift in the mean
@@ -111,12 +111,14 @@ for i=1:numel(b)
     b_value=b(i);    
     var_b(i)=var(fx(z,b_value));
 end
+var_b
 
 %parabolic interpolation:
 A=[b(1).^2 b(1) 1; b(2).^2 b(2) 1; b(3).^2 b(3) 1];
 p=A\var_b';
 fmin=@(x)p(3)+p(2)*x+p(1)*(x.^2);
-[x,S_var]=fminbnd(fmin,0,1);
+[x]=fminbnd(fmin,b(1),b(3))
+var_bx=var(fx(z,x))
 
 %%
 % 
@@ -124,9 +126,16 @@ fmin=@(x)p(3)+p(2)*x+p(1)*(x.^2);
 % <table border=1><tr><td>one</td><td>two</td></tr></table>
 % </html>
 % 
-%[S_var,S_pos]=min(var_b)
-out_param.var = S_var; %calculate the sample variance--stage 1
-out_param.b_value=x;%best variance
+[S_var,S_pos]=min(var_b);
+if var_bx < S_var
+    out_param.b_value = x;
+    out_param.var = var_bx;
+else
+    out_param.b_value = b(S_pos);
+    out_param.var = S_var;
+end
+%out_param.var = min(S_var, var_bx); %calculate the sample variance--stage 1
+%out_param.b_value = x;%best variance
 sig0 = sqrt(out_param.var); %standard deviation
 sig0up = out_param.fudge.*sig0; %upper bound on the standard deviation
 nmu = max(1,ceil((-norminv(alpha)*sig0up/abstol).^2)); 
