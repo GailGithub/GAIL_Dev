@@ -86,7 +86,7 @@ out_param.alpha = alpha; %save the input parameters to a structure
 out_param.fudge = fudge;
 out_param.nSig = nSig;
 
-c_p=input('\n Type "1" for PUT or "2" for CALL:\n');
+c_p=input('\n Type "1" for PUT or "2" for CALL:\n\n');
 
 tstart=tic; %starts the clock.
 
@@ -95,13 +95,19 @@ deltaT = T./d;
 b=B./d;%estimated values for standard deviation.
 
 if c_p == 1
+    
     SK=@(z,bval) max(0,K-mean((So.*exp(cumsum((r-((sigma.^2)./2)).*deltaT + ...
     sigma.*sqrt(deltaT).*(z-bval),2))),2));
+
 elseif c_p == 2
+    
         SK=@(z,bval) max(mean(So.*exp(cumsum((r-((sigma.^2)./2)).*deltaT + ...
         sigma.*sqrt(deltaT).*(z-bval),2)),2)-K,0);
+    
     else
+        
         error('Invalid input')
+        
 end
            
 
