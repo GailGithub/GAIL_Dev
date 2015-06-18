@@ -24,13 +24,15 @@ t=0; n=0;   t1=0;t2=0;t3=0;t4=0;    n1=0; n2=0;n3=0;n4=0;
 
 % multi cv example 2: dim > 1 
 
-f=@(x) x(:,1)+ x(:,2).^2 +0.01*x(:,3).^3; g={@(x) x(:,1)-1/2, @(x) x(:,2).^2- 1/3}; d=3; 
+f=@(x) 10*x(:,1) -5*x(:,2).^2 +1*x(:,3).^3; g={@(x) x(:,1)-1/2, @(x) x(:,2).^2- 1/3}; d=3; 
+q_true=10/3+1/4;
 % comparison between multi cv and single cv
 %f=@(x) x(:,1)+ x(:,2).^2 +0.01*x(:,3).^3; g=@(x) (x(:,1)-1/2)+ (x(:,2).^2- 1/3); d=3; 
  
 r_lag=0;
 abstol=1e-6;
 fprintf('\n abstol: %d \n', abstol);
+
 %% cubSobol
 % run it a couple times first to stablize it 
 for i=1:5
@@ -45,13 +47,13 @@ for i=1:iter
 end
 fprintf('\n Results of CubSobol_g: \n');
 fprintf('q=%.10f \n',q);
+fprintf('q-q_true=%d  \n',q-q_true);
 fprintf('avg time of cubSobol: %s \n', num2str(t/iter) ); 
 fprintf('avg n of cubSobol: %s \n', num2str(n/iter) );
 
 
 %% cvSobol_a1
 
-% run it a couple times first to make it stable 
 for i=1:5
 	cvSobol_a1(f,g,d,abstol,0,'uniform');
 end
@@ -64,14 +66,13 @@ for i=1:iter
 end
 fprintf('\n Results of cvSobol_a1(L2 Reg): \n');
 fprintf('q1=%.10f  \n',q1);
-fprintf('q1-q=%d  \n',q1-q);
+fprintf('q1-q_true=%d  \n',q1-q_true);
 fprintf('avg time of cvSobol_a1: %s \n', num2str(t1/iter) ); 
 fprintf('avg n of cvSobol_a1: %s \n', num2str(n1/iter) );
 
-%{
+
 %% cvSobol_a2
 
-% run it a couple times first to elimiate start up error
 for i=1:5
 	cvSobol_a1(f,g,d,abstol,0,'uniform',r_lag, 'L2', 'T');
 end
@@ -83,14 +84,14 @@ for i=1:iter
     n2=n2+out2.n;
 end
 fprintf('\n Results of cvSobol_a2(L2 Reg with updates): \n');
-fprintf('q2=%d  \n',q2);
+fprintf('q2=%.10f  \n',q2);
+fprintf('q2-q_true=%d  \n',q2-q_true);
 fprintf('avg time of cvSobol_a2: %s \n', num2str(t2/iter) ); 
 fprintf('avg n of cvSobol_a2: %s \n', num2str(n2/iter) );
 
-
+%{
 %% cvSobol_a3
 
-% run it a couple times first to elimiate start up error
 for i=1:5
 	cvSobol_a1(f,g,d,abstol,0,'uniform', r_lag, 'L1');
 end
@@ -109,7 +110,6 @@ fprintf('avg n of cvSobol_a3: %s \n', num2str(n3/iter) );
 
 %% cvSobol_a4
 
-% run it a couple times first to elimiate start up error
 for i=1:5
 	cvSobol_a4(f,g,d,abstol,0,'uniform', r_lag);
 end
