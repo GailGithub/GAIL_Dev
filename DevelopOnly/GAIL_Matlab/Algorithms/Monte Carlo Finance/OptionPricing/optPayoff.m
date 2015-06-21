@@ -172,9 +172,9 @@ classdef optPayoff < assetPath
 
          if any(whbasketcall) %basket option
              tempPay(:,whbasketcall) ...
-               =  max(weight * paths(:,obj.timeDim.nSteps) ...
-               - obj.payoffParam.strike, 0) ...
-               .* exp(- obj.assetParam.interest .* obj.timeDim.endTime);
+               =  max(paths(:,obj.timeDim.nSteps*(1:obj.assetParam.nAsset)) ...
+               * weight' - obj.payoffParam.strike, 0) ...
+               * exp(- obj.assetParam.interest .* obj.timeDim.endTime);
          end
          
          whbasketput= strcmp(obj.payoffParam.optType,'basket') ...
@@ -358,18 +358,6 @@ classdef optPayoff < assetPath
             val(whgmeancall) = gmeancall;
             val(whgmeanput) = gmeanput;
          end
- 
-          %Pricing Basket Option
-         whbasket = strcmp(obj.payoffParam.optType, 'basket');
-         whcall = strcmp(obj.payoffParam.putCallType, 'call');
-         whput = strcmp(obj.payoffParam.putCallType, 'put');
-         whbasketcall = whbasket & whcall;
-         whbasketput = whbasket & whput;
-         if any(whbasket); 
-            [basketcall,basketput] = basketgbmprice();
-            val(whbasketcall) = basketcall;
-            val(whbasketput) = basketput;
-         end
          
            
          function [callprice,putprice]=eurogbmprice(S0,r,T,sigma,K)
@@ -389,11 +377,7 @@ classdef optPayoff < assetPath
             digitassetcall = S0.*exp(-q*T).*normcdf(digitpriceratio1);
             digitassetput = S0.*exp(-q*T).*normcdf(-digitpriceratio1);
          end
- 
-         function [basketcall,basketput] = basketgbmprice()
-            basketcall=1;
-            basketput=1;
-         end
+
       end
       
       function varargout = plot(obj,varargin)
@@ -429,7 +413,7 @@ classdef optPayoff < assetPath
          propList.payoffParam_optType = obj.payoffParam.optType;
          propList.payoffParam_putCallType = obj.payoffParam.putCallType;
          propList.payoffParam_strike = obj.payoffParam.strike;
-             if numel(obj.payoffParam.digitalPay)
+             if any(strncmp(obj.payoffParam.optType,'digital',7))
                 propList.payoffParam_digitalPay = obj.payoffParam.digitalPay;
              end
          propList.exactPrice = obj.exactPrice;
