@@ -37,14 +37,13 @@ classdef latticeSet<handle
        %dim := number of dimensions:
         dim = 2;
        %shift := add a normal random vector to all points in the sample.
-        shift = true;
-        shiftValue 
+        shift = true; 
        %index := starting point
         index=0;
     end
     
     properties (Dependent = true)
-        depGenVector
+        shiftValue 
     end
     
     
@@ -69,6 +68,8 @@ classdef latticeSet<handle
         
         
         function lattice = genLattice(obj,N)%Generates the Lattice set based the latticeSet object and the amount of points required
+            assert(obj.dim<=numel(obj.genVector), ...
+               'dim must be no greater than the number of elements in the generating vector')
             obj.index = vanDerCorput(obj.index,length(obj.index)+N)
             lattice = obj.index(length(obj.index)-N+1:length(obj.index))*obj.genVector(1:obj.dim);
             if obj.shift
@@ -76,28 +77,24 @@ classdef latticeSet<handle
             end
             lattice = mod(lattice,1);
         end
-       
-        
         
         function set.dim(obj,val)
             validateattributes(val,{'numeric'},{'scalar','positive','integer'})
-            if val > length(obj.genVector)
-                disp('first assign to the object a generating vector with length greater or equal to the number of dimensions desired');
-            else 
-                obj.dim = val;
-                obj.shiftValue = rand(1,obj.dim);
-            end
+            obj.dim = val;
         end 
         
-        function obj = funcao2(obj,val)
+        function set.shiftValue(obj,~)
+            obj.shiftValue = rand(1,obj.dim);
+        end 
+        
+        function set.genVector(obj,val)
+            validateattributes(val,{'numeric'},{'vector','integer'})
             obj.genVector=val;
-            if obj.dim > length(obj.genVector)
-                funcao(obj,length(obj.genVector));
-            end
         end 
         
-        function obj = funcao3(obj,val)
-            obj.shift=val
+        function set.shift(obj,val)
+            validateattributes(val,{'logical'},{'scalar'})
+            obj.shift=val;
             
         end
             
