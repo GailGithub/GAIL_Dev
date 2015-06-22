@@ -80,19 +80,18 @@ meanMCabs_g_abbr = function (Yrand = function(n) {runif(n)^2},abstol=0.01,alpha=
   logsqrtnCLT=log(qnorm(1-alpha1/2)/toloversig);
   nmu=min(ncheb,ceiling(exp(2*fzero(BEfun,logsqrtnCLT)$x)));
   #get the min n (used to estimate mu) by using cheb and BEfun
+  if(nmu>=nMax) {message("Program stopped due to the guarantee needing over 1e8 samples")}
   stopifnot(nmu<nMax) 
   #don't exceed sample budget
   tmu=mean(Yrand(nmu)); #estimated mean
   out_param.ntot=nSig+nmu; #total samples required
   out_param.time=proc.time()-tstart; #elapsed time
   out_param.time=unname(out_param.time)
-  return(c("tmu"= tmu,"out_param.ntot" = out_param.ntot,"out_param.var" = out_param.var,"out_param.time" = out_param.time[3],out_param.nSig))
+  return(c("tmu"= tmu,"out_param.ntot" = out_param.ntot,"out_param.var" = out_param.var,"out_param.time" = out_param.time[3]))
 }
 
 
-meanMC_g_param = function(Yrand,abstol,nSig,alpha,fudge) {
-  
-  check.integer <- function(x) {x == as.integer(x)}
+meanMC_g_param = function(Yrand,abstol,alpha,nSig,fudge) {
   
   
   if(!is.function(Yrand)) {message("Yrand must be a function - Now R is using default Yrand=function(n) {runif(n)^2}")
@@ -101,7 +100,7 @@ meanMC_g_param = function(Yrand,abstol,nSig,alpha,fudge) {
   if(abstol<=0) {message("Absolute error tolerance should be greater than 0 - Now R is using default absolute error tolerance = 1e-2.")
                  abstol = 1e-2
   }
-  if(check.integer(nSig)==FALSE | nSig<30) {message("The number nSig should a positive integer at least 30 - We will use the default value 1e4.")
+  if(nSig%%1!=0 | nSig<30) {message("The number nSig should be a positive integer at least 30 - We will use the default value 1e2.")
                                             nSig = 1e2
   }
   if(alpha<=0 | alpha>=1) {message("The uncertainty should be between 0 and 1 - We will use the default value 0.01.")
