@@ -5,8 +5,8 @@ function [succnowarn, succwarn,pfin]=workout_integral_g(nrep,nmax,abstol)
 format long e
 close all;
 tstart = tic;
-warning('off','MATLAB:integral_g:exceedbudget');
-warning('off','MATLAB:integral_g:peaky');
+warning('off','GAIL:integral_g:exceedbudget');
+warning('off','GAIL:integral_g:peaky');
 
 %% Program parameters
 % in_param.nmax=1e7; %maximum number of sample points
@@ -96,8 +96,8 @@ time = toc(tstart);
 gail.save_mat('WorkoutIntegralOutput', 'WorkoutIntegralTest',true, nrep,time,...
         succnowarn,succwarn,failnowarn,failwarn);
 
-warning('on','MATLAB:integral_g:exceedbudget');
-warning('on','MATLAB:integral_g:peaky');
+warning('on','GAIL:integral_g:exceedbudget');
+warning('on','GAIL:integral_g:peaky');
 
 %% The following output was obtained on 2013-August-06 by
 %  from the data in

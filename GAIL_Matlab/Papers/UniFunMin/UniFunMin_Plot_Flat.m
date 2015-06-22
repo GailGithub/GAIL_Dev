@@ -17,6 +17,8 @@ if usejava('jvm') || MATLABVERSION <= 7.12
   y=f(t);
   plot(t,f(t),'LineWidth',2)
   xlim([0 1])
+  title('Example of a flat function')
+  xlabel('X');ylabel('Y');
   
   gail.save_eps('UniFunMinOutput', 'UniFunMinPlotFlat');
 end
