@@ -5,6 +5,7 @@
 *.gen
 *.html
 *.mat
+*.mexw64
 *.mltbx
 *.o
 *.out

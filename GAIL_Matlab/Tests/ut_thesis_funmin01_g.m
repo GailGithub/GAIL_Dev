@@ -39,17 +39,17 @@ classdef ut_thesis_funmin01_g < matlab.unittest.TestCase
     
     function test_UniFunMin_Plot_Bump(testCase)
         a=0.03; z=0.4;
-        y=UniFunMin_Plot_Bump(a,z);
+        UniFunMin_Plot_Bump(a,z);
     end
     
     function test_UniFunMin_Plot_TwoExtreme(testCase)
         a1=0.3; a2=0.75;
-        y=UniFunMin_Plot_TwoExtreme(a1,a2);
+        UniFunMin_Plot_TwoExtreme(a1,a2);
     end
     
     function test_UniFunMin_Plot_Flat(testCase)
         a=0.5; b=1;
-        y=UniFunMin_Plot_Flat(a,b);
+        UniFunMin_Plot_Flat(a,b);
     end
           
   end
