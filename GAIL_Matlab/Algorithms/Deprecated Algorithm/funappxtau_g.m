@@ -124,7 +124,7 @@ function [fappx,out_param]=funappxtau_g(varargin)
 [f, out_param] = funappxtau_g_param(varargin{:});
 MATLABVERSION= gail.matlab_version;
 if MATLABVERSION >= 8.3
-    warning('off', 'MATLAB:interp1:ppGriddedInterpolant');
+    warning('off', 'GAIL:interp1:ppGriddedInterpolant');
 end;
 
 %% main algorithm
@@ -184,11 +184,11 @@ end;
 % Check cost budget flag
 if out_param.exceedbudget == 1;
     n = 1 + (n-1)/m*floor((out_param.nmax-1)*m/(n-1));
-    warning('MATLAB:funappxtau_g:exceedbudget','funappx_g attemped to exceed the cost bugdet. The answer may be unreliable.')
+    warning('GAIL:funappxtau_g:exceedbudget','funappx_g attemped to exceed the cost bugdet. The answer may be unreliable.')
 end;
 
 if out_param.tauchange == 1;
-    warning('MATLAB:funappxtau_g:peaky','This function is peaky relative to ninit. You may wish to increase ninit for similiar functions.')
+    warning('GAIL:funappxtau_g:peaky','This function is peaky relative to ninit. You may wish to increase ninit for similiar functions.')
 end;
 
 out_param.ballradius = 2*out_param.abstol*(out_param.nmax-2)*(out_param.nmax...
@@ -199,7 +199,7 @@ y1 = f(x1);
 fappx = @(x) interp1(x1,y1,x,'linear');
 
 if MATLABVERSION >= 8.3
-    warning('on', 'MATLAB:interp1:ppGriddedInterpolant');
+    warning('on', 'GAIL:interp1:ppGriddedInterpolant');
 end;
 
 

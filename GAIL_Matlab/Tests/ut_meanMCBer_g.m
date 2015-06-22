@@ -27,7 +27,7 @@ classdef ut_meanMCBer_g < matlab.unittest.TestCase
             in_param.abstol = -1e-2;
             pHat = testCase.verifyWarning(@()meanMCBer_g...
                 (@(n) (rand(n,1)<p).^2,...
-                in_param),'MATLAB:meanMCBer_g:abstolneg');
+                in_param),'GAIL:meanMCBer_g:abstolneg');
             actualerr = abs(pHat-p);
             testCase.verifyLessThanOrEqual(actualerr,abs(in_param.abstol));
         end

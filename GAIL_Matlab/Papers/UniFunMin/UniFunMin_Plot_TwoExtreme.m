@@ -18,6 +18,8 @@ if usejava('jvm') || MATLABVERSION <= 7.12
   plot(t,y,'LineWidth',2)
   xlim([0 1])
   ylim([-6 1])
+  title('A function with two local minimum points')
+  xlabel('X');ylabel('Y');
   
   gail.save_eps('UniFunMinOutput', 'UniFunMinTwoExtreme');
 end
