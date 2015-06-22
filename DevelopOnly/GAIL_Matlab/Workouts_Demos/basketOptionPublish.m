@@ -10,11 +10,11 @@
 %
 % Call Option:
 %
-% \[max(\sum\limits_{i=1}^n {a_i*S_T^{(i)}} - K, 0)\]
+% \[max(\sum_{i=1}^n {a_i*S_T^{(i)}} - K, 0)\]
 % 
 % Put Option:
 %
-% \[max(K - \sum\limits_{i=1}^n {a_i*S_T^{(i)}}, 0)\]
+% \[max(K - \sum_{i=1}^n {a_i*S_T^{(i)}}, 0)\]
 %
 % where:
 %
@@ -40,7 +40,7 @@ inp.assetParam.initPrice = [11 15];    % initial Asset Prices
 inp.assetParam.interest = 0.01;   % 1% interest rate
 inp.assetParam.volatility = [0.5 0.6];  % volatility
 inp.assetParam.nAsset = 2;  % number of underlying assets in the basket option
-inp.assetParam.sqCorr = [1 0; 0 1]; % correlation matrix of assets in the basket option
+inp.assetParam.sqCorr = [1 0.5; 0.5 1]; % correlation matrix of assets in the basket option
 
 
 %Option Price Parameters
