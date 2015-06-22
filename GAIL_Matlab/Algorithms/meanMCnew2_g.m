@@ -266,8 +266,8 @@ while true
         % the other combination of tolfun, which adjust the hmu a bit
         tmu = out_param.hmu(i)+deltaminus;
         break;
-    elseif out_param.abstol >= out_param.reltol*(abs(out_param.hmu(i))...
-            +out_param.tol(i))/0.9;
+    elseif out_param.abstol >= 1.1*out_param.reltol*(abs(out_param.hmu(i))...
+            +out_param.tol(i));
         out_param.tol(i+1) = out_param.abstol;
         i=i+1;
     elseif out_param.abstol <= 0.9*out_param.reltol*abs(abs(out_param.hmu(i))...
