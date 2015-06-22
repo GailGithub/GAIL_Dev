@@ -124,7 +124,7 @@ while(max(err) > tol)
     fn = (ninit-1)^2./(len.^2).*max(abs(diff(diffy)),[],1);
     %update cone condition every iteration
     ntemp=max(ceil(nhi*(nlo/nhi).^(1./(1+len))),3);
-    nstar = ntemp -2;
+    nstar = floor(ntemp/2);
     
     %     gn(gn<eps/2)=0;
     %     fn(fn<eps/2)=0;
@@ -138,7 +138,7 @@ while(max(err) > tol)
     %     counterr = sum(err > abstol);
     %     if(length(x) + counterr *(ninit -1) > out_param.nmax)
     %         out_param.exit(1) = 1;
-    %         warning('MATLAB:funappx_g:exceedbudget',' funappx_g attempted to exceed the cost budget. The answer may be unreliable.')
+    %         warning('GAIL:funappx_g:exceedbudget',' funappx_g attempted to exceed the cost budget. The answer may be unreliable.')
     %         break;
     %     end;
     if max(err) > tol;

@@ -16,8 +16,8 @@ tstart = tic;
 
 %% Simulation parameters
 
-warning('off','MATLAB:integraltau_g:exceedbudget');
-warning('off','MATLAB:integraltau_g:peaky');
+warning('off','GAIL:integraltau_g:exceedbudget');
+warning('off','GAIL:integraltau_g:peaky');
 avec = 10.^(rand(nrep,1).*3-4);
 zvec = rand(nrep,1).*(1-4.*avec)+2.*avec;
 x0vec = zvec-2*avec;
@@ -127,8 +127,8 @@ time = toc(tstart);
 gail.save_mat('ConesPaperOutput', 'ConePaperIntegralTest', true, nrep,time,...
         tauvec,pini,pfin,succnowarn,succwarn,failnowarn,failwarn);
 
-warning('on','MATLAB:integraltau_g:exceedbudget');
-warning('on','MATLAB:integraltau_g:peaky');
+warning('on','GAIL:integraltau_g:exceedbudget');
+warning('on','GAIL:integraltau_g:peaky');
 
 %% The following output was obtained on 2013-August-05 by
 %  from the data in

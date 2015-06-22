@@ -105,7 +105,7 @@ while true
     if out_param.tau*(Gf+Ff/(2*ntrap)) < Ff %f lies outside cone
         out_param.tau = 2*Ff/(Gf+Ff/(2*ntrap)); %increase tau
         out_param.tauchange=true; %flag the changed tau
-        warning('MATLAB:integraltau_g:peaky','This integrand is peaky relative to tau. You may wish to increase tau for similar integrands.');
+        warning('GAIL:integraltau_g:peaky','This integrand is peaky relative to tau. You may wish to increase tau for similar integrands.');
         if ntrap+1 <= (out_param.tau+1)/2 %the present ntrap is too small for tau
             inflation=ceil((out_param.tau+1)/(2*ntrap)); %prepare to increase ntrap
             ntrapok=false; %flag the number of trapezoids too small for tau
@@ -126,7 +126,7 @@ while true
     if ntrap*inflation+1 > out_param.nmax
             %cost budget does not allow intended increase in ntrap
         out_param.exceedbudget=true; %tried to exceed budget
-        warning('MATLAB:integraltau_g:exceedbudget','integraltau_g attempts to exceed the cost budget. The answer may be unreliable.');
+        warning('GAIL:integraltau_g:exceedbudget','integraltau_g attempts to exceed the cost budget. The answer may be unreliable.');
         inflation=floor((out_param.nmax-1)/ntrap);
             %max possible increase allowed by cost budget
         if inflation == 1 %cannot increase ntrap at all
@@ -223,11 +223,11 @@ end
 % let cost budget be a positive integer
 if (~gail.isposint(out_param.nmax))
     if ispositive(out_param.nmax)
-        warning('MATLAB:integraltau_g:budgetnotint',['Cost budget should be a positive integer.' ...
+        warning('GAIL:integraltau_g:budgetnotint',['Cost budget should be a positive integer.' ...
             ' Using cost budget ', num2str(ceil(out_param.nmax))])
         out_param.nmax = ceil(out_param.nmax);
     else
-        warning('MATLAB:integraltau_g:budgetisneg',['Cost budget should be a positive integer.' ...
+        warning('GAIL:integraltau_g:budgetisneg',['Cost budget should be a positive integer.' ...
             ' Using default cost budget ' int2str(default.nmax)])
         out_param.nmax = default.nmax;
     end;

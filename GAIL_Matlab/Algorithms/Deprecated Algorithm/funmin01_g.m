@@ -303,13 +303,13 @@ end;
 
 % check tau change flag
 if tauchange == 1
-    warning('MATLAB:funmin01_g:peaky','This function is peaky relative to ninit. You may wish to increase ninit for similar functions.')
+    warning('GAIL:funmin01_g:peaky','This function is peaky relative to ninit. You may wish to increase ninit for similar functions.')
 end;
 
 % check cost budget flag
 if out_param.exceedbudget == 1
     n = l;
-    warning('MATLAB:funmin01_g:exceedbudget','funmin01_g attempted to exceed the cost budget. The answer may be unreliable.')
+    warning('GAIL:funmin01_g:exceedbudget','funmin01_g attempted to exceed the cost budget. The answer may be unreliable.')
 end
 
 fmin = Un;

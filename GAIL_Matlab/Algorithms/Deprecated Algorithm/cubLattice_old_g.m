@@ -316,7 +316,7 @@ default.transform = 'Baker';
 
 if numel(varargin)<2
     help cubLattice_old_g
-    warning('MATLAB:cubLattice_old_g:fdnotgiven',...
+    warning('GAIL:cubLattice_old_g:fdnotgiven',...
         'At least, function f and dimension d need to be specified. Example for f(x)=x^2:')
     f = @(x) x.^2;
     out_param.f=f;
@@ -324,7 +324,7 @@ if numel(varargin)<2
 else
     f = varargin{1};
     if ~gail.isfcn(f)
-        warning('MATLAB:cubLattice_old_g:fnotfcn',...
+        warning('GAIL:cubLattice_old_g:fnotfcn',...
             'The given input f was not a function. Example for f(x)=x^2:')
         f = @(x) x.^2;
         out_param.f=f;
@@ -333,7 +333,7 @@ else
         out_param.f=f;
         d = varargin{2};
         if ~isnumeric(d) || ~gail.isposint(d) || ~(d<251)
-            warning('MATLAB:cubLattice_old_g:dnotposint',...
+            warning('GAIL:cubLattice_old_g:dnotposint',...
                 'The dimension d must be a positive integer less than 101. Example for f(x)=x^2:')
             f = @(x) x.^2;
             out_param.f=f;
@@ -352,7 +352,7 @@ if validvarargin
         || ischar(in3{j}) || isstruct(in3{j}) || gail.isfcn(in3{j}));
     end
     if ~validvarargin
-        warning('MATLAB:cubLattice_old_g:validvarargin','Optional parameters must be numeric or strings. We will use the default optional parameters.')
+        warning('GAIL:cubLattice_old_g:validvarargin','Optional parameters must be numeric or strings. We will use the default optional parameters.')
     end
     in3=varargin{3};
 end
@@ -401,21 +401,21 @@ end;
 
 % Force error tolerance greater than 0
 if (out_param.abstol <= 0 )
-    warning('MATLAB:cubLattice_old_g:abstolnonpos',['Error tolerance should be greater than 0.' ...
+    warning('GAIL:cubLattice_old_g:abstolnonpos',['Error tolerance should be greater than 0.' ...
             ' Using default error tolerance ' num2str(default.abstol)])
     out_param.abstol = default.abstol;
 end
 
 % Force density to be uniform or normal only
 if ~(strcmp(out_param.density,'uniform') || strcmp(out_param.density,'normal') )
-    warning('MATLAB:cubLattice_old_g:notdensity',['The density can only be uniform or normal.' ...
+    warning('GAIL:cubLattice_old_g:notdensity',['The density can only be uniform or normal.' ...
             ' Using default density ' num2str(default.density)])
     out_param.density = default.density;
 end
 
 % Force mmin to be integer greater than 0
 if (~gail.isposint(out_param.mmin) || ~(out_param.mmin < out_param.mmax+1))
-    warning('MATLAB:cubLattice_old_g:lowmmin',['The minimum starting exponent ' ...
+    warning('GAIL:cubLattice_old_g:lowmmin',['The minimum starting exponent ' ...
             'should be an integer greater than 0 and smaller or equal than the maxium.' ...
             ' Using default mmin ' num2str(default.mmin)])
     out_param.mmin = default.mmin;
@@ -424,21 +424,21 @@ end
 % Force exponent budget number of points be a positive integer greater than
 % or equal to mmin an smaller than 27
 if ~(gail.isposint(out_param.mmax) && out_param.mmax>=out_param.mmin && out_param.mmax<=26)
-    warning('MATLAB:cubLattice_old_g:wrongmmax',['The maximum exponent for the budget should be an integer smaller or equal to 27.' ...
+    warning('GAIL:cubLattice_old_g:wrongmmax',['The maximum exponent for the budget should be an integer smaller or equal to 27.' ...
             ' Using default mmax ' num2str(default.mmax)])
     out_param.mmax = default.mmax;
 end
 
 % Force fudge factor to be greater than 0
 if ~((gail.isfcn(out_param.fudge) && (out_param.fudge(1)>0)))
-    warning('MATLAB:cubLattice_old_g:fudgenonpos',['The fudge factor should be a positive function.' ...
+    warning('GAIL:cubLattice_old_g:fudgenonpos',['The fudge factor should be a positive function.' ...
             ' Using default fudge factor ' func2str(default.fudge)])
     out_param.fudge = default.fudge;
 end
 
 % Force transform to only be id, Baker, C0, C1 or C1sin
 if ~(strcmp(out_param.transform,'id') || strcmp(out_param.transform,'Baker') || strcmp(out_param.transform,'C0') || strcmp(out_param.transform,'C1') || strcmp(out_param.transform,'C1sin') )
-    warning('MATLAB:cubLattice_old_g:notdensity',['The periodizing transformations can only be id, Baker, C0, C1 or C1sin.' ...
+    warning('GAIL:cubLattice_old_g:notdensity',['The periodizing transformations can only be id, Baker, C0, C1 or C1sin.' ...
             ' Using default error tolerance ' num2str(default.transform)])
     out_param.transform = default.transform;
 end

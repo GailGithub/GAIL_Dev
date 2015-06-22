@@ -104,7 +104,7 @@ classdef ut_funappxglobal_g < matlab.unittest.TestCase
       in_param.nmax = 10^8;
       in_param.nlo = 100;
       in_param.nhi = 1000;
-      [pp, result] = testCase.verifyWarning(@()funappxglobal_g(f,in_param),'MATLAB:funappxglobal_g:peaky');
+      [pp, result] = testCase.verifyWarning(@()funappxglobal_g(f,in_param),'GAIL:funappxglobal_g:peaky');
       x = rand(1000,1)*(result.b-result.a)+result.a;
       actualerr = max(abs(ppval(pp,x)-f(x)));
       testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
@@ -115,7 +115,7 @@ classdef ut_funappxglobal_g < matlab.unittest.TestCase
       f = @(x) x.^2;
       in_param.a = 2; 
       in_param.b = 1;  
-      [pp, result] = testCase.verifyWarning(@()funappxglobal_g(f,in_param),'MATLAB:funappxglobal_g:blea');
+      [pp, result] = testCase.verifyWarning(@()funappxglobal_g(f,in_param),'GAIL:funappxglobal_g:blea');
       x = rand(1000,1)*(result.b-result.a)+result.a;
       actualerr = max(abs(ppval(pp,x)-f(x)));
       testCase.verifyLessThanOrEqual(actualerr,result.abstol);
@@ -123,7 +123,7 @@ classdef ut_funappxglobal_g < matlab.unittest.TestCase
     end
     
     function funappxglobal_gOfnofunction(testCase)
-      [pp, result] = testCase.verifyWarning(@()funappxglobal_g,'MATLAB:funappxglobal_g:nofunction');
+      [pp, result] = testCase.verifyWarning(@()funappxglobal_g,'GAIL:funappxglobal_g:nofunction');
       x = rand(1000,1)*(result.b-result.a)+result.a;
       actualerr = max(abs(ppval(pp,x)-result.f(x)));
       testCase.verifyLessThanOrEqual(actualerr,result.abstol);
@@ -134,12 +134,27 @@ classdef ut_funappxglobal_g < matlab.unittest.TestCase
       f = @(x) x.^2;
       in_param.a = 1; 
       in_param.b = 1;  
-      [pp, result] = testCase.verifyWarning(@()funappxglobal_g(f,in_param),'MATLAB:funappxglobal_g:beqa');
+      [pp, result] = testCase.verifyWarning(@()funappxglobal_g(f,in_param),'GAIL:funappxglobal_g:beqa');
       x = rand(1000,1)*(result.b-result.a)+result.a;
       actualerr = max(abs(ppval(pp,x)-f(x)));
       testCase.verifyLessThanOrEqual(actualerr,result.abstol);
       testCase.verifyLessThanOrEqual(result.npoints,result.nmax);
     end
+    
+    function funappxglobal_gOnpointsoflinear(testCase)
+        f = @(x) 3*x + 5;
+        in_param.nlo = 3; in_param.nhi =3;
+        [~, result] = funappxglobal_g(f,in_param);
+        testCase.verifyEqual(result.npoints,3);
+    end
+    
+    function funappxglobal_gOnpointsofconstent(testCase)
+        f = @(x) 0*x + 5;
+        in_param.nlo = 3; in_param.nhi =3;
+        [~, result] = funappxglobal_g(f,in_param);
+        testCase.verifyEqual(result.npoints,3);
+    end
+    
     
   end
 end

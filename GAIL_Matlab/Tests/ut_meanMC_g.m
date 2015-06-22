@@ -35,7 +35,7 @@ classdef ut_meanMC_g < matlab.unittest.TestCase
       in_param.abstol = -1e-2;  
       in_param.reltol = 0;
       meanY = testCase.verifyWarning(@()meanMC_g(@(n) rand(n,1).^2,...
-        in_param),'MATLAB:meanMC_g:abstolneg');
+        in_param),'GAIL:meanMC_g:abstolneg');
       exactY = 1/3;
       actualerr = abs(meanY-exactY);
       testCase.verifyLessThanOrEqual(actualerr,abs(in_param.abstol));
@@ -44,7 +44,7 @@ classdef ut_meanMC_g < matlab.unittest.TestCase
     function meanMC_gOfnonRandomInput(testCase)
         in_param.abstol = 1e-2;
         testCase.verifyWarning(@()meanMC_g(@(x) x.^2,...
-            in_param),'MATLAB:meanMC_g:yrandnotlengthN');  
+            in_param),'GAIL:meanMC_g:yrandnotlengthN');  
     end
     function meanMC_gOfWorkouts(testCase)
          mu = Test_meanMC_g;

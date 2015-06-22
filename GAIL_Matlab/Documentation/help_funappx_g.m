@@ -89,24 +89,20 @@
 % * out_param.ninit --- initial number of points we use for each sub
 %  interval
 %
-% <html>
-% <ul type="square">
-%  <li>out_param.exit --- this is a number defining the conditions of
-%  success or failure satisfied when finishing the algorithm. The 
-%  algorithm is considered successful (with out_param.exit == 0) if no 
-%  other flags arise warning that the results are certainly not 
-%  guaranteed. The initial value is 0 and the final value of this
-%  parameter is encoded as follows:</li>
-%   <ul type="circle">
-%    <li>1   If reaching overbudget. It states whether
-%                 the max budget is attained without reaching the
-%                    guaranteed error tolerance.</li>
-%    <li>2   If reaching overiteration. It states whether
+% * out_param.exit --- this is a vector with two elements, defining the
+%  conditions of success or failure satisfied when finishing the
+%  algorithm. The algorithm is considered successful (with
+%  out_param.exit == [0 0]) if no other flags arise warning that the
+%  results are certainly not guaranteed. The initial value is [0 0] and
+%  the final value of this parameter is encoded as follows:
+%    
+%                    [1 0]   If reaching overbudget. It states whether
+%                    the max budget is attained without reaching the
+%                    guaranteed error tolerance.
+%     
+%                    [0 1]   If reaching overiteration. It states whether
 %                    the max iterations is attained without reaching the
-%                    guaranteed error tolerance.</li>
-%   </ul>
-% </ul>
-% </html>
+%                    guaranteed error tolerance.
 %
 % * out_param.iter --- number of iterations
 %
@@ -122,18 +118,18 @@
 %
 %% Guarantee
 %
-% For $[a,b]$, there exists a partition
+% For \([a,b]\), there exists a partition
 %
-% $$ P=\{[t_0,t_1], [t_1,t_2],  \ldots, [t_{L-1},t_L]\},  a=t_0 < t_1 < \cdots < t_L=b.$$
+% \[ P=\{[t_0,t_1], [t_1,t_2],  \ldots, [t_{L-1},t_L]\},  a=t_0 < t_1 < \cdots < t_L=b.\]
 % 
-% If the function to be approximated,  $f$ satisfies the cone condition
+% If the function to be approximated,  \(f\) satisfies the cone condition
 %
-% $$\|f''\|_\infty \le \frac { 2\mathrm{nstar} }{t_l-t_{l-1} } \left\|f'-\frac{f(t_l)-f(t_{l-1})}{t_l-t_{l-1}}\right\|_\infty$$
+% \[\|f''\|_\infty \le \frac { 2\mathrm{nstar} }{t_l-t_{l-1} } \left\|f'-\frac{f(t_l)-f(t_{l-1})}{t_l-t_{l-1}}\right\|_\infty\]
 % 
-% for each sub interval $[t_{l-1},t_l]$, where $1 \le l \le L$, then the
-% $fappx$ |output by this algorithm is guaranteed to satisfy
+% for each sub interval \([t_{l-1},t_l]\), where \(1 \le l \le L\), then the
+% \(fappx\) |output by this algorithm is guaranteed to satisfy
 %
-% $$\| f-fappx \|_{\infty} \le \mathrm{abstol}.$$
+% \[\| f-fappx \|_{\infty} \le \mathrm{abstol}.\]
 %
 %
 %% Examples

@@ -7,10 +7,10 @@ c = rand(nrep,1)*4;
 n = 3;
 npoints = zeros(n,2,nrep);
 time = zeros(n,2,nrep);
-warning('off','MATLAB:funappx_g:peaky')
-warning('off','MATLAB:funappx_g:exceedbudget')
-warning('off','MATLAB:funappxglobal_g:peaky')
-warning('off','MATLAB:funappxglobal_g:exceedbudget')
+warning('off','GAIL:funappx_g:peaky')
+warning('off','GAIL:funappx_g:exceedbudget')
+warning('off','GAIL:funappxglobal_g:peaky')
+warning('off','GAIL:funappxglobal_g:exceedbudget')
 for i = 1:nrep;
     a = 0;
     b = c(i)+1;
@@ -68,10 +68,10 @@ for i = 1:nrep;
 %     npoints(4,2,i) = out_param.npoints;
 %     tic;
 end;
-warning('on','MATLAB:funappxglobal_g:exceedbudget')
-warning('on','MATLAB:funappx_g:peaky')
-warning('on','MATLAB:funappx_g:exceedbudget')
-warning('on','MATLAB:funappxglobal_g:peaky')
+warning('on','GAIL:funappxglobal_g:exceedbudget')
+warning('on','GAIL:funappx_g:peaky')
+warning('on','GAIL:funappx_g:exceedbudget')
+warning('on','GAIL:funappxglobal_g:peaky')
 
 cc = 2.5;
 test1 = @(x) (x-cc).^2;

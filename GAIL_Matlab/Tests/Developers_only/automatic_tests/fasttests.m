@@ -30,8 +30,8 @@ doctest dt_integralNoPenalty_g; time=toc
 if MATLABVERSION < 8.1
     warning('Cannot run unit tests in MATLAB version before 8.1');
 else
-    warning('off','MATLAB:integral_g:peaky')
-    warning('off','MATLAB:integral_g:exceedbudget')
+    warning('off','GAIL:integral_g:peaky')
+    warning('off','GAIL:integral_g:exceedbudget')
     try
         Tests = matlab.unittest.TestSuite.fromClass(?ut_integral_g);
         results=run(ut_integral_g)
@@ -45,11 +45,11 @@ else
         display('Test ut_integral_g is wrongly coded. We skip it.')
         fprintf(fid,'Test ut_integral_g is wrongly coded. We skip it.\n');
     end
-    warning('on','MATLAB:integral_g:peaky')
-    warning('on','MATLAB:integral_g:exceedbudget')
+    warning('on','GAIL:integral_g:peaky')
+    warning('on','GAIL:integral_g:exceedbudget')
     
-	warning('off','MATLAB:integralsim_g:peaky')
-	warning('off','MATLAB:integralsim_g:exceedbudget')
+	warning('off','GAIL:integralsim_g:peaky')
+	warning('off','GAIL:integralsim_g:exceedbudget')
 	try
 	    Tests = matlab.unittest.TestSuite.fromClass(?ut_integralsim_g);
 	    results=run(ut_integralsim_g)
@@ -63,8 +63,8 @@ else
 	    display('Error: Test ut_integralsim_g is wrongly coded. We skip it.')
 	    fprintf(fid,'Error: Test ut_integralsim_g is wrongly coded. We skip it.\n');
 	end
-	warning('on','MATLAB:integralsim_g:peaky')
-	warning('on','MATLAB:integralsim_g:exceedbudget')
+	warning('on','GAIL:integralsim_g:peaky')
+	warning('on','GAIL:integralsim_g:exceedbudget')
     
     try
         Tests = matlab.unittest.TestSuite.fromClass(?ut_funappx_g);

@@ -13,7 +13,7 @@ in_param.nmax = 1e10;
 res = zeros(nrep,10);
 ut_abserr = zeros(nrep,1);
 ut_abstol = zeros(nrep,1);
-warning('off','MATLAB:meanMCBer_g:nabsexceednmax')
+warning('off','GAIL:meanMCBer_g:nabsexceednmax')
 for k = 1:nrep
     p = 10^(-3+u(k)*2);
     in_param.abstol = 10^(-5+3*uu(k));
@@ -42,5 +42,5 @@ for k = 1:nrep
     res(k,7) = abserr./in_param.abstol;
 end
 gail.save_mat('meanMCBerPaperOutput','TestmeanMCBer-on-abs-',true,ut_abstol,ut_abserr,res,nrep,out_param)
-warning('on','MATLAB:meanMCBer_g:nabsexceednmax')
+warning('on','GAIL:meanMCBer_g:nabsexceednmax')
 end
