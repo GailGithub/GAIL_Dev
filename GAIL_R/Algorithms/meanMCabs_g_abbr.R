@@ -1,3 +1,10 @@
+if(require("pracma") == FALSE){
+  print("trying to install package: pracma")
+  install.packages("pracma")
+  if(require("pracma")){
+    print("pracma installed and loaded")}
+    else{stop("coud not install pracma")}
+  }
 library(pracma)
 #MEANMCabs_g_abbr Monte Carlo method to estimate the mean of a random variable
 #
