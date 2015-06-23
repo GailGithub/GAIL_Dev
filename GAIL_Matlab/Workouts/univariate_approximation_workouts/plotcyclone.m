@@ -1,5 +1,5 @@
 function [x,y,z]=plotcyclone(a,b,tol)
-% a = 0; b = 16*pi; tol = 1e-6; [x,y,z,err1,err2]=plotcyclone(a,b,tol);
+% a = 0; b = 16*pi; tol = 1e-6; [x,y,z]=plotcyclone(a,b,tol);
 % set error
 % =max(max|f1(x)-\hat{f1}(x)|,max|f2(x)-\hat{f2}(x)|,max|f3(x)-\hat{f3}(x)|)
 
