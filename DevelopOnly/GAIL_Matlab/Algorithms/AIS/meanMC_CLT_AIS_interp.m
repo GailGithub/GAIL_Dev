@@ -64,7 +64,7 @@ out_param.alpha = alpha; %save the input parameters to a structure
 out_param.fudge = fudge;
 out_param.nSig = nSig;
 
-b=[-1,0,1];%estimated values for standard deviation.
+b=[-2,0,2];%estimated values for standard deviation.
 tstart=tic; %starts the clock.
 gx=@(t,b_value)fx(t+b_value).*exp(-t.*b_value-b_value.^2/2);
 t_value=(randn(nSig,1));%generate the pseudorandom values drawn
@@ -74,10 +74,24 @@ for i=1:numel(b)
     b_value=b(i);
     var_b(i)=var(gx(t_value,b_value));
 end
+var_b
+%parabolic interpolation:
+A=[b'.^2 b' ones(3,1)];
+p=A\var_b';
+fmin=@(x)p(3)+p(2)*x+p(1)*(x.^2);
+[x]=fminbnd(fmin,b(1),b(3))
+var_bx=var(gx(x,b_value))
 
 [S_var,S_pos]=min(var_b);
-out_param.var = S_var; %calculate the sample variance--stage 1
-out_param.b_value=b(S_pos);%best variance
+
+if var_bx <= S_var
+    out_param.b_value = x;
+    out_param.var = var_bx;
+else
+    out_param.b_value = b(S_pos);
+    out_param.var = S_var;
+end
+
 sig0 = sqrt(out_param.var); %standard deviation
 sig0up = out_param.fudge.*sig0; %upper bound on the standard deviation
 nmu = max(1,ceil((-norminv(alpha)*sig0up/abstol).^2)); 
