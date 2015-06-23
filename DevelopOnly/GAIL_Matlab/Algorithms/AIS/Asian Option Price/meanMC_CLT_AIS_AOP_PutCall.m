@@ -1,7 +1,6 @@
 function [tmu,out_param]=meanMC_CLT_AIS_AOP_PutCall(T,d,So,K,r,sigma,B,abstol,alpha,nSig,fudge)
-%MEANMC_CLT Monte Carlo method to estimate the mean of a random variable
-%
-%   Estimates the asian option price within a specified error tolerance, 
+%   MEANMC_CLT_AIS_AOP_PutCall uses adaptive importance sampling 
+%   to estimates the asian option price within a specified error tolerance, 
 %   i.e., | mu - tmu | <= abstol with probability at least 1-alpha, where 
 %   abstol is the absolute error tolerance using the adaptive importance sampling.  
 %
@@ -65,7 +64,7 @@ if nargin < 11
                             if nargin < 3
                                 So = 10; %initial Stock Price
                                 if nargin < 2
-                                    d = 2; %number of dimensions
+                                    d = 1; %number of dimensions
                                     if nargin <1
                                         T = 1; %time in years 
                                     end
@@ -96,12 +95,12 @@ b=B./d;%estimated values for standard deviation.
 
 if c_p == 1
     
-    SK=@(z,bval) max(0,K-mean((So.*exp(cumsum((r-((sigma.^2)./2)).*deltaT + ...
+    SK=@(z,bval) max(0,K-mean(((So./d).*exp(cumsum((r-((sigma.^2)./2)).*deltaT + ...
     sigma.*sqrt(deltaT).*(z-bval),2))),2));
 
 elseif c_p == 2
     
-        SK=@(z,bval) max(mean(So.*exp(cumsum((r-((sigma.^2)./2)).*deltaT + ...
+        SK=@(z,bval) max(mean((So./d).*exp(cumsum((r-((sigma.^2)./2)).*deltaT + ...
         sigma.*sqrt(deltaT).*(z-bval),2)),2)-K,0);
     
     else
