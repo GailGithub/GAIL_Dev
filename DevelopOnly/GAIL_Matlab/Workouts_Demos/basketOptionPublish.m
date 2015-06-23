@@ -3,7 +3,16 @@
 % asset is a group of commodities, securities or currencies. A basket 
 % option gives the holder the right, but not the obligation, to buy or 
 % sell an underlying asset at a specific price, on or before a certain date.
-
+%
+% There are two different types of options, *calls* and *puts*:
+%
+% * A call gives the holder the right to buy an asset at a certain price 
+% within a specific period of time. Buyers of calls hope that the stock 
+% will increase substantially before the option expires.
+% * A put gives the holder the right to sell an asset at a certain price 
+% within a specific period of time. Buyers of puts hope that the price of 
+% the stock will fall before the option expires.
+%
 
 %% Payoffs of Basket Option
 % The payoff of a basket option is given as follows:
@@ -24,9 +33,6 @@
 
 
 %% Generate Basket Option Price using Monte Carlo Method
-% _optPrice_ is a MATLAB(R) class that generates the prices for options
-% from  Monte Carlo - MC_ method. 
-%
 % First, we need to construct several parametrer values:
 %
 %Payoff Parameters:
