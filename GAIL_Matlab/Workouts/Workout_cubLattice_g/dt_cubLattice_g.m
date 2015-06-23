@@ -62,30 +62,6 @@
 %
 %
 % Example 6: 
-% Estimate the integral with integrand Genz "Discontinuous" in
-% genz_test_fun, index 6.
-% >> index = 6;
-% >> f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
-% >> f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)
-% f_true = 0.44***
-% >> Q = cubLattice_g(f,hyperbox,'uniform',1e-3,1e-3);
-% >> check = abs(f_true-Q) < gail.tolfun(1e-3,1e-3,1,f_true,'max')
-% check = 1
-%
-%
-% Example 7: 
-% Estimate the integral with integrand Keister test function in
-% genz_test_fun, index 7.
-% >> index = 7; in_param.dim = 3;
-% >> f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
-% >> f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)
-% f_true = 2.16***
-% >> Q = cubLattice_g(f,hyperbox,'uniform',1e-3,1e-4);
-% >> check = abs(f_true-Q) < gail.tolfun(1e-3,1e-4,1,f_true,'max')
-% check = 1
-%
-%
-% Example 8: 
 % Estimate the integral with integrand Genz "Oscillatory" in
 % genz_test_fun, index 1.
 % >> in_param.dim = 3;alpha = ones(1,in_param.dim); beta = 1./ (1:in_param.dim);r=1;
@@ -98,7 +74,7 @@
 % check = 1
 %
 %
-% Example 9: 
+% Example 7: 
 % Estimate the integral with integrand Genz "Product Peak" in
 % genz_test_fun, index 2.
 % >> index = 2;hyperbox = [-ones(1,in_param.dim);ones(1,in_param.dim)];
@@ -110,7 +86,7 @@
 % check = 1
 % 
 %
-% Example 10: 
+% Example 8: 
 % Estimate the integral with integrand Genz "Product Peak" in
 % genz_test_fun, index 3.
 % >> index = 3;hyperbox = [ones(1,in_param.dim)/2;2*ones(1,in_param.dim)];
@@ -122,7 +98,7 @@
 % check = 1
 % 
 %
-% Example 11: 
+% Example 9: 
 % Estimate the integral with integrand Genz "Gaussian" in
 % genz_test_fun, index 4.
 % >> index = 4;hyperbox = [-ones(1,in_param.dim)/2;ones(1,in_param.dim)];
@@ -134,7 +110,7 @@
 % check = 1
 %
 %
-% Example 12: 
+% Example 10: 
 % Estimate the integral with integrand Genz "Continuous" in
 % genz_test_fun, index 5.
 % >> index = 5;hyperbox = [-ones(1,in_param.dim)/2;ones(1,in_param.dim)];
@@ -143,18 +119,6 @@
 % f_true = 0.83***
 % >> Q = cubLattice_g(f,hyperbox,'uniform',1e-2,1e-2);
 % >> check = abs(f_true-Q) < gail.tolfun(1e-2,1e-2,1,f_true,'max')
-% check = 1
-%
-%
-% Example 13: 
-% Estimate the integral with integrand Genz "Discontinuous" in
-% genz_test_fun, index 6.
-% >> index = 6;
-% >> f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
-% >> f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)
-% f_true = 1.73***
-% >> Q = cubLattice_g(f,hyperbox,'uniform',1e-3,1e-3);
-% >> check = abs(f_true-Q) < gail.tolfun(1e-3,1e-3,1,f_true,'max')
 % check = 1
 %
 %
