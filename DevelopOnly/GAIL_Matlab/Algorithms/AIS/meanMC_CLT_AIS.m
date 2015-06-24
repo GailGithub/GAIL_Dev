@@ -64,7 +64,7 @@ out_param.alpha = alpha; %save the input parameters to a structure
 out_param.fudge = fudge;
 out_param.nSig = nSig;
 
-b=[-1,0,1];%estimated values for standard deviation.
+b=[-2,0,2];%estimated values for standard deviation.
 tstart=tic; %starts the clock.
 gx=@(t,b_value)fx(t+b_value).*exp(-t.*b_value-b_value.^2/2);
 t_value=(randn(nSig,1));%generate the pseudorandom values drawn

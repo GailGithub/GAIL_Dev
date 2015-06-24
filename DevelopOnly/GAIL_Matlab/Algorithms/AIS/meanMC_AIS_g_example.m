@@ -50,12 +50,9 @@ if nargin < 6
             if nargin < 3
                 d = 3; %number of dimensions
                 if nargin < 2
-                    b_vec=[0.5,1.5,2.5]; 
+                    b_vec=[-2,0,2]; 
                     if nargin < 1
-                        Y1 = @(x,b) ((sqrt(2.*pi).*b).^d).*cos(b.*sqrt(sum(x.*x,2)))...
-                            .*exp((1/2-b.^2).*sum(x.*x,2)); %integrand
-                        Y = @(n,b)Y1(randn(n,d),b); % integrand evaluated at
-                        % the sample points. 
+                        Y=@(x)max(x,0);%example function
                     end                  
                 end
             end
@@ -63,42 +60,31 @@ if nargin < 6
       end
    end
 end
-  
-% RESTRICTIONS
-
-if isa(Y,'function_handle') == 0
-    error('"Y" must be a function handle');
-end
-
-if isa(b_vec,'double') == 0
-    error('"b_vector" must be an array');
-end
-
-if d <= 0 
-    error('The number of dimensions must be an integer positive number');
-end
-
 
 out_param.alpha = alpha; %save the input parameters to a structure
 out_param.fudge = fudge;
 out_param.nSig = nSig;
 
 tstart=tic; %starts the clock.
+Y1=@(t,b_value)Y(t+b_value).*exp(-t.*b_value-b_value.^2/2);
+Y2=@(t,b_value)Y1(randn(t,1),b_value);%generate the pseudorandom values drawn
+% from the standard normal distribution
+
 
 var_b=b_vec;
 for i=1:numel(b_vec)
     b_value=b_vec(i);    
-    var_b(i)=var(Y(nSig,b_value));
+    var_b(i)=var(Y2(nSig,b_value));
 end
+[S_var,S_pos]=min(var_b);
 
 %parabolic interpolation:
 A=[b_vec'.^2 b_vec' ones(3,1)];
 p=A\var_b';
 fmin=@(x)p(3)+p(2)*x+p(1)*(x.^2);
 [x]=fminbnd(fmin,b_vec(1),b_vec(3));
-var_bx=var(Y(nSig,x));
+var_bx=var(Y2(nSig,x));
 
-[S_var,S_pos]=min(var_b);
 
 %Checking the best value for b:
 if var_bx < S_var
@@ -111,9 +97,7 @@ end
 
 % MeanMC_g calculation
 
-
-
-tmu = meanMC_g(@(n)Y(n,b_vec(S_pos)),abstol,0);
+tmu = meanMC_g(@(n)Y2(n,out_param.b_value),abstol,0);
     
 
 sig0 = sqrt(out_param.var); %standard deviation

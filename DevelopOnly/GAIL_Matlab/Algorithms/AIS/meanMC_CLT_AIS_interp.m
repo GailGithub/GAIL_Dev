@@ -1,6 +1,6 @@
 
 
-function [tmu,out_param]=meanMC_CLT_AIS(fx,abstol,alpha,nSig,fudge)
+function [tmu,out_param]=meanMC_CLT_AIS_interp(fx,abstol,alpha,nSig,fudge)
 %MEANMC_CLT Monte Carlo method to estimate the mean of a random variable
 %
 %   tmu = meanMC_CLT(fx,abstol,alpha,nSig,fudge) estimates the mean, of a random fuction to
@@ -74,13 +74,13 @@ for i=1:numel(b)
     b_value=b(i);
     var_b(i)=var(gx(t_value,b_value));
 end
-var_b
 %parabolic interpolation:
 A=[b'.^2 b' ones(3,1)];
 p=A\var_b';
+
 fmin=@(x)p(3)+p(2)*x+p(1)*(x.^2);
-[x]=fminbnd(fmin,b(1),b(3))
-var_bx=var(gx(x,b_value))
+[x]=fminbnd(fmin,b(1),b(3));
+var_bx=var(gx(t_value,x));
 
 [S_var,S_pos]=min(var_b);
 
