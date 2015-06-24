@@ -6,9 +6,9 @@ if(require("pracma") == FALSE){
     else{stop("coud not install pracma")}
   }
 library(pracma)
-#MEANMCabs_g_abbr Monte Carlo method to estimate the mean of a random variable
+#meanMCabs_g_abbr uses the Monte Carlo method to estimate the mean of a random variable
 #
-#   tmu = MEANMCabs_g_abbr(Yrand,abstol,alpha,nSig,fudge) estimates the mean, mu, of a random variable Y to
+#   tmu = meanMCabs_g_abbr(Yrand,abstol,alpha,nSig,fudge) estimates the mean, mu, of a random variable Y to
 #   within a specified error tolerance, i.e., | mu - tmu | <= abstol with
 #   probability at least 1-alpha, where abstol is the absolute error
 #   tolerance.  The default values are abstol=1e-2 and alpha=1%. Input
