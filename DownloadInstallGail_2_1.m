@@ -9,6 +9,7 @@
 %% Download the package
 disp('The GAIL package is now being downloaded...')
 unzip('http://math.iit.edu/~openscholar/sites/default/files/meshfree/files/gail_2_1_1.zip') %download and unzip
+cd('GAIL_Matlab')
 
 %% Install GAIL
 GAIL_Install      %this installs GAIL
