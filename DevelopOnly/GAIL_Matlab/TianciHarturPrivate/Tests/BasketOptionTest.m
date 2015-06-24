@@ -10,7 +10,7 @@
               exactcallprice=eurooption.exactPrice;
               inp.payoffParam.optType = {'basket'};
               inp.payoffParam.basketWeight = [0.5 0.5];
-              inp.assetParam.initPrice = [11 11]; 
+              inp.assetParam.initPrice = [10 10]; 
               inp.assetParam.volatility = [0.5 0.5];
               inp.assetParam.nAsset = 2;
               inp.assetParam.corrMat = [1 1;1 1];
@@ -29,24 +29,26 @@
           function testSobolSolution(testCase)
               euroinp.timeDim.timeVector = 1;
               euroinp.payoffParam.optType = {'euro'};
+              euroinp.priceParam.cubMethod = 'Sobol';
               eurooption = optPayoff(euroinp);
               exactcallprice=eurooption.exactPrice;
-              basketinp=euroinp
               basketinp.payoffParam.optType = {'basket'};
               basketinp.payoffParam.basketWeight = [0.5 0.5];
-              basketinp.assetParam.initPrice = [11 11]; 
+              basketinp.assetParam.initPrice = [10 10]; 
               basketinp.assetParam.volatility = [0.5 0.5];
               basketinp.assetParam.nAsset = 2;
               basketinp.assetParam.corrMat = [1 1;1 1];
               basketinp.priceParam.absTol = 0;   
-              basketinp.priceParam.relTol = 0.05;
+              basketinp.priceParam.relTol = 0.01;
               basketinp.priceParam.cubMethod = 'Sobol';
-              BasketOption = optPrice(basketinp)
+              basketinp.timeDim.timeVector = 1;
+              
+              BasketOption = optPrice(basketinp);
               actSolutionCall = genOptPrice(BasketOption);
               BasketOption.payoffParam.putCallType = {'put'};
               %actSolutionPut = genOptPrice(BasketOption);
               testCase.verifyLessThan(abs(actSolutionCall-exactcallprice)/exactcallprice,BasketOption.priceParam.relTol);
-              %testCase.verifyLessThan(abs(actSolutionPut-expSolutionPut)/expSolutionPut,basketinp.priceParam.relTol);
+              %testCase.verifyLessThan(abs(actSolutionPut-expSolutionPut)/expSolutionPut,basketOption.priceParam.relTol);
           end
       end
       
