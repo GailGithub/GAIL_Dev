@@ -39,7 +39,7 @@ classdef assetPath < brownianMotion
          'interest', 0.01, ... %interest rate
          'volatility', 0.5,... %volatility
          'nAsset', 1,... %number of assets 
-         'sqCorr', 1) %A transpose     
+         'corrMat', 1) %A transpose     
    end
    
    properties (Constant, Hidden) %do not change & not seen
@@ -105,10 +105,10 @@ classdef assetPath < brownianMotion
                     =repmat(val.volatility(1),obj.assetParam.nAsset,1);
            end
          end
-         if isfield(val,'sqCorr') %data for A
-            validateattributes(val.sqCorr,{'numeric'}, ...
+         if isfield(val,'corrMat') %data for A
+            validateattributes(val.corrMat,{'numeric'}, ...
                {'nonnegative'})
-            obj.assetParam.sqCorr=val.sqCorr; %row
+            obj.assetParam.corrMat=val.corrMat; %row
          end
       end
       
@@ -124,7 +124,7 @@ classdef assetPath < brownianMotion
                  ((idx-1)*obj.timeDim.nSteps+1):idx*obj.timeDim.nSteps;
               for j=1:obj.timeDim.nSteps
                  tempc(:,j)=bmpaths(:,j:obj.timeDim.nSteps:obj.timeDim.nCols) ...
-                    * obj.assetParam.sqCorr(idx,:)';
+                    * obj.assetParam.corrMat(idx,:)';
               end
               paths(:,colRange) = obj.assetParam.initPrice(idx) * ...
                  exp(bsxfun(@plus,(obj.assetParam.interest ...

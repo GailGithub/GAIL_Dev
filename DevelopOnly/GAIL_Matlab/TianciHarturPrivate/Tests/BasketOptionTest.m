@@ -9,7 +9,7 @@
               %inp.assetParam.initPrice = [11 11]; 
               %inp.assetParam.volatility = [0.5 0.5];
               %inp.assetParam.nAsset = 2;
-              %inp.assetParam.sqCorr = [1 1;1 1];
+              %inp.assetParam.corrMat = [1 1;1 1];
               inp.priceParam.absTol = 0;   
               inp.priceParam.relTol = 0.01;
               inp.timeDim.timeVector = 1;
@@ -21,8 +21,8 @@
               actSolutionCall = genOptPrice(BasketOption);
               BasketOption.payoffParam.putCallType = {'put'};
               actSolutionPut = genOptPrice(BasketOption);
-              testCase.verifyLessThan(abs(actSolutionCall-expSolutionCall),0.01);
-              testCase.verifyLessThan(abs(actSolutionPut-expSolutionPut),0.01);
+              testCase.verifyLessThan(abs(actSolutionCall-expSolutionCall)/expSolutionCall,0.01);
+              testCase.verifyLessThan(abs(actSolutionPut-expSolutionPut)/expSolutionPut,0.01);
           end
           function testSobolSolution(testCase)
               inp.payoffParam.optType = {'basket'};
@@ -43,8 +43,8 @@
               actSolutionCall = genOptPrice(BasketOption);
               BasketOption.payoffParam.putCallType = {'put'};
               actSolutionPut = genOptPrice(BasketOption);
-              testCase.verifyLessThan(abs(actSolutionCall-expSolutionCall),0.01);
-              testCase.verifyLessThan(abs(actSolutionPut-expSolutionPut),0.01);
+              testCase.verifyLessThan(abs(actSolutionCall-expSolutionCall)/expSolutionCall,0.01);
+              testCase.verifyLessThan(abs(actSolutionPut-expSolutionPut)/expSolutionPut,0.01);
           end
       end
       
