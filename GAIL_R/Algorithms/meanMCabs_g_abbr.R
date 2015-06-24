@@ -47,7 +47,8 @@ library(pracma)
 #
 #     out_param.time --- the time elapsed in seconds.
 #
-
+#Authors: Anthony Karahalios and Luana Terra
+#
 #This is a heuristic algorithm based on a Central Limit Theorem
 #approximation
 
@@ -108,10 +109,10 @@ meanMCabs_g_abbr = function (Yrand = function(n) {runif(n)^2},abstol=0.01,alpha=
 meanMC_g_param = function(Yrand,abstol,alpha,nSig,fudge) {
   
   
-  if(!is.function(Yrand)) {message("Yrand must be a function - Now R is using default Yrand=function(n) {runif(n)^2}")
+  if(!is.function(Yrand)) {message("Yrand must be a function - Now meanMC_abs_g_abbr is using default Yrand=function(n) {runif(n)^2}")
                            Yrand=function(n) {runif(n)^2}
   }
-  if(abstol<=0) {message("Absolute error tolerance should be greater than 0 - Now R is using default absolute error tolerance = 1e-2.")
+  if(abstol<=0) {message("Absolute error tolerance should be greater than 0 - Now meanMC_abs_g_abbr is using default absolute error tolerance = 1e-2.")
                  abstol = 1e-2
   }
   if(nSig%%1!=0 | nSig<30) {message("The number nSig should be a positive integer at least 30 - We will use the default value 1e2.")
