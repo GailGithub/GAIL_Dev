@@ -46,6 +46,10 @@ classdef assetPath < brownianMotion
       allowPathType = {'GBM'} 
          %kinds of asset paths that we can generate
    end
+   
+   properties (Dependent = true)
+       sqCorr
+   end
 
 
 
@@ -83,12 +87,12 @@ classdef assetPath < brownianMotion
          if isfield(val,'initPrice') %data for type of option
             validateattributes(val.initPrice,{'numeric'}, ...
                {'nonnegative'})
-            if numel(val.initPrice) == obj.assetParam.nAsset
+           if numel(val.initPrice) == obj.assetParam.nAsset
                 obj.assetParam.initPrice=val.initPrice(:);
-            else
-                obj.assetParam.initPrice ...
+           else
+              obj.assetParam.initPrice ...
                     =repmat(val.initPrice(1),obj.assetParam.nAsset,1);
-            end
+           end  
          end
          if isfield(val,'interest') %data for type of option
             validateattributes(val.interest,{'numeric'}, ...
@@ -112,6 +116,12 @@ classdef assetPath < brownianMotion
          end
       end
       
+      % Generate square root of correlation matrix
+       function val = get.sqCorr(obj)
+          [U,S,V] = svd(obj.assetParam.corrMat);
+          val = sqrt(S)*U';
+       end
+      
       % Generate asset paths
       function paths=genPaths(obj,val)
          bmpaths = genPaths@brownianMotion(obj,val);
@@ -124,7 +134,7 @@ classdef assetPath < brownianMotion
                  ((idx-1)*obj.timeDim.nSteps+1):idx*obj.timeDim.nSteps;
               for j=1:obj.timeDim.nSteps
                  tempc(:,j)=bmpaths(:,j:obj.timeDim.nSteps:obj.timeDim.nCols) ...
-                    * obj.assetParam.corrMat(idx,:)';
+                    * obj.sqCorr(idx,:)';
               end
               paths(:,colRange) = obj.assetParam.initPrice(idx) * ...
                  exp(bsxfun(@plus,(obj.assetParam.interest ...
