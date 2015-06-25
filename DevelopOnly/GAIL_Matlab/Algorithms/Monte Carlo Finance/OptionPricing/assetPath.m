@@ -118,7 +118,7 @@ classdef assetPath < brownianMotion
       
       % Generate square root of correlation matrix
        function val = get.sqCorr(obj)
-          [U,S,V] = svd(obj.assetParam.corrMat);
+          [U,S] = svd(obj.assetParam.corrMat);
           val = sqrt(S)*U';
        end
       
@@ -134,7 +134,7 @@ classdef assetPath < brownianMotion
                  ((idx-1)*obj.timeDim.nSteps+1):idx*obj.timeDim.nSteps;
               for j=1:obj.timeDim.nSteps
                  tempc(:,j)=bmpaths(:,j:obj.timeDim.nSteps:obj.timeDim.nCols) ...
-                    * obj.sqCorr(idx,:)';
+                    * obj.sqCorr(:,idx);
               end
               paths(:,colRange) = obj.assetParam.initPrice(idx) * ...
                  exp(bsxfun(@plus,(obj.assetParam.interest ...

@@ -6,10 +6,13 @@
           function testIIDSolution(testCase)
               euroinp.timeDim.timeVector = 1;
               euroinp.payoffParam.optType = {'euro'};
+              euroinp.payoffParam.putCallType = {'call'};
               eurooption = optPayoff(euroinp);
               exactcallprice=eurooption.exactPrice;
+              eurooption.payoffParam.putCallType = {'put'};
+              exactputprice=eurooption.exactPrice;
               inp.payoffParam.optType = {'basket'};
-              inp.payoffParam.basketWeight = [0.5 0.5];
+              inp.payoffParam.basketWeight = [0.3 0.7];
               inp.assetParam.initPrice = [10 10]; 
               inp.assetParam.volatility = [0.5 0.5];
               inp.assetParam.nAsset = 2;
@@ -19,21 +22,24 @@
               inp.timeDim.timeVector = 1;
               BasketOption = optPrice(inp);
                
-               actSolutionCall = genOptPrice(BasketOption);
+               appSolutionCall = genOptPrice(BasketOption);
                BasketOption.payoffParam.putCallType = {'put'};
-               %actSolutionPut = genOptPrice(BasketOption);
-               testCase.verifyLessThan(abs(actSolutionCall-exactcallprice)/exactcallprice,BasketOption.priceParam.relTol);
-               %testCase.verifyLessThan(abs(actSolutionPut-expSolutionPut)/expSolutionPut,0.01);
+               appSolutionPut = genOptPrice(BasketOption);
+               testCase.verifyLessThan(abs(appSolutionCall-exactcallprice)/exactcallprice,BasketOption.priceParam.relTol);
+               testCase.verifyLessThan(abs(appSolutionPut-exactputprice)/exactputprice,BasketOption.priceParam.relTol);
            end
 
           function testSobolSolution(testCase)
               euroinp.timeDim.timeVector = 1;
               euroinp.payoffParam.optType = {'euro'};
+              euroinp.payoffParam.putCallType = {'call'};
               euroinp.priceParam.cubMethod = 'Sobol';
               eurooption = optPayoff(euroinp);
               exactcallprice=eurooption.exactPrice;
+              eurooption.payoffParam.putCallType = {'put'};
+              exactputprice=eurooption.exactPrice;
               basketinp.payoffParam.optType = {'basket'};
-              basketinp.payoffParam.basketWeight = [0.5 0.5];
+              basketinp.payoffParam.basketWeight = [0.3 0.7];
               basketinp.assetParam.initPrice = [10 10]; 
               basketinp.assetParam.volatility = [0.5 0.5];
               basketinp.assetParam.nAsset = 2;
@@ -44,11 +50,11 @@
               basketinp.timeDim.timeVector = 1;
               
               BasketOption = optPrice(basketinp);
-              actSolutionCall = genOptPrice(BasketOption);
+              appSolutionCall = genOptPrice(BasketOption);
               BasketOption.payoffParam.putCallType = {'put'};
-              %actSolutionPut = genOptPrice(BasketOption);
-              testCase.verifyLessThan(abs(actSolutionCall-exactcallprice)/exactcallprice,BasketOption.priceParam.relTol);
-              %testCase.verifyLessThan(abs(actSolutionPut-expSolutionPut)/expSolutionPut,basketOption.priceParam.relTol);
+              appSolutionPut = genOptPrice(BasketOption);
+              testCase.verifyLessThan(abs(appSolutionCall-exactcallprice)/exactcallprice,BasketOption.priceParam.relTol);
+              testCase.verifyLessThan(abs(appSolutionPut-exactputprice)/exactputprice,BasketOption.priceParam.relTol);
           end
       end
       
