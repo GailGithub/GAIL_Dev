@@ -371,7 +371,7 @@ for m=out_param.mmin+1:out_param.mmax
 
    %% Update kappanumap
    kappanumap(nnext+1:2*nnext)=2^(m-1)+kappanumap(1:nnext); %initialize map
-   for l=m-1:-1:l_star
+   for l=m-1:-1:m-r_lag
       nl=2^l;
       oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
       newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa, 
