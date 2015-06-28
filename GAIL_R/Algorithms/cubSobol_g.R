@@ -1,7 +1,7 @@
-cubSobol_g = function(hyperbox = [zeros(1,1);ones(1,1)], measure = 'uniform', 
+cubSobol_g = function(hyperbox = c(0,1), measure = 'uniform', 
                       abstol = 1e-4, reltol = 1e-2, mmin = 10, mmax = 24, fudge = function(m) {5*2^(-m)}, toltype = 'max', theta = 1){
 #function [q,out_param] = cubSobol_g(varargin)
-#CUBSOBOL_G Quasi-Monte Carlo method using Sobol' cubature over the
+#cubSobol_G Quasi-Monte Carlo method using Sobol' cubature over the
 #d-dimensional region to integrate within a specified generalized error
 #tolerance with guarantees under Walsh-Fourier coefficients cone decay
 #assumptions
@@ -223,13 +223,13 @@ cubSobol_g = function(hyperbox = [zeros(1,1);ones(1,1)], measure = 'uniform',
 #   If you find GAIL helpful in your work, please support us by citing the
 #   above papers, software, and materials.
 #
-####sobstr=sobolset(out_param.d); %generate a Sobol' sequence
-####sobstr=scramble(sobstr,'MatousekAffineOwen'); %scramble it
-#sobstr=sobol(n,out_param.d,scrambling=1)
+##########sobstr=sobolset(out_param.d); #generate a Sobol sequence     # # # # # # We may not need these 2 lines in R
+##########sobstr=scramble(sobstr,'MatousekAffineOwen'); #scramble it
+sobstr=sobol(n,out_param.d,scrambling=1)
 Stilde=rep(0,out_param.mmax-out_param.mmin+1); #initialize sum of DFWT terms
-#CStilde_low = -inf(1,out_param.mmax-l_star+1); #initialize #various sums of DFWT terms for necessary conditions
+CStilde_low = -inf(1,out_param.mmax-l_star+1); #initialize #various sums of DFWT terms for necessary conditions
 Cstilde_low=matrix(-Inf,1,out_param.mmax-l_star+1);
-#CStilde_up = inf(1,out_param.mmax-l_star+1); #initialize various #sums of DFWT terms for necessary conditions
+CStilde_up = inf(1,out_param.mmax-l_star+1); #initialize various #sums of DFWT terms for necessary conditions
 CStilde_up = matrix(Inf,1,out_param.mmax-l_star+1);
 errest=rep(0,out_param.mmax-out_param.mmin+1); #initialize error estimates
 appxinteg=rep(0,out_param.mmax-out_param.mmin+1); #initialize approximations to integral
