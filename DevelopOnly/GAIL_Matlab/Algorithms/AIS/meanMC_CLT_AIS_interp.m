@@ -51,7 +51,7 @@ if nargin < 5
       if nargin < 3
          alpha = 0.01; %uncertainty
          if nargin < 2
-            abstol = 0.01; %absolute error tolerance
+            abstol = 0.001; %absolute error tolerance
             if nargin < 1
                 fx=@(x)max(x,0);%example function
             end

@@ -46,7 +46,7 @@ if nargin < 6
       if nargin < 4
          alpha = 0.01; %uncertainty
          if nargin < 3
-            abstol = 0.002; %absolute error tolerance
+            abstol = 0.001; %absolute error tolerance
             if nargin < 3
                 d = 3; %number of dimensions
                 if nargin < 2
