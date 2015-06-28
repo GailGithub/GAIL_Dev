@@ -115,13 +115,13 @@ meanMC_g_param = function(Yrand,abstol,alpha,nSig,fudge) {
   if(abstol<=0) {message("Absolute error tolerance should be greater than 0 - Now meanMC_abs_g_abbr is using default absolute error tolerance = 1e-2.")
                  abstol = 1e-2
   }
-  if(nSig%%1!=0 | nSig<30) {message("The number nSig should be a positive integer at least 30 - We will use the default value 1e2.")
+  if(nSig%%1!=0 | nSig<30) {message("The number nSig should be a positive integer at least 30 - Now meanMC_abs_g_abbr is using default value = 1e2.")
                                             nSig = 1e2
   }
-  if(alpha<=0 | alpha>=1) {message("The uncertainty should be between 0 and 1 - We will use the default value 0.01.")
+  if(alpha<=0 | alpha>=1) {message("The uncertainty should be between 0 and 1 - Now meanMC_abs_g_abbr is using default value = 0.01.")
                            alpha = 0.01
   }
-  if(fudge <= 1) {message("'The fudge factor should be larger than 1 - We will use the default value 1.2.")
+  if(fudge <= 1) {message("'The fudge factor should be larger than 1 - Now meanMC_abs_g_abbr is using default value = 1.2.")
                   fudge = 1.2
   }
   out_param=c("Yrand"=Yrand,"abstol"=abstol,"nSig"=nSig,"alpha"=alpha,"fudge"=fudge)
