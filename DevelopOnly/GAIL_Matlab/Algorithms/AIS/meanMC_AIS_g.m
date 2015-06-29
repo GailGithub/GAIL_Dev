@@ -46,25 +46,24 @@ function [tmu,out_param]=meanMC_AIS_g(Y1,b,d,abstol,alpha,nSig,fudge)
 %                             Authors
 %
 %     BRITO, Rafael de Miranda.
-%     Ricardo.
+%     PAULO, Ricardo Freitas de.
 %     SABARENSE, Mariane de Carvalho.
 
 
-if nargin < 6
+if nargin < 7
    fudge = 1.2; %variance inflation factor
-   if nargin < 5
+   if nargin < 6
       nSig = 1e4; %number of samples to estimate variance
-      if nargin < 4
+      if nargin < 5
          alpha = 0.01; %uncertainty
-         if nargin < 3
+         if nargin < 4
             abstol = 0.002; %absolute error tolerance
             if nargin < 3
                 d = 1; %number of dimensions
                 if nargin < 2
                     b=[0.5,3]; 
-                    if nargin < 1
-                        Y1 = @(x,b) ((sqrt(2.*pi).*b).^d).*cos(b.*sqrt(sum(x.*x,2)))...
-                            .*exp((1/2-b.^2).*sum(x.*x,2)); %integrand
+                    if nargin < 1 
+                        Y1=input('Please inform "g(x)"');
                     end                  
                 end
             end
@@ -75,30 +74,63 @@ end
   
 %                               RESTRICTIONS
 
-% Checks function input
+% Checking function input
 
 if isa(Y1,'function_handle') == 0 || nargin(Y1) ~= 2
-    error('"Y" must be a function handle with two variables - "x" and "b".');
+    warning('meanMC_AIS_g:Y1notafunction',...
+    ['"Y" must be a function handle with two variables - "x" and "b".'...
+        'A default function "Y(x,b) = randn(n+b,1),b" will be used']);
+    Y1 =@(x,b)(randn(x+b,1));
 end
 
-% Checks 'b' input
+% Checking 'b' input
 
 if isa(b,'double') == 0 || numel(b) ~= 2 || issorted(b) == 0
-    error('"b" must be an array with 2 elements in ascending order');
+    warning('meanMC_AIS_g:invalidInterval',...
+    ['"b" must be an array with 2 elements in ascending order.'...
+    'A default interval of [-1 1] will be used.']);
+    b=[-1 1];
     
 end
 
-% Checks dimension input
+% Checking dimension input
 
 if d <= 0 || mod(d,1) ~= 0 
-    error('The number of dimensions must be an integer positive number');
+    warning('meanMC_AIS_g:invalidDimension',...
+    ['The number of dimensions must be an integer positive number'...
+    'A default value d=1 will be used.']);
+    d=1;
+end
+
+% Checking other inputs
+
+if abstol <= 0 || abstol >1
+    warning('meanMC_AIS_g:invalidTolerance',...
+        ['The absolut tolerance must be between zero and one'...
+    'A default value abstol = 0.002 will be used.']);
+    abstol = 0.002;
+end
+
+if alpha <= 0
+    warning('meanMC_AIS_g:invalidUncertainty',...
+        ['The uncertainty must be higher than zero'...
+    'A default value alpha = 0.01 will be used.']);
+    alpha = 0.01;
+end
+
+if fudge <= 0
+    warning('meanMC_AIS_g:invalidInflationFactor',...
+        ['The inflation factor must be higher than zero'...
+    'A default value fudge = 1.2 will be used.']);
+    fudge = 0.01;
 end
 %__________________________________________________________________________
 
 
-out_param.alpha = alpha; % Save the input parameters to a structure.
-out_param.fudge = fudge;
-out_param.nSig = nSig;
+in_param.alpha = alpha; % Save the input parameters to a structure.
+in_param.abstol = abstol;
+in_param.fudge = fudge;
+in_param.nSig = nSig;
 
 b_vec=linspace(b(1),b(2),3); % Generates a vector with 3 values equally spaced
 %   within the interval defined.
@@ -130,7 +162,7 @@ var_bx=var(Y(nSig,x));
 
 
 % Checking the best value for b:
-if var_bx < S_var
+if var_bx < S_var && var_bx > 0
     out_param.b_value = x;
     out_param.var = var_bx;
 else
@@ -140,12 +172,11 @@ end
 
 % MeanMC_g calculation
 
-tmu = meanMC_g(@(n)Y(n,out_param.b_value),abstol,0);
-    
+[tmu,out_param]=meanMC_g(@(n)Y(n,out_param.b_value),in_param,0);
 
+out_param.nTotal= 4.*nSig+(out_param.ntot);%total number of samples used
 sig0 = sqrt(out_param.var); %standard deviation
-out_param.time=toc(tstart); %elapsed time    
-
+out_param.time=toc(tstart); %elapsed time
 
 
 end
