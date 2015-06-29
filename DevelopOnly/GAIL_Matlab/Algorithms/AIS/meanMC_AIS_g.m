@@ -43,6 +43,10 @@ function [tmu,out_param]=meanMC_AIS_g(Y1,b,d,abstol,alpha,nSig,fudge)
 %
 %     out_param.time --- Time elapsed (in seconds).
 %
+%     Example
+%
+%    Calculate the mean of 
+%
 %                             Authors
 %
 %     BRITO, Rafael de Miranda.
@@ -61,10 +65,10 @@ if nargin < 6
             if nargin < 3
                 d = 1; %number of dimensions
                 if nargin < 2
-                    b=[0.5,3]; 
+                    b=[0.5 1.5]; 
                     if nargin < 1
                         Y1 = @(x,b) ((sqrt(2.*pi).*b).^d).*cos(b.*sqrt(sum(x.*x,2)))...
-                            .*exp((1/2-b.^2).*sum(x.*x,2)); %integrand
+                            .*exp((1/2-b.^2).*sum(x.*x,2)); % g(x)
                     end                  
                 end
             end
@@ -103,7 +107,7 @@ out_param.nSig = nSig;
 b_vec=linspace(b(1),b(2),3); % Generates a vector with 3 values equally spaced
 %   within the interval defined.
 
-Y = @(n,b)Y1(randn(n,d),b); % Integrand evaluated at the sample points. 
+Y = @(n,b)Y1(randn(n,d),b); % g(x) evaluated at the sample points. 
 
 tstart=tic; % Starts the clock.
 
@@ -140,9 +144,9 @@ end
 
 % MeanMC_g calculation
 
-tmu = meanMC_g(@(n)Y(n,out_param.b_value),abstol,0);
-    
+[tmu,out_param]=meanMC_g(@(n)Y(n,out_param.b_value),abstol,0);
 
+out_param.nTotal= 4.*nSig+(out_param.ntot);
 sig0 = sqrt(out_param.var); %standard deviation
 out_param.time=toc(tstart); %elapsed time    
 
