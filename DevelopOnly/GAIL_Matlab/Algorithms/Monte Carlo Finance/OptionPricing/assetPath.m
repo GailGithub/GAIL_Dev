@@ -37,7 +37,8 @@ classdef assetPath < brownianMotion
       assetParam = struct('pathType', 'GBM', ... %type of asset path
          'initPrice', 10, ... %initial asset price
          'interest', 0.01, ... %interest rate
-         'volatility', 0.5) %volatility      
+         'volatility', 0.5,... %volatility      
+         'drift', 0) %drift
    end
    
    properties (Constant, Hidden) %do not change & not seen
@@ -95,7 +96,8 @@ classdef assetPath < brownianMotion
          if strcmp(obj.assetParam.pathType,'GBM')
             paths = obj.assetParam.initPrice * ...
                exp(bsxfun(@plus,(obj.assetParam.interest - obj.assetParam.volatility.^2/2) ...
-               .* obj.timeDim.timeVector, obj.assetParam.volatility .* paths));
+               .* obj.timeDim.timeVector, obj.assetParam.volatility ...
+               .* bsxfun(@plus, paths,obj.timeDim.timeVector.*obj.assetParam.drift)));
          end
       end
                  

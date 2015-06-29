@@ -132,6 +132,7 @@ in_param.abstol = abstol;
 in_param.fudge = fudge;
 in_param.nSig = nSig;
 
+%change%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 b_vec=linspace(b(1),b(2),3); % Generates a vector with 3 values equally spaced
 %   within the interval defined.
 
@@ -155,7 +156,7 @@ p=A\var_b';
 fmin=@(x)p(3)+p(2)*x+p(1)*(x.^2);
 
 % Minimum search using the approximated parabola:
-[x]=fminbnd(fmin,b_vec(1),b_vec(3));
+[x]=fminbnd(fmin,b_vec(1),b_vec(3)); %%%%%%%%CHANGE
 
 % Variance calculation using the value estimated as the minimum 'x'
 var_bx=var(Y(nSig,x)); 
