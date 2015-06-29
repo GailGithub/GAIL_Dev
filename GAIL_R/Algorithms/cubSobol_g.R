@@ -1,3 +1,4 @@
+library(randtoolbox)
 cubSobol_g = function(hyperbox = c(0,1), measure = 'uniform', 
                       abstol = 1e-4, reltol = 1e-2, mmin = 10, mmax = 24, fudge = function(m) {5*2^(-m)}, toltype = 'max', theta = 1){
 #function [q,out_param] = cubSobol_g(varargin)
@@ -225,20 +226,18 @@ cubSobol_g = function(hyperbox = c(0,1), measure = 'uniform',
 #
 ##Initial important cone factors and Check-initialize parameters
 r_lag = 4; #distance between coefficients summed and those computed
-#[f,hyperbox,out_param] = cubSobol_g_param(r_lag,varargin{:});
-#l_star = out_param.mmin - r_lag; % Minimum gathering of points for the sums of DFWT
+cubSobol_g_param() #Get the parameters
+l_star = my_list$"out_param"["mmin"] - r_lag; # Minimum gathering of points for the sums of DFWT
   
 if (out_param.measure == 'normal') {
 f = function(x) {qnorm(x)}
 }
 else if (out_param.measure == 'uniform') {
-Cnorm = prod(hyperbox(2,:)-hyperbox(1,:));
-f=@(x) Cnorm*f(bsxfun(@plus,hyperbox(1,:),bsxfun(@times,(hyperbox(2,:)-hyperbox(1,:)),x))); % a + (b-a)x = u
+Cnorm = prod(hyperbox[,2]-hyperbox[,1]      # # # # # hyperbox needs to be two columns instead of two rows in R
+f = function(x) {Cnorm *f(hyperbox[,1]+(hyperbox[,2]-hyperbox[,1])*x)}
 }
 
 ##Main algorithm
-##########sobstr=sobolset(out_param.d); #generate a Sobol sequence     # # # # # # We may not need these 2 lines in R
-##########sobstr=scramble(sobstr,'MatousekAffineOwen'); #scramble it
 Stilde=rep(0,out_param.mmax-out_param.mmin+1); #initialize sum of DFWT terms
 CStilde_low = -inf(1,out_param.mmax-l_star+1); #initialize #various sums of DFWT terms for necessary conditions
 Cstilde_low=matrix(-Inf,1,out_param.mmax-l_star+1);
@@ -256,4 +255,32 @@ xpts=sobol(n0,out_param.d,scrambling=1)
 ####xpts=sobstr(1:n0,1:out_param.d); %grab Sobol' points     # # # # # # We are trying to use xpts directly without sobstr
 y=f(xpts); #evaluate integrand
 yval=y;
+}
+
+
+##Defining the Parameters
+cubSobol_g_param = function(r_lag, hyperbox = c(0,1), measure = 'uniform', 
+                            abstol = 1e-4, reltol = 1e-2, mmin = 10, mmax = 24, fudge = function(m) {5*2^(-m)}, toltype = 'max', theta = 1){ 
+  #To define the variables but we still need to code for the checks****
+  #  default.hyperbox = [zeros(1,1);ones(1,1)];% default hyperbox
+  #  default.measure  = 'uniform';
+  #  default.abstol  = 1e-4;
+  #  default.reltol  = 1e-2;
+  #  default.mmin  = 10;
+  #  default.mmax  = 24;
+  #  default.fudge = @(m) 5*2.^-m;
+  #  default.toltype  = 'max';
+  #  default.theta  = 1;
+  out_param.measure = measure;
+  out_param.abstol = abstol;
+  out_param.reltol = reltol;
+  out_param.mmin = mmin;
+  out_param.mmax = mmax;  
+  out_param.fudge = fudge;
+  out_param.toltype = toltype;
+  out_param.theta = theta;
+  out_param=c("measure"=out_param.measure,"abstol"=out_param.abstol,"reltol"=out_param.reltol,"mmin"=out_param.mmin,"mmax"=out_param.mmax,
+              "fudge"=out_param.fudge,"toltype"=out_param.toltype,"theta"=out_param.theta)
+  out_list = list("out_param"=out_param,"f"=f,"hyperbox"=hyperbox)
+  return(out_list)
 }
