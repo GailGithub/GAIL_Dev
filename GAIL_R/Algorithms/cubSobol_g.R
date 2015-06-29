@@ -223,9 +223,22 @@ cubSobol_g = function(hyperbox = c(0,1), measure = 'uniform',
 #   If you find GAIL helpful in your work, please support us by citing the
 #   above papers, software, and materials.
 #
+##Initial important cone factors and Check-initialize parameters
+r_lag = 4; #distance between coefficients summed and those computed
+#[f,hyperbox,out_param] = cubSobol_g_param(r_lag,varargin{:});
+#l_star = out_param.mmin - r_lag; % Minimum gathering of points for the sums of DFWT
+  
+if (out_param.measure == 'normal') {
+f = function(x) {qnorm(x)}
+}
+else if (out_param.measure == 'uniform') {
+Cnorm = prod(hyperbox(2,:)-hyperbox(1,:));
+f=@(x) Cnorm*f(bsxfun(@plus,hyperbox(1,:),bsxfun(@times,(hyperbox(2,:)-hyperbox(1,:)),x))); % a + (b-a)x = u
+}
+
+##Main algorithm
 ##########sobstr=sobolset(out_param.d); #generate a Sobol sequence     # # # # # # We may not need these 2 lines in R
 ##########sobstr=scramble(sobstr,'MatousekAffineOwen'); #scramble it
-sobstr=sobol(n,out_param.d,scrambling=1)
 Stilde=rep(0,out_param.mmax-out_param.mmin+1); #initialize sum of DFWT terms
 CStilde_low = -inf(1,out_param.mmax-l_star+1); #initialize #various sums of DFWT terms for necessary conditions
 Cstilde_low=matrix(-Inf,1,out_param.mmax-l_star+1);
@@ -235,4 +248,12 @@ errest=rep(0,out_param.mmax-out_param.mmin+1); #initialize error estimates
 appxinteg=rep(0,out_param.mmax-out_param.mmin+1); #initialize approximations to integral
 exit_len = 2;
 #out_param.exit=false(1,exit_len); #we start the algorithm with #all warning flags down
+
+##Initial points and FWT
+out_param.n=2^out_param.mmin; #total number of points to start with
+n0=out_param.n; #initial number of points
+xpts=sobol(n0,out_param.d,scrambling=1)
+####xpts=sobstr(1:n0,1:out_param.d); %grab Sobol' points     # # # # # # We are trying to use xpts directly without sobstr
+y=f(xpts); #evaluate integrand
+yval=y;
 }
