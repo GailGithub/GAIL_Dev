@@ -234,6 +234,7 @@ while(max(err) > tol)
         %        tt = length(index)-1;
         k = k + 1;
     else
+        k = k + 1;
         break;
     end;
 end;
