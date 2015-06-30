@@ -1,7 +1,7 @@
 % ALGORITHMS
 %
 % Folders
-%   Deprecated Algorithm  - Obsolete algorithms
+%   Deprecated_Algorithm  - Obsolete algorithms
 %   +gail                 - Internal functions needed in algorithms
 %
 % Files
