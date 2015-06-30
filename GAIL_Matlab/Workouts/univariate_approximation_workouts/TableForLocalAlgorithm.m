@@ -2,11 +2,11 @@ format compact
 lmax=5;
 npoints=zeros(lmax,4);
 errorsatisfy = false(lmax,4);
-nlo=10;
-nhi=10;
+nlo=1000;
+nhi=1000;
 for l=1:lmax
    l
-   tol=10^(-3-l);
+   tol=10^(-5-l);
    [fappx,out_param,gappx,out_gparam]=testfunction(tol,nlo,nhi);
    npoints(l,1)=out_param.npoints;
    %errorsatisfy(l,1) = e  (is the 
