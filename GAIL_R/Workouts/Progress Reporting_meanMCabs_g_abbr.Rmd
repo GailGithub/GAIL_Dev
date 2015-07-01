@@ -21,7 +21,7 @@ tmu = MEANMCabs_g_abbr(Yrand,abstol,alpha,nSig,fudge) estimates the mean, mu, of
 
      tmu --- the estimated mean of Y.
 
-     out_param.ntot --- total sample used.
+     out_param.ntot --- total number of samples used.
 
      out_param.var --- the sample variance.
 
