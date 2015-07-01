@@ -1,62 +1,94 @@
-function [tmu,out_param_AIS,out_param_MCg]=meanMC_AIS_g(Y1,b,d,abstol,alpha,nSig,fudge)
+%% Adaptive Importance Sampling (AIS)
+%
+%% Adaptive Importance Sampling
+% Consider the following multivariate integral where _*f(x)*_ is a function:
+%
+% \begin{align*}
+% \mu & =\int_{R^d}^{}{f (x)} \, 
+% {\rm
+% d}x \\
+% \end{align*}
+%
+% If _*x*_ is a random variable and has a probability density function
+% $\rho(x)$, we can assume:
+%
+% \begin{align*}
+% \mu = \int_{{R}^d}\frac{f(x)}{\rho(x)}\rho(x)dx = \int_{{R}^d}g(x)\rho(x)dx 
+% \end{align*}
+%
+% Where:    
+%
+% \begin{align*}
+% g(x)= \frac{f(x)}{\rho(x)}, x \in R^d.
+% \end{align*}
+%
+%
+% The integral above can be described then as: 
+%
+% \begin{align*}
+% \mu = \int_{{R}^d}g(x)\rho(x)dx  \rightarrow  \mu\approx
+% \frac{1}{n}\sum_{i=1}^{n}{g(X_i)}
+% \end{align*}
+%
+% The importance sampling is the best choice of a probability density function 
+% resulting in an alternative distribution whose support is concentrated in the
+% truncation region, i.e., sampling more where it matters.
 
-%   meanMC_AIS_g uses adaptive importance sampling to estimate the best value
-%   for a transformated variable, i.e., the value that minimizes the
-%   variance, and then it uses this value to call the function meanMC_g
-%   where the function defined by the user is evaluated within a specified 
-%   error tolerance, i.e., | mu - tmu |<= abstol with probability at least 
-%   1-alpha, where abstol is the absolute error tolerance.  
+%% Variable Transformation
 %
+% Suppose that it is complicated to generate _*x*_ with probability density
+% $\rho(x)$. We can make use of a variable transformation to obtain a new
+% random variable easier to generate and related to _*x*_.
 %
-%                           Input Arguments
-%
-%     Y --- Anonymous function with two variables, x (independent variable)
-%     and b (factor which will be optimized), provided by the user. This
-%     function must be the combination between an interest function and
-%     the normal density distribution function, i.e, it must be the 
-%     importance function.
-%     
-%     b --- Vector with two values that indicate an interval to be used for
-%     variable 'b'. This interval will be used to create a vector, b_vec,
-%     containing three equally spaced points which will be used to generate 
-%     a parabolic interpolation (between b_vec and the corresponding 
-%     variance) to determine a local minimum within the interval specified.
-%
-%     d --- Number of dimensions.
-%
-%     abstol --- Absolute error tolerance, which should be
-%     positive. Default value is 2e-3.
-%
-%     alpha --- Uncertainty, which should be a small positive
-%     percentage. The default value is 1%.
-%
-%     nSig --- Number of samples used to compute the sample variance.
-%
-%     fudge --- Standard deviation inflation factor.
-%
-%
-%                           Output Arguments --- out_param_AIS
-%
-%
-%     tmu --- Estimated value of the integral.
-%
-%     out_param_AIS.ntot --- Total samples used.
-%
-%     out_param_AIS.var --- Variance.
-%
-%     out_param_AIS.time --- Time elapsed (in seconds).
-%
-%     out_param_AIS.sig0 --- Standard deviation.
-%
-%     *The user can choose to display the outputs from meanMC_g.
-%
-%                             Authors
-%
-%     BRITO, Rafael de Miranda.
-%     PAULO, Ricardo Freitas de.
-%     SABARENSE, Mariane de Carvalho.
 
 
+%% meanMC_CLT_AIS
+%
+% Our first algorithm uses the concepts of Adaptive Importance Sample and
+% Variable Transformation combined to the Central Limit Theorem to evaluate an integral, searching a value inside
+% the transformation that minimizes the variance within an interval.
+%
+% For example, consider the following integral with a Gaussian probability density $\rho(x)$:
+% 
+% \begin{align*}
+% \mu = \int_{{R}^d}cos(\mid\mid x||)exp(-||x||^2)dx
+% \end{align*}
+% and
+%
+% \begin{align*}
+% \rho(x) = \frac{exp(-\mid\mid x||^2)/(2b^2)}{((\sqrt{2\pi})b)^d}
+% \end{align*}
+%
+% Calculating the importance sampling formula and using a variable
+% transformation _*x = bz*_  where *z* is a random variable and *b* is a fixed value higher than zero, we obtain:
+% 
+% \begin{align*}
+% \mu = \int_{{R}^d}(\sqrt{2\pi}b)^d.cos(b\mid\mid z||)exp((1/2-b^2)\mid\mid z||^2)
+% \end{align*}
+% 
+% Using this function as an input, our algorithm will determine the value
+% of *b*, within a determined interval, for which the variance is the
+% smallest.
+%
+% *Example 1:*
+b = [0.5 2.5]; abstol = 0.002; alpha = 0.01; nSig = 1e4; fudge = 1.2;
+Y1=@(z,b) ((sqrt(2.*pi).*b).^d).*cos(b.*sqrt(sum(z.*z,2))).*exp((1/2-b.^2).*sum(z.*z,2));
+[tmu,out_param]=meanMC_CLT_AIS(Y1,abstol,alpha,nSig,fudge)
+
+%% meanMC_AIS_g
+%
+% meanMC_g is a GAIL algorithm that uses Monte Carlo method to estimate the
+% mean of a random variable.
+% The main input of this algorithm is a function handle that accepts a positive integer input _n_ and
+% returns an n x 1 vector of IID instances of the random variable Y.
+%
+% From our previous algorithm we made the following program, meanMC_AIS_g, using Adaptive Importance Sampling and 
+% Variable Transformation to minimize the variance. Once the best value for *b* is found it is used as an input for
+% meanMC_g, obtaining a GAIL guaranteed answer.
+%
+%
+%%
+% *Program inputs:*
 if nargin < 7
    fudge = 1.2; %variance inflation factor
    if nargin < 6
@@ -78,9 +110,8 @@ if nargin < 7
       end
    end
 end
-  
-%                               RESTRICTIONS
-
+%%
+% *Program restrictions:*
 % Checking function input
 
 if isa(Y1,'function_handle') == 0 || nargin(Y1) ~= 2
@@ -96,7 +127,7 @@ if isa(b,'double') == 0 || numel(b) ~= 2 || issorted(b) == 0
     warning('meanMC_AIS_g:invalidInterval',...
     ['"b" must be an array with 2 elements in ascending order.'...
     'A default interval of [-1 1] will be used.']);
-    b=[-2 2];
+    b=[-1 1];
     
 end
 
@@ -138,7 +169,9 @@ if fudge <= 0
     'A default value fudge = 1.2 will be used.']);
     fudge = 0.01;
 end
-%__________________________________________________________________________
+
+%%
+% *Main Structure:*
 
 out_param_AIS.alpha = alpha; % Save the input parameters to a structure.
 out_param_AIS.abstol = abstol;
@@ -148,7 +181,7 @@ out_param_AIS.nSig = nSig;
 b_vec=[b(1),((b(1)+b(2))/2),b(2)]; % Generates a vector with 3 values equally spaced
 %within the interval defined.
 
-Y = @(n,b)Y1(randn(n,d),b); % Integrand evaluated at the sample points. 
+Y = @(n,b)Y1(randn(n,1),b); % Integrand evaluated at the sample points. 
 
 tstart=tic; % Starts the clock.
 
@@ -181,15 +214,30 @@ else
     out_param_AIS.var = S_var;
 end
 out_param_AIS.time=toc(tstart); %elapsed time
-
-% MeanMC_g calculation
+%%
+% *meanMC_g calculation:*
 
 [tmu, out_param_MCg]=meanMC_g(@(n)Y(n,out_param_AIS.b_value),out_param_AIS.abstol,0,out_param_AIS.alpha,out_param_AIS.fudge,out_param_AIS.nSig);
 
 out_param_AIS.nTotal= 4.*nSig+(out_param_MCg.ntot);%total number of samples used
 out_param_AIS.sig0 = sqrt(out_param_AIS.var); %standard deviation
 
+%% 
+% *Example 2:* Using the same function of the Example 1:
 
+[tmu,out_param_AIS, out_param_MCg]=meanMC_AIS_g(Y1,b,d,abstol,alpha,nSig,fudge)
 
-end
-
+%% References
+%
+% 
+% * HICKERNELL, F. J. _*Monte Carlo and Quasi-Monte Carlo Methods*_. Illinois
+% Institute of Technology May, 2015.
+% 
+%
+%%
+%
+% *Authors*
+%
+% BRITO, Rafael de Miranda.
+% DE PAULO, Ricardo Freitas.
+% SABARENSE, Mariane de Carvalho.
