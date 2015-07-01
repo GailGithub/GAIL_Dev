@@ -93,6 +93,7 @@
 % q & = \text{dividend rate}\\
 % r & = \text{risk-free interest rate}\\
 % \sigma & = \text{volatility}\\
+% P & = \text{Payoff}\\
 % \end{align*}
 %
 %% Pricing Digital Option for Cash-or-nothing
@@ -156,6 +157,7 @@ disp(['Expect these answers to be within ' ...
 
 SobolDigOption1 = optPrice(input);
 SobolDigOption1.priceParam.cubMethod = 'Sobol';
+
 for i = 1:n
     tic,
     sobol_price(i) = genOptPrice(SobolDigOption1);
@@ -170,7 +172,6 @@ disp(['Expect these answers to be within ' ...
 %%% Plot the payoffs
 
 plot(DigOption1,1e4);
-
 %% Pricing Digital Option for Asset-or-nothing
 %
 % Copying the input structure from _DigOption1_. _DigOption2_ is the 
