@@ -1,6 +1,6 @@
 
 
-function [tmu,out_param]=meanMC_CLT_AIS(fx,abstol,alpha,nSig,fudge)
+function [tmu,out_param]=meanMC_CLT_AIS_interp(fx,abstol,alpha,nSig,fudge)
 %MEANMC_CLT Monte Carlo method to estimate the mean of a random variable
 %
 %   tmu = meanMC_CLT(fx,abstol,alpha,nSig,fudge) estimates the mean, of a random fuction to
@@ -64,27 +64,40 @@ out_param.alpha = alpha; %save the input parameters to a structure
 out_param.fudge = fudge;
 out_param.nSig = nSig;
 
-b=[-2,0,2];%estimated values for standard deviation.
+b=[0.5,1.5,2.5];%estimated values for standard deviation.
 tstart=tic; %starts the clock.
-gx=@(t,b_value)fx(t+b_value).*exp(-t.*b_value-b_value.^2/2);
 t_value=(randn(nSig,1));%generate the pseudorandom values drawn
 % from the standard normal distribution
 
 for i=1:numel(b)
     b_value=b(i);
-    var_b(i)=var(gx(t_value,b_value));
+    var_b(i)=var(fx(t_value,b_value));
 end
+%parabolic interpolation:
+A=[b'.^2 b' ones(3,1)];
+p=A\var_b';
+
+fmin=@(x)p(3)+p(2)*x+p(1)*(x.^2);
+[x]=fminbnd(fmin,b(1),b(3));
+var_bx=var(fx(t_value,x));
 
 [S_var,S_pos]=min(var_b);
-out_param.var = S_var; %calculate the sample variance--stage 1
-out_param.b_value=b(S_pos);%best variance
+
+if var_bx <= S_var
+    out_param.b_value = x;
+    out_param.var = var_bx;
+else
+    out_param.b_value = b(S_pos);
+    out_param.var = S_var;
+end
+
 sig0 = sqrt(out_param.var); %standard deviation
 sig0up = out_param.fudge.*sig0; %upper bound on the standard deviation
 nmu = max(1,ceil((-norminv(alpha)*sig0up/abstol).^2)); 
    %number of samples needed for mean
 assert(nmu<nMax,['nmu = ' int2str(nmu) ', which is too big']) 
    %don't exceed sample budget
-tmu=mean(gx(randn(nmu,1),out_param.b_value)); %estimated mean
+tmu=mean(fx(randn(nmu,1),out_param.b_value)); %estimated mean
 out_param.ntot=nSig+nmu; %total samples required
 out_param.time=toc(tstart); %elapsed time    
 
