@@ -32,7 +32,6 @@ classdef assetPath < brownianMotion
 % This process inherits properties from the |stochProcess| class.  Below are 
 % values assigned to that are abstractly defined in that class plus some
 % properties particulary for this class
-
    properties (SetAccess=public) %so they can only be set by the constructor
       assetParam = struct('pathType', 'GBM', ... %type of asset path
          'initPrice', 10, ... %initial asset price

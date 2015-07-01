@@ -96,7 +96,7 @@ if isa(b,'double') == 0 || numel(b) ~= 2 || issorted(b) == 0
     warning('meanMC_AIS_g:invalidInterval',...
     ['"b" must be an array with 2 elements in ascending order.'...
     'A default interval of [-1 1] will be used.']);
-    b=[-1 1];
+    b=[-2 2];
     
 end
 
