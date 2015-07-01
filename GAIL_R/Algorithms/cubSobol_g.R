@@ -239,10 +239,8 @@ f = function(x) {Cnorm *f(hyperbox[,1]+(hyperbox[,2]-hyperbox[,1])*x)}
 
 ##Main algorithm
 Stilde=rep(0,out_param.mmax-out_param.mmin+1); #initialize sum of DFWT terms
-CStilde_low = -inf(1,out_param.mmax-l_star+1); #initialize #various sums of DFWT terms for necessary conditions
-Cstilde_low=matrix(-Inf,1,out_param.mmax-l_star+1);
-CStilde_up = inf(1,out_param.mmax-l_star+1); #initialize various #sums of DFWT terms for necessary conditions
-CStilde_up = matrix(Inf,1,out_param.mmax-l_star+1);
+Cstilde_low=matrix(-Inf,1,out_param.mmax-l_star+1); #initialize #various sums of DFWT terms for necessary conditions
+CStilde_up = matrix(Inf,1,out_param.mmax-l_star+1); #initialize various #sums of DFWT terms for necessary conditions
 errest=rep(0,out_param.mmax-out_param.mmin+1); #initialize error estimates
 appxinteg=rep(0,out_param.mmax-out_param.mmin+1); #initialize approximations to integral
 exit_len = 2;
@@ -256,6 +254,18 @@ xpts=sobol(n0,out_param.d,scrambling=1)
 y=f(xpts); #evaluate integrand
 yval=y;
 }
+
+## Compute initial FWT
+for (l in 0:out_param.mmin-1){
+  nl=2^l;
+  nmminlm1=2^(out_param.mmin-l-1);
+  #ptind=repmat([true(nl,1); false(nl,1)],nmminlm1,1);
+  #evenval=y(ptind);
+  #oddval=y(~ptind);
+  #y(ptind)=(evenval+oddval)/2;
+  #y(~ptind)=(evenval-oddval)/2;
+}
+#y now contains the FWT coefficients
 
 
 ##Defining the Parameters
