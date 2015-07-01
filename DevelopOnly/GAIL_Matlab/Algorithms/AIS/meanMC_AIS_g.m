@@ -1,9 +1,11 @@
-function [tmu,out_param]=meanMC_AIS_g(Y1,b,d,abstol,alpha,nSig,fudge)
+function [tmu,out_param_AIS,out_param_MCg]=meanMC_AIS_g(Y1,b,d,abstol,alpha,nSig,fudge)
 
-%   MEANMC_AIS_g uses adaptive importance sampling to estimate the value of
-%   a function integral within a specified error tolerance, i.e., 
-%   | mu - tmu |<= abstol with probability at least 1-alpha, where abstol
-%   is the absolute error tolerance using the adaptive importance sampling.  
+%   meanMC_AIS_g uses adaptive importance sampling to estimate the best value
+%   for a transformated variable, i.e., the value that minimizes the
+%   variance, and then it uses this value to call the function meanMC_g
+%   where the function defined by the user is evaluated within a specified 
+%   error tolerance, i.e., | mu - tmu |<= abstol with probability at least 
+%   1-alpha, where abstol is the absolute error tolerance.  
 %
 %
 %                           Input Arguments
@@ -11,7 +13,8 @@ function [tmu,out_param]=meanMC_AIS_g(Y1,b,d,abstol,alpha,nSig,fudge)
 %     Y --- Anonymous function with two variables, x (independent variable)
 %     and b (factor which will be optimized), provided by the user. This
 %     function must be the combination between an interest function and
-%     the normal density distribution function - the importance function.
+%     the normal density distribution function, i.e, it must be the 
+%     importance function.
 %     
 %     b --- Vector with two values that indicate an interval to be used for
 %     variable 'b'. This interval will be used to create a vector, b_vec,
@@ -22,7 +25,7 @@ function [tmu,out_param]=meanMC_AIS_g(Y1,b,d,abstol,alpha,nSig,fudge)
 %     d --- Number of dimensions.
 %
 %     abstol --- Absolute error tolerance, which should be
-%     positive, default value is 2e-3.
+%     positive. Default value is 2e-3.
 %
 %     alpha --- Uncertainty, which should be a small positive
 %     percentage. The default value is 1%.
@@ -32,16 +35,20 @@ function [tmu,out_param]=meanMC_AIS_g(Y1,b,d,abstol,alpha,nSig,fudge)
 %     fudge --- Standard deviation inflation factor.
 %
 %
-%                           Output Arguments
+%                           Output Arguments --- out_param_AIS
 %
 %
 %     tmu --- Estimated value of the integral.
 %
-%     out_param.ntot --- Total samples used.
+%     out_param_AIS.ntot --- Total samples used.
 %
-%     out_param.var --- Variance.
+%     out_param_AIS.var --- Variance.
 %
-%     out_param.time --- Time elapsed (in seconds).
+%     out_param_AIS.time --- Time elapsed (in seconds).
+%
+%     out_param_AIS.sig0 --- Standard deviation.
+%
+%     *The user can choose to display the outputs from meanMC_g.
 %
 %                             Authors
 %
@@ -61,9 +68,9 @@ if nargin < 7
             if nargin < 3
                 d = 1; %number of dimensions
                 if nargin < 2
-                    b=[0.5,3]; 
+                    b=[-2 2]; % 'b''interval
                     if nargin < 1 
-                        Y1=input('Please inform "g(x)"');
+                        Y1=input('Please inform "g(x)"');% 'g(x)'
                     end                  
                 end
             end
@@ -118,6 +125,13 @@ if alpha <= 0
     alpha = 0.01;
 end
 
+if nSig <= 0
+    warning('meanMC_AIS_g:invalidNumberSamples',...
+        ['The number of samples must be higher than zero'...
+    'A default value nSig = 1e4 will be used.']);
+    nSig = 1e4;
+end
+
 if fudge <= 0
     warning('meanMC_AIS_g:invalidInflationFactor',...
         ['The inflation factor must be higher than zero'...
@@ -127,14 +141,15 @@ end
 %__________________________________________________________________________
 
 
-in_param.alpha = alpha; % Save the input parameters to a structure.
-in_param.abstol = abstol;
-in_param.fudge = fudge;
-in_param.nSig = nSig;
+out_param_AIS.alpha = alpha; % Save the input parameters to a structure.
+out_param_AIS.abstol = abstol;
+out_param_AIS.fudge = fudge;
+out_param_AIS.nSig = nSig;
 
-%change%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-b_vec=linspace(b(1),b(2),3); % Generates a vector with 3 values equally spaced
-%   within the interval defined.
+
+
+b_vec=[b(1),((b(1)+b(2))/2),b(2)]; % Generates a vector with 3 values equally spaced
+%within the interval defined.
 
 Y = @(n,b)Y1(randn(n,d),b); % Integrand evaluated at the sample points. 
 
@@ -153,31 +168,31 @@ end
 % Parabolic interpolation between b_vec and calculated variance:
 A=[b_vec'.^2 b_vec' ones(3,1)];
 p=A\var_b';
-fmin=@(x)p(3)+p(2)*x+p(1)*(x.^2);
 
 % Minimum search using the approximated parabola:
-[x]=fminbnd(fmin,b_vec(1),b_vec(3)); %%%%%%%%CHANGE
-
+[x]=(-p(2)/(2*p(1)));
 % Variance calculation using the value estimated as the minimum 'x'
 var_bx=var(Y(nSig,x)); 
 
 
 % Checking the best value for b:
 if var_bx < S_var && var_bx > 0
-    out_param.b_value = x;
-    out_param.var = var_bx;
+    out_param_AIS.b_value = x;
+    out_param_AIS.var = var_bx;
 else
-    out_param.b_value = b_vec(S_pos);
-    out_param.var = S_var;
+    out_param_AIS.b_value = b_vec(S_pos);
+    out_param_AIS.var = S_var;
 end
-
+out_param_AIS.time=toc(tstart); %elapsed time
+%out_param.b_chosen = out_param.b_value;
 % MeanMC_g calculation
 
-[tmu,out_param]=meanMC_g(@(n)Y(n,out_param.b_value),in_param,0);
+[tmu, out_param_MCg]=meanMC_g(@(n)Y(n,out_param_AIS.b_value),out_param_AIS.abstol,0,out_param_AIS.alpha,out_param_AIS.fudge,out_param_AIS.nSig);
 
-out_param.nTotal= 4.*nSig+(out_param.ntot);%total number of samples used
-sig0 = sqrt(out_param.var); %standard deviation
-out_param.time=toc(tstart); %elapsed time
+
+out_param_AIS.nTotal= 4.*nSig+(out_param_MCg.ntot);%total number of samples used
+out_param_AIS.sig0 = sqrt(out_param_AIS.var); %standard deviation
+
 
 
 end
