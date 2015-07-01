@@ -71,7 +71,7 @@
 % smallest.
 %
 % *Example 1:*
-b = [0.5 2.5]; abstol = 0.002; alpha = 0.01; nSig = 1e4; fudge = 1.2;
+d = 3; b = [0.5 2.5]; abstol = 0.002; alpha = 0.01; nSig = 1e4; fudge = 1.2;
 Y1=@(z,b) ((sqrt(2.*pi).*b).^d).*cos(b.*sqrt(sum(z.*z,2))).*exp((1/2-b.^2).*sum(z.*z,2));
 [tmu,out_param]=meanMC_CLT_AIS(Y1,abstol,alpha,nSig,fudge)
 
@@ -181,7 +181,7 @@ out_param_AIS.nSig = nSig;
 b_vec=[b(1),((b(1)+b(2))/2),b(2)]; % Generates a vector with 3 values equally spaced
 %within the interval defined.
 
-Y = @(n,b)Y1(randn(n,1),b); % Integrand evaluated at the sample points. 
+Y = @(n,b)Y1(randn(n,d),b); % Integrand evaluated at the sample points. 
 
 tstart=tic; % Starts the clock.
 
@@ -223,7 +223,7 @@ out_param_AIS.nTotal= 4.*nSig+(out_param_MCg.ntot);%total number of samples used
 out_param_AIS.sig0 = sqrt(out_param_AIS.var); %standard deviation
 
 %% 
-% *Example 2:* Using the same function of the Example 1:
+% *Example 2:* Using the same inputs of the Example 1:
 
 [tmu,out_param_AIS, out_param_MCg]=meanMC_AIS_g(Y1,b,d,abstol,alpha,nSig,fudge)
 
