@@ -11,6 +11,7 @@ param.measure='normal';
 param.abstol=2e-2;
 param.reltol=0; % 0 reltol means all absolut error
 param.toltype  = 'max';
+param.fudge  = @(m) ones(size(m));
 param_indicator=1;
 
 test.nrep=500;

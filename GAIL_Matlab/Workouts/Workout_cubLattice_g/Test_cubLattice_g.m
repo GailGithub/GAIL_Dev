@@ -3,8 +3,8 @@
 %clear all;close all;clc;
 function [ut_abserr,ut_relerr,abstol,reltol] = Test_cubLattice_g
 %[
-dimsize = 3;
-indexsize = 2;
+dimsize = 8;
+indexsize = 5;
 abstol = 1e-3;
 reltol = abstol;
 format long
@@ -24,7 +24,7 @@ for dim=1:dimsize
   in_param.alpha = 1e-2;% the uncertainty
   in_param.nSig = 1e4;% the sample size to estimate sigma
   in_param.n1 = 1e4;% the initial sample size to estimate Q
-  %in_param.fudge =1.2;% standard deviation inflation factor
+  in_param.fudge = @(m) 5*2.^-m;% standard deviation inflation factor
   in_param.timebudget = 300;% time budget
   in_param.nbudget = 1e10;% sample budget
   alpha = ones(1,in_param.dim);

@@ -124,7 +124,7 @@ while(max(err) > tol)
     fn = (ninit-1)^2./(len.^2).*max(abs(diff(diffy)),[],1);
     %update cone condition every iteration
     ntemp=max(ceil(nhi*(nlo/nhi).^(1./(1+len))),3);
-    nstar = ntemp -2;
+    nstar = floor(ntemp/2);
     
     %     gn(gn<eps/2)=0;
     %     fn(fn<eps/2)=0;
@@ -234,6 +234,7 @@ while(max(err) > tol)
         %        tt = length(index)-1;
         k = k + 1;
     else
+        k = k + 1;
         break;
     end;
 end;

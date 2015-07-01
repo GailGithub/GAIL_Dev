@@ -1,4 +1,4 @@
-%Testing Monte Carlo Finance stuff
+%Testing Monte_Carlo_Finance stuff
 format compact
 clearvars
 

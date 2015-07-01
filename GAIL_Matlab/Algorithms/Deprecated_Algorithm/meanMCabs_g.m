@@ -208,7 +208,7 @@ while true
             out_param.kurtmax = (out_param.n_sigma-3)/(out_param.n_sigma-1) ...
                 + ((alpha1*out_param.n_sigma)/(1-alpha1))*(1-1/out_param.fudge^2)^2;
             % get the upper bound on the modified kurtosis
-            if sig0up == 0; % if the variance is zero, just take n_sigma samples
+            if sig0up == 0; %#ok<BDSCI> % if the variance is zero, just take n_sigma samples
                 out_param.n_mu = out_param.n_sigma;
                 break;
             else

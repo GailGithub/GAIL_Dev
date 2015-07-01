@@ -1,4 +1,5 @@
 Guaranteed Automatic Integration Library (GAIL)
+-----------------------------------------------
 GAIL Version 2.1, Mar 14, 2015.
 See LICENSE.m for copyright and disclaimer.
 
