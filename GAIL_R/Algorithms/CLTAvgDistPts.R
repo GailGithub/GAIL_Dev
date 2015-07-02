@@ -75,3 +75,5 @@ print(muhat)
 # the variance is enough, but 100 is too few.  We would like a theorem.  If
 # we want to have algorithms with solid theoretical justification, then we
 # should look at the *Guaranteed Automatic Integration Library (GAIL)*.
+
+# Authors: Anthony Karahalios and Luana Terra

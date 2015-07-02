@@ -224,6 +224,8 @@ cubSobol_g = function(hyperbox = c(0,1), measure = 'uniform',
 #   If you find GAIL helpful in your work, please support us by citing the
 #   above papers, software, and materials.
 #
+#   Authors: Anthony Karahalios and Luana Terra
+#
 ##Initial important cone factors and Check-initialize parameters
 r_lag = 4; #distance between coefficients summed and those computed
 cubSobol_g_param() #Get the parameters

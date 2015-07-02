@@ -46,6 +46,8 @@
 #alpha = 0.01; uncertainty  
 #abstol = 0.01; absolute error tolerance  
 #Yrand = @(n) rand(n,1); random number generator 
+#
+# Authors: Anthony Karahalios and Luana Terra
 
 meanMC_CLT = function(Yrand = function(n) {runif(n)},abstol = 0.01,alpha = 0.01,nSig = 1e2,fudge = 1.2) {
 nMax=1e8; #maximum number of samples allowed.
