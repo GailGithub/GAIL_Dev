@@ -69,6 +69,19 @@ classdef latticeSet<handle
         29004257, 24806569, 2515121, 25540279, 3051655, 5637047, 19239479,...
         25413861, 19026129, 7717595, 16939323, 5596877, 3411409, 29006229,...
         29289975, 17980543, 25987481, 23186729, 4858187, 25345023, 30536647, 865955]; 
+<<<<<<< HEAD
+=======
+       %dim := number of dimensions:
+        dim = 2;
+       %shift := add a normal random vector to all points in the sample.
+        shift = true; 
+       %index := starting point
+        index=0;
+    end
+    
+    properties (Dependent = true)
+        shiftValue 
+>>>>>>> 52cfe76c62b7db80bce82c85b05debde0897ef43
     end
     
 %% Methods 
@@ -92,6 +105,7 @@ classdef latticeSet<handle
             end
             obj.shiftValue = rand(1,obj.dim);
         end
+<<<<<<< HEAD
 
 
 %%
@@ -108,6 +122,15 @@ classdef latticeSet<handle
 %
         function lattice = genLattice(obj,N)
             lattice = vanDerCorput(obj.index,obj.index+N-1)*obj.genVector(1:obj.dim);
+=======
+        
+        
+        function lattice = genLattice(obj,N)%Generates the Lattice set based the latticeSet object and the amount of points required
+            assert(obj.dim<=numel(obj.genVector), ...
+               'dim must be no greater than the number of elements in the generating vector')
+            obj.index = vanDerCorput(obj.index,length(obj.index)+N)
+            lattice = obj.index(length(obj.index)-N+1:length(obj.index))*obj.genVector(1:obj.dim);
+>>>>>>> 52cfe76c62b7db80bce82c85b05debde0897ef43
             if obj.shift
                 lattice = bsxfun(@plus,lattice,obj.shiftValue);
             end
@@ -115,6 +138,7 @@ classdef latticeSet<handle
             obj.index = obj.index+N;
         end
         
+<<<<<<< HEAD
 %% Get Methods
 % These allows you to access dim and genVector by getting their values
 % on the properties privateDim and privateGenVector.
@@ -175,6 +199,26 @@ classdef latticeSet<handle
                end
                obj.shiftValue = rand(1,obj.dim);
            end 
+=======
+        function set.dim(obj,val)
+            validateattributes(val,{'numeric'},{'scalar','positive','integer'})
+            obj.dim = val;
+        end 
+        
+        function set.shiftValue(obj,~)
+            obj.shiftValue = rand(1,obj.dim);
+        end 
+        
+        function set.genVector(obj,val)
+            validateattributes(val,{'numeric'},{'vector','integer'})
+            obj.genVector=val;
+        end 
+        
+        function set.shift(obj,val)
+            validateattributes(val,{'logical'},{'scalar'})
+            obj.shift=val;
+            
+>>>>>>> 52cfe76c62b7db80bce82c85b05debde0897ef43
         end
         
         
