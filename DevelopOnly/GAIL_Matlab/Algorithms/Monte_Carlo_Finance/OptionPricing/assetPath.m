@@ -32,12 +32,12 @@ classdef assetPath < brownianMotion
 % This process inherits properties from the |stochProcess| class.  Below are 
 % values assigned to that are abstractly defined in that class plus some
 % properties particulary for this class
-
    properties (SetAccess=public) %so they can only be set by the constructor
       assetParam = struct('pathType', 'GBM', ... %type of asset path
          'initPrice', 10, ... %initial asset price
          'interest', 0.01, ... %interest rate
-         'volatility', 0.5) %volatility      
+         'volatility', 0.5,... %volatility      
+         'drift', 0) %drift
    end
    
    properties (Constant, Hidden) %do not change & not seen
@@ -87,15 +87,22 @@ classdef assetPath < brownianMotion
                {'nonnegative'})
             obj.assetParam.volatility=val.volatility; %row
          end
+         if isfield(val,'drift') %data for type of option
+            validateattributes(val.drift,{'numeric'}, ...
+               {'scalar'})
+            obj.assetParam.drift=val.drift; %row
+         end
       end
       
       % Generate Brownian Motion paths
-      function paths=genPaths(obj,val)
+      function [paths,weights]=genPaths(obj,val)
          paths = genPaths@brownianMotion(obj,val);
          if strcmp(obj.assetParam.pathType,'GBM')
             paths = obj.assetParam.initPrice * ...
                exp(bsxfun(@plus,(obj.assetParam.interest - obj.assetParam.volatility.^2/2) ...
-               .* obj.timeDim.timeVector, obj.assetParam.volatility .* paths));
+               .* obj.timeDim.timeVector, obj.assetParam.volatility ...
+               .* bsxfun(@plus, paths,obj.timeDim.timeVector.*obj.assetParam.drift)));
+            weights = 5; %this needs fixing
          end
       end
                  
@@ -109,6 +116,9 @@ classdef assetPath < brownianMotion
          propList.assetParam_initPrice = obj.assetParam.initPrice;
          propList.assetParam_interest = obj.assetParam.interest;
          propList.assetParam_volatility = obj.assetParam.volatility;
+         if obj.assetParam.drift ~=0
+            propList.assetParam_drift = obj.assetParam.drift;
+         end
       end
 
    end

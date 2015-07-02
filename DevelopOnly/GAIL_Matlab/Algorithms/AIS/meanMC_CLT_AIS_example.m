@@ -1,4 +1,4 @@
-function [tmu,out_param]=meanMC_CLT_AIS(fx,abstol,alpha,nSig,fudge)
+function [tmu,out_param]=meanMC_CLT_AIS_example(fx,abstol,alpha,nSig,fudge)
 %MEANMC_CLT Monte Carlo method to estimate the mean of a random variable
 %
 %   tmu = meanMC_CLT(fx,abstol,alpha,nSig,fudge) estimates the mean, of a random fuction to
@@ -61,16 +61,16 @@ nMax=1e8; %maximum number of samples allowed.
 out_param.alpha = alpha; %save the input parameters to a structure
 out_param.fudge = fudge;
 out_param.nSig = nSig;
-
-b=[-1,0,1];%estimated values for standard deviation.
+gx=@(x,b_value)(exp(-0.5.*(x.^2)))./(exp(-0.5.*((x-b_value).^2)));
+b=[0,0.5,1];%estimated values for standard deviation.
 tstart=tic; %starts the clock.
-fx_b=@(t,b_value)fx(t-b_value).*exp(-t.*b_value + 3.*(b_value.^2)/2).*exp((-1/2).*(t-2.*b_value).^2);
 t_value=(randn(nSig,1));%generate the pseudorandom values drawn
 % from the standard normal distribution
 
 for i=1:numel(b)
     b_value=b(i);
-    var_b(i)=var(fx_b(t_value,b_value));
+    fx_b=fx(t_value+b_value)./(gx(t_value+b_value,b_value));
+    var_b(i)=var(fx_b(t_value+b_value,b_value));
 end
 
 [S_var,S_pos]=min(var_b);
@@ -82,7 +82,7 @@ nmu = max(1,ceil((-norminv(alpha)*sig0up/abstol).^2));
    %number of samples needed for mean
 assert(nmu<nMax,['nmu = ' int2str(nmu) ', which is too big']) 
    %don't exceed sample budget
-tmu=mean(fx_b(randn(nmu,1),out_param.b_value)); %estimated mean
+tmu=mean(fx_b(randn(nmu,1),out_param.b_value,d)); %estimated mean
 out_param.ntot=nSig+nmu; %total samples required
 out_param.time=toc(tstart); %elapsed time    
 
