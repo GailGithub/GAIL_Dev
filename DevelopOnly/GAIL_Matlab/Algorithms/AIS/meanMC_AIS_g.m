@@ -85,17 +85,17 @@ end
 
 if isa(Y1,'function_handle') == 0 || nargin(Y1) ~= 2
     warning('meanMC_AIS_g:Y1notafunction',...
-    ['"Y" must be a function handle with two variables - "x" and "b".'...
+    ['"Y" must be a function handle with two variables - "x" and "b".\n'...
         'A default function "Y(x,b) = randn(n+b,1),b" will be used']);
-    Y1 =@(x,b)(randn(x+b,1));
+    Y1 =@(x,b)(randn(x,d)+b);
 end
 
 % Checking 'b' input
 
 if isa(b,'double') == 0 || numel(b) ~= 2 || issorted(b) == 0
     warning('meanMC_AIS_g:invalidInterval',...
-    ['"b" must be an array with 2 elements in ascending order.'...
-    'A default interval of [-1 1] will be used.']);
+    ['"b" must be an array with 2 elements in ascending order.\n'...
+    'A default interval of [-2 2] will be used.']);
     b=[-2 2];
     
 end
@@ -104,7 +104,7 @@ end
 
 if d <= 0 || mod(d,1) ~= 0 
     warning('meanMC_AIS_g:invalidDimension',...
-    ['The number of dimensions must be an integer positive number'...
+    ['The number of dimensions must be an integer positive number.\n'...
     'A default value d=1 will be used.']);
     d=1;
 end
@@ -113,28 +113,28 @@ end
 
 if abstol <= 0 || abstol >1
     warning('meanMC_AIS_g:invalidTolerance',...
-        ['The absolut tolerance must be between zero and one'...
+        ['The absolut tolerance must be between zero and one.\n'...
     'A default value abstol = 0.002 will be used.']);
     abstol = 0.002;
 end
 
 if alpha <= 0
     warning('meanMC_AIS_g:invalidUncertainty',...
-        ['The uncertainty must be higher than zero'...
+        ['The uncertainty must be higher than zero.\n'...
     'A default value alpha = 0.01 will be used.']);
     alpha = 0.01;
 end
 
 if nSig <= 0
     warning('meanMC_AIS_g:invalidNumberSamples',...
-        ['The number of samples must be higher than zero'...
+        ['The number of samples must be higher than zero.\n'...
     'A default value nSig = 1e4 will be used.']);
     nSig = 1e4;
 end
 
 if fudge <= 0
     warning('meanMC_AIS_g:invalidInflationFactor',...
-        ['The inflation factor must be higher than zero'...
+        ['The inflation factor must be higher than zero\.'...
     'A default value fudge = 1.2 will be used.']);
     fudge = 0.01;
 end
@@ -189,7 +189,7 @@ out_param_AIS.time=toc(tstart); %elapsed time
 out_param_AIS.nTotal= 4.*nSig+(out_param_MCg.ntot);%total number of samples used
 out_param_AIS.sig0 = sqrt(out_param_AIS.var); %standard deviation
 
-
+out_param_AIS.TotalTime = out_param_AIS.time + out_param_MCg.time;
 
 end
 
