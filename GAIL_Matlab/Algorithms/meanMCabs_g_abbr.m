@@ -50,7 +50,7 @@ if nargin < 5
             if nargin < 2
                 abstol = 0.01; %absolute error tolerance
                 if nargin < 1
-                    Yrand = @(n) rand(n,1); %random number generator
+                    Yrand = @(n) rand(n,1).^2; %random number generator
                 end
             end
         end
