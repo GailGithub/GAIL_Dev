@@ -259,7 +259,7 @@ yval=y;
 for (l in 0:out_param.mmin-1){
   nl=2^l;
   nmminlm1=2^(out_param.mmin-l-1);
-  ptind=matrix(rep(matrix(c(rep(1,10),rep(0,10))),nmminlm1));
+  ptind=matrix(rep(matrix(c(rep(1,nl),rep(0,nl))),nmminlm1));
   evenval=y[ptind];
   #oddval=y[~ptind];
   y[ptind]=(evenval+oddval)/2;
