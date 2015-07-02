@@ -82,7 +82,7 @@ classdef stochProcess < handle & matlab.mixin.CustomDisplay
             obj.timeDim.initTime=val.initTime; %initial time before startTime
          end
          if isfield(val,'initValue')
-            validateattributes(val.initValue, {'numeric'},{'scalar'})
+            validateattributes(val.initValue, {'numeric'},{'vector'})
             obj.timeDim.initValue=val.initValue; %initial value
          end
          %compute all of the dependent properties

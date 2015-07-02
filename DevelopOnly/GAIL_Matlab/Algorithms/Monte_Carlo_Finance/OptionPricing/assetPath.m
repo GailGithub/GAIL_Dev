@@ -37,12 +37,18 @@ classdef assetPath < brownianMotion
          'initPrice', 10, ... %initial asset price
          'interest', 0.01, ... %interest rate
          'volatility', 0.5,... %volatility      
-         'drift', 0) %drift
+         'drift', 0,... %drift
+         'nAsset', 1,... %number of assets 
+         'corrMat', 1) %A transpose     
    end
    
    properties (Constant, Hidden) %do not change & not seen
       allowPathType = {'GBM'} 
          %kinds of asset paths that we can generate
+   end
+   
+   properties (Dependent = true)
+       sqCorr
    end
 
 
@@ -63,29 +69,50 @@ classdef assetPath < brownianMotion
             obj.restInput = rmfield(obj.restInput,'assetParam');
          end
          obj.timeDim = struct('initTime',0, ...
-            'initValue',obj.assetParam.initPrice);
+            'initValue',obj.assetParam.initPrice,...
+            'dim',obj.assetParam.nAsset);
       end
            
       % Set the properties of the payoff object
       function set.assetParam(obj,val)
          if isfield(val,'pathType') %data for type of option
-            assert(any(strcmp(val.optType,obj.allowPathType)))
+            assert(any(strcmp(val.pathType,obj.allowPathType)))
             obj.assetParam.pathType=val.pathType; %row
+         end
+         if isfield(val,'nAsset') %data for number of assets
+            validateattributes(val.nAsset,{'numeric'}, ...
+               {'nonnegative'})
+            obj.assetParam.nAsset=val.nAsset; %row
          end
          if isfield(val,'initPrice') %data for type of option
             validateattributes(val.initPrice,{'numeric'}, ...
                {'nonnegative'})
-            obj.assetParam.initPrice=val.initPrice; %row
+           if numel(val.initPrice) == obj.assetParam.nAsset
+                obj.assetParam.initPrice=val.initPrice(:);
+           else
+              obj.assetParam.initPrice ...
+                    =repmat(val.initPrice(1),obj.assetParam.nAsset,1);
+           end  
          end
          if isfield(val,'interest') %data for type of option
             validateattributes(val.interest,{'numeric'}, ...
                {'nonnegative'})
-            obj.assetParam.interest=val.interest; %row
+            obj.assetParam.interest=val.interest(:); 
          end
          if isfield(val,'volatility') %data for type of option
             validateattributes(val.volatility,{'numeric'}, ...
                {'nonnegative'})
-            obj.assetParam.volatility=val.volatility; %row
+           if numel(val.volatility) == obj.assetParam.nAsset
+            obj.assetParam.volatility=val.volatility(:); %row
+           else
+                obj.assetParam.volatility ...
+                    =repmat(val.volatility(1),obj.assetParam.nAsset,1);
+           end
+         end
+         if isfield(val,'corrMat') %data for A
+            validateattributes(val.corrMat,{'numeric'}, ...
+               {'nonnegative'})
+            obj.assetParam.corrMat=val.corrMat; %row
          end
          if isfield(val,'drift') %data for type of option
             validateattributes(val.drift,{'numeric'}, ...
@@ -94,15 +121,32 @@ classdef assetPath < brownianMotion
          end
       end
       
-      % Generate Brownian Motion paths
-      function [paths,weights]=genPaths(obj,val)
-         paths = genPaths@brownianMotion(obj,val);
+      % Generate square root of correlation matrix
+       function val = get.sqCorr(obj)
+          [U,S] = svd(obj.assetParam.corrMat);
+          val = sqrt(S)*U';
+       end
+      
+      % Generate asset paths
+      function [paths]=genPaths(obj,val)
+         bmpaths = genPaths@brownianMotion(obj,val);
+         nPaths = size(bmpaths,1);
          if strcmp(obj.assetParam.pathType,'GBM')
-            paths = obj.assetParam.initPrice * ...
-               exp(bsxfun(@plus,(obj.assetParam.interest - obj.assetParam.volatility.^2/2) ...
-               .* obj.timeDim.timeVector, obj.assetParam.volatility ...
-               .* bsxfun(@plus, paths,obj.timeDim.timeVector.*obj.assetParam.drift)));
-            weights = 5; %this needs fixing
+            tempc=zeros(nPaths,obj.timeDim.nSteps);
+            paths=zeros(nPaths,obj.timeDim.nCols);
+            for idx=1:obj.assetParam.nAsset
+              colRange = ...
+                 ((idx-1)*obj.timeDim.nSteps+1):idx*obj.timeDim.nSteps;
+              for j=1:obj.timeDim.nSteps
+                 tempc(:,j)=bmpaths(:,j:obj.timeDim.nSteps:obj.timeDim.nCols) ...
+                    * obj.sqCorr(:,idx);
+              end
+              paths(:,colRange) = obj.assetParam.initPrice(idx) * ...
+                 exp(bsxfun(@plus,(obj.assetParam.interest ...
+                 - obj.assetParam.volatility(idx).^2/2) ...
+                 .* obj.timeDim.timeVector, obj.assetParam.volatility(idx)...
+                 .* tempc));
+             end
          end
       end
                  
@@ -119,6 +163,7 @@ classdef assetPath < brownianMotion
          if obj.assetParam.drift ~=0
             propList.assetParam_drift = obj.assetParam.drift;
          end
+         propList.assetParam_nAsset = obj.assetParam.nAsset;
       end
 
    end
