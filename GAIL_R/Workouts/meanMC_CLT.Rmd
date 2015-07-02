@@ -1,7 +1,4 @@
 ---
-title: "Progress Reporting - meanMC_CLT"
-author: "Anthony Karahalios  -  Luana Amancio Terra"
-date: "June 11, 2015"
 output: html_document
 ---
 \
@@ -9,15 +6,15 @@ output: html_document
 
 ####MEANMC_CLT Monte Carlo method to estimate the mean of a random variable
 
-     tmu = MEANMC_CLT(Yrand,abstol,alpha,nSig,fudge) estimates the mean, mu, of a random variable Y to within a specified error tolerance, i.e., | mu - tmu | <= abstol with probability at least 1-alpha, where abstol is the absolute error tolerance.  The default values are abstol=1e-2 and alpha=1%. Input Yrand is a function handle that accepts a positive integer input n and returns an n x 1 vector of IID instances of the random variable Y.
+     tmu = meanMC_CLT(Yrand,abstol,alpha,nSig,fudge) estimates the mean, mu, of a random variable Y to within a specified error tolerance, i.e., | mu - tmu | <= abstol with probability at least 1-alpha, where abstol is the absolute error tolerance.  The default values are abstol=1e-2 and alpha=0.01. Input Yrand is a function handle that accepts a positive integer input n and returns an n x 1 vector of IID instances of the random variable Y.
 
 ####Input Arguments
 
-     Yrand --- the function for generating n IID instances of a random      variable Y whose mean we want to estimate. Y is often defined as a function of some random variable X with a simple distribution. The input of Yrand should be the number of random variables n, the output of Yrand should be n function values. For example, if Y = X.^2 where X is a standard uniform random variable, then one may define Yrand = @(n) rand(n,1).^2.
+     Yrand --- the function for generating n IID instances of a random variable Y whose mean we want to estimate. Y is often defined as a function of some random variable X with a simple distribution. The input of Yrand should be the number of random variables n, the output of Yrand should be n function values. For example, if Y = X.^2 where X is a standard uniform random variable, then one may define Yrand = function(n) {runif(n)}.
 
      abstol --- the absolute error tolerance, which should be positive, default value is 1e-2.
 
-     alpha --- the uncertainty, which should be a small positive percentage. The default value is 1%.
+     alpha --- the uncertainty, which should be a small positive percentage. The default value is 0.01.
 
      nSig --- the number of samples used to compute the sample variance. The default value is 1e2
 
@@ -36,11 +33,11 @@ output: html_document
 
 ####This is a heuristic algorithm based on a Central Limit Theorem approximation
 ######Default Values
-fudge = 1.2; variance inflation factor    
-nSig = 1e2; number of samples to estimate variance  
-alpha = 0.01; uncertainty  
-abstol = 0.01; absolute error tolerance  
-Yrand = function(n) {runif(n)}; random number generator 
+    Yrand = function(n) {runif(n)}; random number generator 
+    abstol = 0.01; absolute error tolerance 
+    alpha = 0.01; uncertainty 
+    nSig = 1e2; number of samples to estimate variance 
+    fudge = 1.2; variance inflation factor    
 
 ```{r}
 meanMC_CLT = function(Yrand = function(n) {runif(n)},abstol = 0.01,alpha = 0.01,nSig = 1e2,fudge = 1.2) {
@@ -66,14 +63,14 @@ return(output)
 }
 ```
 
-####Output Results
+####Output Results (Examples)
 
 ```{r}
-mean1=meanMC_CLT()
-mean1
-mean2=meanMC_CLT(Yrand = function(n) {runif(n)}) #Example using different Yrand
-mean2
-mean3=meanMC_CLT(abstol=0.015,alpha=0.015) #Example using different abstol and alpha
-mean3
+meanMC_CLT()
+
+meanMC_CLT(Yrand = function(n) {runif(n)^2}) #Example using different Yrand
+
+meanMC_CLT(abstol=0.015,alpha=0.015) #Example using different abstol and alpha
+
 ```
 
