@@ -37,6 +37,11 @@ classdef brownianMotion < whiteNoise
       bmParam = struct('assembleType', 'diff') %method for assembling browniam Motion from white noise
    end
 
+   properties (Constant, Hidden) %do not change & not seen
+      allowassembleType = {'diff','PCA'} 
+   end
+   
+   
 %% Methods
 % The constructor for |brownianMotion| uses the |whiteNoise| constructor
 % and then parses the other properties. The function |genBMPaths| generates
@@ -47,6 +52,11 @@ classdef brownianMotion < whiteNoise
       % Creating a Brownian Motion process
       function obj = brownianMotion(varargin)         
          obj@whiteNoise(varargin{:}) %parse basic input
+         if isfield(obj.restInput,'bmParam')
+            val = obj.restInput.bmParam;
+            obj.bmParam = val;
+            obj.restInput = rmfield(obj.restInput,'bmParam');
+         end
          obj.wnParam = struct('distribName','Gaussian');
             %must have Gaussian whiteNoise paths input   
          assert(obj.timeDim.startTime >= 0) %Brownian motion goes forward in time
@@ -65,10 +75,30 @@ classdef brownianMotion < whiteNoise
                   sqrt([obj.timeDim.timeVector(1) obj.timeDim.timeIncrement]), ...
                   paths(:,colRange)),2);
             end
+%######################################################
+%Beginning of part added:
+%######################################################
+         elseif strcmp(obj.bmParam.assembleType,'PCA')
+             Sigma=bsxfun(@min,obj.timeDim.timeVector',obj.timeDim.timeVector);
+             [Eigenvectors,Eigenvalues]=eig(Sigma);
+             A = Eigenvectors*Eigenvalues.^(1/2);
+             paths=paths*A';
          end
+%######################################################
+%End of part added.
+%######################################################
        end
                  
+      function set.bmParam(obj,val)
+         if isfield(val,'assembleType') %data for assemble Type
+            assert(any(strcmp(val.assembleType,obj.allowassembleType)))
+            obj.bmParam.assembleType = val.assembleType;
+         end
+      end
+      
    end
+   
+
    
    methods (Access = protected)
 
