@@ -1,3 +1,11 @@
+if(require("pracma") == FALSE){
+  print("trying to install package: pracma")
+  install.packages("pracma")
+  if(require("pracma")){
+    print("pracma installed and loaded")}
+  else{stop("coud not install pracma")}
+}
+library(pracma)
 source("meanMCabs_g_abbr.R")
 meanMCabs_g_abbr()
 meanMCabs_g_abbr()
@@ -47,5 +55,5 @@ time = c(avg_time1,avg_time2,avg_time3,avg_time4,avg_time5)
 overall_data = matrix(c(ntot,time),ncol=5,byrow=TRUE)
 colnames(overall_data) = c("0.0001","0.0005","0.001","0.005","0.01")
 rownames(overall_data) = c("ntot","time")
+options(scipen=999)
 overall_data
-
