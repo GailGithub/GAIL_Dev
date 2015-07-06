@@ -1,5 +1,7 @@
 function [tmu,out_param_AIS,out_param_MCg]=meanMC_AIS_g(Y1,b,d,abstol,alpha,nSig,fudge)
-
+%MEANMC_CLT_AIS combines Monte Carlo method and Adaptive Importance Sampling
+%to estimate the mean of a random variable.
+%
 %   meanMC_AIS_g uses adaptive importance sampling to estimate the best value
 %   for a transformated variable, i.e., the value that minimizes the
 %   variance, and then it uses this value to call the function meanMC_g
@@ -10,11 +12,11 @@ function [tmu,out_param_AIS,out_param_MCg]=meanMC_AIS_g(Y1,b,d,abstol,alpha,nSig
 %
 %                           Input Arguments
 %
-%     Y --- Anonymous function with two variables, x (independent variable)
+%     Y1 --- Anonymous function with two variables, x (independent variable)
 %     and b (factor which will be optimized), provided by the user. This
 %     function must be the combination between an interest function and
 %     the normal density distribution function, i.e, it must be the 
-%     importance function.
+%     importance function.    
 %     
 %     b --- Vector with two values that indicate an interval to be used for
 %     variable 'b'. This interval will be used to create a vector, b_vec,
@@ -25,7 +27,7 @@ function [tmu,out_param_AIS,out_param_MCg]=meanMC_AIS_g(Y1,b,d,abstol,alpha,nSig
 %     d --- Number of dimensions.
 %
 %     abstol --- Absolute error tolerance, which should be
-%     positive. Default value is 2e-3.
+%     between 0 and 1. Default value is 2e-3.
 %
 %     alpha --- Uncertainty, which should be a small positive
 %     percentage. The default value is 1%.
@@ -38,7 +40,7 @@ function [tmu,out_param_AIS,out_param_MCg]=meanMC_AIS_g(Y1,b,d,abstol,alpha,nSig
 %                           Output Arguments --- out_param_AIS
 %
 %
-%     tmu --- Estimated value of the integral.
+%     tmu --- Estimated mean.
 %
 %     out_param_AIS.ntot --- Total samples used.
 %
@@ -52,9 +54,7 @@ function [tmu,out_param_AIS,out_param_MCg]=meanMC_AIS_g(Y1,b,d,abstol,alpha,nSig
 %
 %                             Authors
 %
-%     BRITO, Rafael de Miranda.
-%     PAULO, Ricardo Freitas de.
-%     SABARENSE, Mariane de Carvalho.
+%     BRITO, Rafael de Miranda. PAULO, Ricardo Freitas de. SABARENSE, Mariane de Carvalho.
 
 
 if nargin < 7
@@ -85,9 +85,9 @@ end
 
 if isa(Y1,'function_handle') == 0 || nargin(Y1) ~= 2
     warning('meanMC_AIS_g:Y1notafunction',...
-    ['"Y" must be a function handle with two variables - "x" and "b".\n'...
-        'A default function "Y(x,b) = randn(n+b,1),b" will be used']);
-    Y1 =@(x,b)(randn(x,d)+b);
+    ['"Y" must be a function handle with two variables - "n" and "b".\n'...
+        'A default function "Y(n,b) = (n+b).^2" will be used']);
+    Y1 =@(n,b)(n+b).^2;
 end
 
 % Checking 'b' input
@@ -136,7 +136,7 @@ if fudge <= 0
     warning('meanMC_AIS_g:invalidInflationFactor',...
         ['The inflation factor must be higher than zero\.'...
     'A default value fudge = 1.2 will be used.']);
-    fudge = 0.01;
+    fudge = 1.2;
 end
 %__________________________________________________________________________
 
