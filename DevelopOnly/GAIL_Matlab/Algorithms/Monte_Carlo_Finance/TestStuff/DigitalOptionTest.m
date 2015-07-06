@@ -8,14 +8,16 @@ classdef DigitalOptionTest < matlab.unittest.TestCase
             inp.payoffParam.optType = {'digitalcash'};
             inp.payoffParam.callPutType = {'Call'};
             inp.priceParam.cubMethod = 'Sobol';
-            inp.priceParam.relTol = 0;
+            inp.priceParam.relTol = 0.01;
             inp.priceParam.absTol = 0.001;
             inp.timeDim.timeVector = 1;
             
+            S = 15;
+            inp.assetParam.initPrice = S;
+            
             n = 4;
             pay = [0.8 0.9 1 1.1];
-            k = [10 15 20 30];
-            S = [08 18 28 38];
+            k = [0.7*S 0.9*S 1.1*S 1.3*S];
             i = [0.02 0.04 0.06 0.08];
             sigma = [0.4 0.45 0.5 0.55];
             
@@ -26,15 +28,21 @@ classdef DigitalOptionTest < matlab.unittest.TestCase
                             for e = 1:n;
                                 inp.payoffParam.digitalPay = pay(a);
                                 inp.payoffParam.strike = k(b);
-                                inp.assetParam.initPrice = S(c);
-                                inp.payoffParam.interest = i(d);
-                                inp.assetParam.volatility = sigma(e);
+                                inp.payoffParam.interest = i(c);
+                                inp.assetParam.volatility = sigma(d);
                                 DigitalCashCall = optPrice(inp);
+                                DigitalCashPut = optPrice(inp);
+                                DigitalCashPut.payoffParam.callPutType = {'Put'};
                                 expCashCall = DigitalCashCall.exactPrice;
+                                expCashPut = DigitalCashPut.exactPrice;
                                 actCashCall = genOptPrice(DigitalCashCall);
+                                actCashPut = genOptPrice(DigitalCashPut);
                                 testCase.verifyEqual(actCashCall, ...
                                     expCashCall,'RelTol',DigitalCashCall.priceParam.relTol, ...
                                     'AbsTol',DigitalCashCall.priceParam.absTol);
+                                testCase.verifyEqual(actCashPut, ...
+                                    expCashPut,'RelTol',DigitalCashPut.priceParam.relTol, ...
+                                    'AbsTol',DigitalCashPut.priceParam.absTol);
                             end
                         end
                     end
@@ -46,14 +54,16 @@ classdef DigitalOptionTest < matlab.unittest.TestCase
             inp.payoffParam.optType = {'digitalasset'};
             inp.payoffParam.callPutType = {'Call'};
             inp.priceParam.cubMethod = 'Sobol';
-            inp.priceParam.relTol = 0;
-            inp.priceParam.absTol = 0.01;
+            inp.priceParam.relTol = 0.01;
+            inp.priceParam.absTol = 0.001;
             inp.timeDim.timeVector = 1;
+            
+            S = 15;
+            inp.assetParam.initPrice = S;
             
             n = 4;
             pay = [0.8 0.9 1 1.1];
-            k = [10 15 20 35];
-            S = [08 18 28 38];
+            k = [0.7*S 0.9*S 1.1*S 1.3*S];
             i = [0.02 0.04 0.06 0.08];
             sigma = [0.4 0.45 0.5 0.55];
             
@@ -61,19 +71,23 @@ classdef DigitalOptionTest < matlab.unittest.TestCase
                 for b = 1:n;
                     for c = 1:n;
                         for d = 1:n;
-                            for e = 1:n;
                                 inp.payoffParam.digitalPay = pay(a);
                                 inp.payoffParam.strike = k(b);
-                                inp.assetParam.initPrice = S(c);
-                                inp.payoffParam.interest = i(d);
-                                inp.assetParam.volatility = sigma(e);
-                                DigitalAssetCall= optPrice(inp);
+                                inp.payoffParam.interest = i(c);
+                                inp.assetParam.volatility = sigma(d);
+                                DigitalAssetCall = optPrice(inp);
+                                DigitalAssetPut = optPrice(inp);
+                                DigitalAssetPut.payoffParam.callPutType = {'Put'};
                                 expAssetCall = DigitalAssetCall.exactPrice;
+                                expAssetPut = DigitalAssetPut.exactPrice;
                                 actAssetCall = genOptPrice(DigitalAssetCall);
+                                actAssetPut = genOptPrice(DigitalAssetPut);
                                 testCase.verifyEqual(actAssetCall, ...
                                     expAssetCall,'RelTol',DigitalAssetCall.priceParam.relTol, ...
                                     'AbsTol',DigitalAssetCall.priceParam.absTol);
-                            end
+                                testCase.verifyEqual(actAssetPut, ...
+                                    expAssetPut,'RelTol',DigitalAssetPut.priceParam.relTol, ...
+                                    'AbsTol',DigitalAssetPut.priceParam.absTol);
                         end
                     end
                 end
