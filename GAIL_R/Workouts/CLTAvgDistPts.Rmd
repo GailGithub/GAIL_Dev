@@ -36,7 +36,7 @@ $\mathbf{Y_i}$ approaches the Gaussian (or normal) distribution with mean $\math
 
 ```{r}
 # Need to store meanMC_CLT
-setwd("C:/Users/Luana/Desktop/Research Chicago/GAIL_Dev/GAIL_R/Algorithms")
+setwd("/Users/AnthonyKarahalios/GAIL_Dev/GAIL_R/Algorithms")
 source("meanMC_CLT.R")
 ```
  
@@ -57,7 +57,7 @@ meandist
 ```
 
 
-The value of `output.ntot` is the total number of samples used.   
+The value of `out_param.ntot` is the total number of samples used.   
 \   
 
    
