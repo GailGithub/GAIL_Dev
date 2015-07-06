@@ -66,7 +66,7 @@ tic, BasketOptionCall = optPrice(inp), toc
 
 %%
 % Now we generate the basket option price using Independent Identically Distributed (IID) sampling
-n=5 %number of sampling
+n=5; %number of sampling
 
 for i=1:n
     tic, 
