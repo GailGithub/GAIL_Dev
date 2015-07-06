@@ -23,7 +23,7 @@ To approximate the answer, $\mu$, we may use the sample mean with n = 1e6 points
 tstart = proc.time()
 meandist = mean(distfun(1e6))
 time=proc.time() - tstart
-time["elapsed"]
+c("meandist"=meandist,time["elapsed"])
 ```
 
 The problem is that we do not yet know how accurate our answer is.   
@@ -36,7 +36,7 @@ $\mathbf{Y_i}$ approaches the Gaussian (or normal) distribution with mean $\math
 
 ```{r}
 # Need to store meanMC_CLT
-setwd("C:/Users/Luana/Desktop/Research Chicago/GAIL_Dev/GAIL_R")
+setwd("C:/Users/Luana/Desktop/Research Chicago/GAIL_Dev/GAIL_R/Algorithms")
 source("meanMC_CLT.R")
 ```
  
@@ -45,8 +45,7 @@ We may use this algorithm to find a fixed-width confidence interval
 tstart1 = proc.time()
 meandist = meanMC_CLT(distfun,0.02)
 time1=proc.time() - tstart1
-meandist["tmu"]
-time1["elapsed"]
+c(meandist["tmu"],time1["elapsed"])
 ```
 
 
@@ -64,7 +63,7 @@ The value of `output.ntot` is the total number of samples used.
    
 #####Sometimes the CLT confidence interval does not work
 
-Unfortunately, `meanMC_CLT` does not have solid theoretical support.E.g. consider the example
+Unfortunately, `meanMC_CLT` does not have solid theoretical support. E.g. consider the example
 
 ```{r}
 a=1e2; # a parameter
