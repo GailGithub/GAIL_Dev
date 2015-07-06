@@ -113,6 +113,9 @@ absDiff = abs(iid_BasketOptionCall - sobol_BasketOptionCall)
 % "Online Option Pricer." Options Pricer. Web. 22 June 2015.
 %
 % "Basket Option Definition | Investopedia." Investopedia. 19 Nov. 2003. Web. 22 June 2015.
+%%
+% Authors: Tianci Zhu and Hartur Santi
+
 
 
 
