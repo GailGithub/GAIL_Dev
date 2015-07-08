@@ -1,6 +1,7 @@
   classdef BasketOptionTest < matlab.unittest.TestCase
       % BasketOptionTest tests the basket option price generated using
       % Monte Carlo Method and Quasi Monte Carlo Method.
+      % Authors: Tianci Zhu and Hartur Santi
     
       methods (Test)
           % Test Monte Carlo Method

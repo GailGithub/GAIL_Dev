@@ -27,6 +27,7 @@ classdef optPayoff < assetPath
 %          payoffParam_strike: 10
 %                  exactPrice: 3.4501
  
+% Authors: Fred J. Hickernell, Tianci Zhu, Hartur Santi
 %% Properties
 % This process inherits properties from the |stochProcess| class.  Below are 
 % values assigned to that are abstractly defined in that class plus some
