@@ -12,7 +12,7 @@ classdef DigitalOptionTest < matlab.unittest.TestCase
             inp.priceParam.absTol = 0.001;
             inp.timeDim.timeVector = 1;
             
-            S = 15;
+            S = 10;
             inp.assetParam.initPrice = S;
             
             n = 4;
@@ -58,7 +58,7 @@ classdef DigitalOptionTest < matlab.unittest.TestCase
             inp.priceParam.absTol = 0.001;
             inp.timeDim.timeVector = 1;
             
-            S = 15;
+            S = 10;
             inp.assetParam.initPrice = S;
             
             n = 4;

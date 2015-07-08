@@ -1,4 +1,4 @@
-%% Basket Option in Matlab
+%% Pricing Basket Option with Monte Carlo and Quasi-Monte Carlo Methods
 % Basket Option is a type of financial derivative where the underlying 
 % asset is a group of commodities, securities or currencies. A basket 
 % option gives the holder the right, but not the obligation, to buy or 

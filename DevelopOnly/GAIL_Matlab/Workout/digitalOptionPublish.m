@@ -149,7 +149,11 @@ mc_price
 
 disp(['Expect these answers to be within ' ...
    num2str(max(DigOption1.priceParam.absTol, ...
-   DigOption1.priceParam.relTol * abs(mean(mc_price)))) ' of the true answer.'])
+   DigOption1.priceParam.relTol * DigOption1.exactPrice)) ' of the true answer.'])
+
+disp('The actual errors are')
+fprintf(' %12.8f',abs(mc_price-DigOption1.exactPrice))
+
 %%
 % In order to compare the exact price from Monte Carlo and Quasi-Monte
 % Carlo Methods, the 'Sobol' price parameter is used to construct 
@@ -168,7 +172,7 @@ sobol_price
 
 disp(['Expect these answers to be within ' ...
    num2str(max(SobolDigOption1.priceParam.absTol, ...
-   SobolDigOption1.priceParam.relTol * abs(mean(sobol_price)))) ' of the true answer.'])
+   SobolDigOption1.priceParam.relTol * SobolDigOption1.exactPrice)) ' of the true answer.'])
 %%
 %%% Plot the payoffs
 
@@ -193,7 +197,7 @@ end
 mc_price2
 disp(['Expect these answers to be within ' ...
    num2str(max(DigOption2.priceParam.absTol, ...
-   DigOption2.priceParam.relTol * abs(mean(mc_price2)))) ' of the true answer.'])
+   DigOption2.priceParam.relTol * DigOption2.exactPrice)) ' of the true answer.'])
 %%
 % In order to compare the exact price from Monte Carlo and Quasi-Monte
 % Carlo Methods, the 'Sobol' price parameter is used to construct 
@@ -213,7 +217,7 @@ sobol_price2
 
 disp(['Expect these answers to be within ' ...
    num2str(max(SobolDigOption2.priceParam.absTol, ...
-   SobolDigOption2.priceParam.relTol * abs(mean(sobol_price2)))) ' of the true answer.'])
+   SobolDigOption2.priceParam.relTol * SobolDigOption2.exactPrice)) ' of the true answer.'])
 %%
 %%% Plot the payoffs
 
