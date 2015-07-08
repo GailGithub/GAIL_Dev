@@ -6,6 +6,7 @@ if(require("pracma") == FALSE){
   else{stop("coud not install pracma")}
 }
 library(pracma)
+setwd("GAIL_Dev/GAIL_R/Algorithms")
 source("meanMCabs_g_abbr.R")
 meanMCabs_g_abbr()
 meanMCabs_g_abbr()

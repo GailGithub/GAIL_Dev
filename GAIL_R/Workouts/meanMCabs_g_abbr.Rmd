@@ -75,10 +75,10 @@ meanMCabs_g_abbr = function (Yrand = function(n) {runif(n)^2},abstol=0.01,alpha=
   logsqrtnCLT=log(qnorm(1-alpha1/2)/toloversig);
   nmu=min(ncheb,ceiling(exp(2*fzero(BEfun,logsqrtnCLT)$x)));
   #get the min n (used to estimate mu) by using cheb and BEfun
-  if(nmu>=nMax) {message("Program stopped due to the guarantee needing over 1e8 samples")
-  cat("Number of samples required = ", nmu, ". Mean will be estimated using 1e8 samples\n")
-  tmu=mean(Yrand(1e8)); #estimated mean
-  out_param.ntot=nSig+1e8; #total samples required
+  if(nmu>=nMax) {message("Program stopped due to the guarantee needing over ", nMax, " samples")
+  cat("Number of samples required = ", nmu, ". Mean will be estimated using ", nMax, " samples\n")
+  tmu=mean(Yrand(nMax)); #estimated mean
+  out_param.ntot=nSig+nMax; #total samples required
   out_param.time=proc.time()-tstart; #elapsed time
   out_param.time=unname(out_param.time)
   return(c("tmu"= tmu,"out_param.ntot" = out_param.ntot,"out_param.var" = out_param.var,"out_param.time" = out_param.time[3]))
