@@ -3,9 +3,9 @@
 % An option, like a stock or bond, is a security. This type of investment 
 % is a contract that gives the buyer the right, but not the obligation, to
 % buy or sell an asset at a specific price on a certain date.
-%
+% 
 % There are two different types of options, *calls* and *puts*:
-%
+% 
 % * A call gives the holder the right to buy an asset at a certain price 
 % within a specific period of time. Buyers of calls hope that the stock 
 % will increase substantially before the option expires.
@@ -18,11 +18,11 @@
 % continuous spectrum of payoff, _Digital Option_ is the type of option in 
 % which the payoff can take only two possible results: the Payoff itself
 % or nothing at all.
-%
+% 
 % There are two types of digital options: the *cash-or-nothing 
 % option* and the *asset-or-nothing option*. The following characteristic
 % function describes it in math terms:
-%
+% 
 % \[
 % \begin{array}{rcc}
 % \text{Cash-or-nothing} & \text{Call}\\
@@ -75,9 +75,9 @@
 % \text{Asset-or-nothing} & S_0.e^{-qT}\Phi(d_1) & S_0.e^{-qT}\Phi(-d_1)
 % \end{array}
 % \]
-%
+% 
 % under the following notation:
-%
+% 
 % \begin{align*}
 % \Phi(x) & =\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{x}e^{-\frac{1}{2}z^2} \, 
 % {\rm
@@ -152,7 +152,7 @@ disp(['Expect these answers to be within ' ...
    DigOption1.priceParam.relTol * DigOption1.exactPrice)) ' of the true answer.'])
 
 disp('The actual errors are')
-fprintf(' %12.8f',abs(mc_price-DigOption1.exactPrice))
+fprintf(' %12.8f',abs(mc_price - DigOption1.exactPrice))
 
 %%
 % In order to compare the exact price from Monte Carlo and Quasi-Monte
@@ -173,6 +173,9 @@ sobol_price
 disp(['Expect these answers to be within ' ...
    num2str(max(SobolDigOption1.priceParam.absTol, ...
    SobolDigOption1.priceParam.relTol * SobolDigOption1.exactPrice)) ' of the true answer.'])
+
+disp('The actual errors are')
+fprintf(' %12.8f',abs(sobol_price - SobolDigOption1.exactPrice))
 %%
 %%% Plot the payoffs
 
@@ -198,6 +201,9 @@ mc_price2
 disp(['Expect these answers to be within ' ...
    num2str(max(DigOption2.priceParam.absTol, ...
    DigOption2.priceParam.relTol * DigOption2.exactPrice)) ' of the true answer.'])
+
+disp('The actual errors are')
+fprintf(' %12.8f',abs(mc_price2 - DigOption2.exactPrice))
 %%
 % In order to compare the exact price from Monte Carlo and Quasi-Monte
 % Carlo Methods, the 'Sobol' price parameter is used to construct 
@@ -218,6 +224,9 @@ sobol_price2
 disp(['Expect these answers to be within ' ...
    num2str(max(SobolDigOption2.priceParam.absTol, ...
    SobolDigOption2.priceParam.relTol * SobolDigOption2.exactPrice)) ' of the true answer.'])
+
+disp('The actual errors are')
+fprintf(' %12.8f',abs(sobol_price2 - SobolDigOption2.exactPrice))
 %%
 %%% Plot the payoffs
 
