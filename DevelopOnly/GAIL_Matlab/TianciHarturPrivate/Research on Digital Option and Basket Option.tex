@@ -39,7 +39,7 @@ Both option were added at GAIL - Guaranteed Automatic Integration Library, which
 \end{abstract}
 
 \begin{keyword}
-Digital option, Basket Option, Monte Carlo Method, Quasi Monte Carlo Method, Black-Scholes Model
+Digital option, Basket Option, Monte Carlo Method, Quasi-Monte Carlo Method, Black-Scholes Model, GAIL
 \end{keyword}
 \end{frontmatter}
 
@@ -101,34 +101,36 @@ S_{(T)}, & K > S_{(T)} \\
 \end{cases} \\
 \end{array} $$
 
-To better explain, in the case of a Cash-or-nothing Call Option, if the Stock Price at the maturity time $(S_{(T)})$ is above the Strike Price $(K)$, the payoff of the option is \textit{P}.  It does not depend if it closes \$0.01 or \$100.00 above the line, the  digital option is still worth the same amount of money. If $S_{(T)}$  closes below the underlying, then the option expires worthless, or 
-nothing at all.
+To better explain, in the case of a Cash-or-nothing Call Option, if the Stock Price at the maturity time $(S_{(T)})$ is above the Strike Price $(K)$, the payoff of the option is \textit{P}, certain amount of money.  It does not depend if $(S_{(T)})$ closes \$0.01 or \$100.00 above $(K)$, the  digital option is still worth the same amount of money, \textit{P}. If $S_{(T)}$  closes below the underlying $(K)$, then the option expires worthless, or nothing at all.
 
 
 \subsection{Basket Option}
-Basket option is a type of option  which contains a number of underlying assets. Basket option payoff is calculated as follows:
+Basket option is a type of option  which contains a number of underlying assets. It is called Basket because is like putting many different asset in the same basket and the payoff is a result from the variations of all the assets in this basket. 
 
-For a call option:
-\[max(\sum_{i=1}^n {a_i*S_T^{(i)}} - K, 0)\]
+Basket option payoff is calculated as follows:
 
-For a put option:
- \[max(K - \sum_{i=1}^n {a_i*S_T^{(i)}}, 0)\]
+$\text{Call}:$
+$$max(\sum_{i=1}^n {a_i*S_T^{(i)}} - K, 0)$$
+
+$\text{Put}:$
+$$max(K - \sum_{i=1}^n {a_i*S_T^{(i)}}, 0)$$
+
+Where:
+
+\begin{align*}
+n & = \text{number of assets}\\ 
+K & = \text{strike price}\\
+\end{align*}
  
- where:
  
- \(n\) - number of assets
- 
- \(K\) - strike price\\
- 
- 
-As there is no formula to calculate the exact price of basket options, this article will only talk about the Monte Carlo Method and Quasi-Monte Carlo Method on basket option.
+As there is no formula to calculate the exact price of Basket Options, this article will only talk about the Monte Carlo Method and Quasi-Monte Carlo Method on basket option.
 
 \section{Pricing Options}
 To price an option, four regular steps are needed:
 \begin{itemize}
-\item Add needed parameters;
-\item Set values to parameters;
-\item Add payoffs corresponding to the payoff formulas mentioned in the introduction part;
+\item Add needed parameters.
+\item Set values to parameters.
+\item Add payoffs corresponding to the payoff formulas mentioned in the introduction part.
 \item Add exact price calculation if exact formula exists.
 \end{itemize}
 
@@ -179,6 +181,17 @@ r & = \text{risk-free interest rate}\\
 P & = \text{Payoff}\\
 \end{align*}
 
+For Digital Options, lines of codes were added to the file called \textit{optPayoff.m} in GAIL repository. 
+
+Changes that were made into \textit{optPayoff.m} in order to add Digital Options:
+\begin{itemize}
+\item In lines 41 and 48, three parameters were added: \textit{digitalPay}, \textit{digitalcash} and \textit{digitalasset}. These variables introduce the Payoff and the Type of Digital Option in the file.
+\item From line 105 to 108, the properties of the payoff object were set.
+\item Added payoffs corresponding to the payoff formulas mentioned in the introduction part from lines 131 to 168.
+\item Added exact price calculation in lines 323 until 341 and the function to exact price from lines 372 to 380.
+\item The last change was in lines 417 and 418 in the propList function.
+\end{itemize}
+
 \subsection{Basket Option}
 To calculate the option price of basket option, some properties are added to MATLAB files:
 \begin{description}
@@ -191,158 +204,15 @@ As shown in the introduction part, the payoff of a basket option is calculated u
 
 \section{Testing}
 \subsection{Digital Option}
+Since there is formulas for exact price in Digital Option, the testing file called \textit{DigitalOptionTest.m} uses the exact price as reference for the price, and prices the option using Quasi-Monte Carlo method with the \textit{'Sobol'} function. The goal for the testing file is to compare the two values and assert if the error between then is bigger or smaller than the tolerance. 
 
+Four different values for Payoff were tested, as well as four different values for Strike Price, Interest Rate and Volatility. At total, 256 different combinations are tested for \textit{Cash-or-nothing} and \textit{Asset-or-nothing}, both for Calls and Puts. Thus, 1024 combinations were tested and passed for Digital Option.
 
 
 \subsection{Basket Option}
 When the elements of correlation matrix are all ones, the assets in the basket option can be seen as the same asset, so the option price can be calculated as a European option, which is used as the testing method for basket options.
 
 To get the size of samples larger, nested for loops are used in the test file. Both Monte Carlo Method and Quasi-Monte Carlo Method are tested in the file. The test takes about 50 seconds to run and it tests 162 different options for Monte Carlo Method and Quasi-Monte Carlo Method respectively.
-
-\section*{Appendix}
-\subsection*{optPayoff}
-\subsection*{Test}
-\subsubsection*{Digital Option}
-\subsubsection*{Basket Option}
-classdef BasketOptionTest < matlab.unittest.TestCase\\
-      % BasketOptionTest tests the basket option price generated using\\
-      % Monte Carlo Method and Quasi Monte Carlo Method.\\
-    
-    
-      methods (Test)\\
-          % Test Monte Carlo Method\\
-          function testIIDSolution(testCase)\\
-              % Assign parameter values for european option\\
-              euroinp.payoffParam.optType = {'euro'};\\
-              euroinp.timeDim.timeVector = 1;\\
-              euroinp.priceParam.absTol = 0;\\
-              euroinp.priceParam.relTol = 0.01;\\
-              euroinp.timeDim.timeVector = 1;\\
-              euroinitPrice=[10 11 12];\\
-              eurovolatility=[0.5 0.6 0.3];\\
-              strike=[9 10 11];\\
-              callPut=[{'call'},{'put'}];\\
-              nOption=length(euroinitPrice);\\
-              q=0;\\
-              for i=1:nOption\\
-                  for j=1:nOption\\
-                      for m=1:nOption\\
-                          for n=1:2\\
-                              for v=1:nOption\\
-                              euroinp.payoffParam.putCallType = callPut(n);\\
-                              euroinp.payoffParam.strike = strike(m);\\
-                              euroinp.assetParam.volatility = eurovolatility(j);\\
-                              euroinp.assetParam.initPrice = euroinitPrice(i);\\
-                              eurooption = optPayoff(euroinp);\\
-                              q = q+1;\\
-                              exactPrice(q)=eurooption.exactPrice;
-                              end\\
-                          end\\
-                      end\\
-                  end\\
-              end\\
-              % Set parameter value for basket option
-              inp.payoffParam.optType = {'basket'};\\
-              inp.assetParam.nAsset = 2;\\
-              inp.assetParam.corrMat = [1 1;1 1];\\
-              inp.priceParam.absTol = 0;  \\
-              inp.priceParam.relTol = 0.01;\\
-              inp.timeDim.timeVector = 1;\\
-              basketinitPrice = repmat(euroinitPrice',1,inp.assetParam.nAsset);\\
-              basketvolatility = repmat(eurovolatility',1,inp.assetParam.nAsset);\\
-              basketWeight = [0.3 0.7; 0.5 0.5; 0.2 0.8];\\
-              p=0;\\
-              for a=1:nOption\\
-                  for b=1:nOption\\
-                      for c=1:nOption\\
-                          for d=1:2\\
-                              for e=1:nOption\\
-                                 inp.payoffParam.basketWeight = basketWeight(e,:);\\
-                                 inp.payoffParam.putCallType = callPut(d);\\
-                                 inp.payoffParam.strike = strike(c);\\
-                                 inp.assetParam.volatility = basketvolatility(b,:);\\
-                                 inp.assetParam.initPrice = basketinitPrice(a,:);\\
-                                 p=p+1;\\
-                                 BasketOption = optPrice(inp);\\
-                                 % calculate basket option\\
-                                 appPrice(p) = genOptPrice(BasketOption);\\
-                              end\\
-                          end\\
-                      end\\
-                  end\\
-              end\\
-              
-              % Test the relative error
-              testCase.verifyLessThan(abs(appPrice-exactPrice)./exactPrice,BasketOption.priceParam.relTol);\\
-          end\\
-          
-            % Test Quasi-Monte Carlo Method
-          function testSobolSolution(testCase)\\
-              % Assign parameter values for european option
-              euroinp.payoffParam.optType = {'euro'};\\
-              euroinp.timeDim.timeVector = 1;\\
-              euroinp.priceParam.absTol = 0;\\
-              euroinp.priceParam.relTol = 0.01;\\
-              euroinp.timeDim.timeVector = 1;\\
-              euroinitPrice=[10 11 12];\\
-              eurovolatility=[0.5 0.6 0.3];\\
-              strike=[9 10 11];\\
-              callPut=[{'call'},{'put'}];\\
-              nOption=length(euroinitPrice);\\
-              q=0;\\
-              for i=1:nOption\\
-                  for j=1:nOption\\
-                      for m=1:nOption\\
-                          for n=1:2\\
-                              for v=1:nOption\\
-                              euroinp.payoffParam.putCallType = callPut(n);\\
-                              euroinp.payoffParam.strike = strike(m);\\
-                              euroinp.assetParam.volatility = eurovolatility(j);\\
-                              euroinp.assetParam.initPrice = euroinitPrice(i);\\
-                              eurooption = optPayoff(euroinp);\\
-                              q = q+1;\\
-                              exactPrice(q)=eurooption.exactPrice;
-                              end\\
-                          end\\
-                      end\\
-                  end\\
-              end\\
-              % Set parameter value for basket option
-              inp.payoffParam.optType = {'basket'};\\
-              inp.assetParam.nAsset = 2;\\
-              inp.assetParam.corrMat = [1 1;1 1];\\
-              inp.priceParam.cubMethod='Sobol';\\
-              inp.priceParam.absTol = 0;   \\
-              inp.priceParam.relTol = 0.01;\\
-              inp.timeDim.timeVector = 1;\\
-              basketinitPrice = repmat(euroinitPrice',1,inp.assetParam.nAsset);\\
-              basketvolatility = repmat(eurovolatility',1,inp.assetParam.nAsset);\\
-              basketWeight = [0.3 0.7; 0.5 0.5; 0.2 0.8];\\
-              p=0;\\
-              for a=1:nOption\\
-                  for b=1:nOption\\
-                      for c=1:nOption\\
-                          for d=1:2\\
-                              for e=1:nOption\\
-                                 inp.payoffParam.basketWeight = basketWeight(e,:);\\
-                                 inp.payoffParam.putCallType = callPut(d);\\
-                                 inp.payoffParam.strike = strike(c);\\
-                                 inp.assetParam.volatility = basketvolatility(b,:);\\
-                                 inp.assetParam.initPrice = basketinitPrice(a,:);\\
-                                 p=p+1;\\
-                                 BasketOption = optPrice(inp);\\
-                                 % calculate basket option
-                                 appPrice(p) = genOptPrice(BasketOption);\\
-                              end\\
-                          end\\
-                      end\\
-                  end\\
-              end\\
-              % Test the relative error
-              testCase.verifyLessThan(abs(appPrice-exactPrice)./exactPrice,BasketOption.priceParam.relTol);\\
-          end\\
-     end\\
-  end \\
 
 \section*{Reference}
 "Binary Option." Wikipedia. Accessed June 5, 2015.
@@ -354,5 +224,8 @@ classdef BasketOptionTest < matlab.unittest.TestCase\\
 "Online Option Pricer." Options Pricer. Web. 22 June 2015.
 
 "Basket Option Definition | Investopedia." Investopedia. 19 Nov. 2003. Web. 22 June 2015.
+
+Hickernell, Fred. "Monte Carlo Methods for Finance: The Problem." Keynote Speech, First Day of Summer Research on Monte Carlo Methods for Finance, Chicago, May 18, 2015.
+
 \end{document}
 
