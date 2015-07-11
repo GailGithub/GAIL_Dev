@@ -39,7 +39,13 @@ Both option were added at GAIL - Guaranteed Automatic Integration Library, which
 \end{abstract}
 
 \begin{keyword}
+<<<<<<< HEAD
 Digital option, Basket Option, Monte Carlo Method, Quasi-Monte Carlo Method, Black-Scholes Model, GAIL
+=======
+
+Digital option, Basket Option, Monte Carlo Method, Quasi Monte Carlo Method, Black-Scholes Model
+
+>>>>>>> 0dcc1932ee2138d9cba35dc9ff4a30a2c4a96432
 \end{keyword}
 \end{frontmatter}
 
@@ -105,7 +111,12 @@ To better explain, in the case of a Cash-or-nothing Call Option, if the Stock Pr
 
 
 \subsection{Basket Option}
+<<<<<<< HEAD
 Basket option is a type of option  which contains a number of underlying assets. It is called Basket because is like putting many different asset in the same basket and the payoff is a result from the variations of all the assets in this basket. 
+=======
+
+Basket option is a type of option  which contains a number of underlying assets. Basket option payoff is calculated as follows:
+>>>>>>> 0dcc1932ee2138d9cba35dc9ff4a30a2c4a96432
 
 Basket option payoff is calculated as follows:
 
@@ -126,6 +137,7 @@ K & = \text{strike price}\\
 As there is no formula to calculate the exact price of Basket Options, this article will only talk about the Monte Carlo Method and Quasi-Monte Carlo Method on basket option.
 
 \section{Pricing Options}
+
 To price an option, four regular steps are needed:
 \begin{itemize}
 \item Add needed parameters.
@@ -134,7 +146,16 @@ To price an option, four regular steps are needed:
 \item Add exact price calculation if exact formula exists.
 \end{itemize}
 
+\hfill
+
+And the following assumptions were used for pricing both options:
+\begin{itemize}
+\item Even there is a variable for dividend rate, it was considered as zero.
+\item Efficient markets using the Geometric Brownian Motion.
+\end{itemize}
+
 \subsection{Digital Option}
+
 For digital option there is an exact formula for pricing the options and it follows the Black-Scholes model.
 
 The Black-Scholes model is used to calculate the theoretical price of European put and call options. While the original Black-Scholes model did not take into consideration the effects of dividends paid during the life of the option, the model can be adapted to account for dividends by determining the ex-dividend date value of the underlying stock.
@@ -147,12 +168,6 @@ The model makes certain assumptions, including:
 \item No commissions.
 \item The risk-free rate and volatility of the underlying are known and constant.
 \item Follows a log-normal distribution; that is, returns on the underlying are normally distributed.
-\end{itemize}
-
-The following assumptions were used for pricing digital options:
-\begin{itemize}
-\item Even there is a variable for dividend rate, it was considered as zero.
-\item Efficient markets using the Geometric Brownian Motion.
 \end{itemize}
 
 $$\begin{array}{rcc}
@@ -193,14 +208,27 @@ Changes that were made into \textit{optPayoff.m} in order to add Digital Options
 \end{itemize}
 
 \subsection{Basket Option}
-To calculate the option price of basket option, some properties are added to MATLAB files:
-\begin{description}
-\item[nAsset]--- Number of assets in the option
-\item[corrMat]--- Correlation Matrix of assets in the option
-\item[basketWeight]--- Asset weights in the option 
-\end{description}
 
-As shown in the introduction part, the payoff of a basket option is calculated using the weighted stock prices of assets in the option, then the approximate price of the basket option is generated using Monte Carlo Method.
+As shown in the introduction part, the payoff of a basket option is calculated using the weighted stock prices of assets in the option, then several paths are generated using Brownian motion corresponding to the correlation matrix to calculate the approximate price of the basket option using Monte Carlo Method.
+
+To calculate the option price of basket option, some codes are added to MATLAB optPayoff file:
+\begin{itemize}
+\item Line 42: basketWeight property is added to input the asset weights in the option. The default value is set as 1.
+\item Line 48: Basket option is added to allowed option type property.
+\item Line 110 to 114: Set values to basketWeight.
+\item Line 170 to 188: Calculate basket option payoffs for call and put option respectively.
+\end{itemize}
+
+In additiont to optPayoff file, assetPath file is changed to fit for the basket option:
+\begin{itemize}
+\item Line 41: nAsset property is added to input the number of asset in the option. The default value is set as 1.
+\item Line 42: corrMat property is added to input the correlation between Brownian motion paths. The default value is set as 1.
+\item Line 50 to 52: sqCorr property is added as the square root of correlation matrix.
+\item Line 82 to 86: Set values to nAsset.
+\item Line 112 to 116: Set values to corrMat.
+\item Line 124 to 128: Generate square root of correlation matrix.
+\item Line 131 to 151: Make changes to fit for two or more assets in the option.
+\end{itemize}
 
 \section{Testing}
 \subsection{Digital Option}
@@ -210,10 +238,15 @@ Four different values for Payoff were tested, as well as four different values f
 
 
 \subsection{Basket Option}
+
 When the elements of correlation matrix are all ones, the assets in the basket option can be seen as the same asset, so the option price can be calculated as a European option, which is used as the testing method for basket options.
 
 To get the size of samples larger, nested for loops are used in the test file. Both Monte Carlo Method and Quasi-Monte Carlo Method are tested in the file. The test takes about 50 seconds to run and it tests 162 different options for Monte Carlo Method and Quasi-Monte Carlo Method respectively.
 
+<<<<<<< HEAD
+=======
+\break
+>>>>>>> 0dcc1932ee2138d9cba35dc9ff4a30a2c4a96432
 \section*{Reference}
 "Binary Option." Wikipedia. Accessed June 5, 2015.
 
