@@ -232,11 +232,11 @@ cubSobol_g_param() #Get the parameters
 l_star = my_list$"out_param"["mmin"] - r_lag; # Minimum gathering of points for the sums of DFWT
   
 if (out_param.measure == 'normal') {
-f = function(x) {qnorm(x)}
+f = function(x) {qnorm(x)^2}
 }
 else if (out_param.measure == 'uniform') {
 Cnorm = prod(hyperbox[,2]-hyperbox[,1]      # # # # # hyperbox needs to be two columns instead of two rows in R
-f = function(x) {Cnorm *f(hyperbox[,1]+(hyperbox[,2]-hyperbox[,1])*x)}
+f = function(x) {Cnorm *(hyperbox[,1]+(hyperbox[,2]-hyperbox[,1])*x)^2}
 }
 
 ##Main algorithm
@@ -261,11 +261,11 @@ yval=y;
 for (l in 0:out_param.mmin-1){
   nl=2^l;
   nmminlm1=2^(out_param.mmin-l-1);
-  ptind=matrix(rep(matrix(c(rep(1,nl),rep(0,nl))),nmminlm1));
+  ptind=matrix(rep(matrix(c(rep(TRUE,nl),rep(FALSE,nl))),nmminlm1));
   evenval=y[ptind];
-  #oddval=y[~ptind];
+  oddval=y[!ptind];
   y[ptind]=(evenval+oddval)/2;
-  #y[~ptind]=(evenval-oddval)/2;
+  y[!ptind]=(evenval-oddval)/2;
 }
 #y now contains the FWT coefficients
 
