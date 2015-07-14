@@ -269,6 +269,25 @@ for (l in 0:out_param.mmin-1){
 }
 #y now contains the FWT coefficients
 
+## Approximate integral
+q = mean(yval);
+appxinteg[2] = q;
+
+## Create kappanumap implicitly from the data
+kappanumap = (1:out_param.n); #initialize map
+for l = out_param.mmin-1:-1:1 {
+  nl = 2^l;
+  oldone = abs(y(kappanumap(2:nl))); #earlier values of kappa, don't touch first ones
+  newone = abs(y(kappanumap(nl+2:2*nl))); #later values of kappa,
+  flip = find(newone>oldone); #which in the pair are the larger ones
+  if ~isempty(flip) {
+    flipall = bsxfun(@plus,flip,0:2^(l+1):2^out_param.mmin-1);
+    flipall=flipall(:);
+    temp=kappanumap(nl+1+flipall); #then flip
+    kappanumap(nl+1+flipall)=kappanumap(1+flipall); #them
+    kappanumap(1+flipall)=temp; #around
+  }
+}
 
 ##Defining the Parameters
 cubSobol_g_param = function(r_lag, hyperbox = c(0,1), measure = 'uniform', 
