@@ -45,7 +45,7 @@ classdef optPayoff < assetPath
  
    properties (Constant, Hidden) %do not change & not seen
       allowOptType = {'euro','upin', 'downin' 'upout', 'downout', 'look', ...
-         'amean', 'gmean', 'digitalcash', 'digitalasset','basket'} 
+         'amean', 'gmean', 'digitalcash', 'digitalasset','basket','american'} 
          %kinds of payoffs that we can generate
       allowPutCallType = {'call','put'} 
          %kinds of payoffs that we can generate
@@ -121,6 +121,7 @@ classdef optPayoff < assetPath
          nOptType = numel(obj.payoffParam.optType);
          nPaths = size(paths,1);
          tempPay = zeros(nPaths, nOptType);
+         ntimeDim= size(paths,2);
          
          wh=strcmp(obj.payoffParam.optType,'stockprice');
          if any(wh) %final stock price
@@ -186,6 +187,35 @@ classdef optPayoff < assetPath
                * weight' + obj.payoffParam.strike, 0) ...
                * exp(- obj.assetParam.interest .* obj.timeDim.endTime);
          end
+         
+          whamericancall = strcmp(obj.payoffParam.optType,'american') ...
+             & strcmp(obj.payoffParam.putCallType,'call'); %american call
+             
+          if any(whamericancall)
+              i=ntimeDim;
+              while(i>1 && any(paths(:,i-1)>obj.payoffParam.strike))
+                  Y1 = max(paths(:,i)-obj.payoffParam.strike,0)...
+                      *exp(- obj.assetParam.interest ...
+                      .* obj.timeDim.endTime/ntimeDim);
+                  X1 = max(paths(:,i-1)-obj.payoffParam.strike,0);
+                  Y = Y1(paths(:,i-1)>obj.payoffParam.strike);
+                  X = X1(paths(:,i-1)>obj.payoffParam.strike);
+                  p = polyfit(X,Y,2);
+                  Y = p(1)* X.^2 + p(2)* X + p(3);
+                  Y1(paths(:,i-1)>obj.payoffParam.strike)=Y;
+                  paths(:,i) = paths(:,i).*(Y1>X1);
+                  paths(:,i-1) = paths(:,i-1).*((X1>Y1)&(X1>0));
+                  i=i-1;
+              end
+              size(paths)
+              [row,col]=find(paths>0);
+              nvPaths=length(row);
+              for i=1:nvPaths
+                  temp(i)=max(paths(row(i),col(i))-obj.payoffParam.strike,0)...
+                      *exp(- obj.assetParam.interest .* (obj.timeDim.endTime/ntimeDim)*col(i));
+              end
+              tempPay(:,whamericancall)=sum(temp)/nPaths;
+          end
          
          wheurobarrier = any(strcmp(repmat(obj.payoffParam.optType,5,1), ...
             repmat({'euro','upin','upout','downin','downout'}',1,nOptType)),1);
