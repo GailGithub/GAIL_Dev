@@ -188,33 +188,33 @@ classdef optPayoff < assetPath
                * exp(- obj.assetParam.interest .* obj.timeDim.endTime);
          end
          
-          whamericancall = strcmp(obj.payoffParam.optType,'american') ...
-             & strcmp(obj.payoffParam.putCallType,'call'); %american call
+          whamericanput = strcmp(obj.payoffParam.optType,'american') ...
+             & strcmp(obj.payoffParam.putCallType,'put'); %american call
              
-          if any(whamericancall)
+          if any(whamericanput)
               i=ntimeDim;
-              while(i>1 && any(paths(:,i-1)>obj.payoffParam.strike))
-                  Y1 = max(paths(:,i)-obj.payoffParam.strike,0)...
+              while(i>1 && any(paths(:,i-1)<obj.payoffParam.strike))
+                  Y1 = max(obj.payoffParam.strike-paths(:,i),0)...
                       *exp(- obj.assetParam.interest ...
                       .* obj.timeDim.endTime/ntimeDim);
-                  X1 = max(paths(:,i-1)-obj.payoffParam.strike,0);
-                  Y = Y1(paths(:,i-1)>obj.payoffParam.strike);
-                  X = X1(paths(:,i-1)>obj.payoffParam.strike);
+                  X1 = max(obj.payoffParam.strike-paths(:,i-1),0);
+                  Y = Y1(paths(:,i-1)<obj.payoffParam.strike);
+                  X = X1(paths(:,i-1)<obj.payoffParam.strike);
                   p = polyfit(X,Y,2);
                   Y = p(1)* X.^2 + p(2)* X + p(3);
-                  Y1(paths(:,i-1)>obj.payoffParam.strike)=Y;
+                  Y1(paths(:,i-1)<obj.payoffParam.strike)=Y;
                   paths(:,i) = paths(:,i).*(Y1>X1);
                   paths(:,i-1) = paths(:,i-1).*((X1>Y1)&(X1>0));
                   i=i-1;
               end
-              size(paths)
+              size(paths);
               [row,col]=find(paths>0);
               nvPaths=length(row);
               for i=1:nvPaths
-                  temp(i)=max(paths(row(i),col(i))-obj.payoffParam.strike,0)...
+                  temp(i)=max(-paths(row(i),col(i))+obj.payoffParam.strike,0)...
                       *exp(- obj.assetParam.interest .* (obj.timeDim.endTime/ntimeDim)*col(i));
               end
-              tempPay(:,whamericancall)=sum(temp)/nPaths;
+              tempPay(:,whamericanput)=sum(temp)/nPaths;
           end
          
          wheurobarrier = any(strcmp(repmat(obj.payoffParam.optType,5,1), ...
