@@ -276,18 +276,34 @@ appxinteg[2] = q;
 
 ## Create kappanumap implicitly from the data
 kappanumap = (1:out_param.n); #initialize map
-for l = seq((out_param.mmin-1),1,-1) {
+for (l in seq((out_param.mmin-1),1,-1)) {
   nl = 2^l;
   oldone = abs(y[kappanumap[(2:nl)]]); #earlier values of kappa, don't touch first ones
   newone = abs(y[kappanumap[(nl+2):(2*nl)]]); #later values of kappa,
   flip = which(newone>oldone); #which in the pair are the larger ones
   if (length(flip)!=0) {
     flipall = bsxfun("+",flip,seq(0,2^(out_param.mmin-1),2^(l+1)));
-    flipall=flipall(:);
-    temp=kappanumap(nl+1+flipall); #then flip
-    kappanumap(nl+1+flipall)=kappanumap(1+flipall); #them
-    kappanumap(1+flipall)=temp; #around
+    flipall=as.vector(flipall);
+    temp=kappanumap[nl+1+flipall]; #then flip
+    kappanumap[nl+1+flipall]=kappanumap[1+flipall]; #them
+    kappanumap[1+flipall]=temp; #around
   }
+}
+## Compute Stilde
+nllstart=2^(out_param.mmin-r_lag-1);  #no good equiv for int64 w/o package
+Stilde[1]=sum(abs(y[kappanumap[nllstart+1:2*nllstart]]));
+out_param.bound_err=out_param.fudge(out_param.mmin)*Stilde[1];
+errest[1]=out_param.bound_err;
+
+# Necessary conditions
+for (l in l_star:out_param.mmin) { # Storing the information for the necessary conditions
+C_low = (1+out_param.fudge(out_param.mmin-l))/(1+2*out_param.fudge(out_param.mmin-l));
+C_up = (1+out_param.fudge(out_param.mmin-l));
+CStilde_low[l-l_star+1] = C_low*sum(abs(y[kappanumap[2^(l-1)+1:2^l]]));
+CStilde_up[l-l_star+1] = C_up*sum(abs(y[kappanumap[2^(l-1)+1:2^l]]));
+}
+###if (any(CStilde_low(:) > CStilde_up(:))) { ####Unsure about this part
+###out_param.exit(2) = true; #####Unsure about this part
 }
 
 ##Defining the Parameters
