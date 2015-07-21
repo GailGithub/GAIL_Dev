@@ -305,6 +305,28 @@ CStilde_up[l-l_star+1] = C_up*sum(abs(y[kappanumap[2^(l-1)+1:2^l]]));
 ###if (any(CStilde_low(:) > CStilde_up(:))) { ####Unsure about this part
 ###out_param.exit(2) = true; #####Unsure about this part
 }
+# Check the end of the algorithm
+deltaplus = 0.5*(tolfun(out_param.abstol,...
+                             out_param.reltol,out_param.theta,abs(q-errest[1]),...
+                             out_param.toltype)+gail.tolfun(out_param.abstol,out_param.reltol,...
+                                                            out_param.theta,abs(q+errest[1]),out_param.toltype));
+deltaminus = 0.5*(tolfun(out_param.abstol,...
+                              out_param.reltol,out_param.theta,abs(q-errest[1]),...
+                              out_param.toltype)-gail.tolfun(out_param.abstol,out_param.reltol,...
+                                                             out_param.theta,abs(q+errest[1]),out_param.toltype));
+
+is_done = false;
+if (out_param.bound_err <= deltaplus) {
+q=q+deltaminus;
+appxinteg[1]=q;
+out_param.time=proc.time() ##Not using toc here and seeing where this goes
+is_done = TRUE;
+}
+else if (out_param.mmin == out_param.mmax){ # We are on our max budget and did not meet the error condition => overbudget
+###out_param.exit(1) = true;
+}
+
+
 
 ##Defining the Parameters
 cubSobol_g_param = function(r_lag, hyperbox = c(0,1), measure = 'uniform', 
@@ -331,4 +353,25 @@ cubSobol_g_param = function(r_lag, hyperbox = c(0,1), measure = 'uniform',
               "fudge"=out_param.fudge,"toltype"=out_param.toltype,"theta"=out_param.theta)
   out_list = list("out_param"=out_param,"f"=f,"hyperbox"=hyperbox)
   return(out_list)
+}
+
+tolfun = function(abstol,reltol,theta,mu,toltype) {
+# TOLFUN generalized error tolerance function.
+#
+# Input Parameters:
+  # abstol --- absolute error tolertance
+# reltol --- relative error tolerance
+# theta --- parameter in 'theta' case
+# mu --- true mean
+# toltype --- different options of tolerance function
+
+switch (toltype)
+case 'comb' # the linear combination of two tolerances
+#theta=0---relative error tolarance
+#theta=1---absolute error tolerance
+tol  = theta*abstol+(1-theta)*reltol*abs(mu);
+case 'max' # the max case
+tol  = max(abstol,reltol*abs(mu));
+return(tol)
+}
 }
