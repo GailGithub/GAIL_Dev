@@ -242,7 +242,7 @@ f = function(x) {Cnorm *(hyperbox[,1]+(hyperbox[,2]-hyperbox[,1])*x)^2}
 
 ##Main algorithm
 Stilde=rep(0,out_param.mmax-out_param.mmin+1); #initialize sum of DFWT terms
-Cstilde_low=matrix(-Inf,1,out_param.mmax-l_star+1); #initialize #various sums of DFWT terms for necessary conditions
+CStilde_low=matrix(-Inf,1,out_param.mmax-l_star+1); #initialize #various sums of DFWT terms for necessary conditions
 CStilde_up=matrix(Inf,1,out_param.mmax-l_star+1); #initialize various #sums of DFWT terms for necessary conditions
 errest=rep(0,out_param.mmax-out_param.mmin+1); #initialize error estimates
 appxinteg=rep(0,out_param.mmax-out_param.mmin+1); #initialize approximations to integral
@@ -308,11 +308,11 @@ CStilde_up[l-l_star+1] = C_up*sum(abs(y[kappanumap[2^(l-1)+1:2^l]]));
 # Check the end of the algorithm
 deltaplus = 0.5*(tolfun(out_param.abstol,...
                              out_param.reltol,out_param.theta,abs(q-errest[1]),...
-                             out_param.toltype)+gail.tolfun(out_param.abstol,out_param.reltol,...
+                             out_param.toltype)+tolfun(out_param.abstol,out_param.reltol,...
                                                             out_param.theta,abs(q+errest[1]),out_param.toltype));
 deltaminus = 0.5*(tolfun(out_param.abstol,...
                               out_param.reltol,out_param.theta,abs(q-errest[1]),...
-                              out_param.toltype)-gail.tolfun(out_param.abstol,out_param.reltol,...
+                              out_param.toltype)-tolfun(out_param.abstol,out_param.reltol,...
                                                              out_param.theta,abs(q+errest[1]),out_param.toltype));
 
 is_done = false;
@@ -326,7 +326,98 @@ else if (out_param.mmin == out_param.mmax){ # We are on our max budget and did n
 ###out_param.exit(1) = true;
 }
 
+## Loop over m
+for (m in out_param.mmin+1:out_param.mmax) {
+if (is_done) {
+break;
+}
+out_param.n=2^m;
+mnext=m-1;
+nnext=2^mnext;
+xnext=sobol(nnext,out_param.d, scrambling=1, init=0); 
+n0=n0+nnext;
+ynext=f(xnext);
+yval=c(yval,ynext); ##ok<*AGROW>
 
+## Compute initial FWT on next points
+for (l in 0:mnext-1) {
+nl=2^l;
+nmminlm1=2^(mnext-l-1);
+ptind=matrix(rep(matrix(c(rep(TRUE,nl),rep(FALSE,nl))),nmminlm1));
+evenval=y[ptind];
+oddval=y[!ptind];
+y[ptind]=(evenval+oddval)/2;
+y[!ptind]=(evenval-oddval)/2;
+}
+
+## Compute FWT on all points
+y=c(y,ynext);
+nl=2^mnext;
+ptind=matrix(rep(matrix(c(rep(TRUE,nl),rep(FALSE,nl))),nmminlm1));
+evenval=y[ptind];
+oddval=y[!ptind];
+y[ptind]=(evenval+oddval)/2;
+y[!ptind]=(evenval-oddval)/2;
+
+## Update kappanumap
+kappanumap=c(kappanumap, 2^(m-1)+kappanumap); #initialize map
+for (l in m-1:-1:m-r_lag) {
+nl=2^l;
+oldone=abs(y[kappanumap[2:nl]]); #earlier values of kappa, don't touch first one
+newone=abs(y[kappanumap[nl+2:2*nl]]); #later values of kappa, 
+flip = which(newone>oldone); #which in the pair are the larger ones
+  if (length(flip)!=0) {
+          flipall=bsxfun("+",flip,seq(0:2^m-1:2^(l+1)));
+          flipall=as.vector(flipall);
+          temp=kappanumap[nl+1+flipall]; #then flip
+          kappanumap[nl+1+flipall]=kappanumap[1+flipall]; #them
+          kappanumap[1+flipall]=temp; #around
+  }
+}
+
+## Compute Stilde
+nllstart=(2^(m-r_lag-1)) ##No good equiv. for int64 in R w/o a package
+meff=m-out_param.mmin+1;
+Stilde[meff]=sum(abs(y[kappanumap[nllstart+1:2*nllstart]]));
+out_param.bound_err=out_param.fudge(m)*Stilde[meff];
+errest[meff]=out_param.bound_err;
+
+# Necessary conditions
+for (l in l_star:m) { # Storing the information for the necessary conditions
+C_low = (1+out_param.fudge(m-l))/(1+2*out_param.fudge(m-l));
+C_up = (1+out_param.fudge(m-l));
+CStilde_low[l-l_star+1] = max(CStilde_low[l-l_star+1],C_low*sum(abs(y[kappanumap[2^(l-1)+1:2^l]])));
+CStilde_up[l-l_star+1] = min(CStilde_up[l-l_star+1],C_up*sum(abs(y[kappanumap[2^(l-1)+1:2^l]])));
+}
+
+###if any(CStilde_low(:) > CStilde_up(:)) ###Unsure about this part
+###out_param.exit(2) = true;
+###end
+
+## Approximate integral
+q=mean(yval);
+appxinteg[meff]=q;
+
+# Check the end of the algorithm
+deltaplus = 0.5*(tolfun(out_param.abstol,...
+                             out_param.reltol,out_param.theta,abs(q-errest[meff]),...
+                             out_param.toltype)+tolfun(out_param.abstol,out_param.reltol,...
+                                                            out_param.theta,abs(q+errest[meff]),out_param.toltype));
+deltaminus = 0.5*(tolfun(out_param.abstol,...
+                              out_param.reltol,out_param.theta,abs(q-errest[meff]),...
+                              out_param.toltype)-tolfun(out_param.abstol,out_param.reltol,...
+                                                             out_param.theta,abs(q+errest[meff]),out_param.toltype));
+
+if (out_param.bound_err <= deltaplus) {
+q=q+deltaminus;
+appxinteg[meff]=q;
+out_param.time=proc.time() ###Not sure why it said toc, so timing is probably off
+is_done = TRUE;
+}
+else if (m == out_param.mmax) { # We are on our max budget and did not meet the error condition => overbudget
+###out_param.exit(1) = TRUE;    ##Not sure about exiting yet
+}
+}
 
 ##Defining the Parameters
 cubSobol_g_param = function(r_lag, hyperbox = c(0,1), measure = 'uniform', 
