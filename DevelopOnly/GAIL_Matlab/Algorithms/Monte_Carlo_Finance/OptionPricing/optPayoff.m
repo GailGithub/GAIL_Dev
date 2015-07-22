@@ -193,30 +193,30 @@ classdef optPayoff < assetPath
           
           if any(whamericanput)
               basis= @(x) repmat(exp(-x/2),1,3).*[ones(length(x),1) 1-x 1-2*x+x.*x/2];
-              putpayoff = max(obj.payoffParam.strike-paths,0);
-              disputpayoff = putpayoff.*repmat(exp(-obj.assetParam.interest ...
+              putpayoff = max(obj.payoffParam.strike-paths,0)...
+                .*repmat(exp(-obj.assetParam.interest ...
                   .* obj.timeDim.timeVector),nPaths,1); %discounted payoff at each time
-              cashflow = disputpayoff(:,ntimeDim);
+              cashflow = putpayoff(:,ntimeDim);
               extime = repmat(ntimeDim,nPaths,1);
               for i = ntimeDim-1:-1:1 
                   inmoney = find(paths(:,i)<obj.payoffParam.strike);
                   if ~isempty(inmoney)
                       if i>1
-                        regmat=basis(paths(inmoney,i)/obj.assetParam.initPrice);
-                        hold=regmat*(regmat\cashflow(inmoney));
+                          regmat=basis(paths(inmoney,i)/obj.assetParam.initPrice);
+                          hold=regmat*(regmat\cashflow(inmoney));
                       else
-                        hold=mean(cashflow(inmoney));
+                          hold=mean(cashflow(inmoney));
                       end
                   shouldex=inmoney(putpayoff(inmoney,i)>hold); %which paths should be excercised now
-                  if ~isempty(shouldex); %some paths should be exercise
-                  cashflow(shouldex)=disputpayoff(shouldex,i); %updated cashflow
-                  extime(shouldex)=i; %update
-                  end
+                      if ~isempty(shouldex); %some paths should be exercise
+                          cashflow(shouldex)=putpayoff(shouldex,i); %updated cashflow
+                          extime(shouldex)=i; %update
+                      end
                   end
               end
               tempPay(:,whamericanput)=cashflow;
           end
-         
+          
          wheurobarrier = any(strcmp(repmat(obj.payoffParam.optType,5,1), ...
             repmat({'euro','upin','upout','downin','downout'}',1,nOptType)),1);
          wheurobarriercall = wheurobarrier  ...
