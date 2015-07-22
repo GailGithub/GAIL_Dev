@@ -1,7 +1,8 @@
 library(randtoolbox)
 library(pracma)
-cubSobol_g = function(hyperbox = c(0,1), measure = 'uniform', 
-                      abstol = 1e-4, reltol = 1e-2, mmin = 10, mmax = 24, fudge = function(m) {5*2^(-m)}, toltype = 'max', theta = 1){
+cubSobol_g = function(hyperbox = matrix(c(0,1)), measure = 'uniform',
+                      abstol = 1e-4 , reltol = 1e-2, mmin = 10, mmax = 24, fudge = function(m) {5*2^(-m)}, toltype = 'max', theta = 1)
+{
 #function [q,out_param] = cubSobol_g(varargin)
 #cubSobol_G Quasi-Monte Carlo method using Sobol' cubature over the
 #d-dimensional region to integrate within a specified generalized error
@@ -229,16 +230,14 @@ cubSobol_g = function(hyperbox = c(0,1), measure = 'uniform',
 #
 ##Initial important cone factors and Check-initialize parameters
 r_lag = 4; #distance between coefficients summed and those computed
-check = cubSobol_g_param(r_lag,hyperbox,measure, 
-                         abstol,reltol,mmin,mmax,fudge,toltype,theta) #Get the parameters
+###check = cubSobol_g_param(r_lag,hyperbox,measure,abstol,reltol,mmin,mmax,fudge,toltype,theta) #Get the parameters
 l_star = check$out_param$mmin - r_lag; # Minimum gathering of points for the sums of DFWT
   
 if (check$out_param$measure == 'normal') {
 f = function(x) {qnorm(x)^2}
-}
-else if (check$out_param$measure == 'uniform') {
-Cnorm = prod(hyperbox[,2]-hyperbox[,1]      # # # # # hyperbox needs to be two columns instead of two rows in R
-f = function(x) {Cnorm *(hyperbox[,1]+(hyperbox[,2]-hyperbox[,1])*x)^2}
+} else if (check$out_param$measure == 'uniform') {
+Cnorm = prod(check$hyperbox[2,]-check$hyperbox[1,])     # # # # # hyperbox needs to be two columns instead of two rows in R
+f = function(x) {Cnorm *(check$hyperbox[1,]+(check$hyperbox[2,]-check$hyperbox[1,])*x)^2}
 }
 
 ##Main algorithm
@@ -257,7 +256,7 @@ xpts=sobol(n0,check$out_param$d,scrambling=1)
 ####xpts=sobstr(1:n0,1:out_param.d); %grab Sobol' points     # # # # # # We are trying to use xpts directly without sobstr
 y=f(xpts); #evaluate integrand
 yval=y;
-}
+
 
 ## Compute initial FWT
 for (l in 0:check$out_param$mmin-1){
@@ -307,23 +306,22 @@ CStilde_up[l-l_star+1] = C_up*sum(abs(y[kappanumap[2^(l-1)+1:2^l]]));
 ###out_param.exit(2) = true; #####Unsure about this part
 }
 # Check the end of the algorithm
-deltaplus = 0.5*(tolfun(check$out_param$abstol,...
-                             check$out_param$reltol,check$out_param$theta,abs(q-errest[1]),...
-                             check$out_param$toltype)+tolfun(check$out_param$abstol,check$out_param$reltol,...
-                                                            check$out_param$theta,abs(q+errest[1]),check$out_param$toltype));
-deltaminus = 0.5*(tolfun(check$out_param$abstol,...
-                              check$out_param$reltol,check$out_param$theta,abs(q-errest[1]),...
-                              check$out_param$toltype)-tolfun(check$out_param$abstol,check$out_param$reltol,...
+deltaplus = 0.5*(tolfun(check$out_param$abstol,
+                             check$out_param$reltol,check$out_param$theta,abs(as.numeric(q-errest[1])),
+                             check$out_param$toltype)+tolfun(check$out_param$abstol,check$out_param$reltol,
+                                                            check$out_param$theta,abs(as.numeric(q+errest[1])),check$out_param$toltype));
+deltaminus = 0.5*(tolfun(check$out_param$abstol,
+                              check$out_param$reltol,check$out_param$theta,abs(q-errest[1]),
+                              check$out_param$toltype)-tolfun(check$out_param$abstol,check$out_param$reltol,
                                                              check$out_param$theta,abs(q+errest[1]),check$out_param$toltype));
 
-is_done = false;
+is_done = FALSE;
 if (out_param.bound_err <= deltaplus) {
 q=q+deltaminus;
 appxinteg[1]=q;
 out_param.time=proc.time() ##Not using toc here and seeing where this goes
 is_done = TRUE;
-}
-else if (check$out_param$mmin == check$out_param$mmax){ # We are on our max budget and did not meet the error condition => overbudget
+} else if (check$out_param$mmin == check$out_param$mmax){ # We are on our max budget and did not meet the error condition => overbudget
 ###out_param.exit(1) = true;
 }
 
@@ -400,13 +398,13 @@ q=mean(yval);
 appxinteg[meff]=q;
 
 # Check the end of the algorithm
-deltaplus = 0.5*(tolfun(check$out_param$abstol,...
-                             check$out_param$reltol,check$out_param$theta,abs(q-errest[meff]),...
-                             check$out_param$toltype)+tolfun(check$out_param$abstol,check$out_param$reltol,...
+deltaplus = 0.5*(tolfun(check$out_param$abstol,
+                             check$out_param$reltol,check$out_param$theta,abs(q-errest[meff]),
+                             check$out_param$toltype)+tolfun(check$out_param$abstol,check$out_param$reltol,
                                                             check$out_param$theta,abs(q+errest[meff]),check$out_param$toltype));
-deltaminus = 0.5*(tolfun(check$out_param$abstol,...
-                              check$out_param$reltol,check$out_param$theta,abs(q-errest[meff]),...
-                              check$out_param$toltype)-tolfun(check$out_param$abstol,check$out_param$reltol,...
+deltaminus = 0.5*(tolfun(check$out_param$abstol,
+                              check$out_param$reltol,check$out_param$theta,abs(q-errest[meff]),
+                              check$out_param$toltype)-tolfun(check$out_param$abstol,check$out_param$reltol,
                                                              check$out_param$theta,abs(q+errest[meff]),check$out_param$toltype));
 
 if (out_param.bound_err <= deltaplus) {
@@ -414,15 +412,15 @@ q=q+deltaminus;
 appxinteg[meff]=q;
 out_param.time=proc.time() ###Not sure why it said toc, so timing is probably off
 is_done = TRUE;
-}
-else if (m == check$out_param$mmax) { # We are on our max budget and did not meet the error condition => overbudget
+} else if (m == check$out_param$mmax) { # We are on our max budget and did not meet the error condition => overbudget
 ###out_param.exit(1) = TRUE;    ##Not sure about exiting yet
 }
+out_param = c(q,out_param.n,out_param.d)
+return(out_param)
 }
-
 ##Defining the Parameters
-cubSobol_g_param = function(r_lag, hyperbox = c(0,1), measure = 'uniform', 
-                            abstol = 1e-4, reltol = 1e-2, mmin = 10, mmax = 24, fudge = function(m) {5*2^(-m)}, toltype = 'max', theta = 1){ 
+cubSobol_g_param = function(r_lag,hyperbox,measure, 
+                            abstol,reltol,mmin,mmax,fudge,toltype,theta){ 
   #To define the variables but we still need to code for the checks****
   #  default.hyperbox = [zeros(1,1);ones(1,1)];% default hyperbox
   #  default.measure  = 'uniform';
@@ -444,7 +442,7 @@ cubSobol_g_param = function(r_lag, hyperbox = c(0,1), measure = 'uniform',
   out_param.d = size(hyperbox,2);
   out_param=c("measure"=out_param.measure,"abstol"=out_param.abstol,"reltol"=out_param.reltol,"mmin"=out_param.mmin,"mmax"=out_param.mmax,
               "fudge"=out_param.fudge,"toltype"=out_param.toltype,"theta"=out_param.theta, "d"=out_param.d)
-  out_list = list("out_param"=out_param,"f"=f,"hyperbox"=hyperbox)
+  out_list = list("out_param"=out_param, "hyperbox"=hyperbox)
   return(out_list)
 }
 
@@ -458,13 +456,13 @@ tolfun = function(abstol,reltol,theta,mu,toltype) {
 # mu --- true mean
 # toltype --- different options of tolerance function
 
-switch (toltype)
-case 'comb' # the linear combination of two tolerances
+if (toltype == "comb") {    # the linear combination of two tolerances
+  tol  = theta*abstol+(1-theta)*reltol*abs(mu)
+}
+else if (toltype == "max") {    # the max case
+  tol  = max(abstol,reltol*abs(mu))
+}
 #theta=0---relative error tolarance
 #theta=1---absolute error tolerance
-tol  = theta*abstol+(1-theta)*reltol*abs(mu);
-case 'max' # the max case
-tol  = max(abstol,reltol*abs(mu));
 return(tol)
-}
 }
