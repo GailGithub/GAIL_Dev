@@ -190,7 +190,8 @@ classdef optPayoff < assetPath
          
           whamericanput = strcmp(obj.payoffParam.optType,'american') ...
              & strcmp(obj.payoffParam.putCallType,'put'); %american call
-             
+          nAmerican = sum(strcmp(obj.payoffParam.optType,'american'));
+          
           if any(whamericanput)
               i=ntimeDim;
               while(i>1 && any(paths(:,i-1)<obj.payoffParam.strike))
@@ -207,14 +208,17 @@ classdef optPayoff < assetPath
                   paths(:,i-1) = paths(:,i-1).*((X1>Y1)&(X1>0));
                   i=i-1;
               end
-              size(paths);
               [row,col]=find(paths>0);
               nvPaths=length(row);
-              for i=1:nvPaths
-                  temp(i)=max(-paths(row(i),col(i))+obj.payoffParam.strike,0)...
+              temp=zeros(nPaths,nAmerican);
+              i=1;
+              while(i<(nvPaths+1))
+                  j=row(i);
+                  temp(j)=max(-paths(row(i),col(i))+obj.payoffParam.strike,0)...
                       *exp(- obj.assetParam.interest .* (obj.timeDim.endTime/ntimeDim)*col(i));
+                  i=i+1;
               end
-              tempPay(:,whamericanput)=sum(temp)/nPaths;
+              tempPay(:,whamericanput)=temp;
           end
          
          wheurobarrier = any(strcmp(repmat(obj.payoffParam.optType,5,1), ...
