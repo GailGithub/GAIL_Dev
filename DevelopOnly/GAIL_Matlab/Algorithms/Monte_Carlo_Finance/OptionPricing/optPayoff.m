@@ -190,35 +190,31 @@ classdef optPayoff < assetPath
          
           whamericanput = strcmp(obj.payoffParam.optType,'american') ...
              & strcmp(obj.payoffParam.putCallType,'put'); %american call
-          nAmerican = sum(strcmp(obj.payoffParam.optType,'american'));
           
           if any(whamericanput)
-              i=ntimeDim;
-              while(i>1 && any(paths(:,i-1)<obj.payoffParam.strike))
-                  Y1 = max(obj.payoffParam.strike-paths(:,i),0)...
-                      *exp(- obj.assetParam.interest ...
-                      .* obj.timeDim.endTime/ntimeDim);
-                  X1 = max(obj.payoffParam.strike-paths(:,i-1),0);
-                  Y = Y1(paths(:,i-1)<obj.payoffParam.strike);
-                  X = X1(paths(:,i-1)<obj.payoffParam.strike);
-                  p = polyfit(X,Y,2);
-                  Y = p(1)* X.^2 + p(2)* X + p(3);
-                  Y1(paths(:,i-1)<obj.payoffParam.strike)=Y;
-                  paths(:,i) = paths(:,i).*(Y1>X1);
-                  paths(:,i-1) = paths(:,i-1).*((X1>Y1)&(X1>0));
-                  i=i-1;
+              basis= @(x) repmat(exp(-x/2),1,3).*[ones(length(x),1) 1-x 1-2*x+x.*x/2];
+              putpayoff = max(obj.payoffParam.strike-paths,0);
+              disputpayoff = putpayoff.*repmat(exp(-obj.assetParam.interest ...
+                  .* obj.timeDim.timeVector),nPaths,1); %discounted payoff at each time
+              cashflow = disputpayoff(:,ntimeDim);
+              extime = repmat(ntimeDim,nPaths,1);
+              for i = ntimeDim-1:-1:1 
+                  inmoney = find(paths(:,i)<obj.payoffParam.strike);
+                  if ~isempty(inmoney)
+                      if i>1
+                        regmat=basis(paths(inmoney,i)/obj.assetParam.initPrice);
+                        hold=regmat*(regmat\cashflow(inmoney));
+                      else
+                        hold=mean(cashflow(inmoney));
+                      end
+                  shouldex=inmoney(putpayoff(inmoney,i)>hold); %which paths should be excercised now
+                  if ~isempty(shouldex); %some paths should be exercise
+                  cashflow(shouldex)=disputpayoff(shouldex,i); %updated cashflow
+                  extime(shouldex)=i; %update
+                  end
+                  end
               end
-              [row,col]=find(paths>0);
-              nvPaths=length(row);
-              temp=zeros(nPaths,nAmerican);
-              i=1;
-              while(i<(nvPaths+1))
-                  j=row(i);
-                  temp(j)=max(-paths(row(i),col(i))+obj.payoffParam.strike,0)...
-                      *exp(- obj.assetParam.interest .* (obj.timeDim.endTime/ntimeDim)*col(i));
-                  i=i+1;
-              end
-              tempPay(:,whamericanput)=temp;
+              tempPay(:,whamericanput)=cashflow;
           end
          
          wheurobarrier = any(strcmp(repmat(obj.payoffParam.optType,5,1), ...
