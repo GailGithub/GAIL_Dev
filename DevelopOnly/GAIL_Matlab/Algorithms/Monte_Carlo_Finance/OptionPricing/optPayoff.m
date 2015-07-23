@@ -201,19 +201,24 @@ classdef optPayoff < assetPath
               for i = ntimeDim-1:-1:1 
                   inmoney = find(paths(:,i)<obj.payoffParam.strike);
                   if ~isempty(inmoney)
-                      if i>1
-                          regmat=basis(paths(inmoney,i)/obj.assetParam.initPrice);
-                          hold=regmat*(regmat\cashflow(inmoney));
-                      else
-                          hold=mean(cashflow(inmoney));
-                      end
-                  shouldex=inmoney(putpayoff(inmoney,i)>hold); %which paths should be excercised now
+                      regmat=basis(paths(inmoney,i)/obj.assetParam.initPrice);
+                      hold=regmat*(regmat\cashflow(inmoney)); 
+                      shouldex=inmoney(putpayoff(inmoney,i)>hold); %which paths should be excercised now
                       if ~isempty(shouldex); %some paths should be exercise
                           cashflow(shouldex)=putpayoff(shouldex,i); %updated cashflow
                           extime(shouldex)=i; %update
                       end
                   end
               end
+              if obj.assetParam.initPrice<obj.payoffParam.strike %stock is initially in the money                 else
+                  hold = mean(cashflow);
+                  putpayoff0 = obj.payoffParam.strike - obj.assetParam.initPrice; 
+                  if putpayoff0 > hold %should excercise all paths initially
+                     cashflow(:) = putpayoff0;
+                     extime(:) = 0;
+                  end
+              end
+    
               tempPay(:,whamericanput)=cashflow;
           end
           
