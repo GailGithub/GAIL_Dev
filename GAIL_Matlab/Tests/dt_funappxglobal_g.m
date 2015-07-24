@@ -48,7 +48,7 @@ function dt_funappxglobal_g
 %            nstar: 98
 %     exceedbudget: 0
 %          npoints: 9901
-%       errorbound: 2.5508e-***9 
+%       errorbound: 2.5245e-***7 
 %
 %
 %   Example 3:
@@ -78,7 +78,7 @@ function dt_funappxglobal_g
 %            nstar: 802
 %     exceedbudget: 0
 %          npoints: 5661151
-%       errorbound: 3.1299e-***12
+%       errorbound: 2.5028e-***9
 %
 % 
 %   Example 4: 
@@ -110,7 +110,7 @@ function dt_funappxglobal_g
 %            nstar: 430
 %     exceedbudget: 0
 %          npoints: 207743
-%       errorbound: 5.7929e-***10
+%       errorbound: 2.4961e-***7
 %   
 %
 %   Example 5:
@@ -142,7 +142,7 @@ function dt_funappxglobal_g
 %            nstar: 134
 %     exceedbudget: 0
 %          npoints: 23221
-%       errorbound: 1.8547e-***9
+%       errorbound: 2.4996e-***7
 %
 %
 %   Example 6: 
@@ -171,7 +171,7 @@ function dt_funappxglobal_g
 %            nstar: 397
 %     exceedbudget: 0
 %          npoints: 252333
-%       errorbound: 6.2823e-***11
+%       errorbound: 2.4980e-***8
 %
 %
 %   Example 7:
@@ -200,7 +200,7 @@ function dt_funappxglobal_g
 %            nstar: 32
 %     exceedbudget: 0
 %          npoints: 16765
-%       errorbound: 8.0062e-***9
+%       errorbound: 2.5667e-***7
 %
 %
 %   Example 8:
@@ -229,7 +229,7 @@ function dt_funappxglobal_g
 %            nstar: 926
 %     exceedbudget: 0
 %          npoints: 1826191
-%       errorbound: 2.6994e-***10
+%       errorbound: 2.5002e-***7
 % 
 %
 %   Example 9:
@@ -258,7 +258,7 @@ function dt_funappxglobal_g
 %            nstar: 561
 %     exceedbudget: 0
 %          npoints: 166353
-%       errorbound: 4.4267e-***10
+%       errorbound: 2.4918e-***7
 %
 %
 %   Example 10:
@@ -288,7 +288,7 @@ function dt_funappxglobal_g
 %            nstar: 516
 %     exceedbudget: 0
 %          npoints: 431179
-%       errorbound: 4.8410e-***11
+%       errorbound: 2.5009e-***8
 %
 %
 %   Example 11:
@@ -318,5 +318,5 @@ function dt_funappxglobal_g
 %            nstar: 18
 %     exceedbudget: 0
 %          npoints: 195891
-%       errorbound: 1.4659e-***9
+%       errorbound: 2.6388e-***8
 %

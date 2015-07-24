@@ -140,7 +140,7 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %            nstar: 98
 %     exceedbudget: 0
 %          npoints: 9901
-%       errorbound: 2.5508e-09
+%       errorbound: 2.5245e-07
 %
 %
 %   Example 2:
@@ -168,7 +168,7 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %            nstar: 8
 %     exceedbudget: 0
 %          npoints: 33733
-%       errorbound: 3.5154e-09
+%       errorbound: 2.8129e-08 
 %
 %
 %   Example 3:
@@ -199,7 +199,7 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %            nstar: 62
 %     exceedbudget: 0
 %          npoints: 31249
-%       errorbound: 4.0965e-09
+%       errorbound: 2.5448e-07
 %
 %
 %   Example 4:
@@ -232,7 +232,7 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %            nstar: 88
 %     exceedbudget: 0
 %          npoints: 590071
-%       errorbound: 2.8721e-10
+%       errorbound: 2.5278e-08
 %
 %
 %   See also INTEGRAL_G, MEANMC_G, CUBMC_G
@@ -348,19 +348,17 @@ if out_param.exceedbudget == 1;
     warning('GAIL:funappxglobal_g:exceedbudget',['funappxglobal_g '...
     'attempted to exceed the cost budget. The answer may be unreliable.'])
     out_param.npoints = n;
-    out_param.errorbound = fn*len^2/(8*(n-1)^2);
+    nstar = out_param.nstar;
+    out_param.errorbound = gn*len*nstar/(4*(n-1)*(n-1-nstar));
     x1 = out_param.a:len/(out_param.npoints-1):out_param.b;
     y1 = f(x1);
     pp = interp1(x1,y1,'linear','pp');
 else
     out_param.npoints = n;
-    out_param.errorbound = fn*len^2/(8*(n-1)^2);
+    nstar = out_param.nstar;
+    out_param.errorbound = gn*len*nstar/(4*(n-1)*(n-1-nstar));
     pp = interp1(x,y,'linear','pp');    
 end;
-
-%add compute memory parameter
-w = whos;
-out_param.bytes = sum([w.bytes]);
 
 if MATLABVERSION >= 8.3
     warning('on', 'Matlab:interp1:ppGriddedInterpolant');
