@@ -49,7 +49,7 @@ end
 % Initialization
 fa = f(a);
 fb = f(b);
-k = 1;
+k = 0;
 
 % Scale the plot
 h = b - a;
@@ -89,30 +89,6 @@ index = [1 ninit];
 % initialize error
 err = tol + 1;
 while(max(err) > tol)
-    p = flipud(get(gca,'children'));
-        %         p = flipud(allchild(gca));
-        set(p(1),'xdata',x,'ydata',y)
-        %         for i =1:tt;
-        %             if err(i) < tol;
-        %                 color = [0 .5 0];
-        %             else
-        %                 color = [.6 .6 .6];
-        %             end
-        %             left = index(i);
-        %             right = index(i+1);
-        %             u = [x(left) x(left:right) x(right)];
-        %             v = [0 y(left:right) 0];
-        %             set(p(i+1),'xdata',u,'ydata',v,'facecolor',color)
-        %         end;
-        set(gca,'xtick',x,'xticklabel',[]);
-        title(['error estimation is ' num2str(max(err)) ' in iteration ' num2str(k)])
-        pause(.25)
-        while get(gcf,'userdata') == 0
-            pause(.25)
-        end
-        if get(gcf,'userdata') == 1
-            set(gcf,'userdata',0)
-        end
     % length of each subinterval
     len = x(index(2:end))-x(index(1:end-1));
     reshapey = reshape(y(1:end-1),ninit - 1, (index(end) - 1)/(ninit -1));
@@ -233,6 +209,31 @@ while(max(err) > tol)
         index = unique([indexnew index(end)]);
         %        tt = length(index)-1;
         k = k + 1;
+          p = flipud(get(gca,'children'));
+        %         p = flipud(allchild(gca));
+        set(p(1),'xdata',x,'ydata',y)
+        %         for i =1:tt;
+        %             if err(i) < tol;
+        %                 color = [0 .5 0];
+        %             else
+        %                 color = [.6 .6 .6];
+        %             end
+        %             left = index(i);
+        %             right = index(i+1);
+        %             u = [x(left) x(left:right) x(right)];
+        %             v = [0 y(left:right) 0];
+        %             set(p(i+1),'xdata',u,'ydata',v,'facecolor',color)
+        %         end;
+        set(gca,'xtick',x,'xticklabel',[]);
+        hTitle=title(['error estimation is ' num2str(max(err)) ' in iteration ' num2str(k)]);
+        set(hTitle,'FontSize',25)
+        pause(.25)
+        while get(gcf,'userdata') == 0
+            pause(.25)
+        end
+        if get(gcf,'userdata') == 1
+            set(gcf,'userdata',0)
+        end
     else
         k = k + 1;
         break;
@@ -241,7 +242,8 @@ end;
 p = flipud(get(gca,'child'));
 set(p(1),'xdata',x,'ydata',y)
 set(gca,'xtick',x,'xticklabel',[]);
-title(['error estimation is ' num2str(max(err)) ' in iteration ' num2str(k)])
+hTitle=title(['error estimation is ' num2str(max(err)) ' in iteration ' num2str(k)]);
+set(hTitle,'FontSize',25)
 pause(.25)
 while get(gcf,'userdata') == 0
     pause(.25)

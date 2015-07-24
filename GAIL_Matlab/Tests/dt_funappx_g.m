@@ -29,7 +29,7 @@ function dt_funappx_g
 %        npoints: 411137
 %         errest: 3.5719e-09
 %          nstar: [1x512 double]
-%          bytes: 31303594
+%          bytes: 31301554
 %
 % 
 %   Example 3: 
@@ -54,7 +54,7 @@ function dt_funappx_g
 %     npoints: 179201
 %      errest: 3.9377e-09
 %       nstar: [1x512 double]
-%       bytes: 13676826
+%       bytes: 13674786
 %
 %
 %   Example 4:
@@ -77,7 +77,7 @@ function dt_funappx_g
 %          npoints: 41985
 %           errest: 2.9281e-08
 %            nstar: [1x1024 double]
-%            bytes: 3302326
+%            bytes: 3298238
 %
 %
 %   Example 5:
@@ -100,7 +100,7 @@ function dt_funappx_g
 %          npoints: 8449
 %           errest: 4.3863e-07
 %            nstar: [1x256 double]
-%            bytes: 672706
+%            bytes: 671690
 %
 %
 %   Example 6:
@@ -123,7 +123,7 @@ function dt_funappx_g
 %     npoints: 22529
 %      errest: 3.0527e-07
 %       nstar: [1x512 double]
-%       bytes: 1769322
+%       bytes: 1767282
 % 
 %
 %   Example 7:
@@ -145,7 +145,7 @@ function dt_funappx_g
 %          npoints: 44033
 %           errest: 5.9080e-08
 %            nstar: [1x1024 double]
-%            bytes: 3457386
+%            bytes: 3453298
 %
 %
 %   Example 8:
@@ -168,4 +168,4 @@ function dt_funappx_g
 %          npoints: 77825
 %           errest: 5.9705e-08
 %            nstar: [1x4096 double]
-%            bytes: 6348138
+%            bytes: 6331762
