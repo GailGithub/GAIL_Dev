@@ -4,8 +4,10 @@
 *.bak
 *.cfe
 *.cfs
+*.eps
 *.pdf
 *.mat
+*.mexw64
 *.o
 *.sav
 *.png
