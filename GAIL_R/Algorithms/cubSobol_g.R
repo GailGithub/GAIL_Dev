@@ -1,7 +1,7 @@
 setwd("GAIL_Dev/GAIL_R/Algorithms")
 library(randtoolbox)
 library(pracma)
-cubSobol_g = function(hyperbox = matrix(c(0,1)), measure = 'uniform',
+cubSobol_g = function(f = function(x) {x^2},hyperbox = matrix(c(0,1)), measure = 'uniform',
                       abstol = 1e-4 , reltol = 1e-2, mmin = 10, mmax = 24, fudge = function(m) {5*2^(-m)}, toltype = 'max', theta = 1)
 {
 #function [q,out_param] = cubSobol_g(varargin)
@@ -233,6 +233,7 @@ time1 = proc.time()
 ##Initial important cone factors and Check-initialize parameters
   
 r_lag = 4; #distance between coefficients summed and those computed
+#f = function(x) {x^2}
 #hyperbox = matrix(c(0,1))
 #measure <- "uniform"
 #abstol = 1e-4
@@ -244,18 +245,18 @@ r_lag = 4; #distance between coefficients summed and those computed
 #theta = 1
 #out_param=c("measure"=measure,"abstol"=abstol,"reltol"=reltol,"mmin"=mmin,"mmax"=mmax,
  #             "fudge"=fudge,"toltype"=toltype,"theta"=theta, "d"=out_param.d);
-#check <- list("out_param"=out_param, "hyperbox"=hyperbox)
+#check <- list("out_param"=out_param, "hyperbox"=hyperbox, "f"=f)
 source("cubSobol_g_param.R")
-check = cubSobol_g_param(r_lag,hyperbox,measure,abstol,reltol,mmin,mmax,fudge,toltype,theta) #Get the parameters
+check = cubSobol_g_param(r_lag,hyperbox,f,measure,abstol,reltol,mmin,mmax,fudge,toltype,theta) #Get the parameters
 out_param.d = size(hyperbox,2);
 
 l_star = check$out_param$mmin - r_lag; # Minimum gathering of points for the sums of DFWT
   
 if (check$out_param$measure == 'normal') {
-f = function(x) {qnorm(x)^2}
+f = function(x) {check$f(qnorm(x))}
 } else if (check$out_param$measure == 'uniform') {
 Cnorm = prod(check$hyperbox[2,]-check$hyperbox[1,])     # # # # # hyperbox needs to be two columns instead of two rows in R
-f = function(x) {Cnorm *(check$hyperbox[1,]+(check$hyperbox[2,]-check$hyperbox[1,])*x)^2}
+f = function(x) {Cnorm *check$f(check$hyperbox[1,]+(check$hyperbox[2,]-check$hyperbox[1,])*x)}
 }
 else{}
 ##Main algorithm
