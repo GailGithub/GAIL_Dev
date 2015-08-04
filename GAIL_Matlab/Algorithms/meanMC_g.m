@@ -18,7 +18,8 @@ function [tmu,out_param]=meanMC_g(varargin)
 %   level 1-alpha using all ordered parsing inputs abstol, reltol, alpha,
 %   fudge, nSig, n1, tbudget, nbudget.
 %
-%   tmu = meanMC_G(Yrand,'abstol',abstol,'reltol',reltol,'alpha',alpha,'fudge',fudge,'nSig',nSig,'n1',n1,'tbudget',tbudget,'nbudget',nbudget)
+%   tmu = meanMC_G(Yrand,'abstol',abstol,'reltol',reltol,'alpha',alpha,
+%   'fudge',fudge,'nSig',nSig,'n1',n1,'tbudget',tbudget,'nbudget',nbudget)
 %   estimates the mean of a random variable Y to within a specified
 %   generalized error tolerance tolfun with guaranteed confidence level
 %   1-alpha. All the field-value pairs are optional and can be supplied in

@@ -1,5 +1,6 @@
 function [fappx,out_param]=funappx_g(varargin)
-%FUNAPPX_G 1-D guaranteed locally adaptive function approximation (or function recovery) on [a,b]
+%FUNAPPX_G 1-D guaranteed locally adaptive function approximation (or
+%   function recovery) on [a,b]
 %
 %   fappx = FUNAPPX_G(f) approximates function f on the default interval
 %   [0,1] by an approximated function handle fappx within the guaranteed
@@ -85,13 +86,13 @@ function [fappx,out_param]=funappx_g(varargin)
 %     results are certainly not guaranteed. The initial value is [0 0] and
 %     the final value of this parameter is encoded as follows:
 %       
-%                       [1 0]   If reaching overbudget. It states whether
-%                       the max budget is attained without reaching the
-%                       guaranteed error tolerance.
+%                      [1 0]   If reaching overbudget. It states whether
+%                      the max budget is attained without reaching the
+%                      guaranteed error tolerance.
 %        
-%                       [0 1]   If reaching overiteration. It states whether
-%                       the max iterations is attained without reaching the
-%                       guaranteed error tolerance.
+%                      [0 1]   If reaching overiteration. It states whether
+%                      the max iterations is attained without reaching the
+%                      guaranteed error tolerance.
 %
 %     out_param.iter --- number of iterations
 %
@@ -103,7 +104,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %
 %     out_param.nstar --- final value of the parameter defining the cone of
 %     functions for which this algorithm is guaranteed for each
-%     subinterval; nstar = ninit-2 initially
+%     subinterval; nstar = floor(ninit/2) initially
 %
 %  Guarantee
 %
@@ -140,7 +141,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %          npoints: 17409
 %           errest: 8.7998e-08
 %            nstar: [1x1024 double]
-%            bytes: 1433962
+%            bytes: 1429874
 %
 %
 %   Example 2:
@@ -164,7 +165,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %          npoints: 8705
 %           errest: 3.5199e-07
 %            nstar: [1x512 double]
-%            bytes: 719042
+%            bytes: 717002
 %
 %
 %   Example 3:
@@ -189,17 +190,18 @@ function [fappx,out_param]=funappx_g(varargin)
 %          npoints: 18433
 %           errest: 4.8114e-07
 %            nstar: [1x1024 double]
-%            bytes: 1512218
+%            bytes: 1508130
 %
 %
-%   See also INTERP1, GRIDDEDINTERPOLANT, INTEGRAL_G, MEANMC_G, CUBMC_G, FUNMIN_G
+%   See also INTERP1, GRIDDEDINTERPOLANT, INTEGRAL_G, MEANMC_G, FUNMIN_G
 %
 %
 %  References
 %
 %   [1]  Nick Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
-%   Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic Algorithms:
-%   Cones, Not Balls," Journal of Complexity 30, pp. 21-45, 2014.
+%   Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic
+%   Algorithms: Cones, Not Balls," Journal of Complexity 30, pp. 21-45,
+%   2014.
 %    
 %   [2]  Yuhan Ding, Fred J. Hickernell, and Sou-Cheng T. Choi, "Locally
 %   Adaptive Method for Approximating Univariate Functions in Cones with a
@@ -257,44 +259,36 @@ if length(y) == 1
 end
 iter = 0;
 exit_len = 2;
-out_param.exit = false(exit_len,1); %we start the algorithm with all warning flags down
+%we start the algorithm with all warning flags down
+out_param.exit = false(exit_len,1); 
 
 while(max(err) > abstol)
-    iter = iter + 1;
     % length of each subinterval
     len = x(index(2:end))-x(index(1:end-1));
-    %reshapey = reshape(y(1:end-1),ninit - 1, (index(end) - 1)/(ninit -1));
     reshapey = reshape(y(1:end-1),ninit - 1, length(index)-1);
     diffy = diff([reshapey;y(index(2:end))]);
     
     %approximate the weaker norm of input function at different subinterval
-    %gn = (ninit-1)./len.*max(abs(diffy-repmat((y(index(2:end))-y(index(1:end-1)))/(ninit-1),ninit-1,1)),[],1);
-    gn = (ninit-1)./len.*max(abs(bsxfun(@minus,diffy,(y(index(2:end))-y(index(1:end-1)))/(ninit-1))),[],1);
-    %approximate the stronger norm of input function at different subinterval
+    gn = (ninit-1)./len.*max(abs(bsxfun(@minus,diffy,(y(index(2:end))...
+        -y(index(1:end-1)))/(ninit-1))),[],1);
+    %approximate the stronger norm of input function at different
+    %subinterval
     fn = (ninit-1)^2./(len.^2).*max(abs(diff(diffy)),[],1);
     %update cone condition every iteration
-    ntemp=max(ceil(out_param.nhi*(out_param.nlo/out_param.nhi).^(1./(1+len))),3);
-%   nstar = ntemp - 2;
+    ntemp=max(ceil(out_param.nhi*(out_param.nlo...
+        /out_param.nhi).^(1./(1+len))),3);
     nstar = floor(ntemp/2);
-    
-%     gn(gn<eps/2)=0;
-%     fn(fn<eps/2)=0;
-    
     %find nstar not large enough then double it
     smallconeind = find(nstar.*(2*gn+fn.*len/(ninit-1)) <(fn.*len));
     nstar(smallconeind) = 2*nstar(smallconeind);
-    
-    %check necessary condition if satisfied then compute error
-    %otherwise just use the error from last iteration
-%     largeconeind = find(nstar.*(2*gn+fn.*len/(ninit-1)) >= (fn.*len));
-%     err(largeconeind) = nstar(largeconeind).*len(largeconeind).*gn(largeconeind)./...
-%         (4*(ninit-1).*(ninit-1-nstar(largeconeind)));
+    iter = iter + 1;
     err = nstar.*len.*gn./(4*(ninit-1).*(ninit-1-nstar));
     %check if error satisfy the error tolerance 
     counterr = sum(err > abstol);
     if(length(x) + counterr *(ninit -1) > out_param.nmax)
         out_param.exit(1) = 1;
-        warning('GAIL:funappx_g:exceedbudget',' funappx_g attempted to exceed the cost budget. The answer may be unreliable.')
+        warning('GAIL:funappx_g:exceedbudget',['funappx_g attempted to',...
+            'exceed the cost budget. The answer may be unreliable.'])
         break;
     end;
     %if max(err) > abstol;
@@ -316,12 +310,15 @@ while(max(err) > abstol)
         newindex = [badind + [0 cumbad(1:end-1)]; badind + cumbad];
         newindex = newindex(:)';
         %find the length of each sub interval
-        h = len/2/(ninit-1);
-        %reshape x without end point to a matrix of ninit-1 by # of intervals
-        reshapex =  reshape(x(1:end-1),ninit -1,(index(end) - 1)/(ninit -1));
+        %h = len/2/(ninit-1);
+        h = (out_param.b-out_param.a)/2^iter/(ninit-1);
+        %reshape x without end point to a matrix of ninit-1 by # of
+        %intervals
+        reshapex =  reshape(x(1:end-1),ninit -1,...
+            (index(end) - 1)/(ninit -1));
         %generate new points newx need to be added
-        %newx = reshapex(:,badind) + repmat(h(badind),ninit-1,1);
-        newx = bsxfun(@plus,reshapex(:,badind),h(badind));
+        %newx = bsxfun(@plus,reshapex(:,badind),h(badind));
+        newx = reshapex(:,badind)+h;
         %compute value newy of newx
         newy = f(newx);
         %initialize a zero matrix of 2*(ninit-1) by # of bad sub intervals
@@ -380,22 +377,13 @@ while(max(err) > abstol)
         
         %upadte index w.p.t x after splitting
         index = 1:(ninit-1):length(err)*(ninit-1)+1;
-        %update index of the original endpoints 
-%         index(2:end) = index(2:end) + badcumsum*(ninit-1);
-%         %obtain the index of new endpoins after splitting
-%         %if one interval not splitted, will get the same index as in
-%         %previous line
-%         indexbeg = index(1:end-1) + whbad*(ninit-1);
-%         %combine two index together and emlinate duplicate indices
-%         indexnew = [index(1:end-1); indexbeg];
-%         indexnew = indexnew(:)';
-%         index = unique([indexnew index(end)]);
     else
         break;
     end;
     if(iter==out_param.maxiter)
         out_param.exit(2) = 1;
-        warning('GAIL:funappx_g:exceediter',' Iteration will exceed max number of iterations ')
+        warning('GAIL:funappx_g:exceediter',['Number of iterations has'...
+            'reached maximum number of iterations.'])
         break;
     end;
 end;
@@ -403,8 +391,6 @@ out_param.iter = iter;
 out_param.npoints = index(end);
 out_param.errest = max(err);
 out_param.nstar = nstar;
-%out_param.index = index;
-%add compute memory parameter
 w = whos;
 out_param.bytes = sum([w.bytes]);
 if MATLABVERSION >= 8.3
@@ -436,7 +422,9 @@ end;
 
  
 if isempty(varargin)
-  warning('GAIL:funappx_g:nofunction','Function f must be specified. Now GAIL is using f(x)=exp(-100*(x-0.5)^2) and unit interval [0,1].')
+  warning('GAIL:funappx_g:nofunction',['Function f must be specified. '...
+      'Now GAIL is using f(x)=exp(-100*(x-0.5)^2) and unit interval '...
+      '[0,1].'])
   help funappx_g
   f = @(x) exp(-100*(x-0.5).^2);
   out_param.f = f;
@@ -445,7 +433,8 @@ else
     f = varargin{1};
     out_param.f = f;
   else
-    warning('GAIL:funappx_g:notfunction','Function f must be a function handle. Now GAIL is using f(x)=exp(-100*(x-0.5)^2).')
+    warning('GAIL:funappx_g:notfunction',['Function f must be a '...
+        'function handle. Now GAIL is using f(x)=exp(-100*(x-0.5)^2).'])
     f = @(x) exp(-100*(x-0.5).^2);
     out_param.f = f;
   end
@@ -460,7 +449,6 @@ end
 
 if ~validvarargin
     %if only one input f, use all the default parameters
-    %warning('GAIL:funappx_g:inputnotcorr','Input can not be recognized. Use default parameters in GAIL.')
     out_param.a = default.a;
     out_param.b = default.b;
     out_param.abstol = default.abstol;
@@ -499,113 +487,98 @@ end;
 
 % let end point of interval not be infinity
 if (out_param.a == inf||out_param.a == -inf)
-    warning('GAIL:funappx_g:aisinf',['a cannot be infinity. Use default a = ' num2str(default.a)])
+    warning('GAIL:funappx_g:aisinf',['a cannot be infinity.'...
+        'Use default a = ' num2str(default.a)])
     out_param.a = default.a;
 end;
 if (out_param.b == inf||out_param.b == -inf)
-    warning(['GAIL:funappx_g:bisinf','b cannot be infinity. Use default b = ' num2str(default.b)])
+    warning(['GAIL:funappx_g:bisinf','b cannot be infinity. '...
+        'Use default b = ' num2str(default.b)])
     out_param.b = default.b;
 end;
 
 if (out_param.b < out_param.a)
-    warning('GAIL:funappx_g:blea','b cannot be smaller than a; exchange these two. ')
+    warning('GAIL:funappx_g:blea',['b cannot be smaller than a;'...
+        ' exchange these two. '])
     tmp = out_param.b;
     out_param.b = out_param.a;
     out_param.a = tmp;
 elseif(out_param.b == out_param.a)
-    warning('GAIL:funappx_g:beqa',['b cannot equal a. Use b = ' num2str(out_param.a+1)])
+    warning('GAIL:funappx_g:beqa',['b cannot equal a.'...
+        'Use b = ' num2str(out_param.a+1)])
     out_param.b = out_param.a+1;
 end;
 
 % let error tolerance greater than 0
 if (out_param.abstol <= 0 )
-    warning('GAIL:funappx_g:tolneg', ['Error tolerance should be greater than 0.' ...
-        ' Using default error tolerance ' num2str(default.abstol)])
+    warning('GAIL:funappx_g:tolneg', ['Error tolerance should be greater'...
+        ' than 0. Using default error tolerance ' num2str(default.abstol)])
     out_param.abstol = default.abstol;
 end
-
-
-% if (out_param.taulo > out_param.tauhi)
-%     out_param.tauhi = out_param.taulo;
-% end;
-% if (~gail.isposint(out_param.taulo))
-%     if gail.isposge2(out_param.taulo)
-%         warning('GAIL:funappx_g:lowtau',['Lower bound of cone condition should be a positive integer.' ...
-%             ' Using ', num2str(ceil(out_param.taulo))])
-%         out_param.taulo = ceil(out_param.taulo);
-%     else
-%         warning('GAIL:funappx_g:lowtault2',[' Lower bound of cone condition of points should be a positive integer.' ...
-%             ' Using default number of points ' int2str(default.taulo)])
-%         out_param.taulo = default.taulo;
-%     end
-% end
-% if (~gail.isposint(out_param.tauhi))
-%     if gail.isposge2(out_param.tauhi)
-%         warning('GAIL:funappx_g:hitau',['Upper bound of cone condition should be a positive integer.' ...
-%             ' Using ', num2str(ceil(out_param.tauhi))])
-%         out_param.tauhi = ceil(out_param.tauhi);
-%     else
-%         warning('GAIL:funappx_g:hitault2',[' Upper bound of cone condition should be a positive integer.' ...
-%             ' Using default number of points ' int2str(default.tauhi)])
-%         out_param.tauhi = default.tauhi;
-%     end
-% end
 % let cost budget be a positive integer
 if (~gail.isposint(out_param.nmax))
     if gail.isposintive(out_param.nmax)
-        warning('GAIL:funappx_g:budgetnotint',['Cost budget should be a positive integer.' ...
-            ' Using cost budget ', num2str(ceil(out_param.nmax))])
+        warning('GAIL:funappx_g:budgetnotint',['Cost budget should be '...
+            'a positive integer. Using cost budget '...
+            , num2str(ceil(out_param.nmax))])
         out_param.nmax = ceil(out_param.nmax);
     else
-        warning('GAIL:funappx_g:budgetisneg',['Cost budget should be a positive integer.' ...
-            ' Using default cost budget ' int2str(default.nmax)])
+        warning('GAIL:funappx_g:budgetisneg',['Cost budget should be '...
+            'a positive integer. Using default cost budget '...
+            int2str(default.nmax)])
         out_param.nmax = default.nmax;
     end;
 end
 
 if (~gail.isposint(out_param.nlo))
     if gail.isposge3(out_param.nlo)
-        warning('GAIL:funappx_g:lowinitnotint',['Lower bound of initial number of points should be a positive integer.' ...
+        warning('GAIL:funappx_g:lowinitnotint',['Lower bound of initial'...
+            ' number of points should be a positive integer.' ...
             ' Using ', num2str(ceil(out_param.nlo)) ' as nlo '])
         out_param.nlo = ceil(out_param.nlo);
     else
-        warning('GAIL:funappx_g:lowinitlt3',[' Lower bound of initial number of points should be a positive integer greater than 3.' ...
-            ' Using 3 as nlo'])
+        warning('GAIL:funappx_g:lowinitlt3',[' Lower bound of initial '...
+            'number of points should be a positive integer greater than'...
+            ' 3. Using 3 as nlo'])
         out_param.nlo = 3;
     end
 end
 
 if (~gail.isposint(out_param.nhi))
     if gail.isposge3(out_param.nhi)
-        warning('GAIL:funappx_g:hiinitnotint',['Upper bound of initial number of points should be a positive integer.' ...
+        warning('GAIL:funappx_g:hiinitnotint',['Upper bound of initial'...
+            ' number of points should be a positive integer.' ...
             ' Using ', num2str(ceil(out_param.nhi)) ' as nhi' ])
         out_param.nhi = ceil(out_param.nhi);
     else
-        warning('GAIL:funappx_g:hiinitlt3',[' Upper bound of points should be a positive integer greater than 3.' ...
-            ' Using default number of points ' int2str(default.nhi) ' as nhi' ])
+        warning('GAIL:funappx_g:hiinitlt3',[' Upper bound of points '...
+            'should be a positive integer greater than 3. Using default'...
+            ' number of points ' int2str(default.nhi) ' as nhi' ])
         out_param.nhi = default.nhi;
     end
 end
 
 if (out_param.nlo > out_param.nhi)
-    warning('GAIL:funappx_g:logrhi', 'Lower bound of initial number of points is larger than upper bound of initial number of points; Use nhi as nlo')
-    %     temp = out_param.nlo;
-    %     out_param.nlo = out_param.nhi;
-    %     out_param.nhi = temp;
+    warning('GAIL:funappx_g:logrhi', ['Lower bound of initial number of'...
+        ' points is larger than upper bound of initial number of '...
+        'points; Use nhi as nlo'])
     out_param.nhi = out_param.nlo;
 end;
 
 h = out_param.b - out_param.a;
-out_param.ninit = max(ceil(out_param.nhi*(out_param.nlo/out_param.nhi)^(1/(1+h))),3);
+out_param.ninit = max(ceil(out_param.nhi*(out_param.nlo/out_param.nhi)...
+    ^(1/(1+h))),3);
 
 if (~gail.isposint(out_param.maxiter))
     if gail.ispositive(out_param.maxiter)
-        warning('GAIL:funappx_g:maxiternotint',['Max number of iterations should be a positive integer.' ...
-            ' Using max number of iterations as  ', num2str(ceil(out_param.maxiter))])
+        warning('GAIL:funappx_g:maxiternotint',['Max number of '...
+            'iterations should be a positive integer. Using max number '...
+            'of iterations as  ', num2str(ceil(out_param.maxiter))])
         out_param.nmax = ceil(out_param.nmax);
     else
-        warning('GAIL:funappx_g:budgetisneg',['Max number of iterations should be a positive integer.' ...
-            ' Using max number of iterations as ' int2str(default.maxiter)])
+        warning('GAIL:funappx_g:budgetisneg',['Max number of iterations'...
+            ' should be a positive integer. Using max number of '...
+            'iterations as ' int2str(default.maxiter)])
         out_param.nmax = default.nmax;
     end;
 end
