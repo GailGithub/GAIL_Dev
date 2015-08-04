@@ -225,7 +225,7 @@ for m=out_param.mmin+1:out_param.mmax
 end
 
 else
-%% Loop over m with updates of beta--not finished
+%% Loop over m with updates of beta
 for m=out_param.mmin+1:out_param.mmax
    if is_done,
        break;
