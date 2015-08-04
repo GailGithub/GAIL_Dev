@@ -8,7 +8,7 @@ tic
 %% Check and initialize parameters
 [f,g,out_param] = cubSobol_g_param(varargin{:});
 
-%% gn is no use here, gm is used as flag of mult cv mode
+%% gm is no use here, gn is used as flag of mult cv mode
 [gm,gn]=size(g);
 
 if strcmp(out_param.measure,'normal')
@@ -54,8 +54,10 @@ if gn == 1
 else
 	gval = cellfun(@(c) c(xptsG), g, 'UniformOutput', false); A = cell2mat(gval);
 end
-out_param.A=A;
-% chose one from two computing methods
+
+out_param.A=A;%output A for debug use
+
+% chose regression methods: L1 or L2
 if strcmp(out_param.reg,'L2')
 	beta=A(temp,temp1)\b(temp);
 else
@@ -69,7 +71,9 @@ if gn==1
 else
 	y = b - A*beta; yval = y;
 end
-out_param.beta=beta;
+
+out_param.beta=beta;% output beta for debug use
+
 %% Compute initial FWT
 for l=0:out_param.mmin-1
    nl=2^l;
