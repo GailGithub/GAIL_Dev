@@ -252,7 +252,7 @@ function [q,out_param] = cubLattice_g(varargin)
 %   above papers, software, and materials.
 %
 
-tic
+t_start = tic;
 %% Initial important cone factors and Check-initialize parameters
 r_lag = 4; %distance between coefficients summed and those computed
 [f,hyperbox,out_param] = cubLattice_g_param(r_lag,varargin{:});
@@ -356,7 +356,7 @@ is_done = false;
 if out_param.bound_err <= deltaplus
    q=q+deltaminus;
    appxinteg(1)=q;
-   out_param.time=toc;
+   out_param.time=toc(t_start);
    is_done = true;
 elseif out_param.mmin == out_param.mmax % We are on our max budget and did not meet the error condition => overbudget
    out_param.exit(1) = true;
@@ -451,7 +451,7 @@ for m=out_param.mmin+1:out_param.mmax
    if out_param.bound_err <= deltaplus
       q=q+deltaminus;
       appxinteg(meff)=q;
-      out_param.time=toc;
+      out_param.time=toc(t_start);
       is_done = true;
    elseif m == out_param.mmax % We are on our max budget and did not meet the error condition => overbudget
       out_param.exit(1) = true;
@@ -469,7 +469,7 @@ end
 
 out_param = rmfield(out_param,'exit');
 
-out_param.time=toc;
+out_param.time=toc(t_start);
 end
 
 
