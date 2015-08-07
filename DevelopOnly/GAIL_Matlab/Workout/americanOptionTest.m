@@ -10,7 +10,7 @@
               % Requires OptionOutput.m, payoff.m, stockpath.m,
               % exactprice.m
               format compact %remove blank lines from output
-              clearvars %clear all variables
+              %clearvars %clear all variables
 
               %% Parameter set-up
               inp.payoffParam.optType={'american'};
@@ -22,6 +22,7 @@
               year=[1 2];
               volatility=[0.2 0.4];
               p=1;
+              estPrice = zeros(1,20);
               for i=1:5
                   for j=1:2
                       for m=1:2
@@ -29,7 +30,7 @@
                       inp.timeDim.timeVector=1/50:1/50:year(j); %number of trading periods
                       inp.assetParam.volatility=volatility(m); %volatility
                       americanOption=optPrice(inp);
-                      actualPrice(p)=genOptPrice(americanOption);
+                      estPrice(p)=genOptPrice(americanOption);
                       p=p+1;
                       end
                   end
@@ -41,7 +42,9 @@
                   1.118 3.957 1.675 5.622];
               
               %% Test the absolute error
-              testCase.verifyLessThan(abs(longstaffValue-actualPrice),americanOption.priceParam.absTol);
+              testCase.verifyLessThan(abs(longstaffValue-estPrice),2*americanOption.priceParam.absTol);
+              %two approximate answers that are both within absTol of being
+              %correct may differ by 2*absTol
           end
     end
  end
