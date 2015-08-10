@@ -43,8 +43,17 @@ classdef stochProcess < handle & matlab.mixin.CustomDisplay
       function obj = stochProcess(varargin)
          %this constructor essentially parses inputs
          
-         if ~isempty(varargin)
+         if nargin>0
             val=varargin{1};
+            if isa(val,'stochProcess')
+               obj.inputType = val.inputType;
+               obj.timeDim = val.timeDim;
+               if nargin == 1
+                   return
+               else
+                   val = varargin{2};
+               end
+            end
             if isstruct(val)
                obj.restInput = val;
                if isfield(val,'inputType')
@@ -66,8 +75,7 @@ classdef stochProcess < handle & matlab.mixin.CustomDisplay
                {'numeric'}, {'increasing'})
             obj.timeDim.nSteps = numel(obj.timeDim.timeVector); %number of steps
          elseif isfield(val,'nSteps') %data for nSteps provided
-            obj.timeDim.nSteps  =  val.nSteps; % set number of steps
-            validateattributes(obj.timeDim.nSteps, ...
+            validateattributes(val.nSteps, ...
                {'numeric'}, {'scalar','integer','positive'})
             obj.timeDim.timeVector = 1:obj.timeDim.nSteps; %time vector      
          end
@@ -77,13 +85,17 @@ classdef stochProcess < handle & matlab.mixin.CustomDisplay
             obj.timeDim.dim=val.dim; %dimension
          end
          if isfield(val,'initTime')
-            validateattributes(val.initTime, {'numeric'},{'scalar'})
-            assert(val.initTime <= obj.timeDim.startTime)
-            obj.timeDim.initTime=val.initTime; %initial time before startTime
+            if numel(val.initTime)>0 
+               validateattributes(val.initTime, {'numeric'},{'scalar'})
+               assert(val.initTime <= obj.timeDim.startTime)
+               obj.timeDim.initTime=val.initTime; %initial time before startTime
+            end
          end
          if isfield(val,'initValue')
-            validateattributes(val.initValue, {'numeric'},{'vector'})
-            obj.timeDim.initValue=val.initValue; %initial value
+            if numel(val.initTime)>0 
+               validateattributes(val.initValue, {'numeric'},{'vector'})
+               obj.timeDim.initValue=val.initValue; %initial value
+            end
          end
          %compute all of the dependent properties
          obj.timeDim.startTime = obj.timeDim.timeVector(1); %start time

@@ -62,10 +62,20 @@ classdef whiteNoise < stochProcess
       % Creating a white noise process
       function obj = whiteNoise(varargin)
          obj@stochProcess(varargin{:}) %parse basic input         
-         if isfield(obj.restInput,'wnParam')
-            val = obj.restInput.wnParam;
-            obj.wnParam = val;
-            obj.restInput = rmfield(obj.restInput,'wnParam');
+         if nargin>0
+            val=varargin{1};
+            if isa(val,'whiteNoise')
+               obj.wnParam = val.wnParam;
+               obj.qrandState = val.qrandState;
+               if nargin == 1
+                  return
+               end
+            end
+            if isfield(obj.restInput,'wnParam')
+               val = obj.restInput.wnParam;
+               obj.wnParam = val;
+               obj.restInput = rmfield(obj.restInput,'wnParam');
+            end
          end
          if any(strcmp(obj.wnParam.sampleKind,obj.allowQRand)) %quasi-random numbers used
             if isfield(obj.restInput,'qrandState') 
