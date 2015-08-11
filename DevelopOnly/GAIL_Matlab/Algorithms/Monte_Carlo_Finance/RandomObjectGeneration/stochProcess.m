@@ -37,6 +37,13 @@ classdef stochProcess < handle & matlab.mixin.CustomDisplay
       restInput = []; %remaining input not yet parsed
    end
 
+   properties (Hidden, SetAccess=private) %so they can only be set by the constructor
+      defaultNPaths = 10;
+      defaultLineSpecs = {'linewidth',3}
+      defaultPointSpecs = {'markersize',25}
+      defaultFontSize = 20;
+   end
+
    methods
         
       % Creating a stochastic process
@@ -113,6 +120,61 @@ classdef stochProcess < handle & matlab.mixin.CustomDisplay
          end
       end
       
+      function varargout = plot(obj,varargin) %%DOCUMENT & FIX
+         if ~any(strcmp(methods(obj),'genPaths'))
+            return %can only plot if a genPaths method exists
+         end
+         assert(strcmp(obj.inputType,'n'), ...
+            'plot requires inputType to be ''n''')
+         offset = 1;
+         if nargin > offset
+            if any(strcmp(varargin{offset},{'line','point'}))
+               plotKind = varargin{offset};
+               offset = offset+1;
+            else
+               plotKind = 'line';
+            end
+         else
+            plotKind = 'line';
+         end
+         if nargin > offset
+            nPaths = varargin{offset};
+            offset = offset + 1;
+         else
+            nPaths = obj.defaultNPaths; %default 
+         end
+         paths = genPaths(obj,nPaths);
+         if strcmp(plotKind,'point')
+            if obj.timeDim.nSteps >= 2;
+               h = plot(paths(:,1),paths(:,2),'.');
+               if nargin > offset
+                  set(h,varargin{offset:end});
+               else
+                  set(h,obj.defaultPointSpecs{:});
+               end
+            else
+               plotKind = 'line';
+            end
+         end
+         if strcmp(plotKind,'line')
+            timeVec = obj.timeDim.timeVector;
+            if numel(obj.timeDim.initTime)
+               timeVec = [obj.timeDim.initTime timeVec];
+               paths = [repmat(obj.timeDim.initValue,nPaths,1) paths];
+            end
+            h = plot(timeVec,paths,'-');
+            if numel(varargin) > offset + 1
+               set(h,varargin{offset+2:end});
+            else
+               set(h,obj.defaultLineSpecs{:});
+            end
+         end
+         set(gca,'fontsize',obj.defaultFontSize)
+         if nargout
+            varargout{1}=h;
+         end
+      end
+            
    end
    
    methods (Access = protected)
@@ -138,9 +200,12 @@ classdef stochProcess < handle & matlab.mixin.CustomDisplay
          propList.timeDim_initValue = obj.timeDim.initValue;
       end
    end
-   
 
-end
+   end
+   
+%    methods (Abstract)
+%       genPaths(obj,val)
+%    end
        
 end
 
