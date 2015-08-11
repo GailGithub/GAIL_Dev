@@ -140,7 +140,9 @@ classdef whiteNoise < stochProcess
             end
          else
             validateattributes(val,{'numeric'},{'2d'})
-            assert(size(val,2)==obj.timeDim.nCols)
+            assert(size(val,2)==obj.timeDim.nCols, ...
+               ['# of columns of ''x'' input to genPaths must equal' ...
+               ' (# of times)(dimension)'])
             paths=val;
          end
          

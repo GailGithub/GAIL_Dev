@@ -42,6 +42,7 @@ classdef stochProcess < handle & matlab.mixin.CustomDisplay
       defaultLineSpecs = {'linewidth',3}
       defaultPointSpecs = {'markersize',25}
       defaultFontSize = 20;
+      defaultPlotKind = 'line';
    end
 
    methods
@@ -122,28 +123,30 @@ classdef stochProcess < handle & matlab.mixin.CustomDisplay
       
       function varargout = plot(obj,varargin) %%DOCUMENT & FIX
          if ~any(strcmp(methods(obj),'genPaths'))
+            warning(['Objects of class ' class(obj) ' cannot be plotted' ...
+               ' because no genPaths method exists'])
             return %can only plot if a genPaths method exists
          end
-         assert(strcmp(obj.inputType,'n'), ...
-            'plot requires inputType to be ''n''')
-         offset = 1;
-         if nargin > offset
-            if any(strcmp(varargin{offset},{'line','point'}))
-               plotKind = varargin{offset};
-               offset = offset+1;
+         offset = 1; %the last input just looked at 
+         if nargin > offset %does another input exist
+            if any(strcmp(varargin{offset},{'line','point'})) %is it a kind of plot
+               plotKind = varargin{offset}; %then set it to the desired kind
+               offset = offset+1; %increase offset
             else
-               plotKind = 'line';
+               plotKind = obj.defaultPlotKind; %otherwise set to default
             end
          else
-            plotKind = 'line';
+            plotKind = obj.defaultPlotKind; %otherwise set plotKind to default
          end
-         if nargin > offset
-            nPaths = varargin{offset};
+         if nargin > offset %does another input exist
+            genPathsInput = varargin{offset};
             offset = offset + 1;
+         elseif strcmp(obj.inputType,'n')
+            genPathsInput = obj.defaultNPaths; %default for # of paths to be plotted
          else
-            nPaths = obj.defaultNPaths; %default 
+            error('Need input for inputType ''x''')               
          end
-         paths = genPaths(obj,nPaths);
+         paths = genPaths(obj,genPathsInput);
          if strcmp(plotKind,'point')
             if obj.timeDim.nSteps >= 2;
                h = plot(paths(:,1),paths(:,2),'.');
@@ -160,6 +163,7 @@ classdef stochProcess < handle & matlab.mixin.CustomDisplay
             timeVec = obj.timeDim.timeVector;
             if numel(obj.timeDim.initTime)
                timeVec = [obj.timeDim.initTime timeVec];
+               nPaths = size(paths,1);
                paths = [repmat(obj.timeDim.initValue,nPaths,1) paths];
             end
             h = plot(timeVec,paths,'-');

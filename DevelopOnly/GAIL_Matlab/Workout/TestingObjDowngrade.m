@@ -21,4 +21,6 @@ plot(fred)
 figure
 plot(jch)
 figure
-plot(cih)
+plot(cih,rand(10,3))
+figure
+plot(cih,rand(10,5))
