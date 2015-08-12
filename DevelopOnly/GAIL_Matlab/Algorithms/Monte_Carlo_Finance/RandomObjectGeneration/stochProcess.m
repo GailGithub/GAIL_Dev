@@ -38,11 +38,12 @@ classdef stochProcess < handle & matlab.mixin.CustomDisplay
    end
 
    properties (Hidden, SetAccess=private) %so they can only be set by the constructor
-      defaultNPaths = 10;
+      defaultNPaths = 10
       defaultLineSpecs = {'linewidth',3}
       defaultPointSpecs = {'markersize',25}
-      defaultFontSize = 20;
-      defaultPlotKind = 'line';
+      defaultFontSize = 20
+      defaultPlotKind = 'yt-'
+      allowedPlotKind = {'yt.','yt-','yy'}
    end
 
    methods
@@ -129,9 +130,14 @@ classdef stochProcess < handle & matlab.mixin.CustomDisplay
          end
          offset = 1; %the last input just looked at 
          if nargin > offset %does another input exist
-            if any(strcmp(varargin{offset},{'line','point'})) %is it a kind of plot
-               plotKind = varargin{offset}; %then set it to the desired kind
-               offset = offset+1; %increase offset
+            if ischar(varargin{offset})
+               if any(strcmp(varargin{offset},obj.allowedPlotKind)) %is it a kind of plot
+                  plotKind = varargin{offset}; %then set it to the desired kind
+                  offset = offset+1; %increase offset
+               else
+                  warning('Second input is not a valid kind of plot')
+                  return
+               end
             else
                plotKind = obj.defaultPlotKind; %otherwise set to default
             end
@@ -147,7 +153,7 @@ classdef stochProcess < handle & matlab.mixin.CustomDisplay
             error('Need input for inputType ''x''')               
          end
          paths = genPaths(obj,genPathsInput);
-         if strcmp(plotKind,'point')
+         if strcmp(plotKind,'yy')
             if obj.timeDim.nSteps >= 2;
                h = plot(paths(:,1),paths(:,2),'.');
                if nargin > offset
@@ -156,21 +162,21 @@ classdef stochProcess < handle & matlab.mixin.CustomDisplay
                   set(h,obj.defaultPointSpecs{:});
                end
             else
-               plotKind = 'line';
+               plotKind = obj.defaultPlotKind;
             end
          end
-         if strcmp(plotKind,'line')
+         if strncmp(plotKind,'yt',2)
             timeVec = obj.timeDim.timeVector;
             if numel(obj.timeDim.initTime)
                timeVec = [obj.timeDim.initTime timeVec];
                nPaths = size(paths,1);
                paths = [repmat(obj.timeDim.initValue,nPaths,1) paths];
             end
-            h = plot(timeVec,paths,'-');
+            h = plot(timeVec,paths,plotKind(3));
             if numel(varargin) > offset + 1
                set(h,varargin{offset+2:end});
             else
-               set(h,obj.defaultLineSpecs{:});
+               set(h,obj.defaultLineSpecs{:},obj.defaultPointSpecs{:});
             end
          end
          set(gca,'fontsize',obj.defaultFontSize)
