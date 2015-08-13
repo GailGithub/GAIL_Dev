@@ -21,6 +21,10 @@ fhick = brownianMotion
 ehick = stochProcess(fhick,struct('inputType','x'))
 jhick = brownianMotion(ehick,struct('inputType','n'))
 
+%% Start with a assetParam
+derf = assetPath
+eniale = brownianMotion(derf)
+
 %% Test plotting
 figure
 plot(fred)
@@ -36,5 +40,9 @@ try
 catch
 end
 figure
-plot(jhick,'yth',200)
+plot(jhick,'hist',200)
+figure
+plot(derf)
+figure
+plot(eniale)
    
