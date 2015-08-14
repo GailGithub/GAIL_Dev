@@ -39,12 +39,12 @@ classdef stochProcess < handle & matlab.mixin.CustomDisplay
 
    properties (Hidden, SetAccess=private) %so they can only be set by the constructor
       defaultNPaths = 10
-      defaultLineSpecs = {'linewidth',3}
-      defaultPointSpecs = {'markersize',25}
+      defaultSpecs = {'linewidth',3,'markersize',25}
       defaultFontSize = 20
       defaultPlotKind = 'yt-'
-      allowedPlotKind = {'yt.','yt-','yy'}
+      allowedPlotKind = {'yt.','yt-','yy','hist'}
    end
+
 
    methods
         
@@ -156,28 +156,53 @@ classdef stochProcess < handle & matlab.mixin.CustomDisplay
          if strcmp(plotKind,'yy')
             if obj.timeDim.nSteps >= 2;
                h = plot(paths(:,1),paths(:,2),'.');
-               if nargin > offset
-                  set(h,varargin{offset:end});
-               else
-                  set(h,obj.defaultPointSpecs{:});
-               end
             else
                plotKind = obj.defaultPlotKind;
             end
          end
-         if strncmp(plotKind,'yt',2)
+         if strncmp(plotKind,'yt',2) || strcmp(plotKind,'hist')
             timeVec = obj.timeDim.timeVector;
+            nPaths = size(paths,1);
             if numel(obj.timeDim.initTime)
-               timeVec = [obj.timeDim.initTime timeVec];
-               nPaths = size(paths,1);
+               timeVec = [obj.timeDim.initTime timeVec];               
                paths = [repmat(obj.timeDim.initValue,nPaths,1) paths];
             end
-            h = plot(timeVec,paths,plotKind(3));
-            if numel(varargin) > offset + 1
-               set(h,varargin{offset+2:end});
+            if strncmp(plotKind,'yt',2) %a y versus time plot
+               h = plot(timeVec,paths,plotKind(3));
             else
-               set(h,obj.defaultLineSpecs{:},obj.defaultPointSpecs{:});
-            end
+               MATLABblue = [0 0.447 0.741];
+               nTimeVec = numel(timeVec);
+               maxHtVec = [diff(timeVec) 0];
+               maxHtVec(nTimeVec) = maxHtVec(nTimeVec-1);
+               ptsPerBin = ceil(sqrt(nPaths));
+               binBreaks = (1:ptsPerBin:nPaths)';
+               h = zeros(1,nTimeVec);
+               for ii = 1:nTimeVec
+                  pathVals = sort(paths(:,ii));        
+                  binBrkVals = pathVals(binBreaks);
+                  binWdths = diff(binBrkVals);
+                  binCts = diff(binBreaks);
+                  binCts(1) = binCts(1)+1;
+                  tempa = min(binWdths./binCts);
+                  tempb = (4 + 0.2*nPaths*tempa)/(5 + 0.8*nPaths*tempa);
+                  binHts = tempb*ones(size(binCts))*maxHtVec(ii);
+                  bWNotZero = binWdths>0;
+                  binHts(bWNotZero) = (tempa*tempb*maxHtVec(ii))* ...
+                     (binCts(bWNotZero)./binWdths(bWNotZero));
+                  patchy = repmat(binBrkVals',2,1);
+                  patchy = [patchy(:); patchy(1)];
+                  patchx = [0 binHts'; binHts' 0];
+                  patchx = [patchx(:); 0];
+                  h(ii) = patch(patchx+timeVec(ii),patchy,MATLABblue); 
+                  hold on
+               end
+               set(h,'EdgeColor',MATLABblue);
+            end                
+         end
+         if nargin > offset %adjust marker and line sizes
+            set(h,varargin{offset:end});
+         else
+            set(h,obj.defaultSpecs{:});
          end
          set(gca,'fontsize',obj.defaultFontSize)
          if nargout

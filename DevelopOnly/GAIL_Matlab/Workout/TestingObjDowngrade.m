@@ -17,7 +17,7 @@ jch = whiteNoise(ech,struct('inputType','n', ...
 cih = whiteNoise(ech,struct('wnParam',struct('sampleKind','Sobol')))
 
 %% Start with a brownMotion
-fhick = brownianMotion
+fhick = brownianMotion(struct('timeDim',struct('timeVector',0.1:0.1:1)))
 ehick = stochProcess(fhick,struct('inputType','x'))
 jhick = brownianMotion(ehick,struct('inputType','n'))
 
@@ -31,7 +31,9 @@ plot(fred)
 figure
 plot(jch)
 figure
-plot(jch,'yt.',50)
+plot(jch,'yt.',50,'markersize',100)
+figure
+plot(jch,'yy',50)
 figure
 plot(cih,rand(10,3))
 try 
@@ -40,7 +42,7 @@ try
 catch
 end
 figure
-plot(jhick,'hist',200)
+plot(jhick,'hist',2000)
 figure
 plot(derf)
 figure
