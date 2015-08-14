@@ -172,7 +172,6 @@ classdef stochProcess < handle & matlab.mixin.CustomDisplay
             if strncmp(plotKind,'yt',2) %a y versus time plot
                h = plot(timeVec,paths,plotKind(3));
             else
-               MATLABblue = [0 0.447 0.741];
                nTimeVec = numel(timeVec);
                maxHtVec = [diff(timeVec) 0];
                maxHtVec(nTimeVec) = maxHtVec(nTimeVec-1);
@@ -186,7 +185,7 @@ classdef stochProcess < handle & matlab.mixin.CustomDisplay
                   binCts = diff(binBreaks);
                   binCts(1) = binCts(1)+1;
                   tempa = min(binWdths./binCts);
-                  tempb = (4 + 0.2*nPaths*tempa)/(5 + 0.8*nPaths*tempa);
+                  tempb = (3 + 0.2*nPaths*tempa)/(4 + 0.8*nPaths*tempa);
                   binHts = tempb*ones(size(binCts))*maxHtVec(ii);
                   bWNotZero = binWdths>0;
                   binHts(bWNotZero) = (tempa*tempb*maxHtVec(ii))* ...
