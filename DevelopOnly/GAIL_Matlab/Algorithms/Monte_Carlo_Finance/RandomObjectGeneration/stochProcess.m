@@ -39,10 +39,12 @@ classdef stochProcess < handle & matlab.mixin.CustomDisplay
 
    properties (Hidden, SetAccess=private) %so they can only be set by the constructor
       defaultNPaths = 10
-      defaultSpecs = {'linewidth',3,'markersize',25}
+      defaultSpecs = {'linewidth',3, ...
+         'markersize',25}
       defaultFontSize = 20
       defaultPlotKind = 'yt-'
       allowedPlotKind = {'yt.','yt-','yy','hist'}
+      defaultColor = [0 0.447 0.741]; %MATLAB blue
    end
 
 
@@ -193,10 +195,10 @@ classdef stochProcess < handle & matlab.mixin.CustomDisplay
                   patchy = [patchy(:); patchy(1)];
                   patchx = [0 binHts'; binHts' 0];
                   patchx = [patchx(:); 0];
-                  h(ii) = patch(patchx+timeVec(ii),patchy,MATLABblue); 
+                  h(ii) = patch(patchx+timeVec(ii),patchy,obj.defaultColor); 
                   hold on
                end
-               set(h,'EdgeColor',MATLABblue);
+               set(h,'EdgeColor',obj.defaultColor);
             end                
          end
          if nargin > offset %adjust marker and line sizes
