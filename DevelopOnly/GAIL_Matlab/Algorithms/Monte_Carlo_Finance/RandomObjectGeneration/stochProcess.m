@@ -210,7 +210,7 @@ classdef stochProcess < handle & matlab.mixin.CustomDisplay
             varargout{1}=h;
          end
       end
-            
+      
    end
    
    methods (Access = protected)
@@ -238,10 +238,6 @@ classdef stochProcess < handle & matlab.mixin.CustomDisplay
    end
 
    end
-   
-%    methods (Abstract)
-%       genPaths(obj,val)
-%    end
-       
+          
 end
 
