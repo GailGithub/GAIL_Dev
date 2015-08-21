@@ -26,9 +26,9 @@ classdef stochProcess < handle & matlab.mixin.CustomDisplay
          'nSteps', 3, ... %number of different times
          'timeIncrement', [1 1], ... %increment between time intervals
          'dim', 1, ... %dimension of process
-         'nCols', 3, ... %number of columns of the process matrix = nSteps*dim
+         'nCols', 3, ... %number of columns of the process matrix = nSteps * dim
          'initTime', [], ... %initial time, normally zero if it exists
-         'initValue', []) %initial value
+         'initValue', []) %initial value, if it exists
       inputType = 'n' %input type: 'n' for number of paths, 
                       %            'x' for array of numbers
    end
@@ -234,6 +234,9 @@ classdef stochProcess < handle & matlab.mixin.CustomDisplay
       end
       if numel(obj.timeDim.initValue)
          propList.timeDim_initValue = obj.timeDim.initValue;
+      end
+      if obj.timeDim.dim > 1
+         propList.timeDim_dim = obj.timeDim.dim;
       end
    end
 
