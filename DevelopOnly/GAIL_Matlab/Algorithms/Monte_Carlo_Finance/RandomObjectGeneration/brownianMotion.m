@@ -52,10 +52,19 @@ classdef brownianMotion < whiteNoise
       % Creating a Brownian Motion process
       function obj = brownianMotion(varargin)         
          obj@whiteNoise(varargin{:}) %parse basic input
-         if isfield(obj.restInput,'bmParam')
-            val = obj.restInput.bmParam;
-            obj.bmParam = val;
-            obj.restInput = rmfield(obj.restInput,'bmParam');
+         if nargin>0
+            val=varargin{1};
+            if isa(val,'brownMotion')
+               obj.bmParam = val.bmParam;
+               if nargin == 1
+                  return
+               end
+            end
+            if isfield(obj.restInput,'bmParam')
+               val = obj.restInput.bmParam;
+               obj.bmParam = val;
+               obj.restInput = rmfield(obj.restInput,'bmParam');
+            end
          end
          obj.wnParam = struct('distribName','Gaussian');
             %must have Gaussian whiteNoise paths input   

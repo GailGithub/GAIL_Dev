@@ -6,7 +6,7 @@ classdef ut_brownianMotion < matlab.unittest.TestCase
              
     function bmNoInput(testCase)
        bm = brownianMotion;
-       paths = genBMPaths(bm,1e6);
+       paths = genPaths(bm,1e6);
        testCase.verifyClass(bm,'brownianMotion');
        testCase.verifyLessThanOrEqual( ...
           abs(var(paths)-bm.timeDim.timeVector)./bm.timeDim.timeVector,0.01);
@@ -15,7 +15,7 @@ classdef ut_brownianMotion < matlab.unittest.TestCase
     function bmInputType(testCase)
        param.inputType = 'x';
        bm = brownianMotion(param);
-       paths = genBMPaths(bm,rand(1e6,bm.timeDim.nSteps));
+       paths = genPaths(bm,rand(1e6,bm.timeDim.nSteps));
        testCase.verifyClass(bm,'brownianMotion');
        testCase.verifyEqual(bm.inputType,'x');
        testCase.verifyLessThanOrEqual( ...
@@ -25,7 +25,7 @@ classdef ut_brownianMotion < matlab.unittest.TestCase
    function bmTimeVector(testCase)
       param.timeDim.timeVector = 1:5;
       bm = brownianMotion(param);
-      paths = genBMPaths(bm,1e6);
+      paths = genPaths(bm,1e6);
       testCase.verifyClass(bm,'brownianMotion');
       testCase.verifyEqual(bm.timeDim.timeVector,1:5);
       testCase.verifyLessThanOrEqual( ...
@@ -42,7 +42,7 @@ classdef ut_brownianMotion < matlab.unittest.TestCase
    function bmSampleKind(testCase)
       param.wnParam.sampleKind='Sobol';
       bm = brownianMotion(param);
-      paths = genBMPaths(bm,1e6);
+      paths = genPaths(bm,1e6);
       testCase.verifyClass(bm,'brownianMotion');
       testCase.verifyEqual(bm.wnParam.sampleKind,'Sobol');
       testCase.verifyLessThanOrEqual( ...
