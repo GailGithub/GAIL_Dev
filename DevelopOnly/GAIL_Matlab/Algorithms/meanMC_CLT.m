@@ -1,7 +1,7 @@
-function [hmu,out_param]=meanMC_CLT(Yrand,absTol,relTol,alpha,nSig,fudge)
+function [hmu,out_param]=meanMC_CLT(Yrand,absTol,relTol,alpha,nSig,inflate)
 %MEANMC_CLT Monte Carlo method to estimate the mean of a random variable
 %
-%   tmu = MEANMC_CLT(Yrand,abstol,alpha,nSig,fudge) estimates the mean, mu, of a random variable Y to
+%   tmu = MEANMC_CLT(Yrand,abstol,alpha,nSig,inflate) estimates the mean, mu, of a random variable Y to
 %   within a specified error tolerance, i.e., | mu - tmu | <= abstol with
 %   probability at least 1-alpha, where abstol is the absolute error
 %   tolerance.  The default values are abstol=1e-2 and alpha=1%. Input
@@ -30,7 +30,7 @@ function [hmu,out_param]=meanMC_CLT(Yrand,absTol,relTol,alpha,nSig,fudge)
 %     nSig --- the number of samples used to compute the sample variance
 %     --- default = 1000
 %
-%     fudge --- the standard deviation inflation factor --- default = 1.2
+%     inflate --- the standard deviation inflation factor --- default = 1.2
 %
 %   Output Arguments
 %
@@ -46,7 +46,7 @@ function [hmu,out_param]=meanMC_CLT(Yrand,absTol,relTol,alpha,nSig,fudge)
 %This is a heuristic algorithm based on a Central Limit Theorem
 %approximation
 if nargin < 6
-   fudge = 1.2; %variance inflation factor
+   inflate = 1.2; %variance inflation factor
    if nargin < 5;
       nSig = 1e3; %number of samples to estimate variance
       if nargin < 4
@@ -65,18 +65,21 @@ if nargin < 6
 end
 nMax=1e8; %maximum number of samples allowed.
 out_param.alpha = alpha; %save the input parameters to a structure
-out_param.fudge = fudge;
+out_param.inflate = inflate;
 out_param.nSig = nSig;
 tstart = tic; %start the clock
 Yval = Yrand(nSig);% get samples to estimate variance 
 out_param.var = var(Yval); %calculate the sample variance--stage 1
 sig0 = sqrt(out_param.var); %standard deviation
-sig0up = out_param.fudge.*sig0; %upper bound on the standard deviation
+sig0up = out_param.inflate.*sig0; %upper bound on the standard deviation
 hmu0 = mean(Yval);
 nmu = max(1,ceil((-norminv(alpha)*sig0up/max(absTol,relTol*abs(hmu0))).^2)); 
    %number of samples needed for mean
-assert(nmu<nMax,['nmu = ' int2str(nmu) ', which is too big']) 
-   %don't exceed sample budget
+if nmu > nMax %don't exceed sample budget
+   warning(['The algorithm wants to use nmu = ' int2str(nmu) ...
+      ', which is too big. Using ' int2str(nMax) ' instead.']) 
+   nmu = nMax;
+end
 hmu = mean(Yrand(nmu)); %estimated mean
 out_param.ntot = nSig+nmu; %total samples required
 out_param.time = toc(tstart); %elapsed time

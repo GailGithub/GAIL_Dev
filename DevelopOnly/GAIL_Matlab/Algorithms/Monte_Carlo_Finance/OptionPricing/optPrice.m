@@ -53,10 +53,19 @@ classdef optPrice < optPayoff
       % Creating an asset path process
       function obj = optPrice(varargin)         
          obj@optPayoff(varargin{:}) %parse basic input
-         if isfield(obj.restInput,'priceParam')
-            val = obj.restInput.priceParam;
-            obj.priceParam = val;
-            obj.restInput = rmfield(obj.restInput,'priceParam');
+         if nargin>0
+            val=varargin{1};
+            if isa(val,'optPrice')
+               obj.priceParam = val.priceParam;
+               if nargin == 1
+                  return
+               end
+            end
+            if isfield(obj.restInput,'priceParam')
+               val = obj.restInput.priceParam;
+               obj.priceParam = val;
+               obj.restInput = rmfield(obj.restInput,'priceParam');
+            end       
          end
       end
       
@@ -64,6 +73,10 @@ classdef optPrice < optPayoff
          if isfield(val,'cubMethod') %cubature method
             assert(any(strcmp(val.cubMethod,obj.allowCubMethod)))
             obj.priceParam.cubMethod=val.cubMethod;
+            if any(strcmp(obj.priceParam.cubMethod, ...
+                  {'IID_MC','IID_MC_new', 'IID_MC_newtwo','IID_MC_abs'}))
+               obj.wnParam.sampleKind = 'IID';
+            end
             if any(strcmp(obj.priceParam.cubMethod,{'Sobol','lattice'}))
                obj.inputType = 'x';
                obj.wnParam.sampleKind = obj.priceParam.cubMethod;

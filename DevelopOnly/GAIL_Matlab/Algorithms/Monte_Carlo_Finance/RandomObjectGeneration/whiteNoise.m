@@ -29,7 +29,7 @@ classdef whiteNoise < stochProcess
 % values assigned to that are abstractly defined in that class plus some
 % properties particulary for this class
 
-   properties (SetAccess=protected) %so they can only be set by the constructor
+   properties (SetAccess=public)
       wnParam = struct('sampleKind','IID', ... %kind of sampling
          'distribName', 'Uniform', ... %distribution of the marginals 
          'xDistrib', 'Uniform') %kind of sampling
