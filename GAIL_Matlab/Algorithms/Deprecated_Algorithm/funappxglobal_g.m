@@ -331,7 +331,10 @@ while n < out_param.nmax;
             flag = 1;
         else
             % otherwise increase number of points, go to Stage 1
-            n = 2 + ceil(out_param.nstar);
+            %n = 2 + ceil(out_param.nstar);
+            m = ceil((2*out_param.nstar + 1)/(2*n-2));
+            n = m*(n-1)+1;
+            flag = 1;
         end;
     end;
 end;
