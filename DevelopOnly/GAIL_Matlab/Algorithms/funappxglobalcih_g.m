@@ -1,4 +1,4 @@
-function [pp,out_param]=funappxglobal_g(varargin)
+function [pp,out_param]=funappxglobalcih_g(varargin)
 %FUNAPPXGLOBAL_G 1-D guaranteed function recovery on a closed interval
 %[a,b]
 %
@@ -140,7 +140,7 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %            nstar: 98
 %     exceedbudget: 0
 %          npoints: 9901
-%       errorbound: 2.5245e-07
+%       errorbound: 2.5508e-09
 %
 %
 %   Example 2:
@@ -168,7 +168,7 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %            nstar: 8
 %     exceedbudget: 0
 %          npoints: 33733
-%       errorbound: 2.8129e-08 
+%       errorbound: 3.5154e-09
 %
 %
 %   Example 3:
@@ -199,7 +199,7 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %            nstar: 62
 %     exceedbudget: 0
 %          npoints: 31249
-%       errorbound: 2.5448e-07
+%       errorbound: 4.0965e-09
 %
 %
 %   Example 4:
@@ -232,7 +232,7 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %            nstar: 88
 %     exceedbudget: 0
 %          npoints: 590071
-%       errorbound: 2.5278e-08
+%       errorbound: 2.8721e-10
 %
 %
 %   See also INTEGRAL_G, MEANMC_G, CUBMC_G
@@ -266,74 +266,75 @@ end;
 
 % initialize number of points
 n = out_param.ninit;
+% length of interval
+len = out_param.b-out_param.a;
+h=len/(n-1);
 % initialize nstar
-out_param.nstar = n - 2;
+% out_param.nstar = n - 2;
 % cost budget flag
 out_param.exceedbudget = 1;
 % tau change flag
 tauchange = 0;
-% length of interval
-len = out_param.b-out_param.a;
 % add flag
-flag = 0;
+hcut = 2.1*h;
+inflatelimit =  1.5;
+
+ii=1;
+f2normlow=zeros(10,1);
+f2normhi=zeros(10,1);
+f2normhi(1)=inf;
+hvec=zeros(10,1);
+hvec(1)=h;
 
 while n < out_param.nmax;
     
-    if(flag==0)
-        x = out_param.a:len/(n-1):out_param.b;
+    if ii == 1
+        x = out_param.a:h:out_param.b;
         y = f(x);
     else
-        xnew = repmat(x(1:end-1),m-1,1)...
-            +repmat((1:m-1)'*len/(n-1),1,(n-1)/m);
-        ynew = f(xnew);
-        xnew = [x(1:end-1); xnew];
-        x = [xnew(:); x(end)]';
-        ynew = [y(1:end-1); ynew];
-        y = [ynew(:); y(end)]';
+        h=h/m;
+        hvec(ii)=h;
+        xnew=bsxfun(@plus,(1:m-1)'*h,x(1:nold-1)); %additional x values
+        ynew=f(xnew); %additional f(x) values
+        x=[reshape([x(1:nold-1);xnew],1,n-1) x(end)];
+        y=[reshape([y(1:nold-1);ynew],1,n-1) y(end)];     
     end;
-    diff_y = diff(y);
-    %approximate the weaker norm of input function
-    gn = (n-1)/len*max(abs(diff_y-(y(n)-y(1))/(n-1)));
-    %approximate the stronger norm of input function
-    fn = (n-1)^2/len^2*max(abs(diff(diff_y)));
     
-    % Stage 2: satisfy necessary condition
-    if out_param.nstar*(2*gn+fn*len/(n-1)) >= fn*len;
-        % Stage 3: check for convergence
-        errbound = 4*out_param.abstol*(n-1)*(n-1-out_param.nstar)...
-            /out_param.nstar/len;
-        % satisfy convergence
-        if errbound >= gn;
-            out_param.exceedbudget = 0; break;
-        end;
-        % otherwise increase number of points
-        m = max(ceil(1/(n-1)*sqrt(gn*out_param.nstar*...
-            len/4/out_param.abstol)),2);
-        n = m*(n-1)+1;
-        flag = 1;
-        % Stage2: do not satisfy necessary condition
-    else
-        % increase tau
-        out_param.nstar = fn/(2*gn/len+fn/(n-1));
-        % change tau change flag
-        tauchange = 1;
-        % check if number of points large enough
-        if n >= out_param.nstar+2;
-            % true, go to Stage 3
-            errbound = 4*out_param.abstol*(n-1)*(n-1-out_param.nstar)...
-                /out_param.nstar/len;
-            if errbound >= gn;
-                out_param.exceedbudget = 0; break;
-            end;
-            m = max(ceil(1/(n-1)*sqrt(gn*out_param.nstar*...
-                len/4/out_param.abstol)),2);
-            n = m*(n-1)+1;
-            flag = 1;
-        else
-            % otherwise increase number of points, go to Stage 1
-            n = 2 + ceil(out_param.nstar);
-        end;
+    %compute the second order difference
+    f2diff = max(abs(diff(y,2)));
+
+    f2normlow(ii)=f2diff/h^2; %lower bound on ||f''||
+    f2normhi(ii+1)=min(f2normhi(ii),f2normlow(ii) ...
+        *inflatelimit*hcut/(hcut-2*h));
+        %update upper bound on ||f''||       
+
+    %Check necessary condition for function to lie in cone
+    if f2normlow(ii) > f2normhi(ii+1) %f lies outside cone
+        %Decrease hcut
+        tempa=1-inflatelimit*f2normlow(1:ii)/f2normlow(ii);
+        whpos=tempa>0;
+        hcut=min(hvec(whpos)./tempa(whpos));
+        out_param.conechange=true; %flag the changed tau
+        warning('GAIL:integralNoPenalty_g:spiky','This integrand is spiky relative to ninit. You may wish to increase ninit for similar integrands.');
+
+        %Update Varfpup
+        f2normhi(2:ii+1)=cummin((inflatelimit*hcut) ...
+            * f2normlow(1:ii)./(hcut-2*hvec(1:ii)));
+    end
+    
+    
+    % Stage 3: check for convergence
+    if hcut*inflatelimit*f2diff <= 8*out_param.abstol*(hcut-2*h);
+        out_param.exceedbudget = 0; break;
     end;
+    % otherwise increase number of points
+    beta=h/hcut;
+    m=max(2,ceil(1.1*beta*(1+sqrt(1+ ...
+            inflatelimit*f2diff/(8*out_param.abstol*beta^2)))));
+    nold=n;
+    n = m*(n-1)+1;
+
+    ii=ii+1;
 end;
 
 if tauchange == 1;
@@ -348,17 +349,19 @@ if out_param.exceedbudget == 1;
     warning('GAIL:funappxglobal_g:exceedbudget',['funappxglobal_g '...
     'attempted to exceed the cost budget. The answer may be unreliable.'])
     out_param.npoints = n;
-    nstar = out_param.nstar;
-    out_param.errorbound = gn*len*nstar/(4*(n-1)*(n-1-nstar));
+    out_param.errorbound = fn*len^2/(8*(n-1)^2);
     x1 = out_param.a:len/(out_param.npoints-1):out_param.b;
     y1 = f(x1);
     pp = interp1(x1,y1,'linear','pp');
 else
     out_param.npoints = n;
-    nstar = out_param.nstar;
-    out_param.errorbound = gn*len*nstar/(4*(n-1)*(n-1-nstar));
+    out_param.errorbound = 'ha ha'; %fix this!!
     pp = interp1(x,y,'linear','pp');    
 end;
+
+%add compute memory parameter
+w = whos;
+out_param.bytes = sum([w.bytes]);
 
 if MATLABVERSION >= 8.3
     warning('on', 'Matlab:interp1:ppGriddedInterpolant');

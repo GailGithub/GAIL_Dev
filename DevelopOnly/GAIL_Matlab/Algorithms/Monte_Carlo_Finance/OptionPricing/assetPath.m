@@ -63,10 +63,19 @@ classdef assetPath < brownianMotion
       % Creating an asset path process
       function obj = assetPath(varargin)         
          obj@brownianMotion(varargin{:}) %parse basic input
-         if isfield(obj.restInput,'assetParam')
-            val = obj.restInput.assetParam;
-            obj.assetParam = val;
-            obj.restInput = rmfield(obj.restInput,'assetParam');
+         if nargin>0
+            val=varargin{1};
+            if isa(val,'assetPath')
+               obj.assetParam = val.assetParam;
+               if nargin == 1
+                  return
+               end
+            end
+            if isfield(obj.restInput,'assetParam')
+               val = obj.restInput.assetParam;
+               obj.assetParam = val;
+               obj.restInput = rmfield(obj.restInput,'assetParam');
+            end
          end
          obj.timeDim = struct('initTime',0, ...
             'initValue',obj.assetParam.initPrice,...

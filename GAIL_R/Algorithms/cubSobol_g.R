@@ -1,7 +1,9 @@
+setwd("GAIL_Dev/GAIL_R/Algorithms")
 library(randtoolbox)
 library(pracma)
-cubSobol_g = function(hyperbox = c(0,1), measure = 'uniform', 
-                      abstol = 1e-4, reltol = 1e-2, mmin = 10, mmax = 24, fudge = function(m) {5*2^(-m)}, toltype = 'max', theta = 1){
+cubSobol_g = function(f = function(x) {x^2},hyperbox = matrix(c(0,1)), measure = 'uniform',
+                      abstol = 1e-4 , reltol = 1e-2, mmin = 10, mmax = 24, fudge = function(m) {5*2^(-m)}, toltype = 'max', theta = 1)
+{
 #function [q,out_param] = cubSobol_g(varargin)
 #cubSobol_G Quasi-Monte Carlo method using Sobol' cubature over the
 #d-dimensional region to integrate within a specified generalized error
@@ -227,41 +229,59 @@ cubSobol_g = function(hyperbox = c(0,1), measure = 'uniform',
 #
 #   Authors: Anthony Karahalios and Luana Terra
 #
+time1 = proc.time()
 ##Initial important cone factors and Check-initialize parameters
-r_lag = 4; #distance between coefficients summed and those computed
-cubSobol_g_param() #Get the parameters
-l_star = my_list$"out_param"["mmin"] - r_lag; # Minimum gathering of points for the sums of DFWT
   
-if (out_param.measure == 'normal') {
-f = function(x) {qnorm(x)^2}
-}
-else if (out_param.measure == 'uniform') {
-Cnorm = prod(hyperbox[,2]-hyperbox[,1]      # # # # # hyperbox needs to be two columns instead of two rows in R
-f = function(x) {Cnorm *(hyperbox[,1]+(hyperbox[,2]-hyperbox[,1])*x)^2}
-}
+r_lag = 4; #distance between coefficients summed and those computed
+#f = function(x) {x^2}
+#hyperbox = matrix(c(0,1))
+#measure <- "uniform"
+#abstol = 1e-4
+#reltol = 1e-2
+#mmin = 10
+#mmax = 24
+#fudge = function(m) {5*2^(-m)}
+#toltype = 'max'
+#theta = 1
+#out_param=c("measure"=measure,"abstol"=abstol,"reltol"=reltol,"mmin"=mmin,"mmax"=mmax,
+ #             "fudge"=fudge,"toltype"=toltype,"theta"=theta, "d"=out_param.d);
+#check <- list("out_param"=out_param, "hyperbox"=hyperbox, "f"=f)
+source("cubSobol_g_param.R")
+check = cubSobol_g_param(r_lag,hyperbox,f,measure,abstol,reltol,mmin,mmax,fudge,toltype,theta) #Get the parameters
+out_param.d = size(hyperbox,2);
 
+l_star = check$out_param$mmin - r_lag; # Minimum gathering of points for the sums of DFWT
+  
+if (check$out_param$measure == 'normal') {
+f = function(x) {check$f(qnorm(x))}
+} else if (check$out_param$measure == 'uniform') {
+Cnorm = prod(check$hyperbox[2,]-check$hyperbox[1,])     # # # # # hyperbox needs to be two columns instead of two rows in R
+f = function(x) {Cnorm *check$f(check$hyperbox[1,]+(check$hyperbox[2,]-check$hyperbox[1,])*x)}
+}
+else{}
 ##Main algorithm
-Stilde=rep(0,out_param.mmax-out_param.mmin+1); #initialize sum of DFWT terms
-Cstilde_low=matrix(-Inf,1,out_param.mmax-l_star+1); #initialize #various sums of DFWT terms for necessary conditions
-CStilde_up=matrix(Inf,1,out_param.mmax-l_star+1); #initialize various #sums of DFWT terms for necessary conditions
-errest=rep(0,out_param.mmax-out_param.mmin+1); #initialize error estimates
-appxinteg=rep(0,out_param.mmax-out_param.mmin+1); #initialize approximations to integral
+Stilde=rep(0,check$out_param$mmax-check$out_param$mmin+1); #initialize sum of DFWT terms
+CStilde_low=matrix(-Inf,1,check$out_param$mmax-l_star+1); #initialize #various sums of DFWT terms for necessary conditions
+CStilde_up=matrix(Inf,1,check$out_param$mmax-l_star+1); #initialize various #sums of DFWT terms for necessary conditions
+errest=rep(0,check$out_param$mmax-check$out_param$mmin+1); #initialize error estimates
+appxinteg=rep(0,check$out_param$mmax-check$out_param$mmin+1); #initialize approximations to integral
 exit_len = 2;
 #out_param.exit=false(1,exit_len); #we start the algorithm with #all warning flags down
 
 ##Initial points and FWT
-out_param.n=2^out_param.mmin; #total number of points to start with
+out_param.n=2^check$out_param$mmin; #total number of points to start with
 n0=out_param.n; #initial number of points
-xpts=sobol(n0,out_param.d,scrambling=1)
+xpts=sobol(n0,check$out_param$d,scrambling=1)
+xpts = mod((xpts-.5),1)
 ####xpts=sobstr(1:n0,1:out_param.d); %grab Sobol' points     # # # # # # We are trying to use xpts directly without sobstr
 y=f(xpts); #evaluate integrand
 yval=y;
-}
+
 
 ## Compute initial FWT
-for (l in 0:out_param.mmin-1){
+for (l in 0:check$out_param$mmin-1){
   nl=2^l;
-  nmminlm1=2^(out_param.mmin-l-1);
+  nmminlm1=2^(check$out_param$mmin-l-1);
   ptind=matrix(rep(matrix(c(rep(TRUE,nl),rep(FALSE,nl))),nmminlm1));
   evenval=y[ptind];
   oddval=y[!ptind];
@@ -276,43 +296,150 @@ appxinteg[2] = q;
 
 ## Create kappanumap implicitly from the data
 kappanumap = (1:out_param.n); #initialize map
-for l = seq((out_param.mmin-1),1,-1) {
+for (l in seq((check$out_param$mmin-1),1,-1)) {
   nl = 2^l;
   oldone = abs(y[kappanumap[(2:nl)]]); #earlier values of kappa, don't touch first ones
   newone = abs(y[kappanumap[(nl+2):(2*nl)]]); #later values of kappa,
   flip = which(newone>oldone); #which in the pair are the larger ones
   if (length(flip)!=0) {
-    flipall = bsxfun("+",flip,0:2^(l+1):2^out_param.mmin-1);
-    flipall=flipall(:);
-    temp=kappanumap(nl+1+flipall); #then flip
-    kappanumap(nl+1+flipall)=kappanumap(1+flipall); #them
-    kappanumap(1+flipall)=temp; #around
+    flipall = bsxfun("+",flip,seq(0,2^(check$out_param$mmin-1),2^(l+1)));
+    flipall=as.vector(flipall);
+    temp=kappanumap[nl+1+flipall]; #then flip
+    kappanumap[nl+1+flipall]=kappanumap[1+flipall]; #them
+    kappanumap[1+flipall]=temp; #around
+  }
+}
+## Compute Stilde
+nllstart=2^(check$out_param$mmin-r_lag-1);  #no good equiv for int64 w/o package
+Stilde[1]=sum(abs(y[kappanumap[nllstart+1:2*nllstart]]));
+out_param.bound_err=check$out_param$fudge(check$out_param$mmin)*Stilde[1];
+errest[1]=out_param.bound_err;
+
+# Necessary conditions
+for (l in l_star:check$out_param$mmin) { # Storing the information for the necessary conditions
+C_low = (1+check$out_param$fudge(check$out_param$mmin-l))/(1+2*check$out_param$fudge(check$out_param$mmin-l));
+C_up = (1+check$out_param$fudge(check$out_param$mmin-l));
+CStilde_low[l-l_star+1] = C_low*sum(abs(y[kappanumap[2^(l-1)+1:2^l]]));
+CStilde_up[l-l_star+1] = C_up*sum(abs(y[kappanumap[2^(l-1)+1:2^l]]));
+}
+###if (any(CStilde_low(:) > CStilde_up(:))) { ####Unsure about this part
+###out_param.exit(2) = true; #####Unsure about this part
+#}
+# Check the end of the algorithm
+source("tolfun.R")
+deltaplus = 0.5*(tolfun(check$out_param$abstol,
+                             check$out_param$reltol,check$out_param$theta,mu = abs(as.numeric(q-errest[1])),
+                             check$out_param$toltype)+tolfun(check$out_param$abstol,check$out_param$reltol,
+                                                            check$out_param$theta,mu = abs(as.numeric(q+errest[1])),check$out_param$toltype));
+deltaminus = 0.5*(tolfun(check$out_param$abstol,
+                              check$out_param$reltol,check$out_param$theta,abs(q-errest[1]),
+                              check$out_param$toltype)-tolfun(check$out_param$abstol,check$out_param$reltol,
+                                                             check$out_param$theta,abs(q+errest[1]),check$out_param$toltype));
+
+is_done = FALSE;
+if (out_param.bound_err <= deltaplus) {
+q=q+deltaminus;
+appxinteg[1]=q;
+out_param.time=proc.time() - time1 ##Not using toc here and seeing where this goes
+is_done = TRUE;
+} else if (check$out_param$mmin == check$out_param$mmax){ # We are on our max budget and did not meet the error condition => overbudget
+###out_param.exit(1) = true;
+}
+
+## Loop over m
+for (m in check$out_param$mmin+1:check$out_param$mmax) {
+if (is_done) {
+break;
+}
+out_param.n=2^m;
+mnext=m-1;
+nnext=2^mnext;
+xnext=sobol(nnext,check$out_param$d, scrambling=1, init=FALSE); 
+xnext = mod((xnext-.5),1)
+n0=n0+nnext;
+ynext=f(xnext);
+yval=c(yval,ynext); ##ok<*AGROW>
+
+## Compute initial FWT on next points
+for (l in 0:mnext-1) {
+nl=2^l;
+nmminlm1=2^(mnext-l-1);
+ptind=matrix(rep(matrix(c(rep(TRUE,nl),rep(FALSE,nl))),nmminlm1));
+evenval=y[ptind];
+oddval=y[!ptind];
+y[ptind]=(evenval+oddval)/2;
+y[!ptind]=(evenval-oddval)/2;
+}
+
+## Compute FWT on all points
+y=c(y,ynext);
+nl=2^mnext;
+ptind=matrix(rep(matrix(c(rep(TRUE,nl),rep(FALSE,nl))),nmminlm1));
+evenval=y[ptind];
+oddval=y[!ptind];
+y[ptind]=(evenval+oddval)/2;
+y[!ptind]=(evenval-oddval)/2;
+
+## Update kappanumap
+kappanumap=c(kappanumap, 2^(m-1)+kappanumap); #initialize map
+for (l in m-1:-1:m-r_lag) {
+nl=2^l;
+oldone=abs(y[kappanumap[2:nl]]); #earlier values of kappa, don't touch first one
+newone=abs(y[kappanumap[nl+2:2*nl]]); #later values of kappa, 
+flip = which(newone>oldone); #which in the pair are the larger ones
+  if (length(flip)!=0) {
+          flipall=bsxfun("+",flip,seq(0:2^m-1:2^(l+1)));
+          flipall=as.vector(flipall);
+          temp=kappanumap[nl+1+flipall]; #then flip
+          kappanumap[nl+1+flipall]=kappanumap[1+flipall]; #them
+          kappanumap[1+flipall]=temp; #around
   }
 }
 
-##Defining the Parameters
-cubSobol_g_param = function(r_lag, hyperbox = c(0,1), measure = 'uniform', 
-                            abstol = 1e-4, reltol = 1e-2, mmin = 10, mmax = 24, fudge = function(m) {5*2^(-m)}, toltype = 'max', theta = 1){ 
-  #To define the variables but we still need to code for the checks****
-  #  default.hyperbox = [zeros(1,1);ones(1,1)];% default hyperbox
-  #  default.measure  = 'uniform';
-  #  default.abstol  = 1e-4;
-  #  default.reltol  = 1e-2;
-  #  default.mmin  = 10;
-  #  default.mmax  = 24;
-  #  default.fudge = @(m) 5*2.^-m;
-  #  default.toltype  = 'max';
-  #  default.theta  = 1;
-  out_param.measure = measure;
-  out_param.abstol = abstol;
-  out_param.reltol = reltol;
-  out_param.mmin = mmin;
-  out_param.mmax = mmax;  
-  out_param.fudge = fudge;
-  out_param.toltype = toltype;
-  out_param.theta = theta;
-  out_param=c("measure"=out_param.measure,"abstol"=out_param.abstol,"reltol"=out_param.reltol,"mmin"=out_param.mmin,"mmax"=out_param.mmax,
-              "fudge"=out_param.fudge,"toltype"=out_param.toltype,"theta"=out_param.theta)
-  out_list = list("out_param"=out_param,"f"=f,"hyperbox"=hyperbox)
-  return(out_list)
+## Compute Stilde
+nllstart=(2^(m-r_lag-1)) ##No good equiv. for int64 in R w/o a package
+meff=m-out_param.mmin+1;
+Stilde[meff]=sum(abs(y[kappanumap[nllstart+1:2*nllstart]]));
+out_param.bound_err=check$out_param$fudge(m)*Stilde[meff];
+errest[meff]=out_param.bound_err;
+
+# Necessary conditions
+for (l in l_star:m) { # Storing the information for the necessary conditions
+C_low = (1+check$out_param$fudge(m-l))/(1+2*check$out_param$fudge(m-l));
+C_up = (1+check$out_param$fudge(m-l));
+CStilde_low[l-l_star+1] = max(CStilde_low[l-l_star+1],C_low*sum(abs(y[kappanumap[2^(l-1)+1:2^l]])));
+CStilde_up[l-l_star+1] = min(CStilde_up[l-l_star+1],C_up*sum(abs(y[kappanumap[2^(l-1)+1:2^l]])));
+}
+
+###if any(CStilde_low(:) > CStilde_up(:)) ###Unsure about this part
+###out_param.exit(2) = true;
+###end
+
+## Approximate integral
+q=mean(yval);
+appxinteg[meff]=q;
+
+# Check the end of the algorithm
+deltaplus = 0.5*(tolfun(check$out_param$abstol,
+                             check$out_param$reltol,check$out_param$theta,abs(q-errest[meff]),
+                             check$out_param$toltype)+tolfun(check$out_param$abstol,check$out_param$reltol,
+                                                            check$out_param$theta,abs(q+errest[meff]),check$out_param$toltype));
+deltaminus = 0.5*(tolfun(check$out_param$abstol,
+                              check$out_param$reltol,check$out_param$theta,abs(q-errest[meff]),
+                              check$out_param$toltype)-tolfun(check$out_param$abstol,check$out_param$reltol,
+                                                             check$out_param$theta,abs(q+errest[meff]),check$out_param$toltype));
+
+if (out_param.bound_err <= deltaplus) {
+q=q+deltaminus;
+appxinteg[meff]=q;
+out_param.time=proc.time() - time1 ###Not sure why it said toc, so timing is probably off
+is_done = TRUE;
+} else if (m == check$out_param$mmax) { # We are on our max budget and did not meet the error condition => overbudget
+###out_param.exit(1) = TRUE;    ##Not sure about exiting yet
+}
+else{}
+}
+out_param = c("q" = q,"out_param.n" = out_param.n,"out_param.d" = out_param.d,
+              "out_param.bound_err" = out_param.bound_err, "out_param.time"=out_param.time[3])
+return(out_param)
 }

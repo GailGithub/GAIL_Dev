@@ -141,7 +141,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %          npoints: 17409
 %           errest: 8.7998e-08
 %            nstar: [1x1024 double]
-%            bytes: 1433962
+%            bytes: 1429874
 %
 %
 %   Example 2:
@@ -165,7 +165,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %          npoints: 8705
 %           errest: 3.5199e-07
 %            nstar: [1x512 double]
-%            bytes: 719042
+%            bytes: 717002
 %
 %
 %   Example 3:
@@ -190,7 +190,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %          npoints: 18433
 %           errest: 4.8114e-07
 %            nstar: [1x1024 double]
-%            bytes: 1512218
+%            bytes: 1508130
 %
 %
 %   See also INTERP1, GRIDDEDINTERPOLANT, INTEGRAL_G, MEANMC_G, FUNMIN_G
@@ -263,7 +263,6 @@ exit_len = 2;
 out_param.exit = false(exit_len,1); 
 
 while(max(err) > abstol)
-    iter = iter + 1;
     % length of each subinterval
     len = x(index(2:end))-x(index(1:end-1));
     reshapey = reshape(y(1:end-1),ninit - 1, length(index)-1);
@@ -282,7 +281,7 @@ while(max(err) > abstol)
     %find nstar not large enough then double it
     smallconeind = find(nstar.*(2*gn+fn.*len/(ninit-1)) <(fn.*len));
     nstar(smallconeind) = 2*nstar(smallconeind);
-    
+    iter = iter + 1;
     err = nstar.*len.*gn./(4*(ninit-1).*(ninit-1-nstar));
     %check if error satisfy the error tolerance 
     counterr = sum(err > abstol);
@@ -311,13 +310,15 @@ while(max(err) > abstol)
         newindex = [badind + [0 cumbad(1:end-1)]; badind + cumbad];
         newindex = newindex(:)';
         %find the length of each sub interval
-        h = len/2/(ninit-1);
+        %h = len/2/(ninit-1);
+        h = (out_param.b-out_param.a)/2^iter/(ninit-1);
         %reshape x without end point to a matrix of ninit-1 by # of
         %intervals
         reshapex =  reshape(x(1:end-1),ninit -1,...
             (index(end) - 1)/(ninit -1));
         %generate new points newx need to be added
-        newx = bsxfun(@plus,reshapex(:,badind),h(badind));
+        %newx = bsxfun(@plus,reshapex(:,badind),h(badind));
+        newx = reshapex(:,badind)+h;
         %compute value newy of newx
         newy = f(newx);
         %initialize a zero matrix of 2*(ninit-1) by # of bad sub intervals
