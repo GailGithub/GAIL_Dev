@@ -32,7 +32,7 @@ classdef brownianMotion < whiteNoise
 % values assigned to that are abstractly defined in that class plus some
 % properties particulary for this class
 
-   properties (SetAccess=protected) %so they can only be set by the constructor
+   properties (SetAccess=public) %so they can only be set by the constructor
       %added in whiteNoise
       bmParam = struct('assembleType', 'diff') %method for assembling browniam Motion from white noise
    end

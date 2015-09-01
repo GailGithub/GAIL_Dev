@@ -261,7 +261,7 @@ classdef optPayoff < assetPath
  
          wh = whlook & strcmp(obj.payoffParam.putCallType,'put');
          if any(wh)
-            K = min([repmat(obj.assetParam.initPrice,nPaths,1) paths],[ ],2);
+            K = max([repmat(obj.assetParam.initPrice,nPaths,1) paths],[ ],2);
             tempPay(:,wh) ...
                =  max(K - paths(:,obj.timeDim.nSteps), 0) ...
                .* exp(- obj.assetParam.interest .* obj.timeDim.endTime);
