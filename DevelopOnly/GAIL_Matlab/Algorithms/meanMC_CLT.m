@@ -73,7 +73,7 @@ out_param.var = var(Yval); %calculate the sample variance--stage 1
 sig0 = sqrt(out_param.var); %standard deviation
 sig0up = out_param.inflate.*sig0; %upper bound on the standard deviation
 hmu0 = mean(Yval);
-nmu = max(1,ceil((-norminv(alpha)*sig0up/max(absTol,relTol*abs(hmu0))).^2)); 
+nmu = max(1,ceil((-norminv(alpha/2)*sig0up/max(absTol,relTol*abs(hmu0))).^2)); 
    %number of samples needed for mean
 if nmu > nMax %don't exceed sample budget
    warning(['The algorithm wants to use nmu = ' int2str(nmu) ...
