@@ -1,5 +1,9 @@
 function [exactci,cltci]=binomialCI(ntot,nsuc,alpha)
+if nargin==0; help binomialCI, return, end %forgot to give inputs
 obsprob=nsuc/ntot; %observed probability of success
+if nargin < 3 %if no alpha input
+   alpha = 0.01; %this is the default
+end
 al2=alpha/2; %half of uncertainty
 if nsuc==0; %no successes observed
    plo=0; %the lower bound must be zero
