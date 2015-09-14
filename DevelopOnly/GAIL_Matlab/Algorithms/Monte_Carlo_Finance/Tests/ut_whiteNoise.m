@@ -6,7 +6,7 @@ classdef ut_whiteNoise < matlab.unittest.TestCase
              
     function wnNoInput(testCase)
        wn = whiteNoise;
-       paths = genWNPaths(wn,1e6);
+       paths = genPaths(wn,1e6);
        testCase.verifyClass(wn,'whiteNoise');
        testCase.verifyLessThanOrEqual(abs(var(paths)-1/12),0.001);
     end
@@ -14,7 +14,7 @@ classdef ut_whiteNoise < matlab.unittest.TestCase
     function wnInputType(testCase)
        param.inputType = 'x';
        wn = whiteNoise(param);
-       paths = genWNPaths(wn,rand(1e6,wn.timeDim.nSteps));
+       paths = genPaths(wn,rand(1e6,wn.timeDim.nSteps));
        testCase.verifyClass(wn,'whiteNoise');
        testCase.verifyEqual(wn.inputType,'x');
        testCase.verifyLessThanOrEqual(abs(var(paths)-1/12),0.001);
@@ -23,7 +23,7 @@ classdef ut_whiteNoise < matlab.unittest.TestCase
    function wnTimeVector(testCase)
       param.timeDim.timeVector = 1:5;
       wn = whiteNoise(param);
-      paths = genWNPaths(wn,1e6);
+      paths = genPaths(wn,1e6);
       testCase.verifyClass(wn,'whiteNoise');
       testCase.verifyEqual(wn.timeDim.timeVector,1:5);
       testCase.verifyLessThanOrEqual(abs(var(paths)-1/12),0.001);
@@ -39,7 +39,7 @@ classdef ut_whiteNoise < matlab.unittest.TestCase
    function wnSampleKind(testCase)
       param.wnParam.sampleKind='Sobol';
       wn = whiteNoise(param);
-      paths = genWNPaths(wn,1e6);
+      paths = genPaths(wn,1e6);
       testCase.verifyClass(wn,'whiteNoise');
       testCase.verifyEqual(wn.wnParam.sampleKind,'Sobol');
       testCase.verifyLessThanOrEqual(abs(var(paths)-1/12),0.001);

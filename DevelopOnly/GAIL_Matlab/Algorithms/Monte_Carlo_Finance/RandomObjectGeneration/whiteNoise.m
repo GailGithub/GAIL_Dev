@@ -29,7 +29,7 @@ classdef whiteNoise < stochProcess
 % values assigned to that are abstractly defined in that class plus some
 % properties particulary for this class
 
-   properties (SetAccess=protected) %so they can only be set by the constructor
+   properties (SetAccess=public)
       wnParam = struct('sampleKind','IID', ... %kind of sampling
          'distribName', 'Uniform', ... %distribution of the marginals 
          'xDistrib', 'Uniform') %kind of sampling
@@ -46,10 +46,10 @@ classdef whiteNoise < stochProcess
 
    properties (SetAccess=private, Hidden) %so they can only be set by the constructor
       qrandState %state of the quasi-random generator
-      defaultNPaths = 10;
-      defaultLineSpecs = {'linewidth',3}
-      defaultPointSpecs = {'markersize',25}
-      defaultFontSize = 20;
+%       defaultNPaths = 10;
+%       defaultLineSpecs = {'linewidth',3}
+%       defaultPointSpecs = {'markersize',25}
+%       defaultFontSize = 20;
    end
 
 %% Methods
@@ -62,10 +62,20 @@ classdef whiteNoise < stochProcess
       % Creating a white noise process
       function obj = whiteNoise(varargin)
          obj@stochProcess(varargin{:}) %parse basic input         
-         if isfield(obj.restInput,'wnParam')
-            val = obj.restInput.wnParam;
-            obj.wnParam = val;
-            obj.restInput = rmfield(obj.restInput,'wnParam');
+         if nargin>0
+            val=varargin{1};
+            if isa(val,'whiteNoise')
+               obj.wnParam = val.wnParam;
+               obj.qrandState = val.qrandState;
+               if nargin == 1
+                  return
+               end
+            end
+            if isfield(obj.restInput,'wnParam')
+               val = obj.restInput.wnParam;
+               obj.wnParam = val;
+               obj.restInput = rmfield(obj.restInput,'wnParam');
+            end
          end
          if any(strcmp(obj.wnParam.sampleKind,obj.allowQRand)) %quasi-random numbers used
             if isfield(obj.restInput,'qrandState') 
@@ -130,7 +140,9 @@ classdef whiteNoise < stochProcess
             end
          else
             validateattributes(val,{'numeric'},{'2d'})
-            assert(size(val,2)==obj.timeDim.nCols)
+            assert(size(val,2)==obj.timeDim.nCols, ...
+               ['# of columns of ''x'' input to genPaths must equal' ...
+               ' (# of times)(dimension)'])
             paths=val;
          end
          
@@ -140,56 +152,56 @@ classdef whiteNoise < stochProcess
          end
       end
       
-      function varargout = plot(obj,varargin)
-         assert(strcmp(obj.inputType,'n'), ...
-            'plot requires inputType to be ''n''')
-         offset = 0;
-         if numel(varargin) >= 1
-            if any(strcmp(varargin{1},{'line','point'}))
-               plotKind = varargin{1};
-               offset = 1;
-            else
-               plotKind = 'line';
-            end
-         else
-            plotKind = 'line';
-         end
-         if numel(varargin) > offset
-            nPaths = varargin{offset+1};
-         else
-            nPaths = obj.defaultNPaths; %default 
-         end
-         paths = genPaths(obj,nPaths);
-         if strcmp(plotKind,'point')
-            if obj.timeDim.nSteps >= 2;
-               h = plot(paths(:,1),paths(:,2),'.');
-               if numel(varargin) > offset + 1
-                  set(h,varargin{offset+2:end});
-               else
-                  set(h,obj.defaultPointSpecs{:});
-               end
-            else
-               plotKind = 'line';
-            end
-         end
-         if strcmp(plotKind,'line')
-            timeVec = obj.timeDim.timeVector;
-            if numel(obj.timeDim.initTime)
-               timeVec = [obj.timeDim.initTime timeVec];
-               paths = [repmat(obj.timeDim.initValue,nPaths,1) paths];
-            end
-            h = plot(timeVec,paths,'-');
-            if numel(varargin) > offset + 1
-               set(h,varargin{offset+2:end});
-            else
-               set(h,obj.defaultLineSpecs{:});
-            end
-         end
-         set(gca,'fontsize',obj.defaultFontSize)
-         if nargout
-            varargout{1}=h;
-         end
-      end
+%       function varargout = plot(obj,varargin)
+%          assert(strcmp(obj.inputType,'n'), ...
+%             'plot requires inputType to be ''n''')
+%          offset = 0;
+%          if numel(varargin) >= 1
+%             if any(strcmp(varargin{1},{'line','point'}))
+%                plotKind = varargin{1};
+%                offset = 1;
+%             else
+%                plotKind = 'line';
+%             end
+%          else
+%             plotKind = 'line';
+%          end
+%          if numel(varargin) > offset
+%             nPaths = varargin{offset+1};
+%          else
+%             nPaths = obj.defaultNPaths; %default 
+%          end
+%          paths = genPaths(obj,nPaths);
+%          if strcmp(plotKind,'point')
+%             if obj.timeDim.nSteps >= 2;
+%                h = plot(paths(:,1),paths(:,2),'.');
+%                if numel(varargin) > offset + 1
+%                   set(h,varargin{offset+2:end});
+%                else
+%                   set(h,obj.defaultPointSpecs{:});
+%                end
+%             else
+%                plotKind = 'line';
+%             end
+%          end
+%          if strcmp(plotKind,'line')
+%             timeVec = obj.timeDim.timeVector;
+%             if numel(obj.timeDim.initTime)
+%                timeVec = [obj.timeDim.initTime timeVec];
+%                paths = [repmat(obj.timeDim.initValue,nPaths,1) paths];
+%             end
+%             h = plot(timeVec,paths,'-');
+%             if numel(varargin) > offset + 1
+%                set(h,varargin{offset+2:end});
+%             else
+%                set(h,obj.defaultLineSpecs{:});
+%             end
+%          end
+%          set(gca,'fontsize',obj.defaultFontSize)
+%          if nargout
+%             varargout{1}=h;
+%          end
+%       end
           
    end
    

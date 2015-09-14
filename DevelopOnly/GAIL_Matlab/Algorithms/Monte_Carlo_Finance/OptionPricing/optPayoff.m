@@ -70,12 +70,20 @@ classdef optPayoff < assetPath
       % Creating an asset path process
       function obj = optPayoff(varargin)         
          obj@assetPath(varargin{:}) %parse basic input
-         if isfield(obj.restInput,'payoffParam')
-            val = obj.restInput.payoffParam;
-            obj.payoffParam = val;
-            obj.restInput = rmfield(obj.restInput,'payoffParam');
-         end
-         
+         if nargin>0
+            val=varargin{1};
+            if isa(val,'optPayoff')
+               obj.payoffParam = val.payoffParam;
+               if nargin == 1
+                  return
+               end
+            end
+            if isfield(obj.restInput,'payoffParam')
+               val = obj.restInput.payoffParam;
+               obj.payoffParam = val;
+               obj.restInput = rmfield(obj.restInput,'payoffParam');
+            end
+         end       
       end
       
       % Set the properties of the payoff object
@@ -253,7 +261,7 @@ classdef optPayoff < assetPath
  
          wh = whlook & strcmp(obj.payoffParam.putCallType,'put');
          if any(wh)
-            K = min([repmat(obj.assetParam.initPrice,nPaths,1) paths],[ ],2);
+            K = max([repmat(obj.assetParam.initPrice,nPaths,1) paths],[ ],2);
             tempPay(:,wh) ...
                =  max(K - paths(:,obj.timeDim.nSteps), 0) ...
                .* exp(- obj.assetParam.interest .* obj.timeDim.endTime);
