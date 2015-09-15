@@ -84,18 +84,12 @@ classdef brownianMotion < whiteNoise
                   sqrt([obj.timeDim.timeVector(1) obj.timeDim.timeIncrement]), ...
                   paths(:,colRange)),2);
             end
-%######################################################
-%Beginning of part added:
-%######################################################
          elseif strcmp(obj.bmParam.assembleType,'PCA')
              Sigma=bsxfun(@min,obj.timeDim.timeVector',obj.timeDim.timeVector);
              [Eigenvectors,Eigenvalues]=eig(Sigma);
              A = Eigenvectors*Eigenvalues.^(1/2);
              paths=paths*A';
          end
-%######################################################
-%End of part added.
-%######################################################
        end
                  
       function set.bmParam(obj,val)

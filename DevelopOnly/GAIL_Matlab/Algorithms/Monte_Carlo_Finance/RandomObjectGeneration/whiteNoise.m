@@ -39,7 +39,7 @@ classdef whiteNoise < stochProcess
       allowDistribName = {'Uniform','Gaussian'} 
          %kinds of distributions that we can generate
       allowSampleKind = {'IID','Sobol','lattice'} 
-         %kinds of samplking that we allow
+         %kinds of sampling that we allow
       allowQRand = {'Sobol','lattice'} 
          %kinds of samplking that we allow
    end
@@ -85,6 +85,10 @@ classdef whiteNoise < stochProcess
                val = []; %qrandState not provided
             end
             obj.qrandState = val; %set or initialize qrandstate
+         end
+         if strcmp(obj.inputType,'n') && ...
+            strcmp(obj.wnParam.sampleKind,'IID') %easier to sample from randn
+            obj.wnParam.xDistrib = 'Gaussian';
          end
       end
       
