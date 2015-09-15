@@ -1,4 +1,4 @@
-function [q,out_param] = cubLattice_g(varargin)
+function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 %CUBLATTICE_G Quasi-Monte Carlo method using rank-1 Lattices cubature
 %over a d-dimensional region to integrate within a specified generalized
 %error tolerance with guarantees under Fourier coefficients cone decay
