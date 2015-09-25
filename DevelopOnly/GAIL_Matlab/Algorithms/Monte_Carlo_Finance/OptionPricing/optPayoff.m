@@ -401,9 +401,9 @@ classdef optPayoff < assetPath
          probs = (1/(2*nPayoffs)):(1/nPayoffs):(1 - 1/(2*nPayoffs));
          h = plot(sort(payoffs),probs,'-');
          if numel(varargin) > 1
-            set(h,varargin{offset+2:end});
+            set(h,varargin{2:end});
          else
-            set(h,obj.defaultLineSpecs{:});
+            set(h,obj.defaultSpecs{:});
          end
          set(gca,'fontsize',20)
          if nargout
