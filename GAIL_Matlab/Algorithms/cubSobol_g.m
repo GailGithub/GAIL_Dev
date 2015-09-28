@@ -96,6 +96,8 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 %     theta*abstol+(1-theta)*reltol*| integral(f) |. Note that for theta = 1, 
 %     we have pure absolute tolerance while for theta = 0, we have pure 
 %     relative tolerance. By default, theta=1.
+% 
+%     in_param.cv --- struct............
 %
 %   Output Arguments
 %
@@ -225,16 +227,22 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 t_start = tic;
 %% Initial important cone factors and Check-initialize parameters
 r_lag = 4; %distance between coefficients summed and those computed
-[f,hyperbox,out_param] = cubSobol_g_param(r_lag,varargin{:});
+[f, hyperbox, out_param, cv] = cubSobol_g_param(r_lag,varargin{:});
 l_star = out_param.mmin - r_lag; % Minimum gathering of points for the sums of DFWT
 omg_circ = @(m) 2.^(-m);
 omg_hat = @(m) out_param.fudge(m)/((1+out_param.fudge(r_lag))*omg_circ(r_lag));
 
 if strcmp(out_param.measure,'normal')
-   f=@(x) f(gail.stdnorminv(x));
+   f = @(x) f(gail.stdnorminv(x));
+   if cv
+       out_param.cv.g = @(x) out_param.cv.g(gail.stdnorminv(x));
+   end
 elseif strcmp(out_param.measure,'uniform')
    Cnorm = prod(hyperbox(2,:)-hyperbox(1,:));
-   f=@(x) Cnorm*f(bsxfun(@plus,hyperbox(1,:),bsxfun(@times,(hyperbox(2,:)-hyperbox(1,:)),x))); % a + (b-a)x = u
+   f = @(x) Cnorm*f(bsxfun(@plus,hyperbox(1,:),bsxfun(@times,(hyperbox(2,:)-hyperbox(1,:)),x))); % a + (b-a)x = u
+   if cv
+       out_param.cv.g = @(x) Cnorm*out_param.cv.g(bsxfun(@plus,hyperbox(1,:),bsxfun(@times,(hyperbox(2,:)-hyperbox(1,:)),x))); % a + (b-a)x = u
+   end   
 end
 
 %% Main algorithm
@@ -252,8 +260,12 @@ out_param.exit=false(1,exit_len); %we start the algorithm with all warning flags
 out_param.n=2^out_param.mmin; %total number of points to start with
 n0=out_param.n; %initial number of points
 xpts=sobstr(1:n0,1:out_param.d); %grab Sobol' points
-y=f(xpts); %evaluate integrand
+y = f(xpts); %evaluate integrand
 yval=y;
+if cv
+    yg = out_param.cv.g(xpts)-out_param.cv.Ig;
+    yvalg=yg;
+end %evaluate control variate
 
 %% Compute initial FWT
 for l=0:out_param.mmin-1
@@ -264,12 +276,14 @@ for l=0:out_param.mmin-1
    oddval=y(~ptind);
    y(ptind)=(evenval+oddval)/2;
    y(~ptind)=(evenval-oddval)/2;
+   if cv
+       evenval=yg(ptind);
+       oddval=yg(~ptind);
+       yg(ptind)=(evenval+oddval)/2;
+       yg(~ptind)=(evenval-oddval)/2;
+   end
 end
 %y now contains the FWT coefficients
-
-%% Approximate integral
-q=mean(yval);
-appxinteg(1)=q;
 
 %% Create kappanumap implicitly from the data
 kappanumap=(1:out_param.n)'; %initialize map
@@ -285,6 +299,17 @@ for l=out_param.mmin-1:-1:1
        kappanumap(nl+1+flipall)=kappanumap(1+flipall); %them
        kappanumap(1+flipall)=temp; %around
    end
+end
+
+%% If control variates, find optimal beta
+if cv
+    X = yg(kappanumap(end/2+1:end));
+    Y = y(kappanumap(end/2+1:end));
+    beta = (X'*X)^(-1)*X'*Y;
+    % We update the integrand and values
+    y = y-beta*yg;
+    yval = yval-beta*yvalg;
+    f = @(x) f(x)-beta*(out_param.cv.g(x)-out_param.cv.Ig);
 end
 
 %% Compute Stilde
@@ -306,6 +331,10 @@ if any(CStilde_low(:) > CStilde_up(:))
    out_param.exit(2) = true;
 end
 
+%% Approximate integral
+q=mean(yval);
+appxinteg(1)=q;
+
 % Check the end of the algorithm
 deltaplus = 0.5*(gail.tolfun(out_param.abstol,...
     out_param.reltol,out_param.theta,abs(q-errest(1)),...
@@ -325,7 +354,6 @@ if out_param.bound_err <= deltaplus
 elseif out_param.mmin == out_param.mmax % We are on our max budget and did not meet the error condition => overbudget
    out_param.exit(1) = true;
 end
-
 
 %% Loop over m
 for m=out_param.mmin+1:out_param.mmax
@@ -436,7 +464,7 @@ end
 
 
 %% Parsing for the input of cubSobol_g
-function [f,hyperbox, out_param] = cubSobol_g_param(r_lag,varargin)
+function [f,hyperbox, out_param, cv] = cubSobol_g_param(r_lag,varargin)
 
 % Default parameter values
 default.hyperbox = [zeros(1,1);ones(1,1)];% default hyperbox
@@ -448,6 +476,8 @@ default.mmax  = 24;
 default.fudge = @(m) 5*2.^-m;
 default.toltype  = 'max';
 default.theta  = 1;
+default.cv.Ig = 0;
+default.cv.g = @(x) zeros(size(x,1));
 
 if numel(varargin)<2
     help cubSobol_g
@@ -506,6 +536,7 @@ if ~validvarargin
     out_param.fudge = default.fudge;
     out_param.toltype = default.toltype;
     out_param.theta = default.theta;
+    out_param.cv = default.cv;
 else
     p = inputParser;
     addRequired(p,'f',@gail.isfcn);
@@ -521,6 +552,7 @@ else
         addOptional(p,'toltype',default.toltype,...
             @(x) any(validatestring(x, {'max','comb'})));
         addOptional(p,'theta',default.theta,@isnumeric);
+        addOptional(p,'cv',default.cv,@isstruct);
     else
         if isstruct(in3) %parse input structure
             p.StructExpand = true;
@@ -536,12 +568,23 @@ else
         f_addParamVal(p,'toltype',default.toltype,...
             @(x) any(validatestring(x, {'max','comb'})));
         f_addParamVal(p,'theta',default.theta,@isnumeric);
+        f_addParamVal(p,'cv',default.cv,@isstruct);
     end
     parse(p,f,hyperbox,varargin{3:end})
     out_param = p.Results;
 end
 
 out_param.d = size(hyperbox,2);
+
+if (size(func2str(out_param.cv.g),2) == size(func2str(default.cv.g),2))
+    if (all(func2str(out_param.cv.g) == func2str(default.cv.g)))
+        cv = 0; % No control variates if we have default cv
+    else
+        cv = 1;
+    end
+else
+    cv = 1;
+end
 
 fdgyes = 0; % We store how many functions are in varargin. There can only
             % two functions as input, the function f and the fudge factor.
