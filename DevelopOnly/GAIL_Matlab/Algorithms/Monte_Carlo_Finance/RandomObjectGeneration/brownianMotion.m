@@ -54,7 +54,7 @@ classdef brownianMotion < whiteNoise
          obj@whiteNoise(varargin{:}) %parse basic input
          if nargin>0
             val=varargin{1};
-            if isa(val,'brownMotion')
+            if isa(val,'brownianMotion')
                obj.bmParam = val.bmParam;
                if nargin == 1
                   return

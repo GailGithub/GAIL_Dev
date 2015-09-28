@@ -89,7 +89,10 @@ classdef optPayoff < assetPath
       % Set the properties of the payoff object
       function set.payoffParam(obj,val)
          if isfield(val,'optType') %data for type of option
-            assert(any(strcmp(val.optType,obj.allowOptType)))
+%            assert(any(strcmp(val.optType,obj.allowOptType)))
+            assert(all(any(strcmp( ...
+               repmat(val.optType,numel(obj.allowOptType),1), ...
+               repmat(obj.allowOptType',1,numel(val.optType))),1),2))
             obj.payoffParam.optType=val.optType; %row
          end
          if isfield(val,'putCallType') %data for type of option
