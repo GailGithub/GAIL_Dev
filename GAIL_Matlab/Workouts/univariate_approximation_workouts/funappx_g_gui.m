@@ -15,7 +15,7 @@ function [fappx,npoints,errest] = funappx_g_gui(f,a,b,tol,nlo,nhi)
 %  [fappx,npoints,errest] = funappx_g_gui(@(x) exp(-1000*(x-0.2).^2),0,1,1e-3,10,20)
 %  [fappx,npoints,errest] = funappx_g_gui(@(x) exp(-1000*(x-0.2).^2),0,1,1e-6,10,20)
 %   Flat function:
-%  [fappx,npoints,errest] = funappx_g_gui(@(x) exp(-1./(x - 0.5).^2),0,1,1e-5,5,5)
+%  [fappx,npoints,errest] = funappx_g_gui(@(x) exp(-1./(x - 0.5).^2),0,1,1e-4,2,2)
 %  [fappx,npoints,errest] = funappx_g_gui(@(x) sin(2*pi*x),0,1,1e-3,10,20)
 %  Two local min:
 %  [fappx,npoints] = funappx_g_gui(@(x) -5 * exp(-(10*(x - .3)).^2) - exp(-(10*(x - 0.75)).^2),0,1,1e-3,10,20)
@@ -53,7 +53,8 @@ k = 0;
 
 % Scale the plot
 h = b - a;
-ninit = max(ceil(nhi*(nlo/nhi)^(1/(1+h))),3);
+
+ninit = 2*ceil(nhi*(nlo/nhi)^(1/(1+h)))+1;
 x = a:h/(ninit-1):b;
 y = f(x);
 maxy = max(y);
@@ -99,11 +100,7 @@ while(max(err) > tol)
     %approximate the stronger norm of input function at different subinterval
     fn = (ninit-1)^2./(len.^2).*max(abs(diff(diffy)),[],1);
     %update cone condition every iteration
-    ntemp=max(ceil(nhi*(nlo/nhi).^(1./(1+len))),3);
-    nstar = floor(ntemp/2);
-    
-    %     gn(gn<eps/2)=0;
-    %     fn(fn<eps/2)=0;
+    nstar=ceil(nhi*(nlo/nhi).^(1./(1+len)));
     
     %find nstar not large enough then double it
     smallconeind = find(nstar.*(2*gn+fn.*len/(ninit-1)) <(fn.*len));

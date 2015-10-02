@@ -117,18 +117,16 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %
 %   >> f = @(x) x.^2; [pp, out_param] = funappxglobal_g(f)
 %
-%  pp =
-%
+%     pp = 
 %       form: 'pp'
-%     breaks: [1x9901 double]
-%      coefs: [9900x2 double]
-%     pieces: 9900
+%     breaks: [1x5051 double]
+%      coefs: [5050x2 double]
+%     pieces: 5050
 %      order: 2
 %        dim: 1
 %     orient: 'first'
-%
-%   out_param =
-%
+% 
+%     out_param = 
 %                f: @(x)x.^2
 %                a: 0
 %                b: 1
@@ -136,27 +134,29 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %              nlo: 10
 %              nhi: 1000
 %             nmax: 10000000
-%            ninit: 100
-%            nstar: 98
+%            nstar: 100
+%            ninit: 102
 %     exceedbudget: 0
-%          npoints: 9901
-%       errorbound: 2.5245e-07
+%          npoints: 5051
+%       errorbound: 9.9990e-07
 %
 %
 %   Example 2:
 %
 %   >> f = @(x) x.^2;
 %   >> [pp, out_param] = funappxglobal_g(f,-2,2,1e-7,10,10,1000000)
-%
-% pp =
+% 
+% pp = 
+% 
 %       form: 'pp'
-%     breaks: [1x33733 double]
-%      coefs: [33732x2 double]
-%     pieces: 33732
+%     breaks: [1x38149 double]
+%      coefs: [38148x2 double]
+%     pieces: 38148
 %      order: 2
 %        dim: 1
 %     orient: 'first'
-% out_param =
+% 
+%     out_param = 
 %                a: -2
 %           abstol: 1.0000e-07
 %                b: 2
@@ -164,11 +164,11 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %              nhi: 10
 %              nlo: 10
 %             nmax: 1000000
-%            ninit: 10
-%            nstar: 8
+%            nstar: 10
+%            ninit: 12
 %     exceedbudget: 0
-%          npoints: 33733
-%       errorbound: 2.8129e-08 
+%          npoints: 38149
+%       errorbound: 2.7493e-08
 %
 %
 %   Example 3:
@@ -176,18 +176,18 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %   >> f = @(x) x.^2;
 %   >> [pp, out_param] = funappxglobal_g(f,'a',-2,'b',2,'nhi',100,'nlo',10)
 %
-% pp =
-%
+% pp = 
+% 
 %       form: 'pp'
-%     breaks: [1x31249 double]
-%      coefs: [31248x2 double]
-%     pieces: 31248
+%     breaks: [1x31851 double]
+%      coefs: [31850x2 double]
+%     pieces: 31850
 %      order: 2
 %        dim: 1
 %     orient: 'first'
-%
-%   out_param =
-%
+% 
+% out_param = 
+% 
 %                a: -2
 %           abstol: 1.0000e-06
 %                b: 2
@@ -195,11 +195,11 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %              nhi: 100
 %              nlo: 10
 %             nmax: 10000000
-%            ninit: 64
-%            nstar: 62
+%            nstar: 64
+%            ninit: 66
 %     exceedbudget: 0
-%          npoints: 31249
-%       errorbound: 2.5448e-07
+%          npoints: 31851
+%       errorbound: 2.5286e-07
 %
 %
 %   Example 4:
@@ -209,18 +209,17 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %   >> in_param.nmax = 10^6; f = @(x) x.^2;
 %   >> [pp, out_param] =funappxglobal_g(f,in_param)
 %
-% pp =
-%
+% pp = 
+% 
 %       form: 'pp'
-%     breaks: [1x590071 double]
-%      coefs: [590070x2 double]
-%     pieces: 590070
+%     breaks: [1x596779 double]
+%      coefs: [596778x2 double]
+%     pieces: 596778
 %      order: 2
 %        dim: 1
 %     orient: 'first'
-%
-%   out_param =
-%
+% 
+%   out_param =  
 %                a: -10
 %           abstol: 1.0000e-07
 %                b: 10
@@ -228,11 +227,11 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %              nhi: 100
 %              nlo: 10
 %             nmax: 1000000
-%            ninit: 90
-%            nstar: 88
+%            nstar: 90
+%            ninit: 92
 %     exceedbudget: 0
-%          npoints: 590071
-%       errorbound: 2.5278e-08
+%          npoints: 596779
+%       errorbound: 2.5274e-08
 %
 %
 %   See also INTEGRAL_G, MEANMC_G, CUBMC_G
@@ -265,9 +264,10 @@ end;
 %% main algorithm
 
 % initialize number of points
-n = out_param.ninit;
 % initialize nstar
-out_param.nstar = n - 2;
+out_param.ninit = out_param.nstar + 2;
+n = out_param.ninit;
+
 % cost budget flag
 out_param.exceedbudget = 1;
 % tau change flag
@@ -314,7 +314,7 @@ while n < out_param.nmax;
         % Stage2: do not satisfy necessary condition
     else
         % increase tau
-        out_param.nstar = fn/(2*gn/len+fn/(n-1));
+        out_param.nstar = ceil(fn/(2*gn/len+fn/(n-1)));
         % change tau change flag
         tauchange = 1;
         % check if number of points large enough
@@ -487,30 +487,38 @@ if (~gail.isposint(out_param.nmax))
 end
 
 if (~gail.isposint(out_param.nlo))
-    if gail.isposge3(out_param.nlo)
+%     if gail.isposge3(out_param.nlo)
+%         warning('GAIL:funappxglobal_g:lowinitnotint',['Lower bound of '...
+%         'initial number of points should be a positive integer.' ...
+%             ' Using ', num2str(ceil(out_param.nlo)) ' as nlo '])
+%         out_param.nlo = ceil(out_param.nlo);
+%     else
+%         warning('GAIL:funappxglobal_g:lowinitlt3',[' Lower bound of '...
+%         'initial number of points should be a positive integer greater'...
+%         ' than 3. Using 3 as nlo'])
+%         out_param.nlo = 3;
+%    end
         warning('GAIL:funappxglobal_g:lowinitnotint',['Lower bound of '...
-        'initial number of points should be a positive integer.' ...
-            ' Using ', num2str(ceil(out_param.nlo)) ' as nlo '])
+        'initial nstar should be a positive integer.' ...
+        ' Using ', num2str(ceil(out_param.nlo)) ' as nlo '])
         out_param.nlo = ceil(out_param.nlo);
-    else
-        warning('GAIL:funappxglobal_g:lowinitlt3',[' Lower bound of '...
-        'initial number of points should be a positive integer greater'...
-        ' than 3. Using 3 as nlo'])
-        out_param.nlo = 3;
-    end
 end
-if (~gail.isposint(out_param.nhi))
-    if gail.isposge3(out_param.nhi)
-        warning('GAIL:funappxglobal_g:hiinitnotint',['Upper bound of '...
-        'initial number of points should be a positive integer.' ...
+ if (~gail.isposint(out_param.nhi))
+%     if gail.isposge3(out_param.nhi)
+%         warning('GAIL:funappxglobal_g:hiinitnotint',['Upper bound of '...
+%         'initial number of points should be a positive integer.' ...
+%         ' Using ', num2str(ceil(out_param.nhi)) ' as nhi' ])
+%         out_param.nhi = ceil(out_param.nhi);
+%     else
+%         warning('GAIL:funappxglobal_g:hiinitlt3',[' Upper bound of '...
+%         'points should be a positive integer greater than 3. Using '...
+%         'default number of points ' int2str(default.nhi) ' as nhi' ])
+%         out_param.nhi = default.nhi;
+%     end
+         warning('GAIL:funappxglobal_g:hiinitnotint',['Upper bound of '...
+        'initial nstar should be a positive integer.' ...
         ' Using ', num2str(ceil(out_param.nhi)) ' as nhi' ])
         out_param.nhi = ceil(out_param.nhi);
-    else
-        warning('GAIL:funappxglobal_g:hiinitlt3',[' Upper bound of '...
-        'points should be a positive integer greater than 3. Using '...
-        'default number of points ' int2str(default.nhi) ' as nhi' ])
-        out_param.nhi = default.nhi;
-    end
 end
 
 if (out_param.nlo > out_param.nhi)
@@ -533,5 +541,5 @@ if (out_param.nhi > out_param.nmax)
 end;
 
 h = out_param.b - out_param.a;
-out_param.ninit = ceil(out_param.nhi*(out_param.nlo/out_param.nhi)^(1/(1+h)));
+out_param.nstar = ceil(out_param.nhi*(out_param.nlo/out_param.nhi)^(1/(1+h)));
 

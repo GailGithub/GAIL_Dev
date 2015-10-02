@@ -128,20 +128,20 @@ function [fappx,out_param]=funappx_g(varargin)
 %  out_param =
 % 
 %                a: -2
-%           abstol: 1.0000e-07
+%           abstol: 1.0000e-***7
 %                b: 2
 %                f: @(x)x.^2
 %          maxiter: 1000
 %              nhi: 20
 %              nlo: 10
 %             nmax: 10000000
-%            ninit: 18
+%            nstar: [1x1024 double]            
+%            ninit: 37
 %             exit: [2x1 logical]
 %             iter: 11 
-%          npoints: 17409
-%           errest: 8.7998e-08
-%            nstar: [1x1024 double]
-%            bytes: 1429874
+%          npoints: 36865
+%           errest: 4.5329e-***8
+%            bytes: 2900338
 %
 %
 %   Example 2:
@@ -152,20 +152,20 @@ function [fappx,out_param]=funappx_g(varargin)
 % out_param = 
 % 
 %                a: -2
-%           abstol: 1.0000e-06
+%           abstol: 1.0000e-***6
 %                b: 2
 %                f: @(x)x.^2
 %          maxiter: 1000
 %              nhi: 20
 %              nlo: 10
 %             nmax: 10000000
-%            ninit: 18
+%            nstar: [1x256 double]
+%            ninit: 37
 %             exit: [2x1 logical]
-%             iter: 10
-%          npoints: 8705
-%           errest: 3.5199e-07
-%            nstar: [1x512 double]
-%            bytes: 717002
+%             iter: 9
+%          npoints: 9217
+%           errest: 7.2526e-***7
+%            bytes: 728010
 %
 %
 %   Example 3:
@@ -177,20 +177,20 @@ function [fappx,out_param]=funappx_g(varargin)
 % out_param = 
 % 
 %                a: -5
-%           abstol: 1.0000e-06
+%           abstol: 1.0000e-***6
 %                b: 5
 %                f: @(x)x.^2
 %          maxiter: 1000
 %              nhi: 20
 %              nlo: 10
 %             nmax: 10000000
-%            ninit: 19
+%            nstar: [1x512 double]
+%            ninit: 39
 %             exit: [2x1 logical]
-%             iter: 11
-%          npoints: 18433
-%           errest: 4.8114e-07
-%            nstar: [1x1024 double]
-%            bytes: 1508130
+%             iter: 10
+%          npoints: 19457
+%           errest: 9.9555e-***7
+%            bytes: 1530146
 %
 %
 %   See also INTERP1, GRIDDEDINTERPOLANT, INTEGRAL_G, MEANMC_G, FUNMIN_G
@@ -237,14 +237,14 @@ function [fappx,out_param]=funappx_g(varargin)
 [f, out_param] = funappx_g_param(varargin{:});
 MATLABVERSION= gail.matlab_version;
 
-
 %%main algorithm
-% initialize number of points
-ninit = out_param.ninit;
-index = [1 ninit];
 % initialize nstar
 %nstar = ninit - 2;
-nstar = floor(ninit/2);
+nstar = out_param.nstar;
+% initialize number of points
+out_param.ninit = 2 * nstar + 1;
+ninit = out_param.ninit;
+index = [1 ninit];
 % initialize error
 abstol = out_param.abstol;
 err = abstol + 1;
@@ -275,9 +275,8 @@ while(max(err) > abstol)
     %subinterval
     fn = (ninit-1)^2./(len.^2).*max(abs(diff(diffy)),[],1);
     %update cone condition every iteration
-    ntemp=max(ceil(out_param.nhi*(out_param.nlo...
-        /out_param.nhi).^(1./(1+len))),3);
-    nstar = floor(ntemp/2);
+    nstar=ceil(out_param.nhi*(out_param.nlo...
+        /out_param.nhi).^(1./(1+len)));
     %find nstar not large enough then double it
     smallconeind = find(nstar.*(2*gn+fn.*len/(ninit-1)) <(fn.*len));
     nstar(smallconeind) = 2*nstar(smallconeind);
@@ -531,31 +530,38 @@ if (~gail.isposint(out_param.nmax))
 end
 
 if (~gail.isposint(out_param.nlo))
-    if gail.isposge3(out_param.nlo)
-        warning('GAIL:funappx_g:lowinitnotint',['Lower bound of initial'...
-            ' number of points should be a positive integer.' ...
-            ' Using ', num2str(ceil(out_param.nlo)) ' as nlo '])
+%     if gail.isposge3(out_param.nlo)
+%         warning('GAIL:funappxglobal_g:lowinitnotint',['Lower bound of '...
+%         'initial number of points should be a positive integer.' ...
+%             ' Using ', num2str(ceil(out_param.nlo)) ' as nlo '])
+%         out_param.nlo = ceil(out_param.nlo);
+%     else
+%         warning('GAIL:funappxglobal_g:lowinitlt3',[' Lower bound of '...
+%         'initial number of points should be a positive integer greater'...
+%         ' than 3. Using 3 as nlo'])
+%         out_param.nlo = 3;
+%    end
+        warning('GAIL:funappxglobal_g:lowinitnotint',['Lower bound of '...
+        'initial nstar should be a positive integer.' ...
+        ' Using ', num2str(ceil(out_param.nlo)) ' as nlo '])
         out_param.nlo = ceil(out_param.nlo);
-    else
-        warning('GAIL:funappx_g:lowinitlt3',[' Lower bound of initial '...
-            'number of points should be a positive integer greater than'...
-            ' 3. Using 3 as nlo'])
-        out_param.nlo = 3;
-    end
 end
-
-if (~gail.isposint(out_param.nhi))
-    if gail.isposge3(out_param.nhi)
-        warning('GAIL:funappx_g:hiinitnotint',['Upper bound of initial'...
-            ' number of points should be a positive integer.' ...
-            ' Using ', num2str(ceil(out_param.nhi)) ' as nhi' ])
+ if (~gail.isposint(out_param.nhi))
+%     if gail.isposge3(out_param.nhi)
+%         warning('GAIL:funappxglobal_g:hiinitnotint',['Upper bound of '...
+%         'initial number of points should be a positive integer.' ...
+%         ' Using ', num2str(ceil(out_param.nhi)) ' as nhi' ])
+%         out_param.nhi = ceil(out_param.nhi);
+%     else
+%         warning('GAIL:funappxglobal_g:hiinitlt3',[' Upper bound of '...
+%         'points should be a positive integer greater than 3. Using '...
+%         'default number of points ' int2str(default.nhi) ' as nhi' ])
+%         out_param.nhi = default.nhi;
+%     end
+         warning('GAIL:funappxglobal_g:hiinitnotint',['Upper bound of '...
+        'initial nstar should be a positive integer.' ...
+        ' Using ', num2str(ceil(out_param.nhi)) ' as nhi' ])
         out_param.nhi = ceil(out_param.nhi);
-    else
-        warning('GAIL:funappx_g:hiinitlt3',[' Upper bound of points '...
-            'should be a positive integer greater than 3. Using default'...
-            ' number of points ' int2str(default.nhi) ' as nhi' ])
-        out_param.nhi = default.nhi;
-    end
 end
 
 if (out_param.nlo > out_param.nhi)
@@ -566,8 +572,8 @@ if (out_param.nlo > out_param.nhi)
 end;
 
 h = out_param.b - out_param.a;
-out_param.ninit = max(ceil(out_param.nhi*(out_param.nlo/out_param.nhi)...
-    ^(1/(1+h))),3);
+out_param.nstar = ceil(out_param.nhi*(out_param.nlo/out_param.nhi)...
+    ^(1/(1+h)));
 
 if (~gail.isposint(out_param.maxiter))
     if gail.ispositive(out_param.maxiter)

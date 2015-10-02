@@ -143,14 +143,14 @@ classdef ut_funappxglobal_g < matlab.unittest.TestCase
     
     function funappxglobal_gOnpointsoflinear(testCase)
         f = @(x) 3*x + 5;
-        in_param.nlo = 3; in_param.nhi =3;
+        in_param.nlo = 1; in_param.nhi =1;
         [~, result] = funappxglobal_g(f,in_param);
         testCase.verifyEqual(result.npoints,3);
     end
     
     function funappxglobal_gOnpointsofconstent(testCase)
         f = @(x) 0*x + 5;
-        in_param.nlo = 3; in_param.nhi =3;
+        in_param.nlo = 1; in_param.nhi =1;
         [~, result] = funappxglobal_g(f,in_param);
         testCase.verifyEqual(result.npoints,3);
     end
