@@ -22,3 +22,14 @@ fmax=-1*fmax;
 h = 0.000001;
 x = 0:h:pi;
 plot(x,f(x))
+
+if ~isempty(out_min.intervals)
+    hold on;
+    plot(mean(out_min.intervals), fmin, 'bo')
+    hold off;
+end
+if ~isempty(out_max.intervals)
+    hold on;
+    plot(mean(out_max.intervals), fmax, 'bo')
+    hold off;
+end
