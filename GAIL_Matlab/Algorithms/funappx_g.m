@@ -390,6 +390,7 @@ out_param.iter = iter;
 out_param.npoints = index(end);
 out_param.errest = max(err);
 out_param.nstar = nstar;
+out_param.x = x;
 w = whos;
 out_param.bytes = sum([w.bytes]);
 if MATLABVERSION >= 8.3
