@@ -116,6 +116,10 @@
 %  functions for which this algorithm is guaranteed for each
 %  subinterval; nstar = ninit-2 initially
 %
+% * out_param.x --- sample points used to approximate function
+%
+% * out_param.bytes --- storage space used during the computation
+%
 %% Guarantee
 %
 % For \([a,b]\), there exists a partition
