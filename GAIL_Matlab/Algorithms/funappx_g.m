@@ -108,7 +108,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %
 %     out_param.x --- sample points used to approximate function
 %
-%     out_param.bytes --- storage space used during the computation
+%     out_param.bytes --- amount of memory used during the computation
 %
 %  Guarantee
 %
