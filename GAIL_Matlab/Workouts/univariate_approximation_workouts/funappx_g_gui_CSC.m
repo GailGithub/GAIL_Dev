@@ -92,7 +92,7 @@ err = tol + 1;
  
 while(max(err) > tol)
     if max(err) > tol;
-        [fappx,out_param] = funappx_g(f,a,b,tol,nlo,nhi,'maxiter',k+1);
+        [fappx,out_param] = funappx_g_CSC(f,a,b,tol,nlo,nhi,'maxiter',k+1);
         err = out_param.errest;
         npoints = out_param.npoints;
         x = out_param.x;
