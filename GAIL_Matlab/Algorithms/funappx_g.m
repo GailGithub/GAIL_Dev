@@ -258,6 +258,10 @@ err = abstol + 1;
 len = out_param.b - out_param.a;
 x = out_param.a:len/(ninit-1):out_param.b;
 y = f(x);
+iSing = find(isinf(y));
+if ~isempty(iSing)
+    error('GAIL:funappx_g:yInf',['Function f(x) = Inf at x = ', num2str(x(iSing))]);
+end
 if length(y) == 1  
     % probably f is a constant function and Matlab would  
     % reutrn only a scalar y = f(x) even if x is a vector 
@@ -368,7 +372,10 @@ while(max(err) > abstol)
         newreshapey(:,goodind + badcumsum(goodind)) = reshapey(:,goodind);
         %obtain all the values in vector y
         y = [newreshapey(:)' y(end)];
-        
+        iSing = find(isinf(y));
+        if ~isempty(iSing)
+            error('GAIL:funappx_g:yInf',['Function f(x) = Inf at x = ', num2str(x(iSing))]);
+        end
         %generate error for new sub intervals
         %initialize a vertor of # of sub intervals after splitting
         newerr = zeros(1,2*sum(whbad)+sum(whgood));
