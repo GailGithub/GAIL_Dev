@@ -284,7 +284,7 @@ while n < out_param.nmax;
     y = f(x);
     iSing = find(isinf(y));
     if ~isempty(iSing)
-         error('GAIL:funmin_g_CSC:singularity',['Function f is singular at x = ', num2str(x(iSing))]);
+         error('GAIL:funmin_g_CSC:yInf',['Function f(x) = Inf at x = ', num2str(x(iSing))]);
     end
     diff_y = diff(y);
     %approximate the weaker norm of input function
