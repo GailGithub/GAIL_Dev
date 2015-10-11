@@ -297,8 +297,8 @@ while n < out_param.nmax;
         min_end = (~min_index).*(diff_y/2+y(1:n-1)-abs(diff_y)/2);
         ln = min_in+min_end;
         % minimum values of each interval
-        Ln = min(ln); % lower bound
-        Un = min(y); % upper bound
+        [Ln, iLn] = min(ln); % lower bound
+        [Un, iUn] = min(y); % upper bound
         error = Un-Ln;
         % find the intervals containing minimum points
         index = find(min_index ==1 & ln < Un);
@@ -318,7 +318,7 @@ while n < out_param.nmax;
             interval(1,:) = ints(1,leftint);
             interval(2,:) = ints(2,rightint);
         else
-            interval = zeros(2,0);
+            interval = [x(iLn); x(iLn)];
         end
         volumeX = sum(interval(2,:)-interval(1,:));
         % satisfy convergence
