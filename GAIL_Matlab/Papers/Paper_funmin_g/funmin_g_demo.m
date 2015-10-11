@@ -11,7 +11,6 @@ function funmin_g_demo(fmin, out_param)
 %    intlen = ***e-04 fval1 = ***e-16 fval2 = ***e-16
 %
 
-  
 a = out_param.a;
 b = out_param.b;
 f = out_param.f;
@@ -21,18 +20,20 @@ h = 0.00001;
 x = a:h:b;
 plot(x,f(x));
 
+hold on;
+[m,n]=size(out_param.intervals);
 if ~isempty(out_param.intervals)
-    hold on;
-    if out_param.volumeX > out_param.TolX,
-        intlen = out_param.intervals(2) - out_param.intervals(1)
-        fval1 = f(out_param.intervals(2)) - fmin
-        fval2 = f(out_param.intervals(1)) - fmin
-        plot(out_param.intervals(1), fmin, 'r<', 'MarkerSize', 12,'LineWidth',2)
-        plot(out_param.intervals(2), fmin, 'r>', 'MarkerSize', 12,'LineWidth',2)
+    for i=1:n
+        if out_param.volumeX > out_param.TolX,
+            intlen = out_param.intervals(2,i) - out_param.intervals(1,i)
+            fval1 = f(out_param.intervals(2,i)) - fmin
+            fval2 = f(out_param.intervals(1,i)) - fmin
+            plot(out_param.intervals(1,i), fmin, 'r<', 'MarkerSize', 12,'LineWidth',2)
+            plot(out_param.intervals(2,i), fmin, 'r>', 'MarkerSize', 12,'LineWidth',2)
+        end
+        plot(mean(out_param.intervals(:,i)),  fmin, 'ro', 'MarkerSize', 12,'LineWidth',2)
     end
-    plot(mean(out_param.intervals),  fmin, 'ro', 'MarkerSize', 12,'LineWidth',2)
-    hold off;
 end
-
+hold off;
 
 

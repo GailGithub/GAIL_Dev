@@ -11,15 +11,15 @@ x = out_min.x;
 %k = 9
 idx1 = find(x<=out_min.intervals(1));
 k = length(find(abs(f(x(idx1)) - fmin) < out_min.abstol)) - 1;
-xx1 = x(idx1(end-k:end)) % These points xx are not in out_min.intervals
-yy1 = f(xx1)             
+xx1 = x(idx1(end-k:end)); % These points xx are not in out_min.intervals
+yy1 = f(xx1);     
 errors1 = prod(abs(yy1 - fmin) < out_min.abstol) % but abs(f(xx) - fmin) < abstol
 
 %k = 10
 idx2 = find(x>=out_min.intervals(2));
 k = length(find(abs(f(x(idx2)) - fmin) < out_min.abstol));
-xx2 = x(idx2(1:k)) % These points xx are not in out_min.intervals
-yy2 = f(xx2)             
+xx2 = x(idx2(1:k)); % These points xx are not in out_min.intervals
+yy2 = f(xx2);          
 errors2 = prod(abs(yy2 - fmin) < out_min.abstol) % but abs(f(xx) - fmin) < abstol
 
 % Shouldn't out_min.intervals be [0.231060606060606   0.768939393939394]
