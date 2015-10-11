@@ -22,5 +22,5 @@ xx2 = x(idx2(1:k)) % These points xx are not in out_min.intervals
 yy2 = f(xx2)             
 errors2 = prod(abs(yy2 - fmin) < out_min.abstol) % but abs(f(xx) - fmin) < abstol
 
-% Shouldn't out_min.intervals be  0.231060606060606   0.768939393939394
+% Shouldn't out_min.intervals be [0.231060606060606   0.768939393939394]
 [xx1(1), xx2(end)] 
