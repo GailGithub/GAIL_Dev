@@ -322,11 +322,12 @@ while n < out_param.nmax;
             interval(1,:) = ints(1,leftint);
             interval(2,:) = ints(2,rightint);
         else
-            interval = [x(iLn); x(iLn)];
+            [~, id] = find(abs(y - Un) < out_param.abstol);
+            interval = [x(id); x(id)];
         end
         volumeX = sum(interval(2,:)-interval(1,:));
         % satisfy convergence
-        if errest < out_param.abstol || volumeX < out_param.TolX
+        if errest < out_param.abstol && volumeX < out_param.TolX
             out_param.exitflag = 0; break;
         end
         % otherwise increase points number
@@ -373,7 +374,7 @@ while n < out_param.nmax;
             end
             volumeX = sum(interval(2,:)-interval(1,:));
             % satisfy convergence
-            if errest < out_param.abstol || volumeX < out_param.TolX
+            if errest < out_param.abstol && volumeX < out_param.TolX
                 out_param.exitflag = 0; break;
             end
             % otherwise increase points number
