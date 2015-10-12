@@ -342,35 +342,38 @@ while n < out_param.nmax;
     end;
     if(iter==maxiter)
         out_param.exit(2) = 1;
+        out_param.exceedbudget = 0;
         warning('GAIL:funappx_g:exceediter',['Number of iterations has'...
             'reached maximum number of iterations.'])
         break;
     end;
-end;
-out_param.iter = iter;
-if tauchange == 1;
-    warning('GAIL:funappxglobal_g_CSC:peaky',['This function is peaky '...
-    'relative to nlo and nhi. You may wish to increase nlo and nhi for '...
-    'similar functions.'])
-end;
+end
+    out_param.iter = iter;
+    if tauchange == 1;
+        warning('GAIL:funappxglobal_g_CSC:peaky',['This function is peaky '...
+            'relative to nlo and nhi. You may wish to increase nlo and nhi for '...
+            'similar functions.'])
+    end;
+    
+    % Check cost budget flag
+    if out_param.exceedbudget == 1;
+        n = 1 + (n-1)/m*floor((out_param.nmax-1)*m/(n-1));
+        warning('GAIL:funappxglobal_g_CSC:exceedbudget',['funappxglobal_g_CSC '...
+            'attempted to exceed the cost budget. The answer may be unreliable.'])
+        out_param.npoints = n;
+        nstar = out_param.nstar;
+        out_param.errorbound = gn*len*nstar/(4*(n-1)*(n-1-nstar));
+        x1 = out_param.a:len/(out_param.npoints-1):out_param.b;
+        y1 = f(x1);
+        pp = interp1(x1,y1,'linear','pp');
+    else
+        out_param.npoints = n;
+        nstar = out_param.nstar;
+        out_param.errorbound = gn*len*nstar/(4*(n-1)*(n-1-nstar));
+        pp = interp1(x,y,'linear','pp');
+    end;
 
-% Check cost budget flag
-if out_param.exceedbudget == 1;
-    n = 1 + (n-1)/m*floor((out_param.nmax-1)*m/(n-1));
-    warning('GAIL:funappxglobal_g_CSC:exceedbudget',['funappxglobal_g_CSC '...
-    'attempted to exceed the cost budget. The answer may be unreliable.'])
-    out_param.npoints = n;
-    nstar = out_param.nstar;
-    out_param.errorbound = gn*len*nstar/(4*(n-1)*(n-1-nstar));
-    x1 = out_param.a:len/(out_param.npoints-1):out_param.b;
-    y1 = f(x1);
-    pp = interp1(x1,y1,'linear','pp');
-else
-    out_param.npoints = n;
-    nstar = out_param.nstar;
-    out_param.errorbound = gn*len*nstar/(4*(n-1)*(n-1-nstar));
-    pp = interp1(x,y,'linear','pp');    
-end;
+
 
 if MATLABVERSION >= 8.3
     warning('on', 'Matlab:interp1:ppGriddedInterpolant');
