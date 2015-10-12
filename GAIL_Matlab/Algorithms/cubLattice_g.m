@@ -1,4 +1,4 @@
-function [q,out_param] = cubLattice_g(varargin)
+function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 %CUBLATTICE_G Quasi-Monte Carlo method using rank-1 Lattices cubature
 %over a d-dimensional region to integrate within a specified generalized
 %error tolerance with guarantees under Fourier coefficients cone decay
@@ -252,11 +252,13 @@ function [q,out_param] = cubLattice_g(varargin)
 %   above papers, software, and materials.
 %
 
-tic
+t_start = tic;
 %% Initial important cone factors and Check-initialize parameters
 r_lag = 4; %distance between coefficients summed and those computed
 [f,hyperbox,out_param] = cubLattice_g_param(r_lag,varargin{:});
 l_star = out_param.mmin - r_lag; % Minimum gathering of points for the sums of DFT
+omg_circ = @(m) 2.^(-m);
+omg_hat = @(m) out_param.fudge(m)/((1+out_param.fudge(r_lag))*omg_circ(r_lag));
 
 if strcmp(out_param.measure,'normal')
    f=@(x) f(gail.stdnorminv(x));
@@ -333,10 +335,12 @@ errest(1)=out_param.bound_err;
 
 % Necessary conditions
 for l = l_star:out_param.mmin % Storing the information for the necessary conditions
-    C_low = (1+out_param.fudge(out_param.mmin-l))/(1+2*out_param.fudge(out_param.mmin-l));
-    C_up = (1+out_param.fudge(out_param.mmin-l));
-    CStilde_low(l-l_star+1) = C_low*sum(abs(y(kappanumap(2^(l-1)+1:2^l))));
-    CStilde_up(l-l_star+1) = C_up*sum(abs(y(kappanumap(2^(l-1)+1:2^l))));
+    C_low = 1/(1+omg_hat(out_param.mmin-l)*omg_circ(out_param.mmin-l));
+    C_up = 1/(1-omg_hat(out_param.mmin-l)*omg_circ(out_param.mmin-l));
+    CStilde_low(l-l_star+1) = max(CStilde_low(l-l_star+1),C_low*sum(abs(y(kappanumap(2^(l-1)+1:2^l)))));
+    if (omg_hat(out_param.mmin-l)*omg_circ(out_param.mmin-l) < 1)
+        CStilde_up(l-l_star+1) = min(CStilde_up(l-l_star+1),C_up*sum(abs(y(kappanumap(2^(l-1)+1:2^l)))));
+    end
 end
 if any(CStilde_low(:) > CStilde_up(:))
    out_param.exit(2) = true;
@@ -356,7 +360,7 @@ is_done = false;
 if out_param.bound_err <= deltaplus
    q=q+deltaminus;
    appxinteg(1)=q;
-   out_param.time=toc;
+   out_param.time=toc(t_start);
    is_done = true;
 elseif out_param.mmin == out_param.mmax % We are on our max budget and did not meet the error condition => overbudget
    out_param.exit(1) = true;
@@ -424,10 +428,12 @@ for m=out_param.mmin+1:out_param.mmax
    
    % Necessary conditions
    for l = l_star:m % Storing the information for the necessary conditions
-        C_low = (1+out_param.fudge(m-l))/(1+2*out_param.fudge(m-l));
-        C_up = (1+out_param.fudge(m-l));
+        C_low = 1/(1+omg_hat(m-l)*omg_circ(m-l));
+        C_up = 1/(1-omg_hat(m-l)*omg_circ(m-l));
         CStilde_low(l-l_star+1) = max(CStilde_low(l-l_star+1),C_low*sum(abs(y(kappanumap(2^(l-1)+1:2^l)))));
-        CStilde_up(l-l_star+1) = min(CStilde_up(l-l_star+1),C_up*sum(abs(y(kappanumap(2^(l-1)+1:2^l)))));
+        if (omg_hat(m-l)*omg_circ(m-l) < 1)
+            CStilde_up(l-l_star+1) = min(CStilde_up(l-l_star+1),C_up*sum(abs(y(kappanumap(2^(l-1)+1:2^l)))));
+        end
    end
    
    if any(CStilde_low(:) > CStilde_up(:))
@@ -451,7 +457,7 @@ for m=out_param.mmin+1:out_param.mmax
    if out_param.bound_err <= deltaplus
       q=q+deltaminus;
       appxinteg(meff)=q;
-      out_param.time=toc;
+      out_param.time=toc(t_start);
       is_done = true;
    elseif m == out_param.mmax % We are on our max budget and did not meet the error condition => overbudget
       out_param.exit(1) = true;
@@ -469,7 +475,7 @@ end
 
 out_param = rmfield(out_param,'exit');
 
-out_param.time=toc;
+out_param.time=toc(t_start);
 end
 
 
