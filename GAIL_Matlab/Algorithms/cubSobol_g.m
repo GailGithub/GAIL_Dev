@@ -231,17 +231,23 @@ r_lag = 4; %distance between coefficients summed and those computed
 l_star = out_param.mmin - r_lag; % Minimum gathering of points for the sums of DFWT
 omg_circ = @(m) 2.^(-m);
 omg_hat = @(m) out_param.fudge(m)/((1+out_param.fudge(r_lag))*omg_circ(r_lag));
+g = out_param.cv.g;% get control variate function
 
 if strcmp(out_param.measure,'normal')
    f = @(x) f(gail.stdnorminv(x));
-   if cv
-       out_param.cv.g = @(x) out_param.cv.g(gail.stdnorminv(x));
+   if cv == 1
+	   g = @(x) out_param.cv.g(gail.stdnorminv(x));
+   elseif cv > 1
+	   g = @(x) cellfun(@(c) c(gail.stdnorminv(x)), g, 'UniformOutput', false);
    end
 elseif strcmp(out_param.measure,'uniform')
    Cnorm = prod(hyperbox(2,:)-hyperbox(1,:));
-   f = @(x) Cnorm*f(bsxfun(@plus,hyperbox(1,:),bsxfun(@times,(hyperbox(2,:)-hyperbox(1,:)),x))); % a + (b-a)x = u
-   if cv
-       out_param.cv.g = @(x) Cnorm*out_param.cv.g(bsxfun(@plus,hyperbox(1,:),bsxfun(@times,(hyperbox(2,:)-hyperbox(1,:)),x))); % a + (b-a)x = u
+   tran = @(x) (bsxfun(@plus,hyperbox(1,:),bsxfun(@times,(hyperbox(2,:)-hyperbox(1,:)),x)));% a + (b-a)x = u
+   f = @(x) Cnorm*f(tran(x)); % a + (b-a)x = u
+   if cv == 1 
+	   g = @(x) Cnorm*g(tran(x)); % a + (b-a)x = u
+   elseif cv > 1 
+	   g = @(x) cellfun(@(c) c(tran(x)), g, 'UniformOutput', false);
    end   
 end
 
@@ -255,6 +261,7 @@ errest=zeros(out_param.mmax-out_param.mmin+1,1); %initialize error estimates
 appxinteg=zeros(out_param.mmax-out_param.mmin+1,1); %initialize approximations to integral
 exit_len = 2;
 out_param.exit=false(1,exit_len); %we start the algorithm with all warning flags down
+dimg = max(size(out_param.cv.g)); % get the number of control variates
 
 %% Initial points and FWT
 out_param.n=2^out_param.mmin; %total number of points to start with
@@ -262,10 +269,12 @@ n0=out_param.n; %initial number of points
 xpts=sobstr(1:n0,1:out_param.d); %grab Sobol' points
 y = f(xpts); %evaluate integrand
 yval=y;
-if cv
-    yg = out_param.cv.g(xpts)-out_param.cv.Ig;
-    yvalg=yg;
+if cv > 1 
+	yg = cell2mat(g(xpts)) - out_param.cv.Ig; yvalg=yg;
+elseif cv == 1 
+	yg = g(xpts)-out_param.cv.Ig; yvalg=yg;
 end %evaluate control variate
+
 
 %% Compute initial FWT
 for l=0:out_param.mmin-1
@@ -277,10 +286,10 @@ for l=0:out_param.mmin-1
    y(ptind)=(evenval+oddval)/2;
    y(~ptind)=(evenval-oddval)/2;
    if cv
-       evenval=yg(ptind);
-       oddval=yg(~ptind);
-       yg(ptind)=(evenval+oddval)/2;
-       yg(~ptind)=(evenval-oddval)/2;
+       evenval=yg(ptind, (1:cv));
+       oddval=yg(~ptind, (1:cv));
+       yg(ptind, (1:cv))=(evenval+oddval)/2;
+       yg(~ptind, (1:cv))=(evenval-oddval)/2;
    end
 end
 %y now contains the FWT coefficients
@@ -302,15 +311,20 @@ for l=out_param.mmin-1:-1:1
 end
 
 %% If control variates, find optimal beta
-if cv
-    X = yg(kappanumap(end/2+1:end));
+if cv  
+    X = yg(kappanumap(end/2+1:end), (1:cv));
     Y = y(kappanumap(end/2+1:end));
-    beta = (X'*X)^(-1)*X'*Y;
+    beta = X \ Y;  
+    out_param.beta = beta;
     % We update the integrand and values
-    y = y-beta*yg;
-    yval = yval-beta*yvalg;
-    f = @(x) f(x)-beta*(out_param.cv.g(x)-out_param.cv.Ig);
+    y = y-yg*beta;
+    yval = yval-yvalg*beta;
+    if cv == 1 
+	    f = @(x) f(x)-(g(x)-out_param.cv.Ig)*beta;
+    end
 end
+
+
 
 %% Compute Stilde
 nllstart=int64(2^(out_param.mmin-r_lag-1));
@@ -365,8 +379,14 @@ for m=out_param.mmin+1:out_param.mmax
    nnext=2^mnext;
    xnext=sobstr(n0+(1:nnext),1:out_param.d); 
    n0=n0+nnext;
-   ynext=f(xnext);
-   yval=[yval; ynext]; %#ok<*AGROW>
+   if cv == 2% multi C.V.s
+	   ygnext = cell2mat(g(xnext))- out_param.cv.Ig;  
+	   ynext = f(xnext) - ygnext*beta;
+	   yval = [yval; ynext];
+   else
+	   ynext=f(xnext);
+	   yval=[yval; ynext]; %#ok<*AGROW>
+   end
 
    %% Compute initial FWT on next points
    for l=0:mnext-1
@@ -576,15 +596,21 @@ end
 
 out_param.d = size(hyperbox,2);
 
-if (size(func2str(out_param.cv.g),2) == size(func2str(default.cv.g),2))
-    if (all(func2str(out_param.cv.g) == func2str(default.cv.g)))
-        cv = 0; % No control variates if we have default cv
-    else
-        cv = 1;
-    end
+if iscell(out_param.cv.g) % multiply control variates, 
+       cv = max(size(out_param.cv.g));	% cv= number of c.v.s
 else
-    cv = 1;
+    if (size(func2str(out_param.cv.g),2) == size(func2str(default.cv.g),2))
+	    if (all(func2str(out_param.cv.g) == func2str(default.cv.g)))
+		    cv = 0; % no control variates if we have default cv
+            else
+		    cv = 1;
+            end
+    else
+	    cv = 1;
+    end
 end
+
+
 
 fdgyes = 0; % We store how many functions are in varargin. There can only
             % two functions as input, the function f and the fudge factor.
