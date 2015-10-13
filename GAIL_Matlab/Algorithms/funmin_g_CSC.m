@@ -320,14 +320,14 @@ while n < out_param.nmax;
             q = size(leftint,2);
             interval = zeros(2,q);
             interval(1,:) = ints(1,leftint);
-            interval(2,:) = ints(2,rightint);
+            interval(2,:) = ints(2,rightint); 
         else
             [~, id] = find(abs(y - Un) < out_param.abstol);
             interval = [x(id); x(id)];
         end
         volumeX = sum(interval(2,:)-interval(1,:));
         % satisfy convergence
-        if errest < out_param.abstol && volumeX < out_param.TolX
+        if errest < out_param.abstol || volumeX < out_param.TolX
             out_param.exitflag = 0; break;
         end
         % otherwise increase points number
@@ -374,7 +374,7 @@ while n < out_param.nmax;
             end
             volumeX = sum(interval(2,:)-interval(1,:));
             % satisfy convergence
-            if errest < out_param.abstol && volumeX < out_param.TolX
+            if errest < out_param.abstol ||d volumeX < out_param.TolX
                 out_param.exitflag = 0; break;
             end
             % otherwise increase points number
@@ -388,7 +388,12 @@ while n < out_param.nmax;
         end;
     end;
 end;
-
+% The next three statements handle two end points
+[~,index] = find(abs(x([1,n])-interval(2,:)) > eps);
+[~,index] = find(abs(y(index)-Un) <= out_param.abstol);
+if ~isempty(index)
+    interval =  [[y(index); y(index)] interval];
+end
 
 % check tau change flag
 if tauchange == 1

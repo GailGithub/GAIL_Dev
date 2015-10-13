@@ -6,6 +6,6 @@ function [fmin,out_param] = quadratic;
 
 format compact
 
-f=@(x) -(x-0.3).^2+1; 
-[fmin,out_param] = funmin_g_CSC(f,-2,2,1e-7,1e-4,10,10,1000000);
+f=@(x) -(x-1).^2+1; 
+[fmin,out_param] = funmin_g_CSC(f,-2,3,1e-7,1e-4,10,10,1000000);
 %funmin_g_demo(fmin, out_param)
