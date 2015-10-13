@@ -198,30 +198,6 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 % >> check = abs(exactsol-q) < 1e-5
 % check = 1
 %
-% Example 6:
-% Estimate the integral with integrand f(x) = x.^3 in the interval
-% [0,1) with control variates g(x)=x.^2  
-% with pure absolute error 1e-5.
-% 
-% >> f = @(x) x.^3 ; hyperbox = [zeros(1,1);ones(1,1)];
-% >> cv.g = @(x) x.^2; cv.Ig = 1/3; 
-% >> q = cubSobol_g(f,hyperbox,'uniform',1e-5,0,'cv',cv); exactsol = 1/4;
-% >> check = abs(exactsol-q) < 1e-5
-% check = 1
-%
-% Example 7:
-% Estimate the integral with integrand f(x) = x.^3 in the interval
-% [0,1) with control variates g1(x)=x.^2, g2(x)=x  
-% with pure absolute error 1e-5.
-% 
-% >> f = @(x) x.^3 ; hyperbox = [zeros(1,1);ones(1,1)];
-% >> cv.g = {@(x) x.^2-1/3, @(x) x-1/2}; cv.Ig = 0; 
-% >> q = cubSobol_g(f,hyperbox,'uniform',1e-5,0,'cv',cv); exactsol = 1/4;
-% >> check = abs(exactsol-q) < 1e-5
-% check = 1
-%
-
-%
 %
 %   See also CUBLATTICE_G, CUBMC_G, MEANMC_G, MEANMCBER_G, INTEGRAL_G
 % 
