@@ -97,7 +97,13 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 %     we have pure absolute tolerance while for theta = 0, we have pure 
 %     relative tolerance. By default, theta=1.
 % 
-%     in_param.cv --- struct............
+%     in_param.cv ---this input is a structure variable contains two elements.
+%     The first one is a function or several functions with the same dimension as f.
+%     When use multiply control variates, the function should be defined in cellfunc
+%     format(Check the Example 7).
+%     The second one should be the value of the previous function/functions
+%     on the defined interval. By default, this is set to zero(no control variates). 
+%     
 %
 %   Output Arguments
 %
@@ -113,6 +119,9 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 %     smaller than generalized tolerance.
 %
 %     out_param.time --- time elapsed in seconds when calling cubSobol_g.
+%     
+%     out_param.beta --- the value of beta when using control variates
+%                        as in f-beta(g-Ig)
 %
 %     out_param.exitflag --- this is a binary vector stating whether
 %     warning flags arise. These flags tell about which conditions make the
@@ -188,6 +197,30 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 % >> q = cubSobol_g(f,hyperbox,'uniform',1e-5,0); exactsol = 1/4;
 % >> check = abs(exactsol-q) < 1e-5
 % check = 1
+%
+% Example 6:
+% Estimate the integral with integrand f(x) = x.^3 in the interval
+% [0,1) with control variates g(x)=x.^2  
+% with pure absolute error 1e-5.
+% 
+% >> f = @(x) x.^3 ; hyperbox = [zeros(1,1);ones(1,1)];
+% >> cv.g = @(x) x.^2; cv.Ig = 1/3; 
+% >> q = cubSobol_g(f,hyperbox,'uniform',1e-5,0,'cv',cv); exactsol = 1/4;
+% >> check = abs(exactsol-q) < 1e-5
+% check = 1
+%
+% Example 7:
+% Estimate the integral with integrand f(x) = x.^3 in the interval
+% [0,1) with control variates g1(x)=x.^2, g2(x)=x  
+% with pure absolute error 1e-5.
+% 
+% >> f = @(x) x.^3 ; hyperbox = [zeros(1,1);ones(1,1)];
+% >> cv.g = {@(x) x.^2-1/3, @(x) x-1/2}; cv.Ig = 0; 
+% >> q = cubSobol_g(f,hyperbox,'uniform',1e-5,0,'cv',cv); exactsol = 1/4;
+% >> check = abs(exactsol-q) < 1e-5
+% check = 1
+%
+
 %
 %
 %   See also CUBLATTICE_G, CUBMC_G, MEANMC_G, MEANMCBER_G, INTEGRAL_G
