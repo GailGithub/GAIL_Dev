@@ -219,25 +219,25 @@ classdef optPayoff < assetPath
          
          wh=strcmp(obj.payoffParam.optType,'upin');
          if any(wh); %up and in barrier
-            if obj.assetParam.initPrice < obj.payParam.barrier;
+            if obj.assetParam.initPrice < obj.payoffParam.barrier;
                tempPay(:,wh) = tempPay(:,wh) ...
-                  .* any(paths >= obj.payParam.barrier,2);
+                  .* any(paths >= obj.payoffParam.barrier,2);
             end
          end
  
          wh=strcmp(obj.payoffParam.optType,'downin');
          if any(wh); %down and in barrier
-            if obj.assetParam.initPrice > obj.payParam.barrier;
+            if obj.assetParam.initPrice > obj.payoffParam.barrier;
                tempPay(:,wh) = tempPay(:,wh) ...
-                  .* any(paths <= obj.payParam.barrier,2);
+                  .* any(paths <= obj.payoffParam.barrier,2);
             end
          end
  
          wh=strcmp(obj.payoffParam.optType,'upout');
          if any(wh); %up and out barrier
-            if obj.assetParam.initPrice < obj.payParam.barrier;
+            if obj.assetParam.initPrice < obj.payoffParam.barrier;
                tempPay(:,wh) = tempPay(:,wh) ...
-                  .* all(paths < obj.payParam.barrier,2);
+                  .* all(paths < obj.payoffParam.barrier,2);
             else
                tempPay(:,wh) = zeros(nPaths,sum(wh));
             end
@@ -245,9 +245,9 @@ classdef optPayoff < assetPath
  
          wh=strcmp(obj.payoffParam.optType,'downout');
          if any(wh); %down and out barrier
-            if obj.assetParam.initPrice > obj.payParam.barrier;
+            if obj.assetParam.initPrice > obj.payoffParam.barrier;
                tempPay(:,wh) = tempPay(:,wh) ...
-                  .* all(paths > obj.payParam.barrier,2);
+                  .* all(paths > obj.payoffParam.barrier,2);
             else
                tempPay(:,wh) = zeros(nPaths,sum(wh));
             end
