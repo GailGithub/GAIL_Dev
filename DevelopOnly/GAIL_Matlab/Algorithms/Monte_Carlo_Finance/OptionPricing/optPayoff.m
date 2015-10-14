@@ -45,7 +45,7 @@ classdef optPayoff < assetPath
  
    properties (Constant, Hidden) %do not change & not seen
       allowOptType = {'euro','upin', 'downin' 'upout', 'downout', 'look', ...
-         'amean', 'gmean', 'digitalcash', 'digitalasset','basket'} 
+         'amean', 'gmean', 'digitalcash', 'digitalasset','basket','american'} 
          %kinds of payoffs that we can generate
       allowPutCallType = {'call','put'} 
          %kinds of payoffs that we can generate
@@ -132,6 +132,7 @@ classdef optPayoff < assetPath
          nOptType = numel(obj.payoffParam.optType);
          nPaths = size(paths,1);
          tempPay = zeros(nPaths, nOptType);
+         ntimeDim= size(paths,2);
          
          wh=strcmp(obj.payoffParam.optType,'stockprice');
          if any(wh) %final stock price
@@ -198,6 +199,40 @@ classdef optPayoff < assetPath
                * exp(- obj.assetParam.interest .* obj.timeDim.endTime);
          end
          
+          whamericanput = strcmp(obj.payoffParam.optType,'american') ...
+             & strcmp(obj.payoffParam.putCallType,'put'); %american call
+          
+          if any(whamericanput)
+              basis= @(x) repmat(exp(-x/2),1,3).*[ones(length(x),1) 1-x 1-2*x+x.*x/2];
+              putpayoff = max(obj.payoffParam.strike-paths,0)...
+                .*repmat(exp(-obj.assetParam.interest ...
+                  .* obj.timeDim.timeVector),nPaths,1); %discounted payoff at each time
+              cashflow = putpayoff(:,ntimeDim);
+              extime = repmat(ntimeDim,nPaths,1);
+              for i = ntimeDim-1:-1:1 
+                  inmoney = find(paths(:,i)<obj.payoffParam.strike);
+                  if ~isempty(inmoney)
+                      regmat=basis(paths(inmoney,i)/obj.assetParam.initPrice);
+                      hold=regmat*(regmat\cashflow(inmoney)); 
+                      shouldex=inmoney(putpayoff(inmoney,i)>hold); %which paths should be excercised now
+                      if ~isempty(shouldex); %some paths should be exercise
+                          cashflow(shouldex)=putpayoff(shouldex,i); %updated cashflow
+                          extime(shouldex)=i; %update
+                      end
+                  end
+              end
+              if obj.assetParam.initPrice<obj.payoffParam.strike %stock is initially in the money                 else
+                  hold = mean(cashflow);
+                  putpayoff0 = obj.payoffParam.strike - obj.assetParam.initPrice; 
+                  if putpayoff0 > hold %should excercise all paths initially
+                     cashflow(:) = putpayoff0;
+                     extime(:) = 0;
+                  end
+              end
+    
+              tempPay(:,whamericanput)=cashflow;
+          end
+          
          wheurobarrier = any(strcmp(repmat(obj.payoffParam.optType,5,1), ...
             repmat({'euro','upin','upout','downin','downout'}',1,nOptType)),1);
          wheurobarriercall = wheurobarrier  ...
