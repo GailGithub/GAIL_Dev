@@ -45,9 +45,10 @@ classdef optPayoff < assetPath
  
    properties (Constant, Hidden) %do not change & not seen
       allowOptType = {'euro','upin', 'downin' 'upout', 'downout', 'look', ...
-         'amean', 'gmean', 'digitalcash', 'digitalasset','basket','american'} 
+         'amean', 'gmean', 'digitalcash', 'digitalasset','basket','american', ...
+         'stockprice'} 
          %kinds of payoffs that we can generate
-      allowPutCallType = {'call','put'} 
+      allowPutCallType = {'call','put',''} 
          %kinds of payoffs that we can generate
          
    end
