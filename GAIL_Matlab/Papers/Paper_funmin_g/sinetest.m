@@ -14,6 +14,5 @@ function [fmin,out_param] = sinetest(a,b);
 %
 format compact
 
-
 [fmin,out_param]=funmin_g_CSC(@(x) sin(x),a,b);
 funmin_g_demo(fmin, out_param)

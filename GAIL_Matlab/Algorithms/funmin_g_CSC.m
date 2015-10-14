@@ -389,7 +389,17 @@ while n < out_param.nmax;
         end;
     end;
 end;
-% The next three statements handle two end points
+%% Try widening intervals
+[~, id] = find(abs(y - Un) < out_param.abstol);
+id = union(index, id); % unique and sorted
+leftint2 = find([1 diff(id)~=1]);
+rightint2 = find([diff(id)~=1 1]);
+q = size(leftint2,2);
+interval2 = zeros(2,q);
+interval2(1,:) = x(1,id(leftint2));
+interval2(2,:) = x(1,id(rightint2));
+interval = interval2;
+%% The next three statements handle two end points
 if ~isempty(interval)
    [~, index] = find(abs(x([1,n])-interval(2,:)) > eps);
 else
@@ -397,7 +407,7 @@ else
 end
 [~,index2] = find(abs(y(index)-Un) <= out_param.abstol);
 if ~isempty(index2)
-      interval =  [[x(index(index2)); x(index(index2))] interval];
+   interval =  [[x(index(index2)); x(index(index2))] interval];
 end
 
 % check tau change flag
