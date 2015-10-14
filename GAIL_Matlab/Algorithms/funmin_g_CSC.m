@@ -293,17 +293,17 @@ while n < out_param.nmax;
     fn = (n-1)^2*max(abs(diff(diff_y)))/len^2;
     
     % Stage 2: satisfy necessary condition of cone
-    if out_param.tau*(gn/len+fn/(2*n-2)) >= fn; 
+    % if out_param.tau*(gn/len+fn/(2*n-2)) >= fn; 
         % continue to run Stage 3 below
-    else
+    if out_param.tau*(gn/len+fn/(2*n-2)) < fn
         % increase tau
         out_param.tau = 2*fn/(gn/len+fn/(2*n-2));
         % change tau change flag
         tauchange = 1;
         % check if number of points large enough
-        if n >= ((out_param.tau+1)/2);
+        %if n >= ((out_param.tau+1)/2);
             % large enough, go to Stage 3
-        else
+        if n < ((out_param.tau+1)/2)
             % not large enough, increase points number, and go to Stage 1
             l = n;
             n = 1 + (n-1)*ceil(out_param.tau+1/(2*n-2));
