@@ -389,7 +389,7 @@ while n < out_param.nmax;
         end;
     end;
 end;
-%% Try widening intervals
+%% Try widening intervals and treat end points that are possibly min.
 [~, id] = find(abs(y - Un) < out_param.abstol);
 id = union(index, id); % unique and sorted
 if ~((length(index) == length(id)) && (norm(index - id) == 0))
@@ -401,16 +401,7 @@ if ~((length(index) == length(id)) && (norm(index - id) == 0))
     interval2(2,:) = x(1,id(rightint2));
     interval = interval2;
 end
-%% The next three statements handle two end points
-if ~isempty(interval)
-   [~, index] = find(abs(x([1,n])-interval(2,1)) > eps);
-else
-   index = [1, n];
-end
-[~,index2] = find(abs(y(index)-Un) <= out_param.abstol);
-if ~isempty(index2)
-   interval =  [[x(index(index2)); x(index(index2))] interval];
-end
+ 
 
 % check tau change flag
 if tauchange == 1
