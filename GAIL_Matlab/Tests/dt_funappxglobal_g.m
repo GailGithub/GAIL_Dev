@@ -13,9 +13,9 @@ function dt_funappxglobal_g
 % pp = 
 % 
 %       form: 'pp'
-%     breaks: [1x9901 double]
-%      coefs: [9900x2 double]
-%     pieces: 9900
+%     breaks: [1x5051 double]
+%      coefs: [5050x2 double]
+%     pieces: 5050
 %      order: 2
 %        dim: 1
 %     orient: 'first'
@@ -25,30 +25,29 @@ function dt_funappxglobal_g
 %
 %   >> f = @(x) x.^2; [pp out_param] = funappxglobal_g(f)
 %   
-% pp = 
-% 
+%  pp = 
 %       form: 'pp'
-%     breaks: [1x9901 double]
-%      coefs: [9900x2 double]
-%     pieces: 9900
+%     breaks: [1x5051 double]
+%      coefs: [5050x2 double]
+%     pieces: 5050
 %      order: 2
 %        dim: 1
 %     orient: 'first'
-%
-%   out_param = 
+% 
+% out_param = 
 % 
 %                f: @(x)x.^2
 %                a: 0
 %                b: 1
-%           abstol: 1.0000e-06
+%           abstol: 1.0000e-***6
 %              nlo: 10
 %              nhi: 1000
 %             nmax: 10000000
-%            ninit: 100
-%            nstar: 98
+%            nstar: 100
+%            ninit: 102
 %     exceedbudget: 0
-%          npoints: 9901
-%       errorbound: 2.5245e-***7 
+%          npoints: 5051
+%       errorbound: 9.9990e-***7
 %
 %
 %   Example 3:
@@ -59,26 +58,26 @@ function dt_funappxglobal_g
 % pp = 
 % 
 %       form: 'pp'
-%     breaks: [1x5661151 double]
-%      coefs: [5661150x2 double]
-%     pieces: 5661150
+%     breaks: [1x5668811 double]
+%      coefs: [5668810x2 double]
+%     pieces: 5668810
 %      order: 2
 %        dim: 1
 %     orient: 'first'
 %
 %   out_param = 
 %                a: -10
-%           abstol: 1.0000e-08
+%           abstol: 1.0000e-***8
 %                b: 10
 %                f: @(x)x.^2
 %              nhi: 1000
 %              nlo: 10
 %             nmax: 10000000
-%            ninit: 804
-%            nstar: 802
+%            nstar: 804
+%            ninit: 806
 %     exceedbudget: 0
-%          npoints: 5661151
-%       errorbound: 2.5028e-***9
+%          npoints: 5668811
+%       errorbound: 2.5023e-***9
 %
 % 
 %   Example 4: 
@@ -90,9 +89,9 @@ function dt_funappxglobal_g
 % pp = 
 % 
 %       form: 'pp'
-%     breaks: [1x207743 double]
-%      coefs: [207742x2 double]
-%     pieces: 207742
+%     breaks: [1x207841 double]
+%      coefs: [207840x2 double]
+%     pieces: 207840
 %      order: 2
 %        dim: 1
 %     orient: 'first'
@@ -100,17 +99,17 @@ function dt_funappxglobal_g
 %   out_param = 
 % 
 %                a: -5
-%           abstol: 1.0000e-06
+%           abstol: 1.0000e-***6
 %                b: 5
 %                f: @(x)x.^2
 %              nhi: 500
 %              nlo: 100
 %             nmax: 10000000
-%            ninit: 432
-%            nstar: 430
+%            nstar: 432
+%            ninit: 434
 %     exceedbudget: 0
-%          npoints: 207743
-%       errorbound: 2.4961e-***7
+%          npoints: 207841
+%       errorbound: 2.5053e-***7
 %   
 %
 %   Example 5:
@@ -122,9 +121,9 @@ function dt_funappxglobal_g
 % pp = 
 % 
 %       form: 'pp'
-%     breaks: [1x23221 double]
-%      coefs: [23220x2 double]
-%     pieces: 23220
+%     breaks: [1x23291 double]
+%      coefs: [23290x2 double]
+%     pieces: 23290
 %      order: 2
 %        dim: 1
 %     orient: 'first'
@@ -132,17 +131,17 @@ function dt_funappxglobal_g
 %   out_param = 
 % 
 %                a: -1
-%           abstol: 1.0000e-06
+%           abstol: 1.0000e-***6
 %                b: 1
 %                f: @(x)x.^2
 %              nhi: 500
 %              nlo: 10
 %             nmax: 1000000
-%            ninit: 136
-%            nstar: 134
+%            nstar: 136
+%            ninit: 138
 %     exceedbudget: 0
-%          npoints: 23221
-%       errorbound: 2.4996e-***7
+%          npoints: 23291
+%       errorbound: 2.5219e-***7
 %
 %
 %   Example 6: 
@@ -152,26 +151,26 @@ function dt_funappxglobal_g
 % pp = 
 % 
 %       form: 'pp'
-%     breaks: [1x252333 double]
-%      coefs: [252332x2 double]
-%     pieces: 252332
+%     breaks: [1x252801 double]
+%      coefs: [252800x2 double]
+%     pieces: 252800
 %      order: 2
 %        dim: 1
 %     orient: 'first'
 %
 %   out_param = 
 %                a: -2
-%           abstol: 1.0000e-07
+%           abstol: 1.0000e-***7
 %                b: 2
 %                f: @(x)x.^2
 %              nhi: 1000
 %              nlo: 10
 %             nmax: 10000000
-%            ninit: 399
-%            nstar: 397
+%            nstar: 399
+%            ninit: 401
 %     exceedbudget: 0
-%          npoints: 252333
-%       errorbound: 2.4980e-***8
+%          npoints: 252801
+%       errorbound: 2.5013e-***8
 %
 %
 %   Example 7:
@@ -181,26 +180,26 @@ function dt_funappxglobal_g
 % pp = 
 % 
 %       form: 'pp'
-%     breaks: [1x16765 double]
-%      coefs: [16764x2 double]
-%     pieces: 16764
+%     breaks: [1x17291 double]
+%      coefs: [17290x2 double]
+%     pieces: 17290
 %      order: 2
 %        dim: 1
 %     orient: 'first'
 %
 %   out_param = 
 %                a: -3
-%           abstol: 1.0000e-06
+%           abstol: 1.0000e-***6
 %                b: 0
 %                f: @(x)x.^2
 %              nhi: 40
 %              nlo: 20
 %             nmax: 10000000
-%            ninit: 34
-%            nstar: 32
+%            nstar: 34
+%            ninit: 36
 %     exceedbudget: 0
-%          npoints: 16765
-%       errorbound: 2.5667e-***7
+%          npoints: 17291
+%       errorbound: 2.5639e-***7
 %
 %
 %   Example 8:
@@ -210,26 +209,26 @@ function dt_funappxglobal_g
 % pp = 
 % 
 %       form: 'pp'
-%     breaks: [1x1826191 double]
-%      coefs: [1826190x2 double]
-%     pieces: 1826190
+%     breaks: [1x1828273 double]
+%      coefs: [1828272x2 double]
+%     pieces: 1828272
 %      order: 2
 %        dim: 1
 %     orient: 'first'
 %
 %   out_param = 
 %                a: -30
-%           abstol: 1.0000e-06
+%           abstol: 1.0000e-***6
 %                b: 30
 %                f: @(x)x.^2
 %              nhi: 1000
 %              nlo: 10
 %             nmax: 10000000
-%            ninit: 928
-%            nstar: 926
+%            nstar: 928
+%            ninit: 930
 %     exceedbudget: 0
-%          npoints: 1826191
-%       errorbound: 2.5002e-***7
+%          npoints: 1828273
+%       errorbound: 2.4999e-***7
 % 
 %
 %   Example 9:
@@ -239,26 +238,26 @@ function dt_funappxglobal_g
 % pp = 
 % 
 %       form: 'pp'
-%     breaks: [1x166353 double]
-%      coefs: [166352x2 double]
-%     pieces: 166352
+%     breaks: [1x83473 double]
+%      coefs: [83472x2 double]
+%     pieces: 83472
 %      order: 2
 %        dim: 1
 %     orient: 'first'
 %
 %   out_param = 
 %                a: -2
-%           abstol: 1.0000e-06
+%           abstol: 1.0000e-***6
 %                b: 5
 %                f: @(x)x.^2
 %              nhi: 1000
 %              nlo: 10
 %             nmax: 10000000
-%            ninit: 563
-%            nstar: 561
+%            nstar: 563
+%            ninit: 565
 %     exceedbudget: 0
-%          npoints: 166353
-%       errorbound: 2.4918e-***7
+%          npoints: 83473
+%       errorbound: 9.9654e-***7
 %
 %
 %   Example 10:
@@ -269,26 +268,26 @@ function dt_funappxglobal_g
 % pp = 
 % 
 %       form: 'pp'
-%     breaks: [1x431179 double]
-%      coefs: [431178x2 double]
-%     pieces: 431178
+%     breaks: [1x431809 double]
+%      coefs: [431808x2 double]
+%     pieces: 431808
 %      order: 2
 %        dim: 1
 %     orient: 'first'
 %
 %   out_param = 
 %                a: -3
-%           abstol: 1.0000e-07
+%           abstol: 1.0000e-***7
 %                b: 3
 %                f: @(x)x.^2
 %              nhi: 1000
 %              nlo: 10
 %             nmax: 10000000
-%            ninit: 518
-%            nstar: 516
+%            nstar: 518
+%            ninit: 520
 %     exceedbudget: 0
-%          npoints: 431179
-%       errorbound: 2.5009e-***8
+%          npoints: 431809
+%       errorbound: 2.5033e-***8
 %
 %
 %   Example 11:
@@ -299,24 +298,24 @@ function dt_funappxglobal_g
 % pp = 
 % 
 %       form: 'pp'
-%     breaks: [1x195891 double]
-%      coefs: [195890x2 double]
-%     pieces: 195890
+%     breaks: [1x207061 double]
+%      coefs: [207060x2 double]
+%     pieces: 207060
 %      order: 2
 %        dim: 1
 %     orient: 'first'
 %
 %   out_param = 
 %                a: -5
-%           abstol: 1.0000e-07
+%           abstol: 1.0000e-***7
 %                b: 10
 %                f: @(x)x.^2
 %              nhi: 20
 %              nlo: 10
 %             nmax: 10000000
-%            ninit: 20
-%            nstar: 18
+%            nstar: 20
+%            ninit: 22
 %     exceedbudget: 0
-%          npoints: 195891
-%       errorbound: 2.6388e-***8
+%          npoints: 207061
+%       errorbound: 2.6242e-***8
 %

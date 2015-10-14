@@ -70,18 +70,29 @@ classdef optPayoff < assetPath
       % Creating an asset path process
       function obj = optPayoff(varargin)         
          obj@assetPath(varargin{:}) %parse basic input
-         if isfield(obj.restInput,'payoffParam')
-            val = obj.restInput.payoffParam;
-            obj.payoffParam = val;
-            obj.restInput = rmfield(obj.restInput,'payoffParam');
-         end
-         
+         if nargin>0
+            val=varargin{1};
+            if isa(val,'optPayoff')
+               obj.payoffParam = val.payoffParam;
+               if nargin == 1
+                  return
+               end
+            end
+            if isfield(obj.restInput,'payoffParam')
+               val = obj.restInput.payoffParam;
+               obj.payoffParam = val;
+               obj.restInput = rmfield(obj.restInput,'payoffParam');
+            end
+         end       
       end
       
       % Set the properties of the payoff object
       function set.payoffParam(obj,val)
          if isfield(val,'optType') %data for type of option
-            assert(any(strcmp(val.optType,obj.allowOptType)))
+%            assert(any(strcmp(val.optType,obj.allowOptType)))
+            assert(all(any(strcmp( ...
+               repmat(val.optType,numel(obj.allowOptType),1), ...
+               repmat(obj.allowOptType',1,numel(val.optType))),1),2))
             obj.payoffParam.optType=val.optType; %row
          end
          if isfield(val,'putCallType') %data for type of option
@@ -243,25 +254,25 @@ classdef optPayoff < assetPath
          
          wh=strcmp(obj.payoffParam.optType,'upin');
          if any(wh); %up and in barrier
-            if obj.assetParam.initPrice < obj.payParam.barrier;
+            if obj.assetParam.initPrice < obj.payoffParam.barrier;
                tempPay(:,wh) = tempPay(:,wh) ...
-                  .* any(paths >= obj.payParam.barrier,2);
+                  .* any(paths >= obj.payoffParam.barrier,2);
             end
          end
  
          wh=strcmp(obj.payoffParam.optType,'downin');
          if any(wh); %down and in barrier
-            if obj.assetParam.initPrice > obj.payParam.barrier;
+            if obj.assetParam.initPrice > obj.payoffParam.barrier;
                tempPay(:,wh) = tempPay(:,wh) ...
-                  .* any(paths <= obj.payParam.barrier,2);
+                  .* any(paths <= obj.payoffParam.barrier,2);
             end
          end
  
          wh=strcmp(obj.payoffParam.optType,'upout');
          if any(wh); %up and out barrier
-            if obj.assetParam.initPrice < obj.payParam.barrier;
+            if obj.assetParam.initPrice < obj.payoffParam.barrier;
                tempPay(:,wh) = tempPay(:,wh) ...
-                  .* all(paths < obj.payParam.barrier,2);
+                  .* all(paths < obj.payoffParam.barrier,2);
             else
                tempPay(:,wh) = zeros(nPaths,sum(wh));
             end
@@ -269,9 +280,9 @@ classdef optPayoff < assetPath
  
          wh=strcmp(obj.payoffParam.optType,'downout');
          if any(wh); %down and out barrier
-            if obj.assetParam.initPrice > obj.payParam.barrier;
+            if obj.assetParam.initPrice > obj.payoffParam.barrier;
                tempPay(:,wh) = tempPay(:,wh) ...
-                  .* all(paths > obj.payParam.barrier,2);
+                  .* all(paths > obj.payoffParam.barrier,2);
             else
                tempPay(:,wh) = zeros(nPaths,sum(wh));
             end
@@ -288,7 +299,7 @@ classdef optPayoff < assetPath
  
          wh = whlook & strcmp(obj.payoffParam.putCallType,'put');
          if any(wh)
-            K = min([repmat(obj.assetParam.initPrice,nPaths,1) paths],[ ],2);
+            K = max([repmat(obj.assetParam.initPrice,nPaths,1) paths],[ ],2);
             tempPay(:,wh) ...
                =  max(K - paths(:,obj.timeDim.nSteps), 0) ...
                .* exp(- obj.assetParam.interest .* obj.timeDim.endTime);
@@ -428,9 +439,9 @@ classdef optPayoff < assetPath
          probs = (1/(2*nPayoffs)):(1/nPayoffs):(1 - 1/(2*nPayoffs));
          h = plot(sort(payoffs),probs,'-');
          if numel(varargin) > 1
-            set(h,varargin{offset+2:end});
+            set(h,varargin{2:end});
          else
-            set(h,obj.defaultLineSpecs{:});
+            set(h,obj.defaultSpecs{:});
          end
          set(gca,'fontsize',20)
          if nargout

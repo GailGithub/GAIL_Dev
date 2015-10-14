@@ -1,10 +1,16 @@
-function quantci=quantileCI(quant,Xsample,alpha,extremes)
+function quantci=quantileCI(quant,Xsample,extremes,alpha)
 % quantci=QUANTILECI(quant,Xsample,alpha,extremes) 
 %   computes  1-alpha  confidence intervals 
 %   for the  quant  quantile of a random variable  X 
 %   with extreme values  extremes
 %   using IID data  Xsample
-if nargin==0; help quantileci, return, end %forgot to give inputs
+if nargin==0; help quantileci, return %forgot to give inputs
+elseif nargin < 4 %if no alpha input
+   alpha = 0.01; %this is the default
+   if nargin < 3
+      extremes = [-Inf Inf];
+   end
+end
 n=length(Xsample); %number of samples
 Xorder=[extremes(1); sort(Xsample); extremes(2)]; %order statistics
 al2=alpha/2; %half significance level

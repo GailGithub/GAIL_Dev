@@ -29,7 +29,7 @@ classdef whiteNoise < stochProcess
 % values assigned to that are abstractly defined in that class plus some
 % properties particulary for this class
 
-   properties (SetAccess=protected) %so they can only be set by the constructor
+   properties (SetAccess=public)
       wnParam = struct('sampleKind','IID', ... %kind of sampling
          'distribName', 'Uniform', ... %distribution of the marginals 
          'xDistrib', 'Uniform') %kind of sampling
@@ -39,7 +39,7 @@ classdef whiteNoise < stochProcess
       allowDistribName = {'Uniform','Gaussian'} 
          %kinds of distributions that we can generate
       allowSampleKind = {'IID','Sobol','lattice'} 
-         %kinds of samplking that we allow
+         %kinds of sampling that we allow
       allowQRand = {'Sobol','lattice'} 
          %kinds of samplking that we allow
    end
@@ -86,6 +86,10 @@ classdef whiteNoise < stochProcess
             end
             obj.qrandState = val; %set or initialize qrandstate
          end
+         if strcmp(obj.inputType,'n') && ...
+            strcmp(obj.wnParam.sampleKind,'IID') %easier to sample from randn
+            obj.wnParam.xDistrib = 'Gaussian';
+         end
       end
       
       % Set the properties of the white noise process
@@ -114,7 +118,7 @@ classdef whiteNoise < stochProcess
       
       function set.qrandState(obj,val)
          if ~isempty(val) %state of qrand provided
-            assert(size(val.PointSet,2) == obj.spParam.nSteps);
+            assert(size(val.PointSet,2) == obj.timeDim.nSteps);
                %size of point set must match nSteps
             obj.qrandState = val;
          else
