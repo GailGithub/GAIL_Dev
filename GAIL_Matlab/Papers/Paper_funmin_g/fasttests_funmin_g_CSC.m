@@ -19,3 +19,6 @@ doctest fejer_jackon_inequality
     catch
         display('Error: Test ut_funmin_g is wrongly coded. We skip it.')
     end
+    
+    
+ results=run(ut_workout_funmin_g_CSC)   
