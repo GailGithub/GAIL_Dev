@@ -21,4 +21,4 @@ format compact
 
 f=@(x) -(x-1).^2+1; 
 [fmin,out_param] = funmin_g_CSC(f,a,b,1e-7,1e-4,10,10,1000000);
-%funmin_g_demo(fmin, out_param)
+funmin_g_demo(fmin, out_param)

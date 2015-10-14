@@ -28,5 +28,3 @@ g = @(x) fnx(m,x)*-1;
 fmax=-1*fmax;
 out_max.f = f;
 
-
-

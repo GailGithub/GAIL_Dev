@@ -17,5 +17,5 @@ f = @(x) 1./sqrt(1-x.^4);
 
 [fmin, out_param] = funmin_g_CSC(f,a,b);
 
-%funmin_g_demo(fmin, out_param)
+funmin_g_demo(fmin, out_param);
  

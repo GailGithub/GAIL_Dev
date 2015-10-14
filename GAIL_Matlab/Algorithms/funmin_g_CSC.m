@@ -392,7 +392,7 @@ end;
 %% Try widening intervals
 [~, id] = find(abs(y - Un) < out_param.abstol);
 id = union(index, id); % unique and sorted
-if length(index) == length(id) && norm(index - id) > 0
+if ~((length(index) == length(id)) && (norm(index - id) == 0))
     leftint2 = find([1 diff(id)~=1]);
     rightint2 = find([diff(id)~=1 1]);
     q = size(leftint2,2);

@@ -3,7 +3,6 @@ function [fmin,out_min] = flat_bottom;
 %
 % Example:
 % >> [fmin,out_min] = flat_bottom; 
-%    intlen***
 % >> x = out_min.intervals
 %     x = 0.2311   0.7689
 %
@@ -20,5 +19,6 @@ y = f(x);
 leftint = find([1 diff(index)~=1]);
 rightint = find([diff(index)~=1 1]);
 [x(index(leftint)), x(index(rightint))]; 
+funmin_g_demo(fmin, out_min);
 % Shouldn't out_min.intervals be [0.2311   0.7689]
  

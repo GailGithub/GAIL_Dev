@@ -1,4 +1,4 @@
-function funmin_g_demo(fmin, out_param)
+function [intlen,fval1,fval2] = funmin_g_demo(fmin, out_param)
 % 
 % Example 1: f is a flat bottom function. Cf. Wolfram Alpha's result at 
 % tinyurl.com/ox63f2c
@@ -25,9 +25,9 @@ hold on;
 if ~isempty(out_param.intervals)
     for i=1:n
         if out_param.volumeX > out_param.TolX,
-            intlen = out_param.intervals(2,i) - out_param.intervals(1,i)
-            fval1 = f(out_param.intervals(2,i)) - fmin
-            fval2 = f(out_param.intervals(1,i)) - fmin
+            intlen = out_param.intervals(2,i) - out_param.intervals(1,i);
+            fval1 = f(out_param.intervals(2,i)) - fmin;
+            fval2 = f(out_param.intervals(1,i)) - fmin;
             plot(out_param.intervals(1,i), fmin, 'r<', 'MarkerSize', 12,'LineWidth',2)
             plot(out_param.intervals(2,i), fmin, 'r>', 'MarkerSize', 12,'LineWidth',2)
         end
