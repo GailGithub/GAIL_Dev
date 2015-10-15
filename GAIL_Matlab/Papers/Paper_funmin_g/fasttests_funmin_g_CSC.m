@@ -5,7 +5,7 @@ doctest sinetest
 doctest quadratic
 doctest flat_bottom
 doctest flatbottom2
-doctest fejer_jackon_inequality
+doctest fejer_jackson_inequality
 
 results=run(ut_funmin_g_CSC)
 
