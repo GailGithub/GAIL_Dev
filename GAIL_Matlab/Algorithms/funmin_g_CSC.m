@@ -367,6 +367,7 @@ if ~((length(index) == length(id)) && (norm(index - id) == 0))
     interval2(1,:) = x(1,id(leftint2));
     interval2(2,:) = x(1,id(rightint2));
     interval = interval2;
+    volumeX = sum(interval(2,:)-interval(1,:));
 end
  
 
