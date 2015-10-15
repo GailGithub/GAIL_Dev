@@ -318,8 +318,8 @@ while n < out_param.nmax;
     min_end = (~min_index).*(diff_y/2+y(1:n-1)-abs(diff_y)/2);
     ln = min_in+min_end;
     % minimum values of each interval
-    [Ln, iLn] = min(ln); % lower bound
-    [Un, iUn] = min(y); % upper bound
+    Ln = min(ln); % lower bound
+    Un = min(y); % upper bound
     errest = Un-Ln;
     % find the intervals containing minimum points
     index = find(min_index ==1 & ln < Un);
@@ -421,7 +421,7 @@ else
     out_param.f = f;
   else
     warning('GAIL:funmin_g_CSC:notfunction','Function f must be a function handle. Now funmin_g_CSC will use f(x)=(x-0.3)^2+1.')
-    f = @(x) (x-0.3).^2+1;;
+    f = @(x) (x-0.3).^2+1;
     out_param.f = f;
   end
 end
