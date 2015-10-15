@@ -114,6 +114,10 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 %
 %     out_param.time --- time elapsed in seconds when calling cubSobol_g.
 %
+%     y --- fast transform coefficients of the input function.
+%
+%     kappanumap --- wavenumber mapping used in the error bound.
+%
 %     out_param.exitflag --- this is a binary vector stating whether
 %     warning flags arise. These flags tell about which conditions make the
 %     final result certainly not guaranteed. One flag is considered arisen
