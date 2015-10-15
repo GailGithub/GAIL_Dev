@@ -1,8 +1,8 @@
-function [pp,out_param]=funappxglobal_g(varargin)
-%FUNAPPXGLOBAL_G 1-D guaranteed function recovery on a closed interval
+function [pp,out_param]=funappxglobal_g_CSC(varargin)
+%funappxglobal_g_CSC 1-D guaranteed function recovery on a closed interval
 %[a,b]
 %
-%   pp = FUNAPPXGLOBAL_G(f) approximates function f on the default interval
+%   pp = funappxglobal_g_CSC(f) approximates function f on the default interval
 %   [0,1] by a piecewise polynomial structure pp within the guaranteed
 %   absolute error tolerance of 1e-6. Default initial number of points is
 %   100 and default cost budget is 1e7.  Input f is a function handle. The
@@ -10,28 +10,28 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %   vector y of function values that is of the same size as x. Output pp
 %   may be evaluated via PPVAL.
 %
-%   pp = FUNAPPXGLOBAL_G(f,a,b,abstol,nlo,nhi,nmax) for a given function f
+%   pp = funappxglobal_g_CSC(f,a,b,abstol,nlo,nhi,nmax) for a given function f
 %   and the ordered input parameters that define the finite interval [a,b],
 %   a guaranteed absolute error tolerance abstol, a lower bound of initial
 %   number of points nlo, an upper bound of initial number of points nhi,
 %   and a cost budget nmax.
 %
 %   pp =
-%   FUNAPPXGLOBAL_G(f,'a',a,'b',b,'abstol',abstol,'nlo',nlo,'nhi',nhi,'nmax',nmax)
+%   funappxglobal_g_CSC(f,'a',a,'b',b,'abstol',abstol,'nlo',nlo,'nhi',nhi,'nmax',nmax)
 %   recovers function f on the finite interval [a,b], given a guaranteed
 %   absolute error tolerance abstol, a lower bound of initial number of
 %   points nlo, an upper bound of initial number of points nhi, and a cost
 %   budget nmax. All six field-value pairs are optional and can be supplied
 %   in different order.
 %
-%   pp = FUNAPPXGLOBAL_G(f,in_param) recovers function f on the finite
+%   pp = funappxglobal_g_CSC(f,in_param) recovers function f on the finite
 %   interval [in_param.a,in_param.b], given a guaranteed absolute error
 %   tolerance in_param.abstol, a lower bound of initial number of points
 %   in_param.nlo, an upper bound of initial number of points in_param.nhi,
 %   and a cost budget in_param.nmax. If a field is not specified, the
 %   default value is used.
 %
-%   [pp, out_param] = FUNAPPXGLOBAL_G(f,...) returns a piecewise polynomial
+%   [pp, out_param] = funappxglobal_g_CSC(f,...) returns a piecewise polynomial
 %   structure pp and an output structure out_param.
 %
 %   Input Arguments
@@ -115,7 +115,7 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %   Example 1:
 %
 %
-%   >> f = @(x) x.^2; [pp, out_param] = funappxglobal_g(f)
+%   >> f = @(x) x.^2; [pp, out_param] = funappxglobal_g_CSC(f)
 %
 %     pp = 
 %       form: 'pp'
@@ -144,7 +144,7 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %   Example 2:
 %
 %   >> f = @(x) x.^2;
-%   >> [pp, out_param] = funappxglobal_g(f,-2,2,1e-7,10,10,1000000)
+%   >> [pp, out_param] = funappxglobal_g_CSC(f,-2,2,1e-7,10,10,1000000)
 % 
 % pp = 
 % 
@@ -174,7 +174,7 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %   Example 3:
 %
 %   >> f = @(x) x.^2;
-%   >> [pp, out_param] = funappxglobal_g(f,'a',-2,'b',2,'nhi',100,'nlo',10)
+%   >> [pp, out_param] = funappxglobal_g_CSC(f,'a',-2,'b',2,'nhi',100,'nlo',10)
 %
 % pp = 
 % 
@@ -207,7 +207,7 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %   >> in_param.a = -10; in_param.b = 10;
 %   >> in_param.abstol = 10^(-7); in_param.nlo = 10; in_param.nhi = 100;
 %   >> in_param.nmax = 10^6; f = @(x) x.^2;
-%   >> [pp, out_param] =funappxglobal_g(f,in_param)
+%   >> [pp, out_param] =funappxglobal_g_CSC(f,in_param)
 %
 % pp = 
 % 
@@ -276,7 +276,8 @@ tauchange = 0;
 len = out_param.b-out_param.a;
 % add flag
 flag = 0;
-
+iter = 0;
+maxiter = 1;
 while n < out_param.nmax;
     
     if(flag==0)
@@ -296,6 +297,8 @@ while n < out_param.nmax;
     gn = (n-1)/len*max(abs(diff_y-(y(n)-y(1))/(n-1)));
     %approximate the stronger norm of input function
     fn = (n-1)^2/len^2*max(abs(diff(diff_y)));
+    
+    iter = iter + 1;
     
     % Stage 2: satisfy necessary condition
     if out_param.nstar*(2*gn+fn*len/(n-1)) >= fn*len;
@@ -337,31 +340,40 @@ while n < out_param.nmax;
             flag = 1;
         end;
     end;
-end;
+    if(iter==maxiter)
+        out_param.exit(2) = 1;
+        out_param.exceedbudget = 0;
+        warning('GAIL:funappx_g:exceediter',['Number of iterations has'...
+            'reached maximum number of iterations.'])
+        break;
+    end;
+end
+    out_param.iter = iter;
+    if tauchange == 1;
+        warning('GAIL:funappxglobal_g_CSC:peaky',['This function is peaky '...
+            'relative to nlo and nhi. You may wish to increase nlo and nhi for '...
+            'similar functions.'])
+    end;
+    
+    % Check cost budget flag
+    if out_param.exceedbudget == 1;
+        n = 1 + (n-1)/m*floor((out_param.nmax-1)*m/(n-1));
+        warning('GAIL:funappxglobal_g_CSC:exceedbudget',['funappxglobal_g_CSC '...
+            'attempted to exceed the cost budget. The answer may be unreliable.'])
+        out_param.npoints = n;
+        nstar = out_param.nstar;
+        out_param.errorbound = gn*len*nstar/(4*(n-1)*(n-1-nstar));
+        x1 = out_param.a:len/(out_param.npoints-1):out_param.b;
+        y1 = f(x1);
+        pp = interp1(x1,y1,'linear','pp');
+    else
+        out_param.npoints = n;
+        nstar = out_param.nstar;
+        out_param.errorbound = gn*len*nstar/(4*(n-1)*(n-1-nstar));
+        pp = interp1(x,y,'linear','pp');
+    end;
 
-if tauchange == 1;
-    warning('GAIL:funappxglobal_g:peaky',['This function is peaky '...
-    'relative to nlo and nhi. You may wish to increase nlo and nhi for '...
-    'similar functions.'])
-end;
 
-% Check cost budget flag
-if out_param.exceedbudget == 1;
-    n = 1 + (n-1)/m*floor((out_param.nmax-1)*m/(n-1));
-    warning('GAIL:funappxglobal_g:exceedbudget',['funappxglobal_g '...
-    'attempted to exceed the cost budget. The answer may be unreliable.'])
-    out_param.npoints = n;
-    nstar = out_param.nstar;
-    out_param.errorbound = gn*len*nstar/(4*(n-1)*(n-1-nstar));
-    x1 = out_param.a:len/(out_param.npoints-1):out_param.b;
-    y1 = f(x1);
-    pp = interp1(x1,y1,'linear','pp');
-else
-    out_param.npoints = n;
-    nstar = out_param.nstar;
-    out_param.errorbound = gn*len*nstar/(4*(n-1)*(n-1-nstar));
-    pp = interp1(x,y,'linear','pp');    
-end;
 
 if MATLABVERSION >= 8.3
     warning('on', 'Matlab:interp1:ppGriddedInterpolant');
@@ -382,9 +394,9 @@ default.nmax  = 1e7;
 
 
 if isempty(varargin)
-    warning('GAIL:funappxglobal_g:nofunction',['Function f must be '...
+    warning('GAIL:funappxglobal_g_CSC:nofunction',['Function f must be '...
     'specified. Now GAIL is using f(x)=x^2 and unit interval [0,1].'])
-    help funappxglobal_g
+    help funappxglobal_g_CSC
     f = @(x) x.^2;
     out_param.f = f;
 else
@@ -392,7 +404,7 @@ else
     f = varargin{1};
     out_param.f = f;
   else
-    warning('GAIL:funappxglobal_g:notfunction',['Function f must be a '...
+    warning('GAIL:funappxglobal_g_CSC:notfunction',['Function f must be a '...
     ' function handle. Now GAIL is using f(x)=x^2.'])
     f = @(x) x.^2;
     out_param.f = f;
@@ -441,31 +453,31 @@ else
 end;
 
 if (out_param.a == inf||out_param.a == -inf||isnan(out_param.a)==1)
-    warning('GAIL:funappxglobal_g:anoinfinity',['a can not be infinity.'...
+    warning('GAIL:funappxglobal_g_CSC:anoinfinity',['a can not be infinity.'...
     ' Use default a = ' num2str(default.a)])
     out_param.a = default.a;
 end;
 if (out_param.b == inf||out_param.b == -inf||isnan(out_param.b)==1)
-    warning('GAIL:funappxglobal_g:bnoinfinity',['b can not be infinity.'...
+    warning('GAIL:funappxglobal_g_CSC:bnoinfinity',['b can not be infinity.'...
     ' Use default b = ' num2str(default.b)])
     out_param.b = default.b;
 end;
 
 if (out_param.b < out_param.a)
-    warning('GAIL:funappxglobal_g:blea',['b can not be smaller than a;'...
+    warning('GAIL:funappxglobal_g_CSC:blea',['b can not be smaller than a;'...
     ' exchange these two. '])
     tmp = out_param.b;
     out_param.b = out_param.a;
     out_param.a = tmp;
 elseif(out_param.b == out_param.a)
-    warning('GAIL:funappxglobal_g:beqa',['b can not equal a. Use b = '...
+    warning('GAIL:funappxglobal_g_CSC:beqa',['b can not equal a. Use b = '...
         ,num2str(out_param.a+1)])
     out_param.b = out_param.a+1;
 end;
 
 % let error tolerance greater than 0
 if (out_param.abstol <= 0 )
-    warning(['GAIL:funappxglobal_g:abstolnonpos ','Error tolerance'...
+    warning(['GAIL:funappxglobal_g_CSC:abstolnonpos ','Error tolerance'...
     'should be greater than 0. Using default error tolerance ',...
     num2str(default.abstol)])
     out_param.abstol = default.abstol;
@@ -474,12 +486,12 @@ end
 % let cost budget be a positive integer
 if (~gail.isposint(out_param.nmax))
     if gail.isposintive(out_param.nmax)
-        warning('GAIL:funappxglobal_g:budgetnotint',['Cost budget'...
+        warning('GAIL:funappxglobal_g_CSC:budgetnotint',['Cost budget'...
         ' should be a positive integer. Using cost budget ',...
         num2str(ceil(out_param.nmax))])
         out_param.nmax = ceil(out_param.nmax);
     else
-        warning('GAIL:funappxglobal_g:budgetisneg',['Cost budget'...
+        warning('GAIL:funappxglobal_g_CSC:budgetisneg',['Cost budget'...
         ' should be a positive integer. Using default cost budget '...
         int2str(default.nmax)])
         out_param.nmax = default.nmax;
@@ -488,53 +500,53 @@ end
 
 if (~gail.isposint(out_param.nlo))
 %     if gail.isposge3(out_param.nlo)
-%         warning('GAIL:funappxglobal_g:lowinitnotint',['Lower bound of '...
+%         warning('GAIL:funappxglobal_g_CSC:lowinitnotint',['Lower bound of '...
 %         'initial number of points should be a positive integer.' ...
 %             ' Using ', num2str(ceil(out_param.nlo)) ' as nlo '])
 %         out_param.nlo = ceil(out_param.nlo);
 %     else
-%         warning('GAIL:funappxglobal_g:lowinitlt3',[' Lower bound of '...
+%         warning('GAIL:funappxglobal_g_CSC:lowinitlt3',[' Lower bound of '...
 %         'initial number of points should be a positive integer greater'...
 %         ' than 3. Using 3 as nlo'])
 %         out_param.nlo = 3;
 %    end
-        warning('GAIL:funappxglobal_g:lowinitnotint',['Lower bound of '...
+        warning('GAIL:funappxglobal_g_CSC:lowinitnotint',['Lower bound of '...
         'initial nstar should be a positive integer.' ...
         ' Using ', num2str(ceil(out_param.nlo)) ' as nlo '])
         out_param.nlo = ceil(out_param.nlo);
 end
  if (~gail.isposint(out_param.nhi))
 %     if gail.isposge3(out_param.nhi)
-%         warning('GAIL:funappxglobal_g:hiinitnotint',['Upper bound of '...
+%         warning('GAIL:funappxglobal_g_CSC:hiinitnotint',['Upper bound of '...
 %         'initial number of points should be a positive integer.' ...
 %         ' Using ', num2str(ceil(out_param.nhi)) ' as nhi' ])
 %         out_param.nhi = ceil(out_param.nhi);
 %     else
-%         warning('GAIL:funappxglobal_g:hiinitlt3',[' Upper bound of '...
+%         warning('GAIL:funappxglobal_g_CSC:hiinitlt3',[' Upper bound of '...
 %         'points should be a positive integer greater than 3. Using '...
 %         'default number of points ' int2str(default.nhi) ' as nhi' ])
 %         out_param.nhi = default.nhi;
 %     end
-         warning('GAIL:funappxglobal_g:hiinitnotint',['Upper bound of '...
+         warning('GAIL:funappxglobal_g_CSC:hiinitnotint',['Upper bound of '...
         'initial nstar should be a positive integer.' ...
         ' Using ', num2str(ceil(out_param.nhi)) ' as nhi' ])
         out_param.nhi = ceil(out_param.nhi);
 end
 
 if (out_param.nlo > out_param.nhi)
-    warning('GAIL:funappxglobal_g:logrhi',['Lower bound of initial '...
+    warning('GAIL:funappxglobal_g_CSC:logrhi',['Lower bound of initial '...
     'number of points is larger than upper bound of initial number '...
     'of points; Use nhi as nlo'])
     out_param.nhi = out_param.nlo;
 end;
 if (out_param.nlo > out_param.nmax)
-    warning('GAIL:funappxglobal_g:logecost',['Lower bound of initial '...
+    warning('GAIL:funappxglobal_g_CSC:logecost',['Lower bound of initial '...
     'number of points should be smaller than cost budget. Using ',...
     num2str(ceil(out_param.nmax/2))])
     out_param.nlo = out_param.nmax/2;
 end;
 if (out_param.nhi > out_param.nmax)
-    warning('GAIL:funappxglobal_g:higecost',['Upper bound of initial '...
+    warning('GAIL:funappxglobal_g_CSC:higecost',['Upper bound of initial '...
     'number of points should be smaller than cost budget. Using ',...
     num2str(out_param.nlo)])
     out_param.nhi = out_param.nlo;

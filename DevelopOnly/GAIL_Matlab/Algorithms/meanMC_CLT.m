@@ -1,12 +1,13 @@
 function [hmu,out_param]=meanMC_CLT(Yrand,absTol,relTol,alpha,nSig,inflate)
 %MEANMC_CLT Monte Carlo method to estimate the mean of a random variable
 %
-%   tmu = MEANMC_CLT(Yrand,abstol,alpha,nSig,inflate) estimates the mean, mu, of a random variable Y to
-%   within a specified error tolerance, i.e., | mu - tmu | <= abstol with
-%   probability at least 1-alpha, where abstol is the absolute error
-%   tolerance.  The default values are abstol=1e-2 and alpha=1%. Input
-%   Yrand is a function handle that accepts a positive integer input n and
-%   returns an n x 1 vector of IID instances of the random variable Y.
+%   tmu = MEANMC_CLT(Yrand,absTol,relTol,alpha,nSig,inflate) estimates the
+%   mean, mu, of a random variable Y to within a specified error tolerance,
+%   i.e., | mu - tmu | <= max(absTol,relTol|mu|) with probability at least
+%   1-alpha, where abstol is the absolute error tolerance.  The default
+%   values are abstol=1e-2 and alpha=1%. Input Yrand is a function handle
+%   that accepts a positive integer input n and returns an n x 1 vector of
+%   IID instances of the random variable Y.
 %
 %   Input Arguments
 %

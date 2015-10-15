@@ -118,7 +118,7 @@ classdef whiteNoise < stochProcess
       
       function set.qrandState(obj,val)
          if ~isempty(val) %state of qrand provided
-            assert(size(val.PointSet,2) == obj.spParam.nSteps);
+            assert(size(val.PointSet,2) == obj.timeDim.nSteps);
                %size of point set must match nSteps
             obj.qrandState = val;
          else

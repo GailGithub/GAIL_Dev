@@ -5,8 +5,8 @@ classdef ut_funappx_g < matlab.unittest.TestCase
         function funappx_gofConstantFunction(testCase)
             f = @(x) 3;
             in_param.maxiter = 1;
-            in_param.nlo = 3;
-            in_param.nhi = 3;
+            in_param.nlo = 1;
+            in_param.nhi = 1;
             [fappx, result] = funappx_g(f,in_param);
             testCase.verifyLessThanOrEqual(result.iter, 1);
             testCase.verifyEqual(result.npoints,3);
@@ -29,8 +29,8 @@ classdef ut_funappx_g < matlab.unittest.TestCase
         function funappx_gOf100000x(testCase)
             f = @(x) 100000 .* x;
             in_param.abstol = 10^(-8);
-            in_param.nlo = 3;
-            in_param.nhi = 3;
+            in_param.nlo = 1;
+            in_param.nhi = 1;
             [fappx, result] = funappx_g(f,in_param);
             x = rand(10000,1);
             actualerr = max(abs(fappx(x)-f(x)));
@@ -163,14 +163,14 @@ classdef ut_funappx_g < matlab.unittest.TestCase
         
          function funappx_gOnpointsoflinear(testCase)
             f = @(x) 3*x + 5;
-            in_param.nlo = 3; in_param.nhi =3;
+            in_param.nlo = 1; in_param.nhi =1;
             [~, result] = funappx_g(f,in_param);
             testCase.verifyEqual(result.npoints,3);
          end
         
-         function funappx_gOnpointsofconstent(testCase)
+         function funappx_gOnpointsofconstant(testCase)
             f = @(x) 5;
-            in_param.nlo = 3; in_param.nhi =3;
+            in_param.nlo = 1; in_param.nhi =1;
             [~, result] = funappx_g(f,in_param);
             testCase.verifyEqual(result.npoints,3);
         end
