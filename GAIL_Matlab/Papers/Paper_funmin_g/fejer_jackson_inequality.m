@@ -23,7 +23,7 @@ function [fmin, fmax, out_min, out_max] = fejer_jackson_inequality(m);
 %
 % Example 3:
 % >> [fmin, fmax, out_min, out_max] = fejer_jackson_inequality(512);
-%     ***
+%     Warning***
 % >>  abs(fmin) < 1e-6, abs(fmax-1.848874) < 1e-6
 %  ans = 1  ans = 1
 % >>  funmin_g_demo(fmin, out_min); hold on; funmin_g_demo(fmax, out_max); hold off;
@@ -35,6 +35,7 @@ function [fmin, fmax, out_min, out_max] = fejer_jackson_inequality(m);
 
 fnx = @(n,x)((1./(1:n)) * sin((1:n)' * x));
 f = @(x) fnx(m,x);
+in_param.abstol = 1e-6;
 in_param.TolX = 1e-6;
 [fmin,out_min]=funmin_g_CSC(f,0,pi,in_param); 
 
