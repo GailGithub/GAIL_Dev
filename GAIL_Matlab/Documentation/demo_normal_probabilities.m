@@ -1,4 +1,4 @@
-function demo_cubSobol_g
+function demo_normal_probabilities
 %% Computing Normal probabilities with covariance matrix cov
 d = 1000; % Dimension of the problem. In the literature it sometimes appears as s.
 
