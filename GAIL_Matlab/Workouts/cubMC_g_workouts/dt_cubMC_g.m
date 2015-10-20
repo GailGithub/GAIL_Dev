@@ -117,7 +117,8 @@
 % >> f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
 % >> f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.005
 % f_true = 1.30***
-% >> Q = cubMC_g(f,hyperbox,'uniform',1e-2,1e-3)+0.005check = abs(Q - f_true)< max(1e-2, 1e-3*f_true)
+% >> Q = cubMC_g(f,hyperbox,'uniform',1e-2,1e-3)+0.005;
+% >> check = abs(Q - f_true)< max(1e-2, 1e-3*f_true)
 %   1
 %
 %
