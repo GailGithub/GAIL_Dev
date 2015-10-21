@@ -283,7 +283,7 @@ xpts=sobstr(1:n0,1:out_param.d); %grab Sobol' points
 y = f(xpts); %evaluate integrand
 yval=y;
 if cv > 1 
-	yg = cell2mat(g(xpts)) - out_param.cv.Ig; yvalg=yg;
+	yg = cell2mat(g(xpts)) - repmat(out_param.cv.Ig, n0,1); yvalg=yg;
 elseif cv == 1 
 	yg = g(xpts)-out_param.cv.Ig; yvalg=yg;
 end %evaluate control variate
@@ -392,8 +392,8 @@ for m=out_param.mmin+1:out_param.mmax
    nnext=2^mnext;
    xnext=sobstr(n0+(1:nnext),1:out_param.d); 
    n0=n0+nnext;
-   if cv == 2% multi C.V.s
-	   ygnext = cell2mat(g(xnext))- out_param.cv.Ig;  
+   if cv > 1% multi C.V.s
+	   ygnext = cell2mat(g(xnext))- repmat(out_param.cv.Ig, n0,1);  
 	   ynext = f(xnext) - ygnext*beta;
 	   yval = [yval; ynext];
    else
