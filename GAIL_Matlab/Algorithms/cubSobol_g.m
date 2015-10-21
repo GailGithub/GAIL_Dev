@@ -393,7 +393,7 @@ for m=out_param.mmin+1:out_param.mmax
    xnext=sobstr(n0+(1:nnext),1:out_param.d); 
    n0=n0+nnext;
    if cv > 1% multi C.V.s
-	   ygnext = cell2mat(g(xnext))- repmat(out_param.cv.Ig, n0,1);  
+	   ygnext = cell2mat(g(xnext))- repmat(out_param.cv.Ig, nnext,1);  
 	   ynext = f(xnext) - ygnext*beta;
 	   yval = [yval; ynext];
    else
