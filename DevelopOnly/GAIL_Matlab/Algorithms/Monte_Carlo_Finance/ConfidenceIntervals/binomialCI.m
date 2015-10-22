@@ -1,4 +1,7 @@
 function [exactci,cltci]=binomialCI(ntot,nsuc,alpha)
+
+% Author Fred J. Hickernell
+
 if nargin==0; help binomialCI, return, end %forgot to give inputs
 obsprob=nsuc/ntot; %observed probability of success
 if nargin < 3 %if no alpha input
