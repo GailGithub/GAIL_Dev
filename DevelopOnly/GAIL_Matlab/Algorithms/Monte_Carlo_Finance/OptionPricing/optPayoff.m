@@ -348,9 +348,7 @@ classdef optPayoff < assetPath
          val = NaN(1,numel(obj.payoffParam.optType));
          wh = strcmp('stockprice',obj.payoffParam.optType);
          if any(wh); 
-            val(wh)=obj.assetParam.initPrice * ...
-               exp(obj.assetParam.interest * ...
-               obj.timeDim.endTime);
+            val(wh)=obj.assetParam.initPrice;
          end
  
          %Pricing European geometric brownian motion
