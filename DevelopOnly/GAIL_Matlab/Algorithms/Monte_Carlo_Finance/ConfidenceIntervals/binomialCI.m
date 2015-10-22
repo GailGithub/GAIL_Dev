@@ -1,6 +1,6 @@
 function [exactci,cltci]=binomialCI(ntot,nsuc,alpha)
 
-% Author Fred J. Hickernell
+%Author: Todor Markov
 
 if nargin==0; help binomialCI, return, end %forgot to give inputs
 obsprob=nsuc/ntot; %observed probability of success
@@ -23,3 +23,4 @@ if nargout>1 %get the CLT one also
    cltci=obsprob+ ... %CLT confidence interval
    [-1 1]*(-norminv(al2)*sqrt(obsprob*(1-obsprob))/sqrt(ntot));
 end
+
