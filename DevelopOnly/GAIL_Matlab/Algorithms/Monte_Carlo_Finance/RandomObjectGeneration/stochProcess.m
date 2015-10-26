@@ -131,7 +131,7 @@ classdef stochProcess < handle & matlab.mixin.CustomDisplay
             return %can only plot if a genPaths method exists
          end
          offset = 1; %the last input just looked at 
-         if nargin > offset %does another input exist
+         if nargin > offset %another input exists
             if ischar(varargin{offset})
                if any(strcmp(varargin{offset},obj.allowedPlotKind)) %is it a kind of plot
                   plotKind = varargin{offset}; %then set it to the desired kind
@@ -207,7 +207,7 @@ classdef stochProcess < handle & matlab.mixin.CustomDisplay
          end
          set(gca,'fontsize',obj.defaultFontSize)
          if nargout
-            varargout{1}=h;
+            varargout{1} = h;
          end
       end
       
