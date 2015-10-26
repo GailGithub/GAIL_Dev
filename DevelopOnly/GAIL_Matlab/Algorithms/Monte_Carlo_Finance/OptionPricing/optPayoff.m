@@ -429,11 +429,13 @@ classdef optPayoff < assetPath
 
       end
       
-      function varargout = plot(obj,payoffPlotType,varargin)
-         if strcmp(payoffPlotType,'paths')
+      function varargout = plot(obj,varargin)
+         offset = 1;
+         if strcmp(varargin{1},'paths')
             % Plot the asset paths along with the strike and 
             % the exercise boundary for American put options
-            h = plot@stochProcess(obj,varargin{:});
+            offset = offset + 1;
+            h = plot@stochProcess(obj,varargin{offset:end});
             h1 = [];
             h1leg = {};
             if isfinite(obj.payoffParam.strike)
@@ -458,10 +460,13 @@ classdef optPayoff < assetPath
          else
             % Plot the empirical distribution function of the discounted
             % option payoffs
+            if strcmp(varargin{1},'payoffs')
+               offset = offset + 1;
+            end
             assert(strcmp(obj.inputType,'n'), ...
                'plot requires inputType to be ''n''')
-            if numel(varargin)
-               nPayoffs = varargin{1};
+            if numel(varargin{offset:end})
+               nPayoffs = varargin{offset};
             else
                nPayoffs = obj.defaultNPayoffs; %default 
             end
