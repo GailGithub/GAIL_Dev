@@ -282,6 +282,10 @@ while n < out_param.nmax;
     % Stage 1: estimate weaker and stronger norm
     x = out_param.a:len/(n-1):out_param.b;
     y = f(x);
+    iSing = find(isinf(y));
+    if ~isempty(iSing)
+         error('GAIL:funmin_g:yInf',['Function f(x) = Inf at x = ', num2str(x(iSing))]);
+    end
     diff_y = diff(y);
     %approximate the weaker norm of input function
     gn = (n-1)*max(abs(diff_y-(y(n)-y(1))/(n-1)))/len;
@@ -311,7 +315,7 @@ while n < out_param.nmax;
     % minimum values of each interval
     Ln = min(ln); % lower bound
     Un = min(y); % upper bound
-    error = Un-Ln;
+    errest = Un-Ln;
     % find the intervals containing minimum points
     index = find(min_index ==1 & ln < Un);
     m = size(index,2);
@@ -334,7 +338,7 @@ while n < out_param.nmax;
     end
     volumeX = sum(interval(2,:)-interval(1,:));
     % satisfy convergence
-    if error < out_param.abstol || volumeX < out_param.TolX
+    if errest < out_param.abstol || volumeX < out_param.TolX
         out_param.exitflag = 0; break;
     end
     % otherwise increase points number
@@ -355,7 +359,7 @@ end
 
 fmin = Un;
 out_param.npoints = n;
-out_param.errest = error;
+out_param.errest = errest;
 out_param.volumeX = volumeX;
 out_param.tauchange = tauchange;
 out_param.intervals = interval;
@@ -392,7 +396,7 @@ else
     out_param.f = f;
   else
     warning('GAIL:funmin_g:notfunction','Function f must be a function handle. Now funmin_g will use f(x)=(x-0.3)^2+1.')
-    f = @(x) (x-0.3).^2+1;;
+    f = @(x) (x-0.3).^2+1;
     out_param.f = f;
   end
 end
