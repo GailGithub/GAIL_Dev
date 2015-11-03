@@ -7,7 +7,7 @@ function wingo
 %    check = 1 
 %    check = 1
 
-%% Example 1
+%% Example 1: non-covex polynomial
 f = @(x) 1.0/6 * x.^6 - 52.0 / 25 * x.^5 + 39.0 / 80 * x.^4 ...
        + 71.0/10 * x.^3 - 79.0/20 * x.^2 - x + 1.0/10;
 a = -1.5; b = 11; tol = 1e-7; Xtol = 1e-4;
