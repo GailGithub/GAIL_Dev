@@ -146,7 +146,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %          npoints: 36865
 %           errest: 4.5329e-***8
 %                x: [1x36865 double]
-%            bytes: 3195434
+%            bytes: 3203626
 %
 %
 %   Example 2:
@@ -171,7 +171,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %          npoints: 9217
 %           errest: 7.2526e-***7
 %                x: [1x9217 double] 
-%            bytes: 801922
+%            bytes: 803970
 %
 %
 %   Example 3:
@@ -197,7 +197,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %          npoints: 19457
 %           errest: 9.9555e-***7
 %                x: [1x19457 double] 
-%            bytes: 1685978
+%            bytes: 1690074
 %
 %
 %   See also INTERP1, GRIDDEDINTERPOLANT, INTEGRAL_G, MEANMC_G, FUNMIN_G
@@ -290,7 +290,10 @@ while(max(err) > abstol)
         /out_param.nhi).^(1./(1+len)));
     %find nstar not large enough then double it
     smallconeind = find(nstar.*(2*gn+fn.*len/(ninit-1)) <(fn.*len));
-    nstar(smallconeind) = 2*nstar(smallconeind);
+    %nstar(smallconeind) = 2*nstar(smallconeind);
+    nstarsmallcone = (fn.*len)./(2*gn+fn.*len/(ninit-1)).*...
+    (2*ninit-2-(fn.*len)./(2*gn+fn.*len/(ninit-1)))/(ninit-1);
+    nstar(smallconeind) = nstarsmallcone(smallconeind);
     iter = iter + 1;
     err = nstar.*len.*gn./(4*(ninit-1).*(ninit-1-nstar));
     %check if error satisfy the error tolerance 
