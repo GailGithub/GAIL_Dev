@@ -128,7 +128,7 @@ classdef optPayoff < assetPath
  
            
       % Generate payoffs of options
-      function payoffs=genOptPayoffs(obj,val)
+      function [payoffs, more]=genOptPayoffs(obj,val)
          paths = genPaths(obj,val);
          nOptType = numel(obj.payoffParam.optType);
          nPaths = size(paths,1);
@@ -201,7 +201,7 @@ classdef optPayoff < assetPath
          end
          
           whamericanput = strcmp(obj.payoffParam.optType,'american') ...
-             & strcmp(obj.payoffParam.putCallType,'put'); %american call
+             & strcmp(obj.payoffParam.putCallType,'put'); %american put
           
           if any(whamericanput)
               basis= @(x) repmat(exp(-x/2),1,3).*[ones(length(x),1) 1-x 1-2*x+x.*x/2];
@@ -209,7 +209,8 @@ classdef optPayoff < assetPath
                 .*repmat(exp(-obj.assetParam.interest ...
                   .* obj.timeDim.timeVector),nPaths,1); %discounted payoff at each time
               cashflow = putpayoff(:,ntimeDim);
-              extime = repmat(ntimeDim,nPaths,1);
+%              extime = repmat(ntimeDim,nPaths,1);
+              more.exbound = [zeros(1, ntimeDim) obj.payoffParam.strike]; %initialize excercise boundary
               for i = ntimeDim-1:-1:1 
                   inmoney = find(paths(:,i)<obj.payoffParam.strike);
                   if ~isempty(inmoney)
@@ -218,7 +219,8 @@ classdef optPayoff < assetPath
                       shouldex=inmoney(putpayoff(inmoney,i)>hold); %which paths should be excercised now
                       if ~isempty(shouldex); %some paths should be exercise
                           cashflow(shouldex)=putpayoff(shouldex,i); %updated cashflow
-                          extime(shouldex)=i; %update
+%                          extime(shouldex)=i; %update
+                          more.exbound(i+1)=max(paths(shouldex,i)); 
                       end
                   end
               end
@@ -227,8 +229,9 @@ classdef optPayoff < assetPath
                   putpayoff0 = obj.payoffParam.strike - obj.assetParam.initPrice; 
                   if putpayoff0 > hold %should excercise all paths initially
                      cashflow(:) = putpayoff0;
-                     extime(:) = 0;
+%                     extime(:) = 0;
                   end
+                  more.exbound(1) = obj.payoffParam.strike - hold; %exercise boundary at initial time
               end
     
               tempPay(:,whamericanput)=cashflow;
@@ -427,29 +430,63 @@ classdef optPayoff < assetPath
       end
       
       function varargout = plot(obj,varargin)
-         assert(strcmp(obj.inputType,'n'), ...
-            'plot requires inputType to be ''n''')
-         if numel(varargin)
-            nPayoffs = varargin{1};
+         offset = 1;
+         if strcmp(varargin{1},'paths')
+            % Plot the asset paths along with the strike and 
+            % the exercise boundary for American put options
+            offset = offset + 1;
+            h = plot@stochProcess(obj,varargin{offset:end});
+            h1 = [];
+            h1leg = {};
+            if isfinite(obj.payoffParam.strike)
+               hold on
+               h1 = plot([obj.timeDim.initTime obj.timeDim.endTime], ...
+                  obj.payoffParam.strike*[1 1], 'k--', 'linewidth',6);
+               h1leg = {'Strike'};
+            end
+            if strcmp(obj.payoffParam.optType{1},'american')
+               hold on
+               [~, more] = genOptPayoffs(obj,1e5);
+               h1 = [h1; plot([obj.timeDim.initTime obj.timeDim.timeVector], ...
+                  more.exbound, 'b--', 'linewidth', 6)];
+               h1leg = [h1leg {'Exercise Boundary'}];
+            end
+            legend(h1,h1leg,'location','northwest')
+            legend boxoff
+            if nargout
+               varargout{1} = h;
+               varargout{2} = h1;
+            end
          else
-            nPayoffs = obj.defaultNPayoffs; %default 
+            % Plot the empirical distribution function of the discounted
+            % option payoffs
+            if strcmp(varargin{1},'payoffs')
+               offset = offset + 1;
+            end
+            assert(strcmp(obj.inputType,'n'), ...
+               'plot requires inputType to be ''n''')
+            if numel(varargin{offset:end})
+               nPayoffs = varargin{offset};
+            else
+               nPayoffs = obj.defaultNPayoffs; %default 
+            end
+            payoffs = genOptPayoffs(obj,nPayoffs);
+            probs = (1/(2*nPayoffs)):(1/nPayoffs):(1 - 1/(2*nPayoffs));
+            h = plot(sort(payoffs),probs,'-');
+            if numel(varargin) > 1
+               set(h,varargin{2:end});
+            else
+               set(h,obj.defaultSpecs{:});
+            end
+            set(gca,'fontsize',20)
+            if nargout
+               varargout{1}=h;
+            end
+            xlabel('payoff')
+            ylabel('probability')
          end
-         payoffs = genOptPayoffs(obj,nPayoffs);
-         probs = (1/(2*nPayoffs)):(1/nPayoffs):(1 - 1/(2*nPayoffs));
-         h = plot(sort(payoffs),probs,'-');
-         if numel(varargin) > 1
-            set(h,varargin{2:end});
-         else
-            set(h,obj.defaultSpecs{:});
-         end
-         set(gca,'fontsize',20)
-         if nargout
-            varargout{1}=h;
-         end
-         xlabel('payoff')
-         ylabel('probability')
       end
-       
+
    end
     
    methods (Access = protected)

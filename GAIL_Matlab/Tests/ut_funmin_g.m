@@ -178,6 +178,12 @@ classdef ut_funmin_g < matlab.unittest.TestCase
             testCase.verifyLessThanOrEqual(result.intervals(2),exactsolu1(2));
         end
         
+        function funmin_gEXM8(testCase)
+            z = 1;
+            f = @(x) 1./((x-z).^2); % discontinuous function
+            testCase.verifyError(@()funmin_g(f),'GAIL:funmin_g:yInf');      
+        end
+        
     end
 end
 
