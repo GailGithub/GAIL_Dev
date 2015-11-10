@@ -132,7 +132,7 @@ npointsratio(1:max_idx_n) = 1.0 ./npointsratio(1:max_idx_n);
 if usejava('jvm') || MATLABVERSION <= 7.12
     figure
     plot(x,y1,'g--+',x,y2,'b--x',x,y3,'m--o')
-    legend('Quadratic','Perodic','Peaky')
+    legend('Quadratic','Oscillatory','Peaky')
     gail.save_eps('WorkoutFunappxOutput', 'testfun');
     
     figure

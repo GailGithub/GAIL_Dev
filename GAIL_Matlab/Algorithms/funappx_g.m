@@ -304,6 +304,12 @@ while(max(err) > abstol)
             'exceed the cost budget. The answer may be unreliable.'])
         break;
     end;
+    if(iter==out_param.maxiter)
+        out_param.exit(2) = 1;
+        warning('GAIL:funappx_g:exceediter',['Number of iterations has'...
+            'reached maximum number of iterations.'])
+        break;
+    end;
     %if max(err) > abstol;
     if counterr >= 1;
         %flag sub interval error not satisfy error tolerance 1 in whbad
@@ -394,12 +400,6 @@ while(max(err) > abstol)
         %upadte index w.p.t x after splitting
         index = 1:(ninit-1):length(err)*(ninit-1)+1;
     else
-        break;
-    end;
-    if(iter==out_param.maxiter)
-        out_param.exit(2) = 1;
-        warning('GAIL:funappx_g:exceediter',['Number of iterations has'...
-            'reached maximum number of iterations.'])
         break;
     end;
 end;
