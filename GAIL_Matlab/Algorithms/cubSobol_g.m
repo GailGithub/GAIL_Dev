@@ -244,25 +244,6 @@ r_lag = 4; %distance between coefficients summed and those computed
 l_star = out_param.mmin - r_lag; % Minimum gathering of points for the sums of DFWT
 omg_circ = @(m) 2.^(-m);
 omg_hat = @(m) out_param.fudge(m)/((1+out_param.fudge(r_lag))*omg_circ(r_lag));
-g = out_param.cv.g;% get control variate function
-
-if strcmp(out_param.measure,'normal')
-   f = @(x) f(gail.stdnorminv(x));
-   if cv == 1
-	   g = @(x) out_param.cv.g(gail.stdnorminv(x));
-   elseif cv > 1
-	   g = @(x) cellfun(@(c) c(gail.stdnorminv(x)), g, 'UniformOutput', false);
-   end
-elseif strcmp(out_param.measure,'uniform')
-   Cnorm = prod(hyperbox(2,:)-hyperbox(1,:));
-   tran = @(x) (bsxfun(@plus,hyperbox(1,:),bsxfun(@times,(hyperbox(2,:)-hyperbox(1,:)),x)));% a + (b-a)x = u
-   f = @(x) Cnorm*f(tran(x)); % a + (b-a)x = u
-   if cv == 1 
-	   g = @(x) Cnorm*g(tran(x)); % a + (b-a)x = u
-   elseif cv > 1 
-	   g = @(x) cellfun(@(c) c(tran(x)), g, 'UniformOutput', false);
-   end   
-end
 
 %% Main algorithm
 sobstr=sobolset(out_param.d); %generate a Sobol' sequence
@@ -274,19 +255,49 @@ errest=zeros(out_param.mmax-out_param.mmin+1,1); %initialize error estimates
 appxinteg=zeros(out_param.mmax-out_param.mmin+1,1); %initialize approximations to integral
 exit_len = 2;
 out_param.exit=false(1,exit_len); %we start the algorithm with all warning flags down
-dimg = max(size(out_param.cv.g)); % get the number of control variates
+
+% if f is in optPayoff format, redefine funtion as the following
+if strcmp(cv.format, 'optPayoff')
+	fopt = optPayoff(f);
+	f =@(x) genOptPayoffs(fopt, x);
+end
+
+if strcmp(out_param.measure,'normal')
+   if strcmp(cv.format, 'cellfunc') 
+	   f = @(x) cellfun(@(c) c(gail.stdnorminv(x)), f, 'UniformOutput', false);
+   else 
+	   f = @(x) f(gail.stdnorminv(x));
+   end
+elseif strcmp(out_param.measure,'uniform')
+   Cnorm = prod(hyperbox(2,:)-hyperbox(1,:));
+   tran = @(x) (bsxfun(@plus,hyperbox(1,:),bsxfun(@times,(hyperbox(2,:)-hyperbox(1,:)),x)));% a + (b-a)x = u
+   if strcmp(cv.format, 'cellfunc') 
+	   f = @(x) cellfun(@(c) c(tran(x)), f, 'UniformOutput', false);
+   else 
+	   f = @(x) Cnorm*f(tran(x)); % a + (b-a)x = u
+   end   
+end
+
 
 %% Initial points and FWT
 out_param.n=2^out_param.mmin; %total number of points to start with
 n0=out_param.n; %initial number of points
 xpts=sobstr(1:n0,1:out_param.d); %grab Sobol' points
-y = f(xpts); %evaluate integrand
-yval=y;
-if cv > 1 
-	yg = cell2mat(g(xpts)) - repmat(out_param.cv.Ig, n0,1); yvalg=yg;
-elseif cv == 1 
-	yg = g(xpts)-out_param.cv.Ig; yvalg=yg;
-end %evaluate control variate
+
+% evaluate integrand
+if strcmp(cv.format, 'cellfunc') % control variates in cell function format 
+	temp = cell2mat(f(xpts));
+	y = temp(:,1); yval = y;  
+	yg = temp(:,2:end); yvalg = yg;
+elseif strcmp(cv.format, 'optPayoff')&& cv.J % control variates in optPayoff format
+	temp = f(xpts);
+	y = temp(:,1); yval = y;
+	mu = fopt.exactPrice; mu=mu(2:end);
+	yg = temp(:,2:end)- repmat(mu, n0, 1); yvalg = yg;
+else % no control variates
+	y = f(xpts); yval = y;
+end 
+
 
 
 %% Compute initial FWT
@@ -298,11 +309,11 @@ for l=0:out_param.mmin-1
    oddval=y(~ptind);
    y(ptind)=(evenval+oddval)/2;
    y(~ptind)=(evenval-oddval)/2;
-   if cv
-       evenval=yg(ptind, (1:cv));
-       oddval=yg(~ptind, (1:cv));
-       yg(ptind, (1:cv))=(evenval+oddval)/2;
-       yg(~ptind, (1:cv))=(evenval-oddval)/2;
+   if cv.J
+       evenval=yg(ptind, (1:cv.J));
+       oddval=yg(~ptind, (1:cv.J));
+       yg(ptind, (1:cv.J))=(evenval+oddval)/2;
+       yg(~ptind, (1:cv.J))=(evenval-oddval)/2;
    end
 end
 %y now contains the FWT coefficients
@@ -323,18 +334,15 @@ for l=out_param.mmin-1:-1:1
    end
 end
 
-%% If control variates, find optimal beta
-if cv  
-    X = yg(kappanumap(end/2+1:end), (1:cv));
+%% If using control variates, find optimal beta
+if cv.J  
+    X = yg(kappanumap(end/2+1:end), (1:cv.J));
     Y = y(kappanumap(end/2+1:end));
     beta = X \ Y;  
     out_param.beta = beta;
     % We update the integrand and values
     y = y-yg*beta;
     yval = yval-yvalg*beta;
-    if cv == 1 
-	    f = @(x) f(x)-(g(x)-out_param.cv.Ig)*beta;
-    end
 end
 
 
@@ -392,12 +400,17 @@ for m=out_param.mmin+1:out_param.mmax
    nnext=2^mnext;
    xnext=sobstr(n0+(1:nnext),1:out_param.d); 
    n0=n0+nnext;
-   if cv > 1% multi C.V.s
-	   ygnext = cell2mat(g(xnext))- repmat(out_param.cv.Ig, nnext,1);  
-	   ynext = f(xnext) - ygnext*beta;
+   if strcmp(cv.format, 'cellfunc') % control variates in cell function format  
+	   temp = cell2mat(f(xnext)) ;  
+	   ynext = temp(:,1) - temp(:,2:end)*beta;
 	   yval = [yval; ynext];
-   else
-	   ynext=f(xnext);
+   elseif strcmp(cv.format, 'optPayoff') && cv.J % contrl variates in optPayoff format
+	   temp = f(xnext);
+	   ynext = temp(:,1) - (temp(:,2:end)-repmat(mu,nnext,1))*beta;
+	   yval = [yval; ynext];
+   else % no control variates
+	   temp = f(xnext);
+	   ynext = temp(:,1);
 	   yval=[yval; ynext]; %#ok<*AGROW>
    end
 
@@ -509,8 +522,7 @@ default.mmax  = 24;
 default.fudge = @(m) 5*2.^-m;
 default.toltype  = 'max';
 default.theta  = 1;
-default.cv.Ig = 0;
-default.cv.g = @(x) zeros(size(x,1));
+validcv = @(x) gail.isfcn(x) || iscell(x) || isa(x, 'optPayoff');% 3 formats of f
 
 if numel(varargin)<2
     help cubSobol_g
@@ -521,9 +533,9 @@ if numel(varargin)<2
     hyperbox = default.hyperbox;
 else
     f = varargin{1};
-    if ~gail.isfcn(f)
+    if ~validcv(f)
         warning('GAIL:cubSobol_g:fnotfcn',...
-            'The given input f was not a function. Example for f(x)=x^2:')
+            'The given input f should be a function, cellfunction or optPayoff class.' )
         f = @(x) x.^2;
         out_param.f=f;
         hyperbox = default.hyperbox;
@@ -569,10 +581,9 @@ if ~validvarargin
     out_param.fudge = default.fudge;
     out_param.toltype = default.toltype;
     out_param.theta = default.theta;
-    out_param.cv = default.cv;
 else
     p = inputParser;
-    addRequired(p,'f',@gail.isfcn);
+    addRequired(p,'f', validcv);
     addRequired(p,'hyperbox',@isnumeric);
     if isnumeric(in3) || ischar(in3)
         addOptional(p,'measure',default.measure,...
@@ -585,7 +596,6 @@ else
         addOptional(p,'toltype',default.toltype,...
             @(x) any(validatestring(x, {'max','comb'})));
         addOptional(p,'theta',default.theta,@isnumeric);
-        addOptional(p,'cv',default.cv,@isstruct);
     else
         if isstruct(in3) %parse input structure
             p.StructExpand = true;
@@ -601,7 +611,6 @@ else
         f_addParamVal(p,'toltype',default.toltype,...
             @(x) any(validatestring(x, {'max','comb'})));
         f_addParamVal(p,'theta',default.theta,@isnumeric);
-        f_addParamVal(p,'cv',default.cv,@isstruct);
     end
     parse(p,f,hyperbox,varargin{3:end})
     out_param = p.Results;
@@ -609,20 +618,15 @@ end
 
 out_param.d = size(hyperbox,2);
 
-if iscell(out_param.cv.g) % multiply control variates, 
-       cv = max(size(out_param.cv.g));	% cv= number of c.v.s
+% get the number of control variates and its format 
+if iscell(f) % c.v.s in cell function format 
+	cv.J = max(size(f))-1; cv.format = 'cellfunc';	
+elseif isa(f, 'optPayoff') % c.v.s in optPayoff format
+	cv.J = numel(f.payoffParam.optType)-1;
+	cv.format = 'optPayoff';
 else
-    if (size(func2str(out_param.cv.g),2) == size(func2str(default.cv.g),2))
-	    if (all(func2str(out_param.cv.g) == func2str(default.cv.g)))
-		    cv = 0; % no control variates if we have default cv
-            else
-		    cv = 1;
-            end
-    else
-	    cv = 1;
-    end
+	cv.J = 0; cv.format = 'noCV';
 end
-
 
 
 fdgyes = 0; % We store how many functions are in varargin. There can only
