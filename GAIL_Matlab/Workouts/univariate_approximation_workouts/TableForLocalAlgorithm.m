@@ -11,28 +11,28 @@ tt = 0:0.0000001:1;
 figure;
 subplot(2,1,1);
 plot(t,g(t));
-title('test function g(x)')
+%title('test function g(x)')
 subplot(2,1,2);
 plot(t,abs(gdoubleprime(t)));
-title('|g"(x)|')
+%title('|g"(x)|')
 ylim([-1,11]);
 gail.save_eps('WorkoutFunappxOutput', 'testfunctiong');
 figure;
 subplot(2,1,1);
 plot(t,p1(t));
-title('test function p1(x)')
+%title('test function p_1(x)')
 subplot(2,1,2);
 plot(t,abs(p1doubleprime(t)));
-title('|p1"(x)|')
+%title('|p_1"(x)|')
 ylim([0,3]);
 gail.save_eps('WorkoutFunappxOutput', 'testp1');
 figure(2);
 subplot(2,1,1);
 plot(t,p2(t));
-title('test function p2(x)')
+%title('test function p_2(x)')
 subplot(2,1,2);
 plot(t,abs(p2doubleprime(t)));
-title('|p2"(x)|')
+%title('|p_2"(x)|')
 ylim([0,11]);
 gail.save_eps('WorkoutFunappxOutput', 'testp2');
 lmax=5;
