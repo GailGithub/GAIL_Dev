@@ -17,7 +17,7 @@ poserr = abs(fappx(t)-f(t));
 negerr = abs(f2appx(t)-f2(t));
 figure(2)
 subplot(2,1,1)
-semilogy(t,poserr)
+semilogy(t,poserr,'b-',t,ones(size(t))*abstol,'r--')
 subplot(2,1,2);
-semilogy(t,negerr);
+semilogy(t,negerr,'b-',t,ones(size(t))*abstol,'r--');
 gail.save_eps('WorkoutFunappxOutput', 'NewFunAppxBatman2');
