@@ -306,7 +306,7 @@ while(max(err) > abstol)
     end;
     if(iter==out_param.maxiter)
         out_param.exit(2) = 1;
-        warning('GAIL:funappx_g:exceediter',['Number of iterations has'...
+        warning('GAIL:funappx_g:exceediter',['Number of iterations has '...
             'reached maximum number of iterations.'])
         break;
     end;
