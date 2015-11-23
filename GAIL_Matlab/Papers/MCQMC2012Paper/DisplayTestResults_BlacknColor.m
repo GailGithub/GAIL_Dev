@@ -18,7 +18,7 @@ for i = 1:length(NumericalExample)
                 % this MAT file is to plot figure 3&4 in paper
             else
                 warning(['TestcubMCon-gaussian-uniform-Out-17-Aug-2012_13.12.36N500d1tol0.001.mat does not exist. '...
-                    'need to call function RunTestcubMConGaussiand1 to produce the MAT file.'])
+                    'Need to call function RunTestcubMConGaussiand1 to produce the MAT file.'])
                 [res,test,fun,param] = RunTestcubMConGaussiand1;
             end
         case 'ex2'
@@ -27,7 +27,7 @@ for i = 1:length(NumericalExample)
                 % this MAT file is to plot figure 5 in paper
             else
                 warning(['TestcubMCon-gaussian-uniform-Out-17-Aug-2012_17.46.40N500d6tol0.001.mat does not exist. '...
-                    'need to call function RunTestcubMConGaussian to produce the MAT file.'])
+                    'Need to call function RunTestcubMConGaussian to produce the MAT file.'])
                 [res,test,fun,param] = RunTestcubMConGaussian;
             end
         case 'ex3'
@@ -36,7 +36,7 @@ for i = 1:length(NumericalExample)
            % this MAT file is to plot figure 6 in paper
             else
                 warning(['TestcubMCon-geomean-Out-17-Aug-2012_20.38.24N500d1tol0.05.mat does not exist. '...
-                    'need to call function RunTestcubMConGeoAsianCall to produce the MAT file.'])
+                    'Need to call function RunTestcubMConGeoAsianCall to produce the MAT file.'])
                 [res,test,fun,param] = RunTestcubMConGeoAsianCall;
             end
             
