@@ -300,7 +300,7 @@ while(max(err) > abstol)
     counterr = sum(err > abstol);
     if(length(x) + counterr *(ninit -1) > out_param.nmax)
         out_param.exit(1) = 1;
-        warning('GAIL:funappx_g:exceedbudget',['funappx_g attempted to',...
+        warning('GAIL:funappx_g:exceedbudget',['funappx_g attempted to ',...
             'exceed the cost budget. The answer may be unreliable.'])
         break;
     end;
@@ -504,7 +504,7 @@ end;
 
 % let end point of interval not be infinity
 if (out_param.a == inf||out_param.a == -inf)
-    warning('GAIL:funappx_g:aisinf',['a cannot be infinity.'...
+    warning('GAIL:funappx_g:aisinf',['a cannot be infinity. '...
         'Use default a = ' num2str(default.a)])
     out_param.a = default.a;
 end;
@@ -521,7 +521,7 @@ if (out_param.b < out_param.a)
     out_param.b = out_param.a;
     out_param.a = tmp;
 elseif(out_param.b == out_param.a)
-    warning('GAIL:funappx_g:beqa',['b cannot equal a.'...
+    warning('GAIL:funappx_g:beqa',['b cannot equal a. '...
         'Use b = ' num2str(out_param.a+1)])
     out_param.b = out_param.a+1;
 end;
