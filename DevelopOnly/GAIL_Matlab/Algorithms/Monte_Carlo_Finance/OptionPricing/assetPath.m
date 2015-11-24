@@ -119,8 +119,8 @@ classdef assetPath < brownianMotion
            end
          end
          if isfield(val,'corrMat') %data for A
-            validateattributes(val.corrMat,{'numeric'}, ...
-               {'nonnegative'})
+            validateattributes(val.corrMat,{'numeric'})
+            validateattributes(eig(val.corrMat),{'nonnegative'})
             obj.assetParam.corrMat=val.corrMat; %row
          end
          if isfield(val,'drift') %data for type of option
