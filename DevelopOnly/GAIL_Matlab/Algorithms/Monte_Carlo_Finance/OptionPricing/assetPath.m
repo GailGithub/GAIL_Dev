@@ -1,5 +1,4 @@
 classdef assetPath < brownianMotion
-
 %% assetPath
 % is a class of discretized stochastic processes that model the values of
 % an asset with respect to time. Browniam motions are used to build these
@@ -39,7 +38,10 @@ classdef assetPath < brownianMotion
          'volatility', 0.5,... %volatility      
          'drift', 0,... %drift
          'nAsset', 1,... %number of assets 
-         'corrMat', 1) %A transpose     
+         'corrMat', 1,...%A transpose  
+         'sigskew',0,... %a_sigma for varying volatility model
+         'sigsmile',0)%b_sigma for varying volatility model
+     
    end
    
    properties (Constant, Hidden) %do not change & not seen
@@ -128,6 +130,16 @@ classdef assetPath < brownianMotion
                {'scalar'})
             obj.assetParam.drift=val.drift; %row
          end
+         if isfield(val,'sigskew') %data for type of option
+            validateattributes(val.sigskew,{'numeric'}, ...
+               {'scalar'})
+            obj.assetParam.sigskew=val.sigskew;
+         end
+         if isfield(val,'sigsmile') %data for type of option
+            validateattributes(val.sigsmile,{'numeric'}, ...
+               {'scalar'})
+            obj.assetParam.sigsmile=val.sigsmile; %row
+         end
       end
       
       % Generate square root of correlation matrix
@@ -135,12 +147,41 @@ classdef assetPath < brownianMotion
           [U,S] = svd(obj.assetParam.corrMat);
           val = sqrt(S)*U';
        end
-      
+       % Describe the volatility
+      function val = genVols(obj,S,Vol)
+          rate = S/obj.payoffParam.strike;
+          val = ...
+              Vol+...
+              obj.assetParam.sigskew*(rate-1)+...
+              obj.assetParam.sigsmile*(rate-1).^2;
+      end
       % Generate asset paths
       function [paths]=genPaths(obj,val)
-         bmpaths = genPaths@brownianMotion(obj,val);
-         nPaths = size(bmpaths,1);
-         if strcmp(obj.assetParam.pathType,'GBM')
+        bmpaths = genPaths@brownianMotion(obj,val);
+        nPaths = size(bmpaths,1);
+        if strcmp(obj.assetParam.pathType,'GBM')
+          if(obj.assetParam.sigsmile~=0 || obj.assetParam.sigskew~=0)
+            tempc=zeros(nPaths,obj.timeDim.nSteps);
+            paths=zeros(nPaths,obj.timeDim.nCols);
+            for idx=1:obj.assetParam.nAsset
+              for j=1:obj.timeDim.nSteps
+                 tempc(:,j)=bmpaths(:,j:obj.timeDim.nSteps:obj.timeDim.nCols) ...
+                    * obj.sqCorr(:,idx);
+              end
+              volatility = genVols(obj,obj.assetParam.initPrice(idx),obj.assetParam.volatility(idx));
+              paths(:,(idx-1)*obj.timeDim.nSteps+1) = obj.assetParam.initPrice(idx) * ...
+                    exp((obj.assetParam.interest-0.5*volatility.^2)*...
+                    (obj.timeDim.timeVector(1)-0)+...
+                    volatility*(tempc(:,1)-0));
+              for i = 2:obj.timeDim.nSteps
+                  volatility = genVols(obj,paths(:,(idx-1)*obj.timeDim.nSteps+i-1),obj.assetParam.volatility(idx));
+                  paths(:,(idx-1)*obj.timeDim.nSteps+i) = paths(:,(idx-1)*obj.timeDim.nSteps+i-1).* ...
+                    exp((obj.assetParam.interest-0.5*volatility.^2)*...
+                    (obj.timeDim.timeVector(i)-obj.timeDim.timeVector(i-1))+...
+                    volatility.*(tempc(:,i)-tempc(:,i-1)));
+              end
+            end
+          else
             tempc=zeros(nPaths,obj.timeDim.nSteps);
             paths=zeros(nPaths,obj.timeDim.nCols);
             for idx=1:obj.assetParam.nAsset
@@ -155,14 +196,13 @@ classdef assetPath < brownianMotion
                  - obj.assetParam.volatility(idx).^2/2) ...
                  .* obj.timeDim.timeVector, obj.assetParam.volatility(idx)...
                  .* tempc));
-             end
+            end
+          end
          end
       end
-                 
    end
 
    methods (Access = protected)
-
       function propList = getPropertyList(obj)
          propList = getPropertyList@brownianMotion(obj);
          propList.assetParam_pathType = obj.assetParam.pathType;
@@ -173,6 +213,8 @@ classdef assetPath < brownianMotion
             propList.assetParam_drift = obj.assetParam.drift;
          end
          propList.assetParam_nAsset = obj.assetParam.nAsset;
+         propList.assetParam_sigskew = obj.assetParam.sigskew;
+         propList.assetParam_sigsmile = obj.assetParam.sigsmile;
       end
 
    end
