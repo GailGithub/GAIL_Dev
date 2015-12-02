@@ -256,26 +256,24 @@ appxinteg=zeros(out_param.mmax-out_param.mmin+1,1); %initialize approximations t
 exit_len = 2;
 out_param.exit=false(1,exit_len); %we start the algorithm with all warning flags down
 
-% if f is in optPayoff format, redefine funtion as the following
-if strcmp(cv.format, 'optPayoff')
-	fopt = optPayoff(f);
-	f =@(x) genOptPayoffs(fopt, x);
+if cv.J % if using control variates(f is structure), redefine f
+	mu = f.cv; f = f.func;
 end
 
-if strcmp(out_param.measure,'normal')
-   if strcmp(cv.format, 'cellfunc') 
-	   f = @(x) cellfun(@(c) c(gail.stdnorminv(x)), f, 'UniformOutput', false);
-   else 
-	   f = @(x) f(gail.stdnorminv(x));
-   end
-elseif strcmp(out_param.measure,'uniform')
+if strcmp(out_param.measure,'uniform')
    Cnorm = prod(hyperbox(2,:)-hyperbox(1,:));
-   tran = @(x) (bsxfun(@plus,hyperbox(1,:),bsxfun(@times,(hyperbox(2,:)-hyperbox(1,:)),x)));% a + (b-a)x = u
+   tran = @(x) bsxfun(@plus,hyperbox(1,:),bsxfun(@times,(hyperbox(2,:)-hyperbox(1,:)),x));% a + (b-a)x = u
    if strcmp(cv.format, 'cellfunc') 
 	   f = @(x) cellfun(@(c) c(tran(x)), f, 'UniformOutput', false);
    else 
 	   f = @(x) Cnorm*f(tran(x)); % a + (b-a)x = u
    end   
+elseif strcmp(out_param.measure,'normal')
+   if strcmp(cv.format, 'cellfunc') 
+	   f = @(x) cellfun(@(c) c(gail.stdnorminv(x)), f, 'UniformOutput', false);
+   else 
+	   f = @(x) f(gail.stdnorminv(x));
+   end
 end
 
 
@@ -285,20 +283,17 @@ n0=out_param.n; %initial number of points
 xpts=sobstr(1:n0,1:out_param.d); %grab Sobol' points
 
 % evaluate integrand
-if strcmp(cv.format, 'cellfunc') % control variates in cell function format 
+if cv.J==0 % no control variates
+	y = f(xpts); yval = y;
+elseif strcmp(cv.format, 'cellfunc') % control variates in cell function format 
 	temp = cell2mat(f(xpts));
 	y = temp(:,1); yval = y;  
-	yg = temp(:,2:end); yvalg = yg;
+	yg = temp(:,2:end)-repmat(mu, n0,1); yvalg = yg;
 elseif strcmp(cv.format, 'optPayoff')&& cv.J % control variates in optPayoff format
 	temp = f(xpts);
 	y = temp(:,1); yval = y;
-	mu = fopt.exactPrice; mu=mu(2:end);
-	yg = temp(:,2:end)- repmat(mu, n0, 1); yvalg = yg;
-else % no control variates
-	y = f(xpts); yval = y;
+	yg = temp(:,2:end)-repmat(mu, n0,1); yvalg = yg;
 end 
-
-
 
 %% Compute initial FWT
 for l=0:out_param.mmin-1
@@ -344,8 +339,6 @@ if cv.J
     y = y-yg*beta;
     yval = yval-yvalg*beta;
 end
-
-
 
 %% Compute Stilde
 nllstart=int64(2^(out_param.mmin-r_lag-1));
@@ -400,18 +393,17 @@ for m=out_param.mmin+1:out_param.mmax
    nnext=2^mnext;
    xnext=sobstr(n0+(1:nnext),1:out_param.d); 
    n0=n0+nnext;
-   if strcmp(cv.format, 'cellfunc') % control variates in cell function format  
+   if cv.J==0
+	   ynext=f(xnext);
+	   yval=[yval; ynext]; %#ok<*AGROW>
+   elseif strcmp(cv.format, 'cellfunc') % control variates in cell function format  
 	   temp = cell2mat(f(xnext)) ;  
-	   ynext = temp(:,1) - temp(:,2:end)*beta;
+	   ynext = temp(:,1) - (temp(:,2:end)-repmat(mu,nnext,1))*beta;
 	   yval = [yval; ynext];
    elseif strcmp(cv.format, 'optPayoff') && cv.J % contrl variates in optPayoff format
 	   temp = f(xnext);
 	   ynext = temp(:,1) - (temp(:,2:end)-repmat(mu,nnext,1))*beta;
 	   yval = [yval; ynext];
-   else % no control variates
-	   temp = f(xnext);
-	   ynext = temp(:,1);
-	   yval=[yval; ynext]; %#ok<*AGROW>
    end
 
    %% Compute initial FWT on next points
@@ -522,7 +514,7 @@ default.mmax  = 24;
 default.fudge = @(m) 5*2.^-m;
 default.toltype  = 'max';
 default.theta  = 1;
-validcv = @(x) gail.isfcn(x) || iscell(x) || isa(x, 'optPayoff');% 3 formats of f
+validcv = @(x) gail.isfcn(x) || isstruct(x) ;% 2 formats of f
 
 if numel(varargin)<2
     help cubSobol_g
@@ -535,7 +527,7 @@ else
     f = varargin{1};
     if ~validcv(f)
         warning('GAIL:cubSobol_g:fnotfcn',...
-            'The given input f should be a function, cellfunction or optPayoff class.' )
+            'The given input f should be a function, or a structure in required form.' )
         f = @(x) x.^2;
         out_param.f=f;
         hyperbox = default.hyperbox;
@@ -619,13 +611,25 @@ end
 out_param.d = size(hyperbox,2);
 
 % get the number of control variates and its format 
-if iscell(f) % c.v.s in cell function format 
-	cv.J = max(size(f))-1; cv.format = 'cellfunc';	
-elseif isa(f, 'optPayoff') % c.v.s in optPayoff format
-	cv.J = numel(f.payoffParam.optType)-1;
-	cv.format = 'optPayoff';
-else
+if ~isstruct(f) %  using control variates
 	cv.J = 0; cv.format = 'noCV';
+else
+	% checking mu
+	if isnumeric(f.cv)
+		cv.J = size(f.cv,2);
+	else
+		warning('GAIL:cubSobol_g:controlvariates_error1',...
+		'f.cv should be numeric values');
+	end
+	% checking format
+	if iscell(f.func)
+		cv.format = 'cellfunc';
+	elseif strfind(func2str(f.func), 'genOptPayoffs');
+		cv.format = 'optPayoff';
+	else
+	       	warning('GAIL:cubSobol_g:controlvaraites_error2',...
+		'f.func should be cell function format or optPayoff foramt');
+	end
 end
 
 
