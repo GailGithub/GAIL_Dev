@@ -2,6 +2,7 @@
 %clear all;close all;clc
 function [ut_abserr, ut_abstol, nrep, res, out_param]=Test_meanMCBer_g
 format long e
+disp('');
 disp(horzcat(' abstol             abserr            pHat                p               n               nmax '));
 disp(        '-------------------------------------------------------------------------------------------------------');
 %nrep = 500;%in paper, we use 500 replications
