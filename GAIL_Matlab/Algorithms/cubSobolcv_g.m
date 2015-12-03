@@ -256,6 +256,7 @@ appxinteg=zeros(out_param.mmax-out_param.mmin+1,1); %initialize approximations t
 exit_len = 2;
 out_param.exit=false(1,exit_len); %we start the algorithm with all warning flags down
 
+mu=0;beta=0;
 if cv.J % if using control variates(f is structure), redefine f
 	mu = f.cv; f = f.func;
 end
@@ -288,11 +289,11 @@ if cv.J==0 % no control variates
 elseif strcmp(cv.format, 'cellfunc') % control variates in cell function format 
 	temp = cell2mat(f(xpts));
 	y = temp(:,1); yval = y;  
-	yg = temp(:,2:end)-repmat(mu, n0,1); yvalg = yg;
+	yg = temp(:,2:end); yvalg = yg;
 elseif strcmp(cv.format, 'optPayoff')&& cv.J % control variates in optPayoff format
 	temp = f(xpts);
 	y = temp(:,1); yval = y;
-	yg = temp(:,2:end)-repmat(mu, n0,1); yvalg = yg;
+	yg = temp(:,2:end); yvalg = yg;
 end 
 
 %% Compute initial FWT
@@ -360,7 +361,7 @@ if any(CStilde_low(:) > CStilde_up(:))
 end
 
 %% Approximate integral
-q=mean(yval);
+q=mean(yval)+mu*beta;
 appxinteg(1)=q;
 
 % Check the end of the algorithm
@@ -398,11 +399,11 @@ for m=out_param.mmin+1:out_param.mmax
 	   yval=[yval; ynext]; %#ok<*AGROW>
    elseif strcmp(cv.format, 'cellfunc') % control variates in cell function format  
 	   temp = cell2mat(f(xnext)) ;  
-	   ynext = temp(:,1) - (temp(:,2:end)-repmat(mu,nnext,1))*beta;
+	   ynext = temp(:,1) - temp(:,2:end)*beta;
 	   yval = [yval; ynext];
    elseif strcmp(cv.format, 'optPayoff') && cv.J % contrl variates in optPayoff format
 	   temp = f(xnext);
-	   ynext = temp(:,1) - (temp(:,2:end)-repmat(mu,nnext,1))*beta;
+	   ynext = temp(:,1) - temp(:,2:end)*beta;
 	   yval = [yval; ynext];
    end
 
@@ -464,7 +465,7 @@ for m=out_param.mmin+1:out_param.mmax
    end
 
    %% Approximate integral
-   q=mean(yval);
+   q=mean(yval)+mu*beta;
    appxinteg(meff)=q;
    
    % Check the end of the algorithm
