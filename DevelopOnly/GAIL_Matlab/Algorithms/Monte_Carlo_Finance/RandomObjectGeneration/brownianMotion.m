@@ -38,7 +38,7 @@ classdef brownianMotion < whiteNoise
    end
 
    properties (Constant, Hidden) %do not change & not seen
-      allowassembleType = {'diff','PCA'} 
+      allowassembleType = {'diff','PCA','bridge','bridgeApx'} 
    end
    
    
@@ -89,6 +89,57 @@ classdef brownianMotion < whiteNoise
              [Eigenvectors,Eigenvalues]=eig(Sigma);
              A = Eigenvectors*Eigenvalues.^(1/2);
              paths=paths*A';
+         elseif strcmp(obj.bmParam.assembleType,'bridge')
+             t = repmat([0,obj.timeDim.timeVector],val,1); %insert t0 and replicate matrix for val samples 
+             itrlmt=floor(log2(obj.timeDim.nSteps)); %set the maximum iteration 
+             for idx=1:obj.timeDim.dim
+                 basepaths = [zeros(val,1),...
+                     paths(:,((idx-1)*obj.timeDim.nSteps+1):idx*obj.timeDim.nSteps)]; %create basepaths for each dimemsion and insert B(0)
+                 basepaths(:,end) = sqrt(t(:,end)).*basepaths(:,end); %insert B(T) to the basepaths
+                 insertedIdx = [1,obj.timeDim.nSteps+1]; %create an array record the index of inserted time 
+                 for i = 1:itrlmt
+                     currIdx = floor((insertedIdx(1:end-1)+insertedIdx(2:end))./2); %calculate the midpoint of previous time interval to be inserted
+                     basepaths(:,currIdx )= (basepaths(:,insertedIdx(1:end-1)).*...
+                         (t(:,insertedIdx(2:end))-t(:,currIdx))+basepaths(:,insertedIdx(2:end)).*...
+                         (t(:,currIdx) - t(:,insertedIdx(1:end-1))))./(t(:,insertedIdx(2:end))-...
+                         t(:,insertedIdx(1:end-1)))+sqrt((t(:,insertedIdx(2:end))-t(:,currIdx)).*...
+                         (t(:,currIdx) - t(:,insertedIdx(1:end-1)))./(t(:,insertedIdx(2:end))-...
+                         t(:,insertedIdx(1:end-1)))).* paths(:,currIdx-1+(idx-1)*obj.timeDim.nSteps);
+                     %insert the brownian motion to the basepaths
+                     insertedIdx = sort([insertedIdx, currIdx]);
+                     %update insertedIdx with the index just added
+                 end
+                 if obj.timeDim.nSteps~=2^itrlmt %check whether all time inserted
+                    missedIdx = setdiff(1:obj.timeDim.nSteps+1,insertedIdx); %find the missing time
+                    basepaths(:,missedIdx) = (basepaths(:,missedIdx-1).*...
+                         (t(:,missedIdx+1)-t(:,missedIdx))+basepaths(:,missedIdx+1).*...
+                         (t(:,missedIdx) - t(:,missedIdx-1)))./(t(:,missedIdx+1)-...
+                         t(:,missedIdx-1))+sqrt((t(:,missedIdx+1)-t(:,missedIdx)).*...
+                         (t(:,missedIdx) - t(:,missedIdx-1))./(t(:,missedIdx+1)-...
+                         t(:,missedIdx-1))).* paths(:,missedIdx-1+(idx-1)*obj.timeDim.nSteps);
+                    %insert the rest brownian motion
+                 end
+                 paths(:,((idx-1)*obj.timeDim.nSteps+1):idx*obj.timeDim.nSteps) = basepaths(:,2:end);
+                 % assign value of basepaths into paths according to different dimemsion
+                 % skip B(0)
+             end
+         
+         elseif strcmp(obj.bmParam.assembleType,'bridgeApx')
+             X = paths; 
+             mk = floor(log2(1:obj.timeDim.nSteps-1));
+             p = sobolset(1);
+             tkOvT = 1 - p(2:obj.timeDim.nSteps)';
+             for idx=1:obj.timeDim.dim
+                 colRange = ...
+                  ((idx-1)*obj.timeDim.nSteps+1):idx*obj.timeDim.nSteps;
+                 for t_idx=1:obj.timeDim.nSteps
+                     paths(:,t_idx+(idx-1)*obj.timeDim.nSteps) = X(:,colRange(1)).*...
+                         obj.timeDim.timeVector(t_idx)./sqrt(obj.timeDim.endTime) + ...
+                         sum( X(:,colRange(2:end)).*repmat(sqrt(obj.timeDim.endTime./...
+                         (2.^(mk+2))).*(1-min(abs((2.^(mk+1)).*(obj.timeDim.timeVector(t_idx)./...
+                         obj.timeDim.endTime-tkOvT)),1)),size(paths,1),1),2);
+                  end
+             end
          end
        end
                  
