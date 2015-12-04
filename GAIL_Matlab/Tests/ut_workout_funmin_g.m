@@ -9,6 +9,7 @@ classdef ut_workout_funmin_g < matlab.unittest.TestCase
       [tauvec,prob] = workout_ErrToleranceTest(nrep,abstol,nmax);
       succrates = prob.succnowarn + prob.succwarn;   
       testCase.verifyLessThanOrEqual(succrates,[1,1,1]);
+      testCase.verifyGreaterThanOrEqual(succrates,[0.3,0.5,0.7]);
     end
     
     function test_workout_funmin_g_XTolerance(testCase)
@@ -17,6 +18,7 @@ classdef ut_workout_funmin_g < matlab.unittest.TestCase
       [tauvec,prob] = workout_XToleranceTest(nrep,TolX,nmax);
       succrates = prob.succnowarn + prob.succwarn;   
       testCase.verifyLessThanOrEqual(succrates,[1,1,1]);
+      testCase.verifyGreaterThanOrEqual(succrates,[0.1,0.4,0.7]);
     end
     
     function test_workout_funmin_g_ErrXTolerance(testCase)
@@ -25,6 +27,7 @@ classdef ut_workout_funmin_g < matlab.unittest.TestCase
       [tauvec,prob] = workout_ErrXToleranceTest(nrep,abstol,TolX,nmax);
       succrates = prob.succnowarn + prob.succwarn;   
       testCase.verifyLessThanOrEqual(succrates,[1,1,1]);
+      testCase.verifyGreaterThanOrEqual(succrates,[0.8,0.8,0.8]);
     end
     
     function test_workout_funmin_g_TwoExtreme(testCase)
@@ -35,6 +38,7 @@ classdef ut_workout_funmin_g < matlab.unittest.TestCase
       succrates2 = prob.probfminbnd;
       testCase.verifyLessThanOrEqual(succrates1,[1,1,1]);
       testCase.verifyLessThanOrEqual(succrates2,[1,1,1]);
+      testCase.verifyGreaterThanOrEqual(succrates,[0.9,0.9,0.9]);
     end
     
   end
