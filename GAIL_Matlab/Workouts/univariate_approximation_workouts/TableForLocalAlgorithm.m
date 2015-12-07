@@ -1,4 +1,5 @@
 format compact
+LatexInterpreter
 g=@(x) (x+8.85).*(x>=0).*(x<0.1)+(9-5*(x-0.2).^2).*(x>=0.1).*(x<0.3)...
     +(-x+9.25).*(x>=0.3).*(x<=1);
 gdoubleprime=@(x) 10.*(x>=0.1).*(x<0.3);
@@ -14,8 +15,10 @@ plot(t,g(t));
 %title('test function g(x)')
 subplot(2,1,2);
 plot(t,abs(gdoubleprime(t)));
-%title('|g"(x)|')
+title('$|g''''(x)|$')
+xlabel('$|g''''(x)|$')
 ylim([-1,11]);
+return
 gail.save_eps('WorkoutFunappxOutput', 'testfunctiong');
 figure;
 subplot(2,1,1);
@@ -23,12 +26,18 @@ plot(t,p1(t));
 %title('test function p_1(x)')
 subplot(2,1,2);
 plot(t,abs(p1doubleprime(t)));
+xlabel('x','FontSize',20);
+ylabel('|p''''_1(x)|','FontSize',20)
+set(gca,'FontSize',20);
 %title('|p_1"(x)|')
 ylim([0,3]);
 gail.save_eps('WorkoutFunappxOutput', 'testp1');
 figure(2);
 subplot(2,1,1);
 plot(t,p2(t));
+xlabel('x','FontSize',20);
+ylabel('|p_1''''(x)|','FontSize',20)
+set(gca,'FontSize',20);
 %title('test function p_2(x)')
 subplot(2,1,2);
 plot(t,abs(p2doubleprime(t)));
