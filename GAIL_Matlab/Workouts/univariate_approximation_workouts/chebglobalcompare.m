@@ -1,13 +1,5 @@
-%CONEPAPER_TEST_FUNAPPX_G Generate Table 3. in Cones not ball paper Run automatic guaranteed algorithm for function approximation
-%  Generates Table 3 in the paper
-%
-%  N. Clancy, Y. Ding, C. Hamilton, F. J. Hickernell and Y. Zhang,
-%  The Cost of Deterministic, Adaptive, Automatic Algorithms:  Cones, 
-%  Not Balls, submitted for publication, arXiv.org:1303.2412 [math.NA]}, 
-%  2013.
-%
-
 %% Preliminaries
+%Need Chebfun Toolbox
 %clear all, close all
 %clearvars -except testCase
 function [succnowarn,succwarn,exactsucccheb]=chebglobalcompare(nrep,nmax,abstol)
@@ -30,6 +22,7 @@ z = rand(nrep,1).*(1-4*a)+2*a;
 x0 = z-2*a;
 x1 = z+2*a;
 tauvec = [10 100 1000]; %cone condition tau
+%tauvec = 1000;
 ntau = length(tauvec);
 ratio = 1./a;
 gnorm = 1./a;
@@ -97,7 +90,7 @@ exactsucccheb = mean(trueerrormat2 <=in_param.abstol,1);
 display(' ')
 display('        Probability    Success   Success   Failure  Failure')
 display(' tau      In Cone    No Warning  Warning No Warning Warning')
-for i=1:3
+for i=1:ntau
     display(sprintf(['%5.0f %5.2f%%->%5.2f%% %7.2f%%' ...
         '%10.2f%% %7.2f%% %7.2f%% '],...
         [tauvec(i) 100*[pini(i) pfin(i) succnowarn(i) ...
