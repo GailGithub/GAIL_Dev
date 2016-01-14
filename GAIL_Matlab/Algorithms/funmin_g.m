@@ -318,7 +318,7 @@ while n < out_param.nmax;
     errest = Un-Ln;
     % find the intervals containing minimum points
     index = find(min_index ==1 & ln < Un);
-    m = size(index,2);
+    m = size(index,2);        
     if m > 0
         delta = (n-1)^2/len^2*diff_y(index).^2-2*bn/len*(diff_y(index)./2 ...
             +y(index)-bn*len/8/(n-1)^2-Un);
@@ -330,12 +330,38 @@ while n < out_param.nmax;
         leftint = find([1 diff(index)~=1]);
         rightint = find([diff(index)~=1 1]);
         q = size(leftint,2);
-        interval = zeros(2,q);
-        interval(1,:) = ints(1,leftint);
-        interval(2,:) = ints(2,rightint);
+        ints1 = zeros(2,q);
+        ints1(1,:) = ints(1,leftint);
+        ints1(2,:) = ints(2,rightint);
     else
-        interval = zeros(2,0);
+        ints1 = zeros(2,0);
     end
+    k=size(ints1,2);
+    if y(1)==Un 
+        k=k+1;
+        ints2=zeros(2,k);
+        ints2(:,1)=[x(1),x(2)];
+        if k>1
+        ints2(:,2:end)=ints1;
+        end
+    else
+        ints2=zeros(2,k);
+        ints2=ints1;
+    end
+    if y(end)==Un,
+        k=k+1;
+        ints3=zeros(2,k);
+        ints3(:,end)=[x(end-1),x(end)];
+        if k>1
+        ints3(:,1:end-1)=ints2;
+        end
+    else
+        ints3=zeros(2,k);
+        ints3=ints2;
+    end
+    interval=zeros(2,k);
+    interval=ints3;    
+    
     volumeX = sum(interval(2,:)-interval(1,:));
     % satisfy convergence
     if errest < out_param.abstol || volumeX < out_param.TolX
