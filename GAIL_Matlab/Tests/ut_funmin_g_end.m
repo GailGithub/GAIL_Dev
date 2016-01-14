@@ -18,6 +18,17 @@ classdef ut_funmin_g_end < matlab.unittest.TestCase
             actualminima=1;
             testCase.verifyEqual(actualminima,out.intervals(2,end));
         end
+        
+        function funmin_gEXM3(testCase)
+            % minimum appears at both left and right-end point
+            f=@(x) x.*(1-x);
+            [fmin,out]=funmin_g(f);
+            actualminima1=0;
+            actualminima2=1;
+            testCase.verifyEqual(actualminima1,out.intervals(1,1));
+            testCase.verifyEqual(actualminima2,out.intervals(2,end));
+        end
+
      
     end
 end
