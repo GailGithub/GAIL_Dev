@@ -337,23 +337,23 @@ while n < out_param.nmax;
         ints1 = zeros(2,0);
     end
     k=size(ints1,2);
-    if y(1)==Un 
+    if abs(y(1)-Un)<out_param.abstol, 
         k=k+1;
         ints2=zeros(2,k);
         ints2(:,1)=[x(1),x(2)];
         if k>1
-        ints2(:,2:end)=ints1;
+          ints2(:,2:end)=ints1;
         end
     else
         ints2=zeros(2,k);
         ints2=ints1;
     end
-    if y(end)==Un,
+    if abs(y(end)-Un)<out_param.abstol,
         k=k+1;
         ints3=zeros(2,k);
         ints3(:,end)=[x(end-1),x(end)];
         if k>1
-        ints3(:,1:end-1)=ints2;
+          ints3(:,1:end-1)=ints2;
         end
     else
         ints3=zeros(2,k);
