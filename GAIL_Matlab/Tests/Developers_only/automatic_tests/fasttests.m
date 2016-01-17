@@ -96,6 +96,20 @@ else
     end
     
     try
+        Tests = matlab.unittest.TestSuite.fromClass(?ut_funmin_g_end);
+        results=run(ut_funmin_g_end)
+        if sum([results.Failed])>0
+            failed=find([results.Failed]>0);
+            for i=1:size(failed,2)
+                fprintf(fid,'%s\n',Tests(failed(i)).Name);
+            end
+        end
+    catch
+        display('Error: Test ut_funmin_g_end is wrongly coded. We skip it.')
+        fprintf(fid,'Error: Test ut_funmin_g_end is wrongly coded. We skip it.\n');
+    end
+    
+    try
         Tests = matlab.unittest.TestSuite.fromClass(?ut_meanMC_g);
         results=run(ut_meanMC_g)
         if sum([results.Failed])>0
