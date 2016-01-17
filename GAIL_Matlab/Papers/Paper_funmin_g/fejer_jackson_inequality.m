@@ -37,10 +37,10 @@ fnx = @(n,x)((1./(1:n)) * sin((1:n)' * x));
 f = @(x) fnx(m,x);
 in_param.abstol = 1e-6;
 in_param.TolX = 1e-6;
-[fmin,out_min]=funmin_g_CSC(f,0,pi,in_param); 
+[fmin,out_min]=funmin_g(f,0,pi,in_param); 
 
 g = @(x) fnx(m,x)*-1;
-[fmax,out_max]=funmin_g_CSC(g,0,pi,in_param);
+[fmax,out_max]=funmin_g(g,0,pi,in_param);
 fmax=-1*fmax;
 out_max.f = f;
 
