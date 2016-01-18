@@ -345,7 +345,6 @@ while n < out_param.nmax;
           ints2(:,2:end)=ints1;
         end
     else
-        ints2=zeros(2,k);
         ints2=ints1;
     end
     if abs(y(end)-Un)<out_param.abstol,
@@ -356,10 +355,8 @@ while n < out_param.nmax;
           ints3(:,1:end-1)=ints2;
         end
     else
-        ints3=zeros(2,k);
         ints3=ints2;
     end
-    interval=zeros(2,k);
     interval=ints3;    
     
     volumeX = sum(interval(2,:)-interval(1,:));
