@@ -55,8 +55,8 @@ classdef assetPath < brownianMotion
 
 
 %% Methods
-% The constructor for |assetPath| uses the |brownianMotion| constructor
-% and then parses the other properties. The function |genStockPaths| generates
+% The constructor for |assetPath| uses the |brownianMotion| constructor and
+% then parses the other properties. The function |genStockPaths| generates
 % the asset paths based on |whiteNoise| paths.
 
    methods
