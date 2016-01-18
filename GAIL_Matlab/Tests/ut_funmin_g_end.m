@@ -45,8 +45,7 @@ classdef ut_funmin_g_end < matlab.unittest.TestCase
             tol = 1e-7;
             Xtol = 1e-4;
             [fmin,out] = funmin_g(f,0,1,tol,Xtol,10,10,1000000);
-            fmin_true=0;
-            xmin_true=1;
+            xmin_true=0; fmin_true = f(xmin_true);
             ferror = abs(fmin - fmin_true);
             xerror = abs(mean(out.intervals) - xmin_true);
             check = ferror < tol || xerror < Xtol;
