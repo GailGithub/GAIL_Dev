@@ -59,7 +59,8 @@ classdef ut_funmin_g_end < matlab.unittest.TestCase
             xmin_true= -2; fmin_true = f(xmin_true);
             ferror = abs(fmin - fmin_true);
             xerror = abs(mean(out_param.intervals) - xmin_true);
-            check2 = ferror < tol || xerror < Xtol
+            check = ferror < tol || xerror < Xtol;
+            testCase.verifyEqual(check, true);
         end
     end
 end
