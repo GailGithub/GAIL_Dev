@@ -30,7 +30,7 @@ classdef ut_funmin_g_end < matlab.unittest.TestCase
         end
         
         function funmin_gEXM4(testCase)
-            % minimum appears at both left and right-end points
+            % minimum appears at both left- and right-end points
             f=@(x) sin(pi*x);
             [fmin,out]=funmin_g(f);
             actualminima1=0;
@@ -40,12 +40,12 @@ classdef ut_funmin_g_end < matlab.unittest.TestCase
         end
         
         function funmin_gEXM5(testCase)
-            % minimum appears at left end
+            % minimum appears at left end point
             f=@(x) -(x-1).^2+1;
             tol = 1e-7;
             Xtol = 1e-4;
             [fmin,out] = funmin_g(f,0,1,tol,Xtol,10,10,1000000);
-            xmin_true=0; 
+            xmin_true = 0; 
             fmin_true = f(xmin_true);
             ferror = abs(fmin - fmin_true);
             xerror = abs(mean(out.intervals) - xmin_true);
@@ -54,11 +54,12 @@ classdef ut_funmin_g_end < matlab.unittest.TestCase
         end
         
         function funmin_gEXM6(testCase)
+            % minimum appears at left end point
             f=@(x) -(x-0.3).^2+1; 
             tol = 1e-7;
             Xtol = 1e-4; 
             [fmin,out_param] = funmin_g(f,-2,2,tol,Xtol,10,10,1000000);
-            xmin_true= -2; 
+            xmin_true = -2; 
             fmin_true = f(xmin_true);
             ferror = abs(fmin - fmin_true);
             xerror = abs(mean(out_param.intervals) - xmin_true);
