@@ -327,8 +327,8 @@ while n < out_param.nmax;
             -len*sqrt(delta)./bn;
         ints(2,:)=x(index)+len/2/(n-1)-(n-1)*diff_y(index)./bn ...
             +len*sqrt(delta)./bn;
-        leftint = find([1 diff(index)~=1]);
-        rightint = find([diff(index)~=1 1]);
+        leftint = find([true diff(index)~=1]);
+        rightint = find([diff(index)~=1 true]);
         q = size(leftint,2);
         ints1 = zeros(2,q);
         ints1(1,:) = ints(1,leftint);
