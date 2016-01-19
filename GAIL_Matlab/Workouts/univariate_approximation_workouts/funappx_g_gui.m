@@ -147,6 +147,6 @@ delta = 0.00001;
 x=a:delta:b; 
 plot(x,f(x));
 hold off;
-gail.save_eps('WorkoutFunappxOutput', 'funappx_g_gui_CSC');
+gail.save_eps('WorkoutFunappxOutput', 'funappx_g_gui');
 
 % ---------------------------------------------------------

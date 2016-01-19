@@ -4,8 +4,8 @@ function wingo
 % Mathematics 17.3-4 (1985): 287-294.
 %
 % >> wingo
-%    check = 1 
-%    check = 1
+%    check1 = 1 
+%    check2 = 1 
 
 %% Example 1: non-covex polynomial
 f = @(x) 1.0/6 * x.^6 - 52.0 / 25 * x.^5 + 39.0 / 80 * x.^4 ...
@@ -17,7 +17,7 @@ funmin_g_demo(fmin, out_param);
 fmin_true = -29763.233; xmin_true = 10;
 ferror = abs(fmin - fmin_true);
 xerror = abs(mean(out_param.intervals) - xmin_true);
-check = ferror < tol || xerror < Xtol
+check1 = ferror < tol || xerror < Xtol
 
 %% Example 2
 f = @(x) (x-1).^10;
@@ -28,6 +28,6 @@ funmin_g_demo(fmin, out_param);
 fmin_true = 0; xmin_true = 1;
 ferror = abs(fmin - fmin_true);
 xerror = abs(mean(out_param.intervals) - xmin_true);
-check = ferror < tol || xerror < Xtol
+check2 = ferror < tol || xerror < Xtol
 
  

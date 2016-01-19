@@ -16,7 +16,7 @@ max(max(negerr),max(poserr))
 a = 0; b = 16*pi; tol = 1e-6; plotcyclone(a,b,tol);
 % Approximate a seashell in Florida
 a=-0.2; b=0.5; c=0.1; n=2; az=-150; el=10; res=128;
-funappxseashell_csc(a, b, c, n, az, el, res);
+funappxseashell(a, b, c, n, az, el, res);
 % Comparison between funappx_g and funappxglobal_g
 nrep = 100; abstol = 1e-7; nlo = 100; nhi = 1000;
 workout_funappx_g(nrep,abstol,nlo,nhi);
