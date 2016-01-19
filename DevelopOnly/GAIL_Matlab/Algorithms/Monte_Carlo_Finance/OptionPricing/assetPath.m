@@ -45,7 +45,7 @@ classdef assetPath < brownianMotion
    
    properties (Constant, Hidden) %do not change & not seen
       allowPathType = {'GBM'} 
-         %kinds of asset paths that we can generate
+         %kinds of asset paths that we can generate, more to come
    end
    
    properties (Dependent = true)
