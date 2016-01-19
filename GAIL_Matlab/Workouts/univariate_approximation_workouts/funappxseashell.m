@@ -1,4 +1,4 @@
-function funappxseashell (a, b, c, n, azimuth, elevation, res)
+function funappxseashell(a, b, c, n, azimuth, elevation, res)
 % SEASHELL draws a pretty Florida seashell, using a 3D parametric surface.
 %
 % Usage:
@@ -24,7 +24,7 @@ function funappxseashell (a, b, c, n, azimuth, elevation, res)
 %   Also try seashell ('spin') ;
 %
 % References:
-%   T. Davis & K. Sigmon, MATLAB Primer, 7th edition, CRC Press, 2005, pp. 80.
+%   T. Davis & K. Sigmon, MATLAB Primer, 8th edition, CRC Press, 2010.
 %   von Seggern, CRC Standard Curves and Surfaces, 2nd edition, CRC Press,
 %       1993, pp. 306-307.
 %
@@ -46,7 +46,7 @@ function funappxseashell (a, b, c, n, azimuth, elevation, res)
 % See also SHELLGUI, SURF, VIEW, LINSPACE, MESHGRID, SHADING, LIGHTING,
 %   LIGHTANGLE, COLORMAP, AXIS, MATERIAL, SIN, COS, PI.
 
-% Copyright 2006, Tim Davis, University of Florida
+% Copyright 2010, Tim Davis, University of Florida
 
 % use default input parameters, if not present
 if (nargin == 1 && ischar (a))
@@ -87,6 +87,7 @@ if (n <= 0)
     n = 0.1 ;
 end
 
+tic,
 % construct the res-by-res mesh
 t = linspace(0, 2*pi, res) ;
 [u,v] = meshgrid(t) ;
@@ -95,9 +96,35 @@ t = linspace(0, 2*pi, res) ;
 x = (a*(1-v/(2*pi)).*(1+cos(u)) + c) .* cos(n*v) ;
 y = (a*(1-v/(2*pi)).*(1+cos(u)) + c) .* sin(n*v) ;
 z = b*v/(2*pi) + a*(1-v/(2*pi)) .* sin(u) ;
+toc
+
+
+%% use funappx
+a1 = 0 ; b1 = 2 * pi;
+[cosappx, out1] = funappx_g( @(x) cos(x), a1, 2*b1, 1e-1, 'nhi', res);
+[sinappx, out2] = funappx_g( @(x) sin(x), a1, 2*b1, 1e-1, 'nhi', res);
+
+tic, 
+t0  = a1: b1 / (res-1) : 2*b1;
+w = cosappx(t0);
+w2 = sinappx(t0);
+%v = repmat((1/(2*pi))*t(1:res), res,1)';
+% x1 = (a*(1-v).*(repmat(1+w(1:res),res,1)) + c) .* repmat(w(1:2:end),res,1)' ;
+% y1 = (a*(1-v).*(repmat(1+w(1:res),res,1)) + c) .* repmat(w2(1:2:end),res,1)' ;
+% z1 = b*v + a*(1-v) .* repmat(w2(1:res),res,1) ;
+vv = v/(2*pi);
+x1 = bsxfun(@times,a*bsxfun(@times,1-vv,1+w(1:res))+c,w(1:2:end)');
+y1 = bsxfun(@times,a*bsxfun(@times,1-vv,1+w(1:res))+c,w2(1:2:end)');
+z1 = b*vv +a*bsxfun(@times,1-vv,w2(1:res));
+toc
+
+
+errest_cos = out1.errest
+errest_sin = out2.errest
 
 % plot the surface
-figure(1)
+% 7th Edition was surf(x,y,z,y)
+figure;
 surf(x,y,z,y)
 shading interp
 
@@ -119,24 +146,13 @@ else
     end
 end
 
-xapprox = zeros(res,res);
-yapprox = zeros(res,res);
-zapprox = zeros(res,res);
-f1 = @(x,y) (a*(1-y/(2*pi)).*(1+cos(x))+c).*cos(n*y);
-f2 = @(x,y) (a*(1-y/(2*pi)).*(1+cos(x))+c).*sin(n*y);
-f3 = @(x,y) b*y/(2*pi)+a*(1-y/(2*pi)).*sin(x);
-for i = 1:res;
-    [xfappx,~]=funappx_g(@(x) f1(x,t(i)),0,2*pi);
-    xapprox(i,:) = xfappx(t);
-    [yfappx,~]=funappx_g(@(x) f2(x,t(i)),0,2*pi);
-    yapprox(i,:) = yfappx(t);
-    [zfappx,~]=funappx_g(@(x) f3(x,t(i)),0,2*pi);
-    zapprox(i,:) = zfappx(t); 
-end;
 
-% plot the surface
+gail.save_eps('WorkoutFunappxOutput', 'seashell');
+
+% plot the surface from funappx_G
+% 7th Edition was surf(x,y,z,y)
 figure(2)
-surf(xapprox,yapprox,zapprox,yapprox)
+surf(x1,y1,z1,y1)
 shading interp
 
 axis off
@@ -147,6 +163,7 @@ lighting gouraud
 lightangle(80, -40)
 lightangle(-90, 60)
 
+
 % fix the view, or spin the seashell
 if (isfinite (azimuth))
     view([azimuth elevation])
@@ -156,37 +173,16 @@ else
         drawnow
     end
 end
-gail.save_eps('WorkoutFunappxOutput', 'Seashellsurfx');
 
+gail.save_eps('WorkoutFunappxOutput', 'funappxseashell');
+
+% plot the error
 figure(3)
-errmat =sqrt((x-xapprox).^2+(y-yapprox).^2+(z-zapprox).^2);
+errmat = sqrt((x-x1).^2+(y-y1).^2+(z-z1).^2);
 surf(x,y,z,errmat);
-colorbar;
-gail.save_eps('WorkoutFunappxOutput', 'Seashellsurfxerror');
-
-for i = 1:res;
-    [xfappx,~]=funappx_g(@(x) f1(t(i),x),0,2*pi);
-    xapprox(:,i) = xfappx(t);
-    [yfappx,~]=funappx_g(@(x) f2(t(i),x),0,2*pi);
-    yapprox(:,i) = yfappx(t);
-    [zfappx,~]=funappx_g(@(x) f3(t(i),x),0,2*pi);
-    zapprox(:,i) = zfappx(t); 
-end;
-
-% plot the surface
-figure(4)
-surf(xapprox,yapprox,zapprox,yapprox)
-shading interp
-
-axis off
 axis equal
-colormap(hsv(1024))
-material shiny
-lighting gouraud
-lightangle(80, -40)
-lightangle(-90, 60)
+colorbar;
 
-% fix the view, or spin the seashell
 if (isfinite (azimuth))
     view([azimuth elevation])
 else
@@ -195,11 +191,6 @@ else
         drawnow
     end
 end
-gail.save_eps('WorkoutFunappxOutput', 'Seashellsurfy');
 
-errmat =sqrt((x-xapprox).^2+(y-yapprox).^2+(z-zapprox).^2);
-figure(5)
-surf(x,y,z,errmat);
-colorbar;
+
 gail.save_eps('WorkoutFunappxOutput', 'Seashellsurfyerror');
-
