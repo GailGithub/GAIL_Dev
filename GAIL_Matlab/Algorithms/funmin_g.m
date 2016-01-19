@@ -337,6 +337,7 @@ while n < out_param.nmax;
         ints1 = zeros(2,0);
     end
     k=size(ints1,2);
+    % check if [a,a-h] contains minimum
     if abs(y(1)-Un)<out_param.abstol, 
         k=k+1;
         ints2=zeros(2,k);
@@ -347,6 +348,7 @@ while n < out_param.nmax;
     else
         ints2=ints1;
     end
+    % check if [b-h,b] contains minimum
     if abs(y(end)-Un)<out_param.abstol,
         k=k+1;
         ints3=zeros(2,k);
