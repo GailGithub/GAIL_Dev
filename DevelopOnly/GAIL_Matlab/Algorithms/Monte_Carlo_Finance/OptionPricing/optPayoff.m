@@ -62,7 +62,7 @@ classdef optPayoff < assetPath
    end
       
 %% Methods
-% The constructor for |assetPath| uses the |brownianMotion| constructor
+% The constructor for |optPayoff| uses the |assetPath| constructor
 % and then parses the other properties. The function |genStockPaths| generates
 % the asset paths based on |whiteNoise| paths.
  
