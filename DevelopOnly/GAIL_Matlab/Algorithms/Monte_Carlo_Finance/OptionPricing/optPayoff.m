@@ -62,9 +62,9 @@ classdef optPayoff < assetPath
    end
       
 %% Methods
-% The constructor for |optPayoff| uses the |assetPath| constructor
-% and then parses the other properties. The function |genStockPaths| generates
-% the asset paths based on |whiteNoise| paths.
+% The constructor for |optPayoff| uses the |assetPath| constructor and then
+% parses the other properties. The method |genOptPayoffs| generates option
+% payoffs based on |assetPath| paths.
  
    methods
         
