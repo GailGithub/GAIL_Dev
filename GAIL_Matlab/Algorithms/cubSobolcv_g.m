@@ -1,4 +1,4 @@
-function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
+function [q,out_param,y,kappanumap] = cubSobolcv_g(varargin)
 %CUBSOBOL_G Quasi-Monte Carlo method using Sobol' cubature over the
 %d-dimensional region to integrate within a specified generalized error
 %tolerance with guarantees under Walsh-Fourier coefficients cone decay
@@ -39,6 +39,10 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 %     f --- the integrand whose input should be a matrix n x d where n is
 %     the number of data points and d the dimension, which cannot be
 %     greater than 1111. By default f is f=@ x.^2.
+%     If using control variates, then f should have the function and corresponding 
+%     exact integration value of control variates.In this case, f should be defined as
+%     structure datatype, for details please see examples/demo.
+%     By default, control variates is not used.
 %
 %     hyperbox --- the integration region defined by its bounds. It must be
 %     a 2 x d matrix, where the first row corresponds to the lower limits 
