@@ -146,7 +146,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %          npoints: 36865
 %           errest: 4.5329e-***8
 %                x: [1x36865 double]
-%            bytes: 3203626
+%            bytes: 3793714
 %
 %
 %   Example 2:
@@ -171,7 +171,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %          npoints: 9217
 %           errest: 7.2526e-***7
 %                x: [1x9217 double] 
-%            bytes: 803970
+%            bytes: 951690
 %
 %
 %   Example 3:
@@ -197,7 +197,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %          npoints: 19457
 %           errest: 9.9555e-***7
 %                x: [1x19457 double] 
-%            bytes: 1690074
+%            bytes: 2001634
 %
 %
 %   See also INTERP1, GRIDDEDINTERPOLANT, INTEGRAL_G, MEANMC_G, FUNMIN_G
@@ -408,14 +408,14 @@ out_param.npoints = index(end);
 out_param.errest = max(err);
 out_param.nstar = nstar;
 out_param.x = x;
-w = whos;
-out_param.bytes = sum([w.bytes]);
 if MATLABVERSION >= 8.3
     fappx = griddedInterpolant(x,y,'linear');
 else
     pp = interp1(x,y,'linear','pp');
     fappx =@(x) ppval(pp,x);    
 end;
+w = whos;
+out_param.bytes = sum([w.bytes]);
 
 function [f, out_param] = funappx_g_param(varargin)
 % parse the input to the funappx_g function
