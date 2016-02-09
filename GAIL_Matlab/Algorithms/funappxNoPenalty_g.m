@@ -139,14 +139,14 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %              nhi: 20
 %              nlo: 10
 %             nmax: 10000000
-%            nstar: [1x1024 double]            
+%            nstar: 18            
 %            ninit: 37
 %             exit: [2x1 logical]
-%             iter: 11 
-%          npoints: 36865
-%           errest: 4.5329e-***8
-%                x: [1x36865 double]
-%            bytes: 3203626
+%             iter: 9 
+%          npoints: 9217
+%           errest: ***.***e-***8
+%                x: [1x9217 double]
+%            bytes: 1137570
 %
 %
 %   Example 2:
@@ -164,14 +164,14 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %              nhi: 20
 %              nlo: 10
 %             nmax: 10000000
-%            nstar: [1x256 double]
+%            nstar: 18
 %            ninit: 37
 %             exit: [2x1 logical]
-%             iter: 9
-%          npoints: 9217
-%           errest: 7.2526e-***7
-%                x: [1x9217 double] 
-%            bytes: 803970
+%             iter: 7
+%          npoints: 2305
+%           errest: ***.***e-***7
+%                x: [1x2305 double] 
+%            bytes: 287738
 %
 %
 %   Example 3:
@@ -190,14 +190,14 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %              nhi: 20
 %              nlo: 10
 %             nmax: 10000000
-%            nstar: [1x512 double]
+%            nstar: 19
 %            ninit: 39
 %             exit: [2x1 logical]
-%             iter: 10
-%          npoints: 19457
-%           errest: 9.9555e-***7
-%                x: [1x19457 double] 
-%            bytes: 1690074
+%             iter: 9
+%          npoints: 9729
+%           errest: ***.***e-***7
+%                x: [1x9729 double] 
+%            bytes: 1200978
 %
 %
 %   See also INTERP1, GRIDDEDINTERPOLANT, INTEGRAL_G, MEANMC_G, FUNMIN_G
@@ -326,10 +326,8 @@ while(max(errest) > abstol)
     end;
 end;
 
-npoints = ninit;
-
 out_param.iter = iter;
-out_param.npoints = length(x);
+out_param.npoints = ninit;
 out_param.errest = max(errest);
 out_param.nstar = nstar;
 out_param.x = x;
