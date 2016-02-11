@@ -146,7 +146,7 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %          npoints: 9217
 %           errest: ***.***e-***8
 %                x: [1x9217 double]
-%            bytes: 1137570
+%            bytes: 1063850
 %
 %
 %   Example 2:
@@ -171,7 +171,7 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %          npoints: 2305
 %           errest: ***.***e-***7
 %                x: [1x2305 double] 
-%            bytes: 287738
+%            bytes: 269314
 %
 %
 %   Example 3:
@@ -197,7 +197,7 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %          npoints: 9729
 %           errest: ***.***e-***7
 %                x: [1x9729 double] 
-%            bytes: 1200978
+%            bytes: 1123162
 %
 %
 %   See also INTERP1, GRIDDEDINTERPOLANT, INTEGRAL_G, MEANMC_G, FUNMIN_G
@@ -269,11 +269,11 @@ iter = 0;
 exit_len = 2;
 %we start the algorithm with all warning flags down
 out_param.exit = false(exit_len,1); 
-C = @(h) C0*fh./(fh-h);
+C = @(h) (C0*fh)./(fh-h);
 
 errest = ones(1,ninit-1);
 while(max(errest) > abstol)
-    % length of each subinterval
+    % each element in 'len' is length of each subinterval
     len = x(2:end)-x(1:end-1);
     
     %approximate f''(t)
@@ -314,7 +314,7 @@ while(max(errest) > abstol)
     errnew = zeros(1,ninit+length(newx)-2);
     errnew((1:length(whichcut))+tt)=errest;
     errnew((1:length(whichcut))+[0 tt(1:end-1)])=errest;
-    errest = errnew;   
+    errest = max([errnew, errest]);   
     ninit = length(x);
 
     iter = iter + 1;
@@ -328,7 +328,7 @@ end;
 
 out_param.iter = iter;
 out_param.npoints = ninit;
-out_param.errest = max(errest);
+out_param.errest = errest;
 out_param.nstar = nstar;
 out_param.x = x;
 if MATLABVERSION >= 8.3
