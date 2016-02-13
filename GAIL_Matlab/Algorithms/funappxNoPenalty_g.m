@@ -76,8 +76,7 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %
 %     out_param.maxiter --- max number of iterations
 %
-%     out_param.ninit --- initial number of points we use for each sub
-%     interval
+%     out_param.ninit --- initial number of points we use for subinterval
 %
 %     out_param.exit --- this is a vector with two elements, defining the
 %     conditions of success or failure satisfied when finishing the
@@ -101,10 +100,6 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %
 %     out_param.errest --- an estimation of the absolute error for the
 %     approximation
-%
-%     out_param.nstar --- final value of the parameter defining the cone of
-%     functions for which this algorithm is guaranteed for each
-%     subinterval; nstar = floor(ninit/2) initially
 %
 %     out_param.x --- sample points used to approximate function
 %
@@ -138,15 +133,14 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %          maxiter: 1000
 %              nhi: 20
 %              nlo: 10
-%             nmax: 10000000
-%            nstar: 18            
-%            ninit: 37
+%             nmax: 10000000  
+%            ninit: 18
 %             exit: [2x1 logical]
-%             iter: 9 
-%          npoints: 9217
-%           errest: ***.***e-***8
-%                x: [1x9217 double]
-%            bytes: 1137570
+%             iter: 10 
+%          npoints: 8705
+%           errest: 6.3451e-***8
+%                x: [1x8705 double]
+%            bytes: 1074402
 %
 %
 %   Example 2:
@@ -164,14 +158,13 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %              nhi: 20
 %              nlo: 10
 %             nmax: 10000000
-%            nstar: 18
-%            ninit: 37
+%            ninit: 18
 %             exit: [2x1 logical]
-%             iter: 7
-%          npoints: 2305
-%           errest: ***.***e-***7
-%                x: [1x2305 double] 
-%            bytes: 287738
+%             iter: 9
+%          npoints: 4353
+%           errest: 2.5418e-***7
+%                x: [1x4353 double]
+%            bytes: 539450
 %
 %
 %   Example 3:
@@ -190,14 +183,13 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %              nhi: 20
 %              nlo: 10
 %             nmax: 10000000
-%            nstar: 19
-%            ninit: 39
+%            ninit: 19
 %             exit: [2x1 logical]
-%             iter: 9
-%          npoints: 9729
-%           errest: ***.***e-***7
-%                x: [1x9729 double] 
-%            bytes: 1200978
+%             iter: 10
+%          npoints: 9217
+%           errest: 3.5373e-***7
+%                x: [1x9217 double]
+%            bytes: 1137810
 %
 %
 %   See also INTERP1, GRIDDEDINTERPOLANT, INTEGRAL_G, MEANMC_G, FUNMIN_G
@@ -243,8 +235,8 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 % check parameter satisfy conditions or not
 [f, out_param] = funappxNoPenalty_g_param(varargin{:});
 MATLABVERSION= gail.matlab_version;
-nstar = out_param.nstar;
-out_param.ninit = 2 * nstar + 1;
+%nstar = out_param.nstar;
+%out_param.ninit = 2 * nstar + 1;
 ninit = out_param.ninit;
 
 %%main algorithm
@@ -253,7 +245,8 @@ b = out_param.b;
 abstol = out_param.abstol;
 x = a:(b-a)/(ninit-1):b;
 y = f(x);
-fh = b-a;
+%fh = b-a;
+fh = 4*(b-a)/(ninit-1);
 C0 = 1.2;
 iSing = find(isinf(y));
 if ~isempty(iSing)
@@ -329,7 +322,7 @@ end;
 out_param.iter = iter;
 out_param.npoints = ninit;
 out_param.errest = max(errest);
-out_param.nstar = nstar;
+%out_param.nstar = nstar;
 out_param.x = x;
 if MATLABVERSION >= 8.3
     fappx = griddedInterpolant(x,y,'linear');
@@ -514,7 +507,7 @@ if (out_param.nlo > out_param.nhi)
 end;
 
 h = out_param.b - out_param.a;
-out_param.nstar = ceil(out_param.nhi*(out_param.nlo/out_param.nhi)...
+out_param.ninit = ceil(out_param.nhi*(out_param.nlo/out_param.nhi)...
     ^(1/(1+h)));
 
 if (~gail.isposint(out_param.maxiter))

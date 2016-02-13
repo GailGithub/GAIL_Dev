@@ -23,14 +23,13 @@ function dt_funappxNoPenalty_g
 %            nhi: 1000
 %            nlo: 10
 %           nmax: 10000000
-%          nstar: 804
-%          ninit: 1609
+%          ninit: 804
 %           exit: [2x1 logical]
-%           iter: 8
-%        npoints: 205825
-%         errest: ***.***e-***9
-%              x: [1x205825 double]
-%          bytes: 25320418
+%           iter: 9
+%        npoints: 205569
+%         errest: 2.8480e-***9
+%              x: [1x205569 double]
+%          bytes: 25288738
 %
 % 
 %   Example 3: 
@@ -49,14 +48,13 @@ function dt_funappxNoPenalty_g
 %         nhi: 500
 %         nlo: 10
 %        nmax: 10000000
-%       nstar: 351
-%       ninit: 703
+%       ninit: 351
 %        exit: [2x1 logical]
-%        iter: 8
-%     npoints: 89857
-%      errest: ***.***e-***9
-%           x: [1x89857 double]
-%       bytes: 11056722
+%        iter: 9
+%     npoints: 89601
+%      errest: 3.7478e-***9
+%           x: [1x89601 double]
+%       bytes: 11025042
 %
 %
 %   Example 4:
@@ -73,14 +71,13 @@ function dt_funappxNoPenalty_g
 %              nhi: 50
 %              nlo: 20
 %             nmax: 10000000
-%            nstar: 42
-%            ninit: 85
+%            ninit: 42
 %             exit: [2x1 logical]
-%             iter: 8
-%          npoints: 10753
-%           errest: ***.***e-***8
-%                x: [1x10753 double]
-%            bytes: 1327086
+%             iter: 9
+%          npoints: 10497
+%           errest: 4.3699e-***8
+%                x: [1x10497 double]
+%            bytes: 1295406
 %
 %
 %   Example 5:
@@ -97,14 +94,13 @@ function dt_funappxNoPenalty_g
 %              nhi: 40
 %              nlo: 20
 %             nmax: 10000000
-%            nstar: 34
-%            ninit: 69
+%            ninit: 34
 %             exit: [2x1 logical]
-%             iter: 6
-%          npoints: 2177
-%           errest: ***.***e-***7
-%                x: [1x2177 double] 
-%            bytes: 271994
+%             iter: 7
+%          npoints: 2113
+%           errest: 6.1248e-***7
+%                x: [1x2113 double]
+%            bytes: 263930
 %
 %
 %   Example 6:
@@ -121,14 +117,13 @@ function dt_funappxNoPenalty_g
 %         nhi: 50
 %         nlo: 20
 %        nmax: 10000000
-%       nstar: 45
-%       ninit: 91
+%       ninit: 45
 %        exit: [2x1 logical]
-%        iter: 7
-%     npoints: 5761
-%      errest: ***.***e-***7
-%           x: [1x5761 double]
-%       bytes: 712482
+%        iter: 8
+%     npoints: 5633
+%      errest: 4.6617e-***7
+%           x: [1x5633 double]
+%       bytes: 696546
 % 
 %
 %   Example 7:
@@ -144,14 +139,13 @@ function dt_funappxNoPenalty_g
 %              nhi: 50
 %              nlo: 20
 %             nmax: 10000000
-%            nstar: 44
-%            ninit: 89
+%            ninit: 44
 %             exit: [2x1 logical]
-%             iter: 8
-%          npoints: 11265
-%           errest: ***.***e-***8
-%                x: [1x11265 double]
-%            bytes: 1389474
+%             iter: 9
+%          npoints: 11009
+%           errest: 8.9388e-***8
+%                x: [1x11009 double]
+%            bytes: 1357794
 %
 %
 %   Example 8:
@@ -168,11 +162,10 @@ function dt_funappxNoPenalty_g
 %              nhi: 20
 %              nlo: 10
 %             nmax: 10000000
-%            nstar: 20
-%            ninit: 41
+%            ninit: 20
 %             exit: [2x1 logical]
-%             iter: 11
-%          npoints: 40961
-%           errest: ***.***e-***8
-%                x: [1x40961 double]
-%            bytes: 5042082
+%             iter: 12
+%          npoints: 38913
+%           errest: 4.4596e-***8
+%                x: [1x38913 double]
+%            bytes: 4789986

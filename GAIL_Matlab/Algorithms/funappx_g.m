@@ -41,11 +41,11 @@ function [fappx,out_param]=funappx_g(varargin)
 %
 %   Optional Input Arguments
 %
-%     in_param.nlo --- lower bound of initial number of points we used,
-%     default value is 10
+%     in_param.nlo --- lower bound of initial cone constant, default value 
+%     is 10
 %
-%     in_param.nhi --- upper bound of initial number of points we used,
-%     default value is 1000
+%     in_param.nhi --- upper bound of initial cone constant, default value
+%     is 1000
 %
 %     in_param.nmax --- when number of points hits the value, iteration
 %     will stop, default value is 1e7
@@ -67,9 +67,9 @@ function [fappx,out_param]=funappx_g(varargin)
 %
 %     out_param.abstol --- guaranteed absolute error tolerance
 %
-%     out_param.nlo --- a lower bound of initial number of points we use
+%     out_param.nlo --- a lower bound of initial cone constant
 %
-%     out_param.nhi --- an upper bound of initial number of points we use
+%     out_param.nhi --- an upper bound of initial cone constant
 %
 %     out_param.nmax --- when number of points hits the value, iteration
 %     will stop
