@@ -30,7 +30,8 @@ function dt_funappx_g
 %        npoints: 411649
 %         errest: 8.3292e-***9
 %              x: [1x411649 double]
-%          bytes: 41194610
+%   >> out_param.bytes <= 41194610
+%      1
 %
 % 
 %   Example 3: 
@@ -56,14 +57,15 @@ function dt_funappx_g
 %     npoints: 179713
 %      errest: 9.4370e-***9
 %           x: [1x179713 double]
-%       bytes: 18001378
+%   >> out_param.bytes <= 18001378
+%      1
 %
 %
 %   Example 4:
 %
 %   >> [~, out_param] = funappx_g(@(x) x.^2,'a',-2,'b',2,'abstol',1e-7,'nlo',20,'nhi',50)
 %
-% out_param = 
+%   out_param = 
 % 
 %                a: -2
 %           abstol: 1.0000e-***7
@@ -80,7 +82,8 @@ function dt_funappx_g
 %          npoints: 43009
 %           errest: 5.9830e-***8
 %                x: [1x43009 double]
-%            bytes: 4356990
+%   >> out_param.bytes <= 4356990
+%      1
 %
 %
 %   Example 5:
@@ -104,7 +107,8 @@ function dt_funappx_g
 %          npoints: 8705
 %           errest: 8.8908e-***7
 %                x: [1x8705 double] 
-%            bytes: 887562
+%   >> out_param.bytes <= 887562
+%      1 
 %
 %
 %   Example 6:
@@ -128,8 +132,9 @@ function dt_funappx_g
 %     npoints: 23041
 %      errest: 6.2507e-***7
 %           x: [1x23041 double]
-%       bytes: 2333746
-% 
+%   >> out_param.bytes <= 2333746
+%      1
+%
 %
 %   Example 7:
 %
@@ -151,7 +156,8 @@ function dt_funappx_g
 %          npoints: 90113
 %           errest: 3.0223e-***8
 %                x: [1x90113 double]
-%            bytes: 9118514
+%   >> out_param.bytes <= 9118514
+%      1
 %
 %
 %   Example 8:
@@ -175,4 +181,5 @@ function dt_funappx_g
 %          npoints: 163841
 %           errest: 3.0999e-***8
 %                x: [1x163841 double]
-%            bytes: 16801586
+%   >> out_param.bytes <= 16801586
+%      1

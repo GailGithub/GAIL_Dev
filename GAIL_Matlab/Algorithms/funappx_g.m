@@ -129,7 +129,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %   >> f = @(x) x.^2;
 %   >> [~, out_param] = funappx_g(f,-2,2,1e-7,10,20)
 %
-%  out_param =
+%   out_param =
 % 
 %                a: -2
 %           abstol: 1.0000e-***7
@@ -146,7 +146,8 @@ function [fappx,out_param]=funappx_g(varargin)
 %          npoints: 36865
 %           errest: 4.5329e-***8
 %                x: [1x36865 double]
-%            bytes: 3793714
+%   >>  out_param.bytes <= 3793714
+%       1    
 %
 %
 %   Example 2:
@@ -154,7 +155,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %   >> f = @(x) x.^2;
 %   >> [~, out_param] = funappx_g(f,'a',-2,'b',2,'nhi',20,'nlo',10)
 %
-% out_param = 
+%   out_param = 
 % 
 %                a: -2
 %           abstol: 1.0000e-***6
@@ -171,7 +172,8 @@ function [fappx,out_param]=funappx_g(varargin)
 %          npoints: 9217
 %           errest: 7.2526e-***7
 %                x: [1x9217 double] 
-%            bytes: 951690
+%   >>  out_param.bytes <= 3793714
+%       1
 %
 %
 %   Example 3:
@@ -180,7 +182,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %   >> in_param.abstol = 10^(-6); in_param.nlo = 10; in_param.nhi = 20;
 %   >> [~, out_param] = funappx_g(f,in_param)
 %
-% out_param = 
+%   out_param = 
 % 
 %                a: -5
 %           abstol: 1.0000e-***6
@@ -197,7 +199,8 @@ function [fappx,out_param]=funappx_g(varargin)
 %          npoints: 19457
 %           errest: 9.9555e-***7
 %                x: [1x19457 double] 
-%            bytes: 2001634
+%   >>  out_param.bytes <= 2001634
+%       1
 %
 %
 %   See also INTERP1, GRIDDEDINTERPOLANT, INTEGRAL_G, MEANMC_G, FUNMIN_G
@@ -242,7 +245,7 @@ function [fappx,out_param]=funappx_g(varargin)
 
 % check parameter satisfy conditions or not
 [f, out_param] = funappx_g_param(varargin{:});
-MATLABVERSION= gail.matlab_version;
+MATLABVERSION = gail.matlab_version;
 
 %%main algorithm
 % initialize nstar
@@ -411,8 +414,7 @@ out_param.x = x;
 if MATLABVERSION >= 8.3
     fappx = griddedInterpolant(x,y,'linear');
 else
-    pp = interp1(x,y,'linear','pp');
-    fappx =@(x) ppval(pp,x);    
+    fappx = @(x) ppval(interp1(x,y,'linear','pp'), x);    
 end;
 w = whos;
 out_param.bytes = sum([w.bytes]);
