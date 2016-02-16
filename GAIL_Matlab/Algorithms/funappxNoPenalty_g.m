@@ -136,11 +136,19 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %             nmax: 10000000  
 %            ninit: 18
 %             exit: [2x1 logical]
+<<<<<<< Updated upstream
 %             iter: 10 
 %          npoints: 8705
 %           errest: 6.3451e-***8
 %                x: [1x8705 double]
 %            bytes: 1074402
+=======
+%             iter: 9 
+%          npoints: 9217
+%           errest: ***.***e-***8
+%                x: [1x9217 double]
+%            bytes: ***
+>>>>>>> Stashed changes
 %
 %
 %   Example 2:
@@ -160,11 +168,19 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %             nmax: 10000000
 %            ninit: 18
 %             exit: [2x1 logical]
+<<<<<<< Updated upstream
 %             iter: 9
 %          npoints: 4353
 %           errest: 2.5418e-***7
 %                x: [1x4353 double]
 %            bytes: 539450
+=======
+%             iter: 7
+%          npoints: 2305
+%           errest: ***.***e-***7
+%                x: [1x2305 double] 
+%            bytes: ***
+>>>>>>> Stashed changes
 %
 %
 %   Example 3:
@@ -185,11 +201,19 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %             nmax: 10000000
 %            ninit: 19
 %             exit: [2x1 logical]
+<<<<<<< Updated upstream
 %             iter: 10
 %          npoints: 9217
 %           errest: 3.5373e-***7
 %                x: [1x9217 double]
 %            bytes: 1137810
+=======
+%             iter: 9
+%          npoints: 9729
+%           errest: ***.***e-***7
+%                x: [1x9729 double] 
+%            bytes: ***
+>>>>>>> Stashed changes
 %
 %
 %   See also INTERP1, GRIDDEDINTERPOLANT, INTEGRAL_G, MEANMC_G, FUNMIN_G
@@ -290,23 +314,30 @@ while(max(errest) > abstol)
     
     %update x,y
     whichcut = badinterval|[badinterval(2:end) 0]|[0 badinterval(1:end-1)];
-    newx = x(whichcut==1)+0.5 *len(whichcut==1);
+    ss = (whichcut==1);
+    newx = x(ss) + 0.5 .* len(ss);
+    if isempty(newx)
+        keyboard
+    end
     newf = f(newx);
     xnew = zeros(1,ninit+length(newx));
     ynew = xnew;
-    tt=cumsum(whichcut); 
-    xnew([1 (2:length(x))+tt])=x;
-    ynew([1 (2:length(x))+tt])=y;
-    whichstay = (whichcut ==0);
-    tem=2*cumsum(whichcut)+cumsum(whichstay);
-    xnew(tem(whichcut==1))=newx;
-    ynew(tem(whichcut==1))=newf;
+    tt = cumsum(whichcut); 
+    qq = [1 (2:length(x))+tt];
+    xnew(qq)=x;
+    ynew(qq)=y;
+    whichstay = (whichcut == 0);
+    tem = 2*cumsum(whichcut) + cumsum(whichstay);
+    xnew(tem(ss))=newx;
+    ynew(tem(ss))=newf;
     x = xnew;
     y = ynew;
     %update errorbound
     errnew = zeros(1,ninit+length(newx)-2);
-    errnew((1:length(whichcut))+tt)=errest;
-    errnew((1:length(whichcut))+[0 tt(1:end-1)])=errest;
+    ss = 1:length(whichcut);
+    qq = ss+tt;
+    errnew(qq)=errest;
+    errnew(qq-1)=errest;
     errest = errnew;   
     ninit = length(x);
 
