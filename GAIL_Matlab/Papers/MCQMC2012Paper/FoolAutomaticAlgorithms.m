@@ -48,7 +48,8 @@ switch fname %give the calling sequence
         callautoalg = @(fun,lower,upper) fminbnd(fun,lower,upper);
     case '???' %put the NAG algorithm here
         callautoalg = @(fun,lower,upper) fminbnd(fun,lower,upper);
-        
+    case 'integral'
+        callautoalg = @(fun,lower,upper) integral(fun,lower,upper,'AbsTol',1e-14);
 end
  
 
@@ -72,7 +73,7 @@ end
 toc
 
 %% ----------------Plotting the Peaky Function-------
-x=info.lower:.001:info.upper; %The domain of the peaky function
+x=info.lower:.002:info.upper; %The domain of the peaky function
 [yplot, primeplot, dubplot, info]=peaks(x);
 
 %Here the peaks are plotted over the original function
@@ -115,7 +116,7 @@ if exist('chebfun','file') && (usejava('jvm') || MATLABVERSION <= 7.12)
     hold off
     
     figure
-    if strcmp(fname,'quadgk') %too many peaks
+    if strcmp(fname,'quadgk') || strcmp(fname,'integral')%too many peaks
         x=info.lower:.00001:info.upper*0.01;
         yplot=peaks(x);
         axisright=info.upper*0.01;

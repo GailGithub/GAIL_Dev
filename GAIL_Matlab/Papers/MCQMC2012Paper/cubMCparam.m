@@ -22,7 +22,7 @@ param.exit=0; %success! until found otherwise
    npartDefault=8;         %number of parts for quasi-standard error
 npartMinDefault=4;         %minimum allowed
 npartMaxDefault=32;        %maximum allowed
-   fudgeDefault=1.1;       %fudge factor for error estimate
+   fudgeDefault=1.2;       %fudge factor for error estimate
 impscaleDefault=1;         %importance sampling scale default
 impshiftDefault=0;         %importance sampling shift default
 
