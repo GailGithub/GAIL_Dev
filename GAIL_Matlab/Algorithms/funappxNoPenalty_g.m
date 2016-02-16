@@ -124,7 +124,7 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %   >> f = @(x) x.^2;
 %   >> [~, out_param] = funappxNoPenalty_g(f,-2,2,1e-7,10,20)
 %
-%  out_param =
+%   out_param =
 % 
 %                a: -2
 %           abstol: 1.0000e-***7
@@ -140,7 +140,8 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %          npoints: 8705
 %           errest: 6.3451e-***8
 %                x: [1x8705 double]
-%            bytes: 1074402
+%   >> out_param.bytes <= 1074402
+%      1
 %
 %
 %   Example 2:
@@ -148,7 +149,7 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %   >> f = @(x) x.^2;
 %   >> [~, out_param] = funappxNoPenalty_g(f,'a',-2,'b',2,'nhi',20,'nlo',10)
 %
-% out_param = 
+%   out_param = 
 % 
 %                a: -2
 %           abstol: 1.0000e-***6
@@ -164,7 +165,8 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %          npoints: 4353
 %           errest: 2.5418e-***7
 %                x: [1x4353 double]
-%            bytes: 539450
+%   >> out_param.bytes <= 539450
+%      1
 %
 %
 %   Example 3:
@@ -173,7 +175,7 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %   >> in_param.abstol = 10^(-6); in_param.nlo = 10; in_param.nhi = 20;
 %   >> [~, out_param] = funappxNoPenalty_g(f,in_param)
 %
-% out_param = 
+%   out_param = 
 % 
 %                a: -5
 %           abstol: 1.0000e-***6
@@ -189,7 +191,8 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %          npoints: 9217
 %           errest: 3.5373e-***7
 %                x: [1x9217 double]
-%            bytes: 1137810
+%   >> out_param.bytes <= 1137810
+%      1
 %
 %
 %   See also INTERP1, GRIDDEDINTERPOLANT, INTEGRAL_G, MEANMC_G, FUNMIN_G
@@ -284,6 +287,7 @@ while(max(errest) > abstol)
     
     %error estimation
     errest = len.^2/8.*normbd;
+ 
     
     %find I
     badinterval = errest > abstol;
@@ -305,9 +309,9 @@ while(max(errest) > abstol)
     y = ynew;
     %update errorbound
     errnew = zeros(1,ninit+length(newx)-2);
-    errnew((1:length(whichcut))+tt)=errest;
-    errnew((1:length(whichcut))+[0 tt(1:end-1)])=errest;
-    errest = errnew;   
+    errnew((1:length(whichcut))+tt) = errest;
+    errnew((1:length(whichcut))+[0 tt(1:end-1)]) = errest;
+    errest = max(errest);   
     ninit = length(x);
 
     iter = iter + 1;

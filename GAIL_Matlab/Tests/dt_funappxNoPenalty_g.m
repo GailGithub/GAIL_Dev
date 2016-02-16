@@ -13,7 +13,7 @@ function dt_funappxNoPenalty_g
 %   >> clear in_param; in_param.a = -10; in_param.b =10; in_param.abstol = 10^(-8); 
 %   >> [~, out_param] = funappxNoPenalty_g(@(x) x.^2, in_param)
 %
-% out_param = 
+%   out_param = 
 % 
 %              a: -10
 %         abstol: 1.0000e-***8
@@ -29,7 +29,8 @@ function dt_funappxNoPenalty_g
 %        npoints: 205569
 %         errest: 2.8480e-***9
 %              x: [1x205569 double]
-%          bytes: 25288738
+%   >> out_param.bytes <= 25288738
+%      1
 %
 % 
 %   Example 3: 
@@ -38,7 +39,7 @@ function dt_funappxNoPenalty_g
 %   >> in_param.abstol = 10^(-8); in_param.nlo = 10; in_param.nhi = 500;
 %   >> [~, out_param] = funappxNoPenalty_g(@(x) x.^2, in_param)
 %
-% out_param = 
+%   out_param = 
 % 
 %           a: -5
 %      abstol: 1.0000e-08
@@ -54,14 +55,15 @@ function dt_funappxNoPenalty_g
 %     npoints: 89601
 %      errest: 3.7478e-***9
 %           x: [1x89601 double]
-%       bytes: 11025042
-%
+%   >> out_param.bytes <= 11025042
+%      1
+%      
 %
 %   Example 4:
 %
 %   >> [~, out_param] = funappxNoPenalty_g(@(x) x.^2,'a',-2,'b',2,'abstol',1e-7,'nlo',20,'nhi',50)
 %
-% out_param = 
+%   out_param = 
 % 
 %                a: -2
 %           abstol: 1.0000e-***7
@@ -77,14 +79,15 @@ function dt_funappxNoPenalty_g
 %          npoints: 10497
 %           errest: 4.3699e-***8
 %                x: [1x10497 double]
-%            bytes: 1295406
+%   >> out_param.bytes <= 1295406
+%      1
 %
 %
 %   Example 5:
 %
 %   >> [~, out_param] = funappxNoPenalty_g(@(x) x.^2,'a',-3,'b',0,'nlo',20,'nhi',40)
 %
-% out_param = 
+%   out_param = 
 % 
 %                a: -3
 %           abstol: 1.0000e-***6
@@ -100,9 +103,10 @@ function dt_funappxNoPenalty_g
 %          npoints: 2113
 %           errest: 6.1248e-***7
 %                x: [1x2113 double]
-%            bytes: 263930
+%   >> out_param.bytes <= 263930
+%      1
 %
-%
+% 
 %   Example 6:
 %
 %   >> [~, out_param] = funappxNoPenalty_g(@(x) x.^2,-2,5,1e-6,20,50)
@@ -123,14 +127,15 @@ function dt_funappxNoPenalty_g
 %     npoints: 5633
 %      errest: 4.6617e-***7
 %           x: [1x5633 double]
-%       bytes: 696546
-% 
+%   >> out_param.bytes <= 696546
+%      1
+%
 %
 %   Example 7:
 %
 %   >> [~, out_param] = funappxNoPenalty_g(@(x) x.^2,-3,3,1e-7,20,50)
 %
-% out_param = 
+%   out_param = 
 %                a: -3
 %           abstol: 1.0000e-***7
 %                b: 3
@@ -145,14 +150,15 @@ function dt_funappxNoPenalty_g
 %          npoints: 11009
 %           errest: 8.9388e-***8
 %                x: [1x11009 double]
-%            bytes: 1357794
+%   >> out_param.bytes <= 1357794
+%      1
 %
 %
 %   Example 8:
 %
 %   >> [~, out_param] = funappxNoPenalty_g(@(x) x.^2,-5,10,1e-7,10,20)
 %
-% out_param = 
+%   out_param = 
 % 
 %                a: -5
 %           abstol: 1.0000e-07
@@ -168,4 +174,5 @@ function dt_funappxNoPenalty_g
 %          npoints: 38913
 %           errest: 4.4596e-***8
 %                x: [1x38913 double]
-%            bytes: 4789986
+%   >> out_param.bytes <= 4789986
+%      1
