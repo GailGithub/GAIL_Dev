@@ -10,7 +10,7 @@ function [fmin, fmax, out_min, out_max] = fejer_jackson_inequality(m);
 % >>  funmin_g_demo(fmin, out_min); hold on; funmin_g_demo(fmax, out_max); hold off;
 % >>  out_min.intervals
 %    ans =
-%         0    3.1401
+%         0    3.1393
 %         0    3.1416
 %
 %

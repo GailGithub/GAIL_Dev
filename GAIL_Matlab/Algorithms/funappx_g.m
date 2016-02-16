@@ -145,7 +145,9 @@ function [fappx,out_param]=funappx_g(varargin)
 %             iter: 11 
 %          npoints: 36865
 %           errest: 4.5329e-***8
-%                x: [1x36865 double] ***
+%                x: [1x36865 double]
+%   >>  out_param.bytes <= 3793714
+%       1    
 %
 %
 %   Example 2:
@@ -169,7 +171,9 @@ function [fappx,out_param]=funappx_g(varargin)
 %             iter: 9
 %          npoints: 9217
 %           errest: 7.2526e-***7
-%                x: [1x9217 double] ***
+%                x: [1x9217 double] 
+%   >>  out_param.bytes <= 3793714
+%       1
 %
 %
 %   Example 3:
@@ -194,8 +198,9 @@ function [fappx,out_param]=funappx_g(varargin)
 %             iter: 10
 %          npoints: 19457
 %           errest: 9.9555e-***7
-%                x: [1x19457 double] ***
-%               
+%                x: [1x19457 double] 
+%   >>  out_param.bytes <= 2001634
+%       1
 %
 %
 %   See also INTERP1, GRIDDEDINTERPOLANT, INTEGRAL_G, MEANMC_G, FUNMIN_G

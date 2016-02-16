@@ -8,7 +8,7 @@ poserr = [];
 negerr = [];
 f1= @(x) 3*sqrt(1-(x/7).^2);
 a1 = [-7; 3]; b1 = [-3; 7];
-[fappx,out_param1]=funappx_g(f1,a1(1),b1(1),abstol)
+[fappx,~]=funappx_g(f1,a1(1),b1(1),abstol);
 t = a1(1):h:b1(1);
 figure(1);
 plot(t,fappx(t),'k*');
@@ -22,7 +22,7 @@ hold on;
 f7 = @(x) 6*sqrt(10)/7 + (1.5-0.5*abs(x)) -...
     6*sqrt(10)/14 * sqrt(4 - (1+x).^2);
 a7 = -3; b7 = -1;
-[fappx,out_param2]=funappx_g(f7,a7,b7,abstol)
+[fappx,~]=funappx_g(f7,a7,b7,abstol);
 t = a7:h:b7;
 plot(t,fappx(t),'m*');
 posx = [posx t];
@@ -33,7 +33,7 @@ hold on;
 %     8 * abs(x);
 f4 = @(x) 9 - 8 * abs(x);
 a4 = [-1;.75]; b4=[-.75;1];
-[fappx,outparam3]=funappx_g(f4,a4(1),b4(1),abstol)
+[fappx,~]=funappx_g(f4,a4(1),b4(1),abstol);
 t = a4(1):h:b4(1);
 plot(t,fappx(t),'g*');
 posx = [posx t];

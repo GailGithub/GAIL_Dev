@@ -336,7 +336,30 @@ while n < out_param.nmax;
     else
         ints1 = zeros(2,0);
     end
-    interval=ints1;    
+    k=size(ints1,2);
+    % check if [a,a-h] contains minimum
+    if abs(y(1)-Un)<out_param.abstol, 
+        k=k+1;
+        ints2=zeros(2,k);
+        ints2(:,1)=[x(1),x(2)];
+        if k>1
+          ints2(:,2:end)=ints1;
+        end
+    else
+        ints2=ints1;
+    end
+    % check if [b-h,b] contains minimum
+    if abs(y(end)-Un)<out_param.abstol,
+        k=k+1;
+        ints3=zeros(2,k);
+        ints3(:,end)=[x(end-1),x(end)];
+        if k>1
+          ints3(:,1:end-1)=ints2;
+        end
+    else
+        ints3=ints2;
+    end
+    interval=ints3;    
     
     volumeX = sum(interval(2,:)-interval(1,:));
     % satisfy convergence
@@ -348,31 +371,6 @@ while n < out_param.nmax;
     n = 2*(n-1)+1;
 end;
 
-k=size(ints1,2);
-% check if [a,a-h] contains minimum
-if abs(y(1)-Un)<out_param.abstol && (isempty(interval) || any(interval==x(1))==0),
-    k=k+1;
-    ints2=zeros(2,k);
-    ints2(:,1)=[x(1),x(2)];
-    if k>1
-        ints2(:,2:end)=ints1;
-    end
-else
-    ints2=ints1;
-end
-% check if [b-h,b] contains minimum
-if abs(y(end)-Un)<out_param.abstol && (isempty(interval) || any(interval==x(end))==0),
-    k=k+1;
-    ints3=zeros(2,k);
-    ints3(:,end)=[x(end-1),x(end)];
-    if k>1
-        ints3(:,1:end-1)=ints2;
-    end
-else
-    ints3=ints2;
-end
-interval=ints3;
-    
 % check tau change flag
 if tauchange == 1
     warning('GAIL:funmin_g:peaky','This function is peaky relative to ninit. You may wish to increase ninit for similar functions.')
