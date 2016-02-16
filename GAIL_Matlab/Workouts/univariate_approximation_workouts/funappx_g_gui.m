@@ -84,14 +84,12 @@ q(1) = uicontrol('string','step', ...
 q(2) = uicontrol('string','auto', ...
      'units','normal','pos',[.85 .02 .08 .04], ...
     'callback','set(gcf,''userdata'',2)');
-
 %index = [1 ninit];
 % initialize nstar
 %nstar = ninit - 2;
 %nstar = floor(ninit/2);
 % initialize error
-err = tol + 1;
-
+err =tol+1;
 
  
 while(max(err) > tol)
@@ -105,7 +103,7 @@ while(max(err) > tol)
         p = flipud(get(gca,'children'));
         set(p(1),'xdata',x,'ydata',y)
         set(gca,'xtick',x,'xticklabel',[]);
-        hTitle=title(['error estimation is ' num2str(max(err)) ' in iteration ' num2str(k)]);
+        hTitle=title(['error is ' num2str(max(err)) ' in iter ' num2str(k)]);
         set(hTitle,'FontSize',25)
         pause(.25)
         while get(gcf,'userdata') == 0
@@ -149,6 +147,6 @@ delta = 0.00001;
 x=a:delta:b; 
 plot(x,f(x));
 hold off;
-gail.save_eps('WorkoutFunappxOutput', 'funappx_g_gui_CSC');
+gail.save_eps('WorkoutFunappxOutput', 'funappx_g_gui');
 
 % ---------------------------------------------------------

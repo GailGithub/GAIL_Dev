@@ -4,7 +4,7 @@ price=zeros(1,numel(optiontype));
 %Expected value of ending price of asset
 wh=strcmp('stockprice',optiontype);
 if any(wh); 
-   price(wh)=stparam.S0*exp(stparam.r*stparam.T);
+   price(wh)=stparam.S0;
 end
 
 %Pricing European geometric brownian motion

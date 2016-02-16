@@ -282,6 +282,10 @@ while n < out_param.nmax;
     % Stage 1: estimate weaker and stronger norm
     x = out_param.a:len/(n-1):out_param.b;
     y = f(x);
+    iSing = find(isinf(y));
+    if ~isempty(iSing)
+         error('GAIL:funmin_g:yInf',['Function f(x) = Inf at x = ', num2str(x(iSing))]);
+    end
     diff_y = diff(y);
     %approximate the weaker norm of input function
     gn = (n-1)*max(abs(diff_y-(y(n)-y(1))/(n-1)))/len;
@@ -289,101 +293,83 @@ while n < out_param.nmax;
     fn = (n-1)^2*max(abs(diff(diff_y)))/len^2;
     
     % Stage 2: satisfy necessary condition of cone
-    if out_param.tau*(gn/len+fn/(2*n-2))>= fn;
-        % Stage 3: check for convergence
-        bn = 2*(n-1)*out_param.tau/(2*(n-1)-out_param.tau)*gn;
-        min_index = (2*(n-1)^2.*abs(diff_y)) < (bn*len);
-        min_in = min_index.*(diff_y/2+y(1:n-1)-0.25*(2*(n-1)^2*diff_y.^2/bn/len+bn*len/2/(n-1)^2));
-        min_end = (~min_index).*(diff_y/2+y(1:n-1)-abs(diff_y)/2);
-        ln = min_in+min_end;
-        % minimum values of each interval
-        Ln = min(ln); % lower bound
-        Un = min(y); % upper bound
-        error = Un-Ln;
-        % find the intervals containing minimum points
-        index = find(min_index ==1 & ln < Un);
-        m = size(index,2);
-        if m > 0
-            delta = (n-1)^2/len^2*diff_y(index).^2-2*bn/len*(diff_y(index)./2 ...
-                +y(index)-bn*len/8/(n-1)^2-Un);
-            ints = zeros(2,m);
-            ints(1,:)=x(index)+len/2/(n-1)-(n-1)*diff_y(index)./bn ...
-                -len*sqrt(delta)./bn;
-            ints(2,:)=x(index)+len/2/(n-1)-(n-1)*diff_y(index)./bn ...
-                +len*sqrt(delta)./bn;
-            leftint = find([1 diff(index)~=1]);
-            rightint = find([diff(index)~=1 1]);
-            q = size(leftint,2);
-            interval = zeros(2,q);
-            interval(1,:) = ints(1,leftint);
-            interval(2,:) = ints(2,rightint);
-        else
-            interval = zeros(2,0);
-        end
-        volumeX = sum(interval(2,:)-interval(1,:));
-        % satisfy convergence
-        if error < out_param.abstol || volumeX < out_param.TolX
-            out_param.exitflag = 0; break;
-        end
-        % otherwise increase points number
-        l = n;
-        n = 2*(n-1)+1;
-        
-        % Stage 2: do not satisfy necessary condition
-    else
+    if out_param.tau*(gn/len+fn/(2*n-2))< fn;
         % increase tau
         out_param.tau = 2*fn/(gn/len+fn/(2*n-2));
         % change tau change flag
         tauchange = 1;
         % check if number of points large enough
-        if n >= ((out_param.tau+1)/2);
-            % large enough, go to Stage 3
-            bn = 2*(n-1)*out_param.tau/(2*(n-1)-out_param.tau)*gn;
-            min_index = (2*(n-1)^2.*abs(diff_y)) < (bn*len);
-            min_in = min_index.*(diff_y/2+y(1:n-1)-0.25*(2*(n-1)^2*diff_y.^2/bn/len+bn*len/2/(n-1)^2));
-            min_end = (~min_index).*(diff_y/2+y(1:n-1)-abs(diff_y)/2);
-            ln = min_in+min_end;
-            % minimum values of each interval
-            Ln = min(ln); % lower bound
-            Un = min(y); % upper bound
-            error = Un-Ln;
-            % find the intervals containing minimum points
-            index = find(min_index ==1 & ln < Un);
-            m = size(index,2);
-            if m > 0
-                delta = (n-1)^2/len^2*diff_y(index).^2-2*bn/len*(diff_y(index)./2 ...
-                    +y(index)-bn*len/8/(n-1)^2-Un);
-                ints = zeros(2,m);
-                ints(1,:)=x(index)+len/2/(n-1)-(n-1)*diff_y(index)./bn ...
-                    -len*sqrt(delta)./bn;
-                ints(2,:)=x(index)+len/2/(n-1)-(n-1)*diff_y(index)./bn ...
-                    +len*sqrt(delta)./bn;
-                leftint = find([1 diff(index)~=1]);
-                rightint = find([diff(index)~=1 1]);
-                q = size(leftint,2);
-                interval = zeros(2,q);
-                interval(1,:) = ints(1,leftint);
-                interval(2,:) = ints(2,rightint);
-            else
-                interval = zeros(2,0);
-            end
-            volumeX = sum(interval(2,:)-interval(1,:));
-            % satisfy convergence
-            if error < out_param.abstol || volumeX < out_param.TolX
-                out_param.exitflag = 0; break;
-            end
-            % otherwise increase points number
-            l = n;
-            n = 2*(n-1)+1;
-            
-        else
-            % not large enough, increase points number, and go to Stage 1
+        if n < ((out_param.tau+1)/2);
+        % not large enough, increase points number, and go to Stage 1
             l = n;
             n = 1 + (n-1)*ceil(out_param.tau+1/(2*n-2));
-        end;
-    end;
+        end
+    end
+        
+    % Stage 3: check for convergence
+    bn = 2*(n-1)*out_param.tau/(2*(n-1)-out_param.tau)*gn;
+    min_index = (2*(n-1)^2.*abs(diff_y)) < (bn*len);
+    min_in = min_index.*(diff_y/2+y(1:n-1)-0.25*(2*(n-1)^2*diff_y.^2/bn/len+bn*len/2/(n-1)^2));
+    min_end = (~min_index).*(diff_y/2+y(1:n-1)-abs(diff_y)/2);
+    ln = min_in+min_end;
+    % minimum values of each interval
+    Ln = min(ln); % lower bound
+    Un = min(y); % upper bound
+    errest = Un-Ln;
+    % find the intervals containing minimum points
+    index = find(min_index ==1 & ln < Un);
+    m = size(index,2);        
+    if m > 0
+        delta = (n-1)^2/len^2*diff_y(index).^2-2*bn/len*(diff_y(index)./2 ...
+            +y(index)-bn*len/8/(n-1)^2-Un);
+        ints = zeros(2,m);
+        ints(1,:)=x(index)+len/2/(n-1)-(n-1)*diff_y(index)./bn ...
+            -len*sqrt(delta)./bn;
+        ints(2,:)=x(index)+len/2/(n-1)-(n-1)*diff_y(index)./bn ...
+            +len*sqrt(delta)./bn;
+        leftint = find([true diff(index)~=1]);
+        rightint = find([diff(index)~=1 true]);
+        q = size(leftint,2);
+        ints1 = zeros(2,q);
+        ints1(1,:) = ints(1,leftint);
+        ints1(2,:) = ints(2,rightint);
+    else
+        ints1 = zeros(2,0);
+    end
+    k=size(ints1,2);
+    % check if [a,a-h] contains minimum
+    if abs(y(1)-Un)<out_param.abstol, 
+        k=k+1;
+        ints2=zeros(2,k);
+        ints2(:,1)=[x(1),x(2)];
+        if k>1
+          ints2(:,2:end)=ints1;
+        end
+    else
+        ints2=ints1;
+    end
+    % check if [b-h,b] contains minimum
+    if abs(y(end)-Un)<out_param.abstol,
+        k=k+1;
+        ints3=zeros(2,k);
+        ints3(:,end)=[x(end-1),x(end)];
+        if k>1
+          ints3(:,1:end-1)=ints2;
+        end
+    else
+        ints3=ints2;
+    end
+    interval=ints3;    
+    
+    volumeX = sum(interval(2,:)-interval(1,:));
+    % satisfy convergence
+    if errest < out_param.abstol || volumeX < out_param.TolX
+        out_param.exitflag = 0; break;
+    end
+    % otherwise increase points number
+    l = n;
+    n = 2*(n-1)+1;
 end;
-
 
 % check tau change flag
 if tauchange == 1
@@ -398,7 +384,7 @@ end
 
 fmin = Un;
 out_param.npoints = n;
-out_param.errest = error;
+out_param.errest = errest;
 out_param.volumeX = volumeX;
 out_param.tauchange = tauchange;
 out_param.intervals = interval;
@@ -435,7 +421,7 @@ else
     out_param.f = f;
   else
     warning('GAIL:funmin_g:notfunction','Function f must be a function handle. Now funmin_g will use f(x)=(x-0.3)^2+1.')
-    f = @(x) (x-0.3).^2+1;;
+    f = @(x) (x-0.3).^2+1;
     out_param.f = f;
   end
 end

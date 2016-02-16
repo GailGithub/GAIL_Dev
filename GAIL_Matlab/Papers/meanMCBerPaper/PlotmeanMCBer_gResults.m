@@ -7,7 +7,7 @@ if exist('TestmeanMCBernoulli-on-abs-06-Sep-2014_03.18.10.mat')
     load TestmeanMCBernoulli-on-abs-06-Sep-2014_03.18.10.mat
 else
     warning(['TestmeanMCBernoulli-on-abs-06-Sep-2014_03.18.10.mat does not exist. '...
-        'call function Test_meanMCBer_g to produce the MAT file.'])
+        'Calling function Test_meanMCBer_g to produce the MAT file.'])
     [~, ~, nrep, res] = Test_meanMCBer_g;
 end
 standard = true(nrep,1);

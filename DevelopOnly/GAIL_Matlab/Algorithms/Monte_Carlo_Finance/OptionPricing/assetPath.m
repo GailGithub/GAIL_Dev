@@ -2,8 +2,8 @@ classdef assetPath < brownianMotion
 
 %% assetPath
 % is a class of discretized stochastic processes that model the values of
-% an asset with respect to time. Browniam motions are used to build these
-% asset paths.
+% an asset with respect to time. Browniam motions are used to construct
+% these asset paths.
 % 
 %
 % Example 1
@@ -26,12 +26,13 @@ classdef assetPath < brownianMotion
 %       assetParam_interest: 0.0100
 %     assetParam_volatility: 0.5000
 
-% Authors: Fred J. Hickernell
+% Authors: Fred J. Hickernell, Xinyan Zhang
 
 %% Properties
-% This process inherits properties from the |stochProcess| class.  Below are 
-% values assigned to that are abstractly defined in that class plus some
-% properties particulary for this class
+% This process inherits properties from the |brownianMotion| class.  Below
+% are values assigned to that are abstractly defined in that class plus
+% some properties particulary for this class.
+
    properties (SetAccess=public) %so they can only be set by the constructor
       assetParam = struct('pathType', 'GBM', ... %type of asset path
          'initPrice', 10, ... %initial asset price
@@ -44,7 +45,7 @@ classdef assetPath < brownianMotion
    
    properties (Constant, Hidden) %do not change & not seen
       allowPathType = {'GBM'} 
-         %kinds of asset paths that we can generate
+         %kinds of asset paths that we can generate, more to come
    end
    
    properties (Dependent = true)
@@ -54,8 +55,8 @@ classdef assetPath < brownianMotion
 
 
 %% Methods
-% The constructor for |assetPath| uses the |brownianMotion| constructor
-% and then parses the other properties. The function |genStockPaths| generates
+% The constructor for |assetPath| uses the |brownianMotion| constructor and
+% then parses the other properties. The function |genStockPaths| generates
 % the asset paths based on |whiteNoise| paths.
 
    methods
@@ -119,8 +120,7 @@ classdef assetPath < brownianMotion
            end
          end
          if isfield(val,'corrMat') %data for A
-            validateattributes(val.corrMat,{'numeric'}, ...
-               {'nonnegative'})
+            validateattributes(eig(val.corrMat),{'numeric'},{'nonnegative'})
             obj.assetParam.corrMat=val.corrMat; %row
          end
          if isfield(val,'drift') %data for type of option
