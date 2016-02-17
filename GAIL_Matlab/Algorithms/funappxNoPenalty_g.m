@@ -126,22 +126,20 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %
 %   out_param =
 % 
-%                a: -2
-%           abstol: 1.0000e-***7
-%                b: 2
 %                f: @(x)x.^2
-%          maxiter: 1000
-%              nhi: 20
+%                a: -2
+%                b: 2
+%           abstol: 1.0000e-***7
 %              nlo: 10
-%             nmax: 10000000  
+%              nhi: 20
 %            ninit: 18
+%             nmax: 10000000  
+%          maxiter: 1000
 %             exit: [2x1 logical]
 %             iter: 10 
 %          npoints: 8705
 %           errest: 6.3451e-***8
 %                x: [1x8705 double]
-%   >> out_param.bytes <= 1074402
-%      1
 %
 %
 %   Example 2:
@@ -150,23 +148,21 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %   >> [~, out_param] = funappxNoPenalty_g(f,'a',-2,'b',2,'nhi',20,'nlo',10)
 %
 %   out_param = 
-% 
-%                a: -2
-%           abstol: 1.0000e-***6
-%                b: 2
+%
 %                f: @(x)x.^2
-%          maxiter: 1000
-%              nhi: 20
+%                a: -2
+%                b: 2
+%           abstol: 1.0000e-***6
 %              nlo: 10
-%             nmax: 10000000
+%              nhi: 20
 %            ninit: 18
+%             nmax: 10000000
+%          maxiter: 1000
 %             exit: [2x1 logical]
 %             iter: 9
 %          npoints: 4353
 %           errest: 2.5418e-***7
 %                x: [1x4353 double]
-%   >> out_param.bytes <= 539450
-%      1
 %
 %
 %   Example 3:
@@ -177,22 +173,21 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %
 %   out_param = 
 % 
-%                a: -5
-%           abstol: 1.0000e-***6
-%                b: 5
 %                f: @(x)x.^2
-%          maxiter: 1000
-%              nhi: 20
+%                a: -5
+%                b: 5
+%           abstol: 1.0000e-***6
 %              nlo: 10
+%              nhi: 20
+%            ninit: 19 
 %             nmax: 10000000
-%            ninit: 19
+%          maxiter: 1000
 %             exit: [2x1 logical]
 %             iter: 10
 %          npoints: 9217
 %           errest: 3.5373e-***7
 %                x: [1x9217 double]
-%   >> out_param.bytes <= 1137810
-%      1
+%
 %
 %
 %   See also INTERP1, GRIDDEDINTERPOLANT, INTEGRAL_G, MEANMC_G, FUNMIN_G
@@ -236,10 +231,22 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %
 
 % check parameter satisfy conditions or not
-[f, out_param] = funappxNoPenalty_g_param(varargin{:});
+[f, in_param] = funappxNoPenalty_g_param(varargin{:});
 MATLABVERSION= gail.matlab_version;
 %nstar = out_param.nstar;
 %out_param.ninit = 2 * nstar + 1;
+
+%control the order of out_param
+out_param.f = f;
+out_param.a = in_param.a;
+out_param.b = in_param.b;
+out_param.abstol = in_param.abstol;
+out_param.nlo = in_param.nlo;
+out_param.nhi = in_param.nhi;
+out_param.ninit = in_param.ninit;
+out_param.nmax = in_param.nmax ;
+out_param.maxiter = in_param.maxiter;
+
 ninit = out_param.ninit;
 
 %%main algorithm
@@ -334,8 +341,10 @@ else
     pp = interp1(x,y,'linear','pp');
     fappx =@(x) ppval(pp,x);    
 end;
+if (in_param.memorytest==1)
 w = whos;
 out_param.bytes = sum([w.bytes]);
+end
 
 
 function [f, out_param] = funappxNoPenalty_g_param(varargin)
@@ -350,6 +359,7 @@ default.nlo = 10;
 default.nhi = 1000;
 default.nmax = 1e7;
 default.maxiter = 1000;
+default.memorytest = 0;
 
 MATLABVERSION= gail.matlab_version;
 if MATLABVERSION >= 8.3
@@ -394,6 +404,7 @@ if ~validvarargin
     out_param.nhi = default.nhi;
     out_param.nmax = default.nmax ;
     out_param.maxiter = default.maxiter;
+    out_param.memorytest = default.memorytest;
 else
     p = inputParser;
     addRequired(p,'f',@gail.isfcn);
@@ -406,6 +417,7 @@ else
         addOptional(p,'nhi',default.nhi,@isnumeric);
         addOptional(p,'nmax',default.nmax,@isnumeric)
         addOptional(p,'maxiter',default.maxiter,@isnumeric)
+        addOptional(p,'memorytest',default.memorytest,@isnumeric)
     else
         if isstruct(in2) %parse input structure
             p.StructExpand = true;
@@ -418,6 +430,7 @@ else
         f_addParamVal(p,'nhi',default.nhi,@isnumeric);
         f_addParamVal(p,'nmax',default.nmax,@isnumeric);
         f_addParamVal(p,'maxiter',default.maxiter,@isnumeric);
+        f_addParamVal(p,'memorytest',default.memorytest,@isnumeric);
     end
     parse(p,f,varargin{2:end})
     out_param = p.Results;
@@ -527,6 +540,11 @@ if (~gail.isposint(out_param.maxiter))
         out_param.nmax = default.nmax;
     end;
 end
+if (out_param.memorytest~=1&&out_param.memorytest~=0)
+    warning('GAIL:funappxNoPenalty_g:memorytest', ['Input of memorytest'...
+        ' can only be 0 or 1; use default value 0'])
+    out_param.memorytest = 0;
+end;
 
 
 
