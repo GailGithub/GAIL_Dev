@@ -408,10 +408,11 @@ out_param.x = x;
 if MATLABVERSION >= 8.3
     fappx = griddedInterpolant(x,y,'linear');
 else
-    fappx = @(x) ppval(interp1(x,y,'linear','pp'), x);    
-end;
+    fappx = @(t) ppval(interp1(x,y,'linear','pp'), t);    
+end; 
 w = whos;
 out_param.bytes = sum([w.bytes]);
+
 
 function [f, out_param] = funappx_g_param(varargin)
 % parse the input to the funappx_g function

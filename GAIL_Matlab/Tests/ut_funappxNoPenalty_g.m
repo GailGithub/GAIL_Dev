@@ -5,11 +5,11 @@ classdef ut_funappxNoPenalty_g < matlab.unittest.TestCase
         function funappxNoPenalty_gofConstantFunction(testCase)
             f = @(x) 3;
             in_param.maxiter = 1;
-            in_param.nlo = 1;
-            in_param.nhi = 1;
+            in_param.nlo = 5;
+            in_param.nhi = 5;
             [fappx, result] = testCase.verifyWarning(@()funappxNoPenalty_g(f,in_param),'GAIL:funappxNoPenalty_g:exceediter');
             testCase.verifyLessThanOrEqual(result.iter, 1);
-            testCase.verifyEqual(result.npoints,3);
+            testCase.verifyEqual(result.npoints,5);
             x = 0:0.1:1;
             testCase.verifyLessThanOrEqual(norm(fappx(x)-f(x)), eps);
         end
@@ -29,14 +29,14 @@ classdef ut_funappxNoPenalty_g < matlab.unittest.TestCase
         function funappxNoPenalty_gOf100000x(testCase)
             f = @(x) 100000 .* x;
             in_param.abstol = 10^(-8);
-            in_param.nlo = 1;
-            in_param.nhi = 1;
+            in_param.nlo = 5;
+            in_param.nhi = 5;
             [fappx, result] = funappxNoPenalty_g(f,in_param);
             x = rand(10000,1);
             actualerr = max(abs(fappx(x)-f(x)));
             testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
             testCase.verifyLessThanOrEqual(result.iter, 1);
-            testCase.verifyLessThanOrEqual(result.npoints, 3);
+            testCase.verifyLessThanOrEqual(result.npoints, 5);
          end
         
         function funappxNoPenalty_gOfxsquare(testCase)
@@ -163,16 +163,16 @@ classdef ut_funappxNoPenalty_g < matlab.unittest.TestCase
         
          function funappxNoPenalty_gOnpointsoflinear(testCase)
             f = @(x) 3*x + 5;
-            in_param.nlo = 1; in_param.nhi =1;
+            in_param.nlo = 5; in_param.nhi =5;
             [~, result] = funappxNoPenalty_g(f,in_param);
-            testCase.verifyEqual(result.npoints,3);
+            testCase.verifyEqual(result.npoints,5);
          end
         
          function funappxNoPenalty_gOnpointsofconstant(testCase)
             f = @(x) 5;
-            in_param.nlo = 1; in_param.nhi =1;
+            in_param.nlo = 5; in_param.nhi =5;
             [~, result] = funappxNoPenalty_g(f,in_param);
-            testCase.verifyEqual(result.npoints,3);
+            testCase.verifyEqual(result.npoints,5);
         end
 
     end
