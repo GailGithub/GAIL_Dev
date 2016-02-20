@@ -274,8 +274,8 @@ exit_len = 2;
 out_param.exit = false(exit_len,1); 
 C = @(h) C0*fh./(fh-h);
 
-errest = ones(1,ninit-1);
-while(max(errest) > abstol)
+max_errest = 1;
+while(max_errest > abstol)
     % length of each subinterval
     len = x(2:end)-x(1:end-1);
     
@@ -294,12 +294,13 @@ while(max(errest) > abstol)
     
     %error estimation
     errest = len.^2/8.*normbd;
+    max_errest = max(errest);
+    if max_errest <= abstol,
+        break
+    end 
  
     %find I
     badinterval = (errest > abstol);
-    if any(badinterval)==false,
-        break
-    end
     
     %update x,y
     whichcut = badinterval | [badinterval(2:end) 0] | [0 badinterval(1:end-1)];
@@ -338,7 +339,7 @@ end;
 
 out_param.iter = iter;
 out_param.npoints = ninit;
-out_param.errest = max(errest);
+out_param.errest = max_errest;
 %out_param.nstar = nstar;
 out_param.x = x;
 if MATLABVERSION >= 8.3
