@@ -10,20 +10,21 @@ shortutestreport = strcat(GAILPATH,'OutputFiles',filesep,...
    'gail_unittests','.txt');
 fid = fopen(shortutestreport,'wt');
 
-tic; 
-
+tic 
 %% CALL DOCTESTS 
-doctest funappx_g; time=toc
-doctest dt_funappx_g; time=toc
-doctest funmin_g; time=toc
-doctest integral_g; time=toc
-doctest integralsim_g; time=toc
-doctest dt_integral_g ; time=toc
-doctest meanMC_g; time=toc
-doctest meanMCBer_g; time=toc
-doctest cubLattice_g; time=toc
-doctest cubSobol_g; time=toc
-doctest dt_integralNoPenalty_g; time=toc
+tic; doctest funappx_g; time=toc
+tic; doctest funappxNoPenalty_g; time=toc
+tic; doctest dt_funappx_g; time=toc
+tic; doctest dt_funappxNoPenalty_g; time=toc
+tic; doctest funmin_g; time=toc
+tic; doctest integral_g; time=toc
+tic; doctest integralsim_g; time=toc
+tic; doctest dt_integral_g ; time=toc
+tic; doctest meanMC_g; time=toc
+tic; doctest meanMCBer_g; time=toc
+tic; doctest cubLattice_g; time=toc
+tic; doctest cubSobol_g; time=toc
+tic; doctest dt_integralNoPenalty_g; time=toc
 
 %% CALL UNIT TESTS
 [~,~,MATLABVERSION]=GAILstart(0);
@@ -80,6 +81,19 @@ else
         fprintf(fid,'Error: Test ut_funappx_g is wrongly coded. We skip it.\n');
     end
     
+    try
+        Tests = matlab.unittest.TestSuite.fromClass(?ut_funappxNoPenalty_g);
+        results=run(ut_funappx_g)
+        if sum([results.Failed])>0
+            failed=find([results.Failed]>0);
+            for i=1:size(failed,2)
+                fprintf(fid,'%s\n',Tests(failed(i)).Name);
+            end
+        end
+    catch
+        display('Error: Test ut_funappxNoPenalty_g is wrongly coded. We skip it.')
+        fprintf(fid,'Error: Test ut_funappxNoPenalty_g is wrongly coded. We skip it.\n');
+    end   
     
     try
         Tests = matlab.unittest.TestSuite.fromClass(?ut_funmin_g);
@@ -171,8 +185,9 @@ else
     % run_handle_ut(fid,'ut_integralNoPenalty_g')
 end
 
-time=toc;
+time=toc
 % disp(time)
 
 diary off
 fclose(fid);
+format

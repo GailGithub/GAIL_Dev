@@ -41,10 +41,10 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %
 %   Optional Input Arguments
 %
-%     in_param.nlo --- lower bound of initial number of points we used,
+%     in_param.nlo --- lower bound of initial number of points we use,
 %     default value is 10
 %
-%     in_param.nhi --- upper bound of initial number of points we used,
+%     in_param.nhi --- upper bound of initial number of points we use,
 %     default value is 1000
 %
 %     in_param.nmax --- when number of points hits the value, iteration
@@ -76,7 +76,7 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %
 %     out_param.maxiter --- max number of iterations
 %
-%     out_param.ninit --- initial number of points we use for subinterval
+%     out_param.ninit --- initial number of points we use for each subinterval
 %
 %     out_param.exit --- this is a vector with two elements, defining the
 %     conditions of success or failure satisfied when finishing the
@@ -232,7 +232,7 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 
 % check parameter satisfy conditions or not
 [f, in_param] = funappxNoPenalty_g_param(varargin{:});
-MATLABVERSION= gail.matlab_version;
+MATLABVERSION = gail.matlab_version;
 %nstar = out_param.nstar;
 %out_param.ninit = 2 * nstar + 1;
 
@@ -339,8 +339,7 @@ out_param.x = x;
 if MATLABVERSION >= 8.3
     fappx = griddedInterpolant(x,y,'linear');
 else
-    pp = interp1(x,y,'linear','pp');
-    fappx =@(x) ppval(pp,x);    
+    fappx = @(t) ppval(interp1(x,y,'linear','pp'), t);     
 end;
 if (in_param.memorytest==1)
   w = whos;
@@ -362,7 +361,7 @@ default.nmax = 1e7;
 default.maxiter = 1000;
 default.memorytest = 0;
 
-MATLABVERSION= gail.matlab_version;
+MATLABVERSION = gail.matlab_version;
 if MATLABVERSION >= 8.3
     f_addParamVal = @addParameter;
 else
@@ -546,6 +545,3 @@ if (out_param.memorytest~=1&&out_param.memorytest~=0)
         ' can only be 0 or 1; use default value 0'])
     out_param.memorytest = 0;
 end;
-
-
-

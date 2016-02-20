@@ -76,8 +76,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %
 %     out_param.maxiter --- max number of iterations
 %
-%     out_param.ninit --- initial number of points we use for each sub
-%     interval
+%     out_param.ninit --- initial number of points we use for each subinterval
 %
 %     out_param.exit --- this is a vector with two elements, defining the
 %     conditions of success or failure satisfied when finishing the
@@ -251,7 +250,6 @@ ninit = out_param.ninit;
 index = [1 ninit];
 % initialize error
 abstol = out_param.abstol;
-err = abstol + 1;
 len = out_param.b - out_param.a;
 x = out_param.a:len/(ninit-1):out_param.b;
 y = f(x);
@@ -270,7 +268,8 @@ exit_len = 2;
 %we start the algorithm with all warning flags down
 out_param.exit = false(exit_len,1); 
 
-while(max(err) > abstol)
+max_errest = 1;
+while(max_errest > abstol)
     % length of each subinterval
     len = x(index(2:end))-x(index(1:end-1));
     reshapey = reshape(y(1:end-1),ninit - 1, length(index)-1);
@@ -291,8 +290,11 @@ while(max(err) > abstol)
     nstarsmallcone = (fn.*len)./(2*gn+fn.*len/(ninit-1)).*...
     (2*ninit-2-(fn.*len)./(2*gn+fn.*len/(ninit-1)))/(ninit-1);
     nstar(smallconeind) = nstarsmallcone(smallconeind);
+
+    %update iterations
     iter = iter + 1;
     err = nstar.*len.*gn./(4*(ninit-1).*(ninit-1-nstar));
+    max_errest = max(err);
     %check if error satisfy the error tolerance 
     counterr = sum(err > abstol);
     if(length(x) + counterr *(ninit -1) > out_param.nmax)
@@ -393,6 +395,7 @@ while(max(err) > abstol)
         newerr(goodind + badcumsum(goodind)) = err(goodind);
         %obtain error for all sub intervals
         err = newerr;
+        max_errest = max(err);
         
         %upadte index w.p.t x after splitting
         index = 1:(ninit-1):length(err)*(ninit-1)+1;
@@ -402,16 +405,17 @@ while(max(err) > abstol)
 end;
 out_param.iter = iter;
 out_param.npoints = index(end);
-out_param.errest = max(err);
+out_param.errest = max_errest;
 out_param.nstar = nstar;
 out_param.x = x;
 if MATLABVERSION >= 8.3
     fappx = griddedInterpolant(x,y,'linear');
 else
     fappx = @(t) ppval(interp1(x,y,'linear','pp'), t);    
-end; 
+end;
 w = whos;
 out_param.bytes = sum([w.bytes]);
+ 
 
 
 function [f, out_param] = funappx_g_param(varargin)
@@ -603,6 +607,4 @@ if (~gail.isposint(out_param.maxiter))
         out_param.nmax = default.nmax;
     end;
 end
-
-
-
+ 
