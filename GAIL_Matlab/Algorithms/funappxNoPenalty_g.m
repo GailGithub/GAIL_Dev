@@ -296,16 +296,16 @@ while(max(errest) > abstol)
     errest = len.^2/8.*normbd;
  
     %find I
-    badinterval = errest > abstol;
+    badinterval = (errest > abstol);
+    if any(badinterval)==false,
+        break
+    end
     
     %update x,y
     whichcut = badinterval | [badinterval(2:end) 0] | [0 badinterval(1:end-1)];
     whichcut1 = (whichcut==1);
     %whichstay = (whichcut==0);
     newx = x(whichcut1) + 0.5 * len(whichcut1);
-    if isempty(newx),
-        break
-    end
     %newf = f(newx);
     xnew = zeros(1,ninit+length(newx));
     ynew = xnew;
