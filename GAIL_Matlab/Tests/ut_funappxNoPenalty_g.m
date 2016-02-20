@@ -7,7 +7,7 @@ classdef ut_funappxNoPenalty_g < matlab.unittest.TestCase
             in_param.maxiter = 1;
             in_param.nlo = 5;
             in_param.nhi = 5;
-            [fappx, result] = testCase.verifyWarning(@()funappxNoPenalty_g(f,in_param),'GAIL:funappxNoPenalty_g:exceediter');
+            [fappx, result] = funappxNoPenalty_g(f,in_param);
             testCase.verifyLessThanOrEqual(result.iter, 1);
             testCase.verifyEqual(result.npoints,5);
             x = 0:0.1:1;

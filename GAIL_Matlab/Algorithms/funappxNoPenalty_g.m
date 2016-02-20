@@ -136,7 +136,7 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %             nmax: 10000000  
 %          maxiter: 1000
 %             exit: [2x1 logical]
-%             iter: 10 
+%             iter: 9 
 %          npoints: 8705
 %           errest: 6.3451e-***8
 %                x: [1x8705 double]
@@ -159,7 +159,7 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %             nmax: 10000000
 %          maxiter: 1000
 %             exit: [2x1 logical]
-%             iter: 9
+%             iter: 8
 %          npoints: 4353
 %           errest: 2.5418e-***7
 %                x: [1x4353 double]
@@ -183,7 +183,7 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %             nmax: 10000000
 %          maxiter: 1000
 %             exit: [2x1 logical]
-%             iter: 10
+%             iter: 9
 %          npoints: 9217
 %           errest: 3.5373e-***7
 %                x: [1x9217 double]
@@ -280,40 +280,44 @@ while(max(errest) > abstol)
     len = x(2:end)-x(1:end-1);
     
     %approximate f''(t)
-    deltaf =2*(y(1:end-2)./len(1:end-1)./(len(1:end-1)+len(2:end))-...
-            y(2:end-1)./len(1:end-1)./len(2:end)+...
-            y(3:end)./len(2:end)./(len(1:end-1)+len(2:end)));
+    deltaf = 2*(y(1:end-2)./len(1:end-1)./(len(1:end-1)+len(2:end))-...
+             y(2:end-1)./len(1:end-1)./len(2:end)+...
+             y(3:end)./len(2:end)./(len(1:end-1)+len(2:end)));
     %add 
     deltaf=[0 0 abs(deltaf) 0 0];
     
-    %
+    %compute vector h
     h = [x(2)-a x(3)-a x(4:end)-x(1:end-3) b-x(end-2) b-x(end-1)];
     
     %bound of |f''(t)|
-    normbd=C(max(h(1:ninit-1),h(3:ninit+1))).*max(deltaf(1:ninit-1),deltaf(4:ninit+2));
+    normbd = C(max(h(1:ninit-1),h(3:ninit+1))) .* max(deltaf(1:ninit-1),deltaf(4:ninit+2));
     
     %error estimation
     errest = len.^2/8.*normbd;
  
-    
     %find I
     badinterval = errest > abstol;
     
     %update x,y
-    whichcut = badinterval|[badinterval(2:end) 0]|[0 badinterval(1:end-1)];
-    newx = x(whichcut==1)+0.5 *len(whichcut==1);
-    newf = f(newx);
+    whichcut = badinterval | [badinterval(2:end) 0] | [0 badinterval(1:end-1)];
+    whichcut1 = (whichcut==1);
+    %whichstay = (whichcut==0);
+    newx = x(whichcut1) + 0.5 * len(whichcut1);
+    if isempty(newx),
+        break
+    end
+    %newf = f(newx);
     xnew = zeros(1,ninit+length(newx));
     ynew = xnew;
-    tt=cumsum(whichcut); 
-    xnew([1 (2:length(x))+tt])=x;
-    ynew([1 (2:length(x))+tt])=y;
-    whichstay = (whichcut ==0);
-    tem=2*cumsum(whichcut)+cumsum(whichstay);
-    xnew(tem(whichcut==1))=newx;
-    ynew(tem(whichcut==1))=newf;
+    tt = cumsum(whichcut); 
+    xnew([1 (2:ninit)+tt]) = x;
+    ynew([1 (2:ninit)+tt]) = y;
+    tem = 2 * tt + cumsum(whichcut==0);
+    xnew(tem(whichcut1)) = newx;
+    ynew(tem(whichcut1)) = f(newx);
     x = xnew;
     y = ynew;
+    
     %update errorbound
 %     errnew = zeros(1,ninit+length(newx)-2);
 %     errnew((1:length(whichcut))+tt) = errest;
@@ -322,6 +326,7 @@ while(max(errest) > abstol)
     
     ninit = length(x);
 
+    %update iterations
     iter = iter + 1;
     if(iter==out_param.maxiter)
         out_param.exit(2) = 1;
@@ -343,8 +348,8 @@ else
     fappx =@(x) ppval(pp,x);    
 end;
 if (in_param.memorytest==1)
-w = whos;
-out_param.bytes = sum([w.bytes]);
+  w = whos;
+  out_param.bytes = sum([w.bytes]);
 end
 
 
