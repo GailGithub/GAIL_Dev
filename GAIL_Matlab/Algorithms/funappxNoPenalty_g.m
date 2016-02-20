@@ -305,19 +305,13 @@ while(max_errest > abstol)
     %update x,y
     whichcut = badinterval | [badinterval(2:end) 0] | [0 badinterval(1:end-1)];
     whichcut1 = (whichcut==1);
-    %whichstay = (whichcut==0);
     newx = x(whichcut1) + 0.5 * len(whichcut1);
-    %newf = f(newx);
-    xnew = zeros(1,ninit+length(newx));
-    ynew = xnew;
     tt = cumsum(whichcut); 
-    xnew([1 (2:ninit)+tt]) = x;
-    ynew([1 (2:ninit)+tt]) = y;
+    x([1 (2:ninit)+tt]) = x;
+    y([1 (2:ninit)+tt]) = y;
     tem = 2 * tt + cumsum(whichcut==0);
-    xnew(tem(whichcut1)) = newx;
-    ynew(tem(whichcut1)) = f(newx);
-    x = xnew;
-    y = ynew;
+    x(tem(whichcut1)) = newx;
+    y(tem(whichcut1)) = f(newx);
     
     %update errorbound
 %     errnew = zeros(1,ninit+length(newx)-2);
