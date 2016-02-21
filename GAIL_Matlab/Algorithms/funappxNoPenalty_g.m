@@ -286,7 +286,8 @@ while(max_errest > abstol)
     deltaf=[0 0 abs(deltaf) 0 0];
     
     % compute vector h
-    h = [out_param.x(2)-a out_param.x(3)-a out_param.x(4:end)-out_param.x(1:end-3) b-out_param.x(end-2) b-out_param.x(end-1)];
+    h = [out_param.x(2)-a out_param.x(3)-a out_param.x(4:end)-...
+         out_param.x(1:end-3) b-out_param.x(end-2) b-out_param.x(end-1)];
     
     % bound of |f''(t)|
     normbd = C(max(h(1:ninit-1),h(3:ninit+1))) .* max(deltaf(1:ninit-1),deltaf(4:ninit+2));
