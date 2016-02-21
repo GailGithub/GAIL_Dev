@@ -280,14 +280,15 @@ while(max_errest > abstol)
     
     % approximate f''(t)
     deltaf = 2*(y(1:end-2)./len(1:end-1)./(len(1:end-1)+len(2:end))-...
-             y(2:end-1)./len(1:end-1)./len(2:end)+...
-             y(3:end)./len(2:end)./(len(1:end-1)+len(2:end)));
+                y(2:end-1)./len(1:end-1)./ len(2:end)              +...
+                y(3:end  )./len(2:end  )./(len(1:end-1)+len(2:end)));
     % add 
     deltaf=[0 0 abs(deltaf) 0 0];
     
     % compute vector h
-    h = [out_param.x(2)-a out_param.x(3)-a out_param.x(4:end)-...
-         out_param.x(1:end-3) b-out_param.x(end-2) b-out_param.x(end-1)];
+    h = [out_param.x(2)-a out_param.x(3)-a       ...
+         out_param.x(4:end)-out_param.x(1:end-3) ...
+         b-out_param.x(end-2)  b-out_param.x(end-1)];
     
     % bound of |f''(t)|
     normbd = C(max(h(1:ninit-1),h(3:ninit+1))) .* max(deltaf(1:ninit-1),deltaf(4:ninit+2));
