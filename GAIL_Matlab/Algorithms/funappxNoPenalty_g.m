@@ -236,7 +236,7 @@ MATLABVERSION = gail.matlab_version;
 %nstar = out_param.nstar;
 %out_param.ninit = 2 * nstar + 1;
 
-%control the order of out_param
+% control the order of out_param
 out_param.f = f;
 out_param.a = in_param.a;
 out_param.b = in_param.b;
@@ -249,79 +249,78 @@ out_param.maxiter = in_param.maxiter;
 
 ninit = out_param.ninit;
 
-%%main algorithm
+%% main algorithm
 a = out_param.a;
 b = out_param.b;
 abstol = out_param.abstol;
-x = a:(b-a)/(ninit-1):b;
-y = f(x);
+out_param.x = a:(b-a)/(ninit-1):b;
+y = f(out_param.x);
 %fh = b-a;
 fh = 4*(b-a)/(ninit-1);
 C0 = 1.2;
 iSing = find(isinf(y));
 if ~isempty(iSing)
-    error('GAIL:funappxNoPenalty_g:yInf',['Function f(x) = Inf at x = ', num2str(x(iSing))]);
+    error('GAIL:funappxNoPenalty_g:yInf',['Function f(x) = Inf at x = ', num2str(out_param.x(iSing))]);
 end
 if length(y) == 1  
     % probably f is a constant function and Matlab would  
     % reutrn only a scalar y = f(x) even if x is a vector 
     f = @(x) f(x) + 0 * x;
-    y = f(x);
+    y = f(out_param.x);
 end
 iter = 0;
 exit_len = 2;
-%we start the algorithm with all warning flags down
+% we start the algorithm with all warning flags down
 out_param.exit = false(exit_len,1); 
 C = @(h) C0*fh./(fh-h);
-
 max_errest = 1;
 while(max_errest > abstol)
     % length of each subinterval
-    len = x(2:end)-x(1:end-1);
+    len = out_param.x(2:end)-out_param.x(1:end-1);
     
-    %approximate f''(t)
+    % approximate f''(t)
     deltaf = 2*(y(1:end-2)./len(1:end-1)./(len(1:end-1)+len(2:end))-...
              y(2:end-1)./len(1:end-1)./len(2:end)+...
              y(3:end)./len(2:end)./(len(1:end-1)+len(2:end)));
-    %add 
+    % add 
     deltaf=[0 0 abs(deltaf) 0 0];
     
-    %compute vector h
-    h = [x(2)-a x(3)-a x(4:end)-x(1:end-3) b-x(end-2) b-x(end-1)];
+    % compute vector h
+    h = [out_param.x(2)-a out_param.x(3)-a out_param.x(4:end)-out_param.x(1:end-3) b-out_param.x(end-2) b-out_param.x(end-1)];
     
-    %bound of |f''(t)|
+    % bound of |f''(t)|
     normbd = C(max(h(1:ninit-1),h(3:ninit+1))) .* max(deltaf(1:ninit-1),deltaf(4:ninit+2));
     
-    %error estimation
+    % error estimation
     errest = len.^2/8.*normbd;
     max_errest = max(errest);
     if max_errest <= abstol,
         break
     end 
  
-    %find I
+    % find I
     badinterval = (errest > abstol);
     
-    %update x,y
+    % update x,y
     whichcut = badinterval | [badinterval(2:end) 0] | [0 badinterval(1:end-1)];
     whichcut1 = (whichcut==1);
-    newx = x(whichcut1) + 0.5 * len(whichcut1);
+    newx = out_param.x(whichcut1) + 0.5 * len(whichcut1);
     tt = cumsum(whichcut); 
-    x([1 (2:ninit)+tt]) = x;
+    out_param.x([1 (2:ninit)+tt]) = out_param.x;
     y([1 (2:ninit)+tt]) = y;
     tem = 2 * tt + cumsum(whichcut==0);
-    x(tem(whichcut1)) = newx;
+    out_param.x(tem(whichcut1)) = newx;
     y(tem(whichcut1)) = f(newx);
     
-    %update errorbound
+    % update errorbound
 %     errnew = zeros(1,ninit+length(newx)-2);
 %     errnew((1:length(whichcut))+tt) = errest;
 %     errnew((1:length(whichcut))+[0 tt(1:end-1)]) = errest;
 %     errest = max(errest);   
     
-    ninit = length(x);
+    ninit = length(out_param.x);
 
-    %update iterations
+    % update iterations
     iter = iter + 1;
     if(iter==out_param.maxiter)
         out_param.exit(2) = 1;
@@ -334,12 +333,14 @@ end;
 out_param.iter = iter;
 out_param.npoints = ninit;
 out_param.errest = max_errest;
-%out_param.nstar = nstar;
-out_param.x = x;
+[out_param, ~] = orderfields(out_param, ...
+                   {'f', 'a', 'b','abstol','nlo','nhi','ninit','nmax','maxiter',...
+                    'exit','iter','npoints','errest','x'});
+% out_param.nstar = nstar;
 if MATLABVERSION >= 8.3
-    fappx = griddedInterpolant(x,y,'linear');
+    fappx = griddedInterpolant(out_param.x,y,'linear');
 else
-    fappx = @(t) ppval(interp1(x,y,'linear','pp'), t);     
+    fappx = @(t) ppval(interp1(out_param.x,y,'linear','pp'), t);     
 end;
 if (in_param.memorytest==1)
   w = whos;
