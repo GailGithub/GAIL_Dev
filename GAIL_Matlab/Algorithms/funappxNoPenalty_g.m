@@ -336,8 +336,8 @@ out_param.iter = iter;
 out_param.npoints = ninit;
 out_param.errest = max_errest;
 out_param = orderfields(out_param, ...
-                   {'f', 'a', 'b','abstol','nlo','nhi','ninit','nmax','maxiter',...
-                    'exit','iter','npoints','errest','x'});
+            {'f', 'a', 'b','abstol','nlo','nhi','ninit','nmax','maxiter',...
+             'exit','iter','npoints','errest','x'});
 % out_param.nstar = nstar;
 if MATLABVERSION >= 8.3
     fappx = griddedInterpolant(out_param.x,y,'linear');
