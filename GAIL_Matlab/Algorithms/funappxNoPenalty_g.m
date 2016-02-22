@@ -139,7 +139,6 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %             iter: 9 
 %          npoints: 8705
 %           errest: 6.3451e-***8
-%                x: [1x8705 double]
 %
 %
 %   Example 2:
@@ -162,7 +161,6 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %             iter: 8
 %          npoints: 4353
 %           errest: 2.5418e-***7
-%                x: [1x4353 double]
 %
 %
 %   Example 3:
@@ -186,7 +184,6 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %             iter: 9
 %          npoints: 9217
 %           errest: 3.5373e-***7
-%                x: [1x9217 double]
 %
 %
 %
@@ -344,9 +341,12 @@ if MATLABVERSION >= 8.3
 else
     fappx = @(t) ppval(interp1(out_param.x,y,'linear','pp'), t);     
 end;
-if (in_param.memorytest==1)
+if (in_param.memorytest)
   w = whos;
   out_param.bytes = sum([w.bytes]);
+end
+if (~in_param.output_x)
+  out_param = rmfield(out_param,'x');
 end
 
 
@@ -362,7 +362,8 @@ default.nlo = 10;
 default.nhi = 1000;
 default.nmax = 1e7;
 default.maxiter = 1000;
-default.memorytest = 0;
+default.memorytest = false;
+default.output_x = false;
 
 MATLABVERSION = gail.matlab_version;
 if MATLABVERSION >= 8.3
@@ -408,6 +409,7 @@ if ~validvarargin
     out_param.nmax = default.nmax ;
     out_param.maxiter = default.maxiter;
     out_param.memorytest = default.memorytest;
+    out_param.output_x = default.output_x;
 else
     p = inputParser;
     addRequired(p,'f',@gail.isfcn);
@@ -420,7 +422,8 @@ else
         addOptional(p,'nhi',default.nhi,@isnumeric);
         addOptional(p,'nmax',default.nmax,@isnumeric)
         addOptional(p,'maxiter',default.maxiter,@isnumeric)
-        addOptional(p,'memorytest',default.memorytest,@isnumeric)
+        addOptional(p,'memorytest',default.memorytest,@logical)
+        addOptional(p,'output_x',default.output_x,@logical)
     else
         if isstruct(in2) %parse input structure
             p.StructExpand = true;
@@ -433,7 +436,8 @@ else
         f_addParamVal(p,'nhi',default.nhi,@isnumeric);
         f_addParamVal(p,'nmax',default.nmax,@isnumeric);
         f_addParamVal(p,'maxiter',default.maxiter,@isnumeric);
-        f_addParamVal(p,'memorytest',default.memorytest,@isnumeric);
+        f_addParamVal(p,'memorytest',default.memorytest,@logical);
+        f_addParamVal(p,'output_x',default.output_x,@logical);
     end
     parse(p,f,varargin{2:end})
     out_param = p.Results;
@@ -543,8 +547,13 @@ if (~gail.isposint(out_param.maxiter))
         out_param.nmax = default.nmax;
     end;
 end
-if (out_param.memorytest~=1&&out_param.memorytest~=0)
+if (out_param.memorytest~=true&&out_param.memorytest~=false)
     warning('GAIL:funappxNoPenalty_g:memorytest', ['Input of memorytest'...
-        ' can only be 0 or 1; use default value 0'])
-    out_param.memorytest = 0;
+        ' can only be true or false; use default value false'])
+    out_param.memorytest = false;
+end;
+if (out_param.output_x~=true&&out_param.output_x~=false)
+    warning('GAIL:funappxNoPenalty_g:output_x', ['Input of output_x'...
+        ' can only be true or false; use default value false'])
+    out_param.output_x = false;
 end;

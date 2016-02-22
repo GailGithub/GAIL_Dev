@@ -28,7 +28,6 @@ function dt_funappxNoPenalty_g
 %           iter: 8
 %        npoints: 205569
 %         errest: 2.8480e-***9
-%              x: [1x205569 double]
 %
 % 
 %   Example 3: 
@@ -52,7 +51,6 @@ function dt_funappxNoPenalty_g
 %        iter: 8
 %     npoints: 89601
 %      errest: 3.7478e-***9
-%           x: [1x89601 double]
 %      
 %
 %   Example 4:
@@ -74,7 +72,6 @@ function dt_funappxNoPenalty_g
 %             iter: 8
 %          npoints: 10497
 %           errest: 4.3699e-***8
-%                x: [1x10497 double]
 %
 %
 %   Example 5:
@@ -96,7 +93,6 @@ function dt_funappxNoPenalty_g
 %             iter: 6
 %          npoints: 2113
 %           errest: 6.1248e-***7
-%                x: [1x2113 double]
 %
 % 
 %   Example 6:
@@ -118,12 +114,11 @@ function dt_funappxNoPenalty_g
 %        iter: 7
 %     npoints: 5633
 %      errest: 4.6617e-***7
-%           x: [1x5633 double]
 %
 %
 %   Example 7:
 %
-%   >> [~, out_param] = funappxNoPenalty_g(@(x) x.^2,-5,10,1e-7,10,20)
+%   >> [~, out_param] = funappxNoPenalty_g(@(x) x.^2,-5,10,1e-7,10,20,'output_x',1)
 %
 %   out_param = 
 % 
@@ -141,12 +136,14 @@ function dt_funappxNoPenalty_g
 %          npoints: 38913
 %           errest: 4.4596e-***8
 %                x: [1x38913 double]
+%  >> length(out_param.x) == out_param.npoints
+%     1
 %
 %
 %   Example 8:
 %
 %   >> [~, out_param] = funappxNoPenalty_g(@(x) x.^2,'memorytest',1);
-%   >> out_param.bytes <= 73026
-%   1
+%   >> out_param.bytes <= 73203
+%      1
 %
 
