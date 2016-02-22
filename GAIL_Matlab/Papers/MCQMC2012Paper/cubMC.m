@@ -130,15 +130,28 @@ if strcmp(param.sample,'iid') %iid sampling
     else
        toloversig=param.tol/sig0up;
        ncheb=ceil(1/(alpha1*toloversig.^2));
+       
        A=18.1139;
-       A1=0.3328;
-       A2=0.429; %constant in Berry-Esseen inequality
-       M3upper=param.kurtmax^(3/4);
-        BEfun=@(logsqrtn) ...
-                normcdf(-exp(logsqrtn).*toloversig)...
-                +exp(-logsqrtn).*min(A1*(M3upper+A2), ...
-                A*M3upper./(1+(exp(logsqrtn).*toloversig).^3))...
-                - alpha1/2;
+       A1=0.3322;
+       A2=0.429;
+       A3= 0.3031;
+       A4= 0.646;
+       A5= 0.469; % Six constants in Berry-Esseen inequality
+       M3upper=param.kurtmax^(3/4);%using Jensen inequality to
+       % bound the third moment
+       BEfun=@(logsqrtn)normcdf(-exp(logsqrtn).*toloversig)...
+           +exp(-logsqrtn).*min([A1*(M3upper+A2),A3*(M3upper+A4),A5*M3upper, ...
+           A*M3upper./(1+(exp(logsqrtn).*toloversig).^3)])- alpha1/2;
+       
+%        A=18.1139;
+%        A1=0.3328;
+%        A2=0.429; %constant in Berry-Esseen inequality
+%        M3upper=param.kurtmax^(3/4);
+%         BEfun=@(logsqrtn) ...
+%                 normcdf(-exp(logsqrtn).*toloversig)...
+%                 +exp(-logsqrtn).*min(A1*(M3upper+A2), ...
+%                 A*M3upper./(1+(exp(logsqrtn).*toloversig).^3))...
+%                 - alpha1/2;
             
         if BEfun(log(sqrt(param.n0))) <= 0 || ncheb <=param.n0;
             param.n=param.n0;
