@@ -75,7 +75,7 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %     out_param.npoints --- number of points we need to reach the
 %     guaranteed absolute error tolerance
 %
-%     out_param.errorbound --- an upper bound of the absolute error
+%     out_param.errest --- an upper bound of the absolute error
 %
 %     out_param.nstar --- final value of the parameter defining the cone of
 %     functions for which this algorithm is guaranteed; nstar = ninit-2
@@ -138,7 +138,7 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %            ninit: 102
 %     exceedbudget: 0
 %          npoints: 5051
-%       errorbound: 9.9990e-07
+%           errest: 9.9990e-07
 %
 %
 %   Example 2:
@@ -168,7 +168,7 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %            ninit: 12
 %     exceedbudget: 0
 %          npoints: 38149
-%       errorbound: 2.7493e-08
+%           errest: 2.7493e-08
 %
 %
 %   Example 3:
@@ -199,7 +199,7 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %            ninit: 66
 %     exceedbudget: 0
 %          npoints: 31851
-%       errorbound: 2.5286e-07
+%            errest: 2.5286e-07
 %
 %
 %   Example 4:
@@ -231,7 +231,7 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %            ninit: 92
 %     exceedbudget: 0
 %          npoints: 596779
-%       errorbound: 2.5274e-08
+%            errest: 2.5274e-08
 %
 %
 %   See also INTEGRAL_G, MEANMC_G, CUBMC_G
@@ -352,14 +352,14 @@ if out_param.exceedbudget == 1;
     'attempted to exceed the cost budget. The answer may be unreliable.'])
     out_param.npoints = n;
     nstar = out_param.nstar;
-    out_param.errorbound = gn*len*nstar/(4*(n-1)*(n-1-nstar));
+    out_param.errest = gn*len*nstar/(4*(n-1)*(n-1-nstar));
     x1 = out_param.a:len/(out_param.npoints-1):out_param.b;
     y1 = f(x1);
     pp = interp1(x1,y1,'linear','pp');
 else
     out_param.npoints = n;
     nstar = out_param.nstar;
-    out_param.errorbound = gn*len*nstar/(4*(n-1)*(n-1-nstar));
+    out_param.errest = gn*len*nstar/(4*(n-1)*(n-1-nstar));
     pp = interp1(x,y,'linear','pp');    
 end;
 
