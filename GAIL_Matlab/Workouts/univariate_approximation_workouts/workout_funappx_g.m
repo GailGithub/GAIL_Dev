@@ -8,7 +8,7 @@ function [timeratio,timelgratio,npointsratio,npointslgratio]=workout_funappx_g(n
 % [timeratio,timelgratio,npointsratio,npointslgratio]=workout_funappx_g(nrep,abstol,nlo,nhi);
 %
 % Compare funappxNoPenalty_g with funappxglobal_g:
-% [timeratio,timelgratio,npointsratio,npointslgratio]=workout_funappx_g(nrep,abstol,nlo,nhi,'funappxNoPenalty_g')
+% [timeratio,timelgratio,npointsratio,npointslgratio]=workout_funappx_g(nrep,abstol,nlo,nhi,'funappxNoPenalty_g');
 
 c = rand(nrep,1)*4;
 n = 3;
