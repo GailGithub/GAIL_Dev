@@ -230,26 +230,15 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 % check parameter satisfy conditions or not
 [f, in_param] = funappxNoPenalty_g_param(varargin{:});
 MATLABVERSION = gail.matlab_version;
-%nstar = out_param.nstar;
-%out_param.ninit = 2 * nstar + 1;
-
-% control the order of out_param
-out_param.f = f;
-out_param.a = in_param.a;
-out_param.b = in_param.b;
-out_param.abstol = in_param.abstol;
-out_param.nlo = in_param.nlo;
-out_param.nhi = in_param.nhi;
-out_param.ninit = in_param.ninit;
-out_param.nmax = in_param.nmax ;
-out_param.maxiter = in_param.maxiter;
-
-ninit = out_param.ninit;
+out_param = in_param;
+out_param = rmfield(out_param,'memorytest');
+out_param = rmfield(out_param,'output_x');
 
 %% main algorithm
 a = out_param.a;
 b = out_param.b;
 abstol = out_param.abstol;
+ninit = out_param.ninit;
 out_param.x = a:(b-a)/(ninit-1):b;
 y = f(out_param.x);
 %fh = b-a;
@@ -272,35 +261,26 @@ out_param.exit = false(1,exit_len);
 C = @(h) C0*fh./(fh-h);
 max_errest = 1;
 while(max_errest > abstol)
-    % length of each subinterval
+    %% Stage 1: compute length of each subinterval and approximate |f''(t)|
     len = out_param.x(2:end)-out_param.x(1:end-1);
-    
-    % approximate f''(t)
     deltaf = 2*(y(1:end-2)./len(1:end-1)./(len(1:end-1)+len(2:end))-...
                 y(2:end-1)./len(1:end-1)./ len(2:end)              +...
                 y(3:end  )./len(2:end  )./(len(1:end-1)+len(2:end)));
-    % add 
-    deltaf=[0 0 abs(deltaf) 0 0];
+    deltaf = [0 0 abs(deltaf) 0 0];
     
-    % compute vector h
+    %% Stage 2: compute bound of |f''(t)| and estimate error
     h = [out_param.x(2)-a out_param.x(3)-a       ...
          out_param.x(4:end)-out_param.x(1:end-3) ...
          b-out_param.x(end-2)  b-out_param.x(end-1)];
-    
-    % bound of |f''(t)|
     normbd = C(max(h(1:ninit-1),h(3:ninit+1))) .* max(deltaf(1:ninit-1),deltaf(4:ninit+2));
-    
-    % error estimation
     errest = len.^2/8.*normbd;
     max_errest = max(errest);
     if max_errest <= abstol,
         break
     end 
  
-    % find I
+    %% Stage 3: find I and update x,y
     badinterval = (errest > abstol);
-    
-    % update x,y
     whichcut = badinterval | [badinterval(2:end) 0] | [0 badinterval(1:end-1)];
     if (out_param.nmax<(ninit+length(find(whichcut==1))))
         out_param.exit(1) = true;
@@ -316,9 +296,8 @@ while(max_errest > abstol)
     tem = 2 * tt + cumsum(whichcut==0);
     out_param.x(tem(whichcut)) = newx;
     y(tem(whichcut)) = f(newx);
-    
     ninit = length(out_param.x);
-
+    
     % update iterations
     iter = iter + 1;
     if(iter==out_param.maxiter)
@@ -329,13 +308,14 @@ while(max_errest > abstol)
     end;
 end;
 
+%% postprocessing
 out_param.iter = iter;
 out_param.npoints = ninit;
 out_param.errest = max_errest;
+% control the order of out_param
 out_param = orderfields(out_param, ...
             {'f', 'a', 'b','abstol','nlo','nhi','ninit','nmax','maxiter',...
              'exit','iter','npoints','errest','x'});
-% out_param.nstar = nstar;
 if MATLABVERSION >= 8.3
     fappx = griddedInterpolant(out_param.x,y,'linear');
 else
