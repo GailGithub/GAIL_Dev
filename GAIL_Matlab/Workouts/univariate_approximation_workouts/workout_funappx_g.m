@@ -193,6 +193,7 @@ gail.save_mat('WorkoutFunappxOutput', ['Workout',algoname,'Test'], true, npoints
 
 end
 
+%% If funappx_g is used:
 % % Sample output for nrep=1000; abstol = 1e-7; nlo = 100; nhi = 1000;
 % %    Test      Number of Points       Time Used
 % %  Function   Local      Global     Local    Global
@@ -209,4 +210,20 @@ end
 % % npointslgratio =
 % % 
 % %        0.3610    1.2173    0.1076
+%
+%% If funappxNoPenalty_g is used:
+% 
+%    Test      Number of Points       Time Used
+%  Function   Local      Global     Local    Global
+%         1      7781     194166   0.0045961    0.0379585
+%         2     53917     425327   0.0223668    0.0496360
+%         3     22875    2092566   0.0158381    0.2506039
+%
+% timelgratio =
+%
+%     0.1211    0.4506    0.0632
+%
+% npointslgratio =
+% 
+%     0.0401    0.1268    0.0109
 
