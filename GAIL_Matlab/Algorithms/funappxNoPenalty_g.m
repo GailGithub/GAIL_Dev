@@ -279,10 +279,8 @@ while(max_errest > abstol)
         break
     end 
  
-    %% Stage 3: find I
+    %% Stage 3: find I and update x,y
     badinterval = (errest > abstol);
-    
-    % update x,y
     whichcut = badinterval | [badinterval(2:end) 0] | [0 badinterval(1:end-1)];
     whichcut1 = (whichcut==1);
     newx = out_param.x(whichcut1) + 0.5 * len(whichcut1);
@@ -293,11 +291,6 @@ while(max_errest > abstol)
     out_param.x(tem(whichcut1)) = newx;
     y(tem(whichcut1)) = f(newx);
     ninit = length(out_param.x);
-    % update errorbound
-%     errnew = zeros(1,ninit+length(newx)-2);
-%     errnew((1:length(whichcut))+tt) = errest;
-%     errnew((1:length(whichcut))+[0 tt(1:end-1)]) = errest;
-%     errest = max(errest);   
     
     % update iterations
     iter = iter + 1;
