@@ -230,26 +230,15 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 % check parameter satisfy conditions or not
 [f, in_param] = funappxNoPenalty_g_param(varargin{:});
 MATLABVERSION = gail.matlab_version;
-%nstar = out_param.nstar;
-%out_param.ninit = 2 * nstar + 1;
-
-% control the order of out_param
-out_param.f = f;
-out_param.a = in_param.a;
-out_param.b = in_param.b;
-out_param.abstol = in_param.abstol;
-out_param.nlo = in_param.nlo;
-out_param.nhi = in_param.nhi;
-out_param.ninit = in_param.ninit;
-out_param.nmax = in_param.nmax ;
-out_param.maxiter = in_param.maxiter;
-
-ninit = out_param.ninit;
+out_param = in_param;
+out_param = rmfield(out_param,'memorytest');
+out_param = rmfield(out_param,'output_x');
 
 %% main algorithm
 a = out_param.a;
 b = out_param.b;
 abstol = out_param.abstol;
+ninit = out_param.ninit;
 out_param.x = a:(b-a)/(ninit-1):b;
 y = f(out_param.x);
 %fh = b-a;
@@ -275,12 +264,11 @@ while(max_errest > abstol)
     % length of each subinterval
     len = out_param.x(2:end)-out_param.x(1:end-1);
     
-    % approximate f''(t)
+    % approximate |f''(t)|
     deltaf = 2*(y(1:end-2)./len(1:end-1)./(len(1:end-1)+len(2:end))-...
                 y(2:end-1)./len(1:end-1)./ len(2:end)              +...
                 y(3:end  )./len(2:end  )./(len(1:end-1)+len(2:end)));
-    % add 
-    deltaf=[0 0 abs(deltaf) 0 0];
+    deltaf = [0 0 abs(deltaf) 0 0];
     
     % compute vector h
     h = [out_param.x(2)-a out_param.x(3)-a       ...
@@ -332,10 +320,10 @@ end;
 out_param.iter = iter;
 out_param.npoints = ninit;
 out_param.errest = max_errest;
+% control the order of out_param
 out_param = orderfields(out_param, ...
             {'f', 'a', 'b','abstol','nlo','nhi','ninit','nmax','maxiter',...
              'exit','iter','npoints','errest','x'});
-% out_param.nstar = nstar;
 if MATLABVERSION >= 8.3
     fappx = griddedInterpolant(out_param.x,y,'linear');
 else
