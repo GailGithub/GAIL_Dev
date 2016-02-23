@@ -140,7 +140,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %             nmax: 10000000
 %            nstar: [1x1024 double]            
 %            ninit: 37
-%             exit: [2x1 logical]
+%             exit: [0 0]
 %             iter: 11 
 %          npoints: 36865
 %           errest: 4.5329e-***8
@@ -163,7 +163,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %             nmax: 10000000
 %            nstar: [1x256 double]
 %            ninit: 37
-%             exit: [2x1 logical]
+%             exit: [0 0]
 %             iter: 9
 %          npoints: 9217
 %           errest: 7.2526e-***7
@@ -187,7 +187,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %             nmax: 10000000
 %            nstar: [1x512 double]
 %            ninit: 39
-%             exit: [2x1 logical]
+%             exit: [0 0]
 %             iter: 10
 %          npoints: 19457
 %           errest: 9.9555e-***7
@@ -268,7 +268,7 @@ end
 iter = 0;
 exit_len = 2;
 %we start the algorithm with all warning flags down
-out_param.exit = false(exit_len,1); 
+out_param.exit = false(1,exit_len); 
 
 max_errest = 1;
 while(max_errest > abstol)
@@ -300,13 +300,13 @@ while(max_errest > abstol)
     %check if error satisfy the error tolerance 
     counterr = sum(err > abstol);
     if(length(x) + counterr *(ninit -1) > out_param.nmax)
-        out_param.exit(1) = 1;
+        out_param.exit(1) = true;
         warning('GAIL:funappx_g:exceedbudget',['funappx_g attempted to ',...
             'exceed the cost budget. The answer may be unreliable.'])
         break;
     end;
     if(iter==out_param.maxiter)
-        out_param.exit(2) = 1;
+        out_param.exit(2) = true;
         warning('GAIL:funappx_g:exceediter',['Number of iterations has '...
             'reached maximum number of iterations.'])
         break;

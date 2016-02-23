@@ -135,7 +135,7 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %            ninit: 18
 %             nmax: 10000000  
 %          maxiter: 1000
-%             exit: [2x1 logical]
+%             exit: [0 0]
 %             iter: 9 
 %          npoints: 8705
 %           errest: 6.3451e-***8
@@ -157,7 +157,7 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %            ninit: 18
 %             nmax: 10000000
 %          maxiter: 1000
-%             exit: [2x1 logical]
+%             exit: [0 0]
 %             iter: 8
 %          npoints: 4353
 %           errest: 2.5418e-***7
@@ -180,7 +180,7 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %            ninit: 19 
 %             nmax: 10000000
 %          maxiter: 1000
-%             exit: [2x1 logical]
+%             exit: [0 0]
 %             iter: 9
 %          npoints: 9217
 %           errest: 3.5373e-***7
@@ -268,7 +268,7 @@ end
 iter = 0;
 exit_len = 2;
 % we start the algorithm with all warning flags down
-out_param.exit = false(exit_len,1); 
+out_param.exit = false(1,exit_len); 
 C = @(h) C0*fh./(fh-h);
 max_errest = 1;
 while(max_errest > abstol)
@@ -322,7 +322,7 @@ while(max_errest > abstol)
     % update iterations
     iter = iter + 1;
     if(iter==out_param.maxiter)
-        out_param.exit(2) = 1;
+        out_param.exit(2) = true;
         warning('GAIL:funappxNoPenalty_g:exceediter',['Number of iterations has '...
             'reached maximum number of iterations.'])
         break;
