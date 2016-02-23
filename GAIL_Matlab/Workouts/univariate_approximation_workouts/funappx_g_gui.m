@@ -98,7 +98,7 @@ q(2) = uicontrol('string','auto', ...
 %nstar = ninit - 2;
 %nstar = floor(ninit/2);
 % initialize error
-err =tol+1;
+err = tol+1;
 
 in_param.a = a; 
 in_param.b = b; 
