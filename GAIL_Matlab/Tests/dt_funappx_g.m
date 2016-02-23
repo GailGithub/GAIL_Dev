@@ -144,7 +144,7 @@ function dt_funappx_g
 %
 %   Example 8:
 %
-%   >> [~, out_param] = funappx_g(@(x) x.^2,-5,10,1e-7,10,20,'output_x',true)
+%   >> [~, out_param] = funappx_g(@(x) x.^2,-5,10,1e-7,10,20)
 %
 % out_param = 
 % 
@@ -162,11 +162,12 @@ function dt_funappx_g
 %             iter: 13
 %          npoints: 163841
 %           errest: 3.0999e-***8
-
 %
 %
 %   Example 9:
 %
-%   >> [~, out_param] = funappx_g(@(x) x.^2'memorytest',true);
-%   >> out_param.bytes <= 324914
+%   >> [~, out_param] = funappx_g(@(x) x.^2,'memorytest',true,'output_x',true);
+%   >> out_param.bytes <= 388670
+%   1
+%   >> length(out_param.x) == out_param.npoints
 %   1
