@@ -261,31 +261,25 @@ out_param.exit = false(1,exit_len);
 C = @(h) C0*fh./(fh-h);
 max_errest = 1;
 while(max_errest > abstol)
-    % length of each subinterval
+    %% Stage 1: compute length of each subinterval and approximate |f''(t)|
     len = out_param.x(2:end)-out_param.x(1:end-1);
-    
-    % approximate |f''(t)|
     deltaf = 2*(y(1:end-2)./len(1:end-1)./(len(1:end-1)+len(2:end))-...
                 y(2:end-1)./len(1:end-1)./ len(2:end)              +...
                 y(3:end  )./len(2:end  )./(len(1:end-1)+len(2:end)));
     deltaf = [0 0 abs(deltaf) 0 0];
     
-    % compute vector h
+    %% Stage 2: compute bound of |f''(t)| and estimate error
     h = [out_param.x(2)-a out_param.x(3)-a       ...
          out_param.x(4:end)-out_param.x(1:end-3) ...
          b-out_param.x(end-2)  b-out_param.x(end-1)];
-    
-    % bound of |f''(t)|
     normbd = C(max(h(1:ninit-1),h(3:ninit+1))) .* max(deltaf(1:ninit-1),deltaf(4:ninit+2));
-    
-    % error estimation
     errest = len.^2/8.*normbd;
     max_errest = max(errest);
     if max_errest <= abstol,
         break
     end 
  
-    % find I
+    %% Stage 3: find I
     badinterval = (errest > abstol);
     
     % update x,y
@@ -298,15 +292,13 @@ while(max_errest > abstol)
     tem = 2 * tt + cumsum(whichcut==0);
     out_param.x(tem(whichcut1)) = newx;
     y(tem(whichcut1)) = f(newx);
-    
+    ninit = length(out_param.x);
     % update errorbound
 %     errnew = zeros(1,ninit+length(newx)-2);
 %     errnew((1:length(whichcut))+tt) = errest;
 %     errnew((1:length(whichcut))+[0 tt(1:end-1)]) = errest;
 %     errest = max(errest);   
     
-    ninit = length(out_param.x);
-
     % update iterations
     iter = iter + 1;
     if(iter==out_param.maxiter)
@@ -317,6 +309,7 @@ while(max_errest > abstol)
     end;
 end;
 
+%% postprocessing
 out_param.iter = iter;
 out_param.npoints = ninit;
 out_param.errest = max_errest;
