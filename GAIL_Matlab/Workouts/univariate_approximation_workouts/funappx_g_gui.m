@@ -110,6 +110,9 @@ tmpstr = strsplit(algoname,'_g');
 while(max(err) > tol)
     if max(err) > tol;
         in_param.maxiter = k+1; 
+        if k >= 1 && in_param.maxiter > out_param.iter
+            break;
+        end
         [~,out_param] = algo(f,in_param);
         err = out_param.errest;
         npoints = out_param.npoints;
