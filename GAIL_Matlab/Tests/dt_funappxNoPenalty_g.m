@@ -25,7 +25,7 @@ function dt_funappxNoPenalty_g
 %           nmax: 10000000
 %        maxiter: 1000
 %           exit: [0 0]
-%           iter: 8
+%           iter: 9
 %        npoints: 205569
 %         errest: 2.8480e-***9
 %
@@ -48,7 +48,7 @@ function dt_funappxNoPenalty_g
 %        nmax: 10000000
 %     maxiter: 1000
 %        exit: [0 0]
-%        iter: 8
+%        iter: 9
 %     npoints: 89601
 %      errest: 3.7478e-***9
 %      
@@ -69,7 +69,7 @@ function dt_funappxNoPenalty_g
 %             nmax: 10000000
 %          maxiter: 1000
 %             exit: [0 0]
-%             iter: 8
+%             iter: 9
 %          npoints: 10497
 %           errest: 4.3699e-***8
 %
@@ -90,7 +90,7 @@ function dt_funappxNoPenalty_g
 %             nmax: 10000000
 %          maxiter: 1000
 %             exit: [0 0]
-%             iter: 6
+%             iter: 7
 %          npoints: 2113
 %           errest: 6.1248e-***7
 %
@@ -111,7 +111,7 @@ function dt_funappxNoPenalty_g
 %        nmax: 10000000
 %     maxiter: 1000
 %        exit: [0 0]
-%        iter: 7
+%        iter: 8
 %     npoints: 5633
 %      errest: 4.6617e-***7
 %
@@ -132,7 +132,7 @@ function dt_funappxNoPenalty_g
 %             nmax: 10000000
 %          maxiter: 1000
 %             exit: [0 0]
-%             iter: 11
+%             iter: 12
 %          npoints: 38913
 %           errest: 4.4596e-***8
 %
