@@ -28,6 +28,10 @@ function [fappx,out_param]=funappx_g(varargin)
 %   [fappx, out_param] = funappx_g(f,...) returns an approximated function
 %   fappx and an output structure out_param.
 %
+%   Properties
+%    
+%     fappx can be used for linear extrapolation outside [a,b].
+%
 %   Input Arguments
 %
 %     f --- input function

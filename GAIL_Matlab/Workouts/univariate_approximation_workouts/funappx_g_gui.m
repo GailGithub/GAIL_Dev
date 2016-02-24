@@ -21,7 +21,7 @@ function [fappx,npoints,errest] = funappx_g_gui(f,a,b,tol,nlo,nhi,varargin)
 %  [fappx,npoints] = funappx_g_gui(@(x) -5 * exp(-(10*(x - .3)).^2) - exp(-(10*(x - 0.75)).^2),0,1,1e-3,10,20)
 %  [fappx,npoints] = ... 
 %  Demo with funappxNoPenalty_g:
-%  [fappx,npoints,errest] = funappx_g_gui(@(x) x.^2,-1,1,1e-2,10,20)'funappxNoPenalty_g')
+%  [fappx,npoints,errest] = funappx_g_gui(@(x) x.^2,-1,1,1e-2,10,20,'funappxNoPenalty_g')
 shg
 clf reset
 MATLABVERSION= gail.matlab_version;
