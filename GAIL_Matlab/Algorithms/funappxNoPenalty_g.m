@@ -278,9 +278,10 @@ while(max_errest > abstol)
          b-out_param.x(end-2)  b-out_param.x(end-1)];
     normbd = C(max(h(1:ninit-1),h(3:ninit+1))) .* max(deltaf(1:ninit-1),deltaf(4:ninit+2));
     errest = len.^2/8.*normbd;
+    % update iterations
+    iter = iter + 1;
     max_errest = max(errest);
     if max_errest <= abstol,
-        iter = iter + 1;
         break
     end 
  
@@ -289,10 +290,15 @@ while(max_errest > abstol)
     whichcut = badinterval | [badinterval(2:end) 0] | [0 badinterval(1:end-1)];
     if (out_param.nmax<(ninit+length(find(whichcut==1))))
         out_param.exit(1) = true;
-        iter = iter + 1;
         warning('GAIL:funappxNoPenalty_g:exceedbudget',['funappxNoPenalty_g'...
             'attempted to exceed the cost budget. The answer may be '...
             'unreliable.'])
+        break;
+    end; 
+    if(iter==out_param.maxiter)
+        out_param.exit(2) = true;
+        warning('GAIL:funappxNoPenalty_g:exceediter',['Number of iterations has '...
+            'reached maximum number of iterations.'])
         break;
     end;
     newx = out_param.x(whichcut) + 0.5 * len(whichcut);
@@ -303,15 +309,8 @@ while(max_errest > abstol)
     out_param.x(tem(whichcut)) = newx;
     y(tem(whichcut)) = f(newx);
     ninit = length(out_param.x);
-    
-    % update iterations
-    iter = iter + 1;
-    if(iter==out_param.maxiter)
-        out_param.exit(2) = true;
-        warning('GAIL:funappxNoPenalty_g:exceediter',['Number of iterations has '...
-            'reached maximum number of iterations.'])
-        break;
-    end;
+
+ 
 end;
 
 %% postprocessing
