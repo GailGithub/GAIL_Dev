@@ -140,7 +140,7 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %             nmax: 10000000  
 %          maxiter: 1000
 %             exit: [0 0]
-%             iter: 9 
+%             iter: 10 
 %          npoints: 8705
 %           errest: 6.3451e-***8
 %
@@ -162,7 +162,7 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %             nmax: 10000000
 %          maxiter: 1000
 %             exit: [0 0]
-%             iter: 8
+%             iter: 9
 %          npoints: 4353
 %           errest: 2.5418e-***7
 %
@@ -185,7 +185,7 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %             nmax: 10000000
 %          maxiter: 1000
 %             exit: [0 0]
-%             iter: 9
+%             iter: 10
 %          npoints: 9217
 %           errest: 3.5373e-***7
 %
