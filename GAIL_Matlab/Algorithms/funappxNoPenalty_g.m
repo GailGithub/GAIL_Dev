@@ -280,6 +280,7 @@ while(max_errest > abstol)
     errest = len.^2/8.*normbd;
     max_errest = max(errest);
     if max_errest <= abstol,
+        iter = iter + 1;
         break
     end 
  
@@ -288,6 +289,7 @@ while(max_errest > abstol)
     whichcut = badinterval | [badinterval(2:end) 0] | [0 badinterval(1:end-1)];
     if (out_param.nmax<(ninit+length(find(whichcut==1))))
         out_param.exit(1) = true;
+        iter = iter + 1;
         warning('GAIL:funappxNoPenalty_g:exceedbudget',['funappxNoPenalty_g'...
             'attempted to exceed the cost budget. The answer may be '...
             'unreliable.'])
