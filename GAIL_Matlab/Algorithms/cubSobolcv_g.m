@@ -336,11 +336,13 @@ end
 
 %% If using control variates, find optimal beta
 if cv.J  
-    X = yg(kappanumap(end/2+1:end), (1:cv.J));
-    Y = y(kappanumap(end/2+1:end));
+    temp = (n0/2:n0);
+    X = yg(kappanumap(temp), (1:cv.J));
+    Y = y(kappanumap(temp));
     beta = X \ Y;  
     out_param.beta = beta;
     % We update the integrand and values
+    yold = y;% save f value for kappanumap
     y = y-yg*beta;
     yval = yval-yvalg*beta;
 end
@@ -403,10 +405,12 @@ for m=out_param.mmin+1:out_param.mmax
 	   yval=[yval; ynext]; %#ok<*AGROW>
    elseif strcmp(cv.format, 'cellfunc') % control variates in cell function format  
 	   temp = cell2mat(f(xnext)) ;  
-	   ynext = temp(:,1) - temp(:,2:end)*beta;
+       yoldnext = temp(:,1);% stock value of f for kappanumpap
+	   ynext = yoldnext - temp(:,2:end)*beta;
 	   yval = [yval; ynext];
    elseif strcmp(cv.format, 'optPayoff') && cv.J % contrl variates in optPayoff format
 	   temp = f(xnext);
+       yoldnext = temp(:,1);
 	   ynext = temp(:,1) - temp(:,2:end)*beta;
 	   yval = [yval; ynext];
    end
@@ -431,12 +435,30 @@ for m=out_param.mmin+1:out_param.mmax
    y(ptind)=(evenval+oddval)/2;
    y(~ptind)=(evenval-oddval)/2;
 
+if cv.J
+   %% Compute FWT on all points
+   yold=[yold;yoldnext];
+   nl=2^mnext;
+   ptind=[true(nl,1); false(nl,1)];
+   evenval=yold(ptind);
+   oddval=yold(~ptind);
+   yold(ptind)=(evenval+oddval)/2;
+   yold(~ptind)=(evenval-oddval)/2;
+end
+
    %% Update kappanumap
    kappanumap=[kappanumap; 2^(m-1)+kappanumap]; %initialize map
    for l=m-1:-1:m-r_lag
       nl=2^l;
-      oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
-      newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa, 
+      if cv.J% keep using f to induce kappamap
+          %earlier values of kappa, don't touch first one
+          oldone=abs(yold(kappanumap(2:nl)));
+          newone=abs(yold(kappanumap(nl+2:2*nl)));
+      else
+          %later values of kappa, 
+          oldone=abs(y(kappanumap(2:nl)));
+          newone=abs(y(kappanumap(nl+2:2*nl)));
+      end
       flip=find(newone>oldone);
       if ~isempty(flip)
           flipall=bsxfun(@plus,flip,0:2^(l+1):2^m-1);
