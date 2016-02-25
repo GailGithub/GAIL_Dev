@@ -2,13 +2,13 @@ classdef assetPath < brownianMotion
 
 %% assetPath
 % is a class of discretized stochastic processes that model the values of
-% an asset with respect to time. Browniam motions are used to build these
-% asset paths.
+% an asset with respect to time. Browniam motions are used to construct
+% these asset paths.
 % 
 %
 % Example 1
 % >> obj = assetPath
-% obj = 0.01
+% obj = 
 %   assetPath with properties:
 % 
 %                 inputType: 'n'
@@ -26,12 +26,13 @@ classdef assetPath < brownianMotion
 %       assetParam_interest: 0.0100
 %     assetParam_volatility: 0.5000
 
-% Authors: Fred J. Hickernell
+% Authors: Fred J. Hickernell, Xinyan Zhang
 
 %% Properties
-% This process inherits properties from the |stochProcess| class.  Below are 
-% values assigned to that are abstractly defined in that class plus some
-% properties particulary for this class
+% This process inherits properties from the |brownianMotion| class.  Below
+% are values assigned to that are abstractly defined in that class plus
+% some properties particulary for this class.
+
    properties (SetAccess=public) %so they can only be set by the constructor
       assetParam = struct('pathType','GBM', ... %type of asset path
          'initPrice', 10, ... %initial asset price
@@ -80,8 +81,8 @@ classdef assetPath < brownianMotion
 
 
 %% Methods
-% The constructor for |assetPath| uses the |brownianMotion| constructor
-% and then parses the other properties. The function |genStockPaths| generates
+% The constructor for |assetPath| uses the |brownianMotion| constructor and
+% then parses the other properties. The function |genStockPaths| generates
 % the asset paths based on |whiteNoise| paths.
 
    methods

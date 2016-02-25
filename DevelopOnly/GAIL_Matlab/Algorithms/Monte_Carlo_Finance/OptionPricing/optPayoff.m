@@ -29,7 +29,7 @@ classdef optPayoff < assetPath
  
 % Authors: Fred J. Hickernell, Tianci Zhu, Hartur Santi
 %% Properties
-% This process inherits properties from the |stochProcess| class.  Below are 
+% This process inherits properties from the |assetPath| class.  Below are 
 % values assigned to that are abstractly defined in that class plus some
 % properties particulary for this class
  
@@ -62,9 +62,9 @@ classdef optPayoff < assetPath
    end
       
 %% Methods
-% The constructor for |assetPath| uses the |brownianMotion| constructor
-% and then parses the other properties. The function |genStockPaths| generates
-% the asset paths based on |whiteNoise| paths.
+% The constructor for |optPayoff| uses the |assetPath| constructor and then
+% parses the other properties. The method |genOptPayoffs| generates option
+% payoffs based on |assetPath| paths.
  
    methods
         

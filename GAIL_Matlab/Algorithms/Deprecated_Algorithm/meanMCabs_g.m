@@ -216,15 +216,27 @@ while true
                 % absolute error tolerance over sigma
                 ncheb = ceil(1/(alpha1*toloversig.^2));
                 % use Chebyshev inequality to estimate n
+%                 A=18.1139;
+%                 A1=0.3328;
+%                 A2=0.429; % three constants in Berry-Esseen inequality
+%                 M3upper=out_param.kurtmax^(3/4);%using Jensen inequality to
+%                 % bound the third moment
+%                 BEfun=@(logsqrtn)stdnormcdf(-exp(logsqrtn).*toloversig)...
+%                     +exp(-logsqrtn).*min(A1*(M3upper+A2), ...
+%                     A*M3upper./(1+(exp(logsqrtn).*toloversig).^3))- alpha1/2;
+%                 % Berry-Esseen Inequality
                 A=18.1139;
-                A1=0.3328;
-                A2=0.429; % three constants in Berry-Esseen inequality
+                A1=0.3322;
+                A2=0.429;
+                A3= 0.3031;
+                A4= 0.646;
+                A5= 0.469; % Six constants in Berry-Esseen inequality
                 M3upper=out_param.kurtmax^(3/4);%using Jensen inequality to
                 % bound the third moment
                 BEfun=@(logsqrtn)stdnormcdf(-exp(logsqrtn).*toloversig)...
-                    +exp(-logsqrtn).*min(A1*(M3upper+A2), ...
-                    A*M3upper./(1+(exp(logsqrtn).*toloversig).^3))- alpha1/2;
-                % Berry-Esseen Inequality
+                    +exp(-logsqrtn).*min([A1*(M3upper+A2),A3*(M3upper+A4),A5*M3upper, ...
+                    A*M3upper./(1+(exp(logsqrtn).*toloversig).^3)])- alpha1/2;
+                % Berry-Esseen Inequality               
                 if BEfun(log(sqrt(out_param.n_sigma))) <= 0 || ...
                         ncheb <= out_param.n_sigma;
                     out_param.n_mu=out_param.n_sigma;
