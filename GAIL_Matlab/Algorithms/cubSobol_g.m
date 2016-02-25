@@ -623,8 +623,6 @@ else
     end
 end
 
-
-
 fdgyes = 0; % We store how many functions are in varargin. There can only
             % two functions as input, the function f and the fudge factor.
 for j = 1:size(varargin,2)
