@@ -408,11 +408,33 @@ for m=out_param.mmin+1:out_param.mmax
        yoldnext = temp(:,1);% stock value of f for kappanumpap
 	   ynext = yoldnext - temp(:,2:end)*beta;
 	   yval = [yval; ynext];
+       %{
+       for beta update
+       yoldnext = cell2mat(f(xnext));yoldnext=yoldnext(:,1);
+       xpts=sobstr(1:2^m,1:out_param.d);
+	   temp = cell2mat(f(xpts)) ;
+       y=temp(:,1);yg=temp(:,2:end);
+       X = yg(kappanumap((end/2:end), (1:cv.J)));
+       Y = y(kappanumap(end/2:end));
+       beta = X\Y;
+       y = y - yg*beta;yval = y;
+       %}
    elseif strcmp(cv.format, 'optPayoff') && cv.J % contrl variates in optPayoff format
 	   temp = f(xnext);
        yoldnext = temp(:,1);
 	   ynext = temp(:,1) - temp(:,2:end)*beta;
 	   yval = [yval; ynext];
+       %{
+       for beta update
+       yoldnext = f(xnext);yoldnext=yoldnext(:,1);
+       xpts=sobstr(1:2^m,1:out_param.d);
+	   temp = f(xpts) ;
+       y=temp(:,1);yg=temp(:,2:end);
+       X = yg(kappanumap((end/2:end), (1:cv.J)));
+       Y = y(kappanumap(end/2:end));
+       beta = X\Y;
+       y = y - yg*beta;yval = y;
+       %}
    end
 
    %% Compute initial FWT on next points
@@ -434,6 +456,44 @@ for m=out_param.mmin+1:out_param.mmax
    oddval=y(~ptind);
    y(ptind)=(evenval+oddval)/2;
    y(~ptind)=(evenval-oddval)/2;
+
+%{ 
+for beta update
+if cv.J==0
+   for l=0:mnext-1
+      nl=2^l;
+      nmminlm1=2^(mnext-l-1);
+      ptind=repmat([true(nl,1); false(nl,1)],nmminlm1,1);
+      evenval=ynext(ptind);
+      oddval=ynext(~ptind);
+      ynext(ptind)=(evenval+oddval)/2;
+      ynext(~ptind)=(evenval-oddval)/2;
+   end
+
+   %% Compute FWT on all points
+   y=[y;ynext];
+   nl=2^mnext;
+   ptind=[true(nl,1); false(nl,1)];
+   evenval=y(ptind);
+   oddval=y(~ptind);
+   y(ptind)=(evenval+oddval)/2;
+   y(~ptind)=(evenval-oddval)/2;
+else
+    for l=0:m-1
+        nl=2^l;
+        nmminlm1=2^(m-l-1);
+        ptind=repmat([true(nl,1); false(nl,1)],nmminlm1,1);
+        evenval=y(ptind);
+        oddval=y(~ptind);
+        y(ptind)=(evenval+oddval)/2;
+        y(~ptind)=(evenval-oddval)/2;
+        evenval=yg(ptind, (1:cv.J));
+        oddval=yg(~ptind, (1:cv.J));
+        yg(ptind, (1:cv.J))=(evenval+oddval)/2;
+        yg(~ptind, (1:cv.J))=(evenval-oddval)/2;
+    end
+end
+%}
 
 if cv.J
    %% Compute FWT on all points
