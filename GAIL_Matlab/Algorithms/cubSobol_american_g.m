@@ -242,29 +242,13 @@ CStilde_low = -inf(1,out_param.mmax-l_star+1); %initialize various sums of DFWT 
 CStilde_up = inf(1,out_param.mmax-l_star+1); %initialize various sums of DFWT terms for necessary conditions
 errest=zeros(out_param.mmax-out_param.mmin+1,1); %initialize error estimates
 appxinteg=zeros(out_param.mmax-out_param.mmin+1,1); %initialize approximations to integral
-exit_len = 1;
+exit_len = 2;
 out_param.exit=false(1,exit_len); %we start the algorithm with all warning flags down
 
 % set up for control variates
 mu=0;beta=0;
 if cv.J % if using control variates(f is structure), redefine f
 	mu = f.cv; f = f.func;
-end
-
-if strcmp(out_param.measure,'uniform')
-   Cnorm = prod(hyperbox(2,:)-hyperbox(1,:));
-   tran = @(x) bsxfun(@plus,hyperbox(1,:),bsxfun(@times,(hyperbox(2,:)-hyperbox(1,:)),x));% a + (b-a)x = u
-   if strcmp(cv.format, 'cellfunc') 
-	   f = @(x) cellfun(@(c) c(tran(x)), f, 'UniformOutput', false);
-   else 
-	   f = @(x) Cnorm*f(tran(x)); % a + (b-a)x = u
-   end   
-elseif strcmp(out_param.measure,'normal')
-   if strcmp(cv.format, 'cellfunc') 
-	   f = @(x) cellfun(@(c) c(gail.stdnorminv(x)), f, 'UniformOutput', false);
-   else 
-	   f = @(x) f(gail.stdnorminv(x));
-   end
 end
 
 %% Initial points and FWT
@@ -320,7 +304,7 @@ end
 
 %% If control variates, find optimal beta
 if cv.J
-    X = yg(kappanumap(end/2 + 1:end)); %yg(kappanumap(2^(out_param.mmin-r_lag-1) + 1:2^(out_param.mmin-r_lag)), (1:cv));
+    X = yg(kappanumap(end/2 + 1:end), (1:cv.J)); %yg(kappanumap(2^(out_param.mmin-r_lag-1) + 1:2^(out_param.mmin-r_lag)), (1:cv));
     Y = y(kappanumap(end/2 + 1:end)); %y(kappanumap(2^(out_param.mmin-r_lag-1) + 1:2^(out_param.mmin-r_lag)));
     beta = X \ Y;
     out_param.beta = beta;
@@ -393,22 +377,12 @@ for m=out_param.mmin+1:out_param.mmax
        yoldnext = temp(:,1);% stock value of f for kappanumpap
 	   ynext = yoldnext - temp(:,2:end)*beta;
 	   yval = [yval; ynext];
-       %{
-       for beta update
-       yoldnext = cell2mat(f(xnext));yoldnext=yoldnext(:,1);
-       xpts=sobstr(1:2^m,1:out_param.d);
-	   temp = cell2mat(f(xpts)) ;
-       y=temp(:,1);yg=temp(:,2:end);
-       X = yg(kappanumap((end/2:end), (1:cv.J)));
-       Y = y(kappanumap(end/2:end));
-       beta = X\Y;
-       y = y - yg*beta;yval = y;
-       %}
    elseif strcmp(cv.format, 'optPayoff') && cv.J % contrl variates in optPayoff format
 	   temp = f(xnext);
        yoldnext = temp(:,1);
 	   ynext = temp(:,1) - temp(:,2:end)*beta;
 	   yval = [yval; ynext];
+   end
   
     %% Compute initial FWT on next points
    for l=0:mnext-1
@@ -429,44 +403,6 @@ for m=out_param.mmin+1:out_param.mmax
    oddval=y(~ptind);
    y(ptind)=(evenval+oddval)/2;
    y(~ptind)=(evenval-oddval)/2;
-
-%{ 
-for beta update
-if cv.J==0
-   for l=0:mnext-1
-      nl=2^l;
-      nmminlm1=2^(mnext-l-1);
-      ptind=repmat([true(nl,1); false(nl,1)],nmminlm1,1);
-      evenval=ynext(ptind);
-      oddval=ynext(~ptind);
-      ynext(ptind)=(evenval+oddval)/2;
-      ynext(~ptind)=(evenval-oddval)/2;
-   end
-
-   %% Compute FWT on all points
-   y=[y;ynext];
-   nl=2^mnext;
-   ptind=[true(nl,1); false(nl,1)];
-   evenval=y(ptind);
-   oddval=y(~ptind);
-   y(ptind)=(evenval+oddval)/2;
-   y(~ptind)=(evenval-oddval)/2;
-else
-    for l=0:m-1
-        nl=2^l;
-        nmminlm1=2^(m-l-1);
-        ptind=repmat([true(nl,1); false(nl,1)],nmminlm1,1);
-        evenval=y(ptind);
-        oddval=y(~ptind);
-        y(ptind)=(evenval+oddval)/2;
-        y(~ptind)=(evenval-oddval)/2;
-        evenval=yg(ptind, (1:cv.J));
-        oddval=yg(~ptind, (1:cv.J));
-        yg(ptind, (1:cv.J))=(evenval+oddval)/2;
-        yg(~ptind, (1:cv.J))=(evenval-oddval)/2;
-    end
-end
-%}
 
 if cv.J
    %% Compute FWT on all points
@@ -570,9 +506,9 @@ if numel(varargin)<2
     hyperbox = default.hyperbox;
 else
     f = varargin{1};
-    if ~gail.isfcn(f)
+    if ~validcv(f)
         warning('GAIL:cubSobol_g:fnotfcn',...
-            'The given input f was not a function. Example for f(x)=x^2:')
+            'The given input f should be a function or a structure if using cv. Example for f(x)=x^2;  f.func=[x^2,x], f.cv=1/2:')
         f = @(x) x.^2;
         out_param.f=f;
         hyperbox = default.hyperbox;
@@ -630,7 +566,6 @@ else
         addOptional(p,'toltype',default.toltype,...
             @(x) any(validatestring(x, {'max','comb'})));
         addOptional(p,'theta',default.theta,@isnumeric);
-        addOptional(p,'cv',default.cv,@isstruct);
     else
         if isstruct(in3) %parse input structure
             p.StructExpand = true;
