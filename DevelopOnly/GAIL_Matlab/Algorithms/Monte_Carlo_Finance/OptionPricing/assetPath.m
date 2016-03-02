@@ -34,24 +34,25 @@ classdef assetPath < brownianMotion
 % some properties particulary for this class.
 
    properties (SetAccess=public) %so they can only be set by the constructor
-      assetParam = struct('pathType', 'GBM', ... %type of asset path
+      assetParam = struct('pathType','GBM', ... %type of asset path
          'initPrice', 10, ... %initial asset price
          'interest', 0.01, ... %interest rate
          'volatility', 0.5,... %volatility      
          'drift', 0,... %drift
          'nAsset', 1,... %number of assets 
-         'corrMat', 1) %A transpose     
+         'corrMat', 1) %A transpose  
    end
    
    properties (Constant, Hidden) %do not change & not seen
       allowPathType = {'GBM'} 
-         %kinds of asset paths that we can generate, more to come
+         %kinds of asset paths that we can generate
    end
+   
    
    properties (Dependent = true)
        sqCorr
    end
-
+ 
 
 
 %% Methods
@@ -120,14 +121,15 @@ classdef assetPath < brownianMotion
            end
          end
          if isfield(val,'corrMat') %data for A
-            validateattributes(eig(val.corrMat),{'numeric'},{'nonnegative'})
+            validateattributes(val.corrMat,{'numeric'}, ...
+               {'nonnegative'})
             obj.assetParam.corrMat=val.corrMat; %row
          end
          if isfield(val,'drift') %data for type of option
             validateattributes(val.drift,{'numeric'}, ...
                {'scalar'})
             obj.assetParam.drift=val.drift; %row
-         end
+         end                  
       end
       
       % Generate square root of correlation matrix
@@ -135,11 +137,11 @@ classdef assetPath < brownianMotion
           [U,S] = svd(obj.assetParam.corrMat);
           val = sqrt(S)*U';
        end
-      
+                  
       % Generate asset paths
       function [paths]=genPaths(obj,val)
          bmpaths = genPaths@brownianMotion(obj,val);
-         nPaths = size(bmpaths,1);
+         nPaths = size(bmpaths,1);             
          if strcmp(obj.assetParam.pathType,'GBM')
             tempc=zeros(nPaths,obj.timeDim.nSteps);
             paths=zeros(nPaths,obj.timeDim.nCols);
@@ -158,24 +160,23 @@ classdef assetPath < brownianMotion
              end
          end
       end
-                 
    end
+  
 
    methods (Access = protected)
 
       function propList = getPropertyList(obj)
-         propList = getPropertyList@brownianMotion(obj);
-         propList.assetParam_pathType = obj.assetParam.pathType;
-         propList.assetParam_initPrice = obj.assetParam.initPrice;
-         propList.assetParam_interest = obj.assetParam.interest;
-         propList.assetParam_volatility = obj.assetParam.volatility;
-         if obj.assetParam.drift ~=0
-            propList.assetParam_drift = obj.assetParam.drift;
-         end
-         propList.assetParam_nAsset = obj.assetParam.nAsset;
+            propList = getPropertyList@brownianMotion(obj);
+            propList.assetParam_pathType = obj.assetParam.pathType;
+            propList.assetParam_initPrice = obj.assetParam.initPrice;
+            propList.assetParam_interest = obj.assetParam.interest;
+            propList.assetParam_volatility = obj.assetParam.volatility;
+            if obj.assetParam.drift ~=0
+                propList.assetParam_drift = obj.assetParam.drift;
+            end
+            propList.assetParam_nAsset = obj.assetParam.nAsset;          
       end
 
    end
 
 end
-

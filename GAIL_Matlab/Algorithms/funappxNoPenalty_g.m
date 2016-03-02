@@ -28,6 +28,10 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %   [fappx, out_param] = funappxNoPenalty_g(f,...) returns an approximated function
 %   fappx and an output structure out_param.
 %
+%   Properties
+%    
+%     fappx can be used for linear extrapolation outside [a,b].
+%
 %   Input Arguments
 %
 %     f --- input function
@@ -135,11 +139,10 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %            ninit: 18
 %             nmax: 10000000  
 %          maxiter: 1000
-%             exit: [2x1 logical]
-%             iter: 9 
+%             exit: [0 0]
+%             iter: 10 
 %          npoints: 8705
 %           errest: 6.3451e-***8
-%                x: [1x8705 double]
 %
 %
 %   Example 2:
@@ -158,11 +161,10 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %            ninit: 18
 %             nmax: 10000000
 %          maxiter: 1000
-%             exit: [2x1 logical]
-%             iter: 8
+%             exit: [0 0]
+%             iter: 9
 %          npoints: 4353
 %           errest: 2.5418e-***7
-%                x: [1x4353 double]
 %
 %
 %   Example 3:
@@ -182,14 +184,13 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %            ninit: 19 
 %             nmax: 10000000
 %          maxiter: 1000
-%             exit: [2x1 logical]
-%             iter: 9
+%             exit: [0 0]
+%             iter: 10
 %          npoints: 9217
 %           errest: 3.5373e-***7
-%                x: [1x9217 double]
 %
 %
-%
+%   
 %   See also INTERP1, GRIDDEDINTERPOLANT, INTEGRAL_G, MEANMC_G, FUNMIN_G
 %
 %
@@ -233,26 +234,15 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 % check parameter satisfy conditions or not
 [f, in_param] = funappxNoPenalty_g_param(varargin{:});
 MATLABVERSION = gail.matlab_version;
-%nstar = out_param.nstar;
-%out_param.ninit = 2 * nstar + 1;
-
-% control the order of out_param
-out_param.f = f;
-out_param.a = in_param.a;
-out_param.b = in_param.b;
-out_param.abstol = in_param.abstol;
-out_param.nlo = in_param.nlo;
-out_param.nhi = in_param.nhi;
-out_param.ninit = in_param.ninit;
-out_param.nmax = in_param.nmax ;
-out_param.maxiter = in_param.maxiter;
-
-ninit = out_param.ninit;
+out_param = in_param;
+out_param = rmfield(out_param,'memorytest');
+out_param = rmfield(out_param,'output_x');
 
 %% main algorithm
 a = out_param.a;
 b = out_param.b;
 abstol = out_param.abstol;
+ninit = out_param.ninit;
 out_param.x = a:(b-a)/(ninit-1):b;
 y = f(out_param.x);
 %fh = b-a;
@@ -271,82 +261,77 @@ end
 iter = 0;
 exit_len = 2;
 % we start the algorithm with all warning flags down
-out_param.exit = false(exit_len,1); 
+out_param.exit = false(1,exit_len); 
 C = @(h) C0*fh./(fh-h);
 max_errest = 1;
 while(max_errest > abstol)
-    % length of each subinterval
+    %% Stage 1: compute length of each subinterval and approximate |f''(t)|
     len = out_param.x(2:end)-out_param.x(1:end-1);
-    
-    % approximate f''(t)
     deltaf = 2*(y(1:end-2)./len(1:end-1)./(len(1:end-1)+len(2:end))-...
                 y(2:end-1)./len(1:end-1)./ len(2:end)              +...
                 y(3:end  )./len(2:end  )./(len(1:end-1)+len(2:end)));
-    % add 
-    deltaf=[0 0 abs(deltaf) 0 0];
+    deltaf = [0 0 abs(deltaf) 0 0];
     
-    % compute vector h
+    %% Stage 2: compute bound of |f''(t)| and estimate error
     h = [out_param.x(2)-a out_param.x(3)-a       ...
          out_param.x(4:end)-out_param.x(1:end-3) ...
          b-out_param.x(end-2)  b-out_param.x(end-1)];
-    
-    % bound of |f''(t)|
     normbd = C(max(h(1:ninit-1),h(3:ninit+1))) .* max(deltaf(1:ninit-1),deltaf(4:ninit+2));
-    
-    % error estimation
     errest = len.^2/8.*normbd;
+    % update iterations
+    iter = iter + 1;
     max_errest = max(errest);
     if max_errest <= abstol,
         break
     end 
  
-    % find I
+    %% Stage 3: find I and update x,y
     badinterval = (errest > abstol);
-    
-    % update x,y
     whichcut = badinterval | [badinterval(2:end) 0] | [0 badinterval(1:end-1)];
-    whichcut1 = (whichcut==1);
-    newx = out_param.x(whichcut1) + 0.5 * len(whichcut1);
-    tt = cumsum(whichcut); 
-    out_param.x([1 (2:ninit)+tt]) = out_param.x;
-    y([1 (2:ninit)+tt]) = y;
-    tem = 2 * tt + cumsum(whichcut==0);
-    out_param.x(tem(whichcut1)) = newx;
-    y(tem(whichcut1)) = f(newx);
-    
-    % update errorbound
-%     errnew = zeros(1,ninit+length(newx)-2);
-%     errnew((1:length(whichcut))+tt) = errest;
-%     errnew((1:length(whichcut))+[0 tt(1:end-1)]) = errest;
-%     errest = max(errest);   
-    
-    ninit = length(out_param.x);
-
-    % update iterations
-    iter = iter + 1;
+    if (out_param.nmax<(ninit+length(find(whichcut==1))))
+        out_param.exit(1) = true;
+        warning('GAIL:funappxNoPenalty_g:exceedbudget',['funappxNoPenalty_g'...
+            'attempted to exceed the cost budget. The answer may be '...
+            'unreliable.'])
+        break;
+    end; 
     if(iter==out_param.maxiter)
-        out_param.exit(2) = 1;
+        out_param.exit(2) = true;
         warning('GAIL:funappxNoPenalty_g:exceediter',['Number of iterations has '...
             'reached maximum number of iterations.'])
         break;
     end;
+    newx = out_param.x(whichcut) + 0.5 * len(whichcut);
+    tt = cumsum(whichcut); 
+    out_param.x([1 (2:ninit)+tt]) = out_param.x;
+    y([1 (2:ninit)+tt]) = y;
+    tem = 2 * tt + cumsum(whichcut==0);
+    out_param.x(tem(whichcut)) = newx;
+    y(tem(whichcut)) = f(newx);
+    ninit = length(out_param.x);
+
+ 
 end;
 
+%% postprocessing
 out_param.iter = iter;
 out_param.npoints = ninit;
 out_param.errest = max_errest;
+% control the order of out_param
 out_param = orderfields(out_param, ...
             {'f', 'a', 'b','abstol','nlo','nhi','ninit','nmax','maxiter',...
              'exit','iter','npoints','errest','x'});
-% out_param.nstar = nstar;
 if MATLABVERSION >= 8.3
     fappx = griddedInterpolant(out_param.x,y,'linear');
 else
     fappx = @(t) ppval(interp1(out_param.x,y,'linear','pp'), t);     
 end;
-if (in_param.memorytest==1)
+if (in_param.memorytest)
   w = whos;
   out_param.bytes = sum([w.bytes]);
+end
+if (~in_param.output_x)
+  out_param = rmfield(out_param,'x');
 end
 
 
@@ -362,7 +347,8 @@ default.nlo = 10;
 default.nhi = 1000;
 default.nmax = 1e7;
 default.maxiter = 1000;
-default.memorytest = 0;
+default.memorytest = false;
+default.output_x = false;
 
 MATLABVERSION = gail.matlab_version;
 if MATLABVERSION >= 8.3
@@ -408,6 +394,7 @@ if ~validvarargin
     out_param.nmax = default.nmax ;
     out_param.maxiter = default.maxiter;
     out_param.memorytest = default.memorytest;
+    out_param.output_x = default.output_x;
 else
     p = inputParser;
     addRequired(p,'f',@gail.isfcn);
@@ -420,7 +407,8 @@ else
         addOptional(p,'nhi',default.nhi,@isnumeric);
         addOptional(p,'nmax',default.nmax,@isnumeric)
         addOptional(p,'maxiter',default.maxiter,@isnumeric)
-        addOptional(p,'memorytest',default.memorytest,@isnumeric)
+        addOptional(p,'memorytest',default.memorytest,@logical)
+        addOptional(p,'output_x',default.output_x,@logical)
     else
         if isstruct(in2) %parse input structure
             p.StructExpand = true;
@@ -433,7 +421,8 @@ else
         f_addParamVal(p,'nhi',default.nhi,@isnumeric);
         f_addParamVal(p,'nmax',default.nmax,@isnumeric);
         f_addParamVal(p,'maxiter',default.maxiter,@isnumeric);
-        f_addParamVal(p,'memorytest',default.memorytest,@isnumeric);
+        f_addParamVal(p,'memorytest',default.memorytest,@logical);
+        f_addParamVal(p,'output_x',default.output_x,@logical);
     end
     parse(p,f,varargin{2:end})
     out_param = p.Results;
@@ -543,8 +532,13 @@ if (~gail.isposint(out_param.maxiter))
         out_param.nmax = default.nmax;
     end;
 end
-if (out_param.memorytest~=1&&out_param.memorytest~=0)
+if (out_param.memorytest~=true&&out_param.memorytest~=false)
     warning('GAIL:funappxNoPenalty_g:memorytest', ['Input of memorytest'...
-        ' can only be 0 or 1; use default value 0'])
-    out_param.memorytest = 0;
+        ' can only be true or false; use default value false'])
+    out_param.memorytest = false;
+end;
+if (out_param.output_x~=true&&out_param.output_x~=false)
+    warning('GAIL:funappxNoPenalty_g:output_x', ['Input of output_x'...
+        ' can only be true or false; use default value false'])
+    out_param.output_x = false;
 end;

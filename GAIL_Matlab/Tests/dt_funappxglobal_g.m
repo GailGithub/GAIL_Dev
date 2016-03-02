@@ -47,7 +47,7 @@ function dt_funappxglobal_g
 %            ninit: 102
 %     exceedbudget: 0
 %          npoints: 5051
-%       errorbound: 9.9990e-***7
+%           errest: 9.9990e-***7
 %
 %
 %   Example 3:
@@ -77,7 +77,7 @@ function dt_funappxglobal_g
 %            ninit: 806
 %     exceedbudget: 0
 %          npoints: 5668811
-%       errorbound: 2.5023e-***9
+%           errest: 2.5023e-***9
 %
 % 
 %   Example 4: 
@@ -109,7 +109,7 @@ function dt_funappxglobal_g
 %            ninit: 434
 %     exceedbudget: 0
 %          npoints: 207841
-%       errorbound: 2.5053e-***7
+%           errest: 2.5053e-***7
 %   
 %
 %   Example 5:
@@ -141,7 +141,7 @@ function dt_funappxglobal_g
 %            ninit: 138
 %     exceedbudget: 0
 %          npoints: 23291
-%       errorbound: 2.5219e-***7
+%           errest: 2.5219e-***7
 %
 %
 %   Example 6: 
@@ -170,7 +170,7 @@ function dt_funappxglobal_g
 %            ninit: 401
 %     exceedbudget: 0
 %          npoints: 252801
-%       errorbound: 2.5013e-***8
+%           errest: 2.5013e-***8
 %
 %
 %   Example 7:
@@ -199,7 +199,7 @@ function dt_funappxglobal_g
 %            ninit: 36
 %     exceedbudget: 0
 %          npoints: 17291
-%       errorbound: 2.5639e-***7
+%           errest: 2.5639e-***7
 %
 %
 %   Example 8:
@@ -228,7 +228,7 @@ function dt_funappxglobal_g
 %            ninit: 930
 %     exceedbudget: 0
 %          npoints: 1828273
-%       errorbound: 2.4999e-***7
+%           errest: 2.4999e-***7
 % 
 %
 %   Example 9:
@@ -257,7 +257,7 @@ function dt_funappxglobal_g
 %            ninit: 565
 %     exceedbudget: 0
 %          npoints: 83473
-%       errorbound: 9.9654e-***7
+%           errest: 9.9654e-***7
 %
 %
 %   Example 10:
@@ -287,7 +287,7 @@ function dt_funappxglobal_g
 %            ninit: 520
 %     exceedbudget: 0
 %          npoints: 431809
-%       errorbound: 2.5033e-***8
+%           errest: 2.5033e-***8
 %
 %
 %   Example 11:
@@ -317,5 +317,5 @@ function dt_funappxglobal_g
 %            ninit: 22
 %     exceedbudget: 0
 %          npoints: 207061
-%       errorbound: 2.6242e-***8
+%           errest: 2.6242e-***8
 %

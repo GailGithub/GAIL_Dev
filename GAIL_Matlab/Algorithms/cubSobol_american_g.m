@@ -1,10 +1,10 @@
-function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
-%CUBSOBOL_G Quasi-Monte Carlo method using Sobol' cubature over the
+function [q,out_param,b,y,kappanumap] = cubSobol_american_g(varargin)
+%CUBSOBOL_AMERICAN_G Quasi-Monte Carlo method using Sobol' cubature over the
 %d-dimensional region to integrate within a specified generalized error
 %tolerance with guarantees under Walsh-Fourier coefficients cone decay
 %assumptions
 %
-%   [q,out_param] = CUBSOBOL_G(f,hyperbox) estimates the integral of f
+%   [q,out_param] = CUBSOBOL_AMERICAN_G(f,hyperbox) estimates the integral of f
 %   over the d-dimensional region described by hyperbox, and with an error
 %   guaranteed not to be greater than a specific generalized error tolerance,
 %   tolfun:=max(abstol,reltol*| integral(f) |). Input f is a function handle. f should
@@ -15,23 +15,23 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 %   Given the construction of Sobol' sequences, d must be a positive 
 %   integer with 1<=d<=1111.
 %
-%   q = CUBSOBOL_G(f,hyperbox,measure,abstol,reltol)
+%   q = CUBSOBOL_AMERICAN_G(f,hyperbox,abstol,reltol)
 %   estimates the integral of f over the hyperbox. The answer
 %   is given within the generalized error tolerance tolfun. All parameters
 %   should be input in the order specified above. If an input is not specified,
 %   the default value is used. Note that if an input is not specified,
 %   the remaining tail cannot be specified either. Inputs f and hyperbox 
 %   are required. The other optional inputs are in the correct order:
-%   measure,abstol,reltol,mmin,mmax,fudge,toltype and
+%   abstol,reltol,mmin,mmax,fudge,toltype and
 %   theta.
 %
-%   q = CUBSOBOL_G(f,hyperbox,'measure',measure,'abstol',abstol,'reltol',reltol)
+%   q = CUBSOBOL_AMERICAN_G(f,hyperbox,'abstol',abstol,'reltol',reltol)
 %   estimates the integral of f over the hyperbox. The answer
 %   is given within the generalized error tolerance tolfun. All the field-value
 %   pairs are optional and can be supplied in any order. If an input is not
 %   specified, the default value is used.
 %
-%   q = CUBSOBOL_G(f,hyperbox,in_param) estimates the integral of f over the
+%   q = CUBSOBOL_AMERICAN_G(f,hyperbox,in_param) estimates the integral of f over the
 %   hyperbox. The answer is given within the generalized error tolerance tolfun.
 % 
 %   Input Arguments
@@ -44,13 +44,6 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 %     a 2 x d matrix, where the first row corresponds to the lower limits 
 %     and the second row corresponds to the upper limits of the integral.
 %     The default value is [0;1].
-%
-%     in_param.measure --- for f(x)*mu(dx), we can define mu(dx) to be the
-%     measure of a uniformly distributed random variable in the hyperbox
-%     or normally distributed with covariance matrix I_d. The only possible
-%     values are 'uniform' or 'normal'. For 'uniform', the hyperbox must be
-%     a finite volume while for 'normal', the hyperbox can only be defined as 
-%     (-Inf,Inf)^d. By default it is 'uniform'.
 %
 %     in_param.abstol --- the absolute error tolerance, abstol>=0. By 
 %     default it is 1e-4.
@@ -102,7 +95,7 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 %     When use multiply control variates, the function should be defined in cellfunc
 %     format(Check the Example 7).
 %     The second one should be the value of the previous function/functions
-%     on the defined interval. By default, this is set to zero(no control variates). 
+%     on the defined interval. By default, this is set to zero(no control variates).
 %     
 %
 %   Output Arguments
@@ -137,10 +130,6 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 %                       the max budget is attained without reaching the
 %                       guaranteed error tolerance.
 %      
-%                       2 : If the function lies outside the cone. In
-%                       this case, results are not guaranteed. For more
-%                       information about the cone definition, check the
-%                       article mentioned below.
 % 
 %  Guarantee
 % This algorithm computes the integral of real valued functions in [0,1)^d
@@ -240,29 +229,10 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 t_start = tic;
 %% Initial important cone factors and Check-initialize parameters
 r_lag = 4; %distance between coefficients summed and those computed
-[f, hyperbox, out_param, cv] = cubSobol_g_param(r_lag,varargin{:});
+[f, hyperbox, out_param, cv] = cubSobol_american_g_param(r_lag,varargin{:});
 l_star = out_param.mmin - r_lag; % Minimum gathering of points for the sums of DFWT
 omg_circ = @(m) 2.^(-m);
 omg_hat = @(m) out_param.fudge(m)/((1+out_param.fudge(r_lag))*omg_circ(r_lag));
-g = out_param.cv.g;% get control variate function
-
-if strcmp(out_param.measure,'normal')
-   f = @(x) f(gail.stdnorminv(x));
-   if cv == 1
-	   g = @(x) out_param.cv.g(gail.stdnorminv(x));
-   elseif cv > 1
-	   g = @(x) cellfun(@(c) c(gail.stdnorminv(x)), g, 'UniformOutput', false);
-   end
-elseif strcmp(out_param.measure,'uniform')
-   Cnorm = prod(hyperbox(2,:)-hyperbox(1,:));
-   tran = @(x) (bsxfun(@plus,hyperbox(1,:),bsxfun(@times,(hyperbox(2,:)-hyperbox(1,:)),x)));% a + (b-a)x = u
-   f = @(x) Cnorm*f(tran(x)); % a + (b-a)x = u
-   if cv == 1 
-	   g = @(x) Cnorm*g(tran(x)); % a + (b-a)x = u
-   elseif cv > 1 
-	   g = @(x) cellfun(@(c) c(tran(x)), g, 'UniformOutput', false);
-   end   
-end
 
 %% Main algorithm
 sobstr=sobolset(out_param.d); %generate a Sobol' sequence
@@ -272,9 +242,8 @@ CStilde_low = -inf(1,out_param.mmax-l_star+1); %initialize various sums of DFWT 
 CStilde_up = inf(1,out_param.mmax-l_star+1); %initialize various sums of DFWT terms for necessary conditions
 errest=zeros(out_param.mmax-out_param.mmin+1,1); %initialize error estimates
 appxinteg=zeros(out_param.mmax-out_param.mmin+1,1); %initialize approximations to integral
-exit_len = 2;
+exit_len = 1;
 out_param.exit=false(1,exit_len); %we start the algorithm with all warning flags down
-dimg = max(size(out_param.cv.g)); % get the number of control variates
 
 %% Initial points and FWT
 out_param.n=2^out_param.mmin; %total number of points to start with
@@ -282,10 +251,10 @@ n0=out_param.n; %initial number of points
 xpts=sobstr(1:n0,1:out_param.d); %grab Sobol' points
 y = f(xpts); %evaluate integrand
 yval=y;
-if cv > 1 
+if cv > 1
 	yg = cell2mat(g(xpts)) - out_param.cv.Ig; yvalg=yg;
 elseif cv == 1 
-	yg = out_param.cv.g(xpts) - out_param.cv.Ig; yvalg=yg;
+	yg = out_param.cv.g(xpts) - out_param.cv.Ig; yvalg = yg;
 end %evaluate control variate
 
 
@@ -305,14 +274,14 @@ for l=0:out_param.mmin-1
        yg(~ptind, (1:cv))=(evenval-oddval)/2;
    end
 end
-%y now contains the FWT coefficients
+%y and yg now contain the FWT coefficients
 
 %% Create kappanumap implicitly from the data
 kappanumap=(1:out_param.n)'; %initialize map
 for l=out_param.mmin-1:-1:1
    nl=2^l;
-   oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
-   newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa, 
+   oldone=abs(y(kappanumap(2:nl),:)); %earlier values of kappa, don't touch first one
+   newone=abs(y(kappanumap(nl+2:2*nl),:)); %later values of kappa, 
    flip=find(newone>oldone); %which in the pair are the larger ones
    if ~isempty(flip)
        flipall=bsxfun(@plus,flip,0:2^(l+1):2^out_param.mmin-1);
@@ -324,41 +293,22 @@ for l=out_param.mmin-1:-1:1
 end
 
 %% If control variates, find optimal beta
-if cv  
-    X = yg(kappanumap(end/2+1:end), (1:cv));
-    Y = y(kappanumap(end/2+1:end));
-    beta = X \ Y;  
+if cv
+    X = yg(kappanumap(end/2 + 1:end)); %yg(kappanumap(2^(out_param.mmin-r_lag-1) + 1:2^(out_param.mmin-r_lag)), (1:cv));
+    Y = y(kappanumap(end/2 + 1:end)); %y(kappanumap(2^(out_param.mmin-r_lag-1) + 1:2^(out_param.mmin-r_lag)));
+    beta = X \ Y;
     out_param.beta = beta;
     % We update the integrand and values
     y = y-yg*beta;
     yval = yval-yvalg*beta;
-    if cv == 1 
-	    f = @(x) f(x)-(g(x)-out_param.cv.Ig)*beta;
-    else
-        error('Still need to code that part')
-    end
 end
-
 
 
 %% Compute Stilde
-nllstart = int64(2^(out_param.mmin-r_lag-1));
+nllstart=int64(2^(out_param.mmin-r_lag-1));
 Stilde(1)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
 out_param.bound_err=out_param.fudge(out_param.mmin)*Stilde(1);
 errest(1)=out_param.bound_err;
-
-% Necessary conditions
-for l = l_star:out_param.mmin % Storing the information for the necessary conditions
-    C_low = 1/(1+omg_hat(out_param.mmin-l)*omg_circ(out_param.mmin-l));
-    C_up = 1/(1-omg_hat(out_param.mmin-l)*omg_circ(out_param.mmin-l));
-    CStilde_low(l-l_star+1) = max(CStilde_low(l-l_star+1),C_low*sum(abs(y(kappanumap(2^(l-1)+1:2^l)))));
-    if (omg_hat(out_param.mmin-l)*omg_circ(out_param.mmin-l) < 1)
-        CStilde_up(l-l_star+1) = min(CStilde_up(l-l_star+1),C_up*sum(abs(y(kappanumap(2^(l-1)+1:2^l)))));
-    end
-end
-if any(CStilde_low(:) > CStilde_up(:))
-   out_param.exit(2) = true;
-end
 
 %% Approximate integral
 q=mean(yval);
@@ -393,51 +343,72 @@ for m=out_param.mmin+1:out_param.mmax
    mnext=m-1;
    nnext=2^mnext;
    xnext=sobstr(n0+(1:nnext),1:out_param.d); 
+   xpts = [xpts; xnext];
    n0=n0+nnext;
+   y = f(xpts);
+   yval = y;
    if cv > 1% multi C.V.s
-	   ygnext = cell2mat(g(xnext))- out_param.cv.Ig;  
-	   ynext = f(xnext) - ygnext*beta;
-	   yval = [yval; ynext];
-   else
-	   ynext=f(xnext);
-	   yval=[yval; ynext]; %#ok<*AGROW>
+       error('Still need to code that part')
+% 	   ygnext = cell2mat(g(xnext))- out_param.cv.Ig;  
+% 	   ynext = f(xnext) - ygnext*beta;
+% 	   yval = [yval; ynext];
+   elseif cv == 1
+       ynextg = out_param.cv.g(xnext) - out_param.cv.Ig;
+       yvalg = [yvalg; ynextg];
    end
+   
+    %% Compute initial FWT
+    for l=0:m-1
+        nl=2^l;
+        ptind=repmat([true(nl,1); false(nl,1)],2^(m-l-1),1);
+        evenval=y(ptind);
+        oddval=y(~ptind);
+        y(ptind)=(evenval+oddval)/2;
+        y(~ptind)=(evenval-oddval)/2;
+        if cv & l < m-1
+           ptind = ptind(1:end/2);
+           evenval=ynextg(ptind, (1:cv));
+           oddval=ynextg(~ptind, (1:cv));
+           ynextg(ptind, (1:cv))=(evenval+oddval)/2;
+           ynextg(~ptind, (1:cv))=(evenval-oddval)/2;
+        elseif cv % Update FWT on all points for yg only
+            yg = [yg; ynextg];
+            evenval=yg(ptind);
+            oddval=yg(~ptind);
+            yg(ptind)=(evenval+oddval)/2;
+            yg(~ptind)=(evenval-oddval)/2;
+        end
+    end
+   %
 
-   %% Compute initial FWT on next points
-   for l=0:mnext-1
-      nl=2^l;
-      nmminlm1=2^(mnext-l-1);
-      ptind=repmat([true(nl,1); false(nl,1)],nmminlm1,1);
-      evenval=ynext(ptind);
-      oddval=ynext(~ptind);
-      ynext(ptind)=(evenval+oddval)/2;
-      ynext(~ptind)=(evenval-oddval)/2;
-   end
 
-   %% Compute FWT on all points
-   y=[y;ynext];
-   nl=2^mnext;
-   ptind=[true(nl,1); false(nl,1)];
-   evenval=y(ptind);
-   oddval=y(~ptind);
-   y(ptind)=(evenval+oddval)/2;
-   y(~ptind)=(evenval-oddval)/2;
+    %% Create kappanumap implicitly from the data
+    kappanumap=(1:2^m)'; %initialize map
+    for l=m-1:-1:1
+        nl=2^l;
+        oldone=abs(y(kappanumap(2:nl),:)); %earlier values of kappa, don't touch first one
+        newone=abs(y(kappanumap(nl+2:2*nl),:)); %later values of kappa, 
+        flip=find(newone>oldone); %which in the pair are the larger ones
+        if ~isempty(flip)
+            flipall=bsxfun(@plus,flip,0:2^(l+1):2^out_param.mmin-1);
+            flipall=flipall(:);
+            temp=kappanumap(nl+1+flipall); %then flip 
+            kappanumap(nl+1+flipall)=kappanumap(1+flipall); %them
+            kappanumap(1+flipall)=temp; %around
+        end
+    end
 
-   %% Update kappanumap
-   kappanumap=[kappanumap; 2^(m-1)+kappanumap]; %initialize map
-   for l=m-1:-1:m-r_lag
-      nl=2^l;
-      oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
-      newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa, 
-      flip=find(newone>oldone);
-      if ~isempty(flip)
-          flipall=bsxfun(@plus,flip,0:2^(l+1):2^m-1);
-          flipall=flipall(:);
-          temp=kappanumap(nl+1+flipall);
-          kappanumap(nl+1+flipall)=kappanumap(1+flipall);
-          kappanumap(1+flipall)=temp;
-      end
-   end
+    
+%% If control variates, find optimal beta
+if cv  
+    X = yg(kappanumap(end/2 + 1:end)); %yg(kappanumap(2^(m-r_lag-1) + 1:2^(m-r_lag)), (1:cv));
+    Y = y(kappanumap(end/2 + 1:end)); %y(kappanumap(2^(m-r_lag-1) + 1:2^(m-r_lag)));
+    beta = X \ Y;
+    out_param.beta = beta;
+    % We update the integrand and values
+    y = y-yg*beta;
+    yval = yval-yvalg*beta;
+end
 
    %% Compute Stilde
    nllstart=int64(2^(m-r_lag-1));
@@ -446,20 +417,6 @@ for m=out_param.mmin+1:out_param.mmax
    out_param.bound_err=out_param.fudge(m)*Stilde(meff);
    errest(meff)=out_param.bound_err;
    
-   % Necessary conditions
-   for l = l_star:m % Storing the information for the necessary conditions
-        C_low = 1/(1+omg_hat(m-l)*omg_circ(m-l));
-        C_up = 1/(1-omg_hat(m-l)*omg_circ(m-l));
-        CStilde_low(l-l_star+1) = max(CStilde_low(l-l_star+1),C_low*sum(abs(y(kappanumap(2^(l-1)+1:2^l)))));
-        if (omg_hat(m-l)*omg_circ(m-l) < 1)
-            CStilde_up(l-l_star+1) = min(CStilde_up(l-l_star+1),C_up*sum(abs(y(kappanumap(2^(l-1)+1:2^l)))));
-        end
-   end
-   
-   if any(CStilde_low(:) > CStilde_up(:))
-       out_param.exit(2) = true;
-   end
-
    %% Approximate integral
    q=mean(yval);
    appxinteg(meff)=q;
@@ -499,11 +456,10 @@ end
 
 
 %% Parsing for the input of cubSobol_g
-function [f,hyperbox, out_param, cv] = cubSobol_g_param(r_lag,varargin)
+function [f,hyperbox, out_param, cv] = cubSobol_american_g_param(r_lag,varargin)
 
 % Default parameter values
 default.hyperbox = [zeros(1,1);ones(1,1)];% default hyperbox
-default.measure  = 'uniform';
 default.abstol  = 1e-4;
 default.reltol  = 1e-2;
 default.mmin  = 10;
@@ -563,7 +519,6 @@ else
 end
 
 if ~validvarargin
-    out_param.measure = default.measure;
     out_param.abstol = default.abstol;
     out_param.reltol = default.reltol;
     out_param.mmin = default.mmin;
@@ -577,8 +532,6 @@ else
     addRequired(p,'f',@gail.isfcn);
     addRequired(p,'hyperbox',@isnumeric);
     if isnumeric(in3) || ischar(in3)
-        addOptional(p,'measure',default.measure,...
-            @(x) any(validatestring(x, {'uniform','normal'})));
         addOptional(p,'abstol',default.abstol,@isnumeric);
         addOptional(p,'reltol',default.reltol,@isnumeric);
         addOptional(p,'mmin',default.mmin,@isnumeric);
@@ -593,8 +546,6 @@ else
             p.StructExpand = true;
             p.KeepUnmatched = true;
         end
-        f_addParamVal(p,'measure',default.measure,...
-            @(x) any(validatestring(x, {'uniform','normal'})));
         f_addParamVal(p,'abstol',default.abstol,@isnumeric);
         f_addParamVal(p,'reltol',default.reltol,@isnumeric);
         f_addParamVal(p,'mmin',default.mmin,@isnumeric);
@@ -641,13 +592,6 @@ if ~isnumeric(hyperbox) || ~(size(hyperbox,1)==2) || ~(out_param.d<1111)
     f = @(x) x.^2;
     out_param.f=f;
     hyperbox = default.hyperbox;
-end
-
-% Force measure to be uniform or normal only
-if ~(strcmp(out_param.measure,'uniform') || strcmp(out_param.measure,'normal') )
-    warning('GAIL:cubSobol_g:notmeasure',['The measure can only be uniform or normal.' ...
-            ' Using default measure ' num2str(default.measure)])
-    out_param.measure = default.measure;
 end
 
 % Force absolute tolerance greater than 0
@@ -725,26 +669,6 @@ if (strcmp(out_param.toltype,'comb')) && (out_param.theta==0) && (out_param.relt
     warning('GAIL:cubSobol_g:reltolzero',['When choosing toltype comb, if theta=0 then reltol>0.' ...
             ' Using default relative tolerance ' num2str(default.reltol) ])
     out_param.reltol = default.reltol;
-end
-
-% Checking on the hyperbox given the measure
-if (strcmp(out_param.measure,'uniform')) && ~all(all(isfinite(hyperbox)))
-    warning('GAIL:cubSobol_g:hyperboxnotfinite',['If uniform measure, hyperbox must be of finite volume.' ...
-            ' Using default hyperbox:'])
-    disp([zeros(1,out_param.d);ones(1,out_param.d)])
-    hyperbox = [zeros(1,out_param.d);ones(1,out_param.d)];
-end
-if (strcmp(out_param.measure,'normal')) && (sum(sum(isfinite(hyperbox)))>0)
-    warning('GAIL:cubSobol_g:hyperboxfinite',['If normal measure, hyperbox must be defined as (-Inf,Inf)^d.' ...
-            ' Using default hyperbox:'])
-    disp([-inf*ones(1,out_param.d);inf*ones(1,out_param.d)])
-    hyperbox = [-inf*ones(1,out_param.d);inf*ones(1,out_param.d)];
-end
-if (strcmp(out_param.measure,'normal')) && (any(hyperbox(1,:)==hyperbox(2,:)) || any(hyperbox(1,:)>hyperbox(2,:)))
-    warning('GAIL:cubSobol_g:hyperboxnormalwrong',['If normal measure, hyperbox must be defined as (-Inf,Inf)^d.' ...
-            ' Using default hyperbox:'])
-    disp([-inf*ones(1,out_param.d);inf*ones(1,out_param.d)])
-    hyperbox = [-inf*ones(1,out_param.d);inf*ones(1,out_param.d)];
 end
 
 end

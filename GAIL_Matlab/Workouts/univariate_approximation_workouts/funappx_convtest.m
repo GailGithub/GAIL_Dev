@@ -1,6 +1,13 @@
-function [npoints,errest,t,npointsglobal,errestglobal,tglobal]=funappx_convtest(f,a,b)
+function [npoints,errest,t,npointsglobal,errestglobal,tglobal]=funappx_convtest(f,a,b,varargin)
 % a = -4.5960, b = 4.5960, c = 3.5960, f = @(x)exp(-1000*(x-c).^2)
 % a = -4.4221, b = 4.4221, c = 3.4221, f = @(x)sin(c*pi*x)
+%
+% Compare funappx_g with funappxglobal_g:
+%   [npoints,errest,t,npointsglobal,errestglobal,tglobal]=funappx_convtest(f,a,b)
+%
+% Compare funappxNoPenalty_g with funappxglobal_g:
+%   [npoints,errest,t,npointsglobal,errestglobal,tglobal]=funappx_convtest(f,a,b,'funappxNoPenalty_g');
+LatexInterpreter
 tol = zeros(1,15);
 errest = tol;
 npoints = tol;
@@ -21,18 +28,28 @@ if nargin == 0,
   f = @(x) exp(-100*(x-sqrt(2)/2).^2);
   nmax = 1e7;
 end
+
+if isempty(varargin)
+  algoname = 'funappx_g';
+  algo = @(f,in_param) funappx_g(f,in_param);
+else 
+  algoname= varargin{1};
+  algo = str2func(['@(f,in_param)', varargin{1},'(f,in_param)']);  
+end
+
+tmpstr = strsplit(algoname,'_g');
    
-warning('off','GAIL:funappx_g:peaky')
-warning('off','GAIL:funappx_g:exceedbudget')
+warning('off',['GAIL:',algoname,':peaky'])
+warning('off',['GAIL:',algoname,':exceedbudget'])
 warning('off','GAIL:funappxglobal_g:peaky')
 warning('off','GAIL:funappxglobal_g:exceedbudget')
 
-for i=-15:-1,
+for i=-5:-1,
   tol(j) = 10^(i);
   in_param.abstol = 10^(i);
   in_param.nmax = nmax;
   tic,
-  [~, out_param] = funappx_g(f, in_param);
+  [~, out_param] = algo(f, in_param);
   t(j) = toc;
   errest(j) = out_param.errest;
   npoints(j) = out_param.npoints;
@@ -40,16 +57,16 @@ for i=-15:-1,
   tic,
   [~, out_param] = funappxglobal_g(f, in_param);
   tglobal(j) = toc;
-  errestglobal(j) = out_param.errorbound;
+  errestglobal(j) = out_param.errest;
   npointsglobal(j) = out_param.npoints;
   
   j=j+1;
 end
 
 warning('on','GAIL:funappxglobal_g:exceedbudget')
-warning('on','GAIL:funappx_g:peaky')
-warning('on','GAIL:funappx_g:exceedbudget')
 warning('on','GAIL:funappxglobal_g:peaky')
+warning('on',['GAIL:',algoname,':peaky'])
+warning('on',['GAIL:',algoname,':exceedbudget'])
 
 [~,~,MATLABVERSION] = GAILstart(false); 
 if usejava('jvm') || MATLABVERSION <= 7.12
@@ -71,7 +88,7 @@ if usejava('jvm') || MATLABVERSION <= 7.12
     %title('Computational Cost of funappxglobal\_g VS error tolerance')
     ylabel('error estimation')
     xlabel('Number of points')
-    legend('funappx\_g','funappxglobal\_g')
+    legend([tmpstr{1}, '\_g'],'funappxglobal\_g')
    
     
 %     subplot(2,1,2)
@@ -81,6 +98,6 @@ if usejava('jvm') || MATLABVERSION <= 7.12
 %     legend('funappx\_g','funappxglobal\_g')
     
     hold off
-    gail.save_eps('WorkoutFunappxOutput', 'WorkoutFunAppxConvTest');
+    gail.save_eps('WorkoutFunappxOutput', ['Workout', algoname, 'ConvTest']);
 end
 end
