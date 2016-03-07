@@ -286,6 +286,17 @@ while n < out_param.nmax;
     if ~isempty(iSing)
          error('GAIL:funmin_g:yInf',['Function f(x) = Inf at x = ', num2str(x(iSing))]);
     end
+    if length(y) == 1  
+%     probably f is a constant function and Matlab would  
+%     reutrn only a value fmin 
+    Un = y;
+    interval=[out_param.a out_param.b];
+    out_param.exitflag = 0;
+    errest = 0;
+    volumeX=len;
+    
+    break;
+    end        
     diff_y = diff(y);
     %approximate the weaker norm of input function
     gn = (n-1)*max(abs(diff_y-(y(n)-y(1))/(n-1)))/len;
