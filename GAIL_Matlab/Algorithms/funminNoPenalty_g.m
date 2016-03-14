@@ -54,7 +54,6 @@ abstol = out_param.abstol;
 n = out_param.ninit;
 out_param.x = a:(b-a)/(n-1):b;
 y = f(out_param.x);
-Un=min(y);
 fh = 4*(b-a)/(n-1);
 C0 = 1.2;
 max_errest = 1;
@@ -74,7 +73,7 @@ exit_len = 2;
 out_param.exit = false(1,exit_len); 
 C = @(h) C0*fh./(fh-h);
 
-while(max_errest > abstol)
+while n < out_param.nmax
     %% Stage 1: compute length of each subinterval and approximate |f''(t)|
     len = out_param.x(2:end)-out_param.x(1:end-1);
     deltaf = 2*(y(1:end-2)./len(1:end-1)./(len(1:end-1)+len(2:end))-...
@@ -89,13 +88,14 @@ while(max_errest > abstol)
     normbd = C(max(h(1:n-1),h(3:n+1))) .* max(deltaf(1:n-1),deltaf(4:n+2)); % appx f''
     errest = len.^2/8.*normbd;
     % update iterations
-    iter = iter + 1;
     max_errest = max(errest);
     if max_errest <= abstol,
         break
     end 
+    iter = iter + 1;
  
     %% Stage 3: find I and update x,y
+    Un=min(y);
     diff_y=diff(y);
     ln=diff_y/2+y(1:n-1)-abs(diff_y)/2-errest;
     badinterval = (errest > abstol | ln< Un);
