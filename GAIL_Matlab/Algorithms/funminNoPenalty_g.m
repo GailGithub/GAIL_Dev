@@ -98,7 +98,7 @@ while(max_errest > abstol)
     %% Stage 3: find I and update x,y
     diff_y=diff(y);
     ln=diff_y/2+y(1:n-1)-abs(diff_y)/2-errest;
-    badinterval = (errest > abstol & ln< Un);
+    badinterval = (errest > abstol | ln< Un);
     whichcut = badinterval | [badinterval(2:end) 0] | [0 badinterval(1:end-1)];
     if (out_param.nmax<(n+length(find(whichcut==1))))
         out_param.exit(1) = true;
