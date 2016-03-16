@@ -294,8 +294,8 @@ end
 
 %% If control variates, find optimal beta
 if cv
-    X = yg(kappanumap(end/2 + 1:end)); %yg(kappanumap(2^(out_param.mmin-r_lag-1) + 1:2^(out_param.mmin-r_lag)), (1:cv));
-    Y = y(kappanumap(end/2 + 1:end)); %y(kappanumap(2^(out_param.mmin-r_lag-1) + 1:2^(out_param.mmin-r_lag)));
+    X = yg(kappanumap(2^(out_param.mmin-r_lag-1) + 1:2^(out_param.mmin-r_lag)), (1:cv)); %yg(kappanumap(end/2 + 1:end));
+    Y = y(kappanumap(2^(out_param.mmin-r_lag-1) + 1:2^(out_param.mmin-r_lag)));%y(kappanumap(end/2 + 1:end));
     beta = X \ Y;
     out_param.beta = beta;
     % We update the integrand and values
@@ -401,8 +401,8 @@ for m=out_param.mmin+1:out_param.mmax
     
 %% If control variates, find optimal beta
 if cv  
-    X = yg(kappanumap(end/2 + 1:end)); %yg(kappanumap(2^(m-r_lag-1) + 1:2^(m-r_lag)), (1:cv));
-    Y = y(kappanumap(end/2 + 1:end)); %y(kappanumap(2^(m-r_lag-1) + 1:2^(m-r_lag)));
+    X = yg(kappanumap(2^(m-r_lag-1) + 1:2^(m-r_lag)), (1:cv)); %yg(kappanumap(end/2 + 1:end));
+    Y = y(kappanumap(2^(m-r_lag-1) + 1:2^(m-r_lag)));%y(kappanumap(end/2 + 1:end));
     beta = X \ Y;
     out_param.beta = beta;
     % We update the integrand and values
