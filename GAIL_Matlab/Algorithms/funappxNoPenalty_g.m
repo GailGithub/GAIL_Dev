@@ -105,7 +105,7 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %     out_param.errest --- an estimation of the absolute error for the
 %     approximation
 %
-%     x --- sample points used to approximate function
+%     out_param.x --- sample points used to approximate function
 %
 %     out_param.bytes --- amount of memory used during the computation
 %
@@ -328,10 +328,6 @@ if MATLABVERSION >= 8.3
 else
     fappx = @(t) ppval(interp1(x,y,'linear','pp'), t);     
 end;
-if (in_param.memorytest)
-  w = whos;
-  out_param2.bytes = sum([w.bytes]);
-end
 if (in_param.output_x)
   out_param2.x = x;
 end
@@ -342,7 +338,10 @@ for field_index = 1:length(field_list)
      out_param2.(field) = out_param.(field);
 end
 out_param = out_param2;
-
+if (in_param.memorytest)
+  w = whos;
+  out_param.bytes = sum([w.bytes]);
+end
 
 function [f, out_param] = funappxNoPenalty_g_param(varargin)
 % parse the input to the funappxNoPenalty_g function
