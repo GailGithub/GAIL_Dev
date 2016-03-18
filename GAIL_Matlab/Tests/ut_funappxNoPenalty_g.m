@@ -124,14 +124,14 @@ classdef ut_funappxNoPenalty_g < matlab.unittest.TestCase
             f = @(x) x.^2;
             in_param.a = 2;
             in_param.b = 1;
-            [fappx, result] = testCase.verifyWarning(@()funappxNoPenalty_g(f,in_param),'GAIL:funappxNoPenalty_g:blea');
+            [fappx, result] = testCase.verifyWarning(@()funappxNoPenalty_g(f,in_param),'GAIL:funappx_g_in_param:blea');
             x = rand(10000,1)*(result.b-result.a)+result.a;
             actualerr = max(abs(fappx(x)-f(x)));
             testCase.verifyLessThanOrEqual(actualerr,result.abstol);
         end
         
         function funappxNoPenalty_gOfnofunction(testCase)
-            [fappx, result] = testCase.verifyWarning(@()funappxNoPenalty_g,'GAIL:funappxNoPenalty_g:nofunction');
+            [fappx, result] = testCase.verifyWarning(@()funappxNoPenalty_g,'GAIL:gail_in_param:notfunction');
             x = rand(10000,1)*(result.b-result.a)+result.a;
             actualerr = max(abs(fappx(x)-result.f(x)));
             testCase.verifyLessThanOrEqual(actualerr,result.abstol);
@@ -141,7 +141,7 @@ classdef ut_funappxNoPenalty_g < matlab.unittest.TestCase
             f = @(x) x.^2;
             in_param.a = 1;
             in_param.b = 1;
-            [fappx, result] = testCase.verifyWarning(@()funappxNoPenalty_g(f,in_param),'GAIL:funappxNoPenalty_g:beqa');
+            [fappx, result] = testCase.verifyWarning(@()funappxNoPenalty_g(f,in_param),'GAIL:funappx_g_in_param:beqa');
             x = rand(10000,1)*(result.b-result.a)+result.a;
             actualerr = max(abs(fappx(x)-f(x)));
             testCase.verifyLessThanOrEqual(actualerr,result.abstol);

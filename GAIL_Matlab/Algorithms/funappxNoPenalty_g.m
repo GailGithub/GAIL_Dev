@@ -105,7 +105,7 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %     out_param.errest --- an estimation of the absolute error for the
 %     approximation
 %
-%     out_param.x --- sample points used to approximate function
+%     x --- sample points used to approximate function
 %
 %     out_param.bytes --- amount of memory used during the computation
 %
@@ -128,8 +128,8 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %   >> f = @(x) x.^2;
 %   >> [~, out_param] = funappxNoPenalty_g(f,-2,2,1e-7,10,20)
 %
-%   out_param =
-% 
+%     out_param = 
+%
 %                f: @(x)x.^2
 %                a: -2
 %                b: 2
@@ -139,7 +139,7 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %            ninit: 18
 %             nmax: 10000000  
 %          maxiter: 1000
-%             exit: [0 0]
+%         exitflag: [0 0]
 %             iter: 10 
 %          npoints: 8705
 %           errest: 6.3451e-***8
@@ -161,7 +161,7 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %            ninit: 18
 %             nmax: 10000000
 %          maxiter: 1000
-%             exit: [0 0]
+%         exitflag: [0 0]
 %             iter: 9
 %          npoints: 4353
 %           errest: 2.5418e-***7
@@ -184,7 +184,7 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %            ninit: 19 
 %             nmax: 10000000
 %          maxiter: 1000
-%             exit: [0 0]
+%         exitflag: [0 0]
 %             iter: 10
 %          npoints: 9217
 %           errest: 3.5373e-***7
@@ -232,50 +232,52 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %
 
 % check parameter satisfy conditions or not
-[f, in_param] = funappxNoPenalty_g_param(varargin{:});
+%[f, in_param] = funappxNoPenalty_g_param(varargin{:});
+in_param = gail.funappx_g_in_param(varargin{:});
+f = in_param.f;
 MATLABVERSION = gail.matlab_version;
 out_param = in_param;
-out_param = rmfield(out_param,'memorytest');
-out_param = rmfield(out_param,'output_x');
+%out_param = rmfield(out_param,'memorytest');
+%out_param = rmfield(out_param,'output_x');
 
 %% main algorithm
 a = out_param.a;
 b = out_param.b;
 abstol = out_param.abstol;
 ninit = out_param.ninit;
-out_param.x = a:(b-a)/(ninit-1):b;
-y = f(out_param.x);
+x = a:(b-a)/(ninit-1):b;
+y = f(x);
 %fh = b-a;
 fh = 4*(b-a)/(ninit-1);
 C0 = 1.2;
 iSing = find(isinf(y));
 if ~isempty(iSing)
-    error('GAIL:funappxNoPenalty_g:yInf',['Function f(x) = Inf at x = ', num2str(out_param.x(iSing))]);
+    error('GAIL:funappxNoPenalty_g:yInf',['Function f(x) = Inf at x = ', num2str(x(iSing))]);
 end
 if length(y) == 1  
     % probably f is a constant function and Matlab would  
     % reutrn only a scalar y = f(x) even if x is a vector 
     f = @(x) f(x) + 0 * x;
-    y = f(out_param.x);
+    y = f(x);
 end
 iter = 0;
 exit_len = 2;
 % we start the algorithm with all warning flags down
-out_param.exit = false(1,exit_len); 
+out_param.exitflag = false(1,exit_len); 
 C = @(h) C0*fh./(fh-h);
 max_errest = 1;
 while(max_errest > abstol)
     %% Stage 1: compute length of each subinterval and approximate |f''(t)|
-    len = out_param.x(2:end)-out_param.x(1:end-1);
+    len = x(2:end)-x(1:end-1);
     deltaf = 2*(y(1:end-2)./len(1:end-1)./(len(1:end-1)+len(2:end))-...
                 y(2:end-1)./len(1:end-1)./ len(2:end)              +...
                 y(3:end  )./len(2:end  )./(len(1:end-1)+len(2:end)));
     deltaf = [0 0 abs(deltaf) 0 0];
     
     %% Stage 2: compute bound of |f''(t)| and estimate error
-    h = [out_param.x(2)-a out_param.x(3)-a       ...
-         out_param.x(4:end)-out_param.x(1:end-3) ...
-         b-out_param.x(end-2)  b-out_param.x(end-1)];
+    h = [x(2)-a x(3)-a       ...
+         x(4:end)-x(1:end-3) ...
+         b-x(end-2)  b-x(end-1)];
     normbd = C(max(h(1:ninit-1),h(3:ninit+1))) .* max(deltaf(1:ninit-1),deltaf(4:ninit+2));
     errest = len.^2/8.*normbd;
     % update iterations
@@ -289,26 +291,26 @@ while(max_errest > abstol)
     badinterval = (errest > abstol);
     whichcut = badinterval | [badinterval(2:end) 0] | [0 badinterval(1:end-1)];
     if (out_param.nmax<(ninit+length(find(whichcut==1))))
-        out_param.exit(1) = true;
-        warning('GAIL:funappxNoPenalty_g:exceedbudget',['funappxNoPenalty_g'...
+        out_param.exitflag(1) = true;
+        warning('GAIL:funappxNoPenalty_g:exceedbudget',['funappxNoPenalty_g '...
             'attempted to exceed the cost budget. The answer may be '...
             'unreliable.'])
         break;
     end; 
     if(iter==out_param.maxiter)
-        out_param.exit(2) = true;
+        out_param.exitflag(2) = true;
         warning('GAIL:funappxNoPenalty_g:exceediter',['Number of iterations has '...
             'reached maximum number of iterations.'])
         break;
     end;
-    newx = out_param.x(whichcut) + 0.5 * len(whichcut);
+    newx = x(whichcut) + 0.5 * len(whichcut);
     tt = cumsum(whichcut); 
-    out_param.x([1 (2:ninit)+tt]) = out_param.x;
+    x([1 (2:ninit)+tt]) = x;
     y([1 (2:ninit)+tt]) = y;
     tem = 2 * tt + cumsum(whichcut==0);
-    out_param.x(tem(whichcut)) = newx;
+    x(tem(whichcut)) = newx;
     y(tem(whichcut)) = f(newx);
-    ninit = length(out_param.x);
+    ninit = length(x);
 
  
 end;
@@ -318,21 +320,28 @@ out_param.iter = iter;
 out_param.npoints = ninit;
 out_param.errest = max_errest;
 % control the order of out_param
-out_param = orderfields(out_param, ...
-            {'f', 'a', 'b','abstol','nlo','nhi','ninit','nmax','maxiter',...
-             'exit','iter','npoints','errest','x'});
+%out_param = orderfields(out_param, ...
+%            {'f', 'a', 'b','abstol','nlo','nhi','ninit','nmax','maxiter',...
+%             'exitflag','iter','npoints','errest','x'});
 if MATLABVERSION >= 8.3
-    fappx = griddedInterpolant(out_param.x,y,'linear');
+    fappx = griddedInterpolant(x,y,'linear');
 else
-    fappx = @(t) ppval(interp1(out_param.x,y,'linear','pp'), t);     
+    fappx = @(t) ppval(interp1(x,y,'linear','pp'), t);     
 end;
 if (in_param.memorytest)
   w = whos;
-  out_param.bytes = sum([w.bytes]);
+  out_param2.bytes = sum([w.bytes]);
 end
-if (~in_param.output_x)
-  out_param = rmfield(out_param,'x');
+if (in_param.output_x)
+  out_param2.x = x;
 end
+field_list = {'f', 'a', 'b','abstol','nlo','nhi','ninit','nmax','maxiter',...
+            'exitflag','iter','npoints','errest'};
+for field_index = 1:length(field_list)
+     field = field_list{field_index};
+     out_param2.(field) = out_param.(field);
+end
+out_param = out_param2;
 
 
 function [f, out_param] = funappxNoPenalty_g_param(varargin)

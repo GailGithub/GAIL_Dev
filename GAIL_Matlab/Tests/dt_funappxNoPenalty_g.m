@@ -5,7 +5,7 @@ function dt_funappxNoPenalty_g
 %
 %   >> funappxNoPenalty_g
 %
-%   Function f must be specified. Now GAIL is using f(x)=exp(-100*(x-0.5)^2) and unit interval [0,1].
+%   Warning: Function f must be a function handle. ***
 %
 %
 %   Example 2:
@@ -24,10 +24,10 @@ function dt_funappxNoPenalty_g
 %          ninit: 804
 %           nmax: 10000000
 %        maxiter: 1000
-%           exit: [0 0]
+%       exitflag: [0 0]
 %           iter: 9
 %        npoints: 205569
-%         errest: 2.8480e-***9
+%         errest: ***.***e-***9
 %
 % 
 %   Example 3: 
@@ -47,10 +47,10 @@ function dt_funappxNoPenalty_g
 %       ninit: 351
 %        nmax: 10000000
 %     maxiter: 1000
-%        exit: [0 0]
+%    exitflag: [0 0]
 %        iter: 9
 %     npoints: 89601
-%      errest: 3.7478e-***9
+%      errest: ***.***e-***9
 %      
 %
 %   Example 4:
@@ -68,10 +68,10 @@ function dt_funappxNoPenalty_g
 %            ninit: 42
 %             nmax: 10000000
 %          maxiter: 1000
-%             exit: [0 0]
+%         exitflag: [0 0]
 %             iter: 9
 %          npoints: 10497
-%           errest: 4.3699e-***8
+%           errest: 4.***e-***8
 %
 %
 %   Example 5:
@@ -89,10 +89,10 @@ function dt_funappxNoPenalty_g
 %            ninit: 34
 %             nmax: 10000000
 %          maxiter: 1000
-%             exit: [0 0]
+%         exitflag: [0 0]
 %             iter: 7
 %          npoints: 2113
-%           errest: 6.1248e-***7
+%           errest: 6.***e-***7
 %
 % 
 %   Example 6:
@@ -110,10 +110,10 @@ function dt_funappxNoPenalty_g
 %       ninit: 45
 %        nmax: 10000000
 %     maxiter: 1000
-%        exit: [0 0]
+%    exitflag: [0 0]
 %        iter: 8
 %     npoints: 5633
-%      errest: 4.6617e-***7
+%      errest: 4.***e-***7
 %
 %
 %   Example 7:
@@ -131,16 +131,16 @@ function dt_funappxNoPenalty_g
 %            ninit: 20
 %             nmax: 10000000
 %          maxiter: 1000
-%             exit: [0 0]
+%         exitflag: [0 0]
 %             iter: 12
 %          npoints: 38913
-%           errest: 4.4596e-***8
+%           errest: 4.***e-***8
 %
 %
 %   Example 8:
 %
 %   >> [~, out_param] = funappxNoPenalty_g(@(x) x.^2,'memorytest',true,'output_x',1);
-%   >> out_param.bytes <= 73444
+%   >> out_param.bytes <= 88704
 %      1
 %   >> length(out_param.x) == out_param.npoints
 %      1
