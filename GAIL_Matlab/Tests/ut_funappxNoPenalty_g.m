@@ -150,7 +150,7 @@ classdef ut_funappxNoPenalty_g < matlab.unittest.TestCase
         function funappxNoPenalty_gOfexceedbudget(testCase)
             f = @(x) x.^2;
             in_param.nmax = 200;
-            [~, result] = funappxNoPenalty_g(f,in_param)%testCase.verifyWarning(@()funappxNoPenalty_g(f,in_param),'GAIL:funappxNoPenalty_g:exceedbudget');
+            [~, result] = testCase.verifyWarning(@()funappxNoPenalty_g(f,in_param),'GAIL:funappxNoPenalty_g:exceedbudget');
             testCase.verifyLessThanOrEqual(result.npoints,result.nmax);
             testCase.verifyEqual(result.exitflag,logical([1 0]));
         end
