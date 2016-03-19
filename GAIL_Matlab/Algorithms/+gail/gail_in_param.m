@@ -1,49 +1,19 @@
-% Prototype of GAIL input parameter object
+% gail_in_param: GAIL input parameter object for handling function handle f
 %
 % Examples
 %
-% >> in_param = gail_in_param()
+% >> in_param = gail.gail_in_param()
 %
 %    in_param =
-%      gail_in_param with properties:
+%      ***
 %              f: @(x)exp(-100*(x-0.5).^2)
-%              a: 0
-%              b: 1
-%         abstol: 1.0000e-06
-%        maxiter: 1000
-%            nhi: 1000
-%            nlo: 10
-%           nmax: 10000000
-%          nstar: []
-%          ninit: 100
-%           exit: []
-%           iter: []
-%        npoints: []
-%         errest: []
-%     memorytest: 0
-%       output_x: 0
+%             
 %
-%
-% >> f = @(x) x.^2; in_param = gail_in_param(f)
-%
+% >> f = @(x) x.^2; in_param = gail.gail_in_param(f)
 %    in_param =
-%      gail_in_param with properties:
+%     ***
 %              f: @(x)x.^2
-%              a: 0
-%              b: 1
-%         abstol: 1.0000e-06
-%        maxiter: 1000
-%            nhi: 1000
-%            nlo: 10
-%           nmax: 10000000
-%          nstar: []
-%          ninit: 100
-%           exit: []
-%           iter: []
-%        npoints: []
-%         errest: []
-%     memorytest: 0
-%       output_x: 0
+%              
 %
 classdef gail_in_param
     %% data

@@ -140,7 +140,7 @@ function dt_funappxNoPenalty_g
 %   Example 8:
 %
 %   >> [~, out_param] = funappxNoPenalty_g(@(x) x.^2,'memorytest',true,'output_x',1);
-%   >> out_param.bytes <= 88704
+%   >> out_param.bytes <= 71040
 %      1
 %   >> length(out_param.x) == out_param.npoints
 %      1

@@ -1,49 +1,40 @@
-% Prototype of GAIL input parameter object
+% funappx_g_in_param: GAIL funappx_g's input parameter object 
 %
 % Examples
 %
-% >> in_param = funappx_g_in_param()
-%
-%    in_param =
-%      gail_in_param with properties:
-%              f: @(x)exp(-100*(x-0.5).^2)
-%              a: 0
-%              b: 1
-%         abstol: 1.0000e-06
-%        maxiter: 1000
-%            nhi: 1000
-%            nlo: 10
-%           nmax: 10000000
-%          nstar: 100
-%          ninit: []
-%           exit: []
-%           iter: []
-%        npoints: []
-%         errest: []
-%     memorytest: 0
-%       output_x: 0
+% >> in_param = gail.funappx_g_in_param()
+%     Warning: Function f must be a function handle.***
+%     in_param = ***
+%                f: @(x)exp(-100*(x-0.5).^2)
+%                a: 0
+%                b: 1
+%           abstol: 1.0000e-06
+%              nlo: 10
+%              nhi: 1000
+%            ninit: 100
+%             nmax: 10000000
+%          maxiter: 1000
+%         exitflag: []
+%             iter: []
+%          npoints: []
+%           errest: []
 %
 %
-% >> f = @(x) x.^2; in_param = funappx_g_in_param(f)
-%
-%    in_param =
-%      gail_in_param with properties:
-%              f: @(x)x.^2
-%              a: 0
-%              b: 1
-%         abstol: 1.0000e-06
-%        maxiter: 1000
-%            nhi: 1000
-%            nlo: 10
-%           nmax: 10000000
-%          nstar: 100
-%          ninit: []
-%           exit: []
-%           iter: []
-%        npoints: []
-%         errest: []
-%     memorytest: 0
-%       output_x: 0
+% >> f = @(x) x.^2; in_param = gail.funappx_g_in_param(f)
+%    in_param = *** 
+%                f: @(x)x.^2
+%                a: 0
+%                b: 1
+%           abstol: 1.0000e-06
+%              nlo: 10
+%              nhi: 1000
+%            ninit: 100
+%             nmax: 10000000
+%          maxiter: 1000
+%         exitflag: []
+%             iter: []
+%          npoints: []
+%           errest: []
 %
 classdef funappx_g_in_param < gail.gail_in_param & matlab.mixin.CustomDisplay
     %% data
@@ -102,7 +93,6 @@ classdef funappx_g_in_param < gail.gail_in_param & matlab.mixin.CustomDisplay
             else
                 f_addParamVal = @addParamValue;
             end;
-            
             
             validvarargin=numel(varargin)>1;
             if validvarargin
@@ -276,7 +266,19 @@ classdef funappx_g_in_param < gail.gail_in_param & matlab.mixin.CustomDisplay
             end;
             
         end % constructor
+        
+        
+        
+        function out_struct = getStruct(out_param)
+            field_list = {'f', 'a', 'b','abstol','nlo','nhi','ninit','nmax','maxiter',...
+                'exitflag','iter','npoints','errest'};
+            for field_index = 1:length(field_list)
+                field = field_list{field_index};
+                out_struct.(field) = out_param.(field);
+            end
+        end
      end % methods
+     
         
     methods (Access = protected)
         function propgrp = getPropertyGroups(~)

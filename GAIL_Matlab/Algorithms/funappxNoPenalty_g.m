@@ -234,9 +234,10 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 % check parameter satisfy conditions or not
 %[f, in_param] = funappxNoPenalty_g_param(varargin{:});
 in_param = gail.funappx_g_in_param(varargin{:});
+out_param = in_param.getStruct();
 f = in_param.f;
 MATLABVERSION = gail.matlab_version;
-out_param = in_param;
+%out_param = out_param;
 %out_param = rmfield(out_param,'memorytest');
 %out_param = rmfield(out_param,'output_x');
 
@@ -322,25 +323,19 @@ out_param.errest = max_errest;
 % control the order of out_param
 %out_param = orderfields(out_param, ...
 %            {'f', 'a', 'b','abstol','nlo','nhi','ninit','nmax','maxiter',...
-%             'exitflag','iter','npoints','errest','x'});
+%             'exit','iter','npoints','errest','x'});
 if MATLABVERSION >= 8.3
     fappx = griddedInterpolant(x,y,'linear');
 else
     fappx = @(t) ppval(interp1(x,y,'linear','pp'), t);     
 end;
-if (in_param.output_x)
-  out_param2.x = x;
-end
-field_list = {'f', 'a', 'b','abstol','nlo','nhi','ninit','nmax','maxiter',...
-            'exitflag','iter','npoints','errest'};
-for field_index = 1:length(field_list)
-     field = field_list{field_index};
-     out_param2.(field) = out_param.(field);
-end
-out_param = out_param2;
 if (in_param.memorytest)
   w = whos;
   out_param.bytes = sum([w.bytes]);
+end
+if (in_param.output_x)
+  %out_param = rmfield(out_param,'x');
+  out_param.x = x;
 end
 
 function [f, out_param] = funappxNoPenalty_g_param(varargin)
