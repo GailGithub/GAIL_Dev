@@ -36,6 +36,68 @@
 %          npoints: []
 %           errest: []
 %
+%
+% >> f = @(x) x.^2; in_param = gail.funappx_g_in_param(f,0,1,1e-6,10,1000,10000000,1000)
+%    in_param = *** 
+%                f: @(x)x.^2
+%                a: 0
+%                b: 1
+%           abstol: 1.0000e-06
+%              nlo: 10
+%              nhi: 1000
+%            ninit: 100
+%             nmax: 10000000
+%          maxiter: 1000
+%         exitflag: []
+%             iter: []
+%          npoints: []
+%           errest: []
+%
+%
+% >> f = @(x) x.^2; in_param.a=0; in_param.b =1;  in_param = gail.funappx_g_in_param(f,in_param)
+%    in_param = *** 
+%                f: @(x)x.^2
+%                a: 0
+%                b: 1
+%           abstol: 1.0000e-06
+%              nlo: 10
+%              nhi: 1000
+%            ninit: 100
+%             nmax: 10000000
+%          maxiter: 1000
+%         exitflag: []
+%             iter: []
+%          npoints: []
+%           errest: []
+%
+%
+%  To get a struct:
+%  >> out_param = in_param.toStruct()
+%   out_param = 
+% 
+%            f: @(x)x.^2
+%            a: 0
+%            b: 1
+%       abstol: 1.0000e-06
+%          nlo: 10
+%          nhi: 1000
+%        ninit: 100
+%         nmax: 10000000
+%      maxiter: 1000
+%     exitflag: []
+%         iter: []
+%      npoints: []
+%       errest: []
+%
+%  
+% To get a structure with selected fields (and ignore properties that do not exist):
+% >> out_param = in_param.toStruct({'f', 'a', 'b','c'})
+%  out_param = 
+% 
+%     f: @(x)x.^2
+%     a: 0
+%     b: 1
+%       
 classdef funappx_g_in_param < gail.gail_in_param & matlab.mixin.CustomDisplay
     %% data
     properties
@@ -51,6 +113,7 @@ classdef funappx_g_in_param < gail.gail_in_param & matlab.mixin.CustomDisplay
         ninit
         
         % optional
+        memorytest
         output_x
         
         %% outputs
@@ -59,13 +122,15 @@ classdef funappx_g_in_param < gail.gail_in_param & matlab.mixin.CustomDisplay
         npoints
         iter
         
-        % optional
-        memorytest
-        %x
     end % properties
     
+    properties (GetAccess = protected, SetAccess = protected)  % seen by subclasses
+        input_field_names = {'a','b','abstol','nlo','nhi','nmax','maxiter','memorytest','output_x'};
+        output_field_names = {'ninit','exitflag','iter','npoints','errest'};
+    end
+    
     %% methods
-    methods
+    methods % public
         % constructor
         function out_param = funappx_g_in_param(varargin)
             % parse the input to a gail function
@@ -84,8 +149,8 @@ classdef funappx_g_in_param < gail.gail_in_param & matlab.mixin.CustomDisplay
             default.nhi = 1000;
             default.nmax = 1e7;
             default.maxiter = 1000;
-            default.memorytest = false;
-            default.output_x = false;
+            default.memorytest = 0;
+            default.output_x = 0;
             
             MATLABVERSION = gail.matlab_version;
             if MATLABVERSION >= 8.3
@@ -103,43 +168,55 @@ classdef funappx_g_in_param < gail.gail_in_param & matlab.mixin.CustomDisplay
             
             if ~validvarargin
                 %if only one input f, use all the default parameters
-                out_param.a = default.a;
-                out_param.b = default.b;
-                out_param.abstol = default.abstol;
-                out_param.nlo = default.nlo;
-                out_param.nhi = default.nhi;
-                out_param.nmax = default.nmax ;
-                out_param.maxiter = default.maxiter;
-                out_param.memorytest = default.memorytest;
-                out_param.output_x = default.output_x;
+                for field_index = 1:length(out_param.input_field_names)
+                    field = out_param.input_field_names{field_index};
+                    out_param.(field) = default.(field);
+                end 
+%                 out_param.a = default.a;
+%                 out_param.b = default.b;
+%                 out_param.abstol = default.abstol;
+%                 out_param.nlo = default.nlo;
+%                 out_param.nhi = default.nhi;
+%                 out_param.nmax = default.nmax ;
+%                 out_param.maxiter = default.maxiter;
+%                 out_param.memorytest = default.memorytest;
+%                 out_param.output_x = default.output_x;
             else
                 p = inputParser;
                 addRequired(p,'f',@gail.isfcn);
                 if isnumeric(in2)%if there are multiple inputs with
                     %only numeric, they should be put in order.
-                    addOptional(p,'a',default.a,@isnumeric);
-                    addOptional(p,'b',default.b,@isnumeric);
-                    addOptional(p,'abstol',default.abstol,@isnumeric);
-                    addOptional(p,'nlo',default.nlo,@isnumeric);
-                    addOptional(p,'nhi',default.nhi,@isnumeric);
-                    addOptional(p,'nmax',default.nmax,@isnumeric)
-                    addOptional(p,'maxiter',default.maxiter,@isnumeric)
-                    addOptional(p,'memorytest',default.memorytest,@logical)
-                    addOptional(p,'output_x',default.output_x,@logical)
+                    for field_index = 1:length(out_param.input_field_names)
+                      field = out_param.input_field_names{field_index};
+                      addOptional(p,field,default.(field),@isnumeric);
+                    end 
+%                     addOptional(p,'a',default.a,@isnumeric);
+%                     addOptional(p,'b',default.b,@isnumeric);
+%                     addOptional(p,'abstol',default.abstol,@isnumeric);
+%                     addOptional(p,'nlo',default.nlo,@isnumeric);
+%                     addOptional(p,'nhi',default.nhi,@isnumeric);
+%                     addOptional(p,'nmax',default.nmax,@isnumeric)
+%                     addOptional(p,'maxiter',default.maxiter,@isnumeric)
+%                     addOptional(p,'memorytest',default.memorytest,@logical)
+%                     addOptional(p,'output_x',default.output_x,@logical)
                 else
                     if isstruct(in2) %parse input structure
                         p.StructExpand = true;
                         p.KeepUnmatched = true;
                     end
-                    f_addParamVal(p,'a',default.a,@isnumeric);
-                    f_addParamVal(p,'b',default.b,@isnumeric);
-                    f_addParamVal(p,'abstol',default.abstol,@isnumeric);
-                    f_addParamVal(p,'nlo',default.nlo,@isnumeric);
-                    f_addParamVal(p,'nhi',default.nhi,@isnumeric);
-                    f_addParamVal(p,'nmax',default.nmax,@isnumeric);
-                    f_addParamVal(p,'maxiter',default.maxiter,@isnumeric);
-                    f_addParamVal(p,'memorytest',default.memorytest,@logical);
-                    f_addParamVal(p,'output_x',default.output_x,@logical);
+                    for field_index = 1:length(out_param.input_field_names)
+                      field = out_param.input_field_names{field_index};
+                      f_addParamVal(p,field,default.(field),@isnumeric);   
+                    end 
+%                     f_addParamVal(p,'a',default.a,@isnumeric);
+%                     f_addParamVal(p,'b',default.b,@isnumeric);
+%                     f_addParamVal(p,'abstol',default.abstol,@isnumeric);
+%                     f_addParamVal(p,'nlo',default.nlo,@isnumeric);
+%                     f_addParamVal(p,'nhi',default.nhi,@isnumeric);
+%                     f_addParamVal(p,'nmax',default.nmax,@isnumeric);
+%                     f_addParamVal(p,'maxiter',default.maxiter,@isnumeric);
+%                     f_addParamVal(p,'memorytest',default.memorytest,@logical);
+%                     f_addParamVal(p,'output_x',default.output_x,@logical);
                 end
                 parse(p,out_param.f,varargin{2:end})
                 results = p.Results;
@@ -254,33 +331,47 @@ classdef funappx_g_in_param < gail.gail_in_param & matlab.mixin.CustomDisplay
                     out_param.nmax = default.nmax;
                 end;
             end
-            if (out_param.memorytest~=true&&out_param.memorytest~=false)
+            if (out_param.memorytest~=1&&out_param.memorytest~=0)
                 warning('GAIL:funappx_g_in_param:memorytest', ['Input of memorytest'...
-                    ' can only be true or false; use default value false'])
-                out_param.memorytest = false;
+                    ' can only be 1 or 0; use default value 0'])
+                out_param.memorytest = 0;
             end;
-            if (out_param.output_x~=true&&out_param.output_x~=false)
+            if (out_param.output_x~=1&&out_param.output_x~=0)
                 warning('GAIL:funappx_g_in_param:output_x', ['Input of output_x'...
-                    ' can only be true or false; use default value false'])
-                out_param.output_x = false;
+                    ' can only be 1 or 0; use default value 0'])
+                out_param.output_x = 0;
             end;
             
         end % constructor
         
-        
-        
-        function out_struct = getStruct(out_param)
-            field_list = {'f', 'a', 'b','abstol','nlo','nhi','ninit','nmax','maxiter',...
+        function out_struct = toStruct(out_param,varargin)
+            field_list = ...%union({'f'}, union(out_param.input_field_names, out_param.output_field_names,'stable'),'stable');
+            {'f','a','b','abstol','nlo','nhi','ninit','nmax','maxiter',...
                 'exitflag','iter','npoints','errest'};
+            if nargin > 1
+                field_list = varargin{1};
+            end
             for field_index = 1:length(field_list)
                 field = field_list{field_index};
-                out_struct.(field) = out_param.(field);
+                if isprop(out_param,field)
+                  out_struct.(field) = out_param.(field);
+                end
             end
+        end
+        
+        function names = get_input_field_names(out_param)
+            names = out_param.input_field_names;
+        end
+        
+        function names = get_output_field_names(out_param)
+            names = out_param.output_field_names;
         end
      end % methods
      
-        
-    methods (Access = protected)
+  
+    methods (Access = protected)  % seen by subclasses
+       
+        % customize display order of properties (data) in an instance
         function propgrp = getPropertyGroups(~)
             proplist = {'f', 'a', 'b','abstol','nlo','nhi','ninit','nmax','maxiter',...
             'exitflag','iter','npoints','errest','x'};

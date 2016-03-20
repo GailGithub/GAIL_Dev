@@ -234,7 +234,7 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 % check parameter satisfy conditions or not
 %[f, in_param] = funappxNoPenalty_g_param(varargin{:});
 in_param = gail.funappx_g_in_param(varargin{:});
-out_param = in_param.getStruct();
+out_param = in_param.toStruct();
 f = in_param.f;
 MATLABVERSION = gail.matlab_version;
 %out_param = out_param;
