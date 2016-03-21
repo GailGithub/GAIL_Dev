@@ -291,13 +291,13 @@ xpts=sobstr(1:n0,1:out_param.d); %grab Sobol' points
 if cv.J==0 % no control variates
 	y = f(xpts); yval = y;
 elseif strcmp(cv.format, 'cellfunc') % control variates in cell function format 
-	temp = cell2mat(f(xpts));
-	y = temp(:,1); yval = y;  
-	yg = temp(:,2:end); yvalg = yg;
-elseif strcmp(cv.format, 'optPayoff')&& cv.J % control variates in optPayoff format
-	temp = f(xpts);
-	y = temp(:,1); yval = y;
-	yg = temp(:,2:end); yvalg = yg;
+	ycv = cell2mat(f(xpts));
+	y = ycv(:,1); yval = y;  
+	yg = ycv(:,2:end); yvalg = yg;
+elseif strcmp(cv.format, 'optPayoff') % control variates in optPayoff format
+	ycv = f(xpts);
+	y = ycv(:,1); yval = y;
+	yg = ycv(:,2:end); yvalg = yg;
 end 
 
 %% Compute initial FWT
@@ -336,15 +336,38 @@ end
 
 %% If using control variates, find optimal beta
 if cv.J  
-    temp = (n0/2:n0);
-    X = yg(kappanumap(temp), (1:cv.J));
-    Y = y(kappanumap(temp));
+    X = yg(kappanumap(end/2+1:end), (1:cv.J));
+    Y = y(kappanumap(end/2+1:end));
     beta = X \ Y;  
     out_param.beta = beta;
-    % We update the integrand and values
-    yold = y;% save f value for kappanumap
-    y = y-yg*beta;
-    yval = yval-yvalg*beta;
+    %yval = yval-yvalg*beta;
+    y = ycv(:,1) - ycv(:,2:end)*beta;% redefine function
+    yval = y;
+    % Recompute initial FWT
+    for l=0:out_param.mmin-1
+        nl=2^l;
+        nmminlm1=2^(out_param.mmin-l-1);
+        ptind=repmat([true(nl,1); false(nl,1)],nmminlm1,1);
+        evenval=y(ptind);
+        oddval=y(~ptind);
+        y(ptind)=(evenval+oddval)/2;
+        y(~ptind)=(evenval-oddval)/2;
+    end
+    %% rebuild kappa map
+    kappanumap=(1:out_param.n)'; %initialize map
+    for l=out_param.mmin-1:-1:1
+        nl=2^l;
+        oldone=abs(y(kappanumap(2:nl)));
+        newone=abs(y(kappanumap(nl+2:2*nl))); 
+        flip=find(newone>oldone);
+        if ~isempty(flip)
+            flipall=bsxfun(@plus,flip,0:2^(l+1):2^out_param.mmin-1);
+            flipall=flipall(:);
+            temp=kappanumap(nl+1+flipall); %then flip 
+            kappanumap(nl+1+flipall)=kappanumap(1+flipall); %them
+            kappanumap(1+flipall)=temp; %around
+        end
+    end
 end
 
 %% Compute Stilde
@@ -390,6 +413,7 @@ elseif out_param.mmin == out_param.mmax % We are on our max budget and did not m
    out_param.exit(1) = true;
 end
 
+betaUpdate=1;
 %% Loop over m
 for m=out_param.mmin+1:out_param.mmax
    if is_done,
@@ -400,41 +424,16 @@ for m=out_param.mmin+1:out_param.mmax
    nnext=2^mnext;
    xnext=sobstr(n0+(1:nnext),1:out_param.d); 
    n0=n0+nnext;
-   if cv.J==0
-	   ynext=f(xnext);
-	   yval=[yval; ynext]; %#ok<*AGROW>
-   elseif strcmp(cv.format, 'cellfunc') % control variates in cell function format  
-	   temp = cell2mat(f(xnext)) ;  
-       yoldnext = temp(:,1);% stock value of f for kappanumpap
-	   ynext = yoldnext - temp(:,2:end)*beta;
-	   yval = [yval; ynext];
-       %{
-       for beta update
-       yoldnext = cell2mat(f(xnext));yoldnext=yoldnext(:,1);
-       xpts=sobstr(1:2^m,1:out_param.d);
-	   temp = cell2mat(f(xpts)) ;
-       y=temp(:,1);yg=temp(:,2:end);
-       X = yg(kappanumap((end/2:end), (1:cv.J)));
-       Y = y(kappanumap(end/2:end));
-       beta = X\Y;
-       y = y - yg*beta;yval = y;
-       %}
-   elseif strcmp(cv.format, 'optPayoff') && cv.J % contrl variates in optPayoff format
-	   temp = f(xnext);
-       yoldnext = temp(:,1);
-	   ynext = temp(:,1) - temp(:,2:end)*beta;
-	   yval = [yval; ynext];
-       %{
-       for beta update
-       yoldnext = f(xnext);yoldnext=yoldnext(:,1);
-       xpts=sobstr(1:2^m,1:out_param.d);
-	   temp = f(xpts) ;
-       y=temp(:,1);yg=temp(:,2:end);
-       X = yg(kappanumap((end/2:end), (1:cv.J)));
-       Y = y(kappanumap(end/2:end));
-       beta = X\Y;
-       y = y - yg*beta;yval = y;
-       %}
+   if cv.J == 0
+	   ynext = f(xnext); yval=[yval; ynext];
+   elseif strcmp(cv.format, 'cellfunc')
+       ycvnext = cell2mat(f(xnext)) ;
+       ynext = ycvnext(:,1) - ycvnext(:,2:end)*beta;
+       yval=[yval; ynext];
+   elseif strcmp(cv.format, 'optPayoff')
+	   ycvnext = f(xnext);
+       ynext = ycvnext(:,1) - ycvnext(:,2:end)*beta;
+       yval=[yval; ynext];
    end
 
    %% Compute initial FWT on next points
@@ -452,73 +451,15 @@ for m=out_param.mmin+1:out_param.mmax
    y=[y;ynext];
    nl=2^mnext;
    ptind=[true(nl,1); false(nl,1)];
-   evenval=y(ptind);
-   oddval=y(~ptind);
+   evenval=y(ptind); oddval=y(~ptind);
    y(ptind)=(evenval+oddval)/2;
    y(~ptind)=(evenval-oddval)/2;
 
-%{ 
-for beta update
-if cv.J==0
-   for l=0:mnext-1
-      nl=2^l;
-      nmminlm1=2^(mnext-l-1);
-      ptind=repmat([true(nl,1); false(nl,1)],nmminlm1,1);
-      evenval=ynext(ptind);
-      oddval=ynext(~ptind);
-      ynext(ptind)=(evenval+oddval)/2;
-      ynext(~ptind)=(evenval-oddval)/2;
-   end
-
-   %% Compute FWT on all points
-   y=[y;ynext];
-   nl=2^mnext;
-   ptind=[true(nl,1); false(nl,1)];
-   evenval=y(ptind);
-   oddval=y(~ptind);
-   y(ptind)=(evenval+oddval)/2;
-   y(~ptind)=(evenval-oddval)/2;
-else
-    for l=0:m-1
-        nl=2^l;
-        nmminlm1=2^(m-l-1);
-        ptind=repmat([true(nl,1); false(nl,1)],nmminlm1,1);
-        evenval=y(ptind);
-        oddval=y(~ptind);
-        y(ptind)=(evenval+oddval)/2;
-        y(~ptind)=(evenval-oddval)/2;
-        evenval=yg(ptind, (1:cv.J));
-        oddval=yg(~ptind, (1:cv.J));
-        yg(ptind, (1:cv.J))=(evenval+oddval)/2;
-        yg(~ptind, (1:cv.J))=(evenval-oddval)/2;
-    end
-end
-%}
-
-if cv.J
-   %% Compute FWT on all points
-   yold=[yold;yoldnext];
-   nl=2^mnext;
-   ptind=[true(nl,1); false(nl,1)];
-   evenval=yold(ptind);
-   oddval=yold(~ptind);
-   yold(ptind)=(evenval+oddval)/2;
-   yold(~ptind)=(evenval-oddval)/2;
-end
-
-   %% Update kappanumap
    kappanumap=[kappanumap; 2^(m-1)+kappanumap]; %initialize map
    for l=m-1:-1:m-r_lag
       nl=2^l;
-      if cv.J% keep using f to induce kappamap
-          %earlier values of kappa, don't touch first one
-          oldone=abs(yold(kappanumap(2:nl)));
-          newone=abs(yold(kappanumap(nl+2:2*nl)));
-      else
-          %later values of kappa, 
-          oldone=abs(y(kappanumap(2:nl)));
-          newone=abs(y(kappanumap(nl+2:2*nl)));
-      end
+      oldone=abs(y(kappanumap(2:nl)));
+      newone=abs(y(kappanumap(nl+2:2*nl)));
       flip=find(newone>oldone);
       if ~isempty(flip)
           flipall=bsxfun(@plus,flip,0:2^(l+1):2^m-1);
@@ -527,6 +468,78 @@ end
           kappanumap(nl+1+flipall)=kappanumap(1+flipall);
           kappanumap(1+flipall)=temp;
       end
+   end
+
+   if betaUpdate&&cv.J
+       xpts=sobstr(1:n0,1:out_param.d);
+       if strcmp(cv.format, 'cellfunc')
+           ycv = cell2mat(f(xpts));
+       elseif strcmp(cv.format, 'optPayoff')
+           ycv = f(xpts);
+       end
+       y = ycv(:,1); yg = ycv(:,2:end);
+       %% compute FWT
+       for l=0:m-1
+           nl=2^l;
+           nmminlm1=2^(m-l-1);
+           ptind=repmat([true(nl,1); false(nl,1)],nmminlm1,1);
+           evenval=y(ptind);
+           oddval=y(~ptind);
+           y(ptind)=(evenval+oddval)/2;
+           y(~ptind)=(evenval-oddval)/2;
+           evenval=yg(ptind, (1:cv.J));
+           oddval=yg(~ptind, (1:cv.J));
+           yg(ptind, (1:cv.J))=(evenval+oddval)/2;
+           yg(~ptind, (1:cv.J))=(evenval-oddval)/2;
+       end
+       %{
+       %% build kappa map
+       kappanumap=(1:n0)'; %initialize map
+       for l=m-1:-1:1
+        nl=2^l;
+        oldone=abs(y(kappanumap(2:nl)));
+        newone=abs(y(kappanumap(nl+2:2*nl))); 
+        flip=find(newone>oldone);
+        if ~isempty(flip)
+            flipall=bsxfun(@plus,flip,0:2^(l+1):2^out_param.mmin-1);
+            flipall=flipall(:);
+            temp=kappanumap(nl+1+flipall); %then flip 
+            kappanumap(nl+1+flipall)=kappanumap(1+flipall); %them
+            kappanumap(1+flipall)=temp; %around
+        end
+       end
+        %}
+       X = yg(kappanumap(end/2+1:end), (1:cv.J));
+       Y = y(kappanumap(end/2+1:end));
+       beta = X \ Y;  
+       out_param.beta = [out_param.beta;beta];
+       y = ycv(:,1) - ycv(:,2:end)*beta;
+       yval = y;
+       % Recompute initial FWT
+       for l=0:m-1
+           nl=2^l;
+           nmminlm1=2^(m-l-1);
+           ptind=repmat([true(nl,1); false(nl,1)],nmminlm1,1);
+           evenval=y(ptind);
+           oddval=y(~ptind);
+           y(ptind)=(evenval+oddval)/2;
+           y(~ptind)=(evenval-oddval)/2;
+       end
+       %% rebuild kappa map
+       kappanumap=(1:n0)'; %initialize map
+       for l=m-1:-1:1
+           nl=2^l;
+           oldone=abs(y(kappanumap(2:nl)));
+           newone=abs(y(kappanumap(nl+2:2*nl))); 
+           flip=find(newone>oldone);
+           if ~isempty(flip)
+               flipall=bsxfun(@plus,flip,0:2^(l+1):2^out_param.mmin-1);
+               flipall=flipall(:);
+               temp=kappanumap(nl+1+flipall);  
+               kappanumap(nl+1+flipall)=kappanumap(1+flipall);
+               kappanumap(1+flipall)=temp; 
+           end
+       end
    end
 
    %% Compute Stilde
