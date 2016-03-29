@@ -197,13 +197,13 @@ classdef funappx_g_in_param < gail.gail_in_param & matlab.mixin.CustomDisplay
         function out_param = validate_inputs(out_param)
             % let end point of interval not be infinity
             default = out_param.default_values;
-            if (out_param.a == inf||out_param.a == -inf)
-                warning('GAIL:funappx_g_in_param:aisinf',['a cannot be infinity. '...
+            if (out_param.a == inf||out_param.a == -inf||isnan(out_param.a))
+                warning('GAIL:funappx_g_in_param:aisinf',['a cannot be infinity or NaN. '...
                     'Use default a = ' num2str(default.a)])
                 out_param.a = default.a;
             end;
-            if (out_param.b == inf||out_param.b == -inf)
-                warning(['GAIL:funappx_g_in_param:bisinf','b cannot be infinity. '...
+            if (out_param.b == inf||out_param.b == -inf||isnan(out_param.b))
+                warning(['GAIL:funappx_g_in_param:bisinf','b cannot be infinity or NaN. '...
                     'Use default b = ' num2str(default.b)])
                 out_param.b = default.b;
             end;

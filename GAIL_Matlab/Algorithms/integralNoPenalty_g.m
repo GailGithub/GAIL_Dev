@@ -123,9 +123,9 @@ function [q,out_param] = integralNoPenalty_g(varargin)
 %
 %   Example 3:
 %   >> q = integralNoPenalty_g()
-%   Warning: Function f must be specified. Now GAIL is giving you a toy example of f(x)=x^2.
+%   Warning: Function f must be a function handle. Now GAIL is using f(x)=exp(-100*(x-0.5)^2).
 %   >  In ***
-%   q = 0.3333
+%   q = 0.1772
 %
 %
 %   See also FUNAPPX_G, CUBMC_G
@@ -165,7 +165,11 @@ function [q,out_param] = integralNoPenalty_g(varargin)
 
 %%
 % check parameter satisfy conditions or not
-[f,out_param, flip] = integral_g_param(varargin{:});
+%[f,out_param, flip] = integral_g_param(varargin{:});
+in_param = gail.integral_g_in_param(varargin{:});
+out_param = in_param.toStruct();
+f = in_param.f;
+flip = in_param.flip;
 
 %% main alg
 out_param.tau=ceil((out_param.ninit-1)*2-1); % computes the minimum number of points to start
