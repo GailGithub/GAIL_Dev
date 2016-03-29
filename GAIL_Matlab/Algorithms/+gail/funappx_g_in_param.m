@@ -14,10 +14,6 @@
 %            ninit: 100
 %             nmax: 10000000
 %          maxiter: 1000
-%         exitflag: []
-%             iter: []
-%          npoints: []
-%           errest: []
 %
 %
 % >> f = @(x) x.^2; in_param = gail.funappx_g_in_param(f)
@@ -31,10 +27,6 @@
 %            ninit: 100
 %             nmax: 10000000
 %          maxiter: 1000
-%         exitflag: []
-%             iter: []
-%          npoints: []
-%           errest: []
 %
 %
 % >> f = @(x) x.^2; in_param = gail.funappx_g_in_param(f,0,1,1e-6,10,1000,10000000,1000)
@@ -48,10 +40,6 @@
 %            ninit: 100
 %             nmax: 10000000
 %          maxiter: 1000
-%         exitflag: []
-%             iter: []
-%          npoints: []
-%           errest: []
 %
 %
 % >> f = @(x) x.^2; in_param.a=0; in_param.b =1;  in_param = gail.funappx_g_in_param(f,in_param)
@@ -65,10 +53,6 @@
 %            ninit: 100
 %             nmax: 10000000
 %          maxiter: 1000
-%         exitflag: []
-%             iter: []
-%          npoints: []
-%           errest: []
 %
 %
 %  To get a struct:
@@ -84,10 +68,6 @@
 %        ninit: 100
 %         nmax: 10000000
 %      maxiter: 1000
-%     exitflag: []
-%         iter: []
-%      npoints: []
-%       errest: []
 %
 %
 % To get a structure with selected fields (and ignore properties that do not exist):
@@ -109,7 +89,7 @@ classdef funappx_g_in_param < gail.gail_in_param & matlab.mixin.CustomDisplay
         nhi
         nlo
         nmax
-        nstar
+        % nstar
         ninit
         
         % optional
@@ -117,16 +97,17 @@ classdef funappx_g_in_param < gail.gail_in_param & matlab.mixin.CustomDisplay
         output_x
         
         %% outputs
-        exitflag
-        errest
-        npoints
-        iter
+        %         exitflag
+        %         errest
+        %         npoints
+        %         iter
         
     end % properties
     
-    properties (GetAccess = private, SetAccess = private)  % seen by subclasses
-        input_field_names = {'a','b','abstol','nlo','nhi','nmax','maxiter','memorytest','output_x'};
-        output_field_names = {'ninit','exitflag','iter','npoints','errest'};
+    properties (GetAccess = protected, SetAccess = protected)  % seen by subclasses
+        input_field_names = {'a','b','abstol','nlo','nhi','nmax','maxiter','memorytest','output_x'}; %order of parsing
+        % output_field_names = {'ninit','exitflag','iter','npoints','errest'};
+        default_values
     end
     
     %% methods
@@ -151,12 +132,13 @@ classdef funappx_g_in_param < gail.gail_in_param & matlab.mixin.CustomDisplay
             default.maxiter = 1000;
             default.memorytest = 0;
             default.output_x = 0;
-            
+            default.ninit = default.nlo;
+            out_param.default_values = default;
             %% parse inputs
             out_param = out_param.parse_inputs(default, varargin{:});
             
             %% validate inputs
-            out_param = validate_inputs(out_param);
+            out_param = out_param.validate_inputs();
         end % constructor
         
         function out_param = parse_inputs(out_param,default,varargin)
@@ -169,15 +151,17 @@ classdef funappx_g_in_param < gail.gail_in_param & matlab.mixin.CustomDisplay
             
             validvarargin=numel(varargin)>1;
             if validvarargin
-                in2=varargin{2};
-                validvarargin=(isnumeric(in2) || isstruct(in2) ...
+                in2 = varargin{2};
+                validvarargin = (isnumeric(in2) || isstruct(in2) ...
                     || ischar(in2));
             end
             
+            field_names = out_param.input_field_names; %out_param.input_field_names; %;
+            %out_param.get_input_field_names();
             if ~validvarargin
                 %if only one input f, use all the default parameters
-                for field_index = 1:length(out_param.input_field_names)
-                    field = out_param.input_field_names{field_index};
+                for field_index = 1:length(field_names)
+                    field = field_names{field_index};
                     out_param.(field) = default.(field);
                 end
             else
@@ -185,8 +169,9 @@ classdef funappx_g_in_param < gail.gail_in_param & matlab.mixin.CustomDisplay
                 addRequired(p,'f',@gail.isfcn);
                 if isnumeric(in2)%if there are multiple inputs with
                     %only numeric, they should be put in order.
-                    for field_index = 1:length(out_param.input_field_names)
-                        field = out_param.input_field_names{field_index};
+                    p.StructExpand = false;
+                    for field_index = 1:length(field_names)
+                        field = field_names{field_index};
                         addOptional(p,field,default.(field),@isnumeric);
                     end
                 else
@@ -194,8 +179,8 @@ classdef funappx_g_in_param < gail.gail_in_param & matlab.mixin.CustomDisplay
                         p.StructExpand = true;
                         p.KeepUnmatched = true;
                     end
-                    for field_index = 1:length(out_param.input_field_names)
-                        field = out_param.input_field_names{field_index};
+                    for field_index = 1:length(field_names)
+                        field = field_names{field_index};
                         f_addParamVal(p,field,default.(field),@isnumeric);
                     end
                 end
@@ -207,10 +192,11 @@ classdef funappx_g_in_param < gail.gail_in_param & matlab.mixin.CustomDisplay
                     out_param.(field) = results.(field);
                 end
             end;
-        end % function parse_input
+        end % function parse_input()
         
         function out_param = validate_inputs(out_param)
             % let end point of interval not be infinity
+            default = out_param.default_values;
             if (out_param.a == inf||out_param.a == -inf)
                 warning('GAIL:funappx_g_in_param:aisinf',['a cannot be infinity. '...
                     'Use default a = ' num2str(default.a)])
@@ -297,9 +283,7 @@ classdef funappx_g_in_param < gail.gail_in_param & matlab.mixin.CustomDisplay
                 out_param.nhi = out_param.nlo;
             end;
             
-            h = out_param.b - out_param.a;
-            out_param.ninit = ceil(out_param.nhi*(out_param.nlo/out_param.nhi)...
-                ^(1/(1+h)));
+            out_param.ninit = out_param.compute_ninit();
             
             if (~gail.isposint(out_param.maxiter))
                 if gail.ispositive(out_param.maxiter)
@@ -314,12 +298,13 @@ classdef funappx_g_in_param < gail.gail_in_param & matlab.mixin.CustomDisplay
                     out_param.nmax = default.nmax;
                 end;
             end
-            if (out_param.memorytest~=1&&out_param.memorytest~=0)
+            
+            if (out_param.memorytest~=1 && out_param.memorytest~=0)
                 warning('GAIL:funappx_g_in_param:memorytest', ['Input of memorytest'...
                     ' can only be 1 or 0; use default value 0'])
                 out_param.memorytest = 0;
             end;
-            if (out_param.output_x~=1&&out_param.output_x~=0)
+            if (out_param.output_x~=1 && out_param.output_x~=0)
                 warning('GAIL:funappx_g_in_param:output_x', ['Input of output_x'...
                     ' can only be 1 or 0; use default value 0'])
                 out_param.output_x = 0;
@@ -330,8 +315,9 @@ classdef funappx_g_in_param < gail.gail_in_param & matlab.mixin.CustomDisplay
         
         function out_struct = toStruct(out_param,varargin)
             field_list = ...%union({'f'}, union(out_param.input_field_names, out_param.output_field_names,'stable'),'stable');
-                {'f','a','b','abstol','nlo','nhi','ninit','nmax','maxiter',...
-                'exitflag','iter','npoints','errest'};
+                {'f','a','b','abstol','nlo','nhi','ninit','nmax','maxiter'...
+                %'exitflag','iter','npoints','errest'
+                };
             if nargin > 1
                 field_list = varargin{1};
             end
@@ -347,8 +333,20 @@ classdef funappx_g_in_param < gail.gail_in_param & matlab.mixin.CustomDisplay
             names = out_param.input_field_names;
         end
         
-        function names = get_output_field_names(out_param)
-            names = out_param.output_field_names;
+         function default = get_default(out_param)
+            default = out_param.default_values;
+        end
+        function out_param = set_input_field_names(out_param, names)
+            out_param.input_field_names = names;
+        end
+        
+%         function names = get_output_field_names(out_param)
+%             names = out_param.output_field_names;
+%         end
+        
+        function ninit = compute_ninit(out_param)
+            h = out_param.b - out_param.a;
+            ninit = ceil(out_param.nhi*(out_param.nlo/out_param.nhi)^(1/(1+h)));
         end
     end % methods
     
@@ -357,10 +355,11 @@ classdef funappx_g_in_param < gail.gail_in_param & matlab.mixin.CustomDisplay
         
         % customize display order of properties (data) in an instance
         function propgrp = getPropertyGroups(~)
-            proplist = {'f', 'a', 'b','abstol','nlo','nhi','ninit','nmax','maxiter',...
-                'exitflag','iter','npoints','errest','x'};
+            proplist = {'f', 'a', 'b','abstol','nlo','nhi','ninit','nmax','maxiter'};%,...
+            %'exitflag','iter','npoints','errest','x'};
             propgrp = matlab.mixin.util.PropertyGroup(proplist);
         end
+        
     end % methods (protected)
     
     

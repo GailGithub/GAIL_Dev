@@ -146,14 +146,14 @@ function [fmin,out_param]=funmin_g(varargin)
 % 
 %  out_param = 
 % 
-%             a: -2
-%        abstol: 1.0000e-07
-%             b: 2
 %             f: @(x)(x-0.3).^2+1
-%           nhi: 10
-%           nlo: 10
-%          nmax: 1000000
+%             a: -2
+%             b: 2
+%        abstol: 1.0000e-07
 %          TolX: 1.0000e-04
+%           nlo: 10
+%           nhi: 10
+%          nmax: 1000000
 %         ninit: 10
 %           tau: 17
 %      exitflag: 0
@@ -179,14 +179,14 @@ function [fmin,out_param]=funmin_g(varargin)
 % 
 %  out_param = 
 % 
-%             a: -13
-%        abstol: 1.0000e-07
-%             b: 8
 %             f: @(x)(x+1.3).^2+1
-%           nhi: 100
-%           nlo: 10
-%          nmax: 1000000
+%             a: -13
+%             b: 8
+%        abstol: 1.0000e-07
 %          TolX: 1.0000e-04
+%           nlo: 10
+%           nhi: 100
+%          nmax: 1000000
 %         ninit: 91
 %           tau: 179
 %      exitflag: 0
@@ -208,14 +208,14 @@ function [fmin,out_param]=funmin_g(varargin)
 % 
 %  out_param = 
 % 
-%             a: -2
-%        abstol: 1.0000e-04
-%             b: 2
 %             f: @(x)(x-0.3).^2+1
-%           nhi: 100
-%           nlo: 10
-%          nmax: 1000000
+%             a: -2
+%             b: 2
+%        abstol: 1.0000e-04
 %          TolX: 0.0100
+%           nlo: 10
+%           nhi: 100
+%          nmax: 1000000
 %         ninit: 64
 %           tau: 125
 %      exitflag: 0
@@ -260,7 +260,10 @@ function [fmin,out_param]=funmin_g(varargin)
 %
 
 % Parse and check parameter satisfy conditions or not
-[f,out_param] = funmin_g_param(varargin{:});
+%[f,out_param] = funmin_g_param(varargin{:});
+in_param = gail.funmin_g_in_param(varargin{:});
+out_param = in_param.toStruct();
+f = in_param.f;
 MATLABVERSION = gail.matlab_version;
 
 
@@ -399,7 +402,9 @@ out_param.errest = errest;
 out_param.volumeX = volumeX;
 out_param.tauchange = tauchange;
 out_param.intervals = interval;
-
+out_param = orderfields(out_param, ...
+             { 'f','a','b','abstol','TolX','nlo','nhi','nmax','ninit','tau',...
+              'exitflag','npoints','errest','volumeX','tauchange','intervals'});
 
 function [f, out_param] = funmin_g_param(varargin)
 % Parse the input to the funmin_g.m function
