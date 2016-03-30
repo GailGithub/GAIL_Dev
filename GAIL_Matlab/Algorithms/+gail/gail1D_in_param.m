@@ -1,4 +1,4 @@
-% gail1D_in_param: GAIL funappx_g's input parameter object
+% gail1D_in_param: GAIL input parameter object for 1D algorithms
 %
 % Examples
 %
@@ -112,7 +112,7 @@ classdef gail1D_in_param < gail.gail_in_param & matlab.mixin.CustomDisplay
     
     %% methods
     methods % public
-        
+
         % constructor
         function out_param = gail1D_in_param(varargin)
             %% parse the input to a gail function
@@ -354,8 +354,8 @@ classdef gail1D_in_param < gail.gail_in_param & matlab.mixin.CustomDisplay
         end
     end % methods
     
-    
-    methods (Access = protected)  % seen by subclasses
+
+    methods (Access = protected) % seen by subclasses
         
         % customize display order of properties (data) in an instance
         function propgrp = getPropertyGroups(~)
@@ -363,9 +363,9 @@ classdef gail1D_in_param < gail.gail_in_param & matlab.mixin.CustomDisplay
             %'exitflag','iter','npoints','errest','x'};
             propgrp = matlab.mixin.util.PropertyGroup(proplist);
         end
-        
+
     end % methods (protected)
-    
+
     
 end % classdef
 

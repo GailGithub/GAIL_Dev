@@ -1,4 +1,4 @@
-% Prototype of GAIL input parameter object
+% integral_g_in_param: integralNoPenalty_g's input parameter object
 %
 % Examples
 %
@@ -48,7 +48,7 @@
 %     a: 0
 %     b: 1
 %
-classdef integral_g_in_param < gail.gail1D_in_param 
+classdef integral_g_in_param < gail.gail1D_in_param
     %% data
     properties % public
         flip
@@ -67,7 +67,7 @@ classdef integral_g_in_param < gail.gail1D_in_param
             out_param = out_param.set_input_field_names(...
               {'a','b','abstol','nlo','nhi','nmax','flip'}...
             );
-           % out_param.get_input_field_names();
+            % out_param.get_input_field_names();
             %% Default parameter values
             default = out_param.get_default();
             default.flip = 0;

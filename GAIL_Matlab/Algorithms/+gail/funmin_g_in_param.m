@@ -1,4 +1,4 @@
-% Prototype of GAIL input parameter object
+% funmin_g_in_param: funmin_g's input parameter object
 %
 % Examples
 %
@@ -70,7 +70,7 @@ classdef funmin_g_in_param < gail.gail1D_in_param
             out_param = out_param.set_input_field_names(...
               {'a','b','abstol','TolX','nlo','nhi','nmax'}...
             );
-           % out_param.get_input_field_names();
+            % out_param.get_input_field_names();
             %% Default parameter values
             default = out_param.get_default();
             default.TolX = 1e-3;
@@ -79,7 +79,6 @@ classdef funmin_g_in_param < gail.gail1D_in_param
             out_param = out_param.parse_inputs(default, varargin{:});
             
             %% validate inputs
-            
             out_param = out_param.validate_inputs();
             
         end % constructor
@@ -92,20 +91,11 @@ classdef funmin_g_in_param < gail.gail1D_in_param
         function out_param = validate_inputs(out_param)
             out_param = validate_inputs@gail.gail1D_in_param(out_param);
             
-%             % Check whether the length tolerance is nonnegative
-%             if out_param.abstol < 0
-%                 warning('GAIL:funmin_g_in_param:abstolnonpos', ['Error tolerance should be greater than or equal to 0.' ...
-%                     ' Using default error tolerance ', num2str(default.abstol)])
-%                 out_param.abstol = default.abstol;
-%             end
-            
             if out_param.TolX < 0
                 warning('GAIL:funmin_g_in_param:Xtolnonpos', ['X tolerance should be greater than or equal to 0.' ...
                     ' Using default X tolerance ' num2str(default.TolX)]);
                 out_param.TolX = default.TolX;
             end
-            
-
         end
 
     end % methods

@@ -1,4 +1,4 @@
-% funappx_g_in_param: GAIL funappx_g's input parameter object
+% funappx_g_in_param: funappxNoPenalty_g's input parameter object
 %
 % Examples
 %
@@ -78,7 +78,7 @@
 %     a: 0
 %     b: 1
 %
-classdef funappx_g_in_param < gail.gail1D_in_param  
+classdef funappx_g_in_param < gail.gail1D_in_param
     %% data
     properties % public
         flip
@@ -94,10 +94,7 @@ classdef funappx_g_in_param < gail.gail1D_in_param
                 in = varargin{1};
             end
             out_param = out_param@gail.gail1D_in_param(in);
-%             out_param = out_param.set_input_field_names(...
-%               {'a','b','abstol','nlo','nhi','nmax','ninit','nmax','maxiter'}...
-%             );
-           % out_param.get_input_field_names();
+
             %% Default parameter values
             default = out_param.get_default();
             default.flip = 0;
@@ -109,10 +106,7 @@ classdef funappx_g_in_param < gail.gail1D_in_param
             out_param = out_param.validate_inputs();
             
         end % constructor
-         
-%         function out_param = toStruct(out_param,varargin)
-%             out_param = toStruct@gail.gail1D_in_param(out_param,{'f', 'a', 'b','abstol','nlo','nhi','ninit','nmax','maxiter'});
-%         end
+
         
         function out_param = validate_inputs(out_param)
             out_param = validate_inputs@gail.gail1D_in_param(out_param);
@@ -127,16 +121,9 @@ classdef funappx_g_in_param < gail.gail1D_in_param
     end % methods
     
     methods (Access = protected) % seen by subclasses
-        
-        % customize display order of properties (data) in an instance
-%         function propgrp = getPropertyGroups(~)
-%             proplist = {'f', 'a', 'b','abstol','nlo','nhi','ninit','nmax','maxiter'};
-%               %  'exitflag','npoints','errest','volumeX', 'tauchange', 'intervals'};
-%             propgrp = matlab.mixin.util.PropertyGroup(proplist);
-%         end
+       
     end % methods (protected)
-    
-    
+
 end % classdef
 
 %% other functions
