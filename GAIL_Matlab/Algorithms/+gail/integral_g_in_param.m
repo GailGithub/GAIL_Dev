@@ -48,7 +48,7 @@
 %     a: 0
 %     b: 1
 %
-classdef integral_g_in_param < gail.funappx_g_in_param 
+classdef integral_g_in_param < gail.gail1D_in_param 
     %% data
     properties % public
         flip
@@ -63,7 +63,7 @@ classdef integral_g_in_param < gail.funappx_g_in_param
             if nargin >= 1
                 in = varargin{1};
             end
-            out_param = out_param@gail.funappx_g_in_param(in);
+            out_param = out_param@gail.gail1D_in_param(in);
             out_param = out_param.set_input_field_names(...
               {'a','b','abstol','nlo','nhi','nmax','flip'}...
             );
@@ -79,13 +79,24 @@ classdef integral_g_in_param < gail.funappx_g_in_param
             out_param = out_param.validate_inputs();
             
         end % constructor
-         
+        
+        function out_param = validate_a_b(out_param)
+            if (out_param.b < out_param.a)
+                warning('GAIL:integral_g_in_param:blea',['b cannot be smaller than a;'...
+                    ' exchange these two. '])
+                tmp = out_param.b;
+                out_param.b = out_param.a;
+                out_param.a = tmp;
+                out_param.flip=1;
+            end
+        end
+        
         function out_param = toStruct(out_param,varargin)
-            out_param = toStruct@gail.funappx_g_in_param(out_param,{'f', 'a', 'b','abstol','nlo','nhi','nmax','ninit'});
+            out_param = toStruct@gail.gail1D_in_param(out_param,{'f', 'a', 'b','abstol','nlo','nhi','ninit','nmax'});
         end
         
         function out_param = validate_inputs(out_param)
-            out_param = validate_inputs@gail.funappx_g_in_param(out_param);
+            out_param = validate_inputs@gail.gail1D_in_param(out_param);
         end
 
     end % methods

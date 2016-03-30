@@ -51,7 +51,7 @@
 %     a: 0
 %     b: 1
 %
-classdef funmin_g_in_param < gail.funappx_g_in_param 
+classdef funmin_g_in_param < gail.gail1D_in_param 
     %% data
     properties % public
         TolX
@@ -66,7 +66,7 @@ classdef funmin_g_in_param < gail.funappx_g_in_param
             if nargin >= 1
                 in = varargin{1};
             end
-            out_param = out_param@gail.funappx_g_in_param(in);
+            out_param = out_param@gail.gail1D_in_param(in);
             out_param = out_param.set_input_field_names(...
               {'a','b','abstol','TolX','nlo','nhi','nmax'}...
             );
@@ -85,12 +85,12 @@ classdef funmin_g_in_param < gail.funappx_g_in_param
         end % constructor
          
         function out_param = toStruct(out_param,varargin)
-            out_param = toStruct@gail.funappx_g_in_param(out_param,{'f', 'a', 'b','abstol','TolX','nlo','nhi','ninit','nmax','tau'});
+            out_param = toStruct@gail.gail1D_in_param(out_param,{'f', 'a', 'b','abstol','TolX','nlo','nhi','ninit','nmax','tau'});
                 %'exitflag', 'npoints', 'errest','volumeX','tauchange','intervals'});
         end
         
         function out_param = validate_inputs(out_param)
-            out_param = validate_inputs@gail.funappx_g_in_param(out_param);
+            out_param = validate_inputs@gail.gail1D_in_param(out_param);
             
 %             % Check whether the length tolerance is nonnegative
 %             if out_param.abstol < 0

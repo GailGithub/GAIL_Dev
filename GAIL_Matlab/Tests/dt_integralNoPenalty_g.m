@@ -35,7 +35,7 @@ function dt_integralNoPenalty_g()
 %
 %   When a equals b, the integral value has to be 0.
 %   >> q = integralNoPenalty_g(@(x)x.^2,'a',1)
-%   q = 2.3333
+%   q = 0
 %
 %   
 %   When b is Inf, it is corrected to default value 1.
@@ -60,7 +60,7 @@ function dt_integralNoPenalty_g()
 %
 %   When a > b, compute negative of the integral.
 %   >> q = integralNoPenalty_g(@(x)x.^2,'a',1,'b',0)
-%   q = 0.3333
+%   q = -0.3333
 %
 %
 %   >> q = integralNoPenalty_g(@(x)x.^2,'a',0,'b',2,'nlo',10,'nhi',100)
@@ -86,8 +86,8 @@ function dt_integralNoPenalty_g()
 %               abstol: 1.0000e-06
 %                  nlo: 10
 %                  nhi: 1000
-%                 nmax: 10000000
 %                ninit: 100
+%                 nmax: 10000000
 %                  tau: 197
 %         exceedbudget: 0
 %           conechange: 0
@@ -105,8 +105,8 @@ function dt_integralNoPenalty_g()
 %               abstol: 1.0000e-05
 %                  nlo: 100
 %                  nhi: 10000
-%                 nmax: 10000000
 %                ninit: 1000
+%                 nmax: 10000000
 %                  tau: 1997
 %         exceedbudget: 0
 %           conechange: 0
