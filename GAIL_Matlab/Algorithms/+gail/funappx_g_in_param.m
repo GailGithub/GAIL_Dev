@@ -56,7 +56,7 @@
 %
 %
 %  To get a struct:
-%  >> out_param = in_param.toStruct()
+%  >> in_param = gail.funappx_g_in_param(@(x) x.^2); out_param = in_param.toStruct()
 %   out_param =
 %
 %            f: @(x)x.^2
@@ -71,17 +71,15 @@
 %
 %
 % To get a structure with selected fields (and ignore properties that do not exist):
-% >> out_param = in_param.toStruct({'f', 'a', 'b','c'})
+% >> in_param = gail.funappx_g_in_param(@(x) x.^2); out_param = in_param.toStruct({'f','abstol','c'})
 %  out_param =
 %
 %     f: @(x)x.^2
-%     a: 0
-%     b: 1
+%     abstol: 1.0000e-06
 %
 classdef funappx_g_in_param < gail.gail1D_in_param
     %% data
     properties % public
-        flip
     end % properties
      
     %% methods
@@ -97,7 +95,6 @@ classdef funappx_g_in_param < gail.gail1D_in_param
 
             %% Default parameter values
             default = out_param.get_default();
-            default.flip = 0;
         
             %% parse inputs
             out_param = out_param.parse_inputs(default, varargin{:});
@@ -111,10 +108,12 @@ classdef funappx_g_in_param < gail.gail1D_in_param
         function out_param = validate_inputs(out_param)
             out_param = validate_inputs@gail.gail1D_in_param(out_param);
             
-            if (out_param.abstol <= 0 )
-                warning('GAIL:funappx_g_in_param:tolneg', ['Error tolerance should be greater'...
-                    ' than 0. Using default error tolerance ' num2str(default.abstol)])
-                out_param.abstol = default.abstol;
+            if (~isempty(out_param.abstol))
+                if (out_param.abstol <= 0 )
+                    warning('GAIL:funappx_g_in_param:tolneg', ['Error tolerance should be greater'...
+                        ' than 0. Using default error tolerance ' num2str(default.abstol)])
+                    out_param.abstol = default.abstol;
+                end
             end
         end
 

@@ -27,7 +27,7 @@
 %
 %
 %  To get a struct:
-%  >> out_param = in_param.toStruct()
+%  >> in_param = gail.integral_g_in_param(@(x) x.^2);  out_param = in_param.toStruct()
 %  out_param = 
 % 
 %             f: @(x)x.^2
@@ -41,12 +41,11 @@
 %
 %
 % To get a structure with selected fields (and ignore properties that do not exist):
-% >> out_param = in_param.toStruct({'f', 'a', 'b','c'})
+% >> in_param = gail.integral_g_in_param(@(x) x.^2); out_param = in_param.toStruct({'f', 'abstol','c'})
 %  out_param =
 %
 %     f: @(x)x.^2
-%     a: 0
-%     b: 1
+%     abstol: 1.0000e-06
 %
 classdef integral_g_in_param < gail.gail1D_in_param
     %% data
@@ -90,15 +89,18 @@ classdef integral_g_in_param < gail.gail1D_in_param
                 out_param.flip=1;
             end
         end
-        
-        function out_param = toStruct(out_param,varargin)
-            out_param = toStruct@gail.gail1D_in_param(out_param,{'f', 'a', 'b','abstol','nlo','nhi','ninit','nmax'});
-        end
-        
+
         function out_param = validate_inputs(out_param)
             out_param = validate_inputs@gail.gail1D_in_param(out_param);
         end
-
+        
+        function out_param = toStruct(out_param,varargin)
+            l = {'f', 'a', 'b','abstol','nlo','nhi','ninit','nmax'};
+            if length(varargin) > 0
+                l = varargin{1};
+            end
+            out_param = toStruct@gail.gail1D_in_param(out_param, l);
+        end
     end % methods
     
     methods (Access = protected) % seen by subclasses

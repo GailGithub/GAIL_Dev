@@ -106,7 +106,6 @@ classdef gail1D_in_param < gail.gail_in_param & matlab.mixin.CustomDisplay
     
     properties (GetAccess = protected, SetAccess = protected)  % seen by subclasses
         input_field_names = {'a','b','abstol','nlo','nhi','nmax','maxiter','memorytest','output_x'}; %order of parsing
-        % output_field_names = {'ninit','exitflag','iter','npoints','errest'};
         default_values
     end
     
@@ -319,10 +318,8 @@ classdef gail1D_in_param < gail.gail_in_param & matlab.mixin.CustomDisplay
         
         function out_struct = toStruct(out_param,varargin)
             field_list = ...%union({'f'}, union(out_param.input_field_names, out_param.output_field_names,'stable'),'stable');
-                {'f','a','b','abstol','nlo','nhi','ninit','nmax','maxiter'...
-                %'exitflag','iter','npoints','errest'
-                };
-            if nargin > 1
+                {'f','a','b','abstol','nlo','nhi','ninit','nmax','maxiter'};
+            if length(varargin) > 0
                 field_list = varargin{1};
             end
             for field_index = 1:length(field_list)
