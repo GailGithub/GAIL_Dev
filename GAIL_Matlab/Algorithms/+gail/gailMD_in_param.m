@@ -181,12 +181,15 @@ classdef gailMD_in_param < gail.gail_in_param & matlab.mixin.CustomDisplay
                     'Now GAIL is using interval [0;1] with dimension 1.'])
                 f = @(x) x.^2;
                 out_param.hyperbox = default.hyperbox;
+                out_param.dim = length(out_param.hyperbox);
             end
-            if numel(varargin)==1
-                % if there is only function but no hyperbox input. Use default hyperbox.
-                help cubMC_g
-                warning('GAIL:cubMC_g:hyperboxnotgiven',...
-                    'the hyperbox must be specified, Now GAIL is using interval [0;1] with dimension 1')
+            if numel(varargin)==1 
+                if ~isempty(out_param.hyperbox)
+                    % if there is only function but no hyperbox input. Use default hyperbox.
+                    help cubMC_g
+                    warning('GAIL:cubMC_g:hyperboxnotgiven',...
+                        'the hyperbox must be specified, Now GAIL is using interval [0;1] with dimension 1')
+                end
                 f = varargin{1};
                 out_param.hyperbox = default.hyperbox;
             end
@@ -194,6 +197,8 @@ classdef gailMD_in_param < gail.gail_in_param & matlab.mixin.CustomDisplay
                 f = varargin{1};
                 out_param.hyperbox = varargin{2}; % the first input is function, the second input is hyperbox.
             end
+            [two, out_param.dim]=size(out_param.hyperbox); 
+            default.dim = out_param.dim;
             
             validvarargin=(numel(varargin)>2);% check if there is any optional parameter input
             if validvarargin
