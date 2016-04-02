@@ -13,7 +13,8 @@ if usejava('jvm')
     mfile_list = {'GAIL','help_license','help_readme','funclist',...
         'help_funappx_g','help_funmin_g',...
         'help_integral_g', 'help_meanMC_g','help_meanMCBer_g', ...
-        'help_cubMC_g','help_cubLattice_g','help_cubSobol_g'};
+        'help_cubMC_g','help_cubLattice_g','help_cubSobol_g',... % demos below
+        'demo_normal_probabilities.m'};
     
     %% generate GAIL Documentation in HTML format
     if ifGenerateHtml
