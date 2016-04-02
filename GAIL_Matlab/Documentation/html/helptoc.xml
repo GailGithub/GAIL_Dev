@@ -17,7 +17,7 @@
             <tocitem target="help_cubSobol_g.html">cubSobol_g</tocitem>
     </tocitem>
     <tocitem target="demolist.html" image="HelpIcon.EXAMPLES">Demos
-            <tocitem target="demo_normal_probabilities.html">Computing normal probabilities</tocitem>
+            <tocitem target="demo_cubSobol_g.html">cubSobol_g</tocitem>
     </tocitem>
 </tocitem>
 </toc>

@@ -33,7 +33,7 @@
 %% Demos
 %
 % <html>
-% <a href="demo_normal_probabilities.html">Computing Normal probabilities with covariance matrix cov</a>
+% <a href="demo_cubSobol_g.html">Demos for cubSobol_g</a>
 % </html>
 %
 %% Website
