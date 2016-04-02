@@ -1,0 +1,18 @@
+<?xml version ="1.0" encoding="utf-8"?>
+    <demos>
+    <name>GAIL</name>
+    <type>toolbox</type>
+    <icon>$toolbox/matlab/icons/demoicon.gif</icon>
+    <description>Contains demo files for GAIL</description>
+    <website>
+        <a href="http://gailgithub.github.io/GAIL_Dev/">For more info see http://gailgithub.github.io/GAIL_Dev/</a>
+    </website>
+    <demosection>
+        <label>cubSobol_g Demos</label>  
+        <demoitem>
+            <label>Test of cubSobol_g</label>
+            <callback>Test_cubSobol_g</callback>
+            <file>../Workouts/Workout_cubSobol_g/html/Test_cubSobol_g.html</file>
+        </demoitem>
+    </demosection>
+</demos>
