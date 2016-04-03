@@ -15,7 +15,7 @@ if usejava('jvm')
         'help_integral_g', 'help_meanMC_g','help_meanMCBer_g', ...
         'help_cubMC_g','help_cubLattice_g','help_cubSobol_g',... % demos below
         'demo_cubSobol_g','demo_normal_probabilities'};
-    wofile_list = {'Test_cubSobol_g.m'}; 
+    wofile_list = {'Test_cubSobol_g'}; 
     %% generate GAIL Documentation in HTML format
     if ifGenerateHtml
       opts.stylesheet = strcat(GAILPATH,'Documentation',filesep,'mxdom2mathjaxbigfont.xsl');
@@ -26,8 +26,8 @@ if usejava('jvm')
       for i=1:length(wofile_list),
         publish(wofile_list{i}, opts);
         wopath = which(wofile_list{i});
-        htmlpath = strrep(wopath, wofile_list{i}, strcat(['html',filesep]));
-        htmlfile = strrep(wofile_list{i}, '.m', '.html');
+        htmlpath = strrep(wopath, strcat([wofile_list{i},'.m']), strcat(['html',filesep]));
+        htmlfile = strcat([wofile_list{i}, '.html']);
         movefile(fullfile(htmlpath,htmlfile),fullfile(GAILPATH,'Documentation','html'));
         rmdir(htmlpath);
       end
@@ -42,15 +42,24 @@ if usejava('jvm')
             for i=1:length(mfile_list),
                 cat_cmd = strcat([cat_cmd, ' ', GAILPATH,'Documentation',filesep,mfile_list{i},'.m', ' ']);
             end
-            gailug_filename = strcat([GAILPATH,'Documentation',filesep,...
-                'gail_ug',strrep(GAILVERSION, '.', '_'),'.m']);
-            if exist(gailug_filename,'file') > 0
-                delete(gailug_filename)
+            for i=1:length(wofile_list),
+                wopath = which(wofile_list{i});
+                wopath = strrep(wopath, strcat([wofile_list{i},'.m']), strcat(['']));
+                cat_cmd = strcat([cat_cmd, ' ', wopath, wofile_list{i},'.m' ]);
             end
-            cat_cmd = strcat([cat_cmd, '>> ', gailug_filename]);
-            system(cat_cmd);
-            % publish(gailug_filename,'pdf');
-            publish(gailug_filename,'latex');
+            gailug_file = strcat(['gail_ug',strrep(GAILVERSION, '.', '_'),'.m']);
+            gailug_path = strcat([GAILPATH,'Documentation',filesep,gailug_file]);
+            if exist(gailug_path,'file') > 0
+                delete(gailug_path)
+            end
+%           echo_cmd = strcat(['echo ', '"', 'function ', strrep(gailug_file,'.m',''), '"', ' > ',gailug_file]);
+%           [status,result] = system(echo_cmd);
+            cat_cmd = strcat([cat_cmd, '>> ', gailug_file]);
+            [status,result] = system(cat_cmd);
+%           echo_cmd = strcat(['echo ', '"', 'end', '"', ' >> ', gailug_file]);
+%           [status,result] = system(echo_cmd);
+%           publish(gailug_filename,'pdf');
+            publish(gailug_path,'latex');
         end
     end
     set(0, 'DefaultFigureVisible', oldStatus)
