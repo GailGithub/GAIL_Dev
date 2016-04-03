@@ -14,7 +14,7 @@ if usejava('jvm')
         'help_funappx_g','help_funmin_g',...
         'help_integral_g', 'help_meanMC_g','help_meanMCBer_g', ...
         'help_cubMC_g','help_cubLattice_g','help_cubSobol_g',... % demos below
-        'demo_cubSobol_g','demo_normal_probabilities.m'};
+        'demo_cubSobol_g','demo_normal_probabilities'};
     wofile_list = {'Test_cubSobol_g.m'}; 
     %% generate GAIL Documentation in HTML format
     if ifGenerateHtml

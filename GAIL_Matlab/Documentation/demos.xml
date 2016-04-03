@@ -12,7 +12,7 @@
         <demoitem>
             <label>Test of cubSobol_g</label>
             <callback>Test_cubSobol_g</callback>
-            <file>../Workouts/Workout_cubSobol_g/html/Test_cubSobol_g.html</file>
+            <file>html/Test_cubSobol_g.html</file>
         </demoitem>
     </demosection>
 </demos>
