@@ -8,6 +8,14 @@
         <a href="http://gailgithub.github.io/GAIL_Dev/">For more info see http://gailgithub.github.io/GAIL_Dev/</a>
     </website>
     <demosection>
+        <label>funappx_g Demos</label>  
+        <demoitem>
+            <label>Curve</label>
+            <callback>curve</callback>
+            <file>html/curve.html</file>
+        </demoitem>
+    </demosection>
+    <demosection>
         <label>cubSobol_g Demos</label>  
         <demoitem>
             <label>Test of cubSobol_g</label>

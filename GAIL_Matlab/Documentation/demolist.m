@@ -2,7 +2,9 @@
 %
 %% 1-D approximation
 %
-%
+% <html>
+% <a href="demo_funappx_g.html">funappx_g</a>
+% </html>
 %
 %% 1-D integration
 %

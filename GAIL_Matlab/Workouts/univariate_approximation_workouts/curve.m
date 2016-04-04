@@ -1,16 +1,31 @@
-f = @(x) x.^2 .* sin(2*pi./x.^2);
-a=.2;
-b=2.5;
-[q,out]=funappx_g(f, a, b);
+%% CURVE 
+% Approximate a curve using funappxNoPenalty_g.
 
+%% Function definition
+%
+% Define a highly fluctuating function as follows:
+%
+% \[ f(x) = x^2 sin(\frac{2 \pi}{ x^2} ). \] 
+% 
+f = @(x) x.^2 .* sin((2*pi)./x.^2);
 
-subplot(1,2,1);
-x=a:0.0001:b;
-plot(x,q(x))
-axis square
+%% Function approximation
+% We use funappxNoPenalty_g to approximate \(f\) over the interval
+% \([a,b]\):
+a = 0.2;
+b = 2.5;
+[q,out] = funappxNoPenalty_g(f, a, b);
+
+%% Plot of the approximant 
+% We plot out \(q(x)\) below:
+figure;
+x = a:0.0001:b;
+plot(x,q(x)); 
 axis tight
 
-subplot(1,2,2);
-plot(x,abs(f(x)-q(x)))
-axis square
+%% Plot of the apprroximation errors  
+% The plot shows that all pointwise absolute errors are less than the
+% default tolerance of \(10^{-6}\).
+figure;
+plot(x,abs(f(x)-q(x))); 
 axis tight

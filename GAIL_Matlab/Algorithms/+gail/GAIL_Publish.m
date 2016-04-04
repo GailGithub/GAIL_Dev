@@ -7,15 +7,15 @@ function GAIL_Publish(ifGenerateHtml, ifGenerateLateX, ifBuildSearchIndex)
 %
 [GAILPATH,GAILVERSION,MATLABVERSION] = GAILstart;
 if usejava('jvm')
-    oldStatus = get(0,'DefaultFigureVisible');
-    set(0, 'DefaultFigureVisible', 'off')
+    %oldStatus = get(0,'DefaultFigureVisible');
+    %set(0, 'DefaultFigureVisible', 'off')
     [GAILPATH,GAILVERSION] = GAILstart(0);
     mfile_list = {'GAIL','help_license','help_readme','funclist','demolist',...
         'help_funappx_g','help_funmin_g',...
         'help_integral_g', 'help_meanMC_g','help_meanMCBer_g', ...
         'help_cubMC_g','help_cubLattice_g','help_cubSobol_g',... % demos below
-        'demo_cubSobol_g','demo_normal_probabilities'};
-    wofile_list = {'Test_cubSobol_g'}; 
+        'demo_funappx_g','demo_cubSobol_g','demo_normal_probabilities_CSC'};
+    wofile_list = {'Test_cubSobol_g','curve'}; 
     %% generate GAIL Documentation in HTML format
     if ifGenerateHtml
       opts.stylesheet = strcat(GAILPATH,'Documentation',filesep,'mxdom2mathjaxbigfont.xsl');
@@ -27,9 +27,9 @@ if usejava('jvm')
         publish(wofile_list{i}, opts);
         wopath = which(wofile_list{i});
         htmlpath = strrep(wopath, strcat([wofile_list{i},'.m']), strcat(['html',filesep]));
-        htmlfile = strcat([wofile_list{i}, '.html']);
-        movefile(fullfile(htmlpath,htmlfile),fullfile(GAILPATH,'Documentation','html'));
-        rmdir(htmlpath);
+        %htmlfile = strcat([wofile_list{i}, '.html']);
+        copyfile(fullfile(htmlpath,'*'),fullfile(GAILPATH,'Documentation','html'));
+        %rmdir(htmlpath);
       end
     end
     
@@ -62,7 +62,7 @@ if usejava('jvm')
             publish(gailug_path,'latex');
         end
     end
-    set(0, 'DefaultFigureVisible', oldStatus)
+    %set(0, 'DefaultFigureVisible', oldStatus)
     
     %% build search index
     if ifBuildSearchIndex,
