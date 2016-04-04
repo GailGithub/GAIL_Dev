@@ -1,3 +1,4 @@
+%% demo_normal_probabilities_CSC
 function demo_normal_probabilities
 %% Computing Normal probabilities with covariance matrix cov
 % Dimension of the problem. In the literature it sometimes appears as s.
@@ -12,7 +13,7 @@ abstol = 1e-3;
 reltol = 0;  % If 0, we have pure absolute error.
 
 %% Dumb test with cov = Id 
-% to check real error
+% To check real error:
 mu = zeros(d,1);
 cov = eye(d);
 factor = 3.5;
@@ -27,9 +28,9 @@ disp(['Real error was ' ...
     ' which is less than the tolerance ' num2str(abstol) '. Time was '...
     num2str(out_param1.time) ' seconds.'])
 
-%% Another calibration example (to check real error)
+%% Another calibration example 
+% To check real error:
 mu = zeros(d,1);
-
 % off-diagional value of the covariance matrix
 sig = 0.6; 
 % definition of the covariance matrix
@@ -82,8 +83,11 @@ function [p,out, y, kappanumap] = multi_normcdf(hyperbox,mu,cov,abstol,reltol,mm
 
 hyperbox = bsxfun(@minus, hyperbox,mu');
 C = chol(cov)'; d = size(C,1);
-a = hyperbox(1,1)/C(1,1); b = hyperbox(2,1)/C(1,1); s = gail.stdnormcdf(a); e = gail.stdnormcdf(b);
-[p, out, y, kappanumap] = cubSobol_g(@(x) f(s,e,hyperbox,x,C) , [zeros(1,d-1);ones(1,d-1)] ,'uniform',abstol,reltol,'mmax',mmax);
+a = hyperbox(1,1)/C(1,1); b = hyperbox(2,1)/C(1,1); s = gail.stdnormcdf(a); 
+e = gail.stdnormcdf(b);
+[p, out, y, kappanumap] = cubSobol_g(...
+    @(x) f(s,e,hyperbox,x,C), [zeros(1,d-1);ones(1,d-1)],...
+    'uniform',abstol,reltol,'mmax',mmax);
 
 end
 
