@@ -270,11 +270,11 @@ max_errest = 1;
 while(max_errest > abstol)
     %% Stage 1: compute length of each subinterval and approximate |f''(t)|
     len = diff(x);
-    %deltaf = 2*(y(1:end-2)./len(1:end-1)./(len(1:end-1)+len(2:end))-...
+    %tic, deltaf = 2*(y(1:end-2)./len(1:end-1)./(len(1:end-1)+len(2:end))-...
     %            y(2:end-1)./len(1:end-1)./ len(2:end)              +...
-    %            y(3:end  )./len(2:end  )./(len(1:end-1)+len(2:end)));
-    dy = diff(y);
-    deltaf = 2*(dy(2:end)./len(2:end) - dy(1:end-1)./len(1:end-1))./(len(2:end)+len(1:end-1));
+    %            y(3:end  )./len(2:end  )./(len(1:end-1)+len(2:end)));  toc,
+    dydx = diff(y)./len;
+    deltaf = 2 * diff(dydx)./(len(2:end)+len(1:end-1));
     deltaf = [0 0 abs(deltaf) 0 0];
     
     %% Stage 2: compute bound of |f''(t)| and estimate error
