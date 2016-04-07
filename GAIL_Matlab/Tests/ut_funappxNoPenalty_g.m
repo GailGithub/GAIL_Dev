@@ -9,7 +9,7 @@ classdef ut_funappxNoPenalty_g < matlab.unittest.TestCase
             in_param.nhi = 3;
             [fappx, result] = funappxNoPenalty_g(f,in_param);
             testCase.verifyLessThanOrEqual(result.iter, 1);
-            testCase.verifyEqual(result.npoints,3);
+            testCase.verifyEqual(result.npoints, 5);
             x = 0:0.1:1;
             testCase.verifyLessThanOrEqual(norm(fappx(x)-f(x)), eps);
         end

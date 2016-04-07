@@ -107,6 +107,7 @@ classdef gail1D_in_param < gail.gail_in_param & matlab.mixin.CustomDisplay
     properties (GetAccess = protected, SetAccess = protected)  % seen by subclasses
         input_field_names = {'a','b','abstol','nlo','nhi','nmax','maxiter','memorytest','output_x'}; %order of parsing
         default_values
+        ninit_min = 5;
     end
     
     %% methods
@@ -253,8 +254,8 @@ classdef gail1D_in_param < gail.gail_in_param & matlab.mixin.CustomDisplay
                 else
                     warning('GAIL:gail1D_in_param:lowinitlt3',[' Lower bound of '...
                         'initial number of points should be a positive integer greater'...
-                        ' than 3. Using 3 as nlo'])
-                    out_param.nlo = 3;
+                        ' than ', num2str(out_param.ninit_min), '. Using ', num2str(out_param.ninit_min),' as nlo'])
+                    out_param.nlo = out_param.ninit_min;
                 end
                 warning('GAIL:gail1D_in_param:lowinitnotint',['Lower bound of '...
                     'initial nstar should be a positive integer.' ...
@@ -269,7 +270,7 @@ classdef gail1D_in_param < gail.gail_in_param & matlab.mixin.CustomDisplay
                     out_param.nhi = ceil(out_param.nhi);
                 else
                     warning('GAIL:gail1D_in_param:hiinitlt3',[' Upper bound of '...
-                        'points should be a positive integer greater than 3. Using '...
+                        'points should be a positive integer greater than ',out_param.ninit_min,'. Using '...
                         'default number of points ' int2str(default.nhi) ' as nhi' ])
                     out_param.nhi = default.nhi;
                 end
@@ -348,7 +349,7 @@ classdef gail1D_in_param < gail.gail_in_param & matlab.mixin.CustomDisplay
         function ninit = compute_ninit(out_param)
             h = out_param.b - out_param.a;
             ninit = ceil(out_param.nhi*(out_param.nlo/out_param.nhi)^(1/(1+h)));
-            ninit = max(ninit,5);
+            ninit = max(ninit,out_param.ninit_min);
         end
     end % methods
     

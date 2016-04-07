@@ -269,10 +269,12 @@ C = @(h) C0*fh./(fh-h);
 max_errest = 1;
 while(max_errest > abstol)
     %% Stage 1: compute length of each subinterval and approximate |f''(t)|
-    len = x(2:end)-x(1:end-1);
-    deltaf = 2*(y(1:end-2)./len(1:end-1)./(len(1:end-1)+len(2:end))-...
-                y(2:end-1)./len(1:end-1)./ len(2:end)              +...
-                y(3:end  )./len(2:end  )./(len(1:end-1)+len(2:end)));
+    len = diff(x);
+    %deltaf = 2*(y(1:end-2)./len(1:end-1)./(len(1:end-1)+len(2:end))-...
+    %            y(2:end-1)./len(1:end-1)./ len(2:end)              +...
+    %            y(3:end  )./len(2:end  )./(len(1:end-1)+len(2:end)));
+    dy = diff(y);
+    deltaf = 2*(dy(2:end)./len(2:end) - dy(1:end-1)./len(1:end-1))./(len(2:end)+len(1:end-1));
     deltaf = [0 0 abs(deltaf) 0 0];
     
     %% Stage 2: compute bound of |f''(t)| and estimate error
@@ -312,8 +314,6 @@ while(max_errest > abstol)
     x(tem(whichcut)) = newx;
     y(tem(whichcut)) = f(newx);
     ninit = length(x);
-
- 
 end;
 
 %% postprocessing
