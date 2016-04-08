@@ -162,8 +162,8 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %             nmax: 10000000
 %          maxiter: 1000
 %         exitflag: [0 0]
-%             iter: 9
-%          npoints: 4353
+%             iter: 8
+%          npoints: 2177
 %           errest: ***e-07
 %
 %
@@ -248,9 +248,6 @@ abstol = out_param.abstol;
 ninit = out_param.ninit;
 x = a:(b-a)/(ninit-1):b;
 y = f(x);
-%fh = b-a;
-fh = 4*(b-a)/(ninit-1);
-C0 = 1.2;
 iSing = find(isinf(y));
 if ~isempty(iSing)
     error('GAIL:funappxNoPenalty_g:yInf',['Function f(x) = Inf at x = ', num2str(x(iSing))]);
@@ -264,8 +261,12 @@ end
 iter = 0;
 exit_len = 2;
 % we start the algorithm with all warning flags down
-out_param.exitflag = false(1,exit_len); 
+out_param.exitflag = false(1,exit_len);
+%fh = b-a;
+fh = 4*(b-a)/(ninit-1);
+C0 = 2.2;
 C = @(h) C0*fh./(fh-h);
+npoints = ninit;
 max_errest = 1;
 while(max_errest > abstol)
     %% Stage 1: compute length of each subinterval and approximate |f''(t)|
@@ -273,14 +274,14 @@ while(max_errest > abstol)
     %deltaf = 2*(y(1:end-2)./len(1:end-1)./(len(1:end-1)+len(2:end))-...
     %            y(2:end-1)./len(1:end-1)./ len(2:end)              +...
     %            y(3:end  )./len(2:end  )./(len(1:end-1)+len(2:end)))
-    deltaf = 2 * diff(diff(y)./len)./(len(2:end)+len(1:end-1));
+    deltaf = diff(diff(y)./len)./(len(2:end)+len(1:end-1));
     deltaf = [0 0 abs(deltaf) 0 0];
     
     %% Stage 2: compute bound of |f''(t)| and estimate error
     h = [x(2)-a x(3)-a       ...
          x(4:end)-x(1:end-3) ...
          b-x(end-2)  b-x(end-1)];
-    normbd = C(max(h(1:ninit-1),h(3:ninit+1))) .* max(deltaf(1:ninit-1),deltaf(4:ninit+2));
+    normbd = C(max(h(1:npoints-1),h(3:npoints+1))) .* max(deltaf(1:npoints-1),deltaf(4:npoints+2));
     errest = len.^2/8.*normbd;
     % update iterations
     iter = iter + 1;
@@ -292,7 +293,7 @@ while(max_errest > abstol)
     %% Stage 3: find I and update x,y
     badinterval = (errest > abstol);
     whichcut = badinterval | [badinterval(2:end) 0] | [0 badinterval(1:end-1)];
-    if (out_param.nmax<(ninit+length(find(whichcut==1))))
+    if (out_param.nmax<(npoints+length(find(whichcut==1))))
         out_param.exitflag(1) = true;
         warning('GAIL:funappxNoPenalty_g:exceedbudget',['funappxNoPenalty_g '...
             'attempted to exceed the cost budget. The answer may be '...
@@ -307,17 +308,17 @@ while(max_errest > abstol)
     end;
     newx = x(whichcut) + 0.5 * len(whichcut);
     tt = cumsum(whichcut); 
-    x([1 (2:ninit)+tt]) = x;
-    y([1 (2:ninit)+tt]) = y;
+    x([1 (2:npoints)+tt]) = x;
+    y([1 (2:npoints)+tt]) = y;
     tem = 2 * tt + cumsum(whichcut==0);
     x(tem(whichcut)) = newx;
     y(tem(whichcut)) = f(newx);
-    ninit = length(x);
+    npoints = length(x);
 end;
 
 %% postprocessing
 out_param.iter = iter;
-out_param.npoints = ninit;
+out_param.npoints = npoints;
 out_param.errest = max_errest;
 % control the order of out_param
 %out_param = orderfields(out_param, ...
