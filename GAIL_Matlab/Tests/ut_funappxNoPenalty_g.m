@@ -176,5 +176,12 @@ classdef ut_funappxNoPenalty_g < matlab.unittest.TestCase
             testCase.verifyEqual(result.npoints,5);
          end
          
+         function funappxNoPenalty_gHighAccuracy(testCase)
+            [fappx, result] = funappxNoPenalty_g(@(x)exp(x),'a',-2,'b',2,'nhi',20,'nlo',10, 'abstol', 1e-12);
+            x = rand(1000000,1)*(result.b-result.a)+result.a;
+            actualerr = max(abs(fappx(x)-result.f(x)));
+            testCase.verifyLessThanOrEqual(actualerr,result.abstol);
+        end
+         
     end
 end

@@ -18,7 +18,7 @@ function dt_funappxNoPenalty_g
 %              f: @(x)x.^2
 %              a: -10
 %              b: 10
-%         abstol: 1.0000e-***8
+%         abstol: 1.0000e-08
 %            nlo: 10
 %            nhi: 1000
 %          ninit: 804
@@ -27,7 +27,7 @@ function dt_funappxNoPenalty_g
 %       exitflag: [0 0]
 %           iter: 9
 %        npoints: 205569
-%         errest: ***.***e-***9
+%         errest: ***e-09
 %
 % 
 %   Example 3: 
@@ -50,7 +50,7 @@ function dt_funappxNoPenalty_g
 %    exitflag: [0 0]
 %        iter: 9
 %     npoints: 89601
-%      errest: ***.***e-***9
+%      errest: ***e-09
 %      
 %
 %   Example 4:
@@ -62,7 +62,7 @@ function dt_funappxNoPenalty_g
 %                f: @(x)x.^2
 %                a: -2
 %                b: 2
-%           abstol: 1.0000e-***7
+%           abstol: 1.0000e-07
 %              nlo: 20
 %              nhi: 50
 %            ninit: 42
@@ -71,7 +71,7 @@ function dt_funappxNoPenalty_g
 %         exitflag: [0 0]
 %             iter: 9
 %          npoints: 10497
-%           errest: 4.***e-***8
+%           errest: ***e-08
 %
 %
 %   Example 5:
@@ -83,7 +83,7 @@ function dt_funappxNoPenalty_g
 %                f: @(x)x.^2
 %                a: -3
 %                b: 0
-%           abstol: 1.0000e-***6
+%           abstol: 1.0000e-06
 %              nlo: 20
 %              nhi: 40
 %            ninit: 34
@@ -92,7 +92,7 @@ function dt_funappxNoPenalty_g
 %         exitflag: [0 0]
 %             iter: 7
 %          npoints: 2113
-%           errest: 6.***e-***7
+%           errest: ***e-07
 %
 % 
 %   Example 6:
@@ -104,7 +104,7 @@ function dt_funappxNoPenalty_g
 %           f: @(x)x.^2 
 %           a: -2
 %           b: 5
-%      abstol: 1.0000e-***6
+%      abstol: 1.0000e-06
 %         nlo: 20
 %         nhi: 50
 %       ninit: 45
@@ -113,7 +113,7 @@ function dt_funappxNoPenalty_g
 %    exitflag: [0 0]
 %        iter: 8
 %     npoints: 5633
-%      errest: 4.***e-***7
+%      errest: ***e-07
 %
 %
 %   Example 7:
@@ -134,7 +134,7 @@ function dt_funappxNoPenalty_g
 %         exitflag: [0 0]
 %             iter: 12
 %          npoints: 38913
-%           errest: 4.***e-***8
+%           errest: ***e-08
 %
 %
 %   Example 8:

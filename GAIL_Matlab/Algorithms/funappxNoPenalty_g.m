@@ -133,7 +133,7 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %                f: @(x)x.^2
 %                a: -2
 %                b: 2
-%           abstol: 1.0000e-***7
+%           abstol: 1.0000e-07
 %              nlo: 10
 %              nhi: 20
 %            ninit: 18
@@ -142,7 +142,7 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %         exitflag: [0 0]
 %             iter: 10 
 %          npoints: 8705
-%           errest: 6.3451e-***8
+%           errest: ***e-***8
 %
 %
 %   Example 2:
@@ -155,7 +155,7 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %                f: @(x)x.^2
 %                a: -2
 %                b: 2
-%           abstol: 1.0000e-***6
+%           abstol: 1.0000e-06
 %              nlo: 10
 %              nhi: 20
 %            ninit: 18
@@ -164,7 +164,7 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %         exitflag: [0 0]
 %             iter: 9
 %          npoints: 4353
-%           errest: 2.5418e-***7
+%           errest: ***e-***7
 %
 %
 %   Example 3:
@@ -178,7 +178,7 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %                f: @(x)x.^2
 %                a: -5
 %                b: 5
-%           abstol: 1.0000e-***6
+%           abstol: 1.0000e-06
 %              nlo: 10
 %              nhi: 20
 %            ninit: 19 
@@ -187,7 +187,7 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %         exitflag: [0 0]
 %             iter: 10
 %          npoints: 9217
-%           errest: 3.5373e-***7
+%           errest: ***e-***7
 %
 %
 %   
