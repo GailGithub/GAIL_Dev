@@ -142,7 +142,7 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %         exitflag: [0 0]
 %             iter: 10 
 %          npoints: 8705
-%           errest: ***e-***8
+%           errest: ***e-08
 %
 %
 %   Example 2:
@@ -164,7 +164,7 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %         exitflag: [0 0]
 %             iter: 9
 %          npoints: 4353
-%           errest: ***e-***7
+%           errest: ***e-07
 %
 %
 %   Example 3:
@@ -187,7 +187,7 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %         exitflag: [0 0]
 %             iter: 10
 %          npoints: 9217
-%           errest: ***e-***7
+%           errest: ***e-07
 %
 %
 %   
