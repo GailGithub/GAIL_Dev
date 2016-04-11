@@ -237,7 +237,7 @@ in_param = gail.funappx_g_in_param(varargin{:});
 out_param = in_param.toStruct();
 f = in_param.f;
 MATLABVERSION = gail.matlab_version;
-%out_param = out_param;
+%out_param = in_param;
 %out_param = rmfield(out_param,'memorytest');
 %out_param = rmfield(out_param,'output_x');
 
@@ -246,8 +246,10 @@ a = out_param.a;
 b = out_param.b;
 abstol = out_param.abstol;
 ninit = out_param.ninit;
-x = a:(b-a)/(ninit-1):b;
-y = f(x);
+x = zeros(1, out_param.nmax); % preallocation
+y = x;
+x(1:ninit) = a:(b-a)/(ninit-1):b;
+y(1:ninit) = f(x(1:ninit));
 iSing = find(isinf(y));
 if ~isempty(iSing)
     error('GAIL:funappxNoPenalty_g:yInf',['Function f(x) = Inf at x = ', num2str(x(iSing))]);
@@ -256,7 +258,7 @@ if length(y) == 1
     % probably f is a constant function and Matlab would  
     % reutrn only a scalar y = f(x) even if x is a vector 
     f = @(x) f(x) + 0 * x;
-    y = f(x);
+    y(1:ninit) = f(x(1:ninit));
 end
 iter = 0;
 exit_len = 2;
@@ -264,23 +266,21 @@ exit_len = 2;
 out_param.exitflag = false(1,exit_len);
 %fh = b-a;
 fh = 4*(b-a)/(ninit-1);
-C0 = 2.2;
+C0 = 2.3;
 C = @(h) C0*fh./(fh-h);
 npoints = ninit;
 max_errest = 1;
-while(max_errest > abstol)
+for iter_i = 1:out_param.maxiter,
     %% Stage 1: compute length of each subinterval and approximate |f''(t)|
-    len = diff(x);
+    len = diff(x(1:npoints));
     %deltaf = 2*(y(1:end-2)./len(1:end-1)./(len(1:end-1)+len(2:end))-...
     %            y(2:end-1)./len(1:end-1)./ len(2:end)              +...
     %            y(3:end  )./len(2:end  )./(len(1:end-1)+len(2:end)))
-    deltaf = diff(diff(y)./len)./(len(2:end)+len(1:end-1));
+    deltaf = diff(diff(y(1:npoints))./len)./(len(2:end)+len(1:end-1));
     deltaf = [0 0 abs(deltaf) 0 0];
     
     %% Stage 2: compute bound of |f''(t)| and estimate error
-    h = [x(2)-a x(3)-a       ...
-         x(4:end)-x(1:end-3) ...
-         b-x(end-2)  b-x(end-1)];
+    h = [x(2)-a x(3)-a  x(4:npoints)-x(1:npoints-3)  b-x(npoints-2)  b-x(npoints-1)];
     normbd = C(max(h(1:npoints-1),h(3:npoints+1))) .* max(deltaf(1:npoints-1),deltaf(4:npoints+2));
     errest = len.^2/8.*normbd;
     % update iterations
@@ -293,7 +293,7 @@ while(max_errest > abstol)
     %% Stage 3: find I and update x,y
     badinterval = (errest > abstol);
     whichcut = badinterval | [badinterval(2:end) 0] | [0 badinterval(1:end-1)];
-    if (out_param.nmax<(npoints+length(find(whichcut==1))))
+    if (out_param.nmax<(npoints+length(find(whichcut))))
         out_param.exitflag(1) = true;
         warning('GAIL:funappxNoPenalty_g:exceedbudget',['funappxNoPenalty_g '...
             'attempted to exceed the cost budget. The answer may be '...
@@ -306,16 +306,21 @@ while(max_errest > abstol)
             'reached maximum number of iterations.'])
         break;
     end;
+
     newx = x(whichcut) + 0.5 * len(whichcut);
-    tt = cumsum(whichcut); 
-    x([1 (2:npoints)+tt]) = x;
-    y([1 (2:npoints)+tt]) = y;
+    tt = cumsum(whichcut);   
+    x([1 (2:npoints)+tt]) = x(1:npoints);
+    y([1 (2:npoints)+tt]) = y(1:npoints);
     tem = 2 * tt + cumsum(whichcut==0);
     x(tem(whichcut)) = newx;
     y(tem(whichcut)) = f(newx);
-    npoints = length(x);
+    %x([1 (2:npoints)+tt tem(whichcut)]) = [x(1:npoints) newx];
+    %y([1 (2:npoints)+tt tem(whichcut)]) = [y(1:npoints) f(newx)];
+    npoints = npoints + length(newx);
 end;
 
+x = x(1:npoints);
+y = y(1:npoints);
 %% postprocessing
 out_param.iter = iter;
 out_param.npoints = npoints;
@@ -336,6 +341,7 @@ end
 if (in_param.output_x)
   %out_param = rmfield(out_param,'x');
   out_param.x = x;
+  out_param.y = y;
 end
 
 function [f, out_param] = funappxNoPenalty_g_param(varargin)
@@ -383,8 +389,7 @@ end;
 validvarargin=numel(varargin)>1;
 if validvarargin
     in2=varargin{2};
-    validvarargin=(isnumeric(in2) || isstruct(in2) ...
-        || ischar(in2));
+    validvarargin=(isnumeric(in2) || isstruct(in2) || ischar(in2));
 end
 
 if ~validvarargin
