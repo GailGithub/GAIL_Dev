@@ -184,7 +184,7 @@ function [fmin,out_param]=funminNoPenalty_g(varargin)
 %  Example 4:
 %
 %  >> f=@(x) exp(0.01*(x-0.5).^2);
-%  >> [fmin,out_param] = funminNoPenalty_g(f,'a',-2,'b',2,'nhi',100,'nlo',10,'nmax',1e6,'abstol',1e-4,'TolX',1e-2)
+%  >> [fmin,out_param] = funminNoPenalty_g(f,'a',-2,'b',2,'nhi',100,'nlo',10,'nmax',1e6,'abstol',0,'TolX',1e-4)
 %
 %  fmin =
 % 
@@ -208,6 +208,7 @@ function [fmin,out_param]=funminNoPenalty_g(varargin)
 %        errest: 3.1664e-12
 %       volumeX: 6.2004e-05
 %     intervals: [2x1 double]
+%
 %
 %  See also FMINBND, FUNAPPX_G, INTEGRAL_G
 %
@@ -304,7 +305,6 @@ while n < out_param.nmax
         leftint = find([true diff(goodindex)~=1]);
         rightint = find([diff(goodindex)~=1 true]);
         q = size(leftint,2);
-        p = size(rightint,2);
         ints1 = zeros(2,q);
         ints1(1,:) = ints(1,leftint);
         ints1(2,:) = ints(2,rightint);
@@ -321,7 +321,7 @@ while n < out_param.nmax
     iter = iter + 1;
  
     %% Stage 3: find I and update x,y
-    badinterval = (errest > abstol | ln< Un);
+    badinterval = (errest > abstol | ln < Un);
     whichcut = badinterval | [badinterval(2:end) 0] | [0 badinterval(1:end-1)];
     if (out_param.nmax<(n+length(find(whichcut==1))))
         out_param.exitflag(1) = true;
