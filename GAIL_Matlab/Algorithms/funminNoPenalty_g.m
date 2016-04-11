@@ -69,8 +69,6 @@ function [fmin,out_param]=funminNoPenalty_g(varargin)
 %
 %     out_param.ninit --- initial number of points we use
 %
-%     out_param.tau --- latest value of tau
-%
 %     out_param.npoints --- number of points needed to reach the guaranteed
 %     absolute error tolerance or the guaranteed X tolerance
 %
@@ -83,88 +81,76 @@ function [fmin,out_param]=funminNoPenalty_g(varargin)
 %     out_param.volumeX --- the volume of intervals containing the point(s)
 %     where the minimum occurs
 %
-%     out_param.tauchange --- it is 1 if out_param.tau changes, otherwise
-%     it is 0
-%
 %     out_param.intervals --- the intervals containing point(s) where the
 %     minimum occurs. Each column indicates one interval where the first
 %     row is the left point and the second row is the right point.
 %
 %  Guarantee
 %
-%   If the function to be minimized, f satisfies the cone condition
-%
-%   ||f''||_\infty <=  tau/(b-a)||f'-(f(b)-f(a))/(b-a)||__\infty,
-%      
-%   then the fmin output by this algorithm is guaranteed to satisfy
-%
-%       | min(f)-fmin| <= abstol,
-%   or
-%       volumeX <= TolX,
-%
-%   provided the flag exitflag = 0. 
 %
 %
 %  Examples
 %
 %  Example 1:
 %
-%  >> f=@(x) (x-0.3).^2+1; [fmin,out_param] = funminNoPenalty_g(f)
+%  >> f=@(x) exp(0.01*(x-0.5).^2); [fmin,out_param] = funminNoPenalty_g(f)
 %
 %  fmin =
-% 
-%     1.0000
+%
+%      1
 % 
 %  out_param = 
 % 
-%              f: @(x)(x-0.3).^2+1
-%               a: 0
-%               b: 1
-%          abstol: 1.0000e-06
-%            TolX: 1.0000e-03
-%             nlo: 10
-%             nhi: 1000
-%           ninit: 100
-%            nmax: 10000000
-%         maxiter: 1000
-%            exitflag: [0 0]
-%            iter: 3
-%         npoints: 793
-%          errest: 5.2774e-07
+%             f: @(x)exp(0.01*(x-0.5).^2)
+%             a: 0
+%             b: 1
+%        abstol: 1.0000e-06
+%          TolX: 1.0000e-03
+%           nlo: 10
+%           nhi: 1000
+%          nmax: 10000000
+%       maxiter: 1000
+%         ninit: 100
+%      exitflag: [0 0]
+%          iter: 1
+%       npoints: 199
+%        errest: 1.1306e-07
+%       volumeX: 0.0101
+%     intervals: [2x1 double]
 %
 %
 %  Example 2:
 %
-%  >> f = @(x) (x-0.3).^2+1;
+%  >> f = @(x) exp(0.01*(x-0.5).^2);
 %  >> [fmin,out_param] = funminNoPenalty_g(f,-2,2,1e-7,1e-4,10,10,1000000)
 %
 %  fmin =
 % 
-%     1.0000
+%      1
 % 
 %  out_param = 
 % 
-%             f: @(x)(x-0.3).^2+1
 %             a: -2
-%             b: 2
 %        abstol: 1.0000e-07
-%          TolX: 1.0000e-04
-%           nlo: 10
-%           nhi: 10
-%         ninit: 10
-%          nmax: 1000000
+%             b: 2
+%             f: @(x)exp(0.01*(x-0.5).^2)
 %       maxiter: 1000
+%           nhi: 10
+%           nlo: 10
+%          nmax: 1000000
+%          TolX: 1.0000e-04
+%         ninit: 10
 %      exitflag: [0 0]
-%       npoints: 18433
-%        errest: 9.5464e-08
-%       volumeX: 5.4175e-04
-%     tauchange: 0
+%          iter: 7
+%       npoints: 1153
+%        errest: 3.9920e-08
+%       volumeX: 0.0069
 %     intervals: [2x1 double]
 %
 %
 %  Example 3:
 %
-%  >> f=@(x) (x+1.3).^2+1;
+%  >> f=@(x) exp(0.01*(x-0.5).^2);
 %  >> in_param.a = -13; in_param.b = 8;
 %  >> in_param.abstol = 10^(-7); in_param.TolX = 1e-4;
 %  >> in_param.nlo = 10; in_param.nhi = 100;
@@ -174,57 +160,56 @@ function [fmin,out_param]=funminNoPenalty_g(varargin)
 %  fmin =
 % 
 %     1.0000
-% 
+%  
 %  out_param = 
 % 
 %             a: -13
 %        abstol: 1.0000e-07
 %             b: 8
-%             f: @(x)(x+1.3).^2+1
+%             f: @(x)exp(0.01*(x-0.5).^2)
+%       maxiter: 1000
 %           nhi: 100
 %           nlo: 10
 %          nmax: 1000000
 %          TolX: 1.0000e-04
 %         ninit: 91
-%           tau: 179
-%      exitflag: 0
-%       npoints: 368641
-%        errest: 7.1473e-08
-%       volumeX: 5.2354e-04
-%     tauchange: 0
+%      exitflag: [0 0]
+%          iter: 8
+%       npoints: 9508
+%        errest: 9.9894e-08
+%       volumeX: 0.0027
 %     intervals: [2x1 double]
 %
 %
 %  Example 4:
 %
-%  >> f=@(x) (x-0.3).^2+1;
+%  >> f=@(x) exp(0.01*(x-0.5).^2);
 %  >> [fmin,out_param] = funminNoPenalty_g(f,'a',-2,'b',2,'nhi',100,'nlo',10,'nmax',1e6,'abstol',1e-4,'TolX',1e-2)
 %
 %  fmin =
 % 
-%     1.0000
+%      1
 % 
 %  out_param = 
 % 
 %             a: -2
-%        abstol: 1.0000e-04
+%        abstol: 0
 %             b: 2
-%             f: @(x)(x-0.3).^2+1
+%             f: @(x)exp(0.01*(x-0.5).^2)
+%       maxiter: 1000
 %           nhi: 100
 %           nlo: 10
 %          nmax: 1000000
-%          TolX: 0.0100
+%          TolX: 1.0000e-04
 %         ninit: 64
-%           tau: 125
-%      exitflag: 0
-%       npoints: 2017
-%        errest: 6.2273e-05
-%       volumeX: 0.0146
-%     tauchange: 0
+%      exitflag: [0 0]
+%          iter: 11
+%       npoints: 129025
+%        errest: 3.1664e-12
+%       volumeX: 6.2004e-05
 %     intervals: [2x1 double]
 %
-%
-%   See also FMINBND, FUNAPPX_G, INTEGRAL_G
+%  See also FMINBND, FUNAPPX_G, INTEGRAL_G
 %
 %  References
 %   [1]  Xin Tong. A Guaranteed, "Adaptive, Automatic Algorithm for
@@ -263,21 +248,19 @@ function [fmin,out_param]=funminNoPenalty_g(varargin)
 MATLABVERSION = gail.matlab_version;
 out_param = in_param;
 out_param = rmfield(out_param,'memorytest');
-out_param = rmfield(out_param,'output_x');
+
 
 %% main algorithm
 a = out_param.a;
 b = out_param.b;
 abstol = out_param.abstol;
+TolX = out_param.TolX;
 n = out_param.ninit;
-out_param.x = a:(b-a)/(n-1):b;
-y = f(out_param.x);
-fh = 4*(b-a)/(n-1);
-C0 = 1.2;
-max_errest = 1;
+x = a:(b-a)/(n-1):b;
+y = f(x);
 iSing = find(isinf(y));
 if ~isempty(iSing)
-    error('GAIL:funminNoPenalty_g:yInf',['Function f(x) = Inf at x = ', num2str(out_param.x(iSing))]);
+    error('GAIL:funminNoPenalty_g:yInf',['Function f(x) = Inf at x = ', num2str(x(iSing))]);
 end
 if length(y) == 1  
     % probably f is a constant function and Matlab would  
@@ -285,37 +268,59 @@ if length(y) == 1
     fmin = y;
     max_errest = 0;
 end
+
+fh = 4*(b-a)/(n-1);
+C0 = 2.2;
+C = @(h) C0*fh./(fh-h);
+max_errest = 1;
+
 iter = 0;
 exit_len = 2;
 % we start the algorithm with all warning flags down
 out_param.exitflag = false(1,exit_len); 
-C = @(h) C0*fh./(fh-h);
+
 
 while n < out_param.nmax
     %% Stage 1: compute length of each subinterval and approximate |f''(t)|
-    len = out_param.x(2:end)-out_param.x(1:end-1);
-    deltaf = 2*(y(1:end-2)./len(1:end-1)./(len(1:end-1)+len(2:end))-...
-                y(2:end-1)./len(1:end-1)./ len(2:end)              +...
-                y(3:end  )./len(2:end  )./(len(1:end-1)+len(2:end)));
+    len = diff(x);
+    deltaf = diff(diff(y)./len)./(len(2:end)+len(1:end-1));
     deltaf = [0 0 abs(deltaf) 0 0];
     
     %% Stage 2: compute bound of |f''(t)| and estimate error
-    h = [out_param.x(2)-a out_param.x(3)-a       ...
-         out_param.x(4:end)-out_param.x(1:end-3) ...
-         b-out_param.x(end-2)  b-out_param.x(end-1)];
-    normbd = C(max(h(1:n-1),h(3:n+1))) .* max(deltaf(1:n-1),deltaf(4:n+2)); % appx f''
+    h = [x(2)-a x(3)-a       ...
+         x(4:end)-x(1:end-3) ...
+         b-x(end-2)  b-x(end-1)];
+    normbd = C(max(h(1:n-1),h(3:n+1))) .* max(deltaf(1:n-1),deltaf(4:n+2));
     errest = len.^2/8.*normbd;
+    % find intervals contain minimum
+    Un=min(y);
+    diff_y=diff(y);
+    ln=diff_y/2+y(1:n-1)-abs(diff_y)/2-errest;
+    goodindex = find(ln < Un);
+    m = size(goodindex,2);
+    if m > 0
+        ints = zeros(2,m);
+        ints = [x(goodindex); x(goodindex+1)];
+        leftint = find([true diff(goodindex)~=1]);
+        rightint = find([diff(goodindex)~=1 true]);
+        q = size(leftint,2);
+        p = size(rightint,2);
+        ints1 = zeros(2,q);
+        ints1(1,:) = ints(1,leftint);
+        ints1(2,:) = ints(2,rightint);
+    else
+        ints1 = zeros(2,0);
+    end
+    interval=ints1;
+    volumeX = sum(interval(2,:)-interval(1,:));
     % update iterations
     max_errest = max(errest);
-    if max_errest <= abstol,
+    if max_errest <= abstol || volumeX < TolX
         break
     end 
     iter = iter + 1;
  
     %% Stage 3: find I and update x,y
-    Un=min(y);
-    diff_y=diff(y);
-    ln=diff_y/2+y(1:n-1)-abs(diff_y)/2-errest;
     badinterval = (errest > abstol | ln< Un);
     whichcut = badinterval | [badinterval(2:end) 0] | [0 badinterval(1:end-1)];
     if (out_param.nmax<(n+length(find(whichcut==1))))
@@ -331,15 +336,14 @@ while n < out_param.nmax
             'reached maximum number of iterations.'])
         break;
     end;
-    newx = out_param.x(whichcut) + 0.5 * len(whichcut);
+    newx = x(whichcut) + 0.5 * len(whichcut);
     tt = cumsum(whichcut); 
-    out_param.x([1 (2:n)+tt]) = out_param.x;
+    x([1 (2:n)+tt]) = x;
     y([1 (2:n)+tt]) = y;
     tem = 2 * tt + cumsum(whichcut==0);
-    out_param.x(tem(whichcut)) = newx;
+    x(tem(whichcut)) = newx;
     y(tem(whichcut)) = f(newx);
-    n = length(out_param.x);
-
+    n = length(x);
  
 end;
 
@@ -348,29 +352,18 @@ fmin = Un;
 out_param.iter = iter;
 out_param.npoints = n;
 out_param.errest = max_errest;
-%out_param.volumeX = volumeX;
-%out_param.tauchange = tauchange;
-%out_param.intervals = interval;
-% check tau change flag
-%if tauchange == 1
-%    warning('GAIL:funminNoPenalty_g:peaky','This function is peaky relative to ninit. You may wish to increase ninit for similar functions.')
-%end;
-% check cost budget flag
-%if out_param.exitflag == 1
-%    n = l;
-%    warning('GAIL:funminNoPenalty_g:exceedbudget','funminNoPenalty_g attempted to exceed the cost budget. The answer may be unreliable.')
-%end
+out_param.volumeX = volumeX;
+out_param.intervals = interval;
+
 % control the order of out_param
-out_param = orderfields(out_param, ...
-            {'f', 'a', 'b','abstol','TolX','nlo','nhi','ninit','nmax','maxiter',...
-             'exitflag','iter','npoints','errest','x'});
-if (in_param.memorytest)
-  w = whos;
-  out_param.bytes = sum([w.bytes]);
-end
-if (~in_param.output_x)
-  out_param = rmfield(out_param,'x');
-end
+% out_param = orderfields(out_param, ...
+%             {'f', 'a', 'b','abstol','TolX','nlo','nhi','ninit','nmax','maxiter',...
+%              'exitflag','iter','npoints','errest','x'});
+% if (in_param.memorytest)
+%   w = whos;
+%   out_param.bytes = sum([w.bytes]);
+% end
+
 
 
 function [f, out_param] = funminNoPenalty_g_param(varargin)
@@ -386,7 +379,7 @@ default.nhi = 1000;
 default.nmax = 1e7;
 default.maxiter = 1000;
 default.memorytest = false;
-default.output_x = false;
+
 
 MATLABVERSION = gail.matlab_version;
 if MATLABVERSION >= 8.3
@@ -401,7 +394,7 @@ if isempty(varargin)
       'Now GAIL is using f(x)=exp(-100*(x-0.5)^2) and unit interval '...
       '[0,1].'])
   help funminNoPenalty_g
-  f = @(x) exp(-100*(x-0.5).^2);
+  f = @(x) exp(0.01*(x-0.5).^2);
   out_param.f = f;
 else
   if gail.isfcn(varargin{1})
@@ -410,7 +403,7 @@ else
   else
     warning('GAIL:funminNoPenalty_g:notfunction',['Function f must be a '...
         'function handle. Now GAIL is using f(x)=exp(-100*(x-0.5)^2).'])
-    f = @(x) exp(-100*(x-0.5).^2);
+    f = @(x) exp(0.01*(x-0.5).^2);
     out_param.f = f;
   end
 end;
@@ -433,7 +426,6 @@ if ~validvarargin
     out_param.nmax = default.nmax ;
     out_param.maxiter = default.maxiter;
     out_param.memorytest = default.memorytest;
-    out_param.output_x = default.output_x;
 else
     p = inputParser;
     addRequired(p,'f',@gail.isfcn);
@@ -448,7 +440,6 @@ else
         addOptional(p,'nmax',default.nmax,@isnumeric)
         addOptional(p,'maxiter',default.maxiter,@isnumeric)
         addOptional(p,'memorytest',default.memorytest,@logical)
-        addOptional(p,'output_x',default.output_x,@logical)
     else
         if isstruct(in2) %parse input structure
             p.StructExpand = true;
@@ -463,7 +454,6 @@ else
         f_addParamVal(p,'nmax',default.nmax,@isnumeric);
         f_addParamVal(p,'maxiter',default.maxiter,@isnumeric);
         f_addParamVal(p,'memorytest',default.memorytest,@logical);
-        f_addParamVal(p,'output_x',default.output_x,@logical);
     end
     parse(p,f,varargin{2:end})
     out_param = p.Results;
@@ -494,11 +484,19 @@ elseif(out_param.b == out_param.a)
 end;
 
 % let error tolerance greater than 0
-if (out_param.abstol <= 0 )
+if (out_param.abstol < 0 )
     warning('GAIL:funminNoPenalty_g:tolneg', ['Error tolerance should be greater'...
         ' than 0. Using default error tolerance ' num2str(default.abstol)])
     out_param.abstol = default.abstol;
 end
+
+%let length tolerance greater than 0
+if (out_param.TolX < 0)
+    warning('GAIL:funmin_g:Xtolnonpos', ['X tolerance should be greater than or equal to 0.' ...
+        ' Using default X tolerance ' num2str(default.TolX)]);
+    out_param.TolX = default.TolX;
+end
+
 % let cost budget be a positive integer
 if (~gail.isposint(out_param.nmax))
     if gail.isposintive(out_param.nmax)
@@ -565,21 +563,16 @@ if (~gail.isposint(out_param.maxiter))
         warning('GAIL:funminNoPenalty_g:maxiternotint',['Max number of '...
             'iterations should be a positive integer. Using max number '...
             'of iterations as  ', num2str(ceil(out_param.maxiter))])
-        out_param.nmax = ceil(out_param.nmax);
+        out_param.maxiter = ceil(out_param.maxiter);
     else
         warning('GAIL:funminNoPenalty_g:budgetisneg',['Max number of iterations'...
             ' should be a positive integer. Using max number of '...
             'iterations as ' int2str(default.maxiter)])
-        out_param.nmax = default.nmax;
+        out_param.maxiter = default.maxiter;
     end;
 end
 if (out_param.memorytest~=true&&out_param.memorytest~=false)
     warning('GAIL:funminNoPenalty_g:memorytest', ['Input of memorytest'...
         ' can only be true or false; use default value false'])
     out_param.memorytest = false;
-end;
-if (out_param.output_x~=true&&out_param.output_x~=false)
-    warning('GAIL:funminNoPenalty_g:output_x', ['Input of output_x'...
-        ' can only be true or false; use default value false'])
-    out_param.output_x = false;
 end;
