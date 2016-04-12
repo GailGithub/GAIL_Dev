@@ -108,9 +108,9 @@ function [fmin,out_param]=funminNoPenalty_g(varargin)
 %          TolX: 1.0000e-03
 %           nlo: 10
 %           nhi: 1000
+%         ninit: 100
 %          nmax: 10000000
 %       maxiter: 1000
-%         ninit: 100
 %      exitflag: [0 0]
 %          iter: 1
 %       npoints: 199
@@ -130,16 +130,16 @@ function [fmin,out_param]=funminNoPenalty_g(varargin)
 % 
 %  out_param = 
 % 
-%             a: -2
-%        abstol: 1.0000e-07
-%             b: 2
 %             f: @(x)exp(0.01*(x-0.5).^2)
-%       maxiter: 1000
-%           nhi: 10
-%           nlo: 10
-%          nmax: 1000000
+%             a: -2
+%             b: 2
+%        abstol: 1.0000e-07
 %          TolX: 1.0000e-04
+%           nlo: 10
+%           nhi: 10
 %         ninit: 10
+%          nmax: 1000000
+%       maxiter: 1000
 %      exitflag: [0 0]
 %          iter: 7
 %       npoints: 1153
@@ -163,16 +163,16 @@ function [fmin,out_param]=funminNoPenalty_g(varargin)
 %  
 %  out_param = 
 % 
-%             a: -13
-%        abstol: 1.0000e-07
-%             b: 8
 %             f: @(x)exp(0.01*(x-0.5).^2)
-%       maxiter: 1000
-%           nhi: 100
-%           nlo: 10
-%          nmax: 1000000
+%             a: -13
+%             b: 8
+%        abstol: 1.0000e-07
 %          TolX: 1.0000e-04
+%           nlo: 10
+%           nhi: 100
 %         ninit: 91
+%          nmax: 1000000
+%       maxiter: 1000
 %      exitflag: [0 0]
 %          iter: 8
 %       npoints: 9508
@@ -192,16 +192,16 @@ function [fmin,out_param]=funminNoPenalty_g(varargin)
 % 
 %  out_param = 
 % 
-%             a: -2
-%        abstol: 0
-%             b: 2
 %             f: @(x)exp(0.01*(x-0.5).^2)
-%       maxiter: 1000
-%           nhi: 100
-%           nlo: 10
-%          nmax: 1000000
+%             a: -2
+%             b: 2
+%        abstol: 0
 %          TolX: 1.0000e-04
+%           nlo: 10
+%           nhi: 100
 %         ninit: 64
+%          nmax: 1000000
+%       maxiter: 1000
 %      exitflag: [0 0]
 %          iter: 11
 %       npoints: 129025
@@ -288,9 +288,7 @@ while n < out_param.nmax
     deltaf = [0 0 abs(deltaf) 0 0];
     
     %% Stage 2: compute bound of |f''(t)| and estimate error
-    h = [x(2)-a x(3)-a       ...
-         x(4:end)-x(1:end-3) ...
-         b-x(end-2)  b-x(end-1)];
+    h = [x(2)-a  x(3)-a  x(4:end)-x(1:end-3)  b-x(end-2)  b-x(end-1)];
     normbd = C(max(h(1:n-1),h(3:n+1))) .* max(deltaf(1:n-1),deltaf(4:n+2));
     errest = len.^2/8.*normbd;
     % find intervals contain minimum
@@ -344,7 +342,6 @@ while n < out_param.nmax
     x(tem(whichcut)) = newx;
     y(tem(whichcut)) = f(newx);
     n = length(x);
- 
 end;
 
 %% postprocessing
@@ -356,9 +353,9 @@ out_param.volumeX = volumeX;
 out_param.intervals = interval;
 
 % control the order of out_param
-% out_param = orderfields(out_param, ...
-%             {'f', 'a', 'b','abstol','TolX','nlo','nhi','ninit','nmax','maxiter',...
-%              'exitflag','iter','npoints','errest','x'});
+out_param = orderfields(out_param, ...
+            {'f', 'a', 'b','abstol','TolX','nlo','nhi','ninit','nmax','maxiter',...
+             'exitflag','iter','npoints','errest','volumeX', 'intervals'});
 % if (in_param.memorytest)
 %   w = whos;
 %   out_param.bytes = sum([w.bytes]);
