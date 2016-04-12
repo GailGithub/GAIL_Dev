@@ -232,7 +232,7 @@ classdef gail1D_in_param < gail.gail_in_param & matlab.mixin.CustomDisplay
             end
             % let cost budget be a positive integer
             if (~gail.isposint(out_param.nmax))
-                if gail.isposintive(out_param.nmax)
+                if gail.ispositive(out_param.nmax)
                     warning('GAIL:gail1D_in_param:budgetnotint',['Cost budget should be '...
                         'a positive integer. Using cost budget '...
                         , num2str(ceil(out_param.nmax))])
