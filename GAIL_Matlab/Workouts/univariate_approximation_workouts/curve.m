@@ -12,7 +12,7 @@ f = @(x) x.^2 .* sin((2*pi)./x.^2);
 %% Function approximation
 % We use funappxNoPenalty_g to approximate \(f\) over the interval
 % \([a,b]\):
-a = 0.2;
+a = 1e-2;
 b = 2.5;
 [q,out] = funappxNoPenalty_g(f, a, b);
 
@@ -24,7 +24,7 @@ plot(x,q(x));
 axis tight
 
 %% Plot of the apprroximation errors  
-% The plot shows that all pointwise absolute errors are less than the
+% The following plot shows that all pointwise absolute errors are less than the
 % default tolerance of \(10^{-6}\).
 figure;
 plot(x,abs(f(x)-q(x))); 

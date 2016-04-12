@@ -1,7 +1,11 @@
 function [fappx, out_param] = par_funappx_g(workers,varargin)
 %   Example 1:
-%   Create a pool of workers:
-%   >> if isempty(gcp), parpool;  end
+%   Create a pool of 8 workers:
+%      myCluster = parcluster('local')
+%      myCluster.NumWorkers = 8;
+%      saveProfile(myCluster);
+%      if isempty(gcp), parpool; end
+%
 %   >> f = @(x) x.^2;
 %   >> [fappx, out_param] = par_funappx_g(4,f,-2,2,1e-7,20,20); out_param
 %   out_param = 
@@ -26,7 +30,7 @@ function [fappx, out_param] = par_funappx_g(workers,varargin)
 %
 %
 %  To release workers:
-%  if ~isempty(gcp),  delete(gcp); end
+%   delete(gcp); 
 
 
 in_param = gail.funappx_g_in_param(varargin{:});
@@ -43,7 +47,9 @@ fa = cell(1,workers);
 ou = cell(1,workers);
 parfor i=1:workers,
     aa=a+(i-1)*h;
-    [fappx,out] = funappxNoPenalty_g(f, aa, aa+h, out_param.abstol, max(5,out_param.nlo/workers), max(5,out_param.nhi/workers), out_param.nmax/workers, out_param.maxiter, 'output_x', 1);
+    [fappx,out] = funappxNoPenalty_g(f, aa, aa+h, out_param.abstol, ...
+        max(5,out_param.nlo/workers), max(5,out_param.nhi/workers), ...
+        ceil(out_param.nmax/workers), out_param.maxiter, 'output_x', 1);
     fa{i} = fappx;
     ou{i} = out;
 end

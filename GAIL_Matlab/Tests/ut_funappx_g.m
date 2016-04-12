@@ -173,7 +173,14 @@ classdef ut_funappx_g < matlab.unittest.TestCase
             in_param.nlo = 1; in_param.nhi =1;
             [~, result] = funappx_g(f,in_param);
             testCase.verifyEqual(result.npoints,3);
-        end
+         end
 
+                 
+         function funappx_gHighAccuracy(testCase)
+            [fappx, result] = funappx_g(@(x)exp(x),'a',-2,'b',2,'nhi',20,'nlo',10, 'abstol', 1e-12);
+            x = rand(1000000,1)*(result.b-result.a)+result.a;
+            actualerr = max(abs(fappx(x)-result.f(x)));
+            testCase.verifyLessThanOrEqual(actualerr,result.abstol);
+        end
     end
 end
