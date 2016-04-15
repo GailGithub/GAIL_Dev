@@ -265,9 +265,11 @@ exit_len = 2;
 % we start the algorithm with all warning flags down
 out_param.exitflag = false(1,exit_len);
 %fh = b-a;
-fh = 4*(b-a)/(ninit-1);
-C0 = 2.1;
-C = @(h) C0*fh./(fh-h);
+C0 = 1.05;
+fh = 5*(b-a)/(ninit-1);
+C = @(h) (C0 * fh)./(fh-h);
+%C0 = 2; C = @(h) (C0 * 2)./(1+exp(-h)); % logistic
+%C0 = 2; C = @(h) C0 * (1+h.^2);         % quadratic
 npoints = ninit;
 max_errest = 1;
 for iter_i = 1:out_param.maxiter,
@@ -276,7 +278,7 @@ for iter_i = 1:out_param.maxiter,
     %deltaf = 2*(y(1:end-2)./len(1:end-1)./(len(1:end-1)+len(2:end))-...
     %            y(2:end-1)./len(1:end-1)./ len(2:end)              +...
     %            y(3:end  )./len(2:end  )./(len(1:end-1)+len(2:end)))
-    deltaf = diff(diff(y(1:npoints))./len)./(len(2:end)+len(1:end-1));
+    deltaf = 2 * diff(diff(y(1:npoints))./len)./(len(2:end)+len(1:end-1));
     deltaf = [0 0 abs(deltaf) 0 0];
     
     %% Stage 2: compute bound of |f''(t)| and estimate error
@@ -308,6 +310,14 @@ for iter_i = 1:out_param.maxiter,
     end;
 
     newx = x(whichcut) + 0.5 * len(whichcut);
+    if npoints + length(newx) > length(x)
+      xx = zeros(1, out_param.nmax);
+      yy = xx;
+      xx(1:npoints) = x(1:npoints);
+      yy(1:npoints) = y(1:npoints);
+      x = xx;
+      y = yy;
+    end
     tt = cumsum(whichcut);   
     x([1 (2:npoints)+tt]) = x(1:npoints);
     y([1 (2:npoints)+tt]) = y(1:npoints);
@@ -319,6 +329,11 @@ for iter_i = 1:out_param.maxiter,
     npoints = npoints + length(newx);
 end;
 
+% min_len = min(len);
+% max_len = max(len);
+% max_delta = max(deltaf)l
+% [~,ind] = find(deltaf > 0);
+% min_delta = min(deltaf(ind));
 x = x(1:npoints);
 y = y(1:npoints);
 %% postprocessing
@@ -326,9 +341,9 @@ out_param.iter = iter;
 out_param.npoints = npoints;
 out_param.errest = max_errest;
 % control the order of out_param
-%out_param = orderfields(out_param, ...
+% out_param = orderfields(out_param, ...
 %            {'f', 'a', 'b','abstol','nlo','nhi','ninit','nmax','maxiter',...
-%             'exit','iter','npoints','errest','x'});
+%             'exitflag','iter','npoints','errest'});
 if MATLABVERSION >= 8.3
     fappx = griddedInterpolant(x,y,'linear');
 else
