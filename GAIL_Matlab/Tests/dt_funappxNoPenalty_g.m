@@ -25,8 +25,8 @@ function dt_funappxNoPenalty_g
 %           nmax: 10000000
 %        maxiter: 1000
 %       exitflag: [0 0]
-%           iter: 9
-%        npoints: 205569
+%           iter: 8
+%        npoints: 102785
 %         errest: ***e-09
 %
 % 
