@@ -413,7 +413,6 @@ elseif out_param.mmin == out_param.mmax % We are on our max budget and did not m
    out_param.exit(1) = true;
 end
 
-betaUpdate=1;
 %% Loop over m
 for m=out_param.mmin+1:out_param.mmax
    if is_done,
@@ -470,7 +469,7 @@ for m=out_param.mmin+1:out_param.mmax
       end
    end
 
-   if betaUpdate&&cv.J
+   if out_param.betaUpdate&&cv.J
        xpts=sobstr(1:n0,1:out_param.d);
        if strcmp(cv.format, 'cellfunc')
            ycv = cell2mat(f(xpts));
@@ -614,6 +613,7 @@ default.mmax  = 24;
 default.fudge = @(m) 5*2.^-m;
 default.toltype  = 'max';
 default.theta  = 1;
+default.betaUpdate = 0;
 validcv = @(x) gail.isfcn(x) || isstruct(x) ;% 2 formats of f
 
 if numel(varargin)<2
@@ -673,6 +673,7 @@ if ~validvarargin
     out_param.fudge = default.fudge;
     out_param.toltype = default.toltype;
     out_param.theta = default.theta;
+    out_param.betaUpdate= default.betaUpdate;
 else
     p = inputParser;
     addRequired(p,'f', validcv);
@@ -688,6 +689,7 @@ else
         addOptional(p,'toltype',default.toltype,...
             @(x) any(validatestring(x, {'max','comb'})));
         addOptional(p,'theta',default.theta,@isnumeric);
+        addOptional(p,'betaUpdate',default.betaUpdate,@isnumeric);
     else
         if isstruct(in3) %parse input structure
             p.StructExpand = true;
@@ -703,6 +705,7 @@ else
         f_addParamVal(p,'toltype',default.toltype,...
             @(x) any(validatestring(x, {'max','comb'})));
         f_addParamVal(p,'theta',default.theta,@isnumeric);
+        f_addParamVal(p,'betaUpdate',default.betaUpdate,@isnumeric);
     end
     parse(p,f,hyperbox,varargin{3:end})
     out_param = p.Results;
