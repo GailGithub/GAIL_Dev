@@ -6,7 +6,9 @@ x = a:10^-n:b;
 f = out_param.f;
 err = abs(f(x)-fappx(x));
 [~,ind] = find(err > out_param.abstol);
-semilogy(x, err); xlabel('x'); ylabel('absolute error'); hold on
+figure; plot(x, f(x));
+figure; plot(x, fappx(x));
+figure; semilogy(x, err); xlabel('x'); ylabel('absolute error'); hold on
 semilogy(x(ind), err(ind), 'r'); hold off
 axis tight
 err = max(err);
