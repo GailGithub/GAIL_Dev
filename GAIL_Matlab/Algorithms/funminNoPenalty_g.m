@@ -248,7 +248,6 @@ function [fmin,out_param]=funminNoPenalty_g(varargin)
 [f, in_param] = funminNoPenalty_g_param(varargin{:});
 MATLABVERSION = gail.matlab_version;
 out_param = in_param;
-out_param = rmfield(out_param,'memorytest');
 
 
 %% main algorithm
@@ -275,7 +274,7 @@ C0 = 2.2;
 C = @(h) C0*fh./(fh-h);
 max_errest = 1;
 
-iter = 0;
+iter = 1;
 exit_len = 2;
 % we start the algorithm with all warning flags down
 out_param.exitflag = false(1,exit_len); 
@@ -356,10 +355,7 @@ out_param.intervals = interval;
 out_param = orderfields(out_param, ...
             {'f', 'a', 'b','abstol','TolX','nlo','nhi','ninit','nmax','maxiter',...
              'exitflag','iter','npoints','errest','volumeX', 'intervals'});
-% if (in_param.memorytest)
-%   w = whos;
-%   out_param.bytes = sum([w.bytes]);
-% end
+
 
 
 
@@ -375,7 +371,7 @@ default.nlo = 10;
 default.nhi = 1000;
 default.nmax = 1e7;
 default.maxiter = 1000;
-default.memorytest = false;
+
 
 
 MATLABVERSION = gail.matlab_version;
@@ -422,7 +418,6 @@ if ~validvarargin
     out_param.nhi = default.nhi;
     out_param.nmax = default.nmax ;
     out_param.maxiter = default.maxiter;
-    out_param.memorytest = default.memorytest;
 else
     p = inputParser;
     addRequired(p,'f',@gail.isfcn);
@@ -436,7 +431,6 @@ else
         addOptional(p,'nhi',default.nhi,@isnumeric);
         addOptional(p,'nmax',default.nmax,@isnumeric)
         addOptional(p,'maxiter',default.maxiter,@isnumeric)
-        addOptional(p,'memorytest',default.memorytest,@logical)
     else
         if isstruct(in2) %parse input structure
             p.StructExpand = true;
@@ -450,7 +444,6 @@ else
         f_addParamVal(p,'nhi',default.nhi,@isnumeric);
         f_addParamVal(p,'nmax',default.nmax,@isnumeric);
         f_addParamVal(p,'maxiter',default.maxiter,@isnumeric);
-        f_addParamVal(p,'memorytest',default.memorytest,@logical);
     end
     parse(p,f,varargin{2:end})
     out_param = p.Results;
@@ -568,8 +561,4 @@ if (~gail.isposint(out_param.maxiter))
         out_param.maxiter = default.maxiter;
     end;
 end
-if (out_param.memorytest~=true&&out_param.memorytest~=false)
-    warning('GAIL:funminNoPenalty_g:memorytest', ['Input of memorytest'...
-        ' can only be true or false; use default value false'])
-    out_param.memorytest = false;
-end;
+
