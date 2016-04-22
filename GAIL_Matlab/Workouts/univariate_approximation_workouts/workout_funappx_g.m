@@ -1,192 +1,187 @@
 %comparison between funappx_g and funappxlocal_g
-function [timeratio,timelgratio,npointsratio,npointslgratio]=workout_funappx_g(nrep,abstol,nlo,nhi,varargin)
+function [timeratio,timelgratio,npointsratio,npointslgratio]=workout_funappx_g(nrep,abstol,varargin)
 % user can choose absolut error tolerance, initial number of points, number
 % of iteration or can use the following parameters
-% nrep = 100; abstol = 1e-7; nlo = 100; nhi = 1000;
+% nrep = 100; abstol = 1e-13; nlo = 100; nhi = 1000;
 % 
 % Compare funappx_g with funappxglobal_g:
-% [timeratio,timelgratio,npointsratio,npointslgratio]=workout_funappx_g(nrep,abstol,nlo,nhi);
+% [timeratio,timelgratio,npointsratio,npointslgratio]=workout_funappx_g(nrep,abstol);
 %
 % Compare funappxNoPenalty_g with funappxglobal_g:
-% [timeratio,timelgratio,npointsratio,npointslgratio]=workout_funappx_g(nrep,abstol,nlo,nhi,'funappxNoPenalty_g');
+% [timeratio,timelgratio,npointsratio,npointslgratio]=workout_funappx_g(nrep,abstol,'funappxNoPenalty_g');
 
 c = rand(nrep,1)*4;
-n = 3;
-npoints = zeros(n,2,nrep);
-time = zeros(n,2,nrep);
+n = 6; % number of test functions
+m = 3; % number of methods
+npoints = zeros(n,m,nrep);
+time = zeros(n,m,nrep);
+trueerrormat = zeros(n,m,nrep);
+exceedmat  = zeros(n,m,nrep);
 if isempty(varargin)
   algoname = 'funappx_g';
-  algo = @(f,a,b,abstol,nlo,nhi) funappx_g(f,a,b,abstol,nlo,nhi);
+  algo = @(f,a,b,abstol) funappx_g(f,a,b,abstol);
 else 
   algoname = varargin{1};
-  algo = str2func(['@(f,a,b,abstol,nlo,nhi)', algoname,'(f,a,b,abstol,nlo,nhi)']);  
+  algo = str2func(['@(f,a,b,abstol)', algoname,'(f,a,b,abstol)']);  
 end
+
+algo2 = @(f,a,b,abstol) funappxglobal_g(f,a,b,abstol);
+algo3 = @(f,a,b) chebfun(f, [a,b]);
+methods = {algo, algo2, algo3};
 
 warning('off',['GAIL:',algoname,':peaky'])
 warning('off',['GAIL:',algoname,':exceedbudget'])
+warning('off',['GAIL:',algoname,':fSmallerThanAbstol'])
 warning('off','GAIL:funappxglobal_g:peaky')
 warning('off','GAIL:funappxglobal_g:exceedbudget')
-for i = 1:nrep;
-    a = 0;
-    b = c(i)+1;
-    f1 = @(x) (x-c(i)).^2;
-    f2 = @(x) c(i)*sin(c(i)*pi*x);
-    f3 = @(x) 10*exp(-1000*(x-c(i)).^2);
-%     f4 = @(x) 1/4*c(i)*exp(-2*x).*(c(i)-2*exp(x).*(-1 +...
-%         c(i)*cos(x) - c(i)*sin(x))+exp(2*x).*(c(i) + 2*cos(x)...
-%         - 2* sin(x) - c(i)*sin(2*x)));
-    tic;
-    [~, out_param] = algo(f1,a,b,abstol,nlo,nhi);
-    t=toc;
-    time(1,1,i) = t;
-    npoints(1,1,i) = out_param.npoints;
-    tic;
-    [~, out_param] = funappxglobal_g(f1,a,b,abstol,nlo,nhi);
-    t=toc;
-    time(1,2,i) = t;
-    npoints(1,2,i) = out_param.npoints;
-    tic;
-    [~, out_param] = algo(f2,a,b,abstol,nlo,nhi);
-    t=toc;
-    time(2,1,i) =  t;
-    npoints(2,1,i) = out_param.npoints;
-    tic;
-    [~, out_param] = funappxglobal_g(f2,a,b,abstol,nlo,nhi);
-    t=toc;
-    time(2,2,i) =  t;
-    npoints(2,2,i) = out_param.npoints;
-    %if npoints(2,1,i)*1.0/npoints(2,2,i) > 3
-    %    disp(['slow']), c(i), a, b
-    %end
-    tic;
-    [~, out_param] = algo(f3,a,b,abstol,nlo,nhi);
-    t=toc;
-    time(3,1,i) =   t;
-    npoints(3,1,i) = out_param.npoints;
-    tic;
-    [~, out_param] = funappxglobal_g(f3,a,b,abstol,nlo,nhi);
-    t=toc;
-    time(3,2,i) =   t;
-    npoints(3,2,i) = out_param.npoints;
-    %if npoints(3,1,i)*1.0/npoints(3,2,i) < 0.05
-    %    disp(['fast']), c(i), a, b
-    %end
-%     tic;
-%     [~, out_param] = algo(f4,a,b,abstol,nlo,nhi);
-%     t=toc;
-%     time(4,1,i) = t;
-%     npoints(4,1,i) = out_param.npoints;
-%     tic;
-%     [~, out_param] = funappxglobal_g(f4,a,b,abstol,nlo,nhi);
-%     t=toc;
-%     time(4,2,i) =   t;
-%     npoints(4,2,i) = out_param.npoints;
-%     tic;
+
+a = zeros(1,n);
+b = zeros(1,n);
+a(1:3) = [-1,-1,-1];
+b(1:3) = [1,1,1];
+for i = 1:nrep
+    f1 = @(x) x.^4 .* sin(c(i)./x);
+    f2 = @(x) f1(x) + c(i).*x.^2;
+    delta = .2; B = 1./(2*delta.^2); cc = -c(i);
+    f3 = @(x) B*(4*delta.^2 + (x-cc).^2 + (x-cc-delta).*abs(x-cc-delta) ...
+        - (x-cc+delta).*abs(x-cc+delta)).*(abs(x-cc) <= 2*delta);
+    f4 = @(x) (x-c(i)).^2;
+    f5 = @(x) c(i)*sin(c(i)*pi*x);
+    f6 = @(x) 10*exp(-1000*(x-c(i)).^2);
+    %          f4 = @(x) 1/4*c(i)*exp(-2*x).*(c(i)-2*exp(x).*(-1 +...
+    %              c(i)*cos(x) - c(i)*sin(x))+exp(2*x).*(c(i) + 2*cos(x)...
+    %              - 2* sin(x) - c(i)*sin(2*x)));
+    fcns = {f1, f2, f3, f4, f5, f6};
+
+    for j = 1:length(fcns)
+        f = fcns{j};
+        if j > 3,     
+            b(j) = c(i)+1;
+        end
+        xx = a(j):0.000001:b(j);%rand(1000000,1)*(b-a)+a;
+        exactyy = f(xx);
+        for k = 1:length(methods)
+            if k <=2
+                tic; [fappx, out_param] = methods{k}(f,a(j),b(j),abstol); t=toc;
+                npoints(j,k,i) = out_param.npoints;
+            elseif k==3 
+                try
+                    splitting on
+                    tic, fappx = chebfun(f,[a(j),b(j)]); t=toc;
+                    if length(lastwarn) > 0
+                      exceedmat(j,k,i) = 1;
+                      lastwarn('') 
+                    end
+                end
+                npoints(j,k,i) = length(fappx);
+            end
+            time(j,k,i) = t;
+            
+            if k ==1 || k==3
+                yy = fappx(xx);
+            elseif k ==2
+                yy = ppval(fappx,xx);  
+            end
+        
+            trueerrormat(j,k,i) = max(abs(yy-exactyy));
+%             if trueerrormat(j,k,i)  > abstol
+%                cf_chebfun(f,a,b);
+%                keyboard
+%             end
+            if k==1
+                exceedmat(j,k,i) = sum(out_param.exitflag)>0;
+            elseif k==2
+                exceedmat(j,k,i) = out_param.exceedbudget;
+            end
+        end
+    end
 end;
 warning('on','GAIL:funappxglobal_g:exceedbudget')
 warning('on','GAIL:funappxglobal_g:peaky')
 warning('on',['GAIL:',algoname,':peaky'])
 warning('on',['GAIL:',algoname,':exceedbudget'])
+warning('on',['GAIL:',algoname,':fSmallerThanAbstol'])
 
 cc = 2.5;
-test1 = @(x) (x-cc).^2;
-test2 = @(x) cc*sin(cc*pi*x);
-test3 = @(x) 10*exp(-1000*(x-cc).^2);
-% test4 = @(x) 1/4*cc*exp(-2*x).*(cc-2*exp(x).*(-1 +...
-%     cc*cos(x) - cc*sin(x))+exp(2*x).*(cc + 2*cos(x)...
-%     - 2* sin(x) - cc*sin(2*x)));
-x = 0:0.05:3.5;
-y1 = test1(x);
-y2 = test2(x);
-y3 = test3(x);
-% y4 = test4(x);
+x = cell(length(fcns));
+y = cell(length(fcns));
+for i=1:length(fcns)
+   x{i}= a(i):0.05:b(i);
+   y{i} = fcns{i}(x{i});
+end
+ 
 
 timeratio = zeros(nrep,n);
 npointsratio = zeros(nrep,n);
-for i=1:nrep;
-    for j=1:n;
-        timeratio(i,j) = time(j,1,i)/time(j,2, i);
+for i=1:nrep
+    for j=1:n
+          timeratio(i,j) = time(j,1,i)/time(j,2,i);
     end
 end
 
 for i=1:nrep;
     for j=1:n;
-        npointsratio(i,j) = npoints(j,1,i)/npoints(j,2, i); 
+        npointsratio(i,j) = npoints(j,1,i)/npoints(j,2,i); 
     end
 end
 
 timeratio = sort(timeratio(:));
 npointsratio = sort(npointsratio(:));
 
-
 %% Output the table
 % To just re-display the output, load the .mat file and run this section
 % only
 display(' ')
-display('   Test      Number of Points       Time Used')
-display(' Function   Local      Global     Local    Global')
+display('   Test         Number of Points                    Time Used                          Success                                      Failure')
+display('  Function   ----------------------------    -------------------------------     --------------------------------------   ----------------------------------------');
+display('             Local      Global    Chebfun    Local       Global      Chebfun     Local        Global         Chebfun       Local         Global        Chebfun')
+display('                                                                                 No Warn Warn No Warn Warn   No Warn Warn  No Warn Warn  No Warn Warn  No Warn Warn')
 npointslgratio = zeros(1,n);
 timelgratio = zeros(1,n);
 
 for i=1:n
-    display(sprintf('%9.0f %9.0f  %9.0f %11.7f  %11.7f',...
-        [i mean(npoints(i,1,:)) mean(npoints(i,2,:)) mean(time(i,1,:)) mean(time(i,2,:))])) 
+    display(sprintf('%9.0f %9.0f %9.0f  %9.0f %11.3f  %11.3f %11.3f  %6.0f %6.0f %6.0f %6.0f %6.0f   %6.0f %6.0f %6.0f %6.0f %6.0f %6.0f %6.0f',...
+        [i mean(npoints(i,1,:)) mean(npoints(i,2,:)) mean(npoints(i,3,:))...
+           mean(time(i,1,:)) mean(time(i,2,:)) mean(time(i,3,:))...
+           100.0*sum(trueerrormat(i,1,:)<=abstol & (~exceedmat(i,1,:)))/nrep 100.0*sum(trueerrormat(i,1,:)<=abstol & (exceedmat(i,1,:)))/nrep ...
+           100.0*sum(trueerrormat(i,2,:)<=abstol & (~exceedmat(i,2,:)))/nrep 100.0*sum(trueerrormat(i,2,:)<=abstol & (exceedmat(i,2,:)))/nrep ...
+           100.0*sum(trueerrormat(i,3,:)<=abstol & (~exceedmat(i,3,:)))/nrep 100.0*sum(trueerrormat(i,3,:)<=abstol & (exceedmat(i,3,:)))/nrep...
+           100.0*sum(trueerrormat(i,1,:)>abstol & (~exceedmat(i,1,:)))/nrep  100.0*sum(trueerrormat(i,1,:)>abstol & (exceedmat(i,1,:)))/nrep ...
+           100.0*sum(trueerrormat(i,2,:)>abstol & (~exceedmat(i,2,:)))/nrep  100.0*sum(trueerrormat(i,2,:)>abstol & (exceedmat(i,2,:)))/nrep ...
+           100.0*sum(trueerrormat(i,3,:)>abstol & (~exceedmat(i,3,:)))/nrep  100.0*sum(trueerrormat(i,3,:)>abstol & (exceedmat(i,3,:)))/nrep]))
     npointslgratio(i) = mean(npoints(i,1,:))/mean(npoints(i,2,:));
     timelgratio(i) = mean(time(i,1,:))/mean(time(i,2,:));
 end
+
 idx=find(timeratio<1);
 max_idx_t = max(idx);
 timeratio(1:max_idx_t) = 1./timeratio(1:max_idx_t);
 idx=find(npointsratio<1);
 max_idx_n = max(idx);
 npointsratio(1:max_idx_n) = 1.0 ./npointsratio(1:max_idx_n);
+ 
+
+%% Output the table
+% To just re-display the output, load the .mat file and run this section
+% only
 
 %% Save Output
-
 [~,~,MATLABVERSION] = GAILstart(false);
+markers = {'--go', ':r*', '-.b*', '-g+', '--ro', '-.b'};
 if usejava('jvm') || MATLABVERSION <= 7.12
     figure
-    plot(x,y1,'g--+',x,y2,'b--x',x,y3,'m--o')
-    legend('Quadratic','Oscillatory','Peaky')
+    for i=1:length(fcns)
+      plot(x{i},y{i}, markers{i}); hold on
+    end
+
+    legend('f1','f2','f3', 'f4', 'f5', 'f6')
     gail.save_eps('WorkoutFunappxOutput', 'testfun');
     
     figure
-    %     subplot(2,1,1);
-    %     plot(1:nrep*n,timeratio,'blue',1:nrep*n,ones(nrep*n,1),'red');
-    %     title('Comparison between funappx\_g and funappxglobal\_g')
-    %     ylabel('Time ratio of local/global')
-    %     xlabel('Number of tests')
-    %     subplot(2,1,2);
-    %     plot(1:nrep*n,npointsratio,'blue',1:nrep*n,ones(nrep*n,1),'red');
-    %     ylabel('Points ratio of local/global')
-    %     xlabel('Number of tests')
-    %
-    %     gail.save_eps('WorkoutFunappxOutput', 'WorkoutFunAppxTest');
     t =1:nrep*n;
     plot(t,timeratio,'r',t,npointsratio,'b:');
     legend('time ratio','points ratio');
     gail.save_eps('WorkoutFunappxOutput', ['Workout',algoname,'Test']);
-    %show two y-axis in one graph
-%     ax = plotyy(t,timeratio,t,npointsratio,'plot','plot');
-%     ylabel(ax(1),'Time ratio of local/global') % label left y-axis
-%     ylabel(ax(2),'Points ratio of local/global') % label right y-axis
-%     xlabel(ax(2),'Number of tests') % label x-axis
-%     %     p1.LineStyle = '--';
-%     %     p1.LineWidth = 2;
-%     %     p2.LineWidth = 2;
-%     grid(ax(1),'on')
-%     gail.save_eps('WorkoutFunappxOutput', 'WorkoutFunAppxTest');
-    %show two x-axis and y-axis in one graph
-%     line(t,timeratio,'Color','r','LineStyle','--o')
-%     ax1 = gca;
-%     set(ax1,'XColor','r','YColor','r')
-%     ax2 = axes('Position',get(ax1,'Position'),...
-%         'XAxisLocation','top',...
-%         'YAxisLocation','right',...
-%         'Color','none',...
-%         'XColor','b','YColor','b');
-%     line(t,npointsratio,'Color','b','LineStyle','--x','Parent',ax2);
-%     gail.save_eps('WorkoutFunappxOutput', 'WorkoutFunAppxTest');   
 end;
 gail.save_mat('WorkoutFunappxOutput', ['Workout',algoname,'Test'], true, npoints,time,...
     c,timeratio,npointsratio,npointslgratio,timelgratio);
