@@ -1,6 +1,6 @@
 function cf_chebfun(f, a, b)
 % Examples:
-% f1 = @(x) x.^4 .* sin(1./x); a = -1; b = 1; cf_chebfun(f1, a, b)
+% f1 = @(x) x.^4 .* sin( 3.371568833721756 ./x); a = -1; b = 1; cf_chebfun(f1, a, b)
 %
 % f2 = @(x) f1(x) + 10.*x.^2;  cf_chebfun(f2, a, b)
 %
@@ -10,22 +10,44 @@ function cf_chebfun(f, a, b)
 %
 % f = @(x) sign(x);  a = -1; b = 1; cf_chebfun(f, a, b)
 % 
+format compact
+format long
+abstol = 1e-8;
 
-tic, [fappx, fout] = funappxNoPenalty_g(f,a,b,1e-13,5,5,10^8); toc
-%tic, [fappx2, fout] = funappx_g(f,a,b,1e-15,'nmax',10^8), toc
-
+%% funappx_g
+tic, [fappx, fout] = funappxNoPenalty_g(f,a,b,abstol,'nmax',10^8), toc
+gail.funappx_g_check(fappx,fout)
+%% chebfun
 splitting on;
-tic, c = chebfun(f, [a,b]); toc
+tic, c = chebfun(f, [a,b]), toc
 
 x=a:0.00001:b;
 subplot(2,3,1), plot(x,f(x)); title(['f(x) = ',func2str(f)]); axis tight
 subplot(2,3,2), plot(x,fappx(x)); title(['funappx\_g approx.']); axis tight
 subplot(2,3,3), plot(x,c(x)); title(['Chebfun approx.']); axis tight
 
-subplot(2,3,5), semilogy( x, abs( fappx(x) - f(x)), 'k' );  title('funappx\_g error'); axis tight
-err = abs(c(x) - f(x));
-subplot(2,3,6), semilogy( x, err, 'k' );   title ('chebfun error'); axis tight; hold on;
-[~,ind] = find(err > 1e-14);
+err =abs( fappx(x) - f(x));
+subplot(2,3,5), semilogy( x, err, 'k' );  title('funappx\_g error'); axis tight; hold on
+[~,ind] = find(err > abstol);
 semilogy( x(ind), err(ind), 'ro' );   hold off;
    
+err = abs(c(x) - f(x));
+subplot(2,3,6), semilogy( x, err, 'k' );   title ('chebfun error'); axis tight; hold on;
+[~,ind] = find(err > abstol);
+semilogy( x(ind), err(ind), 'ro' );   hold off;
+   
+%% funmin_g
+tic, [fmin,out2] = funminNoPenalty_g(f, a, b, abstol, abstol), toc
+figure;
+funmin_g_demo(fmin, out2);
+
+%% fminbnd
+tic, x = fminbnd(@(x) f(x),a,b), toc
+
+%% chebfun
+tic, [cy,cx] = min(c), toc
+
+%% integral_g
+tic, [fint,out3] = integralNoPenalty_g(f, a, b, abstol), toc
+tic, cint = sum(c),toc
 keyboard

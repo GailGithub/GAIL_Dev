@@ -252,6 +252,7 @@ x(1:ninit) = a:(b-a)/(ninit-1):b;
 y(1:ninit) = f(x(1:ninit));
 iSing = find(isinf(y));
 if ~isempty(iSing)
+    out_param.exitflag(5) = true;
     error('GAIL:funappxNoPenalty_g:yInf',['Function f(x) = Inf at x = ', num2str(x(iSing))]);
 end
 if length(y) == 1  
@@ -261,11 +262,11 @@ if length(y) == 1
     y(1:ninit) = f(x(1:ninit));
 end
 iter = 0;
-exit_len = 2;
+exit_len = 5;
 % we start the algorithm with all warning flags down
 out_param.exitflag = false(1,exit_len);
 %fh = b-a;
-C0 = 1.05;
+C0 = 3;
 fh = 5*(b-a)/(ninit-1);
 C = @(h) (C0 * fh)./(fh-h);
 %C0 = 2; C = @(h) (C0 * 2)./(1+exp(-h)); % logistic
@@ -278,13 +279,25 @@ for iter_i = 1:out_param.maxiter,
     %deltaf = 2*(y(1:end-2)./len(1:end-1)./(len(1:end-1)+len(2:end))-...
     %            y(2:end-1)./len(1:end-1)./ len(2:end)              +...
     %            y(3:end  )./len(2:end  )./(len(1:end-1)+len(2:end)))
-    deltaf = 2 * diff(diff(y(1:npoints))./len)./(len(2:end)+len(1:end-1));
+    deltaf = 2 * diff(diff(y(1:npoints))./len) ./ (len(1:end-1) + len(2:end));
     deltaf = [0 0 abs(deltaf) 0 0];
+    
+    min_len = min(len);
+    max_len = max(len);
+    max_delta = max(deltaf);
+    [~,ind] = find(deltaf > 0);
+    min_delta = min(deltaf(ind));
+    if max_delta < eps * max (abs(y)),
+        out_param.exitflag(3) = true;
+        warning('GAIL:funappxNoPenalty_g:zero2ndDerivative',['f(x)'''' = 0. '...
+            'The function may be outside the cone.'])
+    end
     
     %% Stage 2: compute bound of |f''(t)| and estimate error
     h = [x(2)-a x(3)-a  x(4:npoints)-x(1:npoints-3)  b-x(npoints-2)  b-x(npoints-1)];
     normbd = C(max(h(1:npoints-1),h(3:npoints+1))) .* max(deltaf(1:npoints-1),deltaf(4:npoints+2));
     errest = len.^2/8.*normbd;
+   
     % update iterations
     iter = iter + 1;
     max_errest = max(errest);
@@ -329,13 +342,17 @@ for iter_i = 1:out_param.maxiter,
     npoints = npoints + length(newx);
 end;
 
-% min_len = min(len);
-% max_len = max(len);
-% max_delta = max(deltaf)l
-% [~,ind] = find(deltaf > 0);
-% min_delta = min(deltaf(ind));
+
 x = x(1:npoints);
 y = y(1:npoints);
+
+[~, ind] = find(abs(y) > 0);
+if min(abs(y(ind))) < abstol,
+    [~, ind] = find(abs(y(ind)) < abstol);
+    out_param.exitflag(4) = true;
+    warning('GAIL:funappxNoPenalty_g:fSmallerThanAbstol',['Some values of f(x) are smaller than abstol for x in [', num2str(x(min(ind))), ',', num2str(x(max(ind))), ...
+        ']. The interpolant may be inaccurate. You may want to decrease abstol.'])
+end
 %% postprocessing
 out_param.iter = iter;
 out_param.npoints = npoints;
@@ -498,34 +515,34 @@ end
 
 if (~gail.isposint(out_param.nlo))
     if gail.isposge3(out_param.nlo)
-        warning('GAIL:funappxglobal_g:lowinitnotint',['Lower bound of '...
+        warning('GAIL:funappxgNoPenalty_g:lowinitnotint',['Lower bound of '...
         'initial number of points should be a positive integer.' ...
             ' Using ', num2str(ceil(out_param.nlo)) ' as nlo '])
         out_param.nlo = ceil(out_param.nlo);
     else
-        warning('GAIL:funappxglobal_g:lowinitlt3',[' Lower bound of '...
+        warning('GAIL:funappxgNoPenalty_g:lowinitlt3',[' Lower bound of '...
         'initial number of points should be a positive integer greater'...
         ' than 3. Using 3 as nlo'])
         out_param.nlo = 3;
    end
-        warning('GAIL:funappxglobal_g:lowinitnotint',['Lower bound of '...
+        warning('GAIL:funappxgNoPenalty_g:lowinitnotint',['Lower bound of '...
         'initial nstar should be a positive integer.' ...
         ' Using ', num2str(ceil(out_param.nlo)) ' as nlo '])
         out_param.nlo = ceil(out_param.nlo);
 end
  if (~gail.isposint(out_param.nhi))
     if gail.isposge3(out_param.nhi)
-        warning('GAIL:funappxglobal_g:hiinitnotint',['Upper bound of '...
+        warning('GAIL:funappxNoPenalty_g:hiinitnotint',['Upper bound of '...
         'initial number of points should be a positive integer.' ...
         ' Using ', num2str(ceil(out_param.nhi)) ' as nhi' ])
         out_param.nhi = ceil(out_param.nhi);
     else
-        warning('GAIL:funappxglobal_g:hiinitlt3',[' Upper bound of '...
+        warning('GAIL:funappxNoPenalty_g:hiinitlt3',[' Upper bound of '...
         'points should be a positive integer greater than 3. Using '...
         'default number of points ' int2str(default.nhi) ' as nhi' ])
         out_param.nhi = default.nhi;
     end
-         warning('GAIL:funappxglobal_g:hiinitnotint',['Upper bound of '...
+         warning('GAIL:funappxNoPenalty_g:hiinitnotint',['Upper bound of '...
         'initial nstar should be a positive integer.' ...
         ' Using ', num2str(ceil(out_param.nhi)) ' as nhi' ])
         out_param.nhi = ceil(out_param.nhi);
