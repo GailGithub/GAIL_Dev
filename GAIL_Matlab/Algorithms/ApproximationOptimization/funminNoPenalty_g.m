@@ -112,7 +112,7 @@ function [fmin,out_param]=funminNoPenalty_g(varargin)
 %          nmax: 10000000
 %       maxiter: 1000
 %      exitflag: [0 0]
-%          iter: 1
+%          iter: 2
 %       npoints: 199
 %        errest: 1.1306e-07
 %       volumeX: 0.0101
@@ -141,7 +141,7 @@ function [fmin,out_param]=funminNoPenalty_g(varargin)
 %          nmax: 1000000
 %       maxiter: 1000
 %      exitflag: [0 0]
-%          iter: 7
+%          iter: 8
 %       npoints: 1153
 %        errest: 3.9920e-08
 %       volumeX: 0.0069
@@ -174,7 +174,7 @@ function [fmin,out_param]=funminNoPenalty_g(varargin)
 %          nmax: 1000000
 %       maxiter: 1000
 %      exitflag: [0 0]
-%          iter: 8
+%          iter: 9
 %       npoints: 9508
 %        errest: 9.9894e-08
 %       volumeX: 0.0027
@@ -203,7 +203,7 @@ function [fmin,out_param]=funminNoPenalty_g(varargin)
 %          nmax: 1000000
 %       maxiter: 1000
 %      exitflag: [0 0]
-%          iter: 11
+%          iter: 12
 %       npoints: 129025
 %        errest: 3.1664e-12
 %       volumeX: 6.2004e-05
