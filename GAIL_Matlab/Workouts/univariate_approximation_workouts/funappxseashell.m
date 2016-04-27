@@ -1,10 +1,10 @@
 function funappxseashell(a, b, c, n, azimuth, elevation, res)
-% SEASHELL draws a pretty Florida seashell, using a 3D parametric surface.
+% funappxseashell draws a pretty Florida funappxseashell, using a 3D parametric surface.
 %
 % Usage:
 %
-%   seashell (a, b, c, n, azimuth, elevation, res)
-%   seashell ('spin') ;
+%   funappxseashell (a, b, c, n, azimuth, elevation, res)
+%   funappxseashell ('spin') ;
 %
 %   All arguments are optional.  The first four control the coefficients of
 %   the parametric surface (u and v are the surface parameters):
@@ -20,8 +20,8 @@ function funappxseashell(a, b, c, n, azimuth, elevation, res)
 %   azimuth, elevation: determines the viewing angle (see the 'view' function)
 %   res: the mesh size (res-by-res).  A larger number gives a smoother surface.
 %
-%   If the azimuth is Inf, then the seashell view is spun dynamically.
-%   Also try seashell ('spin') ;
+%   If the azimuth is Inf, then the funappxseashell view is spun dynamically.
+%   Also try funappxseashell ('spin') ;
 %
 % References:
 %   T. Davis & K. Sigmon, MATLAB Primer, 8th edition, CRC Press, 2010.
@@ -29,24 +29,29 @@ function funappxseashell(a, b, c, n, azimuth, elevation, res)
 %       1993, pp. 306-307.
 %
 % Example:
-%   seashell ;          % draws the front cover of the MATLAB Primer
-%   seashell (-0.5) ;   % draws the back cover
-%   seashell (a,b,c,n,az,el,res) ;  % all options, defaults:
+%   funappxseashell ;          % draws the front cover of the MATLAB Primer
+%   funappxseashell (-0.5) ;   % draws the back cover
+%   funappxseashell (a,b,c,n,az,el,res) ;  % all options, defaults:
 %                       % a=-0.2, b=0.5, c=0.1, n=2, az=-150, el=10, res=128
 %
 %   for a = -1:.1:1
-%	seashell (a) ;
-%	drawnow ;
+%	  funappxseashell (a) ;
+%	  drawnow ;
 %   end
 %   for b = -1:.1:1
-%	seashell (-.2, b) ;
-%	drawnow
+%	  funappxseashell (-.2, b) ;
+%	  drawnow
 %   end
 %
 % See also SHELLGUI, SURF, VIEW, LINSPACE, MESHGRID, SHADING, LIGHTING,
 %   LIGHTANGLE, COLORMAP, AXIS, MATERIAL, SIN, COS, PI.
 
 % Copyright 2010, Tim Davis, University of Florida
+
+set(0,'defaultaxesfontsize',13,'defaulttextfontsize',13) %make font larger
+%set(0,'defaultLineLineWidth',3) %thick lines
+%set(0,'defaultTextInterpreter','latex') %latex axis labels
+%set(0,'defaultLineMarkerSize',40) %latex axis labels
 
 % use default input parameters, if not present
 if (nargin == 1 && ischar (a))
@@ -136,7 +141,7 @@ lighting gouraud
 lightangle(80, -40)
 lightangle(-90, 60)
 
-% fix the view, or spin the seashell
+% fix the view, or spin the funappxseashell
 if (isfinite (azimuth))
     view([azimuth elevation])
 else
@@ -147,7 +152,7 @@ else
 end
 
 
-gail.save_eps('WorkoutFunappxOutput', 'seashell');
+gail.save_eps('WorkoutFunappxOutput', 'funappxseashell');
 
 % plot the surface from funappx_G
 % 7th Edition was surf(x,y,z,y)
@@ -164,7 +169,7 @@ lightangle(80, -40)
 lightangle(-90, 60)
 
 
-% fix the view, or spin the seashell
+% fix the view, or spin the funappxseashell
 if (isfinite (azimuth))
     view([azimuth elevation])
 else
@@ -191,6 +196,5 @@ else
         drawnow
     end
 end
-
 
 gail.save_eps('WorkoutFunappxOutput', 'Seashellsurfyerror');
