@@ -130,19 +130,19 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %
 %     out_param = 
 %
-%                f: @(x)x.^2
-%                a: -2
-%                b: 2
-%           abstol: 1.0000e-07
-%              nlo: 10
-%              nhi: 20
-%            ninit: 18
-%             nmax: 10000000  
-%          maxiter: 1000
-%         exitflag: [0 0]
-%             iter: 10 
-%          npoints: 8705
-%           errest: ***e-08
+%            f: @(x)x.^2
+%            a: -2
+%            b: 2
+%       abstol: 1.0000e-07
+%          nlo: 10
+%          nhi: 20
+%        ninit: 18
+%         nmax: 10000000
+%      maxiter: 1000
+%     exitflag: [0 0 0 0 0]
+%         iter: 21
+%      npoints: 17409
+%       errest: 3.9622e-***8
 %
 %
 %   Example 2:
@@ -152,19 +152,19 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %
 %   out_param = 
 %
-%                f: @(x)x.^2
-%                a: -2
-%                b: 2
-%           abstol: 1.0000e-06
-%              nlo: 10
-%              nhi: 20
-%            ninit: 18
-%             nmax: 10000000
-%          maxiter: 1000
-%         exitflag: [0 0]
-%             iter: 8
-%          npoints: 2177
-%           errest: ***e-07
+%            f: @(x)x.^2
+%            a: -2
+%            b: 2
+%       abstol: 1.0000e-06
+%          nlo: 10
+%          nhi: 20
+%        ninit: 18
+%         nmax: 10000000
+%      maxiter: 1000
+%     exitflag: [0 0 0 0 0]
+%         iter: 17
+%      npoints: 4353
+%       errest: 6.3507e-***7
 %
 %
 %   Example 3:
@@ -175,20 +175,19 @@ function [fappx,out_param]=funappxNoPenalty_g(varargin)
 %
 %   out_param = 
 % 
-%                f: @(x)x.^2
-%                a: -5
-%                b: 5
-%           abstol: 1.0000e-06
-%              nlo: 10
-%              nhi: 20
-%            ninit: 19 
-%             nmax: 10000000
-%          maxiter: 1000
-%         exitflag: [0 0]
-%             iter: 10
-%          npoints: 9217
-%           errest: ***e-07
-%
+%            f: @(x)x.^2
+%            a: -5
+%            b: 5
+%       abstol: 1.0000e-06
+%          nlo: 10
+%          nhi: 20
+%        ninit: 19
+%         nmax: 10000000
+%      maxiter: 1000
+%     exitflag: [0 0 0 0 0]
+%         iter: 34
+%      npoints: 9217
+%       errest: 8.8407e-***7
 %
 %   
 %   See also INTERP1, GRIDDEDINTERPOLANT, INTEGRAL_G, MEANMC_G, FUNMIN_G
@@ -280,24 +279,24 @@ for iter_i = 1:out_param.maxiter,
     %            y(2:end-1)./len(1:end-1)./ len(2:end)              +...
     %            y(3:end  )./len(2:end  )./(len(1:end-1)+len(2:end)))
     deltaf = 2 * diff(diff(y(1:npoints))./len) ./ (len(1:end-1) + len(2:end));
-    deltaf = [0 0 abs(deltaf) 0 0];
+    h = x(4:npoints)-x(1:npoints-3);
+    Bp = [abs(deltaf(2:end)).*C(h) 0 0];
+    Bm = [0 0 abs(deltaf(1:end-1)).*C(h)];
+    errest = len.^2/8.*max(Bp,Bm);
     
-    min_len = min(len);
-    max_len = max(len);
-    max_delta = max(deltaf);
-    [~,ind] = find(deltaf > 0);
-    min_delta = min(deltaf(ind));
-    if max_delta < eps * max (abs(y)),
-        out_param.exitflag(3) = true;
-        warning('GAIL:funappxNoPenalty_g:zero2ndDerivative',['f(x)'''' = 0. '...
-            'The function may be outside the cone.'])
-    end
-    
+%     min_len = min(len);
+%     max_len = max(len);
+%     max_delta = max(deltaf);
+%     [~,ind] = find(deltaf > 0);
+%     min_delta = min(deltaf(ind));
+%     if max_delta < eps * max (abs(y)),
+%         out_param.exitflag(3) = true;
+%         warning('GAIL:funappxNoPenalty_g:zero2ndDerivative',['f(x)'''' = 0. '...
+%             'The function may be outside the cone.'])
+%     end
+%     
     %% Stage 2: compute bound of |f''(t)| and estimate error
-    h = [x(2)-a x(3)-a  x(4:npoints)-x(1:npoints-3)  b-x(npoints-2)  b-x(npoints-1)];
-    normbd = C(max(h(1:npoints-1),h(3:npoints+1))) .* max(deltaf(1:npoints-1),deltaf(4:npoints+2));
-    errest = len.^2/8.*normbd;
-   
+
     % update iterations
     iter = iter + 1;
     max_errest = max(errest);
@@ -306,8 +305,12 @@ for iter_i = 1:out_param.maxiter,
     end 
  
     %% Stage 3: find I and update x,y
+%     badinterval = (errest > abstol);
+%     whichcut = badinterval | [badinterval(2:end) 0] | [0 badinterval(1:end-1)];
     badinterval = (errest > abstol);
-    whichcut = badinterval | [badinterval(2:end) 0] | [0 badinterval(1:end-1)];
+    maybecut = (badinterval | [badinterval(2:end) 0] | [0 badinterval(1:end-1)]);
+    maxlength = (len>max(len(maybecut))-eps);    
+    whichcut = maybecut & maxlength;
     if (out_param.nmax<(npoints+length(find(whichcut))))
         out_param.exitflag(1) = true;
         warning('GAIL:funappxNoPenalty_g:exceedbudget',['funappxNoPenalty_g '...
@@ -346,13 +349,13 @@ end;
 x = x(1:npoints);
 y = y(1:npoints);
 
-[~, ind] = find(abs(y) > 0);
-if min(abs(y(ind))) < abstol,
-    [~, ind] = find(abs(y(ind)) < abstol);
-    out_param.exitflag(4) = true;
-    warning('GAIL:funappxNoPenalty_g:fSmallerThanAbstol',['Some values of f(x) are smaller than abstol for x in [', num2str(x(min(ind))), ',', num2str(x(max(ind))), ...
-        ']. The interpolant may be inaccurate. You may want to decrease abstol.'])
-end
+% [~, ind] = find(abs(y) > 0);
+% if min(abs(y(ind))) < abstol,
+%     [~, ind] = find(abs(y(ind)) < abstol);
+%     out_param.exitflag(4) = true;
+%     warning('GAIL:funappxNoPenalty_g:fSmallerThanAbstol',['Some values of f(x) are smaller than abstol for x in [', num2str(x(min(ind))), ',', num2str(x(max(ind))), ...
+%         ']. The interpolant may be inaccurate. You may want to decrease abstol.'])
+% end
 %% postprocessing
 out_param.iter = iter;
 out_param.npoints = npoints;
