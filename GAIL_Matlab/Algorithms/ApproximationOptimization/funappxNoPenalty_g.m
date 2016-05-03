@@ -280,9 +280,9 @@ for iter_i = 1:out_param.maxiter,
     %            y(3:end  )./len(2:end  )./(len(1:end-1)+len(2:end)))
     deltaf = 2 * diff(diff(y(1:npoints))./len) ./ (len(1:end-1) + len(2:end));
     h = x(4:npoints)-x(1:npoints-3);
-    Bp = [abs(deltaf(2:end)).*C(h) 0 0];
-    Bm = [0 0 abs(deltaf(1:end-1)).*C(h)];
-    errest = len.^2/8.*max(Bp,Bm);
+    Br = [abs(deltaf(2:end)).*C(h) 0 0];
+    Bl = [0 0 abs(deltaf(1:end-1)).*C(h)];
+    errest = len.^2/8.*max(Br,Bl);
     
 %     min_len = min(len);
 %     max_len = max(len);
@@ -308,7 +308,10 @@ for iter_i = 1:out_param.maxiter,
 %     badinterval = (errest > abstol);
 %     whichcut = badinterval | [badinterval(2:end) 0] | [0 badinterval(1:end-1)];
     badinterval = (errest > abstol);
-    maybecut = (badinterval | [badinterval(2:end) 0] | [0 badinterval(1:end-1)]);
+    badlinterval= (len.^2/8.*Bl);
+    badrinterval= (len.^2/8.*Br);
+    maybecut=(badinterval|[0 badlinterval(3:end) 0]|[badlinterval(3:end)...
+        0 0]|[0 badrinterval(1:end-2) 0]|[0 0 badrinterval(1:end-2)]);
     maxlength = (len>max(len(maybecut))-eps);    
     whichcut = maybecut & maxlength;
     if (out_param.nmax<(npoints+length(find(whichcut))))
