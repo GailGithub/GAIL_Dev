@@ -308,8 +308,8 @@ for iter_i = 1:out_param.maxiter,
 %     badinterval = (errest > abstol);
 %     whichcut = badinterval | [badinterval(2:end) 0] | [0 badinterval(1:end-1)];
     badinterval = (errest > abstol);
-    badlinterval= (len.^2/8.*Bl);
-    badrinterval= (len.^2/8.*Br);
+    badlinterval= (len.^2/8.*Bl>abstol);
+    badrinterval= (len.^2/8.*Br>abstol);
     maybecut=(badinterval|[0 badlinterval(3:end) 0]|[badlinterval(3:end)...
         0 0]|[0 badrinterval(1:end-2) 0]|[0 0 badrinterval(1:end-2)]);
     maxlength = (len>max(len(maybecut))-eps);    
