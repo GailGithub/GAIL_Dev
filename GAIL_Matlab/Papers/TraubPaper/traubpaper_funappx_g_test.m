@@ -27,7 +27,7 @@ else
 end
 
 algo2 = @(f,a,b,abstol) funappxglobal_g(f,a,b,abstol);
-algo3 = @(f,a,b) chebfun(f, [a,b]);
+algo3 = @(f,a,b) chebfun(f, [a,b],'splitting','on');
 methods = {algo, algo2, algo3};
 
 warning('off',['GAIL:',algoname,':peaky'])
@@ -60,6 +60,8 @@ for i = 1:nrep
     %          f4 = @(x) 1/4*c(i)*exp(-2*x).*(c(i)-2*exp(x).*(-1 +...
     %              c(i)*cos(x) - c(i)*sin(x))+exp(2*x).*(c(i) + 2*cos(x)...
     %              - 2* sin(x) - c(i)*sin(2*x)));
+
+        
     for j = 1:length(fcns)
         f = fcns{j};
         if j > 3,     
@@ -68,12 +70,12 @@ for i = 1:nrep
         xx = a(j):0.000001:b(j);%rand(1000000,1)*(b-a)+a;
         exactyy = f(xx);
         for k = 1:length(methods)
+            clear fappx out_param yy t 
             if k <=2
                 tic; [fappx, out_param] = methods{k}(f,a(j),b(j),abstol); t=toc;
                 npoints(j,k,i) = out_param.npoints;
             elseif k==3 
                 try
-                    splitting on
                     lastwarn('') 
                     tic, fappx = chebfun(f,[a(j),b(j)]); t=toc;
                     if length(lastwarn) > 0
@@ -109,6 +111,7 @@ warning('on',['GAIL:',algoname,':peaky'])
 warning('on',['GAIL:',algoname,':exceedbudget'])
 warning('on',['GAIL:',algoname,':fSmallerThanAbstol'])
 
+permuted_index = [3, 1:2, 4:length(fcns)];
 d = 2.5;
 cc = d/4;
 f1 = @(x) g1(x,d);
@@ -125,7 +128,6 @@ for i=1:length(fcns)
    y{i} = fcns{i}(x{i});
 end
  
-
 timeratio = zeros(m-1,nrep,n);
 npointsratio = zeros(m-1,nrep,n);
 for i=1:nrep  % each test function
@@ -160,7 +162,7 @@ display('                                                                       
 npointslgratio = zeros(1,n);
 timelgratio = zeros(1,n);
 
-for i=1:n
+for i = permuted_index
     display(sprintf('%9.0f %9.0f %9.0f  %9.0f %11.3f  %11.3f %11.3f  %6.0f %6.0f %6.0f %6.0f %6.0f   %6.0f %6.0f %6.0f %6.0f %6.0f %6.0f %6.0f',...
         [i mean(npoints(i,1,:)) mean(npoints(i,2,:)) mean(npoints(i,3,:))...
         mean(time(i,1,:)) mean(time(i,2,:)) mean(time(i,3,:))...
@@ -193,11 +195,11 @@ end
 markers = {'--go', ':r*', '-.b.', '-g+', '--ro', '-.b'};
 if usejava('jvm') || MATLABVERSION <= 7.12
     figure
-    for i=1:length(fcns)
+    for i = permuted_index
         plot(x{i},y{i}, markers{i}); hold on
     end
     
-    legend('f1','f2','f3', 'f4', 'f5', 'f6')
+    legend('f3','g1','g2','g3','g4','g5')
     gail.save_eps('TraubPaperOutput', ['traub_',algoname,'_testfun']);
     
     figure
@@ -205,8 +207,8 @@ if usejava('jvm') || MATLABVERSION <= 7.12
     for k =1:m-1
         subplot(1,m-1,k)
         semilogy(t,sorted_timeratio(k,:),'r-',t,sorted_npointsratio(k,:),'b:');
-        title([algoname, ' vs. ', func2str( methods{k+1})])
-        legend('time ratio', 'points ratio');
+        %title([algoname, ' vs. ', func2str( methods{k+1})])
+        legend('time ratio', 'points ratio','Location','NorthWest');
     end
     
     gail.save_eps('TraubPaperOutput', ['traub_',algoname,'_test']);
@@ -222,9 +224,9 @@ end
 %   Function   ----------------------------    -------------------------------     --------------------------------------   ----------------------------------------
 %              Local      Global    Chebfun    Local       Global      Chebfun     Local        Global         Chebfun       Local         Global        Chebfun
 %                                                                                  No Warn Warn No Warn Warn   No Warn Warn  No Warn Warn  No Warn Warn  No Warn Warn
-%         1      4069     32458       5124       0.018        0.016       1.477     100    100    100      0     71       35      0      0      0      0     29     29
-%         2      4194     50714       4788       0.024        0.021       1.420     100     78    100      0    100       44      0      0      0      0      0      0
-%         3      2914     46439         12       0.022        0.020       0.138     100    100    100      0     82        0      0      0      0      0     18      0
-%         4      4881     42566          3       0.012        0.011       0.005     100    100    100      0    100        0      0      0      0      0      0      0
-%         5     24662     92581         35       0.029        0.015       0.007     100      1    100      0    100        0      0      0      0      0      0      0
-%         6     11542    492264        146       0.018        0.083       0.055     100    100    100      0     91        0      0      0      0      0      9      0
+%         3      2904     46439         11       0.020        0.020       0.229     100      0    100      0     97        0      0      0      0      0      3      0
+%         1      3849     30090       5639       0.018        0.019       2.569     100      0    100      0    100       86      0      0      0      0      0      0
+%         2      3927     48674       2131       0.033        0.020       1.455     100      0    100      0    100        0      0      0      0      0      0      0
+%         4      4666     42398          3       0.015        0.016       0.011     100      0    100      0    100        0      0      0      0      0      0      0
+%         5     23870     95174         34       0.049        0.017       0.013     100      0    100      0    100        0      0      0      0      0      0      0
+%         6     11492    471983        154       0.019        0.077       0.180     100      0    100      0    100        0      0      0      0      0      0      0

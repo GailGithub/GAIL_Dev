@@ -9,7 +9,7 @@ function cf_chebfun(f, a, b, abstol)
 %    - (x-c+delta).*abs(x-c+delta)).*(abs(x-c) <= 2*delta); a = - 1; b = 1; abstol = 1e-14;  
 % cf_chebfun(f3, a, b, abstol)
 %
-% f4 = @(x)sin(10*pi*x.^4)-x, a = 0; b = 2; abstol = 1e-14; cf_chebfun(f4, a, b, abstol)
+% f4 = @(x)sin(10*pi*x.^4)-x, a = 1; b = 2; abstol = 1e-14; cf_chebfun(f4, a, b, abstol)
 %
 % f5 = @(x) sign(x);  a = -1; b = 1; cf_chebfun(f5, a, b, abstol)
 %  
@@ -18,18 +18,11 @@ set(0,'defaultaxesfontsize',24,'defaulttextfontsize',24) %make font larger
 format compact
 format long
 
-
 %% funappx_g
 tic, [fappx, fout] = funappxNoPenalty_g(f,a,b,abstol,'nmax',10^8), toc
 % gail.funappx_g_check(fappx,fout)
 %% chebfun
-ver_chebfun = gail.ver('Chebfun');
-if strcmp(ver_chebfun, '5.4.0')
-  tic, c = chebfun(f, [a,b],'splitting','on'), toc
-else 
-  splitting on;
-  tic, c = chebfun(f, [a,b]), toc
-end
+tic, c = chebfun(f, [a,b],'splitting','on'), toc
 
 x=a:0.00001:b;
 figure(1)
