@@ -94,35 +94,32 @@ function [fmin,out_param]=funminNoPenalty_g(varargin)
 %  Example 1:
 %
 %  >> f=@(x) exp(0.01*(x-0.5).^2); [fmin,out_param] = funminNoPenalty_g(f)
-%
+% 
 %  fmin =
-%
+% 
 %      1
 % 
 %  out_param = 
 % 
-%             f: @(x)exp(0.01*(x-0.5).^2)
-%             a: 0
-%             b: 1
-%        abstol: 1.0000e-06
-%          TolX: 1.0000e-03
-%           nlo: 10
-%           nhi: 1000
-%         ninit: 100
-%          nmax: 10000000
-%       maxiter: 1000
-%      exitflag: [0 0]
-%          iter: 2
-%       npoints: 199
-%        errest: 1.1306e-07
-%       volumeX: 0.0101
-%     intervals: [2x1 double]
+%            f: @(x)exp(0.01*(x-0.5).^2)
+%            a: 0
+%            b: 1
+%       abstol: 1.0000e-06
+%          nlo: 10
+%          nhi: 1000
+%        ninit: 100
+%         nmax: 10000000
+%      maxiter: 1000
+%     exitflag: [0 0]
+%         iter: 2
+%      npoints: 105
+%       errest: 1.4576e-07
 %
 %
 %  Example 2:
 %
 %  >> f = @(x) exp(0.01*(x-0.5).^2);
-%  >> [fmin,out_param] = funminNoPenalty_g(f,-2,2,1e-7,1e-4,10,10,1000000)
+%  >> [fmin,out_param] = funminNoPenalty_g(f,-2,2,1e-7,10,10,1000000)
 %
 %  fmin =
 % 
@@ -130,29 +127,26 @@ function [fmin,out_param]=funminNoPenalty_g(varargin)
 % 
 %  out_param = 
 % 
-%             f: @(x)exp(0.01*(x-0.5).^2)
-%             a: -2
-%             b: 2
-%        abstol: 1.0000e-07
-%          TolX: 1.0000e-04
-%           nlo: 10
-%           nhi: 10
-%         ninit: 10
-%          nmax: 1000000
-%       maxiter: 1000
-%      exitflag: [0 0]
-%          iter: 8
-%       npoints: 1153
-%        errest: 3.9920e-08
-%       volumeX: 0.0069
-%     intervals: [2x1 double]
+%            f: @(x)exp(0.01*(x-0.5).^2)
+%            a: -2
+%            b: 2
+%       abstol: 1.0000e-07
+%          nlo: 10
+%          nhi: 10
+%        ninit: 10
+%         nmax: 1000000
+%      maxiter: 1000
+%     exitflag: [0 0]
+%         iter: 9
+%      npoints: 50
+%       errest: 3.0567e-08
 %
 %
 %  Example 3:
 %
 %  >> f=@(x) exp(0.01*(x-0.5).^2);
 %  >> in_param.a = -13; in_param.b = 8;
-%  >> in_param.abstol = 10^(-7); in_param.TolX = 1e-4;
+%  >> in_param.abstol = 10^(-7);
 %  >> in_param.nlo = 10; in_param.nhi = 100;
 %  >> in_param.nmax = 10^6;
 %  >> [fmin,out_param] = funminNoPenalty_g(f,in_param)
@@ -160,54 +154,48 @@ function [fmin,out_param]=funminNoPenalty_g(varargin)
 %  fmin =
 % 
 %     1.0000
-%  
+% 
 %  out_param = 
 % 
-%             f: @(x)exp(0.01*(x-0.5).^2)
-%             a: -13
-%             b: 8
-%        abstol: 1.0000e-07
-%          TolX: 1.0000e-04
-%           nlo: 10
-%           nhi: 100
-%         ninit: 91
-%          nmax: 1000000
-%       maxiter: 1000
-%      exitflag: [0 0]
-%          iter: 9
-%       npoints: 9508
-%        errest: 9.9894e-08
-%       volumeX: 0.0027
-%     intervals: [2x1 double]
+%            f: @(x)exp(0.01*(x-0.5).^2)
+%            a: -13
+%            b: 8
+%       abstol: 1.0000e-07
+%          nlo: 10
+%          nhi: 100
+%        ninit: 91
+%         nmax: 1000000
+%      maxiter: 1000
+%     exitflag: [0 0]
+%         iter: 7
+%      npoints: 123
+%       errest: 5.3163e-08
 %
 %
 %  Example 4:
 %
 %  >> f=@(x) exp(0.01*(x-0.5).^2);
-%  >> [fmin,out_param] = funminNoPenalty_g(f,'a',-2,'b',2,'nhi',100,'nlo',10,'nmax',1e6,'abstol',0,'TolX',1e-4)
+%  >> [fmin,out_param] = funminNoPenalty_g(f,'a',-2,'b',2,'nhi',100,'nlo',10,'nmax',1e6,'abstol',1e-5)
 %
 %  fmin =
 % 
-%      1
+%     1.0000
 % 
 %  out_param = 
 % 
-%             f: @(x)exp(0.01*(x-0.5).^2)
-%             a: -2
-%             b: 2
-%        abstol: 0
-%          TolX: 1.0000e-04
-%           nlo: 10
-%           nhi: 100
-%         ninit: 64
-%          nmax: 1000000
-%       maxiter: 1000
-%      exitflag: [0 0]
-%          iter: 12
-%       npoints: 129025
-%        errest: 3.1664e-12
-%       volumeX: 6.2004e-05
-%     intervals: [2x1 double]
+%            f: @(x)exp(0.01*(x-0.5).^2)
+%            a: -2
+%            b: 2
+%       abstol: 1.0000e-05
+%          nlo: 10
+%          nhi: 100
+%        ninit: 64
+%         nmax: 1000000
+%      maxiter: 1000
+%     exitflag: [0 0]
+%         iter: 2
+%      npoints: 71
+%       errest: 8.2795e-06
 %
 %
 %  See also FMINBND, FUNAPPX_G, INTEGRAL_G
@@ -254,7 +242,6 @@ out_param = in_param;
 a = out_param.a;
 b = out_param.b;
 abstol = out_param.abstol;
-TolX = out_param.TolX;
 n = out_param.ninit;
 x = a:(b-a)/(n-1):b;
 y = f(x);
@@ -268,59 +255,48 @@ if length(y) == 1
     fmin = y;
     max_errest = 0;
 end
-
-fh = 4*(b-a)/(n-1);
-C0 = 2.2;
-C = @(h) C0*fh./(fh-h);
+iter = 0;
+exit_len = 2;
+fh = 5*(b-a)/(n-1);
+C0 = 3;
+C = @(h) (C0*fh)./(fh-h);
 max_errest = 1;
 
-iter = 1;
-exit_len = 2;
 % we start the algorithm with all warning flags down
 out_param.exitflag = false(1,exit_len); 
 
 
 while n < out_param.nmax
     %% Stage 1: compute length of each subinterval and approximate |f''(t)|
-    len = diff(x);
-    deltaf = diff(diff(y)./len)./(len(2:end)+len(1:end-1));
-    deltaf = [0 0 abs(deltaf) 0 0];
-    
-    %% Stage 2: compute bound of |f''(t)| and estimate error
-    h = [x(2)-a  x(3)-a  x(4:end)-x(1:end-3)  b-x(end-2)  b-x(end-1)];
-    normbd = C(max(h(1:n-1),h(3:n+1))) .* max(deltaf(1:n-1),deltaf(4:n+2));
-    errest = len.^2/8.*normbd;
-    % find intervals contain minimum
+    len = diff(x(1:n));
+    deltaf = 2 * diff(diff(y(1:n))./len) ./ (len(1:end-1) + len(2:end));
+    h = x(4:n)-x(1:n-3);
+    Br = [abs(deltaf(2:end)).*C(h) 0 0];
+    Bl = [0 0 abs(deltaf(1:end-1)).*C(h)];
     Un=min(y);
     diff_y=diff(y);
-    ln=diff_y/2+y(1:n-1)-abs(diff_y)/2-errest;
-    goodindex = find(ln < Un);
-    m = size(goodindex,2);
-    if m > 0
-        ints = zeros(2,m);
-        ints = [x(goodindex); x(goodindex+1)];
-        leftint = find([true diff(goodindex)~=1]);
-        rightint = find([diff(goodindex)~=1 true]);
-        q = size(leftint,2);
-        ints1 = zeros(2,q);
-        ints1(1,:) = ints(1,leftint);
-        ints1(2,:) = ints(2,rightint);
-    else
-        ints1 = zeros(2,0);
-    end
-    interval=ints1;
-    volumeX = sum(interval(2,:)-interval(1,:));
+    min_int = diff_y/2+y(1:n-1);
+    errest = Un+len.^2/8.*max(Br,Bl)-min_int;
+    
+    %% Stage 2: compute bound of |f''(t)| and estimate error
+    
     % update iterations
+    iter = iter + 1;
     max_errest = max(errest);
-    if max_errest <= abstol || volumeX < TolX
+    if max_errest <= abstol,
         break
     end 
-    iter = iter + 1;
+
  
     %% Stage 3: find I and update x,y
-    badinterval = (errest > abstol | ln < Un);
-    whichcut = badinterval | [badinterval(2:end) 0] | [0 badinterval(1:end-1)];
-    if (out_param.nmax<(n+length(find(whichcut==1))))
+    badinterval = (errest > abstol);
+    badlinterval= (Un-min_int+len.^2/8.*Bl>abstol);
+    badrinterval= (Un-min_int+len.^2/8.*Br>abstol);
+    maybecut=(badinterval|[0 badlinterval(3:end) 0]|[badlinterval(3:end)...
+        0 0]|[0 badrinterval(1:end-2) 0]|[0 0 badrinterval(1:end-2)]);
+    maxlength = (len>max(len(maybecut))-eps);    
+    whichcut = maybecut & maxlength;
+    if (out_param.nmax<(n+length(find(whichcut))))
         out_param.exitflag(1) = true;
         warning('GAIL:funminNoPenalty_g:exceedbudget',['funminNoPenalty_g '...
             'attempted to exceed the cost budget. The answer may be '...
@@ -334,27 +310,32 @@ while n < out_param.nmax
         break;
     end;
     newx = x(whichcut) + 0.5 * len(whichcut);
-    tt = cumsum(whichcut); 
-    x([1 (2:n)+tt]) = x;
-    y([1 (2:n)+tt]) = y;
+    if n + length(newx) > length(x)
+      xx(1:n) = x(1:n);
+      yy(1:n) = y(1:n);
+      x = xx;
+      y = yy;
+    end
+    tt = cumsum(whichcut);   
+    x([1 (2:n)+tt]) = x(1:n);
+    y([1 (2:n)+tt]) = y(1:n);
     tem = 2 * tt + cumsum(whichcut==0);
     x(tem(whichcut)) = newx;
     y(tem(whichcut)) = f(newx);
-    n = length(x);
+    n = n + length(newx);
 end;
+
 
 %% postprocessing
 fmin = Un; 
 out_param.iter = iter;
 out_param.npoints = n;
 out_param.errest = max_errest;
-out_param.volumeX = volumeX;
-out_param.intervals = interval;
 
 % control the order of out_param
 out_param = orderfields(out_param, ...
-            {'f', 'a', 'b','abstol','TolX','nlo','nhi','ninit','nmax','maxiter',...
-             'exitflag','iter','npoints','errest','volumeX', 'intervals'});
+            {'f', 'a', 'b','abstol','nlo','nhi','ninit','nmax','maxiter',...
+             'exitflag','iter','npoints','errest'});
 
 
 
@@ -366,7 +347,6 @@ function [f, out_param] = funminNoPenalty_g_param(varargin)
 default.a = 0;
 default.b = 1;
 default.abstol = 1e-6;
-default.TolX = 1e-3;
 default.nlo = 10;
 default.nhi = 1000;
 default.nmax = 1e7;
@@ -413,7 +393,6 @@ if ~validvarargin
     out_param.a = default.a;
     out_param.b = default.b;
     out_param.abstol = default.abstol;
-    out_param.TolX = default.TolX;
     out_param.nlo = default.nlo;
     out_param.nhi = default.nhi;
     out_param.nmax = default.nmax ;
@@ -426,7 +405,6 @@ else
         addOptional(p,'a',default.a,@isnumeric);
         addOptional(p,'b',default.b,@isnumeric);
         addOptional(p,'abstol',default.abstol,@isnumeric);
-        addOptional(p,'TolX',default.TolX,@isnumeric);
         addOptional(p,'nlo',default.nlo,@isnumeric);
         addOptional(p,'nhi',default.nhi,@isnumeric);
         addOptional(p,'nmax',default.nmax,@isnumeric)
@@ -439,7 +417,6 @@ else
         f_addParamVal(p,'a',default.a,@isnumeric);
         f_addParamVal(p,'b',default.b,@isnumeric);
         f_addParamVal(p,'abstol',default.abstol,@isnumeric);
-        f_addParamVal(p,'TolX',default.TolX,@isnumeric);
         f_addParamVal(p,'nlo',default.nlo,@isnumeric);
         f_addParamVal(p,'nhi',default.nhi,@isnumeric);
         f_addParamVal(p,'nmax',default.nmax,@isnumeric);
@@ -478,13 +455,6 @@ if (out_param.abstol < 0 )
     warning('GAIL:funminNoPenalty_g:tolneg', ['Error tolerance should be greater'...
         ' than 0. Using default error tolerance ' num2str(default.abstol)])
     out_param.abstol = default.abstol;
-end
-
-%let length tolerance greater than 0
-if (out_param.TolX < 0)
-    warning('GAIL:funmin_g:Xtolnonpos', ['X tolerance should be greater than or equal to 0.' ...
-        ' Using default X tolerance ' num2str(default.TolX)]);
-    out_param.TolX = default.TolX;
 end
 
 % let cost budget be a positive integer
