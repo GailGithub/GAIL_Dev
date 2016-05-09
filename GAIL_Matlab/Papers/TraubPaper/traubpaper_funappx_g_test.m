@@ -11,7 +11,7 @@ set(0,'defaultaxesfontsize',14,'defaulttextfontsize',14, ... %make font larger
   'defaultLineLineWidth',2); %thick lines
 %  'defaultLineMarkerSize',8)
 cc = rand(nrep,1);
-c = cc*4; % number of simulations for each test function
+c = cc*2; % number of simulations for each test function
 n = 6; % number of test functions
 m = 3; % number of methods
 npoints = zeros(n,m,nrep);
@@ -71,10 +71,10 @@ for i = 1:nrep
     exactyy = f(xx);
     for k = 1:length(methods)
       clear fappx out_param yy t
-      if k <=2
+      if k <= 2
         tic; [fappx, out_param] = methods{k}(f,a(j),b(j),abstol); t=toc;
         npoints(j,k,i) = out_param.npoints;
-      elseif k==3
+      elseif k == 3
         try
           lastwarn('')
           tic, fappx = chebfun(f,[a(j),b(j)],'splitting','on'); t=toc;
@@ -112,7 +112,7 @@ warning('on',['GAIL:',algoname,':exceedbudget'])
 warning('on',['GAIL:',algoname,':fSmallerThanAbstol'])
 
 permuted_index = [3, 1:2, 4:length(fcns)];
-d = 2.5;
+d = 1.9;
 cc = d/4;
 f1 = @(x) g1(x,d);
 f2 = @(x) g2(x,d);
@@ -124,8 +124,11 @@ fcns = {f1, f2, f3, f4, f5, f6};
 x = cell(length(fcns));
 y = cell(length(fcns));
 for i=1:length(fcns)
-  x{i}= a(i):0.05:b(i);
-  y{i} = fcns{i}(x{i});
+    if i > 3,
+        b(i) = d+1;
+    end
+    x{i} = a(i):0.05:d+1;
+    y{i} = fcns{i}(x{i});
 end
 
 timeratio = zeros(m-1,nrep,n);
@@ -199,7 +202,7 @@ if usejava('jvm') || MATLABVERSION <= 7.12
     plot(x{i},y{i}, markers{i}); hold on
   end
   
-  legend('f3','g1','g2','g3','g4','g5')
+  legend('f3','g1','g2','g3','g4','g5','Location','NorthWest')
   gail.save_eps('TraubPaperOutput', ['traub_',algoname,'_testfun']);
   
   figure
@@ -224,9 +227,9 @@ end
 %   Function   ----------------------------    -------------------------------     --------------------------------------   ----------------------------------------
 %              Local      Global    Chebfun    Local       Global      Chebfun     Local        Global         Chebfun       Local         Global        Chebfun
 %                                                                                  No Warn Warn No Warn Warn   No Warn Warn  No Warn Warn  No Warn Warn  No Warn Warn
-%         3      2904     46439         11       0.020        0.020       0.229     100      0    100      0     97        0      0      0      0      0      3      0
-%         1      3849     30090       5639       0.018        0.019       2.569     100      0    100      0    100       86      0      0      0      0      0      0
-%         2      3927     48674       2131       0.033        0.020       1.455     100      0    100      0    100        0      0      0      0      0      0      0
-%         4      4666     42398          3       0.015        0.016       0.011     100      0    100      0    100        0      0      0      0      0      0      0
-%         5     23870     95174         34       0.049        0.017       0.013     100      0    100      0    100        0      0      0      0      0      0      0
-%         6     11492    471983        154       0.019        0.077       0.180     100      0    100      0    100        0      0      0      0      0      0      0
+%         3      2904     46439         11       0.009        0.015       0.183     100      0    100      0     98        0      0      0      0      0      2      0
+%         1      2924     27380       5249       0.015        0.011       2.092     100      0    100      0    100       71      0      0      0      0      0      0
+%         2      3074     38644       1489       0.009        0.013       0.908     100      0    100      0    100        0      0      0      0      0      0      0
+%         4      3493     26524          3       0.010        0.009       0.009     100      0    100      0    100        0      0      0      0      0      0      0
+%         5      6621     37102         22       0.013        0.007       0.010     100      0    100      0    100        0      0      0      0      0      0      0
+%         6     11398    345861        151       0.014        0.042       0.132     100      0    100      0    100        0      0      0      0      0      0      0
