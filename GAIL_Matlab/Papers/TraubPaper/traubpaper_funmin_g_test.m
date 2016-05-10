@@ -23,7 +23,7 @@ if isempty(varargin)
   algo = @(f,a,b,abstol) funmin_g(f,a,b,abstol);
 else
   algoname = varargin{1};
-  algo = str2func(['@(f,a,b,abstol,TolX)', algoname,'(f,a,b,abstol,abstol)']);
+  algo = str2func(['@(f,a,b,abstol)', algoname,'(f,a,b,abstol)']);
 end
 
 algo2 = @(f,a,b,abstol) fminbnd(f,a,b,abstol);
@@ -90,7 +90,7 @@ for i = 1:nrep
     
     for k = 1:length(methods)
       if k == 1
-        tic; [fmin, out_param] = methods{k}(f,a(j),b(j),abstol,abstol); t=toc;
+        tic; [fmin, out_param] = methods{k}(f,a(j),b(j),abstol); t=toc;
         npoints(j,k,i) = out_param.npoints;
       elseif k == 2
         lastwarn('')
@@ -114,11 +114,11 @@ for i = 1:nrep
       time(j,k,i) = t;
       
       trueerrormat(j,k,i) = max(abs(fmin-exactfmin));
-      %if trueerrormat(j,k,i)  > abstol
-      %cf_chebfun_min(f,a,b,abstol);
-      %j, k
-      % keyboard
-      %end
+      if trueerrormat(j,k,i)  > abstol
+        cf_chebfun_min(f,a(j),b(j),abstol,exactfmin);
+        j, k
+        keyboard
+      end
       if k==1
         exceedmat(j,k,i) = sum(out_param.exitflag)>0;
       end
