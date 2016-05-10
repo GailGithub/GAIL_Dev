@@ -27,8 +27,8 @@ function dt_funappxNoPenalty_g
 %     exitflag: [0 0 0 0 0]
 %         iter: 24
 %      npoints: 42049
-%       errest: 4.2821e-***8
-% %
+%       errest: 4.3092e-***8
+%
 % 
 %   Example 3: 
 %
@@ -50,7 +50,7 @@ function dt_funappxNoPenalty_g
 %     exitflag: [0 0 0 0 0]
 %         iter: 32
 %      npoints: 89601
-%       errest: 9.3641e-***9
+%       errest: 9.3786e-***9
 %      
 %
 %   Example 4:
@@ -71,7 +71,7 @@ function dt_funappxNoPenalty_g
 %     exitflag: [0 0 0 0 0]
 %         iter: 19
 %      npoints: 20993
-%       errest: 2.7264e-***8
+%       errest: 2.7284e-***8
 %
 %
 %   Example 5:
@@ -92,7 +92,7 @@ function dt_funappxNoPenalty_g
 %     exitflag: [0 0 0 0 0]
 %         iter: 22
 %      npoints: 4225
-%       errest: 3.8010e-***7
+%       errest: 3.8121e-***7
 %
 % 
 %   Example 6:
@@ -113,7 +113,7 @@ function dt_funappxNoPenalty_g
 %     exitflag: [0 0 0 0 0]
 %         iter: 34
 %      npoints: 11265
-%       errest: 2.9033e-***7
+%       errest: 2.9076e-***7
 %
 %
 %   Example 7:
@@ -134,7 +134,7 @@ function dt_funappxNoPenalty_g
 %     exitflag: [0 0 0 0 0]
 %         iter: 59
 %      npoints: 77825
-%       errest: 2.7866e-***8
+%       errest: 2.7869e-***8
 %
 %
 %   Example 8:
