@@ -257,7 +257,7 @@ if length(y) == 1
 end
 iter = 0;
 exit_len = 2;
-fh = 5*(b-a)/(n-1);
+fh = 3*(b-a)/(n-2);
 C0 = 3;
 C = @(h) (C0*fh)./(fh-h);
 max_errest = 1;
@@ -276,20 +276,23 @@ while n < out_param.nmax
     Un=min(y);
     diff_y=diff(y);
     min_int = diff_y/2+y(1:n-1);
-    errest = Un+len.^2/8.*max(Br,Bl)-min_int;
+    errest = len.^2/8.*max(Br,Bl);
+    max_errest = max(errest);
+    lowerbound = min_int-errest;
+    
     
     %% Stage 2: compute bound of |f''(t)| and estimate error
     
     % update iterations
     iter = iter + 1;
-    max_errest = max(errest);
-    if max_errest <= abstol,
+    min_lowerbound = min(lowerbound);
+    if min_lowerbound >= Un-abstol,
         break
     end 
 
  
     %% Stage 3: find I and update x,y
-    badinterval = (errest > abstol);
+    badinterval = (lowerbound < Un-abstol);
     badlinterval= (Un-min_int+len.^2/8.*Bl>abstol);
     badrinterval= (Un-min_int+len.^2/8.*Br>abstol);
     maybecut=(badinterval|[0 badlinterval(3:end) 0]|[badlinterval(3:end)...
@@ -325,17 +328,35 @@ while n < out_param.nmax
     n = n + length(newx);
 end;
 
-
+%% find intervals
+index = find(lowerbound < Un);
+m = size(index,2);
+if m > 0
+    ints = zeros(2,m);
+    ints = [x(index); x(index+1)];
+    leftint = find([true diff(index)~=1]);
+    rightint = find([diff(index)~=1 true]);
+    q = size(leftint,2);
+    ints1 = zeros(2,q);
+    ints1(1,:) = ints(1,leftint);
+    ints1(2,:) = ints(2,rightint);
+else
+    ints1 = zeros(2,0);
+end
+    interval=ints1;
+   
+    
 %% postprocessing
 fmin = Un; 
 out_param.iter = iter;
 out_param.npoints = n;
 out_param.errest = max_errest;
+out_param.intervals = interval;
 
 % control the order of out_param
 out_param = orderfields(out_param, ...
             {'f', 'a', 'b','abstol','nlo','nhi','ninit','nmax','maxiter',...
-             'exitflag','iter','npoints','errest'});
+             'exitflag','iter','npoints','errest','intervals'});
 
 
 
