@@ -275,24 +275,24 @@ while n < out_param.nmax
     Bl = [0 0 abs(deltaf(1:end-1)).*C(h)];
     Un=min(y);
     diff_y=diff(y);
-    min_int = diff_y/2+y(1:n-1);
-    errest = len.^2/8.*max(Br,Bl);
+    min_int = (y(1:n-1)+y(2:n)-abs(diff_y))./2;
+    errest = Un+len.^2/8.*max(Br,Bl)-min_int;
     max_errest = max(errest);
-    lowerbound = min_int-errest;
+    lowerbound = Un-errest;
+
     
     
     %% Stage 2: compute bound of |f''(t)| and estimate error
-    
+  
     % update iterations
     iter = iter + 1;
-    min_lowerbound = min(lowerbound);
-    if min_lowerbound >= Un-abstol,
+    if max_errest <= abstol,
         break
     end 
 
  
     %% Stage 3: find I and update x,y
-    badinterval = (lowerbound < Un-abstol);
+    badinterval = (errest > abstol);
     badlinterval= (Un-min_int+len.^2/8.*Bl>abstol);
     badrinterval= (Un-min_int+len.^2/8.*Br>abstol);
     maybecut=(badinterval|[0 badlinterval(3:end) 0]|[badlinterval(3:end)...
@@ -357,7 +357,6 @@ out_param.intervals = interval;
 out_param = orderfields(out_param, ...
             {'f', 'a', 'b','abstol','nlo','nhi','ninit','nmax','maxiter',...
              'exitflag','iter','npoints','errest','intervals'});
-
 
 
 
