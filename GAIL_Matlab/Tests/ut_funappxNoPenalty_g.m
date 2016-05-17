@@ -171,7 +171,7 @@ classdef ut_funappxNoPenalty_g < matlab.unittest.TestCase
         
          function funappxNoPenalty_gOnpointsofconstant(testCase)
             f = @(x) 5;
-            in_param.nlo = 5; in_param.nhi =5;
+            in_param.nlo = 1; in_param.nhi = 1;
             [~, result] = funappxNoPenalty_g(f,in_param);
             testCase.verifyEqual(result.npoints,5);
          end

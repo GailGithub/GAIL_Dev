@@ -114,11 +114,11 @@ for i = 1:nrep
       time(j,k,i) = t;
       
       trueerrormat(j,k,i) = max(abs(fmin-exactfmin));
-      if trueerrormat(j,k,i)  > abstol
-        cf_chebfun_min(f,a(j),b(j),abstol,exactfmin);
-        j, k
-        keyboard
-      end
+%       if trueerrormat(j,k,i)  > abstol
+%         cf_chebfun_min(f,a(j),b(j),abstol,exactfmin);
+%         j, k
+%         keyboard
+%       end
       if k==1
         exceedmat(j,k,i) = sum(out_param.exitflag)>0;
       end
@@ -215,25 +215,40 @@ end
 
 %% Save Output
 [~,~,MATLABVERSION] = GAILstart(false);
-markers = {'--go', ':r*', '-.b.', '-g+', '--ro', '-.b'};
+MATLABBlue = [0, 0.447, 0.741];
+MATLABOrange = [0.85,  0.325, 0.098];
+MATLABPurple = [0.494,  0.184, 0.556];
+MATLABGreen = [0.466,  0.674, 0.188];
+MATLABDkOrange = [0.85,  0.325, 0.098]*0.6;
+MATLABLtOrange = 0.5*[0.85,  0.325, 0.098] + 0.5*[1 1 1];
+markers = {MATLABBlue, MATLABOrange, MATLABPurple, MATLABGreen, MATLABDkOrange,MATLABLtOrange};
 if usejava('jvm') || MATLABVERSION <= 7.12
   figure
+  hold on
   for i = permuted_index
-    plot(x{i},y{i}, markers{i}); hold on
+    plot(x{i},y{i},'color',markers{i}); 
   end
   
-  legend('f3','g1','g2','g3','g4','g5')
+markers = {MATLABBlue, MATLABOrange, MATLABPurple, MATLABGreen, MATLABDkOrange,MATLABLtOrange};
+  legend('\(f_3\)','\(g_1\)','\(g_2\)','\(g_3\)','\(g_4\)','\(g_5\)','Location','NorthWest')
+  xlabel('x')
   gail.save_eps('TraubPaperOutput', ['traub_',algoname,'_testfun']);
   
   figure
-  t =1:nrep*n;
-  for k =1:m-1
-    subplot(1,m-1,k)
-    semilogy(t,sorted_timeratio(k,:),'r-',t,sorted_npointsratio(k,:),'b:');
+  t = 1:nrep*n;
+  for k = 1:m-1
+    %subplot(1,m-1,k)
+    semilogy(t,sorted_timeratio(k,:),'color',markers{k*2-1}); hold on
+    semilogy(t,sorted_npointsratio(k,:),'color',markers{2*k});  hold on
+    xlabel('test functions'); 
     %title([algoname, ' vs. ', func2str( methods{k+1})])
     legend('time ratio', 'points ratio','Location','NorthWest');
   end
-  
+  hold off
+  legend('{\tt funmin\_g} vs. {\tt fminbnd} time ratio', '{\tt funmin\_g} vs. {\tt fminbnd} points ratio',...
+         '{\tt funmin\_g} vs. Chebfun time ratio', '{\tt funmin\_g} vs. Chebfun points ratio',...
+         'Location','NorthWest');
+  legend BOXOFF 
   gail.save_eps('TraubPaperOutput', ['traub_',algoname,'_test']);
 end;
 gail.save_mat('TraubPaperOutput', ['traub_',algoname,'_test'], true, npoints, ...
