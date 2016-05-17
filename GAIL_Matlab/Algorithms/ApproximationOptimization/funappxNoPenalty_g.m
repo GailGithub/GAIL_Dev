@@ -282,6 +282,7 @@ for iter_i = 1:out_param.maxiter,
     h = x(4:npoints)-x(1:npoints-3);
     Br = [abs(deltaf(2:end)).*C(h) 0 0];
     Bl = [0 0 abs(deltaf(1:end-1)).*C(h)];
+    %Bl = [0 0 abs(deltaf(1)).*C(h(1))  Br(1:end-3)];
     errest = len.^2/8.*max(Br,Bl);
     
 %     min_len = min(len);
