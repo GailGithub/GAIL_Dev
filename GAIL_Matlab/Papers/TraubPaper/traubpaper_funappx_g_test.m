@@ -232,7 +232,7 @@ gail.save_mat('TraubPaperOutput', ['traub_',algoname,'_test'], true, npoints, ..
   time, c, timeratio, npointsratio, npointslgratio, timelgratio, ...
   sorted_timeratio, sorted_npointsratio);
 end
-keyboard
+
 
 %% Sample printout
 
