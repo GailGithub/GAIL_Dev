@@ -13,7 +13,7 @@ MATLABLtOrange = 0.5*[0.85,  0.325, 0.098] + 0.5*[1 1 1];
 whichdir = '../figure/';
 
 %% Sample functions with wildy oscillating second derivatives
-f1 = @(x) x.^4 .* sin(1./x);
+f1 = @(x) x.^4 .* sin(1./((x==0)+x));
 f1pp = @(x) (12*x.^2 - 1) .* sin(1./x) - 6*x .* cos(1./x);
 f2 = @(x) f1(x) + 10.*x.^2;
 f2pp = @(x) f1pp(x) + 20;

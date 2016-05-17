@@ -1,6 +1,6 @@
 function cf_chebfun_min(f, a, b, abstol, truey)
 % Examples:
-% f1 = @(x) x.^4 .* sin(1./x); a = -1; b = 1; abstol = 1e-6; cf_chebfun_min(f1, a, b, abstol,f1(-1))
+% f1 = @(x) x.^4 .* sin(1./((x==0)+x)); a = -1; b = 1; abstol = 1e-6; cf_chebfun_min(f1, a, b, abstol,f1(-1))
 %
 % f2 = @(x) f1(x) + 10.*x.^2;  cf_chebfun_min(f2, a, b, abstol, 0) 
 %
