@@ -9,7 +9,7 @@ function [timeratio,timelgratio,npointsratio,npointslgratio]=traubpaper_funappx_
 rng default % for reproducibilityI
 cc = rand(nrep,1);
 c = cc*2; % number of simulations for each test function
-n = 6; % number of test functions
+n = 3; % number of test functions
 m = 3; % number of methods
 npoints = zeros(n,m,nrep);
 time = zeros(n,m,nrep);
@@ -33,14 +33,14 @@ warning('off',['GAIL:',algoname,':fSmallerThanAbstol'])
 warning('off','GAIL:funappxglobal_g:peaky')
 warning('off','GAIL:funappxglobal_g:exceedbudget')
 
-g1 = @(x,c) x.^4 .* sin(c./x);
+g1 = @(x,c) x.^4 .* sin(c./((x==0)+x)); 
 g2 = @(x,c) g1(x,c) + c.*x.^2;
 delta = .2; B = 1./(2*delta.^2);
 g3 = @(x,cc) B*(4*delta.^2 + (x-cc).^2 + (x-cc-delta).*abs(x-cc-delta) ...
   - (x-cc+delta).*abs(x-cc+delta)).*(abs(x-cc) <= 2*delta);
-g4 = @(x,c) (x-c).^2;
-g5 = @(x,c) c*sin(c*pi*x);
-g6 = @(x,c) 10*exp(-1000*(x-c).^2);
+%g4 = @(x,c) (x-c).^2;
+%g5 = @(x,c) c*sin(c*pi*x);
+%g6 = @(x,c) 10*exp(-1000*(x-c).^2);
 
 a = zeros(1,n);
 b = zeros(1,n);
@@ -50,10 +50,10 @@ for i = 1:nrep
   f1 = @(x) g1(x,c(i));
   f2 = @(x) g2(x,c(i));
   f3 = @(x) g3(x,cc(i)*0.6);
-  f4 = @(x) g4(x,c(i));
-  f5 = @(x) g5(x,c(i));
-  f6 = @(x) g6(x,c(i));
-  fcns = {f1, f2, f3, f4, f5, f6};
+  %f4 = @(x) g4(x,c(i));
+  %f5 = @(x) g5(x,c(i));
+  %f6 = @(x) g6(x,c(i));
+  fcns = {f1, f2, f3};
   %          f4 = @(x) 1/4*c(i)*exp(-2*x).*(c(i)-2*exp(x).*(-1 +...
   %              c(i)*cos(x) - c(i)*sin(x))+exp(2*x).*(c(i) + 2*cos(x)...
   %              - 2* sin(x) - c(i)*sin(2*x)));
@@ -109,24 +109,25 @@ warning('on',['GAIL:',algoname,':exceedbudget'])
 warning('on',['GAIL:',algoname,':fSmallerThanAbstol'])
 
 permuted_index = [3, 1:2, 4:length(fcns)];
-d = 1.9;
-cc = d/4;
-f1 = @(x) g1(x,d);
-f2 = @(x) g2(x,d);
-f3 = @(x) g3(x,cc*0.6);
-f4 = @(x) g4(x,d);
-f5 = @(x) g5(x,d);
-f6 = @(x) g6(x,d);
-fcns = {f1, f2, f3, f4, f5, f6};
-x = cell(length(fcns));
-y = cell(length(fcns));
-for i=1:length(fcns)
-    if i > 3,
-        b(i) = d+1;
-    end
-    x{i} = a(i):0.05:d+1;
-    y{i} = fcns{i}(x{i});
-end
+% 
+% d = 1.9;
+% cc = d/4;
+% f1 = @(x) g1(x,d);
+% f2 = @(x) g2(x,d);
+% f3 = @(x) g3(x,cc*0.6);
+% %f4 = @(x) g4(x,d);
+% f5 = @(x) g5(x,d);
+% f6 = @(x) g6(x,d);
+% fcns = {f1, f2, f3, f4, f5, f6};
+% x = cell(length(fcns));
+% y = cell(length(fcns));
+% for i=1:length(fcns)
+%     if i > 3,
+%         b(i) = d+1;
+%     end
+%     x{i} = a(i):0.05:d+1;
+%     y{i} = fcns{i}(x{i});
+% end
 
 timeratio = zeros(m-1,nrep,n);
 npointsratio = zeros(m-1,nrep,n);
@@ -201,16 +202,16 @@ MATLABLtOrange = 0.5*[0.85,  0.325, 0.098] + 0.5*[1 1 1];
 %markers = {'--go', ':r*', '-.b.', '-g+', '--ro', '-.b'};
 markers = {MATLABBlue, MATLABOrange, MATLABPurple, MATLABGreen, MATLABDkOrange,MATLABLtOrange};
 if usejava('jvm') || MATLABVERSION <= 7.12
-  figure
-  hold on
-  for i = permuted_index
-    plot(x{i},y{i},'color',markers{i}); 
-  end
-  hold off
-  
-  legend('\(f_3\)','\(g_1\)','\(g_2\)','\(g_3\)','\(g_4\)','\(g_5\)','Location','NorthWest')
-  xlabel('x')
-  gail.save_eps('TraubPaperOutput', ['traub_',algoname,'_testfun']);
+%   figure
+%   hold on
+%   for i = permuted_index
+%     plot(x{i},y{i},'color',markers{i}); 
+%   end
+%   hold off
+%  
+%  legend('\(f_3\)','\(g_1\)','\(g_2\)','\(g_3\)','\(g_4\)','\(g_5\)','Location','NorthWest')
+%  xlabel('x')
+%  gail.save_eps('TraubPaperOutput', ['traub_',algoname,'_testfun']);
   
   figure
   t = 1:nrep*n;
@@ -222,9 +223,12 @@ if usejava('jvm') || MATLABVERSION <= 7.12
     %title([algoname, ' vs. ', func2str( methods{k+1})])
   end
   hold off
-  legend('{\tt funappx\_g} vs. {\tt funappxglobal\_g} time ratio', '{\tt funappx\_g} vs. {\tt funappxglobal\_g} points ratio',...
-         '{\tt funappx\_g} vs. Chebfun time ratio', '{\tt funappx\_g} vs. Chebfun points ratio',...
-         'Location','NorthWest');
+  h=legend('{\tt funappx\_g} vs. {\tt funappxglobal\_g} time ratio',...
+           '{\tt funappx\_g} vs. {\tt funappxglobal\_g} points ratio',...
+           '{\tt funappx\_g} vs. Chebfun time ratio',...
+           '{\tt funappx\_g} vs. Chebfun points ratio',...
+           'Location','NorthWest');
+  set(h, 'Interpreter', 'latex')
   legend BOXOFF 
   gail.save_eps('TraubPaperOutput', ['traub_',algoname,'_test']);
 end;
