@@ -31,7 +31,7 @@ plot(fx,fy,'b+')
 trueerr=abs(truey - fy)
 
 %% chebfun
-tic, c = chebfun(f, [a,b],'splitting','on');
+tic, c = chebfun(f, [a,b],'chebfuneps', abstol,'splitting','on');
 tic, [cy,cx] = min(c), toc
 trueerr = abs(truey - cy)
 plot(cx,cy,'g*')

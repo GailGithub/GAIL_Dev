@@ -24,7 +24,7 @@ else
 end
 
 algo2 = @(f,a,b,abstol) funappxglobal_g(f,a,b,abstol);
-algo3 = @(f,a,b) chebfun(f, [a,b],'splitting','on');
+algo3 = @(f,a,b) chebfun(f, [a,b],'chebfuneps', abstol,'splitting','on');
 methods = {algo, algo2, algo3};
 
 warning('off',['GAIL:',algoname,':peaky'])
@@ -33,7 +33,7 @@ warning('off',['GAIL:',algoname,':fSmallerThanAbstol'])
 warning('off','GAIL:funappxglobal_g:peaky')
 warning('off','GAIL:funappxglobal_g:exceedbudget')
 
-g1 = @(x,c) x.^4 .* sin(c./((x==0)+x)); 
+g1 = @(x,c) x.^4.*sin(c./((x==0)+x)); 
 g2 = @(x,c) g1(x,c) + 10.*x.^2;
 delta = .2; B = 1./(2*delta.^2);
 g3 = @(x,cc) B*(4*delta.^2 + (x-cc).^2 + (x-cc-delta).*abs(x-cc-delta) ...
@@ -88,10 +88,10 @@ for i = 1:nrep
       end
       
       trueerrormat(j,k,i) = max(abs(yy-exactyy));
-%       if trueerrormat(j,k,i)  > abstol
-%         cf_chebfun(f,a(j),b(j), abstol);
-%         keyboard
-%       end
+      if trueerrormat(j,k,i)  > abstol
+        cf_chebfun(f,a(j),b(j), abstol);
+        keyboard
+      end
       if k==1
         exceedmat(j,k,i) = sum(out_param.exitflag)>0;
       elseif k==2
@@ -106,7 +106,7 @@ warning('on',['GAIL:',algoname,':peaky'])
 warning('on',['GAIL:',algoname,':exceedbudget'])
 warning('on',['GAIL:',algoname,':fSmallerThanAbstol'])
 
-permuted_index = [3, 1:2, 4:length(fcns)];
+permuted_index = [3, 1:2];%, 4:length(fcns)];
 % 
 % d = 1.9;
 % cc = d/4;

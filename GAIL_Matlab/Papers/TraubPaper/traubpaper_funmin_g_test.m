@@ -7,12 +7,9 @@ function [timeratio,timelgratio,npointsratio,npointslgratio]=traubpaper_funmin_g
 % Compare funminNoPenalty_g, fminbnd, and chebfun:
 % [timeratio,timelgratio,npointsratio,npointslgratio]=traubpaper_funmin_g_test(nrep,abstol,'funminNoPenalty_g');
 rng default % for reproducibility
-set(0,'defaultaxesfontsize',14,'defaulttextfontsize',14, ... %make font larger
-  'defaultLineLineWidth',2); %thick lines
-%  'defaultLineMarkerSize',8)
 cc = rand(nrep,1);
 c = cc*2; % number of simulations for each test function
-n = 6; % number of test functions
+n = 3; % number of test functions
 m = 3; % number of methods
 npoints = zeros(n,m,nrep);
 time = zeros(n,m,nrep);
@@ -27,7 +24,7 @@ else
 end
 
 algo2 = @(f,a,b,abstol) fminbnd(f,a,b,abstol);
-algo3 = @(f,a,b) chebfun(f, [a,b],'splitting','on');
+algo3 = @(f,a,b) chebfun(f, [a,b],'chebfuneps', abstol,'splitting','on');
 methods = {algo, algo2, algo3};
 
 % warning('off',['GAIL:',algoname,':peaky'])
@@ -36,14 +33,14 @@ methods = {algo, algo2, algo3};
 % warning('off','GAIL:funminglobal_g:peaky')
 % warning('off','GAIL:funminglobal_g:exceedbudget')
 
-g1 = @(x,c) x.^4 .* sin(c./x);
-g2 = @(x,c) g1(x,c) + c.*x.^2;
+g1 = @(x,c) x.^4.*sin(c./((x==0)+x)); 
+g2 = @(x,c) g1(x,c) + 10.*x.^2;
 delta = .2; B = 1./(2*delta.^2);
 g3 = @(x,cc) -B*(4*delta.^2 + (x-cc).^2 + (x-cc-delta).*abs(x-cc-delta) ...
   - (x-cc+delta).*abs(x-cc+delta)).*(abs(x-cc) <= 2*delta);
-g4 = @(x,c) (x-c).^2;
-g5 = @(x,c) c*sin(c*pi*x);
-g6 = @(x,c) -10*exp(-1000*(x-c).^2);
+% g4 = @(x,c) (x-c).^2;
+% g5 = @(x,c) c*sin(c*pi*x);
+% g6 = @(x,c) -10*exp(-1000*(x-c).^2);
 
 a = zeros(1,n);
 b = zeros(1,n);
@@ -53,10 +50,10 @@ for i = 1:nrep
   f1 = @(x) g1(x,c(i));
   f2 = @(x) g2(x,c(i));
   f3 = @(x) g3(x,cc(i)*0.6);
-  f4 = @(x) g4(x,c(i));
-  f5 = @(x) g5(x,c(i));
-  f6 = @(x) g6(x,c(i));
-  fcns = {f1, f2, f3, f4, f5, f6};
+%   f4 = @(x) g4(x,c(i));
+%   f5 = @(x) g5(x,c(i));
+%   f6 = @(x) g6(x,c(i));
+  fcns = {f1, f2, f3};
   
   for j = 1:length(fcns)
     
@@ -73,19 +70,19 @@ for i = 1:nrep
       exactfmin = 0;
     elseif j==3
       exactfmin = -1;
-    elseif j==4
-      exactxmin = c(i);
-      exactfmin = 0;
-    elseif j==5
-      kk = 0:floor(b(j)*c(i)-.5);
-      if isempty(kk)
-        exactfmin = 0;
-      else
-        stat_pts = (kk + 0.5)/c(i);
-        exactfmin = min(f([0,stat_pts,b(j)]));
-      end
-    elseif j==6
-      exactfmin = -10;
+%     elseif j==4
+%       exactxmin = c(i);
+%       exactfmin = 0;
+%     elseif j==5
+%       kk = 0:floor(b(j)*c(i)-.5);
+%       if isempty(kk)
+%         exactfmin = 0;
+%       else
+%         stat_pts = (kk + 0.5)/c(i);
+%         exactfmin = min(f([0,stat_pts,b(j)]));
+%       end
+%     elseif j==6
+%       exactfmin = -10;
     end
     
     for k = 1:length(methods)
@@ -103,8 +100,9 @@ for i = 1:nrep
       elseif k == 3
         try
           lastwarn('')
-          tic, chebf = chebfun(f,[a(j),b(j)],'splitting','on');
-          fmin = min(chebf); t=toc;
+          tic, chebf = chebfun(f,[a(j),b(j)],'chebfuneps', abstol,'splitting','on');
+               fmin = min(chebf); 
+          t=toc;
           if length(lastwarn) > 0
             exceedmat(j,k,i) = 1;
           end
@@ -131,25 +129,26 @@ end;
 % warning('on',['GAIL:',algoname,':exceedbudget'])
 % warning('on',['GAIL:',algoname,':fSmallerThanAbstol'])
 
-permuted_index = [3, 1:2, 4:length(fcns)];
-d = 1.9;
-cc = d/4;
-f1 = @(x) g1(x,d);
-f2 = @(x) g2(x,d);
-f3 = @(x) g3(x,cc*0.6);
-f4 = @(x) g4(x,d);
-f5 = @(x) g5(x,d);
-f6 = @(x) g6(x,d);
-fcns = {f1, f2, f3, f4, f5, f6};
-x = cell(length(fcns));
-y = cell(length(fcns));
-for i=1:length(fcns)
-  if i > 3,
-    b(i) = d+1;
-  end
-  x{i} = a(i):0.05:b(i);
-  y{i} = fcns{i}(x{i});
-end
+permuted_index = [3, 1:2];
+% permuted_index = [3, 1:2, 4:length(fcns)];
+% d = 1.9;
+% cc = d/4;
+% f1 = @(x) g1(x,d);
+% f2 = @(x) g2(x,d);
+% f3 = @(x) g3(x,cc*0.6);
+% f4 = @(x) g4(x,d);
+% f5 = @(x) g5(x,d);
+% f6 = @(x) g6(x,d);
+% fcns = {f1, f2, f3, f4, f5, f6};
+% x = cell(length(fcns));
+% y = cell(length(fcns));
+% for i=1:length(fcns)
+%   if i > 3,
+%     b(i) = d+1;
+%   end
+%   x{i} = a(i):0.05:b(i);
+%   y{i} = fcns{i}(x{i});
+% end
 
 timeratio = zeros(m-1,nrep,n);
 npointsratio = zeros(m-1,nrep,n);
@@ -223,16 +222,15 @@ MATLABDkOrange = [0.85,  0.325, 0.098]*0.6;
 MATLABLtOrange = 0.5*[0.85,  0.325, 0.098] + 0.5*[1 1 1];
 markers = {MATLABBlue, MATLABOrange, MATLABPurple, MATLABGreen, MATLABDkOrange,MATLABLtOrange};
 if usejava('jvm') || MATLABVERSION <= 7.12
-  figure
-  hold on
-  for i = permuted_index
-    plot(x{i},y{i},'color',markers{i}); 
-  end
-  
-markers = {MATLABBlue, MATLABOrange, MATLABPurple, MATLABGreen, MATLABDkOrange,MATLABLtOrange};
-  legend('\(f_3\)','\(g_1\)','\(g_2\)','\(g_3\)','\(g_4\)','\(g_5\)','Location','NorthWest')
-  xlabel('x')
-  gail.save_eps('TraubPaperOutput', ['traub_',algoname,'_testfun']);
+%   figure
+%   hold on
+%   for i = permuted_index
+%     plot(x{i},y{i},'color',markers{i}); 
+%   end
+%   
+%   legend('\(f_3\)','\(g_1\)','\(g_2\)','\(g_3\)','\(g_4\)','\(g_5\)','Location','NorthWest','Interpreter','latex')
+%   xlabel('x')
+%   gail.save_eps('TraubPaperOutput', ['traub_',algoname,'_testfun']);
   
   figure
   t = 1:nrep*n;
@@ -245,9 +243,10 @@ markers = {MATLABBlue, MATLABOrange, MATLABPurple, MATLABGreen, MATLABDkOrange,M
     legend('time ratio', 'points ratio','Location','NorthWest');
   end
   hold off
-  legend('{\tt funmin\_g} vs. {\tt fminbnd} time ratio', '{\tt funmin\_g} vs. {\tt fminbnd} points ratio',...
+  h=legend('{\tt funmin\_g} vs. {\tt fminbnd} time ratio', '{\tt funmin\_g} vs. {\tt fminbnd} points ratio',...
          '{\tt funmin\_g} vs. Chebfun time ratio', '{\tt funmin\_g} vs. Chebfun points ratio',...
          'Location','NorthWest');
+  set(h, 'Interpreter', 'latex')   
   legend BOXOFF 
   gail.save_eps('TraubPaperOutput', ['traub_',algoname,'_test']);
 end;
@@ -262,9 +261,6 @@ end
 %   Function   ----------------------------    -------------------------------     --------------------------------------   ----------------------------------------
 %              funmin_g   fminbnd   Chebfun    funmin_g     fminbnd    Chebfun     funmin_g        fminbnd        Chebfun   funmin_g        fminbnd       Chebfun
 %                                                                                  No Warn Warn No Warn Warn   No Warn Warn  No Warn Warn  No Warn Warn  No Warn Warn
-%         3      2913         8         11       0.003        0.002       0.223     100      0    100      0    100        0      0      0      0      0      0      0
-%         1      2341        22       5249       0.003        0.002       2.534     100      0     24      0    100       71      0      0     76      0      0      0
-%         2      2552        10       1489       0.004        0.002       1.069     100      0    100      0    100        0      0      0      0      0      0      0
-%         4      1747         6          3       0.002        0.002       0.012     100      0    100      0    100        0      0      0      0      0      0      0
-%         5      5421        18         22       0.003        0.002       0.012     100      0    100      0    100        0      0      0      0      0      0      0
-%         6      9160        14        151       0.006        0.002       0.152     100      0    100      0    100        0      0      0      0      0      0      0
+%         3       274         8        113       0.006        0.004       0.196     100      0    100      0     12        0      0      0      0      0     88      0
+%         1       230        22         44       0.005        0.006       0.044     100      0     24      0     54        0      0      0     76      0     46      0
+%         2       273         9         24       0.006        0.005       0.025     100      0    100      0     34        0      0      0      0      0     66      0
