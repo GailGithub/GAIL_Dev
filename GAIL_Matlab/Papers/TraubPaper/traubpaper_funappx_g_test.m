@@ -34,7 +34,7 @@ warning('off','GAIL:funappxglobal_g:peaky')
 warning('off','GAIL:funappxglobal_g:exceedbudget')
 
 g1 = @(x,c) x.^4 .* sin(c./((x==0)+x)); 
-g2 = @(x,c) g1(x,c) + c.*x.^2;
+g2 = @(x,c) g1(x,c) + 10.*x.^2;
 delta = .2; B = 1./(2*delta.^2);
 g3 = @(x,cc) B*(4*delta.^2 + (x-cc).^2 + (x-cc-delta).*abs(x-cc-delta) ...
   - (x-cc+delta).*abs(x-cc+delta)).*(abs(x-cc) <= 2*delta);
@@ -57,8 +57,6 @@ for i = 1:nrep
   %          f4 = @(x) 1/4*c(i)*exp(-2*x).*(c(i)-2*exp(x).*(-1 +...
   %              c(i)*cos(x) - c(i)*sin(x))+exp(2*x).*(c(i) + 2*cos(x)...
   %              - 2* sin(x) - c(i)*sin(2*x)));
-  
-  
   for j = 1:length(fcns)
     f = fcns{j};
     if j > 3,
@@ -74,7 +72,7 @@ for i = 1:nrep
       elseif k == 3
         try
           lastwarn('')
-          tic, fappx = chebfun(f,[a(j),b(j)],'splitting','on'); t=toc;
+          tic, fappx = chebfun(f,[a(j),b(j)],'chebfuneps', abstol,'splitting','on'); t=toc;
           if length(lastwarn) > 0
             exceedmat(j,k,i) = 1;
           end
@@ -90,10 +88,10 @@ for i = 1:nrep
       end
       
       trueerrormat(j,k,i) = max(abs(yy-exactyy));
-      %             if trueerrormat(j,k,i)  > abstol
-      %                cf_chebfun(f,a,b);
-      %                keyboard
-      %             end
+%       if trueerrormat(j,k,i)  > abstol
+%         cf_chebfun(f,a(j),b(j), abstol);
+%         keyboard
+%       end
       if k==1
         exceedmat(j,k,i) = sum(out_param.exitflag)>0;
       elseif k==2
