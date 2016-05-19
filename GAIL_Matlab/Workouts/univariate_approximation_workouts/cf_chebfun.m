@@ -1,6 +1,6 @@
 function cf_chebfun(f, a, b, abstol)
 % Examples:
-% f1 = @(x) x.^4 .* sin(1./x); a = -1; b = 1; abstol = 1e-6; cf_chebfun(f1, a, b, abstol)
+% f1 = @(x) x.^4 .* sin(1./((x==0)+x)); a = -1; b = 1; abstol = 1e-6; cf_chebfun(f1, a, b, abstol)
 %
 % f2 = @(x) f1(x) + 10.*x.^2; abstol = 1e-6;   cf_chebfun(f2, a, b, abstol) 
 %
@@ -32,7 +32,7 @@ tic, [fappx, fout] = funappxNoPenalty_g(f,a,b,abstol,'nmax',10^8), toc
 % gail.funappx_g_check(fappx,fout)
 
 %% chebfun
-tic, c = chebfun(f, [a,b],'splitting','on'), toc
+tic, c = chebfun(f,[a,b],'chebfuneps', abstol,'splitting','on'), toc
 
 x=a:0.00001:b;
 figure(1)
