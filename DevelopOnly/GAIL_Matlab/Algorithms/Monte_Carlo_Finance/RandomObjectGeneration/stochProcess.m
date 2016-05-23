@@ -88,7 +88,7 @@ classdef stochProcess < handle & matlab.mixin.CustomDisplay
          elseif isfield(val,'nSteps') %data for nSteps provided
             validateattributes(val.nSteps, ...
                {'numeric'}, {'scalar','integer','positive'})
-            obj.timeDim.timeVector = 1:obj.timeDim.nSteps; %time vector      
+            obj.timeDim.timeVector = 1:val.nSteps; %time vector      
          end
          if isfield(val,'dim')
             validateattributes(val.dim, {'numeric'}, ...
