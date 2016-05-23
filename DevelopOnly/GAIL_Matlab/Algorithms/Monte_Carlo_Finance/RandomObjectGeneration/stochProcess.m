@@ -65,16 +65,16 @@ classdef stochProcess < handle & matlab.mixin.CustomDisplay
                    val = varargin{2};
                end
             end
-            if isstruct(val)
-               obj.restInput = val;
+            if isstruct(val) %properties of stochProcess might be assigned
                if isfield(val,'inputType')
                   obj.inputType = val.inputType;
-                  obj.restInput=rmfield(obj.restInput,'inputType');
+                  obj.restInput=rmfield(val,'inputType');
                end
                if isfield(val,'timeDim')
                   obj.timeDim = val.timeDim;
-                  obj.restInput=rmfield(obj.restInput,'timeDim');
+                  obj.restInput=rmfield(val,'timeDim');
                end
+               obj.restInput = val;
             end
          end
       end

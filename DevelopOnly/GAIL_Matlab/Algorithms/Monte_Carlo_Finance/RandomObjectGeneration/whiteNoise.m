@@ -87,7 +87,8 @@ classdef whiteNoise < stochProcess
             obj.qrandState = val; %set or initialize qrandstate
          end
          if strcmp(obj.inputType,'n') && ...
-            strcmp(obj.wnParam.sampleKind,'IID') %easier to sample from randn
+            strcmp(obj.wnParam.sampleKind,'IID') && ... %easier to sample from randn
+            strcmp(obj.wnParam.distribName,'Gaussian') %if you want Gaussian
             obj.wnParam.xDistrib = 'Gaussian';
          end
       end
