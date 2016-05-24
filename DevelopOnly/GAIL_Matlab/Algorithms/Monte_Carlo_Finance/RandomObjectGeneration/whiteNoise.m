@@ -32,7 +32,7 @@ classdef whiteNoise < stochProcess
    properties (SetAccess=public)
       wnParam = struct('sampleKind','IID', ... %kind of sampling
          'distribName', 'Uniform', ... %distribution of the marginals 
-         'xDistrib', 'Uniform') %kind of sampling
+         'xDistrib', 'Uniform') %kind of sampling before transformation
    end
 
    properties (Constant, Hidden) %do not change & not seen
