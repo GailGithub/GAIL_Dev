@@ -1,30 +1,27 @@
 function [fmin,out_param]=funminNoPenalty_g(varargin)
-%funminNoPenalty_g 1-D guaranteed locally adaptive function optimization 
+%funminNoPenalty_g 1-D guaranteed locally adaptive function optimization
 %   on [a,b]
 %
-%   fmin = FUNMINNOPENALTY_G(f) finds minimum value of function f on the default
-%   interval [0,1] within the guaranteed absolute error tolerance of 1e-6
-%   and the X tolerance of 1e-3. Default initial number of points is 100
-%   and default cost budget is 1e7. Input f is a function handle.
+%   fmin = FUNMINNOPENALTY_G(f) finds minimum value of function f on the  
+%   default interval [0,1] within the guaranteed absolute error tolerance 
+%   of 1e-6. Input f is a function handle.
 %
-%   fmin = FUNMINNOPENALTY_G(f,a,b,abstol,TolX) finds minimum value of
+%   fmin = FUNMINNOPENALTY_G(f,a,b,abstol) finds minimum value of
 %   function f with ordered input parameters that define the finite
-%   interval [a,b], a guaranteed absolute error tolerance abstol and a
-%   guaranteed X tolerance TolX.
+%   interval [a,b], and a guaranteed absolute error tolerance abstol.
 %
-%   fmin = FUNMINNOPENALTY_G(f,'a',a,'b',b,'abstol',abstol,'TolX',TolX)
-%   finds minimum value of function f on the interval [a,b] with a 
-%   guaranteed absolute error tolerance abstol and a guaranteed X tolerance 
-%   TolX. All five
-%   field-value pairs are optional and can be supplied in different order.
+%   fmin = FUNMINNOPENALTY_G(f,'a',a,'b',b,'abstol',abstol) finds minimum
+%   value of function f on the interval [a,b] with a guaranteed absolute
+%   error tolerance. All four field-value pairs are optional and can be
+%   supplied in different order.
 %
-%   fmin = FUNMINNOPENALTY_G(f,in_param) finds minimum value of function f on the
-%   interval [in_param.a,in_param.b] with a guaranteed absolute error
-%   tolerance in_param.abstol and a guaranteed X tolerance in_param.TolX.
-%   If a field is not specified, the default value is used.
+%   fmin = FUNMINNOPENALTY_G(f,in_param) finds minimum value of function f  
+%   on the interval [in_param.a,in_param.b] with a guaranteed absolute
+%   error tolerance in_param.abstol. If a field is not specified, the
+%   default value is used.
 %
-%   [fmin, out_param] = FUNMINNOPENALTY_G(f,...) returns minimum value fmin of
-%   function f and an output structure out_param.
+%   [fmin, out_param] = FUNMINNOPENALTY_G(f,...) returns minimum value fmin
+%   of function f and an output structure out_param.
 %
 %   Input Arguments
 %
@@ -37,7 +34,6 @@ function [fmin,out_param]=funminNoPenalty_g(varargin)
 %     in_param.abstol --- guaranteed absolute error tolerance, default
 %     value is 1e-6.
 %
-%     in_param.TolX --- guaranteed X tolerance, default value is 1e-3.
 %
 %   Optional Input Arguments
 %
@@ -59,8 +55,6 @@ function [fmin,out_param]=funminNoPenalty_g(varargin)
 %
 %     out_param.abstol --- guaranteed absolute error tolerance
 %
-%     out_param.TolX --- guaranteed X tolerance
-%
 %     out_param.nlo --- a lower bound of initial number of points we use
 %
 %     out_param.nhi --- an upper bound of initial number of points we use
@@ -78,15 +72,18 @@ function [fmin,out_param]=funminNoPenalty_g(varargin)
 %
 %     out_param.errest --- estimation of the absolute error bound
 %
-%     out_param.volumeX --- the volume of intervals containing the point(s)
-%     where the minimum occurs
-%
 %     out_param.intervals --- the intervals containing point(s) where the
 %     minimum occurs. Each column indicates one interval where the first
 %     row is the left point and the second row is the right point.
 %
 %  Guarantee
 %
+%  For [a,b] there exists a partition, P={[t_0,t_1], [t_1,t_2], ...,
+%  [t_{L-1},t_L]}, where a=t_0 < t_1 < ... < t_L=b. If the function to be
+%  minimized, f, satisfies the cone condition
+%  for each sub interval [t_{l-1},t_l], where 1 <= l <= L, then the output
+%  fappx by this algorithm is guaranteed to satisfy
+%      |
 %
 %
 %  Examples
@@ -94,26 +91,27 @@ function [fmin,out_param]=funminNoPenalty_g(varargin)
 %  Example 1:
 %
 %  >> f=@(x) exp(0.01*(x-0.5).^2); [fmin,out_param] = funminNoPenalty_g(f)
-% 
+%
 %  fmin =
-% 
+%
 %      1
 % 
 %  out_param = 
 % 
-%            f: @(x)exp(0.01*(x-0.5).^2)
-%            a: 0
-%            b: 1
-%       abstol: 1.0000e-06
-%          nlo: 10
-%          nhi: 1000
-%        ninit: 100
-%         nmax: 10000000
-%      maxiter: 1000
-%     exitflag: [0 0]
-%         iter: 2
-%      npoints: 105
-%       errest: 1.4576e-07
+%             f: @(x)exp(0.01*(x-0.5).^2)
+%             a: 0
+%             b: 1
+%        abstol: 1.0000e-06
+%           nlo: 10
+%           nhi: 1000
+%         ninit: 100
+%          nmax: 10000000
+%       maxiter: 1000
+%      exitflag: [0 0]
+%          iter: 2
+%       npoints: 123
+%        errest: 3.7879e-07
+%     intervals: [2x1 double]
 %
 %
 %  Example 2:
@@ -127,19 +125,20 @@ function [fmin,out_param]=funminNoPenalty_g(varargin)
 % 
 %  out_param = 
 % 
-%            f: @(x)exp(0.01*(x-0.5).^2)
-%            a: -2
-%            b: 2
-%       abstol: 1.0000e-07
-%          nlo: 10
-%          nhi: 10
-%        ninit: 10
-%         nmax: 1000000
-%      maxiter: 1000
-%     exitflag: [0 0]
-%         iter: 9
-%      npoints: 50
-%       errest: 3.0567e-08
+%             f: @(x)exp(0.01*(x-0.5).^2)
+%             a: -2
+%             b: 2
+%        abstol: 1.0000e-07
+%           nlo: 10
+%           nhi: 10
+%         ninit: 10
+%          nmax: 1000000
+%       maxiter: 1000
+%      exitflag: [0 0]
+%          iter: 9
+%       npoints: 57
+%        errest: 9.1055e-08
+%     intervals: [2x1 double]
 %
 %
 %  Example 3:
@@ -150,26 +149,27 @@ function [fmin,out_param]=funminNoPenalty_g(varargin)
 %  >> in_param.nlo = 10; in_param.nhi = 100;
 %  >> in_param.nmax = 10^6;
 %  >> [fmin,out_param] = funminNoPenalty_g(f,in_param)
-% 
+%
 %  fmin =
 % 
 %     1.0000
 % 
 %  out_param = 
 % 
-%            f: @(x)exp(0.01*(x-0.5).^2)
-%            a: -13
-%            b: 8
-%       abstol: 1.0000e-07
-%          nlo: 10
-%          nhi: 100
-%        ninit: 91
-%         nmax: 1000000
-%      maxiter: 1000
-%     exitflag: [0 0]
-%         iter: 7
-%      npoints: 123
-%       errest: 5.3163e-08
+%             f: @(x)exp(0.01*(x-0.5).^2)
+%             a: -13
+%             b: 8
+%        abstol: 1.0000e-07
+%           nlo: 10
+%           nhi: 100
+%         ninit: 91
+%          nmax: 1000000
+%       maxiter: 1000
+%      exitflag: [0 0]
+%          iter: 9
+%       npoints: 149
+%        errest: 2.5117e-08
+%     intervals: [2x1 double]
 %
 %
 %  Example 4:
@@ -183,28 +183,29 @@ function [fmin,out_param]=funminNoPenalty_g(varargin)
 % 
 %  out_param = 
 % 
-%            f: @(x)exp(0.01*(x-0.5).^2)
-%            a: -2
-%            b: 2
-%       abstol: 1.0000e-05
-%          nlo: 10
-%          nhi: 100
-%        ninit: 64
-%         nmax: 1000000
-%      maxiter: 1000
-%     exitflag: [0 0]
-%         iter: 2
-%      npoints: 71
-%       errest: 8.2795e-06
+%             f: @(x)exp(0.01*(x-0.5).^2)
+%             a: -2
+%             b: 2
+%        abstol: 1.0000e-05
+%           nlo: 10
+%           nhi: 100
+%         ninit: 64
+%          nmax: 1000000
+%       maxiter: 1000
+%      exitflag: [0 0]
+%          iter: 4
+%       npoints: 88
+%        errest: 2.5064e-06
+%     intervals: [2x1 double]
 %
 %
-%  See also FMINBND, FUNAPPX_G, INTEGRAL_G
+%  See also FMINBND, FUNAPPXNOPENALTY_G, INTEGRAL_G
 %
 %  References
 %   [1]  Xin Tong. A Guaranteed, "Adaptive, Automatic Algorithm for
-%   Univariate Function Minimization," MS thesis, Illinois Institute of 
+%   Univariate Function Minimization," MS thesis, Illinois Institute of
 %   Technology, 2014.
-% 
+%
 %   [2] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang,
 %   Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
 %   GAIL: Guaranteed Automatic Integration Library (Version 2.1)
@@ -217,7 +218,7 @@ function [fmin,out_param]=funminNoPenalty_g(varargin)
 %   [4] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable
 %   Mathematical Software" [Course Slides], Illinois Institute of
 %   Technology, Chicago, IL, 2013. Available from
-%   http://code.google.com/p/gail/ 
+%   http://code.google.com/p/gail/
 %
 %   [5] Daniel S. Katz, Sou-Cheng T. Choi, Hilmar Lapp, Ketan Maheshwari,
 %   Frank Loffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr,
@@ -249,9 +250,9 @@ iSing = find(isinf(y));
 if ~isempty(iSing)
     error('GAIL:funminNoPenalty_g:yInf',['Function f(x) = Inf at x = ', num2str(x(iSing))]);
 end
-if length(y) == 1  
-    % probably f is a constant function and Matlab would  
-    % reutrn only a value fmin 
+if length(y) == 1
+    % probably f is a constant function and Matlab would
+    % reutrn only a value fmin
     fmin = y;
     max_errest = 0;
 end
@@ -263,7 +264,7 @@ C = @(h) (C0*fh)./(fh-h);
 max_errest = 1;
 
 % we start the algorithm with all warning flags down
-out_param.exitflag = false(1,exit_len); 
+out_param.exitflag = false(1,exit_len);
 
 
 while n < out_param.nmax
@@ -279,25 +280,25 @@ while n < out_param.nmax
     errest = Un+len.^2/8.*max(Br,Bl)-min_int;
     max_errest = max(errest);
     lowerbound = Un-errest;
-
+    
     
     
     %% Stage 2: compute bound of |f''(t)| and estimate error
-  
+    
     % update iterations
     iter = iter + 1;
     if max_errest <= abstol,
         break
-    end 
-
- 
+    end
+    
+    
     %% Stage 3: find I and update x,y
     badinterval = (errest > abstol);
     badlinterval= (Un-min_int+len.^2/8.*Bl>abstol);
     badrinterval= (Un-min_int+len.^2/8.*Br>abstol);
     maybecut=(badinterval|[0 badlinterval(3:end) 0]|[badlinterval(3:end)...
         0 0]|[0 badrinterval(1:end-2) 0]|[0 0 badrinterval(1:end-2)]);
-    maxlength = (len>max(len(maybecut))-eps);    
+    maxlength = (len>max(len(maybecut))-eps);
     whichcut = maybecut & maxlength;
     if (out_param.nmax<(n+length(find(whichcut))))
         out_param.exitflag(1) = true;
@@ -305,7 +306,7 @@ while n < out_param.nmax
             'attempted to exceed the cost budget. The answer may be '...
             'unreliable.'])
         break;
-    end; 
+    end;
     if(iter==out_param.maxiter)
         out_param.exitflag(2) = true;
         warning('GAIL:funminNoPenalty_g:exceediter',['Number of iterations has '...
@@ -314,12 +315,12 @@ while n < out_param.nmax
     end;
     newx = x(whichcut) + 0.5 * len(whichcut);
     if n + length(newx) > length(x)
-      xx(1:n) = x(1:n);
-      yy(1:n) = y(1:n);
-      x = xx;
-      y = yy;
+        xx(1:n) = x(1:n);
+        yy(1:n) = y(1:n);
+        x = xx;
+        y = yy;
     end
-    tt = cumsum(whichcut);   
+    tt = cumsum(whichcut);
     x([1 (2:n)+tt]) = x(1:n);
     y([1 (2:n)+tt]) = y(1:n);
     tem = 2 * tt + cumsum(whichcut==0);
@@ -343,11 +344,11 @@ if m > 0
 else
     ints1 = zeros(2,0);
 end
-    interval=ints1;
-   
-    
+interval=ints1;
+
+
 %% postprocessing
-fmin = Un; 
+fmin = Un;
 out_param.iter = iter;
 out_param.npoints = n;
 out_param.errest = max_errest;
@@ -355,8 +356,8 @@ out_param.intervals = interval;
 
 % control the order of out_param
 out_param = orderfields(out_param, ...
-            {'f', 'a', 'b','abstol','nlo','nhi','ninit','nmax','maxiter',...
-             'exitflag','iter','npoints','errest','intervals'});
+    {'f', 'a', 'b','abstol','nlo','nhi','ninit','nmax','maxiter',...
+    'exitflag','iter','npoints','errest','intervals'});
 
 
 
@@ -381,24 +382,24 @@ else
     f_addParamVal = @addParamValue;
 end;
 
- 
+
 if isempty(varargin)
-  warning('GAIL:funminNoPenalty_g:nofunction',['Function f must be specified. '...
-      'Now GAIL is using f(x)=exp(-100*(x-0.5)^2) and unit interval '...
-      '[0,1].'])
-  help funminNoPenalty_g
-  f = @(x) exp(0.01*(x-0.5).^2);
-  out_param.f = f;
-else
-  if gail.isfcn(varargin{1})
-    f = varargin{1};
-    out_param.f = f;
-  else
-    warning('GAIL:funminNoPenalty_g:notfunction',['Function f must be a '...
-        'function handle. Now GAIL is using f(x)=exp(-100*(x-0.5)^2).'])
+    warning('GAIL:funminNoPenalty_g:nofunction',['Function f must be specified. '...
+        'Now GAIL is using f(x)=exp(-100*(x-0.5)^2) and unit interval '...
+        '[0,1].'])
+    help funminNoPenalty_g
     f = @(x) exp(0.01*(x-0.5).^2);
     out_param.f = f;
-  end
+else
+    if gail.isfcn(varargin{1})
+        f = varargin{1};
+        out_param.f = f;
+    else
+        warning('GAIL:funminNoPenalty_g:notfunction',['Function f must be a '...
+            'function handle. Now GAIL is using f(x)=exp(-100*(x-0.5)^2).'])
+        f = @(x) exp(0.01*(x-0.5).^2);
+        out_param.f = f;
+    end
 end;
 
 validvarargin=numel(varargin)>1;
@@ -495,36 +496,36 @@ end
 if (~gail.isposint(out_param.nlo))
     if gail.isposge3(out_param.nlo)
         warning('GAIL:funminglobal_g:lowinitnotint',['Lower bound of '...
-        'initial number of points should be a positive integer.' ...
+            'initial number of points should be a positive integer.' ...
             ' Using ', num2str(ceil(out_param.nlo)) ' as nlo '])
         out_param.nlo = ceil(out_param.nlo);
     else
         warning('GAIL:funminglobal_g:lowinitlt3',[' Lower bound of '...
-        'initial number of points should be a positive integer greater'...
-        ' than 3. Using 3 as nlo'])
+            'initial number of points should be a positive integer greater'...
+            ' than 3. Using 3 as nlo'])
         out_param.nlo = 3;
-   end
-        warning('GAIL:funminglobal_g:lowinitnotint',['Lower bound of '...
+    end
+    warning('GAIL:funminglobal_g:lowinitnotint',['Lower bound of '...
         'initial nstar should be a positive integer.' ...
         ' Using ', num2str(ceil(out_param.nlo)) ' as nlo '])
-        out_param.nlo = ceil(out_param.nlo);
+    out_param.nlo = ceil(out_param.nlo);
 end
- if (~gail.isposint(out_param.nhi))
+if (~gail.isposint(out_param.nhi))
     if gail.isposge3(out_param.nhi)
         warning('GAIL:funminglobal_g:hiinitnotint',['Upper bound of '...
-        'initial number of points should be a positive integer.' ...
-        ' Using ', num2str(ceil(out_param.nhi)) ' as nhi' ])
+            'initial number of points should be a positive integer.' ...
+            ' Using ', num2str(ceil(out_param.nhi)) ' as nhi' ])
         out_param.nhi = ceil(out_param.nhi);
     else
         warning('GAIL:funminglobal_g:hiinitlt3',[' Upper bound of '...
-        'points should be a positive integer greater than 3. Using '...
-        'default number of points ' int2str(default.nhi) ' as nhi' ])
+            'points should be a positive integer greater than 3. Using '...
+            'default number of points ' int2str(default.nhi) ' as nhi' ])
         out_param.nhi = default.nhi;
     end
-         warning('GAIL:funminglobal_g:hiinitnotint',['Upper bound of '...
+    warning('GAIL:funminglobal_g:hiinitnotint',['Upper bound of '...
         'initial nstar should be a positive integer.' ...
         ' Using ', num2str(ceil(out_param.nhi)) ' as nhi' ])
-        out_param.nhi = ceil(out_param.nhi);
+    out_param.nhi = ceil(out_param.nhi);
 end
 
 if (out_param.nlo > out_param.nhi)
