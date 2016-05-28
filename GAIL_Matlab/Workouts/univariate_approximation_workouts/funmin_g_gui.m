@@ -64,14 +64,12 @@ k = 0;
 
 % Scale the plot
 h = b - a;
-
 ninit = 2*ceil(nhi*(nlo/nhi)^(1/(1+h)))+1;
 x = a:h/(ninit-1):b;
 y = f(x);
 maxy = max(y);
 miny = min(y);
 set(gcf,'doublebuffer','on','userdata',0)
-MATLABOrange = [0.85,  0.325, 0.098];
 MATLABBlue = [0, 0.447, 0.741];
 MATLABGreen = [0.466,  0.674, 0.188];
 plot(x,y,'.','markersize',25,'color',MATLABBlue);
@@ -81,28 +79,13 @@ p(2) = fill(b,fb,'k');
 hold off
 s = (maxy - miny)/5;
 axis([a b miny-s maxy+s])
-% q(1) = uicontrol('string','step', ...
-%     'units','normal','pos',[.65 .02 .08 .04], ...
-%     'callback','set(gcf,''userdata'',1)');
-% q(2) = uicontrol('string','auto', ...
-%     'units','normal','pos',[.75 .02 .08 .04], ...
-%     'callback','set(gcf,''userdata'',2)');
-% q(3) = uicontrol('string','quit', ...
-%     'units','normal','pos',[.85 .02 .08 .04], ...
-%     'callback','set(gcf,''userdata'',3)');
 q(1) = uicontrol('string','step', ...
     'units','normal','pos',[.75 .02 .08 .04], ...
     'callback','set(gcf,''userdata'',1)');
 q(2) = uicontrol('string','auto', ...
      'units','normal','pos',[.85 .02 .08 .04], ...
     'callback','set(gcf,''userdata'',2)');
-%index = [1 ninit];
-% initialize nstar
-%nstar = ninit - 2;
-%nstar = floor(ninit/2);
-% initialize error
 err = tol+1;
-
 in_param.a = a; 
 in_param.b = b; 
 in_param.abstol = tol; 
@@ -123,8 +106,7 @@ while(max(err) > tol)
         p = flipud(get(gca,'children'));
         set(p(1),'xdata',x,'ydata',y)
         %set(gca,'xtick',x,'xticklabel',[]);
-        plot(x,level * ones(size(x)),'.','markersize',40,'LineWidth',3,...
-          'color',MATLABGreen); hold on;
+        plot(x,zeros(size(x)),'.','color',MATLABGreen); hold on;
         %hTitle=title([tmpstr{1}, '\_g: error is ' num2str(max(err)) ' in iter ' num2str(k)]);
         %set(hTitle,'FontSize',25)
         pause(.25)
@@ -142,8 +124,6 @@ end
 
 p = flipud(get(gca,'child'));
 set(p(1),'xdata',x,'ydata',y)
-xlabel('\(x\)')
-ylabel('\(f_3\)')
 %set(gca,'xtick',x,'xticklabel',[]);
 %hTitle=title([tmpstr{1}, '\_g: error \(\approx\) '  sprintf('%0.2g',max(err)) ' in iter ' num2str(k)]);
 %set(hTitle,'FontSize',25)
