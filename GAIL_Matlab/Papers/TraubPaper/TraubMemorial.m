@@ -96,7 +96,7 @@ legend(h,{'\(f_3(x)\)','\(-f_3(x)\)','\(\pm f_3(x_i)\)'}, ...
    'location', 'northeast','box','off')
 gail.save_eps(whichdir, 'f3foolplot');
 
-%% Sampling of hump functions for funappx and funmin
+%% Sampling of hump functions for funappx_g
 in_param.nlo = 10;
 in_param.nhi = in_param.nlo;
 in_param.abstol = 0.01;
@@ -108,6 +108,8 @@ delta = 0.2;
 f3 = @(x) f3param(x,delta,c);
 figure
 [~,fappxout] = funappx_g(@(x) -f3(x),in_param);
+disp(['funappx_g used ' int2str(fappxout.npoints) ' points and ' ...
+   int2str(fappxout.iter) ' iterations'])
 h = plot(xplot,-f3(xplot),'-', ...
    fappxout.x, fappxout.y,'.', ...
    fappxout.x, zeros(size(fappxout.x)),'.');
@@ -115,15 +117,21 @@ axis([-1 1 -1.2 0.2])
 xlabel('\(x\)')
 legend(h,{'\(-f_3(x)\)','\((x_i,-f_3(x_i))\)','\((x_i,0)\)'}, ...
    'location', 'east','box','off')
+gail.save_eps('TraubPaperOutput', 'sampling-funappxg');
+
+%% Sampling of hump function for funmin_g
 figure
-[~,fappxout] = funmin_g(@(x) -f3(x),in_param);
+[~,fminout] = funminNoPenalty_g(@(x) -f3(x),in_param);
+disp(['funmin_g used ' int2str(fminout.npoints) ' points and ' ...
+   int2str(fminout.iter) ' iterations'])
 h = plot(xplot,-f3(xplot),'-', ...
-   fappxout.x, fappxout.y,'.', ...
-   fappxout.x, zeros(size(fappxout.x)),'.');
+   fminout.x, fminout.y,'.', ...
+   fminout.x, zeros(size(fminout.x)),'.');
 axis([-1 1 -1.2 0.2])
 xlabel('\(x\)')
 legend(h,{'\(-f_3(x)\)','\((x_i,-f_3(x_i))\)','\((x_i,0)\)'}, ...
    'location', 'east','box','off')
+gail.save_eps('TraubPaperOutput', 'sampling-funming');
 
 
 
