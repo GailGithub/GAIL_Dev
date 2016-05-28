@@ -24,7 +24,7 @@ function [fappx,npoints,errest] = funappx_g_gui(f,a,b,tol,nlo,nhi,varargin)
 %  [fappx,npoints,errest] = funappx_g_gui(@(x) x.^2,-1,1,1e-2,10,20,'funappxNoPenalty_g')
 shg
 clf reset
-MATLABVERSION= gail.matlab_version;
+MATLABVERSION = gail.matlab_version;
 if isempty(varargin)
   algoname = 'funappx_g';
   algo = @(f,in_param) funappx_g(f,in_param);

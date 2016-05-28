@@ -14,8 +14,9 @@ nhi = nlo;
 hf=figure(1);
 set(hf, 'Position', [1          96        2560        1113]);
 %[fappx,out1]=funappxNoPenalty_g(f3,a,b,abstol,nlo,nhi)
-[fappx,npoints1,errest1] = funappx_g_gui(f3,a,b,abstol,nlo,nhi,...
-  'funappxNoPenalty_g')
+% [fappx,npoints1,errest1] = funappx_g_gui(f3,a,b,abstol,nlo,nhi,...
+%   'funappxNoPenalty_g')
+[fappx,npoints1,errest1] = funappx_g_gui(f3,a,b,abstol,nlo,nhi)
 xlabel('\(x\)')
 ylabel('\(f_3(x)\)')
 axis tight
