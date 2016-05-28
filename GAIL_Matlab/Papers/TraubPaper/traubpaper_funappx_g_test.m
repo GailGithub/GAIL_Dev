@@ -88,10 +88,10 @@ for i = 1:nrep
       end
       
       trueerrormat(j,k,i) = max(abs(yy-exactyy));
-      if trueerrormat(j,k,i)  > abstol
-        cf_chebfun(f,a(j),b(j), abstol);
-        keyboard
-      end
+%       if trueerrormat(j,k,i)  > abstol
+%         cf_chebfun(f,a(j),b(j), abstol);
+%         keyboard
+%       end
       if k==1
         exceedmat(j,k,i) = sum(out_param.exitflag)>0;
       elseif k==2
