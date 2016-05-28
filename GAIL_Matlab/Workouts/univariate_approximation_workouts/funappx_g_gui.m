@@ -123,10 +123,11 @@ while(max(err) > tol)
         k = k + 1;
         p = flipud(get(gca,'children'));
         set(p(1),'xdata',x,'ydata',y)
-        set(gca,'xtick',x,'xticklabel',[]);
-        plot(x,level * ones(size(x)),'.','markersize',25,'color',MATLABGreen); hold on;
-        hTitle=title([tmpstr{1}, '\_g: error \(\approx\) ' sprintf('%0.2g',max(err)) ' in iter ' num2str(k)]);
-        set(hTitle,'FontSize',25,'Interpreter', 'latex')
+        %set(gca,'xtick',x,'xticklabel',[]);
+        plot(x,zeros(size(x)),'.','markersize',40,'LineWidth',3, ...
+          'color',MATLABGreen); hold on;
+        %hTitle=title([tmpstr{1}, '\_g: error \(\approx\) ' sprintf('%0.2g',max(err)) ' in iter ' num2str(k)]);
+        %set(hTitle,'FontSize',25,'Interpreter', 'latex')
         pause(.25)
         while get(gcf,'userdata') == 0
             pause(.25)
@@ -142,9 +143,11 @@ end
 
 p = flipud(get(gca,'child'));
 set(p(1),'xdata',x,'ydata',y)
-set(gca,'xtick',x,'xticklabel',[]);
-hTitle=title([tmpstr{1}, '\_g: error \(\approx\) '  sprintf('%0.2g',max(err)) ' in iter ' num2str(k)]);
-set(hTitle,'FontSize',25,'Interpreter', 'latex')
+xlabel('\(x\)')
+ylabel('\(f_3\)')
+%set(gca,'xtick',x,'xticklabel',[]);
+%hTitle=title([tmpstr{1}, '\_g: error \(\approx\) '  sprintf('%0.2g',max(err)) ' in iter ' num2str(k)]);
+%set(hTitle,'FontSize',25,'Interpreter', 'latex')
 pause(.25)
 while get(gcf,'userdata') == 0
     pause(.25)
