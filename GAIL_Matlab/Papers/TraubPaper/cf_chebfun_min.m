@@ -49,4 +49,4 @@ hold off
 %% integral_g
 %tic, [fint,out3] = integralNoPenalty_g(f, a, b, abstol,'nmax',10^8), toc
 %tic, cint = sum(c),toc
-keyboard
+%keyboard
