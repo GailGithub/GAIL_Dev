@@ -356,10 +356,13 @@ out_param.intervals = interval;
 
 % control the order of out_param
 out_param = orderfields(out_param, ...
-    {'f', 'a', 'b','abstol','nlo','nhi','ninit','nmax','maxiter',...
-    'exitflag','iter','npoints','errest','intervals'});
+{'f', 'a', 'b','abstol','nlo','nhi','ninit','nmax','maxiter',...
+'exitflag','iter','npoints','errest','intervals','output_x'});
 
-
+if (in_param.output_x)
+  out_param.x = x;
+  out_param.y = y;
+end
 
 function [f, out_param] = funminNoPenalty_g_param(varargin)
 % parse the input to the funminNoPenalty_g function
@@ -372,8 +375,7 @@ default.nlo = 10;
 default.nhi = 1000;
 default.nmax = 1e7;
 default.maxiter = 1000;
-
-
+default.output_x = 0;
 
 MATLABVERSION = gail.matlab_version;
 if MATLABVERSION >= 8.3
@@ -418,6 +420,7 @@ if ~validvarargin
     out_param.nhi = default.nhi;
     out_param.nmax = default.nmax ;
     out_param.maxiter = default.maxiter;
+    out_param.output_x = default.output_x;
 else
     p = inputParser;
     addRequired(p,'f',@gail.isfcn);
@@ -430,6 +433,7 @@ else
         addOptional(p,'nhi',default.nhi,@isnumeric);
         addOptional(p,'nmax',default.nmax,@isnumeric)
         addOptional(p,'maxiter',default.maxiter,@isnumeric)
+        addOptional(p,'output_x',default.output_x,@isnumeric)
     else
         if isstruct(in2) %parse input structure
             p.StructExpand = true;
@@ -442,18 +446,19 @@ else
         f_addParamVal(p,'nhi',default.nhi,@isnumeric);
         f_addParamVal(p,'nmax',default.nmax,@isnumeric);
         f_addParamVal(p,'maxiter',default.maxiter,@isnumeric);
+        f_addParamVal(p,'output_x',default.output_x,@isnumeric);
     end
     parse(p,f,varargin{2:end})
     out_param = p.Results;
 end;
 
 % let end point of interval not be infinity
-if (out_param.a == inf||out_param.a == -inf)
+if (out_param.a == inf || out_param.a == -inf)
     warning('GAIL:funminNoPenalty_g:aisinf',['a cannot be infinity. '...
         'Use default a = ' num2str(default.a)])
     out_param.a = default.a;
 end;
-if (out_param.b == inf||out_param.b == -inf)
+if (out_param.b == inf || out_param.b == -inf)
     warning(['GAIL:funminNoPenalty_g:bisinf','b cannot be infinity. '...
         'Use default b = ' num2str(default.b)])
     out_param.b = default.b;

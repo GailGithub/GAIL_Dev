@@ -73,6 +73,7 @@ miny = min(y);
 set(gcf,'doublebuffer','on','userdata',0)
 MATLABOrange = [0.85,  0.325, 0.098];
 MATLABBlue = [0, 0.447, 0.741];
+MATLABGreen = [0.466,  0.674, 0.188];
 plot(x,y,'.','markersize',25,'color',MATLABBlue);
 hold on
 p(1) = fill(a,fa,'k');
@@ -107,8 +108,9 @@ in_param.b = b;
 in_param.abstol = tol; 
 in_param.nlo = nlo; 
 in_param.nhi = nhi; 
-in_param.output_x = true;
+in_param.output_x = 1;
 tmpstr = strsplit(algoname,'_g');
+level = funminNoPenalty_g(f,a,b,tol,nlo,nhi)-0.2;
 while(max(err) > tol)
     if max(err) > tol;
         in_param.maxiter = k+1; 
@@ -121,6 +123,7 @@ while(max(err) > tol)
         p = flipud(get(gca,'children'));
         set(p(1),'xdata',x,'ydata',y)
         set(gca,'xtick',x,'xticklabel',[]);
+        plot(x,level * ones(size(x)),'.','markersize',25,'color',MATLABGreen); hold on;
         hTitle=title([tmpstr{1}, '\_g: error is ' num2str(max(err)) ' in iter ' num2str(k)]);
         set(hTitle,'FontSize',25)
         pause(.25)
@@ -139,7 +142,7 @@ end
 p = flipud(get(gca,'child'));
 set(p(1),'xdata',x,'ydata',y)
 set(gca,'xtick',x,'xticklabel',[]);
-hTitle=title([tmpstr{1}, '\_g: error estimation is ' num2str(max(err)) ' in iteration ' num2str(k)]);
+hTitle=title([tmpstr{1}, '\_g: error \(\approx\) '  sprintf('%0.2g',max(err)) ' in iter ' num2str(k)]);
 set(hTitle,'FontSize',25)
 pause(.25)
 while get(gcf,'userdata') == 0
@@ -161,10 +164,9 @@ delete(q);
 warning('on', ['GAIL:', algoname ,':exceediter']);
 
 hold on;
-delta = 0.00001;
-x=a:delta:b; 
 
-plot(x,f(x),'color',MATLABOrange);
+
+plot(x,f(x),'color',MATLABBlue);
 hold off;
 gail.save_eps('WorkoutfunminOutput', [algoname, '_gui']);
 
