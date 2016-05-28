@@ -1,5 +1,5 @@
 %% CURVE 
-% Approximate a curve using funappxNoPenalty_g.
+% Approximate a curve using funappx_g.
 
 %% Function definition
 %
@@ -10,11 +10,11 @@
 f = @(x) x.^2 .* sin((2*pi)./x.^2);
 
 %% Function approximation
-% We use funappxNoPenalty_g to approximate \(f\) over the interval
+% We use funappx_g to approximate \(f\) over the interval
 % \([a,b]\):
 a = 1e-2;
 b = 2.5;
-[q,out] = funappxNoPenalty_g(f, a, b);
+[q,out] = funappx_g(f, a, b);
 
 %% Plot of the approximant 
 % We plot out \(q(x)\) below:
