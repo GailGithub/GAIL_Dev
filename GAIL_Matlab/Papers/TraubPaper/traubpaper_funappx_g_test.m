@@ -3,9 +3,11 @@ function [timeratio,timelgratio,npointsratio,npointslgratio]=traubpaper_funappx_
 % user can choose absolut error tolerance, initial number of points, number
 % of iteration or can use the following parameters
 % nrep = 100; abstol = 1e-6;
+% Compare funappx_g with funappxglobal_g and chebfun:
+% [timeratio,timelgratio,npointsratio,npointslgratio]=traubpaper_funappx_g_test(nrep,abstol);
 %
-% Compare funappxNoPenalty_g with funappxglobal_g and chebfun:
-% [timeratio,timelgratio,npointsratio,npointslgratio]=traubpaper_funappx_g_test(nrep,abstol,'funappxNoPenalty_g');
+% Compare funappxPenalty_g with funappxglobal_g and chebfun:
+% [timeratio,timelgratio,npointsratio,npointslgratio]=traubpaper_funappx_g_test(nrep,abstol,'funappxPenalty_g');
 rng default % for reproducibilityI
 cc = rand(nrep,1);
 c = cc*2; % number of simulations for each test function

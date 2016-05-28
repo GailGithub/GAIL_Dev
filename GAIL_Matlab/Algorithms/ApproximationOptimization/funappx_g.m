@@ -109,17 +109,17 @@ function [fappx,out_param]=funappx_g(varargin)
 %
 %     out_param.bytes --- amount of memory used during the computation
 %
-%  Guarantee
-%
-%  For [a,b] there exists a partition, P={[t_0,t_1], [t_1,t_2], ...,
-%  [t_{L-1},t_L]}, where a=t_0 < t_1 < ... < t_L=b. If the function to be
-%  approximated, f, satisfies the cone condition
-%                              2 nstar    ||     f(t_l)-f(t_{l-1})||
-%      ||f''||        <=  --------------  ||f'- ----------------- ||
-%             \infty       t_l - t_{l-1}  ||        t_l - t_{l-1} ||\infty,
-%  for each sub interval [t_{l-1},t_l], where 1 <= l <= L, then the output
-%  fappx by this algorithm is guaranteed to satisfy
-%      ||f-fappx||\infty <= abstol.
+% %  Guarantee
+% %
+% %  For [a,b] there exists a partition, P={[t_0,t_1], [t_1,t_2], ...,
+% %  [t_{L-1},t_L]}, where a=t_0 < t_1 < ... < t_L=b. If the function to be
+% %  approximated, f, satisfies the cone condition
+% %                              2 nstar    ||     f(t_l)-f(t_{l-1})||
+% %      ||f''||        <=  --------------  ||f'- ----------------- ||
+% %             \infty       t_l - t_{l-1}  ||        t_l - t_{l-1} ||\infty,
+% %  for each sub interval [t_{l-1},t_l], where 1 <= l <= L, then the output
+% %  fappx by this algorithm is guaranteed to satisfy
+% %      ||f-fappx||\infty <= abstol.
 %
 %   Examples
 %
