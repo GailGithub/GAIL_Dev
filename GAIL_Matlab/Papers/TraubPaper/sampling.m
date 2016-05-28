@@ -1,9 +1,9 @@
 InitializeWorkspaceDisplay
 close all
-set(0,'defaultaxesfontsize',42,'defaulttextfontsize',42, ... %make font larger
+set(0,'defaultaxesfontsize',48,'defaulttextfontsize',48, ... %make font larger
       'defaultLineLineWidth',7, ... %thick lines
       'defaultLineMarkerSize',48) %big dots
-delta = 0.1;
+delta = 0.2;
 B = 1./(2*delta.^2); 
 c = -0.2;
 f3 = @(x) -B*(4*delta.^2 + (x-c).^2 + (x-c-delta).*abs(x-c-delta) ...
@@ -18,6 +18,7 @@ set(hf, 'Position', [1          96        2560        1113]);
   'funappxNoPenalty_g')
 xlabel('\(x\)')
 ylabel('\(f_3(x)\)')
+axis tight
 gail.save_eps('TraubPaperOutput', 'sampling-funappxg');
 
 hf2=figure(2);
