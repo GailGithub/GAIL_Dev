@@ -1,22 +1,22 @@
-%comparison between funappx_g and funappxlocal_g
+%comparison between funappxPenalty_g and funappx_g
 function [timeratio,timelgratio,npointsratio,npointslgratio]=workout_funappx_g(nrep,abstol,nlo,nhi,varargin)
 % user can choose absolut error tolerance, initial number of points, number
 % of iteration or can use the following parameters
 % nrep = 100; abstol = 1e-7; nlo = 100; nhi = 1000;
 % 
-% Compare funappx_g with funappxglobal_g:
+% Compare funappxPenalty_g with funappxglobal_g:
 % [timeratio,timelgratio,npointsratio,npointslgratio]=workout_funappx_g(nrep,abstol,nlo,nhi);
 %
-% Compare funappxNoPenalty_g with funappxglobal_g:
-% [timeratio,timelgratio,npointsratio,npointslgratio]=workout_funappx_g(nrep,abstol,nlo,nhi,'funappxNoPenalty_g');
+% Compare funappx_g with funappxglobal_g:
+% [timeratio,timelgratio,npointsratio,npointslgratio]=workout_funappx_g(nrep,abstol,nlo,nhi,'funappx_g');
 
 c = rand(nrep,1)*4;
 n = 3;
 npoints = zeros(n,2,nrep);
 time = zeros(n,2,nrep);
 if isempty(varargin)
-  algoname = 'funappx_g';
-  algo = @(f,a,b,abstol,nlo,nhi) funappx_g(f,a,b,abstol,nlo,nhi);
+  algoname = 'funappxPenalty_g';
+  algo = @(f,a,b,abstol,nlo,nhi) funappxPenalty_g(f,a,b,abstol,nlo,nhi);
 else 
   algoname = varargin{1};
   algo = str2func(['@(f,a,b,abstol,nlo,nhi)', algoname,'(f,a,b,abstol,nlo,nhi)']);  
@@ -193,7 +193,7 @@ gail.save_mat('WorkoutFunappxOutput', ['Workout',algoname,'Test'], true, npoints
 
 end
 
-%% If funappx_g is used:
+%% If funappxPenalty_g is used:
 % % Sample output for nrep=1000; abstol = 1e-7; nlo = 100; nhi = 1000;
 % %    Test      Number of Points       Time Used
 % %  Function   Local      Global     Local    Global
@@ -211,7 +211,7 @@ end
 % % 
 % %        0.3610    1.2173    0.1076
 %
-%% If funappxNoPenalty_g is used:
+%% If funappx_g is used:
 % 
 %    Test      Number of Points       Time Used
 %  Function   Local      Global     Local    Global
