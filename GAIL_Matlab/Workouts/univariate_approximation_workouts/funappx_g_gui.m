@@ -20,8 +20,8 @@ function [fappx,npoints,errest] = funappx_g_gui(f,a,b,tol,nlo,nhi,varargin)
 %  Two local min:
 %  [fappx,npoints] = funappx_g_gui(@(x) -5 * exp(-(10*(x - .3)).^2) - exp(-(10*(x - 0.75)).^2),0,1,1e-3,10,20)
 %  [fappx,npoints] = ... 
-%  Demo with funappxNoPenalty_g:
-%  [fappx,npoints,errest] = funappx_g_gui(@(x) x.^2,-1,1,1e-2,10,20,'funappxNoPenalty_g')
+%  Demo with funappxPenalty_g:
+%  [fappx,npoints,errest] = funappx_g_gui(@(x) x.^2,-1,1,1e-2,10,20,'funappxPenalty_g')
 shg
 clf reset
 MATLABVERSION = gail.matlab_version;
@@ -102,8 +102,8 @@ in_param.abstol = tol;
 in_param.nlo = nlo; 
 in_param.nhi = nhi; 
 in_param.output_x = 1;
-tmpstr = strsplit(algoname,'_g');
-level = funminNoPenalty_g(f,a,b,tol,nlo,nhi)-0.2;
+% tmpstr = strsplit(algoname,'_g');
+% level = funmin_g(f,a,b,tol,nlo,nhi)-0.2;
 
 while(max(err) > tol)
     if max(err) > tol;
