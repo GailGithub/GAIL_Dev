@@ -5,7 +5,8 @@ classdef assetPath < brownianMotion
 % an asset with respect to time. Browniam motions are used to construct
 % these asset paths.
 % 
-%
+%5/29/2016
+
 % Example 1
 % >> obj = assetPath
 % obj = 
@@ -26,7 +27,7 @@ classdef assetPath < brownianMotion
 %       assetParam_interest: 0.0100
 %     assetParam_volatility: 0.5000
 
-% Authors: Fred J. Hickernell, Xinyan Zhang
+% Authors: Fred J. Hickernell
 
 %% Properties
 % This process inherits properties from the |brownianMotion| class.  Below
@@ -50,6 +51,7 @@ classdef assetPath < brownianMotion
    end
    
    properties (Constant, Hidden) %do not change & not seen
+
       allowPathType = {'GBM','QE_m','QE'} 
          %kinds of asset paths that we can generate
    end
@@ -62,15 +64,15 @@ classdef assetPath < brownianMotion
    
    properties (Dependent = true)
        sqCorr
-       dT %time step
-       k1
-       k2
-       k3
-       K1
-       K2
-       K3
-       K4
-       c1 %adjustment due to drift
+%      dT %time step
+%        k1
+%        k2
+%        k3
+%        K1
+%        K2
+%        K3
+%        K4
+%        c1 %adjustment due to drift
 %        A %futher adjustment
        %%%%%%%%%%%%%%%%%%%%%
 %        c2
@@ -193,6 +195,7 @@ classdef assetPath < brownianMotion
           [U,S] = svd(obj.assetParam.corrMat);
           val = sqrt(S)*U';
        end
+       
       % Generate coefficients of QE mathod
 %       function val = get.dT(obj)
 %           val = obj.timeDim.timeIncrement(1);
@@ -261,9 +264,11 @@ classdef assetPath < brownianMotion
              end
          end
          if strcmp(obj.assetParam.pathType,'QE_m')
+             
           % vector = obj.timeDim.timeVector        
-          dT = obj.timeDim.timeIncrement(1);
-%           dT = (obj.timeDim.endTime-obj.timeDim.startTime)/(obj.timeDim.nSteps-1);
+%          dT = obj.timeDim.timeIncrement(1);
+%           dT = obj.timeDim.timeVector(2)-obj.timeDim.timeVector(1);
+          dT = (obj.timeDim.endTime-obj.timeDim.startTime)/(obj.timeDim.nSteps-1);
 
           k1 = exp(-obj.assetParam.kappa*dT);
      
@@ -299,8 +304,10 @@ classdef assetPath < brownianMotion
 %              A = K2+0.5*K4; %further adjustment
 %******************************************************************%
 %   %change Ntime to timeDim.nSteps ***********************************%    
-             Ntime = obj.timeDim.endTime/dT;
-             paths = zeros(nPaths,Ntime+1);
+             Ntime = floor(obj.timeDim.endTime/dT);
+%              Ntime = obj.timeDim.nSteps-1;
+             t0 = floor(obj.timeDim.startTime/dT);
+             paths = zeros(nPaths,Ntime+1-t0);
              lnS1 = zeros(nPaths,Ntime+1);
              lnS1(:,1)= log(obj.assetParam.initPrice...
                  *exp(-obj.assetParam.dividend*obj.timeDim.endTime));
@@ -356,8 +363,10 @@ classdef assetPath < brownianMotion
                 lnS1(:,i) = lnS1(:,i-1) + K0 - (K1+0.5*K3).*V2(:,i-1) + ...
                     K1.*V2(:,i-1) + K2.*V2(:,i) + sqrt(K3.*V2(:,i-1) + ...
                     K4.*V2(:,i)).*dW2(:,i-1);
-            end
-            paths(:,:) = exp(lnS1);      
+             end
+            
+             paths(:,:) = exp(lnS1(:,t0+1:end));   
+%               paths = exp(lnS1);
 %             paths(1,:)
          end
       
@@ -431,60 +440,127 @@ classdef assetPath < brownianMotion
 %          end
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
          if strcmp(obj.assetParam.pathType,'QE')
-             paths = zeros(nPaths,obj.timeDim.nSteps); %output pathS
-             c2 = -obj.assetParam.rho*obj.assetParam.kappa*obj.assetParam.Vlong*obj.dT/...
-              obj.assetParam.nu; %used to determine K0
-             K0 = obj.c1+c2;
-             lnS1 = zeros(nPaths,obj.timeDim.nSteps); %logspot price path
+             
+          % vector = obj.timeDim.timeVector        
+%          dT = obj.timeDim.timeIncrement(1);
+%           dT = obj.timeDim.timeVector(2)-obj.timeDim.timeVector(1);
+          dT = (obj.timeDim.endTime-obj.timeDim.startTime)/(obj.timeDim.nSteps-1);
+          K1 = obj.gamma1*dT*(obj.assetParam.kappa*obj.assetParam.rho...
+              /obj.assetParam.nu - .5)-obj.assetParam.rho/obj.assetParam.nu;
+          K2 = obj.gamma2*dT*(obj.assetParam.kappa*obj.assetParam.rho...
+              /obj.assetParam.nu - .5)+obj.assetParam.rho/obj.assetParam.nu;
+          K3 = obj.gamma1*dT*(1-obj.assetParam.rho^2);
+          K4 = obj.gamma2*dT*(1-obj.assetParam.rho^2); 
+          c1 = (obj.assetParam.interest-obj.assetParam.dividend)*dT;
+          c2 = -obj.assetParam.rho*obj.assetParam.kappa*obj.assetParam.Vlong*dT/obj.assetParam.nu;
+          K0= c1+c2;
+%   %change Ntime to timeDim.nSteps ***********************************%    
+             Ntime = floor(obj.timeDim.endTime/dT);
+%              Ntime = obj.timeDim.nSteps-1;
+             t0 = floor(obj.timeDim.startTime/dT);
+             paths = zeros(nPaths,Ntime+1-t0);
+             lnS1 = zeros(nPaths,Ntime+1);
              lnS1(:,1)= log(obj.assetParam.initPrice...
-                 *exp(-obj.assetParam.dividend*(obj.timeDim.endTime...
-                 -obj.timeDim.startTime)));% set S(0) adjust with dividend     
-             V2 = zeros(nPaths,obj.timeDim.nSteps); % Variance path
+                 *exp(-obj.assetParam.dividend*obj.timeDim.endTime));
+             % set S(0) adjust with dividend 
+             
+             V2 = zeros(nPaths,Ntime+1);
              V2(:,1) = obj.assetParam.Vinst; % set V0
+            
+             UV1 = rand(nPaths,Ntime);
+            
+             dW2 = randn(nPaths,Ntime);
+%              dW2 = randn(nPaths,obj.timeDim.nSteps-1);
+%******************************************************************%
+%              for i=2:Ntime+1;%obj.timeDim.nSteps             % time loop
+%                 m = obj.assetParam.Vlong + (V2(:,i-1)-obj.assetParam.Vlong)*k1;% mean (moment matching)
+%                 s2 = V2(:,i-1)*k2 + k3;   % var (moment matching)
+%                 psi = s2./m.^2;   % psi compared to psiC
+% 
+%                 psihat = 1./psi;
+%                 b2 = 2*psihat - 1 + sqrt(2*psihat.*(2*psihat-1));
+%                 a = m ./ (1 + b2);
+% 
+%                 % Non-Central Chi squared approximation for psi < psiC
+%                 I1 = find(psi<=obj.psiC); 
+%                 if isempty(I1)
+%                 else
+%                     V2(I1,i) = a(I1).*(sqrt(b2(I1)) + norminv(UV1(I1,i-1))).^2;
+%                 end
+%                 p = (psi - 1)./(psi + 1);               % for switchingg
+%                 ruleg
+%                 V2((UV1(:,i-1)<=p) & (psi>obj.psiC),i) = 0; % case u<=p & psi>psiC
+%                 I1b = find((UV1(:,i-1)>p) & (psi>obj.psiC));% find is faster here!
+% 
+%                 beta = (1 - p)./m;                      % for switching rule
+%                 if isempty(I1b)
+%                 else    % Psi^(-1)
+%                     V2(I1b,i) = log((1-p(I1b))./(1-UV1(I1b,i-1)))./beta(I1b);
+%                 end
+%                 % log Euler Predictor-Corrector step
+%                     lnS1(:,i) = lnS1(:,i-1) + K0 + K1.*V2(:,i-1) + K2.*V2(:,i) +...
+%                         sqrt(K3.*V2(:,i-1) + K4.*V2(:,i)).*dW2(:,i-1);
+%              end
+%             
+%              paths(:,:) = exp(lnS1(:,t0+1:end));   
+% %               paths = exp(lnS1);
+% %             paths(1,:)
+%          end
+         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%****************************************************************
+%% set U=V-Vlong
+             U = zeros(nPaths,Ntime+1);
+             U(:,1)=V2(:,1) - obj.assetParam.Vlong; % set U0
              
-             UV1 = rand(nPaths,obj.timeDim.nSteps-1);%uniforms         
-             dW2 = randn(nPaths,obj.timeDim.nSteps-1);
-             %K0 = zeros(nPaths,1);        % K0 for martingale adjust  
-             
-             for i=2:obj.timeDim.nSteps             % time loop
-                m = obj.assetParam.Vlong + (V2(:,i-1)-obj.assetParam.Vlong)...
-                    *obj.k1;% mean (moment matching)
-                s2 = V2(:,i-1)*obj.k2 + obj.k3;   % var (moment matching)
+             k1 = exp(-obj.assetParam.kappa*dT);
+             k2 = obj.assetParam.nu^2*k1.*(1-k1)/obj.assetParam.kappa;
+%             k3 = exp(obj.assetParam.kappa*dT)*0.5.*k2.*(1-k1).*obj.assetParam.Vlong;
+             for i=2:2%Ntime+1;%obj.timeDim.nSteps             % time loop
+                m = obj.assetParam.Vlong + U(:,i-1)*k1;% mean (moment matching)
+                s2 = k2*(U(:,i-1)*k1 + obj.assetParam.Vlong/2*(1+k1));   % var (moment matching)
                 psi = s2./m.^2;   % psi compared to psiC
 
-                psihat = 1./psi;
-                b2 = 2*psihat - 1 + sqrt(2*psihat.*(2*psihat-1));
+%                psihat = 1./psi;
+%                b2 = 2*psihat - 1 + sqrt(2*psihat*(2*psihat-1));
+                b2 = 2./psi.*(1-psi/2+sqrt(1-psi/2));
                 a = m ./ (1 + b2);
 
                 % Non-Central Chi squared approximation for psi < psiC
                 I1 = find(psi<=obj.psiC); 
-%                 I2 = ~I1;
-%                 V2(I1,i) = a(I1).*(sqrt(b2(I1)) + norminv(UV1(I1,i-1))).^2;
                 if isempty(I1)
                 else
-                    V2(I1,i) = a(I1).*(sqrt(b2(I1)) + norminv(UV1(I1,i-1))).^2;
+                    U(I1,i) =-obj.assetParam.Vlong + a(I1).*(sqrt(b2(I1)) + norminv(UV1(I1,i-1))).^2;
                 end
                 p = (psi - 1)./(psi + 1);               % for switching rule
-                V2((UV1(:,i-1)<=p) & (psi>obj.psiC),i) = 0; % case u<=p & psi>psiC
+                U((UV1(:,i-1)<=p) & (psi>obj.psiC),i) = -obj.assetParam.Vlong; % case u<=p & psi>psiC
                 I1b = find((UV1(:,i-1)>p) & (psi>obj.psiC));% find is faster here!
 
                 beta = (1 - p)./m;                      % for switching rule
                 if isempty(I1b)
                 else    % Psi^(-1)
-                    V2(I1b,i) = log((1-p(I1b))./(1-UV1(I1b,i-1)))./beta(I1b);
+                    U(I1b,i) = -obj.assetParam.Vlong + log((1-p(I1b))./(1-UV1(I1b,i-1)))./beta(I1b);
                 end
-%                 % K0 for martingale adjustment
-%                 K0(I1)= obj.c1-obj.A*b2(I1).*a(I1)./(1-2*obj.A*a(I1)) + 0.5*log(1-2*obj.A*a(I1));
-%                 K0(I2)= obj.c1-log(p(I2)+beta(I2).*(1-p(I2))./(beta(I2)-obj.A));
-
                 % log Euler Predictor-Corrector step
-                lnS1(:,i) = lnS1(:,i-1) + K0 + obj.K1.*V2(:,i-1) + ...
-                     + obj.K2.*V2(:,i) + sqrt(obj.K3.*V2(:,i-1) + ...
-                    obj.K4.*V2(:,i)).*dW2(:,i-1);
-            end
-            paths(:,:) = exp(lnS1);          
+                temp1 = -dT/2*(obj.assetParam.Vlong+1/2*(U(:,i-1)+U(:,i)));
+                temp2 = obj.assetParam.kappa*dT/2*(U(:,i-1)+U(:,i))+(-U(:,i-1)+U(:,i));
+                temp3 = 1/2*dT*(1-obj.assetParam.rho^2)*(U(:,i-1)+U(:,i));
+                temp4 = dT*obj.assetParam.Vlong*(1-obj.assetParam.rho^2);
+                if temp2 == 0
+                    lnS1(:,i) = lnS1(:,i-1) + temp1 + sqrt(temp4).*dW2(:,i-1);
+                else
+                    lnS1(:,i) = lnS1(:,i-1) + temp1 + obj.assetParam.rho/obj.assetParam.nu*temp2 + sqrt(temp3+temp4).*dW2(:,i-1);
+                end
+%                     lnS1(:,i) = lnS1(:,i-1) + obj.assetParam.rho*obj.assetParam.kappa/obj.assetParam.nu*dT...
+%                         *0.5*(U(:,i-1)+U(:,i)) + obj.assetParam.rho/obj.assetParam.nu*(-U(:,i-1) + U(:,i))...
+%                          - dT/4*(U(:,i-1)+U(:,i)) - dT*obj.assetParam.Vlong/2 + sqrt(0.5*dT*(1-obj.assetParam.rho^2)...
+%                          *(U(:,i-1)+U(:,i))+dT*obj.assetParam.Vlong*(1-obj.assetParam.rho^2)).*dW2(:,i-1);
+             end
+            
+             paths(:,:) = exp(lnS1(:,t0+1:end));   
+%               paths = exp(lnS1);
+%             paths(1,:)
          end
-         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       end
    end
   
