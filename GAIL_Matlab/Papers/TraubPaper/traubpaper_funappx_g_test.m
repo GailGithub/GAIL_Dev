@@ -190,16 +190,6 @@ for i = permuted_index
   timelgratio(i) = mean(time(i,1,:))/mean(time(i,2,:));
 end
 
-% for k=1:m-1
-%   idx=find(timeratio(k,:,:)<1);
-%   max_idx_t = max(idx);
-%   timeratio(k,1:max_idx_t) = 1./timeratio(k,1:max_idx_t);
-%   
-%   idx=find(npointsratio(k,:,:)<1);
-%   max_idx_n = max(idx);
-%   npointsratio(k,1:max_idx_n) = 1.0 ./npointsratio(k,1:max_idx_n);
-% end
-
 %% Output the table
 % To just re-display the output, load the .mat file and run this section
 % only
