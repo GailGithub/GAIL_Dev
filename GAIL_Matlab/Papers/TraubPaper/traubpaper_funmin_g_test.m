@@ -7,6 +7,12 @@ function [timeratio,timelgratio,npointsratio,npointslgratio]=traubpaper_funmin_g
 % Compare funminNoPenalty_g, fminbnd, and chebfun:
 % [timeratio,timelgratio,npointsratio,npointslgratio]=traubpaper_funmin_g_test(nrep,abstol,'funminNoPenalty_g');
 rng default % for reproducibility
+if nargin < 2
+   abstol = 1e-6;
+   if nargin < 1
+      nrep = 10;
+   end
+end
 cc = rand(nrep,1);
 c = cc*2; % number of simulations for each test function
 n = 3; % number of test functions
@@ -176,16 +182,17 @@ end
 %% Output the table
 % To just re-display the output, load the .mat file and run this section
 % only
-display(' ')
-display('   Test         Number of Points                    Time Used                          Success (%)                                  Failure (%)')
-display('  Function   ----------------------------    -------------------------------     --------------------------------------   ----------------------------------------');
-display('             funmin_g   fminbnd   Chebfun    funmin_g     fminbnd    Chebfun     funmin_g        fminbnd        Chebfun   funmin_g        fminbnd       Chebfun')
-display('                                                                                 No Warn Warn No Warn Warn   No Warn Warn  No Warn Warn  No Warn Warn  No Warn Warn')
+[fileID, fullPath] = gail.open_txt('TraubPaperOutput', ['traub_',algoname,'_test']);
+fprintf(fileID,'\n');
+fprintf(fileID,'   Test         Number of Points                    Time Used                          Success (%%)                                  Failure (%%)\n');
+fprintf(fileID,'  Function   ----------------------------    -------------------------------     --------------------------------------   ----------------------------------------\n');
+fprintf(fileID,'             funmin_g   fminbnd   Chebfun    funmin_g     fminbnd    Chebfun     funmin_g        fminbnd        Chebfun   funmin_g        fminbnd       Chebfun\n');
+fprintf(fileID,'                                                                                 No Warn Warn No Warn Warn   No Warn Warn  No Warn Warn  No Warn Warn  No Warn Warn\n');
 npointslgratio = zeros(1,n);
 timelgratio = zeros(1,n);
 
 for i = permuted_index
-  display(sprintf('%9.0f %9.0f %9.0f  %9.0f %11.3f  %11.3f %11.3f  %6.0f %6.0f %6.0f %6.0f %6.0f   %6.0f %6.0f %6.0f %6.0f %6.0f %6.0f %6.0f',...
+  fprintf(fileID,'%9.0f %9.0f %9.0f  %9.0f %11.3f  %11.3f %11.3f  %6.0f %6.0f %6.0f %6.0f %6.0f   %6.0f %6.0f %6.0f %6.0f %6.0f %6.0f %6.0f',...
     [i mean(npoints(i,1,:)) mean(npoints(i,2,:)) mean(npoints(i,3,:))...
     mean(time(i,1,:)) mean(time(i,2,:)) mean(time(i,3,:))...
     100.0*sum(trueerrormat(i,1,:)<=abstol)/nrep 100.0*sum(trueerrormat(i,1,:)<=abstol & (exceedmat(i,1,:)))/nrep ...
@@ -193,20 +200,11 @@ for i = permuted_index
     100.0*sum(trueerrormat(i,3,:)<=abstol)/nrep 100.0*sum(trueerrormat(i,3,:)<=abstol & (exceedmat(i,3,:)))/nrep...
     100.0*sum(trueerrormat(i,1,:)>abstol)/nrep  100.0*sum(trueerrormat(i,1,:)>abstol & (exceedmat(i,1,:)))/nrep ...
     100.0*sum(trueerrormat(i,2,:)>abstol)/nrep  100.0*sum(trueerrormat(i,2,:)>abstol & (exceedmat(i,2,:)))/nrep ...
-    100.0*sum(trueerrormat(i,3,:)>abstol)/nrep  100.0*sum(trueerrormat(i,3,:)>abstol & (exceedmat(i,3,:)))/nrep]))
+    100.0*sum(trueerrormat(i,3,:)>abstol)/nrep  100.0*sum(trueerrormat(i,3,:)>abstol & (exceedmat(i,3,:)))/nrep]);
   npointslgratio(i) = mean(npoints(i,1,:))/mean(npoints(i,2,:));
   timelgratio(i) = mean(time(i,1,:))/mean(time(i,2,:));
 end
-
-for k=1:m-1
-  idx=find(timeratio(k,:,:)<1);
-  max_idx_t = max(idx);
-  timeratio(k,1:max_idx_t) = 1./timeratio(k,1:max_idx_t);
-  
-  idx=find(npointsratio(k,:,:)<1);
-  max_idx_n = max(idx);
-  npointsratio(k,1:max_idx_n) = 1.0 ./npointsratio(k,1:max_idx_n);
-end
+type(fullPath)
 
 %% Output the table
 % To just re-display the output, load the .mat file and run this section
@@ -233,25 +231,29 @@ if usejava('jvm') || MATLABVERSION <= 7.12
 %   gail.save_eps('TraubPaperOutput', ['traub_',algoname,'_testfun']);
   
   figure
-  t = 1:nrep*n;
+  t = ((1:nrep*n) -1/2)/(nrep*n);
   for k = 1:m-1
     %subplot(1,m-1,k)
-    semilogy(t,sorted_timeratio(k,:),'color',markers{k*2-1}); hold on
-    semilogy(t,sorted_npointsratio(k,:),'color',markers{2*k});  hold on
-    xlabel('test functions'); 
+    semilogx(sorted_timeratio(k,:),t,'color',markers{k*2-1}); hold on
+    semilogx(sorted_npointsratio(k,:),t,'color',markers{2*k});  hold on
+    xlabel('Ratios'); 
+    ylabel('Probability')
+%     semilogy(t,sorted_timeratio(k,:),'color',markers{k*2-1}); hold on
+%     semilogy(t,sorted_npointsratio(k,:),'color',markers{2*k});  hold on
+    %xlabel('test functions'); 
     %title([algoname, ' vs. ', func2str( methods{k+1})])
-    legend('time ratio', 'points ratio','Location','NorthWest');
+    %legend('time ratio', 'points ratio','Location','NorthWest');
   end
-  hold off
-  h=legend('{\tt funmin\_g} vs. {\tt fminbnd} time ratio', '{\tt funmin\_g} vs. {\tt fminbnd} points ratio',...
-         '{\tt funmin\_g} vs. Chebfun time ratio', '{\tt funmin\_g} vs. Chebfun points ratio',...
-         'Location','NorthWest');
-  set(h, 'Interpreter', 'latex')   
-  legend BOXOFF 
+%   hold off
+%   h=legend('{\tt funmin\_g} vs. {\tt fminbnd} time ratio', '{\tt funmin\_g} vs. {\tt fminbnd} points ratio',...
+%          '{\tt funmin\_g} vs. Chebfun time ratio', '{\tt funmin\_g} vs. Chebfun points ratio',...
+%          'Location','NorthWest');
+%   set(h, 'Interpreter', 'latex')   
+%   legend BOXOFF 
   gail.save_eps('TraubPaperOutput', ['traub_',algoname,'_test']);
 end;
 gail.save_mat('TraubPaperOutput', ['traub_',algoname,'_test'], true, npoints, ...
-  time, c, timeratio, npointsratio, npointslgratio, timelgratio, ...
+  time, c, timeratio, npointsratio, npointslgratio, timelgratio, nrep, n, m,...
   sorted_timeratio, sorted_npointsratio);
 end
 

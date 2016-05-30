@@ -104,7 +104,7 @@ in_param.a=-1;
 in_param.b=1;
 in_param.output_x = 1;
 c = -0.2;
-delta = 0.2;
+delta = 0.3;
 f3 = @(x) f3param(x,delta,c);
 figure
 [~,fappxout] = funappx_g(@(x) -f3(x),in_param);

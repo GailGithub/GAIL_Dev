@@ -1,5 +1,6 @@
 % traubpaper_funappx_g_test: comparison between funappx_g and funappxlocal_g
-function [timeratio,timelgratio,npointsratio,npointslgratio]=traubpaper_funappx_g_test(nrep,abstol,varargin)
+function [timeratio,timelgratio,npointsratio,npointslgratio] ...
+   =traubpaper_funappx_g_test(nrep,abstol,varargin)
 % user can choose absolut error tolerance, initial number of points, number
 % of iteration or can use the following parameters
 % nrep = 100; abstol = 1e-6;
@@ -8,7 +9,13 @@ function [timeratio,timelgratio,npointsratio,npointslgratio]=traubpaper_funappx_
 %
 % Compare funappxPenalty_g with funappxglobal_g and chebfun:
 % [timeratio,timelgratio,npointsratio,npointslgratio]=traubpaper_funappx_g_test(nrep,abstol,'funappxPenalty_g');
-rng default % for reproducibilityI
+rng default % for reproducibility
+if nargin < 2
+   abstol = 1e-6;
+   if nargin < 1
+      nrep = 500;
+   end
+end
 cc = rand(nrep,1);
 c = cc*2; % number of simulations for each test function
 n = 3; % number of test functions
@@ -49,6 +56,9 @@ b = zeros(1,n);
 a(1:3) = [-1,-1,-1];
 b(1:3) = [1,1,1];
 for i = 1:nrep
+  if (i-1)/10 == round((i-1)/10)
+     disp(['Starting case ' int2str(i) ' out of ' int2str(nrep)])
+  end
   f1 = @(x) g1(x,c(i));
   f2 = @(x) g2(x,c(i));
   f3 = @(x) g3(x,cc(i)*0.6);
@@ -75,9 +85,12 @@ for i = 1:nrep
         try
           lastwarn('')
           tic, fappx = chebfun(f,[a(j),b(j)],'chebfuneps', abstol,'splitting','on'); t=toc;
-          if length(lastwarn) > 0
+          if ~isempty(lastwarn)
             exceedmat(j,k,i) = 1;
           end
+        catch
+           disp('Oops')
+           break
         end
         npoints(j,k,i) = length(fappx);
       end
@@ -177,15 +190,15 @@ for i = permuted_index
   timelgratio(i) = mean(time(i,1,:))/mean(time(i,2,:));
 end
 
-for k=1:m-1
-  idx=find(timeratio(k,:,:)<1);
-  max_idx_t = max(idx);
-  timeratio(k,1:max_idx_t) = 1./timeratio(k,1:max_idx_t);
-  
-  idx=find(npointsratio(k,:,:)<1);
-  max_idx_n = max(idx);
-  npointsratio(k,1:max_idx_n) = 1.0 ./npointsratio(k,1:max_idx_n);
-end
+% for k=1:m-1
+%   idx=find(timeratio(k,:,:)<1);
+%   max_idx_t = max(idx);
+%   timeratio(k,1:max_idx_t) = 1./timeratio(k,1:max_idx_t);
+%   
+%   idx=find(npointsratio(k,:,:)<1);
+%   max_idx_n = max(idx);
+%   npointsratio(k,1:max_idx_n) = 1.0 ./npointsratio(k,1:max_idx_n);
+% end
 
 %% Output the table
 % To just re-display the output, load the .mat file and run this section
@@ -214,27 +227,28 @@ if usejava('jvm') || MATLABVERSION <= 7.12
 %  gail.save_eps('TraubPaperOutput', ['traub_',algoname,'_testfun']);
   
   figure
-  t = 1:nrep*n;
+  t = ((1:nrep*n) -1/2)/(nrep*n);
   for k = 1:m-1
     %subplot(1,m-1,k)
-    semilogy(t,sorted_timeratio(k,:),'color',markers{k*2-1}); hold on
-    semilogy(t,sorted_npointsratio(k,:),'color',markers{2*k});  hold on
-    xlabel('test functions'); 
+    semilogx(sorted_timeratio(k,:),t,'color',markers{k*2-1}); hold on
+    semilogx(sorted_npointsratio(k,:),t,'color',markers{2*k});  hold on
+    xlabel('Ratios'); 
+    ylabel('Probability')
     %title([algoname, ' vs. ', func2str( methods{k+1})])
   end
   hold off
-  h=legend('{\tt funappx\_g} vs. {\tt funappxglobal\_g} time ratio',...
-           '{\tt funappx\_g} vs. {\tt funappxglobal\_g} points ratio',...
-           '{\tt funappx\_g} vs. Chebfun time ratio',...
-           '{\tt funappx\_g} vs. Chebfun points ratio',...
-           'Location','NorthWest');
-  set(h, 'Interpreter', 'latex')
-  legend BOXOFF 
+%   h=legend('{\tt funappx\_g} time / {\tt funappxglobal\_g} time',...
+%            '{\tt funappx\_g} vs. {\tt funappxglobal\_g} points ratio',...
+%            '{\tt funappx\_g} vs. Chebfun time ratio',...
+%            '{\tt funappx\_g} vs. Chebfun points ratio',...
+%            'Location','NorthWest');
+%   set(h, 'Interpreter', 'latex')
+%   legend BOXOFF 
   gail.save_eps('TraubPaperOutput', ['traub_',algoname,'_test']);
 end;
 gail.save_mat('TraubPaperOutput', ['traub_',algoname,'_test'], true, npoints, ...
-  time, c, timeratio, npointsratio, npointslgratio, timelgratio, ...
-  sorted_timeratio, sorted_npointsratio);
+  time, c, timeratio, npointsratio, npointslgratio, timelgratio, nrep, n, m, ...
+  sorted_timeratio, sorted_npointsratio, algoname);
 end
 
 
