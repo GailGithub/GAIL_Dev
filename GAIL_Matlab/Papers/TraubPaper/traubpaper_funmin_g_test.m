@@ -10,7 +10,7 @@ rng default % for reproducibility
 if nargin < 2
    abstol = 1e-6;
    if nargin < 1
-      nrep = 10;
+      nrep = 1000;
    end
 end
 cc = rand(nrep,1);
@@ -22,8 +22,8 @@ time = zeros(n,m,nrep);
 trueerrormat = zeros(n,m,nrep);
 exceedmat  = zeros(n,m,nrep);
 if isempty(varargin)
-  algoname = 'funmin_g';
-  algo = @(f,a,b,abstol) funmin_g(f,a,b,abstol);
+  algoname = 'funminNoPenalty_g';
+  algo = @(f,a,b,abstol) funminNoPenalty_g(f,a,b,abstol);
 else
   algoname = varargin{1};
   algo = str2func(['@(f,a,b,abstol)', algoname,'(f,a,b,abstol)']);
@@ -53,6 +53,10 @@ b = zeros(1,n);
 a(1:3) = [-1,-1,-1];
 b(1:3) = [1,1,1];
 for i = 1:nrep
+  if (i-1)/10 == round((i-1)/10)
+     disp(['Starting case ' int2str(i) ' out of ' int2str(nrep)])
+  end
+
   f1 = @(x) g1(x,c(i));
   f2 = @(x) g2(x,c(i));
   f3 = @(x) g3(x,cc(i)*0.6);
@@ -97,9 +101,9 @@ for i = 1:nrep
         npoints(j,k,i) = out_param.npoints;
       elseif k == 2
         lastwarn('')
-        tic, [xmin, fmin, exitflag, out] = fminbnd(@(x) f(x), a(j), b(j), ...
+        tic, [~, fmin, exitflag, out] = fminbnd(@(x) f(x), a(j), b(j), ...
           optimset ('TolX', abstol, 'MaxFunEvals', out_param.nmax, 'MaxIter', out_param.maxiter) ); t=toc;
-        if length(lastwarn) > 0 || exitflag ~= 1 || out.iterations > out_param.maxiter
+        if ~isempty(lastwarn) || exitflag ~= 1 || out.iterations > out_param.maxiter
           exceedmat(j,k,i) = 1;
         end
         npoints(j,k,i) = out.funcCount;
@@ -109,9 +113,11 @@ for i = 1:nrep
           tic, chebf = chebfun(f,[a(j),b(j)],'chebfuneps', abstol,'splitting','on');
                fmin = min(chebf); 
           t=toc;
-          if length(lastwarn) > 0
+          if ~isempty(lastwarn)
             exceedmat(j,k,i) = 1;
           end
+        catch
+           disp('oops')
         end
         npoints(j,k,i) = length(chebf);
       end
@@ -184,6 +190,7 @@ end
 % only
 [fileID, fullPath] = gail.open_txt('TraubPaperOutput', ['traub_',algoname,'_test']);
 fprintf(fileID,'\n');
+fprintf(fileID,'# of replications = %1.0f\n',nrep);
 fprintf(fileID,'   Test         Number of Points                    Time Used                          Success (%%)                                  Failure (%%)\n');
 fprintf(fileID,'  Function   ----------------------------    -------------------------------     --------------------------------------   ----------------------------------------\n');
 fprintf(fileID,'             funmin_g   fminbnd   Chebfun    funmin_g     fminbnd    Chebfun     funmin_g        fminbnd        Chebfun   funmin_g        fminbnd       Chebfun\n');
@@ -192,7 +199,7 @@ npointslgratio = zeros(1,n);
 timelgratio = zeros(1,n);
 
 for i = permuted_index
-  fprintf(fileID,'%9.0f %9.0f %9.0f  %9.0f %11.3f  %11.3f %11.3f  %6.0f %6.0f %6.0f %6.0f %6.0f   %6.0f %6.0f %6.0f %6.0f %6.0f %6.0f %6.0f',...
+  fprintf(fileID,'%9.0f %9.0f %9.0f  %9.0f %11.4f  %11.4f %11.4f  %6.0f %6.0f %6.0f %6.0f %6.0f   %6.0f %6.0f %6.0f %6.0f %6.0f %6.0f %6.0f \n',...
     [i mean(npoints(i,1,:)) mean(npoints(i,2,:)) mean(npoints(i,3,:))...
     mean(time(i,1,:)) mean(time(i,2,:)) mean(time(i,3,:))...
     100.0*sum(trueerrormat(i,1,:)<=abstol)/nrep 100.0*sum(trueerrormat(i,1,:)<=abstol & (exceedmat(i,1,:)))/nrep ...
@@ -233,16 +240,10 @@ if usejava('jvm') || MATLABVERSION <= 7.12
   figure
   t = ((1:nrep*n) -1/2)/(nrep*n);
   for k = 1:m-1
-    %subplot(1,m-1,k)
     semilogx(sorted_timeratio(k,:),t,'color',markers{k*2-1}); hold on
     semilogx(sorted_npointsratio(k,:),t,'color',markers{2*k});  hold on
     xlabel('Ratios'); 
     ylabel('Probability')
-%     semilogy(t,sorted_timeratio(k,:),'color',markers{k*2-1}); hold on
-%     semilogy(t,sorted_npointsratio(k,:),'color',markers{2*k});  hold on
-    %xlabel('test functions'); 
-    %title([algoname, ' vs. ', func2str( methods{k+1})])
-    %legend('time ratio', 'points ratio','Location','NorthWest');
   end
 %   hold off
 %   h=legend('{\tt funmin\_g} vs. {\tt fminbnd} time ratio', '{\tt funmin\_g} vs. {\tt fminbnd} points ratio',...
