@@ -260,11 +260,11 @@ gail.save_mat('TraubPaperOutput', ['traub_',algoname,'_test'], true, npoints, ..
 end
 
 %% Sample printout
-
+% # of replications = 1000
 %    Test         Number of Points                    Time Used                          Success (%)                                  Failure (%)
 %   Function   ----------------------------    -------------------------------     --------------------------------------   ----------------------------------------
 %              funmin_g   fminbnd   Chebfun    funmin_g     fminbnd    Chebfun     funmin_g        fminbnd        Chebfun   funmin_g        fminbnd       Chebfun
 %                                                                                  No Warn Warn No Warn Warn   No Warn Warn  No Warn Warn  No Warn Warn  No Warn Warn
-%         3       274         8        113       0.006        0.004       0.196     100      0    100      0     12        0      0      0      0      0     88      0
-%         1       230        22         44       0.005        0.006       0.044     100      0     24      0     54        0      0      0     76      0     46      0
-%         2       273         9         24       0.006        0.005       0.025     100      0    100      0     34        0      0      0      0      0     66      0
+%         3       274         8        116      0.0027       0.0019      0.0923     100      0    100      0     14        0      0      0      0      0     86      0 
+%         1       230        22         43      0.0025       0.0025      0.0189     100      0     27      0     60        0      0      0     73      0     40      0 
+%         2       273         9         22      0.0028       0.0021      0.0114     100      0    100      0     35        0      0      0      0      0     65      0 
