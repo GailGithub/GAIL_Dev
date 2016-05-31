@@ -2,25 +2,25 @@ function [fmin,out_param]=funmin_g(varargin)
 %funmin_g 1-D guaranteed locally adaptive function optimization
 %   on [a,b]
 %
-%   fmin = FUNMINNOPENALTY_G(f) finds minimum value of function f on the  
+%   fmin = FUNMIN_G(f) finds minimum value of function f on the  
 %   default interval [0,1] within the guaranteed absolute error tolerance 
 %   of 1e-6. Input f is a function handle.
 %
-%   fmin = FUNMINNOPENALTY_G(f,a,b,abstol) finds minimum value of
+%   fmin = FUNMIN_G(f,a,b,abstol) finds minimum value of
 %   function f with ordered input parameters that define the finite
 %   interval [a,b], and a guaranteed absolute error tolerance abstol.
 %
-%   fmin = FUNMINNOPENALTY_G(f,'a',a,'b',b,'abstol',abstol) finds minimum
+%   fmin = FUNMIN_G(f,'a',a,'b',b,'abstol',abstol) finds minimum
 %   value of function f on the interval [a,b] with a guaranteed absolute
 %   error tolerance. All four field-value pairs are optional and can be
 %   supplied in different order.
 %
-%   fmin = FUNMINNOPENALTY_G(f,in_param) finds minimum value of function f  
+%   fmin = FUNMIN_G(f,in_param) finds minimum value of function f  
 %   on the interval [in_param.a,in_param.b] with a guaranteed absolute
 %   error tolerance in_param.abstol. If a field is not specified, the
 %   default value is used.
 %
-%   [fmin, out_param] = FUNMINNOPENALTY_G(f,...) returns minimum value fmin
+%   [fmin, out_param] = FUNMIN_G(f,...) returns minimum value fmin
 %   of function f and an output structure out_param.
 %
 %   Input Arguments
@@ -199,7 +199,7 @@ function [fmin,out_param]=funmin_g(varargin)
 %     intervals: [2x1 double]
 %
 %
-%  See also FMINBND, FUNAPPXNOPENALTY_G, INTEGRAL_G
+%  See also FMINBND, FUNAPPX_G, INTEGRAL_G
 %
 %  References
 %   [1]  Xin Tong. A Guaranteed, "Adaptive, Automatic Algorithm for
