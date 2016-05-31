@@ -1,5 +1,5 @@
-function [fmin,out_param]=funminNoPenalty_g(varargin)
-%funminNoPenalty_g 1-D guaranteed locally adaptive function optimization
+function [fmin,out_param]=funmin_g(varargin)
+%funmin_g 1-D guaranteed locally adaptive function optimization
 %   on [a,b]
 %
 %   fmin = FUNMINNOPENALTY_G(f) finds minimum value of function f on the  
@@ -90,7 +90,7 @@ function [fmin,out_param]=funminNoPenalty_g(varargin)
 %
 %  Example 1:
 %
-%  >> f=@(x) exp(0.01*(x-0.5).^2); [fmin,out_param] = funminNoPenalty_g(f)
+%  >> f=@(x) exp(0.01*(x-0.5).^2); [fmin,out_param] = funmin_g(f)
 %
 %  fmin =
 %
@@ -117,7 +117,7 @@ function [fmin,out_param]=funminNoPenalty_g(varargin)
 %  Example 2:
 %
 %  >> f = @(x) exp(0.01*(x-0.5).^2);
-%  >> [fmin,out_param] = funminNoPenalty_g(f,-2,2,1e-7,10,10,1000000)
+%  >> [fmin,out_param] = funmin_g(f,-2,2,1e-7,10,10,1000000)
 %
 %  fmin =
 % 
@@ -148,7 +148,7 @@ function [fmin,out_param]=funminNoPenalty_g(varargin)
 %  >> in_param.abstol = 10^(-7);
 %  >> in_param.nlo = 10; in_param.nhi = 100;
 %  >> in_param.nmax = 10^6;
-%  >> [fmin,out_param] = funminNoPenalty_g(f,in_param)
+%  >> [fmin,out_param] = funmin_g(f,in_param)
 %
 %  fmin =
 % 
@@ -175,7 +175,7 @@ function [fmin,out_param]=funminNoPenalty_g(varargin)
 %  Example 4:
 %
 %  >> f=@(x) exp(0.01*(x-0.5).^2);
-%  >> [fmin,out_param] = funminNoPenalty_g(f,'a',-2,'b',2,'nhi',100,'nlo',10,'nmax',1e6,'abstol',1e-5)
+%  >> [fmin,out_param] = funmin_g(f,'a',-2,'b',2,'nhi',100,'nlo',10,'nmax',1e6,'abstol',1e-5)
 %
 %  fmin =
 % 
@@ -234,7 +234,7 @@ function [fmin,out_param]=funminNoPenalty_g(varargin)
 
 
 % check parameter satisfy conditions or not
-[f, in_param] = funminNoPenalty_g_param(varargin{:});
+[f, in_param] = funmin_g_param(varargin{:});
 MATLABVERSION = gail.matlab_version;
 out_param = in_param;
 
@@ -248,7 +248,7 @@ x = a:(b-a)/(n-1):b;
 y = f(x);
 iSing = find(isinf(y));
 if ~isempty(iSing)
-    error('GAIL:funminNoPenalty_g:yInf',['Function f(x) = Inf at x = ', num2str(x(iSing))]);
+    error('GAIL:funmin_g:yInf',['Function f(x) = Inf at x = ', num2str(x(iSing))]);
 end
 if length(y) == 1
     % probably f is a constant function and Matlab would
@@ -302,14 +302,14 @@ while n < out_param.nmax
     whichcut = maybecut & maxlength;
     if (out_param.nmax<(n+length(find(whichcut))))
         out_param.exitflag(1) = true;
-        warning('GAIL:funminNoPenalty_g:exceedbudget',['funminNoPenalty_g '...
+        warning('GAIL:funmin_g:exceedbudget',['funmin_g '...
             'attempted to exceed the cost budget. The answer may be '...
             'unreliable.'])
         break;
     end;
     if(iter==out_param.maxiter)
         out_param.exitflag(2) = true;
-        warning('GAIL:funminNoPenalty_g:exceediter',['Number of iterations has '...
+        warning('GAIL:funmin_g:exceediter',['Number of iterations has '...
             'reached maximum number of iterations.'])
         break;
     end;
@@ -364,8 +364,8 @@ if (in_param.output_x)
   out_param.y = y;
 end
 
-function [f, out_param] = funminNoPenalty_g_param(varargin)
-% parse the input to the funminNoPenalty_g function
+function [f, out_param] = funmin_g_param(varargin)
+% parse the input to the funmin_g function
 
 %% Default parameter values
 default.a = 0;
@@ -386,10 +386,10 @@ end;
 
 
 if isempty(varargin)
-    warning('GAIL:funminNoPenalty_g:nofunction',['Function f must be specified. '...
+    warning('GAIL:funmin_g:nofunction',['Function f must be specified. '...
         'Now GAIL is using f(x)=exp(-100*(x-0.5)^2) and unit interval '...
         '[0,1].'])
-    help funminNoPenalty_g
+    help funmin_g
     f = @(x) exp(0.01*(x-0.5).^2);
     out_param.f = f;
 else
@@ -397,7 +397,7 @@ else
         f = varargin{1};
         out_param.f = f;
     else
-        warning('GAIL:funminNoPenalty_g:notfunction',['Function f must be a '...
+        warning('GAIL:funmin_g:notfunction',['Function f must be a '...
             'function handle. Now GAIL is using f(x)=exp(-100*(x-0.5)^2).'])
         f = @(x) exp(0.01*(x-0.5).^2);
         out_param.f = f;
@@ -454,31 +454,31 @@ end;
 
 % let end point of interval not be infinity
 if (out_param.a == inf || out_param.a == -inf)
-    warning('GAIL:funminNoPenalty_g:aisinf',['a cannot be infinity. '...
+    warning('GAIL:funmin_g:aisinf',['a cannot be infinity. '...
         'Use default a = ' num2str(default.a)])
     out_param.a = default.a;
 end;
 if (out_param.b == inf || out_param.b == -inf)
-    warning(['GAIL:funminNoPenalty_g:bisinf','b cannot be infinity. '...
+    warning(['GAIL:funmin_g:bisinf','b cannot be infinity. '...
         'Use default b = ' num2str(default.b)])
     out_param.b = default.b;
 end;
 
 if (out_param.b < out_param.a)
-    warning('GAIL:funminNoPenalty_g:blea',['b cannot be smaller than a;'...
+    warning('GAIL:funmin_g:blea',['b cannot be smaller than a;'...
         ' exchange these two. '])
     tmp = out_param.b;
     out_param.b = out_param.a;
     out_param.a = tmp;
 elseif(out_param.b == out_param.a)
-    warning('GAIL:funminNoPenalty_g:beqa',['b cannot equal a. '...
+    warning('GAIL:funmin_g:beqa',['b cannot equal a. '...
         'Use b = ' num2str(out_param.a+1)])
     out_param.b = out_param.a+1;
 end;
 
 % let error tolerance greater than 0
 if (out_param.abstol < 0 )
-    warning('GAIL:funminNoPenalty_g:tolneg', ['Error tolerance should be greater'...
+    warning('GAIL:funmin_g:tolneg', ['Error tolerance should be greater'...
         ' than 0. Using default error tolerance ' num2str(default.abstol)])
     out_param.abstol = default.abstol;
 end
@@ -486,12 +486,12 @@ end
 % let cost budget be a positive integer
 if (~gail.isposint(out_param.nmax))
     if gail.isposintive(out_param.nmax)
-        warning('GAIL:funminNoPenalty_g:budgetnotint',['Cost budget should be '...
+        warning('GAIL:funmin_g:budgetnotint',['Cost budget should be '...
             'a positive integer. Using cost budget '...
             , num2str(ceil(out_param.nmax))])
         out_param.nmax = ceil(out_param.nmax);
     else
-        warning('GAIL:funminNoPenalty_g:budgetisneg',['Cost budget should be '...
+        warning('GAIL:funmin_g:budgetisneg',['Cost budget should be '...
             'a positive integer. Using default cost budget '...
             int2str(default.nmax)])
         out_param.nmax = default.nmax;
@@ -534,7 +534,7 @@ if (~gail.isposint(out_param.nhi))
 end
 
 if (out_param.nlo > out_param.nhi)
-    warning('GAIL:funminNoPenalty_g:logrhi', ['Lower bound of initial number of'...
+    warning('GAIL:funmin_g:logrhi', ['Lower bound of initial number of'...
         ' points is larger than upper bound of initial number of '...
         'points; Use nhi as nlo'])
     out_param.nhi = out_param.nlo;
@@ -546,12 +546,12 @@ out_param.ninit = ceil(out_param.nhi*(out_param.nlo/out_param.nhi)...
 
 if (~gail.isposint(out_param.maxiter))
     if gail.ispositive(out_param.maxiter)
-        warning('GAIL:funminNoPenalty_g:maxiternotint',['Max number of '...
+        warning('GAIL:funmin_g:maxiternotint',['Max number of '...
             'iterations should be a positive integer. Using max number '...
             'of iterations as  ', num2str(ceil(out_param.maxiter))])
         out_param.maxiter = ceil(out_param.maxiter);
     else
-        warning('GAIL:funminNoPenalty_g:budgetisneg',['Max number of iterations'...
+        warning('GAIL:funmin_g:budgetisneg',['Max number of iterations'...
             ' should be a positive integer. Using max number of '...
             'iterations as ' int2str(default.maxiter)])
         out_param.maxiter = default.maxiter;
