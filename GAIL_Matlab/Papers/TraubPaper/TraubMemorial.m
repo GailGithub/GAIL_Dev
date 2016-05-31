@@ -121,7 +121,7 @@ gail.save_eps('TraubPaperOutput', 'sampling-funappxg');
 
 %% Sampling of hump function for funmin_g
 figure
-[~,fminout] = funminNoPenalty_g(@(x) -f3(x),in_param);
+[~,fminout] = funmin_g(@(x) -f3(x),in_param);
 disp(['funmin_g used ' int2str(fminout.npoints) ' points and ' ...
    int2str(fminout.iter) ' iterations'])
 h = plot(xplot,-f3(xplot),'-', ...
