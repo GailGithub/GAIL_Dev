@@ -247,33 +247,12 @@ end
 
 
 %% Sample printout
+% # of replications = 1000
 %    Test         Number of Points                    Time Used                          Success (%)                                  Failure (%)
 %   Function   ----------------------------    -------------------------------     --------------------------------------   ----------------------------------------
 %              Local      Global    Chebfun    Local       Global      Chebfun     Local        Global         Chebfun       Local         Global        Chebfun
 %                                                                                  No Warn Warn No Warn Warn   No Warn Warn  No Warn Warn  No Warn Warn  No Warn Warn
-%         3      2904     46439        113       0.016        0.028       0.185     100      0    100      0      0        0      0      0      0      0    100      0
-%         1      2996     27380         44       0.024        0.021       0.037     100      0    100      0      4        0      0      0      0      0     96      0
-%         2      6926     97438         24       0.020        0.041       0.021     100      0    100      0      4        0      0      0      0      0     96      0
-
-%% Sample printout2 when nrep = 1000;
-%    Test         Number of Points                    Time Used                          Success (%)                                  Failure (%)
-%   Function   ----------------------------    -------------------------------     --------------------------------------   ----------------------------------------
-%              Local      Global    Chebfun    Local       Global      Chebfun     Local        Global         Chebfun       Local         Global        Chebfun
-%                                                                                  No Warn Warn No Warn Warn   No Warn Warn  No Warn Warn  No Warn Warn  No Warn Warn
-%         3      2904     46439         11       0.013        0.009       0.304     100      0    100      0     97        0      0      0      0      0      3      0
-%         1      2792     26265       5219       0.016        0.011       3.572     100      0    100      0    100       72      0      0      0      0      0      0
-%         2      2957     37047       1426       0.014        0.014       1.480     100      0    100      0    100        0      0      0      0      0      0      0
-%         4      3361     24470          3       0.017        0.006       0.014     100      0    100      0    100        0      0      0      0      0      0      0
-%         5      5730     31347         21       0.021        0.007       0.016     100      0    100      0    100        0      0      0      0      0      0      0
-%         6     11379    332562        154       0.026        0.066       0.211     100      0    100      0    100        0      0      0      0      0      0      0
-%% Sample printout3 when nrep = 500;
-%   Test         Number of Points                    Time Used                          Success (%)                                  Failure (%)
-%   Function   ----------------------------    -------------------------------     --------------------------------------   ----------------------------------------
-%              Local      Global    Chebfun    Local       Global      Chebfun     Local        Global         Chebfun       Local         Global        Chebfun
-%                                                                                  No Warn Warn No Warn Warn   No Warn Warn  No Warn Warn  No Warn Warn  No Warn Warn
-%         3      2904     46439         11       0.007        0.005       0.161     100      0    100      0     98        0      0      0      0      0      2      0
-%         1      2886     26513       5257       0.011        0.007       1.914     100      0    100      0    100       72      0      0      0      0      0      0
-%         2      3041     37285       1435       0.008        0.008       0.790     100      0    100      0    100        0      0      0      0      0      0      0
-%         4      3380     24275          3       0.009        0.003       0.008     100      0    100      0    100        0      0      0      0      0      0      0
-%         5      5866     32793         21       0.012        0.004       0.009     100      0    100      0    100        0      0      0      0      0      0      0
-%         6     11388    334333        153       0.015        0.042       0.113     100      0    100      0    100        0      0      0      0      0      0      0
+%         3      2904     46439        116      0.0125       0.0212      0.1289     100      0    100      0      0        0      0      0      0      0    100      0
+%         1      2864     26265         43      0.0175       0.0149      0.0241     100      0    100      0      3        0      0      0      0      0     97      0
+%         2      6911     97106         22      0.0161       0.0313      0.0147     100      0    100      0      3        0      0      0      0      0     97      0
+      
