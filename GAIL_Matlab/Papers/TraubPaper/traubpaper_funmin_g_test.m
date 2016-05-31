@@ -211,6 +211,7 @@ for i = permuted_index
   npointslgratio(i) = mean(npoints(i,1,:))/mean(npoints(i,2,:));
   timelgratio(i) = mean(time(i,1,:))/mean(time(i,2,:));
 end
+fclose(fileID);
 type(fullPath)
 
 %% Output the table

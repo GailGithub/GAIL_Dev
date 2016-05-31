@@ -13,7 +13,7 @@ rng default % for reproducibility
 if nargin < 2
    abstol = 1e-6;
    if nargin < 1
-      nrep = 500;
+      nrep = 1000;
    end
 end
 cc = rand(nrep,1);
@@ -191,6 +191,7 @@ for i = permuted_index
   npointslgratio(i) = mean(npoints(i,1,:))/mean(npoints(i,2,:));
   timelgratio(i) = mean(time(i,1,:))/mean(time(i,2,:));
 end
+fclose(fileID);
 type(fullPath)
 
 %% Output the table
