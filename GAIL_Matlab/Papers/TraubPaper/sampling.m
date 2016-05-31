@@ -13,9 +13,9 @@ nlo = 10;
 nhi = nlo;
 hf=figure(1);
 set(hf, 'Position', [1          96        2560        1113]);
-%[fappx,out1]=funappxNoPenalty_g(f3,a,b,abstol,nlo,nhi)
+%[fappx,out1]=funappx_g(f3,a,b,abstol,nlo,nhi)
 % [fappx,npoints1,errest1] = funappx_g_gui(f3,a,b,abstol,nlo,nhi,...
-%   'funappxNoPenalty_g')
+%   'funappx_g')
 [fappx,npoints1,errest1] = funappx_g_gui(f3,a,b,abstol,nlo,nhi)
 xlabel('\(x\)')
 ylabel('\(f_3(x)\)')
@@ -24,9 +24,9 @@ gail.save_eps('TraubPaperOutput', 'sampling-funappxg');
 
 hf2=figure(2);
 set(hf2, 'Position', [1          96        2560        1113]);
-%[fmin,out2]=funminNoPenalty_g(f3,a,b,abstol,nlo,nhi)
+%[fmin,out2]=funmin_g(f3,a,b,abstol,nlo,nhi)
 [fmin,npoints2,errest2] = funmin_g_gui(f3,a,b,abstol,nlo,nhi,...
-  'funminNoPenalty_g')
+  'funmin_g')
 xlabel('\(x\)')
 ylabel('\(f_3(x)\)')
 gail.save_eps('TraubPaperOutput', 'sampling-funming');

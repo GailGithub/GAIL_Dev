@@ -4,8 +4,8 @@ function [timeratio,timelgratio,npointsratio,npointslgratio]=traubpaper_funmin_g
 % of iteration or can use the following parameters
 % nrep = 100; abstol = 1e-6;
 %
-% Compare funminNoPenalty_g, fminbnd, and chebfun:
-% [timeratio,timelgratio,npointsratio,npointslgratio]=traubpaper_funmin_g_test(nrep,abstol,'funminNoPenalty_g');
+% Compare funmin_g, fminbnd, and chebfun:
+% [timeratio,timelgratio,npointsratio,npointslgratio]=traubpaper_funmin_g_test(nrep,abstol,'funmin_g');
 rng default % for reproducibility
 if nargin < 2
    abstol = 1e-6;
@@ -22,8 +22,8 @@ time = zeros(n,m,nrep);
 trueerrormat = zeros(n,m,nrep);
 exceedmat  = zeros(n,m,nrep);
 if isempty(varargin)
-  algoname = 'funminNoPenalty_g';
-  algo = @(f,a,b,abstol) funminNoPenalty_g(f,a,b,abstol);
+  algoname = 'funmin_g';
+  algo = @(f,a,b,abstol) funmin_g(f,a,b,abstol);
 else
   algoname = varargin{1};
   algo = str2func(['@(f,a,b,abstol)', algoname,'(f,a,b,abstol)']);

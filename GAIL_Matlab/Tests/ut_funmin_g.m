@@ -1,5 +1,5 @@
-%UT_FUNMIN_G unit test for funminNoPenalty_g
-classdef ut_funminNoPenalty_g < matlab.unittest.TestCase
+%UT_FUNMIN_G unit test for funmin_g
+classdef ut_funmin_g < matlab.unittest.TestCase
     
     methods(Test)
            
@@ -11,7 +11,7 @@ classdef ut_funminNoPenalty_g < matlab.unittest.TestCase
             z = 0.86;
             f = @(x) 0.5/a^2.*(-4*a.^2-(x-z).^2-(x-z-a).*abs(x-z-a)...
                 +(x-z+a).*abs(x-z+a)).*(x>=z-2*a).*(x<=z+2*a);
-            [fmin, result] = funminNoPenalty_g(f,in_param); 
+            [fmin, result] = funmin_g(f,in_param); 
             actualmin = -1;
             actualerr = abs(actualmin-fmin);
             testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
@@ -26,7 +26,7 @@ classdef ut_funminNoPenalty_g < matlab.unittest.TestCase
 %             z = 0.33;
 %             f = @(x) 0.5/a^2.*(-4*a.^2-(x-z).^2-(x-z-a).*abs(x-z-a)...
 %                 +(x-z+a).*abs(x-z+a)).*(x>=z-2*a).*(x<=z+2*a);
-%             [fmin, result] = funminNoPenalty_g(f,in_param); 
+%             [fmin, result] = funmin_g(f,in_param); 
 %             intnum = size(result.intervals,2);
 %             exactsolu = z;
 %             testflag = 1;
@@ -49,7 +49,7 @@ classdef ut_funminNoPenalty_g < matlab.unittest.TestCase
             z = 0.77;
             f = @(x) 0.5/a^2.*(-4*a.^2-(x-z).^2-(x-z-a).*abs(x-z-a)...
                 +(x-z+a).*abs(x-z+a)).*(x>=z-2*a).*(x<=z+2*a);
-            [fmin, result] = funminNoPenalty_g(f,in_param); 
+            [fmin, result] = funmin_g(f,in_param); 
             actualmin = -1;
             actualerr = abs(actualmin-fmin);
             intnum = size(result.intervals,2);
@@ -76,7 +76,7 @@ classdef ut_funminNoPenalty_g < matlab.unittest.TestCase
 %             a2=1; b2=10; c2=0.5+0.5*rand(1,1);
 %             f=@(x) -a1*exp(-(b1*(x-c1)).^2)-a2*exp(-(b2*(x-c2)).^2);
 %             exactsolu = fminbnd(f,0,(c1+c2)/2,optimset('TolX',10^(-5)*10^(-2)));
-%             [fmin, result] = funminNoPenalty_g(f,in_param); 
+%             [fmin, result] = funmin_g(f,in_param); 
 %             intnum = size(result.intervals,2);
 %             testflag = 1;
 %             for k=1:intnum
@@ -97,7 +97,7 @@ classdef ut_funminNoPenalty_g < matlab.unittest.TestCase
 %             f=@(x) cos(4*pi*(x-0.2));
 %             exactsolu1 = 0.45;
 %             exactsolu2 = 0.95;
-%             [fmin, result] = funminNoPenalty_g(f,in_param); 
+%             [fmin, result] = funmin_g(f,in_param); 
 %             intnum = size(result.intervals,2);
 %             testflag1 = 1;
 %             testflag2 = 1;
@@ -129,7 +129,7 @@ classdef ut_funminNoPenalty_g < matlab.unittest.TestCase
 %             exactsolu3 = -0.5;
 %             exactsolu4 = 1.5;
 %             exactsolu5 = 3.5;
-%             [fmin, result] = funminNoPenalty_g(f,in_param); 
+%             [fmin, result] = funmin_g(f,in_param); 
 %             intnum = size(result.intervals,2);
 %             testflag = ones(5,1);
 %             for k=1:intnum
@@ -165,7 +165,7 @@ classdef ut_funminNoPenalty_g < matlab.unittest.TestCase
             in_param.nmax = 10^7;  
             z = 0.5;
             f = @(x) exp(-1./((x-z).^2)); % flat bottom
-            [fmin,result] = funminNoPenalty_g(f,in_param);
+            [fmin,result] = funmin_g(f,in_param);
             testCase.verifyLessThanOrEqual(result.errest,in_param.abstol);
             testCase.verifyLessThanOrEqual(result.npoints,in_param.nmax);
             v=sqrt(-1/(log(in_param.abstol)));
@@ -181,7 +181,7 @@ classdef ut_funminNoPenalty_g < matlab.unittest.TestCase
         function funmin_gEXM8(testCase)
             z = 1;
             f = @(x) 1./((x-z).^2); % discontinuous function
-            testCase.verifyError(@()funminNoPenalty_g(f),'GAIL:funminNoPenalty_g:yInf');      
+            testCase.verifyError(@()funmin_g(f),'GAIL:funmin_g:yInf');      
         end
         
     end
