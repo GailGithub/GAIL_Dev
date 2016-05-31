@@ -20,8 +20,8 @@ function [fmin,npoints,errest] = funmin_g_gui(f,a,b,tol,nlo,nhi,varargin)
 %  Two local min:
 %  [fmin,npoints] = funmin_g_gui(@(x) -5 * exp(-(10*(x - .3)).^2) - exp(-(10*(x - 0.75)).^2),0,1,1e-3,10,20)
 %  [fmin,npoints] = ... 
-%  Demo with funminNoPenalty_g:
-%  [fmin,npoints,errest] = funmin_g_gui(@(x) x.^2,-1,1,1e-2,10,20,'funminNoPenalty_g')
+%  Demo with funminPenalty_g:
+%  [fmin,npoints,errest] = funmin_g_gui(@(x) x.^2,-1,1,1e-2,10,20,'funminPenalty_g')
 shg
 clf reset
 MATLABVERSION= gail.matlab_version;
@@ -93,7 +93,7 @@ in_param.nlo = nlo;
 in_param.nhi = nhi; 
 in_param.output_x = 1;
 tmpstr = strsplit(algoname,'_g');
-level = funminNoPenalty_g(f,a,b,tol,nlo,nhi)-0.2;
+level = funmin_g(f,a,b,tol,nlo,nhi)-0.2;
 while(max(err) > tol)
     if max(err) > tol;
         in_param.maxiter = k+1; 
