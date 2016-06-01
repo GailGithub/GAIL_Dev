@@ -33,7 +33,7 @@ ourQECallPrice = optPrice(inp) %construct an optPrice object
 %  MC_QE(S0,r,d,T,Vinst,Vlong,kappa,epsilon,rho,NTime,NSim,NBatches)
 % Ntime = numel(inp.timeDim.timeVector)-1;
   Ntime = T/delta_t; 
- [a,b]=MC_QE(initPrice,interest,0,T,0.09,0.09,1,1e-16,-0.0,Ntime,1e5,1);
+ [a,b]=MC_QE(initPrice,interest,0,T,0.09,0.09,1,0,-0.0,Ntime,1e5,1);
 
  PT = a(:,Ntime + 1);
  PT = max(PT-Strike,0);
@@ -61,7 +61,7 @@ inp.assetParam.volatility = 0.09;
 inp.assetParam.Vinst = 0.09; 
 inp.assetParam.Vlong = 0.09;
 inp.assetParam.kappa = 1;
-inp.assetParam.nu = 0.0000001;
+inp.assetParam.nu = 0;
 inp.assetParam.rho = -0.3;
 inp.assetParam.pathType = 'QE';
 
@@ -78,7 +78,7 @@ ourCallPrice = optPrice(inp) %construct an optPrice object
 [CallPrice, out] = genOptPrice(ourCallPrice) %the option price
 % Calculate option price by provided codes
 %  MC_QE(S0,r,d,T,Vinst,Vlong,kappa,nu,rho,NTime,NSim,NBatches)
- [a,b]=MC_QE(100,0,0,5,0.09,0.09,0.0000001,1,-0.3,5,100000,1);
+ [a,b]=MC_QE(100,0,0,5,0.09,0.09,0.0000001,0,-0.3,5,100000,1);
  Strike = 70;
  PT = a(:,6);
  PT = max(PT-Strike,0);
@@ -118,7 +118,7 @@ ourCallPrice = optPrice(inp) %construct an optPrice object
 [CallPrice, out] = genOptPrice(ourCallPrice) %the option price
 % Calculate option price by provided codes
 %  MC_QE(S0,r,d,T,Vinst,Vlong,kappa,nu,rho,NTime,NSim,NBatches)
- [a,b]=MC_QE(100,0,0,5,0.09,0.09,1,0.0000001,-0.3,15,400000,1);
+ [a,b]=MC_QE(100,0,0,5,0.09,0.09,1,0,-0.3,15,400000,1);
  Strike = 100;
  PT = a(:,16);
  PT = max(PT-Strike,0);
@@ -140,7 +140,7 @@ inp.assetParam.volatility = 0.09;
 inp.assetParam.Vinst = 0.09; 
 inp.assetParam.Vlong = 0.09;
 inp.assetParam.kappa = 1;
-inp.assetParam.nu = 0.0000001;
+inp.assetParam.nu = 0;
 inp.assetParam.rho = -0.3;
 inp.assetParam.pathType = 'QE';
 
@@ -157,7 +157,7 @@ ourCallPrice = optPrice(inp) %construct an optPrice object
 [CallPrice, out] = genOptPrice(ourCallPrice) %the option price
 % Calculate option price by provided codes
 %  MC_QE(S0,r,d,T,Vinst,Vlong,kappa,nu,rho,NTime,NSim,NBatches)
- [a,b]=MC_QE(100,0,0,5,0.09,0.09,1,0.0000001,-0.3,15,700000,1);
+ [a,b]=MC_QE(100,0,0,5,0.09,0.09,1,0,-0.3,15,700000,1);
  Strike = 105;
  PT = a(:,16);
  PT = max(PT-Strike,0);
@@ -179,7 +179,7 @@ inp.assetParam.volatility = 0.09;
 inp.assetParam.Vinst = 0.09; 
 inp.assetParam.Vlong = 0.09;
 inp.assetParam.kappa = 1;
-inp.assetParam.nu = 0.0000001;
+inp.assetParam.nu = 0;
 inp.assetParam.rho = -0.3;
 inp.assetParam.pathType = 'QE';
 
@@ -196,7 +196,7 @@ ourCallPrice = optPrice(inp) %construct an optPrice object
 [CallPrice, out] = genOptPrice(ourCallPrice) %the option price
 % Calculate option price by provided codes
 %  MC_QE(S0,r,d,T,Vinst,Vlong,kappa,nu,rho,NTime,NSim,NBatches)
- [a,b]=MC_QE(100,0,0,5,0.09,0.09,1,0.0000001,-0.3,15,1000000,1);
+ [a,b]=MC_QE(100,0,0,5,0.09,0.09,1,0,-0.3,15,1000000,1);
  Strike = 140;
  PT = a(:,16);
  PT = max(PT-Strike,0);
