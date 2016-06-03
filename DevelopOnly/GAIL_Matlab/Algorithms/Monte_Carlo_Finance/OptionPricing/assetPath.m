@@ -353,6 +353,7 @@ classdef assetPath < brownianMotion
                 end
                 % K0 for martingale adjustment
                 K0(I1)= c1-A*b2(I1).*a(I1)./(1-2*A*a(I1)) + 0.5*log(1-2*A*a(I1));
+%                K0(I1)=c1-A*m./(1+bhat.^2-2*A*m.*bhat.^2)+0.5*log(1-(2*A*m.*bhat.^2)./(1+bhat.^2));
                 K0(I2)= c1-log(p(I2)+beta(I2).*(1-p(I2))./(beta(I2)-A));
 
                 % log Euler Predictor-Corrector step
@@ -533,7 +534,7 @@ classdef assetPath < brownianMotion
                 if isempty(I1)
                 else
                     %U(I1,i) =-obj.assetParam.Vlong + a(I1).*(sqrt(b2(I1)) + norminv(UV1(I1,i-1))).^2;
-                    U(I1,i) =-obj.assetParam.Vlong + m(I1)./(1+bhat.^2).*(1+norminv(UV1(I1,i-1)).*bhat).^2;
+                    U(I1,i) =-obj.assetParam.Vlong + m(I1)./(1+bhat(I1).^2).*(1+norminv(UV1(I1,i-1)).*bhat(I1)).^2;
                 end
                 p = (psi - 1)./(psi + 1);               % for switching rule
                 U((UV1(:,i-1)<=p) & (psi>obj.psiC),i) = -obj.assetParam.Vlong; % case u<=p & psi>psiC
