@@ -46,7 +46,7 @@ function [Q,out_param] = cubMC_g(varargin)
 %     quotes.
 % 
 %     in_param.abstol --- the absolute error tolerance, the default value
-%     is 1e-2.
+%     is 1e-1
 %
 %     in_param.reltol --- the relative error tolerance, the default value
 %     is 1e-1.
@@ -111,14 +111,27 @@ function [Q,out_param] = cubMC_g(varargin)
 %      
 %                       10  hyperbox does not contain numbers
 %      
-%                       11  hyperbox is not 2 x d
-%      
+%                       11  hyperbox is not 2 x d when measure is 'uniform'
+%                           or 'normal'
+%
 %                       12  hyperbox is only a point in one direction
 %      
 %                       13  hyperbox is infinite when measure is 'uniform'
 %      
 %                       14  hyperbox is not doubly infinite when measure
 %                           is 'normal'
+%
+%                       15  hyperbox has an infinite coordinate for the
+%                           center of the ball or a infinite radius for the
+%                           ball
+%
+%                       16  The radius of the ball is a nonpositive real
+%                           number
+%
+%                       17  The dimension of the ball is zero
+%
+%                       18  Hyperbox not 1 x (d+1) when measure is 'uniform
+%                           on a ball'
 % 
 %  Guarantee
 % This algorithm attempts to calculate the integral of function f over a
@@ -223,7 +236,28 @@ function [Q,out_param] = cubMC_g(varargin)
 tstart=tic;
 [f,hyperbox,out_param] = cubMC_g_param(varargin{:});%check validity of inputs
 f=gail.transformIntegrand(f,hyperbox,out_param);
-if strcmpi(out_param.measure,'uniform')% the using uniformly distributed samples
+if strcmpi(out_param.measure,'uniform on a ball')% using uniformly distributed samples on a ball
+    volume = ((2.0*pi^(out_param.dim/2.0))/(out_param.dim*gamma(out_param.dim/2.0)))*out_param.radius^out_param.dim;
+    
+    transf = 2;
+    if transf == 1
+        if out_param.dim == 1
+            f = @(t) f(t)*volume;
+            out_param.hyperbox = [out_param.hyperbox - out_param.radius; out_param.hyperbox + out_param.radius];
+            out_param.measure = 'uniform';
+        else
+            f = @(t) f(psi_1(t, out_param.dim, out_param.radius, out_param.hyperbox))*volume;
+            out_param.hyperbox = [zeros(1, out_param.dim); ones(1, out_param.dim)];
+            out_param.measure = 'uniform';
+        end
+    else
+        f = @(t) f(psi_2(t, out_param.dim, out_param.radius, out_param.hyperbox))*volume;
+        out_param.hyperbox = bsxfun(@plus, zeros(2, out_param.dim), [-inf; inf]);
+        out_param.measure = 'normal';
+    end
+end
+
+if strcmpi(out_param.measure,'uniform')%  using uniformly distributed samples
     [Q,out_param] = meanMC_g(@(nfun)f(rand(nfun,out_param.dim)),out_param);
     % using meanMC_g to get the mean
 elseif strcmpi(out_param.measure,'normal')% using normally distributed samples
@@ -303,7 +337,8 @@ else % if there is some optional input
         %if there are multiple inputs with only numeric, they should be put
         %in order.
         addOptional(p,'measure',default.measure,...
-            @(x) any(validatestring(x, {'uniform','normal','Gaussian'})));
+            @(x) any(validatestring(x, {'uniform','uniform on a box',...
+            'normal','Gaussian','uniform on a ball'})));
         addOptional(p,'abstol',default.abstol,@isnumeric);
         addOptional(p,'reltol',default.reltol,@isnumeric);
         addOptional(p,'alpha',default.alpha,@isnumeric);
@@ -321,7 +356,8 @@ else % if there is some optional input
         % if there are multiple inputs with name and numeric, they should
         % be put in order.
         f_addParamVal(p,'measure',default.measure,...
-            @(x) any(validatestring(x, {'uniform','normal','Gaussian'})));
+            @(x) any(validatestring(x, {'uniform','unifom on a box',...
+            'normal','Gaussian','uniform on a ball'})));
         f_addParamVal(p,'abstol',default.abstol,@isnumeric);        
         f_addParamVal(p,'reltol',default.reltol,@isnumeric);
         f_addParamVal(p,'alpha',default.alpha,@isnumeric);
@@ -346,41 +382,84 @@ end
 if any(isnan(hyperbox(:))); %check hyperbox for not a number
     out_param.exit=10; out_param = cubMC_g_err(out_param); return; 
 end
-[two, out_param.dim]=size(hyperbox); %hyperbox should be 2 x dimension
-if two==0 && isfield(out_param,'hyperbox'); 
-    %if hyperbox specified through out_param structure
-    hyperbox=out_param.hyperbox; %then get it from there
-    [two, out_param.dim]=size(hyperbox); %and get the dimension
-end
-if two~=2 %if hyperbox is given as row vector for dimension 1, fix that
-    if out_param.dim==2; out_param.dim=two; hyperbox=hyperbox';
-    else out_param.exit=11; out_param = cubMC_g_err(out_param); return; 
-        %else, return an error
-    end
-end
-hyperbox=[min(hyperbox,[],1); max(hyperbox,[],1)]; 
-%ensure left and right endpoints are in order
-if any(hyperbox(1,:)==hyperbox(2,:)); %hyperbox is a point in one direction
-    out_param.exit=12; out_param = cubMC_g_err(out_param); return;
-end
-out_param.hyperbox=hyperbox; %copy hyperbox into the out_param structure
 
+%hyperbox validation should depend on the measure.
 if isfield(out_param,'measure'); % the sample measure
-    out_param.measure=validatestring(out_param.measure,{'uniform','normal','Gaussian'});
+    out_param.measure=validatestring(out_param.measure,{'uniform','uniform on a box'...
+        ,'normal','Gaussian','uniform on a ball'});
     if strcmpi(out_param.measure,'Gaussian')
         out_param.measure='normal'; 
+    elseif strcmpi(out_param.measure,'uniform on a box')
+        out_param.measure='uniform'; 
     end
+    
 else
     out_param.measure=default.measure;
 end
-if strcmpi(out_param.measure,'uniform')&&~all(isfinite(hyperbox(:)))
-    %cannot integrate on an infinite hyperbox with the uniform distribution
-    out_param.exit=13; out_param = cubMC_g_err(out_param); return;
+
+if strcmpi(out_param.measure,'uniform')||strcmpi(out_param.measure,'normal')
+    [two, out_param.dim]=size(hyperbox); %hyperbox should be 2 x dimension
+    if two==0 && isfield(out_param,'hyperbox'); 
+        %if hyperbox specified through out_param structure
+        hyperbox=out_param.hyperbox; %then get it from there
+        [two, out_param.dim]=size(hyperbox); %and get the dimension
+    end
+    if two~=2 %if hyperbox is given as row vector for dimension 1, fix that
+        if out_param.dim==2; out_param.dim=two; hyperbox=hyperbox';
+        else out_param.exit=11; out_param = cubMC_g_err(out_param); return; 
+            %else, return an error
+        end
+    end
+    
+    hyperbox=[min(hyperbox,[],1); max(hyperbox,[],1)]; 
+    %ensure left and right endpoints are in order
+    if any(hyperbox(1,:)==hyperbox(2,:)); %hyperbox is a point in one direction
+        out_param.exit=12; out_param = cubMC_g_err(out_param); return;
+    end
+
+    if strcmpi(out_param.measure,'uniform')&&~all(isfinite(hyperbox(:)))
+        %cannot integrate on an infinite hyperbox with the uniform distribution
+        out_param.exit=13; out_param = cubMC_g_err(out_param); return;
+    end
+    if strcmpi(out_param.measure,'normal')&&any(isfinite(hyperbox(:)))
+        %must integrate on an infinite hyperbox with the normal distribution
+        out_param.exit=14; out_param = cubMC_g_err(out_param); return;
+    end
+elseif strcmpi(out_param.measure,'uniform on a ball')
+    [one, out_param.dim]=size(hyperbox); %hyperbox should be 1 x dimension
+    if one==0 && isfield(out_param,'hyperbox'); 
+        %if hyperbox specified through out_param structure
+        hyperbox=out_param.hyperbox; %then get it from there
+        [one, out_param.dim]=size(hyperbox); %and get the dimension
+    end
+    if one~=1 %if hyperbox is given as row vector for dimension 1, fix that
+        if out_param.dim==1; out_param.dim=one; hyperbox=hyperbox';
+        else out_param.exit=18; out_param = cubMC_g_err(out_param); return; 
+            %else, return an error
+        end
+    end
+    
+    if ~all(isfinite(hyperbox(:)))
+        %all the coordinates for the center of the ball and the radius must
+        %be finite values
+        out_param.exit=15; out_param = cubMC_g_err(out_param); return;
+    end
+    out_param.radius = hyperbox(out_param.dim);
+    out_param.dim = out_param.dim - 1;
+    if out_param.radius <= 0
+       %the radius must be a positive real number
+       out_param.exit=16; out_param = cubMC_g_err(out_param); return;
+    end
+    if out_param.dim == 0
+       %the dimension must be a positive integer number
+       out_param.exit=17; out_param = cubMC_g_err(out_param); return;
+    end
+    
+    hyperbox = hyperbox(1,1:out_param.dim);
 end
-if strcmpi(out_param.measure,'normal')&&any(isfinite(hyperbox(:)))
-    %must integrate on an infinite hyperbox with the normal distribution
-    out_param.exit=14; out_param = cubMC_g_err(out_param); return;
-end
+
+out_param.hyperbox=hyperbox; %copy hyperbox into the out_param structure
+    
 if out_param.flag == 0
     if (out_param.abstol < 0) 
         %absolute error tolerance should be positive
@@ -454,17 +533,23 @@ function  out_param =cubMC_g_err(out_param)
 %to give an exit with information
 %out_param.exit = 0   success
 %                 10  hyperbox does not contain numbers
-%                 11  hyperbox not 2 x d
+%                 11  hyperbox not 2 x d when measure is uniform or normal
 %                 12  hyperbox is only a point in one direction
 %                 13  hyperbox is infinite when measure is uniform
 %                 14  hyperbox is not doubly infinite when measure is normal
+%                 15  hyperbox has an infinite coordinate for the center of
+%                       the ball or a infinite radius for the ball
+%                 16  the radius of the ball is a nonpositive real number
+%                 17  the dimension of the ball is zero
+%                 18  hyperbox not 1 x (d+1) when measure is uniform on a ball
+
 if ~isfield(out_param,'exit'); return; end
 if out_param.exit==0; return; end
 switch out_param.exit
     case 10; error('GAIL:cubMC_g:hyperboxnotnum',...
             'hyperbox must contain numbers.');
     case 11; error('GAIL:cubMC_g:hyperboxnot2d',...
-            'hyperbox must be 2 x d.');
+            'hyperbox must be 2 x d when measure is uniform or normal.');
     case 12; error('GAIL:cubMC_g:hyperboxnotlessthan2',...
             'hyperbox must be more than a point in any coordinate direction.');
     case 13; error('GAIL:cubMC_g:hyperboxnotfiniteforuniform',...
@@ -472,5 +557,70 @@ switch out_param.exit
     case 14; error('GAIL:cubMC_g:hyperboxnotinffornormal',...
             ['hyperbox must be infinite in both directions' ...
         ' when measure is normal']);
+    case 15; error('GAIL:cubMC_g:hyperboxnotfiniteforuniformonaball',...
+            'hyperbox must have only finite values for a distribution on a ball.');
+    case 16; error('GAIL:cubMC_g:radiusnonpositive',...
+            'the radius of the ball must be a positive real number.');
+    case 17; error('GAIL:cubMC_g:dimensionequalszero',...
+            'dimentions of the ball must be a positive integer.');
+    case 18; error('GAIL:cubMC_g:hyperboxnot1d',...
+            'hyperbox must be 1 x (d+1) when measure is uniform on a ball.');
 end
+end
+
+function Z = psi_2(t, d, r, center)
+    radius2 = @(t) sum(t.^2, 2);
+    factor = @(t) ((chi2cdf(radius2(t),d).^(1.0/d))./sqrt(radius2(t)));
+
+    Z = bsxfun(@plus, center, r * bsxfun(@times,t,factor(t)));
+end
+
+function Z = psi_1(t, d, r, center)
+    X = TFWW_algorithm(t,d);
+    u = t(:,1);
+    Z = bsxfun(@plus, center, r * bsxfun(@times, u.^(1.0/d), X));
+end
+
+%using the d-1 last coordinates of t 
+function X = TFWW_algorithm(t, d)
+    X = zeros(size(t));
+    
+    if mod(d,2) == 0
+        m = d/2;
+        g = zeros(size(t,1),m+1);%g is 1-based, diferently from the original algorithm
+        g(:,m+1) = ones(size(t,1),1);
+        for i = m:-1:2
+           g(:,i) = g(:,i+1).*(t(:,i).^(1.0/(i-1))); 
+        end
+        
+        dd = zeros(size(t,1), m);
+        
+        for i = 1:m
+           dd(:,i) = sqrt(g(:,i+1) - g(:,i));
+           X(:,2*i-1) = dd(:,i).*cos(2*pi*t(:,m+i));
+           X(:,2*i) = dd(:,i).*sin(2*pi*t(:,m+i));
+        end
+    else
+        m = (d-1)/2;
+        g = zeros(size(t,1),m+1);%g is 1-based, diferently from the original algorithm
+        g(:,m+1) = ones(size(t,1),1);
+        for i = m:-1:2
+           g(:,i) = g(:,i+1).*(t(:,i).^(2.0/(2*i-1))); 
+        end
+        
+        dd = zeros(size(t,1),m);
+        
+        for i = 1:m
+           dd(:,i) = sqrt(g(:,i+1) - g(:,i));
+        end
+        
+        X(:,1) = dd(:,1).*(1-2*t(:,m+1));
+        X(:,2) = 2*dd(:,1).*sqrt(t(:,m+1).*(1-t(:,m+1))).*cos(2*pi*t(:,m+2));%multiplied by 2 to match formula (cf.(1.5.28))
+        X(:,3) = 2*dd(:,1).*sqrt(t(:,m+1).*(1-t(:,m+1))).*sin(2*pi*t(:,m+2));%multiplied by 2 to match formula (cf.(1.5.28))
+        
+        for i = 2:m %index of t has been changed to something similar to the m even case so all the coordinates of t will be used.
+            X(:,2*i) = dd(:,i).*cos(2*pi*t(:,m+i+1));
+            X(:,2*i+1) = dd(:,i).*sin(2*pi*t(:,m+i+1));
+        end
+    end
 end
