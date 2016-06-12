@@ -232,31 +232,31 @@ function [Q,out_param] = cubMC_g(varargin)
 %   above papers, software, and materials.
 %
 
-
 tstart=tic;
 [f,hyperbox,out_param] = cubMC_g_param(varargin{:});%check validity of inputs
-f=gail.transformIntegrand(f,hyperbox,out_param);
+
 if strcmpi(out_param.measure,'uniform on a ball')% using uniformly distributed samples on a ball
     volume = ((2.0*pi^(out_param.dim/2.0))/(out_param.dim*gamma(out_param.dim/2.0)))*out_param.radius^out_param.dim;
     
-    transf = 2;
+    transf = 1;
     if transf == 1
         if out_param.dim == 1
             f = @(t) f(t)*volume;
-            out_param.hyperbox = [out_param.hyperbox - out_param.radius; out_param.hyperbox + out_param.radius];
+            hyperbox = [hyperbox - out_param.radius; hyperbox + out_param.radius];
             out_param.measure = 'uniform';
         else
-            f = @(t) f(psi_1(t, out_param.dim, out_param.radius, out_param.hyperbox))*volume;
-            out_param.hyperbox = [zeros(1, out_param.dim); ones(1, out_param.dim)];
+            f = @(t) f(psi_1(t, out_param.dim, out_param.radius, hyperbox))*volume;
+            hyperbox = [zeros(1, out_param.dim); ones(1, out_param.dim)];
             out_param.measure = 'uniform';
         end
     else
-        f = @(t) f(psi_2(t, out_param.dim, out_param.radius, out_param.hyperbox))*volume;
-        out_param.hyperbox = bsxfun(@plus, zeros(2, out_param.dim), [-inf; inf]);
+        f = @(t) f(psi_2(t, out_param.dim, out_param.radius, hyperbox))*volume;
+        hyperbox = bsxfun(@plus, zeros(2, out_param.dim), [-inf; inf]);
         out_param.measure = 'normal';
     end
 end
 
+f=gail.transformIntegrand(f,hyperbox,out_param);
 if strcmpi(out_param.measure,'uniform')%  using uniformly distributed samples
     [Q,out_param] = meanMC_g(@(nfun)f(rand(nfun,out_param.dim)),out_param);
     % using meanMC_g to get the mean
@@ -356,7 +356,7 @@ else % if there is some optional input
         % if there are multiple inputs with name and numeric, they should
         % be put in order.
         f_addParamVal(p,'measure',default.measure,...
-            @(x) any(validatestring(x, {'uniform','unifom on a box',...
+            @(x) any(validatestring(x, {'uniform','uniform on a box',...
             'normal','Gaussian','uniform on a ball'})));
         f_addParamVal(p,'abstol',default.abstol,@isnumeric);        
         f_addParamVal(p,'reltol',default.reltol,@isnumeric);
@@ -385,8 +385,8 @@ end
 
 %hyperbox validation should depend on the measure.
 if isfield(out_param,'measure'); % the sample measure
-    out_param.measure=validatestring(out_param.measure,{'uniform','uniform on a box'...
-        ,'normal','Gaussian','uniform on a ball'});
+    out_param.measure=validatestring(out_param.measure,{'uniform','uniform on a box',...
+        'normal','Gaussian','uniform on a ball'});
     if strcmpi(out_param.measure,'Gaussian')
         out_param.measure='normal'; 
     elseif strcmpi(out_param.measure,'uniform on a box')
