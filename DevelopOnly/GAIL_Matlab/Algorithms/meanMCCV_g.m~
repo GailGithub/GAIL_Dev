@@ -87,27 +87,23 @@ function [tmu,out_param]=meanMCCV_g(varargin)
 %tstart = tic; %start the clock
 [YXrand, muX, out_param] = meanMCCV_g_param(varargin{:});
 
-Yrand = Yrand_CV(YXrand, muX);
+Yrand = Yrand_CV(YXrand, muX)
 
-[tmu,out_param]=meanMC_g(Yrand, out_param);
+[tmu,out_param]=meanMC_g(@(n)controlvariate(Yrand,n,meanX),absTol,relTol);
 end
 
 function Yrand = Yrand_CV(YXrand, muX)
 % this is the control variate part, follows the formula of control variate
 n = 1000;
 YX = YXrand(n);% generate the matrix YX
-Y =YX(:,1); % get Y
-X =bsxfun(@minus,YX(:,2:end),muX); % get centered X
+Y =YX(:,1); % get the first column
+X =YX(:,2:end); % get the rest columns
+X = [ones(n,1) X];
 
 b = regress(Y, X); % the optimal beta estimated
-
     function Y = Yrand_b(n)
-        YX_b = YXrand(n);
-        Y_b =YX_b(:,1);
-        X_b =YX_b(:,2:end);
-        Y = Y_b; %- bsxfun(@minus,X_b,muX)*b;
+        YXrand(n)
     end
-
 Yrand = @Yrand_b;
 end
 
