@@ -85,33 +85,46 @@ function [tmu,out_param]=meanMCCV_g(varargin)
 %                           1  checked by meanMC_g
 
 %tstart = tic; %start the clock
-[YXrand, muX, out_param] = meanMCCV_g_param(varargin{:});
+[YXrand, muX, Yrand, out_param] = meanMCCV_g_param(varargin{:});
 
-Yrand = Yrand_CV(YXrand, muX);
+Yrandop = Yrand_CV(YXrand, muX, Yrand);
 
-[tmu,out_param]=meanMC_g(Yrand, out_param);
+[tmu,out_param]=meanMC_g(Yrandop, out_param);
 end
 
-function Yrand = Yrand_CV(YXrand, muX)
+function Yrandop = Yrand_CV(YXrand, muX, Yrand)
 % this is the control variate part, follows the formula of control variate
-n = 1000;
+n = 1e5;
 YX = YXrand(n);% generate the matrix YX
 Y =YX(:,1); % get Y
 X =bsxfun(@minus,YX(:,2:end),muX); % get centered X
 
-b = regress(Y, X); % the optimal beta estimated
+b = regress(Y, [ones(n,1) X]); % the optimal beta estimated
 
     function Y = Yrand_b(n)
         YX_b = YXrand(n);
         Y_b =YX_b(:,1);
         X_b =YX_b(:,2:end);
-        Y = Y_b; %- bsxfun(@minus,X_b,muX)*b;
+        Y = Y_b - bsxfun(@minus,X_b,muX)*b(2:end);
     end
 
-Yrand = @Yrand_b;
+fn1 = @() Yrand(1e3);
+fn2 = @() Yrand_b(1e3);
+
+t1 = timeit(fn1);
+t2 = timeit(fn2);
+
+var1 = var(Yrand(1e3));
+var2 = var(Yrand_b(1e3));
+
+if var2*t2 < var1*t1
+    Yrandop = @Yrand_b;
+else
+    Yrandop = Yrand;
+end
 end
 
-function  [YXrand, muX, out_param] = meanMCCV_g_param(varargin)
+function  [YXrand, muX, Yrand, out_param] = meanMCCV_g_param(varargin)
 
 default.abstol  = 1e-2;% default absolute error tolerance
 default.reltol = 1e-1;% default relative error tolerance
@@ -142,11 +155,13 @@ else
     muX = varargin{2};
 end
 
-validvarargin=numel(varargin)>2;
+Yrand = varargin{3};
+
+validvarargin=numel(varargin)>3;
 if validvarargin
-    in3=varargin{3};
-    validvarargin=(isnumeric(in3) || isstruct(in3) ...
-        || ischar(in3));
+    in4=varargin{4};
+    validvarargin=(isnumeric(in4) || isstruct(in4) ...
+        || ischar(in4));
 end
 
 if ~validvarargin
@@ -163,7 +178,8 @@ else
     p = inputParser;
     addRequired(p,'YXrand'); % need a validation check function here...
     addRequired(p, 'muX'); % need a validation check function here... 
-    if isnumeric(in3)
+    addRequired(p, 'Yrand'); % need a validation check function here... 
+    if isnumeric(in4)
         %if there are multiple inputs with only numeric, they should be put in order.
         addOptional(p,'abstol',default.abstol,@isnumeric);
         addOptional(p,'reltol',default.reltol,@isnumeric);
@@ -174,7 +190,7 @@ else
         addOptional(p,'tbudget',default.tbudget,@isnumeric);
         addOptional(p,'nbudget',default.nbudget,@isnumeric);
     else
-        if isstruct(in3) %parse input structure
+        if isstruct(in4) %parse input structure
             p.StructExpand = true;
             p.KeepUnmatched = true;
         end
@@ -187,7 +203,7 @@ else
         addParamValue(p,'tbudget',default.tbudget,@isnumeric);
         addParamValue(p,'nbudget',default.nbudget,@isnumeric);
     end
-    parse(p,YXrand,muX,varargin{3:end})
+    parse(p,YXrand,muX,Yrand,varargin{4:end})
     out_param = p.Results;
 end
 %if (~gail.isfcn(YXrand))
