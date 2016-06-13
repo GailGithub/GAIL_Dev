@@ -3,8 +3,11 @@ addpath('/Users/qiantianpei/Desktop/GAIL_Dev/DevelopOnly/GAIL_Matlab/Algorithms'
 % distance 
 distfun2 = @(n) sqrt(sum((rand(n,2)  - rand(n,2)).^2,2));
 
-tic, tmu = meanMCCV_g(@distfun, [0.5 0.5 0.5 0.5], distfun2, 0.0002, 0), toc
-tic, tmu = meanMC_g(distfun2,0.0002,0), toc
+tic, tmu = meanMCCV_g(@distfun,repmat(0.5,1,4), distfun2, 2e-4, 0), toc
+tic, tmu = meanMC_g(distfun2,2e-4,0), toc
+
+tic, tmu = meanMCCV_g('YXrand',@distfun, 'muX',[0.5 0.5 0.5 0.5], ...   
+    'Yrand',distfun2, 'abstol',0.0002, 'reltol',0), toc
 
 % exponential integral 
 expr2 = @(n) exp(rand(n, 1));

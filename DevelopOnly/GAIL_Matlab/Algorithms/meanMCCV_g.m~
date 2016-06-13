@@ -84,24 +84,17 @@ function [tmu,out_param]=meanMCCV_g(varargin)
 %
 %                           1  checked by meanMC_g
 
-start = tic; %start the clock
-[YXrand, muX, Yrand, randindex, out_param] = meanMCCV_g_param(varargin{:});
+%tstart = tic; %start the clock
+[YXrand, muX, Yrand, out_param] = meanMCCV_g_param(varargin{:});
 
-Yrandop = Yrand_CV(YXrand, muX, Yrand, randindex, out_param);
-
-nb = out_param.nb*length(muX);
+Yrandop = Yrand_CV(YXrand, muX, Yrand);
 
 [tmu,out_param]=meanMC_g(Yrandop, out_param);
-
-out_param.nb = nb;
-out_param.ntot = out_param.ntot + nb + randindex * 4e3; % update ntot
-%out_param.time = toc(start); % update time
-
 end
 
-function Yrandop = Yrand_CV(YXrand, muX, Yrand, randindex, out_param)
+function Yrandop = Yrand_CV(YXrand, muX, Yrand)
 % this is the control variate part, follows the formula of control variate
-n = out_param.nb*length(muX);
+n = 1e5;
 YX = YXrand(n);% generate the matrix YX
 Y =YX(:,1); % get Y
 X =bsxfun(@minus,YX(:,2:end),muX); % get centered X
@@ -114,27 +107,25 @@ b = regress(Y, [ones(n,1) X]); % the optimal beta estimated
         X_b =YX_b(:,2:end);
         Y = Y_b - bsxfun(@minus,X_b,muX)*b(2:end);
     end
-Yrandop = @Yrand_b;
-if randindex % if randY is provided
-    fn1 = @() Yrand(1e3); 
-    fn2 = @() Yrand_b(1e3);
 
-    t1 = timeit(fn1); % time to run Yrand 1000 times
-    t2 = timeit(fn2); % time to run Yrand_b 1000 times
+fn1 = @() Yrand(1e3); 
+fn2 = @() Yrand_b(1e3);
 
-    var1 = var(Yrand(1e3)); % estimated var of the plain estimator
-    var2 = var(Yrand_b(1e3)); % estimated var of the estimator with control variates
+t1 = timeit(fn1); % time to run Yrand 1000 times
+t2 = timeit(fn2); % time to run Yrand_b 1000 times
 
-    inflation = 1.2; 
-    if var2*t2 < var1*t1*inflation % the modified estimator performs better
-        Yrandop = @Yrand_b;
-    else % the plain estimator performs better
-        Yrandop = Yrand;
-    end
+var1 = var(Yrand(1e3)); % estimated var of the plain estimator
+var2 = var(Yrand_b(1e3)); % estimated var of the estimator with control variates
+
+inflation = 1.2; 
+if var2*t2 < var1*t1*inflation % the modified estimator performs better
+    Yrandop = @Yrand_b;
+else % the plain estimator performs better
+    Yrandop = Yrand;
 end
 end
 
-function  [YXrand, muX, Yrand, randindex, out_param] = meanMCCV_g_param(varargin)
+function  [YXrand, muX, Yrand, out_param] = meanMCCV_g_param(varargin)
 
 default.abstol  = 1e-2;% default absolute error tolerance
 default.reltol = 1e-1;% default relative error tolerance
@@ -155,6 +146,7 @@ if isempty(varargin)
 %        'YXrand must be specified. Now GAIL is using YXrand =@(n) rand(n,1).^2.')
     YXrand = @(n) rand(n,1).^2;
     muX = [];
+    out_param.cv = 1;
     %if no values are parsed, print warning message and use the default
     %random variable
 else
@@ -165,24 +157,21 @@ if numel(varargin)<2
 %    help meanMCCV_g
 %    warning(...)
     muX = [];
+    out_param.cv = 1;
 else
     muX = varargin{2};
 end
 
 index = 3;
-if numel(varargin)>=index
-    if isa(varargin{index}, 'function_handle')
-        Yrand = varargin{3};
-        index = index + 1;
-        randindex = 1;
-    else 
-      Yrand = @(n) rand(n,1).^2; 
-    end
+if isa(varargin{index}, 'function_handle')
+    Yrand = varargin{3};
+    index = index + 1;
+    randindex = 1;
 else 
     Yrand = @(n) rand(n,1).^2; 
 end
 
-validvarargin=numel(varargin)>=index;
+validvarargin=numel(varargin)>index;
 if validvarargin
     in4=varargin{index};
     validvarargin=(isnumeric(in4) || isstruct(in4) ...
@@ -211,7 +200,7 @@ else
         addOptional(p,'reltol',default.reltol,@isnumeric);
         addOptional(p,'alpha',default.alpha,@isnumeric);
         addOptional(p,'fudge',default.fudge,@isnumeric);
-        addOptional(p,'nb',default.nb,@isnumeric);
+        addOptional(p,'nSig',default.nSig,@isnumeric);
         addOptional(p,'nSig',default.nSig,@isnumeric);
         addOptional(p,'n1',default.n1,@isnumeric);
         addOptional(p,'tbudget',default.tbudget,@isnumeric);
@@ -225,7 +214,6 @@ else
         addParamValue(p,'reltol',default.reltol,@isnumeric);
         addParamValue(p,'alpha',default.alpha,@isnumeric);
         addParamValue(p,'fudge',default.fudge,@isnumeric);
-        addParamValue(p,'nb',default.nb,@isnumeric);
         addParamValue(p,'nSig',default.nSig,@isnumeric);
         addParamValue(p,'n1',default.n1,@isnumeric);
         addParamValue(p,'tbudget',default.tbudget,@isnumeric);
