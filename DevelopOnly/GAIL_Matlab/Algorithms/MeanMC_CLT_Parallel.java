@@ -18,7 +18,7 @@ public class MeanMC_CLT_Parallel {
 				ll = hl+1;
 			
 			if(i==nThreads-1)
-				hl = nGen;
+				hl = nGen-1;
 			else
 				hl = hl + nGen/nThreads;
 			
