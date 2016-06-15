@@ -21,6 +21,9 @@ public class GenerateArrayOfRN extends Thread{
 	}
     
     public ArrayList<Float> getArray(){
+         for(int j=0; j<(int)(hl-ll); j++){
+            System.out.println(arrayRandoms.get(j));
+        }
         return arrayRandoms;
     }
 }

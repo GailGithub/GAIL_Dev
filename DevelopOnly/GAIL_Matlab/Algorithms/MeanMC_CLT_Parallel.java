@@ -45,9 +45,9 @@ public class MeanMC_CLT_Parallel {
 		long timeTaken = time2 - time1;  
 		System.out.println("Total time taken was " + timeTaken/1000000.0 + " ms");
         System.out.println(randNumAll.size());
-        for(int j=0; j <nGen; j++){
+       /* for(int j=0; j<nGen; j++){
             System.out.println(randNumAll.get(j));
-        }
+        }*/
 	}
 
 }
