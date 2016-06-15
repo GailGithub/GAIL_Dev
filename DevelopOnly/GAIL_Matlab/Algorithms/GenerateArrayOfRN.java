@@ -14,7 +14,7 @@ public class GenerateArrayOfRN extends Thread{
 
 	public void run ()
 	{    
-			for (int j = 0; j<(int)(hl-ll); j++)
+			for (int j = 0; j<=(int)(hl-ll); j++)
 			{
 				arrayRandoms.add(rand.nextFloat());
 			}
