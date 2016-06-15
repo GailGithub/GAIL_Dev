@@ -27,7 +27,7 @@ public class MeanMC_CLT_Parallel {
 			randNumObj[i].start();
 		}
 		
-        ArrayList<Float> randNumAll= new ArrayList<>();
+        ArrayList<Float> randNumAll= new ArrayList<Float>();
 		try {
 			for (int i=0; i<nThreads; i++)
 			{

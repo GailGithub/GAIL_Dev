@@ -9,7 +9,7 @@ public class GenerateArrayOfRN extends Thread{
 	public GenerateArrayOfRN(long lowerLimit, long higherLimit) {
 		this.ll = lowerLimit;
 		this.hl = higherLimit;
-        arrayRandoms = new ArrayList<>();	
+        arrayRandoms = new ArrayList<Float>();	
 	}
 
 	public void run ()
