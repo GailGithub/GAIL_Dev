@@ -15,8 +15,8 @@ function [Q,out_param] = cubMC_g(varargin)
 %   or 'Gaussian', the input hyperbox is a 2 x d matrix, where the first
 %   row corresponds to the lower limits and the second row corresponds to
 %   the upper limits. When measure is 'uniform on a ball', the input
-%   hyperbox is a 1 x (d+1) matrix, where the first d vales correspond to
-%   the center of the ball and the last values corresponds to the radius of
+%   hyperbox is a vector with d+1 elements, where the first d vales correspond to
+%   the center of the ball and the last value corresponds to the radius of
 %   the ball.
 % 
 %   Q = CUBMC_G(f,hyperbox,measure,abstol,reltol,alpha)
@@ -130,7 +130,7 @@ function [Q,out_param] = cubMC_g(varargin)
 %                           center of the ball or a infinite radius for the
 %                           ball
 %
-%                       16  The radius of the ball is a nonpositive real
+%                       16  The radius of the ball is a no-npositive real
 %                           number
 %
 %                       17  The dimension of the ball is zero
