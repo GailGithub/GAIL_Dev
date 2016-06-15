@@ -14,7 +14,7 @@ public class MeanMC_CLT_Parallel {
 		for (int i=0; i<nThreads; i++)		//setting up the limits for each thread and initializing them as objects
 		{
 			if(i==0)
-				ll = 2;
+				ll = 0;
 			else
 				ll = hl+1;
 			
