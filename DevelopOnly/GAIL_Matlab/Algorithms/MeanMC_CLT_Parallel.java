@@ -1,8 +1,7 @@
 import java.util.*;
 public class MeanMC_CLT_Parallel {
 
-        
-	public static void main(long nG, int nt) {
+	public static ArrayList<Float> main(long nG, int nt) {
 		long nGen = nG;		//default value
 		long ll, hl = 0;
         int nThreads = nt;			//default value
@@ -19,7 +18,7 @@ public class MeanMC_CLT_Parallel {
 				ll = hl+1;
 			
 			if(i==nThreads-1)
-				hl = nGen-1;
+				hl = nGen;
 			else
 				hl = hl + nGen/nThreads;
 			
@@ -40,14 +39,10 @@ public class MeanMC_CLT_Parallel {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-        
 		long time2 = System.nanoTime();
 		long timeTaken = time2 - time1;  
 		System.out.println("Total time taken was " + timeTaken/1000000.0 + " ms");
-        System.out.println(randNumAll.size());
-       /* for(int j=0; j<nGen; j++){
-            System.out.println(randNumAll.get(j));
-        }*/
+        return randNumAll;
 	}
 
 }
