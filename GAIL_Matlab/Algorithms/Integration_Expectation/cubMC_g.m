@@ -244,6 +244,7 @@ function [Q,out_param] = cubMC_g(varargin)
 %   If you find GAIL helpful in your work, please support us by citing the
 %   above papers, software, and materials.
 %
+%   Authors:  Lan Jiang
 
 tstart=tic;
 [f,hyperbox,out_param] = cubMC_g_param(varargin{:});%check validity of inputs
