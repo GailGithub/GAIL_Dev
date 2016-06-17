@@ -109,6 +109,8 @@ classdef optPayoff < assetPath
                {'nonnegative'})
             obj.payoffParam.strike=val.strike; %row
          end
+         assert(numel(obj.payoffParam.optType) ...
+            == numel(obj.payoffParam.strike))
          if isfield(val,'barrier') %data for type of option
             validateattributes(val.barrier,{'numeric'}, ...
                {'nonnegative'})
@@ -119,6 +121,8 @@ classdef optPayoff < assetPath
                {'nonnegative'})
             obj.payoffParam.digitalPay=val.digitalPay; %row
          end
+         assert(numel(obj.payoffParam.optType) ...
+            == numel(obj.payoffParam.digitalPay))
          if isfield(val,'basketWeight') %data for type of option
             validateattributes(val.basketWeight,{'numeric'}, ...
                {'nonnegative'})
@@ -147,17 +151,19 @@ classdef optPayoff < assetPath
 
          if any(whdigitalcashcall) %digitalcash option
              tempPay(:,whdigitalcashcall) ...
-               =  (paths(:,obj.timeDim.nSteps) > obj.payoffParam.strike) ...
-               .* digitalPay...
+               =  (repmat(paths(:,obj.timeDim.nSteps), 1, sum(whdigitalcashcall)) > ...
+               repmat(obj.payoffParam.strike(whdigitalcashcall), val, 1)) ...
+               .* repmat(digitalPay(whdigitalcashcall), val, 1)...
                .*exp(- obj.assetParam.interest .* obj.timeDim.endTime);
          end
          
          whdigitalcashput = strcmp(obj.payoffParam.optType,'digitalcash') ...
              & strcmp(obj.payoffParam.putCallType,'put'); %digital cash put
-         if any(whdigitalcashput) %digital option
+         if any(whdigitalcashput) %digitalcash option
              tempPay(:,whdigitalcashput) ...
-               =  (paths(:,obj.timeDim.nSteps) <= obj.payoffParam.strike) ...
-               .* digitalPay...
+               =  (repmat(paths(:,obj.timeDim.nSteps), 1, sum(whdigitalcashput)) <= ...
+               repmat(obj.payoffParam.strike(whdigitalcashput), val, 1)) ...
+               .* repmat(digitalPay(whdigitalcashput), val, 1)...
                .*exp(- obj.assetParam.interest .* obj.timeDim.endTime);
          end
          
@@ -166,8 +172,9 @@ classdef optPayoff < assetPath
 
          if any(whdigitalassetcall) %digitalasset option
              tempPay(:,whdigitalassetcall) ...
-               =  (paths(:,obj.timeDim.nSteps) > obj.payoffParam.strike) ...
-               .* (paths(:,obj.timeDim.nSteps))...
+               = (repmat(paths(:,obj.timeDim.nSteps), 1, sum(whdigitalassetcall)) > ...
+               repmat(obj.payoffParam.strike(whdigitalassetcall), val, 1)) ...
+               .* repmat(paths(:,obj.timeDim.nSteps), 1, sum(whdigitalassetcall))...
                .*exp(- obj.assetParam.interest .* obj.timeDim.endTime);
          end
          
@@ -175,8 +182,9 @@ classdef optPayoff < assetPath
              & strcmp(obj.payoffParam.putCallType,'put'); %digital put
          if any(whdigitalassetput) %digital option
              tempPay(:,whdigitalassetput) ...
-               =  (paths(:,obj.timeDim.nSteps) <= obj.payoffParam.strike) ...
-               .* (paths(:,obj.timeDim.nSteps))...
+               =  (repmat(paths(:,obj.timeDim.nSteps), 1, sum(whdigitalassetput)) <= ...
+               repmat(obj.payoffParam.strike(whdigitalassetput), val, 1)) ...
+               .* repmat(paths(:,obj.timeDim.nSteps), 1, sum(whdigitalassetput))...
                .*exp(- obj.assetParam.interest .* obj.timeDim.endTime);
          end
       
@@ -201,7 +209,7 @@ classdef optPayoff < assetPath
          end
          
           whamericanput = strcmp(obj.payoffParam.optType,'american') ...
-             & strcmp(obj.payoffParam.putCallType,'put'); %american call
+             & strcmp(obj.payoffParam.putCallType,'put'); %american put
           
           if any(whamericanput)
               basis= @(x) repmat(exp(-x/2),1,3).*[ones(length(x),1) 1-x 1-2*x+x.*x/2];
@@ -209,7 +217,8 @@ classdef optPayoff < assetPath
                 .*repmat(exp(-obj.assetParam.interest ...
                   .* obj.timeDim.timeVector),nPaths,1); %discounted payoff at each time
               cashflow = putpayoff(:,ntimeDim);
-              extime = repmat(ntimeDim,nPaths,1);
+%              extime = repmat(ntimeDim,nPaths,1);
+              more.exbound = [zeros(1, ntimeDim) obj.payoffParam.strike]; %initialize excercise boundary
               for i = ntimeDim-1:-1:1 
                   inmoney = find(paths(:,i)<obj.payoffParam.strike);
                   if ~isempty(inmoney)
@@ -218,7 +227,8 @@ classdef optPayoff < assetPath
                       shouldex=inmoney(putpayoff(inmoney,i)>hold); %which paths should be excercised now
                       if ~isempty(shouldex); %some paths should be exercise
                           cashflow(shouldex)=putpayoff(shouldex,i); %updated cashflow
-                          extime(shouldex)=i; %update
+%                          extime(shouldex)=i; %update
+                          more.exbound(i+1)=max(paths(shouldex,i)); 
                       end
                   end
               end
@@ -227,8 +237,9 @@ classdef optPayoff < assetPath
                   putpayoff0 = obj.payoffParam.strike - obj.assetParam.initPrice; 
                   if putpayoff0 > hold %should excercise all paths initially
                      cashflow(:) = putpayoff0;
-                     extime(:) = 0;
+%                     extime(:) = 0;
                   end
+                  more.exbound(1) = obj.payoffParam.strike - hold; %exercise boundary at initial time
               end
     
               tempPay(:,whamericanput)=cashflow;
@@ -240,16 +251,17 @@ classdef optPayoff < assetPath
             & strcmp(obj.payoffParam.putCallType,'call');
          if any(wheurobarriercall) %call payoff
             tempPay(:,wheurobarriercall) ...
-               =  max(paths(:,obj.timeDim.nSteps) ...
-               - obj.payoffParam.strike, 0) ...
+               = max(repmat(paths(:,obj.timeDim.nSteps), 1, sum(wheurobarriercall)) ...
+               - repmat(obj.payoffParam.strike(wheurobarriercall), val, 1), 0) ...
                .* exp(- obj.assetParam.interest .* obj.timeDim.endTime);
          end
  
          wheurobarrierput = wheurobarrier  ...
             & strcmp(obj.payoffParam.putCallType,'put');
          if any(wheurobarrierput); %put payoff
-            tempPay(:,wheurobarrierput) =  max(obj.payoffParam.strike ...
-               - paths(:,obj.timeDim.nSteps), 0) ...
+            tempPay(:,wheurobarrierput) ...
+            = max(repmat(obj.payoffParam.strike(wheurobarriercall), val, 1) ...
+               - repmat(paths(:,obj.timeDim.nSteps), 1, sum(wheurobarriercall)), 0) ...
                .* exp(- obj.assetParam.interest .* obj.timeDim.endTime);
          end
          
@@ -312,14 +324,18 @@ classdef optPayoff < assetPath
          end  
          
          wh = whamean & strcmp(obj.payoffParam.putCallType,'call');
-         if any(wh); %arithmetic mean call
-            tempPay(:,wh)=max(meanstock - obj.payoffParam.strike, 0) ...
+         if any(wh); %arithmetic mean call  
+            tempPay(:,wh) ...
+               = max(repmat(meanstock, 1, sum(wh)) ...
+               - repmat(obj.payoffParam.strike(wh), val, 1), 0) ...
                .* exp(- obj.assetParam.interest .* obj.timeDim.endTime);
          end
          
          wh = whamean & strcmp(obj.payoffParam.putCallType,'put');
          if any(wh); %arithmetic mean put
-            tempPay(:,wh)=max(obj.payoffParam.strike - meanstock, 0) ...
+            tempPay(:,wh) ...
+               = max(repmat(obj.payoffParam.strike(wh), val, 1), 0) ...
+               -  repmat(meanstock, 1, sum(wh))...
                .* exp(- obj.assetParam.interest .* obj.timeDim.endTime);
          end
          
@@ -330,13 +346,17 @@ classdef optPayoff < assetPath
          
          wh = whgmean & strcmp(obj.payoffParam.putCallType,'call');
          if any(wh); %geometric mean call
-            tempPay(:,wh)=max(meanstock - obj.payoffParam.strike, 0) ...
+            tempPay(:,wh) ...
+               = max(repmat(meanstock, 1, sum(wh)) ...
+               - repmat(obj.payoffParam.strike(wh), val, 1), 0) ...
                .* exp(- obj.assetParam.interest .* obj.timeDim.endTime);
          end
          
          wh = whgmean & strcmp(obj.payoffParam.putCallType,'put');
          if any(wh); %geometric mean put
-            tempPay(:,wh)=max(obj.payoffParam.strike - meanstock, 0) ...
+            tempPay(:,wh) ...
+               = max(repmat(obj.payoffParam.strike(wh), val, 1), 0) ...
+               -  repmat(meanstock, 1, sum(wh))...
                .* exp(- obj.assetParam.interest .* obj.timeDim.endTime);
          end
          
@@ -363,8 +383,8 @@ classdef optPayoff < assetPath
             [eurocall,europut] = eurogbmprice(obj.assetParam.initPrice, ...
                obj.assetParam.interest, obj.timeDim.endTime, ...
                obj.assetParam.volatility, obj.payoffParam.strike);
-            val(wheurocall) = eurocall;
-            val(wheuroput) = europut;
+            val(wheurocall) = eurocall(wheurocall);
+            val(wheuroput) = europut(wheuroput);
          end
          
          %Pricing digital option
@@ -381,10 +401,10 @@ classdef optPayoff < assetPath
              = digitgbmprice(obj.payoffParam.digitalPay,obj.assetParam.initPrice, ...
                obj.assetParam.interest, obj.timeDim.endTime, ...
                obj.assetParam.volatility, obj.payoffParam.strike,0);
-            val(whdigitcashcall) = digitcashcall;
-            val(whdigitassetcall) = digitassetcall;
-            val(whdigitcashput) = digitcashput;
-            val(whdigitassetput) = digitassetput;
+            val(whdigitcashcall) = digitcashcall(whdigitcashcall);
+            val(whdigitassetcall) = digitassetcall(whdigitassetcall);
+            val(whdigitcashput) = digitcashput(whdigitcashput);
+            val(whdigitassetput) = digitassetput(whdigitassetput);
          end
  
          %Pricing Asian geometric mean
@@ -403,13 +423,13 @@ classdef optPayoff < assetPath
                - obj.assetParam.interest.*obj.timeDim.endTime);
             gmeanput=gmeanput * exp(rbar * Tbar ...
                - obj.assetParam.interest.*obj.timeDim.endTime);
-            val(whgmeancall) = gmeancall;
-            val(whgmeanput) = gmeanput;
+            val(whgmeancall) = gmeancall(whgmeancall);
+            val(whgmeanput) = gmeanput(whgmeanput);
          end
          
            
          function [callprice,putprice]=eurogbmprice(S0,r,T,sigma,K)
-            priceratio = K * exp(-r * T) ./ S0;
+            priceratio = K .* exp(-r * T) ./ S0;
             xbig = log(priceratio) ./ (sigma * sqrt(T)) + sigma * sqrt(T)/2;
             xsmall = log(priceratio) ./ (sigma * sqrt(T)) - sigma * sqrt(T)/2;
             putprice = S0 .* (priceratio.*normcdf(xbig) - normcdf(xsmall));
@@ -420,8 +440,9 @@ classdef optPayoff < assetPath
                  digitassetput] = digitgbmprice(digitalPay,S0,r,T,sigma,K,q)
             digitpriceratio1 = (log(S0./K)+(r-q+(sigma^2)/2)*T)/(sigma*sqrt(T));
             digitpriceratio2 = digitpriceratio1-sigma*sqrt(T);
-            digitcashcall = digitalPay*exp(-r*T)*normcdf(digitpriceratio2);
-            digitcashput = digitalPay*digitalPay*exp(-r*T)*normcdf(-digitpriceratio2);
+            digitcashcall = digitalPay.*exp(-r*T).*normcdf(digitpriceratio2);
+            %digitcashput = digitalPay.*digitalPay.*exp(-r*T)*normcdf(-digitpriceratio2);
+            digitcashput = digitalPay.*exp(-r*T).*normcdf(-digitpriceratio2);
             digitassetcall = S0.*exp(-q*T).*normcdf(digitpriceratio1);
             digitassetput = S0.*exp(-q*T).*normcdf(-digitpriceratio1);
          end
