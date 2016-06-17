@@ -14,10 +14,10 @@ function [Q,out_param] = cubMC_g(varargin)
 %   simultaneously. When measure is 'uniform', 'uniform on a box', 'normal'
 %   or 'Gaussian', the input hyperbox is a 2 x d matrix, where the first
 %   row corresponds to the lower limits and the second row corresponds to
-%   the upper limits. When measure is 'uniform on a ball', the input
-%   hyperbox is a vector with d+1 elements, where the first d vales correspond to
-%   the center of the ball and the last value corresponds to the radius of
-%   the ball.
+%   the upper limits. When measure is 'uniform ball' or 'uniform on a ball',
+%   the input hyperbox is a vector with d+1 elements, where the first d
+%   values correspond to the center of the ball and the last value
+%   corresponds to the radius of the ball.
 % 
 %   Q = CUBMC_G(f,hyperbox,measure,abstol,reltol,alpha)
 %   estimates the integral of function f over hyperbox to within a 
@@ -46,8 +46,8 @@ function [Q,out_param] = cubMC_g(varargin)
 % 
 %     in_param.measure --- the measure for generating the random variable,
 %     the default is 'uniform'. The other measures could be handled are
-%     'uniform on a box', 'normal'/'Gaussian' and 'uniform on a ball'. The
-%     input should be a string type, hence with quotes.
+%     'uniform on a box', 'normal'/'Gaussian' and 'uniform ball'/'uniform 
+%     on a ball'. The input should be a string type, hence with quotes.
 % 
 %     in_param.abstol --- the absolute error tolerance, the default value
 %     is 1e-1
@@ -241,10 +241,13 @@ function [Q,out_param] = cubMC_g(varargin)
 %   (WSSSPE1)," Journal of Open Research Software, Volume 2, Number 1, e6,
 %   pp. 1-21, 2014.
 %
+%   [6] Fang, K.-T., & Wang, Y. (1994). Number-theoretic Methods in 
+%   Statistics. London, UK: CHAPMAN & HALL
+%
 %   If you find GAIL helpful in your work, please support us by citing the
 %   above papers, software, and materials.
 %
-%   Authors:  Lan Jiang
+%   Authors:  Lan Jiang, Felipe Sousa de Andrade
 
 tstart=tic;
 [f,hyperbox,out_param] = cubMC_g_param(varargin{:});%check validity of inputs
@@ -351,7 +354,7 @@ else % if there is some optional input
         %in order.
         addOptional(p,'measure',default.measure,...
             @(x) any(validatestring(x, {'uniform','uniform on a box',...
-            'normal','Gaussian','uniform on a ball'})));
+            'normal','Gaussian','uniform on a ball', 'uniform ball'})));
         addOptional(p,'abstol',default.abstol,@isnumeric);
         addOptional(p,'reltol',default.reltol,@isnumeric);
         addOptional(p,'alpha',default.alpha,@isnumeric);
@@ -370,7 +373,7 @@ else % if there is some optional input
         % be put in order.
         f_addParamVal(p,'measure',default.measure,...
             @(x) any(validatestring(x, {'uniform','uniform on a box',...
-            'normal','Gaussian','uniform on a ball'})));
+            'normal','Gaussian','uniform on a ball', 'uniform ball'})));
         f_addParamVal(p,'abstol',default.abstol,@isnumeric);        
         f_addParamVal(p,'reltol',default.reltol,@isnumeric);
         f_addParamVal(p,'alpha',default.alpha,@isnumeric);
@@ -399,11 +402,13 @@ end
 %hyperbox validation should depend on the measure.
 if isfield(out_param,'measure'); % the sample measure
     out_param.measure=validatestring(out_param.measure,{'uniform','uniform on a box',...
-        'normal','Gaussian','uniform on a ball'});
+        'normal','Gaussian','uniform on a ball', 'uniform ball'});
     if strcmpi(out_param.measure,'Gaussian')
         out_param.measure='normal';
     elseif strcmpi(out_param.measure,'uniform on a box')
         out_param.measure='uniform';
+    elseif strcmpi(out_param.measure,'uniform ball')
+        out_param.measure='uniform on a ball';
     end
     
 else
