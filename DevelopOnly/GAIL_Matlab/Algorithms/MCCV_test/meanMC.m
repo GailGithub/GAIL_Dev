@@ -82,8 +82,12 @@ classdef meanMC
         end
         
         function [tmu, out_param] = genMu(obj)
-            [tmu, out_param]=meanMC_g(obj.Yrand, obj.in_param);
-        end 
+            Yrand_op = obj.Yrand;
+            if strcmp(obj.method, 'cv')
+                Yrand_op = genYrand_b(obj);
+            end
+            [tmu, out_param]=meanMC_g(Yrand_op, obj.in_param);
+        end
         
     end
     
@@ -138,83 +142,68 @@ classdef meanMC
             %update the nremain could afford until now
             out_param.var = var(Yval);% calculate the sample variance--stage 1
             sig0 = sqrt(out_param.var);% standard deviation
-            sig0up = out_param.fudge*sig0;% upper bound on the standard deviation
+            sig0up = out_param.fudge.*sig0;% upper bound on the standard deviation
             alpha_sig = out_param.alpha/2;% the uncertainty for variance estimation
+            alphai = (out_param.alpha-alpha_sig)/(2*(1-alpha_sig));
+            %uncertainty to do iteration
             out_param.kurtmax = (out_param.nSig-3)/(out_param.nSig-1) ...
                 + ((alpha_sig*out_param.nSig)/(1-alpha_sig))...
                 *(1-1/out_param.fudge^2)^2;
             %the upper bound on the modified kurtosis
-            npcmax = 1e6;%constant to do iteration and mean calculation4
-            if out_param.reltol ==0
-                out_param.tau = 1;
-                alphai = 1-(1-out_param.alpha)/(1-alpha_sig);
-                if sig0up == 0; % if the variance is zero, just take n_sigma samples
-                    out_param.n = out_param.nSig;
-                else
-                    toloversig = out_param.abstol/sig0up;
-                    % absolute error tolerance over sigma
-                    out_param.n = nchebe(toloversig,alphai,out_param.kurtmax);
-                    if out_param.n > out_param.nremain;
-                        out_param.exit=1; %pass a flag
-                        meanMC_g_err(out_param); % print warning message
-                        out_param.n = out_param.nremain;% update n
-                    end
+            tol1 = ncbinv(out_param.n1,alphai,out_param.kurtmax);
+            %tolerance for initial estimation
+            out_param.tol(1) = sig0up*tol1;
+            %the width of initial confidence interval for the mean
+            i=1;
+            npcmax = 1e6;%constant to do iteration and mean calculation
+            out_param.n(i) = out_param.n1;% initial sample size to do iteration
+            while true
+                out_param.tau = i;%step of the iteration
+                if out_param.n(i) > out_param.nremain;
+                    % if the sample size used for initial estimation is
+                    % larger than nremain, print warning message and use nremain
+                    out_param.exit=1; %pass a flag
+                    meanMC_g_err(out_param); % print warning message
+                    out_param.n(i) = out_param.nremain;% update n
+                    tmu = gail.evalmean(Yrand,out_param.n(i),npcmax);%evaluate the mean
+                    nsofar = nsofar+out_param.n(i);%total sample used
+                    break;
                 end
-                tmu = gail.evalmean(Yrand,out_param.n,npcmax);%evaluate the mean
-                nsofar = nsofar+out_param.n;%total sample used
-            else
-                alphai = (out_param.alpha-alpha_sig)/(2*(1-alpha_sig));
-                %uncertainty to do iteration
-                eps1 = ncbinv(out_param.n1,alphai,out_param.kurtmax);
-                %tolerance for initial estimation
-                out_param.tol(1) = sig0up*eps1;
-                %the width of initial confidence interval for the mean
-                i=1;
-                out_param.n(i) = out_param.n1;% initial sample size to do iteration
-                while true
-                    out_param.tau = i;%step of the iteration
-                    if out_param.n(i) > out_param.nremain;
-                        % if the sample size used for initial estimation is
-                        % larger than nremain, print warning message and use nremain
-                        out_param.exit=1; %pass a flag
-                        meanMC_g_err(out_param); % print warning message
-                        out_param.n(i) = out_param.nremain;% update n
-                        tmu = gail.evalmean(Yrand,out_param.n(i),npcmax);%evaluate the mean
-                        nsofar = nsofar+out_param.n(i);%total sample used
-                        break;
-                    end
-                    out_param.hmu(i) = gail.evalmean(Yrand,out_param.n(i),npcmax);%evaluate mean
-                    nsofar = nsofar+out_param.n(i);
-                    out_param.nremain = out_param.nremain-out_param.n(i);%update n so far and nremain
-                    errtype = 'max';
-                    % error type, see the function 'tolfun' at Algoithms/+gail/ directory
-                    % for more info
-                    theta  = 0;% relative error case
-                    deltaplus = (gail.tolfun(out_param.abstol,out_param.reltol,...
-                        theta,out_param.hmu(i) - out_param.tol(i),errtype)...
-                        +gail.tolfun(out_param.abstol,out_param.reltol,...
-                        theta,out_param.hmu(i) + out_param.tol(i),errtype))/2;
-                    % a combination of tolfun, which used to decide stopping time
-                    if deltaplus >= out_param.tol(i) % stopping criterion
-                        deltaminus= (gail.tolfun(out_param.abstol,out_param.reltol,...
-                            theta,out_param.hmu(i) - out_param.tol(i),errtype)...
-                            -gail.tolfun(out_param.abstol,out_param.reltol,...
-                            theta,out_param.hmu(i) + out_param.tol(i),errtype))/2;
-                        % the other combination of tolfun, which adjust the hmu a bit
-                        tmu = out_param.hmu(i)+deltaminus;
-                        break;
-                    else
-                        out_param.tol(i+1) = min(out_param.tol(i)/2,max(out_param.abstol,...
-                            0.95*out_param.reltol*abs(out_param.hmu(i))));
-                        i=i+1;
-                    end
+                out_param.hmu(i) = gail.evalmean(Yrand,out_param.n(i),npcmax);%evaluate mean
+                nsofar = nsofar+out_param.n(i);
+                out_param.nremain = out_param.nremain-out_param.n(i);%update n so far and nremain
+                toltype = 'max';
+                % error type, see the function 'tolfun' at Algoithms/+gail/ directory
+                % for more info
+                theta  = 0;% relative error tolerance case
+                deltaplus = (gail.tolfun(out_param.abstol,out_param.reltol,...
+                    theta,out_param.hmu(i) - out_param.tol(i),toltype)...
+                    +gail.tolfun(out_param.abstol,out_param.reltol,...
+                    theta,out_param.hmu(i) + out_param.tol(i),toltype))/2;
+                % a combination of tolfun, which used to decide stopping time
+                if deltaplus >= out_param.tol(i) % stopping criterion
+                    deltaminus= (gail.tolfun(out_param.abstol,out_param.reltol,...
+                        theta,out_param.hmu(i) - out_param.tol(i),toltype)...
+                        -gail.tolfun(out_param.abstol,out_param.reltol,...
+                        theta,out_param.hmu(i) + out_param.tol(i),toltype))/2;
+                    % the other combination of tolfun, which adjust the hmu a bit
+                    tmu = out_param.hmu(i)+deltaminus;
+                    break;
+                else
+                    i=i+1;
+                    deltat=0.7;
+                    deltah=0.5;
+                    delta=0;% constant to decide the next tolerance
+                    out_param.tol(i) = max(min(deltaplus*deltat, ...
+                        deltah*out_param.tol(i-1)),delta*out_param.tol(i-1));
+                    %update the next tolerance
                     toloversig = out_param.tol(i)/sig0up;%next tolerance over sigma
                     alphai = (out_param.alpha-alpha_sig)/(1-alpha_sig)*2.^(-i);
                     %update the next uncertainty
                     out_param.n(i) = nchebe(toloversig,alphai,out_param.kurtmax);
+                    %get the next sample size needed
                 end
             end
-            %get the next sample size needed
             out_param.ntot = nsofar;%total sample size used
             out_param.time=toc(tstart); %elapsed time
         end
@@ -238,7 +227,7 @@ classdef meanMC
             ncb = min(ncheb,nbe);%take the min of two sample sizes.
         end
         
-        function eps = ncbinv(n1,alpha1,kurtmax)
+        function tol1 = ncbinv(n1,alpha1,kurtmax)
             %This function calculate the reliable upper bound on error when given
             %Chebyshev and Berry-Esseen inequality and sample size n.
             NCheb_inv = 1/sqrt(n1*alpha1);
@@ -257,9 +246,23 @@ classdef meanMC
             %use CLT to get tolerance
             NBE_inv = exp(2*fzero(BEfun,logsqrtb_clt));
             %use fzero to get Berry-Esseen tolerance
-            eps = min(NCheb_inv,NBE_inv);
+            tol1 = min(NCheb_inv,NBE_inv);
             %take the min of Chebyshev and Berry Esseen tolerance
         end
         
+        function Y = genYrand_b(obj)
+            n = obj.in_param.nb * length(obj.muX);
+            YX = obj.YXrand(n);% generate the matrix YX
+            Y =YX(:,1); % get Y
+            X = YX(:,2:end);
+            beta = bsxfun(@minus,X,mean(X,1))\Y;
+            function fn = Yrand_b(n) % new estimator with control variates
+                YX_b = obj.YXrand(n);
+                Y_b = YX_b(:,1);
+                X_b = YX_b(:,2:end);
+                fn = Y_b - bsxfun(@minus,X_b,obj.muX) * beta;
+            end
+            Y = @Yrand_b;
+        end
     end
 end
