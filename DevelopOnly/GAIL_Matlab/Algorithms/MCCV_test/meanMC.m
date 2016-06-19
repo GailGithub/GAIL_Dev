@@ -1,5 +1,5 @@
 classdef meanMC
- 
+    
     %% meanMC
     % is a class that uses Monte Carlo method to estimate the mean of a
     % random variable.
@@ -18,14 +18,15 @@ classdef meanMC
     %            in_param_tbudget: 100
     %            in_param_nbudget: 1e9
     %                      method: {'plain'}
-    %                          nc: 1e3
+    %                          nc: 2e3
     %                       Yrand: @(n)rand(n,1).^2
     %             cv_param_YXrand: @(n)rand(n,1).^2
     %                cv_param_muX: []
-    %                 cv_param_nb: 2e3
+    %                cv_param_ncv: 1e3
+    %              cv_param_ridge: 0
     
-    % Authors: Tianpei Qian, ... (and authors for meanMC_g)
-
+    % Authors: Tianpei Qian, ... (and authors for the function |meanMC_g|)
+    
     %% Properties
     % Below are the proporties for this class, along with their default
     % values
@@ -36,32 +37,36 @@ classdef meanMC
             'reltol', 1e-1, ... % default relative error tolerance
             'alpha', 0.01, ... % default uncertainty
             'fudge', 1.2, ... % default standard deviation inflation factor
-            'nSig', 1e4, ... % default the sample size to estimate the variance
-            'n1', 1e4, ... % default the initial sample size to estimate the mean
+            'nSig', 1e4, ... % default sample size to estimate the variance
+            'n1', 1e4, ... % default initial sample size to estimate the mean
             'tbudget', 100, ... % default time budget
             'nbudget', 1e9) % default sample budget;
         
         method = {'plain'}
-        nc = 1e3 % number of samples used to compare different methods
-                 % (per method)
+        nc = 2e3 % number of samples used to compare different methods
+        % (per method)
         
-        Yrand = @(n) rand(n,1).^2
+        Yrand = @(n) rand(n,1).^2 % function that generate samples of the
+        % random variable
         
         cv_param = struct(...
-            'YXrand', @(n) rand(n,1).^2, ...
+            'YXrand', @(n) rand(n,1).^2, ... % function that generate samples of the
+            ... % random variable and control variates
             'muX', [], ... % mean of control variates
-            'nb', 2e3) % initial sample size (per control variate)
-        %for estimating the coefficients of control variates
+            'ncv', 1e3, ... % initial sample size (per control variate)
+                    ... %for estimating the coefficients of control variates
+            'ridge', 0) % parameter of ridge regression
+        
     end
     
     properties (Constant, Hidden) %do not change & not seen
-        allowMethod = {'plain', 'cv'}
+        allowMethod = {'plain', 'cv', 'cvRidge'}
     end
     
     %% Methods
     % Main feature: the function |genMu| estimates the mean of the
     % user-specified variable.
-       
+    
     methods
         % Creating an meanMC process
         function obj = meanMC(varargin)
@@ -150,15 +155,15 @@ classdef meanMC
         % Set nc of the meanMC object
         function obj = set.nc(obj,val)
             validateattributes(val,{'numeric'}, ...
-                    {'positive'}) % nc >= 30
-                assert(gail.isposge30(val))
+                {'positive'}) % nc >= 30
+            assert(gail.isposge30(val))
             obj.nc=val;
         end
         
         % Set method of the meanMC object
         function obj = set.method(obj,val)
             assert(all(any(strcmp(repmat(val,numel(obj.allowMethod),1), ...
-                    repmat(obj.allowMethod',1,numel(val))),1),2))
+                repmat(obj.allowMethod',1,numel(val))),1),2))
             obj.method=val;
         end
         
@@ -172,59 +177,69 @@ classdef meanMC
         
         % Set cv_param of the meanMC object
         function obj = set.cv_param(obj,val)
-            if isfield(val,'nb')
-                validateattributes(val.nb,{'numeric'}, ...
+            if isfield(val,'ncv')
+                validateattributes(val.ncv,{'numeric'}, ...
                     {'nonnegative'})
-                assert(gail.isposge30(val.nb)) % nb >= 30
-                obj.cv_param.nb =val.nb;
+                assert(gail.isposge30(val.ncv)) % ncv >= 30
+                obj.cv_param.ncv = val.ncv;
             end
             if isfield(val, 'YXrand')
-                 validateattributes(val.YXrand(5), {'numeric'}, ...
-                {'nrows',5})
-                 obj.cv_param.YXrand =val.YXrand;
+                validateattributes(val.YXrand(5), {'numeric'}, ...
+                    {'nrows',5})
+                obj.cv_param.YXrand = val.YXrand;
             end
             if isfield(val, 'muX')
-                 assert(isnumeric(val.muX))
-                 validateattributes(val.muX, {'numeric'}, ...
-                {'nrows',1})
-                 obj.cv_param.muX =val.muX;
+                assert(isnumeric(val.muX))
+                validateattributes(val.muX, {'numeric'}, ...
+                    {'nrows',1})
+                obj.cv_param.muX = val.muX;
             end
             assert(size(obj.cv_param.YXrand(5),2)-1 ...
-                ==length(obj.cv_param.muX)) 
+                ==length(obj.cv_param.muX))
             % number of control variates must equal length of muX
+            if isfield(val, 'ridge')
+                assert(isnumeric(val.ridge))
+                validateattributes(val.ridge, {'numeric'}, ...
+                    {'nonnegative'})
+                obj.cv_param.ridge = val.ridge;
+            end
+            
         end
+
         
         % estimate mu
         function [tmu, out_param] = genMu(obj)
             tstart = tic; % start the clock
             
             plain = any(strcmp(obj.method, 'plain'));
-            cv = any(strcmp(obj.method, 'cv'));
-            nmethods = plain+cv; % number of methods
-            Yrand_all = {}; % to contain functions asssociated with each method
+            cv = any(strcmp(obj.method, 'cv')) ...
+                && size(obj.cv_param.YXrand(1),2) > 1; % at least one control variate
+            
+            nmethods = plain+cv*length(obj.cv_param.ridge); % number of methods
+            Yrand_all = cell(1, nmethods); % to contain functions asssociated with each method
             comparison = (nmethods > 1); % whether they are multiple methods
             
             index = 1; % index of Yrand_all; start from one
             nextra = 0; % to count samples used but not counted by meanMC_g
             
-            if plain 
+            if plain
                 Yrand_all{index} = obj.Yrand;
                 index = index+1;
             end
             
-            if cv && size(obj.cv_param.YXrand(1),2) >= 2
-                Yrand_all{index} = genYrand_b(obj);
-                nextra = size(obj.cv_param.YXrand(1),2) * obj.cv_param.nb;
-                %index = index+1;
-            elseif cv && size(obj.cv_param.YXrand(1),2) == 1
-                % no control variate available
-                Yrand_all{index} = obj.cv_param.YXrand;
-                %index = index+1;
+            if cv
+                ridge = obj.cv_param.ridge;
+                for i = 1:length(ridge)
+                    Yrand_all{index} = genYrand_cv(obj, ridge(i));
+                    index = index + 1;
+                end
+                nextra = nextra + size(obj.cv_param.YXrand(1),2) ...
+                    * obj.cv_param.ncv * length(ridge);
             end
             
             if comparison
-            Yrand_op = selectYrand(obj,Yrand_all); % select the best method
-            nextra = nextra + obj.nc * nmethods;
+                Yrand_op = selectYrand(obj,Yrand_all); % select the best method
+                nextra = nextra + obj.nc * nmethods;
             else % no comparions needed
                 Yrand_op = Yrand_all{1};
             end
@@ -239,20 +254,39 @@ classdef meanMC
     
     methods (Access = protected)
         
-        function Y = genYrand_b(obj)
-            n = obj.cv_param.nb * length(obj.cv_param.muX);
+        function Y = genYrand_cv(obj, ridge)
+            n = obj.cv_param.ncv * length(obj.cv_param.muX);
             YX = obj.cv_param.YXrand(n);% generate the matrix YX
             Y =YX(:,1); % get Y
-            X = YX(:,2:end); % get X
+            X = bsxfun(@minus,YX(:,2:end),mean(YX(:,2:end),1)); % get centered X
+            if ridge == 0 % no regularization
             beta = bsxfun(@minus,X,mean(X,1))\Y; % get estimated coefficients
-            function fn = Yrand_b(n) % construct new function 
+            else 
+            beta = (X'*X+eye(length(obj.cv_param.muX))*ridge)\X'*Y;
+            end
+            function fn = Yrand_cv(n) % construct new function
                 YX_b = obj.cv_param.YXrand(n);
                 Y_b = YX_b(:,1);
                 X_b = YX_b(:,2:end);
                 fn = Y_b - bsxfun(@minus,X_b,obj.cv_param.muX) * beta;
             end
-            Y = @Yrand_b;
+            Y = @Yrand_cv;
         end
+        
+%         function Y = genYrand_cvRidge(obj)
+%             n = obj.cvRidge_param.ncvRidge * length(obj.cvRidge_param.muX);
+%             YX = obj.cvRidge_param.YXrand(n);% generate the matrix YX
+%             Y =YX(:,1); % get Y
+%             X = YX(:,2:end); % get X
+%             beta = bsxfun(@minus,X,mean(X,1))\Y; % get estimated coefficients
+%             function fn = Yrand_cvRidge(n) % construct new function
+%                 YX_b = obj.cvRidge_param.YXrand(n);
+%                 Y_b = YX_b(:,1);
+%                 X_b = YX_b(:,2:end);
+%                 fn = Y_b - bsxfun(@minus,X_b,obj.cvRidge_param.muX) * beta;
+%             end
+%             Y = @Yrand_cvRidge;
+%         end
         
         function Y_op = selectYrand(obj, Yrand_all)
             n_tot = obj.nc; % number of samples used in comparsion per method
@@ -269,8 +303,8 @@ classdef meanMC
             end
             
             score = time .* variance; % score for each method,
-                                      % roughly proportional to the total
-                                      % time needs to estimate mu
+            % roughly proportional to the total
+            % time needs to estimate mu
             score_min = min(score); % lowest score
             
             Y_op = Yrand_all{score == score_min}; % return the method with the lowest score
