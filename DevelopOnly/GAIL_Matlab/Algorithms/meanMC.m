@@ -255,14 +255,14 @@ classdef meanMC
             
             if av
                 Yrand_all{index} = genYrand_av(obj);
-            end
+            end 
             
             if comparison
                 Yrand_op = selectYrand(obj,Yrand_all); % select the best method
                 nextra = nextra + obj.nc * nmethods;
             else % no comparions needed
                 Yrand_op = Yrand_all{1};
-            end
+            end     
             
             [tmu, out_param] = meanMC_g(Yrand_op, obj.in_param);
             out_param.ntot = out_param.ntot + nextra; % add counts of extra samples used
@@ -303,17 +303,14 @@ classdef meanMC
         
         
         function Y_op = selectYrand(obj, Yrand_all)
-            n_tot = obj.nc; % number of samples used in comparsion per method
-            n_time = floor(n_tot/2); % numer of samples used to estimate time
-            n_var = n_tot - n_time; % number of samples used to estimate variance
             num = length(Yrand_all); % number of methods to be compared
             time = zeros(1, num); % time to run each method
             variance = zeros(1, num); % estimated varaince for each method
             
             for i = 1:num
                 fn = Yrand_all{i};
-                time(i) = timeit(@()fn(n_time));
-                variance(i) = var(fn(n_var));
+                tic, y = fn(obj.nc); time(i)=toc;
+                variance(i) = var(y);
             end
             
             score = time .* variance; % score for each method,
