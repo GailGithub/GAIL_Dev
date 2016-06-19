@@ -6,20 +6,26 @@ classdef meanMC
             'reltol', 1e-1, ... % default relative error tolerance
             'alpha', 0.01, ... % default uncertainty
             'fudge', 1.2, ... % default standard deviation inflation factor
-            'nb', 1e3, ... % initial sample size (per control variate)
-            ... %for estimating the coefficients of control variates
             'nSig', 1e4, ... % default the sample size to estimate the variance
             'n1', 1e4, ... % default the initial sample size to estimate the mean
             'tbudget', 100, ... % default time budget
             'nbudget', 1e9) % default sample budget;
-        method = 'na'
+        
+        method = {'plain'}
+        nc = 1e3 % number of samples used to compare different methods
+                 % (per method)
+        
         Yrand = @(n) rand(n,1).^2
-        YXrand = @(n) rand(n,1).^2
-        muX = []
+        
+        cv_param = struct(...
+            'YXrand', @(n) rand(n,1).^2, ...
+            'muX', [], ... % mean of control variates
+            'nb', 2e3) % initial sample size (per control variate)
+        %for estimating the coefficients of control variates
     end
     
     properties (Constant, Hidden) %do not change & not seen
-        allowVarRed = {'no', 'cv'}
+        allowMethod = {'plain', 'cv'}
     end
     
     methods
@@ -31,8 +37,7 @@ classdef meanMC
                     obj.in_param = val.in_param;
                     obj.method = val.method;
                     obj.Yrand = val.Yrand;
-                    obj.YXrand = val.YXrand;
-                    obj.muX = val.muX;
+                    obj.cv_param = val.cv_param;
                     if nargin == 1
                         return
                     else
@@ -46,54 +51,198 @@ classdef meanMC
                     if isfield(val,'method')
                         obj.method = val.method;
                     end
+                    if isfield(val,'nc')
+                        obj.nc = val.nc;
+                    end
                     if isfield(val,'Yrand')
                         obj.Yrand = val.Yrand;
                     end
-                    if isfield(val,'YXrand')
-                        obj.YXrand = val.YXrand;
-                    end
-                    if isfield(val,'muX')
-                        obj.muX = val.muX;
+                    if isfield(val,'cv_param')
+                        obj.cv_param = val.cv_param;
                     end
                 end
             end
             
         end
         
-        % Set the properties of the meanMC object
+        % Set in_param of the meanMC object
         function obj = set.in_param(obj,val)
             if isfield(val,'abstol')
                 validateattributes(val.abstol,{'numeric'}, ...
-                    {'nonnegative'})
-                obj.in_param.abstol =val.abstol; %row
+                    {'nonnegative'}) % abstol > 0
+                obj.in_param.abstol =val.abstol;
             end
             if isfield(val,'reltol')
                 validateattributes(val.reltol,{'numeric'}, ...
-                    {'nonnegative'})
-                assert(val.reltol <=1)
-                obj.in_param.reltol =val.reltol; %row
+                    {'nonnegative', '<=', 1}) % 0 <= reltol <=1
+                obj.in_param.reltol =val.reltol;
             end
             if isfield(val,'alpha')
                 validateattributes(val.alpha,{'numeric'}, ...
+                    {'nonnegative','<',1}) % 0<= alpha < 1
+                obj.in_param.alpha =val.alpha;
+            end
+            if isfield(val,'fudge')
+                validateattributes(val.fudge,{'numeric'}, ...
+                    {'nonnegative','>',1}) % fudge > 1
+                obj.in_param.fudge =val.fudge;
+            end
+            if isfield(val,'nSig')
+                validateattributes(val.nSig,{'numeric'}, ...
                     {'nonnegative'})
-                assert(val.alpha <1)
-                obj.in_param.alpha =val.alpha; %row
+                assert(gail.isposge30(val.nSig)) % nSig >= 30
+                obj.in_param.nSig =val.nSig;
+            end
+            if isfield(val,'n1')
+                validateattributes(val.n1,{'numeric'}, ...
+                    {'nonnegative'})
+                assert(gail.isposge30(val.n1)) % n1 >= 30
+                obj.in_param.n1 =val.n1;
+            end
+            if isfield(val,'tbudget')
+                validateattributes(val.tbudget,{'numeric'}, ...
+                    {'positive'}) % tbudget > 0
+                obj.in_param.tbudget =val.tbudget;
+            end
+            if isfield(val,'nbudget')
+                validateattributes(val.nbudget,{'numeric'}, ...
+                    {'nonnegative'})
+                assert(gail.isposge30(val.nbudget)) % mbudget >= 30
+                obj.in_param.nbudget =val.nbudget;
             end
         end
         
-        function [tmu, out_param] = genMu(obj)
-            Yrand_op = obj.Yrand;
-            if strcmp(obj.method, 'cv')
-                Yrand_op = genYrand_b(obj);
+        
+        % Set method of the meanMC object
+        function obj = set.nc(obj,val)
+            validateattributes(val,{'numeric'}, ...
+                    {'nonnegative'})
+                assert(gail.isposge30(val))
+            obj.nc=val;
+        end
+        
+        % Set method of the meanMC object
+        function obj = set.method(obj,val)
+            assert(all(any(strcmp(repmat(val,numel(obj.allowMethod),1), ...
+                    repmat(obj.allowMethod',1,numel(val))),1),2))
+            obj.method=val;
+        end
+        
+        % Set nc of the meanMC object
+        function obj = set.Yrand(obj,val)
+            assert(gail.isfcn(val))
+            validateattributes(val(5), {'numeric'}, ...
+                {'size', [5,1]})
+            obj.Yrand=val;
+        end
+        
+        % Set YXrand of the meanMC object
+        function obj = set.cv_param(obj,val)
+            if isfield(val,'nb')
+                validateattributes(val.nb,{'numeric'}, ...
+                    {'nonnegative'})
+                assert(gail.isposge30(val.nb)) % nb >= 30
+                obj.cv_param.nb =val.nb;
             end
-            [tmu, out_param]=meanMC_g(Yrand_op, obj.in_param);
+            if isfield(val, 'YXrand')
+                 validateattributes(val.YXrand(5), {'numeric'}, ...
+                {'nrows',5})
+                 obj.cv_param.YXrand =val.YXrand;
+            end
+            if isfield(val, 'muX')
+                 assert(isnumeric(val.muX))
+                 validateattributes(val.muX, {'numeric'}, ...
+                {'nrows',1})
+                 obj.cv_param.muX =val.muX;
+            end
+            assert(size(obj.cv_param.YXrand(5),2) ...
+                ==length(obj.cv_param.muX)+1)
+        end
+        
+        % estimate mu
+        function [tmu, out_param] = genMu(obj)
+            tstart = tic; % start the clock
+            
+            plain = any(strcmp(obj.method, 'plain'));
+            cv = any(strcmp(obj.method, 'cv'));
+            methods = plain+cv; 
+            Yrand_all = {};
+            comparison = (methods > 1); % whether they are multiple methods
+            
+            index = 1;
+            nextra = 0; % to count samples used but not counted by meanMC_g
+            
+            if plain
+                Yrand_all{index} = obj.Yrand;
+                index = index+1;
+            end
+            
+            if cv && size(obj.cv_param.YXrand(1),2) >= 2
+                Yrand_all{index} = genYrand_b(obj);
+                nextra = size(obj.cv_param.YXrand(1),2) * obj.cv_param.nb;
+                %index = index+1;
+            elseif cv && size(obj.cv_param.YXrand(1),2) == 1
+                % no control variate available
+                Yrand_all{index} = obj.cv_param.YXrand;
+                %index = index+1;
+            end
+            
+            if comparison
+            Yrand_op = selectYrand(obj,Yrand_all);
+            else % no comparions needed
+                Yrand_op = Yrand_all{1};
+            end
+            
+            [tmu, out_param] = meanMC_g(Yrand_op, obj.in_param);
+            out_param.ntot = out_param.ntot + nextra;
+            out_param.time = toc(tstart); % get running time n
         end
         
     end
     
     
     methods (Access = protected)
-        function [tmu,out_param]=meanMC_g(Yrand, in_param)
+        
+        function Y = genYrand_b(obj)
+            n = obj.cv_param.nb * length(obj.cv_param.muX);
+            YX = obj.cv_param.YXrand(n);% generate the matrix YX
+            Y =YX(:,1); % get Y
+            X = YX(:,2:end);
+            beta = bsxfun(@minus,X,mean(X,1))\Y;
+            function fn = Yrand_b(n) % new estimator with control variates
+                YX_b = obj.cv_param.YXrand(n);
+                Y_b = YX_b(:,1);
+                X_b = YX_b(:,2:end);
+                fn = Y_b - bsxfun(@minus,X_b,obj.cv_param.muX) * beta;
+            end
+            Y = @Yrand_b;
+        end
+        
+        function Y_op = selectYrand(obj, Yrand_all)
+            n_tot = obj.nc; % number of samples used in comparsion per method
+            n_time = floor(n_tot/2); % numer of samples used to estimate time
+            n_var = n_tot - n_time; % number of samples used to estimate variance
+            num = length(Yrand_all); % number of methods to be compared
+            time = zeros(1, num); % time to run each method
+            variance = zeros(1, num); % estimated varaince for each method
+            
+            for i = 1:num
+                fn = Yrand_all{i};
+                time(i) = timeit(@()fn(n_time));
+                variance(i) = var(fn(n_var));
+            end
+            
+            score = time .* variance; % score for each method
+            score_min = min(score);
+            
+            Y_op = Yrand_all{score == score_min}; 
+        end
+        
+    end
+    
+    methods (Static, Access = protected)
+        
+        function [tmu,out_param]=meanMC_g(Yrand,in_param)
             tstart = tic;
             out_param = in_param;
             n1 = 2;
@@ -101,30 +250,28 @@ classdef meanMC
             nsofar = n1;
             
             ntry = 10;% try several samples to get the time
-            tic;
-            Yrand(ntry);
-            ttry=toc;
+            ttry=time(@()Yrand(ntry));
             tpern = ttry/ntry; % calculate time per sample
             nsofar = nsofar+ntry; % update n so far
             out_param.exit = 0;
             if tpern<1e-7;%each sample use very very little time
                 booster = 8;
-                tic;Yrand(ntry*booster);ttry2 = toc;
+                ttry2 = timeit(@()Yrand(ntry*booster));
                 ntry = ntry*[1 booster];
                 ttry = [ttry ttry2];% take eight times more samples to try
             elseif tpern>=1e-7 && tpern<1e-5 %each sample use very little time
                 booster = 6;
-                tic;Yrand(ntry*booster);ttry2 = toc;
+                ttry2 = timeit(@()Yrand(ntry*booster));
                 ntry = ntry*[1 booster];
                 ttry = [ttry ttry2];% take six times more samples to try
             elseif tpern>=1e-5 && tpern<1e-3 %each sample use little time
                 booster = 4;
-                tic;Yrand(ntry*booster);ttry2 = toc;
+                ttry2 = timeit(@()Yrand(ntry*booster));
                 ntry = ntry*[1 booster];
                 ttry = [ttry ttry2];% take four times more samples to try
             elseif  tpern>=1e-3 && tpern<1e-1 %each sample use moderate time
                 booster = 2;
-                tic;Yrand(ntry*booster);ttry2 = toc;
+                ttry2 = timeit(@()Yrand(ntry*booster));
                 ntry = ntry*[1 booster];
                 ttry = [ttry ttry2];% take two times more samples to try
             else %each sample use lots of time, stop try
@@ -250,19 +397,26 @@ classdef meanMC
             %take the min of Chebyshev and Berry Esseen tolerance
         end
         
-        function Y = genYrand_b(obj)
-            n = obj.in_param.nb * length(obj.muX);
-            YX = obj.YXrand(n);% generate the matrix YX
-            Y =YX(:,1); % get Y
-            X = YX(:,2:end);
-            beta = bsxfun(@minus,X,mean(X,1))\Y;
-            function fn = Yrand_b(n) % new estimator with control variates
-                YX_b = obj.YXrand(n);
-                Y_b = YX_b(:,1);
-                X_b = YX_b(:,2:end);
-                fn = Y_b - bsxfun(@minus,X_b,obj.muX) * beta;
+        function meanMC_g_err(out_param)
+            % Handles errors in meanMC_g and meanMC_g_param to give an exit with
+            %  information.
+            %            out_param.exit = 0   success
+            %                             1   too many samples required
+            
+            if ~isfield(out_param,'exit'); return; end
+            if out_param.exit==0; return; end
+            switch out_param.exit
+                case 1 % not enough samples to estimate the mean.
+                    nexceed = out_param.n(out_param.tau);
+                    warning('MATLAB:meanMC_g:maxreached',...
+                        [' In order to achieve the guaranteed accuracy, at step '...
+                        int2str(out_param.tau) ', tried to evaluate at ' int2str(nexceed) ...
+                        ' samples, which is more than the remaining '...
+                        int2str(out_param.nremain) ...
+                        ' samples. We will use all the samples left to estimate the mean without guarantee.']);
+                    return
             end
-            Y = @Yrand_b;
         end
+        
     end
 end

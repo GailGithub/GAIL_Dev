@@ -95,7 +95,7 @@ nb = out_param.nb*length(muX);
 
 out_param.nb = nb;
 out_param.ntot = out_param.ntot + nb + randindex * 4e3; % update ntot
-%out_param.time = toc(start); % update time
+out_param.time = toc(start); % update time
 
 end
 
@@ -104,7 +104,7 @@ function Yrandop = Yrand_CV(YXrand, muX, Yrand, randindex, out_param)
 n = out_param.nb*length(muX);
 YX = YXrand(n);% generate the matrix YX
 Y =YX(:,1); % get Y
-X =bsxfun(@minus,YX(:,2:end),muX); % get centered X
+X =bsxfun(@minus,YX(:,2:end),mean(YX(:,2:end))); % get centered X
 
 b = regress(Y, [ones(n,1) X]); % the optimal beta estimated
 
