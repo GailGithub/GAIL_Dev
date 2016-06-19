@@ -1,4 +1,34 @@
 classdef meanMC
+ 
+    %% meanMC
+    % is a class that uses Monte Carlo method to estimate the mean of a
+    % random variable.
+    %
+    % Example 1
+    % >> obj = meanMC
+    % obj =
+    %      meanMC with properties:
+    %
+    %             in_param_abstol: 1e-2
+    %             in_param_abstol: 1e-1
+    %              in_param_alpha: 0.01
+    %              in_param_fudge: 1.2
+    %               in_param_nSig: 1e4
+    %                 in_param_n1: 1e4
+    %            in_param_tbudget: 100
+    %            in_param_nbudget: 1e9
+    %                      method: {'plain'}
+    %                          nc: 1e3
+    %                       Yrand: @(n)rand(n,1).^2
+    %             cv_param_YXrand: @(n)rand(n,1).^2
+    %                cv_param_muX: []
+    %                 cv_param_nb: 2e3
+    
+    % Authors: Tianpei Qian, ... (and authors for meanMC_g)
+
+    %% Properties
+    % Below are the proporties for this class, along with their default
+    % values
     
     properties (SetAccess=public)
         in_param = struct( ...
@@ -28,6 +58,10 @@ classdef meanMC
         allowMethod = {'plain', 'cv'}
     end
     
+    %% Methods
+    % Main feature: the function |genMu| estimates the mean of the
+    % user-specified variable.
+       
     methods
         % Creating an meanMC process
         function obj = meanMC(varargin)
@@ -89,13 +123,13 @@ classdef meanMC
             end
             if isfield(val,'nSig')
                 validateattributes(val.nSig,{'numeric'}, ...
-                    {'nonnegative'})
+                    {'positive'})
                 assert(gail.isposge30(val.nSig)) % nSig >= 30
                 obj.in_param.nSig =val.nSig;
             end
             if isfield(val,'n1')
                 validateattributes(val.n1,{'numeric'}, ...
-                    {'nonnegative'})
+                    {'positive'})
                 assert(gail.isposge30(val.n1)) % n1 >= 30
                 obj.in_param.n1 =val.n1;
             end
@@ -106,17 +140,17 @@ classdef meanMC
             end
             if isfield(val,'nbudget')
                 validateattributes(val.nbudget,{'numeric'}, ...
-                    {'nonnegative'})
+                    {'positive'})
                 assert(gail.isposge30(val.nbudget)) % mbudget >= 30
                 obj.in_param.nbudget =val.nbudget;
             end
         end
         
         
-        % Set method of the meanMC object
+        % Set nc of the meanMC object
         function obj = set.nc(obj,val)
             validateattributes(val,{'numeric'}, ...
-                    {'nonnegative'})
+                    {'positive'}) % nc >= 30
                 assert(gail.isposge30(val))
             obj.nc=val;
         end
@@ -128,7 +162,7 @@ classdef meanMC
             obj.method=val;
         end
         
-        % Set nc of the meanMC object
+        % Set Yrand of the meanMC object
         function obj = set.Yrand(obj,val)
             assert(gail.isfcn(val))
             validateattributes(val(5), {'numeric'}, ...
@@ -136,7 +170,7 @@ classdef meanMC
             obj.Yrand=val;
         end
         
-        % Set YXrand of the meanMC object
+        % Set cv_param of the meanMC object
         function obj = set.cv_param(obj,val)
             if isfield(val,'nb')
                 validateattributes(val.nb,{'numeric'}, ...
@@ -155,8 +189,9 @@ classdef meanMC
                 {'nrows',1})
                  obj.cv_param.muX =val.muX;
             end
-            assert(size(obj.cv_param.YXrand(5),2) ...
-                ==length(obj.cv_param.muX)+1)
+            assert(size(obj.cv_param.YXrand(5),2)-1 ...
+                ==length(obj.cv_param.muX)) 
+            % number of control variates must equal length of muX
         end
         
         % estimate mu
@@ -165,14 +200,14 @@ classdef meanMC
             
             plain = any(strcmp(obj.method, 'plain'));
             cv = any(strcmp(obj.method, 'cv'));
-            methods = plain+cv; 
-            Yrand_all = {};
-            comparison = (methods > 1); % whether they are multiple methods
+            nmethods = plain+cv; % number of methods
+            Yrand_all = {}; % to contain functions asssociated with each method
+            comparison = (nmethods > 1); % whether they are multiple methods
             
-            index = 1;
+            index = 1; % index of Yrand_all; start from one
             nextra = 0; % to count samples used but not counted by meanMC_g
             
-            if plain
+            if plain 
                 Yrand_all{index} = obj.Yrand;
                 index = index+1;
             end
@@ -188,13 +223,14 @@ classdef meanMC
             end
             
             if comparison
-            Yrand_op = selectYrand(obj,Yrand_all);
+            Yrand_op = selectYrand(obj,Yrand_all); % select the best method
+            nextra = nextra + obj.nc * nmethods;
             else % no comparions needed
                 Yrand_op = Yrand_all{1};
             end
             
             [tmu, out_param] = meanMC_g(Yrand_op, obj.in_param);
-            out_param.ntot = out_param.ntot + nextra;
+            out_param.ntot = out_param.ntot + nextra; % add counts of extra samples used
             out_param.time = toc(tstart); % get running time n
         end
         
@@ -207,9 +243,9 @@ classdef meanMC
             n = obj.cv_param.nb * length(obj.cv_param.muX);
             YX = obj.cv_param.YXrand(n);% generate the matrix YX
             Y =YX(:,1); % get Y
-            X = YX(:,2:end);
-            beta = bsxfun(@minus,X,mean(X,1))\Y;
-            function fn = Yrand_b(n) % new estimator with control variates
+            X = YX(:,2:end); % get X
+            beta = bsxfun(@minus,X,mean(X,1))\Y; % get estimated coefficients
+            function fn = Yrand_b(n) % construct new function 
                 YX_b = obj.cv_param.YXrand(n);
                 Y_b = YX_b(:,1);
                 X_b = YX_b(:,2:end);
@@ -232,10 +268,12 @@ classdef meanMC
                 variance(i) = var(fn(n_var));
             end
             
-            score = time .* variance; % score for each method
-            score_min = min(score);
+            score = time .* variance; % score for each method,
+                                      % roughly proportional to the total
+                                      % time needs to estimate mu
+            score_min = min(score); % lowest score
             
-            Y_op = Yrand_all{score == score_min}; 
+            Y_op = Yrand_all{score == score_min}; % return the method with the lowest score
         end
         
     end
