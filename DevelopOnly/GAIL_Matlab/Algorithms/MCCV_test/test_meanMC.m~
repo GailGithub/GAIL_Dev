@@ -191,14 +191,14 @@ right.LineStyle = ':';
 % The control variate used by meanMCCV_g is S(1), S(2) and S(3).
 
 % setup for meanMC object
-obj3.in_param.abstol = 1e-1;
+obj3.in_param.abstol = 5e-1;
 obj3.in_param.reltol = 0;
 obj3.method = {'plain'}; 
 
 inp.payoffParam.optType = {'upin'};
 inp.payoffParam.putCallType = {'call'};
 inp.payoffParam.strike = 110;
-inp.payoffParam.barrier = 180;
+inp.payoffParam.barrier = 120;
 inp.assetParam.initPrice = 100;
 
 upin = optPayoff(inp);
@@ -218,70 +218,49 @@ for n = 1:num
     time(n,1) = param.time;  
 end
 
-mu_cv1 = ones(num,1);
-mu_cv2 = ones(num,1);
-mu_cv3 = ones(num,1);
-time_cv1 = ones(num,1);
-time_cv2 = ones(num,1);
-time_cv3 = ones(num,1);
-
 obj3.method = {'cv'}; % control variate
 
 inp.payoffParam.optType = {'upin', 'euro'};
 inp.payoffParam.putCallType = {'call', 'call'};
 
-upin_cv1 = optPayoff(inp);
+upin_cv = optPayoff(inp);
 
-obj3.cv_param.YXrand = @(n) genOptPayoffs(upin_cv1, n);
-obj3.cv_param.muX = upin_cv1.exactPrice(2);
+obj3.cv_param.YXrand = @(n) genOptPayoffs(upin_cv, n);
+obj3.cv_param.muX = upin_cv.exactPrice(2);
 test3 = meanMC(obj3);
 
 for n = 1:num
-    [tmu_cv1, param_cv1] = genMu(test3); 
-    mu_cv1(n,1) = tmu_cv1;
-    time_cv1(n,1) = param_cv1.time; 
+    [tmu_cv, param_cv] = genMu(test3); 
+    mu_cv(n,1) = tmu_cv;
+    time_cv(n,1) = param_cv.time; 
 end
 
 
-% add multiple control variates
-strikes = 110:10:180;
-nstrikes = length(strikes);
-inp.payoffParam.optType = [{'upin'} repmat({'euro'},1,nstrikes)];
-inp.payoffParam.putCallType = repmat({'call'},1,nstrikes+1);
-inp.payoffParam.strike = [110 strikes];
+obj3.method = {'cv'}; % control variate
 
-upin_cv2 = optPayoff(inp);
+inp.payoffParam.optType = {'upin', repmat({'euro'},1,6)};
+inp.payoffParam.putCallType = repmat({'call'},1,7);
+inp.payoffParam.strike = [110 110:2:120];
 
-obj3.cv_param.YXrand = @(n) genOptPayoffs(upin_cv2, n);
-obj3.cv_param.muX = upin_cv2.exactPrice(2:(nstrikes+1));
-test3 = meanMC(obj3);
+upin_cv = optPayoff(inp);
 
 for n = 1:num
-    [tmu_cv2, param_cv2] = genMu(test3); 
-    mu_cv2(n,1) = tmu_cv2;
-    time_cv2(n,1) = param_cv2.time; 
-end
-
-obj3.cv_param.ridge = 0.2;
-test3 = meanMC(obj3);
-
-for n = 1:num
-    [tmu_cv3, param_cv3] = genMu(test3); 
-    mu_cv3(n,1) = tmu_cv3;
-    time_cv3(n,1) = param_cv3.time; 
+    [tmu_all, param_all] = genMu(test1); 
+    mu_all(n,1) = tmu_all;
+    time_all(n,1) = param_all.time; 
 end
 
 % plot estimates against running time for the three methods
-plot(mu, time,'o', mu_cv1, time_cv1, 'o')
-legend('plain','cv (1 control)')
+plot(mu, time,'o', mu_cv, time_cv, 'o', mu_av, time_av, 'go')
+legend('plain','cv','av')
 xlabel('estimates')
 ylabel('time')
-tmax = max([time' time_cv1'])*1.1;
+tmax = max([time' time_cv' time_av'])*1.1;
 center = line([truemu truemu], [0 tmax]);
 center.Color = 'k';
-left = line([truemu-test3.in_param.abstol  truemu-test3.in_param.abstol], ...
+left = line([truemu-test1.in_param.abstol  truemu-test1.in_param.abstol], ...
     [0 tmax]);
-right = line([truemu+test3.in_param.abstol  truemu+test3.in_param.abstol], ...
+right = line([truemu+test1.in_param.abstol  truemu+test1.in_param.abstol], ...
     [0 tmax]);
 left.Color = 'k';
 left.LineStyle = ':';
@@ -289,16 +268,16 @@ right.Color = 'k';
 right.LineStyle = ':';
 
 % compare the best two methods with the combined one
-plot(mu_cv1, time_cv1, 'o', mu_cv2, time_cv2, 'o', mu_cv3, time_cv3, 'go')
-legend('cv (1 control)','cv (8 controls)','cvRidge (8 controls)')
+plot(mu_cv, time_cv, 'o', mu_av, time_av, 'o', mu_all, time_all, 'go')
+legend('cv','av','combined')
 xlabel('estimates')
 ylabel('time')
-tmax = max([time_cv1' time_cv2' time_cv3'])*1.1;
+tmax = max([time_cv' time_av' time_all'])*1.1;
 center = line([truemu truemu], [0 tmax]);
 center.Color = 'k';
-left = line([truemu-test3.in_param.abstol  truemu-test3.in_param.abstol], ...
+left = line([truemu-test1.in_param.abstol  truemu-test1.in_param.abstol], ...
     [0 tmax]);
-right = line([truemu+test3.in_param.abstol  truemu+test3.in_param.abstol], ...
+right = line([truemu+test1.in_param.abstol  truemu+test1.in_param.abstol], ...
     [0 tmax]);
 left.Color = 'k';
 left.LineStyle = ':';
