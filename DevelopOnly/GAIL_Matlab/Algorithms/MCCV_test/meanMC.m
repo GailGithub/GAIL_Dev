@@ -54,13 +54,16 @@ classdef meanMC
             ... % random variable and control variates
             'muX', [], ... % mean of control variates
             'ncv', 1e3, ... % initial sample size (per control variate)
-                    ... %for estimating the coefficients of control variates
+            ... %for estimating the coefficients of control variates
             'ridge', 0) % parameter of ridge regression
+        
+        av_param = struct(...
+            'YYrand', @(n) rand(n,2).^2) % function that generate antithetic pairs
         
     end
     
     properties (Constant, Hidden) %do not change & not seen
-        allowMethod = {'plain', 'cv', 'cvRidge'}
+        allowMethod = {'plain', 'cv', 'av'}
     end
     
     %% Methods
@@ -98,6 +101,9 @@ classdef meanMC
                     end
                     if isfield(val,'cv_param')
                         obj.cv_param = val.cv_param;
+                    end
+                    if isfield(val,'av_param')
+                        obj.av_param = val.av_param;
                     end
                 end
             end
@@ -184,14 +190,17 @@ classdef meanMC
                 obj.cv_param.ncv = val.ncv;
             end
             if isfield(val, 'YXrand')
+                assert(gail.isfcn(val.YXrand))
                 validateattributes(val.YXrand(5), {'numeric'}, ...
                     {'nrows',5})
                 obj.cv_param.YXrand = val.YXrand;
             end
             if isfield(val, 'muX')
                 assert(isnumeric(val.muX))
+                if numel(val.muX)>0
                 validateattributes(val.muX, {'numeric'}, ...
                     {'nrows',1})
+                end
                 obj.cv_param.muX = val.muX;
             end
             assert(size(obj.cv_param.YXrand(5),2)-1 ...
@@ -203,9 +212,15 @@ classdef meanMC
                     {'nonnegative'})
                 obj.cv_param.ridge = val.ridge;
             end
-            
         end
-
+        
+        % Set av_param of the meanMC object
+        function obj = set.av_param(obj,val)
+            assert(gail.isfcn(val.YYrand))
+            validateattributes(val.YYrand(5), {'numeric'}, ...
+                {'size', [5,2]})
+            obj.av_param.YYrand=val.YYrand;
+        end
         
         % estimate mu
         function [tmu, out_param] = genMu(obj)
@@ -214,8 +229,9 @@ classdef meanMC
             plain = any(strcmp(obj.method, 'plain'));
             cv = any(strcmp(obj.method, 'cv')) ...
                 && size(obj.cv_param.YXrand(1),2) > 1; % at least one control variate
+            av = any(strcmp(obj.method, 'av'));
             
-            nmethods = plain+cv*length(obj.cv_param.ridge); % number of methods
+            nmethods = plain+cv*length(obj.cv_param.ridge)+av; % number of methods
             Yrand_all = cell(1, nmethods); % to contain functions asssociated with each method
             comparison = (nmethods > 1); % whether they are multiple methods
             
@@ -235,6 +251,10 @@ classdef meanMC
                 end
                 nextra = nextra + size(obj.cv_param.YXrand(1),2) ...
                     * obj.cv_param.ncv * length(ridge);
+            end
+            
+            if av
+                Yrand_all{index} = genYrand_av(obj);
             end
             
             if comparison
@@ -260,9 +280,9 @@ classdef meanMC
             Y =YX(:,1); % get Y
             X = bsxfun(@minus,YX(:,2:end),mean(YX(:,2:end),1)); % get centered X
             if ridge == 0 % no regularization
-            beta = bsxfun(@minus,X,mean(X,1))\Y; % get estimated coefficients
-            else 
-            beta = (X'*X+eye(length(obj.cv_param.muX))*ridge)\X'*Y;
+                beta = bsxfun(@minus,X,mean(X,1))\Y; % get estimated coefficients
+            else
+                beta = (X'*X+eye(length(obj.cv_param.muX))*ridge)\X'*Y;
             end
             function fn = Yrand_cv(n) % construct new function
                 YX_b = obj.cv_param.YXrand(n);
@@ -273,20 +293,14 @@ classdef meanMC
             Y = @Yrand_cv;
         end
         
-%         function Y = genYrand_cvRidge(obj)
-%             n = obj.cvRidge_param.ncvRidge * length(obj.cvRidge_param.muX);
-%             YX = obj.cvRidge_param.YXrand(n);% generate the matrix YX
-%             Y =YX(:,1); % get Y
-%             X = YX(:,2:end); % get X
-%             beta = bsxfun(@minus,X,mean(X,1))\Y; % get estimated coefficients
-%             function fn = Yrand_cvRidge(n) % construct new function
-%                 YX_b = obj.cvRidge_param.YXrand(n);
-%                 Y_b = YX_b(:,1);
-%                 X_b = YX_b(:,2:end);
-%                 fn = Y_b - bsxfun(@minus,X_b,obj.cvRidge_param.muX) * beta;
-%             end
-%             Y = @Yrand_cvRidge;
-%         end
+        function Y = genYrand_av(obj)
+            function fn = Yrand_av(n) % construct new function
+                YY = obj.av_param.YYrand(n);
+                fn = (YY(:,1) + YY(:,2))/2; % average the antithetic pairs
+            end
+            Y = @Yrand_av;
+        end
+        
         
         function Y_op = selectYrand(obj, Yrand_all)
             n_tot = obj.nc; % number of samples used in comparsion per method

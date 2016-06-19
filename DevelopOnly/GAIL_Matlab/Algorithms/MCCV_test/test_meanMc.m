@@ -7,22 +7,20 @@
 % The control variate used by CV is U.
 
 num = 10; % produce 10 estimates
-mu_cv = ones(num,1); 
-mu = ones(num,1); 
-time_cv = ones(num,1);
-time = ones(num,1);
 
+mu = ones(num,1); 
+mu_cv = ones(num,1);
+mu_av = ones(num,1);
+time = ones(num,1);
+time_cv = ones(num,1);
+time_av = ones(num,1);
+
+truemu = exp(1) - 1; % true answer
 
 % setup for meanMC object
 inp.in_param.abstol = 2e-4;
 inp.in_param.reltol = 0;
-inp.method = {'plain'};
 inp.Yrand = @(n) exp(rand(n, 1));
-inp.cv_param.YXrand = @expr;
-inp.cv_param.muX = 0.5;
-
-truemu = exp(1) - 1; % true answer
-
 test1 = meanMC(inp);
 
 for n = 1:num
@@ -31,7 +29,10 @@ for n = 1:num
     time(n,1) = param.time;  
 end
 
-test1.method = {'cv'}; % change method
+inp.method = {'cv'}; % control variate
+inp.cv_param.YXrand = @expr_cv;
+inp.cv_param.muX = 0.5;
+test1 = meanMC(inp);
 
 for n = 1:num
     [tmu_cv, param_cv] = genMu(test1); 
@@ -39,19 +40,28 @@ for n = 1:num
     time_cv(n,1) = param_cv.time; 
 end
 
+inp.method = {'av'}; % antithetic variate
+inp.av_param.YYrand = @expr_av;
+test1 = meanMC(inp);
 
-% plot estimates against running time for two methods
+for n = 1:num
+    [tmu_av, param_av] = genMu(test1); 
+    mu_av(n,1) = tmu_av;
+    time_av(n,1) = param_av.time; 
+end
 
-plot(mu_cv, time_cv, 'o', mu, time,'o') 
-legend('cv','plain')
+% plot estimates against running time for the three methods
+
+plot(mu, time,'o', mu_cv, time_cv, 'o', mu_av, time_av, 'go') 
+legend('plain','cv','av')
 xlabel('estimates')
 ylabel('time')
-center = line([truemu truemu], [0 max(time)+0.5]);
+center = line([truemu truemu], [0 max([time' time_cv' time_av'])+0.5]);
 center.Color = 'k';
 left = line([truemu-test1.in_param.abstol  truemu-test1.in_param.abstol], ...
-    [0 max([time' time_cv'])+0.5]);
+    [0 max([time' time_cv' time_av'])+0.5]);
 right = line([truemu+test1.in_param.abstol  truemu+test1.in_param.abstol], ...
-    [0 max([time' time_cv'])+0.5]);
+    [0 max([time' time_cv' time_av'])+0.5]);
 left.Color = 'k';
 left.LineStyle = ':';
 right.Color = 'k';

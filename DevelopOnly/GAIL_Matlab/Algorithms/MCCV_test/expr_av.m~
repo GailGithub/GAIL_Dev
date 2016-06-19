@@ -1,0 +1,6 @@
+function YY = expr_av(n) 
+    u = 
+    Y = 
+    Y_a = 1-Y;
+    YY = [Y Y_a];
+end
