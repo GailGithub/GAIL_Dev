@@ -1,7 +1,7 @@
 %% Test Cases for class meanMC 
 
 %% Example 1
-% In this example, we are interested in estimating E[exp(U)], where U is
+% In this example, we are interested in estimating E[sin(U)], where U is
 % uniformly distributed over [0, 1].
 %
 % The control variate used by CV is U.
@@ -66,6 +66,7 @@ for n = 1:num
 end
 
 % plot estimates against running time for the three methods
+figure()
 plot(mu, time,'o', mu_cv, time_cv, 'o', mu_av, time_av, 'go')
 legend('plain','cv','av')
 xlabel('estimates')
@@ -83,6 +84,7 @@ right.Color = 'k';
 right.LineStyle = ':';
 
 % compare the best two methods with the combined one
+figure()
 plot(mu_cv, time_cv, 'o', mu_av, time_av, 'o', mu_all, time_all, 'go')
 legend('cv','av','combined')
 xlabel('estimates')
@@ -112,7 +114,7 @@ distfunx = @(x) sqrt(sum((x(:,1:2)  - x(:,3:4)).^2,2));
 truemu = cubSobol_g(distfunx,[zeros(1,4); ones(1,4)],'uniform',1e-5,0); 
 
 % setup for meanMC object
-obj2.in_param.abstol = 5e-4;
+obj2.in_param.abstol = 2e-4;
 obj2.in_param.reltol = 0;
 obj2.method = {'plain'};
 obj2.Yrand = @(n) sqrt(sum((rand(n,2)  - rand(n,2)).^2,2));
@@ -158,6 +160,7 @@ for n = 1:num
 end
 
 % plot estimates against running time for the three methods
+figure()
 plot(mu, time,'o', mu_cv, time_cv, 'o', mu_av, time_av, 'go')
 legend('plain','cv','av')
 xlabel('estimates')
@@ -174,7 +177,8 @@ left.LineStyle = ':';
 right.Color = 'k';
 right.LineStyle = ':';
 
-% compare the best two methods with the combined one
+% compare the best method with the combined one
+figure()
 plot(mu, time, 'o', mu_all, time_all, 'o')
 legend('plain','combined')
 xlabel('estimates')
@@ -192,11 +196,9 @@ right.Color = 'k';
 right.LineStyle = ':';
 
 %% Example 3
-% In this example, we are interested in pricing an Asian geometric call
+% In this example, we are interested in pricing an up-and-in call option
 % option with a strke price of 12. Its payoff depends on S(1), S(2) and
 % S(3).
-%
-% The control variate used by meanMCCV_g is S(1), S(2) and S(3).
 
 % setup for meanMC object
 obj3.in_param.abstol = 1e-1;
@@ -234,8 +236,8 @@ time_cv1 = ones(num,1);
 time_cv2 = ones(num,1);
 time_cv3 = ones(num,1);
 
-obj3.method = {'cv'}; % control variate
-
+% single control variate
+obj3.method = {'cv'}; 
 inp.payoffParam.optType = {'upin', 'euro'};
 inp.payoffParam.putCallType = {'call', 'call'};
 
@@ -251,7 +253,6 @@ for n = 1:num
     mu_cv1(n,1) = tmu_cv1;
     time_cv1(n,1) = param_cv1.time; 
 end
-
 
 % add multiple control variates
 strikes = 110:10:180;
@@ -283,7 +284,8 @@ for n = 1:num
     time_cv3(n,1) = param_cv3.time; 
 end
 
-% plot estimates against running time for plain and single-control cv
+% plot estimates against running time for the plain method and single cv
+figure()
 plot(mu, time,'o', mu_cv1, time_cv1, 'o')
 legend('plain','cv (1 control)')
 xlabel('estimates')
@@ -301,6 +303,7 @@ right.Color = 'k';
 right.LineStyle = ':';
 
 % compare different versions of cv
+figure()
 plot(mu_cv1, time_cv1, 'o', mu_cv2, time_cv2, 'o', mu_cv3, time_cv3, 'go')
 legend('cv (1 control)','cv (8 controls)','cvRidge (8 controls)')
 xlabel('estimates')

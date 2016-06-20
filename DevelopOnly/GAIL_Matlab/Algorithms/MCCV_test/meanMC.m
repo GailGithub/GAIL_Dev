@@ -1,7 +1,7 @@
 classdef meanMC
     
     %% meanMC
-    % is a class that uses Monte Carlo method to estimate the mean of a
+    % is a class that uses the IID Monte Carlo method to estimate the mean of a
     % random variable.
     %
     % Example 1
