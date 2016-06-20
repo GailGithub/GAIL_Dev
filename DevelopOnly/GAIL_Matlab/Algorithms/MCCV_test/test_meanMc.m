@@ -26,6 +26,7 @@ obj1.method = {'plain'};
 obj1.Yrand = @(n) sin(rand(n, 1));
 test1 = meanMC(obj1);
 
+genMu(test1); % run once 
 for n = 1:num
     [tmu, param] = genMu(test1); 
     mu(n,1) = tmu;
@@ -37,6 +38,7 @@ obj1.cv_param.YXrand = @sinr_cv;
 obj1.cv_param.muX = 0.5;
 test1 = meanMC(obj1);
 
+genMu(test1); % run once 
 for n = 1:num
     [tmu_cv, param_cv] = genMu(test1); 
     mu_cv(n,1) = tmu_cv;
@@ -47,6 +49,7 @@ obj1.method = {'av'}; % antithetic variate
 obj1.av_param.YYrand = @sinr_av;
 test1 = meanMC(obj1);
 
+genMu(test1); % run once 
 for n = 1:num
     [tmu_av, param_av] = genMu(test1); 
     mu_av(n,1) = tmu_av;
@@ -55,6 +58,7 @@ end
 
 test1.method = {'plain','cv','av'}; % all methods
 
+genMu(test1); % run once 
 for n = 1:num
     [tmu_all, param_all] = genMu(test1); 
     mu_all(n,1) = tmu_all;
@@ -114,6 +118,7 @@ obj2.method = {'plain'};
 obj2.Yrand = @(n) sqrt(sum((rand(n,2)  - rand(n,2)).^2,2));
 test2 = meanMC(obj2);
 
+genMu(test2); % run once 
 for n = 1:num
     [tmu, param] = genMu(test2); 
     mu(n,1) = tmu;
@@ -125,6 +130,7 @@ obj2.cv_param.YXrand = @distfun_cv;
 obj2.cv_param.muX = repmat(0.5,1,4);
 test2 = meanMC(obj2);
 
+genMu(test2); % run once 
 for n = 1:num
     [tmu_cv, param_cv] = genMu(test2); 
     mu_cv(n,1) = tmu_cv;
@@ -135,6 +141,7 @@ obj2.method = {'av'}; % antithetic variate
 obj2.av_param.YYrand = @distfun_av;
 test2 = meanMC(obj2);
 
+genMu(test2); % run once 
 for n = 1:num
     [tmu_av, param_av] = genMu(test2); 
     mu_av(n,1) = tmu_av;
@@ -143,6 +150,7 @@ end
 
 test2.method = {'plain','cv','av'}; % all methods
 
+genMu(test2); % run once 
 for n = 1:num
     [tmu_all, param_all] = genMu(test2); 
     mu_all(n,1) = tmu_all;
@@ -212,6 +220,7 @@ truemu = genOptPrice(upin_sobol);
 obj3.Yrand = @(n) genOptPayoffs(upin, n);
 test3 = meanMC(obj3);
 
+genMu(test3); % run once 
 for n = 1:num
     [tmu, param] = genMu(test3); 
     mu(n,1) = tmu;
@@ -236,6 +245,7 @@ obj3.cv_param.YXrand = @(n) genOptPayoffs(upin_cv1, n);
 obj3.cv_param.muX = upin_cv1.exactPrice(2);
 test3 = meanMC(obj3);
 
+genMu(test3); % run once 
 for n = 1:num
     [tmu_cv1, param_cv1] = genMu(test3); 
     mu_cv1(n,1) = tmu_cv1;
@@ -256,6 +266,7 @@ obj3.cv_param.YXrand = @(n) genOptPayoffs(upin_cv2, n);
 obj3.cv_param.muX = upin_cv2.exactPrice(2:(nstrikes+1));
 test3 = meanMC(obj3);
 
+genMu(test3); % run once 
 for n = 1:num
     [tmu_cv2, param_cv2] = genMu(test3); 
     mu_cv2(n,1) = tmu_cv2;
@@ -265,13 +276,14 @@ end
 obj3.cv_param.ridge = 0.2;
 test3 = meanMC(obj3);
 
+genMu(test3); % run once 
 for n = 1:num
     [tmu_cv3, param_cv3] = genMu(test3); 
     mu_cv3(n,1) = tmu_cv3;
     time_cv3(n,1) = param_cv3.time; 
 end
 
-% plot estimates against running time for the three methods
+% plot estimates against running time for plain and single-control cv
 plot(mu, time,'o', mu_cv1, time_cv1, 'o')
 legend('plain','cv (1 control)')
 xlabel('estimates')
@@ -288,7 +300,7 @@ left.LineStyle = ':';
 right.Color = 'k';
 right.LineStyle = ':';
 
-% compare the best two methods with the combined one
+% compare different versions of cv
 plot(mu_cv1, time_cv1, 'o', mu_cv2, time_cv2, 'o', mu_cv3, time_cv3, 'go')
 legend('cv (1 control)','cv (8 controls)','cvRidge (8 controls)')
 xlabel('estimates')
