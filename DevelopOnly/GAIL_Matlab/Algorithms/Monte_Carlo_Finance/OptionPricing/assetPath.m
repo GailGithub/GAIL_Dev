@@ -526,7 +526,7 @@ classdef assetPath < brownianMotion
                  m = obj.assetParam.Vlong + U(:,i-1)*k1;% mean (moment matching)
 %                 s2 = k2*(U(:,i-1)*k1 + obj.assetParam.Vlong/2*(1+k1));   % var (moment matching)
 %                 psi = s2./m.^2;   % psi compared to psiC
-                 psi = (U(:,i-1).*exp(-obj.assetParam.kappa*dT)./obj.assetParam.kappa*(1-exp(-obj.assetParam.kappa*dT))+obj.assetParam.Vlong...
+                 psi = ((U(:,i-1)+obj.assetParam.Vlong).*exp(-obj.assetParam.kappa*dT)./obj.assetParam.kappa*(1-exp(-obj.assetParam.kappa*dT))+obj.assetParam.Vlong...
                      /2/obj.assetParam.kappa*(1-exp(-2*obj.assetParam.kappa*dT)))./(obj.assetParam.Vlong+U(:,i-1).*exp(-obj.assetParam.kappa*dT)).^2;
 %                psihat = 1./psi;
 %                b2 = 2*psihat - 1 + sqrt(2*psihat*(2*psihat-1));
@@ -541,8 +541,8 @@ classdef assetPath < brownianMotion
                 else
                     %U(I1,i) = -obj.assetParam.Vlong + a(I1).*(sqrt(b2(I1)) + norminv(UV1(I1,i-1))).^2;
 %                     U(I1,i) = -obj.assetParam.Vlong + m(I1)./(1+binv(I1).^2).*(1+norminv(UV1(I1,i-1)).*binv(I1)).^2;
-                    U(I1,i) = -obj.assetParam.Vlong + m(I1)./(1+binv2(I1)).*(1+norminv(UV1(I1,i-1)).*sqrt(binv2(I1))).^2;
-                    VRing(I1,i) = (obj.assetParam.Vlong+U(I1,i-1).*exp(-obj.assetParam.kappa*dT))./obj.assetParam.nu.*((1+obj.assetParam.nu.*sqrt(binv2(I1))...
+                    U(I1,i) = -obj.assetParam.Vlong + m(I1)./(1+obj.assetParam.nu^2*binv2(I1)).*(1+obj.assetParam.nu^2*norminv(UV1(I1,i-1)).*sqrt(binv2(I1))).^2;
+                    VRing(I1,i) = m(I1)./obj.assetParam.nu.*((1+obj.assetParam.nu^2.*sqrt(binv2(I1))...
                         .*norminv(UV1(I1,i-1))).^2./(1+obj.assetParam.nu^2.*binv2(I1))-1);
                 end
                 p = (psi - 1)./(psi + 1);               % for switching rule
@@ -556,8 +556,8 @@ classdef assetPath < brownianMotion
                 end
                 % log Euler Predictor-Corrector step
                 Gammas = (1-exp(-obj.assetParam.kappa*dT))/obj.assetParam.kappa/dT*U(:,i-1)+gamma2*obj.assetParam.nu*VRing(:,i);
-                lnS1(:,i) = lnS1(:,i-1) - obj.assetParam.Vlong*dT/2 - dT/2*Gammas + obj.assetParam.rho/obj.assetParam.nu*(obj.assetParam.kappa*dT*exp(obj.assetParam.kappa*dT)/...
-                    (exp(obj.assetParam.kappa*dT)-1)*obj.assetParam.nu*VRing(:,i))+sqrt(dT*(1-obj.assetParam.rho^2)*(obj.assetParam.Vlong+Gammas)).*dW2(:,i-1);
+                lnS1(:,i) = lnS1(:,i-1) - obj.assetParam.Vlong*dT/2 - dT/2*Gammas + obj.assetParam.rho*(obj.assetParam.kappa*dT*exp(obj.assetParam.kappa*dT)/...
+                    (exp(obj.assetParam.kappa*dT)-1)*VRing(:,i))+sqrt(dT*(1-obj.assetParam.rho^2)*(obj.assetParam.Vlong+Gammas)).*dW2(:,i-1);
 %                 temp1 = -dT/2*(obj.assetParam.Vlong+1/2*(U(:,i-1)+U(:,i)));
 %                 temp2 = obj.assetParam.kappa*dT/2*(U(:,i-1)+U(:,i))+(-U(:,i-1)+U(:,i));
 %                 temp3 = 1/2*dT*(1-obj.assetParam.rho^2)*(U(:,i-1)+U(:,i));
