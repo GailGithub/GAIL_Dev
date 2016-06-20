@@ -447,7 +447,7 @@ classdef assetPath < brownianMotion
           % vector = obj.timeDim.timeVector        
 %          dT = obj.timeDim.timeIncrement(1);
 %           dT = obj.timeDim.timeVector(2)-obj.timeDim.timeVector(1);
-          dT = (obj.timeDim.endTime-obj.timeDim.startTime)/(obj.timeDim.nSteps-1);
+          dT = obj.timeDim.timeIncrement(1);
           gamma1 = (1-exp(obj.assetParam.kappa*dT)+obj.assetParam.kappa*dT)...
               /(obj.assetParam.kappa*dT*(1-exp(obj.assetParam.kappa*dT)));
           gamma2 = -(1-exp(obj.assetParam.kappa*dT)+obj.assetParam.kappa*dT*exp(obj.assetParam.kappa*dT))...
@@ -462,10 +462,10 @@ classdef assetPath < brownianMotion
 %           c2 = -obj.assetParam.rho*obj.assetParam.kappa*obj.assetParam.Vlong*dT/obj.assetParam.nu;
 %           K0= c1+c2;
 %   %change Ntime to timeDim.nSteps ***********************************%    
-             Ntime = floor(obj.timeDim.endTime/dT);
+             Ntime = obj.timeDim.nSteps;
 %              Ntime = obj.timeDim.nSteps-1;
-             t0 = floor(obj.timeDim.startTime/dT);
-             paths = zeros(nPaths,Ntime+1-t0);
+             %t0 = floor(obj.timeDim.startTime/dT);
+             paths = zeros(nPaths,Ntime);
              lnS1 = zeros(nPaths,Ntime+1);
              lnS1(:,1)= log(obj.assetParam.initPrice...
                  *exp(-obj.assetParam.dividend*obj.timeDim.endTime));
@@ -541,8 +541,8 @@ classdef assetPath < brownianMotion
                 else
                     %U(I1,i) = -obj.assetParam.Vlong + a(I1).*(sqrt(b2(I1)) + norminv(UV1(I1,i-1))).^2;
 %                     U(I1,i) = -obj.assetParam.Vlong + m(I1)./(1+binv(I1).^2).*(1+norminv(UV1(I1,i-1)).*binv(I1)).^2;
-                    U(I1,i) = -obj.assetParam.Vlong + m(I1)./(1+obj.assetParam.nu^2*binv2(I1)).*(1+obj.assetParam.nu^2*norminv(UV1(I1,i-1)).*sqrt(binv2(I1))).^2;
-                    VRing(I1,i) = m(I1)./obj.assetParam.nu.*((1+obj.assetParam.nu^2.*sqrt(binv2(I1))...
+                    U(I1,i) = -obj.assetParam.Vlong + m(I1)./(1+obj.assetParam.nu^2*binv2(I1)).*(1+obj.assetParam.nu*norminv(UV1(I1,i-1)).*sqrt(binv2(I1))).^2;
+                    VRing(I1,i) = m(I1)./obj.assetParam.nu.*((1+obj.assetParam.nu.*sqrt(binv2(I1))...
                         .*norminv(UV1(I1,i-1))).^2./(1+obj.assetParam.nu^2.*binv2(I1))-1);
                 end
                 p = (psi - 1)./(psi + 1);               % for switching rule
@@ -573,7 +573,7 @@ classdef assetPath < brownianMotion
 %                          *(U(:,i-1)+U(:,i))+dT*obj.assetParam.Vlong*(1-obj.assetParam.rho^2)).*dW2(:,i-1);
              end
             
-             paths(:,:) = exp(lnS1(:,t0+1:end));   
+             paths(:,:) = exp(lnS1(:,2:end));   
 %               paths = exp(lnS1);
 %             paths(1,:)
          end

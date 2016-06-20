@@ -1,9 +1,9 @@
 %5/29/2016
 %% QE_European call option_Strike = 70 
 % %InitializeWorkspaceDisplay %initialize the workspace and the display parameters
-t0=1;
-T=3;
-delta_t=0.25;
+T=1;
+delta_t=1;
+t0 = delta_t;
 inp.timeDim.timeVector = t0:delta_t:T; 
 % To generate an asset path modeled by a geometric Brownian motion we need
 % to add some more properties
@@ -12,12 +12,13 @@ interest = 0;
 inp.assetParam.initPrice = initPrice; %initial stock price
 inp.assetParam.interest = interest; %risk-free interest rate
 inp.assetParam.volatility = 0.3;
-inp.assetParam.Vinst = 0.09; 
+inp.assetParam.Vinst = 0.15; 
 inp.assetParam.Vlong = 0.09;
 inp.assetParam.kappa = 1;
-inp.assetParam.nu = 0;%1e-16;
+inp.assetParam.nu = 1e-16;%1e-16;
 inp.assetParam.rho = 0;
-inp.assetParam.pathType = 'QE';
+inp.assetParam.pathType = 'GBM';
+
 
 %%
 % To generate some discounted option payoffs to add some more properties
@@ -27,21 +28,23 @@ inp.payoffParam.strike =Strike;
 %% 
 inp.priceParam.absTol = 0; %absolute tolerance
 inp.priceParam.relTol = 0.01; %one penny on the dollar relative tolerance
+ourGBMCallPrice = optPrice(inp)
+[GBMCallPrice, out] = genOptPrice(ourGBMCallPrice) %the option price
+
+inp.assetParam.pathType = 'QE';
 ourQECallPrice = optPrice(inp) %construct an optPrice object 
+genOptPayoffs(ourQECallPrice,1)
 [QECallPrice, out] = genOptPrice(ourQECallPrice) %the option price
 % Calculate option price by provided codes
 %  MC_QE(S0,r,d,T,Vinst,Vlong,kappa,epsilon,rho,NTime,NSim,NBatches)
 % Ntime = numel(inp.timeDim.timeVector)-1;
-  Ntime = T/delta_t; 
- [a,b]=MC_QE(initPrice,interest,0,T,0.09,0.09,1,0,-0.0,Ntime,1e5,1);
-
- PT = a(:,Ntime + 1);
- PT = max(PT-Strike,0);
- PP = mean(PT)
+%   Ntime = T/delta_t; 
+%  [a,b]=MC_QE(initPrice,interest,0,T,0.09,0.09,1,0,-0.0,Ntime,1e5,1);
+% 
+%  PT = a(:,Ntime + 1);
+%  PT = max(PT-Strike,0);
+%  PP = mean(PT)
 %  PP = PP*exp(-0.01*3)
-ourGBMCallPrice = optPrice(ourQECallPrice);
-ourGBMCallPrice.assetParam.pathType = 'GBM';
-[GBMCallPrice, out] = genOptPrice(ourGBMCallPrice) %the option price
 return
 
 %% QE_European call option_Strike = 70
