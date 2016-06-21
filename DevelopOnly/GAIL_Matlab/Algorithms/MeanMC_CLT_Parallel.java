@@ -1,11 +1,13 @@
 import java.util.*;
 public class MeanMC_CLT_Parallel {
 
-	public static ArrayList<Float> main(long nG, int nt) {
-		long nGen = nG;		//default value
+	public static double[] main(long nG, int nt) {
+		int nGen = (int)nG;		//default value
 		long ll, hl = 0;
-        int nThreads = nt;			//default value
-		long time1 = System.nanoTime();	//measuring time
+        int nThreads = nt; //default value
+        long [] startPos = new long [nThreads];
+        long [] finishPos = new long [nThreads];
+		//long time1 = System.nanoTime();	//measuring time
 		double value = 0;
         
         GenerateArrayOfRN[] randNumObj = new GenerateArrayOfRN[nThreads];	//defining the array of threads
@@ -22,11 +24,13 @@ public class MeanMC_CLT_Parallel {
 			else
 				hl = hl + nGen/nThreads;
 			
+            startPos[i] = ll;
+            finishPos[i] = hl;
 			randNumObj[i] = new GenerateArrayOfRN(ll, hl);
 			randNumObj[i].start();
 		}
 		
-        ArrayList<Float> randNumAll= new ArrayList<Float>();
+        double[] randNumAll= new double[nGen];
 		try {
 			for (int i=0; i<nThreads; i++)
 			{
@@ -34,14 +38,17 @@ public class MeanMC_CLT_Parallel {
 			}
          
             for (int i=0; i<nThreads; i++){
-                   randNumAll.addAll(randNumObj[i].getArray()); 
+               System.arraycopy(randNumObj[i].getArray(), 0, randNumAll,(int) startPos[i],(int) randNumObj[i].getArray().length);
             }
+            
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		long time2 = System.nanoTime();
-		long timeTaken = time2 - time1;  
-		System.out.println("Total time taken was " + timeTaken/1000000.0 + " ms");
+		//long time2 = System.nanoTime();
+		//long timeTaken = time2 - time1;  
+		//System.out.println("Total time taken was " + timeTaken/1000000.0 + " ms");
+        
+
         return randNumAll;
 	}
 

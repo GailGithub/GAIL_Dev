@@ -4,23 +4,24 @@ public class GenerateArrayOfRN extends Thread{
 
 	long ll, hl;
 	Random rand = new Random();
-	ArrayList<Float> arrayRandoms;	
+	double[] arrayRandoms;	
 	
 	public GenerateArrayOfRN(long lowerLimit, long higherLimit) {
 		this.ll = lowerLimit;
 		this.hl = higherLimit;
-        arrayRandoms = new ArrayList<Float>();	
+        arrayRandoms = new double [(int)(hl-ll)+1];	
 	}
 
 	public void run ()
 	{    
 			for (int j = 0; j<=(int)(hl-ll); j++)
 			{
-				arrayRandoms.add(rand.nextFloat());
+				arrayRandoms[j] = rand.nextDouble();
+               
 			}
 	}
     
-    public ArrayList<Float> getArray(){
+    public double[] getArray(){
         return arrayRandoms;
     }
 }

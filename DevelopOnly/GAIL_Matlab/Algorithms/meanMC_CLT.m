@@ -46,6 +46,7 @@ function [hmu,out_param]=meanMC_CLT(Yrand,absTol,relTol,alpha,nSig,inflate)
 
 %This is a heuristic algorithm based on a Central Limit Theorem
 %approximation
+javaaddpath({'C:\Users\Fabio Ricardo\Documents\GAIL_Dev\DevelopOnly\GAIL_Matlab\Algorithms\'});
 if nargin < 6
    inflate = 1.2; %standard deviation inflation factor
    if nargin < 5;
@@ -57,7 +58,7 @@ if nargin < 6
             if nargin < 2
                absTol = 0.01; %absolute error tolerance
                if nargin < 1
-                  Yrand = @(n) rand(n,1); %random number generator
+                  Yrand = @(n) MeanMC_CLT_Parallel.main(n,str2num(getenv('NUMBER_OF_PROCESSORS'))); %random number generator
                end
             end
          end
@@ -69,19 +70,19 @@ out_param.alpha = alpha; %save the input parameters to a structure
 out_param.inflate = inflate;
 out_param.nSig = nSig;
 tstart = tic; %start the clock
-Yval = Yrand(nSig);% get samples to estimate variance 
+Yval = Yrand(nSig);% get samples to estimate variance
 out_param.var = var(Yval); %calculate the sample variance--stage 1
 sig0 = sqrt(out_param.var); %standard deviation
 sig0up = out_param.inflate.*sig0; %upper bound on the standard deviation
 hmu0 = mean(Yval);
-nmu = max(1,ceil((-norminv(alpha/2)*sig0up/max(absTol,relTol*abs(hmu0))).^2)); 
+nmu = max(1,ceil((-norminv(alpha/2)*sig0up/max(absTol,relTol*abs(hmu0))).^2));
    %number of samples needed for mean
 if nmu > nMax %don't exceed sample budget
    warning(['The algorithm wants to use nmu = ' int2str(nmu) ...
       ', which is too big. Using ' int2str(nMax) ' instead.']) 
    nmu = nMax;
 end
-hmu = mean(Yrand(nmu)); %estimated mean
+hmu = mean(Yrand(nmu));
 out_param.ntot = nSig+nmu; %total samples required
 out_param.time = toc(tstart); %elapsed time
 end
