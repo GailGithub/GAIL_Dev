@@ -108,7 +108,8 @@ classdef assetPath < brownianMotion
          end
          obj.timeDim = struct('initTime',0, ...
             'initValue',obj.assetParam.initPrice,...
-            'dim',obj.assetParam.nAsset);
+            'dim',obj.assetParam.nAsset* ...
+            (1+strcmp(obj.assetParam.pathType,'QE'))); %add extra BM for variance process
       end
            
       % Set the properties of the payoff object
@@ -320,7 +321,8 @@ classdef assetPath < brownianMotion
              V2(:,1) = obj.assetParam.Vinst; % set V0
             
              UV1 = rand(nPaths,Ntime);
-            
+             
+             
              dW2 = randn(nPaths,Ntime);
 %              dW2 = randn(nPaths,obj.timeDim.nSteps-1);
              K0 = zeros(nPaths,1);        % K0 for martingale adjust
@@ -475,7 +477,6 @@ classdef assetPath < brownianMotion
              V2(:,1) = obj.assetParam.Vinst; % set V0
             
              UV1 = rand(nPaths,Ntime);
-            
              dW2 = randn(nPaths,Ntime);
 %              dW2 = randn(nPaths,obj.timeDim.nSteps-1);
 %******************************************************************%
