@@ -247,7 +247,7 @@ classdef optPayoff < assetPath
             end
             
             whamericanput = strcmp(obj.payoffParam.optType,'american') ...
-                & strcmp(obj.payoffParam.putCallType,'put'); %american call
+                & strcmp(obj.payoffParam.putCallType,'put'); %american put
             
             if any(whamericanput)
                 basis= @(x) repmat(exp(-x/2),1,3).*[ones(length(x),1) 1-x 1-2*x+x.*x/2];
@@ -255,7 +255,8 @@ classdef optPayoff < assetPath
                     .*repmat(exp(-obj.assetParam.interest ...
                     .* obj.timeDim.timeVector),nPaths,1); %discounted payoff at each time
                 cashflow = putpayoff(:,ntimeDim);
-                extime = repmat(ntimeDim,nPaths,1);
+                %              extime = repmat(ntimeDim,nPaths,1);
+                more.exbound = [zeros(1, ntimeDim) obj.payoffParam.strike]; %initialize excercise boundary
                 for i = ntimeDim-1:-1:1
                     inmoney = find(paths(:,i)<obj.payoffParam.strike);
                     if ~isempty(inmoney)
@@ -264,7 +265,8 @@ classdef optPayoff < assetPath
                         shouldex=inmoney(putpayoff(inmoney,i)>hold); %which paths should be excercised now
                         if ~isempty(shouldex); %some paths should be exercise
                             cashflow(shouldex)=putpayoff(shouldex,i); %updated cashflow
-                            extime(shouldex)=i; %update
+                            %                          extime(shouldex)=i; %update
+                            more.exbound(i+1)=max(paths(shouldex,i));
                         end
                     end
                 end
@@ -273,8 +275,9 @@ classdef optPayoff < assetPath
                     putpayoff0 = obj.payoffParam.strike - obj.assetParam.initPrice;
                     if putpayoff0 > hold %should excercise all paths initially
                         cashflow(:) = putpayoff0;
-                        extime(:) = 0;
+                        %                     extime(:) = 0;
                     end
+                    more.exbound(1) = obj.payoffParam.strike - hold; %exercise boundary at initial time
                 end
                 
                 tempPay(:,whamericanput)=cashflow;
