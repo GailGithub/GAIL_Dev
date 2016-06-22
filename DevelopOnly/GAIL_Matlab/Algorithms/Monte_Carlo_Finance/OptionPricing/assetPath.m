@@ -477,7 +477,17 @@ classdef assetPath < brownianMotion
              V2(:,1) = obj.assetParam.Vinst; % set V0
             
              UV1 = rand(nPaths,Ntime);
-             dW2 = randn(nPaths,Ntime);
+             
+             if Ntime==1
+                 dW2=bmpaths(:,1);
+             else
+             normpath1=bmpaths(:,1:Ntime-1);
+             normpath2=bmpaths(:,2:Ntime);
+             normpathdiff=normpath2-normpath1;
+             dW2=[normpath1(:,1) normpathdiff]/sqrt(dT);
+             end
+
+%               dW2 = randn(nPaths,Ntime);
 %              dW2 = randn(nPaths,obj.timeDim.nSteps-1);
 %******************************************************************%
 %              for i=2:Ntime+1;%obj.timeDim.nSteps             % time loop
@@ -537,12 +547,14 @@ classdef assetPath < brownianMotion
 %                a = m ./ (1 + b2);
 
                 % Non-Central Chi squared approximation for psi < psiC
-                I1 = find(psi<=obj.psiC); 
+                I1 = find(obj.assetParam.nu==0 |psi<=(obj.psiC/(obj.assetParam.nu^2))); 
                 if isempty(I1)
                 else
                     %U(I1,i) = -obj.assetParam.Vlong + a(I1).*(sqrt(b2(I1)) + norminv(UV1(I1,i-1))).^2;
 %                     U(I1,i) = -obj.assetParam.Vlong + m(I1)./(1+binv(I1).^2).*(1+norminv(UV1(I1,i-1)).*binv(I1)).^2;
-                    U(I1,i) = -obj.assetParam.Vlong + m(I1)./(1+obj.assetParam.nu^2*binv2(I1)).*(1+obj.assetParam.nu*norminv(UV1(I1,i-1)).*sqrt(binv2(I1))).^2;
+                    U(I1,i) = -obj.assetParam.Vlong + m(I1)./(1+obj.assetParam.nu^2*binv2(I1))...
+                        .*(1+obj.assetParam.nu*norminv(UV1(I1,i-1)).*sqrt(binv2(I1))).^2;
+          
                     VRing(I1,i) = m(I1)./obj.assetParam.nu.*((1+obj.assetParam.nu.*sqrt(binv2(I1))...
                         .*norminv(UV1(I1,i-1))).^2./(1+obj.assetParam.nu^2.*binv2(I1))-1);
                 end
