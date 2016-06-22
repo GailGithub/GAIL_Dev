@@ -6,7 +6,7 @@ public class MeanMC_CLT_Parallel {
 		long ll, hl = 0;
         int nThreads = nt; //default value
         long [] startPos = new long [nThreads];
-        long [] finishPos = new long [nThreads];
+        long [] finishPos = new [long [nThreads];
 		//long time1 = System.nanoTime();	//measuring time
 		double value = 0;
         
