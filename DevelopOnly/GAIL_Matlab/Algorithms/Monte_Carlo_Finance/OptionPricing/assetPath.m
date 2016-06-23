@@ -545,20 +545,20 @@ classdef assetPath < brownianMotion
 %              k2 = obj.assetParam.nu^2*k1.*(1-k1)/obj.assetParam.kappa;
 % %             k3 = exp(obj.assetParam.kappa*dT)*0.5.*k2.*(1-k1).*obj.assetParam.Vlong;
              for i=2:Ntime+1;%obj.timeDim.nSteps             % time loop
-                 m = obj.assetParam.Vlong + U(:,i-1)*k1;% mean (moment matching)
-%                 s2 = k2*(U(:,i-1)*k1 + obj.assetParam.Vlong/2*(1+k1));   % var (moment matching)
-%                 psi = s2./m.^2;   % psi compared to psiC
-                 psi = ((U(:,i-1)+obj.assetParam.Vlong).*k1./obj.assetParam.kappa*(1-k1)+obj.assetParam.Vlong...
-                     /2/obj.assetParam.kappa*(1-k1)^2)./(obj.assetParam.Vlong+U(:,i-1).*k1);
+                 m = obj.assetParam.Vlong+U(:,i-1).*k1;% mean (moment matching)
+                 s2 =(U(:,i-1)+obj.assetParam.Vlong).*k1./obj.assetParam.kappa*(1-k1)+obj.assetParam.Vlong...
+                     /2/obj.assetParam.kappa*(1-k1)^2;   % var (moment matching)
+                 psi = s2./m.^2;   % psi_tilde compared to psiC
 %                psihat = 1./psi;
 %                b2 = 2*psihat - 1 + sqrt(2*psihat*(2*psihat-1));
 %                b2 = 2./psi.*(1-psi/2+sqrt(1-psi/2)); % rewrite b^2
 %                 binv = sqrt(1./sqrt(1-psi./2)-1); %change b^2 to 1/b
                  binv2 = psi./(2*sqrt(1-psi.*obj.assetParam.nu^2/2).*(1+sqrt(1-psi*obj.assetParam.nu^2/2)));
-%                a = m ./ (1 + b2);
+%                  a = m.*binv2 ./ (1 +obj.assetParam.nu^2*binv2);
 
                 % Non-Central Chi squared approximation for psi < psiC
-                I1 = find(obj.assetParam.nu==0 |psi<=(obj.psiC/(obj.assetParam.nu^2))); 
+                I1 = find(obj.assetParam.nu==0 |obj.assetParam.nu^2*psi<=(obj.psiC/(obj.assetParam.nu^2))); 
+                
                 if isempty(I1)
                 else
                     %U(I1,i) = -obj.assetParam.Vlong + a(I1).*(sqrt(b2(I1)) + norminv(UV1(I1,i-1))).^2;
@@ -570,9 +570,9 @@ classdef assetPath < brownianMotion
 %                     VRing(I1,i) = m(I1)./obj.assetParam.nu*((1+obj.assetParam.nu*sqrt(binv2(I1))...
 %                         .*norminv(UV1(I1,i-1))).^2./(1+obj.assetParam.nu^2.*binv2(I1))-1);
                 end
-                p = (psi - 1)./(psi + 1);               % for switching rule
-                U((UV1(:,i-1)<=p) & (psi>obj.psiC),i) = -obj.assetParam.Vlong; % case u<=p & psi>psiC
-                I1b = find((UV1(:,i-1)>p) & (psi>obj.psiC));% find is faster here!
+                p = (obj.assetParam.nu^2*psi - 1)./(obj.assetParam.nu^2*psi + 1);               % for switching rule
+                U((UV1(:,i-1)<=p) & (obj.assetParam.nu^2*psi>obj.psiC),i) = -obj.assetParam.Vlong; % case u<=p & psi>psiC
+                I1b = find((UV1(:,i-1)>p) & (obj.assetParam.nu^2*psi>obj.psiC));% find is faster here!
 
                 beta = (1 - p)./m;                      % for switching rule
                 if isempty(I1b)
@@ -596,8 +596,7 @@ classdef assetPath < brownianMotion
 %                         *0.5*(U(:,i-1)+U(:,i)) + obj.assetParam.rho/obj.assetParam.nu*(-U(:,i-1) + U(:,i))...
 %                          - dT/4*(U(:,i-1)+U(:,i)) - dT*obj.assetParam.Vlong/2 + sqrt(0.5*dT*(1-obj.assetParam.rho^2)...
 %                          *(U(:,i-1)+U(:,i))+dT*obj.assetParam.Vlong*(1-obj.assetParam.rho^2)).*dW2(:,i-1);
-             end
-            
+             end          
              paths(:,:) = exp(lnS1(:,2:end));   
 %               paths = exp(lnS1);
 %             paths(1,:)
