@@ -483,9 +483,20 @@ classdef assetPath < brownianMotion
              else
              normpath1=bmpaths(:,1:Ntime-1);
              normpath2=bmpaths(:,2:Ntime);
-             normpathdiff=normpath2-normpath1;
-             dW2=[normpath1(:,1) normpathdiff]/sqrt(dT);
+             normpathdiff1=normpath2-normpath1;
+             dW2=[normpath1(:,1) normpathdiff1]/sqrt(dT);
              end
+             
+%              if Ntime==1
+%                  Z=bmpaths(:,Ntime+1);
+%              else
+%              normpath3=bmpaths(:,Ntime+1:2*Ntime-1);
+%              normpath4=bmpaths(:,Ntime+2:2*Ntime);
+%              normpathdiff2=normpath4-normpath3;
+%              Z=[normpath3(:,1) normpathdiff2]/sqrt(dT);
+%              end
+
+               Z=norminv(UV1);
 
 %               dW2 = randn(nPaths,Ntime);
 %              dW2 = randn(nPaths,obj.timeDim.nSteps-1);
@@ -537,8 +548,8 @@ classdef assetPath < brownianMotion
                  m = obj.assetParam.Vlong + U(:,i-1)*k1;% mean (moment matching)
 %                 s2 = k2*(U(:,i-1)*k1 + obj.assetParam.Vlong/2*(1+k1));   % var (moment matching)
 %                 psi = s2./m.^2;   % psi compared to psiC
-                 psi = ((U(:,i-1)+obj.assetParam.Vlong).*exp(-obj.assetParam.kappa*dT)./obj.assetParam.kappa*(1-exp(-obj.assetParam.kappa*dT))+obj.assetParam.Vlong...
-                     /2/obj.assetParam.kappa*(1-exp(-2*obj.assetParam.kappa*dT)))./(obj.assetParam.Vlong+U(:,i-1).*exp(-obj.assetParam.kappa*dT)).^2;
+                 psi = ((U(:,i-1)+obj.assetParam.Vlong).*k1./obj.assetParam.kappa*(1-k1)+obj.assetParam.Vlong...
+                     /2/obj.assetParam.kappa*(1-k1)^2)./(obj.assetParam.Vlong+U(:,i-1).*k1);
 %                psihat = 1./psi;
 %                b2 = 2*psihat - 1 + sqrt(2*psihat*(2*psihat-1));
 %                b2 = 2./psi.*(1-psi/2+sqrt(1-psi/2)); % rewrite b^2
@@ -554,9 +565,10 @@ classdef assetPath < brownianMotion
 %                     U(I1,i) = -obj.assetParam.Vlong + m(I1)./(1+binv(I1).^2).*(1+norminv(UV1(I1,i-1)).*binv(I1)).^2;
                     U(I1,i) = -obj.assetParam.Vlong + m(I1)./(1+obj.assetParam.nu^2*binv2(I1))...
                         .*(1+obj.assetParam.nu*norminv(UV1(I1,i-1)).*sqrt(binv2(I1))).^2;
-          
-                    VRing(I1,i) = m(I1)./obj.assetParam.nu.*((1+obj.assetParam.nu.*sqrt(binv2(I1))...
-                        .*norminv(UV1(I1,i-1))).^2./(1+obj.assetParam.nu^2.*binv2(I1))-1);
+                    VRing(I1,i) = m(I1)./(1+obj.assetParam.nu^2*binv2(I1)).*(obj.assetParam.nu*binv2(I1)...
+                        .*(Z(I1).^2-1)+2*sqrt(binv2(I1)).*Z(I1));
+%                     VRing(I1,i) = m(I1)./obj.assetParam.nu*((1+obj.assetParam.nu*sqrt(binv2(I1))...
+%                         .*norminv(UV1(I1,i-1))).^2./(1+obj.assetParam.nu^2.*binv2(I1))-1);
                 end
                 p = (psi - 1)./(psi + 1);               % for switching rule
                 U((UV1(:,i-1)<=p) & (psi>obj.psiC),i) = -obj.assetParam.Vlong; % case u<=p & psi>psiC
