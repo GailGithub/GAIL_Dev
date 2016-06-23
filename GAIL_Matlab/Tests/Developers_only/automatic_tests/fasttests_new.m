@@ -41,7 +41,7 @@ if MATLABVERSION < 8.1
     warning('Cannot run unit tests in MATLAB version before 8.1');
 else
 	warning ('off','all'); % Disable warnings. Many algorithms have warnings that will be too tedious to print
-	MyFolderInfo = dir('/home/gail/GAIL_tests/repo/gail-development/GAIL_Matlab/Tests')
+	MyFolderInfo = dir(strcat(GAILPATH,'Tests'))
 	for i = 1:size(MyFolderInfo,1)
 		if size(MyFolderInfo(i).name,2) > 3 % We check whether we have at least 4 characters in the name string
 			if all([all(MyFolderInfo(i).name(1:3) == 'ut_') all(MyFolderInfo(i).name(4) ~= 'w')]) % We do not want ut_workouts
