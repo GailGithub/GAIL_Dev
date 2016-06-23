@@ -5,18 +5,18 @@ function [timeratio,timelgratio,npointsratio,npointslgratio]=workout_funappx_g(n
 % nrep = 100; abstol = 1e-7; nlo = 100; nhi = 1000;
 % 
 % Compare funappxPenalty_g with funappxglobal_g:
-% [timeratio,timelgratio,npointsratio,npointslgratio]=workout_funappx_g(nrep,abstol,nlo,nhi);
+% [timeratio,timelgratio,npointsratio,npointslgratio]=workout_funappx_g(nrep,abstol,nlo,nhi,'funappxPenalty_g');
 %
 % Compare funappx_g with funappxglobal_g:
-% [timeratio,timelgratio,npointsratio,npointslgratio]=workout_funappx_g(nrep,abstol,nlo,nhi,'funappx_g');
+% [timeratio,timelgratio,npointsratio,npointslgratio]=workout_funappx_g(nrep,abstol,nlo,nhi,);
 
 c = rand(nrep,1)*4;
 n = 3;
 npoints = zeros(n,2,nrep);
 time = zeros(n,2,nrep);
 if isempty(varargin)
-  algoname = 'funappxPenalty_g';
-  algo = @(f,a,b,abstol,nlo,nhi) funappxPenalty_g(f,a,b,abstol,nlo,nhi);
+  algoname = 'funappx_g';
+  algo = @(f,a,b,abstol,nlo,nhi) funappx_g(f,a,b,abstol,nlo,nhi);
 else 
   algoname = varargin{1};
   algo = str2func(['@(f,a,b,abstol,nlo,nhi)', algoname,'(f,a,b,abstol,nlo,nhi)']);  
