@@ -27,7 +27,7 @@ classdef optPayoff < assetPath
     %          payoffParam_strike: 10
     %                  exactPrice: 3.4501
     
-    % Authors: Fred J. Hickernell, Tianci Zhu, Hartur Santi
+    % Authors: Fred J. Hickernell, Tianci Zhu, Hartur Santi, Tianpei Qian
     %% Properties
     % This process inherits properties from the |stochProcess| class.  Below are
     % values assigned to that are abstractly defined in that class plus some
@@ -231,56 +231,90 @@ classdef optPayoff < assetPath
             weight=obj.payoffParam.basketWeight;
             
             if any(whbasketcall) %basket option
-                tempPay(:,whbasketcall) ...
-                    =  max(paths(:,obj.timeDim.nSteps*(1:obj.assetParam.nAsset)) ...
-                    * weight' - obj.payoffParam.strike, 0) ...
-                    * exp(- obj.assetParam.interest .* obj.timeDim.endTime);
+                weightedPrice = paths(:,obj.timeDim.nSteps*(1:obj.assetParam.nAsset)) ...
+                    * weight';
+                if multistrike
+                    tempPay(:,whbasketcall) ...
+                        = max(repmat(weightedPrice, 1, sum(whbasketcall)) ...
+                        - repmat(obj.payoffParam.strike(whbasketcall), val, 1), 0) ...
+                        .* exp(- obj.assetParam.interest .* obj.timeDim.endTime);
+                else
+                    tempPay(:,whbasketcall) ...
+                        = max(weightedPrice - obj.payoffParam.strike, 0) ...
+                        .* exp(- obj.assetParam.interest .* obj.timeDim.endTime);
+                end
             end
             
             whbasketput= strcmp(obj.payoffParam.optType,'basket') ...
                 & strcmp(obj.payoffParam.putCallType,'put'); %basket put
             if any(whbasketput) %basket option
-                tempPay(:,whbasketput) ...
-                    =  max(-paths(:,obj.timeDim.nSteps*(1:obj.assetParam.nAsset)) ...
-                    * weight' + obj.payoffParam.strike, 0) ...
-                    * exp(- obj.assetParam.interest .* obj.timeDim.endTime);
+                weightedPrice = paths(:,obj.timeDim.nSteps*(1:obj.assetParam.nAsset)) ...
+                    * weight';
+                if multistrike
+                    tempPay(:,whbasketput) ...
+                        = max(repmat(obj.payoffParam.strike(whbasketput), val, 1) ...
+                        - repmat(weightedPrice, 1, sum(whbasketput)), 0) ...
+                        .* exp(- obj.assetParam.interest .* obj.timeDim.endTime);
+                else
+                    tempPay(:,whbasketput) ...
+                        = max(obj.payoffParam.strike - weightedPrice, 0) ...
+                        .* exp(- obj.assetParam.interest .* obj.timeDim.endTime);
+                end
             end
             
             whamericanput = strcmp(obj.payoffParam.optType,'american') ...
                 & strcmp(obj.payoffParam.putCallType,'put'); %american put
             
+            
+            
+            
             if any(whamericanput)
-                basis= @(x) repmat(exp(-x/2),1,3).*[ones(length(x),1) 1-x 1-2*x+x.*x/2];
-                putpayoff = max(obj.payoffParam.strike-paths,0)...
-                    .*repmat(exp(-obj.assetParam.interest ...
-                    .* obj.timeDim.timeVector),nPaths,1); %discounted payoff at each time
-                cashflow = putpayoff(:,ntimeDim);
-                %              extime = repmat(ntimeDim,nPaths,1);
-                more.exbound = [zeros(1, ntimeDim) obj.payoffParam.strike]; %initialize excercise boundary
-                for i = ntimeDim-1:-1:1
-                    inmoney = find(paths(:,i)<obj.payoffParam.strike);
-                    if ~isempty(inmoney)
-                        regmat=basis(paths(inmoney,i)/obj.assetParam.initPrice);
-                        hold=regmat*(regmat\cashflow(inmoney));
-                        shouldex=inmoney(putpayoff(inmoney,i)>hold); %which paths should be excercised now
-                        if ~isempty(shouldex); %some paths should be exercise
-                            cashflow(shouldex)=putpayoff(shouldex,i); %updated cashflow
-                            %                          extime(shouldex)=i; %update
-                            more.exbound(i+1)=max(paths(shouldex,i));
-                        end
-                    end
-                end
-                if obj.assetParam.initPrice<obj.payoffParam.strike %stock is initially in the money                 else
-                    hold = mean(cashflow);
-                    putpayoff0 = obj.payoffParam.strike - obj.assetParam.initPrice;
-                    if putpayoff0 > hold %should excercise all paths initially
-                        cashflow(:) = putpayoff0;
-                        %                     extime(:) = 0;
-                    end
-                    more.exbound(1) = obj.payoffParam.strike - hold; %exercise boundary at initial time
+                
+                if multistrike
+                    iter = sum(whamericanput);
+                    strike = obj.payoffParam.strike(whamericanput);
+                else
+                    iter = 1;
+                    strike = obj.payoffParam.strike;
                 end
                 
-                tempPay(:,whamericanput)=cashflow;
+                cashflows = zeros(val, iter);
+                
+                basis= @(x) repmat(exp(-x/2),1,3).*[ones(length(x),1) 1-x 1-2*x+x.*x/2];
+                for j = 1:iter
+                    putpayoff = max(strike(j)-paths,0)...
+                        .*repmat(exp(-obj.assetParam.interest ...
+                        .* obj.timeDim.timeVector),nPaths,1); %discounted payoff at each time
+                    cashflow = putpayoff(:,ntimeDim);
+                    %              extime = repmat(ntimeDim,nPaths,1);
+                    %more.exbound = [zeros(1, ntimeDim) obj.payoffParam.strike]; %initialize excercise boundary
+                    for i = ntimeDim-1:-1:1
+                        inmoney = find(paths(:,i)<strike(j));
+                        if ~isempty(inmoney)
+                            regmat=[ones(numel(inmoney),1) ...
+                                basis(paths(inmoney,i)/obj.assetParam.initPrice)];
+                            hold=regmat*(regmat\cashflow(inmoney));
+                            shouldex=inmoney(putpayoff(inmoney,i)>hold); %which paths should be excercised now
+                            if ~isempty(shouldex); %some paths should be exercise
+                                cashflow(shouldex)=putpayoff(shouldex,i); %updated cashflow
+                                %                          extime(shouldex)=i; %update
+                                %more.exbound(i+1)=max(paths(shouldex,i));
+                            end
+                        end
+                    end
+                    if obj.assetParam.initPrice<strike(j) %stock is initially in the money                 else
+                        hold = mean(cashflow);
+                        putpayoff0 = strike(j) - obj.assetParam.initPrice;
+                        if putpayoff0 > hold %should excercise all paths initially
+                            cashflow(:) = putpayoff0;
+                            %                     extime(:) = 0;
+                        end
+                        %more.exbound(1) = obj.payoffParam.strike - hold; %exercise boundary at initial time
+                    end
+                    cashflows(:,j) = cashflow;
+                end
+                
+                tempPay(:,whamericanput)=cashflows;
             end
             
             wheurobarrier = any(strcmp(repmat(obj.payoffParam.optType,5,1), ...
