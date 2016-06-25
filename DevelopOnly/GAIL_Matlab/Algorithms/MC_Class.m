@@ -1,20 +1,15 @@
 classdef MC_Class < handle
-    %MC_Class for testing arrays    
+    %MC_Class for testing arrays
+    
     properties
         randGen %rand number generator
         n %number of samples
     end
     
     methods
-        function obj = MC_Class(randGen, n)
-            if nargin ~= 0
-            len = length(randGen);
-            obj(1,len) = MC_Class;
-            for i = 1:len
-                obj(i).randGen = randGen{i};
-                obj(i).n = n{i};
-            end
-            end
+        function obj = MC_Class(varargin)
+            obj.randGen = varargin{1};
+            obj.n = varargin{2};
         end
         
         function val = genMu(obj)
