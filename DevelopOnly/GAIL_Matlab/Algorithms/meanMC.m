@@ -1,7 +1,7 @@
-classdef meanMC
+classdef meanMC < handle
     
     %% meanMC
-    % is a class that uses the IID Monte Carlo method to estimate the mean of a
+    % is a class that uses Monte Carlo method to estimate the mean of a
     % random variable.
     %
     % Example 1
@@ -10,7 +10,7 @@ classdef meanMC
     %      meanMC with properties:
     %
     %             in_param_abstol: 1e-2
-    %             in_param_abstol: 1e-1
+    %             in_param_reltol: 1e-1
     %              in_param_alpha: 0.01
     %              in_param_fudge: 1.2
     %               in_param_nSig: 1e4
@@ -24,6 +24,7 @@ classdef meanMC
     %                cv_param_muX: []
     %                cv_param_ncv: 1e3
     %              cv_param_ridge: 0
+    %             av_param_YYrand: @(n)rand(n,2).^2
     
     % Authors: Tianpei Qian, ... (and authors for the function |meanMC_g|)
     
@@ -40,21 +41,20 @@ classdef meanMC
             'nSig', 1e4, ... % default sample size to estimate the variance
             'n1', 1e4, ... % default initial sample size to estimate the mean
             'tbudget', 100, ... % default time budget
-            'nbudget', 1e9) % default sample budget;  
+            'nbudget', 1e9) % default sample budget;
         
         method = {'plain'}
-        
         nc = 2e3 % number of samples used to compare different methods
         % (per method)
         
         Yrand = @(n) rand(n,1).^2 % function that generate samples of the
-        % random variable  
+        % random variable
         
         cv_param = struct(...
             'YXrand', @(n) rand(n,1).^2, ... % function that generate samples of the
             ... % random variable and control variates
             'muX', [], ... % mean of control variates
-            'ncv', 1e3, ... % sample size (per control variate)
+            'ncv', 1e3, ... % initial sample size (per control variate)
             ... %for estimating the coefficients of control variates
             'ridge', 0) % parameter of ridge regression
         
@@ -75,84 +75,317 @@ classdef meanMC
         % Creating an meanMC process
         function obj = meanMC(varargin)
             if nargin > 0
-                val = varargin{1};
+                index = 1;
+                val = varargin{index};
                 if isa(val,'meanMC')
-                    obj.in_param = val.in_param;
-                    obj.method = val.method;
-                    obj.Yrand = val.Yrand;
-                    obj.cv_param = val.cv_param;
+                    temp.in_param = val.in_param;
+                    temp.method = val.method;
+                    temp.Yrand = val.Yrand;
+                    temp.cv_param = val.cv_param;
                     if nargin == 1
+                        obj = temp;
                         return
                     else
-                        val = varargin{2};
+                        index = 2;
+                        val = varargin{index};
                     end
                 end
                 if isstruct(val)
+                    numObj = 1;
                     if isfield(val,'in_param')
-                        obj.in_param = val.in_param;
+                        
+                        % --- this part counts the number of meanMC objects
+                        % --- we want to create (start)
+                        in_param = val.in_param;
+                        if isfield(in_param, 'abstol')
+                            numObj = max(numObj, length(in_param.abstol));
+                        end
+                        if isfield(in_param, 'reltol')
+                            numObj = max(numObj, length(in_param.reltol));
+                        end
+                        if isfield(in_param, 'alpha')
+                            numObj = max(numObj, length(in_param.alpha));
+                        end
+                        if isfield(in_param, 'fudge')
+                            numObj = max(numObj, length(in_param.fudge));
+                        end
+                        if isfield(in_param, 'nSig')
+                            numObj = max(numObj, length(in_param.nSig));
+                        end
+                        if isfield(in_param, 'n1')
+                            numObj = max(numObj, length(in_param.n1));
+                        end
+                        if isfield(in_param, 'tbudget')
+                            numObj = max(numObj, length(in_param.tbudget));
+                        end
+                        if isfield(in_param, 'nbudget')
+                            numObj = max(numObj, length(in_param.nbudget));
+                        end
                     end
                     if isfield(val,'method')
-                        obj.method = val.method;
+                        if iscell(val.method{1})
+                            numObj = max(numObj, length(val.method));
+                        end
                     end
                     if isfield(val,'nc')
-                        obj.nc = val.nc;
+                        numObj = max(numObj, length(val.nc));
                     end
                     if isfield(val,'Yrand')
-                        obj.Yrand = val.Yrand;
+                        numObj = max(numObj, length(val.Yrand));
                     end
                     if isfield(val,'cv_param')
-                        obj.cv_param = val.cv_param;
+                        cv_param = val.cv_param;
+                        if isfield(cv_param, 'YXrand')
+                            numObj = max(numObj, length(cv_param.YXrand));
+                        end
+                        if isfield(cv_param, 'muX')
+                            if iscell(cv_param.muX)
+                                numObj = max(numObj, length(cv_param.muX));
+                            end
+                        end
+                        if isfield(cv_param, 'ncv')
+                            numObj = max(numObj, length(cv_param.ncv));
+                        end
+                        if isfield(cv_param, 'ridge')
+                            numObj = max(numObj, length(cv_param.ridge));
+                        end
                     end
                     if isfield(val,'av_param')
-                        obj.av_param = val.av_param;
+                        av_param = val.av_param;
+                        if isfield(av_param, YYrand)
+                            numObj = max(numObj, length(av_param.YYrand));
+                        end
+                    end
+                    % -- this part counts the number of meanMC objects we
+                    % -- want to create (end)
+                    
+                    multiObj= (numObj>1);
+                    if index == 1
+                        obj(1, numObj) = meanMC;
+                    else 
+                        obj(1, numObj) = temp;
+                    end
+                    for i = 1:numObj
+                        if isfield(val,'in_param')
+                            in_param = val.in_param;
+                            if isfield(in_param, 'abstol')
+                                if multiObj && length(in_param.abstol) == numObj
+                                    % multiple abstol provided
+                                    if iscell(in_param.abstol)
+                                        obj(i).in_param.abstol = in_param.abstol{i};
+                                    elseif isnumeric(in_param.abstol)
+                                        obj(i).in_param.abstol = in_param.abstol(i);
+                                    end
+                                else
+                                    obj(i).in_param.abstol = in_param.abstol;
+                                end
+                            end
+                            if isfield(in_param, 'reltol')
+                                if multiObj && length(in_param.reltol) == numObj
+                                    % multiple reltol provided
+                                    if iscell(in_param.reltol)
+                                        obj(i).in_param.reltol = in_param.reltol{i};
+                                    elseif isnumeric(in_param.reltol)
+                                        obj(i).in_param.reltol = in_param.reltol(i);
+                                    end
+                                else
+                                    obj(i).in_param.reltol = in_param.reltol;
+                                end
+                            end
+                            if isfield(in_param, 'alpha')
+                                if multiObj && length(in_param.alpha) == numObj
+                                    % multiple alpha provided
+                                    if iscell(in_param.alpha)
+                                        obj(i).in_param.alpha = in_param.alpha{i};
+                                    elseif isnumeric(in_param.alpha)
+                                        obj(i).in_param.alpha = in_param.alpha(i);
+                                    end
+                                else
+                                    obj(i).in_param.alpha = in_param.alpha;
+                                end
+                            end
+                            if isfield(in_param, 'fudge')
+                                if multiObj && length(in_param.fudge) == numObj
+                                    % multiple fudge provided
+                                    if iscell(in_param.fudge)
+                                        obj(i).in_param.fudge = in_param.fudge{i};
+                                    elseif isnumeric(in_param.fudge)
+                                        obj(i).in_param.fudge = in_param.fudge(i);
+                                    end
+                                else
+                                    obj(i).in_param.fudge = in_param.fudge;
+                                end
+                            end
+                            if isfield(in_param, 'nSig')
+                                if multiObj && length(in_param.nSig) == numObj
+                                    % multiple nSig provided
+                                    if iscell(in_param.nSig)
+                                        obj(i).in_param.nSig = in_param.nSig{i};
+                                    elseif isnumeric(in_param.nSig)
+                                        obj(i).in_param.nSig = in_param.nSig(i);
+                                    end
+                                else
+                                    obj(i).in_param.nSig = in_param.nSig;
+                                end
+                            end
+                            if isfield(in_param, 'n1')
+                                if multiObj && length(in_param.n1) == numObj
+                                    % multiple n1 provided
+                                    if iscell(in_param.n1)
+                                        obj(i).in_param.n1 = in_param.n1{i};
+                                    elseif isnumeric(in_param.n1)
+                                        obj(i).in_param.n1 = in_param.n1(i);
+                                    end
+                                else
+                                    obj(i).in_param.n1 = in_param.n1;
+                                end
+                            end
+                            if isfield(in_param, 'tbudget')
+                                if multiObj && length(in_param.tbudget) == numObj
+                                    % multiple tbudget provided
+                                    if iscell(in_param.tbudget)
+                                        obj(i).in_param.tbudget = in_param.tbudget{i};
+                                    elseif isnumeric(in_param.tbudget)
+                                        obj(i).in_param.tbudget = in_param.tbudget(i);
+                                    end
+                                else
+                                    obj(i).in_param.tbudget = in_param.tbudget;
+                                end
+                            end
+                            if isfield(in_param, 'nbudget')
+                                if multiObj && length(in_param.nbudget) == numObj
+                                    % multiple nbudget provided
+                                    if iscell(in_param.nbudget)
+                                        obj(i).in_param.nbudget = in_param.nbudget{i};
+                                    elseif isnumeric(in_param.nbudget)
+                                        obj(i).in_param.nbudget = in_param.nbudget(i);
+                                    end
+                                else
+                                    obj(i).in_param.nbudget = in_param.nbudget;
+                                end
+                            end
+                        end
+                        if isfield(val,'method')
+                            % multiple method provided
+                            if multiObj && iscell(val.method{1}) ...
+                                    && length(val.method) == numObj
+                                obj(i).method = val.method{i};
+                            else
+                                obj(i).method = val.method;
+                            end
+                        end
+                        if isfield(val,'nc')
+                            if multiObj && length(val.nc) == numObj
+                                % multiple nc provided
+                                if iscell(val.nc)
+                                    obj(i).nc = val.nc{i};
+                                elseif isnumeric(val.nc)
+                                    obj(i).nc = val.nc(i);
+                                end
+                            end
+                        end
+                        if isfield(val,'Yrand')
+                            if multiObj && length(val.Yrand) == numObj
+                                % multiple yrand provided
+                                obj(i).Yrand = val.Yrand{i};
+                            else
+                                obj(i).Yrand = val.Yrand;
+                            end
+                        end
+                        if isfield(val,'cv_param')
+                            cv_param = val.cv_param;
+                            if isfield(cv_param, 'YXrand')
+                                if multiObj && length(cv_param.YXrand) == numObj
+                                    % multiple YXrand provided
+                                    obj(i).cv_param.YXrand = cv_param.YXrand{i};
+                                else
+                                    obj(i).cv_param.YXrand = cv_param.YXrand;
+                                end
+                            end
+                            if isfield(cv_param, 'muX')
+                                if multiObj && iscell(cv_param.muX) ...
+                                        && length(cv_param.muX) == numObj
+                                    % multiple muX provided
+                                    obj(i).cv_param.muX = cv_param.muX{i};
+                                else
+                                    obj(i).cv_param.muX = cv_param.muX;
+                                end
+                            end
+                        end
+                        if isfield(val,'av_param')
+                            av_param = val.av_param;
+                            if isfield(av_param, 'YYrand')
+                                if multiObj && length(av_param.YYrand) == numObj
+                                    % multiple YXrand provided
+                                    obj(i).av_param.YYrand = av_param.YYrand{i};
+                                else
+                                    obj(i).av_param.YYrand = av_param.YYrand;
+                                end
+                            end
+                        end
                     end
                 end
             end
-            
         end
         
         % Set in_param of the meanMC object
-        function obj = set.in_param(obj,val)
+        function set.in_param(obj,val)
             if isfield(val,'abstol')
                 validateattributes(val.abstol,{'numeric'}, ...
                     {'nonnegative'}) % abstol > 0
+                validateattributes(val.abstol,{'numeric'}, ...
+                    {'size', [1,1]})
                 obj.in_param.abstol =val.abstol;
             end
             if isfield(val,'reltol')
                 validateattributes(val.reltol,{'numeric'}, ...
                     {'nonnegative', '<=', 1}) % 0 <= reltol <=1
+                validateattributes(val.abstol,{'numeric'}, ...
+                    {'size', [1,1]})
                 obj.in_param.reltol =val.reltol;
             end
             if isfield(val,'alpha')
                 validateattributes(val.alpha,{'numeric'}, ...
                     {'nonnegative','<',1}) % 0<= alpha < 1
+                validateattributes(val.abstol,{'numeric'}, ...
+                    {'size', [1,1]})
                 obj.in_param.alpha =val.alpha;
             end
             if isfield(val,'fudge')
                 validateattributes(val.fudge,{'numeric'}, ...
                     {'nonnegative','>',1}) % fudge > 1
+                validateattributes(val.abstol,{'numeric'}, ...
+                    {'size', [1,1]})
                 obj.in_param.fudge =val.fudge;
             end
             if isfield(val,'nSig')
                 validateattributes(val.nSig,{'numeric'}, ...
                     {'positive'})
+                validateattributes(val.abstol,{'numeric'}, ...
+                    {'size', [1,1]})
                 assert(gail.isposge30(val.nSig)) % nSig >= 30
                 obj.in_param.nSig =val.nSig;
             end
             if isfield(val,'n1')
                 validateattributes(val.n1,{'numeric'}, ...
                     {'positive'})
+                validateattributes(val.abstol,{'numeric'}, ...
+                    {'size', [1,1]})
                 assert(gail.isposge30(val.n1)) % n1 >= 30
                 obj.in_param.n1 =val.n1;
             end
             if isfield(val,'tbudget')
                 validateattributes(val.tbudget,{'numeric'}, ...
                     {'positive'}) % tbudget > 0
+                validateattributes(val.abstol,{'numeric'}, ...
+                    {'size', [1,1]})
                 obj.in_param.tbudget =val.tbudget;
             end
             if isfield(val,'nbudget')
                 validateattributes(val.nbudget,{'numeric'}, ...
                     {'positive'})
+                validateattributes(val.abstol,{'numeric'}, ...
+                    {'size', [1,1]})
                 assert(gail.isposge30(val.nbudget)) % mbudget >= 30
                 obj.in_param.nbudget =val.nbudget;
             end
@@ -160,22 +393,24 @@ classdef meanMC
         
         
         % Set nc of the meanMC object
-        function obj = set.nc(obj,val)
+        function set.nc(obj,val)
             validateattributes(val,{'numeric'}, ...
                 {'positive'}) % nc >= 30
+            validateattributes(val.abstol,{'numeric'}, ...
+                {'size', [1,1]})
             assert(gail.isposge30(val))
             obj.nc=val;
         end
         
         % Set method of the meanMC object
-        function obj = set.method(obj,val)
+        function set.method(obj,val)
             assert(all(any(strcmp(repmat(val,numel(obj.allowMethod),1), ...
                 repmat(obj.allowMethod',1,numel(val))),1),2))
             obj.method=val;
         end
         
         % Set Yrand of the meanMC object
-        function obj = set.Yrand(obj,val)
+        function set.Yrand(obj,val)
             assert(gail.isfcn(val))
             validateattributes(val(5), {'numeric'}, ...
                 {'size', [5,1]})
@@ -183,10 +418,12 @@ classdef meanMC
         end
         
         % Set cv_param of the meanMC object
-        function obj = set.cv_param(obj,val)
+        function set.cv_param(obj,val)
             if isfield(val,'ncv')
                 validateattributes(val.ncv,{'numeric'}, ...
                     {'nonnegative'})
+                validateattributes(val.abstol,{'numeric'}, ...
+                    {'size', [1,1]})
                 assert(gail.isposge30(val.ncv)) % ncv >= 30
                 obj.cv_param.ncv = val.ncv;
             end
@@ -199,8 +436,8 @@ classdef meanMC
             if isfield(val, 'muX')
                 assert(isnumeric(val.muX))
                 if numel(val.muX)>0
-                validateattributes(val.muX, {'numeric'}, ...
-                    {'nrows',1})
+                    validateattributes(val.muX, {'numeric'}, ...
+                        {'nrows',1})
                 end
                 obj.cv_param.muX = val.muX;
             end
@@ -216,15 +453,32 @@ classdef meanMC
         end
         
         % Set av_param of the meanMC object
-        function obj = set.av_param(obj,val)
+        function set.av_param(obj,val)
             assert(gail.isfcn(val.YYrand))
             validateattributes(val.YYrand(5), {'numeric'}, ...
                 {'size', [5,2]})
             obj.av_param.YYrand=val.YYrand;
         end
         
-        % estimate mu
         function [tmu, out_param] = genMu(obj)
+            nObj = numel(obj);
+            tmu = zeros(1,nObj);
+            out_param = cell(1,nObj);
+            for i = 1:numel(obj)
+                [temp_tmu, temp_out_param] = single_genMu(obj(i)); 
+                tmu(i)  = temp_tmu;
+                out_param{i} = temp_out_param;
+            end
+        end
+        
+        
+    end
+    
+    
+    methods (Access = protected)
+        
+        % estimate mu
+        function [tmu, out_param] = single_genMu(obj)
             tstart = tic; % start the clock
             
             plain = any(strcmp(obj.method, 'plain'));
@@ -236,9 +490,8 @@ classdef meanMC
             Yrand_all = cell(1, nmethods); % to contain functions asssociated with each method
             comparison = (nmethods > 1); % whether they are multiple methods
             
-            index = 1; % starting index of Yrand_all
-            opt = 1; % index of the optiomal method
-            nextra = 0; % to count samples used but not counted by meanMC_g   
+            index = 1; % index of Yrand_all; start from one
+            nextra = 0; % to count samples used but not counted by meanMC_g
             
             if plain
                 Yrand_all{index} = obj.Yrand;
@@ -257,27 +510,19 @@ classdef meanMC
             
             if av
                 Yrand_all{index} = genYrand_av(obj);
-            end 
+            end
             
             if comparison
-                [Yrand_opt, index_opt] = selectYrand(obj,Yrand_all); % select the best method
+                Yrand_op = selectYrand(obj,Yrand_all); % select the best method
                 nextra = nextra + obj.nc * nmethods;
-                index_list = 1:index;
-                opt = index_list(index_opt);
             else % no comparions needed
-                Yrand_opt = Yrand_all{1};
-            end     
+                Yrand_op = Yrand_all{1};
+            end
             
-            [tmu, out_param] = meanMC_g(Yrand_opt, obj.in_param);
+            [tmu, out_param] = meanMC_g(Yrand_op, obj.in_param);
             out_param.ntot = out_param.ntot + nextra; % add counts of extra samples used
-            out_param.optMethod = opt; % index of the optimal methods
             out_param.time = toc(tstart); % get running time n
         end
-        
-    end
-    
-    
-    methods (Access = protected)
         
         function Y = genYrand_cv(obj, ridge)
             n = obj.cv_param.ncv * length(obj.cv_param.muX);
@@ -307,7 +552,7 @@ classdef meanMC
         end
         
         
-        function [Y_opt, index_opt] = selectYrand(obj, Yrand_all)
+        function Y_op = selectYrand(obj, Yrand_all)
             num = length(Yrand_all); % number of methods to be compared
             time = zeros(1, num); % time to run each method
             variance = zeros(1, num); % estimated varaince for each method
@@ -322,13 +567,15 @@ classdef meanMC
             % roughly proportional to the total
             % time needs to estimate mu
             score_min = min(score); % lowest score
-            index_opt  = (score == score_min);      
-            Y_opt = Yrand_all{index_opt}; % return the method with the lowest score
+            
+            Y_op = Yrand_all{score == score_min}; % return the method with the lowest score
         end
+        
         
     end
     
     methods (Static, Access = protected)
+        
         
         function [tmu,out_param]=meanMC_g(Yrand,in_param)
             tstart = tic;

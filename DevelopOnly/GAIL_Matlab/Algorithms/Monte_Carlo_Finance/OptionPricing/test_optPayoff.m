@@ -13,20 +13,10 @@ AmerPut.payoffParam.optType = {'american'};
 
 AE = optPayoff(AmerPut);
 AE.payoffParam = ...
-   struct('putCallType', {{'put','call'}}, ... %note two kinds of option payoffs
-   'optType',{{'digitalcash','digitalcash'}});%,...
-   %'strike', 100,...
-   %'digitalPay', 200) %this needs to have the same dimension
+   struct('putCallType', {{'put','put'}}, ... %note two kinds of option payoffs
+   'optType',{{'american','american'}},...
+   'strike', [110, 100],...
+   'digitalPay', 200) %this needs to have the same dimension
+genOptPayoffs(AE,2)
 
-
-
-inp.payoffParam.optType = {'basket'};
-inp.payoffParam.basketWeight = [0.2 0.8];
-inp.assetParam.nAsset = 2;
-inp.assetParam.initPrice = [11 15];
-inp.assetParam.corrMat = [1 0.5; 0.5 1];
-%Compute the Option Price
-BasketOption1 = optPrice(inp);
-[Price1, Out1] = genOptPrice(BasketOption1)
-     
 
