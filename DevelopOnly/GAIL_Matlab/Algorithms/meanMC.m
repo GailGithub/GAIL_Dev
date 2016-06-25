@@ -1,4 +1,4 @@
-classdef meanMC
+classdef meanMC < handle
     
     %% meanMC
     % is a class that uses Monte Carlo method to estimate the mean of a
@@ -111,7 +111,7 @@ classdef meanMC
         end
         
         % Set in_param of the meanMC object
-        function obj = set.in_param(obj,val)
+        function set.in_param(obj,val)
             if isfield(val,'abstol')
                 validateattributes(val.abstol,{'numeric'}, ...
                     {'nonnegative'}) % abstol > 0
@@ -159,7 +159,7 @@ classdef meanMC
         
         
         % Set nc of the meanMC object
-        function obj = set.nc(obj,val)
+        function set.nc(obj,val)
             validateattributes(val,{'numeric'}, ...
                 {'positive'}) % nc >= 30
             assert(gail.isposge30(val))
@@ -167,14 +167,14 @@ classdef meanMC
         end
         
         % Set method of the meanMC object
-        function obj = set.method(obj,val)
+        function set.method(obj,val)
             assert(all(any(strcmp(repmat(val,numel(obj.allowMethod),1), ...
                 repmat(obj.allowMethod',1,numel(val))),1),2))
             obj.method=val;
         end
         
         % Set Yrand of the meanMC object
-        function obj = set.Yrand(obj,val)
+        function set.Yrand(obj,val)
             assert(gail.isfcn(val))
             validateattributes(val(5), {'numeric'}, ...
                 {'size', [5,1]})
@@ -182,7 +182,7 @@ classdef meanMC
         end
         
         % Set cv_param of the meanMC object
-        function obj = set.cv_param(obj,val)
+        function set.cv_param(obj,val)
             if isfield(val,'ncv')
                 validateattributes(val.ncv,{'numeric'}, ...
                     {'nonnegative'})
@@ -215,7 +215,7 @@ classdef meanMC
         end
         
         % Set av_param of the meanMC object
-        function obj = set.av_param(obj,val)
+        function set.av_param(obj,val)
             assert(gail.isfcn(val.YYrand))
             validateattributes(val.YYrand(5), {'numeric'}, ...
                 {'size', [5,2]})
