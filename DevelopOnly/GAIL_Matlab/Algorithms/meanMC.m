@@ -147,7 +147,9 @@ classdef meanMC < handle
                             numObj = max(numObj, length(cv_param.ncv));
                         end
                         if isfield(cv_param, 'ridge')
-                            numObj = max(numObj, length(cv_param.ridge));
+                            if iscell(cv_param.ridge)
+                                numObj = max(numObj, length(cv_param.ridge));
+                            end
                         end
                     end
                     if isfield(val,'av_param')
@@ -282,6 +284,8 @@ classdef meanMC < handle
                                 elseif isnumeric(val.nc)
                                     obj(i).nc = val.nc(i);
                                 end
+                            else
+                                obj(i).nc = val.nc;
                             end
                         end
                         if isfield(val,'Yrand')
@@ -309,6 +313,27 @@ classdef meanMC < handle
                                     obj(i).cv_param.muX = cv_param.muX{i};
                                 else
                                     obj(i).cv_param.muX = cv_param.muX;
+                                end
+                            end
+                            if isfield(cv_param, 'ncv')
+                                if multiObj && length(cv_param.ncv) == numObj
+                                    % multiple nv provided
+                                    if iscell(cv_param.ncv)
+                                        obj(i).ncv = cv_param.ncv{i};
+                                    elseif isnumeric(val.nc)
+                                        obj(i).ncv = cv_param.ncv(i);
+                                    end
+                                else
+                                obj(i).ncv = cv_param.ncv;
+                                end
+                            end
+                            if isfield(cv_param, 'ridge')
+                                if multiObj && iscell(cv_param.ridge) ...
+                                        && length(cv_param.ridge) == numObj
+                                    % multiple ridge provided
+                                    obj(i).cv_param.ridge = cv_param.ridge{i};
+                                else
+                                    obj(i).cv_param.ridge = cv_param.ridge;
                                 end
                             end
                         end
