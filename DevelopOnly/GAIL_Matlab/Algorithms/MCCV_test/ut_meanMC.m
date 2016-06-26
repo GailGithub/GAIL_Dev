@@ -1,5 +1,6 @@
 %% ut_meanMC
 % fast unit tests for the meanMC class
+% Author: Tianpei Qian
 classdef ut_meanMC < matlab.unittest.TestCase
 
   methods(Test)

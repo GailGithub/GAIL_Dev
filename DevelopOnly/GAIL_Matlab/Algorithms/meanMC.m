@@ -488,11 +488,17 @@ classdef meanMC < handle
         function [tmu, out_param] = genMu(obj)
             nObj = numel(obj);
             tmu = zeros(1,nObj);
+            if nObj > 1
             out_param = cell(1,nObj);
-            for i = 1:numel(obj)
+            end
+            for i = 1:nObj
                 [temp_tmu, temp_out_param] = single_genMu(obj(i)); 
                 tmu(i)  = temp_tmu;
-                out_param{i} = temp_out_param;
+                if nObj == 1
+                    out_param = temp_out_param;
+                else
+                    out_param{i} = temp_out_param;
+                end                   
             end
         end
         
