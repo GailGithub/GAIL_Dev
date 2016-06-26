@@ -126,6 +126,55 @@ classdef ut_meanMC < matlab.unittest.TestCase
     end
     
     function multipleMus2(testCase)
+        obj.in_param.abstol = {1e-2 2e-2};
+        obj.in_param.reltol = {0 2e-1};
+        obj.in_param.alpha = {1e-2 2e-2};
+        obj.in_param.fudge = {1.21 1.22};
+        obj.in_param.nSig = {1.1e4 1.2e4};
+        obj.in_param.n1 = {1.1e4 1.2e4};
+        obj.in_param.tbudget = {110 200};
+        obj.in_param.nbudget = {1.1e9 2e9};
+        obj.method = {{'cv','av','plain'},{'cv','av'}};
+        obj.nc = {1e3 2e3};
+        obj.Yrand = {@(n) sin(rand(n, 1)), @(n) exp(rand(n, 1))};
+        obj.cv_param.YXrand = {@sinr_cv, @expr_cv};
+        obj.cv_param.muX = {0.5, 0.5};
+        obj.cv_param.ncv = {1e3 2e3};
+        obj.cv_param.ridge = {0, [0 1e-3]};
+        obj.av_param.YYrand = {@sinr_av, @expr_av};
+        test = meanMC(obj);
+        mu = genMu(test);
+        testCase.verifyEqual(test(1).in_param.abstol, 1e-2);
+        testCase.verifyEqual(test(2).in_param.abstol, 2e-2);
+        testCase.verifyEqual(test(1).in_param.reltol, 0);
+        testCase.verifyEqual(test(2).in_param.reltol, 2e-1);
+        testCase.verifyEqual(test(1).in_param.alpha, 1e-2);
+        testCase.verifyEqual(test(2).in_param.alpha, 2e-2);
+        testCase.verifyEqual(test(1).in_param.fudge, 1.21);
+        testCase.verifyEqual(test(2).in_param.fudge, 1.22);
+        testCase.verifyEqual(test(1).in_param.nSig, 1.1e4);
+        testCase.verifyEqual(test(2).in_param.nSig, 1.2e4);
+        testCase.verifyEqual(test(1).in_param.n1, 1.1e4);
+        testCase.verifyEqual(test(2).in_param.n1, 1.2e4);
+        testCase.verifyEqual(test(1).in_param.tbudget, 110);
+        testCase.verifyEqual(test(2).in_param.tbudget, 200);
+        testCase.verifyEqual(test(1).in_param.nbudget, 1.1e9);
+        testCase.verifyEqual(test(2).in_param.nbudget, 2e9);
+        testCase.verifyEqual(test(1).method, {'cv','av','plain'});
+        testCase.verifyEqual(test(2).method, {'cv','av'});
+        testCase.verifyEqual(test(1).nc, 1e3);
+        testCase.verifyEqual(test(2).nc, 2e3);
+        testCase.verifyEqual(test(1).cv_param.muX, 0.5);
+        testCase.verifyEqual(test(2).cv_param.muX, 0.5);
+        testCase.verifyEqual(test(1).cv_param.ncv, 1e3);
+        testCase.verifyEqual(test(2).cv_param.ncv, 2e3);
+        testCase.verifyEqual(test(1).cv_param.ridge, 0);
+        testCase.verifyEqual(test(2).cv_param.ridge, [0 1e-3]);
+        testCase.verifyLessThanOrEqual([abs(mu(1)-(1-cos(1))), ...
+            abs(mu(2)-(exp(1)-1))],[1e-2 2e-2]);
+    end
+    
+    function multipleMus3(testCase)
         obj.in_param.abstol = 1e-2;
         obj.in_param.reltol = 0;
         obj.in_param.alpha = 1e-2;
