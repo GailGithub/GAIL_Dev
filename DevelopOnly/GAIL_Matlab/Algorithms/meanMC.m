@@ -154,7 +154,7 @@ classdef meanMC < handle
                     end
                     if isfield(val,'av_param')
                         av_param = val.av_param;
-                        if isfield(av_param, YYrand)
+                        if isfield(av_param, 'YYrand')
                             numObj = max(numObj, length(av_param.YYrand));
                         end
                     end
@@ -319,12 +319,12 @@ classdef meanMC < handle
                                 if multiObj && length(cv_param.ncv) == numObj
                                     % multiple nv provided
                                     if iscell(cv_param.ncv)
-                                        obj(i).ncv = cv_param.ncv{i};
+                                        obj(i).cv_param.ncv = cv_param.ncv{i};
                                     elseif isnumeric(val.nc)
-                                        obj(i).ncv = cv_param.ncv(i);
+                                        obj(i).cv_param.ncv = cv_param.ncv(i);
                                     end
                                 else
-                                obj(i).ncv = cv_param.ncv;
+                                obj(i).cv_param.ncv = cv_param.ncv;
                                 end
                             end
                             if isfield(cv_param, 'ridge')
@@ -365,28 +365,28 @@ classdef meanMC < handle
             if isfield(val,'reltol')
                 validateattributes(val.reltol,{'numeric'}, ...
                     {'nonnegative', '<=', 1}) % 0 <= reltol <=1
-                validateattributes(val.abstol,{'numeric'}, ...
+                validateattributes(val.reltol,{'numeric'}, ...
                     {'size', [1,1]})
                 obj.in_param.reltol =val.reltol;
             end
             if isfield(val,'alpha')
                 validateattributes(val.alpha,{'numeric'}, ...
                     {'nonnegative','<',1}) % 0<= alpha < 1
-                validateattributes(val.abstol,{'numeric'}, ...
+                validateattributes(val.alpha,{'numeric'}, ...
                     {'size', [1,1]})
                 obj.in_param.alpha =val.alpha;
             end
             if isfield(val,'fudge')
                 validateattributes(val.fudge,{'numeric'}, ...
                     {'nonnegative','>',1}) % fudge > 1
-                validateattributes(val.abstol,{'numeric'}, ...
+                validateattributes(val.fudge,{'numeric'}, ...
                     {'size', [1,1]})
                 obj.in_param.fudge =val.fudge;
             end
             if isfield(val,'nSig')
                 validateattributes(val.nSig,{'numeric'}, ...
                     {'positive'})
-                validateattributes(val.abstol,{'numeric'}, ...
+                validateattributes(val.nSig,{'numeric'}, ...
                     {'size', [1,1]})
                 assert(gail.isposge30(val.nSig)) % nSig >= 30
                 obj.in_param.nSig =val.nSig;
@@ -394,7 +394,7 @@ classdef meanMC < handle
             if isfield(val,'n1')
                 validateattributes(val.n1,{'numeric'}, ...
                     {'positive'})
-                validateattributes(val.abstol,{'numeric'}, ...
+                validateattributes(val.n1,{'numeric'}, ...
                     {'size', [1,1]})
                 assert(gail.isposge30(val.n1)) % n1 >= 30
                 obj.in_param.n1 =val.n1;
@@ -402,14 +402,14 @@ classdef meanMC < handle
             if isfield(val,'tbudget')
                 validateattributes(val.tbudget,{'numeric'}, ...
                     {'positive'}) % tbudget > 0
-                validateattributes(val.abstol,{'numeric'}, ...
+                validateattributes(val.tbudget,{'numeric'}, ...
                     {'size', [1,1]})
                 obj.in_param.tbudget =val.tbudget;
             end
             if isfield(val,'nbudget')
                 validateattributes(val.nbudget,{'numeric'}, ...
                     {'positive'})
-                validateattributes(val.abstol,{'numeric'}, ...
+                validateattributes(val.nbudget,{'numeric'}, ...
                     {'size', [1,1]})
                 assert(gail.isposge30(val.nbudget)) % mbudget >= 30
                 obj.in_param.nbudget =val.nbudget;
@@ -421,7 +421,7 @@ classdef meanMC < handle
         function set.nc(obj,val)
             validateattributes(val,{'numeric'}, ...
                 {'positive'}) % nc >= 30
-            validateattributes(val.abstol,{'numeric'}, ...
+            validateattributes(val,{'numeric'}, ...
                 {'size', [1,1]})
             assert(gail.isposge30(val))
             obj.nc=val;
@@ -447,7 +447,7 @@ classdef meanMC < handle
             if isfield(val,'ncv')
                 validateattributes(val.ncv,{'numeric'}, ...
                     {'nonnegative'})
-                validateattributes(val.abstol,{'numeric'}, ...
+                validateattributes(val.ncv,{'numeric'}, ...
                     {'size', [1,1]})
                 assert(gail.isposge30(val.ncv)) % ncv >= 30
                 obj.cv_param.ncv = val.ncv;
@@ -465,10 +465,10 @@ classdef meanMC < handle
                         {'nrows',1})
                 end
                 obj.cv_param.muX = val.muX;
-            end
-            assert(size(obj.cv_param.YXrand(5),2)-1 ...
-                ==length(obj.cv_param.muX))
-            % number of control variates must equal length of muX
+%                 assert(size(obj.cv_param.YXrand(5),2)-1 ...
+%                 ==length(obj.cv_param.muX))
+%                 % number of control variates must equal length of muX
+            end 
             if isfield(val, 'ridge')
                 assert(isnumeric(val.ridge))
                 validateattributes(val.ridge, {'numeric'}, ...
