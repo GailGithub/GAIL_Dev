@@ -39,14 +39,15 @@ classdef optPayoff < assetPath
             'strike', 10, ... %strike price
             'barrier', 12, ... %barrier
             'digitalPay', 100,...%digital payoff
-            'basketWeight',1)%basket constants
+            'basketWeight', 1,... %basket constants
+            'outperformanceWeight', 1) %outperformance constants
         
     end
     
     properties (Constant, Hidden) %do not change & not seen
-        allowOptType = {'euro','upin', 'downin' 'upout', 'downout', 'look', ...
-            'amean', 'gmean', 'digitalcash', 'digitalasset','basket','american', ...
-            'stockprice'}
+        allowOptType = {'euro','upin', 'downin', 'upout', 'downout', 'look', ...
+            'amean', 'gmean', 'digitalcash', 'digitalasset', 'basket', 'spread', ...
+            'outperformance', 'american', 'stockprice'}
         %kinds of payoffs that we can generate
         allowPutCallType = {'call','put',''}
         %kinds of payoffs that we can generate
@@ -131,6 +132,11 @@ classdef optPayoff < assetPath
                 validateattributes(val.basketWeight,{'numeric'}, ...
                     {'nonnegative'})
                 obj.payoffParam.basketWeight=val.basketWeight; %row
+            end
+            if isfield(val,'outperformanceWeight') %data for type of option
+                validateattributes(val.basketWeight,{'numeric'}, ...
+                    {'nonnegative'})
+                obj.payoffParam.outperformanceWeight=val.outperformanceWeight; %row
             end
         end
         
@@ -262,12 +268,85 @@ classdef optPayoff < assetPath
                 end
             end
             
+            whspreadcall = strcmp(obj.payoffParam.optType,'spread') ...
+                & strcmp(obj.payoffParam.putCallType,'call'); %spread call
+            
+            if any(whspreadcall) %spread option
+                prices = paths(:,obj.timeDim.nSteps*(1:2)); 
+                spread = prices(:,1) - prices(:,2);
+                if multistrike
+                    tempPay(:,whspreadcall) ...
+                        = max(repmat(spread, 1, sum(whspreadcall)) ...
+                        - repmat(obj.payoffParam.strike(whspreadcall), val, 1), 0) ...
+                        .* exp(- obj.assetParam.interest .* obj.timeDim.endTime);
+                else
+                    tempPay(:,whspreadcall) ...
+                        = max(spread - obj.payoffParam.strike, 0) ...
+                        .* exp(- obj.assetParam.interest .* obj.timeDim.endTime);
+                end
+            end
+            
+            whspreadput = strcmp(obj.payoffParam.optType,'spread') ...
+                & strcmp(obj.payoffParam.putCallType,'put'); %spread put
+            
+            if any(whspreadput) %spread option
+                prices = paths(:,obj.timeDim.nSteps*(1:2)); 
+                spread = prices(:,1) - prices(:,2);
+                if multistrike
+                    tempPay(:,whspreadput) ...
+                        = max(repmat(obj.payoffParam.strike(whspreadput), val, 1) ...
+                        - repmat(spread, 1, sum(whspreadput)), 0) ...
+                        .* exp(- obj.assetParam.interest .* obj.timeDim.endTime);
+                else
+                    tempPay(:,whspreadput) ...
+                        = max(obj.payoffParam.strike - spread, 0) ...
+                        .* exp(- obj.assetParam.interest .* obj.timeDim.endTime);
+                end
+            end
+            
+            whoutperformcall = strcmp(obj.payoffParam.optType,'outperformance') ...
+                & strcmp(obj.payoffParam.putCallType,'call'); %outperformance call
+            outperformweight=obj.payoffParam.outperformanceWeight;
+            
+            if any(whoutperformcall) %outperformance option
+                weightedPrice = paths(:,obj.timeDim.nSteps*(1:obj.assetParam.nAsset)) ...
+                    .* repmat(outperformweight, val, 1);
+                maxPrice = max(weightedPrice,[],2);
+                if multistrike
+                    tempPay(:,whoutperformcall) ...
+                        = max(repmat(maxPrice, 1, sum(whoutperformcall)) ...
+                        - repmat(obj.payoffParam.strike(whoutperformcall), val, 1), 0) ...
+                        .* exp(- obj.assetParam.interest .* obj.timeDim.endTime);
+                else
+                    tempPay(:,whoutperformcall) ...
+                        = max(maxPrice - obj.payoffParam.strike, 0) ...
+                        .* exp(- obj.assetParam.interest .* obj.timeDim.endTime);
+                end
+            end
+            
+            whoutperformput = strcmp(obj.payoffParam.optType,'outperformance') ...
+                & strcmp(obj.payoffParam.putCallType,'put'); %outperformance call
+            weight=obj.payoffParam.outperformanceWeight;
+            
+            if any(whoutperformput) %outperformance option
+                weightedPrice = paths(:,obj.timeDim.nSteps*(1:obj.assetParam.nAsset)) ...
+                    .* repmat(weight, val, 1);
+                maxPrice = max(weightedPrice,[],2);
+                if multistrike
+                    tempPay(:,whoutperformput) ...
+                        = max(repmat(maxPrice, 1, sum(whoutperformput)) ...
+                        - repmat(obj.payoffParam.strike(whoutperformput), val, 1), 0) ...
+                        .* exp(- obj.assetParam.interest .* obj.timeDim.endTime);
+                else
+                    tempPay(:,whoutperformput) ...
+                        = max(maxPrice - obj.payoffParam.strike, 0) ...
+                        .* exp(- obj.assetParam.interest .* obj.timeDim.endTime);
+                end
+            end
+            
             whamericanput = strcmp(obj.payoffParam.optType,'american') ...
                 & strcmp(obj.payoffParam.putCallType,'put'); %american put
-            
-            
-            
-            
+
             if any(whamericanput)
                 
                 if multistrike

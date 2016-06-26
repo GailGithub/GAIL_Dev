@@ -5,6 +5,8 @@ classdef ut_meanMC < matlab.unittest.TestCase
   methods(Test)
              
     function meanMCNoInput(testCase)
+       addpath('..') % folder of meanMC
+       addpath('test_fns') % folder of some functions used in the test
        test = meanMC;
        mu = genMu(test);
        testCase.verifyClass(test,'meanMC');
@@ -24,6 +26,7 @@ classdef ut_meanMC < matlab.unittest.TestCase
         obj.Yrand = @(n) sin(rand(n, 1));
         test = meanMC(obj);
         mu = genMu(test);
+        testCase.verifyClass(test,'meanMC');
         testCase.verifyEqual(test.in_param.abstol, 2e-2);
         testCase.verifyEqual(test.in_param.reltol, 2e-1);
         testCase.verifyEqual(test.in_param.alpha, 2e-2);
@@ -44,6 +47,7 @@ classdef ut_meanMC < matlab.unittest.TestCase
         obj.cv_param.ridge = 1e-3;
         test = meanMC(obj);
         mu = genMu(test);
+        testCase.verifyClass(test,'meanMC');
         testCase.verifyEqual(test.method, {'cv'});
         testCase.verifyEqual(test.cv_param.muX, 0.5);
         testCase.verifyEqual(test.cv_param.ncv, 1.1e3);
@@ -56,6 +60,7 @@ classdef ut_meanMC < matlab.unittest.TestCase
         obj.av_param.YYrand = @sinr_av;
         test = meanMC(obj);
         mu = genMu(test);
+        testCase.verifyClass(test,'meanMC');
         testCase.verifyEqual(test.method, {'av'});
         testCase.verifyLessThanOrEqual(abs(mu-(1-cos(1))),1e-2);
     end
@@ -70,6 +75,7 @@ classdef ut_meanMC < matlab.unittest.TestCase
         obj.av_param.YYrand = @sinr_av;
         test = meanMC(obj);
         mu = genMu(test);
+        testCase.verifyClass(test,'meanMC');
         testCase.verifyEqual(test.nc, 1e3);
         testCase.verifyEqual(test.method, {'cv','av','plain'});
         testCase.verifyEqual(test.cv_param.ridge, [1e-3 2e-3]);
@@ -95,6 +101,7 @@ classdef ut_meanMC < matlab.unittest.TestCase
         obj.av_param.YYrand = {@sinr_av, @expr_av};
         test = meanMC(obj);
         mu = genMu(test);
+        testCase.verifyClass(test,'meanMC');
         testCase.verifyEqual(test(1).in_param.abstol, 1e-2);
         testCase.verifyEqual(test(2).in_param.abstol, 2e-2);
         testCase.verifyEqual(test(1).in_param.reltol, 0);
@@ -144,6 +151,7 @@ classdef ut_meanMC < matlab.unittest.TestCase
         obj.av_param.YYrand = {@sinr_av, @expr_av};
         test = meanMC(obj);
         mu = genMu(test);
+        testCase.verifyClass(test,'meanMC');
         testCase.verifyEqual(test(1).in_param.abstol, 1e-2);
         testCase.verifyEqual(test(2).in_param.abstol, 2e-2);
         testCase.verifyEqual(test(1).in_param.reltol, 0);
@@ -193,6 +201,7 @@ classdef ut_meanMC < matlab.unittest.TestCase
         obj.av_param.YYrand = {@sinr_av, @expr_av};
         test = meanMC(obj);
         mu = genMu(test);
+        testCase.verifyClass(test,'meanMC');
         testCase.verifyEqual(test(1).in_param.abstol, 1e-2);
         testCase.verifyEqual(test(2).in_param.abstol, 1e-2);
         testCase.verifyEqual(test(1).in_param.reltol, 0);
@@ -220,7 +229,7 @@ classdef ut_meanMC < matlab.unittest.TestCase
         testCase.verifyEqual(test(1).cv_param.ridge, [0 1e-3]);
         testCase.verifyEqual(test(2).cv_param.ridge, [0 1e-3]);
         testCase.verifyLessThanOrEqual([abs(mu(1)-(1-cos(1))), ...
-            abs(mu(2)-(exp(1)-1))],[1e-2 2e-2]);
+            abs(mu(2)-(exp(1)-1))],1e-2);
     end
    
   end
