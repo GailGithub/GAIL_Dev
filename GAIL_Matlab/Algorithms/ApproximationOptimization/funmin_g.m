@@ -1,6 +1,5 @@
 function [fmin,out_param]=funmin_g(varargin)
-%funmin_g 1-D guaranteed locally adaptive function optimization
-%   on [a,b]
+%funmin_g 1-D guaranteed locally adaptive function optimization on [a,b]
 %
 %   fmin = FUNMIN_G(f) finds minimum value of function f on the  
 %   default interval [0,1] within the guaranteed absolute error tolerance 
