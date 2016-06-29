@@ -14,18 +14,22 @@ function [Q,out_param] = cubMC_g(varargin)
 %   simultaneously. When measure is 'uniform', 'uniform box', 'normal'
 %   or 'Gaussian', the input hyperbox is a 2 x d matrix, where the first
 %   row corresponds to the lower limits and the second row corresponds to
-%   the upper limits. When measure is 'uniform ball', the input hyperbox is
-%   a vector with d+1 elements, where the first d values correspond to the
-%   center of the ball and the last value corresponds to the radius of the
-%   ball. For this last measure, user can optionally specify what
-%   transformation should be used in order to get a uniform distribution 
-%   on a ball. When measure is 'uniform ball_box-to-ball', the box-to-ball
-%   transformation, which gets a set of points uniformly distributed on a
-%   ball from a set of points uniformly distrubuted on a box, will be used.
-%   When measure is 'uniform ball_normal-to-ball', the normal-to-ball
-%   transformation, which gets a set of points uniformly distributed on a
-%   ball from a set of points normaly distrubuted on the space, will be used.
-%   The defaut transformation is the box-to-ball transformation.
+%   the upper limits. When measure is 'uniform ball' or 'uniform sphere',
+%   the input hyperbox is a vector with d+1 elements, where the first d
+%   values correspond to the center of the ball and the last value
+%   corresponds to the radius of the ball. For this last two measures, user
+%   can optionally specify what transformation should be used in order to
+%   get a uniform distribution on a ball of sphere. When measure is
+%   'uniform ball_box-to-ball', the box-to-ball transformation, which gets
+%   a set of points uniformly distributed on a ball from a set of points
+%   uniformly distrubuted on a box, will be used. When measure is 
+%   'uniform ball_normal-to-ball', the normal-to-ball transformation, which
+%   gets a set of points uniformly distributed on a ball from a set of 
+%   points normaly distrubuted on the space, will be used. Similarly, the
+%   measures 'uniform sphere_box-to-sphere' and 'uniform sphere_normal-to-spehere'
+%   can be defined.
+%   The defaut transformations are the box-to-ball and the box-to-sphere
+%   transformations, depending on the region of integration.
 % 
 %   Q = CUBMC_G(f,hyperbox,measure,abstol,reltol,alpha)
 %   estimates the integral of function f over hyperbox to within a 
@@ -54,8 +58,9 @@ function [Q,out_param] = cubMC_g(varargin)
 % 
 %     in_param.measure --- the measure for generating the random variable,
 %     the default is 'uniform'. The other measures could be handled are
-%     'uniform box', 'normal'/'Gaussian' and 'uniform ball'/'uniform 
-%     ball_box-to-ball'/'uniform ball_normal-to-ball'. The input should be
+%     'uniform box', 'normal'/'Gaussian', 'uniform ball'/'uniform 
+%     ball_box-to-ball'/'uniform ball_normal-to-ball' and 'uniform sphere'/'uniform 
+%     sphere_box-to-sphere'/'uniform sphere_normal-to-sphere'. The input should be
 %     a string type, hence with quotes.
 % 
 %     in_param.abstol --- the absolute error tolerance, the default value
@@ -136,16 +141,18 @@ function [Q,out_param] = cubMC_g(varargin)
 %                           is 'normal'
 %
 %                       15  hyperbox has an infinite coordinate for the
-%                           center of the ball or a infinite radius for the
-%                           ball
+%                           center of the ball or sphere or a infinite radius
+%                           for the ball or sphere
 %
-%                       16  The radius of the ball is a no-npositive real
-%                           number
+%                       16  The radius of the ball or sphere is a no-npositive
+%                           real number
 %
 %                       17  The dimension of the ball is zero
 %
 %                       18  Hyperbox not 1 x (d+1) when measure is 'uniform
-%                           ball'
+%                           ball' or 'uniform sphere'
+%
+%                       19  The dimension of the sphere is smaller than 2
 % 
 %  Guarantee
 % This algorithm attempts to calculate the integral of function f over a
@@ -261,20 +268,35 @@ function [Q,out_param] = cubMC_g(varargin)
 tstart=tic;
 [f,hyperbox,out_param] = cubMC_g_param(varargin{:});%check validity of inputs
 
-if strcmpi(out_param.measure,'uniform ball')% using uniformly distributed samples on a ball
-    volume = ((2.0*pi^(out_param.dim/2.0))/(out_param.dim*gamma(out_param.dim/2.0)))*out_param.radius^out_param.dim; %volume of a d-dimentional ball
+%changing the integrand and the hyperbox when measure is uniform ball or
+%sphere by applying the appropriate transformation
+if strcmpi(out_param.measure,'uniform ball') || strcmpi(out_param.measure,'uniform sphere')% using uniformly distributed samples on a ball or sphere
+    if strcmpi(out_param.measure,'uniform ball')
+        volume = ((2.0*pi^(out_param.dim/2.0))/(out_param.dim*gamma(out_param.dim/2.0)))*out_param.radius^out_param.dim; %volume of a d-dimentional ball
+    else
+        volume = ((2.0*pi^(out_param.dim/2.0))/(gamma(out_param.dim/2.0)))*out_param.radius^(out_param.dim - 1); %volume of a d-dimentional sphere
+    end
     
-    if out_param.transf == 1 % box-to-ball transformation should be used
+    if out_param.transf == 1 % box-to-ball or box-to-sphere transformation should be used
         if out_param.dim == 1 % It is not necessary to multiply the function f by the volume, since no transformation is being made
             hyperbox = [hyperbox - out_param.radius; hyperbox + out_param.radius];% for one dimension, the ball is actually an interval
             out_param.measure = 'uniform';% them a uniform distribution on a box can be used
         else
-            f = @(t) f(psi_1(t, out_param.dim, out_param.radius, hyperbox))*volume;% the psi function is the transformation
-            hyperbox = [zeros(1, out_param.dim); ones(1, out_param.dim)];% the hyperbox must be the domain of the transformation, which is a this unit box
+            if strcmpi(out_param.measure,'uniform ball')
+                f = @(t) f(ball_psi_1(t, out_param.dim, out_param.radius, hyperbox))*volume;% the psi function is the transformation
+            else
+                f = @(t) f(sphere_psi_1(t, out_param.dim, out_param.radius, hyperbox))*volume;% the psi function is the transformation 
+                out_param.dim = out_param.dim - 1;% the box-to-sphere transformation takes points from a (d-1)-dimensional box to a d-dimensional sphere
+            end
+            hyperbox = [zeros(1, out_param.dim); ones(1, out_param.dim)];% the hyperbox must be the domain of the transformation, which is a unit box
             out_param.measure = 'uniform';% them a uniform distribution on a box can be used
         end
-    else % normal-to-ball transformation should be used
-        f = @(t) f(psi_2(t, out_param.dim, out_param.radius, hyperbox))*volume;% the psi function is the transformation
+    else % normal-to-ball or normal-to-sphere transformation should be used
+        if strcmpi(out_param.measure,'uniform ball')
+            f = @(t) f(ball_psi_2(t, out_param.dim, out_param.radius, hyperbox))*volume;% the psi function is the transformation
+        else
+            f = @(t) f(sphere_psi_2(t, out_param.dim, out_param.radius, hyperbox))*volume;% the psi function is the transformation 
+        end
         hyperbox = bsxfun(@plus, zeros(2, out_param.dim), [-inf; inf]);% the hyperbox must be the domain of the transformation, which is a this unit box
         out_param.measure = 'normal';% them a normal distribution can be used
     end
@@ -364,7 +386,8 @@ else % if there is some optional input
         addOptional(p,'measure',default.measure,...
             @(x) any(validatestring(x, {'uniform','uniform box',...
             'normal','Gaussian','uniform ball', 'uniform ball_box-to-ball',...
-            'uniform ball_normal-to-ball'})));
+            'uniform ball_normal-to-ball','uniform sphere','uniform sphere_box-to-sphere',...
+            'uniform sphere_normal-to-sphere'})));
         addOptional(p,'abstol',default.abstol,@isnumeric);
         addOptional(p,'reltol',default.reltol,@isnumeric);
         addOptional(p,'alpha',default.alpha,@isnumeric);
@@ -384,7 +407,8 @@ else % if there is some optional input
         f_addParamVal(p,'measure',default.measure,...
             @(x) any(validatestring(x, {'uniform','uniform box',...
             'normal','Gaussian','uniform ball', 'uniform ball_box-to-ball',...
-            'uniform ball_normal-to-ball'})));
+            'uniform ball_normal-to-ball','uniform sphere','uniform sphere_box-to-sphere',...
+            'uniform sphere_normal-to-sphere'})));
         f_addParamVal(p,'abstol',default.abstol,@isnumeric);        
         f_addParamVal(p,'reltol',default.reltol,@isnumeric);
         f_addParamVal(p,'alpha',default.alpha,@isnumeric);
@@ -414,12 +438,13 @@ end
 if isfield(out_param,'measure'); % the sample measure
     out_param.measure=validatestring(out_param.measure,{'uniform','uniform box',...
         'normal','Gaussian','uniform ball', 'uniform ball_box-to-ball',...
-        'uniform ball_normal-to-ball'});
+        'uniform ball_normal-to-ball', 'uniform sphere', 'uniform sphere_box-to-sphere',...
+            'uniform sphere_normal-to-sphere'});
     if strcmpi(out_param.measure,'Gaussian')
         out_param.measure='normal';
     elseif strcmpi(out_param.measure,'uniform box')
         out_param.measure='uniform';
-    elseif strcmpi(out_param.measure,'uniform ball')
+    elseif strcmpi(out_param.measure,'uniform ball') || strcmpi(out_param.measure,'uniform sphere') 
         out_param.transf = default.transf;
     elseif strcmpi(out_param.measure,'uniform ball_box-to-ball')
         out_param.measure='uniform ball';
@@ -427,8 +452,13 @@ if isfield(out_param,'measure'); % the sample measure
     elseif strcmpi(out_param.measure,'uniform ball_normal-to-ball')
         out_param.measure='uniform ball';
         out_param.transf = 2;
+    elseif strcmpi(out_param.measure,'uniform sphere_box-to-sphere')
+        out_param.measure='uniform sphere';
+        out_param.transf = 1;
+    elseif strcmpi(out_param.measure,'uniform sphere_normal-to-sphere')
+        out_param.measure='uniform sphere';
+        out_param.transf = 2;
     end
-    
 else
     out_param.measure=default.measure;
 end
@@ -461,7 +491,7 @@ if strcmpi(out_param.measure,'uniform')||strcmpi(out_param.measure,'normal')
         %must integrate on an infinite hyperbox with the normal distribution
         out_param.exit=14; out_param = cubMC_g_err(out_param); return;
     end
-elseif strcmpi(out_param.measure,'uniform ball')
+elseif strcmpi(out_param.measure,'uniform ball') || strcmpi(out_param.measure,'uniform sphere')
     [one, out_param.dim]=size(hyperbox); %hyperbox should be 1 x dimension
     if one==0 && isfield(out_param,'hyperbox'); 
         %if hyperbox specified through out_param structure
@@ -480,15 +510,23 @@ elseif strcmpi(out_param.measure,'uniform ball')
         %finite values
         out_param.exit=15; out_param = cubMC_g_err(out_param); return;
     end
-    out_param.radius = hyperbox(out_param.dim);% the last value of the hyperbox must be the radius
+    out_param.radius = hyperbox(out_param.dim);% the last value of the hyperbox is the radius
     out_param.dim = out_param.dim - 1;% the last values doesn't count as coordinate
     if out_param.radius <= 0
        %the radius must be a positive real number
        out_param.exit=16; out_param = cubMC_g_err(out_param); return;
     end
-    if out_param.dim <= 0
-       %the dimension must be a positive integer number
-       out_param.exit=17; out_param = cubMC_g_err(out_param); return;
+    
+    if strcmpi(out_param.measure,'uniform ball')
+        if out_param.dim <= 0
+            %the dimension must be a positive integer number
+            out_param.exit=17; out_param = cubMC_g_err(out_param); return;
+        end
+    else
+       if out_param.dim <= 1
+            %the dimension must be >= 2 when measure is uniform sphere
+            out_param.exit=19; out_param = cubMC_g_err(out_param); return;
+       end
     end
     
     hyperbox = hyperbox(1,1:out_param.dim);
@@ -578,6 +616,7 @@ function  out_param =cubMC_g_err(out_param)
 %                 16  the radius of the ball is a nonpositive real number
 %                 17  the dimension of the ball is zero
 %                 18  hyperbox not 1 x (d+1) when measure is uniform ball
+%                 19  the dimension of the sphere is smaller than 2
 
 if ~isfield(out_param,'exit'); return; end
 if out_param.exit==0; return; end
@@ -602,12 +641,14 @@ switch out_param.exit
             'The number of dimentions of the ball must be a positive integer.');
     case 18; error('GAIL:cubMC_g:hyperboxnot1d',...
             'hyperbox must be 1 x (d+1) when measure is ''uniform ball''.');
+    case 19; error('GAIL:cubMC_g:dimensionsmallerthan2',...
+            'The number of dimentions of the sphere must be greater than or equal to 2.');
 end
 end
 
 % normal-to-ball transformation
 % transformation from a normal distributions on a d-dimensional space to a uniform distribution on a d-dimensional ball.
-function Z = psi_2(t, d, r, center)
+function Z = ball_psi_2(t, d, r, center)
     radius2 = @(t) sum(t.^2, 2); %computes the radius squared
     factor = @(t) ((chi2cdf(radius2(t),d).^(1.0/d))./sqrt(radius2(t)));% computes the factor by which the input must be multiplied
 
@@ -616,10 +657,25 @@ end
 
 % box-to-ball transformation
 % transformation from a uniform distributions on a d-dimensional box to a uniform distribution on a d-dimensional ball.
-function Z = psi_1(t, d, r, center)
-    X = TFWW_algorithm(t,d);% getting points uniformilly distributed on a d-dimensional sphere 
+function Z = ball_psi_1(t, d, r, center)
+    X = TFWW_algorithm(t,d);% getting points uniformly distributed on a d-dimensional sphere 
     u = t(:,1);% a uniform distribution on the interval [0, 1]
     Z = bsxfun(@plus, center, r * bsxfun(@times, u.^(1.0/d), X)); %center + r * ((u^(1/d))*t)
+end
+
+% normal-to-sphere transformation
+% transformation from a normal distributions on a d-dimensional space to a uniform distribution on a d-dimensional sphere.
+function Z = sphere_psi_2(t, d, r, center)
+    radius = sqrt(sum(t.^2, 2)); %computes the radius
+    Z = bsxfun(@plus, center, r * bsxfun(@times,t,radius.^(-1)));% center + r * (factor*t)
+end
+
+% box-to-sphere transformation
+% transformation from a uniform distributions on a (d-1)-dimensional box to a uniform distribution on a d-dimensional sphere.
+function Z = sphere_psi_1(t, d, r, center)
+    t = [zeros(size(t,1),1) t];
+    X = TFWW_algorithm(t,d);% getting points uniformly distributed on a d-dimensional sphere 
+    Z = bsxfun(@plus, center, r * X); %center + r * X
 end
 
 % algorithm that computes the transformation from a uniform distributions on a d-dimensional box
