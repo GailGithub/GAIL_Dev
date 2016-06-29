@@ -452,8 +452,8 @@ classdef assetPath < brownianMotion
           dT = obj.timeDim.timeIncrement(1);
           gamma1 = (1-exp(obj.assetParam.kappa*dT)+obj.assetParam.kappa*dT)...
               /(obj.assetParam.kappa*dT*(1-exp(obj.assetParam.kappa*dT)));
-          gamma2 = -(1-exp(obj.assetParam.kappa*dT)+obj.assetParam.kappa*dT*exp(obj.assetParam.kappa*dT))...
-              /(obj.assetParam.kappa*dT*(1-exp(obj.assetParam.kappa*dT)));
+          gamma2 = -(-expm1(dT*obj.assetParam.kappa)+obj.assetParam.kappa*dT*exp(obj.assetParam.kappa*dT))...
+              /(obj.assetParam.kappa*dT*(-expm1(dT*obj.assetParam.kappa)));
 %           K1 = gamma1*dT*(obj.assetParam.kappa*obj.assetParam.rho...
 %               /obj.assetParam.nu - .5)-obj.assetParam.rho/obj.assetParam.nu;
 %           K2 = gamma2*dT*(obj.assetParam.kappa*obj.assetParam.rho...
@@ -478,6 +478,8 @@ classdef assetPath < brownianMotion
             
              UV1 = rand(nPaths,Ntime);
              
+             
+             
              if Ntime==1
                  dW2=bmpaths(:,1);
              else
@@ -487,16 +489,16 @@ classdef assetPath < brownianMotion
              dW2=[normpath1(:,1) normpathdiff1]/sqrt(dT);
              end
              
-%              if Ntime==1
-%                  Z=bmpaths(:,Ntime+1);
-%              else
-%              normpath3=bmpaths(:,Ntime+1:2*Ntime-1);
-%              normpath4=bmpaths(:,Ntime+2:2*Ntime);
-%              normpathdiff2=normpath4-normpath3;
-%              Z=[normpath3(:,1) normpathdiff2]/sqrt(dT);
-%              end
+             if Ntime==1
+                 Z=bmpaths(:,Ntime+1);
+             else
+             normpath3=bmpaths(:,Ntime+1:2*Ntime-1);
+             normpath4=bmpaths(:,Ntime+2:2*Ntime);
+             normpathdiff2=normpath4-normpath3;
+             Z=[normpath3(:,1) normpathdiff2]/sqrt(dT);
+             end
 
-               Z=norminv(UV1);
+%                Z=norminv(UV1);
 
 %               dW2 = randn(nPaths,Ntime);
 %              dW2 = randn(nPaths,obj.timeDim.nSteps-1);
@@ -546,8 +548,9 @@ classdef assetPath < brownianMotion
 % %             k3 = exp(obj.assetParam.kappa*dT)*0.5.*k2.*(1-k1).*obj.assetParam.Vlong;
              for i=2:Ntime+1;%obj.timeDim.nSteps             % time loop
                  m = obj.assetParam.Vlong+U(:,i-1).*k1;% mean (moment matching)
-                 s2 =(U(:,i-1)+obj.assetParam.Vlong).*k1./obj.assetParam.kappa*(1-k1)+obj.assetParam.Vlong...
-                     /2/obj.assetParam.kappa*(1-k1)^2;   % var (moment matching)
+                 s2 =(U(:,i-1)+obj.assetParam.Vlong).*k1./obj.assetParam.kappa...
+                     *(-expm1(-dT*obj.assetParam.kappa))+obj.assetParam.Vlong...
+                     /2/obj.assetParam.kappa*(-expm1(-dT*obj.assetParam.kappa))^2;   % var (moment matching)
                  psi = s2./m.^2;   % psi_tilde compared to psiC
 %                psihat = 1./psi;
 %                b2 = 2*psihat - 1 + sqrt(2*psihat*(2*psihat-1));
@@ -557,16 +560,18 @@ classdef assetPath < brownianMotion
 %                  a = m.*binv2 ./ (1 +obj.assetParam.nu^2*binv2);
 
                 % Non-Central Chi squared approximation for psi < psiC
-                I1 = find(obj.assetParam.nu==0 |obj.assetParam.nu^2*psi<=(obj.psiC/(obj.assetParam.nu^2))); 
+                I1 = find(obj.assetParam.nu==0 |obj.assetParam.nu^2*psi<=obj.psiC); 
                 
                 if isempty(I1)
                 else
                     %U(I1,i) = -obj.assetParam.Vlong + a(I1).*(sqrt(b2(I1)) + norminv(UV1(I1,i-1))).^2;
 %                     U(I1,i) = -obj.assetParam.Vlong + m(I1)./(1+binv(I1).^2).*(1+norminv(UV1(I1,i-1)).*binv(I1)).^2;
                     U(I1,i) = -obj.assetParam.Vlong + m(I1)./(1+obj.assetParam.nu^2*binv2(I1))...
-                        .*(1+obj.assetParam.nu*norminv(UV1(I1,i-1)).*sqrt(binv2(I1))).^2;
-                    VRing(I1,i) = m(I1)./(1+obj.assetParam.nu^2*binv2(I1)).*(obj.assetParam.nu*binv2(I1)...
-                        .*(Z(I1).^2-1)+2*sqrt(binv2(I1)).*Z(I1));
+                        .*(1+obj.assetParam.nu*Z(I1,i-1).*sqrt(binv2(I1))).^2;
+                    VRing(I1,i) = (m(I1)./(1+obj.assetParam.nu^2*binv2(I1))).*(obj.assetParam.nu*binv2(I1)...
+                        .*(Z(I1,i-1).^2-1)+2*sqrt(binv2(I1)).*Z(I1,i-1));
+%                     closetoOne = VRing(I1,i)./(Z(I1)*sqrt(dT)*sqrt(obj.assetParam.Vlong));
+%                     max(abs(closetoOne-1))
 %                     VRing(I1,i) = m(I1)./obj.assetParam.nu*((1+obj.assetParam.nu*sqrt(binv2(I1))...
 %                         .*norminv(UV1(I1,i-1))).^2./(1+obj.assetParam.nu^2.*binv2(I1))-1);
                 end
@@ -580,9 +585,9 @@ classdef assetPath < brownianMotion
                     U(I1b,i) = -obj.assetParam.Vlong + log((1-p(I1b))./(1-UV1(I1b,i-1)))./beta(I1b);
                 end
                 % log Euler Predictor-Corrector step
-                Gammas = (1-exp(-obj.assetParam.kappa*dT))/obj.assetParam.kappa/dT*U(:,i-1)+gamma2*obj.assetParam.nu*VRing(:,i);
-                lnS1(:,i) = lnS1(:,i-1) - obj.assetParam.Vlong*dT/2 - dT/2*Gammas + obj.assetParam.rho*(obj.assetParam.kappa*dT*exp(obj.assetParam.kappa*dT)/...
-                    (exp(obj.assetParam.kappa*dT)-1)*VRing(:,i))+sqrt(dT*(1-obj.assetParam.rho^2)*(obj.assetParam.Vlong+Gammas)).*dW2(:,i-1);
+                Gammas = (-expm1(-dT*obj.assetParam.kappa))/obj.assetParam.kappa/dT*U(:,i-1)+gamma2*obj.assetParam.nu*VRing(:,i);
+                lnS1(:,i) = lnS1(:,i-1) - obj.assetParam.Vlong*dT/2 - dT/2*Gammas + obj.assetParam.rho*(obj.assetParam.kappa*dT*exp(obj.assetParam.kappa*dT)...
+                    /(expm1(dT*obj.assetParam.kappa))*VRing(:,i))+sqrt(dT*(1-obj.assetParam.rho^2)*(obj.assetParam.Vlong+Gammas)).*dW2(:,i-1);
 %                 temp1 = -dT/2*(obj.assetParam.Vlong+1/2*(U(:,i-1)+U(:,i)));
 %                 temp2 = obj.assetParam.kappa*dT/2*(U(:,i-1)+U(:,i))+(-U(:,i-1)+U(:,i));
 %                 temp3 = 1/2*dT*(1-obj.assetParam.rho^2)*(U(:,i-1)+U(:,i));

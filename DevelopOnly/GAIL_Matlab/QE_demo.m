@@ -2,7 +2,7 @@
 %% QE_European call option_Strike = 70 
 % %InitializeWorkspaceDisplay %initialize the workspace and the display parameters
 T=1;
-delta_t=0.1;
+delta_t=0.01;
 t0 = delta_t;
 inp.timeDim.timeVector = t0:delta_t:T; 
 % To generate an asset path modeled by a geometric Brownian motion we need
@@ -15,8 +15,8 @@ inp.assetParam.volatility = 0.3;
 inp.assetParam.Vinst = 0.09; 
 inp.assetParam.Vlong = 0.09;
 inp.assetParam.kappa = 1;
-inp.assetParam.nu = 1e-16;%1e-16;
-inp.assetParam.rho = 0;
+inp.assetParam.nu = 0;%1e-16;
+inp.assetParam.rho = 0.8;
 inp.assetParam.pathType = 'GBM';
 
 
@@ -33,7 +33,8 @@ ourGBMCallPrice = optPrice(inp);
 
 inp.assetParam.pathType = 'QE';
 ourQECallPrice = optPrice(inp) %construct an optPrice object 
-genOptPayoffs(ourQECallPrice,1);
+%genOptPayoffs(ourQECallPrice,1);
+%return
 [QECallPrice, out] = genOptPrice(ourQECallPrice) %the option price
 % Calculate option price by provided codes
 %  MC_QE(S0,r,d,T,Vinst,Vlong,kappa,epsilon,rho,NTime,NSim,NBatches)
