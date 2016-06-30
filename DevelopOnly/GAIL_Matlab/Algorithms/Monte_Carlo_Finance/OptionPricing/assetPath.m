@@ -460,7 +460,7 @@ classdef assetPath < brownianMotion
 %               /obj.assetParam.nu - .5)+obj.assetParam.rho/obj.assetParam.nu;
 %           K3 = gamma1*dT*(1-obj.assetParam.rho^2);
 %           K4 = gamma2*dT*(1-obj.assetParam.rho^2); 
-%           c1 = (obj.assetParam.interest-obj.assetParam.dividend)*dT;
+          c1 = (obj.assetParam.interest-obj.assetParam.dividend)*dT;% interest and dividend adjustment
 %           c2 = -obj.assetParam.rho*obj.assetParam.kappa*obj.assetParam.Vlong*dT/obj.assetParam.nu;
 %           K0= c1+c2;
 %   %change Ntime to timeDim.nSteps ***********************************%    
@@ -589,23 +589,23 @@ classdef assetPath < brownianMotion
                 Gammas = (-expm1(-dT*obj.assetParam.kappa))/obj.assetParam.kappa/dT*U(I1,i-1)+gamma2*obj.assetParam.nu*VRing(I1,i);
                 if isempty(I1)
                 else
-                lnS1(I1,i) = lnS1(I1,i-1) - obj.assetParam.Vlong*dT/2 - dT/2*Gammas + obj.assetParam.rho*(obj.assetParam.kappa*dT*exp(obj.assetParam.kappa*dT)...
-                    /(expm1(dT*obj.assetParam.kappa))*VRing(I1,i))+sqrt(dT*(1-obj.assetParam.rho^2)*(obj.assetParam.Vlong+Gammas)).*dW2(I1,i-1);
+                    lnS1(I1,i) = lnS1(I1,i-1) + c1 - obj.assetParam.Vlong*dT/2 - dT/2*Gammas + obj.assetParam.rho*(obj.assetParam.kappa*dT*exp(obj.assetParam.kappa*dT)...
+                        /(expm1(dT*obj.assetParam.kappa))*VRing(I1,i))+sqrt(dT*(1-obj.assetParam.rho^2)*(obj.assetParam.Vlong+Gammas)).*dW2(I1,i-1);
                 end
-                K0=obj.assetParam.rho*obj.assetParam.kappa*obj.assetParam.Vlong*dT/obj.assetParam.nu;
-                K1=gamma1*dT*(obj.assetParam.rho*obj.assetParam.kappa/obj.assetParam.nu-0.5)-obj.assetParam.rho/obj.assetParam.nu;
-                K2=gamma2*dT*(obj.assetParam.rho*obj.assetParam.kappa/obj.assetParam.nu-0.5)+obj.assetParam.rho/obj.assetParam.nu;
-                K3=gamma1*dT*(1-obj.assetParam.rho^2);
-                K4=gamma2*dT*(1-obj.assetParam.rho^2);
+                K0 = c1 - obj.assetParam.rho*obj.assetParam.kappa*obj.assetParam.Vlong*dT/obj.assetParam.nu;
+                K1 = gamma1*dT*(obj.assetParam.rho*obj.assetParam.kappa/obj.assetParam.nu-0.5) - obj.assetParam.rho/obj.assetParam.nu;
+                K2 = gamma2*dT*(obj.assetParam.rho*obj.assetParam.kappa/obj.assetParam.nu-0.5) + obj.assetParam.rho/obj.assetParam.nu;
+                K3 = gamma1*dT*(1 - obj.assetParam.rho^2);
+                K4 = gamma2*dT*(1 - obj.assetParam.rho^2);
                 if isempty(I1a)
                 else
-                lnS1(I1a,i)=lnS1(I1a,i-1)+K0+obj.assetParam.Vlong*(K1+K2)+K1*U(I1a,i-1)...
-                    +K2*U(I1a,i)+dW2(I1a,i-1).*sqrt(K3*U(I1a,i-1)+K4*U(I1a,i)+obj.assetParam.Vlong*(K3+K4));
+                    lnS1(I1a,i) = lnS1(I1a,i-1) + K0 + obj.assetParam.Vlong*(K1+K2) + K1*U(I1a,i-1)...
+                        + K2*U(I1a,i) + dW2(I1a,i-1).*sqrt(K3*U(I1a,i-1) + K4*U(I1a,i) + obj.assetParam.Vlong*(K3+K4));
                 end
                 if isempty(I1b)
                 else
-                lnS1(I1b,i)=lnS1(I1b,i-1)+K0+obj.assetParam.Vlong*(K1+K2)+K1*U(I1b,i-1)...
-                    +K2*U(I1b,i)+dW2(I1b,i-1).*sqrt(K3*U(I1b,i-1)+K4*U(I1b,i)+obj.assetParam.Vlong*(K3+K4));
+                    lnS1(I1b,i) = lnS1(I1b,i-1) + K0 + obj.assetParam.Vlong*(K1+K2)+K1*U(I1b,i-1)...
+                        + K2*U(I1b,i) + dW2(I1b,i-1).*sqrt(K3*U(I1b,i-1) + K4*U(I1b,i) + obj.assetParam.Vlong*(K3 + K4));
                 end
 %                 temp1 = -dT/2*(obj.assetParam.Vlong+1/2*(U(:,i-1)+U(:,i)));
 %                 temp2 = obj.assetParam.kappa*dT/2*(U(:,i-1)+U(:,i))+(-U(:,i-1)+U(:,i));
