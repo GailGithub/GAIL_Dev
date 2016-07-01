@@ -49,7 +49,7 @@ function [hmu,out_param]=meanMC_CLT(Yrand,absTol,relTol,alpha,nSig,inflate)
 if nargin < 6
    inflate = 1.2; %standard deviation inflation factor
    if nargin < 5;
-      nSig = 1e3; %number of samples to estimate variance
+      nSig = 1e7; %number of samples to estimate variance
       if nargin < 4
          alpha = 0.01; %uncertainty
          if nargin < 3
@@ -85,6 +85,6 @@ if nmu > nMax %don't exceed sample budget
 end
 hmu = mean(Yrand(nmu)); %estimated mean
 out_param.ntot = nSig+nmu; %total samples required
-out_param.time = toc(tstart) %elapsed time
+out_param.time = toc(tstart); %elapsed time
 end
 
