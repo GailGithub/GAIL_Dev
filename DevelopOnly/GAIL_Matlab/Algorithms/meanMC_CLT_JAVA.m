@@ -50,7 +50,7 @@ javaaddpath({pwd});
 if nargin < 6
    inflate = 1.2; %standard deviation inflation factor
    if nargin < 5;
-      nSig = 1e3; %number of samples to estimate variance
+      nSig = 1e7; %number of samples to estimate variance
       if nargin < 4
          alpha = 0.01; %uncertainty
          if nargin < 3
@@ -58,7 +58,7 @@ if nargin < 6
             if nargin < 2
                absTol = 0.01; %absolute error tolerance
                if nargin < 1
-                  Yrand = @(n) MeanMC_CLT_Parallel.main(n,str2num(getenv('NUMBER_OF_PROCESSORS'))); %random number generator
+                  Yrand = @(n) MeanMC_CLT_Parallel.main(n,8); %random number generator
                end
             end
          end
