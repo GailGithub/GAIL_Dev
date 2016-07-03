@@ -12,7 +12,6 @@ classdef HestonModelTest < matlab.unittest.TestCase
               delta_t=0.1;
               t0 = delta_t;
               euroinp.timeDim.timeVector = t0:delta_t:T;
-              euroinp.assetParam.pathType = 'QE';
               euroinp.assetParam.interest=0;
               euroinp.assetParam.kappa = 1;
               euroinp.assetParam.nu = 0;%1e-16;
@@ -25,6 +24,9 @@ classdef HestonModelTest < matlab.unittest.TestCase
               callPut=[{'call'},{'put'}];
               nOption=2;
               q=1;
+              QEPrice=zeros(1,2*nOption^5);
+              QEmPrice=zeros(1,2*nOption^5);
+              exactPrice=zeros(1,2*nOption^5);
               for i=1:nOption
                   for j=1:nOption
                       for m=1:nOption
@@ -32,6 +34,7 @@ classdef HestonModelTest < matlab.unittest.TestCase
                               for v=1:nOption
                                   for r=1:nOption
                                       %euroinp.assetParam.pathType='GBM';
+                                      euroinp.assetParam.pathType = 'QE';
                                       euroinp.payoffParam.putCallType = callPut(n);
                                       euroinp.payoffParam.strike = strike(m);
                                       euroinp.assetParam.volatility = eurovolatility(j);
@@ -41,6 +44,9 @@ classdef HestonModelTest < matlab.unittest.TestCase
                                       euroinp.assetParam.rho = rho(r);
                                       eurooption = optPrice(euroinp);
                                       QEPrice(q)=genOptPrice(eurooption);
+                                      euroinp.assetParam.pathType = 'QE_m';
+                                      eurooption = optPrice(euroinp);
+                                      QEmPrice(q)=genOptPrice(eurooption);
                                       exactPrice(q)=eurooption.exactPrice;
                                       q = q+1;
                                   end
@@ -50,6 +56,8 @@ classdef HestonModelTest < matlab.unittest.TestCase
                   end
               end
               testCase.verifyLessThan(abs(QEPrice-exactPrice)./exactPrice,eurooption.priceParam.relTol);
+              testCase.verifyLessThan(abs(QEmPrice-exactPrice)./exactPrice,eurooption.priceParam.relTol);
+              
           end            
           
      end
