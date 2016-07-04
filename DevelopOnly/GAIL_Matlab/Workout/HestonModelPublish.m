@@ -23,7 +23,7 @@
 %
 % \[\rho=\text{correlation constant}\]
 %
-% \[\kappa, \theta, \epsilon \text{are positive constants}\]
+% \[\kappa, \theta, \nu \text{are positive constants}\]
 
 %% Advantage of the Algorithm
 % Our modified algorithm can be used for any $\nu$, the volatility of the
@@ -89,3 +89,6 @@ variancesm = sum((QEmPrice-ourQEmPrice.exactPrice).^2)/5
 %% Reference
 %
 % Andersen, Leif B. G. "Efficient Simulation of the Heston Stochastic Volatility Model."
+
+%%
+% Authors: Tianci Zhu, Xiaoyang Zhao
