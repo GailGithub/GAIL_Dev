@@ -10,23 +10,20 @@
 % The Heston Model is defined by the following two stochastic differential
 % equations:
 %
-% $d X(t)=\sqrt{V(t)}X(t)d W_X(t)$
+% \[d X(t)=\sqrt{V(t)}X(t)d W_X(t)\]
 %
-% $dV(t)=\kappa (\theta-V(t))dt+\nu\sqrt{V(t)}dW_V(t)$
+% \[dV(t)=\kappa (\theta-V(t))dt+\nu\sqrt{V(t)}dW_V(t)\]
 %
-% where
+% where 
+% \[dW_X(t) dW_V(t)=\rho dt\]
+% 
+% \[X(t)=\text{asset price process}\]
 %
-% $X(t)=$ asset price process,
+% \[V(t)=\text{instantaneous variance of relative changes to}X(t)\]
 %
-% $V(t)=$ instantaneous variance of relative changes to $X(t)$,
+% \[\rho=\text{correlation constant}\]
 %
-% $d W_1$ and $d W_2$ are two standard Brownian motions which are correlated, $\rho$ being the correlation,
-%
-% $\kappa$ is the speed of mean reversion,
-%    
-% $\theta$ is the value of the long-term variance,
-%
-% $\nu$  is the volatility of volatility.
+% \[\kappa, \theta, \epsilon \text{are positive constants}\]
 
 %% Advantage of the Algorithm
 % Our modified algorithm can be used for any $\nu$, the volatility of the
@@ -40,7 +37,7 @@ delta_t=0.1;                            % time increment
 t0 = delta_t;                           % start time
 inp.timeDim.timeVector = t0:delta_t:T;  % time vector
 inp.assetParam.initPrice = 100;         % initial asset price
-inp.assetParam.interest = 0.04;            % risk-free interest rate
+inp.assetParam.interest = 0.04;         % risk-free interest rate
 inp.assetParam.volatility = 0.3;        % fixed vlatility of asset prices
 inp.assetParam.Vinst = 0.09;            % initial value of volatility
 inp.assetParam.Vlong = 0.09;            % theta
@@ -68,14 +65,13 @@ for i=1:5
 end
 QEPrice
 % Calculate relative tolerance when nu=0
-variances = 0;
 if inp.assetParam.nu==0
     reldiff = abs(QEPrice-ourQEPrice.exactPrice)/ourQEPrice.exactPrice
 end
-variaces = sum((QEPrice-ourQEPrice.exactPrice).^2)/5
+variances = sum((QEPrice-ourQEPrice.exactPrice).^2)/5
 
 %% Generate Option prices using Quadratice Exponential Scheme with Martingale Correction
-inp.assetParam.assetPath='QE_m';
+inp.assetParam.assetPath='QE_m';        % path type QE with martingale correction
 ourQEmPrice = optPrice(inp) 
 QEmPrice=zeros(1,5);
 %Generate Option Price
@@ -89,7 +85,7 @@ QEmPrice
 if inp.assetParam.nu==0
     reldiffm = abs(QEmPrice-ourQEmPrice.exactPrice)/ourQEmPrice.exactPrice
 end
-variaces = sum((QEmPrice-ourQEmPrice.exactPrice).^2)/5
+variancesm = sum((QEmPrice-ourQEmPrice.exactPrice).^2)/5
 %% Reference
 %
 % Andersen, Leif B. G. "Efficient Simulation of the Heston Stochastic Volatility Model."
