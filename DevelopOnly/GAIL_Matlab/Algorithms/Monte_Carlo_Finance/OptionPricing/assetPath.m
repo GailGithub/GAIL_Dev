@@ -27,7 +27,7 @@ classdef assetPath < brownianMotion
 %       assetParam_interest: 0.0100
 %     assetParam_volatility: 0.5000
 
-% Authors: Fred J. Hickernell
+% Authors: Fred J. Hickernell, Tianci Zhu, Xiaoyang Zhao
 
 %% Properties
 % This process inherits properties from the |brownianMotion| class.  Below
