@@ -1,8 +1,9 @@
-%5/29/2016
+% Latest updated date: 7/4/2016
+% Auther: Xiaoyang Zhao
 %% QE_European call option_Strike = 70 
 % %InitializeWorkspaceDisplay %initialize the workspace and the display parameters
 T=1;
-delta_t=0.01;
+delta_t=0.1;
 t0 = delta_t;
 inp.timeDim.timeVector = t0:delta_t:T; 
 % To generate an asset path modeled by a geometric Brownian motion we need

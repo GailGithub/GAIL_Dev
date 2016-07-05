@@ -73,11 +73,10 @@ for i=1:5
 end
 QEPrice
 % Calculate relative error when nu=0
-variances = 0;
 if inp.assetParam.nu==0
     reldiff = abs(QEPrice-ourQEPrice.exactPrice)/ourQEPrice.exactPrice
 end
-variances = sum((QEPrice-ourQEPrice.exactPrice).^2)/5
+variance = sum((QEPrice-ourQEPrice.exactPrice).^2)/5
 
 %% Generate Option prices using Quadratice Exponential Scheme with Martingale Correction
 inp.assetParam.assetPath='QE_m';        % path type QE with martingale correction
@@ -94,7 +93,7 @@ QEmPrice
 if inp.assetParam.nu==0
     reldiffm = abs(QEmPrice-ourQEmPrice.exactPrice)/ourQEmPrice.exactPrice
 end
-variances = sum((QEmPrice-ourQEmPrice.exactPrice).^2)/5
+variance = sum((QEmPrice-ourQEmPrice.exactPrice).^2)/5
 %% Reference
 %
 % Andersen, Leif B. G. "Efficient Simulation of the Heston Stochastic Volatility Model."

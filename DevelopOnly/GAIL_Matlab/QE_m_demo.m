@@ -1,27 +1,23 @@
-
+% Latest updated date: 7/4/2016
+% Auther: Xiaoyang Zhao
 %% QE with martingale correction_European call option_Strike = 70 
-%%
-% %InitializeWorkspaceDisplay %initialize the workspace and the display parameters
-% inp.timeDim.endTime = 5;
-% inp.timeDim.nSteps  = 15;
-% inp.timeDim.timeVector = 0:0.25:2; 
-% To generate an asset path modeled by a geometric Brownian motion we need
-% to add some more properties
-
 T=1;
 delta_t=0.1;
 t0 = delta_t;
 inp.timeDim.timeVector = t0:delta_t:T; 
-
-inp.assetParam.initPrice = 100; %initial stock price
-inp.assetParam.interest = 0; %risk-free interest rate
+% To generate an asset path modeled by a geometric Brownian motion we need
+% to add some more properties
+initPrice = 100;
+interest = 0;
+inp.assetParam.initPrice = initPrice; %initial stock price
+inp.assetParam.interest = interest; %risk-free interest rate
 inp.assetParam.volatility = 0.3;
 inp.assetParam.Vinst = 0.09; 
 inp.assetParam.Vlong = 0.09;
 inp.assetParam.kappa = 1;
-inp.assetParam.nu = 0.5;
-inp.assetParam.rho = 0.5;
-inp.assetParam.pathType = 'QE_m';
+inp.assetParam.nu = 0;%1e-16;
+inp.assetParam.rho = 0.8;
+inp.assetParam.pathType = 'GBM';
 
 %%
 % To generate some discounted option payoffs to add some more properties

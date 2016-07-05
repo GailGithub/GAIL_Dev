@@ -1,7 +1,7 @@
 classdef HestonModelTest < matlab.unittest.TestCase
       % Heston Model Testing 
       % Compared with geometric Brownian Motion.
-      % Authors: Tianci Zhu and Xiaoyang Zhao
+      % Authors: Tianci Zhu
     
       methods (Test)
           % Test Heston Model using Black Scholes formula
