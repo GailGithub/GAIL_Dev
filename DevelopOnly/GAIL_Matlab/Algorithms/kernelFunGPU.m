@@ -1,4 +1,4 @@
-function [K,kvec] = kernelFun(x,whKer)
+function [K,kvec] = kernelFunGPU(x,whKer)
 x = gpuArray(x);
 t = tic;
 if nargin < 2

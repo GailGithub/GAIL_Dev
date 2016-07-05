@@ -61,11 +61,10 @@ if nargin < 6
                if nargin < 1
                    S0 = 100;
                    sigma = 0.5;
-                   d = 100;
-                   T = 2;      %worked until 95 (months?), overloads memory on 96
+                   d = 15;
+                   T = 2;      
                    K = S0;
-                   
-                  %Yrand = @(n) S0*exp(((sigma*sigma)/2)*T+sigma*sqrt(T/d)*sum(randn(n,d),2)); %random number generator
+              
                   Yrand = @(n) max(S0*exp(((sigma*sigma)/2)*T+sigma*sqrt(T/d)*sum(gpuArray.randn(n,d),2)) ,0) - K;
                end
             end
