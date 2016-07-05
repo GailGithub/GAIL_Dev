@@ -7,6 +7,11 @@
 % (2002). The Heston model is of particular interest to us since it is one 
 % of the most widely used stochastic volatility models.
 %
+% We apply Quadratic Exponential (QE) algorithm to simulate the volatility 
+% process and use Broadie-Kaya scheme (2006) to discretize the asset price 
+% process. The QE model brought up by Andersen (2006). It becomes a market  
+% standard simulation method for the Heston model.
+%
 % The Heston Model is defined by the following two stochastic differential
 % equations:
 %
@@ -14,22 +19,25 @@
 %
 % \[dV(t)=\kappa (\theta-V(t))dt+\nu\sqrt{V(t)}dW_V(t)\]
 %
-% where 
-% \[dW_X(t) dW_V(t)=\rho dt\]
-% 
-% \[X(t)=\text{asset price process}\]
+% where
+% $X(t)$ is the asset price process,
+% $V(t)$ is the instantaneous variance of relative changes to $X(t)$,
+% $d W_1$ and $d W_2$ are two standard Brownian motions with correlation
+% $\rho$.
 %
-% \[V(t)=\text{instantaneous variance of relative changes to}X(t)\]
+% The parameters are as the following:
 %
-% \[\rho=\text{correlation constant}\]
-%
-% \[\kappa, \theta, \nu \text{are positive constants}\]
-
+% * $\kappa$ is the speed of mean reversion.
+% * $\theta$ is the value of the long-term variance.
+% * $\nu$  is the volatility of the volatility.
+% * $\kappa, \theta, \nu$ are positive constants.
+%    
 %% Advantage of the Algorithm
-% Our modified algorithm can be used for any $\nu$, the volatility of the
-% asset price volatility, greater than or equal to zero. Besides, the
-% modified algorithm can reduce the numerical error even when $\nu\approx0$
-
+% Our modified algorithm can be used for any $\nu\geq 0$, the volatility of the
+% asset price's volatility, greater than or equal to zero. Besides, the
+% modified algorithm can reduce the numerical error even when $\nu$ close
+% to 0.
+%
 %% Generate Option prices using Quadratice Exponential Scheme
 %Set assetPath parameters
 T=1;                                    % end time
@@ -37,7 +45,7 @@ delta_t=0.1;                            % time increment
 t0 = delta_t;                           % start time
 inp.timeDim.timeVector = t0:delta_t:T;  % time vector
 inp.assetParam.initPrice = 100;         % initial asset price
-inp.assetParam.interest = 0.04;         % risk-free interest rate
+inp.assetParam.interest = 0.04;            % risk-free interest rate
 inp.assetParam.volatility = 0.3;        % fixed vlatility of asset prices
 inp.assetParam.Vinst = 0.09;            % initial value of volatility
 inp.assetParam.Vlong = 0.09;            % theta
@@ -65,13 +73,14 @@ for i=1:5
 end
 QEPrice
 % Calculate relative tolerance when nu=0
+variances = 0;
 if inp.assetParam.nu==0
     reldiff = abs(QEPrice-ourQEPrice.exactPrice)/ourQEPrice.exactPrice
 end
-variances = sum((QEPrice-ourQEPrice.exactPrice).^2)/5
+variaces = sum((QEPrice-ourQEPrice.exactPrice).^2)/5
 
 %% Generate Option prices using Quadratice Exponential Scheme with Martingale Correction
-inp.assetParam.assetPath='QE_m';        % path type QE with martingale correction
+inp.assetParam.assetPath='QE_m';
 ourQEmPrice = optPrice(inp) 
 QEmPrice=zeros(1,5);
 %Generate Option Price
@@ -85,10 +94,7 @@ QEmPrice
 if inp.assetParam.nu==0
     reldiffm = abs(QEmPrice-ourQEmPrice.exactPrice)/ourQEmPrice.exactPrice
 end
-variancesm = sum((QEmPrice-ourQEmPrice.exactPrice).^2)/5
+variaces = sum((QEmPrice-ourQEmPrice.exactPrice).^2)/5
 %% Reference
 %
 % Andersen, Leif B. G. "Efficient Simulation of the Heston Stochastic Volatility Model."
-
-%%
-% Authors: Tianci Zhu, Xiaoyang Zhao
