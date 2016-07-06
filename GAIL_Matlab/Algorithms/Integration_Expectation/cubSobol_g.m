@@ -17,14 +17,14 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 %   values correspond to the center of the ball and the last value
 %   corresponds to the radius of the ball. For this last two measures, user can
 %   optionally specify what transformation should be used in order to get a
-%   uniform distribution on a ball. When measure is 'uniform ball_box-to-ball',
+%   uniform distribution on a ball. When measure is 'uniform ball_box',
 %   the box-to-ball transformation, which gets a set of points uniformly
 %   distributed on a ball from a set of points uniformly distrubuted on a
-%   box, will be used. When measure is 'uniform ball_normal-to-ball',
+%   box, will be used. When measure is 'uniform ball_normal',
 %   the normal-to-ball transformation, which gets a set of points uniformly
 %   distributed on a ball from a set of points normaly distrubuted on the
-%   space, will be used. Similarly, the measures 'uniform sphere_box-to-sphere'
-%   and 'uniform sphere_normal-to-sphere' can be used to specify the
+%   space, will be used. Similarly, the measures 'uniform sphere_box'
+%   and 'uniform sphere_normal' can be used to specify the
 %   desired transformations. The defaut transformation is the box-to-ball
 %   transformation.
 %   Given the construction of Sobol' sequences, d must be
@@ -269,7 +269,7 @@ r_lag = 4; %distance between coefficients summed and those computed
 %changing the integrand and the hyperbox when measure is uniform ball or
 %sphere by applying the appropriate transformation
 if strcmpi(out_param.measure,'uniform ball') || strcmpi(out_param.measure,'uniform sphere')% using uniformly distributed samples on a ball or sphere
-    if strcmpi(out_param.measure,'uniform ball')
+    if strcmpi(out_param.measure,'uniform ball')% using the formula of the volume of a ball or a sphere
         volume = ((2.0*pi^(out_param.d/2.0))/(out_param.d*gamma(out_param.d/2.0)))*out_param.radius^out_param.d; %volume of a d-dimentional ball
     else
         volume = ((2.0*pi^(out_param.d/2.0))/(gamma(out_param.d/2.0)))*out_param.radius^(out_param.d - 1); %volume of a d-dimentional sphere
@@ -640,8 +640,8 @@ else
     if isnumeric(in3) || ischar(in3)
         addOptional(p,'measure',default.measure,...
             @(x) any(validatestring(x, {'uniform','normal','uniform ball',...
-            'uniform ball_box-to-ball','uniform ball_normal-to-ball','uniform sphere',...
-            'uniform sphere_box-to-sphere','uniform sphere_normal-to-sphere'})));
+            'uniform ball_box','uniform ball_normal','uniform sphere',...
+            'uniform sphere_box','uniform sphere_normal'})));
         addOptional(p,'abstol',default.abstol,@isnumeric);
         addOptional(p,'reltol',default.reltol,@isnumeric);
         addOptional(p,'mmin',default.mmin,@isnumeric);
@@ -658,8 +658,8 @@ else
         end
         f_addParamVal(p,'measure',default.measure,...
             @(x) any(validatestring(x, {'uniform','normal','uniform ball',...
-            'uniform ball_box-to-ball','uniform ball_normal-to-ball','uniform sphere',...
-            'uniform sphere_box-to-sphere','uniform sphere_normal-to-sphere'})));
+            'uniform ball_box','uniform ball_normal','uniform sphere',...
+            'uniform sphere_box','uniform sphere_normal'})));
         f_addParamVal(p,'abstol',default.abstol,@isnumeric);
         f_addParamVal(p,'reltol',default.reltol,@isnumeric);
         f_addParamVal(p,'mmin',default.mmin,@isnumeric);
@@ -702,11 +702,11 @@ end
 % Force measure to be one of the allowed ones
 if ~(strcmp(out_param.measure,'uniform') || strcmp(out_param.measure,'normal') || ...
         strcmp(out_param.measure,'uniform ball') || ...
-        strcmp(out_param.measure,'uniform ball_box-to-ball') || ...
-        strcmp(out_param.measure,'uniform ball_normal-to-ball') || ...
+        strcmp(out_param.measure,'uniform ball_box') || ...
+        strcmp(out_param.measure,'uniform ball_normal') || ...
         strcmp(out_param.measure,'uniform sphere') || ...
-        strcmp(out_param.measure,'uniform sphere_box-to-sphere') || ...
-        strcmp(out_param.measure,'uniform sphere_normal-to-sphere'))
+        strcmp(out_param.measure,'uniform sphere_box') || ...
+        strcmp(out_param.measure,'uniform sphere_normal'))
     warning('GAIL:cubSobol_g:notmeasure',['Given measure is not allowed.' ...
             ' Using default measure ' num2str(default.measure)])
     out_param.measure = default.measure;
@@ -714,16 +714,16 @@ end
 
 if strcmp(out_param.measure,'uniform ball') || strcmp(out_param.measure,'uniform sphere')
     out_param.transf = default.transf;
-elseif strcmp(out_param.measure,'uniform ball_box-to-ball')
+elseif strcmp(out_param.measure,'uniform ball_box')
     out_param.transf = 1;
     out_param.measure = 'uniform ball';
-elseif strcmp(out_param.measure,'uniform ball_normal-to-ball')
+elseif strcmp(out_param.measure,'uniform ball_normal')
     out_param.transf = 2;
     out_param.measure = 'uniform ball';
-elseif strcmp(out_param.measure,'uniform sphere_box-to-sphere')
+elseif strcmp(out_param.measure,'uniform sphere_box')
     out_param.transf = 1;
     out_param.measure = 'uniform sphere';
-elseif strcmp(out_param.measure,'uniform sphere_normal-to-sphere')
+elseif strcmp(out_param.measure,'uniform sphere_normal')
     out_param.transf = 2;
     out_param.measure = 'uniform sphere';
 end
@@ -873,7 +873,7 @@ if (strcmp(out_param.measure,'normal')) && (any(hyperbox(1,:)==hyperbox(2,:)) ||
 end
 if (strcmp(out_param.measure,'uniform ball') || strcmp(out_param.measure,'uniform sphere'))...
         && ~all(all(isfinite(hyperbox)))
-    warning('GAIL:cubSobol_g:infinitecoordinateofthecenter',['If uniform ball or sphere measure, all the coordinates of the center must be finites.' ...
+    warning('GAIL:cubSobol_g:infinitecoordinateforthecenter',['If uniform ball or sphere measure, all the coordinates of the center must be finite.' ...
             ' Using the origin as the center:'])
     hyperbox = zeros(1,out_param.d);
 end
