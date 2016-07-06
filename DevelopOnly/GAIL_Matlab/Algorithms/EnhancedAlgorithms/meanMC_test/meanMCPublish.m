@@ -23,7 +23,8 @@ test1 = meanMC(obj1);
 % In this example, we are interested in estimating E[sin(U)], where U is
 % uniformly distributed over [0, 1]. We use U as the control variate.
 obj2.method = {'cv'};
-obj2.cv_param.YXrand = @sinr_cv;
+sinr_help = @(x) [sin(x(:,1)) x(:,1)];
+obj2.cv_param.YXrand = @(n) sinr_help(repmat(rand(n,1),1,2)); 
 obj2.cv_param.muX = 0.5;
 obj2.cv_param.ncv = 1.1e3; 
 obj2.cv_param.ridge = 1e-3;
@@ -33,7 +34,7 @@ test2 = meanMC(obj2);
 % In this example, we are interested in estimating E[sin(U)], where U is
 % uniformly distributed over [0, 1]. We use sin(1-U) as the antithetic variate.
 obj3.method = {'av'};
-obj3.av_param.YYrand = @sinr_av;
+obj3.av_param.YYrand = @(n) sin(bsxfun(@plus, bsxfun(@times, rand(n, 1), [1, -1]), [0, 1]));
 test3 = meanMC(obj3);
 [mu param] = genMu(test3)
 %% Combined methods
@@ -45,14 +46,15 @@ test3 = meanMC(obj3);
 obj4.method = {'cv','av','plain'};
 obj4.nc = 1e3; % number of samples (per method) used to compare different methods
 obj4.Yrand = @(n) sin(rand(n, 1));
-obj4.cv_param.YXrand = @sinr_cv;
+sinr_help = @(x) [sin(x(:,1)) x(:,1)];
+obj4.cv_param.YXrand = @(n) sinr_help(repmat(rand(n,1),1,2)); 
 obj4.cv_param.muX = 0.5;
 obj4.cv_param.ridge = [1e-3 2e-3]; 
 % use ridge regression to estimate control variate coefficients
 % if multiple ridge coefficients are suggested, this will be interpreted as
 % two different methods (since control variate coefficients are estimated
 % in 2 different ways)
-obj4.av_param.YYrand = @sinr_av;
+obj4.av_param.YYrand = @(n) sin(bsxfun(@plus, bsxfun(@times, rand(n, 1), [1, -1]), [0, 1]));;
 test4 = meanMC(obj4);
 [mu param] = genMu(test4)
 %% Multiple problems at one go
@@ -72,12 +74,16 @@ obj5.in_param.reltol = 0;
 obj5.in_param.alpha = [1e-2 2e-2]; % different alpha for the two problems
 obj5.method = {'cv','av','plain'};
 obj5.nc = 1e3;
+sinr_help = @(x) [sin(x(:,1)) x(:,1)];
+expr_help = @(x) [exp(x(:,1)) x(:,1)];
 obj5.Yrand = {@(n) sin(rand(n, 1)), @(n) exp(rand(n, 1))};
-obj5.cv_param.YXrand = {@sinr_cv, @expr_cv};
+obj5.cv_param.YXrand = {@(n) sinr_help(repmat(rand(n,1),1,2)), ...
+            @(n) expr_help(repmat(rand(n,1),1,2))};
 obj5.cv_param.muX = 0.5;
 obj5.cv_param.ncv = 1e3;
 obj5.cv_param.ridge = {[0 1e-3] 0}; % different ridge coefficients
-obj5.av_param.YYrand = {@sinr_av, @expr_av};
+obj5.av_param.YYrand = {@(n) sin(bsxfun(@plus, bsxfun(@times, rand(n, 1), [1, -1]), [0, 1])), ...
+            @(n) exp(bsxfun(@plus, bsxfun(@times, rand(n, 1), [1, -1]), [0, 1]))};
 test = meanMC(obj5);
 test5 = meanMC(obj5);
 [mu param] = genMu(test5);
