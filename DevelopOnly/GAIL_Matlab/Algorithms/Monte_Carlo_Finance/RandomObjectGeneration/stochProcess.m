@@ -65,16 +65,16 @@ classdef stochProcess < handle & matlab.mixin.CustomDisplay
                    val = varargin{2};
                end
             end
-            if isstruct(val)
-               obj.restInput = val;
+            if isstruct(val) %properties of stochProcess might be assigned
                if isfield(val,'inputType')
                   obj.inputType = val.inputType;
-                  obj.restInput=rmfield(obj.restInput,'inputType');
+                  obj.restInput=rmfield(val,'inputType');
                end
                if isfield(val,'timeDim')
                   obj.timeDim = val.timeDim;
-                  obj.restInput=rmfield(obj.restInput,'timeDim');
+                  obj.restInput=rmfield(val,'timeDim');
                end
+               obj.restInput = val;
             end
          end
       end
@@ -88,7 +88,7 @@ classdef stochProcess < handle & matlab.mixin.CustomDisplay
          elseif isfield(val,'nSteps') %data for nSteps provided
             validateattributes(val.nSteps, ...
                {'numeric'}, {'scalar','integer','positive'})
-            obj.timeDim.timeVector = 1:obj.timeDim.nSteps; %time vector      
+            obj.timeDim.timeVector = 1:val.nSteps; %time vector      
          end
          if isfield(val,'dim')
             validateattributes(val.dim, {'numeric'}, ...
@@ -131,7 +131,7 @@ classdef stochProcess < handle & matlab.mixin.CustomDisplay
             return %can only plot if a genPaths method exists
          end
          offset = 1; %the last input just looked at 
-         if nargin > offset %does another input exist
+         if nargin > offset %another input exists
             if ischar(varargin{offset})
                if any(strcmp(varargin{offset},obj.allowedPlotKind)) %is it a kind of plot
                   plotKind = varargin{offset}; %then set it to the desired kind
@@ -207,7 +207,7 @@ classdef stochProcess < handle & matlab.mixin.CustomDisplay
          end
          set(gca,'fontsize',obj.defaultFontSize)
          if nargout
-            varargout{1}=h;
+            varargout{1} = h;
          end
       end
       

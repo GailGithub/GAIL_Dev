@@ -1,14 +1,29 @@
-%comparison between funappx_g and funappxlocal_g
-function [timeratio,timelgratio,npointsratio,npointslgratio]=workout_funappx_g(nrep,abstol,nlo,nhi)
+%comparison between funappxPenalty_g and funappx_g
+function [timeratio,timelgratio,npointsratio,npointslgratio]=workout_funappx_g(nrep,abstol,nlo,nhi,varargin)
 % user can choose absolut error tolerance, initial number of points, number
 % of iteration or can use the following parameters
 % nrep = 100; abstol = 1e-7; nlo = 100; nhi = 1000;
+% 
+% Compare funappxPenalty_g with funappxglobal_g:
+% [timeratio,timelgratio,npointsratio,npointslgratio]=workout_funappx_g(nrep,abstol,nlo,nhi,'funappxPenalty_g');
+%
+% Compare funappx_g with funappxglobal_g:
+% [timeratio,timelgratio,npointsratio,npointslgratio]=workout_funappx_g(nrep,abstol,nlo,nhi,);
+
 c = rand(nrep,1)*4;
 n = 3;
 npoints = zeros(n,2,nrep);
 time = zeros(n,2,nrep);
-warning('off','GAIL:funappx_g:peaky')
-warning('off','GAIL:funappx_g:exceedbudget')
+if isempty(varargin)
+  algoname = 'funappx_g';
+  algo = @(f,a,b,abstol,nlo,nhi) funappx_g(f,a,b,abstol,nlo,nhi);
+else 
+  algoname = varargin{1};
+  algo = str2func(['@(f,a,b,abstol,nlo,nhi)', algoname,'(f,a,b,abstol,nlo,nhi)']);  
+end
+
+warning('off',['GAIL:',algoname,':peaky'])
+warning('off',['GAIL:',algoname,':exceedbudget'])
 warning('off','GAIL:funappxglobal_g:peaky')
 warning('off','GAIL:funappxglobal_g:exceedbudget')
 for i = 1:nrep;
@@ -21,7 +36,7 @@ for i = 1:nrep;
 %         c(i)*cos(x) - c(i)*sin(x))+exp(2*x).*(c(i) + 2*cos(x)...
 %         - 2* sin(x) - c(i)*sin(2*x)));
     tic;
-    [~, out_param] = funappx_g(f1,a,b,abstol,nlo,nhi);
+    [~, out_param] = algo(f1,a,b,abstol,nlo,nhi);
     t=toc;
     time(1,1,i) = t;
     npoints(1,1,i) = out_param.npoints;
@@ -31,7 +46,7 @@ for i = 1:nrep;
     time(1,2,i) = t;
     npoints(1,2,i) = out_param.npoints;
     tic;
-    [~, out_param] = funappx_g(f2,a,b,abstol,nlo,nhi);
+    [~, out_param] = algo(f2,a,b,abstol,nlo,nhi);
     t=toc;
     time(2,1,i) =  t;
     npoints(2,1,i) = out_param.npoints;
@@ -44,7 +59,7 @@ for i = 1:nrep;
     %    disp(['slow']), c(i), a, b
     %end
     tic;
-    [~, out_param] = funappx_g(f3,a,b,abstol,nlo,nhi);
+    [~, out_param] = algo(f3,a,b,abstol,nlo,nhi);
     t=toc;
     time(3,1,i) =   t;
     npoints(3,1,i) = out_param.npoints;
@@ -57,7 +72,7 @@ for i = 1:nrep;
     %    disp(['fast']), c(i), a, b
     %end
 %     tic;
-%     [~, out_param] = funappx_g(f4,a,b,abstol,nlo,nhi);
+%     [~, out_param] = algo(f4,a,b,abstol,nlo,nhi);
 %     t=toc;
 %     time(4,1,i) = t;
 %     npoints(4,1,i) = out_param.npoints;
@@ -69,9 +84,9 @@ for i = 1:nrep;
 %     tic;
 end;
 warning('on','GAIL:funappxglobal_g:exceedbudget')
-warning('on','GAIL:funappx_g:peaky')
-warning('on','GAIL:funappx_g:exceedbudget')
 warning('on','GAIL:funappxglobal_g:peaky')
+warning('on',['GAIL:',algoname,':peaky'])
+warning('on',['GAIL:',algoname,':exceedbudget'])
 
 cc = 2.5;
 test1 = @(x) (x-cc).^2;
@@ -132,7 +147,7 @@ npointsratio(1:max_idx_n) = 1.0 ./npointsratio(1:max_idx_n);
 if usejava('jvm') || MATLABVERSION <= 7.12
     figure
     plot(x,y1,'g--+',x,y2,'b--x',x,y3,'m--o')
-    legend('Quadratic','Perodic','Peaky')
+    legend('Quadratic','Oscillatory','Peaky')
     gail.save_eps('WorkoutFunappxOutput', 'testfun');
     
     figure
@@ -150,7 +165,7 @@ if usejava('jvm') || MATLABVERSION <= 7.12
     t =1:nrep*n;
     plot(t,timeratio,'r',t,npointsratio,'b:');
     legend('time ratio','points ratio');
-    gail.save_eps('WorkoutFunappxOutput', 'WorkoutFunAppxTest');
+    gail.save_eps('WorkoutFunappxOutput', ['Workout',algoname,'Test']);
     %show two y-axis in one graph
 %     ax = plotyy(t,timeratio,t,npointsratio,'plot','plot');
 %     ylabel(ax(1),'Time ratio of local/global') % label left y-axis
@@ -173,11 +188,12 @@ if usejava('jvm') || MATLABVERSION <= 7.12
 %     line(t,npointsratio,'Color','b','LineStyle','--x','Parent',ax2);
 %     gail.save_eps('WorkoutFunappxOutput', 'WorkoutFunAppxTest');   
 end;
-gail.save_mat('WorkoutFunappxOutput', 'WorkoutFunAppxTest', true, npoints,time,...
+gail.save_mat('WorkoutFunappxOutput', ['Workout',algoname,'Test'], true, npoints,time,...
     c,timeratio,npointsratio,npointslgratio,timelgratio);
 
 end
 
+%% If funappxPenalty_g is used:
 % % Sample output for nrep=1000; abstol = 1e-7; nlo = 100; nhi = 1000;
 % %    Test      Number of Points       Time Used
 % %  Function   Local      Global     Local    Global
@@ -194,4 +210,20 @@ end
 % % npointslgratio =
 % % 
 % %        0.3610    1.2173    0.1076
+%
+%% If funappx_g is used:
+% 
+%    Test      Number of Points       Time Used
+%  Function   Local      Global     Local    Global
+%         1      7781     194166   0.0045961    0.0379585
+%         2     53917     425327   0.0223668    0.0496360
+%         3     22875    2092566   0.0158381    0.2506039
+%
+% timelgratio =
+%
+%     0.1211    0.4506    0.0632
+%
+% npointslgratio =
+% 
+%     0.0401    0.1268    0.0109
 

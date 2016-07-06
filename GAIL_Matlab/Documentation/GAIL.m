@@ -20,16 +20,21 @@
 %% Functions
 %
 % <html>
-% <a href="help_funappx_g.html">funappx_g</a>
-% <a href="help_integral_g.html">integral_g</a>
-% <a href="help_funmin_g.html">funmin_g</a>
-% <a href="help_meanMC_g.html">meanMC_g</a>
-% <a href="help_cubMC_g.html">cubMC_g</a>
-% <a href="help_meanMCBer_g.html">meanMCBer_g</a>
-% <a href="help_cubSobol_g.html">cubSobol_g</a>
-% <a href="help_cubLattice_g.html">cubLattice_g</a>
+%    <a href="help_funappx_g.html">funappx_g</a>
+% <p><a href="help_integral_g.html">integral_g</a>
+% <p><a href="help_funmin_g.html">funmin_g</a>
+% <p><a href="help_meanMC_g.html">meanMC_g</a>
+% <p><a href="help_cubMC_g.html">cubMC_g</a>
+% <p><a href="help_meanMCBer_g.html">meanMCBer_g</a>
+% <p><a href="help_cubSobol_g.html">cubSobol_g</a>
+% <p><a href="help_cubLattice_g.html">cubLattice_g</a>
 % </html>
 %
+%% Demos
+%
+% <html>
+% <a href="demo_cubSobol_g.html">Demos for cubSobol_g</a>
+% </html>
 %
 %% Website
 % For more information about GAIL, visit

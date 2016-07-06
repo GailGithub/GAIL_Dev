@@ -9,6 +9,7 @@ abstol = 1e-3;
 reltol = abstol;
 format long
 in_param.measure  = 'uniform';
+disp('');
 disp(horzcat('Dim  ', ' FcnIdx ',  '      Q    ','         f_true     ',...
     '          Err      ','      Sample Used    ', '         Stats  ')); 
 disp(        '-----------------------------------------------------------------------------------------------------');

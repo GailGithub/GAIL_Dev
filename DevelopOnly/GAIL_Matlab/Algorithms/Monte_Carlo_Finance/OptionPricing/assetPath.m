@@ -2,8 +2,8 @@ classdef assetPath < brownianMotion
 
 %% assetPath
 % is a class of discretized stochastic processes that model the values of
-% an asset with respect to time. Browniam motions are used to build these
-% asset paths.
+% an asset with respect to time. Browniam motions are used to construct
+% these asset paths.
 % 
 %
 % Example 1
@@ -26,20 +26,21 @@ classdef assetPath < brownianMotion
 %       assetParam_interest: 0.0100
 %     assetParam_volatility: 0.5000
 
-% Authors: Fred J. Hickernell
+% Authors: Fred J. Hickernell, Xinyan Zhang
 
 %% Properties
-% This process inherits properties from the |stochProcess| class.  Below are 
-% values assigned to that are abstractly defined in that class plus some
-% properties particulary for this class
+% This process inherits properties from the |brownianMotion| class.  Below
+% are values assigned to that are abstractly defined in that class plus
+% some properties particulary for this class.
+
    properties (SetAccess=public) %so they can only be set by the constructor
-      assetParam = struct('pathType', 'GBM', ... %type of asset path
+      assetParam = struct('pathType','GBM', ... %type of asset path
          'initPrice', 10, ... %initial asset price
          'interest', 0.01, ... %interest rate
          'volatility', 0.5,... %volatility      
          'drift', 0,... %drift
          'nAsset', 1,... %number of assets 
-         'corrMat', 1) %A transpose     
+         'corrMat', 1) %A transpose  
    end
    
    properties (Constant, Hidden) %do not change & not seen
@@ -47,15 +48,16 @@ classdef assetPath < brownianMotion
          %kinds of asset paths that we can generate
    end
    
+   
    properties (Dependent = true)
        sqCorr
    end
-
+ 
 
 
 %% Methods
-% The constructor for |assetPath| uses the |brownianMotion| constructor
-% and then parses the other properties. The function |genStockPaths| generates
+% The constructor for |assetPath| uses the |brownianMotion| constructor and
+% then parses the other properties. The function |genStockPaths| generates
 % the asset paths based on |whiteNoise| paths.
 
    methods
@@ -127,7 +129,7 @@ classdef assetPath < brownianMotion
             validateattributes(val.drift,{'numeric'}, ...
                {'scalar'})
             obj.assetParam.drift=val.drift; %row
-         end
+         end                  
       end
       
       % Generate square root of correlation matrix
@@ -135,11 +137,11 @@ classdef assetPath < brownianMotion
           [U,S] = svd(obj.assetParam.corrMat);
           val = sqrt(S)*U';
        end
-      
+                  
       % Generate asset paths
       function [paths]=genPaths(obj,val)
          bmpaths = genPaths@brownianMotion(obj,val);
-         nPaths = size(bmpaths,1);
+         nPaths = size(bmpaths,1);             
          if strcmp(obj.assetParam.pathType,'GBM')
             tempc=zeros(nPaths,obj.timeDim.nSteps);
             paths=zeros(nPaths,obj.timeDim.nCols);
@@ -158,24 +160,23 @@ classdef assetPath < brownianMotion
              end
          end
       end
-                 
    end
+  
 
    methods (Access = protected)
 
       function propList = getPropertyList(obj)
-         propList = getPropertyList@brownianMotion(obj);
-         propList.assetParam_pathType = obj.assetParam.pathType;
-         propList.assetParam_initPrice = obj.assetParam.initPrice;
-         propList.assetParam_interest = obj.assetParam.interest;
-         propList.assetParam_volatility = obj.assetParam.volatility;
-         if obj.assetParam.drift ~=0
-            propList.assetParam_drift = obj.assetParam.drift;
-         end
-         propList.assetParam_nAsset = obj.assetParam.nAsset;
+            propList = getPropertyList@brownianMotion(obj);
+            propList.assetParam_pathType = obj.assetParam.pathType;
+            propList.assetParam_initPrice = obj.assetParam.initPrice;
+            propList.assetParam_interest = obj.assetParam.interest;
+            propList.assetParam_volatility = obj.assetParam.volatility;
+            if obj.assetParam.drift ~=0
+                propList.assetParam_drift = obj.assetParam.drift;
+            end
+            propList.assetParam_nAsset = obj.assetParam.nAsset;          
       end
 
    end
 
 end
-
