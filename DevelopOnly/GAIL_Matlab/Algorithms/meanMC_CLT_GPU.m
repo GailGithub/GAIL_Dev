@@ -57,11 +57,7 @@ if nargin < 6
             if nargin < 2
                absTol = 0.01; %absolute error tolerance
                if nargin < 1
-                   S0 = 100;
-                   sigma = 0.5;
-                   d = 5;
-                   T = 2;
-                  Yrand = @(n) S0*exp(((sigma*sigma)/2)*T+sigma*sqrt(T/d)*sum(rand(n,d,'double','gpuArray'),2)); %random number generator
+                   Yrand = @(n) gpuArray.rand(n,1); %random number generator
                end
             end
          end
