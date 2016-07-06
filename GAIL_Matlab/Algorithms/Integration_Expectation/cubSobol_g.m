@@ -284,9 +284,9 @@ if strcmpi(out_param.measure,'uniform ball') || strcmpi(out_param.measure,'unifo
             out_param.measure = 'uniform';% them a uniform distribution on a box can be used
         else
             if strcmpi(out_param.measure,'uniform ball')
-                f = @(t) f(ball_psi_1(t, out_param.d, out_param.radius, hyperbox))*volume;% the psi function is the transformation
+                f = @(t) f(gail.ball_psi_1(t, out_param.d, out_param.radius, hyperbox))*volume;% the psi function is the transformation
             else
-                f = @(t) f(sphere_psi_1(t, out_param.d, out_param.radius, hyperbox))*volume;% the psi function is the transformation 
+                f = @(t) f(gail.sphere_psi_1(t, out_param.d, out_param.radius, hyperbox))*volume;% the psi function is the transformation 
                 out_param.d = out_param.d - 1;% the box-to-sphere transformation takes points from a (d-1)-dimensional box to a d-dimensional sphere
             end
             hyperbox = [zeros(1, out_param.d); ones(1, out_param.d)];% the hyperbox must be the domain of the transformation, which is a unit box
@@ -294,9 +294,9 @@ if strcmpi(out_param.measure,'uniform ball') || strcmpi(out_param.measure,'unifo
         end
     else % normal-to-ball or normal-to-sphere transformation should be used
         if strcmpi(out_param.measure,'uniform ball')
-            f = @(t) f(ball_psi_2(t, out_param.d, out_param.radius, hyperbox))*volume;% the psi function is the transformation
+            f = @(t) f(gail.ball_psi_2(t, out_param.d, out_param.radius, hyperbox))*volume;% the psi function is the transformation
         else
-            f = @(t) f(sphere_psi_2(t, out_param.d, out_param.radius, hyperbox))*volume;% the psi function is the transformation 
+            f = @(t) f(gail.sphere_psi_2(t, out_param.d, out_param.radius, hyperbox))*volume;% the psi function is the transformation 
         end
         hyperbox = bsxfun(@plus, zeros(2, out_param.d), [-inf; inf]);% the hyperbox must be the domain of the transformation, which is a this unit box
         out_param.measure = 'normal';% them a normal distribution can be used
@@ -883,73 +883,4 @@ if (strcmp(out_param.measure,'uniform ball') || strcmp(out_param.measure,'unifor
     hyperbox = zeros(1,out_param.d);
 end
 
-end
-
-% normal-to-ball transformation
-% transformation from a normal distributions on a d-dimensional space to a uniform distribution on a d-dimensional ball.
-function Z = ball_psi_2(t, d, r, center)
-    radius2 = @(t) sum(t.^2, 2); %computes the radius squared
-    factor = @(t) ((chi2cdf(radius2(t),d).^(1.0/d))./sqrt(radius2(t)));% computes the factor by which the input must be multiplied
-
-    Z = bsxfun(@plus, center, r * bsxfun(@times,t,factor(t)));% center + r * (factor*t)
-end
-
-% box-to-ball transformation
-% transformation from a uniform distributions on a d-dimensional box to a uniform distribution on a d-dimensional ball.
-function Z = ball_psi_1(t, d, r, center)
-    X = TFWW_algorithm(t,d);% getting points uniformly distributed on a d-dimensional sphere 
-    u = t(:,1);% a uniform distribution on the interval [0, 1]
-    Z = bsxfun(@plus, center, r * bsxfun(@times, u.^(1.0/d), X)); %center + r * ((u^(1/d))*t)
-end
-
-% normal-to-sphere transformation
-% transformation from a normal distributions on a d-dimensional space to a uniform distribution on a d-dimensional sphere.
-function Z = sphere_psi_2(t, d, r, center)
-    radius = sqrt(sum(t.^2, 2)); %computes the radius
-    Z = bsxfun(@plus, center, r * bsxfun(@times,t,radius.^(-1)));% center + r * (factor*t)
-end
-
-% box-to-sphere transformation
-% transformation from a uniform distributions on a (d-1)-dimensional box to a uniform distribution on a d-dimensional sphere.
-function Z = sphere_psi_1(t, d, r, center)
-    t = [zeros(size(t,1),1) t];
-    X = TFWW_algorithm(t,d);% getting points uniformly distributed on a d-dimensional sphere 
-    Z = bsxfun(@plus, center, r * X); %center + r * X
-end
-
-% algorithm that computes the transformation from a uniform distributions on a d-dimensional box
-% to a uniform distribution on a d-dimensional sphere, using the d-1 last coordinates of t
-function X = TFWW_algorithm(t, d)    
-    if mod(d,2) == 0 % d even
-        m = d/2;
-        g = zeros(size(t,1),m+1);% g is 1-based, diferently from the original algorithm
-        g(:,m+1) = ones(size(t,1),1);
-        
-        exponents = ones(1, m-1)./(1:m-1);
-        g(:,2:m) = cumprod(bsxfun(@power, t(:,2:m), exponents), 2, 'reverse');
-        
-        dd = sqrt(diff(g,1,2));
-        
-        X = reshape([dd.*cos(2*pi*t(:,m+1:2*m)); dd.*sin(2*pi*t(:,m+1:2*m))], size(t,1), 2*m);
-
-    else %d odd
-        m = (d-1)/2;
-        g = zeros(size(t,1),m+1);% g is 1-based, diferently from the original algorithm
-        g(:,m+1) = ones(size(t,1),1);
-        
-        exponents = (2*ones(1, m-1))./(3:2:2*m-1);
-        g(:,2:m) = cumprod(bsxfun(@power, t(:,2:m), exponents), 2, 'reverse');
-        
-        dd = sqrt(diff(g,1,2)); % dd is equivalent to the d vector in the original algorithm
-              
-        X = zeros(size(t)); %initializing the answer matrix for efficiency 
-        
-        X(:,1) = dd(:,1).*(1-2*t(:,m+1));
-        X(:,2) = 2*dd(:,1).*sqrt(t(:,m+1).*(1-t(:,m+1))).*cos(2*pi*t(:,m+2));%multiplied by 2 to match formula (cf.(1.5.28))
-        X(:,3) = 2*dd(:,1).*sqrt(t(:,m+1).*(1-t(:,m+1))).*sin(2*pi*t(:,m+2));%multiplied by 2 to match formula (cf.(1.5.28))
-        
-        if d > 3
-            X(:,4:end) = reshape([dd(:,2:end).*cos(2*pi*t(:,m+3:2*m+1)); dd(:,2:end).*sin(2*pi*t(:,m+3:2*m+1))], size(t,1), 2*(m-1));
-        end
-    end
 end
