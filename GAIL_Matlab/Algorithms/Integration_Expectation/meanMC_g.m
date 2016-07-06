@@ -343,7 +343,157 @@ eps = min(NCheb_inv,NBE_inv);
 %take the min of Chebyshev and Berry Esseen tolerance
 end
 
-numel(varargin)>1
+function  [Yrand,out_param] = meanMC_g_param(varargin)
+
+default.abstol  = 1e-2;% default absolute error tolerance
+default.reltol = 1e-1;% default relative error tolerance
+default.nSig = 1e4;% default initial sample size nSig for variance estimation
+default.n1 = 1e4; % default initial sample size n1 for mean estimation
+default.alpha = 0.01;% default uncertainty
+default.fudge = 1.2;% default fudge factor
+default.tbudget = 100;% default time budget
+default.nbudget = 1e9; % default sample budget
+if isempty(varargin)
+    help meanMC_g
+    warning('GAIL:meanMC_g:yrandnotgiven',...
+        'Yrand must be specified. Now GAIL is using Yrand =@(n) rand(n,1).^2.')
+    Yrand = @(n) rand(n,1).^2;
+    %if no values are parsed, print warning message and use the default
+    %random variable
+else
+    Yrand = varargin{1};
+end
+
+validvarargin=numel(varargin)>1;
+if validvarargin
+    in2=varargin{2};
+    validvarargin=(isnumeric(in2) || isstruct(in2) ...
+        || ischar(in2));
+end
+
+if ~validvarargin
+    %if there is only input which is Yrand, use all the default parameters
+    out_param.abstol = default.abstol;% default absolute error tolerance
+    out_param.reltol = default.reltol; % default relative error tolerance
+    out_param.alpha = default.alpha;% default uncertainty
+    out_param.fudge = default.fudge;% default standard deviation inflation factor
+    out_param.nSig = default.nSig;% default the sample size to estimate the variance
+    out_param.n1 = default.n1;% default the initial sample size to estimate the mean
+    out_param.tbudget = default.tbudget;% default time budget
+    out_param.nbudget = default.nbudget;% default sample budget
+else
+    p = inputParser;
+    addRequired(p,'Yrand',@gail.isfcn);
+    if isnumeric(in2)
+        %if there are multiple inputs with only numeric, they should be put in order.
+        addOptional(p,'abstol',default.abstol,@isnumeric);
+        addOptional(p,'reltol',default.reltol,@isnumeric);
+        addOptional(p,'alpha',default.alpha,@isnumeric);
+        addOptional(p,'fudge',default.fudge,@isnumeric);
+        addOptional(p,'nSig',default.nSig,@isnumeric);
+        addOptional(p,'n1',default.n1,@isnumeric);
+        addOptional(p,'tbudget',default.tbudget,@isnumeric);
+        addOptional(p,'nbudget',default.nbudget,@isnumeric);
+    else
+        if isstruct(in2) %parse input structure
+            p.StructExpand = true;
+            p.KeepUnmatched = true;
+        end
+        addParamValue(p,'abstol',default.abstol,@isnumeric);
+        addParamValue(p,'reltol',default.reltol,@isnumeric);
+        addParamValue(p,'alpha',default.alpha,@isnumeric);
+        addParamValue(p,'fudge',default.fudge,@isnumeric);
+        addParamValue(p,'nSig',default.nSig,@isnumeric);
+        addParamValue(p,'n1',default.n1,@isnumeric);
+        addParamValue(p,'tbudget',default.tbudget,@isnumeric);
+        addParamValue(p,'nbudget',default.nbudget,@isnumeric);
+    end
+    parse(p,Yrand,varargin{2:end})
+    out_param = p.Results;
+end
+if (~gail.isfcn(Yrand))
+    warning('GAIL:meanMC_g:yrandnotfcn',...
+        ['Yrand must be a function handle.'...
+        ' Now GAIL is using default Yrand =@(n) rand(n,1).^2 .'])
+    %print warning message
+    Yrand = @(n) rand(n,1).^2;
+end
+if max(size(Yrand(5)))~=5 || min(size(Yrand(5)))~=1
+    % if the input is not a length n vector, print the warning message
+    warning('GAIL:meanMC_g:yrandnotlengthN',...
+        ['Yrand should be a random variable vector of length n, '...
+        'but not an integrand or a matrix.'...
+        ' Now GAIL is using the default Yrand =@(n) rand(n,1).^2.'])
+    Yrand = @(n) rand(n,1).^2;
+end
+
+if (out_param.abstol < 0)
+    %absolute error tolerance should be positive
+    warning('GAIL:meanMC_g:abstolneg',...
+        ['Absolute error tolerance should be greater than 0; ' ...
+        'We will take the aosolute value of the absolute error tolerance provided.'])
+    out_param.abstol = abs(out_param.abstol);
+end
+if (out_param.reltol < 0 || out_param.reltol > 1)
+    % relative error tolerance should be in [0,1]
+    warning('GAIL:meanMC_g:reltolneg',...
+        ['Relative error tolerance should be between 0 and 1; ' ...
+        'We will use the default value of the relative error tolerance 1e-1.'])
+    out_param.reltol = default.reltol;
+end
+if (out_param.alpha <= 0 ||out_param.alpha >= 1)
+    %uncertainty should be in (0,1)
+    warning('GAIL:meanMC_g:alphanotin01',...
+        ['The uncertainty should be between 0 and 1; '...
+        'We will use the default value 0.01.'])
+    out_param.alpha = default.alpha;
+end
+if (out_param.fudge <= 1)
+    %standard deviation inflation factor should be bigger than 1
+    warning('GAIL:meanMC_g:fudgelessthan1',...
+        ['The fudge factor should be larger than 1; '...
+        'We will use the default value 1.2.'])
+    out_param.fudge = default.fudge;
+end
+if (~gail.isposge30(out_param.nSig))
+    %initial sample size should be a positive integer at least 30
+    warning('GAIL:meanMC_g:nsignotposint',...
+        ['The number nSig should a positive integer at least 30; '...
+        'We will use the default value 1e4.'])
+    out_param.nSig = default.nSig;
+end
+if (~gail.isposge30(out_param.n1))
+    %initial sample size should be a posotive integer at least 30
+    warning('GAIL:meanMC_g:n1notposint',...
+        ['The number n1 should a positive integer at least 30; '...
+        'We will use the default value 1e4.'])
+    out_param.n1 = default.n1;
+end
+if (out_param.tbudget < 0)
+    %time budget in seconds should be positive
+    warning('GAIL:meanMC_g:timebudgetneg',...
+        ['Time budget in seconds should be positive; '...
+        'We will take the absolute value of time budget provided'])
+    out_param.tbudget = abs(out_param.tbudget);
+end
+
+if (out_param.tbudget == 0)
+    %time budget in seconds should be positive
+    warning('GAIL:meanMC_g:timebudget0',...
+        ['Time budget in seconds should be positive rather than zero; '...
+        'We will take the default value of time budget 100 seconds'])
+    out_param.tbudget = abs(out_param.tbudget);
+end
+if (~gail.isposge30(out_param.nbudget))
+    %sample budget should be a large positive integer
+    warning('GAIL:meanMC_g:nbudgetnotposint',...
+        ['The number of sample budget should be a large positive integer; '...
+        'We will use the default value 1e9.'])
+    out_param.nbudget =default.nbudget;
+end
+out_param.flag = 1;
+%pass the signal indicating the parameters have been checked
+end
 
 function out_param = meanMC_g_err(out_param)
 % Handles errors in meanMC_g and meanMC_g_param to give an exit with
