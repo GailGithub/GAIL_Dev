@@ -681,7 +681,7 @@ if ~(strcmp(out_param.measure,'uniform') || strcmp(out_param.measure,'normal') |
         strcmp(out_param.measure,'uniform sphere') || ...
         strcmp(out_param.measure,'uniform sphere_box') || ...
         strcmp(out_param.measure,'uniform sphere_normal'))
-    warning('GAIL:cubSobol_g:notmeasure',['Given measure is not allowed.' ...
+    warning('GAIL:cubLattice_g:notmeasure',['Given measure is not allowed.' ...
             ' Using default measure ' num2str(default.measure)])
     out_param.measure = default.measure;
 end
@@ -706,7 +706,7 @@ end
 if strcmp(out_param.measure,'uniform') || strcmp(out_param.measure,'normal')
     out_param.d = size(hyperbox,2);
     if ~isnumeric(hyperbox) || ~(size(hyperbox,1)==2) || ~(out_param.d<101)
-        warning('GAIL:cubSobol_g:hyperbox_error2',...
+        warning('GAIL:cubLattice_g:hyperbox_error2',...
             'When measure is ''uniform'' or ''normal'', the hyperbox must be a real matrix of size 2 x d where d can not be greater than 100. Example for f(x)=x^2:')
         f = @(x) x.^2;
         out_param.f=f;
@@ -715,7 +715,7 @@ if strcmp(out_param.measure,'uniform') || strcmp(out_param.measure,'normal')
 else
     out_param.d = size(hyperbox,2);
     if ~isnumeric(hyperbox) || ~(size(hyperbox,1)==1) || ~(out_param.d<102)
-        warning('GAIL:cubSobol_g:hyperbox_error3',...
+        warning('GAIL:cubLattice_g:hyperbox_error3',...
             'When measure is ''uniform ball'' or ''uniform sphere'', the hyperbox must be a real matrix of size 1 x (d+1) where d can not be greater than 100. Default values for f and hyperbox will be used:')
         f = @(x) x.^2;
         out_param.f=f;
@@ -727,7 +727,7 @@ else
     out_param.d = out_param.d - 1;
     
     if strcmp(out_param.measure,'uniform ball') && out_param.d <= 0
-        warning('GAIL:cubSobol_g:dimensionequalszero',...
+        warning('GAIL:cubLattice_g:dimensionequalszero',...
             'When measure is ''uniform ball'', the number of dimentions must be a positive values. Default values for f and hyperbox will be used:')
         f = @(x) x.^2;
         out_param.f=f;
@@ -735,7 +735,7 @@ else
     end
     
     if strcmp(out_param.measure,'uniform sphere') && out_param.d <= 1
-        warning('GAIL:cubSobol_g:dimensionsmallerthan2',...
+        warning('GAIL:cubLattice_g:dimensionsmallerthan2',...
             'When measure is ''uniform sphere'', the number of dimentions must be at least 2. Default values for f and hyperbox will be used:')
         f = @(x) x.^2;
         out_param.f=f;
@@ -743,7 +743,7 @@ else
     end
     
     if ~isfinite(out_param.radius) || out_param.radius <= 0.0
-        warning('GAIL:cubSobol_g:infiniteradius',...
+        warning('GAIL:cubLattice_g:infiniteradius',...
             'When measure is ''uniform ball'' or ''uniform sphere'', the radius must a finite positive real number. Default value for the radius will be used:')
         out_param.radius = default.radius;
     end
@@ -835,26 +835,26 @@ end
 
 % Checking on the hyperbox given the measure
 if (strcmp(out_param.measure,'uniform')) && ~all(all(isfinite(hyperbox)))
-    warning('GAIL:cubSobol_g:hyperboxnotfinite',['If uniform measure, hyperbox must be of finite volume.' ...
+    warning('GAIL:cubLattice_g:hyperboxnotfinite',['If uniform measure, hyperbox must be of finite volume.' ...
             ' Using default hyperbox:'])
     disp([zeros(1,out_param.d);ones(1,out_param.d)])
     hyperbox = [zeros(1,out_param.d);ones(1,out_param.d)];
 end
 if (strcmp(out_param.measure,'normal')) && (sum(sum(isfinite(hyperbox)))>0)
-    warning('GAIL:cubSobol_g:hyperboxfinite',['If normal measure, hyperbox must be defined as (-Inf,Inf)^d.' ...
+    warning('GAIL:cubLattice_g:hyperboxfinite',['If normal measure, hyperbox must be defined as (-Inf,Inf)^d.' ...
             ' Using default hyperbox:'])
     disp([-inf*ones(1,out_param.d);inf*ones(1,out_param.d)])
     hyperbox = [-inf*ones(1,out_param.d);inf*ones(1,out_param.d)];
 end
 if (strcmp(out_param.measure,'normal')) && (any(hyperbox(1,:)==hyperbox(2,:)) || any(hyperbox(1,:)>hyperbox(2,:)))
-    warning('GAIL:cubSobol_g:hyperboxnormalwrong',['If normal measure, hyperbox must be defined as (-Inf,Inf)^d.' ...
+    warning('GAIL:cubLattice_g:hyperboxnormalwrong',['If normal measure, hyperbox must be defined as (-Inf,Inf)^d.' ...
             ' Using default hyperbox:'])
     disp([-inf*ones(1,out_param.d);inf*ones(1,out_param.d)])
     hyperbox = [-inf*ones(1,out_param.d);inf*ones(1,out_param.d)];
 end
 if (strcmp(out_param.measure,'uniform ball') || strcmp(out_param.measure,'uniform sphere'))...
         && ~all(all(isfinite(hyperbox)))
-    warning('GAIL:cubSobol_g:infinitecoordinateforthecenter',['If uniform ball or sphere measure, all the coordinates of the center must be finite.' ...
+    warning('GAIL:cubLattice_g:infinitecoordinateforthecenter',['If uniform ball or sphere measure, all the coordinates of the center must be finite.' ...
             ' Using the origin as the center:'])
     hyperbox = zeros(1,out_param.d);
 end
