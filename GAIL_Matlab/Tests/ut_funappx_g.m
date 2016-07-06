@@ -1,15 +1,15 @@
-%UT_FUNAPPX_G fast unit tests for funappx_g
+%UT_funappx_g fast unit tests for funappx_g
 classdef ut_funappx_g < matlab.unittest.TestCase
     
     methods(Test)
         function funappx_gofConstantFunction(testCase)
             f = @(x) 3;
             in_param.maxiter = 1;
-            in_param.nlo = 1;
-            in_param.nhi = 1;
-            [fappx, result] = testCase.verifyWarning(@()funappx_g(f,in_param),'GAIL:funappx_g:exceediter');
+            in_param.nlo = 3;
+            in_param.nhi = 3;
+            [fappx, result] = funappx_g(f,in_param);
             testCase.verifyLessThanOrEqual(result.iter, 1);
-            testCase.verifyEqual(result.npoints,3);
+            testCase.verifyEqual(result.npoints, 5);
             x = 0:0.1:1;
             testCase.verifyLessThanOrEqual(norm(fappx(x)-f(x)), eps);
         end
@@ -29,14 +29,14 @@ classdef ut_funappx_g < matlab.unittest.TestCase
         function funappx_gOf100000x(testCase)
             f = @(x) 100000 .* x;
             in_param.abstol = 10^(-8);
-            in_param.nlo = 1;
-            in_param.nhi = 1;
+            in_param.nlo = 5;
+            in_param.nhi = 5;
             [fappx, result] = funappx_g(f,in_param);
             x = rand(10000,1);
             actualerr = max(abs(fappx(x)-f(x)));
             testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
             testCase.verifyLessThanOrEqual(result.iter, 1);
-            testCase.verifyLessThanOrEqual(result.npoints, 3);
+            testCase.verifyLessThanOrEqual(result.npoints, 5);
          end
         
         function funappx_gOfxsquare(testCase)
@@ -124,14 +124,14 @@ classdef ut_funappx_g < matlab.unittest.TestCase
             f = @(x) x.^2;
             in_param.a = 2;
             in_param.b = 1;
-            [fappx, result] = testCase.verifyWarning(@()funappx_g(f,in_param),'GAIL:funappx_g:blea');
+            [fappx, result] = testCase.verifyWarning(@()funappx_g(f,in_param),'GAIL:gail1D_in_param:blea');
             x = rand(10000,1)*(result.b-result.a)+result.a;
             actualerr = max(abs(fappx(x)-f(x)));
             testCase.verifyLessThanOrEqual(actualerr,result.abstol);
         end
         
         function funappx_gOfnofunction(testCase)
-            [fappx, result] = testCase.verifyWarning(@()funappx_g,'GAIL:funappx_g:nofunction');
+            [fappx, result] = testCase.verifyWarning(@()funappx_g,'GAIL:gail_in_param:notfunction');
             x = rand(10000,1)*(result.b-result.a)+result.a;
             actualerr = max(abs(fappx(x)-result.f(x)));
             testCase.verifyLessThanOrEqual(actualerr,result.abstol);
@@ -141,7 +141,7 @@ classdef ut_funappx_g < matlab.unittest.TestCase
             f = @(x) x.^2;
             in_param.a = 1;
             in_param.b = 1;
-            [fappx, result] = testCase.verifyWarning(@()funappx_g(f,in_param),'GAIL:funappx_g:beqa');
+            [fappx, result] = testCase.verifyWarning(@()funappx_g(f,in_param),'GAIL:gail1D_in_param:beqa');
             x = rand(10000,1)*(result.b-result.a)+result.a;
             actualerr = max(abs(fappx(x)-f(x)));
             testCase.verifyLessThanOrEqual(actualerr,result.abstol);
@@ -149,9 +149,10 @@ classdef ut_funappx_g < matlab.unittest.TestCase
         
         function funappx_gOfexceedbudget(testCase)
             f = @(x) x.^2;
-            in_param.nmax = 1000;
+            in_param.nmax = 200;
             [~, result] = testCase.verifyWarning(@()funappx_g(f,in_param),'GAIL:funappx_g:exceedbudget');
             testCase.verifyLessThanOrEqual(result.npoints,result.nmax);
+            testCase.verifyEqual(result.exitflag,logical([1 0 0 0 0]));
         end
         
         function funappx_gOfexceediter(testCase)
@@ -163,24 +164,24 @@ classdef ut_funappx_g < matlab.unittest.TestCase
         
          function funappx_gOnpointsoflinear(testCase)
             f = @(x) 3*x + 5;
-            in_param.nlo = 1; in_param.nhi =1;
+            in_param.nlo = 5; in_param.nhi =5;
             [~, result] = funappx_g(f,in_param);
-            testCase.verifyEqual(result.npoints,3);
+            testCase.verifyEqual(result.npoints,5);
          end
         
          function funappx_gOnpointsofconstant(testCase)
             f = @(x) 5;
-            in_param.nlo = 1; in_param.nhi =1;
+            in_param.nlo = 1; in_param.nhi = 1;
             [~, result] = funappx_g(f,in_param);
-            testCase.verifyEqual(result.npoints,3);
+            testCase.verifyEqual(result.npoints,5);
          end
-
-                 
+         
          function funappx_gHighAccuracy(testCase)
             [fappx, result] = funappx_g(@(x)exp(x),'a',-2,'b',2,'nhi',20,'nlo',10, 'abstol', 1e-12);
             x = rand(1000000,1)*(result.b-result.a)+result.a;
             actualerr = max(abs(fappx(x)-result.f(x)));
             testCase.verifyLessThanOrEqual(actualerr,result.abstol);
         end
+         
     end
 end

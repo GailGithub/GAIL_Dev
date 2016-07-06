@@ -1,12 +1,21 @@
 % traubpaper_funappx_g_test: comparison between funappx_g and funappxlocal_g
-function [timeratio,timelgratio,npointsratio,npointslgratio]=traubpaper_funappx_g_test(nrep,abstol,varargin)
+function [timeratio,timelgratio,npointsratio,npointslgratio] ...
+   =traubpaper_funappx_g_test(nrep,abstol,varargin)
 % user can choose absolut error tolerance, initial number of points, number
 % of iteration or can use the following parameters
 % nrep = 100; abstol = 1e-6;
+% Compare funappx_g with funappxglobal_g and chebfun:
+% [timeratio,timelgratio,npointsratio,npointslgratio]=traubpaper_funappx_g_test(nrep,abstol);
 %
-% Compare funappxNoPenalty_g with funappxglobal_g and chebfun:
-% [timeratio,timelgratio,npointsratio,npointslgratio]=traubpaper_funappx_g_test(nrep,abstol,'funappxNoPenalty_g');
-rng default % for reproducibilityI
+% Compare funappxPenalty_g with funappxglobal_g and chebfun:
+% [timeratio,timelgratio,npointsratio,npointslgratio]=traubpaper_funappx_g_test(nrep,abstol,'funappxPenalty_g');
+rng default % for reproducibility
+if nargin < 2
+   abstol = 1e-6;
+   if nargin < 1
+      nrep = 1000;
+   end
+end
 cc = rand(nrep,1);
 c = cc*2; % number of simulations for each test function
 n = 3; % number of test functions
@@ -47,6 +56,9 @@ b = zeros(1,n);
 a(1:3) = [-1,-1,-1];
 b(1:3) = [1,1,1];
 for i = 1:nrep
+  if (i-1)/10 == round((i-1)/10)
+     disp(['Starting case ' int2str(i) ' out of ' int2str(nrep)])
+  end
   f1 = @(x) g1(x,c(i));
   f2 = @(x) g2(x,c(i));
   f3 = @(x) g3(x,cc(i)*0.6);
@@ -73,9 +85,12 @@ for i = 1:nrep
         try
           lastwarn('')
           tic, fappx = chebfun(f,[a(j),b(j)],'chebfuneps', abstol,'splitting','on'); t=toc;
-          if length(lastwarn) > 0
+          if ~isempty(lastwarn)
             exceedmat(j,k,i) = 1;
           end
+        catch
+           disp('Oops')
+           break
         end
         npoints(j,k,i) = length(fappx);
       end
@@ -88,10 +103,10 @@ for i = 1:nrep
       end
       
       trueerrormat(j,k,i) = max(abs(yy-exactyy));
-      if trueerrormat(j,k,i)  > abstol
-        cf_chebfun(f,a(j),b(j), abstol);
-        keyboard
-      end
+%       if trueerrormat(j,k,i)  > abstol
+%         cf_chebfun(f,a(j),b(j), abstol);
+%         keyboard
+%       end
       if k==1
         exceedmat(j,k,i) = sum(out_param.exitflag)>0;
       elseif k==2
@@ -153,16 +168,18 @@ end
 %% Output the table
 % To just re-display the output, load the .mat file and run this section
 % only
-display(' ')
-display('   Test         Number of Points                    Time Used                          Success (%)                                  Failure (%)')
-display('  Function   ----------------------------    -------------------------------     --------------------------------------   ----------------------------------------');
-display('             Local      Global    Chebfun    Local       Global      Chebfun     Local        Global         Chebfun       Local         Global        Chebfun')
-display('                                                                                 No Warn Warn No Warn Warn   No Warn Warn  No Warn Warn  No Warn Warn  No Warn Warn')
+[fileID, fullPath] = gail.open_txt('TraubPaperOutput', ['traub_',algoname,'_test']);
+fprintf(fileID,'\n');
+fprintf(fileID,'# of replications = %1.0f\n',nrep);
+fprintf(fileID,'   Test         Number of Points                    Time Used                          Success (%%)                                  Failure (%%)\n');
+fprintf(fileID,'  Function   ----------------------------    -------------------------------     --------------------------------------   ----------------------------------------\n');
+fprintf(fileID,'             Local      Global    Chebfun    Local       Global      Chebfun     Local        Global         Chebfun       Local         Global        Chebfun\n');
+fprintf(fileID,'                                                                                 No Warn Warn No Warn Warn   No Warn Warn  No Warn Warn  No Warn Warn  No Warn Warn\n');
 npointslgratio = zeros(1,n);
 timelgratio = zeros(1,n);
 
 for i = permuted_index
-  display(sprintf('%9.0f %9.0f %9.0f  %9.0f %11.3f  %11.3f %11.3f  %6.0f %6.0f %6.0f %6.0f %6.0f   %6.0f %6.0f %6.0f %6.0f %6.0f %6.0f %6.0f',...
+  fprintf(fileID,'%9.0f %9.0f %9.0f  %9.0f %11.4f  %11.4f %11.4f  %6.0f %6.0f %6.0f %6.0f %6.0f   %6.0f %6.0f %6.0f %6.0f %6.0f %6.0f %6.0f\n',...
     [i mean(npoints(i,1,:)) mean(npoints(i,2,:)) mean(npoints(i,3,:))...
     mean(time(i,1,:)) mean(time(i,2,:)) mean(time(i,3,:))...
     100.0*sum(trueerrormat(i,1,:)<=abstol)/nrep 100.0*sum(trueerrormat(i,1,:)<=abstol & (exceedmat(i,1,:)))/nrep ...
@@ -170,20 +187,12 @@ for i = permuted_index
     100.0*sum(trueerrormat(i,3,:)<=abstol)/nrep 100.0*sum(trueerrormat(i,3,:)<=abstol & (exceedmat(i,3,:)))/nrep...
     100.0*sum(trueerrormat(i,1,:)>abstol)/nrep  100.0*sum(trueerrormat(i,1,:)>abstol & (exceedmat(i,1,:)))/nrep ...
     100.0*sum(trueerrormat(i,2,:)>abstol)/nrep  100.0*sum(trueerrormat(i,2,:)>abstol & (exceedmat(i,2,:)))/nrep ...
-    100.0*sum(trueerrormat(i,3,:)>abstol)/nrep  100.0*sum(trueerrormat(i,3,:)>abstol & (exceedmat(i,3,:)))/nrep]))
+    100.0*sum(trueerrormat(i,3,:)>abstol)/nrep  100.0*sum(trueerrormat(i,3,:)>abstol & (exceedmat(i,3,:)))/nrep]);
   npointslgratio(i) = mean(npoints(i,1,:))/mean(npoints(i,2,:));
   timelgratio(i) = mean(time(i,1,:))/mean(time(i,2,:));
 end
-
-for k=1:m-1
-  idx=find(timeratio(k,:,:)<1);
-  max_idx_t = max(idx);
-  timeratio(k,1:max_idx_t) = 1./timeratio(k,1:max_idx_t);
-  
-  idx=find(npointsratio(k,:,:)<1);
-  max_idx_n = max(idx);
-  npointsratio(k,1:max_idx_n) = 1.0 ./npointsratio(k,1:max_idx_n);
-end
+fclose(fileID);
+type(fullPath)
 
 %% Output the table
 % To just re-display the output, load the .mat file and run this section
@@ -212,58 +221,38 @@ if usejava('jvm') || MATLABVERSION <= 7.12
 %  gail.save_eps('TraubPaperOutput', ['traub_',algoname,'_testfun']);
   
   figure
-  t = 1:nrep*n;
+  t = ((1:nrep*n) -1/2)/(nrep*n);
   for k = 1:m-1
     %subplot(1,m-1,k)
-    semilogy(t,sorted_timeratio(k,:),'color',markers{k*2-1}); hold on
-    semilogy(t,sorted_npointsratio(k,:),'color',markers{2*k});  hold on
-    xlabel('test functions'); 
+    semilogx(sorted_timeratio(k,:),t,'color',markers{k*2-1}); hold on
+    semilogx(sorted_npointsratio(k,:),t,'color',markers{2*k});  hold on
+    xlabel('Ratios'); 
+    ylabel('Probability')
     %title([algoname, ' vs. ', func2str( methods{k+1})])
   end
   hold off
-  h=legend('{\tt funappx\_g} vs. {\tt funappxglobal\_g} time ratio',...
-           '{\tt funappx\_g} vs. {\tt funappxglobal\_g} points ratio',...
-           '{\tt funappx\_g} vs. Chebfun time ratio',...
-           '{\tt funappx\_g} vs. Chebfun points ratio',...
-           'Location','NorthWest');
-  set(h, 'Interpreter', 'latex')
-  legend BOXOFF 
+%   h=legend('{\tt funappx\_g} time / {\tt funappxglobal\_g} time',...
+%            '{\tt funappx\_g} vs. {\tt funappxglobal\_g} points ratio',...
+%            '{\tt funappx\_g} vs. Chebfun time ratio',...
+%            '{\tt funappx\_g} vs. Chebfun points ratio',...
+%            'Location','NorthWest');
+%   set(h, 'Interpreter', 'latex')
+%   legend BOXOFF 
   gail.save_eps('TraubPaperOutput', ['traub_',algoname,'_test']);
 end;
 gail.save_mat('TraubPaperOutput', ['traub_',algoname,'_test'], true, npoints, ...
-  time, c, timeratio, npointsratio, npointslgratio, timelgratio, ...
-  sorted_timeratio, sorted_npointsratio);
+  time, c, timeratio, npointsratio, npointslgratio, timelgratio, nrep, n, m, ...
+  sorted_timeratio, sorted_npointsratio, algoname);
 end
 
 
 %% Sample printout
+% # of replications = 1000
 %    Test         Number of Points                    Time Used                          Success (%)                                  Failure (%)
 %   Function   ----------------------------    -------------------------------     --------------------------------------   ----------------------------------------
 %              Local      Global    Chebfun    Local       Global      Chebfun     Local        Global         Chebfun       Local         Global        Chebfun
 %                                                                                  No Warn Warn No Warn Warn   No Warn Warn  No Warn Warn  No Warn Warn  No Warn Warn
-%         3      2904     46439        113       0.016        0.028       0.185     100      0    100      0      0        0      0      0      0      0    100      0
-%         1      2996     27380         44       0.024        0.021       0.037     100      0    100      0      4        0      0      0      0      0     96      0
-%         2      6926     97438         24       0.020        0.041       0.021     100      0    100      0      4        0      0      0      0      0     96      0
-
-%% Sample printout2 when nrep = 1000;
-%    Test         Number of Points                    Time Used                          Success (%)                                  Failure (%)
-%   Function   ----------------------------    -------------------------------     --------------------------------------   ----------------------------------------
-%              Local      Global    Chebfun    Local       Global      Chebfun     Local        Global         Chebfun       Local         Global        Chebfun
-%                                                                                  No Warn Warn No Warn Warn   No Warn Warn  No Warn Warn  No Warn Warn  No Warn Warn
-%         3      2904     46439         11       0.013        0.009       0.304     100      0    100      0     97        0      0      0      0      0      3      0
-%         1      2792     26265       5219       0.016        0.011       3.572     100      0    100      0    100       72      0      0      0      0      0      0
-%         2      2957     37047       1426       0.014        0.014       1.480     100      0    100      0    100        0      0      0      0      0      0      0
-%         4      3361     24470          3       0.017        0.006       0.014     100      0    100      0    100        0      0      0      0      0      0      0
-%         5      5730     31347         21       0.021        0.007       0.016     100      0    100      0    100        0      0      0      0      0      0      0
-%         6     11379    332562        154       0.026        0.066       0.211     100      0    100      0    100        0      0      0      0      0      0      0
-%% Sample printout3 when nrep = 500;
-%   Test         Number of Points                    Time Used                          Success (%)                                  Failure (%)
-%   Function   ----------------------------    -------------------------------     --------------------------------------   ----------------------------------------
-%              Local      Global    Chebfun    Local       Global      Chebfun     Local        Global         Chebfun       Local         Global        Chebfun
-%                                                                                  No Warn Warn No Warn Warn   No Warn Warn  No Warn Warn  No Warn Warn  No Warn Warn
-%         3      2904     46439         11       0.007        0.005       0.161     100      0    100      0     98        0      0      0      0      0      2      0
-%         1      2886     26513       5257       0.011        0.007       1.914     100      0    100      0    100       72      0      0      0      0      0      0
-%         2      3041     37285       1435       0.008        0.008       0.790     100      0    100      0    100        0      0      0      0      0      0      0
-%         4      3380     24275          3       0.009        0.003       0.008     100      0    100      0    100        0      0      0      0      0      0      0
-%         5      5866     32793         21       0.012        0.004       0.009     100      0    100      0    100        0      0      0      0      0      0      0
-%         6     11388    334333        153       0.015        0.042       0.113     100      0    100      0    100        0      0      0      0      0      0      0
+%         3      2904     46439        116      0.0125       0.0212      0.1289     100      0    100      0      0        0      0      0      0      0    100      0
+%         1      2864     26265         43      0.0175       0.0149      0.0241     100      0    100      0      3        0      0      0      0      0     97      0
+%         2      6911     97106         22      0.0161       0.0313      0.0147     100      0    100      0      3        0      0      0      0      0     97      0
+      

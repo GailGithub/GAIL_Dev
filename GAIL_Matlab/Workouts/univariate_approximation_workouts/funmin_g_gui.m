@@ -20,8 +20,8 @@ function [fmin,npoints,errest] = funmin_g_gui(f,a,b,tol,nlo,nhi,varargin)
 %  Two local min:
 %  [fmin,npoints] = funmin_g_gui(@(x) -5 * exp(-(10*(x - .3)).^2) - exp(-(10*(x - 0.75)).^2),0,1,1e-3,10,20)
 %  [fmin,npoints] = ... 
-%  Demo with funminNoPenalty_g:
-%  [fmin,npoints,errest] = funmin_g_gui(@(x) x.^2,-1,1,1e-2,10,20,'funminNoPenalty_g')
+%  Demo with funminPenalty_g:
+%  [fmin,npoints,errest] = funmin_g_gui(@(x) x.^2,-1,1,1e-2,10,20,'funminPenalty_g')
 shg
 clf reset
 MATLABVERSION= gail.matlab_version;
@@ -64,15 +64,14 @@ k = 0;
 
 % Scale the plot
 h = b - a;
-
 ninit = 2*ceil(nhi*(nlo/nhi)^(1/(1+h)))+1;
 x = a:h/(ninit-1):b;
 y = f(x);
 maxy = max(y);
 miny = min(y);
 set(gcf,'doublebuffer','on','userdata',0)
-MATLABOrange = [0.85,  0.325, 0.098];
 MATLABBlue = [0, 0.447, 0.741];
+MATLABGreen = [0.466,  0.674, 0.188];
 plot(x,y,'.','markersize',25,'color',MATLABBlue);
 hold on
 p(1) = fill(a,fa,'k');
@@ -80,35 +79,21 @@ p(2) = fill(b,fb,'k');
 hold off
 s = (maxy - miny)/5;
 axis([a b miny-s maxy+s])
-% q(1) = uicontrol('string','step', ...
-%     'units','normal','pos',[.65 .02 .08 .04], ...
-%     'callback','set(gcf,''userdata'',1)');
-% q(2) = uicontrol('string','auto', ...
-%     'units','normal','pos',[.75 .02 .08 .04], ...
-%     'callback','set(gcf,''userdata'',2)');
-% q(3) = uicontrol('string','quit', ...
-%     'units','normal','pos',[.85 .02 .08 .04], ...
-%     'callback','set(gcf,''userdata'',3)');
 q(1) = uicontrol('string','step', ...
     'units','normal','pos',[.75 .02 .08 .04], ...
     'callback','set(gcf,''userdata'',1)');
 q(2) = uicontrol('string','auto', ...
      'units','normal','pos',[.85 .02 .08 .04], ...
     'callback','set(gcf,''userdata'',2)');
-%index = [1 ninit];
-% initialize nstar
-%nstar = ninit - 2;
-%nstar = floor(ninit/2);
-% initialize error
 err = tol+1;
-
 in_param.a = a; 
 in_param.b = b; 
 in_param.abstol = tol; 
 in_param.nlo = nlo; 
 in_param.nhi = nhi; 
-in_param.output_x = true;
+in_param.output_x = 1;
 tmpstr = strsplit(algoname,'_g');
+level = funmin_g(f,a,b,tol,nlo,nhi)-0.2;
 while(max(err) > tol)
     if max(err) > tol;
         in_param.maxiter = k+1; 
@@ -120,9 +105,10 @@ while(max(err) > tol)
         k = k + 1;
         p = flipud(get(gca,'children'));
         set(p(1),'xdata',x,'ydata',y)
-        set(gca,'xtick',x,'xticklabel',[]);
-        hTitle=title([tmpstr{1}, '\_g: error is ' num2str(max(err)) ' in iter ' num2str(k)]);
-        set(hTitle,'FontSize',25)
+        %set(gca,'xtick',x,'xticklabel',[]);
+        plot(x,zeros(size(x)),'.','color',MATLABGreen); hold on;
+        %hTitle=title([tmpstr{1}, '\_g: error is ' num2str(max(err)) ' in iter ' num2str(k)]);
+        %set(hTitle,'FontSize',25)
         pause(.25)
         while get(gcf,'userdata') == 0
             pause(.25)
@@ -138,9 +124,9 @@ end
 
 p = flipud(get(gca,'child'));
 set(p(1),'xdata',x,'ydata',y)
-set(gca,'xtick',x,'xticklabel',[]);
-hTitle=title([tmpstr{1}, '\_g: error estimation is ' num2str(max(err)) ' in iteration ' num2str(k)]);
-set(hTitle,'FontSize',25)
+%set(gca,'xtick',x,'xticklabel',[]);
+%hTitle=title([tmpstr{1}, '\_g: error \(\approx\) '  sprintf('%0.2g',max(err)) ' in iter ' num2str(k)]);
+%set(hTitle,'FontSize',25)
 pause(.25)
 while get(gcf,'userdata') == 0
     pause(.25)
@@ -161,10 +147,9 @@ delete(q);
 warning('on', ['GAIL:', algoname ,':exceediter']);
 
 hold on;
-delta = 0.00001;
-x=a:delta:b; 
 
-plot(x,f(x),'color',MATLABOrange);
+
+plot(x,f(x),'color',MATLABBlue);
 hold off;
 gail.save_eps('WorkoutfunminOutput', [algoname, '_gui']);
 

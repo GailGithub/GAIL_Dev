@@ -45,11 +45,11 @@ function [fappx,out_param]=funappx_g(varargin)
 %
 %   Optional Input Arguments
 %
-%     in_param.nlo --- lower bound of initial cone constant, default value 
-%     is 10
+%     in_param.nlo --- lower bound of initial number of points we use,
+%     default value is 10
 %
-%     in_param.nhi --- upper bound of initial cone constant, default value
-%     is 1000
+%     in_param.nhi --- upper bound of initial number of points we use,
+%     default value is 1000
 %
 %     in_param.nmax --- when number of points hits the value, iteration
 %     will stop, default value is 1e7
@@ -71,9 +71,9 @@ function [fappx,out_param]=funappx_g(varargin)
 %
 %     out_param.abstol --- guaranteed absolute error tolerance
 %
-%     out_param.nlo --- a lower bound of initial cone constant
+%     out_param.nlo --- a lower bound of initial number of points we use
 %
-%     out_param.nhi --- an upper bound of initial cone constant
+%     out_param.nhi --- an upper bound of initial number of points we use
 %
 %     out_param.nmax --- when number of points hits the value, iteration
 %     will stop
@@ -105,25 +105,10 @@ function [fappx,out_param]=funappx_g(varargin)
 %     out_param.errest --- an estimation of the absolute error for the
 %     approximation
 %
-%     out_param.nstar --- final value of the parameter defining the cone of
-%     functions for which this algorithm is guaranteed for each
-%     subinterval; nstar = floor(ninit/2) initially
-%
 %     out_param.x --- sample points used to approximate function
 %
 %     out_param.bytes --- amount of memory used during the computation
 %
-%  Guarantee
-%
-%  For [a,b] there exists a partition, P={[t_0,t_1], [t_1,t_2], ...,
-%  [t_{L-1},t_L]}, where a=t_0 < t_1 < ... < t_L=b. If the function to be
-%  approximated, f, satisfies the cone condition
-%                              2 nstar    ||     f(t_l)-f(t_{l-1})||
-%      ||f''||        <=  --------------  ||f'- ----------------- ||
-%             \infty       t_l - t_{l-1}  ||        t_l - t_{l-1} ||\infty,
-%  for each sub interval [t_{l-1},t_l], where 1 <= l <= L, then the output
-%  fappx by this algorithm is guaranteed to satisfy
-%      ||f-fappx||\infty <= abstol.
 %
 %   Examples
 %
@@ -132,22 +117,21 @@ function [fappx,out_param]=funappx_g(varargin)
 %   >> f = @(x) x.^2;
 %   >> [~, out_param] = funappx_g(f,-2,2,1e-7,10,20)
 %
-%   out_param =
-% 
-%                a: -2
-%           abstol: 1.0000e-***7
-%                b: 2
-%                f: @(x)x.^2
-%          maxiter: 1000
-%              nhi: 20
-%              nlo: 10
-%             nmax: 10000000
-%            nstar: [1x1024 double]            
-%            ninit: 37
-%             exit: [0 0]
-%             iter: 11 
-%          npoints: 36865
-%           errest: 4.5329e-***8
+%     out_param = 
+%
+%            f: @(x)x.^2
+%            a: -2
+%            b: 2
+%       abstol: 1.0000e-07
+%          nlo: 10
+%          nhi: 20
+%        ninit: 18
+%         nmax: 10000000
+%      maxiter: 1000
+%     exitflag: [0 0 0 0 0]
+%         iter: 21
+%      npoints: 17409
+%       errest: 3.9635e-***8
 %
 %
 %   Example 2:
@@ -156,21 +140,20 @@ function [fappx,out_param]=funappx_g(varargin)
 %   >> [~, out_param] = funappx_g(f,'a',-2,'b',2,'nhi',20,'nlo',10)
 %
 %   out_param = 
-% 
-%                a: -2
-%           abstol: 1.0000e-***6
-%                b: 2
-%                f: @(x)x.^2
-%          maxiter: 1000
-%              nhi: 20
-%              nlo: 10
-%             nmax: 10000000
-%            nstar: [1x256 double]
-%            ninit: 37
-%             exit: [0 0]
-%             iter: 9
-%          npoints: 9217
-%           errest: 7.2526e-***7
+%
+%            f: @(x)x.^2
+%            a: -2
+%            b: 2
+%       abstol: 1.0000e-06
+%          nlo: 10
+%          nhi: 20
+%        ninit: 18
+%         nmax: 10000000
+%      maxiter: 1000
+%     exitflag: [0 0 0 0 0]
+%         iter: 17
+%      npoints: 4353
+%       errest: 6.3592e-***7
 %
 %
 %   Example 3:
@@ -181,23 +164,21 @@ function [fappx,out_param]=funappx_g(varargin)
 %
 %   out_param = 
 % 
-%                a: -5
-%           abstol: 1.0000e-***6
-%                b: 5
-%                f: @(x)x.^2
-%          maxiter: 1000
-%              nhi: 20
-%              nlo: 10
-%             nmax: 10000000
-%            nstar: [1x512 double]
-%            ninit: 39
-%             exit: [0 0]
-%             iter: 10
-%          npoints: 19457
-%           errest: 9.9555e-***7
+%            f: @(x)x.^2
+%            a: -5
+%            b: 5
+%       abstol: 1.0000e-06
+%          nlo: 10
+%          nhi: 20
+%        ninit: 19
+%         nmax: 10000000
+%      maxiter: 1000
+%     exitflag: [0 0 0 0 0]
+%         iter: 34
+%      npoints: 9217
+%       errest: 8.8466e-***7
 %
-%
-%
+%   
 %   See also INTERP1, GRIDDEDINTERPOLANT, INTEGRAL_G, MEANMC_G, FUNMIN_G
 %
 %
@@ -239,197 +220,157 @@ function [fappx,out_param]=funappx_g(varargin)
 %
 
 % check parameter satisfy conditions or not
-[f, in_param] = funappx_g_param(varargin{:});
+%[f, in_param] = funappx_g_param(varargin{:});
+in_param = gail.funappx_g_in_param(varargin{:});
+out_param = in_param.toStruct();
+f = in_param.f;
 MATLABVERSION = gail.matlab_version;
+%out_param = in_param;
+%out_param = rmfield(out_param,'memorytest');
+%out_param = rmfield(out_param,'output_x');
 
-out_param = in_param;
-out_param = rmfield(out_param,'memorytest');
-out_param = rmfield(out_param,'output_x');
-
-%%main algorithm
-% initialize nstar
-%nstar = ninit - 2;
-nstar = in_param.nstar;
-% initialize number of points
-out_param.ninit = 2 * nstar + 1;
-ninit = out_param.ninit;
-index = [1 ninit];
-% initialize error
+%% main algorithm
+a = out_param.a;
+b = out_param.b;
 abstol = out_param.abstol;
-len = out_param.b - out_param.a;
-x = out_param.a:len/(ninit-1):out_param.b;
-y = f(x);
+ninit = out_param.ninit;
+x = zeros(1, out_param.nmax/100); % preallocation
+y = x;
+x(1:ninit) = a:(b-a)/(ninit-1):b;
+y(1:ninit) = f(x(1:ninit));
 iSing = find(isinf(y));
 if ~isempty(iSing)
+    out_param.exitflag(5) = true;
     error('GAIL:funappx_g:yInf',['Function f(x) = Inf at x = ', num2str(x(iSing))]);
 end
 if length(y) == 1  
     % probably f is a constant function and Matlab would  
     % reutrn only a scalar y = f(x) even if x is a vector 
     f = @(x) f(x) + 0 * x;
-    y = f(x);
+    y(1:ninit) = f(x(1:ninit));
 end
 iter = 0;
-exit_len = 2;
-%we start the algorithm with all warning flags down
-out_param.exit = false(1,exit_len); 
-
+exit_len = 5;
+% we start the algorithm with all warning flags down
+out_param.exitflag = false(1,exit_len);
+%fh = b-a;
+C0 = 3;
+fh = 3*(b-a)/(ninit-2);
+C = @(h) (C0 * fh)./(fh-h);
+%C0 = 2; C = @(h) (C0 * 2)./(1+exp(-h)); % logistic
+%C0 = 2; C = @(h) C0 * (1+h.^2);         % quadratic
+npoints = ninit;
 max_errest = 1;
-while(max_errest > abstol)
-    % length of each subinterval
-    len = x(index(2:end))-x(index(1:end-1));
-    reshapey = reshape(y(1:end-1),ninit - 1, length(index)-1);
-    diffy = diff([reshapey;y(index(2:end))]);
+for iter_i = 1:out_param.maxiter,
+    %% Stage 1: compute length of each subinterval and approximate |f''(t)|
+    len = diff(x(1:npoints));
+    %deltaf = 2*(y(1:end-2)./len(1:end-1)./(len(1:end-1)+len(2:end))-...
+    %            y(2:end-1)./len(1:end-1)./ len(2:end)              +...
+    %            y(3:end  )./len(2:end  )./(len(1:end-1)+len(2:end)))
+    deltaf = 2 * diff(diff(y(1:npoints))./len) ./ (len(1:end-1) + len(2:end));
+    h = x(4:npoints)-x(1:npoints-3);
+    Br = [abs(deltaf(2:end)).*C(h) 0 0];
+    Bl = [0 0 abs(deltaf(1:end-1)).*C(h)];
+    %Bl = [0 0 abs(deltaf(1)).*C(h(1))  Br(1:end-3)];
+    errest = len.^2/8.*max(Br,Bl);
     
-    %approximate the weaker norm of input function at different subinterval
-    gn = (ninit-1)./len.*max(abs(bsxfun(@minus,diffy,(y(index(2:end))...
-        -y(index(1:end-1)))/(ninit-1))),[],1);
-    %approximate the stronger norm of input function at different
-    %subinterval
-    fn = (ninit-1)^2./(len.^2).*max(abs(diff(diffy)),[],1);
-    %update cone condition every iteration
-    nstar=ceil(out_param.nhi*(out_param.nlo...
-        /out_param.nhi).^(1./(1+len)));
-    %find nstar not large enough then double it
-    smallconeind = find(nstar.*(2*gn+fn.*len/(ninit-1)) <(fn.*len));
-    %nstar(smallconeind) = 2*nstar(smallconeind);
-    nstarsmallcone = (fn.*len)./(2*gn+fn.*len/(ninit-1)).*...
-    (2*ninit-2-(fn.*len)./(2*gn+fn.*len/(ninit-1)))/(ninit-1);
-    nstar(smallconeind) = nstarsmallcone(smallconeind);
+%     min_len = min(len);
+%     max_len = max(len);
+%     max_delta = max(deltaf);
+%     [~,ind] = find(deltaf > 0);
+%     min_delta = min(deltaf(ind));
+%     if max_delta < eps * max (abs(y)),
+%         out_param.exitflag(3) = true;
+%         warning('GAIL:funappx_g:zero2ndDerivative',['f(x)'''' = 0. '...
+%             'The function may be outside the cone.'])
+%     end
+%     
+    %% Stage 2: compute bound of |f''(t)| and estimate error
 
-    %update iterations
+    % update iterations
     iter = iter + 1;
-    err = nstar.*len.*gn./(4*(ninit-1).*(ninit-1-nstar));
-    max_errest = max(err);
-    %check if error satisfy the error tolerance 
-    counterr = sum(err > abstol);
-    if(length(x) + counterr *(ninit -1) > out_param.nmax)
-        out_param.exit(1) = true;
-        warning('GAIL:funappx_g:exceedbudget',['funappx_g attempted to ',...
-            'exceed the cost budget. The answer may be unreliable.'])
+    max_errest = max(errest);
+    if max_errest <= abstol,
+        break
+    end 
+ 
+    %% Stage 3: find I and update x,y
+%     badinterval = (errest > abstol);
+%     whichcut = badinterval | [badinterval(2:end) 0] | [0 badinterval(1:end-1)];
+    badinterval = (errest > abstol);
+    badlinterval= (len.^2/8.*Bl>abstol);
+    badrinterval= (len.^2/8.*Br>abstol);
+    maybecut=(badinterval|[0 badlinterval(3:end) 0]|[badlinterval(3:end)...
+        0 0]|[0 badrinterval(1:end-2) 0]|[0 0 badrinterval(1:end-2)]);
+    maxlength = (len>max(len(maybecut))-eps);    
+    whichcut = maybecut & maxlength;
+    if (out_param.nmax<(npoints+length(find(whichcut))))
+        out_param.exitflag(1) = true;
+        warning('GAIL:funappx_g:exceedbudget',['funappx_g '...
+            'attempted to exceed the cost budget. The answer may be '...
+            'unreliable.'])
         break;
-    end;
+    end; 
     if(iter==out_param.maxiter)
-        out_param.exit(2) = true;
+        out_param.exitflag(2) = true;
         warning('GAIL:funappx_g:exceediter',['Number of iterations has '...
             'reached maximum number of iterations.'])
         break;
     end;
-    %if max(err) > abstol;
-    if counterr >= 1;
-        %flag sub interval error not satisfy error tolerance 1 in whbad
-        whbad = err > abstol;
-        %add index for bad sub interval
-        badind = find(whbad == 1);
-        %flag sub interval error satisfy error tolerance 1 in whgood
-        whgood = (whbad ==0);
-        %add index for good sub interval
-        goodind = find(whgood == 1);   
-        %find # of new sub intervals need to be added at each sub
-        %interval
-        badcumsum = cumsum(whbad);
-        %pickup # of new sub intervals at bad intervals
-        cumbad = badcumsum(badind);
-        %generate new index of sub intervals splitted from bad intervals
-        newindex = [badind + [0 cumbad(1:end-1)]; badind + cumbad];
-        newindex = newindex(:)';
-        %find the length of each sub interval
-        %h = len/2/(ninit-1);
-        h = (out_param.b-out_param.a)/2^iter/(ninit-1);
-        %reshape x without end point to a matrix of ninit-1 by # of
-        %intervals
-        reshapex =  reshape(x(1:end-1),ninit -1,...
-            (index(end) - 1)/(ninit -1));
-        %generate new points newx need to be added
-        %newx = bsxfun(@plus,reshapex(:,badind),h(badind));
-        newx = reshapex(:,badind)+h;
-        %compute value newy of newx
-        newy = f(newx);
-        %initialize a zero matrix of 2*(ninit-1) by # of bad sub intervals
-        %to store all the points after splitting bad sub intervals
-        badmatrix = zeros(2*(ninit-1),sum(whbad));
-        %insert x at bad sub intervals in badmatrix as the row 1,
-        %3,..., end-1
-        badmatrix(1:2:end-1,:) = reshapex(:,badind);
-        %insert newx at bad sub intervals in badmatrix as the row 2,
-        %4,..., end
-        badmatrix(2:2:end,:) = newx;
-        %reshape badmatrix to the size of ninit -1 by 2*# of bad sub
-        %intervals
-        badmatreshape = reshape(badmatrix, ninit - 1, 2*sum(whbad));
-        %initialize a matrix of ninit - 1 by # of sub intervals after
-        %splitting bad sub intervals for x
-        newreshapex = zeros(ninit - 1, 2*sum(whbad)+sum(whgood));
-        %insert all the points after splitting bad sub intervals to correct
-        %column
-        newreshapex(:,newindex) = badmatreshape;
-        %insert all the points on good sub intervals to correct column
-        newreshapex(:,goodind + badcumsum(goodind)) = reshapex(:,goodind);
-        %obtain all the points in vector x
-        x = [newreshapex(:)' x(end)];
-        %insert y at bad sub intervals in badmatrix as the row 1,
-        %3,..., end-1
-        badmatrix(1:2:end-1,:) = reshapey(:,badind);
-        %insert newy at bad sub intervals in badmatrix as the row 2,
-        %4,..., end
-        badmatrix(2:2:end,:) = newy;
-        %reshape badmatrix to the size of ninit -1 by 2*# of bad sub
-        %intervals
-        badmatreshape = reshape(badmatrix, ninit - 1, 2*sum(whbad));
-        %initialize a matrix of ninit - 1 by # of sub intervals after
-        %splitting bad sub intervals for y
-        newreshapey = zeros(ninit - 1, 2*sum(whbad)+sum(whgood));
-        %insert all the values after splitting bad sub intervals to correct
-        %column
-        newreshapey(:,newindex) = badmatreshape;
-        %insert all the original y on good sub intervals to correct column
-        newreshapey(:,goodind + badcumsum(goodind)) = reshapey(:,goodind);
-        %obtain all the values in vector y
-        y = [newreshapey(:)' y(end)];
-        iSing = find(isinf(y));
-        if ~isempty(iSing)
-            error('GAIL:funappx_g:yInf',['Function f(x) = Inf at x = ', num2str(x(iSing))]);
-        end
-        %generate error for new sub intervals
-        %initialize a vertor of # of sub intervals after splitting
-        newerr = zeros(1,2*sum(whbad)+sum(whgood));
-        %use the same error for splitted bad interval
-        baderr = [err(badind); err(badind)];
-        %insert error after splitting bad sub intervals to correct
-        %position
-        newerr(newindex)=baderr(:)';
-        newerr(goodind + badcumsum(goodind)) = err(goodind);
-        %obtain error for all sub intervals
-        err = newerr;
-        max_errest = max(err);
-        
-        %upadte index w.p.t x after splitting
-        index = 1:(ninit-1):length(err)*(ninit-1)+1;
-    else
-        break;
-    end;
+
+    newx = x(whichcut) + 0.5 * len(whichcut);
+    if npoints + length(newx) > length(x)
+      xx = zeros(1, out_param.nmax);
+      yy = xx;
+      xx(1:npoints) = x(1:npoints);
+      yy(1:npoints) = y(1:npoints);
+      x = xx;
+      y = yy;
+    end
+    tt = cumsum(whichcut);   
+    x([1 (2:npoints)+tt]) = x(1:npoints);
+    y([1 (2:npoints)+tt]) = y(1:npoints);
+    tem = 2 * tt + cumsum(whichcut==0);
+    x(tem(whichcut)) = newx;
+    y(tem(whichcut)) = f(newx);
+    %x([1 (2:npoints)+tt tem(whichcut)]) = [x(1:npoints) newx];
+    %y([1 (2:npoints)+tt tem(whichcut)]) = [y(1:npoints) f(newx)];
+    npoints = npoints + length(newx);
 end;
+
+
+x = x(1:npoints);
+y = y(1:npoints);
+
+% [~, ind] = find(abs(y) > 0);
+% if min(abs(y(ind))) < abstol,
+%     [~, ind] = find(abs(y(ind)) < abstol);
+%     out_param.exitflag(4) = true;
+%     warning('GAIL:funappx_g:fSmallerThanAbstol',['Some values of f(x) are smaller than abstol for x in [', num2str(x(min(ind))), ',', num2str(x(max(ind))), ...
+%         ']. The interpolant may be inaccurate. You may want to decrease abstol.'])
+% end
+%% postprocessing
 out_param.iter = iter;
-out_param.npoints = index(end);
+out_param.npoints = npoints;
 out_param.errest = max_errest;
-out_param.nstar = nstar;
-out_param.x = x;
+% control the order of out_param
+% out_param = orderfields(out_param, ...
+%            {'f', 'a', 'b','abstol','nlo','nhi','ninit','nmax','maxiter',...
+%             'exitflag','iter','npoints','errest'});
 if MATLABVERSION >= 8.3
     fappx = griddedInterpolant(x,y,'linear');
 else
-    fappx = @(t) ppval(interp1(x,y,'linear','pp'), t);    
+    fappx = @(t) ppval(interp1(x,y,'linear','pp'), t);     
 end;
-w = whos;
-out_param.bytes = sum([w.bytes]);
 if (in_param.memorytest)
   w = whos;
   out_param.bytes = sum([w.bytes]);
 end
-if (~in_param.output_x)
-  out_param = rmfield(out_param,'x');
+if (in_param.output_x)
+  %out_param = rmfield(out_param,'x');
+  out_param.x = x;
+  out_param.y = y;
 end
-
-
 
 function [f, out_param] = funappx_g_param(varargin)
 % parse the input to the funappx_g function
@@ -446,7 +387,7 @@ default.maxiter = 1000;
 default.memorytest = false;
 default.output_x = false;
 
-MATLABVERSION= gail.matlab_version;
+MATLABVERSION = gail.matlab_version;
 if MATLABVERSION >= 8.3
     f_addParamVal = @addParameter;
 else
@@ -476,8 +417,7 @@ end;
 validvarargin=numel(varargin)>1;
 if validvarargin
     in2=varargin{2};
-    validvarargin=(isnumeric(in2) || isstruct(in2) ...
-        || ischar(in2));
+    validvarargin=(isnumeric(in2) || isstruct(in2) || ischar(in2));
 end
 
 if ~validvarargin
@@ -570,34 +510,34 @@ if (~gail.isposint(out_param.nmax))
 end
 
 if (~gail.isposint(out_param.nlo))
-%     if gail.isposge3(out_param.nlo)
-%         warning('GAIL:funappx_g:lowinitnotint',['Lower bound of '...
-%         'initial number of points should be a positive integer.' ...
-%             ' Using ', num2str(ceil(out_param.nlo)) ' as nlo '])
-%         out_param.nlo = ceil(out_param.nlo);
-%     else
-%         warning('GAIL:funappx_g:lowinitlt3',[' Lower bound of '...
-%         'initial number of points should be a positive integer greater'...
-%         ' than 3. Using 3 as nlo'])
-%         out_param.nlo = 3;
-%    end
-        warning('GAIL:funappx_g:lowinitnotint',['Lower bound of '...
+    if gail.isposge3(out_param.nlo)
+        warning('GAIL:funappxgNoPenalty_g:lowinitnotint',['Lower bound of '...
+        'initial number of points should be a positive integer.' ...
+            ' Using ', num2str(ceil(out_param.nlo)) ' as nlo '])
+        out_param.nlo = ceil(out_param.nlo);
+    else
+        warning('GAIL:funappxgNoPenalty_g:lowinitlt3',[' Lower bound of '...
+        'initial number of points should be a positive integer greater'...
+        ' than 3. Using 3 as nlo'])
+        out_param.nlo = 3;
+   end
+        warning('GAIL:funappxgNoPenalty_g:lowinitnotint',['Lower bound of '...
         'initial nstar should be a positive integer.' ...
         ' Using ', num2str(ceil(out_param.nlo)) ' as nlo '])
         out_param.nlo = ceil(out_param.nlo);
 end
  if (~gail.isposint(out_param.nhi))
-%     if gail.isposge3(out_param.nhi)
-%         warning('GAIL:funappx_g:hiinitnotint',['Upper bound of '...
-%         'initial number of points should be a positive integer.' ...
-%         ' Using ', num2str(ceil(out_param.nhi)) ' as nhi' ])
-%         out_param.nhi = ceil(out_param.nhi);
-%     else
-%         warning('GAIL:funappx_g:hiinitlt3',[' Upper bound of '...
-%         'points should be a positive integer greater than 3. Using '...
-%         'default number of points ' int2str(default.nhi) ' as nhi' ])
-%         out_param.nhi = default.nhi;
-%     end
+    if gail.isposge3(out_param.nhi)
+        warning('GAIL:funappx_g:hiinitnotint',['Upper bound of '...
+        'initial number of points should be a positive integer.' ...
+        ' Using ', num2str(ceil(out_param.nhi)) ' as nhi' ])
+        out_param.nhi = ceil(out_param.nhi);
+    else
+        warning('GAIL:funappx_g:hiinitlt3',[' Upper bound of '...
+        'points should be a positive integer greater than 3. Using '...
+        'default number of points ' int2str(default.nhi) ' as nhi' ])
+        out_param.nhi = default.nhi;
+    end
          warning('GAIL:funappx_g:hiinitnotint',['Upper bound of '...
         'initial nstar should be a positive integer.' ...
         ' Using ', num2str(ceil(out_param.nhi)) ' as nhi' ])
@@ -612,7 +552,7 @@ if (out_param.nlo > out_param.nhi)
 end;
 
 h = out_param.b - out_param.a;
-out_param.nstar = ceil(out_param.nhi*(out_param.nlo/out_param.nhi)...
+out_param.ninit = ceil(out_param.nhi*(out_param.nlo/out_param.nhi)...
     ^(1/(1+h)));
 
 if (~gail.isposint(out_param.maxiter))
@@ -629,12 +569,12 @@ if (~gail.isposint(out_param.maxiter))
     end;
 end
 if (out_param.memorytest~=true&&out_param.memorytest~=false)
-    warning('GAIL:funappxNoPenalty_g:memorytest', ['Input of memorytest'...
+    warning('GAIL:funappx_g:memorytest', ['Input of memorytest'...
         ' can only be true or false; use default value false'])
     out_param.memorytest = false;
 end;
 if (out_param.output_x~=true&&out_param.output_x~=false)
-    warning('GAIL:funappxNoPenalty_g:output_x', ['Input of output_x'...
+    warning('GAIL:funappx_g:output_x', ['Input of output_x'...
         ' can only be true or false; use default value false'])
     out_param.output_x = false;
 end;

@@ -304,7 +304,7 @@ end
 
 %now the transformation will be calculated using uniform or normal measure
 f=gail.transformIntegrand(f,hyperbox,out_param);
-if strcmpi(out_param.measure,'uniform')%  using uniformly distributed samples
+if strcmpi(out_param.measure,'uniform')% using uniformly distributed samples
     [Q,out_param] = meanMC_g(@(nfun)f(rand(nfun,out_param.dim)),out_param);
     % using meanMC_g to get the mean
 elseif strcmpi(out_param.measure,'normal')% using normally distributed samples

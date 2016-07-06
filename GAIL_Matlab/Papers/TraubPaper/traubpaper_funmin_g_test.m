@@ -4,9 +4,15 @@ function [timeratio,timelgratio,npointsratio,npointslgratio]=traubpaper_funmin_g
 % of iteration or can use the following parameters
 % nrep = 100; abstol = 1e-6;
 %
-% Compare funminNoPenalty_g, fminbnd, and chebfun:
-% [timeratio,timelgratio,npointsratio,npointslgratio]=traubpaper_funmin_g_test(nrep,abstol,'funminNoPenalty_g');
+% Compare funmin_g, fminbnd, and chebfun:
+% [timeratio,timelgratio,npointsratio,npointslgratio]=traubpaper_funmin_g_test(nrep,abstol,'funmin_g');
 rng default % for reproducibility
+if nargin < 2
+   abstol = 1e-6;
+   if nargin < 1
+      nrep = 1000;
+   end
+end
 cc = rand(nrep,1);
 c = cc*2; % number of simulations for each test function
 n = 3; % number of test functions
@@ -47,6 +53,10 @@ b = zeros(1,n);
 a(1:3) = [-1,-1,-1];
 b(1:3) = [1,1,1];
 for i = 1:nrep
+  if (i-1)/10 == round((i-1)/10)
+     disp(['Starting case ' int2str(i) ' out of ' int2str(nrep)])
+  end
+
   f1 = @(x) g1(x,c(i));
   f2 = @(x) g2(x,c(i));
   f3 = @(x) g3(x,cc(i)*0.6);
@@ -91,9 +101,9 @@ for i = 1:nrep
         npoints(j,k,i) = out_param.npoints;
       elseif k == 2
         lastwarn('')
-        tic, [xmin, fmin, exitflag, out] = fminbnd(@(x) f(x), a(j), b(j), ...
+        tic, [~, fmin, exitflag, out] = fminbnd(@(x) f(x), a(j), b(j), ...
           optimset ('TolX', abstol, 'MaxFunEvals', out_param.nmax, 'MaxIter', out_param.maxiter) ); t=toc;
-        if length(lastwarn) > 0 || exitflag ~= 1 || out.iterations > out_param.maxiter
+        if ~isempty(lastwarn) || exitflag ~= 1 || out.iterations > out_param.maxiter
           exceedmat(j,k,i) = 1;
         end
         npoints(j,k,i) = out.funcCount;
@@ -103,9 +113,11 @@ for i = 1:nrep
           tic, chebf = chebfun(f,[a(j),b(j)],'chebfuneps', abstol,'splitting','on');
                fmin = min(chebf); 
           t=toc;
-          if length(lastwarn) > 0
+          if ~isempty(lastwarn)
             exceedmat(j,k,i) = 1;
           end
+        catch
+           disp('oops')
         end
         npoints(j,k,i) = length(chebf);
       end
@@ -176,16 +188,18 @@ end
 %% Output the table
 % To just re-display the output, load the .mat file and run this section
 % only
-display(' ')
-display('   Test         Number of Points                    Time Used                          Success (%)                                  Failure (%)')
-display('  Function   ----------------------------    -------------------------------     --------------------------------------   ----------------------------------------');
-display('             funmin_g   fminbnd   Chebfun    funmin_g     fminbnd    Chebfun     funmin_g        fminbnd        Chebfun   funmin_g        fminbnd       Chebfun')
-display('                                                                                 No Warn Warn No Warn Warn   No Warn Warn  No Warn Warn  No Warn Warn  No Warn Warn')
+[fileID, fullPath] = gail.open_txt('TraubPaperOutput', ['traub_',algoname,'_test']);
+fprintf(fileID,'\n');
+fprintf(fileID,'# of replications = %1.0f\n',nrep);
+fprintf(fileID,'   Test         Number of Points                    Time Used                          Success (%%)                                  Failure (%%)\n');
+fprintf(fileID,'  Function   ----------------------------    -------------------------------     --------------------------------------   ----------------------------------------\n');
+fprintf(fileID,'             funmin_g   fminbnd   Chebfun    funmin_g     fminbnd    Chebfun     funmin_g        fminbnd        Chebfun   funmin_g        fminbnd       Chebfun\n');
+fprintf(fileID,'                                                                                 No Warn Warn No Warn Warn   No Warn Warn  No Warn Warn  No Warn Warn  No Warn Warn\n');
 npointslgratio = zeros(1,n);
 timelgratio = zeros(1,n);
 
 for i = permuted_index
-  display(sprintf('%9.0f %9.0f %9.0f  %9.0f %11.3f  %11.3f %11.3f  %6.0f %6.0f %6.0f %6.0f %6.0f   %6.0f %6.0f %6.0f %6.0f %6.0f %6.0f %6.0f',...
+  fprintf(fileID,'%9.0f %9.0f %9.0f  %9.0f %11.4f  %11.4f %11.4f  %6.0f %6.0f %6.0f %6.0f %6.0f   %6.0f %6.0f %6.0f %6.0f %6.0f %6.0f %6.0f \n',...
     [i mean(npoints(i,1,:)) mean(npoints(i,2,:)) mean(npoints(i,3,:))...
     mean(time(i,1,:)) mean(time(i,2,:)) mean(time(i,3,:))...
     100.0*sum(trueerrormat(i,1,:)<=abstol)/nrep 100.0*sum(trueerrormat(i,1,:)<=abstol & (exceedmat(i,1,:)))/nrep ...
@@ -193,20 +207,12 @@ for i = permuted_index
     100.0*sum(trueerrormat(i,3,:)<=abstol)/nrep 100.0*sum(trueerrormat(i,3,:)<=abstol & (exceedmat(i,3,:)))/nrep...
     100.0*sum(trueerrormat(i,1,:)>abstol)/nrep  100.0*sum(trueerrormat(i,1,:)>abstol & (exceedmat(i,1,:)))/nrep ...
     100.0*sum(trueerrormat(i,2,:)>abstol)/nrep  100.0*sum(trueerrormat(i,2,:)>abstol & (exceedmat(i,2,:)))/nrep ...
-    100.0*sum(trueerrormat(i,3,:)>abstol)/nrep  100.0*sum(trueerrormat(i,3,:)>abstol & (exceedmat(i,3,:)))/nrep]))
+    100.0*sum(trueerrormat(i,3,:)>abstol)/nrep  100.0*sum(trueerrormat(i,3,:)>abstol & (exceedmat(i,3,:)))/nrep]);
   npointslgratio(i) = mean(npoints(i,1,:))/mean(npoints(i,2,:));
   timelgratio(i) = mean(time(i,1,:))/mean(time(i,2,:));
 end
-
-for k=1:m-1
-  idx=find(timeratio(k,:,:)<1);
-  max_idx_t = max(idx);
-  timeratio(k,1:max_idx_t) = 1./timeratio(k,1:max_idx_t);
-  
-  idx=find(npointsratio(k,:,:)<1);
-  max_idx_n = max(idx);
-  npointsratio(k,1:max_idx_n) = 1.0 ./npointsratio(k,1:max_idx_n);
-end
+fclose(fileID);
+type(fullPath)
 
 %% Output the table
 % To just re-display the output, load the .mat file and run this section
@@ -233,34 +239,32 @@ if usejava('jvm') || MATLABVERSION <= 7.12
 %   gail.save_eps('TraubPaperOutput', ['traub_',algoname,'_testfun']);
   
   figure
-  t = 1:nrep*n;
+  t = ((1:nrep*n) -1/2)/(nrep*n);
   for k = 1:m-1
-    %subplot(1,m-1,k)
-    semilogy(t,sorted_timeratio(k,:),'color',markers{k*2-1}); hold on
-    semilogy(t,sorted_npointsratio(k,:),'color',markers{2*k});  hold on
-    xlabel('test functions'); 
-    %title([algoname, ' vs. ', func2str( methods{k+1})])
-    legend('time ratio', 'points ratio','Location','NorthWest');
+    semilogx(sorted_timeratio(k,:),t,'color',markers{k*2-1}); hold on
+    semilogx(sorted_npointsratio(k,:),t,'color',markers{2*k});  hold on
+    xlabel('Ratios'); 
+    ylabel('Probability')
   end
-  hold off
-  h=legend('{\tt funmin\_g} vs. {\tt fminbnd} time ratio', '{\tt funmin\_g} vs. {\tt fminbnd} points ratio',...
-         '{\tt funmin\_g} vs. Chebfun time ratio', '{\tt funmin\_g} vs. Chebfun points ratio',...
-         'Location','NorthWest');
-  set(h, 'Interpreter', 'latex')   
-  legend BOXOFF 
+%   hold off
+%   h=legend('{\tt funmin\_g} vs. {\tt fminbnd} time ratio', '{\tt funmin\_g} vs. {\tt fminbnd} points ratio',...
+%          '{\tt funmin\_g} vs. Chebfun time ratio', '{\tt funmin\_g} vs. Chebfun points ratio',...
+%          'Location','NorthWest');
+%   set(h, 'Interpreter', 'latex')   
+%   legend BOXOFF 
   gail.save_eps('TraubPaperOutput', ['traub_',algoname,'_test']);
 end;
 gail.save_mat('TraubPaperOutput', ['traub_',algoname,'_test'], true, npoints, ...
-  time, c, timeratio, npointsratio, npointslgratio, timelgratio, ...
+  time, c, timeratio, npointsratio, npointslgratio, timelgratio, nrep, n, m,...
   sorted_timeratio, sorted_npointsratio);
 end
 
 %% Sample printout
-
+% # of replications = 1000
 %    Test         Number of Points                    Time Used                          Success (%)                                  Failure (%)
 %   Function   ----------------------------    -------------------------------     --------------------------------------   ----------------------------------------
 %              funmin_g   fminbnd   Chebfun    funmin_g     fminbnd    Chebfun     funmin_g        fminbnd        Chebfun   funmin_g        fminbnd       Chebfun
 %                                                                                  No Warn Warn No Warn Warn   No Warn Warn  No Warn Warn  No Warn Warn  No Warn Warn
-%         3       274         8        113       0.006        0.004       0.196     100      0    100      0     12        0      0      0      0      0     88      0
-%         1       230        22         44       0.005        0.006       0.044     100      0     24      0     54        0      0      0     76      0     46      0
-%         2       273         9         24       0.006        0.005       0.025     100      0    100      0     34        0      0      0      0      0     66      0
+%         3       274         8        116      0.0027       0.0019      0.0923     100      0    100      0     14        0      0      0      0      0     86      0 
+%         1       230        22         43      0.0025       0.0025      0.0189     100      0     27      0     60        0      0      0     73      0     40      0 
+%         2       273         9         22      0.0028       0.0021      0.0114     100      0    100      0     35        0      0      0      0      0     65      0 
