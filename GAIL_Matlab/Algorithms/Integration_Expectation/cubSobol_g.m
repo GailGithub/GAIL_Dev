@@ -266,6 +266,9 @@ t_start = tic;
 r_lag = 4; %distance between coefficients summed and those computed
 [f, hyperbox, out_param, cv] = cubSobol_g_param(r_lag,varargin{:});
 
+%------------------------------------------------------------------------------
+% TRANSFORMATION
+
 %changing the integrand and the hyperbox when measure is uniform ball or
 %sphere by applying the appropriate transformation
 if strcmpi(out_param.measure,'uniform ball') || strcmpi(out_param.measure,'uniform sphere')% using uniformly distributed samples on a ball or sphere
@@ -299,6 +302,8 @@ if strcmpi(out_param.measure,'uniform ball') || strcmpi(out_param.measure,'unifo
         out_param.measure = 'normal';% them a normal distribution can be used
     end
 end
+
+%------------------------------------------------------------------------------
 
 l_star = out_param.mmin - r_lag; % Minimum gathering of points for the sums of DFWT
 omg_circ = @(m) 2.^(-m);
@@ -563,7 +568,7 @@ function [f,hyperbox, out_param, cv] = cubSobol_g_param(r_lag,varargin)
 % Default parameter values
 default.hyperbox = [zeros(1,1);ones(1,1)];% default hyperbox
 default.measure  = 'uniform';
-default.transf = 1;% default transformation (box-to-ball)
+default.transf = 1;% default transformation (box-to-ball or box-to-sphere)
 default.radius = 1;% radius of the ball or sphere
 default.abstol  = 1e-4;
 default.reltol  = 1e-2;
@@ -877,6 +882,7 @@ if (strcmp(out_param.measure,'uniform ball') || strcmp(out_param.measure,'unifor
             ' Using the origin as the center:'])
     hyperbox = zeros(1,out_param.d);
 end
+
 end
 
 % normal-to-ball transformation
