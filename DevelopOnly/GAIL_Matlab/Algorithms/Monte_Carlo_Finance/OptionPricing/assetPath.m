@@ -293,7 +293,7 @@ classdef assetPath < brownianMotion
                      lnS1(I1,i) = lnS1(I1,i-1) + term1 + sqrt(dT*(1-obj.assetParam.rho^2)*(obj.assetParam.Vlong+Gammas)).*dW2(I1,i-1);
                  end
                 
-                 I2 = ~I1;
+                 I2 = find(obj.assetParam.nu^2*psi>obj.psiC);;
                  K0 = c1-log(p(I2)+beta(I2).*(1-p(I2))./(beta(I2)-A/obj.assetParam.nu));
                  if isempty(I2)
                  else
