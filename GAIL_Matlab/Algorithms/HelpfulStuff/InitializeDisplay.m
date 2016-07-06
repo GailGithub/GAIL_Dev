@@ -12,3 +12,5 @@ MATLABPurple = [0.494,  0.184, 0.556];
 MATLABGreen = [0.466,  0.674, 0.188];
 MATLABDkOrange = [0.85,  0.325, 0.098]*0.6;
 MATLABLtOrange = 0.5*[0.85,  0.325, 0.098] + 0.5*[1 1 1];
+MATLABCyan = [0.3010, 0.7450, 0.9330];
+MATLABMaroon = [0.6350, 0.0780, 0.1840];
