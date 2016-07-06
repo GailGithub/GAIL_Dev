@@ -6,7 +6,6 @@ classdef OutperformanceOptionTest < matlab.unittest.TestCase
   methods(Test)
              
     function testIIDSolution(testCase)
-       addpath('../OptionPricing') % folder of optPayoff
        
        % parameter for the euro call option
        euroinp.payoffParam.strike = 10;
@@ -33,7 +32,6 @@ classdef OutperformanceOptionTest < matlab.unittest.TestCase
     end
     
     function testSobolSolution(testCase)
-       addpath('../OptionPricing') % folder of optPayoff
        
        % parameter for the euro call option
        euroinp.payoffParam.strike = 10;

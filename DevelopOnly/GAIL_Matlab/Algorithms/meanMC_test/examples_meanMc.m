@@ -1,5 +1,5 @@
-%% Test Cases for class meanMC 
-
+%% Examples for class meanMC 
+% Author: Tianpei Qian
 %% Example 1
 % In this example, we are interested in estimating E[sin(U)], where U is
 % uniformly distributed over [0, 1].
@@ -8,19 +8,19 @@
 
 num = 10; % produce 10 estimates
 
-mu = ones(num,1); 
-mu_cv = ones(num,1);
-mu_av = ones(num,1);
-mu_all = ones(num,1);
-time = ones(num,1);
-time_cv = ones(num,1);
-time_av = ones(num,1);
-time_all = ones(num,1);
+mu = ones(num,1); % a vector containing the estimated means with method 'plain'
+mu_cv = ones(num,1); % a vector containing the estimated means with method 'cv'
+mu_av = ones(num,1); % a vector containing the estimated means with method 'av'
+mu_all = ones(num,1); % a vector containing the estimated means with method 'combined'
+time = ones(num,1); % a vector containing time used method 'plain'
+time_cv = ones(num,1); % a vector containing time used method 'cv'
+time_av = ones(num,1); % a vector containing time used method 'av'
+time_all = ones(num,1); % a vector containing time used method 'combined'
 
 truemu = 1 - cos(1); % true answer
 
 % setup for meanMC object
-obj1.in_param.abstol = 2e-4;
+obj1.in_param.abstol = 2e-4; % absolute tolerance rate
 obj1.in_param.reltol = 0;
 obj1.method = {'plain'}; 
 obj1.Yrand = @(n) sin(rand(n, 1));
@@ -34,7 +34,7 @@ for n = 1:num
 end
 
 obj1.method = {'cv'}; % control variate
-obj1.cv_param.YXrand = @sinr_cv;
+obj1.cv_param.YXrand = @sinr_cv; % sin_cv is defined in the folder test_fns
 obj1.cv_param.muX = 0.5;
 test1 = meanMC(obj1);
 
@@ -46,7 +46,7 @@ for n = 1:num
 end
 
 obj1.method = {'av'}; % antithetic variate
-obj1.av_param.YYrand = @sinr_av;
+obj1.av_param.YYrand = @sinr_av; % sin_av is defined in the folder test_fns
 test1 = meanMC(obj1);
 
 genMu(test1); % run once 
@@ -100,6 +100,9 @@ left.Color = 'k';
 left.LineStyle = ':';
 right.Color = 'k';
 right.LineStyle = ':';
+%%
+% In this example, the method 'cv' is the most efficient method. 
+% The method 'combined' is only a little worse than the optimal method.
 %% Example 2
 % In this example, we are interested in estimating the average distance
 % between two points in a 2-dimensional unit space.
@@ -128,7 +131,7 @@ for n = 1:num
 end
 
 obj2.method = {'cv'}; % control variate
-obj2.cv_param.YXrand = @distfun_cv;
+obj2.cv_param.YXrand = @distfun_cv; % dist_cv is defined in the folder test_fns
 obj2.cv_param.muX = repmat(0.5,1,4);
 test2 = meanMC(obj2);
 
@@ -140,7 +143,7 @@ for n = 1:num
 end
 
 obj2.method = {'av'}; % antithetic variate
-obj2.av_param.YYrand = @distfun_av;
+obj2.av_param.YYrand = @distfun_av; % dist_av is defined in the folder test_fns
 test2 = meanMC(obj2);
 
 genMu(test2); % run once 
@@ -195,14 +198,19 @@ left.LineStyle = ':';
 right.Color = 'k';
 right.LineStyle = ':';
 
+%%
+% In this example, the method 'plain' is the most efficient method. 
+% Again, the method 'combined' is only a little worse than the optimal method.
 %% Example 3
 % In this example, we are interested in pricing an up-and-in call option
 % option with a strke price of 12. Its payoff depends on S(1), S(2) and
 % S(3).
+% The control variates used are the payoffs of a European call options with the
+% different strike prices.
 
 % setup for meanMC object
-obj3.in_param.abstol = 1e-1;
-obj3.in_param.reltol = 0;
+obj3.in_param.abstol = 1e-1; % absolute error tolerance
+obj3.in_param.reltol = 0; % relative error tolerance
 obj3.method = {'plain'}; 
 
 inp.payoffParam.optType = {'upin'};
@@ -255,7 +263,7 @@ for n = 1:num
 end
 
 % add multiple control variates
-strikes = 110:10:180;
+strikes = 110:10:180; 
 nstrikes = length(strikes);
 inp.payoffParam.optType = [{'upin'} repmat({'euro'},1,nstrikes)];
 inp.payoffParam.putCallType = repmat({'call'},1,nstrikes+1);
@@ -274,6 +282,7 @@ for n = 1:num
     time_cv2(n,1) = param_cv2.time; 
 end
 
+% use Ridge regression to estimate control variate coefficients
 obj3.cv_param.ridge = 0.2;
 test3 = meanMC(obj3);
 
@@ -301,6 +310,9 @@ left.Color = 'k';
 left.LineStyle = ':';
 right.Color = 'k';
 right.LineStyle = ':';
+%%
+% In this case, the method 'cv' is much more efficient than the method
+% 'plain'.
 
 % compare different versions of cv
 figure()
@@ -320,4 +332,8 @@ left.LineStyle = ':';
 right.Color = 'k';
 right.LineStyle = ':';
 
-
+%%
+% It can be seen that adding multiple controls makes the 'cv' method more
+% efficient. Also, using Ridge regression to estimate control vocariates
+% does not improve the efficiency. This may be because we
+% already have enough samples to estimate the coefficients.

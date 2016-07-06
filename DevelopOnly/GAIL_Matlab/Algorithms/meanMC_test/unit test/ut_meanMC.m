@@ -6,8 +6,6 @@ classdef ut_meanMC < matlab.unittest.TestCase
   methods(Test)
              
     function meanMCNoInput(testCase)
-       addpath('..') % folder of meanMC
-       addpath('test_fns') % folder of some functions used in the test
        test = meanMC;
        mu = genMu(test);
        testCase.verifyClass(test,'meanMC');

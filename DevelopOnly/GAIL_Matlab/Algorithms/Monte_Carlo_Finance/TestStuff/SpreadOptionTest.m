@@ -6,7 +6,6 @@ classdef SpreadOptionTest < matlab.unittest.TestCase
   methods(Test)
              
     function testIIDSolution(testCase)
-       addpath('../OptionPricing') % folder of optPayoff
        
        inp.payoffParam.optType = {'spread'};
        inp.payoffParam.putCallType = {'put'};
@@ -24,7 +23,6 @@ classdef SpreadOptionTest < matlab.unittest.TestCase
     end
     
         function testSobolSolution(testCase)
-       addpath('../OptionPricing') % folder of optPayoff
        
        inp.payoffParam.optType = {'spread'};
        inp.payoffParam.putCallType = {'put'};
