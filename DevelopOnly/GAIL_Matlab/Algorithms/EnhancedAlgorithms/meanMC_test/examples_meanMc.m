@@ -17,6 +17,10 @@ time_cv = ones(num,1); % a vector containing time used method 'cv'
 time_av = ones(num,1); % a vector containing time used method 'av'
 time_all = ones(num,1); % a vector containing time used method 'combined'
 
+sinr_help = @(x) [sin(x(:,1)) x(:,1)];
+sinr_cv = @(n) sinr_help(repmat(rand(n,1),1,2));
+sinr_av = @(n) sin(bsxfun(@plus, bsxfun(@times, rand(n, 1), [1, -1]), [0, 1]));
+
 truemu = 1 - cos(1); % true answer
 
 % setup for meanMC object
@@ -34,7 +38,7 @@ for n = 1:num
 end
 
 obj1.method = {'cv'}; % control variate
-obj1.cv_param.YXrand = @sinr_cv; % sin_cv is defined in the folder test_fns
+obj1.cv_param.YXrand = sinr_cv; 
 obj1.cv_param.muX = 0.5;
 test1 = meanMC(obj1);
 
@@ -46,7 +50,7 @@ for n = 1:num
 end
 
 obj1.method = {'av'}; % antithetic variate
-obj1.av_param.YYrand = @sinr_av; % sin_av is defined in the folder test_fns
+obj1.av_param.YYrand = sinr_av; 
 test1 = meanMC(obj1);
 
 genMu(test1); % run once 

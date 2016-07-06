@@ -550,7 +550,7 @@ classdef meanMC < handle
                 Yrand_op = Yrand_all{1};
             end
             
-            [tmu, out_param] = meanMC_g(Yrand_op, obj.in_param);
+            [tmu, out_param] = meanMC.meanMC_g(Yrand_op, obj.in_param);
             out_param.ntot = out_param.ntot + nextra; % add counts of extra samples used
             out_param.time = toc(tstart); % get running time n
         end
@@ -616,7 +616,7 @@ classdef meanMC < handle
             nsofar = n1;
             
             ntry = 10;% try several samples to get the time
-            ttry=time(@()Yrand(ntry));
+            ttry=timeit(@()Yrand(ntry));
             tpern = ttry/ntry; % calculate time per sample
             nsofar = nsofar+ntry; % update n so far
             out_param.exit = 0;
@@ -642,7 +642,7 @@ classdef meanMC < handle
                 ttry = [ttry ttry2];% take two times more samples to try
             else %each sample use lots of time, stop try
             end
-            [tmu,out_param] = meanmctolfun(Yrand,out_param,ntry,ttry,nsofar,tstart);
+            [tmu,out_param] = meanMC.meanmctolfun(Yrand,out_param,ntry,ttry,nsofar,tstart);
         end
         
         function [tmu,out_param] =  meanmctolfun(Yrand,out_param,ntry,ttry,nsofar,tstart)
@@ -663,7 +663,7 @@ classdef meanMC < handle
                 + ((alpha_sig*out_param.nSig)/(1-alpha_sig))...
                 *(1-1/out_param.fudge^2)^2;
             %the upper bound on the modified kurtosis
-            tol1 = ncbinv(out_param.n1,alphai,out_param.kurtmax);
+            tol1 = meanMC.ncbinv(out_param.n1,alphai,out_param.kurtmax);
             %tolerance for initial estimation
             out_param.tol(1) = sig0up*tol1;
             %the width of initial confidence interval for the mean
@@ -676,7 +676,7 @@ classdef meanMC < handle
                     % if the sample size used for initial estimation is
                     % larger than nremain, print warning message and use nremain
                     out_param.exit=1; %pass a flag
-                    meanMC_g_err(out_param); % print warning message
+                    meanMC.meanMC_g_err(out_param); % print warning message
                     out_param.n(i) = out_param.nremain;% update n
                     tmu = gail.evalmean(Yrand,out_param.n(i),npcmax);%evaluate the mean
                     nsofar = nsofar+out_param.n(i);%total sample used
@@ -713,7 +713,7 @@ classdef meanMC < handle
                     toloversig = out_param.tol(i)/sig0up;%next tolerance over sigma
                     alphai = (out_param.alpha-alpha_sig)/(1-alpha_sig)*2.^(-i);
                     %update the next uncertainty
-                    out_param.n(i) = nchebe(toloversig,alphai,out_param.kurtmax);
+                    out_param.n(i) = meanMC.nchebe(toloversig,alphai,out_param.kurtmax);
                     %get the next sample size needed
                 end
             end

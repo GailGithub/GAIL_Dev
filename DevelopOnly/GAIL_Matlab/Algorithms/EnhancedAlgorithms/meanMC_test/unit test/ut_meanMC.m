@@ -40,7 +40,8 @@ classdef ut_meanMC < matlab.unittest.TestCase
 
     function cvMethod(testCase)
         obj.method = {'cv'};
-        obj.cv_param.YXrand = @sinr_cv;
+        sinr_help = @(x) [sin(x(:,1)) x(:,1)];
+        obj.cv_param.YXrand = @(n) sinr_help(repmat(rand(n,1),1,2));
         obj.cv_param.muX = 0.5;
         obj.cv_param.ncv = 1.1e3;
         obj.cv_param.ridge = 1e-3;
@@ -68,7 +69,8 @@ classdef ut_meanMC < matlab.unittest.TestCase
         obj.method = {'cv','av','plain'};
         obj.nc = 1e3;
         obj.Yrand = @(n) sin(rand(n, 1));
-        obj.cv_param.YXrand = @sinr_cv;
+        sinr_help = @(x) [sin(x(:,1)) x(:,1)];
+        obj.cv_param.YXrand = @(n) sinr_help(repmat(rand(n,1),1,2));
         obj.cv_param.muX = 0.5;
         obj.cv_param.ridge = [1e-3 2e-3];
         obj.av_param.YYrand = @(n) sin(bsxfun(@plus, bsxfun(@times, rand(n, 1), [1, -1]), [0, 1]));
@@ -93,7 +95,10 @@ classdef ut_meanMC < matlab.unittest.TestCase
         obj.method = {{'cv','av','plain'},{'cv','av'}};
         obj.nc = [1e3 2e3];
         obj.Yrand = {@(n) sin(rand(n, 1)), @(n) exp(rand(n, 1))};
-        obj.cv_param.YXrand = {@sinr_cv, @expr_cv};
+        sinr_help = @(x) [sin(x(:,1)) x(:,1)];
+        expr_help = @(x) [exp(x(:,1)) x(:,1)];
+        obj.cv_param.YXrand = {@(n) sinr_help(repmat(rand(n,1),1,2)), ...
+            @(n) expr_help(repmat(rand(n,1),1,2))};
         obj.cv_param.muX = {0.5, 0.5};
         obj.cv_param.ncv = [1e3 2e3];
         obj.cv_param.ridge = {0, [0 1e-3]};
@@ -143,8 +148,11 @@ classdef ut_meanMC < matlab.unittest.TestCase
         obj.in_param.nbudget = {1.1e9 2e9};
         obj.method = {{'cv','av','plain'},{'cv','av'}};
         obj.nc = {1e3 2e3};
-        obj.Yrand = {@(n) sin(rand(n, 1)), @(n) exp(rand(n, 1))};
-        obj.cv_param.YXrand = {@sinr_cv, @expr_cv};
+        obj.Yrand = {@(n) sin(rand(n,1)), @(n) exp(rand(n, 1))};
+        sinr_help = @(x) [sin(x(:,1)) x(:,1)];
+        expr_help = @(x) [exp(x(:,1)) x(:,1)];
+        obj.cv_param.YXrand = {@(n) sinr_help(repmat(rand(n,1),1,2)), ...
+            @(n) expr_help(repmat(rand(n,1),1,2))};
         obj.cv_param.muX = {0.5, 0.5};
         obj.cv_param.ncv = {1e3 2e3};
         obj.cv_param.ridge = {0, [0 1e-3]};
@@ -195,7 +203,10 @@ classdef ut_meanMC < matlab.unittest.TestCase
         obj.method = {'cv','av','plain'};
         obj.nc = 1e3;
         obj.Yrand = {@(n) sin(rand(n, 1)), @(n) exp(rand(n, 1))};
-        obj.cv_param.YXrand = {@sinr_cv, @expr_cv};
+        sinr_help = @(x) [sin(x(:,1)) x(:,1)];
+        expr_help = @(x) [exp(x(:,1)) x(:,1)];
+        obj.cv_param.YXrand = {@(n) sinr_help(repmat(rand(n,1),1,2)), ...
+            @(n) expr_help(repmat(rand(n,1),1,2))};
         obj.cv_param.muX = 0.5;
         obj.cv_param.ncv = 1e3;
         obj.cv_param.ridge = [0 1e-3];
@@ -235,17 +246,4 @@ classdef ut_meanMC < matlab.unittest.TestCase
     end
    
   end
-end
-
-function YX = sinr_cv(n) 
-    u = rand(n, 1);
-    Y = sin(u);
-    YX = [Y u];
-end
-
-
-function YX = expr_cv(n) 
-    u = rand(n, 1);
-    Y = exp(u);
-    YX = [Y u];
 end
