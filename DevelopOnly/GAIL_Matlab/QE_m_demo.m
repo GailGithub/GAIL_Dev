@@ -15,9 +15,9 @@ inp.assetParam.volatility = 0.3;
 inp.assetParam.Vinst = 0.09; 
 inp.assetParam.Vlong = 0.09;
 inp.assetParam.kappa = 1;
-inp.assetParam.nu = 0;%1e-16;
+inp.assetParam.nu = 1.5;%1e-16;
 inp.assetParam.rho = 0.8;
-inp.assetParam.pathType = 'GBM';
+inp.assetParam.pathType = 'QE_m';
 
 %%
 % To generate some discounted option payoffs to add some more properties

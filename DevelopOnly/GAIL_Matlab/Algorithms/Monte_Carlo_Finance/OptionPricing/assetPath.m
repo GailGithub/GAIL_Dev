@@ -227,8 +227,6 @@ classdef assetPath < brownianMotion
              
              V2 = zeros(nPaths,Ntime+1);
              V2(:,1) = obj.assetParam.Vinst; % set V0
-            
-             UV1 = rand(nPaths,Ntime);
              
              if Ntime==1
                  dW2=bmpaths(:,1);
@@ -247,6 +245,8 @@ classdef assetPath < brownianMotion
                 normpathdiff2=normpath4-normpath3;
                 Z=[normpath3(:,1) normpathdiff2]/sqrt(dT);
              end
+             
+             UV1 = normcdf(Z);
 %*******************************************************************
 % set U=V-Vlong
              U = zeros(nPaths,Ntime+1);
@@ -293,7 +293,7 @@ classdef assetPath < brownianMotion
                      lnS1(I1,i) = lnS1(I1,i-1) + term1 + sqrt(dT*(1-obj.assetParam.rho^2)*(obj.assetParam.Vlong+Gammas)).*dW2(I1,i-1);
                  end
                 
-                 I2 = find(obj.assetParam.nu^2*psi>obj.psiC);;
+                 I2 = find(obj.assetParam.nu^2*psi>obj.psiC);
                  K0 = c1-log(p(I2)+beta(I2).*(1-p(I2))./(beta(I2)-A/obj.assetParam.nu));
                  if isempty(I2)
                  else
@@ -324,8 +324,7 @@ classdef assetPath < brownianMotion
                  *exp(-obj.assetParam.dividend*obj.timeDim.endTime));            
              
              V2 = zeros(nPaths,Ntime+1);
-             V2(:,1) = obj.assetParam.Vinst; % set V0
-             UV1 = rand(nPaths,Ntime);  
+             V2(:,1) = obj.assetParam.Vinst; % set V0 
              
              if Ntime==1
                  dW2=bmpaths(:,1);
@@ -344,6 +343,8 @@ classdef assetPath < brownianMotion
                 normpathdiff2=normpath4-normpath3;
                 Z=[normpath3(:,1) normpathdiff2]/sqrt(dT);
              end
+             
+             UV1 = normcdf(Z);
 
 %****************************************************************
 % set U=V-Vlong
