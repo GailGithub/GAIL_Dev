@@ -56,7 +56,7 @@ classdef ut_meanMC < matlab.unittest.TestCase
     
     function avMethod(testCase)
         obj.method = {'av'};
-        obj.av_param.YYrand = @sinr_av;
+        obj.av_param.YYrand = @(n) sin(bsxfun(@plus, bsxfun(@times, rand(n, 1), [1, -1]), [0, 1]));
         test = meanMC(obj);
         mu = genMu(test);
         testCase.verifyClass(test,'meanMC');
@@ -71,7 +71,7 @@ classdef ut_meanMC < matlab.unittest.TestCase
         obj.cv_param.YXrand = @sinr_cv;
         obj.cv_param.muX = 0.5;
         obj.cv_param.ridge = [1e-3 2e-3];
-        obj.av_param.YYrand = @sinr_av;
+        obj.av_param.YYrand = @(n) sin(bsxfun(@plus, bsxfun(@times, rand(n, 1), [1, -1]), [0, 1]));
         test = meanMC(obj);
         mu = genMu(test);
         testCase.verifyClass(test,'meanMC');
@@ -97,7 +97,8 @@ classdef ut_meanMC < matlab.unittest.TestCase
         obj.cv_param.muX = {0.5, 0.5};
         obj.cv_param.ncv = [1e3 2e3];
         obj.cv_param.ridge = {0, [0 1e-3]};
-        obj.av_param.YYrand = {@sinr_av, @expr_av};
+        obj.av_param.YYrand = {@(n) sin(bsxfun(@plus, bsxfun(@times, rand(n, 1), [1, -1]), [0, 1])), ...
+            @(n) exp(bsxfun(@plus, bsxfun(@times, rand(n, 1), [1, -1]), [0, 1]))};
         test = meanMC(obj);
         mu = genMu(test);
         testCase.verifyClass(test,'meanMC');
@@ -147,7 +148,8 @@ classdef ut_meanMC < matlab.unittest.TestCase
         obj.cv_param.muX = {0.5, 0.5};
         obj.cv_param.ncv = {1e3 2e3};
         obj.cv_param.ridge = {0, [0 1e-3]};
-        obj.av_param.YYrand = {@sinr_av, @expr_av};
+        obj.av_param.YYrand = {@(n) sin(bsxfun(@plus, bsxfun(@times, rand(n, 1), [1, -1]), [0, 1])), ...
+            @(n) exp(bsxfun(@plus, bsxfun(@times, rand(n, 1), [1, -1]), [0, 1]))};
         test = meanMC(obj);
         mu = genMu(test);
         testCase.verifyClass(test,'meanMC');
@@ -197,7 +199,8 @@ classdef ut_meanMC < matlab.unittest.TestCase
         obj.cv_param.muX = 0.5;
         obj.cv_param.ncv = 1e3;
         obj.cv_param.ridge = [0 1e-3];
-        obj.av_param.YYrand = {@sinr_av, @expr_av};
+        obj.av_param.YYrand = {@(n) sin(bsxfun(@plus, bsxfun(@times, rand(n, 1), [1, -1]), [0, 1])), ...
+            @(n) exp(bsxfun(@plus, bsxfun(@times, rand(n, 1), [1, -1]), [0, 1]))};
         test = meanMC(obj);
         mu = genMu(test);
         testCase.verifyClass(test,'meanMC');
@@ -232,4 +235,17 @@ classdef ut_meanMC < matlab.unittest.TestCase
     end
    
   end
+end
+
+function YX = sinr_cv(n) 
+    u = rand(n, 1);
+    Y = sin(u);
+    YX = [Y u];
+end
+
+
+function YX = expr_cv(n) 
+    u = rand(n, 1);
+    Y = exp(u);
+    YX = [Y u];
 end
