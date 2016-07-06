@@ -47,7 +47,7 @@ function [hmu,out_param]=meanMC_CLT(Yrand,absTol,relTol,alpha,nSig,inflate)
 %This is a heuristic algorithm based on a Central Limit Theorem
 %approximation
 if nargin < 6
-   inflate = 1.2; %variance inflation factor
+   inflate = 1.2; %standard deviation inflation factor
    if nargin < 5;
       nSig = 1e3; %number of samples to estimate variance
       if nargin < 4
