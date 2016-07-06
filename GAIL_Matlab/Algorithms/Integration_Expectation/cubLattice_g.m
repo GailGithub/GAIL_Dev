@@ -9,9 +9,24 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 %   guaranteed not to be greater than a specific generalized error tolerance,
 %   tolfun:=max(abstol,reltol*| integral(f) |). Input f is a function handle. f should
 %   accept an n x d matrix input, where d is the dimension and n is the 
-%   number of points being evaluated simultaneously. The input hyperbox is
-%   a 2 x d matrix, where the first row corresponds to the lower limits 
-%   and the second row corresponds to the upper limits of the integral.
+%   number of points being evaluated simultaneously. When measure is 'uniform',
+%   The input hyperbox is a 2 x d matrix, where the first row corresponds
+%   to the lower limits and the second row corresponds to the upper limits
+%   of the integral. When measure is 'uniform ball' or 'uniform sphere',
+%   the input hyperbox is a vector with d+1 elements, where the first d 
+%   values correspond to the center of the ball and the last value
+%   corresponds to the radius of the ball. For this last two measures, user can
+%   optionally specify what transformation should be used in order to get a
+%   uniform distribution on a ball. When measure is 'uniform ball_box',
+%   the box-to-ball transformation, which gets a set of points uniformly
+%   distributed on a ball from a set of points uniformly distrubuted on a
+%   box, will be used. When measure is 'uniform ball_normal',
+%   the normal-to-ball transformation, which gets a set of points uniformly
+%   distributed on a ball from a set of points normaly distrubuted on the
+%   space, will be used. Similarly, the measures 'uniform sphere_box'
+%   and 'uniform sphere_normal' can be used to specify the
+%   desired transformations. The defaut transformation is the box-to-ball
+%   transformation.
 %   Given the construction of our Lattices, d must be a positive integer
 %   with 1<=d<=100.
 % 
@@ -40,17 +55,23 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 %     the number of data points and d the dimension, which cannot be
 %     greater than 100. By default f is f=@ x.^2.
 %
-%     hyperbox --- the integration region defined by its bounds. It must be
-%     a 2 x d matrix, where the first row corresponds to the lower limits 
-%     and the second row corresponds to the upper limits of the integral.
-%     The default value is [0;1].
+%     hyperbox --- the integration region defined by its bounds. When measure
+%     is 'uniform' or 'normal', hiperbox must be a 2 x d matrix, where the
+%     first row corresponds to the lower limits and the second row corresponds
+%     to the upper limits of the integral. When measure is 'uniform ball' 
+%     or 'uniform sphere', the input hyperbox is a vector with d+1 elements,
+%     where the first d values correspond to the center of the ball and the
+%     last value corresponds to the radius of the ball. The default value
+%     is [0;1].
 %
 %     in_param.measure --- for f(x)*mu(dx), we can define mu(dx) to be the
 %     measure of a uniformly distributed random variable in the hyperbox
 %     or normally distributed with covariance matrix I_d. The only possible
-%     values are 'uniform' or 'normal'. For 'uniform', the hyperbox must be
-%     a finite volume while for 'normal', the hyperbox can only be defined as 
-%     (-Inf,Inf)^d. By default it is 'uniform'.
+%     values are 'uniform', 'normal' and 'uniform ball'. For 'uniform', the
+%     hyperbox must be a finite volume, for 'normal', the hyperbox can only
+%     be defined as (-Inf,Inf)^d and, for 'uniform ball' or 'uniform sphere',
+%     hyperbox must have finite values for the coordinates of the center
+%     and a finite positive value for the radius. By default it is 'uniform'.
 %
 %     in_param.abstol --- the absolute error tolerance, abstol>=0. By 
 %     default it is 1e-4.
@@ -256,6 +277,46 @@ t_start = tic;
 %% Initial important cone factors and Check-initialize parameters
 r_lag = 4; %distance between coefficients summed and those computed
 [f,hyperbox,out_param] = cubLattice_g_param(r_lag,varargin{:});
+
+%------------------------------------------------------------------------------
+% TRANSFORMATION
+
+%changing the integrand and the hyperbox when measure is uniform ball or
+%sphere by applying the appropriate transformation
+if strcmpi(out_param.measure,'uniform ball') || strcmpi(out_param.measure,'uniform sphere')% using uniformly distributed samples on a ball or sphere
+    if strcmpi(out_param.measure,'uniform ball')% using the formula of the volume of a ball or a sphere
+        volume = ((2.0*pi^(out_param.d/2.0))/(out_param.d*gamma(out_param.d/2.0)))*out_param.radius^out_param.d; %volume of a d-dimentional ball
+    else
+        volume = ((2.0*pi^(out_param.d/2.0))/(gamma(out_param.d/2.0)))*out_param.radius^(out_param.d - 1); %volume of a d-dimentional sphere
+    end
+    
+    if out_param.transf == 1 % box-to-ball or box-to-sphere transformation should be used
+        if out_param.d == 1 % It is not necessary to multiply the function f by the volume, since no transformation is being made
+            hyperbox = [hyperbox - out_param.radius; hyperbox + out_param.radius];% for one dimension, the ball is actually an interval
+            out_param.measure = 'uniform';% them a uniform distribution on a box can be used
+        else
+            if strcmpi(out_param.measure,'uniform ball')
+                f = @(t) f(gail.ball_psi_1(t, out_param.d, out_param.radius, hyperbox))*volume;% the psi function is the transformation
+            else
+                f = @(t) f(gail.sphere_psi_1(t, out_param.d, out_param.radius, hyperbox))*volume;% the psi function is the transformation 
+                out_param.d = out_param.d - 1;% the box-to-sphere transformation takes points from a (d-1)-dimensional box to a d-dimensional sphere
+            end
+            hyperbox = [zeros(1, out_param.d); ones(1, out_param.d)];% the hyperbox must be the domain of the transformation, which is a unit box
+            out_param.measure = 'uniform';% them a uniform distribution on a box can be used
+        end
+    else % normal-to-ball or normal-to-sphere transformation should be used
+        if strcmpi(out_param.measure,'uniform ball')
+            f = @(t) f(gail.ball_psi_2(t, out_param.d, out_param.radius, hyperbox))*volume;% the psi function is the transformation
+        else
+            f = @(t) f(gail.sphere_psi_2(t, out_param.d, out_param.radius, hyperbox))*volume;% the psi function is the transformation 
+        end
+        hyperbox = bsxfun(@plus, zeros(2, out_param.d), [-inf; inf]);% the hyperbox must be the domain of the transformation, which is a this unit box
+        out_param.measure = 'normal';% them a normal distribution can be used
+    end
+end
+
+%------------------------------------------------------------------------------
+
 l_star = out_param.mmin - r_lag; % Minimum gathering of points for the sums of DFT
 omg_circ = @(m) 2.^(-m);
 omg_hat = @(m) out_param.fudge(m)/((1+out_param.fudge(r_lag))*omg_circ(r_lag));
@@ -485,6 +546,8 @@ function [f,hyperbox, out_param] = cubLattice_g_param(r_lag,varargin)
 % Default parameter values
 default.hyperbox = [zeros(1,1);ones(1,1)];% default hyperbox
 default.measure  = 'uniform';
+default.transf = 1;% default transformation (box-to-ball or box-to-sphere)
+default.radius = 1;% radius of the ball or sphere
 default.abstol  = 1e-4;
 default.reltol  = 1e-2;
 default.shift  = rand;
@@ -513,13 +576,13 @@ else
     else
         out_param.f=f;
         hyperbox = varargin{2};
-        if ~isnumeric(hyperbox) || ~(size(hyperbox,1)==2) || ~(size(hyperbox,2)<101)
-            warning('GAIL:cubLattice_g:hyperbox_error1',...
-                'The hyperbox must be a real matrix of size 2xd where d can not be greater than 100. Example for f(x)=x^2:')
-            f = @(x) x.^2;
-            out_param.f=f;
-            hyperbox = default.hyperbox;
-        end
+%         if ~isnumeric(hyperbox) || ~(size(hyperbox,1)==2) || ~(size(hyperbox,2)<101)
+%             warning('GAIL:cubLattice_g:hyperbox_error1',...
+%                 'The hyperbox must be a real matrix of size 2xd where d can not be greater than 100. Example for f(x)=x^2:')
+%             f = @(x) x.^2;
+%             out_param.f=f;
+%             hyperbox = default.hyperbox;
+%         end
     end
 end
 
@@ -560,7 +623,9 @@ else
     addRequired(p,'hyperbox',@isnumeric);
     if isnumeric(in3) || ischar(in3)
         addOptional(p,'measure',default.measure,...
-            @(x) any(validatestring(x, {'uniform','normal'})));
+            @(x) any(validatestring(x, {'uniform','normal','uniform ball',...
+            'uniform ball_box','uniform ball_normal','uniform sphere',...
+            'uniform sphere_box','uniform sphere_normal'})));
         addOptional(p,'abstol',default.abstol,@isnumeric);
         addOptional(p,'reltol',default.reltol,@isnumeric);
         addOptional(p,'shift',default.shift,@isnumeric);
@@ -578,7 +643,9 @@ else
             p.KeepUnmatched = true;
         end
         f_addParamVal(p,'measure',default.measure,...
-            @(x) any(validatestring(x, {'uniform','normal'})));
+            @(x) any(validatestring(x, {'uniform','normal','uniform ball',...
+            'uniform ball_box','uniform ball_normal','uniform sphere',...
+            'uniform sphere_box','uniform sphere_normal'})));
         f_addParamVal(p,'abstol',default.abstol,@isnumeric);
         f_addParamVal(p,'reltol',default.reltol,@isnumeric);
         f_addParamVal(p,'shift',default.shift,@isnumeric);
@@ -595,7 +662,7 @@ else
     out_param = p.Results;
 end
 
-out_param.d = size(hyperbox,2);
+%out_param.d = size(hyperbox,2);
 
 fdgyes = 0; % We store how many functions are in varargin. There can only
             % two functions as input, the function f and the fudge factor.
@@ -606,20 +673,80 @@ if fdgyes < 2 % No fudge factor given as input
     default.fudge = @(m) 5*2.^-(m/d);
 end
 
-%hyperbox should be 2 x dimension
-if ~isnumeric(hyperbox) || ~(size(hyperbox,1)==2) || ~(out_param.d<101)
-    warning('GAIL:cubLattice_g:hyperbox_error2',...
-        'The hyperbox must be a real matrix of size 2 x d where d can not be greater than 100. Example for f(x)=x^2:')
-    f = @(x) x.^2;
-    out_param.f=f;
-    hyperbox = default.hyperbox;
-end
-
-% Force measure to be uniform or normal only
-if ~(strcmp(out_param.measure,'uniform') || strcmp(out_param.measure,'normal') )
-    warning('GAIL:cubLattice_g:notmeasure',['The measure can only be uniform or normal.' ...
+% Force measure to be one of the allowed ones
+if ~(strcmp(out_param.measure,'uniform') || strcmp(out_param.measure,'normal') || ...
+        strcmp(out_param.measure,'uniform ball') || ...
+        strcmp(out_param.measure,'uniform ball_box') || ...
+        strcmp(out_param.measure,'uniform ball_normal') || ...
+        strcmp(out_param.measure,'uniform sphere') || ...
+        strcmp(out_param.measure,'uniform sphere_box') || ...
+        strcmp(out_param.measure,'uniform sphere_normal'))
+    warning('GAIL:cubLattice_g:notmeasure',['Given measure is not allowed.' ...
             ' Using default measure ' num2str(default.measure)])
     out_param.measure = default.measure;
+end
+
+if strcmp(out_param.measure,'uniform ball') || strcmp(out_param.measure,'uniform sphere')
+    out_param.transf = default.transf;
+elseif strcmp(out_param.measure,'uniform ball_box')
+    out_param.transf = 1;
+    out_param.measure = 'uniform ball';
+elseif strcmp(out_param.measure,'uniform ball_normal')
+    out_param.transf = 2;
+    out_param.measure = 'uniform ball';
+elseif strcmp(out_param.measure,'uniform sphere_box')
+    out_param.transf = 1;
+    out_param.measure = 'uniform sphere';
+elseif strcmp(out_param.measure,'uniform sphere_normal')
+    out_param.transf = 2;
+    out_param.measure = 'uniform sphere';
+end
+
+%validating hyperbox
+if strcmp(out_param.measure,'uniform') || strcmp(out_param.measure,'normal')
+    out_param.d = size(hyperbox,2);
+    if ~isnumeric(hyperbox) || ~(size(hyperbox,1)==2) || ~(out_param.d<101)
+        warning('GAIL:cubLattice_g:hyperbox_error2',...
+            'When measure is ''uniform'' or ''normal'', the hyperbox must be a real matrix of size 2 x d where d can not be greater than 100. Example for f(x)=x^2:')
+        f = @(x) x.^2;
+        out_param.f=f;
+        hyperbox = default.hyperbox;
+    end
+else
+    out_param.d = size(hyperbox,2);
+    if ~isnumeric(hyperbox) || ~(size(hyperbox,1)==1) || ~(out_param.d<102)
+        warning('GAIL:cubLattice_g:hyperbox_error3',...
+            'When measure is ''uniform ball'' or ''uniform sphere'', the hyperbox must be a real matrix of size 1 x (d+1) where d can not be greater than 100. Default values for f and hyperbox will be used:')
+        f = @(x) x.^2;
+        out_param.f=f;
+        hyperbox = default.hyperbox;
+    end
+    
+    out_param.radius = hyperbox(out_param.d);
+    hyperbox = hyperbox(:,1:out_param.d-1);
+    out_param.d = out_param.d - 1;
+    
+    if strcmp(out_param.measure,'uniform ball') && out_param.d <= 0
+        warning('GAIL:cubLattice_g:dimensionequalszero',...
+            'When measure is ''uniform ball'', the number of dimentions must be a positive values. Default values for f and hyperbox will be used:')
+        f = @(x) x.^2;
+        out_param.f=f;
+        hyperbox = default.hyperbox;
+    end
+    
+    if strcmp(out_param.measure,'uniform sphere') && out_param.d <= 1
+        warning('GAIL:cubLattice_g:dimensionsmallerthan2',...
+            'When measure is ''uniform sphere'', the number of dimentions must be at least 2. Default values for f and hyperbox will be used:')
+        f = @(x) x.^2;
+        out_param.f=f;
+        hyperbox = default.hyperbox;
+    end
+    
+    if ~isfinite(out_param.radius) || out_param.radius <= 0.0
+        warning('GAIL:cubLattice_g:infiniteradius',...
+            'When measure is ''uniform ball'' or ''uniform sphere'', the radius must a finite positive real number. Default value for the radius will be used:')
+        out_param.radius = default.radius;
+    end
 end
 
 % Force absolute tolerance greater than 0
@@ -724,6 +851,12 @@ if (strcmp(out_param.measure,'normal')) && (any(hyperbox(1,:)==hyperbox(2,:)) ||
             ' Using default hyperbox:'])
     disp([-inf*ones(1,out_param.d);inf*ones(1,out_param.d)])
     hyperbox = [-inf*ones(1,out_param.d);inf*ones(1,out_param.d)];
+end
+if (strcmp(out_param.measure,'uniform ball') || strcmp(out_param.measure,'uniform sphere'))...
+        && ~all(all(isfinite(hyperbox)))
+    warning('GAIL:cubLattice_g:infinitecoordinateforthecenter',['If uniform ball or sphere measure, all the coordinates of the center must be finite.' ...
+            ' Using the origin as the center:'])
+    hyperbox = zeros(1,out_param.d);
 end
 
 end
