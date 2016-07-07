@@ -19,7 +19,7 @@ format compact
 format long
 
 %% funmin_g
-tic, [fmin,out] = funminNoPenalty_g(f, a, b, abstol), toc
+tic, [fmin,out] = funmin_g(f, a, b, abstol), toc
 out.intervals
 funmin_g_demo(fmin, out);
 trueerr = abs(truey - fmin)
@@ -49,4 +49,4 @@ hold off
 %% integral_g
 %tic, [fint,out3] = integralNoPenalty_g(f, a, b, abstol,'nmax',10^8), toc
 %tic, cint = sum(c),toc
-keyboard
+%keyboard

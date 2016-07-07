@@ -1,187 +1,186 @@
-%UT_funappxNoPenalty_g fast unit tests for funappxNoPenalty_g
-classdef ut_funappxNoPenalty_g < matlab.unittest.TestCase
+%UT_FUNAPPX_G fast unit tests for funappxPenalty_g
+classdef ut_funappxPenalty_g < matlab.unittest.TestCase
     
     methods(Test)
-        function funappxNoPenalty_gofConstantFunction(testCase)
+        function funappxPenalty_gofConstantFunction(testCase)
             f = @(x) 3;
             in_param.maxiter = 1;
-            in_param.nlo = 3;
-            in_param.nhi = 3;
-            [fappx, result] = funappxNoPenalty_g(f,in_param);
+            in_param.nlo = 1;
+            in_param.nhi = 1;
+            [fappx, result] = testCase.verifyWarning(@()funappxPenalty_g(f,in_param),'GAIL:funappxPenalty_g:exceediter');
             testCase.verifyLessThanOrEqual(result.iter, 1);
-            testCase.verifyEqual(result.npoints, 5);
+            testCase.verifyEqual(result.npoints,3);
             x = 0:0.1:1;
             testCase.verifyLessThanOrEqual(norm(fappx(x)-f(x)), eps);
         end
         
-        function funappxNoPenalty_gOfx(testCase)
+        function funappxPenalty_gOfx(testCase)
             f = @(x) x;
             in_param.abstol = 10^(-8);
             in_param.nlo = 10;
             in_param.nhi = 100;
-            [fappx, result] = funappxNoPenalty_g(f,in_param);
+            [fappx, result] = funappxPenalty_g(f,in_param);
             x = rand(10000,1);
             actualerr = max(abs(fappx(x)-f(x)));
             testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
             testCase.verifyLessThanOrEqual(result.iter, 1); 
         end 
         
-        function funappxNoPenalty_gOf100000x(testCase)
+        function funappxPenalty_gOf100000x(testCase)
             f = @(x) 100000 .* x;
             in_param.abstol = 10^(-8);
-            in_param.nlo = 5;
-            in_param.nhi = 5;
-            [fappx, result] = funappxNoPenalty_g(f,in_param);
+            in_param.nlo = 1;
+            in_param.nhi = 1;
+            [fappx, result] = funappxPenalty_g(f,in_param);
             x = rand(10000,1);
             actualerr = max(abs(fappx(x)-f(x)));
             testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
             testCase.verifyLessThanOrEqual(result.iter, 1);
-            testCase.verifyLessThanOrEqual(result.npoints, 5);
+            testCase.verifyLessThanOrEqual(result.npoints, 3);
          end
         
-        function funappxNoPenalty_gOfxsquare(testCase)
+        function funappxPenalty_gOfxsquare(testCase)
             f = @(x) x.^2;
             in_param.abstol = 10^(-8);
             in_param.nlo = 10;
             in_param.nhi = 100;
-            [fappx, ~] = funappxNoPenalty_g(f,in_param);
+            [fappx, ~] = funappxPenalty_g(f,in_param);
             x = rand(10000,1);
             actualerr = max(abs(fappx(x)-f(x)));
             testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
         end
         
-        function funappxNoPenalty_gOfsin(testCase)
+        function funappxPenalty_gOfsin(testCase)
             f = @(x) sin(x);
             in_param.abstol = 10^(-8);
             in_param.nlo = 10;
             in_param.nhi = 10;
-            [fappx, ~] = funappxNoPenalty_g(f,in_param);
+            [fappx, ~] = funappxPenalty_g(f,in_param);
             x = rand(10000,1);
             actualerr = max(abs(fappx(x)-f(x)));
             testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
         end
         
-        function funappxNoPenalty_gOfexponential(testCase)
+        function funappxPenalty_gOfexponential(testCase)
             f = @(x) exp(-100*(x-0.7).^2);
             in_param.abstol = 10^(-8);
             in_param.nlo = 10;
             in_param.nhi = 100;
-            [fappx, ~] = funappxNoPenalty_g(f,in_param);
+            [fappx, ~] = funappxPenalty_g(f,in_param);
             x = rand(10000,1);
             actualerr = max(abs(fappx(x)-f(x)));
             testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
         end
         
-        function funappxNoPenalty_gOfxab(testCase)
+        function funappxPenalty_gOfxab(testCase)
             f = @(x) x;
             in_param.a = 0;
             in_param.b = 10;
             in_param.abstol = 10^(-6);
-            [fappx,result] = funappxNoPenalty_g(f,in_param);
+            [fappx,result] = funappxPenalty_g(f,in_param);
             x = rand(10000,1)*(result.b-result.a)+result.a;
             actualerr = max(abs(fappx(x)-f(x)));
             testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
         end
         
-        function funappxNoPenalty_gOfxsquareab(testCase)
+        function funappxPenalty_gOfxsquareab(testCase)
             f = @(x) x.^2;
             in_param.a = 0;
             in_param.b = 0.001;
             in_param.abstol = 10^(-8);
-            [fappx, result] = funappxNoPenalty_g(f,in_param);
+            [fappx, result] = funappxPenalty_g(f,in_param);
             x = rand(10000,1)*(result.b-result.a)+result.a;
             actualerr = max(abs(fappx(x)-f(x)));
             testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
         end
         
-        function funappxNoPenalty_gOfsinab(testCase)
+        function funappxPenalty_gOfsinab(testCase)
             f = @(x) sin(x);
             in_param.a = 0;
             in_param.b = 10;
             in_param.abstol = 10^(-6);
             in_param.nlo = 10;
             in_param.nhi = 100;
-            [fappx, result] = funappxNoPenalty_g(f,in_param);
+            [fappx, result] = funappxPenalty_g(f,in_param);
             x = rand(10000,1)*(result.b-result.a)+result.a;
             actualerr = max(abs(fappx(x)-f(x)));
             testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
         end
         
-        function funappxNoPenalty_gOfexponentialab(testCase)
+        function funappxPenalty_gOfexponentialab(testCase)
             f = @(x)  exp(-100*(x-0.7).^2);
             in_param.a = 0;
             in_param.b = 10;
             in_param.abstol = 10^(-6);
             in_param.nlo = 10;
             in_param.nhi = 100;
-            [fappx, result] = funappxNoPenalty_g(f,in_param);
+            [fappx, result] = funappxPenalty_g(f,in_param);
             x = rand(10000,1)*(result.b-result.a)+result.a;
             actualerr = max(abs(fappx(x)-f(x)));
             testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
         end
         
-        function funappxNoPenalty_gOfblea(testCase)
+        function funappxPenalty_gOfblea(testCase)
             f = @(x) x.^2;
             in_param.a = 2;
             in_param.b = 1;
-            [fappx, result] = testCase.verifyWarning(@()funappxNoPenalty_g(f,in_param),'GAIL:gail1D_in_param:blea');
+            [fappx, result] = testCase.verifyWarning(@()funappxPenalty_g(f,in_param),'GAIL:funappxPenalty_g:blea');
             x = rand(10000,1)*(result.b-result.a)+result.a;
             actualerr = max(abs(fappx(x)-f(x)));
             testCase.verifyLessThanOrEqual(actualerr,result.abstol);
         end
         
-        function funappxNoPenalty_gOfnofunction(testCase)
-            [fappx, result] = testCase.verifyWarning(@()funappxNoPenalty_g,'GAIL:gail_in_param:notfunction');
+        function funappxPenalty_gOfnofunction(testCase)
+            [fappx, result] = testCase.verifyWarning(@()funappxPenalty_g,'GAIL:funappxPenalty_g:nofunction');
             x = rand(10000,1)*(result.b-result.a)+result.a;
             actualerr = max(abs(fappx(x)-result.f(x)));
             testCase.verifyLessThanOrEqual(actualerr,result.abstol);
         end
         
-        function funappxNoPenalty_gOfbeqa(testCase)
+        function funappxPenalty_gOfbeqa(testCase)
             f = @(x) x.^2;
             in_param.a = 1;
             in_param.b = 1;
-            [fappx, result] = testCase.verifyWarning(@()funappxNoPenalty_g(f,in_param),'GAIL:gail1D_in_param:beqa');
+            [fappx, result] = testCase.verifyWarning(@()funappxPenalty_g(f,in_param),'GAIL:funappxPenalty_g:beqa');
             x = rand(10000,1)*(result.b-result.a)+result.a;
             actualerr = max(abs(fappx(x)-f(x)));
             testCase.verifyLessThanOrEqual(actualerr,result.abstol);
         end
         
-        function funappxNoPenalty_gOfexceedbudget(testCase)
+        function funappxPenalty_gOfexceedbudget(testCase)
             f = @(x) x.^2;
-            in_param.nmax = 200;
-            [~, result] = testCase.verifyWarning(@()funappxNoPenalty_g(f,in_param),'GAIL:funappxNoPenalty_g:exceedbudget');
+            in_param.nmax = 1000;
+            [~, result] = testCase.verifyWarning(@()funappxPenalty_g(f,in_param),'GAIL:funappxPenalty_g:exceedbudget');
             testCase.verifyLessThanOrEqual(result.npoints,result.nmax);
-            testCase.verifyEqual(result.exitflag,logical([1 0 0 0 0]));
         end
         
-        function funappxNoPenalty_gOfexceediter(testCase)
+        function funappxPenalty_gOfexceediter(testCase)
             f = @(x) x.^2;
             in_param.maxiter = 2;
-            [~, result] = testCase.verifyWarning(@()funappxNoPenalty_g(f,in_param),'GAIL:funappxNoPenalty_g:exceediter');
+            [~, result] = testCase.verifyWarning(@()funappxPenalty_g(f,in_param),'GAIL:funappxPenalty_g:exceediter');
             testCase.verifyEqual(result.maxiter,result.iter);
         end
         
-         function funappxNoPenalty_gOnpointsoflinear(testCase)
+         function funappxPenalty_gOnpointsoflinear(testCase)
             f = @(x) 3*x + 5;
-            in_param.nlo = 5; in_param.nhi =5;
-            [~, result] = funappxNoPenalty_g(f,in_param);
-            testCase.verifyEqual(result.npoints,5);
+            in_param.nlo = 1; in_param.nhi =1;
+            [~, result] = funappxPenalty_g(f,in_param);
+            testCase.verifyEqual(result.npoints,3);
          end
         
-         function funappxNoPenalty_gOnpointsofconstant(testCase)
+         function funappxPenalty_gOnpointsofconstant(testCase)
             f = @(x) 5;
-            in_param.nlo = 1; in_param.nhi = 1;
-            [~, result] = funappxNoPenalty_g(f,in_param);
-            testCase.verifyEqual(result.npoints,5);
+            in_param.nlo = 1; in_param.nhi =1;
+            [~, result] = funappxPenalty_g(f,in_param);
+            testCase.verifyEqual(result.npoints,3);
          end
-         
-         function funappxNoPenalty_gHighAccuracy(testCase)
-            [fappx, result] = funappxNoPenalty_g(@(x)exp(x),'a',-2,'b',2,'nhi',20,'nlo',10, 'abstol', 1e-12);
+
+                 
+         function funappxPenalty_gHighAccuracy(testCase)
+            [fappx, result] = funappxPenalty_g(@(x)exp(x),'a',-2,'b',2,'nhi',20,'nlo',10, 'abstol', 1e-12);
             x = rand(1000000,1)*(result.b-result.a)+result.a;
             actualerr = max(abs(fappx(x)-result.f(x)));
             testCase.verifyLessThanOrEqual(actualerr,result.abstol);
         end
-         
     end
 end

@@ -13,8 +13,8 @@ in_param.nmax = 10^7; %cost budget
 %% Simulation parameters
 n = nrep;
 if (n >= 100)
-    warning('off','GAIL:funmin_g:exceedbudget');
-    warning('off','GAIL:funmin_g:peaky');
+    warning('off','GAIL:funminPenalty_g:exceedbudget');
+    warning('off','GAIL:funminPenalty_g:peaky');
 end;
 a1=5; b1=10; c1=0.5-0.5*rand(nrep,1);
 a2=1; b2=10; c2=0.5+0.5*rand(nrep,1);
@@ -32,7 +32,7 @@ for i=1:nTolX
     for j=1:nrep
         f=@(x) -a1*exp(-(b1*(x-c1(j))).^2)-a2*exp(-(b2*(x-c2(j))).^2);
         exactsolu(j) = fminbnd(f,0,(c1(j)+c2(j))/2,optimset('TolX',1e-9));
-        [fmin,out_param] = funmin_g(f,in_param);
+        [fmin,out_param] = funminPenalty_g(f,in_param);
         xmin(j,i)=fminbnd(f,0,1,optimset('TolX',in_param.TolX));
         intnum(j,i) = size(out_param.intervals,2);
         exceedmat(j,i) = out_param.exitflag;
@@ -48,10 +48,10 @@ for i=1:nTolX
     end
 end
 
-warning('on','GAIL:funmin_g:exceedbudget');
-warning('on','GAIL:funmin_g:peaky');
+warning('on','GAIL:funminPenalty_g:exceedbudget');
+warning('on','GAIL:funminPenalty_g:peaky');
 
-prob.probfunmin=mean(succfunmin,1); %probability find the solution by funmin_g 
+prob.probfunmin=mean(succfunmin,1); %probability find the solution by funminPenalty_g 
 prob.probnowarn=mean(succfunmin&(~exceedmat),1); 
 prob.probwarn=mean(succfunmin&(exceedmat),1); 
 prob.probfminbnd=mean(succfminbnd,1); 

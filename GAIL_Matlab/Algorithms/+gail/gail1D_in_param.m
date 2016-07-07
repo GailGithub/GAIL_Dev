@@ -308,10 +308,10 @@ classdef gail1D_in_param < gail.gail_in_param & matlab.mixin.CustomDisplay
                     ' can only be 1 or 0; use default value 0'])
                 out_param.memorytest = 0;
             end;
-            if (out_param.output_x~=1 && out_param.output_x~=0)
+            if ~(out_param.output_x || (1-out_param.output_x))
                 warning('GAIL:gail1D_in_param:output_x', ['Input of output_x'...
-                    ' can only be 1 or 0; use default value 0'])
-                out_param.output_x = 0;
+                    ' can only be 0 or 1; using default value false'])
+                out_param.output_x = false;
             end;
             
         end % function validate_inputs
@@ -320,7 +320,7 @@ classdef gail1D_in_param < gail.gail_in_param & matlab.mixin.CustomDisplay
         function out_struct = toStruct(out_param,varargin)
             field_list = ...%union({'f'}, union(out_param.input_field_names, out_param.output_field_names,'stable'),'stable');
                 {'f','a','b','abstol','nlo','nhi','ninit','nmax','maxiter'};
-            if length(varargin) > 0
+            if ~isempty(varargin)
                 field_list = varargin{1};
             end
             for field_index = 1:length(field_list)

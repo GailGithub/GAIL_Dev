@@ -11,9 +11,25 @@ function [Q,out_param] = cubMC_g(varargin)
 %   are abstol=1e-2, reltol=1e-1, and alpha=1%. Input f is a function
 %   handle that accepts an n x d matrix input, where d is the dimension of
 %   the hyperbox, and n is the number of points being evaluated
-%   simultaneously. The input hyperbox is a 2 x d matrix, where the first
+%   simultaneously. When measure is 'uniform', 'uniform box', 'normal'
+%   or 'Gaussian', the input hyperbox is a 2 x d matrix, where the first
 %   row corresponds to the lower limits and the second row corresponds to
-%   the upper limits.
+%   the upper limits. When measure is 'uniform ball' or 'uniform sphere',
+%   the input hyperbox is a vector with d+1 elements, where the first d
+%   values correspond to the center of the ball and the last value
+%   corresponds to the radius of the ball. For this last two measures, user
+%   can optionally specify what transformation should be used in order to
+%   get a uniform distribution on a ball of sphere. When measure is
+%   'uniform ball_box', the box-to-ball transformation, which gets
+%   a set of points uniformly distributed on a ball from a set of points
+%   uniformly distrubuted on a box, will be used. When measure is 
+%   'uniform ball_normal', the normal-to-ball transformation, which
+%   gets a set of points uniformly distributed on a ball from a set of 
+%   points normaly distrubuted on the space, will be used. Similarly, the
+%   measures 'uniform sphere_box' and 'uniform sphere_normal-to-spehere'
+%   can be defined.
+%   The defaut transformations are the box-to-ball and the box-to-sphere
+%   transformations, depending on the region of integration.
 % 
 %   Q = CUBMC_G(f,hyperbox,measure,abstol,reltol,alpha)
 %   estimates the integral of function f over hyperbox to within a 
@@ -41,12 +57,14 @@ function [Q,out_param] = cubMC_g(varargin)
 %     [zeros(1,d); ones(1,d)], the default d is 1.
 % 
 %     in_param.measure --- the measure for generating the random variable,
-%     the default is 'uniform'. The other measure could be handled is
-%     'normal'/'Gaussian'. The input should be a string type, hence with
-%     quotes.
+%     the default is 'uniform'. The other measures could be handled are
+%     'uniform box', 'normal'/'Gaussian', 'uniform ball'/'uniform 
+%     ball_box-to-ball'/'uniform ball_normal' and 'uniform sphere'/'uniform 
+%     sphere_box-to-sphere'/'uniform sphere_normal'. The input should be
+%     a string type, hence with quotes.
 % 
 %     in_param.abstol --- the absolute error tolerance, the default value
-%     is 1e-2.
+%     is 1e-1
 %
 %     in_param.reltol --- the relative error tolerance, the default value
 %     is 1e-1.
@@ -111,14 +129,30 @@ function [Q,out_param] = cubMC_g(varargin)
 %      
 %                       10  hyperbox does not contain numbers
 %      
-%                       11  hyperbox is not 2 x d
-%      
-%                       12  hyperbox is only a point in one direction
+%                       11  hyperbox is not 2 x d when measure is 'uniform'
+%                           or 'normal'
+%
+%                       12  hyperbox is only a point in one direction when
+%                           measure is 'uniform' or 'normal'
 %      
 %                       13  hyperbox is infinite when measure is 'uniform'
 %      
 %                       14  hyperbox is not doubly infinite when measure
 %                           is 'normal'
+%
+%                       15  hyperbox has an infinite coordinate for the
+%                           center of the ball or sphere or a infinite radius
+%                           for the ball or sphere
+%
+%                       16  The radius of the ball or sphere is a no-npositive
+%                           real number
+%
+%                       17  The dimension of the ball is zero
+%
+%                       18  Hyperbox not 1 x (d+1) when measure is 'uniform
+%                           ball' or 'uniform sphere'
+%
+%                       19  The dimension of the sphere is smaller than 2
 % 
 %  Guarantee
 % This algorithm attempts to calculate the integral of function f over a
@@ -182,6 +216,14 @@ function [Q,out_param] = cubMC_g(varargin)
 % >> Q = cubMC_g(f,hyperbox,'normal',0,1e-2)
 % Q = 0.33***
 % 
+%
+% Example 6: 
+% Estimate the integral with integrand f(x) = x1^2+x2^2 in the ball with
+% center (0,0) and radius 1, where x is a vector x = [x1 x2].
+% 
+% >> f=@(x) x(:,1).^2+x(:,2).^2;hyperbox = [0,0,1];
+% >> Q = cubMC_g(f,hyperbox,'uniform ball','abstol',1e-3,'reltol',1e-3)
+% Q = 1.57***
 % 
 %   See also FUNAPPX_G, INTEGRAL_G, MEANMC_G, MEANMCBER_G, CUBLATTICE_G, CUBSOBOL_G
 % 
@@ -215,15 +257,54 @@ function [Q,out_param] = cubMC_g(varargin)
 %   (WSSSPE1)," Journal of Open Research Software, Volume 2, Number 1, e6,
 %   pp. 1-21, 2014.
 %
+%   [6] Fang, K.-T., & Wang, Y. (1994). Number-theoretic Methods in 
+%   Statistics. London, UK: CHAPMAN & HALL
+%
 %   If you find GAIL helpful in your work, please support us by citing the
 %   above papers, software, and materials.
 %
-
+%   Authors:  Lan Jiang, Felipe Sousa de Andrade
 
 tstart=tic;
 [f,hyperbox,out_param] = cubMC_g_param(varargin{:});%check validity of inputs
+
+%changing the integrand and the hyperbox when measure is uniform ball or
+%sphere by applying the appropriate transformation
+if strcmpi(out_param.measure,'uniform ball') || strcmpi(out_param.measure,'uniform sphere')% using uniformly distributed samples on a ball or sphere
+    if strcmpi(out_param.measure,'uniform ball')% using the formula for the volume of a ball
+        volume = ((2.0*pi^(out_param.dim/2.0))/(out_param.dim*gamma(out_param.dim/2.0)))*out_param.radius^out_param.dim; %volume of a d-dimentional ball
+    else % using the formula for the volume of a sphere
+        volume = ((2.0*pi^(out_param.dim/2.0))/(gamma(out_param.dim/2.0)))*out_param.radius^(out_param.dim - 1); %volume of a d-dimentional sphere
+    end
+    
+    if out_param.transf == 1 % box-to-ball or box-to-sphere transformation should be used
+        if out_param.dim == 1 % It is not necessary to multiply the function f by the volume, since no transformation is being made
+            hyperbox = [hyperbox - out_param.radius; hyperbox + out_param.radius];% for one dimension, the ball is actually an interval
+            out_param.measure = 'uniform';% them a uniform distribution on a box can be used
+        else
+            if strcmpi(out_param.measure,'uniform ball')
+                f = @(t) f(gail.ball_psi_1(t, out_param.dim, out_param.radius, hyperbox))*volume;% the psi function computes the transformation
+            else
+                f = @(t) f(gail.sphere_psi_1(t, out_param.dim, out_param.radius, hyperbox))*volume;% the psi function is the transformation 
+                out_param.dim = out_param.dim - 1;% the box-to-sphere transformation takes points from a (d-1)-dimensional box to a d-dimensional sphere
+            end
+            hyperbox = [zeros(1, out_param.dim); ones(1, out_param.dim)];% the hyperbox must be the domain of the transformation, which is a unit box
+            out_param.measure = 'uniform';% them a uniform distribution on a box can be used
+        end
+    else % normal-to-ball or normal-to-sphere transformation should be used
+        if strcmpi(out_param.measure,'uniform ball')
+            f = @(t) f(gail.ball_psi_2(t, out_param.dim, out_param.radius, hyperbox))*volume;% the psi function computes the transformation
+        else
+            f = @(t) f(gail.sphere_psi_2(t, out_param.dim, out_param.radius, hyperbox))*volume;% the psi function is the transformation 
+        end
+        hyperbox = bsxfun(@plus, zeros(2, out_param.dim), [-inf; inf]);% the hyperbox must be the domain of the transformation, which is a unit box
+        out_param.measure = 'normal';% them a normal distribution can be used
+    end
+end
+
+%now the transformation will be calculated using uniform or normal measure
 f=gail.transformIntegrand(f,hyperbox,out_param);
-if strcmpi(out_param.measure,'uniform')% the using uniformly distributed samples
+if strcmpi(out_param.measure,'uniform')% using uniformly distributed samples
     [Q,out_param] = meanMC_g(@(nfun)f(rand(nfun,out_param.dim)),out_param);
     % using meanMC_g to get the mean
 elseif strcmpi(out_param.measure,'normal')% using normally distributed samples
@@ -236,6 +317,7 @@ end
 function [f,hyperbox,out_param] = cubMC_g_param(varargin)
 % Parameter checking and parsing
 default.measure = 'uniform';% default measure
+default.transf = 1;% default transformation (box-to-ball)
 default.dim = 1;% default dimension
 default.hyperbox = [zeros(1,default.dim);ones(1,default.dim)];% default hyperbox
 default.abstol  = 1e-2;% default absolute error tolerance
@@ -303,7 +385,10 @@ else % if there is some optional input
         %if there are multiple inputs with only numeric, they should be put
         %in order.
         addOptional(p,'measure',default.measure,...
-            @(x) any(validatestring(x, {'uniform','normal','Gaussian'})));
+            @(x) any(validatestring(x, {'uniform','uniform box',...
+            'normal','Gaussian','uniform ball', 'uniform ball_box',...
+            'uniform ball_normal','uniform sphere','uniform sphere_box',...
+            'uniform sphere_normal'})));
         addOptional(p,'abstol',default.abstol,@isnumeric);
         addOptional(p,'reltol',default.reltol,@isnumeric);
         addOptional(p,'alpha',default.alpha,@isnumeric);
@@ -321,7 +406,10 @@ else % if there is some optional input
         % if there are multiple inputs with name and numeric, they should
         % be put in order.
         f_addParamVal(p,'measure',default.measure,...
-            @(x) any(validatestring(x, {'uniform','normal','Gaussian'})));
+            @(x) any(validatestring(x, {'uniform','uniform box',...
+            'normal','Gaussian','uniform ball', 'uniform ball_box',...
+            'uniform ball_normal','uniform sphere','uniform sphere_box',...
+            'uniform sphere_normal'})));
         f_addParamVal(p,'abstol',default.abstol,@isnumeric);        
         f_addParamVal(p,'reltol',default.reltol,@isnumeric);
         f_addParamVal(p,'alpha',default.alpha,@isnumeric);
@@ -346,41 +434,107 @@ end
 if any(isnan(hyperbox(:))); %check hyperbox for not a number
     out_param.exit=10; out_param = cubMC_g_err(out_param); return; 
 end
-[two, out_param.dim]=size(hyperbox); %hyperbox should be 2 x dimension
-if two==0 && isfield(out_param,'hyperbox'); 
-    %if hyperbox specified through out_param structure
-    hyperbox=out_param.hyperbox; %then get it from there
-    [two, out_param.dim]=size(hyperbox); %and get the dimension
-end
-if two~=2 %if hyperbox is given as row vector for dimension 1, fix that
-    if out_param.dim==2; out_param.dim=two; hyperbox=hyperbox';
-    else out_param.exit=11; out_param = cubMC_g_err(out_param); return; 
-        %else, return an error
-    end
-end
-hyperbox=[min(hyperbox,[],1); max(hyperbox,[],1)]; 
-%ensure left and right endpoints are in order
-if any(hyperbox(1,:)==hyperbox(2,:)); %hyperbox is a point in one direction
-    out_param.exit=12; out_param = cubMC_g_err(out_param); return;
-end
-out_param.hyperbox=hyperbox; %copy hyperbox into the out_param structure
 
+%hyperbox validation should depend on the measure.
 if isfield(out_param,'measure'); % the sample measure
-    out_param.measure=validatestring(out_param.measure,{'uniform','normal','Gaussian'});
+    out_param.measure=validatestring(out_param.measure,{'uniform','uniform box',...
+        'normal','Gaussian','uniform ball', 'uniform ball_box',...
+        'uniform ball_normal', 'uniform sphere', 'uniform sphere_box',...
+            'uniform sphere_normal'});
     if strcmpi(out_param.measure,'Gaussian')
-        out_param.measure='normal'; 
+        out_param.measure='normal';
+    elseif strcmpi(out_param.measure,'uniform box')
+        out_param.measure='uniform';
+    elseif strcmpi(out_param.measure,'uniform ball') || strcmpi(out_param.measure,'uniform sphere') 
+        out_param.transf = default.transf;
+    elseif strcmpi(out_param.measure,'uniform ball_box')
+        out_param.measure='uniform ball';
+        out_param.transf = 1;
+    elseif strcmpi(out_param.measure,'uniform ball_normal')
+        out_param.measure='uniform ball';
+        out_param.transf = 2;
+    elseif strcmpi(out_param.measure,'uniform sphere_box')
+        out_param.measure='uniform sphere';
+        out_param.transf = 1;
+    elseif strcmpi(out_param.measure,'uniform sphere_normal')
+        out_param.measure='uniform sphere';
+        out_param.transf = 2;
     end
 else
     out_param.measure=default.measure;
 end
-if strcmpi(out_param.measure,'uniform')&&~all(isfinite(hyperbox(:)))
-    %cannot integrate on an infinite hyperbox with the uniform distribution
-    out_param.exit=13; out_param = cubMC_g_err(out_param); return;
+
+if strcmpi(out_param.measure,'uniform')||strcmpi(out_param.measure,'normal')
+    [two, out_param.dim]=size(hyperbox); %hyperbox should be 2 x dimension
+    if two==0 && isfield(out_param,'hyperbox'); 
+        %if hyperbox specified through out_param structure
+        hyperbox=out_param.hyperbox; %then get it from there
+        [two, out_param.dim]=size(hyperbox); %and get the dimension
+    end
+    if two~=2 %if hyperbox is given as row vector for dimension 1, fix that
+        if out_param.dim==2; out_param.dim=two; hyperbox=hyperbox';
+        else out_param.exit=11; out_param = cubMC_g_err(out_param); return; 
+            %else, return an error
+        end
+    end
+    
+    hyperbox=[min(hyperbox,[],1); max(hyperbox,[],1)]; 
+    %ensure left and right endpoints are in order
+    if any(hyperbox(1,:)==hyperbox(2,:)); %hyperbox is a point in one direction
+        out_param.exit=12; out_param = cubMC_g_err(out_param); return;
+    end
+
+    if strcmpi(out_param.measure,'uniform')&&~all(isfinite(hyperbox(:)))
+        %cannot integrate on an infinite hyperbox with the uniform distribution
+        out_param.exit=13; out_param = cubMC_g_err(out_param); return;
+    end
+    if strcmpi(out_param.measure,'normal')&&any(isfinite(hyperbox(:)))
+        %must integrate on an infinite hyperbox with the normal distribution
+        out_param.exit=14; out_param = cubMC_g_err(out_param); return;
+    end
+elseif strcmpi(out_param.measure,'uniform ball') || strcmpi(out_param.measure,'uniform sphere')
+    [one, out_param.dim]=size(hyperbox); %hyperbox should be 1 x dimension
+    if one==0 && isfield(out_param,'hyperbox'); 
+        %if hyperbox specified through out_param structure
+        hyperbox=out_param.hyperbox; %then get it from there
+        [one, out_param.dim]=size(hyperbox); %and get the dimension
+    end
+    if one~=1 %if hyperbox is given as column vector for dimension 1, fix that
+        if out_param.dim==1; out_param.dim=one; hyperbox=hyperbox';
+        else out_param.exit=18; out_param = cubMC_g_err(out_param); return; 
+            %else, return an error
+        end
+    end
+    
+    if ~all(isfinite(hyperbox(:)))
+        %the coordinates of the center of the ball and the radius must be
+        %finite
+        out_param.exit=15; out_param = cubMC_g_err(out_param); return;
+    end
+    out_param.radius = hyperbox(out_param.dim);% the last value of the hyperbox is the radius
+    out_param.dim = out_param.dim - 1;% the last values doesn't count as coordinate
+    if out_param.radius <= 0
+       %the radius must be a positive real number
+       out_param.exit=16; out_param = cubMC_g_err(out_param); return;
+    end
+    
+    if strcmpi(out_param.measure,'uniform ball')
+        if out_param.dim <= 0
+            %the dimension must be a positive integer number
+            out_param.exit=17; out_param = cubMC_g_err(out_param); return;
+        end
+    else
+       if out_param.dim <= 1
+            %the dimension must be >= 2 when measure is uniform sphere
+            out_param.exit=19; out_param = cubMC_g_err(out_param); return;
+       end
+    end
+    
+    hyperbox = hyperbox(1,1:out_param.dim);
 end
-if strcmpi(out_param.measure,'normal')&&any(isfinite(hyperbox(:)))
-    %must integrate on an infinite hyperbox with the normal distribution
-    out_param.exit=14; out_param = cubMC_g_err(out_param); return;
-end
+
+out_param.hyperbox=hyperbox; %copy hyperbox into the out_param structure
+    
 if out_param.flag == 0
     if (out_param.abstol < 0) 
         %absolute error tolerance should be positive
@@ -454,23 +608,41 @@ function  out_param =cubMC_g_err(out_param)
 %to give an exit with information
 %out_param.exit = 0   success
 %                 10  hyperbox does not contain numbers
-%                 11  hyperbox not 2 x d
+%                 11  hyperbox not 2 x d when measure is uniform or normal
 %                 12  hyperbox is only a point in one direction
 %                 13  hyperbox is infinite when measure is uniform
 %                 14  hyperbox is not doubly infinite when measure is normal
+%                 15  hyperbox has an infinite coordinate for the center of
+%                       the ball or a infinite radius for the ball
+%                 16  the radius of the ball is a nonpositive real number
+%                 17  the dimension of the ball is zero
+%                 18  hyperbox not 1 x (d+1) when measure is uniform ball
+%                 19  the dimension of the sphere is smaller than 2
+
 if ~isfield(out_param,'exit'); return; end
 if out_param.exit==0; return; end
 switch out_param.exit
     case 10; error('GAIL:cubMC_g:hyperboxnotnum',...
             'hyperbox must contain numbers.');
     case 11; error('GAIL:cubMC_g:hyperboxnot2d',...
-            'hyperbox must be 2 x d.');
+            'hyperbox must be 2 x d when measure is ''uniform'' or ''normal''.');
     case 12; error('GAIL:cubMC_g:hyperboxnotlessthan2',...
-            'hyperbox must be more than a point in any coordinate direction.');
+            ['hyperbox must be more than a point in any coordinate'...
+            ' direction when measure is ''uniform'' or ''normal''']);
     case 13; error('GAIL:cubMC_g:hyperboxnotfiniteforuniform',...
             'hyperbox must be finite when measure is uniform.');
     case 14; error('GAIL:cubMC_g:hyperboxnotinffornormal',...
             ['hyperbox must be infinite in both directions' ...
-        ' when measure is normal']);
+            ' when measure is normal']);
+    case 15; error('GAIL:cubMC_g:hyperboxnotfiniteforuniformonaball',...
+            'hyperbox must have only finite values for a distribution on a ball.');
+    case 16; error('GAIL:cubMC_g:radiusnonpositive',...
+            'the radius of the ball must be a positive real number.');
+    case 17; error('GAIL:cubMC_g:dimensionequalszero',...
+            'The number of dimentions of the ball must be a positive integer.');
+    case 18; error('GAIL:cubMC_g:hyperboxnot1d',...
+            'hyperbox must be 1 x (d+1) when measure is ''uniform ball''.');
+    case 19; error('GAIL:cubMC_g:dimensionsmallerthan2',...
+            'The number of dimentions of the sphere must be greater than or equal to 2.');
 end
 end

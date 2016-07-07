@@ -56,7 +56,7 @@ classdef ut_cubSobol_g < matlab.unittest.TestCase
     end
     
     function cubSobol_gOdwarning(testCase)
-        testCase.verifyWarning(@()cubSobol_g(@(x)x.^2,1.5),'GAIL:cubSobol_g:hyperbox_error1');
+        testCase.verifyWarning(@()cubSobol_g(@(x)x.^2,1.5),'GAIL:cubSobol_g:hyperbox_error2');
     end
     
     function cubSobol_Workouts(testCase)
