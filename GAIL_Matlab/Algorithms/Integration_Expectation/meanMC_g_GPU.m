@@ -169,6 +169,9 @@ function [tmu,out_param]=meanMC_g_gpu(varargin)
 %
 %   If you find GAIL helpful in your work, please support us by citing the
 %   above paper and software.
+%
+%   Jul/2016: Adapted by Fabio Araujo da Silva and Renan Guarese
+%
 
 tstart = tic; %start the clock
 [Yrand, out_param] = meanMC_g_gpu_param(varargin{:});

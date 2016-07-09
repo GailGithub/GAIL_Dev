@@ -251,7 +251,8 @@ function [q,out_param,y,kappanumap] = cubLattice_g_gpu(varargin)
 %   If you find GAIL helpful in your work, please support us by citing the
 %   above papers, software, and materials.
 %
-
+%   Jul/2016: Adapted by Fabio Araujo da Silva and Renan Guarese
+%
 t_start = tic;
 %% Initial important cone factors and Check-initialize parameters
 r_lag = 4; %distance between coefficients summed and those computed
