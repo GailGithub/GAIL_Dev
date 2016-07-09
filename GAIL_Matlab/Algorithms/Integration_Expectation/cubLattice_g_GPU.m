@@ -1,10 +1,10 @@
-function [q,out_param,y,kappanumap] = cubLattice_g_gpu(varargin)
-%cubLattice_g_gpu Quasi-Monte Carlo method using rank-1 Lattices cubature
+function [q,out_param,y,kappanumap] = cubLattice_g_GPU(varargin)
+%cubLattice_g_GPU Quasi-Monte Carlo method using rank-1 Lattices cubature
 %over a d-dimensional region to integrate within a specified generalized
 %error tolerance with guarantees under Fourier coefficients cone decay
 %assumptions.
 %
-%   [q,out_param] = cubLattice_g_gpu(f,hyperbox) estimates the integral of f
+%   [q,out_param] = cubLattice_g_GPU(f,hyperbox) estimates the integral of f
 %   over the d-dimensional region described by hyperbox, and with an error
 %   guaranteed not to be greater than a specific generalized error tolerance,
 %   tolfun:=max(abstol,reltol*| integral(f) |). Input f is a function handle. f should
@@ -15,7 +15,7 @@ function [q,out_param,y,kappanumap] = cubLattice_g_gpu(varargin)
 %   Given the construction of our Lattices, d must be a positive integer
 %   with 1<=d<=100.
 % 
-%   q = cubLattice_g_gpu(f,hyperbox,measure,abstol,reltol)
+%   q = cubLattice_g_GPU(f,hyperbox,measure,abstol,reltol)
 %   estimates the integral of f over the hyperbox. The answer
 %   is given within the generalized error tolerance tolfun. All parameters
 %   should be input in the order specified above. If an input is not specified,
@@ -25,13 +25,13 @@ function [q,out_param,y,kappanumap] = cubLattice_g_gpu(varargin)
 %   measure,abstol,reltol,shift,mmin,mmax,fudge,transform,toltype and
 %   theta.
 % 
-%   q = cubLattice_g_gpu(f,hyperbox,'measure',measure,'abstol',abstol,'reltol',reltol)
+%   q = cubLattice_g_GPU(f,hyperbox,'measure',measure,'abstol',abstol,'reltol',reltol)
 %   estimates the integral of f over the hyperbox. The answer
 %   is given within the generalized error tolerance tolfun. All the field-value
 %   pairs are optional and can be supplied in any order. If an input is not
 %   specified, the default value is used.
 % 
-%   q = cubLattice_g_gpu(f,hyperbox,in_param) estimates the integral of f over the
+%   q = cubLattice_g_GPU(f,hyperbox,in_param) estimates the integral of f over the
 %   hyperbox. The answer is given within the generalized error tolerance tolfun.
 % 
 %   Input Arguments
@@ -126,7 +126,7 @@ function [q,out_param,y,kappanumap] = cubLattice_g_gpu(varargin)
 %     condition. If the function lies in the cone, the real error will be
 %     smaller than generalized tolerance.
 % 
-%     out_param.time --- time elapsed in seconds when calling cubLattice_g_gpu.
+%     out_param.time --- time elapsed in seconds when calling cubLattice_g_GPU.
 %
 %     out_param.exitflag --- this is a binary vector stating whether
 %     warning flags arise. These flags tell about which conditions make the
@@ -163,7 +163,7 @@ function [q,out_param,y,kappanumap] = cubLattice_g_gpu(varargin)
 % Estimate the integral with integrand f(x) = x1.*x2 in the interval [0,1)^2:
 % 
 % >> f = @(x) prod(x,2); hyperbox = [gpuArray.zeros(1,2);gpuArray.ones(1,2)]; 
-% >> q = cubLattice_g_gpu(f,hyperbox,'uniform',1e-5,0,'transform','C1sin'); exactsol = 1/4;
+% >> q = cubLattice_g_GPU(f,hyperbox,'uniform',1e-5,0,'transform','C1sin'); exactsol = 1/4;
 % >> check = abs(exactsol-q) < 1e-5
 % check = 1
 % 
@@ -173,7 +173,7 @@ function [q,out_param,y,kappanumap] = cubLattice_g_gpu(varargin)
 % in the interval R^3 where x1, x2 and x3 are normally distributed:
 % 
 % >> f = @(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2; hyperbox = [-inf(1,3);inf(1,3)];
-% >> q = cubLattice_g_gpu(f,hyperbox,'normal',1e-3,1e-3,'transform','C1sin','shift',2^(-25)); exactsol = 1;
+% >> q = cubLattice_g_GPU(f,hyperbox,'normal',1e-3,1e-3,'transform','C1sin','shift',2^(-25)); exactsol = 1;
 % >> check = abs(exactsol-q) < gail.tolfun(1e-3,1e-3,1,exactsol,'max')
 % check = 1
 % 
@@ -183,7 +183,7 @@ function [q,out_param,y,kappanumap] = cubLattice_g_gpu(varargin)
 % interval [-1,2)^2:
 % 
 % >> f = @(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [-gpuArray.ones(1,2);2*gpuArray.ones(1,2)];
-% >> q = cubLattice_g_gpu(f,hyperbox,'uniform',1e-3,1e-2,'transform','C1'); exactsol = (sqrt(pi)/2*(erf(2)+erf(1)))^2;
+% >> q = cubLattice_g_GPU(f,hyperbox,'uniform',1e-3,1e-2,'transform','C1'); exactsol = (sqrt(pi)/2*(erf(2)+erf(1)))^2;
 % >> check = abs(exactsol-q) < gail.tolfun(1e-3,1e-2,1,exactsol,'max')
 % check = 1
 %
@@ -193,7 +193,7 @@ function [q,out_param,y,kappanumap] = cubLattice_g_gpu(varargin)
 % sigma=0.05 and T=1.
 % 
 % >> f = @(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); hyperbox = [-inf(1,1);inf(1,1)];
-% >> q = cubLattice_g_gpu(f,hyperbox,'normal',1e-4,1e-2,'transform','C1sin'); price = normcdf(0.05)*100 - 0.5*100*exp(-0.05^2/2);
+% >> q = cubLattice_g_GPU(f,hyperbox,'normal',1e-4,1e-2,'transform','C1sin'); price = normcdf(0.05)*100 - 0.5*100*exp(-0.05^2/2);
 % >> check = abs(price-q) < gail.tolfun(1e-4,1e-2,1,price,'max')
 % check = 1
 %
@@ -203,7 +203,7 @@ function [q,out_param,y,kappanumap] = cubLattice_g_gpu(varargin)
 % [0,1)^5 with pure absolute error 1e-5.
 % 
 % >> f = @(x) 8*prod(x,2); hyperbox = [gpuArray.zeros(1,5);gpuArray.ones(1,5)];
-% >> q = cubLattice_g_gpu(f,hyperbox,'uniform',1e-5,0); exactsol = 1/4;
+% >> q = cubLattice_g_GPU(f,hyperbox,'uniform',1e-5,0); exactsol = 1/4;
 % >> check = abs(exactsol-q) < 1e-5
 % check = 1
 %
@@ -213,7 +213,7 @@ function [q,out_param,y,kappanumap] = cubLattice_g_gpu(varargin)
 % [0,1) with pure absolute error 1e-5.
 % 
 % >> f = @(x) 3./(5-4*(cos(2*pi*x))); hyperbox = [0;1];
-% >> q = cubLattice_g_gpu(f,hyperbox,'uniform',1e-5,0,'transform','id'); exactsol = 1;
+% >> q = cubLattice_g_GPU(f,hyperbox,'uniform',1e-5,0,'transform','id'); exactsol = 1;
 % >> check = abs(exactsol-q) < 1e-5
 % check = 1
 %
@@ -256,7 +256,7 @@ function [q,out_param,y,kappanumap] = cubLattice_g_gpu(varargin)
 t_start = tic;
 %% Initial important cone factors and Check-initialize parameters
 r_lag = 4; %distance between coefficients summed and those computed
-[f,hyperbox,out_param] = cubLattice_g_gpu_param(r_lag,varargin{:});
+[f,hyperbox,out_param] = cubLattice_g_GPU_param(r_lag,varargin{:});
 l_star = out_param.mmin - r_lag; % Minimum gathering of points for the sums of DFT
 omg_circ = @(m) 2.^(-m);
 omg_hat = @(m) out_param.fudge(m)/((1+out_param.fudge(r_lag))*omg_circ(r_lag));
@@ -280,8 +280,8 @@ end
 
 %% Main algorithm - Preallocation
 Stilde=gpuArray.zeros(out_param.mmax-out_param.mmin+1,1); %initialize sum of DFT terms
-CStilde_low = -inf(1,out_param.mmax-l_star+1); %initialize various sums of DFT terms for necessary conditions
-CStilde_up = inf(1,out_param.mmax-l_star+1); %initialize various sums of DFT terms for necessary conditions
+CStilde_low = gpuArray(-inf(1,out_param.mmax-l_star+1)); %initialize various sums of DFT terms for necessary conditions
+CStilde_up = gpuArray(inf(1,out_param.mmax-l_star+1)); %initialize various sums of DFT terms for necessary conditions
 errest=gpuArray.zeros(out_param.mmax-out_param.mmin+1,1); %initialize error estimates
 appxinteg=gpuArray.zeros(out_param.mmax-out_param.mmin+1,1); %initialize approximations to integral
 exit_len = 2;
@@ -480,8 +480,8 @@ out_param.time=toc(t_start);
 end
 
 
-%% Parsing for the input of cubLattice_g_gpu
-function [f,hyperbox, out_param] = cubLattice_g_gpu_param(r_lag,varargin)
+%% Parsing for the input of cubLattice_g_GPU
+function [f,hyperbox, out_param] = cubLattice_g_GPU_param(r_lag,varargin)
 
 % Default parameter values
 default.hyperbox = [gpuArray.zeros(1,1);gpuArray.ones(1,1)];% default hyperbox
@@ -497,8 +497,8 @@ default.toltype  = 'max';
 default.theta  = 1;
 
 if numel(varargin)<2
-    help cubLattice_g_gpu
-    warning('GAIL:cubLattice_g_gpu:fdnotgiven',...
+    help cubLattice_g_GPU
+    warning('GAIL:cubLattice_g_GPU:fdnotgiven',...
         'At least, function f and hyperbox need to be specified. Example for f(x)=x^2:')
     f = @(x) x.^2;
     out_param.f=f;
@@ -506,7 +506,7 @@ if numel(varargin)<2
 else
     f = varargin{1};
     if ~gail.isfcn(f)
-        warning('GAIL:cubLattice_g_gpu:fnotfcn',...
+        warning('GAIL:cubLattice_g_GPU:fnotfcn',...
             'The given input f was not a function. Example for f(x)=x^2:')
         f = @(x) x.^2;
         out_param.f=f;
@@ -515,7 +515,7 @@ else
         out_param.f=f;
         hyperbox = varargin{2};
         if ~isnumeric(hyperbox) || ~(size(hyperbox,1)==2) || ~(size(hyperbox,2)<101)
-            warning('GAIL:cubLattice_g_gpu:hyperbox_error1',...
+            warning('GAIL:cubLattice_g_GPU:hyperbox_error1',...
                 'The hyperbox must be a real matrix of size 2xd where d can not be greater than 100. Example for f(x)=x^2:')
             f = @(x) x.^2;
             out_param.f=f;
@@ -532,7 +532,7 @@ if validvarargin
         || ischar(in3{j}) || isstruct(in3{j}) || gail.isfcn(in3{j}));
     end
     if ~validvarargin
-        warning('GAIL:cubLattice_g_gpu:validvarargin','Optional parameters must be numeric or strings. We will use the default optional parameters.')
+        warning('GAIL:cubLattice_g_GPU:validvarargin','Optional parameters must be numeric or strings. We will use the default optional parameters.')
     end
     in3=varargin{3};
 end
@@ -609,7 +609,7 @@ end
 
 %hyperbox should be 2 x dimension
 if ~isnumeric(hyperbox) || ~(size(hyperbox,1)==2) || ~(out_param.d<101)
-    warning('GAIL:cubLattice_g_gpu:hyperbox_error2',...
+    warning('GAIL:cubLattice_g_GPU:hyperbox_error2',...
         'The hyperbox must be a real matrix of size 2 x d where d can not be greater than 100. Example for f(x)=x^2:')
     f = @(x) x.^2;
     out_param.f=f;
@@ -618,28 +618,28 @@ end
 
 % Force measure to be uniform or normal only
 if ~(strcmp(out_param.measure,'uniform') || strcmp(out_param.measure,'normal') )
-    warning('GAIL:cubLattice_g_gpu:notmeasure',['The measure can only be uniform or normal.' ...
+    warning('GAIL:cubLattice_g_GPU:notmeasure',['The measure can only be uniform or normal.' ...
             ' Using default measure ' num2str(default.measure)])
     out_param.measure = default.measure;
 end
 
 % Force absolute tolerance greater than 0
 if (out_param.abstol < 0 )
-    warning('GAIL:cubLattice_g_gpu:abstolnonpos',['Absolute tolerance cannot be negative.' ...
+    warning('GAIL:cubLattice_g_GPU:abstolnonpos',['Absolute tolerance cannot be negative.' ...
             ' Using default absolute tolerance ' num2str(default.abstol)])
     out_param.abstol = default.abstol;
 end
 
 % Force relative tolerance greater than 0 and smaller than 1
 if (out_param.reltol < 0) || (out_param.reltol > 1)
-    warning('GAIL:cubLattice_g_gpu:reltolnonunit',['Relative tolerance should be chosen in [0,1].' ...
+    warning('GAIL:cubLattice_g_GPU:reltolnonunit',['Relative tolerance should be chosen in [0,1].' ...
             ' Using default relative tolerance ' num2str(default.reltol)])
     out_param.reltol = default.reltol;
 end
 
 % Force mmin to be integer greater than 0
 if (~gail.isposint(out_param.mmin) || ~(out_param.mmin < out_param.mmax+1))
-    warning('GAIL:cubLattice_g_gpu:lowmmin',['The minimum starting exponent ' ...
+    warning('GAIL:cubLattice_g_GPU:lowmmin',['The minimum starting exponent ' ...
             'should be an integer greater than 0 and smaller or equal than the maxium.' ...
             ' Using default mmin ' num2str(default.mmin)])
     out_param.mmin = default.mmin;
@@ -647,7 +647,7 @@ end
 
 % Force mmin to be integer greater than r_lag (so that l_star=mmin-r_lag>=0)
 if out_param.mmin < r_lag
-    warning('GAIL:cubLattice_g_gpu:lowmminrlag',['The minimum starting exponent ' ...
+    warning('GAIL:cubLattice_g_GPU:lowmminrlag',['The minimum starting exponent ' ...
             'should be at least ' num2str(r_lag) '.' ...
             ' Using default mmin ' num2str(default.mmin)])
     out_param.mmin = default.mmin;
@@ -656,72 +656,72 @@ end
 % Force exponent budget number of points be a positive integer greater than
 % or equal to mmin an smaller than 26
 if ~(gail.isposint(out_param.mmax) && out_param.mmax>=out_param.mmin && out_param.mmax<=26)
-    warning('GAIL:cubLattice_g_gpu:wrongmmax',['The maximum exponent for the budget should be an integer biger than mmin and smaller than 27.' ...
+    warning('GAIL:cubLattice_g_GPU:wrongmmax',['The maximum exponent for the budget should be an integer biger than mmin and smaller than 27.' ...
             ' Using default mmax ' num2str(default.mmax)])
     out_param.mmax = default.mmax;
 end
 
 % Force fudge factor to be greater than 0
 if ~((gail.isfcn(out_param.fudge) && (out_param.fudge(1)>0)))
-    warning('GAIL:cubLattice_g_gpu:fudgenonpos',['The fudge factor should be a positive function.' ...
+    warning('GAIL:cubLattice_g_GPU:fudgenonpos',['The fudge factor should be a positive function.' ...
             ' Using default fudge factor ' func2str(default.fudge)])
     out_param.fudge = default.fudge;
 end
 
 % Force transform to only be id, Baker, C0, C1 or C1sin
 if ~(strcmp(out_param.transform,'id') || strcmp(out_param.transform,'Baker') || strcmp(out_param.transform,'C0') || strcmp(out_param.transform,'C1') || strcmp(out_param.transform,'C1sin') )
-    warning('GAIL:cubLattice_g_gpu:notmeasure',['The periodizing transformations can only be id, Baker, C0, C1 or C1sin.' ...
+    warning('GAIL:cubLattice_g_GPU:notmeasure',['The periodizing transformations can only be id, Baker, C0, C1 or C1sin.' ...
             ' Using default error tolerance ' num2str(default.transform)])
     out_param.transform = default.transform;
 end
 
 % Force toltype to be max or comb
 if ~(strcmp(out_param.toltype,'max') || strcmp(out_param.toltype,'comb') )
-    warning('GAIL:cubLattice_g_gpu:nottoltype',['The error type can only be max or comb.' ...
+    warning('GAIL:cubLattice_g_GPU:nottoltype',['The error type can only be max or comb.' ...
             ' Using default toltype ' num2str(default.toltype)])
     out_param.toltype = default.toltype;
 end
 
 % Force theta to be in [0,1]
 if (out_param.theta < 0) || (out_param.theta > 1)
-    warning('GAIL:cubLattice_g_gpu:thetanonunit',['Theta should be chosen in [0,1].' ...
+    warning('GAIL:cubLattice_g_GPU:thetanonunit',['Theta should be chosen in [0,1].' ...
             ' Using default theta ' num2str(default.theta)])
     out_param.theta = default.theta;
 end
 
 % Checking on pure absolute/relative error
 if (out_param.abstol==0) && (out_param.reltol==0)
-    warning('GAIL:cubLattice_g_gpu:tolzeros',['Absolute and relative error tolerances can not be simultaniusly 0.' ...
+    warning('GAIL:cubLattice_g_GPU:tolzeros',['Absolute and relative error tolerances can not be simultaniusly 0.' ...
             ' Using default absolute tolerance ' num2str(default.abstol) ' and relative tolerance ' num2str(default.reltol)])
     out_param.abstol = default.abstol;
     out_param.reltol = default.reltol;
 end
 if (strcmp(out_param.toltype,'comb')) && (out_param.theta==1) && (out_param.abstol==0)
-    warning('GAIL:cubLattice_g_gpu:abstolzero',['When choosing toltype comb, if theta=1 then abstol>0.' ...
+    warning('GAIL:cubLattice_g_GPU:abstolzero',['When choosing toltype comb, if theta=1 then abstol>0.' ...
             ' Using default absolute tolerance ' num2str(default.abstol) ])
     out_param.abstol = default.abstol;
 end
 if (strcmp(out_param.toltype,'comb')) && (out_param.theta==0) && (out_param.reltol==0)
-    warning('GAIL:cubLattice_g_gpu:reltolzero',['When choosing toltype comb, if theta=0 then reltol>0.' ...
+    warning('GAIL:cubLattice_g_GPU:reltolzero',['When choosing toltype comb, if theta=0 then reltol>0.' ...
             ' Using default relative tolerance ' num2str(default.reltol) ])
     out_param.reltol = default.reltol;
 end
 
 % Checking on the hyperbox given the measure
 if (strcmp(out_param.measure,'uniform')) && ~all(all(isfinite(hyperbox)))
-    warning('GAIL:cubLattice_g_gpu:hyperboxnotfinite',['If uniform measure, hyperbox must be of finite volume.' ...
+    warning('GAIL:cubLattice_g_GPU:hyperboxnotfinite',['If uniform measure, hyperbox must be of finite volume.' ...
             ' Using default hyperbox:'])
     disp([gpuArray.zeros(1,out_param.d);gpuArray.ones(1,out_param.d)])
     hyperbox = [gpuArray.zeros(1,out_param.d);gpuArray.ones(1,out_param.d)];
 end
 if (strcmp(out_param.measure,'normal')) && (sum(sum(isfinite(hyperbox)))>0)
-    warning('GAIL:cubLattice_g_gpu:hyperboxfinite',['If normal measure, hyperbox must be defined as (-Inf,Inf)^d.' ...
+    warning('GAIL:cubLattice_g_GPU:hyperboxfinite',['If normal measure, hyperbox must be defined as (-Inf,Inf)^d.' ...
             ' Using default hyperbox:'])
     disp([-inf*gpuArray.ones(1,out_param.d);inf*gpuArray.ones(1,out_param.d)])
     hyperbox = [-inf*gpuArray.ones(1,out_param.d);inf*gpuArray.ones(1,out_param.d)];
 end
 if (strcmp(out_param.measure,'normal')) && (any(hyperbox(1,:)==hyperbox(2,:)) || any(hyperbox(1,:)>hyperbox(2,:)))
-    warning('GAIL:cubLattice_g_gpu:hyperboxnormalwrong',['If normal measure, hyperbox must be defined as (-Inf,Inf)^d.' ...
+    warning('GAIL:cubLattice_g_GPU:hyperboxnormalwrong',['If normal measure, hyperbox must be defined as (-Inf,Inf)^d.' ...
             ' Using default hyperbox:'])
     disp([-inf*gpuArray.ones(1,out_param.d);inf*gpuArray.ones(1,out_param.d)])
     hyperbox = [-inf*gpuArray.ones(1,out_param.d);inf*gpuArray.ones(1,out_param.d)];
