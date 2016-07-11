@@ -224,7 +224,8 @@ function [Q,out_param] = cubMC_g(varargin)
 % >> f=@(x) x(:,1).^2+x(:,2).^2;hyperbox = [0,0,1];
 % >> Q = cubMC_g(f,hyperbox,'uniform ball','abstol',1e-3,'reltol',1e-3)
 % Q = 1.57***
-% 
+%
+%
 %   See also FUNAPPX_G, INTEGRAL_G, MEANMC_G, MEANMCBER_G, CUBLATTICE_G, CUBSOBOL_G
 % 
 %  References
@@ -257,7 +258,7 @@ function [Q,out_param] = cubMC_g(varargin)
 %   (WSSSPE1)," Journal of Open Research Software, Volume 2, Number 1, e6,
 %   pp. 1-21, 2014.
 %
-%   [6] Fang, K.-T., & Wang, Y. (1994). Number-theoretic Methods in 
+%   [6] Fang, K.-T., & Wang, Y. (1994).ï¿½Number-theoretic Methods in 
 %   Statistics. London, UK: CHAPMAN & HALL
 %
 %   If you find GAIL helpful in your work, please support us by citing the
