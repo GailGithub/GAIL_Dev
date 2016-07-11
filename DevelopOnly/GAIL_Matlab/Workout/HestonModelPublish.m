@@ -79,7 +79,7 @@ end
 variance = sum((QEPrice-ourQEPrice.exactPrice).^2)/5
 
 %% Generate Option prices using Quadratice Exponential Scheme with Martingale Correction
-inp.assetParam.assetPath='QE_m';        % path type QE with martingale correction
+inp.assetParam.pathType ='QE_m';        % path type QE with martingale correction
 ourQEmPrice = optPrice(inp) 
 QEmPrice=zeros(1,5);
 %Generate Option Price
