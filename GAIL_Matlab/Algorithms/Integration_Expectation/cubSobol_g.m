@@ -254,7 +254,7 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 %   (WSSSPE1)," Journal of Open Research Software, Volume 2, Number 1, e6,
 %   pp. 1-21, 2014.
 %
-%   [6] Fang, K.-T., & Wang, Y. (1994). Number-theoretic Methods in 
+%   [6] Fang, K.-T., & Wang, Y. (1994).ï¿½Number-theoretic Methods in 
 %   Statistics. London, UK: CHAPMAN & HALL
 %
 %   If you find GAIL helpful in your work, please support us by citing the
@@ -695,14 +695,14 @@ else
     end
 end
 
-fdgyes = 0; % We store how many functions are in varargin. There can only
-            % two functions as input, the function f and the fudge factor.
-for j = 1:size(varargin,2)
-    fdgyes = gail.isfcn(varargin{j})+fdgyes;
-end
-if fdgyes < 2 % No fudge factor given as input
-    default.fudge = @(m) 5*2.^-(m/d);
-end
+% fdgyes = 0; % We store how many functions are in varargin. There can only
+%             % two functions as input, the function f and the fudge factor.
+% for j = 1:size(varargin,2)
+%     fdgyes = gail.isfcn(varargin{j})+fdgyes;
+% end
+% if fdgyes < 2 % No fudge factor given as input
+%     default.fudge = @(m) 5*2.^-(m/d);
+% end
 
 % Force measure to be one of the allowed ones
 if ~(strcmp(out_param.measure,'uniform') || strcmp(out_param.measure,'normal') || ...
