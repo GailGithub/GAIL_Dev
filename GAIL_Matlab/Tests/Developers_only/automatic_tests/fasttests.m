@@ -12,11 +12,20 @@ fid = fopen(shortutestreport,'wt');
 
 tic 
 %% CALL DOCTESTS 
+tic; doctest gail.gail_in_param; time=toc
+tic; doctest gail.gail1D_in_param; time=toc
+tic; doctest gail.funappx_g_in_param; time=toc
+tic; doctest gail.funmin_g_in_param; time=toc
+tic; doctest gail.integral_g_in_param; time=toc
+tic; doctest gail.gailMD_in_param; time=toc
+tic; doctest gail.cubMC_g_in_param; time=toc
+
 tic; doctest funappx_g; time=toc
 tic; doctest funappxNoPenalty_g; time=toc
 tic; doctest dt_funappx_g; time=toc
 tic; doctest dt_funappxNoPenalty_g; time=toc
 tic; doctest funmin_g; time=toc
+tic; doctest funminNoPenalty_g; time=toc
 tic; doctest integral_g; time=toc
 tic; doctest integralsim_g; time=toc
 tic; doctest dt_integral_g ; time=toc
@@ -83,7 +92,7 @@ else
     
     try
         Tests = matlab.unittest.TestSuite.fromClass(?ut_funappxNoPenalty_g);
-        results=run(ut_funappx_g)
+        results=run(ut_funappxNoPenalty_g)
         if sum([results.Failed])>0
             failed=find([results.Failed]>0);
             for i=1:size(failed,2)
@@ -110,6 +119,20 @@ else
     end
     
     try
+        Tests = matlab.unittest.TestSuite.fromClass(?ut_funminNoPenalty_g);
+        results=run(ut_funminNoPenalty_g)
+        if sum([results.Failed])>0
+            failed=find([results.Failed]>0);
+            for i=1:size(failed,2)
+                fprintf(fid,'%s\n',Tests(failed(i)).Name);
+            end
+        end
+    catch
+        display('Error: Test ut_funminNoPenalty_g is wrongly coded. We skip it.')
+        fprintf(fid,'Error: Test ut_funminNoPenalty_g is wrongly coded. We skip it.\n');
+    end
+    
+    try
         Tests = matlab.unittest.TestSuite.fromClass(?ut_funmin_g_end);
         results=run(ut_funmin_g_end)
         if sum([results.Failed])>0
@@ -121,6 +144,19 @@ else
     catch
         display('Error: Test ut_funmin_g_end is wrongly coded. We skip it.')
         fprintf(fid,'Error: Test ut_funmin_g_end is wrongly coded. We skip it.\n');
+    end
+    try
+        Tests = matlab.unittest.TestSuite.fromClass(?ut_funminNoPenalty_g_end);
+        results=run(ut_funminNoPenalty_g_end)
+        if sum([results.Failed])>0
+            failed=find([results.Failed]>0);
+            for i=1:size(failed,2)
+                fprintf(fid,'%s\n',Tests(failed(i)).Name);
+            end
+        end
+    catch
+        display('Error: Test ut_funminNoPenalty_g_end is wrongly coded. We skip it.')
+        fprintf(fid,'Error: Test ut_funminNoPenalty_g_end is wrongly coded. We skip it.\n');
     end
     
     try

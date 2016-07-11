@@ -89,7 +89,7 @@
 % >> abs(f_true-Q) <= max(abstol, reltol * abs(f_true))
 %    1
 %
-%%
+%
 % Example 9: 
 % Estimate the integral with integrand Genz "Product Peak" in
 % genz_test_fun, index 2.

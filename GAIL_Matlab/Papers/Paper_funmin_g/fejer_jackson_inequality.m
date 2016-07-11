@@ -38,10 +38,10 @@ f = @(x) fnx(m,x);
 a = 0; b = pi;
 in_param.abstol = 1e-6;
 in_param.TolX = 1e-6;
-[fmin,out_min]=funmin_g(f,a,b,in_param); 
+[fmin,out_min]=funminNoPenalty_g(f,a,b,in_param); 
 
 g = @(x) fnx(m,x)*-1;
-[fmax,out_max]=funmin_g(g,a,b,in_param);
+[fmax,out_max]=funminNoPenalty_g(g,a,b,in_param);
 fmax=-1*fmax;
 out_max.f = f;
 

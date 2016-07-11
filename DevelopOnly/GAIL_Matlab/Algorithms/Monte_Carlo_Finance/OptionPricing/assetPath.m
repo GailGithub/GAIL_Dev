@@ -40,8 +40,8 @@ classdef assetPath < brownianMotion
          'interest', 0.01, ... %interest rate
          'volatility', 0.5,... %volatility      
          'drift', 0,... %drift
-         'nAsset', 1,... %number of assets 
-         'corrMat', 1,...%A transpose  
+         'nAsset', 1,... %number of assets
+         'corrMat', 1,... %A transpose
          'dividend',0,...% dividend
          'Vinst',0.04,...%instantaneous variance
          'Vlong',0.04,...%long term variance
@@ -51,7 +51,6 @@ classdef assetPath < brownianMotion
    end
    
    properties (Constant, Hidden) %do not change & not seen
-
       allowPathType = {'GBM','QE_m','QE'} 
          %kinds of asset paths that we can generate
    end
@@ -143,7 +142,7 @@ classdef assetPath < brownianMotion
             validateattributes(val.drift,{'numeric'}, ...
                {'scalar'})
             obj.assetParam.drift=val.drift; %row
-         end
+         end   
          if isfield(val,'dividend')
              validateattributes(val.dividend,{'numeric'},...
                  {'nonnegative'})
@@ -174,7 +173,6 @@ classdef assetPath < brownianMotion
                  {'scalar'})
              obj.assetParam.rho=val.rho;
          end
-                  
       end
       
       % Generate square root of correlation matrix
@@ -182,7 +180,7 @@ classdef assetPath < brownianMotion
           [U,S] = svd(obj.assetParam.corrMat);
           val = sqrt(S)*U';
        end
-     
+
       % Generate asset paths
       function [paths]=genPaths(obj,val)
          bmpaths = genPaths@brownianMotion(obj,val);
@@ -190,7 +188,6 @@ classdef assetPath < brownianMotion
          if strcmp(obj.assetParam.pathType,'GBM')
             tempc=zeros(nPaths,obj.timeDim.nSteps);
             paths=zeros(nPaths,obj.timeDim.nCols);
-            % size_GBM = size(paths)
             for idx=1:obj.assetParam.nAsset
               colRange = ...
                  ((idx-1)*obj.timeDim.nSteps+1):idx*obj.timeDim.nSteps;
@@ -205,6 +202,7 @@ classdef assetPath < brownianMotion
                  .* tempc));
              end
          end
+
          %QE scheme with martingale correction
          if strcmp(obj.assetParam.pathType,'QE_m')
              dT = obj.timeDim.timeIncrement(1);
@@ -357,33 +355,33 @@ classdef assetPath < brownianMotion
   
 
    methods (Access = protected)
-
-      function propList = getPropertyList(obj)
-          if strcmp(obj.assetParam.pathType,'GBM')
-            propList = getPropertyList@brownianMotion(obj);
-            propList.assetParam_pathType = obj.assetParam.pathType;
-            propList.assetParam_initPrice = obj.assetParam.initPrice;
-            propList.assetParam_interest = obj.assetParam.interest;
-            propList.assetParam_volatility = obj.assetParam.volatility;
-            if obj.assetParam.drift ~=0
-                propList.assetParam_drift = obj.assetParam.drift;
-            end
-            propList.assetParam_nAsset = obj.assetParam.nAsset;
-         else
-            propList = getPropertyList@brownianMotion(obj);
-            propList.assetParam_pathType = obj.assetParam.pathType;
-            propList.assetParam_initPrice = obj.assetParam.initPrice;
-            propList.assetParam_interest = obj.assetParam.interest;
-            propList.assetParam_dividend = obj.assetParam.dividend;
-            propList.assetParam_Vinst = obj.assetParam.Vinst;
-            propList.assetParam_Vlong = obj.assetParam.Vlong;
-            propList.assetParam_kappa = obj.assetParam.kappa;
-            propList.assetParam_nu = obj.assetParam.nu;
-            propList.assetParam_rho = obj.assetParam.rho;
-          end              
+        function propList = getPropertyList(obj)
+            
+            if strcmp(obj.assetParam.pathType,'GBM')
+                
+                propList = getPropertyList@brownianMotion(obj);
+                propList.assetParam_pathType = obj.assetParam.pathType;
+                propList.assetParam_initPrice = obj.assetParam.initPrice;
+                propList.assetParam_interest = obj.assetParam.interest;
+                propList.assetParam_volatility = obj.assetParam.volatility;
+                if obj.assetParam.drift ~=0
+                    propList.assetParam_drift = obj.assetParam.drift;
+                end
+                propList.assetParam_nAsset = obj.assetParam.nAsset;
+            else
+                propList = getPropertyList@brownianMotion(obj);
+                propList.assetParam_pathType = obj.assetParam.pathType;
+                propList.assetParam_initPrice = obj.assetParam.initPrice;
+                propList.assetParam_interest = obj.assetParam.interest;
+                propList.assetParam_dividend = obj.assetParam.dividend;
+                propList.assetParam_Vinst = obj.assetParam.Vinst;
+                propList.assetParam_Vlong = obj.assetParam.Vlong;
+                propList.assetParam_kappa = obj.assetParam.kappa;
+                propList.assetParam_nu = obj.assetParam.nu;
+                propList.assetParam_rho = obj.assetParam.rho;
+            end              
           
-      end
+        end
 
    end
-
 end

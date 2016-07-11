@@ -285,7 +285,7 @@ yval=y;
 if cv > 1 
 	yg = cell2mat(g(xpts)) - out_param.cv.Ig; yvalg=yg;
 elseif cv == 1 
-	yg = g(xpts)-out_param.cv.Ig; yvalg=yg;
+	yg = out_param.cv.g(xpts) - out_param.cv.Ig; yvalg=yg;
 end %evaluate control variate
 
 
@@ -334,13 +334,15 @@ if cv
     yval = yval-yvalg*beta;
     if cv == 1 
 	    f = @(x) f(x)-(g(x)-out_param.cv.Ig)*beta;
+    else
+        error('Still need to code that part')
     end
 end
 
 
 
 %% Compute Stilde
-nllstart=int64(2^(out_param.mmin-r_lag-1));
+nllstart = int64(2^(out_param.mmin-r_lag-1));
 Stilde(1)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
 out_param.bound_err=out_param.fudge(out_param.mmin)*Stilde(1);
 errest(1)=out_param.bound_err;
@@ -392,7 +394,7 @@ for m=out_param.mmin+1:out_param.mmax
    nnext=2^mnext;
    xnext=sobstr(n0+(1:nnext),1:out_param.d); 
    n0=n0+nnext;
-   if cv == 2% multi C.V.s
+   if cv > 1% multi C.V.s
 	   ygnext = cell2mat(g(xnext))- out_param.cv.Ig;  
 	   ynext = f(xnext) - ygnext*beta;
 	   yval = [yval; ynext];
@@ -622,8 +624,6 @@ else
 	    cv = 1;
     end
 end
-
-
 
 fdgyes = 0; % We store how many functions are in varargin. There can only
             % two functions as input, the function f and the fudge factor.

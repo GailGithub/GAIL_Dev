@@ -1,10 +1,10 @@
-function funappxseashell(a, b, c, n, azimuth, elevation, res)
-% funappxseashell draws a pretty Florida funappxseashell, using a 3D parametric surface.
+function traub_funappxseashell(a, b, c, n, azimuth, elevation, res)
+% traub_funappxseashell draws a pretty Florida traub_funappxseashell, using a 3D parametric surface.
 %
 % Usage:
 %
-%   funappxseashell (a, b, c, n, azimuth, elevation, res)
-%   funappxseashell ('spin') ;
+%   traub_funappxseashell (a, b, c, n, azimuth, elevation, res)
+%   traub_funappxseashell ('spin') ;
 %
 %   All arguments are optional.  The first four control the coefficients of
 %   the parametric surface (u and v are the surface parameters):
@@ -20,8 +20,8 @@ function funappxseashell(a, b, c, n, azimuth, elevation, res)
 %   azimuth, elevation: determines the viewing angle (see the 'view' function)
 %   res: the mesh size (res-by-res).  A larger number gives a smoother surface.
 %
-%   If the azimuth is Inf, then the funappxseashell view is spun dynamically.
-%   Also try funappxseashell ('spin') ;
+%   If the azimuth is Inf, then the traub_funappxseashell view is spun dynamically.
+%   Also try traub_funappxseashell ('spin') ;
 %
 % References:
 %   T. Davis & K. Sigmon, MATLAB Primer, 8th edition, CRC Press, 2010.
@@ -29,17 +29,17 @@ function funappxseashell(a, b, c, n, azimuth, elevation, res)
 %       1993, pp. 306-307.
 %
 % Example:
-%   funappxseashell ;          % draws the front cover of the MATLAB Primer
-%   funappxseashell (-0.5) ;   % draws the back cover
-%   funappxseashell (a,b,c,n,az,el,res) ;  % all options, defaults:
+%   traub_funappxseashell ;          % draws the front cover of the MATLAB Primer
+%   traub_funappxseashell (-0.5) ;   % draws the back cover
+%   traub_funappxseashell (a,b,c,n,az,el,res) ;  % all options, defaults:
 %                       % a=-0.2, b=0.5, c=0.1, n=2, az=-150, el=10, res=128
 %
 %   for a = -1:.1:1
-%	  funappxseashell (a) ;
+%	  traub_funappxseashell (a) ;
 %	  drawnow ;
 %   end
 %   for b = -1:.1:1
-%	  funappxseashell (-.2, b) ;
+%	  traub_funappxseashell (-.2, b) ;
 %	  drawnow
 %   end
 %
@@ -106,8 +106,8 @@ toc
 
 %% use funappx
 a1 = 0 ; b1 = 2 * pi;
-[cosappx, out1] = funappx_g( @(x) cos(x), a1, 2*b1, 1e-1, 'nhi', res);
-[sinappx, out2] = funappx_g( @(x) sin(x), a1, 2*b1, 1e-1, 'nhi', res);
+[cosappx, out1] = funappxNoPenalty_g( @(x) cos(x), a1, 2*b1, 1e-1, 'nhi', res);
+[sinappx, out2] = funappxNoPenalty_g( @(x) sin(x), a1, 2*b1, 1e-1, 'nhi', res);
 
 tic, 
 t0  = a1: b1 / (res-1) : 2*b1;
@@ -141,7 +141,7 @@ lighting gouraud
 lightangle(80, -40)
 lightangle(-90, 60)
 
-% fix the view, or spin the funappxseashell
+% fix the view, or spin the traub_funappxseashell
 if (isfinite (azimuth))
     view([azimuth elevation])
 else
@@ -151,8 +151,7 @@ else
     end
 end
 
-
-gail.save_eps('WorkoutFunappxOutput', 'funappxseashell');
+gail.save_eps('TraubPaperOutput', 'traub_seashell');
 
 % plot the surface from funappx_G
 % 7th Edition was surf(x,y,z,y)
@@ -169,7 +168,7 @@ lightangle(80, -40)
 lightangle(-90, 60)
 
 
-% fix the view, or spin the funappxseashell
+% fix the view, or spin the traub_funappxseashell
 if (isfinite (azimuth))
     view([azimuth elevation])
 else
@@ -179,7 +178,7 @@ else
     end
 end
 
-gail.save_eps('WorkoutFunappxOutput', 'funappxseashell');
+gail.save_eps('TraubPaperOutput', 'traub_funappxseashell');
 
 % plot the error
 figure(3)
@@ -197,4 +196,4 @@ else
     end
 end
 
-gail.save_eps('WorkoutFunappxOutput', 'Seashellsurfyerror');
+gail.save_eps('TraubPaperOutput', 'Seashellsurfyerror');

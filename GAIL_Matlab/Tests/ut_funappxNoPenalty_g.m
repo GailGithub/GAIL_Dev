@@ -9,7 +9,7 @@ classdef ut_funappxNoPenalty_g < matlab.unittest.TestCase
             in_param.nhi = 3;
             [fappx, result] = funappxNoPenalty_g(f,in_param);
             testCase.verifyLessThanOrEqual(result.iter, 1);
-            testCase.verifyEqual(result.npoints,3);
+            testCase.verifyEqual(result.npoints, 5);
             x = 0:0.1:1;
             testCase.verifyLessThanOrEqual(norm(fappx(x)-f(x)), eps);
         end
@@ -124,14 +124,14 @@ classdef ut_funappxNoPenalty_g < matlab.unittest.TestCase
             f = @(x) x.^2;
             in_param.a = 2;
             in_param.b = 1;
-            [fappx, result] = testCase.verifyWarning(@()funappxNoPenalty_g(f,in_param),'GAIL:funappxNoPenalty_g:blea');
+            [fappx, result] = testCase.verifyWarning(@()funappxNoPenalty_g(f,in_param),'GAIL:gail1D_in_param:blea');
             x = rand(10000,1)*(result.b-result.a)+result.a;
             actualerr = max(abs(fappx(x)-f(x)));
             testCase.verifyLessThanOrEqual(actualerr,result.abstol);
         end
         
         function funappxNoPenalty_gOfnofunction(testCase)
-            [fappx, result] = testCase.verifyWarning(@()funappxNoPenalty_g,'GAIL:funappxNoPenalty_g:nofunction');
+            [fappx, result] = testCase.verifyWarning(@()funappxNoPenalty_g,'GAIL:gail_in_param:notfunction');
             x = rand(10000,1)*(result.b-result.a)+result.a;
             actualerr = max(abs(fappx(x)-result.f(x)));
             testCase.verifyLessThanOrEqual(actualerr,result.abstol);
@@ -141,7 +141,7 @@ classdef ut_funappxNoPenalty_g < matlab.unittest.TestCase
             f = @(x) x.^2;
             in_param.a = 1;
             in_param.b = 1;
-            [fappx, result] = testCase.verifyWarning(@()funappxNoPenalty_g(f,in_param),'GAIL:funappxNoPenalty_g:beqa');
+            [fappx, result] = testCase.verifyWarning(@()funappxNoPenalty_g(f,in_param),'GAIL:gail1D_in_param:beqa');
             x = rand(10000,1)*(result.b-result.a)+result.a;
             actualerr = max(abs(fappx(x)-f(x)));
             testCase.verifyLessThanOrEqual(actualerr,result.abstol);
@@ -152,7 +152,7 @@ classdef ut_funappxNoPenalty_g < matlab.unittest.TestCase
             in_param.nmax = 200;
             [~, result] = testCase.verifyWarning(@()funappxNoPenalty_g(f,in_param),'GAIL:funappxNoPenalty_g:exceedbudget');
             testCase.verifyLessThanOrEqual(result.npoints,result.nmax);
-            testCase.verifyEqual(result.exit,([1 0]==1));
+            testCase.verifyEqual(result.exitflag,logical([1 0 0 0 0]));
         end
         
         function funappxNoPenalty_gOfexceediter(testCase)
@@ -171,10 +171,17 @@ classdef ut_funappxNoPenalty_g < matlab.unittest.TestCase
         
          function funappxNoPenalty_gOnpointsofconstant(testCase)
             f = @(x) 5;
-            in_param.nlo = 5; in_param.nhi =5;
+            in_param.nlo = 1; in_param.nhi = 1;
             [~, result] = funappxNoPenalty_g(f,in_param);
             testCase.verifyEqual(result.npoints,5);
          end
+         
+         function funappxNoPenalty_gHighAccuracy(testCase)
+            [fappx, result] = funappxNoPenalty_g(@(x)exp(x),'a',-2,'b',2,'nhi',20,'nlo',10, 'abstol', 1e-12);
+            x = rand(1000000,1)*(result.b-result.a)+result.a;
+            actualerr = max(abs(fappx(x)-result.f(x)));
+            testCase.verifyLessThanOrEqual(actualerr,result.abstol);
+        end
          
     end
 end

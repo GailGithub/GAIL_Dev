@@ -5,10 +5,10 @@
 clear all; close all;
 a = 1;
 b = 10;
-x = a:b;
 f = @(x) (5*x)+(x.^2*1i);
-xq = a:0.1:b;
-[fappx,out] = funappxNoPenalty_g(f,a,b) 
+xq = a:0.001:b;
+[fappx,out] = funappxNoPenalty_g(f,a,b,1e-13,100,100,10^8)
+gail.funappx_g_check(fappx,out);
 vq = fappx(xq);
 v  = f(xq);
 errest =  max(abs(v-vq))

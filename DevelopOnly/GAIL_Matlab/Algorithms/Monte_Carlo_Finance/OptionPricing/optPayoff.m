@@ -182,7 +182,7 @@ classdef optPayoff < assetPath
       
           whbasketcall = strcmp(obj.payoffParam.optType,'basket') ...
              & strcmp(obj.payoffParam.putCallType,'call'); %basket call
-             weight=obj.payoffParam.basketWeight;
+          weight=obj.payoffParam.basketWeight;
 
          if any(whbasketcall) %basket option
              tempPay(:,whbasketcall) ...

@@ -32,7 +32,7 @@ classdef whiteNoise < stochProcess
    properties (SetAccess=public)
       wnParam = struct('sampleKind','IID', ... %kind of sampling
          'distribName', 'Uniform', ... %distribution of the marginals 
-         'xDistrib', 'Uniform') %kind of sampling
+         'xDistrib', 'Uniform') %kind of sampling before transformation
    end
 
    properties (Constant, Hidden) %do not change & not seen
@@ -87,7 +87,8 @@ classdef whiteNoise < stochProcess
             obj.qrandState = val; %set or initialize qrandstate
          end
          if strcmp(obj.inputType,'n') && ...
-            strcmp(obj.wnParam.sampleKind,'IID') %easier to sample from randn
+            strcmp(obj.wnParam.sampleKind,'IID') && ... %easier to sample from randn
+            strcmp(obj.wnParam.distribName,'Gaussian') %if you want Gaussian
             obj.wnParam.xDistrib = 'Gaussian';
          end
       end
