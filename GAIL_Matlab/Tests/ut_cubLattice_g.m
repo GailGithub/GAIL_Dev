@@ -55,7 +55,7 @@ classdef ut_cubLattice_g < matlab.unittest.TestCase
     end
     
     function cubLattice_gOdwarning(testCase)
-        testCase.verifyWarning(@()cubLattice_g(@(x)x.^2,1.5),'GAIL:cubLattice_g:hyperbox_error1');
+        testCase.verifyWarning(@()cubLattice_g(@(x)x.^2,1.5),'GAIL:cubLattice_g:hyperbox_error2');
     end
     
     function cubLattice_gNormal(testCase)

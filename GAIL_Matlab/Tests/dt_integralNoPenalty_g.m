@@ -86,8 +86,8 @@ function dt_integralNoPenalty_g()
 %               abstol: 1.0000e-06
 %                  nlo: 10
 %                  nhi: 1000
-%                 nmax: 10000000
 %                ninit: 100
+%                 nmax: 10000000
 %                  tau: 197
 %         exceedbudget: 0
 %           conechange: 0
@@ -99,14 +99,14 @@ function dt_integralNoPenalty_g()
 %   >> f = @(x) exp(-x.^2); [~, out_param] = integralNoPenalty_g(f,'a',1,'b',2,'nlo',100,'nhi',10000,'abstol',1e-5,'nmax',1e7)
 %     out_param = 
 % 
-%                    a: 1
-%               abstol: 1.0000e-05
-%                    b: 2
 %                    f: @(x)exp(-x.^2)
-%                  nhi: 10000
+%                    a: 1
+%                    b: 2
+%               abstol: 1.0000e-05
 %                  nlo: 100
-%                 nmax: 10000000
+%                  nhi: 10000
 %                ninit: 1000
+%                 nmax: 10000000
 %                  tau: 1997
 %         exceedbudget: 0
 %           conechange: 0

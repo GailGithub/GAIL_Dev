@@ -5,8 +5,8 @@ function [npoints,errest,t,npointsglobal,errestglobal,tglobal]=funappx_convtest(
 % Compare funappx_g with funappxglobal_g:
 %   [npoints,errest,t,npointsglobal,errestglobal,tglobal]=funappx_convtest(f,a,b)
 %
-% Compare funappxNoPenalty_g with funappxglobal_g:
-%   [npoints,errest,t,npointsglobal,errestglobal,tglobal]=funappx_convtest(f,a,b,'funappxNoPenalty_g');
+% Compare funappxPenalty_g with funappxglobal_g:
+%   [npoints,errest,t,npointsglobal,errestglobal,tglobal]=funappx_convtest(f,a,b,'funappxPenalty_g');
 LatexInterpreter
 tol = zeros(1,15);
 errest = tol;

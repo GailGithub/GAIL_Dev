@@ -86,8 +86,9 @@ classdef brownianMotion < whiteNoise
             end
          elseif strcmp(obj.bmParam.assembleType,'PCA')
              Sigma=bsxfun(@min,obj.timeDim.timeVector',obj.timeDim.timeVector);
-             [Eigenvectors,Eigenvalues]=eig(Sigma);
-             A = Eigenvectors*Eigenvalues.^(1/2);
+             [Eigenvectors,Eigenvalues]=eig(Sigma,'vector');
+             [~, order] = sort(Eigenvalues, 'descend');
+             A = Eigenvectors(:,order)*diag(Eigenvalues(order).^(1/2));
              paths=paths*A';
          end
        end

@@ -20,11 +20,11 @@ function [fappx,npoints,errest] = funappx_g_gui(f,a,b,tol,nlo,nhi,varargin)
 %  Two local min:
 %  [fappx,npoints] = funappx_g_gui(@(x) -5 * exp(-(10*(x - .3)).^2) - exp(-(10*(x - 0.75)).^2),0,1,1e-3,10,20)
 %  [fappx,npoints] = ... 
-%  Demo with funappxNoPenalty_g:
-%  [fappx,npoints,errest] = funappx_g_gui(@(x) x.^2,-1,1,1e-2,10,20,'funappxNoPenalty_g')
+%  Demo with funappxPenalty_g:
+%  [fappx,npoints,errest] = funappx_g_gui(@(x) x.^2,-1,1,1e-2,10,20,'funappxPenalty_g')
 shg
 clf reset
-MATLABVERSION= gail.matlab_version;
+MATLABVERSION = gail.matlab_version;
 if isempty(varargin)
   algoname = 'funappx_g';
   algo = @(f,in_param) funappx_g(f,in_param);
@@ -64,14 +64,15 @@ k = 0;
 
 % Scale the plot
 h = b - a;
-
 ninit = 2*ceil(nhi*(nlo/nhi)^(1/(1+h)))+1;
 x = a:h/(ninit-1):b;
 y = f(x);
 maxy = max(y);
 miny = min(y);
 set(gcf,'doublebuffer','on','userdata',0)
-plot(x,y,'.','markersize',15);
+MATLABBlue = [0, 0.447, 0.741];
+MATLABGreen = [0.466,  0.674, 0.188];
+
 hold on
 p(1) = fill(a,fa,'k');
 p(2) = fill(b,fb,'k');
@@ -93,11 +94,6 @@ q(1) = uicontrol('string','step', ...
 q(2) = uicontrol('string','auto', ...
      'units','normal','pos',[.85 .02 .08 .04], ...
     'callback','set(gcf,''userdata'',2)');
-%index = [1 ninit];
-% initialize nstar
-%nstar = ninit - 2;
-%nstar = floor(ninit/2);
-% initialize error
 err = tol+1;
 
 in_param.a = a; 
@@ -105,8 +101,10 @@ in_param.b = b;
 in_param.abstol = tol; 
 in_param.nlo = nlo; 
 in_param.nhi = nhi; 
-in_param.output_x = true;
-tmpstr = strsplit(algoname,'_g');
+in_param.output_x = 1;
+% tmpstr = strsplit(algoname,'_g');
+% level = funmin_g(f,a,b,tol,nlo,nhi)-0.2;
+
 while(max(err) > tol)
     if max(err) > tol;
         in_param.maxiter = k+1; 
@@ -118,9 +116,10 @@ while(max(err) > tol)
         k = k + 1;
         p = flipud(get(gca,'children'));
         set(p(1),'xdata',x,'ydata',y)
-        set(gca,'xtick',x,'xticklabel',[]);
-        hTitle=title([tmpstr{1}, '\_g: error is ' num2str(max(err)) ' in iter ' num2str(k)]);
-        set(hTitle,'FontSize',25)
+        %set(gca,'xtick',x,'xticklabel',[]);
+        plot(x,zeros(size(x)),'.','color',MATLABGreen); hold on;
+        %hTitle=title([tmpstr{1}, '\_g: error \(\approx\) ' sprintf('%0.2g',max(err)) ' in iter ' num2str(k)]);
+        %set(hTitle,'FontSize',25,'Interpreter', 'latex')
         pause(.25)
         while get(gcf,'userdata') == 0
             pause(.25)
@@ -136,9 +135,9 @@ end
 
 p = flipud(get(gca,'child'));
 set(p(1),'xdata',x,'ydata',y)
-set(gca,'xtick',x,'xticklabel',[]);
-hTitle=title([tmpstr{1}, '\_g: error estimation is ' num2str(max(err)) ' in iteration ' num2str(k)]);
-set(hTitle,'FontSize',25)
+%set(gca,'xtick',x,'xticklabel',[]);
+%hTitle=title([tmpstr{1}, '\_g: error \(\approx\) '  sprintf('%0.2g',max(err)) ' in iter ' num2str(k)]);
+%set(hTitle,'FontSize',25,'Interpreter', 'latex')
 pause(.25)
 while get(gcf,'userdata') == 0
     pause(.25)
@@ -161,8 +160,9 @@ warning('on', ['GAIL:', algoname ,':exceediter']);
 hold on;
 delta = 0.00001;
 x=a:delta:b; 
-plot(x,f(x));
+plot(x,f(x),'color',MATLABBlue);
 hold off;
 gail.save_eps('WorkoutFunappxOutput', [algoname, '_gui']);
+%keyboard
 
 % ---------------------------------------------------------

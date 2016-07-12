@@ -24,13 +24,13 @@ hold on;
 [m,n]=size(out_param.intervals);
 if ~isempty(out_param.intervals)
     for i=1:n
-        if out_param.volumeX > out_param.TolX,
+        %if out_param.volumeX > out_param.TolX,
             intlen = out_param.intervals(2,i) - out_param.intervals(1,i);
             fval1 = f(out_param.intervals(2,i)) - fmin;
             fval2 = f(out_param.intervals(1,i)) - fmin;
             plot(out_param.intervals(1,i), fmin, 'r<', 'MarkerSize', 12,'LineWidth',2)
             plot(out_param.intervals(2,i), fmin, 'r>', 'MarkerSize', 12,'LineWidth',2)
-        end
+        %end
         plot(mean(out_param.intervals(:,i)),  fmin, 'ro', 'MarkerSize', 12,'LineWidth',2)
     end
 end
