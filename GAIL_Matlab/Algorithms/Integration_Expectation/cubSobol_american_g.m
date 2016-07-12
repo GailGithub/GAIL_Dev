@@ -303,6 +303,7 @@ for l=out_param.mmin-1:-1:1
 end
 
 %% If control variates, find optimal beta
+<<<<<<< HEAD
 <<<<<<< HEAD:GAIL_Matlab/Algorithms/cubSobol_american_g.m
 if cv.J
     X = yg(kappanumap(end/2 + 1:end), (1:cv.J)); %yg(kappanumap(2^(out_param.mmin-r_lag-1) + 1:2^(out_param.mmin-r_lag)), (1:cv));
@@ -312,6 +313,11 @@ if cv
     X = yg(kappanumap(2^(out_param.mmin-r_lag-1) + 1:2^(out_param.mmin-r_lag)), (1:cv)); %yg(kappanumap(end/2 + 1:end));
     Y = y(kappanumap(2^(out_param.mmin-r_lag-1) + 1:2^(out_param.mmin-r_lag)));%y(kappanumap(end/2 + 1:end));
 >>>>>>> remotes/origin/feature/Different_Shapes:GAIL_Matlab/Algorithms/Integration_Expectation/cubSobol_american_g.m
+=======
+if cv.J
+    X = yg(kappanumap(end/2 + 1:end), (1:cv.J)); %yg(kappanumap(2^(out_param.mmin-r_lag-1) + 1:2^(out_param.mmin-r_lag)), (1:cv));
+    Y = y(kappanumap(end/2 + 1:end)); %y(kappanumap(2^(out_param.mmin-r_lag-1) + 1:2^(out_param.mmin-r_lag)));
+>>>>>>> develop
     beta = X \ Y;
     out_param.beta = beta;
     % We update the integrand and values
@@ -388,6 +394,7 @@ for m=out_param.mmin+1:out_param.mmax
        yoldnext = temp(:,1);
 	   ynext = temp(:,1) - temp(:,2:end)*beta;
 	   yval = [yval; ynext];
+<<<<<<< HEAD
    end
   
     %% Compute initial FWT on next points
@@ -411,6 +418,30 @@ for m=out_param.mmin+1:out_param.mmax
    y(ptind)=(evenval+oddval)/2;
    y(~ptind)=(evenval-oddval)/2;
 
+=======
+   end
+  
+    %% Compute initial FWT on next points
+   for l=0:mnext-1
+      nl=2^l;
+      nmminlm1=2^(mnext-l-1);
+      ptind=repmat([true(nl,1); false(nl,1)],nmminlm1,1);
+      evenval=ynext(ptind);
+      oddval=ynext(~ptind);
+      ynext(ptind)=(evenval+oddval)/2;
+      ynext(~ptind)=(evenval-oddval)/2;
+   end
+
+   %% Compute FWT on all points
+   y=[y;ynext];
+   nl=2^mnext;
+   ptind=[true(nl,1); false(nl,1)];
+   evenval=y(ptind);
+   oddval=y(~ptind);
+   y(ptind)=(evenval+oddval)/2;
+   y(~ptind)=(evenval-oddval)/2;
+
+>>>>>>> develop
 if cv.J
    %% Compute FWT on all points
    yold=[yold;yoldnext];
@@ -420,6 +451,7 @@ if cv.J
    oddval=yold(~ptind);
    yold(ptind)=(evenval+oddval)/2;
    yold(~ptind)=(evenval-oddval)/2;
+<<<<<<< HEAD
 =======
     
 %% If control variates, find optimal beta
@@ -432,6 +464,8 @@ if cv
     y = y-yg*beta;
     yval = yval-yvalg*beta;
 >>>>>>> remotes/origin/feature/Different_Shapes:GAIL_Matlab/Algorithms/Integration_Expectation/cubSobol_american_g.m
+=======
+>>>>>>> develop
 end
 
    %% Update kappanumap

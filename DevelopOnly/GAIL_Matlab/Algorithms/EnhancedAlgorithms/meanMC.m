@@ -609,35 +609,37 @@ classdef meanMC < handle
         
         
         function [tmu,out_param]=meanMC_g(Yrand,in_param)
-            tstart = tic;
-            out_param = in_param;
+            tstart = tic; %start the clock
+            out_param = in_param;           
             n1 = 2;
             Yrand(n1); %let it run once to load all the data. warm up the machine.
             nsofar = n1;
             
             ntry = 10;% try several samples to get the time
-            ttry=timeit(@()Yrand(ntry));
+            tic;
+            Yrand(ntry);
+            ttry=toc;
             tpern = ttry/ntry; % calculate time per sample
             nsofar = nsofar+ntry; % update n so far
             out_param.exit = 0;
             if tpern<1e-7;%each sample use very very little time
                 booster = 8;
-                ttry2 = timeit(@()Yrand(ntry*booster));
+                tic;Yrand(ntry*booster);ttry2 = toc;
                 ntry = ntry*[1 booster];
                 ttry = [ttry ttry2];% take eight times more samples to try
             elseif tpern>=1e-7 && tpern<1e-5 %each sample use very little time
                 booster = 6;
-                ttry2 = timeit(@()Yrand(ntry*booster));
+                tic;Yrand(ntry*booster);ttry2 = toc;
                 ntry = ntry*[1 booster];
                 ttry = [ttry ttry2];% take six times more samples to try
             elseif tpern>=1e-5 && tpern<1e-3 %each sample use little time
                 booster = 4;
-                ttry2 = timeit(@()Yrand(ntry*booster));
+                tic;Yrand(ntry*booster);ttry2 = toc;
                 ntry = ntry*[1 booster];
                 ttry = [ttry ttry2];% take four times more samples to try
             elseif  tpern>=1e-3 && tpern<1e-1 %each sample use moderate time
                 booster = 2;
-                ttry2 = timeit(@()Yrand(ntry*booster));
+                tic;Yrand(ntry*booster);ttry2 = toc;
                 ntry = ntry*[1 booster];
                 ttry = [ttry ttry2];% take two times more samples to try
             else %each sample use lots of time, stop try
