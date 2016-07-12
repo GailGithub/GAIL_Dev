@@ -1,5 +1,10 @@
 function GAIL_Publish(ifGenerateHtml, ifGenerateLateX, ifBuildSearchIndex)
-% GAIL_PUBLISH  To generate html files in the GAIL subdirectory Documentation
+% GAIL_PUBLISH  To generate formatted documentation in the GAIL subdirectory Documentation
+%
+% ifGenerateHtml: true to generate HTML documentation
+% ifGenerateLateX: true to generate tex source documentation files
+% ifBuildSearchIndex: true to build search index in MATLAB
+%
 [GAILPATH,GAILVERSION,MATLABVERSION] = GAILstart;
 if usejava('jvm')
     oldStatus = get(0,'DefaultFigureVisible');
