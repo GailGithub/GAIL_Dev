@@ -491,23 +491,6 @@ for m=out_param.mmin+1:out_param.mmax
            yg(ptind, (1:cv.J))=(evenval+oddval)/2;
            yg(~ptind, (1:cv.J))=(evenval-oddval)/2;
        end
-       %{
-       %% build kappa map
-       kappanumap=(1:n0)'; %initialize map
-       for l=m-1:-1:1
-        nl=2^l;
-        oldone=abs(y(kappanumap(2:nl)));
-        newone=abs(y(kappanumap(nl+2:2*nl))); 
-        flip=find(newone>oldone);
-        if ~isempty(flip)
-            flipall=bsxfun(@plus,flip,0:2^(l+1):2^out_param.mmin-1);
-            flipall=flipall(:);
-            temp=kappanumap(nl+1+flipall); %then flip 
-            kappanumap(nl+1+flipall)=kappanumap(1+flipall); %them
-            kappanumap(1+flipall)=temp; %around
-        end
-       end
-        %}
        X = yg(kappanumap(end/2+1:end), (1:cv.J));
        Y = y(kappanumap(end/2+1:end));
        beta = X \ Y;  
@@ -610,7 +593,8 @@ default.abstol  = 1e-4;
 default.reltol  = 1e-2;
 default.mmin  = 10;
 default.mmax  = 24;
-default.fudge = @(m) 5*2.^-m;
+default.fudge = @(m) 4*2.^(-m);
+%default.fudge = @(m) 5*2.^-m;
 default.toltype  = 'max';
 default.theta  = 1;
 default.betaUpdate = 0;
