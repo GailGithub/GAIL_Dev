@@ -20,13 +20,14 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 %   uniform distribution on a ball. When measure is 'uniform ball_box',
 %   the box-to-ball transformation, which gets a set of points uniformly
 %   distributed on a ball from a set of points uniformly distrubuted on a
-%   box, will be used. When measure is 'uniform ball_normal',
-%   the normal-to-ball transformation, which gets a set of points uniformly
+%   box, will be used. When measure is 'uniform ball_normal', the
+%   normal-to-ball transformation, which gets a set of points uniformly 
 %   distributed on a ball from a set of points normaly distrubuted on the
 %   space, will be used. Similarly, the measures 'uniform sphere_box'
 %   and 'uniform sphere_normal' can be used to specify the
-%   desired transformations. The defaut transformation is the box-to-ball
-%   transformation.
+%   desired transformations. The defaut transformations are the box-to-ball
+%   and the box-to-sphere transformations, depending on the region of
+%   integration.
 %   Given the construction of Sobol' sequences, d must be
 %   a positive integer with 1<=d<=1111.
 %
@@ -66,12 +67,14 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 %
 %     in_param.measure --- for f(x)*mu(dx), we can define mu(dx) to be the
 %     measure of a uniformly distributed random variable in the hyperbox
-%     or normally distributed with covariance matrix I_d. The only possible
-%     values are 'uniform', 'normal' and 'uniform ball'. For 'uniform', the
-%     hyperbox must be a finite volume, for 'normal', the hyperbox can only
-%     be defined as (-Inf,Inf)^d and, for 'uniform ball' or 'uniform sphere',
-%     hyperbox must have finite values for the coordinates of the center
-%     and a finite positive value for the radius. By default it is 'uniform'.
+%     or normally distributed with covariance matrix I_d. The possible
+%     values are 'uniform', 'normal', 'uniform ball', 'uniform ball_box',
+%     'uniform ball_normal', 'uniform sphere', 'uniform sphere_box' and
+%     'uniform sphere_normal'. For 'uniform', the hyperbox must be a
+%     finite volume, for 'normal', the hyperbox can only be defined as
+%     (-Inf,Inf)^d and, for 'uniform ball' or 'uniform sphere', hyperbox
+%     must have finite values for the coordinates of the center and a
+%     finite positive value for the radius. By default it is 'uniform'. 
 %
 %     in_param.abstol --- the absolute error tolerance, abstol>=0. By 
 %     default it is 1e-4.
@@ -170,8 +173,11 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 % the algorithm terminates without warning messages, the output is given
 % with guarantees under the assumption that the integrand lies inside a
 % cone of functions. The guarantee is based on the decay rate of the
-% Walsh-Fourier coefficients. For more details on how the cone is defined,
-% please refer to the references below.
+% Walsh-Fourier coefficients. For integration over domains other than
+% [0,1]^d, this cone conditions applies to f \circ \psi (the
+% composition of the functions) where \psi is the transformation
+% function for [0,1]^d to the desired region. For more details on how the
+% cone is defined, please refer to the references below.
 % 
 %  Examples
 % 
@@ -272,34 +278,38 @@ r_lag = 4; %distance between coefficients summed and those computed
 %changing the integrand and the hyperbox when measure is uniform ball or
 %sphere by applying the appropriate transformation
 if strcmpi(out_param.measure,'uniform ball') || strcmpi(out_param.measure,'uniform sphere')% using uniformly distributed samples on a ball or sphere
-    if strcmpi(out_param.measure,'uniform ball')% using the formula of the volume of a ball or a sphere
+    if strcmp(out_param.measure,'uniform sphere') && out_param.transf == 1 %box-to-sphere transformation
+        out_param.d = out_param.d + 1; % changing out_param.d back to the dimension of the sphere
+    end
+    
+    if strcmpi(out_param.measure,'uniform ball')% using the formula of the volume of a ball
         volume = ((2.0*pi^(out_param.d/2.0))/(out_param.d*gamma(out_param.d/2.0)))*out_param.radius^out_param.d; %volume of a d-dimentional ball
-    else
+    else % using the formula of the volume of a sphere
         volume = ((2.0*pi^(out_param.d/2.0))/(gamma(out_param.d/2.0)))*out_param.radius^(out_param.d - 1); %volume of a d-dimentional sphere
     end
     
     if out_param.transf == 1 % box-to-ball or box-to-sphere transformation should be used
         if out_param.d == 1 % It is not necessary to multiply the function f by the volume, since no transformation is being made
             hyperbox = [hyperbox - out_param.radius; hyperbox + out_param.radius];% for one dimension, the ball is actually an interval
-            out_param.measure = 'uniform';% them a uniform distribution on a box can be used
+            out_param.measure = 'uniform';% then a uniform distribution on a box can be used
         else
-            if strcmpi(out_param.measure,'uniform ball')
+            if strcmpi(out_param.measure,'uniform ball') % box-to-ball transformation
                 f = @(t) f(gail.ball_psi_1(t, out_param.d, out_param.radius, hyperbox))*volume;% the psi function is the transformation
-            else
+            else % box-to-sphere transformation
                 f = @(t) f(gail.sphere_psi_1(t, out_param.d, out_param.radius, hyperbox))*volume;% the psi function is the transformation 
                 out_param.d = out_param.d - 1;% the box-to-sphere transformation takes points from a (d-1)-dimensional box to a d-dimensional sphere
             end
             hyperbox = [zeros(1, out_param.d); ones(1, out_param.d)];% the hyperbox must be the domain of the transformation, which is a unit box
-            out_param.measure = 'uniform';% them a uniform distribution on a box can be used
+            out_param.measure = 'uniform';% then a uniform distribution on a box can be used
         end
     else % normal-to-ball or normal-to-sphere transformation should be used
-        if strcmpi(out_param.measure,'uniform ball')
+        if strcmpi(out_param.measure,'uniform ball') % normal-to-ball transformation
             f = @(t) f(gail.ball_psi_2(t, out_param.d, out_param.radius, hyperbox))*volume;% the psi function is the transformation
-        else
+        else % normal-to-sphere transformation
             f = @(t) f(gail.sphere_psi_2(t, out_param.d, out_param.radius, hyperbox))*volume;% the psi function is the transformation 
         end
         hyperbox = bsxfun(@plus, zeros(2, out_param.d), [-inf; inf]);% the hyperbox must be the domain of the transformation, which is a this unit box
-        out_param.measure = 'normal';% them a normal distribution can be used
+        out_param.measure = 'normal';% then a normal distribution can be used
     end
 end
 
@@ -597,7 +607,7 @@ else
         hyperbox = default.hyperbox;
     else
         out_param.f=f;
-        hyperbox = varargin{2};
+        hyperbox = varargin{2}; % hyperbox validation will be done later
 %         if ~isnumeric(hyperbox) || ~(size(hyperbox,1)==2) || ~(size(hyperbox,2)<1111)
 %             warning('GAIL:cubSobol_g:hyperbox_error1',...
 %                 'The hyperbox must be a real matrix of size 2xd where d can not be greater than 1111. Example for f(x)=x^2:') 
@@ -679,6 +689,7 @@ else
     out_param = p.Results;
 end
 
+% out_param.d will be set later
 %out_param.d = size(hyperbox,2);
 
 if iscell(out_param.cv.g) % multiply control variates, 
@@ -695,15 +706,6 @@ else
     end
 end
 
-fdgyes = 0; % We store how many functions are in varargin. There can only
-            % two functions as input, the function f and the fudge factor.
-for j = 1:size(varargin,2)
-    fdgyes = gail.isfcn(varargin{j})+fdgyes;
-end
-if fdgyes < 2 % No fudge factor given as input
-    default.fudge = @(m) 5*2.^-(m/d);
-end
-
 % Force measure to be one of the allowed ones
 if ~(strcmp(out_param.measure,'uniform') || strcmp(out_param.measure,'normal') || ...
         strcmp(out_param.measure,'uniform ball') || ...
@@ -717,6 +719,8 @@ if ~(strcmp(out_param.measure,'uniform') || strcmp(out_param.measure,'normal') |
     out_param.measure = default.measure;
 end
 
+% simplifying out_param.measure and storing which transformation should be
+% applied 
 if strcmp(out_param.measure,'uniform ball') || strcmp(out_param.measure,'uniform sphere')
     out_param.transf = default.transf;
 elseif strcmp(out_param.measure,'uniform ball_box')
@@ -745,7 +749,7 @@ if strcmp(out_param.measure,'uniform') || strcmp(out_param.measure,'normal')
     end
 else
     out_param.d = size(hyperbox,2);
-    if ~isnumeric(hyperbox) || ~(size(hyperbox,1)==1) || ~(out_param.d<1112)
+    if ~isnumeric(hyperbox) || ~(size(hyperbox,1)==1) || ~(out_param.d<1112) % size(hyperbox,2) is actually equal to d+1 (the extra value is the radius)
         warning('GAIL:cubSobol_g:hyperbox_error3',...
             'When measure is ''uniform ball'' or ''uniform sphere'', the hyperbox must be a real matrix of size 1 x (d+1) where d can not be greater than 1111. Default values for f and hyperbox will be used:')
         f = @(x) x.^2;
@@ -754,8 +758,8 @@ else
     end
     
     out_param.radius = hyperbox(out_param.d);
-    hyperbox = hyperbox(:,1:out_param.d-1);
-    out_param.d = out_param.d - 1;
+    hyperbox = hyperbox(:,1:out_param.d-1); % removing the last value is the radius, which is the radius
+    out_param.d = out_param.d - 1; % storing the rigth dimension of the ball or sphere
     
     if strcmp(out_param.measure,'uniform ball') && out_param.d <= 0
         warning('GAIL:cubSobol_g:dimensionequalszero',...
@@ -778,6 +782,21 @@ else
             'When measure is ''uniform ball'' or ''uniform sphere'', the radius must a finite positive real number. Default value for the radius will be used:')
         out_param.radius = default.radius;
     end
+    
+    if strcmp(out_param.measure,'uniform sphere') && out_param.transf == 1 % box-to-sphere transformation
+        % setting out_param.d to be the dimension of the box over which the
+        % integral will actually be computed
+        out_param.d = out_param.d - 1;
+    end
+end
+
+fdgyes = 0; % We store how many functions are in varargin. There can only
+            % two functions as input, the function f and the fudge factor.
+for j = 1:size(varargin,2)
+    fdgyes = gail.isfcn(varargin{j})+fdgyes;
+end
+if fdgyes < 2 % No fudge factor given as input
+    default.fudge = @(m) 5*2.^-(m/d);
 end
 
 % Force absolute tolerance greater than 0
@@ -880,7 +899,10 @@ if (strcmp(out_param.measure,'uniform ball') || strcmp(out_param.measure,'unifor
         && ~all(all(isfinite(hyperbox)))
     warning('GAIL:cubSobol_g:infinitecoordinateforthecenter',['If uniform ball or sphere measure, all the coordinates of the center must be finite.' ...
             ' Using the origin as the center:'])
-    hyperbox = zeros(1,out_param.d);
+    % out_param.d should not be used here because this variable stores the
+    % dimension of the box over which the integral will actually be
+    % computed, whih may be different from the dimesion of the sphere
+    hyperbox = zeros(1,size(hyperbox,2));
 end
 
 end
