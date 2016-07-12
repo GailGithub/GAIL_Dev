@@ -55,7 +55,7 @@ if nargin < 6
          if nargin < 3
             relTol = 0.01; %relative error tolerance
             if nargin < 2
-               absTol = 0.01; %absolute error tolerance
+               absTol = 1e-2; %absolute error tolerance
                if nargin < 1
                    Yrand = @(n) gpuArray.rand(n,1); %random number generator
                end

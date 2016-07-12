@@ -49,13 +49,13 @@ function [hmu,out_param]=meanMC_CLT(Yrand,absTol,relTol,alpha,nSig,inflate)
 if nargin < 6
    inflate = 1.2; %standard deviation inflation factor
    if nargin < 5;
-      nSig = 1e7; %number of samples to estimate variance
+      nSig = 1e3; %number of samples to estimate variance
       if nargin < 4
          alpha = 0.01; %uncertainty
          if nargin < 3
             relTol = 0.01; %relative error tolerance
             if nargin < 2
-               absTol = 0.01; %absolute error tolerance
+               absTol = 1e-2; %absolute error tolerance
                if nargin < 1
                   Yrand = @(n) rand(n,1); %random number generator
                end
