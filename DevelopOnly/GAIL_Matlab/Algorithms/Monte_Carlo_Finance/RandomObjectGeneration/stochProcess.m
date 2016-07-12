@@ -112,7 +112,7 @@ classdef stochProcess < handle & matlab.mixin.CustomDisplay
          obj.timeDim.startTime = obj.timeDim.timeVector(1); %start time
          obj.timeDim.endTime = obj.timeDim.timeVector(end); %end time
          obj.timeDim.nSteps = numel(obj.timeDim.timeVector); %number of steps
-         obj.timeDim.timeIncrement = diff(obj.timeDim.timeVector); %increment between time steps
+         obj.timeDim.timeIncrement = diff([obj.timeDim.initTime obj.timeDim.timeVector]); %increment between time steps
          obj.timeDim.nCols = obj.timeDim.nSteps*obj.timeDim.dim; %total number of columns
       end
             

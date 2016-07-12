@@ -270,7 +270,7 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 %   (WSSSPE1)," Journal of Open Research Software, Volume 2, Number 1, e6,
 %   pp. 1-21, 2014.
 %
-%   [6] Fang, K.-T., & Wang, Y. (1994). Number-theoretic Methods in 
+%   [6] Fang, K.-T., & Wang, Y. (1994).ï¿½Number-theoretic Methods in 
 %   Statistics. London, UK: CHAPMAN & HALL
 %
 %   If you find GAIL helpful in your work, please support us by citing the
