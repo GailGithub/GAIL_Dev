@@ -230,6 +230,16 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 % check = 1
 %
 %
+% Example 6:
+% Estimate the integral with integrand f(x) = x1^2+x2^2 over the disk with
+% center (0,0) and radius 1 with pure absolute error 1e-4, where x is a vector x = [x1 x2].
+% 
+% >> f = @(x) x(:,1).^2+x(:,2).^2; hyperbox = [0,0,1];
+% >> q = cubSobol_g(f,hyperbox,'uniform ball','abstol',1e-4,'reltol',0); exactsol = pi/2;
+% >> check = abs(exactsol-q) < 1e-4
+% check = 1
+%
+%
 %   See also CUBLATTICE_G, CUBMC_G, MEANMC_G, MEANMCBER_G, INTEGRAL_G
 % 
 %  References
@@ -605,16 +615,19 @@ else
         f = @(x) x.^2;
         out_param.f=f;
         hyperbox = default.hyperbox;
-    else
+    elseif numel(varargin) == 2
         out_param.f=f;
-        hyperbox = varargin{2}; % hyperbox validation will be done later
-%         if ~isnumeric(hyperbox) || ~(size(hyperbox,1)==2) || ~(size(hyperbox,2)<1111)
-%             warning('GAIL:cubSobol_g:hyperbox_error1',...
-%                 'The hyperbox must be a real matrix of size 2xd where d can not be greater than 1111. Example for f(x)=x^2:') 
-%             f = @(x) x.^2;
-%             out_param.f=f;
-%             hyperbox = default.hyperbox;
-%         end
+        hyperbox = varargin{2};
+        if ~isnumeric(hyperbox) || ~(size(hyperbox,1)==2) || ~(size(hyperbox,2)<1111)
+            warning('GAIL:cubSobol_g:hyperbox_error1',...
+                'The hyperbox must be a real matrix of size 2xd where d can not be greater than 1111. Example for f(x)=x^2:') 
+            f = @(x) x.^2;
+            out_param.f=f;
+            hyperbox = default.hyperbox;
+        end
+    else
+        out_param.f = f;
+        hyperbox = varargin{2}; % hyperbox validation will be done above
     end
 end
 
@@ -689,9 +702,6 @@ else
     out_param = p.Results;
 end
 
-% out_param.d will be set later
-%out_param.d = size(hyperbox,2);
-
 if iscell(out_param.cv.g) % multiply control variates, 
        cv = max(size(out_param.cv.g));	% cv= number of c.v.s
 else
@@ -724,10 +734,10 @@ end
 if strcmp(out_param.measure,'uniform ball') || strcmp(out_param.measure,'uniform sphere')
     out_param.transf = default.transf;
 elseif strcmp(out_param.measure,'uniform ball_box')
-    out_param.transf = 1;
+    out_param.transf = 1; % one means from a box
     out_param.measure = 'uniform ball';
 elseif strcmp(out_param.measure,'uniform ball_normal')
-    out_param.transf = 2;
+    out_param.transf = 2; % two means from normal
     out_param.measure = 'uniform ball';
 elseif strcmp(out_param.measure,'uniform sphere_box')
     out_param.transf = 1;
@@ -738,23 +748,27 @@ elseif strcmp(out_param.measure,'uniform sphere_normal')
 end
     
 %validating hyperbox
-if strcmp(out_param.measure,'uniform') || strcmp(out_param.measure,'normal')
+if strcmp(out_param.measure,'uniform') || strcmp(out_param.measure,'normal') % 'uniform box' or 'normal box'
     out_param.d = size(hyperbox,2);
     if ~isnumeric(hyperbox) || ~(size(hyperbox,1)==2) || ~(out_param.d<1111)
         warning('GAIL:cubSobol_g:hyperbox_error2',...
-            'When measure is ''uniform'' or ''normal'', the hyperbox must be a real matrix of size 2 x d where d can not be greater than 1111. Example for f(x)=x^2:')
+            'When measure is ''uniform'' or ''normal'', the hyperbox must be a real matrix of size 2 x d where d can not be greater than 1111. Example for f(x)=x^2 over [0,1]:')
         f = @(x) x.^2;
         out_param.f=f;
         hyperbox = default.hyperbox;
+        out_param.d = size(hyperbox,2);
+        out_param.measure = default.measure;
     end
-else
+else % 'uniform ball' or 'uniform sphere'
     out_param.d = size(hyperbox,2);
     if ~isnumeric(hyperbox) || ~(size(hyperbox,1)==1) || ~(out_param.d<1112) % size(hyperbox,2) is actually equal to d+1 (the extra value is the radius)
         warning('GAIL:cubSobol_g:hyperbox_error3',...
-            'When measure is ''uniform ball'' or ''uniform sphere'', the hyperbox must be a real matrix of size 1 x (d+1) where d can not be greater than 1111. Default values for f and hyperbox will be used:')
+            'When measure is ''uniform ball'' or ''uniform sphere'', the hyperbox must be a real matrix of size 1 x (d+1) where d can not be greater than 1111.  Example for f(x)=x^2 over [0,1]:')
         f = @(x) x.^2;
         out_param.f=f;
         hyperbox = default.hyperbox;
+        out_param.d = size(hyperbox,2);
+        out_param.measure = default.measure;
     end
     
     out_param.radius = hyperbox(out_param.d);
@@ -763,18 +777,22 @@ else
     
     if strcmp(out_param.measure,'uniform ball') && out_param.d <= 0
         warning('GAIL:cubSobol_g:dimensionequalszero',...
-            'When measure is ''uniform ball'', the number of dimentions must be a positive values. Default values for f and hyperbox will be used:')
+            'When measure is ''uniform ball'', the number of dimentions must be a positive values.  Example for f(x)=x^2 over [0,1]:')
         f = @(x) x.^2;
         out_param.f=f;
         hyperbox = default.hyperbox;
+        out_param.d = size(hyperbox,2);
+        out_param.measure = default.measure;
     end
     
     if strcmp(out_param.measure,'uniform sphere') && out_param.d <= 1
         warning('GAIL:cubSobol_g:dimensionsmallerthan2',...
-            'When measure is ''uniform sphere'', the number of dimentions must be at least 2. Default values for f and hyperbox will be used:')
+            'When measure is ''uniform sphere'', the number of dimentions must be at least 2.  Example for f(x)=x^2 over [0,1]:')
         f = @(x) x.^2;
         out_param.f=f;
         hyperbox = default.hyperbox;
+        out_param.d = size(hyperbox,2);
+        out_param.measure = default.measure;
     end
     
     if ~isfinite(out_param.radius) || out_param.radius <= 0.0
@@ -788,15 +806,6 @@ else
         % integral will actually be computed
         out_param.d = out_param.d - 1;
     end
-end
-
-fdgyes = 0; % We store how many functions are in varargin. There can only
-            % two functions as input, the function f and the fudge factor.
-for j = 1:size(varargin,2)
-    fdgyes = gail.isfcn(varargin{j})+fdgyes;
-end
-if fdgyes < 2 % No fudge factor given as input
-    default.fudge = @(m) 5*2.^-(m/d);
 end
 
 % Force absolute tolerance greater than 0
@@ -883,7 +892,7 @@ if (strcmp(out_param.measure,'uniform')) && ~all(all(isfinite(hyperbox)))
     disp([zeros(1,out_param.d);ones(1,out_param.d)])
     hyperbox = [zeros(1,out_param.d);ones(1,out_param.d)];
 end
-if (strcmp(out_param.measure,'normal')) && (sum(sum(isfinite(hyperbox)))>0)
+if (strcmp(out_param.measure,'normal')) && (any(any(isfinite(hyperbox)))>0)
     warning('GAIL:cubSobol_g:hyperboxfinite',['If normal measure, hyperbox must be defined as (-Inf,Inf)^d.' ...
             ' Using default hyperbox:'])
     disp([-inf*ones(1,out_param.d);inf*ones(1,out_param.d)])
