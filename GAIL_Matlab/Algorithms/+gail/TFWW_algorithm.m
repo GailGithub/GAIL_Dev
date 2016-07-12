@@ -1,9 +1,19 @@
 function X = TFWW_algorithm(t, d)
-% algorithm that computes the transformation from a uniform distributions on a d-dimensional box
-% to a uniform distribution on a d-dimensional sphere, using the d-1 last coordinates of t
+% Algorithm that computes the transformation from a uniform distributions
+% on a (d-1)-dimensional box to a uniform distribution on a d-dimensional
+% sphere. The d-1 last coordinates of each row of t are used as the input
+% for this algorithm because the first coordinate of each row might be used
+% by the box-to-ball transformation as random values on the interval [0,
+% 1]. Therefore, many indexs from the original algorithm that can be found
+% at [1] have been incremented by 1.
+% 
+% References:
+%   [1] Fang, K.-T., & Wang, Y. (1994). Number-theoretic Methods in 
+%   Statistics. London, UK: CHAPMAN & HALL
+
     if mod(d,2) == 0 % d even
         m = d/2;
-        g = zeros(size(t,1),m+1);% g is 1-based, diferently from the original algorithm
+        g = zeros(size(t,1),m+1);% g is 1-based, differently from the original algorithm
         g(:,m+1) = ones(size(t,1),1);
         
         %computing g(:,i) = g(:,i+1).*(t(:,i).^(1.0/(i-1))) without for
@@ -12,7 +22,7 @@ function X = TFWW_algorithm(t, d)
         g(:,2:m) = cumprod(bsxfun(@power, t(:,2:m), exponents), 2, 'reverse');
         
         %computing dd(:,i) = sqrt(g(:,i+1) - g(:,i)) without for loops
-        dd = sqrt(diff(g,1,2));
+        dd = sqrt(diff(g,1,2)); % dd corresponds to the d vector in the original algorithm
         
         %computing the following without for loops:
         %   X(:,2*i-1) = dd(:,i).*cos(2*pi*t(:,m+i));
@@ -21,7 +31,7 @@ function X = TFWW_algorithm(t, d)
 
     else %d odd
         m = (d-1)/2;
-        g = zeros(size(t,1),m+1);% g is 1-based, diferently from the original algorithm
+        g = zeros(size(t,1),m+1);% g is 1-based, differently from the original algorithm
         g(:,m+1) = ones(size(t,1),1);
         
         %computing g(:,i) = g(:,i+1).*(t(:,i).^(2.0/(2*i-1))) without for
@@ -30,13 +40,13 @@ function X = TFWW_algorithm(t, d)
         g(:,2:m) = cumprod(bsxfun(@power, t(:,2:m), exponents), 2, 'reverse');
         
         %computing dd(:,i) = sqrt(g(:,i+1) - g(:,i)) without for loops
-        dd = sqrt(diff(g,1,2)); % dd is equivalent to the d vector in the original algorithm
+        dd = sqrt(diff(g,1,2)); % dd corresponds to the d vector in the original algorithm
               
         X = zeros(size(t)); %initializing the answer matrix for efficiency 
         
         X(:,1) = dd(:,1).*(1-2*t(:,m+1));
-        X(:,2) = 2*dd(:,1).*sqrt(t(:,m+1).*(1-t(:,m+1))).*cos(2*pi*t(:,m+2));%multiplied by 2 to match formula (cf.(1.5.28))
-        X(:,3) = 2*dd(:,1).*sqrt(t(:,m+1).*(1-t(:,m+1))).*sin(2*pi*t(:,m+2));%multiplied by 2 to match formula (cf.(1.5.28))
+        X(:,2) = 2*dd(:,1).*sqrt(t(:,m+1).*(1-t(:,m+1))).*cos(2*pi*t(:,m+2));%multiplied by 2 to match formula (cf.(1.5.28)) from [1]
+        X(:,3) = 2*dd(:,1).*sqrt(t(:,m+1).*(1-t(:,m+1))).*sin(2*pi*t(:,m+2));%multiplied by 2 to match formula (cf.(1.5.28)) from [1]
         
         %computing the following without for loops:
         %   X(:,2*i) = dd(:,i).*cos(2*pi*t(:,m+i+1));
