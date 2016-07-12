@@ -26,7 +26,7 @@ function [Q,out_param] = cubMC_g(varargin)
 %   'uniform ball_normal', the normal-to-ball transformation, which
 %   gets a set of points uniformly distributed on a ball from a set of 
 %   points normaly distrubuted on the space, will be used. Similarly, the
-%   measures 'uniform sphere_box' and 'uniform sphere_normal-to-spehere'
+%   measures 'uniform sphere_box' and 'uniform sphere_normal'
 %   can be defined.
 %   The defaut transformations are the box-to-ball and the box-to-sphere
 %   transformations, depending on the region of integration.
@@ -59,8 +59,8 @@ function [Q,out_param] = cubMC_g(varargin)
 %     in_param.measure --- the measure for generating the random variable,
 %     the default is 'uniform'. The other measures could be handled are
 %     'uniform box', 'normal'/'Gaussian', 'uniform ball'/'uniform 
-%     ball_box-to-ball'/'uniform ball_normal' and 'uniform sphere'/'uniform 
-%     sphere_box-to-sphere'/'uniform sphere_normal'. The input should be
+%     ball_box'/'uniform ball_normal' and 'uniform sphere'/'uniform 
+%     sphere_box'/'uniform sphere_normal'. The input should be
 %     a string type, hence with quotes.
 % 
 %     in_param.abstol --- the absolute error tolerance, the default value
@@ -268,6 +268,9 @@ function [Q,out_param] = cubMC_g(varargin)
 tstart=tic;
 [f,hyperbox,out_param] = cubMC_g_param(varargin{:});%check validity of inputs
 
+%------------------------------------------------------------------------------
+% TRANSFORMATION
+
 %changing the integrand and the hyperbox when measure is uniform ball or
 %sphere by applying the appropriate transformation
 if strcmpi(out_param.measure,'uniform ball') || strcmpi(out_param.measure,'uniform sphere')% using uniformly distributed samples on a ball or sphere
@@ -280,29 +283,31 @@ if strcmpi(out_param.measure,'uniform ball') || strcmpi(out_param.measure,'unifo
     if out_param.transf == 1 % box-to-ball or box-to-sphere transformation should be used
         if out_param.dim == 1 % It is not necessary to multiply the function f by the volume, since no transformation is being made
             hyperbox = [hyperbox - out_param.radius; hyperbox + out_param.radius];% for one dimension, the ball is actually an interval
-            out_param.measure = 'uniform';% them a uniform distribution on a box can be used
+            out_param.measure = 'uniform';% then a uniform distribution on a box can be used
         else
-            if strcmpi(out_param.measure,'uniform ball')
+            if strcmpi(out_param.measure,'uniform ball') % box-to-ball transformation
                 f = @(t) f(gail.ball_psi_1(t, out_param.dim, out_param.radius, hyperbox))*volume;% the psi function computes the transformation
-            else
+            else % box-to-sphere transformation
                 f = @(t) f(gail.sphere_psi_1(t, out_param.dim, out_param.radius, hyperbox))*volume;% the psi function is the transformation 
                 out_param.dim = out_param.dim - 1;% the box-to-sphere transformation takes points from a (d-1)-dimensional box to a d-dimensional sphere
             end
             hyperbox = [zeros(1, out_param.dim); ones(1, out_param.dim)];% the hyperbox must be the domain of the transformation, which is a unit box
-            out_param.measure = 'uniform';% them a uniform distribution on a box can be used
+            out_param.measure = 'uniform';% then a uniform distribution on a box can be used
         end
     else % normal-to-ball or normal-to-sphere transformation should be used
-        if strcmpi(out_param.measure,'uniform ball')
+        if strcmpi(out_param.measure,'uniform ball') % normal-to-ball transformation
             f = @(t) f(gail.ball_psi_2(t, out_param.dim, out_param.radius, hyperbox))*volume;% the psi function computes the transformation
-        else
+        else % normal-to-sphere transformation
             f = @(t) f(gail.sphere_psi_2(t, out_param.dim, out_param.radius, hyperbox))*volume;% the psi function is the transformation 
         end
         hyperbox = bsxfun(@plus, zeros(2, out_param.dim), [-inf; inf]);% the hyperbox must be the domain of the transformation, which is a unit box
-        out_param.measure = 'normal';% them a normal distribution can be used
+        out_param.measure = 'normal';% then a normal distribution can be used
     end
 end
 
-%now the transformation will be calculated using uniform or normal measure
+%------------------------------------------------------------------------------
+
+%now the integral will be calculated using uniform or normal measure
 f=gail.transformIntegrand(f,hyperbox,out_param);
 if strcmpi(out_param.measure,'uniform')% using uniformly distributed samples
     [Q,out_param] = meanMC_g(@(nfun)f(rand(nfun,out_param.dim)),out_param);
@@ -317,7 +322,7 @@ end
 function [f,hyperbox,out_param] = cubMC_g_param(varargin)
 % Parameter checking and parsing
 default.measure = 'uniform';% default measure
-default.transf = 1;% default transformation (box-to-ball)
+default.transf = 1;% default transformation (box-to-ball or box-to-sphere, depending on the region of integration)
 default.dim = 1;% default dimension
 default.hyperbox = [zeros(1,default.dim);ones(1,default.dim)];% default hyperbox
 default.abstol  = 1e-2;% default absolute error tolerance
@@ -441,6 +446,8 @@ if isfield(out_param,'measure'); % the sample measure
         'normal','Gaussian','uniform ball', 'uniform ball_box',...
         'uniform ball_normal', 'uniform sphere', 'uniform sphere_box',...
             'uniform sphere_normal'});
+    % simplifying out_param.measure and storing which transformation should
+    % be applied 
     if strcmpi(out_param.measure,'Gaussian')
         out_param.measure='normal';
     elseif strcmpi(out_param.measure,'uniform box')
