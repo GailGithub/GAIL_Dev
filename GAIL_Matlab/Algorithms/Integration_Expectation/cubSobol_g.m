@@ -318,24 +318,27 @@ end
 l_star = out_param.mmin - r_lag; % Minimum gathering of points for the sums of DFWT
 omg_circ = @(m) 2.^(-m);
 omg_hat = @(m) out_param.fudge(m)/((1+out_param.fudge(r_lag))*omg_circ(r_lag));
-g = out_param.cv.g;% get control variate function
 
-if strcmp(out_param.measure,'normal')
-   f = @(x) f(gail.stdnorminv(x));
-   if cv == 1
-	   g = @(x) out_param.cv.g(gail.stdnorminv(x));
-   elseif cv > 1
-	   g = @(x) cellfun(@(c) c(gail.stdnorminv(x)), g, 'UniformOutput', false);
-   end
-elseif strcmp(out_param.measure,'uniform')
+% intialize CV param, redefine target function
+mu=0;beta=0;
+if cv.J % if using control variates(f is structure), redefine f
+	mu = f.cv; f = f.func;
+end
+
+if strcmp(out_param.measure,'uniform')
    Cnorm = prod(hyperbox(2,:)-hyperbox(1,:));
-   tran = @(x) (bsxfun(@plus,hyperbox(1,:),bsxfun(@times,(hyperbox(2,:)-hyperbox(1,:)),x)));% a + (b-a)x = u
-   f = @(x) Cnorm*f(tran(x)); % a + (b-a)x = u
-   if cv == 1 
-	   g = @(x) Cnorm*g(tran(x)); % a + (b-a)x = u
-   elseif cv > 1 
-	   g = @(x) cellfun(@(c) c(tran(x)), g, 'UniformOutput', false);
+   tran = @(x) bsxfun(@plus,hyperbox(1,:),bsxfun(@times,(hyperbox(2,:)-hyperbox(1,:)),x));% a + (b-a)x = u
+   if strcmp(cv.format, 'cellfunc') 
+	   f = @(x) cellfun(@(c) c(tran(x)), f, 'UniformOutput', false);
+   else 
+	   f = @(x) Cnorm*f(tran(x)); % a + (b-a)x = u
    end   
+elseif strcmp(out_param.measure,'normal')
+   if strcmp(cv.format, 'cellfunc') 
+	   f = @(x) cellfun(@(c) c(gail.stdnorminv(x)), f, 'UniformOutput', false);
+   else 
+	   f = @(x) f(gail.stdnorminv(x));
+   end
 end
 
 %% Main algorithm
@@ -348,20 +351,24 @@ errest=zeros(out_param.mmax-out_param.mmin+1,1); %initialize error estimates
 appxinteg=zeros(out_param.mmax-out_param.mmin+1,1); %initialize approximations to integral
 exit_len = 2;
 out_param.exit=false(1,exit_len); %we start the algorithm with all warning flags down
-dimg = max(size(out_param.cv.g)); % get the number of control variates
 
 %% Initial points and FWT
 out_param.n=2^out_param.mmin; %total number of points to start with
 n0=out_param.n; %initial number of points
 xpts=sobstr(1:n0,1:out_param.d); %grab Sobol' points
-y = f(xpts); %evaluate integrand
-yval=y;
-if cv > 1 
-	yg = cell2mat(g(xpts)) - out_param.cv.Ig; yvalg=yg;
-elseif cv == 1 
-	yg = out_param.cv.g(xpts) - out_param.cv.Ig; yvalg=yg;
-end %evaluate control variate
 
+% evaluate integrand
+if cv.J==0 % no control variates
+	y = f(xpts); yval = y;
+elseif strcmp(cv.format, 'cellfunc') % control variates in cell function format 
+	ycv = cell2mat(f(xpts));
+	y = ycv(:,1); yval = y;  
+	yg = ycv(:,2:end); yvalg = yg;
+elseif strcmp(cv.format, 'optPayoff') % control variates in optPayoff format
+	ycv = f(xpts);
+	y = ycv(:,1); yval = y;
+	yg = ycv(:,2:end); yvalg = yg;
+end 
 
 %% Compute initial FWT
 for l=0:out_param.mmin-1
@@ -372,11 +379,11 @@ for l=0:out_param.mmin-1
    oddval=y(~ptind);
    y(ptind)=(evenval+oddval)/2;
    y(~ptind)=(evenval-oddval)/2;
-   if cv
-       evenval=yg(ptind, (1:cv));
-       oddval=yg(~ptind, (1:cv));
-       yg(ptind, (1:cv))=(evenval+oddval)/2;
-       yg(~ptind, (1:cv))=(evenval-oddval)/2;
+   if cv.J
+       evenval=yg(ptind, (1:cv.J));
+       oddval=yg(~ptind, (1:cv.J));
+       yg(ptind, (1:cv.J))=(evenval+oddval)/2;
+       yg(~ptind, (1:cv.J))=(evenval-oddval)/2;
    end
 end
 %y now contains the FWT coefficients
@@ -397,23 +404,41 @@ for l=out_param.mmin-1:-1:1
    end
 end
 
-%% If control variates, find optimal beta
-if cv  
-    X = yg(kappanumap(end/2+1:end), (1:cv));
+%% If using control variates, find optimal beta
+if cv.J  
+    X = yg(kappanumap(end/2+1:end), (1:cv.J));
     Y = y(kappanumap(end/2+1:end));
     beta = X \ Y;  
     out_param.beta = beta;
-    % We update the integrand and values
-    y = y-yg*beta;
-    yval = yval-yvalg*beta;
-    if cv == 1 
-	    f = @(x) f(x)-(g(x)-out_param.cv.Ig)*beta;
-    else
-        error('Still need to code that part')
+    %yval = yval-yvalg*beta;
+    y = ycv(:,1) - ycv(:,2:end)*beta;% redefine function
+    yval = y;
+    % Recompute initial FWT
+    for l=0:out_param.mmin-1
+        nl=2^l;
+        nmminlm1=2^(out_param.mmin-l-1);
+        ptind=repmat([true(nl,1); false(nl,1)],nmminlm1,1);
+        evenval=y(ptind);
+        oddval=y(~ptind);
+        y(ptind)=(evenval+oddval)/2;
+        y(~ptind)=(evenval-oddval)/2;
+    end
+    %% rebuild kappa map
+    kappanumap=(1:out_param.n)'; %initialize map
+    for l=out_param.mmin-1:-1:1
+        nl=2^l;
+        oldone=abs(y(kappanumap(2:nl)));
+        newone=abs(y(kappanumap(nl+2:2*nl))); 
+        flip=find(newone>oldone);
+        if ~isempty(flip)
+            flipall=bsxfun(@plus,flip,0:2^(l+1):2^out_param.mmin-1);
+            flipall=flipall(:);
+            temp=kappanumap(nl+1+flipall); %then flip 
+            kappanumap(nl+1+flipall)=kappanumap(1+flipall); %them
+            kappanumap(1+flipall)=temp; %around
+        end
     end
 end
-
-
 
 %% Compute Stilde
 nllstart = int64(2^(out_param.mmin-r_lag-1));
@@ -435,7 +460,7 @@ if any(CStilde_low(:) > CStilde_up(:))
 end
 
 %% Approximate integral
-q=mean(yval);
+q=mean(yval)+mu*beta;
 appxinteg(1)=q;
 
 % Check the end of the algorithm
@@ -468,13 +493,16 @@ for m=out_param.mmin+1:out_param.mmax
    nnext=2^mnext;
    xnext=sobstr(n0+(1:nnext),1:out_param.d); 
    n0=n0+nnext;
-   if cv > 1% multi C.V.s
-	   ygnext = cell2mat(g(xnext))- out_param.cv.Ig;  
-	   ynext = f(xnext) - ygnext*beta;
-	   yval = [yval; ynext];
-   else
-	   ynext=f(xnext);
-	   yval=[yval; ynext]; %#ok<*AGROW>
+   if cv.J == 0
+	   ynext = f(xnext); yval=[yval; ynext];
+   elseif strcmp(cv.format, 'cellfunc')
+       ycvnext = cell2mat(f(xnext)) ;
+       ynext = ycvnext(:,1) - ycvnext(:,2:end)*beta;
+       yval=[yval; ynext];
+   elseif strcmp(cv.format, 'optPayoff')
+	   ycvnext = f(xnext);
+       ynext = ycvnext(:,1) - ycvnext(:,2:end)*beta;
+       yval=[yval; ynext];
    end
 
    %% Compute initial FWT on next points
@@ -513,6 +541,62 @@ for m=out_param.mmin+1:out_param.mmax
       end
    end
 
+   %% updating beta (to be improved)
+   if out_param.betaUpdate&&cv.J
+       xpts=sobstr(1:n0,1:out_param.d);
+       if strcmp(cv.format, 'cellfunc')
+           ycv = cell2mat(f(xpts));
+       elseif strcmp(cv.format, 'optPayoff')
+           ycv = f(xpts);
+       end
+       y = ycv(:,1); yg = ycv(:,2:end);
+       %% compute FWT
+       for l=0:m-1
+           nl=2^l;
+           nmminlm1=2^(m-l-1);
+           ptind=repmat([true(nl,1); false(nl,1)],nmminlm1,1);
+           evenval=y(ptind);
+           oddval=y(~ptind);
+           y(ptind)=(evenval+oddval)/2;
+           y(~ptind)=(evenval-oddval)/2;
+           evenval=yg(ptind, (1:cv.J));
+           oddval=yg(~ptind, (1:cv.J));
+           yg(ptind, (1:cv.J))=(evenval+oddval)/2;
+           yg(~ptind, (1:cv.J))=(evenval-oddval)/2;
+       end
+       X = yg(kappanumap(end/2+1:end), (1:cv.J));
+       Y = y(kappanumap(end/2+1:end));
+       beta = X \ Y;  
+       out_param.beta = [out_param.beta;beta];
+       y = ycv(:,1) - ycv(:,2:end)*beta;
+       yval = y;
+       % Recompute initial FWT
+       for l=0:m-1
+           nl=2^l;
+           nmminlm1=2^(m-l-1);
+           ptind=repmat([true(nl,1); false(nl,1)],nmminlm1,1);
+           evenval=y(ptind);
+           oddval=y(~ptind);
+           y(ptind)=(evenval+oddval)/2;
+           y(~ptind)=(evenval-oddval)/2;
+       end
+       %% rebuild kappa map
+       kappanumap=(1:n0)'; %initialize map
+       for l=m-1:-1:1
+           nl=2^l;
+           oldone=abs(y(kappanumap(2:nl)));
+           newone=abs(y(kappanumap(nl+2:2*nl))); 
+           flip=find(newone>oldone);
+           if ~isempty(flip)
+               flipall=bsxfun(@plus,flip,0:2^(l+1):2^out_param.mmin-1);
+               flipall=flipall(:);
+               temp=kappanumap(nl+1+flipall);  
+               kappanumap(nl+1+flipall)=kappanumap(1+flipall);
+               kappanumap(1+flipall)=temp; 
+           end
+       end
+   end
+
    %% Compute Stilde
    nllstart=int64(2^(m-r_lag-1));
    meff=m-out_param.mmin+1;
@@ -535,7 +619,7 @@ for m=out_param.mmin+1:out_param.mmax
    end
 
    %% Approximate integral
-   q=mean(yval);
+   q=mean(yval)+mu*beta;
    appxinteg(meff)=q;
    
    % Check the end of the algorithm
@@ -587,8 +671,10 @@ default.mmax  = 24;
 default.fudge = @(m) 5*2.^-m;
 default.toltype  = 'max';
 default.theta  = 1;
-default.cv.Ig = 0;
-default.cv.g = @(x) zeros(size(x,1));
+default.betaUpdate = 0;% option for updating beta, off at default
+
+% 2 data structures for func handle: function || structure(using CV)
+validf = @(x) gail.isfcn(x) || isstruct(x);
 
 if numel(varargin)<2
     help cubSobol_g
@@ -599,22 +685,26 @@ if numel(varargin)<2
     hyperbox = default.hyperbox;
 else
     f = varargin{1};
-    if ~gail.isfcn(f)
+    % validate function handle 
+    if ~validf(f)
         warning('GAIL:cubSobol_g:fnotfcn',...
-            'The given input f was not a function. Example for f(x)=x^2:')
+            'The given input f should be a function, or a structure in required form.' )
         f = @(x) x.^2;
         out_param.f=f;
         hyperbox = default.hyperbox;
     else
         out_param.f=f;
-        hyperbox = varargin{2}; % hyperbox validation will be done later
-%         if ~isnumeric(hyperbox) || ~(size(hyperbox,1)==2) || ~(size(hyperbox,2)<1111)
-%             warning('GAIL:cubSobol_g:hyperbox_error1',...
-%                 'The hyperbox must be a real matrix of size 2xd where d can not be greater than 1111. Example for f(x)=x^2:') 
-%             f = @(x) x.^2;
-%             out_param.f=f;
-%             hyperbox = default.hyperbox;
-%         end
+        hyperbox = varargin{2};
+        %{ 
+        hyperbox checking to be done later
+        if ~isnumeric(hyperbox) || ~(size(hyperbox,1)==2) || ~(size(hyperbox,2)<1111)
+            warning('GAIL:cubSobol_g:hyperbox_error1',...
+                'The hyperbox must be a real matrix of size 2xd where d can not be greater than 1111. Example for f(x)=x^2:')
+            f = @(x) x.^2;
+            out_param.f=f;
+            hyperbox = default.hyperbox;
+        end 
+        %}
     end
 end
 
@@ -647,10 +737,10 @@ if ~validvarargin
     out_param.fudge = default.fudge;
     out_param.toltype = default.toltype;
     out_param.theta = default.theta;
-    out_param.cv = default.cv;
+    out_param.betaUpdate= default.betaUpdate;
 else
     p = inputParser;
-    addRequired(p,'f',@gail.isfcn);
+    addRequired(p,'f', validf);
     addRequired(p,'hyperbox',@isnumeric);
     if isnumeric(in3) || ischar(in3)
         addOptional(p,'measure',default.measure,...
@@ -665,7 +755,7 @@ else
         addOptional(p,'toltype',default.toltype,...
             @(x) any(validatestring(x, {'max','comb'})));
         addOptional(p,'theta',default.theta,@isnumeric);
-        addOptional(p,'cv',default.cv,@isstruct);
+        addOptional(p,'betaUpdate',default.betaUpdate,@isnumeric);
     else
         if isstruct(in3) %parse input structure
             p.StructExpand = true;
@@ -683,7 +773,7 @@ else
         f_addParamVal(p,'toltype',default.toltype,...
             @(x) any(validatestring(x, {'max','comb'})));
         f_addParamVal(p,'theta',default.theta,@isnumeric);
-        f_addParamVal(p,'cv',default.cv,@isstruct);
+        f_addParamVal(p,'betaUpdate',default.betaUpdate,@isnumeric);
     end
     parse(p,f,hyperbox,varargin{3:end})
     out_param = p.Results;
@@ -692,22 +782,30 @@ end
 % out_param.d will be set later
 %out_param.d = size(hyperbox,2);
 
-if iscell(out_param.cv.g) % multiply control variates, 
-       cv = max(size(out_param.cv.g));	% cv= number of c.v.s
+% get the number of control variates and its format 
+if ~isstruct(f) %  using control variates
+	cv.J = 0; cv.format = 'noCV';
 else
-    if (size(func2str(out_param.cv.g),2) == size(func2str(default.cv.g),2))
-        if (all(func2str(out_param.cv.g) == func2str(default.cv.g)))
-		    cv = 0; % no control variates if we have default cv
-        else
-		    cv = 1;
-        end
-    else
-	    cv = 1;
-    end
+	% checking mu
+	if isnumeric(f.cv)
+		cv.J = size(f.cv,2);
+	else
+		warning('GAIL:cubSobol_g:controlvariates_error1',...
+		'f.cv should be numerical values');
+	end
+	% checking format
+	if iscell(f.func)
+		cv.format = 'cellfunc';
+	elseif strfind(func2str(f.func), 'genOptPayoffs');
+		cv.format = 'optPayoff';
+	else
+	       	warning('GAIL:cubSobol_g:controlvaraites_error2',...
+		'f.func should be cell function format or optPayoff foramt');
+	end
 end
 
-<<<<<<< HEAD
-=======
+%<<<<<<< HEAD
+%=======
 % fdgyes = 0; % We store how many functions are in varargin. There can only
 %             % two functions as input, the function f and the fudge factor.
 % for j = 1:size(varargin,2)
@@ -717,7 +815,7 @@ end
 %     default.fudge = @(m) 5*2.^-(m/d);
 % end
 
->>>>>>> develop
+%>>>>>>> develop
 % Force measure to be one of the allowed ones
 if ~(strcmp(out_param.measure,'uniform') || strcmp(out_param.measure,'normal') || ...
         strcmp(out_param.measure,'uniform ball') || ...

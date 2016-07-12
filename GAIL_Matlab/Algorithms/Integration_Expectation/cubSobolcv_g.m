@@ -453,7 +453,8 @@ for m=out_param.mmin+1:out_param.mmax
    evenval=y(ptind); oddval=y(~ptind);
    y(ptind)=(evenval+oddval)/2;
    y(~ptind)=(evenval-oddval)/2;
-
+   
+   %% Update kappanumap
    kappanumap=[kappanumap; 2^(m-1)+kappanumap]; %initialize map
    for l=m-1:-1:m-r_lag
       nl=2^l;
