@@ -119,14 +119,7 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 %     between the absolute and relative tolerances
 %     theta*abstol+(1-theta)*reltol*| integral(f) |. Note that for theta = 1, 
 %     we have pure absolute tolerance while for theta = 0, we have pure 
-%     relative tolerance. By default, theta=1.
-% 
-%     in_param.cv ---this input is a structure variable contains two elements.
-%     The first one is a function or several functions with the same dimension as f.
-%     When use multiply control variates, the function should be defined in cellfunc
-%     format(Check the Example 7).
-%     The second one should be the value of the previous function/functions
-%     on the defined interval. By default, this is set to zero(no control variates). 
+%     relative tolerance. By default, theta=1. 
 %     
 %
 %   Output Arguments
