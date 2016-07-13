@@ -217,8 +217,8 @@ function [Q,out_param] = cubMC_g(varargin)
 % Q = 0.33***
 % 
 %
-% Example 6: 
-% Estimate the integral with integrand f(x) = x1^2+x2^2 in the ball with
+% Example 6:
+% Estimate the integral with integrand f(x) = x1^2+x2^2 in the disk with
 % center (0,0) and radius 1, where x is a vector x = [x1 x2].
 % 
 % >> f=@(x) x(:,1).^2+x(:,2).^2;hyperbox = [0,0,1];
