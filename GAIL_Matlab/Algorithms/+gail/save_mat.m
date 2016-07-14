@@ -37,7 +37,7 @@ for k = 1:(nargin-3)
     varnames{k} = varname;
 end
 clear subdir filename GAILPATH varname outputfolder isTimeStamped k varargin;
-if length(varnames) > 0
+if ~isempty(varnames)
    save(fullfilename, varnames{:});
 else 
    warning('No variables saved.')

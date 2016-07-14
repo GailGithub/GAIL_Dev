@@ -106,8 +106,8 @@ toc
 
 %% use funappx
 a1 = 0 ; b1 = 2 * pi;
-[cosappx, out1] = funappxNoPenalty_g( @(x) cos(x), a1, 2*b1, 1e-1, 'nhi', res);
-[sinappx, out2] = funappxNoPenalty_g( @(x) sin(x), a1, 2*b1, 1e-1, 'nhi', res);
+[cosappx, out1] = funappx_g( @(x) cos(x), a1, 2*b1, 1e-1, 'nhi', res);
+[sinappx, out2] = funappx_g( @(x) sin(x), a1, 2*b1, 1e-1, 'nhi', res);
 
 tic, 
 t0  = a1: b1 / (res-1) : 2*b1;
@@ -153,7 +153,7 @@ end
 
 gail.save_eps('TraubPaperOutput', 'traub_seashell');
 
-% plot the surface from funappx_G
+% plot the surface from funappx_g
 % 7th Edition was surf(x,y,z,y)
 figure(2)
 surf(x1,y1,z1,y1)

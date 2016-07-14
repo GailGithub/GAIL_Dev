@@ -28,7 +28,7 @@ format long
 
 
 %% funappx_g
-tic, [fappx, fout] = funappxNoPenalty_g(f,a,b,abstol,'nmax',10^8), toc
+tic, [fappx, fout] = funappx_g(f,a,b,abstol,'nmax',10^8), toc
 % gail.funappx_g_check(fappx,fout)
 
 %% chebfun

@@ -19,10 +19,11 @@ function [fappx, out_param] = par_funappx_g(workers,varargin)
 %        ninit: 20
 %         nmax: 10000000
 %      maxiter: 1000
-%     exitflag: [0 0]
-%         iter: 10
+%     exitflag: [0 0 0 0 0]
+%         iter: 11
 %      npoints: ***
 %       errest: ***e-08
+%       ***
 % 
 %  >> x=-2:1e-7:2; f = @(x) x.^2; err = max(abs(f(x)-fappx(x))); err < 1e-7
 %  ans =  
@@ -47,7 +48,7 @@ fa = cell(1,workers);
 ou = cell(1,workers);
 parfor i=1:workers,
     aa=a+(i-1)*h;
-    [fappx,out] = funappxNoPenalty_g(f, aa, aa+h, out_param.abstol, ...
+    [fappx,out] = funappx_g(f, aa, aa+h, out_param.abstol, ...
         max(5,out_param.nlo/workers), max(5,out_param.nhi/workers), ...
         ceil(out_param.nmax/workers), out_param.maxiter, 'output_x', 1);
     fa{i} = fappx;

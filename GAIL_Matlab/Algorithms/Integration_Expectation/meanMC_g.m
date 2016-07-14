@@ -48,7 +48,7 @@ function [tmu,out_param]=meanMC_g(varargin)
 %     between 0 and 1, default value is 1e-1.
 %
 %     in_param.alpha --- the uncertainty, which should be a small positive
-%     percentage. default value is 1%.
+%     percentage, default value is 1%.
 %
 %     in_param.fudge --- standard deviation inflation factor, which should
 %     be larger than 1, default value is 1.2.
@@ -220,7 +220,7 @@ out_param.nremain = gail.estsamplebudget(out_param.tbudget,...
 %update the nremain could afford until now
 out_param.var = var(Yval);% calculate the sample variance--stage 1
 sig0 = sqrt(out_param.var);% standard deviation
-sig0up = out_param.fudge.*sig0;% upper bound on the standard deviation
+sig0up = out_param.fudge*sig0;% upper bound on the standard deviation
 alpha_sig = out_param.alpha/2;% the uncertainty for variance estimation
 out_param.kurtmax = (out_param.nSig-3)/(out_param.nSig-1) ...
     + ((alpha_sig*out_param.nSig)/(1-alpha_sig))...
