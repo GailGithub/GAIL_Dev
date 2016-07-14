@@ -65,7 +65,7 @@ if nargin < 6
                    T = 2;      
                    K = S0;
               
-                  Yrand = @(n) max(S0*exp(((sigma*sigma)/2)*T+sigma*sqrt(T/d)*sum(gpuArray.randn(n,d),2)) ,0) - K;
+                  Yrand = @(n) max(S0*exp(((sigma*sigma)/2)*T+sigma*sqrt(T/d)*sum(gpuArray.randn(n,d),2))-K ,0);
                end
             end
          end
