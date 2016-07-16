@@ -76,10 +76,25 @@ QEPrice
 if inp.assetParam.nu==0
     reldiff = abs(QEPrice-ourQEPrice.exactPrice)/ourQEPrice.exactPrice
 end
+
 variance = sum((QEPrice-ourQEPrice.exactPrice).^2)/5
+
+%%
+inp.assetParam.nu = 0.5;                  % volatility of asset price volatility
+%Construct an optPrice object
+ourQEPrice = optPrice(inp) 
+QEPrice2=zeros(1,5);
+%Generate Option Price
+for i=1:5
+    tic,
+    QEPrice2(i) = genOptPrice(ourQEPrice);
+    toc
+end
+QEPrice2
 
 %% Generate Option prices using Quadratice Exponential Scheme with Martingale Correction
 inp.assetParam.pathType ='QE_m';        % path type QE with martingale correction
+inp.assetParam.nu = 0;                  % volatility of asset price volatility
 ourQEmPrice = optPrice(inp) 
 QEmPrice=zeros(1,5);
 %Generate Option Price
@@ -94,6 +109,17 @@ if inp.assetParam.nu==0
     reldiffm = abs(QEmPrice-ourQEmPrice.exactPrice)/ourQEmPrice.exactPrice
 end
 variance = sum((QEmPrice-ourQEmPrice.exactPrice).^2)/5
+%%
+inp.assetParam.nu = 0.5;                  % volatility of asset price volatility
+ourQEmPrice = optPrice(inp) 
+QEmPrice2=zeros(1,5);
+%Generate Option Price
+for i=1:5
+    tic,
+    QEmPrice2(i) = genOptPrice(ourQEmPrice);
+    toc
+end
+QEmPrice2
 %% Reference
 %
 % Andersen, Leif B. G. "Efficient Simulation of the Heston Stochastic Volatility Model."
