@@ -91,7 +91,20 @@ for i=1:5
     toc
 end
 QEPrice2
-
+QEPrice_Kienitz=zeros(1,5);
+for i=1:5
+    % Calculate option price by provided codes
+    %  MC_QE(S0,r,d,T,Vinst,Vlong,kappa,epsilon,rho,NTime,NSim,NBatches)
+    Ntime = T/delta_t; 
+    [a,b] = MC_QE(inp.assetParam.initPrice,inp.assetParam.interest,0,T,...
+        inp.assetParam.Vinst,inp.assetParam.Vlong,inp.assetParam.kappa,inp.assetParam.nu,...
+        inp.assetParam.rho,Ntime,1e6,1);
+    PT = a(:,Ntime + 1);
+    PT = max(PT-inp.payoffParam.strike,0);
+    PP = mean(PT);
+    QEPrice_Kienitz(i) = PP*exp(-inp.assetParam.interest*T);
+end
+QEPrice_Kienitz
 %% Generate Option prices using Quadratice Exponential Scheme with Martingale Correction
 inp.assetParam.pathType ='QE_m';        % path type QE with martingale correction
 inp.assetParam.nu = 0;                  % volatility of asset price volatility
@@ -120,6 +133,20 @@ for i=1:5
     toc
 end
 QEmPrice2
+QEmPrice_Kienitz=zeros(1,5);
+for i=1:5
+    % Calculate option price by provided codes
+    %  MC_QE(S0,r,d,T,Vinst,Vlong,kappa,epsilon,rho,NTime,NSim,NBatches)
+    Ntime = T/delta_t; 
+    [a,b] = MC_QE_m(inp.assetParam.initPrice,inp.assetParam.interest,0,T,...
+        inp.assetParam.Vinst,inp.assetParam.Vlong,inp.assetParam.kappa,inp.assetParam.nu,...
+        inp.assetParam.rho,Ntime,1e6,1);
+    PT = a(:,Ntime + 1);
+    PT = max(PT-inp.payoffParam.strike,0);
+    PP = mean(PT);
+    QEmPrice_Kienitz(i) = PP*exp(-inp.assetParam.interest*T);
+end
+QEmPrice_Kienitz
 %% Reference
 %
 % Andersen, Leif B. G. "Efficient Simulation of the Heston Stochastic Volatility Model."
