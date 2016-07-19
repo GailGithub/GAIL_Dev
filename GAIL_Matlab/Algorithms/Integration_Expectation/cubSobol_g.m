@@ -233,6 +233,16 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 % check = 1
 %
 %
+% Example 7:
+% Estimate the integral with integrand f(x) = 10*x1-5*x2^2+x3^3 in the interval [0,2)^3 with pure absolute error 1e-6 using two control variates h1(x) = x1 and h2(x) = x2.
+% 
+% >> f1.func = {@(x) 10*x(:,1)-5*x(:,2).^2+1*x(:,3).^3, @(x) x(:,1), @(x) x(:,2).^2};
+% >> f1.cv = [8, 32/3]; hyperbox= [zeros(1,3);2*ones(1,3)];
+% >> q = cubSobol_g(f1,hyperbox,'uniform',1e-6,0); exactsol = 128/3; 
+% >> check = abs(exactsol-q) < 1e-6
+% check = 1
+%
+%
 %   See also CUBLATTICE_G, CUBMC_G, MEANMC_G, MEANMCBER_G, INTEGRAL_G
 % 
 %  References
@@ -328,11 +338,12 @@ if cv.J % if using control variates(f is structure), redefine f
 	mu = f.cv; f = f.func;
 end
 
+% hyperbox transform
 if strcmp(out_param.measure,'uniform')
    Cnorm = prod(hyperbox(2,:)-hyperbox(1,:));
    tran = @(x) bsxfun(@plus,hyperbox(1,:),bsxfun(@times,(hyperbox(2,:)-hyperbox(1,:)),x));% a + (b-a)x = u
    if strcmp(cv.format, 'cellfunc') 
-	   f = @(x) cellfun(@(c) c(tran(x)), f, 'UniformOutput', false);
+	   f = @(x) cellfun(@(c) Cnorm*c(tran(x)), f, 'UniformOutput', false);
    else 
 	   f = @(x) Cnorm*f(tran(x)); % a + (b-a)x = u
    end   
@@ -676,7 +687,7 @@ default.toltype  = 'max';
 default.theta  = 1;
 default.betaUpdate = 0;% option for updating beta, off at default
 
-% 2 data structures for func handle: function || structure(using CV)
+% two data structures for function: function || structure(using CV)
 validf = @(x) gail.isfcn(x) || isstruct(x);
 
 if numel(varargin)<2
@@ -698,18 +709,6 @@ else
     elseif numel(varargin) == 2
         out_param.f=f;
         hyperbox = varargin{2};
-<<<<<<< HEAD
-        %{ 
-        hyperbox checking to be done later
-        if ~isnumeric(hyperbox) || ~(size(hyperbox,1)==2) || ~(size(hyperbox,2)<1111)
-            warning('GAIL:cubSobol_g:hyperbox_error1',...
-                'The hyperbox must be a real matrix of size 2xd where d can not be greater than 1111. Example for f(x)=x^2:')
-            f = @(x) x.^2;
-            out_param.f=f;
-            hyperbox = default.hyperbox;
-        end 
-        %}
-=======
         if ~isnumeric(hyperbox) || ~(size(hyperbox,1)==2) || ~(size(hyperbox,2)<1111)
             warning('GAIL:cubSobol_g:hyperbox_error1',...
                 'The hyperbox must be a real matrix of size 2xd where d can not be greater than 1111. Example for f(x)=x^2:') 
@@ -720,7 +719,6 @@ else
     else
         out_param.f = f;
         hyperbox = varargin{2}; % hyperbox validation will be done above
->>>>>>> develop
     end
 end
 
@@ -795,7 +793,6 @@ else
     out_param = p.Results;
 end
 
-<<<<<<< HEAD
 % out_param.d will be set later
 %out_param.d = size(hyperbox,2);
 
@@ -821,8 +818,6 @@ else
 	end
 end
 
-%<<<<<<< HEAD
-%=======
 % fdgyes = 0; % We store how many functions are in varargin. There can only
 %             % two functions as input, the function f and the fudge factor.
 % for j = 1:size(varargin,2)
@@ -832,23 +827,6 @@ end
 %     default.fudge = @(m) 5*2.^-(m/d);
 % end
 
-%>>>>>>> develop
-=======
-if iscell(out_param.cv.g) % multiply control variates, 
-       cv = max(size(out_param.cv.g));	% cv= number of c.v.s
-else
-    if (size(func2str(out_param.cv.g),2) == size(func2str(default.cv.g),2))
-        if (all(func2str(out_param.cv.g) == func2str(default.cv.g)))
-		    cv = 0; % no control variates if we have default cv
-        else
-		    cv = 1;
-        end
-    else
-	    cv = 1;
-    end
-end
-
->>>>>>> develop
 % Force measure to be one of the allowed ones
 if ~(strcmp(out_param.measure,'uniform') || strcmp(out_param.measure,'normal') || ...
         strcmp(out_param.measure,'uniform ball') || ...
