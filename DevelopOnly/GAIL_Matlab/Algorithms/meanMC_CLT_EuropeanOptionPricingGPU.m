@@ -46,6 +46,8 @@ function [hmu,out_param]=meanMC_CLT(Yrand,absTol,relTol,alpha,nSig,inflate)
 
 %This is a heuristic algorithm based on a Central Limit Theorem
 %approximation
+%reset(gpuDevice(1))
+
 if nargin < 6
    inflate = 1.2; %standard deviation inflation factor
    if nargin < 5;
@@ -57,7 +59,13 @@ if nargin < 6
             if nargin < 2
                absTol = 1e-2; %absolute error tolerance
                if nargin < 1
-                  Yrand = @(n) rand(n,1); %random number generator
+                   S0 = 100;
+                   sigma = 0.5;
+                   d = 15;
+                   T = 2;      
+                   K = S0;
+              
+                  Yrand = @(n) max(S0*exp(((sigma*sigma)/2)*T+sigma*sqrt(T/d)*sum(gpuArray.randn(n,d),2))-K ,0);
                end
             end
          end
@@ -85,6 +93,6 @@ if nmu > nMax %don't exceed sample budget
 end
 hmu = mean(Yrand(nmu)); %estimated mean
 out_param.ntot = nSig+nmu; %total samples required
-out_param.time = toc(tstart); %elapsed time
+out_param.time = toc(tstart) %elapsed time
 end
 
