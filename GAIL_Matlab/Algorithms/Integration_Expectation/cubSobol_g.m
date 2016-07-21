@@ -55,6 +55,16 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 %     f --- the integrand whose input should be a matrix n x d where n is
 %     the number of data points and d the dimension, which cannot be
 %     greater than 1111. By default f is f=@ x.^2.
+%     --- if using control variates, f need to be a structure with two fields. 
+%     First field: 'func', need to be a function handle with n x (J+1) 
+%     dimension outputs, where J is the number of control variates. 
+%     First column is the output of target function, next J colunms are
+%     the outputs of control variates.
+%     Second field: 'cv', need to be a 1 x J vector that stores the 
+%     exact means of control variates in the same order from 
+%     the function handle. For examples of how to use control variates, 
+%     please check Example 7 below. 
+%
 %
 %     hyperbox --- the integration region defined by its bounds. When measure
 %     is 'uniform' or 'normal', hiperbox must be a 2 x d matrix, where the
@@ -121,6 +131,9 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 %     we have pure absolute tolerance while for theta = 0, we have pure 
 %     relative tolerance. By default, theta=1. 
 %     
+%     in_param.betaUpdate--- this input decides whether to update beta during each
+%     iteration when using control variates. With value 0 beta is not updated. 
+%     If betaUpdate = 1, beta is updated. By default, betaUpdate = 0.
 %
 %   Output Arguments
 %
@@ -138,7 +151,8 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 %     out_param.time --- time elapsed in seconds when calling cubSobol_g.
 %     
 %     out_param.beta --- the value of beta when using control variates
-%                        as in f-beta(g-Ig)
+%     as in f-(h-Ih)beta, if using 'betaUpdate' option, beta is a vector 
+%     storing value of each iteration. 
 %
 %     y --- fast transform coefficients of the input function.
 %
@@ -234,11 +248,12 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 %
 %
 % Example 7:
-% Estimate the integral with integrand f(x) = 10*x1-5*x2^2+x3^3 in the interval [0,2)^3 with pure absolute error 1e-6 using two control variates h1(x) = x1 and h2(x) = x2.
+% Estimate the integral with integrand f(x) = 10*x1-5*x2^2+x3^3 in the interval [0,2)^3 
+% with pure absolute error 1e-6 using two control variates h1(x) = x1 and h2(x) = x2.
 % 
-% >> f1.func = {@(x) 10*x(:,1)-5*x(:,2).^2+1*x(:,3).^3, @(x) x(:,1), @(x) x(:,2).^2};
-% >> f1.cv = [8, 32/3]; hyperbox= [zeros(1,3);2*ones(1,3)];
-% >> q = cubSobol_g(f1,hyperbox,'uniform',1e-6,0); exactsol = 128/3; 
+% >> g.func = @(x) [10*x(:,1)-5*x(:,2).^2+1*x(:,3).^3, x(:,1), x(:,2).^2];
+% >> g.cv = [8,32/3]; hyperbox= [zeros(1,3);2*ones(1,3)];
+% >> q = cubSobol_g(g,hyperbox,'uniform',1e-6,0); exactsol = 128/3; 
 % >> check = abs(exactsol-q) < 1e-6
 % check = 1
 %
@@ -342,17 +357,9 @@ end
 if strcmp(out_param.measure,'uniform')
    Cnorm = prod(hyperbox(2,:)-hyperbox(1,:));
    tran = @(x) bsxfun(@plus,hyperbox(1,:),bsxfun(@times,(hyperbox(2,:)-hyperbox(1,:)),x));% a + (b-a)x = u
-   if strcmp(cv.format, 'cellfunc') 
-	   f = @(x) cellfun(@(c) Cnorm*c(tran(x)), f, 'UniformOutput', false);
-   else 
-	   f = @(x) Cnorm*f(tran(x)); % a + (b-a)x = u
-   end   
+   f = @(x) Cnorm*f(tran(x)); % a + (b-a)x = u
 elseif strcmp(out_param.measure,'normal')
-   if strcmp(cv.format, 'cellfunc') 
-	   f = @(x) cellfun(@(c) c(gail.stdnorminv(x)), f, 'UniformOutput', false);
-   else 
-	   f = @(x) f(gail.stdnorminv(x));
-   end
+   f = @(x) f(gail.stdnorminv(x));
 end
 
 %% Main algorithm
@@ -374,11 +381,7 @@ xpts=sobstr(1:n0,1:out_param.d); %grab Sobol' points
 % evaluate integrand
 if cv.J==0 % no control variates
 	y = f(xpts); yval = y;
-elseif strcmp(cv.format, 'cellfunc') % control variates in cell function format 
-	ycv = cell2mat(f(xpts));
-	y = ycv(:,1); yval = y;  
-	yg = ycv(:,2:end); yvalg = yg;
-elseif strcmp(cv.format, 'optPayoff') % control variates in optPayoff format
+else  % using control variates 
 	ycv = f(xpts);
 	y = ycv(:,1); yval = y;
 	yg = ycv(:,2:end); yvalg = yg;
@@ -507,13 +510,10 @@ for m=out_param.mmin+1:out_param.mmax
    nnext=2^mnext;
    xnext=sobstr(n0+(1:nnext),1:out_param.d); 
    n0=n0+nnext;
+   % check for using control variates or not
    if cv.J == 0
 	   ynext = f(xnext); yval=[yval; ynext];
-   elseif strcmp(cv.format, 'cellfunc')
-       ycvnext = cell2mat(f(xnext)) ;
-       ynext = ycvnext(:,1) - ycvnext(:,2:end)*beta;
-       yval=[yval; ynext];
-   elseif strcmp(cv.format, 'optPayoff')
+   else
 	   ycvnext = f(xnext);
        ynext = ycvnext(:,1) - ycvnext(:,2:end)*beta;
        yval=[yval; ynext];
@@ -558,12 +558,7 @@ for m=out_param.mmin+1:out_param.mmax
    %% updating beta (to be improved)
    if out_param.betaUpdate&&cv.J
        xpts=sobstr(1:n0,1:out_param.d);
-       if strcmp(cv.format, 'cellfunc')
-           ycv = cell2mat(f(xpts));
-       elseif strcmp(cv.format, 'optPayoff')
-           ycv = f(xpts);
-       end
-       y = ycv(:,1); yg = ycv(:,2:end);
+       ycv = f(xpts);y = ycv(:,1);yg = ycv(:,2:end);
        %% compute FWT
        for l=0:m-1
            nl=2^l;
@@ -796,38 +791,18 @@ end
 % out_param.d will be set later
 %out_param.d = size(hyperbox,2);
 
-% get the number of control variates and its format 
-if ~isstruct(f) %  using control variates
-	cv.J = 0; cv.format = 'noCV';
-else
-	% checking mu
+% get the number of control variates 
+if ~isstruct(f) %  not using control variates
+	cv.J = 0; 
+else % using control variates, checking mu
 	if isnumeric(f.cv)
 		cv.J = size(f.cv,2);
 	else
 		warning('GAIL:cubSobol_g:controlvariates_error1',...
 		'f.cv should be numerical values');
 	end
-	% checking format
-	if iscell(f.func)
-		cv.format = 'cellfunc';
-	elseif strfind(func2str(f.func), 'genOptPayoffs');
-		cv.format = 'optPayoff';
-	else
-	       	warning('GAIL:cubSobol_g:controlvaraites_error2',...
-		'f.func should be cell function format or optPayoff foramt');
-	end
 end
 
-% fdgyes = 0; % We store how many functions are in varargin. There can only
-%             % two functions as input, the function f and the fudge factor.
-% for j = 1:size(varargin,2)
-%     fdgyes = gail.isfcn(varargin{j})+fdgyes;
-% end
-% if fdgyes < 2 % No fudge factor given as input
-%     default.fudge = @(m) 5*2.^-(m/d);
-% end
-
-% Force measure to be one of the allowed ones
 if ~(strcmp(out_param.measure,'uniform') || strcmp(out_param.measure,'normal') || ...
         strcmp(out_param.measure,'uniform ball') || ...
         strcmp(out_param.measure,'uniform ball_box') || ...
