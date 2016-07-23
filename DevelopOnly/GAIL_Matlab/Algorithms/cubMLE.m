@@ -1,5 +1,5 @@
-function [hmu,out_param]=meanMC_CLT(Yrand,absTol,relTol,alpha,nSig,inflate)
-%MEANMC_CLT Monte Carlo method to estimate the mean of a random variable
+function [hmu,out_param]=cubMLE(f,whKer)
+%CUBMLE Monte Carlo method to estimate the mean of a random variable
 %
 %   tmu = MEANMC_CLT(Yrand,absTol,relTol,alpha,nSig,inflate) estimates the
 %   mean, mu, of a random variable Y to within a specified error tolerance,
