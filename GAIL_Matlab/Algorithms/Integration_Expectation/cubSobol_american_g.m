@@ -258,14 +258,10 @@ xpts=sobstr(1:n0,1:out_param.d); %grab Sobol' points
 % evaluate integrand
 if cv.J==0 % no control variates
 	y = f(xpts); yval = y;
-elseif strcmp(cv.format, 'cellfunc') % control variates in cell function format 
-	temp = cell2mat(f(xpts));
-	y = temp(:,1); yval = y;  
-	yg = temp(:,2:end); yvalg = yg;
-elseif strcmp(cv.format, 'optPayoff')&& cv.J % control variates in optPayoff format
-	temp = f(xpts);
-	y = temp(:,1); yval = y;
-	yg = temp(:,2:end); yvalg = yg;
+else % with control variates 
+	ycv = f(xpts);
+	y = ycv(:,1); yval = y;
+	yg = ycv(:,2:end); yvalg = yg;
 end 
 
 %% Compute initial FWT
@@ -303,30 +299,41 @@ for l=out_param.mmin-1:-1:1
 end
 
 %% If control variates, find optimal beta
-<<<<<<< HEAD
-<<<<<<< HEAD:GAIL_Matlab/Algorithms/cubSobol_american_g.m
 if cv.J
-    X = yg(kappanumap(end/2 + 1:end), (1:cv.J)); %yg(kappanumap(2^(out_param.mmin-r_lag-1) + 1:2^(out_param.mmin-r_lag)), (1:cv));
-    Y = y(kappanumap(end/2 + 1:end)); %y(kappanumap(2^(out_param.mmin-r_lag-1) + 1:2^(out_param.mmin-r_lag)));
-=======
-if cv
-    X = yg(kappanumap(2^(out_param.mmin-r_lag-1) + 1:2^(out_param.mmin-r_lag)), (1:cv)); %yg(kappanumap(end/2 + 1:end));
-    Y = y(kappanumap(2^(out_param.mmin-r_lag-1) + 1:2^(out_param.mmin-r_lag)));%y(kappanumap(end/2 + 1:end));
->>>>>>> remotes/origin/feature/Different_Shapes:GAIL_Matlab/Algorithms/Integration_Expectation/cubSobol_american_g.m
-=======
-if cv.J
-    X = yg(kappanumap(end/2 + 1:end), (1:cv.J)); %yg(kappanumap(2^(out_param.mmin-r_lag-1) + 1:2^(out_param.mmin-r_lag)), (1:cv));
-    Y = y(kappanumap(end/2 + 1:end)); %y(kappanumap(2^(out_param.mmin-r_lag-1) + 1:2^(out_param.mmin-r_lag)));
->>>>>>> develop
+    X = yg(kappanumap(end/2 + 1:end), (1:cv.J)); 
+    Y = y(kappanumap(end/2 + 1:end)); 
     beta = X \ Y;
     out_param.beta = beta;
     % We update the integrand and values
-    yold = y;% save f value for kappanumap
-    y = y-yg*beta;
-    yval = yval-yvalg*beta;
+    %yold = y;% save f value for kappanumap
+    y = ycv(:,1)-ycv(:,2:end)*beta; % redefine function
+    yval = y;
+    % Recompute initial FWT
+    for l=0:out_param.mmin-1
+        nl=2^l;
+        nmminlm1=2^(out_param.mmin-l-1);
+        ptind=repmat([true(nl,1); false(nl,1)],nmminlm1,1);
+        evenval=y(ptind);
+        oddval=y(~ptind);
+        y(ptind)=(evenval+oddval)/2;
+        y(~ptind)=(evenval-oddval)/2;
+    end
+    %% rebuild kappa map
+    kappanumap=(1:out_param.n)'; %initialize map
+    for l=out_param.mmin-1:-1:1
+        nl=2^l;
+        oldone=abs(y(kappanumap(2:nl)));
+        newone=abs(y(kappanumap(nl+2:2*nl))); 
+        flip=find(newone>oldone);
+        if ~isempty(flip)
+            flipall=bsxfun(@plus,flip,0:2^(l+1):2^out_param.mmin-1);
+            flipall=flipall(:);
+            temp=kappanumap(nl+1+flipall); %then flip 
+            kappanumap(nl+1+flipall)=kappanumap(1+flipall); %them
+            kappanumap(1+flipall)=temp; %around
+        end
+    end
 end
-
-
 %% Compute Stilde
 nllstart=int64(2^(out_param.mmin-r_lag-1));
 Stilde(1)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
@@ -384,44 +391,14 @@ for m=out_param.mmin+1:out_param.mmax
    if cv.J==0
 	   ynext=f(xnext);
 	   yval=[yval; ynext]; %#ok<*AGROW>
-   elseif strcmp(cv.format, 'cellfunc') % control variates in cell function format  
-	   temp = cell2mat(f(xnext)) ;  
-       yoldnext = temp(:,1);% stock value of f for kappanumpap
-	   ynext = yoldnext - temp(:,2:end)*beta;
+   else
+       ycvnext = f(xnext);
+       %yoldnext = ycvnext(:,1);
+	   ynext = ycvnext(:,1) - ycvnext(:,2:end)*beta;
 	   yval = [yval; ynext];
-   elseif strcmp(cv.format, 'optPayoff') && cv.J % contrl variates in optPayoff format
-	   temp = f(xnext);
-       yoldnext = temp(:,1);
-	   ynext = temp(:,1) - temp(:,2:end)*beta;
-	   yval = [yval; ynext];
-<<<<<<< HEAD
    end
   
-    %% Compute initial FWT on next points
-   for l=0:mnext-1
-      nl=2^l;
-      nmminlm1=2^(mnext-l-1);
-      ptind=repmat([true(nl,1); false(nl,1)],nmminlm1,1);
-      evenval=ynext(ptind);
-      oddval=ynext(~ptind);
-      ynext(ptind)=(evenval+oddval)/2;
-      ynext(~ptind)=(evenval-oddval)/2;
-   end
-
-<<<<<<< HEAD:GAIL_Matlab/Algorithms/cubSobol_american_g.m
-   %% Compute FWT on all points
-   y=[y;ynext];
-   nl=2^mnext;
-   ptind=[true(nl,1); false(nl,1)];
-   evenval=y(ptind);
-   oddval=y(~ptind);
-   y(ptind)=(evenval+oddval)/2;
-   y(~ptind)=(evenval-oddval)/2;
-
-=======
-   end
-  
-    %% Compute initial FWT on next points
+   %% Compute initial FWT on next points
    for l=0:mnext-1
       nl=2^l;
       nmminlm1=2^(mnext-l-1);
@@ -441,9 +418,9 @@ for m=out_param.mmin+1:out_param.mmax
    y(ptind)=(evenval+oddval)/2;
    y(~ptind)=(evenval-oddval)/2;
 
->>>>>>> develop
-if cv.J
-   %% Compute FWT on all points
+   %{ 
+   if cv.J
+    %% Compute FWT on all points
    yold=[yold;yoldnext];
    nl=2^mnext;
    ptind=[true(nl,1); false(nl,1)];
@@ -451,36 +428,23 @@ if cv.J
    oddval=yold(~ptind);
    yold(ptind)=(evenval+oddval)/2;
    yold(~ptind)=(evenval-oddval)/2;
-<<<<<<< HEAD
-=======
-    
-%% If control variates, find optimal beta
-if cv  
-    X = yg(kappanumap(2^(m-r_lag-1) + 1:2^(m-r_lag)), (1:cv)); %yg(kappanumap(end/2 + 1:end));
-    Y = y(kappanumap(2^(m-r_lag-1) + 1:2^(m-r_lag)));%y(kappanumap(end/2 + 1:end));
-    beta = X \ Y;
-    out_param.beta = beta;
-    % We update the integrand and values
-    y = y-yg*beta;
-    yval = yval-yvalg*beta;
->>>>>>> remotes/origin/feature/Different_Shapes:GAIL_Matlab/Algorithms/Integration_Expectation/cubSobol_american_g.m
-=======
->>>>>>> develop
-end
-
+   end 
+   %}
    %% Update kappanumap
    kappanumap=[kappanumap; 2^(m-1)+kappanumap]; %initialize map
    for l=m-1:-1:m-r_lag
       nl=2^l;
+      %{
       if cv.J% keep using f to induce kappamap
-          %earlier values of kappa, don't touch first one
           oldone=abs(yold(kappanumap(2:nl)));
           newone=abs(yold(kappanumap(nl+2:2*nl)));
       else
-          %later values of kappa, 
-          oldone=abs(y(kappanumap(2:nl)));
-          newone=abs(y(kappanumap(nl+2:2*nl)));
+          oldone=abs(y(kappanumap(2:nl)));       
+          newone=abs(y(kappanumap(nl+2:2*nl)));  
       end
+      %}
+      oldone=abs(y(kappanumap(2:nl)));       
+      newone=abs(y(kappanumap(nl+2:2*nl)));  
       flip=find(newone>oldone);
       if ~isempty(flip)
           flipall=bsxfun(@plus,flip,0:2^(l+1):2^m-1);
@@ -490,6 +454,57 @@ end
           kappanumap(1+flipall)=temp;
       end
    end
+   %% updating beta (to be improved)
+   if out_param.betaUpdate&&cv.J
+       xpts=sobstr(1:n0,1:out_param.d);
+       ycv = f(xpts);y = ycv(:,1);yg = ycv(:,2:end);
+       %% compute FWT
+       for l=0:m-1
+           nl=2^l;
+           nmminlm1=2^(m-l-1);
+           ptind=repmat([true(nl,1); false(nl,1)],nmminlm1,1);
+           evenval=y(ptind);
+           oddval=y(~ptind);
+           y(ptind)=(evenval+oddval)/2;
+           y(~ptind)=(evenval-oddval)/2;
+           evenval=yg(ptind, (1:cv.J));
+           oddval=yg(~ptind, (1:cv.J));
+           yg(ptind, (1:cv.J))=(evenval+oddval)/2;
+           yg(~ptind, (1:cv.J))=(evenval-oddval)/2;
+       end
+       X = yg(kappanumap(end/2+1:end), (1:cv.J));
+       Y = y(kappanumap(end/2+1:end));
+       beta = X \ Y;  
+       out_param.beta = [out_param.beta;beta];
+       y = ycv(:,1) - ycv(:,2:end)*beta;
+       yval = y;
+       % Recompute initial FWT
+       for l=0:m-1
+           nl=2^l;
+           nmminlm1=2^(m-l-1);
+           ptind=repmat([true(nl,1); false(nl,1)],nmminlm1,1);
+           evenval=y(ptind);
+           oddval=y(~ptind);
+           y(ptind)=(evenval+oddval)/2;
+           y(~ptind)=(evenval-oddval)/2;
+       end
+       %% rebuild kappa map
+       kappanumap=(1:n0)'; %initialize map
+       for l=m-1:-1:1
+           nl=2^l;
+           oldone=abs(y(kappanumap(2:nl)));
+           newone=abs(y(kappanumap(nl+2:2*nl))); 
+           flip=find(newone>oldone);
+           if ~isempty(flip)
+               flipall=bsxfun(@plus,flip,0:2^(l+1):2^out_param.mmin-1);
+               flipall=flipall(:);
+               temp=kappanumap(nl+1+flipall);  
+               kappanumap(nl+1+flipall)=kappanumap(1+flipall);
+               kappanumap(1+flipall)=temp; 
+           end
+       end
+   end
+
 
    %% Compute Stilde
    nllstart=int64(2^(m-r_lag-1));
@@ -548,6 +563,7 @@ default.mmax  = 24;
 default.fudge = @(m) 5*2.^-m;
 default.toltype  = 'max';
 default.theta  = 1;
+default.betaUpdate = 0;% option for updating beta, off at default
 validcv = @(x) gail.isfcn(x) || isstruct(x) ;% 2 formats of f
 
 if numel(varargin)<2
@@ -606,6 +622,7 @@ if ~validvarargin
     out_param.fudge = default.fudge;
     out_param.toltype = default.toltype;
     out_param.theta = default.theta;
+    out_param.betaUpdate= default.betaUpdate;
 else
     p = inputParser;
     addRequired(p,'f', validcv);
@@ -619,6 +636,7 @@ else
         addOptional(p,'toltype',default.toltype,...
             @(x) any(validatestring(x, {'max','comb'})));
         addOptional(p,'theta',default.theta,@isnumeric);
+        addOptional(p,'betaUpdate',default.betaUpdate,@isnumeric);
     else
         if isstruct(in3) %parse input structure
             p.StructExpand = true;
@@ -632,6 +650,7 @@ else
         f_addParamVal(p,'toltype',default.toltype,...
             @(x) any(validatestring(x, {'max','comb'})));
         f_addParamVal(p,'theta',default.theta,@isnumeric);
+        f_addParamVal(p,'betaUpdate',default.betaUpdate,@isnumeric);
     end
     parse(p,f,hyperbox,varargin{3:end})
     out_param = p.Results;
@@ -649,15 +668,6 @@ else
 	else
 		warning('GAIL:cubSobol_g:controlvariates_error1',...
 		'f.cv should be numeric values');
-	end
-	% checking format
-	if iscell(f.func)
-		cv.format = 'cellfunc';
-	elseif strfind(func2str(f.func), 'genOptPayoffs');
-		cv.format = 'optPayoff';
-	else
-	       	warning('GAIL:cubSobol_g:controlvaraites_error2',...
-		'f.func should be cell function format or optPayoff foramt');
 	end
 end
 
