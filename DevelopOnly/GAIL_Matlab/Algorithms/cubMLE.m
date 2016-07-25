@@ -1,90 +1,58 @@
-function [hmu,out_param]=cubMLE(f,whKer)
+function [muhat,out]=cubMLE(f,nvec,domain,whSample,whKer)
 %CUBMLE Monte Carlo method to estimate the mean of a random variable
 %
-%   tmu = MEANMC_CLT(Yrand,absTol,relTol,alpha,nSig,inflate) estimates the
-%   mean, mu, of a random variable Y to within a specified error tolerance,
-%   i.e., | mu - tmu | <= max(absTol,relTol|mu|) with probability at least
-%   1-alpha, where abstol is the absolute error tolerance.  The default
-%   values are abstol=1e-2 and alpha=1%. Input Yrand is a function handle
-%   that accepts a positive integer input n and returns an n x 1 vector of
-%   IID instances of the random variable Y.
+%   tmu = cubML(Yrand,absTol,relTol,alpha,nSig,inflate) estimates the mean,
+%   mu, of a f(X) using nvec samples of a random variable X in [0,1]^d.
+%   The samples may be of one of several kinds.  The default values are n=2^10 and
+%   d = 1 Input f is a function handle that accepts an n x d matrix of
+%   n points in [0,1]^d and returns an n x 1 vector of f values.
 %
-%   Input Arguments
-%
-%     Yrand --- the function for generating n IID instances of a random
-%     variable Y whose mean we want to estimate. Y is often defined as a
-%     function of some random variable X with a simple distribution. The
-%     input of Yrand should be the number of random variables n, the output
-%     of Yrand should be n function values. For example, if Y = X.^2 where X
-%     is a standard uniform random variable, then one may define Yrand =
-%     @(n) rand(n,1).^2.
-%
-%     absTol --- the absolute error tolerance, which should be
-%     non-negative --- default = 1e-2
-%
-%     relTol --- the relative error tolerance, which should be
-%     non-negative and no greater than 1 --- default = 0
-%
-%     alpha --- the uncertainty, which should be a small positive
-%     percentage --- default = 1%
-%
-%     nSig --- the number of samples used to compute the sample variance
-%     --- default = 1000
-%
-%     inflate --- the standard deviation inflation factor --- default = 1.2
-%
-%   Output Arguments
-%
-%     hmu --- the estimated mean of Y.
-%
-%     out_param.ntot --- total sample used.
-%
-%     out_param.var --- the sample variance.
-%
-%     out_param.time --- the time elapsed in seconds.
-%
-
+%   
 % This is a heuristic algorithm based on a Central Limit Theorem
 % approximation
 if nargin < 6
-   inflate = 1.2; %standard deviation inflation factor
    if nargin < 5;
-      nSig = 1e3; %number of samples to estimate variance
+      whKer = 'Mat1'; %type of kernel
       if nargin < 4
-         alpha = 0.01; %uncertainty
+         whSample = 'Sobol'; %type of sampling, scrambled Sobol
          if nargin < 3
-            relTol = 0.01; %relative error tolerance
+            domain = [0;1]; %dimension
             if nargin < 2
-               absTol = 1e-2; %absolute error tolerance
+               nvec = 2^10; %number of samples
                if nargin < 1
-                  Yrand = @(n) rand(n,1); %random number generator
+                  f = @(x) x.^2; %function
                end
             end
          end
       end
    end
 end
-nMax=1e8; %maximum number of samples allowed.
-out_param.alpha = alpha; %save the input parameters to a structure
-out_param.inflate = inflate;
-out_param.nSig = nSig;
-tstart = tic; %start the clock
-Yval = Yrand(nSig);% get samples to estimate variance 
-%[M,F] = mode(Yval);%checking if the random values aren't repeating
-%themselves
-out_param.var = var(Yval); %calculate the sample variance--stage 1
-sig0 = sqrt(out_param.var); %standard deviation
-sig0up = out_param.inflate.*sig0; %upper bound on the standard deviation
-hmu0 = mean(Yval);
-nmu = max(1,ceil((-norminv(alpha/2)*sig0up/max(absTol,relTol*abs(hmu0))).^2)); 
-   %number of samples needed for mean
-if nmu > nMax %don't exceed sample budget
-   warning(['The algorithm wants to use nmu = ' int2str(nmu) ...
-      ', which is too big. Using ' int2str(nMax) ' instead.']) 
-   nmu = nMax;
-end
-hmu = mean(Yrand(nmu)); %estimated mean
-out_param.ntot = nSig+nmu; %total samples required
-out_param.time = toc(tstart); %elapsed time
-end
 
+tstart = tic; %start the clock
+nmax = max(nvec);
+nn = numel(nvec);
+d = size(domain,2);
+if strcmp(whSample,'Sobol')
+   x = net(scramble(sobolset(d),'MatousekAffineOwen'),nmax);
+end
+fx = f(x);
+out.aMLE(nn,1) = 0;
+muhat(nn,1) = 0;
+for ii = 1:nn
+   nii = nvec(ii);
+   lnaMLE = fminbnd(@(lna) ...
+      MLEKernel(exp(lna),x(1:nii,:),fx(1:nii),whKer,domain), ...
+      -5,5,optimset('TolX',1e-2));
+   aMLE = exp(lnaMLE);
+   out.aMLE(ii) = aMLE;
+   [K,kvec,k0] = kernelFun(x(1:nii,:),whKer,aMLE);
+   Kinv = pinv(K);
+   w = Kinv*kvec;
+   Kinvy = Kinv*fx(1:nii);
+   muhat(ii) = kvec'*Kinvy;
+   eigK = eig(K);
+   eigKaug = eig([k0 kvec'; kvec K]);
+   disc2 = exp(sum(log(eigKaug(1:nii)) - log(eigK)))*eigKaug(end);
+   out.ErrBd(ii) = 2.58*sqrt(disc2*(fx(1:nii)'*Kinvy)/nii);
+end  
+out.time = toc(tstart);
