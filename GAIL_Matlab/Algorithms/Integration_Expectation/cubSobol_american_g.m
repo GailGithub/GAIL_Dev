@@ -259,9 +259,7 @@ xpts=sobstr(1:n0,1:out_param.d); %grab Sobol' points
 if cv.J==0 % no control variates
 	y = f(xpts); yval = y;
 else % with control variates 
-	ycv = f(xpts);
-	y = ycv(:,1); yval = y;
-	yg = ycv(:,2:end); yvalg = yg;
+	ycv = f(xpts);y = ycv(:,1); yg = ycv(:,2:end); 
 end 
 
 %% Compute initial FWT
@@ -300,12 +298,11 @@ end
 
 %% If control variates, find optimal beta
 if cv.J
-    X = yg(kappanumap(end/2 + 1:end), (1:cv.J)); 
-    Y = y(kappanumap(end/2 + 1:end)); 
+    X = yg(kappanumap(2^(out_param.mmin-r_lag-1)+1:end), (1:cv.J)); 
+    Y = y(kappanumap(2^(out_param.mmin-r_lag-1)+1:end)); 
     beta = X \ Y;
     out_param.beta = beta;
     % We update the integrand and values
-    %yold = y;% save f value for kappanumap
     y = ycv(:,1)-ycv(:,2:end)*beta; % redefine function
     yval = y;
     % Recompute initial FWT
@@ -386,14 +383,12 @@ for m=out_param.mmin+1:out_param.mmax
    mnext=m-1;
    nnext=2^mnext;
    xnext=sobstr(n0+(1:nnext),1:out_param.d); 
-   xpts = [xpts; xnext];
    n0=n0+nnext;
    if cv.J==0
 	   ynext=f(xnext);
 	   yval=[yval; ynext]; %#ok<*AGROW>
    else
        ycvnext = f(xnext);
-       %yoldnext = ycvnext(:,1);
 	   ynext = ycvnext(:,1) - ycvnext(:,2:end)*beta;
 	   yval = [yval; ynext];
    end
@@ -418,31 +413,10 @@ for m=out_param.mmin+1:out_param.mmax
    y(ptind)=(evenval+oddval)/2;
    y(~ptind)=(evenval-oddval)/2;
 
-   %{ 
-   if cv.J
-    %% Compute FWT on all points
-   yold=[yold;yoldnext];
-   nl=2^mnext;
-   ptind=[true(nl,1); false(nl,1)];
-   evenval=yold(ptind);
-   oddval=yold(~ptind);
-   yold(ptind)=(evenval+oddval)/2;
-   yold(~ptind)=(evenval-oddval)/2;
-   end 
-   %}
    %% Update kappanumap
    kappanumap=[kappanumap; 2^(m-1)+kappanumap]; %initialize map
    for l=m-1:-1:m-r_lag
       nl=2^l;
-      %{
-      if cv.J% keep using f to induce kappamap
-          oldone=abs(yold(kappanumap(2:nl)));
-          newone=abs(yold(kappanumap(nl+2:2*nl)));
-      else
-          oldone=abs(y(kappanumap(2:nl)));       
-          newone=abs(y(kappanumap(nl+2:2*nl)));  
-      end
-      %}
       oldone=abs(y(kappanumap(2:nl)));       
       newone=abs(y(kappanumap(nl+2:2*nl)));  
       flip=find(newone>oldone);
@@ -472,8 +446,8 @@ for m=out_param.mmin+1:out_param.mmax
            yg(ptind, (1:cv.J))=(evenval+oddval)/2;
            yg(~ptind, (1:cv.J))=(evenval-oddval)/2;
        end
-       X = yg(kappanumap(end/2+1:end), (1:cv.J));
-       Y = y(kappanumap(end/2+1:end));
+       X = yg(kappanumap(2^(out_param.mmin-r_lag-1)+1:end), (1:cv.J));
+       Y = y(kappanumap(2^(out_param.mmin-r_lag-1)+1:end));
        beta = X \ Y;  
        out_param.beta = [out_param.beta;beta];
        y = ycv(:,1) - ycv(:,2:end)*beta;
@@ -660,7 +634,7 @@ out_param.d = size(hyperbox,2);
 
 % get the number of control variates and its format 
 if ~isstruct(f) %  not using control variates
-	cv.J = 0; cv.format = 'noCV';
+	cv.J = 0;
 else
 	% checking mu
 	if isnumeric(f.cv)

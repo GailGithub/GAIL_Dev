@@ -6,16 +6,16 @@
 clc;clearvars;
 iter=1; % number of trials
 mmin=12; mmax=30;
-fudge=@(m) 5*2.^-m;
-update=1;% update beta or not
+fudge=@(m) 4*2.^-m;
+update=1; % update beta or not
 
 [da_out, da_out0, da_out1, da_out2, da_out3,...
  err, err0, err1, err2, err3]=deal([]); % container for outputs
 
 % Initialize the workspace and the display parameters
-inp.timeDim.timeVector = 1/52:1/52:16/52;%daily monitor for 64 days
+inp.timeDim.timeVector = 1/52:1/52:4/52;%daily monitor for 64 days
 inp.assetParam.initPrice = 36; %initial stock price
-inp.assetParam.interest = 0.06; %risk-free interest rate
+inp.assetParam.interest = 0.01; %risk-free interest rate
 inp.assetParam.volatility = 0.5; %volatility
 inp.payoffParam.strike = 40; %strike price
 inp.priceParam.absTol = 1e-3; %absolute tolerance of a nickel
@@ -34,8 +34,8 @@ opt1.payoffParam = struct( ...
 	'optType',{{'american','euro'}},...
 	'putCallType',{{'put','put'}}); 
 opt2.payoffParam = struct( ...
-	'optType',{{'american','euro','stockprice'}},...
-	'putCallType',{{'put','put',''}}); 
+	'optType',{{'american','euro','gmean'}},...
+	'putCallType',{{'put','put','put'}}); 
 
 % make param shorter
 abstol = inp.priceParam.absTol;
@@ -48,9 +48,6 @@ f1.func =@(x) genOptPayoffs(opt1,x);
 f1.cv = opt1.exactPrice;f1.cv=f1.cv(2:end); 
 f2.func =@(x) genOptPayoffs(opt2,x);
 f2.cv = opt2.exactPrice;f2.cv=f2.cv(2:end); 
-
-%f3.func = {@(x) genOptPayoffs(opt,x),  @(x) genOptPayoffs(opt3,x)};
-%f3.cv = [opt3.exactPrice];
 
 fprintf(' abstol=%s \n ', abstol);
 fprintf(' # of tests=%d \n ', iter);
