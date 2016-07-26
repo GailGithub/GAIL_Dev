@@ -427,19 +427,8 @@ if cv.J
     Y = y(kappanumap(end/2+1:end));
     beta = X \ Y;  
     out_param.beta = beta;
-    %yval = yval-yvalg*beta;
-    y = ycv(:,1) - ycv(:,2:end)*beta;% redefine function
-    yval = y;
-    % Recompute initial FWT
-    for l=0:out_param.mmin-1
-        nl=2^l;
-        nmminlm1=2^(out_param.mmin-l-1);
-        ptind=repmat([true(nl,1); false(nl,1)],nmminlm1,1);
-        evenval=y(ptind);
-        oddval=y(~ptind);
-        y(ptind)=(evenval+oddval)/2;
-        y(~ptind)=(evenval-oddval)/2;
-    end
+    yval = ycv(:,1) - ycv(:,2:end)*beta;% get new function value
+    y = y-yg*beta;% redefine function
     %% rebuild kappa map
     kappanumap=(1:out_param.n)'; %initialize map
     for l=out_param.mmin-1:-1:1
@@ -577,18 +566,8 @@ for m=out_param.mmin+1:out_param.mmax
        Y = y(kappanumap(end/2+1:end));
        beta = X \ Y;  
        out_param.beta = [out_param.beta;beta];
-       y = ycv(:,1) - ycv(:,2:end)*beta;
-       yval = y;
-       % Recompute initial FWT
-       for l=0:m-1
-           nl=2^l;
-           nmminlm1=2^(m-l-1);
-           ptind=repmat([true(nl,1); false(nl,1)],nmminlm1,1);
-           evenval=y(ptind);
-           oddval=y(~ptind);
-           y(ptind)=(evenval+oddval)/2;
-           y(~ptind)=(evenval-oddval)/2;
-       end
+       yval = ycv(:,1) - ycv(:,2:end)*beta;
+       y = y-yg*beta;
        %% rebuild kappa map
        kappanumap=(1:n0)'; %initialize map
        for l=m-1:-1:1
