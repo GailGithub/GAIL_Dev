@@ -79,6 +79,21 @@ end
 
 variance = sum((QEPrice-ourQEPrice.exactPrice).^2)/5
 
+QEPrice_Kienitz=zeros(1,5);
+for i=1:5
+    % Calculate option price by provided codes
+    %  MC_QE(S0,r,d,T,Vinst,Vlong,kappa,epsilon,rho,NTime,NSim,NBatches)
+    Ntime = T/delta_t; 
+    [a,b] = MC_QE(inp.assetParam.initPrice,inp.assetParam.interest,0,T,...
+        inp.assetParam.Vinst,inp.assetParam.Vlong,inp.assetParam.kappa,inp.assetParam.nu,...
+        inp.assetParam.rho,Ntime,1e6,1);
+    PT = a(:,Ntime + 1);
+    PT = max(PT-inp.payoffParam.strike,0);
+    PP = mean(PT);
+    QEPrice_Kienitz(i) = PP*exp(-inp.assetParam.interest*T);
+end
+QEPrice_Kienitz
+return
 %%
 inp.assetParam.nu = 0.5;                  % volatility of asset price volatility
 %Construct an optPrice object

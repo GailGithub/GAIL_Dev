@@ -289,10 +289,10 @@ classdef assetPath < brownianMotion
                  /(obj.assetParam.kappa*dT*(-expm1(dT*obj.assetParam.kappa)));          
              c1 = (obj.assetParam.interest-obj.assetParam.dividend)*dT;% interest and dividend adjustment 
              K0 = c1 - obj.assetParam.rho*obj.assetParam.kappa*obj.assetParam.Vlong*dT/obj.assetParam.nu;
-             K1 = gamma1*dT*(obj.assetParam.rho*obj.assetParam.kappa/obj.assetParam.nu-0.5) - obj.assetParam.rho/obj.assetParam.nu;
-             K2 = gamma2*dT*(obj.assetParam.rho*obj.assetParam.kappa/obj.assetParam.nu-0.5) + obj.assetParam.rho/obj.assetParam.nu;
-             K3 = gamma1*dT*(1 - obj.assetParam.rho^2);
-             K4 = gamma2*dT*(1 - obj.assetParam.rho^2);
+             K1 = 0.5*dT*(obj.assetParam.rho*obj.assetParam.kappa/obj.assetParam.nu-0.5) - obj.assetParam.rho/obj.assetParam.nu;
+             K2 = 0.5*dT*(obj.assetParam.rho*obj.assetParam.kappa/obj.assetParam.nu-0.5) + obj.assetParam.rho/obj.assetParam.nu;
+             K3 = 0.5*dT*(1 - obj.assetParam.rho^2);
+             K4 = 0.5*dT*(1 - obj.assetParam.rho^2);
 
              Ntime = obj.timeDim.nSteps;
              lnS1 = zeros(nPaths,Ntime+1);
@@ -301,7 +301,7 @@ classdef assetPath < brownianMotion
              %Use Brownian motion to generate normal distribution         
              dW2 = [bmpaths(:,1) diff(bmpaths(:,1:Ntime),1,2)]/sqrt(dT);
              Z=[bmpaths(:,Ntime+1) diff(bmpaths(:,Ntime+1:end),1,2)]/sqrt(dT);
-             %Use Brownian motion to generate uniform distribution
+             %Use normal distribution to generate uniform distribution
              UV1 = normcdf(Z);
 
 %****************************************************************

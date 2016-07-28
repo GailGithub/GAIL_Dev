@@ -2,27 +2,28 @@
 % Auther: Xiaoyang Zhao
 %% QE_European call option_Strike = 70 
 % %InitializeWorkspaceDisplay %initialize the workspace and the display parameters
-T=1;
-delta_t=0.1;
+T=5;
+delta_t=1;
 t0 = delta_t;
 inp.timeDim.timeVector = t0:delta_t:T; 
 % To generate an asset path modeled by a geometric Brownian motion we need
 % to add some more properties
 initPrice = 100;
-interest = 0.04;
+interest = 0.0;
 inp.assetParam.initPrice = initPrice; %initial stock price
 inp.assetParam.interest = interest; %risk-free interest rate
 inp.assetParam.volatility = 0.3;
-inp.assetParam.Vinst = 0.09; 
+inp.assetParam.Vinst = 0.04; 
 inp.assetParam.Vlong = 0.09;
 inp.assetParam.kappa = 1;
-inp.assetParam.nu =1.5;%1e-16;
-inp.assetParam.rho = -0.5;
+inp.assetParam.nu = 0.1;
+inp.assetParam.rho = -0.3;
 inp.assetParam.pathType = 'GBM';
+inp.priceParam.cubMethod = 'Sobol';
 
 %%
 % To generate some discounted option payoffs to add some more properties
-Strike =110;
+Strike = 90;
 inp.payoffParam.strike =Strike; 
 
 %% 
@@ -40,13 +41,39 @@ ourQECallPrice = optPrice(inp) %construct an optPrice object
 %  MC_QE(S0,r,d,T,Vinst,Vlong,kappa,epsilon,rho,NTime,NSim,NBatches)
 % Ntime = numel(inp.timeDim.timeVector)-1;
 Ntime = T/delta_t; 
+NSim = 1e6;
 [a,b] = MC_QE(initPrice,interest,0,T,inp.assetParam.Vinst,inp.assetParam.Vlong,...
-    inp.assetParam.kappa,inp.assetParam.nu,inp.assetParam.rho,Ntime,1e6,1);
+    inp.assetParam.kappa,inp.assetParam.nu,inp.assetParam.rho,Ntime,NSim,1);
 PT = a(:,Ntime + 1);
 PT = max(PT-Strike,0);
 PP = mean(PT);
 QEprice_Kienitz = PP*exp(-inp.assetParam.interest*T)
 return
+ExactSamplingPrice_BroadieKaya = HestonFullSampling(initPrice, Strike,interest,T,...
+    inp.assetParam.kappa,inp.assetParam.Vlong,inp.assetParam.nu,...
+    inp.assetParam.rho,inp.assetParam.Vinst,NSim,Ntime)
+
+
+% Nt = T/delta_t;
+% ExactSamplingPrice_BroadieKaya = ExactSampling_Heston(initPrice,inp.assetParam.Vinst,...
+%     Strike,interest,T,inp.assetParam.kappa,inp.assetParam.Vlong,inp.assetParam.nu,...
+%     inp.assetParam.rho,Nt,1e6)
+return
+inp.assetParam.pathType = 'QE_m';
+ourQEmCallPrice = optPrice(inp) %construct an optPrice object 
+%genOptPayoffs(ourQECallPrice,1);
+%return
+[QEmCallPrice, out] = genOptPrice(ourQEmCallPrice) %the option price
+% Calculate option price by provided codes
+%  MC_QE(S0,r,d,T,Vinst,Vlong,kappa,epsilon,rho,NTime,NSim,NBatches)
+Ntime = T/delta_t; 
+[a,b] = MC_QE_m(initPrice,interest,0,T,inp.assetParam.Vinst,inp.assetParam.Vlong,...
+    inp.assetParam.kappa,inp.assetParam.nu,inp.assetParam.rho,Ntime,1e6,1);
+PT = a(:,Ntime + 1);
+PT = max(PT-Strike,0);
+PP = mean(PT);
+QEmprice_Kienitz = PP*exp(-inp.assetParam.interest*T)
+
 
 %% QE_European call option_Strike = 70
 %%
