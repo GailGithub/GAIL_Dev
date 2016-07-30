@@ -249,7 +249,7 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 %
 % Example 7:
 % Estimate the integral with integrand f(x) = 10*x1-5*x2^2+x3^3 in the interval [0,2)^3 
-% with pure absolute error 1e-6 using two control variates h1(x) = x1 and h2(x) = x2.
+% with pure absolute error 1e-6 using two control variates h1(x) = x1 and h2(x) = x2^2.
 % 
 % >> g.func = @(x) [10*x(:,1)-5*x(:,2).^2+1*x(:,3).^3, x(:,1), x(:,2).^2];
 % >> g.cv = [8,32/3]; hyperbox= [zeros(1,3);2*ones(1,3)];
