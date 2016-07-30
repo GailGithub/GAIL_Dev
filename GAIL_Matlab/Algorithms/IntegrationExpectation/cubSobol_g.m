@@ -423,8 +423,8 @@ end
 
 %% If using control variates, find optimal beta
 if cv.J  
-    X = yg(kappanumap(end/2+1:end), (1:cv.J));
-    Y = y(kappanumap(end/2+1:end));
+    X = yg(kappanumap(2^(out_param.mmin-r_lag-1)+1:end), (1:cv.J));
+    Y = y(kappanumap(2^(out_param.mmin-r_lag-1)+1:end));
     beta = X \ Y;  
     out_param.beta = beta;
     yval = ycv(:,1) - ycv(:,2:end)*beta;% get new function value
@@ -562,8 +562,8 @@ for m=out_param.mmin+1:out_param.mmax
            yg(ptind, (1:cv.J))=(evenval+oddval)/2;
            yg(~ptind, (1:cv.J))=(evenval-oddval)/2;
        end
-       X = yg(kappanumap(end/2+1:end), (1:cv.J));
-       Y = y(kappanumap(end/2+1:end));
+       X = yg(kappanumap(2^(m-r_lag-1)+1:end), (1:cv.J));
+       Y = y(kappanumap(2^(m-r_lag-1)+1:end));
        beta = X \ Y;  
        out_param.beta = [out_param.beta;beta];
        yval = ycv(:,1) - ycv(:,2:end)*beta;
