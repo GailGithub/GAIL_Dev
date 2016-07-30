@@ -359,7 +359,7 @@ classdef optPayoff < assetPath
                 
                 cashflows = zeros(nPaths, iter);
                 
-                basis= @(x) repmat(exp(-x/2),1,3).*[ones(length(x),1) 1-x 1-2*x+x.*x/2];
+                basis= @(x) repmat(exp(-x/2),1,3).*[ones(numel(x),1) 1-x 1-2*x+x.*x/2];
                 for j = 1:iter
                     putpayoff = max(strike(j)-paths,0)...
                         .*repmat(exp(-obj.assetParam.interest ...

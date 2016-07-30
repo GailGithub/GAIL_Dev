@@ -288,7 +288,7 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 %   (WSSSPE1)," Journal of Open Research Software, Volume 2, Number 1, e6,
 %   pp. 1-21, 2014.
 %
-%   [6] Fang, K.-T., & Wang, Y. (1994).�Number-theoretic Methods in 
+%   [6] Fang, K.-T., & Wang, Y. (1994). Number-theoretic Methods in 
 %   Statistics. London, UK: CHAPMAN & HALL
 %
 %   If you find GAIL helpful in your work, please support us by citing the
@@ -322,9 +322,9 @@ if strcmpi(out_param.measure,'uniform ball') || strcmpi(out_param.measure,'unifo
             out_param.measure = 'uniform';% then a uniform distribution on a box can be used
         else
             if strcmpi(out_param.measure,'uniform ball') % box-to-ball transformation
-                f = @(t) f(gail.ball_psi_1(t, out_param.d, out_param.radius, hyperbox))*volume;% the psi function is the transformation
+                f = @(t) f(gail.domain_balls_spheres.ball_psi_1(t, out_param.d, out_param.radius, hyperbox))*volume;% the psi function is the transformation
             else % box-to-sphere transformation
-                f = @(t) f(gail.sphere_psi_1(t, out_param.d, out_param.radius, hyperbox))*volume;% the psi function is the transformation 
+                f = @(t) f(gail.domain_balls_spheres.sphere_psi_1(t, out_param.d, out_param.radius, hyperbox))*volume;% the psi function is the transformation 
                 out_param.d = out_param.d - 1;% the box-to-sphere transformation takes points from a (d-1)-dimensional box to a d-dimensional sphere
             end
             hyperbox = [zeros(1, out_param.d); ones(1, out_param.d)];% the hyperbox must be the domain of the transformation, which is a unit box
@@ -332,9 +332,9 @@ if strcmpi(out_param.measure,'uniform ball') || strcmpi(out_param.measure,'unifo
         end
     else % normal-to-ball or normal-to-sphere transformation should be used
         if strcmpi(out_param.measure,'uniform ball') % normal-to-ball transformation
-            f = @(t) f(gail.ball_psi_2(t, out_param.d, out_param.radius, hyperbox))*volume;% the psi function is the transformation
+            f = @(t) f(gail.domain_balls_spheres.ball_psi_2(t, out_param.d, out_param.radius, hyperbox))*volume;% the psi function is the transformation
         else % normal-to-sphere transformation
-            f = @(t) f(gail.sphere_psi_2(t, out_param.d, out_param.radius, hyperbox))*volume;% the psi function is the transformation 
+            f = @(t) f(gail.domain_balls_spheres.sphere_psi_2(t, out_param.d, out_param.radius, hyperbox))*volume;% the psi function is the transformation 
         end
         hyperbox = bsxfun(@plus, zeros(2, out_param.d), [-inf; inf]);% the hyperbox must be the domain of the transformation, which is a this unit box
         out_param.measure = 'normal';% then a normal distribution can be used
