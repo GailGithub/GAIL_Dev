@@ -38,7 +38,7 @@ classdef brownianMotion < whiteNoise
    end
 
    properties (Constant, Hidden) %do not change & not seen
-      allowassembleType = {'diff','PCA'} 
+      allowassembleType = {'diff','PCA','BBridge'} 
    end
    
    
@@ -90,6 +90,17 @@ classdef brownianMotion < whiteNoise
              [~, order] = sort(Eigenvalues, 'descend');
              A = Eigenvectors(:,order)*diag(Eigenvalues(order).^(1/2));
              paths=paths*A';
+         elseif strcmp(obj.bmParam.assembleType,'BBridge')
+            sobstr = sobolset(1);
+            seq = sobstr(1:obj.timeDim.nSteps,1);
+            [~, I] = sort(seq);
+            for idx=1:obj.timeDim.dim
+               colRange = ...
+                  ((idx-1)*obj.timeDim.nSteps+1):idx*obj.timeDim.nSteps;
+               paths(:,colRange) = cumsum(bsxfun(@times, ...
+                  sqrt(obj.timeDim.timeIncrement), ...
+                  paths(:,colRange(I))),2);
+            end
          end
        end
                  

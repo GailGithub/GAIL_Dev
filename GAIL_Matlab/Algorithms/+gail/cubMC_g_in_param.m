@@ -178,7 +178,7 @@ classdef cubMC_g_in_param < gail.gailMD_in_param
         
         function out_param = toStruct(out_param,varargin)
             l = {'measure','abstol','reltol','alpha','fudge','nSig','n1','tbudget','nbudget','flag','dim','hyperbox'};
-            if length(varargin) > 0   
+            if ~isempty(varargin)   
                 l = varargin{1};
             end
             out_param = toStruct@gail.gailMD_in_param(out_param, l);
