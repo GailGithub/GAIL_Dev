@@ -255,7 +255,7 @@ exit_len = 5;
 out_param.exitflag = false(1,exit_len);
 %fh = b-a;
 C0 = 3;
-fh = 3*(b-a)/(ninit-2);
+fh = 2*(b-a)/(ninit-2);
 C = @(h) (C0 * fh)./(fh-h);
 %C0 = 2; C = @(h) (C0 * 2)./(1+exp(-h)); % logistic
 %C0 = 2; C = @(h) C0 * (1+h.^2);         % quadratic
@@ -268,9 +268,9 @@ for iter_i = 1:out_param.maxiter,
     %            y(2:end-1)./len(1:end-1)./ len(2:end)              +...
     %            y(3:end  )./len(2:end  )./(len(1:end-1)+len(2:end)))
     deltaf = 2 * diff(diff(y(1:npoints))./len) ./ (len(1:end-1) + len(2:end));
-    h = x(4:npoints)-x(1:npoints-3);
-    Br = [abs(deltaf(2:end)).*C(h) 0 0];
-    Bl = [0 0 abs(deltaf(1:end-1)).*C(h)];
+    h = x(3:npoints)-x(1:npoints-2);
+    Br = [abs(deltaf(2:end)).*C(h(2:end)) 0 0];
+    Bl = [0 0 abs(deltaf(1:end-1)).*C(h(1:end-1))];
     %Bl = [0 0 abs(deltaf(1)).*C(h(1))  Br(1:end-3)];
     errest = len.^2/8.*max(Br,Bl);
     
