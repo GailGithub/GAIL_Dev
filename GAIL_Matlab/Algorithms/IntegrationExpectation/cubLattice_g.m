@@ -688,25 +688,6 @@ else
     out_param = p.Results;
 end
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-% out_param.d will be set later
-%out_param.d = size(hyperbox,2);
-=======
-% %out_param.d = size(hyperbox,2);
-
-% fdgyes = 0; % We store how many functions are in varargin. There can only
-%             % two functions as input, the function f and the fudge factor.
-% for j = 1:size(varargin,2)
-%     fdgyes = gail.isfcn(varargin{j})+fdgyes;
-% end
-% if fdgyes < 2 % No fudge factor given as input
-%     default.fudge = @(m) 5*2.^-(m/d);
-% end
->>>>>>> develop
-
-=======
->>>>>>> develop
 % Force measure to be one of the allowed ones
 if ~(strcmp(out_param.measure,'uniform') || strcmp(out_param.measure,'normal') || ...
         strcmp(out_param.measure,'uniform ball') || ...
