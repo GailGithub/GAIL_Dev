@@ -250,7 +250,7 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 % center (0,0) and radius 1 with pure absolute error 1e-4, where x is a vector x = [x1 x2].
 % 
 % >> f = @(x) x(:,1).^2+x(:,2).^2; hyperbox = [0,0,1];
-% >> q = cubSobol_g(f,hyperbox,'uniform ball','abstol',1e-4,'reltol',0); exactsol = pi/2;
+% >> q = cubLattice_g(f,hyperbox,'uniform ball','abstol',1e-4,'reltol',0); exactsol = pi/2;
 % >> check = abs(exactsol-q) < 1e-4
 % check = 1
 %
