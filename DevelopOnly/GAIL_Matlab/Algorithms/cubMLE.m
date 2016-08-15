@@ -1,4 +1,4 @@
-function [muhat,out]=cubMLE(f,nvec,domain,whSample,whKer)
+function [muhat,out]=cubMLE(f,nvec,domain,whSample,whKer,powerFuncMethod)
 %CUBMLE Monte Carlo method to estimate the mean of a random variable
 %
 %   tmu = cubML(Yrand,absTol,relTol,alpha,nSig,inflate) estimates the mean,
@@ -6,11 +6,14 @@ function [muhat,out]=cubMLE(f,nvec,domain,whSample,whKer)
 %   The samples may be of one of several kinds.  The default values are n=2^10 and
 %   d = 1 Input f is a function handle that accepts an n x d matrix of
 %   n points in [0,1]^d and returns an n x 1 vector of f values.
-%
+%   powerFuncMethod: 
+%      'cauchy' : using the Cauching interlacing theorem
+%      'thompson' : using the technique form R.C.Thompson paper
 %   
 % This is a heuristic algorithm based on a Central Limit Theorem
 % approximation
 if nargin < 6
+   powerFuncMethod='cauchy';  %technique to compute power function%
    if nargin < 5;
       whKer = 'Mat1'; %type of kernel
       if nargin < 4
@@ -50,9 +53,19 @@ for ii = 1:nn
    %w = Kinv*kvec;
    Kinvy = Kinv*fx(1:nii);
    muhat(ii) = kvec'*Kinvy;
-   eigK = eig(K);
-   eigKaug = eig([k0 kvec'; kvec K]);
-   disc2 = exp(sum(log(eigKaug(1:nii)) - log(eigK)))*eigKaug(end);
+   if strcmp(powerFuncMethod, 'cauchy')
+       eigK = eig(K);
+       eigKaug = eig([k0 kvec'; kvec K]);
+       disc2 = exp(sum(log(eigKaug(1:nii)) - log(eigK)))*eigKaug(end);
+   else
+       % from R.C.Thompson paper
+       [eigVecKaug, eigValKaug] = eig([k0 kvec'; kvec K]);
+       if isvector(eigValKaug) == false
+         eigValKaug = diag(eigValKaug);
+       end
+       uii = eigVecKaug(:,1);
+       disc2 = 1/sum(uii.^2 ./ eigValKaug);
+   end
    out.ErrBd(ii) = 2.58*sqrt(disc2*(fx(1:nii)'*Kinvy)/nii);
 end  
 out.time = toc(tstart);
