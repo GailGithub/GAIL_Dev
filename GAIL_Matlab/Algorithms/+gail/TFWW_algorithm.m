@@ -19,8 +19,9 @@ function X = TFWW_algorithm(t, d)
         %computing g(:,i) = g(:,i+1).*(t(:,i).^(1.0/(i-1))) without for
         %loops for efficiency
         exponents = ones(1, m-1)./(1:m-1);
-        g(:,2:m) = cumprod(bsxfun(@power, t(:,2:m), exponents), 2, 'reverse');
-        
+        if m >= 2
+          g(:,2:m) = cumprod(bsxfun(@power, t(:,2:m), exponents), 2, 'reverse');
+        end
         %computing dd(:,i) = sqrt(g(:,i+1) - g(:,i)) without for loops
         dd = sqrt(diff(g,1,2)); % dd corresponds to the d vector in the original algorithm
         
@@ -37,7 +38,9 @@ function X = TFWW_algorithm(t, d)
         %computing g(:,i) = g(:,i+1).*(t(:,i).^(2.0/(2*i-1))) without for
         %loops for efficiency
         exponents = (2*ones(1, m-1))./(3:2:2*m-1);
-        g(:,2:m) = cumprod(bsxfun(@power, t(:,2:m), exponents), 2, 'reverse');
+        if m>= 2
+          g(:,2:m) = cumprod(bsxfun(@power, t(:,2:m), exponents), 2, 'reverse');
+        end
         
         %computing dd(:,i) = sqrt(g(:,i+1) - g(:,i)) without for loops
         dd = sqrt(diff(g,1,2)); % dd corresponds to the d vector in the original algorithm

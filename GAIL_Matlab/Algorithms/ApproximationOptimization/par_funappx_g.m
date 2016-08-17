@@ -39,19 +39,20 @@ out_param = in_param.toStruct();
 f = in_param.f;
 MATLABVERSION = gail.matlab_version;
 
-%workers = 40;
 a = out_param.a;
 b = out_param.b;
 h = (b-a)/workers;
-aa = zeros(1,workers); 
-fa = cell(1,workers);
 ou = cell(1,workers);
+abstol = out_param.abstol;
+nlo = out_param.nlo;
+nhi = out_param.nhi;
+nmax = out_param.nmax;
+maxiter = out_param.maxiter;
 parfor i=1:workers,
     aa=a+(i-1)*h;
-    [fappx,out] = funappx_g(f, aa, aa+h, out_param.abstol, ...
-        max(5,out_param.nlo/workers), max(5,out_param.nhi/workers), ...
-        ceil(out_param.nmax/workers), out_param.maxiter, 'output_x', 1);
-    fa{i} = fappx;
+    [~,out] = funappx_g(f, aa, aa+h, abstol, ...
+        max(5,nlo/workers), max(5,nhi/workers), ...
+        ceil(nmax/workers), maxiter, 'output_x', 1);
     ou{i} = out;
 end
 
