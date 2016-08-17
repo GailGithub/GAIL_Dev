@@ -7,28 +7,32 @@ function [muhat,out]=cubMLE(f,nvec,domain,whSample,whKer,powerFuncMethod)
 %   d = 1 Input f is a function handle that accepts an n x d matrix of
 %   n points in [0,1]^d and returns an n x 1 vector of f values.
 %   powerFuncMethod: 
-%      'cauchy' : using the Cauching interlacing theorem
+%      'cauchy' : using the Cauchy interlacing theorem
 %      'thompson' : using the technique form R.C.Thompson paper
 %   
 % This is a heuristic algorithm based on a Central Limit Theorem
 % approximation
-if nargin < 6
-   powerFuncMethod='cauchy';  %technique to compute power function%
-   if nargin < 5;
-      whKer = 'Mat1'; %type of kernel
-      if nargin < 4
-         whSample = 'Sobol'; %type of sampling, scrambled Sobol
-         if nargin < 3
-            domain = [0;1]; %dimension
-            if nargin < 2
-               nvec = 2^10; %number of samples
-               if nargin < 1
-                  f = @(x) x.^2; %function
-               end
-            end
-         end
-      end
-   end
+if nargin < 7
+    if ~exist('powerFuncMethod','cauchy') || isempty(powerFuncMethod)
+        powerFuncMethod='cauchy';  %technique to compute power function%
+    end
+    if nargin < 6
+       if nargin < 5;
+          whKer = 'Mat1'; %type of kernel
+          if nargin < 4
+             whSample = 'Sobol'; %type of sampling, scrambled Sobol
+             if nargin < 3
+                domain = [0;1]; %dimension
+                if nargin < 2
+                   nvec = 2^10; %number of samples
+                   if nargin < 1
+                      f = @(x) x.^2; %function
+                   end
+                end
+             end
+          end
+       end
+    end
 end
 
 tstart = tic; %start the clock
