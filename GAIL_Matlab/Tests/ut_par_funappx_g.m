@@ -54,6 +54,7 @@ classdef ut_par_funappx_g < matlab.unittest.TestCase
       testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
     end
     
+
     function par_funappx_gOfsin(testCase)
       f = @(x) sin(x);
       in_param.abstol = 10^(-8);
@@ -101,6 +102,23 @@ classdef ut_par_funappx_g < matlab.unittest.TestCase
       actualerr = max(abs(fappx(x)-f(x)));
       testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
     end
+
+    
+    function par_funappx_gOfxsquareSerial(testCase)
+      f = @(x) x.^2;
+      in_param = struct('a',0,'b',0.001,'abstol',10^(-8));
+      workers = 1;
+      [fappx, result] = par_funappx_g(workers,f,in_param);
+      x = rand(10000,1)*(result.b-result.a)+result.a;
+      actualerr = max(abs(fappx(x)-f(x)));
+      testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
+      
+      % result should be the same as non-parallel version
+      [fappx0, ~] = funappx_g(f,in_param);
+      testCase.verifyEqual(isequal(fappx0,fappx)==1,true);
+    end
+    
+    
     
     function par_funappx_gOfsinab(testCase)
       f = @(x) sin(x);
