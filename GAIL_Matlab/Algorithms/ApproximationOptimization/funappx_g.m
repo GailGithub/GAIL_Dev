@@ -189,9 +189,9 @@ function [fappx,out_param]=funappx_g(varargin)
 %   Algorithms: Cones, Not Balls," Journal of Complexity 30, pp. 21-45,
 %   2014.
 %    
-%   [2]  Yuhan Ding, Fred J. Hickernell, and Sou-Cheng T. Choi, "Locally
-%   Adaptive Method for Approximating Univariate Functions in Cones with a
-%   Guarantee for Accuracy," working, 2015.
+%   [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J.Hickernell, Xin Tong, "Local
+%   Adaption for Approximation and Minimization of Univariate Functions,"
+%   working, 2016.
 %            
 %   [3]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
 %   Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,

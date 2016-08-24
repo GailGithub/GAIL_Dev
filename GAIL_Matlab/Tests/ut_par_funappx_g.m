@@ -177,16 +177,10 @@ classdef ut_par_funappx_g < matlab.unittest.TestCase
     function par_funappx_gOfexceedbudget(testCase)
       f = @(x) x.^2;
       in_param.nmax = 200;
-      workers = 8;
-      %workers = 1;
-      %matlabpool close;
-      %parpool(1);
+      workers = 1;
       lastwarn('')
-      [~, result] = ... %testCase.verifyWarning(@()
-        par_funappx_g(workers,f,in_param);
-      lastwarn
-      %,'GAIL:funappx_g:exceedbudget');
-      %testCase.verifyEqual(isempty(lastwarn), false)
+      [~, result] = testCase.verifyWarning(@()par_funappx_g(workers,f,in_param),...
+      'GAIL:funappx_g:exceedbudget');
       testCase.verifyLessThanOrEqual(result.npoints,result.nmax);
       testCase.verifyEqual(result.exitflag,logical([1 0 0 0 0]));
     end
@@ -194,13 +188,9 @@ classdef ut_par_funappx_g < matlab.unittest.TestCase
     function par_funappx_gOfexceediter(testCase)
       f = @(x) x.^2;
       in_param.maxiter = 2;
-      workers = 8;
-      %lastwarn('')
-      [~, result] = ... %testCase.verifyWarning(@()
-        par_funappx_g(workers,f,in_param);
-      %lastwarn
-      %,'GAIL:par_funappx_g:exceediter');
-      %testCase.verifyEqual(isempty(lastwarn), 0);
+      workers = 1;
+      [~, result] = testCase.verifyWarning(@()par_funappx_g(workers,f,in_param),...
+      'GAIL:funappx_g:exceediter');
       testCase.verifyEqual(result.maxiter,result.iter);
     end
     

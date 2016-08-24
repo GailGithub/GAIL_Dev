@@ -1,5 +1,25 @@
 function [fappx, out_param] = par_funappx_g(workers,varargin)
+% par_funappx_g Executes GAIL's funappx_g using MATLAB Parallel Toolbox
+%
+%   fappx = par_funappx_g(w, f) approximates a function f by applying the
+%   GAIL algorithm funappx_g on w even subintervals of [0,1] using a
+%   parallel pool of w MATLAB workers . If w equals 1, then no parallel
+%   pool is created and it is equivalent to calling fappx = funappx_g(f).
+%
+%   Input Arguments
+%      
+%     w --- number of MATLAB parallel pool workers, positive integer
+% 
+%     Refer to documentation of funappx_g for additional optional inputs
+%     
+%
+%   Output Arguments
+%
+%     Same as the outputs of funappx_g. Refer to documentation of funappx_g
+%
+%
 %   Example 1:
+%
 %   Create a pool of 8 workers:
 %      myCluster = parcluster('local')
 %      myCluster.NumWorkers = 8;
@@ -32,7 +52,30 @@ function [fappx, out_param] = par_funappx_g(workers,varargin)
 %
 %  To release workers:
 %   delete(gcp); 
-
+%
+%
+%   See also FUNAPPX_G, PAR_FUNMIN_G
+%
+%
+%  References
+%
+%   [1]  Nick Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
+%   Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic
+%   Algorithms: Cones, Not Balls," Journal of Complexity 30, pp. 21-45,
+%   2014.
+%    
+%   [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J.Hickernell, Xin Tong, "Local
+%   Adaption for Approximation and Minimization of Univariate Functions,"
+%   working, 2016.
+%            
+%   [3]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
+%   Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
+%   GAIL: Guaranteed Automatic Integration Library (Version 2.1) [MATLAB
+%   Software], 2015. Available from http://code.google.com/p/gail/
+%
+%   If you find GAIL helpful in your work, please support us by citing the
+%   above papers, software, and materials.
+%
 
 in_param = gail.funappx_g_in_param(varargin{:});
 out_param = in_param.toStruct();
@@ -48,7 +91,7 @@ nlo = out_param.nlo;
 nhi = out_param.nhi;
 nmax = out_param.nmax;
 maxiter = out_param.maxiter;
-parfor i=1:workers,
+parfor (i=1:workers, double(workers>1))
     aa=a+(i-1)*h;
     [~,out] = funappx_g(f, aa, aa+h, abstol, ...
         max(5,ceil(nlo/workers)), max(5,ceil(nhi/workers)), ...
