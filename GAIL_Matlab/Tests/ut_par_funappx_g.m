@@ -54,7 +54,6 @@ classdef ut_par_funappx_g < matlab.unittest.TestCase
       testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
     end
     
-
     function par_funappx_gOfsin(testCase)
       f = @(x) sin(x);
       in_param.abstol = 10^(-8);
@@ -103,7 +102,6 @@ classdef ut_par_funappx_g < matlab.unittest.TestCase
       testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
     end
 
-    
     function par_funappx_gOfxsquareSerial(testCase)
       f = @(x) x.^2;
       in_param = struct('a',0,'b',0.001,'abstol',10^(-8));
@@ -117,8 +115,6 @@ classdef ut_par_funappx_g < matlab.unittest.TestCase
       [fappx0, ~] = funappx_g(f,in_param);
       testCase.verifyEqual(isequal(fappx0,fappx)==1,true);
     end
-    
-    
     
     function par_funappx_gOfsinab(testCase)
       f = @(x) sin(x);
@@ -158,7 +154,7 @@ classdef ut_par_funappx_g < matlab.unittest.TestCase
       actualerr = max(abs(fappx(x)-f(x)));
       testCase.verifyLessThanOrEqual(actualerr,result.abstol);
     end
-    
+
     function par_funappx_gOfnofunction(testCase)
       workers = 8;
       [fappx, result] = testCase.verifyWarning(@()par_funappx_g(workers),'GAIL:gail_in_param:notfunction');
@@ -166,7 +162,7 @@ classdef ut_par_funappx_g < matlab.unittest.TestCase
       actualerr = max(abs(fappx(x)-result.f(x)));
       testCase.verifyLessThanOrEqual(actualerr,result.abstol);
     end
-    
+
     function par_funappx_gOfbeqa(testCase)
       f = @(x) x.^2;
       in_param.a = 1;
@@ -177,7 +173,7 @@ classdef ut_par_funappx_g < matlab.unittest.TestCase
       actualerr = max(abs(fappx(x)-f(x)));
       testCase.verifyLessThanOrEqual(actualerr,result.abstol);
     end
-    
+
     function par_funappx_gOfexceedbudget(testCase)
       f = @(x) x.^2;
       in_param.nmax = 200;
@@ -185,24 +181,26 @@ classdef ut_par_funappx_g < matlab.unittest.TestCase
       %lastwarn('')
       [~, result] = ... %testCase.verifyWarning(@()
       par_funappx_g(workers,f,in_param);
+      %lastwarn
       %,'GAIL:funappx_g:exceedbudget');
       %testCase.verifyEqual(isempty(lastwarn), false)   
       testCase.verifyLessThanOrEqual(result.npoints,result.nmax);
       testCase.verifyEqual(result.exitflag,logical([1 0 0 0 0]));
     end
-    
+
     function par_funappx_gOfexceediter(testCase)
       f = @(x) x.^2;
       in_param.maxiter = 2;
       workers = 8;
       %lastwarn('')
       [~, result] = ... %testCase.verifyWarning(@()
-        par_funappx_g(workers,f,in_param);
+      par_funappx_g(workers,f,in_param);
+      %lastwarn
       %,'GAIL:par_funappx_g:exceediter');
       %testCase.verifyEqual(isempty(lastwarn), 0);
       testCase.verifyEqual(result.maxiter,result.iter);
     end
-    
+        
     function par_funappx_gOnpointsoflinear(testCase)
       f = @(x) 3*x + 5;
       in_param.nlo = 5;
@@ -210,7 +208,7 @@ classdef ut_par_funappx_g < matlab.unittest.TestCase
       workers = 8;
       [~, result] = par_funappx_g(workers,f,in_param);
       testCase.verifyEqual(result.npoints,5*workers-workers+1);
-    end
+    end 
     
     function par_funappx_gOnpointsofconstant(testCase)
       f = @(x) 5;
@@ -220,7 +218,7 @@ classdef ut_par_funappx_g < matlab.unittest.TestCase
       [~, result] = par_funappx_g(workers,f,in_param);
       testCase.verifyEqual(result.npoints,5*workers-workers+1);
     end
-    
+  
     function par_funappx_gHighAccuracy(testCase)
       workers = 8;
       [fappx, result] = par_funappx_g(workers,@(x)exp(x),'a',-2,'b',2,'nhi',20,'nlo',10, 'abstol', 1e-12);
