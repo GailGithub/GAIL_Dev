@@ -5,7 +5,7 @@
 % CV function #2: asset price at expiration time
 
 %% Initialization
-% initialize the workspace and the display parameters
+% initialize the workspace and set parameters
 clc;clearvars;
 iter=10; % number of tests
 [da_out, da_out1, da_out2,...
@@ -25,7 +25,7 @@ opt = optPayoff(EuroCall); %make a copy for no CV
 opt1 = optPayoff(EuroCall); %make a copy for CV1
 opt2 = optPayoff(EuroCall); %make a copy for CV2
 
-% geometric mean Asian call option with geometric mean as  
+% set the option type for target and CV functions 
     opt.payoffParam = struct( ...
 	'optType',{{'gmean'}},...
 	'putCallType',{{'call'}}); 
@@ -40,6 +40,7 @@ opt2 = optPayoff(EuroCall); %make a copy for CV2
 abstol = inp.priceParam.absTol; % absolute tolerance
 reltol = inp.priceParam.relTol;% relative tolerance
 d = opt.timeDim.nSteps; 
+fudge =@(m) 4*2.^-m;
 mmin=10; mmax=30; % setup start  
 
 % get exact price of the option
@@ -58,12 +59,12 @@ fprintf('# of tests=%d \n ', iter);
 
 % begin a couple of test trials to get the environment stabilized 
 for i=1:5
-	cubSobol_g(f,[zeros(1,d) ; ones(1,d)],'uniform',abstol,0,mmin,mmax);
+	cubSobol_g(f,[zeros(1,d) ; ones(1,d)],'uniform',abstol,0,mmin,mmax,fudge);
 end
 
 % begin testing no CV 
 for i=1:iter
-	[q,out] = cubSobol_g(f,[zeros(1,d) ; ones(1,d)],'uniform',abstol,0,mmin, mmax);
+	[q,out] = cubSobol_g(f,[zeros(1,d) ; ones(1,d)],'uniform',abstol,0,mmin, mmax,fudge);
     err = [err;abs(q-exactf)];
     da_out = [da_out;[out.time, out.n]];
 end
@@ -76,7 +77,7 @@ fprintf('avg n of cubSobol_g: %.2f \n', mean(da_out(:,2))); % average sample siz
 
 % begin testing single CV 
 for i=1:iter
-    [q1,out1] = cubSobol_g(f1,[zeros(1,d) ; ones(1,d)],'uniform',abstol,0,mmin,30, 'betaUpdate', 0);
+    [q1,out1] = cubSobol_g(f1,[zeros(1,d) ; ones(1,d)],'uniform',abstol,0,mmin,mmax,fudge);
     err1=[err1;abs(q1-exactf)];
     da_out1 = [da_out1;[out1.time, out1.n]];
 end
@@ -89,7 +90,7 @@ fprintf('beta: %.4f \n', out1.beta); % beta of last trial
 
 % begin testing double CV 
 for i=1:iter
-    [q2,out2] = cubSobol_g(f2,[zeros(1,d) ; ones(1,d)],'uniform',abstol,0, mmin,30, 'betaUpdate', 0);
+    [q2,out2] = cubSobol_g(f2,[zeros(1,d) ; ones(1,d)],'uniform',abstol,0, mmin,mmax,fudge);
     err2=[err2;abs(q2-exactf)];
     da_out2 = [da_out2;[out2.time, out2.n]];
 end
