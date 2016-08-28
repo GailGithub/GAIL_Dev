@@ -18,6 +18,9 @@ end
 % funappx_g
 doctest par_funappx_g
 
+% funmin_g
+doctest par_funmin_g
+
 % meanMC_g
 doctest dt_meanMC_g_TrafficModel
 
@@ -98,6 +101,32 @@ catch
     display('Error: Test ut_workout_funmin_g is wrongly coded. We skip it.')
     %fprintf(fid,'Error: Test ut_workout_funmin_g is wrongly coded. We skip it.\n');
 end    
+
+try
+    Tests = matlab.unittest.TestSuite.fromClass(?ut_par_funmin_g);
+    results = run(ut_par_funmin_g);
+    if sum([results.Failed])>0
+        failed=find([results.Failed]>0);
+        for i=1:size(failed,2)
+            fprintf(fid,'%s\n',Tests(failed(i)).Name);
+        end
+    end
+catch
+    display('Error: Test ut_par_funmin_g is wrongly coded. We skip it.')
+end
+
+try
+    Tests = matlab.unittest.TestSuite.fromClass(?ut_par_funmin_g_end);
+    results = run(ut_par_funmin_g_end);
+    if sum([results.Failed])>0
+        failed=find([results.Failed]>0);
+        for i=1:size(failed,2)
+            fprintf(fid,'%s\n',Tests(failed(i)).Name);
+        end
+    end
+catch
+    display('Error: Test ut_par_funmin_g_end is wrongly coded. We skip it.')
+end
 
 %cubQMC
 format short

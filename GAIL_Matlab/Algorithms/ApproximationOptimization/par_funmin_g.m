@@ -107,8 +107,8 @@ end
 
 
 %% postprocessing
-[fmin,index] = min(fa);
-out_param = ou{index};
+[fmin,index1] = min(fa);
+out_param = ou{index1};
 [~,indices] = find(abs(fa - fmin) <= abstol);
 
 % combine consecutive intervals that contain the min
@@ -116,16 +116,21 @@ indices_to_comine = find(diff(indices)==1);
 if length(indices_to_comine) >= 1
   for i = indices_to_comine
     ind = indices(indices_to_comine(i));
-    out_param.intervals = [min(out_param.intervals), max(ou{ind+1}.intervals)];
+    if (index1 <= ind)
+       out_param.intervals = [min(out_param.intervals), max(ou{ind+1}.intervals)];
+    elseif (index1 > ind)
+      out_param.intervals = [min(ou{ind}.intervals), max(out_param.intervals)];
+    end
   end
 end
 
 % add non-consecutive intervals that contain the min
-indices_to_add = setdiff(indices, index);
-indices_to_add = setdiff(indices_to_add, indices_to_comine);
+indices_to_add = setdiff(indices, index1);
+indices_to_add = setdiff(indices_to_add, indices(indices_to_comine));
+indices_to_add = setdiff(indices_to_add, indices(indices_to_comine)+1);
 if length(indices_to_add) >= 1
    for i = indices_to_add
-    out_param.intervals = [out_param.intervals, ou{i}.intervals];
+      out_param.intervals = [out_param.intervals, ou{i}.intervals];
   end
 end
   
