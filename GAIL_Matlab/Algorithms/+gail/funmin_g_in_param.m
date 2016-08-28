@@ -8,7 +8,6 @@
 %             a: 0
 %             b: 1
 %        abstol: 1.0000e-06
-%          TolX: 1.0000e-03
 %           nlo: 10
 %           nhi: 1000
 %          nmax: 10000000
@@ -21,7 +20,6 @@
 %             a: 0
 %             b: 1
 %        abstol: 1.0000e-06
-%          TolX: 1.0000e-03
 %           nlo: 10
 %           nhi: 1000
 %          nmax: 10000000
@@ -36,7 +34,6 @@
 %             a: 0
 %             b: 1
 %        abstol: 1.0000e-06
-%          TolX: 1.0000e-03
 %           nlo: 10
 %           nhi: 1000
 %         ninit: 100
@@ -53,7 +50,7 @@
 classdef funmin_g_in_param < gail.gail1D_in_param 
     %% data
     properties % public
-        TolX
+        %TolX
     end % properties
      
     %% methods
@@ -67,12 +64,13 @@ classdef funmin_g_in_param < gail.gail1D_in_param
             end
             out_param = out_param@gail.gail1D_in_param(in);
             out_param = out_param.set_input_field_names(...
-              {'a','b','abstol','TolX','nlo','nhi','nmax'}...
+              {'a','b','abstol',...%'TolX',
+               'nlo','nhi','nmax'}...
             );
             % out_param.get_input_field_names();
             %% Default parameter values
             default = out_param.get_default();
-            default.TolX = 1e-3;
+            %default.TolX = 1e-3;
         
             %% parse inputs
             out_param = out_param.parse_inputs(default, varargin{:});
@@ -85,17 +83,18 @@ classdef funmin_g_in_param < gail.gail1D_in_param
         function out_param = validate_inputs(out_param)
             out_param = validate_inputs@gail.gail1D_in_param(out_param);
             
-            if (~isempty(out_param.TolX))
-                if out_param.TolX < 0
-                    warning('GAIL:funmin_g_in_param:Xtolnonpos', ['X tolerance should be greater than or equal to 0.' ...
-                        ' Using default X tolerance ' num2str(default.TolX)]);
-                    out_param.TolX = default.TolX;
-                end
-            end
+            %if (~isempty(out_param.TolX))
+            %    if out_param.TolX < 0
+            %        warning('GAIL:funmin_g_in_param:Xtolnonpos', ['X tolerance should be greater than or equal to 0.' ...
+            %            ' Using default X tolerance ' num2str(default.TolX)]);
+            %        out_param.TolX = default.TolX;
+            %    end
+            %end
         end
         
        function out_param = toStruct(out_param,varargin)
-            l = {'f', 'a', 'b','abstol','TolX','nlo','nhi','ninit','nmax','tau'};
+            l = {'f', 'a', 'b','abstol',...%'TolX',
+                 'nlo','nhi','ninit','nmax','tau'};
             if length(varargin) > 0   
                 l = varargin{1};
             end

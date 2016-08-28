@@ -3,7 +3,7 @@ function [fappx, out_param] = par_funappx_g(workers,varargin)
 %
 %   fappx = par_funappx_g(w, f) approximates a function f by applying the
 %   GAIL algorithm funappx_g on w even subintervals of [0,1] using a
-%   parallel pool of w MATLAB workers . If w equals 1, then no parallel
+%   parallel pool of w MATLAB workers. If w equals 1, then no parallel
 %   pool is created and it is equivalent to calling fappx = funappx_g(f).
 %
 %   Input Arguments
@@ -59,14 +59,14 @@ function [fappx, out_param] = par_funappx_g(workers,varargin)
 %
 %  References
 %
-%   [1]  Nick Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
+%   [1]  Sou-Cheng T. Choi, Yuhan Ding, Fred J.Hickernell, Xin Tong, "Local
+%   Adaption for Approximation and Minimization of Univariate Functions,"
+%   working, 2016.
+%
+%   [2]  Nick Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
 %   Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic
 %   Algorithms: Cones, Not Balls," Journal of Complexity 30, pp. 21-45,
 %   2014.
-%    
-%   [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J.Hickernell, Xin Tong, "Local
-%   Adaption for Approximation and Minimization of Univariate Functions,"
-%   working, 2016.
 %            
 %   [3]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
 %   Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
@@ -102,19 +102,19 @@ end
 % postprocessing
 out_all = ou{1};
 out_all.b = out_param.b;
-out_all.nlo = ou{1}.nlo * workers;
-out_all.nhi = out_all.nlo;
-out_all.ninit = ou{1}.ninit * workers;
-out_all.nmax = ou{1}.nmax * workers;
 x = ou{1}.x;
 y = ou{1}.y;
 for i = 2:workers,
-    out_all.iter =  max(out_all.iter, ou{i}.iter);
-    out_all.npoints = out_all.npoints + ou{i}.npoints - 1;
-    out_all.errest =  max(out_all.errest, ou{i}.errest);
-    out_all.exitflag = max(out_all.exitflag, ou{1}.exitflag);
-    x = [x ou{i}.x(2:end)];
-    y = [y ou{i}.y(2:end)]; 
+  out_all.nlo = out_all.nlo + ou{i}.nlo;
+  out_all.nhi = out_all.nhi + ou{i}.nhi;
+  out_all.ninit = out_all.ninit + ou{i}.ninit;
+  out_all.nmax = out_all.nmax + ou{i}.nmax;
+  out_all.iter =  max(out_all.iter, ou{i}.iter);
+  out_all.npoints = out_all.npoints + ou{i}.npoints - 1;
+  out_all.errest =  max(out_all.errest, ou{i}.errest);
+  out_all.exitflag = max(out_all.exitflag, ou{1}.exitflag);
+  x = [x ou{i}.x(2:end)];
+  y = [y ou{i}.y(2:end)];
 end
 if MATLABVERSION >= 8.3
     fappx = griddedInterpolant(x,y,'linear');

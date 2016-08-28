@@ -184,14 +184,14 @@ function [fappx,out_param]=funappx_g(varargin)
 %
 %  References
 %
-%   [1]  Nick Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
+%   [1]  Sou-Cheng T. Choi, Yuhan Ding, Fred J.Hickernell, Xin Tong, "Local
+%   Adaption for Approximation and Minimization of Univariate Functions,"
+%   working, 2016.
+%
+%   [2]  Nick Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
 %   Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic
 %   Algorithms: Cones, Not Balls," Journal of Complexity 30, pp. 21-45,
 %   2014.
-%    
-%   [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J.Hickernell, Xin Tong, "Local
-%   Adaption for Approximation and Minimization of Univariate Functions,"
-%   working, 2016.
 %            
 %   [3]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
 %   Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
@@ -206,14 +206,6 @@ function [fappx,out_param]=funappx_g(varargin)
 %   Mathematical Software" [Course Slides], Illinois Institute of
 %   Technology, Chicago, IL, 2013. Available from
 %   http://code.google.com/p/gail/ 
-%
-%   [6] Daniel S. Katz, Sou-Cheng T. Choi, Hilmar Lapp, Ketan Maheshwari,
-%   Frank Loffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr,
-%   James Hetherington, James Howison, Shel Swenson, Gabrielle D. Allen,
-%   Anne C. Elster, Bruce Berriman, Colin Venters, "Summary of the First
-%   Workshop On Sustainable Software for Science: Practice And Experiences
-%   (WSSSPE1)," Journal of Open Research Software, Volume 2, Number 1, e6,
-%   pp. 1-21, 2014.
 %
 %   If you find GAIL helpful in your work, please support us by citing the
 %   above papers, software, and materials.
