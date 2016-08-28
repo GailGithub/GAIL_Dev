@@ -77,6 +77,7 @@ function [fappx, out_param] = par_funappx_g(workers,varargin)
 %   above papers, software, and materials.
 %
 
+%% preprocessing
 in_param = gail.funappx_g_in_param(varargin{:});
 out_param = in_param.toStruct();
 f = in_param.f;
@@ -91,6 +92,8 @@ nlo = out_param.nlo;
 nhi = out_param.nhi;
 nmax = out_param.nmax;
 maxiter = out_param.maxiter;
+
+%% parallel loop
 parfor (i=1:workers, double(workers>1))
     aa=a+(i-1)*h;
     [~,out] = funappx_g(f, aa, aa+h, abstol, ...
@@ -99,7 +102,7 @@ parfor (i=1:workers, double(workers>1))
     ou{i} = out;
 end
 
-% postprocessing
+%% postprocessing
 out_all = ou{1};
 out_all.b = out_param.b;
 x = ou{1}.x;
