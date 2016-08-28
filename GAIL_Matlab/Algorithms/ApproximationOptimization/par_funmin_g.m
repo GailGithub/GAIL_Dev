@@ -80,7 +80,7 @@ function [fmin, out_param] = par_funmin_g(workers,varargin)
 %   above papers, software, and materials.
 %
 
-
+%% preprocessing
 in_param = gail.funmin_g_in_param(varargin{:});
 out_param = in_param.toStruct();
 f = in_param.f;
@@ -94,6 +94,8 @@ abstol = out_param.abstol;
 nlo = out_param.nlo;
 nhi = out_param.nhi;
 nmax = out_param.nmax;
+
+%% parallel loop
 parfor (i=1:workers, double(workers>1))
     aa=a+(i-1)*h;
     [fm,out] = funmin_g(f, aa, aa+h, abstol, ...
@@ -104,21 +106,29 @@ parfor (i=1:workers, double(workers>1))
 end
 
 
-% postprocessing
+%% postprocessing
 [fmin,index] = min(fa);
 out_param = ou{index};
-[~,indices] = find(fa == fmin);
+[~,indices] = find(abs(fa - fmin) <= abstol);
+
+% combine consecutive intervals that contain the min
 indices_to_comine = find(diff(indices)==1);
 if length(indices_to_comine) >= 1
-  ind = indices(indices_to_comine(1));
-  out_param = ou{ind};
   for i = indices_to_comine
     ind = indices(indices_to_comine(i));
     out_param.intervals = [min(out_param.intervals), max(ou{ind+1}.intervals)];
   end
 end
 
-
+% add non-consecutive intervals that contain the min
+indices_to_add = setdiff(indices, index);
+indices_to_add = setdiff(indices_to_add, indices_to_comine);
+if length(indices_to_add) >= 1
+   for i = indices_to_add
+    out_param.intervals = [out_param.intervals, ou{i}.intervals];
+  end
+end
+  
 out_param.a = a;
 out_param.b = b;
 out_param.abstol = abstol;
