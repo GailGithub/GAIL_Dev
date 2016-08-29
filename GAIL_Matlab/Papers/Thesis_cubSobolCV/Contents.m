@@ -20,12 +20,13 @@
 %                        generate results in table 4.6 (page 24)
 % mvnProbEff.m         - efficiency test of multivariate normal probability  
 %                        generate results in table 4.7 (page 27)
+% mcFinance/*.*        - files needed for generating brownian motion and asset paths for option pricing
 % --------------------------------
 % 
 %% Causions
 % --------------------------------
 % ALL option pricing tests require the 'Monte_Carlo_Finance' packcage.
-% It can be found at github: https://github.com/GailGithub/GAIL_Dev/tree/develop/ 
-% Git clone or download the develop branch and it can be found at this path './DevelopOnly/GAIL_Matlab/Algorithms/Monte_Carlo_Finance'.
-% Add this folder with all subfolders to your matlab path and you are done.
+% Please add folder 'mcFiance' to your matlab path before runing the tests.
+% The package can also be found at github:
+% https://github.com/GailGithub/GAIL_Dev/tree/develop/DevelopOnly/GAIL_Matlab/Algorithms/Monte_Carlo_Finance
 %
