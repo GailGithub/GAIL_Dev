@@ -4,9 +4,7 @@
 %
 % >> in_param = gail.cubMC_g_in_param()
 %     Warning: Function f must be a function handle. Now GAIL is using f(x)=exp(-100*(x-0.5)^2). 
-%     > In gail_in_param>gail_in_param.gail_in_param at ***
-%       In gailMD_in_param>gailMD_in_param.gailMD_in_param at ***
-%       In cubMC_g_in_param>cubMC_g_in_param.cubMC_g_in_param at *** 
+%     ***
 % 
 %     in_param = 
 % 
