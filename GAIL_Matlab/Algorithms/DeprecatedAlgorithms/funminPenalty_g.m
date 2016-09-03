@@ -260,10 +260,10 @@ function [fmin,out_param]=funminPenalty_g(varargin)
 %
 
 % Parse and check parameter satisfy conditions or not
-%[f,out_param] = funminPenalty_g_param(varargin{:});
-in_param = gail.funmin_g_in_param(varargin{:});
-out_param = in_param.toStruct();
-f = in_param.f;
+[f,out_param] = funminPenalty_g_param(varargin{:});
+%in_param = gail.funmin_g_in_param(varargin{:});
+%out_param = in_param.toStruct();
+%f = in_param.f;
 MATLABVERSION = gail.matlab_version;
 
 

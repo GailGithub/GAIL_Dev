@@ -110,12 +110,14 @@
 %              dim: 3
 %         hyperbox: [2x3 double]
 %
+%
 % >> in_param.hyperbox
 % 
 %     ans =
 % 
 %          0     0     0
 %          1     1     1
+%
 
 classdef gailMD_in_param < gail.gail_in_param & matlab.mixin.CustomDisplay
     %% data
