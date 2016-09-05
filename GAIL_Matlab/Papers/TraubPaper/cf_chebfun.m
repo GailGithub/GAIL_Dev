@@ -14,7 +14,7 @@ function cf_chebfun(f, a, b, abstol)
 % f5 = @(x) sign(x);  a = -1; b = 1; cf_chebfun(f5, a, b, abstol)
 %  
 
-InitializeDisplay
+gail.InitializeDisplay
 %set(0,'defaultaxesfontsize',24,'defaulttextfontsize',24) %make font larger
 % format compact
 format long

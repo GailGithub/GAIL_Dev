@@ -200,6 +200,7 @@ type(fullPath)
 
 %% Save Output
 [~,~,MATLABVERSION] = GAILstart(false);
+gail.InitializeDisplay
 MATLABBlue = [0, 0.447, 0.741];
 MATLABOrange = [0.85,  0.325, 0.098];
 MATLABPurple = [0.494,  0.184, 0.556];
