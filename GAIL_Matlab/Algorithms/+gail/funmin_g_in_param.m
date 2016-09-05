@@ -107,7 +107,7 @@ classdef funmin_g_in_param < gail.gail1D_in_param
         
         % customize display order of properties (data) in an instance
         function propgrp = getPropertyGroups(~)
-            proplist = {'f', 'a', 'b','abstol','TolX','nlo','nhi','nmax','ninit','tau'};
+            proplist = {'f', 'a', 'b','abstol','nlo','nhi','nmax','ninit'}; % 'TolX','tau' 
             propgrp = matlab.mixin.util.PropertyGroup(proplist);
         end
     end % methods (protected)
