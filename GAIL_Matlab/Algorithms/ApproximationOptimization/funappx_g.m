@@ -131,7 +131,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %     exitflag: [0 0 0 0 0]
 %         iter: 21
 %      npoints: 17409
-%       errest: 3.9635e-***8
+%       errest: 3.9623e-***8
 %
 %
 %   Example 2:
@@ -153,7 +153,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %     exitflag: [0 0 0 0 0]
 %         iter: 17
 %      npoints: 4353
-%       errest: 6.3592e-***7
+%       errest: 6.3514e-***7
 %
 %
 %   Example 3:
@@ -176,7 +176,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %     exitflag: [0 0 0 0 0]
 %         iter: 34
 %      npoints: 9217
-%       errest: 8.8466e-***7
+%       errest: 8.8412e-***7
 %
 %   
 %   See also INTERP1, GRIDDEDINTERPOLANT, INTEGRAL_G, MEANMC_G, FUNMIN_G
@@ -247,7 +247,7 @@ exit_len = 5;
 out_param.exitflag = false(1,exit_len);
 %fh = b-a;
 C0 = 3;
-fh = 2*(b-a)/(ninit-2);
+fh = 3*(b-a)/(ninit-2);
 C = @(h) (C0 * fh)./(fh-h);
 %C0 = 2; C = @(h) (C0 * 2)./(1+exp(-h)); % logistic
 %C0 = 2; C = @(h) C0 * (1+h.^2);         % quadratic
