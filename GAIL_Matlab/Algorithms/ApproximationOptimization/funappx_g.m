@@ -129,7 +129,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %         nmax: 10000000
 %      maxiter: 1000
 %     exitflag: [0 0 0 0 0]
-%         iter: 21
+%         iter: 11
 %      npoints: 17409
 %       errest: 3.9623e-***8
 %
@@ -151,7 +151,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %         nmax: 10000000
 %      maxiter: 1000
 %     exitflag: [0 0 0 0 0]
-%         iter: 17
+%         iter: 9
 %      npoints: 4353
 %       errest: 6.3514e-***7
 %
@@ -174,7 +174,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %         nmax: 10000000
 %      maxiter: 1000
 %     exitflag: [0 0 0 0 0]
-%         iter: 34
+%         iter: 10
 %      npoints: 9217
 %       errest: 8.8412e-***7
 %
@@ -252,7 +252,10 @@ C = @(h) (C0 * fh)./(fh-h);
 %C0 = 2; C = @(h) (C0 * 2)./(1+exp(-h)); % logistic
 %C0 = 2; C = @(h) C0 * (1+h.^2);         % quadratic
 npoints = ninit;
-max_errest = 1;
+errestl = ones(1,ninit-1);
+errestr = errestl;
+badlinterval = (errestl>abstol);
+badrinterval = (errestr>abstol);
 for iter_i = 1:out_param.maxiter,
     %% Stage 1: compute length of each subinterval and approximate |f''(t)|
     len = diff(x(1:npoints));
@@ -264,7 +267,8 @@ for iter_i = 1:out_param.maxiter,
     Br = [abs(deltaf(2:end)).*C(h(2:end)) 0 0];
     Bl = [0 0 abs(deltaf(1:end-1)).*C(h(1:end-1))];
     %Bl = [0 0 abs(deltaf(1)).*C(h(1))  Br(1:end-3)];
-    errest = len.^2/8.*max(Br,Bl);
+    errestl(badlinterval) = len(badlinterval).^2/8.*Bl(badlinterval);
+    errestr(badrinterval) = len(badrinterval).^2/8.*Br(badrinterval);
     
 %     min_len = min(len);
 %     max_len = max(len);
@@ -281,7 +285,7 @@ for iter_i = 1:out_param.maxiter,
 
     % update iterations
     iter = iter + 1;
-    max_errest = max(errest);
+    max_errest = max(max(errestl),max(errestr));
     if max_errest <= abstol,
         break
     end 
@@ -289,13 +293,11 @@ for iter_i = 1:out_param.maxiter,
     %% Stage 3: find I and update x,y
 %     badinterval = (errest > abstol);
 %     whichcut = badinterval | [badinterval(2:end) 0] | [0 badinterval(1:end-1)];
-    badinterval = (errest > abstol);
-    badlinterval= (len.^2/8.*Bl>abstol);
-    badrinterval= (len.^2/8.*Br>abstol);
-    maybecut=(badinterval|[0 badlinterval(3:end) 0]|[badlinterval(3:end)...
-        0 0]|[0 badrinterval(1:end-2) 0]|[0 0 badrinterval(1:end-2)]);
-    maxlength = (len>max(len(maybecut))-eps);    
-    whichcut = maybecut & maxlength;
+%    badinterval = (errest > abstol);
+    badlinterval= (errestl>abstol);
+    badrinterval= (errestr>abstol);
+    whichcut=(badlinterval|[badlinterval(2:end) 0]|...
+             [0 badrinterval(1:end-1)]|badrinterval);
     if (out_param.nmax<(npoints+length(find(whichcut))))
         out_param.exitflag(1) = true;
         warning('GAIL:funappx_g:exceedbudget',['funappx_g '...
@@ -319,6 +321,10 @@ for iter_i = 1:out_param.maxiter,
       x = xx;
       y = yy;
     end
+    newbadlindex=(whichcut&badlinterval);
+    newbadrindex=(whichcut&badrinterval);
+    newerrestl=errestl(whichcut);
+    newerrestr=errestr(whichcut);
     tt = cumsum(whichcut);   
     x([1 (2:npoints)+tt]) = x(1:npoints);
     y([1 (2:npoints)+tt]) = y(1:npoints);
@@ -327,6 +333,19 @@ for iter_i = 1:out_param.maxiter,
     y(tem(whichcut)) = f(newx);
     %x([1 (2:npoints)+tt tem(whichcut)]) = [x(1:npoints) newx];
     %y([1 (2:npoints)+tt tem(whichcut)]) = [y(1:npoints) f(newx)];
+    temp=(1:npoints-1)+[0 tt(1:end-1)];
+    %update left badinterval 
+    badlinterval((1:npoints-1)+tt) = badlinterval;
+    badlinterval(temp(whichcut)) = newbadlindex(whichcut);
+    %update right badinterval 
+    badrinterval((1:npoints-1)+tt) = badrinterval;
+    badrinterval(temp(whichcut)) = newbadrindex(whichcut);
+    %update left error estimation 
+    errestl((1:npoints-1)+tt) = errestl;
+    errestl(temp(whichcut)) = newerrestl;
+    %update right error estimation 
+    errestr((1:npoints-1)+tt) = errestr;
+    errestr(temp(whichcut)) = newerrestr;
     npoints = npoints + length(newx);
 end;
 
