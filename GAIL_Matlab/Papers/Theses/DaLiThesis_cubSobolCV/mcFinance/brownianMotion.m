@@ -67,7 +67,10 @@ classdef brownianMotion < whiteNoise
             end
          end
          obj.wnParam = struct('distribName','Gaussian');
-            %must have Gaussian whiteNoise paths input   
+            %must have Gaussian whiteNoise paths input
+         if strcmp(obj.wnParam.sampleKind,'IID') %for IID sampling
+            obj.wnParam.xDistrib = 'Gaussian'; %work with Gaussian random numbers, randn
+         end
          assert(obj.timeDim.startTime >= 0) %Brownian motion goes forward in time
          obj.timeDim = struct('initTime',0,'initValue',0); 
             %Brownian motion starts at time 0 with value 0
