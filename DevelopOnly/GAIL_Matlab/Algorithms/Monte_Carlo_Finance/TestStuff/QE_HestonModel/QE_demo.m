@@ -3,7 +3,7 @@
 %% QE_European call option_Strike = 70 
 % %InitializeWorkspaceDisplay %initialize the workspace and the display parameters
 T=5;
-delta_t=1;
+delta_t=0.5;
 t0 = delta_t;
 inp.timeDim.timeVector = t0:delta_t:T; 
 % To generate an asset path modeled by a geometric Brownian motion we need
@@ -16,10 +16,11 @@ inp.assetParam.volatility = 0.3;
 inp.assetParam.Vinst = 0.04; 
 inp.assetParam.Vlong = 0.09;
 inp.assetParam.kappa = 1;
-inp.assetParam.nu = 0.1;
+inp.assetParam.nu = 0.8;
 inp.assetParam.rho = -0.3;
 inp.assetParam.pathType = 'GBM';
 inp.priceParam.cubMethod = 'Sobol';
+%inp.priceParam.cubMethod = 'IID_MC';
 
 %%
 % To generate some discounted option payoffs to add some more properties
@@ -37,10 +38,22 @@ ourQECallPrice = optPrice(inp) %construct an optPrice object
 %genOptPayoffs(ourQECallPrice,1);
 %return
 [QECallPrice, out] = genOptPrice(ourQECallPrice) %the option price
+inp.priceParam.cubMethod = 'IID_MC'
+delta_t=0.25;
+t0 = delta_t;
+inp.timeDim.timeVector = t0:delta_t:T; 
+ourGBMCallPrice = optPrice(inp);
+[GBMCallPrice, out] = genOptPrice(ourGBMCallPrice); %the option price
+ourQECallPrice = optPrice(inp); %construct an optPrice object 
+%genOptPayoffs(ourQECallPrice,1);
+%return
+[QECallPrice, out] = genOptPrice(ourQECallPrice) %the option price
+
 % Calculate option price by provided codes
 %  MC_QE(S0,r,d,T,Vinst,Vlong,kappa,epsilon,rho,NTime,NSim,NBatches)
 % Ntime = numel(inp.timeDim.timeVector)-1;
-Ntime = T/delta_t; 
+tic
+Ntime = T/0.25; 
 NSim = 1e6;
 [a,b] = MC_QE(initPrice,interest,0,T,inp.assetParam.Vinst,inp.assetParam.Vlong,...
     inp.assetParam.kappa,inp.assetParam.nu,inp.assetParam.rho,Ntime,NSim,1);
@@ -48,6 +61,7 @@ PT = a(:,Ntime + 1);
 PT = max(PT-Strike,0);
 PP = mean(PT);
 QEprice_Kienitz = PP*exp(-inp.assetParam.interest*T)
+toc
 return
 ExactSamplingPrice_BroadieKaya = HestonFullSampling(initPrice, Strike,interest,T,...
     inp.assetParam.kappa,inp.assetParam.Vlong,inp.assetParam.nu,...
