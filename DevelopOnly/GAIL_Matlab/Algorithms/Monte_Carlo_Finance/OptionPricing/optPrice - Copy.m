@@ -33,7 +33,7 @@ classdef optPrice < optPayoff
       priceParam = struct('cubMethod', 'IID_MC', ... %type of pricing scheme
          'absTol', 1, ... %absolute tolerance
          'relTol', 0, ... %relative tolerance
-         'alpha', 0.01) %alpha = uncertainty         
+         'alpha', 0.01) %alpha = uncertainty
       
    end
    
@@ -100,7 +100,7 @@ classdef optPrice < optPayoff
       % Generate option prices
       function [price, out] = genOptPrice(obj)
          if strcmp(obj.priceParam.cubMethod,'IID_MC')
-            [price, outtemp] = meanMC_g(@(n) genOptPayoffs(obj,n).*obj.assetParam.ratio, ...
+            [price, outtemp] = meanMC_g(@(n) genOptPayoffs(obj,n), ...
                obj.priceParam.absTol, obj.priceParam.relTol, ...
                obj.priceParam.alpha);
             out.nPaths=outtemp.ntot;
@@ -125,7 +125,7 @@ classdef optPrice < optPayoff
                     obj.priceParam.absTol, obj.priceParam.relTol);
                  out.nPaths=outtemp.n;
             else
-                [price, outtemp] = cubSobol_g(@(x) genOptPayoffs(obj,x).*obj.assetParam.ratio, ...
+                [price, outtemp] = cubSobol_g(@(x) genOptPayoffs(obj,x), ...
                     [zeros(1,obj.timeDim.nCols); ones(1,obj.timeDim.nCols)], ...
                     'uniform', obj.priceParam.absTol, obj.priceParam.relTol);
                  out.nPaths=outtemp.n;

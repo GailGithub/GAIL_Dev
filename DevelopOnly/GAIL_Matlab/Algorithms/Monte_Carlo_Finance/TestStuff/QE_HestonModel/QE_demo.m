@@ -1,9 +1,12 @@
-% Latest updated date: 7/4/2016
-% Auther: Xiaoyang Zhao
-%% QE_European call option_Strike = 70 
+% This file is a demo for QE method compared with ExactSampling for Heston
+% model.
+% Latest updated date: 9/21/2016
+% Author: Xiaoyang Zhao
+
+%% QE_European call option
 % %InitializeWorkspaceDisplay %initialize the workspace and the display parameters
 T=5;
-delta_t=0.5;
+delta_t=0.2;
 t0 = delta_t;
 inp.timeDim.timeVector = t0:delta_t:T; 
 % To generate an asset path modeled by a geometric Brownian motion we need
@@ -13,18 +16,18 @@ interest = 0.0;
 inp.assetParam.initPrice = initPrice; %initial stock price
 inp.assetParam.interest = interest; %risk-free interest rate
 inp.assetParam.volatility = 0.3;
-inp.assetParam.Vinst = 0.04; 
+inp.assetParam.Vinst = 0.09; %0.04; 
 inp.assetParam.Vlong = 0.09;
 inp.assetParam.kappa = 1;
-inp.assetParam.nu = 0.8;
-inp.assetParam.rho = -0.3;
+inp.assetParam.nu = 0; %0.8;
+inp.assetParam.rho = 0; %-0.3;
 inp.assetParam.pathType = 'GBM';
-inp.priceParam.cubMethod = 'Sobol';
-%inp.priceParam.cubMethod = 'IID_MC';
+%inp.priceParam.cubMethod = 'Sobol';
+inp.priceParam.cubMethod = 'IID_MC';
 
 %%
 % To generate some discounted option payoffs to add some more properties
-Strike = 90;
+Strike = 110;
 inp.payoffParam.strike =Strike; 
 
 %% 
@@ -34,21 +37,20 @@ ourGBMCallPrice = optPrice(inp);
 [GBMCallPrice, out] = genOptPrice(ourGBMCallPrice); %the option price
 
 inp.assetParam.pathType = 'QE';
+inp.assetParam.MeanShift = 0.08;
 ourQECallPrice = optPrice(inp) %construct an optPrice object 
 %genOptPayoffs(ourQECallPrice,1);
 %return
 [QECallPrice, out] = genOptPrice(ourQECallPrice) %the option price
-inp.priceParam.cubMethod = 'IID_MC'
-delta_t=0.25;
+inp.priceParam.cubMethod = 'Sobol'
+delta_t=0.5;
 t0 = delta_t;
 inp.timeDim.timeVector = t0:delta_t:T; 
-ourGBMCallPrice = optPrice(inp);
-[GBMCallPrice, out] = genOptPrice(ourGBMCallPrice); %the option price
-ourQECallPrice = optPrice(inp); %construct an optPrice object 
+ourQECallPrice = optPrice(inp) %construct an optPrice object 
 %genOptPayoffs(ourQECallPrice,1);
 %return
 [QECallPrice, out] = genOptPrice(ourQECallPrice) %the option price
-
+return
 % Calculate option price by provided codes
 %  MC_QE(S0,r,d,T,Vinst,Vlong,kappa,epsilon,rho,NTime,NSim,NBatches)
 % Ntime = numel(inp.timeDim.timeVector)-1;
@@ -67,12 +69,12 @@ ExactSamplingPrice_BroadieKaya = HestonFullSampling(initPrice, Strike,interest,T
     inp.assetParam.kappa,inp.assetParam.Vlong,inp.assetParam.nu,...
     inp.assetParam.rho,inp.assetParam.Vinst,NSim,Ntime)
 
-
+return
 % Nt = T/delta_t;
 % ExactSamplingPrice_BroadieKaya = ExactSampling_Heston(initPrice,inp.assetParam.Vinst,...
 %     Strike,interest,T,inp.assetParam.kappa,inp.assetParam.Vlong,inp.assetParam.nu,...
 %     inp.assetParam.rho,Nt,1e6)
-return
+
 inp.assetParam.pathType = 'QE_m';
 ourQEmCallPrice = optPrice(inp) %construct an optPrice object 
 %genOptPayoffs(ourQECallPrice,1);
@@ -87,7 +89,7 @@ PT = a(:,Ntime + 1);
 PT = max(PT-Strike,0);
 PP = mean(PT);
 QEmprice_Kienitz = PP*exp(-inp.assetParam.interest*T)
-
+return
 
 %% QE_European call option_Strike = 70
 %%
