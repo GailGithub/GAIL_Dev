@@ -15,6 +15,12 @@ if usejava('jvm') || MATLABVERSION <= 7.12
 end
 
 %% Workouts
+% funappx_g
+doctest par_funappx_g
+
+% funmin_g
+doctest par_funmin_g
+
 % meanMC_g
 doctest dt_meanMC_g_TrafficModel
 
@@ -27,7 +33,7 @@ doctest dt_cubMC_g
 % integral_g
 try
     Tests = matlab.unittest.TestSuite.fromClass(?ut_workout_integral_g);
-    results=run(ut_workout_integral_g)
+    results=run(ut_workout_integral_g);
     if sum([results.Failed])>0
         failed=find([results.Failed]>0);
         %for i=1:size(failed,2)
@@ -42,7 +48,7 @@ end
 % funappx_g
 try
     Tests = matlab.unittest.TestSuite.fromClass(?ut_workout_funappx_g);
-    results=run(ut_workout_funappx_g)
+    results=run(ut_workout_funappx_g);
     if sum([results.Failed])>0
         failed=find([results.Failed]>0);
         %for i=1:size(failed,2)
@@ -55,7 +61,7 @@ catch
 end
 try
     Tests = matlab.unittest.TestSuite.fromClass(?ut_convtest_funappx_g);
-    results=run(ut_convtest_funappx_g)
+    results=run(ut_convtest_funappx_g);
     if sum([results.Failed])>0
         failed=find([results.Failed]>0);
         %for i=1:size(failed,2)
@@ -66,12 +72,25 @@ catch
     display('Error: Test ut_convtest_funappx_g is wrongly coded. We skip it.')
     %fprintf(fid,'Error: Test ut_convtest_funappx_g is wrongly coded. We skip it.\n');
 end    
+
+try
+    Tests = matlab.unittest.TestSuite.fromClass(?ut_par_funappx_g);
+    results = run(ut_par_funappx_g);
+    if sum([results.Failed])>0
+        failed=find([results.Failed]>0);
+        for i=1:size(failed,2)
+            fprintf(fid,'%s\n',Tests(failed(i)).Name);
+        end
+    end
+catch
+    display('Error: Test ut_par_funappx_g is wrongly coded. We skip it.')
+end
  
 
 % funmin_g
 try
     Tests = matlab.unittest.TestSuite.fromClass(?ut_workout_funmin_g);
-    results=run(ut_workout_funmin_g)
+    results=run(ut_workout_funmin_g);
     if sum([results.Failed])>0
         failed=find([results.Failed]>0);
         %for i=1:size(failed,2)
@@ -82,6 +101,32 @@ catch
     display('Error: Test ut_workout_funmin_g is wrongly coded. We skip it.')
     %fprintf(fid,'Error: Test ut_workout_funmin_g is wrongly coded. We skip it.\n');
 end    
+
+try
+    Tests = matlab.unittest.TestSuite.fromClass(?ut_par_funmin_g);
+    results = run(ut_par_funmin_g);
+    if sum([results.Failed])>0
+        failed=find([results.Failed]>0);
+        for i=1:size(failed,2)
+            fprintf(fid,'%s\n',Tests(failed(i)).Name);
+        end
+    end
+catch
+    display('Error: Test ut_par_funmin_g is wrongly coded. We skip it.')
+end
+
+try
+    Tests = matlab.unittest.TestSuite.fromClass(?ut_par_funmin_g_end);
+    results = run(ut_par_funmin_g_end);
+    if sum([results.Failed])>0
+        failed=find([results.Failed]>0);
+        for i=1:size(failed,2)
+            fprintf(fid,'%s\n',Tests(failed(i)).Name);
+        end
+    end
+catch
+    display('Error: Test ut_par_funmin_g_end is wrongly coded. We skip it.')
+end
 
 %cubQMC
 format short
@@ -95,7 +140,7 @@ if usejava('jvm') || MATLABVERSION <= 7.12
 end
 try
     Tests = matlab.unittest.TestSuite.fromClass(?ut_ConesPaper);
-    results=run(ut_ConesPaper)
+    results=run(ut_ConesPaper);
     if sum([results.Failed])>0
         failed=find([results.Failed]>0);
         %for i=1:size(failed,2)
@@ -125,7 +170,7 @@ run_handle('PlotmeanMCBer_gResults')
 run_handle('PlotRatioHoeffCLT')
 try
     Tests = matlab.unittest.TestSuite.fromClass(?ut_meanMCBer_g);
-    results=run(ut_meanMCBer_g)
+    results=run(ut_meanMCBer_g);
     if sum([results.Failed])>0
         failed=find([results.Failed]>0);
         %for i=1:size(failed,2)
@@ -152,7 +197,7 @@ end
 %run_handle('RunTestCubatureonKeisterSobol')
 try
     Tests = matlab.unittest.TestSuite.fromClass(?ut_Papers_cubSobol_g);
-    results=run(ut_Papers_cubSobol_g)
+    results=run(ut_Papers_cubSobol_g);
     if sum([results.Failed])>0
         failed=find([results.Failed]>0);
         %for i=1:size(failed,2)
@@ -179,7 +224,7 @@ end
 %run_handle('RunTestCubatureonKeisterLattice');
 try
     Tests = matlab.unittest.TestSuite.fromClass(?ut_Papers_cubLattice_g);
-    results=run(ut_Papers_cubLattice_g)
+    results=run(ut_Papers_cubLattice_g);
     if sum([results.Failed])>0
         failed=find([results.Failed]>0);
         %for i=1:size(failed,2)
@@ -204,7 +249,7 @@ catch
 end
 try
     Tests = matlab.unittest.TestSuite.fromClass(?ut_thesis_funmin01_g);
-    results=run(ut_thesis_funmin01_g)
+    results=run(ut_thesis_funmin01_g);
     if sum([results.Failed])>0
         failed=find([results.Failed]>0);
         % for i=1:size(failed,2)
@@ -231,7 +276,7 @@ doctest cubSobol_old_g;
 
 try
     Tests = matlab.unittest.TestSuite.fromClass(?ut_funappx01_g);
-    results=run(ut_funappx01_g)
+    results=run(ut_funappx01_g);
     if sum([results.Failed])>0
         failed=find([results.Failed]>0);
         % for i=1:size(failed,2)
@@ -245,7 +290,7 @@ end
 
 try
     Tests = matlab.unittest.TestSuite.fromClass(?ut_funappxglobal_g);
-    results=run(ut_funappxglobal_g)
+    results=run(ut_funappxglobal_g);
     if sum([results.Failed])>0
         failed=find([results.Failed]>0);
         for i=1:size(failed,2)
@@ -260,7 +305,7 @@ end
 warning('off','GAIL:integral01_g:peaky')
 try
     Tests = matlab.unittest.TestSuite.fromClass(?ut_integral01_g);
-    results=run(ut_integral01_g)
+    results=run(ut_integral01_g);
     if sum([results.Failed])>0
         failed=find([results.Failed]>0);
         %for i=1:size(failed,2)
@@ -274,7 +319,7 @@ warning('on','GAIL:integral01_g:peaky')
 
 try
     Tests = matlab.unittest.TestSuite.fromClass(?ut_funmin01_g);
-    results=run(ut_funmin01_g)
+    results=run(ut_funmin01_g);
     if sum([results.Failed])>0
         failed=find([results.Failed]>0);
         %for i=1:size(failed,2)
@@ -287,7 +332,7 @@ end
 
 try
     Tests = matlab.unittest.TestSuite.fromClass(?ut_meanMCabs_g);
-    results=run(ut_meanMCabs_g)
+    results=run(ut_meanMCabs_g);
     if sum([results.Failed])>0
         failed=find([results.Failed]>0);
         for i=1:size(failed,2)
@@ -301,7 +346,7 @@ end
 
 try
     Tests = matlab.unittest.TestSuite.fromClass(?ut_cubMC_g);
-    results=run(ut_cubMC_g)
+    results=run(ut_cubMC_g);
     if sum([results.Failed])>0
         failed=find([results.Failed]>0);
         for i=1:size(failed,2)
@@ -315,7 +360,7 @@ end
 
 try
     Tests = matlab.unittest.TestSuite.fromClass(?ut_cubMCabs_g);
-    results=run(ut_cubMCabs_g)
+    results=run(ut_cubMCabs_g);
     if sum([results.Failed])>0
         failed=find([results.Failed]>0);
         for i=1:size(failed,2)
@@ -330,7 +375,7 @@ end
 
 try
     Tests = matlab.unittest.TestSuite.fromClass(?ut_integralNoPenalty_g);
-    results=run(ut_integralNoPenalty_g)
+    results=run(ut_integralNoPenalty_g);
     if sum([results.Failed])>0
         failed=find([results.Failed]>0);
         for i=1:size(failed,2)
@@ -340,6 +385,7 @@ try
 catch
     display('Error: Test ut_integralNoPenalty_g is wrongly coded. We skip it.')
 end
+
 
 
 time=toc;

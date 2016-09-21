@@ -91,8 +91,8 @@ else
     end
     
     try
-        Tests = matlab.unittest.TestSuite.fromClass(?ut_funappxNoPenalty_g);
-        results=run(ut_funappxNoPenalty_g)
+        Tests = matlab.unittest.TestSuite.fromClass(?ut_funappxPenalty_g);
+        results=run(ut_funappxPenalty_g)
         if sum([results.Failed])>0
             failed=find([results.Failed]>0);
             for i=1:size(failed,2)
@@ -100,8 +100,8 @@ else
             end
         end
     catch
-        display('Error: Test ut_funappxNoPenalty_g is wrongly coded. We skip it.')
-        fprintf(fid,'Error: Test ut_funappxNoPenalty_g is wrongly coded. We skip it.\n');
+        display('Error: Test ut_funappxPenalty_g is wrongly coded. We skip it.')
+        fprintf(fid,'Error: Test ut_funappxPenalty_g is wrongly coded. We skip it.\n');
     end   
     
     try
@@ -119,8 +119,8 @@ else
     end
     
     try
-        Tests = matlab.unittest.TestSuite.fromClass(?ut_funminNoPenalty_g);
-        results=run(ut_funminNoPenalty_g)
+        Tests = matlab.unittest.TestSuite.fromClass(?ut_funminPenalty_g);
+        results=run(ut_funminPenalty_g)
         if sum([results.Failed])>0
             failed=find([results.Failed]>0);
             for i=1:size(failed,2)
@@ -128,8 +128,8 @@ else
             end
         end
     catch
-        display('Error: Test ut_funminNoPenalty_g is wrongly coded. We skip it.')
-        fprintf(fid,'Error: Test ut_funminNoPenalty_g is wrongly coded. We skip it.\n');
+        display('Error: Test ut_funminPenalty_g is wrongly coded. We skip it.')
+        fprintf(fid,'Error: Test ut_funminPenalty_g is wrongly coded. We skip it.\n');
     end
     
     try
@@ -146,8 +146,8 @@ else
         fprintf(fid,'Error: Test ut_funmin_g_end is wrongly coded. We skip it.\n');
     end
     try
-        Tests = matlab.unittest.TestSuite.fromClass(?ut_funminNoPenalty_g_end);
-        results=run(ut_funminNoPenalty_g_end)
+        Tests = matlab.unittest.TestSuite.fromClass(?ut_funminPenalty_g_end);
+        results=run(ut_funminPenalty_g_end)
         if sum([results.Failed])>0
             failed=find([results.Failed]>0);
             for i=1:size(failed,2)
@@ -155,8 +155,8 @@ else
             end
         end
     catch
-        display('Error: Test ut_funminNoPenalty_g_end is wrongly coded. We skip it.')
-        fprintf(fid,'Error: Test ut_funminNoPenalty_g_end is wrongly coded. We skip it.\n');
+        display('Error: Test ut_funminPenalty_g_end is wrongly coded. We skip it.')
+        fprintf(fid,'Error: Test ut_funminPenalty_g_end is wrongly coded. We skip it.\n');
     end
     
     try

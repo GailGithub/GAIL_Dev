@@ -10,9 +10,9 @@ in_param.abstol = tol;
 f1 = @(x) exp(.05.*x);
 f2 = @(x) f1(x).*cos(x);
 f3 = @(x) f1(x).*sin(x);
-[q1,~]=funappx_g(f1, in_param);
-[q2,~]=funappx_g(f2, in_param);
-[q3,~]=funappx_g(f3, in_param);
+[q1,~]=funappxPenalty_g(f1, in_param);
+[q2,~]=funappxPenalty_g(f2, in_param);
+[q3,~]=funappxPenalty_g(f3, in_param);
 
 figure
 subplot(1,2,1);

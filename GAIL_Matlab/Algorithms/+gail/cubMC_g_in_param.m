@@ -4,9 +4,7 @@
 %
 % >> in_param = gail.cubMC_g_in_param()
 %     Warning: Function f must be a function handle. Now GAIL is using f(x)=exp(-100*(x-0.5)^2). 
-%     > In gail_in_param>gail_in_param.gail_in_param at ***
-%       In gailMD_in_param>gailMD_in_param.gailMD_in_param at ***
-%       In cubMC_g_in_param>cubMC_g_in_param.cubMC_g_in_param at *** 
+%     ***
 % 
 %     in_param = 
 % 
@@ -178,7 +176,7 @@ classdef cubMC_g_in_param < gail.gailMD_in_param
         
         function out_param = toStruct(out_param,varargin)
             l = {'measure','abstol','reltol','alpha','fudge','nSig','n1','tbudget','nbudget','flag','dim','hyperbox'};
-            if length(varargin) > 0   
+            if ~isempty(varargin)   
                 l = varargin{1};
             end
             out_param = toStruct@gail.gailMD_in_param(out_param, l);

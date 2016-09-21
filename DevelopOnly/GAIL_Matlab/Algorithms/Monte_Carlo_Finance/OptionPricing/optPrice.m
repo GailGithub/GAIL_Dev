@@ -38,7 +38,7 @@ classdef optPrice < optPayoff
    end
    
    properties (Constant, Hidden) %do not change & not seen
-      allowCubMethod = {'IID_MC','Sobol','lattice','IID_MC_new', 'IID_MC_newtwo', ...
+      allowCubMethod = {'IID_MC','Sobol','SobolCV','lattice','IID_MC_new', 'IID_MC_newtwo', ...
          'IID_MC_abs'} 
    end
    
@@ -126,6 +126,20 @@ classdef optPrice < optPayoff
                  out.nPaths=outtemp.n;
             else
                 [price, outtemp] = cubSobol_g(@(x) genOptPayoffs(obj,x).*obj.assetParam.ratio, ...
+                    [zeros(1,obj.timeDim.nCols); ones(1,obj.timeDim.nCols)], ...
+                    'uniform', obj.priceParam.absTol, obj.priceParam.relTol);
+                 out.nPaths=outtemp.n;
+            end
+         elseif strcmp(obj.priceParam.cubMethod,'SobolCV') %control variates
+            f.func = @(x) genOptPayoffs(obj,x);
+            f.cv = obj.exactPrice(2:end);
+            if strcmp(obj.payoffParam.optType,'american')
+                [price, outtemp] = cubSobol_american_g(f, ...
+                    [zeros(1,obj.timeDim.nCols); ones(1,obj.timeDim.nCols)], ...
+                    obj.priceParam.absTol, obj.priceParam.relTol);
+                 out.nPaths=outtemp.n;
+            else
+                [price, outtemp] = cubSobol_g(f, ...
                     [zeros(1,obj.timeDim.nCols); ones(1,obj.timeDim.nCols)], ...
                     'uniform', obj.priceParam.absTol, obj.priceParam.relTol);
                  out.nPaths=outtemp.n;
