@@ -92,13 +92,13 @@ nlo = out_param.nlo;
 nhi = out_param.nhi;
 nmax = out_param.nmax;
 maxiter = out_param.maxiter;
-
+div = min(4, workers);
 %% parallel loop
 parfor (i=1:workers, double(workers>1))
     aa=a+(i-1)*h;
     [~,out] = funappx_g(f, aa, aa+h, abstol, ...
-        max(5,ceil(nlo/workers)), max(5,ceil(nhi/workers)), ...
-        ceil(nmax/workers), maxiter, 'output_x', 1);
+        max(5,ceil(nlo/div)), max(5,ceil(nhi/div)), ...
+        ceil(nmax/div), maxiter, 'output_x', 1);
     ou{i} = out;
 end
 
@@ -125,8 +125,17 @@ else
     fappx = @(t) ppval(interp1(x,y,'linear','pp'), t);
 end;
 out_param = out_all;
-out_param.x = x;
-out_param.y = y;
+if (in_param.output_x ~= 0)
+  out_param.x = x;
+  out_param.y = y;
+else
+  out_param = rmfield(out_param,'x');
+  out_param = rmfield(out_param,'y');
+end
 
-
+% for i = 1:workers,
+%   xx = rand(10000,1)*(ou{i}.b-ou{i}.a)+ou{i}.a;
+%   actualerr = max(abs(fappx(xx)-f(xx)));
+%   if actualerr > abstol, keyboard, end
+% end
 
