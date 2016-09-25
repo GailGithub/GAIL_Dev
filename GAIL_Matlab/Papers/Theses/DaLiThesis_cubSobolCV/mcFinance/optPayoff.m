@@ -142,7 +142,7 @@ classdef optPayoff < assetPath
         
         
         % Generate payoffs of options
-        function payoffs=genOptPayoffs(obj,val)
+        function [payoffs,more] = genOptPayoffs(obj,val)
             paths = genPaths(obj,val);
             nOptType = numel(obj.payoffParam.optType);
             nPaths = size(paths,1);
@@ -366,7 +366,7 @@ classdef optPayoff < assetPath
                         .* obj.timeDim.timeVector),nPaths,1); %discounted payoff at each time
                     cashflow = putpayoff(:,ntimeDim);
                     %              extime = repmat(ntimeDim,nPaths,1);
-                    %more.exbound = [zeros(1, ntimeDim) obj.payoffParam.strike]; %initialize excercise boundary
+                    more.exbound = [zeros(1, ntimeDim) obj.payoffParam.strike]; %initialize excercise boundary
                     for i = ntimeDim-1:-1:1
                         inmoney = find(paths(:,i)<strike(j));
                         if ~isempty(inmoney)
@@ -374,10 +374,10 @@ classdef optPayoff < assetPath
                                 basis(paths(inmoney,i)/obj.assetParam.initPrice)];
                             hold=regmat*(regmat\cashflow(inmoney));
                             shouldex=inmoney(putpayoff(inmoney,i)>hold); %which paths should be excercised now
-                            if ~isempty(shouldex); %some paths should be exercise
+                            if ~isempty(shouldex); %some paths should be exercised
                                 cashflow(shouldex)=putpayoff(shouldex,i); %updated cashflow
                                 %                          extime(shouldex)=i; %update
-                                %more.exbound(i+1)=max(paths(shouldex,i));
+                                more.exbound(i+1)=max(paths(shouldex,i)); %update exercise boundary
                             end
                         end
                     end
