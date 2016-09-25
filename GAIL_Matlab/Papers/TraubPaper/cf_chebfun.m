@@ -28,11 +28,18 @@ format long
 
 
 %% funappx_g
-tic, [fappx, fout] = funappx_g(f,a,b,abstol,'nmax',10^8), toc
+t1 = 0;
+tic, [fappx, fout] = funappx_g(f,a,b,abstol,'nmax',10^8), t1=toc
+disp('---------------------');
 % gail.funappx_g_check(fappx,fout)
+tic, [fappx, fout] = par_funappx_g(4, f,a,b,abstol,'nmax',10^8), t2=toc
+time_ratio1 = t1/t2
+disp('---------------------');
 
 %% chebfun
-tic, c = chebfun(f,[a,b],'chebfuneps', abstol,'splitting','on'), toc
+tic, c = chebfun(f,[a,b],'chebfuneps', abstol,'splitting','on'), t3=toc
+time_ratio2 = t1/t3
+disp('---------------------');
 
 x=a:0.00001:b;
 figure(1)
@@ -76,3 +83,74 @@ set(gca,'ytick',10.^(5*ceil(small/5):5:5*floor(large/5)))
 gail.save_eps('TraubPaperOutput', 'chebfun_errors');
 
 
+
+% Example output:
+%
+% >> cf_chebfun(f3, a, b, abstol)
+% fappx = 
+%   griddedInterpolant with properties:
+% 
+%             GridVectors: {[1x45088972 double]}
+%                  Values: [1x45088972 double]
+%                  Method: 'linear'
+%     ExtrapolationMethod: 'linear'
+% fout = 
+%            f: @(x)B*(4*delta.^2+(x-c).^2+(x-c-delta).*abs(x-c-delta)-(x-c+delta).*abs(x-c+delta)).*(abs(x-c)<=2*delta)
+%            a: -1
+%            b: 1
+%       abstol: 1.000000000000000e-14
+%          nlo: 10
+%          nhi: 1000
+%        ninit: 216
+%         nmax: 100000000
+%      maxiter: 1000
+%     exitflag: [0 0 0 0 0]
+%         iter: 20
+%      npoints: 45088972
+%       errest: 9.907450844259228e-15
+% t1 =
+%   61.678505145000003
+% ---------------------
+% fappx = 
+%   griddedInterpolant with properties:
+% 
+%             GridVectors: {[1x30199129 double]}
+%                  Values: [1x30199129 double]
+%                  Method: 'linear'
+%     ExtrapolationMethod: 'linear'
+% fout = 
+%            f: @(x)B*(4*delta.^2+(x-c).^2+(x-c-delta).*abs(x-c-delta)-(x-c+delta).*abs(x-c+delta)).*(abs(x-c)<=2*delta)
+%            a: -1
+%            b: 1
+%       abstol: 1.000000000000000e-14
+%          nlo: 20
+%          nhi: 1000
+%        ninit: 76
+%         nmax: 100000000
+%      maxiter: 1000
+%     exitflag: [0 0 0 0 0]
+%         iter: 21
+%      npoints: 30199129
+%       errest: 9.346701314321710e-15
+%            x: [1x3774936 double]
+%            y: [1x3774936 double]
+% t2 =
+%   28.271855909999999
+% time_ratio1 =
+%    2.181622081739027
+% ---------------------
+% c =
+%    chebfun column (6 smooth pieces)
+%        interval       length     endpoint values  
+% [      -1,    -0.6]        1         0        0 
+% [    -0.6,    -0.4]        3   8.7e-15      0.5 
+% [    -0.4,-0.00078]        3       0.5      0.5 
+% [-0.00078,  0.0047]       20       0.5     0.48 
+% [  0.0047,     0.2]        3      0.48  3.1e-05 
+% [     0.2,       1]        1         0        0 
+% vertical scale =   1    Total length = 31
+% t3 =
+%    0.598259872000000
+% time_ratio2 =
+%      1.030965104492250e+02
+% ---------------------

@@ -125,8 +125,13 @@ else
     fappx = @(t) ppval(interp1(x,y,'linear','pp'), t);
 end;
 out_param = out_all;
-out_param.x = x;
-out_param.y = y;
+if (in_param.output_x ~= 0)
+  out_param.x = x;
+  out_param.y = y;
+else
+  out_param = rmfield(out_param,'x');
+  out_param = rmfield(out_param,'y');
+end
 
 
 
