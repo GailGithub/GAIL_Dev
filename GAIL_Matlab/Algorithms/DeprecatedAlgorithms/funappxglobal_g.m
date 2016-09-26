@@ -1,5 +1,5 @@
 function [pp,out_param]=funappxglobal_g(varargin)
-%FUNAPPXGLOBAL_G 1-D guaranteed function recovery on a closed interval
+%FUNAPPXGLOBAL_G 1-D guaranteed function recovery on [a,b]
 %[a,b]
 %
 %   pp = FUNAPPXGLOBAL_G(f) approximates function f on the default interval

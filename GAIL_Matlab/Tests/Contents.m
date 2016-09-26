@@ -11,7 +11,6 @@
 %   ut_cubMC_g             - fast unit tests for cubMC_g
 %   ut_cubMCabs_g          - fast unit test for cubMCabs_g
 %   ut_cubSobol_g          - fast unit tests for cubSobol_g
-%   ut_funappx01_g         - fast unit tests for funappx01_g
 %   ut_funappx_g           - fast unit tests for funappx_g
 %   ut_funappxglobal_g     - fast unit tests for funappxglobal_g
 %   ut_funmin01_g          - fast unit tests for funmin01_g
