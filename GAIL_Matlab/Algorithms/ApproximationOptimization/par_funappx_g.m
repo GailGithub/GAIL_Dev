@@ -87,18 +87,20 @@ a = out_param.a;
 b = out_param.b;
 h = (b-a)/workers;
 ou = cell(1,workers);
-abstol = out_param.abstol;
-nlo = out_param.nlo;
-nhi = out_param.nhi;
-nmax = out_param.nmax;
-maxiter = out_param.maxiter;
-div = min(4, workers);
+div = min(4, workers);  
+nlo = max(5,ceil(out_param.nlo/div));
+nhi = max(5,ceil(out_param.nhi/div));
+nmax = max(5,ceil(out_param.nmax/div));
 %% parallel loop
 parfor (i=1:workers, double(workers>1))
-    aa=a+(i-1)*h;
-    [~,out] = funappx_g(f, aa, aa+h, abstol, ...
-        max(5,ceil(nlo/div)), max(5,ceil(nhi/div)), ...
-        ceil(nmax/div), maxiter, 'output_x', 1);
+    out_param_subinterval = out_param;
+    out_param_subinterval.a = a+(i-1)*h;
+    out_param_subinterval.b = out_param_subinterval.a + h;
+    out_param_subinterval.nlo = nlo;
+    out_param_subinterval.nhi = nhi;
+    out_param_subinterval.nmax = nmax;
+    out_param_subinterval.output_x = 1;
+    [~,out] = funappx_g(f, out_param_subinterval);
     ou{i} = out;
 end
 
