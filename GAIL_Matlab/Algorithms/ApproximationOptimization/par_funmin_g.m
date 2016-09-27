@@ -90,17 +90,20 @@ b = out_param.b;
 h = (b-a)/workers;
 fa = zeros(1,workers);
 ou = cell(1,workers);
-abstol = out_param.abstol;
-nlo = out_param.nlo;
-nhi = out_param.nhi;
-nmax = out_param.nmax;
+div = min(4, workers);  
+nlo = max(5,ceil(out_param.nlo/div));
+nhi = max(5,ceil(out_param.nhi/div));
+nmax = max(5,ceil(out_param.nmax/div));
 
 %% parallel loop
 parfor (i=1:workers, double(workers>1))
-    aa=a+(i-1)*h;
-    [fm,out] = funmin_g(f, aa, aa+h, abstol, ...
-         max(5,ceil(nlo/workers)), max(5,ceil(nhi/workers)), ...
-        ceil(nmax/workers));
+ out_param_subinterval = out_param;
+    out_param_subinterval.a = a+(i-1)*h;
+    out_param_subinterval.b = out_param_subinterval.a + h;
+    out_param_subinterval.nlo = nlo;
+    out_param_subinterval.nhi = nhi;
+    out_param_subinterval.nmax = nmax;
+    [fm,out] = funmin_g(f, out_param_subinterval);
     fa(i) = fm;   
     ou{i} = out;
 end
@@ -109,7 +112,7 @@ end
 %% postprocessing
 [fmin,index1] = min(fa);
 out_param = ou{index1};
-[~,indices] = find(abs(fa - fmin) <= abstol);
+[~,indices] = find(abs(fa - fmin) <= out_param.abstol);
 
 % combine consecutive intervals that contain the min
 indices_to_comine = find(diff(indices)==1);
@@ -119,7 +122,7 @@ if length(indices_to_comine) >= 1
     if (index1 <= ind)
        out_param.intervals = [min(out_param.intervals), max(ou{ind+1}.intervals)];
     elseif (index1 > ind)
-      out_param.intervals = [min(ou{ind}.intervals), max(out_param.intervals)];
+       out_param.intervals = [min(ou{ind}.intervals), max(out_param.intervals)];
     end
   end
 end
@@ -136,7 +139,7 @@ end
   
 out_param.a = a;
 out_param.b = b;
-out_param.abstol = abstol;
+%out_param.abstol = abstol;
 out_param.iter = ou{1}.iter;
 for i = 2:workers,
   out_param.nlo = out_param.nlo + ou{i}.nlo;
