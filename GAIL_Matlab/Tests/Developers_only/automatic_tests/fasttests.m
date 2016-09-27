@@ -27,7 +27,7 @@ tic; doctest dt_funappxNoPenalty_g; time=toc
 tic; doctest funmin_g; time=toc
 tic; doctest funminNoPenalty_g; time=toc
 tic; doctest integral_g; time=toc
-tic; doctest integralsim_g; time=toc
+%tic; doctest integralsim_g; time=toc
 tic; doctest dt_integral_g ; time=toc
 tic; doctest meanMC_g; time=toc
 %tic; doctest meanMCBer_g; time=toc
@@ -58,24 +58,24 @@ else
     warning('on','GAIL:integral_g:peaky')
     warning('on','GAIL:integral_g:exceedbudget')
     
-	warning('off','GAIL:integralsim_g:peaky')
-	warning('off','GAIL:integralsim_g:exceedbudget')
-	try
-	    Tests = matlab.unittest.TestSuite.fromClass(?ut_integralsim_g);
-	    results=run(ut_integralsim_g)
-	    if sum([results.Failed])>0
-		failed=find([results.Failed]>0);
-		for i=1:size(failed,2)
-		    fprintf(fid,'%s\n',Tests(failed(i)).Name);
-		end
-	    end
-	catch
-	    display('Error: Test ut_integralsim_g is wrongly coded. We skip it.')
-	    fprintf(fid,'Error: Test ut_integralsim_g is wrongly coded. We skip it.\n');
-	end
-	warning('on','GAIL:integralsim_g:peaky')
-	warning('on','GAIL:integralsim_g:exceedbudget')
-    
+% 	warning('off','GAIL:integralsim_g:peaky')
+% 	warning('off','GAIL:integralsim_g:exceedbudget')
+% 	try
+% 	    Tests = matlab.unittest.TestSuite.fromClass(?ut_integralsim_g);
+% 	    results=run(ut_integralsim_g)
+% 	    if sum([results.Failed])>0
+% 		failed=find([results.Failed]>0);
+% 		for i=1:size(failed,2)
+% 		    fprintf(fid,'%s\n',Tests(failed(i)).Name);
+% 		end
+% 	    end
+% 	catch
+% 	    display('Error: Test ut_integralsim_g is wrongly coded. We skip it.')
+% 	    fprintf(fid,'Error: Test ut_integralsim_g is wrongly coded. We skip it.\n');
+% 	end
+% 	warning('on','GAIL:integralsim_g:peaky')
+% 	warning('on','GAIL:integralsim_g:exceedbudget')
+
     try
         Tests = matlab.unittest.TestSuite.fromClass(?ut_funappx_g);
         results=run(ut_funappx_g)
