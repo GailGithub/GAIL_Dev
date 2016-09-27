@@ -97,14 +97,14 @@ nmax = max(5,ceil(out_param.nmax/div));
 
 %% parallel loop
 parfor (i=1:workers, double(workers>1))
- out_param_subinterval = out_param;
+    out_param_subinterval = out_param;
     out_param_subinterval.a = a+(i-1)*h;
     out_param_subinterval.b = out_param_subinterval.a + h;
     out_param_subinterval.nlo = nlo;
     out_param_subinterval.nhi = nhi;
     out_param_subinterval.nmax = nmax;
     [fm,out] = funmin_g(f, out_param_subinterval);
-    fa(i) = fm;   
+    fa(i) = fm;
     ou{i} = out;
 end
 
