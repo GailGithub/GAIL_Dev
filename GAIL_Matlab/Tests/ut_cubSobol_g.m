@@ -78,7 +78,7 @@ classdef ut_cubSobol_g < matlab.unittest.TestCase
     end
     
     function cubSobol_gOfgmeanOptcv(testCase)
-      inp.timeDim.timeVector = 1/52:1/52:4/52;%weekly monitor for a month 
+      inp.timeDim.timeVector = 1/4:1/4:4/4;%weekly monitor for a month 
       inp.assetParam.initPrice = 120; %initial stock price
       inp.assetParam.interest = 0.01; %risk-free interest rate
       inp.assetParam.volatility = 0.5; %volatility
@@ -87,7 +87,7 @@ classdef ut_cubSobol_g < matlab.unittest.TestCase
       inp.priceParam.absTol = 1e-3; %absolute tolerance of a nickel
       inp.priceParam.relTol = 0; %zero relative tolerance
       inp.priceParam.cubMethod = 'Sobol'; %Sobol sampling
-      inp.bmParam.assembleType = 'PCA';
+      inp.bmParam.assembleType = 'diff';
       obj = optPrice(inp); %construct an optPrice object
       opt = optPayoff(obj);
       opt.payoffParam = struct( ...
@@ -121,5 +121,6 @@ classdef ut_cubSobol_g < matlab.unittest.TestCase
         verifyrelerr = ut_relerr<=reltol;
         testCase.verifyTrue(min(min(verifyabserr + verifyrelerr))>0);
     end
+
   end
 end
