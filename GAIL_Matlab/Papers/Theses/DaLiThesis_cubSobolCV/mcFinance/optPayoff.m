@@ -388,7 +388,7 @@ classdef optPayoff < assetPath
                             cashflow(:) = putpayoff0;
                             %                     extime(:) = 0;
                         end
-                        %more.exbound(1) = obj.payoffParam.strike - hold; %exercise boundary at initial time
+                        more.exbound(1) = obj.payoffParam.strike - hold; %exercise boundary at initial time
                     end
                     cashflows(:,j) = cashflow;
                 end
