@@ -198,7 +198,7 @@ classdef cubMC_g_in_param < gail.gailMD_in_param
                     if (~gail.isposge30(out_param.nSig))
                         %the sample to estimate sigma should be a positive integer
                         warning('GAIL:cubMC_g:nsignotposint',...
-                            ['The number nSig should a positive integer greater than 30; '
+                            ['The number nSig should a positive integer greater than 30; '...
                             'We will take the default value 1e4.'])
                         out_param.nSig = default.nSig;
                     end
