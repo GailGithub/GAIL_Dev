@@ -131,7 +131,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %     exitflag: [0 0 0 0 0]
 %         iter: 11
 %      npoints: 17409
-%       errest: 3.9672e-***8
+%       errest: 3.9635e-***8
 %
 %
 %   Example 2:
@@ -153,7 +153,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %     exitflag: [0 0 0 0 0]
 %         iter: 9
 %      npoints: 4353
-%       errest: 6.3828e-***7
+%       errest: 6.3592e-***7
 %
 %
 %   Example 3:
@@ -176,7 +176,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %     exitflag: [0 0 0 0 0]
 %         iter: 10
 %      npoints: 9217
-%       errest: 8.8630e-***7
+%       errest: 8.8466e-***7
 %
 %   
 %   See also INTERP1, GRIDDEDINTERPOLANT, INTEGRAL_G, MEANMC_G, FUNMIN_G
@@ -253,15 +253,13 @@ C = @(h) (C0 * fh)./(fh-h);
 %C0 = 2; C = @(h) (C0 * 2)./(1+exp(-h)); % logistic
 %C0 = 2; C = @(h) C0 * (1+h.^2);         % quadratic
 npoints = ninit;
-err = ones(1,ninit-2);
 for iter_i = 1:out_param.maxiter,
     %% Stage 1: compute length of each subinterval and approximate |f''(t)|
     len = diff(x(1:npoints));
     deltaf = diff(diff(y(1:npoints)));
-    h = x(3:npoints)-x(1:npoints-2);
-    err(indexI(2:end-1)) = abs(1/8* C(3*h(indexI(2:end-1)))...
-        .*deltaf(indexI(2:end-1)));
-    
+    h = x(2:npoints-1)-x(1:npoints-2);
+    err = abs(1/8* C(3*h).*deltaf);
+    indexI(2:end-1)=(err> abstol);
     
 %     min_len = min(len);
 %     max_len = max(len);
@@ -278,7 +276,7 @@ for iter_i = 1:out_param.maxiter,
 
     % update iterations
     iter = iter + 1;
-    max_errest = max(err(indexI(2:end-1)));
+    max_errest = max(err);
     if max_errest <= abstol,
         break
     end 
@@ -321,8 +319,7 @@ for iter_i = 1:out_param.maxiter,
         |[0 indexI(1:end-1)]);
     tempindex = (indexI|[0 indexI(1:end-1)]);
     newindex(tem)=tempindex(2:end);
-    indexI = ([newindex(1:end-1) 0]>0);
-    err = ones(1,npoints-2);
+    indexI = ([0 newindex(2:end-1) 0]>0);
     npoints = npoints + length(newx);
 end;
 

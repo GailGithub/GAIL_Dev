@@ -18,7 +18,7 @@ whichdir = 'TraubPaperOutput';
 % f1pp = @(x) (12*x.^2 - 1) .* sin(1./x) - 6*x .* cos(1./x);
 % f2 = @(x) f1(x) + 10.*x.^2;
 % f2pp = @(x) f1pp(x) + 20;
-% xplot = (-1:.001:1);
+ xplot = (-1:.001:1);
 % h = plot(xplot,f1(xplot),'-','color',MATLABBlue);
 % hold on
 % h=[h,plot(xplot,f2(xplot),'-','color',MATLABOrange)];
