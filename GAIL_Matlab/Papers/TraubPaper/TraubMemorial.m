@@ -5,11 +5,11 @@
 % S.-C. T. Choi, Y. Ding, F. J. Hickernell, X. Tong, " ...
 
 gail.InitializeDisplay %initialize the workspace and the display parameters
-% MATLABBlue = [0, 0.447, 0.741];
-% MATLABOrange = [0.85,  0.325, 0.098];
-% MATLABPurple = [0.494,  0.184, 0.556];
-% MATLABGreen = [0.466,  0.674, 0.188];
-% %MATLABDkOrange = [0.85,  0.325, 0.098]*0.6;
+MATLABBlue = [0, 0.447, 0.741];
+MATLABOrange = [0.85,  0.325, 0.098];
+MATLABPurple = [0.494,  0.184, 0.556];
+MATLABGreen = [0.466,  0.674, 0.188];
+%MATLABDkOrange = [0.85,  0.325, 0.098]*0.6;
 %MATLABLtOrange = 0.5*[0.85,  0.325, 0.098] + 0.5*[1 1 1];
 whichdir = 'TraubPaperOutput';
 
@@ -35,7 +35,7 @@ whichdir = 'TraubPaperOutput';
 % legend(h,{'\(f_1(x)\)'},'location', 'north','box','off')
 % print('-depsc',[whichdir 'f1closeplot.eps'])
 % gail.save_eps(whichdir, 'f1f2plot.eps');
-% 
+
 % figure
 % xplotclose = (-0.02:0.00001:0.02)';
 % h = plot(xplotclose,f2(xplotclose),'-','color',MATLABOrange);
@@ -43,7 +43,7 @@ whichdir = 'TraubPaperOutput';
 % xlabel('\(x\)')
 % legend(h,{'\(f_2(x)\)'},'location', 'north','box','off')
 % gail.save_eps(whichdir, 'f2closeplot.eps');
-% 
+
 % figure
 % h = plot(xplot,f1pp(xplot),'-',xplot,f2pp(xplot),'-');
 % axis([-1 1 -7 27])
@@ -61,18 +61,25 @@ c = -0.2;
 delta = 0.2;
 f3 = @(x) f3param(x,delta,c);
 f3pp = @(x) f3ppparam(x,delta,c);
-figure
-h = plot(xplot,f3(xplot),'-','color',MATLABPurple);
-axis([-1 1 -0.2 1.2])
-xlabel('\(x\)')
-legend(h,{'\(f_1(x)\)'},'location', 'northeast','box','off')
-gail.save_eps(whichdir, 'f3plot');
+%figure
+%h = plot(xplot,f3(xplot),'-','color',MATLABPurple);
+%axis([-1 1 -0.2 1.2])
+%xlabel('\(x\)')
+%legend(h,{'\(f_1(x)\)'},'location', 'northeast','box','off')
+%gail.save_eps(whichdir, 'f3plot');
 
 figure
-h = plot(xplot,f3pp(xplot),'-','color',MATLABPurple);
+[h,hLine1,hLine2] = plotyy(xplot,f3(xplot),xplot,f3pp(xplot));
+%h = plot(xplot,f3pp(xplot),'-','color',MATLABPurple);
 %axis([-1 1 -0.2 1.2])
-xlabel('\(x\)')
-legend(h,{'\(f_1''''(x)\)'},'location', 'northeast','box','off')
+set(hLine1, 'LineStyle','-')
+set(hLine2, 'LineStyle',':')
+set(h(1), 'YLim', [0, 1],'YTick',[0, 1], 'fontsize', 18)
+set(h(2), 'YLim', [-30, 30],'YTick',[-30, 30], 'fontsize', 18)
+ylabel(h(1),'\(f_1(x)\)','fontsize', 18)    % left y-axis
+ylabel(h(2), '\(f_1''''(x)\)','fontsize', 18) % right y-axis
+%xlabel('\(x\)')
+%legend(h,{'\(f_1(x)\)', '\(f_1''''(x)\)'},'location', 'northeast','box','off')
 print('-depsc',[whichdir 'f3ppplot.eps'])
 gail.save_eps(whichdir, 'f3ppplot');
 
@@ -92,7 +99,7 @@ h = [h; plot(xplot,-f3(xplot),'-','color',MATLABGreen)];
 h = [h; plot(xpt(2:end-1),f3(xpt(2:end-1)),'.','color',MATLABOrange)];
 axis([-1 1 -1.2 1.2])
 xlabel('\(x\)')
-legend(h,{'\(f_3(x)\)','\(-f_3(x)\)','\(\pm f_3(x_i)\)'}, ...
+legend(h,{'\(f_1(x)\)','\(-f_1(x)\)','\(\pm f_1(x_i)\)'}, ...
    'location', 'northeast','box','off')
 gail.save_eps(whichdir, 'f3foolplot');
 
