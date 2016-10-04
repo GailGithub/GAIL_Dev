@@ -18,7 +18,7 @@ whichdir = 'TraubPaperOutput';
 % f1pp = @(x) (12*x.^2 - 1) .* sin(1./x) - 6*x .* cos(1./x);
 % f2 = @(x) f1(x) + 10.*x.^2;
 % f2pp = @(x) f1pp(x) + 20;
- xplot = (-1:.001:1);
+xplot = (-1:.001:1);
 % h = plot(xplot,f1(xplot),'-','color',MATLABBlue);
 % hold on
 % h=[h,plot(xplot,f2(xplot),'-','color',MATLABOrange)];
@@ -74,14 +74,14 @@ figure
 %axis([-1 1 -0.2 1.2])
 set(hLine1, 'LineStyle','-')
 set(hLine2, 'LineStyle',':')
-set(h(1), 'YLim', [0, 1],'YTick',[0, 1], 'fontsize', 18)
-set(h(2), 'YLim', [-30, 30],'YTick',[-30, 30], 'fontsize', 18)
-ylabel(h(1),'\(f_1(x)\)','fontsize', 18)    % left y-axis
-ylabel(h(2), '\(f_1''''(x)\)','fontsize', 18) % right y-axis
-%xlabel('\(x\)')
-%legend(h,{'\(f_1(x)\)', '\(f_1''''(x)\)'},'location', 'northeast','box','off')
-print('-depsc',[whichdir 'f3ppplot.eps'])
-gail.save_eps(whichdir, 'f3ppplot');
+set(h(1), 'YLim', [0, 1],'YTick',[0, 1])
+set(h(2), 'YLim', [-30, 30],'YTick',[-30, 30])
+%ylabel(h(1),'\(f_1(x)\)','fontsize', 18)    % left y-axis
+%ylabel(h(2), '\(f_1''''(x)\)','fontsize', 18) % right y-axis
+xlabel('\(x\)')
+legend(h(1),{'\(f_1(x)\)', '\(f_1''''(x)\)'},'location', 'northeast','box','off')
+print('-depsc',[whichdir 'f3plot.eps'])
+gail.save_eps(whichdir, 'f3plot');
 
 %% Lower Complexity Bounds Fooling Functions
 rng(29);
