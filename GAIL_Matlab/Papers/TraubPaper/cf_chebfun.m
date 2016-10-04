@@ -48,28 +48,33 @@ subplot(2,3,1), plot(x,f(x));
 subplot(2,3,2), plot(x,fappx(x)); title(['funappx\_g approx.']); axis tight
 subplot(2,3,3), plot(x,c(x)); title(['Chebfun approx.']); axis tight
 
-err = abs( fappx(x) - f(x));
-subplot(2,3,5), semilogy( x, err, 'k' );  title('funappx\_g errors'); axis tight; hold on
-[~,ind] = find(err > abstol*10);
-semilogy( x(ind), err(ind), '.' );   hold off;
-figure(2);
-semilogy( x, err, '-', x(ind), err(ind), '.');  
-% semilogy( x, err, '-', 'color', MATLABBlue); hold on
-% semilogy( x(ind), err(ind), '.' , 'color', MATLABOrange);  
-small = max(-20,log10(0.1*min(err)));
-large = log10(10*max(err));
-axis([a b 10^small 10^large])
-xlabel('\(x\)')
-ylabel('{\tt funappx\_g} error')
-gail.save_eps('TraubPaperOutput', 'funappx_g_errors');
+err1 = abs( fappx(x) - f(x));
+subplot(2,3,5), semilogy( x, err1, 'k' );  title('funappx\_g errors'); axis tight; hold on
+[~,ind1] = find(err1 > abstol*10);
+semilogy( x(ind1), err1(ind1), '.' );   hold off;
+
+
    
 chebfuntol=1e-14;
 err = abs(c(x) - f(x));
 figure(1); subplot(2,3,6), semilogy( x, err, 'k' );   title ('Chebfun errors'); axis tight; hold on;
+
 [~,ind] = find(err > chebfuntol*10);
 semilogy( x(ind), err(ind), 'r.' );   hold off;
-figure(3);
-semilogy( x, err, '-', x(ind), err(ind), '.'); 
+
+
+figure(2);
+h=semilogy( x, err1, '-', x(ind1), err1(ind1), '.', 'color', MATLABOrange);   hold on;
+% semilogy( x, err, '-', 'color', MATLABBlue); hold on
+% semilogy( x(ind), err(ind), '.' , 'color', MATLABOrange);  
+small1 = max(-20,log10(0.1*min(err1)));
+large1 = log10(10*max(err1));
+axis([a b 10^small1 10^large1])
+xlabel('\(x\)')
+%ylabel('{\tt funappx\_g} error')
+%gail.save_eps('TraubPaperOutput', 'funappx_g_errors');
+
+h=semilogy( x, err, '-', x(ind), err(ind), '.');  hold off;
 % semilogy( x, err, '-', 'color', MATLABBlue); 
 % %axis tight;  
 % hold on;
@@ -78,7 +83,8 @@ small = max(-20,log10(0.1*min(err)));
 large = log10(10*max(err));
 axis([a b 10^small 10^large])
 xlabel('\(x\)')
-ylabel('Chebfun error')
+%ylabel('Chebfun error')
+legend(h,{'{\tt funappx\_g} error', 'Chebfun error'},'location', 'northwest','box','off')
 set(gca,'ytick',10.^(5*ceil(small/5):5:5*floor(large/5)))
 gail.save_eps('TraubPaperOutput', 'chebfun_errors');
 
