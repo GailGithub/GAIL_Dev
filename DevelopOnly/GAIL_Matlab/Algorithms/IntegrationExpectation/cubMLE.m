@@ -13,7 +13,7 @@ function [muhat,out]=cubMLE(f,nvec,domain,whSample,whKer,powerFuncMethod)
 % This is a heuristic algorithm based on a Central Limit Theorem
 % approximation
 if nargin < 7
-    if ~exist('powerFuncMethod','cauchy') || isempty(powerFuncMethod)
+    if ~exist('powerFuncMethod','var') || isempty(powerFuncMethod)
         powerFuncMethod='cauchy';  %technique to compute power function%
     end
     if nargin < 6
@@ -47,16 +47,22 @@ out.aMLE(nn,1) = 0;
 muhat(nn,1) = 0;
 for ii = 1:nn
    nii = nvec(ii);
+   
+   % Find the optimal shape parameter
    lnaMLE = fminbnd(@(lna) ...
       MLEKernel(exp(lna),x(1:nii,:),fx(1:nii),whKer,domain), ...
       -5,5,optimset('TolX',1e-2));
    aMLE = exp(lnaMLE);
    out.aMLE(ii) = aMLE;
+   
    [K,kvec,k0] = kernelFun(x(1:nii,:),whKer,aMLE);
    Kinv = pinv(K);
    %w = Kinv*kvec;
    Kinvy = Kinv*fx(1:nii);
+   
+   % compute the approximate mu 
    muhat(ii) = kvec'*Kinvy;
+   
    if strcmp(powerFuncMethod, 'cauchy')
        eigK = eig(K);
        eigKaug = eig([k0 kvec'; kvec K]);
