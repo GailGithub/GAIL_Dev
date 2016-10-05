@@ -1,15 +1,9 @@
 % ALGORITHMS
 %
 % Folders
-%   Deprecated_Algorithm  - Obsolete algorithms
-%   +gail                 - Internal functions needed in algorithms
-%
-% Files
-%   cubMC_g           - Monte Carlo method to evaluate a multidimensional integral
-%   cubLattice_g      - Quasi-Monte Carlo method using rank-1 Lattices with hybrid error and hyperbox
-%   cubSobol_g        - Quasi-Monte Carlo method using Sobol' with hybrid error and hyperbox 
-%   funappx_g         - 1-D guaranteed locally adaptive function approximation (or function recovery) on [a,b]
-%   funmin_g          - 1-D guaranteed global minimum value on [a,b] and the subset containing optimal solutions
-%   integral_g        - 1-D guaranteed function integration using trapezoidal rule
-%   meanMC_g          - Monte Carlo method to estimate the mean of a random variable
-%   meanMCBer_g       - Monte Carlo method to estimate the mean of a Bernoulli random variable
+%   +gail                      - Internal functions needed in algorithms
+%   ApproximationOptimization  - Algorithms for appproximation and
+%   optimizations
+%   Deprecated_Algorithm       - Obsolete algorithms
+%   IntegrationExpection       - Algorithms for integration, Monte Carlo
+%   Mehtods and Quasi-Monte Carlo Methods

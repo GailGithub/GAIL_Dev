@@ -131,7 +131,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %     exitflag: [0 0 0 0 0]
 %         iter: 11
 %      npoints: 17409
-%       errest: 3.9623e-***8
+%       errest: 3.9635e-***8
 %
 %
 %   Example 2:
@@ -153,7 +153,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %     exitflag: [0 0 0 0 0]
 %         iter: 9
 %      npoints: 4353
-%       errest: 6.3514e-***7
+%       errest: 6.3592e-***7
 %
 %
 %   Example 3:
@@ -176,7 +176,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %     exitflag: [0 0 0 0 0]
 %         iter: 10
 %      npoints: 9217
-%       errest: 8.8412e-***7
+%       errest: 8.8466e-***7
 %
 %   
 %   See also INTERP1, GRIDDEDINTERPOLANT, INTEGRAL_G, MEANMC_G, FUNMIN_G
@@ -230,6 +230,7 @@ x = zeros(1, max(100,ceil(out_param.nmax/100))); % preallocation
 y = x;
 x(1:ninit) = a:(b-a)/(ninit-1):b;
 y(1:ninit) = f(x(1:ninit));
+indexI = ([0 ones(1,ninit-2) 0]>0);
 iSing = find(isinf(y));
 if ~isempty(iSing)
     out_param.exitflag(5) = true;
@@ -252,23 +253,13 @@ C = @(h) (C0 * fh)./(fh-h);
 %C0 = 2; C = @(h) (C0 * 2)./(1+exp(-h)); % logistic
 %C0 = 2; C = @(h) C0 * (1+h.^2);         % quadratic
 npoints = ninit;
-errestl = ones(1,ninit-1);
-errestr = errestl;
-badlinterval = (errestl>abstol);
-badrinterval = (errestr>abstol);
 for iter_i = 1:out_param.maxiter,
     %% Stage 1: compute length of each subinterval and approximate |f''(t)|
     len = diff(x(1:npoints));
-    %deltaf = 2*(y(1:end-2)./len(1:end-1)./(len(1:end-1)+len(2:end))-...
-    %            y(2:end-1)./len(1:end-1)./ len(2:end)              +...
-    %            y(3:end  )./len(2:end  )./(len(1:end-1)+len(2:end)))
-    deltaf = 2 * diff(diff(y(1:npoints))./len) ./ (len(1:end-1) + len(2:end));
-    h = x(3:npoints)-x(1:npoints-2);
-    Br = [abs(deltaf(2:end)).*C(h(2:end)) 0 0];
-    Bl = [0 0 abs(deltaf(1:end-1)).*C(h(1:end-1))];
-    %Bl = [0 0 abs(deltaf(1)).*C(h(1))  Br(1:end-3)];
-    errestl(badlinterval) = len(badlinterval).^2/8.*Bl(badlinterval);
-    errestr(badrinterval) = len(badrinterval).^2/8.*Br(badrinterval);
+    deltaf = diff(diff(y(1:npoints)));
+    h = x(2:npoints-1)-x(1:npoints-2);
+    err = abs(1/8* C(3*h).*deltaf);
+    indexI(2:end-1)=(err> abstol);
     
 %     min_len = min(len);
 %     max_len = max(len);
@@ -285,19 +276,15 @@ for iter_i = 1:out_param.maxiter,
 
     % update iterations
     iter = iter + 1;
-    max_errest = max(max(errestl),max(errestr));
+    max_errest = max(err);
     if max_errest <= abstol,
         break
     end 
  
     %% Stage 3: find I and update x,y
-%     badinterval = (errest > abstol);
-%     whichcut = badinterval | [badinterval(2:end) 0] | [0 badinterval(1:end-1)];
-%    badinterval = (errest > abstol);
-    badlinterval= (errestl>abstol);
-    badrinterval= (errestr>abstol);
-    whichcut=(badlinterval|[badlinterval(2:end) 0]|...
-             [0 badrinterval(1:end-1)]|badrinterval);
+    midpoint=([indexI(3:end) 0 0 ]|[indexI(2:end) 0]...
+        |indexI|[0 indexI(1:end-1)]);
+    whichcut=midpoint(1:end-1);   
     if (out_param.nmax<(npoints+length(find(whichcut))))
         out_param.exitflag(1) = true;
         warning('GAIL:funappx_g:exceedbudget',['funappx_g '...
@@ -312,7 +299,7 @@ for iter_i = 1:out_param.maxiter,
         break;
     end;
 
-    newx = x(whichcut) + 0.5 * len(whichcut);
+    newx=x(whichcut)+0.5*len(whichcut);
     if npoints + length(newx) > length(x)
       xx = zeros(1, out_param.nmax);
       yy = xx;
@@ -321,31 +308,18 @@ for iter_i = 1:out_param.maxiter,
       x = xx;
       y = yy;
     end
-    newbadlindex=(whichcut&badlinterval);
-    newbadrindex=(whichcut&badrinterval);
-    newerrestl=errestl(whichcut);
-    newerrestr=errestr(whichcut);
     tt = cumsum(whichcut);   
     x([1 (2:npoints)+tt]) = x(1:npoints);
     y([1 (2:npoints)+tt]) = y(1:npoints);
     tem = 2 * tt + cumsum(whichcut==0);
     x(tem(whichcut)) = newx;
     y(tem(whichcut)) = f(newx);
-    %x([1 (2:npoints)+tt tem(whichcut)]) = [x(1:npoints) newx];
-    %y([1 (2:npoints)+tt tem(whichcut)]) = [y(1:npoints) f(newx)];
-    temp=(1:npoints-1)+[0 tt(1:end-1)];
-    %update left badinterval 
-    badlinterval((1:npoints-1)+tt) = badlinterval;
-    badlinterval(temp(whichcut)) = newbadlindex(whichcut);
-    %update right badinterval 
-    badrinterval((1:npoints-1)+tt) = badrinterval;
-    badrinterval(temp(whichcut)) = newbadrindex(whichcut);
-    %update left error estimation 
-    errestl((1:npoints-1)+tt) = errestl;
-    errestl(temp(whichcut)) = newerrestl;
-    %update right error estimation 
-    errestr((1:npoints-1)+tt) = errestr;
-    errestr(temp(whichcut)) = newerrestr;
+    newindex = zeros(1,npoints+length(newx));
+    newindex([1 (2:npoints)+tt])=(indexI|[indexI(2:end) 0]...
+        |[0 indexI(1:end-1)]);
+    tempindex = (indexI|[0 indexI(1:end-1)]);
+    newindex(tem)=tempindex(2:end);
+    indexI = ([0 newindex(2:end-1) 0]>0);
     npoints = npoints + length(newx);
 end;
 
