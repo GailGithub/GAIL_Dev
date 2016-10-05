@@ -254,11 +254,15 @@ C = @(h) (C0 * fh)./(fh-h);
 %C0 = 2; C = @(h) C0 * (1+h.^2);         % quadratic
 npoints = ninit;
 for iter_i = 1:out_param.maxiter,
+%     if iter_i==7;
+%         keyboard
+%     end;
     %% Stage 1: compute length of each subinterval and approximate |f''(t)|
     len = diff(x(1:npoints));
     deltaf = diff(diff(y(1:npoints)));
     h = x(2:npoints-1)-x(1:npoints-2);
-    err = abs(1/8* C(3*h).*deltaf);
+    err(indexI(2:end-1)) = abs(1/8* C(3*h(indexI(2:end-1)))...
+        .*deltaf(indexI(2:end-1)));
     indexI(2:end-1)=(err> abstol);
     
 %     min_len = min(len);
@@ -321,6 +325,7 @@ for iter_i = 1:out_param.maxiter,
     newindex(tem)=tempindex(2:end);
     indexI = ([0 newindex(2:end-1) 0]>0);
     npoints = npoints + length(newx);
+    err = zeros(1,npoints-2);
 end;
 
 
