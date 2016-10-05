@@ -27,7 +27,7 @@ inp.priceParam.cubMethod = 'IID_MC';
 
 %%
 % To generate some discounted option payoffs to add some more properties
-Strike = 110;
+Strike = 120;
 inp.payoffParam.strike =Strike; 
 
 %% 
@@ -37,7 +37,7 @@ ourGBMCallPrice = optPrice(inp);
 [GBMCallPrice, out] = genOptPrice(ourGBMCallPrice); %the option price
 
 inp.assetParam.pathType = 'QE';
-inp.assetParam.MeanShift = 0.08;
+inp.assetParam.meanShift =0.49;
 ourQECallPrice = optPrice(inp) %construct an optPrice object 
 %genOptPayoffs(ourQECallPrice,1);
 %return

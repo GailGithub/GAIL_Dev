@@ -143,7 +143,7 @@ classdef optPayoff < assetPath
         
         % Generate payoffs of options
         function payoffs=genOptPayoffs(obj,val)
-            paths = genPaths(obj,val);
+            [paths, likelihoodRatio] = genPaths(obj,val);            
             nOptType = numel(obj.payoffParam.optType);
             nPaths = size(paths,1);
             tempPay = zeros(nPaths, nOptType);
@@ -544,8 +544,11 @@ classdef optPayoff < assetPath
                         .* exp(- obj.assetParam.interest .* obj.timeDim.endTime);
                 end
             end
-            
-            payoffs = tempPay;
+            if likelihoodRatio == 1 % no important sampling
+                payoffs = tempPay;
+            else % with importance sampling
+                payoffs = tempPay.*likelihoodRatio;
+            end
         end
         
         function val = get.exactPrice(obj)

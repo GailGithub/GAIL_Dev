@@ -48,8 +48,8 @@ classdef assetPath < brownianMotion
          'kappa',0.5,...%mean reversion speed
          'nu',1,...%volatility of variance
          'rho',-0.9,...%correlation of the Brownian motions
-         'MeanShift',0,...% Importance Sampling
-         'ratio', 1) %the likelihood ratio of Important sampling
+         'meanShift',0)% 0 for no importance sampling. Mean shift for normal random variable
+
    end
    
    properties (Constant, Hidden) %do not change & not seen
@@ -175,16 +175,12 @@ classdef assetPath < brownianMotion
                  {'scalar'})
              obj.assetParam.rho=val.rho;
          end
-         if isfield(val,'MeanShift')
-             validateattributes(val.MeanShift,{'numeric'},...
+         if isfield(val,'meanShift')
+             validateattributes(val.meanShift,{'numeric'},...
                  {'scalar'})
-             obj.assetParam.MeanShift=val.MeanShift;
+             obj.assetParam.meanShift=val.meanShift;
          end
-         if isfield(val,'ratio')
-             validateattributes(val.ratio,{'numeric'},...
-                 {'nonempty'})
-             obj.assetParam.ratio=val.ratio;
-         end
+   
       end
       
       % Generate square root of correlation matrix
@@ -194,7 +190,8 @@ classdef assetPath < brownianMotion
        end
 
       % Generate asset paths
-      function [paths]=genPaths(obj,val)
+      function [paths,likelihoodRatio]=genPaths(obj,val)
+         likelihoodRatio = 1; % likelihoodRatio for importance sampling
          bmpaths = genPaths@brownianMotion(obj,val);
          nPaths = size(bmpaths,1);             
          if strcmp(obj.assetParam.pathType,'GBM')
@@ -298,8 +295,8 @@ classdef assetPath < brownianMotion
          %QE scheme without martingale correction
          if strcmp(obj.assetParam.pathType,'QE')
              dT = obj.timeDim.timeIncrement(1);
-             gamma1 = (1-exp(obj.assetParam.kappa*dT)+obj.assetParam.kappa*dT)...
-                 /(obj.assetParam.kappa*dT*(1-exp(obj.assetParam.kappa*dT)));
+%              gamma1 = (1-exp(obj.assetParam.kappa*dT)+obj.assetParam.kappa*dT)...
+%                  /(obj.assetParam.kappa*dT*(1-exp(obj.assetParam.kappa*dT)));
              gamma2 = -(-expm1(dT*obj.assetParam.kappa)+obj.assetParam.kappa*dT*exp(obj.assetParam.kappa*dT))...
                  /(obj.assetParam.kappa*dT*(-expm1(dT*obj.assetParam.kappa)));          
              c1 = (obj.assetParam.interest-obj.assetParam.dividend)*dT;% interest and dividend adjustment 
@@ -314,16 +311,20 @@ classdef assetPath < brownianMotion
              lnS1(:,1)= log(obj.assetParam.initPrice...  % set S(0) adjust with dividend 
                  *exp(-obj.assetParam.dividend*obj.timeDim.endTime));            
              %Use Brownian motion to generate normal distribution         
-             if obj.assetParam.MeanShift == 0
+             if obj.assetParam.meanShift == 0
                  dW2 = [bmpaths(:,1) diff(bmpaths(:,1:Ntime),1,2)]/sqrt(dT); %Use Brownian motion to generate normal distribution N(0,I)
+                 Z = [bmpaths(:,Ntime+1) diff(bmpaths(:,Ntime+1:end),1,2)]/sqrt(dT);
+                 %Use normal distribution to generate uniform distribution
+                 UV1 = normcdf(Z);
              else
-                 dW2 = [bmpaths(:,1) diff(bmpaths(:,1:Ntime),1,2)]/sqrt(dT) + obj.assetParam.MeanShift; %Use Brownian motion to generate normal distribution N(MeanShift,I)
-                 obj.assetParam.ratio = exp(obj.assetParam.MeanShift^2*0.5- sum(dW2,2).*obj.assetParam.MeanShift);
-                 %size(obj.assetParam.ratio)
+                 %delta = size(bmpaths,2);
+                 shift = obj.assetParam.meanShift/obj.timeDim.endTime;% use meanShift per time step                 
+                 dW2 = [bmpaths(:,1) diff(bmpaths(:,1:Ntime),1,2)]/sqrt(dT) + shift; %Use Brownian motion to generate normal distribution N(MeanShift,I)
+                 Z=[bmpaths(:,Ntime+1) diff(bmpaths(:,Ntime+1:end),1,2)]/sqrt(dT) + shift;
+                 likelihoodRatio = exp(shift^2*(Ntime+1)-shift.*sum(dW2+Z,2));
+                 %Use normal distribution to generate uniform distribution
+                 UV1 = normcdf(Z);                
              end
-             Z=[bmpaths(:,Ntime+1) diff(bmpaths(:,Ntime+1:end),1,2)]/sqrt(dT);
-             %Use normal distribution to generate uniform distribution
-             UV1 = normcdf(Z);
 
 %****************************************************************
              % set U=V-Vlong
@@ -400,6 +401,7 @@ classdef assetPath < brownianMotion
                 propList.assetParam_kappa = obj.assetParam.kappa;
                 propList.assetParam_nu = obj.assetParam.nu;
                 propList.assetParam_rho = obj.assetParam.rho;
+                propList.assetParam_meanShift = obj.assetParam.meanShift;
             end              
           
         end
