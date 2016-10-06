@@ -257,26 +257,14 @@ for iter_i = 1:out_param.maxiter,
 %     if iter_i==7;
 %         keyboard
 %     end;
-    %% Stage 1: compute length of each subinterval and approximate |f''(t)|
+    %% Stage 1: Check for convergence
+    %% Compute the error for i in I
     len = diff(x(1:npoints));
     deltaf = diff(diff(y(1:npoints)));
     h = x(2:npoints-1)-x(1:npoints-2);
     err(indexI(2:end-1)) = abs(1/8* C(3*h(indexI(2:end-1)))...
         .*deltaf(indexI(2:end-1)));
     indexI(2:end-1)=(err> abstol);
-    
-%     min_len = min(len);
-%     max_len = max(len);
-%     max_delta = max(deltaf);
-%     [~,ind] = find(deltaf > 0);
-%     min_delta = min(deltaf(ind));
-%     if max_delta < eps * max (abs(y)),
-%         out_param.exitflag(3) = true;
-%         warning('GAIL:funappx_g:zero2ndDerivative',['f(x)'''' = 0. '...
-%             'The function may be outside the cone.'])
-%     end
-%     
-    %% Stage 2: compute bound of |f''(t)| and estimate error
 
     % update iterations
     iter = iter + 1;
@@ -285,10 +273,13 @@ for iter_i = 1:out_param.maxiter,
         break
     end 
  
-    %% Stage 3: find I and update x,y
+    %% Stage 2: Split the subintervals as needed
+    %find the index of the subinterval which is needed to be cut
     midpoint=([indexI(3:end) 0 0 ]|[indexI(2:end) 0]...
         |indexI|[0 indexI(1:end-1)]);
-    whichcut=midpoint(1:end-1);   
+    whichcut=midpoint(1:end-1);
+    
+    %check to see if exceed the cost budget
     if (out_param.nmax<(npoints+length(find(whichcut))))
         out_param.exitflag(1) = true;
         warning('GAIL:funappx_g:exceedbudget',['funappx_g '...
@@ -296,14 +287,19 @@ for iter_i = 1:out_param.maxiter,
             'unreliable.'])
         break;
     end; 
+    
+    %check to see if exceed the maximumber number of iterations
     if(iter==out_param.maxiter)
         out_param.exitflag(2) = true;
         warning('GAIL:funappx_g:exceediter',['Number of iterations has '...
             'reached maximum number of iterations.'])
         break;
     end;
-
+    
+    %generate split points for x
     newx=x(whichcut)+0.5*len(whichcut);
+    
+    %relocate the space for new x
     if npoints + length(newx) > length(x)
       xx = zeros(1, out_param.nmax);
       yy = xx;
@@ -312,18 +308,23 @@ for iter_i = 1:out_param.maxiter,
       x = xx;
       y = yy;
     end
+    
+    %update x and y
     tt = cumsum(whichcut);   
     x([1 (2:npoints)+tt]) = x(1:npoints);
     y([1 (2:npoints)+tt]) = y(1:npoints);
     tem = 2 * tt + cumsum(whichcut==0);
     x(tem(whichcut)) = newx;
     y(tem(whichcut)) = f(newx);
+    
+    %update the set I to consist of the new indices
     newindex = zeros(1,npoints+length(newx));
-    newindex([1 (2:npoints)+tt])=(indexI|[indexI(2:end) 0]...
-        |[0 indexI(1:end-1)]);
+    newindex([1 (2:npoints)+tt])=([indexI(2:end) 0]|[0 indexI(1:end-1)]);
     tempindex = (indexI|[0 indexI(1:end-1)]);
     newindex(tem)=tempindex(2:end);
     indexI = ([0 newindex(2:end-1) 0]>0);
+    
+    %update # of points and initialize error for all the subintervals
     npoints = npoints + length(newx);
     err = zeros(1,npoints-2);
 end;
