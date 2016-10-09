@@ -27,7 +27,7 @@ function dt_funappx_g
 %     exitflag: [0 0 0 0 0]
 %         iter: 7
 %      npoints: 42049
-%       errest: 4.3092e-***8
+%       errest: ***e-***8
 %
 % 
 %   Example 3: 
@@ -49,8 +49,8 @@ function dt_funappx_g
 %      maxiter: 1000
 %     exitflag: [0 0 0 0 0]
 %         iter: 8
-%      npoints: 12277
-%       errest: 4.2598e-***9
+%      npoints: 14361
+%       errest: ***e-***9
 %      
 %
 %   Example 4:
@@ -70,8 +70,8 @@ function dt_funappx_g
 %      maxiter: 1000
 %     exitflag: [0 0 0 0 0]
 %         iter: 11
-%      npoints: 27351
-%       errest: 4.0884e-***8
+%      npoints: 33211
+%       errest: ***e-***8
 %
 %
 %   Example 5:
@@ -91,8 +91,8 @@ function dt_funappx_g
 %      maxiter: 1000
 %     exitflag: [0 0 0 0 0]
 %         iter: 10
-%      npoints: 3601
-%       errest: 3.6561e-07
+%      npoints: 4573
+%       errest: ***e-***7
 %
 %
 %   Example 6:

@@ -92,7 +92,10 @@ gail.save_eps('TraubPaperOutput', 'chebfun_errors');
 
 % Example output:
 %
-% >> cf_chebfun(f3, a, b, abstol)
+% delta = 0.2; B = 1./(2*delta.^2); c = -0.2;
+%   f3 = @(x) B*(4*delta.^2 + (x-c).^2 + (x-c-delta).*abs(x-c-delta) ...
+%      - (x-c+delta).*abs(x-c+delta)).*(abs(x-c) <= 2*delta); a = - 1; b = 1; abstol = 1e-14;  
+%   cf_chebfun(f3, a, b, abstol)
 % fappx = 
 %   griddedInterpolant with properties:
 % 
@@ -113,9 +116,9 @@ gail.save_eps('TraubPaperOutput', 'chebfun_errors');
 %     exitflag: [0 0 0 0 0]
 %         iter: 20
 %      npoints: 45088972
-%       errest: 9.907450844259228e-15
+%       errest: 4.943971292550902e-15
 % t1 =
-%   61.678505145000003
+%   49.791136166000001
 % ---------------------
 % fappx = 
 %   griddedInterpolant with properties:
@@ -137,13 +140,11 @@ gail.save_eps('TraubPaperOutput', 'chebfun_errors');
 %     exitflag: [0 0 0 0 0]
 %         iter: 21
 %      npoints: 30199129
-%       errest: 9.346701314321710e-15
-%            x: [1x3774936 double]
-%            y: [1x3774936 double]
+%       errest: 8.066471428701743e-15
 % t2 =
-%   28.271855909999999
+%   25.345884486999999
 % time_ratio1 =
-%    2.181622081739027
+%    1.964466309768675
 % ---------------------
 % c =
 %    chebfun column (6 smooth pieces)
@@ -156,7 +157,7 @@ gail.save_eps('TraubPaperOutput', 'chebfun_errors');
 % [     0.2,       1]        1         0        0 
 % vertical scale =   1    Total length = 31
 % t3 =
-%    0.598259872000000
+%    1.827106135000000
 % time_ratio2 =
-%      1.030965104492250e+02
-% ---------------------
+%   27.251364993090565
+% --------------------
