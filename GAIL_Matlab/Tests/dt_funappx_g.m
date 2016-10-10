@@ -25,8 +25,8 @@ function dt_funappx_g
 %         nmax: 10000000
 %      maxiter: 1000
 %     exitflag: [0 0 0 0 0]
-%         iter: 7
-%      npoints: 42049
+%         iter: 8
+%      npoints: 84097
 %       errest: ***e-***8
 %
 % 
@@ -48,8 +48,8 @@ function dt_funappx_g
 %         nmax: 10000000
 %      maxiter: 1000
 %     exitflag: [0 0 0 0 0]
-%         iter: 8
-%      npoints: 14361
+%         iter: 9
+%      npoints: 22163
 %       errest: ***e-***9
 %      
 %
@@ -69,8 +69,8 @@ function dt_funappx_g
 %         nmax: 10000000
 %      maxiter: 1000
 %     exitflag: [0 0 0 0 0]
-%         iter: 11
-%      npoints: 33211
+%         iter: 12
+%      npoints: 48787
 %       errest: ***e-***8
 %
 %
@@ -90,15 +90,15 @@ function dt_funappx_g
 %         nmax: 10000000
 %      maxiter: 1000
 %     exitflag: [0 0 0 0 0]
-%         iter: 10
-%      npoints: 4573
+%         iter: 11
+%      npoints: 6659
 %       errest: ***e-***7
 %
 %
 %   Example 6:
 %
 %   >> [~, out_param] = funappx_g(@(x) x.^2,'memorytest',1,'output_x',1);
-%   >> out_param.bytes <= 189591
+%   >> out_param.bytes <= 280674
 %      1
 %   >> length(out_param.x) == out_param.npoints
 %      1

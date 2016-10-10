@@ -129,8 +129,8 @@ function [fappx,out_param]=funappx_g(varargin)
 %         nmax: 10000000
 %      maxiter: 1000
 %     exitflag: [0 0 0 0 0]
-%         iter: 11
-%      npoints: 17409
+%         iter: 12
+%      npoints: 34817
 %       errest: ***e-***8
 %
 %
@@ -246,7 +246,7 @@ iter = 0;
 exit_len = 5;
 % we start the algorithm with all warning flags down
 out_param.exitflag = false(1,exit_len);
-C0 = 5;
+C0 = 10;
 fh = 3*(b-a)/(ninit-2);
 C = @(h) (C0 * fh)./(fh-h);
 %C = @(h) (C0 * 2)./(1+exp(-h)); % logistic
