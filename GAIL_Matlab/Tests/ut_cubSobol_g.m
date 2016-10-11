@@ -76,7 +76,7 @@ classdef ut_cubSobol_g < matlab.unittest.TestCase
       testCase.verifyLessThanOrEqual(actualerr,tolerance);
       testCase.verifyTrue(out_param.d==2);
     end
-    
+%{    
     function cubSobol_gOfgmeanOptcv(testCase)
       %add finance package to path
       packagePath = regexprep(fileparts(which('LICENSE.m')),'GAIL\_Matlab$','DevelopOnly/GAIL_Matlab/Algorithms/Monte_Carlo_Finance/');
@@ -111,7 +111,7 @@ classdef ut_cubSobol_g < matlab.unittest.TestCase
       testCase.verifyTrue(out_param.d==4);
       rmpath(packagePath);
     end
-
+%}
     function cubSobol_gOfwarning(testCase)
         testCase.verifyWarning(@()cubSobol_g,'GAIL:cubSobol_g:fdnotgiven');
     end
