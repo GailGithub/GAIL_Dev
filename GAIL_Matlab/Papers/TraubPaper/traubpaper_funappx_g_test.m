@@ -223,7 +223,7 @@ if usejava('jvm') || MATLABVERSION <= 7.12
   
   figure
   t = ((1:nrep*n) -1/2)/(nrep*n);
-  for k = 1:m-1
+  for k = 2:m-1
     %subplot(1,m-1,k)
     semilogx(sorted_timeratio(k,:),t,'color',markers{k*2-1}); hold on
     semilogx(sorted_npointsratio(k,:),t,'color',markers{2*k});  hold on

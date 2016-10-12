@@ -142,8 +142,8 @@ classdef optPayoff < assetPath
         
         
         % Generate payoffs of options
-        function payoffs=genOptPayoffs(obj,val)
-            [paths, likelihoodRatio] = genPaths(obj,val);            
+        function [payoffs,more] = genOptPayoffs(obj,val)
+            paths = genPaths(obj,val);
             nOptType = numel(obj.payoffParam.optType);
             nPaths = size(paths,1);
             tempPay = zeros(nPaths, nOptType);
@@ -366,7 +366,7 @@ classdef optPayoff < assetPath
                         .* obj.timeDim.timeVector),nPaths,1); %discounted payoff at each time
                     cashflow = putpayoff(:,ntimeDim);
                     %              extime = repmat(ntimeDim,nPaths,1);
-                    %more.exbound = [zeros(1, ntimeDim) obj.payoffParam.strike]; %initialize excercise boundary
+                    more.exbound = [zeros(1, ntimeDim) obj.payoffParam.strike]; %initialize excercise boundary
                     for i = ntimeDim-1:-1:1
                         inmoney = find(paths(:,i)<strike(j));
                         if ~isempty(inmoney)
@@ -377,7 +377,7 @@ classdef optPayoff < assetPath
                             if ~isempty(shouldex); %some paths should be exercise
                                 cashflow(shouldex)=putpayoff(shouldex,i); %updated cashflow
                                 %                          extime(shouldex)=i; %update
-                                %more.exbound(i+1)=max(paths(shouldex,i));
+                                more.exbound(i+1)=max(paths(shouldex,i));
                             end
                         end
                     end
@@ -388,7 +388,7 @@ classdef optPayoff < assetPath
                             cashflow(:) = putpayoff0;
                             %                     extime(:) = 0;
                         end
-                        %more.exbound(1) = obj.payoffParam.strike - hold; %exercise boundary at initial time
+                        more.exbound(1) = obj.payoffParam.strike - hold; %exercise boundary at initial time
                     end
                     cashflows(:,j) = cashflow;
                 end
