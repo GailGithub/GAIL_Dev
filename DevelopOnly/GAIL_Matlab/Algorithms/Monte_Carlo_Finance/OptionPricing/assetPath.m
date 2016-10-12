@@ -231,14 +231,22 @@ classdef assetPath < brownianMotion
              % set S(0) adjust with dividend 
              lnS1(:,1)= log(obj.assetParam.initPrice...
                  *exp(-obj.assetParam.dividend*obj.timeDim.endTime));            
-             
-             if obj.assetParam.MeanShift == 0
+                          
+             %Use Brownian motion to generate normal distribution      
+             if obj.assetParam.meanShift == 0
                  dW2 = [bmpaths(:,1) diff(bmpaths(:,1:Ntime),1,2)]/sqrt(dT); %Use Brownian motion to generate normal distribution N(0,I)
+                 Z = [bmpaths(:,Ntime+1) diff(bmpaths(:,Ntime+1:end),1,2)]/sqrt(dT);
+                 %Use normal distribution to generate uniform distribution
+                 UV1 = normcdf(Z);
              else
-                 dW2 = [bmpaths(:,1) diff(bmpaths(:,1:Ntime),1,2)]/sqrt(dT) + obj.assetParam.MeanShift; %Use Brownian motion to generate normal distribution N(MeanShift,I)
+                 %delta = size(bmpaths,2);
+                 shift = obj.assetParam.meanShift/obj.timeDim.endTime;% use meanShift per time step                 
+                 dW2 = [bmpaths(:,1) diff(bmpaths(:,1:Ntime),1,2)]/sqrt(dT) + shift; %Use Brownian motion to generate normal distribution N(MeanShift,I)
+                 Z=[bmpaths(:,Ntime+1) diff(bmpaths(:,Ntime+1:end),1,2)]/sqrt(dT) + shift;
+                 likelihoodRatio = exp(shift^2*(Ntime+1)-shift.*sum(dW2+Z,2));
+                 %Use normal distribution to generate uniform distribution
+                 UV1 = normcdf(Z);                
              end
-             Z=[bmpaths(:,Ntime+1) diff(bmpaths(:,Ntime+1:end),1,2)]/sqrt(dT); %Use another Brownian motion to generate normal distribution
-             UV1 = normcdf(Z); %Use Brownian motion to generate uniform distribution
 %*******************************************************************
              % set U=V-Vlong
              U = zeros(nPaths,Ntime+1); 

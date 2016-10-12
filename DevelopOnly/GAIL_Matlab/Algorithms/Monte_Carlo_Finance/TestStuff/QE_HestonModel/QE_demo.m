@@ -1,6 +1,6 @@
 % This file is a demo for QE method compared with ExactSampling for Heston
 % model.
-% Latest updated date: 9/21/2016
+% Latest updated date: 10/12/2016
 % Author: Xiaoyang Zhao
 
 %% QE_European call option
@@ -36,7 +36,7 @@ inp.priceParam.relTol = 0.01; %one penny on the dollar relative tolerance
 ourGBMCallPrice = optPrice(inp);
 [GBMCallPrice, out] = genOptPrice(ourGBMCallPrice); %the option price
 
-inp.assetParam.pathType = 'QE';
+inp.assetParam.pathType = 'QE_m';
 inp.assetParam.meanShift =0.49;
 ourQECallPrice = optPrice(inp) %construct an optPrice object 
 %genOptPayoffs(ourQECallPrice,1);
