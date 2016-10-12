@@ -40,8 +40,8 @@ function [fappx, out_param] = par_funappx_g(workers,varargin)
 %         nmax: 10000000
 %      maxiter: 1000
 %     exitflag: [0 0 0 0 0]
-%         iter: 11
-%      npoints: ***
+%         iter: 12
+%      npoints: 32769
 %       errest: ***e-08
 %       ***
 % 
