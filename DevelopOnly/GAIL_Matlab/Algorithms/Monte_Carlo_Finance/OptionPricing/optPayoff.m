@@ -142,7 +142,7 @@ classdef optPayoff < assetPath
         
         
         % Generate payoffs of options
-        function payoffs=genOptPayoffs(obj,val)
+        function [payoffs,more] = genOptPayoffs(obj,val)
             paths = genPaths(obj,val);
             nOptType = numel(obj.payoffParam.optType);
             nPaths = size(paths,1);
