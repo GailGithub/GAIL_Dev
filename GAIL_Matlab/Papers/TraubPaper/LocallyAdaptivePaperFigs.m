@@ -7,7 +7,6 @@ function LocallyAdaptivePaperFigs(colorfig)
 
 gail.InitializeDisplay %initialize the workspace and the display parameters
 set(0,'defaultLineLineWidth',4) %thicker lines
-whichdir = 'TraubPaperOutput';
 if nargin < 1 
    colorfig = true; %color figures
 end
@@ -16,7 +15,47 @@ if ~colorfig %black and white figures
    MATLABOrange = zeros(1,3);
    MATLABGreen = zeros(1,3);
 end
+whichdir = 'TraubPaperOutput';
 
+%% Define function
+f = @(x) x./(1+x.^3);
+fpp = @(x) (6*x.^2 .*(-2 + x.^3))./(1 + x.^3).^3;
+xnodes = 0:0.2:1;
+fnodes = f(xnodes);
+nnodes = numel(xnodes);
+extra = 0.15;
+xmin = min(xnodes) - extra;
+xmax = max(xnodes) + extra;
+xplot = xmin + (0:1e-3:1)*(xmax - xmin);
+fppplot = fpp(xplot);
+fppnodes = fpp(xnodes);
+fppmax = max(abs(fppplot));
+ylabelval = - 0.4;
+yaxislvl = -0.2;
+
+%% Plot second derivative of function
+gail.RemovePlotAxes
+plot([xnodes; xnodes],yaxislvl+0.1*[-ones(1,nnodes); ones(1,nnodes)],'-k')
+plot([xmin xmax],yaxislvl*ones(1,2),'-k')
+text(xnodes(1)-0.09,yaxislvl + ylabelval-0.02,'\(\beta - h_-\)');
+text(xnodes(3)-0.03,yaxislvl + ylabelval-0.02,'\(\alpha\)');
+text(xnodes(4)-0.03,yaxislvl + ylabelval-0.02,'\(\beta\)');
+text(xnodes(6)-0.09,yaxislvl + ylabelval-0.02,'\(\alpha + h_+\)');
+pbaspect([1 0.25 1])
+fdd1 = diff(diff(fnodes(1:3))./diff(xnodes(1:3)))/diff(xnodes([1 3]));
+fdd2 = diff(diff(fnodes(4:6))./diff(xnodes(4:6)))/diff(xnodes([4 6]));
+plot(xplot,abs(fppplot),'-','color',MATLABBlue);
+plot(xnodes, abs(fppnodes),'.','color',MATLABBlue)
+plot(xnodes([1 3]),2*abs(fdd1)*ones(1,2), '-.', ...
+   xnodes([4 6]),2*abs(fdd2)*ones(1,2), ...
+   '-.', 'color',MATLABOrange);
+plot(xnodes([1 3]),abs(fppnodes(1))*ones(1,2),':', ...
+   xnodes([4 6]),abs(fppnodes(6))*ones(1,2), ...
+   ':', 'color',MATLABPurple);
+plot(xnodes([3 4]),abs(fppnodes(4))*ones(1,2), ...
+   '--','color',MATLABGreen);
+axis([xmin xmax yaxislvl-0.1 fppmax])
+gail.save_eps(whichdir,'ConeDefineFig');
 
 %% Sample functions with piecwise constant second derivatives
 xplot = (-1:.001:1);
@@ -37,7 +76,6 @@ set(h(1), 'YLim', [0, 1],'YTick',[0, 1])
 set(h(2), 'YLim', [-30, 30],'YTick',[-30, 30])
 xlabel('\(x\)')
 legend(h(1),{'\(f_1(x)\)', '\(f_1''''(x)\)'},'location', 'northeast','box','off')
-print('-depsc',[whichdir 'f3plot.eps'])
 gail.save_eps(whichdir, 'f3plot');
 
 %% Lower Complexity Bounds Fooling Functions
@@ -106,5 +144,39 @@ legend(h,{'\(-f_1(x)\)','\((x_i,-f_1(x_i))\)'}, ...
    'location', 'east','box','off')
 gail.save_eps('TraubPaperOutput', 'sampling-funming');
 
+%% Chebfun example
+delta = 0.2; 
+f = @(x) f3param(x,delta,c); 
+a = - 1; 
+b = 1; 
+chebfuntol = 1e-14;  
+chf = chebfun(f,[a,b],'chebfuneps', chebfuntol,'splitting','on');
+x=a:0.00001:b;
+err = abs(chf(x) - f(x));
+[~,ind] = find(err > chebfuntol*10);
+figure;
+semilogy(x, err, '-','color',MATLABBlue);
+hold on
+semilogy(x(ind), err(ind), '.','color',MATLABOrange);
+small = max(-20,log10(0.1*min(err)));
+large = log10(10*max(err));
+axis([a b 10^small 10^large])
+xlabel('\(x\)')
+ylabel('Chebfun error')
+set(gca,'ytick',10.^(5*ceil(small/5):5:5*floor(large/5)))
+gail.save_eps('TraubPaperOutput', 'chebfun_errors');
 
+%% Chebfun/funppx_g ratios
+sorted_timeratio = 0;
+sorted_npointsratio = 0;
+load traub_funappx_g_test-2016-10-09-19-36-50  
+figure
+t = ((1:nrep*n) -1/2)/(nrep*n);
+h = semilogx(sorted_timeratio(2,:),t,'color',MATLABBlue); hold on
+h = [h; semilogx(sorted_npointsratio(2,:),t,'--','color',MATLABOrange)]; 
+    xlabel('Ratios'); 
+    ylabel('Probability')
+legend(h,{'Time','\# Samples'},'location','northwest','box','off')
+hold off
+gail.save_eps('TraubPaperOutput', ['traub_',algoname,'_test']);
 
