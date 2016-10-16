@@ -1,11 +1,14 @@
-%traubpaper_funmin_g_test: comparison between funmin_g, fminbnd, and chebfun
-function [timeratio,timelgratio,npointsratio,npointslgratio]=traubpaper_funmin_g_test(nrep,abstol,varargin)
+% funappx_g_test: comparison between funappx_g and funappxlocal_g
+function [timeratio,timelgratio,npointsratio,npointslgratio] ...
+   =funappx_g_test(nrep,abstol,varargin)
 % user can choose absolut error tolerance, initial number of points, number
 % of iteration or can use the following parameters
 % nrep = 100; abstol = 1e-6;
+% Compare funappx_g with funappxglobal_g and chebfun:
+% [timeratio,timelgratio,npointsratio,npointslgratio]=funappx_g_test(nrep,abstol);
 %
-% Compare funmin_g, fminbnd, and chebfun:
-% [timeratio,timelgratio,npointsratio,npointslgratio]=traubpaper_funmin_g_test(nrep,abstol,'funmin_g');
+% Compare funappxPenalty_g with funappxglobal_g and chebfun:
+% [timeratio,timelgratio,npointsratio,npointslgratio]=funappx_g_test(nrep,abstol,'funappxPenalty_g');
 rng default % for reproducibility
 if nargin < 2
    abstol = 1e-6;
@@ -22,31 +25,31 @@ time = zeros(n,m,nrep);
 trueerrormat = zeros(n,m,nrep);
 exceedmat  = zeros(n,m,nrep);
 if isempty(varargin)
-  algoname = 'funmin_g';
-  algo = @(f,a,b,abstol) funmin_g(f,a,b,abstol);
+  algoname = 'funappx_g';
+  algo = @(f,a,b,abstol) funappx_g(f,a,b,abstol);
 else
   algoname = varargin{1};
   algo = str2func(['@(f,a,b,abstol)', algoname,'(f,a,b,abstol)']);
 end
 
-algo2 = @(f,a,b,abstol) fminbnd(f,a,b,abstol);
+algo2 = @(f,a,b,abstol) funappxglobal_g(f,a,b,abstol);
 algo3 = @(f,a,b) chebfun(f, [a,b],'chebfuneps', abstol,'splitting','on');
 methods = {algo, algo2, algo3};
 
-% warning('off',['GAIL:',algoname,':peaky'])
-% warning('off',['GAIL:',algoname,':exceedbudget'])
-% warning('off',['GAIL:',algoname,':fSmallerThanAbstol'])
-% warning('off','GAIL:funminglobal_g:peaky')
-% warning('off','GAIL:funminglobal_g:exceedbudget')
+warning('off',['GAIL:',algoname,':peaky'])
+warning('off',['GAIL:',algoname,':exceedbudget'])
+warning('off',['GAIL:',algoname,':fSmallerThanAbstol'])
+warning('off','GAIL:funappxglobal_g:peaky')
+warning('off','GAIL:funappxglobal_g:exceedbudget')
 
 g1 = @(x,c) x.^4.*sin(c./((x==0)+x)); 
 g2 = @(x,c) g1(x,c) + 10.*x.^2;
 delta = .2; B = 1./(2*delta.^2);
-g3 = @(x,cc) -B*(4*delta.^2 + (x-cc).^2 + (x-cc-delta).*abs(x-cc-delta) ...
+g3 = @(x,cc) B*(4*delta.^2 + (x-cc).^2 + (x-cc-delta).*abs(x-cc-delta) ...
   - (x-cc+delta).*abs(x-cc+delta)).*(abs(x-cc) <= 2*delta);
-% g4 = @(x,c) (x-c).^2;
-% g5 = @(x,c) c*sin(c*pi*x);
-% g6 = @(x,c) -10*exp(-1000*(x-c).^2);
+%g4 = @(x,c) (x-c).^2;
+%g5 = @(x,c) c*sin(c*pi*x);
+%g6 = @(x,c) 10*exp(-1000*(x-c).^2);
 
 a = zeros(1,n);
 b = zeros(1,n);
@@ -56,110 +59,87 @@ for i = 1:nrep
   if (i-1)/10 == round((i-1)/10)
      disp(['Starting case ' int2str(i) ' out of ' int2str(nrep)])
   end
-
   f1 = @(x) g1(x,c(i));
   f2 = @(x) g2(x,c(i));
   f3 = @(x) g3(x,cc(i)*0.6);
-%   f4 = @(x) g4(x,c(i));
-%   f5 = @(x) g5(x,c(i));
-%   f6 = @(x) g6(x,c(i));
+  %f4 = @(x) g4(x,c(i));
+  %f5 = @(x) g5(x,c(i));
+  %f6 = @(x) g6(x,c(i));
   fcns = {f1, f2, f3};
-  
+  %          f4 = @(x) 1/4*c(i)*exp(-2*x).*(c(i)-2*exp(x).*(-1 +...
+  %              c(i)*cos(x) - c(i)*sin(x))+exp(2*x).*(c(i) + 2*cos(x)...
+  %              - 2* sin(x) - c(i)*sin(2*x)));
   for j = 1:length(fcns)
-    
     f = fcns{j};
-    
     if j > 3,
       b(j) = c(i)+1;
     end
-    
-    if j == 1
-      exactxmin = -1;
-      exactfmin = f(exactxmin);
-    elseif j == 2
-      exactfmin = 0;
-    elseif j==3
-      exactfmin = -1;
-%     elseif j==4
-%       exactxmin = c(i);
-%       exactfmin = 0;
-%     elseif j==5
-%       kk = 0:floor(b(j)*c(i)-.5);
-%       if isempty(kk)
-%         exactfmin = 0;
-%       else
-%         stat_pts = (kk + 0.5)/c(i);
-%         exactfmin = min(f([0,stat_pts,b(j)]));
-%       end
-%     elseif j==6
-%       exactfmin = -10;
-    end
-    
+    xx = a(j):0.000001:b(j);%rand(1000000,1)*(b-a)+a;
+    exactyy = f(xx);
     for k = 1:length(methods)
-      if k == 1
-        tic; [fmin, out_param] = methods{k}(f,a(j),b(j),abstol); t=toc;
+      clear fappx out_param yy t
+      if k <= 2
+        tic; [fappx, out_param] = methods{k}(f,a(j),b(j),abstol); t=toc;
         npoints(j,k,i) = out_param.npoints;
-      elseif k == 2
-        lastwarn('')
-        tic, [~, fmin, exitflag, out] = fminbnd(@(x) f(x), a(j), b(j), ...
-          optimset ('TolX', abstol, 'MaxFunEvals', out_param.nmax, 'MaxIter', out_param.maxiter) ); t=toc;
-        if ~isempty(lastwarn) || exitflag ~= 1 || out.iterations > out_param.maxiter
-          exceedmat(j,k,i) = 1;
-        end
-        npoints(j,k,i) = out.funcCount;
       elseif k == 3
         try
           lastwarn('')
-          tic, chebf = chebfun(f,[a(j),b(j)],'chebfuneps', abstol,'splitting','on');
-               fmin = min(chebf); 
-          t=toc;
+          tic, fappx = chebfun(f,[a(j),b(j)],'chebfuneps', abstol,'splitting','on'); t=toc;
           if ~isempty(lastwarn)
             exceedmat(j,k,i) = 1;
           end
         catch
-           disp('oops')
+           disp('Oops')
+           break
         end
-        npoints(j,k,i) = length(chebf);
+        npoints(j,k,i) = length(fappx);
       end
       time(j,k,i) = t;
       
-      trueerrormat(j,k,i) = max(abs(fmin-exactfmin));
+      if k ==1 || k==3
+        yy = fappx(xx);
+      elseif k ==2
+        yy = ppval(fappx,xx);
+      end
+      
+      trueerrormat(j,k,i) = max(abs(yy-exactyy));
 %       if trueerrormat(j,k,i)  > abstol
-%         cf_chebfun_min(f,a(j),b(j),abstol,exactfmin);
-%         j, k
+%         cf_chebfun(f,a(j),b(j), abstol);
 %         keyboard
 %       end
       if k==1
         exceedmat(j,k,i) = sum(out_param.exitflag)>0;
+      elseif k==2
+        exceedmat(j,k,i) = out_param.exceedbudget;
       end
     end
   end
 end;
-% warning('on','GAIL:funminglobal_g:exceedbudget')
-% warning('on','GAIL:funminglobal_g:peaky')
-% warning('on',['GAIL:',algoname,':peaky'])
-% warning('on',['GAIL:',algoname,':exceedbudget'])
-% warning('on',['GAIL:',algoname,':fSmallerThanAbstol'])
+warning('on','GAIL:funappxglobal_g:exceedbudget')
+warning('on','GAIL:funappxglobal_g:peaky')
+warning('on',['GAIL:',algoname,':peaky'])
+warning('on',['GAIL:',algoname,':exceedbudget'])
+warning('on',['GAIL:',algoname,':fSmallerThanAbstol'])
 
-permuted_index = [3, 1:2];
-% permuted_index = [3, 1:2, 4:length(fcns)];
+permuted_index = [3, 1:2];%, 4:length(fcns)];
+% 
 % d = 1.9;
 % cc = d/4;
 % f1 = @(x) g1(x,d);
 % f2 = @(x) g2(x,d);
 % f3 = @(x) g3(x,cc*0.6);
-% f4 = @(x) g4(x,d);
+% %f4 = @(x) g4(x,d);
 % f5 = @(x) g5(x,d);
 % f6 = @(x) g6(x,d);
 % fcns = {f1, f2, f3, f4, f5, f6};
 % x = cell(length(fcns));
 % y = cell(length(fcns));
 % for i=1:length(fcns)
-%   if i > 3,
-%     b(i) = d+1;
-%   end
-%   x{i} = a(i):0.05:b(i);
-%   y{i} = fcns{i}(x{i});
+%     if i > 3,
+%         b(i) = d+1;
+%     end
+%     x{i} = a(i):0.05:d+1;
+%     y{i} = fcns{i}(x{i});
 % end
 
 timeratio = zeros(m-1,nrep,n);
@@ -188,18 +168,18 @@ end
 %% Output the table
 % To just re-display the output, load the .mat file and run this section
 % only
-[fileID, fullPath] = gail.open_txt('TraubPaperOutput', ['traub_',algoname,'_test']);
+[fileID, fullPath] = gail.open_txt('TraubPaperOutput', [algoname,'_test']);
 fprintf(fileID,'\n');
 fprintf(fileID,'# of replications = %1.0f\n',nrep);
 fprintf(fileID,'   Test         Number of Points                    Time Used                          Success (%%)                                  Failure (%%)\n');
 fprintf(fileID,'  Function   ----------------------------    -------------------------------     --------------------------------------   ----------------------------------------\n');
-fprintf(fileID,'             funmin_g   fminbnd   Chebfun    funmin_g     fminbnd    Chebfun     funmin_g        fminbnd        Chebfun   funmin_g        fminbnd       Chebfun\n');
+fprintf(fileID,'             Local      Global    Chebfun    Local       Global      Chebfun     Local        Global         Chebfun       Local         Global        Chebfun\n');
 fprintf(fileID,'                                                                                 No Warn Warn No Warn Warn   No Warn Warn  No Warn Warn  No Warn Warn  No Warn Warn\n');
 npointslgratio = zeros(1,n);
 timelgratio = zeros(1,n);
 
 for i = permuted_index
-  fprintf(fileID,'%9.0f %9.0f %9.0f  %9.0f %11.4f  %11.4f %11.4f  %6.0f %6.0f %6.0f %6.0f %6.0f   %6.0f %6.0f %6.0f %6.0f %6.0f %6.0f %6.0f \n',...
+  fprintf(fileID,'%9.0f %9.0f %9.0f  %9.0f %11.4f  %11.4f %11.4f  %6.0f %6.0f %6.0f %6.0f %6.0f   %6.0f %6.0f %6.0f %6.0f %6.0f %6.0f %6.0f\n',...
     [i mean(npoints(i,1,:)) mean(npoints(i,2,:)) mean(npoints(i,3,:))...
     mean(time(i,1,:)) mean(time(i,2,:)) mean(time(i,3,:))...
     100.0*sum(trueerrormat(i,1,:)<=abstol)/nrep 100.0*sum(trueerrormat(i,1,:)<=abstol & (exceedmat(i,1,:)))/nrep ...
@@ -227,6 +207,7 @@ MATLABPurple = [0.494,  0.184, 0.556];
 MATLABGreen = [0.466,  0.674, 0.188];
 MATLABDkOrange = [0.85,  0.325, 0.098]*0.6;
 MATLABLtOrange = 0.5*[0.85,  0.325, 0.098] + 0.5*[1 1 1];
+%markers = {'--go', ':r*', '-.b.', '-g+', '--ro', '-.b'};
 markers = {MATLABBlue, MATLABOrange, MATLABPurple, MATLABGreen, MATLABDkOrange,MATLABLtOrange};
 if usejava('jvm') || MATLABVERSION <= 7.12
 %   figure
@@ -234,38 +215,45 @@ if usejava('jvm') || MATLABVERSION <= 7.12
 %   for i = permuted_index
 %     plot(x{i},y{i},'color',markers{i}); 
 %   end
-%   
-%   legend('\(f_3\)','\(g_1\)','\(g_2\)','\(g_3\)','\(g_4\)','\(g_5\)','Location','NorthWest','Interpreter','latex')
-%   xlabel('x')
-%   gail.save_eps('TraubPaperOutput', ['traub_',algoname,'_testfun']);
+%   hold off
+%  
+%  legend('\(f_3\)','\(g_1\)','\(g_2\)','\(g_3\)','\(g_4\)','\(g_5\)','Location','NorthWest')
+%  xlabel('x')
+%  gail.save_eps('TraubPaperOutput', [algoname,'_testfun']);
   
   figure
   t = ((1:nrep*n) -1/2)/(nrep*n);
-  for k = 1:m-1
+  for k = 2:m-1
+    %subplot(1,m-1,k)
     semilogx(sorted_timeratio(k,:),t,'color',markers{k*2-1}); hold on
     semilogx(sorted_npointsratio(k,:),t,'color',markers{2*k});  hold on
     xlabel('Ratios'); 
     ylabel('Probability')
+    %title([algoname, ' vs. ', func2str( methods{k+1})])
   end
-%   hold off
-%   h=legend('{\tt funmin\_g} vs. {\tt fminbnd} time ratio', '{\tt funmin\_g} vs. {\tt fminbnd} points ratio',...
-%          '{\tt funmin\_g} vs. Chebfun time ratio', '{\tt funmin\_g} vs. Chebfun points ratio',...
-%          'Location','NorthWest');
-%   set(h, 'Interpreter', 'latex')   
+  hold off
+%   h=legend('{\tt funappx\_g} time / {\tt funappxglobal\_g} time',...
+%            '{\tt funappx\_g} vs. {\tt funappxglobal\_g} points ratio',...
+%            '{\tt funappx\_g} vs. Chebfun time ratio',...
+%            '{\tt funappx\_g} vs. Chebfun points ratio',...
+%            'Location','NorthWest');
+%   set(h, 'Interpreter', 'latex')
 %   legend BOXOFF 
-  gail.save_eps('TraubPaperOutput', ['traub_',algoname,'_test']);
+  gail.save_eps('TraubPaperOutput', [algoname,'_test']);
 end;
-gail.save_mat('TraubPaperOutput', ['traub_',algoname,'_test'], true, npoints, ...
-  time, c, timeratio, npointsratio, npointslgratio, timelgratio, nrep, n, m,...
-  sorted_timeratio, sorted_npointsratio);
+gail.save_mat('TraubPaperOutput', [algoname,'_test'], true, npoints, ...
+  time, c, timeratio, npointsratio, npointslgratio, timelgratio, nrep, n, m, ...
+  sorted_timeratio, sorted_npointsratio, algoname);
 end
+
 
 %% Sample printout
 % # of replications = 1000
 %    Test         Number of Points                    Time Used                          Success (%)                                  Failure (%)
 %   Function   ----------------------------    -------------------------------     --------------------------------------   ----------------------------------------
-%              funmin_g   fminbnd   Chebfun    funmin_g     fminbnd    Chebfun     funmin_g        fminbnd        Chebfun   funmin_g        fminbnd       Chebfun
+%              Local      Global    Chebfun    Local       Global      Chebfun     Local        Global         Chebfun       Local         Global        Chebfun
 %                                                                                  No Warn Warn No Warn Warn   No Warn Warn  No Warn Warn  No Warn Warn  No Warn Warn
-%         3       274         8        116      0.0027       0.0019      0.0923     100      0    100      0     14        0      0      0      0      0     86      0 
-%         1       230        22         43      0.0025       0.0025      0.0189     100      0     27      0     60        0      0      0     73      0     40      0 
-%         2       273         9         22      0.0028       0.0021      0.0114     100      0    100      0     35        0      0      0      0      0     65      0 
+%         3      5659     46439        116      0.0084       0.0137      0.0403     100      0    100      0      0        0      0      0      0      0    100      0
+%         1      3690     26265         43      0.0091       0.0119      0.0104      98      0    100      0      3        0      2      0      0      0     97      0
+%         2     11835     97106         22      0.0114       0.0246      0.0061     100      0    100      0      3        0      0      0      0      0     97      0
+% IdleTimeout has been reached.
