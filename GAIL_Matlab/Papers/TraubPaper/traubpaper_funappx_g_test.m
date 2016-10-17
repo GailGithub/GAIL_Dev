@@ -27,8 +27,11 @@ exceedmat  = zeros(n,m,nrep);
 if isempty(varargin)
   algoname = 'funappx_g';
   algo = @(f,a,b,abstol) funappx_g(f,a,b,abstol);
-else
-  algoname = varargin{1};
+elseif size(varargin) == 1
+  algoname = 'funappx_g';
+  algo = @(f,a,b,abstol) funappx_g(f,a,b,abstol,varargin{1});
+else 
+  algoname = varargin{2};
   algo = str2func(['@(f,a,b,abstol)', algoname,'(f,a,b,abstol)']);
 end
 
@@ -243,7 +246,9 @@ if usejava('jvm') || MATLABVERSION <= 7.12
 end;
 gail.save_mat('TraubPaperOutput', ['traub_',algoname,'_test'], true, npoints, ...
   time, c, timeratio, npointsratio, npointslgratio, timelgratio, nrep, n, m, ...
-  sorted_timeratio, sorted_npointsratio, algoname);
+  sorted_timeratio, sorted_npointsratio, ...
+  trueerrormat, exceedmat, permuted_index, abstol, ...
+  algoname);
 end
 
 

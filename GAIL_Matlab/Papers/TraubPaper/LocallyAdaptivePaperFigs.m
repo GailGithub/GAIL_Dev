@@ -1,4 +1,4 @@
-function LocallyAdaptivePaperFigs(colorfig)
+function LocallyAdaptivePaperFigs(funappxRes,funminRes,colorfig)
 % LOCALLYADPATIVEPAPERFIGS createS some figures for the paper on local
 % adpation for function approximation and optimization submitted to the
 % Joseph Traub memorial issue in the Journal of Complexity
@@ -7,8 +7,14 @@ function LocallyAdaptivePaperFigs(colorfig)
 
 gail.InitializeDisplay %initialize the workspace and the display parameters
 set(0,'defaultLineLineWidth',4) %thicker lines
-if nargin < 1 
+if nargin < 3
    colorfig = true; %color figures
+   if nargin < 2
+      funminRes = []; %file for funmin_g testing
+      if nargin < 1
+         funappxRes = []; %file for funappx_g testing
+      end
+   end
 end
 if ~colorfig %black and white figures
    MATLABBlue = zeros(1,3);
@@ -166,17 +172,54 @@ ylabel('Chebfun error')
 set(gca,'ytick',10.^(5*ceil(small/5):5:5*floor(large/5)))
 gail.save_eps('TraubPaperOutput', 'chebfun_errors');
 
-%% Chebfun/funppx_g ratios
-sorted_timeratio = 0;
-sorted_npointsratio = 0;
-load traub_funappx_g_test-2016-10-09-19-36-50  
-figure
-t = ((1:nrep*n) -1/2)/(nrep*n);
-h = semilogx(sorted_timeratio(2,:),t,'color',MATLABBlue); hold on
-h = [h; semilogx(sorted_npointsratio(2,:),t,'--','color',MATLABOrange)]; 
-    xlabel('Ratios'); 
-    ylabel('Probability')
-legend(h,{'Time','\# Samples'},'location','northwest','box','off')
-hold off
-gail.save_eps('TraubPaperOutput', ['traub_',algoname,'_test']);
+%% Output funappx Table
+if ~strcmp(funappxRes,'')
+   sorted_timeratio = 0;
+   sorted_npointsratio = 0;
+   trueerrormat = 0;
+   exceedmat = 0;
+   npoints = 0;
+   time = 0;
+   load(funappxRes)
+   [fileID, fullPath] = gail.open_txt('TraubPaperOutput', [funappxRes 'Table']);
+   fprintf(fileID,'\n');
+   fprintf(fileID,'# of replications = %1.0f\n',nrep);
+   fprintf(fileID,'   Test         Number of Points                    Time Used                          Success (%%)                                  Failure (%%)\n');
+   fprintf(fileID,'  Function   ----------------------------    -------------------------------     --------------------------------------   ----------------------------------------\n');
+   fprintf(fileID,'             Local      Global    Chebfun    Local       Global      Chebfun     Local        Global         Chebfun       Local         Global        Chebfun\n');
+   fprintf(fileID,'                                                                                 No Warn Warn No Warn Warn   No Warn Warn  No Warn Warn  No Warn Warn  No Warn Warn\n');
+   npointslgratio = zeros(1,n);
+   timelgratio = zeros(1,n);
 
+   for i = permuted_index
+     fprintf(fileID,'%9.0f %9.0f %9.0f  %9.0f %11.4f  %11.4f %11.4f  %6.0f %6.0f %6.0f %6.0f %6.0f   %6.0f %6.0f %6.0f %6.0f %6.0f %6.0f %6.0f\n',...
+       [i mean(npoints(i,1,:)) mean(npoints(i,2,:)) mean(npoints(i,3,:))...
+       mean(time(i,1,:)) mean(time(i,2,:)) mean(time(i,3,:))...
+       100.0*sum(trueerrormat(i,1,:)<=abstol)/nrep 100.0*sum(trueerrormat(i,1,:)<=abstol & (exceedmat(i,1,:)))/nrep ...
+       100.0*sum(trueerrormat(i,2,:)<=abstol)/nrep 100.0*sum(trueerrormat(i,2,:)<=abstol & (exceedmat(i,2,:)))/nrep ...
+       100.0*sum(trueerrormat(i,3,:)<=abstol)/nrep 100.0*sum(trueerrormat(i,3,:)<=abstol & (exceedmat(i,3,:)))/nrep...
+       100.0*sum(trueerrormat(i,1,:)>abstol)/nrep  100.0*sum(trueerrormat(i,1,:)>abstol & (exceedmat(i,1,:)))/nrep ...
+       100.0*sum(trueerrormat(i,2,:)>abstol)/nrep  100.0*sum(trueerrormat(i,2,:)>abstol & (exceedmat(i,2,:)))/nrep ...
+       100.0*sum(trueerrormat(i,3,:)>abstol)/nrep  100.0*sum(trueerrormat(i,3,:)>abstol & (exceedmat(i,3,:)))/nrep]);
+     npointslgratio(i) = mean(npoints(i,1,:))/mean(npoints(i,2,:));
+     timelgratio(i) = mean(time(i,1,:))/mean(time(i,2,:));
+   end
+   fclose(fileID);
+   type(fullPath)
+
+%% Chebfun/funppx_g ratios
+   figure
+   t = ((1:nrep*n) -1/2)/(nrep*n);
+   h = semilogx(sorted_timeratio(2,:),t,'color',MATLABBlue); hold on
+   h = [h; semilogx(sorted_npointsratio(2,:),t,'--','color',MATLABOrange)]; 
+       xlabel('Ratios'); 
+       ylabel('Probability')
+   legend(h,{'Time','\# Samples'},'location','northwest','box','off')
+   hold off
+   gail.save_eps('TraubPaperOutput', ['traub_',algoname,'_test']);
+end
+ 
+%% Output funmin_g Table
+if ~strcmp(funminRes,'')
+   disp('Put table here please')
+end
