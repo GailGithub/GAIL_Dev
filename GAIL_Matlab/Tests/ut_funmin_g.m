@@ -52,18 +52,18 @@ classdef ut_funmin_g < matlab.unittest.TestCase
             [fmin, result] = funmin_g(f,in_param); 
             actualmin = -1;
             actualerr = abs(actualmin-fmin);
-            intnum = size(result.intervals,2);
+%             intnum = size(result.intervals,2);
             exactsolu = z;
             testflag = 1;
             if actualerr <= in_param.abstol
                 testflag = 0;
             end
-            for k=1:intnum
-                if exactsolu <= result.intervals(2,k) && exactsolu >= ...
-                        result.intervals(1,k)
-                 testflag = 0;
-                end
-            end
+%             for k=1:intnum
+%                 if exactsolu <= result.intervals(2,k) && exactsolu >= ...
+%                         result.intervals(1,k)
+%                  testflag = 0;
+%                 end
+%             end
             testCase.verifyLessThan(testflag,1);
             testCase.verifyLessThanOrEqual(result.npoints,in_param.nmax);
         end
@@ -173,9 +173,9 @@ classdef ut_funmin_g < matlab.unittest.TestCase
             % verify guarantee |min(f)-fmin| <= abstol
             testCase.verifyLessThanOrEqual(abs(fmin-0), in_param.abstol)
             % verify result.intervals is a subinterval of exactsolu1
-            testCase.verifyLessThanOrEqual(exactsolu1(1),result.intervals(1));
-            testCase.verifyLessThanOrEqual(result.intervals(1),result.intervals(2));
-            testCase.verifyLessThanOrEqual(result.intervals(2),exactsolu1(2));
+%             testCase.verifyLessThanOrEqual(exactsolu1(1),result.intervals(1));
+%             testCase.verifyLessThanOrEqual(result.intervals(1),result.intervals(2));
+%             testCase.verifyLessThanOrEqual(result.intervals(2),exactsolu1(2));
         end
         
         function funmin_gEXM8(testCase)

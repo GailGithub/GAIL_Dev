@@ -1,14 +1,14 @@
-% traubpaper_funappx_g_test: comparison between funappx_g and funappxlocal_g
+% funappx_g_test: comparison between funappx_g and funappxlocal_g
 function [timeratio,timelgratio,npointsratio,npointslgratio] ...
-   =traubpaper_funappx_g_test(nrep,abstol,varargin)
+   =funappx_g_test(nrep,abstol,varargin)
 % user can choose absolut error tolerance, initial number of points, number
 % of iteration or can use the following parameters
 % nrep = 100; abstol = 1e-6;
 % Compare funappx_g with funappxglobal_g and chebfun:
-% [timeratio,timelgratio,npointsratio,npointslgratio]=traubpaper_funappx_g_test(nrep,abstol);
+% [timeratio,timelgratio,npointsratio,npointslgratio]=funappx_g_test(nrep,abstol);
 %
 % Compare funappxPenalty_g with funappxglobal_g and chebfun:
-% [timeratio,timelgratio,npointsratio,npointslgratio]=traubpaper_funappx_g_test(nrep,abstol,'funappxPenalty_g');
+% [timeratio,timelgratio,npointsratio,npointslgratio]=funappx_g_test(nrep,abstol,'funappxPenalty_g');
 rng default % for reproducibility
 if nargin < 2
    abstol = 1e-6;
@@ -171,7 +171,7 @@ end
 %% Output the table
 % To just re-display the output, load the .mat file and run this section
 % only
-[fileID, fullPath] = gail.open_txt('TraubPaperOutput', ['traub_',algoname,'_test']);
+[fileID, fullPath] = gail.open_txt('TraubPaperOutput', [algoname,'_test']);
 fprintf(fileID,'\n');
 fprintf(fileID,'# of replications = %1.0f\n',nrep);
 fprintf(fileID,'   Test         Number of Points                    Time Used                          Success (%%)                                  Failure (%%)\n');
@@ -222,7 +222,7 @@ if usejava('jvm') || MATLABVERSION <= 7.12
 %  
 %  legend('\(f_3\)','\(g_1\)','\(g_2\)','\(g_3\)','\(g_4\)','\(g_5\)','Location','NorthWest')
 %  xlabel('x')
-%  gail.save_eps('TraubPaperOutput', ['traub_',algoname,'_testfun']);
+%  gail.save_eps('TraubPaperOutput', [algoname,'_testfun']);
   
   figure
   t = ((1:nrep*n) -1/2)/(nrep*n);
@@ -242,9 +242,9 @@ if usejava('jvm') || MATLABVERSION <= 7.12
 %            'Location','NorthWest');
 %   set(h, 'Interpreter', 'latex')
 %   legend BOXOFF 
-  gail.save_eps('TraubPaperOutput', ['traub_',algoname,'_test']);
+  gail.save_eps('TraubPaperOutput', [algoname,'_test']);
 end;
-gail.save_mat('TraubPaperOutput', ['traub_',algoname,'_test'], true, npoints, ...
+gail.save_mat('TraubPaperOutput', [algoname,'_test'], true, npoints, ...
   time, c, timeratio, npointsratio, npointslgratio, timelgratio, nrep, n, m, ...
   sorted_timeratio, sorted_npointsratio, ...
   trueerrormat, exceedmat, permuted_index, abstol, ...
