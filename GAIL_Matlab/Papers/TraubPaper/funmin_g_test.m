@@ -185,39 +185,6 @@ for k = 1:m-1
   sorted_npointsratio(k,:) = sort(npointsratio(k,:));
 end
 
-%% Output the table
-% To just re-display the output, load the .mat file and run this section
-% only
-[fileID, fullPath] = gail.open_txt('TraubPaperOutput', [algoname,'_test']);
-fprintf(fileID,'\n');
-fprintf(fileID,'# of replications = %1.0f\n',nrep);
-fprintf(fileID,'   Test         Number of Points                    Time Used                          Success (%%)                                  Failure (%%)\n');
-fprintf(fileID,'  Function   ----------------------------    -------------------------------     --------------------------------------   ----------------------------------------\n');
-fprintf(fileID,'             funmin_g   fminbnd   Chebfun    funmin_g     fminbnd    Chebfun     funmin_g        fminbnd        Chebfun   funmin_g        fminbnd       Chebfun\n');
-fprintf(fileID,'                                                                                 No Warn Warn No Warn Warn   No Warn Warn  No Warn Warn  No Warn Warn  No Warn Warn\n');
-npointslgratio = zeros(1,n);
-timelgratio = zeros(1,n);
-
-for i = permuted_index
-  fprintf(fileID,'%9.0f %9.0f %9.0f  %9.0f %11.4f  %11.4f %11.4f  %6.0f %6.0f %6.0f %6.0f %6.0f   %6.0f %6.0f %6.0f %6.0f %6.0f %6.0f %6.0f \n',...
-    [i mean(npoints(i,1,:)) mean(npoints(i,2,:)) mean(npoints(i,3,:))...
-    mean(time(i,1,:)) mean(time(i,2,:)) mean(time(i,3,:))...
-    100.0*sum(trueerrormat(i,1,:)<=abstol)/nrep 100.0*sum(trueerrormat(i,1,:)<=abstol & (exceedmat(i,1,:)))/nrep ...
-    100.0*sum(trueerrormat(i,2,:)<=abstol)/nrep 100.0*sum(trueerrormat(i,2,:)<=abstol & (exceedmat(i,2,:)))/nrep ...
-    100.0*sum(trueerrormat(i,3,:)<=abstol)/nrep 100.0*sum(trueerrormat(i,3,:)<=abstol & (exceedmat(i,3,:)))/nrep...
-    100.0*sum(trueerrormat(i,1,:)>abstol)/nrep  100.0*sum(trueerrormat(i,1,:)>abstol & (exceedmat(i,1,:)))/nrep ...
-    100.0*sum(trueerrormat(i,2,:)>abstol)/nrep  100.0*sum(trueerrormat(i,2,:)>abstol & (exceedmat(i,2,:)))/nrep ...
-    100.0*sum(trueerrormat(i,3,:)>abstol)/nrep  100.0*sum(trueerrormat(i,3,:)>abstol & (exceedmat(i,3,:)))/nrep]);
-  npointslgratio(i) = mean(npoints(i,1,:))/mean(npoints(i,2,:));
-  timelgratio(i) = mean(time(i,1,:))/mean(time(i,2,:));
-end
-fclose(fileID);
-type(fullPath)
-
-%% Output the table
-% To just re-display the output, load the .mat file and run this section
-% only
-
 %% Save Output
 [~,~,MATLABVERSION] = GAILstart(false);
 gail.InitializeDisplay
@@ -257,7 +224,8 @@ if usejava('jvm') || MATLABVERSION <= 7.12
 end;
 gail.save_mat('TraubPaperOutput', [algoname,'_test'], true, npoints, ...
   time, c, timeratio, npointsratio, npointslgratio, timelgratio, nrep, n, m,...
-  sorted_timeratio, sorted_npointsratio);
+  sorted_timeratio, sorted_npointsratio,...
+  trueerrormat, exceedmat, permuted_index, abstol);
 end
 
 %% Sample printout

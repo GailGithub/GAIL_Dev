@@ -221,5 +221,34 @@ end
  
 %% Output funmin_g Table
 if ~strcmp(funminRes,'')
-   disp('Put table here please')
+   trueerrormat = 0;
+   exceedmat = 0;
+   npoints = 0;
+   time = 0;
+   load(funminRes) 
+   [fileID, fullPath] = gail.open_txt('TraubPaperOutput', [algoname,'_test']);
+   fprintf(fileID,'\n');
+   fprintf(fileID,'# of replications = %1.0f\n',nrep);
+   fprintf(fileID,'   Test         Number of Points                    Time Used                          Success (%%)                                  Failure (%%)\n');
+   fprintf(fileID,'  Function   ----------------------------    -------------------------------     --------------------------------------   ----------------------------------------\n');
+   fprintf(fileID,'             funmin_g   fminbnd   Chebfun    funmin_g     fminbnd    Chebfun     funmin_g        fminbnd        Chebfun   funmin_g        fminbnd       Chebfun\n');
+   fprintf(fileID,'                                                                                 No Warn Warn No Warn Warn   No Warn Warn  No Warn Warn  No Warn Warn  No Warn Warn\n');
+   npointslgratio = zeros(1,n);
+   timelgratio = zeros(1,n);
+   
+   for i = permuted_index
+       fprintf(fileID,'%9.0f %9.0f %9.0f  %9.0f %11.4f  %11.4f %11.4f  %6.0f %6.0f %6.0f %6.0f %6.0f   %6.0f %6.0f %6.0f %6.0f %6.0f %6.0f %6.0f \n',...
+           [i mean(npoints(i,1,:)) mean(npoints(i,2,:)) mean(npoints(i,3,:))...
+           mean(time(i,1,:)) mean(time(i,2,:)) mean(time(i,3,:))...
+           100.0*sum(trueerrormat(i,1,:)<=abstol)/nrep 100.0*sum(trueerrormat(i,1,:)<=abstol & (exceedmat(i,1,:)))/nrep ...
+           100.0*sum(trueerrormat(i,2,:)<=abstol)/nrep 100.0*sum(trueerrormat(i,2,:)<=abstol & (exceedmat(i,2,:)))/nrep ...
+           100.0*sum(trueerrormat(i,3,:)<=abstol)/nrep 100.0*sum(trueerrormat(i,3,:)<=abstol & (exceedmat(i,3,:)))/nrep...
+           100.0*sum(trueerrormat(i,1,:)>abstol)/nrep  100.0*sum(trueerrormat(i,1,:)>abstol & (exceedmat(i,1,:)))/nrep ...
+           100.0*sum(trueerrormat(i,2,:)>abstol)/nrep  100.0*sum(trueerrormat(i,2,:)>abstol & (exceedmat(i,2,:)))/nrep ...
+           100.0*sum(trueerrormat(i,3,:)>abstol)/nrep  100.0*sum(trueerrormat(i,3,:)>abstol & (exceedmat(i,3,:)))/nrep]);
+       npointslgratio(i) = mean(npoints(i,1,:))/mean(npoints(i,2,:));
+       timelgratio(i) = mean(time(i,1,:))/mean(time(i,2,:));
+   end
+   fclose(fileID);
+   type(fullPath)
 end
