@@ -1,14 +1,14 @@
 % funappx_g_test: comparison between funappx_g and funappxlocal_g
-function [timeratio,timelgratio,npointsratio,npointslgratio] ...
+function [timeratio,npointsratio] ...
    =funappx_g_test(nrep,abstol,varargin)
 % user can choose absolute error tolerance, initial number of subintervals,
 % number of iteration or can use the following parameters
 % nrep = 100; abstol = 1e-6; ninit = 250;
 % Compare funappx_g with funappxglobal_g and chebfun:
-% [timeratio,timelgratio,npointsratio,npointslgratio]=funappx_g_test(nrep,abstol,ninit);
+% [timeration,pointsratio]=funappx_g_test(nrep,abstol,ninit);
 %
 % Compare funappxPenalty_g with funappxglobal_g and chebfun:
-% [timeratio,timelgratio,npointsratio,npointslgratio]=funappx_g_test(nrep,abstol,ninit,'funappxPenalty_g');
+% [timeratio,npointsratio]=funappx_g_test(nrep,abstol,ninit,'funappxPenalty_g');
 rng default % for reproducibility
 if nargin < 2
    abstol = 1e-6;
@@ -212,7 +212,7 @@ if usejava('jvm') || MATLABVERSION <= 7.12
   gail.save_eps('TraubPaperOutput', [algoname,'_test']);
 end;
 gail.save_mat('TraubPaperOutput', [algoname,'_test'], true, npoints, ...
-  time, c, timeratio, npointsratio, npointslgratio, timelgratio, nrep, n, m, ...
+  time, c, timeratio, npointsratio, nrep, n, m, ...
   sorted_timeratio, sorted_npointsratio, ...
   trueerrormat, exceedmat, permuted_index, abstol, ...
   algoname);
