@@ -365,8 +365,8 @@ out_param = orderfields(out_param, ...
 
 
 if (in_param.output_x)
-  out_param.x = x;
-  out_param.y = y;
+  out_param.x = x(1:n);
+  out_param.y = y(1:n);
 end
 
 

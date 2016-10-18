@@ -104,8 +104,7 @@ legend(h,{'\(f_1(x)\)','\(-f_1(x)\)','\(\pm f_1(x_i)\)'}, ...
 gail.save_eps(whichdir, 'f3foolplot');
 
 %% Sampling of hump functions for funappx_g
-in_param.nlo = 10;
-in_param.nhi = in_param.nlo;
+in_param.ninit = 20;
 in_param.abstol = 0.02;
 in_param.a=-1;
 in_param.b=1;
@@ -155,8 +154,10 @@ delta = 0.2;
 f = @(x) f3param(x,delta,c); 
 a = - 1; 
 b = 1; 
-chebfuntol = 1e-14;  
+chebfuntol = 1e-12; 
+t0 = tic;
 chf = chebfun(f,[a,b],'chebfuneps', chebfuntol,'splitting','on');
+t_chebfun = toc(t0)
 x=a:0.00001:b;
 err = abs(chf(x) - f(x));
 [~,ind] = find(err > chebfuntol*10);
@@ -172,8 +173,15 @@ ylabel('Chebfun error')
 set(gca,'ytick',10.^(5*ceil(small/5):5:5*floor(large/5)))
 gail.save_eps('TraubPaperOutput', 'chebfun_errors');
 
+%% Time and error for funappx_g
+t0 = tic;
+[fhat,out] = funappx_g(f,a,b,chebfuntol)
+t_funappx = toc(t0)
+t_ratio = t_funappx/t_chebfun
+err_funappx = max(abs(f(x) - fhat(x)))
+
 %% Output funappx Table
-if ~strcmp(funappxRes,'')
+if numel(funappxRes) > 0
    sorted_timeratio = 0;
    sorted_npointsratio = 0;
    trueerrormat = 0;
@@ -216,11 +224,11 @@ if ~strcmp(funappxRes,'')
        ylabel('Probability')
    legend(h,{'Time','\# Samples'},'location','northwest','box','off')
    hold off
-   gail.save_eps('TraubPaperOutput', ['traub_',algoname,'_test']);
+   gail.save_eps('TraubPaperOutput', [algoname,'_test']);
 end
  
 %% Output funmin_g Table
-if ~strcmp(funminRes,'')
+if numel(funminRes) > 0
    trueerrormat = 0;
    exceedmat = 0;
    npoints = 0;
