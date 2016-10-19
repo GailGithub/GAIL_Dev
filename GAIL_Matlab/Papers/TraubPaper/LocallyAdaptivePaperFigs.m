@@ -12,8 +12,8 @@ function LocallyAdaptivePaperFigs(funappxRes,funminRes,colorfig)
 %
 %   LocallyAdaptivePaperFigs
 %
-% Example 2: To plot all figures and print summary tables from 
-% the input mat files by running 'funappx_g_test' and 'funmin_g_test', run
+% Example 2: To plot all figures and print summary tables from the input
+% mat files (produced by running 'funappx_g_test' and 'funmin_g_test'), run
 %
 %   LocallyAdaptivePaperFigs('funappx_g_test-2016-10-18-20-17-56.mat', ...
 %                            'funmin_g_test-2016-10-18-20-23-58.mat')
