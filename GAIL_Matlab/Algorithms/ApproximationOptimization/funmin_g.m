@@ -36,7 +36,7 @@ function [fmin,out_param]=funmin_g(varargin)
 %
 %   Optional Input Arguments
 %
-%     in_param.ninit --- initial number of points
+%     in_param.ninit --- initial number of points. Default to 20.
 %
 %     in_param.nmax --- cost budget, default value is 1e7.
 %
