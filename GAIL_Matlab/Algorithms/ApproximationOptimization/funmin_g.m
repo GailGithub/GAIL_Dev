@@ -437,8 +437,8 @@ else
         addOptional(p,'abstol',default.abstol,@isnumeric);
         addOptional(p,'ninit',default.ninit,@isnumeric);
         addOptional(p,'nmax',default.nmax,@isnumeric);
-        addOptional(p,'maxiter',default.maxiter,@isnumeri);
-        addOptional(p,'output_x',default.output_x,@isnumeric);
+        addOptional(p,'maxiter',default.maxiter,@isnumeric);
+        addOptional(p,'output_x',default.output_x,@islogical);
     else
         if isstruct(in2) %parse input structure
             p.StructExpand = true;
@@ -450,7 +450,7 @@ else
         f_addParamVal(p,'ninit',default.ninit,@isnumeric);
         f_addParamVal(p,'nmax',default.nmax,@isnumeric);
         f_addParamVal(p,'maxiter',default.maxiter,@isnumeric);
-        f_addParamVal(p,'output_x',default.output_x,@isnumeric);
+        f_addParamVal(p,'output_x',default.output_x,@islogical);
     end
     parse(p,f,varargin{2:end})
     out_param = p.Results;
