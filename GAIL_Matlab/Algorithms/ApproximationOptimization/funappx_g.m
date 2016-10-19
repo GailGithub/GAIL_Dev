@@ -45,11 +45,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %
 %   Optional Input Arguments
 %
-%     in_param.nlo --- lower bound of initial number of points we use,
-%     default value is 10
-%
-%     in_param.nhi --- upper bound of initial number of points we use,
-%     default value is 1000
+%     in_param.ninit --- initial number of subintervals. Default to 20.
 %
 %     in_param.nmax --- when number of points hits the value, iteration
 %     will stop, default value is 1e7
@@ -71,16 +67,9 @@ function [fappx,out_param]=funappx_g(varargin)
 %
 %     out_param.abstol --- guaranteed absolute error tolerance
 %
-%     out_param.nlo --- a lower bound of initial number of points we use
-%
-%     out_param.nhi --- an upper bound of initial number of points we use
-%
-%     out_param.nmax --- when number of points hits the value, iteration
-%     will stop
-%
 %     out_param.maxiter --- max number of iterations
 %
-%     out_param.ninit --- initial number of points we use for each subinterval
+%     out_param.ninit --- initial number of subintervals
 %
 %     out_param.exit --- this is a vector with two elements, defining the
 %     conditions of success or failure satisfied when finishing the
@@ -115,68 +104,61 @@ function [fappx,out_param]=funappx_g(varargin)
 %   Example 1:
 %
 %   >> f = @(x) x.^2;
-%   >> [~, out_param] = funappx_g(f,-2,2,1e-7,10,20)
+%   >> [~, out_param] = funappx_g(f,-2,2,1e-7,18)
 %
-%     out_param = 
-%
-%            f: @(x)x.^2
+% out_param = 
+% 
 %            a: -2
-%            b: 2
 %       abstol: 1.0000e-07
-%          nlo: 10
-%          nhi: 20
+%            b: 2
+%            f: @(x)x.^2
+%      maxiter: 1000
 %        ninit: 18
 %         nmax: 10000000
-%      maxiter: 1000
 %     exitflag: [0 0 0 0 0]
 %         iter: 12
-%      npoints: 34817
-%       errest: ***e-***8
+%      npoints: 36865
+%       errest: 2.9448e-***8
 %
 %
 %   Example 2:
 %
 %   >> f = @(x) x.^2;
-%   >> [~, out_param] = funappx_g(f,'a',-2,'b',2,'nhi',20,'nlo',10)
+%   >> [~, out_param] = funappx_g(f,'a',-2,'b',2,'ninit',17)
 %
-%   out_param = 
-%
-%            f: @(x)x.^2
+%out_param = 
 %            a: -2
-%            b: 2
 %       abstol: 1.0000e-06
-%          nlo: 10
-%          nhi: 20
-%        ninit: 18
-%         nmax: 10000000
+%            b: 2
+%            f: @(x)x.^2
 %      maxiter: 1000
+%        ninit: 17
+%         nmax: 10000000
 %     exitflag: [0 0 0 0 0]
 %         iter: 10
 %      npoints: 8705
-%       errest: ***e-***7
+%       errest: 5.2896e-***7
 %
 %
 %   Example 3:
 %
 %   >> in_param.a = -5; in_param.b = 5; f = @(x) x.^2;
-%   >> in_param.abstol = 10^(-6); in_param.nlo = 10; in_param.nhi = 20;
+%   >> in_param.abstol = 10^(-6); in_param.ninit=18;
 %   >> [~, out_param] = funappx_g(f,in_param)
-%
-%   out_param = 
 % 
-%            f: @(x)x.^2
+% out_param = 
+% 
 %            a: -5
-%            b: 5
 %       abstol: 1.0000e-06
-%          nlo: 10
-%          nhi: 20
-%        ninit: 19
-%         nmax: 10000000
+%            b: 5
+%            f: @(x)x.^2
 %      maxiter: 1000
+%        ninit: 18
+%         nmax: 10000000
 %     exitflag: [0 0 0 0 0]
 %         iter: 11
 %      npoints: 18433
-%       errest: ***e-***7
+%       errest: 7.3654e-***7
 %
 %   
 %   See also INTERP1, GRIDDEDINTERPOLANT, INTEGRAL_G, MEANMC_G, FUNMIN_G
@@ -212,25 +194,27 @@ function [fappx,out_param]=funappx_g(varargin)
 %
 
 % check parameter satisfy conditions or not
-%[f, in_param] = funappx_g_param(varargin{:});
-in_param = gail.funappx_g_in_param(varargin{:});
-out_param = in_param.toStruct();
-f = in_param.f;
+[f, in_param]= funappx_g_param(varargin{:});
+%in_param = gail.funappx_g_in_param(varargin{:});
+%out_param = in_param.toStruct();
+out_param = in_param;
+%f = in_param.f;
 MATLABVERSION = gail.matlab_version;
 %out_param = in_param;
-%out_param = rmfield(out_param,'memorytest');
-%out_param = rmfield(out_param,'output_x');
+out_param = rmfield(out_param,'memorytest');
+out_param = rmfield(out_param,'output_x');
 
 %% main algorithm
 a = out_param.a;
 b = out_param.b;
 abstol = out_param.abstol;
-ninit = out_param.ninit;
+%initialize number of points
+ninitp = out_param.ninit+1;
 x = zeros(1, max(100,ceil(out_param.nmax/100))); % preallocation
 y = x;
-x(1:ninit) = a:(b-a)/(ninit-1):b;
-y(1:ninit) = f(x(1:ninit));
-indexI = ([0 ones(1,ninit-2) 0]>0);
+x(1:ninitp) = a:(b-a)/(ninitp-1):b;
+y(1:ninitp) = f(x(1:ninitp));
+indexI = ([0 ones(1,ninitp-2) 0]>0);
 iSing = find(isinf(y));
 if ~isempty(iSing)
     out_param.exitflag(5) = true;
@@ -240,18 +224,18 @@ if length(y) == 1
     % probably f is a constant function and Matlab would  
     % reutrn only a scalar y = f(x) even if x is a vector 
     f = @(x) f(x) + 0 * x;
-    y(1:ninit) = f(x(1:ninit));
+    y(1:ninitp) = f(x(1:ninitp));
 end
 iter = 0;
 exit_len = 5;
 % we start the algorithm with all warning flags down
 out_param.exitflag = false(1,exit_len);
 C0 = 10;
-fh = 3*(b-a)/(ninit-2);
+fh = 3*(b-a)/(ninitp-2);
 C = @(h) (C0 * fh)./(fh-h);
 %C = @(h) (C0 * 2)./(1+exp(-h)); % logistic
 %C = @(h) C0 * (1+h.^2);         % quadratic
-npoints = ninit;
+npoints = ninitp;
 for iter_i = 1:out_param.maxiter,
     %% Stage 1: Check for convergence
     %% Compute the error for i in I
@@ -342,7 +326,7 @@ out_param.npoints = npoints;
 out_param.errest = max_errest;
 % control the order of out_param
 % out_param = orderfields(out_param, ...
-%            {'f', 'a', 'b','abstol','nlo','nhi','ninit','nmax','maxiter',...
+%            {'f', 'a', 'b','abstol','nlo','nhi','ninitp','nmax','maxiter',...
 %             'exitflag','iter','npoints','errest'});
 if MATLABVERSION >= 8.3
     fappx = griddedInterpolant(x,y,'linear');
@@ -367,8 +351,7 @@ function [f, out_param] = funappx_g_param(varargin)
 default.abstol = 1e-6;
 default.a = 0;
 default.b = 1;
-default.nlo = 10;
-default.nhi = 1000;
+default.ninit = 20;
 default.nmax = 1e7;
 default.maxiter = 1000;
 default.memorytest = false;
@@ -383,7 +366,7 @@ end;
 
  
 if isempty(varargin)
-  warning('GAIL:funappx_g:nofunction',['Function f must be specified. '...
+  warning('GAIL:funappx_g:nofunction',['Function f must be a function handle. '...
       'Now GAIL is using f(x)=exp(-100*(x-0.5)^2) and unit interval '...
       '[0,1].'])
   help funappx_g
@@ -412,9 +395,8 @@ if ~validvarargin
     out_param.a = default.a;
     out_param.b = default.b;
     out_param.abstol = default.abstol;
-    out_param.nlo = default.nlo;
-    out_param.nhi = default.nhi;
     out_param.nmax = default.nmax ;
+    out_param.ninit = default.ninit ;
     out_param.maxiter = default.maxiter;
     out_param.memorytest = default.memorytest;
     out_param.output_x = default.output_x;
@@ -426,8 +408,7 @@ else
         addOptional(p,'a',default.a,@isnumeric);
         addOptional(p,'b',default.b,@isnumeric);
         addOptional(p,'abstol',default.abstol,@isnumeric);
-        addOptional(p,'nlo',default.nlo,@isnumeric);
-        addOptional(p,'nhi',default.nhi,@isnumeric);
+        addOptional(p,'ninit',default.ninit,@isnumeric);
         addOptional(p,'nmax',default.nmax,@isnumeric)
         addOptional(p,'maxiter',default.maxiter,@isnumeric)
         addOptional(p,'memorytest',default.memorytest,@logical)
@@ -440,8 +421,7 @@ else
         f_addParamVal(p,'a',default.a,@isnumeric);
         f_addParamVal(p,'b',default.b,@isnumeric);
         f_addParamVal(p,'abstol',default.abstol,@isnumeric);
-        f_addParamVal(p,'nlo',default.nlo,@isnumeric);
-        f_addParamVal(p,'nhi',default.nhi,@isnumeric);
+        f_addParamVal(p,'ninit',default.ninit,@isnumeric);
         f_addParamVal(p,'nmax',default.nmax,@isnumeric);
         f_addParamVal(p,'maxiter',default.maxiter,@isnumeric);
         f_addParamVal(p,'memorytest',default.memorytest,@logical);
@@ -496,51 +476,48 @@ if (~gail.isposint(out_param.nmax))
     end;
 end
 
-if (~gail.isposint(out_param.nlo))
-    if gail.isposge3(out_param.nlo)
-        warning('GAIL:funappxgNoPenalty_g:lowinitnotint',['Lower bound of '...
-        'initial number of points should be a positive integer.' ...
-            ' Using ', num2str(ceil(out_param.nlo)) ' as nlo '])
+if (~gail.isposint(out_param.ninit))
+    if (out_param.ninit >= 5)
+        warning('GAIL:funappxgNoPenalty_g:initnotint',['Initial '...
+        'number of subintervals should be a positive integer.' ...
+            ' Using ', num2str(ceil(out_param.nlo)) ' as ninit '])
         out_param.nlo = ceil(out_param.nlo);
     else
-        warning('GAIL:funappxgNoPenalty_g:lowinitlt3',[' Lower bound of '...
-        'initial number of points should be a positive integer greater'...
-        ' than 3. Using 3 as nlo'])
-        out_param.nlo = 3;
+        warning('GAIL:funappxgNoPenalty_g:initlt3',[' Initial '...
+        'number of subintervals should be a positive integer greater'...
+        ' than or equal to 5. Using 5 as ninit'])
+        out_param.nlo = 5;
    end
-        warning('GAIL:funappxgNoPenalty_g:lowinitnotint',['Lower bound of '...
-        'initial nstar should be a positive integer.' ...
-        ' Using ', num2str(ceil(out_param.nlo)) ' as nlo '])
-        out_param.nlo = ceil(out_param.nlo);
-end
- if (~gail.isposint(out_param.nhi))
-    if gail.isposge3(out_param.nhi)
-        warning('GAIL:funappx_g:hiinitnotint',['Upper bound of '...
-        'initial number of points should be a positive integer.' ...
-        ' Using ', num2str(ceil(out_param.nhi)) ' as nhi' ])
-        out_param.nhi = ceil(out_param.nhi);
-    else
-        warning('GAIL:funappx_g:hiinitlt3',[' Upper bound of '...
-        'points should be a positive integer greater than 3. Using '...
-        'default number of points ' int2str(default.nhi) ' as nhi' ])
-        out_param.nhi = default.nhi;
-    end
-         warning('GAIL:funappx_g:hiinitnotint',['Upper bound of '...
-        'initial nstar should be a positive integer.' ...
-        ' Using ', num2str(ceil(out_param.nhi)) ' as nhi' ])
-        out_param.nhi = ceil(out_param.nhi);
+%         warning('GAIL:funappxgNoPenalty_g:initnotint',['Lower bound of '...
+%         'initial nstar should be a positive integer.' ...
+%         ' Using ', num2str(ceil(out_param.nlo)) ' as nlo '])
+%         out_param.nlo = ceil(out_param.nlo);
 end
 
-if (out_param.nlo > out_param.nhi)
-    warning('GAIL:funappx_g:logrhi', ['Lower bound of initial number of'...
-        ' points is larger than upper bound of initial number of '...
-        'points; Use nhi as nlo'])
-    out_param.nhi = out_param.nlo;
-end;
-
-h = out_param.b - out_param.a;
-out_param.ninit = ceil(out_param.nhi*(out_param.nlo/out_param.nhi)...
-    ^(1/(1+h)));
+%  if (~gail.isposint(out_param.nhi))
+%     if gail.isposge3(out_param.nhi)
+%         warning('GAIL:funappx_g:hiinitnotint',['Upper bound of '...
+%         'initial number of points should be a positive integer.' ...
+%         ' Using ', num2str(ceil(out_param.nhi)) ' as nhi' ])
+%         out_param.nhi = ceil(out_param.nhi);
+%     else
+%         warning('GAIL:funappx_g:hiinitlt3',[' Upper bound of '...
+%         'points should be a positive integer greater than 3. Using '...
+%         'default number of points ' int2str(default.nhi) ' as nhi' ])
+%         out_param.nhi = default.nhi;
+%     end
+%          warning('GAIL:funappx_g:hiinitnotint',['Upper bound of '...
+%         'initial nstar should be a positive integer.' ...
+%         ' Using ', num2str(ceil(out_param.nhi)) ' as nhi' ])
+%         out_param.nhi = ceil(out_param.nhi);
+% end
+% 
+% if (out_param.nlo > out_param.nhi)
+%     warning('GAIL:funappx_g:logrhi', ['Lower bound of initial number of'...
+%         ' points is larger than upper bound of initial number of '...
+%         'points; Use nhi as nlo'])
+%     out_param.nhi = out_param.nlo;
+% end;
 
 if (~gail.isposint(out_param.maxiter))
     if gail.ispositive(out_param.maxiter)

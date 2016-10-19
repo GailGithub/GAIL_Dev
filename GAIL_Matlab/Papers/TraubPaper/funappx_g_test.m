@@ -1,14 +1,14 @@
-% traubpaper_funappx_g_test: comparison between funappx_g and funappxlocal_g
-function [timeratio,timelgratio,npointsratio,npointslgratio] ...
-   =traubpaper_funappx_g_test(nrep,abstol,varargin)
-% user can choose absolut error tolerance, initial number of points, number
-% of iteration or can use the following parameters
-% nrep = 100; abstol = 1e-6;
+% funappx_g_test: comparison between funappx_g and funappxlocal_g
+function [timeratio,npointsratio] ...
+   =funappx_g_test(nrep,abstol,varargin)
+% user can choose absolute error tolerance, initial number of subintervals,
+% number of iteration or can use the following parameters
+% nrep = 100; abstol = 1e-6; ninit = 250;
 % Compare funappx_g with funappxglobal_g and chebfun:
-% [timeratio,timelgratio,npointsratio,npointslgratio]=traubpaper_funappx_g_test(nrep,abstol);
+% [timeration,pointsratio]=funappx_g_test(nrep,abstol,ninit);
 %
 % Compare funappxPenalty_g with funappxglobal_g and chebfun:
-% [timeratio,timelgratio,npointsratio,npointslgratio]=traubpaper_funappx_g_test(nrep,abstol,'funappxPenalty_g');
+% [timeratio,npointsratio]=funappx_g_test(nrep,abstol,ninit,'funappxPenalty_g');
 rng default % for reproducibility
 if nargin < 2
    abstol = 1e-6;
@@ -27,8 +27,11 @@ exceedmat  = zeros(n,m,nrep);
 if isempty(varargin)
   algoname = 'funappx_g';
   algo = @(f,a,b,abstol) funappx_g(f,a,b,abstol);
-else
-  algoname = varargin{1};
+elseif size(varargin) == 1
+  algoname = 'funappx_g';
+  algo = @(f,a,b,abstol) funappx_g(f,a,b,abstol,varargin{1});
+else 
+  algoname = varargin{2};
   algo = str2func(['@(f,a,b,abstol)', algoname,'(f,a,b,abstol)']);
 end
 
@@ -165,39 +168,6 @@ for k = 1:m-1
   sorted_npointsratio(k,:) = sort(npointsratio(k,:));
 end
 
-%% Output the table
-% To just re-display the output, load the .mat file and run this section
-% only
-[fileID, fullPath] = gail.open_txt('TraubPaperOutput', ['traub_',algoname,'_test']);
-fprintf(fileID,'\n');
-fprintf(fileID,'# of replications = %1.0f\n',nrep);
-fprintf(fileID,'   Test         Number of Points                    Time Used                          Success (%%)                                  Failure (%%)\n');
-fprintf(fileID,'  Function   ----------------------------    -------------------------------     --------------------------------------   ----------------------------------------\n');
-fprintf(fileID,'             Local      Global    Chebfun    Local       Global      Chebfun     Local        Global         Chebfun       Local         Global        Chebfun\n');
-fprintf(fileID,'                                                                                 No Warn Warn No Warn Warn   No Warn Warn  No Warn Warn  No Warn Warn  No Warn Warn\n');
-npointslgratio = zeros(1,n);
-timelgratio = zeros(1,n);
-
-for i = permuted_index
-  fprintf(fileID,'%9.0f %9.0f %9.0f  %9.0f %11.4f  %11.4f %11.4f  %6.0f %6.0f %6.0f %6.0f %6.0f   %6.0f %6.0f %6.0f %6.0f %6.0f %6.0f %6.0f\n',...
-    [i mean(npoints(i,1,:)) mean(npoints(i,2,:)) mean(npoints(i,3,:))...
-    mean(time(i,1,:)) mean(time(i,2,:)) mean(time(i,3,:))...
-    100.0*sum(trueerrormat(i,1,:)<=abstol)/nrep 100.0*sum(trueerrormat(i,1,:)<=abstol & (exceedmat(i,1,:)))/nrep ...
-    100.0*sum(trueerrormat(i,2,:)<=abstol)/nrep 100.0*sum(trueerrormat(i,2,:)<=abstol & (exceedmat(i,2,:)))/nrep ...
-    100.0*sum(trueerrormat(i,3,:)<=abstol)/nrep 100.0*sum(trueerrormat(i,3,:)<=abstol & (exceedmat(i,3,:)))/nrep...
-    100.0*sum(trueerrormat(i,1,:)>abstol)/nrep  100.0*sum(trueerrormat(i,1,:)>abstol & (exceedmat(i,1,:)))/nrep ...
-    100.0*sum(trueerrormat(i,2,:)>abstol)/nrep  100.0*sum(trueerrormat(i,2,:)>abstol & (exceedmat(i,2,:)))/nrep ...
-    100.0*sum(trueerrormat(i,3,:)>abstol)/nrep  100.0*sum(trueerrormat(i,3,:)>abstol & (exceedmat(i,3,:)))/nrep]);
-  npointslgratio(i) = mean(npoints(i,1,:))/mean(npoints(i,2,:));
-  timelgratio(i) = mean(time(i,1,:))/mean(time(i,2,:));
-end
-fclose(fileID);
-type(fullPath)
-
-%% Output the table
-% To just re-display the output, load the .mat file and run this section
-% only
-
 %% Save Output
 [~,~,MATLABVERSION] = GAILstart(false);
 gail.InitializeDisplay
@@ -219,7 +189,7 @@ if usejava('jvm') || MATLABVERSION <= 7.12
 %  
 %  legend('\(f_3\)','\(g_1\)','\(g_2\)','\(g_3\)','\(g_4\)','\(g_5\)','Location','NorthWest')
 %  xlabel('x')
-%  gail.save_eps('TraubPaperOutput', ['traub_',algoname,'_testfun']);
+%  gail.save_eps('TraubPaperOutput', [algoname,'_testfun']);
   
   figure
   t = ((1:nrep*n) -1/2)/(nrep*n);
@@ -239,11 +209,13 @@ if usejava('jvm') || MATLABVERSION <= 7.12
 %            'Location','NorthWest');
 %   set(h, 'Interpreter', 'latex')
 %   legend BOXOFF 
-  gail.save_eps('TraubPaperOutput', ['traub_',algoname,'_test']);
+  gail.save_eps('TraubPaperOutput', [algoname,'_test']);
 end;
-gail.save_mat('TraubPaperOutput', ['traub_',algoname,'_test'], true, npoints, ...
-  time, c, timeratio, npointsratio, npointslgratio, timelgratio, nrep, n, m, ...
-  sorted_timeratio, sorted_npointsratio, algoname);
+gail.save_mat('TraubPaperOutput', [algoname,'_test'], true, npoints, ...
+  time, c, timeratio, npointsratio, nrep, n, m, ...
+  sorted_timeratio, sorted_npointsratio, ...
+  trueerrormat, exceedmat, permuted_index, abstol, ...
+  algoname);
 end
 
 

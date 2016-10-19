@@ -76,12 +76,9 @@ classdef ut_cubSobol_g < matlab.unittest.TestCase
       testCase.verifyLessThanOrEqual(actualerr,tolerance);
       testCase.verifyTrue(out_param.d==2);
     end
-%{    
+
     function cubSobol_gOfgmeanOptcv(testCase)
-      %add finance package to path
-      packagePath = regexprep(fileparts(which('LICENSE.m')),'GAIL\_Matlab$','DevelopOnly/GAIL_Matlab/Algorithms/Monte_Carlo_Finance/');
-      packagePath = genpath(packagePath);
-      addpath(packagePath)
+      % set up option params
       inp.timeDim.timeVector = 1/4:1/4:4/4;%weekly monitor for a month 
       inp.assetParam.initPrice = 120; %initial stock price
       inp.assetParam.interest = 0.01; %risk-free interest rate
@@ -98,6 +95,7 @@ classdef ut_cubSobol_g < matlab.unittest.TestCase
       'optType',{{'gmean','euro'}},...
       'putCallType',{{'call','call'}}); 
       exactOpt = opt.exactPrice;    
+      % define the function
       f.func = @(x) genOptPayoffs(opt,x);
       f.cv = exactOpt(2:end); 
       in_param.abstol = inp.priceParam.absTol;
@@ -109,9 +107,8 @@ classdef ut_cubSobol_g < matlab.unittest.TestCase
       tolerance = gail.tolfun(out_param.abstol,out_param.reltol,out_param.theta,exactf,out_param.toltype);
       testCase.verifyLessThanOrEqual(actualerr,tolerance);
       testCase.verifyTrue(out_param.d==4);
-      rmpath(packagePath);
     end
-%}
+
     function cubSobol_gOfwarning(testCase)
         testCase.verifyWarning(@()cubSobol_g,'GAIL:cubSobol_g:fdnotgiven');
     end
