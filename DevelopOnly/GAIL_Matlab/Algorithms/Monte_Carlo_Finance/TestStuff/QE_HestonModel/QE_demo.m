@@ -36,7 +36,10 @@ inp.priceParam.relTol = 0.01; %one penny on the dollar relative tolerance
 inp.assetParam.meanShift = 5;
 
 ourGBMCallPrice = optPrice(inp)
-[GBMCallPrice, out] = genOptPrice(ourGBMCallPrice) %the option price
+[GBMCallPrice_withIS, out] = genOptPrice(ourGBMCallPrice) %the option price
+inp.assetParam.meanShift = 0;
+ourGBMCallPrice = optPrice(inp);
+[GBMCallPrice_withoutIS, out] = genOptPrice(ourGBMCallPrice)
 return
 inp.assetParam.pathType = 'QE_m';
 inp.assetParam.meanShift =0.49;
