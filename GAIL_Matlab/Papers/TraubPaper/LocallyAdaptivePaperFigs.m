@@ -1,9 +1,22 @@
 function LocallyAdaptivePaperFigs(funappxRes,funminRes,colorfig)
-% LOCALLYADPATIVEPAPERFIGS createS some figures for the paper on local
+% LOCALLYADPATIVEPAPERFIGS creates some figures for the paper on local
 % adpation for function approximation and optimization submitted to the
 % Joseph Traub memorial issue in the Journal of Complexity
 %
-% S.-C. T. Choi, Y. Ding, F. J. Hickernell, X. Tong, " ...
+% Sou-Cheng T. Choi, Yuhan Ding, Fred J.Hickernell, Xin Tong, "Local
+% Adaption for Approximation and Minimization of Univariate Functions,"
+% working, 2016.
+%
+%
+% Example1: To plot all figures in the paper, run
+%
+%   LocallyAdaptivePaperFigs
+%
+% Example 2: To plot all figures and print summary tables from 
+% the input mat files by running 'funappx_g_test' and 'funmin_g_test', run
+%
+%   LocallyAdaptivePaperFigs('funappx_g_test-2016-10-18-20-17-56.mat', ...
+%                            'funmin_g_test-2016-10-18-20-23-58.mat')
 
 gail.InitializeDisplay %initialize the workspace and the display parameters
 set(0,'defaultLineLineWidth',4) %thicker lines
