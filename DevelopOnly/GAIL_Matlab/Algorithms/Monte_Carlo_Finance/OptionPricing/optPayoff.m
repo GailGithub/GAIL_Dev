@@ -369,10 +369,11 @@ classdef optPayoff < assetPath
                     more.exbound = [zeros(1, ntimeDim) obj.payoffParam.strike]; %initialize excercise boundary
                     for i = ntimeDim-1:-1:1
                         inmoney = find(paths(:,i)<strike(j));
+                        lhr = likelihoodRatio(inmoney);
                         if ~isempty(inmoney)
                             regmat=[ones(numel(inmoney),1) ...
                                 basis(paths(inmoney,i)/obj.assetParam.initPrice)];
-                            hold=regmat*(regmat\cashflow(inmoney));
+                            hold=regmat*(regmat\cashflow(inmoney)).*lhr;
                             shouldex=inmoney(putpayoff(inmoney,i)>hold); %which paths should be excercised now
                             if ~isempty(shouldex); %some paths should be exercise
                                 cashflow(shouldex)=putpayoff(shouldex,i); %updated cashflow
@@ -544,7 +545,7 @@ classdef optPayoff < assetPath
                         .* exp(- obj.assetParam.interest .* obj.timeDim.endTime);
                 end
             end
-            if likelihoodRatio == 1 % no important sampling
+            if likelihoodRatio == ones(size(likelihoodRatio)) % no important sampling
                 payoffs = tempPay;
             else % with importance sampling
                 payoffs = tempPay.*likelihoodRatio;
