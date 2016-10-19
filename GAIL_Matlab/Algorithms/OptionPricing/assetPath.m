@@ -418,30 +418,25 @@ classdef assetPath < brownianMotion
 
    methods (Access = protected)
         function propList = getPropertyList(obj)
-            
+            propList = getPropertyList@brownianMotion(obj);
+            propList.assetParam_pathType = obj.assetParam.pathType;
+            propList.assetParam_initPrice = obj.assetParam.initPrice;
+            propList.assetParam_interest = obj.assetParam.interest;
+            propList.assetParam_meanShift = obj.assetParam.meanShift;
             if strcmp(obj.assetParam.pathType,'GBM')
                 
-                propList = getPropertyList@brownianMotion(obj);
-                propList.assetParam_pathType = obj.assetParam.pathType;
-                propList.assetParam_initPrice = obj.assetParam.initPrice;
-                propList.assetParam_interest = obj.assetParam.interest;
                 propList.assetParam_volatility = obj.assetParam.volatility;
                 if obj.assetParam.drift ~=0
                     propList.assetParam_drift = obj.assetParam.drift;
                 end
                 propList.assetParam_nAsset = obj.assetParam.nAsset;
             else
-                propList = getPropertyList@brownianMotion(obj);
-                propList.assetParam_pathType = obj.assetParam.pathType;
-                propList.assetParam_initPrice = obj.assetParam.initPrice;
-                propList.assetParam_interest = obj.assetParam.interest;
                 propList.assetParam_dividend = obj.assetParam.dividend;
                 propList.assetParam_Vinst = obj.assetParam.Vinst;
                 propList.assetParam_Vlong = obj.assetParam.Vlong;
                 propList.assetParam_kappa = obj.assetParam.kappa;
                 propList.assetParam_nu = obj.assetParam.nu;
                 propList.assetParam_rho = obj.assetParam.rho;
-                propList.assetParam_meanShift = obj.assetParam.meanShift;
             end              
           
         end
