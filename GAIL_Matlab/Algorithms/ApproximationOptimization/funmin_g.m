@@ -36,7 +36,7 @@ function [fmin,out_param]=funmin_g(varargin)
 %
 %   Optional Input Arguments
 %
-%     in_param.ninit --- initial number of points. Default to 20.
+%     in_param.ninit --- initial number of subintervals. Default to 20.
 %
 %     in_param.nmax --- cost budget, default value is 1e7.
 %
@@ -54,7 +54,7 @@ function [fmin,out_param]=funmin_g(varargin)
 %
 %     out_param.nmax --- cost budget
 %  
-%     out_param.ninit --- initial number of points
+%     out_param.ninit --- initial number of subintervals
 %
 %     out_param.npoints --- number of points needed to reach the guaranteed
 %     absolute error tolerance or the guaranteed X tolerance
@@ -103,8 +103,8 @@ function [fmin,out_param]=funmin_g(varargin)
 %      maxiter: 1000
 %     exitflag: [0 0 0 0 0]
 %         iter: 5
-%      npoints: 67
-%       errest: 2.8754e-07
+%      npoints: 69
+%       errest: 2.5955e-07
 %     output_x: 0
 %
 %
@@ -128,8 +128,8 @@ function [fmin,out_param]=funmin_g(varargin)
 %      maxiter: 1000
 %     exitflag: [0 0 0 0 0]
 %         iter: 9
-%      npoints: 80
-%       errest: 7.5615e-08
+%      npoints: 79
+%       errest: 6.1251e-08
 %     output_x: 0
 %
 %
@@ -140,7 +140,7 @@ function [fmin,out_param]=funmin_g(varargin)
 %  >> in_param.abstol = 10^(-7);
 %  >> in_param.ninit = 100;
 %  >> in_param.nmax = 10^6;
-%  >> in_param.output_x = 1;
+%  >> in_param.output_x = true;
 %  >> [fmin,out_param] = funmin_g(f,in_param)
 %
 %  fmin =
@@ -158,11 +158,11 @@ function [fmin,out_param]=funmin_g(varargin)
 %      maxiter: 1000
 %     exitflag: [0 0 0 0 0]
 %         iter: 8
-%      npoints: 204
-%       errest: 6.9193e-08
+%      npoints: 203
+%       errest: 6.7816e-08
 %     output_x: 1
-%            x: [1x10000 double]
-%            y: [1x10000 double]
+%            x: [1x203 double]
+%            y: [1x203 double]
 %
 %
 %  Example 4:
@@ -172,7 +172,7 @@ function [fmin,out_param]=funmin_g(varargin)
 %
 %  fmin =
 % 
-%     1.0000
+%     1
 % 
 %  out_param = 
 % 
@@ -185,8 +185,8 @@ function [fmin,out_param]=funmin_g(varargin)
 %      maxiter: 1000
 %     exitflag: [0 0 0 0 0]
 %         iter: 3
-%      npoints: 108
-%       errest: 8.3599e-06
+%      npoints: 107
+%       errest: 8.0997e-06
 %     output_x: 0
 %
 %
@@ -381,7 +381,7 @@ default.abstol = 1e-6;
 default.ninit = 20;
 default.nmax = 1e7;
 default.maxiter = 1000;
-default.output_x = 0;
+default.output_x = false;
 
 
 MATLABVERSION = gail.matlab_version;
