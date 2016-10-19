@@ -45,7 +45,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %
 %   Optional Input Arguments
 %
-%     in_param.ninit --- initial number of subintervals
+%     in_param.ninit --- initial number of subintervals. Default to 20.
 %
 %     in_param.nmax --- when number of points hits the value, iteration
 %     will stop, default value is 1e7
