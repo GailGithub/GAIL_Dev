@@ -373,7 +373,7 @@ classdef optPayoff < assetPath
                         if ~isempty(inmoney)
                             regmat=[ones(numel(inmoney),1) ...
                                 basis(paths(inmoney,i)/obj.assetParam.initPrice)];
-                            hold=regmat*(regmat\cashflow(inmoney)).*lhr;
+                            hold=regmat*(regmat\cashflow(inmoney));%.*lhr;
                             shouldex=inmoney(putpayoff(inmoney,i)>hold); %which paths should be excercised now
                             if ~isempty(shouldex); %some paths should be exercise
                                 cashflow(shouldex)=putpayoff(shouldex,i); %updated cashflow
