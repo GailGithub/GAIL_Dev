@@ -39,7 +39,7 @@ classdef optPrice < optPayoff
    
    properties (Constant, Hidden) %do not change & not seen
       allowCubMethod = {'IID_MC','Sobol','SobolCV','lattice','IID_MC_new', 'IID_MC_newtwo', ...
-         'IID_MC_abs'} 
+         'IID_MC_abs','IID_MC_CV'} 
    end
    
 
@@ -123,6 +123,11 @@ classdef optPrice < optPayoff
                obj.priceParam.absTol, obj.priceParam.relTol, ...
                obj.priceParam.alpha);
             out.nPaths=outtemp.ntot;
+         elseif strcmp(obj.priceParam.cubMethod,'IID_MC_CV')
+             disp('Under construction')
+             price = 0;
+             out.nPaths = 0;
+             outtemp.time = 0;
          elseif strcmp(obj.priceParam.cubMethod,'Sobol')
             if strcmp(obj.payoffParam.optType,'american')
                 [price, outtemp] = cubSobol_american_g(@(x) genOptPayoffs(obj,x), ...
