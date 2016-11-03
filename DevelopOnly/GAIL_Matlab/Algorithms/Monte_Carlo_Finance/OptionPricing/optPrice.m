@@ -118,6 +118,8 @@ classdef optPrice < optPayoff
                obj.priceParam.absTol, obj.priceParam.relTol, ...
                obj.priceParam.alpha);
             out.nPaths=outtemp.ntot;
+         elseif strcmp(obj.priceParam.cubMethod,'IID_MC_CV')
+             disp{'Under construction'}
          elseif strcmp(obj.priceParam.cubMethod,'Sobol')
             if strcmp(obj.payoffParam.optType,'american')
                 [price, outtemp] = cubSobol_american_g(@(x) genOptPayoffs(obj,x), ...
