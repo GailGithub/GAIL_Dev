@@ -119,7 +119,10 @@ classdef optPrice < optPayoff
                obj.priceParam.alpha);
             out.nPaths=outtemp.ntot;
          elseif strcmp(obj.priceParam.cubMethod,'IID_MC_CV')
-             disp{'Under construction'}
+             disp('Under construction')
+             price = 0;
+             out.nPaths = 0;
+             outtemp.time = 0;
          elseif strcmp(obj.priceParam.cubMethod,'Sobol')
             if strcmp(obj.payoffParam.optType,'american')
                 [price, outtemp] = cubSobol_american_g(@(x) genOptPayoffs(obj,x), ...
