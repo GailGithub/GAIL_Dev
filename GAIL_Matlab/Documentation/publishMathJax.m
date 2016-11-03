@@ -17,4 +17,3 @@ end
 opts.stylesheet = 'mxdom2mathjaxbigfont.xsl';
 publish(filename,opts);
 set(0,'FormatSpacing',formatNow); %restore existing format
-

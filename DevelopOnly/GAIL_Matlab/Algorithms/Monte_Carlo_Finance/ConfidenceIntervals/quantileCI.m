@@ -1,4 +1,4 @@
-function quantci=quantileCI(quant,Xsample,extremes,alpha)
+oofunction quantci=quantileCI(quant,Xsample,extremes,alpha)
 % quantci=QUANTILECI(quant,Xsample,alpha,extremes) 
 %   computes  1-alpha  confidence intervals 
 %   for the  quant  quantile of a random variable  X 

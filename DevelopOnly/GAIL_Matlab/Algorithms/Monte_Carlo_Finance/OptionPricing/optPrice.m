@@ -39,7 +39,7 @@ classdef optPrice < optPayoff
    
    properties (Constant, Hidden) %do not change & not seen
       allowCubMethod = {'IID_MC','Sobol','SobolCV','lattice','IID_MC_new', 'IID_MC_newtwo', ...
-         'IID_MC_abs'} 
+         'IID_MC_abs','IID_MC_CV'} 
    end
    
 
