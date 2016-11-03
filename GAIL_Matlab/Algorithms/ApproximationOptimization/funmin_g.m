@@ -36,13 +36,11 @@ function [fmin,out_param]=funmin_g(varargin)
 %
 %   Optional Input Arguments
 %
-%     in_param.nlo --- lower bound of initial number of points we used,
-%     default value is 10
-%
-%     in_param.nhi --- upper bound of initial number of points we used,
-%     default value is 1000
+%     in_param.ninit --- initial number of subintervals. Default to 20.
 %
 %     in_param.nmax --- cost budget, default value is 1e7.
+%
+%     in_param.maxiter --- max number of iterations, default value is 1000
 %
 %   Output Arguments
 %
@@ -54,35 +52,34 @@ function [fmin,out_param]=funmin_g(varargin)
 %
 %     out_param.abstol --- guaranteed absolute error tolerance
 %
-%     out_param.nlo --- a lower bound of initial number of points we use
-%
-%     out_param.nhi --- an upper bound of initial number of points we use
-%
 %     out_param.nmax --- cost budget
-%
-%     out_param.ninit --- initial number of points we use
+%  
+%     out_param.ninit --- initial number of subintervals
 %
 %     out_param.npoints --- number of points needed to reach the guaranteed
 %     absolute error tolerance or the guaranteed X tolerance
 %
-%     out_param.exitflag --- the state of program when exiting
-%              0  Success
-%              1  Number of points used is greater than out_param.nmax
+%     out_param.exit --- this is a vector with two elements, defining the
+%     conditions of success or failure satisfied when finishing the
+%     algorithm. The algorithm is considered successful (with
+%     out_param.exit == [0 0]) if no other flags arise warning that the
+%     results are certainly not guaranteed. The initial value is [0 0] and
+%     the final value of this parameter is encoded as follows:
+%       
+%                      [1 0]   If reaching overbudget. It states whether
+%                      the max budget is attained without reaching the
+%                      guaranteed error tolerance.
+%        
+%                      [0 1]   If reaching overiteration. It states whether
+%                      the max iterations is attained without reaching the
+%                      guaranteed error tolerance.
 %
 %     out_param.errest --- estimation of the absolute error bound
 %
-%     out_param.intervals --- the intervals containing point(s) where the
-%     minimum occurs. Each column indicates one interval where the first
-%     row is the left point and the second row is the right point.
+%     out_param.iter --- number of iterations
 %
-%  Guarantee
-%
-%  For [a,b] there exists a partition, P={[t_0,t_1], [t_1,t_2], ...,
-%  [t_{L-1},t_L]}, where a=t_0 < t_1 < ... < t_L=b. If the function to be
-%  minimized, f, satisfies the cone condition
-%  for each sub interval [t_{l-1},t_l], where 1 <= l <= L, then the output
-%  fappx by this algorithm is guaranteed to satisfy
-%      |
+%     out_param.npoints --- number of points we need to reach the
+%     guaranteed absolute error tolerance
 %
 %
 %  Examples
@@ -92,31 +89,29 @@ function [fmin,out_param]=funmin_g(varargin)
 %  >> f=@(x) exp(0.01*(x-0.5).^2); [fmin,out_param] = funmin_g(f)
 %
 %  fmin =
-%
+% 
 %      1
 % 
 %  out_param = 
 % 
-%             f: @(x)exp(0.01*(x-0.5).^2)
-%             a: 0
-%             b: 1
-%        abstol: 1.0000e-06
-%           nlo: 10
-%           nhi: 1000
-%         ninit: 100
-%          nmax: 10000000
-%       maxiter: 1000
-%      exitflag: [0 0]
-%          iter: 2
-%       npoints: 123
-%        errest: 3.7879e-07
-%     intervals: [2x1 double]
+%            f: @(x)exp(0.01*(x-0.5).^2)
+%            a: 0
+%            b: 1
+%       abstol: 1.0000e-06
+%        ninit: 20
+%         nmax: 10000000
+%      maxiter: 1000
+%     exitflag: [0 0 0 0 0]
+%         iter: 5
+%      npoints: 69
+%       errest: 2.5955e-07
+%     output_x: 0
 %
 %
 %  Example 2:
 %
 %  >> f = @(x) exp(0.01*(x-0.5).^2);
-%  >> [fmin,out_param] = funmin_g(f,-2,2,1e-7,10,10,1000000)
+%  >> [fmin,out_param] = funmin_g(f,-2,2,1e-7,10,1000000)
 %
 %  fmin =
 % 
@@ -124,20 +119,18 @@ function [fmin,out_param]=funmin_g(varargin)
 % 
 %  out_param = 
 % 
-%             f: @(x)exp(0.01*(x-0.5).^2)
-%             a: -2
-%             b: 2
-%        abstol: 1.0000e-07
-%           nlo: 10
-%           nhi: 10
-%         ninit: 10
-%          nmax: 1000000
-%       maxiter: 1000
-%      exitflag: [0 0]
-%          iter: 9
-%       npoints: 57
-%        errest: 9.1055e-08
-%     intervals: [2x1 double]
+%            f: @(x)exp(0.01*(x-0.5).^2)
+%            a: -2
+%            b: 2
+%       abstol: 1.0000e-07
+%        ninit: 10
+%         nmax: 1000000
+%      maxiter: 1000
+%     exitflag: [0 0 0 0 0]
+%         iter: 9
+%      npoints: 79
+%       errest: 6.1251e-08
+%     output_x: 0
 %
 %
 %  Example 3:
@@ -145,8 +138,9 @@ function [fmin,out_param]=funmin_g(varargin)
 %  >> f=@(x) exp(0.01*(x-0.5).^2);
 %  >> in_param.a = -13; in_param.b = 8;
 %  >> in_param.abstol = 10^(-7);
-%  >> in_param.nlo = 10; in_param.nhi = 100;
+%  >> in_param.ninit = 100;
 %  >> in_param.nmax = 10^6;
+%  >> in_param.output_x = true;
 %  >> [fmin,out_param] = funmin_g(f,in_param)
 %
 %  fmin =
@@ -155,47 +149,45 @@ function [fmin,out_param]=funmin_g(varargin)
 % 
 %  out_param = 
 % 
-%             f: @(x)exp(0.01*(x-0.5).^2)
-%             a: -13
-%             b: 8
-%        abstol: 1.0000e-07
-%           nlo: 10
-%           nhi: 100
-%         ninit: 91
-%          nmax: 1000000
-%       maxiter: 1000
-%      exitflag: [0 0]
-%          iter: 9
-%       npoints: 149
-%        errest: 2.5117e-08
-%     intervals: [2x1 double]
+%            f: @(x)exp(0.01*(x-0.5).^2)
+%            a: -13
+%            b: 8
+%       abstol: 1.0000e-07
+%        ninit: 100
+%         nmax: 1000000
+%      maxiter: 1000
+%     exitflag: [0 0 0 0 0]
+%         iter: 8
+%      npoints: 203
+%       errest: 6.7816e-08
+%     output_x: 1
+%            x: [1x203 double]
+%            y: [1x203 double]
 %
 %
 %  Example 4:
 %
 %  >> f=@(x) exp(0.01*(x-0.5).^2);
-%  >> [fmin,out_param] = funmin_g(f,'a',-2,'b',2,'nhi',100,'nlo',10,'nmax',1e6,'abstol',1e-5)
+%  >> [fmin,out_param] = funmin_g(f,'a',-2,'b',2,'ninit',64,'nmax',1e6,'abstol',1e-5)
 %
 %  fmin =
 % 
-%     1.0000
+%     1
 % 
 %  out_param = 
 % 
-%             f: @(x)exp(0.01*(x-0.5).^2)
-%             a: -2
-%             b: 2
-%        abstol: 1.0000e-05
-%           nlo: 10
-%           nhi: 100
-%         ninit: 64
-%          nmax: 1000000
-%       maxiter: 1000
-%      exitflag: [0 0]
-%          iter: 4
-%       npoints: 88
-%        errest: 2.5064e-06
-%     intervals: [2x1 double]
+%            f: @(x)exp(0.01*(x-0.5).^2)
+%            a: -2
+%            b: 2
+%       abstol: 1.0000e-05
+%        ninit: 64
+%         nmax: 1000000
+%      maxiter: 1000
+%     exitflag: [0 0 0 0 0]
+%         iter: 3
+%      npoints: 107
+%       errest: 8.0997e-06
+%     output_x: 0
 %
 %
 %  See also FMINBND, FUNAPPX_G, INTEGRAL_G
@@ -240,126 +232,144 @@ out_param = in_param;
 a = out_param.a;
 b = out_param.b;
 abstol = out_param.abstol;
-n = out_param.ninit;
-x = a:(b-a)/(n-1):b;
-y = f(x);
+n = out_param.ninit+1;
+x = zeros(1, max(100,ceil(out_param.nmax/100))); % preallocation
+y = x;
+x(1:n) = a:(b-a)/(n-1):b;
+y(1:n) = f(x(1:n));
 iSing = find(isinf(y));
 if ~isempty(iSing)
+    out_param.exitflag(5) = true;
     error('GAIL:funmin_g:yInf',['Function f(x) = Inf at x = ', num2str(x(iSing))]);
 end
 if length(y) == 1
     % probably f is a constant function and Matlab would
     % reutrn only a value fmin
-    fmin = y;
+    M_hat = y;
     max_errest = 0;
 end
 iter = 0;
-exit_len = 2;
-fh = 3*(b-a)/(n-2);
-C0 = 3;
-C = @(h) (C0*fh)./(fh-h);
-max_errest = 1;
-
+exit_len = 5;
 % we start the algorithm with all warning flags down
 out_param.exitflag = false(1,exit_len);
 
+fh = 3*(b-a)/(n-2);
+C0 = 10;
+C = @(h) (C0*fh)./(fh-h);
+indexI_p = ([0 0 ones(1,n-3) 0]>0);
+indexI_m = ([0 ones(1,n-3) 0 0]>0);
+max_errest = 1;
 
 while n < out_param.nmax
     %% Stage 1: compute length of each subinterval and approximate |f''(t)|
     len = diff(x(1:n));
-    deltaf = 2 * diff(diff(y(1:n))./len) ./ (len(1:end-1) + len(2:end));
-    h = x(4:n)-x(1:n-3);
-    Br = [abs(deltaf(2:end)).*C(h) 0 0];
-    Bl = [0 0 abs(deltaf(1:end-1)).*C(h)];
-    Un=min(y);
+    deltaf = diff(diff(y(1:n)));
+    h = x(2:n-1) - x(1:n-2);
     diff_y=diff(y);
-    min_int = (y(1:n-1)+y(2:n)-abs(diff_y))./2;
-    errest = Un+len.^2/8.*max(Br,Bl)-min_int;
-    max_errest = max(errest);
-    lowerbound = Un-errest;
+    min_int = (y(1:n-1)+y(2:n)-abs(diff_y(1:n-1)))./2;
+    M_hat=min(y(1:n));
     
+    err_p=zeros(1,n); err_hat_p=zeros(1,n);
+    err_m=zeros(1,n); err_hat_m=zeros(1,n);
+    err_p(2:end-1) = abs(1/8 * C(3*h)...
+                           .* deltaf.*indexI_p(2:end-1));
+    indexI_tilde_p = (err_p > abstol);   
+    err_m(2:end-1) = abs(1/8 * C(3*h)...
+                           .* deltaf.*indexI_m(2:end-1));
+    indexI_tilde_m = (err_m > abstol);
+    err_hat_p(3:end-1) = indexI_p(3:end-1).*...
+        (err_p(3:end-1)+M_hat-min_int(1:end-2));
+    err_hat_m(2:end-2) = indexI_m(2:end-2).*...
+        (err_m(2:end-2)+M_hat-min_int(3:end));
     
-    
-    %% Stage 2: compute bound of |f''(t)| and estimate error
+    indexI_hat_p = (err_hat_p > abstol)| ...
+        ((indexI_tilde_p.*[0 0 0 indexI_tilde_m(1:end-3)]) & ...
+        (([indexI_tilde_p(4:end) 0 0 0].*err_hat_m)>abstol));
+    indexI_hat_m = (err_hat_m > abstol)| ...
+        ((indexI_tilde_m.*[indexI_tilde_p(4:end) 0 0 0]) & ...
+        (([0 0 0 indexI_tilde_m(1:end-3)].*err_hat_p)>abstol));
     
     % update iterations
     iter = iter + 1;
-    if max_errest <= abstol,
-        break
+    if max(indexI_hat_p|indexI_hat_m) == 0,
+        max_errest = max(max(err_p),max(err_m));
+        break;
     end
     
+    %% Stage 2: Split the subintervals as needed
+    %find the index of the subinterval which is needed to be cut
+    midpoint_p = [indexI_hat_p(3:end) 0 0 ] | [indexI_hat_p(2:end) 0];
+    midpoint_m = indexI_hat_m | [0 indexI_hat_m(1:end-1)];
+    whichcut = midpoint_p(1:end-1) | midpoint_m(1:end-1);
     
-    %% Stage 3: find I and update x,y
-    badinterval = (errest > abstol);
-    badlinterval= (Un-min_int+len.^2/8.*Bl>abstol);
-    badrinterval= (Un-min_int+len.^2/8.*Br>abstol);
-    maybecut=(badinterval|[0 badlinterval(3:end) 0]|[badlinterval(3:end)...
-        0 0]|[0 badrinterval(1:end-2) 0]|[0 0 badrinterval(1:end-2)]);
-    maxlength = (len>max(len(maybecut))-eps);
-    whichcut = maybecut & maxlength;
+    %check to see if exceed the cost budget
     if (out_param.nmax<(n+length(find(whichcut))))
         out_param.exitflag(1) = true;
         warning('GAIL:funmin_g:exceedbudget',['funmin_g '...
             'attempted to exceed the cost budget. The answer may be '...
             'unreliable.'])
         break;
-    end;
+    end; 
+    
+    %check to see if exceed the maximumber number of iterations
     if(iter==out_param.maxiter)
         out_param.exitflag(2) = true;
         warning('GAIL:funmin_g:exceediter',['Number of iterations has '...
             'reached maximum number of iterations.'])
         break;
     end;
-    newx = x(whichcut) + 0.5 * len(whichcut);
+    
+    %generate split points for x
+    newx=x(whichcut)+0.5*len(whichcut);
+    
+    %relocate the space for new x
     if n + length(newx) > length(x)
-        xx(1:n) = x(1:n);
-        yy(1:n) = y(1:n);
-        x = xx;
-        y = yy;
+      xx = zeros(1, out_param.nmax);
+      yy = xx;
+      xx(1:n) = x(1:n);
+      yy(1:n) = y(1:n);
+      x = xx;
+      y = yy;
     end
-    tt = cumsum(whichcut);
+    
+    %update x and y
+    tt = cumsum(whichcut);   
     x([1 (2:n)+tt]) = x(1:n);
     y([1 (2:n)+tt]) = y(1:n);
     tem = 2 * tt + cumsum(whichcut==0);
     x(tem(whichcut)) = newx;
     y(tem(whichcut)) = f(newx);
+    
+    %update the set I to consist of the new indices
+    newindex_p([1 (2:n)+tt]) = [indexI_hat_p(2:end) 0];
+    newindex_p(tem) = indexI_hat_p(2:end);
+    indexI_p = ([0 0 newindex_p(3:end-1) 0]>0);
+    newindex_m([1 (2:n)+tt]) = [0 indexI_hat_m(1:end-1)];
+    newindex_m(tem) = indexI_hat_m(1:end-1);
+    indexI_m = ([0 newindex_m(2:end-2) 0 0]>0);
+    
+    %update # of points
     n = n + length(newx);
-end;
-
-%% find intervals
-index = find(lowerbound < Un);
-m = size(index,2);
-if m > 0
-    %ints = zeros(2,m);
-    ints = [x(index); x(index+1)];
-    leftint = find([true diff(index)~=1]);
-    rightint = [diff(index)~=1 true];
-    q = size(leftint,2);
-    ints1 = zeros(2,q);
-    ints1(1,:) = ints(1,leftint);
-    ints1(2,:) = ints(2,rightint);
-else
-    ints1 = zeros(2,0);
 end
-interval=ints1;
-
 
 %% postprocessing
-fmin = Un;
+fmin = M_hat;
 out_param.iter = iter;
 out_param.npoints = n;
 out_param.errest = max_errest;
-out_param.intervals = interval;
 
 % control the order of out_param
 out_param = orderfields(out_param, ...
-{'f', 'a', 'b','abstol','nlo','nhi','ninit','nmax','maxiter',...
-'exitflag','iter','npoints','errest','intervals','output_x'});
+{'f', 'a', 'b','abstol','ninit','nmax','maxiter',...
+'exitflag','iter','npoints','errest','output_x'});
+
 
 if (in_param.output_x)
-  out_param.x = x;
-  out_param.y = y;
+  out_param.x = x(1:n);
+  out_param.y = y(1:n);
 end
+
+
 
 function [f, out_param] = funmin_g_param(varargin)
 % parse the input to the funmin_g function
@@ -368,11 +378,11 @@ function [f, out_param] = funmin_g_param(varargin)
 default.a = 0;
 default.b = 1;
 default.abstol = 1e-6;
-default.nlo = 10;
-default.nhi = 1000;
+default.ninit = 20;
 default.nmax = 1e7;
 default.maxiter = 1000;
-default.output_x = 0;
+default.output_x = false;
+
 
 MATLABVERSION = gail.matlab_version;
 if MATLABVERSION >= 8.3
@@ -413,8 +423,7 @@ if ~validvarargin
     out_param.a = default.a;
     out_param.b = default.b;
     out_param.abstol = default.abstol;
-    out_param.nlo = default.nlo;
-    out_param.nhi = default.nhi;
+    out_param.ninit = default.ninit;
     out_param.nmax = default.nmax ;
     out_param.maxiter = default.maxiter;
     out_param.output_x = default.output_x;
@@ -426,11 +435,10 @@ else
         addOptional(p,'a',default.a,@isnumeric);
         addOptional(p,'b',default.b,@isnumeric);
         addOptional(p,'abstol',default.abstol,@isnumeric);
-        addOptional(p,'nlo',default.nlo,@isnumeric);
-        addOptional(p,'nhi',default.nhi,@isnumeric);
-        addOptional(p,'nmax',default.nmax,@isnumeric)
-        addOptional(p,'maxiter',default.maxiter,@isnumeric)
-        addOptional(p,'output_x',default.output_x,@isnumeric)
+        addOptional(p,'ninit',default.ninit,@isnumeric);
+        addOptional(p,'nmax',default.nmax,@isnumeric);
+        addOptional(p,'maxiter',default.maxiter,@isnumeric);
+        addOptional(p,'output_x',default.output_x,@islogical);
     else
         if isstruct(in2) %parse input structure
             p.StructExpand = true;
@@ -439,11 +447,10 @@ else
         f_addParamVal(p,'a',default.a,@isnumeric);
         f_addParamVal(p,'b',default.b,@isnumeric);
         f_addParamVal(p,'abstol',default.abstol,@isnumeric);
-        f_addParamVal(p,'nlo',default.nlo,@isnumeric);
-        f_addParamVal(p,'nhi',default.nhi,@isnumeric);
+        f_addParamVal(p,'ninit',default.ninit,@isnumeric);
         f_addParamVal(p,'nmax',default.nmax,@isnumeric);
         f_addParamVal(p,'maxiter',default.maxiter,@isnumeric);
-        f_addParamVal(p,'output_x',default.output_x,@isnumeric);
+        f_addParamVal(p,'output_x',default.output_x,@islogical);
     end
     parse(p,f,varargin{2:end})
     out_param = p.Results;
@@ -495,51 +502,23 @@ if (~gail.isposint(out_param.nmax))
     end;
 end
 
-if (~gail.isposint(out_param.nlo))
-    if gail.isposge3(out_param.nlo)
-        warning('GAIL:funminglobal_g:lowinitnotint',['Lower bound of '...
+if (~gail.isposint(out_param.ninit))
+    if gail.isposge3(out_param.ninit)
+        warning('GAIL:funming_g:lowinitnotint',['Lower bound of '...
             'initial number of points should be a positive integer.' ...
-            ' Using ', num2str(ceil(out_param.nlo)) ' as nlo '])
-        out_param.nlo = ceil(out_param.nlo);
+            ' Using ', num2str(ceil(out_param.ninit)) ' as ninit '])
+        out_param.ninit = ceil(out_param.ninit);
     else
-        warning('GAIL:funminglobal_g:lowinitlt3',[' Lower bound of '...
+        warning('GAIL:funmin_g:lowinitlt3',[' Lower bound of '...
             'initial number of points should be a positive integer greater'...
-            ' than 3. Using 3 as nlo'])
-        out_param.nlo = 3;
+            ' than 3. Using 3 as ninit'])
+        out_param.ninit = 3;
     end
-    warning('GAIL:funminglobal_g:lowinitnotint',['Lower bound of '...
+    warning('GAIL:funmin_g:lowinitnotint',['Lower bound of '...
         'initial nstar should be a positive integer.' ...
-        ' Using ', num2str(ceil(out_param.nlo)) ' as nlo '])
-    out_param.nlo = ceil(out_param.nlo);
+        ' Using ', num2str(ceil(out_param.ninit)) ' as ninit '])
+    out_param.ninit = ceil(out_param.ninit);
 end
-if (~gail.isposint(out_param.nhi))
-    if gail.isposge3(out_param.nhi)
-        warning('GAIL:funminglobal_g:hiinitnotint',['Upper bound of '...
-            'initial number of points should be a positive integer.' ...
-            ' Using ', num2str(ceil(out_param.nhi)) ' as nhi' ])
-        out_param.nhi = ceil(out_param.nhi);
-    else
-        warning('GAIL:funminglobal_g:hiinitlt3',[' Upper bound of '...
-            'points should be a positive integer greater than 3. Using '...
-            'default number of points ' int2str(default.nhi) ' as nhi' ])
-        out_param.nhi = default.nhi;
-    end
-    warning('GAIL:funminglobal_g:hiinitnotint',['Upper bound of '...
-        'initial nstar should be a positive integer.' ...
-        ' Using ', num2str(ceil(out_param.nhi)) ' as nhi' ])
-    out_param.nhi = ceil(out_param.nhi);
-end
-
-if (out_param.nlo > out_param.nhi)
-    warning('GAIL:funmin_g:logrhi', ['Lower bound of initial number of'...
-        ' points is larger than upper bound of initial number of '...
-        'points; Use nhi as nlo'])
-    out_param.nhi = out_param.nlo;
-end;
-
-h = out_param.b - out_param.a;
-out_param.ninit = ceil(out_param.nhi*(out_param.nlo/out_param.nhi)...
-    ^(1/(1+h)));
 
 if (~gail.isposint(out_param.maxiter))
     if gail.ispositive(out_param.maxiter)
@@ -554,4 +533,10 @@ if (~gail.isposint(out_param.maxiter))
         out_param.maxiter = default.maxiter;
     end;
 end
+
+
+
+
+
+ 
 

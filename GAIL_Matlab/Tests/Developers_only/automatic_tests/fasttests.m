@@ -175,13 +175,20 @@ else
     
     
     try
-        Tests = matlab.unittest.TestSuite.fromClass(?ut_cubLattice_g);
-        results=run(ut_cubLattice_g)
-        if sum([results.Failed])>0
-            failed=find([results.Failed]>0);
-            for i=1:size(failed,2)
-                fprintf(fid,'%s\n',Tests(failed(i)).Name);
-            end
+	% add a license check before run cubLattice
+	licCheck = license('checkout', 'Statistics_Toolbox');
+	if licCheck == 0 
+            display('Warning: License for Statistics_Toolbox failed to checkout. We skip ut_cubLattice_g.')
+	    fprintf(fid, 'Warning: License for Statistics_Toolbox failed to checkout. We skip ut_cubLattice_g.');
+	else
+            Tests = matlab.unittest.TestSuite.fromClass(?ut_cubLattice_g);
+            results=run(ut_cubLattice_g)
+	        if sum([results.Failed])>0
+                    failed=find([results.Failed]>0);
+                    for i=1:size(failed,2)
+                        fprintf(fid,'%s\n',Tests(failed(i)).Name);
+                    end
+                end
         end
     catch
         display('Error: Test ut_cubLattice_g is wrongly coded. We skip it.')
@@ -189,14 +196,20 @@ else
     end
     
     try
-        Tests = matlab.unittest.TestSuite.fromClass(?ut_cubSobol_g);
-        results=run(ut_cubSobol_g)
-        if sum([results.Failed])>0
-            failed=find([results.Failed]>0);
-            for i=1:size(failed,2)
-                fprintf(fid,'%s\n',Tests(failed(i)).Name);
-            end
-        end
+	% add a license check before run cubSobol
+	if licCheck == 0 
+            display('Warning: License for Statistics_Toolbox failed to checkout. We skip ut_cubSobol_g.\n')
+	    fprintf(fid, 'Warning: License for Statistics_Toolbox failed to checkout. We skip ut_cubSobol_g.\n');
+	else
+             Tests = matlab.unittest.TestSuite.fromClass(?ut_cubSobol_g);
+             results=run(ut_cubSobol_g)
+             if sum([results.Failed])>0
+                 failed=find([results.Failed]>0);
+                 for i=1:size(failed,2)
+                     fprintf(fid,'%s\n',Tests(failed(i)).Name);
+                 end
+             end
+	end
     catch
         display('Error: Test ut_cubSobol_g is wrongly coded. We skip it.')
         fprintf(fid,'Error: Test ut_cubSobol_g is wrongly coded. We skip it.\n');
