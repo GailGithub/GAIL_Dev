@@ -81,6 +81,11 @@ classdef optPrice < optPayoff
                obj.inputType = 'x';
                obj.wnParam.sampleKind = obj.priceParam.cubMethod;
                obj.wnParam.xDistrib = 'Uniform';
+            end           
+	    if any(strcmp(obj.priceParam.cubMethod,{'SobolCV'}))
+               obj.inputType = 'x';
+               obj.wnParam.sampleKind = 'Sobol';
+               obj.wnParam.xDistrib = 'Uniform';
             end
          end 
          if isfield(val,'absTol') %absolute error tolerance
