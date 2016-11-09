@@ -13,17 +13,19 @@
 
 gail.InitializeWorkspaceDisplay %initialize the workspace and the display parameters
 inp.timeDim.timeVector = 1/52:1/52:1/2; %weekly monitoring for three months
-inp.assetParam.initPrice = 100; %initial stock price
-inp.assetParam.interest = 0.05; %risk-free interest rate
-inp.assetParam.volatility = 0.5; %volatility
-inp.payoffParam.strike = 130; %strike price
+inp.assetParam.initPrice = 60; %initial stock price
+inp.assetParam.interest = 0.0; %risk-free interest rate
+inp.assetParam.volatility = 0.3; %volatility
+inp.payoffParam.strike = 80; %strike price
 inp.payoffParam.putCallType = {'put'}; %put option
-inp.priceParam.absTol = 0.04; %absolute tolerance of a nickel
-inp.priceParam.relTol = 0; %zero relative tolerance
+inp.priceParam.absTol = 0.0; %absolute tolerance of a nickel
+inp.priceParam.relTol = 0.01; %zero relative tolerance
 inp.assetParam.pathType = 'GBM';
 %inp.priceParam.cubMethod = 'Sobol';
 inp.priceParam.cubMethod = 'IID_MC';
-% inp.assetParam.meanShift = -0.5;
+inp.assetParam.meanShift = -0.5;
+%{
+
 EuroPut = optPrice(inp) %construct an optPrice object 
 
 %%
@@ -67,7 +69,7 @@ text(0.05,180,'\(P = 0 < H = V\)')
 text(0.05,110,'\(0 < P < H = V\)')
 text(0.05,30,'\(0 < H < P = V\)')
 %print -depsc AmerPutPathsExer.eps
-
+%}
 inp.assetParam.meanShift = 0;
 EuroPut = optPrice(inp); %construct an optPrice object 
 

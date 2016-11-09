@@ -369,11 +369,12 @@ classdef optPayoff < assetPath
                     more.exbound = [zeros(1, ntimeDim) obj.payoffParam.strike]; %initialize excercise boundary
                     for i = ntimeDim-1:-1:1
                         inmoney = find(paths(:,i)<strike(j));
-                        lhr = likelihoodRatio(inmoney);
+                        regwt = sqrt(likelihoodRatio(inmoney));
                         if ~isempty(inmoney)
                             regmat=[ones(numel(inmoney),1) ...
                                 basis(paths(inmoney,i)/obj.assetParam.initPrice)];
-                            hold=regmat*(regmat\cashflow(inmoney));%.*lhr;
+                           % hold=regmat*(regmat\cashflow(inmoney));%.*lhr;
+                           hold=regmat*(bsxfun(@times,regwt,regmat)\(regwt.*cashflow(inmoney)));
                             shouldex=inmoney(putpayoff(inmoney,i)>hold); %which paths should be excercised now
                             if ~isempty(shouldex); %some paths should be exercise
                                 cashflow(shouldex)=putpayoff(shouldex,i); %updated cashflow

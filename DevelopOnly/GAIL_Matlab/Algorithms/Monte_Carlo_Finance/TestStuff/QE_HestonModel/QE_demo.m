@@ -10,7 +10,7 @@ t0 = delta_t;
 inp.timeDim.timeVector = t0:delta_t:T; 
 % To generate an asset path modeled by a geometric Brownian motion we need
 % to add some more properties
-initPrice = 100;
+initPrice = 60;
 interest = 0.0;
 inp.assetParam.initPrice = initPrice; %initial stock price
 inp.assetParam.interest = interest; %risk-free interest rate
@@ -21,24 +21,26 @@ inp.assetParam.kappa = 1;
 inp.assetParam.nu = 0; %0.8;
 inp.assetParam.rho = 0; %-0.3;
 inp.assetParam.pathType = 'GBM';
+inp.payoffParam.putCallType = {'put'};
 %inp.priceParam.cubMethod = 'Sobol';
 inp.priceParam.cubMethod = 'IID_MC';
 
 %%
 % To generate some discounted option payoffs to add some more properties
-Strike = 140;
+Strike = 80;
 inp.payoffParam.strike =Strike; 
 
 %% 
 inp.priceParam.absTol = 0; %absolute tolerance
 inp.priceParam.relTol = 0.01; %one penny on the dollar relative tolerance
 
-inp.assetParam.meanShift = 5;
-
+%inp.assetParam.meanShift = 5;
+%{
 ourGBMCallPrice = optPrice(inp)
 [GBMCallPrice_withIS, out] = genOptPrice(ourGBMCallPrice) %the option price
 inp.assetParam.meanShift = 0;
-ourGBMCallPrice = optPrice(inp);
+%}
+ourGBMCallPrice = optPrice(inp)
 [GBMCallPrice_withoutIS, out] = genOptPrice(ourGBMCallPrice)
 return
 inp.assetParam.pathType = 'QE_m';
