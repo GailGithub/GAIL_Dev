@@ -93,7 +93,7 @@ f3pp_xplot = f3pp(xplot);
 set(hLine1, 'LineStyle','-','color',MATLABBlue)
 set(hLine2, 'LineStyle','--','color',MATLABOrange)
 set(h(1), 'YLim', [0, 1],'YTick',[0, 1])
-set(h(2), 'YLim', [min(f3pp_xplot), max(f3pp_xplot)],'YTick',[min(f3pp_xplot), max(f3pp_xplot)])
+set(h(2), 'YLim', [min(f3pp_xplot)-2, max(f3pp_xplot)+2],'YTick',[min(f3pp_xplot), max(f3pp_xplot)])
 xlabel('\(x\)')
 legend(h(1),{'\(f_1(x)\)', '\(f_1''''(x)\)'},'location', 'northeast','box','off')
 gail.save_eps(whichdir, 'f3plot');
