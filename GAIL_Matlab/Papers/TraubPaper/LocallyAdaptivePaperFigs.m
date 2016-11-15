@@ -5,7 +5,7 @@ function LocallyAdaptivePaperFigs(funappxRes,funminRes,colorfig)
 %
 % Sou-Cheng T. Choi, Yuhan Ding, Fred J.Hickernell, Xin Tong, "Local
 % Adaption for Approximation and Minimization of Univariate Functions,"
-% working, 2016.
+% submitted to Journal of Complexity, accepted, 2016.
 %
 %
 % Example1: To plot all figures in the paper, run
@@ -88,11 +88,12 @@ f3 = @(x) f3param(x,delta,c);
 f3pp = @(x) f3ppparam(x,delta,c);
 
 figure
-[h,hLine1,hLine2] = plotyy(xplot,f3(xplot),xplot,f3pp(xplot));
+f3pp_xplot = f3pp(xplot);
+[h,hLine1,hLine2] = plotyy(xplot,f3(xplot),xplot,f3pp_xplot);
 set(hLine1, 'LineStyle','-','color',MATLABBlue)
 set(hLine2, 'LineStyle','--','color',MATLABOrange)
 set(h(1), 'YLim', [0, 1],'YTick',[0, 1])
-set(h(2), 'YLim', [-30, 30],'YTick',[-30, 30])
+set(h(2), 'YLim', [min(f3pp_xplot), max(f3pp_xplot)],'YTick',[min(f3pp_xplot), max(f3pp_xplot)])
 xlabel('\(x\)')
 legend(h(1),{'\(f_1(x)\)', '\(f_1''''(x)\)'},'location', 'northeast','box','off')
 gail.save_eps(whichdir, 'f3plot');
