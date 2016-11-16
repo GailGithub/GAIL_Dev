@@ -29,7 +29,7 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 %   and the box-to-sphere transformations, depending on the region of
 %   integration.
 %   Given the construction of our Lattices, d must be a positive integer
-%   with 1<=d<=100.
+%   with 1<=d<=600.
 % 
 %   q = CUBLATTICE_G(f,hyperbox,measure,abstol,reltol)
 %   estimates the integral of f over the hyperbox. The answer
@@ -54,7 +54,7 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 %
 %     f --- the integrand whose input should be a matrix n x d where n is
 %     the number of data points and d the dimension, which cannot be
-%     greater than 100. By default f is f=@ x.^2.
+%     greater than 600. By default f is f=@ x.^2.
 %
 %     hyperbox --- the integration region defined by its bounds. When measure
 %     is 'uniform' or 'normal', hiperbox must be a 2 x d matrix, where the
@@ -85,8 +85,8 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 %   Optional Input Arguments
 % 
 %     in_param.shift --- the Rank-1 lattices can be shifted to avoid the
-%     origin or other particular points. By default we consider a uniformly
-%     [0,1) random shift.
+%     origin or other particular points. The shift is a vector in [0,1)^d.
+%     By default we consider a shift uniformly sampled from [0,1)^d.
 % 
 %     in_param.mmin --- the minimum number of points to start is 2^mmin.
 %     The cone condition on the Fourier coefficients decay requires a
@@ -96,7 +96,8 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 % 
 %     in_param.mmax --- the maximum budget is 2^mmax. By construction of
 %     our Lattices generator, mmax is a positive integer such that
-%     mmin<=mmax<=26. The default value is 24.
+%     mmin<=mmax. mmax should not be bigger than the gail.lattice_gen
+%     allows. The default value is 20.
 % 
 %     in_param.fudge --- the positive function multiplying the finite 
 %     sum of Fast Fourier coefficients specified in the cone of functions.
@@ -200,7 +201,7 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 % in the interval R^3 where x1, x2 and x3 are normally distributed:
 % 
 % >> f = @(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2; hyperbox = [-inf(1,3);inf(1,3)];
-% >> q = cubLattice_g(f,hyperbox,'normal',1e-3,1e-3,'transform','C1sin','shift',2^(-25)); exactsol = 1;
+% >> q = cubLattice_g(f,hyperbox,'normal',1e-3,1e-3,'transform','C1sin','shift',2^(-25)*ones(1,3)); exactsol = 1;
 % >> check = abs(exactsol-q) < gail.tolfun(1e-3,1e-3,1,exactsol,'max')
 % check = 1
 % 
@@ -305,6 +306,7 @@ r_lag = 4; %distance between coefficients summed and those computed
 if strcmpi(out_param.measure,'uniform ball') || strcmpi(out_param.measure,'uniform sphere')% using uniformly distributed samples on a ball or sphere
     if strcmp(out_param.measure,'uniform sphere') && out_param.transf == 1 %box-to-sphere transformation
         out_param.d = out_param.d + 1; % changing out_param.d to the dimension of the sphere
+        out_param.shift = [out_param.shift rand];
     end
     
     if strcmpi(out_param.measure,'uniform ball')% using the formula of the volume of a ball
@@ -323,6 +325,7 @@ if strcmpi(out_param.measure,'uniform ball') || strcmpi(out_param.measure,'unifo
             else %  % box-to-sphere transformation
                 f = @(t) f(gail.domain_balls_spheres.sphere_psi_1(t, out_param.d, out_param.radius, hyperbox))*volume;% the psi function is the transformation 
                 out_param.d = out_param.d - 1;% the box-to-sphere transformation takes points from a (d-1)-dimensional box to a d-dimensional sphere
+                out_param.shift = out_param.shift(1:end-1);
             end
             hyperbox = [zeros(1, out_param.d); ones(1, out_param.d)];% the hyperbox must be the domain of the transformation, which is a unit box
             out_param.measure = 'uniform';% then a uniform distribution on a box can be used
@@ -373,7 +376,7 @@ out_param.exit=false(1,exit_len); %we start the algorithm with all warning flags
 %% Initial points and FFT
 out_param.n=2^out_param.mmin; %total number of points to start with
 n0=out_param.n; %initial number of points
-xpts=mod(gail.lattice_gen(1,n0,out_param.d)+out_param.shift,1); %grab Lattice points
+xpts=mod(bsxfun(@plus, gail.lattice_gen(1,n0,out_param.d), out_param.shift),1); %grab Lattice points
 y=f(xpts); %evaluate integrand
 yval=y;
 
@@ -458,7 +461,7 @@ for m=out_param.mmin+1:out_param.mmax
    out_param.n=2^m;
    mnext=m-1;
    nnext=2^mnext;
-   xnext=mod(gail.lattice_gen(nnext+1,2*nnext,out_param.d)+out_param.shift,1);
+   xnext=mod(bsxfun(@plus, gail.lattice_gen(nnext+1,2*nnext,out_param.d), out_param.shift),1);
    n0=n0+nnext;
    ynext=f(xnext);
    yval=[yval; ynext]; %#ok<*AGROW>
@@ -575,7 +578,7 @@ default.abstol  = 1e-4;
 default.reltol  = 1e-2;
 default.shift  = rand;
 default.mmin  = 10;
-default.mmax  = 24;
+default.mmax  = 20;
 default.fudge = @(m) 5*2.^-m;
 default.transform = 'Baker';
 default.toltype  = 'max';
@@ -599,9 +602,9 @@ else
     elseif numel(varargin) == 2
         out_param.f=f;
         hyperbox = varargin{2};
-        if ~isnumeric(hyperbox) || ~(size(hyperbox,1)==2) || ~(size(hyperbox,2)<101)
+        if ~isnumeric(hyperbox) || ~(size(hyperbox,1)==2) || ~(size(hyperbox,2)<601)
             warning('GAIL:cubLattice_g:hyperbox_error1',...
-                'The hyperbox must be a real matrix of size 2xd where d can not be greater than 100. Example for f(x)=x^2:')
+                'The hyperbox must be a real matrix of size 2xd where d can not be greater than 600. Example for f(x)=x^2:')
             f = @(x) x.^2;
             out_param.f=f;
             hyperbox = default.hyperbox;
@@ -609,6 +612,7 @@ else
      else
         out_param.f = f;
         hyperbox = varargin{2}; % hyperbox validation will be done above
+        default.shift = rand(1, size(hyperbox, 2)); % The shift needs to take the dimension of the problem
     end
 end
 
@@ -746,6 +750,7 @@ else % 'uniform ball' or 'uniform sphere'
     out_param.radius = hyperbox(out_param.d);
     hyperbox = hyperbox(:,1:out_param.d-1); % removing the last value is the radius, which is the radius
     out_param.d = out_param.d - 1; % storing the rigth dimension of the ball or sphere
+    out_param.shift = out_param.shift(1:end-1);
     
     if strcmp(out_param.measure,'uniform ball') && out_param.d <= 0
         warning('GAIL:cubLattice_g:dimensionequalszero',...
@@ -777,6 +782,7 @@ else % 'uniform ball' or 'uniform sphere'
         % setting out_param.d to be the dimension of the box over which the
         % integral will actually be computed
         out_param.d = out_param.d - 1;
+        out_param.shift = out_param.shift(1:end-1);
     end
 end
 
@@ -792,6 +798,14 @@ if (out_param.reltol < 0) || (out_param.reltol > 1)
     warning('GAIL:cubLattice_g:reltolnonunit',['Relative tolerance should be chosen in [0,1].' ...
             ' Using default relative tolerance ' num2str(default.reltol)])
     out_param.reltol = default.reltol;
+end
+
+% Checks if shift is a vector in [0,1)^d
+if ~(all(out_param.shift < 1) && all(out_param.shift >= 0) && size(out_param.shift, 2) == out_param.d)
+    warning('GAIL:cubLattice_g:shift',['The shift should be a vector ' ...
+            'of size 1 x d in [0,1)^d.' ...
+            ' Using default shift ' num2str(default.shift)])
+    out_param.shift = default.shift;
 end
 
 % Force mmin to be integer greater than 0
@@ -811,9 +825,9 @@ if out_param.mmin < r_lag
 end
 
 % Force exponent budget number of points be a positive integer greater than
-% or equal to mmin an smaller than 26
-if ~(gail.isposint(out_param.mmax) && out_param.mmax>=out_param.mmin && out_param.mmax<=26)
-    warning('GAIL:cubLattice_g:wrongmmax',['The maximum exponent for the budget should be an integer biger than mmin and smaller than 27.' ...
+% or equal to mmin an smaller than 20
+if ~(gail.isposint(out_param.mmax) && out_param.mmax>=out_param.mmin)
+    warning('GAIL:cubLattice_g:wrongmmax',['The maximum exponent for the budget should be an integer bigger than mmin and smaller than the allowed by gail.lattice_gen.' ...
             ' Using default mmax ' num2str(default.mmax)])
     out_param.mmax = default.mmax;
 end
