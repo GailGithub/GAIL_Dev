@@ -120,9 +120,17 @@ disp(['   which is ' num2str(LCVout.time/lout.time * 100,'%5.2f') ...
 
 
 %% Control variates for integral evaluation
-% Suppose we want to evaluate $I = \int^2_0 \mathsf{e}^{-x^2}dx$, which is
-% equivalent to $I = 2\int^1_0 \mathsf{e}^{-(2u)^2}du$. We then can create
-% $U[0,1]$ IID samples to approximate this integral by simple Monte Carlo.
+% Suppose we want to evaluate
+% \[
+% I = \int^2_0 \mathsf{e}^{-x^2}dx,
+% \]
+% which is
+% equivalent to 
+% \[
+% I = 2\int^1_0 \mathsf{e}^{-(2u)^2}du.
+% \]
+% We then can create $U[0,1]$ IID samples to approximate this integral by
+% simple Monte Carlo.
 
 absTol = 0.001;
 relTol = 0;
@@ -134,7 +142,10 @@ disp(['   and it took ' num2str(Iout.time) ' seconds to compute'])
 
 %%
 % Next we implement this by control variates method by taking the control
-% variate as $X = \mathsf{e}^{-2u}$.
+% variate as 
+% \[
+% X = \mathsf{e}^{-2u}.
+% \]
 %%
 % To ensure that we use exactly the same random numbers for $I$ and $X$, we
 % enclose the data as a function below.
