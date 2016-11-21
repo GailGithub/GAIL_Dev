@@ -1,6 +1,6 @@
 %% Initialization
 % We start by setting up the basic common praramters for our examples.
-
+% 
 gail.InitializeWorkspaceDisplay %initialize the workspace and the display parameters
 inp.timeDim.timeVector = 1/52:1/52:1/4; %weekly monitoring for three months
 inp.assetParam.initPrice = 100; %initial stock price
@@ -43,7 +43,7 @@ disp(['The price of the American put option is $' ...
    AmerEuro.priceParam.relTol*AmerEuroPutPrice)) ])
 disp(['   and this took ' num2str(AEout.time) ' seconds,'])
 disp(['   which is ' num2str(AEout.time/Aout.time * 100,'%5.2f') ...
-   ' of the time without control variates'])
+   '% of the time without control variates'])
 
 
 %% The Asian put without control variates
@@ -107,7 +107,7 @@ disp(['   and it took ' num2str(lout.time) ' seconds to compute']) %display resu
 %% The Lookback call *with* control variates
 LookCallCV = optPrice(EuroPut);
 LookCallCV.payoffParam = ...
-    struct('optType',{{'look','stockprice'}},'putCallType',{{'call','call'}});
+    struct('optType',{{'look','euro'}},'putCallType',{{'call','call'}});
 LookCallCV.priceParam.cubMethod = 'IID_MC_CV';
 [LookCallCVPrice,LCVout] = genOptPrice(LookCallCV);
 
@@ -162,4 +162,44 @@ disp(['The approximation of I is ' num2str(I_MC_CV,'%6.3f') ' +/- ' ...
     num2str(max(absTol, I_MC_CV*relTol)) ])
 disp(['   and it took ' num2str(ICVout.time) ' seconds to compute'])
 disp(['   which is ' num2str(ICVout.time/Iout.time * 100,'%5.2f') ...
+   '% of the time without control variates'])
+
+%% Control variates for two dimensional integral evaluation
+% Suppose we want to calculate the following integral:
+% \[
+% G = \int_{[-1,1]^2}\mathsf{e}^{||\boldsymbol{x}||^2}d\boldsymbol{x} =
+% 4\int_{[0,1]^2}\mathsf{e}^{||\boldsymbol{x}||^2}d\boldsymbol{x},
+% \]
+% where $x$, $y$ are independent and 
+% \[
+% ||\boldsymbol{x}||^2 = x_1^2 + x_2^2.
+% \]
+% Then we can use |meanMC_g| to approximate 
+% \[
+% E[g(\boldsymbol{x})],
+% \]
+% where 
+% \[
+% g(\boldsymbol{x})=4e^{||\boldsymbol{x}||^2}.
+% \]
+G = @(n) 4.*exp(sum(rand(n,2).^2,2));
+[G_MC, Gout] = meanMC_g(G,absTol,relTol);
+disp(['The approximation of G is ' num2str(G_MC,'%6.3f') ' +/- ' ...
+    num2str(max(absTol, G_MC*relTol)) ])
+disp(['   and it took ' num2str(Gout.time) ' seconds to compute'])
+%%
+% Next we use control variate $Z=||x||^2$ to approximate $G$. And the
+% auxiliary function is
+%%
+% 
+%   function YX = Test_CV_integral_Two(n)
+%   u = rand(n,2);
+%   YX = [4.*exp(sum(u.^2,2)) sum(u.^2,2)];
+%   end
+% 
+[G_MC_CV, GCVout] = meanMC_CV(@(n) Test_CV_integral_Two(n),2/3,absTol,relTol);
+disp(['The approximation of G is ' num2str(G_MC_CV,'%6.3f') ' +/- ' ...
+    num2str(max(absTol, G_MC_CV*relTol)) ])
+disp(['   and it took ' num2str(GCVout.time) ' seconds to compute'])
+disp(['   which is ' num2str(GCVout.time/Gout.time * 100,'%5.2f') ...
    '% of the time without control variates'])
