@@ -12,7 +12,7 @@ function [tmu,out_param]=meanMC_CV(varargin)
 %   is rather small, the abstol determines the accuracy of the estimation.
 %   The default values are abstol=1e-2, reltol=1e-1, and alpha=1%. Input
 %   YXrand is a function handle that accepts a positive integer input n and
-%   returns an n x j array of IID instances of the random variable Y and
+%   returns an n x j matrix of IID instances of the random variable Y and
 %   the depentent random variables X.
 %
 %   tmu = meanMC_CV(YXrand,meanX,abstol,reltol,alpha,fudge,nSig,n1,tbudget,nbudget)
@@ -40,8 +40,8 @@ function [tmu,out_param]=meanMC_CV(varargin)
 %     YXrand --- the function for generating n IID instances of a random
 %     variable Y whose mean we want to estimate and other dependent random
 %     variables X. Y is often defined as a function of some random variable
-%     with a simple distribution. The input of Yrand should be the number 
-%     of random variables n, the output of Yrand should be n x j function 
+%     with a simple distribution. The input of YXrand should be the number 
+%     of random variables n, the output of YXrand should be n x j function 
 %     values. For example, if Y = u.^2 and X = u where u is a standard 
 %     uniform random variable, then one may define 
 %     YXrand = @(n) [rand(n,1).^2, rand(n,1)].
@@ -142,7 +142,7 @@ function [tmu,out_param]=meanMC_CV(varargin)
 %
 % Example 2:
 % Calculate the mean of u^2 by adding X=u when u is standard normally distributed
-% in [0 1], with the absolute error tolerance = 1e-3 and uncertainty 5%.
+% in [-00 +00], with the absolute error tolerance = 1e-3 and uncertainty 5%.
 %
 % >> in_param.reltol=0; in_param.abstol = 1e-3;
 % >> in_param.alpha = 0.05; YXrand=@(n) [randn(n,1).^2, randn(n,1)].
@@ -203,12 +203,17 @@ else
 end
 
 if numel(varargin)>1 && isnumeric(varargin{2}) && all(~isnan(varargin{2}))
-    YX = YXrand2(10000);
+    YX = YXrand2(100000);
     X = YX(:,2:end);
     meanX2 = mean(X,1);
-    if all(abs(meanX2-varargin{2})<0.01)
+    if all(abs(meanX2-varargin{2})<0.01) && all(varargin{2}~=1e-1) && ...
+            all(varargin{2}~=1e-2) && all(varargin{2}~=1e-3) && ...
+            all(varargin{2}~=1e-4) && all(varargin{2}~=1e-5)
         meanX2 = varargin{2};
     else
+    % if the difference between any population means and any samples means
+    % is not under tolerance 0.01, print warning message and using sample
+    % means of X
     warning('GAIL:meanMC_CV:meanXnotright',...
         ['meanX mignt not be given or is not close to sample means of X '...
         'under tolerance 0.01. Now GAIL is using sample means of X.'])
@@ -233,7 +238,7 @@ if validvarargin
 end
 
 if ~validvarargin
-    %if there is only input which is Yrand, use all the default parameters
+    %if there is only input which is YXrand, use all the default parameters
     out_param.abstol = default.abstol;% default absolute error tolerance
     out_param.reltol = default.reltol; % default relative error tolerance
     out_param.alpha = default.alpha;% default uncertainty
@@ -275,7 +280,7 @@ end
 if (~gail.isfcn(YXrand2))
     %print warning message
     warning('GAIL:meanMC_CV:yxrandnotfcn',...
-        ['Yrand must be a function handle.' ...
+        ['YXrand must be a function handle.' ...
         ' Now GAIL is using the default YXrand =@(n) [rand(n,1).^2, rand(n,1)].'])
     YXrand2 = @(n) [rand(n,1).^2, rand(n,1)];
 end
