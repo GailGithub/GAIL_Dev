@@ -154,7 +154,7 @@ function [tmu,out_param]=meanMC_CV(varargin)
 % Calculate the mean of exp(u) by adding X=u when u is uniformly distributed in
 % [0 1], with the absolute error tolerance 1e-3.
 %
-% >> tmu=meanMC_CV(@(n) [exp(rand(n,1)), rand(n,1)],0.5,1e-3,0)
+% >> [tmu, out_param]=meanMC_CV(@(n) [exp(rand(n,1)), rand(n,1)],0.5,1e-3,0)
 % tmu = 1.71***
 %
 %
@@ -162,7 +162,7 @@ function [tmu,out_param]=meanMC_CV(varargin)
 % Calculate the mean of cos(u^2) by adding X=[u,u^2] when u is uniformly distributed in
 % [0 1], with the relative error tolerance 1e-2 and uncertainty 0.05.
 %
-% >> tmu=meanMC_CV(@(n) [cos(rand(n,1).^2),rand(n,1), rand(n,1).^2],[0.5,1/3],
+% >> [tmu, out_param]=meanMC_CV(@(n) [cos(rand(n,1).^2),rand(n,1), rand(n,1).^2],[0.5,1/3],
 % 'reltol',1e-2,'abstol',0,'alpha',0.05)
 % tmu = 0.90***
 
@@ -202,22 +202,26 @@ else
     YXrand2 = varargin{1};
 end
 
+YX =@(n) YXrand2(n);
+X = @(YX) YX(:,2:end);
 if numel(varargin)>1 && isnumeric(varargin{2}) && all(~isnan(varargin{2}))
-    YX = YXrand2(100000);
-    X = YX(:,2:end);
-    meanX2 = mean(X,1);
-    if all(abs(meanX2-varargin{2})<0.01) && all(varargin{2}~=1e-1) && ...
+    xval = X(YX(100)); %generate 100 samples of X
+    meanX2 = mean(xval,1); %compute the sample means of X
+    CLTCIwidth = 2.58*std(xval)/sqrt(100); %width of confidence interval
+    % if the difference between any population means and any samples means
+    % is not in the width of confidence interval or meanX2 equals to some 
+    % common absolute tolerance, use meanX the user passed. Or, print 
+    % warning message and using sample means of X
+    if all(abs(meanX2-varargin{2})<CLTCIwidth) && all(varargin{2}~=1e-1) && ...
             all(varargin{2}~=1e-2) && all(varargin{2}~=1e-3) && ...
             all(varargin{2}~=1e-4) && all(varargin{2}~=1e-5)
         meanX2 = varargin{2};
     else
-    % if the difference between any population means and any samples means
-    % is not under tolerance 0.01, print warning message and using sample
-    % means of X
     warning('GAIL:meanMC_CV:meanXnotright',...
-        ['meanX mignt not be given or is not close to sample means of X '...
-        'under tolerance 0.01. Now GAIL is using sample means of X.'])
-    meanX2 = mean(X,1);
+        ['meanX mignt not be given or is not in the 99% confidence interval.'...
+        'Now GAIL is using sample means of X.'])
+    meanX2 = meanMC_CLT(@(n) X(YX(n)),0.01,0); % use meanMC_CLT to estimate
+    % the population means under absolute tolerance 0.01
     end
 else
     % if meanX are not numbers, print warning message and using sample
@@ -225,9 +229,8 @@ else
     help meanMC_CV
     warning('GAIL:meanMC_CV:meanXnotgiven',...
         'meanX must be given. Now GAIL is using sample means of X.')
-    YX = YXrand2(10000);
-    X = YX(:,2:end);
-    meanX2 = mean(X,1);
+    meanX2 = meanMC_CLT(@(n) X(YX(n)),0.01,0); % use meanMC_CLT to estimate
+    % the population means under absolute tolerance 0.01
 end
 
 validvarargin=numel(varargin)>2;
