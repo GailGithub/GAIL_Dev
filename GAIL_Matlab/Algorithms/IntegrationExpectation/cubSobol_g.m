@@ -38,8 +38,7 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 %   the default value is used. Note that if an input is not specified,
 %   the remaining tail cannot be specified either. Inputs f and hyperbox 
 %   are required. The other optional inputs are in the correct order:
-%   measure,abstol,reltol,mmin,mmax,fudge,toltype and
-%   theta.
+%   measure,abstol,reltol,mmin,mmax,and fudge.
 %
 %   q = CUBSOBOL_G(f,hyperbox,'measure',measure,'abstol',abstol,'reltol',reltol)
 %   estimates the integral of f over the hyperbox. The answer
@@ -55,7 +54,7 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 %     f --- the integrand whose input should be a matrix n x d where n is
 %     the number of data points and d the dimension, which cannot be
 %     greater than 1111. By default f is f=@ x.^2.
-%     --- if using control variates, f need to be a structure with two fields. 
+%     --- if using control variates, f needs to be a structure with two fields. 
 %     First field: 'func', need to be a function handle with n x (J+1) 
 %     dimension outputs, where J is the number of control variates. 
 %     First column is the output of target function, next J colunms are
@@ -64,7 +63,6 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 %     exact means of control variates in the same order from 
 %     the function handle. For examples of how to use control variates, 
 %     please check Example 7 below. 
-%
 %
 %     hyperbox --- the integration region defined by its bounds. When measure
 %     is 'uniform' or 'normal', hiperbox must be a 2 x d matrix, where the
@@ -87,10 +85,12 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 %     finite positive value for the radius. By default it is 'uniform'. 
 %
 %     in_param.abstol --- the absolute error tolerance, abstol>=0. By 
-%     default it is 1e-4.
+%     default it is 1e-4. For pure absolute tolerance, set in_param.reltol
+%     = 0.
 %
 %     in_param.reltol --- the relative error tolerance, which should be
-%     in [0,1]. Default value is 1e-2.
+%     in [0,1]. Default value is 1e-2. For pure absolute tolerance, set
+%     in_param.abstol = 0.
 % 
 %   Optional Input Arguments
 % 
@@ -110,26 +110,6 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 %     nonnegative integers being evaluated simultaneously. For more
 %     technical information about this parameter, refer to the references.
 %     By default it is @(m) 5*2.^-m.
-%
-%     in_param.toltype --- this is the generalized tolerance function.
-%     There are two choices, 'max' which takes
-%     max(abstol,reltol*| integral(f) | ) and 'comb' which is the linear combination
-%     theta*abstol+(1-theta)*reltol*| integral(f) | . Theta is another 
-%     parameter to be specified with 'comb'(see below). For pure absolute
-%     error, either choose 'max' and set reltol = 0 or choose 'comb' and set
-%     theta = 1. For pure relative error, either choose 'max' and set 
-%     abstol = 0 or choose 'comb' and set theta = 0. Note that with 'max',
-%     the user can not input abstol = reltol = 0 and with 'comb', if theta = 1
-%     abstol con not be 0 while if theta = 0, reltol can not be 0.
-%     By default toltype is 'max'.
-% 
-%     in_param.theta --- this input is parametrizing the toltype 
-%     'comb'. Thus, it is only active when the toltype
-%     chosen is 'comb'. It establishes the linear combination weight
-%     between the absolute and relative tolerances
-%     theta*abstol+(1-theta)*reltol*| integral(f) |. Note that for theta = 1, 
-%     we have pure absolute tolerance while for theta = 0, we have pure 
-%     relative tolerance. By default, theta=1. 
 %     
 %     in_param.betaUpdate--- this input decides whether to update beta during each
 %     iteration when using control variates. With value 0 beta is not updated. 
@@ -203,7 +183,7 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 % 
 % >> f = @(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2; hyperbox = [-inf(1,3);inf(1,3)];
 % >> q = cubSobol_g(f,hyperbox,'normal',1e-3,1e-3); exactsol = 1;
-% >> check = abs(exactsol-q) < gail.tolfun(1e-3,1e-3,1,exactsol,'max')
+% >> check = abs(exactsol-q) < max(1e-3,1e-3*abs(exactsol))
 % check = 1
 % 
 % 
@@ -213,7 +193,7 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 % 
 % >> f = @(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [-ones(1,2);2*ones(1,2)];
 % >> q = cubSobol_g(f,hyperbox,'uniform',1e-3,1e-2); exactsol = (sqrt(pi)/2*(erf(2)+erf(1)))^2;
-% >> check = abs(exactsol-q) < gail.tolfun(1e-3,1e-2,1,exactsol,'max')
+% >> check = abs(exactsol-q) < max(1e-3,1e-2*abs(exactsol))
 % check = 1
 %
 %
@@ -223,7 +203,7 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 % 
 % >> f = @(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); hyperbox = [-inf(1,1);inf(1,1)];
 % >> q = cubSobol_g(f,hyperbox,'normal',1e-4,1e-2); price = normcdf(0.05)*100 - 0.5*100*exp(-0.05^2/2);
-% >> check = abs(price-q) < gail.tolfun(1e-4,1e-2,1,price,'max')
+% >> check = abs(price-q) < max(1e-4,1e-2*abs(price))
 % check = 1
 %
 %
@@ -467,22 +447,17 @@ end
 
 %% Approximate integral
 q=mean(yval)+mu*beta;
-appxinteg(1)=q;
 
 % Check the end of the algorithm
-deltaplus = 0.5*(gail.tolfun(out_param.abstol,...
-    out_param.reltol,out_param.theta,abs(q-errest(1)),...
-    out_param.toltype)+gail.tolfun(out_param.abstol,out_param.reltol,...
-    out_param.theta,abs(q+errest(1)),out_param.toltype));
-deltaminus = 0.5*(gail.tolfun(out_param.abstol,...
-    out_param.reltol,out_param.theta,abs(q-errest(1)),...
-    out_param.toltype)-gail.tolfun(out_param.abstol,out_param.reltol,...
-    out_param.theta,abs(q+errest(1)),out_param.toltype));
+q = q - errest(1)*(max(out_param.abstol, out_param.reltol*abs(q + errest(1)))...
+    - max(out_param.abstol, out_param.reltol*abs(q - errest(1))))/...
+    (max(out_param.abstol, out_param.reltol*abs(q + errest(1)))...
+    + max(out_param.abstol, out_param.reltol*abs(q - errest(1)))); % Optimal estimator
+appxinteg(1)=q;
 
 is_done = false;
-if out_param.bound_err <= deltaplus
-   q=q+deltaminus;
-   appxinteg(1)=q;
+if 4*errest(1)^2/(max(out_param.abstol, out_param.reltol*abs(q + errest(1)))...
+    + max(out_param.abstol, out_param.reltol*abs(q - errest(1))))^2 <= 1
    out_param.time=toc(t_start);
    is_done = true;
 elseif out_param.mmin == out_param.mmax % We are on our max budget and did not meet the error condition => overbudget
@@ -608,21 +583,15 @@ for m=out_param.mmin+1:out_param.mmax
 
    %% Approximate integral
    q=mean(yval)+mu*beta;
+   
+   q = q - errest(meff)*(max(out_param.abstol, out_param.reltol*abs(q + errest(meff)))...
+        - max(out_param.abstol, out_param.reltol*abs(q - errest(meff))))/...
+        (max(out_param.abstol, out_param.reltol*abs(q + errest(meff)))...
+        + max(out_param.abstol, out_param.reltol*abs(q - errest(meff)))); % Optimal estimator
    appxinteg(meff)=q;
-   
-   % Check the end of the algorithm
-    deltaplus = 0.5*(gail.tolfun(out_param.abstol,...
-        out_param.reltol,out_param.theta,abs(q-errest(meff)),...
-        out_param.toltype)+gail.tolfun(out_param.abstol,out_param.reltol,...
-        out_param.theta,abs(q+errest(meff)),out_param.toltype));
-    deltaminus = 0.5*(gail.tolfun(out_param.abstol,...
-        out_param.reltol,out_param.theta,abs(q-errest(meff)),...
-        out_param.toltype)-gail.tolfun(out_param.abstol,out_param.reltol,...
-        out_param.theta,abs(q+errest(meff)),out_param.toltype));
-   
-   if out_param.bound_err <= deltaplus
-      q=q+deltaminus;
-      appxinteg(meff)=q;
+
+   if 4*errest(meff)^2/(max(out_param.abstol, out_param.reltol*abs(q + errest(meff)))...
+        + max(out_param.abstol, out_param.reltol*abs(q - errest(meff))))^2 <= 1
       out_param.time=toc(t_start);
       is_done = true;
    elseif m == out_param.mmax % We are on our max budget and did not meet the error condition => overbudget
@@ -657,8 +626,6 @@ default.reltol  = 1e-2;
 default.mmin  = 10;
 default.mmax  = 24;
 default.fudge = @(m) 5*2.^-m;
-default.toltype  = 'max';
-default.theta  = 1;
 default.betaUpdate = 0;% option for updating beta, off at default
 
 % two data structures for function: function || structure(using CV)
@@ -723,8 +690,6 @@ if ~validvarargin
     out_param.mmin = default.mmin;
     out_param.mmax = default.mmax;  
     out_param.fudge = default.fudge;
-    out_param.toltype = default.toltype;
-    out_param.theta = default.theta;
     out_param.betaUpdate= default.betaUpdate;
 else
     p = inputParser;
@@ -740,9 +705,6 @@ else
         addOptional(p,'mmin',default.mmin,@isnumeric);
         addOptional(p,'mmax',default.mmax,@isnumeric);
         addOptional(p,'fudge',default.fudge,@gail.isfcn);
-        addOptional(p,'toltype',default.toltype,...
-            @(x) any(validatestring(x, {'max','comb'})));
-        addOptional(p,'theta',default.theta,@isnumeric);
         addOptional(p,'betaUpdate',default.betaUpdate,@isnumeric);
     else
         if isstruct(in3) %parse input structure
@@ -758,9 +720,6 @@ else
         f_addParamVal(p,'mmin',default.mmin,@isnumeric);
         f_addParamVal(p,'mmax',default.mmax,@isnumeric);
         f_addParamVal(p,'fudge',default.fudge,@gail.isfcn);
-        f_addParamVal(p,'toltype',default.toltype,...
-            @(x) any(validatestring(x, {'max','comb'})));
-        f_addParamVal(p,'theta',default.theta,@isnumeric);
         f_addParamVal(p,'betaUpdate',default.betaUpdate,@isnumeric);
     end
     parse(p,f,hyperbox,varargin{3:end})
@@ -918,35 +877,11 @@ if ~((gail.isfcn(out_param.fudge) && (out_param.fudge(1)>0)))
     out_param.fudge = default.fudge;
 end
 
-% Force toltype to be max or comb
-if ~(strcmp(out_param.toltype,'max') || strcmp(out_param.toltype,'comb') )
-    warning('GAIL:cubSobol_g:nottoltype',['The error type can only be max or comb.' ...
-            ' Using default toltype ' num2str(default.toltype)])
-    out_param.toltype = default.toltype;
-end
-
-% Force theta to be in [0,1]
-if (out_param.theta < 0) || (out_param.theta > 1)
-    warning('GAIL:cubSobol_g:thetanonunit',['Theta should be chosen in [0,1].' ...
-            ' Using default theta ' num2str(default.theta)])
-    out_param.theta = default.theta;
-end
-
 % Checking on pure absolute/relative error
 if (out_param.abstol==0) && (out_param.reltol==0)
     warning('GAIL:cubSobol_g:tolzeros',['Absolute and relative error tolerances can not be simultaniusly 0.' ...
             ' Using default absolute tolerance ' num2str(default.abstol) ' and relative tolerance ' num2str(default.reltol)])
     out_param.abstol = default.abstol;
-    out_param.reltol = default.reltol;
-end
-if (strcmp(out_param.toltype,'comb')) && (out_param.theta==1) && (out_param.abstol==0)
-    warning('GAIL:cubSobol_g:abstolzero',['When choosing toltype comb, if theta=1 then abstol>0.' ...
-            ' Using default absolute tolerance ' num2str(default.abstol) ])
-    out_param.abstol = default.abstol;
-end
-if (strcmp(out_param.toltype,'comb')) && (out_param.theta==0) && (out_param.reltol==0)
-    warning('GAIL:cubSobol_g:reltolzero',['When choosing toltype comb, if theta=0 then reltol>0.' ...
-            ' Using default relative tolerance ' num2str(default.reltol) ])
     out_param.reltol = default.reltol;
 end
 
