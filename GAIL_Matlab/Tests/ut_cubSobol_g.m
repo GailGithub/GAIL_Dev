@@ -10,7 +10,7 @@ classdef ut_cubSobol_g < matlab.unittest.TestCase
       [meanf,out_param] = cubSobol_g(f,hyperbox,in_param);
       exactf = 0.33;
       actualerr = abs(meanf-exactf);
-      tolerance = gail.tolfun(out_param.abstol,out_param.reltol,out_param.theta,exactf,out_param.toltype);
+      tolerance = max(out_param.abstol,out_param.reltol*abs(exactf));
       testCase.verifyLessThanOrEqual(actualerr,tolerance);
       testCase.verifyTrue(out_param.d==1);
     end
@@ -22,7 +22,7 @@ classdef ut_cubSobol_g < matlab.unittest.TestCase
       [meanf,out_param] = cubSobol_g(f,hyperbox,in_param);
       exactf = exp(1)-1;
       actualerr = abs(meanf-exactf);
-      tolerance = gail.tolfun(out_param.abstol,out_param.reltol,out_param.theta,exactf,out_param.toltype);
+      tolerance = max(out_param.abstol,out_param.reltol*abs(exactf));
       testCase.verifyLessThanOrEqual(actualerr,tolerance);
       testCase.verifyTrue(out_param.d==1);
     end
@@ -34,7 +34,7 @@ classdef ut_cubSobol_g < matlab.unittest.TestCase
       [meanf,out_param] = cubSobol_g(f,hyperbox,in_param);
       exactf = 1-cos(1);
       actualerr = abs(meanf-exactf);
-      tolerance = gail.tolfun(out_param.abstol,out_param.reltol,out_param.theta,exactf,out_param.toltype);
+      tolerance = max(out_param.abstol,out_param.reltol*abs(exactf));
       testCase.verifyLessThanOrEqual(actualerr,tolerance);
       testCase.verifyTrue(out_param.d==1);
     end
@@ -46,7 +46,7 @@ classdef ut_cubSobol_g < matlab.unittest.TestCase
       [meanf,out_param] = cubSobol_g(f,hyperbox,in_param);
       exactf = pi/4*erf(1)^2;
       actualerr = abs(meanf-exactf);
-      tolerance = gail.tolfun(out_param.abstol,out_param.reltol,out_param.theta,exactf,out_param.toltype);
+      tolerance = max(out_param.abstol,out_param.reltol*abs(exactf));
       testCase.verifyLessThanOrEqual(actualerr,tolerance);
       testCase.verifyTrue(out_param.d==2);
     end
@@ -59,7 +59,7 @@ classdef ut_cubSobol_g < matlab.unittest.TestCase
       [meanf,out_param] = cubSobol_g(f,hyperbox,in_param);
       exactf = 128/3;
       actualerr = abs(meanf-exactf);
-      tolerance = gail.tolfun(out_param.abstol,out_param.reltol,out_param.theta,exactf,out_param.toltype);
+      tolerance = max(out_param.abstol,out_param.reltol*abs(exactf));
       testCase.verifyLessThanOrEqual(actualerr,tolerance);
       testCase.verifyTrue(out_param.d==3);
     end
@@ -72,7 +72,7 @@ classdef ut_cubSobol_g < matlab.unittest.TestCase
       [meanf,out_param] = cubSobol_g(f,hyperbox,in_param);
       exactf = pi/4*erf(1)^2;
       actualerr = abs(meanf-exactf);
-      tolerance = gail.tolfun(out_param.abstol,out_param.reltol,out_param.theta,exactf,out_param.toltype);
+      tolerance = max(out_param.abstol,out_param.reltol*abs(exactf));
       testCase.verifyLessThanOrEqual(actualerr,tolerance);
       testCase.verifyTrue(out_param.d==2);
     end
@@ -104,7 +104,7 @@ classdef ut_cubSobol_g < matlab.unittest.TestCase
       exactf = exactOpt(1);
       [meanf,out_param] = cubSobol_g(f,hyperbox,in_param);
       actualerr = abs(meanf-exactf);
-      tolerance = gail.tolfun(out_param.abstol,out_param.reltol,out_param.theta,exactf,out_param.toltype);
+      tolerance = max(out_param.abstol,out_param.reltol*abs(exactf));
       testCase.verifyLessThanOrEqual(actualerr,tolerance);
       testCase.verifyTrue(out_param.d==4);
     end

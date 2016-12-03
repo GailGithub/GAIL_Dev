@@ -10,7 +10,7 @@ classdef ut_cubLattice_g < matlab.unittest.TestCase
       [meanf,out_param] = cubLattice_g(f,hyperbox,in_param);
       exactf = 0.33;
       actualerr = abs(meanf-exactf);
-      tolerance = gail.tolfun(out_param.abstol,out_param.reltol,out_param.theta,exactf,out_param.toltype);
+      tolerance = max(out_param.abstol,out_param.reltol*abs(exactf));
       testCase.verifyLessThanOrEqual(actualerr,tolerance);
     end
     
@@ -21,7 +21,7 @@ classdef ut_cubLattice_g < matlab.unittest.TestCase
       [meanf,out_param] = cubLattice_g(f,hyperbox,in_param);
       exactf = exp(1)-1;
       actualerr = abs(meanf-exactf);
-      tolerance = gail.tolfun(out_param.abstol,out_param.reltol,out_param.theta,exactf,out_param.toltype);
+      tolerance = max(out_param.abstol,out_param.reltol*abs(exactf));
       testCase.verifyLessThanOrEqual(actualerr,tolerance);
       testCase.verifyTrue(out_param.d==1);
     end
@@ -33,7 +33,7 @@ classdef ut_cubLattice_g < matlab.unittest.TestCase
       [meanf,out_param] = cubLattice_g(f,hyperbox,in_param);
       exactf = 1-cos(1);
       actualerr = abs(meanf-exactf);
-      tolerance = gail.tolfun(out_param.abstol,out_param.reltol,out_param.theta,exactf,out_param.toltype);
+      tolerance = max(out_param.abstol,out_param.reltol*abs(exactf));
       testCase.verifyLessThanOrEqual(actualerr,tolerance);
       testCase.verifyTrue(out_param.d==1);
     end
@@ -45,7 +45,7 @@ classdef ut_cubLattice_g < matlab.unittest.TestCase
       [meanf,out_param] = cubLattice_g(f,hyperbox,in_param);
       exactf = pi/4*erf(1)^2;
       actualerr = abs(meanf-exactf);
-      tolerance = gail.tolfun(out_param.abstol,out_param.reltol,out_param.theta,exactf,out_param.toltype);
+      tolerance = max(out_param.abstol,out_param.reltol*abs(exactf));
       testCase.verifyLessThanOrEqual(actualerr,tolerance);
       testCase.verifyTrue(out_param.d==2);
     end
@@ -85,7 +85,7 @@ classdef ut_cubLattice_g < matlab.unittest.TestCase
         [ut_abserr,ut_relerr,abstol,reltol] = Test_cubLattice_g;
         verifyabserr = ut_abserr<=abstol;
         verifyrelerr = ut_relerr<=reltol;
-        testCase.verifyTrue(max(max(verifyabserr + verifyrelerr))>0);
+        testCase.verifyTrue(min(min(verifyabserr + verifyrelerr))>0);
     end
   end
 end
