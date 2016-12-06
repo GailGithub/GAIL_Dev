@@ -110,7 +110,10 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 %     nonnegative integers being evaluated simultaneously. For more
 %     technical information about this parameter, refer to the references.
 %     By default it is @(m) 5*2.^-m.
-%     
+%
+%     in_param.scramble --- boolean which allows to choose Owen scrambled
+%     Sobol' sequences. By default it is true.
+%
 %     in_param.betaUpdate--- this input decides whether to update beta during each
 %     iteration when using control variates. With value 0 beta is not updated. 
 %     If betaUpdate = 1, beta is updated. By default, betaUpdate = 0.
@@ -344,7 +347,9 @@ end
 
 %% Main algorithm
 sobstr=sobolset(out_param.d); %generate a Sobol' sequence
-sobstr=scramble(sobstr,'MatousekAffineOwen'); %scramble it
+if out_param.scramble
+    sobstr=scramble(sobstr,'MatousekAffineOwen'); %scramble it
+end
 Stilde=zeros(out_param.mmax-out_param.mmin+1,1); %initialize sum of DFWT terms
 CStilde_low = -inf(1,out_param.mmax-l_star+1); %initialize various sums of DFWT terms for necessary conditions
 CStilde_up = inf(1,out_param.mmax-l_star+1); %initialize various sums of DFWT terms for necessary conditions
@@ -626,6 +631,7 @@ default.reltol  = 1e-2;
 default.mmin  = 10;
 default.mmax  = 24;
 default.fudge = @(m) 5*2.^-m;
+default.scramble = true;
 default.betaUpdate = 0;% option for updating beta, off at default
 
 % two data structures for function: function || structure(using CV)
@@ -668,7 +674,7 @@ if validvarargin
     in3=varargin(3:end);
     for j=1:numel(varargin)-2
     validvarargin=validvarargin && (isnumeric(in3{j}) ...
-        || ischar(in3{j}) || isstruct(in3{j}) || gail.isfcn(in3{j}));
+        || ischar(in3{j}) || isstruct(in3{j}) || gail.isfcn(in3{j})) || islogical(in3{j});
     end
     if ~validvarargin
         warning('GAIL:cubSobol_g:validvarargin','Optional parameters must be numeric or strings. We will use the default optional parameters.')
@@ -690,6 +696,7 @@ if ~validvarargin
     out_param.mmin = default.mmin;
     out_param.mmax = default.mmax;  
     out_param.fudge = default.fudge;
+    out_param.fudge = default.scramble;
     out_param.betaUpdate= default.betaUpdate;
 else
     p = inputParser;
@@ -705,6 +712,7 @@ else
         addOptional(p,'mmin',default.mmin,@isnumeric);
         addOptional(p,'mmax',default.mmax,@isnumeric);
         addOptional(p,'fudge',default.fudge,@gail.isfcn);
+        addOptional(p,'scramble',default.scramble,@islogical);
         addOptional(p,'betaUpdate',default.betaUpdate,@isnumeric);
     else
         if isstruct(in3) %parse input structure
@@ -720,6 +728,7 @@ else
         f_addParamVal(p,'mmin',default.mmin,@isnumeric);
         f_addParamVal(p,'mmax',default.mmax,@isnumeric);
         f_addParamVal(p,'fudge',default.fudge,@gail.isfcn);
+        f_addParamVal(p,'scramble',default.scramble,@islogical);
         f_addParamVal(p,'betaUpdate',default.betaUpdate,@isnumeric);
     end
     parse(p,f,hyperbox,varargin{3:end})
