@@ -465,11 +465,9 @@ if 4*errest(1)^2/(max(out_param.abstol, out_param.reltol*abs(q + errest(1)))...
     + max(out_param.abstol, out_param.reltol*abs(q - errest(1))))^2 <= 1
    out_param.time=toc(t_start);
    is_done = true;
-   out_param.beta = beta;
 elseif out_param.mmin == out_param.mmax % We are on our max budget and did not meet the error condition => overbudget
    out_param.exit(1) = true;
    is_done = true;
-   out_param.beta = beta;
 end
 
 %% Loop over m
@@ -602,7 +600,6 @@ for m=out_param.mmin+1:out_param.mmax
         + max(out_param.abstol, out_param.reltol*abs(q - errest(meff))))^2 <= 1
       out_param.time=toc(t_start);
       is_done = true;
-      out_param.beta = beta;
    elseif m == out_param.mmax % We are on our max budget and did not meet the error condition => overbudget
       out_param.exit(1) = true;
    end
