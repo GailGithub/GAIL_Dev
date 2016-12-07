@@ -428,6 +428,7 @@ if 4*errest(1)^2/(max(out_param.abstol, out_param.reltol*abs(q + errest(1)))...
    is_done = true;
 elseif out_param.mmin == out_param.mmax % We are on our max budget and did not meet the error condition => overbudget
    out_param.exit(1) = true;
+   is_done = true;
 end
 
 %% Loop over m
