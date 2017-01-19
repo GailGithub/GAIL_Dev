@@ -17,7 +17,7 @@ if nargin < 7
         powerFuncMethod='Cauchy';  %technique to compute power function%
     end
     if nargin < 6
-       if nargin < 5;
+       if nargin < 5
           whKer = 'Mat1'; %type of kernel
           if nargin < 4
              whSample = 'Sobol'; %type of sampling, scrambled Sobol

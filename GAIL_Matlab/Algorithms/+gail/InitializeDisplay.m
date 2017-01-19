@@ -15,3 +15,11 @@ MATLABLtOrange = 0.5*[0.85,  0.325, 0.098] + 0.5*[1 1 1];
 MATLABCyan = [0.3010, 0.7450, 0.9330];
 MATLABMaroon = [0.6350, 0.0780, 0.1840];
 MATLABYellow = [0.9290, 0.6940, 0.1250];
+colorSequence = {MATLABBlue, MATLABOrange, MATLABYellow, MATLABPurple, ...
+   MATLABGreen, MATLABCyan, MATLABMaroon};
+nColor = length(colorSequence);
+markerSequence = {'o','s','d','^','v','h'};
+markerSize = {15,15,15,15,15,15};
+nMarker = length(markerSequence);
+lineSequence = {'-','--',':','-.'};
+nLine = length(lineSequence);
