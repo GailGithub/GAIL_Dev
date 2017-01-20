@@ -94,7 +94,7 @@ tstart = tic; %start the clock
 for ii = 1:nn
    nii = nvec(ii);
    
-   xr = x(1:nii,:); fxr = fx(1:nii); BernPolynXr = 0;
+   xr = x(1:nii,:); fxr = fx(1:nii); BernPolynXr = 0; % default Initial values
    if strcmp(whKer,'Fourier')
        %% Reorder the x, fx to get symmetric circulant (Toeplitz) matrix
        [~,w2]=sort(xr(:,2)); xr = xr(w2,:);
