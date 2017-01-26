@@ -109,13 +109,13 @@ for ii = 1:nn
    
    %% Estimate optimal \theta
    lnaMLE = fminbnd(@(lna) ...
-      MLEKernel(exp(lna),xr,fxr,whKer,domain,BernPolynXr,BernPolynOrder), ...
+      MLEKernel(exp(lna),xr,fxr,whKer,domain), ...
       ax,bx,optimset('TolX',1e-2));
    aMLE = exp(lnaMLE);
    
    %% Use the optimal \theta
-   out_aMLE(ii) = aMLE
-   [K,kvec,k0] = kernelFun(xr,whKer,aMLE,domain,BernPolynXr,BernPolynOrder);
+   out_aMLE(ii) = aMLE;
+   [K,kvec,k0] = kernelFun(xr,whKer,aMLE,domain);
    
    if strcmp(whKer,'Fourier')
        y = fxr; cn = K;
@@ -127,7 +127,7 @@ for ii = 1:nn
    end
    
    %% compute the approximate mu 
-   muhat(ii) = kvec'*Kinvy
+   muhat(ii) = kvec'*Kinvy;
    %out_Kcond(ii) = cond(K);
 
    %% compute the discriminant
