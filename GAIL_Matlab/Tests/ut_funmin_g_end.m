@@ -45,7 +45,7 @@ classdef ut_funmin_g_end < matlab.unittest.TestCase
             tol = 1e-7;
 %             Xtol = 1e-4;
 %             [fmin,out] = funmin_g(f,0,1,tol,Xtol,10,10,1000000);
-            [fmin,out] = funmin_g(f,0,1,tol,10,1000000);
+            [fmin,out] = funmin_g(f,0,1,tol,10,10,1000000);
             xmin_true = 0; 
             fmin_true = f(xmin_true);
             ferror = abs(fmin - fmin_true);
@@ -61,7 +61,7 @@ classdef ut_funmin_g_end < matlab.unittest.TestCase
             tol = 1e-7;
 %             Xtol = 1e-4; 
 %             [fmin,out] = funmin_g(f,-2,2,tol,Xtol,10,10,1000000);
-            [fmin,out] = funmin_g(f,-2,2,tol,10,1000000);
+            [fmin,out] = funmin_g(f,-2,2,tol,10,10,1000000);
             xmin_true = -2; 
             fmin_true = f(xmin_true);
             ferror = abs(fmin - fmin_true);
