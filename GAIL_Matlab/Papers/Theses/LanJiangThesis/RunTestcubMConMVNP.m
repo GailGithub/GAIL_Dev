@@ -1,5 +1,5 @@
-% This is the product test function in Section 4.5.3, producing
-% Figure 4.4 
+% RunTestcubMConMVNP generates the product test function in Section 4.5.3,
+% and produces Figure 4.4 
 clear all;close all;clc;
 tstart=tic;
 param.funtype = 'MVNP';

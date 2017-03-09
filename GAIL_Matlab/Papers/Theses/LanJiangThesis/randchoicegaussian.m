@@ -1,3 +1,5 @@
+% randchoicegaussian randomly generates the parameters in test functions
+% used by choosetestfun for multivariate integration cases.
 function [testfun,fun,param]=randchoicegaussian(fun,param,rchparam,irep)
 
 shapevec=rchparam.shapeoverall(irep,:);

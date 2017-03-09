@@ -1,4 +1,4 @@
-% This is the function used to plot Figure 1.1 in Lan Jiang's thesis
+% twohumps is the function used to plot Figure 1.1 in Lan Jiang's thesis
 % PlotTwoHumps.m calls this function
 
 function f = twohumps(x)

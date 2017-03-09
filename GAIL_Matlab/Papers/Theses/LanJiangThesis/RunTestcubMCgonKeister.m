@@ -1,4 +1,5 @@
-% This is the Gaussian test function in Section 4.5.2, producing Figure 4.3
+% RunTestcubMCgonKeister generates the Gaussian test function in Section
+% 4.5.2 and produces Figure 4.3.
 
 clear all, close all
 format compact

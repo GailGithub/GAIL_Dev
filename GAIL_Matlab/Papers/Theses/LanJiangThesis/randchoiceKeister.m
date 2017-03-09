@@ -1,3 +1,5 @@
+% randchoiceKeister - randomly generates the parameters in Keister test
+% functions in Section 4.5.2
 function [testfun,fun,param]=randchoiceKeister(fun,param,rchparam,irep)
 %Choose Keister function
 %param.dim=rchparam.dim(irep);

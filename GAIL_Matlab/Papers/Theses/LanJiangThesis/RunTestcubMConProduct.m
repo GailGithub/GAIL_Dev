@@ -1,4 +1,5 @@
-% This is the product test function in Section 3.5.1, producing Figure 3.4
+% RunTestcubMConProduct generates the product test function in Section
+% 3.5.1 and produces Figure 3.4
 clear all;close all;clc;
 tstart=tic;
 param.funtype = 'product';

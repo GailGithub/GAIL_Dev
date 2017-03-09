@@ -1,4 +1,4 @@
-% This script produce Figure 3.2 in Lan Jiang's thesis
+% RatioBEnsigtol_fixed_kmax produce Figure 3.2 in Lan Jiang's thesis
 
 clear all; close all;clc;
 set(0,'defaultaxesfontsize',24,'defaulttextfontsize',24) %make font larger

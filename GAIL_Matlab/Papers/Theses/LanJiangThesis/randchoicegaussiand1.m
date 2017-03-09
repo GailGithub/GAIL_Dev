@@ -1,3 +1,5 @@
+% randchoiceproduct randomly generates the parameters in test functions
+% used by choosetestfun for univariate integration cases.
 function [testfun,fun,param]=randchoicegaussiand1(fun,param,rchparam,irep)
 shapevec=rchparam.shapeoverall(irep,:);
 scalevec=rchparam.scaleoverall(irep,:);

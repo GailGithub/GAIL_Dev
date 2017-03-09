@@ -1,4 +1,4 @@
-% This script is to reproduce Figure 4.5 in Lan Jiang's thesis
+% RunMVNPdeltaplot produces Figure 4.5 in Lan Jiang's thesis
 load TestcubMCon-MVNP-N500d3abstol1e-05rel1e-05-2015-09-12-00-38-36.mat
 %set(0,'defaultlinelinewidth',4)
 deltavec = [0.01,0.1,1,10];

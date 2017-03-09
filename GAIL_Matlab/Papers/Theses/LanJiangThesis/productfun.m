@@ -1,4 +1,5 @@
-
+% productfun produces the product function used to section 3.5.1 in Lan
+% Jiang's thesis.
 function output = productfun(center,hyperbox,inparam)
 
 [output.iidQ, output.iidparam] = ...
