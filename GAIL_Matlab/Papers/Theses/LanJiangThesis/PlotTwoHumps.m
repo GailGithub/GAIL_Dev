@@ -1,4 +1,4 @@
-% This script is to plot Figure 1.1 in Lan Jiang's thesis
+% This script plots Figure 1.1 in Lan Jiang's thesis
 % Function called: twohumps
 
 A = -20:0.01:250;
