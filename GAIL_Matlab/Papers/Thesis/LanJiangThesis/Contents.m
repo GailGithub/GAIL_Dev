@@ -66,6 +66,16 @@
 %
 %   RunMVNPdeltaplot - produces Figure 4.5 in Lan Jiang's thesis
 %
+%   PlotmeanMCBernoulli_gResults - generates Figure 5.1 & 5.2
+%
+%   PlotRatioHoeffCLT -  generates Figure 5.3
+%   
+%   meanMCBernoulli_g - Monte Carlo to estimate means of Bernoulli random
+%   variables
+%
+%   Test_meanMCBernoulli_g - test function of meanMCBernoulli_g
+%
+%   DisplayTestResults* - used to plot the examples in Section 3 and 4
 
 
 
