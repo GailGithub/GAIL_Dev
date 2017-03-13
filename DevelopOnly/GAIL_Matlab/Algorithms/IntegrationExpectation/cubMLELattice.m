@@ -27,9 +27,7 @@ if nargin < 5
 end
 
 tstart = tic; %start the clock
-z = [1, 433461, 315689, 441789, 501101, 146355, 88411, 215837, 273599 ...
-   151719, 258185, 357967, 96407, 203741, 211709, 135719, 100779, ...
-   85729, 14597, 94813, 422013, 484367]; %generator
+z = [1, 433461, 315689, 441789, 501101, 146355, 88411, 215837, 273599]; %generator
 z = z(1:d);
 mmin = 10;
 mmax = 23;
@@ -50,16 +48,18 @@ for ii = 1:numM
       ftilde = fft(fx);
    else
       xunnew = mod(bsxfun(@times,(1/n:2/n:1-1/n)',z),1);
-      xnew = mod(bsxfun(@plus,xunnew,shift),1);
-      temp = zeros(n,d);
+      temp = zeros(n,2);
       temp(1:2:n-1,:) = xun;
       temp(2:2:n,:) = xunnew;
       xun = temp;
+      xnew = x+1/n;
+      fnew = ff(xnew);
+      temp = zeros(n,2);
       temp(1:2:n-1,:) = x;
       temp(2:2:n,:) = xnew;
       x = temp;
-      fnew = ff(xnew);
-      fx = reshape([fx fnew]',n,1);
+      fx = [fx fnew]';
+      fx = fx(:);
       ftilde = fft(fx);
    end
    
