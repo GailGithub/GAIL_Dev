@@ -48,18 +48,16 @@ for ii = 1:numM
       ftilde = fft(fx);
    else
       xunnew = mod(bsxfun(@times,(1/n:2/n:1-1/n)',z),1);
+      xnew = mod(bsxfun(@plus,xunnew,shift),1);
       temp = zeros(n,2);
       temp(1:2:n-1,:) = xun;
       temp(2:2:n,:) = xunnew;
       xun = temp;
-      xnew = x+1/n;
-      fnew = ff(xnew);
-      temp = zeros(n,2);
       temp(1:2:n-1,:) = x;
       temp(2:2:n,:) = xnew;
       x = temp;
-      fx = [fx fnew]';
-      fx = fx(:);
+      fnew = ff(xnew);
+      fx = reshape([fx fnew]',n,1);
       ftilde = fft(fx);
    end
    
