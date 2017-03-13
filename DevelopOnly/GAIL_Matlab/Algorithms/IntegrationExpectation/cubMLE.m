@@ -46,6 +46,8 @@ end
 %% Generate Rank-1 Lattice points
 if strcmp(whSample,'Lattice1')
     x = gail.lattice_gen(1,nmax,d);
+    %latticeseq_b2('init0');
+    %x = latticeseq_b2(d,nmax)';
 end
 
 
@@ -59,7 +61,15 @@ elseif strcmp(ptransform,'C0')
 elseif strcmp(ptransform,'C1')
     f=@(x) fInput(x.^3.*(10-15*x+6*x.^2)).*prod(30*x.^2.*(1-x).^2,2); % C^1 transform
 elseif strcmp(ptransform,'C1sin')
-    f=@(x) fInput(x-sin(2*pi*x)/(2*pi)).*prod(1-cos(2*pi*x),2); % Sidi C^1 transform
+    %f=@(x) fInput(x-sin(2*pi*x)/(2*pi)).*prod(1-cos(2*pi*x),2); % Sidi C^1 transform
+    % 1-cos(2x) = 2 sin^2(x)
+    f=@(x) fInput(x-sin(2*pi*x)/(2*pi)).*prod(2*sin(pi*x).^2,2); % Sidi C^1 transform
+elseif strcmp(ptransform,'C2sin')
+    psi3 = @(t) (8-9*cos(pi*t)+cos(3*pi*t))/16; psi3_1 = @(t) (9*sin(pi*t)*pi- sin(3*pi*t)*3*pi)/16;
+    f=@(x) fInput(psi3(x)).*prod(psi3_1(x),2);
+elseif strcmp(ptransform,'C3sin')
+    psi4 = @(t) (12*pi*t-8*sin(2*pi*t)+sin(4*pi*t))/(12*pi); psi4_1 = @(t) (12*pi-8*cos(2*pi*t)*2*pi+sin(4*pi*t)*4*pi)/(12*pi);
+    f=@(x) fInput(psi4(x)).*prod(psi4_1(x),2);
 elseif strcmp(ptransform,'none')
     % do nothing
     f=@(x) fInput(x);
@@ -92,32 +102,78 @@ if strcmp(whKer,'Fourier')
     end
 end
 
-if  false %strcmp(whKer,'Fourier') % disabled in release code
+if  true %strcmp(whKer,'Fourier') % disabled in release code
+    enableMovie = false;
     %% plot MLEKernel cost function
     lnTheta = -3:0.05:0;
-
-    costMLE = zeros(nn, numel(lnTheta)); 
+    plotFileName = sprintf('%s%s Cost d_%d bernoulli_%d Period_%s', figSavePath, fName, d, BernPolynOrder, ptransform);
+    if enableMovie
+        figH = figure(21);
+        set(figH, 'position', [10 10 1920 1080]);
+        ax = gca;
+        ax.NextPlot = 'replaceChildren';
+        
+        loops = nn*numel(lnTheta);
+        Frames(loops) = struct('cdata',[],'colormap',[]);
+        warning('off','MATLAB:handle_graphics:MException:SceneNode');
+        warning('off','MATLAB:handle_graphics:exceptions:SceneNode')
+        
+        %set(figH, 'Visible', 'off');
+        %set(gcf,'Visible','off')              % turns current figure "off"
+        %set(0,'DefaultFigureVisible','off');  % all subsequent figures "off"
+        FramesT = reshape(Frames, nn, numel(lnTheta)); %zeros(nn, numel(lnTheta));
+    end
+    
+    costMLE = zeros(nn,numel(lnTheta));
     tic
+    
     for ii = 1:nn
         nii = nvec(ii)
         xReord = x(1:nii,:); yReord = yInput(1:nii); BernPolynXr = BernPolynX(1:nii,:);
-        w2 = bitrevorder(1:nii);
-        xReord = xReord(w2,:); yReord = yReord(w2); BernPolynXr = BernPolynXr(w2,:); %recorder to get symmetric matrix
-        tic
-        parfor k=1:numel(lnTheta)
-            [costMLE(ii,k)] = MLEKernel(exp(lnTheta(k)),xReord,yReord,whKer,domain,BernPolynXr,BernPolynOrder);
+        if true
+            %[~,w2] = sort(xReord(:,1));
+            w2 = bitrevorder(1:nii);
+            xReord = xReord(w2,:); yReord = yReord(w2); BernPolynXr = BernPolynXr(w2,:); %reorder to get symmetric matrix
         end
-        toc
+        eigvalK = zeros(numel(lnTheta),nii); ffy = zeros(numel(lnTheta),nii);
+        tic
+        %par
+        for k=1:numel(lnTheta)
+            [costMLE(ii,k),eigvalK(k,:),ffy(k,:)] = MLEKernel(exp(lnTheta(k)),xReord,yReord,whKer,domain,BernPolynXr,BernPolynOrder);
+            %costMLE(ii,k) = MLEKernel(exp(lnTheta(k)),xReord,yReord,whKer,domain,BernPolynXr,BernPolynOrder);
+        end
         
+        if enableMovie
+            for k=1:numel(lnTheta)
+                
+                warning('off','MATLAB:handle_graphics:MException:SceneNode');
+                warning('off','MATLAB:handle_graphics:exceptions:SceneNode')
+                %drawnow
+                create_cost_plots(eigvalK(k),ffy(k),exp(lnTheta),k,costMLE(ii,:));
+                set(figH, 'position', [10 10 1920 1080]);
+                %Frames((ii-1)*numel(lnTheta) + k) = getframe(figH);
+                FramesT(ii,k) = getframe(figH);
+            end
+        end
+        
+        toc
     end
+    
     toc
+    if enableMovie
+        Frames1 = reshape(FramesT',1,nn*numel(lnTheta));
+        myVideo = VideoWriter(strcat(plotFileName, '_movie3.avi'), 'Motion JPEG AVI');
+        open(myVideo);
+        writeVideo(myVideo,Frames1)
+        close(myVideo)
+    end
     
     hFigCost = figure; semilogx(exp(lnTheta),costMLE); %lgd = legend(string(nvec),'location','north'); axis tight
     set(hFigCost, 'units', 'inches', 'Position', [4 4 10 7])
     %title(lgd,'Sample Size, \(n\)'); legend boxoff
     xlabel('Shape param, \(\theta\)')
     ylabel('MLE Cost, \( \frac{y^T K_\theta^{-1}y}{[\det(K_\theta^{-1})]^{1/n}} \)')
-    axis tight; 
+    axis tight;
     title(sprintf('%s Cost d=%d Bernoulli=%d PeriodTx=%s', fName, d, BernPolynOrder, ptransform));
     [minVal,Index] = min(costMLE,[],2);
     hold on; plot(exp(lnTheta(Index)),minVal, '.');
@@ -134,6 +190,7 @@ parfor ii = 1:nn
     if true % disable %strcmp(whKer,'Fourier')
         %% Reorder the x, yInput to get symmetric circulant (Toeplitz) matrix
         w2 = bitrevorder(1:nii);
+        %[~,w2] = sort(xReord(:,d-1));
         xReord = xReord(w2,:);
         yReord = yReord(w2);
         BernPolynXr = BernPolynX(w2,:);
@@ -148,6 +205,11 @@ parfor ii = 1:nn
     [lnaMLE, costMin] = fminbnd(@(lna) ...
         MLEKernel(exp(lna),xReord,yReord,whKer,domain,BernPolynXr,BernPolynOrder), ...
         ax,bx,optimset('TolX',1e-4));
+    if 0
+        costFunc = @(lna)MLEKernel(exp(lna),xReord,yReord,whKer,domain,BernPolynXr,BernPolynOrder);
+        [xmin, costMin] = fminsearch(costFunc,0.5*ones(1,d) );
+        aMLE = exp(xmin);
+    end
     aMLE = exp(lnaMLE);
     
     %% Use the optimal \theta
@@ -158,14 +220,15 @@ parfor ii = 1:nn
     if strcmp(whKer,'Fourier')
         cn = K;
         
-        fy = abs(fft(yReord))/nii;
+        ffy = abs(fft(yReord-1))/nii;
+        ffy(1)=1;
         eigval = fft(cn'-1)/nii; % subtract 1 and then after fft computation, put it back in fft
         eigval(1) = 1;  % this helps to avoid zero values in fft
         if any(eigval==0)
             fprintf('Zero eigval in estimating Kinvy \n')
         end
         eigvaln = eigval + (eigval==0)*eps;
-        Kinvy = ifft(fy./eigvaln);
+        Kinvy = ifft(ffy./eigvaln);
         
         %% compute the approximate mu
         muhat(ii) = sum(yReord)/sum(cn);
@@ -186,8 +249,8 @@ parfor ii = 1:nn
     %% compute the discriminant
     if strcmp(whKer,'Fourier') == true
         %disc2_old = k0 - kvec'*ifft(fft_DIT(kvec)./fft_DIT(cn'));
-        disc2 = k0 - nii/sum(cn);
-        ffy = abs(fft(yReord))/nii;
+        disc2 = (k0*sum(cn) - nii)/sum(cn);
+        %ffy = abs(fft(yReord))/nii;
         val2 = sum((ffy(eigval~=0).^2)./abs(eigval(eigval~=0)));
         out_ErrBd(ii) = 2.58*sqrt(disc2*val2/nii);
     else
@@ -212,7 +275,7 @@ parfor ii = 1:nn
 end
 
 % add the actual min theta and from fminbnd to the plot
-if false %strcmp(whKer,'Fourier') == true
+if true %strcmp(whKer,'Fourier') == true
     if isvalid(hFigCost)
         lgdText = string(nvec);
         for i=1:length(nvec)
@@ -231,6 +294,37 @@ out.time = toc(tstart)
 out.BernPolynOrder = BernPolynOrder;
 out.ptransform = ptransform;
 
+end
+
+
+% debug function to create plots
+function create_cost_plots(eigval,ffy,theta,k,costMLE)
+shape = theta(k);
+%figure(21);
+[~, I] = sort(eigval,'descend');
+zi2 = ffy.^2;
+temp = zi2(I)./eigval(I);
+%thresh = quantile(temp, 0.95);
+%temp(temp > thresh) = 0;
+cumz = cumsum(temp);
+subplot(2,3,1); loglog(cumz)
+xlabel('count')
+ylabel('cumsum of \(\frac{z_i^2}{\gamma_i}\)'); axis tight manual
+title(sprintf('shape %0.3f, n %d', shape, length(ffy)))
+
+subplot(2,3,2); loglog(eigval(eigval~=0), (ffy(eigval~=0).^2)./abs(eigval(eigval~=0)), '.')
+xlabel('Eigvals of K, \(\gamma\)')
+ylabel('DFT(y)**2/eigvals, \(\frac{z_i^2}{\gamma_i}\)'); axis tight manual
+
+subplot(2,3,3); loglog(eigval(eigval~=0), ffy(eigval~=0).^2, '.');  xlabel('Eigvals of K, \(\gamma\)'); ylabel('DFT(y)**2, \(z_i^2\)'); axis tight manual
+title('');
+
+%subplot(2,3,4); loglog(eigval(eigval~=0)); xlabel('count'); ylabel('Eigvals of K, \(\gamma\)'); axis tight manual
+subplot(2,3,4); loglog(eigval(I)); xlabel('count'); ylabel('Eigvals of K, \(\gamma\)'); axis tight manual
+
+%subplot(2,3,5); loglog(ffy(eigval~=0)); xlabel('count'); ylabel('DFT of y, \(z_i\)'); axis tight manual
+subplot(2,3,5); loglog(ffy(I)); xlabel('count'); ylabel('DFT of y, \(z_i\)'); axis tight manual
+subplot(2,3,6); semilogx(theta,costMLE); xlabel('theta'); ylabel('cost'); axis tight manual
 end
 
 
