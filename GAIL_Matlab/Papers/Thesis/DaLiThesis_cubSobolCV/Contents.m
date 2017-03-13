@@ -8,23 +8,27 @@
 % 
 %% Files
 % --------------------------------
-% geoAsianAcc.m        - accuracy test of gmean Asian call option pricing with CV 
-%                        generate results in table 4.2 (page 20)
-% geoAsianEff.m        - efficiency test I of geometric mean Asian call option pricing with poor CV 
-%                        generate results in table 4.4 (page 21) 
-% ariAsianEff.m        - efficiency test II of arithematic mean Asian call option pricing with good CV 
-%                        generate results in table 4.5 (page 22)
-% ariAsianWalshDecay.m - Walsh coefficents decay of amean Asian option payoff with/without CV  
-%                        plot figure 4.1 (page 23)
-% barrierEff.m         - efficiency test II of up and in barrier call option pricing with good CV 
-%                        generate results in table 4.6 (page 24)
-% mvnProbEff.m         - efficiency test of multivariate normal probability  
-%                        generate results in table 4.7 (page 27)
+% table4.2 @ P20 -- geoAsianAcc.m 
+%	         -- accuracy test of geometric mean Asian call option pricing with CV 
+% table4.4 @ P21 -- geoAsianEff.m 
+%		 -- efficiency test I of geometric mean Asian call option pricing with poor CV 
+% table4.5 @ P22 -- ariAsianEff.m 
+%		 -- efficiency test II of arithmetic mean Asian call option pricing with good CV 
+% table4.6 @ P24 -- barrierEff.m 
+%		 -- efficiency test II of up and in barrier call option pricing with good CV 
+% table4.7 @ P27 -- mvnProbEff.m 
+%		 -- efficiency test of multivariate normal probability  
+% figure2.1 @ P5  -- sobolPlot.m 
+%		  -- plots of 256 random points and Sobol points in [0,1)^2 
+% figure2.2 @ P9  -- conePlot.m 
+%		  -- plots of Walsh coefficients in cone conditions 
+% figure4.1 @ P23 -- walshDecayCVPlot.m 
+%		  -- Walsh coefficients decay of arithmetic mean Asian option payoff with/without CV  
 % --------------------------------
 % 
-%% Packages required 
+%% Packages requirements 
 % --------------------------------
-% ALL option pricing tests require the 'Monte_Carlo_Finance' packcage.
+% ALL option pricing tests require the 'Monte_Carlo_Finance' package.
 % The package can be found at github:
 % https://github.com/GailGithub/GAIL_Dev/tree/develop/DevelopOnly/GAIL_Matlab/Algorithms/Monte_Carlo_Finance
-% Please add package folder to your matlab path before runing the tests.
+% Please add package folder to your Matlab path before running the tests.
