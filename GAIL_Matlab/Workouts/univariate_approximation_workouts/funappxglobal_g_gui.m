@@ -49,13 +49,13 @@ fb = f(b);
 
 % Scale the plot
 h = b - a;
-ninit = max(ceil(nhi*(nlo/nhi)^(1/(1+h))),3);
+ninit = max(ceil(nhi*(nlo/nhi)^(1/(1+h))),3)+2;
 x = a:h/(ninit-1):b;
 y = f(x);
 maxy = max(y);
 miny = min(y);
 set(gcf,'doublebuffer','on','userdata',0)
-plot(x,y,'.','markersize',15);
+plot(x,y,'.','markersize',20);
 hold on
 p(1) = fill(a,fa,'k');
 p(2) = fill(b,fb,'k');
@@ -78,6 +78,7 @@ n = ninit;
 tauchange = 0;
 flag = 0;
 errorbound =1;
+
 while n < nmax;
     
     if(flag==0)
@@ -91,6 +92,12 @@ while n < nmax;
         ynew = [y(1:end-1); ynew];
         y = [ynew(:); y(end)]';
     end;
+         diff_y = diff(y);
+    %approximate the weaker norm of input function
+    gn = (n-1)/h*max(abs(diff_y-(y(n)-y(1))/(n-1)));
+    %approximate the stronger norm of input function
+    fn = (n-1)^2/h^2*max(abs(diff(diff_y)));
+    errorbound = gn*h*nstar/(4*(n-1)*(n-1-nstar));
     %        tt = length(index)-1;
         p = flipud(get(gca,'children'));
         %         p = flipud(allchild(gca));
@@ -108,7 +115,9 @@ while n < nmax;
         %             set(p(i+1),'xdata',u,'ydata',v,'facecolor',color)
         %         end;
         set(gca,'xtick',x,'xticklabel',[]);
-        title(['error estimation is ' num2str(max(errorbound))])
+        set(gca,'FontSize',16)
+        title(['error bound is ' num2str(max(errorbound))...
+            '; number of points is ' num2str(n)])
         pause(.25)
         while get(gcf,'userdata') == 0
             pause(.25)
@@ -116,19 +125,13 @@ while n < nmax;
         if get(gcf,'userdata') == 1
             set(gcf,'userdata',0)
         end
-    diff_y = diff(y);
-    %approximate the weaker norm of input function
-    gn = (n-1)/h*max(abs(diff_y-(y(n)-y(1))/(n-1)));
-    %approximate the stronger norm of input function
-    fn = (n-1)^2/h^2*max(abs(diff(diff_y)));
-    errorbound = fn*h^2/(8*(n-1)^2);
     % Stage 2: satisfy necessary condition
     if nstar*(2*gn+fn*h/(n-1)) >= fn*h;
         % Stage 3: check for convergence
-        errbound = 4*tol*(n-1)*(n-1-nstar)...
+        errest = 4*tol*(n-1)*(n-1-nstar)...
             /nstar/h;
         % satisfy convergence
-        if errbound >= gn;
+        if errest >= gn;
              break;
         end;
         % otherwise increase number of points
@@ -145,9 +148,9 @@ while n < nmax;
         % check if number of points large enough
         if n >= nstar+2;
             % true, go to Stage 3
-            errbound = 4*tol*(n-1)*(n-1-nstar)...
+            errest = 4*tol*(n-1)*(n-1-nstar)...
                 /nstar/h;
-            if errbound >= gn;
+            if errest >= gn;
                 break;
             end;
             m = max(ceil(1/(n-1)*sqrt(gn*nstar*...
@@ -161,14 +164,18 @@ while n < nmax;
     end;
 end;
 
-if tauchange == 1;
-    warning('GAIL:funappxglobal_g:peaky','This function is peaky relative to nlo and nhi. You may wish to increase nlo and nhi for similar functions.')
-end;
-errorbound = fn*h^2/(8*(n-1)^2);
+%if tauchange == 1;
+%    warning('GAIL:funappxglobal_g:peaky','This function is peaky relative to nlo and nhi. You may wish to increase nlo and nhi for similar functions.')
+%end;
+%errbound = 4*tol*(n-1)*(n-1-nstar)...
+%           /nstar/h;
+%errorbound = gn*h*nstar/(4*(n-1)*(n-1-nstar));
 p = flipud(get(gca,'child'));
 set(p(1),'xdata',x,'ydata',y)
 set(gca,'xtick',x,'xticklabel',[]);
-title(['error estimation is ' num2str(max(errorbound))])
+set(gca,'FontSize',16)
+title(['error bound is ' num2str(max(errorbound)),...
+    '; number of points is ' num2str(n) ])
 pause(.25)
 while get(gcf,'userdata') == 0
     pause(.25)
