@@ -13,9 +13,7 @@ function cf_chebfun(f, a, b, abstol, varargin)
 %
 % f5 = @(x) sign(x);  a = -1; b = 1; cf_chebfun(f5, a, b, abstol)
 %  
-% 
-% To compare par_funappx_g and chebfun:
-% cf_chebfun(f3, a, b, abstol, true)
+%  
 
 gail.InitializeDisplay
 %set(0,'defaultaxesfontsize',24,'defaulttextfontsize',24) %make font larger
