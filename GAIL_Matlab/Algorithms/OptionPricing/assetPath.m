@@ -4,13 +4,11 @@ classdef assetPath < brownianMotion
 % is a class of discretized stochastic processes that model the values of
 % an asset with respect to time. Browniam motions are used to construct
 % these asset paths.
-% 
-%7/4/2016
-
+%
 % Example 1
 % >> obj = assetPath
 % obj = 
-%   assetPath with properties:
+%   assetPath with properties: 
 % 
 %                 inputType: 'n'
 %        timeDim_timeVector: [1 2 3]
@@ -26,8 +24,12 @@ classdef assetPath < brownianMotion
 %      assetParam_initPrice: 10
 %       assetParam_interest: 0.0100
 %     assetParam_volatility: 0.5000
+%         assetParam_nAsset: 1
+%   
+%   ***
 
 % Authors: Fred J. Hickernell, Xiaoyang Zhao, Tianci Zhu
+% Rev. March 29, 2017
 
 %% Properties
 % This process inherits properties from the |brownianMotion| class.  Below
