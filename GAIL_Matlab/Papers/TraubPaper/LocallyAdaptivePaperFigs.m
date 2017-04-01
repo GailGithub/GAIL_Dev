@@ -1,22 +1,22 @@
 function LocallyAdaptivePaperFigs(funappxRes,funminRes,colorfig)
-% LOCALLYADPATIVEPAPERFIGS creates some figures for the paper on local
+% LOCALLYADPATIVEPAPERFIGS creates all figures and tables in the paper on local
 % adpation for function approximation and optimization submitted to the
 % Joseph Traub memorial issue in the Journal of Complexity
 %
-% Sou-Cheng T. Choi, Yuhan Ding, Fred J.Hickernell, Xin Tong, "Local
+% Sou-Cheng T. Choi, Yuhan Ding, Fred J.Hickernell, and Xin Tong, "Local
 % Adaption for Approximation and Minimization of Univariate Functions,"
-% submitted to Journal of Complexity, accepted, 2016.
+% Journal of Complexity, 2016. To appear.
 %
 %
-% Example1: To plot all figures in the paper, run
+% Example 1: To plot all figures in the paper, run
 %
 %   LocallyAdaptivePaperFigs
 %
 % Example 2: To plot all figures and print summary tables from the input
 % mat files (produced by running 'funappx_g_test' and 'funmin_g_test'), run
 %
-%   LocallyAdaptivePaperFigs('funappx_g_test-2016-10-18-20-17-56.mat', ...
-%                            'funmin_g_test-2016-10-18-20-23-58.mat')
+%   LocallyAdaptivePaperFigs('funappx_g_test-2016-10-17-18-20-32.mat', ...
+%                            'funmin_g_test-2016-10-17-18-21-21.mat')
 
 gail.InitializeDisplay %initialize the workspace and the display parameters
 set(0,'defaultLineLineWidth',4) %thicker lines
@@ -274,3 +274,96 @@ if numel(funminRes) > 0
    fclose(fileID);
    type(fullPath)
 end
+
+%% SAMPLE OUTPUT
+
+% >> LocallyAdaptivePaperFigs
+% funappx_g used 65 points and 3 iterations
+%    to satisfy an absolute error tolerance of 0.02
+% the mesh width ranges from 0.025 to 0.1
+% funmin_g used 43 points and 3 iterations
+%    to satisfy an absolute error tolerance of 0.02
+% the mesh width ranges from 0.025 to 0.1
+% t_chebfun =
+%     0.8860
+% fhat = 
+%   griddedInterpolant with properties:
+% 
+%             GridVectors: {[1x8388699 double]}
+%                  Values: [1x8388699 double]
+%                  Method: 'linear'
+%     ExtrapolationMethod: 'linear'
+% out = 
+%            a: -1
+%       abstol: 1.0000e-12
+%            b: 1
+%            f: @(x)f3param(x,delta,c)
+%      maxiter: 1000
+%        ninit: 20
+%         nmax: 10000000
+%     exitflag: [0 0 0 0 0]
+%         iter: 21
+%      npoints: 8388699
+%       errest: 2.9057e-13
+% t_funappx =
+%     3.2602
+% t_ratio =
+%     3.6797
+% err_funappx =
+%    2.9775e-14
+
+% >>  LocallyAdaptivePaperFigs('funappx_g_test-2016-10-17-18-20-32.mat', ...
+%                              'funmin_g_test-2016-10-17-18-21-21.mat')
+% funappx_g used 65 points and 3 iterations
+%    to satisfy an absolute error tolerance of 0.02
+% the mesh width ranges from 0.025 to 0.1
+% funmin_g used 43 points and 3 iterations
+%    to satisfy an absolute error tolerance of 0.02
+% the mesh width ranges from 0.025 to 0.1
+% t_chebfun =
+%     0.1685
+% fhat = 
+%   griddedInterpolant with properties:
+% 
+%             GridVectors: {[1x8388699 double]}
+%                  Values: [1x8388699 double]
+%                  Method: 'linear'
+%     ExtrapolationMethod: 'linear'
+% out = 
+%            a: -1
+%       abstol: 1.0000e-12
+%            b: 1
+%            f: @(x)f3param(x,delta,c)
+%      maxiter: 1000
+%        ninit: 20
+%         nmax: 10000000
+%     exitflag: [0 0 0 0 0]
+%         iter: 21
+%      npoints: 8388699
+%       errest: 2.9057e-13
+% t_funappx =
+%     3.4043
+% t_ratio =
+%    20.2017
+% err_funappx =
+%    2.9775e-14
+% 
+% 
+% # of replications = 1000
+%    Test         Number of Points                    Time Used                          Success (%)                                  Failure (%)
+%   Function   ----------------------------    -------------------------------     --------------------------------------   ----------------------------------------
+%              Local      Global    Chebfun    Local       Global      Chebfun     Local        Global         Chebfun       Local         Global        Chebfun
+%                                                                                  No Warn Warn No Warn Warn   No Warn Warn  No Warn Warn  No Warn Warn  No Warn Warn
+%         3      6577     46439        116      0.0030       0.0024      0.0216     100      0    100      0      0        0      0      0      0      0    100      0
+%         1      5017     26265         43      0.0032       0.0029      0.0063     100      0    100      0      3        0      0      0      0      0     97      0
+%         2     15698     97106         22      0.0050       0.0079      0.0039     100      0    100      0      3        0      0      0      0      0     97      0
+% 
+% 
+% # of replications = 1000
+%    Test         Number of Points                    Time Used                          Success (%)                                  Failure (%)
+%   Function   ----------------------------    -------------------------------     --------------------------------------   ----------------------------------------
+%              funmin_g   fminbnd   Chebfun    funmin_g     fminbnd    Chebfun     funmin_g        fminbnd        Chebfun   funmin_g        fminbnd       Chebfun
+%                                                                                  No Warn Warn No Warn Warn   No Warn Warn  No Warn Warn  No Warn Warn  No Warn Warn
+%         3       318         8        116      0.0025       0.0007      0.0272     100      0    100      0     14        0      0      0      0      0     86      0 
+%         1       233        22         43      0.0024       0.0010      0.0070     100      0     27      0     60        0      0      0     73      0     40      0 
+%         2       316         9         22      0.0026       0.0008      0.0039     100      0    100      0     35        0      0      0      0      0     65      0 
