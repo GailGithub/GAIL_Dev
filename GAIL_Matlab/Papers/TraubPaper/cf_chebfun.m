@@ -26,23 +26,23 @@ format long
 % MATLABGreen = [0.466,  0.674, 0.188];
 % MATLABDkOrange = [0.85,  0.325, 0.098]*0.6;
 % MATLABLtOrange = 0.5*[0.85,  0.325, 0.098] + 0.5*[1 1 1];
-if nargin < 5,
-    testparallel = false;
-else
-    testparallel = varargin{1};
-end
+% if nargin < 5,
+%     testparallel = false;
+% else
+%     testparallel = varargin{1};
+% end
 
 %% funappx_g
 t1 = 0;
-if ~testparallel,
+%if ~testparallel,
     tic, [fappx, fout] = funappx_g(f,a,b,abstol,'nmax',10^8), t1=toc
     disp('---------------------');
     % gail.funappx_g_check(fappx,fout)
-else
-    tic, [fappx, fout] = par_funappx_g(4, f,a,b,abstol,'nmax',10^8), t2=toc
-    time_ratio1 = t1/t2
-    disp('---------------------');
-end
+% else
+%     tic, [fappx, fout] = par_funappx_g(4, f,a,b,abstol,'nmax',10^8), t2=toc
+%     time_ratio1 = t1/t2
+%     disp('---------------------');
+% end
 
 %% chebfun
 tic, c = chebfun(f,[a,b],'chebfuneps', abstol,'splitting','on'), t3=toc
