@@ -1,6 +1,6 @@
 Guaranteed Automatic Integration Library (GAIL)
 -----------------------------------------------
-GAIL Version 2.1, Mar 14, 2015.
+GAIL Version 2.2, 2017.
 See LICENSE.m for copyright and disclaimer.
 
 GAIL is a suite of algorithms for integration problems in one and many
@@ -24,8 +24,8 @@ Please cite the following software, papers, and materials:
 
 Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang, and Xuan Zhou, GAIL: 
-Guaranteed Automatic Integration Library (Version 2.1) [MATLAB Software],
-2015. Available from http://code.google.com/p/gail/
+Guaranteed Automatic Integration Library (Version 2.2) [MATLAB Software],
+2017. Available from http://gailgithub.github.io/GAIL_Dev/
 (this software)
 
 Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible Research via 
@@ -36,7 +36,7 @@ Scientific Software)
 
 Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable Mathematical
 Software" [Course Slides], Illinois Institute of Technology, Chicago, IL, 2013.
-Available from http://code.google.com/p/gail/
+Available from http://gailgithub.github.io/GAIL_Dev/
 (develops practices of Reliable Reproducible Research and Supportable 
 Scientific Software)
 
@@ -84,7 +84,7 @@ Function Minimization," MS thesis, Illinois Institute of Technology, 2014.
 
 Downloads
 ------------
-GAIL can be downloaded from http://code.google.com/p/gail/.
+GAIL can be downloaded from http://gailgithub.github.io/GAIL_Dev/.
 
 Alternatively, you can get a local copy of the GAIL repository with
 this command:
@@ -107,7 +107,7 @@ Detailed documentation is available at GAIL_Matlab/Documentation.
 General Usage Notes
 -------------------
 
-GAIL Version 2.1 includes the following eight algorithms:
+GAIL Version 2.2 includes the following eight algorithms:
 
 1.  funappx_g: One-dimensional function approximation on bounded interval
 2.  funmin_g: global minimum value of univariate function on a closed interval
@@ -139,7 +139,7 @@ Installation Instruction
 
 Alternatively, you could do this:
 
-1.  Download DownloadInstallGail_2_1.m and put it where you want
+1.  Download DownloadInstallGail_2_2.m and put it where you want
     GAIL to be installed.
 
 2.  Execute it in MATLAB.
@@ -165,7 +165,7 @@ Contact Information
 
 Please send any queries, questions, or comments to
 gail-users@googlegroups.com or visit our project website:
-http://code.google.com/p/gail/
+http://gailgithub.github.io/GAIL_Dev/
 
 
 Acknowledgements

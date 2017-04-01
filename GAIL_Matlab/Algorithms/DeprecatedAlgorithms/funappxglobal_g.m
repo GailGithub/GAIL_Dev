@@ -247,7 +247,7 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %   [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
 %   and Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library
 %   (Version 1.3)" [MATLAB Software], 2014. Available from
-%   http://code.google.com/p/gail/
+%   http://gailgithub.github.io/GAIL_Dev/
 %
 %   If you find GAIL helpful in your work, please support us by citing
 %   the above paper and software.

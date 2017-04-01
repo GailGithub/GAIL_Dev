@@ -177,8 +177,8 @@ function [fappx,out_param]=funappx_g(varargin)
 %            
 %   [3]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
 %   Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
-%   GAIL: Guaranteed Automatic Integration Library (Version 2.1) [MATLAB
-%   Software], 2015. Available from http://code.google.com/p/gail/
+%   GAIL: Guaranteed Automatic Integration Library (Version 2.2) [MATLAB
+%   Software], 2017. Available from http://gailgithub.github.io/GAIL_Dev/
 %
 %   [4] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
 %   Research via Supportable Scientific Software," Journal of Open Research
@@ -187,7 +187,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %   [5] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable
 %   Mathematical Software" [Course Slides], Illinois Institute of
 %   Technology, Chicago, IL, 2013. Available from
-%   http://code.google.com/p/gail/ 
+%   http://gailgithub.github.io/GAIL_Dev/ 
 %
 %   If you find GAIL helpful in your work, please support us by citing the
 %   above papers, software, and materials.

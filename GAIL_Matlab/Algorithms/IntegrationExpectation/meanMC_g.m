@@ -164,8 +164,8 @@ function [tmu,out_param]=meanMC_g(varargin)
 %
 %   [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 %   Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou, "GAIL:
-%   Guaranteed Automatic Integration Library (Version 2.0)" [MATLAB
-%   Software], 2014. Available from http://code.google.com/p/gail/
+%   Guaranteed Automatic Integration Library (Version 2.2)" [MATLAB
+%   Software], 2017. Available from http://gailgithub.github.io/GAIL_Dev/
 %
 %   If you find GAIL helpful in your work, please support us by citing the
 %   above paper and software.

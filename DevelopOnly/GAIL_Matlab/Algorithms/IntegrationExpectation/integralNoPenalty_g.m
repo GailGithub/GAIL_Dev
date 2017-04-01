@@ -2,10 +2,10 @@ function [q,out_param] = integralNoPenalty_g(varargin)
 %INTEGRAL_G 1-D guaranteed function integration using trapezoidal rule
 %
 %   q = INTEGRAL_G(f) computes q, the definite integral of function f
-%   on the interval [a,b] by trapezoidal rule with 
+%   on the interval [a,b] by trapezoidal rule with
 %   in a guaranteed absolute error of 1e-6. Default starting number of
-%   sample points taken is 100 and default cost budget is 1e7. Input f is a 
-%   function handle. The function y = f(x) should accept a vector argument 
+%   sample points taken is 100 and default cost budget is 1e7. Input f is a
+%   function handle. The function y = f(x) should accept a vector argument
 %   x and return a vector result y, the integrand evaluated at each element
 %   of x.
 %
@@ -25,7 +25,7 @@ function [q,out_param] = integralNoPenalty_g(varargin)
 %   in_param.abstol. If a field is not specified, the default value is
 %   used.
 %
-%   [q, out_param] = INTEGRAL_G(f,...) returns the approximated 
+%   [q, out_param] = INTEGRAL_G(f,...) returns the approximated
 %   integration q and output structure out_param.
 %
 %   Input Arguments
@@ -39,8 +39,8 @@ function [q,out_param] = integralNoPenalty_g(varargin)
 %
 %     in_param.abstol --- guaranteed absolute error tolerance, default value
 %     is 1e-6
-% 
-%  Opitional Input Arguments (Recommended not to change very often) 
+%
+%  Opitional Input Arguments (Recommended not to change very often)
 %
 %     in_param.nlo --- lowest initial number of function values used, default
 %     value is 10
@@ -52,7 +52,7 @@ function [q,out_param] = integralNoPenalty_g(varargin)
 %     default value is 1e7
 %
 %     in_param.maxiter --- max number of iterations, default value is 1000
-% 
+%
 %   Output Arguments
 %
 %     q --- approximated integral
@@ -64,7 +64,7 @@ function [q,out_param] = integralNoPenalty_g(varargin)
 %     out_param.b --- high end of the integral
 %
 %     out_param.abstol --- guaranteed absolute error tolerance
-% 
+%
 %     out_param.nlo --- lowest initial number of function values
 %
 %     out_param.nhi --- highest initial number of function values
@@ -76,16 +76,16 @@ function [q,out_param] = integralNoPenalty_g(varargin)
 %     out_param.ninit --- initial number of points we use, computed by nlo
 %     and nhi
 %
-%     out_param.exceedbudget --- it is true if the algorithm tries to use 
+%     out_param.exceedbudget --- it is true if the algorithm tries to use
 %      more points than cost budget, false otherwise.
-% 
+%
 %     out_param.tauchange --- it is true if the cone constant has been
 %     changed, false otherwise. See [1] for details. If true, you may wish to
 %     change the input in_param.ninit to a larger number.
-% 
+%
 %     out_param.iter --- number of iterations
 %
-%     out_param.npoints --- number of points we need to 
+%     out_param.npoints --- number of points we need to
 %     reach the guaranteed absolute error tolerance abstol.
 %
 %     out_param.errest --- approximation error defined as the differences
@@ -96,7 +96,7 @@ function [q,out_param] = integralNoPenalty_g(varargin)
 %     initially and is increased as necessary
 %
 %  Guarantee
-%    
+%
 %  If the function to be integrated, f, satisfies the cone condition
 %                          nstar   ||     f(b)-f(a)  ||
 %      ||f''||        <=  -------- ||f'- ----------- ||
@@ -104,14 +104,14 @@ function [q,out_param] = integralNoPenalty_g(varargin)
 %  then the q output by this algorithm is guaranteed to satisfy
 %      |\int_{a}^{b} f(x) dx - q | <= abstol,
 %  provided the flag exceedbudget = 0. And the upper bound of the cost is
-%          ________________________ 
-%         /   nstar*(b-a)^2 Var(f') 
+%          ________________________
+%         /   nstar*(b-a)^2 Var(f')
 %        / ------------------------ + 2 nstar + 4
 %      \/          2 abstol
 %
 %  Examples
 %
-%   Example 1: 
+%   Example 1:
 %   >> q = integralNoPenalty_g(@(x) x.^2)
 %   q = 0.3333
 %
@@ -139,7 +139,7 @@ function [q,out_param] = integralNoPenalty_g(varargin)
 %   [2] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang,
 %   Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
 %   GAIL: Guaranteed Automatic Integration Library (Version 2.1)
-%   [MATLAB Software], 2015. Available from http://code.google.com/p/gail/
+%   [MATLAB Software], 2015. Available from http://gailgithub.github.io/GAIL_Dev/
 %
 %   [3] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
 %   Research via Supportable Scientific Software," Journal of Open Research
@@ -148,7 +148,7 @@ function [q,out_param] = integralNoPenalty_g(varargin)
 %   [4] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable
 %   Mathematical Software" [Course Slides], Illinois Institute of
 %   Technology, Chicago, IL, 2013. Available from
-%   http://code.google.com/p/gail/ 
+%   http://gailgithub.github.io/GAIL_Dev/
 %
 %   [5] Daniel S. Katz, Sou-Cheng T. Choi, Hilmar Lapp, Ketan Maheshwari,
 %   Frank Loffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr,
@@ -181,7 +181,7 @@ Varfp=zeros(10,1); %initialize vector of approximations to Var(f')
 Varfpup=[inf; zeros(10,1)]; %initialize vector of upper bounds to Var(f')
 ii=1; %index
 
-if intervallen>0   
+if intervallen>0
     steplen=intervallen/ntrap; % length of subinterval
     steplenvec=zeros(10,1); %vector to record subinterval lengths
     hcut=2*intervallen/(ntrap-1); %minimum interval size
@@ -191,11 +191,11 @@ if intervallen>0
     sumf=(fpts(1)+fpts(out_param.ninit))/2+sum(fpts(2:ntrap)); % computes the sum of trapezoidal rule
     while true
         steplenvec(ii)=steplen;
-        
+
         %Compute approximation to Var(f')
         Varfp(ii)=sum(abs(diff(fpts,2)))/steplen; %approx Var(f')
         Varfpup(ii+1)=min(Varfpup(ii),Varfp(ii)*inflatelim*hcut/(hcut-2*steplen));
-            %update upper bound on Var(f')       
+            %update upper bound on Var(f')
 
         %Check necessary condition for integrand to lie in cone
         if Varfp(ii) > Varfpup(ii+1) %f lies outside cone
@@ -205,11 +205,11 @@ if intervallen>0
             hcut=min(steplenvec(whpos:ii)./tempa(whpos:ii));
             out_param.conechange=true; %flag the changed tau
             warning('GAIL:integralNoPenalty_g:spiky','This integrand is spiky relative to ninit. You may wish to increase ninit for similar integrands.');
-            
+
             %Update Varfpup
             Varfpup(whpos+1:ii+1)=min(Varfp(whpos:ii)*inflatelim*hcut/(hcut-2*steplenvec(whpos:ii)));
         end
-        
+
         %Check error
         errest=Varfpup(ii+1)*(steplen.^2)/8;
         if errest <= out_param.abstol %tolerance is satisfied
@@ -229,7 +229,7 @@ if intervallen>0
             inflation=floor((out_param.nmax-1)/ntrap);
                 %max possible increase allowed by cost budget
             if inflation == 1 %cannot increase ntrap at all
-                q=sumf*steplen; %compute the integral                 
+                q=sumf*steplen; %compute the integral
                 break %exit while loop
             end
         end
@@ -299,7 +299,7 @@ if ~validvarargin
     out_param.b = default.b;
     out_param.abstol = default.abstol;
     out_param.nlo = default.nlo;
-    out_param.nhi = default.nhi;    
+    out_param.nhi = default.nhi;
     out_param.nmax = default.nmax;
 else
     p = inputParser;

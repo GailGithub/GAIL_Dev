@@ -1,6 +1,6 @@
 function [q,out_param] = integralsim_g(varargin)
 %INTEGRALSIM_G 1-D guaranteed function integration using Simpson's rule
-% 
+%
 %  Description
 %
 %   q = INTEGRALSIM_G(f) computes q, the definite integral of function f on
@@ -10,50 +10,50 @@ function [q,out_param] = integralsim_g(varargin)
 %   function y = f(x) should accept a vector argument x and return a vector
 %   result y, the integrand evaluated at each element of x.
 %
-%   q = INTEGRAL_G(f,abstol,ninit, nmax,maxiter) computes q, the definite 
-%   integral of function f by Simpson's rule with the ordered input 
+%   q = INTEGRAL_G(f,abstol,ninit, nmax,maxiter) computes q, the definite
+%   integral of function f by Simpson's rule with the ordered input
 %   parameters, guaranteed absolute error tolerance abstol, starting number
 %   of points ninit, cost budget nmax and max number of iterations maxiter.
 %
 %   q = INTEGRAL_G(f,'abstol',abstol,'ninit',ninit,'nmax',nmax,'maxiter',maxiter) computes
-%   q, the definite integral of function f by Simpson's rule within a 
-%   guaranteed absolute error tolerance abstol, starting number of points 
-%   ninit, cost budget nmax and max number of iterations maxiter. All three field-value pairs are optional 
+%   q, the definite integral of function f by Simpson's rule within a
+%   guaranteed absolute error tolerance abstol, starting number of points
+%   ninit, cost budget nmax and max number of iterations maxiter. All three field-value pairs are optional
 %   and can be supplied.
 %
-%   q = INTEGRAL_G(f,in_param) computes q, the definite integral of 
+%   q = INTEGRAL_G(f,in_param) computes q, the definite integral of
 %   function f by Simpson's rule within a guaranteed absolute error
-%   in_param.abstol, starting number of points in_param.ninit, cost 
+%   in_param.abstol, starting number of points in_param.ninit, cost
 %   budget in_param.nmax and max number of iterations maxiter. If a field is not specified, the default value is
 %   used.
-%   
-%   [q, out_param] = INTEGRAL_G(f,...) returns the approximated 
+%
+%   [q, out_param] = INTEGRAL_G(f,...) returns the approximated
 %   integration q and output structure out_param.
 %
 %   Input Arguments
 %
 %   in_param.abstol --- absolute error tolerance required by user.
-% 
+%
 %   in_param.ninit --- initial number of function values used
 %
 %   in_param.nmax --- cost budget (maximum number of function values)
 %
 %   in_param.maxiter --- max number of iterations, default value is 1000
-% 
-%   [q, out_param] = INTEGRAL_G(f,...) returns the approximated 
-%   integration q and output structure out_param, which includes the 
+%
+%   [q, out_param] = INTEGRAL_G(f,...) returns the approximated
+%   integration q and output structure out_param, which includes the
 %   fileds in_param plus the following fields:
 %
 %   out_param.tauchange --- it is true if the cone constant has been
 %   changed, false otherwise. If true, you may wish to
 %   change the input in_param.ninit to a larger number.
-% 
-%   out_param.npoints --- number of points we need to 
+%
+%   out_param.npoints --- number of points we need to
 %   reach the guaranteed absolute error tolerance abstol.
 %
 %   out_param.errest --- approximation error defined as the differences
 %   between the true value and the approximated value of the integral.
-% 
+%
 %   out_param.maxiter --- max number of iterations
 %
 %   out_param.iter --- number of iterations
@@ -65,7 +65,7 @@ function [q,out_param] = integralsim_g(varargin)
 %
 %   Examples
 %
-%   Example 1: 
+%   Example 1:
 %   >> q = integralsim_g(@(x) x.^2)
 %   q = 0.3333
 %
@@ -89,11 +89,11 @@ function [q,out_param] = integralsim_g(varargin)
 %   [1]  Nick Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
 %   Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic Algorithms:
 %   Cones, Not Balls," Journal of Complexity 30, pp. 21-45, 2014.
-%            
+%
 %   [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
 %   Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
 %   GAIL: Guaranteed Automatic Integration Library (Version 2.1) [MATLAB
-%   Software], 2015. Available from http://code.google.com/p/gail/
+%   Software], 2015. Available from http://gailgithub.github.io/GAIL_Dev/
 %
 %   [3] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
 %   Research via Supportable Scientific Software," Journal of Open Research
@@ -102,7 +102,7 @@ function [q,out_param] = integralsim_g(varargin)
 %   [4] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable
 %   Mathematical Software" [Course Slides], Illinois Institute of
 %   Technology, Chicago, IL, 2013. Available from
-%   http://code.google.com/p/gail/ 
+%   http://gailgithub.github.io/GAIL_Dev/ 
 %
 %   [5] Daniel S. Katz, Sou-Cheng T. Choi, Hilmar Lapp, Ketan Maheshwari,
 %   Frank Loffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr,
@@ -140,11 +140,11 @@ while true
     df=diff(fpts); %first difference of points
     df1=reshape(df,2,length(df)/2); %matrix operation
     df1=df1(2,:)-df1(1,:); %matrix operation
-    Gf=sum(abs(2*nint*df1-8*(fpts(nint+1)-2*f(0.5)+fpts(1))/nint)); %approx weak norm   
+    Gf=sum(abs(2*nint*df1-8*(fpts(nint+1)-2*f(0.5)+fpts(1))/nint)); %approx weak norm
     Ff=nint^2*(sum(abs(diff(diff(df))))); %approx strong norm
 %     Gf=sum(abs(df-(fpts(nint+1)-fpts(1))/nint)); %approx weak norm
 %     Ff=nint*(sum(abs(diff(df)))); %approx strong norm
-    
+
     %Check necessary condition for integrand to lie in cone
     if out_param.tau*(Gf+Ff/(2*nint)) < Ff %f lies outside cone
         out_param.tau = 2*Ff/(Gf+Ff/(2*nint)); %increase tau
@@ -155,7 +155,7 @@ while true
             nintok=false; %flag the number of trapezoids too small for tau
         end
     end
-    
+
     if nintok %ntrap large enough for tau
         %compute a reliable error estimate
         errest=out_param.tau^2*Gf/(36*nint.^3*(2*nint-out_param.tau));
@@ -174,11 +174,11 @@ while true
         inflation=floor((out_param.nmax-1)/nint);
             %max possible increase allowed by cost budget
         if inflation == 1 %cannot increase ntrap at all
-            q=sumf/nint/3; %compute the integral                 
+            q=sumf/nint/3; %compute the integral
             break %exit while loop
         end
     end
-    
+
     %Increase number of sample points
 %     expand=repmat(xpts(1:end-1),1,inflation-1);
 %     addon=repmat((1:inflation-1)'/(inflation*nint),1,nint)';
@@ -195,7 +195,7 @@ while true
     xpts=linspace(0,1,nint+1)'; % generate ninit number of uniformly spaced points in [0,1]
     fpts=f(xpts);   % get function values at xpts
     sum1=reshape(fpts(2:nint+1),2,nint/2);
-    sumf=(fpts(1)+fpts(nint+1))+2*sum(fpts(2:nint))+2*sum(sum1(1,:));    
+    sumf=(fpts(1)+fpts(nint+1))+2*sum(fpts(2:nint))+2*sum(sum1(1,:));
         %updated weighted sum of function values
     if out_param.exceedbudget %tried to exceed cost budget
         q=sumf/nint/3; %compute the integral

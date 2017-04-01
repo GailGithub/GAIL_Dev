@@ -8,22 +8,22 @@ function [pHat,out_param]=meanMCBernoulli_g(varargin)
 %   confidence level 99%. Input Yrand is a function handle that accepts a
 %   positive integer input n and returns a n x 1 vector of IID instances
 %   of the Bernoulli random variable Y.
-% 
+%
 %   pHat = MEANMCBERNOULLI_G(Yrand,abstol,reltol,errtype,alpha,nmax) estimates
 %   the mean of a Bernoulli random variable Y to within a specified error
 %   tolerance with guaranteed confidence level 1-alpha using all ordered
 %   parsing inputs abstol, reltol, errtype, alpha and nmax.
-% 
+%
 %   pHat = MEANMCBERNOULLI_G(Yrand,'abstol',abstol,'reltol',reltol,'errtype',errtype,'alpha',alpha,'nmax',nmax)
-%   estimates the mean of a Bernoulli random variable Y to within a 
+%   estimates the mean of a Bernoulli random variable Y to within a
 %   specified error tolerance with guaranteed confidence level 1-alpha. All
 %   the field-value pairs are optional and can be supplied in different order.
-% 
+%
 %   [pHat, out_param] = MEANMCBERNOULLI_G(Yrand,in_param) estimates the mean
 %   of a Bernoulli random variable Y to within a specified error tolerance
 %   with the given parameters in_param and produce the estimated mean pHat
 %   and output parameters out_param.
-% 
+%
 %   Input Arguments
 %
 %     Yrand --- the function for generating IID instances of a Bernoulli
@@ -36,20 +36,20 @@ function [pHat,out_param]=meanMCBernoulli_g(varargin)
 %     in_param.reltol --- the relative error tolerance, default value is 1e-1.
 %
 %     in_param.errtype --- the error type, default value is 'abs'.
-%      
+%
 %                          'abs'--- absolute error criterion
-%      
+%
 %                          'rel'--- relative error criterion
-%      
+%
 %                          'either'---absolute OR relative criterion
-% 
+%
 %     in_param.alpha --- the uncertainty, default value is 1%.
-% 
+%
 %     in_param.nmax --- the sample budget, default value is 1e9.
-% 
+%
 %   Output Arguments
 %
-%     out_param.nabs --- sample size needed to satisfy absolute error 
+%     out_param.nabs --- sample size needed to satisfy absolute error
 %                        tolerance.
 %
 %     out_param.nrel --- sample size needed to satisfy relative error
@@ -58,9 +58,9 @@ function [pHat,out_param]=meanMCBernoulli_g(varargin)
 %     out_param.n --- the total sample used.
 %
 %     out_param.tau --- the iteration step.
-% 
+%
 %     out_param.time --- the time elapsed in seconds.
-% 
+%
 %  Guarantee
 %
 % Case 1: errtype = 'abs'
@@ -70,12 +70,12 @@ function [pHat,out_param]=meanMCBernoulli_g(varargin)
 % following inequality must be satisfied:
 %
 % Pr(|p-pHat| <= abstol) >= 1-alpha.
-% 
+%
 % Here p is the true mean of Yrand, and pHat is the output of
 % MEANMCBERNOULLI_G with errtype = 'abs'
 %
 % Also, the cost is deterministic and bounded.
-% 
+%
 % Case 2: errtype = 'rel'
 %
 % If the algorithm terminated without any warning messages, the estimated
@@ -85,41 +85,41 @@ function [pHat,out_param]=meanMCBernoulli_g(varargin)
 %
 % Here p is the true mean of Y, and pHat is the output of MEANMCBERNOULLI_G
 % with errtype = 'rel'.
-% 
+%
 % Additionally, the cost of the algorithm would be bounded by N_up, which is
 % defined in terms of the true mean p, uncertainty alpha and relative
 % tolerance reltol. For details, please refer to the paper.
 %
 %   Examples
-% 
+%
 %   Example 1:
 %   Calculate the mean of a Bernoulli random variable with true p=1/90,
 %   absolute error tolerance 1e-3 and uncertainty 0.01.
-% 
+%
 %   >> in_param.abstol=1e-3; in_param.alpha = 0.01; p=1/9;Yrand=@(n) rand(n,1)<p;
 %   >> pHat=meanMCBernoulli_g(Yrand,in_param)
 %   pHat = 0.1***
-% 
-% 
+%
+%
 %   Example 2:
 %   Using the same function as example 1, with the relative error tolerance
 %   1e-2.
-% 
+%
 %   >> pHat = meanMCBernoulli_g(Yrand,0,1e-2,'rel')
 %   pHat = 0.1***
-% 
-% 
+%
+%
 %   Example 3:
 %   Using the same function as example 1, with the relative error
 %   tolerance 1e-2 and uncertainty 0.05.
-% 
+%
 %   >> pHat = meanMCBernoulli_g(Yrand,'errtype','rel','reltol',1e-2,'alpha',0.05)
 %   pHat = 0.11***
-% 
-% 
+%
+%
 %   See also FUNAPPX_G, INTEGRAL_G, CUBMC_G, MEANMC_G, CUBLATTICE_G,
 %   CUBSOBOL_G
-% 
+%
 %  References
 %
 %   [1]  F. J. Hickernell, L. Jiang, Y. Liu, and A. B. Owen, Guaranteed
@@ -132,7 +132,7 @@ function [pHat,out_param]=meanMCBernoulli_g(varargin)
 %   Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
 %   "GAIL: Guaranteed Automatic Integration Library (Version 2.0)"
 %   [MATLAB Software], 2014. Available from
-%   http://code.google.com/p/gail/
+%   http://gailgithub.github.io/GAIL_Dev/
 %
 %   If you find GAIL helpful in your work, please support us by citing the
 %   above paper and software.
@@ -162,7 +162,7 @@ if strcmpi(out_param.errtype,'either')
 end
 npcmax = 1e6;
 out_param.pHat = gail.evalmean(Yrand,out_param.n,npcmax);
-% evaluate the mean 
+% evaluate the mean
 pHat=out_param.pHat; % assign answer
 out_param.n = out_param.n+nsofar; % update total sample used
 out_param.time=toc(tstart); %elapsed time
@@ -171,7 +171,7 @@ end
 function  [Yrand,out_param] = meanMCBernoulli_g_param(varargin)
 default.reltol = 1e-1;% default relative error tolerance
 default.abstol  = 1e-2;% default absolute error tolerance
-default.errtype = 'abs';% default error type 
+default.errtype = 'abs';% default error type
 default.alpha = 1e-2;% default uncertainty
 default.nmax = 1e9;% default the sample budget
 if isempty(varargin) % if no parsing value
@@ -236,7 +236,7 @@ if (out_param.reltol < 0 || out_param.reltol >1)
         'We will use the default value of the error tolerance'])
     out_param.reltol = default.reltol;
 end
-if (out_param.alpha <= 0 ||out_param.alpha >= 1) 
+if (out_param.alpha <= 0 ||out_param.alpha >= 1)
     % uncertainty is not in (0,1)
     warning('MATLAB:meanMCBernoulli_g:alphanotin01',...
         ['the uncertainty should be in (0,1); '...
@@ -244,7 +244,7 @@ if (out_param.alpha <= 0 ||out_param.alpha >= 1)
     out_param.alpha = default.alpha;
 end
 
-if (~gail.isposint(out_param.nmax)) 
+if (~gail.isposint(out_param.nmax))
     % sample budget should be a positive integer
     warning('MATLAB:meanMCBernoulli_g:nmaxnotposint',...
         ['the number of nmax should be a positive integer; '...
@@ -288,7 +288,7 @@ switch out_param.exit
             num2str(out_param.nmax) ...
             ' samples. We will use the maximum sample budget to estimate p ',...
             'without guarantee.']);
-        return;        
+        return;
 end
 out_param.pHat=NaN;
 pHat=out_param.pHat;
@@ -322,13 +322,13 @@ while 1
     ni = ceil(-log(alphai)/(2*toli^2));
     %sample size obtained by one side Hoeffding's inequality
     if ni > out_param.nmax-nsofar;% if ni is bigger than sample left
-        out_param.exit=2; % pass a flag 
+        out_param.exit=2; % pass a flag
         meanMCBernoulli_g_err(out_param,tstart); % print warning message
         out_param.nrel = out_param.nmax- nsofar;%update nrel using all sample left
         break
     end
     meanP = gail.evalmean(Yrand,ni,npcmax);%evaluate mean
-    nsofar = nsofar+ni;%update n used so far 
+    nsofar = nsofar+ni;%update n used so far
     c = max(meanP-toli,0); % parameter to determine the stopping time
     delta = 1/2; % constant to determine stopping time
     if c > (meanP+toli)*delta % stopping criterion
