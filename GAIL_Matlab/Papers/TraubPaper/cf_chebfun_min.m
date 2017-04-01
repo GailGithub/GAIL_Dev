@@ -1,4 +1,6 @@
 function cf_chebfun_min(f, a, b, abstol, truey)
+% CF_CHEBFUN_MIN Compares funmin_g with Chebfun
+%
 % Examples:
 % f1 = @(x) x.^4 .* sin(1./((x==0)+x)); a = -1; b = 1; abstol = 1e-6; cf_chebfun_min(f1, a, b, abstol,f1(-1))
 %
@@ -9,9 +11,9 @@ function cf_chebfun_min(f, a, b, abstol, truey)
 %    - (x-c+delta).*abs(x-c+delta)).*(abs(x-c) <= 2*delta); a = - 1; b = 1; abstol = 1e-6;  
 % cf_chebfun_min(f3, a, b, abstol,-1)
 %
-% f4 = @(x)sin(10*pi*x.^4)-x, a = 0; b = 2; cf_chebfun_min(f4, a, b)
+% f4 = @(x)sin(10*pi*x.^4)-x, a = 0; b = 2; abstol = 1e-6; truey= -3; cf_chebfun_min(f4, a, b, abstol, truey)
 %
-% f5 = @(x) sign(x);  a = -1; b = 1; cf_chebfun_min(f5, a, b)
+% f5 = @(x) sign(x);  a = -1; b = 1; abstol = 1e-6; truey= -1; cf_chebfun_min(f5, a, b, abstol, truey)
 %  
 
 set(0,'defaultaxesfontsize',24,'defaulttextfontsize',24) %make font larger
@@ -20,7 +22,7 @@ format long
 
 %% funmin_g
 tic, [fmin,out] = funmin_g(f, a, b, abstol), toc
-out.intervals
+%out.intervals
 funmin_g_demo(fmin, out);
 trueerr = abs(truey - fmin)
 hold on; 
@@ -35,7 +37,7 @@ tic, c = chebfun(f, [a,b],'chebfuneps', abstol,'splitting','on');
 tic, [cy,cx] = min(c), toc
 trueerr = abs(truey - cy)
 plot(cx,cy,'g*')
-legend('funmin\_g', 'fminbnd', 'chebfun')
+legend('f', 'funmin\_g', 'fminbnd', 'chebfun')
 hold off
 
 %% symbolic toolbox

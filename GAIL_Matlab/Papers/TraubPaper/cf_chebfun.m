@@ -1,4 +1,6 @@
 function cf_chebfun(f, a, b, abstol, varargin)
+% CF_CHEBFUN compares funappx_g with Chebfun
+%
 % Examples:
 % f1 = @(x) x.^4 .* sin(1./((x==0)+x)); a = -1; b = 1; abstol = 1e-6; cf_chebfun(f1, a, b, abstol)
 %
