@@ -15,11 +15,11 @@ interest = 0.0;
 inp.assetParam.initPrice = initPrice; %initial stock price
 inp.assetParam.interest = interest; %risk-free interest rate
 inp.assetParam.volatility = 0.3;
-inp.assetParam.Vinst = 0.5; %0.04; 
-inp.assetParam.Vlong = 0.16;
+inp.assetParam.Vinst = 0.09; %0.04; 
+inp.assetParam.Vlong = 0.09;
 inp.assetParam.kappa = 1;
-inp.assetParam.nu = 0.4; %0.8;
-inp.assetParam.rho = -0.3; %-0.3;
+inp.assetParam.nu = 0; %0.8;
+inp.assetParam.rho = 0; %-0.3;
 inp.assetParam.pathType = 'GBM';
 inp.payoffParam.putCallType = {'put'};
 %inp.priceParam.cubMethod = 'Sobol';
@@ -27,7 +27,7 @@ inp.priceParam.cubMethod = 'IID_MC';
 
 %%
 % To generate some discounted option payoffs to add some more properties
-Strike = 60;
+Strike = 80;
 inp.payoffParam.strike =Strike; 
 
 %% 
@@ -40,12 +40,6 @@ ourGBMCallPrice = optPrice(inp)
 [GBMCallPrice_withIS, out] = genOptPrice(ourGBMCallPrice) %the option price
 inp.assetParam.meanShift = 0;
 %}
-Ntime = T/0.25; 
-NSim = 1e5;
-ExactSamplingPrice_BroadieKaya = HestonFullSampling(initPrice, Strike,interest,T,...
-    inp.assetParam.kappa,inp.assetParam.Vlong,inp.assetParam.nu,...
-    inp.assetParam.rho,inp.assetParam.Vinst,NSim,Ntime)
-return
 ourGBMCallPrice = optPrice(inp)
 [GBMCallPrice_withoutIS, out] = genOptPrice(ourGBMCallPrice)
 return

@@ -1,4 +1,3 @@
-%{
 %% Importance Sampling
 %
 % Set assetPath parameters
@@ -9,18 +8,18 @@ t0 = delta_t;
 inp.timeDim.timeVector = t0:delta_t:T;  % time vector
 inp.assetParam.interest = 0.0;          % risk-free interest rate
 inp.assetParam.volatility = 0.3;        % fixed vlatility of asset prices
-inp.assetParam.Vinst = 0.5;%0.09            % initial value of volatility
-inp.assetParam.Vlong = 0.16;%0.09            % theta
+inp.assetParam.Vinst = 0.09;            % initial value of volatility
+inp.assetParam.Vlong = 0.09;            % theta
 inp.assetParam.kappa = 1;               % kappa
-inp.assetParam.nu = 0.4;%0                  % volatility of asset price volatility
-inp.assetParam.rho = -0.3;%0                 % rho
+inp.assetParam.nu = 0;                  % volatility of asset price volatility
+inp.assetParam.rho = 0;                 % rho
 inp.assetParam.pathType = 'GBM'; 
 inp.priceParam.cubMethod = 'IID_MC';
 %Set optPayoff parameter
 inp.assetParam.initPrice = 60;            % strike price
 %Set error tolerance
 inp.priceParam.absTol = 0;              % absolute tolerance
-inp.priceParam.relTol = 0.01;           % one penny on the dollar relative tolerance
+inp.priceParam.relTol = 0.01;           % three penny on the dollar relative tolerance
 strike = [20,60,100];
 
 %% European call option
@@ -49,16 +48,14 @@ iid_temp = [GBMCallPrice_withIS,GBMCallPriceIS_time,GBMCallPriceIS_paths];
 % GBMCP_exact = num2str(GBMCallPrice_exact(:),'$%.4f \t')
 GBMCPI = sprintf('$%.4f \n',GBMCallPrice_withIS);
 GBMCP_exact = sprintf('$%.4f \t',GBMCallPrice_exact); 
-GBMCPI_paths={};
-GBMCPI_paths =[GBMCPI_paths {sprintf('%3.2E\n',GBMCallPriceIS_paths(:))}];
-GBMCPI_time = sprintf('%5.2f\t',GBMCallPriceIS_time);
-%strike;
+GBMCPI_paths = sprintf('%3.2E \t',GBMCallPriceIS_paths);
+GBMCPI_time = sprintf('%5.2fs\t',GBMCallPriceIS_time);
+strike;
 GBMCP_exact;
 GBMCPI;
-GBMCPI_paths
-% strrep(GBMCPI_paths,'e+00','e+')
+GBMCPI_paths;
 GBMCPI_time;
-%return
+
 % Without importance Sampling
 inp.assetParam.meanShift = 0;
 GBMCallPrice_withoutIS=zeros(1,3);
@@ -158,7 +155,7 @@ inp.assetParam.pathType = 'GBM';
 inp.priceParam.cubMethod = 'IID_MC';
 
 inp.payoffParam.putCallType = {'put'};
-%strike = fliplr(strike);   %initialPrice = [40,60,80]
+strike = fliplr(strike);   %initialPrice = [40,60,80]
 %%
 % * cubMethod = 'IID_MC'
 %With Importance Sampling
@@ -368,8 +365,6 @@ for i=1:3
 end
 Sobol_temp = [Sobol_temp;AmericanPutPrice_withIS,AmericanPutPriceIS_time,...
     AmericanPutPriceIS_paths];
-
-%}
 %% Generate LaTex code for a table of "call and put options",pathtype='GBM',cubmethod='IID_MC'
 clear input;
 temp = NaN(1,6);
@@ -382,18 +377,16 @@ input.data = content;
 % Set column labels (use empty string for no label):
 input.tableColLabels = {'K=20','K=60','K=100','K=20','K=60','K=100','K=20','K=60','K=100'};
 % Set row labels (use empty string for no label):
-% input.tableRowLabels = {'EuropeanCall\_exact price','EuropeanCall\_withIS',...
-% 'EuropeanCall\_withoutIS','EuropeanPut\_exact price','EuropeanPut\_withIS',...
-% 'EuropeanPut\_withoutIS','AmericanPut\_withIS','AmericanPut\_withoutIS'};
-input.tableRowLabels = {'ECexact','ECwIS',...
-'ECw/oIS','EPexact','EPwIS',...
-'EPw/oIS','APwIS','APw/oIS'};
+input.tableRowLabels = {'EuropeanCall\_exact price','EuropeanCall\_withIS',...
+'EuropeanCall\_withoutIS','EuropeanPut\_exact price','EuropeanPut\_withIS',...
+'EuropeanPut\_withoutIS','AmericanPut\_withIS','AmericanPut\_withoutIS'};
+
 % Switch transposing/pivoting your table:
 input.transposeTable = 0;
 
 % Determine whether input.dataFormat is applied column or row based:
 input.dataFormatMode = 'column'; % use 'column' or 'row'. if not set 'colum' is used
-input.dataFormat={'%.3f',3,'%5.2f',3,'%3.2e',3};%,'%.4f',3,'%5.2fs',3,'%3.2E',3};
+input.dataFormat={'%.4f',3,'%5.2fs',3,'%3.2E',3};%,'%.4f',3,'%5.2fs',3,'%3.2E',3};
 input.dataNanString = '-';
 input.tableColumnAlignment = 'c';
 % Switch table borders on/off (borders are enabled by default):
@@ -405,7 +398,7 @@ input.tableLabel = 'MyTableLabel';
 % Switch to generate a complete LaTex document or just a table:
 input.makeCompleteLatexDocument = 0;
 % Switch to landscape table:
-input.landscape = 0;
+input.landscape = 1;
 % call latexTable:
 latex = latexTable(input);
 
@@ -421,19 +414,16 @@ input.data = content;
 % Set column labels (use empty string for no label):
 input.tableColLabels = {'K=20','K=60','K=100','K=20','K=60','K=100','K=20','K=60','K=100'};
 % Set row labels (use empty string for no label):
-% input.tableRowLabels = {'EuropeanCall\_exact price','EuropeanCall\_withIS',...
-% 'EuropeanCall\_withoutIS','EuropeanPut\_exact price','EuropeanPut\_withIS',...
-% 'EuropeanPut\_withoutIS','AmericanPut\_withIS','AmericanPut\_withoutIS'};
-input.tableRowLabels = {'ECexact','ECwIS',...
-'ECw/oIS','EPexact','EPwIS',...
-'EPw/oIS','APwIS','APw/oIS'};
+input.tableRowLabels = {'EuropeanCall\_exact price','EuropeanCall\_withIS',...
+'EuropeanCall\_withoutIS','EuropeanPut\_exact price','EuropeanPut\_withIS',...
+'EuropeanPut\_withoutIS','AmericanPut\_withIS','AmericanPut\_withoutIS'};
 
 % Switch transposing/pivoting your table:
 input.transposeTable = 0;
 
 % Determine whether input.dataFormat is applied column or row based:
 input.dataFormatMode = 'column'; % use 'column' or 'row'. if not set 'colum' is used
-input.dataFormat={'%.3f',3,'%5.2f',3,'%3.2e',3};%,'%.4f',3,'%5.2fs',3,'%3.2E',3};
+input.dataFormat={'%.4f',3,'%5.2fs',3,'%3.2E',3};%,'%.4f',3,'%5.2fs',3,'%3.2E',3};
 input.dataNanString = '-';
 input.tableColumnAlignment = 'c';
 % Switch table borders on/off (borders are enabled by default):
@@ -445,7 +435,7 @@ input.tableLabel = 'MyTableLabel';
 % Switch to generate a complete LaTex document or just a table:
 input.makeCompleteLatexDocument = 0;
 % Switch to landscape table:
-input.landscape = 0;
+input.landscape = 1;
 % call latexTable:
 latex = latexTable(input);
 
