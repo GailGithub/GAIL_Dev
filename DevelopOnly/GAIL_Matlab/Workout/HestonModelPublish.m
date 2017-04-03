@@ -40,18 +40,18 @@
 %
 %% Generate Option prices using Quadratice Exponential Scheme
 %Set assetPath parameters
-T=1;                                    % end time
+T=1.5;                                    % end time
 delta_t=0.1;                            % time increment
 t0 = delta_t;                           % start time
 inp.timeDim.timeVector = t0:delta_t:T;  % time vector
 inp.assetParam.initPrice = 100;         % initial asset price
 inp.assetParam.interest = 0.04;         % risk-free interest rate
-inp.assetParam.volatility = 0.3;        % fixed vlatility of asset prices
-inp.assetParam.Vinst = 0.09;            % initial value of volatility
-inp.assetParam.Vlong = 0.09;            % theta
+inp.assetParam.volatility = 0.3;        % fixed volatility of asset prices
+inp.assetParam.Vinst = 0.01;            % initial value of volatility
+inp.assetParam.Vlong = 0.25;            % theta
 inp.assetParam.kappa = 1;               % kappa
-inp.assetParam.nu = 0;                  % volatility of asset price volatility
-inp.assetParam.rho = 0.5;               % rho
+inp.assetParam.nu = 0.01;                  % volatility of asset price volatility
+inp.assetParam.rho = -0.3;               % rho
 
 %Set optPayoff parameter
 inp.payoffParam.strike = 90;            % strike price
