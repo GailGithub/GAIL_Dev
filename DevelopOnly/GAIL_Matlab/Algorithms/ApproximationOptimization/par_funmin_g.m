@@ -7,11 +7,11 @@ function [fmin, out_param] = par_funmin_g(workers,varargin)
 %   pool is created and it is equivalent to calling fmin = funmin_g(f).
 %
 %   Input Arguments
-%      
+%
 %     w --- number of MATLAB parallel pool workers, positive integer
-% 
+%
 %     Refer to documentation of funappx_g for additional optional inputs
-%     
+%
 %
 %   Output Arguments
 %
@@ -27,7 +27,7 @@ function [fmin, out_param] = par_funmin_g(workers,varargin)
 %
 %   >> f = @(x) x.^2;
 %   >> [fmin, out_param] = par_funmin_g(4,f,-2,2,1e-7,100,100); out_param
-%   out_param = 
+%   out_param =
 %             f: @(x)x.^2
 %             a: -2
 %             b: 2
@@ -43,9 +43,9 @@ function [fmin, out_param] = par_funmin_g(workers,varargin)
 %        errest: ***e-08
 %     intervals: ***
 %      output_x: 0
-% 
+%
 %  >> out_param.intervals
-%     ans = 
+%     ans =
 %       1.0e-03 *
 %        -0.3***
 %         0.3***
@@ -55,17 +55,17 @@ function [fmin, out_param] = par_funmin_g(workers,varargin)
 %
 %
 %  To release workers:
-%   delete(gcp); 
+%   delete(gcp);
 %
 %
-%  See also FUNMIN_G, FMINBND, PAR_FUNAPPX_G 
+%  See also FUNMIN_G, FMINBND, PAR_FUNAPPX_G
 %
 %
 %  References
 %
 %   [1]  Sou-Cheng T. Choi, Yuhan Ding, Fred J.Hickernell, Xin Tong, "Local
 %   Adaption for Approximation and Minimization of Univariate Functions,"
-%   working, 2016.
+%   Journal of Complexity, 2016. To appear.
 %
 %   [2]  Xin Tong. A Guaranteed, "Adaptive, Automatic Algorithm for
 %   Univariate Function Minimization," MS thesis, Illinois Institute of
@@ -73,8 +73,8 @@ function [fmin, out_param] = par_funmin_g(workers,varargin)
 %
 %   [2] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang,
 %   Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
-%   GAIL: Guaranteed Automatic Integration Library (Version 2.1)
-%   [MATLAB Software], 2015. Available from http://code.google.com/p/gail/
+%   GAIL: Guaranteed Automatic Integration Library (Version 2.2)
+%   [MATLAB Software], 2017. Available from http://gailgithub.github.io/GAIL_Dev/
 %
 %   If you find GAIL helpful in your work, please support us by citing the
 %   above papers, software, and materials.
@@ -90,7 +90,7 @@ b = out_param.b;
 h = (b-a)/workers;
 fa = zeros(1,workers);
 ou = cell(1,workers);
-div = min(4, workers);  
+div = min(4, workers);
 nlo = max(5,ceil(out_param.nlo/div));
 nhi = max(5,ceil(out_param.nhi/div));
 nmax = max(5,ceil(out_param.nmax/div));
@@ -136,7 +136,7 @@ if length(indices_to_add) >= 1
       out_param.intervals = [out_param.intervals, ou{i}.intervals];
   end
 end
-  
+
 out_param.a = a;
 out_param.b = b;
 %out_param.abstol = abstol;
@@ -151,7 +151,3 @@ for i = 2:workers,
   out_param.errest =  max(out_param.errest, ou{i}.errest);
   out_param.exitflag = max(out_param.exitflag, ou{1}.exitflag);
 end
-
-
-
-

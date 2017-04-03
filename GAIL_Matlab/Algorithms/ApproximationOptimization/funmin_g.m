@@ -1,8 +1,8 @@
 function [fmin,out_param]=funmin_g(varargin)
 %funmin_g 1-D guaranteed locally adaptive function optimization on [a,b]
 %
-%   fmin = FUNMIN_G(f) finds minimum value of function f on the  
-%   default interval [0,1] within the guaranteed absolute error tolerance 
+%   fmin = FUNMIN_G(f) finds minimum value of function f on the
+%   default interval [0,1] within the guaranteed absolute error tolerance
 %   of 1e-6. Input f is a function handle.
 %
 %   fmin = FUNMIN_G(f,a,b,abstol) finds minimum value of
@@ -14,7 +14,7 @@ function [fmin,out_param]=funmin_g(varargin)
 %   error tolerance. All four field-value pairs are optional and can be
 %   supplied in different order.
 %
-%   fmin = FUNMIN_G(f,in_param) finds minimum value of function f  
+%   fmin = FUNMIN_G(f,in_param) finds minimum value of function f
 %   on the interval [in_param.a,in_param.b] with a guaranteed absolute
 %   error tolerance in_param.abstol. If a field is not specified, the
 %   default value is used.
@@ -53,7 +53,7 @@ function [fmin,out_param]=funmin_g(varargin)
 %     out_param.abstol --- guaranteed absolute error tolerance
 %
 %     out_param.nmax --- cost budget
-%  
+%
 %     out_param.ninit --- initial number of subintervals
 %
 %     out_param.npoints --- number of points needed to reach the guaranteed
@@ -65,11 +65,11 @@ function [fmin,out_param]=funmin_g(varargin)
 %     out_param.exit == [0 0]) if no other flags arise warning that the
 %     results are certainly not guaranteed. The initial value is [0 0] and
 %     the final value of this parameter is encoded as follows:
-%       
+%
 %                      [1 0]   If reaching overbudget. It states whether
 %                      the max budget is attained without reaching the
 %                      guaranteed error tolerance.
-%        
+%
 %                      [0 1]   If reaching overiteration. It states whether
 %                      the max iterations is attained without reaching the
 %                      guaranteed error tolerance.
@@ -89,11 +89,11 @@ function [fmin,out_param]=funmin_g(varargin)
 %  >> f=@(x) exp(0.01*(x-0.5).^2); [fmin,out_param] = funmin_g(f)
 %
 %  fmin =
-% 
+%
 %      1
-% 
-%  out_param = 
-% 
+%
+%  out_param =
+%
 %            f: @(x)exp(0.01*(x-0.5).^2)
 %            a: 0
 %            b: 1
@@ -114,11 +114,11 @@ function [fmin,out_param]=funmin_g(varargin)
 %  >> [fmin,out_param] = funmin_g(f,-2,2,1e-7,10,1000000)
 %
 %  fmin =
-% 
+%
 %      1
-% 
-%  out_param = 
-% 
+%
+%  out_param =
+%
 %            f: @(x)exp(0.01*(x-0.5).^2)
 %            a: -2
 %            b: 2
@@ -144,11 +144,11 @@ function [fmin,out_param]=funmin_g(varargin)
 %  >> [fmin,out_param] = funmin_g(f,in_param)
 %
 %  fmin =
-% 
+%
 %     1.0000
-% 
-%  out_param = 
-% 
+%
+%  out_param =
+%
 %            f: @(x)exp(0.01*(x-0.5).^2)
 %            a: -13
 %            b: 8
@@ -171,11 +171,11 @@ function [fmin,out_param]=funmin_g(varargin)
 %  >> [fmin,out_param] = funmin_g(f,'a',-2,'b',2,'ninit',64,'nmax',1e6,'abstol',1e-5)
 %
 %  fmin =
-% 
+%
 %     1
-% 
-%  out_param = 
-% 
+%
+%  out_param =
+%
 %            f: @(x)exp(0.01*(x-0.5).^2)
 %            a: -2
 %            b: 2
@@ -205,8 +205,8 @@ function [fmin,out_param]=funmin_g(varargin)
 %
 %   [3] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang,
 %   Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
-%   GAIL: Guaranteed Automatic Integration Library (Version 2.1)
-%   [MATLAB Software], 2015. Available from http://code.google.com/p/gail/
+%   GAIL: Guaranteed Automatic Integration Library (Version 2.2)
+%   [MATLAB Software], 2017. Available from http://gailgithub.github.io/GAIL_Dev/
 %
 %   [4] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
 %   Research via Supportable Scientific Software," Journal of Open Research
@@ -215,7 +215,7 @@ function [fmin,out_param]=funmin_g(varargin)
 %   [5] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable
 %   Mathematical Software" [Course Slides], Illinois Institute of
 %   Technology, Chicago, IL, 2013. Available from
-%   http://code.google.com/p/gail/
+%   http://gailgithub.github.io/GAIL_Dev/
 %
 %   If you find GAIL helpful in your work, please support us by citing the
 %   above papers, software, and materials.
@@ -268,12 +268,12 @@ while n < out_param.nmax
     diff_y=diff(y);
     min_int = (y(1:n-1)+y(2:n)-abs(diff_y(1:n-1)))./2;
     M_hat=min(y(1:n));
-    
+
     err_p=zeros(1,n); err_hat_p=zeros(1,n);
     err_m=zeros(1,n); err_hat_m=zeros(1,n);
     err_p(2:end-1) = abs(1/8 * C(3*h)...
                            .* deltaf.*indexI_p(2:end-1));
-    indexI_tilde_p = (err_p > abstol);   
+    indexI_tilde_p = (err_p > abstol);
     err_m(2:end-1) = abs(1/8 * C(3*h)...
                            .* deltaf.*indexI_m(2:end-1));
     indexI_tilde_m = (err_m > abstol);
@@ -281,27 +281,27 @@ while n < out_param.nmax
         (err_p(3:end-1)+M_hat-min_int(1:end-2));
     err_hat_m(2:end-2) = indexI_m(2:end-2).*...
         (err_m(2:end-2)+M_hat-min_int(3:end));
-    
+
     indexI_hat_p = (err_hat_p > abstol)| ...
         ((indexI_tilde_p.*[0 0 0 indexI_tilde_m(1:end-3)]) & ...
         (([indexI_tilde_p(4:end) 0 0 0].*err_hat_m)>abstol));
     indexI_hat_m = (err_hat_m > abstol)| ...
         ((indexI_tilde_m.*[indexI_tilde_p(4:end) 0 0 0]) & ...
         (([0 0 0 indexI_tilde_m(1:end-3)].*err_hat_p)>abstol));
-    
+
     % update iterations
     iter = iter + 1;
     if max(indexI_hat_p|indexI_hat_m) == 0,
         max_errest = max(max(err_p),max(err_m));
         break;
     end
-    
+
     %% Stage 2: Split the subintervals as needed
     %find the index of the subinterval which is needed to be cut
     midpoint_p = [indexI_hat_p(3:end) 0 0 ] | [indexI_hat_p(2:end) 0];
     midpoint_m = indexI_hat_m | [0 indexI_hat_m(1:end-1)];
     whichcut = midpoint_p(1:end-1) | midpoint_m(1:end-1);
-    
+
     %check to see if exceed the cost budget
     if (out_param.nmax<(n+length(find(whichcut))))
         out_param.exitflag(1) = true;
@@ -309,8 +309,8 @@ while n < out_param.nmax
             'attempted to exceed the cost budget. The answer may be '...
             'unreliable.'])
         break;
-    end; 
-    
+    end;
+
     %check to see if exceed the maximumber number of iterations
     if(iter==out_param.maxiter)
         out_param.exitflag(2) = true;
@@ -318,10 +318,10 @@ while n < out_param.nmax
             'reached maximum number of iterations.'])
         break;
     end;
-    
+
     %generate split points for x
     newx=x(whichcut)+0.5*len(whichcut);
-    
+
     %relocate the space for new x
     if n + length(newx) > length(x)
       xx = zeros(1, out_param.nmax);
@@ -331,15 +331,15 @@ while n < out_param.nmax
       x = xx;
       y = yy;
     end
-    
+
     %update x and y
-    tt = cumsum(whichcut);   
+    tt = cumsum(whichcut);
     x([1 (2:n)+tt]) = x(1:n);
     y([1 (2:n)+tt]) = y(1:n);
     tem = 2 * tt + cumsum(whichcut==0);
     x(tem(whichcut)) = newx;
     y(tem(whichcut)) = f(newx);
-    
+
     %update the set I to consist of the new indices
     newindex_p([1 (2:n)+tt]) = [indexI_hat_p(2:end) 0];
     newindex_p(tem) = indexI_hat_p(2:end);
@@ -347,7 +347,7 @@ while n < out_param.nmax
     newindex_m([1 (2:n)+tt]) = [0 indexI_hat_m(1:end-1)];
     newindex_m(tem) = indexI_hat_m(1:end-1);
     indexI_m = ([0 newindex_m(2:end-2) 0 0]>0);
-    
+
     %update # of points
     n = n + length(newx);
 end
@@ -533,10 +533,3 @@ if (~gail.isposint(out_param.maxiter))
         out_param.maxiter = default.maxiter;
     end;
 end
-
-
-
-
-
- 
-

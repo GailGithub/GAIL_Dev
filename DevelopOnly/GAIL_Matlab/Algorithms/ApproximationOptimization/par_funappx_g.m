@@ -7,11 +7,11 @@ function [fappx, out_param] = par_funappx_g(workers,varargin)
 %   pool is created and it is equivalent to calling fappx = funappx_g(f).
 %
 %   Input Arguments
-%      
+%
 %     w --- number of MATLAB parallel pool workers, positive integer
-% 
+%
 %     Refer to documentation of funappx_g for additional optional inputs
-%     
+%
 %
 %   Output Arguments
 %
@@ -28,8 +28,8 @@ function [fappx, out_param] = par_funappx_g(workers,varargin)
 %
 %   >> f = @(x) x.^2;
 %   >> [fappx, out_param] = par_funappx_g(4,f,-2,2,1e-7,20,20); out_param
-%   out_param = 
-% 
+%   out_param =
+%
 %            f: @(x)x.^2
 %            a: -2
 %            b: 2
@@ -44,14 +44,14 @@ function [fappx, out_param] = par_funappx_g(workers,varargin)
 %      npoints: 32769
 %       errest: ***e-08
 %       ***
-% 
+%
 %  >> x=-2:1e-7:2; f = @(x) x.^2; err = max(abs(f(x)-fappx(x))); err < 1e-7
-%  ans =  
+%  ans =
 %    1
 %
 %
 %  To release workers:
-%   delete(gcp); 
+%   delete(gcp);
 %
 %
 %   See also FUNAPPX_G, PAR_FUNMIN_G
@@ -61,17 +61,17 @@ function [fappx, out_param] = par_funappx_g(workers,varargin)
 %
 %   [1]  Sou-Cheng T. Choi, Yuhan Ding, Fred J.Hickernell, Xin Tong, "Local
 %   Adaption for Approximation and Minimization of Univariate Functions,"
-%   working, 2016.
+%   Journal of Complexity, 2016. To appear.
 %
 %   [2]  Nick Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
 %   Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic
 %   Algorithms: Cones, Not Balls," Journal of Complexity 30, pp. 21-45,
 %   2014.
-%            
+%
 %   [3]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
 %   Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
-%   GAIL: Guaranteed Automatic Integration Library (Version 2.1) [MATLAB
-%   Software], 2015. Available from http://code.google.com/p/gail/
+%   GAIL: Guaranteed Automatic Integration Library (Version 2.2) [MATLAB
+%   Software], 2017. Available from http://gailgithub.github.io/GAIL_Dev/
 %
 %   If you find GAIL helpful in your work, please support us by citing the
 %   above papers, software, and materials.
@@ -87,7 +87,7 @@ a = out_param.a;
 b = out_param.b;
 h = (b-a)/workers;
 ou = cell(1,workers);
-div = min(4, workers);  
+div = min(4, workers);
 nmax = max(5,ceil(out_param.nmax/div));
 %% parallel loop
 parfor (i=1:workers, double(workers>1))
@@ -134,4 +134,3 @@ end
 %   actualerr = max(abs(fappx(xx)-f(xx)));
 %   if actualerr > abstol, keyboard, end
 % end
-
