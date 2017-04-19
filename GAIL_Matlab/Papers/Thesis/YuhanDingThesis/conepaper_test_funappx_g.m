@@ -1,8 +1,16 @@
+%CONEPAPER_TEST_FUNAPPX_G Generate Table 3. in Cones not ball paper Run automatic guaranteed algorithm for function approximation
+%  Generates Table 3 in the paper
+%
+%  N. Clancy, Y. Ding, C. Hamilton, F. J. Hickernell and Y. Zhang,
+%  The Cost of Deterministic, Adaptive, Automatic Algorithms:  Cones, 
+%  Not Balls, submitted for publication, arXiv.org:1303.2412 [math.NA]}, 
+%  2013.
+%
+
 %% Preliminaries
-%Need Chebfun Toolbox
 %clear all, close all
 %clearvars -except testCase
-function [succnowarn,succwarn,exactsucccheb]=chebglobalcompare(nrep,nmax,abstol)
+function [succnowarn,succwarn]=conepaper_test_funappx_g(nrep,nmax,abstol)
 tstart = tic;
 
 %% Program parameters
@@ -22,7 +30,6 @@ z = rand(nrep,1).*(1-4*a)+2*a;
 x0 = z-2*a;
 x1 = z+2*a;
 tauvec = [10 100 1000]; %cone condition tau
-%tauvec = 1000;
 ntau = length(tauvec);
 ratio = 1./a;
 gnorm = 1./a;
@@ -35,9 +42,6 @@ timemat = ntrapmat;
 tauchangemat = ntrapmat;
 exceedmat = ntrapmat;
 ballmat = ntrapmat;
-timematcheb = timemat;
-ncheb = timemat;
-trueerrormat2 = timemat;
 
 for i=1:ntau;
     for j=1:nrep;
@@ -47,19 +51,14 @@ for i=1:ntau;
         in_param.tau = tauvec(i);
         tic
         [fappx,out_param] = funappxtau_g(f,in_param);
+        chebfun
         timemat(j,i) = toc;
-        tic
-        fcheb = chebfun(f,[0,1]);
-        timematcheb(j,i)=toc;
         ntrapmat(j,i) = out_param.npoints;
-        ncheb(j,i) = length(fcheb);
         newtaumat(j,i) = out_param.tau;
         xx = [rand(1,50000) rand(1,50000)*(4*a(j))+(z(j)-2*a(j))];
         yy1 = fappx(xx);
-        yy2 = fcheb(xx);
         exactyy = f(xx);
         trueerrormat(j,i) = max(abs(yy1-exactyy));
-        trueerrormat2(j,i) = max(abs(yy2-exactyy));
         tauchangemat(j,i) = out_param.tauchange;
         exceedmat(j,i) = out_param.exceedbudget;
         ballmat(j,i) = out_param.ballradius;
@@ -82,7 +81,6 @@ succnowarn = mean((trueerrormat<=in_param.abstol)&(~exceedmat),1); %percentage o
 succwarn = mean((trueerrormat<=in_param.abstol)&(exceedmat),1);    %percentage of successful instants for which the functions are not in the cone
 failnowarn = mean((trueerrormat>in_param.abstol)&(~exceedmat),1);  %percentage of failed instants for which the functions are in the cone
 failwarn = mean((trueerrormat>in_param.abstol)&(exceedmat),1);
-exactsucccheb = mean(trueerrormat2 <=in_param.abstol,1);
 
 %% Output the table
 % To just re-display the output, load the .mat file and run this section
@@ -90,7 +88,7 @@ exactsucccheb = mean(trueerrormat2 <=in_param.abstol,1);
 display(' ')
 display('        Probability    Success   Success   Failure  Failure')
 display(' tau      In Cone    No Warning  Warning No Warning Warning')
-for i=1:ntau
+for i=1:3
     display(sprintf(['%5.0f %5.2f%%->%5.2f%% %7.2f%%' ...
         '%10.2f%% %7.2f%% %7.2f%% '],...
         [tauvec(i) 100*[pini(i) pfin(i) succnowarn(i) ...

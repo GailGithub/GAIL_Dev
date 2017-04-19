@@ -22,6 +22,7 @@ classdef optPayoff < assetPath
     %        assetParam_initPrice: 10
     %         assetParam_interest: 0.0100
     %       assetParam_volatility: 0.5000
+    %           assetParam_nAsset: 1      
     %         payoffParam_optType: {'euro'}
     %     payoffParam_putCallType: {'call'}
     %          payoffParam_strike: 10

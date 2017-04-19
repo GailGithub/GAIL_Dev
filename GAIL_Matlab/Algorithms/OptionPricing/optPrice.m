@@ -22,7 +22,7 @@ classdef optPrice < optPayoff
 %     timeIncrement: [1 1]
 %               dim: 1
 %             nCols: 3
-%         inputType: 'n'
+
 
 %% Properties
 % This process inherits properties from the |stochProcess| class.  Below are 
@@ -82,7 +82,7 @@ classdef optPrice < optPayoff
                obj.wnParam.sampleKind = obj.priceParam.cubMethod;
                obj.wnParam.xDistrib = 'Uniform';
             end           
-	    if any(strcmp(obj.priceParam.cubMethod,{'SobolCV'}))
+            if any(strcmp(obj.priceParam.cubMethod,{'SobolCV'}))
                obj.inputType = 'x';
                obj.wnParam.sampleKind = 'Sobol';
                obj.wnParam.xDistrib = 'Uniform';
