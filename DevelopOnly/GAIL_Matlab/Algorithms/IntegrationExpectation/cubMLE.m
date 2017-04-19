@@ -35,6 +35,8 @@ if nargin < 7
     end
 end
 
+enableCostPlot = false;
+
 nmax = max(nvec);
 nn = numel(nvec);
 d = size(domain,2);
@@ -102,7 +104,7 @@ if strcmp(whKer,'Fourier')
     end
 end
 
-if  true %strcmp(whKer,'Fourier') % disabled in release code
+if  enableCostPlot %strcmp(whKer,'Fourier') % disabled in release code
     enableMovie = false;
     %% plot MLEKernel cost function
     lnTheta = -3:0.05:0;
@@ -275,7 +277,7 @@ parfor ii = 1:nn
 end
 
 % add the actual min theta and from fminbnd to the plot
-if true %strcmp(whKer,'Fourier') == true
+if enableCostPlot %strcmp(whKer,'Fourier') == true
     if isvalid(hFigCost)
         lgdText = string(nvec);
         for i=1:length(nvec)
