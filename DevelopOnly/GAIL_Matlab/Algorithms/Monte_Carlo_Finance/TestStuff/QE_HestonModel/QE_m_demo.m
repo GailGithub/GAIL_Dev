@@ -1,34 +1,40 @@
-% Latest updated date: 7/4/2016
+% Latest updated date: 4/7/2017
 % Auther: Xiaoyang Zhao
 %% QE with martingale correction_European call option_Strike = 70 
-T=1;
-delta_t=0.1;
+clearvars
+T=5;
+delta_t=0.2;
 t0 = delta_t;
 inp.timeDim.timeVector = t0:delta_t:T; 
 % To generate an asset path modeled by a geometric Brownian motion we need
 % to add some more properties
-initPrice = 100;
-interest = 0.04;
+initPrice = 60;
+interest = 0.0;
 inp.assetParam.initPrice = initPrice; %initial stock price
 inp.assetParam.interest = interest; %risk-free interest rate
-inp.assetParam.volatility = 0.3;
-inp.assetParam.Vinst = 0.09; 
-inp.assetParam.Vlong = 0.09;
+inp.assetParam.volatility = 0.4;
+inp.assetParam.Vinst = 0.5; 
+inp.assetParam.Vlong = 0.16;
 inp.assetParam.kappa = 1;
-inp.assetParam.nu = 1.5;%1e-16;
-inp.assetParam.rho = -0.5;
-inp.assetParam.pathType = 'GBM';
+inp.assetParam.nu = 0.4;%1e-16;
+inp.assetParam.rho = -0.3;
+inp.priceParam.cubMethod = 'IID_MC';
+inp.priceParam.cubMethod = 'Sobol';
+inp.payoffParam.putCallType = {'put'};
+inp.payoffParam.optType = {'american'};
+% inp.assetParam.pathType = 'GBM';
 
 %%
 % To generate some discounted option payoffs to add some more properties
-Strike = 90;
+Strike =20;
 inp.payoffParam.strike =Strike; 
 
 %% 
 inp.priceParam.absTol = 0; %absolute tolerance
 inp.priceParam.relTol = 0.01; %one penny on the dollar relative tolerance
-ourGBMCallPrice = optPrice(inp);
-[GBMCallPrice, out] = genOptPrice(ourGBMCallPrice); %the option price
+% ourGBMCallPrice = optPrice(inp);
+% [GBMCallPrice, out] = genOptPrice(ourGBMCallPrice); %the option price
+inp.assetParam.meanShift = -0.6;%1;
 
 inp.assetParam.pathType = 'QE_m';
 ourQEmCallPrice = optPrice(inp) %construct an optPrice object 
@@ -37,13 +43,22 @@ ourQEmCallPrice = optPrice(inp) %construct an optPrice object
 [QEmCallPrice, out] = genOptPrice(ourQEmCallPrice) %the option price
 % Calculate option price by provided codes
 %  MC_QE(S0,r,d,T,Vinst,Vlong,kappa,epsilon,rho,NTime,NSim,NBatches)
+return
 Ntime = T/delta_t; 
+tic
 [a,b] = MC_QE_m(initPrice,interest,0,T,inp.assetParam.Vinst,inp.assetParam.Vlong,...
     inp.assetParam.kappa,inp.assetParam.nu,inp.assetParam.rho,Ntime,1e6,1);
 PT = a(:,Ntime + 1);
-PT = max(PT-Strike,0);
+if strcmp(inp.payoffParam.putCallType,'call')
+    PT = max(PT-Strike,0);
+else
+    PT = max(Strike-PT,0);
+end
+
 PP = mean(PT);
 QEmprice_Kienitz = PP*exp(-inp.assetParam.interest*T)
+elapsed = toc;
+elapsed
 return
 
 %% QE with martingale correction_European call option_Strike = 100 

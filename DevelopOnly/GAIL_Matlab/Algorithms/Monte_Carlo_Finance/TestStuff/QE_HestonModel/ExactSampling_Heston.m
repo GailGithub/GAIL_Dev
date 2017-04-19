@@ -16,7 +16,7 @@ V = V0*V(:,1);                                     % init variance
 S = ones(NSim,Nt+1);                               
 S = S0*S(:,1);                                     % init asset
 Inverse = zeros(NSim,1);                           % for num inversion
-options = optimset('TolX',1e-6);                   % for num inversion
+options = optimset('TolX',1e-8);                   % for num inversion
 
 for i = 2:Nt+1
     dt = t(i)-t(i-1);                              % time step
