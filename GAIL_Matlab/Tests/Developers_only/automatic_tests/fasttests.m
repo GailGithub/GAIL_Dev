@@ -25,7 +25,6 @@ tic; doctest funappxNoPenalty_g; time=toc
 tic; doctest dt_funappx_g; time=toc
 tic; doctest dt_funappxNoPenalty_g; time=toc
 tic; doctest funmin_g; time=toc
-tic; doctest funminNoPenalty_g; time=toc
 tic; doctest integral_g; time=toc
 %tic; doctest integralsim_g; time=toc
 tic; doctest dt_integral_g ; time=toc
@@ -119,20 +118,6 @@ else
     end
     
     try
-        Tests = matlab.unittest.TestSuite.fromClass(?ut_funminPenalty_g);
-        results=run(ut_funminPenalty_g)
-        if sum([results.Failed])>0
-            failed=find([results.Failed]>0);
-            for i=1:size(failed,2)
-                fprintf(fid,'%s\n',Tests(failed(i)).Name);
-            end
-        end
-    catch
-        display('Error: Test ut_funminPenalty_g is wrongly coded. We skip it.')
-        fprintf(fid,'Error: Test ut_funminPenalty_g is wrongly coded. We skip it.\n');
-    end
-    
-    try
         Tests = matlab.unittest.TestSuite.fromClass(?ut_funmin_g_end);
         results=run(ut_funmin_g_end)
         if sum([results.Failed])>0
@@ -144,19 +129,6 @@ else
     catch
         display('Error: Test ut_funmin_g_end is wrongly coded. We skip it.')
         fprintf(fid,'Error: Test ut_funmin_g_end is wrongly coded. We skip it.\n');
-    end
-    try
-        Tests = matlab.unittest.TestSuite.fromClass(?ut_funminPenalty_g_end);
-        results=run(ut_funminPenalty_g_end)
-        if sum([results.Failed])>0
-            failed=find([results.Failed]>0);
-            for i=1:size(failed,2)
-                fprintf(fid,'%s\n',Tests(failed(i)).Name);
-            end
-        end
-    catch
-        display('Error: Test ut_funminPenalty_g_end is wrongly coded. We skip it.')
-        fprintf(fid,'Error: Test ut_funminPenalty_g_end is wrongly coded. We skip it.\n');
     end
     
     try
