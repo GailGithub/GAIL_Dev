@@ -1,11 +1,11 @@
 function dt_funappx_g
-%DT_funappx_g small doctest for funappx_g
+%DT_FUNAPPX_G fast doctest for funappx_g
 %
 %   Example 1:
 %
 %   >> funappx_g
 %
-%   Warning: Function f must be a function handle. ***
+%   Warning: Function f must be a function handle. 
 %
 %
 %   Example 2:
@@ -13,7 +13,7 @@ function dt_funappx_g
 %   >> clear in_param; in_param.a = -5; in_param.b =5; in_param.abstol = 10^(-7); 
 %   >> [~, out_param] = funappx_g(@(x) x.^2, in_param)
 % 
-% out_param = 
+% out_param =***
 % 
 %            a: -5
 %       abstol: 1.0000e-07
@@ -34,7 +34,7 @@ function dt_funappx_g
 %   >> in_param.abstol = 10^(-8); in_param.ninit = 20; 
 %   >> [~, out_param] = funappx_g(f, in_param)
 % 
-% out_param = 
+% out_param =***
 % 
 %            a: -1
 %       abstol: 1.0000e-08
@@ -53,7 +53,7 @@ function dt_funappx_g
 %
 %   >> [~, out_param] = funappx_g(@(x) x.^3,'a',-2,'b',2,'abstol',1e-7,'ninit',41)
 %
-% out_param = 
+% out_param =***
 % 
 %            a: -2
 %       abstol: 1.0000e-07
@@ -72,7 +72,7 @@ function dt_funappx_g
 %
 %   >> [~, out_param] = funappx_g(@(x) exp(-100*(x-0.7).^2),'a',0,'b',1,'ninit',28)
 %
-% out_param = 
+% out_param =***
 % 
 %            a: 0
 %       abstol: 1.0000e-06
@@ -94,3 +94,5 @@ function dt_funappx_g
 %      1
 %   >> length(out_param.x) == out_param.npoints
 %      1
+%
+%
