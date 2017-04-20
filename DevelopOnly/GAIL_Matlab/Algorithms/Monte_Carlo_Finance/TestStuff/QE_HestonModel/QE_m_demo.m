@@ -31,12 +31,12 @@ inp.payoffParam.strike =Strike;
 
 %% 
 inp.priceParam.absTol = 0; %absolute tolerance
-inp.priceParam.relTol = 0.01; %one penny on the dollar relative tolerance
+inp.priceParam.relTol = 0.001; %one penny on the dollar relative tolerance
 % ourGBMCallPrice = optPrice(inp);
 % [GBMCallPrice, out] = genOptPrice(ourGBMCallPrice); %the option price
-inp.assetParam.meanShift = -0.6;%1;
+%inp.assetParam.meanShift = -0.75;%1;
 
-inp.assetParam.pathType = 'QE_m';
+inp.assetParam.pathType = 'QE';
 ourQEmCallPrice = optPrice(inp) %construct an optPrice object 
 %genOptPayoffs(ourQECallPrice,1);
 %return

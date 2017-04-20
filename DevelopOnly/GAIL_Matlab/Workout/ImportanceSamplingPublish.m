@@ -20,7 +20,7 @@ inp.priceParam.cubMethod = 'IID_MC';
 inp.assetParam.initPrice = 60;            % strike price
 %Set error tolerance
 inp.priceParam.absTol = 0;              % absolute tolerance
-inp.priceParam.relTol = 0.01;           % three penny on the dollar relative tolerance
+inp.priceParam.relTol = 0.001;           % three penny on the dollar relative tolerance
 strike = [20,60,100];
 avg = 5; % run five times and take average
 %{
@@ -111,7 +111,7 @@ strike;
 IIDCP;
 IIDCP_paths;
 IIDCP_time;
-
+%}
 %%
 % * cubMethod = 'Sobol'
 %Set assetPath parameters
@@ -125,14 +125,14 @@ SobolCallPrice_withIS=zeros(1,3);
 SobolCallPriceIS_paths = zeros(1,3);
 SobolCallPriceIS_time = zeros(1,3);
 %SobolCallPrice_QE = zeros(1,3);
-inp.assetParam.meanShift = 1;
+% inp.assetParam.meanShift = 1;
 for i=1:3
     inp.payoffParam.strike = strike(i);
-%     if inp.payoffParam.strike >= inp.assetParam.initPrice
-%         inp.assetParam.meanShift = 0.4;
-%     else
-%         inp.assetParam.meanShift = 0;
-%     end
+    if inp.payoffParam.strike >= inp.assetParam.initPrice
+        inp.assetParam.meanShift = 1;
+    else
+        inp.assetParam.meanShift = 0;
+    end
     %Construct an optPrice object
     ourSobolCallPrice = optPrice(inp);
     for j = 1:avg
@@ -186,7 +186,7 @@ strike;
 SobolCP;
 SobolCP_paths;
 SobolCP_time;
-%}
+%%}
 %% European put option
 %{
 % T=5;
@@ -290,7 +290,7 @@ strike;
 IIDPP;
 IIDPP_paths;
 IIDPP_time;
-
+%}
 %%
 % * cubMethod = 'Sobol'
 %Set assetPath parameters
@@ -304,14 +304,14 @@ inp.payoffParam.putCallType = {'put'};
 SobolPutPrice_withIS=zeros(1,3);
 SobolPutPriceIS_paths = zeros(1,3);
 SobolPutPriceIS_time = zeros(1,3);
-inp.assetParam.meanShift = -0.5;
+%inp.assetParam.meanShift = -1;
 for i=1:3
     inp.payoffParam.strike = strike(i);
-%     if inp.payoffParam.strike <= inp.assetParam.initPrice
-%         inp.assetParam.meanShift = -0.8;
-%     else
-%         inp.assetParam.meanShift = 0;
-%     end
+    if inp.payoffParam.strike < inp.assetParam.initPrice
+        inp.assetParam.meanShift = -1;
+    else
+        inp.assetParam.meanShift = 0;
+    end
     %Construct an optPrice object
     ourSobolPutPrice = optPrice(inp);
     for j = 1:avg
@@ -374,6 +374,7 @@ inp.timeDim.timeVector = t0:delta_t:T;
 inp.payoffParam.optType = {'american'}; %change from European to American
 inp.payoffParam.putCallType = {'put'};
 inp.priceParam.cubMethod = 'IID_MC';
+%{
 AmericanPutPrice_withIS=zeros(1,3);
 AmericanPutPriceIS_paths = zeros(1,3);
 AmericanPutPriceIS_time = zeros(1,3);
@@ -452,7 +453,7 @@ inp.payoffParam.putCallType = {'put'};
 AmericanPutPrice_withIS=zeros(1,3);
 AmericanPutPriceIS_paths = zeros(1,3);
 AmericanPutPriceIS_time = zeros(1,3);
-inp.assetParam.meanShift = -0.6;
+inp.assetParam.meanShift = -0.3;
 for i=1:3
     inp.payoffParam.strike = strike(i);
 %     if inp.payoffParam.strike <= inp.assetParam.initPrice
@@ -469,12 +470,12 @@ for i=1:3
         AmericanPutPriceIS_time(i) = AmericanPutPriceIS_time(i) + out.time;   
     end
 end
-AmericanPutPrice_withIS = AmericanPutPrice_withIS ./ avg;
-AmericanPutPriceIS_paths = AmericanPutPriceIS_paths ./ avg;
-AmericanPutPriceIS_time = AmericanPutPriceIS_time ./ avg;
+ AmericanPutPrice_withIS = AmericanPutPrice_withIS ./ avg;
+ AmericanPutPriceIS_paths = AmericanPutPriceIS_paths ./ avg;
+ AmericanPutPriceIS_time = AmericanPutPriceIS_time ./ avg;
 
-% Sobol_temp = [Sobol_temp;AmericanPutPrice_withIS,AmericanPutPriceIS_time,...
-%     AmericanPutPriceIS_paths];
+Sobol_temp = [Sobol_temp;AmericanPutPrice_withIS,AmericanPutPriceIS_time,...
+    AmericanPutPriceIS_paths];
 %Without importance sampling
 inp.assetParam.meanShift = 0;
 AmericanPutPrice_withoutIS=zeros(1,3);
@@ -495,8 +496,8 @@ AmericanPutPrice_withoutIS = AmericanPutPrice_withoutIS ./ avg;
 AmericanPutPrice_paths = AmericanPutPrice_paths ./ avg;
 AmericanPutPrice_time = AmericanPutPrice_time ./ avg;
 
-% Sobol_temp = [Sobol_temp;AmericanPutPrice_withoutIS,AmericanPutPrice_time,...
-%     AmericanPutPrice_paths];
+Sobol_temp = [Sobol_temp;AmericanPutPrice_withoutIS,AmericanPutPrice_time,...
+    AmericanPutPrice_paths];
 %{
 %% Generate LaTex code for a table of "call and put options",pathtype='QE',cubmethod='IID_MC'
 clear input;
@@ -533,7 +534,7 @@ input.makeCompleteLatexDocument = 0;
 input.landscape = 0;
 % call latexTable:
 latex = latexTable(input);
-
+%}
 %% Generate LaTex code for a table of "call and put options",pathtype='QE',cubmethod='Sobol'
 clear input;
 % temp = NaN(1,6);
