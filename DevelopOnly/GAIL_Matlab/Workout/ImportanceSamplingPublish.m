@@ -20,13 +20,15 @@ inp.priceParam.cubMethod = 'IID_MC';
 inp.assetParam.initPrice = 60;            % strike price
 %Set error tolerance
 inp.priceParam.absTol = 0;              % absolute tolerance
-inp.priceParam.relTol = 0.001;           % three penny on the dollar relative tolerance
+inp.priceParam.relTol = 0.01;           % one penny on the dollar relative tolerance
 strike = [20,60,100];
 avg = 5; % run five times and take average
 %{
-%% European call option
-%
-% * cubMethod = 'IID_MC'
+%% * cubMethod = 'IID_MC'
+%*****************************
+% European call option
+%*****************************
+
 %With importance sampling
 IIDCallPrice_withIS = zeros(1,3);
 IIDCallPriceIS_paths = zeros(1,3);
@@ -111,15 +113,203 @@ strike;
 IIDCP;
 IIDCP_paths;
 IIDCP_time;
+
+%************************
+% European put option
+%************************
+% T=5;
+% delta_t=0.2;
+% t0 = delta_t;
+% inp.timeDim.timeVector = t0:delta_t:T;  % time vector
+% inp.assetParam.interest = 0.0;          % risk-free interest rate
+% inp.assetParam.volatility = 0.3;        % fixed vlatility of asset prices
+% inp.assetParam.Vinst = 0.09;            % initial value of volatility
+% inp.assetParam.Vlong = 0.09;            % theta
+% inp.assetParam.kappa = 1;               % kappa
+% inp.assetParam.nu = 0;                  % volatility of asset price volatility
+% inp.assetParam.rho = 0;                 % rho
+% inp.assetParam.pathType = 'GBM'; 
+% inp.priceParam.cubMethod = 'IID_MC';
+inp.payoffParam.putCallType = {'put'};
+% inp.priceParam.relTol = 0.01;    
+%strike = fliplr(strike);   %initialPrice = [40,60,80]
+%
+%
+%With Importance Sampling
+IIDPutPrice_withIS=zeros(1,3);
+IIDPutPriceIS_paths = zeros(1,3);
+IIDPutPriceIS_time = zeros(1,3);
+IIDPutPrice_QE = zeros(1,3);
+IIDPutElapsed = zeros(1,3);
+inp.assetParam.meanShift = -0.8;
+for i=1:3
+    inp.payoffParam.strike = strike(i);
+%     if inp.payoffParam.strike <= inp.assetParam.initPrice
+%         inp.assetParam.meanShift = -0.8;
+%     else
+%         inp.assetParam.meanShift = 0;
+%     end
+    %Construct an optPrice object
+    ourIIDPutPrice = optPrice(inp);
+    for j = 1:avg
+        [temp, out] = genOptPrice(ourIIDPutPrice);
+        IIDPutPrice_withIS(i) = IIDPutPrice_withIS(i) + temp;
+        IIDPutPriceIS_paths(i) = IIDPutPriceIS_paths(i) + out.nPaths;
+        IIDPutPriceIS_time(i) = IIDPutPriceIS_time(i) + out.time;
+        
+        % Calculate option price by provided codes
+        %  MC_QE(S0,r,d,T,Vinst,Vlong,kappa,epsilon,rho,NTime,NSim,NBatches)
+        tic
+        Ntime = T/delta_t; 
+        [a,b] = MC_QE(inp.assetParam.initPrice,inp.assetParam.interest,0,T,...
+            inp.assetParam.Vinst,inp.assetParam.Vlong,inp.assetParam.kappa,inp.assetParam.nu,...
+            inp.assetParam.rho,Ntime,1e6,1);
+        PT = a(:,Ntime + 1);
+        PT = max(inp.payoffParam.strike-PT,0);
+        PP = mean(PT);
+        temp = PP*exp(-inp.assetParam.interest*T);
+        IIDPutPrice_QE(i) = IIDPutPrice_QE(i) + temp;
+        IIDPutElapsed(i) = IIDPutElapsed(i) + toc;
+    end
+end
+IIDPutPrice_withIS = IIDPutPrice_withIS ./ avg;
+IIDPutPriceIS_paths = IIDPutPriceIS_paths ./ avg;
+IIDPutPriceIS_time = IIDPutPriceIS_time ./ avg;
+
+IIDPutPrice_QE = IIDPutPrice_QE ./ avg;
+IIDPutElapsed = IIDPutElapsed ./ avg;
+
+iid_temp = [iid_temp;IIDPutPrice_withIS,IIDPutPriceIS_time,IIDPutPriceIS_paths];
+IIDPPI = sprintf('$%.4f \t',IIDPutPrice_withIS);
+IIDPP_QE = sprintf('$%.4f \t',IIDPutPrice_QE); 
+IIDPPI_paths = sprintf('%3.2E \t',IIDPutPriceIS_paths);
+IIDPPI_time = sprintf('%5.2fs\t',IIDPutPriceIS_time);
+strike;
+IIDPP_QE;
+IIDPPI;
+IIDPPI_paths;
+IIDPPI_time;
+
+% Without Importance Sampling
+inp.assetParam.meanShift = 0;
+IIDPutPrice_withoutIS=zeros(1,3);
+IIDPutPrice_paths = zeros(1,3);
+IIDPutPrice_time = zeros(1,3);
+for i=1:3
+    inp.payoffParam.strike = strike(i);
+    %Construct an optPrice object
+    ourIIDPutPrice = optPrice(inp);
+    for j = 1:avg
+        [temp, out] = genOptPrice(ourIIDPutPrice);
+        IIDPutPrice_withoutIS(i) = IIDPutPrice_withoutIS(i) + temp;
+        IIDPutPrice_paths(i) = IIDPutPrice_paths(i) + out.nPaths;
+        IIDPutPrice_time(i) = IIDPutPrice_time(i) + out.time;
+    end
+end
+IIDPutPrice_withoutIS = IIDPutPrice_withoutIS ./ avg;
+IIDPutPrice_paths = IIDPutPrice_paths ./ avg;
+IIDPutPrice_time = IIDPutPrice_time ./ avg;
+
+iid_temp = [iid_temp;IIDPutPrice_withoutIS,IIDPutPrice_time,IIDPutPrice_paths];
+IIDPP = sprintf('$%.4f \t',IIDPutPrice_withoutIS);
+IIDPP_paths = sprintf('%3.2E \t',IIDPutPrice_paths);
+IIDPP_time = sprintf('%5.2fs\t',IIDPutPrice_time);
+strike;
+IIDPP;
+IIDPP_paths;
+IIDPP_time;
 %}
-%%
-% * cubMethod = 'Sobol'
+%*****************************
+% American put option
+%*****************************
+% American put option with importance sampling
+% delta_t=0.2;
+% t0 = delta_t;
+% inp.timeDim.timeVector = t0:delta_t:T;
+inp.payoffParam.optType = {'american'}; %change from European to American
+inp.payoffParam.putCallType = {'put'};
+% inp.priceParam.cubMethod = 'IID_MC';
+% inp.priceParam.relTol = 0.01;    
+
+AmericanPutPrice_withIS=zeros(1,3);
+AmericanPutPriceIS_paths = zeros(1,3);
+AmericanPutPriceIS_time = zeros(1,3);
+% inp.assetParam.meanShift = -0.8;
+for i=1:3
+    inp.payoffParam.strike = strike(i);
+    if inp.payoffParam.strike < inp.assetParam.initPrice
+        inp.assetParam.meanShift = -0.8;
+    else
+        inp.assetParam.meanShift = 0;
+    end
+    %Construct an optPrice object
+    AmericanPut = optPrice(inp);
+    for j = 1: avg        
+        [temp, out] = genOptPrice(AmericanPut);
+        AmericanPutPrice_withIS(i) = AmericanPutPrice_withIS(i) + temp;
+        AmericanPutPriceIS_paths(i) = AmericanPutPriceIS_paths(i) + out.nPaths;
+        AmericanPutPriceIS_time(i) = AmericanPutPriceIS_time(i) + out.time;   
+    end
+end
+AmericanPutPrice_withIS = AmericanPutPrice_withIS ./ avg;
+AmericanPutPriceIS_paths = AmericanPutPriceIS_paths ./ avg;
+AmericanPutPriceIS_time = AmericanPutPriceIS_time ./ avg;
+
+APPI = sprintf('$%.4f \t',AmericanPutPrice_withIS);
+APPI_paths = sprintf('%3.2E \t',AmericanPutPriceIS_paths);
+APPI_time = sprintf('%5.2fs\t',AmericanPutPriceIS_time);
+strike;
+APPI;
+APPI_paths;
+APPI_time;
+% iid_temp = [iid_temp;AmericanPutPrice_withIS,AmericanPutPriceIS_time,...
+%     AmericanPutPriceIS_paths];
+
+% American put option without importance sampling
+inp.assetParam.meanShift = 0;
+AmericanPutPrice_withoutIS=zeros(1,3);
+AmericanPutPrice_paths = zeros(1,3);
+AmericanPutPrice_time = zeros(1,3);
+for i=1:3
+    inp.payoffParam.strike = strike(i);
+    %Construct an optPrice object
+    AmericanPut = optPrice(inp);
+    for j = 1:avg
+        [temp, out] = genOptPrice(AmericanPut);
+        AmericanPutPrice_withoutIS(i) = AmericanPutPrice_withoutIS(i) + temp;
+        AmericanPutPrice_paths(i) = AmericanPutPrice_paths(i) + out.nPaths;
+        AmericanPutPrice_time(i) = AmericanPutPrice_time(i) + out.time; 
+    end
+end
+AmericanPutPrice_withoutIS = AmericanPutPrice_withoutIS ./ avg;
+AmericanPutPrice_paths = AmericanPutPrice_paths ./ avg;
+AmericanPutPrice_time = AmericanPutPrice_time ./ avg;
+
+APP = sprintf('$%.4f \t',AmericanPutPrice_withoutIS);
+APP_paths = sprintf('%3.2E \t',AmericanPutPrice_paths);
+APP_time = sprintf('%5.2fs\t',AmericanPutPrice_time);
+strike;
+APP;
+APP_paths;
+APP_time;
+% iid_temp = [iid_temp;AmericanPutPrice_withoutIS,AmericanPutPrice_time,...
+%     AmericanPutPrice_paths];
+%}
+return
+%{
+%% * cubMethod = 'Sobol'
+
+%*****************************
+% European call option
+%*****************************
 %Set assetPath parameters
 delta_t=0.5;
 t0 = delta_t;
-inp.timeDim.timeVector = t0:delta_t:T;  % time vector       
+inp.timeDim.timeVector = t0:delta_t:T;  % time vector 
+inp.payoffParam.optType = {'euro'};
+inp.payoffParam.putCallType = {'call'};
 inp.priceParam.cubMethod = 'Sobol';
-
+inp.priceParam.relTol = 0.001;    
 %With importance sampling
 SobolCallPrice_withIS=zeros(1,3);
 SobolCallPriceIS_paths = zeros(1,3);
@@ -187,119 +377,17 @@ SobolCP;
 SobolCP_paths;
 SobolCP_time;
 %%}
-%% European put option
-%{
-% T=5;
-delta_t=0.2;
-t0 = delta_t;
-inp.timeDim.timeVector = t0:delta_t:T;  % time vector
-% inp.assetParam.interest = 0.0;          % risk-free interest rate
-% inp.assetParam.volatility = 0.3;        % fixed vlatility of asset prices
-% inp.assetParam.Vinst = 0.09;            % initial value of volatility
-% inp.assetParam.Vlong = 0.09;            % theta
-% inp.assetParam.kappa = 1;               % kappa
-% inp.assetParam.nu = 0;                  % volatility of asset price volatility
-% inp.assetParam.rho = 0;                 % rho
-% inp.assetParam.pathType = 'GBM'; 
-inp.priceParam.cubMethod = 'IID_MC';
 
-inp.payoffParam.putCallType = {'put'};
-%strike = fliplr(strike);   %initialPrice = [40,60,80]
-%%
-% * cubMethod = 'IID_MC'
-%With Importance Sampling
-IIDPutPrice_withIS=zeros(1,3);
-IIDPutPriceIS_paths = zeros(1,3);
-IIDPutPriceIS_time = zeros(1,3);
-IIDPutPrice_QE = zeros(1,3);
-IIDPutElapsed = zeros(1,3);
-inp.assetParam.meanShift = -0.8;
-for i=1:3
-    inp.payoffParam.strike = strike(i);
-%     if inp.payoffParam.strike <= inp.assetParam.initPrice
-%         inp.assetParam.meanShift = -0.8;
-%     else
-%         inp.assetParam.meanShift = 0;
-%     end
-    %Construct an optPrice object
-    ourIIDPutPrice = optPrice(inp);
-    for j = 1:avg
-        [temp, out] = genOptPrice(ourIIDPutPrice);
-        IIDPutPrice_withIS(i) = IIDPutPrice_withIS(i) + temp;
-        IIDPutPriceIS_paths(i) = IIDPutPriceIS_paths(i) + out.nPaths;
-        IIDPutPriceIS_time(i) = IIDPutPriceIS_time(i) + out.time;
-        
-        % Calculate option price by provided codes
-        %  MC_QE(S0,r,d,T,Vinst,Vlong,kappa,epsilon,rho,NTime,NSim,NBatches)
-        tic
-        Ntime = T/delta_t; 
-        [a,b] = MC_QE(inp.assetParam.initPrice,inp.assetParam.interest,0,T,...
-            inp.assetParam.Vinst,inp.assetParam.Vlong,inp.assetParam.kappa,inp.assetParam.nu,...
-            inp.assetParam.rho,Ntime,1e6,1);
-        PT = a(:,Ntime + 1);
-        PT = max(inp.payoffParam.strike-PT,0);
-        PP = mean(PT);
-        temp = PP*exp(-inp.assetParam.interest*T);
-        IIDPutPrice_QE(i) = IIDPutPrice_QE(i) + temp;
-        IIDPutElapsed(i) = IIDPutElapsed(i) + toc;
-    end
-end
-IIDPutPrice_withIS = IIDPutPrice_withIS ./ avg;
-IIDPutPriceIS_paths = IIDPutPriceIS_paths ./ avg;
-IIDPutPriceIS_time = IIDPutPriceIS_time ./ avg;
-
-IIDPutPrice_QE = IIDPutPrice_QE ./ avg;
-IIDPutElapsed = IIDPutElapsed ./ avg;
-%{
-iid_temp = [iid_temp;IIDPutPrice_withIS,IIDPutPriceIS_time,IIDPutPriceIS_paths];
-IIDPPI = sprintf('$%.4f \t',IIDPutPrice_withIS);
-IIDPP_QE = sprintf('$%.4f \t',IIDPutPrice_QE); 
-IIDPPI_paths = sprintf('%3.2E \t',IIDPutPriceIS_paths);
-IIDPPI_time = sprintf('%5.2fs\t',IIDPutPriceIS_time);
-strike;
-IIDPP_QE;
-IIDPPI;
-IIDPPI_paths;
-IIDPPI_time;
-%}
-% Without Importance Sampling
-inp.assetParam.meanShift = 0;
-IIDPutPrice_withoutIS=zeros(1,3);
-IIDPutPrice_paths = zeros(1,3);
-IIDPutPrice_time = zeros(1,3);
-for i=1:3
-    inp.payoffParam.strike = strike(i);
-    %Construct an optPrice object
-    ourIIDPutPrice = optPrice(inp);
-    for j = 1:avg
-        [temp, out] = genOptPrice(ourIIDPutPrice);
-        IIDPutPrice_withoutIS(i) = IIDPutPrice_withoutIS(i) + temp;
-        IIDPutPrice_paths(i) = IIDPutPrice_paths(i) + out.nPaths;
-        IIDPutPrice_time(i) = IIDPutPrice_time(i) + out.time;
-    end
-end
-IIDPutPrice_withoutIS = IIDPutPrice_withoutIS ./ avg;
-IIDPutPrice_paths = IIDPutPrice_paths ./ avg;
-IIDPutPrice_time = IIDPutPrice_time ./ avg;
-
-iid_temp = [iid_temp;IIDPutPrice_withoutIS,IIDPutPrice_time,IIDPutPrice_paths];
-IIDPP = sprintf('$%.4f \t',IIDPutPrice_withoutIS);
-IIDPP_paths = sprintf('%3.2E \t',IIDPutPrice_paths);
-IIDPP_time = sprintf('%5.2fs\t',IIDPutPrice_time);
-strike;
-IIDPP;
-IIDPP_paths;
-IIDPP_time;
-%}
-%%
-% * cubMethod = 'Sobol'
+%************************
+% European put option
+%************************
 %Set assetPath parameters
-T=5;
 delta_t=0.5;
 t0 = delta_t;
 inp.timeDim.timeVector = t0:delta_t:T;  % time vector       
-inp.priceParam.cubMethod = 'Sobol';
+% inp.priceParam.cubMethod = 'Sobol';
 inp.payoffParam.putCallType = {'put'};
+% inp.priceParam.relTol = 0.001;    
 %With importance sampling
 SobolPutPrice_withIS=zeros(1,3);
 SobolPutPriceIS_paths = zeros(1,3);
@@ -365,90 +453,19 @@ SobolPP;
 SobolPP_paths;
 SobolPP_time;
 
-%% American put option
-% * cubMethod = 'IID_MC'
-% American put option with importance sampling
-delta_t=0.2;
-t0 = delta_t;
-inp.timeDim.timeVector = t0:delta_t:T;
-inp.payoffParam.optType = {'american'}; %change from European to American
-inp.payoffParam.putCallType = {'put'};
-inp.priceParam.cubMethod = 'IID_MC';
-%{
-AmericanPutPrice_withIS=zeros(1,3);
-AmericanPutPriceIS_paths = zeros(1,3);
-AmericanPutPriceIS_time = zeros(1,3);
-inp.assetParam.meanShift = -0.8;
-for i=1:3
-    inp.payoffParam.strike = strike(i);
-%     if inp.payoffParam.strike <= inp.assetParam.initPrice
-%         inp.assetParam.meanShift = -0.8;
-%     else
-%         inp.assetParam.meanShift = 0;
-%     end
-    %Construct an optPrice object
-    AmericanPut = optPrice(inp);
-    for j = 1: avg        
-        [temp, out] = genOptPrice(AmericanPut);
-        AmericanPutPrice_withIS(i) = AmericanPutPrice_withIS(i) + temp;
-        AmericanPutPriceIS_paths(i) = AmericanPutPriceIS_paths(i) + out.nPaths;
-        AmericanPutPriceIS_time(i) = AmericanPutPriceIS_time(i) + out.time;   
-    end
-end
-AmericanPutPrice_withIS = AmericanPutPrice_withIS ./ avg;
-AmericanPutPriceIS_paths = AmericanPutPriceIS_paths ./ avg;
-AmericanPutPriceIS_time = AmericanPutPriceIS_time ./ avg;
-%{
-APPI = sprintf('$%.4f \t',AmericanPutPrice_withIS);
-APPI_paths = sprintf('%3.2E \t',AmericanPutPriceIS_paths);
-APPI_time = sprintf('%5.2fs\t',AmericanPutPriceIS_time);
-strike;
-APPI;
-APPI_paths;
-APPI_time;
-iid_temp = [iid_temp;AmericanPutPrice_withIS,AmericanPutPriceIS_time,...
-    AmericanPutPriceIS_paths];
-%}
-% American put option without importance sampling
-inp.assetParam.meanShift = 0;
-AmericanPutPrice_withoutIS=zeros(1,3);
-AmericanPutPrice_paths = zeros(1,3);
-AmericanPutPrice_time = zeros(1,3);
-for i=1:3
-    inp.payoffParam.strike = strike(i);
-    %Construct an optPrice object
-    AmericanPut = optPrice(inp);
-    for j = 1:avg
-        [temp, out] = genOptPrice(AmericanPut);
-        AmericanPutPrice_withoutIS(i) = AmericanPutPrice_withoutIS(i) + temp;
-        AmericanPutPrice_paths(i) = AmericanPutPrice_paths(i) + out.nPaths;
-        AmericanPutPrice_time(i) = AmericanPutPrice_time(i) + out.time; 
-    end
-end
-AmericanPutPrice_withoutIS = AmericanPutPrice_withoutIS ./ avg;
-AmericanPutPrice_paths = AmericanPutPrice_paths ./ avg;
-AmericanPutPrice_time = AmericanPutPrice_time ./ avg;
 
-APP = sprintf('$%.4f \t',AmericanPutPrice_withoutIS);
-APP_paths = sprintf('%3.2E \t',AmericanPutPrice_paths);
-APP_time = sprintf('%5.2fs\t',AmericanPutPrice_time);
-strike;
-APP;
-APP_paths;
-APP_time;
-iid_temp = [iid_temp;AmericanPutPrice_withoutIS,AmericanPutPrice_time,...
-    AmericanPutPrice_paths];
-%}
-%%
-% * cubMethod = 'Sobol'
+
+%*****************************
+% American put option
+%*****************************
 %Set assetPath parameters
-T=5;
 delta_t=0.5;
 t0 = delta_t;
 inp.timeDim.timeVector = t0:delta_t:T;  % time vector       
 inp.priceParam.cubMethod = 'Sobol';
 inp.payoffParam.optType = {'american'};
-inp.payoffParam.putCallType = {'put'};
+% inp.payoffParam.putCallType = {'put'};
+% inp.priceParam.relTol = 0.001;    
 %With importance sampling
 AmericanPutPrice_withIS=zeros(1,3);
 AmericanPutPriceIS_paths = zeros(1,3);
@@ -498,7 +515,8 @@ AmericanPutPrice_time = AmericanPutPrice_time ./ avg;
 
 Sobol_temp = [Sobol_temp;AmericanPutPrice_withoutIS,AmericanPutPrice_time,...
     AmericanPutPrice_paths];
-%{
+%}
+%%{
 %% Generate LaTex code for a table of "call and put options",pathtype='QE',cubmethod='IID_MC'
 clear input;
 %temp = NaN(1,6);
@@ -535,6 +553,7 @@ input.landscape = 0;
 % call latexTable:
 latex = latexTable(input);
 %}
+%{
 %% Generate LaTex code for a table of "call and put options",pathtype='QE',cubmethod='Sobol'
 clear input;
 % temp = NaN(1,6);

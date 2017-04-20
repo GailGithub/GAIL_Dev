@@ -19,7 +19,7 @@ inp.assetParam.kappa = 1;
 inp.assetParam.nu = 0.4;%1e-16;
 inp.assetParam.rho = -0.3;
 inp.priceParam.cubMethod = 'IID_MC';
-inp.priceParam.cubMethod = 'Sobol';
+% inp.priceParam.cubMethod = 'Sobol';
 inp.payoffParam.putCallType = {'put'};
 inp.payoffParam.optType = {'american'};
 % inp.assetParam.pathType = 'GBM';
@@ -31,10 +31,10 @@ inp.payoffParam.strike =Strike;
 
 %% 
 inp.priceParam.absTol = 0; %absolute tolerance
-inp.priceParam.relTol = 0.001; %one penny on the dollar relative tolerance
+inp.priceParam.relTol = 0.01; %one penny on the dollar relative tolerance
 % ourGBMCallPrice = optPrice(inp);
 % [GBMCallPrice, out] = genOptPrice(ourGBMCallPrice); %the option price
-%inp.assetParam.meanShift = -0.75;%1;
+inp.assetParam.meanShift = -0.8;%1;
 
 inp.assetParam.pathType = 'QE';
 ourQEmCallPrice = optPrice(inp) %construct an optPrice object 
