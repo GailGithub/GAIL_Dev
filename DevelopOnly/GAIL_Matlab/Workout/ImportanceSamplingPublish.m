@@ -218,7 +218,7 @@ strike;
 IIDPP;
 IIDPP_paths;
 IIDPP_time;
-%}
+%%}
 %*****************************
 % American put option
 %*****************************
@@ -295,8 +295,8 @@ APP_time;
 % iid_temp = [iid_temp;AmericanPutPrice_withoutIS,AmericanPutPrice_time,...
 %     AmericanPutPrice_paths];
 %}
-return
-%{
+
+% %{
 %% * cubMethod = 'Sobol'
 
 %*****************************
@@ -459,7 +459,7 @@ SobolPP_time;
 % American put option
 %*****************************
 %Set assetPath parameters
-delta_t=0.5;
+delta_t=0.2;
 t0 = delta_t;
 inp.timeDim.timeVector = t0:delta_t:T;  % time vector       
 inp.priceParam.cubMethod = 'Sobol';
@@ -470,14 +470,14 @@ inp.payoffParam.optType = {'american'};
 AmericanPutPrice_withIS=zeros(1,3);
 AmericanPutPriceIS_paths = zeros(1,3);
 AmericanPutPriceIS_time = zeros(1,3);
-inp.assetParam.meanShift = -0.3;
+% inp.assetParam.meanShift = -0.3;
 for i=1:3
     inp.payoffParam.strike = strike(i);
-%     if inp.payoffParam.strike <= inp.assetParam.initPrice
-%         inp.assetParam.meanShift = -0.8;
-%     else
-%         inp.assetParam.meanShift = 0;
-%     end
+    if inp.payoffParam.strike < inp.assetParam.initPrice
+        inp.assetParam.meanShift = -1;
+    else
+        inp.assetParam.meanShift = 0;
+    end
     %Construct an optPrice object
     AmericanPut = optPrice(inp);
     for j = 1: avg
@@ -516,7 +516,7 @@ AmericanPutPrice_time = AmericanPutPrice_time ./ avg;
 Sobol_temp = [Sobol_temp;AmericanPutPrice_withoutIS,AmericanPutPrice_time,...
     AmericanPutPrice_paths];
 %}
-%%{
+%{
 %% Generate LaTex code for a table of "call and put options",pathtype='QE',cubmethod='IID_MC'
 clear input;
 %temp = NaN(1,6);
@@ -553,7 +553,7 @@ input.landscape = 0;
 % call latexTable:
 latex = latexTable(input);
 %}
-%{
+%%{
 %% Generate LaTex code for a table of "call and put options",pathtype='QE',cubmethod='Sobol'
 clear input;
 % temp = NaN(1,6);
