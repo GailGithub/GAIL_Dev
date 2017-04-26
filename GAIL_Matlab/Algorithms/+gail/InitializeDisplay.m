@@ -17,6 +17,8 @@ MATLABMaroon = [0.6350, 0.0780, 0.1840];
 MATLABYellow = [0.9290, 0.6940, 0.1250];
 colorSequence = {MATLABBlue, MATLABOrange, MATLABYellow, MATLABPurple, ...
    MATLABGreen, MATLABCyan, MATLABMaroon};
+noYcolorSequence = {MATLABBlue, MATLABOrange, MATLABPurple, ...
+   MATLABGreen, MATLABCyan, MATLABMaroon};
 nColor = length(colorSequence);
 markerSequence = {'o','s','d','^','v','h'};
 markerSize = {15,15,15,15,15,15};
