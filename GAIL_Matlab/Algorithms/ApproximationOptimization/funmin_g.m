@@ -193,10 +193,10 @@ function [fmin,out_param]=funmin_g(varargin)
 %
 %  References
 %
-%   [1]  Sou-Cheng T. Choi, Yuhan Ding, Fred J.Hickernell, Xin Tong, "Local
+%   [1] Sou-Cheng T. Choi, Yuhan Ding, Fred J.Hickernell, Xin Tong, "Local
 %   Adaption for Approximation and Minimization of Univariate Functions,"
-%   working, 2016.
-
+%   Journal of Complexity 40, pp. 17-33, 2017.
+%
 %   [2]  Xin Tong. A Guaranteed, "Adaptive, Automatic Algorithm for
 %   Univariate Function Minimization," MS thesis, Illinois Institute of
 %   Technology, 2014.

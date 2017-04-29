@@ -49,10 +49,15 @@ Workshop On Sustainable Software for Science: Practice And Experiences
 pp. 1-21, 2014.
 (discusses practice and challenges in Sustainable Software for Science)
 
+Sou-Cheng T. Choi, Yuhan Ding, Fred J.Hickernell, Xin Tong, "Local
+Adaption for Approximation and Minimization of Univariate Functions,"
+Journal of Complexity 40, pp. 17-33, 2017.
+(describes funappx_g.m and funmin_g.m)
+
 Nicholas Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
 Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic Algorithms:
 Cones, Not Balls," Journal of Complexity 30, pp. 21-45, 2014.
-(describes integral_g.m and funappx_g.m)
+(describes integral_g.m and deprecated funappxtau_g.m)
 
 Yuhan Ding, Fred J. Hickernell, and Sou-Cheng T. Choi, "Locally
 Adaptive Method for Approximating Univariate Functions in Cones with a
@@ -80,7 +85,7 @@ Integration Based on Rank-1 Lattices," submitted for publication, 2014.
 
 Xin Tong, "A Guaranteed, Adaptive, Automatic Algorithm for Univariate 
 Function Minimization," MS thesis, Illinois Institute of Technology, 2014. 
-(describes funmin_g.m)
+(describes deprecated funmin01_g.m)
 
 Downloads
 ------------
@@ -107,7 +112,7 @@ Detailed documentation is available at GAIL_Matlab/Documentation.
 General Usage Notes
 -------------------
 
-GAIL Version 2.2 includes the following eight algorithms:
+GAIL version 2.2 includes the following eight algorithms:
 
 1.  funappx_g: One-dimensional function approximation on bounded interval
 2.  funmin_g: global minimum value of univariate function on a closed interval
