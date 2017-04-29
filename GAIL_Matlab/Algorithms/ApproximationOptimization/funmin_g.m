@@ -197,7 +197,7 @@ function [fmin,out_param]=funmin_g(varargin)
 %   Adaption for Approximation and Minimization of Univariate Functions,"
 %   Journal of Complexity 40, pp. 17-33, 2017.
 %
-%   [2]  Xin Tong. A Guaranteed, "Adaptive, Automatic Algorithm for
+%   [2] Xin Tong. A Guaranteed, "Adaptive, Automatic Algorithm for
 %   Univariate Function Minimization," MS thesis, Illinois Institute of
 %   Technology, 2014.
 %
