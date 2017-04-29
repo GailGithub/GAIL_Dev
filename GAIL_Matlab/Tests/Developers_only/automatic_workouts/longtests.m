@@ -24,8 +24,6 @@ end
 % meanMC_g
 doctest dt_meanMC_g_TrafficModel
 
-% meanMCBer_g
- 
 % cubMC_g
 format short
 doctest dt_cubMC_g
@@ -164,23 +162,6 @@ catch
     display('Error: DisplayTestResults_BlacknColor is wrongly coded. We skip it.')
     %fprintf(fid,'Error: DisplayTestResults_BlacknColor is wrongly coded. We skip it.\n');
 end
-
-% meanMCBer_g paper
-% run_handle('PlotmeanMCBer_gResults')
-% run_handle('PlotRatioHoeffCLT')
-% try
-%     Tests = matlab.unittest.TestSuite.fromClass(?ut_meanMCBer_g);
-%     results=run(ut_meanMCBer_g);
-%     if sum([results.Failed])>0
-%         failed=find([results.Failed]>0);
-%         %for i=1:size(failed,2)
-%         %  fprintf(fid,'%s\n',Tests(failed(i)).Name);
-%         %end
-%     end
-% catch
-%     display('Error: Test ut_meanMCBer_g is wrongly coded. We skip it.')
-%     %fprintf(fid,'Error: Test ut_meanMCBer_g is wrongly coded. We skip it.\n');
-% end
 
 % cubSobol_g paper
 try

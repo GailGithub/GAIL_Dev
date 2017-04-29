@@ -256,7 +256,7 @@ function [q,out_param,y,kappanumap] = cubLattice_CLT(varargin)
 % check = 1
 %
 %
-%   See also CUBSOBOL_G, CUBMC_G, MEANMC_G, MEANMCBER_G, INTEGRAL_G
+%   See also CUBSOBOL_G, CUBMC_G, MEANMC_G, INTEGRAL_G
 % 
 %  References
 %

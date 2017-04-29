@@ -75,10 +75,6 @@ Fred J. Hickernell and Lluis Antoni Jimenez Rugama, "Reliable Adaptive
 Cubature Using Digital Sequences," submitted for publication, 2014.
 (describes cubSobol_g.m)
 
-Lan Jiang and Fred J. Hickernell, "Guaranteed Conservative Confidence Intervals 
-for Means of Bernoulli Random Variables," submitted for publication, 2014.
-(describes meanMCBer_g)
-
 Lluis Antoni Jimenez Rugama and Fred J. Hickernell, "Adaptive Multidimensional 
 Integration Based on Rank-1 Lattices," submitted for publication, 2014.
 (describes cubLattice_g.m)
@@ -118,10 +114,9 @@ GAIL version 2.2 includes the following eight algorithms:
 2.  funmin_g: global minimum value of univariate function on a closed interval
 3.  integral_g: One-dimensional integration on bounded interval
 4.  meanMC_g: Monte Carlo method for estimating mean of a random variable
-5.  meanMCBer_g: Monte Carlo method to estimate the mean of a Bernoulli random variable
-6.  cubMC_g: Monte Carlo method for numerical multiple integration
-7.  cubSobol_g: Quasi-Monte Carlo method using Sobol' cubature for d-dimensional integration
-8.  cubLattice_g: Quasi-Monte Carlo method using rank-1 Lattices cubature for d-dimensional integration
+5.  cubMC_g: Monte Carlo method for numerical multiple integration
+6.  cubSobol_g: Quasi-Monte Carlo method using Sobol' cubature for d-dimensional integration
+7.  cubLattice_g: Quasi-Monte Carlo method using rank-1 Lattices cubature for d-dimensional integration
 
 Installation Instruction
 ------------------------
