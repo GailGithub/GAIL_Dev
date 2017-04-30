@@ -23,7 +23,6 @@ tic; doctest gail.cubMC_g_in_param; time=toc
 tic; doctest funappx_g; time=toc
 tic; doctest funappxNoPenalty_g; time=toc
 tic; doctest dt_funappx_g; time=toc
-tic; doctest dt_funappxNoPenalty_g; time=toc
 tic; doctest funmin_g; time=toc
 tic; doctest integral_g; time=toc
 %tic; doctest integralsim_g; time=toc
