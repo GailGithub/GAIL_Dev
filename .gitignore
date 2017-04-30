@@ -18,7 +18,6 @@
 *.si
 *.zip
 *.DS_Store
-GAIL_Matlab/Documentation/autodoc?
 GAIL_Matlab/Documentation/html/gail_ug2_1.tex
 GAIL_Matlab/Documentation/html/helpsearch*
 GAIL_Matlab/ThirdParty
