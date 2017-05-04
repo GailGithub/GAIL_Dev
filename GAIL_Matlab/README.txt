@@ -83,6 +83,11 @@ Xin Tong, "A Guaranteed, Adaptive, Automatic Algorithm for Univariate
 Function Minimization," MS thesis, Illinois Institute of Technology, 2014. 
 (describes deprecated funmin01_g.m)
 
+Da Li, "Reliable Quasi-Monte Carlo with Control Variates," Master's thesis, 
+Illinois Institute of Technology, 2016. 
+(describes cubSobol_g.m for control variates)
+
+
 Downloads
 ------------
 GAIL can be downloaded from http://gailgithub.github.io/GAIL_Dev/.
