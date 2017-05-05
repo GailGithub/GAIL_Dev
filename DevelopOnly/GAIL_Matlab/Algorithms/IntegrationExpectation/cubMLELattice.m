@@ -23,10 +23,10 @@ if nargin < 5
             if nargin < 1
                f = @(x) x.^2; %function
             end
-            end
          end
       end
    end
+end
 end
 
 tstart = tic; %start the clock
@@ -57,7 +57,7 @@ for ii = 1:numM
    else
       xunnew = mod(bsxfun(@times,(1/n:2/n:1-1/n)',z),1);
       xnew = mod(bsxfun(@plus,xunnew,shift),1);
-      temp = zeros(n,d);
+        temp = zeros(n,d);
       temp(1:2:n-1,:) = xun;
       temp(2:2:n,:) = xunnew;
         xun = temp;    % save unshifted for further iterations
@@ -74,14 +74,14 @@ for ii = 1:numM
       MLEKernel(exp(lna),xun,ftilde,order), ...
         -5,0,optimset('TolX',1e-2)); % -5,5
    aMLE = exp(lnaMLE);
-    [loss,Ktilde,RKHSnorm,K] = MLEKernel(aMLE,xun,ftilde,order);
+    [loss,Ktilde,RKHSnormSq,K] = MLEKernel(aMLE,xun,ftilde,order);
    wt = 1./Ktilde(1);
    
    %Check error criterion
     DSC = abs((1/n) - wt);
     %DSC = 1 - n/sum(K);
     %DSC = (1/n) - 1/sum(Ktilde); % wrong
-    out.ErrBd = 2.58*sqrt(DSC*RKHSnorm);
+    out.ErrBd = 2.58*sqrt(DSC)*RKHSnormSq;
    muhat = ftilde(1)/Ktilde(1);
    muminus = muhat - out.ErrBd;
    muplus = muhat + out.ErrBd;
@@ -92,7 +92,9 @@ for ii = 1:numM
    if 2*out.ErrBd <= ...
          max(absTol,relTol*abs(muminus)) + max(absTol,relTol*abs(muplus))      
         fprintf('%d Error bound met %e !\n', n, out.ErrBd)
+        if errorBdAll(ii)==0
         errorBdAll(ii) = eps;
+        end
         % break
    end 
    
@@ -105,7 +107,7 @@ out.mvec = mvec;
 out.aMLEAll = aMLEAll;
 end
 
-function [loss,Ktilde,RKHSnorm,K] = MLEKernel(a,xun,ftilde,order)
+function [loss,Ktilde,RKHSnormSq,K] = MLEKernel(a,xun,ftilde,order)
 
 constMult = -(-1)^(order/2)*(2*pi)^order/factorial(order);
    if order == 2
@@ -121,8 +123,11 @@ n =  length(K);
 
 
 %RKHSnorm = mean(abs(ftilde).^2./Ktilde);
-RKHSnorm = mean(abs(ftilde(Ktilde~=0)).^2./Ktilde(Ktilde~=0));
-loss = mean(log(Ktilde(Ktilde~=0))) + log(RKHSnorm);
+%RKHSnorm = mean(abs(ftilde(Ktilde~=0)).^2./Ktilde(Ktilde~=0));
+RKHSnormSq = mean(abs(ftilde(Ktilde~=0))./sqrt(Ktilde(Ktilde~=0)));
+
+
+loss = mean(log(Ktilde(Ktilde~=0))) + 2*log(RKHSnormSq);
    a;
    ftilde(1)/Ktilde(1);
 end
@@ -148,5 +153,22 @@ elseif strcmp(ptransform,'none')
     f=@(x) fInput(x);
 else
     error('Error: Periodization transform %s not implemented', ptransform);
+end
+end
+
+
+function y = fft_DIT( y )
+nmmin = log2(length(y));
+%y = bitrevorder(y);
+for l=0:nmmin-1
+    nl=2^l;
+    nmminlm1=2^(nmmin-l-1);
+    ptind=repmat([true(nl,1); false(nl,1)],nmminlm1,1);
+    coef=exp(-2*pi()*sqrt(-1)*(0:nl-1)'/(2*nl));
+    coefv=repmat(coef,nmminlm1,1);
+    evenval=y(ptind);
+    oddval=y(~ptind);
+    y(ptind)=(evenval+coefv.*oddval)/2;
+    y(~ptind)=(evenval-coefv.*oddval)/2;
 end
 end
