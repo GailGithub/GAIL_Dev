@@ -51,13 +51,14 @@ for ii = 1:numM
     
     %Update function values
     if ii == 1
-        xun = mod(bsxfun(@times,(0:1/n:1-1/n)',z),1);  % unshifted
+        brIndices = bitrevorder((0:1/n:1-1/n));
+        xun = mod(bsxfun(@times,brIndices',z),1);  % unshifted
         x = mod(bsxfun(@plus,xun,shift),1);  % shifted
         fx = ff(x);
-        ftilde = fft(fx);
+        ftilde = fft(bitrevorder(fx));
                 
         %% Efficient FFT computation algorithm
-        ftildeNew=bitrevorder(ff(x)); %evaluate integrand
+        ftildeNew=ff(x); %evaluate integrand
         
         %% Compute initial FFT
         for l=0:mmin-1
@@ -73,22 +74,29 @@ for ii = 1:numM
         end
         
     else
-        xunnew = mod(bsxfun(@times,(1/n:2/n:1-1/n)',z),1);
+        brIndices = bitrevorder((1/n:2/n:1-1/n));
+        xunnew = mod(bsxfun(@times,brIndices',z),1);
         xnew = mod(bsxfun(@plus,xunnew,shift),1);
-        temp = zeros(n,d);
-        temp(1:2:n-1,:) = xun;
-        temp(2:2:n,:) = xunnew;
-        xun = temp;    % save unshifted for further iterations
-        temp(1:2:n-1,:) = x;
-        temp(2:2:n,:) = xnew;
-        x = temp; % saving the shifted
+        if 0
+            temp = zeros(n,d);
+            temp(1:2:n-1,:) = xun;
+            temp(2:2:n,:) = xunnew;
+            xun = temp;    % save unshifted for further iterations
+            temp(1:2:n-1,:) = x;
+            temp(2:2:n,:) = xnew;
+            x = temp; % saving the shifted
+        else
+            xun = [xun;xunnew];
+            x = [x;xnew];
+        end
         fnew = ff(xnew);
-        fx = reshape([fx fnew]',n,1);
-        ftilde = fft(fx);
+        %fx = reshape([fx fnew]',n,1);
+        fx = [fx;fnew];
+        ftilde = fft(bitrevorder(fx));
                 
         %% Efficient FFT computation algorithm
         mnext=m-1;
-        ftildeNextNew=bitrevorder(ff(xnew));
+        ftildeNextNew=ff(xnew);  % initialize for inplace computation
 
         %% Compute initial FFT on next points
         for l=0:mnext-1
@@ -117,13 +125,16 @@ for ii = 1:numM
     if sum((abs(ftildeNew-ftilde)))/n > 0.000001
         fprintf('FFT values differ too much')
     end
+    ftilde = ftildeNew;
+    %% figure(1); loglog(abs(ftilde)); figure(2); loglog((abs(ftildeNew)))
     
+    br_xun = bitrevorder(xun);
     %Compute MLE parameter
     lnaMLE = fminbnd(@(lna) ...
-        MLEKernel(exp(lna),xun,ftilde,order), ...
+        MLEKernel(exp(lna),br_xun,ftilde,order), ...
         -5,0,optimset('TolX',1e-2)); % -5,5
     aMLE = exp(lnaMLE);
-    [loss,Ktilde,RKHSnormSq,K] = MLEKernel(aMLE,xun,ftilde,order);
+    [loss,Ktilde,RKHSnormSq,K] = MLEKernel(aMLE,br_xun,ftilde,order);
     wt = 1./Ktilde(1);
     
     %Check error criterion
@@ -168,7 +179,10 @@ else
     error('Bernoulli order not implemented !');
 end
 n =  length(K);
-Ktilde = real(fft(K));
+Ktilde = real(fft((K)));
+%Ktilde = real(fft_DIT(K));
+
+
 %Ktilde = real(fft(K-1))/n; Ktilde(1) = Ktilde(1) + 1; % this is done to improve accuracy, to reduce zero values
 
 
@@ -218,7 +232,7 @@ for l=0:nmmin-1
     coefv=repmat(coef,nmminlm1,1);
     evenval=y(ptind);
     oddval=y(~ptind);
-    y(ptind)=(evenval+coefv.*oddval)/2;
-    y(~ptind)=(evenval-coefv.*oddval)/2;
+    y(ptind)=(evenval+coefv.*oddval); %/2;
+    y(~ptind)=(evenval-coefv.*oddval); %/2;
 end
 end
