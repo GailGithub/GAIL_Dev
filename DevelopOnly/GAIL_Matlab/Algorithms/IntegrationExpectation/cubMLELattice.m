@@ -55,6 +55,23 @@ for ii = 1:numM
         x = mod(bsxfun(@plus,xun,shift),1);  % shifted
         fx = ff(x);
         ftilde = fft(fx);
+                
+        %% Efficient FFT computation algorithm
+        ftildeNew=bitrevorder(ff(x)); %evaluate integrand
+        
+        %% Compute initial FFT
+        for l=0:mmin-1
+            nl=2^l;
+            nmminlm1=2^(mmin-l-1);
+            ptind=repmat([true(nl,1); false(nl,1)],nmminlm1,1);
+            coef=exp(-2*pi()*sqrt(-1)*(0:nl-1)'/(2*nl));
+            coefv=repmat(coef,nmminlm1,1);
+            evenval=ftildeNew(ptind);
+            oddval=ftildeNew(~ptind);
+            ftildeNew(ptind)=(evenval+coefv.*oddval);  % /2
+            ftildeNew(~ptind)=(evenval-coefv.*oddval);  % /2
+        end
+        
     else
         xunnew = mod(bsxfun(@times,(1/n:2/n:1-1/n)',z),1);
         xnew = mod(bsxfun(@plus,xunnew,shift),1);
@@ -68,6 +85,37 @@ for ii = 1:numM
         fnew = ff(xnew);
         fx = reshape([fx fnew]',n,1);
         ftilde = fft(fx);
+                
+        %% Efficient FFT computation algorithm
+        mnext=m-1;
+        ftildeNextNew=bitrevorder(ff(xnew));
+
+        %% Compute initial FFT on next points
+        for l=0:mnext-1
+            nl=2^l;
+            nmminlm1=2^(mnext-l-1);
+            ptind=repmat([true(nl,1); false(nl,1)],nmminlm1,1);
+            coef=exp(-2*pi()*sqrt(-1)*(0:nl-1)'/(2*nl));
+            coefv=repmat(coef,nmminlm1,1);
+            evenval=ftildeNextNew(ptind);
+            oddval=ftildeNextNew(~ptind);
+            ftildeNextNew(ptind)=(evenval+coefv.*oddval);  %/2;
+            ftildeNextNew(~ptind)=(evenval-coefv.*oddval);  %/2;
+        end
+
+        %% Compute FFT on all points
+        ftildeNew=[ftildeNew;ftildeNextNew];
+        nl=2^mnext;
+        ptind=[true(nl,1); false(nl,1)];
+        coef=exp(-2*pi()*sqrt(-1)*(0:nl-1)'/(2*nl));
+        coefv=repmat(coef,nmminlm1,1);
+        evenval=ftildeNew(ptind);
+        oddval=ftildeNew(~ptind);
+        ftildeNew(ptind)=(evenval+coefv.*oddval);   %/2;
+        ftildeNew(~ptind)=(evenval-coefv.*oddval);  %/2;
+    end
+    if sum((abs(ftildeNew-ftilde)))/n > 0.000001
+        fprintf('FFT values differ too much')
     end
     
     %Compute MLE parameter
