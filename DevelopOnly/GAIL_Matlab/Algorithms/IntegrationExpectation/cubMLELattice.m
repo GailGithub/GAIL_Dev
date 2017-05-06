@@ -7,26 +7,26 @@ function [muhat,out]=cubMLELattice(f,d,absTol,relTol,order,ptransform)
 %   d = 1 Input f is a function handle that accepts an n x d matrix of
 %   n points in [0,1]^d and returns an n x 1 vector of f values.
 %
-%   
+%
 % This is a heuristic algorithm based on a Central Limit Theorem
 % approximation
 if nargin < 6
     ptransform = 'Baker';
-if nargin < 5
-   order = 2; %type of sampling, scrambled Sobol
-   if nargin < 4
-      relTol = 0;
-      if nargin < 3
+    if nargin < 5
+        order = 2; %type of sampling, scrambled Sobol
+        if nargin < 4
+            relTol = 0;
+            if nargin < 3
                 absTol = 0.01;
-         if nargin < 2
+                if nargin < 2
                     d = 1; %dimension
-            if nargin < 1
-               f = @(x) x.^2; %function
+                    if nargin < 1
+                        f = @(x) x.^2; %function
+                    end
+                end
             end
-         end
-      end
-   end
-end
+        end
+    end
 end
 
 tstart = tic; %start the clock
@@ -44,60 +44,121 @@ shift = rand(1,d);
 % ff = f; %no transformation
 % ff = @(x) f(1 - abs(1-2*x)); %folding transformation
 ff = PeriodTx(f, ptransform);
+
 for ii = 1:numM
-   m = mvec(ii);
+    m = mvec(ii);
     n = 2^m
-   
-   %Update function values
-   if ii == 1
-        xun = mod(bsxfun(@times,(0:1/n:1-1/n)',z),1);  % unshifted
+
+    %Update function values
+    if ii == 1
+        brIndices = bitrevorder((0:1/n:1-1/n));
+        xun = mod(bsxfun(@times,brIndices',z),1);  % unshifted
         x = mod(bsxfun(@plus,xun,shift),1);  % shifted
-      fx = ff(x);
-      ftilde = fft(fx);
-   else
-      xunnew = mod(bsxfun(@times,(1/n:2/n:1-1/n)',z),1);
-      xnew = mod(bsxfun(@plus,xunnew,shift),1);
+        fx = ff(x);
+        ftilde = fft(bitrevorder(fx));
+                
+        %% Efficient FFT computation algorithm
+        ftildeNew=bitrevorder(ff(x)); %evaluate integrand
+        
+        %% Compute initial FFT
+        for l=0:mmin-1
+            nl=2^l;
+            nmminlm1=2^(mmin-l-1);
+            ptind=repmat([true(nl,1); false(nl,1)],nmminlm1,1);
+            coef=exp(-2*pi()*sqrt(-1)*(0:nl-1)'/(2*nl));
+            coefv=repmat(coef,nmminlm1,1);
+            evenval=ftildeNew(ptind);
+            oddval=ftildeNew(~ptind);
+            ftildeNew(ptind)=(evenval+coefv.*oddval);  % /2
+            ftildeNew(~ptind)=(evenval-coefv.*oddval);  % /2
+        end
+        
+    else
+        brIndices = bitrevorder((1/n:2/n:1-1/n));
+        xunnew = mod(bsxfun(@times,brIndices',z),1);
+        xnew = mod(bsxfun(@plus,xunnew,shift),1);
+        if 0
         temp = zeros(n,d);
-      temp(1:2:n-1,:) = xun;
-      temp(2:2:n,:) = xunnew;
+        temp(1:2:n-1,:) = xun;
+        temp(2:2:n,:) = xunnew;
         xun = temp;    % save unshifted for further iterations
-      temp(1:2:n-1,:) = x;
-      temp(2:2:n,:) = xnew;
+        temp(1:2:n-1,:) = x;
+        temp(2:2:n,:) = xnew;
         x = temp; % saving the shifted
-      fnew = ff(xnew);
-      fx = reshape([fx fnew]',n,1);
-      ftilde = fft(fx);
-   end
-   
-   %Compute MLE parameter
-   lnaMLE = fminbnd(@(lna) ...
-      MLEKernel(exp(lna),xun,ftilde,order), ...
+        else
+            xun = [xun;xunnew];
+            x = [x;xnew];
+        end
+        fnew = ff(xnew);
+        %fx = reshape([fx fnew]',n,1);
+        fx = [fx;fnew];
+        ftilde = fft(bitrevorder(fx));
+                
+        %% Efficient FFT computation algorithm
+        mnext=m-1;
+        ftildeNextNew=bitrevorder(ff(xnew));
+
+        %% Compute initial FFT on next points
+        for l=0:mnext-1
+            nl=2^l;
+            nmminlm1=2^(mnext-l-1);
+            ptind=repmat([true(nl,1); false(nl,1)],nmminlm1,1);
+            coef=exp(-2*pi()*sqrt(-1)*(0:nl-1)'/(2*nl));
+            coefv=repmat(coef,nmminlm1,1);
+            evenval=ftildeNextNew(ptind);
+            oddval=ftildeNextNew(~ptind);
+            ftildeNextNew(ptind)=(evenval+coefv.*oddval);  %/2;
+            ftildeNextNew(~ptind)=(evenval-coefv.*oddval);  %/2;
+        end
+
+        %% Compute FFT on all points
+        ftildeNew=[ftildeNew;ftildeNextNew];
+        nl=2^mnext;
+        ptind=[true(nl,1); false(nl,1)];
+        coef=exp(-2*pi()*sqrt(-1)*(0:nl-1)'/(2*nl));
+        coefv=repmat(coef,nmminlm1,1);
+        evenval=ftildeNew(ptind);
+        oddval=ftildeNew(~ptind);
+        ftildeNew(ptind)=(evenval+coefv.*oddval);   %/2;
+        ftildeNew(~ptind)=(evenval-coefv.*oddval);  %/2;
+    end
+    if sum((abs(ftildeNew-ftilde)))/n > 0.000001
+        fprintf('FFT values differ too much')
+    end
+    ftilde = ftildeNew;
+    %% figure(1); loglog(abs(ftilde)); figure(2); loglog((abs(ftildeNew)))
+
+    br_xun = bitrevorder(xun);
+    %Compute MLE parameter
+    lnaMLE = fminbnd(@(lna) ...
+        MLEKernel(exp(lna),br_xun,ftilde,order), ...
         -5,0,optimset('TolX',1e-2)); % -5,5
-   aMLE = exp(lnaMLE);
-    [loss,Ktilde,RKHSnormSq,K] = MLEKernel(aMLE,xun,ftilde,order);
-   wt = 1./Ktilde(1);
-   
-   %Check error criterion
+    aMLE = exp(lnaMLE);
+    [loss,Ktilde,RKHSnormSq,K] = MLEKernel(aMLE,br_xun,ftilde,order);
+    wt = 1./Ktilde(1);
+
+    %Check error criterion
     DSC = abs((1/n) - wt);
     %DSC = 1 - n/sum(K);
     %DSC = (1/n) - 1/sum(Ktilde); % wrong
     out.ErrBd = 2.58*sqrt(DSC)*RKHSnormSq;
-   muhat = ftilde(1)/Ktilde(1);
-   muminus = muhat - out.ErrBd;
-   muplus = muhat + out.ErrBd;
+    muhat = ftilde(1)/Ktilde(1);
+    muminus = muhat - out.ErrBd;
+    muplus = muhat + out.ErrBd;
     muhatAll(ii) = muhat;
     errorBdAll(ii) = out.ErrBd;
     aMLEAll(ii) = aMLE;
-   
-   if 2*out.ErrBd <= ...
-         max(absTol,relTol*abs(muminus)) + max(absTol,relTol*abs(muplus))      
+
+    if 2*out.ErrBd <= ...
+            max(absTol,relTol*abs(muminus)) + max(absTol,relTol*abs(muplus))
+        
         fprintf('%d Error bound met %e !\n', n, out.ErrBd)
         if errorBdAll(ii)==0
         errorBdAll(ii) = eps;
         end
         % break
-   end 
-   
+    end
+
 end
 out.n = n;
 out.time = toc(tstart);
@@ -110,15 +171,16 @@ end
 function [loss,Ktilde,RKHSnormSq,K] = MLEKernel(a,xun,ftilde,order)
 
 constMult = -(-1)^(order/2)*(2*pi)^order/factorial(order);
-   if order == 2
+if order == 2
     K = prod(1 + a*constMult*(-xun.*(1-xun) + 1/6),2);
 elseif order == 4
     K = prod(1 + a*constMult*(xun.^2.*(xun.*(xun-2) +1) - 1/30),2);
 else
     error('Bernoulli order not implemented !');
-   end
+end
 n =  length(K);
-   Ktilde = real(fft(K));
+Ktilde = real(fft((K)));
+%Ktilde = real(fft_DIT(K));
 %Ktilde = real(fft(K-1))/n; Ktilde(1) = Ktilde(1) + 1; % this is done to improve accuracy, to reduce zero values
 
 
@@ -128,8 +190,8 @@ RKHSnormSq = mean(abs(ftilde(Ktilde~=0))./sqrt(Ktilde(Ktilde~=0)));
 
 
 loss = mean(log(Ktilde(Ktilde~=0))) + 2*log(RKHSnormSq);
-   a;
-   ftilde(1)/Ktilde(1);
+a;
+ftilde(1)/Ktilde(1);
 end
 
 function f = PeriodTx(fInput, ptransform)
@@ -168,7 +230,7 @@ for l=0:nmmin-1
     coefv=repmat(coef,nmminlm1,1);
     evenval=y(ptind);
     oddval=y(~ptind);
-    y(ptind)=(evenval+coefv.*oddval)/2;
-    y(~ptind)=(evenval-coefv.*oddval)/2;
+    y(ptind)=(evenval+coefv.*oddval); %/2;
+    y(~ptind)=(evenval-coefv.*oddval); %/2;
 end
 end
