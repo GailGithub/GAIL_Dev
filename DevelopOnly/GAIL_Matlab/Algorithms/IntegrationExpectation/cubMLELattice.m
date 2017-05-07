@@ -55,8 +55,8 @@ for ii = 1:numM
         xun = mod(bsxfun(@times,brIndices',z),1);  % unshifted
         x = mod(bsxfun(@plus,xun,shift),1);  % shifted
         fx = ff(x);
-        ftilde = fft(bitrevorder(fx));
-                
+        ftilde = fft(bitrevorder(fx))/n;
+        
         %% Efficient FFT computation algorithm
         ftildeNew=ff(x); %evaluate integrand
         
@@ -69,8 +69,8 @@ for ii = 1:numM
             coefv=repmat(coef,nmminlm1,1);
             evenval=ftildeNew(ptind);
             oddval=ftildeNew(~ptind);
-            ftildeNew(ptind)=(evenval+coefv.*oddval);  % /2
-            ftildeNew(~ptind)=(evenval-coefv.*oddval);  % /2
+            ftildeNew(ptind)=(evenval+coefv.*oddval)/2;
+            ftildeNew(~ptind)=(evenval-coefv.*oddval)/2;
         end
         
     else
@@ -92,12 +92,12 @@ for ii = 1:numM
         fnew = ff(xnew);
         %fx = reshape([fx fnew]',n,1);
         fx = [fx;fnew];
-        ftilde = fft(bitrevorder(fx));
-                
+        ftilde = fft(bitrevorder(fx))/n;
+        
         %% Efficient FFT computation algorithm
         mnext=m-1;
         ftildeNextNew=ff(xnew);  % initialize for inplace computation
-
+        
         %% Compute initial FFT on next points
         for l=0:mnext-1
             nl=2^l;
@@ -107,10 +107,10 @@ for ii = 1:numM
             coefv=repmat(coef,nmminlm1,1);
             evenval=ftildeNextNew(ptind);
             oddval=ftildeNextNew(~ptind);
-            ftildeNextNew(ptind)=(evenval+coefv.*oddval);  %/2;
-            ftildeNextNew(~ptind)=(evenval-coefv.*oddval);  %/2;
+            ftildeNextNew(ptind)=(evenval+coefv.*oddval)/2;
+            ftildeNextNew(~ptind)=(evenval-coefv.*oddval)/2;
         end
-
+        
         %% Compute FFT on all points
         ftildeNew=[ftildeNew;ftildeNextNew];
         nl=2^mnext;
@@ -119,16 +119,17 @@ for ii = 1:numM
         coefv=repmat(coef,nmminlm1,1);
         evenval=ftildeNew(ptind);
         oddval=ftildeNew(~ptind);
-        ftildeNew(ptind)=(evenval+coefv.*oddval);   %/2;
-        ftildeNew(~ptind)=(evenval-coefv.*oddval);  %/2;
+        ftildeNew(ptind)=(evenval+coefv.*oddval)/2;
+        ftildeNew(~ptind)=(evenval-coefv.*oddval)/2;
     end
     if sum((abs(ftildeNew-ftilde)))/n > 0.000001
         fprintf('FFT values differ too much')
     end
     ftilde = ftildeNew;
+    
     %% figure(1); loglog(abs(ftilde)); figure(2); loglog((abs(ftildeNew)))
     
-    br_xun = bitrevorder(xun);
+    br_xun = (xun);
     %Compute MLE parameter
     lnaMLE = fminbnd(@(lna) ...
         MLEKernel(exp(lna),br_xun,ftilde,order), ...
@@ -138,7 +139,7 @@ for ii = 1:numM
     wt = 1./Ktilde(1);
     
     %Check error criterion
-    DSC = abs((1/n) - wt);
+    DSC = abs(1 - wt); %/n;
     %DSC = 1 - n/sum(K);
     %DSC = (1/n) - 1/sum(Ktilde); % wrong
     out.ErrBd = 2.58*sqrt(DSC)*RKHSnormSq;
@@ -179,7 +180,7 @@ else
     error('Bernoulli order not implemented !');
 end
 n =  length(K);
-Ktilde = real(fft((K)));
+Ktilde = real(fft_DIT((K)));
 %Ktilde = real(fft_DIT(K));
 
 
@@ -232,7 +233,7 @@ for l=0:nmmin-1
     coefv=repmat(coef,nmminlm1,1);
     evenval=y(ptind);
     oddval=y(~ptind);
-    y(ptind)=(evenval+coefv.*oddval); %/2;
-    y(~ptind)=(evenval-coefv.*oddval); %/2;
+    y(ptind)=(evenval+coefv.*oddval)/2;
+    y(~ptind)=(evenval-coefv.*oddval)/2;
 end
 end
