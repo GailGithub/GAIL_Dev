@@ -1,4 +1,4 @@
-function [muhat,out]=cubMLELattice(f,d,absTol,relTol,order,ptransform)
+function [muhat,out]=cubMLELattice(f,d,absTol,relTol,order,ptransform,regression,figSavePath,fName)
 %CUBMLE Monte Carlo method to estimate the mean of a random variable
 %
 %   tmu = cubMLELattice(f,absTol,relTol,alpha,nSig,inflate) estimates the mean,
@@ -29,6 +29,9 @@ if nargin < 6
     end
 end
 
+if ~exist(regression,'var')
+    regression = false;
+end
 tstart = tic; %start the clock
 z = [1, 364981, 245389, 97823, 488939, 62609, 400749, 385317, 21281, 223487]; % generator from Hickernell's paper
 %z = [1, 433461, 315689, 441789, 501101, 146355, 88411, 215837, 273599]; %generator
@@ -45,18 +48,20 @@ shift = rand(1,d);
 % ff = @(x) f(1 - abs(1-2*x)); %folding transformation
 ff = PeriodTx(f, ptransform);
 
+%% plot MLE loss function
+% if exist(fName,'var') and exist(figSavePath,'var')
+% plotMLE_Loss(ff, mvec, figSavePath, fName, d, order, ptransform)
+% end
 for ii = 1:numM
     m = mvec(ii);
     n = 2^m
     
     %Update function values
     if ii == 1
-        brIndices = bitrevorder((0:1/n:1-1/n));
-        xun = mod(bsxfun(@times,brIndices',z),1);  % unshifted
+        xun = lattice_gen(n,d,true);
         x = mod(bsxfun(@plus,xun,shift),1);  % shifted
-        fx = ff(x);
-        ftilde = fft(bitrevorder(fx))/n;
-                
+        fx = ff(x); ftilde = fft(bitrevorder(fx))/n;
+        
         %% Efficient FFT computation algorithm
         ftildeNew=ff(x); %evaluate integrand
         
@@ -74,8 +79,7 @@ for ii = 1:numM
         end
         
     else
-        brIndices = bitrevorder((1/n:2/n:1-1/n));
-        xunnew = mod(bsxfun(@times,brIndices',z),1);
+        xunnew = lattice_gen(n,d,false);
         xnew = mod(bsxfun(@plus,xunnew,shift),1);
         if 0
         temp = zeros(n,d);
@@ -93,11 +97,11 @@ for ii = 1:numM
         %fx = reshape([fx fnew]',n,1);
         fx = [fx;fnew];
         ftilde = fft(bitrevorder(fx))/n;
-                
+        
         %% Efficient FFT computation algorithm
         mnext=m-1;
         ftildeNextNew=ff(xnew);  % initialize for inplace computation
-
+        
         %% Compute initial FFT on next points
         for l=0:mnext-1
             nl=2^l;
@@ -110,7 +114,7 @@ for ii = 1:numM
             ftildeNextNew(ptind)=(evenval+coefv.*oddval)/2;
             ftildeNextNew(~ptind)=(evenval-coefv.*oddval)/2;
         end
-
+        
         %% Compute FFT on all points
         ftildeNew=[ftildeNew;ftildeNextNew];
         nl=2^mnext;
@@ -126,6 +130,7 @@ for ii = 1:numM
         fprintf('FFT values differ too much')
     end
     ftilde = ftildeNew;
+    
     %% figure(1); loglog(abs(ftilde)); figure(2); loglog((abs(ftildeNew)))
     
     br_xun = (xun);
@@ -156,7 +161,9 @@ for ii = 1:numM
         if errorBdAll(ii)==0
             errorBdAll(ii) = eps;
         end
-        % break
+        if regression==false % if regression is set, run for for all 'n' values to compute error
+            break
+        end
     end
     
 end
@@ -233,4 +240,48 @@ for l=0:nmmin-1
     y(ptind)=(evenval+coefv.*oddval)/2;
     y(~ptind)=(evenval-coefv.*oddval)/2;
 end
+end
+
+
+function minTheta = plotMLE_Loss(ff, mvec, figSavePath, fName, d, order, ptransform)
+
+    n = 2.^mvec(end);
+    xun = lattice_gen(n,d,true);
+    fx = ff(xun);
+    numM = length(mvec);
+
+    %% plot MLEKernel cost function
+    lnTheta = -3:0.05:0;
+    plotFileName = sprintf('%s%s Cost d_%d bernoulli_%d Period_%s', figSavePath, fName, d, order, ptransform);
+    
+    costMLE = zeros(numM,numel(lnTheta));
+    tic
+    
+    for ii = 1:numM
+        nii = 2^mvec(ii)
+
+        eigvalK = zeros(numel(lnTheta),nii);
+        ftilde = fft(bitrevorder(fx(1:nii)))/nii;
+
+        tic
+        %par
+        parfor k=1:numel(lnTheta)
+            [costMLE(ii,k),eigvalK(k,:)] = MLEKernel(exp(lnTheta(k)),xun(1:nii,:),ftilde,order);
+        end
+        toc
+    end
+    
+    toc
+    
+    hFigCost = figure; semilogx(exp(lnTheta),costMLE); %lgd = legend(string(nvec),'location','north'); axis tight
+    set(hFigCost, 'units', 'inches', 'Position', [4 4 10 7])
+    %title(lgd,'Sample Size, \(n\)'); legend boxoff
+    xlabel('Shape param, \(\theta\)')
+    ylabel('MLE Cost, \( \frac{y^T K_\theta^{-1}y}{[\det(K_\theta^{-1})]^{1/n}} \)')
+    axis tight;
+    title(sprintf('%s Cost d=%d Bernoulli=%d PeriodTx=%s', fName, d, order, ptransform));
+    [minVal,Index] = min(costMLE,[],2);
+    hold on; plot(exp(lnTheta(Index)),minVal, '.');
+    
+    minTheta = exp(lnTheta(Index));
 end
