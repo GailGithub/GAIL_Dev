@@ -59,11 +59,6 @@ Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic Algorithms:
 Cones, Not Balls," Journal of Complexity 30, pp. 21-45, 2014.
 (describes integral_g.m and deprecated funappxtau_g.m)
 
-Yuhan Ding, Fred J. Hickernell, and Sou-Cheng T. Choi, "Locally
-Adaptive Method for Approximating Univariate Functions in Cones with a
-Guarantee for Accuracy," working, 2015.
-(describes funappx_g.m)
-
 Fred J. Hickernell, Lan Jiang, Yuewei Liu, and Art B. Owen,
 "Guaranteed conservative fixed width confidence intervals via Monte
 Carlo sampling," Monte Carlo and Quasi-Monte Carlo Methods 2012
@@ -77,6 +72,10 @@ Methods: MCQMC, Leuven, Belgium, April 2014 (R. Cools and D. Nuyens, eds.),
 Springer Proceedings in Mathematics and Statistics, vol. 163, 
 Springer-Verlag, Berlin, 2016, arXiv:1410.8615 [math.NA], pp. 367-383.
 (describes cubSobol_g.m)
+
+F. J. Hickernell, Ll. A. Jim\'enez Rugama, and D. Li, “Adaptive 
+quasi-{M}onte {C}arlo methods, 2017+, submitted for publication, 
+arXiv:1702.01491 [math.NA].
 
 Lluis Antoni Jimenez Rugama and Fred J. Hickernell, "Adaptive
 multidimensional integration based on rank-1 lattices," Monte Carlo 
