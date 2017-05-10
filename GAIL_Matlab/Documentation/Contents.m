@@ -10,7 +10,6 @@
 %   help_funmin_g     - funmin_g
 %   help_integral_g   - integral_g
 %   help_meanMC_g     - meanMC_g
-%   help_meanMCBer_g  - meanMCBer_g
 %   help_install      - Installation Instructions
 %
 % Folders

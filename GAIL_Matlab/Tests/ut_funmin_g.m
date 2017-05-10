@@ -115,7 +115,9 @@ classdef ut_funmin_g < matlab.unittest.TestCase
             in_param.b = 1;
             in_param.nmax = 10^5; 
             f = @(x) sign(x); 
+            warning('off','GAIL:funmin_g:exceediter');
             [fmin, result] = funmin_g(f,in_param); 
+            warning('on','GAIL:funmin_g:exceediter');
             actualmin = -1;
             actualerr = abs(actualmin-fmin);
             testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);

@@ -167,16 +167,16 @@ function [fappx,out_param]=funappx_g(varargin)
 %
 %  References
 %
-%   [1]  Sou-Cheng T. Choi, Yuhan Ding, Fred J.Hickernell, Xin Tong, "Local
+%   [1] Sou-Cheng T. Choi, Yuhan Ding, Fred J.Hickernell, Xin Tong, "Local
 %   Adaption for Approximation and Minimization of Univariate Functions,"
-%   working, 2016.
+%   Journal of Complexity 40, pp. 17-33, 2017.
 %
-%   [2]  Nick Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
+%   [2] Nick Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
 %   Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic
 %   Algorithms: Cones, Not Balls," Journal of Complexity 30, pp. 21-45,
 %   2014.
 %            
-%   [3]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
+%   [3] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
 %   Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
 %   GAIL: Guaranteed Automatic Integration Library (Version 2.2) [MATLAB
 %   Software], 2017. Available from http://gailgithub.github.io/GAIL_Dev/

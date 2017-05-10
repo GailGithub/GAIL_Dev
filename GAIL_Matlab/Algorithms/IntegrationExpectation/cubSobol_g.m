@@ -241,14 +241,17 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 % check = 1
 %
 %
-%   See also CUBLATTICE_G, CUBMC_G, MEANMC_G, MEANMCBER_G, INTEGRAL_G
+%   See also CUBLATTICE_G, CUBMC_G, MEANMC_G, INTEGRAL_G
 % 
 %  References
 %
-%   [1] Fred J. Hickernell and Lluis Antoni Jimenez Rugama, "Reliable adaptive
-%   cubature using digital sequences," 2014. Submitted for publication:
-%   arXiv:1410.8615.
-%
+%   [1] Fred J. Hickernell and Lluis Antoni Jimenez Rugama "Reliable
+%   adaptive cubature using digital sequences", Monte Carlo and Quasi-Monte
+%   Carlo Methods: MCQMC, Leuven, Belgium, April 2014 (R. Cools and D.
+%   Nuyens, eds.), Springer Proceedings in Mathematics and Statistics, vol.
+%   163, Springer-Verlag, Berlin, 2016, arXiv:1410.8615 [math.NA], pp.
+%   367-383.
+% 
 %   [2] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang,
 %   Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
 %   GAIL: Guaranteed Automatic Integration Library (Version 2.2)
