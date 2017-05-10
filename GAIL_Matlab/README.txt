@@ -71,12 +71,19 @@ Carlo sampling," Monte Carlo and Quasi-Monte Carlo Methods 2012
 Springer-Verlag, Berlin, pp. 105-128, 2014.
 (describes meanMC_g.m and cubMC_g.m)
 
-Fred J. Hickernell and Lluis Antoni Jimenez Rugama, "Reliable Adaptive 
-Cubature Using Digital Sequences," submitted for publication, 2014.
+Fred J. Hickernell and Lluis Antoni Jimenez Rugama "Reliable adaptive 
+cubature using digital sequences", Monte Carlo and Quasi-Monte Carlo 
+Methods: MCQMC, Leuven, Belgium, April 2014 (R. Cools and D. Nuyens, eds.), 
+Springer Proceedings in Mathematics and Statistics, vol. 163, 
+Springer-Verlag, Berlin, 2016, arXiv:1410.8615 [math.NA], pp. 367-383.
 (describes cubSobol_g.m)
 
-Lluis Antoni Jimenez Rugama and Fred J. Hickernell, "Adaptive Multidimensional 
-Integration Based on Rank-1 Lattices," submitted for publication, 2014.
+Lluis Antoni Jimenez Rugama and Fred J. Hickernell, "Adaptive
+multidimensional integration based on rank-1 lattices," Monte Carlo 
+and Quasi-Monte Carlo  Methods: MCQMC, Leuven, Belgium, April 2014 
+(R. Cools and D. Nuyens, eds.), Springer Proceedings in Mathematics 
+and Statistics, vol. 163, Springer-Verlag, Berlin, 2016, arXiv:1411.1966,
+pp. 407-422.
 (describes cubLattice_g.m)
 
 Xin Tong, "A Guaranteed, Adaptive, Automatic Algorithm for Univariate 
