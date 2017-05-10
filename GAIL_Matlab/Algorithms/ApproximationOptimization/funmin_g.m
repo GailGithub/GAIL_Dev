@@ -147,8 +147,8 @@ function [fmin,out_param]=funmin_g(varargin)
 %
 %     1.0000
 %
-% out_param =***
-% 
+%  out_param =***
+%
 %            f: @(x)exp(0.01*(x-0.5).^2)
 %            a: -13
 %            b: 8
@@ -161,8 +161,6 @@ function [fmin,out_param]=funmin_g(varargin)
 %      npoints: 203
 %       errest: 6.7816e-08
 %     output_x: 1
-%            x: [1×203 double]
-%            y: [1×203 double]
 %
 %
 %  Example 4:
@@ -195,11 +193,11 @@ function [fmin,out_param]=funmin_g(varargin)
 %
 %  References
 %
-%   [1]  Sou-Cheng T. Choi, Yuhan Ding, Fred J.Hickernell, Xin Tong, "Local
+%   [1] Sou-Cheng T. Choi, Yuhan Ding, Fred J.Hickernell, Xin Tong, "Local
 %   Adaption for Approximation and Minimization of Univariate Functions,"
-%   working, 2016.
-
-%   [2]  Xin Tong. A Guaranteed, "Adaptive, Automatic Algorithm for
+%   Journal of Complexity 40, pp. 17-33, 2017.
+%
+%   [2] Xin Tong. A Guaranteed, "Adaptive, Automatic Algorithm for
 %   Univariate Function Minimization," MS thesis, Illinois Institute of
 %   Technology, 2014.
 %

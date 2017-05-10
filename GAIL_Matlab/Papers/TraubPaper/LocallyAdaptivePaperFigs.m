@@ -1,11 +1,11 @@
 function LocallyAdaptivePaperFigs(funappxRes,funminRes,colorfig)
 % LOCALLYADPATIVEPAPERFIGS creates all figures and tables in the paper on local
-% adpation for function approximation and optimization submitted to the
-% Joseph Traub memorial issue in the Journal of Complexity
+% adpation for function approximation and optimization published in the
+% Joseph Traub memorial issue in the Journal of Complexity:
 %
-% Sou-Cheng T. Choi, Yuhan Ding, Fred J.Hickernell, and Xin Tong, "Local
-% Adaption for Approximation and Minimization of Univariate Functions,"
-% Journal of Complexity, 2016. To appear.
+%   Sou-Cheng T. Choi, Yuhan Ding, Fred J.Hickernell, Xin Tong, "Local
+%   Adaption for Approximation and Minimization of Univariate Functions,"
+%   Journal of Complexity 40, pp. 17-33, 2017.
 %
 %
 % Example 1: To plot all figures in the paper, run

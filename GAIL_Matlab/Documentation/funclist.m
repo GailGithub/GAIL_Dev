@@ -32,10 +32,6 @@
 % </html>
 %
 % <html>
-% <a href="help_meanMCBer_g.html">meanMCBer_g</a>
-% </html>
-%
-% <html>
 % <a href="help_cubSobol_g.html">cubSobol_g</a>
 % </html>
 %

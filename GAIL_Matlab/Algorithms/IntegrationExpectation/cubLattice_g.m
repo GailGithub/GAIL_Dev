@@ -237,13 +237,15 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 % check = 1
 %
 %
-%   See also CUBSOBOL_G, CUBMC_G, MEANMC_G, MEANMCBER_G, INTEGRAL_G
+%   See also CUBSOBOL_G, CUBMC_G, MEANMC_G, INTEGRAL_G
 % 
 %  References
 %
 %   [1] Lluis Antoni Jimenez Rugama and Fred J. Hickernell, "Adaptive
-%   Multidimensional Integration Based on Rank-1 Lattices," 2014. Submitted
-%   for publication: arXiv:1411.1966.
+%   multidimensional integration based on rank-1 lattices," Monte Carlo and
+%   Quasi-Monte Carlo  Methods: MCQMC, Leuven, Belgium, April 2014 (R. Cools
+%   and D. Nuyens, eds.), Springer Proceedings in Mathematics and Statistics,
+%   vol. 163, Springer-Verlag, Berlin, 2016, arXiv:1411.1966, pp. 407-422.
 %
 %   [2] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang,
 %   Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
