@@ -27,6 +27,8 @@ classdef optPayoff < assetPath
     %     payoffParam_putCallType: {'call'}
     %          payoffParam_strike: 10
     %                  exactPrice: 3.4501
+    %     
+    %     ***
     
     % Authors: Fred J. Hickernell, Tianci Zhu, Hartur Santi, Tianpei Qian
     %% Properties
