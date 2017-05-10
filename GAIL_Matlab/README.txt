@@ -78,6 +78,10 @@ Springer Proceedings in Mathematics and Statistics, vol. 163,
 Springer-Verlag, Berlin, 2016, arXiv:1410.8615 [math.NA], pp. 367-383.
 (describes cubSobol_g.m)
 
+F. J. Hickernell, Ll. A. Jim\'enez Rugama, and D. Li, “Adaptive 
+quasi-{M}onte {C}arlo methods, 2017+, submitted for publication, 
+arXiv:1702.01491 [math.NA].
+
 Lluis Antoni Jimenez Rugama and Fred J. Hickernell, "Adaptive
 multidimensional integration based on rank-1 lattices," Monte Carlo 
 and Quasi-Monte Carlo  Methods: MCQMC, Leuven, Belgium, April 2014 
