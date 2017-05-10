@@ -111,7 +111,7 @@ classdef multivarGauss < handle
          e = gail.stdnormcdf(b1);
          fval = (e-d)*ones(nn,1);
          y = zeros(nn,dim-1);
-         for i = 2:dim;
+         for i = 2:dim
             y(:,i-1) = gail.stdnorminv(d+w(:,i-1).*(e-d));
             aux = sum(bsxfun(@times,obj.CovProp.C(i,1:i-1),y(:,1:i-1)),2);
             a1 = (am(i)-aux)/obj.CovProp.C(i,i);
@@ -174,12 +174,15 @@ classdef multivarGauss < handle
                end
             end
          elseif strcmp(obj.errMeth,'g')
+            dim = numel(obj.a)-1;
             if strcmp(obj.cubMeth,'IID')
-               [prob, out] = meanMC_g(@(m) obj.f(rand(m,1)), ...
+               [prob, out] = meanMC_g(@(m) obj.f(rand(m,dim)), ...
                   obj.absTol,obj.relTol);
             elseif strcmp(obj.cubMeth,'Sobol')
-               dim = numel(obj.a);
                [prob, out] = cubSobol_g(obj.f,[zeros(1,dim); ones(1,dim)], ...
+                  'uniform',obj.absTol,obj.relTol);
+            elseif strcmp(obj.cubMeth,'lattice')
+               [prob, out] = cubLattice_g(obj.f,[zeros(1,dim); ones(1,dim)], ...
                   'uniform',obj.absTol,obj.relTol);
             end
           end

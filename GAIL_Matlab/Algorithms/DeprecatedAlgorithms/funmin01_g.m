@@ -170,7 +170,7 @@ function [fmin,out_param]=funmin01_g(varargin)
 %   [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
 %   and Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library
 %   (Version 1.3.0)" [MATLAB Software], 2014. Available from
-%   http://code.google.com/p/gail/
+%   http://gailgithub.github.io/GAIL_Dev/
 %
 %   [3]  Xin Tong. A Guaranteed, Adaptive, Automatic Algorithm for
 %   Univariate Function Minimization. 2014

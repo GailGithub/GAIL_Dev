@@ -29,7 +29,7 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 %   and the box-to-sphere transformations, depending on the region of
 %   integration.
 %   Given the construction of our Lattices, d must be a positive integer
-%   with 1<=d<=100.
+%   with 1<=d<=600.
 % 
 %   q = CUBLATTICE_G(f,hyperbox,measure,abstol,reltol)
 %   estimates the integral of f over the hyperbox. The answer
@@ -38,8 +38,7 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 %   the default value is used. Note that if an input is not specified,
 %   the remaining tail cannot be specified either. Inputs f and hyperbox 
 %   are required. The other optional inputs are in the correct order:
-%   measure,abstol,reltol,shift,mmin,mmax,fudge,transform,toltype and
-%   theta.
+%   measure,abstol,reltol,shift,mmin,mmax,fudge, and transform.
 % 
 %   q = CUBLATTICE_G(f,hyperbox,'measure',measure,'abstol',abstol,'reltol',reltol)
 %   estimates the integral of f over the hyperbox. The answer
@@ -54,7 +53,7 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 %
 %     f --- the integrand whose input should be a matrix n x d where n is
 %     the number of data points and d the dimension, which cannot be
-%     greater than 100. By default f is f=@ x.^2.
+%     greater than 600. By default f is f=@ x.^2.
 %
 %     hyperbox --- the integration region defined by its bounds. When measure
 %     is 'uniform' or 'normal', hiperbox must be a 2 x d matrix, where the
@@ -77,16 +76,18 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 %     finite positive value for the radius. By default it is 'uniform'.
 %
 %     in_param.abstol --- the absolute error tolerance, abstol>=0. By 
-%     default it is 1e-4.
+%     default it is 1e-4. For pure absolute tolerance, set in_param.reltol
+%     = 0.
 %
 %     in_param.reltol --- the relative error tolerance, which should be
-%     in [0,1]. Default value is 1e-2.
+%     in [0,1]. Default value is 1e-2. For pure absolute tolerance, set
+%     in_param.abstol = 0.
 % 
 %   Optional Input Arguments
 % 
 %     in_param.shift --- the Rank-1 lattices can be shifted to avoid the
-%     origin or other particular points. By default we consider a uniformly
-%     [0,1) random shift.
+%     origin or other particular points. The shift is a vector in [0,1)^d.
+%     By default we consider a shift uniformly sampled from [0,1)^d.
 % 
 %     in_param.mmin --- the minimum number of points to start is 2^mmin.
 %     The cone condition on the Fourier coefficients decay requires a
@@ -96,7 +97,8 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 % 
 %     in_param.mmax --- the maximum budget is 2^mmax. By construction of
 %     our Lattices generator, mmax is a positive integer such that
-%     mmin<=mmax<=26. The default value is 24.
+%     mmin<=mmax. mmax should not be bigger than the gail.lattice_gen
+%     allows. The default value is 20.
 % 
 %     in_param.fudge --- the positive function multiplying the finite 
 %     sum of Fast Fourier coefficients specified in the cone of functions.
@@ -116,26 +118,6 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 %       C1 : polynomial transformation preserving the first derivative.
 %       C1sin : Sidi's transform with sine, preserving the first derivative.
 %                 This is in general a better option than 'C1'.
-%
-%     in_param.toltype --- this is the generalized tolerance function.
-%     There are two choices, 'max' which takes
-%     max(abstol,reltol*| integral(f) | ) and 'comb' which is the linear combination
-%     theta*abstol+(1-theta)*reltol*| integral(f) | . Theta is another 
-%     parameter to be specified with 'comb'(see below). For pure absolute
-%     error, either choose 'max' and set reltol = 0 or choose 'comb' and set
-%     theta = 1. For pure relative error, either choose 'max' and set 
-%     abstol = 0 or choose 'comb' and set theta = 0. Note that with 'max',
-%     the user can not input abstol = reltol = 0 and with 'comb', if theta = 1
-%     abstol con not be 0 while if theta = 0, reltol can not be 0.
-%     By default toltype is 'max'.
-% 
-%     in_param.theta --- this input is parametrizing the toltype 
-%     'comb'. Thus, it is only active when the toltype
-%     chosen is 'comb'. It establishes the linear combination weight
-%     between the absolute and relative tolerances
-%     theta*abstol+(1-theta)*reltol*| integral(f) |. Note that for theta = 1, 
-%     we have pure absolute tolerance while for theta = 0, we have pure 
-%     relative tolerance. By default, theta=1.
 %
 %   Output Arguments
 %
@@ -200,8 +182,8 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 % in the interval R^3 where x1, x2 and x3 are normally distributed:
 % 
 % >> f = @(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2; hyperbox = [-inf(1,3);inf(1,3)];
-% >> q = cubLattice_g(f,hyperbox,'normal',1e-3,1e-3,'transform','C1sin','shift',2^(-25)); exactsol = 1;
-% >> check = abs(exactsol-q) < gail.tolfun(1e-3,1e-3,1,exactsol,'max')
+% >> q = cubLattice_g(f,hyperbox,'normal',1e-3,1e-3,'transform','C1sin','shift',2^(-25)*ones(1,3)); exactsol = 1;
+% >> check = abs(exactsol-q) < max(1e-3,1e-3*abs(exactsol))
 % check = 1
 % 
 % 
@@ -211,7 +193,7 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 % 
 % >> f = @(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [-ones(1,2);2*ones(1,2)];
 % >> q = cubLattice_g(f,hyperbox,'uniform',1e-3,1e-2,'transform','C1'); exactsol = (sqrt(pi)/2*(erf(2)+erf(1)))^2;
-% >> check = abs(exactsol-q) < gail.tolfun(1e-3,1e-2,1,exactsol,'max')
+% >> check = abs(exactsol-q) < max(1e-3,1e-2*abs(exactsol))
 % check = 1
 %
 %
@@ -221,7 +203,7 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 % 
 % >> f = @(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); hyperbox = [-inf(1,1);inf(1,1)];
 % >> q = cubLattice_g(f,hyperbox,'normal',1e-4,1e-2,'transform','C1sin'); price = normcdf(0.05)*100 - 0.5*100*exp(-0.05^2/2);
-% >> check = abs(price-q) < gail.tolfun(1e-4,1e-2,1,price,'max')
+% >> check = abs(price-q) < max(1e-4,1e-2*abs(price))
 % check = 1
 %
 %
@@ -255,18 +237,20 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 % check = 1
 %
 %
-%   See also CUBSOBOL_G, CUBMC_G, MEANMC_G, MEANMCBER_G, INTEGRAL_G
+%   See also CUBSOBOL_G, CUBMC_G, MEANMC_G, INTEGRAL_G
 % 
 %  References
 %
 %   [1] Lluis Antoni Jimenez Rugama and Fred J. Hickernell, "Adaptive
-%   Multidimensional Integration Based on Rank-1 Lattices," 2014. Submitted
-%   for publication: arXiv:1411.1966.
+%   multidimensional integration based on rank-1 lattices," Monte Carlo and
+%   Quasi-Monte Carlo  Methods: MCQMC, Leuven, Belgium, April 2014 (R. Cools
+%   and D. Nuyens, eds.), Springer Proceedings in Mathematics and Statistics,
+%   vol. 163, Springer-Verlag, Berlin, 2016, arXiv:1411.1966, pp. 407-422.
 %
 %   [2] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang,
 %   Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
-%   GAIL: Guaranteed Automatic Integration Library (Version 2.1)
-%   [MATLAB Software], 2015. Available from http://code.google.com/p/gail/
+%   GAIL: Guaranteed Automatic Integration Library (Version 2.2)
+%   [MATLAB Software], 2017. Available from http://gailgithub.github.io/GAIL_Dev/
 %
 %   [3] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
 %   Research via Supportable Scientific Software," Journal of Open Research
@@ -275,7 +259,7 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 %   [4] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable
 %   Mathematical Software" [Course Slides], Illinois Institute of
 %   Technology, Chicago, IL, 2013. Available from
-%   http://code.google.com/p/gail/ 
+%   http://gailgithub.github.io/GAIL_Dev/ 
 %
 %   [5] Daniel S. Katz, Sou-Cheng T. Choi, Hilmar Lapp, Ketan Maheshwari,
 %   Frank Loffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr,
@@ -305,6 +289,7 @@ r_lag = 4; %distance between coefficients summed and those computed
 if strcmpi(out_param.measure,'uniform ball') || strcmpi(out_param.measure,'uniform sphere')% using uniformly distributed samples on a ball or sphere
     if strcmp(out_param.measure,'uniform sphere') && out_param.transf == 1 %box-to-sphere transformation
         out_param.d = out_param.d + 1; % changing out_param.d to the dimension of the sphere
+        out_param.shift = [out_param.shift rand];
     end
     
     if strcmpi(out_param.measure,'uniform ball')% using the formula of the volume of a ball
@@ -323,6 +308,7 @@ if strcmpi(out_param.measure,'uniform ball') || strcmpi(out_param.measure,'unifo
             else %  % box-to-sphere transformation
                 f = @(t) f(gail.domain_balls_spheres.sphere_psi_1(t, out_param.d, out_param.radius, hyperbox))*volume;% the psi function is the transformation 
                 out_param.d = out_param.d - 1;% the box-to-sphere transformation takes points from a (d-1)-dimensional box to a d-dimensional sphere
+                out_param.shift = out_param.shift(1:end-1);
             end
             hyperbox = [zeros(1, out_param.d); ones(1, out_param.d)];% the hyperbox must be the domain of the transformation, which is a unit box
             out_param.measure = 'uniform';% then a uniform distribution on a box can be used
@@ -373,7 +359,7 @@ out_param.exit=false(1,exit_len); %we start the algorithm with all warning flags
 %% Initial points and FFT
 out_param.n=2^out_param.mmin; %total number of points to start with
 n0=out_param.n; %initial number of points
-xpts=mod(gail.lattice_gen(1,n0,out_param.d)+out_param.shift,1); %grab Lattice points
+xpts=mod(bsxfun(@plus, gail.lattice_gen(1,n0,out_param.d), out_param.shift),1); %grab Lattice points
 y=f(xpts); %evaluate integrand
 yval=y;
 
@@ -431,23 +417,20 @@ if any(CStilde_low(:) > CStilde_up(:))
 end
 
 % Check the end of the algorithm
-deltaplus = 0.5*(gail.tolfun(out_param.abstol,...
-    out_param.reltol,out_param.theta,abs(q-errest(1)),...
-    out_param.toltype)+gail.tolfun(out_param.abstol,out_param.reltol,...
-    out_param.theta,abs(q+errest(1)),out_param.toltype));
-deltaminus = 0.5*(gail.tolfun(out_param.abstol,...
-    out_param.reltol,out_param.theta,abs(q-errest(1)),...
-    out_param.toltype)-gail.tolfun(out_param.abstol,out_param.reltol,...
-    out_param.theta,abs(q+errest(1)),out_param.toltype));
+q = q - errest(1)*(max(out_param.abstol, out_param.reltol*abs(q + errest(1)))...
+    - max(out_param.abstol, out_param.reltol*abs(q - errest(1))))/...
+    (max(out_param.abstol, out_param.reltol*abs(q + errest(1)))...
+    + max(out_param.abstol, out_param.reltol*abs(q - errest(1)))); % Optimal estimator
+appxinteg(1)=q;
 
 is_done = false;
-if out_param.bound_err <= deltaplus
-   q=q+deltaminus;
-   appxinteg(1)=q;
+if 4*errest(1)^2/(max(out_param.abstol, out_param.reltol*abs(q + errest(1)))...
+    + max(out_param.abstol, out_param.reltol*abs(q - errest(1))))^2 <= 1
    out_param.time=toc(t_start);
    is_done = true;
 elseif out_param.mmin == out_param.mmax % We are on our max budget and did not meet the error condition => overbudget
    out_param.exit(1) = true;
+   is_done = true;
 end
 
 %% Loop over m
@@ -458,7 +441,7 @@ for m=out_param.mmin+1:out_param.mmax
    out_param.n=2^m;
    mnext=m-1;
    nnext=2^mnext;
-   xnext=mod(gail.lattice_gen(nnext+1,2*nnext,out_param.d)+out_param.shift,1);
+   xnext=mod(bsxfun(@plus, gail.lattice_gen(nnext+1,2*nnext,out_param.d), out_param.shift),1);
    n0=n0+nnext;
    ynext=f(xnext);
    yval=[yval; ynext]; %#ok<*AGROW>
@@ -526,21 +509,16 @@ for m=out_param.mmin+1:out_param.mmax
    
    %% Approximate integral
    q=mean(yval);
-   appxinteg(meff)=q;
 
    % Check the end of the algorithm
-    deltaplus = 0.5*(gail.tolfun(out_param.abstol,...
-        out_param.reltol,out_param.theta,abs(q-errest(meff)),...
-        out_param.toltype)+gail.tolfun(out_param.abstol,out_param.reltol,...
-        out_param.theta,abs(q+errest(meff)),out_param.toltype));
-    deltaminus = 0.5*(gail.tolfun(out_param.abstol,...
-        out_param.reltol,out_param.theta,abs(q-errest(meff)),...
-        out_param.toltype)-gail.tolfun(out_param.abstol,out_param.reltol,...
-        out_param.theta,abs(q+errest(meff)),out_param.toltype));
+   q = q - errest(meff)*(max(out_param.abstol, out_param.reltol*abs(q + errest(meff)))...
+        - max(out_param.abstol, out_param.reltol*abs(q - errest(meff))))/...
+        (max(out_param.abstol, out_param.reltol*abs(q + errest(meff)))...
+        + max(out_param.abstol, out_param.reltol*abs(q - errest(meff)))); % Optimal estimator
+   appxinteg(meff)=q;
 
-   if out_param.bound_err <= deltaplus
-      q=q+deltaminus;
-      appxinteg(meff)=q;
+   if 4*errest(meff)^2/(max(out_param.abstol, out_param.reltol*abs(q + errest(meff)))...
+        + max(out_param.abstol, out_param.reltol*abs(q - errest(meff))))^2 <= 1
       out_param.time=toc(t_start);
       is_done = true;
    elseif m == out_param.mmax % We are on our max budget and did not meet the error condition => overbudget
@@ -575,11 +553,9 @@ default.abstol  = 1e-4;
 default.reltol  = 1e-2;
 default.shift  = rand;
 default.mmin  = 10;
-default.mmax  = 24;
+default.mmax  = 20;
 default.fudge = @(m) 5*2.^-m;
 default.transform = 'Baker';
-default.toltype  = 'max';
-default.theta  = 1;
 
 if numel(varargin)<2
     help cubLattice_g
@@ -599,9 +575,9 @@ else
     elseif numel(varargin) == 2
         out_param.f=f;
         hyperbox = varargin{2};
-        if ~isnumeric(hyperbox) || ~(size(hyperbox,1)==2) || ~(size(hyperbox,2)<101)
+        if ~isnumeric(hyperbox) || ~(size(hyperbox,1)==2) || ~(size(hyperbox,2)<601)
             warning('GAIL:cubLattice_g:hyperbox_error1',...
-                'The hyperbox must be a real matrix of size 2xd where d can not be greater than 100. Example for f(x)=x^2:')
+                'The hyperbox must be a real matrix of size 2xd where d can not be greater than 600. Example for f(x)=x^2:')
             f = @(x) x.^2;
             out_param.f=f;
             hyperbox = default.hyperbox;
@@ -609,6 +585,7 @@ else
      else
         out_param.f = f;
         hyperbox = varargin{2}; % hyperbox validation will be done above
+        default.shift = rand(1, size(hyperbox, 2)); % The shift needs to take the dimension of the problem
     end
 end
 
@@ -641,8 +618,6 @@ if ~validvarargin
     out_param.mmax = default.mmax;  
     out_param.fudge = default.fudge;
     out_param.transform = default.transform;
-    out_param.toltype = default.toltype;
-    out_param.theta = default.theta;
 else
     p = inputParser;
     addRequired(p,'f',@gail.isfcn);
@@ -660,9 +635,6 @@ else
         addOptional(p,'fudge',default.fudge,@gail.isfcn);
         addOptional(p,'transform',default.transform,...
             @(x) any(validatestring(x, {'id','Baker','C0','C1','C1sin'})));
-        addOptional(p,'toltype',default.toltype,...
-            @(x) any(validatestring(x, {'max','comb'})));
-        addOptional(p,'theta',default.theta,@isnumeric);
     else
         if isstruct(in3) %parse input structure
             p.StructExpand = true;
@@ -680,9 +652,6 @@ else
         f_addParamVal(p,'fudge',default.fudge,@gail.isfcn);
         f_addParamVal(p,'transform',default.transform,...
             @(x) any(validatestring(x, {'id','Baker','C0','C1','C1sin'})));
-        f_addParamVal(p,'toltype',default.toltype,...
-            @(x) any(validatestring(x, {'max','comb'})));
-        f_addParamVal(p,'theta',default.theta,@isnumeric);
     end
     parse(p,f,hyperbox,varargin{3:end});
     out_param = p.Results;
@@ -746,6 +715,7 @@ else % 'uniform ball' or 'uniform sphere'
     out_param.radius = hyperbox(out_param.d);
     hyperbox = hyperbox(:,1:out_param.d-1); % removing the last value is the radius, which is the radius
     out_param.d = out_param.d - 1; % storing the rigth dimension of the ball or sphere
+    out_param.shift = out_param.shift(1:end-1);
     
     if strcmp(out_param.measure,'uniform ball') && out_param.d <= 0
         warning('GAIL:cubLattice_g:dimensionequalszero',...
@@ -777,6 +747,7 @@ else % 'uniform ball' or 'uniform sphere'
         % setting out_param.d to be the dimension of the box over which the
         % integral will actually be computed
         out_param.d = out_param.d - 1;
+        out_param.shift = out_param.shift(1:end-1);
     end
 end
 
@@ -792,6 +763,14 @@ if (out_param.reltol < 0) || (out_param.reltol > 1)
     warning('GAIL:cubLattice_g:reltolnonunit',['Relative tolerance should be chosen in [0,1].' ...
             ' Using default relative tolerance ' num2str(default.reltol)])
     out_param.reltol = default.reltol;
+end
+
+% Checks if shift is a vector in [0,1)^d
+if ~(all(out_param.shift < 1) && all(out_param.shift >= 0) && size(out_param.shift, 2) == out_param.d)
+    warning('GAIL:cubLattice_g:shift',['The shift should be a vector ' ...
+            'of size 1 x d in [0,1)^d.' ...
+            ' Using default shift ' num2str(default.shift)])
+    out_param.shift = default.shift;
 end
 
 % Force mmin to be integer greater than 0
@@ -811,9 +790,9 @@ if out_param.mmin < r_lag
 end
 
 % Force exponent budget number of points be a positive integer greater than
-% or equal to mmin an smaller than 26
-if ~(gail.isposint(out_param.mmax) && out_param.mmax>=out_param.mmin && out_param.mmax<=26)
-    warning('GAIL:cubLattice_g:wrongmmax',['The maximum exponent for the budget should be an integer biger than mmin and smaller than 27.' ...
+% or equal to mmin an smaller than 20
+if ~(gail.isposint(out_param.mmax) && out_param.mmax>=out_param.mmin)
+    warning('GAIL:cubLattice_g:wrongmmax',['The maximum exponent for the budget should be an integer bigger than mmin and smaller than the allowed by gail.lattice_gen.' ...
             ' Using default mmax ' num2str(default.mmax)])
     out_param.mmax = default.mmax;
 end
@@ -832,35 +811,11 @@ if ~(strcmp(out_param.transform,'id') || strcmp(out_param.transform,'Baker') || 
     out_param.transform = default.transform;
 end
 
-% Force toltype to be max or comb
-if ~(strcmp(out_param.toltype,'max') || strcmp(out_param.toltype,'comb') )
-    warning('GAIL:cubLattice_g:nottoltype',['The error type can only be max or comb.' ...
-            ' Using default toltype ' num2str(default.toltype)])
-    out_param.toltype = default.toltype;
-end
-
-% Force theta to be in [0,1]
-if (out_param.theta < 0) || (out_param.theta > 1)
-    warning('GAIL:cubLattice_g:thetanonunit',['Theta should be chosen in [0,1].' ...
-            ' Using default theta ' num2str(default.theta)])
-    out_param.theta = default.theta;
-end
-
 % Checking on pure absolute/relative error
 if (out_param.abstol==0) && (out_param.reltol==0)
     warning('GAIL:cubLattice_g:tolzeros',['Absolute and relative error tolerances can not be simultaniusly 0.' ...
             ' Using default absolute tolerance ' num2str(default.abstol) ' and relative tolerance ' num2str(default.reltol)])
     out_param.abstol = default.abstol;
-    out_param.reltol = default.reltol;
-end
-if (strcmp(out_param.toltype,'comb')) && (out_param.theta==1) && (out_param.abstol==0)
-    warning('GAIL:cubLattice_g:abstolzero',['When choosing toltype comb, if theta=1 then abstol>0.' ...
-            ' Using default absolute tolerance ' num2str(default.abstol) ])
-    out_param.abstol = default.abstol;
-end
-if (strcmp(out_param.toltype,'comb')) && (out_param.theta==0) && (out_param.reltol==0)
-    warning('GAIL:cubLattice_g:reltolzero',['When choosing toltype comb, if theta=0 then reltol>0.' ...
-            ' Using default relative tolerance ' num2str(default.reltol) ])
     out_param.reltol = default.reltol;
 end
 

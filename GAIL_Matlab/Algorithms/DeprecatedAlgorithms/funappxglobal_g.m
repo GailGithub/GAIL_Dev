@@ -247,7 +247,7 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %   [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
 %   and Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library
 %   (Version 1.3)" [MATLAB Software], 2014. Available from
-%   http://code.google.com/p/gail/
+%   http://gailgithub.github.io/GAIL_Dev/
 %
 %   If you find GAIL helpful in your work, please support us by citing
 %   the above paper and software.
@@ -276,9 +276,9 @@ tauchange = 0;
 len = out_param.b-out_param.a;
 % add flag
 flag = 0;
+iter = 0;
 
 while n < out_param.nmax;
-    
     if(flag==0)
         x = out_param.a:len/(n-1):out_param.b;
         y = f(x);
@@ -296,7 +296,7 @@ while n < out_param.nmax;
     gn = (n-1)/len*max(abs(diff_y-(y(n)-y(1))/(n-1)));
     %approximate the stronger norm of input function
     fn = (n-1)^2/len^2*max(abs(diff(diff_y)));
-    
+    iter = iter+1;
     % Stage 2: satisfy necessary condition
     if out_param.nstar*(2*gn+fn*len/(n-1)) >= fn*len;
         % Stage 3: check for convergence
@@ -360,7 +360,8 @@ else
     out_param.npoints = n;
     nstar = out_param.nstar;
     out_param.errest = gn*len*nstar/(4*(n-1)*(n-1-nstar));
-    pp = interp1(x,y,'linear','pp');    
+    pp = interp1(x,y,'linear','pp'); 
+    out_param.iter = iter;
 end;
 
 if MATLABVERSION >= 8.3

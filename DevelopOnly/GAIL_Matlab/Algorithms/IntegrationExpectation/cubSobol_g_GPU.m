@@ -8,11 +8,11 @@ function [q,out_param,y,kappanumap] = cubSobol_g_GPU(varargin)
 %   over the d-dimensional region described by hyperbox, and with an error
 %   guaranteed not to be greater than a specific generalized error tolerance,
 %   tolfun:=max(abstol,reltol*| integral(f) |). Input f is a function handle. f should
-%   accept an n x d matrix input, where d is the dimension and n is the 
+%   accept an n x d matrix input, where d is the dimension and n is the
 %   number of points being evaluated simultaneously. The input hyperbox is
-%   a 2 x d matrix, where the first row corresponds to the lower limits 
+%   a 2 x d matrix, where the first row corresponds to the lower limits
 %   and the second row corresponds to the upper limits of the integral.
-%   Given the construction of Sobol' sequences, d must be a positive 
+%   Given the construction of Sobol' sequences, d must be a positive
 %   integer with 1<=d<=1111.
 %
 %   q = cubSobol_g_GPU(f,hyperbox,measure,abstol,reltol)
@@ -20,7 +20,7 @@ function [q,out_param,y,kappanumap] = cubSobol_g_GPU(varargin)
 %   is given within the generalized error tolerance tolfun. All parameters
 %   should be input in the order specified above. If an input is not specified,
 %   the default value is used. Note that if an input is not specified,
-%   the remaining tail cannot be specified either. Inputs f and hyperbox 
+%   the remaining tail cannot be specified either. Inputs f and hyperbox
 %   are required. The other optional inputs are in the correct order:
 %   measure,abstol,reltol,mmin,mmax,fudge,toltype and
 %   theta.
@@ -33,7 +33,7 @@ function [q,out_param,y,kappanumap] = cubSobol_g_GPU(varargin)
 %
 %   q = cubSobol_g_GPU(f,hyperbox,in_param) estimates the integral of f over the
 %   hyperbox. The answer is given within the generalized error tolerance tolfun.
-% 
+%
 %   Input Arguments
 %
 %     f --- the integrand whose input should be a matrix n x d where n is
@@ -41,7 +41,7 @@ function [q,out_param,y,kappanumap] = cubSobol_g_GPU(varargin)
 %     greater than 1111. By default f is f=@ x.^2.
 %
 %     hyperbox --- the integration region defined by its bounds. It must be
-%     a 2 x d matrix, where the first row corresponds to the lower limits 
+%     a 2 x d matrix, where the first row corresponds to the lower limits
 %     and the second row corresponds to the upper limits of the integral.
 %     The default value is [0;1].
 %
@@ -49,17 +49,17 @@ function [q,out_param,y,kappanumap] = cubSobol_g_GPU(varargin)
 %     measure of a uniformly distributed random variable in the hyperbox
 %     or normally distributed with covariance matrix I_d. The only possible
 %     values are 'uniform' or 'normal'. For 'uniform', the hyperbox must be
-%     a finite volume while for 'normal', the hyperbox can only be defined as 
+%     a finite volume while for 'normal', the hyperbox can only be defined as
 %     (-Inf,Inf)^d. By default it is 'uniform'.
 %
-%     in_param.abstol --- the absolute error tolerance, abstol>=0. By 
+%     in_param.abstol --- the absolute error tolerance, abstol>=0. By
 %     default it is 1e-4.
 %
 %     in_param.reltol --- the relative error tolerance, which should be
 %     in [0,1]. Default value is 1e-2.
-% 
+%
 %   Optional Input Arguments
-% 
+%
 %     in_param.mmin --- the minimum number of points to start is 2^mmin.
 %     The cone condition on the Fourier coefficients decay requires a
 %     minimum number of points to start. The advice is to consider at least
@@ -70,7 +70,7 @@ function [q,out_param,y,kappanumap] = cubSobol_g_GPU(varargin)
 %     the Sobol' generator, mmax is a positive integer such that
 %     mmin<=mmax<=53. The default value is 24.
 %
-%     in_param.fudge --- the positive function multiplying the finite 
+%     in_param.fudge --- the positive function multiplying the finite
 %     sum of Fast Walsh Fourier coefficients specified in the cone of functions.
 %     This input is a function handle. The fudge should accept an array of
 %     nonnegative integers being evaluated simultaneously. For more
@@ -80,30 +80,30 @@ function [q,out_param,y,kappanumap] = cubSobol_g_GPU(varargin)
 %     in_param.toltype --- this is the generalized tolerance function.
 %     There are two choices, 'max' which takes
 %     max(abstol,reltol*| integral(f) | ) and 'comb' which is the linear combination
-%     theta*abstol+(1-theta)*reltol*| integral(f) | . Theta is another 
+%     theta*abstol+(1-theta)*reltol*| integral(f) | . Theta is another
 %     parameter to be specified with 'comb'(see below). For pure absolute
 %     error, either choose 'max' and set reltol = 0 or choose 'comb' and set
-%     theta = 1. For pure relative error, either choose 'max' and set 
+%     theta = 1. For pure relative error, either choose 'max' and set
 %     abstol = 0 or choose 'comb' and set theta = 0. Note that with 'max',
 %     the user can not input abstol = reltol = 0 and with 'comb', if theta = 1
 %     abstol con not be 0 while if theta = 0, reltol can not be 0.
 %     By default toltype is 'max'.
-% 
-%     in_param.theta --- this input is parametrizing the toltype 
+%
+%     in_param.theta --- this input is parametrizing the toltype
 %     'comb'. Thus, it is only active when the toltype
 %     chosen is 'comb'. It establishes the linear combination weight
 %     between the absolute and relative tolerances
-%     theta*abstol+(1-theta)*reltol*| integral(f) |. Note that for theta = 1, 
-%     we have pure absolute tolerance while for theta = 0, we have pure 
+%     theta*abstol+(1-theta)*reltol*| integral(f) |. Note that for theta = 1,
+%     we have pure absolute tolerance while for theta = 0, we have pure
 %     relative tolerance. By default, theta=1.
-% 
+%
 %     in_param.cv ---this input is a structure variable contains two elements.
 %     The first one is a function or several functions with the same dimension as f.
 %     When use multiply control variates, the function should be defined in cellfunc
 %     format(Check the Example 7).
 %     The second one should be the value of the previous function/functions
-%     on the defined interval. By default, this is set to zero(no control variates). 
-%     
+%     on the defined interval. By default, this is set to zero(no control variates).
+%
 %
 %   Output Arguments
 %
@@ -119,7 +119,7 @@ function [q,out_param,y,kappanumap] = cubSobol_g_GPU(varargin)
 %     smaller than generalized tolerance.
 %
 %     out_param.time --- time elapsed in seconds when calling cubSobol_g_GPU.
-%     
+%
 %     out_param.beta --- the value of beta when using control variates
 %                        as in f-beta(g-Ig)
 %
@@ -136,12 +136,12 @@ function [q,out_param,y,kappanumap] = cubSobol_g_GPU(varargin)
 %                       1 : If reaching overbudget. It states whether
 %                       the max budget is attained without reaching the
 %                       guaranteed error tolerance.
-%      
+%
 %                       2 : If the function lies outside the cone. In
 %                       this case, results are not guaranteed. For more
 %                       information about the cone definition, check the
 %                       article mentioned below.
-% 
+%
 %  Guarantee
 % This algorithm computes the integral of real valued functions in [0,1)^d
 % with a prescribed generalized error tolerance. The Walsh-Fourier
@@ -151,42 +151,42 @@ function [q,out_param,y,kappanumap] = cubSobol_g_GPU(varargin)
 % cone of functions. The guarantee is based on the decay rate of the
 % Walsh-Fourier coefficients. For more details on how the cone is defined,
 % please refer to the references below.
-% 
+%
 %  Examples
-% 
+%
 % Example 1:
 % Estimate the integral with integrand f(x) = x1.*x2 in the interval [0,1)^2:
-% 
-% >> f = @(x) prod(x,2); hyperbox = [zeros(1,2);ones(1,2)]; 
+%
+% >> f = @(x) prod(x,2); hyperbox = [zeros(1,2);ones(1,2)];
 % >> q = cubSobol_g_GPU(f,hyperbox,'uniform',1e-5,0); exactsol = 1/4;
 % >> check = abs(exactsol-q) < 1e-5
 % check = 1
-% 
-% 
+%
+%
 % Example 2:
 % Estimate the integral with integrand f(x) = x1.^2.*x2.^2.*x3.^2
 % in the interval R^3 where x1, x2 and x3 are normally distributed:
-% 
+%
 % >> f = @(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2; hyperbox = [-inf(1,3);inf(1,3)];
 % >> q = cubSobol_g_GPU(f,hyperbox,'normal',1e-3,1e-3); exactsol = 1;
 % >> check = abs(exactsol-q) < gail.tolfun(1e-3,1e-3,1,exactsol,'max')
 % check = 1
-% 
-% 
-% Example 3: 
+%
+%
+% Example 3:
 % Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) in the
 % interval [-1,2)^2:
-% 
+%
 % >> f = @(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [-ones(1,2);2*ones(1,2)];
 % >> q = cubSobol_g_GPU(f,hyperbox,'uniform',1e-3,1e-2); exactsol = (sqrt(pi)/2*(erf(2)+erf(1)))^2;
 % >> check = abs(exactsol-q) < gail.tolfun(1e-3,1e-2,1,exactsol,'max')
 % check = 1
 %
 %
-% Example 4: 
+% Example 4:
 % Estimate the price of an European call with S0=100, K=100, r=sigma^2/2,
 % sigma=0.05 and T=1.
-% 
+%
 % >> f = @(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); hyperbox = [-inf(1,1);inf(1,1)];
 % >> q = cubSobol_g_GPU(f,hyperbox,'normal',1e-4,1e-2); price = normcdf(0.05)*100 - 0.5*100*exp(-0.05^2/2);
 % >> check = abs(price-q) < gail.tolfun(1e-4,1e-2,1,price,'max')
@@ -196,7 +196,7 @@ function [q,out_param,y,kappanumap] = cubSobol_g_GPU(varargin)
 % Example 5:
 % Estimate the integral with integrand f(x) = 8*x1.*x2.*x3.*x4.*x5 in the interval
 % [0,1)^5 with pure absolute error 1e-5.
-% 
+%
 % >> f = @(x) 8*prod(x,2); hyperbox = [zeros(1,5);ones(1,5)];
 % >> q = cubSobol_g_GPU(f,hyperbox,'uniform',1e-5,0); exactsol = 1/4;
 % >> check = abs(exactsol-q) < 1e-5
@@ -204,7 +204,7 @@ function [q,out_param,y,kappanumap] = cubSobol_g_GPU(varargin)
 %
 %
 %   See also CUBLATTICE_G, CUBMC_G, MEANMC_G, MEANMCBER_G, INTEGRAL_G
-% 
+%
 %  References
 %
 %   [1] Fred J. Hickernell and Lluis Antoni Jimenez Rugama, "Reliable adaptive
@@ -214,7 +214,7 @@ function [q,out_param,y,kappanumap] = cubSobol_g_GPU(varargin)
 %   [2] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang,
 %   Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
 %   GAIL: Guaranteed Automatic Integration Library (Version 2.1)
-%   [MATLAB Software], 2015. Available from http://code.google.com/p/gail/
+%   [MATLAB Software], 2015. Available from http://gailgithub.github.io/GAIL_Dev/
 %
 %   [3] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
 %   Research via Supportable Scientific Software," Journal of Open Research
@@ -223,7 +223,7 @@ function [q,out_param,y,kappanumap] = cubSobol_g_GPU(varargin)
 %   [4] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable
 %   Mathematical Software" [Course Slides], Illinois Institute of
 %   Technology, Chicago, IL, 2013. Available from
-%   http://code.google.com/p/gail/ 
+%   http://gailgithub.github.io/GAIL_Dev/
 %
 %   [5] Daniel S. Katz, Sou-Cheng T. Choi, Hilmar Lapp, Ketan Maheshwari,
 %   Frank Loffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr,
@@ -257,11 +257,11 @@ elseif strcmp(out_param.measure,'uniform')
    Cnorm = prod(hyperbox(2,:)-hyperbox(1,:));
    tran = @(x) (bsxfun(@plus,hyperbox(1,:),bsxfun(@times,(hyperbox(2,:)-hyperbox(1,:)),x)));% a + (b-a)x = u
    f = @(x) Cnorm*f(tran(x)); % a + (b-a)x = u
-   if cv == 1 
+   if cv == 1
 	   g = @(x) Cnorm*g(tran(x)); % a + (b-a)x = u
-   elseif cv > 1 
+   elseif cv > 1
 	   g = @(x) cellfun(@(c) c(tran(x)), g, 'UniformOutput', false);
-   end   
+   end
 end
 
 %% Main algorithm
@@ -282,9 +282,9 @@ n0=out_param.n; %initial number of points
 xpts=sobstr(1:n0,1:out_param.d); %grab Sobol' points
 y = f(xpts); %evaluate integrand
 yval=y;
-if cv > 1 
+if cv > 1
 	yg = cell2mat(g(xpts)) - out_param.cv.Ig; yvalg=yg;
-elseif cv == 1 
+elseif cv == 1
 	yg = out_param.cv.g(xpts) - out_param.cv.Ig; yvalg=yg;
 end %evaluate control variate
 
@@ -312,27 +312,27 @@ kappanumap=(1:out_param.n)'; %initialize map
 for l=out_param.mmin-1:-1:1
    nl=2^l;
    oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
-   newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa, 
+   newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa,
    flip=find(newone>oldone); %which in the pair are the larger ones
    if ~isempty(flip)
        flipall=bsxfun(@plus,flip,0:2^(l+1):2^out_param.mmin-1);
        flipall=flipall(:);
-       temp=kappanumap(nl+1+flipall); %then flip 
+       temp=kappanumap(nl+1+flipall); %then flip
        kappanumap(nl+1+flipall)=kappanumap(1+flipall); %them
        kappanumap(1+flipall)=temp; %around
    end
 end
 
 %% If control variates, find optimal beta
-if cv  
+if cv
     X = yg(kappanumap(end/2+1:end), (1:cv));
     Y = y(kappanumap(end/2+1:end));
-    beta = X \ Y;  
+    beta = X \ Y;
     out_param.beta = beta;
     % We update the integrand and values
     y = y-yg*beta;
     yval = yval-yvalg*beta;
-    if cv == 1 
+    if cv == 1
 	    f = @(x) f(x)-(g(x)-out_param.cv.Ig)*beta;
     else
         error('Still need to code that part')
@@ -392,10 +392,10 @@ for m=out_param.mmin+1:out_param.mmax
    out_param.n=2^m;
    mnext=m-1;
    nnext=2^mnext;
-   xnext=sobstr(n0+(1:nnext),1:out_param.d); 
+   xnext=sobstr(n0+(1:nnext),1:out_param.d);
    n0=n0+nnext;
    if cv > 1% multi C.V.s
-	   ygnext = cell2mat(g(xnext))- out_param.cv.Ig;  
+	   ygnext = cell2mat(g(xnext))- out_param.cv.Ig;
 	   ynext = f(xnext) - ygnext*beta;
 	   yval = [yval; ynext];
    else
@@ -428,7 +428,7 @@ for m=out_param.mmin+1:out_param.mmax
    for l=m-1:-1:m-r_lag
       nl=2^l;
       oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
-      newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa, 
+      newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa,
       flip=find(newone>oldone);
       if ~isempty(flip)
           flipall=bsxfun(@plus,flip,0:2^(l+1):2^m-1);
@@ -445,7 +445,7 @@ for m=out_param.mmin+1:out_param.mmax
    Stilde(meff)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
    out_param.bound_err=out_param.fudge(m)*Stilde(meff);
    errest(meff)=out_param.bound_err;
-   
+
    % Necessary conditions
    for l = l_star:m % Storing the information for the necessary conditions
         C_low = 1/(1+omg_hat(m-l)*omg_circ(m-l));
@@ -455,7 +455,7 @@ for m=out_param.mmin+1:out_param.mmax
             CStilde_up(l-l_star+1) = min(CStilde_up(l-l_star+1),C_up*sum(abs(y(kappanumap(2^(l-1)+1:2^l)))));
         end
    end
-   
+
    if any(CStilde_low(:) > CStilde_up(:))
        out_param.exit(2) = true;
    end
@@ -463,7 +463,7 @@ for m=out_param.mmin+1:out_param.mmax
    %% Approximate integral
    q=mean(yval);
    appxinteg(meff)=q;
-   
+
    % Check the end of the algorithm
     deltaplus = 0.5*(gail.tolfun(out_param.abstol,...
         out_param.reltol,out_param.theta,abs(q-errest(meff)),...
@@ -473,7 +473,7 @@ for m=out_param.mmin+1:out_param.mmax
         out_param.reltol,out_param.theta,abs(q-errest(meff)),...
         out_param.toltype)-gail.tolfun(out_param.abstol,out_param.reltol,...
         out_param.theta,abs(q+errest(meff)),out_param.toltype));
-   
+
    if out_param.bound_err <= deltaplus
       q=q+deltaminus;
       appxinteg(meff)=q;
@@ -567,7 +567,7 @@ if ~validvarargin
     out_param.abstol = default.abstol;
     out_param.reltol = default.reltol;
     out_param.mmin = default.mmin;
-    out_param.mmax = default.mmax;  
+    out_param.mmax = default.mmax;
     out_param.fudge = default.fudge;
     out_param.toltype = default.toltype;
     out_param.theta = default.theta;
@@ -611,7 +611,7 @@ end
 
 out_param.d = size(hyperbox,2);
 
-if iscell(out_param.cv.g) % multiply control variates, 
+if iscell(out_param.cv.g) % multiply control variates,
        cv = max(size(out_param.cv.g));	% cv= number of c.v.s
 else
     if (size(func2str(out_param.cv.g),2) == size(func2str(default.cv.g),2))

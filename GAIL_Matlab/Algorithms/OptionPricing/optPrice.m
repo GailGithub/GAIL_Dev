@@ -1,28 +1,41 @@
 classdef optPrice < optPayoff
 
-%% optPrice
-% is a object of that computes the price of an object via (quasi-)Monte
-% Carlo methods.
-% 
-%
-% Example 1
-% >> obj=whiteNoise
-% obj = 
-%   whiteNoise with properties:
-% 
-%       distribName: 'Uniform'
-%        sampleName: 'IID'
-%          xDistrib: 'Uniform'
-%        qrandState: []
-%              name: 'WhiteNoise'
-%        timeVector: [1 2 3]
-%         startTime: 1
-%           endTime: 3
-%            nSteps: 3
-%     timeIncrement: [1 1]
-%               dim: 1
-%             nCols: 3
-%         inputType: 'n'
+    %% optPrice
+    % is a object of that computes the price of an object via (quasi-)Monte
+    % Carlo methods.
+    % 
+    %
+    % Example 1
+    % >> obj = optPrice
+    % obj =
+    %    optPrice with properties:
+    % 
+    %                   inputType: 'n'
+    %          timeDim_timeVector: [1 2 3]
+    %           timeDim_startTime: 1
+    %             timeDim_endTime: 3
+    %            timeDim_initTime: 0
+    %           timeDim_initValue: 10
+    %          wnParam_sampleKind: 'IID'
+    %         wnParam_distribName: 'Gaussian'
+    %            wnParam_xDistrib: 'Uniform'
+    %        bmParam_assembleType: 'diff'
+    %         assetParam_pathType: 'GBM'
+    %        assetParam_initPrice: 10
+    %         assetParam_interest: 0.0100
+    %       assetParam_volatility: 0.5000
+    %           assetParam_nAsset: 1
+    %         payoffParam_optType: {'euro'}
+    %     payoffParam_putCallType: {'call'}
+    %          payoffParam_strike: 10
+    %                  exactPrice: 3.4501
+    %        priceParam_cubMethod: 'IID_MC'
+    %           priceParam_absTol: 1
+    %           priceParam_relTol: 0
+    %            priceParam_alpha: 0.0100
+    % 
+    %   ***
+
 
 %% Properties
 % This process inherits properties from the |stochProcess| class.  Below are 
@@ -80,6 +93,11 @@ classdef optPrice < optPayoff
             if any(strcmp(obj.priceParam.cubMethod,{'Sobol','lattice'}))
                obj.inputType = 'x';
                obj.wnParam.sampleKind = obj.priceParam.cubMethod;
+               obj.wnParam.xDistrib = 'Uniform';
+            end           
+            if any(strcmp(obj.priceParam.cubMethod,{'SobolCV'}))
+               obj.inputType = 'x';
+               obj.wnParam.sampleKind = 'Sobol';
                obj.wnParam.xDistrib = 'Uniform';
             end
          end 

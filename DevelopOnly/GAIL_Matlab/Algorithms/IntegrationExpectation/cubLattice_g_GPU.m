@@ -8,32 +8,32 @@ function [q,out_param,y,kappanumap] = cubLattice_g_GPU(varargin)
 %   over the d-dimensional region described by hyperbox, and with an error
 %   guaranteed not to be greater than a specific generalized error tolerance,
 %   tolfun:=max(abstol,reltol*| integral(f) |). Input f is a function handle. f should
-%   accept an n x d matrix input, where d is the dimension and n is the 
+%   accept an n x d matrix input, where d is the dimension and n is the
 %   number of points being evaluated simultaneously. The input hyperbox is
-%   a 2 x d matrix, where the first row corresponds to the lower limits 
+%   a 2 x d matrix, where the first row corresponds to the lower limits
 %   and the second row corresponds to the upper limits of the integral.
 %   Given the construction of our Lattices, d must be a positive integer
 %   with 1<=d<=100.
-% 
+%
 %   q = cubLattice_g_GPU(f,hyperbox,measure,abstol,reltol)
 %   estimates the integral of f over the hyperbox. The answer
 %   is given within the generalized error tolerance tolfun. All parameters
 %   should be input in the order specified above. If an input is not specified,
 %   the default value is used. Note that if an input is not specified,
-%   the remaining tail cannot be specified either. Inputs f and hyperbox 
+%   the remaining tail cannot be specified either. Inputs f and hyperbox
 %   are required. The other optional inputs are in the correct order:
 %   measure,abstol,reltol,shift,mmin,mmax,fudge,transform,toltype and
 %   theta.
-% 
+%
 %   q = cubLattice_g_GPU(f,hyperbox,'measure',measure,'abstol',abstol,'reltol',reltol)
 %   estimates the integral of f over the hyperbox. The answer
 %   is given within the generalized error tolerance tolfun. All the field-value
 %   pairs are optional and can be supplied in any order. If an input is not
 %   specified, the default value is used.
-% 
+%
 %   q = cubLattice_g_GPU(f,hyperbox,in_param) estimates the integral of f over the
 %   hyperbox. The answer is given within the generalized error tolerance tolfun.
-% 
+%
 %   Input Arguments
 %
 %     f --- the integrand whose input should be a matrix n x d where n is
@@ -41,7 +41,7 @@ function [q,out_param,y,kappanumap] = cubLattice_g_GPU(varargin)
 %     greater than 100. By default f is f=@ x.^2.
 %
 %     hyperbox --- the integration region defined by its bounds. It must be
-%     a 2 x d matrix, where the first row corresponds to the lower limits 
+%     a 2 x d matrix, where the first row corresponds to the lower limits
 %     and the second row corresponds to the upper limits of the integral.
 %     The default value is [0;1].
 %
@@ -49,41 +49,41 @@ function [q,out_param,y,kappanumap] = cubLattice_g_GPU(varargin)
 %     measure of a uniformly distributed random variable in the hyperbox
 %     or normally distributed with covariance matrix I_d. The only possible
 %     values are 'uniform' or 'normal'. For 'uniform', the hyperbox must be
-%     a finite volume while for 'normal', the hyperbox can only be defined as 
+%     a finite volume while for 'normal', the hyperbox can only be defined as
 %     (-Inf,Inf)^d. By default it is 'uniform'.
 %
-%     in_param.abstol --- the absolute error tolerance, abstol>=0. By 
+%     in_param.abstol --- the absolute error tolerance, abstol>=0. By
 %     default it is 1e-4.
 %
 %     in_param.reltol --- the relative error tolerance, which should be
 %     in [0,1]. Default value is 1e-2.
-% 
+%
 %   Optional Input Arguments
-% 
+%
 %     in_param.shift --- the Rank-1 lattices can be shifted to avoid the
 %     origin or other particular points. By default we consider a uniformly
 %     [0,1) random shift.
-% 
+%
 %     in_param.mmin --- the minimum number of points to start is 2^mmin.
 %     The cone condition on the Fourier coefficients decay requires a
 %     minimum number of points to start. The advice is to consider at least
 %     mmin=10. mmin needs to be a positive integer with mmin<=mmax. By
 %     default it is 10.
-% 
+%
 %     in_param.mmax --- the maximum budget is 2^mmax. By construction of
 %     our Lattices generator, mmax is a positive integer such that
 %     mmin<=mmax<=26. The default value is 24.
-% 
-%     in_param.fudge --- the positive function multiplying the finite 
+%
+%     in_param.fudge --- the positive function multiplying the finite
 %     sum of Fast Fourier coefficients specified in the cone of functions.
 %     This input is a function handle. The fudge should accept an array of
 %     nonnegative integers being evaluated simultaneously. For more
 %     technical information about this parameter, refer to the references.
 %     By default it is @(m) 5*2.^-m.
-% 
+%
 %     in_param.transform --- the algorithm is defined for continuous
 %     periodic functions. If the input function f is not, there are 5
-%     types of transform to periodize it without modifying the result. 
+%     types of transform to periodize it without modifying the result.
 %     By default it is the Baker's transform. The options are:
 %       id : no transformation.
 %       Baker : Baker's transform or tent map in each coordinate. Preserving
@@ -96,21 +96,21 @@ function [q,out_param,y,kappanumap] = cubLattice_g_GPU(varargin)
 %     in_param.toltype --- this is the generalized tolerance function.
 %     There are two choices, 'max' which takes
 %     max(abstol,reltol*| integral(f) | ) and 'comb' which is the linear combination
-%     theta*abstol+(1-theta)*reltol*| integral(f) | . Theta is another 
+%     theta*abstol+(1-theta)*reltol*| integral(f) | . Theta is another
 %     parameter to be specified with 'comb'(see below). For pure absolute
 %     error, either choose 'max' and set reltol = 0 or choose 'comb' and set
-%     theta = 1. For pure relative error, either choose 'max' and set 
+%     theta = 1. For pure relative error, either choose 'max' and set
 %     abstol = 0 or choose 'comb' and set theta = 0. Note that with 'max',
 %     the user can not input abstol = reltol = 0 and with 'comb', if theta = 1
 %     abstol con not be 0 while if theta = 0, reltol can not be 0.
 %     By default toltype is 'max'.
-% 
-%     in_param.theta --- this input is parametrizing the toltype 
+%
+%     in_param.theta --- this input is parametrizing the toltype
 %     'comb'. Thus, it is only active when the toltype
 %     chosen is 'comb'. It establishes the linear combination weight
 %     between the absolute and relative tolerances
-%     theta*abstol+(1-theta)*reltol*| integral(f) |. Note that for theta = 1, 
-%     we have pure absolute tolerance while for theta = 0, we have pure 
+%     theta*abstol+(1-theta)*reltol*| integral(f) |. Note that for theta = 1,
+%     we have pure absolute tolerance while for theta = 0, we have pure
 %     relative tolerance. By default, theta=1.
 %
 %   Output Arguments
@@ -118,14 +118,14 @@ function [q,out_param,y,kappanumap] = cubLattice_g_GPU(varargin)
 %     q --- the estimated value of the integral.
 %
 %     out_param.d --- dimension over which the algorithm integrated.
-% 
+%
 %     out_param.n --- number of Rank-1 lattice points used for computing
 %     the integral of f.
-% 
+%
 %     out_param.bound_err --- predicted bound on the error based on the cone
 %     condition. If the function lies in the cone, the real error will be
 %     smaller than generalized tolerance.
-% 
+%
 %     out_param.time --- time elapsed in seconds when calling cubLattice_g_GPU.
 %
 %     out_param.exitflag --- this is a binary vector stating whether
@@ -137,7 +137,7 @@ function [q,out_param,y,kappanumap] = cubLattice_g_GPU(varargin)
 %                       1 : If reaching overbudget. It states whether
 %                       the max budget is attained without reaching the
 %                       guaranteed error tolerance.
-%      
+%
 %                       2 : If the function lies outside the cone. In
 %                       this case, results are not guaranteed. Note that
 %                       this parameter is computed on the transformed
@@ -146,7 +146,7 @@ function [q,out_param,y,kappanumap] = cubLattice_g_GPU(varargin)
 %                       parameter in_param.transform; for information about
 %                       the cone definition, check the article mentioned
 %                       below.
-% 
+%
 %  Guarantee
 % This algorithm computes the integral of real valued functions in [0,1)^d
 % with a prescribed generalized error tolerance. The Fourier coefficients
@@ -156,42 +156,42 @@ function [q,out_param,y,kappanumap] = cubLattice_g_GPU(varargin)
 % functions. The guarantee is based on the decay rate of the Fourier
 % coefficients. For more details on how the cone is defined, please refer
 % to the references below.
-% 
+%
 %  Examples
-% 
+%
 % Example 1:
 % Estimate the integral with integrand f(x) = x1.*x2 in the interval [0,1)^2:
-% 
-% >> f = @(x) prod(x,2); hyperbox = [gpuArray.zeros(1,2);gpuArray.ones(1,2)]; 
+%
+% >> f = @(x) prod(x,2); hyperbox = [gpuArray.zeros(1,2);gpuArray.ones(1,2)];
 % >> q = cubLattice_g_GPU(f,hyperbox,'uniform',1e-5,0,'transform','C1sin'); exactsol = 1/4;
 % >> check = abs(exactsol-q) < 1e-5
 % check = 1
-% 
-% 
+%
+%
 % Example 2:
 % Estimate the integral with integrand f(x) = x1.^2.*x2.^2.*x3.^2
 % in the interval R^3 where x1, x2 and x3 are normally distributed:
-% 
+%
 % >> f = @(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2; hyperbox = [-inf(1,3);inf(1,3)];
 % >> q = cubLattice_g_GPU(f,hyperbox,'normal',1e-3,1e-3,'transform','C1sin','shift',2^(-25)); exactsol = 1;
 % >> check = abs(exactsol-q) < gail.tolfun(1e-3,1e-3,1,exactsol,'max')
 % check = 1
-% 
-% 
-% Example 3: 
+%
+%
+% Example 3:
 % Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) in the
 % interval [-1,2)^2:
-% 
+%
 % >> f = @(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [-gpuArray.ones(1,2);2*gpuArray.ones(1,2)];
 % >> q = cubLattice_g_GPU(f,hyperbox,'uniform',1e-3,1e-2,'transform','C1'); exactsol = (sqrt(pi)/2*(erf(2)+erf(1)))^2;
 % >> check = abs(exactsol-q) < gail.tolfun(1e-3,1e-2,1,exactsol,'max')
 % check = 1
 %
 %
-% Example 4: 
+% Example 4:
 % Estimate the price of an European call with S0=100, K=100, r=sigma^2/2,
 % sigma=0.05 and T=1.
-% 
+%
 % >> f = @(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); hyperbox = [-inf(1,1);inf(1,1)];
 % >> q = cubLattice_g_GPU(f,hyperbox,'normal',1e-4,1e-2,'transform','C1sin'); price = normcdf(0.05)*100 - 0.5*100*exp(-0.05^2/2);
 % >> check = abs(price-q) < gail.tolfun(1e-4,1e-2,1,price,'max')
@@ -201,7 +201,7 @@ function [q,out_param,y,kappanumap] = cubLattice_g_GPU(varargin)
 % Example 5:
 % Estimate the integral with integrand f(x) = 8*x1.*x2.*x3.*x4.*x5 in the interval
 % [0,1)^5 with pure absolute error 1e-5.
-% 
+%
 % >> f = @(x) 8*prod(x,2); hyperbox = [gpuArray.zeros(1,5);gpuArray.ones(1,5)];
 % >> q = cubLattice_g_GPU(f,hyperbox,'uniform',1e-5,0); exactsol = 1/4;
 % >> check = abs(exactsol-q) < 1e-5
@@ -211,7 +211,7 @@ function [q,out_param,y,kappanumap] = cubLattice_g_GPU(varargin)
 % Example 6:
 % Estimate the integral with integrand f(x) = 3./(5-4*(cos(2*pi*x))) in the interval
 % [0,1) with pure absolute error 1e-5.
-% 
+%
 % >> f = @(x) 3./(5-4*(cos(2*pi*x))); hyperbox = [0;1];
 % >> q = cubLattice_g_GPU(f,hyperbox,'uniform',1e-5,0,'transform','id'); exactsol = 1;
 % >> check = abs(exactsol-q) < 1e-5
@@ -219,7 +219,7 @@ function [q,out_param,y,kappanumap] = cubLattice_g_GPU(varargin)
 %
 %
 %   See also CUBSOBOL_G, CUBMC_G, MEANMC_G, MEANMCBER_G, INTEGRAL_G
-% 
+%
 %  References
 %
 %   [1] Lluis Antoni Jimenez Rugama and Fred J. Hickernell, "Adaptive
@@ -229,7 +229,7 @@ function [q,out_param,y,kappanumap] = cubLattice_g_GPU(varargin)
 %   [2] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang,
 %   Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
 %   GAIL: Guaranteed Automatic Integration Library (Version 2.1)
-%   [MATLAB Software], 2015. Available from http://code.google.com/p/gail/
+%   [MATLAB Software], 2015. Available from http://gailgithub.github.io/GAIL_Dev/
 %
 %   [3] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
 %   Research via Supportable Scientific Software," Journal of Open Research
@@ -238,7 +238,7 @@ function [q,out_param,y,kappanumap] = cubLattice_g_GPU(varargin)
 %   [4] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable
 %   Mathematical Software" [Course Slides], Illinois Institute of
 %   Technology, Chicago, IL, 2013. Available from
-%   http://code.google.com/p/gail/ 
+%   http://gailgithub.github.io/GAIL_Dev/
 %
 %   [5] Daniel S. Katz, Sou-Cheng T. Choi, Hilmar Lapp, Ketan Maheshwari,
 %   Frank Loffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr,
@@ -317,12 +317,12 @@ kappanumap=(1:out_param.n)'; %initialize map
 for l=out_param.mmin-1:-1:1
    nl=2^l;
    oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
-   newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa, 
+   newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa,
    flip=find(newone>oldone); %which in the pair are the larger ones
    if ~isempty(flip)
        flipall=bsxfun(@plus,flip,0:2^(l+1):2^out_param.mmin-1);
        flipall=flipall(:);
-       temp=kappanumap(nl+1+flipall); %then flip 
+       temp=kappanumap(nl+1+flipall); %then flip
        kappanumap(nl+1+flipall)=kappanumap(1+flipall); %them
        kappanumap(1+flipall)=temp; %around
    end
@@ -403,7 +403,7 @@ for m=out_param.mmin+1:out_param.mmax
    oddval=y(~ptind);
    y(ptind)=(evenval+coefv.*oddval)/2;
    y(~ptind)=(evenval-coefv.*oddval)/2;
-   
+
    %% Update kappanumap
    kappanumap=[kappanumap; 2^(m-1)+kappanumap]; %initialize map
    for l=m-1:-1:m-r_lag
@@ -426,7 +426,7 @@ for m=out_param.mmin+1:out_param.mmax
    Stilde(meff)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
    out_param.bound_err=out_param.fudge(m)*Stilde(meff);
    errest(meff)=out_param.bound_err;
-   
+
    % Necessary conditions
    for l = l_star:m % Storing the information for the necessary conditions
         C_low = 1/(1+omg_hat(m-l)*omg_circ(m-l));
@@ -436,11 +436,11 @@ for m=out_param.mmin+1:out_param.mmax
             CStilde_up(l-l_star+1) = min(CStilde_up(l-l_star+1),C_up*sum(abs(y(kappanumap(2^(l-1)+1:2^l)))));
         end
    end
-   
+
    if any(CStilde_low(:) > CStilde_up(:))
        out_param.exit(2) = true;
    end
-   
+
    %% Approximate integral
    q=mean(yval);
    appxinteg(meff)=q;
@@ -550,7 +550,7 @@ if ~validvarargin
     out_param.reltol = default.reltol;
     out_param.shift = default.shift;
     out_param.mmin = default.mmin;
-    out_param.mmax = default.mmax;  
+    out_param.mmax = default.mmax;
     out_param.fudge = default.fudge;
     out_param.transform = default.transform;
     out_param.toltype = default.toltype;

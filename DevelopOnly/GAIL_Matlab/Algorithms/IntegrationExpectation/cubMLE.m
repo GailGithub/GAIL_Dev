@@ -6,10 +6,10 @@ function [muhat,out]=cubMLE(f,nvec,domain,whSample,whKer,powerFuncMethod)
 %   The samples may be of one of several kinds.  The default values are n=2^10 and
 %   d = 1 Input f is a function handle that accepts an n x d matrix of
 %   n points in [0,1]^d and returns an n x 1 vector of f values.
-%   powerFuncMethod: 
+%   powerFuncMethod:
 %      'cauchy' : using the Cauchy interlacing theorem
 %      'thompson' : using the technique form R.C.Thompson paper
-%   
+%
 % This is a heuristic algorithm based on a Central Limit Theorem
 % approximation
 if nargin < 7
@@ -47,22 +47,22 @@ out.aMLE(nn,1) = 0;
 muhat(nn,1) = 0;
 for ii = 1:nn
    nii = nvec(ii);
-   
+
    % Find the optimal shape parameter
    lnaMLE = fminbnd(@(lna) ...
       MLEKernel(exp(lna),x(1:nii,:),fx(1:nii),whKer,domain), ...
       -5,5,optimset('TolX',1e-2));
    aMLE = exp(lnaMLE);
    out.aMLE(ii) = aMLE;
-   
+
    [K,kvec,k0] = kernelFun(x(1:nii,:),whKer,aMLE);
    Kinv = pinv(K);
    %w = Kinv*kvec;
    Kinvy = Kinv*fx(1:nii);
-   
-   % compute the approximate mu 
+
+   % compute the approximate mu
    muhat(ii) = kvec'*Kinvy;
-   
+
    if strcmp(powerFuncMethod, 'cauchy')
        eigK = eig(K);
        eigKaug = eig([k0 kvec'; kvec K]);
@@ -77,5 +77,5 @@ for ii = 1:nn
        disc2 = 1/sum(uii.^2 ./ eigValKaug);
    end
    out.ErrBd(ii) = 2.58*sqrt(disc2*(fx(1:nii)'*Kinvy)/nii);
-end  
+end
 out.time = toc(tstart);
