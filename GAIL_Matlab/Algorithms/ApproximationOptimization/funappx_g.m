@@ -106,7 +106,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %   >> f = @(x) x.^2;
 %   >> [~, out_param] = funappx_g(f,-2,2,1e-7,18)
 %
-% out_param = 
+% out_param =***
 % 
 %            a: -2
 %       abstol: 1.0000e-07

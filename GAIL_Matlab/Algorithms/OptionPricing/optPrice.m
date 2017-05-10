@@ -22,8 +22,8 @@ classdef optPrice < optPayoff
 %     timeIncrement: [1 1]
 %               dim: 1
 %             nCols: 3
-
-
+% 
+% 
 %% Properties
 % This process inherits properties from the |stochProcess| class.  Below are 
 % values assigned to that are abstractly defined in that class plus some
