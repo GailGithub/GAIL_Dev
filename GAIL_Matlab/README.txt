@@ -59,11 +59,6 @@ Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic Algorithms:
 Cones, Not Balls," Journal of Complexity 30, pp. 21-45, 2014.
 (describes integral_g.m and deprecated funappxtau_g.m)
 
-Yuhan Ding, Fred J. Hickernell, and Sou-Cheng T. Choi, "Locally
-Adaptive Method for Approximating Univariate Functions in Cones with a
-Guarantee for Accuracy," working, 2015.
-(describes funappx_g.m)
-
 Fred J. Hickernell, Lan Jiang, Yuewei Liu, and Art B. Owen,
 "Guaranteed conservative fixed width confidence intervals via Monte
 Carlo sampling," Monte Carlo and Quasi-Monte Carlo Methods 2012
