@@ -42,13 +42,13 @@ inp.assetParam.meanShift = 0;
 %}
 ourGBMCallPrice = optPrice(inp)
 [GBMCallPrice_withoutIS, out] = genOptPrice(ourGBMCallPrice)
-return
-inp.assetParam.pathType = 'QE_m';
+%return
+inp.assetParam.pathType = 'QE';
 inp.assetParam.meanShift =0.49;
 ourQECallPrice = optPrice(inp) %construct an optPrice object 
 %genOptPayoffs(ourQECallPrice,1);
-%return
 [QECallPrice, out] = genOptPrice(ourQECallPrice) %the option price
+return
 inp.priceParam.cubMethod = 'Sobol'
 delta_t=0.5;
 t0 = delta_t;
