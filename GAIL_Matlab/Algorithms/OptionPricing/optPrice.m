@@ -46,7 +46,7 @@ classdef optPrice < optPayoff
       priceParam = struct('cubMethod', 'IID_MC', ... %type of pricing scheme
          'absTol', 1, ... %absolute tolerance
          'relTol', 0, ... %relative tolerance
-         'alpha', 0.01) %alpha = uncertainty
+         'alpha', 0.01) %alpha = uncertainty         
       
    end
    
