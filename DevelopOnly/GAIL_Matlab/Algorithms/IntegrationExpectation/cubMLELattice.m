@@ -1,4 +1,4 @@
-function [muhat,out]=cubMLELattice(f,d,absTol,relTol,order,ptransform,regression,figSavePath,fName)
+function [muhat,out]=cubMLELattice(f,d,absTol,relTol,order,ptransform,testAll,figSavePath,fName)
 %CUBMLE Monte Carlo method to estimate the mean of a random variable
 %
 %   tmu = cubMLELattice(f,absTol,relTol,alpha,nSig,inflate) estimates the mean,
@@ -29,8 +29,8 @@ if nargin < 6
     end
 end
 
-if ~exist(regression,'var')
-    regression = false;
+if ~exist('testAll','var')
+    testAll = false;
 end
 
 tstart = tic; %start the clock
@@ -43,8 +43,7 @@ errorBdAll = zeros(length(mvec),1);
 muhatAll = zeros(length(mvec),1);
 aMLEAll = zeros(length(mvec),1);
 shift = rand(1,d);
-% ff = f; %no transformation
-% ff = @(x) f(1 - abs(1-2*x)); %folding transformation
+% Choose a periodization transformation
 ff = PeriodTx(f, ptransform);
 
 
@@ -56,17 +55,17 @@ ff = PeriodTx(f, ptransform);
 
 for ii = 1:numM
     m = mvec(ii);
-    n = 2^m
+    n = 2^m;
     
     %Update function values
     if ii == 1
         xun = lattice_gen(n,d,true);
         x = mod(bsxfun(@plus,xun,shift),1);  % shifted
         
-        fx = ff(x); ftilde = fft(bitrevorder(fx))/n;
+        %% fx = gpuArray(ff(x)); ftilde = fft(bitrevorder(fx))/n;
         
         %% Efficient FFT computation algorithm
-        ftildeNew=ff(x); %evaluate integrand
+        ftildeNew=gpuArray(ff(x)); %evaluate integrand
         
         %% Compute initial FFT
         for l=0:mmin-1
@@ -97,14 +96,15 @@ for ii = 1:numM
             x = [x;xnew];
         end
         
-        fnew = ff(xnew);
+        %% fnew = gpuArray(ff(xnew));
         %fx = reshape([fx fnew]',n,1);
-        fx = [fx;fnew];
-        ftilde = fft(bitrevorder(fx))/n;
+        %% fx = [fx;fnew];
+        
+        %%ftilde = fft(bitrevorder(fx))/n;
         
         %% Efficient FFT computation algorithm
         mnext=m-1;
-        ftildeNextNew=ff(xnew);  % initialize for inplace computation
+        ftildeNextNew=gpuArray(ff(xnew));  % initialize for inplace computation
         
         %% Compute initial FFT on next points
         for l=0:mnext-1
@@ -129,43 +129,47 @@ for ii = 1:numM
         oddval=ftildeNew(~ptind);
         ftildeNew(ptind)=(evenval+coefv.*oddval)/2;
         ftildeNew(~ptind)=(evenval-coefv.*oddval)/2;
+        
     end
-    if sum((abs(ftildeNew-ftilde)))/n > 0.000001
-        fprintf('FFT values differ too much')
-    end
+    %if sum((abs(ftildeNew-ftilde)))/n > 1E-7
+    %    fprintf('FFT values differ too much')
+    %end
     ftilde = ftildeNew;
     
     %% figure(1); loglog(abs(ftilde)); figure(2); loglog((abs(ftildeNew)))
     
-    br_xun = (xun);
+    br_xun = bitrevorder(gpuArray(xun));
+    
     %Compute MLE parameter
     lnaMLE = fminbnd(@(lna) ...
         MLEKernel(exp(lna),br_xun,ftilde,order), ...
         -5,0,optimset('TolX',1e-2)); % -5,5
     aMLE = exp(lnaMLE);
-    [loss,Ktilde,RKHSnormSq,K] = MLEKernel(aMLE,br_xun,ftilde,order);
+    [loss,Ktilde,RKHSnormSq] = MLEKernel(aMLE,br_xun,ftilde,order);
     wt = 1./Ktilde(1);
     
     %Check error criterion
-    DSC = abs(1 - wt); %/n;
-    %DSC = 1 - n/sum(K);
-    %DSC = (1/n) - 1/sum(Ktilde); % wrong
+    DSC = abs(1 - wt);
+
     out.ErrBd = 2.58*sqrt(DSC)*RKHSnormSq;
     muhat = ftilde(1)/Ktilde(1);
     muminus = muhat - out.ErrBd;
     muplus = muhat + out.ErrBd;
-    muhatAll(ii) = muhat;
-    errorBdAll(ii) = out.ErrBd;
-    aMLEAll(ii) = aMLE;
+    muhatAll(ii) = gather(muhat);
+    errorBdAll(ii) = gather(out.ErrBd);
+    aMLEAll(ii) = gather(aMLE);
     
     if 2*out.ErrBd <= ...
             max(absTol,relTol*abs(muminus)) + max(absTol,relTol*abs(muplus))
         
-        fprintf('%d Error bound met %e !\n', n, out.ErrBd)
+        % fprintf('%d Error bound met %e !\n', n, out.ErrBd)
         if errorBdAll(ii)==0
             errorBdAll(ii) = eps;
         end
-        if regression==false % if regression is set, run for for all 'n' values to compute error
+        
+         % if testAll flag is set, run for for all 'n' values to compute error
+         % used for error plotting
+        if testAll==false
             break
         end
     end
@@ -181,40 +185,41 @@ end
 
 function [loss,Ktilde,RKHSnormSq,K] = MLEKernel(a,xun,ftilde,order)
 
-constMult = -(-1)^(order/2)*(2*pi)^order/factorial(order);
-if order == 2
-    K = prod(1 + a*constMult*(-xun.*(1-xun) + 1/6),2);
-elseif order == 4
-    K = prod(1 + a*constMult*(xun.^2.*(xun.*(xun-2) +1) - 1/30),2);
-else
-    error('Bernoulli order not implemented !');
-end
-% n =  length(K);
-Ktilde = real(fft_DIT(K));
-%Ktilde = real(fft(bitrevorder((K)));
+    constMult = -(-1)^(order/2)*(2*pi)^order/factorial(order);
+    if order == 2
+        bernPloy = @(x)(-x.*(1-x) + 1/6);
+    elseif order == 4
+        bernPloy = @(x)(x.^2.*(x.*(x-2) +1) - 1/30);
+    else
+        error('Bernoulli order not implemented !');
+    end
+    K = prod(1 + a*constMult*bernPloy(xun),2);
 
+    %Ktilde = real(fft_DIT(K));
+    % matlab's builtin fft much faster and accurate
+    Ktilde = real(fft((K)))/length(K);
 
-%Ktilde = real(fft(K-1))/n; Ktilde(1) = Ktilde(1) + 1; % this is done to improve accuracy, to reduce zero values
+    %Ktilde = real(fft(K-1))/length(K); Ktilde(1) = Ktilde(1) + 1; % this is done to improve accuracy, to reduce zero values
 
-if any(Ktilde==0)
-    fprintf('Ktilde has zero vals \n');
-end
+    if any(Ktilde==0)
+        % fprintf('Ktilde has zero vals \n');
+    end
 
-%RKHSnorm = mean(abs(ftilde).^2./Ktilde);
-%RKHSnorm = mean(abs(ftilde(Ktilde~=0)).^2./Ktilde(Ktilde~=0));
-RKHSnormSq = mean(abs(ftilde(Ktilde~=0))./sqrt(Ktilde(Ktilde~=0))); 
+    %RKHSnorm = mean(abs(ftilde).^2./Ktilde);
+    %RKHSnorm = mean(abs(ftilde(Ktilde~=0)).^2./Ktilde(Ktilde~=0));
+    RKHSnormSq = mean(abs(ftilde(Ktilde~=0))./sqrt(Ktilde(Ktilde~=0))); 
 
-if isnan(RKHSnormSq)
-    fprintf('RKHSnormSq NaN \n');
-end
-loss = mean(log(Ktilde(Ktilde~=0))) + 2*log(RKHSnormSq);
+    if isnan(RKHSnormSq)
+        fprintf('RKHSnormSq NaN \n');
+    end
+    loss = mean(log(Ktilde(Ktilde~=0))) + 2*log(RKHSnormSq);
 
-if isnan(loss)
-    fprintf('loss NaN \n');
-end
+    if isnan(loss)
+        fprintf('loss NaN \n');
+    end
 
-a;
-ftilde(1)/Ktilde(1);
+    a;
+    ftilde(1)/Ktilde(1);
 end
 
 function f = PeriodTx(fInput, ptransform)
@@ -243,10 +248,9 @@ end
 end
 
 function xlat = lattice_gen(n,d,firstBatch)
-z = [1, 364981, 245389, 97823, 488939, 62609, 400749, 385317, 21281, 223487]; % generator from Hickernell's paper
-%z = [1, 433461, 315689, 441789, 501101, 146355, 88411, 215837, 273599]; %generator
-z = z(1:d);
-
+    z = [1, 364981, 245389, 97823, 488939, 62609, 400749, 385317, 21281, 223487]; % generator from Hickernell's paper
+    %z = [1, 433461, 315689, 441789, 501101, 146355, 88411, 215837, 273599]; %generator
+    z = z(1:d);
 
     if false
         if firstBatch==true
@@ -289,6 +293,7 @@ function q = vdc(n)
 end
 
 
+% fft with deimation in time i.e, input is already in 'bitrevorder'
 function y = fft_DIT( y )
     nmmin = log2(length(y));
     %y = bitrevorder(y);
