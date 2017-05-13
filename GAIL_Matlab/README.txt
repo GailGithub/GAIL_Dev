@@ -21,6 +21,11 @@ We thank the contributions of Xincheng Sheng, and the IIT class of Math
 
 Please cite the following software, papers, and materials:
 
+Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible Research via 
+Supportable Scientific Software," Journal of Open Research Software, Volume 2, 
+Number 1, e22, pp. 1-7, 2014.
+(describes principles of Reliable Reproducible Research and Supportable 
+Scientific Software)
 
 Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible Research via 
 Supportable Scientific Software," Journal of Open Research Software, Volume 2, 
@@ -50,15 +55,9 @@ Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic Algorithms:
 Cones, Not Balls," Journal of Complexity 30, pp. 21-45, 2014.
 (describes integral_g.m and deprecated funappxtau_g.m)
 
-Daniel S. Katz, Sou-Cheng T. Choi, Hilmar Lapp, Ketan Maheshwari,
-Frank Loffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr,
-James Hetherington, James Howison, Shel Swenson, Gabrielle D. Allen,
-Anne C. Elster, Bruce Berriman, Colin Venters, "Summary of the First
-Workshop On Sustainable Software for Science: Practice And Experiences
-(WSSSPE1)," Journal of Open Research Software, Volume 2, Number 1, e6,
-pp. 1-21, 2014.
-(discusses practice and challenges in Sustainable Software for Science)
-
+Yuhan Ding, "Guaranteed Adaptive Univariate Function Approximation," PhD 
+thesis, Illinois Institute of Technology, 2015. 
+(describes deprecated funappxPenalty_g.m)
 
 Fred J. Hickernell, Lan Jiang, Yuewei Liu, and Art B. Owen,
 "Guaranteed conservative fixed width confidence intervals via Monte
@@ -78,13 +77,22 @@ F. J. Hickernell, Ll. A. Jim\'enez Rugama, and D. Li, “Adaptive
 quasi-{M}onte {C}arlo methods, 2017+, submitted for publication, 
 arXiv:1702.01491 [math.NA].
 
-Lluis Antoni Jim\'enez Rugama and Fred J. Hickernell, "Adaptive
+Lluis Antoni Jimenez Rugama and Fred J. Hickernell, "Adaptive
 multidimensional integration based on rank-1 lattices," Monte Carlo 
 and Quasi-Monte Carlo  Methods: MCQMC, Leuven, Belgium, April 2014 
 (R. Cools and D. Nuyens, eds.), Springer Proceedings in Mathematics 
 and Statistics, vol. 163, Springer-Verlag, Berlin, 2016, arXiv:1411.1966,
 pp. 407-422.
 (describes cubLattice_g.m)
+
+Daniel S. Katz, Sou-Cheng T. Choi, Hilmar Lapp, Ketan Maheshwari,
+Frank Loffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr,
+James Hetherington, James Howison, Shel Swenson, Gabrielle D. Allen,
+Anne C. Elster, Bruce Berriman, Colin Venters, "Summary of the First
+Workshop On Sustainable Software for Science: Practice And Experiences
+(WSSSPE1)," Journal of Open Research Software, Volume 2, Number 1, e6,
+pp. 1-21, 2014.
+(discusses practice and challenges in Sustainable Software for Science)
 
 Da Li, "Reliable Quasi-Monte Carlo with Control Variates," Master's thesis, 
 Illinois Institute of Technology, 2016. 

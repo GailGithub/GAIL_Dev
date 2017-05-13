@@ -32,7 +32,8 @@
 %% Demos
 %
 % <html>
-% <a href="demo_cubSobol_g.html">Demos for cubSobol_g</a>
+% <a href="demo_funappx_g.html">Demos for funappx_g</a>
+% <p><a href="demo_cubSobol_g.html">Demos for cubSobol_g</a>
 % </html>
 %
 %% Website

@@ -25,7 +25,7 @@ axis tight
 
 %% Plot of the apprroximation errors  
 % The following plot shows that all pointwise absolute errors are less than the
-% default tolerance of \(10^{-6}\).
+% default tolerance of \(10^{-2}\).
 figure;
 plot(x,abs(f(x)-q(x))); 
 axis tight
