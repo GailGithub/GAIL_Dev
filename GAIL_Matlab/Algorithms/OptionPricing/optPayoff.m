@@ -5,10 +5,10 @@ classdef optPayoff < assetPath
     %
     % Example 1
     % >> obj = optPayoff
-    % obj =
+    % obj =***
     %   optPayoff with properties:
     %
-    %                   inputType: 'n'
+    %                       inputType: 'n'
     %          timeDim_timeVector: [1 2 3]
     %           timeDim_startTime: 1
     %             timeDim_endTime: 3
@@ -21,8 +21,9 @@ classdef optPayoff < assetPath
     %         assetParam_pathType: 'GBM'
     %        assetParam_initPrice: 10
     %         assetParam_interest: 0.0100
+    %        assetParam_meanShift: 0
     %       assetParam_volatility: 0.5000
-    %           assetParam_nAsset: 1      
+    %           assetParam_nAsset: 1
     %         payoffParam_optType: {'euro'}
     %     payoffParam_putCallType: {'call'}
     %          payoffParam_strike: 10
