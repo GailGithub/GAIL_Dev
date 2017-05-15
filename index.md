@@ -13,10 +13,15 @@ GAIL is a suite of algorithms for integration problems in one and many dimension
 <a href="http://math.iit.edu/~openscholar/sites/default/files/meshfree/files/gail_2_1_1.zip"><img hspace="40" src="https://raw.githubusercontent.com/harryzyz/GAILPubPic/master/downloadzip.png">                                          <a href="http://math.iit.edu/~openscholar/sites/default/files/meshfree/files/downloadinstallgail_2_1_2.m"><img hspace="5" src="https://raw.githubusercontent.com/harryzyz/GAILPubPic/master/downloadscript.png">
 
 ### News
+
   * GAIL version 2.1 is released on March 14, 2015 (Super Pi Day and Albert Einstein's Birthday)
+  
   * GAIL's GitHub repository is open to public at https://github.com/GailGithub/GAIL_Dev starting February 6, 2015.
+  
   * GAIL version 2.0 is released on November 1, 2014 (All Saints' Day).
+  
   * GAIL version 1.3 is released on February 14, 2014 (Valentine's Day, for our love of the package). 
+  
   * GAIL version 1.0 is released on September 3, 2013. 
 
 If you find GAIL helpful in your work, please support us by citing the
@@ -36,6 +41,7 @@ following papers and software.
 
 
 ### Papers and Reports
+
 2015
   *   Xuan Zhou and Fred J. Hickernell, <em><a href="http://arxiv.org/abs/1411.0790">Tractability of function approximation with product kernels</a></em>, Monte Carlo and Quasi-Monte Carlo Methods 2014 (R. Cools and D. Nuyens, eds.), Springer-Verlag, Berlin, 2015. Accepted.
 
@@ -59,6 +65,7 @@ following papers and software.
   * Daniel S. Katz, Sou-Cheng T. Choi, Hilmar Lapp, Ketan Maheshwari, Frank Löffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr, James Hetherington, James Howison, Shel Swenson, Gabrielle D. Allen, Anne C. Elster, Bruce Berriman, Colin Venters, <em><a href="http://openresearchsoftware.metajnl.com/article/view/jors.an">Summary of the First Workshop on Sustainable Software for Science: Practice and Experiences (WSSSPE1)</a></em>,  Journal of Open Research Software, 2014 
 
 ### Courses and Notes
+
 Sou-Cheng T. Choi and Fred J. Hickernell, <em>IIT MATH-573 Reliable Mathematical Software</em> [Course Slides], Illinois Institute of Technology, Chicago, IL, 2013.  (<a href ="http://mypages.iit.edu/~schoi32/MATH573Slides.pdf">slides</a>)
 
 ### Presentations and Slides
