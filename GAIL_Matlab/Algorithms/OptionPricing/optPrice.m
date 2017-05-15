@@ -7,10 +7,10 @@ classdef optPrice < optPayoff
     %
     % Example 1
     % >> obj = optPrice
-    % obj =
+    % obj =***
     %    optPrice with properties:
     % 
-    %                   inputType: 'n'
+    %                       inputType: 'n'
     %          timeDim_timeVector: [1 2 3]
     %           timeDim_startTime: 1
     %             timeDim_endTime: 3
@@ -23,6 +23,7 @@ classdef optPrice < optPayoff
     %         assetParam_pathType: 'GBM'
     %        assetParam_initPrice: 10
     %         assetParam_interest: 0.0100
+    %        assetParam_meanShift: 0
     %       assetParam_volatility: 0.5000
     %           assetParam_nAsset: 1
     %         payoffParam_optType: {'euro'}
@@ -46,7 +47,7 @@ classdef optPrice < optPayoff
       priceParam = struct('cubMethod', 'IID_MC', ... %type of pricing scheme
          'absTol', 1, ... %absolute tolerance
          'relTol', 0, ... %relative tolerance
-         'alpha', 0.01) %alpha = uncertainty
+         'alpha', 0.01) %alpha = uncertainty         
       
    end
    

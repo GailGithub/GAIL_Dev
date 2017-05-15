@@ -5,10 +5,10 @@ classdef optPayoff < assetPath
     %
     % Example 1
     % >> obj = optPayoff
-    % obj =
+    % obj =***
     %   optPayoff with properties:
     %
-    %                   inputType: 'n'
+    %                       inputType: 'n'
     %          timeDim_timeVector: [1 2 3]
     %           timeDim_startTime: 1
     %             timeDim_endTime: 3
@@ -21,8 +21,9 @@ classdef optPayoff < assetPath
     %         assetParam_pathType: 'GBM'
     %        assetParam_initPrice: 10
     %         assetParam_interest: 0.0100
+    %        assetParam_meanShift: 0
     %       assetParam_volatility: 0.5000
-    %           assetParam_nAsset: 1      
+    %           assetParam_nAsset: 1
     %         payoffParam_optType: {'euro'}
     %     payoffParam_putCallType: {'call'}
     %          payoffParam_strike: 10
@@ -146,7 +147,7 @@ classdef optPayoff < assetPath
         
         % Generate payoffs of options
         function [payoffs,more] = genOptPayoffs(obj,val)
-            paths = genPaths(obj,val);
+            [paths, likelihoodRatio] = genPaths(obj,val);
             nOptType = numel(obj.payoffParam.optType);
             nPaths = size(paths,1);
             tempPay = zeros(nPaths, nOptType);
@@ -372,10 +373,12 @@ classdef optPayoff < assetPath
                     more.exbound = [zeros(1, ntimeDim) obj.payoffParam.strike]; %initialize excercise boundary
                     for i = ntimeDim-1:-1:1
                         inmoney = find(paths(:,i)<strike(j));
+                        regwt = sqrt(likelihoodRatio(inmoney));
                         if ~isempty(inmoney)
                             regmat=[ones(numel(inmoney),1) ...
                                 basis(paths(inmoney,i)/obj.assetParam.initPrice)];
-                            hold=regmat*(regmat\cashflow(inmoney));
+                           % hold=regmat*(regmat\cashflow(inmoney));%.*lhr;
+                           hold=regmat*(bsxfun(@times,regwt,regmat)\(regwt.*cashflow(inmoney)));
                             shouldex=inmoney(putpayoff(inmoney,i)>hold); %which paths should be excercised now
                             if ~isempty(shouldex); %some paths should be exercise
                                 cashflow(shouldex)=putpayoff(shouldex,i); %updated cashflow
@@ -547,8 +550,11 @@ classdef optPayoff < assetPath
                         .* exp(- obj.assetParam.interest .* obj.timeDim.endTime);
                 end
             end
-            
-            payoffs = tempPay;
+            if likelihoodRatio == ones(size(likelihoodRatio)) % no important sampling
+                payoffs = tempPay;
+            else % with importance sampling
+                payoffs = tempPay.*likelihoodRatio;
+            end
         end
         
         function val = get.exactPrice(obj)
