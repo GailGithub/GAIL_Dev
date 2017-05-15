@@ -26,7 +26,7 @@
 %
 %
 % >> f = @(x) x.^2; in_param = gail.cubMC_g_in_param(f)
-%    in_param = ***
+%    in_param =***
 %          measure: 'uniform'
 %           abstol: 0.0100
 %           reltol: 0.1000
@@ -43,7 +43,7 @@
 %
 %  To get a struct:
 %  >> in_param = gail.cubMC_g_in_param(@(x) x.^2);  out_param = in_param.toStruct()
-%  out_param = 
+%  out_param =***
 %          measure: 'uniform'
 %           abstol: 0.0100
 %           reltol: 0.1000
@@ -60,7 +60,7 @@
 %
 % To get a structure with selected fields (and ignore properties that do not exist):
 % >> in_param = gail.cubMC_g_in_param(@(x) x.^2);  out_param = in_param.toStruct({'f','measure','hyperbox','nonexistent'})
-%  out_param =
+%  out_param =***
 %            f: @(x)x.^2
 %      measure: 'uniform'
 %     hyperbox: [2x1 double]
@@ -68,7 +68,7 @@
 %
 % >> f=@(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [0 0; 1 1];
 % >> in_param = gail.cubMC_g_in_param(f,hyperbox,'measure','uniform','abstol',1e-3,'reltol',0)
-%    in_param = ***
+%    in_param =***
 %          measure: 'uniform'
 %           abstol: 1.0000e-03
 %           reltol: 0
@@ -85,7 +85,7 @@
 %
 % >> f=@(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [-inf -inf;inf inf];
 % >> in_param = gail.cubMC_g_in_param(f,hyperbox,'normal',0,1e-2)
-%    in_param = ***
+%    in_param =***
 %          measure: 'normal'
 %           abstol: 0
 %           reltol: 0.0100
