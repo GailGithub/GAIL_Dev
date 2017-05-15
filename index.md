@@ -13,7 +13,8 @@ GAIL is a suite of algorithms for integration problems in one and many dimension
 <a href="http://math.iit.edu/~openscholar/sites/default/files/meshfree/files/gail_2_1_1.zip"><img hspace="40" src="https://raw.githubusercontent.com/harryzyz/GAILPubPic/master/downloadzip.png"></a>
 <a href="http://math.iit.edu/~openscholar/sites/default/files/meshfree/files/downloadinstallgail_2_1_2.m"><img hspace="5" src="https://raw.githubusercontent.com/harryzyz/GAILPubPic/master/downloadscript.png"></a>
 
-## News :laughing:
+
+### News
 
   * GAIL version 2.1 is released on March 14, 2015 (Super Pi Day and Albert Einstein's Birthday)
   
@@ -26,6 +27,7 @@ GAIL is a suite of algorithms for integration problems in one and many dimension
   * GAIL version 1.0 is released on September 3, 2013. 
 
 If you find GAIL helpful in your work, please support us by citing the following papers and software.
+
 
 ### Free GAIL Software
 
@@ -219,9 +221,11 @@ Univariate Function Minimization_</a>
 
 2011
 * <a href="http://galton.uchicago.edu/about/whatsnew.shtml">_Recent Developments in Quasi-Monte Carlo Methods_</a>, Summer Seminar Series, Department of Statistics, University of Chicago, Chicago, IL, Sep 6, 2011. 
-<hr/>
+
 
 ### Events of Interest
+
+
 * <a href="http://www.ams.org/meetings/sectional/2219_program_ss25.html">Special Session on Frontiers in Computational Mathematics</a>, <a href="http://www.ams.org/meetings/sectional/2219_program.html">AMS Central Fall Sectional Meeting</a>, Chicago, IL, Oct 3, 2015</a>
 
 * <a href="http://wssspe.researchcomputing.org.uk/wssspe3/">3rd Workshop on Sustainable Software for Science: Practice and Experiences (WSSSPE3)</a>, Boulder, CO, September 28-29, 2015.
@@ -243,9 +247,11 @@ Univariate Function Minimization_</a>
 * Review and search <a href="http://code.google.com/p/gail/issues/list">Issues</a> for your questions about GAIL. If it does not help, you may file a <a href="http://code.google.com/p/gail/issues/entry">new issue ticket</a> and we will respond as soon as we can.  
 * Email questions and comments to <a href="mailto:gail-users@googlegroups.com" rel="nofollow">gail-users@googlegroups.com</a>. 
 
+
 ### To Help
  
 The GAIL routines come with comprehensive online documentation and their implementation is driven by rigorous unit tests. If you would like to contribute to the software development or documentation of the library, please contact <a href="mailto:gail-users@googlegroups.com">gail-users@googlegroups.com</a>  
+
 
 ### Acknowledgement
 
