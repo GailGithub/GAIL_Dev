@@ -1,6 +1,6 @@
 ### About Guaranteed Automatic Integration Library (GAIL)
 
-<p><p align="center"> <img src="https://raw.githubusercontent.com/GailGithub/GAIL_Dev/gh-pages/logoGAIL.jpg" width="18%"align="middle" alt="Logo"><img> </p> </p>
+<p><p align="center"> <img src="https://raw.githubusercontent.com/GailGithub/GAIL_Dev/gh-pages/logoGAIL.jpg" width="18%" align="middle" alt="Logo"> </p> </p>
 
 GAIL is a suite of algorithms for integration problems in one and many dimensions, and whose answers are guaranteed to be correct.
 
