@@ -33,7 +33,10 @@ if ~exist('testAll','var')
     testAll = false;
 end
 
+%gpuArray = @(x) x;
+%gather = @(x) x;
 tstart = tic; %start the clock
+
 mmin = 10;
 mmax = 23;
 mvec = mmin:mmax;
@@ -45,22 +48,26 @@ shift = rand(1,d);
 % Choose a periodization transformation
 ff = PeriodTx(f, ptransform);
 
+
 %% plot MLE loss function
 % if exist(fName,'var') and exist(figSavePath,'var')
 % plotMLE_Loss(ff, mvec, figSavePath, fName, d, order, ptransform)
 % end
+
+
 for ii = 1:numM
     m = mvec(ii);
-    n = 2^m
+    n = 2^m;
     
     %Update function values
     if ii == 1
         xun = lattice_gen(n,d,true);
         x = mod(bsxfun(@plus,xun,shift),1);  % shifted
-        fx = ff(x); ftilde = fft(bitrevorder(fx))/n;
+        
+        %% fx = gpuArray(ff(x)); ftilde = fft(bitrevorder(fx))/n;
         
         %% Efficient FFT computation algorithm
-        ftildeNew=ff(x); %evaluate integrand
+        ftildeNew=gpuArray(ff(x)); %evaluate integrand
         
         %% Compute initial FFT
         for l=0:mmin-1
@@ -90,6 +97,7 @@ for ii = 1:numM
             xun = [xun;xunnew];
             x = [x;xnew];
         end
+        
         %% fnew = gpuArray(ff(xnew));
         %fx = reshape([fx fnew]',n,1);
         %% fx = [fx;fnew];
@@ -173,7 +181,7 @@ out.mvec = mvec;
 out.aMLEAll = aMLEAll;
 end
 
-function [loss,Ktilde,RKHSnormSq,K] = MLEKernel(a,xun,ftilde,order)
+function [K, Ktilde] = kernel(xun,order,a)
 
 constMult = -(-1)^(order/2)*(2*pi)^order/factorial(order);
 if order == 2
@@ -184,30 +192,63 @@ else
     error('Bernoulli order not implemented !');
 end
     K = prod(1 + a*constMult*bernPloy(xun),2);
-%Ktilde = real(fft_DIT(K));
+
+    %Ktilde = abs(fft_DIT(K));
     % matlab's builtin fft much faster and accurate
-    Ktilde = real(fft((K)))/length(K);
+    Ktilde = abs(fft((K)))/length(K);
 
+end
 
-    if any(Ktilde==0)
+function [loss,Ktilde,RKHSnormSq,K] = MLEKernel(a,xun,ftilde,order)
+    
+    if order==4
+        [K, Ktilde] = kernel(xun,order,a);
+        [K2, Ktilde2] = kernel(xun,order/2,sqrt(a));
+        
+        KtildeSq = (Ktilde2);
+        % Ktappx = (Ktilde2).^2; figure(51);loglog(Ktilde); figure(52); loglog(Ktappx)
+        if 0
+            K2 = bitrevorder(K2);
+            v = K2';
+            KK2 =  toeplitz([v(1) fliplr(v(2:end))], v);
+            KK2_new = toeplitz(K2);
+            if any(any(KK2~=KK2_new))
+                fprintf('toeplitz wrong !!\n');
+            end
+            n = length(K2);
+            K = K2'*KK2/n;
+        else
+        
+        end
+        %Ktilde = KtildeSq.^2;
+    elseif order==2
+        [K, Ktilde] = kernel(xun,order,a);
+        KtildeSq = sqrt(Ktilde);
+    else
+        error('Unsupported Bernoulli polyn order !');
+    end
+
+    %Ktilde = real(fft(K-1))/length(K); Ktilde(1) = Ktilde(1) + 1; % this is done to improve accuracy, to reduce zero values
+
+    if any(KtildeSq==0)
         % fprintf('Ktilde has zero vals \n');
     end
 
-
 %RKHSnorm = mean(abs(ftilde).^2./Ktilde);
 %RKHSnorm = mean(abs(ftilde(Ktilde~=0)).^2./Ktilde(Ktilde~=0));
-RKHSnormSq = mean(abs(ftilde(Ktilde~=0))./sqrt(Ktilde(Ktilde~=0)));
+    RKHSnormSq = mean(abs(ftilde(KtildeSq~=0))./(KtildeSq(KtildeSq~=0))); 
 
 if isnan(RKHSnormSq)
     fprintf('RKHSnormSq NaN \n');
 end
-loss = mean(log(Ktilde(Ktilde~=0))) + 2*log(RKHSnormSq);
+    loss = mean(log(Ktilde)) + 2*log(RKHSnormSq);
 
 if isnan(loss)
     fprintf('loss NaN \n');
 end
+
 a;
-ftilde(1)/Ktilde(1);
+    %ftilde(1)/Ktilde(1);
 end
 
 function f = PeriodTx(fInput, ptransform)
@@ -232,12 +273,14 @@ elseif strcmp(ptransform,'none')
 else
     error('Error: Periodization transform %s not implemented', ptransform);
 end
+
 end
 
 function xlat = lattice_gen(n,d,firstBatch)
     z = [1, 364981, 245389, 97823, 488939, 62609, 400749, 385317, 21281, 223487]; % generator from Hickernell's paper
     %z = [1, 433461, 315689, 441789, 501101, 146355, 88411, 215837, 273599]; %generator
     z = z(1:d);
+
 
     if false
         if firstBatch==true
@@ -282,19 +325,19 @@ end
 
 % fft with deimation in time i.e, input is already in 'bitrevorder'
 function y = fft_DIT( y )
-nmmin = log2(length(y));
-%y = bitrevorder(y);
-for l=0:nmmin-1
-    nl=2^l;
-    nmminlm1=2^(nmmin-l-1);
-    ptind=repmat([true(nl,1); false(nl,1)],nmminlm1,1);
-    coef=exp(-2*pi()*sqrt(-1)*(0:nl-1)'/(2*nl));
-    coefv=repmat(coef,nmminlm1,1);
-    evenval=y(ptind);
-    oddval=y(~ptind);
-    y(ptind)=(evenval+coefv.*oddval)/2;
-    y(~ptind)=(evenval-coefv.*oddval)/2;
-end
+    nmmin = log2(length(y));
+    %y = bitrevorder(y);
+    for l=0:nmmin-1
+        nl=2^l;
+        nmminlm1=2^(nmmin-l-1);
+        ptind=repmat([true(nl,1); false(nl,1)],nmminlm1,1);
+        coef=exp(-2*pi()*sqrt(-1)*(0:nl-1)'/(2*nl));
+        coefv=repmat(coef,nmminlm1,1);
+        evenval=y(ptind);
+        oddval=y(~ptind);
+        y(ptind)=(evenval+coefv.*oddval)/2;
+        y(~ptind)=(evenval-coefv.*oddval)/2;
+    end
 end
 
 
@@ -339,4 +382,5 @@ function minTheta = plotMLE_Loss(ff, mvec, figSavePath, fName, d, order, ptransf
     hold on; plot(exp(lnTheta(Index)),minVal, '.');
     
     minTheta = exp(lnTheta(Index));
+
 end
