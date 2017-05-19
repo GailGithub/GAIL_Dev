@@ -33,6 +33,10 @@ if ~exist('testAll','var')
     testAll = false;
 end
 
+
+%gpuArray = @(x) x;
+%gather = @(x) x;
+
 tstart = tic; %start the clock
 
 mmin = 10;
@@ -183,7 +187,7 @@ out.mvec = mvec;
 out.aMLEAll = aMLEAll;
 end
 
-function [loss,Ktilde,RKHSnormSq,K] = MLEKernel(a,xun,ftilde,order)
+function [K, Ktilde] = kernel(xun,order,a)
 
     constMult = -(-1)^(order/2)*(2*pi)^order/factorial(order);
     if order == 2
@@ -194,32 +198,65 @@ function [loss,Ktilde,RKHSnormSq,K] = MLEKernel(a,xun,ftilde,order)
         error('Bernoulli order not implemented !');
     end
     K = prod(1 + a*constMult*bernPloy(xun),2);
-
-    %Ktilde = real(fft_DIT(K));
+    
+    
+    %Ktilde = abs(fft_DIT(K));
     % matlab's builtin fft much faster and accurate
-    Ktilde = real(fft((K)))/length(K);
+    Ktilde = abs(fft((K)))/length(K);
 
+end
+
+function [loss,Ktilde,RKHSnormSq,K] = MLEKernel(a,xun,ftilde,order)
+    
+    if order==4
+        [K, Ktilde] = kernel(xun,order,a);
+        [K2, Ktilde2] = kernel(xun,order/2,sqrt(a));
+        
+        KtildeSq = (Ktilde2);
+        % Ktappx = (Ktilde2).^2; figure(51);loglog(Ktilde); figure(52); loglog(Ktappx)
+        if 0
+            K2 = bitrevorder(K2);
+            v = K2';
+            KK2 =  toeplitz([v(1) fliplr(v(2:end))], v);
+            KK2_new = toeplitz(K2);
+            if any(any(KK2~=KK2_new))
+                fprintf('toeplitz wrong !!\n');
+            end
+            n = length(K2);
+            K = K2'*KK2/n;
+        else
+        
+        end
+        %Ktilde = KtildeSq.^2;
+    elseif order==2
+        [K, Ktilde] = kernel(xun,order,a);
+        KtildeSq = sqrt(Ktilde);
+    else
+        error('Unsupported Bernoulli polyn order !');
+    end
+    
+    
     %Ktilde = real(fft(K-1))/length(K); Ktilde(1) = Ktilde(1) + 1; % this is done to improve accuracy, to reduce zero values
 
-    if any(Ktilde==0)
+    if any(KtildeSq==0)
         % fprintf('Ktilde has zero vals \n');
     end
 
     %RKHSnorm = mean(abs(ftilde).^2./Ktilde);
     %RKHSnorm = mean(abs(ftilde(Ktilde~=0)).^2./Ktilde(Ktilde~=0));
-    RKHSnormSq = mean(abs(ftilde(Ktilde~=0))./sqrt(Ktilde(Ktilde~=0))); 
+    RKHSnormSq = mean(abs(ftilde(KtildeSq~=0))./(KtildeSq(KtildeSq~=0))); 
 
     if isnan(RKHSnormSq)
         fprintf('RKHSnormSq NaN \n');
     end
-    loss = mean(log(Ktilde(Ktilde~=0))) + 2*log(RKHSnormSq);
+    loss = mean(log(Ktilde)) + 2*log(RKHSnormSq);
 
     if isnan(loss)
         fprintf('loss NaN \n');
     end
 
     a;
-    ftilde(1)/Ktilde(1);
+    %ftilde(1)/Ktilde(1);
 end
 
 function f = PeriodTx(fInput, ptransform)
@@ -354,3 +391,4 @@ function minTheta = plotMLE_Loss(ff, mvec, figSavePath, fName, d, order, ptransf
     minTheta = exp(lnTheta(Index));
 
 end
+
