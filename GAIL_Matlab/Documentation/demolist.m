@@ -11,7 +11,9 @@
 %
 %
 %% 1-D minimization
-%
+% <html>
+% <a href="demo_funmin_g.html">funmin_g</a>
+% </html>
 %
 %
 %% High dimension integration

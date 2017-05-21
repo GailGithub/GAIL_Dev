@@ -17,6 +17,7 @@
     </tocitem>
     <tocitem target="demolist.html" image="HelpIcon.EXAMPLES">Demos
             <tocitem target="demo_funappx_g.html">funappx_g</tocitem>
+            <tocitem target="demo_funmin_g.html">funmin_g</tocitem>
             <tocitem target="demo_cubSobol_g.html">cubSobol_g</tocitem>
     </tocitem>
 </tocitem>

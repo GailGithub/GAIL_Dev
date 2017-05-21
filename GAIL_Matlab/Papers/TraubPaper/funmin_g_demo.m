@@ -11,7 +11,7 @@ function [intlen,fval1,fval2] = funmin_g_demo(fmin, out_param)
 % >> funmin_g_demo(fmin, out)
 %    intlen = ***e-04 fval1 = ***e-16 fval2 = ***e-16
 %
-
+LatexInterpreter;
 a = out_param.a;
 b = out_param.b;
 f = out_param.f;
@@ -19,7 +19,9 @@ h = 1.0/out_param.nmax;
 
 %h = 0.00001;
 x = a:h:b;
+figure;
 plot(x,f(x));
+xlabel('$x$')
 
 hold on;
 %plot(out_param.output_x, fmin, 'ro', 'MarkerSize', 12,'LineWidth',2)
@@ -32,5 +34,7 @@ if ~isempty(out_param.intervals)
    end
 end
 hold off;
+
+legend('$f$', 'minimum from funmin_g')
 
 
