@@ -35,6 +35,6 @@ if ~isempty(out_param.intervals)
 end
 hold off;
 
-legend('$f$', 'minimum from funmin_g')
+legend('$f$', 'minimum from \texttt{funmin\_g}')
 
 
