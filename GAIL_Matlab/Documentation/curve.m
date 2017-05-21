@@ -11,19 +11,21 @@ close all; clear all; format compact; format short;
 f = @(x) x.^2 .* sin((2*pi)./x.^2);
 
 %% Function approximation
-% We use funappx_g to approximate \(f\) over the interval
-% \([a,b]\):
+% We use funappx_g to approximate \(f\) over the interval \([a,b]\), where
+% \(a = 0.1)\) and \(b = 2.5\):
 a = 0.1;
 b = 2.5;
 [q,out] = funappx_g(f, a, b);
 
-%% Plot of the approximant 
-% We plot out \(q(x)\) below:
+%% Plots of the function and approximant 
+% We plot \(f(x)\) and the approximant returned by funappx_g, \(q(x)\),
+% below:
 figure;
 x = a:1e-6:b;
-plot(x,q(x)); 
+plot(x,f(x),'r.', x,q(x),'g-'); 
 xlabel('$x$','interpreter','latex')
-ylabel('approximant')
+h_legend=legend('$f(x)$', '$q(x)$')
+set(h_legend,'interpreter','latex');
 axis tight
 
 %% Plot of the apprroximation errors  
@@ -34,6 +36,10 @@ semilogy(x,abs(f(x)-q(x)));
 xlabel('$x$','interpreter','latex')
 ylabel('absolute error')
 axis tight
+max_abs_error = max(abs(f(x)-q2(x)))
+
+[fmin,outmin] = funmin_g(f, a, b);
+ 
 
 %% A slightly different example
 % If we changes \(a\) to a smaller number such as \(10^{-2}\), then even if
@@ -50,6 +56,7 @@ semilogy(x,abs(f(x)-q2(x)));
 xlabel('$x$','interpreter','latex')
 ylabel('absolute error')
 axis tight
+max_abs_error = max(abs(f(x)-q2(x)))
 
 %% A fix
 % We can widen the cone by increasing the number of initial points given to
@@ -66,6 +73,7 @@ semilogy(x,abs(f(x)-q3(x)));
 xlabel('$x$','interpreter','latex')
 ylabel('absolute error')
 axis tight
+max_abs_error = max(abs(f(x)-q3(x)))
  
 
 
