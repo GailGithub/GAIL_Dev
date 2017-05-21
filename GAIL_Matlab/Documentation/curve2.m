@@ -1,9 +1,9 @@
 %% CURVE 
-% Find the minimum of a highly fluctuating curve using funmin_g.
+% Find the minimum of a highly oscillating curve using funmin_g.
 
 %% Function definition
 %
-% Define a highly fluctuating function as follows:
+% Define a highly oscillating function as follows:
 %
 % \[ f(x) = sin (10 \pi x^4 ) - x \] 
 % 
@@ -18,7 +18,7 @@ a = 0; b = 2;
 
 %% Plots of the function and its minimum 
 % We plot \(f(x)\) and the approximate minimum returned by funmin_g below.
-% It is obvious that the apprxomiation is not satisfactory. We compute the
+% It is obvious that the approximation is not satisfactory. We compute the
 % error by comparing to the true minimum returned by the Mathematica
 % command, "N[Minimize[{Sin[10 Pi x^4] - x, 0 <= x <= 2}, {x}],15]".  The
 % reason is probably that this function is not contained in the cone of
