@@ -24,7 +24,7 @@ figure;
 x = a:1e-6:b;
 plot(x,f(x),'r.', x,q(x),'g-'); 
 xlabel('$x$','interpreter','latex')
-h_legend=legend('$f(x)$', '$q(x)$')
+h_legend=legend('$f(x)$', '$q(x)$');
 set(h_legend,'interpreter','latex');
 axis tight
 
@@ -36,7 +36,7 @@ semilogy(x,abs(f(x)-q(x)));
 xlabel('$x$','interpreter','latex')
 ylabel('absolute error')
 axis tight
-max_abs_error = max(abs(f(x)-q2(x)))
+max_abs_error = max(abs(f(x)-q(x)))
 
 [fmin,outmin] = funmin_g(f, a, b);
  
@@ -74,8 +74,3 @@ xlabel('$x$','interpreter','latex')
 ylabel('absolute error')
 axis tight
 max_abs_error = max(abs(f(x)-q3(x)))
- 
-
-
-
- 
