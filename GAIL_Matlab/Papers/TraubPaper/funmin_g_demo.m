@@ -17,25 +17,20 @@ b = out_param.b;
 f = out_param.f;
 h = 1.0/out_param.nmax;
 
-h = 0.00001;
+%h = 0.00001;
 x = a:h:b;
 plot(x,f(x));
 
 hold on;
-plot(out_param.output_x, fmin, 'ro', 'MarkerSize', 12,'LineWidth',2)
-%[m,n]=size(out_param.intervals);
-%if ~isempty(out_param.intervals)
-    %for i=1:n
-        %if out_param.volumeX > out_param.TolX,
-            %intlen = out_param.intervals(2,i) - out_param.intervals(1,i);
-            %fval1 = f(out_param.intervals(2,i)) - fmin;
-            %fval2 = f(out_param.intervals(1,i)) - fmin;
-            %plot(out_param.intervals(1,i), fmin, 'r<', 'MarkerSize', 12,'LineWidth',2)
-            %plot(out_param.intervals(2,i), fmin, 'r>', 'MarkerSize', 12,'LineWidth',2)
-        %end
-        %plot(mean(out_param.intervals(:,i)),  fmin, 'ro', 'MarkerSize', 12,'LineWidth',2)
-    %end
-%end
+%plot(out_param.output_x, fmin, 'ro', 'MarkerSize', 12,'LineWidth',2)
+[m,n]=size(out_param.intervals);
+if ~isempty(out_param.intervals)
+   if (n>1)
+     plot([mean(out_param.intervals(:,1)), mean(out_param.intervals(:,n))], [fmin, fmin], 'ro', 'MarkerSize', 12,'LineWidth',2)
+   else
+    plot(mean(out_param.intervals(:,1)),  fmin, 'ro', 'MarkerSize', 12,'LineWidth',2)
+   end
+end
 hold off;
 
 
