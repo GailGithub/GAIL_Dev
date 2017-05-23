@@ -84,8 +84,6 @@ classdef stochProcess < handle & matlab.mixin.CustomDisplay
             obj.timeDim.timeVector = val.timeVector(:)'; %row
               MATLABVERSION = gail.matlab_version;
               if MATLABVERSION <= 8.1
-                  validateattributes(obj.timeDim.timeVector, ...
-                      {'numeric'})
                   if (length(find(diff(obj.timeDim.timeVector)<=0)) > 0)
                        error('Need obj.timeDim.timeVector with increasing values.')               
                   end
