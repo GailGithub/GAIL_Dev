@@ -15,6 +15,8 @@ GAIL is a suite of algorithms for integration problems in one and many dimension
 
 
 ## News
+* GAIL : <a href="https://science.iit.edu/sites/science/files/elements/science/pdfs/SciLetters-W2016-Newsletter.pdf ">Press about GAIL: Reliable Mathematical Software</a>
+
 * GAIL version 2.1 is released on March 14, 2015 (Super Pi Day and Albert Einstein's Birthday)
 
 * GAIL's GitHub repository is open to public at https://github.com/GailGithub/GAIL_Dev starting February 6, 2015.
@@ -69,6 +71,10 @@ If you find GAIL helpful in your work, please support us by citing the following
 Sou-Cheng T. Choi and Fred J. Hickernell, <em>IIT MATH-573 Reliable Mathematical Software</em> [Course Slides], Illinois Institute of Technology, Chicago, IL, 2013.  (<a href ="http://mypages.iit.edu/~schoi32/MATH573Slides.pdf">slides</a>)
 
 ### Presentations and Slides
+2017
+
+*  <a href="https://www.slideshare.net/fjhickernell">_Fred Hickernell's slideshare_</a>
+
 
 2016 
 
@@ -224,7 +230,7 @@ Univariate Function Minimization_</a>
 ### Events of Interest
 
 
-* <a href="http://www.ams.org/meetings/sectional/2219_program_ss25.html">Special Session on Frontiers in Computational Mathematics</a>, <a href="http://www.ams.org/meetings/sectional/2219_program.html">AMS Central Fall Sectional Meeting</a>, Chicago, IL, Oct 3, 2015</a>
+* <a href="http://www.ams.org/meetings/sectional/2219_program_ss25.html">Special Session on Frontiers in Computational Mathematics</a>, <a href="http://www.ams.org/meetings/sectional/2219_program.html">AMS Central Fall Sectional Meeting</a>, Chicago, IL, Oct 3, 2015
 
 * <a href="http://wssspe.researchcomputing.org.uk/wssspe3/">3rd Workshop on Sustainable Software for Science: Practice and Experiences (WSSSPE3)</a>, Boulder, CO, September 28-29, 2015.
 
