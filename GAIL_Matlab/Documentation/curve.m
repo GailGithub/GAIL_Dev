@@ -1,5 +1,5 @@
 %% CURVE 
-% Approximate a highly fluctuating curve using funappx_g.
+% Approximate a highly fluctuating curve using *funappx_g*.
 
 %% Function definition
 %
@@ -11,14 +11,14 @@ close all; clear all; format compact; format short;
 f = @(x) x.^2 .* sin((2*pi)./x.^2);
 
 %% Function approximation
-% We use funappx_g to approximate \(f\) over the interval \([a,b]\), where
-% \(a = 0.1)\) and \(b = 2.5\):
+% We use *funappx_g* to approximate \(f\) over the interval \([a,b]\), where
+% \(a = 0.1\) and \(b = 2.5\):
 a = 0.1;
 b = 2.5;
 [q,out] = funappx_g(f, a, b);
 
 %% Plots of the function and approximant 
-% We plot \(f(x)\) and the approximant returned by funappx_g, \(q(x)\),
+% We plot \(f(x)\) and the approximant returned by *funappx_g*, \(q(x)\),
 % below:
 figure;
 x = a:1e-6:b;
@@ -38,12 +38,9 @@ ylabel('absolute error')
 axis tight
 max_abs_error = max(abs(f(x)-q(x)))
 
-[fmin,outmin] = funmin_g(f, a, b);
- 
-
 %% A slightly different example
 % If we changes \(a\) to a smaller number such as \(10^{-2}\), then even if
-% we relax the tolerance to \(10^{-4}\), funappx_g may still return an
+% we relax the tolerance to \(10^{-4}\), *funappx_g* may still return an
 % approximant that fails to meet the tolerance. The reason is that \(f\) on
 % \((a,b)\) is no longer in the cone of functions conducive for successful
 % approximation.
@@ -60,7 +57,7 @@ max_abs_error = max(abs(f(x)-q2(x)))
 
 %% A fix
 % We can widen the cone by increasing the number of initial points given to
-% funappx_g. 
+% *funappx_g*. 
 inparam.a = a;
 inparam.b = b;
 inparam.abstol = abstol;
