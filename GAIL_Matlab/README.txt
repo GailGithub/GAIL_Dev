@@ -27,12 +27,6 @@ Number 1, e22, pp. 1-7, 2014.
 (describes principles of Reliable Reproducible Research and Supportable 
 Scientific Software)
 
-Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible Research via 
-Supportable Scientific Software," Journal of Open Research Software, Volume 2, 
-Number 1, e22, pp. 1-7, 2014.
-(describes principles of Reliable Reproducible Research and Supportable 
-Scientific Software)
-
 Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang, and Xuan Zhou, GAIL: 
 Guaranteed Automatic Integration Library (Version 2.2) [MATLAB Software],
@@ -73,7 +67,7 @@ Springer Proceedings in Mathematics and Statistics, vol. 163,
 Springer-Verlag, Berlin, 2016, arXiv:1410.8615 [math.NA], pp. 367-383.
 (describes cubSobol_g.m)
 
-F. J. Hickernell, Ll. A. Jim\'enez Rugama, and D. Li, “Adaptive 
+F. J. Hickernell, Ll. A. Jimenez Rugama, and D. Li, “Adaptive 
 quasi-{M}onte {C}arlo methods, 2017+, submitted for publication, 
 arXiv:1702.01491 [math.NA].
 
