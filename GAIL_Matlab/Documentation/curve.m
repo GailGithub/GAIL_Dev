@@ -5,7 +5,7 @@
 %
 % Define a highly fluctuating function as follows:
 %
-% \[ f(x) = x^2 sin (\frac{2 \pi}{ x^2} ). \] 
+% \[ f(x) = x^2 \sin \biggl(\frac{2 \pi}{ x^2} \biggr). \] 
 % 
 close all; clear all; format compact; format short;
 f = @(x) x.^2 .* sin((2*pi)./x.^2);
