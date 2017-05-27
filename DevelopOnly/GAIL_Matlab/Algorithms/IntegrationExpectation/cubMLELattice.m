@@ -1,4 +1,5 @@
-function [muhat,out]=cubMLELattice(f,d,absTol,relTol,order,ptransform,testAll,figSavePath,fName)
+function [muhat,out]=cubMLELattice(f,d,absTol,relTol,order,ptransform, ...
+                                    testAll,figSavePath,fName)
 %CUBMLE Monte Carlo method to estimate the mean of a random variable
 %
 %   tmu = cubMLELattice(f,absTol,relTol,alpha,nSig,inflate) estimates the mean,
@@ -33,6 +34,7 @@ if ~exist('testAll','var')
     testAll = false;
 end
 
+%% uncomment this to avoid using GPU 
 %gpuArray = @(x) x;
 %gather = @(x) x;
 tstart = tic; %start the clock
@@ -131,6 +133,7 @@ for ii = 1:numM
         oddval=ftildeNew(~ptind);
         ftildeNew(ptind)=(evenval+coefv.*oddval)/2;
         ftildeNew(~ptind)=(evenval-coefv.*oddval)/2;
+        
     end
     %if sum((abs(ftildeNew-ftilde)))/n > 1E-7
     %    fprintf('FFT values differ too much')
@@ -140,18 +143,24 @@ for ii = 1:numM
     %% figure(1); loglog(abs(ftilde)); figure(2); loglog((abs(ftildeNew)))
     
     br_xun = bitrevorder(gpuArray(xun));
+    
     %Compute MLE parameter
     lnaMLE = fminbnd(@(lna) ...
         MLEKernel(exp(lna),br_xun,ftilde,order), ...
         -5,0,optimset('TolX',1e-2)); % -5,5
     aMLE = exp(lnaMLE);
-    [loss,Ktilde,RKHSnormSq] = MLEKernel(aMLE,br_xun,ftilde,order);
+    [loss,Ktilde,KtildeSq,RKHSnormSq] = MLEKernel(aMLE,br_xun,ftilde,order);
     wt = 1./Ktilde(1);
     
     %Check error criterion
-    DSC = abs(1 - wt);
-    out.ErrBd = 2.58*sqrt(DSC)*RKHSnormSq;
-    muhat = ftilde(1)/Ktilde(1);
+    DSC_sq = sqrt(abs(1 - wt));
+
+    out.ErrBd = (2.58*(DSC_sq)*RKHSnormSq);
+    if 1 % zero mean case
+        muhat = ftilde(1)*(1/Ktilde(1));
+    else % non zero mean case
+        muhat = (((1 - 1/Ktilde(1))/Ktilde(1)) + 1)*ftilde(1)/Ktilde(1);
+    end
     muminus = muhat - out.ErrBd;
     muplus = muhat + out.ErrBd;
     muhatAll(ii) = gather(muhat);
@@ -165,6 +174,7 @@ for ii = 1:numM
         if errorBdAll(ii)==0
             errorBdAll(ii) = eps;
         end
+        
          % if testAll flag is set, run for for all 'n' values to compute error
          % used for error plotting
         if testAll==false
@@ -183,14 +193,14 @@ end
 
 function [K, Ktilde] = kernel(xun,order,a)
 
-constMult = -(-1)^(order/2)*(2*pi)^order/factorial(order);
-if order == 2
+    constMult = -(-1)^(order/2)*(2*pi)^order/factorial(order);
+    if order == 2
         bernPloy = @(x)(-x.*(1-x) + 1/6);
-elseif order == 4
+    elseif order == 4
         bernPloy = @(x)(x.^2.*(x.*(x-2) +1) - 1/30);
-else
-    error('Bernoulli order not implemented !');
-end
+    else
+        error('Bernoulli order not implemented !');
+    end
     K = prod(1 + a*constMult*bernPloy(xun),2);
 
     %Ktilde = abs(fft_DIT(K));
@@ -199,9 +209,11 @@ end
 
 end
 
-function [loss,Ktilde,RKHSnormSq,K] = MLEKernel(a,xun,ftilde,order)
+function [loss,Ktilde,KtildeSq,RKHSnormSq,K] = MLEKernel(a,xun,ftilde,order)
     
+    n = length(ftilde);
     if order==4
+        if n>(2^15)
         [K, Ktilde] = kernel(xun,order,a);
         [K2, Ktilde2] = kernel(xun,order/2,sqrt(a));
         
@@ -219,6 +231,8 @@ function [loss,Ktilde,RKHSnormSq,K] = MLEKernel(a,xun,ftilde,order)
             K = K2'*KK2/n;
         else
         
+            [K, Ktilde] = kernel(xun,order,a);
+            KtildeSq = sqrt(Ktilde);
         end
         %Ktilde = KtildeSq.^2;
     elseif order==2
@@ -234,20 +248,20 @@ function [loss,Ktilde,RKHSnormSq,K] = MLEKernel(a,xun,ftilde,order)
         % fprintf('Ktilde has zero vals \n');
     end
 
-%RKHSnorm = mean(abs(ftilde).^2./Ktilde);
-%RKHSnorm = mean(abs(ftilde(Ktilde~=0)).^2./Ktilde(Ktilde~=0));
+    %RKHSnorm = mean(abs(ftilde).^2./Ktilde);
+    %RKHSnorm = mean(abs(ftilde(Ktilde~=0)).^2./Ktilde(Ktilde~=0));
     RKHSnormSq = mean(abs(ftilde(KtildeSq~=0))./(KtildeSq(KtildeSq~=0))); 
 
-if isnan(RKHSnormSq)
-    fprintf('RKHSnormSq NaN \n');
-end
-    loss = mean(log(Ktilde)) + 2*log(RKHSnormSq);
+    if isnan(RKHSnormSq)
+        fprintf('RKHSnormSq NaN \n');
+    end
+    loss = mean(2*log(KtildeSq)) + 2*log(RKHSnormSq);
 
-if isnan(loss)
-    fprintf('loss NaN \n');
-end
+    if isnan(loss)
+        fprintf('loss NaN \n');
+    end
 
-a;
+    a;
     %ftilde(1)/Ktilde(1);
 end
 
@@ -280,7 +294,6 @@ function xlat = lattice_gen(n,d,firstBatch)
     z = [1, 364981, 245389, 97823, 488939, 62609, 400749, 385317, 21281, 223487]; % generator from Hickernell's paper
     %z = [1, 433461, 315689, 441789, 501101, 146355, 88411, 215837, 273599]; %generator
     z = z(1:d);
-
 
     if false
         if firstBatch==true
