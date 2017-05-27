@@ -1,4 +1,5 @@
-function [muhat,out]=cubMLELattice(f,d,absTol,relTol,order,ptransform,testAll,figSavePath,fName)
+function [muhat,out]=cubMLELattice(f,d,absTol,relTol,order,ptransform, ...
+                                    testAll,figSavePath,fName)
 %CUBMLE Monte Carlo method to estimate the mean of a random variable
 %
 %   tmu = cubMLELattice(f,absTol,relTol,alpha,nSig,inflate) estimates the mean,
@@ -33,7 +34,7 @@ if ~exist('testAll','var')
     testAll = false;
 end
 
-
+%% uncomment this to avoid using GPU 
 %gpuArray = @(x) x;
 %gather = @(x) x;
 
@@ -149,14 +150,18 @@ for ii = 1:numM
         MLEKernel(exp(lna),br_xun,ftilde,order), ...
         -5,0,optimset('TolX',1e-2)); % -5,5
     aMLE = exp(lnaMLE);
-    [loss,Ktilde,RKHSnormSq] = MLEKernel(aMLE,br_xun,ftilde,order);
+    [loss,Ktilde,KtildeSq,RKHSnormSq] = MLEKernel(aMLE,br_xun,ftilde,order);
     wt = 1./Ktilde(1);
-    
-    %Check error criterion
-    DSC = abs(1 - wt);
 
-    out.ErrBd = 2.58*sqrt(DSC)*RKHSnormSq;
-    muhat = ftilde(1)/Ktilde(1);
+    %Check error criterion
+    DSC_sq = sqrt(abs(1 - wt));
+
+    out.ErrBd = (2.58*(DSC_sq)*RKHSnormSq);
+    if 1 % zero mean case
+        muhat = ftilde(1)*(1/Ktilde(1));
+    else % non zero mean case
+        muhat = (((1 - 1/Ktilde(1))/Ktilde(1)) + 1)*ftilde(1)/Ktilde(1);
+    end
     muminus = muhat - out.ErrBd;
     muplus = muhat + out.ErrBd;
     muhatAll(ii) = gather(muhat);
@@ -206,28 +211,19 @@ function [K, Ktilde] = kernel(xun,order,a)
 
 end
 
-function [loss,Ktilde,RKHSnormSq,K] = MLEKernel(a,xun,ftilde,order)
+function [loss,Ktilde,KtildeSq,RKHSnormSq,K] = MLEKernel(a,xun,ftilde,order)
     
+    n = length(ftilde);
     if order==4
-        [K, Ktilde] = kernel(xun,order,a);
-        [K2, Ktilde2] = kernel(xun,order/2,sqrt(a));
-        
-        KtildeSq = (Ktilde2);
-        % Ktappx = (Ktilde2).^2; figure(51);loglog(Ktilde); figure(52); loglog(Ktappx)
-        if 0
-            K2 = bitrevorder(K2);
-            v = K2';
-            KK2 =  toeplitz([v(1) fliplr(v(2:end))], v);
-            KK2_new = toeplitz(K2);
-            if any(any(KK2~=KK2_new))
-                fprintf('toeplitz wrong !!\n');
-            end
-            n = length(K2);
-            K = K2'*KK2/n;
+        if n>(2^15)
+            [K, Ktilde] = kernel(xun,order,a);
+            [K2, Ktilde2] = kernel(xun,order/2,sqrt(a));
+
+            KtildeSq = (Ktilde2);
         else
-        
+            [K, Ktilde] = kernel(xun,order,a);
+            KtildeSq = sqrt(Ktilde);
         end
-        %Ktilde = KtildeSq.^2;
     elseif order==2
         [K, Ktilde] = kernel(xun,order,a);
         KtildeSq = sqrt(Ktilde);
@@ -244,12 +240,13 @@ function [loss,Ktilde,RKHSnormSq,K] = MLEKernel(a,xun,ftilde,order)
 
     %RKHSnorm = mean(abs(ftilde).^2./Ktilde);
     %RKHSnorm = mean(abs(ftilde(Ktilde~=0)).^2./Ktilde(Ktilde~=0));
+
     RKHSnormSq = mean(abs(ftilde(KtildeSq~=0))./(KtildeSq(KtildeSq~=0))); 
 
     if isnan(RKHSnormSq)
         fprintf('RKHSnormSq NaN \n');
     end
-    loss = mean(log(Ktilde)) + 2*log(RKHSnormSq);
+    loss = mean(2*log(KtildeSq)) + 2*log(RKHSnormSq);
 
     if isnan(loss)
         fprintf('loss NaN \n');
