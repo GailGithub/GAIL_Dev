@@ -106,7 +106,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %   >> f = @(x) x.^2;
 %   >> [~, out_param] = funappx_g(f,-2,2,1e-7,18)
 %
-% out_param = 
+% out_param =
 % 
 %            a: -2
 %       abstol: 1.0000e-07
@@ -244,7 +244,7 @@ for iter_i = 1:out_param.maxiter,
     deltaf = diff(diff(y(1:npoints)));
     h = x(2:npoints-1) - x(1:npoints-2);
     err(indexI(2:end-1)) = abs(1/8 * C(3*h(indexI(2:end-1)))...
-                           .* deltaf(indexI(2:end-1)));
+        .* deltaf(indexI(2:end-1)));
     indexI(2:end-1) = (err > abstol);
 
     % update iterations
