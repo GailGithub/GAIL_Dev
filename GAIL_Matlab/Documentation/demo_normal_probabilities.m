@@ -138,3 +138,12 @@ function f_eval = f(s,e,hyperbox,w,C)
     end
 end
 end
+
+%% References
+%  
+% [1] Fred J. Hickernell, Lluis Antoni Jimenez Rugama "Reliable adaptive 
+%     cubature using digital sequences", Monte Carlo and Quasi-Monte Carlo
+%     Methods: MCQMC, Leuven, Belgium, April 2014 (R. Cools and D. Nuyens,
+%     eds.), Springer Proceedings in Mathematics and Statistics, vol. 163,
+%     Springer-Verlag, Berlin, 2016, arXiv:1410.8615 [math.NA], pp.
+%     367-383.
