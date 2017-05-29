@@ -55,7 +55,7 @@ ylabel('absolute error')
 axis tight
 max_abs_error = max(abs(f(x)-q2(x)))
 
-%% A fix
+%% A workaround
 % We can widen the cone by increasing the number of initial points given to
 % *funappx_g*. 
 inparam.a = a;
@@ -71,6 +71,36 @@ xlabel('$x$','interpreter','latex')
 ylabel('absolute error')
 axis tight
 max_abs_error = max(abs(f(x)-q3(x)))
+
+%% A better way
+% Using a large value of |ninit| defeats the purpose of *funappx_g*'s local
+% adaptive design. Notice that the failure region was [0,0.1], So we can
+% use *funappx_g* with a high value of |ninit| only in this region.
+inparam.a = a;
+inparam.b = 0.1;
+inparam.ninit = 2e5; 
+inparam.nmax =  1e7; 
+inparam.output_x = 1; 
+[q4,out4] = funappx_g(f, inparam);
+
+% Use smaller number of ninit on [0.1,2.5] 
+inparam.a = inparam.b;
+inparam.b = b;
+inparam.ninit = 20;
+[q5,out5] = funappx_g(f, inparam);
+
+% define a new approximant on [a,b]
+xx = [out4.x, out5.x(2:end)];
+yy = [out4.y, out5.y(2:end)];
+if gail.matlab_version >= 8.3
+    fappx = griddedInterpolant(xx,yy,'linear');
+else
+    fappx = @(t) ppval(interp1(xx,yy,'linear','pp'), t);
+end;
+
+% Evaluate the error again
+x = a:1e-7:b;
+max_abs_error = max(abs(f(x)-fappx(x)))
 
 %% References
 %  
