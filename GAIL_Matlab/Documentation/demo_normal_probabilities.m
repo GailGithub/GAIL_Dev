@@ -147,3 +147,9 @@ end
 %     eds.), Springer Proceedings in Mathematics and Statistics, vol. 163,
 %     Springer-Verlag, Berlin, 2016, arXiv:1410.8615 [math.NA], pp.
 %     367-383.
+%
+% [2] Fred J. Hickernell, Lan Jiang, Yuewei Liu, and Art B. Owen,
+%     "Guaranteed conservative fixed width confidence intervals via Monte
+%     Carlo sampling," Monte Carlo and Quasi-Monte Carlo Methods 2012
+%     (J. Dick, F. Y. Kuo, G. W. Peters, and I. H. Sloan, eds.),
+%     Springer-Verlag, Berlin, pp. 105-128, 2014.
