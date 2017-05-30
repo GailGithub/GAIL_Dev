@@ -38,7 +38,7 @@ classdef whiteNoise < stochProcess
    properties (Constant, Hidden) %do not change & not seen
       allowDistribName = {'Uniform','Gaussian'} 
          %kinds of distributions that we can generate
-      allowSampleKind = {'IID','Sobol','lattice'} 
+      allowSampleKind = {'IID','Sobol','lattice','MLE_lattice'} 
          %kinds of sampling that we allow
       allowQRand = {'Sobol','lattice'} 
          %kinds of samplking that we allow

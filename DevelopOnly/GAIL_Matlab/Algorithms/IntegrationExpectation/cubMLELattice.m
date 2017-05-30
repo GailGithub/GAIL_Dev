@@ -34,9 +34,13 @@ if ~exist('testAll','var')
     testAll = false;
 end
 
+debugEnable=false;
+
 %% uncomment this to avoid using GPU 
-%gpuArray = @(x) x;
-%gather = @(x) x;
+if 1
+    gpuArray = @(x) x;
+    gather = @(x) x;
+end
 
 tstart = tic; %start the clock
 
@@ -81,8 +85,8 @@ for ii = 1:numM
             coefv=repmat(coef,nmminlm1,1);
             evenval=ftildeNew(ptind);
             oddval=ftildeNew(~ptind);
-            ftildeNew(ptind)=(evenval+coefv.*oddval)/2;
-            ftildeNew(~ptind)=(evenval-coefv.*oddval)/2;
+            ftildeNew(ptind)=(evenval+coefv.*oddval); %/2;
+            ftildeNew(~ptind)=(evenval-coefv.*oddval); %/2;
         end
         
     else
@@ -111,6 +115,15 @@ for ii = 1:numM
         mnext=m-1;
         ftildeNextNew=gpuArray(ff(xnew));  % initialize for inplace computation
         
+        if debugEnable==true
+            ftildeNextNew(ftildeNextNew==0)=eps;
+
+            if any(isnan(ftildeNextNew)) || any(isinf(ftildeNextNew))
+                    fprintf('ftildeNextNew NaN \n');
+            end
+        end
+        
+        
         %% Compute initial FFT on next points
         for l=0:mnext-1
             nl=2^l;
@@ -120,8 +133,15 @@ for ii = 1:numM
             coefv=repmat(coef,nmminlm1,1);
             evenval=ftildeNextNew(ptind);
             oddval=ftildeNextNew(~ptind);
-            ftildeNextNew(ptind)=(evenval+coefv.*oddval)/2;
-            ftildeNextNew(~ptind)=(evenval-coefv.*oddval)/2;
+            ftildeNextNew(ptind)=(evenval+coefv.*oddval); %/2;
+            ftildeNextNew(~ptind)=(evenval-coefv.*oddval); %/2;
+            
+            if debugEnable==true
+                if any(isnan(ftildeNextNew)) || any(isinf(ftildeNextNew))
+                    fprintf('ftildeNextNew NaN \n');
+                end
+            end
+    
         end
         
         %% Compute FFT on all points
@@ -132,14 +152,14 @@ for ii = 1:numM
         coefv=repmat(coef,nmminlm1,1);
         evenval=ftildeNew(ptind);
         oddval=ftildeNew(~ptind);
-        ftildeNew(ptind)=(evenval+coefv.*oddval)/2;
-        ftildeNew(~ptind)=(evenval-coefv.*oddval)/2;
+        ftildeNew(ptind)=(evenval+coefv.*oddval); %/2;
+        ftildeNew(~ptind)=(evenval-coefv.*oddval); %/2;
         
     end
     %if sum((abs(ftildeNew-ftilde)))/n > 1E-7
     %    fprintf('FFT values differ too much')
     %end
-    ftilde = ftildeNew;
+    ftilde = ftildeNew/n;
     
     %% figure(1); loglog(abs(ftilde)); figure(2); loglog((abs(ftildeNew)))
     
@@ -157,7 +177,7 @@ for ii = 1:numM
     DSC_sq = sqrt(abs(1 - wt));
 
     out.ErrBd = (2.58*(DSC_sq)*RKHSnormSq);
-    if 1 % zero mean case
+    if 0 % zero mean case
         muhat = ftilde(1)*(1/Ktilde(1));
     else % non zero mean case
         muhat = (((1 - 1/Ktilde(1))/Ktilde(1)) + 1)*ftilde(1)/Ktilde(1);
@@ -184,6 +204,10 @@ for ii = 1:numM
     end
     
 end
+% extract from gpu array
+muhat=gather(muhat);
+out=gather(out);
+
 out.n = n;
 out.time = toc(tstart);
 out.ErrBdAll = errorBdAll;
@@ -282,11 +306,18 @@ end
 end
 
 function xlat = lattice_gen(n,d,firstBatch)
+if d<=10
+    % this gives best accuracy
     z = [1, 364981, 245389, 97823, 488939, 62609, 400749, 385317, 21281, 223487]; % generator from Hickernell's paper
     %z = [1, 433461, 315689, 441789, 501101, 146355, 88411, 215837, 273599]; %generator
+else
+    z = [1 182667 302247 433461 160317 94461 481331 252345 358305 221771 48157 489023 438503 399693 200585 169833 308325 247437 281713 424209 244841 205461 336811 359375 86263 370621 422443 284811 231547 360239 505287 355195 52937 344561 286935 312429 513879 171905 50603 441451 164379 139609 371213 152351 138607 441127 157037 510073 281681 380297 208143 497641 482925 233389 238553 121499 137783 463115 168681 70699];
+end
+
     z = z(1:d);
 
     if false
+        % this is very slow
         if firstBatch==true
             brIndices = bitrevorder((0:1/n:1-1/n));
         else
