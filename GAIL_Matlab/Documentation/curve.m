@@ -73,9 +73,10 @@ axis tight
 max_abs_error = max(abs(f(x)-q3(x)))
 
 %% A better way
-% Using a large value of |ninit| defeats the purpose of *funappx_g*'s local
-% adaptive design. Notice that the failure region was [0,0.1], So we can
-% use *funappx_g* with a high value of |ninit| only in this region.
+% Using a large value of |ninit| defeats the purpose of *funappx_g*'s
+% locally adaptive design. Notice that the failure region was [0.01,0.1],
+% So we can use *funappx_g* with a high value of |ninit| only in this
+% region.
 inparam.a = a;
 inparam.b = 0.1;
 inparam.ninit = 2e5; 
@@ -83,13 +84,13 @@ inparam.nmax =  1e7;
 inparam.output_x = 1; 
 [q4,out4] = funappx_g(f, inparam);
 
-% Use smaller number of ninit on [0.1,2.5] 
+% Use default value of ninit on [0.1,2.5] 
 inparam.a = inparam.b;
 inparam.b = b;
 inparam.ninit = 20;
 [q5,out5] = funappx_g(f, inparam);
 
-% define a new approximant on [a,b]
+% Define a new approximant on [a,b]
 xx = [out4.x, out5.x(2:end)];
 yy = [out4.y, out5.y(2:end)];
 if gail.matlab_version >= 8.3
