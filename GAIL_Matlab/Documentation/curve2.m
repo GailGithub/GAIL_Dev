@@ -20,13 +20,14 @@ a = 0; b = 2;
 % We plot \(f(x)\) and the approximate minimum returned by *funmin_g* below.
 % It is obvious that the approximation is not satisfactory. We compute the
 % error by comparing to the true minimum returned by the Mathematica
-% command, "N[Minimize[{Sin[10 Pi x^4] - x, 0 <= x <= 2}, {x}],15]".  The
+% command, |N[Minimize[{Sin[10 Pi x^4] - x, 0 <= x <= 2}, {x}],15]|.  The
 % reason is probably that this function is not contained in the cone of
 % functions sufficient for successful function minimization.
 funmin_g_demo(fmin,outmin)
 truefmin=-2.99843616266006;
+truexmin=1.99843665971919;
 max_abs_error = max(abs(truefmin-fmin))
- 
+
 
 %% A fix
 % We can widen the cone by increasing the number of initial points given to

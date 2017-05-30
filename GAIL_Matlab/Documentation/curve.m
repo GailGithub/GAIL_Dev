@@ -42,7 +42,7 @@ max_abs_error = max(abs(f(x)-q(x)))
 % If we changes \(a\) to a smaller number such as \(10^{-2}\), then even if
 % we relax the tolerance to \(10^{-4}\), *funappx_g* may still return an
 % approximant that fails to meet the tolerance. The reason is that \(f\) on
-% \((a,b)\) is no longer in the cone of functions conducive for successful
+% \([a,b]\) is no longer in the cone of functions conducive for successful
 % approximation.
 a = 1e-2;
 abstol = 1e-4;
@@ -74,7 +74,7 @@ max_abs_error = max(abs(f(x)-q3(x)))
 
 %% A better way
 % Using a large value of |ninit| defeats the purpose of *funappx_g*'s
-% locally adaptive design. Notice that the failure region was [0.01,0.1],
+% locally adaptive design. Notice that the failure region was \([0.01,0.1]\),
 % So we can use *funappx_g* with a high value of |ninit| only in this
 % region.
 inparam.a = a;
