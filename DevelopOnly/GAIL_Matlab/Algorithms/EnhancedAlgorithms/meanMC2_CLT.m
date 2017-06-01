@@ -1,4 +1,4 @@
-function [hmu,out_param]=meanMC_CLT(Yrand,absTol,relTol,alpha,nSig,inflate)
+function [hmu,out_param]=meanMC2_CLT(Yrand,absTol,relTol,alpha,nSig,inflate)
 %MEANMC_CLT Monte Carlo method to estimate the mean of a random variable
 %
 %   tmu = MEANMC_CLT(Yrand,absTol,relTol,alpha,nSig,inflate) estimates the
@@ -64,31 +64,32 @@ if nargin < 6
       end
    end
 end
+
 nMax=1e8; %maximum number of samples allowed.
 out_param.alpha = alpha; %save the input parameters to a structure
 out_param.inflate = inflate;
 out_param.nSig = nSig;
 tstart = tic; %start the clock
 
-val = Yrand(nSig);% get samples to estimate variance 
-%[M,F] = mode(Yval);%checking if the random values aren't repeating
-%themselves
 
+
+
+% get samples to estimate variance 
+val = Yrand(nSig);
 Yval = val(:,1);
 Xval = val (:,2);
 
 Yvar=var(Yval);
 corrXYM=corrcoef(Xval,Yval);
 corrXY=corrXYM(1,2);
-out_param.var = Yvar/nSig*(1-corrXY^2); %calculate the sample variance--stage 1
+control.var = Yvar*(1-corrXY^2); %calculate the sample variance--stage 1
+beta=corrXY/var(Xval);
 
-
-
-
-
-sig0 = sqrt(out_param.var); %standard deviation
+sig0 = sqrt(control.var); %standard deviation
 sig0up = out_param.inflate.*sig0; %upper bound on the standard deviation
-hmu0 = mean(Yval);
+
+hmu0 = mean(Yval-beta*Xval);
+
 nmu = max(1,ceil((-gail.stdnorminv(alpha/2)*sig0up/max(absTol,relTol*abs(hmu0))).^2)); 
    %number of samples needed for mean
 if nmu > nMax %don't exceed sample budget
@@ -96,8 +97,10 @@ if nmu > nMax %don't exceed sample budget
       ', which is too big. Using ' int2str(nMax) ' instead.']) 
    nmu = nMax;
 end
+
+%if strcmp(method,'control')>0
 Ynmu=Yrand(nmu);
-hmu = mean(Ynmu(:,1)); %estimated mean
+hmu = mean(Ynmu(:,1))-beta*mean(Ynmu(:,2)); %estimated mean
 out_param.ntot = nSig+nmu; %total samples required
 out_param.time = toc(tstart); %elapsed time
 end
