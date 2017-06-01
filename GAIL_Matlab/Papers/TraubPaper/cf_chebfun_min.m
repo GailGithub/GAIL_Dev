@@ -33,7 +33,7 @@ hold on;
 
 %% fminbnd
 tic, [fx,fy] = fminbnd(@(x) f(x), a, b), toc
-plot(fx,fy,'b+')
+plot(fx,fy,'bs')
 trueerr=abs(truey - fy)
 
 %% chebfun
