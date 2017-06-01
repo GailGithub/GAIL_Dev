@@ -53,7 +53,7 @@ classdef optPrice < optPayoff
    
    properties (Constant, Hidden) %do not change & not seen
       allowCubMethod = {'IID_MC','Sobol','SobolCV','lattice','IID_MC_new', 'IID_MC_newtwo', ...
-         'IID_MC_abs'} 
+         'IID_MC_abs','IID_MC_CLT'} 
    end
    
 
@@ -134,6 +134,11 @@ classdef optPrice < optPayoff
             out.nPaths=outtemp.ntot;
          elseif strcmp(obj.priceParam.cubMethod,'IID_MC_newtwo')
             [price, outtemp] = meanMCnew2_g(@(n) genOptPayoffs(obj,n), ...
+               obj.priceParam.absTol, obj.priceParam.relTol, ...
+               obj.priceParam.alpha);
+            out.nPaths=outtemp.ntot;
+         elseif strcmp(obj.priceParam.cubMethod,'IID_MC_CLT')
+            [price, outtemp] = meanMC_CLT(@(n) genOptPayoffs(obj,n), ...
                obj.priceParam.absTol, obj.priceParam.relTol, ...
                obj.priceParam.alpha);
             out.nPaths=outtemp.ntot;
