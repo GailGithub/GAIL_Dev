@@ -153,7 +153,7 @@ classdef whiteNoise < stochProcess
          
          if strcmp(obj.wnParam.xDistrib,'Uniform') && ...
                strcmp(obj.wnParam.distribName,'Gaussian') %need a transformation
-            paths=norminv(paths);
+            paths=gail.stdnorminv(paths);
          end
       end
       

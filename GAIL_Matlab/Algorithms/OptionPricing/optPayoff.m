@@ -648,7 +648,7 @@ classdef optPayoff < assetPath
                 priceratio = K .* exp(-r * T) ./ S0;
                 xbig = log(priceratio) ./ (sigma * sqrt(T)) + sigma * sqrt(T)/2;
                 xsmall = log(priceratio) ./ (sigma * sqrt(T)) - sigma * sqrt(T)/2;
-                putprice = S0 .* (priceratio.*normcdf(xbig) - normcdf(xsmall));
+                putprice = S0 .* (priceratio.*gail.stdnormcdf(xbig) - gail.stdnormcdf(xsmall));
                 callprice = putprice + S0 .* (1-priceratio);
             end
             
@@ -656,11 +656,11 @@ classdef optPayoff < assetPath
                     digitassetput] = digitgbmprice(digitalPay,S0,r,T,sigma,K,q)
                 digitpriceratio1 = (log(S0./K)+(r-q+(sigma^2)/2)*T)/(sigma*sqrt(T));
                 digitpriceratio2 = digitpriceratio1-sigma*sqrt(T);
-                digitcashcall = digitalPay.*exp(-r*T).*normcdf(digitpriceratio2);
-                %digitcashput = digitalPay.*digitalPay.*exp(-r*T)*normcdf(-digitpriceratio2);
-                digitcashput = digitalPay.*exp(-r*T).*normcdf(-digitpriceratio2);
-                digitassetcall = S0.*exp(-q*T).*normcdf(digitpriceratio1);
-                digitassetput = S0.*exp(-q*T).*normcdf(-digitpriceratio1);
+                digitcashcall = digitalPay.*exp(-r*T).*gail.stdnormcdf(digitpriceratio2);
+                %digitcashput = digitalPay.*digitalPay.*exp(-r*T)*gail.stdnormcdf(-digitpriceratio2);
+                digitcashput = digitalPay.*exp(-r*T).*gail.stdnormcdf(-digitpriceratio2);
+                digitassetcall = S0.*exp(-q*T).*gail.stdnormcdf(digitpriceratio1);
+                digitassetput = S0.*exp(-q*T).*gail.stdnormcdf(-digitpriceratio1);
             end
             
         end
