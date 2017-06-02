@@ -4,7 +4,7 @@
 
 GAIL is a suite of algorithms for integration problems in one and many dimensions, and whose answers are guaranteed to be correct.
 
-<p>GAIL is created, developed, and maintained by  <a href="http://mypages.iit.edu/~hickernell/" rel="nofollow">Fred Hickernell</a> (Illinois Institute of Technology), <a href="http://home.uchicago.edu/sctchoi" rel="nofollow">Sou-Cheng Choi</a> (NORC at the University of Chicago and IIT), and their collaborators including Yuhan Ding (IIT), Lan Jiang (IIT), Da Li (IIT), Jiazhen Lu (IIT), Jagadeeswaran Rathinavel (IIT), Lluís Antoni Jiménez Rugama (UBS), Xin Tong (UIC), Kan Zhang (IIT), Yizhi Zhang (IIT), Xiaoyang Zhao (IIT), and Xuan Zhou (J.P. Morgan).  It is a free software and could be downloaded via the link below.</p>
+<p>GAIL is created, developed, and maintained by  <a href="http://mypages.iit.edu/~hickernell/" rel="nofollow">Fred Hickernell</a> (Illinois Institute of Technology), <a href="http://home.uchicago.edu/sctchoi" rel="nofollow">Sou-Cheng Choi</a> (IIT), and their collaborators including Yuhan Ding (IIT), Lan Jiang (IIT), Da Li (IIT), Jiazhen Lu (IIT), Jagadeeswaran Rathinavel (IIT), Lluís Antoni Jiménez Rugama (UBS), Xin Tong (UIC), Kan Zhang (IIT), Yizhi Zhang (IIT), Xiaoyang Zhao (IIT), and Xuan Zhou (J.P. Morgan).  It is a free software and could be downloaded via the link below.</p>
 
 *To download the latest version of GAIL, follow one of the links below to:*
 <font size="2" color="red"><pre>           Get zip file            OR   run the MATLAB installation script</pre> </font>
@@ -15,7 +15,7 @@ GAIL is a suite of algorithms for integration problems in one and many dimension
 
 
 ## News
-* <a href="https://science.iit.edu/sites/science/files/elements/science/pdfs/SciLetters-W2016-Newsletter.pdf ">Press about GAIL: Reliable Mathematical Software</a>
+* <a href="https://science.iit.edu/sites/science/files/elements/science/pdfs/SciLetters-W2016-Newsletter.pdf">Press about GAIL: Reliable Mathematical Software</a>
 
 * GAIL version 2.1 is released on March 14, 2015 (Super Pi Day and Albert Einstein's Birthday)
 
