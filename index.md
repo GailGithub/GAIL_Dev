@@ -48,6 +48,10 @@ If you find GAIL helpful in your work, please support us by citing the following
 
 * Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Xin Tong, <em><a href="http://www.sciencedirect.com/science/article/pii/S0885064X16301108">Local adaption for approximation and minimization of univariate functions</a></em>, Journal of Complexity, *40*, pp. 17-33, 2017.
 
+* F. J. Hickernell, Ll. A. Jim\'enez Rugama, and D. Li, <em><a href="https://arxiv.org/abs/1702.01491">Adaptive 
+quasi-Monte Carlo methods for Cubature</a></em>, submitted.
+
+
 2016
 * Lluís Antoni Jiménez Rugama, <em><a href="http://search.proquest.com/openview/9f2d8affbbb995fc4ff99527d6587a46/1?pq-origsite=gscholar&cbl=18750&diss=y">Adaptive quasi-Monte Carlo cubature</a></em>,  Ph.D Thesis, Illinois Institute of Technology,  2016.
 
