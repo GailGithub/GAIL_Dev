@@ -159,7 +159,7 @@ classdef optPrice < optPayoff
                 func = @(x) genOptPayoffs(obj,x);
                 order=2;
                 dim=obj.timeDim.nSteps;
-                ptransform= 'C1sin';
+                ptransform= 'Baker';
                 testAll=false;
                 figSavePath='/home/jagadees/MyWriteup/May4thweek_optprice/';
                 fName='optPrice';
