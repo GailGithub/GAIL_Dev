@@ -35,11 +35,11 @@ if ~exist('testAll','var')
 end
 
 debugEnable=false;
+useNonZeroMean = true;
 
 %% uncomment this to avoid using GPU 
 if 1
-    gpuArray = @(x) x;
-    gather = @(x) x;
+   gpuArray = @(x) x;   gather = @(x) x;
 end
 
 tstart = tic; %start the clock
@@ -71,8 +71,6 @@ for ii = 1:numM
         xun = lattice_gen(n,d,true);
         x = mod(bsxfun(@plus,xun,shift),1);  % shifted
         
-        %% fx = gpuArray(ff(x)); ftilde = fft(bitrevorder(fx))/n;
-        
         %% Efficient FFT computation algorithm
         ftildeNew=gpuArray(ff(x)); %evaluate integrand
         
@@ -92,34 +90,18 @@ for ii = 1:numM
     else
         xunnew = lattice_gen(n,d,false);
         xnew = mod(bsxfun(@plus,xunnew,shift),1);
-        if 0
-            temp = zeros(n,d);
-            temp(1:2:n-1,:) = xun;
-            temp(2:2:n,:) = xunnew;
-            xun = temp;    % save unshifted for further iterations
-            temp(1:2:n-1,:) = x;
-            temp(2:2:n,:) = xnew;
-            x = temp; % saving the shifted
-        else
-            xun = [xun;xunnew];
-            x = [x;xnew];
-        end
-        
-        %% fnew = gpuArray(ff(xnew));
-        %fx = reshape([fx fnew]',n,1);
-        %% fx = [fx;fnew];
-        
-        %%ftilde = fft(bitrevorder(fx))/n;
-        
+        xun = [xun;xunnew];
+        x = [x;xnew];
+               
         %% Efficient FFT computation algorithm
         mnext=m-1;
         ftildeNextNew=gpuArray(ff(xnew));  % initialize for inplace computation
         
         if debugEnable==true
-            ftildeNextNew(ftildeNextNew==0)=eps;
+            % ftildeNextNew(ftildeNextNew==0)=eps;
 
             if any(isnan(ftildeNextNew)) || any(isinf(ftildeNextNew))
-                    fprintf('ftildeNextNew NaN \n');
+                fprintf('ftildeNextNew NaN \n');
             end
         end
         
@@ -156,42 +138,37 @@ for ii = 1:numM
         ftildeNew(~ptind)=(evenval-coefv.*oddval); %/2;
         
     end
-    %if sum((abs(ftildeNew-ftilde)))/n > 1E-7
-    %    fprintf('FFT values differ too much')
-    %end
-    ftilde = ftildeNew/n;
-    
-    %% figure(1); loglog(abs(ftilde)); figure(2); loglog((abs(ftildeNew)))
-    
+
+    ftilde = ftildeNew;
+    ftilde(1) = sum(ff(x)); % correction to avoid round off error
     br_xun = bitrevorder(gpuArray(xun));
     
     %Compute MLE parameter
     lnaMLE = fminbnd(@(lna) ...
-        MLEKernel(exp(lna),br_xun,ftilde,order), ...
+        MLEKernel(exp(lna),br_xun,ftilde,order,useNonZeroMean), ...
         -5,0,optimset('TolX',1e-2)); % -5,5
     aMLE = exp(lnaMLE);
-    [loss,Ktilde,KtildeSq,RKHSnormSq] = MLEKernel(aMLE,br_xun,ftilde,order);
-    wt = 1./Ktilde(1);
+    [loss,Ktilde,KtildeSq,RKHSnorm,K] = MLEKernel(aMLE,br_xun,ftilde,order,useNonZeroMean);
+    wt = n/sum(K);
 
     %Check error criterion
-    DSC_sq = sqrt(abs(1 - wt));
+    DSC = abs(1 - wt)/n;
 
-    out.ErrBd = (2.58*(DSC_sq)*RKHSnormSq);
-    if 0 % zero mean case
-        muhat = ftilde(1)*(1/Ktilde(1));
+    out.ErrBd = 2.58*sqrt(DSC*RKHSnorm);
+    if useNonZeroMean==true % zero mean case
+        muhat = (((1 - wt)/wt) + 1)*ftilde(1)/sum(K);
     else % non zero mean case
-        muhat = (((1 - 1/Ktilde(1))/Ktilde(1)) + 1)*ftilde(1)/Ktilde(1);
+        muhat = ftilde(1)/sum(K);
     end
     muminus = muhat - out.ErrBd;
     muplus = muhat + out.ErrBd;
-    muhatAll(ii) = gather(muhat);
-    errorBdAll(ii) = gather(out.ErrBd);
-    aMLEAll(ii) = gather(aMLE);
+    muhatAll(ii) = muhat;
+    errorBdAll(ii) = out.ErrBd;
+    aMLEAll(ii) = aMLE;
     
     if 2*out.ErrBd <= ...
             max(absTol,relTol*abs(muminus)) + max(absTol,relTol*abs(muplus))
         
-        % fprintf('%d Error bound met %e !\n', n, out.ErrBd)
         if errorBdAll(ii)==0
             errorBdAll(ii) = eps;
         end
@@ -204,9 +181,6 @@ for ii = 1:numM
     end
     
 end
-% extract from gpu array
-muhat=gather(muhat);
-out=gather(out);
 
 out.n = n;
 out.time = toc(tstart);
@@ -214,6 +188,11 @@ out.ErrBdAll = errorBdAll;
 out.muhatAll = muhatAll;
 out.mvec = mvec;
 out.aMLEAll = aMLEAll;
+
+% convert from gpu memory to local
+muhat=gather(muhat);
+out=gather(out);
+
 end
 
 function [K, Ktilde] = kernel(xun,order,a)
@@ -222,28 +201,30 @@ function [K, Ktilde] = kernel(xun,order,a)
     if order == 2
         bernPloy = @(x)(-x.*(1-x) + 1/6);
     elseif order == 4
-        bernPloy = @(x)(x.^2.*(x.*(x-2) +1) - 1/30);
+        bernPloy = @(x)((x.^2).*(x.*(x-2) +1) - 1/30);
     else
         error('Bernoulli order not implemented !');
     end
     K = prod(1 + a*constMult*bernPloy(xun),2);
     
-    
-    %Ktilde = abs(fft_DIT(K));
     % matlab's builtin fft much faster and accurate
-    Ktilde = abs(fft((K)))/length(K);
+    Ktilde = real(fft(K));
 
+    if sum(K)==length(K) || Ktilde(1)==length(K)
+        %fprintf('debug');
+    end
 end
 
-function [loss,Ktilde,KtildeSq,RKHSnormSq,K] = MLEKernel(a,xun,ftilde,order)
+function [loss,Ktilde,KtildeSq,RKHSnorm,K] = MLEKernel(a,xun,ftilde,...
+    order,useNonZeroMean)
     
     n = length(ftilde);
     if order==4
-        if n>(2^15)
+        if n>(2^18)
             [K, Ktilde] = kernel(xun,order,a);
             [K2, Ktilde2] = kernel(xun,order/2,sqrt(a));
 
-            KtildeSq = (Ktilde2);
+            KtildeSq = (Ktilde2/sqrt(n));
         else
             [K, Ktilde] = kernel(xun,order,a);
             KtildeSq = sqrt(Ktilde);
@@ -254,23 +235,27 @@ function [loss,Ktilde,KtildeSq,RKHSnormSq,K] = MLEKernel(a,xun,ftilde,order)
     else
         error('Unsupported Bernoulli polyn order !');
     end
+        
     
-    
-    %Ktilde = real(fft(K-1))/length(K); Ktilde(1) = Ktilde(1) + 1; % this is done to improve accuracy, to reduce zero values
-
     if any(KtildeSq==0)
         % fprintf('Ktilde has zero vals \n');
     end
 
     %RKHSnorm = mean(abs(ftilde).^2./Ktilde);
-    %RKHSnorm = mean(abs(ftilde(Ktilde~=0)).^2./Ktilde(Ktilde~=0));
 
-    RKHSnormSq = mean(abs(ftilde(KtildeSq~=0))./(KtildeSq(KtildeSq~=0))); 
+    if useNonZeroMean==true
+        part1 = mean((real(ftilde(KtildeSq~=0))./(KtildeSq(KtildeSq~=0))).^2 );
+        part2 = ((ftilde(1)/n)^2)/sum(K);
+        RKHSnorm = part1 - part2; 
+    else
+        RKHSnorm = mean((abs(ftilde(KtildeSq~=0))./(KtildeSq(KtildeSq~=0))).^2 ); 
+    end
+    RKHSnormSq = sqrt(RKHSnorm); 
 
     if isnan(RKHSnormSq)
         fprintf('RKHSnormSq NaN \n');
     end
-    loss = mean(2*log(KtildeSq)) + 2*log(RKHSnormSq);
+    loss = mean(2*log(KtildeSq)) + log(RKHSnorm);
 
     if isnan(loss)
         fprintf('loss NaN \n');

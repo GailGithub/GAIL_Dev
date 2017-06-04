@@ -3,18 +3,18 @@
 % gail.InitializeWorkspaceDisplay %initialize the workspace and the display parameters
 format long
 
-figSavePath = '/home/jagadees/MyWriteup/May4thweek_nonzero_mean/';
-visiblePlot=false;
+figSavePath = '/home/jagadees/MyWriteup/May4thweek_temp/';
+visiblePlot=true;
 
 tstart=tic;
 pdTx = {'C1sin', 'C2sin', 'Baker', 'C0', 'C1', 'none'};
 for tx=pdTx
-  for dim=[4 3 2]
-    for bern=[2 4]
-      TestExpCosBayesianCubature(dim,bern,tx{1},figSavePath,visiblePlot)
+  for dim=[2 3 4]
+    for bern=[4 2]
       if dim~=4
         TestMVN_BayesianCubature(dim,bern,tx{1},figSavePath,visiblePlot)
       end
+      TestExpCosBayesianCubature(dim,bern,tx{1},figSavePath,visiblePlot)
       TestKeisterBayesianCubature(dim,bern,tx{1},figSavePath,visiblePlot)
     end
   end

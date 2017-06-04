@@ -8,7 +8,7 @@ inp.timeDim.timeVector = 0.25:0.25:1;
 inp.assetParam.volatility = 0.5;
 inp.assetParam.initPrice = 100;
 inp.payoffParam.strike = 100;
-inp.priceParam.absTol = 1E-5; %0.1;
+inp.priceParam.absTol = 1E-2; %0.1;
 inp.priceParam.relTol = 0; %0.01;
 priceObj = optPrice(inp);
 disp(priceObj)
