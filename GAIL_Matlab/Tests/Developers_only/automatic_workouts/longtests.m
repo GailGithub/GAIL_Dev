@@ -27,9 +27,11 @@ longtests_funappx_g
 % meanMC_g
 doctest dt_meanMC_g_TrafficModel
 
+if 0 % moved out to logtests_cubMC_g
 % cubMC_g
 format short
 doctest dt_cubMC_g
+end
 
 % integral_g
 try
@@ -46,6 +48,7 @@ catch
     %fprintf(fid,'Error: Test ut_workout_integral_g is wrongly coded. We skip it.\n');
 end
 
+if 0 % moved out to logtests_funappx_g
 % funappx_g
 try
     Tests = matlab.unittest.TestSuite.fromClass(?ut_workout_funappx_g);
@@ -86,7 +89,8 @@ end
 % catch
 %     display('Error: Test ut_par_funappx_g is wrongly coded. We skip it.')
 % end
-%
+end
+
 
 % funmin_g
 % try
@@ -153,6 +157,7 @@ catch
     %fprintf(fid,'Error: Test ut_ConesPaper is wrongly coded. We skip it.\n');
 end
 
+if 0 % moved out to logtests_cubMC_g
 % MCQMC paper
 run_handle('MCQMC2012Figs')
 run_handle('FoolAutomaticAlgorithms')
@@ -164,6 +169,7 @@ try
 catch
     display('Error: DisplayTestResults_BlacknColor is wrongly coded. We skip it.')
     %fprintf(fid,'Error: DisplayTestResults_BlacknColor is wrongly coded. We skip it.\n');
+end
 end
 
 % cubSobol_g paper
@@ -312,6 +318,7 @@ catch
     %fprintf(fid,'Error: Test ut_meanMCabs_g is wrongly coded. We skip it.\n');
 end
 
+if 0
 try
     Tests = matlab.unittest.TestSuite.fromClass(?ut_cubMC_g);
     results=run(ut_cubMC_g);
@@ -324,6 +331,7 @@ try
 catch
     display('Error: Test ut_cubMC_g is wrongly coded. We skip it.')
     fprintf(fid,'Error: Test ut_cubMC_g is wrongly coded. We skip it.\n');
+end
 end
 
 try
