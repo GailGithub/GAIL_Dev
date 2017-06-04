@@ -3,14 +3,14 @@ price=zeros(1,numel(optiontype));
 
 %Expected value of ending price of asset
 wh=strcmp('stockprice',optiontype);
-if any(wh); 
+if any(wh)
    price(wh)=stparam.S0;
 end
 
 %Pricing European geometric brownian motion
 whcall=strcmp('eurocall',optiontype);
 whput=strcmp('europut',optiontype);
-if any(whcall | whput); 
+if any(whcall | whput) 
    [eurocall,europut]=eurogbmprice(stparam,payparam);
    price(whcall)=eurocall;
    price(whput)=europut;
@@ -19,7 +19,7 @@ end
 %Pricing Asian geometric mean
 whcall=strcmp('gmeancall',optiontype);
 whput=strcmp('gmeanput',optiontype);
-if any(whcall | whput); 
+if any(whcall | whput)
    stparambar=stparam;
    stparambar.T=(1+1/stparam.d)*stparam.T/2; 
    stparambar.sig=stparam.sig*sqrt((2+1/stparam.d)/3);

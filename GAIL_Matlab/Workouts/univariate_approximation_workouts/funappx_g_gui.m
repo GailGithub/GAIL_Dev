@@ -12,7 +12,7 @@ function [fappx,npoints,errest] = funappx_g_gui(f,a,b,tol,nlo,nhi,varargin)
 %
 %   Examples:
 %  [fappx,npoints,errest] = funappx_g_gui(@(x) x.^2,-1,1,1e-2,10,20)
-%  [fappx,npoints,errest] = funappx_g_gui(@(x) exp(-1000*(x-0.2).^2),0,1,1e-3,10,20)
+%  [fappx,npoints,errest] = funappx_g_gui(@(x) exp(-1000*(x-0.2).^2),0,1,1e-3,5,9)
 %  [fappx,npoints,errest] = funappx_g_gui(@(x) exp(-1000*(x-0.2).^2),0,1,1e-6,10,20)
 %   Flat function:
 %  [fappx,npoints,errest] = funappx_g_gui(@(x) exp(-1./(x - 0.5).^2),0,1,1e-4,2,2)
@@ -64,8 +64,9 @@ k = 0;
 
 % Scale the plot
 h = b - a;
-ninit = 2*ceil(nhi*(nlo/nhi)^(1/(1+h)))+1;
-x = a:h/(ninit-1):b;
+%ninit = 2*ceil(nhi*(nlo/nhi)^(1/(1+h)))+1;
+ninit = nlo;
+x = a:h/ninit:b;
 y = f(x);
 maxy = max(y);
 miny = min(y);
@@ -102,6 +103,7 @@ in_param.abstol = tol;
 in_param.nlo = nlo; 
 in_param.nhi = nhi; 
 in_param.output_x = 1;
+in_param.ninit = ninit;
 % tmpstr = strsplit(algoname,'_g');
 % level = funmin_g(f,a,b,tol,nlo,nhi)-0.2;
 
@@ -116,8 +118,12 @@ while(max(err) > tol)
         k = k + 1;
         p = flipud(get(gca,'children'));
         set(p(1),'xdata',x,'ydata',y)
-        %set(gca,'xtick',x,'xticklabel',[]);
-        plot(x,zeros(size(x)),'.','color',MATLABGreen); hold on;
+        set(gca,'xtick',x,'xticklabel',[]);
+        plot(x,y,'.','MarkerSize',20,'color',MATLABBlue); hold on;        
+        %plot(x,zeros(size(x)),'.','color',MATLABGreen); hold on;
+        set(gca,'FontSize',16)
+        title(['error bound is ' num2str(err),...
+        '; number of points is ' num2str(npoints) ])
         %hTitle=title([tmpstr{1}, '\_g: error \(\approx\) ' sprintf('%0.2g',max(err)) ' in iter ' num2str(k)]);
         %set(hTitle,'FontSize',25,'Interpreter', 'latex')
         pause(.25)
@@ -135,7 +141,10 @@ end
 
 p = flipud(get(gca,'child'));
 set(p(1),'xdata',x,'ydata',y)
-%set(gca,'xtick',x,'xticklabel',[]);
+set(gca,'xtick',x,'xticklabel',[]);
+set(gca,'FontSize',16)
+title(['error bound is ' num2str(err),...
+    '; number of points is ' num2str(npoints) ])
 %hTitle=title([tmpstr{1}, '\_g: error \(\approx\) '  sprintf('%0.2g',max(err)) ' in iter ' num2str(k)]);
 %set(hTitle,'FontSize',25,'Interpreter', 'latex')
 pause(.25)

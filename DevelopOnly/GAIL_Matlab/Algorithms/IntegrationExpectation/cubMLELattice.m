@@ -404,4 +404,3 @@ function minTheta = plotMLE_Loss(ff, mvec, figSavePath, fName, d, order, ptransf
     minTheta = exp(lnTheta(Index));
 
 end
-

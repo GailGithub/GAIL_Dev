@@ -1,4 +1,4 @@
-% funappx_g_test: comparison between funappx_g and funappxlocal_g
+% funappx_g_test: comparison between funappx_g, funappxPenalty_g, and Chebfun
 function [timeratio,npointsratio] ...
    =funappx_g_test(nrep,abstol,varargin)
 % user can choose absolute error tolerance, initial number of subintervals,

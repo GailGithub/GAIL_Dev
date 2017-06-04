@@ -178,8 +178,8 @@ f = @(x) x.^2; [q, out_param] = integral_g(f)
 %
 % [2] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang,
 % Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
-% GAIL: Guaranteed Automatic Integration Library (Version 2.1)
-% [MATLAB Software], 2015. Available from http://code.google.com/p/gail/
+% GAIL: Guaranteed Automatic Integration Library (Version 2.2)
+% [MATLAB Software], 2017. Available from http://gailgithub.github.io/GAIL_Dev/
 %
 % [3] Sou-Cheng T. Choi, _MINRES-QLP Pack and Reliable Reproducible
 % Research via Supportable Scientific Software,_ Journal of Open Research
@@ -188,7 +188,7 @@ f = @(x) x.^2; [q, out_param] = integral_g(f)
 % [4] Sou-Cheng T. Choi and Fred J. Hickernell, _IIT MATH-573 Reliable
 % Mathematical Software_ [Course Slides], Illinois Institute of
 % Technology, Chicago, IL, 2013. Available from
-% http://code.google.com/p/gail/ 
+% http://gailgithub.github.io/GAIL_Dev/ 
 %
 % [5] Daniel S. Katz, Sou-Cheng T. Choi, Hilmar Lapp, Ketan Maheshwari,
 % Frank Loffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr,

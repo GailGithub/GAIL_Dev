@@ -48,7 +48,7 @@ function [hmu,out_param]=meanMC_CLT(Yrand,absTol,relTol,alpha,nSig,inflate)
 % approximation
 if nargin < 6
    inflate = 1.2; %standard deviation inflation factor
-   if nargin < 5;
+   if nargin < 5
       nSig = 1e3; %number of samples to estimate variance
       if nargin < 4
          alpha = 0.01; %uncertainty
@@ -76,7 +76,7 @@ out_param.var = var(Yval); %calculate the sample variance--stage 1
 sig0 = sqrt(out_param.var); %standard deviation
 sig0up = out_param.inflate.*sig0; %upper bound on the standard deviation
 hmu0 = mean(Yval);
-nmu = max(1,ceil((-norminv(alpha/2)*sig0up/max(absTol,relTol*abs(hmu0))).^2)); 
+nmu = max(1,ceil((-gail.stdnorminv(alpha/2)*sig0up/max(absTol,relTol*abs(hmu0))).^2)); 
    %number of samples needed for mean
 if nmu > nMax %don't exceed sample budget
    warning(['The algorithm wants to use nmu = ' int2str(nmu) ...

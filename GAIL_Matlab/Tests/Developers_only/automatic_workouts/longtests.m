@@ -16,16 +16,14 @@ end
 
 %% Workouts
 % funappx_g
-doctest par_funappx_g
+%doctest par_funappx_g
 
 % funmin_g
-doctest par_funmin_g
+%doctest par_funmin_g
 
 % meanMC_g
 doctest dt_meanMC_g_TrafficModel
 
-% meanMCBer_g
- 
 % cubMC_g
 format short
 doctest dt_cubMC_g
@@ -73,60 +71,60 @@ catch
     %fprintf(fid,'Error: Test ut_convtest_funappx_g is wrongly coded. We skip it.\n');
 end    
 
-try
-    Tests = matlab.unittest.TestSuite.fromClass(?ut_par_funappx_g);
-    results = run(ut_par_funappx_g);
-    if sum([results.Failed])>0
-        failed=find([results.Failed]>0);
-        for i=1:size(failed,2)
-            fprintf(fid,'%s\n',Tests(failed(i)).Name);
-        end
-    end
-catch
-    display('Error: Test ut_par_funappx_g is wrongly coded. We skip it.')
-end
- 
+% try
+%     Tests = matlab.unittest.TestSuite.fromClass(?ut_par_funappx_g);
+%     results = run(ut_par_funappx_g);
+%     if sum([results.Failed])>0
+%         failed=find([results.Failed]>0);
+%         for i=1:size(failed,2)
+%             fprintf(fid,'%s\n',Tests(failed(i)).Name);
+%         end
+%     end
+% catch
+%     display('Error: Test ut_par_funappx_g is wrongly coded. We skip it.')
+% end
+%  
 
 % funmin_g
-try
-    Tests = matlab.unittest.TestSuite.fromClass(?ut_workout_funmin_g);
-    results=run(ut_workout_funmin_g);
-    if sum([results.Failed])>0
-        failed=find([results.Failed]>0);
-        %for i=1:size(failed,2)
-        %  fprintf(fid,'%s\n',Tests(failed(i)).Name);
-        %end
-    end
-catch
-    display('Error: Test ut_workout_funmin_g is wrongly coded. We skip it.')
-    %fprintf(fid,'Error: Test ut_workout_funmin_g is wrongly coded. We skip it.\n');
-end    
+% try
+%     Tests = matlab.unittest.TestSuite.fromClass(?ut_workout_funmin_g);
+%     results=run(ut_workout_funmin_g);
+%     if sum([results.Failed])>0
+%         failed=find([results.Failed]>0);
+%         %for i=1:size(failed,2)
+%         %  fprintf(fid,'%s\n',Tests(failed(i)).Name);
+%         %end
+%     end
+% catch
+%     display('Error: Test ut_workout_funmin_g is wrongly coded. We skip it.')
+%     %fprintf(fid,'Error: Test ut_workout_funmin_g is wrongly coded. We skip it.\n');
+% end    
 
-try
-    Tests = matlab.unittest.TestSuite.fromClass(?ut_par_funmin_g);
-    results = run(ut_par_funmin_g);
-    if sum([results.Failed])>0
-        failed=find([results.Failed]>0);
-        for i=1:size(failed,2)
-            fprintf(fid,'%s\n',Tests(failed(i)).Name);
-        end
-    end
-catch
-    display('Error: Test ut_par_funmin_g is wrongly coded. We skip it.')
-end
+% try
+%     Tests = matlab.unittest.TestSuite.fromClass(?ut_par_funmin_g);
+%     results = run(ut_par_funmin_g);
+%     if sum([results.Failed])>0
+%         failed=find([results.Failed]>0);
+%         for i=1:size(failed,2)
+%             fprintf(fid,'%s\n',Tests(failed(i)).Name);
+%         end
+%     end
+% catch
+%     display('Error: Test ut_par_funmin_g is wrongly coded. We skip it.')
+% end
 
-try
-    Tests = matlab.unittest.TestSuite.fromClass(?ut_par_funmin_g_end);
-    results = run(ut_par_funmin_g_end);
-    if sum([results.Failed])>0
-        failed=find([results.Failed]>0);
-        for i=1:size(failed,2)
-            fprintf(fid,'%s\n',Tests(failed(i)).Name);
-        end
-    end
-catch
-    display('Error: Test ut_par_funmin_g_end is wrongly coded. We skip it.')
-end
+% try
+%     Tests = matlab.unittest.TestSuite.fromClass(?ut_par_funmin_g_end);
+%     results = run(ut_par_funmin_g_end);
+%     if sum([results.Failed])>0
+%         failed=find([results.Failed]>0);
+%         for i=1:size(failed,2)
+%             fprintf(fid,'%s\n',Tests(failed(i)).Name);
+%         end
+%     end
+% catch
+%     display('Error: Test ut_par_funmin_g_end is wrongly coded. We skip it.')
+% end
 
 %cubQMC
 format short
@@ -164,23 +162,6 @@ catch
     display('Error: DisplayTestResults_BlacknColor is wrongly coded. We skip it.')
     %fprintf(fid,'Error: DisplayTestResults_BlacknColor is wrongly coded. We skip it.\n');
 end
-
-% meanMCBer_g paper
-% run_handle('PlotmeanMCBer_gResults')
-% run_handle('PlotRatioHoeffCLT')
-% try
-%     Tests = matlab.unittest.TestSuite.fromClass(?ut_meanMCBer_g);
-%     results=run(ut_meanMCBer_g);
-%     if sum([results.Failed])>0
-%         failed=find([results.Failed]>0);
-%         %for i=1:size(failed,2)
-%         %  fprintf(fid,'%s\n',Tests(failed(i)).Name);
-%         %end
-%     end
-% catch
-%     display('Error: Test ut_meanMCBer_g is wrongly coded. We skip it.')
-%     %fprintf(fid,'Error: Test ut_meanMCBer_g is wrongly coded. We skip it.\n');
-% end
 
 % cubSobol_g paper
 try
@@ -237,34 +218,34 @@ catch
 end
 
 % Function minimization thesis
-try
-    if usejava('jvm') || MATLABVERSION <= 7.12
-        run_handle('UniFunMin_Plot_Bump')
-        run_handle('UniFunMin_Plot_Flat')
-        run_handle('UniFunMin_Plot_TwoExtreme')
-    end
-catch
-    display('Error: Test for Papers/UniFunMin is wrongly coded. We skip it.')
-    %fprintf(fid,'Error: Test for Papers/UniFunMin is wrongly coded. We skip it.\n');
-end
-try
-    Tests = matlab.unittest.TestSuite.fromClass(?ut_thesis_funmin01_g);
-    results=run(ut_thesis_funmin01_g);
-    if sum([results.Failed])>0
-        failed=find([results.Failed]>0);
-        % for i=1:size(failed,2)
-        %    fprintf(fid,'%s\n',Tests(failed(i)).Name);
-        % end
-    end
-catch
-    display('Error: Test ut_thesis_funmin01_g is wrongly coded. We skip it.')
-end
+% try
+%     if usejava('jvm') || MATLABVERSION <= 7.12
+%         run_handle('UniFunMin_Plot_Bump')
+%         run_handle('UniFunMin_Plot_Flat')
+%         run_handle('UniFunMin_Plot_TwoExtreme')
+%     end
+% catch
+%     display('Error: Test for Papers/UniFunMin is wrongly coded. We skip it.')
+%     %fprintf(fid,'Error: Test for Papers/UniFunMin is wrongly coded. We skip it.\n');
+% end
+% try
+%     Tests = matlab.unittest.TestSuite.fromClass(?ut_thesis_funmin01_g);
+%     results=run(ut_thesis_funmin01_g);
+%     if sum([results.Failed])>0
+%         failed=find([results.Failed]>0);
+%         % for i=1:size(failed,2)
+%         %    fprintf(fid,'%s\n',Tests(failed(i)).Name);
+%         % end
+%     end
+% catch
+%     display('Error: Test ut_thesis_funmin01_g is wrongly coded. We skip it.')
+% end
 
 %% doctests and unit tests for deprecated algos
 doctest funappxtau_g
 doctest funappxglobal_g
-doctest dt_funappxglobal_g
-doctest funmin01_g
+%doctest dt_funappxglobal_g
+% doctest funmin01_g
 doctest integral01_g
 doctest integraltau_g
 doctest meanMCabs_g
@@ -272,19 +253,19 @@ doctest cubMCabs_g;
 doctest cubLattice_old_g;  
 doctest cubSobol_old_g;  
 
-try
-    Tests = matlab.unittest.TestSuite.fromClass(?ut_funappxglobal_g);
-    results=run(ut_funappxglobal_g);
-    if sum([results.Failed])>0
-        failed=find([results.Failed]>0);
-        for i=1:size(failed,2)
-            fprintf(fid,'%s\n',Tests(failed(i)).Name);
-        end
-    end
-catch
-    display('Error: Test ut_funappxglobal_g is wrongly coded. We skip it.')
-    %fprintf(fid,'Error: Test ut_funappxglobal_g is wrongly coded. We skip it.\n');
-end
+% try
+%     Tests = matlab.unittest.TestSuite.fromClass(?ut_funappxglobal_g);
+%     results=run(ut_funappxglobal_g);
+%     if sum([results.Failed])>0
+%         failed=find([results.Failed]>0);
+%         for i=1:size(failed,2)
+%             fprintf(fid,'%s\n',Tests(failed(i)).Name);
+%         end
+%     end
+% catch
+%     display('Error: Test ut_funappxglobal_g is wrongly coded. We skip it.')
+%     %fprintf(fid,'Error: Test ut_funappxglobal_g is wrongly coded. We skip it.\n');
+% end
     
 warning('off','GAIL:integral01_g:peaky')
 try
@@ -301,18 +282,18 @@ catch
 end
 warning('on','GAIL:integral01_g:peaky')
 
-try
-    Tests = matlab.unittest.TestSuite.fromClass(?ut_funmin01_g);
-    results=run(ut_funmin01_g);
-    if sum([results.Failed])>0
-        failed=find([results.Failed]>0);
-        %for i=1:size(failed,2)
-        %    fprintf(fid,'%s\n',Tests(failed(i)).Name);
-        %end
-    end
-catch
-    display('Error: Test ut_funmin01_g is wrongly coded. We skip it.')
-end
+% try
+%     Tests = matlab.unittest.TestSuite.fromClass(?ut_funmin01_g);
+%     results=run(ut_funmin01_g);
+%     if sum([results.Failed])>0
+%         failed=find([results.Failed]>0);
+%         %for i=1:size(failed,2)
+%         %    fprintf(fid,'%s\n',Tests(failed(i)).Name);
+%         %end
+%     end
+% catch
+%     display('Error: Test ut_funmin01_g is wrongly coded. We skip it.')
+% end
 
 try
     Tests = matlab.unittest.TestSuite.fromClass(?ut_meanMCabs_g);
@@ -357,18 +338,18 @@ catch
 end
 
 
-try
-    Tests = matlab.unittest.TestSuite.fromClass(?ut_integralNoPenalty_g);
-    results=run(ut_integralNoPenalty_g);
-    if sum([results.Failed])>0
-        failed=find([results.Failed]>0);
-        for i=1:size(failed,2)
-            fprintf(fid,'%s\n',Tests(failed(i)).Name);
-        end
-    end
-catch
-    display('Error: Test ut_integralNoPenalty_g is wrongly coded. We skip it.')
-end
+%try
+%    Tests = matlab.unittest.TestSuite.fromClass(?ut_integralNoPenalty_g);
+%    results=run(ut_integralNoPenalty_g);
+%    if sum([results.Failed])>0
+%        failed=find([results.Failed]>0);
+%        for i=1:size(failed,2)
+%            fprintf(fid,'%s\n',Tests(failed(i)).Name);
+%        end
+%    end
+%catch
+%    display('Error: Test ut_integralNoPenalty_g is wrongly coded. We skip it.')
+%end
 
 
 

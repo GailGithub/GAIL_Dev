@@ -78,7 +78,7 @@ function dt_integral_g()
 %
 % 
 %  >>  [~,out_param]=integral_g(@(x) x.^2) 
-%     out_param =  
+%     out_param =***  
 %                f: @(x)x.^2
 %                a: 0
 %                b: 1
@@ -98,7 +98,7 @@ function dt_integral_g()
 %
 %
 %   >> f = @(x) exp(-x.^2); [~, out_param] = integral_g(f,'a',1,'b',2,'nlo',100,'nhi',10000,'abstol',1e-5,'nmax',1e7)
-%   out_param = 
+%   out_param =*** 
 %                a: 1
 %           abstol: 1.0000e-05
 %                b: 2

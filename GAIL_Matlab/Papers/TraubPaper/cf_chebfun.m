@@ -1,21 +1,25 @@
 function cf_chebfun(f, a, b, abstol, varargin)
-% Examples:
+% CF_CHEBFUN compares funappx_g with Chebfun
+%
+% Example 1:
 % f1 = @(x) x.^4 .* sin(1./((x==0)+x)); a = -1; b = 1; abstol = 1e-6; cf_chebfun(f1, a, b, abstol)
 %
+% Example 2:
 % f2 = @(x) f1(x) + 10.*x.^2; abstol = 1e-6;   cf_chebfun(f2, a, b, abstol) 
 %
+% Example 3:
 % delta = 0.2; B = 1./(2*delta.^2); c = -0.2;
 % f3 = @(x) B*(4*delta.^2 + (x-c).^2 + (x-c-delta).*abs(x-c-delta) ...
 %    - (x-c+delta).*abs(x-c+delta)).*(abs(x-c) <= 2*delta); a = - 1; b = 1; abstol = 1e-14;  
 % cf_chebfun(f3, a, b, abstol)
 %
+% Example 4:
 % f4 = @(x)sin(10*pi*x.^4)-x, a = 1; b = 2; abstol = 1e-14; cf_chebfun(f4, a, b, abstol)
 %
+% Example 5:
 % f5 = @(x) sign(x);  a = -1; b = 1; cf_chebfun(f5, a, b, abstol)
 %  
-% 
-% To compare par_funappx_g and chebfun:
-% cf_chebfun(f3, a, b, abstol, true)
+%  
 
 gail.InitializeDisplay
 %set(0,'defaultaxesfontsize',24,'defaulttextfontsize',24) %make font larger
@@ -28,23 +32,23 @@ format long
 % MATLABGreen = [0.466,  0.674, 0.188];
 % MATLABDkOrange = [0.85,  0.325, 0.098]*0.6;
 % MATLABLtOrange = 0.5*[0.85,  0.325, 0.098] + 0.5*[1 1 1];
-if nargin < 5,
-    testparallel = false;
-else
-    testparallel = varargin{1};
-end
+% if nargin < 5,
+%     testparallel = false;
+% else
+%     testparallel = varargin{1};
+% end
 
 %% funappx_g
 t1 = 0;
-if ~testparallel,
+%if ~testparallel,
     tic, [fappx, fout] = funappx_g(f,a,b,abstol,'nmax',10^8), t1=toc
     disp('---------------------');
     % gail.funappx_g_check(fappx,fout)
-else
-    tic, [fappx, fout] = par_funappx_g(4, f,a,b,abstol,'nmax',10^8), t2=toc
-    time_ratio1 = t1/t2
-    disp('---------------------');
-end
+% else
+%     tic, [fappx, fout] = par_funappx_g(4, f,a,b,abstol,'nmax',10^8), t2=toc
+%     time_ratio1 = t1/t2
+%     disp('---------------------');
+% end
 
 %% chebfun
 tic, c = chebfun(f,[a,b],'chebfuneps', abstol,'splitting','on'), t3=toc

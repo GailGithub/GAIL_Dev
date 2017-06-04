@@ -21,20 +21,22 @@ tic; doctest gail.gailMD_in_param; time=toc
 tic; doctest gail.cubMC_g_in_param; time=toc
 
 tic; doctest funappx_g; time=toc
-tic; doctest funappxNoPenalty_g; time=toc
 tic; doctest dt_funappx_g; time=toc
-tic; doctest dt_funappxNoPenalty_g; time=toc
 tic; doctest funmin_g; time=toc
-tic; doctest funminNoPenalty_g; time=toc
 tic; doctest integral_g; time=toc
 %tic; doctest integralsim_g; time=toc
 tic; doctest dt_integral_g ; time=toc
 tic; doctest meanMC_g; time=toc
-%tic; doctest meanMCBer_g; time=toc
 tic; doctest cubLattice_g; time=toc
 tic; doctest cubSobol_g; time=toc
-tic; doctest dt_integralNoPenalty_g; time=toc
+%tic; doctest dt_integralNoPenalty_g; time=toc
 
+tic; doctest assetPath; time=toc
+tic; doctest optPayoff; time=toc
+tic; doctest optPrice; time=toc
+tic; doctest brownianMotion; time=toc
+tic; doctest stochProcess; time=toc
+tic; doctest whiteNoise; time=toc
 %% CALL UNIT TESTS
 [~,~,MATLABVERSION]=GAILstart(0);
 if MATLABVERSION < 8.1
@@ -90,19 +92,19 @@ else
         fprintf(fid,'Error: Test ut_funappx_g is wrongly coded. We skip it.\n');
     end
     
-    try
-        Tests = matlab.unittest.TestSuite.fromClass(?ut_funappxPenalty_g);
-        results=run(ut_funappxPenalty_g)
-        if sum([results.Failed])>0
-            failed=find([results.Failed]>0);
-            for i=1:size(failed,2)
-                fprintf(fid,'%s\n',Tests(failed(i)).Name);
-            end
-        end
-    catch
-        display('Error: Test ut_funappxPenalty_g is wrongly coded. We skip it.')
-        fprintf(fid,'Error: Test ut_funappxPenalty_g is wrongly coded. We skip it.\n');
-    end   
+%     try
+%         Tests = matlab.unittest.TestSuite.fromClass(?ut_funappxPenalty_g);
+%         results=run(ut_funappxPenalty_g)
+%         if sum([results.Failed])>0
+%             failed=find([results.Failed]>0);
+%             for i=1:size(failed,2)
+%                 fprintf(fid,'%s\n',Tests(failed(i)).Name);
+%             end
+%         end
+%     catch
+%         display('Error: Test ut_funappxPenalty_g is wrongly coded. We skip it.')
+%         fprintf(fid,'Error: Test ut_funappxPenalty_g is wrongly coded. We skip it.\n');
+%     end   
     
     try
         Tests = matlab.unittest.TestSuite.fromClass(?ut_funmin_g);
@@ -119,20 +121,6 @@ else
     end
     
     try
-        Tests = matlab.unittest.TestSuite.fromClass(?ut_funminPenalty_g);
-        results=run(ut_funminPenalty_g)
-        if sum([results.Failed])>0
-            failed=find([results.Failed]>0);
-            for i=1:size(failed,2)
-                fprintf(fid,'%s\n',Tests(failed(i)).Name);
-            end
-        end
-    catch
-        display('Error: Test ut_funminPenalty_g is wrongly coded. We skip it.')
-        fprintf(fid,'Error: Test ut_funminPenalty_g is wrongly coded. We skip it.\n');
-    end
-    
-    try
         Tests = matlab.unittest.TestSuite.fromClass(?ut_funmin_g_end);
         results=run(ut_funmin_g_end)
         if sum([results.Failed])>0
@@ -144,19 +132,6 @@ else
     catch
         display('Error: Test ut_funmin_g_end is wrongly coded. We skip it.')
         fprintf(fid,'Error: Test ut_funmin_g_end is wrongly coded. We skip it.\n');
-    end
-    try
-        Tests = matlab.unittest.TestSuite.fromClass(?ut_funminPenalty_g_end);
-        results=run(ut_funminPenalty_g_end)
-        if sum([results.Failed])>0
-            failed=find([results.Failed]>0);
-            for i=1:size(failed,2)
-                fprintf(fid,'%s\n',Tests(failed(i)).Name);
-            end
-        end
-    catch
-        display('Error: Test ut_funminPenalty_g_end is wrongly coded. We skip it.')
-        fprintf(fid,'Error: Test ut_funminPenalty_g_end is wrongly coded. We skip it.\n');
     end
     
     try
@@ -175,20 +150,13 @@ else
     
     
     try
-	% add a license check before run cubLattice
-	licCheck = license('checkout', 'Statistics_Toolbox');
-	if licCheck == 0 
-            display('Warning: License for Statistics_Toolbox failed to checkout. We skip ut_cubLattice_g.')
-	    fprintf(fid, 'Warning: License for Statistics_Toolbox failed to checkout. We skip ut_cubLattice_g.');
-	else
-            Tests = matlab.unittest.TestSuite.fromClass(?ut_cubLattice_g);
-            results=run(ut_cubLattice_g)
-	        if sum([results.Failed])>0
-                    failed=find([results.Failed]>0);
-                    for i=1:size(failed,2)
-                        fprintf(fid,'%s\n',Tests(failed(i)).Name);
-                    end
-                end
+        Tests = matlab.unittest.TestSuite.fromClass(?ut_cubLattice_g);
+        results=run(ut_cubLattice_g)
+        if sum([results.Failed])>0
+            failed=find([results.Failed]>0);
+            for i=1:size(failed,2)
+                fprintf(fid,'%s\n',Tests(failed(i)).Name);
+            end
         end
     catch
         display('Error: Test ut_cubLattice_g is wrongly coded. We skip it.')
@@ -196,20 +164,14 @@ else
     end
     
     try
-	% add a license check before run cubSobol
-	if licCheck == 0 
-            display('Warning: License for Statistics_Toolbox failed to checkout. We skip ut_cubSobol_g.\n')
-	    fprintf(fid, 'Warning: License for Statistics_Toolbox failed to checkout. We skip ut_cubSobol_g.\n');
-	else
-             Tests = matlab.unittest.TestSuite.fromClass(?ut_cubSobol_g);
-             results=run(ut_cubSobol_g)
-             if sum([results.Failed])>0
-                 failed=find([results.Failed]>0);
-                 for i=1:size(failed,2)
-                     fprintf(fid,'%s\n',Tests(failed(i)).Name);
-                 end
-             end
-	end
+        Tests = matlab.unittest.TestSuite.fromClass(?ut_cubSobol_g);
+        results=run(ut_cubSobol_g)
+        if sum([results.Failed])>0
+            failed=find([results.Failed]>0);
+            for i=1:size(failed,2)
+                fprintf(fid,'%s\n',Tests(failed(i)).Name);
+            end
+        end
     catch
         display('Error: Test ut_cubSobol_g is wrongly coded. We skip it.')
         fprintf(fid,'Error: Test ut_cubSobol_g is wrongly coded. We skip it.\n');

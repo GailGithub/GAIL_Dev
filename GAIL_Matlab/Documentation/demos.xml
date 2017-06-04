@@ -15,6 +15,14 @@
             <file>html/curve.html</file>
         </demoitem>
     </demosection>
+     <demosection>
+        <label>funmin_g Demos</label>  
+        <demoitem>
+            <label>Curve 2</label>
+            <callback>curve2</callback>
+            <file>html/curve2.html</file>
+        </demoitem>
+    </demosection>
     <demosection>
         <label>cubSobol_g Demos</label>  
         <demoitem>
