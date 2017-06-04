@@ -10,18 +10,23 @@ shortutestreport = strcat(GAILPATH,'OutputFiles',filesep,...
    'gail_unittests','.txt');
 fid = fopen(shortutestreport,'wt');
 
-tic 
-%% CALL DOCTESTS 
+tic
+
+%% CALL DOCTESTs for individual algorithms moved to own files
+fasttests_cubMC_g
+fasttests_funappx_g
+
+%% CALL DOCTESTS
 tic; doctest gail.gail_in_param; time=toc
 tic; doctest gail.gail1D_in_param; time=toc
-tic; doctest gail.funappx_g_in_param; time=toc
+% moved to a separate file tic; doctest gail.funappx_g_in_param; time=toc
 tic; doctest gail.funmin_g_in_param; time=toc
 tic; doctest gail.integral_g_in_param; time=toc
 tic; doctest gail.gailMD_in_param; time=toc
-tic; doctest gail.cubMC_g_in_param; time=toc
+% moved to a separate file tic; doctest gail.cubMC_g_in_param; time=toc
 
-tic; doctest funappx_g; time=toc
-tic; doctest dt_funappx_g; time=toc
+% moved to a separate file tic; doctest funappx_g; time=toc
+% moved to a separate file tic; doctest dt_funappx_g; time=toc
 tic; doctest funmin_g; time=toc
 tic; doctest integral_g; time=toc
 %tic; doctest integralsim_g; time=toc
@@ -59,7 +64,7 @@ else
     end
     warning('on','GAIL:integral_g:peaky')
     warning('on','GAIL:integral_g:exceedbudget')
-    
+
 % 	warning('off','GAIL:integralsim_g:peaky')
 % 	warning('off','GAIL:integralsim_g:exceedbudget')
 % 	try
@@ -78,6 +83,7 @@ else
 % 	warning('on','GAIL:integralsim_g:peaky')
 % 	warning('on','GAIL:integralsim_g:exceedbudget')
 
+if 0 % moved to a separate file
     try
         Tests = matlab.unittest.TestSuite.fromClass(?ut_funappx_g);
         results=run(ut_funappx_g)
@@ -91,7 +97,7 @@ else
         display('Error: Test ut_funappx_g is wrongly coded. We skip it.')
         fprintf(fid,'Error: Test ut_funappx_g is wrongly coded. We skip it.\n');
     end
-    
+end
 %     try
 %         Tests = matlab.unittest.TestSuite.fromClass(?ut_funappxPenalty_g);
 %         results=run(ut_funappxPenalty_g)
@@ -104,8 +110,8 @@ else
 %     catch
 %         display('Error: Test ut_funappxPenalty_g is wrongly coded. We skip it.')
 %         fprintf(fid,'Error: Test ut_funappxPenalty_g is wrongly coded. We skip it.\n');
-%     end   
-    
+%     end
+
     try
         Tests = matlab.unittest.TestSuite.fromClass(?ut_funmin_g);
         results=run(ut_funmin_g)
@@ -119,7 +125,7 @@ else
         display('Error: Test ut_funmin_g is wrongly coded. We skip it.')
         fprintf(fid,'Error: Test ut_funmin_g is wrongly coded. We skip it.\n');
     end
-    
+
     try
         Tests = matlab.unittest.TestSuite.fromClass(?ut_funmin_g_end);
         results=run(ut_funmin_g_end)
@@ -133,7 +139,7 @@ else
         display('Error: Test ut_funmin_g_end is wrongly coded. We skip it.')
         fprintf(fid,'Error: Test ut_funmin_g_end is wrongly coded. We skip it.\n');
     end
-    
+
     try
         Tests = matlab.unittest.TestSuite.fromClass(?ut_meanMC_g);
         results=run(ut_meanMC_g)
@@ -147,8 +153,8 @@ else
         display('Error: Test ut_meanMC_g is wrongly coded. We skip it.')
         fprintf(fid,'Error: Test ut_meanMC_g is wrongly coded. We skip it.\n');
     end
-    
-    
+
+
     try
         Tests = matlab.unittest.TestSuite.fromClass(?ut_cubLattice_g);
         results=run(ut_cubLattice_g)
@@ -162,7 +168,7 @@ else
         display('Error: Test ut_cubLattice_g is wrongly coded. We skip it.')
         fprintf(fid,'Error: Test ut_cubLattice_g is wrongly coded. We skip it.\n');
     end
-    
+
     try
         Tests = matlab.unittest.TestSuite.fromClass(?ut_cubSobol_g);
         results=run(ut_cubSobol_g)
@@ -176,10 +182,10 @@ else
         display('Error: Test ut_cubSobol_g is wrongly coded. We skip it.')
         fprintf(fid,'Error: Test ut_cubSobol_g is wrongly coded. We skip it.\n');
     end
-    
-    
+
+
     %run_handle_ut(fid,'ut_cubMC_g')
-    
+
     %   try
     %     Tests = matlab.unittest.TestSuite.fromClass(?ut_integralNoPenalty_g);
     %     results=run(ut_integralNoPenalty_g)
