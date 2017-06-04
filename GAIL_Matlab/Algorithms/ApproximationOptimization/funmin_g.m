@@ -356,17 +356,25 @@ out_param.iter = iter;
 out_param.npoints = n;
 out_param.errest = max_errest;
 
+
 % control the order of out_param
 out_param = orderfields(out_param, ...
 {'f', 'a', 'b','abstol','ninit','nmax','maxiter',...
 'exitflag','iter','npoints','errest','output_x'});
 
+ints = find(ismember( x, newx ));
+leftint = ints(logical([true diff(ints)>2]));
+rightint = ints(logical([diff(ints)>2 true]));
+q = size(leftint,2);
+ints1 = zeros(2,q);
+ints1(1,:) = x(leftint);
+ints1(2,:) = x(rightint);
+out_param.intervals = ints1;
 
 if (in_param.output_x)
   out_param.x = x(1:n);
   out_param.y = y(1:n);
 end
-
 
 
 function [f, out_param] = funmin_g_param(varargin)

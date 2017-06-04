@@ -9,7 +9,7 @@
 % >> f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)
 % f_true = 0.06***
 % >> Q = cubLattice_g(f,hyperbox,'uniform',1e-3,1e-2);
-% >> check = abs(f_true-Q) < gail.tolfun(1e-3,1e-2,1,f_true,'max')
+% >> check = double(abs(f_true-Q) < gail.tolfun(1e-3,1e-2,1,f_true,'max'))
 % check = 1
 % 
 %

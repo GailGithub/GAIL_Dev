@@ -138,3 +138,24 @@ function f_eval = f(s,e,hyperbox,w,C)
     end
 end
 end
+
+%% References
+%  
+% [1] Fred J. Hickernell, Lluis Antoni Jimenez Rugama "Reliable adaptive 
+%     cubature using digital sequences", Monte Carlo and Quasi-Monte Carlo
+%     Methods: MCQMC, Leuven, Belgium, April 2014 (R. Cools and D. Nuyens,
+%     eds.), Springer Proceedings in Mathematics and Statistics, vol. 163,
+%     Springer-Verlag, Berlin, 2016, arXiv:1410.8615 [math.NA], pp.
+%     367-383.
+%
+% [2] Fred J. Hickernell, Lan Jiang, Yuewei Liu, and Art B. Owen,
+%     "Guaranteed conservative fixed width confidence intervals via Monte
+%     Carlo sampling," Monte Carlo and Quasi-Monte Carlo Methods 2012
+%     (J. Dick, F. Y. Kuo, G. W. Peters, and I. H. Sloan, eds.),
+%     Springer-Verlag, Berlin, pp. 105-128, 2014.
+% 
+% [3] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
+%     Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
+%     GAIL: Guaranteed Automatic Integration Library (Version 2.2) [MATLAB
+%     Software], 2017. Available from <http://gailgithub.github.io/GAIL_Dev/
+%     GitHub>.

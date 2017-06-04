@@ -71,12 +71,12 @@ function [fappx,out_param]=funappx_g(varargin)
 %
 %     out_param.ninit --- initial number of subintervals
 %
-%     out_param.exit --- this is a vector with two elements, defining the
-%     conditions of success or failure satisfied when finishing the
-%     algorithm. The algorithm is considered successful (with
-%     out_param.exit == [0 0]) if no other flags arise warning that the
-%     results are certainly not guaranteed. The initial value is [0 0] and
-%     the final value of this parameter is encoded as follows:
+%     out_param.exitflag --- this is a vector with two elements, for
+%     tracking important warnings in the algorithm. The algorithm is
+%     considered successful (with out_param.exitflag == [0 0]) if no other
+%     flags arise warning that the results are certainly not guaranteed.
+%     The initial value is [0 0] and the final value of this parameter is
+%     encoded as follows:
 %       
 %                      [1 0]   If reaching overbudget. It states whether
 %                      the max budget is attained without reaching the
@@ -106,7 +106,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %   >> f = @(x) x.^2;
 %   >> [~, out_param] = funappx_g(f,-2,2,1e-7,18)
 %
-% out_param =***
+% out_param =
 % 
 %            a: -2
 %       abstol: 1.0000e-07
@@ -115,7 +115,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %      maxiter: 1000
 %        ninit: 18
 %         nmax: 10000000
-%     exitflag: [0 0 0 0 0]
+%     exitflag: [0 0]
 %         iter: 12
 %      npoints: 36865
 %       errest: 2.9448e-***8
@@ -135,7 +135,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %      maxiter: 1000
 %        ninit: 17
 %         nmax: 10000000
-%     exitflag: [0 0 0 0 0]
+%     exitflag: [0 0]
 %         iter: 10
 %      npoints: 8705
 %       errest: 5.2896e-***7
@@ -156,12 +156,12 @@ function [fappx,out_param]=funappx_g(varargin)
 %      maxiter: 1000
 %        ninit: 18
 %         nmax: 10000000
-%     exitflag: [0 0 0 0 0]
+%     exitflag: [0 0]
 %         iter: 11
 %      npoints: 18433
 %       errest: 7.3654e-***7
 %
-%   
+%
 %   See also INTERP1, GRIDDEDINTERPOLANT, INTEGRAL_G, MEANMC_G, FUNMIN_G
 %
 %
@@ -218,7 +218,7 @@ y(1:ninitp) = f(x(1:ninitp));
 indexI = ([0 ones(1,ninitp-2) 0]>0);
 iSing = find(isinf(y));
 if ~isempty(iSing)
-    out_param.exitflag(5) = true;
+    %out_param.exitflag(5) = true;
     error('GAIL:funappx_g:yInf',['Function f(x) = Inf at x = ', num2str(x(iSing))]);
 end
 if length(y) == 1  
@@ -228,7 +228,7 @@ if length(y) == 1
     y(1:ninitp) = f(x(1:ninitp));
 end
 iter = 0;
-exit_len = 5;
+exit_len = 2;
 % we start the algorithm with all warning flags down
 out_param.exitflag = false(1,exit_len);
 C0 = 10;
@@ -237,20 +237,20 @@ C = @(h) (C0 * fh)./(fh-h);
 %C = @(h) (C0 * 2)./(1+exp(-h)); % logistic
 %C = @(h) C0 * (1+h.^2);         % quadratic
 npoints = ninitp;
-for iter_i = 1:out_param.maxiter,
+for iter_i = 1:out_param.maxiter
     %% Stage 1: Check for convergence
     %% Compute the error for i in I
     len = diff(x(1:npoints));
     deltaf = diff(diff(y(1:npoints)));
     h = x(2:npoints-1) - x(1:npoints-2);
     err(indexI(2:end-1)) = abs(1/8 * C(3*h(indexI(2:end-1)))...
-                           .* deltaf(indexI(2:end-1)));
+        .* deltaf(indexI(2:end-1)));
     indexI(2:end-1) = (err > abstol);
 
     % update iterations
     iter = iter + 1;
     max_errest = max(err);
-    if max_errest <= abstol,
+    if (max_errest <= abstol)
         break
     end 
  

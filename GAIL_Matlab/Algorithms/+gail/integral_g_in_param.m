@@ -28,7 +28,7 @@
 %
 %  To get a struct:
 %  >> in_param = gail.integral_g_in_param(@(x) x.^2);  out_param = in_param.toStruct()
-%  out_param = 
+%  out_param =*** 
 % 
 %             f: @(x)x.^2
 %             a: 0
@@ -42,7 +42,7 @@
 %
 % To get a structure with selected fields (and ignore properties that do not exist):
 % >> in_param = gail.integral_g_in_param(@(x) x.^2); out_param = in_param.toStruct({'f', 'abstol','c'})
-%  out_param =
+%  out_param =***
 %
 %     f: @(x)x.^2
 %     abstol: 1.0000e-06

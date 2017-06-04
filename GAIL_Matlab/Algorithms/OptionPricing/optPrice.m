@@ -1,27 +1,41 @@
 classdef optPrice < optPayoff
 
-%% optPrice
-% is a object of that computes the price of an object via (quasi-)Monte
-% Carlo methods.
-% 
-%
-% Example 1
-% >> obj=whiteNoise
-% obj = 
-%   whiteNoise with properties:
-% 
-%       distribName: 'Uniform'
-%        sampleName: 'IID'
-%          xDistrib: 'Uniform'
-%        qrandState: []
-%              name: 'WhiteNoise'
-%        timeVector: [1 2 3]
-%         startTime: 1
-%           endTime: 3
-%            nSteps: 3
-%     timeIncrement: [1 1]
-%               dim: 1
-%             nCols: 3
+    %% optPrice
+    % is a object of that computes the price of an object via (quasi-)Monte
+    % Carlo methods.
+    % 
+    %
+    % Example 1
+    % >> obj = optPrice
+    % obj =***
+    %    optPrice with properties:
+    % 
+    %                       inputType: 'n'
+    %          timeDim_timeVector: [1 2 3]
+    %           timeDim_startTime: 1
+    %             timeDim_endTime: 3
+    %            timeDim_initTime: 0
+    %           timeDim_initValue: 10
+    %          wnParam_sampleKind: 'IID'
+    %         wnParam_distribName: 'Gaussian'
+    %            wnParam_xDistrib: 'Uniform'
+    %        bmParam_assembleType: 'diff'
+    %         assetParam_pathType: 'GBM'
+    %        assetParam_initPrice: 10
+    %         assetParam_interest: 0.0100
+    %        assetParam_meanShift: 0
+    %       assetParam_volatility: 0.5000
+    %           assetParam_nAsset: 1
+    %         payoffParam_optType: {'euro'}
+    %     payoffParam_putCallType: {'call'}
+    %          payoffParam_strike: 10
+    %                  exactPrice: 3.4501
+    %        priceParam_cubMethod: 'IID_MC'
+    %           priceParam_absTol: 1
+    %           priceParam_relTol: 0
+    %            priceParam_alpha: 0.0100
+    % 
+    %   ***
 
 
 %% Properties
@@ -33,13 +47,13 @@ classdef optPrice < optPayoff
       priceParam = struct('cubMethod', 'IID_MC', ... %type of pricing scheme
          'absTol', 1, ... %absolute tolerance
          'relTol', 0, ... %relative tolerance
-         'alpha', 0.01) %alpha = uncertainty
+         'alpha', 0.01) %alpha = uncertainty         
       
    end
    
    properties (Constant, Hidden) %do not change & not seen
       allowCubMethod = {'IID_MC','Sobol','SobolCV','lattice','IID_MC_new', 'IID_MC_newtwo', ...
-         'IID_MC_abs'} 
+         'IID_MC_abs','IID_MC_CLT'} 
    end
    
 
@@ -120,6 +134,11 @@ classdef optPrice < optPayoff
             out.nPaths=outtemp.ntot;
          elseif strcmp(obj.priceParam.cubMethod,'IID_MC_newtwo')
             [price, outtemp] = meanMCnew2_g(@(n) genOptPayoffs(obj,n), ...
+               obj.priceParam.absTol, obj.priceParam.relTol, ...
+               obj.priceParam.alpha);
+            out.nPaths=outtemp.ntot;
+         elseif strcmp(obj.priceParam.cubMethod,'IID_MC_CLT')
+            [price, outtemp] = meanMC_CLT(@(n) genOptPayoffs(obj,n), ...
                obj.priceParam.absTol, obj.priceParam.relTol, ...
                obj.priceParam.alpha);
             out.nPaths=outtemp.ntot;

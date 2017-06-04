@@ -245,10 +245,13 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 % 
 %  References
 %
-%   [1] Fred J. Hickernell and Lluis Antoni Jimenez Rugama, "Reliable adaptive
-%   cubature using digital sequences," 2014. Submitted for publication:
-%   arXiv:1410.8615.
-%
+%   [1] Fred J. Hickernell and Lluis Antoni Jimenez Rugama "Reliable
+%   adaptive cubature using digital sequences", Monte Carlo and Quasi-Monte
+%   Carlo Methods: MCQMC, Leuven, Belgium, April 2014 (R. Cools and D.
+%   Nuyens, eds.), Springer Proceedings in Mathematics and Statistics, vol.
+%   163, Springer-Verlag, Berlin, 2016, arXiv:1410.8615 [math.NA], pp.
+%   367-383.
+% 
 %   [2] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang,
 %   Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
 %   GAIL: Guaranteed Automatic Integration Library (Version 2.2)
@@ -482,53 +485,52 @@ for m=out_param.mmin+1:out_param.mmax
    n0=n0+nnext;
    % check for using control variates or not
    if cv.J == 0
-	   ynext = f(xnext); yval=[yval; ynext];
+       ynext = f(xnext); yval=[yval; ynext];
    else
-	   ycvnext = f(xnext);
+       ycvnext = f(xnext);
        ynext = ycvnext(:,1) - ycvnext(:,2:end)*beta;
        yval=[yval; ynext];
    end
-
    %% Compute initial FWT on next points
-   for l=0:mnext-1
-      nl=2^l;
-      nmminlm1=2^(mnext-l-1);
-      ptind=repmat([true(nl,1); false(nl,1)],nmminlm1,1);
-      evenval=ynext(ptind);
-      oddval=ynext(~ptind);
-      ynext(ptind)=(evenval+oddval)/2;
-      ynext(~ptind)=(evenval-oddval)/2;
-   end
-
-   %% Compute FWT on all points
-   y=[y;ynext];
-   nl=2^mnext;
-   ptind=[true(nl,1); false(nl,1)];
-   evenval=y(ptind);
-   oddval=y(~ptind);
-   y(ptind)=(evenval+oddval)/2;
-   y(~ptind)=(evenval-oddval)/2;
-
-   %% Update kappanumap
-   kappanumap=[kappanumap; 2^(m-1)+kappanumap]; %initialize map
-   for l=m-1:-1:m-r_lag
-      nl=2^l;
-      oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
-      newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa, 
-      flip=find(newone>oldone);
-      if ~isempty(flip)
-          flipall=bsxfun(@plus,flip,0:2^(l+1):2^m-1);
-          flipall=flipall(:);
-          temp=kappanumap(nl+1+flipall);
-          kappanumap(nl+1+flipall)=kappanumap(1+flipall);
-          kappanumap(1+flipall)=temp;
-      end
-   end
-
-   %% updating beta (to be improved)
-   if out_param.betaUpdate&&cv.J
-       xpts=sobstr(1:n0,1:out_param.d);
-       ycv = f(xpts);y = ycv(:,1);yg = ycv(:,2:end);
+   %% not updating beta
+   if out_param.betaUpdate == 0
+    	for l=0:mnext-1
+       	    nl=2^l;
+       	    nmminlm1=2^(mnext-l-1);
+       	    ptind=repmat([true(nl,1); false(nl,1)],nmminlm1,1);
+       	    evenval=ynext(ptind);
+       	    oddval=ynext(~ptind);
+       	    ynext(ptind)=(evenval+oddval)/2;
+       	    ynext(~ptind)=(evenval-oddval)/2;
+    	end
+ 	
+    	%% Compute FWT on all points
+    	y=[y;ynext];
+    	nl=2^mnext;
+    	ptind=[true(nl,1); false(nl,1)];
+    	evenval=y(ptind);
+    	oddval=y(~ptind);
+    	y(ptind)=(evenval+oddval)/2;
+    	y(~ptind)=(evenval-oddval)/2;
+ 	
+    	%% Update kappanumap
+    	kappanumap=[kappanumap; 2^(m-1)+kappanumap]; %initialize map
+    	for l=m-1:-1:m-r_lag
+       	    nl=2^l;
+       	    oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
+       	    newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa, 
+       	    flip=find(newone>oldone);
+       	    if ~isempty(flip)
+           	flipall=bsxfun(@plus,flip,0:2^(l+1):2^m-1);
+           	flipall=flipall(:);
+           	temp=kappanumap(nl+1+flipall);
+           	kappanumap(nl+1+flipall)=kappanumap(1+flipall);
+           	kappanumap(1+flipall)=temp;
+       	    end
+	end
+   %% updating beta
+   else
+       ycv = [ycv;ycvnext];y = ycv(:,1);yg = ycv(:,2:end);
        %% compute FWT
        for l=0:m-1
            nl=2^l;
@@ -549,20 +551,20 @@ for m=out_param.mmin+1:out_param.mmax
        out_param.beta = [out_param.beta;beta];
        yval = ycv(:,1) - ycv(:,2:end)*beta;
        y = y-yg*beta;
-       %% rebuild kappa map
-       kappanumap=(1:n0)'; %initialize map
-       for l=m-1:-1:1
-           nl=2^l;
-           oldone=abs(y(kappanumap(2:nl)));
-           newone=abs(y(kappanumap(nl+2:2*nl))); 
-           flip=find(newone>oldone);
-           if ~isempty(flip)
-               flipall=bsxfun(@plus,flip,0:2^(l+1):2^out_param.mmin-1);
-               flipall=flipall(:);
-               temp=kappanumap(nl+1+flipall);  
-               kappanumap(nl+1+flipall)=kappanumap(1+flipall);
-               kappanumap(1+flipall)=temp; 
-           end
+       %% update kappamap
+       kappanumap=[kappanumap; 2^(m-1)+kappanumap]; %initialize map
+       for l=m-1:-1:m-r_lag
+       	   nl=2^l;
+       	   oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
+       	   newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa, 
+       	   flip=find(newone>oldone);
+       	   if ~isempty(flip)
+           	flipall=bsxfun(@plus,flip,0:2^(l+1):2^m-1);
+           	flipall=flipall(:);
+           	temp=kappanumap(nl+1+flipall);
+           	kappanumap(nl+1+flipall)=kappanumap(1+flipall);
+           	kappanumap(1+flipall)=temp;
+       	   end
        end
    end
 

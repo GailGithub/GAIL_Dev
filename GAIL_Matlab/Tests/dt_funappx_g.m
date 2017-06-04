@@ -22,7 +22,7 @@ function dt_funappx_g
 %      maxiter: 1000
 %        ninit: 20
 %         nmax: 10000000
-%     exitflag: [0 0 0 0 0]
+%     exitflag: [0 0]
 %         iter: 13
 %      npoints: 81921
 %       errest: 3.7262e-***8
@@ -43,7 +43,7 @@ function dt_funappx_g
 %      maxiter: 1000
 %        ninit: 20
 %         nmax: 10000000
-%     exitflag: [0 0 0 0 0]
+%     exitflag: [0 0]
 %         iter: 12
 %      npoints: 18159
 %       errest: 2.5089e-***9
@@ -62,7 +62,7 @@ function dt_funappx_g
 %      maxiter: 1000
 %        ninit: 41
 %         nmax: 10000000
-%     exitflag: [0 0 0 0 0]
+%     exitflag: [0 0]
 %         iter: 12
 %      npoints: 48787
 %       errest: 3.4055e-***08
@@ -81,7 +81,7 @@ function dt_funappx_g
 %      maxiter: 1000
 %        ninit: 28
 %         nmax: 10000000
-%     exitflag: [0 0 0 0 0]
+%     exitflag: [0 0]
 %         iter: 11
 %      npoints: 6659
 %       errest: 3.0439e-***7
