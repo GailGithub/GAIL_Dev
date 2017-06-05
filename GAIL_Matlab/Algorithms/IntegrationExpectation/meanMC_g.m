@@ -54,8 +54,8 @@ function [tmu,out_param]=meanMC_g(varargin)
 %     be larger than 1, default value is 1.2.
 %
 %     in_param.nSig --- initial sample size for estimating the sample
-%     variance, which should be a moderate large integer at least 30, the
-%     default value is 1e4.
+%     variance, which should be a moderately large integer bigger than or
+%     equal to 30, the default value is 1e4.
 %
 %     in_param.n1 --- initial sample size for estimating the sample mean,
 %     which should be a moderate large positive integer at least 30, the
@@ -72,7 +72,7 @@ function [tmu,out_param]=meanMC_g(varargin)
 %
 %     tmu --- the estimated mean of Y.
 %
-%     out_param.tau --- the iteration step.
+%     out_param.tau --- the total number of iterations.
 %
 %     out_param.n --- the sample size used in each iteration.
 %
@@ -87,7 +87,7 @@ function [tmu,out_param]=meanMC_g(varargin)
 %
 %     out_param.var --- the sample variance.
 %
-%     out_param.exit --- the state of program when exiting.
+%     out_param.exitflag --- the state of program when exiting.
 %
 %                      0   Success
 %
@@ -104,8 +104,8 @@ function [tmu,out_param]=meanMC_g(varargin)
 %  Guarantee
 % This algorithm attempts to calculate the mean, mu, of a random variable
 % to a prescribed error tolerance, tolfun:= max(abstol,reltol*|mu|), with
-% guaranteed confidence level 1-alpha. If the algorithm terminated without
-% showing any warning messages and provide an answer tmu, then the follow
+% guaranteed confidence level 1-alpha. If the algorithm terminates without
+% showing any warning messages and provides an answer tmu, then the follow
 % inequality would be satisfied:
 %
 % Pr(|mu-tmu| <= tolfun) >= 1-alpha
@@ -132,24 +132,28 @@ function [tmu,out_param]=meanMC_g(varargin)
 %
 % >> in_param.reltol=0; in_param.abstol = 1e-3;
 % >> in_param.alpha = 0.05; Yrand=@(n) rand(n,1).^2;
-% >> tmu=meanMC_g(Yrand,in_param)
-% tmu = 0.33***
+% >> tmu=meanMC_g(Yrand,in_param);exactsol = 1/3;
+% >> check = abs(exactsol-tmu) < 1e-3
+% check = 1
 %
 %
 % Example 3:
 % Calculate the mean of exp(x) when x is uniformly distributed in
 % [0 1], with the absolute error tolerance 1e-3.
 %
-% >> tmu=meanMC_g(@(n)exp(rand(n,1)),1e-3,0)
-% tmu = 1.71***
+% >> tmu=meanMC_g(@(n)exp(rand(n,1)),1e-3,0);exactsol=exp(1)-1;
+% >> check = abs(exactsol-tmu) < 1e-3
+% check = 1
 %
 %
 % Example 4:
 % Calculate the mean of cos(x) when x is uniformly distributed in
 % [0 1], with the relative error tolerance 1e-2 and uncertainty 0.05.
 %
-% >> tmu=meanMC_g(@(n)cos(rand(n,1)),'reltol',1e-2,'abstol',0,'alpha',0.05)
-% tmu = 0.84***
+% >> tmu=meanMC_g(@(n)cos(rand(n,1)),'reltol',1e-3,'abstol',1e-4,'alpha',0.01);
+% >> exactsol = sin(1);
+% >> check = abs(exactsol-tmu) < max(1e-3,1e-2*abs(exactsol))
+% check = 1
 %
 %
 %   See also FUNAPPX_G, INTEGRAL_G, CUBMC_G, CUBSOBOL_G, CUBLATTICE_G
@@ -167,6 +171,10 @@ function [tmu,out_param]=meanMC_g(varargin)
 %   Guaranteed Automatic Integration Library (Version 2.2)" [MATLAB
 %   Software], 2017. Available from http://gailgithub.github.io/GAIL_Dev/
 %
+%   [3] Lan Jiang, Guaranteed Adaptive Monte Carlo Methods for Estimating
+%   Means of Random Variables, Ph.D Thesis, Illinois Institute of
+%   Technology, 2016.
+%
 %   If you find GAIL helpful in your work, please support us by citing the
 %   above paper and software.
 
@@ -183,7 +191,7 @@ Yrand(ntry);
 ttry=toc;
 tpern = ttry/ntry; % calculate time per sample
 nsofar = nsofar+ntry; % update n so far
-out_param.exit = 0;
+out_param.exitflag = 0;
 if tpern<1e-7;%each sample use very very little time
     booster = 8;
     tic;Yrand(ntry*booster);ttry2 = toc;
@@ -237,7 +245,7 @@ if out_param.reltol ==0
         % absolute error tolerance over sigma
         out_param.n = nchebe(toloversig,alphai,out_param.kurtmax);
         if out_param.n > out_param.nremain;
-            out_param.exit=1; %pass a flag
+            out_param.exitglag=1; %pass a flag
             meanMC_g_err(out_param); % print warning message
             out_param.n = out_param.nremain;% update n
         end
@@ -258,7 +266,7 @@ else
         if out_param.n(i) > out_param.nremain;
             % if the sample size used for initial estimation is
             % larger than nremain, print warning message and use nremain
-            out_param.exit=1; %pass a flag
+            out_param.exitflag=1; %pass a flag
             meanMC_g_err(out_param); % print warning message
             out_param.n(i) = out_param.nremain;% update n
             tmu = gail.evalmean(Yrand,out_param.n(i),npcmax);%evaluate the mean
@@ -498,12 +506,12 @@ end
 function out_param = meanMC_g_err(out_param)
 % Handles errors in meanMC_g and meanMC_g_param to give an exit with
 %  information.
-%            out_param.exit = 0   success
+%            out_param.exitflag = 0   success
 %                             1   too many samples required
 
-if ~isfield(out_param,'exit'); return; end
-if out_param.exit==0; return; end
-switch out_param.exit
+if ~isfield(out_param,'exitflag'); return; end
+if out_param.exitflag==0; return; end
+switch out_param.exitflag
     case 1 % not enough samples to estimate the mean.
         nexceed = out_param.n(out_param.tau);
         warning('GAIL:meanMC_g:maxreached',...
