@@ -184,8 +184,10 @@ function [Q,out_param] = cubMC_g(varargin)
 % [1;2] with default parameters.
 % 
 % >> f=@(x) sin(x);interval = [1;2];
-% >> Q = cubMC_g(f,interval,'uniform',1e-3,1e-2)
-% Q = 0.95***
+% >> Q = cubMC_g(f,interval,'uniform',1e-3,1e-2);
+% >> exactsol = 0.9564;
+% >> check = abs(exactsol-Q) < max(1e-3,1e-2*abs(exactsol))
+% check = 1
 % 
 % 
 % Example 3: 
@@ -193,8 +195,10 @@ function [Q,out_param] = cubMC_g(varargin)
 % hyperbox [0 0;1 1], where x is a vector x = [x1 x2].
 % 
 % >> f=@(x) exp(-x(:,1).^2-x(:,2).^2);hyperbox = [0 0;1 1];
-% >> Q = cubMC_g(f,hyperbox,'measure','uniform','abstol',1e-3,'reltol',0)
-% Q = 0.55***
+% >> Q = cubMC_g(f,hyperbox,'measure','uniform','abstol',1e-3,'reltol',0);
+% >> exactsol = 0.5577;
+% >> check = abs(exactsol-Q) < 1e-3
+% check = 1
 % 
 % 
 % Example 4: 
@@ -204,8 +208,10 @@ function [Q,out_param] = cubMC_g(varargin)
 % 
 % >> d=3;f=@(x) 2^d*prod(x,2)+0.555;hyperbox =[zeros(1,d);ones(1,d)];
 % >> in_param.abstol = 1e-3;in_param.reltol=1e-3;
-% >> Q = cubMC_g(f,hyperbox,in_param)
-% Q = 1.55***
+% >> Q = cubMC_g(f,hyperbox,in_param);
+% >> exactsol = 1.555;
+% >> check = abs(exactsol-Q) < max(1e-3,1e-3*abs(exactsol))
+% check = 1
 % 
 %
 % Example 5: 
@@ -213,8 +219,10 @@ function [Q,out_param] = cubMC_g(varargin)
 % hyperbox [-inf -inf;inf inf], where x is a vector x = [x1 x2].
 % 
 % >> f=@(x) exp(-x(:,1).^2-x(:,2).^2);hyperbox = [-inf -inf;inf inf];
-% >> Q = cubMC_g(f,hyperbox,'normal',0,1e-2)
-% Q = 0.33***
+% >> Q = cubMC_g(f,hyperbox,'normal',0,1e-2);
+% >> exactsol = 1/3;
+% >> check = abs(exactsol-Q) < max(0,1e-2*abs(exactsol))
+% check = 1
 % 
 %
 % Example 6:
@@ -222,8 +230,10 @@ function [Q,out_param] = cubMC_g(varargin)
 % center (0,0) and radius 1, where x is a vector x = [x1 x2].
 % 
 % >> f=@(x) x(:,1).^2+x(:,2).^2;hyperbox = [0,0,1];
-% >> Q = cubMC_g(f,hyperbox,'uniform ball','abstol',1e-3,'reltol',1e-3)
-% Q = 1.57***
+% >> Q = cubMC_g(f,hyperbox,'uniform ball','abstol',1e-3,'reltol',1e-3);
+% >> exactsol = pi/2;
+% >> check = abs(exactsol-Q) < max(1e-3,1e-3*abs(exactsol))
+% check = 1
 %
 %
 %   See also FUNAPPX_G, INTEGRAL_G, MEANMC_G, CUBLATTICE_G, CUBSOBOL_G
