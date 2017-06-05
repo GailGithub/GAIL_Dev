@@ -3,8 +3,8 @@
 % gail.InitializeWorkspaceDisplay %initialize the workspace and the display parameters
 format long
 
-figSavePath = '/home/jagadees/MyWriteup/May4thweek_temp/';
-visiblePlot=true;
+figSavePath = '/home/jagadees/MyWriteup/Jun1stweek_optim/';
+visiblePlot=false;
 
 tstart=tic;
 pdTx = {'C1sin', 'C2sin', 'Baker', 'C0', 'C1', 'none'};
