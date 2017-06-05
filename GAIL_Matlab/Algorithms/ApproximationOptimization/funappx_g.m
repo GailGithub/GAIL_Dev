@@ -74,9 +74,9 @@ function [fappx,out_param]=funappx_g(varargin)
 %     out_param.exitflag --- this is a vector with two elements, for
 %     tracking important warnings in the algorithm. The algorithm is
 %     considered successful (with out_param.exitflag == [0 0]) if no other
-%     flags arise warning that the results are certainly not guaranteed.
-%     The initial value is [0 0] and the final value of this parameter is
-%     encoded as follows:
+%     flags arise warning that the results are not guaranteed. The initial
+%     value is [0 0] and the final value of this parameter is encoded as
+%     follows:
 %       
 %                      [1 0]   If reaching overbudget. It states whether
 %                      the max budget is attained without reaching the
