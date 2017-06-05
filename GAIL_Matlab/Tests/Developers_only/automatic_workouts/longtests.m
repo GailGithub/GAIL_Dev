@@ -17,6 +17,7 @@ end
 %% Workouts
 longtests_cubMC_g
 longtests_funappx_g
+longtests_integral_g
 
 % funappx_g
 %doctest par_funappx_g
@@ -33,6 +34,7 @@ format short
 doctest dt_cubMC_g
 end
 
+if 0
 % integral_g
 try
     Tests = matlab.unittest.TestSuite.fromClass(?ut_workout_integral_g);
@@ -46,6 +48,7 @@ try
 catch
     display('Error: Test ut_workout_integral_g is wrongly coded. We skip it.')
     %fprintf(fid,'Error: Test ut_workout_integral_g is wrongly coded. We skip it.\n');
+end
 end
 
 if 0 % moved out to logtests_funappx_g

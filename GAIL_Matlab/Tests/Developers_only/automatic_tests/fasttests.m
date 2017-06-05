@@ -15,22 +15,23 @@ tic
 %% CALL DOCTESTs for individual algorithms moved to own files
 fasttests_cubMC_g
 fasttests_funappx_g
+fasttests_integral_g
 
 %% CALL DOCTESTS
 tic; doctest gail.gail_in_param; time=toc
 tic; doctest gail.gail1D_in_param; time=toc
 % moved to a separate file tic; doctest gail.funappx_g_in_param; time=toc
 tic; doctest gail.funmin_g_in_param; time=toc
-tic; doctest gail.integral_g_in_param; time=toc
+% tic; doctest gail.integral_g_in_param; time=toc
 tic; doctest gail.gailMD_in_param; time=toc
 % moved to a separate file tic; doctest gail.cubMC_g_in_param; time=toc
 
 % moved to a separate file tic; doctest funappx_g; time=toc
 % moved to a separate file tic; doctest dt_funappx_g; time=toc
 tic; doctest funmin_g; time=toc
-tic; doctest integral_g; time=toc
+%tic; doctest integral_g; time=toc
 %tic; doctest integralsim_g; time=toc
-tic; doctest dt_integral_g ; time=toc
+%tic; doctest dt_integral_g ; time=toc
 tic; doctest meanMC_g; time=toc
 tic; doctest cubLattice_g; time=toc
 tic; doctest cubSobol_g; time=toc
@@ -47,6 +48,8 @@ tic; doctest whiteNoise; time=toc
 if MATLABVERSION < 8.1
     warning('Cannot run unit tests in MATLAB version before 8.1');
 else
+
+if 0
     warning('off','GAIL:integral_g:peaky')
     warning('off','GAIL:integral_g:exceedbudget')
     try
@@ -64,6 +67,7 @@ else
     end
     warning('on','GAIL:integral_g:peaky')
     warning('on','GAIL:integral_g:exceedbudget')
+end
 
 % 	warning('off','GAIL:integralsim_g:peaky')
 % 	warning('off','GAIL:integralsim_g:exceedbudget')

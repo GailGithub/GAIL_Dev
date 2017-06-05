@@ -1,5 +1,6 @@
-% logtests for funappx_g
+% long tests for funappx_g
 
+format short
 %% Workouts
 % doctest
 % funappx_g
