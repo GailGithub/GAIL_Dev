@@ -103,7 +103,7 @@
 %
 %% Guarantee
 %
-% *Plese check the details of the guarantee in Reference 1.*
+% *Please check the details of the guarantee in [1].*
 %
 %% Examples
 % *Example 1*
