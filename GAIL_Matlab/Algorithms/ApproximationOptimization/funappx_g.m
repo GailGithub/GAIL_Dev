@@ -115,7 +115,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %      maxiter: 1000
 %        ninit: 18
 %         nmax: 10000000
-%     exitflag: [0 0 0 0 0]
+%     exitflag: [0 0]
 %         iter: 12
 %      npoints: 36865
 %       errest: 2.9448e-***8
@@ -161,7 +161,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %      npoints: 18433
 %       errest: 7.3654e-***7
 %
-%   
+%
 %   See also INTERP1, GRIDDEDINTERPOLANT, INTEGRAL_G, MEANMC_G, FUNMIN_G
 %
 %
