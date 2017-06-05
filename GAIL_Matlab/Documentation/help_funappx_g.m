@@ -104,9 +104,6 @@
 % * out_param.errest --- an estimation of the absolute error for the
 %  approximation
 %
-% * out_param.x --- sample points used to approximate function
-%
-% * out_param.bytes --- amount of memory used during the computation
 %
 %% Guarantee
 %

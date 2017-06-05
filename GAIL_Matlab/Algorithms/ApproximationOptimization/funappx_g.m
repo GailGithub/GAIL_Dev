@@ -94,9 +94,10 @@ function [fappx,out_param]=funappx_g(varargin)
 %     out_param.errest --- an estimation of the absolute error for the
 %     approximation
 %
-%     out_param.x --- sample points used to approximate function
 %
-%     out_param.bytes --- amount of memory used during the computation
+%   Guarantee
+%
+%   Plese check the details of the guarantee in Reference 1.
 %
 %
 %   Examples
@@ -106,7 +107,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %   >> f = @(x) x.^2;
 %   >> [~, out_param] = funappx_g(f,-2,2,1e-7,18)
 %
-% out_param =
+% out_param =***
 % 
 %            a: -2
 %       abstol: 1.0000e-07
