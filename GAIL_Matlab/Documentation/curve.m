@@ -5,7 +5,7 @@
 %
 % Define a highly fluctuating function as follows:
 %
-% \[ f(x) = x^2 sin (\frac{2 \pi}{ x^2} ). \] 
+% \[ f(x) = x^2 \sin \biggl(\frac{2 \pi}{ x^2} \biggr). \] 
 % 
 close all; clear all; format compact; format short;
 f = @(x) x.^2 .* sin((2*pi)./x.^2);
@@ -42,7 +42,7 @@ max_abs_error = max(abs(f(x)-q(x)))
 % If we changes \(a\) to a smaller number such as \(10^{-2}\), then even if
 % we relax the tolerance to \(10^{-4}\), *funappx_g* may still return an
 % approximant that fails to meet the tolerance. The reason is that \(f\) on
-% \((a,b)\) is no longer in the cone of functions conducive for successful
+% \([a,b]\) is no longer in the cone of functions conducive for successful
 % approximation.
 a = 1e-2;
 abstol = 1e-4;
@@ -55,7 +55,7 @@ ylabel('absolute error')
 axis tight
 max_abs_error = max(abs(f(x)-q2(x)))
 
-%% A fix
+%% A workaround
 % We can widen the cone by increasing the number of initial points given to
 % *funappx_g*. 
 inparam.a = a;
@@ -71,3 +71,47 @@ xlabel('$x$','interpreter','latex')
 ylabel('absolute error')
 axis tight
 max_abs_error = max(abs(f(x)-q3(x)))
+
+%% A better way
+% Using a large value of |ninit| defeats the purpose of *funappx_g*'s
+% locally adaptive design. Notice that the failure region was \([0.01,0.1]\),
+% So we can use *funappx_g* with a high value of |ninit| only in this
+% region.
+inparam.a = a;
+inparam.b = 0.1;
+inparam.ninit = 2e5; 
+inparam.nmax =  1e7; 
+inparam.output_x = 1; 
+[q4,out4] = funappx_g(f, inparam);
+
+% Use default value of ninit on [0.1,2.5] 
+inparam.a = inparam.b;
+inparam.b = b;
+inparam.ninit = 20;
+[q5,out5] = funappx_g(f, inparam);
+
+% Define a new approximant on [a,b]
+xx = [out4.x, out5.x(2:end)];
+yy = [out4.y, out5.y(2:end)];
+if gail.matlab_version >= 8.3
+    fappx = griddedInterpolant(xx,yy,'linear');
+else
+    fappx = @(t) ppval(interp1(xx,yy,'linear','pp'), t);
+end;
+
+% Evaluate the error again
+x = a:1e-7:b;
+max_abs_error = max(abs(f(x)-fappx(x)))
+
+%% References
+%  
+% [1] Sou-Cheng T. Choi, Yuhan Ding, Fred J.Hickernell, Xin Tong, "Local
+%     Adaption for Approximation and Minimization of Univariate Functions,"
+%     _Journal of Complexity_ 40, pp. 17-33, 2017.
+%
+% [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
+%     Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
+%     GAIL: Guaranteed Automatic Integration Library (Version 2.2) [MATLAB
+%     Software], 2017. Available from <http://gailgithub.github.io/GAIL_Dev/
+%     GitHub>.
+

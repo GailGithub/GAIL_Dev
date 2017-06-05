@@ -82,8 +82,15 @@ classdef stochProcess < handle & matlab.mixin.CustomDisplay
       function set.timeDim(obj,val) %set the timeDim property
          if isfield(val,'timeVector') %data for timeVector
             obj.timeDim.timeVector = val.timeVector(:)'; %row
-            validateattributes(obj.timeDim.timeVector, ...
-               {'numeric'}, {'increasing'})
+              MATLABVERSION = gail.matlab_version;
+              if MATLABVERSION <= 8.1
+                  if (length(find(diff(obj.timeDim.timeVector)<=0)) > 0)
+                       error('Need obj.timeDim.timeVector with increasing values.')               
+                  end
+              else
+                  validateattributes(obj.timeDim.timeVector, ...
+                      {'numeric'}, {'increasing'})
+              end
             obj.timeDim.nSteps = numel(obj.timeDim.timeVector); %number of steps
          elseif isfield(val,'nSteps') %data for nSteps provided
             validateattributes(val.nSteps, ...

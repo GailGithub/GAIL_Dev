@@ -145,7 +145,7 @@ classdef ut_funappx_g < matlab.unittest.TestCase
             in_param.nmax = 200;
             [~, result] = testCase.verifyWarning(@()funappx_g(f,in_param),'GAIL:funappx_g:exceedbudget');
             testCase.verifyLessThanOrEqual(result.npoints,result.nmax);
-            testCase.verifyEqual(result.exitflag,logical([1 0 0 0 0]));
+            testCase.verifyEqual(result.exitflag,logical([1 0]));
         end
         
         function funappx_gOfexceediter(testCase)
