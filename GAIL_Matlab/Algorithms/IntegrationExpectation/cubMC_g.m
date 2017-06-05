@@ -22,10 +22,10 @@ function [Q,out_param] = cubMC_g(varargin)
 %   get a uniform distribution on a ball of sphere. When measure is
 %   'uniform ball_box', the box-to-ball transformation, which gets
 %   a set of points uniformly distributed on a ball from a set of points
-%   uniformly distrubuted on a box, will be used. When measure is 
+%   uniformly distributed on a box, will be used. When measure is 
 %   'uniform ball_normal', the normal-to-ball transformation, which
 %   gets a set of points uniformly distributed on a ball from a set of 
-%   points normaly distrubuted on the space, will be used. Similarly, the
+%   points normally distributed on the space, will be used. Similarly, the
 %   measures 'uniform sphere_box' and 'uniform sphere_normal'
 %   can be defined.
 %   The defaut transformations are the box-to-ball and the box-to-sphere
@@ -64,7 +64,7 @@ function [Q,out_param] = cubMC_g(varargin)
 %     a string type, hence with quotes.
 % 
 %     in_param.abstol --- the absolute error tolerance, the default value
-%     is 1e-1
+%     is 1e-2.
 %
 %     in_param.reltol --- the relative error tolerance, the default value
 %     is 1e-1.
@@ -77,7 +77,7 @@ function [Q,out_param] = cubMC_g(varargin)
 %     default value is 1.2.
 %
 %     in_param.nSig --- initial sample size for estimating the sample
-%     variance, which should be a moderate large integer at least 30, the
+%     variance, which should be a moderately large integer at least 30, the
 %     default value is 1e4.
 %
 %     in_param.n1 --- initial sample size for estimating the sample mean,
@@ -109,11 +109,11 @@ function [Q,out_param] = cubMC_g(varargin)
 %     out_param.nremain --- the remaining sample budget to estimate I. It was
 %     calculated by the sample left and time left.
 %
-%     out_param.tau --- the iteration step.
+%     out_param.tau --- the total number of iterations.
 %
 %     out_param.hmu --- estimated integral in each iteration.
 %
-%     out_param.tol --- the reliable upper bound on error for each iteration.
+%     out_param.tol --- a reliable upper bound on error for each iteration.
 %  
 %     out_param.kurtmax --- the upper bound on modified kurtosis.
 % 
@@ -144,7 +144,7 @@ function [Q,out_param] = cubMC_g(varargin)
 %                           center of the ball or sphere or a infinite radius
 %                           for the ball or sphere
 %
-%                       16  The radius of the ball or sphere is a no-npositive
+%                       16  The radius of the ball or sphere is a non-positive
 %                           real number
 %
 %                       17  The dimension of the ball is zero
@@ -157,8 +157,8 @@ function [Q,out_param] = cubMC_g(varargin)
 %  Guarantee
 % This algorithm attempts to calculate the integral of function f over a
 % hyperbox to a prescribed error tolerance tolfun:= max(abstol,reltol*| I |)
-% with guaranteed confidence level 1-alpha. If the algorithm terminated
-% without showing any warning messages and provide an answer Q, then the
+% with guaranteed confidence level 1-alpha. If the algorithm terminates
+% without showing any warning messages and provides an answer Q, then the
 % follow inequality would be satisfied:
 % 
 % Pr(| Q - I | <= tolfun) >= 1-alpha
@@ -260,6 +260,10 @@ function [Q,out_param] = cubMC_g(varargin)
 %
 %   [6] Fang, K.-T., & Wang, Y. (1994). Number-theoretic Methods in 
 %   Statistics. London, UK: CHAPMAN & HALL
+%    
+%   [7] Lan Jiang, Guaranteed Adaptive Monte Carlo Methods for Estimating
+%   Means of Random Variables, Ph.D Thesis, Illinois Institute of
+%   Technology, 2016.
 %
 %   If you find GAIL helpful in your work, please support us by citing the
 %   above papers, software, and materials.
