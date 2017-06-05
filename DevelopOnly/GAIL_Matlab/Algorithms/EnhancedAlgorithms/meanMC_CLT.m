@@ -86,6 +86,11 @@ if isstruct(YYrand)
     else
         q=1;   
     end
+    if isfield(YYrand,'xMean')
+        xmean=YYrand.xMean;
+    else
+        xmean=zeros(1,Yrand(1)-q);
+    end
 else
     Yrand=YYrand;
     q=1;
@@ -130,7 +135,8 @@ end
 
 YY = Yrand(nmu);   
 if p > 0 || q > 1
-  YY(:,q+1:end) = bsxfun(@minus, YY(:,q+1:end), mean(YY(:,q+1:end),1));
+  %YY(:,q+1:end) = bsxfun(@minus, YY(:,q+1:end), mean(YY(:,q+1:end),1));
+  YY(:,q+1:end) = bsxfun(@minus, YY(:,q+1:end), xmean);
   YY = YY*beta;
     %YY = val*beta;
 end
