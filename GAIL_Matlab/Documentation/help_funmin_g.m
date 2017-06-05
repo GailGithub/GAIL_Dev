@@ -102,23 +102,8 @@
 %  row is the left point and the second row is the right point.
 %
 %% Guarantee
-%    
-% If the function to be minimized, \(f\) satisfies the cone condition
 %
-% \[\|f''\|_\infty \le  \frac {\tau}{b-a}\left\|f'-\frac{f(b)-f(a)}{b-a}
-% \right\|_\infty,\]
-%      
-% then the \(\mathrm{fmin}\) output by this algorithm is guaranteed to
-% satisfy
-%
-% \[| \min f-\mathrm{fmin}| \le \mathrm{abstol},\]
-%
-% or
-%
-% \[\mathrm{volumeX} \le \mathrm{TolX},\]
-%
-% provided the flag \(\mathrm{exitflag} = 0.\)
-%
+% *Plese check the details of the guarantee in Reference 1.*
 %
 %% Examples
 % *Example 1*
