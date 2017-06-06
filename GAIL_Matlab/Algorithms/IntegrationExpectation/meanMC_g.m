@@ -79,7 +79,9 @@ function [tmu,out_param]=meanMC_g(varargin)
 %     out_param.nremain --- the remaining sample budget to estimate mu. It was
 %     calculated by the sample left and time left.
 %
-%     out_param.ntot --- total sample used.
+%     out_param.ntot --- total sample used, including the sample used to
+%     convert time budget to sample budget and the sample in each iteration
+%     step.
 %
 %     out_param.hmu --- estimated mean in each iteration.
 %
@@ -97,7 +99,7 @@ function [tmu,out_param]=meanMC_g(varargin)
 %
 %     out_param.time --- the time elapsed in seconds.
 %
-%     out_param.flag --- parameter checking status
+%     out_param.exitflag --- parameter checking status
 %
 %                           1  checked by meanMC_g
 %
@@ -215,7 +217,10 @@ elseif  tpern>=1e-3 && tpern<1e-1 %each sample use moderate time
 else %each sample use lots of time, stop try
 end
 [tmu,out_param] =  meanmctolfun(Yrand,out_param,ntry,ttry,nsofar,tstart);
-
+%control the order of out_param
+out_param = orderfields(out_param, ...
+{'Yrand','abstol','reltol','tol','alpha','fudge', 'tau','hmu','time',...
+'n1','nSig', 'n','nremain','nbudget','ntot','tbudget','var','kurtmax','exitflag'});
 end
 
 function [tmu,out_param] =  meanmctolfun(Yrand,out_param,ntry,ttry,nsofar,tstart)
@@ -499,7 +504,7 @@ if (~gail.isposge30(out_param.nbudget))
         'We will use the default value 1e9.'])
     out_param.nbudget =default.nbudget;
 end
-out_param.flag = 1;
+out_param.exitflag = 1;
 %pass the signal indicating the parameters have been checked
 end
 

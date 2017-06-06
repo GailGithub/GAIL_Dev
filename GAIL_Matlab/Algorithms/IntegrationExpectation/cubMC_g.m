@@ -332,6 +332,12 @@ elseif strcmpi(out_param.measure,'normal')% using normally distributed samples
     % using meanMC_g to get the mean
 end
 out_param.time=toc(tstart); %elapsed time
+
+% control the order of out_param
+% out_param = orderfields(out_param, ...
+% {'Yrand','abstol','reltol','tol','alpha','fudge', 'tau','hmu','time',...
+% 'n1','nSig', 'n','nremain','nbudget','ntot','tbudget','var','kurtmax','exitflag'});
+
 end
 
 function [f,hyperbox,out_param] = cubMC_g_param(varargin)

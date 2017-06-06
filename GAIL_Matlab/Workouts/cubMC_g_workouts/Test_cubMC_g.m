@@ -1,7 +1,7 @@
 % TEST_CUBMC_G This is the driver script to test cubMC_g algorithm
 %using seven integrands of dimensions up to 8
 %clear all;close all;clc;
-function [ut_abserr,ut_relerr,abstol,reltol] = Test_cubMC_g
+function [ut_abserr,ut_relerr,abstol,reltol,out_param] = Test_cubMC_g
 %[
 dimsize = 3;
 indexsize = 2;
