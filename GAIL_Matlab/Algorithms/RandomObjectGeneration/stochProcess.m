@@ -56,16 +56,16 @@ classdef stochProcess < handle & matlab.mixin.CustomDisplay
          
          if nargin>0
             val=varargin{1};
-            if isa(val,'stochProcess')
+            if isa(val,'stochProcess') %make a copy an existing stochProcess
                obj.inputType = val.inputType;
                obj.timeDim = val.timeDim;
                if nargin == 1
                    return
                else
-                   val = varargin{2};
+                   val = varargin{2}; %structure that can contain additional inputs
                end
             end
-            if isstruct(val) %properties of stochProcess might be assigned
+            if isstruct(val) %structure with properties of stochProcess
                if isfield(val,'inputType')
                   obj.inputType = val.inputType;
                   obj.restInput=rmfield(val,'inputType');
@@ -74,45 +74,45 @@ classdef stochProcess < handle & matlab.mixin.CustomDisplay
                   obj.timeDim = val.timeDim;
                   obj.restInput=rmfield(val,'timeDim');
                end
-               obj.restInput = val;
+               obj.restInput = val; %rest of inputs for subclasses
             end
          end
       end
       
       function set.timeDim(obj,val) %set the timeDim property
-         if isfield(val,'timeVector') %data for timeVector
-            obj.timeDim.timeVector = val.timeVector(:)'; %row
+         if isfield(val,'timeVector') %data for timeVector provided
+            obj.timeDim.timeVector = val.timeVector(:)'; %row vector
               MATLABVERSION = gail.matlab_version;
               if MATLABVERSION <= 8.1
-                  if (length(find(diff(obj.timeDim.timeVector)<=0)) > 0)
+                  if any(diff(obj.timeDim.timeVector)<=0)
                        error('Need obj.timeDim.timeVector with increasing values.')               
                   end
               else
                   validateattributes(obj.timeDim.timeVector, ...
                       {'numeric'}, {'increasing'})
               end
-            obj.timeDim.nSteps = numel(obj.timeDim.timeVector); %number of steps
+            obj.timeDim.nSteps = numel(obj.timeDim.timeVector); %number of time steps
          elseif isfield(val,'nSteps') %data for nSteps provided
             validateattributes(val.nSteps, ...
                {'numeric'}, {'scalar','integer','positive'})
-            obj.timeDim.timeVector = 1:val.nSteps; %time vector      
+            obj.timeDim.timeVector = 1:val.nSteps; %time vector with intervals of one    
          end
          if isfield(val,'dim')
             validateattributes(val.dim, {'numeric'}, ...
                {'scalar','integer','positive'})
-            obj.timeDim.dim=val.dim; %dimension
+            obj.timeDim.dim = val.dim; %dimension of the stochastic process
          end
          if isfield(val,'initTime')
-            if numel(val.initTime)>0 
+            if numel(val.initTime) > 0 
                validateattributes(val.initTime, {'numeric'},{'scalar'})
                assert(val.initTime <= obj.timeDim.startTime)
-               obj.timeDim.initTime=val.initTime; %initial time before startTime
+               obj.timeDim.initTime = val.initTime; %initial time before startTime
             end
          end
          if isfield(val,'initValue')
             if numel(val.initTime)>0 
                validateattributes(val.initValue, {'numeric'},{'vector'})
-               obj.timeDim.initValue=val.initValue; %initial value
+               obj.timeDim.initValue = val.initValue; %initial value of the stochastic process
             end
          end
          %compute all of the dependent properties
@@ -120,7 +120,7 @@ classdef stochProcess < handle & matlab.mixin.CustomDisplay
          obj.timeDim.endTime = obj.timeDim.timeVector(end); %end time
          obj.timeDim.nSteps = numel(obj.timeDim.timeVector); %number of steps
          obj.timeDim.timeIncrement = diff([obj.timeDim.initTime obj.timeDim.timeVector]); %increment between time steps
-         obj.timeDim.nCols = obj.timeDim.nSteps*obj.timeDim.dim; %total number of columns
+         obj.timeDim.nCols = obj.timeDim.nSteps * obj.timeDim.dim; %total number of columns
       end
             
       function set.inputType(obj,val)
@@ -154,31 +154,31 @@ classdef stochProcess < handle & matlab.mixin.CustomDisplay
             plotKind = obj.defaultPlotKind; %otherwise set plotKind to default
          end
          if nargin > offset %does another input exist
-            genPathsInput = varargin{offset};
+            genPathsInput = varargin{offset}; %input to the method to generate paths
             offset = offset + 1;
          elseif strcmp(obj.inputType,'n')
             genPathsInput = obj.defaultNPaths; %default for # of paths to be plotted
          else
             error('Need input for inputType ''x''')               
          end
-         paths = genPaths(obj,genPathsInput);
-         if strcmp(plotKind,'yy')
-            if obj.timeDim.nSteps >= 2;
+         paths = genPaths(obj,genPathsInput); %generate paths to be plotted
+         if strcmp(plotKind,'yy') %plot path columns against each other
+            if obj.timeDim.nSteps >= 2
                h = plot(paths(:,1),paths(:,2),'.');
             else
                plotKind = obj.defaultPlotKind;
             end
          end
          if strncmp(plotKind,'yt',2) || strcmp(plotKind,'hist')
-            timeVec = obj.timeDim.timeVector;
-            nPaths = size(paths,1);
+            timeVec = obj.timeDim.timeVector; %times to be plotted at
+            nPaths = size(paths,1); %number of paths to be plotted
             if numel(obj.timeDim.initTime)
-               timeVec = [obj.timeDim.initTime timeVec];               
-               paths = [repmat(obj.timeDim.initValue,nPaths,1) paths];
+               timeVec = [obj.timeDim.initTime timeVec]; %add initial time to time vector               
+               paths = [repmat(obj.timeDim.initValue,nPaths,1) paths]; %add initial value to paths
             end
             if strncmp(plotKind,'yt',2) %a y versus time plot
-               h = plot(timeVec,paths,plotKind(3));
-            else
+               h = plot(timeVec,paths,plotKind(3)); %the third argument gives line type
+            else %a histogram
                nTimeVec = numel(timeVec);
                maxHtVec = [diff(timeVec) 0];
                maxHtVec(nTimeVec) = maxHtVec(nTimeVec-1);
@@ -212,9 +212,9 @@ classdef stochProcess < handle & matlab.mixin.CustomDisplay
          else
             set(h,obj.defaultSpecs{:});
          end
-         set(gca,'fontsize',obj.defaultFontSize)
+         set(gca,'fontsize',obj.defaultFontSize) %set font size
          if nargout
-            varargout{1} = h;
+            varargout{1} = h; %output plot handle
          end
       end
       
