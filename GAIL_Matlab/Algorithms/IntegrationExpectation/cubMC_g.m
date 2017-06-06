@@ -28,7 +28,7 @@ function [Q,out_param] = cubMC_g(varargin)
 %   points normally distributed on the space, will be used. Similarly, the
 %   measures 'uniform sphere_box' and 'uniform sphere_normal'
 %   can be defined.
-%   The defaut transformations are the box-to-ball and the box-to-sphere
+%   The default transformations are the box-to-ball and the box-to-sphere
 %   transformations, depending on the region of integration.
 % 
 %   Q = CUBMC_G(f,hyperbox,measure,abstol,reltol,alpha)
@@ -159,7 +159,7 @@ function [Q,out_param] = cubMC_g(varargin)
 % hyperbox to a prescribed error tolerance tolfun:= max(abstol,reltol*| I |)
 % with guaranteed confidence level 1-alpha. If the algorithm terminates
 % without showing any warning messages and provides an answer Q, then the
-% follow inequality would be satisfied:
+% following inequality would be satisfied:
 % 
 % Pr(| Q - I | <= tolfun) >= 1-alpha
 %
