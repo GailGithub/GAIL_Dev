@@ -195,7 +195,7 @@ function [Q,out_param] = cubMC_g(varargin)
 % hyperbox [0 0;1 1], where x is a vector x = [x1 x2].
 % 
 % >> f=@(x) exp(-x(:,1).^2-x(:,2).^2);hyperbox = [0 0;1 1];
-% >> Q = cubMC_g(f,hyperbox,'uniform',1e-3,1e-2);
+% >> Q = cubMC_g(f,hyperbox,'uniform',1e-3,0);
 % >> exactsol = 0.5577;
 % >> check = abs(exactsol-Q) < 1e-3
 % check = 1
