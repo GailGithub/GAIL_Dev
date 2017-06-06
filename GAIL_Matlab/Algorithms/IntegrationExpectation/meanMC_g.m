@@ -218,9 +218,12 @@ else %each sample use lots of time, stop try
 end
 [tmu,out_param] =  meanmctolfun(Yrand,out_param,ntry,ttry,nsofar,tstart);
 %control the order of out_param
-out_param = orderfields(out_param, ...
-{'Yrand','abstol','reltol','tol','alpha','fudge', 'tau','hmu','time',...
-'n1','nSig', 'n','nremain','nbudget','ntot','tbudget','var','kurtmax','exitflag'});
+if out_param.reltol ~= 0
+    out_param = orderfields(out_param, ...
+        {'Yrand','abstol','reltol','tol','alpha','fudge', 'tau','hmu','time',...
+        'n1','nSig', 'n','nremain','nbudget','ntot','tbudget','var',...
+        'kurtmax','exitflag'});
+end
 end
 
 function [tmu,out_param] =  meanmctolfun(Yrand,out_param,ntry,ttry,nsofar,tstart)
@@ -250,7 +253,7 @@ if out_param.reltol ==0
         % absolute error tolerance over sigma
         out_param.n = nchebe(toloversig,alphai,out_param.kurtmax);
         if out_param.n > out_param.nremain;
-            out_param.exitglag=1; %pass a flag
+            out_param.exitflag=1; %pass a flag
             meanMC_g_err(out_param); % print warning message
             out_param.n = out_param.nremain;% update n
         end
@@ -359,7 +362,7 @@ end
 function  [Yrand,out_param] = meanMC_g_param(varargin)
 
 default.abstol  = 1e-2;% default absolute error tolerance
-default.reltol = 1e-1;% default relative error tolerance
+default.reltol = 1e-2;% default relative error tolerance
 default.nSig = 1e4;% default initial sample size nSig for variance estimation
 default.n1 = 1e4; % default initial sample size n1 for mean estimation
 default.alpha = 0.01;% default uncertainty
@@ -371,6 +374,7 @@ if isempty(varargin)
     warning('GAIL:meanMC_g:yrandnotgiven',...
         'Yrand must be specified. Now GAIL is using Yrand =@(n) rand(n,1).^2.')
     Yrand = @(n) rand(n,1).^2;
+    out_param.Yrand = Yrand;
     %if no values are parsed, print warning message and use the default
     %random variable
 else
