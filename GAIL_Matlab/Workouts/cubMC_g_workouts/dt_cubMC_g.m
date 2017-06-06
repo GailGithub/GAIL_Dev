@@ -79,15 +79,17 @@
 % Example 8: 
 % Estimate the integral with integrand Genz "Oscillatory" in
 % genz_test_fun, index 1.
-% >> in_param.dim = 3;alpha = ones(1,in_param.dim); beta = 1./ (1:in_param.dim);r=1;
+% >> in_param.dim = 3; alpha = ones(1,in_param.dim); beta = 1./ (1:in_param.dim);r=1;
 % >> hyperbox = [-ones(1,in_param.dim);ones(1,in_param.dim)];index = 1;
 % >> f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
 % >> f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)
 % f_true = 4.76***
-% >> Q = cubMC_g(f,hyperbox,'uniform',1e-2,1e-13)
-% Q = 4.76***
+% >> abstol = 1e-2; reltol = 1e-13;
+% >> Q = cubMC_g(f,hyperbox,'uniform',abstol,reltol);
+% >> abs(f_true-Q) <= max(abstol, reltol * abs(f_true))
+%    1
 %
-%%
+%
 % Example 9: 
 % Estimate the integral with integrand Genz "Product Peak" in
 % genz_test_fun, index 2.

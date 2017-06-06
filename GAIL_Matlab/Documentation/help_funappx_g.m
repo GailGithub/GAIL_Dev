@@ -51,11 +51,7 @@
 %
 % *Optional Input Arguments*
 %
-% * in_param.nlo --- lower bound of initial number of points we used,
-%  default value is 10
-%
-% * in_param.nhi --- upper bound of initial number of points we used,
-%  default value is 1000
+% * in_param.ninit --- initial number of subintervals. Default to 20.
 %
 % * in_param.nmax --- when number of points hits the value, iteration
 %  will stop, default value is 1e7
@@ -77,10 +73,6 @@
 %
 % * out_param.abstol --- guaranteed absolute error tolerance
 %
-% * out_param.nlo --- a lower bound of initial number of points we use
-%
-% * out_param.nhi --- an upper bound of initial number of points we use
-%
 % * out_param.nmax --- when number of points hits the value, iteration
 %  will stop
 %
@@ -89,12 +81,12 @@
 % * out_param.ninit --- initial number of points we use for each sub
 %  interval
 %
-% * out_param.exit --- this is a vector with two elements, defining the
-%  conditions of success or failure satisfied when finishing the
-%  algorithm. The algorithm is considered successful (with
-%  out_param.exit == [0 0]) if no other flags arise warning that the
-%  results are certainly not guaranteed. The initial value is [0 0] and
-%  the final value of this parameter is encoded as follows:
+% * out_param.exitflag --- this is a vector with two elements, for
+%   tracking important warnings in the algorithm. The algorithm is
+%   considered successful (with out_param.exitflag == [0 0]) if no other
+%   flags arise warning that the results are not guaranteed. The initial 
+%   value is [0 0] and the final value of this parameter is encoded as
+%   follows:
 %    
 %                    [1 0]   If reaching overbudget. It states whether
 %                    the max budget is attained without reaching the
@@ -112,29 +104,10 @@
 % * out_param.errest --- an estimation of the absolute error for the
 %  approximation
 %
-% * out_param.nstar --- final value of the parameter defining the cone of
-%  functions for which this algorithm is guaranteed for each
-%  subinterval; nstar = ninit-2 initially
-%
-% * out_param.x --- sample points used to approximate function
-%
-% * out_param.bytes --- amount of memory used during the computation
 %
 %% Guarantee
 %
-% For \([a,b]\), there exists a partition
-%
-% \[ P=\{[t_0,t_1], [t_1,t_2],  \ldots, [t_{L-1},t_L]\},  a=t_0 < t_1 < \cdots < t_L=b.\]
-% 
-% If the function to be approximated,  \(f\) satisfies the cone condition
-%
-% \[\|f''\|_\infty \le \frac { 2\mathrm{nstar} }{t_l-t_{l-1} } \left\|f'-\frac{f(t_l)-f(t_{l-1})}{t_l-t_{l-1}}\right\|_\infty\]
-% 
-% for each sub interval \([t_{l-1},t_l]\), where \(1 \le l \le L\), then the
-% \(fappx\) |output by this algorithm is guaranteed to satisfy
-%
-% \[\| f-fappx \|_{\infty} \le \mathrm{abstol}.\]
-%
+% *Please check the details of the guarantee in Reference 1.*
 %
 %% Examples
 % *Example 1*
@@ -197,38 +170,30 @@ clear in_param; f = @(x) x.^2;
 % <a href="help_funmin_g.html">funmin_g</a>
 % </html>
 %
+% <http://gailgithub.github.io/GAIL_Dev/ GAIL_Dev> 
+%
 %% References
 %
-% [1]  Nick Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
-% Yizhi Zhang, _The Cost of Deterministic, Adaptive, Automatic Algorithms:
-% Cones, Not Balls,_ Journal of Complexity 30, pp. 21-45, 2014.
-%  
-% [2]  Yuhan Ding, Fred J. Hickernell, and Sou-Cheng T. Choi, _Locally
-% Adaptive Method for Approximating Univariate Functions in Cones with a
-% Guarantee for Accuracy,_ working, 2015.
-%          
-% [3]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
-% Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
-% GAIL: Guaranteed Automatic Integration Library (Version 2.1) [MATLAB
-% Software], 2015. Available from http://code.google.com/p/gail/
+%  [1] Sou-Cheng T. Choi, Yuhan Ding, Fred J.Hickernell, Xin Tong, "Local
+%  Adaption for Approximation and Minimization of Univariate Functions,"
+%  Journal of Complexity 40, pp. 17-33, 2017.
 %
-% [4] Sou-Cheng T. Choi, _MINRES-QLP Pack and Reliable Reproducible
-% Research via Supportable Scientific Software,_ Journal of Open Research
-% Software, Volume 2, Number 1, e22, pp. 1-7, 2014.
+%  [2] Nick Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
+%  Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic
+%  Algorithms: Cones, Not Balls," Journal of Complexity 30, pp. 21-45,
+%  2014.
+%            
+%  [3] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
+%  Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
+%  GAIL: Guaranteed Automatic Integration Library (Version 2.2) [MATLAB
+%  Software], 2017. Available from http://gailgithub.github.io/GAIL_Dev/
 %
-% [5] Sou-Cheng T. Choi and Fred J. Hickernell, _IIT MATH-573 Reliable
-% Mathematical Software_ [Course Slides], Illinois Institute of
-% Technology, Chicago, IL, 2013. Available from
-% http://code.google.com/p/gail/ 
+%  [4] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
+%  Research via Supportable Scientific Software," Journal of Open Research
+%  Software, Volume 2, Number 1, e22, pp. 1-7, 2014.
 %
-% [6] Daniel S. Katz, Sou-Cheng T. Choi, Hilmar Lapp, Ketan Maheshwari,
-% Frank Loffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr,
-% James Hetherington, James Howison, Shel Swenson, Gabrielle D. Allen,
-% Anne C. Elster, Bruce Berriman, Colin Venters, _Summary of the First
-% Workshop On Sustainable Software for Science: Practice And Experiences
-% (WSSSPE1),_ Journal of Open Research Software, Volume 2, Number 1, e6,
-% pp. 1-21, 2014.
-%
-% If you find GAIL helpful in your work, please support us by citing the
-% above papers, software, and materials.
+%  [5] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable
+%  Mathematical Software" [Course Slides], Illinois Institute of
+%  Technology, Chicago, IL, 2013. Available from
+%  http://gailgithub.github.io/GAIL_Dev/ 
 %

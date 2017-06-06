@@ -42,12 +42,12 @@
 #approximation
 #Default Values
 #fudge = 1.2; variance inflation factor
-#nSig = 1e2; number of samples to estimate variance  
+#nSig = 1e2; number of samples to estimate variance  100
 #alpha = 0.01; uncertainty  
 #abstol = 0.01; absolute error tolerance  
 #Yrand = @(n) rand(n,1); random number generator 
 #
-# Authors: Anthony Karahalios and Luana Terra
+# Authors: Anthony Karahalios,Luana Terra, Marcela Ribeiro, Ramon Oliveira and Joao Mateus Cunha
 
 meanMC_CLT = function(Yrand = function(n) {runif(n)},abstol = 0.01,alpha = 0.01,nSig = 1e2,fudge = 1.2) {
   
@@ -59,20 +59,21 @@ alpha = check$alpha; #save the input parameters to a structure
 fudge = check$fudge;
 nSig = check$nSig;
 abstol = check$abstol;
-tstart = proc.time(); #start the clock
+start <- Sys.time (); #start the clock 
 Yval = Yrand(nSig);# get samples to estimate variance 
 out_param.var = var(Yval); #calculate the sample variance--stage 1
 sig0 = sqrt(out_param.var); #standard deviation
 sig0up = fudge*sig0; #upper bound on the standard deviation
-nmu = max(1,ceiling((-qnorm(alpha)*sig0up/abstol)^2)); 
+hmu0 = mean(Yval); # FOI ADICIONADO
+nmu = max(1,ceiling((-qnorm(alpha/2)*sig0up/max(abstol,alpha*abs(hmu0)))^2)); # Changed
 #number of samples needed for mean
 stopifnot(nmu<nMax) 
 #don't exceed sample budget
 tmu = mean(Yrand(nmu)); #estimated mean
 out_param.ntot = nSig + nmu; #total samples required
-out_param.time = proc.time() - tstart; #elapsed time
-out_param.time = unname(out_param.time)
-output = c("tmu" = tmu,"out_param.ntot" = out_param.ntot,"out_param.var" = out_param.var,"out_param.time" = out_param.time[3])
+out_param.time = Sys.time () - start;#proc.time() - tstart; #elapsed time
+#out_param.time = unname(out_param.time)
+output = c("tmu" = tmu,"out_param.ntot" = out_param.ntot,"out_param.var" = out_param.var,"out_param.time" = out_param.time)
 return(output)
 }
 

@@ -18,7 +18,7 @@
 % 
 % Alternatively, you could do this:
 % 
-% 1.  Download DownloadInstallGail_2_1.m and put it where you want
+% 1.  Download DownloadInstallGail_2_2.m and put it where you want
 %     GAIL to be installed.
 % 
 % 2.  Execute it in MATLAB.
