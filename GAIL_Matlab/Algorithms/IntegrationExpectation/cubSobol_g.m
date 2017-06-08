@@ -15,21 +15,21 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 %   of the integral. When measure is 'uniform ball' or 'uniform sphere',
 %   the input hyperbox is a vector with d+1 elements, where the first d 
 %   values correspond to the center of the ball and the last value
-%   corresponds to the radius of the ball. For this last two measures, user can
+%   corresponds to the radius of the ball. For these last two measures, a user can
 %   optionally specify what transformation should be used in order to get a
 %   uniform distribution on a ball. When measure is 'uniform ball_box',
 %   the box-to-ball transformation, which gets a set of points uniformly
-%   distributed on a ball from a set of points uniformly distrubuted on a
+%   distributed on a ball from a set of points uniformly distributed on a
 %   box, will be used. When measure is 'uniform ball_normal', the
 %   normal-to-ball transformation, which gets a set of points uniformly 
-%   distributed on a ball from a set of points normaly distrubuted on the
+%   distributed on a ball from a set of points normally distributed on the
 %   space, will be used. Similarly, the measures 'uniform sphere_box'
 %   and 'uniform sphere_normal' can be used to specify the
-%   desired transformations. The defaut transformations are the box-to-ball
+%   desired transformations. The default transformations are the box-to-ball
 %   and the box-to-sphere transformations, depending on the region of
 %   integration.
 %   Given the construction of Sobol' sequences, d must be
-%   a positive integer with 1<=d<=1111.
+%   a positive integer with 1 <= d<= 1111.
 %
 %   q = CUBSOBOL_G(f,hyperbox,measure,abstol,reltol)
 %   estimates the integral of f over the hyperbox. The answer
@@ -54,10 +54,11 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 %     f --- the integrand whose input should be a matrix n x d where n is
 %     the number of data points and d the dimension, which cannot be
 %     greater than 1111. By default f is f=@ x.^2.
-%     --- if using control variates, f needs to be a structure with two fields. 
+%      
+%       --- if using control variates, f needs to be a structure with two fields:
 %     First field: 'func', need to be a function handle with n x (J+1) 
 %     dimension outputs, where J is the number of control variates. 
-%     First column is the output of target function, next J colunms are
+%     First column is the output of target function, next J columns are
 %     the outputs of control variates.
 %     Second field: 'cv', need to be a 1 x J vector that stores the 
 %     exact means of control variates in the same order from 
@@ -65,7 +66,7 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 %     please check Example 7 below. 
 %
 %     hyperbox --- the integration region defined by its bounds. When measure
-%     is 'uniform' or 'normal', hiperbox must be a 2 x d matrix, where the
+%     is 'uniform' or 'normal', hyperbox must be a 2 x d matrix, where the
 %     first row corresponds to the lower limits and the second row corresponds
 %     to the upper limits of the integral. When measure is 'uniform ball' 
 %     or 'uniform sphere', the input hyperbox is a vector with d+1 elements,
@@ -164,7 +165,7 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 % with guarantees under the assumption that the integrand lies inside a
 % cone of functions. The guarantee is based on the decay rate of the
 % Walsh-Fourier coefficients. For integration over domains other than
-% [0,1]^d, this cone conditions applies to f \circ \psi (the
+% [0,1]^d, this cone condition applies to f \circ \psi (the
 % composition of the functions) where \psi is the transformation
 % function for [0,1]^d to the desired region. For more details on how the
 % cone is defined, please refer to the references below.
@@ -372,7 +373,7 @@ if cv.J==0 % no control variates
 else  % using control variates 
 	ycv = f(xpts);
 	y = ycv(:,1); yval = y;
-	yg = ycv(:,2:end); yvalg = yg;
+	yg = ycv(:,2:end); %yvalg = yg;
 end 
 
 %% Compute initial FWT
@@ -485,53 +486,52 @@ for m=out_param.mmin+1:out_param.mmax
    n0=n0+nnext;
    % check for using control variates or not
    if cv.J == 0
-	   ynext = f(xnext); yval=[yval; ynext];
+       ynext = f(xnext); yval=[yval; ynext];
    else
-	   ycvnext = f(xnext);
+       ycvnext = f(xnext);
        ynext = ycvnext(:,1) - ycvnext(:,2:end)*beta;
        yval=[yval; ynext];
    end
-
    %% Compute initial FWT on next points
-   for l=0:mnext-1
-      nl=2^l;
-      nmminlm1=2^(mnext-l-1);
-      ptind=repmat([true(nl,1); false(nl,1)],nmminlm1,1);
-      evenval=ynext(ptind);
-      oddval=ynext(~ptind);
-      ynext(ptind)=(evenval+oddval)/2;
-      ynext(~ptind)=(evenval-oddval)/2;
-   end
-
-   %% Compute FWT on all points
-   y=[y;ynext];
-   nl=2^mnext;
-   ptind=[true(nl,1); false(nl,1)];
-   evenval=y(ptind);
-   oddval=y(~ptind);
-   y(ptind)=(evenval+oddval)/2;
-   y(~ptind)=(evenval-oddval)/2;
-
-   %% Update kappanumap
-   kappanumap=[kappanumap; 2^(m-1)+kappanumap]; %initialize map
-   for l=m-1:-1:m-r_lag
-      nl=2^l;
-      oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
-      newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa, 
-      flip=find(newone>oldone);
-      if ~isempty(flip)
-          flipall=bsxfun(@plus,flip,0:2^(l+1):2^m-1);
-          flipall=flipall(:);
-          temp=kappanumap(nl+1+flipall);
-          kappanumap(nl+1+flipall)=kappanumap(1+flipall);
-          kappanumap(1+flipall)=temp;
-      end
-   end
-
-   %% updating beta (to be improved)
-   if out_param.betaUpdate&&cv.J
-       xpts=sobstr(1:n0,1:out_param.d);
-       ycv = f(xpts);y = ycv(:,1);yg = ycv(:,2:end);
+   %% not updating beta
+   if out_param.betaUpdate == 0
+    	for l=0:mnext-1
+       	    nl=2^l;
+       	    nmminlm1=2^(mnext-l-1);
+       	    ptind=repmat([true(nl,1); false(nl,1)],nmminlm1,1);
+       	    evenval=ynext(ptind);
+       	    oddval=ynext(~ptind);
+       	    ynext(ptind)=(evenval+oddval)/2;
+       	    ynext(~ptind)=(evenval-oddval)/2;
+    	end
+ 	
+    	%% Compute FWT on all points
+    	y=[y;ynext];
+    	nl=2^mnext;
+    	ptind=[true(nl,1); false(nl,1)];
+    	evenval=y(ptind);
+    	oddval=y(~ptind);
+    	y(ptind)=(evenval+oddval)/2;
+    	y(~ptind)=(evenval-oddval)/2;
+ 	
+    	%% Update kappanumap
+    	kappanumap=[kappanumap; 2^(m-1)+kappanumap]; %initialize map
+    	for l=m-1:-1:m-r_lag
+       	    nl=2^l;
+       	    oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
+       	    newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa, 
+       	    flip=find(newone>oldone);
+       	    if ~isempty(flip)
+           	flipall=bsxfun(@plus,flip,0:2^(l+1):2^m-1);
+           	flipall=flipall(:);
+           	temp=kappanumap(nl+1+flipall);
+           	kappanumap(nl+1+flipall)=kappanumap(1+flipall);
+           	kappanumap(1+flipall)=temp;
+       	    end
+	end
+   %% updating beta
+   else
+       ycv = [ycv;ycvnext];y = ycv(:,1);yg = ycv(:,2:end);
        %% compute FWT
        for l=0:m-1
            nl=2^l;
@@ -552,20 +552,20 @@ for m=out_param.mmin+1:out_param.mmax
        out_param.beta = [out_param.beta;beta];
        yval = ycv(:,1) - ycv(:,2:end)*beta;
        y = y-yg*beta;
-       %% rebuild kappa map
-       kappanumap=(1:n0)'; %initialize map
-       for l=m-1:-1:1
-           nl=2^l;
-           oldone=abs(y(kappanumap(2:nl)));
-           newone=abs(y(kappanumap(nl+2:2*nl))); 
-           flip=find(newone>oldone);
-           if ~isempty(flip)
-               flipall=bsxfun(@plus,flip,0:2^(l+1):2^out_param.mmin-1);
-               flipall=flipall(:);
-               temp=kappanumap(nl+1+flipall);  
-               kappanumap(nl+1+flipall)=kappanumap(1+flipall);
-               kappanumap(1+flipall)=temp; 
-           end
+       %% update kappamap
+       kappanumap=[kappanumap; 2^(m-1)+kappanumap]; %initialize map
+       for l=m-1:-1:m-r_lag
+       	   nl=2^l;
+       	   oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
+       	   newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa, 
+       	   flip=find(newone>oldone);
+       	   if ~isempty(flip)
+           	flipall=bsxfun(@plus,flip,0:2^(l+1):2^m-1);
+           	flipall=flipall(:);
+           	temp=kappanumap(nl+1+flipall);
+           	kappanumap(nl+1+flipall)=kappanumap(1+flipall);
+           	kappanumap(1+flipall)=temp;
+       	   end
        end
    end
 

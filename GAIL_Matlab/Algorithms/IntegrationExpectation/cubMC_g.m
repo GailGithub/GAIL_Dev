@@ -3,33 +3,32 @@ function [Q,out_param] = cubMC_g(varargin)
 %
 %   [Q,out_param] = CUBMC_G(f,hyperbox) estimates the integral of f over
 %   hyperbox to within a specified generalized error tolerance, tolfun =
-%   max(abstol, reltol*| I |), i.e., | I - Q | <= tolfun with probability at
-%   least 1-alpha, where abstol is the absolute error tolerance, and reltol
-%   is the relative error tolerance. Usually the reltol determines the
-%   accuracy of the estimation, however, if the | I | is rather small, the
-%   abstol determines the accuracy of the estimation. The default values
-%   are abstol=1e-2, reltol=1e-1, and alpha=1%. Input f is a function
-%   handle that accepts an n x d matrix input, where d is the dimension of
-%   the hyperbox, and n is the number of points being evaluated
-%   simultaneously. When measure is 'uniform', 'uniform box', 'normal'
-%   or 'Gaussian', the input hyperbox is a 2 x d matrix, where the first
-%   row corresponds to the lower limits and the second row corresponds to
-%   the upper limits. When measure is 'uniform ball' or 'uniform sphere',
-%   the input hyperbox is a vector with d+1 elements, where the first d
-%   values correspond to the center of the ball and the last value
-%   corresponds to the radius of the ball. For this last two measures, user
-%   can optionally specify what transformation should be used in order to
-%   get a uniform distribution on a ball of sphere. When measure is
-%   'uniform ball_box', the box-to-ball transformation, which gets
-%   a set of points uniformly distributed on a ball from a set of points
-%   uniformly distrubuted on a box, will be used. When measure is 
-%   'uniform ball_normal', the normal-to-ball transformation, which
-%   gets a set of points uniformly distributed on a ball from a set of 
-%   points normaly distrubuted on the space, will be used. Similarly, the
-%   measures 'uniform sphere_box' and 'uniform sphere_normal'
-%   can be defined.
-%   The defaut transformations are the box-to-ball and the box-to-sphere
-%   transformations, depending on the region of integration.
+%   max(abstol, reltol*| I |), i.e., | I - Q | <= tolfun with probability
+%   at least 1-alpha, where abstol is the absolute error tolerance, and
+%   reltol is the relative error tolerance. Usually the reltol determines
+%   the accuracy of the estimation, however, if the | I | is rather small,
+%   the abstol determines the accuracy of the estimation. The default
+%   values are abstol=1e-2, reltol=1e-1, and alpha=1%. Input f is a
+%   function handle that accepts an n x d matrix input, where d is the
+%   dimension of the hyperbox, and n is the number of points being
+%   evaluated simultaneously. When measure is 'uniform', 'uniform box',
+%   'normal' or 'Gaussian', the input hyperbox is a 2 x d matrix, where the
+%   first row corresponds to the lower limits and the second row
+%   corresponds to the upper limits. When measure is 'uniform ball' or
+%   'uniform sphere', the input hyperbox is a vector with d+1 elements,
+%   where the first d values correspond to the center of the ball and the
+%   last value corresponds to the radius of the ball. For these last two
+%   measures, a user can optionally specify what transformation should be
+%   used in order to get a uniform distribution on a ball of sphere. When
+%   measure is 'uniform ball_box', the box-to-ball transformation, which
+%   gets a set of points uniformly distributed on a ball from a set of
+%   points uniformly distributed on a box, will be used. When measure is
+%   'uniform ball_normal', the normal-to-ball transformation, which gets a
+%   set of points uniformly distributed on a ball from a set of points
+%   normally distributed on the space, will be used. Similarly, the
+%   measures 'uniform sphere_box' and 'uniform sphere_normal' can be
+%   defined. The default transformations are the box-to-ball and the
+%   box-to-sphere transformations, depending on the region of integration.
 % 
 %   Q = CUBMC_G(f,hyperbox,measure,abstol,reltol,alpha)
 %   estimates the integral of function f over hyperbox to within a 
@@ -64,7 +63,7 @@ function [Q,out_param] = cubMC_g(varargin)
 %     a string type, hence with quotes.
 % 
 %     in_param.abstol --- the absolute error tolerance, the default value
-%     is 1e-1
+%     is 1e-2.
 %
 %     in_param.reltol --- the relative error tolerance, the default value
 %     is 1e-1.
@@ -77,7 +76,7 @@ function [Q,out_param] = cubMC_g(varargin)
 %     default value is 1.2.
 %
 %     in_param.nSig --- initial sample size for estimating the sample
-%     variance, which should be a moderate large integer at least 30, the
+%     variance, which should be a moderately large integer at least 30, the
 %     default value is 1e4.
 %
 %     in_param.n1 --- initial sample size for estimating the sample mean,
@@ -109,11 +108,11 @@ function [Q,out_param] = cubMC_g(varargin)
 %     out_param.nremain --- the remaining sample budget to estimate I. It was
 %     calculated by the sample left and time left.
 %
-%     out_param.tau --- the iteration step.
+%     out_param.tau --- the total number of iterations.
 %
 %     out_param.hmu --- estimated integral in each iteration.
 %
-%     out_param.tol --- the reliable upper bound on error for each iteration.
+%     out_param.tol --- a reliable upper bound on error for each iteration.
 %  
 %     out_param.kurtmax --- the upper bound on modified kurtosis.
 % 
@@ -144,7 +143,7 @@ function [Q,out_param] = cubMC_g(varargin)
 %                           center of the ball or sphere or a infinite radius
 %                           for the ball or sphere
 %
-%                       16  The radius of the ball or sphere is a no-npositive
+%                       16  The radius of the ball or sphere is a non-positive
 %                           real number
 %
 %                       17  The dimension of the ball is zero
@@ -157,9 +156,9 @@ function [Q,out_param] = cubMC_g(varargin)
 %  Guarantee
 % This algorithm attempts to calculate the integral of function f over a
 % hyperbox to a prescribed error tolerance tolfun:= max(abstol,reltol*| I |)
-% with guaranteed confidence level 1-alpha. If the algorithm terminated
-% without showing any warning messages and provide an answer Q, then the
-% follow inequality would be satisfied:
+% with guaranteed confidence level 1-alpha. If the algorithm terminates
+% without showing any warning messages and provides an answer Q, then the
+% following inequality would be satisfied:
 % 
 % Pr(| Q - I | <= tolfun) >= 1-alpha
 %
@@ -184,8 +183,10 @@ function [Q,out_param] = cubMC_g(varargin)
 % [1;2] with default parameters.
 % 
 % >> f=@(x) sin(x);interval = [1;2];
-% >> Q = cubMC_g(f,interval,'uniform',1e-3,1e-2)
-% Q = 0.95***
+% >> Q = cubMC_g(f,interval,'uniform',1e-3,1e-2);
+% >> exactsol = 0.9564;
+% >> check = abs(exactsol-Q) < max(1e-3,1e-2*abs(exactsol))
+% check = 1
 % 
 % 
 % Example 3: 
@@ -193,8 +194,10 @@ function [Q,out_param] = cubMC_g(varargin)
 % hyperbox [0 0;1 1], where x is a vector x = [x1 x2].
 % 
 % >> f=@(x) exp(-x(:,1).^2-x(:,2).^2);hyperbox = [0 0;1 1];
-% >> Q = cubMC_g(f,hyperbox,'measure','uniform','abstol',1e-3,'reltol',0)
-% Q = 0.55***
+% >> Q = cubMC_g(f,hyperbox,'uniform',1e-3,0);
+% >> exactsol = 0.5577;
+% >> check = abs(exactsol-Q) < 1e-3
+% check = 1
 % 
 % 
 % Example 4: 
@@ -204,8 +207,10 @@ function [Q,out_param] = cubMC_g(varargin)
 % 
 % >> d=3;f=@(x) 2^d*prod(x,2)+0.555;hyperbox =[zeros(1,d);ones(1,d)];
 % >> in_param.abstol = 1e-3;in_param.reltol=1e-3;
-% >> Q = cubMC_g(f,hyperbox,in_param)
-% Q = 1.55***
+% >> Q = cubMC_g(f,hyperbox,in_param);
+% >> exactsol = 1.555;
+% >> check = abs(exactsol-Q) < max(1e-3,1e-3*abs(exactsol))
+% check = 1
 % 
 %
 % Example 5: 
@@ -213,8 +218,10 @@ function [Q,out_param] = cubMC_g(varargin)
 % hyperbox [-inf -inf;inf inf], where x is a vector x = [x1 x2].
 % 
 % >> f=@(x) exp(-x(:,1).^2-x(:,2).^2);hyperbox = [-inf -inf;inf inf];
-% >> Q = cubMC_g(f,hyperbox,'normal',0,1e-2)
-% Q = 0.33***
+% >> Q = cubMC_g(f,hyperbox,'normal',0,1e-2);
+% >> exactsol = 1/3;
+% >> check = abs(exactsol-Q) < max(0,1e-2*abs(exactsol))
+% check = 1
 % 
 %
 % Example 6:
@@ -222,8 +229,10 @@ function [Q,out_param] = cubMC_g(varargin)
 % center (0,0) and radius 1, where x is a vector x = [x1 x2].
 % 
 % >> f=@(x) x(:,1).^2+x(:,2).^2;hyperbox = [0,0,1];
-% >> Q = cubMC_g(f,hyperbox,'uniform ball','abstol',1e-3,'reltol',1e-3)
-% Q = 1.57***
+% >> Q = cubMC_g(f,hyperbox,'uniform ball','abstol',1e-3,'reltol',1e-3);
+% >> exactsol = pi/2;
+% >> check = abs(exactsol-Q) < max(1e-3,1e-3*abs(exactsol))
+% check = 1
 %
 %
 %   See also FUNAPPX_G, INTEGRAL_G, MEANMC_G, CUBLATTICE_G, CUBSOBOL_G
@@ -260,6 +269,10 @@ function [Q,out_param] = cubMC_g(varargin)
 %
 %   [6] Fang, K.-T., & Wang, Y. (1994). Number-theoretic Methods in 
 %   Statistics. London, UK: CHAPMAN & HALL
+%    
+%   [7] Lan Jiang, Guaranteed Adaptive Monte Carlo Methods for Estimating
+%   Means of Random Variables, Ph.D Thesis, Illinois Institute of
+%   Technology, 2016.
 %
 %   If you find GAIL helpful in your work, please support us by citing the
 %   above papers, software, and materials.
@@ -318,6 +331,12 @@ elseif strcmpi(out_param.measure,'normal')% using normally distributed samples
     % using meanMC_g to get the mean
 end
 out_param.time=toc(tstart); %elapsed time
+
+% control the order of out_param
+% out_param = orderfields(out_param, ...
+% {'Yrand','abstol','reltol','tol','alpha','fudge', 'tau','hmu','time',...
+% 'n1','nSig', 'n','nremain','nbudget','ntot','tbudget','var','kurtmax','exitflag'});
+
 end
 
 function [f,hyperbox,out_param] = cubMC_g_param(varargin)

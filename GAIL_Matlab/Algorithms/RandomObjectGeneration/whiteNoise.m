@@ -1,9 +1,9 @@
 classdef whiteNoise < stochProcess
 
 %% whiteNoise
-% is a class of discretized stochastic processes.
-% The values of the process at different times are meant to resemble 
-% independent and identically distributed (IID) random variables,
+% is a class of discretized stochastic processes. The values of the process
+% at different times are meant to resemble independent and identically
+% distributed (IID) random variables,
 % 
 % The property |paths| is a matrix corresponding to |nPaths| rows, each 
 % row corresponding to a path of lenth |nSteps|.
@@ -25,9 +25,9 @@ classdef whiteNoise < stochProcess
 
 
 %% Properties
-% This process inherits properties from the |stochProcess| class.  Below are 
-% values assigned to that are abstractly defined in that class plus some
-% properties particulary for this class
+% This process inherits properties from the |stochProcess| class.  Below
+% are values assigned to that are abstractly defined in that class plus
+% some properties particulary for this class
 
    properties (SetAccess=public)
       wnParam = struct('sampleKind','IID', ... %kind of sampling
@@ -41,15 +41,11 @@ classdef whiteNoise < stochProcess
       allowSampleKind = {'IID','Sobol','lattice'} 
          %kinds of sampling that we allow
       allowQRand = {'Sobol','lattice'} 
-         %kinds of samplking that we allow
+         %kinds of quasi-random sampling that we allow
    end
 
    properties (SetAccess=private, Hidden) %so they can only be set by the constructor
       qrandState %state of the quasi-random generator
-%       defaultNPaths = 10;
-%       defaultLineSpecs = {'linewidth',3}
-%       defaultPointSpecs = {'markersize',25}
-%       defaultFontSize = 20;
    end
 
 %% Methods
@@ -64,14 +60,14 @@ classdef whiteNoise < stochProcess
          obj@stochProcess(varargin{:}) %parse basic input         
          if nargin>0
             val=varargin{1};
-            if isa(val,'whiteNoise')
+            if isa(val,'whiteNoise') %make a new copy of a whiteNoise object
                obj.wnParam = val.wnParam;
                obj.qrandState = val.qrandState;
                if nargin == 1
                   return
                end
             end
-            if isfield(obj.restInput,'wnParam')
+            if isfield(obj.restInput,'wnParam') %assign or change some of the properties
                val = obj.restInput.wnParam;
                obj.wnParam = val;
                obj.restInput = rmfield(obj.restInput,'wnParam');
@@ -86,7 +82,7 @@ classdef whiteNoise < stochProcess
             end
             obj.qrandState = val; %set or initialize qrandstate
          end
-         if strcmp(obj.inputType,'n') && ...
+         if strcmp(obj.inputType,'n') && ... %input number of sample paths
             strcmp(obj.wnParam.sampleKind,'IID') && ... %easier to sample from randn
             strcmp(obj.wnParam.distribName,'Gaussian') %if you want Gaussian
             obj.wnParam.xDistrib = 'Gaussian';
@@ -97,11 +93,14 @@ classdef whiteNoise < stochProcess
       function set.wnParam(obj,val)
          if isfield(val,'sampleKind') %data for timeVector
             assert(any(strcmp(val.sampleKind,obj.allowSampleKind)))
-            obj.wnParam.sampleKind=val.sampleKind; %row
+            obj.wnParam.sampleKind=val.sampleKind;
          end
          if isfield(val,'distribName') %distribName is provided
             assert(any(strcmp(val.distribName,obj.allowDistribName)))
             obj.wnParam.distribName = val.distribName;
+            if numel(val.distribName) ~= obj.dim
+               val.distribName = repmat(val.distribName(1),1,obj.dim); %fixing here
+            end
          end
          if isfield(val,'xDistrib') %xDistrib is provided
             assert(any(strcmp(val.xDistrib,obj.allowDistribName)))
@@ -111,8 +110,6 @@ classdef whiteNoise < stochProcess
          end
          if isfield(val,'sampleKind') %sampleKind is provided
             assert(any(strcmp(val.sampleKind,obj.allowSampleKind)))
-%             assert(strcmp(obj.wnParam.xDistrib,'Uniform') || ...
-%                ~any(strcmp(obj.sampleKind,obj.allowQRand)))
             obj.wnParam.sampleKind = val.sampleKind;
          end
       end
@@ -157,56 +154,6 @@ classdef whiteNoise < stochProcess
          end
       end
       
-%       function varargout = plot(obj,varargin)
-%          assert(strcmp(obj.inputType,'n'), ...
-%             'plot requires inputType to be ''n''')
-%          offset = 0;
-%          if numel(varargin) >= 1
-%             if any(strcmp(varargin{1},{'line','point'}))
-%                plotKind = varargin{1};
-%                offset = 1;
-%             else
-%                plotKind = 'line';
-%             end
-%          else
-%             plotKind = 'line';
-%          end
-%          if numel(varargin) > offset
-%             nPaths = varargin{offset+1};
-%          else
-%             nPaths = obj.defaultNPaths; %default 
-%          end
-%          paths = genPaths(obj,nPaths);
-%          if strcmp(plotKind,'point')
-%             if obj.timeDim.nSteps >= 2;
-%                h = plot(paths(:,1),paths(:,2),'.');
-%                if numel(varargin) > offset + 1
-%                   set(h,varargin{offset+2:end});
-%                else
-%                   set(h,obj.defaultPointSpecs{:});
-%                end
-%             else
-%                plotKind = 'line';
-%             end
-%          end
-%          if strcmp(plotKind,'line')
-%             timeVec = obj.timeDim.timeVector;
-%             if numel(obj.timeDim.initTime)
-%                timeVec = [obj.timeDim.initTime timeVec];
-%                paths = [repmat(obj.timeDim.initValue,nPaths,1) paths];
-%             end
-%             h = plot(timeVec,paths,'-');
-%             if numel(varargin) > offset + 1
-%                set(h,varargin{offset+2:end});
-%             else
-%                set(h,obj.defaultLineSpecs{:});
-%             end
-%          end
-%          set(gca,'fontsize',obj.defaultFontSize)
-%          if nargout
-%             varargout{1}=h;
-%          end
-%       end
           
    end
    

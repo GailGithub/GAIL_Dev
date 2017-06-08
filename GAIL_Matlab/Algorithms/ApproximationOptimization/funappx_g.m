@@ -74,9 +74,9 @@ function [fappx,out_param]=funappx_g(varargin)
 %     out_param.exitflag --- this is a vector with two elements, for
 %     tracking important warnings in the algorithm. The algorithm is
 %     considered successful (with out_param.exitflag == [0 0]) if no other
-%     flags arise warning that the results are certainly not guaranteed.
-%     The initial value is [0 0] and the final value of this parameter is
-%     encoded as follows:
+%     flags arise warning that the results are not guaranteed. The initial
+%     value is [0 0] and the final value of this parameter is encoded as
+%     follows:
 %       
 %                      [1 0]   If reaching overbudget. It states whether
 %                      the max budget is attained without reaching the
@@ -94,9 +94,10 @@ function [fappx,out_param]=funappx_g(varargin)
 %     out_param.errest --- an estimation of the absolute error for the
 %     approximation
 %
-%     out_param.x --- sample points used to approximate function
 %
-%     out_param.bytes --- amount of memory used during the computation
+%   Guarantee
+%
+%   Plese check the details of the guarantee in Reference 1.
 %
 %
 %   Examples
@@ -106,7 +107,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %   >> f = @(x) x.^2;
 %   >> [~, out_param] = funappx_g(f,-2,2,1e-7,18)
 %
-% out_param =
+% out_param =***
 % 
 %            a: -2
 %       abstol: 1.0000e-07
