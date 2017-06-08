@@ -15,21 +15,21 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 %   of the integral. When measure is 'uniform ball' or 'uniform sphere',
 %   the input hyperbox is a vector with d+1 elements, where the first d 
 %   values correspond to the center of the ball and the last value
-%   corresponds to the radius of the ball. For this last two measures, user can
+%   corresponds to the radius of the ball. For these last two measures, a user can
 %   optionally specify what transformation should be used in order to get a
 %   uniform distribution on a ball. When measure is 'uniform ball_box',
 %   the box-to-ball transformation, which gets a set of points uniformly
-%   distributed on a ball from a set of points uniformly distrubuted on a
+%   distributed on a ball from a set of points uniformly distributed on a
 %   box, will be used. When measure is 'uniform ball_normal',
 %   the normal-to-ball transformation, which gets a set of points uniformly
-%   distributed on a ball from a set of points normaly distrubuted on the
+%   distributed on a ball from a set of points normally distributed on the
 %   space, will be used. Similarly, the measures 'uniform sphere_box'
 %   and 'uniform sphere_normal' can be used to specify the
-%   desired transformations. The defaut transformations are the box-to-ball
+%   desired transformations. The default transformations are the box-to-ball
 %   and the box-to-sphere transformations, depending on the region of
 %   integration.
 %   Given the construction of our Lattices, d must be a positive integer
-%   with 1<=d<=600.
+%   with 1 <= d <= 600.
 % 
 %   q = CUBLATTICE_G(f,hyperbox,measure,abstol,reltol)
 %   estimates the integral of f over the hyperbox. The answer
@@ -56,7 +56,7 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 %     greater than 600. By default f is f=@ x.^2.
 %
 %     hyperbox --- the integration region defined by its bounds. When measure
-%     is 'uniform' or 'normal', hiperbox must be a 2 x d matrix, where the
+%     is 'uniform' or 'normal', hyperbox must be a 2 x d matrix, where the
 %     first row corresponds to the lower limits and the second row corresponds
 %     to the upper limits of the integral. When measure is 'uniform ball' 
 %     or 'uniform sphere', the input hyperbox is a vector with d+1 elements,
@@ -161,7 +161,7 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 % guarantees under the assumption that the integrand lies inside a cone of
 % functions. The guarantee is based on the decay rate of the Fourier
 % coefficients. For integration over domains other than [0,1]^d, this cone
-% conditions applies to f \circ \psi (the composition of the
+% condition applies to f \circ \psi (the composition of the
 % functions) where \psi is the transformation function for [0,1]^d to
 % the desired region. For more details on how the cone is defined, please
 % refer to the references below.
