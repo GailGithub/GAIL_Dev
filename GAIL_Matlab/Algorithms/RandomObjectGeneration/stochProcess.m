@@ -1,8 +1,11 @@
 classdef stochProcess < handle & matlab.mixin.CustomDisplay
+
+%% stochProcess
 % is a an abstract class of discretized stochastic processes.
+%
 %   Concrete subclasses include 
-%      o white noise
-%      o Brownian motion
+%      o whiteNoise
+%      o brownianMotion
 %
 % Example 1
 % >> stochProcess
@@ -20,13 +23,13 @@ classdef stochProcess < handle & matlab.mixin.CustomDisplay
            
    properties
       timeDim = struct( ...
-         'timeVector', 1:3, ... %vector of times where process is discretized
-         'startTime', 1, ... %starting time
+         'timeVector', 1:3, ... %vector of increasing times for process 
+         'startTime', 1, ... %starting time, usually larger than zero
          'endTime', 3, ... %ending time
          'nSteps', 3, ... %number of different times
          'timeIncrement', [1 1], ... %increment between time intervals
          'dim', 1, ... %dimension of process
-         'nCols', 3, ... %number of columns of the process matrix = nSteps * dim
+         'nCols', 3, ... %number of columns of the process matrix = nSteps x dim
          'initTime', [], ... %initial time, normally zero if it exists
          'initValue', []) %initial value, if it exists
       inputType = 'n' %input type: 'n' for number of paths, 
@@ -39,8 +42,7 @@ classdef stochProcess < handle & matlab.mixin.CustomDisplay
 
    properties (Hidden, SetAccess=private) %so they can only be set by the constructor
       defaultNPaths = 10
-      defaultSpecs = {'linewidth',3, ...
-         'markersize',25}
+      defaultSpecs = {'linewidth',3,'markersize',25}
       defaultFontSize = 20
       defaultPlotKind = 'yt-'
       allowedPlotKind = {'yt.','yt-','yy','hist'}
@@ -54,9 +56,9 @@ classdef stochProcess < handle & matlab.mixin.CustomDisplay
       function obj = stochProcess(varargin)
          %this constructor essentially parses inputs
          
-         if nargin>0
-            val=varargin{1};
-            if isa(val,'stochProcess') %make a copy an existing stochProcess
+         if nargin %there are inputs to parse and assign
+            val=varargin{1}; %first input
+            if isa(val,'stochProcess') %make a copy an existing stochProcess object
                obj.inputType = val.inputType;
                obj.timeDim = val.timeDim;
                if nargin == 1
@@ -103,14 +105,14 @@ classdef stochProcess < handle & matlab.mixin.CustomDisplay
             obj.timeDim.dim = val.dim; %dimension of the stochastic process
          end
          if isfield(val,'initTime')
-            if numel(val.initTime) > 0 
+            if numel(val.initTime)
                validateattributes(val.initTime, {'numeric'},{'scalar'})
                assert(val.initTime <= obj.timeDim.startTime)
                obj.timeDim.initTime = val.initTime; %initial time before startTime
             end
          end
          if isfield(val,'initValue')
-            if numel(val.initTime)>0 
+            if numel(val.initTime)
                validateattributes(val.initValue, {'numeric'},{'vector'})
                obj.timeDim.initValue = val.initValue; %initial value of the stochastic process
             end
