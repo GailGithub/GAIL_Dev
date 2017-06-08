@@ -79,7 +79,9 @@ function [tmu,out_param]=meanMC_g(varargin)
 %     out_param.nremain --- the remaining sample budget to estimate mu. It was
 %     calculated by the sample left and time left.
 %
-%     out_param.ntot --- total sample used.
+%     out_param.ntot --- total sample used, including the sample used to
+%     convert time budget to sample budget and the sample in each iteration
+%     step.
 %
 %     out_param.hmu --- estimated mean in each iteration.
 %
@@ -97,7 +99,7 @@ function [tmu,out_param]=meanMC_g(varargin)
 %
 %     out_param.time --- the time elapsed in seconds.
 %
-%     out_param.flag --- parameter checking status
+%     out_param.exitflag --- parameter checking status
 %
 %                           1  checked by meanMC_g
 %
@@ -215,7 +217,13 @@ elseif  tpern>=1e-3 && tpern<1e-1 %each sample use moderate time
 else %each sample use lots of time, stop try
 end
 [tmu,out_param] =  meanmctolfun(Yrand,out_param,ntry,ttry,nsofar,tstart);
-
+%control the order of out_param
+if out_param.reltol ~= 0
+    out_param = orderfields(out_param, ...
+        {'Yrand','abstol','reltol','tol','alpha','fudge', 'tau','hmu','time',...
+        'n1','nSig', 'n','nremain','nbudget','ntot','tbudget','var',...
+        'kurtmax','exitflag'});
+end
 end
 
 function [tmu,out_param] =  meanmctolfun(Yrand,out_param,ntry,ttry,nsofar,tstart)
@@ -245,7 +253,7 @@ if out_param.reltol ==0
         % absolute error tolerance over sigma
         out_param.n = nchebe(toloversig,alphai,out_param.kurtmax);
         if out_param.n > out_param.nremain;
-            out_param.exitglag=1; %pass a flag
+            out_param.exitflag=1; %pass a flag
             meanMC_g_err(out_param); % print warning message
             out_param.n = out_param.nremain;% update n
         end
@@ -354,7 +362,7 @@ end
 function  [Yrand,out_param] = meanMC_g_param(varargin)
 
 default.abstol  = 1e-2;% default absolute error tolerance
-default.reltol = 1e-1;% default relative error tolerance
+default.reltol = 1e-2;% default relative error tolerance
 default.nSig = 1e4;% default initial sample size nSig for variance estimation
 default.n1 = 1e4; % default initial sample size n1 for mean estimation
 default.alpha = 0.01;% default uncertainty
@@ -366,6 +374,7 @@ if isempty(varargin)
     warning('GAIL:meanMC_g:yrandnotgiven',...
         'Yrand must be specified. Now GAIL is using Yrand =@(n) rand(n,1).^2.')
     Yrand = @(n) rand(n,1).^2;
+    out_param.Yrand = Yrand;
     %if no values are parsed, print warning message and use the default
     %random variable
 else
@@ -499,7 +508,7 @@ if (~gail.isposge30(out_param.nbudget))
         'We will use the default value 1e9.'])
     out_param.nbudget =default.nbudget;
 end
-out_param.flag = 1;
+out_param.exitflag = 1;
 %pass the signal indicating the parameters have been checked
 end
 

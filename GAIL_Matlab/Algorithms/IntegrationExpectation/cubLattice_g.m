@@ -15,22 +15,22 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 %   of the integral. When measure is 'uniform ball' or 'uniform sphere',
 %   the input hyperbox is a vector with d+1 elements, where the first d
 %   values correspond to the center of the ball and the last value
-%   corresponds to the radius of the ball. For this last two measures, user can
+%   corresponds to the radius of the ball. For these last two measures, a user can
 %   optionally specify what transformation should be used in order to get a
 %   uniform distribution on a ball. When measure is 'uniform ball_box',
 %   the box-to-ball transformation, which gets a set of points uniformly
-%   distributed on a ball from a set of points uniformly distrubuted on a
+%   distributed on a ball from a set of points uniformly distributed on a
 %   box, will be used. When measure is 'uniform ball_normal',
 %   the normal-to-ball transformation, which gets a set of points uniformly
-%   distributed on a ball from a set of points normaly distrubuted on the
+%   distributed on a ball from a set of points normally distributed on the
 %   space, will be used. Similarly, the measures 'uniform sphere_box'
 %   and 'uniform sphere_normal' can be used to specify the
 %   desired transformations. The default transformations are the box-to-ball
 %   and the box-to-sphere transformations, depending on the region of
 %   integration.
 %   Given the construction of our Lattices, d must be a positive integer
-%   with 1<=d<=600.
-%
+%   with 1 <= d <= 600.
+% 
 %   q = CUBLATTICE_G(f,hyperbox,measure,abstol,reltol)
 %   estimates the integral of f over the hyperbox. The answer
 %   is given within the generalized error tolerance tolfun. All parameters
@@ -56,9 +56,9 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 %     greater than 600. By default f is f=@ x.^2.
 %
 %     hyperbox --- the integration region defined by its bounds. When measure
-%     is 'uniform' or 'normal', hiperbox must be a 2 x d matrix, where the
+%     is 'uniform' or 'normal', hyperbox must be a 2 x d matrix, where the
 %     first row corresponds to the lower limits and the second row corresponds
-%     to the upper limits of the integral. When measure is 'uniform ball'
+%     to the upper limits of the integral. When measure is 'uniform ball' 
 %     or 'uniform sphere', the input hyperbox is a vector with d+1 elements,
 %     where the first d values correspond to the center of the ball and the
 %     last value corresponds to the radius of the ball. The default value
@@ -161,7 +161,7 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 % guarantees under the assumption that the integrand lies inside a cone of
 % functions. The guarantee is based on the decay rate of the Fourier
 % coefficients. For integration over domains other than [0,1]^d, this cone
-% conditions applies to f \circ \psi (the composition of the
+% condition applies to f \circ \psi (the composition of the
 % functions) where \psi is the transformation function for [0,1]^d to
 % the desired region. For more details on how the cone is defined, please
 % refer to the references below.
@@ -170,19 +170,19 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 %
 % Example 1:
 % Estimate the integral with integrand f(x) = x1.*x2 in the interval [0,1)^2:
-%
-%   f = @(x) prod(x,2); hyperbox = [zeros(1,2);ones(1,2)];
-%   q = cubLattice_g(f,hyperbox,'uniform',1e-5,0,'transform','C1sin'); exactsol = 1/4;
-%   check = abs(exactsol-q) < 1e-5
+% 
+% >> f = @(x) prod(x,2); hyperbox = [zeros(1,2);ones(1,2)]; 
+% >> q = cubLattice_g(f,hyperbox,'uniform',1e-5,0,'transform','C1sin'); exactsol = 1/4;
+% >> check = abs(exactsol-q) < 1e-5
 % check = 1
 %
 % Example 2:
 % Estimate the integral with integrand f(x) = x1.^2.*x2.^2.*x3.^2
 % in the interval R^3 where x1, x2 and x3 are normally distributed:
-%
-%   f = @(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2; hyperbox = [-inf(1,3);inf(1,3)];
-%   q = cubLattice_g(f,hyperbox,'normal',1e-3,1e-3,'transform','C1sin','shift',2^(-25)*ones(1,3)); exactsol = 1;
-%   check = abs(exactsol-q) < max(1e-3,1e-3*abs(exactsol))
+% 
+% >> f = @(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2; hyperbox = [-inf(1,3);inf(1,3)];
+% >> q = cubLattice_g(f,hyperbox,'normal',1e-3,1e-3,'transform','C1sin','shift',2^(-25)*ones(1,3)); exactsol = 1;
+% >> check = abs(exactsol-q) < max(1e-3,1e-3*abs(exactsol))
 % check = 1
 %
 %
@@ -199,20 +199,20 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 % Example 4:
 % Estimate the price of an European call with S0=100, K=100, r=sigma^2/2,
 % sigma=0.05 and T=1.
-%
-%   f = @(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); hyperbox = [-inf(1,1);inf(1,1)];
-%   q = cubLattice_g(f,hyperbox,'normal',1e-4,1e-2,'transform','C1sin'); price = normcdf(0.05)*100 - 0.5*100*exp(-0.05^2/2);
-%   check = abs(price-q) < max(1e-4,1e-2*abs(price))
+% 
+% >> f = @(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); hyperbox = [-inf(1,1);inf(1,1)];
+% >> q = cubLattice_g(f,hyperbox,'normal',1e-4,1e-2,'transform','C1sin'); price = normcdf(0.05)*100 - 0.5*100*exp(-0.05^2/2);
+% >> check = abs(price-q) < max(1e-4,1e-2*abs(price))
 % check = 1
 %
 %
 % Example 5:
 % Estimate the integral with integrand f(x) = 8*x1.*x2.*x3.*x4.*x5 in the interval
 % [0,1)^5 with pure absolute error 1e-5.
-%
-%   f = @(x) 8*prod(x,2); hyperbox = [zeros(1,5);ones(1,5)];
-%   q = cubLattice_g(f,hyperbox,'uniform',1e-5,0); exactsol = 1/4;
-%   check = abs(exactsol-q) < 1e-5
+% 
+% >> f = @(x) 8*prod(x,2); hyperbox = [zeros(1,5);ones(1,5)];
+% >> q = cubLattice_g(f,hyperbox,'uniform',1e-5,0); exactsol = 1/4;
+% >> check = abs(exactsol-q) < 1e-5
 % check = 1
 %
 %
@@ -229,12 +229,11 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 % Example 7:
 % Estimate the integral with integrand f(x) = x1^2+x2^2 over the disk with
 % center (0,0) and radius 1 with pure absolute error 1e-4, where x is a vector x = [x1 x2].
-%
-%   f = @(x) x(:,1).^2+x(:,2).^2; hyperbox = [0,0,1];
-%   q = cubLattice_g(f,hyperbox,'uniform ball','abstol',1e-4,'reltol',0); exactsol = pi/2;
-%   check = abs(exactsol-q) < 1e-4
-% check = 1
 % 
+% >> f = @(x) x(:,1).^2+x(:,2).^2; hyperbox = [0,0,1];
+% >> q = cubLattice_g(f,hyperbox,'uniform ball','abstol',1e-4,'reltol',0); exactsol = pi/2;
+% >> check = abs(exactsol-q) < 1e-4
+% check = 1
 %
 %   See also CUBSOBOL_G, CUBMC_G, MEANMC_G, INTEGRAL_G
 %

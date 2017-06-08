@@ -216,7 +216,6 @@ function [fmin,out_param]=funmin_g(varargin)
 
 % check parameter satisfy conditions or not
 [f, in_param] = funmin_g_param(varargin{:});
-MATLABVERSION = gail.matlab_version;
 out_param = in_param;
 
 
@@ -238,7 +237,7 @@ if length(y) == 1
     % probably f is a constant function and Matlab would
     % reutrn only a value fmin
     M_hat = y;
-    max_errest = 0;
+    %max_errest = 0;
 end
 iter = 0;
 exit_len = 2;
