@@ -17,7 +17,7 @@ function [Q,out_param] = cubMC_g(varargin)
 %   the upper limits. When measure is 'uniform ball' or 'uniform sphere',
 %   the input hyperbox is a vector with d+1 elements, where the first d
 %   values correspond to the center of the ball and the last value
-%   corresponds to the radius of the ball. For this last two measures, user
+%   corresponds to the radius of the ball. For these last two measures, a user
 %   can optionally specify what transformation should be used in order to
 %   get a uniform distribution on a ball of sphere. When measure is
 %   'uniform ball_box', the box-to-ball transformation, which gets
