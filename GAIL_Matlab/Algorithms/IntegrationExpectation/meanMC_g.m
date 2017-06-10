@@ -2,15 +2,14 @@ function [tmu,out_param]=meanMC_g(varargin)
 % meanMC_G Monte Carlo method to estimate the mean of a random variable.
 %
 %   tmu = meanMC_G(Yrand) estimates the mean, mu, of a random variable Y to
-%   within a specified generalized error tolerance,
-%   tolfun:=max(abstol,reltol*|mu|), i.e., |mu - tmu| <= tolfun with
-%   probability at least 1-alpha, where abstol is the absolute error
-%   tolerance, and reltol is the relative error tolerance. Usually the
-%   reltol determines the accuracy of the estimation, however, if the |mu|
-%   is rather small, the abstol determines the accuracy of the estimation.
-%   The default values are abstol=1e-2, reltol=1e-1, and alpha=1%. Input
-%   Yrand is a function handle that accepts a positive integer input n and
-%   returns an n x 1 vector of IID instances of the random variable Y.
+%   within a specified generalized error tolerance, tolfun :=
+%   max(abstol,reltol*|mu|), i.e., |mu - tmu| <= tolfun with probability at
+%   least (1 - alpha), where abstol is the absolute error tolerance, and
+%   reltol is the relative error tolerance. Usually the reltol determines
+%   the accuracy of the estimation, however, if |mu| is rather small, then
+%   abstol determines the accuracy of the estimation. Input Yrand is a
+%   function handle that accepts a positive integer input n and returns an
+%   n x 1 vector of IID instances of the random variable Y.
 %
 %   tmu = meanMC_G(Yrand,abstol,reltol,alpha,fudge,nSig,n1,tbudget,nbudget)
 %   estimates the mean of a random variable Y to within a specified
