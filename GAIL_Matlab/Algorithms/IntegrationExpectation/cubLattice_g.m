@@ -55,32 +55,32 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 %     the number of data points and d the dimension, which cannot be
 %     greater than 600. By default f is f=@ x.^2.
 %
-%     hyperbox --- the integration region defined by its bounds. When measure
-%     is 'uniform' or 'normal', hyperbox must be a 2 x d matrix, where the
-%     first row corresponds to the lower limits and the second row corresponds
-%     to the upper limits of the integral. When measure is 'uniform ball' 
-%     or 'uniform sphere', the input hyperbox is a vector with d+1 elements,
-%     where the first d values correspond to the center of the ball and the
-%     last value corresponds to the radius of the ball. The default value
-%     is [0;1].
+%     hyperbox --- the integration region defined by its bounds. When
+%     measure is 'uniform' or 'normal', hyperbox must be a 2 x d matrix,
+%     where the first row corresponds to the lower limits and the second
+%     row corresponds to the upper limits of the integral. When measure is
+%     'uniform ball' or 'uniform sphere', the input hyperbox is a vector
+%     with d+1 elements, where the first d values correspond to the center
+%     of the ball and the last value corresponds to the radius of the ball.
+%     The default value is [0;1].
 %
 %     in_param.measure --- for f(x)*mu(dx), we can define mu(dx) to be the
-%     measure of a uniformly distributed random variable in the hyperbox
-%     or normally distributed with covariance matrix I_d. The possible
-%     values are 'uniform', 'normal', 'uniform ball', 'uniform ball_box',
-%     'uniform ball_normal', 'uniform sphere', 'uniform sphere_box' and
-%     'uniform sphere_normal'. For 'uniform', the hyperbox must be a finite
-%     volume, for 'normal', the hyperbox can only be defined as
-%     (-Inf,Inf)^d and, for 'uniform ball' or 'uniform sphere', hyperbox
-%     must have finite values for the coordinates of the center and a
-%     finite positive value for the radius. By default it is 'uniform'.
+%     measure of a uniformly distributed random variable in the hyperbox or
+%     normally distributed with covariance matrix I_d. The possible values
+%     are 'uniform', 'normal', 'uniform ball', 'uniform ball_box', 'uniform
+%     ball_normal', 'uniform sphere', 'uniform sphere_box' and 'uniform
+%     sphere_normal'. For 'uniform', the hyperbox must be a finite volume,
+%     for 'normal', the hyperbox can only be defined as (-Inf,Inf)^d and,
+%     for 'uniform ball' or 'uniform sphere', hyperbox must have finite
+%     values for the coordinates of the center and a finite positive value
+%     for the radius. By default it is 'uniform'.
 %
 %     in_param.abstol --- the absolute error tolerance, abstol>=0. By 
 %     default it is 1e-4. For pure absolute tolerance, set in_param.reltol
 %     = 0.
 %
-%     in_param.reltol --- the relative error tolerance, which should be
-%     in [0,1]. Default value is 1e-2. For pure absolute tolerance, set
+%     in_param.reltol --- the relative error tolerance, which should be in
+%     [0,1]. Default value is 1e-2. For pure absolute tolerance, set
 %     in_param.abstol = 0.
 % 
 %   Optional Input Arguments
@@ -128,9 +128,9 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 %     out_param.n --- number of Rank-1 lattice points used for computing
 %     the integral of f.
 % 
-%     out_param.bound_err --- predicted bound on the error based on the cone
-%     condition. If the function lies in the cone, the real error will be
-%     smaller than generalized tolerance.
+%     out_param.bound_err --- predicted bound on the error based on the
+%     cone condition. If the function lies in the cone, the real error will
+%     be smaller than generalized tolerance.
 % 
 %     out_param.time --- time elapsed in seconds when calling cubLattice_g.
 %
@@ -140,18 +140,17 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 %     when its value is 1. The following list explains the flags in the
 %     respective vector order:
 %
-%                       1 : If reaching overbudget. It states whether
-%                       the max budget is attained without reaching the
-%                       guaranteed error tolerance.
+%                       1 : If reached overbudget, meaning the max budget
+%                       is attained without reaching the guaranteed error
+%                       tolerance.
 %      
-%                       2 : If the function lies outside the cone. In
-%                       this case, results are not guaranteed. Note that
-%                       this parameter is computed on the transformed
-%                       function, not the input function. For more
-%                       information on the transforms, check the input
-%                       parameter in_param.transform; for information about
-%                       the cone definition, check the article mentioned
-%                       below.
+%                       2 : If the function lies outside the cone, results
+%                       are not guaranteed to be accurate. Note that this
+%                       parameter is computed on the transformed function,
+%                       not the input function. For more information on the
+%                       transforms, check the input parameter
+%                       in_param.transform; for information about the cone
+%                       definition, check the article mentioned below.
 % 
 %  Guarantee
 % This algorithm computes the integral of real valued functions in [0,1)^d
@@ -178,8 +177,8 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 % 
 % 
 % Example 2:
-% Estimate the integral with integrand f(x) = x1.^2.*x2.^2.*x3.^2
-% in the interval R^3 where x1, x2 and x3 are normally distributed:
+% Estimate the integral with integrand f(x) = x1.^2.*x2.^2.*x3.^2 in the
+% interval R^3 where x1, x2 and x3 are normally distributed:
 % 
 % >> f = @(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2; hyperbox = [-inf(1,3);inf(1,3)];
 % >> q = cubLattice_g(f,hyperbox,'normal',1e-3,1e-3,'transform','C1sin','shift',2^(-25)*ones(1,3)); exactsol = 1;
@@ -208,8 +207,8 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 %
 %
 % Example 5:
-% Estimate the integral with integrand f(x) = 8*x1.*x2.*x3.*x4.*x5 in the interval
-% [0,1)^5 with pure absolute error 1e-5.
+% Estimate the integral with integrand f(x) = 8*x1.*x2.*x3.*x4.*x5 in the
+% interval [0,1)^5 with pure absolute error 1e-5.
 % 
 % >> f = @(x) 8*prod(x,2); hyperbox = [zeros(1,5);ones(1,5)];
 % >> q = cubLattice_g(f,hyperbox,'uniform',1e-5,0); exactsol = 1/4;
@@ -218,8 +217,8 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 %
 %
 % Example 6:
-% Estimate the integral with integrand f(x) = 3./(5-4*(cos(2*pi*x))) in the interval
-% [0,1) with pure absolute error 1e-5.
+% Estimate the integral with integrand f(x) = 3./(5-4*(cos(2*pi*x))) in the
+% interval [0,1) with pure absolute error 1e-5.
 % 
 % >> f = @(x) 3./(5-4*(cos(2*pi*x))); hyperbox = [0;1];
 % >> q = cubLattice_g(f,hyperbox,'uniform',1e-5,0,'transform','id'); exactsol = 1;
@@ -227,9 +226,10 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 % check = 1
 %
 %
-% Example 7:
+% Example 7: 
 % Estimate the integral with integrand f(x) = x1^2+x2^2 over the disk with
-% center (0,0) and radius 1 with pure absolute error 1e-4, where x is a vector x = [x1 x2].
+% center (0,0) and radius 1 with pure absolute error 1e-4, where x is a
+% vector x = [x1 x2].
 % 
 % >> f = @(x) x(:,1).^2+x(:,2).^2; hyperbox = [0,0,1];
 % >> q = cubLattice_g(f,hyperbox,'uniform ball','abstol',1e-4,'reltol',0); exactsol = pi/2;
