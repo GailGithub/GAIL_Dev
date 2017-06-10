@@ -103,7 +103,9 @@ function [Q,out_param] = cubMC_g(varargin)
 % 
 %     out_param.n --- the sample size used in each iteration.
 %
-%     out_param.ntot --- total sample used.
+%     out_param.ntot --- total sample used, including the sample used to
+%     convert time budget to sample budget and the sample in each iteration
+%     step.
 %
 %     out_param.nremain --- the remaining sample budget to estimate I. It was
 %     calculated by the sample left and time left.
@@ -277,7 +279,7 @@ function [Q,out_param] = cubMC_g(varargin)
 %   If you find GAIL helpful in your work, please support us by citing the
 %   above papers, software, and materials.
 %
-%   Authors:  Lan Jiang, Felipe Sousa de Andrade
+%   Author:  Lan Jiang
 
 tstart=tic;
 [f,hyperbox,out_param] = cubMC_g_param(varargin{:});%check validity of inputs
