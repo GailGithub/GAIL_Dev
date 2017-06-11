@@ -18,7 +18,7 @@ classdef whiteNoise < stochProcess
 %       timeDim_startTime: 1
 %         timeDim_endTime: 3
 %      wnParam_sampleKind: 'IID'
-%     wnParam_distribName: 'Uniform'
+%     wnParam_distribName: {'Uniform'}
 %        wnParam_xDistrib: 'Uniform'
 %
 %
@@ -31,7 +31,7 @@ classdef whiteNoise < stochProcess
 
    properties (SetAccess=public)
       wnParam = struct('sampleKind','IID', ... %kind of sampling
-         'distribName', 'Uniform', ... %distribution of the marginals 
+         'distribName', {{'Uniform'}}, ... %distribution of the marginals 
          'xDistrib', 'Uniform') %kind of sampling before transformation
    end
 
@@ -91,26 +91,26 @@ classdef whiteNoise < stochProcess
       
       % Set the properties of the white noise process
       function set.wnParam(obj,val)
-         if isfield(val,'sampleKind') %data for timeVector
+         if isfield(val,'sampleKind') %sampleKind is provided
             assert(any(strcmp(val.sampleKind,obj.allowSampleKind)))
-            obj.wnParam.sampleKind=val.sampleKind;
+            obj.wnParam.sampleKind = val.sampleKind;
          end
          if isfield(val,'distribName') %distribName is provided
-            assert(any(strcmp(val.distribName,obj.allowDistribName)))
-            obj.wnParam.distribName = val.distribName;
-            if numel(val.distribName) ~= obj.dim
-               val.distribName = repmat(val.distribName(1),1,obj.dim); %fixing here
+            if ~iscell(val.distribName)
+               val.distribName = {val.distribName};
             end
-         end
+            assert(gail.compCellArray(val.distribName,obj.allowDistribName))
+            obj.wnParam.distribName = val.distribName;
+            obj.timeDim.dim = numel(val.distribName);
+        end
          if isfield(val,'xDistrib') %xDistrib is provided
             assert(any(strcmp(val.xDistrib,obj.allowDistribName)))
             obj.wnParam.xDistrib = val.xDistrib;
          elseif ~isfield(obj.wnParam,'xDistrib')
             obj.wnParam.xDistrib = obj.allowDistribName{1};
          end
-         if isfield(val,'sampleKind') %sampleKind is provided
-            assert(any(strcmp(val.sampleKind,obj.allowSampleKind)))
-            obj.wnParam.sampleKind = val.sampleKind;
+         if ~gail.compCellArray(obj.wnParam.distribName,{'Gaussian'})
+            obj.wnParam.xDistrib = 'Uniform';
          end
       end
       
@@ -148,9 +148,13 @@ classdef whiteNoise < stochProcess
             paths=val;
          end
          
-         if strcmp(obj.wnParam.xDistrib,'Uniform') && ...
-               strcmp(obj.wnParam.distribName,'Gaussian') %need a transformation
-            paths=norminv(paths);
+         if strcmp(obj.wnParam.xDistrib,'Uniform')
+            whGauss = strcmp(obj.wnParam.distribName,'Gaussian');
+            if any(whGauss) %need a transformation
+               whTransform = repmat(whGauss,obj.timeDim.nSteps,1);
+               whTransform = whTransform(:);
+               paths(:,whTransform) = gail.stdnorminv(paths(:,whTransform));
+            end
          end
       end
       
