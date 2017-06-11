@@ -2,15 +2,14 @@ function [tmu,out_param]=meanMC_g(varargin)
 % meanMC_G Monte Carlo method to estimate the mean of a random variable.
 %
 %   tmu = meanMC_G(Yrand) estimates the mean, mu, of a random variable Y to
-%   within a specified generalized error tolerance,
-%   tolfun:=max(abstol,reltol*|mu|), i.e., |mu - tmu| <= tolfun with
-%   probability at least 1-alpha, where abstol is the absolute error
-%   tolerance, and reltol is the relative error tolerance. Usually the
-%   reltol determines the accuracy of the estimation, however, if the |mu|
-%   is rather small, the abstol determines the accuracy of the estimation.
-%   The default values are abstol=1e-2, reltol=1e-1, and alpha=1%. Input
-%   Yrand is a function handle that accepts a positive integer input n and
-%   returns an n x 1 vector of IID instances of the random variable Y.
+%   within a specified generalized error tolerance, tolfun :=
+%   max(abstol,reltol*|mu|), i.e., |mu - tmu| <= tolfun with probability at
+%   least (1 - alpha), where abstol is the absolute error tolerance, and
+%   reltol is the relative error tolerance. Usually the reltol determines
+%   the accuracy of the estimation, however, if |mu| is rather small, then
+%   abstol determines the accuracy of the estimation. Input Yrand is a
+%   function handle that accepts a positive integer input n and returns an
+%   n x 1 vector of IID instances of the random variable Y.
 %
 %   tmu = meanMC_G(Yrand,abstol,reltol,alpha,fudge,nSig,n1,tbudget,nbudget)
 %   estimates the mean of a random variable Y to within a specified
@@ -162,23 +161,45 @@ function [tmu,out_param]=meanMC_g(varargin)
 %
 %  References
 %
-%   [1]  F. J. Hickernell, L. Jiang, Y. Liu, and A. B. Owen, Guaranteed
-%   conservative fixed width confidence intervals via Monte Carlo sampling,
-%   Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F. Y. Kuo, G. W.
-%   Peters, and I. H. Sloan, eds.), Springer-Verlag, Berlin, 2014.
-%   arXiv:1208.4318 [math.ST]
+%   [1]  F. J. Hickernell, L. Jiang, Y. Liu, and A. B. Owen, "Guaranteed
+%   conservative fixed width confidence intervals via Monte Carlo
+%   sampling," Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F.
+%   Y. Kuo, G. W. Peters, and I. H. Sloan, eds.), pp. 105-128,
+%   Springer-Verlag, Berlin, 2014. DOI: 10.1007/978-3-642-41095-6_5
 %
-%   [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
-%   Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou, "GAIL:
-%   Guaranteed Automatic Integration Library (Version 2.2)" [MATLAB
-%   Software], 2017. Available from http://gailgithub.github.io/GAIL_Dev/
+%   [2] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang,
+%   Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
+%   GAIL: Guaranteed Automatic Integration Library (Version 2.2)
+%   [MATLAB Software], 2017. Available from http://gailgithub.github.io/GAIL_Dev/
 %
-%   [3] Lan Jiang, Guaranteed Adaptive Monte Carlo Methods for Estimating
+%   [3] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
+%   Research via Supportable Scientific Software," Journal of Open Research
+%   Software, Volume 2, Number 1, e22, pp. 1-7, 2014.
+%
+%   [4] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable
+%   Mathematical Software" [Course Slides], Illinois Institute of
+%   Technology, Chicago, IL, 2013. Available from
+%   http://gailgithub.github.io/GAIL_Dev/ 
+%
+%   [5] Daniel S. Katz, Sou-Cheng T. Choi, Hilmar Lapp, Ketan Maheshwari,
+%   Frank Loffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr,
+%   James Hetherington, James Howison, Shel Swenson, Gabrielle D. Allen,
+%   Anne C. Elster, Bruce Berriman, Colin Venters, "Summary of the First
+%   Workshop On Sustainable Software for Science: Practice And Experiences
+%   (WSSSPE1)," Journal of Open Research Software, Volume 2, Number 1, e6,
+%   pp. 1-21, 2014.
+%
+%   [6] Fang, K.-T., & Wang, Y. (1994). Number-theoretic Methods in 
+%   Statistics. London, UK: CHAPMAN & HALL
+%    
+%   [7] Lan Jiang, Guaranteed Adaptive Monte Carlo Methods for Estimating
 %   Means of Random Variables, Ph.D Thesis, Illinois Institute of
 %   Technology, 2016.
 %
 %   If you find GAIL helpful in your work, please support us by citing the
 %   above paper and software.
+%
+%   Author:  Lan Jiang
 
 tstart = tic; %start the clock
 [Yrand, out_param] = meanMC_g_param(varargin{:});
@@ -362,7 +383,7 @@ end
 function  [Yrand,out_param] = meanMC_g_param(varargin)
 
 default.abstol  = 1e-2;% default absolute error tolerance
-default.reltol = 1e-2;% default relative error tolerance
+default.reltol = 1e-1;% default relative error tolerance
 default.nSig = 1e4;% default initial sample size nSig for variance estimation
 default.n1 = 1e4; % default initial sample size n1 for mean estimation
 default.alpha = 0.01;% default uncertainty
