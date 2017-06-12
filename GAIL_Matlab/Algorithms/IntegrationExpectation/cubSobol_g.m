@@ -289,7 +289,6 @@ r_lag = 4; %distance between coefficients summed and those computed
 
 %------------------------------------------------------------------------------
 % TRANSFORMATION
-
 %changing the integrand and the hyperbox when measure is uniform ball or
 %sphere by applying the appropriate transformation
 if strcmpi(out_param.measure,'uniform ball') || strcmpi(out_param.measure,'uniform sphere')% using uniformly distributed samples on a ball or sphere
@@ -329,7 +328,7 @@ if strcmpi(out_param.measure,'uniform ball') || strcmpi(out_param.measure,'unifo
 end
 
 %------------------------------------------------------------------------------
-
+% Minimum gathering of points 
 l_star = out_param.mmin - r_lag; % Minimum gathering of points for the sums of DFWT
 omg_circ = @(m) 2.^(-m);
 omg_hat = @(m) out_param.fudge(m)/((1+out_param.fudge(r_lag))*omg_circ(r_lag));
@@ -435,7 +434,7 @@ if cv.J
     end
 end
 
-%% Compute Stilde
+%% Compute Stilde (1)
 nllstart = int64(2^(out_param.mmin-r_lag-1));
 Stilde(1)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
 out_param.bound_err=out_param.fudge(out_param.mmin)*Stilde(1);
@@ -454,7 +453,7 @@ if any(CStilde_low(:) > CStilde_up(:))
    out_param.exit(2) = true;
 end
 
-%% Approximate integral
+%% Approximate integral (1) 
 q=mean(yval)+mu*beta;
 
 % Check the end of the algorithm
@@ -493,7 +492,7 @@ for m=out_param.mmin+1:out_param.mmax
        yval=[yval; ynext];
    end
    %% Compute initial FWT on next points
-   %% not updating beta
+   % not updating beta
    if out_param.betaUpdate == 0
     	for l=0:mnext-1
        	    nl=2^l;
@@ -505,7 +504,7 @@ for m=out_param.mmin+1:out_param.mmax
        	    ynext(~ptind)=(evenval-oddval)/2;
     	end
  	
-    	%% Compute FWT on all points
+    	% Compute FWT on all points
     	y=[y;ynext];
     	nl=2^mnext;
     	ptind=[true(nl,1); false(nl,1)];
@@ -514,7 +513,7 @@ for m=out_param.mmin+1:out_param.mmax
     	y(ptind)=(evenval+oddval)/2;
     	y(~ptind)=(evenval-oddval)/2;
  	
-    	%% Update kappanumap
+    	% Update kappanumap
     	kappanumap=[kappanumap; 2^(m-1)+kappanumap]; %initialize map
     	for l=m-1:-1:m-r_lag
        	    nl=2^l;
@@ -569,7 +568,7 @@ for m=out_param.mmin+1:out_param.mmax
        end
    end
 
-   %% Compute Stilde
+   %% Compute Stilde (2)
    nllstart=int64(2^(m-r_lag-1));
    meff=m-out_param.mmin+1;
    Stilde(meff)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
@@ -590,7 +589,7 @@ for m=out_param.mmin+1:out_param.mmax
        out_param.exit(2) = true;
    end
 
-   %% Approximate integral
+   %% Approximate integral (2)
    q=mean(yval)+mu*beta;
    
    q = q - errest(meff)*(max(out_param.abstol, out_param.reltol*abs(q + errest(meff)))...
@@ -634,7 +633,7 @@ default.abstol  = 1e-4;
 default.reltol  = 1e-2;
 default.mmin  = 10;
 default.mmax  = 24;
-default.fudge = @(m) 5*2.^-m;
+default.fudge = @(m) 10*2.^-m;
 default.scramble = true;
 default.betaUpdate = 0;% option for updating beta, off at default
 
