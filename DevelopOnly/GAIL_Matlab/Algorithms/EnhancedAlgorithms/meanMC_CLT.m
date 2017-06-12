@@ -1,4 +1,4 @@
-function [hmu,out_param]=meanMC5_CLT(YYrand,absTol,relTol,alpha,nSig,inflate)
+function [hmu,out_param]=meanMC_CLT(YYrand,absTol,relTol,alpha,nSig,inflate)
 %MEANMC_CLT Monte Carlo method to estimate the mean of a random variable
 %
 %   tmu = MEANMC_CLT(Yrand,absTol,relTol,alpha,nSig,inflate) estimates the
@@ -89,7 +89,7 @@ if isstruct(YYrand)
     if isfield(YYrand,'xMean')
         xmean=YYrand.xMean;
     else
-        xmean=zeros(1,Yrand(1)-q);
+        xmean=zeros(1,size(Yrand(1),2)-q);
     end
 else
     Yrand=YYrand;

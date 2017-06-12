@@ -71,6 +71,9 @@ classdef brownianMotion < whiteNoise
          assert(obj.timeDim.startTime >= 0) %Brownian motion goes forward in time
          obj.timeDim = struct('initTime',0,'initValue',0); 
             %Brownian motion starts at time 0 with value 0
+         if strcmp(obj.inputType,'n') && strcmp(obj.wnParam.sampleKind,'IID')
+             obj.wnParam.xDistrib = 'Gaussian';
+         end
       end
            
       % Generate Brownian Motion paths

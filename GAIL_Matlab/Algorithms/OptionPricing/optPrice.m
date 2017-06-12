@@ -1,3 +1,4 @@
+
 classdef optPrice < optPayoff
 
     %% optPrice
@@ -124,8 +125,10 @@ classdef optPrice < optPayoff
                obj.priceParam.alpha);
             out.nPaths=outtemp.ntot;
          elseif strcmp(obj.priceParam.cubMethod,'IID_MC_abs')
+            
             [price, outtemp] = meanMCabs_g(@(n) genOptPayoffs(obj,n), ...
                obj.priceParam.absTol, obj.priceParam.alpha);
+           
             out.nPaths=outtemp.n;
          elseif strcmp(obj.priceParam.cubMethod,'IID_MC_new')
             [price, outtemp] = meanMCnew_g(@(n) genOptPayoffs(obj,n), ...
@@ -138,9 +141,17 @@ classdef optPrice < optPayoff
                obj.priceParam.alpha);
             out.nPaths=outtemp.ntot;
          elseif strcmp(obj.priceParam.cubMethod,'IID_MC_CLT')
-            [price, outtemp] = meanMC_CLT(@(n) genOptPayoffs(obj,n), ...
+            if numel(obj.payoffParam.optType) == 1
+               [price, outtemp] = meanMC_CLT(@(n) genOptPayoffs(obj,n), ...
                obj.priceParam.absTol, obj.priceParam.relTol, ...
                obj.priceParam.alpha);
+            else
+               inputStruct = struct('Yrand',@(n) genOptPayoffs(obj,n), ...
+                  'q',1,'xMean',obj.exactPrice(2:end));
+               [price, outtemp] = meanMC_CLT(inputStruct, ...
+               obj.priceParam.absTol, obj.priceParam.relTol, ...
+               obj.priceParam.alpha);
+            end
             out.nPaths=outtemp.ntot;
          elseif strcmp(obj.priceParam.cubMethod,'Sobol')
             if strcmp(obj.payoffParam.optType,'american')
