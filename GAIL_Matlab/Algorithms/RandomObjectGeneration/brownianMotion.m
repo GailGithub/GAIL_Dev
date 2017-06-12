@@ -49,7 +49,7 @@ classdef brownianMotion < whiteNoise
    
 %% Methods
 % The constructor for |brownianMotion| uses the |whiteNoise| constructor
-% and then parses the other properties. The function |genBMPaths| generates
+% and then parses the other properties. The function |genPaths| generates
 % the Brownian motion paths based on |whiteNoise| paths.
 
    methods
