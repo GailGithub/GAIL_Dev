@@ -1,21 +1,22 @@
 classdef stochProcess < handle & matlab.mixin.CustomDisplay
 
 %% stochProcess
-% is a an abstract class of discretized stochastic processes.
+% is an abstract class of discretized stochastic processes.
 %
 %   Concrete subclasses include 
 %      o whiteNoise
 %      o brownianMotion
 %
 % Example 1
-% >> stochProcess
-% ans = 
+% >> obj = stochProcess
+% obj = 
 %   stochProcess with properties:
 % 
 %              inputType: 'n'
 %     timeDim_timeVector: [1 2 3]
 %      timeDim_startTime: 1
 %        timeDim_endTime: 3
+%            timeDim_dim: 1
 %
 %
 % Authors: Fred J. Hickernell
@@ -48,7 +49,7 @@ classdef stochProcess < handle & matlab.mixin.CustomDisplay
       allowedPlotKind = {'yt.','yt-','yy','hist'}
       defaultColor = [0 0.447 0.741]; %MATLAB blue
    end
-
+   
 
    methods
         
@@ -102,7 +103,7 @@ classdef stochProcess < handle & matlab.mixin.CustomDisplay
          if isfield(val,'dim')
             validateattributes(val.dim, {'numeric'}, ...
                {'scalar','integer','positive'})
-            obj.timeDim.dim = val.dim; %dimension of the stochastic process
+            obj.timeDim.dim = val.dim; %dimension of the stochastic process            
          end
          if isfield(val,'initTime')
             if numel(val.initTime)
@@ -244,9 +245,7 @@ classdef stochProcess < handle & matlab.mixin.CustomDisplay
       if numel(obj.timeDim.initValue)
          propList.timeDim_initValue = obj.timeDim.initValue;
       end
-      if obj.timeDim.dim > 1
-         propList.timeDim_dim = obj.timeDim.dim;
-      end
+      propList.timeDim_dim = obj.timeDim.dim;
    end
 
    end

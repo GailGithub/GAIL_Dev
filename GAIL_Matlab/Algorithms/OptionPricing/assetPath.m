@@ -7,7 +7,7 @@ classdef assetPath < brownianMotion
 %
 % Example 1
 % >> obj = assetPath
-% obj =*** 
+% obj =  
 %   assetPath with properties: 
 % 
 %                inputType: 'n'
@@ -16,10 +16,12 @@ classdef assetPath < brownianMotion
 %           timeDim_endTime: 3
 %          timeDim_initTime: 0
 %         timeDim_initValue: 10
+%               timeDim_dim: 1
 %        wnParam_sampleKind: 'IID'
-%       wnParam_distribName: 'Gaussian'
-%          wnParam_xDistrib: 'Uniform'
+%       wnParam_distribName: {'Gaussian'}
+%          wnParam_xDistrib: 'Gaussian'
 %      bmParam_assembleType: 'diff'
+%              bmParam_whBM: 1
 %       assetParam_pathType: 'GBM'
 %      assetParam_initPrice: 10
 %       assetParam_interest: 0.0100
@@ -27,8 +29,8 @@ classdef assetPath < brownianMotion
 %     assetParam_volatility: 0.5000
 %         assetParam_nAsset: 1
 %   
-%   ***
-
+%
+%
 % Authors: Fred J. Hickernell, Xiaoyang Zhao, Tianci Zhu
 % Rev. May 11, 2017
 
@@ -44,14 +46,14 @@ classdef assetPath < brownianMotion
          'volatility', 0.5,... %volatility      
          'drift', 0,... %drift
          'nAsset', 1,... %number of assets
-         'corrMat', 1,... %A transpose
-         'dividend',0,...% dividend
-         'Vinst',0.04,...%instantaneous variance
-         'Vlong',0.04,...%long term variance
-         'kappa',0.5,...%mean reversion speed
-         'nu',1,...%volatility of variance
-         'rho',-0.9,...%correlation of the Brownian motions
-         'meanShift',0)% 0 for no importance sampling. Mean shift for normal random variable
+         'dividend',0,... %dividend
+         'corrMat', 1,... %correlation between Brownian motions for the Heston model
+         'Vinst', 0.04,... %instantaneous variance for Heston model
+         'Vlong', 0.04,... %long term variance for Heston model
+         'kappa', 0.5,... %mean reversion speed for Heston model
+         'nu', 1,... %volatility of variance for Heston model
+         'rho', -0.9,... %correlation of the Brownian motions for Heston model
+         'meanShift',0) %0 for no importance sampling. Mean shift for normal random variable
    end
    
    properties (Constant, Hidden) %do not change & not seen
@@ -60,21 +62,19 @@ classdef assetPath < brownianMotion
    end
    
    properties (Constant)
-       psiC=1.5,% Between 1 and two. Threshold for different estimation distributions
-%        gamma1=0.5%For PredictorCorrector
-%        gamma2=0.5%For PredictorCorrector
+       psiC=1.5 %Between 1 and 2. Threshold for different estimation distributions for Heston model
    end
    
    properties (Dependent = true)
-       sqCorr
+       sqCorr %square root of the correlation matrix
    end
  
 
 
 %% Methods
 % The constructor for |assetPath| uses the |brownianMotion| constructor and
-% then parses the other properties. The function |genStockPaths| generates
-% the asset paths based on |whiteNoise| paths.
+% then parses the other properties. The function |genPaths| generates the
+% asset paths based on |brownianMotion| paths.
 
    methods
         
@@ -195,6 +195,8 @@ classdef assetPath < brownianMotion
          bmpaths = genPaths@brownianMotion(obj,val);
          nPaths = size(bmpaths,1); 
          likelihoodRatio = ones(nPaths,1); % likelihoodRatio for importance sampling
+
+         % Generate geometric Brownian motion asset paths
          if strcmp(obj.assetParam.pathType,'GBM')
             tempc=zeros(nPaths,obj.timeDim.nSteps);
             paths=zeros(nPaths,obj.timeDim.nCols);
@@ -373,7 +375,7 @@ classdef assetPath < brownianMotion
              U = zeros(nPaths,Ntime+1);
              U(:,1)=obj.assetParam.Vinst - obj.assetParam.Vlong; % set U0
              k1 = exp(-obj.assetParam.kappa*dT);
-             for i=2:Ntime+1;%obj.timeDim.nSteps             % time loop
+             for i=2:Ntime+1 %obj.timeDim.nSteps             % time loop
                  m = obj.assetParam.Vlong+U(:,i-1).*k1;% mean (moment matching)
                  s2 =(U(:,i-1)+obj.assetParam.Vlong).*k1./obj.assetParam.kappa...
                      *(-expm1(-dT*obj.assetParam.kappa))+obj.assetParam.Vlong...
