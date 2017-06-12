@@ -17,11 +17,13 @@ classdef whiteNoise < stochProcess
 %      timeDim_timeVector: [1 2 3]
 %       timeDim_startTime: 1
 %         timeDim_endTime: 3
+%             timeDim_dim: 1
 %      wnParam_sampleKind: 'IID'
 %     wnParam_distribName: {'Uniform'}
 %        wnParam_xDistrib: 'Uniform'
 %
 %
+% Authors: Fred J. Hickernell
 
 
 %% Properties

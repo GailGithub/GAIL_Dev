@@ -1,21 +1,22 @@
 classdef stochProcess < handle & matlab.mixin.CustomDisplay
 
 %% stochProcess
-% is a an abstract class of discretized stochastic processes.
+% is an abstract class of discretized stochastic processes.
 %
 %   Concrete subclasses include 
 %      o whiteNoise
 %      o brownianMotion
 %
 % Example 1
-% >> stochProcess
-% ans = 
+% >> obj = stochProcess
+% obj = 
 %   stochProcess with properties:
 % 
 %              inputType: 'n'
 %     timeDim_timeVector: [1 2 3]
 %      timeDim_startTime: 1
 %        timeDim_endTime: 3
+%            timeDim_dim: 1
 %
 %
 % Authors: Fred J. Hickernell
