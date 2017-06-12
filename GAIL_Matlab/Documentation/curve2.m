@@ -7,7 +7,7 @@
 %
 % \[ f(x) = \sin (10 \pi x^4 ) - x \] 
 % 
-close all; clear all; format compact; format short;
+close all; clearvars; format compact; format short;
 f = @(x) sin(10*pi*x.^4)-x;
 
 %% Function minimization
