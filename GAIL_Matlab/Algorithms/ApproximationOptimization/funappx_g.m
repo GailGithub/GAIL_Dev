@@ -97,7 +97,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %
 %   Guarantee
 %
-%   Plese check the details of the guarantee in Reference 1.
+%   Plese check the details of the guarantee in [1].
 %
 %
 %   Examples
