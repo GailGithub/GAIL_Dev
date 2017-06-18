@@ -1,6 +1,6 @@
-%% GUI of Funappx_g 
-% To approximate a peaky function to show how *funappx_g* generate number
-% of points
+%% GUI of funappx_g 
+% To approximate a peaky function with *funappx_g* and to show how
+% *funappx_g* generates grid points for linear spline approximation
 
 %% Function definition
 %
@@ -15,19 +15,19 @@ axis tight
 
 %% Function Approximation 
 % We use *funappx_g* to approximate \(f\) over the interval \([0,1]\) with
-% error tolerance \(1e-2\) and 15 initial subintervals
+% error tolerance \(1e-2\) and 15 initial subintervals:
 [~,out_param] = funappx_g(@(x) exp(-1000*(x-0.2).^2),0,1,1e-2,15)
 
-% We can find to reach the error tolerance, we need 105 points to
+% We find that to reach the error tolerance, we need 105 points to
 % approximate the function. 
 
-%% Process to Generate Number of Points
+%% Process to Generate Grid Points
 %
 % Step 1: 16 evenly spaced points
 %
 % <<localgui1.png>>
 % 
-% Step 2: add points at peaky part
+% Step 2: add points to the peaky part
 %
 % <<localgui2.png>>
 % 
@@ -40,7 +40,7 @@ axis tight
 % <<localgui7.png>>
 % 
 %
-% This process can be reproduced by following command:
+% This process can also be reproduced by following command:
 % funappx_g_gui(@(x) exp(-1000*(x-0.2).^2),0,1,1e-2,15,15);
 %
 %% References
