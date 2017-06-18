@@ -8,16 +8,18 @@ classdef optPayoff < assetPath
     % obj =***
     %   optPayoff with properties:
     %
-    %                       inputType: 'n'
+    %                   inputType: 'n'
     %          timeDim_timeVector: [1 2 3]
     %           timeDim_startTime: 1
     %             timeDim_endTime: 3
     %            timeDim_initTime: 0
     %           timeDim_initValue: 10
+    %                 timeDim_dim: 1
     %          wnParam_sampleKind: 'IID'
-    %         wnParam_distribName: 'Gaussian'
-    %            wnParam_xDistrib: 'Uniform'
+    %         wnParam_distribName: {'Gaussian'}
+    %            wnParam_xDistrib: 'Gaussian'
     %        bmParam_assembleType: 'diff'
+    %                bmParam_whBM: 1
     %         assetParam_pathType: 'GBM'
     %        assetParam_initPrice: 10
     %         assetParam_interest: 0.0100
