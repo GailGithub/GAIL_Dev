@@ -1,37 +1,27 @@
 classdef optPrice < optPayoff
 
-%% optPrice
-% is a object of that computes the price of an object via (quasi-)Monte
-% Carlo methods.
-% 
-%
-% Example 1
+    %% optPrice
+    % is a object of that computes the price of an object via (quasi-)Monte
+    % Carlo methods.
+    % 
+    %
+    % Example 1
     % >> obj = optPrice
     % obj =***
     %    optPrice with properties:
-% 
-%       distribName: 'Uniform'
-%        sampleName: 'IID'
-%          xDistrib: 'Uniform'
-%        qrandState: []
-%              name: 'WhiteNoise'
-%        timeVector: [1 2 3]
-%         startTime: 1
-%           endTime: 3
-%            nSteps: 3
-%     timeIncrement: [1 1]
-%               dim: 1
-%             nCols: 3
-%         inputType: 'n'
+    % 
+    %                       inputType: 'n'
     %          timeDim_timeVector: [1 2 3]
     %           timeDim_startTime: 1
     %             timeDim_endTime: 3
     %            timeDim_initTime: 0
     %           timeDim_initValue: 10
+    %                 timeDim_dim: 1
     %          wnParam_sampleKind: 'IID'
-    %         wnParam_distribName: 'Gaussian'
-    %            wnParam_xDistrib: 'Uniform'
+    %         wnParam_distribName: {'Gaussian'}
+    %            wnParam_xDistrib: 'Gaussian'
     %        bmParam_assembleType: 'diff'
+    %                bmParam_whBM: 1
     %         assetParam_pathType: 'GBM'
     %        assetParam_initPrice: 10
     %         assetParam_interest: 0.0100
@@ -49,6 +39,7 @@ classdef optPrice < optPayoff
     % 
     %   ***
 
+
 %% Properties
 % This process inherits properties from the |stochProcess| class.  Below are 
 % values assigned to that are abstractly defined in that class plus some
@@ -58,13 +49,13 @@ classdef optPrice < optPayoff
       priceParam = struct('cubMethod', 'IID_MC', ... %type of pricing scheme
          'absTol', 1, ... %absolute tolerance
          'relTol', 0, ... %relative tolerance
-         'alpha', 0.01) %alpha = uncertainty
+         'alpha', 0.01) %alpha = uncertainty         
       
    end
    
    properties (Constant, Hidden) %do not change & not seen
       allowCubMethod = {'IID_MC','Sobol','SobolCV','lattice','IID_MC_new', 'IID_MC_newtwo', ...
-         'IID_MC_abs','IID_MC_CLT','MLE_lattice'} 
+         'IID_MC_abs','IID_MC_CLT'} 
    end
    
 
@@ -102,12 +93,12 @@ classdef optPrice < optPayoff
                   {'IID_MC','IID_MC_new', 'IID_MC_newtwo','IID_MC_abs'}))
                obj.wnParam.sampleKind = 'IID';
             end
-                if any(strcmp(obj.priceParam.cubMethod,{'Sobol','lattice','MLE_lattice'}))
+            if any(strcmp(obj.priceParam.cubMethod,{'Sobol','lattice'}))
                obj.inputType = 'x';
                obj.wnParam.sampleKind = obj.priceParam.cubMethod;
                obj.wnParam.xDistrib = 'Uniform';
             end           
-	    if any(strcmp(obj.priceParam.cubMethod,{'SobolCV'}))
+            if any(strcmp(obj.priceParam.cubMethod,{'SobolCV'}))
                obj.inputType = 'x';
                obj.wnParam.sampleKind = 'Sobol';
                obj.wnParam.xDistrib = 'Uniform';
@@ -183,18 +174,6 @@ classdef optPrice < optPayoff
             [price, outtemp] = cubLattice_g(@(x) genOptPayoffs(obj,x), ...
                [zeros(1,obj.timeDim.nSteps); ones(1,obj.timeDim.nSteps)], ...
                'uniform', obj.priceParam.absTol, obj.priceParam.relTol);
-                out.nPaths=outtemp.n;
-            elseif strcmp(obj.priceParam.cubMethod,'MLE_lattice')
-                func = @(x) genOptPayoffs(obj,x);
-                order=2;
-                dim=obj.timeDim.nSteps;
-                ptransform= 'Baker';
-                testAll=false;
-                figSavePath='/home/jagadees/MyWriteup/May4thweek_optprice/';
-                fName='optPrice';
-                [price, outtemp] = cubMLELattice(func, ...
-                    dim, obj.priceParam.absTol, obj.priceParam.relTol,...
-                    order,ptransform,testAll,figSavePath,fName);
             out.nPaths=outtemp.n;
          end
          out.time=outtemp.time;
