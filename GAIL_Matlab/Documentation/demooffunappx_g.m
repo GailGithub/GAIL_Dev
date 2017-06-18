@@ -1,4 +1,4 @@
-%% GUI of funappx_g 
+%% A GUI (graphical user interface) for *funappx_g*
 % To approximate a peaky function with *funappx_g* and to show how
 % *funappx_g* generates grid points for linear spline approximation
 
@@ -40,7 +40,7 @@ axis tight
 % <<localgui7.png>>
 % 
 %
-% This process can also be reproduced by following command:
+% This process can also be reproduced by the following command:
 % funappx_g_gui(@(x) exp(-1000*(x-0.2).^2),0,1,1e-2,15,15);
 %
 %% References
