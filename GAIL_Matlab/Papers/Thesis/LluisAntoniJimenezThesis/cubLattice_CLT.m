@@ -444,7 +444,19 @@ if numel(varargin)<2
     warning('GAIL:cubLattice_g:fdnotgiven',...
         'At least, function f and hyperbox need to be specified. Example for f(x)=x^2:')
     f = @(x) x.^2;
-    out_param.f=f;
+    out_param.f=f;Yueyi Li:
+	   beta = real(X \ Y);
+    
+    out_param.beta = beta;
+   % yval = ycv(:,1) - ycv(:,2:end)*beta;% get new function value
+    yval = ycv(:,1) - ycv(:,2:end)*beta;
+    y=yval;
+	YX=@(x)[sin(x),cos(x)-sin(1)+1-cos(1) ,x-1/2,x.^2-1/3]
+	YXn=@(n)YX(rand(n,1))
+	s=struct('Yrand',YXn,'q',1)
+Willy Hung:
+	File Transfer: cubLattice_CLT-1.m
+
     hyperbox = default.hyperbox;
 else
     f = varargin{1};
