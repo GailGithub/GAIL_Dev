@@ -1,4 +1,4 @@
-function [hmu,mean_out] = meanMC_CLT(varargin)
+function [hmu,out_param]=meanMC_CLT(Yrand,absTol,relTol,alpha,nSig,inflate)
 %MEANMC_CLT Monte Carlo method to estimate the mean of a random variable
 %
 %   tmu = MEANMC_CLT(Yrand,absTol,relTol,alpha,nSig,inflate) estimates the
@@ -37,56 +37,63 @@ function [hmu,mean_out] = meanMC_CLT(varargin)
 %
 %     hmu --- the estimated mean of Y.
 %
-%     mean_out.ntot --- total sample used.
+%     out_param.ntot --- total sample used.
 %
-%     mean_out.sig --- the sample standard deviation.
+%     out_param.var --- the sample variance.
 %
-%     mean_out.time --- the time elapsed in seconds.
-%
-%
-% >> [mu,out] = meanMC_CLT(@(n) rand(n,1).^2, 0.001)
-% mu =
-%     0.33***
-% out = 
-%   meanYOut with properties:
-% 
-%           mu: 0.33***
-%          std: 0.***
-%            Y: @(n)rand(n,1).^2
-%        alpha: 0.0100
-%         nSig: 1000
-%      inflate: 1.2000
-%         nMax: 100000000
-%       absTol: 1.0000e-03
-%       relTol: 0
-%       solFun: @(mu)mu
-%     solBdFun: @(muhat,errbd)[muhat-errbd,muhat+errbd]
-%      nSample: ***
-%         time: ***
+%     out_param.time --- the time elapsed in seconds.
+%  Examples
 %
 %
+% Example 1:
+% Estimate the integral with integrand f(x) = x1.*x2 in the interval [0,1)^2:
+% f = @(x) prod(x,2)
+% Yrand=@(n)f(rand(n,2))
+% q = meanMC_CLT(Yrand,1e-2,0);
+% check = abs(exactsol-q) < 1e-2;
+% check = 1;
 
 % This is a heuristic algorithm based on a Central Limit Theorem
 % approximation
-
-mean_inp = gail.meanYParam(varargin{:});
-mean_out = gail.meanYOut(mean_inp);
-tstart = tic; %start the clock
-Yval = mean_out.Y(mean_out.nSig); %get samples to estimate variance 
-mean_out.std = std(Yval); %calculate the sample standard deviation
-sig0up = mean_out.inflate .* mean_out.std; %upper bound on the standard deviation
-hmu0 = mean(Yval);
-nmu = max(1,ceil((-gail.stdnorminv(mean_out.alpha/2)*sig0up ...
-   /max(mean_out.absTol,mean_out.relTol*abs(hmu0))).^2)); 
-   %number of samples needed for mean
-if nmu > mean_out.nMax %don't exceed sample budget
-   warning(['The algorithm wants to use nmu = ' int2str(nmu) ...
-      ', which is too big. Using ' int2str(mean_out.nMax) ' instead.']) 
-   nmu = mean_out.nMax;
+if nargin < 6
+   inflate = 1.2; %standard deviation inflation factor
+   if nargin < 5
+      nSig = 1e3; %number of samples to estimate variance
+      if nargin < 4
+         alpha = 0.01; %uncertainty
+         if nargin < 3
+            relTol = 0.01; %relative error tolerance
+            if nargin < 2
+               absTol = 1e-2; %absolute error tolerance
+               if nargin < 1
+                  Yrand = @(n) rand(n,1); %random number generator
+               end
+            end
+         end
+      end
+   end
 end
-hmu = mean(mean_out.Y(nmu)); %estimated mean
-mean_out.mu = hmu;
-mean_out.nSample = mean_out.nSig+nmu; %total samples required
-mean_out.time = toc(tstart); %elapsed time
+nMax=1e8; %maximum number of samples allowed.
+out_param.alpha = alpha; %save the input parameters to a structure
+out_param.inflate = inflate;
+out_param.nSig = nSig;
+tstart = tic; %start the clock
+Yval = Yrand(nSig);% get samples to estimate variance 
+%[M,F] = mode(Yval);%checking if the random values aren't repeating
+%themselves
+out_param.var = var(Yval); %calculate the sample variance--stage 1
+sig0 = sqrt(out_param.var); %standard deviation
+sig0up = out_param.inflate.*sig0; %upper bound on the standard deviation
+hmu0 = mean(Yval);
+nmu = max(1,ceil((-gail.stdnorminv(alpha/2)*sig0up/max(absTol,relTol*abs(hmu0))).^2)); 
+   %number of samples needed for mean
+if nmu > nMax %don't exceed sample budget
+   warning(['The algorithm wants to use nmu = ' int2str(nmu) ...
+      ', which is too big. Using ' int2str(nMax) ' instead.']) 
+   nmu = nMax;
+end
+hmu = mean(Yrand(nmu)); %estimated mean
+out_param.ntot = nSig+nmu; %total samples required
+out_param.time = toc(tstart); %elapsed time
 end
 
