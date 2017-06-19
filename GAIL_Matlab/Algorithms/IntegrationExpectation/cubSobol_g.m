@@ -235,9 +235,9 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 % Estimate the integral with integrand f(x) = 10*x1-5*x2^2+x3^3 in the interval [0,2)^3 
 % with pure absolute error 1e-6 using two control variates h1(x) = x1 and h2(x) = x2^2.
 % 
-% >> g.func = @(x) [10*x(:,1)-5*x(:,2).^2+1*x(:,3).^3, x(:,1), x(:,2).^2];
-% >> g.cv = [8,32/3]; hyperbox= [zeros(1,3);2*ones(1,3)];
-% >> q = cubSobol_g(g,hyperbox,'uniform',1e-6,0); exactsol = 128/3; 
+% >> w.func = @(x)[10*x(:,1)-5*x(:,2).^2+1*x(:,3).^3, x(:,1), x(:,2).^2];
+% >> w.cv = [8,32/3]; hyperbox= [zeros(1,3);2*ones(1,3)];
+% >> q = cubSobol_g(w,hyperbox,'uniform',1e-6,0); exactsol = 128/3; 
 % >> check = abs(exactsol-q) < 1e-6
 % check = 1
 %
@@ -415,8 +415,11 @@ if cv.J
     Y = y(kappanumap(2^(out_param.mmin-r_lag-1)+1:end));
     beta = X \ Y;  
     out_param.beta = beta;
-    yval = ycv(:,1) - ycv(:,2:end)*beta;% get new function value
+    yval = ycv(:,1) - ycv(:,2:end)*beta; % get new function value
+    
     y = y-yg*beta;% redefine function
+    
+  
     %% rebuild kappa map
     kappanumap=(1:out_param.n)'; %initialize map
     for l=out_param.mmin-1:-1:1

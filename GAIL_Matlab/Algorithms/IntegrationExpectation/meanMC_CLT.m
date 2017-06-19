@@ -18,8 +18,7 @@ function [hmu,out_param]=meanMC_CLT(YYrand,absTol,relTol,alpha,nSig,inflate)
 %     of Yrand should be n function values. For example, if Y = X.^2 where X
 %     is a standard uniform random variable, then one may define Yrand =
 %     @(n) rand(n,1).^2.
-%
-%
+%     
 %     absTol --- the absolute error tolerance, which should be
 %     non-negative --- default = 1e-2
 %
@@ -56,10 +55,10 @@ if nargin < 6
             if nargin < 3
                 relTol = 0.01; %relative error tolerance
                 if nargin < 2
-                    absTol = 1e-2; %absolute error tolerance
+                    absTol = 1e-2; %absolute error tolerance                   
                     if nargin < 1
                         YYrand = @(n) rand(n,1); %random number generator
-                        
+                       
                     end
                 end
             end
@@ -67,12 +66,11 @@ if nargin < 6
     end
 end
 
-
 nMax=1e8; %maximum number of samples allowed.
 out_param.alpha = alpha; %save the input parameters to a structure
 out_param.inflate = inflate;
 out_param.nSig = nSig;
-tstart = tic; %start the clock
+tstart = tic; %start the clock 
 
 %check to see input YYrand.
 if isstruct(YYrand)
@@ -84,7 +82,7 @@ if isstruct(YYrand)
     if isfield(YYrand,'q')
         q=round(YYrand.q);
     else
-        q=1;
+        q=1;   
     end
     if isfield(YYrand,'xMean')
         xmean=YYrand.xMean;
@@ -104,40 +102,39 @@ if p==0 && q==1
     Yval = val(:,1);
     samplevar = var(Yval);
     YY=Yval;
-else
-    val = Yrand(nSig);
-    meanVal=mean(val);
-    A=bsxfun(@minus, val, meanVal);
-    C=[ones(q,1); zeros(p,1)];
-    [U,S,V]=svd([A; C'],0);
-    Sdiag = diag(S);
-    U2=U(end,:);
-    y=U2'/(U2*U2');
-    beta=V*(y./Sdiag);
-    meanX=meanVal(:,q+1:end);
-    meanX=[zeros(q,1); meanX'];
-    YY = bsxfun(@minus, val, meanX')*beta;
-    samplevar = var(YY);
+else 
+        meanVal=mean(Yrand(nSig));
+        A=bsxfun(@minus, val, meanVal);        
+        C=[ones(q,1); zeros(p,1)];           
+        [U,S,V]=svd([A; C'],0);        
+        Sdiag = diag(S);
+        U2=U(end,:);
+        y=U2'/(U2*U2');
+        theta=V*(y./Sdiag);
+        meanX=meanVal(:,q+1:end);
+        meanX=[zeros(q,1); meanX'];
+        YY = bsxfun(@minus, val, meanX')*theta;
+        samplevar = var(YY);
 end
 
 out_param.sig0 = sqrt(samplevar); %standard deviation
 sig0up = out_param.inflate.*out_param.sig0; %upper bound on the standard deviation
 out_param.hmu0 = mean(YY);
 
-nmu =  max(nSig,ceil((-gail.stdnorminv(alpha/2)*sig0up/max(absTol,relTol*abs(out_param.hmu0))).^2));
-%nmu =  ceil((-gail.stdnorminv(alpha/2)*sig0up/max(absTol,relTol*abs(out_param.hmu0))).^2);
-%number of samples needed for mean
+nmu =  max(nSig,ceil((-gail.stdnorminv(alpha/2)*sig0up/max(absTol,relTol*abs(out_param.hmu0))).^2)); 
+%nmu =  ceil((-gail.stdnorminv(alpha/2)*sig0up/max(absTol,relTol*abs(out_param.hmu0))).^2); 
+   %number of samples needed for mean
 if nmu > nMax %don't exceed sample budget
-    warning(['The algorithm wants to use nmu = ' int2str(nmu) ...
-        ', which is too big. Using ' int2str(nMax) ' instead.'])
-    nmu = nMax;
+   warning(['The algorithm wants to use nmu = ' int2str(nmu) ...
+      ', which is too big. Using ' int2str(nMax) ' instead.']) 
+   nmu = nMax;
 end
 
-YY = Yrand(nmu);
+YY = Yrand(nmu);   
 if p > 0 || q > 1
-    %YY(:,q+1:end) = bsxfun(@minus, YY(:,q+1:end), mean(YY(:,q+1:end),1));
-    YY(:,q+1:end) = bsxfun(@minus, YY(:,q+1:end), xmean);
-    YY = YY*beta;
+  %YY(:,q+1:end) = bsxfun(@minus, YY(:,q+1:end), mean(YY(:,q+1:end),1));
+  YY(:,q+1:end) = bsxfun(@minus, YY(:,q+1:end), xmean);
+  YY = YY*theta;
     %YY = val*beta;
 end
 
@@ -145,3 +142,5 @@ hmu = mean(YY); %estimated mean
 out_param.ntot = nSig+nmu; %total samples required
 out_param.time = toc(tstart); %elapsed time
 end
+
+

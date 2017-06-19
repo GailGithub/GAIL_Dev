@@ -84,3 +84,9 @@ plot(ax1, x, avSobol);
 ax2 = subplot(2,1,2);
 y2 = pointsLatticeCV;
 plot(ax2,x,y2, 'b')
+
+%% Stem leaf plot
+pointsSobolCV*1000;
+pointsLatticeCV*1000;
+stemleafplot(pointsSobolCV);
+stemleafplot(pointsLatticeCV);
