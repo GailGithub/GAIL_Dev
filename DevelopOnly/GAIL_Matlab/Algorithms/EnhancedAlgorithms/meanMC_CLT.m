@@ -42,7 +42,16 @@ function [hmu,out_param]=meanMC_CLT(Yrand,absTol,relTol,alpha,nSig,inflate)
 %     out_param.var --- the sample variance.
 %
 %     out_param.time --- the time elapsed in seconds.
+%  Examples
 %
+%
+% Example 1:
+% Estimate the integral with integrand f(x) = x1.*x2 in the interval [0,1)^2:
+% f = @(x) prod(x,2)
+% Yrand=@(n)f(rand(n,2))
+% q = meanMC_CLT(Yrand,1e-2,0);
+% check = abs(exactsol-q) < 1e-2;
+% check = 1;
 
 % This is a heuristic algorithm based on a Central Limit Theorem
 % approximation
