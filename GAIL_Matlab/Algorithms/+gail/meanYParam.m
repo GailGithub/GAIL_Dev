@@ -9,7 +9,15 @@ classdef meanYParam < gail.errorParam
       nSig %sample size to estimate variance
       inflate %inflation factor for bounding standard deviation
       nMax %maximum sample size allowed
+      nMu %number of means for solution function
+      nY %number of Y for each mean
+      trueMuCV %true mean of control variates
    end
+   
+    properties (Dependent = true)
+       nCV %number of control variates
+       nYOut %number of Y outputs
+    end
    
    properties (Hidden, SetAccess = private)
       def_Y = @(n) rand(n,1) %default random number generator
@@ -17,7 +25,11 @@ classdef meanYParam < gail.errorParam
       def_nSig = 1000 %default uncertainty
       def_inflate = 1.2 %default inflation factor
       def_nMax = 1e8 %default maximum sample size
+      def_nMu = 1 %default number of means
+      def_nY = 1 %default number of Y per mean
+      def_trueMuCV = [] %default true means of control variates
    end
+   
    
    methods
       
@@ -66,7 +78,10 @@ classdef meanYParam < gail.errorParam
             obj.alpha = val.alpha; %copy uncertainty
             obj.nSig = val.nSig; %copy sample size for sigma
             obj.inflate = val.inflate; %copy inflation factor
-            obj.nMax = val.nMax; %copy maximum ample size
+            obj.nMax = val.nMax; %copy maximum sample size
+            obj.nMu = val.nMu; %copy number of mu values
+            obj.nY = val.nY; %copy number of Y values per mu
+            obj.trueMuCV = val.trueMuCV; %copy true means of control variates
             return
          end
 
@@ -97,6 +112,10 @@ classdef meanYParam < gail.errorParam
          f_addParamVal(p,'nSig',obj.def_nSig);
          f_addParamVal(p,'inflate',obj.def_inflate);
          f_addParamVal(p,'nMax',obj.def_nMax);
+         f_addParamVal(p,'nMu',obj.def_nMu);
+         f_addParamVal(p,'nY',obj.def_nY);
+         f_addParamVal(p,'trueMuCV',obj.def_trueMuCV);
+         
          if structInp
             parse(p,varargin{start:end},varargin{structInp}) 
             %parse inputs with a structure
@@ -106,15 +125,18 @@ classdef meanYParam < gail.errorParam
          struct_val = p.Results; %store parse inputs as a structure
          
          %Assign values of structure to corresponding class properties
-         obj.alpha = struct_val.alpha;
-         obj.nSig = struct_val.nSig;
-         obj.inflate = struct_val.inflate;
-         obj.nMax = struct_val.nMax;
          if YInp
             obj.Y = varargin{YInp}; %assign function
          else
             obj.Y = struct_val.Y;
          end
+         obj.alpha = struct_val.alpha;
+         obj.nSig = struct_val.nSig;
+         obj.inflate = struct_val.inflate;
+         obj.nMax = struct_val.nMax;
+         obj.nMu = struct_val.nMu;
+         obj.nY = struct_val.nY;
+         obj.trueMuCV = struct_val.trueMuCV;
 
          
       end %of constructor
@@ -144,10 +166,48 @@ classdef meanYParam < gail.errorParam
          validateattributes(val, {'numeric'}, {'scalar','positive','integer'})
          obj.nMax = val;
       end
+      
+      function set.nMu(obj,val)
+         validateattributes(val, {'numeric'}, {})
+         obj.nMu = val;
+      end
+                       
+      function set.nY(obj,val)
+         validateattributes(val, {'numeric'}, {'positive','integer'})
+         obj.nY = val;
+      end
+                       
+      function set.trueMuCV(obj,val)
+         validateattributes(val, {'numeric'}, {})
+         obj.trueMuCV = setTrueMuCVDim(obj,val);
+      end
+      
+      function val = get.nCV(obj)
+         val = obj.nYOut - sum(obj.nY); 
+      end         
+                       
+      function val = get.nYOut(obj)
+         val = numel(obj.Y(1)); 
+      end         
                        
      
       
    end
+   
+   methods (Access = protected)
+   
+      function outval = setTrueMuCVDim(obj,inval)
+         if numel(inval) == obj.nCV
+            outval = inval(:)';
+         else
+            outval = zeros(1,obj.nCV);
+         end
+
+      end
+   
+   end
+
+   
    
 end
 
