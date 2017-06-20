@@ -57,6 +57,11 @@ function [hmu,mean_out] = meanMC_CLT_class(varargin)
 %         nSig: 1000
 %      inflate: 1.2000
 %         nMax: 100000000
+%          nMu: 1
+%           nY: 1
+%     trueMuCV: [1×0 double]
+%          nCV: 0
+%        nYOut: 1
 %       absTol: 1.0000e-03
 %       relTol: 0
 %       solFun: @(mu)mu
