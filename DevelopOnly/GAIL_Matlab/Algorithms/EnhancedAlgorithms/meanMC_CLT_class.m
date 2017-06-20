@@ -1,4 +1,4 @@
-function [hmu,mean_out]=meanMC_CLT(varargin)
+function [hmu,mean_out] = meanMC_CLT(varargin)
 %MEANMC_CLT Monte Carlo method to estimate the mean of a random variable
 %
 %   tmu = MEANMC_CLT(Yrand,absTol,relTol,alpha,nSig,inflate) estimates the
@@ -11,14 +11,13 @@ function [hmu,mean_out]=meanMC_CLT(varargin)
 %
 %   Input Arguments
 %
-%     Yrand --- the function or structure for generating n IID instances of a random
+%     Yrand --- the function for generating n IID instances of a random
 %     variable Y whose mean we want to estimate. Y is often defined as a
 %     function of some random variable X with a simple distribution. The
 %     input of Yrand should be the number of random variables n, the output
 %     of Yrand should be n function values. For example, if Y = X.^2 where X
 %     is a standard uniform random variable, then one may define Yrand =
 %     @(n) rand(n,1).^2.
-%     
 %
 %     absTol --- the absolute error tolerance, which should be
 %     non-negative --- default = 1e-2
@@ -38,11 +37,12 @@ function [hmu,mean_out]=meanMC_CLT(varargin)
 %
 %     hmu --- the estimated mean of Y.
 %
-%     out_param.ntot --- total sample used.
+%     mean_out.ntot --- total sample used.
 %
-%     out_param.var --- the sample variance.
+%     mean_out.sig --- the sample standard deviation.
 %
-%     out_param.time --- the time elapsed in seconds.
+%     mean_out.time --- the time elapsed in seconds.
+%
 %
 % >> [mu,out] = meanMC_CLT(@(n) rand(n,1).^2, 0.001)
 % mu =
@@ -66,64 +66,16 @@ function [hmu,mean_out]=meanMC_CLT(varargin)
 %
 %
 
-
-
 % This is a heuristic algorithm based on a Central Limit Theorem
 % approximation
 
 mean_inp = gail.meanYParam(varargin{:});
 mean_out = gail.meanYOut(mean_inp);
-tstart = tic; %start the clock 
-
-%check to see input YYrand.
-if isstruct(mean_out.Y)
-    if isfield(YYrand,'Yrand')
-        Yrand=YYrand.Yrand;
-    else
-        Yrand = @(n) rand(n,1); %random number generator
-    end
-    if isfield(YYrand,'q')
-        q=round(YYrand.q);
-    else
-        q=1;   
-    end
-    if isfield(YYrand,'xMean')
-        xmean=YYrand.xMean;
-    else
-        xmean=zeros(1,size(Yrand(1),2)-q);
-    end
-else
-    Yrand=mean_out.Y;
-    q=1;
-end
-
-r = size(Yrand(1),2);
-p = max(0,r - q);
-val = Yrand(mean_out.nSig);
-
-if p==0 && q==1
-    Yval = val(:,1);
-    mean_out.std = std(Yval);
-    YY=Yval;
-else 
-        val = Yrand(nSig);
-        meanVal=mean(val);
-        A=bsxfun(@minus, val, meanVal);
-        C=[ones(q,1); zeros(p,1)];
-        [U,S,V]=svd([A; C'],0);
-        Sdiag = diag(S);
-        U2=U(end,:);
-        y=U2'/(U2*U2');
-        beta=V*(y./Sdiag);
-        meanX=meanVal(:,q+1:end);
-        meanX=[zeros(q,1); meanX'];
-        YY = bsxfun(@minus, val, meanX')*beta;
-        samplevar = var(YY);
-end
-    
+tstart = tic; %start the clock
+Yval = mean_out.Y(mean_out.nSig); %get samples to estimate variance 
+mean_out.std = std(Yval); %calculate the sample standard deviation
 sig0up = mean_out.inflate .* mean_out.std; %upper bound on the standard deviation
-hmu0 = mean(YY);
-
+hmu0 = mean(Yval);
 nmu = max(1,ceil((-gail.stdnorminv(mean_out.alpha/2)*sig0up ...
    /max(mean_out.absTol,mean_out.relTol*abs(hmu0))).^2)); 
    %number of samples needed for mean
@@ -132,18 +84,9 @@ if nmu > mean_out.nMax %don't exceed sample budget
       ', which is too big. Using ' int2str(mean_out.nMax) ' instead.']) 
    nmu = mean_out.nMax;
 end
-YY = Yrand(nmu);   
-if p > 0 || q > 1
-  %YY(:,q+1:end) = bsxfun(@minus, YY(:,q+1:end), mean(YY(:,q+1:end),1));
-  YY(:,q+1:end) = bsxfun(@minus, YY(:,q+1:end), xmean);
-  YY = YY*beta;
-    %YY = val*beta;
-end
-
-hmu = mean(YY); %estimated mean
+hmu = mean(mean_out.Y(nmu)); %estimated mean
 mean_out.mu = hmu;
 mean_out.nSample = mean_out.nSig+nmu; %total samples required
 mean_out.time = toc(tstart); %elapsed time
 end
-
 
