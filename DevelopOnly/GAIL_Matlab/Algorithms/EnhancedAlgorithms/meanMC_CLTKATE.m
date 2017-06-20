@@ -1,4 +1,4 @@
-function [hmu,mean_out]=meanMC_CLT(varargin)
+function [hmu,mean_out]=meanMC_CLTKATE(varargin)
 %MEANMC_CLT Monte Carlo method to estimate the mean of a random variable
 %
 %   tmu = MEANMC_CLT(Yrand,absTol,relTol,alpha,nSig,inflate) estimates the
@@ -75,8 +75,11 @@ mean_inp = gail.meanYParam(varargin{:});
 mean_out = gail.meanYOut(mean_inp);
 tstart = tic; %start the clock 
 Yrand=mean_out.Y;
+display(Yrand)
 q=mean_out.nY;
-xmean=mean_out.trueMucv;
+display(q)
+xmean=mean_out.trueMuCV;
+display(xmean)
 p=mean_out.nCV;
 %check to see input YYrand.
 % if isstruct(mean_out.Y)
@@ -109,7 +112,7 @@ if p==0 && q==1
     mean_out.std = std(Yval);
     YY=Yval;
 else 
-        val = Yrand(nSig);
+        val = Yrand(mean_out.nSig);
         meanVal=mean(val);
         A=bsxfun(@minus, val, meanVal);
         C=[ones(q,1); zeros(p,1)];
@@ -121,7 +124,7 @@ else
         meanX=meanVal(:,q+1:end);
         meanX=[zeros(q,1); meanX'];
         YY = bsxfun(@minus, val, meanX')*beta;
-        samplevar = var(YY);
+        mean_out.std = std(YY);
 end
     
 sig0up = mean_out.inflate .* mean_out.std; %upper bound on the standard deviation
