@@ -121,6 +121,7 @@ else
         U2=U(end,:);
         y=U2'/(U2*U2');
         beta=V*(y./Sdiag);
+        display(beta)
         meanX=meanVal(:,q+1:end);
         meanX=[zeros(q,1); meanX'];
         YY = bsxfun(@minus, val, meanX')*beta;
