@@ -100,16 +100,15 @@ y=f(xpts); %evaluate integrand
 yval=y;
 
 
-
 % evaluate integrand
 if cv.J==0 % no control variates
     y = f(xpts); yval = y;
 else  % using control variates
-    ycv = f(xpts);    
+    ycv = f(xpts);
     y = ycv(:,1:FuncCount); yval = y;
     yg = ycv(:,FuncCount+1:end); %yvalg = yg;
 end
-    
+
 %% Compute initial FFT
 for l=0:out_param.mmin-1
     nl=2^l;
@@ -136,6 +135,7 @@ end
 
 %% Create kappanumap implicitly from the data
 kappanumap=(1:out_param.n)'; %initialize map
+
 for l=out_param.mmin-1:-1:1
     nl=2^l;
     oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
@@ -152,49 +152,43 @@ end
 
 %% If using control variates, find optimal beta
 if cv.J
-        
+    
     X = yg(kappanumap(2^(out_param.mmin-r_lag-1)+1:end), (1:end));
-    Y = y(kappanumap(2^(out_param.mmin-r_lag-1)+1:end), (1:end));
-
-    meanY=mean(Y);
-    meanX=mean(X);
+    Y =  y(kappanumap(2^(out_param.mmin-r_lag-1)+1:end), (1:end));
     
-    A1=bsxfun(@minus, Y, meanY);
-    A2=bsxfun(@minus, X, meanX);
+    Val = [];
+    Val = [Y X];
+    meanVal=[mean(Val)];
     
-    A=[];
-    A=[A A1];
-    A=[A A2];
-      
-    C=[ones(FuncCount,1); zeros(CVCount,1)];            
-    [U,S,V]=svd([A; C'],0);        
+    A=bsxfun(@minus, Val, meanVal);
+    
+    C=[ones(FuncCount,1); zeros(CVCount,1)];
+    [U,S,V]=svd([A; C'],0);
     Sdiag = diag(S);
     U2=U(end,:);
-    y=U2'/(U2*U2');
+    H=U2'/(U2*U2');
+    beta=V*(H./Sdiag);
     
-    theta=V*(y./Sdiag);
-
-    meanX=[zeros(CVCount,1); meanX'];
+    display(beta);
     
-    display(size(Y));
-    display(size(meanX));
+    meanX=meanVal(:,FuncCount+1:end);
+    meanX=[zeros(FuncCount,1); meanX'];
     
-    YY = bsxfun(@minus, Y, meanX')*theta;
-
+    Ytemp=[];
+    Ytemp=[y yg];
     
-
-    
-    out_param.beta = theta;
-    yval = ycv(:,1) - ycv(:,2:end)*theta;% get new function value
-    y = y-yg*theta;% redefine function
-    
+    yval = ycv(:,1:FuncCount)*beta(1:FuncCount,:) + ycv(:,FuncCount+1:end)*beta(FuncCount+1:end,:);
+    y = (y(:,1:end)*beta(1:FuncCount,:)) + (yg(:,1:end)*beta(FuncCount+1:end,:));
     
     %% rebuild kappa map
-    kappanumap=(1:out_param.n)'; %initialize map
+    kappanumap=(1:out_param.n); %initialize map
+    
     for l=out_param.mmin-1:-1:1
+        
         nl=2^l;
         oldone=abs(y(kappanumap(2:nl)));
         newone=abs(y(kappanumap(nl+2:2*nl)));
+        
         flip=find(newone>oldone);
         if ~isempty(flip)
             flipall=bsxfun(@plus,flip,0:2^(l+1):2^out_param.mmin-1);
@@ -225,8 +219,13 @@ if any(CStilde_low(:) > CStilde_up(:))
     out_param.exit(2) = true;
 end
 
-%% Approximate integral (1) 
-q=mean(yval)+mu*beta;
+%% Approximate integral (1)
+display('approximate integral (1)');
+if cv.J
+    q= mean(yval) - mu*beta(FuncCount+1:end,:);
+else
+    q=mean(yval);
+end
 
 % Check the end of the algorithm
 q = q - errest(1)*(max(out_param.abstol, out_param.reltol*abs(q + errest(1)))...
@@ -234,7 +233,9 @@ q = q - errest(1)*(max(out_param.abstol, out_param.reltol*abs(q + errest(1)))...
     (max(out_param.abstol, out_param.reltol*abs(q + errest(1)))...
     + max(out_param.abstol, out_param.reltol*abs(q - errest(1)))); % Optimal estimator
 
-q=q(1);
+
+display(q);
+%q=q(1);
 appxinteg(1)=q;
 
 is_done = false;
@@ -263,9 +264,13 @@ for m=out_param.mmin+1:out_param.mmax
     if cv.J == 0
         ynext = f(xnext); yval=[yval; ynext];
     else
+        
         ycvnext = f(xnext);
-        ynext = ycvnext(:,1) - ycvnext(:,2:end)*beta;
+        ynext = ycvnext(:,1:FuncCount)*beta(1:FuncCount,:) + ycvnext(:,FuncCount+1:end)*beta(FuncCount+1:end,:);
         yval=[yval; ynext];
+        
+        
+        
     end
     
     %% Compute initial FFT on next points
@@ -388,13 +393,17 @@ for m=out_param.mmin+1:out_param.mmax
     end
     
     %% Approximate integral (2)
-    q=mean(yval)+mu*beta;
-    
+    if cv.J
+        q= mean(yval) - mu*beta(FuncCount+1:end,:);
+    else
+        q=mean(yval);
+    end
     % Check the end of the algorithm
     q = q - errest(meff)*(max(out_param.abstol, out_param.reltol*abs(q + errest(meff)))...
         - max(out_param.abstol, out_param.reltol*abs(q - errest(meff))))/...
         (max(out_param.abstol, out_param.reltol*abs(q + errest(meff)))...
         + max(out_param.abstol, out_param.reltol*abs(q - errest(meff)))); % Optimal estimator
+    
     appxinteg(meff)=q;
     
     if 4*errest(meff)^2/(max(out_param.abstol, out_param.reltol*abs(q + errest(meff)))...

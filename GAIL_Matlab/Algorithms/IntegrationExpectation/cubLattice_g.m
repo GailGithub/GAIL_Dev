@@ -371,6 +371,7 @@ yval=y;
 % evaluate integrand
 if cv.J==0 % no control variates
     y = f(xpts); yval = y;
+    
 else  % using control variates
     ycv = f(xpts);    
     y = ycv(:,1); yval = y;
@@ -425,13 +426,20 @@ if cv.J
     beta = real(X \ Y);
    
     out_param.beta = beta;
-    yval = ycv(:,1) - ycv(:,2:end)*beta;% get new function value
-    y = y-yg*beta;% redefine function
+    display(size(ycv));
+    
         
+    % new function value and redfine function?
+    yval = ycv(:,1) - ycv(:,2:end)*beta; % get new function value
+    y = y-yg*beta;                       % redefine function
+    
+    
     %% rebuild kappa map
-    kappanumap=(1:out_param.n)'; %initialize map
+    kappanumap=(1:out_param.n); %initialize map
+    
     for l=out_param.mmin-1:-1:1
         nl=2^l;
+        
         oldone=abs(y(kappanumap(2:nl)));
         newone=abs(y(kappanumap(nl+2:2*nl)));
         flip=find(newone>oldone);
@@ -465,6 +473,9 @@ if any(CStilde_low(:) > CStilde_up(:))
 end
 
 %% Approximate integral (1) 
+display(mu);
+display(beta);
+
 q=mean(yval)+mu*beta;
 
 % Check the end of the algorithm

@@ -104,18 +104,25 @@ if p==0 && q==1
     YY=Yval;
 else 
         meanVal=mean(Yrand(nSig));
-        A=bsxfun(@minus, val, meanVal);        
-        C=[ones(q,1); zeros(p,1)];           
-        [U,S,V]=svd([A; C'],0);        
+        display(meanVal);
+        
+        A=bsxfun(@minus, val, meanVal); 
+        C=[ones(q,1); zeros(p,1)];      
+      
+        [U,S,V]=svd([A; C'],0);   
         Sdiag = diag(S);
         U2=U(end,:);
-        y=U2'/(U2*U2');
+        y=U2'/(U2*U2');     
         theta=V*(y./Sdiag);
+        display(theta);
+        
         meanX=meanVal(:,q+1:end);
         meanX=[zeros(q,1); meanX'];
         YY = bsxfun(@minus, val, meanX')*theta;
         samplevar = var(YY);
 end
+
+display(theta);
 
 out_param.sig0 = sqrt(samplevar); %standard deviation
 sig0up = out_param.inflate.*out_param.sig0; %upper bound on the standard deviation
@@ -134,6 +141,8 @@ YY = Yrand(nmu);
 if p > 0 || q > 1
   %YY(:,q+1:end) = bsxfun(@minus, YY(:,q+1:end), mean(YY(:,q+1:end),1));
   YY(:,q+1:end) = bsxfun(@minus, YY(:,q+1:end), xmean);
+  
+  
   YY = YY*theta;
     %YY = val*beta;
 end
