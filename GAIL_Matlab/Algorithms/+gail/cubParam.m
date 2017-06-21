@@ -1,40 +1,34 @@
-classdef meanYParam < gail.errorParam
-   %GAIL.MEANYPARAM is a class containing the parameters related to
+classdef cubParam < gail.fParam
+   %GAIL.CUBPARAM is a class containing the parameters related to
    %algorithms that find the mean of a random variable
-   %   This class contains the random number generator, the uncertainty
+   %   This class contains the number of integrands with the same integral,
+   %   etc.
    
    properties
-      Y %random number generator
-      alpha %uncertainty
-      nSig %sample size to estimate variance
-      inflate %inflation factor for bounding standard deviation
-      nMax %maximum sample size allowed
-      nMu %number of means for solution function
-      nY %number of Y for each mean
-      trueMuCV %true mean of control variates
+      measure %measure against which to integrate
+      inflate %inflation factor for bounding the error
+      nMu %number of integrals for solution function
+      nf %number of f for each integral
+      trueMuCV %true integral for control variates
    end
    
     properties (Dependent = true)
        nCV %number of control variates
-       nYOut %number of Y outputs
     end
    
    properties (Hidden, SetAccess = private)
-      def_Y = @(n) rand(n,1) %default random number generator
-      def_alpha = 0.01 %default uncertainty
-      def_nSig = 1000 %default uncertainty
-      def_inflate = 1.2 %default inflation factor
-      def_nMax = 1e8 %default maximum sample size
-      def_nMu = 1 %default number of means
-      def_nY = 1 %default number of Y per mean
-      def_trueMuCV = [] %default true means of control variates
+      def_measure = 'uniform'
+      def_inflate = @(m) 5 * 2^-m %default inflation factor
+      def_nMu = 1 %default number of integrals
+      def_nY = 1 %default number of Y per integral
+      def_trueMuCV = [] %default true integrals for control variates
    end
    
    
    methods
       
       % Creating a meanYParam process
-      function obj = meanYParam(varargin)
+      function obj = cubParam(varargin)
          %this constructor essentially parses inputs
          %the parser will look for the following in order
          %  # a copy of a meanYParam object
@@ -70,7 +64,7 @@ classdef meanYParam < gail.errorParam
          %Parse errorParam properties
          whichParse = [objInp structInp start:nargin];
          whichParse = whichParse(whichParse > 0);
-         obj@gail.errorParam(varargin{whichParse});
+         obj@gail.fParam(varargin{whichParse});
 
          if objInp
             val = varargin{objInp}; %first input
