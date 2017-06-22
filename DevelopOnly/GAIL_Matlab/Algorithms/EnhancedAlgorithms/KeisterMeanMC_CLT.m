@@ -33,17 +33,15 @@ f = @(t,a,d) f1(normsqd(t),a,d);
 abstol = 0; %absolute error tolerance
 reltol = 0.01; %relative error tolerance
 dvec = 1:5; %vector of dimensions
-avec = [0.5 1/sqrt(2)]; %default value of a 
+avec = [1 ]; %default value of a 
 IMCvec = zeros(size(dvec)); %vector of answers
-f2= @(t,d) arrayfun(@(a) f(t,a,d),avec);
-
-
+f2= @(t,d) cell2mat(arrayfun(@(a) f(t,a,d),avec,'UniformOutput',false));
 tic
  for d = dvec
- f2=@(t)[f(t,1,d),f(t,2,d)];%creat a matrix with same mean for each column
- YXn=@(n)f2(randn(n,d));
- s=struct('Yrand',YXn,'q',size(avec,2)); %create a structure as input for meanMC_CLT
- IMCvec(d)= meanMC_CLT(s,abstol,reltol);
+ f3=@(t)f2(t,d);
+ YXn=@(n)f3(randn(n,d));
+ s=struct('Y',YXn,'nY',size(avec,2)); %create a structure as input for meanMC_CLT
+ IMCvec(d)= meanMC_CLTKATE(s,abstol,reltol);
  end
 
 toc

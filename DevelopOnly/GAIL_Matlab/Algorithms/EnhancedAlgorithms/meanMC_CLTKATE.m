@@ -64,72 +64,71 @@ function [hmu,mean_out]=meanMC_CLTKATE(varargin)
 %      nSample: ***
 %         time: ***
 %
+% Example 1:
+% Estimate the integral with integrand f(x) = x1.*x2 in the interval [0,1)^2 with absolute 
+% tolerance 1e-5 and relative tolerence 0:
+% 
+% >> f = @(x) prod(x,2);
+% >> q = meanMC_CLTKATE(@(n)f(rand(n,2)),1e-5,0); exactsol = 1/4; 
+% >> check = abs(exactsol-q) < 1e-5
+% check = 1
 %
-
+%
+% Example 2:
+% Estimate the integral with integrand f(x) = x1.^3.*x2.^3.*x3.^3
+% in the interval [0,1)^3 with pure absolute error 1e-5 using x1.*x2.*x3 as control variate:
+% 
+% >> f=@(x) [x(:,1).^3.*x(:,2).^3.*x(:,3).^3, x(:,1).*x(:,2).*x(:,3)];
+% >> s=struct('Y',@(n)f(rand(n,3)),'nY',1,'trueMuCV',1/8)
+% >> [hmu,mean_out]=meanMC_CLTKATE(s,1e-3,0) exactsol = 1/64;
+% >> check = abs(exactsol-hmu) < max(1e-3,1e-3*abs(exactsol))
+% check = 1
+%
+% Example 3:
+% Estimate the integrals with integrands f1(x) = x1.^3.*x2.^3.*x3.^3 and 
+% f2(x)= x1.^2.*x2.^2.*x3.^2-1/27+1/64 in the interval [0,1)^3
+% using  x1.*x2.*x3 and x1+x2.^3+x3 as control variate:
+% >> f = @(x) [x(:,1).^3.*x(:,2).^3.*x(:,3).^3, x(:,1).^2.*x(:,2).^2.*x(:,3).^2-1/27+1/64,x(:,1).*x(:,2).*x(:,3),x(:,1)+x(:,2)+x(:,3)];
+% >> s=struct('Y',@(n)f(rand(n,3)),'nY',2,'trueMuCV',[1/8 1.5])
+% >> [hmu,mean_out]=meanMC_CLTKATE(s,1e-4,1e-3); exactsol = 1/64;
+% >> check = abs(exactsol-hmu) < max(1e-4,1e-3*abs(exactsol))
+% check = 1
 
 
 % This is a heuristic algorithm based on a Central Limit Theorem
 % approximation
 
-mean_inp = gail.meanYParam(varargin{:});
-mean_out = gail.meanYOut(mean_inp);
 tstart = tic; %start the clock 
-Yrand=mean_out.Y;
-display(Yrand)
-q=mean_out.nY;
-display(q)
-xmean=mean_out.trueMuCV;
-display(xmean)
-p=mean_out.nCV;
-%check to see input YYrand.
-% if isstruct(mean_out.Y)
-%     if isfield(YYrand,'Yrand')
-%         Yrand=YYrand.Yrand;
-%     else
-%         Yrand = @(n) rand(n,1); %random number generator
-%     end
-%     if isfield(YYrand,'q')
-%         q=round(YYrand.q);
-%     else
-%         q=1;   
-%     end
-%     if isfield(YYrand,'xMean')
-%         xmean=YYrand.xMean;
-%     else
-%         xmean=zeros(1,size(Yrand(1),2)-q);
-%     end
-% else
-%     Yrand=mean_out.Y;
-%     q=1;
-% end
+mean_inp = gail.meanYParam(varargin{:}); %parse the input and check it for errors
+mean_out = gail.meanYOut(mean_inp); %create the output class
+toc(tstart)
+Yrand=mean_out.Y; %the random number generator
+q=mean_out.nY; %the number of target random varaibles 
+p=mean_out.nCV; %the number of control variates
+xmean=mean_out.trueMuCV; %the mean of the control variates
 
-% r = size(Yrand(1),2);
-% p = max(0,r - q);
-val = Yrand(mean_out.nSig);
+val = Yrand(mean_out.nSig); %get samples to estimate variance 
 
 if p==0 && q==1
-    Yval = val(:,1);
-    mean_out.std = std(Yval);
-    YY=Yval;
-else 
-        %val = Yrand(mean_out.nSig);
-        meanVal=mean(val);
-        A=bsxfun(@minus, val, meanVal);
-        C=[ones(q,1); zeros(p,1)];
-        [U,S,V]=svd([A; C'],0);
-        Sdiag = diag(S);
-        U2=U(end,:);
-        y=U2'/(U2*U2');
-        beta=V*(y./Sdiag);
-        display(beta)
-        meanX=meanVal(:,q+1:end);
-        meanX=[zeros(q,1); meanX'];
-        YY = bsxfun(@minus, val, meanX')*beta;
-        mean_out.std = std(YY);
-end
+    YY = val(:,1); 
     
+else
+%if there is control variate, construct a new random variable that has the
+%same expected value by taking contrained linear combination of control
+%variates and target functions
+        meanVal=mean(val); %the mean of each column
+        A=bsxfun(@minus, val, meanVal); %covariance matrix of the samples
+        [U,S,V]=svd([A; [ones(1,q) zeros(1,p)] ],0); %use SVD to solve a constrained least square problem
+        Sdiag = diag(S); %the vector of the single values
+        U2=U(end,:); %last row of U
+        beta=V*(U2'/(U2*U2')./Sdiag); %get the coefficient for the linear combination
+        YY = [val(:,1:q) A(:,q+1:end)] * beta; %get samples of the new random variable 
+end
+
+mean_out.std = std(YY); %standard deviation of the samples
+
 sig0up = mean_out.inflate .* mean_out.std; %upper bound on the standard deviation
-hmu0 = mean(YY);
+hmu0 = mean(YY); % mean of the samples
 
 nmu = max(1,ceil((-gail.stdnorminv(mean_out.alpha/2)*sig0up ...
    /max(mean_out.absTol,mean_out.relTol*abs(hmu0))).^2)); 
@@ -139,12 +138,12 @@ if nmu > mean_out.nMax %don't exceed sample budget
       ', which is too big. Using ' int2str(mean_out.nMax) ' instead.']) 
    nmu = mean_out.nMax;
 end
-YY = Yrand(nmu);   
-if p > 0 || q > 1
-  %YY(:,q+1:end) = bsxfun(@minus, YY(:,q+1:end), mean(YY(:,q+1:end),1));
+
+YY = Yrand(nmu); %samples to estimate the mean
+
+if p > 0 || q > 1   %samples of the new random variable
   YY(:,q+1:end) = bsxfun(@minus, YY(:,q+1:end), xmean);
   YY = YY*beta;
-    %YY = val*beta;
 end
 
 hmu = mean(YY); %estimated mean
