@@ -13,7 +13,9 @@ classdef cubParam < gail.fParam
    end
    
     properties (Dependent = true)
+       ff %function after variable transformation
        nCV %number of control variates
+       volume %volume of the domain with respect to the measure
     end
    
    properties (Hidden, SetAccess = private)
@@ -22,9 +24,13 @@ classdef cubParam < gail.fParam
       def_nMu = 1 %default number of integrals
       def_nf = 1 %default number of Y per integral
       def_trueMuCV = [] %default true integrals for control variates
-      allowedMeasures = {'uniform', ...
+      allowedMeasures = {'uniform', ... %over a hyperbox volume of domain is one
          'Lebesgue', ... %like uniform, but integral over domain is the volume of the domain
          'Gaussian', 'normal', ... %these are the same
+         'Uniform ball', ... %analogous 
+         'Lebesgue ball', ... %to hyperbox
+         'Uniform sphere', ... %analogous 
+         'Lebesgue sphere', ... %to hyperbox
          }
    end
    
@@ -173,8 +179,27 @@ classdef cubParam < gail.fParam
       
       function val = get.nCV(obj)
          val = obj.nfOut - sum(obj.nf); 
-      end         
-     
+      end        
+      
+      function val = get.volume(obj) %volume of the domain
+         if any(strcmp(obj.measure,{'uniform', 'normal'}))
+            val = 1;
+         elseif strcmp(obj.measure, {'Lebesgue'})
+            val = prod(diff(obj.domain,1),2);
+         end
+      end
+            
+      function val = get.ff(obj)
+         if strcmp(obj.measure,'uniform')
+            val = obj.f;
+         elseif strcmp(obj.measure,'Lebesgue')
+            val = @(x) obj.f(bsxfun(@times, diff(obj.domain,1), ...
+               bsxfun(@minus, x, obj.domain(1,:))));
+         elseif strcmp(obj.measure, 'normal')
+            val = @(x) obj.f(gail.stdnorminv(x));
+         end
+      end
+            
       
    end
    
@@ -182,10 +207,17 @@ classdef cubParam < gail.fParam
    
       function outval = checkMeasure(obj,inval)
          assert(any(strcmp(inval,obj.allowedMeasures)))
-         if strcmp(inval,'Gaussian')
+         if strcmp(inval,'Gaussian') %same as normal
             outval = 'normal';
          else
             outval = inval;
+         end
+         if strcmp(outval,'normal') %domain must be R^d
+            assert(all(obj.domain(1,:) == '-Inf') && ...
+               all(obj.domain(2,:) == 'Inf'))
+         end
+         if any(strcmp(outval,{'uniform','Lebesgue'})) %domain must be finite
+            assert(all(all(isfinite(obj.domain))))
          end
       end
    
