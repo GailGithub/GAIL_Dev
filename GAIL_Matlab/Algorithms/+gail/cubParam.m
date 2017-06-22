@@ -22,7 +22,9 @@ classdef cubParam < gail.fParam
       def_nMu = 1 %default number of integrals
       def_nf = 1 %default number of Y per integral
       def_trueMuCV = [] %default true integrals for control variates
-      allowedMeasures = {'uniform', 'Lebesgue', 'Gaussian', 'normal', ...
+      allowedMeasures = {'uniform', ...
+         'Lebesgue', ... %like uniform, but integral over domain is the volume of the domain
+         'Gaussian', 'normal', ... %these are the same
          }
    end
    
@@ -38,7 +40,7 @@ classdef cubParam < gail.fParam
          %  # a domain
          %  # a measure
          %  # a structure
-         %  # numbers: absTol, relTol, alpha,
+         %  # numbers: absTol, relTol,
          %  # name-value pairs
          
          start = 1;
