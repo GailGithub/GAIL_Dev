@@ -20,37 +20,56 @@ classdef cubParam < gail.fParam
       def_measure = 'uniform'
       def_inflate = @(m) 5 * 2^-m %default inflation factor
       def_nMu = 1 %default number of integrals
-      def_nY = 1 %default number of Y per integral
+      def_nf = 1 %default number of Y per integral
       def_trueMuCV = [] %default true integrals for control variates
+      allowedMeasures = {'uniform', 'Lebesgue', 'Gaussian', 'normal', ...
+         }
    end
    
    
    methods
       
-      % Creating a meanYParam process
+      % Creating a cubParam process
       function obj = cubParam(varargin)
          %this constructor essentially parses inputs
          %the parser will look for the following in order
-         %  # a copy of a meanYParam object
+         %  # a copy of a cubParam object
          %  # a function
+         %  # a domain
+         %  # a measure
          %  # a structure
          %  # numbers: absTol, relTol, alpha,
          %  # name-value pairs
          
          start = 1;
          objInp = 0;
-         YInp = 0;
+         fInp = 0;
+         domainInp = 0;
+         measureInp = 0;
          structInp = 0;
          if nargin %there are inputs to parse and assign
-            if isa(varargin{start},'gail.meanYParam') 
+            if isa(varargin{start},'gail.cubParam') 
                %the first input is a meanYParam object so copy it
                objInp = start;
                start = start + 1;
             end
             if nargin >= start
-               if gail.isfcn(varargin{start}) %next input is the function Y
-                  YInp = start;
+               if gail.isfcn(varargin{start}) %next input is the function f
+                  fInp = start;
                   start = start + 1;
+                  if nargin >= start
+                     if ismatrix(varargin{start}) && numel(varargin{start}) > 1
+                        %next input is the domain
+                        domainInp = start;
+                        start = start+1;
+                        if nargin >= start
+                           if ischar(varargin{start})
+                              measureInp = start;
+                              start = start + 1;
+                           end
+                        end
+                     end
+                  end
                end
                if nargin >= start
                   if isstruct(varargin{start}) %next input is a structure containing Y
@@ -62,19 +81,16 @@ classdef cubParam < gail.fParam
          end
          
          %Parse errorParam properties
-         whichParse = [objInp structInp start:nargin];
+         whichParse = [objInp fInp domainInp structInp start:nargin];
          whichParse = whichParse(whichParse > 0);
          obj@gail.fParam(varargin{whichParse});
 
          if objInp
             val = varargin{objInp}; %first input
-            obj.Y = val.Y; %copy random number generator
-            obj.alpha = val.alpha; %copy uncertainty
-            obj.nSig = val.nSig; %copy sample size for sigma
+            obj.measure = val.measure; %copy integration measure
             obj.inflate = val.inflate; %copy inflation factor
-            obj.nMax = val.nMax; %copy maximum sample size
-            obj.nMu = val.nMu; %copy number of mu values
-            obj.nY = val.nY; %copy number of Y values per mu
+            obj.nMu = val.nMu; %copy the number of integrals
+            obj.nf = val.nf; %copy number of functions for each integral
             obj.trueMuCV = val.trueMuCV; %copy true means of control variates
             return
          end
@@ -101,13 +117,10 @@ classdef cubParam < gail.fParam
            f_addParamVal = @addOptional;
            start = start + 2; %to account for the two tolerances already parsed
          end
-         f_addParamVal(p,'Y',obj.def_Y);
-         f_addParamVal(p,'alpha',obj.def_alpha);
-         f_addParamVal(p,'nSig',obj.def_nSig);
+         f_addParamVal(p,'measure',obj.def_measure);
          f_addParamVal(p,'inflate',obj.def_inflate);
-         f_addParamVal(p,'nMax',obj.def_nMax);
          f_addParamVal(p,'nMu',obj.def_nMu);
-         f_addParamVal(p,'nY',obj.def_nY);
+         f_addParamVal(p,'nf',obj.def_nf);
          f_addParamVal(p,'trueMuCV',obj.def_trueMuCV);
          
          if structInp
@@ -119,55 +132,36 @@ classdef cubParam < gail.fParam
          struct_val = p.Results; %store parse inputs as a structure
          
          %Assign values of structure to corresponding class properties
-         if YInp
-            obj.Y = varargin{YInp}; %assign function
+         if measureInp
+            obj.measure = varargin{measureInp}; %assign measure
          else
-            obj.Y = struct_val.Y;
+            obj.measure = struct_val.measure;
          end
-         obj.alpha = struct_val.alpha;
-         obj.nSig = struct_val.nSig;
          obj.inflate = struct_val.inflate;
-         obj.nMax = struct_val.nMax;
          obj.nMu = struct_val.nMu;
+         obj.nf = struct_val.nf;
          obj.trueMuCV = struct_val.trueMuCV;
-
-         
+       
       end %of constructor
      
-      function set.Y(obj,val)
-         validateattributes(val, {'function_handle'}, {})
-         obj.Y = val;
+      function set.measure(obj,val)
+         validateattributes(val, {'char'}, {})
+         obj.measure = checkMeasure(obj,val);
       end
       
-      function set.alpha(obj,val)
-         validateattributes(val, {'numeric'}, {'scalar','nonnegative', ...
-            '<', 1})
-         obj.alpha = val;
-      end
-                       
-      function set.nSig(obj,val)
-         validateattributes(val, {'numeric'}, {'scalar','positive','integer'})
-         obj.nSig = val;
-      end
-                       
       function set.inflate(obj,val)
-         validateattributes(val, {'numeric'}, {'scalar','>',1})
+         validateattributes(val, {'function_handle'}, {})
          obj.inflate = val;
       end
-      
-      function set.nMax(obj,val)
-         validateattributes(val, {'numeric'}, {'scalar','positive','integer'})
-         obj.nMax = val;
-      end
-      
+                             
       function set.nMu(obj,val)
-         validateattributes(val, {'numeric'}, {})
+         validateattributes(val, {'numeric'}, {'integer', 'positive'})
          obj.nMu = val;
       end
                        
-      function set.nY(obj,val)
+      function set.nf(obj,val)
          validateattributes(val, {'numeric'}, {'positive','integer'})
-         obj.nY = val;
+         obj.nf = val;
       end
                        
       function set.trueMuCV(obj,val)
@@ -176,24 +170,28 @@ classdef cubParam < gail.fParam
       end
       
       function val = get.nCV(obj)
-         val = obj.nYOut - sum(obj.nY); 
+         val = obj.nfOut - sum(obj.nf); 
       end         
-                       
-      function val = get.nYOut(obj)
-         val = numel(obj.Y(1)); 
-      end         
-                       
      
       
    end
    
    methods (Access = protected)
    
+      function outval = checkMeasure(obj,inval)
+         assert(any(strcmp(inval,obj.allowedMeasures)))
+         if strcmp(inval,'Gaussian')
+            outval = 'normal';
+         else
+            outval = inval;
+         end
+      end
+   
       function outval = setTrueMuCVDim(obj,inval)
          assert(numel(inval) == obj.nCV)
          outval = inval(:)';
       end
-   
+      
    end
 
    
