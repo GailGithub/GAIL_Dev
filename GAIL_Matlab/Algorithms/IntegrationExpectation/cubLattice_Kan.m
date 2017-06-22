@@ -59,6 +59,9 @@ mu=0;beta=0;
 FuncCount=cell2mat(FuncCount);
 FuncCount=FuncCount(1);
 
+display('this is cv.J');
+display(cv.J);
+
 if cv.J && FuncCount>1
    f.cv=[f.cv zeros(1,FuncCount-1)] ;
    CVCount=cell2mat(CVCount(1));

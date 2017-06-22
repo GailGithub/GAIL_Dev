@@ -20,16 +20,23 @@ check = abs(exactsol-q) < max(1e-3,1e-2*abs(exactsol))
 % -----------------------------------------------------------------
 numIter=100; 
 
-%% Sobol' Sampling regular
+%% params
+inp.timeDim.timeVector = 1/52:1/52:1/4; %weekly monitoring for three months
+inp.assetParam.initPrice = 100; %initial stock price
+inp.assetParam.interest = 0.02; %risk-free interest rate
+inp.assetParam.volatility = 0.5; %volatility
+inp.payoffParam.strike = 100; %strike price
+inp.payoffParam.optType = {'amean'}; %looking at an arithmetic mean option
+inp.payoffParam.putCallType = {'call'}; %looking at a put option
+inp.priceParam.absTol = 0.005; %absolute tolerance of a one cent
+inp.priceParam.relTol = 0; %zero relative tolerance
 
-AMeanCallSobol = optPrice(AMeanCallIID); %make a copy of the IID optPrice object
-AMeanCallSobol.priceParam.cubMethod = 'Sobol'; %change to Sobol sampling
-pointsSobol(1,numIter) = 0;
-for n=1:numIter
-    gail.TakeNote(n,10)
-    [AMeanCallSobolPrice,AoutSobol] = genOptPrice(AMeanCallSobol);
-    pointsSobol(n) = AMeanCallSobolPrice;
-end
+AMeanCallIID = optPrice(inp) %construct an optPrice object
+[AMeanCallIIDPrice,AoutIID] = genOptPrice(AMeanCallIID);
+fprintf(['The price of the Asian geometric mean call option using IID ' ...
+   'sampling is \n   $%3.3f +/- $%2.3f and this took %10.0f paths and %3.6f seconds\n'], ...
+   AMeanCallIIDPrice,AMeanCallIID.priceParam.absTol,AoutIID.nPaths,AoutIID.time)
+
 
 %% Sobol' Sampling with Control Variates
 % We can use control variates with Sobol' and lattice sampling, but it is a
@@ -56,8 +63,6 @@ AMeanCallLatticeCV.payoffParam = struct( ...
     'optType',{{'amean','gmean'}},...  %Add two payoffs
     'putCallType',{{'call','call'}});  %both calls
 AMeanCallLatticeCV.priceParam.cubMethod = 'LatticeCV'; %change method to use control variates
-[AMeanCallLatticeCVPrice,AoutLatticeCV] = genOptPrice(AMeanCallLatticeCV);
-
 pointsLatticeCV(1,numIter) = 0;
 for n= 1:numIter
     gail.TakeNote(n,10)

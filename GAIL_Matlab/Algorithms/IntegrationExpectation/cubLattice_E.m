@@ -1,9 +1,11 @@
-function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
+function [q,out_param,y,kappanumap] = cubLattice_E(varargin)
 
 t_start = tic;
 %% Initial important cone factors and Check-initialize parameters
 r_lag = 4; %distance between coefficients summed and those computed
-[f,hyperbox,out_param, cv, FuncCount, CVCount] = cubLattice_g_param(r_lag,varargin{:});
+[f,hyperbox,out_param, cv] = cubLattice_g_param(r_lag,varargin{:});
+
+display(out_param);
 
 %------------------------------------------------------------------------------
 % TRANSFORMATION
@@ -53,12 +55,6 @@ l_star = out_param.mmin - r_lag; % Minimum gathering of points for the sums of D
 omg_circ = @(m) 2.^(-m);
 omg_hat = @(m) out_param.fudge(m)/((1+out_param.fudge(r_lag))*omg_circ(r_lag));
 
-
-
-FuncCount=cell2mat(FuncCount);
-CVCount=cell2mat(CVCount);
-
-
 % intialize CV param, redefine target function
 mu=0;beta=0;
 if cv.J % if using control variates(f is structure), redefine f
@@ -99,15 +95,10 @@ xpts=mod(bsxfun(@plus, gail.lattice_gen(1,n0,out_param.d), out_param.shift),1); 
 y=f(xpts); %evaluate integrand
 yval=y;
 
-
 % evaluate integrand
-if cv.J==0 % no control variates
-    y = f(xpts); yval = y;
-else  % using control variates
-    ycv = f(xpts);
-    y = ycv(:,1:FuncCount); yval = y;
-    yg = ycv(:,FuncCount+1:end); %yvalg = yg;
-end
+ycv = f(xpts);
+y = ycv(:,1:out_param.FuncCount); yval = y;
+yg = ycv(:,out_param.FuncCount+1:end); %yvalg = yg;
 
 %% Compute initial FFT
 for l=0:out_param.mmin-1
@@ -130,7 +121,6 @@ for l=0:out_param.mmin-1
         
     end
     % y now contains the FFT coefficients
-    
 end
 
 %% Create kappanumap implicitly from the data
@@ -150,53 +140,55 @@ for l=out_param.mmin-1:-1:1
     end
 end
 
-%% If using control variates, find optimal beta
+%% Finding optimal beta
+% Pre-determine the size of the beta coefficients 
 if cv.J
+    C=[ones(out_param.FuncCount,1); zeros(out_param.CVCount,1)];
+else 
+    C=[ones(out_param.FuncCount,1)];
+end 
     
-    X = yg(kappanumap(2^(out_param.mmin-r_lag-1)+1:end), (1:end));
-    Y =  y(kappanumap(2^(out_param.mmin-r_lag-1)+1:end), (1:end));
+%% alogirhtm to find beta 
+X = yg(kappanumap(2^(out_param.mmin-r_lag-1)+1:end), (1:end));
+Y =  y(kappanumap(2^(out_param.mmin-r_lag-1)+1:end), (1:end));
+
+Val = [];
+Val = [Y X];
+meanVal=[mean(Val)];
+
+A=bsxfun(@minus, Val, meanVal);
+
+[U,S,V]=svd([A; C'],0);
+Sdiag = diag(S);
+U2=U(end,:);
+H=U2'/(U2*U2');
+beta=V*(H./Sdiag);
+
+meanX=meanVal(:,out_param.FuncCount+1:end);
+meanX=[zeros(out_param.FuncCount,1); meanX'];
+
+Ytemp=[];
+Ytemp=[y yg];
+
+yval = ycv(:,1:out_param.FuncCount)*beta(1:out_param.FuncCount,:) + ycv(:,out_param.FuncCount+1:end)*beta(out_param.FuncCount+1:end,:);
+y = (y(:,1:end)*beta(1:out_param.FuncCount,:)) + (yg(:,1:end)*beta(out_param.FuncCount+1:end,:));
+
+%% rebuild kappa map
+kappanumap=(1:out_param.n); %initialize map
+
+for l=out_param.mmin-1:-1:1
     
-    Val = [];
-    Val = [Y X];
-    meanVal=[mean(Val)];
+    nl=2^l;
+    oldone=abs(y(kappanumap(2:nl)));
+    newone=abs(y(kappanumap(nl+2:2*nl)));
     
-    A=bsxfun(@minus, Val, meanVal);
-    
-    C=[ones(FuncCount,1); zeros(CVCount,1)];
-    [U,S,V]=svd([A; C'],0);
-    Sdiag = diag(S);
-    U2=U(end,:);
-    H=U2'/(U2*U2');
-    beta=V*(H./Sdiag);
-    
-    display(beta);
-    
-    meanX=meanVal(:,FuncCount+1:end);
-    meanX=[zeros(FuncCount,1); meanX'];
-    
-    Ytemp=[];
-    Ytemp=[y yg];
-    
-    yval = ycv(:,1:FuncCount)*beta(1:FuncCount,:) + ycv(:,FuncCount+1:end)*beta(FuncCount+1:end,:);
-    y = (y(:,1:end)*beta(1:FuncCount,:)) + (yg(:,1:end)*beta(FuncCount+1:end,:));
-    
-    %% rebuild kappa map
-    kappanumap=(1:out_param.n); %initialize map
-    
-    for l=out_param.mmin-1:-1:1
-        
-        nl=2^l;
-        oldone=abs(y(kappanumap(2:nl)));
-        newone=abs(y(kappanumap(nl+2:2*nl)));
-        
-        flip=find(newone>oldone);
-        if ~isempty(flip)
-            flipall=bsxfun(@plus,flip,0:2^(l+1):2^out_param.mmin-1);
-            flipall=flipall(:);
-            temp=kappanumap(nl+1+flipall); %then flip
-            kappanumap(nl+1+flipall)=kappanumap(1+flipall); %them
-            kappanumap(1+flipall)=temp; %around
-        end
+    flip=find(newone>oldone);
+    if ~isempty(flip)
+        flipall=bsxfun(@plus,flip,0:2^(l+1):2^out_param.mmin-1);
+        flipall=flipall(:);
+        temp=kappanumap(nl+1+flipall); %then flip
+        kappanumap(nl+1+flipall)=kappanumap(1+flipall); %them
+        kappanumap(1+flipall)=temp; %around
     end
 end
 
@@ -220,9 +212,8 @@ if any(CStilde_low(:) > CStilde_up(:))
 end
 
 %% Approximate integral (1)
-display('approximate integral (1)');
 if cv.J
-    q= mean(yval) - mu*beta(FuncCount+1:end,:);
+    q= mean(yval) - mu*beta(out_param.FuncCount+1:end,:);
 else
     q=mean(yval);
 end
@@ -233,9 +224,7 @@ q = q - errest(1)*(max(out_param.abstol, out_param.reltol*abs(q + errest(1)))...
     (max(out_param.abstol, out_param.reltol*abs(q + errest(1)))...
     + max(out_param.abstol, out_param.reltol*abs(q - errest(1)))); % Optimal estimator
 
-
-display(q);
-%q=q(1);
+q=q(1);
 appxinteg(1)=q;
 
 is_done = false;
@@ -266,7 +255,7 @@ for m=out_param.mmin+1:out_param.mmax
     else
         
         ycvnext = f(xnext);
-        ynext = ycvnext(:,1:FuncCount)*beta(1:FuncCount,:) + ycvnext(:,FuncCount+1:end)*beta(FuncCount+1:end,:);
+        ynext = ycvnext(:,1:out_param.FuncCount)*beta(1:out_param.FuncCount,:) + ycvnext(:,out_param.FuncCount+1:end)*beta(out_param.FuncCount+1:end,:);
         yval=[yval; ynext];
         
         
@@ -394,10 +383,11 @@ for m=out_param.mmin+1:out_param.mmax
     
     %% Approximate integral (2)
     if cv.J
-        q= mean(yval) - mu*beta(FuncCount+1:end,:);
+        q= mean(yval) - mu*beta(out_param.FuncCount+1:end,:);
     else
         q=mean(yval);
     end
+    
     % Check the end of the algorithm
     q = q - errest(meff)*(max(out_param.abstol, out_param.reltol*abs(q + errest(meff)))...
         - max(out_param.abstol, out_param.reltol*abs(q - errest(meff))))/...
@@ -431,10 +421,7 @@ end
 
 
 %% Parsing for the input of cubLattice_g
-function [f,hyperbox, out_param,cv, FuncCount, CVCount] = cubLattice_g_param(r_lag,varargin)
-
-FuncCount=varargin(6);
-CVCount=varargin(7);
+function [f,hyperbox, out_param, cv] = cubLattice_g_param(r_lag,varargin)
 
 % Default parameter values
 default.hyperbox = [zeros(1,1);ones(1,1)];% default hyperbox
@@ -449,6 +436,8 @@ default.mmax  = 20;
 default.fudge = @(m) 10*2.^-(m);
 default.transform = 'Baker';
 default.betaUpdate=0;
+default.FuncCount=0;
+default.CVCount=0; 
 
 % two data structures for function: function || structure(using CV)
 validf = @(x) gail.isfcn(x) || isstruct(x);
@@ -505,6 +494,39 @@ else
     f_addParamVal = @addParamValue;
 end
 
+
+
+% get the number of control variates and number of functions
+if ~isstruct(f) %  not using control variates
+    cv.J = 0;
+    Temp=size(f(1));
+    default.FuncCount=Temp(:,2)
+    
+else % using control variates, checking mu
+    if isnumeric(f.cv)
+        cv.J = size(f.cv,2);
+        default.CVCount=cv.J; 
+        
+        out_param.d = size(hyperbox,2);
+        tempVal=ones(1, out_param.d);
+        temp=(size(f.func(tempVal)));
+        totSize=temp(:,2);
+        
+        default.FuncCount=totSize-cv.J;
+        
+    else
+        warning('GAIL:cubLattice_g:controlvariates_error1',...
+            'f.cv should be numerical values');
+    end
+end
+
+% display('#######################');
+% display('FuncCount');
+% display(default.FuncCount);
+% display('CVCount');
+% display(default.CVCount);
+% display('#######################');
+
 if ~validvarargin
     out_param.measure = default.measure;
     out_param.abstol = default.abstol;
@@ -515,6 +537,8 @@ if ~validvarargin
     out_param.fudge = default.fudge;
     out_param.transform = default.transform;
     out_param.betaUpdate=default.betaUpdate;
+    out_param.FuncCount=default.FuncCount;
+    out_param.CVCount=default.CVCount;
 else
     p = inputParser;
     addRequired(p,'f', validf);
@@ -533,6 +557,8 @@ else
         addOptional(p,'transform',default.transform,...
             @(x) any(validatestring(x, {'id','Baker','C0','C1','C1sin'})));
         addOptional(p,'betaUpdate',default.betaUpdate,@isnumeric);
+        addOptional(p,'FuncCount',default.FuncCount,@isnumeric);
+        addOptional(p,'CVCount',default.CVCount,@isnumeric);
         
     else
         if isstruct(in3) %parse input structure
@@ -551,23 +577,13 @@ else
         f_addParamVal(p,'fudge',default.fudge,@gail.isfcn);
         f_addParamVal(p,'transform',default.transform,...
             @(x) any(validatestring(x, {'id','Baker','C0','C1','C1sin'})));
-        f_addParamVal(p,'betaUpdate',default.betaUpdate,@isnumeric);
-        
+        f_addParamVal(p,'betaUpdate',default.betaUpdate,@isnumeric);           
+        f_addParamVal(p,'FuncCount',default.FuncCount,@isnumeric);              
+        f_addParamVal(p,'CVCount',default.CVCount,@isnumeric);
+
     end
     parse(p,f,hyperbox,varargin{3:end});
     out_param = p.Results;
-end
-
-% get the number of control variates
-if ~isstruct(f) %  not using control variates
-    cv.J = 0;
-else % using control variates, checking mu
-    if isnumeric(f.cv)
-        cv.J = size(f.cv,2);
-    else
-        warning('GAIL:cubLattice_g:controlvariates_error1',...
-            'f.cv should be numerical values');
-    end
 end
 
 % Force measure to be one of the allowed ones
@@ -760,4 +776,7 @@ if (strcmp(out_param.measure,'uniform ball') || strcmp(out_param.measure,'unifor
     % computed, whih may be different from the dimesion of the sphere
     hyperbox = zeros(1,size(hyperbox,2));
 end
+
+
+
 end
