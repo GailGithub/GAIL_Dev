@@ -112,7 +112,7 @@ if p==0 && q==1
     mean_out.std = std(Yval);
     YY=Yval;
 else 
-        val = Yrand(mean_out.nSig);
+        %val = Yrand(mean_out.nSig);
         meanVal=mean(val);
         A=bsxfun(@minus, val, meanVal);
         C=[ones(q,1); zeros(p,1)];
