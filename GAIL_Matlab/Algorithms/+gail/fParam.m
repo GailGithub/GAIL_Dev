@@ -32,9 +32,9 @@ classdef fParam < gail.errorParam
          %the parser will look for the following in order
          %  # a copy of a fParam object
          %  # a function
-         %  # an interval
+         %  # a domain
          %  # a structure
-         %  # numbers: absTol, relTol, domain,
+         %  # numbers: absTol, relTol,
          %  # name-value pairs
          
          start = 1;
@@ -49,11 +49,12 @@ classdef fParam < gail.errorParam
                start = start + 1;
             end
             if nargin >= start
-               if gail.isfcn(varargin{start}) %next input is the function Y
+               if gail.isfcn(varargin{start}) %next input is the function f
                   fInp = start;
                   start = start + 1;
                   if nargin >= start
-                     if ismatrix(varargin{start})
+                     if ismatrix(varargin{start}) && numel(varargin{start}) > 1
+                        %next input is the domain
                         domainInp = start;
                         start = start+1;
                      end
