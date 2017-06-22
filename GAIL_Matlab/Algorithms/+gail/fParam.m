@@ -165,7 +165,8 @@ classdef fParam < gail.errorParam
                        
       function val = get.nfOut(obj)
          val = numel(obj.f(obj.domain(1,:))); 
-      end         
+      end      
+       
                        
    end
    
