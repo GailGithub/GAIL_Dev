@@ -73,7 +73,6 @@ function [hmu,mean_out]=meanMC_CLTKATE(varargin)
 % >> check = abs(exactsol-q) < 1e-5
 % check = 1
 %
-%
 % Example 2:
 % Estimate the integral with integrand f(x) = x1.^3.*x2.^3.*x3.^3
 % in the interval [0,1)^3 with pure absolute error 1e-5 using x1.*x2.*x3 as control variate:
@@ -87,7 +86,18 @@ function [hmu,mean_out]=meanMC_CLTKATE(varargin)
 % Example 3:
 % Estimate the integrals with integrands f1(x) = x1.^3.*x2.^3.*x3.^3 and 
 % f2(x)= x1.^2.*x2.^2.*x3.^2-1/27+1/64 in the interval [0,1)^3
-% using  x1.*x2.*x3 and x1+x2.^3+x3 as control variate:
+% using x1.*x2.*x3 and x1+x2.^3+x3 as control variate:
+%
+% >> f = @(x) [x(:,1).^3.*x(:,2).^3.*x(:,3).^3, x(:,1).^2.*x(:,2).^2.*x(:,3).^2-1/27+1/64,x(:,1).*x(:,2).*x(:,3),x(:,1)+x(:,2)+x(:,3)];
+% >> s=struct('Y',@(n)f(rand(n,3)),'nY',2,'trueMuCV',[1/8 1.5])
+% >> [hmu,mean_out]=meanMC_CLTKATE(s,1e-4,1e-3); exactsol = 1/64;
+% >> check = abs(exactsol-hmu) < max(1e-4,1e-3*abs(exactsol))
+% check = 1
+%
+% Example 3:
+% Estimate the Keister's integration in dimension 3 with a=1 and a=1/sqrt(2)a
+% using cos(x1).*cos(x2).*cos(x3)  as control variate:
+%
 % >> f = @(x) [x(:,1).^3.*x(:,2).^3.*x(:,3).^3, x(:,1).^2.*x(:,2).^2.*x(:,3).^2-1/27+1/64,x(:,1).*x(:,2).*x(:,3),x(:,1)+x(:,2)+x(:,3)];
 % >> s=struct('Y',@(n)f(rand(n,3)),'nY',2,'trueMuCV',[1/8 1.5])
 % >> [hmu,mean_out]=meanMC_CLTKATE(s,1e-4,1e-3); exactsol = 1/64;
@@ -125,6 +135,7 @@ else
         YY = [val(:,1:q) A(:,q+1:end)] * beta; %get samples of the new random variable 
 end
 
+display(beta);
 mean_out.std = std(YY); %standard deviation of the samples
 
 sig0up = mean_out.inflate .* mean_out.std; %upper bound on the standard deviation

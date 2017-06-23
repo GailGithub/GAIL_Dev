@@ -33,7 +33,7 @@ f = @(t,a,d) f1(normsqd(t),a,d);
 abstol = 0; %absolute error tolerance
 reltol = 0.01; %relative error tolerance
 dvec = 1:5; %vector of dimensions
-avec = [1 ]; %default value of a 
+avec = [1 1/sqrt(2)]; %default value of a 
 IMCvec = zeros(size(dvec)); %vector of answers
 f2= @(t,d) cell2mat(arrayfun(@(a) f(t,a,d),avec,'UniformOutput',false));
 tic
