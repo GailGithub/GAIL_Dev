@@ -22,11 +22,9 @@ fasttests_cubLattice_g
 fasttests_cubSobol_g
 
 fasttests_OptionPricing
+fasttests_InputClasses
 
 
-%tic; doctest gail.gail_in_param; time=toc
-%tic; doctest gail.gail1D_in_param; time=toc
-%tic; doctest gail.gailMD_in_param; time=toc
 
 
 time=toc
