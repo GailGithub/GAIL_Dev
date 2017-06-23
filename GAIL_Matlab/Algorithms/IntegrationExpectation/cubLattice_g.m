@@ -363,10 +363,8 @@ out_param.n=2^out_param.mmin; %total number of points to start with
 n0=out_param.n; %initial number of points
 xpts=mod(bsxfun(@plus, gail.lattice_gen(1,n0,out_param.d), out_param.shift),1); %grab Lattice points
 
-
 y=f(xpts); %evaluate integrand
 yval=y;
-
 
 % evaluate integrand
 if cv.J==0 % no control variates

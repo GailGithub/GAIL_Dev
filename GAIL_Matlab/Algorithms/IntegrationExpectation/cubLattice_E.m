@@ -454,6 +454,7 @@ ycv = f(xpts);
 y = ycv(:,1:out_param.FuncCount); yval = y;
 yg = ycv(:,out_param.FuncCount+1:end); %yvalg = yg;
 
+
 %% Compute initial FFT
 for l=0:out_param.mmin-1
     nl=2^l;
@@ -607,13 +608,9 @@ for m=out_param.mmin+1:out_param.mmax
     if cv.J == 0
         ynext = f(xnext); yval=[yval; ynext];
     else
-        
         ycvnext = f(xnext);
         ynext = ycvnext(:,1:out_param.FuncCount)*beta(1:out_param.FuncCount,:) + ycvnext(:,out_param.FuncCount+1:end)*beta(out_param.FuncCount+1:end,:);
         yval=[yval; ynext];
-        
-        
-        
     end
     
     %% Compute initial FFT on next points

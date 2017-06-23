@@ -10,12 +10,12 @@
     %% 2 Functions and 2 CVs
     w.func=@(x)[sin(x),cos(x)-sin(1)+1-cos(1) ,x-1/2,x.^2-1/3]
     w.cv = [0,0]; hyperbox= [0;1];
-    q = cubLattice_E(w,hyperbox,'uniform',1e-6,0);
+    q = cubSobol_g(w,hyperbox,'uniform',1e-6,0);
 
     %% 1 Function and 2 CVs 
     w.func=@(x)[sin(x), x-1/2,x.^2-1/3]
     w.cv = [0,0]; hyperbox= [0;1];
-    q = cubLattice_E(w,hyperbox,'uniform',1e-6,0);
+    q = cubSobol_g(w,hyperbox,'uniform',1e-6,0);
 
     %% 2 Functions and 3 CVs
     w.func=@(x)[sin(x),cos(x)-sin(1)+1-cos(1) ,x , x.^2, x.^3]
