@@ -37,6 +37,17 @@ classdef errorParam < handle
    %     solBdFun: @(muhat,errbd)[muhat-errbd,muhat+errbd]
    %
    %
+   % Example 4. Make a copy of an errorParam object and change a property
+   % >> newErrParamObj = gail.errorParam(errParamObj,'relTol',0.001)
+   % newErrParamObj = 
+   %   errorParam with properties:
+   % 
+   %       absTol: 0.010000000000000
+   %       relTol: 1.000000000000000e-03
+   %       solFun: @(mu)mu
+   %     solBdFun: @(muhat,errbd)[muhat-errbd,muhat+errbd]
+   %
+   %
    % Author: Fred J. Hickernell
 
    
@@ -69,6 +80,8 @@ classdef errorParam < handle
          %  # name-value pairs
          
          start = 1;
+         done = false; %not finished parsing
+         useDefaults = true; %use default values
          if nargin %there are inputs to parse and assign
             val=varargin{start}; %first input
             if isa(val,'gail.errorParam') %make a new copy an existing errorParam object
@@ -76,7 +89,8 @@ classdef errorParam < handle
                obj.relTol = val.relTol; %copy relatve tolerance
                obj.solFun = val.solFun; %copy solution function
                obj.solBdFun = val.solBdFun; %copy solution bound function
-               return
+               useDefaults = false;
+               start = start + 1;
             end
          end
          
@@ -86,7 +100,6 @@ classdef errorParam < handle
          p.PartialMatching = false; %don'try a partial match
          p.StructExpand = true; %expand structures
          structInp = 0; %no structure input
-         done = false; %not finished parsing
          if nargin >= start
            if isstruct(varargin{start})
               structInp = start;
@@ -119,12 +132,23 @@ classdef errorParam < handle
             parse(p,varargin{start:end}) %parse inputs w/o structure
          end
          struct_val = p.Results; %store parse inputs as a structure
+         if ~useDefaults
+            struct_val = rmfield(struct_val,p.UsingDefaults);
+         end
          
          %Assign structure values to properties of errorParam
-         obj.absTol = struct_val.absTol;
-         obj.relTol = struct_val.relTol;
-         obj.solFun = struct_val.solFun;
-         obj.solBdFun = struct_val.solBdFun;            
+         if isfield(struct_val,'absTol')
+            obj.absTol = struct_val.absTol;
+         end
+         if isfield(struct_val,'relTol')
+            obj.relTol = struct_val.relTol;
+         end
+         if isfield(struct_val,'solFun')
+            obj.solFun = struct_val.solFun;
+         end
+         if isfield(struct_val,'solBdFun')
+            obj.solBdFun = struct_val.solBdFun;
+         end
       end %of constructor
 
       function set.absTol(obj,val)
