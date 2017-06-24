@@ -3,13 +3,50 @@ classdef errorParam < handle
    %error tolerance
    %   This class contains the error tolerances, solution function, and
    %   related parameters determinign the error criterion
+   %
+   % Example 1.  Default values
+   % >> errParamObj = gail.errorParam 
+   % errParamObj = 
+   %   errorParam with properties:
+   % 
+   %       absTol: 0.010000000000000
+   %       relTol: 0
+   %       solFun: @(mu)mu
+   %     solBdFun: @(muhat,errbd)[muhat-errbd,muhat+errbd]
+   %
+   %
+   % Example 2.  Assign a different absolute error tolerance
+   % >> errParamObj = gail.errorParam(0.001)
+   % errParamObj = 
+   %   errorParam with properties:
+   % 
+   %       absTol: 1.000000000000000e-03
+   %       relTol: 0
+   %       solFun: @(mu)mu
+   %     solBdFun: @(muhat,errbd)[muhat-errbd,muhat+errbd]
+   %
+   %
+   % Example 3. Use a name/value pair
+   % errParamObj = gail.errorParam('relTol',0.1)
+   % errParamObj = 
+   %   errorParam with properties:
+   % 
+   %       absTol: 0.010000000000000
+   %       relTol: 0.100000000000000
+   %       solFun: @(mu)mu
+   %     solBdFun: @(muhat,errbd)[muhat-errbd,muhat+errbd]
+   %
+   %
+   % Author: Fred J. Hickernell
+
+   
    
    properties
       absTol %absolute error tolerance
       relTol %relative error tolerance
       solFun %function of vector of mu that you want to estimate
       solBdFun
-         %lower and upper bounds on solFun for mu in [muhat - errbd, muhat + errbd]      
+      %lower and upper bounds on solFun for mu in [muhat - errbd, muhat + errbd]
    end
    
    properties (Hidden, SetAccess = private)
