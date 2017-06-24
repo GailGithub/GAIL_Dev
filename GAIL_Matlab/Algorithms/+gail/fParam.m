@@ -118,9 +118,25 @@ classdef fParam < gail.errorParam
    %       solBdFun: @(muhat,errbd)[muhat-errbd,muhat+errbd]
    %
    %   
+   % Example 7. Coping an fParam object and changing properties
+   % >> newfParamObj = gail.fParam(fParamObj,'domainType','sphere')
+   % newfParamObj = 
+   %   fParam with properties:
+   % 
+   %              f: @(x)sin(sum(x,2))
+   %         domain: [2×4 double]
+   %     domainType: 'sphere'
+   %          nInit: 100
+   %           nMax: 10000000
+   %              d: 4
+   %          nfOut: 1
+   %         absTol: 1.000000000000000e-04
+   %         relTol: 0.100000000000000
+   %         solFun: @(mu)mu
+   %       solBdFun: @(muhat,errbd)[muhat-errbd,muhat+errbd]
+   %
+   %   
    % Author:  Fred J. Hickernell
-   
-   
    
    properties
       f %function defined on some domain, often an interval or box
@@ -162,12 +178,13 @@ classdef fParam < gail.errorParam
          %  # numbers: absTol, relTol
          %  # name-value pairs
          
-         start = 1;
-         objInp = 0;
-         fInp = 0;
-         domainInp = 0;
-         domainTypeInp = 0;
-         structInp = 0;
+         start = 1; %index to begin to parse
+         useDefaults = true; %true unless copying an fParam object, then false
+         objInp = 0; %where is the an object in the class
+         fInp = 0; %where is the input function
+         domainInp = 0; %where is the domain
+         domainTypeInp = 0; %where is the domain type
+         structInp = 0; %where is the structure
          if nargin %there are inputs to parse and assign
             if isa(varargin{start},'gail.fParam') 
                %the first input is a meanYParam object so copy it
@@ -206,6 +223,7 @@ classdef fParam < gail.errorParam
          whichParse = whichParse(whichParse > 0);
          obj@gail.errorParam(varargin{whichParse});
 
+         done = false; %not finished parsing
          if objInp
             val = varargin{objInp}; %first input
             obj.f = val.f; %copy function
@@ -213,7 +231,7 @@ classdef fParam < gail.errorParam
             obj.domainType = val.domainType; %copy domain type
             obj.nInit = val.nInit; %copy initial sample size
             obj.nMax = val.nMax; %copy maximum sample size
-            return
+            useDefaults = false;
          end
 
          %Now begin to parse inputs
@@ -221,7 +239,6 @@ classdef fParam < gail.errorParam
          p.KeepUnmatched = true; %ignore those that do not match
          p.PartialMatching = false; %don'try a partial match
          p.StructExpand = true; %expand structures
-         done = false; %not finished parsing
          if nargin >= start
             if ischar(varargin{start})
                %there may be input string/value pairs or a structure
@@ -258,25 +275,32 @@ classdef fParam < gail.errorParam
             parse(p,varargin{parseRange}) %parse inputs w/o structure
          end
          struct_val = p.Results; %store parse inputs as a structure
+         if ~useDefaults %remove defaults if copying fParam object
+            struct_val = rmfield(struct_val,p.UsingDefaults);
+         end
          
          %Assign values of structure to corresponding class properties
          if fInp
             obj.f = varargin{fInp}; %assign function
-         else
+         elseif isfield(struct_val,'f')
             obj.f = struct_val.f;
          end
          if domainInp
             obj.domain = varargin{domainInp}; %assign function
-         else
+         elseif isfield(struct_val,'domain')
             obj.domain = struct_val.domain;
          end
          if domainTypeInp
             obj.domainType = varargin{domainTypeInp}; %assign function
-         else
+         elseif isfield(struct_val,'domainType')
             obj.domainType = struct_val.domainType;
          end
-         obj.nInit = struct_val.nInit;
-         obj.nMax = struct_val.nMax;
+         if isfield(struct_val,'nInit')
+            obj.nInit = struct_val.nInit;
+         end
+         if isfield(struct_val,'nMax')
+            obj.nMax = struct_val.nMax;
+         end
 
          
       end %of constructor

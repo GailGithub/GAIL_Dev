@@ -82,10 +82,10 @@ classdef cubParam < gail.fParam
    %
    %
    % Example 4. Using a structure for input
-   % inpStruct.f = @(x) sin(sum(x,2));
-   % inpStruct.domain = [zeros(1,4); ones(1,4)];
-   % inpStruct.nInit = 1000;
-   % cubParamObj = gail.cubParam(inpStruct)
+   % >> inpStruct.f = @(x) sin(sum(x,2));
+   % >> inpStruct.domain = [zeros(1,4); ones(1,4)];
+   % >> inpStruct.nInit = 1000;
+   % >> cubParamObj = gail.cubParam(inpStruct)
    % cubParamObj = 
    %   cubParam with properties:
    % 
@@ -95,6 +95,32 @@ classdef cubParam < gail.fParam
    %             nf: 1
    %        inflate: @(m)5*2^-m
    %             ff: @(x)sin(sum(x,2))
+   %            nCV: 0
+   %         volume: 1
+   %              f: @(x)sin(sum(x,2))
+   %         domain: [2×4 double]
+   %     domainType: 'box'
+   %          nInit: 1000
+   %           nMax: 10000000
+   %              d: 4
+   %          nfOut: 1
+   %         absTol: 0.010000000000000
+   %         relTol: 0
+   %         solFun: @(mu)mu
+   %       solBdFun: @(muhat,errbd)[muhat-errbd,muhat+errbd]
+   %
+   %
+   % Example 5. Copying a cubParam object and changing some properties
+   % >> NewCubParamObj = gail.cubParam(cubParamObj,'measure','Lebesgue')
+   % NewCubParamObj = 
+   %   cubParam with properties:
+   % 
+   %        measure: 'Lebesgue'
+   %       trueMuCV: [1×0 double]
+   %            nMu: 1
+   %             nf: 1
+   %        inflate: @(m)5*2^-m
+   %             ff: [function_handle]
    %            nCV: 0
    %         volume: 1
    %              f: @(x)sin(sum(x,2))
@@ -156,13 +182,14 @@ classdef cubParam < gail.fParam
          %  # numbers: absTol, relTol, trueMuCV, nMu, nf, inflate
          %  # name-value pairs
          
-         start = 1;
-         objInp = 0;
-         fInp = 0;
-         domainInp = 0;
-         domainTypeInp = 0;
-         measureInp = 0;
-         structInp = 0;
+         start = 1; %index to begin to parse
+         useDefaults = true; %true unless copying an fParam object, then false
+         objInp = 0; %where is the an object in the class
+         fInp = 0; %where is the input function
+         domainInp = 0; %where is the domain
+         domainTypeInp = 0; %where is the domain type
+         measureInp = 0; %where is the integration measure
+         structInp = 0; %where is the structure
          if nargin %there are inputs to parse and assign
             if isa(varargin{start},'gail.cubParam') 
                %the first input is a meanYParam object so copy it
@@ -214,7 +241,7 @@ classdef cubParam < gail.fParam
             obj.nMu = val.nMu; %copy the number of integrals
             obj.nf = val.nf; %copy number of functions for each integral
             obj.trueMuCV = val.trueMuCV; %copy true means of control variates
-            return
+            useDefaults = true;
          end
 
          %Now begin to parse inputs
@@ -255,17 +282,28 @@ classdef cubParam < gail.fParam
             parse(p,varargin{parseRange}) %parse inputs w/o structure
          end
          struct_val = p.Results; %store parse inputs as a structure
+         if ~useDefaults %remove defaults if copying cubParam object
+            struct_val = rmfield(struct_val,p.UsingDefaults);
+         end
          
          %Assign values of structure to corresponding class properties
          if measureInp
             obj.measure = varargin{measureInp}; %assign measure
-         else
+         elseif isfield(struct_val,'measure')
             obj.measure = struct_val.measure;
          end
-         obj.inflate = struct_val.inflate;
-         obj.nMu = struct_val.nMu;
-         obj.nf = struct_val.nf;
-         obj.trueMuCV = struct_val.trueMuCV;
+         if isfield(struct_val,'inflate')
+            obj.inflate = struct_val.inflate;
+         end
+         if isfield(struct_val,'nMu')         
+            obj.nMu = struct_val.nMu;
+         end
+         if isfield(struct_val,'nf')         
+            obj.nf = struct_val.nf;
+         end
+         if isfield(struct_val,'trueMuCV')         
+            obj.trueMuCV = struct_val.trueMuCV;
+         end        
        
       end %of constructor
      
