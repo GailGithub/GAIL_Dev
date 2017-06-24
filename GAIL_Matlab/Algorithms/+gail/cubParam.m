@@ -3,13 +3,124 @@ classdef cubParam < gail.fParam
    %algorithms that find the mean of a random variable
    %   This class contains the number of integrands with the same integral,
    %   etc.
+   %
+   % Example 1.
+   % >> cubParamObj = gail.cubParam
+   % cubParamObj = 
+   %   cubParam with properties:
+   % 
+   %        measure: 'uniform'
+   %       trueMuCV: [1×0 double]
+   %            nMu: 1
+   %             nf: 1
+   %        inflate: @(m)5*2^-m
+   %             ff: @(x)sum(x.^2,2)
+   %            nCV: 0
+   %         volume: 1
+   %              f: @(x)sum(x.^2,2)
+   %         domain: [2×1 double]
+   %     domainType: 'box'
+   %          nInit: 100
+   %           nMax: 10000000
+   %              d: 1
+   %          nfOut: 1
+   %         absTol: 0.010000000000000
+   %         relTol: 0
+   %         solFun: @(mu)mu
+   %       solBdFun: @(muhat,errbd)[muhat-errbd,muhat+errbd]
+   %
+   %
+   % >> cubParamObj = gail.cubParam(@(x) sum(x.^3.2),[0 0; 2 2],'box','Lebesgue')
+   % cubParamObj = 
+   %   cubParam with properties:
+   % 
+   %        measure: 'Lebesgue'
+   %       trueMuCV: [1×0 double]
+   %            nMu: 1
+   %             nf: 1
+   %        inflate: @(m)5*2^-m
+   %             ff: [function_handle]
+   %            nCV: 0
+   %         volume: 4
+   %              f: @(x)sum(x.^3.2)
+   %         domain: [2×2 double]
+   %     domainType: 'box'
+   %          nInit: 100
+   %           nMax: 10000000
+   %              d: 2
+   %          nfOut: 1
+   %         absTol: 0.010000000000000
+   %         relTol: 0
+   %         solFun: @(mu)mu
+   %       solBdFun: @(muhat,errbd)[muhat-errbd,muhat+errbd]
+   %
+   %
+   % Example 3. Using name/value pairs
+   % >> cubParamObj = gail.cubParam('domain', [-Inf -Inf; Inf Inf], 'f', @(x) sum(x.^3.2), 'relTol', 0.1, 'measure', 'Gaussian')
+   % cubParamObj = 
+   %   cubParam with properties:
+   % 
+   %        measure: 'normal'
+   %       trueMuCV: [1×0 double]
+   %            nMu: 1
+   %             nf: 1
+   %        inflate: @(m)5*2^-m
+   %             ff: @(x)obj.f(gail.stdnorminv(x))
+   %            nCV: 0
+   %         volume: 1
+   %              f: @(x)sum(x.^3.2)
+   %         domain: [2×2 double]
+   %     domainType: 'box'
+   %          nInit: 100
+   %           nMax: 10000000
+   %              d: 2
+   %          nfOut: 1
+   %         absTol: 0.010000000000000
+   %         relTol: 0.100000000000000
+   %         solFun: @(mu)mu
+   %       solBdFun: @(muhat,errbd)[muhat-errbd,muhat+errbd]
+   %
+   %
+   % Example 4. Using a structure for input
+   % inpStruct.f = @(x) sin(sum(x,2));
+   % inpStruct.domain = [zeros(1,4); ones(1,4)];
+   % inpStruct.nInit = 1000;
+   % cubParamObj = gail.cubParam(inpStruct)
+   % cubParamObj = 
+   %   cubParam with properties:
+   % 
+   %        measure: 'uniform'
+   %       trueMuCV: [1×0 double]
+   %            nMu: 1
+   %             nf: 1
+   %        inflate: @(m)5*2^-m
+   %             ff: @(x)sin(sum(x,2))
+   %            nCV: 0
+   %         volume: 1
+   %              f: @(x)sin(sum(x,2))
+   %         domain: [2×4 double]
+   %     domainType: 'box'
+   %          nInit: 1000
+   %           nMax: 10000000
+   %              d: 4
+   %          nfOut: 1
+   %         absTol: 0.010000000000000
+   %         relTol: 0
+   %         solFun: @(mu)mu
+   %       solBdFun: @(muhat,errbd)[muhat-errbd,muhat+errbd]
+   %
+   %
+   %
+
+   
+   % Author: Fred J. Hickernell
    
    properties
       measure %measure against which to integrate
-      inflate %inflation factor for bounding the error
+      trueMuCV %true integral for control variates
       nMu %number of integrals for solution function
       nf %number of f for each integral
-      trueMuCV %true integral for control variates
+      inflate %inflation factor for bounding the error
    end
    
     properties (Dependent = true)
@@ -26,11 +137,7 @@ classdef cubParam < gail.fParam
       def_trueMuCV = [] %default true integrals for control variates
       allowedMeasures = {'uniform', ... %over a hyperbox volume of domain is one
          'Lebesgue', ... %like uniform, but integral over domain is the volume of the domain
-         'Gaussian', 'normal', ... %these are the same
-         'Uniform ball', ... %analogous 
-         'Lebesgue ball', ... %to hyperbox
-         'Uniform sphere', ... %analogous 
-         'Lebesgue sphere', ... %to hyperbox
+         'Gaussian', 'normal' ... %these are the same
          }
    end
    
@@ -42,17 +149,18 @@ classdef cubParam < gail.fParam
          %this constructor essentially parses inputs
          %the parser will look for the following in order
          %  # a copy of a cubParam object
+         %  # a structure
          %  # a function
          %  # a domain
          %  # a measure
-         %  # a structure
-         %  # numbers: absTol, relTol,
+         %  # numbers: absTol, relTol, trueMuCV, nMu, nf, inflate
          %  # name-value pairs
          
          start = 1;
          objInp = 0;
          fInp = 0;
          domainInp = 0;
+         domainTypeInp = 0;
          measureInp = 0;
          structInp = 0;
          if nargin %there are inputs to parse and assign
@@ -60,6 +168,12 @@ classdef cubParam < gail.fParam
                %the first input is a meanYParam object so copy it
                objInp = start;
                start = start + 1;
+            end
+            if nargin >= start
+               if isstruct(varargin{start}) %next input is a structure containing Y
+                  structInp = start;
+                  start = start + 1;
+               end
             end
             if nargin >= start
                if gail.isfcn(varargin{start}) %next input is the function f
@@ -70,26 +184,26 @@ classdef cubParam < gail.fParam
                         %next input is the domain
                         domainInp = start;
                         start = start+1;
-                        if nargin >= start
-                           if ischar(varargin{start})
-                              measureInp = start;
-                              start = start + 1;
+                        if nargin >= start 
+                           if ischar(varargin{start}) %next imput is domain type
+                              domainTypeInp = start;
+                              start = start+ 1;
+                              if nargin >= start
+                                 if ischar(varargin{start}) %next input is meaure
+                                    measureInp = start;
+                                    start = start + 1;
+                                 end
+                              end
                            end
                         end
                      end
-                  end
-               end
-               if nargin >= start
-                  if isstruct(varargin{start}) %next input is a structure containing Y
-                     structInp = start;
-                     start = start + 1;
                   end
                end
             end
          end
          
          %Parse errorParam properties
-         whichParse = [objInp fInp domainInp structInp start:nargin];
+         whichParse = [objInp fInp domainInp domainTypeInp structInp start:nargin];
          whichParse = whichParse(whichParse > 0);
          obj@gail.fParam(varargin{whichParse});
 
@@ -118,24 +232,27 @@ classdef cubParam < gail.fParam
                else
                   f_addParamVal = @addParamValue;
                end
+               parseRange = start:nargin;
                done = true;
             end
          end
          if ~done %then nothingleft or just numbers
-           f_addParamVal = @addOptional;
-           start = start + 2; %to account for the two tolerances already parsed
+            f_addParamVal = @addOptional;
+            parseRange = (start + 2):nargin; %to account for the two tolerances already parsed
          end
-         f_addParamVal(p,'measure',obj.def_measure);
-         f_addParamVal(p,'inflate',obj.def_inflate);
+         if ~measureInp
+            f_addParamVal(p,'measure',obj.def_measure);
+         end
+         f_addParamVal(p,'trueMuCV',obj.def_trueMuCV);
          f_addParamVal(p,'nMu',obj.def_nMu);
          f_addParamVal(p,'nf',obj.def_nf);
-         f_addParamVal(p,'trueMuCV',obj.def_trueMuCV);
+         f_addParamVal(p,'inflate',obj.def_inflate);
          
          if structInp
-            parse(p,varargin{start:end},varargin{structInp}) 
+            parse(p,varargin{parseRange},varargin{structInp}) 
             %parse inputs with a structure
          else
-            parse(p,varargin{start:end}) %parse inputs w/o structure
+            parse(p,varargin{parseRange}) %parse inputs w/o structure
          end
          struct_val = p.Results; %store parse inputs as a structure
          
@@ -213,8 +330,8 @@ classdef cubParam < gail.fParam
             outval = inval;
          end
          if strcmp(outval,'normal') %domain must be R^d
-            assert(all(obj.domain(1,:) == '-Inf') && ...
-               all(obj.domain(2,:) == 'Inf'))
+            assert(all(obj.domain(1,:) == -Inf) && ...
+               all(obj.domain(2,:) == Inf))
          end
          if any(strcmp(outval,{'uniform','Lebesgue'})) %domain must be finite
             assert(all(all(isfinite(obj.domain))))
