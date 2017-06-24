@@ -9,6 +9,9 @@ format long
 tic; doctest gail.errorParam; time = toc
 tic; doctest gail.fParam; time = toc
 tic; doctest gail.cubParam; time = toc
+tic; doctest gail.cubOut; time = toc
+tic; doctest gail.meanYParam; time = toc
+tic; doctest gail.meanYOut; time = toc
 
 
 %% CALL UNIT TESTS

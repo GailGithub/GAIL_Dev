@@ -2,7 +2,117 @@ classdef meanYParam < gail.errorParam
    %GAIL.MEANYPARAM is a class containing the parameters related to
    %algorithms that find the mean of a random variable
    %   This class contains the random number generator, the uncertainty
-   
+   %
+   % Example 1. Construct a meanYParam object with default parameters
+   % >> meanYParamObj = gail.meanYParam
+   % meanYParamObj = 
+   %   meanYParam with properties:
+   % 
+   %            Y: @(n)rand(n,1)
+   %        alpha: 0.010000000000000
+   %         nSig: 1000
+   %      inflate: 1.200000000000000
+   %         nMax: 100000000
+   %          nMu: 1
+   %           nY: 1
+   %     trueMuCV: [1×0 double]
+   %          nCV: 0
+   %        nYOut: 1
+   %       absTol: 0.010000000000000
+   %       relTol: 0
+   %       solFun: @(mu)mu
+   %     solBdFun: @(muhat,errbd)[muhat-errbd,muhat+errbd]
+   %
+   %
+   % Example 2. Construct a cubParam object with properly ordered inputs
+   % >> meanYParamObj = gail.meanYParam(@(n) sum(rand(n,4).^3,2),0.001)
+   % meanYParamObj = 
+   %   meanYParam with properties:
+   % 
+   %            Y: @(n)sum(rand(n,4).^3,2)
+   %        alpha: 0.010000000000000
+   %         nSig: 1000
+   %      inflate: 1.200000000000000
+   %         nMax: 100000000
+   %          nMu: 1
+   %           nY: 1
+   %     trueMuCV: [1×0 double]
+   %          nCV: 0
+   %        nYOut: 1
+   %       absTol: 1.000000000000000e-03
+   %       relTol: 0
+   %       solFun: @(mu)mu
+   %     solBdFun: @(muhat,errbd)[muhat-errbd,muhat+errbd]
+   %
+   %
+   % Example 3. Using name/value pairs
+   % >> meanYParamObj = gail.meanYParam('nSig', 1e4, 'Y', @(x) sin(sum(x.^3,2)), 'relTol', 0.1)
+   % meanYParamObj = 
+   %   meanYParam with properties:
+   % 
+   %            Y: @(x)sin(sum(x.^3,2))
+   %        alpha: 0.010000000000000
+   %         nSig: 10000
+   %      inflate: 1.200000000000000
+   %         nMax: 100000000
+   %          nMu: 1
+   %           nY: 1
+   %     trueMuCV: [1×0 double]
+   %          nCV: 0
+   %        nYOut: 1
+   %       absTol: 0.010000000000000
+   %       relTol: 0.100000000000000
+   %       solFun: @(mu)mu
+   %     solBdFun: @(muhat,errbd)[muhat-errbd,muhat+errbd]
+   %
+   %
+   % Example 4. Using a structure for input
+   % >> inpStruct.Y = @(x) sin(sum(x,2));
+   % >> inpStruct.nSig = 1e4;
+   % >> inpStruct.relTol = 0.1;
+   % >> meanYParamObj = gail.meanYParam(inpStruct)
+   % meanYParamObj = 
+   %   meanYParam with properties:
+   % 
+   %            Y: @(x)sin(sum(x,2))
+   %        alpha: 0.010000000000000
+   %         nSig: 10000
+   %      inflate: 1.200000000000000
+   %         nMax: 100000000
+   %          nMu: 1
+   %           nY: 1
+   %     trueMuCV: [1×0 double]
+   %          nCV: 0
+   %        nYOut: 1
+   %       absTol: 0.010000000000000
+   %       relTol: 0.100000000000000
+   %       solFun: @(mu)mu
+   %     solBdFun: @(muhat,errbd)[muhat-errbd,muhat+errbd]
+   %
+   %
+   % Example 5. Copying a meanYParam object and changing some properties
+   % >> NewMeanYParamObj = gail.meanYParam(meanYParamObj,'Y',@(n) rand(n,3))
+   % NewMeanYParamObj = 
+   %   meanYParam with properties:
+   % 
+   %            Y: @(n)rand(n,3)
+   %        alpha: 0.010000000000000
+   %         nSig: 10000
+   %      inflate: 1.200000000000000
+   %         nMax: 100000000
+   %          nMu: 1
+   %           nY: 1
+   %     trueMuCV: [1×0 double]
+   %          nCV: 2
+   %        nYOut: 3
+   %       absTol: 0.010000000000000
+   %       relTol: 0.100000000000000
+   %       solFun: @(mu)mu
+   %     solBdFun: @(muhat,errbd)[muhat-errbd,muhat+errbd]
+   %
+   %
+   % Author: Fred J. Hickernell
+
    properties
       Y %random number generator
       alpha %uncertainty
@@ -44,6 +154,7 @@ classdef meanYParam < gail.errorParam
          %  # name-value pairs
          
          start = 1;
+         useDefaults = true;
          objInp = 0;
          YInp = 0;
          structInp = 0;
@@ -54,15 +165,15 @@ classdef meanYParam < gail.errorParam
                start = start + 1;
             end
             if nargin >= start
+               if isstruct(varargin{start}) %next input is a structure containing Y
+                  structInp = start;
+                  start = start + 1;
+               end
+            end
+            if nargin >= start
                if gail.isfcn(varargin{start}) %next input is the function Y
                   YInp = start;
                   start = start + 1;
-               end
-               if nargin >= start
-                  if isstruct(varargin{start}) %next input is a structure containing Y
-                     structInp = start;
-                     start = start + 1;
-                  end
                end
             end
          end
@@ -82,7 +193,7 @@ classdef meanYParam < gail.errorParam
             obj.nMu = val.nMu; %copy number of mu values
             obj.nY = val.nY; %copy number of Y values per mu
             obj.trueMuCV = val.trueMuCV; %copy true means of control variates
-            return
+            useDefaults = false;
          end
 
          %Now begin to parse inputs
@@ -123,19 +234,37 @@ classdef meanYParam < gail.errorParam
             parse(p,varargin{start:end}) %parse inputs w/o structure
          end
          struct_val = p.Results; %store parse inputs as a structure
+         if ~useDefaults %remove defaults if copying cubParam object
+            struct_val = rmfield(struct_val,p.UsingDefaults);
+         end
          
          %Assign values of structure to corresponding class properties
          if YInp
             obj.Y = varargin{YInp}; %assign function
-         else
+         elseif isfield(struct_val,'Y')
             obj.Y = struct_val.Y;
          end
-         obj.alpha = struct_val.alpha;
-         obj.nSig = struct_val.nSig;
-         obj.inflate = struct_val.inflate;
-         obj.nMax = struct_val.nMax;
-         obj.nMu = struct_val.nMu;
-         obj.trueMuCV = struct_val.trueMuCV;
+         if isfield(struct_val,'alpha')
+            obj.alpha = struct_val.alpha;
+         end
+         if isfield(struct_val,'nSig')
+            obj.nSig = struct_val.nSig;
+         end
+         if isfield(struct_val,'inflate')
+            obj.inflate = struct_val.inflate;
+         end
+         if isfield(struct_val,'nMax')
+            obj.nMax = struct_val.nMax;
+         end
+         if isfield(struct_val,'nMu')
+            obj.nMu = struct_val.nMu;
+         end
+         if isfield(struct_val,'nY')
+            obj.nY = struct_val.nY;
+         end
+         if isfield(struct_val,'trueMuCV')
+            obj.trueMuCV = struct_val.trueMuCV;
+         end
 
          
       end %of constructor
