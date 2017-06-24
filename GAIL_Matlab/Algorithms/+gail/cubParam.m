@@ -4,7 +4,7 @@ classdef cubParam < gail.fParam
    %   This class contains the number of integrands with the same integral,
    %   etc.
    %
-   % Example 1.
+   % Example 1. Construct a cubParam object with default parameters
    % >> cubParamObj = gail.cubParam
    % cubParamObj = 
    %   cubParam with properties:
@@ -30,6 +30,7 @@ classdef cubParam < gail.fParam
    %       solBdFun: @(muhat,errbd)[muhat-errbd,muhat+errbd]
    %
    %
+   % Example 2. Construct a cubParam object with properly ordered inputs
    % >> cubParamObj = gail.cubParam(@(x) sum(x.^3.2),[0 0; 2 2],'box','Lebesgue')
    % cubParamObj = 
    %   cubParam with properties:
