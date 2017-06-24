@@ -8,6 +8,8 @@ tic; doctest gail.gailMD_in_param; time=toc
 format long
 tic; doctest gail.errorParam; time = toc
 tic; doctest gail.fParam; time = toc
+tic; doctest gail.cubParam; time = toc
+
 
 %% CALL UNIT TESTS
 

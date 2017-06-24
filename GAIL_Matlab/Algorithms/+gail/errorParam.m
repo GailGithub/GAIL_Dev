@@ -5,7 +5,7 @@ classdef errorParam < handle
    %   related parameters determinign the error criterion
    %
    % Example 1.  Default values
-   % >> errParamObj = gail.errorParam 
+   % >> errParamObj = gail.errorParam
    % errParamObj = 
    %   errorParam with properties:
    % 
@@ -27,7 +27,7 @@ classdef errorParam < handle
    %
    %
    % Example 3. Use a name/value pair
-   % errParamObj = gail.errorParam('relTol',0.1)
+   % >> errParamObj = gail.errorParam('relTol',0.1)
    % errParamObj = 
    %   errorParam with properties:
    % 
