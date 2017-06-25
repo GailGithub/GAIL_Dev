@@ -1,9 +1,9 @@
-%% longtests_cubMC_g: long tests for cubMC_g
+% longtests_cubMC_g: long tests for cubMC_g
 
 % cubMC_g
 format short
 doctest dt_cubMC_g
- 
+
 % MCQMC paper
 run_handle('MCQMC2012Figs')
 run_handle('FoolAutomaticAlgorithms')
