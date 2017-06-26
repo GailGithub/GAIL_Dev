@@ -1,4 +1,4 @@
-function [hmu,mean_out,Time]=meanMC_CLTKATE(varargin)
+function [hmu,mean_out]=meanMC_CLTKATE(varargin)
 %MEANMC_CLT Monte Carlo method to estimate the mean of a random variable
 %
 %   tmu = MEANMC_CLT(Yrand,absTol,relTol,alpha,nSig,inflate) estimates the
@@ -94,15 +94,16 @@ function [hmu,mean_out,Time]=meanMC_CLTKATE(varargin)
 % >> check = abs(exactsol-hmu) < max(1e-4,1e-3*abs(exactsol))
 % check = 1
 %
-% Example 3:
-% Estimate the Keister's integration in dimension 3 with a=1 and a=1/sqrt(2)a
-% using cos(x1).*cos(x2).*cos(x3)  as control variate:
-%
-% >> f = @(x) [x(:,1).^3.*x(:,2).^3.*x(:,3).^3, x(:,1).^2.*x(:,2).^2.*x(:,3).^2-1/27+1/64,x(:,1).*x(:,2).*x(:,3),x(:,1)+x(:,2)+x(:,3)];
-% >> s=struct('Y',@(n)f(rand(n,3)),'nY',2,'trueMuCV',[1/8 1.5])
-% >> [hmu,mean_out]=meanMC_CLTKATE(s,1e-4,1e-3); exactsol = 1/64;
-% >> check = abs(exactsol-hmu) < max(1e-4,1e-3*abs(exactsol))
-% check = 1
+% Example 4:
+% Estimate the Keister's integration in dimension 1 with a=1, 1/sqrt(2)and using cos(x) as a control variate:
+% >> normsqd = @(t) sum(t.*t,2);
+% >> f=@(normt,a,d) ((2*pi*a^2).^(d/2)) * cos(a*sqrt(normt)).* exp((1/2-a^2)*normt);
+% >> f1 = @(t,a,d) f(normsqd(t),a,d);
+% >> f2=@(t)[f1(t,1,1),f1(t,1/sqrt(2),1),cos(t)];
+% >> YXn=@(n)f2(randn(n,1));
+% >> s=struct('Y',YXn,'nY',2,'trueMuCV',1/sqrt(exp(1)))
+% >> [hmu,mean_out]=meanMC_CLTKATE(s,0,1e-3); 
+
 
 
 % This is a heuristic algorithm based on a Central Limit Theorem
@@ -148,7 +149,7 @@ if nmu > mean_out.nMax %don't exceed sample budget
    nmu = mean_out.nMax;
 end
 
-YY = Yrand(nmu); %samples to estimate the mean
+YY = Yrand(nmu); %get samples 
 
 if p > 0 || q > 1   %samples of the new random variable
   YY(:,q+1:end) = bsxfun(@minus, YY(:,q+1:end), xmean);
@@ -159,7 +160,6 @@ hmu = mean(YY); %estimated mean
 mean_out.mu = hmu;
 mean_out.nSample = mean_out.nSig+nmu; %total samples required
 mean_out.time = toc(tstart); %elapsed time
-Time=mean_out.time;
 end
 
 
