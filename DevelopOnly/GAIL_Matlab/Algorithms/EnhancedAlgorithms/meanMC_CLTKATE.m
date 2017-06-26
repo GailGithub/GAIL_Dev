@@ -1,4 +1,4 @@
-function [hmu,mean_out]=meanMC_CLTKATE(varargin)
+function [hmu,mean_out,Time]=meanMC_CLTKATE(varargin)
 %MEANMC_CLT Monte Carlo method to estimate the mean of a random variable
 %
 %   tmu = MEANMC_CLT(Yrand,absTol,relTol,alpha,nSig,inflate) estimates the
@@ -111,14 +111,12 @@ function [hmu,mean_out]=meanMC_CLTKATE(varargin)
 tstart = tic; %start the clock 
 mean_inp = gail.meanYParam(varargin{:}); %parse the input and check it for errors
 mean_out = gail.meanYOut(mean_inp); %create the output class
-toc(tstart)
 Yrand=mean_out.Y; %the random number generator
 q=mean_out.nY; %the number of target random varaibles 
 p=mean_out.nCV; %the number of control variates
 xmean=mean_out.trueMuCV; %the mean of the control variates
 
 val = Yrand(mean_out.nSig); %get samples to estimate variance 
-
 if p==0 && q==1
     YY = val(:,1); 
     
@@ -135,11 +133,11 @@ else
         YY = [val(:,1:q) A(:,q+1:end)] * beta; %get samples of the new random variable 
 end
 
-display(beta);
 mean_out.std = std(YY); %standard deviation of the samples
 
 sig0up = mean_out.inflate .* mean_out.std; %upper bound on the standard deviation
 hmu0 = mean(YY); % mean of the samples
+
 
 nmu = max(1,ceil((-gail.stdnorminv(mean_out.alpha/2)*sig0up ...
    /max(mean_out.absTol,mean_out.relTol*abs(hmu0))).^2)); 
@@ -161,6 +159,7 @@ hmu = mean(YY); %estimated mean
 mean_out.mu = hmu;
 mean_out.nSample = mean_out.nSig+nmu; %total samples required
 mean_out.time = toc(tstart); %elapsed time
+Time=mean_out.time;
 end
 
 
