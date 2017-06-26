@@ -226,8 +226,14 @@ classdef multivarGauss < handle
                   'measure','uniform','abstol',obj.absTol, ...
                   'reltol',obj.relTol,'scramble',false);
             elseif strcmp(obj.cubMeth,'MLELattice')
-               [prob, out] = cubMLELattice(obj.f, ...
-                  realDim,obj.absTol,obj.relTol,2);
+               [prob, out] = cubBayesLattice(obj.f, ...
+                  realDim,obj.absTol,obj.relTol,2,true);
+            elseif strcmp(obj.cubMeth,'MLELattice4')
+               [prob, out] = cubBayesLattice(obj.f, ...
+                  realDim,obj.absTol,obj.relTol,4,true);
+            elseif strcmp(obj.cubMeth,'MLE0Lattice')
+               [prob, out] = cubBayesLattice(obj.f, ...
+                  realDim,obj.absTol,obj.relTol,2,false);
             end
           end
       end
