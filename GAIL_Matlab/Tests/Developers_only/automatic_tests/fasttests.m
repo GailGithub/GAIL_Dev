@@ -1,4 +1,4 @@
-% Drives all doctests and unit tests
+% fasttests: Drives all fast doctests and unit tests
 format short
 
 GAILPATH = GAILstart(0);
@@ -21,11 +21,11 @@ fasttests_cubMC_g
 fasttests_cubLattice_g
 fasttests_cubSobol_g
 
+%% CALL fasttests for other key GAIL components
+format short
+
 fasttests_OptionPricing
 fasttests_InputClasses
-
-
-
 
 time=toc
  
