@@ -51,54 +51,14 @@ IMCvec = zeros(size(dvec)); %vector of answers
 IMCvecEtime = zeros(size(dvec)); %vector of answers
 IMCvecE = zeros(size(dvec)); %vector of answers
 
-totE=[];
-totTime=[];
-for i=1:100
-    for d = dvec
-        w=@(t)[f(t, avec(1),d),f(t,avec(2),d),f(t,avec(3),d),f(t,avec(4),d)]
-        hyperbox=[zeros(1,d); ones(1,d)];
-        [IMCvecE(d), out, IMCvecEtime(d), ~] = cubLattice_E(w,hyperbox,'normal',1e-6,0);
-    end 
-    totE=vertcat(totE, IMCvecE);
-    totTime=vertcat(totTime, IMCvecEtime);
+for d = dvec
+    w=@(t)[f(t, avec(1),d),f(t,avec(2),d),f(t,avec(3),d),f(t,avec(4),d)]
+    hyperbox=[zeros(1,d); ones(1,d)];
+    [IMCvecE(d), out, IMCvecEtime(d), ~] = cubLattice_E(w,hyperbox,'normal',1e-6,0);
 end 
-
-totE
-totTime
-
-%% 
-totMCL=[];
-totMCLTime=[];
-
-for i=100 
-    for d=dvec 
-        
-    end 
-    
-end 
-
-
-
-
+IMCvecE
+IMCvecEtime
  
-%% 2 function, 1 CV
-% dim 1
-d=1
-w.func=@(f(t, avec(1),d),f(t,avec(2),d), ]
-w.cv = [0.5, 1/3, 1/4]; hyperbox=[zeros(1,d); ones(1,d)];
-
-% dim 2
-d=2
-w.func=@(f(t, avec(1),d),f(t,avec(2),d), ]
-w.cv = [0.5, 1/3, 1/4]; hyperbox=[zeros(1,d); ones(1,d)];
-
-% dim 3 
-d=2
-w.func=@(f(t, avec(1),d),f(t,avec(2),d), ]
-w.cv = [0.5, 1/3, 1/4]; hyperbox=[zeros(1,d); ones(1,d)];
-
-
-
 
 
 
