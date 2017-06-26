@@ -1,4 +1,4 @@
-function [q,out_param,y,kappanumap] = cubLattice_E(varargin)
+function [q, numofS, time, y,kappanumap] = cubLattice_E(varargin)
 
 %CUBLATTICE_G Quasi-Monte Carlo method using rank-1 Lattices cubature
 %over a d-dimensional region to integrate within a specified generalized
@@ -594,7 +594,7 @@ end
 
 %% Loop over m
 for m=out_param.mmin+1:out_param.mmax
-    if is_done,
+    if is_done || out_param.n>=1000,
         break;
     end
     
@@ -606,7 +606,10 @@ for m=out_param.mmin+1:out_param.mmax
     
     % check for using control variates or not
     if cv.J == 0
-        ynext = f(xnext); yval=[yval; ynext];
+        % ynext = f(xnext); yval=[yval; ynext];
+        ycvnext = f(xnext);
+        ynext = ycvnext(:,1:out_param.FuncCount)*beta(1:out_param.FuncCount,:) + ycvnext(:,out_param.FuncCount+1:end)*beta(out_param.FuncCount+1:end,:);
+        yval=[yval; ynext];
     else
         ycvnext = f(xnext);
         ynext = ycvnext(:,1:out_param.FuncCount)*beta(1:out_param.FuncCount,:) + ycvnext(:,out_param.FuncCount+1:end)*beta(out_param.FuncCount+1:end,:);
@@ -768,6 +771,8 @@ end
 out_param = rmfield(out_param,'exit');
 out_param.time=toc(t_start);
 
+numofS=out_param.n;
+time=out_param.time;
 end
 
 
@@ -870,6 +875,8 @@ else % using control variates, checking mu
             'f.cv should be numerical values');
     end
 end
+
+cv.J=0;
 
 % display('#######################');
 % display('FuncCount');
