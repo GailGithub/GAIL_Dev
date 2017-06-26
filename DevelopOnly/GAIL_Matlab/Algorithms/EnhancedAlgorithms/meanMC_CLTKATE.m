@@ -139,10 +139,9 @@ mean_out.std = std(YY); %standard deviation of the samples
 sig0up = mean_out.inflate .* mean_out.std; %upper bound on the standard deviation
 hmu0 = mean(YY); % mean of the samples
 
-
 nmu = max(1,ceil((-gail.stdnorminv(mean_out.alpha/2)*sig0up ...
    /max(mean_out.absTol,mean_out.relTol*abs(hmu0))).^2)); 
-   %number of samples needed for mean
+   %number of samples needed for the error tolerance
 if nmu > mean_out.nMax %don't exceed sample budget
    warning(['The algorithm wants to use nmu = ' int2str(nmu) ...
       ', which is too big. Using ' int2str(mean_out.nMax) ' instead.']) 
