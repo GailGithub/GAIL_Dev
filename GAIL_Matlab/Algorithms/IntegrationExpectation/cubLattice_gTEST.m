@@ -37,7 +37,6 @@ fprintf(['The price of the Asian geometric mean call option using IID ' ...
    'sampling is \n   $%3.3f +/- $%2.3f and this took %10.0f paths and %3.6f seconds\n'], ...
    AMeanCallIIDPrice,AMeanCallIID.priceParam.absTol,AoutIID.nPaths,AoutIID.time)
 
-
 %% Sobol' Sampling with Control Variates
 % We can use control variates with Sobol' and lattice sampling, but it is a
 % bit different than for IID sampling.  Here is an example.
@@ -64,7 +63,7 @@ AMeanCallLatticeCV.payoffParam = struct( ...
     'putCallType',{{'call','call'}});  %both calls
 AMeanCallLatticeCV.priceParam.cubMethod = 'LatticeCV'; %change method to use control variates
 pointsLatticeCV(1,numIter) = 0;
-for n= 1:numIter
+for n= 1:2
     gail.TakeNote(n,10)
     [AMeanCallLatticeCVPrice,AoutLatticeCV] = genOptPrice(AMeanCallLatticeCV);    
     pointsLatticeCV(n) = AMeanCallLatticeCVPrice;
