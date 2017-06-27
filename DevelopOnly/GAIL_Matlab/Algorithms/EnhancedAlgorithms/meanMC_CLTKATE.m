@@ -1,7 +1,7 @@
 function [hmu,mean_out]=meanMC_CLTKATE(varargin)
 %MEANMC_CLT Monte Carlo method to estimate the mean of a random variable
 %
-%   tmu = MEANMC_CLT(Yrand,absTol,relTol,alpha,nSig,inflate) estimates the
+%   tmu = MEANMC_CLT(Y,absTol,relTol,alpha,nSig,inflate) estimates the
 %   mean, mu, of a random variable Y to within a specified error tolerance,
 %   i.e., | mu - tmu | <= max(absTol,relTol|mu|) with probability at least
 %   1-alpha, where abstol is the absolute error tolerance.  The default
@@ -11,7 +11,7 @@ function [hmu,mean_out]=meanMC_CLTKATE(varargin)
 %
 %   Input Arguments
 %
-%     Yrand --- the function or structure for generating n IID instances of a random
+%     Y --- the function or structure for generating n IID instances of a random
 %     variable Y whose mean we want to estimate. Y is often defined as a
 %     function of some random variable X with a simple distribution. The
 %     input of Yrand should be the number of random variables n, the output
@@ -64,6 +64,10 @@ function [hmu,mean_out]=meanMC_CLTKATE(varargin)
 %      nSample: ***
 %         time: ***
 %
+%
+
+
+
 % Example 1:
 % Estimate the integral with integrand f(x) = x1.*x2 in the interval [0,1)^2 with absolute 
 % tolerance 1e-5 and relative tolerence 0:
@@ -73,9 +77,13 @@ function [hmu,mean_out]=meanMC_CLTKATE(varargin)
 % >> check = abs(exactsol-q) < 1e-5
 % check = 1
 %
+%
+
+
+
 % Example 2:
 % Estimate the integral with integrand f(x) = x1.^3.*x2.^3.*x3.^3
-% in the interval [0,1)^3 with pure absolute error 1e-5 using x1.*x2.*x3 as control variate:
+% in the interval [0,1)^3 with pure absolute error 1e-3 using x1.*x2.*x3 as control variate:
 % 
 % >> f=@(x) [x(:,1).^3.*x(:,2).^3.*x(:,3).^3, x(:,1).*x(:,2).*x(:,3)];
 % >> s=struct('Y',@(n)f(rand(n,3)),'nY',1,'trueMuCV',1/8)
@@ -102,7 +110,9 @@ function [hmu,mean_out]=meanMC_CLTKATE(varargin)
 % >> f2=@(t)[f1(t,1,1),f1(t,1/sqrt(2),1),cos(t)];
 % >> YXn=@(n)f2(randn(n,1));
 % >> s=struct('Y',YXn,'nY',2,'trueMuCV',1/sqrt(exp(1)))
-% >> [hmu,mean_out]=meanMC_CLTKATE(s,0,1e-3); 
+% >> [hmu,mean_out]=meanMC_CLTKATE(s,0,1e-3); exactsol=1.380388447043143;
+% >>  abs(exactsol-hmu) < max(0,1e-3*abs(exactsol))
+
 
 
 
@@ -113,7 +123,7 @@ tstart = tic; %start the clock
 mean_inp = gail.meanYParam(varargin{:}); %parse the input and check it for errors
 mean_out = gail.meanYOut(mean_inp); %create the output class
 Yrand=mean_out.Y; %the random number generator
-q=mean_out.nY; %the number of target random varaibles 
+q=mean_out.nY; %the number of target random variable 
 p=mean_out.nCV; %the number of control variates
 xmean=mean_out.trueMuCV; %the mean of the control variates
 
@@ -123,18 +133,17 @@ if p==0 && q==1
     
 else
 %if there is control variate, construct a new random variable that has the
-%same expected value by taking contrained linear combination of control
-%variates and target functions
+%same expected value and smaller variance
         meanVal=mean(val); %the mean of each column
         A=bsxfun(@minus, val, meanVal); %covariance matrix of the samples
         [U,S,V]=svd([A; [ones(1,q) zeros(1,p)] ],0); %use SVD to solve a constrained least square problem
         Sdiag = diag(S); %the vector of the single values
         U2=U(end,:); %last row of U
-        beta=V*(U2'/(U2*U2')./Sdiag); %get the coefficient for the linear combination
+        beta=V*(U2'/(U2*U2')./Sdiag); %get the coefficient for control variates
         YY = [val(:,1:q) A(:,q+1:end)] * beta; %get samples of the new random variable 
 end
 
-mean_out.std = std(YY); %standard deviation of the samples
+mean_out.std = std(YY); %standard deviation of the new samples
 
 sig0up = mean_out.inflate .* mean_out.std; %upper bound on the standard deviation
 hmu0 = mean(YY); % mean of the samples
