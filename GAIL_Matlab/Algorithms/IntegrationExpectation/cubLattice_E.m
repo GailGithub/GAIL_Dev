@@ -359,8 +359,6 @@ t_start = tic;
 r_lag = 4; %distance between coefficients summed and those computed
 [f,hyperbox,out_param, cv] = cubLattice_g_param(r_lag,varargin{:});
 
-%display(out_param);
-
 %------------------------------------------------------------------------------
 % TRANSFORMATION
 %changing the integrand and the hyperbox when measure is uniform ball or
@@ -518,6 +516,7 @@ Sdiag = diag(S);
 U2=U(end,:);
 H=U2'/(U2*U2');
 beta=V*(H./Sdiag);
+beta=real(beta);
 
 meanX=meanVal(:,out_param.FuncCount+1:end);
 meanX=[zeros(out_param.FuncCount,1); meanX'];
@@ -594,7 +593,7 @@ end
 
 %% Loop over m
 for m=out_param.mmin+1:out_param.mmax
-    if is_done || out_param.n>=1000,
+    if is_done
         break;
     end
     
@@ -850,14 +849,11 @@ else
     f_addParamVal = @addParamValue;
 end
 
-
-
 % get the number of control variates and number of functions
 if ~isstruct(f) %  not using control variates
     cv.J = 0;
     Temp=size(f(1));
     default.FuncCount=Temp(:,2)
-    
 else % using control variates, checking mu
     if isnumeric(f.cv)
         cv.J = size(f.cv,2);
@@ -869,14 +865,11 @@ else % using control variates, checking mu
         totSize=temp(:,2);
         
         default.FuncCount=totSize-cv.J;
-        
     else
         warning('GAIL:cubLattice_g:controlvariates_error1',...
             'f.cv should be numerical values');
     end
 end
-
-cv.J=0;
 
 % display('#######################');
 % display('FuncCount');
@@ -1110,19 +1103,19 @@ end
 if (strcmp(out_param.measure,'uniform')) && ~all(all(isfinite(hyperbox)))
     warning('GAIL:cubLattice_g:hyperboxnotfinite',['If uniform measure, hyperbox must be of finite volume.' ...
         ' Using default hyperbox:'])
-    disp([zeros(1,out_param.d);ones(1,out_param.d)])
+    %disp([zeros(1,out_param.d);ones(1,out_param.d)])
     hyperbox = [zeros(1,out_param.d);ones(1,out_param.d)];
 end
 if (strcmp(out_param.measure,'normal')) && (any(any(isfinite(hyperbox)))>0)
     warning('GAIL:cubLattice_g:hyperboxfinite',['If normal measure, hyperbox must be defined as (-Inf,Inf)^d.' ...
         ' Using default hyperbox:'])
-    disp([-inf*ones(1,out_param.d);inf*ones(1,out_param.d)])
+    %disp([-inf*ones(1,out_param.d);inf*ones(1,out_param.d)])
     hyperbox = [-inf*ones(1,out_param.d);inf*ones(1,out_param.d)];
 end
 if (strcmp(out_param.measure,'normal')) && (any(hyperbox(1,:)==hyperbox(2,:)) || any(hyperbox(1,:)>hyperbox(2,:)))
     warning('GAIL:cubLattice_g:hyperboxnormalwrong',['If normal measure, hyperbox must be defined as (-Inf,Inf)^d.' ...
         ' Using default hyperbox:'])
-    disp([-inf*ones(1,out_param.d);inf*ones(1,out_param.d)])
+    %disp([-inf*ones(1,out_param.d);inf*ones(1,out_param.d)])
     hyperbox = [-inf*ones(1,out_param.d);inf*ones(1,out_param.d)];
 end
 if (strcmp(out_param.measure,'uniform ball') || strcmp(out_param.measure,'uniform sphere'))...
@@ -1134,7 +1127,4 @@ if (strcmp(out_param.measure,'uniform ball') || strcmp(out_param.measure,'unifor
     % computed, whih may be different from the dimesion of the sphere
     hyperbox = zeros(1,size(hyperbox,2));
 end
-
-
-
 end
