@@ -4,11 +4,10 @@ function [Q,out_param] = cubMC_g(varargin)
 %   [Q,out_param] = CUBMC_G(f,hyperbox) estimates the integral of f over
 %   hyperbox to within a specified generalized error tolerance, tolfun =
 %   max(abstol, reltol*| I |), i.e., | I - Q | <= tolfun with probability
-%   at least 1-alpha, where abstol is the absolute error tolerance, and
+%   at least (1 - alpha), where abstol is the absolute error tolerance, and
 %   reltol is the relative error tolerance. Usually the reltol determines
-%   the accuracy of the estimation, however, if the | I | is rather small,
-%   the abstol determines the accuracy of the estimation. The default
-%   values are abstol=1e-2, reltol=1e-1, and alpha=1%. Input f is a
+%   the accuracy of the estimation, however, if | I | is rather small,
+%   then abstol determines the accuracy of the estimation. Input f is a
 %   function handle that accepts an n x d matrix input, where d is the
 %   dimension of the hyperbox, and n is the number of points being
 %   evaluated simultaneously. When measure is 'uniform', 'uniform box',
@@ -103,7 +102,9 @@ function [Q,out_param] = cubMC_g(varargin)
 % 
 %     out_param.n --- the sample size used in each iteration.
 %
-%     out_param.ntot --- total sample used.
+%     out_param.ntot --- total sample used, including the sample used to
+%     convert time budget to sample budget and the sample in each iteration
+%     step.
 %
 %     out_param.nremain --- the remaining sample budget to estimate I. It was
 %     calculated by the sample left and time left.
@@ -277,7 +278,7 @@ function [Q,out_param] = cubMC_g(varargin)
 %   If you find GAIL helpful in your work, please support us by citing the
 %   above papers, software, and materials.
 %
-%   Authors:  Lan Jiang, Felipe Sousa de Andrade
+%   Author:  Lan Jiang
 
 tstart=tic;
 [f,hyperbox,out_param] = cubMC_g_param(varargin{:});%check validity of inputs
