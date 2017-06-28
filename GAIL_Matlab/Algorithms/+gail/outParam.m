@@ -4,8 +4,9 @@ classdef outParam < handle
    %   computation
    
    properties
-      nSample = 0%total sample size
-      time = 0%time required for computation
+      nSample = 0 %total sample size
+      time = 0 %time required for computation
+      errBd
    end
       
    methods
@@ -20,7 +21,11 @@ classdef outParam < handle
          obj.time = val;
       end                     
      
-      
+      function set.errBd(obj,val)
+         validateattributes(val, {'numeric'}, {'scalar','nonnegative'})
+         obj.errBd = val;
+      end                    
+     
    end
    
 end

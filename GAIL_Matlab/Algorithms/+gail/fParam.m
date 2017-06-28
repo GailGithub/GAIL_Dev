@@ -10,15 +10,8 @@ classdef fParam < gail.errorParam
    % 
    %              f: @(x)sum(x.^2,2)
    %         domain: [2×1 double]
-   %     domainType: 'box'
-   %          nInit: 100
-   %           nMax: 10000000
-   %              d: 1
-   %          nfOut: 1
    %         absTol: 0.010000000000000
    %         relTol: 0
-   %         solFun: @(mu)mu
-   %       solBdFun: @(muhat,errbd)[muhat-errbd,muhat+errbd]
    %
    %
    % Example 2. Function on 2-D unit cube
@@ -28,15 +21,8 @@ classdef fParam < gail.errorParam
    % 
    %              f: @(x)sum(x.^3.2)
    %         domain: [2×2 double]
-   %     domainType: 'box'
-   %          nInit: 100
-   %           nMax: 10000000
-   %              d: 2
-   %          nfOut: 1
    %         absTol: 0.010000000000000
    %         relTol: 0
-   %         solFun: @(mu)mu
-   %       solBdFun: @(muhat,errbd)[muhat-errbd,muhat+errbd]
    % 
    %
    % Example 3. Ball domain
@@ -47,14 +33,8 @@ classdef fParam < gail.errorParam
    %              f: @(x)sum(x.^3.2)
    %         domain: [2×2 double]
    %     domainType: 'ball'
-   %          nInit: 100
-   %           nMax: 10000000
-   %              d: 2
-   %          nfOut: 1
    %         absTol: 0.010000000000000
    %         relTol: 0
-   %         solFun: @(mu)mu
-   %       solBdFun: @(muhat,errbd)[muhat-errbd,muhat+errbd]
    %
    %
    % Example 4. Using name/value pairs
@@ -64,15 +44,8 @@ classdef fParam < gail.errorParam
    % 
    %              f: @(x)sum(x.^3.2)
    %         domain: [2×2 double]
-   %     domainType: 'box'
-   %          nInit: 100
-   %           nMax: 10000000
-   %              d: 2
-   %          nfOut: 1
    %         absTol: 0.010000000000000
    %         relTol: 0.100000000000000
-   %         solFun: @(mu)mu
-   %       solBdFun: @(muhat,errbd)[muhat-errbd,muhat+errbd]
    % 
    %
    % Example 5. Using structure for input
@@ -85,15 +58,8 @@ classdef fParam < gail.errorParam
    % 
    %              f: @(x)sin(sum(x,2))
    %         domain: [2×4 double]
-   %     domainType: 'box'
-   %          nInit: 100
-   %           nMax: 10000000
-   %              d: 4
-   %          nfOut: 1
    %         absTol: 0.010000000000000
    %         relTol: 0.100000000000000
-   %         solFun: @(mu)mu
-   %       solBdFun: @(muhat,errbd)[muhat-errbd,muhat+errbd]
    %
    %   
    % Example 6. Using structure for input and numbers, structure takes
@@ -107,15 +73,8 @@ classdef fParam < gail.errorParam
    % 
    %              f: @(x)sin(sum(x,2))
    %         domain: [2×4 double]
-   %     domainType: 'box'
-   %          nInit: 100
-   %           nMax: 10000000
-   %              d: 4
-   %          nfOut: 1
    %         absTol: 1.000000000000000e-04
    %         relTol: 0.100000000000000
-   %         solFun: @(mu)mu
-   %       solBdFun: @(muhat,errbd)[muhat-errbd,muhat+errbd]
    %
    %   
    % Example 7. Coping an fParam object and changing properties
@@ -126,14 +85,8 @@ classdef fParam < gail.errorParam
    %              f: @(x)sin(sum(x,2))
    %         domain: [2×4 double]
    %     domainType: 'sphere'
-   %          nInit: 100
-   %           nMax: 10000000
-   %              d: 4
-   %          nfOut: 1
    %         absTol: 1.000000000000000e-04
    %         relTol: 0.100000000000000
-   %         solFun: @(mu)mu
-   %       solBdFun: @(muhat,errbd)[muhat-errbd,muhat+errbd]
    %
    %   
    % Author:  Fred J. Hickernell
@@ -352,7 +305,23 @@ classdef fParam < gail.errorParam
          assert(any(strcmp(inval,obj.allowedDomains)))
       end
          
-   end
+      function propList = getPropertyList(obj)
+         propList = struct('f', obj.f, ...
+            'domain', obj.domain);
+         if ~strcmp(obj.domainType,obj.def_domainType)
+            propList.domainType = obj.domainType;
+         end
+         propList.absTol = obj.absTol;
+         propList.relTol = obj.relTol;
+         if obj.nInit ~= obj.def_nInit
+            propList.nInit = obj.nInit;
+         end
+         if obj.nMax ~= obj.def_nMax
+            propList.nMax = obj.nMax;
+         end
+
+      end
+  end
 
    
    
