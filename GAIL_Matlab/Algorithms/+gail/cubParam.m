@@ -327,6 +327,15 @@ classdef cubParam < gail.fParam
          if obj.nMax ~= obj.def_nMax
             propList.nMax = obj.nMax;
          end
+         if obj.nMu ~= obj.def_nMu
+            propList.nMu = obj.nMu;
+         end
+         if obj.nf ~= obj.def_nf
+            propList.nf= obj.nf;
+         end
+         if numel(obj.trueMuCV)
+            propList.trueMuCV = obj.trueMuCV;
+         end
       end
 
    end
