@@ -302,7 +302,7 @@ classdef meanYParam < gail.errorParam
          if obj.nY ~= obj.def_nY
             propList.nY = obj.nY;
          end
-         if obj.trueMuCV ~= obj.def_trueMuCV
+         if numel(obj.trueMuCV)
             propList.trueMuCV = obj.trueMuCV;
          end
 
