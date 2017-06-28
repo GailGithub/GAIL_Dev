@@ -159,9 +159,9 @@ else
         YY = [val(:,1:q) A(:,q+1:end)] * beta; %get samples of the new random variable 
 end
 
-out.std = std(YY); %standard deviation of the new samples
+out.stddev = std(YY); %standard deviation of the new samples
 
-sig0up = out.inflate .* out.std; %upper bound on the standard deviation
+sig0up = out.inflate .* out.stddev; %upper bound on the standard deviation
 hmu0 = mean(YY); %mean of the samples
 
 nmu = max(1,ceil((-gail.stdnorminv(out.alpha/2)*sig0up ...
