@@ -8,29 +8,22 @@ classdef meanYOut < gail.meanYParam & gail.outParam
    % >> meanParamObj = gail.meanYParam; %an input object
    % >> meanOutObj = gail.meanYOut(meanParamObj); %copied to becom an output object
    % >> meanOutObj.mu = 1.467; %integral value is recorded
+   % >> meanOutObj.stddev = 1.23; %standard deviation is recorded
    % >> meanOutObj.nSample = 31415926; %sample size is recorded
-   % >> meanOutObj.time = 0.0278 %time of computation is recorded
+   % >> meanOutObj.time = 0.0278; %time of computation is recorded
+   % >> meanOutObj.errBd = 0.000456 %error bound is recorded
    % meanOutObj = 
    %   meanYOut with properties:
    % 
-   %           mu: 1.467000000000000
-   %          std: []
-   %            Y: @(n)rand(n,1)
-   %        alpha: 0.010000000000000
-   %         nSig: 1000
-   %      inflate: 1.200000000000000
-   %         nMax: 100000000
-   %          nMu: 1
-   %           nY: 1
-   %     trueMuCV: [1×0 double]
-   %          nCV: 0
-   %        nYOut: 1
-   %       absTol: 0.010000000000000
-   %       relTol: 0
-   %       solFun: @(mu)mu
-   %     solBdFun: @(muhat,errbd)[muhat-errbd,muhat+errbd]
-   %      nSample: 31415926
-   %         time: 0.027800000000000
+   %           Y: @(n)rand(n,1)
+   %      absTol: 0.010000000000000
+   %      relTol: 0
+   %       alpha: 0.010000000000000
+   %          mu: 1.467000000000000
+   %      stddev: 1.230000000000000
+   %     nSample: 31415926
+   %        time: 0.027800000000000
+   %       errBd: 4.560000000000000e-04
    %
    %
    % Author: Fred J. Hickernell
@@ -38,7 +31,7 @@ classdef meanYOut < gail.meanYParam & gail.outParam
    
    properties
       mu %approximation to the mean
-      std %sample standard deviation of the random variable
+      stddev %sample standard deviation of the random variable
    end
    
    properties (Hidden, SetAccess = private)
@@ -60,12 +53,24 @@ classdef meanYOut < gail.meanYParam & gail.outParam
          obj.mu = val;
       end                    
      
-      function set.std(obj,val)
+      function set.stddev(obj,val)
          validateattributes(val, {'numeric'}, {'scalar','nonnegative'})
-         obj.std = val;
+         obj.stddev = val;
       end                    
-     
+          
       
+   end
+   
+   methods (Access = protected)
+   
+         function propList = getPropertyList(obj)
+         propList = getPropertyList@gail.meanYParam(obj);
+         propList.mu = obj.mu;
+         propList.stddev = obj.stddev;
+         propList.nSample = obj.nSample;
+         propList.time = obj.time;
+         propList.errBd = obj.errBd;
+         end
    end
    
 end

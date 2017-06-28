@@ -12,26 +12,12 @@ classdef cubOut < gail.cubParam & gail.outParam
    % cubOutObj = 
    %   cubOut with properties:
    % 
-   %             mu: 1.467000000000000
-   %        measure: 'uniform'
-   %       trueMuCV: [1×0 double]
-   %            nMu: 1
-   %             nf: 1
-   %        inflate: @(m)5*2^-m
-   %             ff: @(x)sum(x.^2,2)
-   %            nCV: 0
-   %         volume: 1
    %              f: @(x)sum(x.^2,2)
    %         domain: [2×1 double]
-   %     domainType: 'box'
-   %          nInit: 100
-   %           nMax: 10000000
-   %              d: 1
-   %          nfOut: 1
+   %        measure: 'uniform'
    %         absTol: 0.010000000000000
    %         relTol: 0
-   %         solFun: @(mu)mu
-   %       solBdFun: @(muhat,errbd)[muhat-errbd,muhat+errbd]
+   %             mu: 1.467000000000000
    %        nSample: 31415926
    %           time: 0.027800000000000
    %
@@ -47,7 +33,7 @@ classdef cubOut < gail.cubParam & gail.outParam
    
    methods
       
-      % Creating a meanYParam process
+      % Creating a cubOut process
       function obj = cubOut(val)
          %this constructor essentially parses inputs
          %the parser will look for a meanYParam object
@@ -62,6 +48,17 @@ classdef cubOut < gail.cubParam & gail.outParam
       end     
       
    end
+
+    methods (Access = protected)
    
+         function propList = getPropertyList(obj)
+         propList = getPropertyList@gail.cubParam(obj);
+         propList.mu = obj.mu;
+         propList.nSample = obj.nSample;
+         propList.time = obj.time;
+         propList.errBd = obj.errBd;
+         end
+   end
+
 end
 
