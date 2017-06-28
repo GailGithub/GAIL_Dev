@@ -9,19 +9,9 @@ classdef meanYParam < gail.errorParam
    %   meanYParam with properties:
    % 
    %            Y: @(n)rand(n,1)
-   %        alpha: 0.010000000000000
-   %         nSig: 1000
-   %      inflate: 1.200000000000000
-   %         nMax: 100000000
-   %          nMu: 1
-   %           nY: 1
-   %     trueMuCV: [1×0 double]
-   %          nCV: 0
-   %        nYOut: 1
    %       absTol: 0.010000000000000
    %       relTol: 0
-   %       solFun: @(mu)mu
-   %     solBdFun: @(muhat,errbd)[muhat-errbd,muhat+errbd]
+   %        alpha: 0.010000000000000
    %
    %
    % Example 2. Construct a cubParam object with properly ordered inputs
@@ -30,64 +20,36 @@ classdef meanYParam < gail.errorParam
    %   meanYParam with properties:
    % 
    %            Y: @(n)sum(rand(n,4).^3,2)
-   %        alpha: 0.010000000000000
-   %         nSig: 1000
-   %      inflate: 1.200000000000000
-   %         nMax: 100000000
-   %          nMu: 1
-   %           nY: 1
-   %     trueMuCV: [1×0 double]
-   %          nCV: 0
-   %        nYOut: 1
    %       absTol: 1.000000000000000e-03
    %       relTol: 0
-   %       solFun: @(mu)mu
-   %     solBdFun: @(muhat,errbd)[muhat-errbd,muhat+errbd]
+   %        alpha: 0.010000000000000
    %
    %
    % Example 3. Using name/value pairs
-   % >> meanYParamObj = gail.meanYParam('nSig', 1e4, 'Y', @(x) sin(sum(x.^3,2)), 'relTol', 0.1)
+   % >> meanYParamObj = gail.meanYParam('nSig', 1e4, 'Y', @(n)sin(sum(rand(n,4).^3,2)), 'relTol', 0.1)
    % meanYParamObj = 
    %   meanYParam with properties:
    % 
-   %            Y: @(x)sin(sum(x.^3,2))
-   %        alpha: 0.010000000000000
-   %         nSig: 10000
-   %      inflate: 1.200000000000000
-   %         nMax: 100000000
-   %          nMu: 1
-   %           nY: 1
-   %     trueMuCV: [1×0 double]
-   %          nCV: 0
-   %        nYOut: 1
+   %            Y: @(n)sin(sum(rand(n,4).^3,2))
    %       absTol: 0.010000000000000
    %       relTol: 0.100000000000000
-   %       solFun: @(mu)mu
-   %     solBdFun: @(muhat,errbd)[muhat-errbd,muhat+errbd]
+   %        alpha: 0.010000000000000
+   %         nSig: 10000
    %
    %
    % Example 4. Using a structure for input
-   % >> inpStruct.Y = @(x) sin(sum(x,2));
+   % >> inpStruct.Y = @(n) sin(sum(rand(n,2),2));
    % >> inpStruct.nSig = 1e4;
    % >> inpStruct.relTol = 0.1;
    % >> meanYParamObj = gail.meanYParam(inpStruct)
    % meanYParamObj = 
    %   meanYParam with properties:
    % 
-   %            Y: @(x)sin(sum(x,2))
-   %        alpha: 0.010000000000000
-   %         nSig: 10000
-   %      inflate: 1.200000000000000
-   %         nMax: 100000000
-   %          nMu: 1
-   %           nY: 1
-   %     trueMuCV: [1×0 double]
-   %          nCV: 0
-   %        nYOut: 1
+   %            Y: @(n)sin(sum(rand(n,2),2))
    %       absTol: 0.010000000000000
    %       relTol: 0.100000000000000
-   %       solFun: @(mu)mu
-   %     solBdFun: @(muhat,errbd)[muhat-errbd,muhat+errbd]
+   %        alpha: 0.010000000000000
+   %         nSig: 10000
    %
    %
    % Example 5. Copying a meanYParam object and changing some properties
@@ -96,19 +58,10 @@ classdef meanYParam < gail.errorParam
    %   meanYParam with properties:
    % 
    %            Y: @(n)rand(n,3)
-   %        alpha: 0.010000000000000
-   %         nSig: 10000
-   %      inflate: 1.200000000000000
-   %         nMax: 100000000
-   %          nMu: 1
-   %           nY: 1
-   %     trueMuCV: [1×0 double]
-   %          nCV: 2
-   %        nYOut: 3
    %       absTol: 0.010000000000000
    %       relTol: 0.100000000000000
-   %       solFun: @(mu)mu
-   %     solBdFun: @(muhat,errbd)[muhat-errbd,muhat+errbd]
+   %        alpha: 0.010000000000000
+   %         nSig: 10000
    %
    %
    % Author: Fred J. Hickernell
@@ -329,9 +282,34 @@ classdef meanYParam < gail.errorParam
          outval = inval(:)';
       end
    
-   end
+      function propList = getPropertyList(obj)
+         propList = struct('Y', obj.Y, ...
+            'absTol', obj.absTol, ...
+            'relTol', obj.relTol, ...
+            'alpha', obj.alpha);
+         if obj.nSig ~= obj.def_nSig
+            propList.nSig = obj.nSig;
+         end
+         if obj.inflate ~= obj.inflate
+            propList.inflate = obj.inflate;
+         end
+         if obj.nMax ~= obj.def_nMax
+            propList.nMax = obj.nMax;
+         end
+         if obj.nMu ~= obj.def_nMu
+            propList.nMu = obj.nMu;
+         end
+         if obj.nY ~= obj.def_nY
+            propList.nY = obj.nY;
+         end
+         if numel(obj.trueMuCV)
+            propList.trueMuCV = obj.trueMuCV;
+         end
 
-   
+      end
+      
+   end
+ 
    
 end
 
