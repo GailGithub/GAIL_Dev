@@ -1,13 +1,13 @@
-classdef cubLatticeParam < gail.cubParam
-   %GAIL.CUBPARAM is a class containing the parameters related to
+classdef cubBayesLatticeParam < gail.cubLatticeParam
+   %GAIL.CUBBAYESLATTICEPARAM is a class containing the parameters related to
    %algorithms that find the mean of a random variable
    %   This class contains the number of integrands with the same integral,
    %   etc.
    %
    % Example 1. Construct a cubParam object with default parameters
-   % >> cubParamObj = gail.cubParam
-   % cubParamObj = 
-   %   cubParam with properties:
+   % >> cubBayesLatticeParamObj = gail.cubBayesLatticeParam
+   % cubBayesLatticeParamObj = 
+   %   cubBayesLatticeParam with properties:
    % 
    %              f: @(x)sum(x.^2,2)
    %         domain: [2×1 double]
@@ -17,63 +17,63 @@ classdef cubLatticeParam < gail.cubParam
    %
    %
    % Example 2. Construct a cubParam object with properly ordered inputs
-   % >> cubParamObj = gail.cubParam(@(x) sum(x.^3.2),[0 0; 2 2],'box','Lebesgue')
-   % cubParamObj = 
-   %   cubParam with properties:
+   % >> cubBayesLatticeParamObj = gail.cubBayesLatticeParam(@(x) sum(x.^3.2),[0 0; 2 2])
+   % cubBayesLatticeParamObj = 
+   %   cubBayesLatticeParam with properties:
    % 
    %              f: @(x)sum(x.^3.2)
    %         domain: [2×2 double]
-   %        measure: 'Lebesgue'
+   %        measure: 'uniform'
    %         absTol: 0.010000000000000
    %         relTol: 0
    %
    %
    % Example 3. Using name/value pairs
-   % >> cubParamObj = gail.cubParam('domain', [-Inf -Inf; Inf Inf], 'f', @(x) sum(x.^3.2), 'relTol', 0.1, 'measure', 'Gaussian')
-   % cubParamObj = 
-   %   cubParam with properties:
+   % >> cubBayesLatticeParamObj = gail.cubBayesLatticeParam('domain', [0 0; 1 1], 'f', @(x) sum(x.^3.2), 'relTol', 0.1,'kerName','Ber4')
+   % cubBayesLatticeParamObj = 
+   %   cubBayesLatticeParam with properties:
    % 
    %              f: @(x)sum(x.^3.2)
    %         domain: [2×2 double]
-   %        measure: 'normal'
+   %        measure: 'uniform'
    %         absTol: 0.010000000000000
    %         relTol: 0.100000000000000
+   %        kerName: 'Ber4'
    %
    %
    % Example 4. Using a structure for input
    % >> inpStruct.f = @(x) sin(sum(x,2));
    % >> inpStruct.domain = [zeros(1,4); ones(1,4)];
-   % >> inpStruct.nInit = 1000;
-   % >> cubParamObj = gail.cubParam(inpStruct)
-   % cubParamObj = 
-   %   cubParam with properties:
+   % >> inpStruct.kerName = 'Ber4';
+   % >> cubBayesLatticeParamObj = gail.cubBayesLatticeParam(inpStruct)
+   % cubBayesLatticeParamObj = 
+   %   cubBayesLatticeParam with properties:
    % 
    %              f: @(x)sin(sum(x,2))
    %         domain: [2×4 double]
    %        measure: 'uniform'
    %         absTol: 0.010000000000000
    %         relTol: 0
+   %        kerName: 'Ber4'
    %
    %
    % Example 5. Copying a cubParam object and changing some properties
-   % >> NewCubParamObj = gail.cubParam(cubParamObj,'measure','Lebesgue')
-   % NewCubParamObj = 
-   %   cubParam with properties:
+   % >> NewCubBayesLatticeParamObj = gail.cubBayesLatticeParam(cubBayesLatticeParamObj,'GPMean',0)
+   % NewCubBayesLatticeParamObj = 
+   %   cubBayesLatticeParam with properties:
    % 
    %              f: @(x)sin(sum(x,2))
    %         domain: [2×4 double]
-   %        measure: 'Lebesgue'
+   %        measure: 'uniform'
    %         absTol: 0.010000000000000
    %         relTol: 0
-   %          nInit: 1000
+   %        kerName: 'Ber4'
+   %         GPMean: 0
    %
    %
-
-   
    % Author: Fred J. Hickernell
    
    properties
-      periodTransName %periodizing transformation
       kerName %name of kernel function used for Bayesian cubature
       GPMean %value of the Gaussian process mean
    end
@@ -83,18 +83,15 @@ classdef cubLatticeParam < gail.cubParam
     end
    
    properties (Hidden, SetAccess = private)
-      def_periodTransName = 'tent' %periodizing transformation
-      allowedMeasures = {'uniform', ... %over a hyperbox volume of domain is one
-         'Lebesgue', ... %like uniform, but integral over domain is the volume of the domain
-         'Gaussian', 'normal' ... %these are the same
-         }
+      def_kerName = 'Ber2' %periodizing transformation
+      def_GPMean = [];
    end
    
    
    methods
       
-      % Creating a cubParam process
-      function obj = cubParam(varargin)
+      % Creating a cubBayesLatticeParam process
+      function obj = cubBayesLatticeParam(varargin)
          %this constructor essentially parses inputs
          %the parser will look for the following in order
          %  # a copy of a cubParam object
@@ -108,13 +105,9 @@ classdef cubLatticeParam < gail.cubParam
          start = 1; %index to begin to parse
          useDefaults = true; %true unless copying an fParam object, then false
          objInp = 0; %where is the an object in the class
-         fInp = 0; %where is the input function
-         domainInp = 0; %where is the domain
-         domainTypeInp = 0; %where is the domain type
-         measureInp = 0; %where is the integration measure
          structInp = 0; %where is the structure
          if nargin %there are inputs to parse and assign
-            if isa(varargin{start},'gail.cubParam') 
+            if isa(varargin{start},'gail.cubBayesLatticeParam') 
                %the first input is a meanYParam object so copy it
                objInp = start;
                start = start + 1;
@@ -125,46 +118,18 @@ classdef cubLatticeParam < gail.cubParam
                   start = start + 1;
                end
             end
-            if nargin >= start
-               if gail.isfcn(varargin{start}) %next input is the function f
-                  fInp = start;
-                  start = start + 1;
-                  if nargin >= start
-                     if ismatrix(varargin{start}) && numel(varargin{start}) > 1
-                        %next input is the domain
-                        domainInp = start;
-                        start = start+1;
-                        if nargin >= start 
-                           if ischar(varargin{start}) %next imput is domain type
-                              domainTypeInp = start;
-                              start = start+ 1;
-                              if nargin >= start
-                                 if ischar(varargin{start}) %next input is meaure
-                                    measureInp = start;
-                                    start = start + 1;
-                                 end
-                              end
-                           end
-                        end
-                     end
-                  end
-               end
-            end
          end
          
          %Parse errorParam properties
-         whichParse = [objInp fInp domainInp domainTypeInp structInp start:nargin];
+         whichParse = [objInp structInp start:nargin];
          whichParse = whichParse(whichParse > 0);
-         obj@gail.fParam(varargin{whichParse});
+         obj@gail.cubLatticeParam(varargin{whichParse});
 
          if objInp
             val = varargin{objInp}; %first input
-            obj.measure = val.measure; %copy integration measure
-            obj.inflate = val.inflate; %copy inflation factor
-            obj.nMu = val.nMu; %copy the number of integrals
-            obj.nf = val.nf; %copy number of functions for each integral
-            obj.trueMuCV = val.trueMuCV; %copy true means of control variates
-            useDefaults = true;
+            obj.kerName = val.kerName; %copy kernel name
+            obj.GPMean = val.GPMean; %Gaussian process mean
+            useDefaults = false;
          end
 
          %Now begin to parse inputs
@@ -188,15 +153,10 @@ classdef cubLatticeParam < gail.cubParam
          end
          if ~done %then nothingleft or just numbers
             f_addParamVal = @addOptional;
-            parseRange = (start + 2):nargin; %to account for the two tolerances already parsed
+            parseRange = []; %to account for the two tolerances already parsed
          end
-         if ~measureInp
-            f_addParamVal(p,'measure',obj.def_measure);
-         end
-         f_addParamVal(p,'trueMuCV',obj.def_trueMuCV);
-         f_addParamVal(p,'nMu',obj.def_nMu);
-         f_addParamVal(p,'nf',obj.def_nf);
-         f_addParamVal(p,'inflate',obj.def_inflate);
+         f_addParamVal(p,'kerName',obj.def_kerName);
+         f_addParamVal(p,'GPMean',obj.def_GPMean);
          
          if structInp
             parse(p,varargin{parseRange},varargin{structInp}) 
@@ -210,126 +170,45 @@ classdef cubLatticeParam < gail.cubParam
          end
          
          %Assign values of structure to corresponding class properties
-         if measureInp
-            obj.measure = varargin{measureInp}; %assign measure
-         elseif isfield(struct_val,'measure')
-            obj.measure = struct_val.measure;
+         if isfield(struct_val,'kerName')
+            obj.kerName = struct_val.kerName;
          end
-         if isfield(struct_val,'inflate')
-            obj.inflate = struct_val.inflate;
+         if isfield(struct_val,'GPMean')         
+            obj.GPMean = struct_val.GPMean;
          end
-         if isfield(struct_val,'nMu')         
-            obj.nMu = struct_val.nMu;
-         end
-         if isfield(struct_val,'nf')         
-            obj.nf = struct_val.nf;
-         end
-         if isfield(struct_val,'trueMuCV')         
-            obj.trueMuCV = struct_val.trueMuCV;
-         end        
        
       end %of constructor
      
-      function set.measure(obj,val)
+      function set.kerName(obj,val)
          validateattributes(val, {'char'}, {})
-         obj.measure = checkMeasure(obj,val);
+         obj.kerName = val;
       end
       
-      function set.inflate(obj,val)
-         validateattributes(val, {'function_handle'}, {})
-         obj.inflate = val;
-      end
-                             
-      function set.nMu(obj,val)
-         validateattributes(val, {'numeric'}, {'integer', 'positive'})
-         obj.nMu = val;
-      end
-                       
-      function set.nf(obj,val)
-         validateattributes(val, {'numeric'}, {'positive','integer'})
-         obj.nf = val;
-      end
-                       
-      function set.trueMuCV(obj,val)
+      function set.GPMean(obj,val)
          validateattributes(val, {'numeric'}, {})
-         obj.trueMuCV = setTrueMuCVDim(obj,val);
+         obj.GPMean = val;
       end
-      
-      function val = get.nCV(obj)
-         val = obj.nfOut - sum(obj.nf); 
-      end        
-      
-      function val = get.volume(obj) %volume of the domain
-         if any(strcmp(obj.measure,{'uniform', 'normal'}))
-            val = 1;
-         elseif strcmp(obj.measure, {'Lebesgue'})
-            val = prod(diff(obj.domain,1),2);
+                                   
+      function val = get.kernel(obj) %volume of the domain
+         if any(strcmp(obj.kerName,{'Ber4'}))
+            val = @(x,theta) prod(1 - theta*((x.*(1-x)).^2 - 1/30),2);      
+         else %assume kerName = Ber2
+            val = @(x,theta) prod(1 + theta*(-x.*(1-x) + 1/6),2);
          end
-      end
-            
-      function val = get.ff(obj)
-         if strcmp(obj.measure,'uniform') && strcmp(obj.domainType,'box')
-            val = obj.f;
-         elseif strcmp(obj.measure,'Lebesgue') && strcmp(obj.domainType,'box')
-            val = @(x) obj.f(bsxfun(@times, diff(obj.domain,1), ...
-               bsxfun(@minus, x, obj.domain(1,:))));
-         elseif strcmp(obj.measure, 'normal') && strcmp(obj.domainType,'box')
-            val = @(x) obj.f(gail.stdnorminv(x));
-         end
-         
-         if numel(periodTransform)
-            if strcmp(periodTransform,'tent'
-      end
-            
+      end            
       
    end
    
    methods (Access = protected)
-   
-      function outval = checkMeasure(obj,inval)
-         assert(any(strcmp(inval,obj.allowedMeasures)))
-         if strcmp(inval,'Gaussian') %same as normal
-            outval = 'normal';
-         else
-            outval = inval;
-         end
-         if strcmp(outval,'normal') %domain must be R^d
-            assert(all(obj.domain(1,:) == -Inf) && ...
-               all(obj.domain(2,:) == Inf))
-         end
-         if any(strcmp(outval,{'uniform','Lebesgue'})) %domain must be finite
-            assert(all(all(isfinite(obj.domain))))
-         end
-      end
-   
-      function outval = setTrueMuCVDim(obj,inval)
-         assert(numel(inval) == obj.nCV)
-         outval = inval(:)';
-      end
-      
+            
       function propList = getPropertyList(obj)
-         propList = struct('f', obj.f, ...
-            'domain', obj.domain);
-         if ~strcmp(obj.domainType,obj.def_domainType)
-            propList.domainType = obj.domainType;
+         propList = getPropertyList@gail.cubLatticeParam(obj);
+         if ~strcmp(obj.kerName, obj.def_kerName)
+            propList.kerName = obj.kerName;
          end
-         propList.measure = obj.measure;
-         propList.absTol = obj.absTol;
-         propList.relTol = obj.relTol;
-         if obj.nInit ~= obj.def_nInit
-            propList.nInit = obj.nInit;
-         end
-         if obj.nMax ~= obj.def_nMax
-            propList.nMax = obj.nMax;
-         end
-         if obj.nMu ~= obj.def_nMu
-            propList.nMu = obj.nMu;
-         end
-         if obj.nf ~= obj.def_nf
-            propList.nf= obj.nf;
-         end
-         if numel(obj.trueMuCV)
-            propList.trueMuCV = obj.trueMuCV;
+         if numel(obj.GPMean) ~= numel(obj.def_GPMean) || ...
+            any(obj.GPMean ~= obj.def_GPMean)
+            propList.GPMean = obj.GPMean;
          end
       end
 
