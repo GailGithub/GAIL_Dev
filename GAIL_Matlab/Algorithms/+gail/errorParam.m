@@ -1,4 +1,4 @@
-classdef errorParam < handle
+classdef errorParam < handle & matlab.mixin.CustomDisplay
    %GAIL.ERRORPARAM is a class containing the parameters related to the
    %error tolerance
    %   This class contains the error tolerances, solution function, and
@@ -11,8 +11,6 @@ classdef errorParam < handle
    % 
    %       absTol: 0.010000000000000
    %       relTol: 0
-   %       solFun: @(mu)mu
-   %     solBdFun: @(muhat,errbd)[muhat-errbd,muhat+errbd]
    %
    %
    % Example 2.  Assign a different absolute error tolerance
@@ -22,8 +20,6 @@ classdef errorParam < handle
    % 
    %       absTol: 1.000000000000000e-03
    %       relTol: 0
-   %       solFun: @(mu)mu
-   %     solBdFun: @(muhat,errbd)[muhat-errbd,muhat+errbd]
    %
    %
    % Example 3. Use a name/value pair
@@ -33,8 +29,6 @@ classdef errorParam < handle
    % 
    %       absTol: 0.010000000000000
    %       relTol: 0.100000000000000
-   %       solFun: @(mu)mu
-   %     solBdFun: @(muhat,errbd)[muhat-errbd,muhat+errbd]
    %
    %
    % Example 4. Make a copy of an errorParam object and change a property
@@ -44,8 +38,6 @@ classdef errorParam < handle
    % 
    %       absTol: 0.010000000000000
    %       relTol: 1.000000000000000e-03
-   %       solFun: @(mu)mu
-   %     solBdFun: @(muhat,errbd)[muhat-errbd,muhat+errbd]
    %
    %
    % Author: Fred J. Hickernell
@@ -97,7 +89,9 @@ classdef errorParam < handle
          %Now begin to parse inputs
          p = inputParser; %construct an inputParser object
          p.KeepUnmatched = true; %ignore those that do not match
-         p.PartialMatching = false; %don'try a partial match
+         if isprop(p, 'PartialMatching'), p.PartialMatching = false; end
+            %don'try a partial match, if/then needed for old MATLAB
+            %versions
          p.StructExpand = true; %expand structures
          structInp = 0; %no structure input
          if nargin >= start
@@ -105,6 +99,7 @@ classdef errorParam < handle
               structInp = start;
               start = start + 1;
            end
+           parseRange = start:nargin;
            if nargin >= start
               if ischar(varargin{start})
                  %there may be input string/value pairs or a structure
@@ -120,13 +115,14 @@ classdef errorParam < handle
          end
          if ~done
            f_addParamVal = @addOptional;
+           parseRange = start:min(nargin,start + 2); %only parse absTol and relTol
          end
          f_addParamVal(p,'absTol',obj.def_absTol);
          f_addParamVal(p,'relTol',obj.def_relTol);
          f_addParamVal(p,'solFun',obj.def_solFun);
          f_addParamVal(p,'solBdFun',obj.def_solBdFun);
          if structInp
-            parse(p,varargin{start:end},varargin{structInp}) 
+            parse(p,varargin{parseRange},varargin{structInp}) 
             %parse inputs with a structure
          else
             parse(p,varargin{start:end}) %parse inputs w/o structure
@@ -173,6 +169,25 @@ classdef errorParam < handle
       end
             
    end
+   
+   methods (Access = protected)
+
+      function propgrp = getPropertyGroups(obj)
+         if ~isscalar(obj)
+            propgrp = getPropertyGroups@matlab.mixin.CustomDisplay(obj);
+         else
+            propList = getPropertyList(obj);
+            propgrp = matlab.mixin.util.PropertyGroup(propList);
+         end
+      end
+   
+      function propList = getPropertyList(obj)
+         propList = struct('absTol',obj.absTol, ...
+            'relTol', obj.relTol);
+      end
+
+   end
+
    
 end
 

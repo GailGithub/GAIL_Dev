@@ -9,25 +9,11 @@ classdef cubParam < gail.fParam
    % cubParamObj = 
    %   cubParam with properties:
    % 
-   %        measure: 'uniform'
-   %       trueMuCV: [1×0 double]
-   %            nMu: 1
-   %             nf: 1
-   %        inflate: @(m)5*2^-m
-   %             ff: @(x)sum(x.^2,2)
-   %            nCV: 0
-   %         volume: 1
    %              f: @(x)sum(x.^2,2)
    %         domain: [2×1 double]
-   %     domainType: 'box'
-   %          nInit: 100
-   %           nMax: 10000000
-   %              d: 1
-   %          nfOut: 1
+   %        measure: 'uniform'
    %         absTol: 0.010000000000000
    %         relTol: 0
-   %         solFun: @(mu)mu
-   %       solBdFun: @(muhat,errbd)[muhat-errbd,muhat+errbd]
    %
    %
    % Example 2. Construct a cubParam object with properly ordered inputs
@@ -35,25 +21,11 @@ classdef cubParam < gail.fParam
    % cubParamObj = 
    %   cubParam with properties:
    % 
-   %        measure: 'Lebesgue'
-   %       trueMuCV: [1×0 double]
-   %            nMu: 1
-   %             nf: 1
-   %        inflate: @(m)5*2^-m
-   %             ff: [function_handle]
-   %            nCV: 0
-   %         volume: 4
    %              f: @(x)sum(x.^3.2)
    %         domain: [2×2 double]
-   %     domainType: 'box'
-   %          nInit: 100
-   %           nMax: 10000000
-   %              d: 2
-   %          nfOut: 1
+   %        measure: 'Lebesgue'
    %         absTol: 0.010000000000000
    %         relTol: 0
-   %         solFun: @(mu)mu
-   %       solBdFun: @(muhat,errbd)[muhat-errbd,muhat+errbd]
    %
    %
    % Example 3. Using name/value pairs
@@ -61,25 +33,11 @@ classdef cubParam < gail.fParam
    % cubParamObj = 
    %   cubParam with properties:
    % 
-   %        measure: 'normal'
-   %       trueMuCV: [1×0 double]
-   %            nMu: 1
-   %             nf: 1
-   %        inflate: @(m)5*2^-m
-   %             ff: @(x)obj.f(gail.stdnorminv(x))
-   %            nCV: 0
-   %         volume: 1
    %              f: @(x)sum(x.^3.2)
    %         domain: [2×2 double]
-   %     domainType: 'box'
-   %          nInit: 100
-   %           nMax: 10000000
-   %              d: 2
-   %          nfOut: 1
+   %        measure: 'normal'
    %         absTol: 0.010000000000000
    %         relTol: 0.100000000000000
-   %         solFun: @(mu)mu
-   %       solBdFun: @(muhat,errbd)[muhat-errbd,muhat+errbd]
    %
    %
    % Example 4. Using a structure for input
@@ -90,25 +48,11 @@ classdef cubParam < gail.fParam
    % cubParamObj = 
    %   cubParam with properties:
    % 
-   %        measure: 'uniform'
-   %       trueMuCV: [1×0 double]
-   %            nMu: 1
-   %             nf: 1
-   %        inflate: @(m)5*2^-m
-   %             ff: @(x)sin(sum(x,2))
-   %            nCV: 0
-   %         volume: 1
    %              f: @(x)sin(sum(x,2))
    %         domain: [2×4 double]
-   %     domainType: 'box'
-   %          nInit: 1000
-   %           nMax: 10000000
-   %              d: 4
-   %          nfOut: 1
+   %        measure: 'uniform'
    %         absTol: 0.010000000000000
    %         relTol: 0
-   %         solFun: @(mu)mu
-   %       solBdFun: @(muhat,errbd)[muhat-errbd,muhat+errbd]
    %
    %
    % Example 5. Copying a cubParam object and changing some properties
@@ -116,26 +60,12 @@ classdef cubParam < gail.fParam
    % NewCubParamObj = 
    %   cubParam with properties:
    % 
-   %        measure: 'Lebesgue'
-   %       trueMuCV: [1×0 double]
-   %            nMu: 1
-   %             nf: 1
-   %        inflate: @(m)5*2^-m
-   %             ff: [function_handle]
-   %            nCV: 0
-   %         volume: 1
    %              f: @(x)sin(sum(x,2))
    %         domain: [2×4 double]
-   %     domainType: 'box'
-   %          nInit: 1000
-   %           nMax: 10000000
-   %              d: 4
-   %          nfOut: 1
+   %        measure: 'Lebesgue'
    %         absTol: 0.010000000000000
    %         relTol: 0
-   %         solFun: @(mu)mu
-   %       solBdFun: @(muhat,errbd)[muhat-errbd,muhat+errbd]
-   %
+   %          nInit: 1000
    %
    %
 
@@ -242,7 +172,7 @@ classdef cubParam < gail.fParam
             obj.nMu = val.nMu; %copy the number of integrals
             obj.nf = val.nf; %copy number of functions for each integral
             obj.trueMuCV = val.trueMuCV; %copy true means of control variates
-            useDefaults = true;
+            useDefaults = false;
          end
 
          %Now begin to parse inputs
@@ -382,6 +312,32 @@ classdef cubParam < gail.fParam
          outval = inval(:)';
       end
       
+      function propList = getPropertyList(obj)
+         propList = struct('f', obj.f, ...
+            'domain', obj.domain);
+         if ~strcmp(obj.domainType,obj.def_domainType)
+            propList.domainType = obj.domainType;
+         end
+         propList.measure = obj.measure;
+         propList.absTol = obj.absTol;
+         propList.relTol = obj.relTol;
+         if obj.nInit ~= obj.def_nInit
+            propList.nInit = obj.nInit;
+         end
+         if obj.nMax ~= obj.def_nMax
+            propList.nMax = obj.nMax;
+         end
+         if obj.nMu ~= obj.def_nMu
+            propList.nMu = obj.nMu;
+         end
+         if obj.nf ~= obj.def_nf
+            propList.nf= obj.nf;
+         end
+         if numel(obj.trueMuCV)
+            propList.trueMuCV = obj.trueMuCV;
+         end
+      end
+
    end
 
    

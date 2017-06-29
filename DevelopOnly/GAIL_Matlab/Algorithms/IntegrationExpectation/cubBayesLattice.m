@@ -1,4 +1,4 @@
-function [muhat,out]=cubMLELattice(f,d,absTol,relTol,order)
+function [muhat,out]=cubBayesLattice(f,d,absTol,relTol,order,arbMean)
 %CUBMLE Monte Carlo method to estimate the mean of a random variable
 %
 %   tmu = cubMLELattice(f,absTol,relTol,alpha,nSig,inflate) estimates the mean,
@@ -10,16 +10,19 @@ function [muhat,out]=cubMLELattice(f,d,absTol,relTol,order)
 %   
 % This is a heuristic algorithm based on a Central Limit Theorem
 % approximation
-if nargin < 5
-   order = 2; %type of sampling, scrambled Sobol
-   if nargin < 4
-      relTol = 0;
-      if nargin < 3
-         absTol = 0.01; %dimension
-         if nargin < 2
-            d = 1; %number of samples
-            if nargin < 1
-               f = @(x) x.^2; %function
+if nargin < 6
+   arbMean = true;
+   if nargin < 5
+      order = 2; %type of sampling, scrambled Sobol
+      if nargin < 4
+         relTol = 0;
+         if nargin < 3
+            absTol = 0.01; %dimension
+            if nargin < 2
+               d = 1; %number of samples
+               if nargin < 1
+                  f = @(x) x.^2; %function
+               end
             end
          end
       end
@@ -65,15 +68,18 @@ for ii = 1:numM
    
    %Compute MLE parameter
    lnaMLE = fminbnd(@(lna) ...
-      MLEKernel(exp(lna),xun,ftilde,order), ...
+      MLEKernel(exp(lna),xun,ftilde,order,arbMean), ...
       -5,5,optimset('TolX',1e-2));
    aMLE = exp(lnaMLE);
-   [loss,Ktilde,RKHSnorm] = MLEKernel(aMLE,xun,ftilde,order);
-   wt = 1./Ktilde(1);
+   [~,Ktilde,RKHSnorm] = MLEKernel(aMLE,xun,ftilde,order,arbMean);
    
    %Check error criterion
-   out.ErrBd = 2.58*sqrt(((1/n) - wt)*RKHSnorm);
-   muhat = ftilde(1)/Ktilde(1);
+   out.ErrBd = 2.58*sqrt(((1/n) - 1./Ktilde(1))*RKHSnorm);
+   if arbMean
+      muhat = ftilde(1)/n;
+   else
+      muhat = ftilde(1)/Ktilde(1);
+   end
    muminus = muhat - out.ErrBd;
    muplus = muhat + out.ErrBd;
    
@@ -87,13 +93,20 @@ out.n = n;
 out.time = toc(tstart);
 end
 
-function [loss,Ktilde,RKHSnorm] = MLEKernel(a,xun,ftilde,order)
+function [loss,Ktilde,RKHSnorm] = MLEKernel(a,xun,ftilde,order,arbMean)
    if order == 2
       K = prod(1 + a*(-xun.*(1-xun) + 1/6),2);
+   elseif order == 4
+      K = prod(1 - a*((xun.*(1-xun)).^2 - 1/30),2);      
    end
    Ktilde = real(fft(K));
-   RKHSnorm = mean(abs(ftilde).^2./Ktilde);
+   temp = abs(ftilde).^2./Ktilde;
+   if arbMean
+      RKHSnorm = sum(temp(2:end))/numel(Ktilde);
+   else
+      RKHSnorm = mean(temp);
+   end
    loss = mean(log(Ktilde)) + log(RKHSnorm);
-   a;
-   ftilde(1)/Ktilde(1);
+%    a;
+%    ftilde(1)/Ktilde(1);
 end

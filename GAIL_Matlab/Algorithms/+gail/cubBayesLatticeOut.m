@@ -1,16 +1,16 @@
-classdef cubOut < gail.cubParam & gail.outParam
-   %GAIL.cubOUT is a class containing the parameters related to the
-   %outputs from the algorithms that compute integrals.
+classdef cubBayesLatticeOut < gail.cubBayesLatticeParam & gail.outParam
+   %GAIL.CUBBAYESLATTICEOUT is a class containing the parameters related to the
+   %outputs from the cubBayesLattice algorithm that computes integrals.
    %   This class includes the approximation to the integral
    %
    % Example 1.
-   % >> cubParamObj = gail.cubParam; %an input object
-   % >> cubOutObj = gail.cubOut(cubParamObj); %copied to becom an output object
-   % >> cubOutObj.mu = 1.467; %integral value is recorded
-   % >> cubOutObj.nSample = 31415926; %sample size is recorded
-   % >> cubOutObj.time = 0.0278 %time of computation is recorded
-   % cubOutObj = 
-   %   cubOut with properties:
+   % >> cubBayesLatticeParamObj = gail.cubBayesLatticeParam; %an input object
+   % >> cubBayesLatticeOutObj = gail.cubBayesLatticeOut(cubBayesLatticeParamObj); %copied to becom an output object
+   % >> cubBayesLatticeOutObj.mu = 1.467; %integral value is recorded
+   % >> cubBayesLatticeOutObj.nSample = 31415926; %sample size is recorded
+   % >> cubBayesLatticeOutObj.time = 0.0278 %time of computation is recorded
+   % cubBayesLatticeOutObj = 
+   %   cubBayesLatticeOut with properties:
    % 
    %              f: @(x)sum(x.^2,2)
    %         domain: [2×1 double]
@@ -34,11 +34,11 @@ classdef cubOut < gail.cubParam & gail.outParam
    methods
       
       % Creating a cubOut process
-      function obj = cubOut(val)
+      function obj = cubBayesLatticeOut(val)
          %this constructor essentially parses inputs
          %the parser will look for a meanYParam object
          
-         obj@gail.cubParam(val)
+         obj@gail.cubBayesLatticeParam(val)
         
       end %of constructor
      
@@ -52,11 +52,12 @@ classdef cubOut < gail.cubParam & gail.outParam
     methods (Access = protected)
    
          function propList = getPropertyList(obj)
-         propList = getPropertyList@gail.cubParam(obj);
+         propList = getPropertyList@gail.cubBayesLatticeParam(obj);
          propList.mu = obj.mu;
          propList.nSample = obj.nSample;
          propList.time = obj.time;
          propList.errBd = obj.errBd;
+         propList.tolVal = obj.tolVal;
          end
    end
 
