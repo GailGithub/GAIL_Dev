@@ -5,8 +5,8 @@ classdef cubLatticeParam < gail.cubParam
    %   etc.
    %
    % Example 1. Construct a cubParam object with default parameters
-   % >> cubParamObj = gail.cubLatticeParam
-   % cubParamObj = 
+   % >> cubLatticeParamObj = gail.cubLatticeParam
+   % cubLatticeParamObj = 
    %   cubLatticeParam with properties:
    % 
    %              f: @(x)sum(x.^2,2)
@@ -17,8 +17,8 @@ classdef cubLatticeParam < gail.cubParam
    %
    %
    % Example 2. Using name/value pairs
-   % >> cubParamObj = gail.cubLatticeParam('domain', [-2 -2; 2 2], 'f', @(x) sum(x.^3.2), 'relTol', 0.1, 'isShift', false)
-   % cubParamObj = 
+   % >> cubLatticeParamObj = gail.cubLatticeParam('domain', [-2 -2; 2 2], 'f', @(x) sum(x.^3.2), 'relTol', 0.1, 'isShift', false)
+   % cubLatticeParamObj = 
    %   cubLatticeParam with properties:
    % 
    %              f: @(x)sum(x.^3.2)
@@ -33,8 +33,8 @@ classdef cubLatticeParam < gail.cubParam
    % >> inpStruct.f = @(x) sin(sum(x,2));
    % >> inpStruct.domain = [zeros(1,4); ones(1,4)];
    % >> inpStruct.isShift = false;
-   % >> cubParamObj = gail.cubLatticeParam(inpStruct)
-   % cubParamObj = 
+   % >> cubLatticeParamObj = gail.cubLatticeParam(inpStruct)
+   % cubLatticeParamObj = 
    %   cubLatticeParam with properties:
    % 
    %              f: @(x)sin(sum(x,2))
@@ -46,8 +46,8 @@ classdef cubLatticeParam < gail.cubParam
    %
    %
    % Example 4. Copying a cubParam object and changing some properties
-   % >> NewCubParamObj = gail.cubLatticeParam(cubParamObj,'measure','Lebesgue')
-   % NewCubParamObj = 
+   % >> NewCubLatticeParamObj = gail.cubLatticeParam(cubLatticeParamObj,'measure','Lebesgue')
+   % NewCubLatticeParamObj = 
    %   cubLatticeParam with properties:
    % 
    %              f: @(x)sin(sum(x,2))
@@ -58,8 +58,6 @@ classdef cubLatticeParam < gail.cubParam
    %        isShift: 0
    %
    %
-
-   
    % Author: Fred J. Hickernell
    
    properties
@@ -175,7 +173,9 @@ classdef cubLatticeParam < gail.cubParam
       
       function val = get.fff(obj)
          if strcmp(obj.periodTransform,'tent') && strcmp(obj.domainType,'box')
-            val = obj.ff(1 - abs(2*x-1));
+            val = @(x) obj.ff(1 - abs(2*x-1)); %tent transformation
+         else %no transformation
+            val = obj.ff;
          end
          
       end

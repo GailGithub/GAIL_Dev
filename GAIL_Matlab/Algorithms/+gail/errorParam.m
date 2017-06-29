@@ -89,7 +89,9 @@ classdef errorParam < handle & matlab.mixin.CustomDisplay
          %Now begin to parse inputs
          p = inputParser; %construct an inputParser object
          p.KeepUnmatched = true; %ignore those that do not match
-         p.PartialMatching = false; %don'try a partial match
+         if isprop(p, 'PartialMatching'), p.PartialMatching = false; end
+            %don'try a partial match, if/then needed for old MATLAB
+            %versions
          p.StructExpand = true; %expand structures
          structInp = 0; %no structure input
          if nargin >= start
