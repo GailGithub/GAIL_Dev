@@ -1,4 +1,4 @@
-classdef cubParam < gail.fParam
+classdef cubLatticeParam < gail.cubParam
    %GAIL.CUBPARAM is a class containing the parameters related to
    %algorithms that find the mean of a random variable
    %   This class contains the number of integrands with the same integral,
@@ -73,25 +73,17 @@ classdef cubParam < gail.fParam
    % Author: Fred J. Hickernell
    
    properties
-      measure %measure against which to integrate
-      trueMuCV %true integral for control variates
-      nMu %number of integrals for solution function
-      nf %number of f for each integral
-      inflate %inflation factor for bounding the error
+      periodTransName %periodizing transformation
+      kerName %name of kernel function used for Bayesian cubature
+      GPMean %value of the Gaussian process mean
    end
    
     properties (Dependent = true)
-       ff %function after variable transformation
-       nCV %number of control variates
-       volume %volume of the domain with respect to the measure
+       kernel %kernel function used for Bayesian cubature
     end
    
    properties (Hidden, SetAccess = private)
-      def_measure = 'uniform'
-      def_inflate = @(m) 5 * 2^-m %default inflation factor
-      def_nMu = 1 %default number of integrals
-      def_nf = 1 %default number of Y per integral
-      def_trueMuCV = [] %default true integrals for control variates
+      def_periodTransName = 'tent' %periodizing transformation
       allowedMeasures = {'uniform', ... %over a hyperbox volume of domain is one
          'Lebesgue', ... %like uniform, but integral over domain is the volume of the domain
          'Gaussian', 'normal' ... %these are the same
@@ -172,7 +164,7 @@ classdef cubParam < gail.fParam
             obj.nMu = val.nMu; %copy the number of integrals
             obj.nf = val.nf; %copy number of functions for each integral
             obj.trueMuCV = val.trueMuCV; %copy true means of control variates
-            useDefaults = false;
+            useDefaults = true;
          end
 
          %Now begin to parse inputs
@@ -276,14 +268,17 @@ classdef cubParam < gail.fParam
       end
             
       function val = get.ff(obj)
-         if strcmp(obj.measure,'uniform')
+         if strcmp(obj.measure,'uniform') && strcmp(obj.domainType,'box')
             val = obj.f;
-         elseif strcmp(obj.measure,'Lebesgue')
+         elseif strcmp(obj.measure,'Lebesgue') && strcmp(obj.domainType,'box')
             val = @(x) obj.f(bsxfun(@times, diff(obj.domain,1), ...
                bsxfun(@minus, x, obj.domain(1,:))));
-         elseif strcmp(obj.measure, 'normal')
+         elseif strcmp(obj.measure, 'normal') && strcmp(obj.domainType,'box')
             val = @(x) obj.f(gail.stdnorminv(x));
          end
+         
+         if numel(periodTransform)
+            if strcmp(periodTransform,'tent'
       end
             
       
