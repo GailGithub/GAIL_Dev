@@ -33,7 +33,7 @@ classdef cubBayesLatticeParam < gail.cubLatticeParam
    % cubBayesLatticeParamObj = 
    %   cubBayesLatticeParam with properties:
    % 
-   %              f: @(x)sum(x.^3.2)
+   %              f: @(x)sum(x.^3.2)..........................
    %         domain: [2×2 double]
    %        measure: 'uniform'
    %         absTol: 0.010000000000000
