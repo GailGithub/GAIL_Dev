@@ -4,6 +4,7 @@ display(varargin);
 mean_inp = gail.cubBayesLatticeParam(varargin{:}); %parse the input and check it for errors
 disp(mean_inp);
 disp('hi');
+disp('willy test');
 
 t_start = tic;
 %% Initial important cone factors and Check-initialize parameters
