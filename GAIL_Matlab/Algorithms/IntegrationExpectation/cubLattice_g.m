@@ -242,43 +242,38 @@ function [q, out_param] = cubLattice_g(varargin)
 % >> q = cubLattice_g(w,hyperbox,'uniform',1e-6,0); exactsol=128/3;
 % >> check = abs(exactsol-q) < 1e-4
 % check = 1
-
+%
 % Example 9:
 % >> f = @(x)[sin(x),cos(x)-sin(1)+1-cos(1)]; hyperbox = [0;1];
-% >> q = cubLattice_g(f,hyperbox,'uniform',1e-3,1e-2,'transform','C1');
-% exactsol=1-cos(1);
+% >> q = cubLattice_g(f,hyperbox,'uniform',1e-3,1e-2,'transform','C1'); exactsol=1-cos(1);
 % >> check = abs(exactsol-q) < 1e-4
 % check = 1
-
+%
 % Example 10:
 % >> w.func=@(x)[sin(x),cos(x)-sin(1)+1-cos(1) ,x-1/2,x.^2-1/3]
 % >> w.cv = [0,0]; hyperbox= [0;1];
-% >> q = cubLattice_g(w,hyperbox,'uniform',1e-6,0);
-% exactsol=1-cos(1);
+% >> q = cubLattice_g(w,hyperbox,'uniform',1e-6,0); exactsol=1-cos(1);
 % >> check = abs(exactsol-q) < 1e-4
 % check = 1
-
+%
 % Example 11:
 % >> w.func=@(x)[sin(x), x-1/2,x.^2-1/3]
 % >> w.cv = [0,0]; hyperbox= [0;1];
-% >> q = cubLattice_g(w,hyperbox,'uniform',1e-6,0);
-% exactsol=1-cos(1);
+% >> q = cubLattice_g(w,hyperbox,'uniform',1e-6,0); exactsol=1-cos(1);
 % >> check = abs(exactsol-q) < 1e-4
 % check = 1
 % 
 % Example 12:
 % >> w.func=@(x)[sin(x),cos(x)-sin(1)+1-cos(1) ,x , x.^2, x.^3]
 % >> w.cv = [0.5, 1/3, 1/4]; hyperbox= [0;1];
-% >> q = cubLattice_g(w,hyperbox,'uniform',1e-6,0);
-% exactsol=1-cos(1);
+% >> q = cubLattice_g(w,hyperbox,'uniform',1e-6,0); exactsol=1-cos(1);
 % >> check = abs(exactsol-q) < 1e-4
 % check = 1
 % 
 % Example 13:
 % >> w.func=@(x)[sin(x),cos(x)-sin(1)+1-cos(1), sin(2.*x)/2.*cos(x), x-1/2,x.^2-1/3]
 % >> w.cv = [0,0]; hyperbox= [0;1];
-% >> q = cubLattice_g(w,hyperbox,'uniform',1e-6,0);
-% exactsol=1-cos(1);
+% >> q = cubLattice_g(w,hyperbox,'uniform',1e-6,0); exactsol=1-cos(1);
 % >> check = abs(exactsol-q) < 1e-4
 % check = 1
 % 
