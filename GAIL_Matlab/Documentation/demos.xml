@@ -13,6 +13,9 @@
             <label>Curve</label>
             <callback>curve</callback>
             <file>html/curve.html</file>
+            <label>GUI of funappx_g</label>
+            <callback>GUI of funappx_g</callback>
+            <file>html/demooffunappx_g.html</file>
         </demoitem>
     </demosection>
      <demosection>
