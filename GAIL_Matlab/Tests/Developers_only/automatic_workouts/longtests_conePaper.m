@@ -1,4 +1,4 @@
-%% longtests_conePaper
+% longtests_conePaper
 
 format short
 
