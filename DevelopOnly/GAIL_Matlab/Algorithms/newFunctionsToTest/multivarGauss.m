@@ -127,7 +127,7 @@ classdef multivarGauss < handle
          e = gail.stdnormcdf(b1);
          fval = (e-d)*ones(nn,1);
          y = zeros(nn,dim-1);
-         for i = 2:dim;
+         for i = 2:dim
             y(:,i-1) = gail.stdnorminv(d+w(:,i-1).*(e-d));
             aux = sum(bsxfun(@times,obj.CovProp.C(i,1:i-1),y(:,1:i-1)),2);
             a1 = (am(i)-aux)/obj.CovProp.C(i,i);
