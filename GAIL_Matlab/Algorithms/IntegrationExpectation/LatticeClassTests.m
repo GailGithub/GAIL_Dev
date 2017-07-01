@@ -34,6 +34,21 @@ w.domain = [-ones(1,2);2*ones(1,2)];
 w.transform = 'C1';
 cubLattice_gCLASS(w);
 
+% Example 4: 
+f = @(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); hyperbox = [-inf(1,1);inf(1,1)];
+q = cubLattice_g(f,hyperbox,'normal',1e-4,1e-2,'transform','C1sin'); price = normcdf(0.05)*100 - 0.5*100*exp(-0.05^2/2);
+
+w.f = @(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0);
+w.domain = [-inf(1,1);inf(1,1)];
+w.measure='normal'
+w.absTol=1e-4
+w.relTol=1e-2
+w.transform=('C1sin')
+cubLattice_gCLASS(w);
+
+% Example 5: 
+
+
 
 
 % Example 6:
