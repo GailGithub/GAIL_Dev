@@ -11,7 +11,7 @@ classdef cubLatticeParam < gail.cubParam
    % 
    %              f: @(x)sum(x.^2,2)
    %         domain: [2×1 double]
-   %        measure: 'uniform'
+   %        measure: 'uniform'd
    %         absTol: 0.010000000000000
    %         relTol: 0
    %
@@ -63,16 +63,17 @@ classdef cubLatticeParam < gail.cubParam
    properties
       periodTransform %periodizing transformation
       isShift %is the lattice shifted
+      shiftVal
    end
    
    properties (Dependent = true)
       fff %function after periodizing transformation
    end
    
-      
    properties (Hidden, SetAccess = private)
-      def_periodTransform = 'tent' %default periodizing transformation
+      def_periodTransform = 'Baker' %default periodizing transformation
       def_isShift = true %default is a random shift
+      def_shiftVal = rand
    end
    
    
@@ -109,6 +110,7 @@ classdef cubLatticeParam < gail.cubParam
             val = varargin{objInp}; %first input
             obj.periodTransform = val.periodTransform; %copy integration measure
             obj.isShift = val.isShift; %copy whether to shift
+            obj.shiftVal = val.shiftVal;
             useDefaults = false;
          end
 
@@ -137,7 +139,8 @@ classdef cubLatticeParam < gail.cubParam
          end
          f_addParamVal(p,'periodTransform',obj.def_periodTransform);
          f_addParamVal(p,'isShift',obj.def_isShift);
-         
+         f_addParamVal(p,'shiftVal',obj.def_shiftVal);
+
          if structInp
             parse(p,varargin{parseRange},varargin{structInp}) 
             %parse inputs with a structure
@@ -159,6 +162,10 @@ classdef cubLatticeParam < gail.cubParam
             obj.isShift = struct_val.isShift;
          end
          
+         if isfield(struct_val, 'shiftVal')
+             obj.shiftVal=struct_val.shiftVal;
+         end 
+         
       end %of constructor
      
       function set.periodTransform(obj,val)
@@ -170,6 +177,11 @@ classdef cubLatticeParam < gail.cubParam
          validateattributes(val, {'logical'}, {'scalar'})
          obj.isShift = val;
       end
+      
+      function set.shiftVal(obj,val)
+          validateattributes(val, {'double'}, {})
+          obj.shiftVal = val;
+      end 
       
       function val = get.fff(obj)
          if strcmp(obj.periodTransform,'tent') && strcmp(obj.domainType,'box')
@@ -196,8 +208,6 @@ classdef cubLatticeParam < gail.cubParam
       end
 
    end
-
-   
    
 end
 

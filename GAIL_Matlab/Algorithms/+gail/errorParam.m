@@ -42,8 +42,6 @@ classdef errorParam < handle & matlab.mixin.CustomDisplay
    %
    % Author: Fred J. Hickernell
 
-   
-   
    properties
       absTol %absolute error tolerance
       relTol %relative error tolerance

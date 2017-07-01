@@ -80,7 +80,7 @@ function [hmu,mean_out, time]=meanMC_CLTKATE(varargin)
 % 
 % >> f=@(x) [x(:,1).^3.*x(:,2).^3.*x(:,3).^3, x(:,1).*x(:,2).*x(:,3)];
 % >> s=struct('Y',@(n)f(rand(n,3)),'nY',1,'trueMuCV',1/8)
-% >> [hmu,mean_out]=meanMC_CLTKATE(s,1e-3,0) exactsol = 1/64;
+% >> [hmu,mean_out]=meanMC_CLTKATE(s,1e-3,0); exactsol = 1/64;
 % >> check = abs(exactsol-hmu) < max(1e-3,1e-3*abs(exactsol))
 % check = 1
 %
@@ -125,9 +125,9 @@ else
         YY = [val(:,1:q) A(:,q+1:end)] * beta; %get samples of the new random variable 
 end
 
-mean_out.std = std(YY); %standard deviation of the samples
+mean_out.stddev = std(YY); %standard deviation of the samples
 
-sig0up = mean_out.inflate .* mean_out.std; %upper bound on the standard deviation
+sig0up = mean_out.inflate .* mean_out.stddev; %upper bound on the standard deviation
 hmu0 = mean(YY); % mean of the samples
 
 nmu = max(1,ceil((-gail.stdnorminv(mean_out.alpha/2)*sig0up ...

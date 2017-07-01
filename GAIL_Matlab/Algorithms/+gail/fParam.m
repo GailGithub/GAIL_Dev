@@ -97,7 +97,6 @@ classdef fParam < gail.errorParam
       domainType
       nInit %initial sample size
       nMax %maximum sample size
-      
    end
    
    properties (Dependent = true)

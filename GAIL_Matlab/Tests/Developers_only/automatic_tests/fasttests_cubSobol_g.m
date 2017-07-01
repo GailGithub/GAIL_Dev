@@ -19,7 +19,7 @@ else
             end
         end
     catch
-        display('Error: Test ut_cubSobol_g is wrongly coded. We skip it.')
-        fprintf(fid,'Error: Test ut_cubSobol_g is wrongly coded. We skip it.\n');
+        display('GAIL: Test ut_cubSobol_g is wrongly coded. We skip it.')
+        fprintf(fid,'GAIL: Test ut_cubSobol_g is wrongly coded. We skip it.\n');
     end
 end
