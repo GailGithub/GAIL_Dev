@@ -85,8 +85,7 @@ classdef cubParam < gail.fParam
       transf 
       radius
       betaUpdate
-      
-      
+   
    end
    
     properties (Dependent = true)
@@ -109,13 +108,11 @@ classdef cubParam < gail.fParam
       def_radius = 1
       def_betaUpdate=0
       
-      
       allowedMeasures = {'uniform', 'uniform ball' ... %over a hyperbox volume of domain is one
          'Lebesgue', ... %like uniform, but integral over domain is the volume of the domain
          'Gaussian', 'normal' ... %these are the same
          }
      
-
    end
    
    
@@ -200,6 +197,7 @@ classdef cubParam < gail.fParam
             obj.radius=val.radius;
             obj.betaUpdate=val.betaUpdate;
             useDefaults = false;
+            
          end
 
          %Now begin to parse inputs
@@ -238,7 +236,6 @@ classdef cubParam < gail.fParam
          f_addParamVal(p,'transf', obj.def_transf);
          f_addParamVal(p,'radius', obj.def_radius);
          f_addParamVal(p,'betaUpdate', obj.def_betaUpdate);
-
          
          if structInp
             parse(p,varargin{parseRange},varargin{structInp}) 
@@ -266,6 +263,7 @@ classdef cubParam < gail.fParam
          if isfield(struct_val,'nf')         
             obj.nf = struct_val.nf;
          end
+         
          if isfield(struct_val,'trueMuCV')         
             obj.trueMuCV = struct_val.trueMuCV;
          end
@@ -288,10 +286,10 @@ classdef cubParam < gail.fParam
          end
          
       end %of constructor
-     
+      
       function set.measure(obj,val)
-         validateattributes(val, {'char'}, {})
-         obj.measure = checkMeasure(obj,val);
+          validateattributes(val, {'char'}, {})
+          obj.measure = checkMeasure(obj,val);
       end
       
       function set.inflate(obj,val)
@@ -329,8 +327,6 @@ classdef cubParam < gail.fParam
           obj.betaUpdate = val;
       end
       
-      
-      
       function val = get.nCV(obj)
          val = obj.nfOut - sum(obj.nf); 
       end        
@@ -344,17 +340,63 @@ classdef cubParam < gail.fParam
       end
             
       function val = get.ff(obj)
-         if strcmp(obj.measure,'uniform')
-            val = obj.f;
-         elseif strcmp(obj.measure,'Lebesgue')
-            val = @(x) obj.f(bsxfun(@times, diff(obj.domain,1), ...
-               bsxfun(@minus, x, obj.domain(1,:))));
-         elseif strcmp(obj.measure, 'normal')
-            val = @(x) obj.f(gail.stdnorminv(x));
-         end
+          
+          if strcmpi(obj.measure,'uniform ball') || strcmpi(obj.measure,'uniform sphere')% using uniformly distributed samples on a ball or sphere
+              if strcmp(obj.measure,'uniform sphere') && obj.transf == 1 %box-to-sphere transformation
+                  obj.d = obj.d + 1; % changing obj.d to the dimension of the sphere
+                  obj.shiftVal = [obj.shiftVal rand];
+              end
+              
+              if strcmpi(obj.measure,'uniform ball')% using the formula of the volume of a ball
+                  obj.volume = ((2.0*pi^(obj.d/2.0))/(obj.d*gamma(obj.d/2.0)))*obj.radius^obj.d; %volume of a d-dimentional ball
+              else % using the formula of the volume of a sphere
+                  obj.volume = ((2.0*pi^(obj.d/2.0))/(gamma(obj.d/2.0)))*obj.radius^(obj.d - 1); %volume of a d-dimentional sphere
+              end
+              
+              if obj.transf == 1 % box-to-ball or box-to-sphere transformation should be used
+                  if obj.d == 1 % It is not necessary to multiply the function f by the volume, since no transformation is being made
+                      obj.domain = [obj.domain - obj.radius; obj.domain + obj.radius];% for one dimension, the ball is actually an interval
+                      obj.measure = 'uniform';% then a uniform distribution on a box can be used
+                  else
+                      if strcmpi(obj.measure,'uniform ball') % box-to-ball transformation
+                          val = @(t) obj.f(gail.domain_balls_spheres.ball_psi_1(t, obj.d, obj.radius, obj.domain))*obj.volume;% the psi function is the transformation
+                      else %  % box-to-sphere transformation
+                          val = @(t) obj.f(gail.domain_balls_spheres.sphere_psi_1(t, obj.d, obj.radius, obj.domain))*obj.volume;% the psi function is the transformation
+                          obj.d = obj.d - 1;% the box-to-sphere transformation takes points from a (d-1)-dimensional box to a d-dimensional sphere
+                          obj.shiftVal = obj.shiftVal(1:end-1);
+                      end
+                      obj.domain = [zeros(1, obj.d); ones(1, obj.d)];% the obj.domain must be the domain of the transformation, which is a unit box
+                      obj.measure = 'uniform';% then a uniform distribution on a box can be used
+                  end
+              else % normal-to-ball or normal-to-sphere transformation should be used
+                  if strcmpi(obj.measure,'uniform ball') % normal-to-ball transformation
+                      val = @(t) obj.f(gail.domain_balls_spheres.ball_psi_2(t, obj.d, obj.radius, obj.domain))*obj.volume;% the psi function is the transformation
+                  else % normal-to-sphere transformation
+                      val = @(t) obj.f(gail.domain_balls_spheres.sphere_psi_2(t, obj.d, obj.radius, obj.domain))*obj.volume;% the psi function is the transformation
+                  end
+                  obj.domain = bsxfun(@plus, zeros(2, obj.d), [-inf; inf]);% the obj.domain must be the domain of the transformation, which is a this unit box
+                  obj.measure = 'normal';% then a normal distribution can be used
+              end
+          end
+          
+          if strcmp(obj.measure,'normal')
+              val=@(x) obj.f(gail.stdnorminv(x));
+          elseif strcmp(obj.measure,'uniform')
+              Cnorm = prod(obj.domain(2,:)-obj.domain(1,:));
+              val=@(x) Cnorm*obj.f(bsxfun(@plus,obj.domain(1,:),bsxfun(@times,(obj.domain(2,:)-obj.domain(1,:)),x))); % a + (b-a)x = u
+          end
+          
+           % ORIGINAL
+%          if strcmp(obj.measure,'uniform')
+%             val = obj.f;
+%          elseif strcmp(obj.measure,'Lebesgue')
+%             val = @(x) obj.f(bsxfun(@times, diff(obj.domain,1), ...
+%                bsxfun(@minus, x, obj.domain(1,:))));
+%          elseif strcmp(obj.measure, 'normal')
+%             val = @(x) obj.f(gail.stdnorminv(x));
+%          end
+
       end
-            
-      
    end
    
    methods (Access = protected)
@@ -413,7 +455,7 @@ classdef cubParam < gail.fParam
             propList.trueMuCV = obj.trueMuCV;
          end
       end
-
+      
    end
   
    end 

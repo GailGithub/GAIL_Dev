@@ -58,7 +58,6 @@ classdef cubLatticeOut < gail.cubLatticeParam & gail.outParam
          propList.errBd = obj.errBd;
          propList.tolVal = obj.tolVal;
       
-
          end
       
    end

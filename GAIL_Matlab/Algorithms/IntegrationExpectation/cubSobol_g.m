@@ -728,31 +728,32 @@ else
   f_addParamVal = @addParamValue;
 end
 
-
-
-
-% get the number of control variates and number of functions
 if ~isstruct(f) %  not using control variates
     cv.J = 0;
-    Temp=size(f(1));
-    default.FuncCount=Temp(:,2)
     
-else % using control variates
+    out_param.d = size(hyperbox,2);
+    tempVal=ones(1, out_param.d);
+    temp=(size(f(tempVal))); 
+    totSize=temp(:,2);
+  
+    default.FuncCount=totSize-cv.J;
+    
+else % using control variates, checking mu
     if isnumeric(f.cv)
         cv.J = size(f.cv,2);
         default.CVCount=cv.J; 
         
         out_param.d = size(hyperbox,2);
         tempVal=ones(1, out_param.d);
-        temp=size(f.func(tempVal));
+        temp=(size(f.func(tempVal)));
         totSize=temp(:,2);
-        default.FuncCount=totSize-cv.J;        
+        
+        default.FuncCount=totSize-cv.J;
     else
         warning('GAIL:cubLattice_g:controlvariates_error1',...
             'f.cv should be numerical values');
     end
-end 
-
+end
 
 if ~validvarargin
     out_param.measure = default.measure;

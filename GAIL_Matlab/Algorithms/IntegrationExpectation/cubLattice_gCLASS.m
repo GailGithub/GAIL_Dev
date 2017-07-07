@@ -8,46 +8,46 @@ mean_inp = gail.cubLatticeParam(varargin{:}); %parse the input and check it for 
 mean_out = gail.cubLatticeOut(mean_inp); %create the output class
 
 %------------------------------------------------------------------------------
-% TRANSFORMATION
-%changing the integrand and the mean_out.domain when measure is uniform ball or
-%sphere by applying the appropriate transformation
-if strcmpi(mean_out.measure,'uniform ball') || strcmpi(mean_out.measure,'uniform sphere')% using uniformly distributed samples on a ball or sphere
-    if strcmp(mean_out.measure,'uniform sphere') && mean_out.transf == 1 %box-to-sphere transformation
-        mean_out.d = mean_out.d + 1; % changing mean_out.d to the dimension of the sphere
-        mean_out.shiftVal = [mean_out.shiftVal rand];
-    end
-    
-    if strcmpi(mean_out.measure,'uniform ball')% using the formula of the volume of a ball
-        volume = ((2.0*pi^(mean_out.d/2.0))/(mean_out.d*gamma(mean_out.d/2.0)))*mean_out.radius^mean_out.d; %volume of a d-dimentional ball
-    else % using the formula of the volume of a sphere
-        volume = ((2.0*pi^(mean_out.d/2.0))/(gamma(mean_out.d/2.0)))*mean_out.radius^(mean_out.d - 1); %volume of a d-dimentional sphere
-    end
-    
-    if mean_out.transf == 1 % box-to-ball or box-to-sphere transformation should be used
-        if mean_out.d == 1 % It is not necessary to multiply the function f by the volume, since no transformation is being made
-            mean_out.domain = [mean_out.domain - mean_out.radius; mean_out.domain + mean_out.radius];% for one dimension, the ball is actually an interval
-            mean_out.measure = 'uniform';% then a uniform distribution on a box can be used
-        else
-            if strcmpi(mean_out.measure,'uniform ball') % box-to-ball transformation
-                f = @(t) f(gail.domain_balls_spheres.ball_psi_1(t, mean_out.d, mean_out.radius, mean_out.domain))*volume;% the psi function is the transformation
-            else %  % box-to-sphere transformation
-                f = @(t) f(gail.domain_balls_spheres.sphere_psi_1(t, mean_out.d, mean_out.radius, mean_out.domain))*volume;% the psi function is the transformation
-                mean_out.d = mean_out.d - 1;% the box-to-sphere transformation takes points from a (d-1)-dimensional box to a d-dimensional sphere
-                mean_out.shiftVal = mean_out.shiftVal(1:end-1);
-            end
-            mean_out.domain = [zeros(1, mean_out.d); ones(1, mean_out.d)];% the mean_out.domain must be the domain of the transformation, which is a unit box
-            mean_out.measure = 'uniform';% then a uniform distribution on a box can be used
-        end
-    else % normal-to-ball or normal-to-sphere transformation should be used
-        if strcmpi(mean_out.measure,'uniform ball') % normal-to-ball transformation
-            f = @(t) f(gail.domain_balls_spheres.ball_psi_2(t, mean_out.d, mean_out.radius, mean_out.domain))*volume;% the psi function is the transformation
-        else % normal-to-sphere transformation
-            f = @(t) f(gail.domain_balls_spheres.sphere_psi_2(t, mean_out.d, mean_out.radius, mean_out.domain))*volume;% the psi function is the transformation
-        end
-        mean_out.domain = bsxfun(@plus, zeros(2, mean_out.d), [-inf; inf]);% the mean_out.domain must be the domain of the transformation, which is a this unit box
-        mean_out.measure = 'normal';% then a normal distribution can be used
-    end
-end
+% % TRANSFORMATION
+% % changing the integrand and the mean_out.domain when measure is uniform ball or
+% % sphere by applying the appropriate transformation
+% if strcmpi(mean_out.measure,'uniform ball') || strcmpi(mean_out.measure,'uniform sphere')% using uniformly distributed samples on a ball or sphere
+%     if strcmp(mean_out.measure,'uniform sphere') && mean_out.transf == 1 %box-to-sphere transformation
+%         mean_out.d = mean_out.d + 1; % changing mean_out.d to the dimension of the sphere
+%         mean_out.shiftVal = [mean_out.shiftVal rand];
+%     end
+%     
+%     if strcmpi(mean_out.measure,'uniform ball')% using the formula of the volume of a ball
+%         volume = ((2.0*pi^(mean_out.d/2.0))/(mean_out.d*gamma(mean_out.d/2.0)))*mean_out.radius^mean_out.d; %volume of a d-dimentional ball
+%     else % using the formula of the volume of a sphere
+%         volume = ((2.0*pi^(mean_out.d/2.0))/(gamma(mean_out.d/2.0)))*mean_out.radius^(mean_out.d - 1); %volume of a d-dimentional sphere
+%     end
+%     
+%     if mean_out.transf == 1 % box-to-ball or box-to-sphere transformation should be used
+%         if mean_out.d == 1 % It is not necessary to multiply the function f by the volume, since no transformation is being made
+%             mean_out.domain = [mean_out.domain - mean_out.radius; mean_out.domain + mean_out.radius];% for one dimension, the ball is actually an interval
+%             mean_out.measure = 'uniform';% then a uniform distribution on a box can be used
+%         else
+%             if strcmpi(mean_out.measure,'uniform ball') % box-to-ball transformation
+%                 f = @(t) f(gail.domain_balls_spheres.ball_psi_1(t, mean_out.d, mean_out.radius, mean_out.domain))*volume;% the psi function is the transformation
+%             else %  % box-to-sphere transformation
+%                 f = @(t) f(gail.domain_balls_spheres.sphere_psi_1(t, mean_out.d, mean_out.radius, mean_out.domain))*volume;% the psi function is the transformation
+%                 mean_out.d = mean_out.d - 1;% the box-to-sphere transformation takes points from a (d-1)-dimensional box to a d-dimensional sphere
+%                 mean_out.shiftVal = mean_out.shiftVal(1:end-1);
+%             end
+%             mean_out.domain = [zeros(1, mean_out.d); ones(1, mean_out.d)];% the mean_out.domain must be the domain of the transformation, which is a unit box
+%             mean_out.measure = 'uniform';% then a uniform distribution on a box can be used
+%         end
+%     else % normal-to-ball or normal-to-sphere transformation should be used
+%         if strcmpi(mean_out.measure,'uniform ball') % normal-to-ball transformation
+%             f = @(t) f(gail.domain_balls_spheres.ball_psi_2(t, mean_out.d, mean_out.radius, mean_out.domain))*volume;% the psi function is the transformation
+%         else % normal-to-sphere transformation
+%             f = @(t) f(gail.domain_balls_spheres.sphere_psi_2(t, mean_out.d, mean_out.radius, mean_out.domain))*volume;% the psi function is the transformation
+%         end
+%         mean_out.domain = bsxfun(@plus, zeros(2, mean_out.d), [-inf; inf]);% the mean_out.domain must be the domain of the transformation, which is a this unit box
+%         mean_out.measure = 'normal';% then a normal distribution can be used
+%     end
+% end
 
 %------------------------------------------------------------------------------
 % Minimum gathering of points
@@ -57,28 +57,35 @@ omg_hat = @(m) mean_out.inflate(m)/((1+mean_out.inflate(r_lag))*omg_circ(r_lag))
 
 % intialize CV param, redefine target function
 mu=0;beta=0;
-f = mean_out.f;
 
 if mean_out.nCV  % if using control variates(f is structure), redefine f
     mu = mean_out.trueMuCV;
 end
 
-if strcmp(mean_out.measure,'normal')
-    f=@(x) f(gail.stdnorminv(x));
-elseif strcmp(mean_out.measure,'uniform')
-    Cnorm = prod(mean_out.domain(2,:)-mean_out.domain(1,:));
-    f=@(x) Cnorm*f(bsxfun(@plus,mean_out.domain(1,:),bsxfun(@times,(mean_out.domain(2,:)-mean_out.domain(1,:)),x))); % a + (b-a)x = u
-end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ALREADY INCLUDED 
+% if strcmp(mean_out.measure,'normal')
+%     f=@(x) f(gail.stdnorminv(x));
+% elseif strcmp(mean_out.measure,'uniform')
+%     Cnorm = prod(mean_out.domain(2,:)-mean_out.domain(1,:));
+%     f=@(x) Cnorm*f(bsxfun(@plus,mean_out.domain(1,:),bsxfun(@times,(mean_out.domain(2,:)-mean_out.domain(1,:)),x))); % a + (b-a)x = u
+% end
 
-if strcmp(mean_out.periodTransform,'Baker')
-    f=@(x) f(1-2*abs(x-1/2)); % Baker's transform
-elseif strcmp(mean_out.periodTransform,'C0')
-    f=@(x) f(3*x.^2-2*x.^3).*prod(6*x.*(1-x),2); % C^0 transform
-elseif strcmp(mean_out.periodTransform,'C1')
-    f=@(x) f(x.^3.*(10-15*x+6*x.^2)).*prod(30*x.^2.*(1-x).^2,2); % C^1 transform
-elseif strcmp(mean_out.periodTransform,'C1sin')
-    f=@(x) f(x-sin(2*pi*x)/(2*pi)).*prod(1-cos(2*pi*x),2); % Sidi C^1 transform
-end
+% if strcmp(mean_out.periodTransform,'Baker')
+%     f=@(x) f(1-2*abs(x-1/2)); % Baker's transform
+% elseif strcmp(mean_out.periodTransform,'C0')
+%     f=@(x) f(3*x.^2-2*x.^3).*prod(6*x.*(1-x),2); % C^0 transform
+% elseif strcmp(mean_out.periodTransform,'C1')
+%     f=@(x) f(x.^3.*(10-15*x+6*x.^2)).*prod(30*x.^2.*(1-x).^2,2); % C^1 transform
+% elseif strcmp(mean_out.periodTransform,'C1sin')
+%     f=@(x) f(x-sin(2*pi*x)/(2*pi)).*prod(1-cos(2*pi*x),2); % Sidi C^1 transform
+% end
+
+display("Both functions: ");
+display(mean_out.f);
+display(mean_out.ff);
+display(mean_out.fff);
+
 
 %% Main algorithm - Preallocation
 Stilde=zeros(mean_out.mmax -mean_out.mmin+1,1); %initialize sum of DFT terms
@@ -94,11 +101,11 @@ mean_out.nSample=2^mean_out.mmin; %total number of points to start with
 n0=mean_out.nSample; %initial number of points
 xpts=mod(bsxfun(@plus, gail.lattice_gen(1,n0,mean_out.d), mean_out.shiftVal),1); %grab Lattice points
 
-y=f(xpts); %evaluate integrand
+y=mean_out.fff(xpts); %evaluate integrand
 yval=y;
 
 % evaluate integrand
-ycv = f(xpts);
+ycv = mean_out.fff(xpts);
 y = ycv(:,1:mean_out.nf); yval = y;
 yg = ycv(:,mean_out.nf+1:end); %yvalg = yg;
 
@@ -256,11 +263,11 @@ for m=mean_out.mmin+1:mean_out.mmax
     % check for using control variates or not
     if mean_out.nCV  == 0
         % ynext = f(xnext); yval=[yval; ynext];
-        ycvnext = f(xnext);
+        ycvnext = mean_out.fff(xnext);
         ynext = ycvnext(:,1:mean_out.nf)*beta(1:mean_out.nf,:) + ycvnext(:,mean_out.nf+1:end)*beta(mean_out.nf+1:end,:);
         yval=[yval; ynext];
     else
-        ycvnext = f(xnext);
+        ycvnext = mean_out.fff(xnext);
         ynext = ycvnext(:,1:mean_out.nf)*beta(1:mean_out.nf,:) + ycvnext(:,mean_out.nf+1:end)*beta(mean_out.nf+1:end,:);
         yval=[yval; ynext];
     end
