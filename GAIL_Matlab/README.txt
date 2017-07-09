@@ -1,4 +1,4 @@
-Guaranteed Automatic Integration Library (GAIL)
+﻿Guaranteed Automatic Integration Library (GAIL)
 -----------------------------------------------
 GAIL Version 2.2, 2017.
 See LICENSE.m for copyright and disclaimer.
@@ -71,6 +71,11 @@ F. J. Hickernell, Ll. A. Jimenez Rugama, and D. Li, “Adaptive
 quasi-{M}onte {C}arlo methods, 2017+, submitted for publication, 
 arXiv:1702.01491 [math.NA].
 
+Lan Jiang, Guaranteed Adaptive Monte Carlo Methods for Estimating
+Means of Random Variables, Ph.D Thesis, Illinois Institute of
+Technology, 2016.
+(describes meanMC_g.m and cubMC_g.m)
+
 Lluis Antoni Jimenez Rugama and Fred J. Hickernell, "Adaptive
 multidimensional integration based on rank-1 lattices," Monte Carlo 
 and Quasi-Monte Carlo  Methods: MCQMC, Leuven, Belgium, April 2014 
@@ -95,11 +100,6 @@ Illinois Institute of Technology, 2016.
 Xin Tong, "A Guaranteed, Adaptive, Automatic Algorithm for Univariate 
 Function Minimization," MS thesis, Illinois Institute of Technology, 2014. 
 (describes deprecated funmin01_g.m)
-
-[7] Lan Jiang, Guaranteed Adaptive Monte Carlo Methods for Estimating
-Means of Random Variables, Ph.D Thesis, Illinois Institute of
-Technology, 2016.
-(describes meanMC_g.m and cubMC_g.m)
 
 Downloads
 ------------
