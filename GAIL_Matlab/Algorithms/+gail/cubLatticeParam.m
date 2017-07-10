@@ -76,9 +76,8 @@ classdef cubLatticeParam < gail.cubParam
         def_shiftVal = rand
     end
     
-    
+   
     methods
-        
         % Creating a cubParam process
         function obj = cubLatticeParam(varargin)
            
@@ -200,7 +199,6 @@ classdef cubLatticeParam < gail.cubParam
                 val = obj.ff;
             end
         end
-        
     end
     
     methods (Access = protected)

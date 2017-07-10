@@ -87,8 +87,8 @@ f = @(x) [x(:,1).^2+x(:,2).^2]; hyperbox = [0,0,1];
 q = cubLattice_g(f,hyperbox,'uniform ball','abstol',1e-4,'reltol',0); exactsol = pi/2;
 
 a.f = @(x) [x(:,1).^2+x(:,2).^2];
-a.domain =[0,0,1];
-a.measure ='uniform ball';
+a.domain =[0,0];
+a.measure = 'uniform ball';
 a.abstol=1e-4;
 a.reltol=0;
 cubLattice_gCLASS(a);

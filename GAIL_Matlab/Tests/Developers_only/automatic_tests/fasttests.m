@@ -21,6 +21,8 @@ fasttests_cubMC_g
 fasttests_cubLattice_g
 fasttests_cubSobol_g
 
+fasttests_cubLattice_gCLASS
+
 %% CALL fasttests for other key GAIL components
 format short
 

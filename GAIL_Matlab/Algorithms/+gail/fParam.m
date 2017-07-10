@@ -139,12 +139,12 @@ classdef fParam < gail.errorParam
          structInp = 0; %where is the structure
          if nargin %there are inputs to parse and assign
             if isa(varargin{start},'gail.fParam') 
-               %the first input is a meanYParam object so copy it
+               %the first input is a fParam object so copy it
                objInp = start;
                start = start + 1;
             end
             if nargin >= start
-               if isstruct(varargin{start}) %next input is a structure containing Y
+               if isstruct(varargin{start}) %next input is a structure containing f
                   structInp = start;
                   start = start + 1;
                end
@@ -235,6 +235,9 @@ classdef fParam < gail.errorParam
          if fInp
             obj.f = varargin{fInp}; %assign function
          elseif isfield(struct_val,'f')
+            if any(strcmp(p.UsingDefaults,'f'))
+               warning('GAIL:fParam:noFunctionInput','No function input, default used.')
+            end
             obj.f = struct_val.f;
          end
          if domainInp
@@ -257,7 +260,7 @@ classdef fParam < gail.errorParam
       end %of constructor
      
       function set.f(obj,val)
-         validateattributes(val, {'function_handle'}, {})
+         validateattributes(val, {'function_handle'}, {'nonempty'})
          obj.f = val;
       end
       
@@ -318,7 +321,5 @@ classdef fParam < gail.errorParam
       end
   end
 
-   
-   
 end
 

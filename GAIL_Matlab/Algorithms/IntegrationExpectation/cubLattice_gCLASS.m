@@ -1,4 +1,4 @@
-function [mean_out] = cubLattice_gCLASS(varargin)
+function [meanf, mean_out] = cubLattice_gCLASS(varargin)
 
 t_start = tic;
 %% Initial important cone factors and Check-initialize parameters
@@ -80,12 +80,6 @@ end
 % elseif strcmp(mean_out.periodTransform,'C1sin')
 %     f=@(x) f(x-sin(2*pi*x)/(2*pi)).*prod(1-cos(2*pi*x),2); % Sidi C^1 transform
 % end
-
-display("Both functions: ");
-display(mean_out.f);
-display(mean_out.ff);
-display(mean_out.fff);
-
 
 %% Main algorithm - Preallocation
 Stilde=zeros(mean_out.mmax -mean_out.mmin+1,1); %initialize sum of DFT terms
@@ -426,6 +420,8 @@ end
 
 mean_out.time=toc(t_start);
 mean_out.mu=q;
+
+meanf=mean_out.mu;
 
 end
 

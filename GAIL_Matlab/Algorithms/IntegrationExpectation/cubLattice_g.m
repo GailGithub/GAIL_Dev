@@ -354,7 +354,6 @@ t_start = tic;
 r_lag = 4; %distance between coefficients summed and those computed
 [f,hyperbox,out_param, cv] = cubLattice_g_param(r_lag,varargin{:});
 
-
 %------------------------------------------------------------------------------
 % TRANSFORMATION
 %changing the integrand and the hyperbox when measure is uniform ball or
@@ -372,6 +371,7 @@ if strcmpi(out_param.measure,'uniform ball') || strcmpi(out_param.measure,'unifo
     end
     
     if out_param.transf == 1 % box-to-ball or box-to-sphere transformation should be used
+       
         if out_param.d == 1 % It is not necessary to multiply the function f by the volume, since no transformation is being made
             hyperbox = [hyperbox - out_param.radius; hyperbox + out_param.radius];% for one dimension, the ball is actually an interval
             out_param.measure = 'uniform';% then a uniform distribution on a box can be used
@@ -387,6 +387,7 @@ if strcmpi(out_param.measure,'uniform ball') || strcmpi(out_param.measure,'unifo
             out_param.measure = 'uniform';% then a uniform distribution on a box can be used
         end
     else % normal-to-ball or normal-to-sphere transformation should be used
+       
         if strcmpi(out_param.measure,'uniform ball') % normal-to-ball transformation
             f = @(t) f(gail.domain_balls_spheres.ball_psi_2(t, out_param.d, out_param.radius, hyperbox))*volume;% the psi function is the transformation
         else % normal-to-sphere transformation
@@ -979,6 +980,8 @@ elseif strcmp(out_param.measure,'uniform sphere_normal')
     out_param.measure = 'uniform sphere';
 end
 
+
+
 %validating hyperbox
 if strcmp(out_param.measure,'uniform') || strcmp(out_param.measure,'normal') % 'uniform box' or 'normal box'
     out_param.d = size(hyperbox,2);
@@ -1041,6 +1044,7 @@ else % 'uniform ball' or 'uniform sphere'
         out_param.shift = out_param.shift(1:end-1);
     end
 end
+
 
 % Force absolute tolerance greater than 0
 if (out_param.abstol < 0 )

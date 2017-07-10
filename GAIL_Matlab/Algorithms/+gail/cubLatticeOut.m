@@ -1,16 +1,16 @@
 classdef cubLatticeOut < gail.cubLatticeParam & gail.outParam
-   %GAIL.CUBBAYESLATTICEOUT is a class containing the parameters related to the
+   %GAIL.CUBLATTICEOUT is a class containing the parameters related to the
    %outputs from the cubBayesLattice algorithm that computes integrals.
    %   This class includes the approximation to the integral
    %
    % Example 1.
-   % >> cubBayesLatticeParamObj = gail.cubBayesLatticeParam; %an input object
-   % >> cubBayesLatticeOutObj = gail.cubBayesLatticeOut(cubBayesLatticeParamObj); %copied to becom an output object
-   % >> cubBayesLatticeOutObj.mu = 1.467; %integral value is recorded
-   % >> cubBayesLatticeOutObj.nSample = 31415926; %sample size is recorded
-   % >> cubBayesLatticeOutObj.time = 0.0278 %time of computation is recorded
-   % cubBayesLatticeOutObj = 
-   %   cubBayesLatticeOut with properties:
+   % >> cubLatticeParamObj = gail.cubBayesLatticeParam; %an input object
+   % >> cubLatticeOut = gail.cubBayesLatticeOut(cubLatticeParamObj); %copied to becom an output object
+   % >> cubLatticeOut.mu = 1.467; %integral value is recorded
+   % >> cubLatticeOut.nSample = 31415926; %sample size is recorded
+   % >> cubLatticeOut.time = 0.0278 %time of computation is recorded
+   % cubLatticeOut = 
+   %   cubLatticeOut with properties:
    % 
    %              f: @(x)sum(x.^2,2)
    %         domain: [2×1 double]
