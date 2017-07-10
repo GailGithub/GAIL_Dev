@@ -4,12 +4,12 @@ classdef cubLatticeOut < gail.cubLatticeParam & gail.outParam
    %   This class includes the approximation to the integral
    %
    % Example 1.
-   % >> cubLatticeParamObj = gail.cubBayesLatticeParam; %an input object
-   % >> cubLatticeOut = gail.cubBayesLatticeOut(cubLatticeParamObj); %copied to becom an output object
-   % >> cubLatticeOut.mu = 1.467; %integral value is recorded
-   % >> cubLatticeOut.nSample = 31415926; %sample size is recorded
-   % >> cubLatticeOut.time = 0.0278 %time of computation is recorded
-   % cubLatticeOut = 
+   % >> cubLatticeParamObj = gail.cubLatticeParam; %an input object
+   % >> cubLatticeParamObj = gail.cubLatticeOut(cubLatticeParamObj); %copied to becom an output object
+   % >> cubLatticeParamObj.mu = 1.467; %integral value is recorded
+   % >> cubLatticeParamObj.nSample = 31415926; %sample size is recorded
+   % >> cubLatticeParamObj.time = 0.0278 %time of computation is recorded
+   % cubLatticeParamObj = 
    %   cubLatticeOut with properties:
    % 
    %              f: @(x)sum(x.^2,2)
@@ -36,7 +36,7 @@ classdef cubLatticeOut < gail.cubLatticeParam & gail.outParam
       % Creating a cubOut process
       function obj = cubLatticeOut(val)
          %this constructor essentially parses inputs
-         %the parser will look for a meanYParam object
+         %the parser will look for a cubLatticeOut object         
          obj@gail.cubLatticeParam(val)
         
       end %of constructor
@@ -57,9 +57,7 @@ classdef cubLatticeOut < gail.cubLatticeParam & gail.outParam
          propList.time = obj.time;
          propList.errBd = obj.errBd;
          propList.tolVal = obj.tolVal;
-      
          end
-      
    end
 
 end
