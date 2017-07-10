@@ -13,6 +13,16 @@ classdef ut_funmin_g < matlab.unittest.TestCase
             [fmin, result] = funmin_g(f,in_param); 
             actualmin = -1;
             actualerr = abs(actualmin-fmin);
+            intnum = size(result.intervals,2);
+            exactsolu = z;
+            testflag = 1;
+            for k=1:intnum
+                if exactsolu <= result.intervals(2,k) && exactsolu >= ...
+                        result.intervals(1,k)
+                 testflag = 0;
+                end
+            end
+            testCase.verifyLessThan(testflag,1);
             testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
             testCase.verifyLessThanOrEqual(result.npoints,in_param.nmax);
         end
@@ -28,12 +38,17 @@ classdef ut_funmin_g < matlab.unittest.TestCase
             [fmin, result] = funmin_g(f,in_param); 
             actualmin = -1;
             actualerr = abs(actualmin-fmin);
+            intnum = size(result.intervals,2);
             exactsolu = z;
             testflag = 1;
-            if actualerr <= in_param.abstol
-                testflag = 0;
+            for k=1:intnum
+                if exactsolu <= result.intervals(2,k) && exactsolu >= ...
+                        result.intervals(1,k)
+                 testflag = 0;
+                end
             end
             testCase.verifyLessThan(testflag,1);
+            testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
             testCase.verifyLessThanOrEqual(result.npoints,in_param.nmax);
         end
   
@@ -43,10 +58,11 @@ classdef ut_funmin_g < matlab.unittest.TestCase
             z = 0.5;
             f = @(x) exp(-1./((x-z).^2)); % flat bottom
             [fmin,result] = funmin_g(f,in_param);
+            actualmin = 0;
+            actualerr = abs(actualmin-fmin);
+            testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
             testCase.verifyLessThanOrEqual(result.errest,in_param.abstol);
             testCase.verifyLessThanOrEqual(result.npoints,in_param.nmax);
-            actualmin = 0;
-            testCase.verifyLessThanOrEqual(abs(fmin-actualmin), in_param.abstol)
         end
         
         function funmin_gEXM4(testCase)
@@ -65,7 +81,7 @@ classdef ut_funmin_g < matlab.unittest.TestCase
             actualmin = sin(-1);
             actualerr = abs(actualmin-fmin);
             testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
-            testCase.verifyLessThanOrEqual(result.npoints,in_param.nmax);
+            testCase.verifyLessThanOrEqual(result.npoints,in_param.nmax);   
         end
         
         function funmin_gEXM6(testCase)
@@ -92,24 +108,21 @@ classdef ut_funmin_g < matlab.unittest.TestCase
             [fmin, result] = funmin_g(f,in_param); 
             actualmin = -1;
             actualerr = abs(actualmin-fmin);
+            intnum = size(result.intervals,2);
+            exactsolu = c;
+            testflag = 1;
+            for k=1:intnum
+                if exactsolu <= result.intervals(2,k) && exactsolu >= ...
+                        result.intervals(1,k)
+                 testflag = 0;
+                end
+            end
+            testCase.verifyLessThan(testflag,1);
             testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
             testCase.verifyLessThanOrEqual(result.npoints,in_param.nmax);
         end
         
-%         function funmin_gEXM8(testCase)
-%             in_param.abstol = 1e-6;
-%             in_param.a = 0; 
-%             in_param.b = 2;
-%             in_param.nmax = 10^5; 
-%             f = @(x)sin(10*pi*x.^4)-x;
-%             [fmin, result] = funmin_g(f,in_param); 
-%             actualmin = -3;
-%             actualerr = abs(actualmin-fmin);
-%             testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
-%             testCase.verifyLessThanOrEqual(result.npoints,in_param.nmax);
-%         end
-        
-        function funmin_gEXM9(testCase)
+        function funmin_gEXM8(testCase)
             in_param.abstol = 1e-6;
             in_param.a = -1; 
             in_param.b = 1;
@@ -122,8 +135,7 @@ classdef ut_funmin_g < matlab.unittest.TestCase
             actualerr = abs(actualmin-fmin);
             testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
             testCase.verifyLessThanOrEqual(result.npoints,in_param.nmax);
-        end
-        
+        end        
         
     end
 end
