@@ -78,6 +78,14 @@ classdef cubParam < gail.fParam
       nMu %number of integrals for solution function
       nf %number of f for each integral
       inflate %inflation factor for bounding the error
+
+      % Willy added 
+      mmin
+      mmax
+      transf 
+      radius
+      betaUpdate
+   
    end
    
     properties (Dependent = true)
@@ -87,15 +95,24 @@ classdef cubParam < gail.fParam
     end
    
    properties (Hidden, SetAccess = private)
-      def_measure = 'uniform'
+      def_measure = 'uniform' % default measure
       def_inflate = @(m) 5 * 2^-m %default inflation factor
       def_nMu = 1 %default number of integrals
       def_nf = 1 %default number of Y per integral
       def_trueMuCV = [] %default true integrals for control variates
-      allowedMeasures = {'uniform', ... %over a hyperbox volume of domain is one
+      
+      % Willy added 
+      def_mmin=10
+      def_mmax=20
+      def_transf = 1
+      def_radius = 1
+      def_betaUpdate=0
+      
+      allowedMeasures = {'uniform', 'uniform ball' ... %over a hyperbox volume of domain is one
          'Lebesgue', ... %like uniform, but integral over domain is the volume of the domain
          'Gaussian', 'normal' ... %these are the same
          }
+     
    end
    
    
@@ -172,7 +189,15 @@ classdef cubParam < gail.fParam
             obj.nMu = val.nMu; %copy the number of integrals
             obj.nf = val.nf; %copy number of functions for each integral
             obj.trueMuCV = val.trueMuCV; %copy true means of control variates
+            
+            % Willy added
+            obj.mmin=val.mmin;
+            obj.mmax=val.mmax;
+            obj.transf=val.transf;
+            obj.radius=val.radius;
+            obj.betaUpdate=val.betaUpdate;
             useDefaults = false;
+            
          end
 
          %Now begin to parse inputs
@@ -194,17 +219,23 @@ classdef cubParam < gail.fParam
                done = true;
             end
          end
+         
          if ~done %then nothingleft or just numbers
             f_addParamVal = @addOptional;
             parseRange = (start + 2):nargin; %to account for the two tolerances already parsed
          end
-         if ~measureInp
-            f_addParamVal(p,'measure',obj.def_measure);
-         end
+         
+         f_addParamVal(p,'measure',obj.def_measure);
          f_addParamVal(p,'trueMuCV',obj.def_trueMuCV);
          f_addParamVal(p,'nMu',obj.def_nMu);
          f_addParamVal(p,'nf',obj.def_nf);
          f_addParamVal(p,'inflate',obj.def_inflate);
+         
+         f_addParamVal(p,'mmin',obj.def_mmin);
+         f_addParamVal(p,'mmax',obj.def_mmax);
+         f_addParamVal(p,'transf', obj.def_transf);
+         f_addParamVal(p,'radius', obj.def_radius);
+         f_addParamVal(p,'betaUpdate', obj.def_betaUpdate);
          
          if structInp
             parse(p,varargin{parseRange},varargin{structInp}) 
@@ -222,7 +253,7 @@ classdef cubParam < gail.fParam
             obj.measure = varargin{measureInp}; %assign measure
          elseif isfield(struct_val,'measure')
             obj.measure = struct_val.measure;
-         end
+         end 
          if isfield(struct_val,'inflate')
             obj.inflate = struct_val.inflate;
          end
@@ -232,15 +263,33 @@ classdef cubParam < gail.fParam
          if isfield(struct_val,'nf')         
             obj.nf = struct_val.nf;
          end
+         
          if isfield(struct_val,'trueMuCV')         
             obj.trueMuCV = struct_val.trueMuCV;
-         end        
-       
+         end
+         
+         if isfield(struct_val,'mmin')
+             obj.mmin = struct_val.mmin;
+         end
+         if isfield(struct_val,'mmax')
+             obj.mmax = struct_val.mmax;
+         end
+         if isfield(struct_val,'transf')
+             obj.transf = struct_val.transf;
+         end
+         if isfield(struct_val,'radius')
+             obj.radius = struct_val.radius;
+         end
+         
+         if isfield(struct_val,'betaUpdate')
+             obj.betaUpdate = struct_val.betaUpdate;
+         end
+         
       end %of constructor
-     
+      
       function set.measure(obj,val)
-         validateattributes(val, {'char'}, {})
-         obj.measure = checkMeasure(obj,val);
+          validateattributes(val, {'char'}, {})
+          obj.measure = checkMeasure(obj,val);
       end
       
       function set.inflate(obj,val)
@@ -257,10 +306,25 @@ classdef cubParam < gail.fParam
          validateattributes(val, {'numeric'}, {'positive','integer'})
          obj.nf = val;
       end
+     
+      function set.transf(obj,val)
+          validateattributes(val, {'numeric'}, {'integer', 'positive'})
+          obj.transf = val;
+      end
+      
+      function set.radius(obj,val)
+          validateattributes(val, {'numeric'}, {'positive','integer'})
+          obj.radius = val;
+      end
                        
       function set.trueMuCV(obj,val)
          validateattributes(val, {'numeric'}, {})
          obj.trueMuCV = setTrueMuCVDim(obj,val);
+      end
+      
+      function set.betaUpdate(obj,val)
+          validateattributes(val, {'numeric'}, {})
+          obj.betaUpdate = val;
       end
       
       function val = get.nCV(obj)
@@ -276,21 +340,66 @@ classdef cubParam < gail.fParam
       end
             
       function val = get.ff(obj)
-         if strcmp(obj.measure,'uniform')
-            val = obj.f;
-         elseif strcmp(obj.measure,'Lebesgue')
-            val = @(x) obj.f(bsxfun(@times, diff(obj.domain,1), ...
-               bsxfun(@minus, x, obj.domain(1,:))));
-         elseif strcmp(obj.measure, 'normal')
-            val = @(x) obj.f(gail.stdnorminv(x));
-         end
+          
+          if strcmpi(obj.measure,'uniform ball') || strcmpi(obj.measure,'uniform sphere')% using uniformly distributed samples on a ball or sphere
+              if strcmp(obj.measure,'uniform sphere') && obj.transf == 1 %box-to-sphere transformation
+                  obj.d = obj.d + 1; % changing obj.d to the dimension of the sphere
+                  obj.shiftVal = [obj.shiftVal rand];
+              end
+              
+              if strcmpi(obj.measure,'uniform ball')% using the formula of the volume of a ball
+                  obj.volume = ((2.0*pi^(obj.d/2.0))/(obj.d*gamma(obj.d/2.0)))*obj.radius^obj.d; %volume of a d-dimentional ball
+              else % using the formula of the volume of a sphere
+                  obj.volume = ((2.0*pi^(obj.d/2.0))/(gamma(obj.d/2.0)))*obj.radius^(obj.d - 1); %volume of a d-dimentional sphere
+              end
+              
+              if obj.transf == 1 % box-to-ball or box-to-sphere transformation should be used
+                  if obj.d == 1 % It is not necessary to multiply the function f by the volume, since no transformation is being made
+                      obj.domain = [obj.domain - obj.radius; obj.domain + obj.radius];% for one dimension, the ball is actually an interval
+                      obj.measure = 'uniform';% then a uniform distribution on a box can be used
+                  else
+                      if strcmpi(obj.measure,'uniform ball') % box-to-ball transformation
+                          val = @(t) obj.f(gail.domain_balls_spheres.ball_psi_1(t, obj.d, obj.radius, obj.domain))*obj.volume;% the psi function is the transformation
+                      else %  % box-to-sphere transformation
+                          val = @(t) obj.f(gail.domain_balls_spheres.sphere_psi_1(t, obj.d, obj.radius, obj.domain))*obj.volume;% the psi function is the transformation
+                          obj.d = obj.d - 1;% the box-to-sphere transformation takes points from a (d-1)-dimensional box to a d-dimensional sphere
+                          obj.shiftVal = obj.shiftVal(1:end-1);
+                      end
+                      obj.domain = [zeros(1, obj.d); ones(1, obj.d)];% the obj.domain must be the domain of the transformation, which is a unit box
+                      obj.measure = 'uniform';% then a uniform distribution on a box can be used
+                  end
+              else % normal-to-ball or normal-to-sphere transformation should be used
+                  if strcmpi(obj.measure,'uniform ball') % normal-to-ball transformation
+                      val = @(t) obj.f(gail.domain_balls_spheres.ball_psi_2(t, obj.d, obj.radius, obj.domain))*obj.volume;% the psi function is the transformation
+                  else % normal-to-sphere transformation
+                      val = @(t) obj.f(gail.domain_balls_spheres.sphere_psi_2(t, obj.d, obj.radius, obj.domain))*obj.volume;% the psi function is the transformation
+                  end
+                  obj.domain = bsxfun(@plus, zeros(2, obj.d), [-inf; inf]);% the obj.domain must be the domain of the transformation, which is a this unit box
+                  obj.measure = 'normal';% then a normal distribution can be used
+              end
+          end
+          
+          if strcmp(obj.measure,'normal')
+              val=@(x) obj.f(gail.stdnorminv(x));
+          elseif strcmp(obj.measure,'uniform')
+              Cnorm = prod(obj.domain(2,:)-obj.domain(1,:));
+              val=@(x) Cnorm*obj.f(bsxfun(@plus,obj.domain(1,:),bsxfun(@times,(obj.domain(2,:)-obj.domain(1,:)),x))); % a + (b-a)x = u
+          end
+          
+           % ORIGINAL
+%          if strcmp(obj.measure,'uniform')
+%             val = obj.f;
+%          elseif strcmp(obj.measure,'Lebesgue')
+%             val = @(x) obj.f(bsxfun(@times, diff(obj.domain,1), ...
+%                bsxfun(@minus, x, obj.domain(1,:))));
+%          elseif strcmp(obj.measure, 'normal')
+%             val = @(x) obj.f(gail.stdnorminv(x));
+%          end
+
       end
-            
-      
    end
    
    methods (Access = protected)
-   
       function outval = checkMeasure(obj,inval)
          assert(any(strcmp(inval,obj.allowedMeasures)))
          if strcmp(inval,'Gaussian') %same as normal
@@ -318,9 +427,18 @@ classdef cubParam < gail.fParam
          if ~strcmp(obj.domainType,obj.def_domainType)
             propList.domainType = obj.domainType;
          end
+         
          propList.measure = obj.measure;
          propList.absTol = obj.absTol;
          propList.relTol = obj.relTol;
+    
+         % Willy added (display following)
+%          propList.mmin=obj.mmin;
+%          propList.mmax=obj.mmax;
+%          propList.transf=obj.transf;
+%          propList.radius=obj.radius;
+%          propList.betaUpdate=obj.betaUpdate;
+         
          if obj.nInit ~= obj.def_nInit
             propList.nInit = obj.nInit;
          end
@@ -337,10 +455,8 @@ classdef cubParam < gail.fParam
             propList.trueMuCV = obj.trueMuCV;
          end
       end
-
+      
    end
-
-   
-   
-end
-
+  
+   end 
+ 

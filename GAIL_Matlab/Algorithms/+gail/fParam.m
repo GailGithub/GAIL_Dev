@@ -97,7 +97,6 @@ classdef fParam < gail.errorParam
       domainType
       nInit %initial sample size
       nMax %maximum sample size
-      
    end
    
    properties (Dependent = true)
@@ -254,7 +253,6 @@ classdef fParam < gail.errorParam
          if isfield(struct_val,'nMax')
             obj.nMax = struct_val.nMax;
          end
-
          
       end %of constructor
      
@@ -295,12 +293,10 @@ classdef fParam < gail.errorParam
       function val = get.nfOut(obj)
          val = numel(obj.f(obj.domain(1,:))); 
       end      
-       
-                       
+      
    end
    
   methods (Access = protected)
-   
       function checkDomainType(obj,inval)
          assert(any(strcmp(inval,obj.allowedDomains)))
       end
@@ -319,7 +315,6 @@ classdef fParam < gail.errorParam
          if obj.nMax ~= obj.def_nMax
             propList.nMax = obj.nMax;
          end
-
       end
   end
 

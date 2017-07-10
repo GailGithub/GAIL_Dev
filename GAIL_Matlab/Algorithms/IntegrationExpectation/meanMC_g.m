@@ -204,6 +204,8 @@ function [tmu,out_param]=meanMC_g(varargin)
 tstart = tic; %start the clock
 [Yrand, out_param] = meanMC_g_param(varargin{:});
 
+%display(out_param);
+
 n1 = 2;
 Yrand(n1); %let it run once to load all the data. warm up the machine.
 nsofar = n1;

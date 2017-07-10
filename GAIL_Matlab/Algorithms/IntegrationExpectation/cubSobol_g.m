@@ -235,9 +235,9 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 % Estimate the integral with integrand f(x) = 10*x1-5*x2^2+x3^3 in the interval [0,2)^3 
 % with pure absolute error 1e-6 using two control variates h1(x) = x1 and h2(x) = x2^2.
 % 
-% >> g.func = @(x) [10*x(:,1)-5*x(:,2).^2+1*x(:,3).^3, x(:,1), x(:,2).^2];
-% >> g.cv = [8,32/3]; hyperbox= [zeros(1,3);2*ones(1,3)];
-% >> q = cubSobol_g(g,hyperbox,'uniform',1e-6,0); exactsol = 128/3; 
+% >> w.func = @(x)[10*x(:,1)-5*x(:,2).^2+1*x(:,3).^3, x(:,1), x(:,2).^2];
+% >> w.cv = [8,32/3]; hyperbox= [zeros(1,3);2*ones(1,3)];
+% >> q = cubSobol_g(w,hyperbox,'uniform',1e-6,0); exactsol = 128/3; 
 % >> check = abs(exactsol-q) < 1e-6
 % check = 1
 %
@@ -289,7 +289,6 @@ r_lag = 4; %distance between coefficients summed and those computed
 
 %------------------------------------------------------------------------------
 % TRANSFORMATION
-
 %changing the integrand and the hyperbox when measure is uniform ball or
 %sphere by applying the appropriate transformation
 if strcmpi(out_param.measure,'uniform ball') || strcmpi(out_param.measure,'uniform sphere')% using uniformly distributed samples on a ball or sphere
@@ -329,7 +328,7 @@ if strcmpi(out_param.measure,'uniform ball') || strcmpi(out_param.measure,'unifo
 end
 
 %------------------------------------------------------------------------------
-
+% Minimum gathering of points 
 l_star = out_param.mmin - r_lag; % Minimum gathering of points for the sums of DFWT
 omg_circ = @(m) 2.^(-m);
 omg_hat = @(m) out_param.fudge(m)/((1+out_param.fudge(r_lag))*omg_circ(r_lag));
@@ -367,14 +366,13 @@ out_param.n=2^out_param.mmin; %total number of points to start with
 n0=out_param.n; %initial number of points
 xpts=sobstr(1:n0,1:out_param.d); %grab Sobol' points
 
+y=f(xpts); %evaluate integrand
+yval=y;
+
 % evaluate integrand
-if cv.J==0 % no control variates
-	y = f(xpts); yval = y;
-else  % using control variates 
-	ycv = f(xpts);
-	y = ycv(:,1); yval = y;
-	yg = ycv(:,2:end); %yvalg = yg;
-end 
+ycv = f(xpts);
+y = ycv(:,1:out_param.FuncCount); yval = y;
+yg = ycv(:,out_param.FuncCount+1:end); %yvalg = yg;
 
 %% Compute initial FWT
 for l=0:out_param.mmin-1
@@ -410,32 +408,57 @@ for l=out_param.mmin-1:-1:1
    end
 end
 
-%% If using control variates, find optimal beta
-if cv.J  
-    X = yg(kappanumap(2^(out_param.mmin-r_lag-1)+1:end), (1:cv.J));
-    Y = y(kappanumap(2^(out_param.mmin-r_lag-1)+1:end));
-    beta = X \ Y;  
-    out_param.beta = beta;
-    yval = ycv(:,1) - ycv(:,2:end)*beta;% get new function value
-    y = y-yg*beta;% redefine function
-    %% rebuild kappa map
-    kappanumap=(1:out_param.n)'; %initialize map
-    for l=out_param.mmin-1:-1:1
-        nl=2^l;
-        oldone=abs(y(kappanumap(2:nl)));
-        newone=abs(y(kappanumap(nl+2:2*nl))); 
-        flip=find(newone>oldone);
-        if ~isempty(flip)
-            flipall=bsxfun(@plus,flip,0:2^(l+1):2^out_param.mmin-1);
-            flipall=flipall(:);
-            temp=kappanumap(nl+1+flipall); %then flip 
-            kappanumap(nl+1+flipall)=kappanumap(1+flipall); %them
-            kappanumap(1+flipall)=temp; %around
-        end
+%% Finding optimal beta
+% Pre-determine the size of the beta coefficients 
+if cv.J
+    C=[ones(out_param.FuncCount,1); zeros(out_param.CVCount,1)];
+else 
+    C=[ones(out_param.FuncCount,1)];
+end 
+    
+%% alogirhtm to find beta 
+X = yg(kappanumap(2^(out_param.mmin-r_lag-1)+1:end), (1:end));
+Y =  y(kappanumap(2^(out_param.mmin-r_lag-1)+1:end), (1:end));
+
+Val = [];
+Val = [Y X];
+meanVal=[mean(Val)];
+
+A=bsxfun(@minus, Val, meanVal);
+
+[U,S,V]=svd([A; C'],0);
+Sdiag = diag(S);
+U2=U(end,:);
+H=U2'/(U2*U2');
+beta=V*(H./Sdiag);
+
+meanX=meanVal(:,out_param.FuncCount+1:end);
+meanX=[zeros(out_param.FuncCount,1); meanX'];
+
+Ytemp=[];
+Ytemp=[y yg];
+
+yval = ycv(:,1:out_param.FuncCount)*beta(1:out_param.FuncCount,:) + ycv(:,out_param.FuncCount+1:end)*beta(out_param.FuncCount+1:end,:);
+y = (y(:,1:end)*beta(1:out_param.FuncCount,:)) + (yg(:,1:end)*beta(out_param.FuncCount+1:end,:));
+  
+%% rebuild kappa map
+kappanumap=(1:out_param.n)'; %initialize map
+for l=out_param.mmin-1:-1:1
+    nl=2^l;
+    oldone=abs(y(kappanumap(2:nl)));
+    newone=abs(y(kappanumap(nl+2:2*nl))); 
+    flip=find(newone>oldone);
+    if ~isempty(flip)
+        flipall=bsxfun(@plus,flip,0:2^(l+1):2^out_param.mmin-1);
+        flipall=flipall(:);
+        temp=kappanumap(nl+1+flipall); %then flip 
+        kappanumap(nl+1+flipall)=kappanumap(1+flipall); %them
+        kappanumap(1+flipall)=temp; %around
     end
 end
 
-%% Compute Stilde
+
+%% Compute Stilde (1)
 nllstart = int64(2^(out_param.mmin-r_lag-1));
 Stilde(1)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
 out_param.bound_err=out_param.fudge(out_param.mmin)*Stilde(1);
@@ -454,8 +477,12 @@ if any(CStilde_low(:) > CStilde_up(:))
    out_param.exit(2) = true;
 end
 
-%% Approximate integral
-q=mean(yval)+mu*beta;
+%% Approximate integral (1)
+if cv.J
+    q= mean(yval) - mu*beta(out_param.FuncCount+1:end,:);
+else
+    q=mean(yval);
+end
 
 % Check the end of the algorithm
 q = q - errest(1)*(max(out_param.abstol, out_param.reltol*abs(q + errest(1)))...
@@ -484,16 +511,18 @@ for m=out_param.mmin+1:out_param.mmax
    nnext=2^mnext;
    xnext=sobstr(n0+(1:nnext),1:out_param.d); 
    n0=n0+nnext;
-   % check for using control variates or not
-   if cv.J == 0
-       ynext = f(xnext); yval=[yval; ynext];
-   else
-       ycvnext = f(xnext);
-       ynext = ycvnext(:,1) - ycvnext(:,2:end)*beta;
-       yval=[yval; ynext];
-   end
+   
+    % check for using control variates or not
+    if cv.J == 0
+        ynext = f(xnext); yval=[yval; ynext];
+    else
+        ycvnext = f(xnext);
+        ynext = ycvnext(:,1:out_param.FuncCount)*beta(1:out_param.FuncCount,:) + ycvnext(:,out_param.FuncCount+1:end)*beta(out_param.FuncCount+1:end,:);
+        yval=[yval; ynext];
+    end
+   
    %% Compute initial FWT on next points
-   %% not updating beta
+   % not updating beta
    if out_param.betaUpdate == 0
     	for l=0:mnext-1
        	    nl=2^l;
@@ -505,7 +534,7 @@ for m=out_param.mmin+1:out_param.mmax
        	    ynext(~ptind)=(evenval-oddval)/2;
     	end
  	
-    	%% Compute FWT on all points
+    	% Compute FWT on all points
     	y=[y;ynext];
     	nl=2^mnext;
     	ptind=[true(nl,1); false(nl,1)];
@@ -514,7 +543,7 @@ for m=out_param.mmin+1:out_param.mmax
     	y(ptind)=(evenval+oddval)/2;
     	y(~ptind)=(evenval-oddval)/2;
  	
-    	%% Update kappanumap
+    	% Update kappanumap
     	kappanumap=[kappanumap; 2^(m-1)+kappanumap]; %initialize map
     	for l=m-1:-1:m-r_lag
        	    nl=2^l;
@@ -569,7 +598,7 @@ for m=out_param.mmin+1:out_param.mmax
        end
    end
 
-   %% Compute Stilde
+   %% Compute Stilde (2)
    nllstart=int64(2^(m-r_lag-1));
    meff=m-out_param.mmin+1;
    Stilde(meff)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
@@ -590,9 +619,13 @@ for m=out_param.mmin+1:out_param.mmax
        out_param.exit(2) = true;
    end
 
-   %% Approximate integral
-   q=mean(yval)+mu*beta;
-   
+   %% Approximate integral (2)
+   if cv.J
+       q= mean(yval) - mu*beta(out_param.FuncCount+1:end,:);
+   else
+       q=mean(yval);
+   end
+
    q = q - errest(meff)*(max(out_param.abstol, out_param.reltol*abs(q + errest(meff)))...
         - max(out_param.abstol, out_param.reltol*abs(q - errest(meff))))/...
         (max(out_param.abstol, out_param.reltol*abs(q + errest(meff)))...
@@ -634,9 +667,11 @@ default.abstol  = 1e-4;
 default.reltol  = 1e-2;
 default.mmin  = 10;
 default.mmax  = 24;
-default.fudge = @(m) 5*2.^-m;
+default.fudge = @(m) 10*2.^-m;
 default.scramble = true;
 default.betaUpdate = 0;% option for updating beta, off at default
+default.FuncCount=0;
+default.CVCount=0; 
 
 % two data structures for function: function || structure(using CV)
 validf = @(x) gail.isfcn(x) || isstruct(x);
@@ -693,6 +728,33 @@ else
   f_addParamVal = @addParamValue;
 end
 
+if ~isstruct(f) %  not using control variates
+    cv.J = 0;
+    
+    out_param.d = size(hyperbox,2);
+    tempVal=ones(1, out_param.d);
+    temp=(size(f(tempVal))); 
+    totSize=temp(:,2);
+  
+    default.FuncCount=totSize-cv.J;
+    
+else % using control variates, checking mu
+    if isnumeric(f.cv)
+        cv.J = size(f.cv,2);
+        default.CVCount=cv.J; 
+        
+        out_param.d = size(hyperbox,2);
+        tempVal=ones(1, out_param.d);
+        temp=(size(f.func(tempVal)));
+        totSize=temp(:,2);
+        
+        default.FuncCount=totSize-cv.J;
+    else
+        warning('GAIL:cubLattice_g:controlvariates_error1',...
+            'f.cv should be numerical values');
+    end
+end
+
 if ~validvarargin
     out_param.measure = default.measure;
     out_param.abstol = default.abstol;
@@ -702,6 +764,8 @@ if ~validvarargin
     out_param.fudge = default.fudge;
     out_param.scramble = default.scramble;
     out_param.betaUpdate= default.betaUpdate;
+    out_param.FuncCount=default.FuncCount;
+    out_param.CVCount=default.CVCount;
 else
     p = inputParser;
     addRequired(p,'f', validf);
@@ -718,6 +782,9 @@ else
         addOptional(p,'fudge',default.fudge,@gail.isfcn);
         addOptional(p,'scramble',default.scramble,@islogical);
         addOptional(p,'betaUpdate',default.betaUpdate,@isnumeric);
+        addOptional(p,'FuncCount',default.FuncCount,@isnumeric);
+        addOptional(p,'CVCount',default.CVCount,@isnumeric);
+
     else
         if isstruct(in3) %parse input structure
             p.StructExpand = true;
@@ -734,25 +801,14 @@ else
         f_addParamVal(p,'fudge',default.fudge,@gail.isfcn);
         f_addParamVal(p,'scramble',default.scramble,@islogical);
         f_addParamVal(p,'betaUpdate',default.betaUpdate,@isnumeric);
+        f_addParamVal(p,'FuncCount',default.FuncCount,@isnumeric);
+        f_addParamVal(p,'CVCount',default.CVCount,@isnumeric);
+
     end
     parse(p,f,hyperbox,varargin{3:end})
     out_param = p.Results;
 end
 
-% out_param.d will be set later
-%out_param.d = size(hyperbox,2);
-
-% get the number of control variates 
-if ~isstruct(f) %  not using control variates
-	cv.J = 0; 
-else % using control variates, checking mu
-	if isnumeric(f.cv)
-		cv.J = size(f.cv,2);
-	else
-		warning('GAIL:cubSobol_g:controlvariates_error1',...
-		'f.cv should be numerical values');
-	end
-end
 
 if ~(strcmp(out_param.measure,'uniform') || strcmp(out_param.measure,'normal') || ...
         strcmp(out_param.measure,'uniform ball') || ...
