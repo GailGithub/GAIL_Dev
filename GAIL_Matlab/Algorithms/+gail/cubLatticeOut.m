@@ -36,8 +36,7 @@ classdef cubLatticeOut < gail.cubLatticeParam & gail.outParam
       % Creating a cubOut process
       function obj = cubLatticeOut(val)
          %this constructor essentially parses inputs
-         %the parser will look for a meanYParam object
-         
+         %the parser will look for a cubLatticeOut object         
          obj@gail.cubLatticeParam(val)
         
       end %of constructor
