@@ -1,4 +1,4 @@
-% UniFunMin
+% XINTONGTHESIS
 %
 % Files
 %
@@ -17,7 +17,7 @@
 %             test functions with epsilon=10^(-8) & delta=10^(-6).
 %   UniFunMin_test_TwoExtreme - Generate Table 3.1 in the thesis for 
 %             functions with two local minimum points.
-%   XinTong's Master Thesis.pdf
+%   XinTong's Master Thesis.pdf - Thesis
 
     
 

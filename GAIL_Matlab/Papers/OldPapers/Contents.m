@@ -1,5 +1,5 @@
-% PAPERS
+% OLDPAPERS
 %
 % Folders
-%   XXX  - xxx 
+%    XinTongThesis - Xin Tong's Thesis (2014)
  

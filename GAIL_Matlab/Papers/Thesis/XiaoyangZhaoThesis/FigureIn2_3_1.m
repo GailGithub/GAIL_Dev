@@ -1,7 +1,6 @@
+% QE_European call option
 
-%%{
-%% QE_European call option
-% %InitializeWorkspaceDisplay %initialize the workspace and the display parameters
+%%InitializeWorkspaceDisplay %initialize the workspace and the display parameters
 clearvars
 T=2;%2;
 delta_t=0.2;
