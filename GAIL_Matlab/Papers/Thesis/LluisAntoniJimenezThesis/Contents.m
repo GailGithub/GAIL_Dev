@@ -1,4 +1,4 @@
-% Lluis Antoni thesis
+% LLUISANTONIJIMENEZTHESIS
 %
 % Files
 %
