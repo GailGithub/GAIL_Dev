@@ -341,6 +341,7 @@ classdef cubParam < gail.fParam
       
       function val = get.ff(obj)
          %
+         %          % Working with Fred 7/10/2017
          %          % ORIGINAL
          %          if strcmp(obj.domainType,'box')
          %             if strcmp(obj.measure,'uniform')
@@ -415,7 +416,8 @@ classdef cubParam < gail.fParam
          end
         
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+         
+        
       end
       
    end
