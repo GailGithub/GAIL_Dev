@@ -73,7 +73,7 @@ function [hmu,out]=meanMC_CLT(varargin)
 % tolerance 1e-5 and relative tolerence 0:
 % 
 % >> f = @(x) prod(x,2);
-% >> q = meanMC_CLTKATE(@(n)f(rand(n,2)),1e-4,0); exactsol = 1/4; 
+% >> q = meanMC_CLT(@(n)f(rand(n,2)),1e-4,0); exactsol = 1/4; 
 % >> check = abs(exactsol-q) < 1e-5
 % check = 1
 %
@@ -83,7 +83,7 @@ function [hmu,out]=meanMC_CLT(varargin)
 % >> f=@(t)[exp(-t.^2),t];
 % >> YXn=@(n)f(rand(n,1));
 % >> s=struct('Y',YXn,'nY',1,'trueMuCV',1/2)
-% >> [hmu,out]=meanMC_CLTKATE(s,0,1e-3); exactsol=erf(1)*sqrt(pi)/2
+% >> [hmu,out]=meanMC_CLT(s,0,1e-3); exactsol=erf(1)*sqrt(pi)/2
 % >> check = abs(exactsol-hmu) < max(0,1e-3*abs(exactsol))
 % check=1
 %
@@ -96,7 +96,7 @@ function [hmu,out]=meanMC_CLT(varargin)
 % >> f2=@(x)[f1(x,1,1),f1(x,1/sqrt(2),1),cos(x)];
 % >> YXn=@(n)f2(randn(n,1));
 % >> s=struct('Y',YXn,'nY',2,'trueMuCV',1/sqrt(exp(1)))
-% >> [hmu,out]=meanMC_CLTKATE(s,0,1e-3); exactsol=1.380388447043143;
+% >> [hmu,out]=meanMC_CLT(s,0,1e-3); exactsol=1.380388447043143;
 % >>  abs(exactsol-hmu) < max(0,1e-3*abs(exactsol))
 % check=1
 %
@@ -107,7 +107,7 @@ function [hmu,out]=meanMC_CLT(varargin)
 % 
 % >> f=@(x) [x(:,1).^3.*x(:,2).^3.*x(:,3).^3, x(:,1).*x(:,2).*x(:,3)];
 % >> s=struct('Y',@(n)f(rand(n,3)),'nY',1,'trueMuCV',1/8)
-% >> [hmu,out]=meanMC_CLTKATE(s,1e-3,0) exactsol = 1/64;
+% >> [hmu,out]=meanMC_CLT(s,1e-3,0) exactsol = 1/64;
 % >> check = abs(exactsol-hmu) < max(1e-3,1e-3*abs(exactsol))
 % check = 1
 %
@@ -119,7 +119,7 @@ function [hmu,out]=meanMC_CLT(varargin)
 %
 % >> f = @(x) [x(:,1).^3.*x(:,2).^3.*x(:,3).^3, x(:,1).^2.*x(:,2).^2.*x(:,3).^2-1/27+1/64,x(:,1).*x(:,2).*x(:,3),x(:,1)+x(:,2)+x(:,3)];
 % >> s=struct('Y',@(n)f(rand(n,3)),'nY',2,'trueMuCV',[1/8 1.5])
-% >> [hmu,out]=meanMC_CLTKATE(s,1e-4,1e-3); exactsol = 1/64;
+% >> [hmu,out]=meanMC_CLT(s,1e-4,1e-3); exactsol = 1/64;
 % >> check = abs(exactsol-hmu) < max(1e-4,1e-3*abs(exactsol))
 % check = 1
 %
@@ -184,6 +184,7 @@ hmu = mean(YY); %estimated mean
 out.mu = hmu; %record answer in output class
 out.nSample = out.nSig+nmu; %total samples required
 out.time = toc(tstart); %elapsed time
+out.errBd = -gail.stdnorminv(out.alpha/2)*sig0up/sqrt(nmu);
 end
 
 

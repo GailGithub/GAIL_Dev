@@ -21,7 +21,7 @@
 % To find \(I\) by Monte Carlo methods we define an anonymous function
 % \(f\) as follows:
 
-gail.InitializeWorkspaceDisplay %initialize the workspace and the display parameters
+
 normsqd = @(t) sum(t.*t,2); %squared l_2 norm of t
 f1 = @(normt,a,d) ((2*pi*a^2).^(d/2)) * cos(a*sqrt(normt)) ...
    .* exp((1/2-a^2)*normt);
@@ -41,7 +41,7 @@ tic
  f3=@(t)f2(t,d);
  YXn=@(n)f3(randn(n,d));
  s=struct('Y',YXn,'nY',size(avec,2)); %create a structure as input for meanMC_CLT
- IMCvec(d)= meanMC_CLTKATE(s,abstol,reltol);
+ IMCvec(d)= meanMC_CLT(s,abstol,reltol);
  end
 
 toc
