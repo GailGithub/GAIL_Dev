@@ -31,9 +31,6 @@
 %   ut_save_mat            - ut_save_mat unit tests for gail.save_mat
 %   ut_stochProcess        - ut_stochProcess
 %
-% Folder
-%   
-%   Developers_only	       - drivers for fast and long tests 
 
 
 
