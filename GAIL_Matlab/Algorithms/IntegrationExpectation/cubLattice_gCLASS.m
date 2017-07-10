@@ -197,6 +197,7 @@ for l=mean_out.mmin-1:-1:1
     end
 end
 
+
 %% Compute Stilde (1)
 nllstart=int64(2^(mean_out.mmin-r_lag-1));
 Stilde(1)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
