@@ -103,7 +103,7 @@ classdef cubParam < gail.fParam
       def_trueMuCV = [] %default true integrals for control variates
       
       def_mmax = 20
-      def_mmin = 10 
+      def_mmin = 10
       def_radius = 1
       def_transf = 1
       
@@ -327,31 +327,30 @@ classdef cubParam < gail.fParam
       
       function val = get.volume(obj) %volume of the domain
          
-         % Working with Fred
+         %% Working with Fred 7/10/2017
          if any(strcmp(obj.measure,{'uniform', 'normal'}))
-            if strcmpi(obj.measure, 'ball')
+            if strcmpi(obj.domainType, 'ball')
                val = ((2.0*pi^(obj.d/2.0))/(obj.d*gamma(obj.d/2.0)))*obj.radius^obj.d; %volume of a d-dimentional ball
-            elseif strcmpi(obj.measure, 'sphere')
+            elseif strcmpi(obj.domainType, 'sphere')
                val = ((2.0*pi^(obj.d/2.0))/(gamma(obj.d/2.0)))*obj.radius^(obj.d - 1); %volume of a d-dimentional sphere
             end
             
          elseif strcmp(obj.measure, {'Lebesgue'})
             val = prod(diff(obj.domain,1),2);
          end
-        
-%          % ORIGINAL WORKING (7/8 Examples)
-%          if any(strcmp(obj.measure,{'uniform', 'normal'}))
-%             val = 1;
-%          elseif strcmp(obj.measure, {'Lebesgue'})
-%             val = prod(diff(obj.domain,1),2);
-%          end
+         
+         %%          ORIGINAL WORKING (7/8 Examples)
+         %          if any(strcmp(obj.measure,{'uniform', 'normal'}))
+         %             val = 1;
+         %          elseif strcmp(obj.measure, {'Lebesgue'})
+         %             val = prod(diff(obj.domain,1),2);
+         %          end
          
       end
       
       function val = get.ff(obj)
          
-         % Working with Fred 7/10/2017
-         % ORIGINAL
+         %% Working with Fred 7/10/2017
          if strcmp(obj.domainType,'box')
             if strcmp(obj.measure,'uniform')
                val = @(t) obj.f(bsxfun(@plus, obj.domain(1,:), ...
@@ -362,79 +361,110 @@ classdef cubParam < gail.fParam
             elseif strcmp(obj.measure, 'normal')
                val = @(t) obj.f(gail.stdnorminv(t));
             end
-            
-         elseif strcmp(obj.domainType,'ball')
-            
-            
-            if strcmp(ob.measure, 'uniform')
+         end 
+         
+         
+         if strcmp(obj.measure, 'uniform')
+            if strcmp(obj.ffmeasure, 'uniform')
                
+               if strcmp(obj.domainType, 'ball')
+                  
+               elseif strcmp(obj.domainTpe, 'box')
+                  
+               elseif strcmp(obj.domainType, '
                
-            end
+            elseif strcmp(obj.ffmeasure, 'normal')
+               
+            end 
             
-         elseif strcmp(obj.domainType, 'sphere')
-            if strcmp(ob.measure, 'uniform')
-               
-            elseif strcmp(obj.measure,'Lebesgue')
-               
-            elseif strcmp(obj.measure, 'normal')
+         elseif strcmp(obj.measure, 'Lesbesque')
+            
+         elseif strcmp(obj.measure, 'normal')
+            
+         end 
+            
+            
+          
+%          elseif strcmp(obj.domainType,'ball')
+%             if strcmp(ob.measure, 'uniform')
+%                
+%             elseif strcmp(obj.measure,'Lebesgue')
+%                
+%             elseif strcmp(obj.measure, 'normal')
+%                val = @(t) obj.f(gail.domain_balls_spheres.ball_psi_2(t, ...
+%                obj.d, obj.radius, obj.domain))*obj.volume;% the psi function is the transformation
+% 
+%             end
+%             
+%          elseif strcmp(obj.domainType, 'sphere')
+%             if strcmp(ob.measure, 'uniform')
+%                
+%             elseif strcmp(obj.measure,'Lebesgue')
+%                
+%             elseif strcmp(obj.measure, 'normal')
+%                val = @(t) obj.f(gail.domain_balls_spheres.sphere_psi_2(t, ...
+%                obj.d, obj.radius, obj.domain))*obj.volume;% the psi function is the transformation
+
                
             end
          end
          
-%          % ORIGINAL WORKING (7/8 Examples)
-%          if strcmpi(obj.measure,'uniform ball') || strcmpi(obj.measure,'uniform sphere')% using uniformly distributed samples on a ball or sphere
-%             if strcmp(obj.measure,'uniform sphere') && obj.transf == 1 %box-to-sphere transformation
-%                obj.d = obj.d + 1; % changing obj.d to the dimension of the sphere
-%                obj.shift = [obj.shift rand];
-%             end
-%             
-%             if strcmpi(obj.measure,'uniform ball')% using the formula of the obj.volume of a ball
-%                obj.volume = ((2.0*pi^(obj.d/2.0))/(obj.d*gamma(obj.d/2.0)))*obj.radius^obj.d; %obj.volume of a d-dimentional ball
-%             else % using the formula of the obj.volume of a sphere
-%                obj.volume = ((2.0*pi^(obj.d/2.0))/(gamma(obj.d/2.0)))*obj.radius^(obj.d - 1); %obj.volume of a d-dimentional sphere
-%             end
-%             
-%             if obj.transf == 1 % box-to-ball or box-to-sphere transformation should be used
-%                
-%                if obj.d == 1 % It is not necessary to multiply the function f by the obj.volume, since no transformation is being made
-%                   obj.domain = [obj.domain - obj.radius; obj.domain + obj.radius];% for one dimension, the ball is actually an interval
-%                   obj.measure = 'uniform';% then a uniform distribution on a box can be used
-%                else
-%                   if strcmpi(obj.measure,'uniform ball') % box-to-ball transformation
-%                      val = @(t) obj.f(gail.domain_balls_spheres.ball_psi_1(t, obj.d, obj.radius, obj.domain))*obj.volume;% the psi function is the transformation
-%                   else %  % box-to-sphere transformation
-%                      val = @(t) obj.f(gail.domain_balls_spheres.sphere_psi_1(t, obj.d, obj.radius, obj.domain))*obj.volume;% the psi function is the transformation
-%                      obj.d = obj.d - 1;% the box-to-sphere transformation takes points from a (d-1)-dimensional box to a d-dimensional sphere
-%                      obj.shift = obj.shift(1:end-1);
-%                   end
-%                   obj.domain = [zeros(1, obj.d); ones(1, obj.d)];% the obj.domain must be the domain of the transformation, which is a unit box
-%                   obj.measure = 'uniform';% then a uniform distribution on a box can be used
-%                end
-%             else % normal-to-ball or normal-to-sphere transformation should be used
-%                
-%                if strcmpi(obj.measure,'uniform ball') % normal-to-ball transformation
-%                   val = @(t) obj.f(gail.domain_balls_spheres.ball_psi_2(t, obj.d, obj.radius, obj.domain))*obj.volume;% the psi function is the transformation
-%                else % normal-to-sphere transformation
-%                   val = @(t) obj.f(gail.domain_balls_spheres.sphere_psi_2(t, obj.d, obj.radius, obj.domain))*obj.volume;% the psi function is the transformation
-%                end
-%                obj.domain = bsxfun(@plus, zeros(2, obj.d), [-inf; inf]);% the obj.domain must be the domain of the transformation, which is a this unit box
-%                obj.measure = 'normal';% then a normal distribution can be used
-%             end
-%          end
-%          
-%          if strcmp(obj.measure,'normal')
-%             val=@(x) obj.f(gail.stdnorminv(x));
-%          elseif strcmp(obj.measure,'uniform')
-%             Cnorm = prod(obj.domain(2,:)-obj.domain(1,:));
-%             val=@(x) Cnorm*obj.f(bsxfun(@plus,obj.domain(1,:),bsxfun(@times,(obj.domain(2,:)-obj.domain(1,:)),x))); % a + (b-a)x = u
-%          end
-%       end
+      end
       
- 
+      %%         ORIGINAL WORKING (7/8 Examples)
+      %          if strcmpi(obj.measure,'uniform ball') || strcmpi(obj.measure,'uniform sphere') %using uniformly distributed samples on a ball or sphere
+      %             if strcmp(obj.measure,'uniform sphere') && obj.transf == 1 %box-to-sphere transformation
+      %                obj.d = obj.d + 1; % changing obj.d to the dimension of the sphere
+      %                obj.shift = [obj.shift rand];
+      %             end
+      %
+      %             if strcmpi(obj.measure,'uniform ball')% using the formula of the obj.volume of a ball
+      %                obj.volume = ((2.0*pi^(obj.d/2.0))/(obj.d*gamma(obj.d/2.0)))*obj.radius^obj.d; %obj.volume of a d-dimentional ball
+      %             else % using the formula of the obj.volume of a sphere
+      %                obj.volume = ((2.0*pi^(obj.d/2.0))/(gamma(obj.d/2.0)))*obj.radius^(obj.d - 1); %obj.volume of a d-dimentional sphere
+      %             end
+      %
+      %             if obj.transf == 1 % box-to-ball or box-to-sphere transformation should be used
+      %
+      %                if obj.d == 1 % It is not necessary to multiply the function f by the obj.volume, since no transformation is being made
+      %                   obj.domain = [obj.domain - obj.radius; obj.domain + obj.radius];% for one dimension, the ball is actually an interval
+      %                   obj.measure = 'uniform';% then a uniform distribution on a box can be used
+      %                else
+      %                   if strcmpi(obj.measure,'uniform ball') % box-to-ball transformation
+      %                      val = @(t) obj.f(gail.domain_balls_spheres.ball_psi_1(t, obj.d, obj.radius, obj.domain))*obj.volume;% the psi function is the transformation
+      %                   else %  % box-to-sphere transformation
+      %                      val = @(t) obj.f(gail.domain_balls_spheres.sphere_psi_1(t, obj.d, obj.radius, obj.domain))*obj.volume;% the psi function is the transformation
+      %                      obj.d = obj.d - 1;% the box-to-sphere transformation takes points from a (d-1)-dimensional box to a d-dimensional sphere
+      %                      obj.shift = obj.shift(1:end-1);
+      %                   end
+      %                   obj.domain = [zeros(1, obj.d); ones(1, obj.d)];% the obj.domain must be the domain of the transformation, which is a unit box
+      %                   obj.measure = 'uniform';% then a uniform distribution on a box can be used
+      %                end
+      %
+      %             else % normal-to-ball or normal-to-sphere transformation should be used
+      %
+      %                if strcmpi(obj.measure,'uniform ball') % normal-to-ball transformation
+      %                   val = @(t) obj.f(gail.domain_balls_spheres.ball_psi_2(t, obj.d, obj.radius, obj.domain))*obj.volume;% the psi function is the transformation
+      %                else % normal-to-sphere transformation
+      %                   val = @(t) obj.f(gail.domain_balls_spheres.sphere_psi_2(t, obj.d, obj.radius, obj.domain))*obj.volume;% the psi function is the transformation
+      %                end
+      %                obj.domain = bsxfun(@plus, zeros(2, obj.d), [-inf; inf]);% the obj.domain must be the domain of the transformation, which is a this unit box
+      %                obj.measure = 'normal';% then a normal distribution can be used
+      %             end
+      %          end
+      %
+      %          if strcmp(obj.measure,'normal')
+      %             val=@(x) obj.f(gail.stdnorminv(x));
+      %          elseif strcmp(obj.measure,'uniform')
+      %             Cnorm = prod(obj.domain(2,:)-obj.domain(1,:));
+      %             val=@(x) Cnorm*obj.f(bsxfun(@plus,obj.domain(1,:),bsxfun(@times,(obj.domain(2,:)-obj.domain(1,:)),x))); % a + (b-a)x = u
+      %          end
+      %       end
+      
    end
    
-   
    methods (Access = protected)
+      
       function outval = checkMeasure(obj,inval)
          assert(any(strcmp(inval,obj.allowedMeasures)))
          if strcmp(inval,'Gaussian') %same as normal

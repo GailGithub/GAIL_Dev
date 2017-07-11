@@ -386,6 +386,7 @@ if strcmpi(out_param.measure,'uniform ball') || strcmpi(out_param.measure,'unifo
             hyperbox = [zeros(1, out_param.d); ones(1, out_param.d)];% the hyperbox must be the domain of the transformation, which is a unit box
             out_param.measure = 'uniform';% then a uniform distribution on a box can be used
         end
+        
     else % normal-to-ball or normal-to-sphere transformation should be used
        
         if strcmpi(out_param.measure,'uniform ball') % normal-to-ball transformation
