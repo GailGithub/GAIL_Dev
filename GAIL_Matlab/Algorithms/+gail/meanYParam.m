@@ -70,7 +70,7 @@ classdef meanYParam < gail.errorParam
       Y %random number generator
       alpha %uncertainty
       nSig %sample size to estimate variance
-      inflate %inflation factor for bounding standard deviation
+      inflateSig %inflation factor for bounding standard deviation
       nMax %maximum sample size allowed
       nMu %number of means for solution function
       nY %number of Y for each mean
@@ -86,7 +86,7 @@ classdef meanYParam < gail.errorParam
       def_Y = @(n) rand(n,1) %default random number generator
       def_alpha = 0.01 %default uncertainty
       def_nSig = 1000 %default uncertainty
-      def_inflate = 1.2 %default inflation factor
+      def_inflateSig = 1.2 %default inflation factor
       def_nMax = 1e8 %default maximum sample size
       def_nMu = 1 %default number of means
       def_nY = 1 %default number of Y per mean
@@ -141,7 +141,7 @@ classdef meanYParam < gail.errorParam
             obj.Y = val.Y; %copy random number generator
             obj.alpha = val.alpha; %copy uncertainty
             obj.nSig = val.nSig; %copy sample size for sigma
-            obj.inflate = val.inflate; %copy inflation factor
+            obj.inflateSig = val.inflateSig; %copy inflation factor
             obj.nMax = val.nMax; %copy maximum sample size
             obj.nMu = val.nMu; %copy number of mu values
             obj.nY = val.nY; %copy number of Y values per mu
@@ -174,7 +174,7 @@ classdef meanYParam < gail.errorParam
          f_addParamVal(p,'Y',obj.def_Y);
          f_addParamVal(p,'alpha',obj.def_alpha);
          f_addParamVal(p,'nSig',obj.def_nSig);
-         f_addParamVal(p,'inflate',obj.def_inflate);
+         f_addParamVal(p,'inflateSig',obj.def_inflateSig);
          f_addParamVal(p,'nMax',obj.def_nMax);
          f_addParamVal(p,'nMu',obj.def_nMu);
          f_addParamVal(p,'nY',obj.def_nY);
@@ -203,8 +203,8 @@ classdef meanYParam < gail.errorParam
          if isfield(struct_val,'nSig')
             obj.nSig = struct_val.nSig;
          end
-         if isfield(struct_val,'inflate')
-            obj.inflate = struct_val.inflate;
+         if isfield(struct_val,'inflateSig')
+            obj.inflateSig = struct_val.inflateSig;
          end
          if isfield(struct_val,'nMax')
             obj.nMax = struct_val.nMax;
@@ -238,9 +238,9 @@ classdef meanYParam < gail.errorParam
          obj.nSig = val;
       end
                        
-      function set.inflate(obj,val)
+      function set.inflateSig(obj,val)
          validateattributes(val, {'numeric'}, {'scalar','>',1})
-         obj.inflate = val;
+         obj.inflateSig = val;
       end
       
       function set.nMax(obj,val)
@@ -290,8 +290,8 @@ classdef meanYParam < gail.errorParam
          if obj.nSig ~= obj.def_nSig
             propList.nSig = obj.nSig;
          end
-         if obj.inflate ~= obj.inflate
-            propList.inflate = obj.inflate;
+         if obj.inflateSig ~= obj.inflateSig
+            propList.inflateSig = obj.inflateSig;
          end
          if obj.nMax ~= obj.def_nMax
             propList.nMax = obj.nMax;

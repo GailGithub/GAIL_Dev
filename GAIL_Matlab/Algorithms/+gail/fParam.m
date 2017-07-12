@@ -118,7 +118,7 @@ classdef fParam < gail.errorParam
    
    methods
       
-      % Creating a meanYParam process
+      % Creating a fParam process
       function obj = fParam(varargin)
          %this constructor essentially parses inputs
          %the parser will look for the following in order
