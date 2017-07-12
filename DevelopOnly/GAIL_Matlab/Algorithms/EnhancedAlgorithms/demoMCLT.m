@@ -3,31 +3,36 @@
 %
 % \[
 %  \mu=\mathbb{E}(Y) =
-%  \mathbb{E}[f(\boldsymbol{X})]=\int_{\boldsymbol{R^d}} f(\boldsymbol{x}) \rho(\boldsymbol{x}) d\boldsymbol{x}
+%  \mathbb{E}[f(\boldsymbol{X})]=\int_{\mathbb{R}^d} f(\boldsymbol{x}) \rho(\boldsymbol{x}) d\boldsymbol{x}
 %  \approx \frac{1}{n}\sum_{i=1}^{n}{f(x_i)}, \, {x_i} \,
 %  \text{IID} \sim
 %  \, \rho
 % \]
 %
-% We will approximate \(\mu\) using meanMC_CLT GAIL method. It is a
-% IID Monte-Carlo algorithm using Central Limit Theorem. In order to improve
-% computation efficiency, we will use control variates.
+% We will approximate \(\mu\) using meanMC_CLT GAIL method. It is a IID
+% Monte Carlo algorithm using Central Limit Theorem to determine the sample
+% size. In order to improve computation efficiency, we will use control
+% variates.
 %%
 
 function demoMCLT
 %% Initialize the workspace and setting the display parameters
-% These settings clean up the workspace and make the display beautiful.
+% This script cleans up the workspace and makes the display beautiful.
 
 gail.InitializeWorkspaceDisplay %initialize the workspace and the display parameters
 
 %% Example 1: Estimate \(\mathbb{E}[f(\boldsymbol{X})]\) where \(f(\boldsymbol{x})=\exp(-\boldsymbol{x}^2)\) and \(\boldsymbol{X} \sim \mathcal{U} (0,1)\) using \(f(\boldsymbol{x})=\boldsymbol{x}\) as a control variate
-absTol=1e-3; % absolute tolerance 
+% In this example a function that cannot be integrated analytically is
+% integrated using our adaptive IID Monte Carlo method.  We also use the
+% function  \(x\) as a control variate.
+
+absTol=1e-3; %absolute tolerance 
 relTol=0; %relative tolerance
-f=@(x)[exp(-x.^2),x];YXn=@(n)f(rand(n,1));%set up the random variable 
+f=@(x)[exp(-x.^2),x]; YXn=@(n)f(rand(n,1)); %set up the random variable 
 
 figure %plot f(x)
-n=0:0.001:1;
-plot(n,exp(-n.^2),'-'); 
+x=0:0.001:1;
+plot(x,exp(-x.^2),'-'); 
 ylabel('\(\exp(-x^2)\)')
 xlabel('\(x\)')
 
@@ -44,17 +49,22 @@ disp(['Real error was ' ...
     num2str(absTol) '.'])
 
 
-%% Example 2: Price European Call option with stock price as a control variate
-%Initialize option parameters for a European call option
-inp.timeDim.timeVector = [1 2 3]; %%time increments
+%% Example 2: Price European Call Option
+% This time we price a European call option using the stock price as a
+% control variate.
+%
+% Initialize option parameters for a European call option
+inp.timeDim.timeVector = 0:0.25:1; %%time increments
 inp.assetParam.initPrice = 10; %initial stock price
 inp.assetParam.interest = 0.01; %risk-free interest rate
-inp.assetParam.volatility = 0.8; %volatility
+inp.assetParam.volatility = 0.5; %volatility
 inp.payoffParam.strike = 10; %strike price
-inp.priceParam.absTol = 0.1; %absolute tolerance
+inp.priceParam.absTol = 0.01; %absolute tolerance of a penny
 inp.priceParam.relTol = 0; %relative tolerance
-EuroCall = optPayoff(inp); % create a european call option
-EuroCallPayoff=@(n) genOptPayoffs(EuroCall,n);
+EuroCall = optPayoff(inp); %create a European call option payoff object
+EuroCallPayoff=@(n) genOptPayoffs(EuroCall,n); %identify the payoff function
+
+%%
 % Plot an empirical distribution of the European call option
 n = 1e4; %number of payoffs to plot
 payoffs = EuroCallPayoff(n); %generate n payoffs
@@ -63,23 +73,15 @@ figure
 plot(sortedpay,((1:n)-1/2)/n,'-'); %plot the empirical distribution function scenarios
 xlabel('Payoff in dollars')
 ylabel('CDF')
-axis([0 300 0 1])
+axis([0 50 0 1])
 print -depsc PayoffCDF.eps %print the plot to a .eps file
-% set up the stock price
-load /Users/yueyili/GAIL_Dev/DevelopOnly/GAIL_Matlab/Algorithms/EnhancedAlgorithms/stockPriceHistory -ascii %load one year of stock price data into memory
-S0 = stockPriceHistory(end); %stock price today
-Delta = 1/250; %daily time increment in years
-diffLogStockPrice = diff(log(stockPriceHistory)); %difference of the log of the stock prices
-scDrift = mean(diffLogStockPrice); %sample mean
-drift = scDrift/Delta; %estimated drift
-scVolatility = std(diffLogStockPrice); %sample standard deviation
-volatility = scVolatility/sqrt(Delta); %estimated volatility
-timeFinal = 1/2; %final time
-%estimate European call option
-Y=@(n) [genOptPayoffs(EuroCall,n),S0*exp(drift*timeFinal+ volatility * sqrt(timeFinal)* randn(n,1))];
-s=struct('Y',Y,'nY',1,'trueMuCV',S0);
-[hmu,out]=meanMC_CLT(s,inp.priceParam.absTol,inp.priceParam.relTol);
-disp('Example 2')
+%%
+% Note that the option has a positive payoff only about 60% of the time.
+
+%%
+% Next we price the option using simple IID Monte Carlo.  We happen to have
+% a formulat for the exact price that can be used to check our error.
+[hmu,out]=meanMC_CLT(EuroCallPayoff,inp.priceParam.absTol,inp.priceParam.relTol);
 disp(['Estimated mean is: ' num2str(hmu)])
 disp(['The algorithm took ' num2str(out.time) ' seconds and '...
     num2str(out.nSample) ' points.'])
@@ -87,8 +89,39 @@ disp(['Real error was ' ...
     num2str(abs(EuroCall.exactPrice-hmu))...
     ' which is less than the user input tolerance '...
     num2str(inp.priceParam.absTol) '.'])
+
+%%
+% Now we used the stock price as a control variate.  To do that, we need to
+% modify the option payoff object.
+
+EuroCallCV = optPayoff(EuroCall); %make a copy of the European call option parameters
+EuroCallCV.payoffParam = struct('optType', {{'euro','stockprice'}}, ...
+   'putCallType', {{'call',''}}); %identify the option type
+EuroCallCVPayoff=@(n) genOptPayoffs(EuroCallCV,n); %identify the payoff function
+s=struct('Y',EuroCallCVPayoff,'nY',1,'trueMuCV',EuroCallCV.assetParam.initPrice);
+[hmu,out]=meanMC_CLT(s,inp.priceParam.absTol,inp.priceParam.relTol);
+disp(['Estimated mean is: ' num2str(hmu)])
+disp(['The algorithm took ' num2str(out.time) ' seconds and '...
+    num2str(out.nSample) ' points.'])
+disp(['Real error was ' ...
+    num2str(abs(EuroCall.exactPrice-hmu))...
+    ' which is less than the user input tolerance '...
+    num2str(inp.priceParam.absTol) '.'])
+
+%%
+% See how meanMC_CLT works on pricing a European call option with
+% and without a control variate. While the two both give estimation within
+% error torelance,adding control variate uses only about 1/9 of sample points
+% and takes 1/5 of the time.
+%%
+% In GAIL, we provide a function genOptPric that takes a call option and calls meanMC_CLT (or other method)
+% to price it.
+EuroCallCV2 = optPayoff(EuroCall);
+EuroCallCV.payoffParam2 = struct('optType', {{'euro','stockprice'}}, ...
+   'putCallType', {{'call',''}});
+
 %% Example 3: Keister's multidimensional integration
-% We will evaluate the Keister's integration $I$ using meanMC_CLT.  Note
+% We will evaluate the Keister's integral $I$ using meanMC_CLT.  Note
 % that the we do a change of variable \(\boldsymbol{t} = \boldsymbol{x}/a\)
 % and transform the integral:
 %
@@ -125,17 +158,21 @@ outN=zeros(size(dvec));%vector of points
  outT(d)=out.time;
  outN(d)=out.nSample;
  end
-[~,Ivec] = Keistertrue(dvec(end)); %true integration
-relErrMC = abs(Ivec-IMCvec)./abs(Ivec);
+Ivec=zeros(size(dvec)); %vector of true integration
+for d = dvec
+Ivec(d)= Keistertrue(d); %true integration
+end
  disp('Example 3')
 disp(['The estimated integration for dimension ' num2str(dvec) ': ' num2str(IMCvec) ])
 disp(['The algorithm took ' num2str(outT) ' seconds and '...
     num2str(outN) ' points.'])
 disp(['Real error was ' ...
-    num2str(relErrMC)...
+    num2str(abs(Ivec-IMCvec)./abs(Ivec))...
     ' which is less than the user input tolerance '...
     num2str(reltol) '.'])
 
 
  
 end
+%%
+% _Yueyi Li_

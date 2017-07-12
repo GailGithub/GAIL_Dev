@@ -64,7 +64,7 @@ classdef whiteNoise < stochProcess
             val=varargin{1};
             if isa(val,'whiteNoise') %make a new copy of a whiteNoise object
                obj.wnParam = val.wnParam;
-               obj.qrandState = val.qrandState;
+               %obj.qrandState = val.qrandState;
                if nargin == 1
                   return
                end
