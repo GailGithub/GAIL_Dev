@@ -49,20 +49,16 @@ function [hmu,out]=meanMC_CLT(varargin)
 %     0.33***
 % out = 
 %   meanYOut with properties:
-% 
-%           mu: 0.33***
-%          std: 0.***
-%            Y: @(n)rand(n,1).^2
-%        alpha: 0.0100
-%         nSig: 1000
-%      inflate: 1.2000
-%         nMax: 100000000
+%           
+%            Y: @(n)rand(n,1).^2 
 %       absTol: 1.0000e-03
 %       relTol: 0
-%       solFun: @(mu)mu
-%     solBdFun: @(muhat,errbd)[muhat-errbd,muhat+errbd]
-%      nSample: ***
-%         time: ***
+%        alpha: 0.0100 
+%           mu: 0.33***
+%       stddev: 0.3006
+%      nSample: 864130
+%         time: 0.0983 
+%       errBd: 1.0000e-03
 %
 %
 
