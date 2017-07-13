@@ -69,8 +69,6 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
    %          nInit: 2048
    %
    %
-
-   
    % Author: Fred J. Hickernell
    
    properties
