@@ -322,12 +322,7 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
          assert(obj.fun.nfOut - sum(inval) == obj.CM.nCV)
          outval = inval;
       end
-   
-      function outval = setTrueMuCVDim(obj,inval)
-         assert(numel(inval) == obj.CM.nCV)
-         outval = inval(:)';
-      end
- 
+    
      function propgrp = getPropertyGroups(obj)
         if ~isscalar(obj)
            propgrp = getPropertyGroups@matlab.mixin.CustomDisplay(obj);

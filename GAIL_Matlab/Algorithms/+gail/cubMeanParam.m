@@ -58,7 +58,7 @@ classdef cubMeanParam < handle & matlab.mixin.CustomDisplay
       def_nInit = 1024 %default initial number of samples
       def_nMax = 2^24 %default maximum sample size
       def_nMu = 1 %default number of integrals
-      def_inflate = [] %default true integrals for control variates
+      def_inflate = 1.2 %default true integrals for control variates
       def_trueMuCV = [] %default true integrals for control variates
    end
    
