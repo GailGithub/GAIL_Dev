@@ -16,14 +16,14 @@ classdef meanYOut < gail.meanYParam & gail.outParam
    %   meanYOut with properties:
    % 
    %           Y: @(n)rand(n,1)
-   %      absTol: 0.010000000000000
+   %      absTol: 0.0100
    %      relTol: 0
-   %       alpha: 0.010000000000000
-   %          mu: 1.467000000000000
-   %      stddev: 1.230000000000000
+   %       alpha: 0.0100
+   %          mu: 1.4670
+   %      stddev: 1.2300
    %     nSample: 31415926
-   %        time: 0.027800000000000
-   %       errBd: 4.560000000000000e-04
+   %        time: 0.0278
+   %       errBd: 4.5600e-04
    %
    %
    % Author: Fred J. Hickernell

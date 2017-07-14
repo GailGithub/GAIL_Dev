@@ -9,7 +9,7 @@ classdef errorParam < handle & matlab.mixin.CustomDisplay
    % errParamObj = 
    %   errorParam with properties:
    % 
-   %       absTol: 0.010000000000000
+   %       absTol: 0.0100
    %       relTol: 0
    %
    %
@@ -18,7 +18,7 @@ classdef errorParam < handle & matlab.mixin.CustomDisplay
    % errParamObj = 
    %   errorParam with properties:
    % 
-   %       absTol: 1.000000000000000e-03
+   %       absTol: 1.0000e-03
    %       relTol: 0
    %
    %
@@ -27,8 +27,8 @@ classdef errorParam < handle & matlab.mixin.CustomDisplay
    % errParamObj = 
    %   errorParam with properties:
    % 
-   %       absTol: 0.010000000000000
-   %       relTol: 0.100000000000000
+   %       absTol: 0.0100
+   %       relTol: 0.1000
    %
    %
    % Example 4. Make a copy of an errorParam object and change a property
@@ -36,8 +36,8 @@ classdef errorParam < handle & matlab.mixin.CustomDisplay
    % newErrParamObj = 
    %   errorParam with properties:
    % 
-   %       absTol: 0.010000000000000
-   %       relTol: 1.000000000000000e-03
+   %       absTol: 0.0100
+   %       relTol: 1.0000e-03
    %
    %
    % Author: Fred J. Hickernell

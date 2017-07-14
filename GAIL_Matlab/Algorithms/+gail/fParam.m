@@ -1,4 +1,4 @@
-classdef fParam < gail.errorParam
+classdef fParam < handle & matlab.mixin.CustomDisplay
    %GAIL.FPARAM is a class containing the parameters related to
    %algorithms that act on functions of x
    %   This class contains the function, its domain, etc.
@@ -10,8 +10,6 @@ classdef fParam < gail.errorParam
    % 
    %              f: @(x)sum(x.^2,2)
    %         domain: [2×1 double]
-   %         absTol: 0.010000000000000
-   %         relTol: 0
    %
    %
    % Example 2. Function on 2-D unit cube
@@ -21,8 +19,6 @@ classdef fParam < gail.errorParam
    % 
    %              f: @(x)sum(x.^3.2)
    %         domain: [2×2 double]
-   %         absTol: 0.010000000000000
-   %         relTol: 0
    % 
    %
    % Example 3. Ball domain
@@ -33,8 +29,6 @@ classdef fParam < gail.errorParam
    %              f: @(x)sum(x.^3.2)
    %         domain: [2×2 double]
    %     domainType: 'ball'
-   %         absTol: 0.010000000000000
-   %         relTol: 0
    %
    %
    % Example 4. Using name/value pairs
@@ -44,8 +38,6 @@ classdef fParam < gail.errorParam
    % 
    %              f: @(x)sum(x.^3.2)
    %         domain: [2×2 double]
-   %         absTol: 0.010000000000000
-   %         relTol: 0.100000000000000
    % 
    %
    % Example 5. Using structure for input
@@ -58,8 +50,6 @@ classdef fParam < gail.errorParam
    % 
    %              f: @(x)sin(sum(x,2))
    %         domain: [2×4 double]
-   %         absTol: 0.010000000000000
-   %         relTol: 0.100000000000000
    %
    %   
    % Example 6. Using structure for input and numbers, structure takes
@@ -73,8 +63,6 @@ classdef fParam < gail.errorParam
    % 
    %              f: @(x)sin(sum(x,2))
    %         domain: [2×4 double]
-   %         absTol: 1.000000000000000e-04
-   %         relTol: 0.100000000000000
    %
    %   
    % Example 7. Coping an fParam object and changing properties
@@ -85,8 +73,6 @@ classdef fParam < gail.errorParam
    %              f: @(x)sin(sum(x,2))
    %         domain: [2×4 double]
    %     domainType: 'sphere'
-   %         absTol: 1.000000000000000e-04
-   %         relTol: 0.100000000000000
    %
    %   
    % Author:  Fred J. Hickernell
@@ -94,7 +80,7 @@ classdef fParam < gail.errorParam
    properties
       f %function defined on some domain, often an interval or box
       domain %domain one or several dimensions
-      domainType
+      domainType %domain type
       nInit %initial sample size
       nMax %maximum sample size
    end
@@ -123,7 +109,7 @@ classdef fParam < gail.errorParam
    
    methods
       
-      % Creating a meanYParam process
+      % Creating a fParam process
       function obj = fParam(varargin)
          %this constructor essentially parses inputs
          %the parser will look for the following in order
@@ -175,11 +161,6 @@ classdef fParam < gail.errorParam
             end
          end
          
-         %Parse errorParam properties
-         whichParse = [objInp structInp start:nargin];
-         whichParse = whichParse(whichParse > 0);
-         obj@gail.errorParam(varargin{whichParse});
-
          done = false; %not finished parsing
          if objInp
             val = varargin{objInp}; %first input
@@ -309,14 +290,21 @@ classdef fParam < gail.errorParam
          assert(any(strcmp(inval,obj.allowedDomains)))
       end
          
-      function propList = getPropertyList(obj)
+      function propgrp = getPropertyGroups(obj)
+        if ~isscalar(obj)
+           propgrp = getPropertyGroups@matlab.mixin.CustomDisplay(obj);
+        else
+           propList = getPropertyList(obj);
+           propgrp = matlab.mixin.util.PropertyGroup(propList);
+        end
+     end
+      
+     function propList = getPropertyList(obj)
          propList = struct('f', obj.f, ...
             'domain', obj.domain);
          if ~strcmp(obj.domainType,obj.def_domainType)
             propList.domainType = obj.domainType;
          end
-         propList.absTol = obj.absTol;
-         propList.relTol = obj.relTol;
          if obj.nInit ~= obj.def_nInit
             propList.nInit = obj.nInit;
          end
