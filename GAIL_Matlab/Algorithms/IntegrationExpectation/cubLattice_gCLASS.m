@@ -49,6 +49,8 @@ mean_out = gail.cubLatticeOut(mean_inp); %create the output class
 %     end
 % end
 
+display(mean_out.domain);
+
 %------------------------------------------------------------------------------
 % Minimum gathering of points
 l_star = mean_out.mmin - r_lag; % Minimum gathering of points for the sums of DFT
@@ -89,6 +91,7 @@ errest=zeros(mean_out.mmax -mean_out.mmin+1,1); %initialize error estimates
 appxinteg=zeros(mean_out.mmax -mean_out.mmin+1,1); %initialize approximations to integral
 exit_len = 2;
 exit=false(1,exit_len); %we start the algorithm with all warning flags down
+
 
 %% Initial points and FFT
 mean_out.nSample=2^mean_out.mmin; %total number of points to start with

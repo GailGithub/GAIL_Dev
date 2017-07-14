@@ -352,8 +352,14 @@ function [q, out_param] = cubLattice_g(varargin)
 t_start = tic;
 %% Initial important cone factors and Check-initialize parameters
 r_lag = 4; %distance between coefficients summed and those computed
+disp('before before:');
+disp(varargin);
+
 [f,hyperbox,out_param, cv] = cubLattice_g_param(r_lag,varargin{:});
 
+disp('before');
+display(hyperbox);
+display(out_param.d);
 %------------------------------------------------------------------------------
 % TRANSFORMATION
 %changing the integrand and the hyperbox when measure is uniform ball or
@@ -412,11 +418,12 @@ if cv.J % if using control variates(f is structure), redefine f
 end
 
 if strcmp(out_param.measure,'normal')
-    f=@(x) f(gail.stdnorminv(x));
+   f=@(x) f(gail.stdnorminv(x));
 elseif strcmp(out_param.measure,'uniform')
-    Cnorm = prod(hyperbox(2,:)-hyperbox(1,:));
-    f=@(x) Cnorm*f(bsxfun(@plus,hyperbox(1,:),bsxfun(@times,(hyperbox(2,:)-hyperbox(1,:)),x))); % a + (b-a)x = u
+   Cnorm = prod(hyperbox(2,:)-hyperbox(1,:));
+   f=@(x) Cnorm*f(bsxfun(@plus,hyperbox(1,:),bsxfun(@times,(hyperbox(2,:)-hyperbox(1,:)),x))); % a + (b-a)x = u
 end
+
 
 if strcmp(out_param.transform,'Baker')
     f=@(x) f(1-2*abs(x-1/2)); % Baker's transform
@@ -427,6 +434,10 @@ elseif strcmp(out_param.transform,'C1')
 elseif strcmp(out_param.transform,'C1sin')
     f=@(x) f(x-sin(2*pi*x)/(2*pi)).*prod(1-cos(2*pi*x),2); % Sidi C^1 transform
 end
+
+display('after:');
+display(hyperbox);
+display(out_param.d);
 
 %% Main algorithm - Preallocation
 Stilde=zeros(out_param.mmax-out_param.mmin+1,1); %initialize sum of DFT terms

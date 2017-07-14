@@ -57,6 +57,12 @@ classdef cubLatticeOut < gail.cubLatticeParam & gail.outParam
          propList.time = obj.time;
          propList.errBd = obj.errBd;
          propList.tolVal = obj.tolVal;
+         propList.domainType=obj.domainType;
+         propList.measure=obj.measure;
+         propList.ffMeasure=obj.ffMeasure;
+         propList.d=obj.d;
+         propList.domain=obj.domain;
+
          end
    end
 

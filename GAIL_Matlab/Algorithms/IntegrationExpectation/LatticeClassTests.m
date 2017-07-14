@@ -71,7 +71,7 @@ cubLattice_gCLASS(w);
 % Example 8: 
 w.func = @(x)[10*x(:,1)-5*x(:,2).^2+1*x(:,3).^3, x(:,1), x(:,2).^2];
 w.cv = [8,32/3]; hyperbox= [zeros(1,3);2*ones(1,3)];
-q = cubLattice_g(w,hyperbox,'uniform',1e-6,0); exactsol=128/3;
+[q, hi]= cubLattice_g(w,hyperbox,'uniform',1e-6,0); exactsol=128/3;
 
 w.f= @(x)[10*x(:,1)-5*x(:,2).^2+1*x(:,3).^3, x(:,1), x(:,2).^2];
 w.domain = [zeros(1,3);2*ones(1,3)];
@@ -79,18 +79,21 @@ w.trueMuCV=[8,32/3];
 w.absTol=1e-6
 w.relTol=0
 w.measure = 'uniform';
-cubLattice_gCLASS(w);
+[~, bye]=cubLattice_gCLASS(w);
 
 % ------------------------------------
 % Example 7:
 f = @(x) [x(:,1).^2+x(:,2).^2]; hyperbox = [0,0,1];
-q = cubLattice_g(f,hyperbox,'uniform ball','abstol',1e-4,'reltol',0); exactsol = pi/2;
+[q, hi] = cubLattice_g(f,hyperbox,'uniform ball','abstol',1e-4,'reltol',0); exactsol = pi/2;
 
 a.f = @(x) [x(:,1).^2+x(:,2).^2];
-a.domain =[0,0];
+a.domain =[0,0,1];
 a.measure = 'uniform ball';
 a.abstol=1e-4;
 a.reltol=0;
 cubLattice_gCLASS(a);
+
+
+
 
 

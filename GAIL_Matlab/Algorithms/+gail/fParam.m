@@ -107,12 +107,17 @@ classdef fParam < gail.errorParam
    properties (Hidden, SetAccess = private)
       def_f = @(x) sum(x.^2,2) %default function
       def_domain = [0; 1]; %default domain
-      def_domainType = 'box'; %default domain type
-      def_nInit = 100 %default initial number of samples
-      def_nMax = 1e7 %default maximum sample size
-      allowedDomains = {'box', ... %a hyperbox
+      def_domainType = 'cube'; %default domain type
+      def_nInit = 1e3 %default initial number of samples
+      def_nMax = 1.5e6 %default maximum sample size
+      allowedDomains = {'cube', ... %a hyperbox
          'ball', ... %solid ball
-         'sphere'} %hollow sphere
+         'sphere',...
+         'ball-from-normal', ...
+         'ball-from-cube', ...
+         'sphere-from-normal',...
+         'sphere-from-cube'
+         } %hollow sphere
    end
    
    
