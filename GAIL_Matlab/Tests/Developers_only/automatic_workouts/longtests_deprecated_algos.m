@@ -7,6 +7,7 @@ doctest funappxglobal_g
 % doctest funmin01_g
 doctest integral01_g
 doctest integraltau_g
+doctest integralPenalty_g
 doctest meanMCabs_g
 doctest cubMCabs_g;
 doctest cubLattice_old_g;
@@ -24,6 +25,16 @@ doctest cubLattice_old_g;
 %     display('Error: Test ut_funappxglobal_g is wrongly coded. We skip it.')
 %     %fprintf(fid,'Error: Test ut_funappxglobal_g is wrongly coded. We skip it.\n');
 % end
+
+try
+    Tests = matlab.unittest.TestSuite.fromClass(?ut_integralPenalty_g);
+    results=run(ut_integral01_g);
+    if sum([results.Failed])>0
+        failed=find([results.Failed]>0);
+    end
+catch
+    display('Error: Test ut_integralPenalty_g is wrongly coded. We skip it.')
+end
 
 warning('off','GAIL:integral01_g:peaky')
 try
@@ -83,8 +94,8 @@ end
 
 
 %try
-%    Tests = matlab.unittest.TestSuite.fromClass(?ut_integralNoPenalty_g);
-%    results=run(ut_integralNoPenalty_g);
+%    Tests = matlab.unittest.TestSuite.fromClass(?ut_integral_g);
+%    results=run(ut_integral_g);
 %    if sum([results.Failed])>0
 %        failed=find([results.Failed]>0);
 %        for i=1:size(failed,2)
@@ -92,5 +103,5 @@ end
 %        end
 %    end
 %catch
-%    display('Error: Test ut_integralNoPenalty_g is wrongly coded. We skip it.')
+%    display('Error: Test ut_integral_g is wrongly coded. We skip it.')
 %end
