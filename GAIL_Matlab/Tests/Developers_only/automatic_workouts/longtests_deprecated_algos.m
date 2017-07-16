@@ -12,6 +12,8 @@ doctest meanMCabs_g
 doctest cubMCabs_g;
 doctest cubLattice_old_g;
 
+longtests_conePaper
+
 % try
 %     Tests = matlab.unittest.TestSuite.fromClass(?ut_funappxglobal_g);
 %     results=run(ut_funappxglobal_g);
