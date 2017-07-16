@@ -62,7 +62,7 @@ for i=1:nrep
         newtaumat(i,j) = out_param.tau;
         budgetmat(i,j) = out_param.exceedbudget;
         errestmat(i,j) = out_param.errest;
-        tauchangemat(i,j) = out_param.tauchange;
+        %tauchangemat(i,j) = out_param.tauchange;
     end
 end
 
