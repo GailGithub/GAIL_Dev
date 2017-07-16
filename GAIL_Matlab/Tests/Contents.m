@@ -4,7 +4,6 @@
 %
 %   dt_funappx_g           - fast doctest for funappx_g
 %   dt_integral_g          - fast doctest for integral_g
-%   ut_ConesPaper          - long unit tests for Cone Paper
 %   ut_convtest_funappx_g  - unit tests for convergence test of funappx_g
 %   ut_cubLattice_g        - fast unit tests for cubLattice_g
 %   ut_cubMC_g             - fast unit tests for cubMC_g
@@ -23,14 +22,11 @@
 %   dt_integral_g          - fast doctest for integral_g
 %   ut_assetPath           - unit tests for object class assetPath
 %   ut_brownianMotion      - unit tests for object class brownianMotion
-%   ut_whiteNoise          - unit tests for object class whiteNoise 
+%   ut_whiteNoise          - unit tests for object class whiteNoise
 %   ut_funmin_g_end        - unit test for funmin_g at end points
 %   ut_integralsim_g       - unit test for integralsim_g
 %   ut_integral_g          - unit test for integral_g
 %   ut_save_eps            - ut_save_eps unit tests for gail.save_eps
 %   ut_save_mat            - ut_save_mat unit tests for gail.save_mat
-%   ut_stochProcess        - unit tests for object class stochProcess 
+%   ut_stochProcess        - unit tests for object class stochProcess
 %
-
-
-
