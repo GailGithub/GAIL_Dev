@@ -132,7 +132,7 @@ function [q,out_param] = integral_g(varargin)
 %  References
 %
 %   [1] Fred J. Hickernell, Martha Razo, and Sunny Yun, "Reliable Adaptive
-%   Numerical Integration", working.
+%   Numerical Integration", 2015+, working.
 %
 %   [2]  Nick Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
 %   Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic Algorithms:
