@@ -128,6 +128,7 @@ classdef cubMeanParam < handle & matlab.mixin.CustomDisplay
            f_addParamVal = @addOptional;
            parseRange = []; %nothing to parse here if just numbers
          end
+         
          f_addParamVal(p,'nInit',obj.def_nInit);
          f_addParamVal(p,'nMax',obj.def_nMax);
          f_addParamVal(p,'inflate',obj.def_inflate);
@@ -192,11 +193,9 @@ classdef cubMeanParam < handle & matlab.mixin.CustomDisplay
       function val = get.nCV(obj)
          val = numel(obj.trueMuCV);
       end
-     
    end
    
   methods (Access = protected)
-                
      function propgrp = getPropertyGroups(obj)
         if ~isscalar(obj)
            propgrp = getPropertyGroups@matlab.mixin.CustomDisplay(obj);

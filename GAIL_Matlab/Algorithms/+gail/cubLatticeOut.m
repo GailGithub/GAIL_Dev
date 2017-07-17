@@ -9,9 +9,9 @@ classdef cubLatticeOut < gail.cubLatticeParam & gail.outParam
    % >> cubLatticeParamObj.mu = 1.467; %integral value is recorded
    % >> cubLatticeParamObj.nSample = 31415926; %sample size is recorded
    % >> cubLatticeParamObj.time = 0.0278 %time of computation is recorded
-   % cubLatticeParamObj = 
+   % cubLatticeParamObj =
    %   cubLatticeOut with properties:
-   % 
+   %
    %              f: @(x)sum(x.^2,2)
    %         domain: [2×1 double]
    %        measure: 'uniform'
@@ -23,7 +23,7 @@ classdef cubLatticeOut < gail.cubLatticeParam & gail.outParam
    %
    %
    % Author: Fred J. Hickernell
-
+   
    properties
       mu %approximation to the mean
    end
@@ -36,35 +36,35 @@ classdef cubLatticeOut < gail.cubLatticeParam & gail.outParam
       % Creating a cubOut process
       function obj = cubLatticeOut(val)
          %this constructor essentially parses inputs
-         %the parser will look for a cubLatticeOut object         
+         %the parser will look for a cubLatticeOut object
          obj@gail.cubLatticeParam(val)
-        
+         
       end %of constructor
-     
+      
       function set.mu(obj,val)
          validateattributes(val, {'numeric'}, {'scalar'})
          obj.mu = val;
-      end     
+      end
       
    end
-
-    methods (Access = protected)
    
-         function propList = getPropertyList(obj)
+   methods (Access = protected)
+      
+      function propList = getPropertyList(obj)
          propList = getPropertyList@gail.cubLatticeParam(obj);
          propList.mu = obj.mu;
          propList.nSample = obj.nSample;
          propList.time = obj.time;
          propList.errBd = obj.errBd;
          propList.tolVal = obj.tolVal;
-         propList.domainType=obj.domainType;
+         propList.domainTypeInp=obj.domainTypeInp;
          propList.measure=obj.measure;
          propList.ffMeasure=obj.ffMeasure;
          propList.d=obj.d;
          propList.domain=obj.domain;
-
-         end
+         
+      end
    end
-
+   
 end
 

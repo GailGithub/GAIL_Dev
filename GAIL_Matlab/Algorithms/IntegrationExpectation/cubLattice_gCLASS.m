@@ -5,7 +5,8 @@ t_start = tic;
 r_lag = 4; %distance between coefficients summed and those computed
 
 mean_inp = gail.cubLatticeParam(varargin{:}); %parse the input and check it for errors
-mean_out = gail.cubLatticeOut(mean_inp); %create the output class
+mean_out = gail.outParam(mean_inp);
+% mean_out = gail.cubLatticeOut(mean_inp); %create the output class
 
 %------------------------------------------------------------------------------
 % % TRANSFORMATION
@@ -48,8 +49,6 @@ mean_out = gail.cubLatticeOut(mean_inp); %create the output class
 %         mean_out.measure = 'normal';% then a normal distribution can be used
 %     end
 % end
-
-display(mean_out.domain);
 
 %------------------------------------------------------------------------------
 % Minimum gathering of points
