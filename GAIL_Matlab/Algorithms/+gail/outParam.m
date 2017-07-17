@@ -4,6 +4,7 @@ classdef outParam < handle
    %   computation
    
    properties
+      sol = NaN %solution, such as mean, integral, approximate function,
       nSample = 0 %total sample size
       time = 0 %time required for computation
       errBd %error bounds on the means of Y our the integrals
