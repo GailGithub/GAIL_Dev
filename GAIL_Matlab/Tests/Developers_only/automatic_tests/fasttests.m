@@ -16,7 +16,10 @@ tic
 fasttests_integral_g
 fasttests_funappx_g
 fasttests_funmin_g
+
 fasttests_meanMC_g
+fasttests_meanMC_CLT
+
 fasttests_cubMC_g
 fasttests_cubLattice_g
 fasttests_cubSobol_g
