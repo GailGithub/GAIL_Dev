@@ -5,47 +5,46 @@ t_start = tic;
 r_lag = 4; %distance between coefficients summed and those computed
 
 mean_inp = gail.cubLatticeParam(varargin{:}); %parse the input and check it for errors
-mean_out = gail.outParam(mean_inp);
-% mean_out = gail.cubLatticeOut(mean_inp); %create the output class
+mean_out = gail.cubLatticeOut(mean_inp); %create the output class
 
 %------------------------------------------------------------------------------
 % % TRANSFORMATION
-% % changing the integrand and the mean_out.domain when measure is uniform ball or
+% % changing the integrand and the mean_out.fun.domain when measure is uniform ball or
 % % sphere by applying the appropriate transformation
 % if strcmpi(mean_out.measure,'uniform ball') || strcmpi(mean_out.measure,'uniform sphere')% using uniformly distributed samples on a ball or sphere
 %     if strcmp(mean_out.measure,'uniform sphere') && mean_out.transf == 1 %box-to-sphere transformation
-%         mean_out.d = mean_out.d + 1; % changing mean_out.d to the dimension of the sphere
+%         mean_out.fun.d = mean_out.fun.d + 1; % changing mean_out.fun.d to the dimension of the sphere
 %         mean_out.shiftVal = [mean_out.shiftVal rand];
 %     end
 %     
 %     if strcmpi(mean_out.measure,'uniform ball')% using the formula of the volume of a ball
-%         volume = ((2.0*pi^(mean_out.d/2.0))/(mean_out.d*gamma(mean_out.d/2.0)))*mean_out.radius^mean_out.d; %volume of a d-dimentional ball
+%         volume = ((2.0*pi^(mean_out.fun.d/2.0))/(mean_out.fun.d*gamma(mean_out.fun.d/2.0)))*mean_out.radius^mean_out.fun.d; %volume of a d-dimentional ball
 %     else % using the formula of the volume of a sphere
-%         volume = ((2.0*pi^(mean_out.d/2.0))/(gamma(mean_out.d/2.0)))*mean_out.radius^(mean_out.d - 1); %volume of a d-dimentional sphere
+%         volume = ((2.0*pi^(mean_out.fun.d/2.0))/(gamma(mean_out.fun.d/2.0)))*mean_out.radius^(mean_out.fun.d - 1); %volume of a d-dimentional sphere
 %     end
 %     
 %     if mean_out.transf == 1 % box-to-ball or box-to-sphere transformation should be used
-%         if mean_out.d == 1 % It is not necessary to multiply the function f by the volume, since no transformation is being made
-%             mean_out.domain = [mean_out.domain - mean_out.radius; mean_out.domain + mean_out.radius];% for one dimension, the ball is actually an interval
+%         if mean_out.fun.d == 1 % It is not necessary to multiply the function f by the volume, since no transformation is being made
+%             mean_out.fun.domain = [mean_out.fun.domain - mean_out.radius; mean_out.fun.domain + mean_out.radius];% for one dimension, the ball is actually an interval
 %             mean_out.measure = 'uniform';% then a uniform distribution on a box can be used
 %         else
 %             if strcmpi(mean_out.measure,'uniform ball') % box-to-ball transformation
-%                 f = @(t) f(gail.domain_balls_spheres.ball_psi_1(t, mean_out.d, mean_out.radius, mean_out.domain))*volume;% the psi function is the transformation
+%                 f = @(t) f(gail.domain_balls_spheres.ball_psi_1(t, mean_out.fun.d, mean_out.radius, mean_out.fun.domain))*volume;% the psi function is the transformation
 %             else %  % box-to-sphere transformation
-%                 f = @(t) f(gail.domain_balls_spheres.sphere_psi_1(t, mean_out.d, mean_out.radius, mean_out.domain))*volume;% the psi function is the transformation
-%                 mean_out.d = mean_out.d - 1;% the box-to-sphere transformation takes points from a (d-1)-dimensional box to a d-dimensional sphere
+%                 f = @(t) f(gail.domain_balls_spheres.sphere_psi_1(t, mean_out.fun.d, mean_out.radius, mean_out.fun.domain))*volume;% the psi function is the transformation
+%                 mean_out.fun.d = mean_out.fun.d - 1;% the box-to-sphere transformation takes points from a (d-1)-dimensional box to a d-dimensional sphere
 %                 mean_out.shiftVal = mean_out.shiftVal(1:end-1);
 %             end
-%             mean_out.domain = [zeros(1, mean_out.d); ones(1, mean_out.d)];% the mean_out.domain must be the domain of the transformation, which is a unit box
+%             mean_out.fun.domain = [zeros(1, mean_out.fun.d); ones(1, mean_out.fun.d)];% the mean_out.fun.domain must be the domain of the transformation, which is a unit box
 %             mean_out.measure = 'uniform';% then a uniform distribution on a box can be used
 %         end
 %     else % normal-to-ball or normal-to-sphere transformation should be used
 %         if strcmpi(mean_out.measure,'uniform ball') % normal-to-ball transformation
-%             f = @(t) f(gail.domain_balls_spheres.ball_psi_2(t, mean_out.d, mean_out.radius, mean_out.domain))*volume;% the psi function is the transformation
+%             f = @(t) f(gail.domain_balls_spheres.ball_psi_2(t, mean_out.fun.d, mean_out.radius, mean_out.fun.domain))*volume;% the psi function is the transformation
 %         else % normal-to-sphere transformation
-%             f = @(t) f(gail.domain_balls_spheres.sphere_psi_2(t, mean_out.d, mean_out.radius, mean_out.domain))*volume;% the psi function is the transformation
+%             f = @(t) f(gail.domain_balls_spheres.sphere_psi_2(t, mean_out.fun.d, mean_out.radius, mean_out.fun.domain))*volume;% the psi function is the transformation
 %         end
-%         mean_out.domain = bsxfun(@plus, zeros(2, mean_out.d), [-inf; inf]);% the mean_out.domain must be the domain of the transformation, which is a this unit box
+%         mean_out.fun.domain = bsxfun(@plus, zeros(2, mean_out.fun.d), [-inf; inf]);% the mean_out.fun.domain must be the domain of the transformation, which is a this unit box
 %         mean_out.measure = 'normal';% then a normal distribution can be used
 %     end
 % end
@@ -54,12 +53,12 @@ mean_out = gail.outParam(mean_inp);
 % Minimum gathering of points
 l_star = mean_out.mmin - r_lag; % Minimum gathering of points for the sums of DFT
 omg_circ = @(m) 2.^(-m);
-omg_hat = @(m) mean_out.inflate(m)/((1+mean_out.inflate(r_lag))*omg_circ(r_lag));
+omg_hat = @(m) mean_out.CM.inflate(m)/((1+mean_out.CM.inflate(r_lag))*omg_circ(r_lag));
 
 % intialize CV param, redefine target function
 mu=0;beta=0;
 
-if mean_out.nCV  % if using control variates(f is structure), redefine f
+if mean_out.CM.nCV  % if using control variates(f is structure), redefine f
     mu = mean_out.trueMuCV;
 end
 
@@ -68,8 +67,8 @@ end
 % if strcmp(mean_out.measure,'normal')
 %     f=@(x) f(gail.stdnorminv(x));
 % elseif strcmp(mean_out.measure,'uniform')
-%     Cnorm = prod(mean_out.domain(2,:)-mean_out.domain(1,:));
-%     f=@(x) Cnorm*f(bsxfun(@plus,mean_out.domain(1,:),bsxfun(@times,(mean_out.domain(2,:)-mean_out.domain(1,:)),x))); % a + (b-a)x = u
+%     Cnorm = prod(mean_out.fun.domain(2,:)-mean_out.fun.domain(1,:));
+%     f=@(x) Cnorm*f(bsxfun(@plus,mean_out.fun.domain(1,:),bsxfun(@times,(mean_out.fun.domain(2,:)-mean_out.fun.domain(1,:)),x))); % a + (b-a)x = u
 % end
 
 % if strcmp(mean_out.periodTransform,'Baker')
@@ -83,7 +82,7 @@ end
 % end
 
 %% Main algorithm - Preallocation
-Stilde=zeros(mean_out.mmax -mean_out.mmin+1,1); %initialize sum of DFT terms
+Stilde=zeros(mean_out.mmax-mean_out.mmin+1,1); %initialize sum of DFT terms
 CStilde_low = -inf(1,mean_out.mmax -l_star+1); %initialize various sums of DFT terms for necessary conditions
 CStilde_up = inf(1,mean_out.mmax -l_star+1); %initialize various sums of DFT terms for necessary conditions
 errest=zeros(mean_out.mmax -mean_out.mmin+1,1); %initialize error estimates
@@ -95,7 +94,7 @@ exit=false(1,exit_len); %we start the algorithm with all warning flags down
 %% Initial points and FFT
 mean_out.nSample=2^mean_out.mmin; %total number of points to start with
 n0=mean_out.nSample; %initial number of points
-xpts=mod(bsxfun(@plus, gail.lattice_gen(1,n0,mean_out.d), mean_out.shiftVal),1); %grab Lattice points
+xpts=mod(bsxfun(@plus, gail.lattice_gen(1,n0,mean_out.fun.d), mean_out.shiftVal),1); %grab Lattice points
 
 y=mean_out.fff(xpts); %evaluate integrand
 yval=y;
@@ -119,11 +118,11 @@ for l=0:mean_out.mmin-1
     y(ptind)=(evenval+coefv.*oddval)/2;
     y(~ptind)=(evenval-coefv.*oddval)/2;
     
-    if mean_out.nCV 
-        evenval=yg(ptind, (1:mean_out.nCV ));
-        oddval=yg(~ptind, (1:mean_out.nCV ));
-        yg(ptind, (1:mean_out.nCV ))=(evenval+coefv.*oddval)/2;
-        yg(~ptind, (1:mean_out.nCV ))=(evenval-coefv.*oddval)/2;
+    if mean_out.CM.nCV 
+        evenval=yg(ptind, (1:mean_out.CM.nCV ));
+        oddval=yg(~ptind, (1:mean_out.CM.nCV ));
+        yg(ptind, (1:mean_out.CM.nCV ))=(evenval+coefv.*oddval)/2;
+        yg(~ptind, (1:mean_out.CM.nCV ))=(evenval-coefv.*oddval)/2;
         
     end
     % y now contains the FFT coefficients
@@ -148,8 +147,8 @@ end
 
 %% Finding optimal beta
 % Pre-determine the size of the beta coefficients 
-if mean_out.nCV 
-    C=[ones(mean_out.nf,1); zeros(mean_out.nCV,1)];
+if mean_out.CM.nCV 
+    C=[ones(mean_out.nf,1); zeros(mean_out.CM.nCV,1)];
 else 
     C=[ones(mean_out.nf,1)];
 end 
@@ -203,7 +202,8 @@ end
 %% Compute Stilde (1)
 nllstart=int64(2^(mean_out.mmin-r_lag-1));
 Stilde(1)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
-mean_out.errBd=mean_out.inflate(mean_out.mmin)*Stilde(1);
+
+mean_out.errBd=mean_out.CM.inflate(mean_out.mmin)*Stilde(1);
 errest(1)=mean_out.errBd;
 
 % Necessary conditions
@@ -220,24 +220,24 @@ if any(CStilde_low(:) > CStilde_up(:))
 end
 
 %% Approximate integral (1)
-if mean_out.nCV 
+if mean_out.CM.nCV 
     q = mean(yval) - mu*beta(mean_out.nf+1:end,:);
 else
     q =mean(yval);
 end
 
 % Check the end of the algorithm
-q = q - errest(1)*(max(mean_out.absTol, mean_out.relTol*abs(q + errest(1)))...
-    - max(mean_out.absTol, mean_out.relTol*abs(q - errest(1))))/...
-    (max(mean_out.absTol, mean_out.relTol*abs(q + errest(1)))...
-    + max(mean_out.absTol, mean_out.relTol*abs(q - errest(1)))); % Optimal estimator
+q = q - errest(1)*(max(mean_out.err.absTol, mean_out.err.relTol*abs(q + errest(1)))...
+    - max(mean_out.err.absTol, mean_out.err.relTol*abs(q - errest(1))))/...
+    (max(mean_out.err.absTol, mean_out.err.relTol*abs(q + errest(1)))...
+    + max(mean_out.err.absTol, mean_out.err.relTol*abs(q - errest(1)))); % Optimal estimator
 
 q=q(1);
 appxinteg(1)=q;
 
 is_done = false;
-if 4*errest(1)^2/(max(mean_out.absTol, mean_out.relTol*abs(q + errest(1)))...
-        + max(mean_out.absTol, mean_out.relTol*abs(q - errest(1))))^2 <= 1
+if 4*errest(1)^2/(max(mean_out.err.absTol, mean_out.err.relTol*abs(q + errest(1)))...
+        + max(mean_out.err.absTol, mean_out.err.relTol*abs(q - errest(1))))^2 <= 1
     mean_out.time=toc(t_start);
     is_done = true;
 elseif mean_out.mmin == mean_out.mmax  % We are on our max budget and did not meet the error condition => overbudget
@@ -254,11 +254,11 @@ for m=mean_out.mmin+1:mean_out.mmax
     mean_out.nSample=2^m;
     mnext=m-1;
     nnext=2^mnext;
-    xnext=mod(bsxfun(@plus, gail.lattice_gen(nnext+1,2*nnext,mean_out.d), mean_out.shiftVal),1);
+    xnext=mod(bsxfun(@plus, gail.lattice_gen(nnext+1,2*nnext,mean_out.fun.d), mean_out.shiftVal),1);
     n0=n0+nnext;
     
     % check for using control variates or not
-    if mean_out.nCV  == 0
+    if mean_out.CM.nCV  == 0
         % ynext = f(xnext); yval=[yval; ynext];
         ycvnext = mean_out.fff(xnext);
         ynext = ycvnext(:,1:mean_out.nf)*beta(1:mean_out.nf,:) + ycvnext(:,mean_out.nf+1:end)*beta(mean_out.nf+1:end,:);
@@ -336,16 +336,16 @@ for m=mean_out.mmin+1:mean_out.mmax
             coefv=repmat(coef,nmminlm1,1);
             y(ptind)=(evenval+coefv.*oddval)/2;
             y(~ptind)=(evenval-coefv.*oddval)/2;
-            evenval=yg(ptind, (1:mean_out.nCV ));
-            oddval=yg(~ptind, (1:mean_out.nCV ));
-            yg(ptind, (1:mean_out.nCV ))=(evenval+coefv.*oddval)/2;
-            yg(~ptind, (1:mean_out.nCV ))=(evenval-coefv.*oddval)/2;
+            evenval=yg(ptind, (1:mean_out.CM.nCV ));
+            oddval=yg(~ptind, (1:mean_out.CM.nCV ));
+            yg(ptind, (1:mean_out.CM.nCV ))=(evenval+coefv.*oddval)/2;
+            yg(~ptind, (1:mean_out.CM.nCV ))=(evenval-coefv.*oddval)/2;
         end
         
-        X = yg(kappanumap(2^(m-r_lag-1)+1:end), (1:mean_out.nCV ));
+        X = yg(kappanumap(2^(m-r_lag-1)+1:end), (1:mean_out.CM.nCV ));
         Y = y(kappanumap(2^(m-r_lag-1)+1:end));
         beta = real(X \ Y);
-        out_param.beta = [out_param.beta;beta];
+        mean_out.sol = [mean_out.sol;beta];
         yval = ycv(:,1) - ycv(:,2:end)*beta;
         y = y-yg*beta;
         
@@ -371,7 +371,7 @@ for m=mean_out.mmin+1:mean_out.mmax
     nllstart=int64(2^(m-r_lag-1));
     meff=m-mean_out.mmin+1;
     Stilde(meff)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
-    mean_out.errBd=mean_out.inflate(m)*Stilde(meff);
+    mean_out.errBd=mean_out.CM.inflate(m)*Stilde(meff);
     errest(meff)=mean_out.errBd;
     
     % Necessary conditions
@@ -389,22 +389,22 @@ for m=mean_out.mmin+1:mean_out.mmax
     end
     
     %% Approximate integral (2)
-    if mean_out.nCV 
+    if mean_out.CM.nCV 
         q= mean(yval) - mu*beta(mean_out.nf+1:end,:);
     else
         q=mean(yval);
     end
     
     % Check the end of the algorithm
-    q = q - errest(meff)*(max(mean_out.absTol, mean_out.relTol*abs(q + errest(meff)))...
-        - max(mean_out.absTol, mean_out.relTol*abs(q - errest(meff))))/...
-        (max(mean_out.absTol, mean_out.relTol*abs(q + errest(meff)))...
-        + max(mean_out.absTol, mean_out.relTol*abs(q - errest(meff)))); % Optimal estimator
+    q = q - errest(meff)*(max(mean_out.err.absTol, mean_out.err.relTol*abs(q + errest(meff)))...
+        - max(mean_out.err.absTol, mean_out.err.relTol*abs(q - errest(meff))))/...
+        (max(mean_out.err.absTol, mean_out.err.relTol*abs(q + errest(meff)))...
+        + max(mean_out.err.absTol, mean_out.err.relTol*abs(q - errest(meff)))); % Optimal estimator
     
     appxinteg(meff)=q;
     
-    if 4*errest(meff)^2/(max(mean_out.absTol, mean_out.relTol*abs(q + errest(meff)))...
-            + max(mean_out.absTol, mean_out.relTol*abs(q - errest(meff))))^2 <= 1
+    if 4*errest(meff)^2/(max(mean_out.err.absTol, mean_out.err.relTol*abs(q + errest(meff)))...
+            + max(mean_out.err.absTol, mean_out.err.relTol*abs(q - errest(meff))))^2 <= 1
         mean_out.time=toc(t_start);
         is_done = true;
     elseif m == mean_out.mmax  % We are on our max budget and did not meet the error condition => overbudget
@@ -422,9 +422,9 @@ else
 end
 
 mean_out.time=toc(t_start);
-mean_out.mu=q;
+mean_out.sol=q;
 
-meanf=mean_out.mu;
+meanf=mean_out.sol;
 
 end
 

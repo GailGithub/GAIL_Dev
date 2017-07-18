@@ -96,7 +96,7 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
          'Lebesgue', ... %like uniform, but integral over domain is the volume of the domain
          'Gaussian', 'normal' ... %these are the same
          }
-      allowedMeasureTypes = {'uniform',  ... %over a hyperbox volume of domain is one
+      allowedmeasureTypes = {'uniform',  ... %over a hyperbox volume of domain is one
          'Gaussian', 'normal' ... %these are the same
          }
    end
@@ -263,7 +263,7 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
       
       function set.measureType(obj,val)
          validateattributes(val, {'char'}, {})
-         obj.measureType = checkMeasureType(obj,val);
+         obj.measureType = checkmeasureType(obj,val);
       end
       
       function set.nf(obj,val)
@@ -273,13 +273,13 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
       
       function val = get.volume(obj) %volume of the domain
          if any(strcmp(obj.measure,{'uniform', 'normal'}))
-            if strcmpi(obj.domainTypeInp, 'ball')
+            if strcmpi(obj.fun.domainType, 'ball')
                val = ((2.0*pi^(obj.d/2.0))/(obj.d*gamma(obj.d/2.0)))*obj.radius^obj.d; %volume of a d-dimentional ball
-            elseif strcmpi(obj.domainTypeInp, 'sphere')
+            elseif strcmpi(obj.fun.domainType, 'sphere')
                val = ((2.0*pi^(obj.d/2.0))/(gamma(obj.d/2.0)))*obj.radius^(obj.d - 1); %volume of a d-dimentional sphere
             end
          elseif strcmp(obj.measure, {'Lebesgue'})
-            val = prod(diff(obj.domain,1),2);
+            val = prod(diff(obj.fun.domain,1),2);
          end
       end
       
@@ -294,52 +294,53 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
    
       % Transformation section 
       function val = get.ff(obj)
+  
          % Domain type = box 
-         if strcmp(obj.domainTypeInp,'box')
+         if strcmp(obj.fun.domainType,'cube')
             if strcmp(obj.measure,'uniform')
-               Cnorm = prod(obj.domain(2,:)-obj.domain(1,:));
-               val =@(t) Cnorm*obj.f(bsxfun(@plus,obj.domain(1,:), ...
-                  bsxfun(@times,(obj.domain(2,:)-obj.domain(1,:)),t))); % a + (b-a)x = u
+               Cnorm = prod(obj.fun.domain(2,:)-obj.fun.domain(1,:));
+               val =@(t) Cnorm*obj.fun.f(bsxfun(@plus,obj.fun.domain(1,:), ...
+                  bsxfun(@times,(obj.fun.domain(2,:)-obj.fun.domain(1,:)),t))); % a + (b-a)x = u
 
             elseif strcmp(obj.measure,'Lebesgue')
-               Cnorm = prod(obj.domain(2,:)-obj.domain(1,:));
-               val =@(t) obj.volume*Cnorm*obj.f(bsxfun(@plus,obj.domain(1,:), ...
-                  bsxfun(@times,(obj.domain(2,:)-obj.domain(1,:)),t))); % a + (b-a)x = u
+               Cnorm = prod(obj.fun.domain(2,:)-obj.fun.domain(1,:));
+               val =@(t) obj.volume*Cnorm*obj.fun.f(bsxfun(@plus,obj.fun.domain(1,:), ...
+                  bsxfun(@times,(obj.fun.domain(2,:)-obj.fun.domain(1,:)),t))); % a + (b-a)x = u
 
             elseif strcmp(obj.measure, 'normal')
-               val = @(t) obj.f(gail.stdnorminv(t));
+               val = @(t) obj.fun.f(gail.stdnorminv(t));
             end
          end
          
          % Domain type ball/sphere - automatically assume the original
          % measure is uniform. If it is lesbegue, then we will just
          % multiple by volume at next step 
-         if strcmp(obj.MeasureType, 'uniform')
-            if strcmp(obj.domainTypeInp, 'ball') || strcmp(obj.domainTypeInp,'ball-from-cube')
-               val=@(t) obj.f(gail.domain_balls_spheres.ball_psi_1(t, obj.d, obj.radius, obj.domain));
+         if strcmp(obj.measureType, 'uniform')
+            if strcmp(obj.fun.domainType, 'ball') || strcmp(obj.fun.domainType, 'ball-from-cube')
+               val=@(t) obj.fun.f(gail.domain_balls_spheres.ball_psi_1(t, obj.d, obj.radius, obj.fun.domain));
                
-            elseif strcmp(obj.domainTypeInp, 'ball-from-normal')
-               val=@(t) obj.f(gail.domain_balls_spheres.ball_psi_2(gail.stdnorminv(t), obj.d, obj.radius, obj.domain));
+            elseif strcmp(obj.fun.domainType, 'ball-from-normal')
+               val=@(t) obj.fun.f(gail.domain_balls_spheres.ball_psi_2(gail.stdnorminv(t), obj.d, obj.radius, obj.fun.domain));
 
-            elseif strcmp(obj.domainTypeInp,'sphere') || strcmp(obj.domainTypeInp, 'sphere-from-cube')
-               val=@(t) obj.f(gail.domain_balls_spheres.sphere_psi_1(t, obj.d, obj.radius, obj.domain));
+            elseif strcmp(obj.fun.domainType,'sphere') || strcmp(obj.fun.domainType, 'sphere-from-cube')
+               val=@(t) obj.fun.f(gail.domain_balls_spheres.sphere_psi_1(t, obj.d, obj.radius, obj.fun.domain));
 
-            elseif strcmp(obj.domainTypeInp, 'sphere-from-normal')
-               val=@(t) obj.f(gail.domain_balls_spheres.sphere_psi_2(gail.stdnorminv(t), obj.d, obj.radius, obj.domain));
+            elseif strcmp(obj.fun.domainType, 'sphere-from-normal')
+               val=@(t) obj.fun.f(gail.domain_balls_spheres.sphere_psi_2(gail.stdnorminv(t), obj.d, obj.radius, obj.fun.domain));
             end
             
-         elseif strcmp(obj.MeasureType, 'normal')
-            if strcmp(obj.domainTypeInp, 'ball') || strcmp(obj.domainTypeInp, 'ball-from-normal')
-               val=@(t) obj.f(gail.domain_balls_spheres.ball_psi_2(t, obj.d, obj.radius, obj.domain));
+         elseif strcmp(obj.measureType, 'normal')
+            if strcmp(obj.fun.domainType, 'ball') || strcmp(obj.fun.domainType, 'ball-from-normal')
+               val=@(t) obj.fun.f(gail.domain_balls_spheres.ball_psi_2(t, obj.d, obj.radius, obj.fun.domain));
 
-            elseif strcmp(obj.domainTypeInp,'ball-from-cube')
-               val=@(t) obj.f(gail.domain_balls_spheres.ball_psi_2(gail.stdnorm(t), obj.d, obj.radius, obj.domain));
+            elseif strcmp(obj.fun.domainType,'ball-from-cube')
+               val=@(t) obj.fun.f(gail.domain_balls_spheres.ball_psi_2(gail.stdnorm(t), obj.d, obj.radius, obj.fun.domain));
 
-            elseif strcmp(obj.domainTypeInp,'sphere') || strcmp(obj.domainTypeInp, 'sphere-from-normal')
-               val=@(t) obj.f(gail.domain_balls_spheres.sphere_psi_2(t, obj.d, obj.radius, obj.domain));
+            elseif strcmp(obj.fun.domainType,'sphere') || strcmp(obj.fun.domainType, 'sphere-from-normal')
+               val=@(t) obj.fun.f(gail.domain_balls_spheres.sphere_psi_2(t, obj.d, obj.radius, obj.fun.domain));
 
-            elseif strcmp(obj.domainTypeInp, 'sphere-from-cube')
-               val=@(t) obj.f(gail.domain_balls_spheres.sphere_psi_2(gail.stdnorm(t), obj.d, obj.radius, obj.domain));
+            elseif strcmp(obj.fun.domainType, 'sphere-from-cube')
+               val=@(t) obj.fun.f(gail.domain_balls_spheres.sphere_psi_2(gail.stdnorm(t), obj.d, obj.radius, obj.fun.domain));
             end
          end
             
@@ -348,8 +349,9 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
             val = obj.volume*val; 
 
          elseif strcmp(obj.measure, 'normal')
-            val = @(t) obj.f(gail.stdnorminv(t));
+            val = @(t) obj.fun.f(gail.stdnorminv(t));
          end 
+                  
       end
    end
    
@@ -361,17 +363,25 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
          else
             outval = inval;
          end
+         
+         disp('inval:');
+         disp(inval);
+%          disp(obj.fun.domain(1,:));
+%          disp(obj.fun.domain(2,:));
+%          disp(obj.measure);
+         disp('outval:');
+         disp(outval);
+         
          if strcmp(outval,'normal') %domain must be R^d
             assert(all(obj.fun.domain(1,:) == -Inf) && ...
                all(obj.fun.domain(2,:) == Inf))
-         end
-         if any(strcmp(outval,{'uniform','Lebesgue'})) %domain must be finite
+         elseif any(strcmp(outval,{'uniform','Lebesgue'})) %domain must be finite
             assert(all(all(isfinite(obj.fun.domain))))
          end
       end
       
-      function outval = checkMeasureType(obj,inval)
-         assert(any(strcmp(inval,obj.allowedMeasureTypes)))
+      function outval = checkmeasureType(obj,inval)
+         assert(any(strcmp(inval,obj.allowedmeasureTypes)))
          if strcmp(inval,'Gaussian') %same as normal
             outval = 'normal';
          else
@@ -402,6 +412,8 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
          propList.measure = obj.measure;
          propList.absTol = obj.err.absTol;
          propList.relTol = obj.err.relTol;
+         propList.betaUpdate=obj.betaUpdate;
+         
          if obj.CM.nInit ~= obj.CM.def_nInit
             propList.nInit = obj.CM.nInit;
          end

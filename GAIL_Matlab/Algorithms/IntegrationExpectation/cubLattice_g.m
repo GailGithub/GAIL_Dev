@@ -352,14 +352,9 @@ function [q, out_param] = cubLattice_g(varargin)
 t_start = tic;
 %% Initial important cone factors and Check-initialize parameters
 r_lag = 4; %distance between coefficients summed and those computed
-disp('before before:');
-disp(varargin);
 
 [f,hyperbox,out_param, cv] = cubLattice_g_param(r_lag,varargin{:});
 
-disp('before');
-display(hyperbox);
-display(out_param.d);
 %------------------------------------------------------------------------------
 % TRANSFORMATION
 %changing the integrand and the hyperbox when measure is uniform ball or
@@ -435,9 +430,6 @@ elseif strcmp(out_param.transform,'C1sin')
     f=@(x) f(x-sin(2*pi*x)/(2*pi)).*prod(1-cos(2*pi*x),2); % Sidi C^1 transform
 end
 
-display('after:');
-display(hyperbox);
-display(out_param.d);
 
 %% Main algorithm - Preallocation
 Stilde=zeros(out_param.mmax-out_param.mmin+1,1); %initialize sum of DFT terms
@@ -557,6 +549,8 @@ end
 
 %% Compute Stilde (1)
 nllstart=int64(2^(out_param.mmin-r_lag-1));
+
+
 Stilde(1)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
 out_param.bound_err=out_param.fudge(out_param.mmin)*Stilde(1);
 errest(1)=out_param.bound_err;
@@ -702,6 +696,11 @@ for m=out_param.mmin+1:out_param.mmax
         beta = real(X \ Y);
         out_param.beta = [out_param.beta;beta];
         yval = ycv(:,1) - ycv(:,2:end)*beta;
+        
+        disp(size(y));
+        disp(size(yg));
+        disp(size(beta));
+        
         y = y-yg*beta;
         
         %% update kappamap

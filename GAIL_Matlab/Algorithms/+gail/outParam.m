@@ -12,6 +12,7 @@ classdef outParam < handle
    end
       
    methods       
+ 
       function set.nSample(obj,val)
          validateattributes(val, {'numeric'}, {'scalar','positive','integer'})
          obj.nSample = val;
@@ -33,7 +34,5 @@ classdef outParam < handle
       end                    
      
    end
-  
-   
 end
 
