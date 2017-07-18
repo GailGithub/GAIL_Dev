@@ -113,12 +113,7 @@ disp(['Real error was ' ...
 % and without a control variate. While the two both give estimation within
 % error torelance,adding control variate uses only about 1/9 of sample points
 % and takes 1/5 of the time.
-%%
-% In GAIL, we provide a function genOptPric that takes a call option and calls meanMC_CLT (or other method)
-% to price it.
-EuroCallCV2 = optPayoff(EuroCall);
-EuroCallCV.payoffParam2 = struct('optType', {{'euro','stockprice'}}, ...
-   'putCallType', {{'call',''}});
+
 
 %% Example 3: Keister's multidimensional integration
 % We will evaluate the Keister's integral $I$ using meanMC_CLT.  Note
@@ -175,4 +170,4 @@ disp(['Real error was ' ...
  
 end
 %%
-% _Yueyi Li_
+% Author _Yueyi Li_
