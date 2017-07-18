@@ -1,4 +1,4 @@
-Guaranteed Automatic Integration Library (GAIL)
+﻿Guaranteed Automatic Integration Library (GAIL)
 -----------------------------------------------
 GAIL Version 2.2, 2017.
 See LICENSE.m for copyright and disclaimer.
@@ -71,6 +71,11 @@ F. J. Hickernell, Ll. A. Jimenez Rugama, and D. Li, “Adaptive
 quasi-{M}onte {C}arlo methods, 2017+, submitted for publication, 
 arXiv:1702.01491 [math.NA].
 
+Lan Jiang, Guaranteed Adaptive Monte Carlo Methods for Estimating
+Means of Random Variables, Ph.D Thesis, Illinois Institute of
+Technology, 2016.
+(describes meanMC_g.m and cubMC_g.m)
+
 Lluis Antoni Jimenez Rugama and Fred J. Hickernell, "Adaptive
 multidimensional integration based on rank-1 lattices," Monte Carlo 
 and Quasi-Monte Carlo  Methods: MCQMC, Leuven, Belgium, April 2014 
@@ -95,11 +100,6 @@ Illinois Institute of Technology, 2016.
 Xin Tong, "A Guaranteed, Adaptive, Automatic Algorithm for Univariate 
 Function Minimization," MS thesis, Illinois Institute of Technology, 2014. 
 (describes deprecated funmin01_g.m)
-
-[7] Lan Jiang, Guaranteed Adaptive Monte Carlo Methods for Estimating
-Means of Random Variables, Ph.D Thesis, Illinois Institute of
-Technology, 2016.
-(describes meanMC_g.m and cubMC_g.m)
 
 Downloads
 ------------
@@ -129,11 +129,17 @@ General Usage Notes
 GAIL version 2.2 includes the following eight algorithms:
 
 1.  funappx_g: One-dimensional function approximation on bounded interval
+
 2.  funmin_g: global minimum value of univariate function on a closed interval
+
 3.  integral_g: One-dimensional integration on bounded interval
+
 4.  meanMC_g: Monte Carlo method for estimating mean of a random variable
+
 5.  cubMC_g: Monte Carlo method for numerical multiple integration
+
 6.  cubSobol_g: Quasi-Monte Carlo method using Sobol' cubature for d-dimensional integration
+
 7.  cubLattice_g: Quasi-Monte Carlo method using rank-1 Lattices cubature for d-dimensional integration
 
 Installation Instruction

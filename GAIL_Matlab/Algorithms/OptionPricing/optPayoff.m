@@ -146,7 +146,6 @@ classdef optPayoff < assetPath
             end
         end
         
-        
         % Generate payoffs of options
         function [payoffs,more] = genOptPayoffs(obj,val)
             [paths, likelihoodRatio] = genPaths(obj,val);

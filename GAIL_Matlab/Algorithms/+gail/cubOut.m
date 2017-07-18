@@ -15,11 +15,11 @@ classdef cubOut < gail.cubParam & gail.outParam
    %              f: @(x)sum(x.^2,2)
    %         domain: [2×1 double]
    %        measure: 'uniform'
-   %         absTol: 0.010000000000000
+   %         absTol: 0.0100
    %         relTol: 0
-   %             mu: 1.467000000000000
+   %             mu: 1.4670
    %        nSample: 31415926
-   %           time: 0.027800000000000
+   %           time: 0.0278
    %
    %
    % Author: Fred J. Hickernell

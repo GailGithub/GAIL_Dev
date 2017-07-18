@@ -9,7 +9,7 @@ classdef errorParam < handle & matlab.mixin.CustomDisplay
    % errParamObj = 
    %   errorParam with properties:
    % 
-   %       absTol: 0.010000000000000
+   %       absTol: 0.0100
    %       relTol: 0
    %
    %
@@ -18,7 +18,7 @@ classdef errorParam < handle & matlab.mixin.CustomDisplay
    % errParamObj = 
    %   errorParam with properties:
    % 
-   %       absTol: 1.000000000000000e-03
+   %       absTol: 1.0000e-03
    %       relTol: 0
    %
    %
@@ -27,8 +27,8 @@ classdef errorParam < handle & matlab.mixin.CustomDisplay
    % errParamObj = 
    %   errorParam with properties:
    % 
-   %       absTol: 0.010000000000000
-   %       relTol: 0.100000000000000
+   %       absTol: 0.0100
+   %       relTol: 0.1000
    %
    %
    % Example 4. Make a copy of an errorParam object and change a property
@@ -36,14 +36,12 @@ classdef errorParam < handle & matlab.mixin.CustomDisplay
    % newErrParamObj = 
    %   errorParam with properties:
    % 
-   %       absTol: 0.010000000000000
-   %       relTol: 1.000000000000000e-03
+   %       absTol: 0.0100
+   %       relTol: 1.0000e-03
    %
    %
    % Author: Fred J. Hickernell
 
-   
-   
    properties
       absTol %absolute error tolerance
       relTol %relative error tolerance
@@ -89,7 +87,9 @@ classdef errorParam < handle & matlab.mixin.CustomDisplay
          %Now begin to parse inputs
          p = inputParser; %construct an inputParser object
          p.KeepUnmatched = true; %ignore those that do not match
-         p.PartialMatching = false; %don'try a partial match
+         if isprop(p, 'PartialMatching'), p.PartialMatching = false; end
+            %don'try a partial match, if/then needed for old MATLAB
+            %versions
          p.StructExpand = true; %expand structures
          structInp = 0; %no structure input
          if nargin >= start

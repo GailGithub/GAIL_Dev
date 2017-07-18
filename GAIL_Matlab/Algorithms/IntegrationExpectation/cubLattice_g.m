@@ -1,4 +1,5 @@
-function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
+function [q, out_param] = cubLattice_g(varargin)
+
 %CUBLATTICE_G Quasi-Monte Carlo method using rank-1 Lattices cubature
 %over a d-dimensional region to integrate within a specified generalized
 %error tolerance with guarantees under Fourier coefficients cone decay
@@ -30,7 +31,11 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 %   integration.
 %   Given the construction of our Lattices, d must be a positive integer
 %   with 1 <= d <= 600.
+<<<<<<< HEAD
 % 
+=======
+%
+>>>>>>> e65f3b761c01b995bfffe72b45f6fcd9a866ebbc
 %   q = CUBLATTICE_G(f,hyperbox,measure,abstol,reltol)
 %   estimates the integral of f over the hyperbox. The answer
 %   is given within the generalized error tolerance tolfun. All parameters
@@ -55,6 +60,7 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 %     the number of data points and d the dimension, which cannot be
 %     greater than 600. By default f is f=@ x.^2.
 %
+<<<<<<< HEAD
 %     hyperbox --- the integration region defined by its bounds. When
 %     measure is 'uniform' or 'normal', hyperbox must be a 2 x d matrix,
 %     where the first row corresponds to the lower limits and the second
@@ -63,24 +69,34 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 %     with d+1 elements, where the first d values correspond to the center
 %     of the ball and the last value corresponds to the radius of the ball.
 %     The default value is [0;1].
+=======
+%     hyperbox --- the integration region defined by its bounds. When measure
+%     is 'uniform' or 'normal', hyperbox must be a 2 x d matrix, where the
+%     first row corresponds to the lower limits and the second row corresponds
+%     to the upper limits of the integral. When measure is 'uniform ball'
+%     or 'uniform sphere', the input hyperbox is a vector with d+1 elements,
+%     where the first d values correspond to the center of the ball and the
+%     last value corresponds to the radius of the ball. The default value
+%     is [0;1].
+>>>>>>> e65f3b761c01b995bfffe72b45f6fcd9a866ebbc
 %
 %     in_param.measure --- for f(x)*mu(dx), we can define mu(dx) to be the
-%     measure of a uniformly distributed random variable in the hyperbox or
-%     normally distributed with covariance matrix I_d. The possible values
-%     are 'uniform', 'normal', 'uniform ball', 'uniform ball_box', 'uniform
-%     ball_normal', 'uniform sphere', 'uniform sphere_box' and 'uniform
-%     sphere_normal'. For 'uniform', the hyperbox must be a finite volume,
-%     for 'normal', the hyperbox can only be defined as (-Inf,Inf)^d and,
-%     for 'uniform ball' or 'uniform sphere', hyperbox must have finite
-%     values for the coordinates of the center and a finite positive value
-%     for the radius. By default it is 'uniform'.
+%     measure of a uniformly distributed random variable in the hyperbox
+%     or normally distributed with covariance matrix I_d. The possible
+%     values are 'uniform', 'normal', 'uniform ball', 'uniform ball_box',
+%     'uniform ball_normal', 'uniform sphere', 'uniform sphere_box' and
+%     'uniform sphere_normal'. For 'uniform', the hyperbox must be a finite
+%     volume, for 'normal', the hyperbox can only be defined as
+%     (-Inf,Inf)^d and, for 'uniform ball' or 'uniform sphere', hyperbox
+%     must have finite values for the coordinates of the center and a
+%     finite positive value for the radius. By default it is 'uniform'.
 %
 %     in_param.abstol --- the absolute error tolerance, abstol>=0. By 
 %     default it is 1e-4. For pure absolute tolerance, set in_param.reltol
 %     = 0.
 %
-%     in_param.reltol --- the relative error tolerance, which should be in
-%     [0,1]. Default value is 1e-2. For pure absolute tolerance, set
+%     in_param.reltol --- the relative error tolerance, which should be
+%     in [0,1]. Default value is 1e-2. For pure absolute tolerance, set
 %     in_param.abstol = 0.
 % 
 %   Optional Input Arguments
@@ -127,11 +143,19 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 % 
 %     out_param.n --- number of Rank-1 lattice points used for computing
 %     the integral of f.
+<<<<<<< HEAD
 % 
 %     out_param.bound_err --- predicted bound on the error based on the
 %     cone condition. If the function lies in the cone, the real error will
 %     be smaller than generalized tolerance.
 % 
+=======
+%
+%     out_param.bound_err --- predicted bound on the error based on the cone
+%     condition. If the function lies in the cone, the real error will be
+%     smaller than generalized tolerance.
+%
+>>>>>>> e65f3b761c01b995bfffe72b45f6fcd9a866ebbc
 %     out_param.time --- time elapsed in seconds when calling cubLattice_g.
 %
 %     out_param.exitflag --- this is a binary vector stating whether
@@ -140,6 +164,7 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 %     when its value is 1. The following list explains the flags in the
 %     respective vector order:
 %
+<<<<<<< HEAD
 %                       1 : If reached overbudget, meaning the max budget
 %                       is attained without reaching the guaranteed error
 %                       tolerance.
@@ -152,6 +177,21 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 %                       in_param.transform; for information about the cone
 %                       definition, check the article mentioned below.
 % 
+=======
+%                       1 : If reaching overbudget. It states whether
+%                       the max budget is attained without reaching the
+%                       guaranteed error tolerance.
+%
+%                       2 : If the function lies outside the cone. In
+%                       this case, results are not guaranteed. Note that
+%                       this parameter is computed on the transformed
+%                       function, not the input function. For more
+%                       information on the transforms, check the input
+%                       parameter in_param.transform; for information about
+%                       the cone definition, check the article mentioned
+%                       below.
+%
+>>>>>>> e65f3b761c01b995bfffe72b45f6fcd9a866ebbc
 %  Guarantee
 % This algorithm computes the integral of real valued functions in [0,1)^d
 % with a prescribed generalized error tolerance. The Fourier coefficients
@@ -169,17 +209,28 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 % 
 % Example 1:
 % Estimate the integral with integrand f(x) = x1.*x2 in the interval [0,1)^2:
+<<<<<<< HEAD
 % 
 % >> f = @(x) prod(x,2); hyperbox = [zeros(1,2);ones(1,2)]; 
+=======
+%
+% >> f = @(x) prod(x,2); hyperbox = [zeros(1,2);ones(1,2)];
+>>>>>>> e65f3b761c01b995bfffe72b45f6fcd9a866ebbc
 % >> q = cubLattice_g(f,hyperbox,'uniform',1e-5,0,'transform','C1sin'); exactsol = 1/4;
 % >> check = abs(exactsol-q) < 1e-5
 % check = 1
 % 
 % 
 % Example 2:
+<<<<<<< HEAD
 % Estimate the integral with integrand f(x) = x1.^2.*x2.^2.*x3.^2 in the
 % interval R^3 where x1, x2 and x3 are normally distributed:
 % 
+=======
+% Estimate the integral with integrand f(x) = x1.^2.*x2.^2.*x3.^2
+% in the interval R^3 where x1, x2 and x3 are normally distributed:
+%
+>>>>>>> e65f3b761c01b995bfffe72b45f6fcd9a866ebbc
 % >> f = @(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2; hyperbox = [-inf(1,3);inf(1,3)];
 % >> q = cubLattice_g(f,hyperbox,'normal',1e-3,1e-3,'transform','C1sin','shift',2^(-25)*ones(1,3)); exactsol = 1;
 % >> check = abs(exactsol-q) < max(1e-3,1e-3*abs(exactsol))
@@ -189,17 +240,29 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 % Example 3: 
 % Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) in the
 % interval [-1,2)^2:
+<<<<<<< HEAD
 % 
 % >> f = @(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [-ones(1,2);2*ones(1,2)];
 % >> q = cubLattice_g(f,hyperbox,'uniform',1e-3,1e-2,'transform','C1'); exactsol = (sqrt(pi)/2*(erf(2)+erf(1)))^2;
 % >> check = abs(exactsol-q) < max(1e-3,1e-2*abs(exactsol))
 % check = 1
+=======
+%
+% >> f = @(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [-ones(1,2);2*ones(1,2)];
+% >> q = cubLattice_g(f,hyperbox,'uniform',1e-3,1e-2,'transform','C1'); exactsol = (sqrt(pi)/2*(erf(2)+erf(1)))^2;
+% >> check = abs(exactsol-q) < max(1e-3,1e-2*abs(exactsol))
+% >> check = 1
+>>>>>>> e65f3b761c01b995bfffe72b45f6fcd9a866ebbc
 %
 %
 % Example 4: 
 % Estimate the price of an European call with S0=100, K=100, r=sigma^2/2,
 % sigma=0.05 and T=1.
+<<<<<<< HEAD
 % 
+=======
+%
+>>>>>>> e65f3b761c01b995bfffe72b45f6fcd9a866ebbc
 % >> f = @(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); hyperbox = [-inf(1,1);inf(1,1)];
 % >> q = cubLattice_g(f,hyperbox,'normal',1e-4,1e-2,'transform','C1sin'); price = normcdf(0.05)*100 - 0.5*100*exp(-0.05^2/2);
 % >> check = abs(price-q) < max(1e-4,1e-2*abs(price))
@@ -207,9 +270,15 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 %
 %
 % Example 5:
+<<<<<<< HEAD
 % Estimate the integral with integrand f(x) = 8*x1.*x2.*x3.*x4.*x5 in the
 % interval [0,1)^5 with pure absolute error 1e-5.
 % 
+=======
+% Estimate the integral with integrand f(x) = 8*x1.*x2.*x3.*x4.*x5 in the interval
+% [0,1)^5 with pure absolute error 1e-5.
+%
+>>>>>>> e65f3b761c01b995bfffe72b45f6fcd9a866ebbc
 % >> f = @(x) 8*prod(x,2); hyperbox = [zeros(1,5);ones(1,5)];
 % >> q = cubLattice_g(f,hyperbox,'uniform',1e-5,0); exactsol = 1/4;
 % >> check = abs(exactsol-q) < 1e-5
@@ -217,26 +286,117 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 %
 %
 % Example 6:
+<<<<<<< HEAD
 % Estimate the integral with integrand f(x) = 3./(5-4*(cos(2*pi*x))) in the
 % interval [0,1) with pure absolute error 1e-5.
 % 
 % >> f = @(x) 3./(5-4*(cos(2*pi*x))); hyperbox = [0;1];
 % >> q = cubLattice_g(f,hyperbox,'uniform',1e-5,0,'transform','id'); exactsol = 1;
 % >> check = abs(exactsol-q) < 1e-5
+=======
+% Estimate the integral with integrand f(x) = 3./(5-4*(cos(2*pi*x))) in the interval
+% [0,1) with pure absolute error 1e-5.
+%
+%   f = @(x) 3./(5-4*(cos(2*pi*x))); hyperbox = [0;1];
+%   q = cubLattice_g(f,hyperbox,'uniform',1e-5,0,'transform','id'); exactsol = 1;
+%   check = abs(exactsol-q) < 1e-5
+>>>>>>> e65f3b761c01b995bfffe72b45f6fcd9a866ebbc
 % check = 1
 %
 %
-% Example 7: 
+% Example 7:
 % Estimate the integral with integrand f(x) = x1^2+x2^2 over the disk with
+<<<<<<< HEAD
 % center (0,0) and radius 1 with pure absolute error 1e-4, where x is a
 % vector x = [x1 x2].
 % 
+=======
+% center (0,0) and radius 1 with pure absolute error 1e-4, where x is a vector x = [x1 x2].
+%
+>>>>>>> e65f3b761c01b995bfffe72b45f6fcd9a866ebbc
 % >> f = @(x) x(:,1).^2+x(:,2).^2; hyperbox = [0,0,1];
 % >> q = cubLattice_g(f,hyperbox,'uniform ball','abstol',1e-4,'reltol',0); exactsol = pi/2;
 % >> check = abs(exactsol-q) < 1e-4
 % check = 1
 %
+<<<<<<< HEAD
+=======
+% Example 8:
+% >> w.func = @(x)[10*x(:,1)-5*x(:,2).^2+1*x(:,3).^3, x(:,1), x(:,2).^2];
+% >> w.cv = [8,32/3]; hyperbox= [zeros(1,3);2*ones(1,3)];
+% >> q = cubLattice_g(w,hyperbox,'uniform',1e-6,0); exactsol=128/3;
+% >> check = abs(exactsol-q) < 1e-4
+% check = 1
 %
+% Example 9:
+% >> f = @(x)[sin(x),cos(x)-sin(1)+1-cos(1)]; hyperbox = [0;1];
+% >> q = cubLattice_g(f,hyperbox,'uniform',1e-3,1e-2,'transform','C1'); exactsol=1-cos(1);
+% >> check = abs(exactsol-q) < 1e-4
+% check = 1
+>>>>>>> e65f3b761c01b995bfffe72b45f6fcd9a866ebbc
+%
+% Example 10:
+% >> w.func=@(x)[sin(x),cos(x)-sin(1)+1-cos(1) ,x-1/2,x.^2-1/3]
+% >> w.cv = [0,0]; hyperbox= [0;1];
+% >> q = cubLattice_g(w,hyperbox,'uniform',1e-6,0); exactsol=1-cos(1);
+% >> check = abs(exactsol-q) < 1e-4
+% check = 1
+%
+% Example 11:
+% >> w.func=@(x)[sin(x), x-1/2,x.^2-1/3]
+% >> w.cv = [0,0]; hyperbox= [0;1];
+% >> q = cubLattice_g(w,hyperbox,'uniform',1e-6,0); exactsol=1-cos(1);
+% >> check = abs(exactsol-q) < 1e-4
+% check = 1
+% 
+% Example 12:
+% >> w.func=@(x)[sin(x),cos(x)-sin(1)+1-cos(1) ,x , x.^2, x.^3]
+% >> w.cv = [0.5, 1/3, 1/4]; hyperbox= [0;1];
+% >> q = cubLattice_g(w,hyperbox,'uniform',1e-6,0); exactsol=1-cos(1);
+% >> check = abs(exactsol-q) < 1e-4
+% check = 1
+% 
+% Example 13:
+% >> w.func=@(x)[sin(x),cos(x)-sin(1)+1-cos(1), sin(2.*x)/2.*cos(x), x-1/2,x.^2-1/3]
+% >> w.cv = [0,0]; hyperbox= [0;1];
+% >> q = cubLattice_g(w,hyperbox,'uniform',1e-6,0); exactsol=1-cos(1);
+% >> check = abs(exactsol-q) < 1e-4
+% check = 1
+% 
+% #########################################################################
+% Example 14 (KESITER EQUATION):
+%% Multi-dimensional (Using Keister's equation) 
+%initialize the workspace and the display parameters
+% gail.InitializeWorkspaceDisplay %initialize the workspace and the display parameters
+% normsqd = @(t) sum(t.*t,2); %squared l_2 norm of t
+% f1 = @(normt,a,d) ((2*pi*a^2).^(d/2)) * cos(a*sqrt(normt)) ...
+%    .* exp((1/2-a^2)*normt);
+% f = @(t,a,d) f1(normsqd(t),a,d);
+%  
+% abstol = 0; %absolute error tolerance
+% reltol = 0.01; %relative error tolerance
+% dvec = 1:5; %vector of dimensions
+% a = 1 %default value of a
+% 
+% IMCvec = zeros(size(dvec)); %vector of answers
+% tic
+% for d = dvec
+%    IMCvec(d) = meanMC_g(@(n) f(randn(n,d),a,d),abstol,reltol);
+% end
+% toc
+% IMCvec
+%  
+% IMCvecE = zeros(size(dvec)); %vector of answers
+% for d = dvec
+%     w.func=@(t)[f(t, 1,d),f(t,1/sqrt(2),d),f(t,1/sqrt(1.5),d),f(t,1/sqrt(3),d)]
+%     w.cv = [IMCvec(d) IMCvec(d)];
+%     hyperbox=[zeros(1,d); ones(1,d)];
+%     [IMCvecE(d), out, ~, ~] = cubLattice_g(w,hyperbox,'normal',1e-6,0);
+% end 
+% IMCvecE
+%  
+% #########################################################################
+% 
 %   See also CUBSOBOL_G, CUBMC_G, MEANMC_G, INTEGRAL_G
 % 
 %  References
@@ -274,16 +434,15 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 %
 %   If you find GAIL helpful in your work, please support us by citing the
 %   above papers, software, and materials.
-%
 
 t_start = tic;
 %% Initial important cone factors and Check-initialize parameters
 r_lag = 4; %distance between coefficients summed and those computed
 [f,hyperbox,out_param] = cubLattice_g_param(r_lag,varargin{:});
 
+
 %------------------------------------------------------------------------------
 % TRANSFORMATION
-
 %changing the integrand and the hyperbox when measure is uniform ball or
 %sphere by applying the appropriate transformation
 if strcmpi(out_param.measure,'uniform ball') || strcmpi(out_param.measure,'uniform sphere')% using uniformly distributed samples on a ball or sphere
@@ -360,9 +519,11 @@ out_param.exit=false(1,exit_len); %we start the algorithm with all warning flags
 out_param.n=2^out_param.mmin; %total number of points to start with
 n0=out_param.n; %initial number of points
 xpts=mod(bsxfun(@plus, gail.lattice_gen(1,n0,out_param.d), out_param.shift),1); %grab Lattice points
+
 y=f(xpts); %evaluate integrand
 yval=y;
 
+<<<<<<< HEAD
 %% Compute initial FFT
 for l=0:out_param.mmin-1
    nl=2^l;
@@ -380,10 +541,42 @@ end
 %% Approximate integral
 q=mean(yval);
 appxinteg(1)=q;
+=======
+% evaluate integrand
+ycv = f(xpts);
+y = ycv(:,1:out_param.FuncCount); yval = y;
+yg = ycv(:,out_param.FuncCount+1:end); %yvalg = yg;
+
+
+%% Compute initial FFT
+for l=0:out_param.mmin-1
+    nl=2^l;
+    nmminlm1=2^(out_param.mmin-l-1);
+    ptind=repmat([true(nl,1); false(nl,1)],nmminlm1,1);
+    coef=exp(-2*pi()*sqrt(-1)*(0:nl-1)'/(2*nl));
+    coefv=repmat(coef,nmminlm1,1);
+    
+    evenval=y(ptind);
+    oddval=y(~ptind);
+    y(ptind)=(evenval+coefv.*oddval)/2;
+    y(~ptind)=(evenval-coefv.*oddval)/2;
+    
+    if cv.J
+        evenval=yg(ptind, (1:cv.J));
+        oddval=yg(~ptind, (1:cv.J));
+        yg(ptind, (1:cv.J))=(evenval+coefv.*oddval)/2;
+        yg(~ptind, (1:cv.J))=(evenval-coefv.*oddval)/2;
+        
+    end
+    % y now contains the FFT coefficients
+end
+>>>>>>> e65f3b761c01b995bfffe72b45f6fcd9a866ebbc
 
 %% Create kappanumap implicitly from the data
 kappanumap=(1:out_param.n)'; %initialize map
+
 for l=out_param.mmin-1:-1:1
+<<<<<<< HEAD
    nl=2^l;
    oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
    newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa, 
@@ -398,6 +591,75 @@ for l=out_param.mmin-1:-1:1
 end
 
 %% Compute Stilde
+=======
+    nl=2^l;
+    oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
+    newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa,
+    flip=find(newone>oldone); %which in the pair are the larger ones
+    if ~isempty(flip)
+        flipall=bsxfun(@plus,flip,0:2^(l+1):2^out_param.mmin-1);
+        flipall=flipall(:);
+        temp=kappanumap(nl+1+flipall); %then flip
+        kappanumap(nl+1+flipall)=kappanumap(1+flipall); %them
+        kappanumap(1+flipall)=temp; %around
+    end
+end
+
+%% Finding optimal beta
+% Pre-determine the size of the beta coefficients 
+if cv.J
+    C=[ones(out_param.FuncCount,1); zeros(out_param.CVCount,1)];
+else 
+    C=[ones(out_param.FuncCount,1)];
+end 
+    
+%% alogirhtm to find beta 
+X = yg(kappanumap(2^(out_param.mmin-r_lag-1)+1:end), (1:end));
+Y =  y(kappanumap(2^(out_param.mmin-r_lag-1)+1:end), (1:end));
+
+Val = [];
+Val = [Y X];
+meanVal=[mean(Val)];
+
+A=bsxfun(@minus, Val, meanVal);
+
+[U,S,V]=svd([A; C'],0);
+Sdiag = diag(S);
+U2=U(end,:);
+H=U2'/(U2*U2');
+beta=V*(H./Sdiag);
+beta=real(beta);
+
+meanX=meanVal(:,out_param.FuncCount+1:end);
+meanX=[zeros(out_param.FuncCount,1); meanX'];
+
+Ytemp=[];
+Ytemp=[y yg];
+
+yval = ycv(:,1:out_param.FuncCount)*beta(1:out_param.FuncCount,:) + ycv(:,out_param.FuncCount+1:end)*beta(out_param.FuncCount+1:end,:);
+y = (y(:,1:end)*beta(1:out_param.FuncCount,:)) + (yg(:,1:end)*beta(out_param.FuncCount+1:end,:));
+
+%% rebuild kappa map
+kappanumap=(1:out_param.n); %initialize map
+
+for l=out_param.mmin-1:-1:1
+    
+    nl=2^l;
+    oldone=abs(y(kappanumap(2:nl)));
+    newone=abs(y(kappanumap(nl+2:2*nl)));
+    
+    flip=find(newone>oldone);
+    if ~isempty(flip)
+        flipall=bsxfun(@plus,flip,0:2^(l+1):2^out_param.mmin-1);
+        flipall=flipall(:);
+        temp=kappanumap(nl+1+flipall); %then flip
+        kappanumap(nl+1+flipall)=kappanumap(1+flipall); %them
+        kappanumap(1+flipall)=temp; %around
+    end
+end
+
+%% Compute Stilde (1)
+>>>>>>> e65f3b761c01b995bfffe72b45f6fcd9a866ebbc
 nllstart=int64(2^(out_param.mmin-r_lag-1));
 Stilde(1)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
 out_param.bound_err=out_param.fudge(out_param.mmin)*Stilde(1);
@@ -414,6 +676,13 @@ for l = l_star:out_param.mmin % Storing the information for the necessary condit
 end
 if any(CStilde_low(:) > CStilde_up(:))
    out_param.exit(2) = true;
+end
+
+%% Approximate integral (1)
+if cv.J
+    q= mean(yval) - mu*beta(out_param.FuncCount+1:end,:);
+else
+    q=mean(yval);
 end
 
 % Check the end of the algorithm
@@ -435,6 +704,7 @@ end
 
 %% Loop over m
 for m=out_param.mmin+1:out_param.mmax
+<<<<<<< HEAD
    if is_done,
        break;
    end
@@ -495,12 +765,144 @@ for m=out_param.mmin+1:out_param.mmax
    
    % Necessary conditions
    for l = l_star:m % Storing the information for the necessary conditions
+=======
+    if is_done
+        break;
+    end
+    
+    out_param.n=2^m;
+    mnext=m-1;
+    nnext=2^mnext;
+    xnext=mod(bsxfun(@plus, gail.lattice_gen(nnext+1,2*nnext,out_param.d), out_param.shift),1);
+    n0=n0+nnext;
+    
+    % check for using control variates or not
+    if cv.J == 0
+        % ynext = f(xnext); yval=[yval; ynext];
+        ycvnext = f(xnext);
+        ynext = ycvnext(:,1:out_param.FuncCount)*beta(1:out_param.FuncCount,:) + ycvnext(:,out_param.FuncCount+1:end)*beta(out_param.FuncCount+1:end,:);
+        yval=[yval; ynext];
+    else
+        ycvnext = f(xnext);
+        ynext = ycvnext(:,1:out_param.FuncCount)*beta(1:out_param.FuncCount,:) + ycvnext(:,out_param.FuncCount+1:end)*beta(out_param.FuncCount+1:end,:);
+        yval=[yval; ynext];
+    end
+    
+    %% Compute initial FFT on next points
+    % Not updating beta
+    if out_param.betaUpdate==0
+        for l=0:mnext-1
+            nl=2^l;
+            nmminlm1=2^(mnext-l-1);
+            ptind=repmat([true(nl,1); false(nl,1)],nmminlm1,1);
+            coef=exp(-2*pi()*sqrt(-1)*(0:nl-1)'/(2*nl));
+            coefv=repmat(coef,nmminlm1,1);
+            evenval=ynext(ptind);
+            oddval=ynext(~ptind);
+            ynext(ptind)=(evenval+coefv.*oddval)/2;
+            ynext(~ptind)=(evenval-coefv.*oddval)/2;
+        end
+        
+        %Compute FFT on all points
+        y=[y;ynext];
+        nl=2^mnext;
+        ptind=[true(nl,1); false(nl,1)];
+        coef=exp(-2*pi()*sqrt(-1)*(0:nl-1)'/(2*nl));
+        coefv=repmat(coef,nmminlm1,1);
+        evenval=y(ptind);
+        oddval=y(~ptind);
+        y(ptind)=(evenval+coefv.*oddval)/2;
+        y(~ptind)=(evenval-coefv.*oddval)/2;
+        
+        % Update kappanumap
+        kappanumap=[kappanumap; 2^(m-1)+kappanumap]; %initialize map
+        for l=m-1:-1:m-r_lag
+            nl=2^l;
+            oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
+            newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa,
+            flip=find(newone>oldone);
+            if ~isempty(flip)
+                flipall=bsxfun(@plus,flip,0:2^(l+1):2^m-1);
+                flipall=flipall(:);
+                temp=kappanumap(nl+1+flipall);
+                kappanumap(nl+1+flipall)=kappanumap(1+flipall);
+                kappanumap(1+flipall)=temp;
+            end
+        end
+        
+        % Updating beta
+    else
+        ycv = [ycv;ycvnext];y = ycv(:,1);yg = ycv(:,2:end);
+        
+        % compute FFT
+        y=[y;ynext];
+        nl=2^mnext;
+        ptind=[true(nl,1); false(nl,1)];
+        coef=exp(-2*pi()*sqrt(-1)*(0:nl-1)'/(2*nl));
+        coefv=repmat(coef,nmminlm1,1);
+        evenval=y(ptind);
+        oddval=y(~ptind);
+        y(ptind)=(evenval+coefv.*oddval)/2;
+        y(~ptind)=(evenval-coefv.*oddval)/2;
+        
+        for l=0:m-1
+            nl=2^l;
+            nmminlm1=2^(m-l-1);
+            ptind=repmat([true(nl,1); false(nl,1)],nmminlm1,1);
+            evenval=y(ptind);
+            oddval=y(~ptind);
+            coef=exp(-2*pi()*sqrt(-1)*(0:nl-1)'/(2*nl));
+            coefv=repmat(coef,nmminlm1,1);
+            y(ptind)=(evenval+coefv.*oddval)/2;
+            y(~ptind)=(evenval-coefv.*oddval)/2;
+            evenval=yg(ptind, (1:cv.J));
+            oddval=yg(~ptind, (1:cv.J));
+            yg(ptind, (1:cv.J))=(evenval+coefv.*oddval)/2;
+            yg(~ptind, (1:cv.J))=(evenval-coefv.*oddval)/2;
+        end
+        
+        X = yg(kappanumap(2^(m-r_lag-1)+1:end), (1:cv.J));
+        Y = y(kappanumap(2^(m-r_lag-1)+1:end));
+        beta = real(X \ Y);
+        out_param.beta = [out_param.beta;beta];
+        yval = ycv(:,1) - ycv(:,2:end)*beta;
+        y = y-yg*beta;
+        
+        %% update kappamap
+        kappanumap=[kappanumap; 2^(m-1)+kappanumap]; %initialize map
+        for l=m-1:-1:m-r_lag
+            nl=2^l;
+            oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
+            newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa,
+            flip=find(newone>oldone);
+            if ~isempty(flip)
+                flipall=bsxfun(@plus,flip,0:2^(l+1):2^m-1);
+                flipall=flipall(:);
+                temp=kappanumap(nl+1+flipall);
+                kappanumap(nl+1+flipall)=kappanumap(1+flipall);
+                kappanumap(1+flipall)=temp;
+            end
+        end
+        
+    end
+    
+    %% Compute Stilde (2)
+    nllstart=int64(2^(m-r_lag-1));
+    meff=m-out_param.mmin+1;
+    Stilde(meff)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
+    out_param.bound_err=out_param.fudge(m)*Stilde(meff);
+    errest(meff)=out_param.bound_err;
+    
+    % Necessary conditions
+    for l = l_star:m % Storing the information for the necessary conditions
+>>>>>>> e65f3b761c01b995bfffe72b45f6fcd9a866ebbc
         C_low = 1/(1+omg_hat(m-l)*omg_circ(m-l));
         C_up = 1/(1-omg_hat(m-l)*omg_circ(m-l));
         CStilde_low(l-l_star+1) = max(CStilde_low(l-l_star+1),C_low*sum(abs(y(kappanumap(2^(l-1)+1:2^l)))));
         if (omg_hat(m-l)*omg_circ(m-l) < 1)
             CStilde_up(l-l_star+1) = min(CStilde_up(l-l_star+1),C_up*sum(abs(y(kappanumap(2^(l-1)+1:2^l)))));
         end
+<<<<<<< HEAD
    end
    
    if any(CStilde_low(:) > CStilde_up(:))
@@ -524,6 +926,36 @@ for m=out_param.mmin+1:out_param.mmax
    elseif m == out_param.mmax % We are on our max budget and did not meet the error condition => overbudget
       out_param.exit(1) = true;
    end
+=======
+    end
+    
+    if any(CStilde_low(:) > CStilde_up(:))
+        out_param.exit(2) = true;
+    end
+    
+    %% Approximate integral (2)
+    if cv.J
+        q= mean(yval) - mu*beta(out_param.FuncCount+1:end,:);
+    else
+        q=mean(yval);
+    end
+    
+    % Check the end of the algorithm
+    q = q - errest(meff)*(max(out_param.abstol, out_param.reltol*abs(q + errest(meff)))...
+        - max(out_param.abstol, out_param.reltol*abs(q - errest(meff))))/...
+        (max(out_param.abstol, out_param.reltol*abs(q + errest(meff)))...
+        + max(out_param.abstol, out_param.reltol*abs(q - errest(meff)))); % Optimal estimator
+    
+    appxinteg(meff)=q;
+    
+    if 4*errest(meff)^2/(max(out_param.abstol, out_param.reltol*abs(q + errest(meff)))...
+            + max(out_param.abstol, out_param.reltol*abs(q - errest(meff))))^2 <= 1
+        out_param.time=toc(t_start);
+        is_done = true;
+    elseif m == out_param.mmax % We are on our max budget and did not meet the error condition => overbudget
+        out_param.exit(1) = true;
+    end
+>>>>>>> e65f3b761c01b995bfffe72b45f6fcd9a866ebbc
 end
 
 % Decode the exit structure
@@ -537,12 +969,21 @@ end
 
 out_param = rmfield(out_param,'exit');
 
+<<<<<<< HEAD
 out_param.time=toc(t_start);
+=======
+numofS=out_param.n;
+time=out_param.time;
+>>>>>>> e65f3b761c01b995bfffe72b45f6fcd9a866ebbc
 end
 
 
 %% Parsing for the input of cubLattice_g
+<<<<<<< HEAD
 function [f,hyperbox, out_param] = cubLattice_g_param(r_lag,varargin)
+=======
+function [f,hyperbox, out_param, cv] = cubLattice_g_param(r_lag,varargin)
+>>>>>>> e65f3b761c01b995bfffe72b45f6fcd9a866ebbc
 
 % Default parameter values
 default.hyperbox = [zeros(1,1);ones(1,1)];% default hyperbox
@@ -554,8 +995,19 @@ default.reltol  = 1e-2;
 default.shift  = rand;
 default.mmin  = 10;
 default.mmax  = 20;
-default.fudge = @(m) 5*2.^-m;
+default.fudge = @(m) 10*2.^-(m);
 default.transform = 'Baker';
+<<<<<<< HEAD
+=======
+default.betaUpdate=0;
+default.FuncCount=0;
+default.CVCount=0; 
+default.toltype='max';
+default.theta=1;
+
+% two data structures for function: function || structure(using CV)
+validf = @(x) gail.isfcn(x) || isstruct(x);
+>>>>>>> e65f3b761c01b995bfffe72b45f6fcd9a866ebbc
 
 if numel(varargin)<2
     help cubLattice_g
@@ -609,6 +1061,41 @@ else
   f_addParamVal = @addParamValue;
 end
 
+% get the number of control variates and number of functions
+if ~isstruct(f) %  not using control variates
+    cv.J = 0;
+    
+    out_param.d = size(hyperbox,2);
+    tempVal=ones(1, out_param.d);
+    temp=(size(f(tempVal))); 
+    totSize=temp(:,2);
+  
+    default.FuncCount=totSize-cv.J;
+    
+else % using control variates, checking mu
+    if isnumeric(f.cv)
+        cv.J = size(f.cv,2);
+        default.CVCount=cv.J; 
+        
+        out_param.d = size(hyperbox,2);
+        tempVal=ones(1, out_param.d);
+        temp=(size(f.func(tempVal)));
+        totSize=temp(:,2);
+        
+        default.FuncCount=totSize-cv.J;
+    else
+        warning('GAIL:cubLattice_g:controlvariates_error1',...
+            'f.cv should be numerical values');
+    end
+end
+
+% display('#######################');
+% display('FuncCount');
+% display(default.FuncCount);
+% display('CVCount');
+% display(default.CVCount);
+% display('#######################');
+
 if ~validvarargin
     out_param.measure = default.measure;
     out_param.abstol = default.abstol;
@@ -618,6 +1105,15 @@ if ~validvarargin
     out_param.mmax = default.mmax;  
     out_param.fudge = default.fudge;
     out_param.transform = default.transform;
+<<<<<<< HEAD
+=======
+    out_param.betaUpdate=default.betaUpdate;
+    out_param.FuncCount=default.FuncCount;
+    out_param.CVCount=default.CVCount;
+    out_param.toltype=default.toltype;
+    out_param.theta=default.theta;
+    
+>>>>>>> e65f3b761c01b995bfffe72b45f6fcd9a866ebbc
 else
     p = inputParser;
     addRequired(p,'f',@gail.isfcn);
@@ -635,6 +1131,15 @@ else
         addOptional(p,'fudge',default.fudge,@gail.isfcn);
         addOptional(p,'transform',default.transform,...
             @(x) any(validatestring(x, {'id','Baker','C0','C1','C1sin'})));
+<<<<<<< HEAD
+=======
+        addOptional(p,'betaUpdate',default.betaUpdate,@isnumeric);
+        addOptional(p,'FuncCount',default.FuncCount,@isnumeric);
+        addOptional(p,'CVCount',default.CVCount,@isnumeric);
+        addOptional(p,'toltype',default.toltype,@isstring);
+        addOptional(p,'theta',default.theta,@isnumeric);
+        
+>>>>>>> e65f3b761c01b995bfffe72b45f6fcd9a866ebbc
     else
         if isstruct(in3) %parse input structure
             p.StructExpand = true;
@@ -652,6 +1157,15 @@ else
         f_addParamVal(p,'fudge',default.fudge,@gail.isfcn);
         f_addParamVal(p,'transform',default.transform,...
             @(x) any(validatestring(x, {'id','Baker','C0','C1','C1sin'})));
+<<<<<<< HEAD
+=======
+        f_addParamVal(p,'betaUpdate',default.betaUpdate,@isnumeric);           
+        f_addParamVal(p,'FuncCount',default.FuncCount,@isnumeric);              
+        f_addParamVal(p,'CVCount',default.CVCount,@isnumeric);
+        f_addParamVal(p,'toltype',default.toltype,@isstring);
+        f_addParamVal(p,'theta',default.theta, @isnumeric);
+
+>>>>>>> e65f3b761c01b995bfffe72b45f6fcd9a866ebbc
     end
     parse(p,f,hyperbox,varargin{3:end});
     out_param = p.Results;
@@ -822,20 +1336,35 @@ end
 % Checking on the hyperbox given the measure
 if (strcmp(out_param.measure,'uniform')) && ~all(all(isfinite(hyperbox)))
     warning('GAIL:cubLattice_g:hyperboxnotfinite',['If uniform measure, hyperbox must be of finite volume.' ...
+<<<<<<< HEAD
             ' Using default hyperbox:'])
     disp([zeros(1,out_param.d);ones(1,out_param.d)])
+=======
+        ' Using default hyperbox:'])
+    %disp([zeros(1,out_param.d);ones(1,out_param.d)])
+>>>>>>> e65f3b761c01b995bfffe72b45f6fcd9a866ebbc
     hyperbox = [zeros(1,out_param.d);ones(1,out_param.d)];
 end
 if (strcmp(out_param.measure,'normal')) && (any(any(isfinite(hyperbox)))>0)
     warning('GAIL:cubLattice_g:hyperboxfinite',['If normal measure, hyperbox must be defined as (-Inf,Inf)^d.' ...
+<<<<<<< HEAD
             ' Using default hyperbox:'])
     disp([-inf*ones(1,out_param.d);inf*ones(1,out_param.d)])
+=======
+        ' Using default hyperbox:'])
+    %disp([-inf*ones(1,out_param.d);inf*ones(1,out_param.d)])
+>>>>>>> e65f3b761c01b995bfffe72b45f6fcd9a866ebbc
     hyperbox = [-inf*ones(1,out_param.d);inf*ones(1,out_param.d)];
 end
 if (strcmp(out_param.measure,'normal')) && (any(hyperbox(1,:)==hyperbox(2,:)) || any(hyperbox(1,:)>hyperbox(2,:)))
     warning('GAIL:cubLattice_g:hyperboxnormalwrong',['If normal measure, hyperbox must be defined as (-Inf,Inf)^d.' ...
+<<<<<<< HEAD
             ' Using default hyperbox:'])
     disp([-inf*ones(1,out_param.d);inf*ones(1,out_param.d)])
+=======
+        ' Using default hyperbox:'])
+    %disp([-inf*ones(1,out_param.d);inf*ones(1,out_param.d)])
+>>>>>>> e65f3b761c01b995bfffe72b45f6fcd9a866ebbc
     hyperbox = [-inf*ones(1,out_param.d);inf*ones(1,out_param.d)];
 end
 if (strcmp(out_param.measure,'uniform ball') || strcmp(out_param.measure,'uniform sphere'))...

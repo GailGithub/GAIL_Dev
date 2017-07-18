@@ -1,19 +1,19 @@
-classdef cubParam < gail.fParam
+classdef cubParam < handle & matlab.mixin.CustomDisplay
    %GAIL.CUBPARAM is a class containing the parameters related to
    %algorithms that find the mean of a random variable
    %   This class contains the number of integrands with the same integral,
    %   etc.
    %
    % Example 1. Construct a cubParam object with default parameters
-   % >> cubParamObj = gail.cubParam
+   % cubParamObj = gail.cubParam
    % cubParamObj = 
    %   cubParam with properties:
    % 
-   %              f: @(x)sum(x.^2,2)
-   %         domain: [2×1 double]
-   %        measure: 'uniform'
-   %         absTol: 0.010000000000000
-   %         relTol: 0
+   %           f: @(x)sum(x.^2,2)
+   %      domain: [2×1 double]
+   %     measure: 'uniform'
+   %      absTol: 0.0100
+   %      relTol: 0
    %
    %
    % Example 2. Construct a cubParam object with properly ordered inputs
@@ -24,7 +24,7 @@ classdef cubParam < gail.fParam
    %              f: @(x)sum(x.^3.2)
    %         domain: [2×2 double]
    %        measure: 'Lebesgue'
-   %         absTol: 0.010000000000000
+   %         absTol: 0.0100
    %         relTol: 0
    %
    %
@@ -36,14 +36,14 @@ classdef cubParam < gail.fParam
    %              f: @(x)sum(x.^3.2)
    %         domain: [2×2 double]
    %        measure: 'normal'
-   %         absTol: 0.010000000000000
-   %         relTol: 0.100000000000000
+   %         absTol: 0.0100
+   %         relTol: 0.1000
    %
    %
    % Example 4. Using a structure for input
    % >> inpStruct.f = @(x) sin(sum(x,2));
    % >> inpStruct.domain = [zeros(1,4); ones(1,4)];
-   % >> inpStruct.nInit = 1000;
+   % >> inpStruct.nInit = 2048;
    % >> cubParamObj = gail.cubParam(inpStruct)
    % cubParamObj = 
    %   cubParam with properties:
@@ -51,8 +51,9 @@ classdef cubParam < gail.fParam
    %              f: @(x)sin(sum(x,2))
    %         domain: [2×4 double]
    %        measure: 'uniform'
-   %         absTol: 0.010000000000000
+   %         absTol: 0.0100
    %         relTol: 0
+   %          nInit: 2048
    %
    %
    % Example 5. Copying a cubParam object and changing some properties
@@ -63,21 +64,20 @@ classdef cubParam < gail.fParam
    %              f: @(x)sin(sum(x,2))
    %         domain: [2×4 double]
    %        measure: 'Lebesgue'
-   %         absTol: 0.010000000000000
+   %         absTol: 0.0100
    %         relTol: 0
-   %          nInit: 1000
+   %          nInit: 2048
    %
    %
-
-   
    % Author: Fred J. Hickernell
    
    properties
+      err %an errorParam object
+      fun %an fParam object
+      CM %a cubMeanParam object
       measure %measure against which to integrate
-      trueMuCV %true integral for control variates
-      nMu %number of integrals for solution function
-      nf %number of f for each integral
-      inflate %inflation factor for bounding the error
+      measureType %type of measure that final integral is made with respect to
+      nf %number of f for each integral   
    end
    
     properties (Dependent = true)
@@ -87,15 +87,16 @@ classdef cubParam < gail.fParam
     end
    
    properties (Hidden, SetAccess = private)
-      def_measure = 'uniform'
-      def_inflate = @(m) 5 * 2^-m %default inflation factor
-      def_nMu = 1 %default number of integrals
-      def_nf = 1 %default number of Y per integral
-      def_trueMuCV = [] %default true integrals for control variates
-      allowedMeasures = {'uniform', ... %over a hyperbox volume of domain is one
+      def_measure = 'uniform' % default measure
+      def_measureType = 'uniform' % default measure
+      def_nf = 1 %default number of functions per integral      
+      allowedMeasures = {'uniform',  ... %over a hyperbox volume of domain is one
          'Lebesgue', ... %like uniform, but integral over domain is the volume of the domain
          'Gaussian', 'normal' ... %these are the same
-         }
+         }    
+      allowedMeasureTypes = {'uniform',  ... %over a hyperbox volume of domain is one
+         'Gaussian', 'normal' ... %these are the same
+         }    
    end
    
    
@@ -109,6 +110,7 @@ classdef cubParam < gail.fParam
          %  # a structure
          %  # a function
          %  # a domain
+         %  # a domain type
          %  # a measure
          %  # numbers: absTol, relTol, trueMuCV, nMu, nf, inflate
          %  # name-value pairs
@@ -160,22 +162,44 @@ classdef cubParam < gail.fParam
             end
          end
          
-         %Parse errorParam properties
-         whichParse = [objInp fInp domainInp domainTypeInp structInp start:nargin];
-         whichParse = whichParse(whichParse > 0);
-         obj@gail.fParam(varargin{whichParse});
-
          if objInp
             val = varargin{objInp}; %first input
+            obj.err = gail.errorParam(val.err);
+            obj.fun = gail.fParam(val.fun);
+            obj.CM = gail.cubMeanParam(val.CM);          
             obj.measure = val.measure; %copy integration measure
-            obj.inflate = val.inflate; %copy inflation factor
-            obj.nMu = val.nMu; %copy the number of integrals
+            obj.measureType = val.measureType; %copy integration measure
             obj.nf = val.nf; %copy number of functions for each integral
-            obj.trueMuCV = val.trueMuCV; %copy true means of control variates
-            useDefaults = true;
          end
 
-         %Now begin to parse inputs
+         %Parse fParam properties
+         whichfParse = [fInp domainInp domainTypeInp structInp start:nargin];
+         whichfParse = whichfParse(whichfParse > 0);
+         if objInp
+            obj.fun = gail.fParam(obj.fun,varargin{whichfParse});
+         else
+            obj.fun = gail.fParam(varargin{whichfParse});
+         end
+
+         %Parse errorParam properties
+         whichErrParse = [structInp start:nargin];
+         whichErrParse = whichErrParse(whichErrParse > 0);
+         if objInp
+            obj.err = gail.errorParam(obj.err,varargin{whichErrParse});
+         else
+            obj.err = gail.errorParam(varargin{whichErrParse});
+         end
+
+         %Parse cubMeanParam properties
+         whichCMParse = [structInp start:nargin];
+         whichCMParse = whichCMParse(whichCMParse > 0);
+         if objInp
+            obj.CM = gail.cubMeanParam(obj.CM,varargin{whichCMParse});
+         else
+            obj.CM = gail.cubMeanParam(varargin{whichCMParse});
+         end
+
+         %Now begin to parse remaining inputs
          p = inputParser; %construct an inputParser object
          p.KeepUnmatched = true; %ignore those that do not match
          p.PartialMatching = false; %don'try a partial match
@@ -194,18 +218,16 @@ classdef cubParam < gail.fParam
                done = true;
             end
          end
+         
          if ~done %then nothingleft or just numbers
             f_addParamVal = @addOptional;
-            parseRange = (start + 2):nargin; %to account for the two tolerances already parsed
+            parseRange = []; %nothing to parse here if just numbers
          end
-         if ~measureInp
-            f_addParamVal(p,'measure',obj.def_measure);
-         end
-         f_addParamVal(p,'trueMuCV',obj.def_trueMuCV);
-         f_addParamVal(p,'nMu',obj.def_nMu);
-         f_addParamVal(p,'nf',obj.def_nf);
-         f_addParamVal(p,'inflate',obj.def_inflate);
          
+         f_addParamVal(p,'measure',obj.def_measure);
+         f_addParamVal(p,'measureType',obj.def_measureType);
+         f_addParamVal(p,'nf',obj.def_nf);
+                  
          if structInp
             parse(p,varargin{parseRange},varargin{structInp}) 
             %parse inputs with a structure
@@ -222,75 +244,53 @@ classdef cubParam < gail.fParam
             obj.measure = varargin{measureInp}; %assign measure
          elseif isfield(struct_val,'measure')
             obj.measure = struct_val.measure;
-         end
-         if isfield(struct_val,'inflate')
-            obj.inflate = struct_val.inflate;
-         end
-         if isfield(struct_val,'nMu')         
-            obj.nMu = struct_val.nMu;
+         end 
+         if isfield(struct_val,'measureType')         
+            obj.measureType = struct_val.measureType;
          end
          if isfield(struct_val,'nf')         
             obj.nf = struct_val.nf;
          end
-         if isfield(struct_val,'trueMuCV')         
-            obj.trueMuCV = struct_val.trueMuCV;
-         end        
-       
+                  
       end %of constructor
-     
+      
       function set.measure(obj,val)
-         validateattributes(val, {'char'}, {})
-         obj.measure = checkMeasure(obj,val);
+          validateattributes(val, {'char'}, {})
+          obj.measure = checkMeasure(obj,val);
       end
       
-      function set.inflate(obj,val)
-         validateattributes(val, {'function_handle'}, {})
-         obj.inflate = val;
+      function set.measureType(obj,val)
+          validateattributes(val, {'char'}, {})
+          obj.measureType = checkMeasureType(obj,val);
       end
-                             
-      function set.nMu(obj,val)
-         validateattributes(val, {'numeric'}, {'integer', 'positive'})
-         obj.nMu = val;
-      end
-                       
+      
       function set.nf(obj,val)
          validateattributes(val, {'numeric'}, {'positive','integer'})
-         obj.nf = val;
+         obj.nf = checkNf(obj,val);
       end
-                       
-      function set.trueMuCV(obj,val)
-         validateattributes(val, {'numeric'}, {})
-         obj.trueMuCV = setTrueMuCVDim(obj,val);
-      end
-      
-      function val = get.nCV(obj)
-         val = obj.nfOut - sum(obj.nf); 
-      end        
-      
+                 
       function val = get.volume(obj) %volume of the domain
          if any(strcmp(obj.measure,{'uniform', 'normal'}))
             val = 1;
          elseif strcmp(obj.measure, {'Lebesgue'})
-            val = prod(diff(obj.domain,1),2);
+            val = prod(diff(obj.fun.domain,1),2);
          end
       end
             
       function val = get.ff(obj)
          if strcmp(obj.measure,'uniform')
-            val = obj.f;
+            val = obj.fun.f;
          elseif strcmp(obj.measure,'Lebesgue')
-            val = @(x) obj.f(bsxfun(@times, diff(obj.domain,1), ...
-               bsxfun(@minus, x, obj.domain(1,:))));
+            val = @(x) obj.fun.f(bsxfun(@times, diff(obj.fun.domain,1), ...
+               bsxfun(@minus, x, obj.fun.domain(1,:))));
          elseif strcmp(obj.measure, 'normal')
-            val = @(x) obj.f(gail.stdnorminv(x));
+            val = @(x) obj.fun.f(gail.stdnorminv(x));
          end
+
       end
-            
-      
    end
    
    methods (Access = protected)
-   
       function outval = checkMeasure(obj,inval)
          assert(any(strcmp(inval,obj.allowedMeasures)))
          if strcmp(inval,'Gaussian') %same as normal
@@ -299,39 +299,64 @@ classdef cubParam < gail.fParam
             outval = inval;
          end
          if strcmp(outval,'normal') %domain must be R^d
-            assert(all(obj.domain(1,:) == -Inf) && ...
-               all(obj.domain(2,:) == Inf))
+            assert(all(obj.fun.domain(1,:) == -Inf) && ...
+               all(obj.fun.domain(2,:) == Inf))
          end
          if any(strcmp(outval,{'uniform','Lebesgue'})) %domain must be finite
-            assert(all(all(isfinite(obj.domain))))
+            assert(all(all(isfinite(obj.fun.domain))))
          end
-      end
-   
-      function outval = setTrueMuCVDim(obj,inval)
-         assert(numel(inval) == obj.nCV)
-         outval = inval(:)';
       end
       
-      function propList = getPropertyList(obj)
-         propList = struct('f', obj.f, ...
-            'domain', obj.domain);
-         if ~strcmp(obj.domainType,obj.def_domainType)
-            propList.domainType = obj.domainType;
-         end
-         propList.measure = obj.measure;
-         propList.absTol = obj.absTol;
-         propList.relTol = obj.relTol;
-         if obj.nInit ~= obj.def_nInit
-            propList.nInit = obj.nInit;
-         end
-         if obj.nMax ~= obj.def_nMax
-            propList.nMax = obj.nMax;
+      function outval = checkMeasureType(obj,inval)
+         assert(any(strcmp(inval,obj.allowedMeasureTypes)))
+         if strcmp(inval,'Gaussian') %same as normal
+            outval = 'normal';
+         else
+            outval = inval;
          end
       end
-
+   
+      function outval = checkNf(obj,inval)
+         assert(obj.fun.nfOut - sum(inval) == obj.CM.nCV)
+         outval = inval;
+      end
+    
+     function propgrp = getPropertyGroups(obj)
+        if ~isscalar(obj)
+           propgrp = getPropertyGroups@matlab.mixin.CustomDisplay(obj);
+        else
+           propList = getPropertyList(obj);
+           propgrp = matlab.mixin.util.PropertyGroup(propList);
+        end
+     end
+      
+      function propList = getPropertyList(obj)
+         propList = struct('f', obj.fun.f, ...
+            'domain', obj.fun.domain);
+         if ~strcmp(obj.fun.domainType,obj.fun.def_domainType)
+            propList.domainType = obj.fun.domainType;
+         end
+         propList.measure = obj.measure;
+         propList.absTol = obj.err.absTol;
+         propList.relTol = obj.err.relTol;
+         if obj.CM.nInit ~= obj.CM.def_nInit
+            propList.nInit = obj.CM.nInit;
+         end
+         if obj.CM.nMax ~= obj.CM.def_nMax
+            propList.nMax = obj.CM.nMax;
+         end
+         if obj.CM.nMu ~= obj.CM.def_nMu
+            propList.nMu = obj.CM.nMu;
+         end
+         if obj.nf ~= obj.def_nf
+            propList.nf= obj.nf;
+         end
+         if numel(obj.CM.trueMuCV)
+            propList.trueMuCV = obj.CM.trueMuCV;
+         end
+      end
+      
    end
-
-   
-   
-end
-
+  
+end 
+ 

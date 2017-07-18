@@ -44,7 +44,7 @@
 %   TestcubMCgDiffSettings - function to test different routines when
 %   given an absolute error tolerance.
 %
-%   RunTestcubMCgonKeister generates the Keister test function in Section
+%   RunTestcubMCgonKeister - generates the Keister test function in Section
 %   4.5.2 and produces Figure 4.3.
 %
 %   Keistertrue - computes the true value of the Keister integral in dimension d
@@ -76,17 +76,9 @@
 %   Test_meanMCBernoulli_g - test function of meanMCBernoulli_g
 %
 %   DisplayTestResults* - used to plot the examples in Section 3 and 4
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+%
+%   RunTestcubMConGaussian  - This is the Gaussian test function in Section 3.5.2, producing Figure 3.6
+%   randchoiceKeister - randchoiceKeister - randomly generates the parameters in Keister test
+%   kurtosismax - compute the maximum kurtosis
+%   
+%   LanJiangThesis.pdf - Thesis

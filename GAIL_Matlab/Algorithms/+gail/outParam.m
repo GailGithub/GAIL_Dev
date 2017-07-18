@@ -4,9 +4,11 @@ classdef outParam < handle
    %   computation
    
    properties
+      sol = NaN %solution, such as mean, integral, approximate function,
       nSample = 0 %total sample size
       time = 0 %time required for computation
-      errBd
+      errBd %error bounds on the means of Y our the integrals
+      tolVal %value of the tolerance function
    end
       
    methods
@@ -24,6 +26,11 @@ classdef outParam < handle
       function set.errBd(obj,val)
          validateattributes(val, {'numeric'}, {'scalar','nonnegative'})
          obj.errBd = val;
+      end                    
+     
+      function set.tolVal(obj,val)
+         validateattributes(val, {'numeric'}, {'scalar','nonnegative'})
+         obj.tolVal = val;
       end                    
      
    end

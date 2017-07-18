@@ -12,6 +12,7 @@ classdef multivarGauss < handle
       n = 1e4 %number of samples
       intMeth = 'aff' %method for forming integrand
       cubMeth = 'Sobol' %cubature method for calculating the integral
+      transMeth = 'none' %transformation method
       errMeth = 'n' %method for determining that the error is met
    end
    
@@ -47,6 +48,8 @@ classdef multivarGauss < handle
                if ~isempty(wh), obj.intMeth = varargin{wh+iStart}; end
                wh = find(strcmp(varargin(iStart:end),'cubMeth'));
                if ~isempty(wh), obj.cubMeth = varargin{wh+iStart}; end
+               wh = find(strcmp(varargin(iStart:end),'transMeth'));
+               if ~isempty(wh), obj.transMeth = varargin{wh+iStart}; end
                wh = find(strcmp(varargin(iStart:end),'errMeth'));
                if ~isempty(wh), obj.errMeth = varargin{wh+iStart}; end
            end            
@@ -80,7 +83,11 @@ classdef multivarGauss < handle
          updateInteg(obj);
        end
              
-       function updateCovProp(obj)
+        function set.transMeth(obj,val)
+         obj.transMeth = val;
+         updateInteg(obj);
+       end
+      function updateCovProp(obj)
          obj.CovProp.C = chol(obj.Cov)';
          obj.CovProp.detSig = det(obj.Cov);
          obj.CovProp.invSig = inv(obj.Cov);
@@ -92,11 +99,20 @@ classdef multivarGauss < handle
             multinorm = ...
                @(x) exp(-0.5*sum((x - obj.mu).*((x - obj.mu)*obj.CovProp.invSig),2)) ...
                ./sqrt(((2*pi)^numel(obj.a))*obj.CovProp.detSig);
-            obj.f = @(t) prod(obj.b-obj.a)*multinorm(stretch(t));
+            ff = @(t) prod(obj.b-obj.a)*multinorm(stretch(t));
          elseif strcmp(obj.intMeth,'Genz')
-            obj.f = @(t) Genz(t,obj);
+            ff = @(t) Genz(t,obj);
          else
             error('intMeth not recognized')
+         end
+         if strcmp(obj.transMeth,'none')
+            obj.f = ff;
+         elseif strcmp(obj.transMeth,'tent')
+            obj.f = @(x) ff(1 - abs(2*x -1));
+         elseif strcmp(obj.transMeth,'C0')
+            obj.f = @(x) ff((x.^2).*(3-2*x)).*prod(6*x.*(1-x),2);
+         else
+            error ('transMeth not recognized')
          end
       end
       
@@ -124,21 +140,22 @@ classdef multivarGauss < handle
       
       function [prob,out] = compProb(obj)
          redDim = strcmp(obj.intMeth,'Genz');
+         dim = numel(obj.a);
+         realDim = dim - redDim;
+         out = [];
          if strcmp(obj.errMeth,'n')
-            out = [];
-            dim = numel(obj.a);
             nmax = max(obj.n);
             if strcmp(obj.cubMeth,'IID')
-               if dim - redDim >= 1
-                  x = rand(nmax,dim-redDim);
+               if realDim >= 1
+                  x = rand(nmax,realDim);
                else
                   x(nmax,1) = 0;
                end
                temp = cumsum(obj.f(x),1);
                prob = temp(obj.n)./obj.n(:);
             elseif strcmp(obj.cubMeth,'Sobol')
-               if dim - redDim >= 1
-                  x = net(scramble(sobolset(dim-redDim), ...
+               if realDim >= 1
+                  x = net(scramble(sobolset(realDim), ...
                   'MatousekAffineOwen'),nmax);
                else
                   x(nmax,1) = 0;
@@ -146,16 +163,16 @@ classdef multivarGauss < handle
                temp = cumsum(obj.f(x),1);
                prob = temp(obj.n)./obj.n(:);
             elseif strcmp(obj.cubMeth,'uSobol')
-               if dim - redDim >= 1
-                  x = net(sobolset(dim-redDim),nmax);
+               if realDim >= 1
+                  x = net(sobolset(realDim),nmax);
                else
                   x(nmax,1) = 0;
                end
                temp = cumsum(obj.f(x),1);
                prob = temp(obj.n)./obj.n(:);
             elseif strcmp(obj.cubMeth,'SobolOpt')
-               if dim - redDim >= 1
-                  x = net(scramble(sobolset(dim-redDim), ...
+               if realDim >= 1
+                  x = net(scramble(sobolset(realDim), ...
                      'MatousekAffineOwen'),nmax);
                   %acosx = acos(1-2*x)/pi;
                   nn = numel(obj.n);
@@ -172,21 +189,73 @@ classdef multivarGauss < handle
                else
                   prob = obj.f(0)*ones(size(obj.n));
                end
+            elseif strcmp(obj.cubMeth,'SobolMLE')
+               if realDim >= 1
+                  [prob,out] = cubMLE(obj.f,obj.n,[zeros(1,realDim); ones(1,realDim)]);
+               else
+                  prob = obj.f(0)*ones(size(obj.n));
+               end
+            elseif strcmp(obj.cubMeth,'LatticeMLE')
+               if realDim >= 1
+                  [prob,out] = cubMLE(obj.f,obj.n,[zeros(1,realDim); ones(1,realDim)],...
+                      'Lattice1','Fourier','Thompson');
+               else
+                  prob = obj.f(0)*ones(size(obj.n));
+               end
+            elseif strcmp(obj.cubMeth,'lattice')
+               if realDim >= 1
+                  x = mod(bsxfun(@plus,gail.lattice_gen(1,nmax,realDim), ...
+                     + rand(1,realDim)),1);
+               else
+                  x(nmax,1) = 0;
+               end
+               temp = cumsum(obj.f(x),1);
+               prob = temp(obj.n)./obj.n(:);
             end
          elseif strcmp(obj.errMeth,'g')
-            dim = numel(obj.a)-1;
             if strcmp(obj.cubMeth,'IID')
-               [prob, out] = meanMC_g(@(m) obj.f(rand(m,dim)), ...
+               [prob, out] = meanMC_g(@(m) obj.f(rand(m,realDim)), ...
                   obj.absTol,obj.relTol);
             elseif strcmp(obj.cubMeth,'Sobol')
-               [prob, out] = cubSobol_g(obj.f,[zeros(1,dim); ones(1,dim)], ...
+               [prob, out] = cubSobol_g(obj.f, ...
+                  [zeros(1,realDim); ones(1,realDim)], ...
                   'uniform',obj.absTol,obj.relTol);
-            elseif strcmp(obj.cubMeth,'lattice')
-               [prob, out] = cubLattice_g(obj.f,[zeros(1,dim); ones(1,dim)], ...
-                  'uniform',obj.absTol,obj.relTol);
+            elseif strcmp(obj.cubMeth,'uSobol')
+               [prob, out] = cubSobol_g(obj.f, ...
+                  [zeros(1,realDim); ones(1,realDim)], ...
+                  'measure','uniform','abstol',obj.absTol, ...
+                  'reltol',obj.relTol,'scramble',false);
+            elseif strcmp(obj.cubMeth,'MLELattice')
+               [prob, out] = cubBayesLatticeCLASS('f', obj.f, ...
+                  'domain', [zeros(1,realDim); ones(1,realDim)], ...
+                  'absTol', obj.absTol, 'relTol', obj.relTol, ...
+                  'kerName', 'Ber2');
+            elseif strcmp(obj.cubMeth,'MLELattice4')
+               [prob, out] = cubBayesLatticeCLASS('f', obj.f, ...
+                  'domain', [zeros(1,realDim); ones(1,realDim)], ...
+                  'absTol', obj.absTol, 'relTol', obj.relTol, ...
+                  'kerName', 'Ber4');
+            elseif strcmp(obj.cubMeth,'MLE0Lattice')
+               [prob, out] = cubBayesLattice(obj.f, ...
+                  realDim,obj.absTol,obj.relTol,2,false);
             end
           end
       end
+      
+      function val = sameProblem(obj1,obj2)
+         val = all(obj1.a == obj2.a) && ...
+            all(obj1.b == obj2.b) && ...
+            all(obj1.mu == obj2.mu) && ...
+            all(all(obj1.Cov == obj2.Cov)) && ...
+            obj1.absTol == obj2.absTol && ...
+            obj1.relTol == obj2.relTol && ...
+            all(obj1.n == obj2.n) && ...
+            strcmp(obj1.intMeth,obj2.intMeth) && ...
+            strcmp(obj1.cubMeth,obj2.cubMeth) && ...
+            strcmp(obj1.transMeth,obj2.transMeth) && ...
+            strcmp(obj1.errMeth,obj2.errMeth); 
+   end
+ 
                
    end
    
