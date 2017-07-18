@@ -47,7 +47,6 @@ classdef ut_meanMC_CLT < matlab.unittest.TestCase
 
     function meanMC_CLTOfparsing(testCase)
       in_param.abstol = -1e-2;  
-
       in_param.reltol = 0;
       errorOccurred = false;
       
@@ -64,30 +63,29 @@ classdef ut_meanMC_CLT < matlab.unittest.TestCase
 
 
 
-  function meanMC_CLTOfnonRandomInput(testCase)
+%   function meanMC_CLTOfnonRandomInput(testCase)
+% 
+%         in_param.abstol = 1e-2;
+%         errorOccurred = false;
+%         try
+%            meanMC_CLT(@(x) x.^2,in_param.abstol);
+%         catch ME
+%            testCase.verifyEqual(ME.identifier,'MATLAB:expectedNonnegative')
+%            errorOccurred = true;
+%         end
+%         testCase.verifyEqual(errorOccurred,true);
+%         
+%    end
 
-        in_param.abstol = 1e-2;
-        errorOccurred = false;
-        try
-           a=meanMC_CLT(@(x) x.^2,in_param.abstol);
-        catch ME
-           display('a')
-           testCase.verifyEqual(ME.identifier,'MATLAB:expectedNonnegative')
-           errorOccurred = true;
-        end
-        testCase.verifyEqual(errorOccurred,true);
-        
-   end
-
-    %function meanMC_CLTOfWorkouts(testCase)
-
-   %      mu = Test_meanMC_CLT;
-
-    %   testCase.verifyTrue(mu>4.4);
-
-     %   testCase.verifyTrue(mu<4.5);  
-
-  %  end
+%     function meanMC_CLTOfWorkouts(testCase)
+% 
+%         mu = Test_meanMC_CLT;
+% 
+%       testCase.verifyTrue(mu>4.4);
+% 
+%        testCase.verifyTrue(mu<4.5);  
+% 
+%    end
 
 
 
