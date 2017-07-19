@@ -136,8 +136,11 @@ tstart = tic; %start the clock
 out = gail.meanYOut(gail.meanYParam(varargin{:})); 
 Yrand=out.Y; %the random number generator
 q=out.nY; %the number of target random variable 
-p=out.nCV; %the number of control variates
-xmean=out.trueMuCV; %the mean of the control variates
+p=out.CM.nCV; %the number of control variates
+xmean=out.CM.trueMuCV; %the mean of the control variates
+if size(xmean)==zeros(1,2)
+   xmean=0;
+end
 
 val = Yrand(out.nSig); %get samples to estimate variance 
 if p==0 && q==1
@@ -157,16 +160,16 @@ end
 
 out.stddev = std(YY); %standard deviation of the new samples
 
-sig0up = out.inflate .* out.stddev; %upper bound on the standard deviation
+sig0up = out.CM.inflate .* out.stddev; %upper bound on the standard deviation
 hmu0 = mean(YY); %mean of the samples
 
 nmu = max(1,ceil((-gail.stdnorminv(out.alpha/2)*sig0up ...
-   /max(out.absTol,out.relTol*abs(hmu0))).^2)); 
+   /max(out.err.absTol,out.err.relTol*abs(hmu0))).^2)); 
    %number of samples needed for the error tolerance
-if nmu > out.nMax %don't exceed sample budget
+if nmu > out.CM.nMax %don't exceed sample budget
    warning(['The algorithm wants to use nmu = ' int2str(nmu) ...
-      ', which is too big. Using ' int2str(out.nMax) ' instead.']) 
-   nmu = out.nMax; %revise nmu
+      ', which is too big. Using ' int2str(out.CM.nMax) ' instead.']) 
+   nmu = out.CM.nMax; %revise nmu
 end
 
 YY = Yrand(nmu); %get samples 
