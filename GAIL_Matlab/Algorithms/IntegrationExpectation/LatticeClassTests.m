@@ -10,18 +10,23 @@ w.domain = [zeros(1,2);ones(1,2)];
 w.transform = 'C1sin';
 cubLattice_gCLASS(w);
 
-% Example 2: 
-f = @(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2; hyperbox = [-inf(1,3);inf(1,3)];
-q = cubLattice_g(f,hyperbox,'normal',1e-3,1e-3,'transform','C1sin','shift',2^(-25)*ones(1,3)); exactsol = 1;
+% Example 2: (Not working)
+d = 3;
+f = @(x) prod(x.^2,2); hyperbox = [-inf(1,d);inf(1,d)];
+q = cubLattice_g(f,hyperbox,'normal',1e-3,1e-3,'transform','bakers','shift',2^(-25)*ones(1,d)); exactsol = 1;
 
-w.f= @(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2;
-w.absTol=1e-3
-w.relTol=1e-3
+d = 3;
+p = 3;
+a = 0.4;
+exponent = (1./a.^2 - 1)
+w.f= @(x) (a.^(-d*(p+1)))*prod(x.^p,2).* exp(((1-1/a.^2)/2).*sum(x.^2,2)); 
+w.absTol=1e-3;
+w.relTol=1e-3;
 w.measure='normal';
-w.domain = [-inf(1,3);inf(1,3)];
-w.transform = 'C1sin';
-w.shift=2^(-25)*ones(1,3);
-cubLattice_gCLASS(w);
+w.domain = [-inf(1,d);inf(1,d)];
+w.transform = 'Baker';
+%w.shift=2^(-25)*ones(1,d);
+[q,ans]=cubLattice_gCLASS(w)
 
 % Example 3:
 f = @(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [-ones(1,2);2*ones(1,2)];
@@ -71,7 +76,7 @@ cubLattice_gCLASS(w);
 % Example 8: 
 w.func = @(x)[10*x(:,1)-5*x(:,2).^2+1*x(:,3).^3, x(:,1), x(:,2).^2];
 w.cv = [8,32/3]; hyperbox= [zeros(1,3);2*ones(1,3)];
-q = cubLattice_g(w,hyperbox,'uniform',1e-6,0); exactsol=128/3;
+[q, hi]= cubLattice_g(w,hyperbox,'uniform',1e-6,0); exactsol=128/3;
 
 w.f= @(x)[10*x(:,1)-5*x(:,2).^2+1*x(:,3).^3, x(:,1), x(:,2).^2];
 w.domain = [zeros(1,3);2*ones(1,3)];
@@ -79,18 +84,21 @@ w.trueMuCV=[8,32/3];
 w.absTol=1e-6
 w.relTol=0
 w.measure = 'uniform';
-cubLattice_gCLASS(w);
+[~, bye]=cubLattice_gCLASS(w);
 
 % ------------------------------------
 % Example 7:
 f = @(x) [x(:,1).^2+x(:,2).^2]; hyperbox = [0,0,1];
-q = cubLattice_g(f,hyperbox,'uniform ball','abstol',1e-4,'reltol',0); exactsol = pi/2;
+[q, hi] = cubLattice_g(f,hyperbox,'uniform ball','abstol',1e-4,'reltol',0); exactsol = pi/2;
 
 a.f = @(x) [x(:,1).^2+x(:,2).^2];
 a.domain =[0,0,1];
-a.measure ='uniform ball';
+a.measure = 'uniform ball';
 a.abstol=1e-4;
 a.reltol=0;
 cubLattice_gCLASS(a);
+
+
+
 
 

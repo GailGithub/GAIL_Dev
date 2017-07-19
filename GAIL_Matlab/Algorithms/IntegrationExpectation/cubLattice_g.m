@@ -438,8 +438,12 @@ function [q, out_param] = cubLattice_g(varargin)
 t_start = tic;
 %% Initial important cone factors and Check-initialize parameters
 r_lag = 4; %distance between coefficients summed and those computed
+<<<<<<< HEAD
 [f,hyperbox,out_param] = cubLattice_g_param(r_lag,varargin{:});
+=======
+>>>>>>> feature/willy
 
+[f,hyperbox,out_param, cv] = cubLattice_g_param(r_lag,varargin{:});
 
 %------------------------------------------------------------------------------
 % TRANSFORMATION
@@ -458,6 +462,7 @@ if strcmpi(out_param.measure,'uniform ball') || strcmpi(out_param.measure,'unifo
     end
     
     if out_param.transf == 1 % box-to-ball or box-to-sphere transformation should be used
+       
         if out_param.d == 1 % It is not necessary to multiply the function f by the volume, since no transformation is being made
             hyperbox = [hyperbox - out_param.radius; hyperbox + out_param.radius];% for one dimension, the ball is actually an interval
             out_param.measure = 'uniform';% then a uniform distribution on a box can be used
@@ -472,7 +477,9 @@ if strcmpi(out_param.measure,'uniform ball') || strcmpi(out_param.measure,'unifo
             hyperbox = [zeros(1, out_param.d); ones(1, out_param.d)];% the hyperbox must be the domain of the transformation, which is a unit box
             out_param.measure = 'uniform';% then a uniform distribution on a box can be used
         end
+        
     else % normal-to-ball or normal-to-sphere transformation should be used
+       
         if strcmpi(out_param.measure,'uniform ball') % normal-to-ball transformation
             f = @(t) f(gail.domain_balls_spheres.ball_psi_2(t, out_param.d, out_param.radius, hyperbox))*volume;% the psi function is the transformation
         else % normal-to-sphere transformation
@@ -496,6 +503,7 @@ elseif strcmp(out_param.measure,'uniform')
    f=@(x) Cnorm*f(bsxfun(@plus,hyperbox(1,:),bsxfun(@times,(hyperbox(2,:)-hyperbox(1,:)),x))); % a + (b-a)x = u
 end
 
+
 if strcmp(out_param.transform,'Baker')
     f=@(x) f(1-2*abs(x-1/2)); % Baker's transform
 elseif strcmp(out_param.transform,'C0')
@@ -505,6 +513,7 @@ elseif strcmp(out_param.transform,'C1')
 elseif strcmp(out_param.transform,'C1sin')
     f=@(x) f(x-sin(2*pi*x)/(2*pi)).*prod(1-cos(2*pi*x),2); % Sidi C^1 transform
 end
+
 
 %% Main algorithm - Preallocation
 Stilde=zeros(out_param.mmax-out_param.mmin+1,1); %initialize sum of DFT terms
@@ -661,6 +670,8 @@ end
 %% Compute Stilde (1)
 >>>>>>> e65f3b761c01b995bfffe72b45f6fcd9a866ebbc
 nllstart=int64(2^(out_param.mmin-r_lag-1));
+
+
 Stilde(1)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
 out_param.bound_err=out_param.fudge(out_param.mmin)*Stilde(1);
 errest(1)=out_param.bound_err;
@@ -866,6 +877,11 @@ for m=out_param.mmin+1:out_param.mmax
         beta = real(X \ Y);
         out_param.beta = [out_param.beta;beta];
         yval = ycv(:,1) - ycv(:,2:end)*beta;
+        
+        disp(size(y));
+        disp(size(yg));
+        disp(size(beta));
+        
         y = y-yg*beta;
         
         %% update kappamap
@@ -1202,6 +1218,8 @@ elseif strcmp(out_param.measure,'uniform sphere_normal')
     out_param.measure = 'uniform sphere';
 end
 
+
+
 %validating hyperbox
 if strcmp(out_param.measure,'uniform') || strcmp(out_param.measure,'normal') % 'uniform box' or 'normal box'
     out_param.d = size(hyperbox,2);
@@ -1264,6 +1282,7 @@ else % 'uniform ball' or 'uniform sphere'
         out_param.shift = out_param.shift(1:end-1);
     end
 end
+
 
 % Force absolute tolerance greater than 0
 if (out_param.abstol < 0 )

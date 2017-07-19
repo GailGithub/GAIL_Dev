@@ -11,8 +11,8 @@ classdef outParam < handle
       tolVal %value of the tolerance function
    end
       
-   methods
-          
+   methods       
+ 
       function set.nSample(obj,val)
          validateattributes(val, {'numeric'}, {'scalar','positive','integer'})
          obj.nSample = val;
@@ -34,6 +34,5 @@ classdef outParam < handle
       end                    
      
    end
-   
 end
 

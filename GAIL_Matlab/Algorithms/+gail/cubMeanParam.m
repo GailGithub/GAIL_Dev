@@ -58,7 +58,7 @@ classdef cubMeanParam < handle & matlab.mixin.CustomDisplay
       def_nInit = 1024 %default initial number of samples
       def_nMax = 2^24 %default maximum sample size
       def_nMu = 1 %default number of integrals
-      def_inflate = 1.2 %default true integrals for control variates
+      def_inflate = @(m) 10*2.^-(m)
       def_trueMuCV = [] %default true integrals for control variates
    end
    
@@ -128,6 +128,7 @@ classdef cubMeanParam < handle & matlab.mixin.CustomDisplay
            f_addParamVal = @addOptional;
            parseRange = []; %nothing to parse here if just numbers
          end
+         
          f_addParamVal(p,'nInit',obj.def_nInit);
          f_addParamVal(p,'nMax',obj.def_nMax);
          f_addParamVal(p,'inflate',obj.def_inflate);
@@ -192,11 +193,9 @@ classdef cubMeanParam < handle & matlab.mixin.CustomDisplay
       function val = get.nCV(obj)
          val = numel(obj.trueMuCV);
       end
-     
    end
    
   methods (Access = protected)
-                
      function propgrp = getPropertyGroups(obj)
         if ~isscalar(obj)
            propgrp = getPropertyGroups@matlab.mixin.CustomDisplay(obj);
