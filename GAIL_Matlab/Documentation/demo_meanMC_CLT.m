@@ -14,13 +14,13 @@
 % improve computation efficiency, we will also use control variates.
 %%
 
-function demoMCLT
+function demo_meanMC_CLT
 %% Initialize the workspace and set the display parameters
 % This script cleans up the workspace and makes the display beautiful.
 
 gail.InitializeWorkspaceDisplay %initialize the workspace and the display parameters
 
-%% Example 1: Estimate \(\mathbb{E}[f(\boldsymbol{X})]\) where \(f(\boldsymbol{x})=\exp(-\boldsymbol{x}^2)\) and \(\boldsymbol{X} \sim \mathcal{U} (0,1)\) using \(f(\boldsymbol{x})=\boldsymbol{x}\) as a control variate
+%% Example 1: Estimate \(\mathbb{E}[f(\boldsymbol{X})]\) where \(f(\boldsymbol{x})=\exp(-\boldsymbol{x}^2)\) and \(\boldsymbol{X} \sim \mathcal{U} (0,1)\) using \(x \mapsto x\) as a control variate
 % In this example a function that cannot be integrated analytically is
 % integrated using our adaptive IID Monte Carlo method.  We also use the
 % function  \(x \mapsto x\) as a control variate.
@@ -36,7 +36,7 @@ ylabel('\(\exp(-x^2)\)')
 xlabel('\(x\)')
 
 %%
-% Next we set up the parameters for the Monte Carlo integration
+% Next we set up the parameters for Monte Carlo integration
 
 absTol = 1e-3; %absolute tolerance 
 relTol = 0; %relative tolerance
@@ -97,7 +97,7 @@ disp(['Real error was ' ...
     num2str(inp.priceParam.absTol) '.'])
 
 %%
-% Now we used the stock price as a control variate.  To do that, we need to
+% Now we use the stock price as a control variate.  To do that, we need to
 % modify the option payoff object by adding the stock price.
 
 EuroCallCV = optPayoff(EuroCall); %make a copy of the European call option parameters
@@ -157,8 +157,8 @@ disp(['Real error was ' ...
 % that the we do a change of variable \(\boldsymbol{t} = \boldsymbol{x}/a\)
 % and transform the integral:
 %
-% \begin{align*} I &= \int_{\mathbb{R}^d} \cos(a \lVert \boldsymbol{t}
-% \rVert) \exp(-a^2 \lVert \boldsymbol{t} \rVert^2) \, a^d \mathrm{d}
+% \begin{align*} I &= \int_{\mathbb{R}^d} a^d \cos(a \lVert \boldsymbol{t}
+% \rVert) \exp(-a^2 \lVert \boldsymbol{t} \rVert^2) \, \mathrm{d}
 % \boldsymbol{t}, \qquad a > 0, \\ & = \int_{\mathbb{R}^d}
 % \underbrace{(2\pi a^2)^{d/2} \cos(a \lVert \boldsymbol{t} \rVert)
 % \exp((1/2-a^2) \lVert \boldsymbol{t} \rVert^2)}_{f(\boldsymbol{t})}
@@ -178,23 +178,23 @@ abstol = 0; %absolute tolerance
 reltol = 0.01; %relative tolerance
 dvec = 1:5; %vector of dimensions
 avec = [1 1/sqrt(2) 1/sqrt(1.5) 1/sqrt(3)]; %default value of a 
-IMCvec = zeros(size(dvec)); %vector of answers
+IMCvec(size(dvec)) = 0; %vector of answers
 f2= @(t,d) cell2mat(arrayfun(@(a) f(t,a,d),avec,'UniformOutput',false)); %a vector of funcion for each value of a
 outT = zeros(size(dvec));%vector of time
 outN = zeros(size(dvec));%vector of points
- for d = dvec
- f3 = @(t)f2(t,d);%integration in dimension d
- YXn = @(n)f3(randn(n,d));%random generator
- s = struct('Y',YXn,'nY',size(avec,2)); 
- [IMCvec(d),out] = meanMC_CLT(s,abstol,reltol);
- outT(d) = out.time;
- outN(d) = out.nSample;
- end
+for d = dvec
+   f3 = @(t)f2(t,d);%integration in dimension d
+   YXn = @(n)f3(randn(n,d));%random generator
+   s = struct('Y',YXn,'nY',size(avec,2)); 
+   [IMCvec(d),out] = meanMC_CLT(s,abstol,reltol);
+   outT(d) = out.time;
+   outN(d) = out.nSample;
+end
 Ivec = zeros(size(dvec)); %vector of true integration
 for d = dvec
-Ivec(d) = Keistertrue(d); %true integration
+   Ivec(d) = Keistertrue(d); %true integration
 end
- disp('Example 3')
+disp('Example 3')
 disp(['The estimated integration for dimension ' num2str(dvec) ': ' num2str(IMCvec) ])
 disp(['The algorithm took ' num2str(outT) ' seconds and '...
     num2str(outN) ' points.'])

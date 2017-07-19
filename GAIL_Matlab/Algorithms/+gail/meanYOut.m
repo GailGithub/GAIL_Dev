@@ -54,7 +54,7 @@ classdef meanYOut < gail.meanYParam & gail.outParam
       end                    
      
       function set.stddev(obj,val)
-         validateattributes(val, {'numeric'}, {'scalar','nonnegative'})
+         validateattributes(val, {'numeric'}, {'nonnegative'})
          obj.stddev = val;
       end                    
           
