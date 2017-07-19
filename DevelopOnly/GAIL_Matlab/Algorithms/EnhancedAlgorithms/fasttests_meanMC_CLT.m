@@ -18,7 +18,7 @@ else
             end
         end
     catch
-        display('Error: Test ut_meanMC_CLT is wrongly coded. We skip it.')
+        disp('Error: Test ut_meanMC_CLT is wrongly coded. We skip it.')
         fprintf(fid,'Error: Test ut_meanMC_CLT is wrongly coded. We skip it.\n');
     end
 end
