@@ -5,8 +5,9 @@ t_start = tic;
 r_lag = 4; %distance between coefficients summed and those computed
 
 mean_inp = gail.cubLatticeParam(varargin{:}); %parse the input and check it for errors
+mean_inp.fun.nMax = min(mean_inp.fun.nMax,2^24);
 mean_out = gail.cubLatticeOut(mean_inp); %create the output class
-
+% % disp('hi');
 %------------------------------------------------------------------------------
 % % TRANSFORMATION
 % % changing the integrand and the mean_out.fun.domain when measure is uniform ball or
@@ -59,7 +60,7 @@ omg_hat = @(m) mean_out.CM.inflate(m)/((1+mean_out.CM.inflate(r_lag))*omg_circ(r
 mu=0;beta=0;
 
 if mean_out.CM.nCV  % if using control variates(f is structure), redefine f
-    mu = mean_out.trueMuCV;
+    mu = mean_out.CM.trueMuCV;
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

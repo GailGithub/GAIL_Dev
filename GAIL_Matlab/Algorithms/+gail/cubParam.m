@@ -101,9 +101,7 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
          }
    end
    
-   
    methods
-      
       % Creating a cubParam process
       function obj = cubParam(varargin)
          %this constructor essentially parses inputs
@@ -172,6 +170,7 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
             obj.measure = val.measure; %copy integration measure
             obj.measureType = val.measureType; %copy integration measure
             obj.nf = val.nf; %copy number of functions for each integral
+            useDefaults = false;
          end
          
          %Parse fParam properties
@@ -357,21 +356,18 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
    
    methods (Access = protected)
       function outval = checkMeasure(obj,inval)
+         
+%          disp('WILLY WAS HERE');
+%          disp(inval);
+%          disp(obj.fun.domain);
+%          
          assert(any(strcmp(inval,obj.allowedMeasures)))
          if strcmp(inval,'Gaussian') %same as normal
             outval = 'normal';
          else
             outval = inval;
          end
-         
-         disp('inval:');
-         disp(inval);
-%          disp(obj.fun.domain(1,:));
-%          disp(obj.fun.domain(2,:));
-%          disp(obj.measure);
-         disp('outval:');
-         disp(outval);
-         
+
          if strcmp(outval,'normal') %domain must be R^d
             assert(all(obj.fun.domain(1,:) == -Inf) && ...
                all(obj.fun.domain(2,:) == Inf))
@@ -409,6 +405,8 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
          if ~strcmp(obj.fun.domainType,obj.fun.def_domainType)
             propList.domainType = obj.fun.domainType;
          end
+         
+         propList.measureType=obj.measureType;
          propList.measure = obj.measure;
          propList.absTol = obj.err.absTol;
          propList.relTol = obj.err.relTol;

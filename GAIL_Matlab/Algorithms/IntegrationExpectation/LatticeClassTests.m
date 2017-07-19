@@ -11,17 +11,22 @@ w.transform = 'C1sin';
 cubLattice_gCLASS(w);
 
 % Example 2: (Not working)
-f = @(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2; hyperbox = [-inf(1,3);inf(1,3)];
-q = cubLattice_g(f,hyperbox,'normal',1e-3,1e-3,'transform','C1sin','shift',2^(-25)*ones(1,3)); exactsol = 1;
+d = 3;
+f = @(x) prod(x.^2,2); hyperbox = [-inf(1,d);inf(1,d)];
+q = cubLattice_g(f,hyperbox,'normal',1e-3,1e-3,'transform','bakers','shift',2^(-25)*ones(1,d)); exactsol = 1;
 
-w.f= @(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2;
-w.absTol=1e-3
-w.relTol=1e-3
+d = 3;
+p = 3;
+a = 0.4;
+exponent = (1./a.^2 - 1)
+w.f= @(x) (a.^(-d*(p+1)))*prod(x.^p,2).* exp(((1-1/a.^2)/2).*sum(x.^2,2)); 
+w.absTol=1e-3;
+w.relTol=1e-3;
 w.measure='normal';
-w.domain = [-inf(1,3);inf(1,3)];
-w.transform = 'C1sin';
-w.shift=2^(-25)*ones(1,3);
-cubLattice_gCLASS(w);
+w.domain = [-inf(1,d);inf(1,d)];
+w.transform = 'Baker';
+%w.shift=2^(-25)*ones(1,d);
+[q,ans]=cubLattice_gCLASS(w)
 
 % Example 3:
 f = @(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [-ones(1,2);2*ones(1,2)];
