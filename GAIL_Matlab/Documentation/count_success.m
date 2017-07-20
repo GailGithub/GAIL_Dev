@@ -1,5 +1,5 @@
 %% Counting the success rate of meanMC_g
-%  Author: Lan Jiang and Sou-Cheng Choi, July 2017
+%  Authors: Lan Jiang and Sou-Cheng Choi, July 2017
 %
 % Define an integration problem as follows:
 %
