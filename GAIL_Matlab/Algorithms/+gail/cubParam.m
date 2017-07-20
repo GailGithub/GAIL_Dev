@@ -410,7 +410,6 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
          propList.measure = obj.measure;
          propList.absTol = obj.err.absTol;
          propList.relTol = obj.err.relTol;
-         propList.betaUpdate=obj.betaUpdate;
          
          if obj.CM.nInit ~= obj.CM.def_nInit
             propList.nInit = obj.CM.nInit;
