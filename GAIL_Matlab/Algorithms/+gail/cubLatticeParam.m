@@ -224,6 +224,7 @@ classdef cubLatticeParam < gail.cubParam
             end
             if obj.isShift ~= obj.def_isShift
                 propList.isShift = obj.isShift;
+                propList.betaUpdate=obj.betaUpdate;
             end
         end
         

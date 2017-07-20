@@ -10,7 +10,7 @@ w.domain = [zeros(1,2);ones(1,2)];
 w.transform = 'C1sin';
 cubLattice_gCLASS(w);
 
-% Example 2: (Not working)
+% Example 2:
 d = 3;
 f = @(x) prod(x.^2,2); hyperbox = [-inf(1,d);inf(1,d)];
 q = cubLattice_g(f,hyperbox,'normal',1e-3,1e-3,'transform','bakers','shift',2^(-25)*ones(1,d)); exactsol = 1;
@@ -97,7 +97,6 @@ a.measure = 'uniform ball';
 a.abstol=1e-4;
 a.reltol=0;
 cubLattice_gCLASS(a);
-
 
 
 
