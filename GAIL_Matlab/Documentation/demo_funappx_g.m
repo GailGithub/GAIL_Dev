@@ -1,9 +1,9 @@
 %% Demos for funappx_g
 %
 % <html>
-% <a href="curve.html">Curve</a>
+% <a href="demo_funappx_g1.html">Approximating a highly fluctating curve</a>
 % </html>
 % 
 % <html>
-% <a href="demooffunappx_g.html">GUI of funappx_g</a>
+% <a href="demo_funappx_g2.html">GUI of funappx_g</a>
 % </html>

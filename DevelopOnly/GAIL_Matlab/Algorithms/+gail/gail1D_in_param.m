@@ -57,7 +57,7 @@
 %
 %  To get a struct:
 %  >> out_param = in_param.toStruct()
-%   out_param =***
+%   out_param =
 %
 %            f: @(x)x.^2
 %            a: 0
@@ -72,7 +72,7 @@
 %
 % To get a structure with selected fields (and ignore properties that do not exist):
 % >> out_param = in_param.toStruct({'f', 'a', 'b','c'})
-%  out_param =***
+%  out_param =
 %
 %     f: @(x)x.^2
 %     a: 0

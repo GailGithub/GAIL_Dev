@@ -1,19 +1,13 @@
 % XUANZHOUTHESIS
 %
 % Files
-%   DoubleInt           - 
-%   EigvalExper         - Experiments with eigenvalues
-%   HermiteInt          - 
+%
+%   HermiteInt          - Integrate Hermite Polynomial
 %   HermitePoly         - HermitePoly.m by David Terr, Raytheon, 5-10-04
-%   HermitePoly2        - 
 %   InterpEx            - DistanceMatrixFit
-%   TractAve            - 
-%   TractExAllTest      - DistanceMatrixFit
-%   TractEx             - DistanceMatrixFit
-%   test001             - 
+%   TractAve            - Tractability average case
 %   symKernelMat        - Evaluate the kernel matrix for a symmetric kernel
 %   kernelMat           - Evaluate the kernel matrix for a symmetric kernel
 %   fctVec              - Evaluate the function value vector
-%   TractWor            - 
-%   TractExAllTestSobol - DistanceMatrixFit
+%   TractWor            - Tractability worst case
 %   XuanZhouDissertation.pdf - Dissertation

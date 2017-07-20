@@ -2,10 +2,23 @@
 
 %% CALL DOCTESTS
 format short
+<<<<<<< HEAD
 tic; doctest gail.gail_in_param; time=toc
 tic; doctest gail.gail1D_in_param; time=toc
 tic; doctest gail.gailMD_in_param; time=toc
 
+=======
+%tic; doctest gail.gail_in_param; time=toc
+%tic; doctest gail.gail1D_in_param; time=toc
+%tic; doctest gail.gailMD_in_param; time=toc
+
+%tic; doctest gail.integral_g_in_param; time=toc
+%tic; doctest gail.funappx_g_in_param; time=toc
+%tic; doctest gail.funmin_g_in_param; time=toc
+%tic; doctest gail.cubMC_g_in_param; time=toc
+
+format long
+>>>>>>> develop
 tic; doctest gail.errorParam; time = toc
 tic; doctest gail.fParam; time = toc
 tic; doctest gail.cubMeanParam; time = toc

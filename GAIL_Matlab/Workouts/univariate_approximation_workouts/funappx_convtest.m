@@ -44,7 +44,7 @@ warning('off',['GAIL:',algoname,':exceedbudget'])
 warning('off','GAIL:funappxglobal_g:peaky')
 warning('off','GAIL:funappxglobal_g:exceedbudget')
 
-for i=-5:-1,
+for i=-15:-1,
   tol(j) = 10^(i);
   in_param.abstol = 10^(i);
   in_param.nmax = nmax;

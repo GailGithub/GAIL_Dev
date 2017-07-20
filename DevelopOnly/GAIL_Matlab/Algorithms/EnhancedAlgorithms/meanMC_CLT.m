@@ -36,23 +36,23 @@ function [hmu,out]=meanMC_CLT(varargin)
 %
 %   Output Arguments
 %
-%     out.Y --- the random generator
+%     Y --- the random generator
 %
-%     out.absTol --- the absolute error tolerance
+%     absTol --- the absolute error tolerance
 %
-%     out.relTol --- the relative error tolerance
+%     relTol --- the relative error tolerance
 %
-%     out.alpha --- the uncertainty
+%     alpha --- the uncertainty
 %
 %     mu --- the estimated mean of Y.
 %
 %     stddev --- sample standard deviation of the random variable
 %
-%     out.nSample --- total sample used.
+%     nSample --- total sample used.
 %
-%     out.time --- the time elapsed in seconds.
+%     time --- the time elapsed in seconds.
 %
-%     out.errBd --- the error bound.
+%     errBd --- the error bound.
 %
 % >> [mu,out] = meanMC_CLT(@(n) rand(n,1).^2, 0.001)
 % mu =
@@ -71,7 +71,6 @@ function [hmu,out]=meanMC_CLT(varargin)
 %       errBd: 1.0000e-03
 %
 %
-
 
 
 % Example 1:
@@ -146,8 +145,8 @@ tstart = tic; %start the clock
 out = gail.meanYOut(gail.meanYParam(varargin{:})); 
 Yrand=out.Y; %the random number generator
 q=out.nY; %the number of target random variable 
-p=out.nCV; %the number of control variates
-xmean=out.trueMuCV; %the mean of the control variates
+p=out.CM.nCV; %the number of control variates
+xmean=out.CM.trueMuCV; %the mean of the control variates
 
 val = Yrand(out.nSig); %get samples to estimate variance 
 if p==0 && q==1
@@ -167,16 +166,16 @@ end
 
 out.stddev = std(YY); %standard deviation of the new samples
 
-sig0up = out.inflate .* out.stddev; %upper bound on the standard deviation
+sig0up = out.CM.inflate .* out.stddev; %upper bound on the standard deviation
 hmu0 = mean(YY); %mean of the samples
 
 nmu = max(1,ceil((-gail.stdnorminv(out.alpha/2)*sig0up ...
-   /max(out.absTol,out.relTol*abs(hmu0))).^2)); 
+   /max(out.err.absTol,out.err.relTol*abs(hmu0))).^2)); 
    %number of samples needed for the error tolerance
-if nmu > out.nMax %don't exceed sample budget
+if nmu > out.CM.nMax %don't exceed sample budget
    warning(['The algorithm wants to use nmu = ' int2str(nmu) ...
-      ', which is too big. Using ' int2str(out.nMax) ' instead.']) 
-   nmu = out.nMax; %revise nmu
+      ', which is too big. Using ' int2str(out.CM.nMax) ' instead.']) 
+   nmu = out.CM.nMax; %revise nmu
 end
 
 YY = Yrand(nmu); %get samples 
