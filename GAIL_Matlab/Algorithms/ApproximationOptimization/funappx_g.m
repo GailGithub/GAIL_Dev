@@ -194,6 +194,8 @@ function [fappx,out_param]=funappx_g(varargin)
 %   If you find GAIL helpful in your work, please support us by citing the
 %   above papers, software, and materials.
 %
+%   Author: Yuhan Ding
+
 
 % check parameter satisfy conditions or not
 [f, in_param]= funappx_g_param(varargin{:});
