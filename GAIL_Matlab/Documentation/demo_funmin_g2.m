@@ -20,7 +20,7 @@ b = 1.5;
 
 %% Plot of the function and minima
 % We plot \(f(x)\) and the global minimum value  returned
-% by *funmin_g* and and local minimum by *fminbnd* below:
+% by *funmin_g* and and a local minimum by *fminbnd* below:
 figure;
 x = a:1e-6:b;
 fminvec = fmin.*ones(size(x));
