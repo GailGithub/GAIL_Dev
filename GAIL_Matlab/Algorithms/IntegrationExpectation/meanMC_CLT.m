@@ -71,7 +71,7 @@ function [hmu,out]=meanMC_CLT(varargin)
 %         time: 0.0983 
 %       errBd: 1.0000e-03
 %
-%
+% _Author: Yueyi Li_
 
 
 
