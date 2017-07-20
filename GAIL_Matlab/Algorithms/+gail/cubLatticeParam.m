@@ -72,7 +72,7 @@ classdef cubLatticeParam < gail.cubParam
     end
     
     properties (Hidden, SetAccess = private)
-        def_periodTransform = 'Baker' %default periodizing transformation
+        def_periodTransform ='Baker' %default periodizing transformation
         def_isShift = true %default is a random shift
         def_shiftVal = rand
         def_betaUpdate = 0

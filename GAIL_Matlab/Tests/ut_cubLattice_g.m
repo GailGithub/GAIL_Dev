@@ -13,7 +13,7 @@ classdef ut_cubLattice_g < matlab.unittest.TestCase
       tolerance = max(out_param.abstol,out_param.reltol*abs(exactf));
       testCase.verifyLessThanOrEqual(actualerr,tolerance);
     end
-    e
+    
     function cubLattice_gOfexp(testCase)
       f = @(x) exp(x);
       in_param.abstol = 1e-3;
