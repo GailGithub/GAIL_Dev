@@ -172,6 +172,7 @@ disp(['Real error was ' ...
 
 %%
 % define an anonymous function \(f\) as follows:
+
 normsqd = @(t) sum(t.*t,2); %squared l_2 norm of t
 f1 = @(normt,a,d) ((2*pi*a^2).^(d/2)) * cos(a*sqrt(normt)) ...
    .* exp((1/2-a^2)*normt);
@@ -196,17 +197,12 @@ Ivec = zeros(size(dvec)); %vector of true integration
 for d = dvec
    Ivec(d) = Keistertrue(d); %true integration
 end
-disp('Example 3')
-disp(['The estimated integration for dimension ' num2str(dvec) ': ' num2str(IMCvec) ])
-disp(['The algorithm took ' num2str(outT) ' seconds and '...
-    num2str(outN) ' points.'])
-disp(['Real error was ' ...
-    num2str(abs(Ivec-IMCvec)./abs(Ivec))...
-    ' which is less than the user input tolerance '...
-    num2str(reltol) '.'])
-
-
- 
+error=abs(Ivec-IMCvec)./abs(Ivec); %calculate the relative error
+%display a result table
+title=['Dimension  ' 'Esti.Mean  ' 'TrueMean  ' 'Comp.Time  ' 'RealError '];
+datasave=[dvec'  IMCvec'    Ivec'   outT'  error'];
+disp(title)
+disp(datasave)
 end
 %%
 % Author _Yueyi Li_
