@@ -36,13 +36,23 @@ function [hmu,out]=meanMC_CLT(varargin)
 %
 %   Output Arguments
 %
-%     hmu --- the estimated mean of Y.
+%     out.Y --- the random generator
 %
-%     out_param.ntot --- total sample used.
+%     out.absTol --- the absolute error tolerance
 %
-%     out_param.var --- the sample variance.
+%     out.relTol --- the relative error tolerance
 %
-%     out_param.time --- the time elapsed in seconds.
+%     out.alpha --- the uncertainty
+%
+%     mu --- the estimated mean of Y.
+%
+%     stddev --- sample standard deviation of the random variable
+%
+%     out.nSample --- total sample used.
+%
+%     out.time --- the time elapsed in seconds.
+%
+%     out.errBd --- the error bound.
 %
 % >> [mu,out] = meanMC_CLT(@(n) rand(n,1).^2, 0.001)
 % mu =
