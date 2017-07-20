@@ -160,7 +160,7 @@ end
 
 out.stddev = std(YY); %standard deviation of the new samples
 
-sig0up = out.CM.inflate .* out.stddev; %upper bound on the standard deviation
+sig0up = out.CM.inflate.* out.stddev; %upper bound on the standard deviation
 hmu0 = mean(YY); %mean of the samples
 
 nmu = max(1,ceil((-gail.stdnorminv(out.alpha/2)*sig0up ...

@@ -124,6 +124,7 @@ disp(['Real error was ' ...
 % Acutally, in GAIL we have a function genOptPrice that could direcelty compute a call
 % option price.
 
+%without control variate
 inp.priceParam.cubMethod = 'IID_MC_CLT'; %set method
 EuroCall = optPrice(inp); %create an object for computation of the price
 [EuroCallPrice, out] = genOptPrice(EuroCall); %compute the option price
@@ -135,7 +136,8 @@ disp(['Real error was ' ...
     num2str(abs(EuroCall.exactPrice-EuroCallPrice))...
     ' which is less than the user input tolerance '...
     num2str(inp.priceParam.absTol) '.'])
-
+%%
+%with control variate
 EuroCallCV = optPrice(EuroCall); %make a copy of the European call option parameters
 EuroCallCV.payoffParam = struct('optType', {{'euro','stockprice'}}, ...
    'putCallType', {{'call',''}}); %identify the option type
