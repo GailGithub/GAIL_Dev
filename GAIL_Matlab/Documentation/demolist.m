@@ -13,7 +13,7 @@
 % </html>
 %
 %
-%% High dimension integration
+%% Higher dimensional integration
 %
 % <html>
 % <a href="demo_meanMC_g.html">meanMC_g</a>
