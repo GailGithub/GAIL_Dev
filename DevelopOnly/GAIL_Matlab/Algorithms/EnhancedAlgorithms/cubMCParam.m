@@ -1,4 +1,4 @@
-classdef cubMCParam<cubParam
+classdef cubMCParam<gail.cubParam
    properties
    Y %function to integrate
    alpha %uncertainty
@@ -12,7 +12,7 @@ classdef cubMCParam<cubParam
       def_alpha = 0.01 %default uncertainty
       def_nSig = 1000 %default uncertainty
       def_nYOut = 1 %default number of Y per mean
-
+      def_nY=1 %default number of Y
    end
    
    methods
@@ -56,7 +56,8 @@ classdef cubMCParam<cubParam
             obj.Y = val.Y; %copy random number generator
             obj.alpha = val.alpha; %copy uncertainty
             obj.nSig = val.nSig; %copy sample size for sigma
-            obj.nY = val.nY; %copy number of Y values per mu
+            obj.nY =obj.nf; %copy number of Y values per mu
+            obj.nYOut=obj.fun.nfOut;
             useDefaults = false;
    end
 
@@ -118,7 +119,12 @@ classdef cubMCParam<cubParam
    
    function set.Y(obj,val)
          validateattributes(val, {'function_handle'}, {})
-         obj.Y = val;
+         if strcmp(obj.measureType,'uniform')
+            obj.Y = @(n)val.ff(rand(n,val.fun.d));
+         end 
+         if strcmp(obj.measureType,'normal') || strcmp(obj.measureType,'Gaussian')
+            obj.Y = @(n)val.ff(randn(n,val.fun.d));
+         end
       end
       
       function set.alpha(obj,val)

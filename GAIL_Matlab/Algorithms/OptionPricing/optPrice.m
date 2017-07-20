@@ -113,9 +113,9 @@ classdef optPrice < optPayoff
             assert(val.relTol >= 0 && val.relTol <= 1)
             obj.priceParam.relTol=val.relTol;
          end   
-         if isfield(val,'exactOptType') %exact option type
-            obj.priceParam.exactOptType = val.exactOptType;
-         end 
+%          if isfield(val,'exactOptType') %exact option type
+%             obj.priceParam.exactOptType = val.exactOptType;
+%          end 
         
       end
            

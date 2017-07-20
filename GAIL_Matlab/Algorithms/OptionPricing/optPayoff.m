@@ -157,7 +157,7 @@ classdef optPayoff < assetPath
             multipay = (numel(obj.payoffParam.digitalPay) > 1);
             
             wh=strcmp(obj.payoffParam.optType,'stockprice');
-            if any(wh) %final stock price
+            if any(wh) %final discounted stock price
                 tempPay(:,wh)=paths(:,obj.timeDim.nSteps) ...
                     .* exp(- obj.assetParam.interest .* obj.timeDim.endTime);
             end
@@ -561,16 +561,14 @@ classdef optPayoff < assetPath
         function val = get.exactPrice(obj)
             %Expected value of ending price of asset
             val = NaN(1,numel(obj.payoffParam.optType));
-            wh = strcmp('stockprice',obj.payoffParam.optType);
+            whstockPrice = strcmp('stockprice',obj.payoffParam.optType);
+            if any(whstockPrice)
+                val(whstockPrice) = obj.assetParam.initPrice; %discounted final price
+            end
             
             multistrike = (numel(obj.payoffParam.strike) > 1);
             multipay = (numel(obj.payoffParam.digitalPay) > 1);
             
-            if any(wh);
-                val(wh)=obj.assetParam.initPrice * ...
-                    exp(obj.assetParam.interest * ...
-                    obj.timeDim.endTime);
-            end
             
             %Pricing European geometric brownian motion
             wheuro = strcmp(obj.payoffParam.optType, 'euro');

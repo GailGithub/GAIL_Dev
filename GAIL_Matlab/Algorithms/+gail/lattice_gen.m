@@ -6,7 +6,7 @@ function xlat = lattice_gen(nmin,nmax,d)
 %       nmax must be defined as a power of 2 and we can only have
 %       nmin=1 or nmin=nmax/2+1
 
-if nmax > 2^20
+if nmax > 2^24
     error('The maximum number of points allowed is 2^20')
 end
 % 600 dimensional 2^20 points generating vector from Dirks website exod2_base2_m20.txt

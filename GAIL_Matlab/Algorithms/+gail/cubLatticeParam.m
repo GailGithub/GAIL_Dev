@@ -64,6 +64,7 @@ classdef cubLatticeParam < gail.cubParam
         periodTransform %periodizing transformation
         isShift %is the lattice shifted
         shiftVal
+        betaUpdate
     end
     
     properties (Dependent = true)
@@ -74,11 +75,11 @@ classdef cubLatticeParam < gail.cubParam
         def_periodTransform = 'Baker' %default periodizing transformation
         def_isShift = true %default is a random shift
         def_shiftVal = rand
+        def_betaUpdate = 0
     end
     
-    
+   
     methods
-        
         % Creating a cubParam process
         function obj = cubLatticeParam(varargin)
            
@@ -112,6 +113,7 @@ classdef cubLatticeParam < gail.cubParam
                 obj.periodTransform = val.periodTransform; %copy integration measure
                 obj.isShift = val.isShift; %copy whether to shift
                 obj.shiftVal = val.shiftVal;
+                obj.betaUpdate = val.betaUpdate;
                 useDefaults = false;
             end
             
@@ -141,6 +143,7 @@ classdef cubLatticeParam < gail.cubParam
             f_addParamVal(p,'periodTransform',obj.def_periodTransform);
             f_addParamVal(p,'isShift',obj.def_isShift);
             f_addParamVal(p,'shiftVal',obj.def_shiftVal);
+            f_addParamVal(p,'betaUpdate', obj.def_betaUpdate);
             
             if structInp
                 parse(p,varargin{parseRange},varargin{structInp})
@@ -156,6 +159,10 @@ classdef cubLatticeParam < gail.cubParam
             %Assign values of structure to corresponding class properties
             if isfield(struct_val,'periodTransform')
                 obj.periodTransform = struct_val.periodTransform;
+            end
+           
+            if isfield(struct_val,'betaUpdate')
+                obj.betaUpdate = struct_val.betaUpdate;
             end
             
             %Assign values of structure to corresponding class properties
@@ -179,6 +186,11 @@ classdef cubLatticeParam < gail.cubParam
             obj.isShift = val;
         end
         
+        function set.betaUpdate(obj,val)
+           validateattributes(val, {'double'}, {})
+           obj.betaUpdate = val;
+        end
+        
         function set.shiftVal(obj,val)
             validateattributes(val, {'double'}, {})
             obj.shiftVal = val;
@@ -186,6 +198,7 @@ classdef cubLatticeParam < gail.cubParam
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         function val = get.fff(obj)
+           
             if strcmp(obj.periodTransform,'Baker')
                 val=@(x) obj.ff(1-2*abs(x-1/2)); % Baker's transform
             elseif strcmp(obj.periodTransform,'C0')
@@ -200,7 +213,6 @@ classdef cubLatticeParam < gail.cubParam
                 val = obj.ff;
             end
         end
-        
     end
     
     methods (Access = protected)

@@ -93,12 +93,17 @@ classdef fParam < handle & matlab.mixin.CustomDisplay
    properties (Hidden, SetAccess = private)
       def_f = @(x) sum(x.^2,2) %default function
       def_domain = [0; 1]; %default domain
-      def_domainType = 'box'; %default domain type
-      def_nInit = 100 %default initial number of samples
-      def_nMax = 1e7 %default maximum sample size
-      allowedDomains = {'box', ... %a hyperbox
+      def_domainType = 'cube'; %default domain type
+      def_nInit = 1e3 %default initial number of samples
+      def_nMax = 1.5e6 %default maximum sample size
+      allowedDomains = {'cube', ... %a hyperbox
          'ball', ... %solid ball
-         'sphere'} %hollow sphere
+         'sphere',...
+         'ball-from-normal', ...
+         'ball-from-cube', ...
+         'sphere-from-normal',...
+         'sphere-from-cube'
+         } %hollow sphere
    end
    
    
@@ -130,7 +135,7 @@ classdef fParam < handle & matlab.mixin.CustomDisplay
                start = start + 1;
             end
             if nargin >= start
-               if isstruct(varargin{start}) %next input is a structure containing Y
+               if isstruct(varargin{start}) %next input is a structure containing f
                   structInp = start;
                   start = start + 1;
                end
@@ -216,6 +221,9 @@ classdef fParam < handle & matlab.mixin.CustomDisplay
          if fInp
             obj.f = varargin{fInp}; %assign function
          elseif isfield(struct_val,'f')
+            if any(strcmp(p.UsingDefaults,'f'))
+               warning('GAIL:fParam:noFunctionInput','No function input, default used.')
+            end
             obj.f = struct_val.f;
          end
          if domainInp
@@ -238,7 +246,7 @@ classdef fParam < handle & matlab.mixin.CustomDisplay
       end %of constructor
      
       function set.f(obj,val)
-         validateattributes(val, {'function_handle'}, {})
+         validateattributes(val, {'function_handle'}, {'nonempty'})
          obj.f = val;
       end
       
@@ -306,7 +314,5 @@ classdef fParam < handle & matlab.mixin.CustomDisplay
       end
   end
 
-   
-   
 end
 

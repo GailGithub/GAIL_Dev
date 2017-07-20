@@ -14,13 +14,13 @@
 % improve computation efficiency, we will also use control variates.
 %%
 
-function demoMCLT
+function demo_meanMC_CLT
 %% Initialize the workspace and set the display parameters
 % This script cleans up the workspace and makes the display beautiful.
 
 gail.InitializeWorkspaceDisplay %initialize the workspace and the display parameters
 
-%% Example 1: Estimate \(\mathbb{E}[f(\boldsymbol{X})]\) where \(f(\boldsymbol{x})=\exp(-\boldsymbol{x}^2)\) and \(\boldsymbol{X} \sim \mathcal{U} (0,1)\) using \(f(\boldsymbol{x})=\boldsymbol{x}\) as a control variate
+%% Example 1: Estimate \(\mathbb{E}[f(\boldsymbol{X})]\) where \(f(\boldsymbol{x})=\exp(-\boldsymbol{x}^2)\) and \(\boldsymbol{X} \sim \mathcal{U} (0,1)\) using \(x \mapsto x\) as a control variate
 % In this example a function that cannot be integrated analytically is
 % integrated using our adaptive IID Monte Carlo method.  We also use the
 % function  \(x \mapsto x\) as a control variate.
@@ -36,13 +36,13 @@ ylabel('\(\exp(-x^2)\)')
 xlabel('\(x\)')
 
 %%
-% Next we set up the parameters for the Monte Carlo integration
+% Next we set up the parameters for Monte Carlo integration
 
 absTol = 1e-3; %absolute tolerance 
 relTol = 0; %relative tolerance
-s=struct('Y',YXn,'nY',1,'trueMuCV',1/2); % create a structure containing random variables, number of random variables and mean of the control variates 
-[hmu,out]=meanMC_CLT(s,absTol,relTol);  % calculate the mean
-exactsol=erf(1)*sqrt(pi)/2; %true mean
+s = struct('Y',YXn,'nY',1,'trueMuCV',1/2); % create a structure containing random variables, number of random variables and mean of the control variates 
+[hmu,out] = meanMC_CLT(s,absTol,relTol);  % calculate the mean
+exactsol = erf(1)*sqrt(pi)/2; %true mean
 disp('Example 1')
 disp(['Estimated mean is: ' num2str(hmu)])
 disp(['     True mean is: ' num2str(exactsol)])
@@ -67,7 +67,7 @@ inp.payoffParam.strike = 10; %strike price
 inp.priceParam.absTol = 0.01; %absolute tolerance of a penny
 inp.priceParam.relTol = 0; %relative tolerance
 EuroCall = optPayoff(inp); %create a European call option payoff object
-EuroCallPayoff=@(n) genOptPayoffs(EuroCall,n); %identify the payoff function
+EuroCallPayoff = @(n) genOptPayoffs(EuroCall,n); %identify the payoff function
 
 %%
 % Plot an empirical distribution of the European call option
@@ -86,7 +86,7 @@ print -depsc PayoffCDF.eps %print the plot to a .eps file
 %%
 % Next we price the option using simple IID Monte Carlo.  We happen to have
 % a formula for the exact price that can be used to check our error.
-[hmu,out]=meanMC_CLT(EuroCallPayoff,inp.priceParam.absTol,inp.priceParam.relTol);
+[hmu,out] = meanMC_CLT(EuroCallPayoff,inp.priceParam.absTol,inp.priceParam.relTol);
 disp(['Estimated price is: ' num2str(hmu)])
 disp(['    Exact price is: ' num2str(EuroCall.exactPrice)])
 disp(['The algorithm took ' num2str(out.time) ' seconds and '...
@@ -97,15 +97,15 @@ disp(['Real error was ' ...
     num2str(inp.priceParam.absTol) '.'])
 
 %%
-% Now we used the stock price as a control variate.  To do that, we need to
+% Now we use the stock price as a control variate.  To do that, we need to
 % modify the option payoff object by adding the stock price.
 
 EuroCallCV = optPayoff(EuroCall); %make a copy of the European call option parameters
 EuroCallCV.payoffParam = struct('optType', {{'euro','stockprice'}}, ...
    'putCallType', {{'call',''}}); %identify the option type
-EuroCallCVPayoff=@(n) genOptPayoffs(EuroCallCV,n); %identify the payoff function
+EuroCallCVPayoff = @(n) genOptPayoffs(EuroCallCV,n); %identify the payoff function
 s=struct('Y',EuroCallCVPayoff,'nY',1,'trueMuCV',EuroCallCV.assetParam.initPrice);
-[hmu,out]=meanMC_CLT(s,inp.priceParam.absTol,inp.priceParam.relTol);
+[hmu,out] = meanMC_CLT(s,inp.priceParam.absTol,inp.priceParam.relTol);
 disp(['Estimated price is: ' num2str(hmu)])
 disp(['    Exact price is: ' num2str(EuroCallCV.exactPrice(1))])
 disp(['The algorithm took ' num2str(out.time) ' seconds and '...
@@ -121,10 +121,12 @@ disp(['Real error was ' ...
 % within the error tolerance, adding a control variate uses only about 1/9
 % of sample points and takes 1/5 of the time.
 %
-% Acutally 
+% Acutally, in GAIL we have a function genOptPrice that could direcelty compute a call
+% option price.
 
-inp.priceParam.cubMethod = 'IID_MC_CLT';
-EuroCall = optPrice(inp);
+%without control variate
+inp.priceParam.cubMethod = 'IID_MC_CLT'; %set method
+EuroCall = optPrice(inp); %create an object for computation of the price
 [EuroCallPrice, out] = genOptPrice(EuroCall); %compute the option price
 disp(['Estimated price is: ' num2str(EuroCallPrice)])
 disp(['    Exact price is: ' num2str(EuroCall.exactPrice)])
@@ -134,11 +136,12 @@ disp(['Real error was ' ...
     num2str(abs(EuroCall.exactPrice-EuroCallPrice))...
     ' which is less than the user input tolerance '...
     num2str(inp.priceParam.absTol) '.'])
-
+%%
+%with control variate
 EuroCallCV = optPrice(EuroCall); %make a copy of the European call option parameters
 EuroCallCV.payoffParam = struct('optType', {{'euro','stockprice'}}, ...
    'putCallType', {{'call',''}}); %identify the option type
-[EuroCallCVPrice, out] = genOptPrice(EuroCallCV); %identify the payoff function
+[EuroCallCVPrice, out] = genOptPrice(EuroCallCV); %compute the option price
 disp(['Estimated price is: ' num2str(EuroCallCVPrice)])
 disp(['    Exact price is: ' num2str(EuroCallCV.exactPrice(1))])
 disp(['The algorithm took ' num2str(out.time) ' seconds and '...
@@ -156,8 +159,8 @@ disp(['Real error was ' ...
 % that the we do a change of variable \(\boldsymbol{t} = \boldsymbol{x}/a\)
 % and transform the integral:
 %
-% \begin{align*} I &= \int_{\mathbb{R}^d} \cos(a \lVert \boldsymbol{t}
-% \rVert) \exp(-a^2 \lVert \boldsymbol{t} \rVert^2) \, a^d \mathrm{d}
+% \begin{align*} I &= \int_{\mathbb{R}^d} a^d \cos(a \lVert \boldsymbol{t}
+% \rVert) \exp(-a^2 \lVert \boldsymbol{t} \rVert^2) \, \mathrm{d}
 % \boldsymbol{t}, \qquad a > 0, \\ & = \int_{\mathbb{R}^d}
 % \underbrace{(2\pi a^2)^{d/2} \cos(a \lVert \boldsymbol{t} \rVert)
 % \exp((1/2-a^2) \lVert \boldsymbol{t} \rVert^2)}_{f(\boldsymbol{t})}
@@ -177,23 +180,23 @@ abstol = 0; %absolute tolerance
 reltol = 0.01; %relative tolerance
 dvec = 1:5; %vector of dimensions
 avec = [1 1/sqrt(2) 1/sqrt(1.5) 1/sqrt(3)]; %default value of a 
-IMCvec = zeros(size(dvec)); %vector of answers
+IMCvec(size(dvec)) = 0; %vector of answers
 f2= @(t,d) cell2mat(arrayfun(@(a) f(t,a,d),avec,'UniformOutput',false)); %a vector of funcion for each value of a
 outT = zeros(size(dvec));%vector of time
-outN=zeros(size(dvec));%vector of points
- for d = dvec
- f3=@(t)f2(t,d);%integration in dimension d
- YXn=@(n)f3(randn(n,d));%random generator
- s=struct('Y',YXn,'nY',size(avec,2)); 
- [IMCvec(d),out]= meanMC_CLT(s,abstol,reltol);
- outT(d)=out.time;
- outN(d)=out.nSample;
- end
-Ivec=zeros(size(dvec)); %vector of true integration
+outN = zeros(size(dvec));%vector of points
 for d = dvec
-Ivec(d)= Keistertrue(d); %true integration
+   f3 = @(t)f2(t,d);%integration in dimension d
+   YXn = @(n)f3(randn(n,d));%random generator
+   s = struct('Y',YXn,'nY',size(avec,2)); 
+   [IMCvec(d),out] = meanMC_CLT(s,abstol,reltol);
+   outT(d) = out.time;
+   outN(d) = out.nSample;
 end
- disp('Example 3')
+Ivec = zeros(size(dvec)); %vector of true integration
+for d = dvec
+   Ivec(d) = Keistertrue(d); %true integration
+end
+disp('Example 3')
 disp(['The estimated integration for dimension ' num2str(dvec) ': ' num2str(IMCvec) ])
 disp(['The algorithm took ' num2str(outT) ' seconds and '...
     num2str(outN) ' points.'])
