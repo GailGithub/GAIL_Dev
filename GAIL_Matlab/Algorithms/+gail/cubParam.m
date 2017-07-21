@@ -78,6 +78,7 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
       measure %measure against which to integrate
       measureType %type of measure that final integral is made with respect to
       nf %number of f for each integral
+      exitflag % exit flag 
    end
    
    properties (Dependent = true)
@@ -170,6 +171,7 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
             obj.measure = val.measure; %copy integration measure
             obj.measureType = val.measureType; %copy integration measure
             obj.nf = val.nf; %copy number of functions for each integral
+            obj.exitflag=val.exitflag;
             useDefaults = false;
          end
          

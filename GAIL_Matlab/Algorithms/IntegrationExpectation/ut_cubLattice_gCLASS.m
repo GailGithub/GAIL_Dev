@@ -73,8 +73,8 @@ classdef ut_cubLattice_gCLASS < matlab.unittest.TestCase
             exactsol = 1; check = abs(exactsol-q) < gail.tolfun(1e-3,1e-3,1,exactsol,'max');
             if check==0 || isfinite(q) ==0 %|| out_param.exitflag > 0,
                i, exactsol, q, exitflag = out_param.exitflag,
-               abserr = abs(exactsol-q), tol = gail.tolfun(1e-3,1e-3,1,exactsol,'max'), n = out_param.n,
-               shift = out_param.shift, lattice = mod(bsxfun(@plus, gail.lattice_gen(1,2^24,3), shift),1);
+               abserr = abs(exactsol-q), tol = gail.tolfun(1e-3,1e-3,1,exactsol,'max'), n = out_param.nSample;
+               shift = out_param.shiftVal, lattice = mod(bsxfun(@plus, gail.lattice_gen(1,2^24,3), shift),1);
                max_lattice = max(max(lattice))
                max_C1sin = max(max(lattice-sin(2*pi*lattice)/(2*pi))),
                max_after_normtransform = max(max(gail.stdnorminv(lattice-sin(2*pi*lattice)/(2*pi))))%, min(min(gail.stdnorminv(lattice-sin(2*pi*lattice)/(2*pi))))
