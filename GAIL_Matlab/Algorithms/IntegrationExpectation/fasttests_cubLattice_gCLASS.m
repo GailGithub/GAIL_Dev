@@ -10,7 +10,7 @@ if MATLABVERSION < 8.1
     warning('Cannot run unit tests in MATLAB version before 8.1');
 else
     try
-        Tests = matlab.unittest.TestSuite.fromClass(?ut_cubLattice_g);
+        Tests = matlab.unittest.TestSuite.fromClass(?ut_cubLattice_gCLASS);
         results=run(ut_cubLattice_gCLASS)
         if sum([results.Failed])>0
             failed=find([results.Failed]>0);

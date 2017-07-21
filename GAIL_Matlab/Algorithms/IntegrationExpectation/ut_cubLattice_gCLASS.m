@@ -23,7 +23,7 @@ classdef ut_cubLattice_gCLASS < matlab.unittest.TestCase
          actualerr = abs(meanf-exactf);
          tolerance = max(out_param.err.absTol,out_param.err.relTol*abs(exactf));
          testCase.verifyLessThanOrEqual(actualerr,tolerance);
-         testCase.verifyTrue(out_param.d==1);
+         testCase.verifyTrue(out_param.fun.d==1);
       end
       
       function cubLattice_gOfsin(testCase)
@@ -35,7 +35,7 @@ classdef ut_cubLattice_gCLASS < matlab.unittest.TestCase
          actualerr = abs(meanf-exactf);
          tolerance = max(out_param.err.absTol,out_param.err.relTol*abs(exactf));
          testCase.verifyLessThanOrEqual(actualerr,tolerance);
-         testCase.verifyTrue(out_param.d==1);
+         testCase.verifyTrue(out_param.fun.d==1);
       end
       
       function cubLattice_gOfmultierrfun(testCase)
@@ -47,7 +47,7 @@ classdef ut_cubLattice_gCLASS < matlab.unittest.TestCase
          actualerr = abs(meanf-exactf);
          tolerance = max(out_param.err.absTol,out_param.err.relTol*abs(exactf));
          testCase.verifyLessThanOrEqual(actualerr,tolerance);
-         testCase.verifyTrue(out_param.d==2);
+         testCase.verifyTrue(out_param.fun.d==2);
       end
       
       function cubLattice_gOfwarning(testCase)
@@ -64,7 +64,7 @@ classdef ut_cubLattice_gCLASS < matlab.unittest.TestCase
          w.measure='normal';
          w.absTol=1e-3;
          w.relTol=1e-3;
-         w.transform='C1in';
+         w.periodTransform='C1sin';
          w.shift=2^(-25)*ones(1,3);
          w.domain = [-inf(1,3);inf(1,3)];
          count = 0;
