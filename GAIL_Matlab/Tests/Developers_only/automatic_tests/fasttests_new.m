@@ -31,7 +31,7 @@ tic; doctest dt_integral_g ; time=toc
 tic; doctest meanMC_g; time=toc
 tic; doctest cubLattice_g; time=toc
 tic; doctest cubSobol_g; time=toc
-tic; doctest dt_integralNoPenalty_g; time=toc
+tic; doctest dt_integral_g; time=toc
 
 %% CALL UNIT TESTS
 [~,~,MATLABVERSION]=GAILstart(0);

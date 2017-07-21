@@ -10,7 +10,7 @@ shortutestreport = strcat(GAILPATH,'OutputFiles',filesep,...
     'gail_unittests','.txt');
 fid = fopen(shortutestreport,'wt');
 
-tic
+fasttestsStartTime = tic;
 
 %% CALL fasttests for individual algorithms
 fasttests_integral_g
@@ -31,7 +31,7 @@ format short
 fasttests_OptionPricing
 fasttests_InputClasses
 
-time=toc
+fastTestsTimeTaken = toc(fasttestsStartTime)
  
 diary off
 fclose(fid);

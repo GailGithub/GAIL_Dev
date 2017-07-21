@@ -4,9 +4,10 @@
 %
 % >> in_param = gail.gailMD_in_param()
 % Warning: Function f must be a function handle. Now GAIL is using f(x)=exp(-100*(x-0.5)^2). 
-% ***
+% > In gail_in_param>gail_in_param.gail_in_param at ***
+%   In gailMD_in_param>gailMD_in_param.gailMD_in_param at ***
 % 
-% in_param =*** 
+% in_param = 
 % 
 %   gailMD_in_param with properties:
 %                f: @(x)exp(-100*(x-0.5).^2)
@@ -19,7 +20,7 @@
 %
 %
 % >> f = @(x) x.^2; in_param = gail.gailMD_in_param(f)
-%     in_param =*** 
+%     in_param = 
 % 
 %       gailMD_in_param with properties:
 % 
@@ -34,7 +35,7 @@
 %
 %  To get a struct:
 %  >> in_param = gail.gailMD_in_param(@(x) x.^2); out_param = in_param.toStruct()
-%   out_param =***
+%   out_param =
 %            f: @(x)x.^2
 %      measure: 'uniform'
 %       abstol: 0.0100
@@ -46,7 +47,7 @@
 %
 % To get a structure with selected fields (and ignore properties that do not exist):
 % >> out_param = in_param.toStruct({'f', 'measure', 'hyperbox','nonexistent'})
-%  out_param =***
+%  out_param =
 %            f: @(x)x.^2
 %      measure: 'uniform'
 %     hyperbox: [2x1 double]
@@ -55,7 +56,7 @@
 % >> f=@(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [0 0;1 1];
 % >> in_param = gail.gailMD_in_param(f,hyperbox,'measure','uniform','abstol',1e-3,'reltol',0)
 % 
-%     in_param =*** 
+%     in_param = 
 % 
 %       gailMD_in_param with properties:
 % 
@@ -97,7 +98,7 @@
 % >> d=3;f=@(x) 2^d*prod(x,2)+0.555; hyperbox = [zeros(1,d);ones(1,d)];
 % >> in_struct.abstol = 1e-3; in_struct.reltol=1e-3;
 % >> in_param = gail.gailMD_in_param(f,hyperbox,in_struct)
-%     in_param =*** 
+%     in_param = 
 % 
 %       gailMD_in_param with properties:
 % 
@@ -109,14 +110,12 @@
 %              dim: 3
 %         hyperbox: [2x3 double]
 %
-%
 % >> in_param.hyperbox
 % 
 %     ans =
 % 
 %          0     0     0
 %          1     1     1
-%
 
 classdef gailMD_in_param < gail.gail_in_param & matlab.mixin.CustomDisplay
     %% data
@@ -148,7 +147,6 @@ classdef gailMD_in_param < gail.gail_in_param & matlab.mixin.CustomDisplay
                 in = cell(0);
             end
             out_param = out_param@gail.gail_in_param(in);
-            f=out_param.f;
             
             %% Default parameter values
             default.measure = 'uniform';% default measure
@@ -176,12 +174,12 @@ classdef gailMD_in_param < gail.gail_in_param & matlab.mixin.CustomDisplay
             end;
             
             if isempty(varargin) % if no input, print error message and use the default setting
-%                 help gail.gailMD_in_param
-%                 warning('GAIL:gailMD_in_param:fnotgiven',['f must be specified.'...
-%                     'Now GAIL is using f = @(x) x.^2. '...
-%                     'Integration hyperbox must be specified.'...
-%                     'Now GAIL is using interval [0;1] with dimension 1.'])
-%                 f = @(x) x.^2;
+                help cubMC_g
+                warning('GAIL:cubMC_g:fnotgiven',['f must be specified.'...
+                    'Now GAIL is using f = @(x) x.^2. '...
+                    'Integration hyperbox must be specified.'...
+                    'Now GAIL is using interval [0;1] with dimension 1.'])
+                f = @(x) x.^2;
                 out_param.hyperbox = default.hyperbox;
                 out_param.dim = length(out_param.hyperbox);
             end

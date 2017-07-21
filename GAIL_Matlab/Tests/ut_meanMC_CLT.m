@@ -13,36 +13,22 @@ classdef ut_meanMC_CLT < matlab.unittest.TestCase
       testCase.verifyLessThanOrEqual(actualerr,in_param.abstol);
     end
     
-     function meanMC_CLTOfxsquare(testCase)
-
+    function meanMC_CLTOfxsquare(testCase)
       in_param.reltol = 1e-1;
-
       in_param.abstol = 0;
-
       meanY = meanMC_CLT(@(n) rand(n,1).^2,in_param.abstol,in_param.reltol);
-
       exactY = 1/3;
-
       actualerr = abs(meanY-exactY)/exactY;
-
       testCase.verifyLessThanOrEqual(actualerr,in_param.reltol);
-
-     end
+    end
     
      function meanMC_CLTOfsin(testCase)
-
       in_param.reltol = 1e-2;
-
       in_param.abstol = 0;
-
       meanY = meanMC_CLT(@(n) sin(rand(n,1)),in_param.abstol,in_param.reltol);
-
       exactY = 1-cos(1);
-
       actualerr = abs(meanY-exactY)/exactY;
-
       testCase.verifyLessThanOrEqual(actualerr,in_param.reltol);
-
     end
 
     function meanMC_CLTOfparsing(testCase)

@@ -1,4 +1,6 @@
 %% A GUI (graphical user interface) for *funappx_g*
+% Author: Yuhan Ding, July 2017
+%
 % To approximate a peaky function with *funappx_g* and to show how
 % *funappx_g* generates grid points for locally adaptive linear spline
 % approximation

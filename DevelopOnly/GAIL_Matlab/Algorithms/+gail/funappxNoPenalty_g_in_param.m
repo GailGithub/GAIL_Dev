@@ -1,8 +1,8 @@
-% funappx_g_in_param: funappxNoPenalty_g's input parameter object
+% funappxNoPenalty_g_in_param: funappxNoPenalty_g's input parameter object
 %
 % Examples
 %
-% >> in_param = gail.funappx_g_in_param()
+% >> in_param = gail.funappxNoPenalty_g_in_param()
 %     Warning: Function f must be a function handle.***
 %     in_param = ***
 %                f: @(x)exp(-100*(x-0.5).^2)
@@ -16,7 +16,7 @@
 %          maxiter: 1000
 %
 %
-% >> f = @(x) x.^2; in_param = gail.funappx_g_in_param(f)
+% >> f = @(x) x.^2; in_param = gail.funappxNoPenalty_g_in_param(f)
 %    in_param = ***
 %                f: @(x)x.^2
 %                a: 0
@@ -29,7 +29,7 @@
 %          maxiter: 1000
 %
 %
-% >> f = @(x) x.^2; in_param = gail.funappx_g_in_param(f,0,1,1e-6,10,1000,10000000,1000)
+% >> f = @(x) x.^2; in_param = gail.funappxNoPenalty_g_in_param(f,0,1,1e-6,10,1000,10000000,1000)
 %    in_param = ***
 %                f: @(x)x.^2
 %                a: 0
@@ -42,7 +42,7 @@
 %          maxiter: 1000
 %
 %
-% >> f = @(x) x.^2; in_param.a=0; in_param.b =1;  in_param = gail.funappx_g_in_param(f,in_param)
+% >> f = @(x) x.^2; in_param.a=0; in_param.b =1;  in_param = gail.funappxNoPenalty_g_in_param(f,in_param)
 %    in_param = ***
 %                f: @(x)x.^2
 %                a: 0
@@ -56,8 +56,8 @@
 %
 %
 %  To get a struct:
-%  >> in_param = gail.funappx_g_in_param(@(x) x.^2); out_param = in_param.toStruct()
-%   out_param =***
+%  >> in_param = gail.funappxNoPenalty_g_in_param(@(x) x.^2); out_param = in_param.toStruct()
+%   out_param =
 %
 %            f: @(x)x.^2
 %            a: 0
@@ -71,13 +71,13 @@
 %
 %
 % To get a structure with selected fields (and ignore properties that do not exist):
-% >> in_param = gail.funappx_g_in_param(@(x) x.^2); out_param = in_param.toStruct({'f','abstol','c'})
-%  out_param =***
+% >> in_param = gail.funappxNoPenalty_g_in_param(@(x) x.^2); out_param = in_param.toStruct({'f','abstol','c'})
+%  out_param =
 %
 %     f: @(x)x.^2
 %     abstol: 1.0000e-06
 %
-classdef funappx_g_in_param < gail.gail1D_in_param
+classdef funappxNoPenalty_g_in_param < gail.gail1D_in_param
     %% data
     properties % public
     end % properties
@@ -85,7 +85,7 @@ classdef funappx_g_in_param < gail.gail1D_in_param
     %% methods
     methods % public
         % constructor
-        function out_param = funappx_g_in_param(varargin)
+        function out_param = funappxNoPenalty_g_in_param(varargin)
             % parse the input to a gail function
             in = cell(0);
             if nargin >= 1
@@ -110,7 +110,7 @@ classdef funappx_g_in_param < gail.gail1D_in_param
             
             if (~isempty(out_param.abstol))
                 if (out_param.abstol <= 0 )
-                    warning('GAIL:funappx_g_in_param:tolneg', ['Error tolerance should be greater'...
+                    warning('GAIL:funappxNoPenalty_g_in_param:tolneg', ['Error tolerance should be greater'...
                         ' than 0. Using default error tolerance ' num2str(default.abstol)])
                     out_param.abstol = default.abstol;
                 end

@@ -4,7 +4,9 @@
 %
 % >> in_param = gail.cubMC_g_in_param()
 %     Warning: Function f must be a function handle. Now GAIL is using f(x)=exp(-100*(x-0.5)^2). 
-%     ***
+%     > In gail_in_param>gail_in_param.gail_in_param at ***
+%       In gailMD_in_param>gailMD_in_param.gailMD_in_param at ***
+%       In cubMC_g_in_param>cubMC_g_in_param.cubMC_g_in_param at *** 
 % 
 %     in_param = 
 % 
@@ -26,7 +28,7 @@
 %
 %
 % >> f = @(x) x.^2; in_param = gail.cubMC_g_in_param(f)
-%    in_param =***
+%    in_param = ***
 %          measure: 'uniform'
 %           abstol: 0.0100
 %           reltol: 0.1000
@@ -43,7 +45,7 @@
 %
 %  To get a struct:
 %  >> in_param = gail.cubMC_g_in_param(@(x) x.^2);  out_param = in_param.toStruct()
-%  out_param =***
+%  out_param = 
 %          measure: 'uniform'
 %           abstol: 0.0100
 %           reltol: 0.1000
@@ -60,7 +62,7 @@
 %
 % To get a structure with selected fields (and ignore properties that do not exist):
 % >> in_param = gail.cubMC_g_in_param(@(x) x.^2);  out_param = in_param.toStruct({'f','measure','hyperbox','nonexistent'})
-%  out_param =***
+%  out_param =
 %            f: @(x)x.^2
 %      measure: 'uniform'
 %     hyperbox: [2x1 double]
@@ -68,7 +70,7 @@
 %
 % >> f=@(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [0 0; 1 1];
 % >> in_param = gail.cubMC_g_in_param(f,hyperbox,'measure','uniform','abstol',1e-3,'reltol',0)
-%    in_param =***
+%    in_param = ***
 %          measure: 'uniform'
 %           abstol: 1.0000e-03
 %           reltol: 0
@@ -85,7 +87,7 @@
 %
 % >> f=@(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [-inf -inf;inf inf];
 % >> in_param = gail.cubMC_g_in_param(f,hyperbox,'normal',0,1e-2)
-%    in_param =***
+%    in_param = ***
 %          measure: 'normal'
 %           abstol: 0
 %           reltol: 0.0100
@@ -176,7 +178,7 @@ classdef cubMC_g_in_param < gail.gailMD_in_param
         
         function out_param = toStruct(out_param,varargin)
             l = {'measure','abstol','reltol','alpha','fudge','nSig','n1','tbudget','nbudget','flag','dim','hyperbox'};
-            if ~isempty(varargin)   
+            if length(varargin) > 0   
                 l = varargin{1};
             end
             out_param = toStruct@gail.gailMD_in_param(out_param, l);
@@ -198,7 +200,7 @@ classdef cubMC_g_in_param < gail.gailMD_in_param
                     if (~gail.isposge30(out_param.nSig))
                         %the sample to estimate sigma should be a positive integer
                         warning('GAIL:cubMC_g:nsignotposint',...
-                            ['The number nSig should a positive integer greater than 30; '...
+                            ['The number nSig should a positive integer greater than 30; '
                             'We will take the default value 1e4.'])
                         out_param.nSig = default.nSig;
                     end
