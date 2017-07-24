@@ -134,10 +134,6 @@ function [hmu,out]=meanMC_CLT(varargin)
 %
 %
 
-
-
-
-
 % This is a heuristic algorithm based on a Central Limit Theorem
 % approximation
 
@@ -191,7 +187,8 @@ if p > 0 || q > 1   %samples of the new random variable
 end
 
 hmu = mean(YY); %estimated mean
-out.mu = hmu; %record answer in output class
+out.mu = hmu(1); %record answer in output class
+
 out.nSample = out.nSig+nmu; %total samples required
 out.time = toc(tstart); %elapsed time
 out.errBd = -gail.stdnorminv(out.alpha/2)*sig0up/sqrt(nmu);

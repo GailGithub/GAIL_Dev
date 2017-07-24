@@ -40,11 +40,11 @@ classdef cubYOut < gail.cubMCParam & gail.outParam
    methods
       
       % Creating a meanYParam process
-      function obj = meanYOut(val)
+      function obj = cubYOut(val)
          %this constructor essentially parses inputs
          %the parser will look for a meanYParam object
          
-         obj@gail.meanYParam(val)
+         obj@gail.cubMCParam(val)
         
       end %of constructor
      
@@ -64,7 +64,7 @@ classdef cubYOut < gail.cubMCParam & gail.outParam
    methods (Access = protected)
    
          function propList = getPropertyList(obj)
-         propList = getPropertyList@gail.meanYParam(obj);
+         propList = getPropertyList@gail.cubMCParam(obj);
          propList.mu = obj.mu;
          propList.stddev = obj.stddev;
          propList.nSample = obj.nSample;

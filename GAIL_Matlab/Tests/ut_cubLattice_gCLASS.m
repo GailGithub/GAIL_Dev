@@ -23,7 +23,7 @@ classdef ut_cubLattice_gCLASS < matlab.unittest.TestCase
          actualerr = abs(meanf-exactf);
          tolerance = max(out_param.err.absTol,out_param.err.relTol*abs(exactf));
          testCase.verifyLessThanOrEqual(actualerr,tolerance);
-         testCase.verifyTrue(out_param.d==1);
+         testCase.verifyTrue(out_param.fun.d==1);
       end
       
       function cubLattice_gOfsin(testCase)
@@ -35,7 +35,7 @@ classdef ut_cubLattice_gCLASS < matlab.unittest.TestCase
          actualerr = abs(meanf-exactf);
          tolerance = max(out_param.err.absTol,out_param.err.relTol*abs(exactf));
          testCase.verifyLessThanOrEqual(actualerr,tolerance);
-         testCase.verifyTrue(out_param.d==1);
+         testCase.verifyTrue(out_param.fun.d==1);
       end
       
       function cubLattice_gOfmultierrfun(testCase)
@@ -47,7 +47,7 @@ classdef ut_cubLattice_gCLASS < matlab.unittest.TestCase
          actualerr = abs(meanf-exactf);
          tolerance = max(out_param.err.absTol,out_param.err.relTol*abs(exactf));
          testCase.verifyLessThanOrEqual(actualerr,tolerance);
-         testCase.verifyTrue(out_param.d==2);
+         testCase.verifyTrue(out_param.fun.d==2);
       end
       
       function cubLattice_gOfwarning(testCase)
@@ -64,7 +64,7 @@ classdef ut_cubLattice_gCLASS < matlab.unittest.TestCase
          w.measure='normal';
          w.absTol=1e-3;
          w.relTol=1e-3;
-         w.transform='C1in';
+         w.periodTransform='C1sin';
          w.shift=2^(-25)*ones(1,3);
          w.domain = [-inf(1,3);inf(1,3)];
          count = 0;
@@ -73,8 +73,8 @@ classdef ut_cubLattice_gCLASS < matlab.unittest.TestCase
             exactsol = 1; check = abs(exactsol-q) < gail.tolfun(1e-3,1e-3,1,exactsol,'max');
             if check==0 || isfinite(q) ==0 %|| out_param.exitflag > 0,
                i, exactsol, q, exitflag = out_param.exitflag,
-               abserr = abs(exactsol-q), tol = gail.tolfun(1e-3,1e-3,1,exactsol,'max'), n = out_param.n,
-               shift = out_param.shift, lattice = mod(bsxfun(@plus, gail.lattice_gen(1,2^24,3), shift),1);
+               abserr = abs(exactsol-q), tol = gail.tolfun(1e-3,1e-3,1,exactsol,'max'), n = out_param.nSample;
+               shift = out_param.shiftVal, lattice = mod(bsxfun(@plus, gail.lattice_gen(1,2^24,3), shift),1);
                max_lattice = max(max(lattice))
                max_C1sin = max(max(lattice-sin(2*pi*lattice)/(2*pi))),
                max_after_normtransform = max(max(gail.stdnorminv(lattice-sin(2*pi*lattice)/(2*pi))))%, min(min(gail.stdnorminv(lattice-sin(2*pi*lattice)/(2*pi))))

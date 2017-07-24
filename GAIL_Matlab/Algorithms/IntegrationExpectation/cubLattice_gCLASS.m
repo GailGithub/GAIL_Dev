@@ -5,8 +5,8 @@ function [meanf, mean_out] = cubLattice_gCLASS(varargin)
 % >> w.transform = 'C1sin'; 
 % >> [q, out_param] = cubLattice_gCLASS(w);
 % >> exactsol = 1/4;
-% >> check = abs(exactsol-q) < 1e-5;
-% check = logical 1
+% >> check = abs(exactsol-q) < 1e-5
+% check = 1
 %
 % Example 2: 
 % >> w.f= @(x) exp(-x(:,1).^2-x(:,2).^2); w.absTol=1e-3;
@@ -14,43 +14,44 @@ function [meanf, mean_out] = cubLattice_gCLASS(varargin)
 % >> w.transform = 'C1';
 % >> [q, out_param] = cubLattice_gCLASS(w);
 % >> exactsol = (sqrt(pi)/2*(erf(2)+erf(1)))^2;
-% >> check = abs(exactsol-q) < 1e-5;
-% check = logical 1 
+% >> check = abs(exactsol-q) < 1e-3;
+% check = 1 
 %
 % Example 3: 
 % >> w.f = @(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); w.domain = [-inf(1,1);inf(1,1)];
-% >> w.measure='normal'; w.absTol=1e-4; w.relTol=1e-2; w.transform=('C1sin')
+% >> w.measure='normal'; w.absTol=1e-4; w.relTol=1e-2;
+% w.transform=('C1sin');
 % >> [q, out_param] = cubLattice_gCLASS(w);
 % >> price = normcdf(0.05)*100 - 0.5*100*exp(-0.05^2/2);
-% >> check = abs(price-q) < 1e-5;
-% check = logical 1
+% >> check = abs(price-q) < 1e-4;
+% check = 1
 %
 % Example 4: 
 % >> w.f = @(x) 8*prod(x,2); w.domain = [zeros(1,5);ones(1,5)];
 % >> w.measure='uniform'; 
-% >> w.absTol=1e-5; w.relTol=0
+% >> w.absTol=1e-5; w.relTol=0;
 % >> [q, out_param] = cubLattice_gCLASS(w);
 % >> exactsol = 1/4;
 % >> check = abs(exactsol-q) < 1e-5;
-% check = logical 1
+% check = 1
 %
 % Example 5: 
 % >> w.f= @(x) 3./(5-4*(cos(2*pi*x)));
-% >> w.absTol=1e-5; w.relTol=0
+% >> w.absTol=1e-5; w.relTol=0;
 % >> w.domain = [0;1]; w.transform = 'id';
 % >> [q, out_param] = cubLattice_gCLASS(w);
 % >> exactsol = 1;
 % >> check = abs(exactsol-q) < 1e-5;
-% check = logical 1
+% check = 1
 %
 % Example 6: 
 % >> w.f= @(x)[10*x(:,1)-5*x(:,2).^2+1*x(:,3).^3, x(:,1), x(:,2).^2]; w.domain = [zeros(1,3);2*ones(1,3)];
-% >> w.trueMuCV=[8,32/3]; w.absTol=1e-6
+% >> w.trueMuCV=[8,32/3]; w.absTol=1e-6;
 % >> w.relTol=0; w.measure = 'uniform';
 % >> [q, out_param] = cubLattice_gCLASS(w);
 % >> exactsol = 128/3;
-% >> check = abs(exactsol-q) < 1e-5;
-% check = logical 1
+% >> check = abs(exactsol-q) < 1e-6;
+% check = 1
 
 t_start = tic;
 %% Initial important cone factors and Check-initialize parameters
@@ -197,6 +198,7 @@ end
 nllstart=int64(2^(mean_out.mmin-r_lag-1));
 Stilde(1)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
 mean_out.errBd=mean_out.CM.fudge(mean_out.mmin)*Stilde(1);
+
 errest(1)=mean_out.errBd;
 
 % Necessary conditions
