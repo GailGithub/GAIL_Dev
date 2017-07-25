@@ -19,6 +19,7 @@ fasttests_funmin_g
 
 fasttests_meanMC_g
 fasttests_meanMC_CLT
+fasttests_cubMC_CLT
 
 fasttests_cubMC_g
 fasttests_cubLattice_g

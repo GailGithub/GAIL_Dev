@@ -140,7 +140,14 @@ function [hmu,out]=meanMC_CLT(varargin)
 tstart = tic; %start the clock 
 %inp = gail.meanYParam(varargin{:}); 
 %parse the input and check it for errors and create the output class
-out = gail.meanYOut(gail.meanYParam(varargin{:})); 
+
+if nargin 
+   if isa(varargin{1},'gail.cubMCOut')
+      out = varargin{1};
+   end
+else
+   out = gail.meanYOut(gail.meanYParam(varargin{:})); 
+end
 Yrand=out.Y; %the random number generator
 q=out.nY; %the number of target random variable 
 p=out.CM.nCV; %the number of control variates
@@ -152,7 +159,6 @@ end
 val = Yrand(out.nSig); %get samples to estimate variance 
 if p==0 && q==1
     YY = val(:,1); 
-    
 else
 %if there is control variate, construct a new random variable that has the
 %same expected value and smaller variance
@@ -187,7 +193,8 @@ if p > 0 || q > 1   %samples of the new random variable
 end
 
 hmu = mean(YY); %estimated mean
-out.mu = hmu(1); %record answer in output class
+out.sol = hmu; %record answer in output class
+
 
 out.nSample = out.nSig+nmu; %total samples required
 out.time = toc(tstart); %elapsed time

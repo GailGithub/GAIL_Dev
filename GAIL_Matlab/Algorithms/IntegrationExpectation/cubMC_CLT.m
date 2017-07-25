@@ -1,10 +1,46 @@
-function [q, out_param] = cubMC_CLT(varargin)
+function [q, cub_out] = cubMC_CLT(varargin)
 t_start = tic;
+% % Example 1:
+% % Estimate the integral with integrand f(x) = x1.*x2 in the interval [0,1)^2:
+% >> w.f = @(x) prod(x,2);
+% >> w.absTol=1e-3;
+% >> w.relTol=0;
+% >> w.relTol=0; 
+% >> w.domain = [zeros(1,2);ones(1,2)];
+% >> [q, out] = cubMC_CLT(w)
+% exactsol = 1/4;
+% 
+% % Example 2:
+% >> w.f= @(x) exp(-x(:,1).^2-x(:,2).^2); w.absTol=1e-3;
+% >> w.relTol=1e-2; w.domain = [-ones(1,2);2*ones(1,2)];
+% >> [q, out_param] = cubMC_CLT(w);
+% exactsol = (sqrt(pi)/2*(erf(2)+erf(1)))^2;
+% 
+% % Example 3: 
+% >> w.f= @(x)[10*x(:,1)-5*x(:,2).^2+1*x(:,3).^3, x(:,1), x(:,2).^2]; w.domain = [zeros(1,3);2*ones(1,3)];
+% >> w.trueMuCV=[8,32/3]; w.absTol=1e-3;
+% >> w.relTol=0; w.measure = 'uniform';
+% >> [q, out_param] = cubMC_CLT(w);
+% exactsol = 128/3;
+% 
+% % Example 4:
+% >> w.f= @(x) 3./(5-4*(cos(2*pi*x)));
+% >> w.absTol=1e-3; w.relTol=0;
+% >> w.domain = [0;1]; 
+% >> [q, out_param] = cubMC_CLT(w);
+% exactsol = 1;
+% 
+% % Example 5: 
+% >> w.f= @(x)[10*x(:,1)-5*x(:,2).^2+1*x(:,3).^3, x(:,1), x(:,2).^2]; w.domain = [zeros(1,3);2*ones(1,3)];
+% >> w.trueMuCV=[8,32/3]; w.absTol=1e-3;
+% >> w.relTol=0; w.measure = 'uniform';
+% >> [q, out_param] = cubMC_CLT(w);
+% exactsol = 128/3;
 
-mean_inp = gail.cubMCParam(cell2mat(varargin)); %parse the input and check it for errors
-mean_out = gail.cubYOut(mean_inp); %create the output class
+cub_inp = gail.cubMCParam(varargin{:}); %parse the input and check it for errors
+cub_out = gail.cubMCOut(cub_inp); %create the output class
 
-[q, out_param]=meanMC_CLT(mean_out.Y, mean_out.err.absTol, ...
-   mean_out.err.relTol, mean_out.alpha, mean_out.nSig, mean_out.CM.inflate)
+[q, cub_out] = meanMC_CLT(cub_out);
 
+cub_out.time = toc(t_start);
 end 

@@ -1,4 +1,4 @@
-classdef meanYOut < gail.meanYParam & gail.outParam
+classdef cubMCOut < gail.cubMCParam & gail.outParam
    %GAIL.MEANYOUT is a class containing the parameters related to the
    %outputs from the algorithms that find the mean of a random variable.
    %   This class includes the time and sample size required for the
@@ -29,18 +29,21 @@ classdef meanYOut < gail.meanYParam & gail.outParam
    % Author: Fred J. Hickernell
 
    
-   properties 
+   properties
       stddev %sample standard deviation of the random variable
    end
-      
+   
+   properties (Hidden, SetAccess = private)
+   end
+   
    methods
       
       % Creating a meanYParam process
-      function obj = meanYOut(val)
+      function obj = cubMCOut(val)
          %this constructor essentially parses inputs
          %the parser will look for a meanYParam object
          
-         obj@gail.meanYParam(val)
+         obj@gail.cubMCParam(val)
         
       end %of constructor
           
@@ -55,12 +58,16 @@ classdef meanYOut < gail.meanYParam & gail.outParam
    methods (Access = protected)
    
          function propList = getPropertyList(obj)
-         propList = getPropertyList@gail.meanYParam(obj);
+         propList = getPropertyList@gail.cubParam(obj);
          propList.sol = obj.sol;
          propList.stddev = obj.stddev;
          propList.nSample = obj.nSample;
          propList.time = obj.time;
          propList.errBd = obj.errBd;
+         
+         propList.alpha = obj.alpha;
+         propList.nSig = obj.nSig;
+       
          end
    end
    
