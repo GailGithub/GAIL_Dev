@@ -1,0 +1,448 @@
+TAP version 13
+1..4
+ok 1 - "in_param = gail.integral_g_in_param()"
+ok 2 - "f = @(x) x.^2; in_param = gail.integral_g_in_param(f)"
+ok 3 - "in_param = gail.integral_g_in_param(@(x) x.^2);  out_param = in_param.toStruct()"
+ok 4 - "in_param = gail.integral_g_in_param(@(x) x.^2); out_param = in_param.toStruct({'f', 'abstol','c'})"
+
+time =
+
+    2.9555
+
+TAP version 13
+1..3
+ok 1 - "q = integral_g(@(x) x.^2)"
+ok 2 - "f = @(x) exp(-x.^2); q = integral_g(f,'a',1,'b',2,'abstol',1e-5)"
+ok 3 - "q = integral_g()"
+
+time =
+
+    0.4717
+
+TAP version 13
+1..19
+ok 1 - "f = @(x) exp(-(x-1).^2); q = integral_g(f,'a',1,'b',2,'nlo',100,'nhi',10000,'abstol',1e-5,'nmax',1e7)"
+ok 2 - "f = @(x) exp(-x.^2); q = integral_g(f,'abstol',1e-5,'nhi',52,'nmax',1e7)"
+ok 3 - "f = @(x) exp(-x.^2); q = integral_g(f,'a',1,'b',2,'abstol',1e-5,'nhi',52,'nmax',1e7)"
+ok 4 - "f = @(x) exp(-x.^2); q = integral_g(f,'a',0,'b',2,'abstol',1e-5,'nhi',52,'nmax',1e7)"
+ok 5 - "f = @(x) exp(-x.^2); q = integral_g(f,'a',0,'b',2,'nlo',100,'nhi',10000,'abstol',1e-5,'nmax',1e7)"
+ok 6 - "f = @(x) exp(-x.^2); q = integral_g(f,'a',0,'b',3,'nlo',100,'nhi',10000,'abstol',1e-5,'nmax',1e7)"
+ok 7 - "f = @(x) exp(-x.^2); q = integral_g(f,'a',-1,'b',3,'nlo',100,'nhi',10000,'abstol',1e-5,'nmax',1e7)"
+ok 8 - "f = @(x) exp(-x.^2); q = integral_g(f,'a',-4.5,'b',1.5,'nlo',100,'nhi',10000,'abstol',1e-5,'nmax',1e7)"
+ok 9 - "q = integral_g(@(x)x.^2,'a',1)"
+ok 10 - "q = integral_g(@(x)x.^2,'a',0,'b',Inf)"
+ok 11 - "q = integral_g(@(x)x.^2,'a',Inf)"
+ok 12 - "q = integral_g(@(x)x.^2,'a',NaN)"
+ok 13 - "q = integral_g(@(x)x.^2,'a',0,'b',NaN)"
+ok 14 - "q = integral_g(@(x)x.^2,'a',1,'b',0)"
+ok 15 - "q = integral_g(@(x)x.^2,'a',0,'b',2,'nlo',10,'nhi',100)"
+ok 16 - " inparam.a=0; inparam.b=3; inparam.abstol=1e-13; q=integral_g(@(x) exp(2*x),inparam)"
+ok 17 - "q = integral_g(@(x) x.^2,'a',-1,'b',1)"
+ok 18 - " [~,out_param]=integral_g(@(x) x.^2) "
+ok 19 - "f = @(x) exp(-x.^2); [~, out_param] = integral_g(f,'a',1,'b',2,'nlo',100,'nhi',10000,'abstol',1e-5,'nmax',1e7)"
+
+time =
+
+    1.6618
+
+Running ut_integral_g
+<a href="matlab: opentoline('/Applications/MATLAB_R2017a.app/toolbox/matlab/testframework/core/+matlab/+unittest/TestRunner.m',1215,1)">1215 </a>            suite = pluginData.TestSuite;
+if system_dependent('IsDebugMode')==1, dbquit; end
+edit fasttests
+clc
+fasttests_cubLattice_gCLASS
+TAP version 13
+1..35
+ok 1 - "w.f= @(x) prod(x,2); w.absTol=1e-5;"
+ok 2 - "w.relTol=0; w.domain = [zeros(1,2);ones(1,2)];"
+ok 3 - "w.transform = 'C1sin'; "
+ok 4 - "[q, out_param] = cubLattice_gCLASS(w);"
+ok 5 - "exactsol = 1/4;"
+not ok 6 - "check = abs(exactsol-q) < 1e-5;"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_gCLASS.m', 1);">cubLattice_gCLASS</a>
+    expected: check = logical 1 Example 2:
+    got     : 
+ok 7 - "w.f= @(x) exp(-x(:,1).^2-x(:,2).^2); w.absTol=1e-3;"
+ok 8 - "w.relTol=1e-2; w.domain = [-ones(1,2);2*ones(1,2)];"
+ok 9 - "w.transform = 'C1';"
+ok 10 - "[q, out_param] = cubLattice_gCLASS(w);"
+ok 11 - "exactsol = (sqrt(pi)/2*(erf(2)+erf(1)))^2;"
+not ok 12 - "check = abs(exactsol-q) < 1e-5;"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_gCLASS.m', 1);">cubLattice_gCLASS</a>
+    expected: check = logical 1 Example 3:
+    got     : 
+ok 13 - "w.f = @(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); w.domain = [-inf(1,1);inf(1,1)];"
+not ok 14 - "w.measure='normal'; w.absTol=1e-4; w.relTol=1e-2; w.transform=('C1sin')"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_gCLASS.m', 1);">cubLattice_gCLASS</a>
+    expected: 
+    got     : w = <a href="matlab:helpPopup struct" style="font-weight:bold">struct</a> with fields: f: @(x)exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0) absTol: 1.0000e-04 relTol: 0.0100 domain: [2×1 double] transform: 'C1sin' measure: 'normal'
+ok 15 - "[q, out_param] = cubLattice_gCLASS(w);"
+ok 16 - "price = normcdf(0.05)*100 - 0.5*100*exp(-0.05^2/2);"
+not ok 17 - "check = abs(price-q) < 1e-5;"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_gCLASS.m', 1);">cubLattice_gCLASS</a>
+    expected: check = logical 1 Example 4:
+    got     : 
+ok 18 - "w.f = @(x) 8*prod(x,2); w.domain = [zeros(1,5);ones(1,5)];"
+ok 19 - "w.measure='uniform'; "
+not ok 20 - "w.absTol=1e-5; w.relTol=0"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_gCLASS.m', 1);">cubLattice_gCLASS</a>
+    expected: 
+    got     : w = <a href="matlab:helpPopup struct" style="font-weight:bold">struct</a> with fields: f: @(x)8*prod(x,2) absTol: 1.0000e-05 relTol: 0 domain: [2×5 double] transform: 'C1sin' measure: 'uniform'
+ok 21 - "[q, out_param] = cubLattice_gCLASS(w);"
+ok 22 - "exactsol = 1/4;"
+not ok 23 - "check = abs(exactsol-q) < 1e-5;"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_gCLASS.m', 1);">cubLattice_gCLASS</a>
+    expected: check = logical 1 Example 5:
+    got     : 
+ok 24 - "w.f= @(x) 3./(5-4*(cos(2*pi*x)));"
+not ok 25 - "w.absTol=1e-5; w.relTol=0"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_gCLASS.m', 1);">cubLattice_gCLASS</a>
+    expected: 
+    got     : w = <a href="matlab:helpPopup struct" style="font-weight:bold">struct</a> with fields: f: @(x)3./(5-4*(cos(2*pi*x))) absTol: 1.0000e-05 relTol: 0 domain: [2×5 double] transform: 'C1sin' measure: 'uniform'
+ok 26 - "w.domain = [0;1]; w.transform = 'id';"
+ok 27 - "[q, out_param] = cubLattice_gCLASS(w);"
+ok 28 - "exactsol = 1;"
+not ok 29 - "check = abs(exactsol-q) < 1e-5;"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_gCLASS.m', 1);">cubLattice_gCLASS</a>
+    expected: check = logical 1 Example 6:
+    got     : 
+ok 30 - "w.f= @(x)[10*x(:,1)-5*x(:,2).^2+1*x(:,3).^3, x(:,1), x(:,2).^2]; w.domain = [zeros(1,3);2*ones(1,3)];"
+not ok 31 - "w.trueMuCV=[8,32/3]; w.absTol=1e-6"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_gCLASS.m', 1);">cubLattice_gCLASS</a>
+    expected: 
+    got     : w = <a href="matlab:helpPopup struct" style="font-weight:bold">struct</a> with fields: f: @(x)[10*x(:,1)-5*x(:,2).^2+1*x(:,3).^3,x(:,1),x(:,2).^2] absTol: 1.0000e-06 relTol: 0 domain: [2×3 double] transform: 'id' measure: 'uniform' trueMuCV: [8 10.6667]
+ok 32 - "w.relTol=0; w.measure = 'uniform';"
+ok 33 - "[q, out_param] = cubLattice_gCLASS(w);"
+ok 34 - "exactsol = 128/3;"
+not ok 35 - "check = abs(exactsol-q) < 1e-5;"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_gCLASS.m', 1);">cubLattice_gCLASS</a>
+    expected: check = logical 1
+    got     : 
+
+time =
+
+   48.1898
+
+Running ut_cubLattice_gCLASS
+.......Dim   FcnIdx       Q             f_true               Err            Sample Used             Stats  
+-----------------------------------------------------------------------------------------------------
+1     1       8.41471e-01       8.41471e-01       1.31683e-07         1024             BothErrMet
+1     2       7.85398e-01       7.85398e-01       1.68597e-08         1024             BothErrMet
+1     3       3.75000e-01       3.75000e-01       4.46127e-07         1024             BothErrMet
+1     4       7.46824e-01       7.46824e-01       1.01707e-07         1024             BothErrMet
+1     5       6.32121e-01       6.32121e-01       5.66910e-08         1024             BothErrMet
+2     1       4.96751e-01       4.96751e-01       6.26767e-08         1024             BothErrMet
+2     2       7.28296e-01       7.28296e-01       3.34052e-07         1024             BothErrMet
+2     3       1.01855e-01       1.01852e-01       3.42878e-06         2048             BothErrMet
+2     4       6.88992e-01       6.88992e-01       7.40070e-07         1024             BothErrMet
+2     5       4.97442e-01       4.97440e-01       1.43947e-06         1024             BothErrMet
+3     1       6.23590e-02       6.23593e-02       3.03109e-07         2048             BothErrMet
+3     2       6.62571e-01       6.62570e-01       9.66491e-07         1024             BothErrMet
+3     3       2.17869e-02       2.17014e-02       8.54894e-05         1024             AbsErrMet
+3     4       6.20903e-01       6.20903e-01       1.82415e-07         1024             BothErrMet
+3     5       3.83057e-01       3.83055e-01       2.29248e-06         1024             BothErrMet
+4     1       -3.51762e-01       -3.51764e-01       1.75497e-06         8192             BothErrMet
+4     2       5.88682e-01       5.88680e-01       2.82618e-06         1024             BothErrMet
+4     3       3.63160e-03       3.80556e-03       1.73952e-04         1024             AbsErrMet
+4     4       5.43349e-01       5.43373e-01       2.46528e-05         1024             BothErrMet
+4     5       2.86728e-01       2.86844e-01       1.15382e-04         1024             BothErrMet
+5     1       -6.49327e-01       -6.49331e-01       4.41357e-06         16384             BothErrMet
+5     2       5.13408e-01       5.13409e-01       5.79110e-07         1024             BothErrMet
+5     3       5.29911e-04       5.67130e-04       3.72184e-05         1024             AbsErrMet
+5     4       4.64631e-01       4.64603e-01       2.75758e-05         2048             BothErrMet
+5     5       2.09875e-01       2.09952e-01       7.77380e-05         1024             BothErrMet
+6     1       -7.69365e-01       -7.69376e-01       1.17677e-05         32768             BothErrMet
+6     2       4.41472e-01       4.41474e-01       1.39073e-06         4096             BothErrMet
+6     3       6.87713e-05       7.34937e-05       4.72235e-06         1024             AbsErrMet
+6     4       3.90229e-01       3.90227e-01       1.31625e-06         4096             BothErrMet
+6     5       1.50831e-01       1.50939e-01       1.08387e-04         2048             BothErrMet
+7     1       -6.97823e-01       -6.97824e-01       1.36067e-06         32768             BothErrMet
+7     2       3.75523e-01       3.75484e-01       3.92541e-05         4096             BothErrMet
+7     3       8.40269e-06       8.42590e-06       2.32086e-08         1024             AbsErrMet
+7     4       3.23180e-01       3.23235e-01       5.47070e-05         4096             BothErrMet
+7     5       1.07035e-01       1.06978e-01       5.72290e-05         2048             BothErrMet
+8     1       -4.67038e-01       -4.67036e-01       2.24905e-06         65536             BothErrMet
+8     2       3.16646e-01       3.16602e-01       4.40184e-05         4096             BothErrMet
+8     3       8.18065e-07       8.66209e-07       4.81441e-08         1024             AbsErrMet
+8     4       2.64710e-01       2.64801e-01       9.07250e-05         4096             BothErrMet
+8     5       7.48251e-02       7.49531e-02       1.28022e-04         1024             AbsErrMet
+.
+Done ut_cubLattice_gCLASS
+__________
+
+results = 
+  1×8 <a href="matlab:helpPopup matlab.unittest.TestResult" style="font-weight:bold">TestResult</a> array with properties:
+
+    Name
+    Passed
+    Failed
+    Incomplete
+    Duration
+    Details
+Totals:
+   8 Passed, 0 Failed, 0 Incomplete.
+   14.8484 seconds testing time.
+edit gail.ut_meanMC_CLT
+edit gail.ut_meanMCTest_CLT
+edit fasttests
+ut_meanMC_CLT
+ans = 
+  <a href="matlab:helpPopup ut_meanMC_CLT" style="font-weight:bold">ut_meanMC_CLT</a> with no properties.
+results=run(ut_meanMC_CLT);
+Running ut_meanMC_CLT
+....
+Done ut_meanMC_CLT
+__________
+
+Tests = matlab.unittest.TestSuite.fromClass(?ut_meanMC_CLT);
+Tests = matlab.unittest.TestSuite.fromClass(?ut_meanMC_CLT);
+ut_meanMC_CLT
+ans = 
+  <a href="matlab:helpPopup ut_meanMC_CLT" style="font-weight:bold">ut_meanMC_CLT</a> with no properties.
+results=run(ut_meanMC_CLT);
+Running ut_meanMC_CLT
+....
+================================================================================
+<strong>Verification failed in ut_meanMC_CLT/meanMC_CLTOfnonRandomInput.</strong>
+
+    ---------------------
+    Framework Diagnostic:
+    ---------------------
+    <a href="matlab:helpPopup matlab.unittest.TestCase.verifyEqual" style="font-weight:bold">verifyEqual</a> failed.
+    --> The logical values are not equal.
+    
+    Actual logical:
+           0
+    Expected logical:
+           1
+
+    ------------------
+    Stack Information:
+    ------------------
+    In <a href="matlab:opentoline('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Tests/Developers_only/automatic_tests/ut_meanMC_CLT.m',76,1)">/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Tests/Developers_only/automatic_tests/ut_meanMC_CLT.m (ut_meanMC_CLT.meanMC_CLTOfnonRandomInput) at 76</a>
+================================================================================
+.
+================================================================================
+<strong>Error occurred in ut_meanMC_CLT/meanMC_CLTOfWorkouts and it did not run to completion.</strong>
+
+    ---------
+    Error ID:
+    ---------
+    'MATLAB:UndefinedFunction'
+
+    --------------
+    Error Details:
+    --------------
+    Undefined function or variable 'Test_meanMC_CLT'.
+    Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ut_meanMC_CLT/meanMC_CLTOfWorkouts', '/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Tests/Developers_only/automatic_tests/ut_meanMC_CLT.m', 81)" style="font-weight:bold">ut_meanMC_CLT/meanMC_CLTOfWorkouts</a> (<a href="matlab: opentoline('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Tests/Developers_only/automatic_tests/ut_meanMC_CLT.m',81,0)">line 81</a>)
+            mu = Test_meanMC_CLT;
+================================================================================
+.
+Done ut_meanMC_CLT
+__________
+
+Failure Summary:
+
+     Name                                      Failed  Incomplete  Reason(s)
+    =======================================================================================
+     ut_meanMC_CLT/meanMC_CLTOfnonRandomInput    X                 Failed by verification.
+    ---------------------------------------------------------------------------------------
+     ut_meanMC_CLT/meanMC_CLTOfWorkouts          X         X       Errored.
+    
+mu = Test_meanMC_CLT;
+mu
+mu =
+   4.440211980109489
+results=run(ut_meanMC_CLT);
+Running ut_meanMC_CLT
+.....
+Done ut_meanMC_CLT
+__________
+
+results=run(ut_meanMC_CLT);
+Running ut_meanMC_CLT
+.....
+Done ut_meanMC_CLT
+__________
+
+fasttests_meanMC_CLT
+TAP version 13
+1..1
+not ok 1 - "[mu,out] = meanMC_CLT(@(n) rand(n,1).^2, 0.001)"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/meanMC_CLT.m', 1);">meanMC_CLT</a>
+    expected: mu = 0.33*** out = meanYOut with properties: Y: @(n)rand(n,1).^2 absTol: 1.0000e-03 relTol: 0 alpha: 0.0100 mu: 0.33*** stddev: 0.3006 nSample: 864130 time: 0.0983 errBd: 1.0000e-03
+    got     : mu = 0.333548002746650 out = <a href="matlab:helpPopup gail.meanYOut" style="font-weight:bold">meanYOut</a> with properties: Y: @(n)rand(n,1).^2 absTol: 1.000000000000000e-03 relTol: 0 alpha: 0.010000000000000 mu: 0.333548002746650 stddev: 0.295046612216347 nSample: 832722 time: 0.028426583000000 errBd: 9.999996853849846e-04
+time =
+   0.090464252000000
+Running ut_meanMC_CLT
+.....
+Done ut_meanMC_CLT
+__________
+
+fasttests_cubLattice_gCLASS
+TAP version 13
+1..35
+ok 1 - "w.f= @(x) prod(x,2); w.absTol=1e-5;"
+ok 2 - "w.relTol=0; w.domain = [zeros(1,2);ones(1,2)];"
+ok 3 - "w.transform = 'C1sin'; "
+ok 4 - "[q, out_param] = cubLattice_gCLASS(w);"
+ok 5 - "exactsol = 1/4;"
+not ok 6 - "check = abs(exactsol-q) < 1e-5;"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_gCLASS.m', 1);">cubLattice_gCLASS</a>
+    expected: check = logical 1 Example 2:
+    got     : 
+ok 7 - "w.f= @(x) exp(-x(:,1).^2-x(:,2).^2); w.absTol=1e-3;"
+ok 8 - "w.relTol=1e-2; w.domain = [-ones(1,2);2*ones(1,2)];"
+ok 9 - "w.transform = 'C1';"
+ok 10 - "[q, out_param] = cubLattice_gCLASS(w);"
+ok 11 - "exactsol = (sqrt(pi)/2*(erf(2)+erf(1)))^2;"
+not ok 12 - "check = abs(exactsol-q) < 1e-5;"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_gCLASS.m', 1);">cubLattice_gCLASS</a>
+    expected: check = logical 1 Example 3:
+    got     : 
+ok 13 - "w.f = @(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); w.domain = [-inf(1,1);inf(1,1)];"
+not ok 14 - "w.measure='normal'; w.absTol=1e-4; w.relTol=1e-2; w.transform=('C1sin')"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_gCLASS.m', 1);">cubLattice_gCLASS</a>
+    expected: 
+    got     : w = <a href="matlab:helpPopup struct" style="font-weight:bold">struct</a> with fields: f: @(x)exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0) absTol: 1.000000000000000e-04 relTol: 0.010000000000000 domain: [2×1 double] transform: 'C1sin' measure: 'normal'
+ok 15 - "[q, out_param] = cubLattice_gCLASS(w);"
+ok 16 - "price = normcdf(0.05)*100 - 0.5*100*exp(-0.05^2/2);"
+not ok 17 - "check = abs(price-q) < 1e-5;"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_gCLASS.m', 1);">cubLattice_gCLASS</a>
+    expected: check = logical 1 Example 4:
+    got     : 
+ok 18 - "w.f = @(x) 8*prod(x,2); w.domain = [zeros(1,5);ones(1,5)];"
+ok 19 - "w.measure='uniform'; "
+not ok 20 - "w.absTol=1e-5; w.relTol=0"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_gCLASS.m', 1);">cubLattice_gCLASS</a>
+    expected: 
+    got     : w = <a href="matlab:helpPopup struct" style="font-weight:bold">struct</a> with fields: f: @(x)8*prod(x,2) absTol: 1.000000000000000e-05 relTol: 0 domain: [2×5 double] transform: 'C1sin' measure: 'uniform'
+ok 21 - "[q, out_param] = cubLattice_gCLASS(w);"
+ok 22 - "exactsol = 1/4;"
+not ok 23 - "check = abs(exactsol-q) < 1e-5;"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_gCLASS.m', 1);">cubLattice_gCLASS</a>
+    expected: check = logical 1 Example 5:
+    got     : 
+ok 24 - "w.f= @(x) 3./(5-4*(cos(2*pi*x)));"
+not ok 25 - "w.absTol=1e-5; w.relTol=0"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_gCLASS.m', 1);">cubLattice_gCLASS</a>
+    expected: 
+    got     : w = <a href="matlab:helpPopup struct" style="font-weight:bold">struct</a> with fields: f: @(x)3./(5-4*(cos(2*pi*x))) absTol: 1.000000000000000e-05 relTol: 0 domain: [2×5 double] transform: 'C1sin' measure: 'uniform'
+ok 26 - "w.domain = [0;1]; w.transform = 'id';"
+ok 27 - "[q, out_param] = cubLattice_gCLASS(w);"
+ok 28 - "exactsol = 1;"
+not ok 29 - "check = abs(exactsol-q) < 1e-5;"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_gCLASS.m', 1);">cubLattice_gCLASS</a>
+    expected: check = logical 1 Example 6:
+    got     : 
+ok 30 - "w.f= @(x)[10*x(:,1)-5*x(:,2).^2+1*x(:,3).^3, x(:,1), x(:,2).^2]; w.domain = [zeros(1,3);2*ones(1,3)];"
+not ok 31 - "w.trueMuCV=[8,32/3]; w.absTol=1e-6"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_gCLASS.m', 1);">cubLattice_gCLASS</a>
+    expected: 
+    got     : w = <a href="matlab:helpPopup struct" style="font-weight:bold">struct</a> with fields: f: @(x)[10*x(:,1)-5*x(:,2).^2+1*x(:,3).^3,x(:,1),x(:,2).^2] absTol: 1.000000000000000e-06 relTol: 0 domain: [2×3 double] transform: 'id' measure: 'uniform' trueMuCV: [8 10.666666666666666]
+ok 32 - "w.relTol=0; w.measure = 'uniform';"
+ok 33 - "[q, out_param] = cubLattice_gCLASS(w);"
+ok 34 - "exactsol = 128/3;"
+not ok 35 - "check = abs(exactsol-q) < 1e-5;"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_gCLASS.m', 1);">cubLattice_gCLASS</a>
+    expected: check = logical 1
+    got     : 
+time =
+  43.893391837999999
+Running ut_cubLattice_gCLASS
+.......Dim   FcnIdx       Q             f_true               Err            Sample Used             Stats  
+-----------------------------------------------------------------------------------------------------
+1     1       8.41471e-01       8.41471e-01       5.90911e-08         1024             BothErrMet
+1     2       7.85398e-01       7.85398e-01       5.55366e-08         1024             BothErrMet
+1     3       3.75000e-01       3.75000e-01       2.72642e-07         1024             BothErrMet
+1     4       7.46824e-01       7.46824e-01       5.45206e-08         1024             BothErrMet
+1     5       6.32120e-01       6.32121e-01       6.82823e-08         1024             BothErrMet
+2     1       4.96751e-01       4.96751e-01       2.31029e-08         1024             BothErrMet
+2     2       7.28296e-01       7.28296e-01       1.56903e-08         1024             BothErrMet
+2     3       1.01856e-01       1.01852e-01       4.55073e-06         2048             BothErrMet
+2     4       6.88991e-01       6.88992e-01       8.03182e-07         1024             BothErrMet
+2     5       4.97439e-01       4.97440e-01       7.26484e-07         1024             BothErrMet
+3     1       6.23595e-02       6.23593e-02       1.42901e-07         2048             BothErrMet
+3     2       6.62569e-01       6.62570e-01       1.94470e-07         1024             BothErrMet
+3     3       2.16790e-02       2.17014e-02       2.24324e-05         1024             AbsErrMet
+3     4       6.20901e-01       6.20903e-01       2.02258e-06         1024             BothErrMet
+3     5       3.83052e-01       3.83055e-01       2.51384e-06         1024             BothErrMet
+4     1       -3.51761e-01       -3.51764e-01       2.98979e-06         8192             BothErrMet
+4     2       5.88679e-01       5.88680e-01       1.86723e-07         1024             BothErrMet
+4     3       3.91392e-03       3.80556e-03       1.08359e-04         1024             AbsErrMet
+4     4       5.43342e-01       5.43373e-01       3.13130e-05         1024             BothErrMet
+4     5       2.86989e-01       2.86844e-01       1.45060e-04         1024             BothErrMet
+5     1       -6.49336e-01       -6.49331e-01       4.44823e-06         16384             BothErrMet
+5     2       5.13411e-01       5.13409e-01       2.39422e-06         1024             BothErrMet
+5     3       5.18328e-04       5.67130e-04       4.88015e-05         1024             AbsErrMet
+5     4       4.64578e-01       4.64603e-01       2.53371e-05         2048             BothErrMet
+5     5       2.09830e-01       2.09952e-01       1.22740e-04         1024             BothErrMet
+6     1       -7.69515e-01       -7.69376e-01       1.38267e-04         16384             BothErrMet
+6     2       4.41474e-01       4.41474e-01       3.13658e-07         4096             BothErrMet
+6     3       6.71385e-05       7.34937e-05       6.35523e-06         1024             AbsErrMet
+6     4       3.90229e-01       3.90227e-01       1.26152e-06         4096             BothErrMet
+6     5       1.50885e-01       1.50939e-01       5.41634e-05         2048             BothErrMet
+7     1       -6.97816e-01       -6.97824e-01       7.65806e-06         32768             BothErrMet
+7     2       3.75543e-01       3.75484e-01       5.98113e-05         4096             BothErrMet
+7     3       1.09640e-05       8.42590e-06       2.53807e-06         1024             AbsErrMet
+7     4       3.23344e-01       3.23235e-01       1.09004e-04         4096             BothErrMet
+7     5       1.06938e-01       1.06978e-01       3.95054e-05         2048             BothErrMet
+8     1       -4.67046e-01       -4.67036e-01       1.01210e-05         65536             BothErrMet
+8     2       3.16545e-01       3.16602e-01       5.74586e-05         4096             BothErrMet
+8     3       8.47565e-07       8.66209e-07       1.86435e-08         1024             AbsErrMet
+8     4       2.64779e-01       2.64801e-01       2.13981e-05         4096             BothErrMet
+8     5       7.49265e-02       7.49531e-02       2.66832e-05         1024             BothErrMet
+.
+Done ut_cubLattice_gCLASS
+__________
+
+results = 
+  1×8 <a href="matlab:helpPopup matlab.unittest.TestResult" style="font-weight:bold">TestResult</a> array with properties:
+
+    Name
+    Passed
+    Failed
+    Incomplete
+    Duration
+    Details
+Totals:
+   8 Passed, 0 Failed, 0 Incomplete.
+   13.077 seconds testing time.
+Tests = matlab.unittest.TestSuite.fromClass(?ut_cubLattice_gCLASS);
+results=run(ut_cubLattice_gCLASS)
+Running ut_cubLattice_gCLASS
+.......Dim   FcnIdx       Q             f_true               Err            Sample Used             Stats  
+-----------------------------------------------------------------------------------------------------
+1     1       8.41471e-01       8.41471e-01       1.15202e-07         1024             BothErrMet
+1     2       7.85398e-01       7.85398e-01       7.98354e-08         1024             BothErrMet
+1     3       3.75000e-01       3.75000e-01       4.45708e-07         1024             BothErrMet
+1     4       7.46824e-01       7.46824e-01       1.16946e-07         1024             BothErrMet
+1     5       6.32120e-01       6.32121e-01       9.91626e-08         1024             BothErrMet
+2     1       4.96751e-01       4.96751e-01       6.26755e-07         1024             BothErrMet
+2     2       7.28296e-01       7.28296e-01       1.94884e-07         1024             BothErrMet
+2     3       1.01854e-01       1.01852e-01       1.91804e-06         2048             BothErrMet
+2     4       6.88992e-01       6.88992e-01       9.02277e-07         1024             BothErrMet
+2     5       4.97439e-01       4.97440e-01       1.18889e-06         1024             BothErrMet
+3     1       6.23592e-02       6.23593e-02       1.05420e-07         2048             BothErrMet
+3     2       6.62569e-01       6.62570e-01       6.75428e-08         1024             BothErrMet
+3     3       2.15944e-02       2.17014e-02       1.07035e-04         1024             AbsErrMet
+3     4       6.20904e-01       6.20903e-01       5.15014e-07         1024             BothErrMet
+3     5       3.83053e-01       3.83055e-01       1.93626e-06         1024             BothErrMet
+4     1       -3.51761e-01       -3.51764e-01       2.53657e-06         8192             BothErrMet
+4     2       5.88681e-01       5.88680e-01       1.20084e-06         1024             BothErrMet
+4     3       4.15136e-03       3.80556e-03       3.45806e-04         1024             AbsErrMet
+4     4       5.43387e-01       5.43373e-01       1.39980e-05         1024             BothErrMet
+4     5       2.86913e-01       2.86844e-01       6.87544e-05         1024             BothErrMet
+5     1       -6.49338e-01       -6.49331e-01       6.50802e-06         16384             BothErrMet
+5     2       5.13396e-01       5.13409e-01       1.34749e-05         1024             BothErrMet
+5     3       5.79042e-04       5.67130e-04       1.19119e-05         1024             AbsErrMet
+5     4       4.64621e-01       4.64603e-01       1.81753e-05         2048             BothErrMet
+5     5       2.09876e-01       2.09952e-01       7.66988e-05         1024             BothErrMet
+6     1       -7.69200e-01       -7.69376e-01       1.75976e-04         16384             BothErrMet
+6     2       4.41472e-01       4.41474e-01       1.28050e-06         4096             BothErrMet
+6     3       7.58537e-05       7.34937e-05       2.36001e-06         1024             AbsErrMet
+6     4       3.90226e-01       3.90227e-01       1.82540e-06         4096             BothErrMet
+6     5       1.50979e-01       1.50939e-01       3.95673e-05         2048             BothErrMet
+7     1       -6.97810e-01       -6.97824e-01       1.35358e-05         32768             BothErrMet
+7     2       3.75442e-01       3.75484e-01       4.15791e-05         4096             BothErrMet
+7     3       6.89996e-06       

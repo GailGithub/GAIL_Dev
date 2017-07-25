@@ -20,5 +20,6 @@ else
     catch
         disp('Error: Test ut_meanMC_CLT is wrongly coded. We skip it.')
         fprintf(fid,'Error: Test ut_meanMC_CLT is wrongly coded. We skip it.\n');
-    end
+    end    
+    disp(results);
 end

@@ -1,4 +1,4 @@
-% fasttests_cubLattice_g: fast tests for cubLattice_g
+% fasttests_cubLattice_g: fast tests for cubLattice_gCLASS
 
 %% CALL DOCTESTS
 tic; doctest cubLattice_gCLASS; time=toc

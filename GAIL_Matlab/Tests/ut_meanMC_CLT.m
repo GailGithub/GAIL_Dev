@@ -63,15 +63,11 @@ classdef ut_meanMC_CLT < matlab.unittest.TestCase
 %         
 %    end
 
-%     function meanMC_CLTOfWorkouts(testCase)
-% 
-%         mu = Test_meanMC_CLT;
-% 
-%       testCase.verifyTrue(mu>4.4);
-% 
-%        testCase.verifyTrue(mu<4.5);  
-% 
-%    end
+    function meanMC_CLTOfWorkouts(testCase)
+        mu = Test_meanMC_CLT;
+      testCase.verifyTrue(mu>4.4);
+       testCase.verifyTrue(mu<4.5);  
+   end
 
 
 

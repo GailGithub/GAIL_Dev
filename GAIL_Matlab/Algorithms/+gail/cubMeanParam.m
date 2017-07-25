@@ -44,7 +44,7 @@ classdef cubMeanParam < handle & matlab.mixin.CustomDisplay
    
    properties
       inflate %inflation factor for bounding the error
-      fudge % fudge factor 
+      fudge   % fudge factor 
       nInit %initial sample size
       nMax %maximum sample size
       nMu %number of integrals for solution function
@@ -59,8 +59,8 @@ classdef cubMeanParam < handle & matlab.mixin.CustomDisplay
       def_nInit = 1024 %default initial number of samples
       def_nMax = 2^24 %default maximum sample size
       def_nMu = 1 %default number of integrals
-      def_fudge = @(m) 10*2.^-(m)
-      def_inflate = 1.2;
+      def_inflate = 1.2
+      def_fudge = @(m) 10*2.^-(m);
       def_trueMuCV = [] %default true integrals for control variates
    end
    
@@ -102,10 +102,10 @@ classdef cubMeanParam < handle & matlab.mixin.CustomDisplay
             val = varargin{objInp}; %first input
             obj.nInit = val.nInit; %copy initial sample size
             obj.nMax = val.nMax; %copy maximum sample size
-            obj.fudge = val.fudge;
             obj.inflate = val.inflate; %copy inflation factor
             obj.nMu = val.nMu; %copy the number of means/integrals
             obj.trueMuCV = val.trueMuCV; %copy true means of control variates
+            obj.fudge=val.fudge;
             useDefaults = false;
          end
 
@@ -135,9 +135,9 @@ classdef cubMeanParam < handle & matlab.mixin.CustomDisplay
          f_addParamVal(p,'nInit',obj.def_nInit);
          f_addParamVal(p,'nMax',obj.def_nMax);
          f_addParamVal(p,'inflate',obj.def_inflate);
-         f_addParamVal(p,'fudge',obj.def_fudge);
          f_addParamVal(p,'nMu',obj.def_nMu);
          f_addParamVal(p,'trueMuCV',obj.def_trueMuCV);
+         f_addParamVal(p,'fudge',obj.def_fudge);
          
          if structInp
             parse(p,varargin{parseRange},varargin{structInp}) 
@@ -160,9 +160,6 @@ classdef cubMeanParam < handle & matlab.mixin.CustomDisplay
          if isfield(struct_val,'inflate')
             obj.inflate = struct_val.inflate;
          end
-         if isfield(struct_val,'fudge')
-            obj.fudge = struct_val.fudge;
-         end
          if isfield(struct_val,'nMu')         
             obj.nMu = struct_val.nMu;
          end         
@@ -170,7 +167,9 @@ classdef cubMeanParam < handle & matlab.mixin.CustomDisplay
             obj.trueMuCV = struct_val.trueMuCV;
          end
          
-         
+         if isfield(struct_val,'fudge')
+            obj.fudge = struct_val.fudge;
+         end
          
       end %of constructor
                             
@@ -187,6 +186,11 @@ classdef cubMeanParam < handle & matlab.mixin.CustomDisplay
        function set.inflate(obj,val)
          validateattributes(val, {'function_handle','numeric'}, {})
          obj.inflate = val;
+       end
+      
+       function set.fudge(obj,val)
+         validateattributes(val, {'function_handle','numeric'}, {})
+         obj.fudge = val;
       end
                              
       function set.nMu(obj,val)
@@ -225,10 +229,7 @@ classdef cubMeanParam < handle & matlab.mixin.CustomDisplay
         end
      end
      
-     
   end
-
-   
    
 end
 

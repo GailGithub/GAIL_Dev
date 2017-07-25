@@ -1,4 +1,57 @@
 function [meanf, mean_out] = cubLattice_gCLASS(varargin)
+% Example 1: 
+% >> w.f= @(x) prod(x,2); w.absTol=1e-5;
+% >> w.relTol=0; w.domain = [zeros(1,2);ones(1,2)];
+% >> w.transform = 'C1sin'; 
+% >> [q, out_param] = cubLattice_gCLASS(w);
+% >> exactsol = 1/4;
+% >> check = abs(exactsol-q) < 1e-5
+% check = 1
+%
+% Example 2: 
+% >> w.f= @(x) exp(-x(:,1).^2-x(:,2).^2); w.absTol=1e-3;
+% >> w.relTol=1e-2; w.domain = [-ones(1,2);2*ones(1,2)];
+% >> w.transform = 'C1';
+% >> [q, out_param] = cubLattice_gCLASS(w);
+% >> exactsol = (sqrt(pi)/2*(erf(2)+erf(1)))^2;
+% >> check = abs(exactsol-q) < 1e-3;
+% check = 1 
+%
+% Example 3: 
+% >> w.f = @(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); w.domain = [-inf(1,1);inf(1,1)];
+% >> w.measure='normal'; w.absTol=1e-4; w.relTol=1e-2;
+% w.transform=('C1sin');
+% >> [q, out_param] = cubLattice_gCLASS(w);
+% >> price = normcdf(0.05)*100 - 0.5*100*exp(-0.05^2/2);
+% >> check = abs(price-q) < 1e-4;
+% check = 1
+%
+% Example 4: 
+% >> w.f = @(x) 8*prod(x,2); w.domain = [zeros(1,5);ones(1,5)];
+% >> w.measure='uniform'; 
+% >> w.absTol=1e-5; w.relTol=0;
+% >> [q, out_param] = cubLattice_gCLASS(w);
+% >> exactsol = 1/4;
+% >> check = abs(exactsol-q) < 1e-5;
+% check = 1
+%
+% Example 5: 
+% >> w.f= @(x) 3./(5-4*(cos(2*pi*x)));
+% >> w.absTol=1e-5; w.relTol=0;
+% >> w.domain = [0;1]; w.transform = 'id';
+% >> [q, out_param] = cubLattice_gCLASS(w);
+% >> exactsol = 1;
+% >> check = abs(exactsol-q) < 1e-5;
+% check = 1
+%
+% Example 6: 
+% >> w.f= @(x)[10*x(:,1)-5*x(:,2).^2+1*x(:,3).^3, x(:,1), x(:,2).^2]; w.domain = [zeros(1,3);2*ones(1,3)];
+% >> w.trueMuCV=[8,32/3]; w.absTol=1e-6;
+% >> w.relTol=0; w.measure = 'uniform';
+% >> [q, out_param] = cubLattice_gCLASS(w);
+% >> exactsol = 128/3;
+% >> check = abs(exactsol-q) < 1e-6;
+% check = 1
 
 t_start = tic;
 %% Initial important cone factors and Check-initialize parameters
@@ -7,48 +60,6 @@ r_lag = 4; %distance between coefficients summed and those computed
 mean_inp = gail.cubLatticeParam(varargin{:}); %parse the input and check it for errors
 mean_inp.fun.nMax = min(mean_inp.fun.nMax,2^24);
 mean_out = gail.cubLatticeOut(mean_inp); %create the output class
-% % disp('hi');
-%------------------------------------------------------------------------------
-% % TRANSFORMATION
-% % changing the integrand and the mean_out.fun.domain when measure is uniform ball or
-% % sphere by applying the appropriate transformation
-% if strcmpi(mean_out.measure,'uniform ball') || strcmpi(mean_out.measure,'uniform sphere')% using uniformly distributed samples on a ball or sphere
-%     if strcmp(mean_out.measure,'uniform sphere') && mean_out.transf == 1 %box-to-sphere transformation
-%         mean_out.fun.d = mean_out.fun.d + 1; % changing mean_out.fun.d to the dimension of the sphere
-%         mean_out.shiftVal = [mean_out.shiftVal rand];
-%     end
-%     
-%     if strcmpi(mean_out.measure,'uniform ball')% using the formula of the volume of a ball
-%         volume = ((2.0*pi^(mean_out.fun.d/2.0))/(mean_out.fun.d*gamma(mean_out.fun.d/2.0)))*mean_out.radius^mean_out.fun.d; %volume of a d-dimentional ball
-%     else % using the formula of the volume of a sphere
-%         volume = ((2.0*pi^(mean_out.fun.d/2.0))/(gamma(mean_out.fun.d/2.0)))*mean_out.radius^(mean_out.fun.d - 1); %volume of a d-dimentional sphere
-%     end
-%     
-%     if mean_out.transf == 1 % box-to-ball or box-to-sphere transformation should be used
-%         if mean_out.fun.d == 1 % It is not necessary to multiply the function f by the volume, since no transformation is being made
-%             mean_out.fun.domain = [mean_out.fun.domain - mean_out.radius; mean_out.fun.domain + mean_out.radius];% for one dimension, the ball is actually an interval
-%             mean_out.measure = 'uniform';% then a uniform distribution on a box can be used
-%         else
-%             if strcmpi(mean_out.measure,'uniform ball') % box-to-ball transformation
-%                 f = @(t) f(gail.domain_balls_spheres.ball_psi_1(t, mean_out.fun.d, mean_out.radius, mean_out.fun.domain))*volume;% the psi function is the transformation
-%             else %  % box-to-sphere transformation
-%                 f = @(t) f(gail.domain_balls_spheres.sphere_psi_1(t, mean_out.fun.d, mean_out.radius, mean_out.fun.domain))*volume;% the psi function is the transformation
-%                 mean_out.fun.d = mean_out.fun.d - 1;% the box-to-sphere transformation takes points from a (d-1)-dimensional box to a d-dimensional sphere
-%                 mean_out.shiftVal = mean_out.shiftVal(1:end-1);
-%             end
-%             mean_out.fun.domain = [zeros(1, mean_out.fun.d); ones(1, mean_out.fun.d)];% the mean_out.fun.domain must be the domain of the transformation, which is a unit box
-%             mean_out.measure = 'uniform';% then a uniform distribution on a box can be used
-%         end
-%     else % normal-to-ball or normal-to-sphere transformation should be used
-%         if strcmpi(mean_out.measure,'uniform ball') % normal-to-ball transformation
-%             f = @(t) f(gail.domain_balls_spheres.ball_psi_2(t, mean_out.fun.d, mean_out.radius, mean_out.fun.domain))*volume;% the psi function is the transformation
-%         else % normal-to-sphere transformation
-%             f = @(t) f(gail.domain_balls_spheres.sphere_psi_2(t, mean_out.fun.d, mean_out.radius, mean_out.fun.domain))*volume;% the psi function is the transformation
-%         end
-%         mean_out.fun.domain = bsxfun(@plus, zeros(2, mean_out.fun.d), [-inf; inf]);% the mean_out.fun.domain must be the domain of the transformation, which is a this unit box
-%         mean_out.measure = 'normal';% then a normal distribution can be used
-%     end
-% end
 
 %------------------------------------------------------------------------------
 % Minimum gathering of points
@@ -64,23 +75,6 @@ if mean_out.CM.nCV  % if using control variates(f is structure), redefine f
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% ALREADY INCLUDED 
-% if strcmp(mean_out.measure,'normal')
-%     f=@(x) f(gail.stdnorminv(x));
-% elseif strcmp(mean_out.measure,'uniform')
-%     Cnorm = prod(mean_out.fun.domain(2,:)-mean_out.fun.domain(1,:));
-%     f=@(x) Cnorm*f(bsxfun(@plus,mean_out.fun.domain(1,:),bsxfun(@times,(mean_out.fun.domain(2,:)-mean_out.fun.domain(1,:)),x))); % a + (b-a)x = u
-% end
-
-% if strcmp(mean_out.periodTransform,'Baker')
-%     f=@(x) f(1-2*abs(x-1/2)); % Baker's transform
-% elseif strcmp(mean_out.periodTransform,'C0')
-%     f=@(x) f(3*x.^2-2*x.^3).*prod(6*x.*(1-x),2); % C^0 transform
-% elseif strcmp(mean_out.periodTransform,'C1')
-%     f=@(x) f(x.^3.*(10-15*x+6*x.^2)).*prod(30*x.^2.*(1-x).^2,2); % C^1 transform
-% elseif strcmp(mean_out.periodTransform,'C1sin')
-%     f=@(x) f(x-sin(2*pi*x)/(2*pi)).*prod(1-cos(2*pi*x),2); % Sidi C^1 transform
-% end
 
 %% Main algorithm - Preallocation
 Stilde=zeros(mean_out.mmax-mean_out.mmin+1,1); %initialize sum of DFT terms
@@ -204,6 +198,7 @@ end
 nllstart=int64(2^(mean_out.mmin-r_lag-1));
 Stilde(1)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
 mean_out.errBd=mean_out.CM.fudge(mean_out.mmin)*Stilde(1);
+
 errest(1)=mean_out.errBd;
 
 % Necessary conditions
