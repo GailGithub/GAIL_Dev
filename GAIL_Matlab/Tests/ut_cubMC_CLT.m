@@ -50,6 +50,8 @@ classdef ut_cubMC_CLT < matlab.unittest.TestCase
          testCase.verifyTrue(out_param.fun.d==2);
       end
       
+      
+      
       function cubLattice_gOfwarning(testCase)
          testCase.verifyWarning(@()cubLattice_g,'GAIL:cubLattice_g:fdnotgiven');
       end
@@ -57,35 +59,7 @@ classdef ut_cubMC_CLT < matlab.unittest.TestCase
       function cubLattice_gOdwarning(testCase)
          testCase.verifyWarning(@()cubLattice_g(@(x)x.^2,1.5),'GAIL:cubLattice_g:hyperbox_error1');
       end
-      
-      function cubLattice_gNormal(testCase)
-         format compact
-         w.f = @(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2;
-         w.measure='normal';
-         w.absTol=1e-2;
-         w.relTol=1e-2;
-         w.shift=2^(-25)*ones(1,3);
-         w.domain = [-inf(1,3);inf(1,3)];
-         count = 0;
-         for i=1:100
-            [q,out_param] = cubMC_CLT(w);
-            exactsol = 1; check = abs(exactsol-q) < gail.tolfun(1e-2,1e-2,1,exactsol,'max');
-            if check==0 || isfinite(q) ==0 %|| out_param.exitflag > 0,
-               i, exactsol, q, exitflag = out_param.exitflag,
-               abserr = abs(exactsol-q), tol = gail.tolfun(1e-3,1e-3,1,exactsol,'max'), n = out_param.nSample;
-               shift = out_param.shiftVal, lattice = mod(bsxfun(@plus, gail.lattice_gen(1,2^24,3), shift),1);
-               max_lattice = max(max(lattice))
-               max_C1sin = max(max(lattice-sin(2*pi*lattice)/(2*pi))),
-               max_after_normtransform = max(max(gail.stdnorminv(lattice-sin(2*pi*lattice)/(2*pi))))%, min(min(gail.stdnorminv(lattice-sin(2*pi*lattice)/(2*pi))))
-               disp('-----');
-               count = count + 1;
-               %keyboard
-               clear lattice
-            end;
-         end;
-         testCase.verifyTrue(count==0);
-      end
-      
+            
       function cubLattice_Workouts(testCase)
          [ut_abserr,ut_relerr,abstol,reltol] = Test_cubLattice_g;
          verifyabserr = ut_abserr<=abstol;

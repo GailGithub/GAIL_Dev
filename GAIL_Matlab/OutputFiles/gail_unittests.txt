@@ -1,0 +1,10 @@
+ut_meanMC_CLT/meanMC_CLTOfexp
+ut_meanMC_CLT/meanMC_CLTOfxsquare
+ut_meanMC_CLT/meanMC_CLTOfsin
+ut_meanMC_CLT/meanMC_CLTOfparsing
+Error: Test ut_cubMC_CLT is wrongly coded. We skip it.
+ut_cubLattice_gCLASS/cubLattice_gOfxsquare
+ut_cubLattice_gCLASS/cubLattice_gOfexp
+ut_cubLattice_gCLASS/cubLattice_gOfsin
+ut_cubLattice_gCLASS/cubLattice_gOfmultierrfun
+ut_cubLattice_gCLASS/cubLattice_gNormal

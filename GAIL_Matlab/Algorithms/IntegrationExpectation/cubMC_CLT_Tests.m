@@ -34,3 +34,20 @@
 % >> w.relTol=0; w.measure = 'uniform';
 % >> [q, out_param] = cubMC_CLT(w);
 % exactsol = 128/3;
+% 
+% % % Example 6: 
+% w.f = @(x) (x.^(-1/3.).^2);
+% w.domain=[zeros(1,1); ones(1,1)];
+% w.absTol = 1e-2; w.relTol=0;
+% [q, out_param] = cubMC_CLT(w);
+% exactsol=3;
+% 
+% % % Example 7:
+% w.f= @(x) 1-(2*abs(x-0.5));
+% w.domain=[zeros(1,1); ones(1,1)];
+% w.absTol = 1e-3; w.relTol=0;
+% [q, out_param] = cubMC_CLT(w);
+% exactsol = 0.5;
+
+
+

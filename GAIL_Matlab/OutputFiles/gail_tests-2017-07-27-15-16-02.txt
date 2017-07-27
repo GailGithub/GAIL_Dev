@@ -1,0 +1,2553 @@
+TAP version 13
+1..3
+ok 1 - "q = integral_g(@(x) x.^2)"
+ok 2 - "f = @(x) exp(-x.^2); q = integral_g(f,'a',1,'b',2,'nlo',100,'nhi',10000,'abstol',1e-5,'nmax',1e7)"
+ok 3 - "q = integral_g()"
+
+time =
+
+    0.8534
+
+TAP version 13
+1..19
+ok 1 - "f = @(x) exp(-(x-1).^2); q = integral_g(f,'a',1,'b',2,'nlo',100,'nhi',10000,'abstol',1e-5,'nmax',1e7)"
+ok 2 - "f = @(x) exp(-x.^2); q = integral_g(f,'abstol',1e-5,'nhi',52,'nmax',1e7)"
+ok 3 - "f = @(x) exp(-x.^2); q = integral_g(f,'a',1,'b',2,'abstol',1e-5,'nhi',52,'nmax',1e7)"
+ok 4 - "f = @(x) exp(-x.^2); q = integral_g(f,'a',0,'b',2,'abstol',1e-5,'nhi',52,'nmax',1e7)"
+ok 5 - "f = @(x) exp(-x.^2); q = integral_g(f,'a',0,'b',2,'nlo',100,'nhi',10000,'abstol',1e-5,'nmax',1e7)"
+ok 6 - "f = @(x) exp(-x.^2); q = integral_g(f,'a',0,'b',3,'nlo',100,'nhi',10000,'abstol',1e-5,'nmax',1e7)"
+ok 7 - "f = @(x) exp(-x.^2); q = integral_g(f,'a',-1,'b',3,'nlo',100,'nhi',10000,'abstol',1e-5,'nmax',1e7)"
+ok 8 - "f = @(x) exp(-x.^2); q = integral_g(f,'a',-4.5,'b',1.5,'nlo',100,'nhi',10000,'abstol',1e-5,'nmax',1e7)"
+ok 9 - "q = integral_g(@(x)x.^2,'a',1)"
+ok 10 - "q = integral_g(@(x)x.^2,'a',0,'b',Inf)"
+ok 11 - "q = integral_g(@(x)x.^2,'a',Inf)"
+ok 12 - "q = integral_g(@(x)x.^2,'a',NaN)"
+ok 13 - "q = integral_g(@(x)x.^2,'a',0,'b',NaN)"
+ok 14 - "q = integral_g(@(x)x.^2,'a',1,'b',0)"
+ok 15 - "q = integral_g(@(x)x.^2,'a',0,'b',2,'nlo',10,'nhi',100)"
+ok 16 - " inparam.a=0; inparam.b=3; inparam.abstol=1e-13; q=integral_g(@(x) exp(2*x),inparam)"
+ok 17 - "q = integral_g(@(x) x.^2,'a',-1,'b',1)"
+not ok 18 - "[~,out_param]=integral_g(@(x) x.^2) "
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Tests/dt_integral_g.m', 1);">dt_integral_g</a>
+    expected: out_param = f: @(x)x.^2 a: 0 b: 1 abstol: 1.0000e-06 nlo: 10 nhi: 1000 nmax: 10000000 ninit: 100 tau: 197 exceedbudget: 0 conechange: 0 npoints: 793 errest: 6.8139e-07 VarfpCI: [1.9975 3.4193]
+    got     : out_param = <a href="matlab:helpPopup struct" style="font-weight:bold">struct</a> with fields: f: @(x)x.^2 a: 0 b: 1 abstol: 1.0000e-06 nlo: 10 nhi: 1000 nmax: 10000000 ninit: 100 tau: 197 exceedbudget: 0 conechange: 0 npoints: 793 errest: 6.8139e-07 VarfpCI: [1.9975 3.4193]
+not ok 19 - "f = @(x) exp(-x.^2); [~, out_param] = integral_g(f,'a',1,'b',2,'nlo',100,'nhi',10000,'abstol',1e-5,'nmax',1e7)"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Tests/dt_integral_g.m', 1);">dt_integral_g</a>
+    expected: out_param = f: @(x)exp(-x.^2) a: 1 b: 2 abstol: 1.0000e-05 nlo: 100 nhi: 10000 nmax: 10000000 ninit: 1000 tau: 1997 exceedbudget: 0 conechange: 0 npoints: 1999 errest: 6.2148e-08 VarfpCI: [0.6622 1.9848]
+    got     : out_param = <a href="matlab:helpPopup struct" style="font-weight:bold">struct</a> with fields: f: @(x)exp(-x.^2) a: 1 b: 2 abstol: 1.0000e-05 nlo: 100 nhi: 10000 nmax: 10000000 ninit: 1000 tau: 1997 exceedbudget: 0 conechange: 0 npoints: 1999 errest: 6.2148e-08 VarfpCI: [0.6622 1.9848]
+
+time =
+
+    0.6438
+
+Running ut_integral_g
+........
+Done ut_integral_g
+__________
+
+
+results = 
+
+  1×8 <a href="matlab:helpPopup matlab.unittest.TestResult" style="font-weight:bold">TestResult</a> array with properties:
+
+    Name
+    Passed
+    Failed
+    Incomplete
+    Duration
+    Details
+
+Totals:
+   8 Passed, 0 Failed, 0 Incomplete.
+   0.3011 seconds testing time.
+
+TAP version 13
+1..7
+ok 1 - "f = @(x) x.^2;"
+ok 2 - "[~, out_param] = funappx_g(f,-2,2,1e-7,18)"
+ok 3 - "f = @(x) x.^2;"
+ok 4 - "[~, out_param] = funappx_g(f,'a',-2,'b',2,'ninit',17)"
+ok 5 - "in_param.a = -5; in_param.b = 5; f = @(x) x.^2;"
+ok 6 - "in_param.abstol = 10^(-6); in_param.ninit=18;"
+ok 7 - "[~, out_param] = funappx_g(f,in_param)"
+
+time =
+
+    0.9140
+
+TAP version 13
+1..11
+ok 1 - "funappx_g"
+ok 2 - "clear in_param; in_param.a = -5; in_param.b =5; in_param.abstol = 10^(-7); "
+ok 3 - "[~, out_param] = funappx_g(@(x) x.^2, in_param)"
+ok 4 - "clear in_param; f = @(x) sin(x); in_param.a = -1; in_param.b = 1; "
+ok 5 - "in_param.abstol = 10^(-8); in_param.ninit = 20; "
+ok 6 - "[~, out_param] = funappx_g(f, in_param)"
+ok 7 - "[~, out_param] = funappx_g(@(x) x.^3,'a',-2,'b',2,'abstol',1e-7,'ninit',41)"
+ok 8 - "[~, out_param] = funappx_g(@(x) exp(-100*(x-0.7).^2),'a',0,'b',1,'ninit',28)"
+ok 9 - "[~, out_param] = funappx_g(@(x) x.^2,'memorytest',1,'output_x',1);"
+ok 10 - "out_param.bytes <= 280674"
+ok 11 - "length(out_param.x) == out_param.npoints"
+
+time =
+
+    0.3588
+
+Running ut_funappx_g
+..........
+.......
+Done ut_funappx_g
+__________
+
+
+results = 
+
+  1×17 <a href="matlab:helpPopup matlab.unittest.TestResult" style="font-weight:bold">TestResult</a> array with properties:
+
+    Name
+    Passed
+    Failed
+    Incomplete
+    Duration
+    Details
+
+Totals:
+   17 Passed, 0 Failed, 0 Incomplete.
+   1.1936 seconds testing time.
+
+TAP version 13
+1..11
+ok 1 - "f=@(x) exp(0.01*(x-0.5).^2); [fmin,out_param] = funmin_g(f)"
+ok 2 - "f = @(x) exp(0.01*(x-0.5).^2);"
+ok 3 - "[fmin,out_param] = funmin_g(f,-2,2,1e-7,10,1000000)"
+ok 4 - "f=@(x) exp(0.01*(x-0.5).^2);"
+ok 5 - "in_param.a = -13; in_param.b = 8;"
+ok 6 - "in_param.abstol = 10^(-7);"
+ok 7 - "in_param.ninit = 100;"
+ok 8 - "in_param.nmax = 10^6;"
+ok 9 - "[fmin,out_param] = funmin_g(f,in_param)"
+ok 10 - "f=@(x) exp(0.01*(x-0.5).^2);"
+ok 11 - "[fmin,out_param] = funmin_g(f,'a',-2,'b',2,'ninit',64,'nmax',1e6,'abstol',1e-5)"
+
+time =
+
+    0.1320
+
+Running ut_funmin_g
+........
+Done ut_funmin_g
+__________
+
+
+results = 
+
+  1×8 <a href="matlab:helpPopup matlab.unittest.TestResult" style="font-weight:bold">TestResult</a> array with properties:
+
+    Name
+    Passed
+    Failed
+    Incomplete
+    Duration
+    Details
+
+Totals:
+   8 Passed, 0 Failed, 0 Incomplete.
+   0.66137 seconds testing time.
+
+Running ut_funmin_g_end
+..
+Done ut_funmin_g_end
+__________
+
+
+results = 
+
+  1×2 <a href="matlab:helpPopup matlab.unittest.TestResult" style="font-weight:bold">TestResult</a> array with properties:
+
+    Name
+    Passed
+    Failed
+    Incomplete
+    Duration
+    Details
+
+Totals:
+   2 Passed, 0 Failed, 0 Incomplete.
+   0.034442 seconds testing time.
+
+TAP version 13
+1..10
+ok 1 - "meanMC_g"
+ok 2 - "in_param.reltol=0; in_param.abstol = 1e-3;"
+ok 3 - "in_param.alpha = 0.05; Yrand=@(n) rand(n,1).^2;"
+ok 4 - "tmu=meanMC_g(Yrand,in_param);exactsol = 1/3;"
+not ok 5 - "check = abs(exactsol-tmu) < 1e-3"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/meanMC_g.m', 1);">meanMC_g</a>
+    expected: check = 1
+    got     : check = <a href="matlab:helpPopup logical" style="font-weight:bold">logical</a> 1
+ok 6 - "tmu=meanMC_g(@(n)exp(rand(n,1)),1e-3,0);exactsol=exp(1)-1;"
+not ok 7 - "check = abs(exactsol-tmu) < 1e-3"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/meanMC_g.m', 1);">meanMC_g</a>
+    expected: check = 1
+    got     : check = <a href="matlab:helpPopup logical" style="font-weight:bold">logical</a> 1
+ok 8 - "tmu=meanMC_g(@(n)cos(rand(n,1)),'reltol',1e-3,'abstol',1e-4,'alpha',0.01);"
+ok 9 - "exactsol = sin(1);"
+not ok 10 - "check = abs(exactsol-tmu) < max(1e-3,1e-2*abs(exactsol))"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/meanMC_g.m', 1);">meanMC_g</a>
+    expected: check = 1
+    got     : check = <a href="matlab:helpPopup logical" style="font-weight:bold">logical</a> 1
+
+time =
+
+    0.0463
+
+Running ut_meanMC_g
+......
+Done ut_meanMC_g
+__________
+
+
+results = 
+
+  1×6 <a href="matlab:helpPopup matlab.unittest.TestResult" style="font-weight:bold">TestResult</a> array with properties:
+
+    Name
+    Passed
+    Failed
+    Incomplete
+    Duration
+    Details
+
+Totals:
+   6 Passed, 0 Failed, 0 Incomplete.
+   1.4132 seconds testing time.
+
+TAP version 13
+1..1
+not ok 1 - "[mu,out] = meanMC_CLT(@(n) rand(n,1).^2, 0.001)"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/meanMC_CLT.m', 1);">meanMC_CLT</a>
+    expected: mu = 0.33*** out = meanYOut with properties: Y: @(n)rand(n,1).^2 absTol: 1.0000e-03 relTol: 0 alpha: 0.0100 mu: 0.33*** stddev: 0.3006 nSample: 864130 time: 0.0983 errBd: 1.0000e-03 _Author: Yueyi Li_
+    got     : ??? Undefined function or variable 'out'.
+
+time =
+
+    0.0365
+
+Running ut_meanMC_CLT
+
+================================================================================
+<strong>Error occurred in ut_meanMC_CLT/meanMC_CLTOfexp and it did not run to completion.</strong>
+
+    ---------
+    Error ID:
+    ---------
+    'MATLAB:UndefinedFunction'
+
+    --------------
+    Error Details:
+    --------------
+    Undefined function or variable 'out'.
+    
+    Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('meanMC_CLT', '/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/meanMC_CLT.m', 151)" style="font-weight:bold">meanMC_CLT</a> (<a href="matlab: opentoline('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/meanMC_CLT.m',151,0)">line 151</a>)
+    Yrand=out.Y; %the random number generator
+    
+    Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ut_meanMC_CLT/meanMC_CLTOfexp', '/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Tests/ut_meanMC_CLT.m', 10)" style="font-weight:bold">ut_meanMC_CLT/meanMC_CLTOfexp</a> (<a href="matlab: opentoline('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Tests/ut_meanMC_CLT.m',10,0)">line 10</a>)
+          meanY = meanMC_CLT(@(n) exp(rand(n,1)),in_param.abstol,in_param.reltol);
+================================================================================
+.
+================================================================================
+<strong>Error occurred in ut_meanMC_CLT/meanMC_CLTOfxsquare and it did not run to completion.</strong>
+
+    ---------
+    Error ID:
+    ---------
+    'MATLAB:UndefinedFunction'
+
+    --------------
+    Error Details:
+    --------------
+    Undefined function or variable 'out'.
+    
+    Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('meanMC_CLT', '/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/meanMC_CLT.m', 151)" style="font-weight:bold">meanMC_CLT</a> (<a href="matlab: opentoline('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/meanMC_CLT.m',151,0)">line 151</a>)
+    Yrand=out.Y; %the random number generator
+    
+    Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ut_meanMC_CLT/meanMC_CLTOfxsquare', '/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Tests/ut_meanMC_CLT.m', 19)" style="font-weight:bold">ut_meanMC_CLT/meanMC_CLTOfxsquare</a> (<a href="matlab: opentoline('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Tests/ut_meanMC_CLT.m',19,0)">line 19</a>)
+          meanY = meanMC_CLT(@(n) rand(n,1).^2,in_param.abstol,in_param.reltol);
+================================================================================
+.
+================================================================================
+<strong>Error occurred in ut_meanMC_CLT/meanMC_CLTOfsin and it did not run to completion.</strong>
+
+    ---------
+    Error ID:
+    ---------
+    'MATLAB:UndefinedFunction'
+
+    --------------
+    Error Details:
+    --------------
+    Undefined function or variable 'out'.
+    
+    Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('meanMC_CLT', '/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/meanMC_CLT.m', 151)" style="font-weight:bold">meanMC_CLT</a> (<a href="matlab: opentoline('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/meanMC_CLT.m',151,0)">line 151</a>)
+    Yrand=out.Y; %the random number generator
+    
+    Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ut_meanMC_CLT/meanMC_CLTOfsin', '/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Tests/ut_meanMC_CLT.m', 28)" style="font-weight:bold">ut_meanMC_CLT/meanMC_CLTOfsin</a> (<a href="matlab: opentoline('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Tests/ut_meanMC_CLT.m',28,0)">line 28</a>)
+          meanY = meanMC_CLT(@(n) sin(rand(n,1)),in_param.abstol,in_param.reltol);
+================================================================================
+.
+================================================================================
+<strong>Verification failed in ut_meanMC_CLT/meanMC_CLTOfparsing.</strong>
+
+    ---------------------
+    Framework Diagnostic:
+    ---------------------
+    <a href="matlab:helpPopup matlab.unittest.TestCase.verifyEqual" style="font-weight:bold">verifyEqual</a> failed.
+    --> The character arrays are not equal.
+    
+    Actual char:
+        MATLAB:UndefinedFunction
+    Expected char:
+        MATLAB:expectedNonnegative
+
+    ------------------
+    Stack Information:
+    ------------------
+    In <a href="matlab:opentoline('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Tests/ut_meanMC_CLT.m',42,1)">/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Tests/ut_meanMC_CLT.m (ut_meanMC_CLT.meanMC_CLTOfparsing) at 42</a>
+================================================================================
+..
+Done ut_meanMC_CLT
+__________
+
+Failure Summary:
+
+     Name                               Failed  Incomplete  Reason(s)
+    ================================================================================
+     ut_meanMC_CLT/meanMC_CLTOfexp        X         X       Errored.
+    --------------------------------------------------------------------------------
+     ut_meanMC_CLT/meanMC_CLTOfxsquare    X         X       Errored.
+    --------------------------------------------------------------------------------
+     ut_meanMC_CLT/meanMC_CLTOfsin        X         X       Errored.
+    --------------------------------------------------------------------------------
+     ut_meanMC_CLT/meanMC_CLTOfparsing    X                 Failed by verification.
+    
+  1×5 <a href="matlab:helpPopup matlab.unittest.TestResult" style="font-weight:bold">TestResult</a> array with properties:
+
+    Name
+    Passed
+    Failed
+    Incomplete
+    Duration
+    Details
+
+Totals:
+   1 Passed, 4 Failed, 3 Incomplete.
+   1.9694 seconds testing time.
+
+TAP version 13
+1..0
+
+time =
+
+    0.4560
+
+Error: Test ut_cubMC_CLT is wrongly coded. We skip it.
+  1×5 <a href="matlab:helpPopup matlab.unittest.TestResult" style="font-weight:bold">TestResult</a> array with properties:
+
+    Name
+    Passed
+    Failed
+    Incomplete
+    Duration
+    Details
+
+Totals:
+   1 Passed, 4 Failed, 3 Incomplete.
+   1.9694 seconds testing time.
+
+TAP version 13
+1..22
+ok 1 - "cubMC_g"
+ok 2 - "f=@(x) sin(x);interval = [1;2];"
+ok 3 - "Q = cubMC_g(f,interval,'uniform',1e-3,1e-2);"
+ok 4 - "exactsol = 0.9564;"
+not ok 5 - "check = abs(exactsol-Q) < max(1e-3,1e-2*abs(exactsol))"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubMC_g.m', 1);">cubMC_g</a>
+    expected: check = 1
+    got     : check = <a href="matlab:helpPopup logical" style="font-weight:bold">logical</a> 1
+ok 6 - "f=@(x) exp(-x(:,1).^2-x(:,2).^2);hyperbox = [0 0;1 1];"
+ok 7 - "Q = cubMC_g(f,hyperbox,'uniform',1e-3,0);"
+ok 8 - "exactsol = 0.5577;"
+not ok 9 - "check = abs(exactsol-Q) < 1e-3"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubMC_g.m', 1);">cubMC_g</a>
+    expected: check = 1
+    got     : check = <a href="matlab:helpPopup logical" style="font-weight:bold">logical</a> 1
+ok 10 - "d=3;f=@(x) 2^d*prod(x,2)+0.555;hyperbox =[zeros(1,d);ones(1,d)];"
+ok 11 - "in_param.abstol = 1e-3;in_param.reltol=1e-3;"
+ok 12 - "Q = cubMC_g(f,hyperbox,in_param);"
+ok 13 - "exactsol = 1.555;"
+not ok 14 - "check = abs(exactsol-Q) < max(1e-3,1e-3*abs(exactsol))"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubMC_g.m', 1);">cubMC_g</a>
+    expected: check = 1
+    got     : check = <a href="matlab:helpPopup logical" style="font-weight:bold">logical</a> 1
+ok 15 - "f=@(x) exp(-x(:,1).^2-x(:,2).^2);hyperbox = [-inf -inf;inf inf];"
+ok 16 - "Q = cubMC_g(f,hyperbox,'normal',0,1e-2);"
+ok 17 - "exactsol = 1/3;"
+not ok 18 - "check = abs(exactsol-Q) < max(0,1e-2*abs(exactsol))"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubMC_g.m', 1);">cubMC_g</a>
+    expected: check = 1
+    got     : check = <a href="matlab:helpPopup logical" style="font-weight:bold">logical</a> 1
+ok 19 - "f=@(x) x(:,1).^2+x(:,2).^2;hyperbox = [0,0,1];"
+ok 20 - "Q = cubMC_g(f,hyperbox,'uniform ball','abstol',1e-3,'reltol',1e-3);"
+ok 21 - "exactsol = pi/2;"
+not ok 22 - "check = abs(exactsol-Q) < max(1e-3,1e-3*abs(exactsol))"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubMC_g.m', 1);">cubMC_g</a>
+    expected: check = 1
+    got     : check = <a href="matlab:helpPopup logical" style="font-weight:bold">logical</a> 1
+
+time =
+
+    0.7797
+
+TAP version 13
+1..42
+ok 1 - "f = @(x) prod(x,2); hyperbox = [zeros(1,2);ones(1,2)];"
+not ok 2 - "q = cubLattice_g(f,hyperbox,'uniform',1e-5,0,'transform','C1sin'); exactsol = 1/4;"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_g.m', 1);">cubLattice_g</a>
+    expected: 
+    got     : hyperbox = 0 0 1 1 2 --------- 0 0 1 1 2
+not ok 3 - "check = abs(exactsol-q) < 1e-5"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_g.m', 1);">cubLattice_g</a>
+    expected: check = 1 Example 2: Estimate the integral with integrand f(x) = x1.^2.*x2.^2.*x3.^2 in the interval R^3 where x1, x2 and x3 are normally distributed:
+    got     : check = <a href="matlab:helpPopup logical" style="font-weight:bold">logical</a> 1
+ok 4 - "f = @(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2; hyperbox = [-inf(1,3);inf(1,3)];"
+not ok 5 - "q = cubLattice_g(f,hyperbox,'normal',1e-3,1e-3,'transform','C1sin','shift',2^(-25)*ones(1,3)); exactsol = 1;"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_g.m', 1);">cubLattice_g</a>
+    expected: 
+    got     : hyperbox = -Inf -Inf -Inf Inf Inf Inf 3 --------- -Inf -Inf -Inf Inf Inf Inf 3
+not ok 6 - "check = abs(exactsol-q) < max(1e-3,1e-3*abs(exactsol))"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_g.m', 1);">cubLattice_g</a>
+    expected: check = 1
+    got     : check = <a href="matlab:helpPopup logical" style="font-weight:bold">logical</a> 1
+ok 7 - "f = @(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [-ones(1,2);2*ones(1,2)];"
+not ok 8 - "q = cubLattice_g(f,hyperbox,'uniform',1e-3,1e-2,'transform','C1'); exactsol = (sqrt(pi)/2*(erf(2)+erf(1)))^2;"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_g.m', 1);">cubLattice_g</a>
+    expected: 
+    got     : hyperbox = -1 -1 2 2 2 --------- -1 -1 2 2 2
+not ok 9 - "check = abs(exactsol-q) < max(1e-3,1e-2*abs(exactsol))"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_g.m', 1);">cubLattice_g</a>
+    expected: 
+    got     : check = <a href="matlab:helpPopup logical" style="font-weight:bold">logical</a> 1
+not ok 10 - "check = 1"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_g.m', 1);">cubLattice_g</a>
+    expected: 
+    got     : check = 1
+ok 11 - "f = @(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); hyperbox = [-inf(1,1);inf(1,1)];"
+not ok 12 - "q = cubLattice_g(f,hyperbox,'normal',1e-4,1e-2,'transform','C1sin'); price = normcdf(0.05)*100 - 0.5*100*exp(-0.05^2/2);"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_g.m', 1);">cubLattice_g</a>
+    expected: 
+    got     : hyperbox = -Inf Inf 1 --------- -Inf Inf 1
+not ok 13 - "check = abs(price-q) < max(1e-4,1e-2*abs(price))"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_g.m', 1);">cubLattice_g</a>
+    expected: check = 1
+    got     : check = <a href="matlab:helpPopup logical" style="font-weight:bold">logical</a> 1
+ok 14 - "f = @(x) 8*prod(x,2); hyperbox = [zeros(1,5);ones(1,5)];"
+not ok 15 - "q = cubLattice_g(f,hyperbox,'uniform',1e-5,0); exactsol = 1/4;"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_g.m', 1);">cubLattice_g</a>
+    expected: 
+    got     : hyperbox = 0 0 0 0 0 1 1 1 1 1 5 --------- 0 0 0 0 0 1 1 1 1 1 5
+not ok 16 - "check = abs(exactsol-q) < 1e-5"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_g.m', 1);">cubLattice_g</a>
+    expected: check = 1
+    got     : check = <a href="matlab:helpPopup logical" style="font-weight:bold">logical</a> 1
+ok 17 - "f = @(x) x(:,1).^2+x(:,2).^2; hyperbox = [0,0,1];"
+not ok 18 - "q = cubLattice_g(f,hyperbox,'uniform ball','abstol',1e-4,'reltol',0); exactsol = pi/2;"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_g.m', 1);">cubLattice_g</a>
+    expected: 
+    got     : hyperbox = 0 0 1 3 --------- 0 0 2
+not ok 19 - "check = abs(exactsol-q) < 1e-4"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_g.m', 1);">cubLattice_g</a>
+    expected: check = 1 Example 8:
+    got     : check = <a href="matlab:helpPopup logical" style="font-weight:bold">logical</a> 1
+ok 20 - "w.func = @(x)[10*x(:,1)-5*x(:,2).^2+1*x(:,3).^3, x(:,1), x(:,2).^2];"
+ok 21 - "w.cv = [8,32/3]; hyperbox= [zeros(1,3);2*ones(1,3)];"
+not ok 22 - "q = cubLattice_g(w,hyperbox,'uniform',1e-6,0); exactsol=128/3;"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_g.m', 1);">cubLattice_g</a>
+    expected: 
+    got     : hyperbox = 0 0 0 2 2 2 3 --------- 0 0 0 2 2 2 3
+not ok 23 - "check = abs(exactsol-q) < 1e-4"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_g.m', 1);">cubLattice_g</a>
+    expected: check = 1 Example 9:
+    got     : check = <a href="matlab:helpPopup logical" style="font-weight:bold">logical</a> 1
+ok 24 - "f = @(x)[sin(x),cos(x)-sin(1)+1-cos(1)]; hyperbox = [0;1];"
+not ok 25 - "q = cubLattice_g(f,hyperbox,'uniform',1e-3,1e-2,'transform','C1'); exactsol=1-cos(1);"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_g.m', 1);">cubLattice_g</a>
+    expected: 
+    got     : hyperbox = 0 1 1 --------- 0 1 1
+not ok 26 - "check = abs(exactsol-q) < 1e-4"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_g.m', 1);">cubLattice_g</a>
+    expected: check = 1 Example 10:
+    got     : check = <a href="matlab:helpPopup logical" style="font-weight:bold">logical</a> 1
+not ok 27 - "w.func=@(x)[sin(x),cos(x)-sin(1)+1-cos(1) ,x-1/2,x.^2-1/3]"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_g.m', 1);">cubLattice_g</a>
+    expected: 
+    got     : w = <a href="matlab:helpPopup struct" style="font-weight:bold">struct</a> with fields: func: @(x)[sin(x),cos(x)-sin(1)+1-cos(1),x-1/2,x.^2-1/3] cv: [8 10.6667]
+ok 28 - "w.cv = [0,0]; hyperbox= [0;1];"
+not ok 29 - "q = cubLattice_g(w,hyperbox,'uniform',1e-6,0); exactsol=1-cos(1);"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_g.m', 1);">cubLattice_g</a>
+    expected: 
+    got     : hyperbox = 0 1 1 --------- 0 1 1
+not ok 30 - "check = abs(exactsol-q) < 1e-4"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_g.m', 1);">cubLattice_g</a>
+    expected: check = 1 Example 11:
+    got     : check = <a href="matlab:helpPopup logical" style="font-weight:bold">logical</a> 1
+not ok 31 - "w.func=@(x)[sin(x), x-1/2,x.^2-1/3]"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_g.m', 1);">cubLattice_g</a>
+    expected: 
+    got     : w = <a href="matlab:helpPopup struct" style="font-weight:bold">struct</a> with fields: func: @(x)[sin(x),x-1/2,x.^2-1/3] cv: [0 0]
+ok 32 - "w.cv = [0,0]; hyperbox= [0;1];"
+not ok 33 - "q = cubLattice_g(w,hyperbox,'uniform',1e-6,0); exactsol=1-cos(1);"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_g.m', 1);">cubLattice_g</a>
+    expected: 
+    got     : hyperbox = 0 1 1 --------- 0 1 1
+not ok 34 - "check = abs(exactsol-q) < 1e-4"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_g.m', 1);">cubLattice_g</a>
+    expected: check = 1 Example 12:
+    got     : check = <a href="matlab:helpPopup logical" style="font-weight:bold">logical</a> 1
+not ok 35 - "w.func=@(x)[sin(x),cos(x)-sin(1)+1-cos(1) ,x , x.^2, x.^3]"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_g.m', 1);">cubLattice_g</a>
+    expected: 
+    got     : w = <a href="matlab:helpPopup struct" style="font-weight:bold">struct</a> with fields: func: @(x)[sin(x),cos(x)-sin(1)+1-cos(1),x,x.^2,x.^3] cv: [0 0]
+ok 36 - "w.cv = [0.5, 1/3, 1/4]; hyperbox= [0;1];"
+not ok 37 - "q = cubLattice_g(w,hyperbox,'uniform',1e-6,0); exactsol=1-cos(1);"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_g.m', 1);">cubLattice_g</a>
+    expected: 
+    got     : hyperbox = 0 1 1 --------- 0 1 1
+not ok 38 - "check = abs(exactsol-q) < 1e-4"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_g.m', 1);">cubLattice_g</a>
+    expected: check = 1 Example 13:
+    got     : check = <a href="matlab:helpPopup logical" style="font-weight:bold">logical</a> 1
+not ok 39 - "w.func=@(x)[sin(x),cos(x)-sin(1)+1-cos(1), sin(2.*x)/2.*cos(x), x-1/2,x.^2-1/3]"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_g.m', 1);">cubLattice_g</a>
+    expected: 
+    got     : w = <a href="matlab:helpPopup struct" style="font-weight:bold">struct</a> with fields: func: @(x)[sin(x),cos(x)-sin(1)+1-cos(1),sin(2.*x)/2.*cos(x),x-1/2,x.^2-1/3] cv: [0.5000 0.3333 0.2500]
+ok 40 - "w.cv = [0,0]; hyperbox= [0;1];"
+not ok 41 - "q = cubLattice_g(w,hyperbox,'uniform',1e-6,0); exactsol=1-cos(1);"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_g.m', 1);">cubLattice_g</a>
+    expected: 
+    got     : hyperbox = 0 1 1 --------- 0 1 1
+not ok 42 - "check = abs(exactsol-q) < 1e-4"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_g.m', 1);">cubLattice_g</a>
+    expected: check = 1
+    got     : check = <a href="matlab:helpPopup logical" style="font-weight:bold">logical</a> 1
+
+time =
+
+    3.7638
+
+Running ut_cubLattice_g
+
+hyperbox =
+
+     0
+     1
+
+     1
+
+---------
+     0
+     1
+
+     1
+
+.
+hyperbox =
+
+     0
+     1
+
+     1
+
+---------
+     0
+     1
+
+     1
+
+.
+hyperbox =
+
+     0
+     1
+
+     1
+
+---------
+     0
+     1
+
+     1
+
+.
+hyperbox =
+
+     0     0
+     1     1
+
+     2
+
+---------
+     0     0
+     1     1
+
+     2
+
+...hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+hyperbox =
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+---------
+  -Inf  -Inf  -Inf
+   Inf   Inf   Inf
+     3
+.Dim   FcnIdx       Q             f_true               Err            Sample Used             Stats  
+-----------------------------------------------------------------------------------------------------
+hyperbox =
+     0
+     1
+     1
+---------
+     0
+     1
+     1
+1     1       8.41471e-01       8.41471e-01       1.05054e-07         1024             BothErrMet
+hyperbox =
+     0
+     1
+     1
+---------
+     0
+     1
+     1
+1     2       7.85398e-01       7.85398e-01       3.38658e-08         1024             BothErrMet
+hyperbox =
+     0
+     1
+     1
+---------
+     0
+     1
+     1
+1     3       3.75001e-01       3.75000e-01       8.56248e-07         1024             BothErrMet
+hyperbox =
+     0
+     1
+     1
+---------
+     0
+     1
+     1
+1     4       7.46824e-01       7.46824e-01       7.93717e-08         1024             BothErrMet
+hyperbox =
+     0
+     1
+     1
+---------
+     0
+     1
+     1
+1     5       6.32120e-01       6.32121e-01       1.00274e-07         1024             BothErrMet
+hyperbox =
+     0     0
+     1     1
+     2
+---------
+     0     0
+     1     1
+     2
+2     1       4.96752e-01       4.96751e-01       1.45290e-07         1024             BothErrMet
+hyperbox =
+     0     0
+     1     1
+     2
+---------
+     0     0
+     1     1
+     2
+2     2       7.28296e-01       7.28296e-01       1.02277e-07         1024             BothErrMet
+hyperbox =
+     0     0
+     1     1
+     2
+---------
+     0     0
+     1     1
+     2
+2     3       1.01854e-01       1.01852e-01       2.06897e-06         2048             BothErrMet
+hyperbox =
+     0     0
+     1     1
+     2
+---------
+     0     0
+     1     1
+     2
+2     4       6.88992e-01       6.88992e-01       5.87002e-07         1024             BothErrMet
+hyperbox =
+     0     0
+     1     1
+     2
+---------
+     0     0
+     1     1
+     2
+2     5       4.97440e-01       4.97440e-01       1.77891e-07         1024             BothErrMet
+hyperbox =
+     0     0     0
+     1     1     1
+     3
+---------
+     0     0     0
+     1     1     1
+     3
+3     1       6.23591e-02       6.23593e-02       1.81482e-07         2048             BothErrMet
+hyperbox =
+     0     0     0
+     1     1     1
+     3
+---------
+     0     0     0
+     1     1     1
+     3
+3     2       6.62570e-01       6.62570e-01       1.52779e-08         1024             BothErrMet
+hyperbox =
+     0     0     0
+     1     1     1
+     3
+---------
+     0     0     0
+     1     1     1
+     3
+3     3       2.17003e-02       2.17014e-02       1.06802e-06         1024             BothErrMet
+hyperbox =
+     0     0     0
+     1     1     1
+     3
+---------
+     0     0     0
+     1     1     1
+     3
+3     4       6.20905e-01       6.20903e-01       1.05113e-06         1024             BothErrMet
+hyperbox =
+     0     0     0
+     1     1     1
+     3
+---------
+     0     0     0
+     1     1     1
+     3
+3     5       3.83057e-01       3.83055e-01       2.91788e-06         1024             BothErrMet
+hyperbox =
+     0     0     0     0
+     1     1     1     1
+     4
+---------
+     0     0     0     0
+     1     1     1     1
+     4
+4     1       -3.51763e-01       -3.51764e-01       5.65102e-07         8192             BothErrMet
+hyperbox =
+     0     0     0     0
+     1     1     1     1
+     4
+---------
+     0     0     0     0
+     1     1     1     1
+     4
+4     2       5.88679e-01       5.88680e-01       1.10745e-06         1024             BothErrMet
+hyperbox =
+     0     0     0     0
+     1     1     1     1
+     4
+---------
+     0     0     0     0
+     1     1     1     1
+     4
+4     3       3.95299e-03       3.80556e-03       1.47430e-04         1024             AbsErrMet
+hyperbox =
+     0     0     0     0
+     1     1     1     1
+     4
+---------
+     0     0     0     0
+     1     1     1     1
+     4
+4     4       5.43398e-01       5.43373e-01       2.51065e-05         1024             BothErrMet
+hyperbox =
+     0     0     0     0
+     1     1     1     1
+     4
+---------
+     0     0     0     0
+     1     1     1     1
+     4
+4     5       2.86787e-01       2.86844e-01       5.68435e-05         1024             BothErrMet
+hyperbox =
+     0     0     0     0     0
+     1     1     1     1     1
+     5
+---------
+     0     0     0     0     0
+     1     1     1     1     1
+     5
+5     1       -6.49328e-01       -6.49331e-01       3.28224e-06         16384             BothErrMet
+hyperbox =
+     0     0     0     0     0
+     1     1     1     1     1
+     5
+---------
+     0     0     0     0     0
+     1     1     1     1     1
+     5
+5     2       5.13395e-01       5.13409e-01       1.38501e-05         1024             BothErrMet
+hyperbox =
+     0     0     0     0     0
+     1     1     1     1     1
+     5
+---------
+     0     0     0     0     0
+     1     1     1     1     1
+     5
+5     3       5.38647e-04       5.67130e-04       2.84827e-05         1024             AbsErrMet
+hyperbox =
+     0     0     0     0     0
+     1     1     1     1     1
+     5
+---------
+     0     0     0     0     0
+     1     1     1     1     1
+     5
+5     4       4.64599e-01       4.64603e-01       3.79355e-06         2048             BothErrMet
+hyperbox =
+     0     0     0     0     0
+     1     1     1     1     1
+     5
+---------
+     0     0     0     0     0
+     1     1     1     1     1
+     5
+5     5       2.09877e-01       2.09952e-01       7.55238e-05         1024             BothErrMet
+hyperbox =
+     0     0     0     0     0     0
+     1     1     1     1     1     1
+     6
+---------
+     0     0     0     0     0     0
+     1     1     1     1     1     1
+     6
+6     1       -7.69550e-01       -7.69376e-01       1.73429e-04         16384             BothErrMet
+hyperbox =
+     0     0     0     0     0     0
+     1     1     1     1     1     1
+     6
+---------
+     0     0     0     0     0     0
+     1     1     1     1     1     1
+     6
+6     2       4.41474e-01       4.41474e-01       3.69988e-07         4096             BothErrMet
+hyperbox =
+     0     0     0     0     0     0
+     1     1     1     1     1     1
+     6
+---------
+     0     0     0     0     0     0
+     1     1     1     1     1     1
+     6
+6     3       8.35597e-05       7.34937e-05       1.00660e-05         1024             AbsErrMet
+hyperbox =
+     0     0     0     0     0     0
+     1     1     1     1     1     1
+     6
+---------
+     0     0     0     0     0     0
+     1     1     1     1     1     1
+     6
+6     4       3.90224e-01       3.90227e-01       3.13368e-06         4096             BothErrMet
+hyperbox =
+     0     0     0     0     0     0
+     1     1     1     1     1     1
+     6
+---------
+     0     0     0     0     0     0
+     1     1     1     1     1     1
+     6
+6     5       1.51007e-01       1.50939e-01       6.80794e-05         2048             BothErrMet
+hyperbox =
+     0     0     0     0     0     0     0
+     1     1     1     1     1     1     1
+     7
+---------
+     0     0     0     0     0     0     0
+     1     1     1     1     1     1     1
+     7
+7     1       -6.97845e-01       -6.97824e-01       2.08034e-05         32768             BothErrMet
+hyperbox =
+     0     0     0     0     0     0     0
+     1     1     1     1     1     1     1
+     7
+---------
+     0     0     0     0     0     0     0
+     1     1     1     1     1     1     1
+     7
+7     2       3.75509e-01       3.75484e-01       2.49971e-05         4096             BothErrMet
+hyperbox =
+     0     0     0     0     0     0     0
+     1     1     1     1     1     1     1
+     7
+---------
+     0     0     0     0     0     0     0
+     1     1     1     1     1     1     1
+     7
+7     3       1.05588e-05       8.42590e-06       2.13286e-06         1024             AbsErrMet
+hyperbox =
+     0     0     0     0     0     0     0
+     1     1     1     1     1     1     1
+     7
+---------
+     0     0     0     0     0     0     0
+     1     1     1     1     1     1     1
+     7
+7     4       3.23355e-01       3.23235e-01       1.20149e-04         4096             BothErrMet
+hyperbox =
+     0     0     0     0     0     0     0
+     1     1     1     1     1     1     1
+     7
+---------
+     0     0     0     0     0     0     0
+     1     1     1     1     1     1     1
+     7
+7     5       1.07090e-01       1.06978e-01       1.11676e-04         2048             AbsErrMet
+hyperbox =
+     0     0     0     0     0     0     0     0
+     1     1     1     1     1     1     1     1
+     8
+---------
+     0     0     0     0     0     0     0     0
+     1     1     1     1     1     1     1     1
+     8
+8     1       -4.67022e-01       -4.67036e-01       1.43057e-05         65536             BothErrMet
+hyperbox =
+     0     0     0     0     0     0     0     0
+     1     1     1     1     1     1     1     1
+     8
+---------
+     0     0     0     0     0     0     0     0
+     1     1     1     1     1     1     1     1
+     8
+8     2       3.16617e-01       3.16602e-01       1.51373e-05         4096             BothErrMet
+hyperbox =
+     0     0     0     0     0     0     0     0
+     1     1     1     1     1     1     1     1
+     8
+---------
+     0     0     0     0     0     0     0     0
+     1     1     1     1     1     1     1     1
+     8
+8     3       8.93871e-07       8.66209e-07       2.76620e-08         1024             AbsErrMet
+hyperbox =
+     0     0     0     0     0     0     0     0
+     1     1     1     1     1     1     1     1
+     8
+---------
+     0     0     0     0     0     0     0     0
+     1     1     1     1     1     1     1     1
+     8
+8     4       2.64728e-01       2.64801e-01       7.25016e-05         4096             BothErrMet
+hyperbox =
+     0     0     0     0     0     0     0     0
+     1     1     1     1     1     1     1     1
+     8
+---------
+     0     0     0     0     0     0     0     0
+     1     1     1     1     1     1     1     1
+     8
+8     5       7.48759e-02       7.49531e-02       7.72287e-05         1024             AbsErrMet
+.
+Done ut_cubLattice_g
+__________
+
+results = 
+  1×8 <a href="matlab:helpPopup matlab.unittest.TestResult" style="font-weight:bold">TestResult</a> array with properties:
+
+    Name
+    Passed
+    Failed
+    Incomplete
+    Duration
+    Details
+Totals:
+   8 Passed, 0 Failed, 0 Incomplete.
+   12.0061 seconds testing time.
+TAP version 13
+1..22
+ok 1 - "f = @(x) prod(x,2); hyperbox = [zeros(1,2);ones(1,2)]; "
+ok 2 - "q = cubSobol_g(f,hyperbox,'uniform',1e-5,0); exactsol = 1/4;"
+not ok 3 - "check = abs(exactsol-q) < 1e-5"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubSobol_g.m', 1);">cubSobol_g</a>
+    expected: check = 1
+    got     : check = <a href="matlab:helpPopup logical" style="font-weight:bold">logical</a> 1
+ok 4 - "f = @(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2; hyperbox = [-inf(1,3);inf(1,3)];"
+ok 5 - "q = cubSobol_g(f,hyperbox,'normal',1e-3,1e-3); exactsol = 1;"
+not ok 6 - "check = abs(exactsol-q) < max(1e-3,1e-3*abs(exactsol))"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubSobol_g.m', 1);">cubSobol_g</a>
+    expected: check = 1
+    got     : check = <a href="matlab:helpPopup logical" style="font-weight:bold">logical</a> 1
+ok 7 - "f = @(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [-ones(1,2);2*ones(1,2)];"
+ok 8 - "q = cubSobol_g(f,hyperbox,'uniform',1e-3,1e-2); exactsol = (sqrt(pi)/2*(erf(2)+erf(1)))^2;"
+not ok 9 - "check = abs(exactsol-q) < max(1e-3,1e-2*abs(exactsol))"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubSobol_g.m', 1);">cubSobol_g</a>
+    expected: check = 1
+    got     : check = <a href="matlab:helpPopup logical" style="font-weight:bold">logical</a> 1
+ok 10 - "f = @(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); hyperbox = [-inf(1,1);inf(1,1)];"
+ok 11 - "q = cubSobol_g(f,hyperbox,'normal',1e-4,1e-2); price = normcdf(0.05)*100 - 0.5*100*exp(-0.05^2/2);"
+not ok 12 - "check = abs(price-q) < max(1e-4,1e-2*abs(price))"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubSobol_g.m', 1);">cubSobol_g</a>
+    expected: check = 1
+    got     : check = <a href="matlab:helpPopup logical" style="font-weight:bold">logical</a> 1
+ok 13 - "f = @(x) 8*prod(x,2); hyperbox = [zeros(1,5);ones(1,5)];"
+ok 14 - "q = cubSobol_g(f,hyperbox,'uniform',1e-5,0); exactsol = 1/4;"
+not ok 15 - "check = abs(exactsol-q) < 1e-5"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubSobol_g.m', 1);">cubSobol_g</a>
+    expected: check = 1
+    got     : check = <a href="matlab:helpPopup logical" style="font-weight:bold">logical</a> 1
+ok 16 - "f = @(x) x(:,1).^2+x(:,2).^2; hyperbox = [0,0,1];"
+ok 17 - "q = cubSobol_g(f,hyperbox,'uniform ball','abstol',1e-4,'reltol',0); exactsol = pi/2;"
+not ok 18 - "check = abs(exactsol-q) < 1e-4"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubSobol_g.m', 1);">cubSobol_g</a>
+    expected: check = 1
+    got     : check = <a href="matlab:helpPopup logical" style="font-weight:bold">logical</a> 1
+ok 19 - "w.func = @(x)[10*x(:,1)-5*x(:,2).^2+1*x(:,3).^3, x(:,1), x(:,2).^2];"
+ok 20 - "w.cv = [8,32/3]; hyperbox= [zeros(1,3);2*ones(1,3)];"
+ok 21 - "q = cubSobol_g(w,hyperbox,'uniform',1e-6,0); exactsol = 128/3; "
+not ok 22 - "check = abs(exactsol-q) < 1e-6"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubSobol_g.m', 1);">cubSobol_g</a>
+    expected: check = 1
+    got     : check = <a href="matlab:helpPopup logical" style="font-weight:bold">logical</a> 1
+time =
+   3.149886165000000
+Running ut_cubSobol_g
+.........Dim   FcnIdx       Q             f_true               Err            Sample Used             Stats  
+-----------------------------------------------------------------------------------------------------
+1     1       8.41471e-01       8.41471e-01       6.62185e-10         1024             BothErrMet
+1     2       7.85398e-01       7.85398e-01       1.18711e-11         1024             BothErrMet
+2     1       4.96740e-01       4.96751e-01       1.12665e-05         1024             BothErrMet
+2     2       7.28297e-01       7.28296e-01       8.68410e-07         1024             BothErrMet
+3     1       6.23731e-02       6.23593e-02       1.37554e-05         2048             BothErrMet
+3     2       6.62576e-01       6.62570e-01       6.50433e-06         1024             BothErrMet
+.
+Done ut_cubSobol_g
+__________
+
+results = 
+  1×10 <a href="matlab:helpPopup matlab.unittest.TestResult" style="font-weight:bold">TestResult</a> array with properties:
+
+    Name
+    Passed
+    Failed
+    Incomplete
+    Duration
+    Details
+Totals:
+   10 Passed, 0 Failed, 0 Incomplete.
+   1.844 seconds testing time.
+TAP version 13
+1..35
+ok 1 - "w.f= @(x) prod(x,2); w.absTol=1e-5;"
+ok 2 - "w.relTol=0; w.domain = [zeros(1,2);ones(1,2)];"
+ok 3 - "w.transform = 'C1sin'; "
+not ok 4 - "[q, out_param] = cubLattice_gCLASS(w);"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_gCLASS.m', 1);">cubLattice_gCLASS</a>
+    expected: 
+    got     : willy here 0 1 0 1 val = 1 willy here 0 0 1 1 val = 1
+ok 5 - "exactsol = 1/4;"
+not ok 6 - "check = abs(exactsol-q) < 1e-5"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_gCLASS.m', 1);">cubLattice_gCLASS</a>
+    expected: check = 1 Example 2:
+    got     : check = <a href="matlab:helpPopup logical" style="font-weight:bold">logical</a> 0
+ok 7 - "w.f= @(x) exp(-x(:,1).^2-x(:,2).^2); w.absTol=1e-3;"
+ok 8 - "w.relTol=1e-2; w.domain = [-ones(1,2);2*ones(1,2)];"
+ok 9 - "w.transform = 'C1';"
+not ok 10 - "[q, out_param] = cubLattice_gCLASS(w);"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_gCLASS.m', 1);">cubLattice_gCLASS</a>
+    expected: 
+    got     : willy here -1 2 -1 2 val = 1 willy here -1 -1 2 2 val = 1
+ok 11 - "exactsol = (sqrt(pi)/2*(erf(2)+erf(1)))^2;"
+not ok 12 - "check = abs(exactsol-q) < 1e-3;"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_gCLASS.m', 1);">cubLattice_gCLASS</a>
+    expected: check = 1 Example 3:
+    got     : 
+ok 13 - "w.f = @(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); w.domain = [-inf(1,1);inf(1,1)];"
+not ok 14 - "w.measure='normal'; w.absTol=1e-4; w.relTol=1e-2;"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_gCLASS.m', 1);">cubLattice_gCLASS</a>
+    expected: w.transform=('C1sin');
+    got     : 
+not ok 15 - "[q, out_param] = cubLattice_gCLASS(w);"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_gCLASS.m', 1);">cubLattice_gCLASS</a>
+    expected: 
+    got     : ??? Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('gail.cubParam/checkMeasure', '/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/+gail/cubParam.m', 369)" style="font-weight:bold">gail.cubParam/checkMeasure</a> (<a href="matlab: opentoline('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/+gail/cubParam.m',369,0)">line 369</a>) Assertion failed.
+ok 16 - "price = normcdf(0.05)*100 - 0.5*100*exp(-0.05^2/2);"
+not ok 17 - "check = abs(price-q) < 1e-4;"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_gCLASS.m', 1);">cubLattice_gCLASS</a>
+    expected: check = 1 Example 4:
+    got     : 
+ok 18 - "w.f = @(x) 8*prod(x,2); w.domain = [zeros(1,5);ones(1,5)];"
+ok 19 - "w.measure='uniform'; "
+ok 20 - "w.absTol=1e-5; w.relTol=0;"
+not ok 21 - "[q, out_param] = cubLattice_gCLASS(w);"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_gCLASS.m', 1);">cubLattice_gCLASS</a>
+    expected: 
+    got     : willy here 0 1 0 1 0 1 0 1 0 1 val = 1 willy here 0 0 0 0 0 1 1 1 1 1 val = 1
+ok 22 - "exactsol = 1/4;"
+not ok 23 - "check = abs(exactsol-q) < 1e-5;"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_gCLASS.m', 1);">cubLattice_gCLASS</a>
+    expected: check = 1 Example 5:
+    got     : 
+ok 24 - "w.f= @(x) 3./(5-4*(cos(2*pi*x)));"
+ok 25 - "w.absTol=1e-5; w.relTol=0;"
+ok 26 - "w.domain = [0;1]; w.transform = 'id';"
+not ok 27 - "[q, out_param] = cubLattice_gCLASS(w);"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_gCLASS.m', 1);">cubLattice_gCLASS</a>
+    expected: 
+    got     : ??? Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('gail.cubParam/checkNf', '/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/+gail/cubParam.m', 386)" style="font-weight:bold">gail.cubParam/checkNf</a> (<a href="matlab: opentoline('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/+gail/cubParam.m',386,0)">line 386</a>) Assertion failed.
+ok 28 - "exactsol = 1;"
+not ok 29 - "check = abs(exactsol-q) < 1e-5;"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_gCLASS.m', 1);">cubLattice_gCLASS</a>
+    expected: check = 1 Example 6:
+    got     : 
+ok 30 - "w.f= @(x)[10*x(:,1)-5*x(:,2).^2+1*x(:,3).^3, x(:,1), x(:,2).^2]; w.domain = [zeros(1,3);2*ones(1,3)];"
+ok 31 - "w.trueMuCV=[8,32/3]; w.absTol=1e-6;"
+ok 32 - "w.relTol=0; w.measure = 'uniform';"
+not ok 33 - "[q, out_param] = cubLattice_gCLASS(w);"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_gCLASS.m', 1);">cubLattice_gCLASS</a>
+    expected: 
+    got     : ??? Index exceeds matrix dimensions.
+ok 34 - "exactsol = 128/3;"
+not ok 35 - "check = abs(exactsol-q) < 1e-6;"
+    in <a href="matlab:editorservices.openAndGoToLine('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_gCLASS.m', 1);">cubLattice_gCLASS</a>
+    expected: check = 1
+    got     : 
+time =
+   0.242021750000000
+Running ut_cubLattice_gCLASS
+willy here
+     0     1
+val =
+     2
+
+================================================================================
+<strong>Error occurred in ut_cubLattice_gCLASS/cubLattice_gOfxsquare and it did not run to completion.</strong>
+
+    ---------
+    Error ID:
+    ---------
+    'MATLAB:assertion:failed'
+
+    --------------
+    Error Details:
+    --------------
+    Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('gail.cubParam/checkNf', '/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/+gail/cubParam.m', 386)" style="font-weight:bold">gail.cubParam/checkNf</a> (<a href="matlab: opentoline('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/+gail/cubParam.m',386,0)">line 386</a>)
+    Assertion failed.
+    Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('gail.cubParam/set.nf', '/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/+gail/cubParam.m', 272)" style="font-weight:bold">gail.cubParam/set.nf</a> (<a href="matlab: opentoline('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/+gail/cubParam.m',272,0)">line 272</a>)
+             obj.nf = checkNf(obj,val);
+    Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('gail.cubParam', '/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/+gail/cubParam.m', 255)" style="font-weight:bold">gail.cubParam</a> (<a href="matlab: opentoline('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/+gail/cubParam.m',255,0)">line 255</a>)
+                obj.nf = struct_val.nf;
+    Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('gail.cubLatticeParam', '/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/+gail/cubLatticeParam.m', 109)" style="font-weight:bold">gail.cubLatticeParam</a> (<a href="matlab: opentoline('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/+gail/cubLatticeParam.m',109,0)">line 109</a>)
+                obj@gail.cubParam(varargin{whichParse});
+    Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('cubLattice_gCLASS', '/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_gCLASS.m', 60)" style="font-weight:bold">cubLattice_gCLASS</a> (<a href="matlab: opentoline('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_gCLASS.m',60,0)">line 60</a>)
+    mean_inp = gail.cubLatticeParam(varargin{:}); %parse the input and check it for errors
+    Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ut_cubLattice_gCLASS/cubLattice_gOfxsquare', '/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Tests/ut_cubLattice_gCLASS.m', 10)" style="font-weight:bold">ut_cubLattice_gCLASS/cubLattice_gOfxsquare</a> (<a href="matlab: opentoline('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Tests/ut_cubLattice_gCLASS.m',10,0)">line 10</a>)
+             [meanf, out_param]=cubLattice_gCLASS(w);
+================================================================================
+.willy here
+     0     1
+val =
+     2
+
+================================================================================
+<strong>Error occurred in ut_cubLattice_gCLASS/cubLattice_gOfexp and it did not run to completion.</strong>
+
+    ---------
+    Error ID:
+    ---------
+    'MATLAB:assertion:failed'
+
+    --------------
+    Error Details:
+    --------------
+    Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('gail.cubParam/checkNf', '/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/+gail/cubParam.m', 386)" style="font-weight:bold">gail.cubParam/checkNf</a> (<a href="matlab: opentoline('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/+gail/cubParam.m',386,0)">line 386</a>)
+    Assertion failed.
+    Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('gail.cubParam/set.nf', '/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/+gail/cubParam.m', 272)" style="font-weight:bold">gail.cubParam/set.nf</a> (<a href="matlab: opentoline('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/+gail/cubParam.m',272,0)">line 272</a>)
+             obj.nf = checkNf(obj,val);
+    Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('gail.cubParam', '/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/+gail/cubParam.m', 255)" style="font-weight:bold">gail.cubParam</a> (<a href="matlab: opentoline('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/+gail/cubParam.m',255,0)">line 255</a>)
+                obj.nf = struct_val.nf;
+    Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('gail.cubLatticeParam', '/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/+gail/cubLatticeParam.m', 109)" style="font-weight:bold">gail.cubLatticeParam</a> (<a href="matlab: opentoline('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/+gail/cubLatticeParam.m',109,0)">line 109</a>)
+                obj@gail.cubParam(varargin{whichParse});
+    Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('cubLattice_gCLASS', '/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_gCLASS.m', 60)" style="font-weight:bold">cubLattice_gCLASS</a> (<a href="matlab: opentoline('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_gCLASS.m',60,0)">line 60</a>)
+    mean_inp = gail.cubLatticeParam(varargin{:}); %parse the input and check it for errors
+    Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ut_cubLattice_gCLASS/cubLattice_gOfexp', '/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Tests/ut_cubLattice_gCLASS.m', 21)" style="font-weight:bold">ut_cubLattice_gCLASS/cubLattice_gOfexp</a> (<a href="matlab: opentoline('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Tests/ut_cubLattice_gCLASS.m',21,0)">line 21</a>)
+             [meanf, out_param]=cubLattice_gCLASS(w);
+================================================================================
+.willy here
+     0     1
+val =
+     2
+
+================================================================================
+<strong>Error occurred in ut_cubLattice_gCLASS/cubLattice_gOfsin and it did not run to completion.</strong>
+
+    ---------
+    Error ID:
+    ---------
+    'MATLAB:assertion:failed'
+
+    --------------
+    Error Details:
+    --------------
+    Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('gail.cubParam/checkNf', '/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/+gail/cubParam.m', 386)" style="font-weight:bold">gail.cubParam/checkNf</a> (<a href="matlab: opentoline('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/+gail/cubParam.m',386,0)">line 386</a>)
+    Assertion failed.
+    Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('gail.cubParam/set.nf', '/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/+gail/cubParam.m', 272)" style="font-weight:bold">gail.cubParam/set.nf</a> (<a href="matlab: opentoline('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/+gail/cubParam.m',272,0)">line 272</a>)
+             obj.nf = checkNf(obj,val);
+    Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('gail.cubParam', '/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/+gail/cubParam.m', 255)" style="font-weight:bold">gail.cubParam</a> (<a href="matlab: opentoline('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/+gail/cubParam.m',255,0)">line 255</a>)
+                obj.nf = struct_val.nf;
+    Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('gail.cubLatticeParam', '/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/+gail/cubLatticeParam.m', 109)" style="font-weight:bold">gail.cubLatticeParam</a> (<a href="matlab: opentoline('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/+gail/cubLatticeParam.m',109,0)">line 109</a>)
+                obj@gail.cubParam(varargin{whichParse});
+    Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('cubLattice_gCLASS', '/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_gCLASS.m', 60)" style="font-weight:bold">cubLattice_gCLASS</a> (<a href="matlab: opentoline('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_gCLASS.m',60,0)">line 60</a>)
+    mean_inp = gail.cubLatticeParam(varargin{:}); %parse the input and check it for errors
+    Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ut_cubLattice_gCLASS/cubLattice_gOfsin', '/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Tests/ut_cubLattice_gCLASS.m', 33)" style="font-weight:bold">ut_cubLattice_gCLASS/cubLattice_gOfsin</a> (<a href="matlab: opentoline('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Tests/ut_cubLattice_gCLASS.m',33,0)">line 33</a>)
+             [meanf, out_param]=cubLattice_gCLASS(w);
+================================================================================
+.willy here
+     0     1
+     0     1
+val =
+     1
+willy here
+     0     0
+     1     1
+val =
+     1
+
+================================================================================
+<strong>Verification failed in ut_cubLattice_gCLASS/cubLattice_gOfmultierrfun.</strong>
+
+    ---------------------
+    Framework Diagnostic:
+    ---------------------
+    <a href="matlab:helpPopup matlab.unittest.TestCase.verifyLessThanOrEqual" style="font-weight:bold">verifyLessThanOrEqual</a> failed.
+    --> The value must be less than or equal to the maximum value.
+    
+    Actual double:
+           0.557746285351034
+    Maximum Value (Inclusive):
+             1.000000000000000e-03
+
+    ------------------
+    Stack Information:
+    ------------------
+    In <a href="matlab:opentoline('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Tests/ut_cubLattice_gCLASS.m',49,1)">/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Tests/ut_cubLattice_gCLASS.m (ut_cubLattice_gCLASS.cubLattice_gOfmultierrfun) at 49</a>
+================================================================================
+
+================================================================================
+<strong>Verification failed in ut_cubLattice_gCLASS/cubLattice_gOfmultierrfun.</strong>
+
+    ---------------------
+    Framework Diagnostic:
+    ---------------------
+    <a href="matlab:helpPopup matlab.unittest.TestCase.verifyTrue" style="font-weight:bold">verifyTrue</a> failed.
+    --> The value must evaluate to "true".
+    
+    Actual logical:
+           0
+
+    ------------------
+    Stack Information:
+    ------------------
+    In <a href="matlab:opentoline('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Tests/ut_cubLattice_gCLASS.m',50,1)">/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Tests/ut_cubLattice_gCLASS.m (ut_cubLattice_gCLASS.cubLattice_gOfmultierrfun) at 50</a>
+================================================================================
+...
+================================================================================
+<strong>Error occurred in ut_cubLattice_gCLASS/cubLattice_gNormal and it did not run to completion.</strong>
+
+    ---------
+    Error ID:
+    ---------
+    'MATLAB:assertion:failed'
+
+    --------------
+    Error Details:
+    --------------
+    Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('gail.cubParam/checkMeasure', '/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/+gail/cubParam.m', 369)" style="font-weight:bold">gail.cubParam/checkMeasure</a> (<a href="matlab: opentoline('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/+gail/cubParam.m',369,0)">line 369</a>)
+    Assertion failed.
+    Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('gail.cubParam/set.measure', '/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/+gail/cubParam.m', 262)" style="font-weight:bold">gail.cubParam/set.measure</a> (<a href="matlab: opentoline('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/+gail/cubParam.m',262,0)">line 262</a>)
+             obj.measure = checkMeasure(obj,val);
+    Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('gail.cubParam', '/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/+gail/cubParam.m', 249)" style="font-weight:bold">gail.cubParam</a> (<a href="matlab: opentoline('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/+gail/cubParam.m',249,0)">line 249</a>)
+                obj.measure = struct_val.measure;
+    Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('gail.cubLatticeParam', '/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/+gail/cubLatticeParam.m', 109)" style="font-weight:bold">gail.cubLatticeParam</a> (<a href="matlab: opentoline('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/+gail/cubLatticeParam.m',109,0)">line 109</a>)
+                obj@gail.cubParam(varargin{whichParse});
+    Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('cubLattice_gCLASS', '/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_gCLASS.m', 60)" style="font-weight:bold">cubLattice_gCLASS</a> (<a href="matlab: opentoline('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_gCLASS.m',60,0)">line 60</a>)
+    mean_inp = gail.cubLatticeParam(varargin{:}); %parse the input and check it for errors
+    Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ut_cubLattice_gCLASS/cubLattice_gNormal', '/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Tests/ut_cubLattice_gCLASS.m', 72)" style="font-weight:bold">ut_cubLattice_gCLASS/cubLattice_gNormal</a> (<a href="matlab: opentoline('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Tests/ut_cubLattice_gCLASS.m',72,0)">line 72</a>)
+                [q,out_param] = cubLattice_gCLASS(w);
+================================================================================
+.Dim   FcnIdx       Q             f_true               Err            Sample Used             Stats  
+-----------------------------------------------------------------------------------------------------
+hyperbox =
+     0
+     1
+     1
+---------
+     0
+     1
+     1
+1     1       8.41471e-01       8.41471e-01       8.15477e-08         1024             BothErrMet
+hyperbox =
+     0
+     1
+     1
+---------
+     0
+     1
+     1
+1     2       7.85398e-01       7.85398e-01       7.88745e-08         1024             BothErrMet
+hyperbox =
+     0
+     1
+     1
+---------
+     0
+     1
+     1
+1     3       3.75000e-01       3.75000e-01       4.22572e-07         1024             BothErrMet
+hyperbox =
+     0
+     1
+     1
+---------
+     0
+     1
+     1
+1     4       7.46824e-01       7.46824e-01       1.10490e-07         1024             BothErrMet
+hyperbox =
+     0
+     1
+     1
+---------
+     0
+     1
+     1
+1     5       6.32121e-01       6.32121e-01       1.31542e-08         1024             BothErrMet
+hyperbox =
+     0     0
+     1     1
+     2
+---------
+     0     0
+     1     1
+     2
+2     1       4.96751e-01       4.96751e-01       8.47686e-07         1024             BothErrMet
+hyperbox =
+     0     0
+     1     1
+     2
+---------
+     0     0
+     1     1
+     2
+2     2       7.28296e-01       7.28296e-01       1.73621e-07         1024             BothErrMet
+hyperbox =
+     0     0
+     1     1
+     2
+---------
+     0     0
+     1     1
+     2
+2     3       1.01858e-01       1.01852e-01       6.21227e-06         2048             BothErrMet
+hyperbox =
+     0     0
+     1     1
+     2
+---------
+     0     0
+     1     1
+     2
+2     4       6.88991e-01       6.88992e-01       5.05986e-07         1024             BothErrMet
+hyperbox =
+     0     0
+     1     1
+     2
+---------
+     0     0
+     1     1
+     2
+2     5       4.97439e-01       4.97440e-01       6.61583e-07         1024             BothErrMet
+hyperbox =
+     0     0     0
+     1     1     1
+     3
+---------
+     0     0     0
+     1     1     1
+     3
+3     1       6.23594e-02       6.23593e-02       3.46477e-08         2048             BothErrMet
+hyperbox =
+     0     0     0
+     1     1     1
+     3
+---------
+     0     0     0
+     1     1     1
+     3
+3     2       6.62569e-01       6.62570e-01       7.07179e-07         1024             BothErrMet
+hyperbox =
+     0     0     0
+     1     1     1
+     3
+---------
+     0     0     0
+     1     1     1
+     3
+3     3       2.18558e-02       2.17014e-02       1.54453e-04         1024             AbsErrMet
+hyperbox =
+     0     0     0
+     1     1     1
+     3
+---------
+     0     0     0
+     1     1     1
+     3
+3     4       6.20906e-01       6.20903e-01       2.28654e-06         1024             BothErrMet
+hyperbox =
+     0     0     0
+     1     1     1
+     3
+---------
+     0     0     0
+     1     1     1
+     3
+3     5       3.83051e-01       3.83055e-01       3.59097e-06         1024             BothErrMet
+hyperbox =
+     0     0     0     0
+     1     1     1     1
+     4
+---------
+     0     0     0     0
+     1     1     1     1
+     4
+4     1       -3.51762e-01       -3.51764e-01       2.34658e-06         8192             BothErrMet
+hyperbox =
+     0     0     0     0
+     1     1     1     1
+     4
+---------
+     0     0     0     0
+     1     1     1     1
+     4
+4     2       5.88679e-01       5.88680e-01       8.69527e-07         1024             BothErrMet
+hyperbox =
+     0     0     0     0
+     1     1     1     1
+     4
+---------
+     0     0     0     0
+     1     1     1     1
+     4
+4     3       4.11482e-03       3.80556e-03       3.09269e-04         1024             AbsErrMet
+hyperbox =
+     0     0     0     0
+     1     1     1     1
+     4
+---------
+     0     0     0     0
+     1     1     1     1
+     4
+4     4       5.43350e-01       5.43373e-01       2.28988e-05         1024             BothErrMet
+hyperbox =
+     0     0     0     0
+     1     1     1     1
+     4
+---------
+     0     0     0     0
+     1     1     1     1
+     4
+4     5       2.86990e-01       2.86844e-01       1.45746e-04         1024             BothErrMet
+hyperbox =
+     0     0     0     0     0
+     1     1     1     1     1
+     5
+---------
+     0     0     0     0     0
+     1     1     1     1     1
+     5
+5     1       -6.49333e-01       -6.49331e-01       1.50195e-06         16384             BothErrMet
+hyperbox =
+     0     0     0     0     0
+     1     1     1     1     1
+     5
+---------
+     0     0     0     0     0
+     1     1     1     1     1
+     5
+5     2       5.13420e-01       5.13409e-01       1.10136e-05         1024             BothErrMet
+hyperbox =
+     0     0     0     0     0
+     1     1     1     1     1
+     5
+---------
+     0     0     0     0     0
+     1     1     1     1     1
+     5
+5     3       5.46929e-04       5.67130e-04       2.02010e-05         1024             AbsErrMet
+hyperbox =
+     0     0     0     0     0
+     1     1     1     1     1
+     5
+---------
+     0     0     0     0     0
+     1     1     1     1     1
+     5
+5     4       4.64579e-01       4.64603e-01       2.44353e-05         2048             BothErrMet
+hyperbox =
+     0     0     0     0     0
+     1     1     1     1     1
+     5
+---------
+     0     0     0     0     0
+     1     1     1     1     1
+     5
+5     5       2.10011e-01       2.09952e-01       5.82541e-05         1024             BothErrMet
+hyperbox =
+     0     0     0     0     0     0
+     1     1     1     1     1     1
+     6
+---------
+     0     0     0     0     0     0
+     1     1     1     1     1     1
+     6
+6     1       -7.69088e-01       -7.69376e-01       2.88208e-04         16384             BothErrMet
+hyperbox =
+     0     0     0     0     0     0
+     1     1     1     1     1     1
+     6
+---------
+     0     0     0     0     0     0
+     1     1     1     1     1     1
+     6
+6     2       4.41473e-01       4.41474e-01       6.98617e-07         4096             BothErrMet
+hyperbox =
+     0     0     0     0     0     0
+     1     1     1     1     1     1
+     6
+---------
+     0     0     0     0     0     0
+     1     1     1     1     1     1
+     6
+6     3       6.31228e-05       7.34937e-05       1.03709e-05         1024             AbsErrMet
+hyperbox =
+     0     0     0     0     0     0
+     1     1     1     1     1     1
+     6
+---------
+     0     0     0     0     0     0
+     1     1     1     1     1     1
+     6
+6     4       3.90226e-01       3.90227e-01       1.67181e-06         4096             BothErrMet
+hyperbox =
+     0     0     0     0     0     0
+     1     1     1     1     1     1
+     6
+---------
+     0     0     0     0     0     0
+     1     1     1     1     1     1
+     6
+6     5       1.51029e-01       1.50939e-01       8.97565e-05         2048             BothErrMet
+hyperbox =
+     0     0     0     0     0     0     0
+     1     1     1     1     1     1     1
+     7
+---------
+     0     0     0     0     0     0     0
+     1     1     1     1     1     1     1
+     7
+7     1       -6.97802e-01       -6.97824e-01       2.16055e-05         32768             BothErrMet
+hyperbox =
+     0     0     0     0     0     0     0
+     1     1     1     1     1     1     1
+     7
+---------
+     0     0     0     0     0     0     0
+     1     1     1     1     1     1     1
+     7
+7     2       3.75448e-01       3.75484e-01       3.56252e-05         4096             BothErrMet
+hyperbox =
+     0     0     0     0     0     0     0
+     1     1     1     1     1     1     1
+     7
+---------
+     0     0     0     0     0     0     0
+     1     1     1     1     1     1     1
+     7
+7     3       2.25386e-05       8.42590e-06       1.41127e-05         1024             AbsErrMet
+hyperbox =
+     0     0     0     0     0     0     0
+     1     1     1     1     1     1     1
+     7
+---------
+     0     0     0     0     0     0     0
+     1     1     1     1     1     1     1
+     7
+7     4       3.23139e-01       3.23235e-01       9.64375e-05         4096             BothErrMet
+hyperbox =
+     0     0     0     0     0     0     0
+     1     1     1     1     1     1     1
+     7
+---------
+     0     0     0     0     0     0     0
+     1     1     1     1     1     1     1
+     7
+7     5       1.06906e-01       1.06978e-01       7.21377e-05         2048             BothErrMet
+hyperbox =
+     0     0     0     0     0     0     0     0
+     1     1     1     1     1     1     1     1
+     8
+---------
+     0     0     0     0     0     0     0     0
+     1     1     1     1     1     1     1     1
+     8
+8     1       -4.67045e-01       -4.67036e-01       9.22637e-06         65536             BothErrMet
+hyperbox =
+     0     0     0     0     0     0     0     0
+     1     1     1     1     1     1     1     1
+     8
+---------
+     0     0     0     0     0     0     0     0
+     1     1     1     1     1     1     1     1
+     8
+8     2       3.16653e-01       3.16602e-01       5.10118e-05         4096             BothErrMet
+hyperbox =
+     0     0     0     0     0     0     0     0
+     1     1     1     1     1     1     1     1
+     8
+---------
+     0     0     0     0     0     0     0     0
+     1     1     1     1     1     1     1     1
+     8
+8     3       6.93544e-07       8.66209e-07       1.72665e-07         1024             AbsErrMet
+hyperbox =
+     0     0     0     0     0     0     0     0
+     1     1     1     1     1     1     1     1
+     8
+---------
+     0     0     0     0     0     0     0     0
+     1     1     1     1     1     1     1     1
+     8
+8     4       2.64877e-01       2.64801e-01       7.65427e-05         4096             BothErrMet
+hyperbox =
+     0     0     0     0     0     0     0     0
+     1     1     1     1     1     1     1     1
+     8
+---------
+     0     0     0     0     0     0     0     0
+     1     1     1     1     1     1     1     1
+     8
+8     5       7.49323e-02       7.49531e-02       2.08064e-05         1024             BothErrMet
+.
+Done ut_cubLattice_gCLASS
+__________
+
+Failure Summary:
+
+     Name                                            Failed  Incomplete  Reason(s)
+    =============================================================================================
+     ut_cubLattice_gCLASS/cubLattice_gOfxsquare        X         X       Errored.
+    ---------------------------------------------------------------------------------------------
+     ut_cubLattice_gCLASS/cubLattice_gOfexp            X         X       Errored.
+    ---------------------------------------------------------------------------------------------
+     ut_cubLattice_gCLASS/cubLattice_gOfsin            X         X       Errored.
+    ---------------------------------------------------------------------------------------------
+     ut_cubLattice_gCLASS/cubLattice_gOfmultierrfun    X                 Failed by verification.
+    ---------------------------------------------------------------------------------------------
+     ut_cubLattice_gCLASS/cubLattice_gNormal           X         X       Errored.
+    
+results = 
+  1×8 <a href="matlab:helpPopup matlab.unittest.TestResult" style="font-weight:bold">TestResult</a> array with properties:
+
+    Name
+    Passed
+    Failed
+    Incomplete
+    Duration
+    Details
+Totals:
+   3 Passed, 5 Failed, 4 Incomplete.
+   1.8654 seconds testing time.
+TAP version 13
+1..2
+ok 1 - "obj = assetPath"
+ok 2 - "obj = assetPath"
+time =
+    0.9528
+TAP version 13
+1..2
+ok 1 - "obj = optPayoff"
+ok 2 - "obj = optPayoff"
+time =
+    0.6001
+TAP version 13
+1..2
+ok 1 - "obj = optPrice"
+ok 2 - "obj = optPrice"
+time =
+    0.5119
+TAP version 13
+1..2
+ok 1 - "obj = brownianMotion"
+ok 2 - "obj = brownianMotion"
+time =
+    0.4164
+TAP version 13
+1..1
+ok 1 - "obj = stochProcess"
+time =
+    0.3627
+TAP version 13
+1..2
+ok 1 - "obj = whiteNoise"
+ok 2 - "obj = whiteNoise"
+time =
+    0.3797
+{Error: <a href="matlab: opentoline('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Tests/Developers_only/automatic_tests/fasttests_InputClasses.m',5,1)">File: fasttests_InputClasses.m Line: 5 Column: 1
+</a>Unexpected MATLAB operator.
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('fasttests', '/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Tests/Developers_only/automatic_tests/fasttests.m', 33)" style="font-weight:bold">fasttests</a> (<a href="matlab: opentoline('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Tests/Developers_only/automatic_tests/fasttests.m',33,0)">line 33</a>)
+fasttests_InputClasses} 
+clc
+edit gail.cubMeanParam
+w.f = @(x) x(:,1).^2+x(:,2).^2;
+w.domain = [0,0;1,0];
+w.domainType = 'ball-from-cube';
+w.absTol=1e-3;
+w.relTol=0; 
+cubLattice_gCLASS(w);
+{No appropriate method, property, or field 'd' for class 'gail.cubLatticeOut'.
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('gail.cubParam>@(t)obj.fun.f(gail.domain_balls_spheres.ball_psi_1(t,obj.d,obj.radius,obj.fun.domain))', '/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/+gail/cubParam.m', 321)" style="font-weight:bold">gail.cubParam>@(t)obj.fun.f(gail.domain_balls_spheres.ball_psi_1(t,obj.d,obj.radius,obj.fun.domain))</a> (<a href="matlab: opentoline('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/+gail/cubParam.m',321,0)">line 321</a>)
+               val=@(t) obj.fun.f(gail.domain_balls_spheres.ball_psi_1(t, obj.d, obj.radius, obj.fun.domain));
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('gail.cubLatticeParam>@(x)obj.ff(1-2*abs(x-1/2))', '/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/+gail/cubLatticeParam.m', 203)" style="font-weight:bold">gail.cubLatticeParam>@(x)obj.ff(1-2*abs(x-1/2))</a> (<a href="matlab: opentoline('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/+gail/cubLatticeParam.m',203,0)">line 203</a>)
+                val=@(x) obj.ff(1-2*abs(x-1/2)); % Baker's transform
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('cubLattice_gCLASS', '/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_gCLASS.m', 94)" style="font-weight:bold">cubLattice_gCLASS</a> (<a href="matlab: opentoline('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_gCLASS.m',94,0)">line 94</a>)
+y=mean_out.fff(xpts); %evaluate integrand} 
+clc
+w.f = @(x) x(:,1).^2+x(:,2).^2;
+w.domain = [0,0;1,0];
+w.domainType = 'ball-from-cube';
+w.absTol=1e-3;
+w.relTol=0; 
+cubLattice_gCLASS(w);
+{No appropriate method, property, or field 'd' for class 'gail.cubLatticeOut'.
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('gail.cubParam>@(t)obj.fun.f(gail.domain_balls_spheres.ball_psi_1(t,obj.d,obj.radius,obj.fun.domain))', '/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/+gail/cubParam.m', 321)" style="font-weight:bold">gail.cubParam>@(t)obj.fun.f(gail.domain_balls_spheres.ball_psi_1(t,obj.d,obj.radius,obj.fun.domain))</a> (<a href="matlab: opentoline('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/+gail/cubParam.m',321,0)">line 321</a>)
+               val=@(t) obj.fun.f(gail.domain_balls_spheres.ball_psi_1(t, obj.d, obj.radius, obj.fun.domain));
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('gail.cubLatticeParam>@(x)obj.ff(1-2*abs(x-1/2))', '/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/+gail/cubLatticeParam.m', 203)" style="font-weight:bold">gail.cubLatticeParam>@(x)obj.ff(1-2*abs(x-1/2))</a> (<a href="matlab: opentoline('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/+gail/cubLatticeParam.m',203,0)">line 203</a>)
+                val=@(x) obj.ff(1-2*abs(x-1/2)); % Baker's transform
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('cubLattice_gCLASS', '/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_gCLASS.m', 94)" style="font-weight:bold">cubLattice_gCLASS</a> (<a href="matlab: opentoline('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms/IntegrationExpectation/cubLattice_gCLASS.m',94,0)">line 94</a>)
+y=mean_out.fff(xpts); %evaluate integrand} 
+opentoline('/Users/WillyHung/GAIL_Dev/GAIL_Matlab/Algorithms

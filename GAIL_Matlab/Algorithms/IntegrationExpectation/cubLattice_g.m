@@ -882,6 +882,10 @@ end
 % display(default.CVCount);
 % display('#######################');
 
+display(hyperbox);
+display(out_param.d);
+display('---------');
+
 if ~validvarargin
     out_param.measure = default.measure;
     out_param.abstol = default.abstol;
@@ -1005,7 +1009,7 @@ else % 'uniform ball' or 'uniform sphere'
     
     out_param.radius = hyperbox(out_param.d);
     hyperbox = hyperbox(:,1:out_param.d-1); % removing the last value is the radius, which is the radius
-    out_param.d = out_param.d - 1; % storing the rigth dimension of the ball or sphere
+    out_param.d = out_param.d - 1; % storing the right dimension of the ball or sphere
     out_param.shift = out_param.shift(1:end-1);
     
     if strcmp(out_param.measure,'uniform ball') && out_param.d <= 0
@@ -1138,4 +1142,8 @@ if (strcmp(out_param.measure,'uniform ball') || strcmp(out_param.measure,'unifor
     % computed, whih may be different from the dimesion of the sphere
     hyperbox = zeros(1,size(hyperbox,2));
 end
+
+    disp(hyperbox);
+    disp(out_param.d);
+    
 end

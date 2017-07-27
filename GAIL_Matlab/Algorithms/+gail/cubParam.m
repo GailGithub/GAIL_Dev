@@ -358,11 +358,6 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
    
    methods (Access = protected)
       function outval = checkMeasure(obj,inval)
-         
-%          disp('WILLY WAS HERE');
-%          disp(inval);
-%          disp(obj.fun.domain);
-%          
          assert(any(strcmp(inval,obj.allowedMeasures)))
          if strcmp(inval,'Gaussian') %same as normal
             outval = 'normal';

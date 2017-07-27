@@ -253,10 +253,10 @@ classdef fParam < handle & matlab.mixin.CustomDisplay
       function set.domain(obj,val)
          validateattributes(val, {'numeric'}, {'2d'})
          assert(numel(val) > 1)
-         if any(size(val) == 1) %domain is an interval
+         if size(val, 1) == 1 %domain is an interval
             val = val(:);
          end
-         obj.domain = val;
+         obj.domain = val(1:2,:);
       end
                        
       function set.domainType(obj,val)
@@ -276,11 +276,13 @@ classdef fParam < handle & matlab.mixin.CustomDisplay
       end
                                                                                 
       function val = get.d(obj)
-         val = size(obj.domain,2); 
+            val = size(obj.domain,2);
       end         
                        
       function val = get.nfOut(obj)
-         val = numel(obj.f(obj.domain(1,:))); 
+         
+         val = numel(obj.f(obj.domain(1,:)));         
+         % val = numel(obj.f(obj.domain(1,:))); 
       end      
       
    end
