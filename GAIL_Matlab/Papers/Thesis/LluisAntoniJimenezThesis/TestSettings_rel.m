@@ -111,7 +111,7 @@ for irep=1:test.nrep
         [q,out_param]=...
            cubSobol_g(testfunqmc,[zeros(1,param.dim);ones(1,param.dim)],...
            'abstol',param.abstol,'reltol',param.reltol,'measure',param.measure,...
-           'mmax',param.mmax,'toltype',param.toltype,'theta',param.theta);
+           'mmax',param.mmax);
 %         res.Sobolexit(irep)=out_param.overbudget;
         res.SobolQ(irep)=q;
         res.Sobolexact = param.exactintegral;
@@ -125,7 +125,7 @@ for irep=1:test.nrep
         [q,out_param]=...
            cubLattice_g(testfunqmc,[zeros(1,param.dim);ones(1,param.dim)],...
            'abstol',param.abstol,'reltol',param.reltol,'measure',param.measure,...
-           'mmax',param.mmax,'transform',param.transform,'toltype',param.toltype,'theta',param.theta);
+           'mmax',param.mmax,'transform',param.transform);
 %         res.Latticeexit(irep)=out_param.overbudget;
         res.LatticeQ(irep)=q;
         res.Latticeexact = param.exactintegral;
@@ -138,7 +138,7 @@ end
 timestamp=datestr(now,'yyyy-mm-dd-HH-MM');
 save(['TestCubature-' fun.funtype '-' param.measure ...
    '-N-' int2str(test.nrep)  ...
-    '-' test.whichsample{1} '_rel.mat'])
+    '-' param.method '_rel.mat'])
 
 
 toc(tstartwhole)
