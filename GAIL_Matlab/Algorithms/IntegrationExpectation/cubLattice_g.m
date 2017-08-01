@@ -172,7 +172,7 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 % 
 % >> f = @(x) prod(x,2); hyperbox = [zeros(1,2);ones(1,2)]; 
 % >> q = cubLattice_g(f,hyperbox,'uniform',1e-5,0,'transform','C1sin'); exactsol = 1/4;
-% >> check = abs(exactsol-q) < 1e-5
+% >> check = double(abs(exactsol-q) < 1e-5)
 % check = 1
 % 
 % 
@@ -182,7 +182,7 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 % 
 % >> f = @(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2; hyperbox = [-inf(1,3);inf(1,3)];
 % >> q = cubLattice_g(f,hyperbox,'normal',1e-3,1e-3,'transform','C1sin','shift',2^(-25)*ones(1,3)); exactsol = 1;
-% >> check = abs(exactsol-q) < max(1e-3,1e-3*abs(exactsol))
+% >> check = double(abs(exactsol-q) < max(1e-3,1e-3*abs(exactsol)))
 % check = 1
 % 
 % 
@@ -192,7 +192,7 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 % 
 % >> f = @(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [-ones(1,2);2*ones(1,2)];
 % >> q = cubLattice_g(f,hyperbox,'uniform',1e-3,1e-2,'transform','C1'); exactsol = (sqrt(pi)/2*(erf(2)+erf(1)))^2;
-% >> check = abs(exactsol-q) < max(1e-3,1e-2*abs(exactsol))
+% >> check = double(abs(exactsol-q) < max(1e-3,1e-2*abs(exactsol)))
 % check = 1
 %
 %
@@ -202,7 +202,7 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 % 
 % >> f = @(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); hyperbox = [-inf(1,1);inf(1,1)];
 % >> q = cubLattice_g(f,hyperbox,'normal',1e-4,1e-2,'transform','C1sin'); price = normcdf(0.05)*100 - 0.5*100*exp(-0.05^2/2);
-% >> check = abs(price-q) < max(1e-4,1e-2*abs(price))
+% >> check = double(abs(price-q) < max(1e-4,1e-2*abs(price)))
 % check = 1
 %
 %
@@ -212,7 +212,7 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 % 
 % >> f = @(x) 8*prod(x,2); hyperbox = [zeros(1,5);ones(1,5)];
 % >> q = cubLattice_g(f,hyperbox,'uniform',1e-5,0); exactsol = 1/4;
-% >> check = abs(exactsol-q) < 1e-5
+% >> check = double(abs(exactsol-q) < 1e-5)
 % check = 1
 %
 %
@@ -222,7 +222,7 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 % 
 % >> f = @(x) 3./(5-4*(cos(2*pi*x))); hyperbox = [0;1];
 % >> q = cubLattice_g(f,hyperbox,'uniform',1e-5,0,'transform','id'); exactsol = 1;
-% >> check = abs(exactsol-q) < 1e-5
+% >> check = double(abs(exactsol-q) < 1e-5)
 % check = 1
 %
 %
@@ -233,7 +233,7 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 % 
 % >> f = @(x) x(:,1).^2+x(:,2).^2; hyperbox = [0,0,1];
 % >> q = cubLattice_g(f,hyperbox,'uniform ball','abstol',1e-4,'reltol',0); exactsol = pi/2;
-% >> check = abs(exactsol-q) < 1e-4
+% >> check = double(abs(exactsol-q) < 1e-4)
 % check = 1
 %
 %
