@@ -50,8 +50,6 @@ classdef ut_cubMC_CLT < matlab.unittest.TestCase
          testCase.verifyTrue(out_param.fun.d==2);
       end
       
-      
-      
       function cubLattice_gOfwarning(testCase)
          testCase.verifyWarning(@()cubLattice_g,'GAIL:cubLattice_g:fdnotgiven');
       end

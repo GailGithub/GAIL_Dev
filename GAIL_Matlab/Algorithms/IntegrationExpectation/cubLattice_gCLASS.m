@@ -65,7 +65,7 @@ mean_out = gail.cubLatticeOut(mean_inp); %create the output class
 % Minimum gathering of points
 l_star = mean_out.mmin - r_lag; % Minimum gathering of points for the sums of DFT
 omg_circ = @(m) 2.^(-m);
-omg_hat = @(m) mean_out.CM.fudge(m)/((1+mean_out.CM.fudge(r_lag))*omg_circ(r_lag));
+omg_hat = @(m) mean_out.CM.inflateFun(m)/((1+mean_out.CM.inflateFun(r_lag))*omg_circ(r_lag));
 
 % intialize CV param, redefine target function
 mu=0;beta=0;
@@ -197,7 +197,7 @@ end
 %% Compute Stilde (1)
 nllstart=int64(2^(mean_out.mmin-r_lag-1));
 Stilde(1)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
-mean_out.errBd=mean_out.CM.fudge(mean_out.mmin)*Stilde(1);
+mean_out.errBd=mean_out.CM.inflateFun(mean_out.mmin)*Stilde(1);
 
 errest(1)=mean_out.errBd;
 
@@ -366,7 +366,7 @@ for m=mean_out.mmin+1:mean_out.mmax
     nllstart=int64(2^(m-r_lag-1));
     meff=m-mean_out.mmin+1;
     Stilde(meff)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
-    mean_out.errBd=mean_out.CM.fudge(m)*Stilde(meff);
+    mean_out.errBd=mean_out.CM.inflateFun(m)*Stilde(meff);
     errest(meff)=mean_out.errBd;
     
     % Necessary conditions

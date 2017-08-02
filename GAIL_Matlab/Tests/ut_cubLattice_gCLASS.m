@@ -1,9 +1,9 @@
-%ut_cubLattice_g  unit test for cubLattice_g
+%ut_cubLattice_g  unit test for cubLattice_gCLASS
 classdef ut_cubLattice_gCLASS < matlab.unittest.TestCase
    
    methods(Test)
       
-      function cubLattice_gOfxsquare(testCase)
+      function cubLattice_gCLASSOfxsquare(testCase)
          w.f= @(x) x.^2;
          w.absTol=1e-2;
          w.domain = [0;1];
@@ -14,7 +14,7 @@ classdef ut_cubLattice_gCLASS < matlab.unittest.TestCase
          testCase.verifyLessThanOrEqual(actualerr,tolerance);
       end
       
-      function cubLattice_gOfexp(testCase)
+      function ubLattice_gCLASSOfOfexp(testCase)
          w.f = @(x) exp(x);
          w.absTol = 1e-3;
          w.domain = [0;1];
@@ -26,7 +26,7 @@ classdef ut_cubLattice_gCLASS < matlab.unittest.TestCase
          testCase.verifyTrue(out_param.fun.d==1);
       end
       
-      function cubLattice_gOfsin(testCase)
+      function ubLattice_gCLASSOfsin(testCase)
          w.f = @(x) sin(x);
          w.absTol = 1e-3;
          w.domain = [0;1];
@@ -38,7 +38,7 @@ classdef ut_cubLattice_gCLASS < matlab.unittest.TestCase
          testCase.verifyTrue(out_param.fun.d==1);
       end
       
-      function cubLattice_gOfmultierrfun(testCase)
+      function ubLattice_gCLASSOfmultierrfun(testCase)
          w.f = @(x) exp(-x(:,1).^2-x(:,2).^2);
          w.absTol = 1e-3;
          w.domain = [0 0;1 1];
@@ -50,15 +50,15 @@ classdef ut_cubLattice_gCLASS < matlab.unittest.TestCase
          testCase.verifyTrue(out_param.fun.d==2);
       end
       
-      function cubLattice_gOfwarning(testCase)
+      function ubLattice_gCLASSOfwarning(testCase)
          testCase.verifyWarning(@()cubLattice_g,'GAIL:cubLattice_g:fdnotgiven');
       end
       
-      function cubLattice_gOdwarning(testCase)
+      function cubLattice_gCLASSOdwarning(testCase)
          testCase.verifyWarning(@()cubLattice_g(@(x)x.^2,1.5),'GAIL:cubLattice_g:hyperbox_error1');
       end
       
-      function cubLattice_gNormal(testCase)
+      function ubLattice_gCLASSNormal(testCase)
          format compact
          w.f = @(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2;
          w.measure='normal';
@@ -72,23 +72,23 @@ classdef ut_cubLattice_gCLASS < matlab.unittest.TestCase
             [q,out_param] = cubLattice_gCLASS(w);
             exactsol = 1; check = abs(exactsol-q) < gail.tolfun(1e-3,1e-3,1,exactsol,'max');
             if check==0 || isfinite(q) ==0 %|| out_param.exitflag > 0,
-               i, exactsol, q, exitflag = out_param.exitflag,
-               abserr = abs(exactsol-q), tol = gail.tolfun(1e-3,1e-3,1,exactsol,'max'), n = out_param.nSample;
-               shift = out_param.shiftVal, lattice = mod(bsxfun(@plus, gail.lattice_gen(1,2^24,3), shift),1);
+               i, exactsol; q; exitflag = out_param.exitflag;
+               abserr = abs(exactsol-q); tol = gail.tolfun(1e-3,1e-3,1,exactsol,'max'); n = out_param.nSample;
+               shift = out_param.shiftVal; lattice = mod(bsxfun(@plus, gail.lattice_gen(1,2^24,3), shift),1);
                max_lattice = max(max(lattice))
-               max_C1sin = max(max(lattice-sin(2*pi*lattice)/(2*pi))),
-               max_after_normtransform = max(max(gail.stdnorminv(lattice-sin(2*pi*lattice)/(2*pi))))%, min(min(gail.stdnorminv(lattice-sin(2*pi*lattice)/(2*pi))))
+               max_C1sin = max(max(lattice-sin(2*pi*lattice)/(2*pi)));
+               max_after_normtransform = max(max(gail.stdnorminv(lattice-sin(2*pi*lattice)/(2*pi))));%, min(min(gail.stdnorminv(lattice-sin(2*pi*lattice)/(2*pi))))
                disp('-----');
                count = count + 1;
                %keyboard
                clear lattice
-            end;
-         end;
+            end
+         end
          testCase.verifyTrue(count==0);
       end
       
       function cubLattice_Workouts(testCase)
-         [ut_abserr,ut_relerr,abstol,reltol] = Test_cubLattice_g;
+         [ut_abserr,ut_relerr,abstol,reltol] = Test_cubLattice_gCLASS;
          verifyabserr = ut_abserr<=abstol;
          verifyrelerr = ut_relerr<=reltol;
          testCase.verifyTrue(min(min(verifyabserr + verifyrelerr))>0);

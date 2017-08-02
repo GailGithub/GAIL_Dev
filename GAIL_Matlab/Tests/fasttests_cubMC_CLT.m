@@ -9,7 +9,7 @@ if MATLABVERSION < 8.1
     warning('Cannot run unit tests in MATLAB version before 8.1');
 else
     try
-        Tests = matlab.unittest.TestSuite.fromClass(?e);
+        Tests = matlab.unittest.TestSuite.fromClass(?ut_cubMC_CLT);
         results=run(ut_cubMC_CLT);
         if sum([results.Failed])>0
             failed=find([results.Failed]>0);

@@ -44,7 +44,7 @@ classdef cubMeanParam < handle & matlab.mixin.CustomDisplay
    
    properties
       inflate %inflation factor for bounding the error
-      fudge   % fudge factor 
+      inflateFun   % inflateFun factor 
       nInit %initial sample size
       nMax %maximum sample size
       nMu %number of integrals for solution function
@@ -60,7 +60,7 @@ classdef cubMeanParam < handle & matlab.mixin.CustomDisplay
       def_nMax = 2^24 %default maximum sample size
       def_nMu = 1 %default number of integrals
       def_inflate = 1.2
-      def_fudge = @(m) 10*2.^-(m);
+      def_inflateFun = @(m) (16/3)*2.^(-m)
       def_trueMuCV = [] %default true integrals for control variates
    end
    
@@ -105,7 +105,7 @@ classdef cubMeanParam < handle & matlab.mixin.CustomDisplay
             obj.inflate = val.inflate; %copy inflation factor
             obj.nMu = val.nMu; %copy the number of means/integrals
             obj.trueMuCV = val.trueMuCV; %copy true means of control variates
-            obj.fudge=val.fudge;
+            obj.inflateFun=val.inflateFun;
             useDefaults = false;
          end
 
@@ -137,7 +137,7 @@ classdef cubMeanParam < handle & matlab.mixin.CustomDisplay
          f_addParamVal(p,'inflate',obj.def_inflate);
          f_addParamVal(p,'nMu',obj.def_nMu);
          f_addParamVal(p,'trueMuCV',obj.def_trueMuCV);
-         f_addParamVal(p,'fudge',obj.def_fudge);
+         f_addParamVal(p,'inflateFun',obj.def_inflateFun);
          
          if structInp
             parse(p,varargin{parseRange},varargin{structInp}) 
@@ -167,8 +167,8 @@ classdef cubMeanParam < handle & matlab.mixin.CustomDisplay
             obj.trueMuCV = struct_val.trueMuCV;
          end
          
-         if isfield(struct_val,'fudge')
-            obj.fudge = struct_val.fudge;
+         if isfield(struct_val,'inflateFun')
+            obj.inflateFun = struct_val.inflateFun;
          end
          
       end %of constructor
@@ -188,9 +188,9 @@ classdef cubMeanParam < handle & matlab.mixin.CustomDisplay
          obj.inflate = val;
        end
       
-       function set.fudge(obj,val)
+       function set.inflateFun(obj,val)
          validateattributes(val, {'function_handle','numeric'}, {})
-         obj.fudge = val;
+         obj.inflateFun = val;
       end
                              
       function set.nMu(obj,val)

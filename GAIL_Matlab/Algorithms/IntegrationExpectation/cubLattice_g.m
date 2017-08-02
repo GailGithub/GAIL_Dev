@@ -355,6 +355,7 @@ r_lag = 4; %distance between coefficients summed and those computed
 [f,hyperbox,out_param, cv] = cubLattice_g_param(r_lag,varargin{:});
 
 
+disp('willy was here');
 %------------------------------------------------------------------------------
 % TRANSFORMATION
 %changing the integrand and the hyperbox when measure is uniform ball or
@@ -882,10 +883,6 @@ end
 % display(default.CVCount);
 % display('#######################');
 
-display(hyperbox);
-display(out_param.d);
-display('---------');
-
 if ~validvarargin
     out_param.measure = default.measure;
     out_param.abstol = default.abstol;
@@ -1142,8 +1139,5 @@ if (strcmp(out_param.measure,'uniform ball') || strcmp(out_param.measure,'unifor
     % computed, whih may be different from the dimesion of the sphere
     hyperbox = zeros(1,size(hyperbox,2));
 end
-
-    disp(hyperbox);
-    disp(out_param.d);
     
 end
