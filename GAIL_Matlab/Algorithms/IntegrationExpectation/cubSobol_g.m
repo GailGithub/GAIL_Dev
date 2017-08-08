@@ -330,7 +330,7 @@ end
 %------------------------------------------------------------------------------
 % Minimum gathering of points 
 l_star = out_param.mmin - r_lag; % Minimum gathering of points for the sums of DFWT
-omg_circ = @(m) 2.^(-m);
+omg_circ = @(m) 2.^(3-m);
 omg_hat = @(m) out_param.fudge(m)/((1+out_param.fudge(r_lag))*omg_circ(r_lag));
 
 % intialize CV param, redefine target function
@@ -431,6 +431,7 @@ Sdiag = diag(S);
 U2=U(end,:);
 H=U2'/(U2*U2');
 beta=V*(H./Sdiag);
+out_param.beta = beta; %record beta
 
 meanX=meanVal(:,out_param.FuncCount+1:end);
 meanX=[zeros(out_param.FuncCount,1); meanX'];
@@ -503,7 +504,7 @@ end
 
 %% Loop over m
 for m=out_param.mmin+1:out_param.mmax
-   if is_done,
+   if is_done
        break;
    end
    out_param.n=2^m;
@@ -578,7 +579,7 @@ for m=out_param.mmin+1:out_param.mmax
        X = yg(kappanumap(2^(m-r_lag-1)+1:end), (1:cv.J));
        Y = y(kappanumap(2^(m-r_lag-1)+1:end));
        beta = X \ Y;  
-       out_param.beta = [out_param.beta;beta];
+       out_param.beta = [out_param.beta beta];
        yval = ycv(:,1) - ycv(:,2:end)*beta;
        y = y-yg*beta;
        %% update kappamap
@@ -667,7 +668,7 @@ default.abstol  = 1e-4;
 default.reltol  = 1e-2;
 default.mmin  = 10;
 default.mmax  = 24;
-default.fudge = @(m) 2.^-(m-3);
+default.fudge = @(m) (16/3) * 2.^-m;
 default.scramble = true;
 default.betaUpdate = 0;% option for updating beta, off at default
 default.FuncCount=0;

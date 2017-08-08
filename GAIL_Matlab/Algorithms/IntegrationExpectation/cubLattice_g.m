@@ -400,7 +400,7 @@ end
 %------------------------------------------------------------------------------
 % Minimum gathering of points
 l_star = out_param.mmin - r_lag; % Minimum gathering of points for the sums of DFT
-omg_circ = @(m) 2.^(-m);
+omg_circ = @(m) 2.^(3-m);
 omg_hat = @(m) out_param.fudge(m)/((1+out_param.fudge(r_lag))*omg_circ(r_lag));
 
 % intialize CV param, redefine target function
@@ -784,7 +784,7 @@ default.reltol  = 1e-2;
 default.shift  = rand;
 default.mmin  = 10;
 default.mmax  = 20;
-default.fudge = @(m) 2.^-(m-3);
+default.fudge = @(m) (16/3)*2.^(3-m);
 default.transform = 'Baker';
 default.betaUpdate=0;
 default.FuncCount=0;
