@@ -1,13 +1,13 @@
-classdef cubLatticeParam < gail.cubParam
-    %GAIL.CUBLATTICEPARAM is a class containing the parameters related to
+classdef cubSobolParam < gail.cubParam
+    %GAIL.cubSobolParam is a class containing the parameters related to
     %algorithms that find the mean of a random variable
     %   This class contains the number of integrands with the same integral,
     %   etc.
     %
     % Example 1. Construct a cubParam object with default parameters
-    % >> cubLatticeParamObj = gail.cubLatticeParam
-    % cubLatticeParamObj =
-    %   cubLatticeParam with properties:
+    % >> cubSobolParamObj = gail.cubSobolParam
+    % cubSobolParamObj =
+    %   cubSobolParam with properties:
     %
     %              f: @(x)sum(x.^2,2)
     %         domain: [2×1 double]
@@ -17,9 +17,9 @@ classdef cubLatticeParam < gail.cubParam
     %
     %
     % Example 2. Using name/value pairs
-    % >> cubLatticeParamObj = gail.cubLatticeParam('domain', [-2 -2; 2 2], 'f', @(x) sum(x.^3.2), 'relTol', 0.1, 'isShift', false)
-    % cubLatticeParamObj =
-    %   cubLatticeParam with properties:
+    % >> cubSobolParamObj = gail.cubSobolParam('domain', [-2 -2; 2 2], 'f', @(x) sum(x.^3.2), 'relTol', 0.1, 'isShift', false)
+    % cubSobolParamObj =
+    %   cubSobolParam with properties:
     %
     %              f: @(x)sum(x.^3.2)
     %         domain: [2×2 double]
@@ -33,9 +33,9 @@ classdef cubLatticeParam < gail.cubParam
     % >> inpStruct.f = @(x) sin(sum(x,2));
     % >> inpStruct.domain = [zeros(1,4); ones(1,4)];
     % >> inpStruct.isShift = false;
-    % >> cubLatticeParamObj = gail.cubLatticeParam(inpStruct)
-    % cubLatticeParamObj =
-    %   cubLatticeParam with properties:
+    % >> cubSobolParamObj = gail.cubSobolParam(inpStruct)
+    % cubSobolParamObj =
+    %   cubSobolParam with properties:
     %
     %              f: @(x)sin(sum(x,2))
     %         domain: [2×4 double]
@@ -46,9 +46,9 @@ classdef cubLatticeParam < gail.cubParam
     %
     %
     % Example 4. Copying a cubParam object and changing some properties
-    % >> NewCubLatticeParamObj = gail.cubLatticeParam(cubLatticeParamObj,'measure','Lebesgue')
-    % NewCubLatticeParamObj =
-    %   cubLatticeParam with properties:
+    % >> NewcubSobolParamObj = gail.cubSobolParam(cubSobolParamObj,'measure','Lebesgue')
+    % NewcubSobolParamObj =
+    %   cubSobolParam with properties:
     %
     %              f: @(x)sin(sum(x,2))
     %         domain: [2×4 double]
@@ -65,6 +65,7 @@ classdef cubLatticeParam < gail.cubParam
         isShift %is the lattice shifted
         shiftVal
         betaUpdate
+        scramble
     end
     
     properties (Dependent = true)
@@ -76,21 +77,23 @@ classdef cubLatticeParam < gail.cubParam
         def_isShift = true %default is a random shift
         def_shiftVal = rand
         def_betaUpdate = 0
+        def_scramble=0;
     end
     
    
     methods
         % Creating a cubParam process
-        function obj = cubLatticeParam(varargin)
+        function obj = cubSobolParam(varargin)
            
             %this constructor essentially parses inputs
+            
             start = 1; %index to begin to parse
             useDefaults = true; %true unless copying an fParam object, then false
             objInp = 0; %where is the an object in the class
             structInp = 0; %where is the structure
             if nargin %there are inputs to parse and assign
-                if isa(varargin{start},'gail.cubLatticeParam')
-                    %the first input is a cubLatticeParam object so copy it
+                if isa(varargin{start},'gail.cubSobolParam')
+                    %the first input is a cubSobolParam object so copy it
                     objInp = start;
                     start = start + 1;
                 end
@@ -113,6 +116,7 @@ classdef cubLatticeParam < gail.cubParam
                 obj.isShift = val.isShift; %copy whether to shift
                 obj.shiftVal = val.shiftVal;
                 obj.betaUpdate = val.betaUpdate;
+                obj.scramble=val.scramble;
                 useDefaults = false;
             end
             
@@ -143,6 +147,7 @@ classdef cubLatticeParam < gail.cubParam
             f_addParamVal(p,'isShift',obj.def_isShift);
             f_addParamVal(p,'shiftVal',obj.def_shiftVal);
             f_addParamVal(p,'betaUpdate', obj.def_betaUpdate);
+            f_addParamVal(p,'scramble', obj.scramble);
             
             if structInp
                 parse(p,varargin{parseRange},varargin{structInp})
@@ -172,6 +177,10 @@ classdef cubLatticeParam < gail.cubParam
             if isfield(struct_val, 'shiftVal')
                 obj.shiftVal=struct_val.shiftVal;
             end
+            
+            if isfield(struct_val, 'scramble')
+               obj.scramble=struct_val.scramble;
+            end 
             
         end %of constructor
         

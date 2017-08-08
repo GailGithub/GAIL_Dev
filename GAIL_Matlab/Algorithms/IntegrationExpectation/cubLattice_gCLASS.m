@@ -61,6 +61,8 @@ mean_inp = gail.cubLatticeParam(varargin{:}); %parse the input and check it for 
 mean_inp.fun.nMax = min(mean_inp.fun.nMax,2^24);
 mean_out = gail.cubLatticeOut(mean_inp); %create the output class
 
+display(mean_out.nSample);
+
 %------------------------------------------------------------------------------
 % Minimum gathering of points
 l_star = mean_out.mmin - r_lag; % Minimum gathering of points for the sums of DFT
@@ -85,6 +87,8 @@ appxinteg=zeros(mean_out.mmax -mean_out.mmin+1,1); %initialize approximations to
 exit_len = 2;
 exit=false(1,exit_len); %we start the algorithm with all warning flags down
 
+display('hello');
+display(mean_out.nSample);
 
 %% Initial points and FFT
 mean_out.nSample=2^mean_out.mmin; %total number of points to start with
