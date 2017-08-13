@@ -4,10 +4,8 @@
 
 %% Function definition
 %
-% This example is taken from [1], where a very spiky function on \( [0,1] \)
-% is defined as follows:
-%
-% \[ f(x) = 4^3 (x(1-x))^3, \quad x \in [0,1]. \]
+% This example is taken from [1], where a function is defined on \( [0,1] \)
+% with twelve spikes.
 %
 close all; clear all; format compact; format short e;
 [~,~,MATLABVERSION] = GAILstart(false);
@@ -24,8 +22,10 @@ xplot = (0:0.002:1)'; %points to plot
 spikyfun = @(x) foolfunmaker(x, @(x,c) fbump((x-c(1))/c(2)),...
     ones(nnode-1,1), [xall(1:nnode-1) diff(xall)]);
 
-%% Plot of the spiky function and data sites
-% We plot \(f(x)\) and the data sites below:
+%% Plot of the spiky function 
+% In the following, we plot \(f(x)\) and show the data sampling points
+% picked by MATLAB's built-in integration function *quad*, which explains
+% why *quad* essentially gives the answer zero for our spiky function:
 figure;
 h = plot(xplot,spikyfun(xplot), 'k-', xall, zeros(nnode,1), 'k.');
 axis([0 1 -0.3 1.1])
@@ -38,7 +38,7 @@ legend(h,{'$f$','data'},'location','southeast')
 % integrate \(f\) over the unit interval:
 a = 0;
 b = 1;
-abstol = 1e-12;
+abstol = 1e-11;
 if MATLABVERSION >= 8,
     MATintegralspiky = integral(spikyfun,a,b,'AbsTol',abstol)
 end
@@ -48,9 +48,9 @@ MATgailspiky = integral_g(spikyfun,a,b,abstol)
 
 %% Compute apprroximation errors
 % The true integral value of the spiky function is \(16/35\). The following
-% code computes absolute errors from the above approximation methods. Not
-% all methods achieve the required accuracy with respect to the absolute
-% tolerance.
+% code computes absolute errors from the above approximation methods. Only
+% *integral_g* achieves the required accuracy with respect to the absolute
+% tolerance of \( 10^{-11} \) in this example.
 integralspiky = 16/35;
 if MATLABVERSION >= 8,
   abs_errors = abs(integralspiky - [MATintegralspiky, MATquadspiky, MATgailspiky])
