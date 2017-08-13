@@ -24,19 +24,6 @@ xplot = (0:0.002:1)'; %points to plot
 spikyfun = @(x) foolfunmaker(x, @(x,c) fbump((x-c(1))/c(2)),...
     ones(nnode-1,1), [xall(1:nnode-1) diff(xall)]);
 
-
-%% Function approximation
-% We use MATLAB built-in functions and *integral_g* [2] from GAIL [3] to
-% integrate \(f\) over the unit interval:
-a = 0;
-b = 1;
-abstol = 1e-13;
-if MATLABVERSION >= 8,
-    MATintegralspiky = integral(spikyfun,a,b,'AbsTol',abstol)
-end
-MATquadspiky = quad(spikyfun,a,b,abstol)
-MATgailspiky = integral_g(spikyfun,a,b,abstol)
-
 %% Plot of the spiky function and data sites
 % We plot \(f(x)\) and the data sites below:
 figure;
@@ -45,8 +32,22 @@ axis([0 1 -0.3 1.1])
 set(gca,'Ytick',-0.2:0.2:1)
 legend(h,{'$f$','data'},'location','southeast')
 
+
+%% Integral approximation
+% We use MATLAB built-in functions and *integral_g* [2] from GAIL [3] to
+% integrate \(f\) over the unit interval:
+a = 0;
+b = 1;
+abstol = 1e-12;
+if MATLABVERSION >= 8,
+    MATintegralspiky = integral(spikyfun,a,b,'AbsTol',abstol)
+end
+MATquadspiky = quad(spikyfun,a,b,abstol)
+MATgailspiky = integral_g(spikyfun,a,b,abstol)
+
+
 %% Compute apprroximation errors
-% The true integral value of the spiky function is 16/35. The following
+% The true integral value of the spiky function is \(16/35\). The following
 % code computes absolute errors from the above approximation methods. Not
 % all methods achieve the required accuracy with respect to the absolute
 % tolerance.
@@ -66,7 +67,7 @@ if_meet_abstol = (abs_errors < abstol)
 %     2014.
 % 
 % [2] Fred J. Hickernell, Martha Razo, and Sunny Yun, "Reliable Adaptive
-%   Numerical Integration", 2015+, working.
+%     Numerical Integration", 2015+, working.
 %
 % [3] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
 %     Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
