@@ -2,13 +2,12 @@
 % Authors:  Fred Hickernell and Sou-Cheng Choi, August 2017
 
 
-
 %% Function definition
 %
-% This example is taken from [1], where a very spiky function on \(
-% [0,1]\) is defined as follows:
+% This example is taken from [1], where a very spiky function on \( [0,1] \)
+% is defined as follows:
 %
-% \[ f(x) = 4^3 ((x*(1-x))^3), \quad x \in [0,1] \]
+% \[ f(x) = 4^3 (x(1-x))^3, \quad x \in [0,1]. \]
 %
 close all; clear all; format compact; format short e;
 [~,~,MATLABVERSION] = GAILstart(false);
@@ -38,11 +37,10 @@ end
 MATquadspiky = quad(spikyfun,a,b,abstol);
 MATgailspiky = integral_g(spikyfun,a,b,abstol)'
 
-%% Plots of the function and approximant
-% We plot \(f(x)\) and the approximant returned by *integral_g*, \(q(x)\),
-% below:
+%% Plot of the spiky function and data sites
+% We plot \(f(x)\) and the data sites below:
 figure;
-h = plot(xplot,spikyfun(xplot),'k-',xall,zeros(nnode,1),'k.');
+h = plot(xplot,spikyfun(xplot), 'k-', xall, zeros(nnode,1), 'k.');
 axis([0 1 -0.3 1.1])
 set(gca,'Ytick',-0.2:0.2:1)
 legend(h,{'$f$','data'},'location','southeast')
@@ -50,7 +48,7 @@ legend(h,{'$f$','data'},'location','southeast')
 %% Compute apprroximation errors
 % The true integral value of the spiky function is 16/35. The following
 % code computes absolute errors from the above approximation methods. Not
-% all methods achieve an accuracy meeting the required absolute
+% all methods achieve the required accuracy with respect to the absolute
 % tolerance.
 integralspiky = 16/35;
 if MATLABVERSION >= 8,
