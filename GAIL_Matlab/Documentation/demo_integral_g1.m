@@ -32,10 +32,10 @@ a = 0;
 b = 1;
 abstol = 1e-13;
 if MATLABVERSION >= 8,
-    MATintegralspiky = integral(spikyfun,a,b,'AbsTol',abstol);
+    MATintegralspiky = integral(spikyfun,a,b,'AbsTol',abstol)
 end
-MATquadspiky = quad(spikyfun,a,b,abstol);
-MATgailspiky = integral_g(spikyfun,a,b,abstol)'
+MATquadspiky = quad(spikyfun,a,b,abstol)
+MATgailspiky = integral_g(spikyfun,a,b,abstol)
 
 %% Plot of the spiky function and data sites
 % We plot \(f(x)\) and the data sites below:
