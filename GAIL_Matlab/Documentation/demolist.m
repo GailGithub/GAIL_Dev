@@ -12,6 +12,11 @@
 % <a href="demo_funmin_g.html">funmin_g</a>
 % </html>
 %
+%% 1-D integration
+%
+% <html>
+% <a href="demo_integral_g.html">integral_g</a>
+% </html>
 %
 %% Higher dimensional integration
 %
