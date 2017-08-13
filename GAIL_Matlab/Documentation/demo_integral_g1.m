@@ -1,4 +1,4 @@
-%% Integrate a spiky function using *integral_g*.
+%% Integrate a spiky function using *integral_g*
 % Authors:  Fred Hickernell and Sou-Cheng Choi, August 2017
 
 
