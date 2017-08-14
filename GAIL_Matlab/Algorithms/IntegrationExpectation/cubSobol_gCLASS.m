@@ -8,10 +8,7 @@ mean_inp = gail.cubSobolParam(varargin{:}); %parse the input and check it for er
 mean_inp.fun.nMax = min(mean_inp.fun.nMax,2^24);
 mean_out=gail.cubSobolOut(mean_inp); %create the output class
 
-display(mean_out.nSample);
-
 %------------------------------------------------------------------------------
-
 % Minimum gathering of points 
 l_star = mean_out.mmin - r_lag; % Minimum gathering of points for the sums of DFWT
 omg_circ = @(m) 2.^(-m);
@@ -38,17 +35,16 @@ appxinteg=zeros(mean_out.mmax-mean_out.mmin+1,1); %initialize approximations to 
 exit_len = 2;
 exit=false(1,exit_len); %we start the algorithm with all warning flags down
 
-
 %% Initial points and FWT
 mean_out.nSample=2^mean_out.mmin; %total number of points to start with
 n0=mean_out.nSample; %initial number of points
 xpts=sobstr(1:n0,1:mean_out.fun.d); %grab Sobol' points
 
-y=mean_out.fff(xpts); %evaluate integrand
+y=mean_out.ff(xpts); %evaluate integrand
 yval=y;
 
 % evaluate integrand
-ycv = mean_out.fff(xpts);
+ycv = mean_out.ff(xpts);
 y = ycv(:,1:mean_out.nf); yval = y;
 yg = ycv(:,mean_out.nf+1:end); %yvalg = yg;
 
@@ -91,11 +87,11 @@ end
 %% Finding optimal beta
 % Pre-determine the size of the beta coefficients 
 if mean_out.CM.nCV 
-    C=[ones(mean_out.nf,1); zeros(out_param.CVCount,1)];
+    C=[ones(mean_out.nf,1); zeros(mean_out.CM.nCV,1)];
 else 
     C=[ones(mean_out.nf,1)];
 end 
-    
+
 %% alogirhtm to find beta 
 X = yg(kappanumap(2^(mean_out.mmin-r_lag-1)+1:end), (1:end));
 Y =  y(kappanumap(2^(mean_out.mmin-r_lag-1)+1:end), (1:end));
@@ -105,6 +101,7 @@ Val = [Y X];
 meanVal=[mean(Val)];
 
 A=bsxfun(@minus, Val, meanVal);
+
 
 [U,S,V]=svd([A; C'],0);
 Sdiag = diag(S);
@@ -195,7 +192,7 @@ for m=mean_out.mmin+1:mean_out.mmax
    
     % check for using control variates or not
     if mean_out.CM.nCV  == 0
-        ynext = mean_out.fff(xnext); yval=[yval; ynext];
+        ynext = mean_out.ff(xnext); yval=[yval; ynext];
     else
         ycvnext = f(xnext);
         ynext = ycvnext(:,1:mean_out.nf)*beta(1:mean_out.nf,:) + ycvnext(:,mean_out.nf+1:end)*beta(mean_out.nf+1:end,:);

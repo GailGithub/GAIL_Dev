@@ -205,22 +205,6 @@ classdef cubSobolParam < gail.cubParam
         end
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        function val = get.fff(obj)
-           
-            if strcmp(obj.periodTransform,'Baker')
-                val=@(x) obj.ff(1-2*abs(x-1/2)); % Baker's transform
-            elseif strcmp(obj.periodTransform,'C0')
-                val=@(x) obj.ff(3*x.^2-2*x.^3).*prod(6*x.*(1-x),2); % C^0 transform
-            elseif strcmp(obj.periodTransform,'C1')
-                val=@(x) obj.ff(x.^3.*(10-15*x+6*x.^2)).*prod(30*x.^2.*(1-x).^2,2); % C^1 transform
-            elseif strcmp(obj.periodTransform,'C1sin')
-                val=@(x) obj.ff(x-sin(2*pi*x)/(2*pi)).*prod(1-cos(2*pi*x),2); % Sidi C^1 transform
-            elseif strcmp(obj.periodTransform,'tent') && strcmp(obj.domainType,'box')
-                val = @(x) obj.ff(1 - abs(2*x-1)); %tent transformation
-            else %no transformation
-                val = obj.ff;
-            end
-        end
     end
     
     methods (Access = protected)

@@ -354,8 +354,6 @@ t_start = tic;
 r_lag = 4; %distance between coefficients summed and those computed
 [f,hyperbox,out_param, cv] = cubLattice_g_param(r_lag,varargin{:});
 
-
-disp('willy was here');
 %------------------------------------------------------------------------------
 % TRANSFORMATION
 %changing the integrand and the hyperbox when measure is uniform ball or

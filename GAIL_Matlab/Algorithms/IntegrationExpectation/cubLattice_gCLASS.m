@@ -1,4 +1,33 @@
 function [meanf, mean_out] = cubLattice_gCLASS(varargin)
+%CUBLATTICE_GCLASS Quasi-Monte Carlo method using rank-1 Lattices cubature
+%over a d-dimensional region to integrate within a specified generalized
+%error tolerance with guarantees under Fourier coefficients cone decay
+%assumptions.
+%
+%     w.f --- the integrand whose input should be a matrix n x d where n is
+%     the number of data points and d the dimension, which cannot be
+%     greater than 600. By default f is f=@ x.^2.
+%
+%     w.domain --- the integration region defined by its bounds. When measure
+%     is 'uniform' or 'normal', hyperbox must be a 2 x d matrix, where the
+%     first row corresponds to the lower limits and the second row corresponds
+%     to the upper lirmits of the integral. When measure is 'uniform ball'
+%     or 'uniform sphere', the input hyperbox is a vector with d+1 elements,
+%     where the first d values correspond to the center of the ball and the
+%     last value corresponds to the radius of the ball. The default value
+%     is [0;1].
+%
+%     w.measure --- for f(x)*mu(dx), we can define mu(dx) to be the
+%     measure of a uniformly distributed random variable in the hyperbox
+%     or normally distributed with covariance matrix I_d.
+%
+%     w.abstol --- the absolute error tolerance, abstol>=0. By
+%     default it is 1e-2. 
+%
+%     w.reltol --- the relative error tolerance, which should be
+%     in [0,1]. Default value is 0. 
+%
+
 % Example 1: 
 % >> w.f= @(x) prod(x,2); w.absTol=1e-5;
 % >> w.relTol=0; w.domain = [zeros(1,2);ones(1,2)];
@@ -61,8 +90,6 @@ mean_inp = gail.cubLatticeParam(varargin{:}); %parse the input and check it for 
 mean_inp.fun.nMax = min(mean_inp.fun.nMax,2^24);
 mean_out = gail.cubLatticeOut(mean_inp); %create the output class
 
-display(mean_out.nSample);
-
 %------------------------------------------------------------------------------
 % Minimum gathering of points
 l_star = mean_out.mmin - r_lag; % Minimum gathering of points for the sums of DFT
@@ -86,9 +113,6 @@ errest=zeros(mean_out.mmax -mean_out.mmin+1,1); %initialize error estimates
 appxinteg=zeros(mean_out.mmax -mean_out.mmin+1,1); %initialize approximations to integral
 exit_len = 2;
 exit=false(1,exit_len); %we start the algorithm with all warning flags down
-
-display('hello');
-display(mean_out.nSample);
 
 %% Initial points and FFT
 mean_out.nSample=2^mean_out.mmin; %total number of points to start with
@@ -151,7 +175,7 @@ if mean_out.CM.nCV
 else 
     C=[ones(mean_out.nf,1)];
 end 
-    
+
 %% alogirhtm to find beta 
 X = yg(kappanumap(2^(mean_out.mmin-r_lag-1)+1:end), (1:end));
 Y =  y(kappanumap(2^(mean_out.mmin-r_lag-1)+1:end), (1:end));

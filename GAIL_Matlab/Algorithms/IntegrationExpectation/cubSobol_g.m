@@ -280,7 +280,6 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 %
 %   If you find GAIL helpful in your work, please support us by citing the
 %   above papers, software, and materials.
-%
 
 t_start = tic;
 %% Initial important cone factors and Check-initialize parameters
@@ -326,6 +325,8 @@ if strcmpi(out_param.measure,'uniform ball') || strcmpi(out_param.measure,'unifo
         out_param.measure = 'normal';% then a normal distribution can be used
     end
 end
+
+disp(hyperbox);
 
 %------------------------------------------------------------------------------
 % Minimum gathering of points 
@@ -415,7 +416,7 @@ if cv.J
 else 
     C=[ones(out_param.FuncCount,1)];
 end 
-    
+
 %% alogirhtm to find beta 
 X = yg(kappanumap(2^(out_param.mmin-r_lag-1)+1:end), (1:end));
 Y =  y(kappanumap(2^(out_param.mmin-r_lag-1)+1:end), (1:end));

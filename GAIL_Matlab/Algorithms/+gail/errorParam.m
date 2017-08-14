@@ -183,9 +183,7 @@ classdef errorParam < handle & matlab.mixin.CustomDisplay
          propList = struct('absTol',obj.absTol, ...
             'relTol', obj.relTol);
       end
-
    end
 
-   
 end
 
