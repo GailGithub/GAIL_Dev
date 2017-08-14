@@ -1,21 +1,21 @@
 %Test the new cubMC routine
-function res=TestSettings_rel(test,fcn,param)
+function res=TestSettings_rel(test,fun,param)
 tstartwhole=tic;
 
 % Initialize variables
 tempinitial=zeros(test.nrep,1);
 res.dim=tempinitial;
-if strcmp(fcn.funtype,'step')
+if strcmp(fun.funtype,'step')
     res.exactkurtosis=tempinitial;
     res.estvariance=tempinitial;
     res.exactvariance=tempinitial;
 end
-if strcmp(fcn.funtype,'exp')
+if strcmp(fun.funtype,'exp')
     res.exactkurtosis=tempinitial;
     res.estvariance=tempinitial;
     res.exactvariance=tempinitial;
 end
-if strcmp(fcn.funtype,'gaussian')
+if strcmp(fun.funtype,'gaussian')
     res.exactkurtosis=tempinitial;
     res.estvariance=tempinitial;
     res.exactvariance=tempinitial;   
@@ -54,26 +54,26 @@ for irep=1:test.nrep
     %keyboard
     if any(strcmp(test.whichsample,{'iid','iidheavy'}))
        param.sample='iid';
-       [testfuniid,fcn,param]= ...
-          test.randchoicefun(fcn,param,test.randch,irep);
+       [testfuniid,fun,param]= ...
+          test.randchoicefun(fun,param,test.randch,irep);
     elseif any(strcmp(test.whichsample,{'cubSobol','cubLattice'}))
        param.sample='qmc';
-       [testfunqmc,fcn,param]= ...
-          test.randchoicefun(fcn,param,test.randch,irep);
+       [testfunqmc,fun,param]= ...
+          test.randchoicefun(fun,param,test.randch,irep);
     else
        error('Don''t know the sample type')
     end
     res.dim(irep)=param.dim;
-    if strcmp(fcn.funtype,'step')
+    if strcmp(fun.funtype,'step')
         res.exactkurtosis(irep)=param.exactkurtosis;
         res.exactvariance(irep)=param.exactvariance;
     end
-    if strcmp(fcn.funtype,'exp')
+    if strcmp(fun.funtype,'exp')
         res.exactkurtosis(irep)=param.exactkurtosis;
         res.exactvariance(irep)=param.exactvariance;
 
     end
-    if strcmp(fcn.funtype,'gaussian')
+    if strcmp(fun.funtype,'gaussian')
         res.exactkurtosis(irep)=param.exactkurtosis;
         res.exactvariance(irep)=param.exactvariance;
     end
@@ -83,7 +83,7 @@ for irep=1:test.nrep
         param.n_sigma=1e4;
         param.sample='iid';
         [Q,out_param]=cubMC_g(testfuniid,param.interval,param);
-        if irep==1 
+        if irep==1; 
             res.iidkurtmax=out_param.kurtmax; 
         end
         res.iidexit(irep)=out_param.exit;
@@ -112,7 +112,6 @@ for irep=1:test.nrep
            cubSobol_g(testfunqmc,[zeros(1,param.dim);ones(1,param.dim)],...
            'abstol',param.abstol,'reltol',param.reltol,'measure',param.measure,...
            'mmax',param.mmax);
-        %,'toltype',param.toltype,'theta',param.theta);
 %         res.Sobolexit(irep)=out_param.overbudget;
         res.SobolQ(irep)=q;
         res.Sobolexact = param.exactintegral;
@@ -121,13 +120,12 @@ for irep=1:test.nrep
         res.Sobolneval(irep)=out_param.n;
     end
     
-    % Evaluate integral using cubLattice
+    % Evaluate integral using cubSobol
     if any(strcmp('cubLattice',test.whichsample))
         [q,out_param]=...
            cubLattice_g(testfunqmc,[zeros(1,param.dim);ones(1,param.dim)],...
            'abstol',param.abstol,'reltol',param.reltol,'measure',param.measure,...
            'mmax',param.mmax,'transform',param.transform);
-        % ,'toltype',param.toltype,'theta',param.theta);
 %         res.Latticeexit(irep)=out_param.overbudget;
         res.LatticeQ(irep)=q;
         res.Latticeexact = param.exactintegral;
@@ -138,9 +136,9 @@ for irep=1:test.nrep
 end
 
 timestamp=datestr(now,'yyyy-mm-dd-HH-MM');
-save(['TestCubature-' fcn.funtype '-' param.measure ...
+save(['TestCubature-' fun.funtype '-' param.measure ...
    '-N-' int2str(test.nrep)  ...
-    '-' test.whichsample '_rel.mat'])
+    '-' param.method '_rel.mat'])
 
 
 toc(tstartwhole)

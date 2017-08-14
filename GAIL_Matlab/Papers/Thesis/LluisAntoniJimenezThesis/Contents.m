@@ -37,6 +37,6 @@
 %   cubSobol_CLT        - CUBLATTICE_G Quasi-Monte Carlo method using rank-1 Lattices cubature
 %   geoAsianCall        - This function chooses and sets up a test function from the parameters
 %   randomchoiceKeister - Choose Keister function
-%   plotTestColor       - 
-%   plotTestColor_rel   - 
-%   randomchoiceGeo     - 
+%   plotTestColor       - Plots the results for the pure absolute error tolerance case. It is called by DisplayTestResults_BlacknColor.
+%   plotTestColor_rel   - Plots the results fro the hybrid error tolerance case. It is called by DisplayTestResults_BlacknColor_rel.
+%   randomchoiceGeo     - Generates the arithmetic mean Asian option. It calls geoAsianCall.
