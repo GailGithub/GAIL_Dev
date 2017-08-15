@@ -57,7 +57,7 @@ function [fmin,out_param]=funmin_g(varargin)
 %     out_param.ninit --- initial number of subintervals
 %
 %     out_param.npoints --- number of points needed to reach the guaranteed
-%     absolute error tolerance or the guaranteed X tolerance
+%     absolute error tolerance
 %
 %     out_param.exit --- this is a vector with two elements, for
 %     tracking important warnings in the algorithm. The algorithm is considered successful (with
@@ -77,12 +77,15 @@ function [fmin,out_param]=funmin_g(varargin)
 %
 %     out_param.iter --- number of iterations
 %
-%     out_param.npoints --- number of points we need to reach the
-%     guaranteed absolute error tolerance
-%
 %     out_param.intervals --- the intervals containing point(s) where the
 %     minimum occurs. Each column indicates one interval where the first
-%     row is the left point and the second row is the right point.%    
+%     row is the left point and the second row is the right point.   
+%
+%
+%  Guarantee
+%
+%  Plese check the details of the guarantee in [1].
+%
 %
 %  Examples
 %
