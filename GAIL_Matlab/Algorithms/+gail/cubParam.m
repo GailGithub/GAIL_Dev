@@ -297,7 +297,7 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
       function val = get.ff(obj)
   
          % Domain type = box 
-         if strcmp(obj.fun.domainType,'cube')
+         if strcmp(obj.fun.domainType,'box')
             if strcmp(obj.measure,'uniform')
                Cnorm = prod(obj.fun.domain(2,:)-obj.fun.domain(1,:));
                val =@(t) Cnorm*obj.fun.f(bsxfun(@plus,obj.fun.domain(1,:), ...
