@@ -55,9 +55,11 @@ quasi-Monte Carlo methods for Cubature</a></em>, Ian Sloan's 80th Birthday Fetsc
 
 
 2016
+* Lan Jiang, <em><a href="http://repository.iit.edu/handle/10560/3844">Guaranteed Adaptive Monte Carlo Methods for Estimating Means of Random Variables</a></em>,  Ph.D Thesis, Illinois Institute of Technology,  2016.
+
 * Lluís Antoni Jiménez Rugama, <em><a href="http://search.proquest.com/openview/9f2d8affbbb995fc4ff99527d6587a46/1?pq-origsite=gscholar&cbl=18750&diss=y">Adaptive quasi-Monte Carlo cubature</a></em>,  Ph.D Thesis, Illinois Institute of Technology,  2016.
 
-* Lan Jiang, <em><a href="http://repository.iit.edu/handle/10560/3844">Guaranteed Adaptive Monte Carlo Methods for Estimating Means of Random Variables</a></em>,  Ph.D Thesis, Illinois Institute of Technology,  2016.
+*   Daniel S. Katz, Sou-Cheng T. Choi, Nancy Wilkins-Diehr, Neil Chue Hong, Colin C. Venters, James Howison, Frank Seinstra, Matthew Jones, Karen Cranston, Thomas L. Clune, Miguel de Val-Borro, Richard Littauer, <em><a href="http://arxiv.org/abs/1507.01715">Report on the Second Workshop on Sustainable Software for Science: Practice and Experiences (WSSSPE2)</a></em>, Journal of Open Research Software, Volume 4, Number 1, e7, 2016.
 
 2015
 *  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang, and Xuan Zhou, <em><a href="http://mypages.iit.edu/~schoi32/GAIL_2_1/Documentation/gail_doc_2_1.pdf">GAIL---Guaranteed Automatic Integration Library in MATLAB: Documentation for Version 2.1</a></em>, Technical Report, Illinois Institute of Technology, 2015.
@@ -67,8 +69,6 @@ quasi-Monte Carlo methods for Cubature</a></em>, Ian Sloan's 80th Birthday Fetsc
 * Fred J. Hickernell and Lluís Antoni Jiménez Rugama, <em><a href="http://arxiv.org/abs/1410.8615">Reliable Adaptive Cubature Using Digital Sequences</a></em>, Monte Carlo and Quasi-Monte Carlo Methods 2014 (R. Cools and D. Nuyens, eds.), Springer-Verlag, Berlin, 2015.
 
 * Lluís Antoni Jiménez Rugama and Fred J. Hickernell, <em><a href="http://arxiv.org/abs/1411.1966">Adaptive Multidimensional Integration Based on Rank-1 Lattices</a></em>, Monte Carlo and Quasi-Monte Carlo Methods 2014 (R. Cools and D. Nuyens, eds.), Springer-Verlag, Berlin, 2015.
-
-*   Daniel S. Katz, Sou-Cheng T. Choi, Nancy Wilkins-Diehr, Neil Chue Hong, Colin C. Venters, James Howison, Frank Seinstra, Matthew Jones, Karen Cranston, Thomas L. Clune, Miguel de Val-Borro, Richard Littauer, <em><a href="http://arxiv.org/abs/1507.01715">Report on the Second Workshop on Sustainable Software for Science: Practice and Experiences (WSSSPE2)</a></em>, submitted, 2015.
 
 * Xuan Zhou, <em><a href="https://books.google.com/books/about/Function_Approximation_with_Kernel_Metho.html?id=oDpoAQAACAAJ">Function Approximation with Kernel Methods</a></em>,  Ph.D Thesis, Illinois Institute of Technology,  2015.
 
