@@ -3,7 +3,7 @@
 %% Syntax
 % fmin = *funmin_g*(f)
 %
-% fmin = *funmin_g*(f,a,b,abstol,TolX)
+% fmin = *funmin_g*(f,a,b,abstol)
 %
 % fmin = *funmin_g*(f,'a',a,'b',b,'abstol',abstol)
 %
@@ -54,42 +54,46 @@
 %
 % *Output Arguments*
 %
-% * out_param.f --- input function.
+% * out_param.f --- input function
 %
-% * out_param.a --- left end point of interval.
+% * out_param.a --- left end point of interval
 %
-% * out_param.b --- right end point of interval.
+% * out_param.b --- right end point of interval
 %
-% * out_param.abstol --- guaranteed absolute error tolerance.
+% * out_param.abstol --- guaranteed absolute error tolerance
 %
-% * out_param.nmax --- cost budget.
+% * out_param.nmax --- cost budget
 %
-% * out_param.ninit --- initial number of points we use.
+% * out_param.ninit --- initial number of points we use
 %
 % * out_param.npoints --- number of points needed to reach the guaranteed
-%  absolute error tolerance.
+%  absolute error tolerance
 %
-% * out_param.exit --- this is a vector with two elements, for
+% <html>
+% <ul type="square">
+%  <li>out_param.exit --- this is a vector with two elements, for
 %  tracking important warnings in the algorithm. The algorithm is 
 %  considered successful (with out_param.exit == [0 0]) if no flags arise 
 %  warning that the results are not guaranteed. The initial value is [0 0]
-%  and the final value of this parameter is encoded as follows:
+%  and the final value of this parameter is encoded as follows:</li>
+%   <ul type="circle">
+%    <li>[1 0]   If reaching overbudget. It states whether
+%                the max budget is attained without reaching the
+%                guaranteed error tolerance.</li>
+%    <li>[0 1]   If reaching overiteration. It states whether
+%                the max iterations is attained without reaching the
+%                guaranteed error tolerance.</li>
+%   </ul>
+% </ul>
+% </html>
 %
-%                      [1 0]   If reaching overbudget. It states whether
-%                      the max budget is attained without reaching the
-%                      guaranteed error tolerance.
+% * out_param.errest --- estimation of the absolute error bound
 %
-%                      [0 1]   If reaching overiteration. It states whether
-%                      the max iterations is attained without reaching the
-%                      guaranteed error tolerance.
-%
-% * out_param.errest --- estimation of the absolute error bound.
-%
-% * out_param.iter --- number of iterations.
+% * out_param.iter --- number of iterations
 %
 % * out_param.intervals --- the intervals containing point(s) where the
 %  minimum occurs. Each column indicates one interval where the first raw
-%  is the left point and the second row is the right point.  
+%  is the left point and the second row is the right point
 %
 %% Guarantee
 %

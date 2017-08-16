@@ -34,8 +34,8 @@
 %  in_param.abstol. If a field is not specified, the default value is
 %  used.
 %
-% [q, out_param] = *integral_g*(f,...) returns the approximated 
-%  integration q and output structure out_param.
+% [q, out_param] = *integral_g*(f,...) returns the approximated integration
+%  q and output structure out_param.
 %
 % *Input Arguments*
 %
@@ -84,9 +84,8 @@
 % * out_param.ninit --- initial number of points we use, computed by nlo
 %  and nhi
 %
-% * out_param.tauchange --- it is true if the cone constant has been
-%  changed, false otherwise. See [1] for details. If true, you may wish to
-%  change the input in_param.ninit to a larger number.
+% * out_param.exceedbudget --- it is true if the algorithm tries to use
+%  more points than cost budget, false otherwise.
 % 
 % * out_param.tauchange --- it is true if the cone constant has been
 %  changed, false otherwise. See [1] for details. If true, you may wish to
@@ -103,11 +102,6 @@
 % * out_param.nstar --- final value of the parameter defining the cone of
 %  functions for which this algorithm is guaranteed; nstar = ninit-2
 %  initially and is increased as necessary
-%
-% * out_param.exit --- the state of program when exiting
-%         0  Success
-%         1  Number of points used is greater than out_param.nmax
-%         2  Number of iterations is greater than out_param.maxiter
 %
 %% Guarantee
 %    
@@ -131,19 +125,26 @@
 %% Examples
 % *Example 1*
 
-f = @(x) x.^2; [q, out_param] = integral_g(f)
+q = integral_g(@(x) x.^2)
 
 % Integrate function x with default input parameter to make the error less
 % than 1e-7.
-
 %%
 % *Example 2*
 
-[q, out_param] = integral_g(@(x) exp(-x.^2),'a',1,'b',2,...
-   'nlo',100,'nhi',10000,'abstol',1e-5,'nmax',1e7)
+f = @(x) exp(-x.^2); q = integral_g(f,'a',1,'b',2,'nlo',100,'nhi',10000,...
+    'abstol',1e-5,'nmax',1e7)
 
-% Integrate function x^2 with starting number of points 52, cost budget
-% 10000000 and error tolerance 1e-8
+% Integrate function x^2 on [1,2] with lowest initial number of function 
+% values 100 and highest initial number of function values 10000, absolute 
+% error tolerance 1e-5 and cost budget 10000000.
+%%
+% *Example 3*
+
+q = integral_g()
+
+% Warning: Function f must be a function handle. Now GAIL is using 
+% f(x)=exp(-100*(x-0.5)^2).
 %% See Also
 %
 % <html>
@@ -155,10 +156,6 @@ f = @(x) x.^2; [q, out_param] = integral_g(f)
 % </html>
 %
 % <html>
-% <a href="help_funappx_g.html">funappx_g</a>
-% </html>
-%
-% <html>
 % <a href="help_meanMC_g.html">meanMC_g</a>
 % </html>
 %
@@ -167,37 +164,40 @@ f = @(x) x.^2; [q, out_param] = integral_g(f)
 % </html>
 %
 % <html>
+% <a href="help_cubSobol_g.html">meanMC_g</a>
+% </html>
+%
+% <html>
+% <a href="help_cubLattice_g.html">cubMC_g</a>
+% </html>
+%
+% <html>
+% <a href="help_funappx_g.html">funappx_g</a>
+% </html>
+%
+% <html>
 % <a href="help_funmin_g.html">funmin_g</a>
 % </html>
 %
 %% References
 %
-% [1]  Nick Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
-% Yizhi Zhang, _The Cost of Deterministic, Adaptive, Automatic Algorithms:
-% Cones, Not Balls,_ Journal of Complexity 30, pp. 21-45, 2014.
+% [1] Fred J. Hickernell, Martha Razo, and Sunny Yun, "Reliable Adaptive
+% Numerical Integration", 2015+, working.
 %
-% [2] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang,
+% [2]  Nick Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
+% Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic Algorithms:
+% Cones, Not Balls," Journal of Complexity 30, pp. 21-45, 2014.
+%
+% [3] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang,
 % Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
 % GAIL: Guaranteed Automatic Integration Library (Version 2.2)
 % [MATLAB Software], 2017. Available from http://gailgithub.github.io/GAIL_Dev/
 %
-% [3] Sou-Cheng T. Choi, _MINRES-QLP Pack and Reliable Reproducible
-% Research via Supportable Scientific Software,_ Journal of Open Research
-% Software, Volume 2, Number 1, e22, pp. 1-7, 2014.
-%
-% [4] Sou-Cheng T. Choi and Fred J. Hickernell, _IIT MATH-573 Reliable
-% Mathematical Software_ [Course Slides], Illinois Institute of
+% [4] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable
+% Mathematical Software" [Course Slides], Illinois Institute of
 % Technology, Chicago, IL, 2013. Available from
-% http://gailgithub.github.io/GAIL_Dev/ 
+% http://gailgithub.github.io/GAIL_Dev/
 %
-% [5] Daniel S. Katz, Sou-Cheng T. Choi, Hilmar Lapp, Ketan Maheshwari,
-% Frank Loffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr,
-% James Hetherington, James Howison, Shel Swenson, Gabrielle D. Allen,
-% Anne C. Elster, Bruce Berriman, Colin Venters, _Summary of the First
-% Workshop On Sustainable Software for Science: Practice And Experiences
-% (WSSSPE1),_ Journal of Open Research Software, Volume 2, Number 1, e6,
-% pp. 1-21, 2014.
 %
 % If you find GAIL helpful in your work, please support us by citing the
 % above papers, software, and materials.
-%
