@@ -12,17 +12,33 @@
 %
 % [Q,out_param] = *cubMC_g*(f,hyperbox) estimates the integral of f over
 %  hyperbox to within a specified generalized error tolerance, tolfun =
-%  max(abstol, reltol*| I |), i.e., | I - Q | <= tolfun with probability at
-%  least 1-alpha, where abstol is the absolute error tolerance, and reltol
-%  is the relative error tolerance. Usually the reltol determines the
-%  accuracy of the estimation, however, if the | I | is rather small, the
-%  abstol determines the accuracy of the estimation. The default values
-%  are abstol=1e-2, reltol=1e-1, and alpha=1%. Input f is a function
-%  handle that accepts an n x d matrix input, where d is the dimension of
-%  the hyperbox, and n is the number of points being evaluated
-%  simultaneously. The input hyperbox is a 2 x d matrix, where the first
-%  row corresponds to the lower limits and the second row corresponds to
-%  the upper limits.
+%  max(abstol, reltol*| I |), i.e., | I - Q | <= tolfun with probability
+%  at least (1 - alpha), where abstol is the absolute error tolerance, and
+%  reltol is the relative error tolerance. Usually the reltol determines
+%  the accuracy of the estimation, however, if | I | is rather small,
+%  then abstol determines the accuracy of the estimation. Input f is a
+%  function handle that accepts an n x d matrix input, where d is the
+%  dimension of the hyperbox, and n is the number of points being
+%  evaluated simultaneously. When measure is 'uniform', 'uniform box',
+%  'normal' or 'Gaussian', the input hyperbox is a 2 x d matrix, where the
+%  first row corresponds to the lower limits and the second row
+%  corresponds to the upper limits. 
+%
+% When measure is 'uniform ball' or 'uniform sphere', the input hyperbox
+%  is a vector with d+1 elements, where the first d values correspond to
+%  the center of the ball and the last value corresponds to the radius of
+%  the ball. For these last two measures, a user can optionally specify
+%  what transformation should be used in order to get a uniform
+%  distribution on a ball of sphere. When measure is 'uniform ball_box',
+%  the box-to-ball transformation, which gets a set of points uniformly
+%  distributed on a ball from a set of points uniformly distributed on a
+%  box, will be used. When measure is 'uniform ball_normal', the
+%  normal-to-ball transformation, which gets a set of points uniformly
+%  distributed on a ball from a set of points normally distributed on the
+%  space, will be used. Similarly, the measures 'uniform sphere_box' and
+%  'uniform sphere_normal' can be defined. The default transformations are
+%  the box-to-ball and the box-to-sphere transformations, depending on the
+%  region of integration.
 % 
 % Q = *cubMC_g*(f,hyperbox,measure,abstol,reltol,alpha)
 %  estimates the integral of function f over hyperbox to within a 
@@ -50,9 +66,11 @@
 %  [zeros(1,d); ones(1,d)], the default d is 1.
 % 
 % * in_param.measure --- the measure for generating the random variable,
-%  the default is 'uniform'. The other measure could be handled is
-%  'normal'/'Gaussian'. The input should be a string type, hence with
-%  quotes.
+%  the default is 'uniform'. The other measures could be handled are
+%  'uniform box', 'normal'/'Gaussian', 'uniform ball'/'uniform 
+%  ball_box'/'uniform ball_normal' and 'uniform sphere'/'uniform 
+%  sphere_box'/'uniform sphere_normal'. The input should be
+%  a string type, hence with quotes.
 % 
 % * in_param.abstol --- the absolute error tolerance, the default value
 %  is 1e-2.
@@ -98,7 +116,9 @@
 % 
 % * out_param.n --- the sample size used in each iteration.
 %
-% * out_param.ntot --- total sample used.
+% * out_param.ntot --- total sample used, including the sample used to
+%  convert time budget to sample budget and the sample in each iteration
+%  step.
 %
 % * out_param.nremain --- the remaining sample budget to estimate I. It was
 %  calculated by the sample left and time left.
@@ -122,11 +142,21 @@
 %    <li>0   success</li>
 %    <li>1   Not enough samples to estimate the mean</li>
 %    <li>10  hyperbox does not contain numbers</li>
-%    <li>11  hyperbox is not 2 x d</li>
-%    <li>12  hyperbox is only a point in one direction</li>
+%    <li>11  hyperbox is not 2 x d when measure is 'uniform'
+%                           or 'normal'</li>
+%    <li>12  hyperbox is only a point in one direction when
+%                           measure is 'uniform' or 'normal'</li>
 %    <li>13  hyperbox is infinite when measure is 'uniform'</li>
 %    <li>14  hyperbox is not doubly infinite when measure
-%                        is 'normal'</li>
+%                           is 'normal'</li>
+%    <li>15  hyperbox has an infinite coordinate for the
+%            center of the ball or sphere or a infinite radius
+%                           for the ball or sphere</li>
+%    <li>16  The radius of the ball or sphere is a non-positive
+%                           real number</li>
+%    <li>18  Hyperbox not 1 x (d+1) when measure is 'uniform
+%                           ball' or 'uniform sphere'</li>
+%    <li>19  The dimension of the sphere is smaller than 2</li>
 %   </ul>
 % </ul>
 % </html>
@@ -134,62 +164,85 @@
 %%  Guarantee
 % This algorithm attempts to calculate the integral of function f over a
 % hyperbox to a prescribed error tolerance tolfun:= max(abstol,reltol*| I |)
-% with guaranteed confidence level 1-alpha. If the algorithm terminated
-% without showing any warning messages and provide an answer Q, then the
-% follow inequality would be satisfied:
+% with guaranteed confidence level 1-alpha. If the algorithm terminates
+% without showing any warning messages and provides an answer Q, then the
+% following inequality would be satisfied:
 % 
 % Pr(| Q - I | <= tolfun) >= 1-alpha
 %
 % The cost of the algorithm, N_tot, is also bounded above by N_up, which is
-% a function in terms of abstol, reltol, nSig, n1, fudge, kurtmax, beta.
-% And the following inequality holds:
+% a function in terms of abstol, reltol, nSig, n1, fudge, kurtmax, beta. And
+% the following inequality holds:
 % 
 % Pr (N_tot <= N_up) >= 1-beta
 %
 % Please refer to our paper for detailed arguments and proofs.
 %
 %%  Examples
+%%
 % *Example 1*
 
-% Estimate the integral with integrand f(x) = sin(x) over the interval
-% [1;2]
-% 
-
- f = @(x) sin(x); interval = [1;2];
- Q = cubMC_g(f,interval,'uniform',1e-3,1e-2)
+% If no parameters are parsed, help text will show up as follows: 
  
-%% 
+ cubMC_g
+
+%%
 % *Example 2*
 
-% Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) over the
-% hyperbox [0 0;1 1], where x is a vector x = [x1 x2].
-% 
+% Estimate the integral with integrand f(x) = sin(x) over the interval
+% [1;2] with default parameters.
 
- f = @(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [0 0;1 1];
- Q = cubMC_g(f,hyperbox,'measure','uniform','abstol',1e-3,...
-     'reltol',1e-13)
-
-%%
+ f=@(x) sin(x);interval = [1;2];
+ Q = cubMC_g(f,interval,'uniform',1e-3,1e-2);
+ exactsol = 0.9564;
+ check = double(abs(exactsol-Q) < max(1e-3,1e-2*abs(exactsol)))
+ 
+%% 
 % *Example 3*
 
-% Estimate the integral with integrand f(x) = 2^d*prod(x1*x2*...*xd) +
-% 0.555 over the hyperbox [zeros(1,d);ones(1,d)], where x is a vector x =
-% [x1 x2... xd].
+% Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) over the
+% hyperbox [0 0;1 1], where x is a vector x = [x1 x2]. 
 
-
-  d = 3;f = @(x) 2^d*prod(x,2)+0.555; hyperbox = [zeros(1,d);ones(1,d)];
-  in_param.abstol = 1e-3; in_param.reltol=1e-3;
-  Q = cubMC_g(f,hyperbox,in_param)
+ f=@(x) exp(-x(:,1).^2-x(:,2).^2);hyperbox = [0 0;1 1];
+ Q = cubMC_g(f,hyperbox,'uniform',1e-3,0);
+ exactsol = 0.5577;
+ check = double(abs(exactsol-Q) < 1e-3)
 
 %%
-% *Example 4* 
+% *Example 4*
 
+% Estimate the integral with integrand f(x) = 2^d*prod(x1*x2*...*xd)+0.555
+% over the hyperbox [zeros(1,d);ones(1,d)], where x is a vector 
+% x = [x1 x2... xd].
+
+  d=3;f=@(x) 2^d*prod(x,2)+0.555;hyperbox =[zeros(1,d);ones(1,d)];
+  in_param.abstol = 1e-3;in_param.reltol=1e-3;
+  Q = cubMC_g(f,hyperbox,in_param);
+  exactsol = 1.555;
+  check = double(abs(exactsol-Q) < max(1e-3,1e-3*abs(exactsol)))
+
+%%
+% *Example 5* 
+%
 % Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) in the
 % hyperbox [-inf -inf;inf inf], where x is a vector x = [x1 x2].
 
+ f=@(x) exp(-x(:,1).^2-x(:,2).^2);hyperbox = [-inf -inf;inf inf];
+ Q = cubMC_g(f,hyperbox,'normal',0,1e-2);
+ exactsol = 1/3;
+ check = double(abs(exactsol-Q) < max(0,1e-2*abs(exactsol)))
+ 
+%%
+% *Example 6* 
+%
+% Estimate the integral with integrand f(x) = x1^2+x2^2 in the disk with
+% center (0,0) and radius 1, where x is a vector x = [x1 x2].
 
- f = @(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [-inf -inf;inf inf];
- Q = cubMC_g(f,hyperbox,'normal',0,1e-2)
+ f=@(x) x(:,1).^2+x(:,2).^2;hyperbox = [0,0,1];
+ Q = cubMC_g(f,hyperbox,'uniform ball','abstol',1e-3,'reltol',1e-3);
+ exactsol = pi/2;
+ check = double(abs(exactsol-Q) < max(1e-3,1e-3*abs(exactsol)))
+ 
 %% See Also
 %
 % <html>
@@ -205,10 +258,6 @@
 % </html>
 %
 % <html>
-% <a href="help_meanMCBer_g.html">meanMCBer_g</a>
-% </html>
-%
-% <html>
 % <a href="help_cubLattice_g.html">cubLattice_g</a>
 % </html>
 %
@@ -218,9 +267,9 @@
 %
 %% References
 %
-% [1]  F. J. Hickernell, L. Jiang, Y. Liu, and A. B. Owen, _Guaranteed
+% [1]  F. J. Hickernell, L. Jiang, Y. Liu, and A. B. Owen, "Guaranteed
 % conservative fixed width confidence intervals via Monte Carlo
-% sampling,_ Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F.
+% sampling," Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F.
 % Y. Kuo, G. W. Peters, and I. H. Sloan, eds.), pp. 105-128,
 % Springer-Verlag, Berlin, 2014. DOI: 10.1007/978-3-642-41095-6_5
 %
@@ -229,23 +278,29 @@
 % GAIL: Guaranteed Automatic Integration Library (Version 2.2)
 % [MATLAB Software], 2017. Available from http://gailgithub.github.io/GAIL_Dev/
 %
-% [3] Sou-Cheng T. Choi, _MINRES-QLP Pack and Reliable Reproducible
-% Research via Supportable Scientific Software,_ Journal of Open Research
+% [3] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
+% Research via Supportable Scientific Software," Journal of Open Research
 % Software, Volume 2, Number 1, e22, pp. 1-7, 2014.
 %
-% [4] Sou-Cheng T. Choi and Fred J. Hickernell, _IIT MATH-573 Reliable
-% Mathematical Software_ [Course Slides], Illinois Institute of
+% [4] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable
+% Mathematical Software" [Course Slides], Illinois Institute of
 % Technology, Chicago, IL, 2013. Available from
 % http://gailgithub.github.io/GAIL_Dev/ 
 %
 % [5] Daniel S. Katz, Sou-Cheng T. Choi, Hilmar Lapp, Ketan Maheshwari,
 % Frank Loffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr,
 % James Hetherington, James Howison, Shel Swenson, Gabrielle D. Allen,
-% Anne C. Elster, Bruce Berriman, Colin Venters, _Summary of the First
+% Anne C. Elster, Bruce Berriman, Colin Venters, "Summary of the First
 % Workshop On Sustainable Software for Science: Practice And Experiences
-% (WSSSPE1),_ Journal of Open Research Software, Volume 2, Number 1, e6,
+% (WSSSPE1)," Journal of Open Research Software, Volume 2, Number 1, e6,
 % pp. 1-21, 2014.
+%
+% [6] Fang, K.-T., & Wang, Y. (1994). Number-theoretic Methods in 
+% Statistics. London, UK: CHAPMAN & HALL
+%    
+% [7] Lan Jiang, Guaranteed Adaptive Monte Carlo Methods for Estimating
+% Means of Random Variables, Ph.D Thesis, Illinois Institute of
+% Technology, 2016.
 %
 % If you find GAIL helpful in your work, please support us by citing the
 % above papers, software, and materials.
-%
