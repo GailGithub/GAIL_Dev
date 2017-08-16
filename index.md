@@ -51,7 +51,7 @@ If you find GAIL helpful in your work, please support us by citing the following
 * F. J. Hickernell, Ll. A. Jim\'enez Rugama, and D. Li, <em><a href="https://arxiv.org/abs/1702.01491">Adaptive 
 quasi-Monte Carlo methods for Cubature</a></em>, Ian Sloan's 80th Birthday Fetschrift, to appear.
 
-* F. J. Hickernell, <em><a href="https://arxiv.org/abs/1702.01487">The Trio Identity for Quasi-Monte Carlo Error</a></em>, Monte Carlo and Quasi-Monte Carlo Methods: MCQMC, Stanford, USA, August 2016, to appear.
+* F. J. Hickernell, <em><a href="https://arxiv.org/abs/1702.01487">The Trio Identity for Quasi-Monte Carlo Error</a></em>, Monte Carlo and Quasi-Monte Carlo Methods: MCQMC, Stanford, USA, August 2016 (P. Glynn and A. Owen, eds.), to appear.
 
 
 2016
