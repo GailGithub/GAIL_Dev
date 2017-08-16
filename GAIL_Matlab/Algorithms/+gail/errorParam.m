@@ -115,7 +115,7 @@ classdef errorParam < handle & matlab.mixin.CustomDisplay
          end
          if ~done
            f_addParamVal = @addOptional;
-           parseRange = start:min(nargin,start + 2); %only parse absTol and relTol
+           parseRange = start:min(nargin,start + 1); %only parse absTol and relTol
          end
          f_addParamVal(p,'absTol',obj.def_absTol);
          f_addParamVal(p,'relTol',obj.def_relTol);
