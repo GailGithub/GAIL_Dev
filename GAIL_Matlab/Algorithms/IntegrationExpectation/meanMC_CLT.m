@@ -60,39 +60,25 @@ function [sol, out] = meanMC_CLT(varargin)
 %
 % _Authors: Yueyi Li, Hu Cauw Hung, Fred J. Hickernell_
 %
-% Example 1
-% >> [mu,out] = meanMC_CLT(@(n) rand(n,1).^2, 0.001)
-% mu =
-%     0.33***
-% out = 
-%   meanYOut with properties:
-%           
-%            Y: @(n)rand(n,1).^2 
-%       absTol: 1.0000e-03
-%       relTol: 0
-%        alpha: 0.0100 
-%          sol: 0.33***
-
-
-
 % Example 1:
 % Estimate the integral with integrand f(x) = x1.*x2 in the interval [0,1)^2 with absolute 
-% tolerance 1e-5 and relative tolerence 0:
-% 
-% >> f = @(x) prod(x,2);
-% >> q = meanMC_CLT(@(n)f(rand(n,2)),1e-4,0); exactsol = 1/4; 
-% >> check = abs(exactsol-q) < 1e-5
-% check = 1
+% tolerance 1e-3 and relative tolerence 0:
+% >> [mu,out] = meanMC_CLT(@(n) rand(n,1).^2, 0.001);
+% >> exact = 1/3;
+% >> check = abs(exact - mu) < 2e-3
+% check = logical 1
 %
 %
 % Example 2:
-% Estimate the integral f(x)=exp(-x^2) in the interval [0,1] using x as a control variate:
-% >> f=@(t)[exp(-t.^2),t];
-% >> YXn=@(n)f(rand(n,1));
-% >> s=struct('Y',YXn,'nY',1,'trueMuCV',1/2)
-% >> [hmu,out]=meanMC_CLT(s,0,1e-3); exactsol=erf(1)*sqrt(pi)/2
-% >> check = abs(exactsol-hmu) < max(0,1e-3*abs(exactsol))
-% check=1
+% Estimate the integral f(x)=exp(-x^2) in the interval [0,1] 
+%    using x as a control variate and relative error 1e-3:
+% >> f = @(x)[exp(-x.^2), x];
+% >> YXn = @(n)f(rand(n,1));
+% >> s = struct('Y',YXn,'nY',1,'trueMuCV',1/2);
+% >> [hmu,out] = meanMC_CLT(s,0,1e-3); 
+% >> exact = erf(1)*sqrt(pi)/2;
+% >> check = abs(exact-hmu) < max(0,1e-3*abs(exact))
+% check = logical 1
 %
 %
 % Example 3:
@@ -102,10 +88,11 @@ function [sol, out] = meanMC_CLT(varargin)
 % >> f1 = @(x,a,d) f(normsqd(x),a,d);
 % >> f2=@(x)[f1(x,1,1),f1(x,1/sqrt(2),1),cos(x)];
 % >> YXn=@(n)f2(randn(n,1));
-% >> s=struct('Y',YXn,'nY',2,'trueMuCV',1/sqrt(exp(1)))
-% >> [hmu,out]=meanMC_CLT(s,0,1e-3); exactsol=1.380388447043143;
-% >>  abs(exactsol-hmu) < max(0,1e-3*abs(exactsol))
-% check=1
+% >> s=struct('Y',YXn,'nY',2,'trueMuCV',1/sqrt(exp(1)));
+% >> [hmu,out]=meanMC_CLT(s,0,1e-3); 
+% >> exact=1.380388447043143;
+% >> check = abs(exact-hmu) < max(0,1e-3*abs(exact))
+% check = logical 1
 %
 %
 % Example 4:
@@ -113,10 +100,11 @@ function [sol, out] = meanMC_CLT(varargin)
 % in the interval [0,1)^3 with pure absolute error 1e-3 using x1.*x2.*x3 as control variate:
 % 
 % >> f=@(x) [x(:,1).^3.*x(:,2).^3.*x(:,3).^3, x(:,1).*x(:,2).*x(:,3)];
-% >> s=struct('Y',@(n)f(rand(n,3)),'nY',1,'trueMuCV',1/8)
-% >> [hmu,out]=meanMC_CLT(s,1e-3,0) exactsol = 1/64;
-% >> check = abs(exactsol-hmu) < max(1e-3,1e-3*abs(exactsol))
-% check = 1
+% >> s=struct('Y',@(n)f(rand(n,3)),'nY',1,'trueMuCV',1/8);
+% >> [hmu,out]=meanMC_CLT(s,1e-3,0);
+% >> exact = 1/64;
+% >> check = abs(exact-hmu) < max(1e-3,1e-3*abs(exact))
+% check = logical 1
 %
 %
 % Example 5:
@@ -125,14 +113,15 @@ function [sol, out] = meanMC_CLT(varargin)
 % using x1.*x2.*x3 and x1+x2.^3+x3 as control variate:
 %
 % >> f = @(x) [x(:,1).^3.*x(:,2).^3.*x(:,3).^3, x(:,1).^2.*x(:,2).^2.*x(:,3).^2-1/27+1/64,x(:,1).*x(:,2).*x(:,3),x(:,1)+x(:,2)+x(:,3)];
-% >> s=struct('Y',@(n)f(rand(n,3)),'nY',2,'trueMuCV',[1/8 1.5])
-% >> [hmu,out]=meanMC_CLT(s,1e-4,1e-3); exactsol = 1/64;
-% >> check = abs(exactsol-hmu) < max(1e-4,1e-3*abs(exactsol))
-% check = 1
+% >> s=struct('Y',@(n)f(rand(n,3)),'nY',2,'trueMuCV',[1/8 1.5]);
+% >> [hmu,out]=meanMC_CLT(s,1e-4,1e-3); 
+% >> exact = 1/64;
+% >> check = abs(exact-hmu) < max(1e-4,1e-3*abs(exact))
+% check = logical 1
 %
 %
 %
-%
+% _Authors: Yueyi Li, Hu Cauw Hung, Fred J. Hickernell_
 
 tstart = tic; %start the clock 
 
