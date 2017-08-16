@@ -147,7 +147,7 @@ end
 Yrand = out.Y; %the random number generator
 q = out.nY; %the number of target random variable 
 p = out.CM.nCV; %the number of control variates
-xmean = out.CM.trueMuCV; %the mean of the control variates
+% xmean = out.CM.trueMuCV; %the mean of the control variates
 % if size(xmean) == [0 0] %not sure why this is here
 %    xmean = 0;
 % end
@@ -184,8 +184,11 @@ end
 YY = Yrand(nmu); %get samples for computing the mean
 
 if p > 0 || q > 1   %samples of the new random variable
-  YY(:,q+1:end) = bsxfun(@minus, YY(:,q+1:end), xmean); %subtract true mean from control variates
-  YY = YY*beta; %incorporate the control variates and multiple Y's
+  if ~isempty(out.CM.trueMuCV)
+     YY(:,q+1:end) = bsxfun(@minus, YY(:,q+1:end), out.CM.trueMuCV); 
+     %subtract true mean from control variates
+  end
+  YY = YY * beta; %incorporate the control variates and multiple Y's
 end
 
 sol = mean(YY); %estimated mean
