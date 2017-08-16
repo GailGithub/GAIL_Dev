@@ -40,7 +40,7 @@ function [fmin,out_param]=funmin_g(varargin)
 %
 %     in_param.nmax --- cost budget, default value is 1e7.
 %
-%     in_param.maxiter --- max number of iterations, default value is 1000
+%     in_param.maxiter --- max number of iterations, default value is 1000.
 %
 %   Output Arguments
 %
