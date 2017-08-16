@@ -136,11 +136,6 @@ end
 Yrand = out.Y; %the random number generator
 q = out.nY; %the number of target random variable 
 p = out.CM.nCV; %the number of control variates
-% xmean = out.CM.trueMuCV; %the mean of the control variates
-% if size(xmean) == [0 0] %not sure why this is here
-%    xmean = 0;
-% end
-
 val = Yrand(out.nSig); %get samples to estimate variance 
 if p==0 && q==1
    YY = val(:,1); 
@@ -157,7 +152,6 @@ else
 end
 
 out.stddev = std(YY); %standard deviation of the new samples
-
 sig0up = out.CM.inflate .* out.stddev; %upper bound on the standard deviation
 hmu0 = mean(YY); %mean of the samples
 
