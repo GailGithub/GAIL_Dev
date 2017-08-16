@@ -51,7 +51,7 @@ If you find GAIL helpful in your work, please support us by citing the following
 * F. J. Hickernell, Ll. A. Jim\'enez Rugama, and D. Li, <em><a href="https://arxiv.org/abs/1702.01491">Adaptive 
 quasi-Monte Carlo methods for Cubature</a></em>, Ian Sloan's 80th Birthday Fetschrift, to appear.
 
-* F. J. Hickernell <em><a href="https://arxiv.org/abs/1702.01487">The Trio Identity for Quasi-Monte Carlo Error</a></em>, Monte Carlo and Quasi-Monte Carlo Methods: MCQMC, Stanford, USA, August 2016, to appear.
+* F. J. Hickernell, <em><a href="https://arxiv.org/abs/1702.01487">The Trio Identity for Quasi-Monte Carlo Error</a></em>, Monte Carlo and Quasi-Monte Carlo Methods: MCQMC, Stanford, USA, August 2016, to appear.
 
 
 2016
@@ -60,21 +60,21 @@ quasi-Monte Carlo methods for Cubature</a></em>, Ian Sloan's 80th Birthday Fetsc
 * Lan Jiang, <em><a href="http://repository.iit.edu/handle/10560/3844">Guaranteed Adaptive Monte Carlo Methods for Estimating Means of Random Variables</a></em>,  Ph.D Thesis, Illinois Institute of Technology,  2016.
 
 2015
+*  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang, and Xuan Zhou, <em><a href="http://mypages.iit.edu/~schoi32/GAIL_2_1/Documentation/gail_doc_2_1.pdf">GAIL---Guaranteed Automatic Integration Library in MATLAB: Documentation for Version 2.1</a></em>, Technical Report, Illinois Institute of Technology, 2015.
+
 * Yuhan Ding, <em><a href="https://books.google.com/books/about/Guaranteed_Adaptive_Univariate_Function.html?id=hR9iAQAACAAJ">Guaranteed Adaptive Univariate Function Approximation</a></em>,   Ph.D Thesis, Illinois Institute of Technology,  2015.
+
+* Fred J. Hickernell and Lluís Antoni Jiménez Rugama, <em><a href="http://arxiv.org/abs/1410.8615">Reliable Adaptive Cubature Using Digital Sequences</a></em>, Monte Carlo and Quasi-Monte Carlo Methods 2014 (R. Cools and D. Nuyens, eds.), Springer-Verlag, Berlin, 2015.
+
+* Lluís Antoni Jiménez Rugama and Fred J. Hickernell, <em><a href="http://arxiv.org/abs/1411.1966">Adaptive Multidimensional Integration Based on Rank-1 Lattices</a></em>, Monte Carlo and Quasi-Monte Carlo Methods 2014 (R. Cools and D. Nuyens, eds.), Springer-Verlag, Berlin, 2015.
+
+*   Daniel S. Katz, Sou-Cheng T. Choi, Nancy Wilkins-Diehr, Neil Chue Hong, Colin C. Venters, James Howison, Frank Seinstra, Matthew Jones, Karen Cranston, Thomas L. Clune, Miguel de Val-Borro, Richard Littauer, <em><a href="http://arxiv.org/abs/1507.01715">Report on the Second Workshop on Sustainable Software for Science: Practice and Experiences (WSSSPE2)</a></em>, submitted, 2015.
 
 * Xuan Zhou, <em><a href="https://books.google.com/books/about/Function_Approximation_with_Kernel_Metho.html?id=oDpoAQAACAAJ">Function Approximation with Kernel Methods</a></em>,  Ph.D Thesis, Illinois Institute of Technology,  2015.
 
 *   Xuan Zhou and Fred J. Hickernell, <em><a href="http://arxiv.org/abs/1411.0790">Tractability of function approximation with product kernels</a></em>, Monte Carlo and Quasi-Monte Carlo Methods 2014 (R. Cools and D. Nuyens, eds.), Springer-Verlag, Berlin, 2015.
 
-*   Daniel S. Katz, Sou-Cheng T. Choi, Nancy Wilkins-Diehr, Neil Chue Hong, Colin C. Venters, James Howison, Frank Seinstra, Matthew Jones, Karen Cranston, Thomas L. Clune, Miguel de Val-Borro, Richard Littauer, <em><a href="http://arxiv.org/abs/1507.01715">Report on the Second Workshop on Sustainable Software for Science: Practice and Experiences (WSSSPE2)</a></em>, submitted, 2015.
-
-*  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang, and Xuan Zhou, <em><a href="http://mypages.iit.edu/~schoi32/GAIL_2_1/Documentation/gail_doc_2_1.pdf">GAIL---Guaranteed Automatic Integration Library in MATLAB: Documentation for Version 2.1</a></em>, Technical Report, Illinois Institute of Technology, 2015.
-
 2014
-* Fred J. Hickernell and Lluís Antoni Jiménez Rugama, <em><a href="http://arxiv.org/abs/1410.8615">Reliable Adaptive Cubature Using Digital Sequences</a></em>, Monte Carlo and Quasi-Monte Carlo Methods 2014 (R. Cools and D. Nuyens, eds.), Springer-Verlag, Berlin, 2015.
-
-* Lluís Antoni Jiménez Rugama and Fred J. Hickernell, <em><a href="http://arxiv.org/abs/1411.1966">Adaptive Multidimensional Integration Based on Rank-1 Lattices</a></em>, Monte Carlo and Quasi-Monte Carlo Methods 2014 (R. Cools and D. Nuyens, eds.), Springer-Verlag, Berlin, 2015.
-
 * Xin Tong, <em><a href="https://gail.googlecode.com/git/GAIL_2_0/Papers/UniFunMin/XinTong's%20Master%20Thesis.pdf">A Guaranteed, Adaptive, Automatic Algorithm for Univariate Function Minimization</a></em>,  M.S. Thesis, Illinois Institute of Technology,  2014.
 
 * Fred J. Hickernell, Lan Jiang, Yuewei Liu, and Art B. Owen, <em>Guaranteed conservative fixed width confidence intervals via Monte Carlo sampling</em>, Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F. Y. Kuo, G. W. Peters, and I. H. Sloan, eds.), pp. 105-128, Springer-Verlag, Berlin, 2014, <a href="http://link.springer.com/chapter/10.1007/978-3-642-41095-6_5">DOI: 10.1007/978-3-642-41095-6_5</a>. (<a href="https://gail.googlecode.com/git/GAIL_2_0/Papers/MCQMC2012Paper/MCQMC2012GuaranteedFixedWidthConfidenceIntervals.pdf">PDF</a>)
