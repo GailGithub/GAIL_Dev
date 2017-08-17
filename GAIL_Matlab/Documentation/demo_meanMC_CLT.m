@@ -158,7 +158,10 @@ disp(['Real error was ' ...
 % that the we do a change of variable \(\boldsymbol{t} = \boldsymbol{x}/a\)
 % and transform the integral:
 %
-% \begin{align*} I &= \int_{\mathbb{R}^d} a^d \cos(a \lVert \boldsymbol{t}
+% \begin{align*} I &= \int_{\mathbb{R}^d} \cos(\lVert \boldsymbol{x}
+% \rVert) \exp(-\lVert \boldsymbol{x} \rVert^2) \, \mathrm{d}
+% \boldsymbol{x} \\
+% &= \int_{\mathbb{R}^d} a^d \cos(a \lVert \boldsymbol{t}
 % \rVert) \exp(-a^2 \lVert \boldsymbol{t} \rVert^2) \, \mathrm{d}
 % \boldsymbol{t}, \qquad a > 0, \\ & = \int_{\mathbb{R}^d}
 % \underbrace{(2\pi a^2)^{d/2} \cos(a \lVert \boldsymbol{t} \rVert)
@@ -179,11 +182,11 @@ f = @(t,a,d) f1(normsqd(t),a,d);
 abstol = 0; %absolute tolerance
 reltol = 0.01; %relative tolerance
 dvec = 1:5; %vector of dimensions
-avec = [1 1/sqrt(2) 1/sqrt(1.5) 1/sqrt(3)]; %default value of a 
+avec = [1 1/sqrt(2) 1/sqrt(1.5) 1/sqrt(3)]; %trial values of a 
 IMCvec(size(dvec)) = 0; %vector of answers
-f2= @(t,d) cell2mat(arrayfun(@(a) f(t,a,d),avec,'UniformOutput',false)); %a vector of funcion for each value of a
-outT = zeros(size(dvec));%vector of time
-outN = zeros(size(dvec));%vector of points
+f2 = @(t,d) cell2mat(arrayfun(@(a) f(t,a,d),avec,'UniformOutput',false)); %a vector of functions for each value of a
+outT = zeros(size(dvec)); %vector of time
+outN = zeros(size(dvec)); %vector of points
 for d = dvec
    f3 = @(t)f2(t,d);%integration in dimension d
    YXn = @(n)f3(randn(n,d));%random generator
@@ -198,10 +201,11 @@ for d = dvec
 end
 error=abs(Ivec-IMCvec)./abs(Ivec); %calculate the relative error
 %display a result table
-title=['Dimension  ' 'Esti.Mean  ' 'TrueMean  ' 'Comp.Time  ' 'RealError '];
-datasave=[dvec'  IMCvec'    Ivec'   outT'  error'];
+title ='Dimension  Est. Mean  True Mean  Rel. Error     N      Time';
+datasave=[dvec; IMCvec; Ivec; error; outN; outT];
 disp(title)
-disp(datasave)
-end
+fprintf('    %1.0f        %2.4f     %2.4f     %2.4f  %8.0f   %2.4f \n', datasave)
+
+
 %%
 % Author _Yueyi Li_

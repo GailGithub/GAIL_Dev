@@ -567,10 +567,9 @@ classdef optPayoff < assetPath
             multistrike = (numel(obj.payoffParam.strike) > 1);
             multipay = (numel(obj.payoffParam.digitalPay) > 1);
             
-            if any(wh);
-                val(wh)=obj.assetParam.initPrice * ...
-                    exp(obj.assetParam.interest * ...
-                    obj.timeDim.endTime);
+            %Exact price for discounted stock price is initial price
+            if any(wh) 
+                val(wh)=obj.assetParam.initPrice;
             end
             
             %Pricing European geometric brownian motion
@@ -579,7 +578,7 @@ classdef optPayoff < assetPath
             whput = strcmp(obj.payoffParam.putCallType, 'put');
             wheurocall = wheuro & whcall;
             wheuroput = wheuro & whput;
-            if any(wheuro);
+            if any(wheuro)
                 [eurocall,europut] = eurogbmprice(obj.assetParam.initPrice, ...
                     obj.assetParam.interest, obj.timeDim.endTime, ...
                     obj.assetParam.volatility, obj.payoffParam.strike);
