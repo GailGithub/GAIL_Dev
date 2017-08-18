@@ -10,7 +10,7 @@
 % f_true = 0.06***
 % >> Q = cubLattice_g(f,hyperbox,'uniform',1e-3,1e-2);
 % >> check = double(abs(f_true-Q) < gail.tolfun(1e-3,1e-2,1,f_true,'max'))
-% check = 1
+% check = logical 1
 % 
 %
 % Example 2: 
@@ -22,7 +22,7 @@
 % f_true = 0.66***
 % >> Q = cubLattice_g(f,hyperbox,'uniform',1e-3,1e-3);
 % >> check = abs(f_true-Q) < gail.tolfun(1e-3,1e-3,1,f_true,'max')
-% check = 1
+% check = logical 1
 % 
 %
 % Example 3: 
@@ -34,7 +34,7 @@
 % f_true = 0.04***
 % >> Q = cubLattice_g(f,hyperbox,'uniform',1e-3,1e-2);
 % >> check = abs(f_true-Q) < gail.tolfun(1e-3,1e-2,1,f_true,'max')
-% check = 1
+% check = logical 1
 % 
 %
 % Example 4: 
@@ -46,7 +46,7 @@
 % f_true = 0.62***
 % >> Q = cubLattice_g(f,hyperbox,'uniform',1e-3,1e-3);
 % >> check = abs(f_true-Q) < gail.tolfun(1e-3,1e-3,1,f_true,'max')
-% check = 1
+% check = logical 1
 %
 %
 % Example 5: 
@@ -58,7 +58,7 @@
 % f_true = 0.38***
 % >> Q = cubLattice_g(f,hyperbox,'uniform',1e-3,1e-3);
 % >> check = abs(f_true-Q) < gail.tolfun(1e-3,1e-3,1,f_true,'max')
-% check = 1
+% check = logical 1
 %
 %
 % Example 6: 
@@ -71,7 +71,7 @@
 % f_true = 4.76***
 % >> Q = cubLattice_g(f,hyperbox,'uniform',1e-2,1e-13);
 % >> check = abs(f_true-Q) < gail.tolfun(1e-2,1e-13,1,f_true,'max')
-% check = 1
+% check = logical 1
 %
 %
 % Example 7: 
@@ -83,7 +83,7 @@
 % f_true = 2.4***
 % >> Q = cubLattice_g(f,hyperbox,'uniform',1e-2,1e-13);
 % >> check = abs(f_true-Q) < gail.tolfun(1e-2,1e-13,1,f_true,'max')
-% check = 1
+% check = logical 1
 % 
 %
 % Example 8: 
@@ -95,7 +95,7 @@
 % f_true = 0.00***
 % >> Q = cubLattice_g(f,hyperbox,'uniform',1e-2,1e-3);
 % >> check = abs(f_true-Q) < gail.tolfun(1e-2,1e-3,1,f_true,'max')
-% check = 1
+% check = logical 1
 % 
 %
 % Example 9: 
@@ -107,7 +107,7 @@
 % f_true = 1.29***
 % >> Q = cubLattice_g(f,hyperbox,'uniform',1e-2,1e-3);
 % >> check = abs(f_true-Q) < gail.tolfun(1e-2,1e-3,1,f_true,'max')
-% check = 1
+% check = logical 1
 %
 %
 % Example 10: 
@@ -119,6 +119,6 @@
 % f_true = 0.83***
 % >> Q = cubLattice_g(f,hyperbox,'uniform',1e-2,1e-2);
 % >> check = abs(f_true-Q) < gail.tolfun(1e-2,1e-2,1,f_true,'max')
-% check = 1
+% check = logical 1
 %
 %
