@@ -126,7 +126,7 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %        dim: 1
 %     orient: 'first'
 % 
-%     out_param = ***
+%     out_param = 
 %                f: @(x)x.^2
 %                a: 0
 %                b: 1
@@ -139,6 +139,7 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %     exceedbudget: 0
 %          npoints: 5051
 %           errest: 9.9990e-07
+%             iter: 2
 %
 %
 %   Example 2:
@@ -156,7 +157,7 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %        dim: 1
 %     orient: 'first'
 % 
-%     out_param = ***
+%     out_param = 
 %                a: -2
 %           abstol: 1.0000e-07
 %                b: 2
@@ -169,6 +170,7 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %     exceedbudget: 0
 %          npoints: 38149
 %           errest: 2.7493e-08
+%             iter: 3
 %
 %
 %   Example 3:
@@ -186,7 +188,7 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %        dim: 1
 %     orient: 'first'
 % 
-% out_param = ***
+% out_param = 
 % 
 %                a: -2
 %           abstol: 1.0000e-06
@@ -199,7 +201,8 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %            ninit: 66
 %     exceedbudget: 0
 %          npoints: 31851
-%            errest: 2.5286e-07
+%           errest: 2.5286e-07
+%             iter: 3
 %
 %
 %   Example 4:
@@ -219,7 +222,7 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %        dim: 1
 %     orient: 'first'
 % 
-%   out_param =  ***
+%   out_param =  
 %                a: -10
 %           abstol: 1.0000e-07
 %                b: 10
@@ -231,7 +234,8 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %            ninit: 92
 %     exceedbudget: 0
 %          npoints: 596779
-%            errest: 2.5274e-08
+%           errest: 2.5274e-08
+%             iter: 3
 %
 %
 %   See also INTEGRAL_G, MEANMC_G, CUBMC_G
