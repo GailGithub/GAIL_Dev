@@ -126,7 +126,7 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %        dim: 1
 %     orient: 'first'
 % 
-%     out_param = 
+%     out_param = ***
 %                f: @(x)x.^2
 %                a: 0
 %                b: 1
@@ -156,7 +156,7 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %        dim: 1
 %     orient: 'first'
 % 
-%     out_param = 
+%     out_param = ***
 %                a: -2
 %           abstol: 1.0000e-07
 %                b: 2
@@ -186,7 +186,7 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %        dim: 1
 %     orient: 'first'
 % 
-% out_param = 
+% out_param = ***
 % 
 %                a: -2
 %           abstol: 1.0000e-06
@@ -219,7 +219,7 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %        dim: 1
 %     orient: 'first'
 % 
-%   out_param =  
+%   out_param =  ***
 %                a: -10
 %           abstol: 1.0000e-07
 %                b: 10
