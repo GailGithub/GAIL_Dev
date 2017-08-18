@@ -59,7 +59,7 @@ function [fappx,out_param]=funappxtau_g(varargin)
 %
 %       @(x)interp1(x1,y1,x,'linear')
 %
-%   out_param = 
+%   out_param = ***
 %           abstol: 1.0000e-***6
 %              tau: 10
 %             nmax: 10000000
@@ -79,7 +79,7 @@ function [fappx,out_param]=funappxtau_g(varargin)
 %
 %       @(x)interp1(x1,y1,x,'linear')
 %
-%   out_param = 
+%   out_param = ***
 %           abstol: 1.0000e-***8
 %                f: @(x)x.^2
 %             nmax: 1000000
@@ -99,7 +99,7 @@ function [fappx,out_param]=funappxtau_g(varargin)
 %
 %       @(x)interp1(x1,y1,x,'linear')
 %
-%   out_param = 
+%   out_param = ***
 %           abstol: 1.0000e-***8
 %                f: @(x)x.^2
 %             nmax: 1000000
