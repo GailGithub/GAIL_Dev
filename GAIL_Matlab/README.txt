@@ -1,4 +1,4 @@
-﻿Guaranteed Automatic Integration Library (GAIL)
+Guaranteed Automatic Integration Library (GAIL)
 -----------------------------------------------
 GAIL Version 2.2, 2017.
 See LICENSE.m for copyright and disclaimer.
