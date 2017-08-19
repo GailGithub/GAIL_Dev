@@ -1,6 +1,7 @@
 % fasttests_integral_g: fast tests for integral_g
 
 %% CALL DOCTESTS
+tic; doctest gail.integral_g_in_param; time=toc
 tic; doctest integral_g; time=toc
 tic; doctest dt_integral_g ; time=toc
 

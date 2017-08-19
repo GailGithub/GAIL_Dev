@@ -1,6 +1,7 @@
 % fasttests_funappx_g: fast tests for funappx_g
 
 %% CALL DOCTESTS 
+tic; doctest gail.funappx_g_in_param; time=toc
 tic; doctest funappx_g; time=toc
 tic; doctest dt_funappx_g; time=toc
 

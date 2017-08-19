@@ -8,26 +8,26 @@ function [muhat,out]=cubMLELattice(f,d,absTol,relTol,order,ptransform, ...
 %   d = 1 Input f is a function handle that accepts an n x d matrix of
 %   n points in [0,1]^d and returns an n x 1 vector of f values.
 %
-%
+%   
 % This is a heuristic algorithm based on a Central Limit Theorem
 % approximation
 if nargin < 6
     ptransform = 'Baker';
-    if nargin < 5
-        order = 2; %type of sampling, scrambled Sobol
-        if nargin < 4
-            relTol = 0;
-            if nargin < 3
+if nargin < 5
+   order = 2; %type of sampling, scrambled Sobol
+   if nargin < 4
+      relTol = 0;
+      if nargin < 3
                 absTol = 0.01;
-                if nargin < 2
+         if nargin < 2
                     d = 1; %dimension
-                    if nargin < 1
-                        f = @(x) x.^2; %function
-                    end
-                end
+            if nargin < 1
+               f = @(x) x.^2; %function
             end
-        end
-    end
+         end
+      end
+   end
+end
 end
 
 if ~exist('testAll','var')
@@ -40,7 +40,6 @@ debugEnable=false;
 gpuArray = @(x) x;   gather = @(x) x;
 
 tstart = tic; %start the clock
-
 % define min and max number of points allowed in the automatic cubature
 mmin = 10;
 mmax = 23;
@@ -70,12 +69,12 @@ end
 % the error threshold
 for ii = 1:numM
   tstart_iter = tic; 
-    m = mvec(ii);
-    n = 2^m;
-    
-    %Update function values
+   m = mvec(ii);
+   n = 2^m;
+   
+   %Update function values
   %% Efficient FFT computation algorithm
-    if ii == 1
+   if ii == 1
     % in the first iteration compute the full FFT
     xun = simple_lattice_gen(n,d,true);
         x = mod(bsxfun(@plus,xun,shift),1);  % shifted
@@ -94,10 +93,9 @@ for ii = 1:numM
       ftildeNew(ptind)=(evenval+coefv.*oddval);
       ftildeNew(~ptind)=(evenval-coefv.*oddval);
         end
-        
-    else
+   else
     xunnew = simple_lattice_gen(n,d,false);
-        xnew = mod(bsxfun(@plus,xunnew,shift),1);
+      xnew = mod(bsxfun(@plus,xunnew,shift),1);
         xun = [xun;xunnew];
         x = [x;xnew];
                
@@ -108,7 +106,7 @@ for ii = 1:numM
 
             if any(isnan(ftildeNextNew)) || any(isinf(ftildeNextNew))
                 fprintf('ftildeNextNew NaN \n');
-            end
+   end
         end
         
         
@@ -148,16 +146,16 @@ for ii = 1:numM
     ftilde = ftildeNew;
   % ftilde(1) = sum(ff(x)); % correction to avoid round off error
     br_xun = bitrevorder(gpuArray(xun));
-    
-    %Compute MLE parameter
-    lnaMLE = fminbnd(@(lna) ...
+   
+   %Compute MLE parameter
+   lnaMLE = fminbnd(@(lna) ...
     MLEKernel(exp(lna),br_xun,ftilde,order,arbMean), ...
         -5,0,optimset('TolX',1e-2)); % -5,5
-    aMLE = exp(lnaMLE);
+   aMLE = exp(lnaMLE);
   [loss,Ktilde,KtildeSq,RKHSnorm,K] = MLEKernel(aMLE,br_xun,ftilde,order,arbMean);
   wt = 1/Ktilde(1);
-
-    %Check error criterion
+   
+   %Check error criterion
   DSC = abs((1/n) - wt);
   
   % store the debug information
@@ -168,17 +166,16 @@ for ii = 1:numM
   if arbMean==true % zero mean case
     muhat = ftilde(1)/n;
     else % non zero mean case
-    muhat = ftilde(1)/Ktilde(1);
+   muhat = ftilde(1)/Ktilde(1);
     end
-    muminus = muhat - out.ErrBd;
-    muplus = muhat + out.ErrBd;
+   muminus = muhat - out.ErrBd;
+   muplus = muhat + out.ErrBd;
     muhatAll(ii) = muhat;
     errorBdAll(ii) = out.ErrBd;
     aMLEAll(ii) = aMLE;
-    
-    if 2*out.ErrBd <= ...
-            max(absTol,relTol*abs(muminus)) + max(absTol,relTol*abs(muplus))
-        
+   
+   if 2*out.ErrBd <= ...
+         max(absTol,relTol*abs(muminus)) + max(absTol,relTol*abs(muplus))      
         if errorBdAll(ii)==0
             errorBdAll(ii) = eps;
         end
@@ -186,13 +183,12 @@ for ii = 1:numM
          % if testAll flag is set, run for for all 'n' values to compute error
          % used for error plotting
         if testAll==false
-            break
-        end
+      break
+   end 
     end
-    
+   
   timeAll(ii) = toc(tstart_iter);
 end
-
 out.n = n;
 out.time = toc(tstart);
 out.ErrBdAll = errorBdAll;
@@ -206,25 +202,23 @@ out.dscAll = dscAll;
 % convert from gpu memory to local
 muhat=gather(muhat);
 out=gather(out);
-
 end
 
 function [K, Ktilde] = kernel(xun,order,a)
 
     constMult = -(-1)^(order/2)*(2*pi)^order/factorial(order);
-    if order == 2
+   if order == 2
         bernPloy = @(x)(-x.*(1-x) + 1/6);
     elseif order == 4
   %bernPloy = @(x)((x.^2).*(x.*(x-2) +1) - 1/30);
   bernPloy = @(x)( ( (x.*(1-x)).^2 ) - 1/30);
     else
         error('Bernoulli order not implemented !');
-    end
+   end
     K = prod(1 + a*constMult*bernPloy(xun),2);
     
 % matlab's builtin fft is much faster and accurate
-    Ktilde = real(fft(K));
-
+   Ktilde = real(fft(K));
     if sum(K)==length(K) || Ktilde(1)==length(K)
         %fprintf('debug');
     end
@@ -291,8 +285,7 @@ end
     if isnan(loss)
         fprintf('loss NaN \n');
     end
-
-    a;
+   a;
     %ftilde(1)/Ktilde(1);
 end
 
@@ -445,5 +438,4 @@ title(sprintf('%s d=%d r=%d Tx=%s %s', fName, d, order, ptransform, mType));
 saveas(hFigCost, plotFileName)
     
     minTheta = exp(lnTheta(Index));
-
 end

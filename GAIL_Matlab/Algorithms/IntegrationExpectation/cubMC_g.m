@@ -13,23 +13,21 @@ function [Q,out_param] = cubMC_g(varargin)
 %   evaluated simultaneously. When measure is 'uniform', 'uniform box',
 %   'normal' or 'Gaussian', the input hyperbox is a 2 x d matrix, where the
 %   first row corresponds to the lower limits and the second row
-%   corresponds to the upper limits. 
-%
-%   When measure is 'uniform ball' or 'uniform sphere', the input hyperbox
-%   is a vector with d+1 elements, where the first d values correspond to
-%   the center of the ball and the last value corresponds to the radius of
-%   the ball. For these last two measures, a user can optionally specify
-%   what transformation should be used in order to get a uniform
-%   distribution on a ball of sphere. When measure is 'uniform ball_box',
-%   the box-to-ball transformation, which gets a set of points uniformly
-%   distributed on a ball from a set of points uniformly distributed on a
-%   box, will be used. When measure is 'uniform ball_normal', the
-%   normal-to-ball transformation, which gets a set of points uniformly
-%   distributed on a ball from a set of points normally distributed on the
-%   space, will be used. Similarly, the measures 'uniform sphere_box' and
-%   'uniform sphere_normal' can be defined. The default transformations are
-%   the box-to-ball and the box-to-sphere transformations, depending on the
-%   region of integration.
+%   corresponds to the upper limits. When measure is 'uniform ball' or
+%   'uniform sphere', the input hyperbox is a vector with d+1 elements,
+%   where the first d values correspond to the center of the ball and the
+%   last value corresponds to the radius of the ball. For these last two
+%   measures, a user can optionally specify what transformation should be
+%   used in order to get a uniform distribution on a ball of sphere. When
+%   measure is 'uniform ball_box', the box-to-ball transformation, which
+%   gets a set of points uniformly distributed on a ball from a set of
+%   points uniformly distributed on a box, will be used. When measure is
+%   'uniform ball_normal', the normal-to-ball transformation, which gets a
+%   set of points uniformly distributed on a ball from a set of points
+%   normally distributed on the space, will be used. Similarly, the
+%   measures 'uniform sphere_box' and 'uniform sphere_normal' can be
+%   defined. The default transformations are the box-to-ball and the
+%   box-to-sphere transformations, depending on the region of integration.
 % 
 %   Q = CUBMC_G(f,hyperbox,measure,abstol,reltol,alpha)
 %   estimates the integral of function f over hyperbox to within a 
@@ -188,7 +186,7 @@ function [Q,out_param] = cubMC_g(varargin)
 % >> f=@(x) sin(x);interval = [1;2];
 % >> Q = cubMC_g(f,interval,'uniform',1e-3,1e-2);
 % >> exactsol = 0.9564;
-% >> check = double(abs(exactsol-Q) < max(1e-3,1e-2*abs(exactsol)))
+% >> check = abs(exactsol-Q) < max(1e-3,1e-2*abs(exactsol))
 % check = 1
 % 
 % 
@@ -199,7 +197,7 @@ function [Q,out_param] = cubMC_g(varargin)
 % >> f=@(x) exp(-x(:,1).^2-x(:,2).^2);hyperbox = [0 0;1 1];
 % >> Q = cubMC_g(f,hyperbox,'uniform',1e-3,0);
 % >> exactsol = 0.5577;
-% >> check = double(abs(exactsol-Q) < 1e-3)
+% >> check = abs(exactsol-Q) < 1e-3
 % check = 1
 % 
 % 
@@ -212,7 +210,7 @@ function [Q,out_param] = cubMC_g(varargin)
 % >> in_param.abstol = 1e-3;in_param.reltol=1e-3;
 % >> Q = cubMC_g(f,hyperbox,in_param);
 % >> exactsol = 1.555;
-% >> check = double(abs(exactsol-Q) < max(1e-3,1e-3*abs(exactsol)))
+% >> check = abs(exactsol-Q) < max(1e-3,1e-3*abs(exactsol))
 % check = 1
 % 
 %
@@ -223,7 +221,7 @@ function [Q,out_param] = cubMC_g(varargin)
 % >> f=@(x) exp(-x(:,1).^2-x(:,2).^2);hyperbox = [-inf -inf;inf inf];
 % >> Q = cubMC_g(f,hyperbox,'normal',0,1e-2);
 % >> exactsol = 1/3;
-% >> check = double(abs(exactsol-Q) < max(0,1e-2*abs(exactsol)))
+% >> check = abs(exactsol-Q) < max(0,1e-2*abs(exactsol))
 % check = 1
 % 
 %
@@ -234,7 +232,7 @@ function [Q,out_param] = cubMC_g(varargin)
 % >> f=@(x) x(:,1).^2+x(:,2).^2;hyperbox = [0,0,1];
 % >> Q = cubMC_g(f,hyperbox,'uniform ball','abstol',1e-3,'reltol',1e-3);
 % >> exactsol = pi/2;
-% >> check = double(abs(exactsol-Q) < max(1e-3,1e-3*abs(exactsol)))
+% >> check = abs(exactsol-Q) < max(1e-3,1e-3*abs(exactsol))
 % check = 1
 %
 %
@@ -334,12 +332,10 @@ elseif strcmpi(out_param.measure,'normal')% using normally distributed samples
     % using meanMC_g to get the mean
 end
 out_param.time=toc(tstart); %elapsed time
-
 % control the order of out_param
 % out_param = orderfields(out_param, ...
 % {'Yrand','abstol','reltol','tol','alpha','fudge', 'tau','hmu','time',...
 % 'n1','nSig', 'n','nremain','nbudget','ntot','tbudget','var','kurtmax','exitflag'});
-
 end
 
 function [f,hyperbox,out_param] = cubMC_g_param(varargin)

@@ -1,6 +1,4 @@
-%% Estimation of normal probabilities by *cubMC_g*
-% Author: Lan Jiang, July 2017
-%
+%% Estimation of normal probabilities
 % For $\bf{X}\sim N(\bf{\mu},\Sigma)$ , we will estimate the following
 % probability:
 % 
@@ -8,8 +6,8 @@
 % \frac{{\rm e}^{(\bf{x}-\bf{\mu})^t {\Sigma}^{-1}(\bf{x}-\bf{\mu})}}
 % {(2\pi)^{d/2}\left|{\Sigma}\right|^{1/2}}\,{\rm d}\bf{x}.$$
 %
-% We will approximate this probability using *cubMC_g* and *meanMC_g* GAIL
-% methods. These are IID Monte Carlo algorithms.
+% We will approximate this probability using cubMC_g and meanMC_g GAIL
+% methods. These are quasi-Monte Carlo and IID Monte Carlo algorithms.
 % In order to facilitate the computations when $d$ is high (~1000), we
 % are going to apply a special transformation of the integrand proposed by
 % Alan Genz.

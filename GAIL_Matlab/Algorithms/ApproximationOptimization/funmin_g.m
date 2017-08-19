@@ -40,7 +40,7 @@ function [fmin,out_param]=funmin_g(varargin)
 %
 %     in_param.nmax --- cost budget, default value is 1e7.
 %
-%     in_param.maxiter --- max number of iterations, default value is 1000.
+%     in_param.maxiter --- max number of iterations, default value is 1000
 %
 %   Output Arguments
 %
@@ -57,7 +57,7 @@ function [fmin,out_param]=funmin_g(varargin)
 %     out_param.ninit --- initial number of subintervals
 %
 %     out_param.npoints --- number of points needed to reach the guaranteed
-%     absolute error tolerance
+%     absolute error tolerance or the guaranteed X tolerance
 %
 %     out_param.exit --- this is a vector with two elements, for
 %     tracking important warnings in the algorithm. The algorithm is considered successful (with
@@ -77,14 +77,8 @@ function [fmin,out_param]=funmin_g(varargin)
 %
 %     out_param.iter --- number of iterations
 %
-%     out_param.intervals --- the intervals containing point(s) where the
-%     minimum occurs. Each column indicates one interval where the first
-%     row is the left point and the second row is the right point.   
-%
-%
-%  Guarantee
-%
-%  Plese check the details of the guarantee in [1].
+%     out_param.npoints --- number of points we need to reach the
+%     guaranteed absolute error tolerance
 %
 %
 %  Examples
@@ -99,18 +93,17 @@ function [fmin,out_param]=funmin_g(varargin)
 %
 %  out_param =***
 %
-%             f: @(x)exp(0.01*(x-0.5).^2)
-%             a: 0
-%             b: 1
-%        abstol: 1.0000e-06
-%         ninit: 20
-%          nmax: 10000000
-%       maxiter: 1000
-%      exitflag: [0 0]
-%          iter: 5
-%       npoints: 69
-%        errest: 2.5955e-07
-%     intervals: [2×1 double]
+%            f: @(x)exp(0.01*(x-0.5).^2)
+%            a: 0
+%            b: 1
+%       abstol: 1.0000e-06
+%        ninit: 20
+%         nmax: 10000000
+%      maxiter: 1000
+%     exitflag: [0 0]
+%         iter: 5
+%      npoints: 69
+%       errest: 2.5955e-07
 %
 %
 %  Example 2:
@@ -135,7 +128,6 @@ function [fmin,out_param]=funmin_g(varargin)
 %         iter: 9
 %      npoints: 79
 %       errest: 6.1251e-08
-%    intervals: [2×1 double]
 %
 %
 %  Example 3:
@@ -164,7 +156,6 @@ function [fmin,out_param]=funmin_g(varargin)
 %         iter: 8
 %      npoints: 203
 %       errest: 6.7816e-08
-   % intervals: [2×1 double]
 %
 %
 %  Example 4:
@@ -189,7 +180,6 @@ function [fmin,out_param]=funmin_g(varargin)
 %         iter: 3
 %      npoints: 107
 %       errest: 8.0997e-06
-%    intervals: [2×1 double]
 %
 %
 %  See also FMINBND, FUNAPPX_G, INTEGRAL_G
@@ -227,7 +217,7 @@ function [fmin,out_param]=funmin_g(varargin)
 % check parameter satisfy conditions or not
 [f, in_param] = funmin_g_param(varargin{:});
 out_param = in_param;
-out_param = rmfield(out_param,'output_x');
+
 
 %% main algorithm
 a = out_param.a;
@@ -374,10 +364,6 @@ ints1(1,:) = x(leftint);
 ints1(2,:) = x(rightint);
 out_param.intervals = ints1;
 
-if (in_param.output_x)
-   out_param.x = x(1:n);
-   out_param.y = y(1:n);
-end
 
 function [f, out_param] = funmin_g_param(varargin)
 % parse the input to the funmin_g function
@@ -389,7 +375,7 @@ default.abstol = 1e-6;
 default.ninit = 20;
 default.nmax = 1e7;
 default.maxiter = 1000;
-default.output_x = false;
+
 
 MATLABVERSION = gail.matlab_version;
 if MATLABVERSION >= 8.3
@@ -433,7 +419,6 @@ if ~validvarargin
     out_param.ninit = default.ninit;
     out_param.nmax = default.nmax ;
     out_param.maxiter = default.maxiter;
-    out_param.output_x = default.output_x;
 else
     p = inputParser;
     addRequired(p,'f',@gail.isfcn);
@@ -445,7 +430,6 @@ else
         addOptional(p,'ninit',default.ninit,@isnumeric);
         addOptional(p,'nmax',default.nmax,@isnumeric);
         addOptional(p,'maxiter',default.maxiter,@isnumeric);
-        addOptional(p,'output_x',default.output_x,@logical);
     else
         if isstruct(in2) %parse input structure
             p.StructExpand = true;
@@ -457,7 +441,6 @@ else
         f_addParamVal(p,'ninit',default.ninit,@isnumeric);
         f_addParamVal(p,'nmax',default.nmax,@isnumeric);
         f_addParamVal(p,'maxiter',default.maxiter,@isnumeric);
-        f_addParamVal(p,'output_x',default.output_x,@logical);
     end
     parse(p,f,varargin{2:end})
     out_param = p.Results;
@@ -540,8 +523,3 @@ if (~gail.isposint(out_param.maxiter))
         out_param.maxiter = default.maxiter;
     end;
 end
-if (out_param.output_x~=true&&out_param.output_x~=false)
-    warning('GAIL:funmin_g:output_x', ['Input of output_x'...
-        ' can only be true or false; use default value false'])
-    out_param.output_x = false;
-end;

@@ -47,7 +47,7 @@ Scientific Software)
 Nicholas Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
 Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic Algorithms:
 Cones, Not Balls," Journal of Complexity 30, pp. 21-45, 2014.
-(describes deprecated integralPenalty_g.m and deprecated funappxtau_g.m)
+(describes integral_g.m and deprecated funappxtau_g.m)
 
 Yuhan Ding, "Guaranteed Adaptive Univariate Function Approximation," PhD 
 thesis, Illinois Institute of Technology, 2015. 
@@ -60,25 +60,16 @@ Carlo sampling," Monte Carlo and Quasi-Monte Carlo Methods 2012
 Springer-Verlag, Berlin, pp. 105-128, 2014.
 (describes meanMC_g.m and cubMC_g.m)
 
-Fred J. Hickernell and Lluis Antoni Jimenez Rugama, "Reliable adaptive 
+Fred J. Hickernell, Lluis Antoni Jimenez Rugama "Reliable adaptive 
 cubature using digital sequences", Monte Carlo and Quasi-Monte Carlo 
 Methods: MCQMC, Leuven, Belgium, April 2014 (R. Cools and D. Nuyens, eds.), 
 Springer Proceedings in Mathematics and Statistics, vol. 163, 
 Springer-Verlag, Berlin, 2016, arXiv:1410.8615 [math.NA], pp. 367-383.
 (describes cubSobol_g.m)
 
-Fred J. Hickernell, Lluis Antoni Jimenez Rugama a, and D. Li,"Adaptive 
+F. J. Hickernell, Ll. A. Jimenez Rugama, and D. Li, “Adaptive 
 quasi-{M}onte {C}arlo methods, 2017+, submitted for publication, 
 arXiv:1702.01491 [math.NA].
-
-Fred J. Hickernell, Martha Razo, and Sunny Yun, "Reliable Adaptive
-Numerical Integration", 2015+, working.
-(describes integral_g.m)
-
-Lan Jiang, Guaranteed Adaptive Monte Carlo Methods for Estimating
-Means of Random Variables, Ph.D Thesis, Illinois Institute of
-Technology, 2016.
-(describes meanMC_g.m and cubMC_g.m)
 
 Lluis Antoni Jimenez Rugama and Fred J. Hickernell, "Adaptive
 multidimensional integration based on rank-1 lattices," Monte Carlo 
@@ -105,6 +96,12 @@ Xin Tong, "A Guaranteed, Adaptive, Automatic Algorithm for Univariate
 Function Minimization," MS thesis, Illinois Institute of Technology, 2014. 
 (describes deprecated funmin01_g.m)
 
+
+
+[7] Lan Jiang, Guaranteed Adaptive Monte Carlo Methods for Estimating
+Means of Random Variables, Ph.D Thesis, Illinois Institute of
+Technology, 2016.
+(describes meanMC_g.m and cubMC_g.m)
 Downloads
 ------------
 GAIL can be downloaded from http://gailgithub.github.io/GAIL_Dev/.
@@ -133,17 +130,11 @@ General Usage Notes
 GAIL version 2.2 includes the following eight algorithms:
 
 1.  funappx_g: One-dimensional function approximation on bounded interval
-
 2.  funmin_g: global minimum value of univariate function on a closed interval
-
 3.  integral_g: One-dimensional integration on bounded interval
-
 4.  meanMC_g: Monte Carlo method for estimating mean of a random variable
-
 5.  cubMC_g: Monte Carlo method for numerical multiple integration
-
 6.  cubSobol_g: Quasi-Monte Carlo method using Sobol' cubature for d-dimensional integration
-
 7.  cubLattice_g: Quasi-Monte Carlo method using rank-1 Lattices cubature for d-dimensional integration
 
 Installation Instruction
