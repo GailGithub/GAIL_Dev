@@ -45,6 +45,11 @@ warning('off',['GAIL:',algoname,':fSmallerThanAbstol'])
 warning('off','GAIL:funappxglobal_g:peaky')
 warning('off','GAIL:funappxglobal_g:exceedbudget')
 
+if ~exist('chebfun','file') 
+   warning('Chebfun is not installed.')
+   return
+end
+ 
 g1 = @(x,c) x.^4.*sin(c./((x==0)+x)); 
 g2 = @(x,c) g1(x,c) + 10.*x.^2;
 delta = .2; B = 1./(2*delta.^2);
@@ -92,8 +97,8 @@ for i = 1:nrep
             exceedmat(j,k,i) = 1;
           end
         catch
-           disp('Oops')
-           break
+            disp('Chebfun() error.')
+            break
         end
         npoints(j,k,i) = length(fappx);
       end
