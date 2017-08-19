@@ -18,6 +18,7 @@ classdef multivarGauss < handle
       ptransform = 'C1sin'; %Periodization transform for Bayesian cubature
       fName = '' %function name for plot title
       figSavePath  = '' % path to save the figure
+      arbMean = true  % Non zero mean m for Bayesian cubature
    end
 
    properties (SetAccess = private)
@@ -65,6 +66,8 @@ classdef multivarGauss < handle
                if ~isempty(wh), obj.fName = varargin{wh+iStart}; end
                wh = find(strcmp(varargin(iStart:end),'figSavePath'));
                if ~isempty(wh), obj.figSavePath = varargin{wh+iStart}; end
+               wh = find(strcmp(varargin(iStart:end),'arbMean'));
+               if ~isempty(wh), obj.arbMean = varargin{wh+iStart}; end
            end
          end
          updateCovProp(obj)
@@ -216,7 +219,7 @@ classdef multivarGauss < handle
                   testAll=true;
                   [prob, out] = cubMLELattice(obj.f, ...
                   realDim,obj.absTol,obj.relTol,obj.bernPolyOrder,obj.ptransform, ...
-                  testAll,obj.figSavePath,obj.fName);
+                  testAll,obj.figSavePath,obj.fName,obj.arbMean);
                else
                   prob = obj.f(0)*ones(size(obj.n));
                end

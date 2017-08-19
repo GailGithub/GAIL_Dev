@@ -8,7 +8,7 @@
 % \exp(-\lVert \boldsymbol{x} \rVert^2) \, \mathrm{d} \boldsymbol{x},
 % \qquad d = 1, 2, \ldots. \]
 
-function [muhat,aMLE,err,out] = KeisterCubatureExampleBayesian(dim,BernPolyOrder,ptransform,figSavePath,visiblePlot)
+function [muhat,aMLE,err,out] = TestKeisterBayesianCubature(dim,BernPolyOrder,ptransform,figSavePath,visiblePlot,arbMean)
 
 normsqd = @(t) sum(t.*t,2); %squared l_2 norm of t
 
@@ -36,7 +36,7 @@ tic
     order = BernPolyOrder;
     regression = true;
     tic
-    [muhatFinal,out]=cubMLELattice(f1,dim,absTol,relTol,order,ptransform,regression,figSavePath,fName);
+    [muhatFinal,out]=cubMLELattice(f1,dim,absTol,relTol,order,ptransform,regression,fullPath,fName,arbMean);
     toc
     nvec = 2.^out.mvec;
     muhat = out.muhatAll;
@@ -48,7 +48,11 @@ toc
 exactInteg = Keistertrue(dim);
 errCubMLE = abs(exactInteg - muhat);
 
-plotCubatureError(dim, nvec, errCubMLE, ErrBd, fName, BernPolyOrder, ptransform, fullPath,visiblePlot)
+plotCubatureError(dim, nvec, errCubMLE, ErrBd, fName, BernPolyOrder, ptransform, ...
+    fullPath,visiblePlot,arbMean, out.s_All, out.dscAll)
 
+figSavePathName = sprintf('%s%s computeTime d_%d bernoulli_%d Period_%s.png', ...
+        fullPath, fName, dim, BernPolyOrder, ptransform);
+plot_nvec_vs_computeTime(nvec, out.timeAll, visiblePlot, figSavePathName)
 
 fprintf('Done\n')
