@@ -1,4 +1,4 @@
-%% Approximate a highly fluctuating curve using *funappx_g*.
+%% Approximate a highly fluctuating curve using *funappx_g*
 % Author: Sou-Cheng Choi, July 2017
 
 %% Function definition
