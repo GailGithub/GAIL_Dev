@@ -37,7 +37,7 @@ end
 debugEnable=false;
 
 % comment this line of code to use GPU for computations
-   gpuArray = @(x) x;   gather = @(x) x;
+gpuArray = @(x) x;   gather = @(x) x;
 
 tstart = tic; %start the clock
 
@@ -80,7 +80,6 @@ for ii = 1:numM
     xun = simple_lattice_gen(n,d,true);
         x = mod(bsxfun(@plus,xun,shift),1);  % shifted
         
-        %% Efficient FFT computation algorithm
         ftildeNew=gpuArray(ff(x)); %evaluate integrand
         
     % Compute initial FFT
@@ -99,18 +98,16 @@ for ii = 1:numM
     else
     xunnew = simple_lattice_gen(n,d,false);
         xnew = mod(bsxfun(@plus,xunnew,shift),1);
-            xun = [xun;xunnew];
-            x = [x;xnew];
-        
-        %% Efficient FFT computation algorithm
+        xun = [xun;xunnew];
+        x = [x;xnew];
+               
         mnext=m-1;
         ftildeNextNew=gpuArray(ff(xnew));  % initialize for inplace computation
         
         if debugEnable==true
-            % ftildeNextNew(ftildeNextNew==0)=eps;
 
             if any(isnan(ftildeNextNew)) || any(isinf(ftildeNextNew))
-                    fprintf('ftildeNextNew NaN \n');
+                fprintf('ftildeNextNew NaN \n');
             end
         end
         
@@ -147,10 +144,9 @@ for ii = 1:numM
     ftildeNew(~ptind)=(evenval-coefv.*oddval);
         
     end
-    
+
     ftilde = ftildeNew;
   % ftilde(1) = sum(ff(x)); % correction to avoid round off error
-    
     br_xun = bitrevorder(gpuArray(xun));
     
     %Compute MLE parameter
@@ -162,7 +158,7 @@ for ii = 1:numM
   wt = 1/Ktilde(1);
 
     %Check error criterion
-  DSC = abs(1/n - wt);
+  DSC = abs((1/n) - wt);
   
   % store the debug information
   dscAll(ii) = DSC;
@@ -206,9 +202,11 @@ out.aMLEAll = aMLEAll;
 out.timeAll = timeAll;
 out.s_All = s_All;
 out.dscAll = dscAll;
+
 % convert from gpu memory to local
 muhat=gather(muhat);
 out=gather(out);
+
 end
 
 function [K, Ktilde] = kernel(xun,order,a)
@@ -223,7 +221,6 @@ function [K, Ktilde] = kernel(xun,order,a)
         error('Bernoulli order not implemented !');
     end
     K = prod(1 + a*constMult*bernPloy(xun),2);
-    
     
 % matlab's builtin fft is much faster and accurate
     Ktilde = real(fft(K));
@@ -254,11 +251,10 @@ roundOffErrOptimize = false;
     else
         error('Unsupported Bernoulli polyn order !');
     end
-    
-    
+        
 Ktilde = abs(Ktilde);  % remove any negative values
 ftilde = abs(ftilde);
-
+    
     if any(KtildeSq==0)
         % fprintf('Ktilde has zero vals \n');
     end
@@ -451,4 +447,3 @@ saveas(hFigCost, plotFileName)
     minTheta = exp(lnTheta(Index));
 
 end
-
