@@ -1,7 +1,6 @@
 % fasttests_funmin_g: fast tests for funmin_g
 
 %% CALL DOCTESTS
-tic; doctest gail.funmin_g_in_param; time=toc
 tic; doctest funmin_g; time=toc
 
 

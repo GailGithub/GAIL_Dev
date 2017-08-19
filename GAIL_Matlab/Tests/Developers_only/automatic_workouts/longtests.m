@@ -24,7 +24,7 @@ longtests_integral_g
 longtests_meanMC_g
 
 %% Papers
-longtests_conePaper
+%longtests_conePaper
 
 %% doctests and unit tests for deprecated algos
 longtests_deprecated_algos

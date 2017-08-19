@@ -1,5 +1,6 @@
 %% funappx_g
-% 1-D guaranteed locally adaptive function approximation (or function recovery) on [a,b]
+% 1-D guaranteed locally adaptive function approximation (or
+%   function recovery) on [a,b]
 %% Syntax
 % fappx = *funappx_g*(f)
 %

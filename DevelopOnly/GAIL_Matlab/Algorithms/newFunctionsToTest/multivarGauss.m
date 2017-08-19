@@ -144,8 +144,6 @@ classdef multivarGauss < handle
          realDim = dim - redDim;
          out = [];
          if strcmp(obj.errMeth,'n')
-            out = [];
-            dim = numel(obj.a);
             nmax = max(obj.n);
             if strcmp(obj.cubMeth,'IID')
                if realDim >= 1
@@ -215,7 +213,6 @@ classdef multivarGauss < handle
                prob = temp(obj.n)./obj.n(:);
             end
          elseif strcmp(obj.errMeth,'g')
-            dim = numel(obj.a)-1;
             if strcmp(obj.cubMeth,'IID')
                [prob, out] = meanMC_g(@(m) obj.f(rand(m,realDim)), ...
                   obj.absTol,obj.relTol);

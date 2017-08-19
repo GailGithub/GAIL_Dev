@@ -10,10 +10,10 @@ function [vSol,out]=cubBayesLatticeCLASS(varargin)
 %   
 % This is a heuristic algorithm based on a Central Limit Theorem
 % approximation
+tstart = tic; %start the clock
 inp = gail.cubBayesLatticeParam(varargin{:});
 out = gail.cubBayesLatticeOut(inp);
 
-tstart = tic; %start the clock
 d = out.d;
 z = [1, 433461, 315689, 441789, 501101, 146355, 88411, 215837, 273599 ...
    151719, 258185, 357967, 96407, 203741, 211709, 135719, 100779, ...
