@@ -59,7 +59,7 @@ if usejava('jvm')
             end
 %           echo_cmd = strcat(['echo ', '"', 'function ', strrep(gailug_file,'.m',''), '"', ' > ',gailug_file]);
 %           [status,result] = system(echo_cmd);
-            cat_cmd = strcat([cat_cmd, '>> ', gailug_file]);
+            cat_cmd = strcat([cat_cmd, '>> ', gailug_path]);
             [status,result] = system(cat_cmd);
 %           echo_cmd = strcat(['echo ', '"', 'end', '"', ' >> ', gailug_file]);
 %           [status,result] = system(echo_cmd);
