@@ -227,7 +227,7 @@ function [fmin,out_param]=funmin_g(varargin)
 % check parameter satisfy conditions or not
 [f, in_param] = funmin_g_param(varargin{:});
 out_param = in_param;
-
+out_param = rmfield(out_param,'output_x');
 
 %% main algorithm
 a = out_param.a;
@@ -374,6 +374,10 @@ ints1(1,:) = x(leftint);
 ints1(2,:) = x(rightint);
 out_param.intervals = ints1;
 
+if (in_param.output_x)
+  out_param.x = x;
+  out_param.y = y;
+end
 
 function [f, out_param] = funmin_g_param(varargin)
 % parse the input to the funmin_g function
@@ -385,7 +389,7 @@ default.abstol = 1e-6;
 default.ninit = 20;
 default.nmax = 1e7;
 default.maxiter = 1000;
-
+default.output_x = false;
 
 MATLABVERSION = gail.matlab_version;
 if MATLABVERSION >= 8.3
@@ -429,6 +433,7 @@ if ~validvarargin
     out_param.ninit = default.ninit;
     out_param.nmax = default.nmax ;
     out_param.maxiter = default.maxiter;
+    out_param.output_x = default.output_x;
 else
     p = inputParser;
     addRequired(p,'f',@gail.isfcn);
@@ -440,6 +445,7 @@ else
         addOptional(p,'ninit',default.ninit,@isnumeric);
         addOptional(p,'nmax',default.nmax,@isnumeric);
         addOptional(p,'maxiter',default.maxiter,@isnumeric);
+        addOptional(p,'output_x',default.output_x,@logical);
     else
         if isstruct(in2) %parse input structure
             p.StructExpand = true;
@@ -451,6 +457,7 @@ else
         f_addParamVal(p,'ninit',default.ninit,@isnumeric);
         f_addParamVal(p,'nmax',default.nmax,@isnumeric);
         f_addParamVal(p,'maxiter',default.maxiter,@isnumeric);
+        f_addParamVal(p,'output_x',default.output_x,@logical);
     end
     parse(p,f,varargin{2:end})
     out_param = p.Results;
@@ -533,3 +540,8 @@ if (~gail.isposint(out_param.maxiter))
         out_param.maxiter = default.maxiter;
     end;
 end
+if (out_param.output_x~=true&&out_param.output_x~=false)
+    warning('GAIL:funmin_g:output_x', ['Input of output_x'...
+        ' can only be true or false; use default value false'])
+    out_param.output_x = false;
+end;

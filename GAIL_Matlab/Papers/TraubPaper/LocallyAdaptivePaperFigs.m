@@ -146,7 +146,7 @@ gail.save_eps('TraubPaperOutput', 'sampling-funappxg');
 
 %% Sampling of hump function for funmin_g
 figure
-[~,fminout] = funmin_g(@(x) -f3(x),in_param);
+[~,fminout] = funmin_g(@(x) -f3(x), in_param);
 disp(['funmin_g used ' int2str(fminout.npoints) ' points and ' ...
    int2str(fminout.iter) ' iterations'])
 disp(['   to satisfy an absolute error tolerance of ' ...
@@ -164,35 +164,38 @@ legend(h,{'\(-f_1(x)\)','\((x_i,-f_1(x_i))\)'}, ...
 gail.save_eps('TraubPaperOutput', 'sampling-funming');
 
 %% Chebfun example
-delta = 0.2; 
-f = @(x) f3param(x,delta,c); 
-a = - 1; 
-b = 1; 
-chebfuntol = 1e-12; 
-t0 = tic;
-chf = chebfun(f,[a,b],'chebfuneps', chebfuntol,'splitting','on');
-t_chebfun = toc(t0)
-x=a:0.00001:b;
-err = abs(chf(x) - f(x));
-[~,ind] = find(err > chebfuntol*10);
-figure;
-semilogy(x, err, '-','color',MATLABBlue);
-hold on
-semilogy(x(ind), err(ind), '.','color',MATLABOrange);
-small = max(-20,log10(0.1*min(err)));
-large = log10(10*max(err));
-axis([a b 10^small 10^large])
-xlabel('\(x\)')
-ylabel('Chebfun error')
-set(gca,'ytick',10.^(5*ceil(small/5):5:5*floor(large/5)))
-gail.save_eps('TraubPaperOutput', 'chebfun_errors');
+if exist('chebfun','file')
+    delta = 0.2;
+    f = @(x) f3param(x,delta,c);
+    a = - 1;
+    b = 1;
+    chebfuntol = 1e-12;
+    t0 = tic;
+    chf = chebfun(f,[a,b],'chebfuneps', chebfuntol,'splitting','on');
+    t_chebfun = toc(t0)
+    x=a:0.00001:b;
+    err = abs(chf(x) - f(x));
+    [~,ind] = find(err > chebfuntol*10);
+    figure;
+    semilogy(x, err, '-','color',MATLABBlue);
+    hold on
+    semilogy(x(ind), err(ind), '.','color',MATLABOrange);
+    small = max(-20,log10(0.1*min(err)));
+    large = log10(10*max(err));
+    axis([a b 10^small 10^large])
+    xlabel('\(x\)')
+    ylabel('Chebfun error')
+    set(gca,'ytick',10.^(5*ceil(small/5):5:5*floor(large/5)))
+    gail.save_eps('TraubPaperOutput', 'chebfun_errors');
 
-%% Time and error for funappx_g
-t0 = tic;
-[fhat,out] = funappx_g(f,a,b,chebfuntol)
-t_funappx = toc(t0)
-t_ratio = t_funappx/t_chebfun
-err_funappx = max(abs(f(x) - fhat(x)))
+    
+    %% Time and error for funappx_g
+    t0 = tic;
+    [fhat,out] = funappx_g(f,a,b,chebfuntol)
+    t_funappx = toc(t0)
+    t_ratio = t_funappx/t_chebfun
+    err_funappx = max(abs(f(x) - fhat(x)))
+end
 
 %% Output funappx Table
 if numel(funappxRes) > 0
