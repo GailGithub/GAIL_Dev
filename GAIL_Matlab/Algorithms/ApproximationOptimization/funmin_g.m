@@ -375,8 +375,8 @@ ints1(2,:) = x(rightint);
 out_param.intervals = ints1;
 
 if (in_param.output_x)
-  out_param.x = x;
-  out_param.y = y;
+   out_param.x = x(1:n);
+   out_param.y = y(1:n);
 end
 
 function [f, out_param] = funmin_g_param(varargin)
