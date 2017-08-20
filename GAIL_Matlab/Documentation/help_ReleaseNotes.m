@@ -15,8 +15,8 @@
 % subfolders to group algorithms and object classes by their shared
 % functionalities. We deprecated *funappx_g*, *funmin_g*, and *integral_g* in
 % version 2.1 and renamed them  in this version as *funappxPenalty_g*,
-% *funminPenalty_g*, and *integralPenalty_g*, respectively. We also removed
-% *meanMCBer_g* in version 2.1
+% *funminPenalty_g*, and *integralPenalty_g*, respectively. Lastly,
+% *meanMCBer_g* in version 2.1 is removed.
 % 
 % 
 %% Major changes in publications

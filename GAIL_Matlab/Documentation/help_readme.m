@@ -2,8 +2,8 @@
 % 
 % GAIL Version 2.2, 2017.
 %
-% See LICENSE.m for copyright and disclaimer. See LICENSE.m for copyright
-% and disclaimer. Refer to ReleaseNotes.m for what is new in this version.
+% See LICENSE.m for copyright and disclaimer. Refer to ReleaseNotes.m for
+% what is new in this version.
 % 
 % GAIL is a suite of algorithms for integration problems in one and many
 % dimensions, and whose answers are guaranteed to be correct.

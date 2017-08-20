@@ -6,6 +6,9 @@
     </tocitem>
     <tocitem target="help_readme.html">README
     </tocitem>
+    <tocitem target="help_ReleaseNotes.html">Release Notes
+    </tocitem>
+       </tocitem>
     <tocitem target="funclist.html" image="HelpIcon.FUNCTION">Functions
             <tocitem target="help_funappx_g.html">funappx_g</tocitem>
             <tocitem target="help_funmin_g.html">funmin_g</tocitem>
