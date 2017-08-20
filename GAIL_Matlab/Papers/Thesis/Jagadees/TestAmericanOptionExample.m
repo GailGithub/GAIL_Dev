@@ -1,6 +1,8 @@
 %% Generate Examples of American Option Pricing
-
-gail.InitializeWorkspaceDisplay %clean up
+function [muhat,aMLE,err,outAll] = TestAmericanOptionExample(dim,BernPolyOrder,...
+          ptransform,figSavePath,visiblePlot,arbMean)
+        
+% gail.InitializeWorkspaceDisplay %clean up
 format long
 
 nvec = 2.^(7:15)';
@@ -94,9 +96,10 @@ if compMLE_lattice
     testAll=true;
     figSavePath='/home/jagadees/MyWriteup/May4thweek_optprice/';
     fName='optPrice';
+    arbMean = false;
     [muAmerPutUSobol, outtemp] = cubMLELattice(fun, ...
         dim, AmerPut.priceParam.absTol, AmerPut.priceParam.relTol,...
-        order,ptransform,testAll,figSavePath,fName);
+        order,ptransform,testAll,figSavePath,fName,arbMean);
     out.nPaths=outtemp.n;
     
     errvecAmerPutMLELattice = abs(putPriceExact - muAmerPutUSobol);
