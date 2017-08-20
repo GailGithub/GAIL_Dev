@@ -1,4 +1,6 @@
-% Release Notes for GAIL 2.2
+% Release Notes 
+%
+% GAIL Version 2.2, 2017.
 % 
 % (1) Major changes in algorithms
 % 
