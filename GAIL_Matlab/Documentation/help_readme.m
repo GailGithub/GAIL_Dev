@@ -12,14 +12,18 @@
 % 
 %% Developed by
 % 
-% 
-% Fred Hickernell, Sou-Cheng Choi, and their collaborators including
-% Yuhan Ding, Lan Jiang, Lluis Antoni Jimenez Rugama, Yizhi 
-% Zhang and Xuan Zhou, Department of Applied Mathematics, Illinois 
-% Institute of Technology (IIT) and  Xin Tong, Department of Mathematics, 
-% Statistics, and Computer Science, University of Illinois at Chicago. 
-% We thank the contributions of Xincheng Sheng, and the IIT class of Math 
-% 573 Reliable Mathematical Software, Fall 2013.
+% Fred Hickernell, Sou-Cheng Choi, and their collaborators including Yuhan
+% Ding, Lan Jiang, Lluis Antoni Jimenez Rugama, Da Li, Jagadeeswaran
+% Rathinavel, Kan Zhang, Yizhi Zhang, and Xuan Zhou, Department of Applied
+% Mathematics, Illinois Institute of Technology (IIT) and  Xin Tong,
+% Department of Mathematics, Statistics, and Computer Science, University
+% of Illinois at Chicago. We thank the contributions of Christine
+% Hickernell, Kate Li, Xincheng Sheng, Felipe Sousa de Andrade, Xiaoyang
+% Zhao, Tianci Zhu, and the IIT classes of CI 498/MATH 491: Computational
+% Social Sciences, Summer 2016; MATH 491-195: Solving Problems in the
+% Social Sciences Using Tools from Computational Mathematics and
+% Statistics, Summer 2015; Math 573 Reliable Mathematical Software, Fall
+% 2013.
 % 
 % 
 % Please cite the following software, papers, and materials:
