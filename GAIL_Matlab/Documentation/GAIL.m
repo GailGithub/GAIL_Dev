@@ -15,6 +15,7 @@
 % <html>
 % <a href="help_license.html">GAIL License</a>
 % <a href="help_readme.html">README</a>
+% <a href="help_ReleaseNotes.html">Release Notes</a>
 % </html>
 %
 %% Functions
