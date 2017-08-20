@@ -9,7 +9,7 @@ classdef errorParam < handle & matlab.mixin.CustomDisplay
    % errParamObj = 
    %   errorParam with properties:
    % 
-   %       absTol: 0.010000000000000
+   %       absTol: 0.0100
    %       relTol: 0
    %
    %
@@ -18,7 +18,7 @@ classdef errorParam < handle & matlab.mixin.CustomDisplay
    % errParamObj = 
    %   errorParam with properties:
    % 
-   %       absTol: 1.000000000000000e-03
+   %       absTol: 1.0000e-03
    %       relTol: 0
    %
    %
@@ -27,8 +27,8 @@ classdef errorParam < handle & matlab.mixin.CustomDisplay
    % errParamObj = 
    %   errorParam with properties:
    % 
-   %       absTol: 0.010000000000000
-   %       relTol: 0.100000000000000
+   %       absTol: 0.0100
+   %       relTol: 0.1000
    %
    %
    % Example 4. Make a copy of an errorParam object and change a property
@@ -36,14 +36,12 @@ classdef errorParam < handle & matlab.mixin.CustomDisplay
    % newErrParamObj = 
    %   errorParam with properties:
    % 
-   %       absTol: 0.010000000000000
-   %       relTol: 1.000000000000000e-03
+   %       absTol: 0.0100
+   %       relTol: 1.0000e-03
    %
    %
    % Author: Fred J. Hickernell
 
-   
-   
    properties
       absTol %absolute error tolerance
       relTol %relative error tolerance
@@ -115,7 +113,7 @@ classdef errorParam < handle & matlab.mixin.CustomDisplay
          end
          if ~done
            f_addParamVal = @addOptional;
-           parseRange = start:min(nargin,start + 2); %only parse absTol and relTol
+           parseRange = start:min(nargin,start + 1); %only parse absTol and relTol
          end
          f_addParamVal(p,'absTol',obj.def_absTol);
          f_addParamVal(p,'relTol',obj.def_relTol);
@@ -125,7 +123,7 @@ classdef errorParam < handle & matlab.mixin.CustomDisplay
             parse(p,varargin{parseRange},varargin{structInp}) 
             %parse inputs with a structure
          else
-            parse(p,varargin{start:end}) %parse inputs w/o structure
+            parse(p,varargin{parseRange}) %parse inputs w/o structure
          end
          struct_val = p.Results; %store parse inputs as a structure
          if ~useDefaults
@@ -185,8 +183,7 @@ classdef errorParam < handle & matlab.mixin.CustomDisplay
          propList = struct('absTol',obj.absTol, ...
             'relTol', obj.relTol);
       end
-
    end
 
-   
 end
+
