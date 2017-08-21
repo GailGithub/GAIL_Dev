@@ -1,14 +1,14 @@
-%% Estimation of normal probabilities by *cubSobol_g*
-% Author: Lluis Antoni Jimenez Rugama, July 2017
+%% Estimation of normal probabilities by *cubSobol_g* and *cubMC_g*
+% Author: Lluis Antoni Jimenez Rugama and Lan Jiang, August 2017
 %
 % For $\bf{X}\sim N(\bf{\mu},\Sigma)$ , we will estimate the following
 % probability:
-% 
+%
 % $$ P\left(\bf{a} \leq \bf{X} \leq \bf{b} \right) = \int_{\bf{a}}^{\bf{b}}
 % \frac{{\rm e}^{(\bf{x}-\bf{\mu})^t {\Sigma}^{-1}(\bf{x}-\bf{\mu})}}
 % {(2\pi)^{d/2}\left|{\Sigma}\right|^{1/2}}\,{\rm d}\bf{x}.$$
 %
-% We will approximate this probability using *cubSobol_g* and *meanMC_g* GAIL
+% We will approximate this probability using *cubSobol_g* and *cubMC_g* GAIL
 % methods. These are quasi-Monte Carlo and IID Monte Carlo algorithms.
 % In order to facilitate the computations when $d$ is high (~1000), we
 % are going to apply a special transformation of the integrand proposed by
@@ -24,12 +24,12 @@ function demo_normal_probabilities
 % viceversa. Finally, for simplicity we define the mean of the distribution
 % to be $\bf{\mu}=\bf{0}$:
 d = 30; % Dimension of the problem
-abstol = 1e-3; % User input, absolute error bound 
+abstol = 1e-3; % User input, absolute error bound
 reltol = 0;  % User input, relative error bound
 mu = zeros(d,1); % Mean of the distribution
 
 %% First test: $\Sigma=I_d$ (quasi-Monte Carlo cubSobol_g)
-% For this first example, we consider $\Sigma=I_d$, and 
+% For this first example, we consider $\Sigma=I_d$, and
 % $\bf{b}=-\bf{a}=(3.5,\dots,3.5)$. In this case, the
 % solution of the integral is known so we can verify that the error
 % conditions are met:
@@ -38,8 +38,19 @@ factor = 3.5; hyperbox = [-factor*ones(1,d) ; factor*ones(1,d)]; % We define the
 exactsol = (gail.stdnormcdf(factor)-gail.stdnormcdf(-factor))^d; % Exact solution of the integral
 
 % Solution approx_prob and integration output parameters in out_param
-[approx_prob,out_param] = multi_normcdf(hyperbox,mu,Sigma,abstol,reltol); 
-disp('Test 1: cubSobol_g')
+[approx_prob,out_param] = multi_normcdf_cubMC(hyperbox,mu,Sigma,abstol,reltol); 
+disp('Test 1: cubMC_g')
+disp(['Estimated probability with cubMC_g is: ' num2str(approx_prob)])
+disp(['The algorithm took ' num2str(out_param.time) ' seconds and '...
+    num2str(out_param.ntot) ' points.'])
+disp(['Real error was ' ...
+    num2str(abs(exactsol-approx_prob))...
+    ' which is less than the user input tolerance '...
+    num2str(gail.tolfun(abstol,reltol,1,exactsol,'max')) '.'])
+
+% Solution approx_prob and integration output parameters in out_param
+[approx_prob,out_param] = multi_normcdf_cubSobol(hyperbox,mu,Sigma,abstol,reltol);
+disp('Test 2: cubSobol_g')
 disp(['Estimated probability with cubSobol_g is: ' num2str(approx_prob)])
 disp(['The algorithm took ' num2str(out_param.time) ' seconds and '...
     num2str(out_param.n) ' points.'])
@@ -49,21 +60,30 @@ disp(['Real error was ' ...
     num2str(gail.tolfun(abstol,reltol,1,exactsol,'max')) '.'])
 
 %% Second test: $\Sigma=0.4I_d + 0.6\bf{1}\bf{1}^T$ (quasi-Monte Carlo cubSobol_g)
-% For this second example, we consider $\Sigma=0.4I_d + 0.6\bf{1}\bf{1}^T$ 
-% ($1$ on the diagonal, $0.6$ off the diagional), 
+% For this second example, we consider $\Sigma=0.4I_d + 0.6\bf{1}\bf{1}^T$
+% ($1$ on the diagonal, $0.6$ off the diagional),
 % $\bf{a}=(-\infty,\dots,-\infty)$, and $\bf{b}=\sqrt{d}(U_1,\dots,U_d)$
 % ($\bf{b}$ is chosen randomly). The solution for this integral is known
 % too so we can verify the real error:
 sig = 0.6; Sigma = sig*ones(d,d); Sigma(1:d+1:d*d) = 1; % We set the covariance matrix
 hyperbox = [-Inf*ones(1,d) ; sqrt(d)*rand(1,d)]; % We define the integration limits
-[exactsol , ~] = cubSobol_g(...
-  @(t) prod(gail.stdnormcdf(bsxfun(@plus,hyperbox(2,:),...
-  sqrt(sig)*t)/sqrt(1-sig)),2),...
-  [-Inf;Inf],'normal',abstol/10^3,0);  % Exact solution of the integral
+exactsol = integral(@(t)MVNPexact(t,hyperbox(2,:),sig),...
+-inf, inf,'Abstol',1e-8,'RelTol',1e-8)/sqrt(2*pi);
 
 % Solution approx_prob and integration output parameters in out_param
-[approx_prob,out_param] = multi_normcdf(hyperbox,mu,Sigma,abstol,reltol);
-disp('Test 2: cubSobol_g')
+[approx_prob,out_param] = multi_normcdf_cubMC(hyperbox,mu,Sigma,abstol,reltol);
+disp('Test 3: cubMC_g')
+disp(['Estimated probability with cubMC_g is: ' num2str(approx_prob)])
+disp(['The algorithm took ' num2str(out_param.time) ' seconds and '...
+    num2str(out_param.ntot) ' points.'])
+disp(['Real error was ' ...
+    num2str(abs(exactsol-approx_prob))...
+    ' which is less than the user input tolerance '...
+    num2str(gail.tolfun(abstol,reltol,1,exactsol,'max')) '.'])
+
+% Solution approx_prob and integration output parameters in out_param
+[approx_prob,out_param] = multi_normcdf_cubSobol(hyperbox,mu,Sigma,abstol,reltol);
+disp('Test 4: cubSobol_g')
 disp(['Estimated probability with cubSobol_g is: ' num2str(approx_prob)])
 disp(['The algorithm took ' num2str(out_param.time) ' seconds and '...
     num2str(out_param.n) ' points.'])
@@ -79,38 +99,43 @@ disp(['Real error was ' ...
 hyperbox = [-(d/3)*rand(1,d) ; (d/3)*rand(1,d)]; % We define the integration limits
 
 % Solution approx_prob and integration output parameters in out_param
-[approx_prob,out_param] = multi_normcdf(hyperbox,mu,Sigma,abstol,reltol);
-disp('Test 3: cubSobol_g')
+[approx_prob,out_param] = multi_normcdf_cubMC(hyperbox,mu,Sigma,abstol,reltol);
+disp('Test 5: cubMC_g')
+disp(['Estimated probability with cubMC_g is: ' num2str(approx_prob)])
+disp(['The algorithm took ' num2str(out_param.time) ' seconds and '...
+    num2str(out_param.ntot) ' points.'])
+
+% Solution approx_prob and integration output parameters in out_param
+[approx_prob,out_param] = multi_normcdf_cubSobol(hyperbox,mu,Sigma,abstol,reltol);
+disp('Test 6: cubSobol_g')
 disp(['Estimated probability with cubSobol_g is: ' num2str(approx_prob)])
 disp(['The algorithm took ' num2str(out_param.time) ' seconds and '...
     num2str(out_param.n) ' points.'])
 
-%% Third test with IID Monte Carlo (Monte Carlo meanMC_g)
-% We repeat the third test but we use the IID Monte Carlo algorithm
-% instead:
-C = chol(Sigma)'; % Alan Genz's transform parameters
-a = hyperbox(1,1)/C(1,1); b = hyperbox(2,1)/C(1,1); % Alan Genz's transform parameters
-s = gail.stdnormcdf(a); e = gail.stdnormcdf(b); % Alan Genz's transform parameters
 
-% Solution approx_prob and integration output parameters in out_param
-[approx_prob,out_param] = meanMC_g(@(n) f(s,e,hyperbox,rand(n,d-1),C),...
-    abstol,reltol,'tbudget',5000);
-disp('Test 3: meanMC_g')
-disp(['Estimated probability with meanMC_g is: ' num2str(approx_prob)])
-disp(['The algorithm took ' num2str(out_param.time) ' seconds and '...
-    num2str(out_param.n) ' points.'])
-
-
+end
 
 %% APPENDIX: Auxiliary function definitions
 % These two functions are defined for all the above test examples.
-% _multi_normcdf_ is a redefinition of cubSobol_g prepared to computed
-% normal probabilites based on Alan Genz's transformation. _f_ is the
-% function resulting from applying Alan Genz's transform that that will be
-% called in either cubSobol_g or meanMC_g.
+% _multi_normcdf_ is a redefinition of cubSobol_g and cubMC_g prepared to
+% computed normal probabilites based on Alan Genz's transformation. _f_ is
+% the function resulting from applying Alan Genz's transform that that will
+% be called in either cubSobol_g or cubMC_g.
 
-function [p,out, y, kappanumap] = multi_normcdf(hyperbox,mu,Sigma,...
-        abstol,reltol)
+function [p,out, y, kappanumap] = multi_normcdf_cubSobol(hyperbox,mu,Sigma,abstol,reltol)
+% multi_normcdf computes the cumulative distribution function of the
+% multivariate normal distribution with mean mu, covariance matrix Sigma
+% and within the region defined by hyperbox.
+hyperbox = bsxfun(@minus, hyperbox,mu');
+C = chol(Sigma)'; d = size(C,1);
+a = hyperbox(1,1)/C(1,1); b = hyperbox(2,1)/C(1,1);
+s = gail.stdnormcdf(a); e = gail.stdnormcdf(b);
+[p, out, y, kappanumap] = cubSobol_g(...
+    @(x) f(s,e,hyperbox,x,C), [zeros(1,d-1);ones(1,d-1)],...
+    'uniform',abstol,reltol);
+end
+
+function [Q,param] = multi_normcdf_cubMC(hyperbox,mu,Sigma,abstol,reltol)
 % multi_normcdf computes the cumulative distribution function of the
 % multivariate normal distribution with mean mu, covariance matrix Sigma
 % and within the region defined by hyperbox.
@@ -118,7 +143,7 @@ function [p,out, y, kappanumap] = multi_normcdf(hyperbox,mu,Sigma,...
     C = chol(Sigma)'; d = size(C,1);
     a = hyperbox(1,1)/C(1,1); b = hyperbox(2,1)/C(1,1);
     s = gail.stdnormcdf(a); e = gail.stdnormcdf(b);
-    [p, out, y, kappanumap] = cubSobol_g(...
+    [Q,param] = cubMC_g(...
         @(x) f(s,e,hyperbox,x,C), [zeros(1,d-1);ones(1,d-1)],...
         'uniform',abstol,reltol);
 end
@@ -126,24 +151,24 @@ end
 function f_eval = f(s,e,hyperbox,w,C)
 % This is the integrand resulting from applying Alan Genz's transformation,
 % which is recursively defined.
-    f_eval = (e-s)*ones(size(w,1),1);
-    aux = ones(size(w,1),1);
-    y = [];
-    for i = 2:size(hyperbox,2);
-        y = [y gail.stdnorminv(s+w(:,i-1).*(e-s))];
-        aux = sum(bsxfun(@times,C(i,1:i-1),y),2);
-        a = (hyperbox(1,i)-aux)/C(i,i);
-        b = (hyperbox(2,i)-aux)/C(i,i);
-        s = gail.stdnormcdf(a);
-        e = gail.stdnormcdf(b);
-        f_eval = f_eval .* (e-s);
-    end
+f_eval = (e-s)*ones(size(w,1),1);
+aux = ones(size(w,1),1);
+y = [];
+for i = 2:size(hyperbox,2);
+    y = [y gail.stdnorminv(s+w(:,i-1).*(e-s))];
+    aux = sum(bsxfun(@times,C(i,1:i-1),y),2);
+    a = (hyperbox(1,i)-aux)/C(i,i);
+    b = (hyperbox(2,i)-aux)/C(i,i);
+    s = gail.stdnormcdf(a);
+    e = gail.stdnormcdf(b);
+    f_eval = f_eval .* (e-s);
 end
 end
 
+
 %% References
-%  
-% [1] Fred J. Hickernell, Lluis Antoni Jimenez Rugama "Reliable adaptive 
+%
+% [1] Fred J. Hickernell, Lluis Antoni Jimenez Rugama "Reliable adaptive
 %     cubature using digital sequences", Monte Carlo and Quasi-Monte Carlo
 %     Methods: MCQMC, Leuven, Belgium, April 2014 (R. Cools and D. Nuyens,
 %     eds.), Springer Proceedings in Mathematics and Statistics, vol. 163,
@@ -155,9 +180,13 @@ end
 %     Carlo sampling," Monte Carlo and Quasi-Monte Carlo Methods 2012
 %     (J. Dick, F. Y. Kuo, G. W. Peters, and I. H. Sloan, eds.),
 %     Springer-Verlag, Berlin, pp. 105-128, 2014.
-% 
+%
 % [3] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
 %     Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
 %     GAIL: Guaranteed Automatic Integration Library (Version 2.2) [MATLAB
 %     Software], 2017. Available from <http://gailgithub.github.io/GAIL_Dev/
 %     GitHub>.
+%
+% [4] Lan Jiang, Guaranteed Adaptive Monte Carlo Methods for Estimating
+%     Means of Random Variables, Ph.D Thesis, Illinois Institute of
+%     Technology, 2016.
