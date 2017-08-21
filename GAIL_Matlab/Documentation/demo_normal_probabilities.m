@@ -39,7 +39,7 @@ exactsol = (gail.stdnormcdf(factor)-gail.stdnormcdf(-factor))^d; % Exact solutio
 
 % Solution approx_prob and integration output parameters in out_param
 [approx_prob,out_param] = multi_normcdf_cubMC(hyperbox,mu,Sigma,abstol,reltol);
-disp('Test 1: cubMC_g')
+disp('Test 1.1: cubMC_g')
 disp(['Estimated probability with cubMC_g is: ' num2str(approx_prob)])
 disp(['The algorithm took ' num2str(out_param.time) ' seconds and '...
     num2str(out_param.ntot) ' points.'])
@@ -50,7 +50,7 @@ disp(['Real error was ' ...
 
 % Solution approx_prob and integration output parameters in out_param
 [approx_prob,out_param] = multi_normcdf_cubSobol(hyperbox,mu,Sigma,abstol,reltol);
-disp('Test 2: cubSobol_g')
+disp('Test 1.2: cubSobol_g')
 disp(['Estimated probability with cubSobol_g is: ' num2str(approx_prob)])
 disp(['The algorithm took ' num2str(out_param.time) ' seconds and '...
     num2str(out_param.n) ' points.'])
@@ -72,7 +72,7 @@ exactsol = integral(@(t)MVNPexact(t,hyperbox(2,:),sig),...
 
 % Solution approx_prob and integration output parameters in out_param
 [approx_prob,out_param] = multi_normcdf_cubMC(hyperbox,mu,Sigma,abstol,reltol);
-disp('Test 3: cubMC_g')
+disp('Test 2.1: cubMC_g')
 disp(['Estimated probability with cubMC_g is: ' num2str(approx_prob)])
 disp(['The algorithm took ' num2str(out_param.time) ' seconds and '...
     num2str(out_param.ntot) ' points.'])
@@ -83,7 +83,7 @@ disp(['Real error was ' ...
 
 % Solution approx_prob and integration output parameters in out_param
 [approx_prob,out_param] = multi_normcdf_cubSobol(hyperbox,mu,Sigma,abstol,reltol);
-disp('Test 4: cubSobol_g')
+disp('Test 2.2: cubSobol_g')
 disp(['Estimated probability with cubSobol_g is: ' num2str(approx_prob)])
 disp(['The algorithm took ' num2str(out_param.time) ' seconds and '...
     num2str(out_param.n) ' points.'])
@@ -101,78 +101,78 @@ hyperbox = [-(d/3)*rand(1,d) ; (d/3)*rand(1,d)]; % We define the integration lim
 
 % Solution approx_prob and integration output parameters in out_param
 [approx_prob,out_param] = multi_normcdf_cubMC(hyperbox,mu,Sigma,abstol,reltol);
-disp('Test 5: cubMC_g')
+disp('Test 3.1: cubMC_g')
 disp(['Estimated probability with cubMC_g is: ' num2str(approx_prob)])
 disp(['The algorithm took ' num2str(out_param.time) ' seconds and '...
     num2str(out_param.ntot) ' points.'])
 
 % Solution approx_prob and integration output parameters in out_param
 [approx_prob,out_param] = multi_normcdf_cubSobol(hyperbox,mu,Sigma,abstol,reltol);
-disp('Test 6: cubSobol_g')
+disp('Test 3.2: cubSobol_g')
 disp(['Estimated probability with cubSobol_g is: ' num2str(approx_prob)])
 disp(['The algorithm took ' num2str(out_param.time) ' seconds and '...
     num2str(out_param.n) ' points.'])
 
-    function [p,out, y, kappanumap] = multi_normcdf_cubSobol(hyperbox,mu,Sigma,abstol,reltol)
-        % multi_normcdf computes the cumulative distribution function of the
-        % multivariate normal distribution with mean mu, covariance matrix Sigma
-        % and within the region defined by hyperbox.
-        hyperbox = bsxfun(@minus, hyperbox,mu');
-        C = chol(Sigma)'; d = size(C,1);
-        a = hyperbox(1,1)/C(1,1); b = hyperbox(2,1)/C(1,1);
-        s = gail.stdnormcdf(a); e = gail.stdnormcdf(b);
-        [p, out, y, kappanumap] = cubSobol_g(...
-            @(x) f(s,e,hyperbox,x,C), [zeros(1,d-1);ones(1,d-1)],...
-            'uniform',abstol,reltol);
-    end
+function [p,out, y, kappanumap] = multi_normcdf_cubSobol(hyperbox,mu,Sigma,abstol,reltol)
+% multi_normcdf computes the cumulative distribution function of the
+% multivariate normal distribution with mean mu, covariance matrix Sigma
+% and within the region defined by hyperbox.
+hyperbox = bsxfun(@minus, hyperbox,mu');
+C = chol(Sigma)'; d = size(C,1);
+a = hyperbox(1,1)/C(1,1); b = hyperbox(2,1)/C(1,1);
+s = gail.stdnormcdf(a); e = gail.stdnormcdf(b);
+[p, out, y, kappanumap] = cubSobol_g(...
+    @(x) f(s,e,hyperbox,x,C), [zeros(1,d-1);ones(1,d-1)],...
+    'uniform',abstol,reltol);
+end
 
-    function [Q,param] = multi_normcdf_cubMC(hyperbox,mu,Sigma,abstol,reltol)
-        % multi_normcdf computes the cumulative distribution function of the
-        % multivariate normal distribution with mean mu, covariance matrix Sigma
-        % and within the region defined by hyperbox.
-        hyperbox = bsxfun(@minus, hyperbox,mu');
-        C = chol(Sigma)'; d = size(C,1);
-        a = hyperbox(1,1)/C(1,1); b = hyperbox(2,1)/C(1,1);
-        s = gail.stdnormcdf(a); e = gail.stdnormcdf(b);
-        [Q,param] = cubMC_g(...
-            @(x) f(s,e,hyperbox,x,C), [zeros(1,d-1);ones(1,d-1)],...
-            'uniform',abstol,reltol);
-    end
+function [Q,param] = multi_normcdf_cubMC(hyperbox,mu,Sigma,abstol,reltol)
+% multi_normcdf computes the cumulative distribution function of the
+% multivariate normal distribution with mean mu, covariance matrix Sigma
+% and within the region defined by hyperbox.
+hyperbox = bsxfun(@minus, hyperbox,mu');
+C = chol(Sigma)'; d = size(C,1);
+a = hyperbox(1,1)/C(1,1); b = hyperbox(2,1)/C(1,1);
+s = gail.stdnormcdf(a); e = gail.stdnormcdf(b);
+[Q,param] = cubMC_g(...
+    @(x) f(s,e,hyperbox,x,C), [zeros(1,d-1);ones(1,d-1)],...
+    'uniform',abstol,reltol);
+end
 
-    function f_eval = f(s,e,hyperbox,w,C)
-        % This is the integrand resulting from applying Alan Genz's transformation,
-        % which is recursively defined.
-        f_eval = (e-s)*ones(size(w,1),1);
-        aux = ones(size(w,1),1);
-        y = [];
-        for i = 2:size(hyperbox,2);
-            y = [y gail.stdnorminv(s+w(:,i-1).*(e-s))];
-            aux = sum(bsxfun(@times,C(i,1:i-1),y),2);
-            a = (hyperbox(1,i)-aux)/C(i,i);
-            b = (hyperbox(2,i)-aux)/C(i,i);
-            s = gail.stdnormcdf(a);
-            e = gail.stdnormcdf(b);
-            f_eval = f_eval .* (e-s);
-        end
-    end
+function f_eval = f(s,e,hyperbox,w,C)
+% This is the integrand resulting from applying Alan Genz's transformation,
+% which is recursively defined.
+f_eval = (e-s)*ones(size(w,1),1);
+aux = ones(size(w,1),1);
+y = [];
+for i = 2:size(hyperbox,2);
+    y = [y gail.stdnorminv(s+w(:,i-1).*(e-s))];
+    aux = sum(bsxfun(@times,C(i,1:i-1),y),2);
+    a = (hyperbox(1,i)-aux)/C(i,i);
+    b = (hyperbox(2,i)-aux)/C(i,i);
+    s = gail.stdnormcdf(a);
+    e = gail.stdnormcdf(b);
+    f_eval = f_eval .* (e-s);
+end
+end
 
-    function MVNPfunvalfinal = MVNPexact(t,b,sig)
-        % MVNPexact calculates the true solution of multivariate
-        % normal probability when the coveriance matrix is in a special form:
-        % diagnal is 1 and off diagnal are all same.
-        %
-        % b - the upper limits of the integal with size 1 x d
-        % sig - the off diagnal element
-        % dim- the dimension of the integral
-        % t - the variable
-        MVNPfunval = (gail.stdnormcdf((b(1)+sqrt(sig)*t)/sqrt(1-sig)));
-        dim =  length(b);
-        for i =2:dim
-            MVNPfunval= MVNPfunval.*(gail.stdnormcdf((b(i)+sqrt(sig)*t)/sqrt(1-sig)));
-            %i=i+100;
-        end
-        MVNPfunvalfinal = MVNPfunval.*exp(-t.^2/2);
-    end
+function MVNPfunvalfinal = MVNPexact(t,b,sig)
+% MVNPexact calculates the true solution of multivariate
+% normal probability when the coveriance matrix is in a special form:
+% diagnal is 1 and off diagnal are all same.
+%
+% b - the upper limits of the integal with size 1 x d
+% sig - the off diagnal element
+% dim- the dimension of the integral
+% t - the variable
+MVNPfunval = (gail.stdnormcdf((b(1)+sqrt(sig)*t)/sqrt(1-sig)));
+dim =  length(b);
+for i =2:dim
+    MVNPfunval= MVNPfunval.*(gail.stdnormcdf((b(i)+sqrt(sig)*t)/sqrt(1-sig)));
+    %i=i+100;
+end
+MVNPfunvalfinal = MVNPfunval.*exp(-t.^2/2);
+end
 end
 
 %% APPENDIX: Auxiliary function definitions
