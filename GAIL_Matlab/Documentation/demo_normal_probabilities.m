@@ -94,7 +94,7 @@ disp(['Real error was ' ...
 
 %% Third test: $\Sigma=0.4I_d + 0.6\bf{1}\bf{1}^T$ (Monte Carlo cubMC_g and quasi-Monte Carlo cubSobol_g)
 % For this last example, we consider the same covariance matrix as the
-% second test but the upper and lower limits are different, 
+% second test but the upper and lower limits are different,
 % $\bf{a}=-d/3(U_1,\dots,U_d)$, and $\bf{b}=d/3(U_{d+1},\dots,U_{2d})$
 % (both $\bf{a}$ and $\bf{b}$ are chosen randomly):
 hyperbox = [-(d/3)*rand(1,d) ; (d/3)*rand(1,d)]; % We define the integration limits
@@ -170,10 +170,9 @@ disp(['The algorithm took ' num2str(out_param.time) ' seconds and '...
         for i =2:dim
             MVNPfunval= MVNPfunval.*(gail.stdnormcdf((b(i)+sqrt(sig)*t)/sqrt(1-sig)));
             %i=i+100;
-        end       
-        MVNPfunvalfinal = MVNPfunval.*exp(-t.^2/2);        
+        end
+        MVNPfunvalfinal = MVNPfunval.*exp(-t.^2/2);
     end
-
 end
 
 %% APPENDIX: Auxiliary function definitions

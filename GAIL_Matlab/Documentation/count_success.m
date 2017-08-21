@@ -3,7 +3,7 @@
 %
 % Define an integration problem as follows:
 %
-% \[ I = \int_0^1 x^2 dx. \]
+% $$I = \int_0^1 x^2 dx.$$
 % 
 % The analytical solution is 1/3. If we use *meanMC_g* to estimate the
 % integral with 1000 replications, we expect the success rate to be bigger
