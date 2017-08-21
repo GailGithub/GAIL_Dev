@@ -7,6 +7,7 @@
 %   GAIL_Uninstall - Uninstall GAIL. Remove GAIL paths from MATLAB search path
 %   LICENSE        - License of GAIL
 %   README         - Installation of and introduction to GAIL.
+%   ReleaseNotes   - What is new in this version?
 % 
 % Folders
 %   Algorithms     - GAIL algorithms

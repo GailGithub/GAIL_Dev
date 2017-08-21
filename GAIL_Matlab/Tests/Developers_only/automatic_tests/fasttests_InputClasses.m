@@ -1,7 +1,7 @@
 % fasttests_InputClasses: fast tests for input classes
 
 %% CALL DOCTESTS
-format short
+%format short
 %tic; doctest gail.gail_in_param; time=toc
 %tic; doctest gail.gail1D_in_param; time=toc
 %tic; doctest gail.gailMD_in_param; time=toc
@@ -11,7 +11,7 @@ format short
 %tic; doctest gail.funmin_g_in_param; time=toc
 %tic; doctest gail.cubMC_g_in_param; time=toc
 
-format long
+%format long
 tic; doctest gail.errorParam; time = toc
 tic; doctest gail.fParam; time = toc
 tic; doctest gail.cubParam; time = toc

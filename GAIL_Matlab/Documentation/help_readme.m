@@ -1,7 +1,9 @@
 %% Guaranteed Automatic Integration Library (GAIL)
 % 
 % GAIL Version 2.2, 2017.
-% See LICENSE.m for copyright and disclaimer.
+%
+% See LICENSE.m for copyright and disclaimer. Refer to ReleaseNotes.m for
+% what is new in this version.
 % 
 % GAIL is a suite of algorithms for integration problems in one and many
 % dimensions, and whose answers are guaranteed to be correct.
@@ -10,14 +12,18 @@
 % 
 %% Developed by
 % 
-% 
-% Fred Hickernell, Sou-Cheng Choi, and their collaborators including
-% Yuhan Ding, Lan Jiang, Lluis Antoni Jimenez Rugama, Yizhi 
-% Zhang and Xuan Zhou, Department of Applied Mathematics, Illinois 
-% Institute of Technology (IIT) and  Xin Tong, Department of Mathematics, 
-% Statistics, and Computer Science, University of Illinois at Chicago. 
-% We thank the contributions of Xincheng Sheng, and the IIT class of Math 
-% 573 Reliable Mathematical Software, Fall 2013.
+% Fred Hickernell, Sou-Cheng Choi, and their collaborators including Yuhan
+% Ding, Lan Jiang, Lluis Antoni Jimenez Rugama, Da Li, Jagadeeswaran
+% Rathinavel, Kan Zhang, Yizhi Zhang, and Xuan Zhou, Department of Applied
+% Mathematics, Illinois Institute of Technology (IIT) and  Xin Tong,
+% Department of Mathematics, Statistics, and Computer Science, University
+% of Illinois at Chicago. We thank the contributions of Christine
+% Hickernell, Kate Li, Xincheng Sheng, Felipe Sousa de Andrade, Xiaoyang
+% Zhao, Tianci Zhu, and the IIT classes of CI 498/MATH 491: Computational
+% Social Sciences, Summer 2016; MATH 491-195: Solving Problems in the
+% Social Sciences Using Tools from Computational Mathematics and
+% Statistics, Summer 2015; Math 573 Reliable Mathematical Software, Fall
+% 2013.
 % 
 % 
 % Please cite the following software, papers, and materials:
@@ -68,7 +74,7 @@
 % Springer-Verlag, Berlin, 2016, arXiv:1410.8615 [math.NA], pp. 367-383.
 % (describes *cubSobol_g.m*)
 % 
-% Fred J. Hickernell, Lluis Antoni Jimenez Rugama a, and D. Li,"Adaptive 
+% Fred J. Hickernell, Lluis Antoni Jimenez Rugama a, and D. Li, "Adaptive 
 % quasi-{M}onte {C}arlo methods, 2017+, submitted for publication, 
 % arXiv:1702.01491 [math.NA].
 % 
