@@ -1,36 +1,38 @@
 %% Estimation of normal probabilities by *cubSobol_g* and *cubMC_g*
-% Author: Lluis Antoni Jimenez Rugama and Lan Jiang, August 2017
+% Authors: Lluis Antoni Jimenez Rugama and Lan Jiang, August 2017
 %
-% For $\bf{X}\sim N(\bf{\mu},\Sigma)$ , we will estimate the following
+% For \(\bf{X}\sim N(\bf{\mu},\Sigma)\), we will estimate the following
 % probability:
 %
-% $$ P\left(\bf{a} \leq \bf{X} \leq \bf{b} \right) = \int_{\bf{a}}^{\bf{b}}
+% \[ P\left(\bf{a} \leq \bf{X} \leq \bf{b} \right) = \int_{\bf{a}}^{\bf{b}}
 % \frac{{\rm e}^{(\bf{x}-\bf{\mu})^t {\Sigma}^{-1}(\bf{x}-\bf{\mu})}}
-% {(2\pi)^{d/2}\left|{\Sigma}\right|^{1/2}}\,{\rm d}\bf{x}.$$
+% {(2\pi)^{d/2}\left|{\Sigma}\right|^{1/2}}\,{\rm d}\bf{x}. \]
 %
-% There are three tests, each test approximates this probability using
-% *cubSobol_g* and *cubMC_g* GAIL methods. These are quasi-Monte Carlo and
-% IID Monte Carlo algorithms. In order to facilitate the computations when
-% $d$ is high (~1000), we are going to apply a special transformation of
-% the integrand proposed by Alan Genz.
+% We present three tests, each of which approximates the aforementioned
+% probability using *cubSobol_g* and *cubMC_g*, which are quasi-Monte Carlo
+% and IID Monte Carlo algorithms in GAIL, respectively. In order to
+% facilitate the computations when $d$ is high (~30), we are going to apply
+% a special transformation of the integrand proposed by Alan Genz.
 %%
 
-function demo_normal_probabilities
+
 %% Basic integration parameters set up
-% For all the examples, the dimension of the problem will be $d=30$.
-% The user input tolerances are also set up below. _abstol_ is the absolute
-% error tolerance, and _reltol_ the relative error tolerance. When _reltol_
+% For all the examples, the dimension of the problem is $d=30$.
+% The user input tolerances are also set up below: |abstol| is the absolute
+% error tolerance, and |reltol| the relative error tolerance. When |reltol|
 % is set to 0, the algorithms use pure absolute error bound, and
 % vice versa. Finally, for simplicity we define the mean of the distribution
-% to be $\bf{\mu}=\bf{0}$:
+% to be \(\bf{\mu}=\bf{0}\):
+
+function demo_normal_probabilities()
 d = 30; % Dimension of the problem
 abstol = 1e-3; % User input, absolute error bound
 reltol = 0;  % User input, relative error bound
 mu = zeros(d,1); % Mean of the distribution
 
-%% First test: $\Sigma=I_d$ (Monte Carlo cubMC_g and quasi-Monte Carlo cubSobol_g)
-% For this first example, we consider $\Sigma=I_d$, and
-% $\bf{b}=-\bf{a}=(3.5,\dots,3.5)$. In this case, the
+%% First test: \(\Sigma=I_d\) 
+% For this first example, we consider \(\Sigma=I_d\), and
+% \(\bf{b}=-\bf{a}=(3.5,\dots,3.5)\). In this case, the
 % solution of the integral is known so we can verify that the error
 % conditions are met:
 Sigma = eye(d); % We set the covariance matrix to the identity
@@ -43,7 +45,7 @@ disp('Test 1.1: cubMC_g')
 disp(['Estimated probability with cubMC_g is: ' num2str(approx_prob)])
 disp(['The algorithm took ' num2str(out_param.time) ' seconds and '...
     num2str(out_param.ntot) ' points.'])
-disp(['Real error was ' ...
+disp(['Real error is ' ...
     num2str(abs(exactsol-approx_prob))...
     ' which is less than the user input tolerance '...
     num2str(gail.tolfun(abstol,reltol,1,exactsol,'max')) '.'])
@@ -54,16 +56,16 @@ disp('Test 1.2: cubSobol_g')
 disp(['Estimated probability with cubSobol_g is: ' num2str(approx_prob)])
 disp(['The algorithm took ' num2str(out_param.time) ' seconds and '...
     num2str(out_param.n) ' points.'])
-disp(['Real error was ' ...
+disp(['Real error is ' ...
     num2str(abs(exactsol-approx_prob))...
     ' which is less than the user input tolerance '...
     num2str(gail.tolfun(abstol,reltol,1,exactsol,'max')) '.'])
 
-%% Second test: $\Sigma=0.4I_d + 0.6\bf{1}\bf{1}^T$ (Monte Carlo cubMC_g and quasi-Monte Carlo cubSobol_g)
-% For this second example, we consider $\Sigma=0.4I_d + 0.6\bf{1}\bf{1}^T$
-% ($1$ on the diagonal, $0.6$ off the diagional),
-% $\bf{a}=(-\infty,\dots,-\infty)$, and $\bf{b}=\sqrt{d}(U_1,\dots,U_d)$
-% ($\bf{b}$ is chosen randomly). The solution for this integral is known
+%% Second test: \(\Sigma=0.4I_d + 0.6\bf{1}\bf{1}^T\)
+% For this second example, we consider \(\Sigma=0.4I_d + 0.6\bf{1}\bf{1}^T\)
+% (\(1\) on the diagonal, \(0.6\) off the diagional),
+% \(\bf{a}=(-\infty,\dots,-\infty)\), and \(\bf{b}=\sqrt{d}(U_1,\dots,U_d)\)
+% (\(\bf{b}\) is chosen randomly). The solution for this integral is known
 % too so we can verify the real error:
 sig = 0.6; Sigma = sig*ones(d,d); Sigma(1:d+1:d*d) = 1; % We set the covariance matrix
 hyperbox = [-Inf*ones(1,d) ; sqrt(d)*rand(1,d)]; % We define the integration limits
@@ -76,7 +78,7 @@ disp('Test 2.1: cubMC_g')
 disp(['Estimated probability with cubMC_g is: ' num2str(approx_prob)])
 disp(['The algorithm took ' num2str(out_param.time) ' seconds and '...
     num2str(out_param.ntot) ' points.'])
-disp(['Real error was ' ...
+disp(['Real error is ' ...
     num2str(abs(exactsol-approx_prob))...
     ' which is less than the user input tolerance '...
     num2str(gail.tolfun(abstol,reltol,1,exactsol,'max')) '.'])
@@ -87,16 +89,16 @@ disp('Test 2.2: cubSobol_g')
 disp(['Estimated probability with cubSobol_g is: ' num2str(approx_prob)])
 disp(['The algorithm took ' num2str(out_param.time) ' seconds and '...
     num2str(out_param.n) ' points.'])
-disp(['Real error was ' ...
+disp(['Real error is ' ...
     num2str(abs(exactsol-approx_prob))...
     ' which is less than the user input tolerance '...
     num2str(gail.tolfun(abstol,reltol,1,exactsol,'max')) '.'])
 
-%% Third test: $\Sigma=0.4I_d + 0.6\bf{1}\bf{1}^T$ (Monte Carlo cubMC_g and quasi-Monte Carlo cubSobol_g)
-% For this last example, we consider the same covariance matrix as the
+%% Third test: \(\Sigma=0.4I_d + 0.6\bf{1}\bf{1}^T\) 
+% For this last example, we consider the same covariance matrix in the
 % second test but the upper and lower limits are different,
-% $\bf{a}=-d/3(U_1,\dots,U_d)$, and $\bf{b}=d/3(U_{d+1},\dots,U_{2d})$
-% (both $\bf{a}$ and $\bf{b}$ are chosen randomly):
+% \(\bf{a}=-d/3(U_1,\dots,U_d)\), and \(\bf{b}=d/3(U_{d+1},\dots,U_{2d})\)
+% (both \(\bf{a}\) and \(\bf{b}\) are chosen randomly):
 hyperbox = [-(d/3)*rand(1,d) ; (d/3)*rand(1,d)]; % We define the integration limits
 
 % Solution approx_prob and integration output parameters in out_param
@@ -113,11 +115,18 @@ disp(['Estimated probability with cubSobol_g is: ' num2str(approx_prob)])
 disp(['The algorithm took ' num2str(out_param.time) ' seconds and '...
     num2str(out_param.n) ' points.'])
 
+%% Appendix: Auxiliary function definitions
+% The following functions are defined for the above test examples.
+% |multi_normcdf_cubSobol| and |multi_normcdf_cubMC| redefine *cubSobol_g
+% and *cubMC_g* respectively for computing normal probabilites based on Alan
+% Genz's transformation. |f| is the function resulting from applying Alan
+% Genz's transform that is called in either *cubSobol_g* or *cubMC_g*.
+
 function [p,out, y, kappanumap] = multi_normcdf_cubSobol(hyperbox,mu,Sigma,abstol,reltol)
-% multi_normcdf computes the cumulative distribution function of the
-% multivariate normal distribution with mean mu, covariance matrix Sigma
-% and within the region defined by hyperbox.
-hyperbox = bsxfun(@minus, hyperbox,mu');
+% Using cubSobol_g, multi_normcdf_cubMC computes the cumulative
+% distribution function of the multivariate normal distribution with mean
+% mu, covariance matrix Sigma and within the region defined by hyperbox.
+hyperbox = bsxfun(@minus, hyperbox, mu');
 C = chol(Sigma)'; d = size(C,1);
 a = hyperbox(1,1)/C(1,1); b = hyperbox(2,1)/C(1,1);
 s = gail.stdnormcdf(a); e = gail.stdnormcdf(b);
@@ -127,10 +136,10 @@ s = gail.stdnormcdf(a); e = gail.stdnormcdf(b);
 end
 
 function [Q,param] = multi_normcdf_cubMC(hyperbox,mu,Sigma,abstol,reltol)
-% multi_normcdf computes the cumulative distribution function of the
-% multivariate normal distribution with mean mu, covariance matrix Sigma
-% and within the region defined by hyperbox.
-hyperbox = bsxfun(@minus, hyperbox,mu');
+% Using cubMC_g, multi_normcdf_cubMC computes the cumulative distribution
+% function of the multivariate normal distribution with mean mu, covariance
+% matrix Sigma and within the region defined by hyperbox.
+hyperbox = bsxfun(@minus, hyperbox, mu');
 C = chol(Sigma)'; d = size(C,1);
 a = hyperbox(1,1)/C(1,1); b = hyperbox(2,1)/C(1,1);
 s = gail.stdnormcdf(a); e = gail.stdnormcdf(b);
@@ -161,10 +170,10 @@ function MVNPfunvalfinal = MVNPexact(t,b,sig)
 % normal probability when the coveriance matrix is in a special form:
 % diagnal is 1 and off diagnal are all same.
 %
-% b - the upper limits of the integal with size 1 x d
+% b   - the upper limits of the integal with size 1 x d
 % sig - the off diagnal element
-% dim- the dimension of the integral
-% t - the variable
+% dim - the dimension of the integral
+% t   - the variable
 MVNPfunval = (gail.stdnormcdf((b(1)+sqrt(sig)*t)/sqrt(1-sig)));
 dim =  length(b);
 for i =2:dim
@@ -175,12 +184,7 @@ MVNPfunvalfinal = MVNPfunval.*exp(-t.^2/2);
 end
 end
 
-%% APPENDIX: Auxiliary function definitions
-% These two functions are defined for all the above test examples.
-% _multi_normcdf_ is a redefinition of cubSobol_g and cubMC_g prepared to
-% computed normal probabilites based on Alan Genz's transformation. _f_ is
-% the function resulting from applying Alan Genz's transform that that will
-% be called in either cubSobol_g or cubMC_g.
+
 
 
 %% References
