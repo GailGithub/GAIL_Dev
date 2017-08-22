@@ -200,8 +200,12 @@
 % tests for funmin_g, for instance, execute run(ut_funmin_g).
 % 
 % 
-% 
-% 
+%% Known Bugs
+%
+%
+% None.
+%
+%
 %% Contact Information
 % 
 % 

@@ -195,7 +195,9 @@ funappx_g.
 We also provide unit tests for MATLAB version 8 or later. To run unit
 tests for funmin_g, for instance, execute run(ut_funmin_g).
 
-
+Known Bugs
+----------
+None.
 
 Contact Information
 --------------------
