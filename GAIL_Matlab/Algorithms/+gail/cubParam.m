@@ -10,7 +10,7 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
    %   cubParam with properties:
    %
    %           f: @(x)sum(x.^2,2)
-   %      domain: [2×1 double]
+   %      domain: [2x1 double]
    %     measure: 'uniform'
    %      absTol: 0.0100
    %      relTol: 0
@@ -22,7 +22,7 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
    %   cubParam with properties:
    %
    %              f: @(x)sum(x.^3.2)
-   %         domain: [2×2 double]
+   %         domain: [2x2 double]
    %    measureType: 'uniform'
    %        measure: 'Lebesgue'
    %         absTol: 0.0100
@@ -35,7 +35,7 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
    %   cubParam with properties:
    %
    %              f: @(x)sum(x.^3.2)
-   %         domain: [2×2 double]
+   %         domain: [2x2 double]
    %    measureType: 'uniform'
    %        measure: 'normal'
    %         absTol: 0.0100
@@ -51,7 +51,7 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
    %   cubParam with properties:
    %
    %              f: @(x)sin(sum(x,2))
-   %         domain: [2×4 double]
+   %         domain: [2x4 double]
    %    measureType: 'uniform'
    %        measure: 'uniform'
    %         absTol: 0.0100
@@ -65,7 +65,7 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
    %   cubParam with properties:
    %
    %              f: @(x)sin(sum(x,2))
-   %         domain: [2×4 double]
+   %         domain: [2x4 double]
    %    measureType: 'uniform'
    %        measure: 'Lebesgue'
    %         absTol: 0.0100
@@ -74,7 +74,7 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
    %
    %
    % Author: Fred J. Hickernell
-   
+
    properties
       err %an errorParam object
       fun %an fParam object
@@ -82,9 +82,9 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
       measure %measure against which to integrate
       measureType %type of measure that final integral is made with respect to
       nf %number of f for each integral
-      exitflag % exit flag 
+      exitflag % exit flag
    end
-   
+
    properties (Dependent = true)
       ff %function after variable transformation
       nCV %number of control variates
@@ -92,7 +92,7 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
       mmin
       mmax
    end
-   
+
    properties (Hidden, SetAccess = private)
       def_measure = 'uniform' % default measure
       def_measureType = 'uniform' % default measure
@@ -105,7 +105,7 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
          'Gaussian', 'normal' ... %these are the same
          }
    end
-   
+
    methods
       % Creating a cubParam process
       function obj = cubParam(varargin)
@@ -119,7 +119,7 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
          %  # a measure
          %  # numbers: absTol, relTol, trueMuCV, nMu, nf, inflate
          %  # name-value pairs
-         
+
          start = 1; %index to begin to parse
          useDefaults = true; %true unless copying an fParam object, then false
          objInp = 0; %where is the an object in the class
@@ -166,7 +166,7 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
                end
             end
          end
-         
+
          if objInp
             val = varargin{objInp}; %first input
             obj.err = gail.errorParam(val.err);
@@ -178,7 +178,7 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
             obj.exitflag=val.exitflag;
             useDefaults = false;
          end
-         
+
          %Parse fParam properties
          whichfParse = [fInp domainInp domainTypeInp structInp start:nargin];
          whichfParse = whichfParse(whichfParse > 0);
@@ -187,7 +187,7 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
          else
             obj.fun = gail.fParam(varargin{whichfParse});
          end
-         
+
          %Parse errorParam properties
          whichErrParse = [structInp start:nargin];
          whichErrParse = whichErrParse(whichErrParse > 0);
@@ -196,7 +196,7 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
          else
             obj.err = gail.errorParam(varargin{whichErrParse});
          end
-         
+
          %Parse cubMeanParam properties
          whichCMParse = [structInp start:nargin];
          whichCMParse = whichCMParse(whichCMParse > 0);
@@ -205,7 +205,7 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
          else
             obj.CM = gail.cubMeanParam(varargin{whichCMParse});
          end
-         
+
          %Now begin to parse remaining inputs
          p = inputParser; %construct an inputParser object
          p.KeepUnmatched = true; %ignore those that do not match
@@ -225,16 +225,16 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
                done = true;
             end
          end
-         
+
          if ~done %then nothingleft or just numbers
             f_addParamVal = @addOptional;
             parseRange = []; %nothing to parse here if just numbers
          end
-         
+
          f_addParamVal(p,'measure',obj.def_measure);
          f_addParamVal(p,'measureType',obj.def_measureType);
          f_addParamVal(p,'nf',obj.def_nf);
-         
+
          if structInp
             parse(p,varargin{parseRange},varargin{structInp})
             %parse inputs with a structure
@@ -245,7 +245,7 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
          if ~useDefaults %remove defaults if copying cubParam object
             struct_val = rmfield(struct_val,p.UsingDefaults);
          end
-         
+
          %Assign values of structure to corresponding class properties
          if measureInp
             obj.measure = varargin{measureInp}; %assign measure
@@ -258,24 +258,24 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
          if isfield(struct_val,'nf')
             obj.nf = struct_val.nf;
          end
-         
+
       end %of constructor
-      
+
       function set.measure(obj,val)
          validateattributes(val, {'char'}, {})
          obj.measure = checkMeasure(obj,val);
       end
-      
+
       function set.measureType(obj,val)
          validateattributes(val, {'char'}, {})
          obj.measureType = checkmeasureType(obj,val);
       end
-      
+
       function set.nf(obj,val)
          validateattributes(val, {'numeric'}, {'positive','integer'})
          obj.nf = checkNf(obj,val);
       end
-      
+
       function val = get.volume(obj) %volume of the domain
          if any(strcmp(obj.measure,{'uniform', 'normal'}))
             if strcmpi(obj.fun.domainType, 'ball')
@@ -287,20 +287,20 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
             val = prod(diff(obj.fun.domain,1),2);
          end
       end
-      
-      % Mmin and mmax is based on nInit and nMax 
+
+      % Mmin and mmax is based on nInit and nMax
       function val=get.mmin(obj)
          val = ceil(log2(obj.CM.nInit));
-      end 
-      
+      end
+
       function val=get.mmax(obj)
          val=floor(log2(obj.CM.nMax));
-      end 
-   
-      % Transformation section 
+      end
+
+      % Transformation section
       function val = get.ff(obj)
-  
-         % Domain type = box 
+
+         % Domain type = box
          if strcmp(obj.fun.domainType,'box')
             if strcmp(obj.measure,'uniform')
                Cnorm = prod(obj.fun.domain(2,:)-obj.fun.domain(1,:));
@@ -316,14 +316,14 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
                val = @(t) obj.fun.f(gail.stdnorminv(t));
             end
          end
-         
+
          % Domain type ball/sphere - automatically assume the original
          % measure is uniform. If it is lesbegue, then we will just
-         % multiple by volume at next step 
+         % multiple by volume at next step
          if strcmp(obj.measureType, 'uniform')
             if strcmp(obj.fun.domainType, 'ball') || strcmp(obj.fun.domainType, 'ball-from-cube')
                val=@(t) obj.fun.f(gail.domain_balls_spheres.ball_psi_1(t, obj.d, obj.radius, obj.fun.domain));
-               
+
             elseif strcmp(obj.fun.domainType, 'ball-from-normal')
                val=@(t) obj.fun.f(gail.domain_balls_spheres.ball_psi_2(gail.stdnorminv(t), obj.d, obj.radius, obj.fun.domain));
 
@@ -333,7 +333,7 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
             elseif strcmp(obj.fun.domainType, 'sphere-from-normal')
                val=@(t) obj.fun.f(gail.domain_balls_spheres.sphere_psi_2(gail.stdnorminv(t), obj.d, obj.radius, obj.fun.domain));
             end
-            
+
          elseif strcmp(obj.measureType, 'normal')
             if strcmp(obj.fun.domainType, 'ball') || strcmp(obj.fun.domainType, 'ball-from-normal')
                val=@(t) obj.fun.f(gail.domain_balls_spheres.ball_psi_2(t, obj.d, obj.radius, obj.fun.domain));
@@ -348,18 +348,18 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
                val=@(t) obj.fun.f(gail.domain_balls_spheres.sphere_psi_2(gail.stdnorm(t), obj.d, obj.radius, obj.fun.domain));
             end
          end
-            
+
          % If original measure if lesbeque, just multiple by volume
          if strcmp(obj.measure, 'Lesbeque')
-            val = obj.volume*val; 
+            val = obj.volume*val;
 
          elseif strcmp(obj.measure, 'normal')
             val = @(t) obj.fun.f(gail.stdnorminv(t));
-         end 
-                  
+         end
+
       end
    end
-   
+
    methods (Access = protected)
       function outval = checkMeasure(obj,inval)
          assert(any(strcmp(inval,obj.allowedMeasures)))
@@ -376,7 +376,7 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
             assert(all(all(isfinite(obj.fun.domain))))
          end
       end
-      
+
       function outval = checkmeasureType(obj,inval)
          assert(any(strcmp(inval,obj.allowedmeasureTypes)))
          if strcmp(inval,'Gaussian') %same as normal
@@ -385,12 +385,12 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
             outval = inval;
          end
       end
-      
+
       function outval = checkNf(obj,inval)
          assert(obj.fun.nfOut - sum(inval) == obj.CM.nCV)
          outval = inval;
       end
-      
+
       function propgrp = getPropertyGroups(obj)
          if ~isscalar(obj)
             propgrp = getPropertyGroups@matlab.mixin.CustomDisplay(obj);
@@ -399,19 +399,19 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
             propgrp = matlab.mixin.util.PropertyGroup(propList);
          end
       end
-      
+
       function propList = getPropertyList(obj)
          propList = struct('f', obj.fun.f, ...
             'domain', obj.fun.domain);
          if ~strcmp(obj.fun.domainType,obj.fun.def_domainType)
             propList.domainType = obj.fun.domainType;
          end
-         
+
          propList.measureType=obj.measureType;
          propList.measure = obj.measure;
          propList.absTol = obj.err.absTol;
          propList.relTol = obj.err.relTol;
-         
+
          if obj.CM.nInit ~= obj.CM.def_nInit
             propList.nInit = obj.CM.nInit;
          end
@@ -428,8 +428,7 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
             propList.trueMuCV = obj.CM.trueMuCV;
          end
       end
-      
-   end
-   
-end
 
+   end
+
+end
