@@ -36,8 +36,9 @@ mu = zeros(d,1); % Mean of the distribution
 % solution of the integral is known so we can verify that the error
 % conditions are met:
 Sigma = eye(d); % We set the covariance matrix to the identity
-factor = 3.5; hyperbox = [-factor*ones(1,d) ; factor*ones(1,d)]; % We define the integration limits
-exactsol = (gail.stdnormcdf(factor)-gail.stdnormcdf(-factor))^d; % Exact solution of the integral
+factor = 3.5; 
+hyperbox = [-factor*ones(1,d) ; factor*ones(1,d)]; % We define the integration limits
+exactsol = (gail.stdnormcdf(factor)-gail.stdnormcdf(-factor))^d; % Exact integral solution
 
 % Solution approx_prob and integration output parameters in out_param
 [approx_prob,out_param] = multi_normcdf_cubMC(hyperbox,mu,Sigma,abstol,reltol);
@@ -67,8 +68,9 @@ disp(['Real error is ' ...
 % \(\bf{a}=(-\infty,\dots,-\infty)\), and \(\bf{b}=\sqrt{d}(U_1,\dots,U_d)\)
 % (\(\bf{b}\) is chosen randomly). The solution for this integral is known
 % too so we can verify the real error:
-sig = 0.6; Sigma = sig*ones(d,d); Sigma(1:d+1:d*d) = 1; % We set the covariance matrix
-hyperbox = [-Inf*ones(1,d) ; sqrt(d)*rand(1,d)]; % We define the integration limits
+sig = 0.6; 
+Sigma = sig*ones(d,d); Sigma(1:d+1:d*d) = 1; % set the covariance matrix
+hyperbox = [-Inf*ones(1,d) ; sqrt(d)*rand(1,d)]; % define the integration limits
 exactsol = integral(@(t)MVNPexact(t,hyperbox(2,:),sig),...
     -inf, inf,'Abstol',1e-8,'RelTol',1e-8)/sqrt(2*pi);
 
@@ -117,10 +119,10 @@ disp(['The algorithm took ' num2str(out_param.time) ' seconds and '...
 
 %% Appendix: Auxiliary function definitions
 % The following functions are defined for the above test examples.
-% |multi_normcdf_cubSobol| and |multi_normcdf_cubMC| redefine *cubSobol_g
-% and *cubMC_g* respectively for computing normal probabilites based on Alan
-% Genz's transformation. |f| is the function resulting from applying Alan
-% Genz's transform that is called in either *cubSobol_g* or *cubMC_g*.
+% |multi_normcdf_cubSobol| and |multi_normcdf_cubMC| redefine *cubSobol_g*
+% and *cubMC_g* respectively for computing normal probabilites based on
+% Alan Genz's transformation. |f| is the function resulting from applying
+% Alan Genz's transform that is called in either *cubSobol_g* or *cubMC_g*.
 
 function [p,out, y, kappanumap] = multi_normcdf_cubSobol(hyperbox,mu,Sigma,abstol,reltol)
 % Using cubSobol_g, multi_normcdf_cubMC computes the cumulative
@@ -166,9 +168,9 @@ end
 end
 
 function MVNPfunvalfinal = MVNPexact(t,b,sig)
-% MVNPexact calculates the true solution of multivariate
-% normal probability when the coveriance matrix is in a special form:
-% diagnal is 1 and off diagnal are all same.
+% MVNPexact calculates the true solution of multivariate normal probability
+% when the coveriance matrix is in a special form: diagnal is 1 and off
+% diagnal are all same.
 %
 % b   - the upper limits of the integal with size 1 x d
 % sig - the off diagnal element
