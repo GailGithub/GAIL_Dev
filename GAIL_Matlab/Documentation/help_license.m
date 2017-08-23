@@ -1,5 +1,5 @@
 %% GAIL License
-%Copyright © 2015, Illinois Institute of Technology. All rights reserved.
+%Copyright © 2017, Illinois Institute of Technology. All rights reserved.
 %  
 % Redistribution and use in source and binary forms, with or without 
 % modification, are permitted provided that the following conditions are 
