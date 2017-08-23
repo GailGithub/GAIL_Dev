@@ -30,13 +30,13 @@ abstol = 1e-3; % User input, absolute error bound
 reltol = 0;  % User input, relative error bound
 mu = zeros(d,1); % Mean of the distribution
 
-%% First test: \(\Sigma=I_d\) 
+%% First test: \(\Sigma=I_d\)
 % For this first example, we consider \(\Sigma=I_d\), and
 % \(\bf{b}=-\bf{a}=(3.5,\dots,3.5)\). In this case, the
 % solution of the integral is known so we can verify that the error
 % conditions are met:
 Sigma = eye(d); % We set the covariance matrix to the identity
-factor = 3.5; 
+factor = 3.5;
 hyperbox = [-factor*ones(1,d) ; factor*ones(1,d)]; % We define the integration limits
 exactsol = (gail.stdnormcdf(factor)-gail.stdnormcdf(-factor))^d; % Exact integral solution
 
@@ -68,7 +68,7 @@ disp(['Real error is ' ...
 % \(\bf{a}=(-\infty,\dots,-\infty)\), and \(\bf{b}=\sqrt{d}(U_1,\dots,U_d)\)
 % (\(\bf{b}\) is chosen randomly). The solution for this integral is known
 % too so we can verify the real error:
-sig = 0.6; 
+sig = 0.6;
 Sigma = sig*ones(d,d); Sigma(1:d+1:d*d) = 1; % set the covariance matrix
 hyperbox = [-Inf*ones(1,d) ; sqrt(d)*rand(1,d)]; % define the integration limits
 exactsol = integral(@(t)MVNPexact(t,hyperbox(2,:),sig),...
@@ -96,7 +96,7 @@ disp(['Real error is ' ...
     ' which is less than the user input tolerance '...
     num2str(gail.tolfun(abstol,reltol,1,exactsol,'max')) '.'])
 
-%% Third test: \(\Sigma=0.4I_d + 0.6\bf{1}\bf{1}^T\) 
+%% Third test: \(\Sigma=0.4I_d + 0.6\bf{1}\bf{1}^T\)
 % For this last example, we consider the same covariance matrix in the
 % second test but the upper and lower limits are different,
 % \(\bf{a}=-d/3(U_1,\dots,U_d)\), and \(\bf{b}=d/3(U_{d+1},\dots,U_{2d})\)
@@ -204,11 +204,11 @@ end
 %     (J. Dick, F. Y. Kuo, G. W. Peters, and I. H. Sloan, eds.),
 %     Springer-Verlag, Berlin, pp. 105-128, 2014.
 %
-% [3] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
-%     Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
-%     GAIL: Guaranteed Automatic Integration Library (Version 2.2) [MATLAB
-%     Software], 2017. Available from <http://gailgithub.github.io/GAIL_Dev/
-%     GitHub>.
+% [3] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
+%     Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
+%     Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
+%     Integration Library (Version 2.2) [MATLAB Software], 2017. Available
+%     from http://gailgithub.github.io/GAIL_Dev/
 %
 % [4] Lan Jiang, Guaranteed Adaptive Monte Carlo Methods for Estimating
 %     Means of Random Variables, Ph.D Thesis, Illinois Institute of

@@ -4,18 +4,18 @@
 %
 % Define a highly oscillating function as follows:
 %
-% \[ f(x) = \sin (10 \pi x^4 ) - x \] 
-% 
+% \[ f(x) = \sin (10 \pi x^4 ) - x \]
+%
 close all; clearvars; format compact; format short;
 f = @(x) sin(10*pi*x.^4)-x;
 
 %% Function minimization
 % We use *funmin_g* to approximate \(f\) over the interval \([a,b]\), where
-% \(a = 0\) and \(b = 2\) with default parameter values: 
-a = 0; b = 2;  
+% \(a = 0\) and \(b = 2\) with default parameter values:
+a = 0; b = 2;
 [fmin,outmin] = funmin_g(f, a, b);
 
-%% Plots of the function and its minimum 
+%% Plots of the function and its minimum
 % We plot \(f(x)\) and the approximate minimum returned by *funmin_g* below.
 % It is obvious that the approximation is not satisfactory. We compute the
 % error by comparing to the true minimum returned by the Mathematica
@@ -30,11 +30,11 @@ max_abs_error = max(abs(truefmin-fmin))
 
 %% A fix
 % We can widen the cone by increasing the number of initial points given to
-% *funmin_g*. 
+% *funmin_g*.
 inparam.a = a;
-inparam.b = b; 
-inparam.ninit = 1000; 
-inparam.nmax = inparam.ninit*10; 
+inparam.b = b;
+inparam.ninit = 1000;
+inparam.nmax = inparam.ninit*10;
 [fmin2,outmin2] = funmin_g(f, inparam);
 
 funmin_g_demo(fmin2,outmin2)
@@ -42,13 +42,13 @@ funmin_g_demo(fmin2,outmin2)
 max_abs_error = max(abs(truefmin-fmin2))
 
 %% References
-%  
+%
 % [1] Sou-Cheng T. Choi, Yuhan Ding, Fred J.Hickernell, Xin Tong, "Local
 %     Adaption for Approximation and Minimization of Univariate Functions,"
 %   _Journal of Complexity_ 40, pp. 17-33, 2017.
 %
-% [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
-%     Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
-%     GAIL: Guaranteed Automatic Integration Library (Version 2.2) [MATLAB
-%     Software], 2017. Available from <http://gailgithub.github.io/GAIL_Dev/
-%     GitHub>.
+% [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
+%     Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
+%     Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
+%     Integration Library (Version 2.2) [MATLAB Software], 2017. Available
+%     from http://gailgithub.github.io/GAIL_Dev/

@@ -25,7 +25,7 @@
 %  generalized error tolerance tolfun with guaranteed confidence
 %  level 1-alpha using all ordered parsing inputs abstol, reltol, alpha,
 %  fudge, nSig, n1, tbudget, nbudget.
-%   
+%
 % tmu = *meanMC_g*(Yrand,'abstol',abstol,'reltol',reltol,'alpha',alpha)
 %  estimates the mean of a random variable Y to within a specified
 %  generalized error tolerance tolfun with guaranteed confidence level
@@ -123,13 +123,13 @@
 % guaranteed confidence level 1-alpha. If the algorithm terminated without
 % showing any warning messages and provide an answer tmu, then the follow
 % inequality would be satisfied:
-% 
+%
 % Pr(| mu - tmu | <= tolfun) >= 1-alpha
-% 
+%
 % The cost of the algorithm, N_tot, is also bounded above by N_up, which is
 % defined in terms of abstol, reltol, nSig, n1, fudge, kurtmax, beta. And
 % the following inequality holds:
-% 
+%
 % Pr (N_tot <= N_up) >= 1-beta
 %
 % Please refer to our paper for detailed arguments and proofs.
@@ -172,7 +172,7 @@
   tmu=meanMC_g(@(n)cos(rand(n,1)),'reltol',1e-3,'abstol',1e-4,'alpha',0.01);
   exactsol = sin(1);
   check = double(abs(exactsol-tmu) < max(1e-3,1e-2*abs(exactsol)))
-  
+
 %% See Also
 %
 % <html>
@@ -203,10 +203,11 @@
 % Y. Kuo, G. W. Peters, and I. H. Sloan, eds.), pp. 105-128,
 % Springer-Verlag, Berlin, 2014. DOI: 10.1007/978-3-642-41095-6_5
 %
-% [2] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang,
-% Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
-% GAIL: Guaranteed Automatic Integration Library (Version 2.2)
-% [MATLAB Software], 2017. Available from http://gailgithub.github.io/GAIL_Dev/
+% [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
+% Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
+% Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
+% Integration Library (Version 2.2) [MATLAB Software], 2017. Available
+% from http://gailgithub.github.io/GAIL_Dev/
 %
 % [3] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
 % Research via Supportable Scientific Software," Journal of Open Research
@@ -215,7 +216,7 @@
 % [4] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable
 % Mathematical Software" [Course Slides], Illinois Institute of
 % Technology, Chicago, IL, 2013. Available from
-% http://gailgithub.github.io/GAIL_Dev/ 
+% http://gailgithub.github.io/GAIL_Dev/
 %
 % [5] Daniel S. Katz, Sou-Cheng T. Choi, Hilmar Lapp, Ketan Maheshwari,
 % Frank Loffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr,
@@ -225,9 +226,9 @@
 % (WSSSPE1)," Journal of Open Research Software, Volume 2, Number 1, e6,
 % pp. 1-21, 2014.
 %
-% [6] Fang, K.-T., & Wang, Y. (1994). Number-theoretic Methods in 
+% [6] Fang, K.-T., & Wang, Y. (1994). Number-theoretic Methods in
 % Statistics. London, UK: CHAPMAN & HALL
-%    
+%
 % [7] Lan Jiang, Guaranteed Adaptive Monte Carlo Methods for Estimating
 % Means of Random Variables, Ph.D Thesis, Illinois Institute of
 % Technology, 2016.

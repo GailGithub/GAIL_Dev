@@ -17,12 +17,12 @@
 %  over the d-dimensional region described by hyperbox, and with an error
 %  guaranteed not to be greater than a specific generalized error tolerance,
 %  tolfun:=max(abstol,reltol*| integral(f) |). Input f is a function handle. f should
-%  accept an n x d matrix input, where d is the dimension and n is the 
+%  accept an n x d matrix input, where d is the dimension and n is the
 %  number of points being evaluated simultaneously. When measure is 'uniform',
 %  The input hyperbox is a 2 x d matrix, where the first row corresponds
 %  to the lower limits and the second row corresponds to the upper limits
 %  of the integral. When measure is 'uniform ball' or 'uniform sphere',
-%  the input hyperbox is a vector with d+1 elements, where the first d 
+%  the input hyperbox is a vector with d+1 elements, where the first d
 %  values correspond to the center of the ball and the last value
 %  corresponds to the radius of the ball. For these last two measures, a user can
 %  optionally specify what transformation should be used in order to get a
@@ -30,7 +30,7 @@
 %  the box-to-ball transformation, which gets a set of points uniformly
 %  distributed on a ball from a set of points uniformly distributed on a
 %  box, will be used. When measure is 'uniform ball_normal', the
-%  normal-to-ball transformation, which gets a set of points uniformly 
+%  normal-to-ball transformation, which gets a set of points uniformly
 %  distributed on a ball from a set of points normally distributed on the
 %  space, will be used. Similarly, the measures 'uniform sphere_box'
 %  and 'uniform sphere_normal' can be used to specify the
@@ -45,7 +45,7 @@
 %  is given within the generalized error tolerance tolfun. All parameters
 %  should be input in the order specified above. If an input is not specified,
 %  the default value is used. Note that if an input is not specified,
-%  the remaining tail cannot be specified either. Inputs f and hyperbox 
+%  the remaining tail cannot be specified either. Inputs f and hyperbox
 %  are required. The other optional inputs are in the correct order:
 %  measure,abstol,reltol,mmin,mmax,and fudge.
 %
@@ -57,7 +57,7 @@
 %
 % q = *cubSobol_g*(f,hyperbox,in_param) estimates the integral of f over the
 %  hyperbox. The answer is given within the generalized error tolerance tolfun.
-% 
+%
 % *Input Arguments*
 %
 % <html>
@@ -65,13 +65,13 @@
 %  the number of data points and d the dimension, which cannot be
 %  greater than 1111. By default f is f=@ x.^2.</li>
 %  --- if using control variates, f needs to be a structure with two fields:
-%  First field: 'func', need to be a function handle with n x (J+1) 
-%  dimension outputs, where J is the number of control variates. 
+%  First field: 'func', need to be a function handle with n x (J+1)
+%  dimension outputs, where J is the number of control variates.
 %  First column is the output of target function, next J columns are
 %  the outputs of control variates.
-%  Second field: 'cv', need to be a 1 x J vector that stores the 
-%  exact means of control variates in the same order from 
-%  the function handle. For examples of how to use control variates, 
+%  Second field: 'cv', need to be a 1 x J vector that stores the
+%  exact means of control variates in the same order from
+%  the function handle. For examples of how to use control variates,
 %  please check Example 7 below.</li>
 %  </ul>
 % </html>
@@ -79,7 +79,7 @@
 % * hyperbox --- the integration region defined by its bounds. When measure
 %  is 'uniform' or 'normal', hyperbox must be a 2 x d matrix, where the
 %  first row corresponds to the lower limits and the second row corresponds
-%  to the upper limits of the integral. When measure is 'uniform ball' 
+%  to the upper limits of the integral. When measure is 'uniform ball'
 %  or 'uniform sphere', the input hyperbox is a vector with d+1 elements,
 %  where the first d values correspond to the center of the ball and the
 %  last value corresponds to the radius of the ball. The default value
@@ -94,16 +94,16 @@
 %  finite volume, for 'normal', the hyperbox can only be defined as
 %  (-Inf,Inf)^d and, for 'uniform ball' or 'uniform sphere', hyperbox
 %  must have finite values for the coordinates of the center and a
-%  finite positive value for the radius. By default it is 'uniform'. 
+%  finite positive value for the radius. By default it is 'uniform'.
 %
-% * in_param.abstol --- the absolute error tolerance, abstol>=0. By 
+% * in_param.abstol --- the absolute error tolerance, abstol>=0. By
 %  default it is 1e-4. For pure absolute tolerance, set in_param.reltol
 %  = 0.
 %
 % * in_param.reltol --- the relative error tolerance, which should be
 %  in [0,1]. Default value is 1e-2. For pure absolute tolerance, set
 %  in_param.abstol = 0.
-% 
+%
 % *Optional Input Arguments*
 %
 % * in_param.mmin --- the minimum number of points to start is 2^mmin.
@@ -116,7 +116,7 @@
 %  the Sobol' generator, mmax is a positive integer such that
 %  mmin<=mmax<=53. The default value is 24.
 %
-% * in_param.fudge --- the positive function multiplying the finite 
+% * in_param.fudge --- the positive function multiplying the finite
 %  sum of Fast Walsh Fourier coefficients specified in the cone of functions.
 %  This input is a function handle. The fudge should accept an array of
 %  nonnegative integers being evaluated simultaneously. For more
@@ -139,8 +139,8 @@
 % * out_param.time --- time elapsed in seconds when calling cubSobol_g.
 %
 % * out_param.beta --- the value of beta when using control variates
-%     as in f-(h-Ih)beta, if using 'betaUpdate' option, beta is a vector 
-%     storing value of each iteration. 
+%     as in f-(h-Ih)beta, if using 'betaUpdate' option, beta is a vector
+%     storing value of each iteration.
 %
 % * y --- fast transform coefficients of the input function.
 %
@@ -186,7 +186,7 @@
 
 % Estimate the integral with integrand f(x) = x1.*x2 in the interval [0,1)^2:
 
-  f = @(x) prod(x,2); hyperbox = [zeros(1,2);ones(1,2)]; 
+  f = @(x) prod(x,2); hyperbox = [zeros(1,2);ones(1,2)];
   q = cubSobol_g(f,hyperbox,'uniform',1e-5,0); exactsol = 1/4;
   check = double(abs(exactsol-q) < 1e-5)
 
@@ -229,7 +229,7 @@
   f = @(x) 8*prod(x,2); hyperbox = [zeros(1,5);ones(1,5)];
   q = cubSobol_g(f,hyperbox,'uniform',1e-5,0); exactsol = 1/4;
   check = double(abs(exactsol-q) < 1e-5)
-  
+
 %%
 % *Example 6*
 
@@ -239,18 +239,18 @@
   f = @(x) x(:,1).^2+x(:,2).^2; hyperbox = [0,0,1];
   q = cubSobol_g(f,hyperbox,'uniform ball','abstol',1e-4,'reltol',0); exactsol = pi/2;
   check = double(abs(exactsol-q) < 1e-4)
-  
+
 %%
 % *Example 7*
 
-% Estimate the integral with integrand f(x) = 10*x1-5*x2^2+x3^3 in the interval [0,2)^3 
+% Estimate the integral with integrand f(x) = 10*x1-5*x2^2+x3^3 in the interval [0,2)^3
 % with pure absolute error 1e-6 using two control variates h1(x) = x1 and h2(x) = x2^2.
 
   g.func = @(x) [10*x(:,1)-5*x(:,2).^2+1*x(:,3).^3, x(:,1), x(:,2).^2];
   g.cv = [8,32/3]; hyperbox= [zeros(1,3);2*ones(1,3)];
-  q = cubSobol_g(g,hyperbox,'uniform',1e-6,0); exactsol = 128/3; 
+  q = cubSobol_g(g,hyperbox,'uniform',1e-6,0); exactsol = 128/3;
   check = double(abs(exactsol-q) < 1e-6)
-  
+
 
 %% See Also
 %
@@ -278,11 +278,12 @@
 % Nuyens, eds.), Springer Proceedings in Mathematics and Statistics, vol.
 % 163, Springer-Verlag, Berlin, 2016, arXiv:1410.8615 [math.NA], pp.
 % 367-383.
-% 
-% [2] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang,
-% Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
-% GAIL: Guaranteed Automatic Integration Library (Version 2.2)
-% [MATLAB Software], 2017. Available from http://gailgithub.github.io/GAIL_Dev/
+%
+% [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
+% Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
+% Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
+% Integration Library (Version 2.2) [MATLAB Software], 2017. Available
+% from http://gailgithub.github.io/GAIL_Dev/
 %
 % [3] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
 % Research via Supportable Scientific Software," Journal of Open Research
@@ -291,7 +292,7 @@
 % [4] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable
 % Mathematical Software" [Course Slides], Illinois Institute of
 % Technology, Chicago, IL, 2013. Available from
-% http://gailgithub.github.io/GAIL_Dev/ 
+% http://gailgithub.github.io/GAIL_Dev/
 %
 % [5] Daniel S. Katz, Sou-Cheng T. Choi, Hilmar Lapp, Ketan Maheshwari,
 % Frank Loffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr,
@@ -301,7 +302,7 @@
 % (WSSSPE1)," Journal of Open Research Software, Volume 2, Number 1, e6,
 % pp. 1-21, 2014.
 %
-% [6] Fang, K.-T., & Wang, Y. (1994). Number-theoretic Methods in 
+% [6] Fang, K.-T., & Wang, Y. (1994). Number-theoretic Methods in
 % Statistics. London, UK: CHAPMAN & HALL
 %
 % If you find GAIL helpful in your work, please support us by citing the

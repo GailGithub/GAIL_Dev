@@ -47,7 +47,7 @@
 %
 % * in_param.abstol --- guaranteed absolute error tolerance, default value
 %  is 1e-6
-% 
+%
 % *Optional Input Arguments*
 %
 % * in_param.nlo --- lowest initial number of function values used, default
@@ -60,7 +60,7 @@
 %  default value is 1e7
 %
 % * in_param.maxiter --- max number of iterations, default value is 1000
-% 
+%
 % *Output Arguments*
 %
 % * q --- approximated integral
@@ -72,7 +72,7 @@
 % * out_param.b --- high end of the integral
 %
 % * out_param.abstol --- guaranteed absolute error tolerance
-% 
+%
 % * out_param.nlo --- lowest initial number of function values
 %
 % * out_param.nhi --- highest initial number of function values
@@ -86,14 +86,14 @@
 %
 % * out_param.exceedbudget --- it is true if the algorithm tries to use
 %  more points than cost budget, false otherwise.
-% 
+%
 % * out_param.tauchange --- it is true if the cone constant has been
 %  changed, false otherwise. See [1] for details. If true, you may wish to
 %  change the input in_param.ninit to a larger number.
-% 
+%
 % * out_param.iter --- number of iterations
 %
-% * out_param.npoints --- number of points we need to 
+% * out_param.npoints --- number of points we need to
 %  reach the guaranteed absolute error tolerance abstol.
 %
 % * out_param.errest --- approximation error defined as the differences
@@ -104,12 +104,12 @@
 %  initially and is increased as necessary
 %
 %% Guarantee
-%    
+%
 % If the function to be integrated, \(f\) satisfies the cone condition
 %
 % \[\|f''\|_1 \le \frac { \mathrm{nstar} }{2(b-a)}
 % \left\|f'-\frac{f(b)-f(a)}{b-a}\right\|_1,\]
-% 
+%
 % then the \(q\) output by this algorithm is guaranteed to satisfy
 %
 % \[\left\| \int_{a}^{b} f(x) dx - q \right\|_{1} \le \mathrm{abstol},\]
@@ -135,15 +135,15 @@ q = integral_g(@(x) x.^2)
 f = @(x) exp(-x.^2); q = integral_g(f,'a',1,'b',2,'nlo',100,'nhi',10000,...
     'abstol',1e-5,'nmax',1e7)
 
-% Integrate function x^2 on [1,2] with lowest initial number of function 
-% values 100 and highest initial number of function values 10000, absolute 
+% Integrate function x^2 on [1,2] with lowest initial number of function
+% values 100 and highest initial number of function values 10000, absolute
 % error tolerance 1e-5 and cost budget 10000000.
 %%
 % *Example 3*
 
 q = integral_g()
 
-% Warning: Function f must be a function handle. Now GAIL is using 
+% Warning: Function f must be a function handle. Now GAIL is using
 % f(x)=exp(-100*(x-0.5)^2).
 %% See Also
 %
@@ -184,14 +184,15 @@ q = integral_g()
 % [1] Fred J. Hickernell, Martha Razo, and Sunny Yun, "Reliable Adaptive
 % Numerical Integration", 2015+, working.
 %
-% [2]  Nick Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
+% [2] Nick Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
 % Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic Algorithms:
 % Cones, Not Balls," Journal of Complexity 30, pp. 21-45, 2014.
 %
-% [3] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang,
-% Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
-% GAIL: Guaranteed Automatic Integration Library (Version 2.2)
-% [MATLAB Software], 2017. Available from http://gailgithub.github.io/GAIL_Dev/
+% [3] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
+% Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
+% Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
+% Integration Library (Version 2.2) [MATLAB Software], 2017. Available
+% from http://gailgithub.github.io/GAIL_Dev/
 %
 % [4] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable
 % Mathematical Software" [Course Slides], Illinois Institute of
