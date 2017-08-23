@@ -9,17 +9,18 @@ classdef cubOut < gail.cubParam & gail.outParam
    % >> cubOutObj.mu = 1.467; %integral value is recorded
    % >> cubOutObj.nSample = 31415926; %sample size is recorded
    % >> cubOutObj.time = 0.0278 %time of computation is recorded
-   % cubOutObj = 
+   % cubOutObj =
    %   cubOut with properties:
-   % 
+   %
    %              f: @(x)sum(x.^2,2)
    %         domain: [2×1 double]
+   %    measureType: 'uniform'
    %        measure: 'uniform'
-   %         absTol: 0.010000000000000
+   %         absTol: 0.0100
    %         relTol: 0
-   %             mu: 1.467000000000000
+   %             mu: 1.4670
    %        nSample: 31415926
-   %           time: 0.027800000000000
+   %           time: 0.0278
    %
    %
    % Author: Fred J. Hickernell
@@ -27,30 +28,30 @@ classdef cubOut < gail.cubParam & gail.outParam
    properties
       mu %approximation to the mean
    end
-   
+
    properties (Hidden, SetAccess = private)
    end
-   
+
    methods
-      
+
       % Creating a cubOut process
       function obj = cubOut(val)
          %this constructor essentially parses inputs
          %the parser will look for a meanYParam object
-         
+
          obj@gail.cubParam(val)
-        
+
       end %of constructor
-     
+
       function set.mu(obj,val)
          validateattributes(val, {'numeric'}, {'scalar'})
          obj.mu = val;
-      end     
-      
+      end
+
    end
 
     methods (Access = protected)
-   
+
          function propList = getPropertyList(obj)
          propList = getPropertyList@gail.cubParam(obj);
          propList.mu = obj.mu;
@@ -61,4 +62,3 @@ classdef cubOut < gail.cubParam & gail.outParam
    end
 
 end
-

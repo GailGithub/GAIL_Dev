@@ -10,7 +10,7 @@ classdef cubLatticeParam < gail.cubParam
    %   cubLatticeParam with properties:
    %
    %              f: @(x)sum(x.^2,2)
-   %         domain: [2x1 double]
+   %         domain: [2×1 double]
    %    measureType: 'uniform'
    %        measure: 'uniform'
    %         absTol: 0.0100
@@ -23,7 +23,7 @@ classdef cubLatticeParam < gail.cubParam
    %   cubLatticeParam with properties:
    %
    %              f: @(x)sum(x.^3.2)
-   %         domain: [2x2 double]
+   %         domain: [2×2 double]
    %    measureType: 'uniform'
    %        measure: 'uniform'
    %         absTol: 0.0100
@@ -40,7 +40,7 @@ classdef cubLatticeParam < gail.cubParam
    %   cubLatticeParam with properties:
    %
    %              f: @(x)sin(sum(x,2))
-   %         domain: [2x4 double]
+   %         domain: [2×4 double]
    %    measureType: 'uniform'
    %        measure: 'uniform'
    %         absTol: 0.0100
@@ -54,7 +54,7 @@ classdef cubLatticeParam < gail.cubParam
    %   cubLatticeParam with properties:
    %
    %              f: @(x)sin(sum(x,2))
-   %         domain: [2x4 double]
+   %         domain: [2×4 double]
    %    measureType: 'uniform'
    %        measure: 'Lebesgue'
    %         absTol: 0.0100
