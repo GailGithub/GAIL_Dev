@@ -40,10 +40,10 @@
 % </html>
 %
 % <html>
-% <a href="help_meanMC_CLT.html">meanMC_g</a>
+% <a href="help_meanMC_CLT.html">meanMC_CLT</a>
 % </html>
 %
 % <html>
-% <a href="help_cubMC_CLT.html">cubMC_g</a>
+% <a href="help_cubMC_CLT.html">cubMC_CLT</a>
 % </html>
 
