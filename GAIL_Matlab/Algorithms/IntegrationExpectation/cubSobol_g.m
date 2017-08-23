@@ -8,12 +8,12 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 %   over the d-dimensional region described by hyperbox, and with an error
 %   guaranteed not to be greater than a specific generalized error tolerance,
 %   tolfun:=max(abstol,reltol*| integral(f) |). Input f is a function handle. f should
-%   accept an n x d matrix input, where d is the dimension and n is the 
+%   accept an n x d matrix input, where d is the dimension and n is the
 %   number of points being evaluated simultaneously. When measure is 'uniform',
 %   The input hyperbox is a 2 x d matrix, where the first row corresponds
 %   to the lower limits and the second row corresponds to the upper limits
 %   of the integral. When measure is 'uniform ball' or 'uniform sphere',
-%   the input hyperbox is a vector with d+1 elements, where the first d 
+%   the input hyperbox is a vector with d+1 elements, where the first d
 %   values correspond to the center of the ball and the last value
 %   corresponds to the radius of the ball. For these last two measures, a user can
 %   optionally specify what transformation should be used in order to get a
@@ -21,7 +21,7 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 %   the box-to-ball transformation, which gets a set of points uniformly
 %   distributed on a ball from a set of points uniformly distributed on a
 %   box, will be used. When measure is 'uniform ball_normal', the
-%   normal-to-ball transformation, which gets a set of points uniformly 
+%   normal-to-ball transformation, which gets a set of points uniformly
 %   distributed on a ball from a set of points normally distributed on the
 %   space, will be used. Similarly, the measures 'uniform sphere_box'
 %   and 'uniform sphere_normal' can be used to specify the
@@ -36,7 +36,7 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 %   is given within the generalized error tolerance tolfun. All parameters
 %   should be input in the order specified above. If an input is not specified,
 %   the default value is used. Note that if an input is not specified,
-%   the remaining tail cannot be specified either. Inputs f and hyperbox 
+%   the remaining tail cannot be specified either. Inputs f and hyperbox
 %   are required. The other optional inputs are in the correct order:
 %   measure,abstol,reltol,mmin,mmax,and fudge.
 %
@@ -48,27 +48,27 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 %
 %   q = CUBSOBOL_G(f,hyperbox,in_param) estimates the integral of f over the
 %   hyperbox. The answer is given within the generalized error tolerance tolfun.
-% 
+%
 %   Input Arguments
 %
 %     f --- the integrand whose input should be a matrix n x d where n is
 %     the number of data points and d the dimension, which cannot be
 %     greater than 1111. By default f is f=@ x.^2.
-%      
+%
 %       --- if using control variates, f needs to be a structure with two fields:
-%     First field: 'func', need to be a function handle with n x (J+1) 
-%     dimension outputs, where J is the number of control variates. 
+%     First field: 'func', need to be a function handle with n x (J+1)
+%     dimension outputs, where J is the number of control variates.
 %     First column is the output of target function, next J columns are
 %     the outputs of control variates.
-%     Second field: 'cv', need to be a 1 x J vector that stores the 
-%     exact means of control variates in the same order from 
-%     the function handle. For examples of how to use control variates, 
-%     please check Example 7 below. 
+%     Second field: 'cv', need to be a 1 x J vector that stores the
+%     exact means of control variates in the same order from
+%     the function handle. For examples of how to use control variates,
+%     please check Example 7 below.
 %
 %     hyperbox --- the integration region defined by its bounds. When measure
 %     is 'uniform' or 'normal', hyperbox must be a 2 x d matrix, where the
 %     first row corresponds to the lower limits and the second row corresponds
-%     to the upper limits of the integral. When measure is 'uniform ball' 
+%     to the upper limits of the integral. When measure is 'uniform ball'
 %     or 'uniform sphere', the input hyperbox is a vector with d+1 elements,
 %     where the first d values correspond to the center of the ball and the
 %     last value corresponds to the radius of the ball. The default value
@@ -83,18 +83,18 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 %     finite volume, for 'normal', the hyperbox can only be defined as
 %     (-Inf,Inf)^d and, for 'uniform ball' or 'uniform sphere', hyperbox
 %     must have finite values for the coordinates of the center and a
-%     finite positive value for the radius. By default it is 'uniform'. 
+%     finite positive value for the radius. By default it is 'uniform'.
 %
-%     in_param.abstol --- the absolute error tolerance, abstol>=0. By 
+%     in_param.abstol --- the absolute error tolerance, abstol>=0. By
 %     default it is 1e-4. For pure absolute tolerance, set in_param.reltol
 %     = 0.
 %
 %     in_param.reltol --- the relative error tolerance, which should be
 %     in [0,1]. Default value is 1e-2. For pure absolute tolerance, set
 %     in_param.abstol = 0.
-% 
+%
 %   Optional Input Arguments
-% 
+%
 %     in_param.mmin --- the minimum number of points to start is 2^mmin.
 %     The cone condition on the Fourier coefficients decay requires a
 %     minimum number of points to start. The advice is to consider at least
@@ -105,7 +105,7 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 %     the Sobol' generator, mmax is a positive integer such that
 %     mmin<=mmax<=53. The default value is 24.
 %
-%     in_param.fudge --- the positive function multiplying the finite 
+%     in_param.fudge --- the positive function multiplying the finite
 %     sum of Fast Walsh Fourier coefficients specified in the cone of functions.
 %     This input is a function handle. The fudge should accept an array of
 %     nonnegative integers being evaluated simultaneously. For more
@@ -116,7 +116,7 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 %     Sobol' sequences. By default it is true.
 %
 %     in_param.betaUpdate--- this input decides whether to update beta during each
-%     iteration when using control variates. With value 0 beta is not updated. 
+%     iteration when using control variates. With value 0 beta is not updated.
 %     If betaUpdate = 1, beta is updated. By default, betaUpdate = 0.
 %
 %   Output Arguments
@@ -133,10 +133,10 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 %     smaller than generalized tolerance.
 %
 %     out_param.time --- time elapsed in seconds when calling cubSobol_g.
-%     
+%
 %     out_param.beta --- the value of beta when using control variates
-%     as in f-(h-Ih)beta, if using 'betaUpdate' option, beta is a vector 
-%     storing value of each iteration. 
+%     as in f-(h-Ih)beta, if using 'betaUpdate' option, beta is a vector
+%     storing value of each iteration.
 %
 %     y --- fast transform coefficients of the input function.
 %
@@ -151,12 +151,12 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 %                       1 : If reaching overbudget. It states whether
 %                       the max budget is attained without reaching the
 %                       guaranteed error tolerance.
-%      
+%
 %                       2 : If the function lies outside the cone. In
 %                       this case, results are not guaranteed. For more
 %                       information about the cone definition, check the
 %                       article mentioned below.
-% 
+%
 %  Guarantee
 % This algorithm computes the integral of real valued functions in [0,1)^d
 % with a prescribed generalized error tolerance. The Walsh-Fourier
@@ -169,42 +169,42 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 % composition of the functions) where \psi is the transformation
 % function for [0,1]^d to the desired region. For more details on how the
 % cone is defined, please refer to the references below.
-% 
+%
 %  Examples
-% 
+%
 % Example 1:
 % Estimate the integral with integrand f(x) = x1.*x2 in the interval [0,1)^2:
-% 
-% >> f = @(x) prod(x,2); hyperbox = [zeros(1,2);ones(1,2)]; 
+%
+% >> f = @(x) prod(x,2); hyperbox = [zeros(1,2);ones(1,2)];
 % >> q = cubSobol_g(f,hyperbox,'uniform',1e-5,0); exactsol = 1/4;
 % >> check = double(abs(exactsol-q) < 1e-5)
 % check = 1
-% 
-% 
+%
+%
 % Example 2:
 % Estimate the integral with integrand f(x) = x1.^2.*x2.^2.*x3.^2
 % in the interval R^3 where x1, x2 and x3 are normally distributed:
-% 
+%
 % >> f = @(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2; hyperbox = [-inf(1,3);inf(1,3)];
 % >> q = cubSobol_g(f,hyperbox,'normal',1e-3,1e-3); exactsol = 1;
 % >> check = double(abs(exactsol-q) < max(1e-3,1e-3*abs(exactsol)))
 % check = 1
-% 
-% 
-% Example 3: 
+%
+%
+% Example 3:
 % Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) in the
 % interval [-1,2)^2:
-% 
+%
 % >> f = @(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [-ones(1,2);2*ones(1,2)];
 % >> q = cubSobol_g(f,hyperbox,'uniform',1e-3,1e-2); exactsol = (sqrt(pi)/2*(erf(2)+erf(1)))^2;
 % >> check = double(abs(exactsol-q) < max(1e-3,1e-2*abs(exactsol)))
 % check = 1
 %
 %
-% Example 4: 
+% Example 4:
 % Estimate the price of an European call with S0=100, K=100, r=sigma^2/2,
 % sigma=0.05 and T=1.
-% 
+%
 % >> f = @(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); hyperbox = [-inf(1,1);inf(1,1)];
 % >> q = cubSobol_g(f,hyperbox,'normal',1e-4,1e-2); price = normcdf(0.05)*100 - 0.5*100*exp(-0.05^2/2);
 % >> check = double(abs(price-q) < max(1e-4,1e-2*abs(price)))
@@ -214,7 +214,7 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 % Example 5:
 % Estimate the integral with integrand f(x) = 8*x1.*x2.*x3.*x4.*x5 in the interval
 % [0,1)^5 with pure absolute error 1e-5.
-% 
+%
 % >> f = @(x) 8*prod(x,2); hyperbox = [zeros(1,5);ones(1,5)];
 % >> q = cubSobol_g(f,hyperbox,'uniform',1e-5,0); exactsol = 1/4;
 % >> check = double(abs(exactsol-q) < 1e-5)
@@ -224,7 +224,7 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 % Example 6:
 % Estimate the integral with integrand f(x) = x1^2+x2^2 over the disk with
 % center (0,0) and radius 1 with pure absolute error 1e-4, where x is a vector x = [x1 x2].
-% 
+%
 % >> f = @(x) x(:,1).^2+x(:,2).^2; hyperbox = [0,0,1];
 % >> q = cubSobol_g(f,hyperbox,'uniform ball','abstol',1e-4,'reltol',0); exactsol = pi/2;
 % >> check = double(abs(exactsol-q) < 1e-4)
@@ -232,18 +232,18 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 %
 %
 % Example 7:
-% Estimate the integral with integrand f(x) = 10*x1-5*x2^2+x3^3 in the interval [0,2)^3 
+% Estimate the integral with integrand f(x) = 10*x1-5*x2^2+x3^3 in the interval [0,2)^3
 % with pure absolute error 1e-6 using two control variates h1(x) = x1 and h2(x) = x2^2.
-% 
+%
 % >> g.func = @(x) [10*x(:,1)-5*x(:,2).^2+1*x(:,3).^3, x(:,1), x(:,2).^2];
 % >> g.cv = [8,32/3]; hyperbox= [zeros(1,3);2*ones(1,3)];
-% >> q = cubSobol_g(g,hyperbox,'uniform',1e-6,0); exactsol = 128/3; 
+% >> q = cubSobol_g(g,hyperbox,'uniform',1e-6,0); exactsol = 128/3;
 % >> check = double(abs(exactsol-q) < 1e-6)
 % check = 1
 %
 %
 %   See also CUBLATTICE_G, CUBMC_G, MEANMC_G, INTEGRAL_G
-% 
+%
 %  References
 %
 %   [1] Fred J. Hickernell and Lluis Antoni Jimenez Rugama "Reliable
@@ -252,11 +252,12 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 %   Nuyens, eds.), Springer Proceedings in Mathematics and Statistics, vol.
 %   163, Springer-Verlag, Berlin, 2016, arXiv:1410.8615 [math.NA], pp.
 %   367-383.
-% 
-%   [2] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang,
-%   Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
-%   GAIL: Guaranteed Automatic Integration Library (Version 2.2)
-%   [MATLAB Software], 2017. Available from http://gailgithub.github.io/GAIL_Dev/
+%
+%   [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
+%   Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
+%   Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
+%   Integration Library (Version 2.2) [MATLAB Software], 2017. Available
+%   from http://gailgithub.github.io/GAIL_Dev/
 %
 %   [3] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
 %   Research via Supportable Scientific Software," Journal of Open Research
@@ -265,7 +266,7 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 %   [4] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable
 %   Mathematical Software" [Course Slides], Illinois Institute of
 %   Technology, Chicago, IL, 2013. Available from
-%   http://gailgithub.github.io/GAIL_Dev/ 
+%   http://gailgithub.github.io/GAIL_Dev/
 %
 %   [5] Daniel S. Katz, Sou-Cheng T. Choi, Hilmar Lapp, Ketan Maheshwari,
 %   Frank Loffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr,
@@ -275,7 +276,7 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 %   (WSSSPE1)," Journal of Open Research Software, Volume 2, Number 1, e6,
 %   pp. 1-21, 2014.
 %
-%   [6] Fang, K.-T., & Wang, Y. (1994). Number-theoretic Methods in 
+%   [6] Fang, K.-T., & Wang, Y. (1994). Number-theoretic Methods in
 %   Statistics. London, UK: CHAPMAN & HALL
 %
 %   If you find GAIL helpful in your work, please support us by citing the
@@ -296,13 +297,13 @@ if strcmpi(out_param.measure,'uniform ball') || strcmpi(out_param.measure,'unifo
     if strcmp(out_param.measure,'uniform sphere') && out_param.transf == 1 %box-to-sphere transformation
         out_param.d = out_param.d + 1; % changing out_param.d back to the dimension of the sphere
     end
-    
+
     if strcmpi(out_param.measure,'uniform ball')% using the formula of the volume of a ball
         volume = ((2.0*pi^(out_param.d/2.0))/(out_param.d*gamma(out_param.d/2.0)))*out_param.radius^out_param.d; %volume of a d-dimentional ball
     else % using the formula of the volume of a sphere
         volume = ((2.0*pi^(out_param.d/2.0))/(gamma(out_param.d/2.0)))*out_param.radius^(out_param.d - 1); %volume of a d-dimentional sphere
     end
-    
+
     if out_param.transf == 1 % box-to-ball or box-to-sphere transformation should be used
         if out_param.d == 1 % It is not necessary to multiply the function f by the volume, since no transformation is being made
             hyperbox = [hyperbox - out_param.radius; hyperbox + out_param.radius];% for one dimension, the ball is actually an interval
@@ -311,7 +312,7 @@ if strcmpi(out_param.measure,'uniform ball') || strcmpi(out_param.measure,'unifo
             if strcmpi(out_param.measure,'uniform ball') % box-to-ball transformation
                 f = @(t) f(gail.domain_balls_spheres.ball_psi_1(t, out_param.d, out_param.radius, hyperbox))*volume;% the psi function is the transformation
             else % box-to-sphere transformation
-                f = @(t) f(gail.domain_balls_spheres.sphere_psi_1(t, out_param.d, out_param.radius, hyperbox))*volume;% the psi function is the transformation 
+                f = @(t) f(gail.domain_balls_spheres.sphere_psi_1(t, out_param.d, out_param.radius, hyperbox))*volume;% the psi function is the transformation
                 out_param.d = out_param.d - 1;% the box-to-sphere transformation takes points from a (d-1)-dimensional box to a d-dimensional sphere
             end
             hyperbox = [zeros(1, out_param.d); ones(1, out_param.d)];% the hyperbox must be the domain of the transformation, which is a unit box
@@ -321,7 +322,7 @@ if strcmpi(out_param.measure,'uniform ball') || strcmpi(out_param.measure,'unifo
         if strcmpi(out_param.measure,'uniform ball') % normal-to-ball transformation
             f = @(t) f(gail.domain_balls_spheres.ball_psi_2(t, out_param.d, out_param.radius, hyperbox))*volume;% the psi function is the transformation
         else % normal-to-sphere transformation
-            f = @(t) f(gail.domain_balls_spheres.sphere_psi_2(t, out_param.d, out_param.radius, hyperbox))*volume;% the psi function is the transformation 
+            f = @(t) f(gail.domain_balls_spheres.sphere_psi_2(t, out_param.d, out_param.radius, hyperbox))*volume;% the psi function is the transformation
         end
         hyperbox = bsxfun(@plus, zeros(2, out_param.d), [-inf; inf]);% the hyperbox must be the domain of the transformation, which is a this unit box
         out_param.measure = 'normal';% then a normal distribution can be used
@@ -370,11 +371,11 @@ xpts=sobstr(1:n0,1:out_param.d); %grab Sobol' points
 % evaluate integrand
 if cv.J==0 % no control variates
 	y = f(xpts); yval = y;
-else  % using control variates 
+else  % using control variates
 	ycv = f(xpts);
 	y = ycv(:,1); yval = y;
 	yg = ycv(:,2:end); %yvalg = yg;
-end 
+end
 
 %% Compute initial FWT
 for l=0:out_param.mmin-1
@@ -399,22 +400,22 @@ kappanumap=(1:out_param.n)'; %initialize map
 for l=out_param.mmin-1:-1:1
    nl=2^l;
    oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
-   newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa, 
+   newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa,
    flip=find(newone>oldone); %which in the pair are the larger ones
    if ~isempty(flip)
        flipall=bsxfun(@plus,flip,0:2^(l+1):2^out_param.mmin-1);
        flipall=flipall(:);
-       temp=kappanumap(nl+1+flipall); %then flip 
+       temp=kappanumap(nl+1+flipall); %then flip
        kappanumap(nl+1+flipall)=kappanumap(1+flipall); %them
        kappanumap(1+flipall)=temp; %around
    end
 end
 
 %% If using control variates, find optimal beta
-if cv.J  
+if cv.J
     X = yg(kappanumap(2^(out_param.mmin-r_lag-1)+1:end), (1:cv.J));
     Y = y(kappanumap(2^(out_param.mmin-r_lag-1)+1:end));
-    beta = X \ Y;  
+    beta = X \ Y;
     out_param.beta = beta;
     yval = ycv(:,1) - ycv(:,2:end)*beta;% get new function value
     y = y-yg*beta;% redefine function
@@ -423,12 +424,12 @@ if cv.J
     for l=out_param.mmin-1:-1:1
         nl=2^l;
         oldone=abs(y(kappanumap(2:nl)));
-        newone=abs(y(kappanumap(nl+2:2*nl))); 
+        newone=abs(y(kappanumap(nl+2:2*nl)));
         flip=find(newone>oldone);
         if ~isempty(flip)
             flipall=bsxfun(@plus,flip,0:2^(l+1):2^out_param.mmin-1);
             flipall=flipall(:);
-            temp=kappanumap(nl+1+flipall); %then flip 
+            temp=kappanumap(nl+1+flipall); %then flip
             kappanumap(nl+1+flipall)=kappanumap(1+flipall); %them
             kappanumap(1+flipall)=temp; %around
         end
@@ -482,7 +483,7 @@ for m=out_param.mmin+1:out_param.mmax
    out_param.n=2^m;
    mnext=m-1;
    nnext=2^mnext;
-   xnext=sobstr(n0+(1:nnext),1:out_param.d); 
+   xnext=sobstr(n0+(1:nnext),1:out_param.d);
    n0=n0+nnext;
    % check for using control variates or not
    if cv.J == 0
@@ -504,7 +505,7 @@ for m=out_param.mmin+1:out_param.mmax
        	    ynext(ptind)=(evenval+oddval)/2;
        	    ynext(~ptind)=(evenval-oddval)/2;
     	end
- 	
+
     	%% Compute FWT on all points
     	y=[y;ynext];
     	nl=2^mnext;
@@ -513,13 +514,13 @@ for m=out_param.mmin+1:out_param.mmax
     	oddval=y(~ptind);
     	y(ptind)=(evenval+oddval)/2;
     	y(~ptind)=(evenval-oddval)/2;
- 	
+
     	%% Update kappanumap
     	kappanumap=[kappanumap; 2^(m-1)+kappanumap]; %initialize map
     	for l=m-1:-1:m-r_lag
        	    nl=2^l;
        	    oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
-       	    newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa, 
+       	    newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa,
        	    flip=find(newone>oldone);
        	    if ~isempty(flip)
            	flipall=bsxfun(@plus,flip,0:2^(l+1):2^m-1);
@@ -548,7 +549,7 @@ for m=out_param.mmin+1:out_param.mmax
        end
        X = yg(kappanumap(2^(m-r_lag-1)+1:end), (1:cv.J));
        Y = y(kappanumap(2^(m-r_lag-1)+1:end));
-       beta = X \ Y;  
+       beta = X \ Y;
        out_param.beta = [out_param.beta;beta];
        yval = ycv(:,1) - ycv(:,2:end)*beta;
        y = y-yg*beta;
@@ -557,7 +558,7 @@ for m=out_param.mmin+1:out_param.mmax
        for l=m-1:-1:m-r_lag
        	   nl=2^l;
        	   oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
-       	   newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa, 
+       	   newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa,
        	   flip=find(newone>oldone);
        	   if ~isempty(flip)
            	flipall=bsxfun(@plus,flip,0:2^(l+1):2^m-1);
@@ -575,7 +576,7 @@ for m=out_param.mmin+1:out_param.mmax
    Stilde(meff)=sum(abs(y(kappanumap(nllstart+1:2*nllstart))));
    out_param.bound_err=out_param.fudge(m)*Stilde(meff);
    errest(meff)=out_param.bound_err;
-   
+
    % Necessary conditions
    for l = l_star:m % Storing the information for the necessary conditions
         C_low = 1/(1+omg_hat(m-l)*omg_circ(m-l));
@@ -585,14 +586,14 @@ for m=out_param.mmin+1:out_param.mmax
             CStilde_up(l-l_star+1) = min(CStilde_up(l-l_star+1),C_up*sum(abs(y(kappanumap(2^(l-1)+1:2^l)))));
         end
    end
-   
+
    if any(CStilde_low(:) > CStilde_up(:))
        out_param.exit(2) = true;
    end
 
    %% Approximate integral
    q=mean(yval)+mu*beta;
-   
+
    q = q - errest(meff)*(max(out_param.abstol, out_param.reltol*abs(q + errest(meff)))...
         - max(out_param.abstol, out_param.reltol*abs(q - errest(meff))))/...
         (max(out_param.abstol, out_param.reltol*abs(q + errest(meff)))...
@@ -650,7 +651,7 @@ if numel(varargin)<2
     hyperbox = default.hyperbox;
 else
     f = varargin{1};
-    % validate function handle 
+    % validate function handle
     if ~validf(f)
         warning('GAIL:cubSobol_g:fnotfcn',...
             'The given input f should be a function, or a structure in required form.' )
@@ -662,7 +663,7 @@ else
         hyperbox = varargin{2};
         if ~isnumeric(hyperbox) || ~(size(hyperbox,1)==2) || ~(size(hyperbox,2)<1111)
             warning('GAIL:cubSobol_g:hyperbox_error1',...
-                'The hyperbox must be a real matrix of size 2xd where d can not be greater than 1111. Example for f(x)=x^2:') 
+                'The hyperbox must be a real matrix of size 2xd where d can not be greater than 1111. Example for f(x)=x^2:')
             f = @(x) x.^2;
             out_param.f=f;
             hyperbox = default.hyperbox;
@@ -698,7 +699,7 @@ if ~validvarargin
     out_param.abstol = default.abstol;
     out_param.reltol = default.reltol;
     out_param.mmin = default.mmin;
-    out_param.mmax = default.mmax;  
+    out_param.mmax = default.mmax;
     out_param.fudge = default.fudge;
     out_param.scramble = default.scramble;
     out_param.betaUpdate= default.betaUpdate;
@@ -742,9 +743,9 @@ end
 % out_param.d will be set later
 %out_param.d = size(hyperbox,2);
 
-% get the number of control variates 
+% get the number of control variates
 if ~isstruct(f) %  not using control variates
-	cv.J = 0; 
+	cv.J = 0;
 else % using control variates, checking mu
 	if isnumeric(f.cv)
 		cv.J = size(f.cv,2);
@@ -767,7 +768,7 @@ if ~(strcmp(out_param.measure,'uniform') || strcmp(out_param.measure,'normal') |
 end
 
 % simplifying out_param.measure and storing which transformation should be
-% applied 
+% applied
 if strcmp(out_param.measure,'uniform ball') || strcmp(out_param.measure,'uniform sphere')
     out_param.transf = default.transf;
 elseif strcmp(out_param.measure,'uniform ball_box')
@@ -783,7 +784,7 @@ elseif strcmp(out_param.measure,'uniform sphere_normal')
     out_param.transf = 2;
     out_param.measure = 'uniform sphere';
 end
-    
+
 %validating hyperbox
 if strcmp(out_param.measure,'uniform') || strcmp(out_param.measure,'normal') % 'uniform box' or 'normal box'
     out_param.d = size(hyperbox,2);
@@ -807,11 +808,11 @@ else % 'uniform ball' or 'uniform sphere'
         out_param.d = size(hyperbox,2);
         out_param.measure = default.measure;
     end
-    
+
     out_param.radius = hyperbox(out_param.d);
     hyperbox = hyperbox(:,1:out_param.d-1); % removing the last value is the radius, which is the radius
     out_param.d = out_param.d - 1; % storing the rigth dimension of the ball or sphere
-    
+
     if strcmp(out_param.measure,'uniform ball') && out_param.d <= 0
         warning('GAIL:cubSobol_g:dimensionequalszero',...
             'When measure is ''uniform ball'', the number of dimentions must be a positive values.  Example for f(x)=x^2 over [0,1]:')
@@ -821,7 +822,7 @@ else % 'uniform ball' or 'uniform sphere'
         out_param.d = size(hyperbox,2);
         out_param.measure = default.measure;
     end
-    
+
     if strcmp(out_param.measure,'uniform sphere') && out_param.d <= 1
         warning('GAIL:cubSobol_g:dimensionsmallerthan2',...
             'When measure is ''uniform sphere'', the number of dimentions must be at least 2.  Example for f(x)=x^2 over [0,1]:')
@@ -831,13 +832,13 @@ else % 'uniform ball' or 'uniform sphere'
         out_param.d = size(hyperbox,2);
         out_param.measure = default.measure;
     end
-    
+
     if ~isfinite(out_param.radius) || out_param.radius <= 0.0
         warning('GAIL:cubSobol_g:infiniteradius',...
             'When measure is ''uniform ball'' or ''uniform sphere'', the radius must a finite positive real number. Default value for the radius will be used:')
         out_param.radius = default.radius;
     end
-    
+
     if strcmp(out_param.measure,'uniform sphere') && out_param.transf == 1 % box-to-sphere transformation
         % setting out_param.d to be the dimension of the box over which the
         % integral will actually be computed

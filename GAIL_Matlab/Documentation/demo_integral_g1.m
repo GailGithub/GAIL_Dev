@@ -22,7 +22,7 @@ xplot = (0:0.002:1)'; %points to plot
 spikyfun = @(x) foolfunmaker(x, @(x,c) fbump((x-c(1))/c(2)),...
     ones(nnode-1,1), [xall(1:nnode-1) diff(xall)]);
 
-%% Plot of the spiky function 
+%% Plot of the spiky function
 % In the following, we plot \(f(x)\) and show the data sampling points
 % picked by MATLAB's built-in integration function *quad*, which explains
 % why *quad* essentially gives the answer zero for our spiky function:
@@ -60,17 +60,17 @@ end
 if_meet_abstol = (abs_errors < abstol)
 
 %% References
-%  
+%
 % [1] Nick Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
 %     Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic
 %     Algorithms: Cones, Not Balls," Journal of Complexity 30, pp. 21-45,
 %     2014.
-% 
+%
 % [2] Fred J. Hickernell, Martha Razo, and Sunny Yun, "Reliable Adaptive
 %     Numerical Integration", 2015+, working.
 %
-% [3] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
-%     Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
-%     GAIL: Guaranteed Automatic Integration Library (Version 2.2) [MATLAB
-%     Software], 2017. Available from <http://gailgithub.github.io/GAIL_Dev/
-%     GitHub>.
+% [3] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
+%     Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
+%     Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
+%     Integration Library (Version 2.2) [MATLAB Software], 2017. Available
+%     from http://gailgithub.github.io/GAIL_Dev/

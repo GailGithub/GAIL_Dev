@@ -205,10 +205,11 @@ function [fmin,out_param]=funmin_g(varargin)
 %   Univariate Function Minimization," MS thesis, Illinois Institute of
 %   Technology, 2014.
 %
-%   [3] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang,
-%   Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
-%   GAIL: Guaranteed Automatic Integration Library (Version 2.2)
-%   [MATLAB Software], 2017. Available from http://gailgithub.github.io/GAIL_Dev/
+%   [3] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
+%   Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
+%   Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
+%   Integration Library (Version 2.2) [MATLAB Software], 2017. Available
+%   from http://gailgithub.github.io/GAIL_Dev/
 %
 %   [4] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
 %   Research via Supportable Scientific Software," Journal of Open Research

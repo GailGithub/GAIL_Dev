@@ -88,11 +88,11 @@
 %   flags arise warning that the results are not guaranteed. The initial
 %   value is [0 0] and the final value of this parameter is encoded as
 %   follows:
-%    
+%
 %                     [1 0]   If reaching overbudget. It states whether
 %                     the max budget is attained without reaching the
 %                     guaranteed error tolerance.
-%        
+%
 %                     [0 1]   If reaching overiteration. It states whether
 %                     the max iterations is attained without reaching the
 %                     guaranteed error tolerance.
@@ -114,7 +114,7 @@
 
 f = @(x) x.^2; [~, out_param] = funappx_g(f,-2,2,1e-7,18)
 
-% Approximate function x^2 on [-2,2] with error tolerance 1e-7, default 
+% Approximate function x^2 on [-2,2] with error tolerance 1e-7, default
 % cost budget and initial number of subintervals 18.
 %%
 % *Example 2*
@@ -122,7 +122,7 @@ f = @(x) x.^2; [~, out_param] = funappx_g(f,-2,2,1e-7,18)
 f = @(x) x.^2;
 [~, out_param] = funappx_g(f,'a',-2,'b',2,'ninit',17)
 
-% Approximate function x^2 on [-2,2] with default error tolerance, default 
+% Approximate function x^2 on [-2,2] with default error tolerance, default
 % cost budget and initial number of subintervals 17.
 %%
 % *Example 3*
@@ -131,7 +131,7 @@ clear in_param; in_param.a = -5; in_param.b = 5; f = @(x) x.^2;
 in_param.abstol = 10^(-6); in_param.ninit=18;
 [~, out_param] = funappx_g(f,in_param)
 
-% Approximate function x^2 on [-5,5] with error tolerance 1e-6, default 
+% Approximate function x^2 on [-5,5] with error tolerance 1e-6, default
 % cost budget and initial number of subintervals 18.
 %% See Also
 %
@@ -159,7 +159,7 @@ in_param.abstol = 10^(-6); in_param.ninit=18;
 % <a href="help_funmin_g.html">funmin_g</a>
 % </html>
 %
-% <http://gailgithub.github.io/GAIL_Dev/ GAIL_Dev> 
+% <http://gailgithub.github.io/GAIL_Dev/ GAIL_Dev>
 %
 %% References
 % [1] Sou-Cheng T. Choi, Yuhan Ding, Fred J.Hickernell, Xin Tong, "Local
@@ -170,11 +170,12 @@ in_param.abstol = 10^(-6); in_param.ninit=18;
 % Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic
 % Algorithms: Cones, Not Balls," Journal of Complexity 30, pp. 21-45,
 % 2014.
-%            
-% [3] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
-% Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
-% GAIL: Guaranteed Automatic Integration Library (Version 2.2) [MATLAB
-% Software], 2017. Available from http://gailgithub.github.io/GAIL_Dev/
+%
+% [3] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
+% Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
+% Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
+% Integration Library (Version 2.2) [MATLAB Software], 2017. Available
+% from http://gailgithub.github.io/GAIL_Dev/
 %
 % [4] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
 % Research via Supportable Scientific Software," Journal of Open Research
@@ -183,7 +184,7 @@ in_param.abstol = 10^(-6); in_param.ninit=18;
 % [5] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable
 % Mathematical Software" [Course Slides], Illinois Institute of
 % Technology, Chicago, IL, 2013. Available from
-% http://gailgithub.github.io/GAIL_Dev/ 
+% http://gailgithub.github.io/GAIL_Dev/
 %
 % If you find GAIL helpful in your work, please support us by citing the
 % above papers, software, and materials.
