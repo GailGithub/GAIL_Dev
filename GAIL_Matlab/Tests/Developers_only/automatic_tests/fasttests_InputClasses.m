@@ -12,6 +12,7 @@
 %tic; doctest gail.cubMC_g_in_param; time=toc
 
 %format long
+warning('off', 'GAIL:fParam:noFunctionInput');
 tic; doctest gail.errorParam; time = toc
 tic; doctest gail.fParam; time = toc
 tic; doctest gail.cubParam; time = toc
@@ -21,7 +22,6 @@ tic; doctest gail.cubBayesLatticeParam; time = toc
 tic; doctest gail.cubBayesLatticeOut; time = toc
 tic; doctest gail.meanYParam; time = toc
 tic; doctest gail.meanYOut; time = toc
-
+warning('on', 'GAIL:fParam:noFunctionInput');
 
 %% CALL UNIT TESTS
-
