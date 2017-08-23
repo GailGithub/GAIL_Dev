@@ -77,7 +77,7 @@ end
 disp(['mu  = ' num2str(muBest,15) ' +/- ' num2str(2*std(muBestvec),10)])
 
 %% Try MLE Bayseian cubature with Fourier kernel and Rank1 Lattice points
-nvecMLE = 2.^(10:23)';
+nvecMLE = 2.^(10:20)';
 nnMLE = numel(nvecMLE);
 MVNProbMLELatticeGn = multivarGauss('a',a,'b',b,'Cov',Cov,'n',nvecMLE, ...
     'errMeth','n','cubMeth','MLELattice','intMeth','Genz', ...

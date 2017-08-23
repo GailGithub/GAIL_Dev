@@ -1,12 +1,15 @@
 
-!synclient HorizEdgeScroll=0 HorizTwoFingerScroll=0 %% disable horizontal scrolling
+!synclient HorizEdgeScroll=0 HorizTwoFingerScroll=0 # disable horizontal scrolling
 gail.InitializeWorkspaceDisplay %initialize the workspace and the display parameters
 format long
 
+figSavePath = '/home/jagadees/MyWriteup/Aug_3rdweek/';
 
-visiblePlot=true;
+completereport = strcat(figSavePath,...
+    '_tests-logs-', datestr(now,'yyyy-mm-dd-HH-MM-SS'),'.txt');
+diary(completereport)
 
-figSavePath = '/home/jagadees/MyWriteup/Aug_2ndweek/';
+visiblePlot=false;
 
 
 if visiblePlot==false
@@ -28,8 +31,8 @@ end
 % visiblePlot=true; % lets test if the setting really works
 
 tstart=tic;
-pdTx = {'Baker', 'C1sin', 'C2sin', 'C0', 'C1', 'none'};
-arbMeanType = [false,true];
+pdTx = {'C1','C1sin', 'C2sin', 'C0', 'none', 'Baker'};
+arbMeanType = [true,false];
 for arbMean=arbMeanType
   if arbMean==true
     newPath = strcat(figSavePath, 'arbMean/');
@@ -59,5 +62,6 @@ if 0
   cp MyWriteup/Apr1stweek/Exp\(cos\)/C2sin/* Dropbox/writeup/BeamerPresent/figures/
 end
 
+diary off
 
 error 'finished'

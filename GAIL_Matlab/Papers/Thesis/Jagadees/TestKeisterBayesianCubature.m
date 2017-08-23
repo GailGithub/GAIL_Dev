@@ -13,7 +13,6 @@ function [muhat,aMLE,err,out] = TestKeisterBayesianCubature(dim,BernPolyOrder,pt
 normsqd = @(t) sum(t.*t,2); %squared l_2 norm of t
 
 domain = repmat([0;1],[1,dim]);
-nvec = 2.^(10:20);
 
 replaceZeros = @(t) (t+(t==0)*eps); % to avoid getting infinity, NaN
 yinv = @(t)(erfcinv( replaceZeros(abs(t)) ));  %using erfcinv is more accurate than erfinv with -1

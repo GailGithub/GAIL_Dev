@@ -34,9 +34,6 @@ if ~exist('testAll','var')
   testAll = false;
 end
 
-if ~exist('visiblePlot','var')
-  visiblePlot = false;
-end
 
 debugEnable=false;
 
@@ -46,7 +43,7 @@ gpuArray = @(x) x;   gather = @(x) x;
 tstart = tic; %start the clock
 % define min and max number of points allowed in the automatic cubature
 mmin = 10;
-mmax = 23;
+mmax = 20;
 mvec = mmin:mmax;
 numM = length(mvec);
 % variables to save debug info
@@ -150,16 +147,16 @@ for iter = 1:numM
     -5,5,optimset('TolX',1e-2)); 
   aMLE = exp(lnaMLE);
   [loss,Ktilde,KtildeSq,RKHSnorm,K] = MLEKernel(aMLE,br_xun,ftilde,order,arbMean);
-  wt = 1/Ktilde(1);
+  %wt = 1/Ktilde(1);
   
   %Check error criterion
-  DSC = abs((1/n) - wt);
+  DSC = abs(1 - (n/Ktilde(1)));
   
   % store the debug information
-  dscAll(iter) = DSC;
-  s_All(iter) = RKHSnorm;
+  dscAll(iter) = sqrt(DSC);
+  s_All(iter) = sqrt(RKHSnorm/n);
   
-  out.ErrBd = 2.58*sqrt(DSC*RKHSnorm);
+  out.ErrBd = 2.58*sqrt(DSC)*sqrt(RKHSnorm/n);
   if arbMean==true % zero mean case
     muhat = ftilde(1)/n;
   else % non zero mean case
@@ -188,20 +185,24 @@ for iter = 1:numM
   timeAll(iter) = toc(tstart_iter);
 end
 out.n = n;
-out.time = toc(tstart);
-out.ErrBdAll = errorBdAll;
-out.muhatAll = muhatAll;
+out.time = toc(tstart)   % let it to print
+out.ErrBdAll = errorBdAll
+out.muhatAll = muhatAll
 out.mvec = mvec;
-out.aMLEAll = aMLEAll;
-out.timeAll = timeAll;
-out.s_All = s_All;
-out.dscAll = dscAll;
+out.aMLEAll = aMLEAll
+out.timeAll = timeAll
+out.s_All = s_All
+out.dscAll = dscAll
 
 % convert from gpu memory to local
 muhat=gather(muhat);
 out=gather(out);
 
 %% plot MLE loss function
+if ~exist('visiblePlot','var')
+  visiblePlot = true;
+end
+
 if exist('fName','var') && exist('figSavePath','var')
   minTheta = plotMLE_Loss(ff, mvec, figSavePath, fName, d, order, ptransform, ...
               arbMean,visiblePlot,aMLEAll,lossMLEAll)
@@ -280,8 +281,8 @@ end
 if any(Ktilde==0)
 end
 
-Ktilde(Ktilde==0) = eps;
-loss1 = sum(log(Ktilde));
+% Ktilde(Ktilde==0) = min(Ktilde(Ktilde~=0)); %eps;
+loss1 = sum(log(Ktilde(Ktilde~=0)));
 if isinf(loss1)
   fprintf('loss1 is infinity \n');
 end
@@ -289,7 +290,8 @@ loss2 = log(temp_1);
 if isinf(loss2)
   fprintf('loss2 is infinity \n');
 end
-loss = sum(log(Ktilde)) + numel(Ktilde)*log(temp_1);
+% ignore all zero val eigenvalues
+loss = sum(log(Ktilde(Ktilde~=0))) + numel(Ktilde)*log(temp_1);
 
 if isinf(loss)
   fprintf('loss is infinity \n');
@@ -415,9 +417,9 @@ fx = ff(xun);  % Note: periodization transform already applied
 numM = length(mvec);
 
 %% plot MLEKernel cost function
-lnTheta = -5:0.1:5;
+lnTheta = -5:0.2:5;
 % fullPath = strcat(figSavePath,'/',fName,'/',ptransform,'/');
-plotFileName = sprintf('%s%s Cost d_%d bernoulli_%d Period_%s.eps', fullPath, fName, d, order, ptransform)
+plotFileName = sprintf('%s%s Cost d_%d bernoulli_%d Period_%s.png', fullPath, fName, d, order, ptransform)
 
 costMLE = zeros(numM,numel(lnTheta));
 tic
@@ -431,7 +433,7 @@ for iter = 1:numM
   
   tic
   %par
-  for k=1:numel(lnTheta)
+  parfor k=1:numel(lnTheta)
     [costMLE(iter,k),eigvalK(k,:)] = MLEKernel(exp(lnTheta(k)),...
           br_xun,ftilde,order,useArbMean);
   end
@@ -446,11 +448,26 @@ else
   hFigCost = figure();
 end
 
-semilogx(exp(lnTheta),real(costMLE)); %lgd = legend(string(nvec),'location','north'); axis tight
-set(hFigCost, 'units', 'inches', 'Position', [4 4 10 7])
+% push the negative to positive by adding a offset
+if false % any(any(costMLE<=0))
+  temp = min(min(costMLE));
+  temp = min([temp, min(lossMLEAll)]);
+  offset =  1 + abs(temp);
+  costMLE = costMLE + offset;
+  lossMLEAll = lossMLEAll + offset;
+  fprintf('costMLE has negative or zero values !! \n')
+end
+if ~isreal(costMLE)
+  fprintf('costMLE has complex values !! \n')
+end
+
+% semilogx
+semilogx(exp(lnTheta),real(costMLE)); 
+set(hFigCost, 'units', 'inches', 'Position', [4 4 13.5 11.5])
 %title(lgd,'Sample Size, \(n\)'); legend boxoff
 xlabel('Shape param, \(\theta\)')
-ylabel('MLE Cost, \( \frac{y^T K_\theta^{-1}y}{[\det(K_\theta^{-1})]^{1/n}} \)')
+% ylabel('MLE Cost, \( \frac{y^T K_\theta^{-1}y}{[\det(K_\theta^{-1})]^{1/n}} \)')
+ylabel('Log MLE Obj. fun.')
 axis tight;
 if useArbMean
   mType = '\(m \neq 0\)';
@@ -462,8 +479,13 @@ title(sprintf('%s d=%d r=%d Tx=%s %s', fName, d, order, ptransform, mType));
 
 % mark the min theta values found using fminbnd 
 minTheta = exp(lnTheta(Index));
-hold on; plot(minTheta,minVal, '.');
-plot(aMLEAll,lossMLEAll, '+');
+hold on; 
+semilogx(minTheta,minVal, '.');
+semilogx(aMLEAll,lossMLEAll, '+');
+temp = string(mvec);
+temp(end+1) = '\(\theta_{min_{true}}\)';
+temp(end+1) = '\(\theta_{min_{est}}\)';
+legend(temp,'location','best'); axis tight
 saveas(hFigCost, plotFileName)
 
 

@@ -1,14 +1,14 @@
 function plot_nvec_vs_computeTime(nvec, computeTime, visiblePlot, figSavePath)
+% disabled for now
+end
 
-
-% plot_nvec_vs_computeTime_matern_example(visiblePlot)
-
+function dummy()
   
-%% Plot n vs time for the given cubature
+% Plot n vs time for the given cubature
 if exist('visiblePlot','var') && visiblePlot==false
     hFigTime = figure('visible','off');
 else
-    hFigTime = figure(); %21
+    hFigTime = figure(); 
 end
 
 set(hFigTime, 'units', 'inches', 'Position', [4 4 6.5 5.5])
@@ -16,7 +16,7 @@ loglog(nvec,computeTime, 'b.-', ...
   [nvec(1) nvec(end)],computeTime(2)*[1 (nvec(end)/nvec(1))^1], 'g--')
 
 legend({'Compute time', '\(O(n^{})\)'}, ...
-                'location','northeast')
+                'location','best')
               
 axis([100 1e7 1e-2 1e5])
 set(gca,'Xtick',(10.^(2:7)),'YTick',(10.^(-2:2:5)))
