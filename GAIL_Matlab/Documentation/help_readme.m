@@ -143,20 +143,23 @@
 % 
 % GAIL version 2.2 includes the following eight algorithms:
 % 
-% 1.  funappx_g: One-dimensional function approximation on bounded interval
+% 1.  *funappx_g*: One-dimensional function approximation on bounded interval
 % 
-% 2.  funmin_g: global minimum value of univariate function on a closed interval
+% 2.  *funmin_g*: global minimum value of univariate function on a closed interval
 % 
-% 3.  integral_g: One-dimensional integration on bounded interval
+% 3.  *integral_g*: One-dimensional integration on bounded interval
 % 
-% 4.  meanMC_g: Monte Carlo method for estimating mean of a random variable
+% 4.  *meanMC_g*: Monte Carlo method for estimating mean of a random variable
 % 
-% 5.  cubMC_g: Monte Carlo method for numerical multiple integration
+% 5.  *cubMC_g*: Monte Carlo method for numerical multiple integration
 % 
-% 6.  cubSobol_g: Quasi-Monte Carlo method using Sobol' cubature for d-dimensional integration
+% 6.  *cubSobol_g*: Quasi-Monte Carlo method using Sobol' cubature for d-dimensional integration
 % 
-% 7.  cubLattice_g: Quasi-Monte Carlo method using rank-1 Lattices cubature for d-dimensional integration
+% 7.  *cubLattice_g*: Quasi-Monte Carlo method using rank-1 Lattices cubature for d-dimensional integration
 % 
+% 8.  *meanMC_CLT*: Monte Carlo method with Central Limit Theorem (CLT) confidence intervals for estimating mean of a random variable
+% 
+% 9.  *cubMC_CLT*: Monte Carlo method with Central Limit Theorem (CLT) confidence intervals for numerical multiple integration
 % 
 %% Installation Instruction
 % 

@@ -39,4 +39,11 @@
 % <a href="help_cubLattice_g.html">cubLattice_g</a>
 % </html>
 %
+% <html>
+% <a href="help_meanMC_CLT.html">meanMC_g</a>
+% </html>
 %
+% <html>
+% <a href="help_cubMC_CLT.html">cubMC_g</a>
+% </html>
+

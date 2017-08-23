@@ -155,6 +155,11 @@ GAIL version 2.2 includes the following eight algorithms:
 
 7.  cubLattice_g: Quasi-Monte Carlo method using rank-1 Lattices cubature for d-dimensional integration
 
+8.  meanMC_CLT: Monte Carlo method with Central Limit Theorem (CLT) confidence intervals for estimating mean of a random variable
+ 
+9.  cubMC_CLT: Monte Carlo method with Central Limit Theorem (CLT) confidence intervals for numerical multiple integration
+
+
 Installation Instruction
 ------------------------
 

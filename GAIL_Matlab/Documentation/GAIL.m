@@ -28,6 +28,8 @@
 % <p><a href="help_cubMC_g.html">cubMC_g</a>
 % <p><a href="help_cubSobol_g.html">cubSobol_g</a>
 % <p><a href="help_cubLattice_g.html">cubLattice_g</a>
+% <p><a href="help_meanMC_CLT.html">meanMC_CLT</a>
+% <p><a href="help_cubMC_CLT.html">cubMC_CLT</a>
 % </html>
 %
 %% Demos
