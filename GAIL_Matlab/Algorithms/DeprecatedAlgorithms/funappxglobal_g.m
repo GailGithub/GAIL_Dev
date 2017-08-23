@@ -117,16 +117,16 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %
 %   >> f = @(x) x.^2; [pp, out_param] = funappxglobal_g(f)
 %
-%     pp = 
+%     pp =
 %       form: 'pp'
-%     breaks: [1x5051 double]
-%      coefs: [5050x2 double]
+%     breaks: [1×5051 double]
+%      coefs: [5050×2 double]
 %     pieces: 5050
 %      order: 2
 %        dim: 1
 %     orient: 'first'
-% 
-%     out_param = 
+%
+%     out_param =
 %                f: @(x)x.^2
 %                a: 0
 %                b: 1
@@ -146,18 +146,18 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %
 %   >> f = @(x) x.^2;
 %   >> [pp, out_param] = funappxglobal_g(f,-2,2,1e-7,10,10,1000000)
-% 
-% pp = 
-% 
+%
+% pp =
+%
 %       form: 'pp'
-%     breaks: [1x38149 double]
-%      coefs: [38148x2 double]
+%     breaks: [1×38149 double]
+%      coefs: [38148×2 double]
 %     pieces: 38148
 %      order: 2
 %        dim: 1
 %     orient: 'first'
-% 
-%     out_param = 
+%
+%     out_param =
 %                a: -2
 %           abstol: 1.0000e-07
 %                b: 2
@@ -178,18 +178,18 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %   >> f = @(x) x.^2;
 %   >> [pp, out_param] = funappxglobal_g(f,'a',-2,'b',2,'nhi',100,'nlo',10)
 %
-% pp = 
-% 
+% pp =
+%
 %       form: 'pp'
-%     breaks: [1x31851 double]
-%      coefs: [31850x2 double]
+%     breaks: [1×31851 double]
+%      coefs: [31850×2 double]
 %     pieces: 31850
 %      order: 2
 %        dim: 1
 %     orient: 'first'
-% 
-% out_param = 
-% 
+%
+% out_param =
+%
 %                a: -2
 %           abstol: 1.0000e-06
 %                b: 2
@@ -212,17 +212,17 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %   >> in_param.nmax = 10^6; f = @(x) x.^2;
 %   >> [pp, out_param] =funappxglobal_g(f,in_param)
 %
-% pp = 
-% 
+% pp =
+%
 %       form: 'pp'
-%     breaks: [1x596779 double]
-%      coefs: [596778x2 double]
+%     breaks: [1×596779 double]
+%      coefs: [596778×2 double]
 %     pieces: 596778
 %      order: 2
 %        dim: 1
 %     orient: 'first'
-% 
-%   out_param =  
+%
+%   out_param =
 %                a: -10
 %           abstol: 1.0000e-07
 %                b: 10
@@ -364,7 +364,7 @@ else
     out_param.npoints = n;
     nstar = out_param.nstar;
     out_param.errest = gn*len*nstar/(4*(n-1)*(n-1-nstar));
-    pp = interp1(x,y,'linear','pp'); 
+    pp = interp1(x,y,'linear','pp');
     out_param.iter = iter;
 end;
 
@@ -547,4 +547,3 @@ end;
 
 h = out_param.b - out_param.a;
 out_param.nstar = ceil(out_param.nhi*(out_param.nlo/out_param.nhi)^(1/(1+h)));
-
