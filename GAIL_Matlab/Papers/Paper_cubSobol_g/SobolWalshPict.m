@@ -37,7 +37,7 @@ set(0,'defaultLineMarkerSize',40) %large dots
 %    % eval(['print -depsc walshk' int2str(k) 'fun.eps'])
 % end
 
-[~,~,MATLABVERSION] = GAILstart(false);
+[~,~,~,MATLABVERSION] = GAILstart(false);
 if usejava('jvm') || MATLABVERSION <= 7.12
 
 %% Plot Sobol points

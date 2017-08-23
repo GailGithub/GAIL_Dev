@@ -91,7 +91,7 @@ if any(strcmp('cubLattice',test.whichsample))
     end
     Latticesuccess=mean(res.Latticeerr<=param_indicator);
 end
-gail.save_mat('Paper_cubLattice_g', 'Paper_cubLattice_g_TestKeister',true, Latticesuccess,...
+gail.save_mat('Paper_cubLattice_g', 'Paper_cubLattice_g_TestKeister', Latticesuccess,...
         fun,irep,res,test);
 end
 
@@ -99,7 +99,7 @@ end
 
 %% Defining function plotTestColor
 function plotTestColor(plotTest,param)
-[~,~,MATLABVERSION] = GAILstart(false);
+[~,~,~,MATLABVERSION] = GAILstart(false);
 if usejava('jvm') || MATLABVERSION <= 7.12
 figure
 ntot=length(plotTest.err);

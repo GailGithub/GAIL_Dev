@@ -1,5 +1,5 @@
 function plotTestcubMCcolor(plotTest,param)
-[~,~,MATLABVERSION] = GAILstart(false); 
+[~,~,~,MATLABVERSION] = GAILstart(false); 
 if usejava('jvm') || MATLABVERSION <= 7.12
 figure
 ntot=length(plotTest.err);

@@ -99,7 +99,7 @@ if any(strcmp('cubSobol',test.whichsample))
     end
     Sobolsuccess=mean(res.Sobolerr<=param_indicator);
 end
-gail.save_mat('Paper_cubSobol_g', 'Paper_cubSobol_g_TestGeoAsianCall', true, Sobolsuccess,dimchoice,...
+gail.save_mat('Paper_cubSobol_g', 'Paper_cubSobol_g_TestGeoAsianCall', Sobolsuccess,dimchoice,...
         fun,irep,res,test,testfunqmc);
 end
     
@@ -108,7 +108,7 @@ end
 
 %% Defining function plotTestColor
 function plotTestColor(plotTest,param)
-[~,~,MATLABVERSION] = GAILstart(false);
+[~,~,~,MATLABVERSION] = GAILstart(false);
 if usejava('jvm') || MATLABVERSION <= 7.12
 figure
 ntot=length(plotTest.err);

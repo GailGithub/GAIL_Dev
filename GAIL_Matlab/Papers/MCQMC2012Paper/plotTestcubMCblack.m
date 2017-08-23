@@ -1,5 +1,5 @@
 function plotTestcubMCblack(plotTest,param)
-[~,~,MATLABVERSION] = GAILstart(false); 
+[~,~,~,MATLABVERSION] = GAILstart(false); 
 if usejava('jvm') || MATLABVERSION <= 7.12
 figure
 ntot=length(plotTest.err);
@@ -9,12 +9,14 @@ if isfield(plotTest,'kurtvec') && isfield(plotTest,'kurtmax')
     standard=standard &~smallkurt;
     scatter(plotTest.err(smallkurt,:),plotTest.time(smallkurt,:),plotTest.ptsize,'k*', ...
         'linewidth',1);
+    hold on;
 end
 
 if isfield(plotTest,'exit')
    bigsample=plotTest.exit==1;
    standard=standard&~bigsample;
    scatter(plotTest.err(bigsample,:),plotTest.time(bigsample,:),plotTest.ptsize,'kd','filled');
+   
 end
 erraug=[plotTest.errlowlimit; sort(plotTest.err); plotTest.errhilimit];
 timeaug=[plotTest.timelowlimit; sort(plotTest.time); plotTest.timehilimit];
@@ -30,7 +32,7 @@ set(ax1,'XColor','k','YColor','k',...
     'XTick',10.^(plotTest.logerrlo:plotTest.logerrhi))
     %'XGrid','on','YGrid','on','GridLineStyle','--',...
 
-line([param.abstol param.abstol],[plotTest.timelowlimit plotTest.timehilimit],...
+line([param.tol param.tol],[plotTest.timelowlimit plotTest.timehilimit],...
     'color','k','linestyle','--','linewidth',plotTest.linewidth)
 % wherexsuccess=-0.02+0.75*(log10(param.tol)-plotTest.logerrlo)/...
 %     (plotTest.logerrhi-plotTest.logerrlo);
