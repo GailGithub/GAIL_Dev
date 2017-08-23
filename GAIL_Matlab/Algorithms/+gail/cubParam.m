@@ -11,6 +11,7 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
    %
    %           f: @(x)sum(x.^2,2)
    %      domain: [2×1 double]
+   % measureType: 'uniform'
    %     measure: 'uniform'
    %      absTol: 0.0100
    %      relTol: 0
