@@ -5,7 +5,7 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
    %   etc.
    %
    % Example 1. Construct a cubParam object with default parameters
-   % cubParamObj = gail.cubParam
+   % >> cubParamObj = gail.cubParam
    % cubParamObj =
    %   cubParam with properties:
    %
