@@ -95,17 +95,8 @@ function [q,out_param] = integral_g(varargin)
 %
 %  Guarantee
 %
-%  If the function to be integrated, f, satisfies the cone condition
-%                          nstar   ||     f(b)-f(a)  ||
-%      ||f''||        <=  -------- ||f'- ----------- ||
-%             1           2(b - a) ||       b - a    ||1,
-%  then the q output by this algorithm is guaranteed to satisfy
-%      |\int_{a}^{b} f(x) dx - q | <= abstol,
-%  provided the flag exceedbudget = 0. And the upper bound of the cost is
-%          ________________________
-%         /   nstar*(b-a)^2 Var(f')
-%        / ------------------------ + 2 nstar + 4
-%      \/          2 abstol
+%  Plese check the details of the guarantee in [1].
+%
 %
 %  Examples
 %
