@@ -65,7 +65,7 @@ kappanumap=(1:n)'; %initialize map
 for l=mmax-1:-1:1
    nl=2^l;
    oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
-   newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa, 
+   newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa,
    flip=find(newone>oldone); %
    temp=kappanumap(nl+1+flip);
    kappanumap(nl+1+flip)=kappanumap(1+flip);
@@ -114,7 +114,7 @@ for mdual=mdualvec
    legend(h([4 2 3]),{['${\rm error}\leq\hat{S}_{0,' int2str(mdual) '}(f)$'],...
       ['$\check{S}_{' int2str(mdual) '}(f)$'],...
       ['$S_{' int2str(mdual-mlag) '}(f)$']},...
-      'location','southwest')
+      'location','southwest','interpreter','latex')
    legend('boxoff')
    set(gca,'Position',[0.2 0.155 0.75 0.77])
    eval(['print -depsc PlotFWTCoefUse' int2str(nuse) '.eps'])
