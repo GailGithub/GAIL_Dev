@@ -20,7 +20,7 @@ if usejava('jvm')
         'demo_meanMC_g','count_success',...
         'demo_normal_probabilities'};
         %,'demo_normal_probabilities_cubMC', 'demo_normal_probabilities'};
-    wofile_list = {'Test_cubSobol_g'}; 
+    wofile_list = {}; %{'Test_cubSobol_g'}; 
     %% generate GAIL Documentation in HTML format
     if ifGenerateHtml
       opts.stylesheet = strcat(GAILPATH,'Documentation',filesep,'mxdom2mathjaxbigfont.xsl');
