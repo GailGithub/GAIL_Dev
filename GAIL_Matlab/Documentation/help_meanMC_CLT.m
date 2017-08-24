@@ -14,17 +14,17 @@
 %  instances of the random variable.
 %
 % This is a heuristic algorithm based on a Central Limit Theorem
-%  approximation
+%  approximation.
 %   
 % *Input Arguments*
 %
-% * Y --- the function or structure for generating n IID instances of a random
-%  variable Y whose mean we want to estimate. Y is often defined as a
-%  function of some random variable X with a simple distribution. The
-%  input of Yrand should be the number of random variables n, the output
-%  of Yrand should be n function values. For example, if Y = X.^2 where X
-%  is a standard uniform random variable, then one may define Yrand =
-%  @(n) rand(n,1).^2.
+% * Y --- the function or structure for generating n IID instances of a
+%     random variable Y whose mean we want to estimate. Y is often defined
+%     as a function of some random variable X with a simple distribution.
+%     The input of Yrand should be the number of random variables n, the
+%     output of Yrand should be n function values. For example, if Y = X.^2
+%     where X is a standard uniform random variable, then one may define
+%     Yrand = @(n) rand(n,1).^2.
 %
 % * absTol --- the absolute error tolerance, which should be
 %  non-negative --- default = 1e-2
@@ -65,8 +65,8 @@
 %%
 % *Example 1*
 
-% Estimate the integral with integrand f(x) = x1.*x2 in the interval [0,1)^2 with absolute 
-% tolerance 1e-3 and relative tolerence 0:
+% Estimate the integral with integrand f(x) = x1.*x2 in the interval
+% [0,1)^2 with absolute tolerance 1e-3 and relative tolerence 0:
 
   [mu,out] = meanMC_CLT(@(n) rand(n,1).^2, 0.001);
   exact = 1/3;
@@ -104,8 +104,9 @@
 %%
 % *Example 4*
 
-% Estimate the integral with integrand f(x) = x1.^3.*x2.^3.*x3.^3
-% in the interval [0,1)^3 with pure absolute error 1e-3 using x1.*x2.*x3 as control variate:
+% Estimate the integral with integrand f(x) = x1.^3.*x2.^3.*x3.^3 in the
+% interval [0,1)^3 with pure absolute error 1e-3 using x1.*x2.*x3 as
+% control variate:
 
   f=@(x) [x(:,1).^3.*x(:,2).^3.*x(:,3).^3, x(:,1).*x(:,2).*x(:,3)];
   s=struct('Y',@(n)f(rand(n,3)),'nY',1,'trueMuCV',1/8);

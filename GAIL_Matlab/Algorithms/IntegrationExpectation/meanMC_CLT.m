@@ -10,18 +10,18 @@ function [sol, out] = meanMC_CLT(varargin)
 %   instances of the random variable.
 %
 %   This is a heuristic algorithm based on a Central Limit Theorem
-%   approximation
+%   approximation.
 %
 %
 %   Input Arguments
 %
-%     Y --- the function or structure for generating n IID instances of a random
-%     variable Y whose mean we want to estimate. Y is often defined as a
-%     function of some random variable X with a simple distribution. The
-%     input of Yrand should be the number of random variables n, the output
-%     of Yrand should be n function values. For example, if Y = X.^2 where X
-%     is a standard uniform random variable, then one may define Yrand =
-%     @(n) rand(n,1).^2.
+%     Y --- the function or structure for generating n IID instances of a
+%     random variable Y whose mean we want to estimate. Y is often defined
+%     as a function of some random variable X with a simple distribution.
+%     The input of Yrand should be the number of random variables n, the
+%     output of Yrand should be n function values. For example, if Y = X.^2
+%     where X is a standard uniform random variable, then one may define
+%     Yrand = @(n) rand(n,1).^2.
 %     
 %
 %     absTol --- the absolute error tolerance, which should be
@@ -61,8 +61,8 @@ function [sol, out] = meanMC_CLT(varargin)
 % _Authors: Yueyi Li, Hu Cauw Hung, Fred J. Hickernell_
 %
 % Example 1:
-% Estimate the integral with integrand f(x) = x1.*x2 in the interval [0,1)^2 with absolute 
-% tolerance 1e-3 and relative tolerence 0:
+% Estimate the integral with integrand f(x) = x1.*x2 in the interval
+% [0,1)^2 with absolute tolerance 1e-3 and relative tolerence 0:
 % >> [mu,out] = meanMC_CLT(@(n) rand(n,1).^2, 0.001);
 % >> exact = 1/3;
 % >> check = abs(exact - mu) < 2e-3
@@ -70,8 +70,8 @@ function [sol, out] = meanMC_CLT(varargin)
 %
 %
 % Example 2:
-% Estimate the integral f(x)=exp(-x^2) in the interval [0,1] 
-%    using x as a control variate and relative error 1e-3:
+% Estimate the integral f(x)=exp(-x^2) in the interval [0,1] using x as a
+% control variate and relative error 1e-3:
 % >> f = @(x)[exp(-x.^2), x];
 % >> YXn = @(n)f(rand(n,1));
 % >> s = struct('Y',YXn,'nY',1,'trueMuCV',1/2);
@@ -82,7 +82,8 @@ function [sol, out] = meanMC_CLT(varargin)
 %
 %
 % Example 3:
-% Estimate the Keister's integration in dimension 1 with a=1, 1/sqrt(2)and using cos(x) as a control variate:
+% Estimate the Keister's integration in dimension 1 with a=1, 1/sqrt(2)and
+% using cos(x) as a control variate:
 % >> normsqd = @(x) sum(x.*x,2);
 % >> f=@(normt,a,d) ((2*pi*a^2).^(d/2)) * cos(a*sqrt(normt)).* exp((1/2-a^2)*normt);
 % >> f1 = @(x,a,d) f(normsqd(x),a,d);
@@ -96,8 +97,9 @@ function [sol, out] = meanMC_CLT(varargin)
 %
 %
 % Example 4:
-% Estimate the integral with integrand f(x) = x1.^3.*x2.^3.*x3.^3
-% in the interval [0,1)^3 with pure absolute error 1e-3 using x1.*x2.*x3 as control variate:
+% Estimate the integral with integrand f(x) = x1.^3.*x2.^3.*x3.^3 in the
+% interval [0,1)^3 with pure absolute error 1e-3 using x1.*x2.*x3 as
+% control variate:
 % 
 % >> f=@(x) [x(:,1).^3.*x(:,2).^3.*x(:,3).^3, x(:,1).*x(:,2).*x(:,3)];
 % >> s=struct('Y',@(n)f(rand(n,3)),'nY',1,'trueMuCV',1/8);
@@ -108,9 +110,9 @@ function [sol, out] = meanMC_CLT(varargin)
 %
 %
 % Example 5:
-% Estimate the integrals with integrands f1(x) = x1.^3.*x2.^3.*x3.^3 and 
-% f2(x)= x1.^2.*x2.^2.*x3.^2-1/27+1/64 in the interval [0,1)^3
-% using x1.*x2.*x3 and x1+x2.^3+x3 as control variate:
+% Estimate the integrals with integrands f1(x) = x1.^3.*x2.^3.*x3.^3 and
+% f2(x)= x1.^2.*x2.^2.*x3.^2-1/27+1/64 in the interval [0,1)^3 using
+% x1.*x2.*x3 and x1+x2.^3+x3 as control variate:
 %
 % >> f = @(x) [x(:,1).^3.*x(:,2).^3.*x(:,3).^3, x(:,1).^2.*x(:,2).^2.*x(:,3).^2-1/27+1/64,x(:,1).*x(:,2).*x(:,3),x(:,1)+x(:,2)+x(:,3)];
 % >> s=struct('Y',@(n)f(rand(n,3)),'nY',2,'trueMuCV',[1/8 1.5]);
