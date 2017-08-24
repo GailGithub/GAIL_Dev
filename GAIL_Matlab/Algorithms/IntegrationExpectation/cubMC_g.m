@@ -10,11 +10,11 @@ function [Q,out_param] = cubMC_g(varargin)
 %   then abstol determines the accuracy of the estimation. Input f is a
 %   function handle that accepts an n x d matrix input, where d is the
 %   dimension of the hyperbox, and n is the number of points being
-%   evaluated simultaneously. When measure is 'uniform', 'uniform box',
-%   'normal' or 'Gaussian', the input hyperbox is a 2 x d matrix, where the
-%   first row corresponds to the lower limits and the second row
-%   corresponds to the upper limits.
+%   evaluated simultaneously. 
 %
+%   When measure is 'uniform', 'uniform box', 'normal' or 'Gaussian', the
+%   input hyperbox is a 2 x d matrix, where the first row corresponds to
+%   the lower limits and the second row corresponds to the upper limits.
 %   When measure is 'uniform ball' or 'uniform sphere', the input hyperbox
 %   is a vector with d+1 elements, where the first d values correspond to
 %   the center of the ball and the last value corresponds to the radius of

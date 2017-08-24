@@ -18,27 +18,27 @@
 %  guaranteed not to be greater than a specific generalized error tolerance,
 %  tolfun:=max(abstol,reltol*| integral(f) |). Input f is a function handle. f should
 %  accept an n x d matrix input, where d is the dimension and n is the
-%  number of points being evaluated simultaneously. When measure is 'uniform',
-%  The input hyperbox is a 2 x d matrix, where the first row corresponds
-%  to the lower limits and the second row corresponds to the upper limits
-%  of the integral. When measure is 'uniform ball' or 'uniform sphere',
-%  the input hyperbox is a vector with d+1 elements, where the first d
-%  values correspond to the center of the ball and the last value
-%  corresponds to the radius of the ball. For these last two measures, a user can
-%  optionally specify what transformation should be used in order to get a
-%  uniform distribution on a ball. When measure is 'uniform ball_box',
-%  the box-to-ball transformation, which gets a set of points uniformly
-%  distributed on a ball from a set of points uniformly distributed on a
-%  box, will be used. When measure is 'uniform ball_normal', the
-%  normal-to-ball transformation, which gets a set of points uniformly
-%  distributed on a ball from a set of points normally distributed on the
-%  space, will be used. Similarly, the measures 'uniform sphere_box'
-%  and 'uniform sphere_normal' can be used to specify the
-%  desired transformations. The default transformations are the box-to-ball
-%  and the box-to-sphere transformations, depending on the region of
-%  integration.
-%  Given the construction of Sobol' sequences, d must be
-%  a positive integer with 1 <= d<= 1111.
+%  number of points being evaluated simultaneously. 
+%
+% When measure is 'uniform', the input hyperbox is a 2 x d matrix, where
+% the first row corresponds to the lower limits and the second row
+% corresponds to the upper limits of the integral. When measure is 'uniform
+% ball' or 'uniform sphere', the input hyperbox is a vector with d+1
+% elements, where the first d values correspond to the center of the ball
+% and the last value corresponds to the radius of the ball. For these last
+% two measures, a user can optionally specify what transformation should be
+% used in order to get a uniform distribution on a ball. When measure is
+% 'uniform ball_box', the box-to-ball transformation, which gets a set of
+% points uniformly distributed on a ball from a set of points uniformly
+% distributed on a box, will be used. When measure is 'uniform
+% ball_normal', the normal-to-ball transformation, which gets a set of
+% points uniformly distributed on a ball from a set of points normally
+% distributed on the space, will be used. Similarly, the measures 'uniform
+% sphere_box' and 'uniform sphere_normal' can be used to specify the
+% desired transformations. The default transformations are the box-to-ball
+% and the box-to-sphere transformations, depending on the region of
+% integration. Given the construction of Sobol' sequences, d must be a
+% positive integer with 1 <= d<= 1111.
 %
 % q = *cubSobol_g*(f,hyperbox,measure,abstol,reltol)
 %  estimates the integral of f over the hyperbox. The answer
