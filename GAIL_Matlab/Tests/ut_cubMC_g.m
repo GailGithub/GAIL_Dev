@@ -1,4 +1,4 @@
-%UT_CUBMC_G  unit test for cubMC_g
+%UT_CUBMC_G fast unit tests for cubMC_g
 classdef ut_cubMC_g < matlab.unittest.TestCase
     
     methods(Test)
@@ -97,3 +97,4 @@ classdef ut_cubMC_g < matlab.unittest.TestCase
         end
     end
 end
+

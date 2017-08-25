@@ -1,6 +1,6 @@
 function [fmin,out_param]=funmin01_g(varargin)
-%FUNMIN01_G Guaranteed global minimum value of univariate function on
-%interval [0,1] and the subset containing optimal solutions
+%FUNMIN01_G 1-D guaranteed global minimum value(s) on [0,1] and the subset 
+% containing optimal solutions
 %
 %   fmin = FUNMIN01_G(f) finds minimum value of function f on the interval
 %   [0,1] within a guatanteed absolute error tolerance of 1e-6 and X

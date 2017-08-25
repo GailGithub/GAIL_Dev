@@ -1,4 +1,4 @@
-%UT_CONVTEST_FUNAPPX_G unit test for conv. test of funappx_g
+%UT_CONVTEST_FUNAPPX_G unit tests for convergence test of funappx_g
 classdef ut_convtest_funappx_g < matlab.unittest.TestCase
 
   methods(Test)
@@ -18,3 +18,4 @@ classdef ut_convtest_funappx_g < matlab.unittest.TestCase
     
   end
 end
+

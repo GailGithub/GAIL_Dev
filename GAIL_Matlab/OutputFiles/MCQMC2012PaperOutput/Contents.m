@@ -7,7 +7,7 @@
 %
 % Mat file
 %
-%   TestcubMCon-gaussian-uniform-Out-17-Aug-2012_13.12.36N500d1tol0.001.mat
+%  TestcubMCon-gaussian-uniform-Out-17-Aug-2012_13.12.36N500d1tol0.001.mat
 %                                  - numerical integration results of using
 %                                  the Gaussian test function with
 %                                  dimension 1. It was used to generate the

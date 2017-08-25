@@ -3,3 +3,4 @@
 %
 % Files
 %
+% GuaranteedQuadratureExpository_ver_b.pdf - paper

@@ -1,4 +1,4 @@
-%UT_FUNMIN_G_end unit test for funmin_g at end points
+%UT_FUNMIN_G_END unit test for funmin_g at end points
 classdef ut_funmin_g_end < matlab.unittest.TestCase
     
     methods(Test)
@@ -28,4 +28,5 @@ classdef ut_funmin_g_end < matlab.unittest.TestCase
         end
     end
 end
+
 
