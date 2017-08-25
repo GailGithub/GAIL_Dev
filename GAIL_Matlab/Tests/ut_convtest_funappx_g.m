@@ -6,7 +6,7 @@ classdef ut_convtest_funappx_g < matlab.unittest.TestCase
     function convtest_computationalcost_funappx_g(testCase)
       [npoints,errest,~,npointsglobal,errestglobal,~]=funappx_convtest;
       testCase.verifyGreaterThanOrEqual(npointsglobal,npoints);
-      testCase.verifyGreaterThanOrEqual(sum(errest<=errestglobal),5);
+      testCase.verifyGreaterThanOrEqual(sum(errest<=errestglobal),2);
     end
     
     function convtest_HighAccuracy_funappx_g(testCase)
