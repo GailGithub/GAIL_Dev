@@ -34,6 +34,9 @@
 % <html>
 % <a href="demo_funappx_g.html">Demos for funappx_g</a>
 % <p><a href="demo_funmin_g.html">Demos for funmin_g</a>
+% <p><a href="demo_integral_g.html">Demos for integral_g</a>
+% <p><a href="demo_meanMC_g.html">Demos for meanMC_g</a>
+% <p><a href="demo_cubMC_g.html">Demos for cubMC_g</a>
 % <p><a href="demo_cubSobol_g.html">Demos for cubSobol_g</a>
 % </html>
 %

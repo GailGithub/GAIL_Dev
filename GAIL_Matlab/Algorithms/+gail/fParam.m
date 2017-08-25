@@ -93,10 +93,10 @@ classdef fParam < handle & matlab.mixin.CustomDisplay
    properties (Hidden, SetAccess = private)
       def_f = @(x) sum(x.^2,2) %default function
       def_domain = [0; 1]; %default domain
-      def_domainType = 'cube'; %default domain type
+      def_domainType = 'box'; %default domain type
       def_nInit = 1e3 %default initial number of samples
       def_nMax = 1.5e6 %default maximum sample size
-      allowedDomains = {'cube', ... %a hyperbox
+      allowedDomains = {'box', ... %a hyperbox
          'ball', ... %solid ball
          'sphere',...
          'ball-from-normal', ...

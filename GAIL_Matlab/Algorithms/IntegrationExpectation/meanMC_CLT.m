@@ -1,13 +1,17 @@
-function [hmu,out]=meanMC_CLT(varargin)
+function [sol, out] = meanMC_CLT(varargin)
 %MEANMC_CLT Monte Carlo method to estimate the mean of a random variable
 %
-%   tmu = MEANMC_CLT(Y,absTol,relTol,alpha,nSig,inflate) estimates the
-%   mean, mu, of a random variable Y to within a specified error tolerance,
+%   sol = MEANMC_CLT(Y,absTol,relTol,alpha,nSig,inflate) estimates the
+%   mean, mu, of a random variable to within a specified error tolerance,
 %   i.e., | mu - tmu | <= max(absTol,relTol|mu|) with probability at least
 %   1-alpha, where abstol is the absolute error tolerance.  The default
-%   values are abstol=1e-2 and alpha=1%. Input Yrand is a function handle
-%   that accepts a positive integer input n and returns an n x 1 vector of
-%   IID instances of the random variable Y.
+%   values are abstol=1e-2 and alpha=1%. Input Y is a function handle that
+%   accepts a positive integer input n and returns an n x 1 vector of IID
+%   instances of the random variable.
+%
+%   This is a heuristic algorithm based on a Central Limit Theorem
+%   approximation
+%
 %
 %   Input Arguments
 %
@@ -54,7 +58,9 @@ function [hmu,out]=meanMC_CLT(varargin)
 %
 %     errBd --- the error bound.
 %
+% _Authors: Yueyi Li, Hu Cauw Hung, Fred J. Hickernell_
 %
+% Example 1
 % >> [mu,out] = meanMC_CLT(@(n) rand(n,1).^2, 0.001)
 % mu =
 %     0.33***
@@ -65,13 +71,7 @@ function [hmu,out]=meanMC_CLT(varargin)
 %       absTol: 1.0000e-03
 %       relTol: 0
 %        alpha: 0.0100 
-%           mu: 0.33***
-%       stddev: 0.3006
-%      nSample: 864130
-%         time: 0.0983 
-%       errBd: 1.0000e-03
-%
-% _Author: Yueyi Li_
+%          sol: 0.33***
 
 
 
@@ -134,46 +134,42 @@ function [hmu,out]=meanMC_CLT(varargin)
 %
 %
 
-% This is a heuristic algorithm based on a Central Limit Theorem
-% approximation
-
 tstart = tic; %start the clock 
-%inp = gail.meanYParam(varargin{:}); 
-%parse the input and check it for errors and create the output class
 
 if nargin 
    if isa(varargin{1},'gail.cubMCOut')
       out = varargin{1};
    end
-else
+end
+if ~exist('out','var')
    out = gail.meanYOut(gail.meanYParam(varargin{:})); 
 end
-Yrand=out.Y; %the random number generator
-q=out.nY; %the number of target random variable 
-p=out.CM.nCV; %the number of control variates
-xmean=out.CM.trueMuCV; %the mean of the control variates
-if size(xmean)==zeros(1,2)
-   xmean=0;
-end
+Yrand = out.Y; %the random number generator
+q = out.nY; %the number of target random variable 
+p = out.CM.nCV; %the number of control variates
+% xmean = out.CM.trueMuCV; %the mean of the control variates
+% if size(xmean) == [0 0] %not sure why this is here
+%    xmean = 0;
+% end
 
 val = Yrand(out.nSig); %get samples to estimate variance 
 if p==0 && q==1
-    YY = val(:,1); 
+   YY = val(:,1); 
 else
 %if there is control variate, construct a new random variable that has the
 %same expected value and smaller variance
-        meanVal=mean(val); %the mean of each column
-        A=bsxfun(@minus, val, meanVal); %covariance matrix of the samples
-        [U,S,V]=svd([A; [ones(1,q) zeros(1,p)] ],0); %use SVD to solve a constrained least square problem
-        Sdiag = diag(S); %the vector of the single values
-        U2=U(end,:); %last row of U
-        beta=V*(U2'/(U2*U2')./Sdiag); %get the coefficient for control variates
-        YY = [val(:,1:q) A(:,q+1:end)] * beta; %get samples of the new random variable 
+   meanVal = mean(val); %the mean of each column
+   A = bsxfun(@minus, val, meanVal); %covariance matrix of the samples
+   [U, S, V] = svd([A; [ones(1,q) zeros(1,p)] ],0); %use SVD to solve a constrained least square problem
+   Sdiag = diag(S); %the vector of the single values
+   U2 = U(end,:); %last row of U
+   beta = V*(U2'/(U2*U2')./Sdiag); %get the coefficient for control variates
+   YY = [val(:,1:q) A(:,q+1:end)] * beta; %get samples of the new random variable 
 end
 
 out.stddev = std(YY); %standard deviation of the new samples
 
-sig0up = out.CM.inflate.* out.stddev; %upper bound on the standard deviation
+sig0up = out.CM.inflate .* out.stddev; %upper bound on the standard deviation
 hmu0 = mean(YY); %mean of the samples
 
 nmu = max(1,ceil((-gail.stdnorminv(out.alpha/2)*sig0up ...
@@ -185,16 +181,18 @@ if nmu > out.CM.nMax %don't exceed sample budget
    nmu = out.CM.nMax; %revise nmu
 end
 
-YY = Yrand(nmu); %get samples 
+YY = Yrand(nmu); %get samples for computing the mean
 
 if p > 0 || q > 1   %samples of the new random variable
-  YY(:,q+1:end) = bsxfun(@minus, YY(:,q+1:end), xmean);
-  YY = YY*beta; %incorporate the control variates and multiple Y's
+  if ~isempty(out.CM.trueMuCV)
+     YY(:,q+1:end) = bsxfun(@minus, YY(:,q+1:end), out.CM.trueMuCV); 
+     %subtract true mean from control variates
+  end
+  YY = YY * beta; %incorporate the control variates and multiple Y's
 end
 
-hmu = mean(YY); %estimated mean
-out.sol = hmu; %record answer in output class
-
+sol = mean(YY); %estimated mean
+out.sol = sol; %record answer in output class
 
 out.nSample = out.nSig+nmu; %total samples required
 out.time = toc(tstart); %elapsed time

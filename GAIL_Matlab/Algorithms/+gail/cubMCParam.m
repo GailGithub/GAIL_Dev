@@ -5,7 +5,7 @@ classdef cubMCParam < gail.cubParam
    end
 
    properties (Dependent)
-      Y %function to integrate
+      Y %random variable to integrate
       nY %number of Y output
       nYOut %number of Y for each mean
    end
@@ -65,7 +65,7 @@ classdef cubMCParam < gail.cubParam
             else
                f_addParamVal = @addParamValue;
             end
-            parseRange = varargin{start:end};
+            parseRange = 1:nargin;
          end
       end
       f_addParamVal(p,'alpha',obj.def_alpha);
@@ -98,9 +98,9 @@ classdef cubMCParam < gail.cubParam
 
    function val = get.Y(obj)
       if strcmp(obj.measureType,'uniform')
-         val = @(n)obj.ff(rand(n,obj.fun.d));
+         val = @(n) obj.ff(rand(n,obj.fun.d));
       elseif strcmp(obj.measureType,'normal') || strcmp(obj.measureType,'Gaussian')
-         val = @(n)obj.ff(randn(n,obj.fun.d));
+         val = @(n) obj.ff(randn(n,obj.fun.d));
       end
    end
    

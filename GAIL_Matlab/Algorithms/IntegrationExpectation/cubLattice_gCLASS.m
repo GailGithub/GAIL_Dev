@@ -4,11 +4,14 @@ function [meanf, mean_out] = cubLattice_gCLASS(varargin)
 %error tolerance with guarantees under Fourier coefficients cone decay
 %assumptions.
 %
-%     w.f --- the integrand whose input should be a matrix n x d where n is
-%     the number of data points and d the dimension, which cannot be
-%     greater than 600. By default f is f=@ x.^2.
+%   [mu,out] = CUBLATTICE_GCLASS(f, domain, domainType, measure)
+%   approximates a (multi-dimensional) integral
 %
-%     w.domain --- the integration region defined by its bounds. When measure
+%     f --- the integrand whose input should be a matrix n x d where n is
+%     the number of data points and d the dimension, which cannot be
+%     greater than 600. By default f is f = @ x.^2.
+%
+%     domain --- the integration region defined by its bounds. When measure
 %     is 'uniform' or 'normal', hyperbox must be a 2 x d matrix, where the
 %     first row corresponds to the lower limits and the second row corresponds
 %     to the upper lirmits of the integral. When measure is 'uniform ball'
@@ -101,7 +104,8 @@ omg_circ = @(m) 2.^(-m);
 omg_hat = @(m) mean_out.CM.inflateFun(m)/((1+mean_out.CM.inflateFun(r_lag))*omg_circ(r_lag));
 
 % intialize CV param, redefine target function
-mu=0;beta=0;
+% mu=0;
+% beta=0;
 
 if mean_out.CM.nCV  % if using control variates(f is structure), redefine f
     mu = mean_out.CM.trueMuCV;
