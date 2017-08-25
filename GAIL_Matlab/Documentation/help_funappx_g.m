@@ -82,20 +82,24 @@
 %
 % * out_param.ninit --- initial number of subintervals.
 %
-% * out_param.exitflag --- this is a vector with two elements, for
-%   tracking important warnings in the algorithm. The algorithm is
-%   considered successful (with out_param.exitflag == [0 0]) if no other
-%   flags arise warning that the results are not guaranteed. The initial
-%   value is [0 0] and the final value of this parameter is encoded as
-%   follows:
-%
-%                     [1 0]   If reaching overbudget. It states whether
-%                     the max budget is attained without reaching the
-%                     guaranteed error tolerance.
-%
-%                     [0 1]   If reaching overiteration. It states whether
-%                     the max iterations is attained without reaching the
-%                     guaranteed error tolerance.
+% <html>
+% <ul type="square">
+%  <li>out_param.exitflag --- this is a vector with two elements, for
+%  tracking important warnings in the algorithm. The algorithm is
+%  considered successful (with out_param.exitflag == [0 0]) if no other
+%  flags arise warning that the results are not guaranteed. The initial
+%  value is [0 0] and the final value of this parameter is encoded as
+%  follows:</li>
+%   <ul type="circle">
+%    <li>[1 0]   If reaching overbudget. It states whether
+%                the max budget is attained without reaching the
+%                guaranteed error tolerance.</li>
+%    <li>[0 1]   If reaching overiteration. It states whether
+%                the max iterations is attained without reaching the
+%                guaranteed error tolerance</li>
+%   </ul>
+% </ul>
+% </html>
 %
 % * out_param.iter --- number of iterations.
 %
