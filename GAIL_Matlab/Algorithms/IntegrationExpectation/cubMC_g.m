@@ -188,7 +188,7 @@ function [Q,out_param] = cubMC_g(varargin)
 % >> f=@(x) sin(x);interval = [1;2];
 % >> Q = cubMC_g(f,interval,'uniform',1e-3,1e-2);
 % >> exactsol = 0.9564;
-% >> check = abs(exactsol-Q) < max(1e-3,1e-2*abs(exactsol))
+% >> check = double(abs(exactsol-Q) < max(1e-3,1e-2*abs(exactsol)))
 % check = 1
 % 
 % 
@@ -199,7 +199,7 @@ function [Q,out_param] = cubMC_g(varargin)
 % >> f=@(x) exp(-x(:,1).^2-x(:,2).^2);hyperbox = [0 0;1 1];
 % >> Q = cubMC_g(f,hyperbox,'uniform',1e-3,0);
 % >> exactsol = 0.5577;
-% >> check = abs(exactsol-Q) < 1e-3
+% >> check = double(abs(exactsol-Q) < 1e-3)
 % check = 1
 % 
 % 
@@ -212,7 +212,7 @@ function [Q,out_param] = cubMC_g(varargin)
 % >> in_param.abstol = 1e-3;in_param.reltol=1e-3;
 % >> Q = cubMC_g(f,hyperbox,in_param);
 % >> exactsol = 1.555;
-% >> check = abs(exactsol-Q) < max(1e-3,1e-3*abs(exactsol))
+% >> check = double(abs(exactsol-Q) < max(1e-3,1e-3*abs(exactsol)))
 % check = 1
 % 
 %
@@ -223,7 +223,7 @@ function [Q,out_param] = cubMC_g(varargin)
 % >> f=@(x) exp(-x(:,1).^2-x(:,2).^2);hyperbox = [-inf -inf;inf inf];
 % >> Q = cubMC_g(f,hyperbox,'normal',0,1e-2);
 % >> exactsol = 1/3;
-% >> check = abs(exactsol-Q) < max(0,1e-2*abs(exactsol))
+% >> check = double(abs(exactsol-Q) < max(0,1e-2*abs(exactsol)))
 % check = 1
 % 
 %
@@ -234,7 +234,7 @@ function [Q,out_param] = cubMC_g(varargin)
 % >> f=@(x) x(:,1).^2+x(:,2).^2;hyperbox = [0,0,1];
 % >> Q = cubMC_g(f,hyperbox,'uniform ball','abstol',1e-3,'reltol',1e-3);
 % >> exactsol = pi/2;
-% >> check = abs(exactsol-Q) < max(1e-3,1e-3*abs(exactsol))
+% >> check = double(abs(exactsol-Q) < max(1e-3,1e-3*abs(exactsol)))
 % check = 1
 %
 %

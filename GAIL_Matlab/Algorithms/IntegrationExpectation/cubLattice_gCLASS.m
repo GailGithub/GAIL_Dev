@@ -17,6 +17,10 @@ function [meanf, mean_out] = cubLattice_gCLASS(varargin)
 %     last value corresponds to the radius of the ball. The default value
 %     is [0;1].
 %
+%     w.domainType
+%
+%     w.measureType 
+%
 %     w.measure --- for f(x)*mu(dx), we can define mu(dx) to be the
 %     measure of a uniformly distributed random variable in the hyperbox
 %     or normally distributed with covariance matrix I_d.

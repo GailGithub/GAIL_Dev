@@ -177,7 +177,7 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 % 
 % >> f = @(x) prod(x,2); hyperbox = [zeros(1,2);ones(1,2)]; 
 % >> q = cubSobol_g(f,hyperbox,'uniform',1e-5,0); exactsol = 1/4;
-% >> check = abs(exactsol-q) < 1e-5
+% >> check = double(abs(exactsol-q) < 1e-5)
 % check = 1
 % 
 % 
@@ -187,7 +187,7 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 % 
 % >> f = @(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2; hyperbox = [-inf(1,3);inf(1,3)];
 % >> q = cubSobol_g(f,hyperbox,'normal',1e-3,1e-3); exactsol = 1;
-% >> check = abs(exactsol-q) < max(1e-3,1e-3*abs(exactsol))
+% >> check = double(abs(exactsol-q) < max(1e-3,1e-3*abs(exactsol)))
 % check = 1
 % 
 % 
@@ -197,7 +197,7 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 % 
 % >> f = @(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [-ones(1,2);2*ones(1,2)];
 % >> q = cubSobol_g(f,hyperbox,'uniform',1e-3,1e-2); exactsol = (sqrt(pi)/2*(erf(2)+erf(1)))^2;
-% >> check = abs(exactsol-q) < max(1e-3,1e-2*abs(exactsol))
+% >> check = double(abs(exactsol-q) < max(1e-3,1e-2*abs(exactsol)))
 % check = 1
 %
 %
@@ -207,7 +207,7 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 % 
 % >> f = @(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); hyperbox = [-inf(1,1);inf(1,1)];
 % >> q = cubSobol_g(f,hyperbox,'normal',1e-4,1e-2); price = normcdf(0.05)*100 - 0.5*100*exp(-0.05^2/2);
-% >> check = abs(price-q) < max(1e-4,1e-2*abs(price))
+% >> check = double(abs(price-q) < max(1e-4,1e-2*abs(price)))
 % check = 1
 %
 %
@@ -217,7 +217,7 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 % 
 % >> f = @(x) 8*prod(x,2); hyperbox = [zeros(1,5);ones(1,5)];
 % >> q = cubSobol_g(f,hyperbox,'uniform',1e-5,0); exactsol = 1/4;
-% >> check = abs(exactsol-q) < 1e-5
+% >> check = double(abs(exactsol-q) < 1e-5)
 % check = 1
 %
 %
@@ -227,7 +227,7 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 % 
 % >> f = @(x) x(:,1).^2+x(:,2).^2; hyperbox = [0,0,1];
 % >> q = cubSobol_g(f,hyperbox,'uniform ball','abstol',1e-4,'reltol',0); exactsol = pi/2;
-% >> check = abs(exactsol-q) < 1e-4
+% >> check = double(abs(exactsol-q) < 1e-4)
 % check = 1
 %
 %
@@ -235,10 +235,17 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 % Estimate the integral with integrand f(x) = 10*x1-5*x2^2+x3^3 in the interval [0,2)^3 
 % with pure absolute error 1e-6 using two control variates h1(x) = x1 and h2(x) = x2^2.
 % 
+<<<<<<< HEAD
 % >> w.func = @(x)[10*x(:,1)-5*x(:,2).^2+1*x(:,3).^3, x(:,1), x(:,2).^2];
 % >> w.cv = [8,32/3]; hyperbox= [zeros(1,3);2*ones(1,3)];
 % >> q = cubSobol_g(w,hyperbox,'uniform',1e-6,0); exactsol = 128/3; 
 % >> check = abs(exactsol-q) < 1e-6
+=======
+% >> g.func = @(x) [10*x(:,1)-5*x(:,2).^2+1*x(:,3).^3, x(:,1), x(:,2).^2];
+% >> g.cv = [8,32/3]; hyperbox= [zeros(1,3);2*ones(1,3)];
+% >> q = cubSobol_g(g,hyperbox,'uniform',1e-6,0); exactsol = 128/3; 
+% >> check = double(abs(exactsol-q) < 1e-6)
+>>>>>>> develop
 % check = 1
 %
 %
