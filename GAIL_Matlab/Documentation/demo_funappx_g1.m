@@ -28,7 +28,7 @@ h_legend=legend('$f(x)$', '$q(x)$');
 set(h_legend,'interpreter','latex');
 axis tight
 
-%% Plot of the apprroximation errors
+%% Plot of the approximation errors
 % The following plot shows that all pointwise absolute errors are less than
 % the default tolerance of \(10^{-6}\).
 figure;
@@ -105,7 +105,7 @@ max_abs_error = max(abs(f(x)-fappx(x)))
 
 %% References
 %
-% [1] Sou-Cheng T. Choi, Yuhan Ding, Fred J.Hickernell, Xin Tong, "Local
+% [1] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Xin Tong, "Local
 %     Adaption for Approximation and Minimization of Univariate Functions,"
 %     _Journal of Complexity_ 40, pp. 17-33, 2017.
 %

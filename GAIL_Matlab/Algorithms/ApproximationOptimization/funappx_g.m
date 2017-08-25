@@ -97,7 +97,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %
 %   Guarantee
 %
-%   Plese check the details of the guarantee in [1].
+%   Please check the details of the guarantee in [1].
 %
 %
 %   Examples
@@ -168,7 +168,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %
 %  References
 %
-%   [1] Sou-Cheng T. Choi, Yuhan Ding, Fred J.Hickernell, Xin Tong, "Local
+%   [1] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Xin Tong, "Local
 %   Adaption for Approximation and Minimization of Univariate Functions,"
 %   Journal of Complexity 40, pp. 17-33, 2017.
 %

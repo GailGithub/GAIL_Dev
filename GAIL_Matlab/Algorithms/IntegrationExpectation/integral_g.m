@@ -38,7 +38,7 @@ function [q,out_param] = integral_g(varargin)
 %     in_param.abstol --- guaranteed absolute error tolerance, default value
 %     is 1e-6
 %
-%  Opitional Input Arguments (Recommended not to change very often)
+%  Optional  Input Arguments (Recommended not to change very often)
 %
 %     in_param.nlo --- lowest initial number of function values used, default
 %     value is 10
@@ -95,7 +95,7 @@ function [q,out_param] = integral_g(varargin)
 %
 %  Guarantee
 %
-%  Plese check the details of the guarantee in [1].
+%  Please check the details of the guarantee in [1].
 %
 %
 %  Examples

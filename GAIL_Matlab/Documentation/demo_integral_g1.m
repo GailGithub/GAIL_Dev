@@ -46,7 +46,7 @@ MATquadspiky = quad(spikyfun,a,b,abstol)
 MATgailspiky = integral_g(spikyfun,a,b,abstol)
 
 
-%% Compute apprroximation errors
+%% Compute approximation errors
 % The true integral value of the spiky function is \(16/35\). The following
 % code computes absolute errors from the above approximation methods. Only
 % *integral_g* achieves the required accuracy with respect to the absolute

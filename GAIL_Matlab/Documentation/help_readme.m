@@ -40,7 +40,7 @@
 % Integration Library (Version 2.2) [MATLAB Software], 2017. Available
 % from http://gailgithub.github.io/GAIL_Dev/
 %
-% Sou-Cheng T. Choi, Yuhan Ding, Fred J.Hickernell, Xin Tong, "Local
+% Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Xin Tong, "Local
 % Adaption for Approximation and Minimization of Univariate Functions,"
 % Journal of Complexity 40, pp. 17-33, 2017.
 % (describes *funappx_g.m* and *funmin_g.m*)
@@ -75,7 +75,7 @@
 % (describes *cubSobol_g.m*)
 %
 % Fred J. Hickernell, Lluis Antoni Jimenez Rugama a, and D. Li, "Adaptive
-% quasi-{M}onte {C}arlo methods, 2017+, submitted for publication,
+% quasi-Monte Carlo methods, 2017+, submitted for publication,
 % arXiv:1702.01491 [math.NA].
 %
 % Fred J. Hickernell, Martha Razo, and Sunny Yun, "Reliable Adaptive
@@ -83,7 +83,7 @@
 % (describes *integral_g.m*)
 %
 % Lan Jiang, Guaranteed Adaptive Monte Carlo Methods for Estimating
-% Means of Random Variables, Ph.D Thesis, Illinois Institute of
+% Means of Random Variables, PhD Thesis, Illinois Institute of
 % Technology, 2016.
 % (describes *meanMC_g.m* and *cubMC_g.m*)
 %
@@ -99,7 +99,7 @@
 % Frank Loffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr,
 % James Hetherington, James Howison, Shel Swenson, Gabrielle D. Allen,
 % Anne C. Elster, Bruce Berriman, Colin Venters, "Summary of the First
-% Workshop On Sustainable Software for Science: Practice And Experiences
+% Workshop On Sustainable Software for Science: Practice and Experiences
 % (WSSSPE1)," Journal of Open Research Software, Volume 2, Number 1, e6,
 % pp. 1-21, 2014.
 % (discusses practice and challenges in Sustainable Software for Science)
@@ -107,6 +107,11 @@
 % Da Li, "Reliable Quasi-Monte Carlo with Control Variates," Master's thesis,
 % Illinois Institute of Technology, 2016.
 % (describes *cubSobol_g.m* for control variates)
+%
+% Arfon M. Smith, Daniel S. Katz, Kyle E. Niemeyer, and FORCE11 Software
+% Citation Working Group, "Software citation principles," PeerJ Computer
+% Science, Volume 2, e86, 2016. 
+% (motivates research software citation)
 %
 % Xin Tong, "A Guaranteed, Adaptive, Automatic Algorithm for Univariate
 % Function Minimization," MS thesis, Illinois Institute of Technology, 2014.
@@ -142,25 +147,25 @@
 %
 %
 % GAIL version 2.2 includes the following eight algorithms:
-% 
+%
 % 1.  *funappx_g*: One-dimensional function approximation on bounded interval
-% 
+%
 % 2.  *funmin_g*: global minimum value of univariate function on a closed interval
-% 
+%
 % 3.  *integral_g*: One-dimensional integration on bounded interval
-% 
+%
 % 4.  *meanMC_g*: Monte Carlo method for estimating mean of a random variable
-% 
+%
 % 5.  *cubMC_g*: Monte Carlo method for numerical multiple integration
-% 
+%
 % 6.  *cubSobol_g*: Quasi-Monte Carlo method using Sobol' cubature for d-dimensional integration
-% 
+%
 % 7.  *cubLattice_g*: Quasi-Monte Carlo method using rank-1 Lattices cubature for d-dimensional integration
-% 
+%
 % 8.  *meanMC_CLT*: Monte Carlo method with Central Limit Theorem (CLT) confidence intervals for estimating mean of a random variable
-% 
+%
 % 9.  *cubMC_CLT*: Monte Carlo method with Central Limit Theorem (CLT) confidence intervals for numerical multiple integration
-% 
+%
 %% Installation Instruction
 %
 %
@@ -226,4 +231,3 @@
 % Scientific Computing Research, Office of Science, U.S. Department of
 % Energy, under contract DE-AC02-06CH11357.
 %
-

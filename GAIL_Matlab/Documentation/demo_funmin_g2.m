@@ -20,7 +20,7 @@ b = 1.5;
 
 %% Plot of the function and minima
 % We plot \(f(x)\) and the global minimum value  returned
-% by *funmin_g* and and a local minimum by *fminbnd* below:
+% by *funmin_g* and a local minimum by *fminbnd* below:
 figure;
 x = a:1e-6:b;
 fminvec = fmin.*ones(size(x));
@@ -33,7 +33,7 @@ set(h_legend,'interpreter','latex');
 
 %% References
 %
-% [1] Sou-Cheng T. Choi, Yuhan Ding, Fred J.Hickernell, Xin Tong, "Local
+% [1] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Xin Tong, "Local
 %     Adaption for Approximation and Minimization of Univariate Functions,"
 %     _Journal of Complexity_ 40, pp. 17-33, 2017.
 %

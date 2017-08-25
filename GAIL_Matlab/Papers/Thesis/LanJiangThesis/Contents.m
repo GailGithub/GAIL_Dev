@@ -58,8 +58,8 @@
 %   and within the region defined by box.
 %
 %   MVNPexact - This function computes the true solution of multivariate
-%   normal probability when the coveriance matrix is in a special form:
-%   diagnal is 1 and off diagnal are all  same.
+%   normal probability when the covariance matrix is in a special form:
+%   diagonal is 1 and off diagonal elements are all the same.
 %
 %   choosetestfun - The function chooses and sets up a test function from
 %   the parameters input by the user and contained in the structures.

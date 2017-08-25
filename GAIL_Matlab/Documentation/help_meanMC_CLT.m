@@ -66,7 +66,7 @@
 % *Example 1*
 
 % Estimate the integral with integrand f(x) = x1.*x2 in the interval
-% [0,1)^2 with absolute tolerance 1e-3 and relative tolerence 0:
+% [0,1)^2 with absolute tolerance 1e-3 and relative tolerance 0:
 
   [mu,out] = meanMC_CLT(@(n) rand(n,1).^2, 0.001);
   exact = 1/3;

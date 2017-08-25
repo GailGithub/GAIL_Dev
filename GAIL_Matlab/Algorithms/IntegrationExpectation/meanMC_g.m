@@ -133,7 +133,7 @@ function [tmu,out_param]=meanMC_g(varargin)
 %
 % >> in_param.reltol=0; in_param.abstol = 1e-3;
 % >> in_param.alpha = 0.05; Yrand=@(n) rand(n,1).^2;
-% >> tmu=meanMC_g(Yrand,in_param);exactsol = 1/3;
+% >> tmu=meanMC_g(Yrand,in_param); exactsol  = 1/3;
 % >> check = double(abs(exactsol-tmu) < 1e-3)
 % check = 1
 %
@@ -142,7 +142,7 @@ function [tmu,out_param]=meanMC_g(varargin)
 % Calculate the mean of exp(x) when x is uniformly distributed in
 % [0 1], with the absolute error tolerance 1e-3.
 %
-% >> tmu=meanMC_g(@(n)exp(rand(n,1)),1e-3,0);exactsol=exp(1)-1;
+% >> tmu=meanMC_g(@(n)exp(rand(n,1)),1e-3,0); exactsol =exp(1)-1;
 % >> check = double(abs(exactsol-tmu) < 1e-3)
 % check = 1
 %
@@ -161,7 +161,7 @@ function [tmu,out_param]=meanMC_g(varargin)
 %
 %  References
 %
-%   [1]  F. J. Hickernell, L. Jiang, Y. Liu, and A. B. Owen, "Guaranteed
+%   [1] Fred J. Hickernell, Lan Jiang, Yuewei Liu, and Art B. Owen, "Guaranteed
 %   conservative fixed width confidence intervals via Monte Carlo
 %   sampling," Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F.
 %   Y. Kuo, G. W. Peters, and I. H. Sloan, eds.), pp. 105-128,
@@ -186,7 +186,7 @@ function [tmu,out_param]=meanMC_g(varargin)
 %   Frank Loffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr,
 %   James Hetherington, James Howison, Shel Swenson, Gabrielle D. Allen,
 %   Anne C. Elster, Bruce Berriman, Colin Venters, "Summary of the First
-%   Workshop On Sustainable Software for Science: Practice And Experiences
+%   Workshop On Sustainable Software for Science: Practice and Experiences
 %   (WSSSPE1)," Journal of Open Research Software, Volume 2, Number 1, e6,
 %   pp. 1-21, 2014.
 %
@@ -194,7 +194,7 @@ function [tmu,out_param]=meanMC_g(varargin)
 %   Statistics. London, UK: CHAPMAN & HALL
 %
 %   [7] Lan Jiang, Guaranteed Adaptive Monte Carlo Methods for Estimating
-%   Means of Random Variables, Ph.D Thesis, Illinois Institute of
+%   Means of Random Variables, PhD Thesis, Illinois Institute of
 %   Technology, 2016.
 %
 %   If you find GAIL helpful in your work, please support us by citing the

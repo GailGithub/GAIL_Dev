@@ -2,7 +2,7 @@ Guaranteed Automatic Integration Library (GAIL)
 -----------------------------------------------
 GAIL Version 2.2, 2017.
 
-See LICENSE.m for copyright and disclaimer. Refer to ReleaseNotes.m for 
+See LICENSE.m for copyright and disclaimer. Refer to ReleaseNotes.m for
 what is new in this version.
 
 GAIL is a suite of algorithms for integration problems in one and many
@@ -29,19 +29,19 @@ Software, Fall 2013.
 
 Please cite the following software, papers, and materials:
 
-Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible Research via 
-Supportable Scientific Software," Journal of Open Research Software, Volume 2, 
+Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible Research via
+Supportable Scientific Software," Journal of Open Research Software, Volume 2,
 Number 1, e22, pp. 1-7, 2014.
-(describes principles of Reliable Reproducible Research and Supportable 
+(describes principles of Reliable Reproducible Research and Supportable
 Scientific Software)
 
 Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
-Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang, and Xuan Zhou, GAIL: 
+Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang, and Xuan Zhou, GAIL:
 Guaranteed Automatic Integration Library (Version 2.2) [MATLAB Software],
 2017. Available from http://gailgithub.github.io/GAIL_Dev/
 (this software)
 
-Sou-Cheng T. Choi, Yuhan Ding, Fred J.Hickernell, Xin Tong, "Local
+Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Xin Tong, "Local
 Adaption for Approximation and Minimization of Univariate Functions,"
 Journal of Complexity 40, pp. 17-33, 2017.
 (describes funappx_g.m and funmin_g.m)
@@ -49,7 +49,7 @@ Journal of Complexity 40, pp. 17-33, 2017.
 Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable Mathematical
 Software" [Course Slides], Illinois Institute of Technology, Chicago, IL, 2013.
 Available from http://gailgithub.github.io/GAIL_Dev/
-(develops practices of Reliable Reproducible Research and Supportable 
+(develops practices of Reliable Reproducible Research and Supportable
 Scientific Software)
 
 Nicholas Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
@@ -57,8 +57,8 @@ Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic Algorithms:
 Cones, Not Balls," Journal of Complexity 30, pp. 21-45, 2014.
 (describes deprecated integralPenalty_g.m and deprecated funappxtau_g.m)
 
-Yuhan Ding, "Guaranteed Adaptive Univariate Function Approximation," PhD 
-thesis, Illinois Institute of Technology, 2015. 
+Yuhan Ding, "Guaranteed Adaptive Univariate Function Approximation," PhD
+thesis, Illinois Institute of Technology, 2015.
 (describes deprecated funappxPenalty_g.m)
 
 Fred J. Hickernell, Lan Jiang, Yuewei Liu, and Art B. Owen,
@@ -68,15 +68,15 @@ Carlo sampling," Monte Carlo and Quasi-Monte Carlo Methods 2012
 Springer-Verlag, Berlin, pp. 105-128, 2014.
 (describes meanMC_g.m and cubMC_g.m)
 
-Fred J. Hickernell and Lluis Antoni Jimenez Rugama, "Reliable adaptive 
-cubature using digital sequences", Monte Carlo and Quasi-Monte Carlo 
-Methods: MCQMC, Leuven, Belgium, April 2014 (R. Cools and D. Nuyens, eds.), 
-Springer Proceedings in Mathematics and Statistics, vol. 163, 
+Fred J. Hickernell and Lluis Antoni Jimenez Rugama, "Reliable adaptive
+cubature using digital sequences", Monte Carlo and Quasi-Monte Carlo
+Methods: MCQMC, Leuven, Belgium, April 2014 (R. Cools and D. Nuyens, eds.),
+Springer Proceedings in Mathematics and Statistics, vol. 163,
 Springer-Verlag, Berlin, 2016, arXiv:1410.8615 [math.NA], pp. 367-383.
 (describes cubSobol_g.m)
 
-Fred J. Hickernell, Lluis Antoni Jimenez Rugama a, and D. Li,"Adaptive 
-quasi-{M}onte {C}arlo methods, 2017+, submitted for publication, 
+Fred J. Hickernell, Lluis Antoni Jimenez Rugama a, and D. Li,"Adaptive
+quasi-Monte Carlo methods, 2017+, submitted for publication, 
 arXiv:1702.01491 [math.NA].
 
 Fred J. Hickernell, Martha Razo, and Sunny Yun, "Reliable Adaptive
@@ -84,14 +84,14 @@ Numerical Integration", 2015+, working.
 (describes integral_g.m)
 
 Lan Jiang, Guaranteed Adaptive Monte Carlo Methods for Estimating
-Means of Random Variables, Ph.D Thesis, Illinois Institute of
+Means of Random Variables, PhD Thesis, Illinois Institute of
 Technology, 2016.
 (describes meanMC_g.m and cubMC_g.m)
 
 Lluis Antoni Jimenez Rugama and Fred J. Hickernell, "Adaptive
-multidimensional integration based on rank-1 lattices," Monte Carlo 
-and Quasi-Monte Carlo  Methods: MCQMC, Leuven, Belgium, April 2014 
-(R. Cools and D. Nuyens, eds.), Springer Proceedings in Mathematics 
+multidimensional integration based on rank-1 lattices," Monte Carlo
+and Quasi-Monte Carlo  Methods: MCQMC, Leuven, Belgium, April 2014
+(R. Cools and D. Nuyens, eds.), Springer Proceedings in Mathematics
 and Statistics, vol. 163, Springer-Verlag, Berlin, 2016, arXiv:1411.1966,
 pp. 407-422.
 (describes cubLattice_g.m)
@@ -100,17 +100,22 @@ Daniel S. Katz, Sou-Cheng T. Choi, Hilmar Lapp, Ketan Maheshwari,
 Frank Loffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr,
 James Hetherington, James Howison, Shel Swenson, Gabrielle D. Allen,
 Anne C. Elster, Bruce Berriman, Colin Venters, "Summary of the First
-Workshop On Sustainable Software for Science: Practice And Experiences
+Workshop On Sustainable Software for Science: Practice and Experiences
 (WSSSPE1)," Journal of Open Research Software, Volume 2, Number 1, e6,
 pp. 1-21, 2014.
 (discusses practice and challenges in Sustainable Software for Science)
 
-Da Li, "Reliable Quasi-Monte Carlo with Control Variates," Master's thesis, 
-Illinois Institute of Technology, 2016. 
+Da Li, "Reliable Quasi-Monte Carlo with Control Variates," Master's thesis,
+Illinois Institute of Technology, 2016.
 (describes cubSobol_g.m for control variates)
 
-Xin Tong, "A Guaranteed, Adaptive, Automatic Algorithm for Univariate 
-Function Minimization," MS thesis, Illinois Institute of Technology, 2014. 
+Arfon M. Smith, Daniel S. Katz, Kyle E. Niemeyer, and FORCE11 Software
+Citation Working Group, "Software citation principles," PeerJ Computer
+Science, Volume 2, e86, 2016. 
+(motivates research software citation)
+
+Xin Tong, "A Guaranteed, Adaptive, Automatic Algorithm for Univariate
+Function Minimization," MS thesis, Illinois Institute of Technology, 2014.
 (describes deprecated funmin01_g.m)
 
 Downloads
@@ -155,7 +160,7 @@ GAIL version 2.2 includes the following eight algorithms:
 7.  cubLattice_g: Quasi-Monte Carlo method using rank-1 Lattices cubature for d-dimensional integration
 
 8.  meanMC_CLT: Monte Carlo method with Central Limit Theorem (CLT) confidence intervals for estimating mean of a random variable
- 
+
 9.  cubMC_CLT: Monte Carlo method with Central Limit Theorem (CLT) confidence intervals for numerical multiple integration
 
 

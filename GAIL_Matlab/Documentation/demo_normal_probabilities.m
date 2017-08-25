@@ -64,7 +64,7 @@ disp(['Real error is ' ...
 
 %% Second test: \(\Sigma=0.4I_d + 0.6\bf{1}\bf{1}^T\)
 % For this second example, we consider \(\Sigma=0.4I_d + 0.6\bf{1}\bf{1}^T\)
-% (\(1\) on the diagonal, \(0.6\) off the diagional),
+% (\(1\) on the diagonal, \(0.6\) off the diagonal),
 % \(\bf{a}=(-\infty,\dots,-\infty)\), and \(\bf{b}=\sqrt{d}(U_1,\dots,U_d)\)
 % (\(\bf{b}\) is chosen randomly). The solution for this integral is known
 % too so we can verify the real error:
@@ -169,11 +169,11 @@ end
 
 function MVNPfunvalfinal = MVNPexact(t,b,sig)
 % MVNPexact calculates the true solution of multivariate normal probability
-% when the coveriance matrix is in a special form: diagnal is 1 and off
-% diagnal are all same.
+% when the covariance matrix is in a special form: diagonal is 1 and off
+% diagonal elements are all the same.
 %
-% b   - the upper limits of the integal with size 1 x d
-% sig - the off diagnal element
+% b   - the upper limits of the integral with size 1 x d
+% sig - the off diagonal element
 % dim - the dimension of the integral
 % t   - the variable
 MVNPfunval = (gail.stdnormcdf((b(1)+sqrt(sig)*t)/sqrt(1-sig)));
@@ -211,5 +211,5 @@ end
 %     from http://gailgithub.github.io/GAIL_Dev/
 %
 % [4] Lan Jiang, Guaranteed Adaptive Monte Carlo Methods for Estimating
-%     Means of Random Variables, Ph.D Thesis, Illinois Institute of
+%     Means of Random Variables, PhD Thesis, Illinois Institute of
 %     Technology, 2016.

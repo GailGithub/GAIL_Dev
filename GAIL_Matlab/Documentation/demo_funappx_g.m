@@ -5,7 +5,7 @@
 % </html>
 %
 % <html>
-% <a href="demo_funappx_g1.html">Approximating a highly fluctating curve</a>
+% <a href="demo_funappx_g1.html">Approximating a highly fluctuating curve</a>
 % </html>
 % 
 

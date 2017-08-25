@@ -155,7 +155,7 @@
 #
 #  References
 #
-#   [1]  F. J. Hickernell, L. Jiang, Y. Liu, and A. B. Owen, "Guaranteed
+#   [1] Fred J. Hickernell, Lan Jiang, Yuewei Liu, and Art B. Owen, "Guaranteed
 #   conservative fixed width confidence intervals via Monte Carlo
 #   sampling," Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F.
 #   Y. Kuo, G. W. Peters, and I. H. Sloan, eds.), Springer-Verlag, Berlin,
@@ -179,7 +179,7 @@
 #   Frank Loffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr,
 #   James Hetherington, James Howison, Shel Swenson, Gabrielle D. Allen,
 #   Anne C. Elster, Bruce Berriman, Colin Venters, "Summary of the First
-#   Workshop On Sustainable Software for Science: Practice And Experiences
+#   Workshop On Sustainable Software for Science: Practice and Experiences
 #   (WSSSPE1)," Journal of Open Research Software, Volume 2, Number 1, e6,
 #   pp. 1-21, 2014.
 #
