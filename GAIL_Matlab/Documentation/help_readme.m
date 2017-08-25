@@ -104,6 +104,24 @@
 % pp. 1-21, 2014.
 % (discusses practice and challenges in Sustainable Software for Science)
 %
+% Daniel S. Katz, Sou-Cheng T. Choi, Nancy Wilkins-Diehr, Neil Chue Hong,
+% Colin C. Venters, James Howison, Frank J. Seinstra, Matthew Jones, Karen
+% Cranston, Thomas L. Clune,  Miguel de Val-Borro, and Richard Littauer,
+% "Report on the Second Workshop on Sustainable Software for Science:
+% Practice and Experiences (WSSSPE2)," Journal of Open Research Software,
+% Volume 4, Number 1, e7, 2016.
+% (discusses practice and challenges in Sustainable Software for Science)
+%
+% Daniel S. Katz, Sou{-}Cheng T. Choi, Kyle E. Niemeyer, James
+% Hetherington, Frank L{offler, Dan Gunter, Ray Idaszak, Steven R. Brandt,
+% Mark A. Miller, Sandra Gesing, Nick D. Jones, Nic Weber, Suresh Marru,
+% Gabrielle Allen, Birgit Penzenstadler, Colin C. Venters, Ethan Davis,
+% Lorraine Hwang, Ilian Todorov, Abani Patra, and Miguel de Val-Borro,
+% "Report on the Third Workshop on Sustainable Software for Science:
+% Practice and Experiences (WSSSPE3)," Journal of Open Research Software,
+% Volume 4, Number 1, e37, 2016.
+% (discusses practice and challenges in Sustainable Software for Science)
+%
 % Da Li, "Reliable Quasi-Monte Carlo with Control Variates," Master's thesis,
 % Illinois Institute of Technology, 2016.
 % (describes *cubSobol_g.m* for control variates)
