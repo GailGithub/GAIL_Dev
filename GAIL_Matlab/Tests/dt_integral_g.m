@@ -1,5 +1,5 @@
 function dt_integral_g()
-%DT_INTEGRAL_G fast doctest for integral_g
+%DT_integral_g small doctest for integral_g
 %
 %   >> f = @(x) exp(-(x-1).^2); q = integral_g(f,'a',1,'b',2,'nlo',100,'nhi',10000,'abstol',1e-5,'nmax',1e7)
 %   q = 0.7468

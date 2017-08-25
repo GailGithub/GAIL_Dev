@@ -1,4 +1,4 @@
-%UT_MEANMCABS_G fast unit test for meanMCabs_g
+%UT_MEANMCabs_G  unit test for meanMCabs_g
 classdef ut_meanMCabs_g < matlab.unittest.TestCase
   
   methods(Test)

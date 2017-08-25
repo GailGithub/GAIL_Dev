@@ -1,4 +1,4 @@
-%UT_WORKOUT_INTEGRAL_G unit test for workout_integral_g
+%ut_workout_integral_g unit test for workout_integral_g
 classdef ut_workout_integral_g < matlab.unittest.TestCase
 
   methods(Test)

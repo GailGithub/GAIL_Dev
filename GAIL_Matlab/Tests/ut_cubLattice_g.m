@@ -1,4 +1,4 @@
-%UT_CUBLATTICE_G fast unit tests for cubLattice_g
+%ut_cubLattice_g  unit test for cubLattice_g
 classdef ut_cubLattice_g < matlab.unittest.TestCase
   
   methods(Test)

@@ -1,4 +1,4 @@
-%UT_INTEGRAL01_G fast unit tests for integral01_g
+%UT_INTEGRAL01_G unit test for integral01_g
 classdef ut_integral01_g < matlab.unittest.TestCase    
     methods (Test)
         

@@ -1,4 +1,4 @@
-%UT_CUBMCABS_G fast unit test for cubMCabs_g
+%UT_CUBMCabs_G  unit test for cubMCabs_g
 classdef ut_cubMCabs_g < matlab.unittest.TestCase
   
   methods(Test)

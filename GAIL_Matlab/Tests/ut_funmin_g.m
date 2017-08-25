@@ -1,4 +1,4 @@
-%UT_FUNMIN_G fast unit tests for funmin_g
+%UT_FUNMIN_G unit test for funmin_g
 classdef ut_funmin_g < matlab.unittest.TestCase
     
     methods(Test)

@@ -1,4 +1,4 @@
-%UT_CUBSOBOL_G fast unit tests for cubSobol_g
+%ut_cubSobol_g  unit test for cubSobol_g
 classdef ut_cubSobol_g < matlab.unittest.TestCase
   
   methods(Test)

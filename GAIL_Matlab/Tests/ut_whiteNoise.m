@@ -48,4 +48,3 @@ classdef ut_whiteNoise < matlab.unittest.TestCase
    
   end
 end
-
