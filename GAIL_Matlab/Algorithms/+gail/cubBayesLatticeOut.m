@@ -9,11 +9,10 @@ classdef cubBayesLatticeOut < gail.cubBayesLatticeParam & gail.outParam
    % >> cubBayesLatticeOutObj.mu = 1.467; %integral value is recorded
    % >> cubBayesLatticeOutObj.nSample = 31415926; %sample size is recorded
    % >> cubBayesLatticeOutObj.time = 0.0278 %time of computation is recorded
-   % cubBayesLatticeOutObj =
-   %   cubBayesLatticeOut with properties:
+   % cubBayesLatticeOutObj = ***
    %
    %              f: @(x)sum(x.^2,2)
-   %         domain: [2×1 double]
+   %         domain: [2***1 double]
    %    measureType: 'uniform'
    %        measure: 'uniform'
    %         absTol: 0.0100

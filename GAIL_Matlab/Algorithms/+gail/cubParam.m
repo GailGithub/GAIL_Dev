@@ -6,11 +6,10 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
    %
    % Example 1. Construct a cubParam object with default parameters
    % >> cubParamObj = gail.cubParam
-   % cubParamObj =
-   %   cubParam with properties:
+   % cubParamObj = ***
    %
    %           f: @(x)sum(x.^2,2)
-   %      domain: [2×1 double]
+   %      domain: [2***1 double]
    % measureType: 'uniform'
    %     measure: 'uniform'
    %      absTol: 0.0100
@@ -19,11 +18,10 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
    %
    % Example 2. Construct a cubParam object with properly ordered inputs
    % >> cubParamObj = gail.cubParam(@(x) sum(x.^3.2),[0 0; 2 2],'box','Lebesgue')
-   % cubParamObj =
-   %   cubParam with properties:
+   % cubParamObj = ***
    %
    %              f: @(x)sum(x.^3.2)
-   %         domain: [2×2 double]
+   %         domain: [2***2 double]
    %    measureType: 'uniform'
    %        measure: 'Lebesgue'
    %         absTol: 0.0100
@@ -32,11 +30,10 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
    %
    % Example 3. Using name/value pairs
    % >> cubParamObj = gail.cubParam('domain', [-Inf -Inf; Inf Inf], 'f', @(x) sum(x.^3.2), 'relTol', 0.1, 'measure', 'Gaussian')
-   % cubParamObj =
-   %   cubParam with properties:
+   % cubParamObj = ***
    %
    %              f: @(x)sum(x.^3.2)
-   %         domain: [2×2 double]
+   %         domain: [2***2 double]
    %    measureType: 'uniform'
    %        measure: 'normal'
    %         absTol: 0.0100
@@ -48,11 +45,10 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
    % >> inpStruct.domain = [zeros(1,4); ones(1,4)];
    % >> inpStruct.nInit = 2048;
    % >> cubParamObj = gail.cubParam(inpStruct)
-   % cubParamObj =
-   %   cubParam with properties:
+   % cubParamObj = ***
    %
    %              f: @(x)sin(sum(x,2))
-   %         domain: [2×4 double]
+   %         domain: [2***4 double]
    %    measureType: 'uniform'
    %        measure: 'uniform'
    %         absTol: 0.0100
@@ -62,11 +58,10 @@ classdef cubParam < handle & matlab.mixin.CustomDisplay
    %
    % Example 5. Copying a cubParam object and changing some properties
    % >> NewCubParamObj = gail.cubParam(cubParamObj,'measure','Lebesgue')
-   % NewCubParamObj =
-   %   cubParam with properties:
+   % NewCubParamObj = ***
    %
    %              f: @(x)sin(sum(x,2))
-   %         domain: [2×4 double]
+   %         domain: [2***4 double]
    %    measureType: 'uniform'
    %        measure: 'Lebesgue'
    %         absTol: 0.0100

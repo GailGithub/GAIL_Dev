@@ -6,11 +6,10 @@ classdef cubBayesLatticeParam < gail.cubLatticeParam
    %
    % Example 1. Construct a cubParam object with default parameters
    % >> cubBayesLatticeParamObj = gail.cubBayesLatticeParam
-   % cubBayesLatticeParamObj =
-   %   cubBayesLatticeParam with properties:
+   % cubBayesLatticeParamObj = ***
    %
    %              f: @(x)sum(x.^2,2)
-   %         domain: [2×1 double]
+   %         domain: [2***1 double]
    %    measureType: 'uniform'
    %        measure: 'uniform'
    %         absTol: 0.0100
@@ -19,11 +18,10 @@ classdef cubBayesLatticeParam < gail.cubLatticeParam
    %
    % Example 2. Construct a cubParam object with properly ordered inputs
    % >> cubBayesLatticeParamObj = gail.cubBayesLatticeParam(@(x) sum(x.^3.2),[0 0; 2 2])
-   % cubBayesLatticeParamObj =
-   %   cubBayesLatticeParam with properties:
+   % cubBayesLatticeParamObj = ***
    %
    %              f: @(x)sum(x.^3.2)
-   %         domain: [2×2 double]
+   %         domain: [2***2 double]
    %    measureType: 'uniform'
    %        measure: 'uniform'
    %         absTol: 0.0100
@@ -32,11 +30,10 @@ classdef cubBayesLatticeParam < gail.cubLatticeParam
    %
    % Example 3. Using name/value pairs
    % >> cubBayesLatticeParamObj = gail.cubBayesLatticeParam('domain', [0 0; 1 1], 'f', @(x) sum(x.^3.2), 'relTol', 0.1,'kerName','Ber4')
-   % cubBayesLatticeParamObj =
-   %   cubBayesLatticeParam with properties:
+   % cubBayesLatticeParamObj = ***
    %
    %              f: @(x)sum(x.^3.2)
-   %         domain: [2×2 double]
+   %         domain: [2***2 double]
    %    measureType: 'uniform'
    %        measure: 'uniform'
    %         absTol: 0.0100
@@ -49,11 +46,10 @@ classdef cubBayesLatticeParam < gail.cubLatticeParam
    % >> inpStruct.domain = [zeros(1,4); ones(1,4)];
    % >> inpStruct.kerName = 'Ber4';
    % >> cubBayesLatticeParamObj = gail.cubBayesLatticeParam(inpStruct)
-   % cubBayesLatticeParamObj =
-   %   cubBayesLatticeParam with properties:
+   % cubBayesLatticeParamObj = ***
    %
    %              f: @(x)sin(sum(x,2))
-   %         domain: [2×4 double]
+   %         domain: [2***4 double]
    %    measureType: 'uniform'
    %        measure: 'uniform'
    %         absTol: 0.0100
@@ -63,11 +59,10 @@ classdef cubBayesLatticeParam < gail.cubLatticeParam
    %
    % Example 5. Copying a cubParam object and changing some properties
    % >> NewCubBayesLatticeParamObj = gail.cubBayesLatticeParam(cubBayesLatticeParamObj,'GPMean',0)
-   % NewCubBayesLatticeParamObj =
-   %   cubBayesLatticeParam with properties:
+   % NewCubBayesLatticeParamObj = ***
    %
    %              f: @(x)sin(sum(x,2))
-   %         domain: [2×4 double]
+   %         domain: [2***4 double]
    %    measureType: 'uniform'
    %        measure: 'uniform'
    %         absTol: 0.0100

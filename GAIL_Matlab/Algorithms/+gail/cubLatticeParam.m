@@ -6,11 +6,10 @@ classdef cubLatticeParam < gail.cubParam
    %
    % Example 1. Construct a cubParam object with default parameters
    % >> cubLatticeParamObj = gail.cubLatticeParam
-   % cubLatticeParamObj =
-   %   cubLatticeParam with properties:
+   % cubLatticeParamObj = ***
    %
    %              f: @(x)sum(x.^2,2)
-   %         domain: [2×1 double]
+   %         domain: [2***1 double]
    %    measureType: 'uniform'
    %        measure: 'uniform'
    %         absTol: 0.0100
@@ -19,11 +18,10 @@ classdef cubLatticeParam < gail.cubParam
    %
    % Example 2. Using name/value pairs
    % >> cubLatticeParamObj = gail.cubLatticeParam('domain', [-2 -2; 2 2], 'f', @(x) sum(x.^3.2), 'relTol', 0.1, 'isShift', false)
-   % cubLatticeParamObj =
-   %   cubLatticeParam with properties:
+   % cubLatticeParamObj = ***
    %
    %              f: @(x)sum(x.^3.2)
-   %         domain: [2×2 double]
+   %         domain: [2***2 double]
    %    measureType: 'uniform'
    %        measure: 'uniform'
    %         absTol: 0.0100
@@ -36,11 +34,10 @@ classdef cubLatticeParam < gail.cubParam
    % >> inpStruct.domain = [zeros(1,4); ones(1,4)];
    % >> inpStruct.isShift = false;
    % >> cubLatticeParamObj = gail.cubLatticeParam(inpStruct)
-   % cubLatticeParamObj =
-   %   cubLatticeParam with properties:
+   % cubLatticeParamObj = ***
    %
    %              f: @(x)sin(sum(x,2))
-   %         domain: [2×4 double]
+   %         domain: [2***4 double]
    %    measureType: 'uniform'
    %        measure: 'uniform'
    %         absTol: 0.0100
@@ -50,11 +47,10 @@ classdef cubLatticeParam < gail.cubParam
    %
    % Example 4. Copying a cubParam object and changing some properties
    % >> NewCubLatticeParamObj = gail.cubLatticeParam(cubLatticeParamObj,'measure','Lebesgue')
-   % NewCubLatticeParamObj =
-   %   cubLatticeParam with properties:
+   % NewCubLatticeParamObj = ***
    %
    %              f: @(x)sin(sum(x,2))
-   %         domain: [2×4 double]
+   %         domain: [2***4 double]
    %    measureType: 'uniform'
    %        measure: 'Lebesgue'
    %         absTol: 0.0100

@@ -4,79 +4,72 @@ classdef fParam < handle & matlab.mixin.CustomDisplay
    %   This class contains the function, its domain, etc.
    %
    % Example 1.  Default values
-   % >> fParamObj = gail.fParam 
-   % fParamObj = 
-   %   fParam with properties:
-   % 
+   % >> fParamObj = gail.fParam
+   % fParamObj = ***
+   %
    %              f: @(x)sum(x.^2,2)
-   %         domain: [2×1 double]
+   %         domain: [2***1 double]
    %
    %
    % Example 2. Function on 2-D unit cube
    % >> fParamObj = gail.fParam(@(x) sum(x.^3.2),[0 0; 1 1])
-   % fParamObj = 
-   %   fParam with properties:
-   % 
+   % fParamObj = ***
+   %
    %              f: @(x)sum(x.^3.2)
-   %         domain: [2×2 double]
-   % 
+   %         domain: [2***2 double]
+   %
    %
    % Example 3. Ball domain
    % >> fParamObj = gail.fParam(@(x) sum(x.^3.2),[0 0; 1 1],'ball')
-   % fParamObj = 
-   %   fParam with properties:
-   % 
+   % fParamObj = ***
+   %
    %              f: @(x)sum(x.^3.2)
-   %         domain: [2×2 double]
+   %         domain: [2***2 double]
    %     domainType: 'ball'
    %
    %
    % Example 4. Using name/value pairs
    % fParamObj = gail.fParam('domain', [0 0; 1 1], 'f', @(x) sum(x.^3.2), 'relTol', 0.1)
-   % fParamObj = 
-   %   fParam with properties:
-   % 
+   % fParamObj = ***
+   %
    %              f: @(x)sum(x.^3.2)
-   %         domain: [2×2 double]
-   % 
+   %         domain: [2***2 double]
+   %
    %
    % Example 5. Using structure for input
    % >> inpStruct.f = @(x) sin(sum(x,2));
    % >> inpStruct.domain = [zeros(1,4); ones(1,4)];
    % >> inpStruct.relTol = 0.1;
    % >> fParamObj = gail.fParam(inpStruct)
-   % fParamObj = 
-   %   fParam with properties:
-   % 
-   %              f: @(x)sin(sum(x,2))
-   %         domain: [2×4 double]
+   % fParamObj = ***
    %
-   %   
+   %              f: @(x)sin(sum(x,2))
+   %         domain: [2***4 double]
+   %
+   %
    % Example 6. Using structure for input and numbers, structure takes
    % precedence
    % >> inpStruct.f = @(x) sin(sum(x,2));
    % >> inpStruct.domain = [zeros(1,4); ones(1,4)];
    % >> inpStruct.relTol = 0.1;
    % >> fParamObj = gail.fParam(inpStruct,0.0001,0.01)
-   % fParamObj = 
-   %   fParam with properties:
-   % 
-   %              f: @(x)sin(sum(x,2))
-   %         domain: [2×4 double]
+   % fParamObj = ***
    %
-   %   
+   %              f: @(x)sin(sum(x,2))
+   %         domain: [2***4 double]
+   %
+   %
    % Example 7. Coping an fParam object and changing properties
    % >> newfParamObj = gail.fParam(fParamObj,'domainType','sphere')
-   % newfParamObj = 
-   %   fParam with properties:
-   % 
+   % newfParamObj = ***
+   %
    %              f: @(x)sin(sum(x,2))
-   %         domain: [2×4 double]
+   %         domain: [2***4 double]
    %     domainType: 'sphere'
    %
-   %   
+   %
    % Author:  Fred J. Hickernell
-   
+
    properties
       f %function defined on some domain, often an interval or box
       domain %domain one or several dimensions
@@ -84,12 +77,12 @@ classdef fParam < handle & matlab.mixin.CustomDisplay
       nInit %initial sample size
       nMax %maximum sample size
    end
-   
+
    properties (Dependent = true)
       d %number of variables
       nfOut %number of outputs of f
    end
-   
+
    properties (Hidden, SetAccess = private)
       def_f = @(x) sum(x.^2,2) %default function
       def_domain = [0; 1]; %default domain
@@ -105,10 +98,10 @@ classdef fParam < handle & matlab.mixin.CustomDisplay
          'sphere-from-cube'
          } %hollow sphere
    end
-   
-   
+
+
    methods
-      
+
       % Creating a fParam process
       function obj = fParam(varargin)
          %this constructor essentially parses inputs
@@ -120,7 +113,7 @@ classdef fParam < handle & matlab.mixin.CustomDisplay
          %  # a domain Type
          %  # numbers: absTol, relTol
          %  # name-value pairs
-         
+
          start = 1; %index to begin to parse
          useDefaults = true; %true unless copying an fParam object, then false
          objInp = 0; %where is the an object in the class
@@ -129,7 +122,7 @@ classdef fParam < handle & matlab.mixin.CustomDisplay
          domainTypeInp = 0; %where is the domain type
          structInp = 0; %where is the structure
          if nargin %there are inputs to parse and assign
-            if isa(varargin{start},'gail.fParam') 
+            if isa(varargin{start},'gail.fParam')
                %the first input is a fParam object so copy it
                objInp = start;
                start = start + 1;
@@ -149,7 +142,7 @@ classdef fParam < handle & matlab.mixin.CustomDisplay
                         %next input is the domain
                         domainInp = start;
                         start = start + 1;
-                        if nargin >= start 
+                        if nargin >= start
                            if ischar(varargin{start}) %next input is domain type
                               domainTypeInp = start;
                               start = start+ 1;
@@ -160,7 +153,7 @@ classdef fParam < handle & matlab.mixin.CustomDisplay
                end
             end
          end
-         
+
          done = false; %not finished parsing
          if objInp
             val = varargin{objInp}; %first input
@@ -205,9 +198,9 @@ classdef fParam < handle & matlab.mixin.CustomDisplay
          end
          f_addParamVal(p,'nInit',obj.def_nInit);
          f_addParamVal(p,'nMax',obj.def_nMax);
-         
+
          if structInp
-            parse(p,varargin{parseRange},varargin{structInp}) 
+            parse(p,varargin{parseRange},varargin{structInp})
             %parse inputs with a structure
          else
             parse(p,varargin{parseRange}) %parse inputs w/o structure
@@ -216,7 +209,7 @@ classdef fParam < handle & matlab.mixin.CustomDisplay
          if ~useDefaults %remove defaults if copying fParam object
             struct_val = rmfield(struct_val,p.UsingDefaults);
          end
-         
+
          %Assign values of structure to corresponding class properties
          if fInp
             obj.f = varargin{fInp}; %assign function
@@ -242,14 +235,14 @@ classdef fParam < handle & matlab.mixin.CustomDisplay
          if isfield(struct_val,'nMax')
             obj.nMax = struct_val.nMax;
          end
-         
+
       end %of constructor
-     
+
       function set.f(obj,val)
          validateattributes(val, {'function_handle'}, {'nonempty'})
          obj.f = val;
       end
-      
+
       function set.domain(obj,val)
          validateattributes(val, {'numeric'}, {'2d'})
          assert(numel(val) > 1)
@@ -258,40 +251,40 @@ classdef fParam < handle & matlab.mixin.CustomDisplay
          end
          obj.domain = val(1:2,:);
       end
-                       
+
       function set.domainType(obj,val)
          validateattributes(val, {'char'}, {})
          checkDomainType(obj,val)
          obj.domainType = val;
       end
-                       
+
       function set.nInit(obj,val)
          validateattributes(val, {'numeric'}, {'scalar','positive','integer'})
          obj.nInit = val;
       end
-                             
+
       function set.nMax(obj,val)
          validateattributes(val, {'numeric'}, {'scalar','positive','integer'})
          obj.nMax = val;
       end
-                                                                                
+
       function val = get.d(obj)
             val = size(obj.domain,2);
-      end         
-                       
+      end
+
       function val = get.nfOut(obj)
-         
-         val = numel(obj.f(obj.domain(1,:)));         
-         % val = numel(obj.f(obj.domain(1,:))); 
-      end      
-      
+
+         val = numel(obj.f(obj.domain(1,:)));
+         % val = numel(obj.f(obj.domain(1,:)));
+      end
+
    end
-   
+
   methods (Access = protected)
       function checkDomainType(obj,inval)
          assert(any(strcmp(inval,obj.allowedDomains)))
       end
-         
+
       function propgrp = getPropertyGroups(obj)
         if ~isscalar(obj)
            propgrp = getPropertyGroups@matlab.mixin.CustomDisplay(obj);
@@ -300,7 +293,7 @@ classdef fParam < handle & matlab.mixin.CustomDisplay
            propgrp = matlab.mixin.util.PropertyGroup(propList);
         end
      end
-      
+
      function propList = getPropertyList(obj)
          propList = struct('f', obj.f, ...
             'domain', obj.domain);
@@ -317,4 +310,3 @@ classdef fParam < handle & matlab.mixin.CustomDisplay
   end
 
 end
-
