@@ -35,15 +35,4 @@ catch
     %fprintf(fid,'Error: Test ut_convtest_funappx_g is wrongly coded. We skip it.\n');
 end
 
-try
-    Tests = matlab.unittest.TestSuite.fromClass(?ut_par_funappx_g);
-    results = run(ut_par_funappx_g);
-    if sum([results.Failed])>0
-        failed=find([results.Failed]>0);
-        for i=1:size(failed,2)
-            fprintf(fid,'%s\n',Tests(failed(i)).Name);
-        end
-    end
-catch
-    display('Error: Test ut_par_funappx_g is wrongly coded. We skip it.')
-end
+
