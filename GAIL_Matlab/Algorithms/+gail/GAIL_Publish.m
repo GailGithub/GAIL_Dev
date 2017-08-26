@@ -54,7 +54,7 @@ if usejava('jvm')
                 cat_cmd = strcat([cat_cmd, ' ', wopath, wofile_list{i},'.m' ]);
             end
             gailug_file = strcat(['gail_ug',strrep(GAILVERSION, '.', '_'),'.m']);
-            gailug_path = strcat([GAILPATH,'Documentation','Developers_only',filesep,filesep,gailug_file]);
+            gailug_path = strcat([GAILPATH,'Documentation',filesep,'Developers_only',filesep,filesep,gailug_file]);
             if exist(gailug_path,'file') > 0
                 delete(gailug_path)
             end
