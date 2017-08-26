@@ -2,7 +2,7 @@ classdef optPrice < optPayoff
 
     %% optPrice
     % is a object of that computes the price of an object via (quasi-)Monte
-    % Carlo methods.  Hello
+    % Carlo methods.
     % 
     %
     % Example 1
