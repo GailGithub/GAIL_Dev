@@ -189,7 +189,13 @@ function [fmin,out_param]=funmin_g(varargin)
 %         iter: 3
 %      npoints: 107
 %       errest: 8.0997e-06
-%    intervals: [2×1 double]
+%    intervals: ***
+%   
+% >> out_param(:).intervals
+% ans =
+%
+%    0.3594
+%    0.6406
 %
 %
 %  See also FMINBND, FUNAPPX_G, INTEGRAL_G
