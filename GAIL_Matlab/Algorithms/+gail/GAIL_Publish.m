@@ -12,7 +12,7 @@ if usejava('jvm')
     [GAILPATH,GAILVERSION] = GAILstart(0);
     mfile_list = {'GAIL','help_license','help_readme','help_ReleaseNotes','funclist','demolist',...
         'help_funappx_g','help_funmin_g','help_integral_g',...
-        'help_meanMC_g', 'help_meanMC_CLT','help_cubMC_g','help_cubMC_CLT',...
+        'help_meanMC_g', 'help_meanMC_CLT','help_cubMC_g',...%'help_cubMC_CLT',...
         'help_cubLattice_g','help_cubSobol_g',... % demos below
         'demo_funappx_g','demo_funappx_g1', 'demo_funappx_g2',...
         'demo_funmin_g','demo_funmin_g1', 'demo_funmin_g2',...
@@ -43,7 +43,7 @@ if usejava('jvm')
     if ifGenerateLateX
         s = computer;
         if all(s(1:2)=='PC') == 0
-            delete(strcat(GAILPATH,'Documentation',filesep,'html',filesep,'gail_ug.*'))
+            delete(strcat(GAILPATH,'Documentation',filesep,'Developers_only',filesep,'gail_ug.*'))
             cat_cmd = 'cat ';
             for i=1:length(mfile_list),
                 cat_cmd = strcat([cat_cmd, ' ', GAILPATH,'Documentation',filesep,mfile_list{i},'.m', ' ']);
@@ -54,7 +54,7 @@ if usejava('jvm')
                 cat_cmd = strcat([cat_cmd, ' ', wopath, wofile_list{i},'.m' ]);
             end
             gailug_file = strcat(['gail_ug',strrep(GAILVERSION, '.', '_'),'.m']);
-            gailug_path = strcat([GAILPATH,'Documentation',filesep,gailug_file]);
+            gailug_path = strcat([GAILPATH,'Documentation','Developers_only',filesep,filesep,gailug_file]);
             if exist(gailug_path,'file') > 0
                 delete(gailug_path)
             end
