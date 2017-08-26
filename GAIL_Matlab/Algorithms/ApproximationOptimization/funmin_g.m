@@ -164,7 +164,7 @@ function [fmin,out_param]=funmin_g(varargin)
 %         iter: 8
 %      npoints: 203
 %       errest: 6.7816e-08
-   % intervals: [2×1 double]
+%    intervals: [2×1 double]
 %
 %
 %  Example 4:
