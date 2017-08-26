@@ -8,7 +8,7 @@ GAIL_Install
 % git clone https://github.com/chebfun/chebfun.git
 chebfunroot = '/home/gail/GAIL_tests/chebfun';
 addpath(chebfunroot), savepath
-# print the version
+% print the version
 help chebfun
 
 % Go to the tests direcoty (% is comment in matlab environment)
