@@ -41,7 +41,7 @@ if usejava('jvm') || MATLABVERSION <= 7.12
     xpts=sobstr(1:n,1:d);
     y=testfun(xpts);
     yval=y;
-    yfwt=fwht(y);
+    %yfwt=fwht(y);
 
     %% Compute initial FWT
     for l=0:mmax-1
