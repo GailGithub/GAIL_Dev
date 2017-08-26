@@ -120,11 +120,11 @@
 %%  Guarantee
 % This algorithm attempts to calculate the mean, |mu|, of a random variable
 % to a prescribed error tolerance, |tolfun| = max(|abstol|, |reltol| ||mu||), with
-% guaranteed confidence level (|1 - alpha|). If the algorithm terminated without
-% showing any warning messages and provide an answer |tmu|, then the follow
+% guaranteed confidence level (|1 - alpha|). If the algorithm terminates without
+% showing any warning messages and provides an answer |tmu|, then the follow
 % inequality would be satisfied:
 %
-% |Pr(| mu - tmu | <= tolfun) >= 1-alpha|
+% |Pr(| mu - tmu | <= tolfun) >= 1-alpha|.
 %
 % The cost of the algorithm, |N_tot|, is also bounded above by |N_up|, which is
 % defined in terms of |abstol|, |reltol|, |nSig|, |n1|, |fudge|, |kurtmax|, |beta|. And
