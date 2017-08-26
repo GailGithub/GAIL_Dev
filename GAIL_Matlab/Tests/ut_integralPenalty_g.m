@@ -1,5 +1,5 @@
 %UT_INTEGRAL_G unit test for integralPenalty_g
-classdef ut_integral_g < matlab.unittest.TestCase    
+classdef ut_integralPenalty_g < matlab.unittest.TestCase    
     methods (Test)
         
         function testerrorfabstol(testCase)
