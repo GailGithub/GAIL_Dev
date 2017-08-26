@@ -17,13 +17,14 @@
 % Rathinavel, Kan Zhang, Yizhi Zhang, and Xuan Zhou, Department of Applied
 % Mathematics, Illinois Institute of Technology (IIT) and  Xin Tong,
 % Department of Mathematics, Statistics, and Computer Science, University
-% of Illinois at Chicago. We thank the contributions of Christine
-% Hickernell, Cu Hauw Hung, Yueyi Li, Xincheng Sheng, Felipe Sousa de
-% Andrade, Xiaoyang Zhao, Tianci Zhu, and the IIT classes of CI 498/MATH
-% 491: Computational Social Sciences, Summer 2016; MATH 491-195: Solving
-% Problems in the Social Sciences Using Tools from Computational
-% Mathematics and Statistics, Summer 2015; Math 573 Reliable Mathematical
-% Software, Fall 2013.
+% of Illinois at Chicago. We thank the contributions of Francisco
+% Hernandez, Cu Hauw Hung, Yueyi Li, Xincheng Sheng, Xiaoyang Zhao, Tianci
+% Zhu, and the IIT classes of SCI 498 Adaptive Monte Carlo Algorithms with
+% Applications to Financial Risk Management, Summer 2016; MATH 491 Reading
+% & Research, Summer 2015; SCI 498/MATH 491 Computational Social Sciences,
+% Summer 2016; MATH 491-195 Solving Problems in the Social Sciences Using
+% Tools from Computational Mathematics and Statistics, Summer 2015; Math
+% 573 Reliable Mathematical Software, Fall 2013.
 %
 %
 % Please cite the following software, papers, and materials:
@@ -112,7 +113,7 @@
 % Volume 4, Number 1, e7, 2016.
 % (discusses practice and challenges in Sustainable Software for Science)
 %
-% Daniel S. Katz, Sou{-}Cheng T. Choi, Kyle E. Niemeyer, James
+% Daniel S. Katz, Sou-Cheng T. Choi, Kyle E. Niemeyer, James
 % Hetherington, Frank L{offler, Dan Gunter, Ray Idaszak, Steven R. Brandt,
 % Mark A. Miller, Sandra Gesing, Nick D. Jones, Nic Weber, Suresh Marru,
 % Gabrielle Allen, Birgit Penzenstadler, Colin C. Venters, Ethan Davis,
