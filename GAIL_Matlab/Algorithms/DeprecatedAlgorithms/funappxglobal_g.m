@@ -117,18 +117,18 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %
 %   >> f = @(x) x.^2; [pp, out_param] = funappxglobal_g(f)
 %
-%     pp =
-%   struct with fields:
+%     pp = ***
+%   
 %       form: 'pp'
-%     breaks: [1×5051 double]
-%      coefs: [5050×2 double]
+%     breaks: [1***5051 double]
+%      coefs: [5050***2 double]
 %     pieces: 5050
 %      order: 2
 %        dim: 1
 %     orient: 'first'
 %
-%     out_param =
-%   struct with fields:
+%     out_param = ***
+%
 %                f: @(x)x.^2
 %                a: 0
 %                b: 1
@@ -149,18 +149,18 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %   >> f = @(x) x.^2;
 %   >> [pp, out_param] = funappxglobal_g(f,-2,2,1e-7,10,10,1000000)
 %
-% pp =
-%   struct with fields:
+% pp = ***
+%
 %       form: 'pp'
-%     breaks: [1×38149 double]
-%      coefs: [38148×2 double]
+%     breaks: [1***38149 double]
+%      coefs: [38148***2 double]
 %     pieces: 38148
 %      order: 2
 %        dim: 1
 %     orient: 'first'
 %
-%     out_param =
-%   struct with fields:
+%     out_param = ***
+%
 %                a: -2
 %           abstol: 1.0000e-07
 %                b: 2
@@ -181,18 +181,18 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %   >> f = @(x) x.^2;
 %   >> [pp, out_param] = funappxglobal_g(f,'a',-2,'b',2,'nhi',100,'nlo',10)
 %
-% pp =
-%   struct with fields:
+% pp = ***
+%
 %       form: 'pp'
-%     breaks: [1×31851 double]
-%      coefs: [31850×2 double]
+%     breaks: [1***31851 double]
+%      coefs: [31850***2 double]
 %     pieces: 31850
 %      order: 2
 %        dim: 1
 %     orient: 'first'
 %
-% out_param =
-%   struct with fields:
+% out_param = ***
+%
 %                a: -2
 %           abstol: 1.0000e-06
 %                b: 2
@@ -215,18 +215,18 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %   >> in_param.nmax = 10^6; f = @(x) x.^2;
 %   >> [pp, out_param] =funappxglobal_g(f,in_param)
 %
-% pp =
-%   struct with fields:
+% pp = ***
+%
 %       form: 'pp'
-%     breaks: [1×596779 double]
-%      coefs: [596778×2 double]
+%     breaks: [1***596779 double]
+%      coefs: [596778***2 double]
 %     pieces: 596778
 %      order: 2
 %        dim: 1
 %     orient: 'first'
 %
-%   out_param =
-%   struct with fields:
+%   out_param = ***
+%
 %                a: -10
 %           abstol: 1.0000e-07
 %                b: 10
