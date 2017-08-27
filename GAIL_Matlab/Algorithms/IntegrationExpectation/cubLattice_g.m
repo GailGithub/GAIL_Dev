@@ -87,8 +87,8 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 %   Optional Input Arguments
 %
 %     in_param.shift --- the Rank-1 lattices can be shifted to avoid the
-%     origin or other particular points. The shift is a vector in [0,1)^d.
-%     By default we consider a shift uniformly sampled from [0,1)^d.
+%     origin or other particular points. The shift is a vector in [0,1]^d.
+%     By default we consider a shift uniformly sampled from [0,1]^d.
 %
 %     in_param.mmin --- the minimum number of points to start is 2^mmin.
 %     The cone condition on the Fourier coefficients decay requires a
@@ -154,7 +154,7 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 %                       definition, check the article mentioned below.
 %
 %  Guarantee
-% This algorithm computes the integral of real valued functions in [0,1)^d
+% This algorithm computes the integral of real valued functions in [0,1]^d
 % with a prescribed generalized error tolerance. The Fourier coefficients
 % of the integrand are assumed to be absolutely convergent. If the
 % algorithm terminates without warning messages, the output is given with
@@ -169,7 +169,7 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 %  Examples
 %
 % Example 1:
-% Estimate the integral with integrand f(x) = x1.*x2 in the interval [0,1)^2:
+% Estimate the integral with integrand f(x) = x1.*x2 in the interval [0,1]^2:
 %
 % >> f = @(x) prod(x,2); hyperbox = [zeros(1,2);ones(1,2)];
 % >> q = cubLattice_g(f,hyperbox,'uniform',1e-5,0,'transform','C1sin'); exactsol = 1/4;
@@ -189,7 +189,7 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 %
 % Example 3:
 % Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) in the
-% interval [-1,2)^2:
+% interval [-1,2]^2:
 %
 % >> f = @(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [-ones(1,2);2*ones(1,2)];
 % >> q = cubLattice_g(f,hyperbox,'uniform',1e-3,1e-2,'transform','C1'); exactsol = (sqrt(pi)/2*(erf(2)+erf(1)))^2;
@@ -209,7 +209,7 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 %
 % Example 5:
 % Estimate the integral with integrand f(x) = 8*x1.*x2.*x3.*x4.*x5 in the
-% interval [0,1)^5 with pure absolute error 1e-5.
+% interval [0,1]^5 with pure absolute error 1e-5.
 %
 % >> f = @(x) 8*prod(x,2); hyperbox = [zeros(1,5);ones(1,5)];
 % >> q = cubLattice_g(f,hyperbox,'uniform',1e-5,0); exactsol = 1/4;
@@ -219,7 +219,7 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 %
 % Example 6:
 % Estimate the integral with integrand f(x) = 3./(5-4*(cos(2*pi*x))) in the
-% interval [0,1) with pure absolute error 1e-5.
+% interval [0,1] with pure absolute error 1e-5.
 %
 % >> f = @(x) 3./(5-4*(cos(2*pi*x))); hyperbox = [0;1];
 % >> q = cubLattice_g(f,hyperbox,'uniform',1e-5,0,'transform','id'); exactsol = 1;
@@ -271,8 +271,8 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 %   (WSSSPE1)," Journal of Open Research Software, Volume 2, Number 1, e6,
 %   pp. 1-21, 2014.
 %
-%   [6] Fang, K.-T., & Wang, Y. (1994). Number-theoretic Methods in
-%   Statistics. London, UK: CHAPMAN & HALL
+%   [6] Kai-Tai Fang and Yuan Wang, Number-theoretic Methods in 
+% Statistics, Chapman & Hall, London, 1994.
 %
 %   If you find GAIL helpful in your work, please support us by citing the
 %   above papers, software, and materials.
