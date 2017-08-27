@@ -121,8 +121,8 @@
 % *Example 2*
 %
 % Integrate function \(\exp(-x^2)\) on \([1,2]\) with lowest initial number of function
-% values 100 and highest initial number of function values 10000, absolute
-% error tolerance \(10^{-5}\) and cost budget 10000000.
+% values \(100\) and highest initial number of function values \(10000\), absolute
+% error tolerance \(10^{-5}\) and cost budget \(10000000\).
 f = @(x) exp(-x.^2); [q, out_param] = integral_g(f,'a',1,'b',2,'nlo',100,'nhi',10000,...
     'abstol',1e-5,'nmax',1e7)
 
