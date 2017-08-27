@@ -190,7 +190,7 @@ function [fmin,out_param]=funmin_g(varargin)
 %      npoints: 107
 %       errest: 8.0997e-06
 %    intervals: [2***1 double]
-%   
+%
 % >> out_param(:).intervals
 % ans =
 %

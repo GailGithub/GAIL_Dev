@@ -14,5 +14,10 @@ help chebfun
 % Go to the tests direcoty (% is comment in matlab environment)
 cd /home/gail/GAIL_tests/repo/gail-development/GAIL_Matlab/Tests/Developers_only/automatic_workouts/
 
+fprintf('Launching longtests at %s \n', datetime)
+
 longtests
+
+fprintf('Exiting longtests at %s \n', datetime)
+
 exit
