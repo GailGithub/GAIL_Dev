@@ -95,7 +95,7 @@ function [q,out_param] = integral_g(varargin)
 %
 %  Guarantee
 %
-%  Please check the details of the guarantee in [1].
+% Please check the details of the guarantee in [1].
 %
 %
 %  Examples

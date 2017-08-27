@@ -167,34 +167,34 @@
 %
 %%  Guarantee
 %
-% This algorithm computes the integral of real valued functions in [0,1)^d
+% This algorithm computes the integral of real valued functions in \([0,1]^d\)
 % with a prescribed generalized error tolerance. The Walsh-Fourier
 % coefficients of the integrand are assumed to be absolutely convergent. If
 % the algorithm terminates without warning messages, the output is given
 % with guarantees under the assumption that the integrand lies inside a
 % cone of functions. The guarantee is based on the decay rate of the
 % Walsh-Fourier coefficients. For integration over domains other than
-% [0,1]^d, this cone condition applies to f \circ \psi (the
-% composition of the functions) where \psi is the transformation
-% function for [0,1]^d to the desired region. For more details on how the
+% \([0,1]^d\), this cone condition applies to \(f \circ \psi\) (the
+% composition of the functions) where \(\psi\) is the transformation
+% function for \([0,1]^d\) to the desired region. For more details on how the
 % cone is defined, please refer to the references below.
 %
 %% Examples
 %
 %%
 % *Example 1*
+%
+% Estimate the integral with integrand \(f(x) = x_1 x_2\) in the hyperbox \([0,1]^2\):
 
-% Estimate the integral with integrand f(x) = x1.*x2 in the interval [0,1)^2:
-
-  f = @(x) prod(x,2); hyperbox = [zeros(1,2);ones(1,2)];
+  f = @(x) prod(x,2); hyperbox = [zeros(1,2); ones(1,2)];
   q = cubSobol_g(f,hyperbox,'uniform',1e-5,0); exactsol = 1/4;
   check = double(abs(exactsol-q) < 1e-5)
 
 %%
 % *Example 2*
-
-% Estimate the integral with integrand f(x) = x1.^2.*x2.^2.*x3.^2
-% in the interval R^3 where x1, x2 and x3 are normally distributed:
+%
+% Estimate the integral with integrand \(f(x) = x_1^2  x_2^2 x_3^2\)
+% in the hyperbox \(R^3\) where \(x_1\), \(x_2\) and \(x_3\) are normally distributed:
 
   f = @(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2; hyperbox = [-inf(1,3);inf(1,3)];
   q = cubSobol_g(f,hyperbox,'normal',1e-3,1e-3); exactsol = 1;
@@ -202,17 +202,17 @@
 
 %%
 % *Example 3*
+%
+% Estimate the integral with integrand \(f(x) = exp(-x_1^2-x_2^2)\) in the
+% hyperbox \([-1,2]^2\):
 
-% Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) in the
-% interval [-1,2)^2:
-
-  f = @(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [-ones(1,2);2*ones(1,2)];
+  f = @(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [-ones(1,2); 2*ones(1,2)];
   q = cubSobol_g(f,hyperbox,'uniform',1e-3,1e-2); exactsol = (sqrt(pi)/2*(erf(2)+erf(1)))^2;
   check = double(abs(exactsol-q) < max(1e-3,1e-2*abs(exactsol)))
 
 %%
 % *Example 4*
-
+%
 % Estimate the price of an European call with S0=100, K=100, r=sigma^2/2,
 % sigma=0.05 and T=1.
 
@@ -222,7 +222,7 @@
 
 %%
 % *Example 5*
-
+%
 % Estimate the integral with integrand f(x) = 8*x1.*x2.*x3.*x4.*x5 in the interval
 % [0,1)^5 with pure absolute error 1e-5.
 
@@ -232,7 +232,7 @@
 
 %%
 % *Example 6*
-
+%
 % Estimate the integral with integrand f(x) = x1^2+x2^2 over the disk with
 % center (0,0) and radius 1 with pure absolute error 1e-4, where x is a vector x = [x1 x2].
 
@@ -242,7 +242,7 @@
 
 %%
 % *Example 7*
-
+%
 % Estimate the integral with integrand f(x) = 10*x1-5*x2^2+x3^3 in the interval [0,2)^3
 % with pure absolute error 1e-6 using two control variates h1(x) = x1 and h2(x) = x2^2.
 
