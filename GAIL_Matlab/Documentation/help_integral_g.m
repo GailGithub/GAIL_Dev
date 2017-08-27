@@ -147,11 +147,11 @@ f = @(x) exp(-x.^2); [q, out_param] = integral_g(f,'a',1,'b',2,'nlo',100,'nhi',1
 % </html>
 %
 % <html>
-% <a href="help_cubSobol_g.html">meanMC_g</a>
+% <a href="help_cubSobol_g.html">cubSobol_g</a>
 % </html>
 %
 % <html>
-% <a href="help_cubLattice_g.html">cubMC_g</a>
+% <a href="help_cubLattice_g.html">cubLattice_g</a>
 % </html>
 %
 % <html>
