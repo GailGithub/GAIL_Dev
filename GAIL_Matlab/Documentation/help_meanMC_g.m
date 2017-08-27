@@ -21,10 +21,10 @@
 %  function handle that accepts a positive integer input n and returns an
 %  n x 1 vector of IID instances of the random variable Y.
 %
-% tmu = *meanMC_g*(Yrand,abstol,reltol,alpha) estimates the mean of a random variable Y to within a specified
-%  generalized error tolerance tolfun with guaranteed confidence
-%  level 1-alpha using all ordered parsing inputs abstol, reltol, alpha,
-%  fudge, nSig, n1, tbudget, nbudget.
+% tmu = *meanMC_g*(Yrand,abstol,reltol,alpha) estimates the mean of a
+%  random variable Y to within a specified generalized error tolerance
+%  tolfun with guaranteed confidence level 1-alpha using all ordered parsing
+%  inputs abstol, reltol, alpha, fudge, nSig, n1, tbudget, nbudget.
 %
 % tmu = *meanMC_g*(Yrand,'abstol',abstol,'reltol',reltol,'alpha',alpha)
 %  estimates the mean of a random variable Y to within a specified
