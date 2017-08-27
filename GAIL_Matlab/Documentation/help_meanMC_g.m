@@ -140,7 +140,7 @@
 % *Example 1*
 %
 % Calculate the mean of \(x^2\) when \(x\) is uniformly distributed in
-% \([0, 1]\), with the absolute error tolerance = \(10^{-3}\) and uncertainty 5%.
+% \([0, 1]\), with the absolute error tolerance = \(10^{-3}\) and uncertainty \(5\%\).
 
   in_param.reltol=0; in_param.abstol = 1e-3;
   in_param.alpha = 0.05; Yrand=@(n) rand(n,1).^2;
@@ -160,7 +160,7 @@
 % *Example 3*
 %
 % Calculate the mean of \(\cos(x)\) when \(x\) is uniformly distributed in
-% \([0, 1]\), with the relative error tolerance \(10^{-2}\) and uncertainty 0.05.
+% \([0, 1]\), with the relative error tolerance \(10^{-2}\) and uncertainty \(0.05\).
 
   tmu=meanMC_g(@(n)cos(rand(n,1)),'reltol',1e-3,'abstol',1e-4,'alpha',0.01);
   exactsol = sin(1);

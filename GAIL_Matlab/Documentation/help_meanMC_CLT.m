@@ -106,7 +106,7 @@
 %
 % Estimate the integral with integrand \(f(x) = x_1^3 x_2^3 x_3^3\) in the
 % interval \([0,1]^3\) with pure absolute error \(10^{-3}\) using \(x_1 x_2 x_3\) as
-% control variate:
+% a control variate:
 
   f = @(x) [x(:,1).^3.*x(:,2).^3.*x(:,3).^3, x(:,1).*x(:,2).*x(:,3)];
   s = struct('Y',@(n)f(rand(n,3)),'nY',1,'trueMuCV',1/8);
@@ -119,7 +119,7 @@
 %
 % Estimate the integrals with integrands \(f_1(x) = x_1^3 x_2^3 x_3^3\) and 
 % \(f_2(x)= x_1^2 x_2^2 x_3^2- \tfrac{1}{27}+\tfrac{1}{64}\) in the interval \([0,1]^3\)
-% using \(x_1 x_2 x_3\) and \(x_1+x_2+x_3\) as control variate:
+% using \(x_1 x_2 x_3\) and \(x_1+x_2+x_3\) as control variates:
 
   f = @(x) [x(:,1).^3.*x(:,2).^3.*x(:,3).^3, ...
             x(:,1).^2.*x(:,2).^2.*x(:,3).^2-1/27+1/64, ...

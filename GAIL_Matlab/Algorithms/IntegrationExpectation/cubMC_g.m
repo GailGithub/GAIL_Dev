@@ -176,16 +176,18 @@ function [Q,out_param] = cubMC_g(varargin)
 %  Examples
 %
 % Example 1:
+%
 % If no parameters are parsed, help text will show up as follows:
 % >> cubMC_g
 % ***Monte Carlo method to estimate***
 %
 %
 % Example 2:
+%
 % Estimate the integral with integrand f(x) = sin(x) over the interval
 % [1;2] with default parameters.
 %
-% >> f=@(x) sin(x);interval = [1;2];
+% >> f = @(x) sin(x); interval = [1;2];
 % >> Q = cubMC_g(f,interval,'uniform',1e-3,1e-2);
 % >> exactsol = 0.9564;
 % >> check = double(abs(exactsol-Q) < max(1e-3,1e-2*abs(exactsol)))
@@ -193,10 +195,11 @@ function [Q,out_param] = cubMC_g(varargin)
 %
 %
 % Example 3:
-% Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) over the
-% hyperbox [0 0;1 1], where x is a vector x = [x1 x2].
 %
-% >> f=@(x) exp(-x(:,1).^2-x(:,2).^2);hyperbox = [0 0;1 1];
+% Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) over the
+% hyperbox [0 0;1 1], where x = [x1 x2] is a vector.
+%
+% >> f = @(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [0 0;1 1];
 % >> Q = cubMC_g(f,hyperbox,'uniform',1e-3,0);
 % >> exactsol = 0.5577;
 % >> check = double(abs(exactsol-Q) < 1e-3)
@@ -204,12 +207,13 @@ function [Q,out_param] = cubMC_g(varargin)
 %
 %
 % Example 4:
-% Estimate the integral with integrand f(x) = 2^d*prod(x1*x2*...*xd)+0.555
-% over the hyperbox [zeros(1,d);ones(1,d)], where x is a vector
-% x = [x1 x2... xd].
 %
-% >> d=3;f=@(x) 2^d*prod(x,2)+0.555;hyperbox =[zeros(1,d);ones(1,d)];
-% >> in_param.abstol = 1e-3;in_param.reltol=1e-3;
+% Estimate the integral with integrand f(x) = 2^d*prod(x1*x2*...*xd)+0.555
+% over the hyperbox [zeros(1,d);ones(1,d)], where x = [x1 x2... xd] is a
+% vector.
+%
+% >> d = 3; f = @(x) 2^d*prod(x,2)+0.555; hyperbox =[zeros(1,d); ones(1,d)];
+% >> in_param.abstol = 1e-3; in_param.reltol = 1e-3;
 % >> Q = cubMC_g(f,hyperbox,in_param);
 % >> exactsol = 1.555;
 % >> check = double(abs(exactsol-Q) < max(1e-3,1e-3*abs(exactsol)))
@@ -218,9 +222,9 @@ function [Q,out_param] = cubMC_g(varargin)
 %
 % Example 5:
 % Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) in the
-% hyperbox [-inf -inf;inf inf], where x is a vector x = [x1 x2].
+% hyperbox [-inf -inf;inf inf], where x = [x1 x2] is a vector.
 %
-% >> f=@(x) exp(-x(:,1).^2-x(:,2).^2);hyperbox = [-inf -inf;inf inf];
+% >> f = @(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [-inf -inf;inf inf];
 % >> Q = cubMC_g(f,hyperbox,'normal',0,1e-2);
 % >> exactsol = 1/3;
 % >> check = double(abs(exactsol-Q) < max(0,1e-2*abs(exactsol)))
@@ -229,9 +233,9 @@ function [Q,out_param] = cubMC_g(varargin)
 %
 % Example 6:
 % Estimate the integral with integrand f(x) = x1^2+x2^2 in the disk with
-% center (0,0) and radius 1, where x is a vector x = [x1 x2].
+% center (0,0) and radius 1, where x = [x1 x2] is a vector.
 %
-% >> f=@(x) x(:,1).^2+x(:,2).^2;hyperbox = [0,0,1];
+% >> f = @(x) x(:,1).^2+x(:,2).^2; hyperbox = [0,0,1];
 % >> Q = cubMC_g(f,hyperbox,'uniform ball','abstol',1e-3,'reltol',1e-3);
 % >> exactsol = pi/2;
 % >> check = double(abs(exactsol-Q) < max(1e-3,1e-3*abs(exactsol)))

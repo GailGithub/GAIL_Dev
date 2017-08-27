@@ -56,10 +56,12 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 %     greater than 1111. By default f is f=@ x.^2.
 %
 %       --- if using control variates, f needs to be a structure with two fields:
+%     
 %     First field: 'func', need to be a function handle with n x (J+1)
 %     dimension outputs, where J is the number of control variates.
 %     First column is the output of target function, next J columns are
 %     the outputs of control variates.
+%
 %     Second field: 'cv', need to be a 1 x J vector that stores the
 %     exact means of control variates in the same order from
 %     the function handle. For examples of how to use control variates,

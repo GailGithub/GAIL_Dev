@@ -131,7 +131,7 @@ in_param.nmax = 10^6;
 %%
 % *Example 4*
 %
-% Minimize function exp(0.01*(x-0.5).^2) on \([-2,2]\) with error tolerance \(10^{-5}\),
+% Minimize function \(\exp(0.01 (x-0.5)^2)\) on \([-2,2]\) with error tolerance \(10^{-5}\),
 % cost budget \(1000000\), initial number of points \(64\).
 f=@(x) exp(0.01*(x-0.5).^2);
 [fmin,out_param] = funmin_g(f,'a',-2,'b',2,'ninit',64,'nmax',1e6,'abstol',1e-5)

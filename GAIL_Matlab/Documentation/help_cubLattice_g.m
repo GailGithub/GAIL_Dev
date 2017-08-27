@@ -224,7 +224,7 @@
 %%
 % *Example 4*
 %
-% Estimate the price of an European call with \(S0=100\), \(K=100\), \(r=\sigma^2/2\),
+% Estimate the price of an European call with \(S_0=100\), \(K=100\), \(r=\sigma^2/2\),
 % \(\sigma=0.05\), and \(T=1\).
 
   f = @(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); 
@@ -257,9 +257,9 @@
 %%
 % *Example 7*
 %
-% Estimate the integral with integrand \(f(x) = x_1^2+x_2^2\) over the disk with
-% center \((0,0)\) and radius 1 with pure absolute error \(10^{-4}\), where \(x\) is a
-% vector \(x = [x_1 x_2]\).
+% Estimate the integral with integrand \(f(x) = x_1^2+x_2^2\) over the disk
+% with center \((0,0)\) and radius 1 with pure absolute error \(10^{-4}\),
+% where  \(x = [x_1 x_2]\) is a vector.
 
   f = @(x) x(:,1).^2+x(:,2).^2; hyperbox = [0,0,1];
   q = cubLattice_g(f,hyperbox,'uniform ball','abstol',1e-4,'reltol',0); 
