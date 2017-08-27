@@ -18,7 +18,7 @@ axis tight
 
 %% Function Approximation
 % We use *funappx_g* to approximate \(f\) over the interval \([0,1]\) with
-% error tolerance \(1e-2\) and 15 initial subintervals:
+% error tolerance \(10^{-2}\) and 15 initial subintervals:
 [~,out_param] = funappx_g(@(x) exp(-1000*(x-0.2).^2),0,1,1e-2,15)
 
 % We find that to reach the error tolerance, we need 105 points to
@@ -26,19 +26,19 @@ axis tight
 
 %% Process to Generate Grid Points
 %
-% Step 1: 16 evenly spaced points
+% Step 1: start with \(16\) evenly spaced points:
 %
 % <<localgui1.png>>
 %
-% Step 2: add points to the peaky part
+% Step 2: add points to the peaky part:
 %
 % <<localgui2.png>>
 %
-% Step 6: after serveral iterations
+% Step 6: after serveral iterations, the approximation error almost meets the given tolerance:
 %
 % <<localgui6.png>>
 %
-% Step 7: reach the error tolerance
+% Step 7: the error tolerance is reached:
 %
 % <<localgui7.png>>
 %
