@@ -108,9 +108,9 @@
 % interval \([0,1]^3\) with pure absolute error \(10^{-3}\) using \(x_1 x_2 x_3\) as
 % control variate:
 
-  f=@(x) [x(:,1).^3.*x(:,2).^3.*x(:,3).^3, x(:,1).*x(:,2).*x(:,3)];
-  s=struct('Y',@(n)f(rand(n,3)),'nY',1,'trueMuCV',1/8);
-  [hmu,out]=meanMC_CLT(s,1e-3,0);
+  f = @(x) [x(:,1).^3.*x(:,2).^3.*x(:,3).^3, x(:,1).*x(:,2).*x(:,3)];
+  s = struct('Y',@(n)f(rand(n,3)),'nY',1,'trueMuCV',1/8);
+  [hmu,out] = meanMC_CLT(s,1e-3,0);
   exact = 1/64;
   check = abs(exact-hmu) < max(1e-3,1e-3*abs(exact))
 
