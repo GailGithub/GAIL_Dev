@@ -77,10 +77,10 @@
 %  warning that the results are not guaranteed. The initial value is [0 0]
 %  and the final value of this parameter is encoded as follows:</li>
 %   <ul type="circle">
-%    <li>[1 0]   If reaching overbudget. It states whether
+%    <li>[1 0]:  If reaching overbudget. It states whether
 %                the max budget is attained without reaching the
 %                guaranteed error tolerance.</li>
-%    <li>[0 1]   If reaching overiteration. It states whether
+%    <li>[0 1]:  If reaching overiteration. It states whether
 %                the max iterations is attained without reaching the
 %                guaranteed error tolerance.</li>
 %   </ul>
@@ -103,7 +103,7 @@
 % *Example 1*
 %
 % Minimize function \(\exp(0.01 (x-0.5)^2)\) with default input parameters.
-f=@(x) exp(0.01*(x-0.5).^2); [fmin,out_param] = funmin_g(f)
+  f = @(x) exp(0.01*(x-0.5).^2); [fmin,out_param] = funmin_g(f)
 
 
 %%

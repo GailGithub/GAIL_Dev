@@ -38,8 +38,9 @@
 % Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 % Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
 % Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
-% Integration Library (Version 2.2) [MATLAB Software], 2017. Available
-% from http://gailgithub.github.io/GAIL_Dev/
+% Integration Library (Version 2.2) [MATLAB Software], 2017. Available from
+% http://gailgithub.github.io/GAIL_Dev/
+% (this software)
 %
 % Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Xin Tong, "Local
 % Adaption for Approximation and Minimization of Univariate Functions,"
@@ -75,7 +76,7 @@
 % Springer-Verlag, Berlin, 2016, arXiv:1410.8615 [math.NA], pp. 367-383.
 % (describes *cubSobol_g.m*)
 %
-% Fred J. Hickernell, Lluis Antoni Jimenez Rugama a, and D. Li, "Adaptive
+% Fred J. Hickernell, Lluis Antoni Jimenez Rugama, and Da Li, "Adaptive
 % quasi-Monte Carlo methods, 2017+, submitted for publication,
 % arXiv:1702.01491 [math.NA].
 %

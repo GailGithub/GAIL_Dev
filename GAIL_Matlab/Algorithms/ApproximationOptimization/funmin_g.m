@@ -65,11 +65,11 @@ function [fmin,out_param]=funmin_g(varargin)
 %     results are not guaranteed. The initial value is [0 0] and
 %     the final value of this parameter is encoded as follows:
 %
-%                      [1 0]   If reaching overbudget. It states whether
+%                      [1 0]:   If reaching overbudget. It states whether
 %                      the max budget is attained without reaching the
 %                      guaranteed error tolerance.
 %
-%                      [0 1]   If reaching overiteration. It states whether
+%                      [0 1]:   If reaching overiteration. It states whether
 %                      the max iterations is attained without reaching the
 %                      guaranteed error tolerance.
 %
@@ -91,7 +91,7 @@ function [fmin,out_param]=funmin_g(varargin)
 %
 %  Example 1:
 %
-%  >> f=@(x) exp(0.01*(x-0.5).^2); [fmin,out_param] = funmin_g(f)
+%  >> f = @(x) exp(0.01*(x-0.5).^2); [fmin,out_param] = funmin_g(f)
 %
 %  fmin =
 %

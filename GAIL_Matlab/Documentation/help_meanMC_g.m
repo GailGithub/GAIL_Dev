@@ -108,14 +108,6 @@
 %
 % * out_param.time --- the time elapsed in seconds.
 %
-% <html>
-% <ul type="square">
-%  <li>out_param.exitflag --- parameter checking status</li>
-%   <ul type="circle">
-%    <li>1  checked by meanMC_g</li>
-%   </ul>
-% </ul>
-% </html>
 %
 %%  Guarantee
 % This algorithm attempts to calculate the mean, |mu|, of a random variable
@@ -142,9 +134,9 @@
 % Calculate the mean of \(x^2\) when \(x\) is uniformly distributed in
 % \([0, 1]\), with the absolute error tolerance = \(10^{-3}\) and uncertainty \(5\%\).
 
-  in_param.reltol=0; in_param.abstol = 1e-3;
-  in_param.alpha = 0.05; Yrand=@(n) rand(n,1).^2;
-  tmu=meanMC_g(Yrand,in_param); exactsol  = 1/3;
+  in_param.reltol = 0; in_param.abstol = 1e-3;
+  in_param.alpha = 0.05; Yrand = @(n) rand(n,1).^2;
+  tmu = meanMC_g(Yrand,in_param); exactsol = 1/3;
   check = double(abs(exactsol-tmu) < 1e-3)
 
 %%
@@ -153,7 +145,7 @@
 % Calculate the mean of \(\exp(x)\) when \(x\) is uniformly distributed in
 % \([0, 1]\), with the absolute error tolerance \(10^{-3}\).
 
-  tmu=meanMC_g(@(n)exp(rand(n,1)),1e-3,0); exactsol =exp(1)-1;
+  tmu = meanMC_g(@(n)exp(rand(n,1)),1e-3,0); exactsol = exp(1)-1;
   check = double(abs(exactsol-tmu) < 1e-3)
 
 %%
@@ -162,7 +154,7 @@
 % Calculate the mean of \(\cos(x)\) when \(x\) is uniformly distributed in
 % \([0, 1]\), with the relative error tolerance \(10^{-2}\) and uncertainty \(0.05\).
 
-  tmu=meanMC_g(@(n)cos(rand(n,1)),'reltol',1e-3,'abstol',1e-4,'alpha',0.01);
+  tmu = meanMC_g(@(n)cos(rand(n,1)),'reltol',1e-3,'abstol',1e-4,'alpha',0.01);
   exactsol = sin(1);
   check = double(abs(exactsol-tmu) < max(1e-3,1e-2*abs(exactsol)))
 
