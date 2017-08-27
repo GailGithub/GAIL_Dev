@@ -77,7 +77,7 @@ Springer Proceedings in Mathematics and Statistics, vol. 163,
 Springer-Verlag, Berlin, 2016, arXiv:1410.8615 [math.NA], pp. 367-383.
 (describes cubSobol_g.m)
 
-Fred J. Hickernell, Lluis Antoni Jimenez Rugama a, and D. Li,"Adaptive
+Fred J. Hickernell, Lluis Antoni Jimenez Rugama, and Da Li,"Adaptive
 quasi-Monte Carlo methods, 2017+, submitted for publication, 
 arXiv:1702.01491 [math.NA].
 
