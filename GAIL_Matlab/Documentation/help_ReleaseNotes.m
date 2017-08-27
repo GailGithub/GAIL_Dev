@@ -4,19 +4,17 @@
 % 
 %% Major changes in algorithms
 % 
-% We have two new algorithms, namely *meanMC_CLT* and *cubMC_CLT*. In addition,
-% we created two new object classes for pricing options and generating
-% random objects such as the Brownian motion. In addition, all algorithms
-% in version 2.1 are improved with reduced computational complexity and
-% some new features. For example, our three multidimensional integration
-% algorithms (*cubMC_g*, *cubLattice_g*, and *cubSobol_g*) may take the
-% probability measure uniform sphere in addition to uniform hyperbox and
-% Gaussian. The directory Algorithms has been reorganized with new
-% subfolders to group algorithms and object classes by their shared
-% functionalities. We deprecated *funappx_g*, *funmin_g*, and *integral_g* in
-% version 2.1 and renamed them  in this version as *funappxPenalty_g*,
-% *funminPenalty_g*, and *integralPenalty_g*, respectively. Lastly,
-% *meanMCBer_g* in version 2.1 is removed.
+% We have a new algorithm called *meanMC_CLT*. In addition, all algorithms in
+% version 2.1 are improved with reduced computational complexity and some
+% new features. For example, funappx_g and funmin_g are locally adaptive;
+% our three multidimensional integration algorithms (*cubMC_g*, *cubLattice_g*,
+% and *cubSobol_g*) may take the probability measure uniform sphere in
+% addition to uniform hyperbox and Gaussian. The directory Algorithms is
+% reorganized with new subfolders to group algorithms and object classes by
+% their shared functionalities. We deprecated *funappx_g*, *funmin_g*, and
+% integral_g in version 2.1 and renamed them in this version as
+% *funappxPenalty_g*, *funminPenalty_g*, and *integralPenalty_g*, respectively.
+% Lastly, *meanMCBer_g* in version 2.1 is removed.
 % 
 % 
 %% Major changes in publications

@@ -82,28 +82,28 @@ function [sol, out] = meanMC_CLT(varargin)
 %
 %
 % Example 3:
-% Estimate the Keister's integration in dimension 1 with a=1, 1/sqrt(2)and
+% Estimate the Keister's integration in dimension 1 with a=1, 1/sqrt(2) and
 % using cos(x) as a control variate:
 % >> normsqd = @(x) sum(x.*x,2);
-% >> f=@(normt,a,d) ((2*pi*a^2).^(d/2)) * cos(a*sqrt(normt)).* exp((1/2-a^2)*normt);
+% >> f = @(normt,a,d) ((2*pi*a^2).^(d/2)) * cos(a*sqrt(normt)).* exp((1/2-a^2)*normt);
 % >> f1 = @(x,a,d) f(normsqd(x),a,d);
-% >> f2=@(x)[f1(x,1,1),f1(x,1/sqrt(2),1),cos(x)];
-% >> YXn=@(n)f2(randn(n,1));
-% >> s=struct('Y',YXn,'nY',2,'trueMuCV',1/sqrt(exp(1)));
-% >> [hmu,out]=meanMC_CLT(s,0,1e-3); 
-% >> exact=1.380388447043143;
+% >> f2 = @(x)[f1(x,1,1),f1(x,1/sqrt(2),1),cos(x)];
+% >> YXn = @(n)f2(randn(n,1));
+% >> s = struct('Y',YXn,'nY',2,'trueMuCV',1/sqrt(exp(1)));
+% >> [hmu,out] = meanMC_CLT(s,0,1e-3); 
+% >> exact = 1.380388447043143;
 % >> check = abs(exact-hmu) < max(0,1e-3*abs(exact))
 % check = logical 1
 %
 %
 % Example 4:
 % Estimate the integral with integrand f(x) = x1.^3.*x2.^3.*x3.^3 in the
-% interval [0,1)^3 with pure absolute error 1e-3 using x1.*x2.*x3 as
+% interval [0,1]^3 with pure absolute error 1e-3 using x1.*x2.*x3 as
 % control variate:
 % 
-% >> f=@(x) [x(:,1).^3.*x(:,2).^3.*x(:,3).^3, x(:,1).*x(:,2).*x(:,3)];
-% >> s=struct('Y',@(n)f(rand(n,3)),'nY',1,'trueMuCV',1/8);
-% >> [hmu,out]=meanMC_CLT(s,1e-3,0);
+% >> f = @(x) [x(:,1).^3.*x(:,2).^3.*x(:,3).^3, x(:,1).*x(:,2).*x(:,3)];
+% >> s = struct('Y',@(n)f(rand(n,3)),'nY',1,'trueMuCV',1/8);
+% >> [hmu,out] = meanMC_CLT(s,1e-3,0);
 % >> exact = 1/64;
 % >> check = abs(exact-hmu) < max(1e-3,1e-3*abs(exact))
 % check = logical 1
@@ -111,12 +111,12 @@ function [sol, out] = meanMC_CLT(varargin)
 %
 % Example 5:
 % Estimate the integrals with integrands f1(x) = x1.^3.*x2.^3.*x3.^3 and
-% f2(x)= x1.^2.*x2.^2.*x3.^2-1/27+1/64 in the interval [0,1)^3 using
-% x1.*x2.*x3 and x1+x2.^3+x3 as control variate:
+% f2(x)= x1.^2.*x2.^2.*x3.^2-1/27+1/64 in the interval [0,1]^3 using
+% x1.*x2.*x3 and x1+x2+x3 as control variate:
 %
-% >> f = @(x) [x(:,1).^3.*x(:,2).^3.*x(:,3).^3, x(:,1).^2.*x(:,2).^2.*x(:,3).^2-1/27+1/64,x(:,1).*x(:,2).*x(:,3),x(:,1)+x(:,2)+x(:,3)];
-% >> s=struct('Y',@(n)f(rand(n,3)),'nY',2,'trueMuCV',[1/8 1.5]);
-% >> [hmu,out]=meanMC_CLT(s,1e-4,1e-3); 
+% >> f = @(x) [x(:,1).^3.*x(:,2).^3.*x(:,3).^3, x(:,1).^2.*x(:,2).^2.*x(:,3).^2-1/27+1/64,  x(:,1).*x(:,2).*x(:,3), x(:,1)+x(:,2)+x(:,3)];
+% >> s = struct('Y',@(n)f(rand(n,3)),'nY',2,'trueMuCV',[1/8 1.5]);
+% >> [hmu,out] = meanMC_CLT(s,1e-4,1e-3); 
 % >> exact = 1/64;
 % >> check = abs(exact-hmu) < max(1e-4,1e-3*abs(exact))
 % check = logical 1

@@ -105,32 +105,29 @@
 %
 %% Guarantee
 %
-%  *Please check the details of the guarantee in [1].*
+% *Please check the details of the guarantee in [1].*
 %
 %
 %% Examples
 % *Example 1*
+%
+% Integrate function \(x^2\) with default input parameter to make the error less
+% than \(10^{-6}\).
+[q, out_param] = integral_g(@(x) x.^2)
 
-q = integral_g(@(x) x.^2)
 
-% Integrate function x with default input parameter to make the error less
-% than 1e-7.
+
 %%
 % *Example 2*
-
-f = @(x) exp(-x.^2); q = integral_g(f,'a',1,'b',2,'nlo',100,'nhi',10000,...
+%
+% Integrate function \(\exp(-x^2)\) on \([1,2]\) with lowest initial number of function
+% values 100 and highest initial number of function values 10000, absolute
+% error tolerance \(10^{-5}\) and cost budget 10000000.
+f = @(x) exp(-x.^2); [q, out_param] = integral_g(f,'a',1,'b',2,'nlo',100,'nhi',10000,...
     'abstol',1e-5,'nmax',1e7)
 
-% Integrate function x^2 on [1,2] with lowest initial number of function
-% values 100 and highest initial number of function values 10000, absolute
-% error tolerance 1e-5 and cost budget 10000000.
-%%
-% *Example 3*
 
-q = integral_g()
-
-% Warning: Function f must be a function handle. Now GAIL is using
-% f(x)=exp(-100*(x-0.5)^2).
+ 
 %% See Also
 %
 % <html>

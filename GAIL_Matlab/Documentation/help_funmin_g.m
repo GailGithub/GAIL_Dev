@@ -101,38 +101,42 @@
 %
 %% Examples
 % *Example 1*
-
+%
+% Minimize function \(\exp(0.01 (x-0.5)^2)\) with default input parameters.
 f=@(x) exp(0.01*(x-0.5).^2); [fmin,out_param] = funmin_g(f)
 
-% Minimize function exp(0.01*(x-0.5).^2) with default input parameter.
+
 %%
 % *Example 2*
-
+%
+% Minimize function \(\exp(0.01 (x-0.5)^2)\) on \([-2,2]\) with error tolerance
+% \(10^{-7}\), cost budget \(1000000\), initial number of points \(10\).
 f = @(x) exp(0.01*(x-0.5).^2);
 [fmin,out_param] = funmin_g(f,-2,2,1e-7,10,1000000)
 
-% Minimize function exp(0.01*(x-0.5).^2) on [-2,2] with error tolerance
-% 1e-7, cost budget 1000000, initial number of points 10
+
 
 %%
 % *Example 3*
-
+%
+% Minimize function \(\exp(0.01 (x-0.5)^2)\) on \([-13,8]\) with error tolerance
+% \(10^{-7}\), cost budget \(1000000\), initial number of points \(100\).
 clear in_param; in_param.a = -13; in_param.b = 8;
 in_param.abstol = 1e-7;
 in_param.ninit = 100;
 in_param.nmax = 10^6;
 [fmin,out_param] = funmin_g(f,in_param)
 
-% Minimize function exp(0.01*(x-0.5).^2) on [-13,8] with error tolerance
-% 1e-7, cost budget 1000000, initial number of points 100
+
 %%
 % *Example 4*
-
+%
+% Minimize function exp(0.01*(x-0.5).^2) on \([-2,2]\) with error tolerance \(10^{-5}\),
+% cost budget \(1000000\), initial number of points \(64\).
 f=@(x) exp(0.01*(x-0.5).^2);
 [fmin,out_param] = funmin_g(f,'a',-2,'b',2,'ninit',64,'nmax',1e6,'abstol',1e-5)
 
-% Minimize function exp(0.01*(x-0.5).^2) on [-2,2] with error tolerance 1e-5,
-% cost budget 1000000, initial number of points 64
+
 %% See Also
 %
 % <html>

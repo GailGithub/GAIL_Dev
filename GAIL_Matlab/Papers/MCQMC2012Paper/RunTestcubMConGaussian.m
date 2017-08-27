@@ -4,7 +4,7 @@ format compact
 %test.nrep=500; in the paper, we use 500 repilcation numbers
 test.nrep = 100;
 fun.funtype='gaussian';
-%param.dim=8;
+param.dim=8;
 param.measure='uniform';
 
 % param.measure='normal';
@@ -14,7 +14,7 @@ ndim=size(dimchoice,1);
 test.randch.dimoverall=dimchoice(randi(ndim,test.nrep,1));
 
 param.impyes=false;
-param.tol=1e-2;
+param.abstol=1e-2;
 param.n0=2^13;
 test.howoftenrep=10;
 shapemin=1e-6;

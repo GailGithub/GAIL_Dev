@@ -158,7 +158,7 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 %                       article mentioned below.
 %
 %  Guarantee
-% This algorithm computes the integral of real valued functions in [0,1)^d
+% This algorithm computes the integral of real valued functions in [0,1]^d
 % with a prescribed generalized error tolerance. The Walsh-Fourier
 % coefficients of the integrand are assumed to be absolutely convergent. If
 % the algorithm terminates without warning messages, the output is given

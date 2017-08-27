@@ -163,34 +163,28 @@
 %
 %%  Guarantee
 % This algorithm attempts to calculate the integral of function f over a
-% hyperbox to a prescribed error tolerance tolfun:= max(abstol,reltol*| I |)
-% with guaranteed confidence level 1-alpha. If the algorithm terminates
-% without showing any warning messages and provides an answer Q, then the
+% hyperbox to a prescribed error tolerance |tolfun| = max(|abstol|, |reltol| ||I||)
+% with guaranteed confidence level |1-alpha|. If the algorithm terminates
+% without showing any warning messages and provides an answer |Q|, then the
 % following inequality would be satisfied:
 %
-% Pr(| Q - I | <= tolfun) >= 1-alpha
+% |Pr(| Q - I | <= tolfun) >= 1-alpha|.
 %
-% The cost of the algorithm, N_tot, is also bounded above by N_up, which is
-% a function in terms of abstol, reltol, nSig, n1, fudge, kurtmax, beta. And
+% The cost of the algorithm, |N_tot|, is also bounded above by |N_up|, which is
+% a function in terms of |abstol|, |reltol|, |nSig|, |n1|, |fudge|, |kurtmax|, |beta|. And
 % the following inequality holds:
 %
-% Pr (N_tot <= N_up) >= 1-beta
+% |Pr (N_tot <= N_up) >= 1-beta|.
 %
 % Please refer to our paper for detailed arguments and proofs.
 %
 %%  Examples
+
 %%
 % *Example 1*
-
-% If no parameters are parsed, help text will show up as follows:
-
- cubMC_g
-
-%%
-% *Example 2*
-
-% Estimate the integral with integrand f(x) = sin(x) over the interval
-% [1;2] with default parameters.
+%
+% Estimate the integral with integrand \(f(x) = \sin(x)\) over the interval
+% \([1,2]\) with default parameters.
 
  f=@(x) sin(x);interval = [1;2];
  Q = cubMC_g(f,interval,'uniform',1e-3,1e-2);
@@ -198,10 +192,10 @@
  check = double(abs(exactsol-Q) < max(1e-3,1e-2*abs(exactsol)))
 
 %%
-% *Example 3*
-
-% Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) over the
-% hyperbox [0 0;1 1], where x is a vector x = [x1 x2].
+% *Example 2*
+%
+% Estimate the integral with integrand \(f(x) = \exp(-x_1^2-x_2^2)\) over the
+% hyperbox \([0, 0; 1, 1]\), where \(x\) is a vector \(x = [x_1, x_2]\).
 
  f=@(x) exp(-x(:,1).^2-x(:,2).^2);hyperbox = [0 0;1 1];
  Q = cubMC_g(f,hyperbox,'uniform',1e-3,0);
@@ -209,11 +203,12 @@
  check = double(abs(exactsol-Q) < 1e-3)
 
 %%
-% *Example 4*
-
-% Estimate the integral with integrand f(x) = 2^d*prod(x1*x2*...*xd)+0.555
-% over the hyperbox [zeros(1,d);ones(1,d)], where x is a vector
-% x = [x1 x2... xd].
+% *Example 3*
+%
+% Estimate the integral with integrand \(f(x) =
+% 2^d \prod(x_1 x_2 \cdots x_d)+0.555\)
+% over the hyperbox |[zeros(1,d);ones(1,d)]|, where \(x\) is a vector
+% \(x = [x_1, x_2, \ldots x_d]\).
 
   d=3;f=@(x) 2^d*prod(x,2)+0.555;hyperbox =[zeros(1,d);ones(1,d)];
   in_param.abstol = 1e-3;in_param.reltol=1e-3;
@@ -222,10 +217,10 @@
   check = double(abs(exactsol-Q) < max(1e-3,1e-3*abs(exactsol)))
 
 %%
-% *Example 5*
+% *Example 4*
 %
-% Estimate the integral with integrand f(x) = exp(-x1^2-x2^2) in the
-% hyperbox [-inf -inf;inf inf], where x is a vector x = [x1 x2].
+% Estimate the integral with integrand \(f(x) = \exp(-x_1^2-x_2^2)\) in the
+% hyperbox |[-inf -inf; inf inf]|, where \(x\) is a vector \(x = [x_1, x_2]\).
 
  f=@(x) exp(-x(:,1).^2-x(:,2).^2);hyperbox = [-inf -inf;inf inf];
  Q = cubMC_g(f,hyperbox,'normal',0,1e-2);
@@ -233,10 +228,10 @@
  check = double(abs(exactsol-Q) < max(0,1e-2*abs(exactsol)))
 
 %%
-% *Example 6*
+% *Example 5*
 %
-% Estimate the integral with integrand f(x) = x1^2+x2^2 in the disk with
-% center (0,0) and radius 1, where x is a vector x = [x1 x2].
+% Estimate the integral with integrand \(f(x) = x_1^2+x_2^2\) in the disk with
+% center \((0,0)\) and radius 1, where \(x\) is a vector \(x = [x_1, x_2]\).
 
  f=@(x) x(:,1).^2+x(:,2).^2;hyperbox = [0,0,1];
  Q = cubMC_g(f,hyperbox,'uniform ball','abstol',1e-3,'reltol',1e-3);
