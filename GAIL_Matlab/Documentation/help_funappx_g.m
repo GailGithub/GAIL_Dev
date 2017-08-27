@@ -115,6 +115,7 @@
 %
 %% Examples
 % *Example 1*
+%
 % Approximate function \(x^2\) on \([-2,2]\) with error tolerance \(10^{-7}\), default
 % cost budget and initial number of subintervals 18.
 f = @(x) x.^2; [~, out_param] = funappx_g(f,-2,2,1e-7,18)
@@ -122,6 +123,7 @@ f = @(x) x.^2; [~, out_param] = funappx_g(f,-2,2,1e-7,18)
 
 %%
 % *Example 2*
+%
 % Approximate function \(x^2\) on \([-2,2]\) with default error tolerance, default
 % cost budget and initial number of subintervals 17.
 f = @(x) x.^2;
@@ -130,6 +132,7 @@ f = @(x) x.^2;
 
 %%
 % *Example 3*
+%
 % Approximate function \(x^2\) on \([-5,5]\) with error tolerance \(10^{-6}\), default
 % cost budget and initial number of subintervals 18.
 clear in_param; in_param.a = -5; in_param.b = 5; f = @(x) x.^2;
