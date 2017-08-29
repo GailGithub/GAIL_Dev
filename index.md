@@ -7,18 +7,16 @@ GAIL is a suite of algorithms for integration problems in one and many dimension
 <p>GAIL is created, developed, and maintained by  <a href="http://mypages.iit.edu/~hickernell/" rel="nofollow">Fred Hickernell</a> (Illinois Institute of Technology), <a href="http://home.uchicago.edu/sctchoi" rel="nofollow">Sou-Cheng Choi</a> (IIT), and their collaborators including Yuhan Ding (IIT), Lan Jiang (IIT), Da Li (IIT), Jiazhen Lu (IIT), Jagadeeswaran Rathinavel (IIT), Lluís Antoni Jiménez Rugama (UBS), Xin Tong (UIC), Kan Zhang (IIT), Yizhi Zhang (IIT), Xiaoyang Zhao (IIT), and Xuan Zhou (J.P. Morgan).  It is a free software and could be downloaded via the link below.</p>
 
 *To download the latest version of GAIL, follow one of the links below to:*
-<font size="2" color="red"><pre>           Get zip file               OR     run the MATLAB installation script</pre> </font>
+<font size="2" color="red"><pre>            Get zip file                OR      run the MATLAB installation script</pre> </font>
 
 
-<a href="http://math.iit.edu/~openscholar/sites/default/files/meshfree/files/gail_2_1_1.zip"><img hspace="40" src="https://raw.githubusercontent.com/harryzyz/GAILPubPic/master/downloadzip.png"></a>
-<a href="http://math.iit.edu/~openscholar/sites/default/files/meshfree/files/downloadinstallgail_2_1_2.m"><img hspace="5" src="https://raw.githubusercontent.com/harryzyz/GAILPubPic/master/downloadscript.png"></a>
+<a href="http://www.math.iit.edu/~Meshfree-methods-seminar/GAIL/GAIL_2_2.zip"><img hspace="40" src="https://raw.githubusercontent.com/harryzyz/GAILPubPic/master/downloadzip.png"></a>
+<a href="http://www.math.iit.edu/~Meshfree-methods-seminar/GAIL/DownloadInstallGail_2_2.m"><img hspace="5" src="https://raw.githubusercontent.com/harryzyz/GAILPubPic/master/downloadscript.png"></a>
 
 
 ## News
 
 * <span style="color:red">GAIL version 2.2.1 is released on August 28, 2017 (Chinese Valentine's Day) </span>
-
-* GAIL version 2.2.1 is released on August 28, 2017 (Chinese Valentine's Day) 
 
 * <a href="https://science.iit.edu/sites/science/files/elements/science/pdfs/SciLetters-W2016-Newsletter.pdf">Press about GAIL: Reliable Mathematical Software</a>
 
