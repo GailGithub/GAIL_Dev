@@ -1,0 +1,1907 @@
+
+Tests = 
+
+  1×2 Test array with properties:
+
+    Name
+    BaseFolder
+    ProcedureName
+    SharedTestFixtures
+    Parameterization
+    Tags
+
+Tests Include:
+   0 Parameterizations, 0 Shared Test Fixture Classes, 0 Tags.
+
+Running ut_save_mat
+..
+Done ut_save_mat
+__________
+
+
+results = 
+
+  1×2 TestResult array with properties:
+
+    Name
+    Passed
+    Failed
+    Incomplete
+    Duration
+    Details
+
+Totals:
+   2 Passed, 0 Failed, 0 Incomplete.
+   0.51021 seconds testing time.
+
+
+Tests = 
+
+  1×3 Test array with properties:
+
+    Name
+    BaseFolder
+    ProcedureName
+    SharedTestFixtures
+    Parameterization
+    Tags
+
+Tests Include:
+   0 Parameterizations, 0 Shared Test Fixture Classes, 0 Tags.
+
+Running ut_save_eps
+...
+Done ut_save_eps
+__________
+
+
+results = 
+
+  1×3 TestResult array with properties:
+
+    Name
+    Passed
+    Failed
+    Incomplete
+    Duration
+    Details
+
+Totals:
+   3 Passed, 0 Failed, 0 Incomplete.
+   5.3419 seconds testing time.
+
+Starting longtests at 27-Aug-2017 15:46:24 
+TAP version 13
+1..52
+ok 1 - "in_param.dim = 3;alpha = ones(1,in_param.dim); beta = 1./ (1:in_param.dim);r=1;"
+ok 2 - "hyperbox = [zeros(1,in_param.dim);ones(1,in_param.dim)];index = 1;"
+ok 3 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 4 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 5 - "Q = cubLattice_g(f,hyperbox,'uniform',1e-3,1e-2);"
+ok 6 - "check = abs(f_true-Q) < gail.tolfun(1e-3,1e-2,1,f_true,'max')"
+ok 7 - "index = 2;"
+ok 8 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 9 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 10 - "Q = cubLattice_g(f,hyperbox,'uniform',1e-3,1e-3);"
+ok 11 - "check = abs(f_true-Q) < gail.tolfun(1e-3,1e-3,1,f_true,'max')"
+ok 12 - "index = 3;"
+ok 13 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 14 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 15 - "Q = cubLattice_g(f,hyperbox,'uniform',1e-3,1e-2);"
+ok 16 - "check = abs(f_true-Q) < gail.tolfun(1e-3,1e-2,1,f_true,'max')"
+ok 17 - "index = 4;"
+ok 18 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 19 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 20 - "Q = cubLattice_g(f,hyperbox,'uniform',1e-3,1e-3);"
+ok 21 - "check = abs(f_true-Q) < gail.tolfun(1e-3,1e-3,1,f_true,'max')"
+ok 22 - "index = 5;"
+ok 23 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 24 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 25 - "Q = cubLattice_g(f,hyperbox,'uniform',1e-3,1e-3);"
+ok 26 - "check = abs(f_true-Q) < gail.tolfun(1e-3,1e-3,1,f_true,'max')"
+ok 27 - "in_param.dim = 3;alpha = ones(1,in_param.dim); beta = 1./ (1:in_param.dim);r=1;"
+ok 28 - "hyperbox = [-ones(1,in_param.dim);ones(1,in_param.dim)];index = 1;"
+ok 29 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 30 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 31 - "Q = cubLattice_g(f,hyperbox,'uniform',1e-2,1e-13);"
+ok 32 - "check = abs(f_true-Q) < gail.tolfun(1e-2,1e-13,1,f_true,'max')"
+ok 33 - "index = 2;hyperbox = [-ones(1,in_param.dim);ones(1,in_param.dim)];"
+ok 34 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 35 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 36 - "Q = cubLattice_g(f,hyperbox,'uniform',1e-2,1e-13);"
+ok 37 - "check = abs(f_true-Q) < gail.tolfun(1e-2,1e-13,1,f_true,'max')"
+ok 38 - "index = 3;hyperbox = [ones(1,in_param.dim)/2;2*ones(1,in_param.dim)];"
+ok 39 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 40 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 41 - "Q = cubLattice_g(f,hyperbox,'uniform',1e-2,1e-3);"
+ok 42 - "check = abs(f_true-Q) < gail.tolfun(1e-2,1e-3,1,f_true,'max')"
+ok 43 - "index = 4;hyperbox = [-ones(1,in_param.dim)/2;ones(1,in_param.dim)];"
+ok 44 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 45 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 46 - "Q = cubLattice_g(f,hyperbox,'uniform',1e-2,1e-3);"
+ok 47 - "check = abs(f_true-Q) < gail.tolfun(1e-2,1e-3,1,f_true,'max')"
+ok 48 - "index = 5;hyperbox = [-ones(1,in_param.dim)/2;ones(1,in_param.dim)];"
+ok 49 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 50 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 51 - "Q = cubLattice_g(f,hyperbox,'uniform',1e-2,1e-2);"
+ok 52 - "check = abs(f_true-Q) < gail.tolfun(1e-2,1e-2,1,f_true,'max')"
+Running ut_Papers_cubLattice_g
+irep =
+    10
+irep =
+    20
+irep =
+    30
+irep =
+    40
+irep =
+    50
+irep =
+    60
+irep =
+    70
+irep =
+    80
+irep =
+    90
+irep =
+   100
+irep =
+   110
+irep =
+   120
+irep =
+   130
+irep =
+   140
+irep =
+   150
+irep =
+   160
+irep =
+   170
+irep =
+   180
+irep =
+   190
+irep =
+   200
+irep =
+   210
+irep =
+   220
+irep =
+   230
+irep =
+   240
+irep =
+   250
+irep =
+   260
+irep =
+   270
+irep =
+   280
+irep =
+   290
+irep =
+   300
+irep =
+   310
+irep =
+   320
+irep =
+   330
+irep =
+   340
+irep =
+   350
+irep =
+   360
+irep =
+   370
+irep =
+   380
+irep =
+   390
+irep =
+   400
+irep =
+   410
+irep =
+   420
+irep =
+   430
+irep =
+   440
+irep =
+   450
+irep =
+   460
+irep =
+   470
+irep =
+   480
+irep =
+   490
+irep =
+   500
+.irep =
+    10
+irep =
+    20
+irep =
+    30
+irep =
+    40
+irep =
+    50
+irep =
+    60
+irep =
+    70
+irep =
+    80
+irep =
+    90
+irep =
+   100
+irep =
+   110
+irep =
+   120
+irep =
+   130
+irep =
+   140
+irep =
+   150
+irep =
+   160
+irep =
+   170
+irep =
+   180
+irep =
+   190
+irep =
+   200
+irep =
+   210
+irep =
+   220
+irep =
+   230
+irep =
+   240
+irep =
+   250
+irep =
+   260
+irep =
+   270
+irep =
+   280
+irep =
+   290
+irep =
+   300
+irep =
+   310
+irep =
+   320
+irep =
+   330
+irep =
+   340
+irep =
+   350
+irep =
+   360
+irep =
+   370
+irep =
+   380
+irep =
+   390
+irep =
+   400
+irep =
+   410
+irep =
+   420
+irep =
+   430
+irep =
+   440
+irep =
+   450
+irep =
+   460
+irep =
+   470
+irep =
+   480
+irep =
+   490
+irep =
+   500
+.
+Done ut_Papers_cubLattice_g
+__________
+
+Finished longtests_cubLattice_g at 27-Aug-2017 15:47:04 
+TAP version 13
+1..56
+ok 1 - " in_param.dim = 3;alpha = ones(1,in_param.dim); beta = 1./ (1:in_param.dim);r=1;"
+ok 2 - "hyperbox = [zeros(1,in_param.dim);ones(1,in_param.dim)];index = 1;"
+ok 3 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 4 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.001"
+ok 5 - "Q = cubMC_g(f,hyperbox,'uniform',1e-3,1e-2)+0.001"
+ok 6 - "index = 2;"
+ok 7 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 8 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.001"
+ok 9 - "Q = cubMC_g(f,hyperbox,'uniform',1e-3,1e-3)+0.001"
+ok 10 - "index = 3;"
+ok 11 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 12 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.001"
+ok 13 - "Q = cubMC_g(f,hyperbox,'uniform',1e-3,1e-2)+0.001"
+ok 14 - "index = 4;"
+ok 15 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 16 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.001"
+ok 17 - "Q = cubMC_g(f,hyperbox,'uniform',1e-3,1e-3)+0.001"
+ok 18 - "index = 5;"
+ok 19 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 20 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 21 - "Q = cubMC_g(f,hyperbox,'uniform',1e-3,1e-3)"
+ok 22 - "index = 6;"
+ok 23 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 24 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 25 - "Q = cubMC_g(f,hyperbox,'uniform',1e-3,1e-3)"
+ok 26 - "index = 7; in_param.dim = 3;"
+ok 27 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 28 - "Q = cubMC_g(f,hyperbox,'uniform',1e-3,1e-4)"
+ok 29 - "in_param.dim = 3; alpha = ones(1,in_param.dim); beta = 1./ (1:in_param.dim);r=1;"
+ok 30 - "hyperbox = [-ones(1,in_param.dim);ones(1,in_param.dim)];index = 1;"
+ok 31 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 32 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 33 - "abstol = 1e-2; reltol = 1e-13;"
+ok 34 - "Q = cubMC_g(f,hyperbox,'uniform',abstol,reltol);"
+ok 35 - "abs(f_true-Q) <= max(abstol, reltol * abs(f_true))"
+ok 36 - "index = 2;hyperbox = [-ones(1,in_param.dim);ones(1,in_param.dim)];"
+ok 37 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 38 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 39 - "Q = cubMC_g(f,hyperbox,'uniform',1e-2,1e-13)"
+ok 40 - "index = 3;hyperbox = [ones(1,in_param.dim)/2;2*ones(1,in_param.dim)];"
+ok 41 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 42 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 43 - "Q = cubMC_g(f,hyperbox,'uniform',1e-2,1e-3)"
+ok 44 - "index = 4;hyperbox = [-ones(1,in_param.dim)/2;ones(1,in_param.dim)];"
+ok 45 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 46 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.005"
+ok 47 - "Q = cubMC_g(f,hyperbox,'uniform',1e-2,1e-3)+0.005;"
+ok 48 - "check = abs(Q - f_true)< max(1e-2, 1e-3*f_true)"
+ok 49 - "index = 5;hyperbox = [-ones(1,in_param.dim)/2;ones(1,in_param.dim)];"
+ok 50 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 51 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.005"
+ok 52 - "Q = cubMC_g(f,hyperbox,'uniform',1e-2,1e-2)+0.005"
+ok 53 - "index = 6;"
+ok 54 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 55 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 56 - "Q = cubMC_g(f,hyperbox,'uniform',1e-3,1e-3)"
+Running MCQMC2012Figs ...
+Elapsed time is 11.796564 seconds.
+Elapsed time is 11.810024 seconds.
+Elapsed time is 13.377230 seconds.
+Running FoolAutomaticAlgorithms ...
+info = 
+  struct with fields:
+
+       filename: 'scriptValues.mat'
+         degree: 2
+    coefficient: 0
+        RegFunc: @(x)info.coefficient*x.^info.degree
+info = 
+  struct with fields:
+
+        filename: 'scriptValues.mat'
+          degree: 2
+     coefficient: 0
+         RegFunc: @(x)info.coefficient*x.^info.degree
+    RegFuncprime: @(x)info.degree.*info.coefficient*x.^(info.degree-1)
+info = 
+  struct with fields:
+
+           filename: 'scriptValues.mat'
+             degree: 2
+        coefficient: 0
+            RegFunc: @(x)info.coefficient*x.^info.degree
+       RegFuncprime: @(x)info.degree.*info.coefficient*x.^(info.degree-1)
+    RegFuncdubprime: [function_handle]
+fname =
+    'chebint'
+Original =
+     0
+Elapsed time is 0.595527 seconds.
+ratio =
+     7.828846471388402e+03
+failintegral =
+     0
+realintegral =
+   0.369408369408369
+error =
+     1
+Running RunTestcubMConGeoAsianCall ...
+Warning: tried to evaluate at 12395635320 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 11092186796 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 4261403468 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 5591410648 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 18969523752 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 22829583536 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 3197325720 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 2771642625 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 18916220200 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 22589036648 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 145916799808 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 179263975360 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 43203910512 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 45748519056 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 46544203328 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 45365688064 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 6349069634 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 5638266090 samples,
+which is more than the allowed maximum of 1000000000 samples
+irep =
+    10
+Warning: tried to evaluate at 2556209209 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 2821033035 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 41571471568 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 43152977392 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 22464363240 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 22583242648 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 86418939040 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 90791635520 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 83531782528 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 89945170816 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 6531795644 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 5537036452 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 12070306920 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 11264561576 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 44994501568 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 45179859280 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 20562731288 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 22723016728 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 11387473224 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 11213591544 samples,
+which is more than the allowed maximum of 1000000000 samples
+irep =
+    20
+Warning: tried to evaluate at 97422721792 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 88543401728 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 2839802062 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 2730741545 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 5453670304 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 5558870662 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 2852927706 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 2802913985 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 47087437712 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 45240496832 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 3178107597 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 2758896313 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 10863680572 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 11133959380 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 77149569440 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 91151616544 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 91115513344 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 91248488320 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 77408105280 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 90710631840 samples,
+which is more than the allowed maximum of 1000000000 samples
+irep =
+    30
+Warning: tried to evaluate at 10979653220 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 11278372420 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 22600985576 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 22963181736 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 10095200032 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 11216502296 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 91701430784 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 89273899456 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 46525948000 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 45232924960 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 185201048960 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 182159164800 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 18373859200 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 22174623480 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 2784407099 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 2764076374 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 98488360224 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 91360024576 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 95971804256 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 88480471392 samples,
+which is more than the allowed maximum of 1000000000 samples
+irep =
+    40
+Warning: tried to evaluate at 3108443290 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 2842669117 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 188987919104 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 178232555456 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 186155576320 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 180239087040 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 5546498298 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 5652395232 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 101230593312 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 90131511616 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 11119404908 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 11157278848 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 5808592474 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 5537665266 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 2540604392 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 2748254613 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 24410184136 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 22172822752 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 181142623808 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 183273324992 samples,
+which is more than the allowed maximum of 1000000000 samples
+irep =
+    50
+Warning: tried to evaluate at 6025610010 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 5650916806 samples,
+which is more than the allowed maximum of 1000000000 samples
+Elapsed time is 3232.922188 seconds.
+Running RunTestcubMConGaussian ...
+Warning: tried to evaluate at 1572912610 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 1611014890 samples,
+which is more than the allowed maximum of 1000000000 samples
+irep =
+    10
+Warning: tried to evaluate at 5251525706 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 6658561966 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 1070192024 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 1162191096 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 1133772260 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 1327170140 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 2395787840 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 2446543000 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 1110518580 samples,
+which is more than the allowed maximum of 1000000000 samples
+irep =
+    20
+Warning: tried to evaluate at 2868479120 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 3062703888 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 2249112176 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 2437687112 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 5004666672 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 4962780152 samples,
+which is more than the allowed maximum of 1000000000 samples
+irep =
+    30
+Warning: tried to evaluate at 3391814048 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 2746511432 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 1021863994 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 3310688808 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 3491668232 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 1392242076 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 1454777484 samples,
+which is more than the allowed maximum of 1000000000 samples
+irep =
+    40
+Warning: tried to evaluate at 1844679016 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 2436812340 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 1019996370 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 1128414305 samples,
+which is more than the allowed maximum of 1000000000 samples
+irep =
+    50
+Warning: tried to evaluate at 1502086248 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 1520486421 samples,
+which is more than the allowed maximum of 1000000000 samples
+irep =
+    60
+Warning: tried to evaluate at 1187319280 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 1218922645 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 5891732088 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 6877721136 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 1183475880 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 1348514752 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 3538473192 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 3731136352 samples,
+which is more than the allowed maximum of 1000000000 samples
+irep =
+    70
+Warning: tried to evaluate at 2515744480 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 2805852000 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 3510939691 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 4302266668 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 4237167767 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 4040262226 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 3683243168 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 3812860360 samples,
+which is more than the allowed maximum of 1000000000 samples
+irep =
+    80
+Warning: tried to evaluate at 3262752680 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 3958159572 samples,
+which is more than the allowed maximum of 1000000000 samples
+irep =
+    90
+Warning: tried to evaluate at 1420227520 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 1490217144 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 2551915140 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 2669423004 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 2715992475 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 2490451166 samples,
+which is more than the allowed maximum of 1000000000 samples
+irep =
+   100
+Elapsed time is 2393.941149 seconds.
+Running RunTestcubMConGaussiand1 ...
+irep =
+    10
+irep =
+    20
+irep =
+    30
+Warning: tried to evaluate at 10689498213 samples,
+which is more than the allowed maximum of 1000000000 samples
+irep =
+    40
+irep =
+    50
+irep =
+    60
+irep =
+    70
+irep =
+    80
+Warning: tried to evaluate at 1469865442 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 1200670017 samples,
+which is more than the allowed maximum of 1000000000 samples
+irep =
+    90
+irep =
+   100
+irep =
+   110
+irep =
+   120
+irep =
+   130
+irep =
+   140
+irep =
+   150
+irep =
+   160
+irep =
+   170
+Warning: tried to evaluate at 1049061098 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 1148397459 samples,
+which is more than the allowed maximum of 1000000000 samples
+irep =
+   180
+irep =
+   190
+irep =
+   200
+irep =
+   210
+irep =
+   220
+irep =
+   230
+irep =
+   240
+irep =
+   250
+irep =
+   260
+irep =
+   270
+irep =
+   280
+irep =
+   290
+Warning: tried to evaluate at 1013019822 samples,
+which is more than the allowed maximum of 1000000000 samples
+irep =
+   300
+Warning: tried to evaluate at 1451856259 samples,
+which is more than the allowed maximum of 1000000000 samples
+irep =
+   310
+irep =
+   320
+irep =
+   330
+irep =
+   340
+irep =
+   350
+irep =
+   360
+irep =
+   370
+irep =
+   380
+irep =
+   390
+irep =
+   400
+irep =
+   410
+Warning: tried to evaluate at 1127908385 samples,
+which is more than the allowed maximum of 1000000000 samples
+irep =
+   420
+Warning: tried to evaluate at 1165699711 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 1063260156 samples,
+which is more than the allowed maximum of 1000000000 samples
+irep =
+   430
+irep =
+   440
+irep =
+   450
+irep =
+   460
+irep =
+   470
+irep =
+   480
+Warning: tried to evaluate at 1122358597 samples,
+which is more than the allowed maximum of 1000000000 samples
+irep =
+   490
+irep =
+   500
+Elapsed time is 2925.744259 seconds.
+[Warning:
+TestcubMCon-gaussian-uniform-Out-17-Aug-2012_13.12.36N500d1tol0.001.mat does
+not exist. Need to call function RunTestcubMConGaussiand1 to produce the MAT
+file.] 
+[> In DisplayTestResults_BlacknColor (line 20)
+  In longtests_cubMC_g (line 14)
+  In longtests (line 21)] 
+irep =
+    10
+irep =
+    20
+Warning: tried to evaluate at 1117830444 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 3570309792 samples,
+which is more than the allowed maximum of 1000000000 samples
+irep =
+    30
+Warning: tried to evaluate at 3469832611 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 1531121269 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 1497181681 samples,
+which is more than the allowed maximum of 1000000000 samples
+irep =
+    40
+irep =
+    50
+irep =
+    60
+irep =
+    70
+irep =
+    80
+irep =
+    90
+irep =
+   100
+irep =
+   110
+irep =
+   120
+irep =
+   130
+irep =
+   140
+irep =
+   150
+irep =
+   160
+irep =
+   170
+irep =
+   180
+irep =
+   190
+irep =
+   200
+Warning: tried to evaluate at 1024148515 samples,
+which is more than the allowed maximum of 1000000000 samples
+irep =
+   210
+Warning: tried to evaluate at 4617282517 samples,
+which is more than the allowed maximum of 1000000000 samples
+irep =
+   220
+Warning: tried to evaluate at 1002486673 samples,
+which is more than the allowed maximum of 1000000000 samples
+irep =
+   230
+irep =
+   240
+irep =
+   250
+irep =
+   260
+Warning: tried to evaluate at 3213420758 samples,
+which is more than the allowed maximum of 1000000000 samples
+irep =
+   270
+Warning: tried to evaluate at 1131593034 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 1171948578 samples,
+which is more than the allowed maximum of 1000000000 samples
+irep =
+   280
+irep =
+   290
+irep =
+   300
+irep =
+   310
+Warning: tried to evaluate at 1411486878 samples,
+which is more than the allowed maximum of 1000000000 samples
+irep =
+   320
+Warning: tried to evaluate at 1007689617 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 1280640747 samples,
+which is more than the allowed maximum of 1000000000 samples
+irep =
+   330
+irep =
+   340
+irep =
+   350
+irep =
+   360
+irep =
+   370
+irep =
+   380
+irep =
+   390
+irep =
+   400
+irep =
+   410
+irep =
+   420
+irep =
+   430
+irep =
+   440
+irep =
+   450
+irep =
+   460
+irep =
+   470
+irep =
+   480
+irep =
+   490
+Warning: tried to evaluate at 1615962613 samples,
+which is more than the allowed maximum of 1000000000 samples
+irep =
+   500
+Elapsed time is 3834.514877 seconds.
+[Warning:
+TestcubMCon-gaussian-uniform-Out-17-Aug-2012_17.46.40N500d6tol0.001.mat does
+not exist. Need to call function RunTestcubMConGaussian to produce the MAT
+file.] 
+[> In DisplayTestResults_BlacknColor (line 29)
+  In longtests_cubMC_g (line 14)
+  In longtests (line 21)] 
+Warning: tried to evaluate at 1249883810 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 1456109075 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 4230299850 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 4539707145 samples,
+which is more than the allowed maximum of 1000000000 samples
+irep =
+    10
+Warning: tried to evaluate at 3779891185 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 3808551726 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 3779902434 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 3246436584 samples,
+which is more than the allowed maximum of 1000000000 samples
+irep =
+    20
+Warning: tried to evaluate at 3662663900 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 3420180225 samples,
+which is more than the allowed maximum of 1000000000 samples
+irep =
+    30
+Warning: tried to evaluate at 4931223080 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 5265276548 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 1922465300 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 2007431496 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 2978683660 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 3406755576 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 1050680755 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 2339675292 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 2473914540 samples,
+which is more than the allowed maximum of 1000000000 samples
+irep =
+    40
+Warning: tried to evaluate at 1695368990 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 1820353878 samples,
+which is more than the allowed maximum of 1000000000 samples
+irep =
+    50
+Warning: tried to evaluate at 1055697816 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 1010900064 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 2864723416 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 3129297852 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 2398789029 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 2331810699 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 4046684640 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 4715299744 samples,
+which is more than the allowed maximum of 1000000000 samples
+irep =
+    60
+Warning: tried to evaluate at 5503499000 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 5688768912 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 1287281832 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 1349594736 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 1360308384 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 1574518576 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 1369844427 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 1549422228 samples,
+which is more than the allowed maximum of 1000000000 samples
+irep =
+    70
+Warning: tried to evaluate at 1211196232 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 1324547332 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 1251583135 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 1374897255 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 2400169440 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 2426393337 samples,
+which is more than the allowed maximum of 1000000000 samples
+irep =
+    80
+Warning: tried to evaluate at 4535387796 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 4344954468 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 4182405864 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 4301301305 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 3579845874 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 3654588504 samples,
+which is more than the allowed maximum of 1000000000 samples
+irep =
+    90
+Warning: tried to evaluate at 1999691328 samples,
+which is more than the allowed maximum of 1000000000 samples
+irep =
+   100
+Elapsed time is 2013.561606 seconds.
+[Warning: TestcubMCon-geomean-Out-17-Aug-2012_20.38.24N500d1tol0.05.mat does not
+exist. Need to call function RunTestcubMConGeoAsianCall to produce the MAT
+file.] 
+[> In DisplayTestResults_BlacknColor (line 38)
+  In longtests_cubMC_g (line 14)
+  In longtests (line 21)] 
+Warning: tried to evaluate at 85648467744 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 89870601984 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 42324490800 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 44205107984 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 41848177632 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 46345926640 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 39887777280 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 45392880960 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 20701827144 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 21909851160 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 177147757312 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 176512750144 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 5580568068 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 5719263846 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 21183808240 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 22147230816 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 2728918013 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 2772043463 samples,
+which is more than the allowed maximum of 1000000000 samples
+irep =
+    10
+Warning: tried to evaluate at 2714500759 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 2766846315 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 10696922112 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 11387061612 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 23924601168 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 22499719320 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 28550330032 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 22213669232 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 84607140480 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 91219623072 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 2606895744 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 2871056495 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 171312341440 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 174314488256 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 178931414976 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 178883663552 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 2673246906 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 2783821235 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 22277086768 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 22213117528 samples,
+which is more than the allowed maximum of 1000000000 samples
+irep =
+    20
+Warning: tried to evaluate at 5315660046 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 5699055556 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 80021877248 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 89211175072 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 25235065272 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 22108791368 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 171943838336 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 179875730880 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 10434856652 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 10899689088 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 43134186064 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 44036829888 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 5907412204 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 5538880026 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 21402973608 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 22230764520 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 19473696120 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 23172788344 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 12683326100 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 11061110800 samples,
+which is more than the allowed maximum of 1000000000 samples
+irep =
+    30
+Warning: tried to evaluate at 20713035064 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 22546011056 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 23716185856 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 22831455888 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 169126300736 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 178874530752 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 86290354784 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 89055122144 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 72466718816 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 87143160896 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 5916296802 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 5483290364 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 41096844944 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 42847552624 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 52530383568 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 43925216864 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 19674855352 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 22776605648 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 2996155829 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 2807708969 samples,
+which is more than the allowed maximum of 1000000000 samples
+irep =
+    40
+Warning: tried to evaluate at 41587022288 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 43016539488 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 43261362640 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 44949273184 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 183885420736 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 180839047488 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 5727436810 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 5522266364 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 2393823480 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 2880474291 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 2536239428 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 2717247436 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 6200102966 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 5563734382 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 10950971004 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 11349099536 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 23641187248 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 22497688568 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 11857600500 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 11216847652 samples,
+which is more than the allowed maximum of 1000000000 samples
+irep =
+    50
+Warning: tried to evaluate at 23373332320 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 22389411232 samples,
+which is more than the allowed maximum of 1000000000 samples
+Elapsed time is 3129.897065 seconds.
+Error: DisplayTestResults_BlacknColor is wrongly coded. We skip it.
+Running ut_cubMC_g
+..........
+Dim   FcnIdx       Q             f_true               Err            Sample Used             Stats  
+-----------------------------------------------------------------------------------------------------
+1     1       8.41159e-01       8.41471e-01       3.12228e-04         711092             BothErrMet
+1     2       7.85366e-01       7.85398e-01       3.24660e-05         883122             BothErrMet
+2     1       4.96555e-01       4.96751e-01       1.96429e-04         2558734             BothErrMet
+2     2       7.28141e-01       7.28296e-01       1.55322e-04         857605             BothErrMet
+3     1       6.20687e-02       6.23593e-02       2.90627e-04         4284480             AbsErrMet
+3     2       6.62645e-01       6.62570e-01       7.49772e-05         860976             BothErrMet
+.i =
+     1
+i =
+     2
+i =
+     3
+i =
+     4
+i =
+     5
+i =
+     6
+i =
+     7
+i =
+     8
+i =
+     9
+i =
+    10
+i =
+    11
+i =
+    12
+i =
+    13
+i =
+    14
+i =
+    15
+i =
+    16
+i =
+    17
+i =
+    18
+i =
+    19
+i =
+    20
+.
+Done ut_cubMC_g
+__________
+
+Finished longtests_cubMC_g at 27-Aug-2017 20:54:05 
+TAP version 13
+1..53
+ok 1 - " in_param.dim = 3;alpha = ones(1,in_param.dim); beta = 1./ (1:in_param.dim);r=1;"
+ok 2 - "hyperbox = [zeros(1,in_param.dim);ones(1,in_param.dim)];index = 1;"
+ok 3 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 4 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.001"
+ok 5 - "Q = cubSobol_g(f,hyperbox,'uniform',1e-3,1e-2)+0.001"
+ok 6 - "index = 2;"
+ok 7 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 8 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.001"
+ok 9 - "Q = cubSobol_g(f,hyperbox,'uniform',1e-3,1e-3)+0.001"
+ok 10 - "index = 3;"
+ok 11 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 12 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.001"
+ok 13 - "Q = cubSobol_g(f,hyperbox,'uniform',1e-3,1e-2)+0.001"
+ok 14 - "index = 4;"
+ok 15 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 16 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.001"
+ok 17 - "Q = cubSobol_g(f,hyperbox,'uniform',1e-3,1e-3)+0.001"
+ok 18 - "index = 5;"
+ok 19 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 20 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 21 - "Q = cubSobol_g(f,hyperbox,'uniform',1e-3,1e-3)"
+ok 22 - "index = 6;"
+ok 23 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 24 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 25 - "Q = cubSobol_g(f,hyperbox,'uniform',1e-3,1e-3)"
+ok 26 - "index = 7; in_param.dim = 3;"
+ok 27 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 28 - "Q = cubSobol_g(f,hyperbox,'uniform',1e-3,1e-4)"
+ok 29 - "in_param.dim = 3;alpha = ones(1,in_param.dim); beta = 1./ (1:in_param.dim);r=1;"
+ok 30 - "hyperbox = [-ones(1,in_param.dim);ones(1,in_param.dim)];index = 1;"
+ok 31 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 32 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 33 - "Q = cubSobol_g(f,hyperbox,'uniform',1e-2,1e-13)"
+ok 34 - "index = 2;hyperbox = [-ones(1,in_param.dim);ones(1,in_param.dim)];"
+ok 35 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 36 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 37 - "Q = cubSobol_g(f,hyperbox,'uniform',1e-2,1e-13)"
+ok 38 - "index = 3;hyperbox = [ones(1,in_param.dim)/2;2*ones(1,in_param.dim)];"
+ok 39 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 40 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 41 - "Q = cubSobol_g(f,hyperbox,'uniform',1e-2,1e-3)"
+ok 42 - "index = 4;hyperbox = [-ones(1,in_param.dim)/2;ones(1,in_param.dim)];"
+ok 43 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 44 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.005"
+ok 45 - "Q = cubSobol_g(f,hyperbox,'uniform',1e-2,1e-3)+0.005"
+ok 46 - "index = 5;hyperbox = [-ones(1,in_param.dim)/2;ones(1,in_param.dim)];"
+ok 47 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 48 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.005"
+ok 49 - "Q = cubSobol_g(f,hyperbox,'uniform',1e-2,1e-2)+0.005"
+ok 50 - "index = 6;"
+ok 51 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 52 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 53 - "Q = cubSobol_g(f,hyperbox,'uniform',1e-3,1e-3)"
+TAP version 13
+1..0
+Running ut_Papers_cubSobol_g
+irep =
+    10
+irep =
+    20
+irep =
+    30
+irep =
+    40
+irep =
+    50
+irep =
+    60
+irep =
+    70
+irep =
+    80
+irep =
+    90
+irep =
+   100
+irep =
+   110
+irep =
+   120
+irep =
+   130
+irep =
+   140
+irep =
+   150
+irep =
+   160
+irep =
+   170
+irep =
+   180
+irep =
+   190
+irep =
+   200
+irep =
+   210
+irep =
+   220
+irep =
+   230
+irep =
+   240
+irep =
+   250
+irep =
+   260
+irep =
+   270
+irep =
+   280
+irep =
+   290
+irep =
+   300
+irep =
+   310
+irep =
+   320
+irep =
+   330
+irep =
+   340
+irep =
+   350
+irep =
+   360
+irep =
+   370
+irep =
+   380
+irep =
+   390
+irep =
+   400
+irep =
+   410
+irep =
+   420
+irep =
+   430
+irep =
+   440
+irep =
+   450
+irep =
+   460
+irep =
+   470
+irep =
+   480
+irep =
+   490
+irep =
+   500
+.irep =
+    10
+irep =
+    20
+irep =
+    30
+irep =
+    40
+irep =
+    50
+irep =
+    60
+irep =
+    70
+irep =
+    80
+irep =
+    90
+irep =
+   100
+irep =
+   110
+irep =
+   120
+irep =
+   130
+irep =
+   140
+irep =
+   150
+irep =
+   160
+irep =
+   170
+irep =
+   180
+irep =
+   190
+irep =
+   200
+irep =
+   210
+irep =
+   220
+irep =
+   230
+irep =
+   240
+irep =
+   250
+irep =
+   260
+irep =
+   270
+irep =
+   280
+irep =
+   290
+irep =
+   300
+irep =
+   310
+irep =
+   320
+irep =
+   330
+irep =
+   340
+irep =
+   350
+irep =
+   360
+irep =
+   370
+irep =
+   380
+irep =
+   390
+irep =
+   400
+irep =
+   410
+irep =
+   420
+irep =
+   430
+irep =
+   440
+irep =
+   450
+irep =
+   460
+irep =
+   470
+irep =
+   480
+irep =
+   490
+irep =
+   500
+.
+Done ut_Papers_cubSobol_g
+__________
+
+Finished longtests_cubSobol_g at 27-Aug-2017 20:54:46 
+TAP version 13
+1..0
+Running ut_workout_funappx_g
+ 
+   Test      Number of Points       Time Used
+ Function   Local      Global     Local    Global
+        1     72384     183621   0.0115814    0.0152824
+        2    473286     387155   0.0642200    0.0350784
+        3    222092    2024351   0.0357371    0.1775712
+. 
+   Test      Number of Points       Time Used
+ Function   Local      Global     Local    Global
+        1       801     210284   0.0039713    0.0163713
+        2       785     461035   0.0039395    0.0405139
+        3       779    2159769   0.0046214    0.1868035
+.
+Done ut_workout_funappx_g
+__________
+
+Running ut_convtest_funappx_g
+..
+Done ut_convtest_funappx_g
+__________
+
+Finished longtests_funappx_g at 27-Aug-2017 20:56:14 
+Finished longtests_funmin_g at 27-Aug-2017 20:56:14 
+Running ut_workout_integral_g
+ 
+        Probability    Success   Success   Failure  Failure
+ ninit    In Cone    No Warning  Warning No Warning Warning
+    7  0.00%-> 0.00%   25.90%      0.00%   74.10%    0.00% 
+   52 22.80%->22.80%   55.90%      0.70%   43.40%    0.00% 
+  502 56.40%->56.40%   70.90%     16.40%   12.70%    0.00% 
+.
+Done ut_workout_integral_g
+__________
+
+Finished longtests_integral_g at 27-Aug-2017 20:58:31 
+TAP version 13
+1..3
+ok 1 - "dt_meanMC_g_TrafficModel('hi')"
+ok 2 - "dt_meanMC_g_TrafficModel(1e-2)"
+ok 3 - "dt_meanMC_g_TrafficModel(1e-3)"
+Finished longtests_meanMC_g at 27-Aug-2017 20:59:13 
+TAP version 13
+1..6
+ok 1 - "format short; f = @(x) x.^2; [fappx, out_param] = funappxtau_g(f)"
+ok 2 - "clear in_param; format short; in_param.abstol = 10^(-8);"
+ok 3 - "in_param.tau = 15; in_param.nmax = 10^6;"
+ok 4 - "[fappx, out_param] = funappxtau_g(@(x) x.^2, in_param)"
+ok 5 - "format short; f = @(x) x.^2;"
+ok 6 - "[fappx, out_param] = funappxtau_g(f,'tau',15,'nmax',1e6,'abstol',1e-8)"
+TAP version 13
+1..9
+ok 1 - "f = @(x) x.^2; [pp, out_param] = funappxglobal_g(f)"
+ok 2 - "f = @(x) x.^2;"
+ok 3 - "[pp, out_param] = funappxglobal_g(f,-2,2,1e-7,10,10,1000000)"
+ok 4 - "f = @(x) x.^2;"
+ok 5 - "[pp, out_param] = funappxglobal_g(f,'a',-2,'b',2,'nhi',100,'nlo',10)"
+ok 6 - "in_param.a = -10; in_param.b = 10;"
+ok 7 - "in_param.abstol = 10^(-7); in_param.nlo = 10; in_param.nhi = 100;"
+ok 8 - "in_param.nmax = 10^6; f = @(x) x.^2;"
+ok 9 - "[pp, out_param] =funappxglobal_g(f,in_param)"
+TAP version 13
+1..3
+ok 1 - "q = integral01_g(@(x) x.^2)"
+ok 2 - "f = @(x) exp(-x.^2); q = integral01_g(f,'abstol',1e-5,'ninit',52,'nmax',1e7)"
+ok 3 - "q = integral01_g()"
+TAP version 13
+1..3
+ok 1 - "q = integraltau_g(@(x) x.^2)"
+ok 2 - "f = @(x) exp(-x.^2); q = integraltau_g(f,'abstol',1e-5,'nmax',1e7)"
+ok 3 - "q = integraltau_g()"
+TAP version 13
+1..3
+ok 1 - "q = integralPenalty_g(@(x) x.^2)"
+ok 2 - "f = @(x) exp(-x.^2); q = integralPenalty_g(f,'a',1,'b',2,'abstol',1e-5)"
+ok 3 - "q = integralPenalty_g()"
+TAP version 13
+1..4
+ok 1 - "in_param.abstol=1e-2; in_param.alpha = 0.01; Yrand=@(n) rand(n,1).^2;"
+ok 2 - "mu=meanMCabs_g(Yrand,in_param) "
+ok 3 - "mu=meanMCabs_g(Yrand,1e-2) "
+ok 4 - "mu=meanMCabs_g(Yrand,'abstol',1e-2,'alpha',0.01) "
+TAP version 13
+1..8
+ok 1 - "f=@(x) sin(x);interval = [1;2];"
+ok 2 - "Q = cubMCabs_g(f,interval,'uniform',1e-3)"
+ok 3 - "f=@(x) exp(-x(:,1).^2-x(:,2).^2);hyperbox = [0 0;1 1];"
+ok 4 - "Q = cubMCabs_g(f,hyperbox,'uniform',1e-3)"
+ok 5 - "d=3;f=@(x) 2^d*prod(x,2)+0.555;hyperbox = [zeros(1,d);ones(1,d)];"
+ok 6 - "Q = cubMCabs_g(f,hyperbox,'uniform',1e-3)"
+ok 7 - "f=@(x) exp(-x(:,1).^2-x(:,2).^2);hyperbox = [-inf -inf;inf inf];"
+ok 8 - "Q = cubMCabs_g(f,hyperbox,'normal',1e-3)"
+TAP version 13
+1..0
+Running ConesPaperFoolFunctions ...
+  Integral of spiky function = 0.45714
+By MATLAB's integral routine = 0.45714
+But by MATLAB's quad routine = 0.00000
+
+  Condition number of matrix = 304.32326
+  Integral of fluky function = 0.16402
+By MATLAB's integral routine = 0.16402
+But by MATLAB's quad routine = 0.11481
+
+Running ut_ConesPaper
+ 
+        Probability    Success   Success   Failure  Failure
+ tau      In Cone    No Warning  Warning No Warning Warning
+   10  0.00%->26.60%   26.50%      0.10%   73.40%    0.00% 
+  100 25.10%->56.70%   55.20%      1.50%   43.30%    0.00% 
+ 1000 55.00%->87.80%   66.60%     21.40%   12.00%    0.00% 
+.[Warning:  Need more than one hour to replicate the result in the paper! ] 
+[> In conepaper_test_funappx_g (line 24)
+  In ut_ConesPaper/testConepaper_test_funappx_g (line 18)
+  In matlab.unittest.TestRunner/evaluateMethodCore (line 1059)
+  In matlab.unittest.TestRunner/evaluateMethodsOnTestContent (line 990)
+  In matlab.unittest.TestRunner/runTestMethod (line 1356)
+  In matlab.unittest.TestRunner/runTest (line 1313)
+  In matlab.unittest.TestRunner/repeatTest (line 615)
+  In matlab.unittest.TestRunner/runSharedTestCase (line 577)
+  In matlab.unittest.TestRunner/runTestClass (line 1232)
+  In matlab.unittest.TestRunner/invokeTestContentOperatorMethod_ (line 1105)
+  In matlab.unittest.plugins.TestRunnerPlugin/runTestClass (line 411)
+  In matlab.unittest.plugins.testrunprogress.ConciseProgressPlugin/runTestClass (line 61)
+  In matlab.unittest.plugins.TestRunnerPlugin/invokeTestContentOperatorMethod_ (line 691)
+  In matlab.unittest.TestRunner/evaluateMethodOnPlugins (line 949)
+  In matlab.unittest.TestRunner/runTestSuite (line 1164)
+  In matlab.unittest.TestRunner/invokeTestContentOperatorMethod_ (line 1105)
+  In matlab.unittest.plugins.TestRunnerPlugin/runTestSuite (line 262)
+  In matlab.unittest.plugins.FailureDiagnosticsPlugin/runTestSuite (line 106)
+  In matlab.unittest.plugins.TestRunnerPlugin/invokeTestContentOperatorMethod_ (line 691)
+  In matlab.unittest.plugins.TestRunnerPlugin/runTestSuite (line 262)
+  In matlab.unittest.plugins.DiagnosticsRecordingPlugin/runTestSuite (line 184)
+  In matlab.unittest.plugins.TestRunnerPlugin/invokeTestContentOperatorMethod_ (line 691)
+  In matlab.unittest.TestRunner/evaluateMethodOnPlugins (line 949)
+  In matlab.unittest.TestRunner/run (line 336)
+  In matlab.unittest.TestSuite/run (line 559)
+  In matlab.unittest.internal.RunnableTestContent/run (line 52)
+  In longtests_conePaper (line 11)
+  In longtests_deprecated_algos (line 15)
+  In longtests (line 37)] 
+ 
+        Probability    Success   Success   Failure  Failure
+ tau      In Cone    No Warning  Warning No Warning Warning
+   10  0.00%->25.51%   25.26%      0.19%   74.49%    0.06% 
+  100 33.24%->58.45%   56.88%      0.76%   41.55%    0.81% 
+ 1000 66.76%->88.51%   75.84%      4.44%   11.48%    8.24% 
+Elapsed time is 1767.343451 seconds.
+.
+Done ut_ConesPaper
+__________
+
+Running ut_integral01_g
+[Warning: This integrand is peaky relative to ninit. You may wish to increase
+ninit for similar integrands.] 
+[> In integral01_g (line 106)
+  In ut_integral01_g/tauchange (line 14)
+  In matlab.unittest.TestRunner/evaluateMethodCore (line 1059)
+  In matlab.unittest.TestRunner/evaluateMethodsOnTestContent (line 990)
+  In matlab.unittest.TestRunner/runTestMethod (line 1356)
+  In matlab.unittest.TestRunner/runTest (line 1313)
+  In matlab.unittest.TestRunner/repeatTest (line 615)
+  In matlab.unittest.TestRunner/runSharedTestCase (line 577)
+  In matlab.unittest.TestRunner/runTestClass (line 1232)
+  In matlab.unittest.TestRunner/invokeTestContentOperatorMethod_ (line 1105)
+  In matlab.unittest.plugins.TestRunnerPlugin/runTestClass (line 411)
+  In matlab.unittest.plugins.testrunprogress.ConciseProgressPlugin/runTestClass (line 61)
+  In matlab.unittest.plugins.TestRunnerPlugin/invokeTestContentOperatorMethod_ (line 691)
+  In matlab.unittest.TestRunner/evaluateMethodOnPlugins (line 949)
+  In matlab.unittest.TestRunner/runTestSuite (line 1164)
+  In matlab.unittest.TestRunner/invokeTestContentOperatorMethod_ (line 1105)
+  In matlab.unittest.plugins.TestRunnerPlugin/runTestSuite (line 262)
+  In matlab.unittest.plugins.FailureDiagnosticsPlugin/runTestSuite (line 106)
+  In matlab.unittest.plugins.TestRunnerPlugin/invokeTestContentOperatorMethod_ (line 691)
+  In matlab.unittest.plugins.TestRunnerPlugin/runTestSuite (line 262)
+  In matlab.unittest.plugins.DiagnosticsRecordingPlugin/runTestSuite (line 184)
+  In matlab.unittest.plugins.TestRunnerPlugin/invokeTestContentOperatorMethod_ (line 691)
+  In matlab.unittest.TestRunner/evaluateMethodOnPlugins (line 949)
+  In matlab.unittest.TestRunner/run (line 336)
+  In matlab.unittest.TestSuite/run (line 559)
+  In matlab.unittest.internal.RunnableTestContent/run (line 52)
+  In longtests_deprecated_algos (line 33)
+  In longtests (line 37)] 
+.......
+Done ut_integral01_g
+__________
+
+Running ut_integral01_g
+.......
+Done ut_integral01_g
+__________
+
+Running ut_meanMCabs_g
+.....
+Done ut_meanMCabs_g
+__________
+
+Running ut_cubMCabs_g
+..........
+Done ut_cubMCabs_g
+__________
+
+Finished all the longtests at 27-Aug-2017 21:33:41 
+     2.615160000000000e-01

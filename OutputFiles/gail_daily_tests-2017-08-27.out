@@ -1,0 +1,571 @@
+
+                            < M A T L A B (R) >
+                  Copyright 1984-2017 The MathWorks, Inc.
+                   R2017a (9.2.0.538062) 64-bit (glnxa64)
+                             February 23, 2017
+
+ 
+To get started, type one of these: helpwin, helpdesk, or demo.
+For product information, visit www.mathworks.com.
+ 
+>> >> >> >> 
+Welcome to Guaranteed Automatic Integration Library (GAIL).
+You are installing GAIL v2.2.
+
+[Warning: Unable to save path to file
+'/share/apps/matlab/R2017a/toolbox/local/pathdef.m'. You can save your path to
+a different location by calling SAVEPATH with an input argument that specifies
+the full path. For MATLAB to use that path in future sessions, save the path to
+'pathdef.m' in your MATLAB startup folder.] 
+[> In savepath (line 172)
+  In GAIL_Install (line 24)] 
+
+GAIL version 2.2 has been installed successfully.
+
+>> >> >> >> TAP version 13
+1..3
+ok 1 - "q = integral_g(@(x) x.^2)"
+ok 2 - "f = @(x) exp(-x.^2); q = integral_g(f,'a',1,'b',2,'nlo',100,'nhi',10000,'abstol',1e-5,'nmax',1e7)"
+ok 3 - "q = integral_g()"
+
+time =
+
+    0.9433
+
+TAP version 13
+1..19
+ok 1 - "f = @(x) exp(-(x-1).^2); q = integral_g(f,'a',1,'b',2,'nlo',100,'nhi',10000,'abstol',1e-5,'nmax',1e7)"
+ok 2 - "f = @(x) exp(-x.^2); q = integral_g(f,'abstol',1e-5,'nhi',52,'nmax',1e7)"
+ok 3 - "f = @(x) exp(-x.^2); q = integral_g(f,'a',1,'b',2,'abstol',1e-5,'nhi',52,'nmax',1e7)"
+ok 4 - "f = @(x) exp(-x.^2); q = integral_g(f,'a',0,'b',2,'abstol',1e-5,'nhi',52,'nmax',1e7)"
+ok 5 - "f = @(x) exp(-x.^2); q = integral_g(f,'a',0,'b',2,'nlo',100,'nhi',10000,'abstol',1e-5,'nmax',1e7)"
+ok 6 - "f = @(x) exp(-x.^2); q = integral_g(f,'a',0,'b',3,'nlo',100,'nhi',10000,'abstol',1e-5,'nmax',1e7)"
+ok 7 - "f = @(x) exp(-x.^2); q = integral_g(f,'a',-1,'b',3,'nlo',100,'nhi',10000,'abstol',1e-5,'nmax',1e7)"
+ok 8 - "f = @(x) exp(-x.^2); q = integral_g(f,'a',-4.5,'b',1.5,'nlo',100,'nhi',10000,'abstol',1e-5,'nmax',1e7)"
+ok 9 - "q = integral_g(@(x)x.^2,'a',1)"
+ok 10 - "q = integral_g(@(x)x.^2,'a',0,'b',Inf)"
+ok 11 - "q = integral_g(@(x)x.^2,'a',Inf)"
+ok 12 - "q = integral_g(@(x)x.^2,'a',NaN)"
+ok 13 - "q = integral_g(@(x)x.^2,'a',0,'b',NaN)"
+ok 14 - "q = integral_g(@(x)x.^2,'a',1,'b',0)"
+ok 15 - "q = integral_g(@(x)x.^2,'a',0,'b',2,'nlo',10,'nhi',100)"
+ok 16 - " inparam.a=0; inparam.b=3; inparam.abstol=1e-13; q=integral_g(@(x) exp(2*x),inparam)"
+ok 17 - "q = integral_g(@(x) x.^2,'a',-1,'b',1)"
+ok 18 - "[~,out_param]=integral_g(@(x) x.^2) "
+ok 19 - "f = @(x) exp(-x.^2); [~, out_param] = integral_g(f,'a',1,'b',2,'nlo',100,'nhi',10000,'abstol',1e-5,'nmax',1e7)"
+
+time =
+
+    0.4036
+
+Running ut_integral_g
+........
+Done ut_integral_g
+__________
+
+
+results = 
+
+  1×8 TestResult array with properties:
+
+    Name
+    Passed
+    Failed
+    Incomplete
+    Duration
+    Details
+
+Totals:
+   8 Passed, 0 Failed, 0 Incomplete.
+   0.18349 seconds testing time.
+
+TAP version 13
+1..7
+ok 1 - "f = @(x) x.^2;"
+ok 2 - "[~, out_param] = funappx_g(f,-2,2,1e-7,18)"
+ok 3 - "f = @(x) x.^2;"
+ok 4 - "[~, out_param] = funappx_g(f,'a',-2,'b',2,'ninit',17)"
+ok 5 - "in_param.a = -5; in_param.b = 5; f = @(x) x.^2;"
+ok 6 - "in_param.abstol = 10^(-6); in_param.ninit=18;"
+ok 7 - "[~, out_param] = funappx_g(f,in_param)"
+
+time =
+
+    0.2088
+
+TAP version 13
+1..11
+ok 1 - "funappx_g"
+ok 2 - "clear in_param; in_param.a = -5; in_param.b =5; in_param.abstol = 10^(-7); "
+ok 3 - "[~, out_param] = funappx_g(@(x) x.^2, in_param)"
+ok 4 - "clear in_param; f = @(x) sin(x); in_param.a = -1; in_param.b = 1; "
+ok 5 - "in_param.abstol = 10^(-8); in_param.ninit = 20; "
+ok 6 - "[~, out_param] = funappx_g(f, in_param)"
+ok 7 - "[~, out_param] = funappx_g(@(x) x.^3,'a',-2,'b',2,'abstol',1e-7,'ninit',41)"
+ok 8 - "[~, out_param] = funappx_g(@(x) exp(-100*(x-0.7).^2),'a',0,'b',1,'ninit',28)"
+ok 9 - "[~, out_param] = funappx_g(@(x) x.^2,'memorytest',1,'output_x',1);"
+ok 10 - "out_param.bytes <= 280674"
+ok 11 - "length(out_param.x) == out_param.npoints"
+
+time =
+
+    0.3929
+
+Running ut_funappx_g
+..........
+.......
+Done ut_funappx_g
+__________
+
+
+results = 
+
+  1×17 TestResult array with properties:
+
+    Name
+    Passed
+    Failed
+    Incomplete
+    Duration
+    Details
+
+Totals:
+   17 Passed, 0 Failed, 0 Incomplete.
+   1.397 seconds testing time.
+
+TAP version 13
+1..12
+ok 1 - "f = @(x) exp(0.01*(x-0.5).^2); [fmin,out_param] = funmin_g(f)"
+ok 2 - "f = @(x) exp(0.01*(x-0.5).^2);"
+ok 3 - "[fmin,out_param] = funmin_g(f,-2,2,1e-7,10,1000000)"
+ok 4 - "f=@(x) exp(0.01*(x-0.5).^2);"
+ok 5 - "in_param.a = -13; in_param.b = 8;"
+ok 6 - "in_param.abstol = 10^(-7);"
+ok 7 - "in_param.ninit = 100;"
+ok 8 - "in_param.nmax = 10^6;"
+ok 9 - "[fmin,out_param] = funmin_g(f,in_param)"
+ok 10 - "f=@(x) exp(0.01*(x-0.5).^2);"
+ok 11 - "[fmin,out_param] = funmin_g(f,'a',-2,'b',2,'ninit',64,'nmax',1e6,'abstol',1e-5)"
+ok 12 - "out_param(:).intervals"
+
+time =
+
+    0.1545
+
+Running ut_funmin_g
+........
+Done ut_funmin_g
+__________
+
+
+results = 
+
+  1×8 TestResult array with properties:
+
+    Name
+    Passed
+    Failed
+    Incomplete
+    Duration
+    Details
+
+Totals:
+   8 Passed, 0 Failed, 0 Incomplete.
+   1.0909 seconds testing time.
+
+Running ut_funmin_g_end
+..
+Done ut_funmin_g_end
+__________
+
+
+results = 
+
+  1×2 TestResult array with properties:
+
+    Name
+    Passed
+    Failed
+    Incomplete
+    Duration
+    Details
+
+Totals:
+   2 Passed, 0 Failed, 0 Incomplete.
+   0.045694 seconds testing time.
+
+TAP version 13
+1..10
+ok 1 - "meanMC_g"
+ok 2 - "in_param.reltol = 0; in_param.abstol = 1e-3;"
+ok 3 - "in_param.alpha = 0.05; Yrand=@(n) rand(n,1).^2;"
+ok 4 - "tmu = meanMC_g(Yrand,in_param); exactsol = 1/3;"
+ok 5 - "check = double(abs(exactsol-tmu) < 1e-3)"
+ok 6 - "tmu = meanMC_g(@(n)exp(rand(n,1)),1e-3,0); exactsol = exp(1)-1;"
+ok 7 - "check = double(abs(exactsol-tmu) < 1e-3)"
+ok 8 - "tmu = meanMC_g(@(n)cos(rand(n,1)),'reltol',1e-3,'abstol',1e-4,'alpha',0.01);"
+ok 9 - "exactsol = sin(1);"
+ok 10 - "check = double(abs(exactsol-tmu) < max(1e-3,1e-2*abs(exactsol)))"
+
+time =
+
+    0.0530
+
+Running ut_meanMC_g
+......
+Done ut_meanMC_g
+__________
+
+
+results = 
+
+  1×6 TestResult array with properties:
+
+    Name
+    Passed
+    Failed
+    Incomplete
+    Duration
+    Details
+
+Totals:
+   6 Passed, 0 Failed, 0 Incomplete.
+   2.2406 seconds testing time.
+
+TAP version 13
+1..22
+ok 1 - "cubMC_g"
+ok 2 - "f = @(x) sin(x); interval = [1;2];"
+ok 3 - "Q = cubMC_g(f,interval,'uniform',1e-3,1e-2);"
+ok 4 - "exactsol = 0.9564;"
+ok 5 - "check = double(abs(exactsol-Q) < max(1e-3,1e-2*abs(exactsol)))"
+ok 6 - "f = @(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [0 0;1 1];"
+ok 7 - "Q = cubMC_g(f,hyperbox,'uniform',1e-3,0);"
+ok 8 - "exactsol = 0.5577;"
+ok 9 - "check = double(abs(exactsol-Q) < 1e-3)"
+ok 10 - "d = 3; f = @(x) 2^d*prod(x,2)+0.555; hyperbox =[zeros(1,d); ones(1,d)];"
+ok 11 - "in_param.abstol = 1e-3; in_param.reltol = 1e-3;"
+ok 12 - "Q = cubMC_g(f,hyperbox,in_param);"
+ok 13 - "exactsol = 1.555;"
+ok 14 - "check = double(abs(exactsol-Q) < max(1e-3,1e-3*abs(exactsol)))"
+ok 15 - "f = @(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [-inf -inf;inf inf];"
+ok 16 - "Q = cubMC_g(f,hyperbox,'normal',0,1e-2);"
+ok 17 - "exactsol = 1/3;"
+ok 18 - "check = double(abs(exactsol-Q) < max(0,1e-2*abs(exactsol)))"
+ok 19 - "f = @(x) x(:,1).^2+x(:,2).^2; hyperbox = [0,0,1];"
+ok 20 - "Q = cubMC_g(f,hyperbox,'uniform ball','abstol',1e-3,'reltol',1e-3);"
+ok 21 - "exactsol = pi/2;"
+ok 22 - "check = double(abs(exactsol-Q) < max(1e-3,1e-3*abs(exactsol)))"
+
+time =
+
+    0.7835
+
+TAP version 13
+1..21
+ok 1 - "f = @(x) prod(x,2); hyperbox = [zeros(1,2);ones(1,2)];"
+ok 2 - "q = cubLattice_g(f,hyperbox,'uniform',1e-5,0,'transform','C1sin'); exactsol = 1/4;"
+ok 3 - "check = double(abs(exactsol-q) < 1e-5)"
+ok 4 - "f = @(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2; hyperbox = [-inf(1,3);inf(1,3)];"
+ok 5 - "q = cubLattice_g(f,hyperbox,'normal',1e-3,1e-3,'transform','C1sin','shift',2^(-25)*ones(1,3)); exactsol = 1;"
+ok 6 - "check = double(abs(exactsol-q) < max(1e-3,1e-3*abs(exactsol)))"
+ok 7 - "f = @(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [-ones(1,2);2*ones(1,2)];"
+ok 8 - "q = cubLattice_g(f,hyperbox,'uniform',1e-3,1e-2,'transform','C1'); exactsol = (sqrt(pi)/2*(erf(2)+erf(1)))^2;"
+ok 9 - "check = double(abs(exactsol-q) < max(1e-3,1e-2*abs(exactsol)))"
+ok 10 - "f = @(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); hyperbox = [-inf(1,1);inf(1,1)];"
+ok 11 - "q = cubLattice_g(f,hyperbox,'normal',1e-4,1e-2,'transform','C1sin'); price = normcdf(0.05)*100 - 0.5*100*exp(-0.05^2/2);"
+ok 12 - "check = double(abs(price-q) < max(1e-4,1e-2*abs(price)))"
+ok 13 - "f = @(x) 8*prod(x,2); hyperbox = [zeros(1,5);ones(1,5)];"
+ok 14 - "q = cubLattice_g(f,hyperbox,'uniform',1e-5,0); exactsol = 1/4;"
+ok 15 - "check = double(abs(exactsol-q) < 1e-5)"
+ok 16 - "f = @(x) 3./(5-4*(cos(2*pi*x))); hyperbox = [0;1];"
+ok 17 - "q = cubLattice_g(f,hyperbox,'uniform',1e-5,0,'transform','id'); exactsol = 1;"
+ok 18 - "check = double(abs(exactsol-q) < 1e-5)"
+ok 19 - "f = @(x) x(:,1).^2+x(:,2).^2; hyperbox = [0,0,1];"
+ok 20 - "q = cubLattice_g(f,hyperbox,'uniform ball','abstol',1e-4,'reltol',0); exactsol = pi/2;"
+ok 21 - "check = double(abs(exactsol-q) < 1e-4)"
+
+time =
+
+    0.7809
+
+Running ut_cubLattice_g
+.......Dim   FcnIdx       Q             f_true               Err            Sample Used             Stats  
+-----------------------------------------------------------------------------------------------------
+1     1       8.41471e-01       8.41471e-01       1.00435e-07         1024             BothErrMet
+1     2       7.85398e-01       7.85398e-01       1.37817e-07         1024             BothErrMet
+1     3       3.75000e-01       3.75000e-01       4.47980e-07         1024             BothErrMet
+1     4       7.46824e-01       7.46824e-01       1.09440e-07         1024             BothErrMet
+1     5       6.32121e-01       6.32121e-01       5.21511e-08         1024             BothErrMet
+2     1       4.96751e-01       4.96751e-01       2.38000e-07         1024             BothErrMet
+2     2       7.28296e-01       7.28296e-01       3.98031e-07         1024             BothErrMet
+2     3       1.01852e-01       1.01852e-01       1.91871e-08         2048             BothErrMet
+2     4       6.88991e-01       6.88992e-01       5.15093e-07         1024             BothErrMet
+2     5       4.97440e-01       4.97440e-01       5.69389e-07         1024             BothErrMet
+3     1       6.23592e-02       6.23593e-02       1.45993e-07         2048             BothErrMet
+3     2       6.62568e-01       6.62570e-01       1.36965e-06         1024             BothErrMet
+3     3       2.17588e-02       2.17014e-02       5.74081e-05         1024             AbsErrMet
+3     4       6.20904e-01       6.20903e-01       9.40242e-07         1024             BothErrMet
+3     5       3.83054e-01       3.83055e-01       6.81074e-07         1024             BothErrMet
+4     1       -3.51761e-01       -3.51764e-01       2.58889e-06         4096             BothErrMet
+4     2       5.88678e-01       5.88680e-01       1.46562e-06         1024             BothErrMet
+4     3       3.78282e-03       3.80556e-03       2.27324e-05         1024             AbsErrMet
+4     4       5.43401e-01       5.43373e-01       2.76545e-05         1024             BothErrMet
+4     5       2.86875e-01       2.86844e-01       3.10210e-05         1024             BothErrMet
+5     1       -6.49314e-01       -6.49331e-01       1.70468e-05         4096             BothErrMet
+5     2       5.13404e-01       5.13409e-01       5.45443e-06         1024             BothErrMet
+5     3       5.19834e-04       5.67130e-04       4.72952e-05         1024             AbsErrMet
+5     4       4.64621e-01       4.64603e-01       1.83572e-05         2048             BothErrMet
+5     5       2.10026e-01       2.09952e-01       7.31385e-05         1024             BothErrMet
+6     1       -7.69099e-01       -7.69376e-01       2.77898e-04         8192             BothErrMet
+6     2       4.41472e-01       4.41474e-01       1.69959e-06         2048             BothErrMet
+6     3       6.93962e-05       7.34937e-05       4.09751e-06         1024             AbsErrMet
+6     4       3.90254e-01       3.90227e-01       2.68582e-05         2048             BothErrMet
+6     5       1.51024e-01       1.50939e-01       8.45123e-05         2048             BothErrMet
+7     1       -6.97586e-01       -6.97824e-01       2.38234e-04         8192             BothErrMet
+7     2       3.75492e-01       3.75484e-01       8.34792e-06         2048             BothErrMet
+7     3       6.64499e-06       8.42590e-06       1.78090e-06         1024             AbsErrMet
+7     4       3.23300e-01       3.23235e-01       6.52514e-05         2048             BothErrMet
+7     5       1.07041e-01       1.06978e-01       6.34597e-05         2048             BothErrMet
+8     1       -4.66722e-01       -4.67036e-01       3.13883e-04         16384             BothErrMet
+8     2       3.16564e-01       3.16602e-01       3.79992e-05         2048             BothErrMet
+8     3       7.79251e-07       8.66209e-07       8.69572e-08         1024             AbsErrMet
+8     4       2.64902e-01       2.64801e-01       1.01265e-04         2048             BothErrMet
+8     5       7.49130e-02       7.49531e-02       4.01321e-05         1024             BothErrMet
+.
+Done ut_cubLattice_g
+__________
+
+results = 
+  1×8 TestResult array with properties:
+
+    Name
+    Passed
+    Failed
+    Incomplete
+    Duration
+    Details
+Totals:
+   8 Passed, 0 Failed, 0 Incomplete.
+   2.9533 seconds testing time.
+TAP version 13
+1..22
+ok 1 - "f = @(x) prod(x,2); hyperbox = [zeros(1,2);ones(1,2)];"
+ok 2 - "q = cubSobol_g(f,hyperbox,'uniform',1e-5,0); exactsol = 1/4;"
+ok 3 - "check = double(abs(exactsol-q) < 1e-5)"
+ok 4 - "f = @(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2; hyperbox = [-inf(1,3);inf(1,3)];"
+ok 5 - "q = cubSobol_g(f,hyperbox,'normal',1e-3,1e-3); exactsol = 1;"
+ok 6 - "check = double(abs(exactsol-q) < max(1e-3,1e-3*abs(exactsol)))"
+ok 7 - "f = @(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [-ones(1,2);2*ones(1,2)];"
+ok 8 - "q = cubSobol_g(f,hyperbox,'uniform',1e-3,1e-2); exactsol = (sqrt(pi)/2*(erf(2)+erf(1)))^2;"
+ok 9 - "check = double(abs(exactsol-q) < max(1e-3,1e-2*abs(exactsol)))"
+ok 10 - "f = @(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); hyperbox = [-inf(1,1);inf(1,1)];"
+ok 11 - "q = cubSobol_g(f,hyperbox,'normal',1e-4,1e-2); price = normcdf(0.05)*100 - 0.5*100*exp(-0.05^2/2);"
+ok 12 - "check = double(abs(price-q) < max(1e-4,1e-2*abs(price)))"
+ok 13 - "f = @(x) 8*prod(x,2); hyperbox = [zeros(1,5);ones(1,5)];"
+ok 14 - "q = cubSobol_g(f,hyperbox,'uniform',1e-5,0); exactsol = 1/4;"
+ok 15 - "check = double(abs(exactsol-q) < 1e-5)"
+ok 16 - "f = @(x) x(:,1).^2+x(:,2).^2; hyperbox = [0,0,1];"
+ok 17 - "q = cubSobol_g(f,hyperbox,'uniform ball','abstol',1e-4,'reltol',0); exactsol = pi/2;"
+ok 18 - "check = double(abs(exactsol-q) < 1e-4)"
+ok 19 - "g.func = @(x) [10*x(:,1)-5*x(:,2).^2+1*x(:,3).^3, x(:,1), x(:,2).^2];"
+ok 20 - "g.cv = [8,32/3]; hyperbox= [zeros(1,3);2*ones(1,3)];"
+ok 21 - "q = cubSobol_g(g,hyperbox,'uniform',1e-6,0); exactsol = 128/3;"
+ok 22 - "check = double(abs(exactsol-q) < 1e-6)"
+time =
+   0.978222000000000
+Running ut_cubSobol_g
+.........Dim   FcnIdx       Q             f_true               Err            Sample Used             Stats  
+-----------------------------------------------------------------------------------------------------
+1     1       8.41471e-01       8.41471e-01       1.38556e-12         1024             BothErrMet
+1     2       7.85398e-01       7.85398e-01       4.43198e-10         1024             BothErrMet
+2     1       4.96764e-01       4.96751e-01       1.25111e-05         1024             BothErrMet
+2     2       7.28296e-01       7.28296e-01       2.69511e-07         1024             BothErrMet
+3     1       6.23559e-02       6.23593e-02       3.38974e-06         1024             BothErrMet
+3     2       6.62565e-01       6.62570e-01       4.94094e-06         1024             BothErrMet
+.
+Done ut_cubSobol_g
+__________
+
+results = 
+  1×10 TestResult array with properties:
+
+    Name
+    Passed
+    Failed
+    Incomplete
+    Duration
+    Details
+Totals:
+   10 Passed, 0 Failed, 0 Incomplete.
+   1.2094 seconds testing time.
+TAP version 13
+1..28
+ok 1 - "[mu,out] = meanMC_CLT(@(n) rand(n,1).^2, 0.001);"
+ok 2 - "exact = 1/3;"
+ok 3 - "check = abs(exact - mu) < 2e-3"
+ok 4 - "f = @(x)[exp(-x.^2), x];"
+ok 5 - "YXn = @(n)f(rand(n,1));"
+ok 6 - "s = struct('Y',YXn,'nY',1,'trueMuCV',1/2);"
+ok 7 - "[hmu,out] = meanMC_CLT(s,0,1e-3); "
+ok 8 - "exact = erf(1)*sqrt(pi)/2;"
+ok 9 - "check = abs(exact-hmu) < max(0,1e-3*abs(exact))"
+ok 10 - "normsqd = @(x) sum(x.*x,2);"
+ok 11 - "f = @(normt,a,d) ((2*pi*a^2).^(d/2)) * cos(a*sqrt(normt)).* exp((1/2-a^2)*normt);"
+ok 12 - "f1 = @(x,a,d) f(normsqd(x),a,d);"
+ok 13 - "f2 = @(x)[f1(x,1,1),f1(x,1/sqrt(2),1),cos(x)];"
+ok 14 - "YXn = @(n)f2(randn(n,1));"
+ok 15 - "s = struct('Y',YXn,'nY',2,'trueMuCV',1/sqrt(exp(1)));"
+ok 16 - "[hmu,out] = meanMC_CLT(s,0,1e-3); "
+ok 17 - "exact = 1.380388447043143;"
+ok 18 - "check = abs(exact-hmu) < max(0,1e-3*abs(exact))"
+ok 19 - "f = @(x) [x(:,1).^3.*x(:,2).^3.*x(:,3).^3, x(:,1).*x(:,2).*x(:,3)];"
+ok 20 - "s = struct('Y',@(n)f(rand(n,3)),'nY',1,'trueMuCV',1/8);"
+ok 21 - "[hmu,out] = meanMC_CLT(s,1e-3,0);"
+ok 22 - "exact = 1/64;"
+ok 23 - "check = abs(exact-hmu) < max(1e-3,1e-3*abs(exact))"
+ok 24 - "f = @(x) [x(:,1).^3.*x(:,2).^3.*x(:,3).^3, x(:,1).^2.*x(:,2).^2.*x(:,3).^2-1/27+1/64,  x(:,1).*x(:,2).*x(:,3), x(:,1)+x(:,2)+x(:,3)];"
+ok 25 - "s = struct('Y',@(n)f(rand(n,3)),'nY',2,'trueMuCV',[1/8 1.5]);"
+ok 26 - "[hmu,out] = meanMC_CLT(s,1e-4,1e-3); "
+ok 27 - "exact = 1/64;"
+ok 28 - "check = abs(exact-hmu) < max(1e-4,1e-3*abs(exact))"
+time =
+   0.465397000000000
+TAP version 13
+1..2
+ok 1 - "obj = assetPath"
+ok 2 - "obj = assetPath"
+time =
+    3.5932
+TAP version 13
+1..2
+ok 1 - "obj = optPayoff"
+ok 2 - "obj = optPayoff"
+time =
+    0.8806
+TAP version 13
+1..2
+ok 1 - "obj = optPrice"
+ok 2 - "obj = optPrice"
+time =
+    0.8415
+TAP version 13
+1..2
+ok 1 - "obj = brownianMotion"
+ok 2 - "obj = brownianMotion"
+time =
+    0.6795
+TAP version 13
+1..1
+ok 1 - "obj = stochProcess"
+time =
+    0.5730
+TAP version 13
+1..2
+ok 1 - "obj = whiteNoise"
+ok 2 - "obj = whiteNoise"
+time =
+    0.5762
+TAP version 13
+1..4
+ok 1 - "errParamObj = gail.errorParam"
+ok 2 - "errParamObj = gail.errorParam(0.001)"
+ok 3 - "errParamObj = gail.errorParam('relTol',0.1)"
+ok 4 - "newErrParamObj = gail.errorParam(errParamObj,'relTol',0.001)"
+time =
+    0.5871
+TAP version 13
+1..12
+ok 1 - "fParamObj = gail.fParam"
+ok 2 - "fParamObj = gail.fParam(@(x) sum(x.^3.2),[0 0; 1 1])"
+ok 3 - "fParamObj = gail.fParam(@(x) sum(x.^3.2),[0 0; 1 1],'ball')"
+ok 4 - "inpStruct.f = @(x) sin(sum(x,2));"
+ok 5 - "inpStruct.domain = [zeros(1,4); ones(1,4)];"
+ok 6 - "inpStruct.relTol = 0.1;"
+ok 7 - "fParamObj = gail.fParam(inpStruct)"
+ok 8 - "inpStruct.f = @(x) sin(sum(x,2));"
+ok 9 - "inpStruct.domain = [zeros(1,4); ones(1,4)];"
+ok 10 - "inpStruct.relTol = 0.1;"
+ok 11 - "fParamObj = gail.fParam(inpStruct,0.0001,0.01)"
+ok 12 - "newfParamObj = gail.fParam(fParamObj,'domainType','sphere')"
+time =
+    0.5852
+TAP version 13
+1..8
+ok 1 - "cubParamObj = gail.cubParam"
+ok 2 - "cubParamObj = gail.cubParam(@(x) sum(x.^3.2),[0 0; 2 2],'box','Lebesgue')"
+ok 3 - "cubParamObj = gail.cubParam('domain', [-Inf -Inf; Inf Inf], 'f', @(x) sum(x.^3.2), 'relTol', 0.1, 'measure', 'Gaussian')"
+ok 4 - "inpStruct.f = @(x) sin(sum(x,2));"
+ok 5 - "inpStruct.domain = [zeros(1,4); ones(1,4)];"
+ok 6 - "inpStruct.nInit = 2048;"
+ok 7 - "cubParamObj = gail.cubParam(inpStruct)"
+ok 8 - "NewCubParamObj = gail.cubParam(cubParamObj,'measure','Lebesgue')"
+time =
+    0.6829
+TAP version 13
+1..5
+ok 1 - "cubParamObj = gail.cubParam; %an input object"
+ok 2 - "cubOutObj = gail.cubOut(cubParamObj); %copied to becom an output object"
+ok 3 - "cubOutObj.mu = 1.467; %integral value is recorded"
+ok 4 - "cubOutObj.nSample = 31415926; %sample size is recorded"
+ok 5 - "cubOutObj.time = 0.0278 %time of computation is recorded"
+time =
+    0.5477
+TAP version 13
+1..7
+ok 1 - "cubLatticeParamObj = gail.cubLatticeParam"
+ok 2 - "cubLatticeParamObj = gail.cubLatticeParam('domain', [-2 -2; 2 2], 'f', @(x) sum(x.^3.2), 'relTol', 0.1, 'isShift', false)"
+ok 3 - "inpStruct.f = @(x) sin(sum(x,2));"
+ok 4 - "inpStruct.domain = [zeros(1,4); ones(1,4)];"
+ok 5 - "inpStruct.isShift = false;"
+ok 6 - "cubLatticeParamObj = gail.cubLatticeParam(inpStruct)"
+ok 7 - "NewCubLatticeParamObj = gail.cubLatticeParam(cubLatticeParamObj,'measure','Lebesgue')"
+time =
+    0.5709
+TAP version 13
+1..8
+ok 1 - "cubBayesLatticeParamObj = gail.cubBayesLatticeParam"
+ok 2 - "cubBayesLatticeParamObj = gail.cubBayesLatticeParam(@(x) sum(x.^3.2),[0 0; 2 2])"
+ok 3 - "cubBayesLatticeParamObj = gail.cubBayesLatticeParam('domain', [0 0; 1 1], 'f', @(x) sum(x.^3.2), 'relTol', 0.1,'kerName','Ber4')"
+ok 4 - "inpStruct.f = @(x) sin(sum(x,2));"
+ok 5 - "inpStruct.domain = [zeros(1,4); ones(1,4)];"
+ok 6 - "inpStruct.kerName = 'Ber4';"
+ok 7 - "cubBayesLatticeParamObj = gail.cubBayesLatticeParam(inpStruct)"
+ok 8 - "NewCubBayesLatticeParamObj = gail.cubBayesLatticeParam(cubBayesLatticeParamObj,'GPMean',0)"
+time =
+    0.5926
+TAP version 13
+1..5
+ok 1 - "cubBayesLatticeParamObj = gail.cubBayesLatticeParam; %an input object"
+ok 2 - "cubBayesLatticeOutObj = gail.cubBayesLatticeOut(cubBayesLatticeParamObj); %copied to becom an output object"
+ok 3 - "cubBayesLatticeOutObj.mu = 1.467; %integral value is recorded"
+ok 4 - "cubBayesLatticeOutObj.nSample = 31415926; %sample size is recorded"
+ok 5 - "cubBayesLatticeOutObj.time = 0.0278 %time of computation is recorded"
+time =
+    0.5393
+TAP version 13
+1..8
+ok 1 - "meanYParamObj = gail.meanYParam"
+ok 2 - "meanYParamObj = gail.meanYParam(@(n) sum(rand(n,4).^3,2),0.001)"
+ok 3 - "meanYParamObj = gail.meanYParam('nSig', 1e4, 'Y', @(n)sin(sum(rand(n,4).^3,2)), 'relTol', 0.1)"
+ok 4 - "inpStruct.Y = @(n) sin(sum(rand(n,2),2));"
+ok 5 - "inpStruct.nSig = 1e4;"
+ok 6 - "inpStruct.relTol = 0.1;"
+ok 7 - "meanYParamObj = gail.meanYParam(inpStruct)"
+ok 8 - "NewMeanYParamObj = gail.meanYParam(meanYParamObj,'Y',@(n) rand(n,3))"
+time =
+    0.5152
+TAP version 13
+1..7
+ok 1 - "meanParamObj = gail.meanYParam; %an input object"
+ok 2 - "meanOutObj = gail.meanYOut(meanParamObj); %copied to becom an output object"
+ok 3 - "meanOutObj.sol = 1.467; %integral value is recorded"
+ok 4 - "meanOutObj.stddev = 1.23; %standard deviation is recorded"
+ok 5 - "meanOutObj.nSample = 31415926; %sample size is recorded"
+ok 6 - "meanOutObj.time = 0.0278; %time of computation is recorded"
+ok 7 - "meanOutObj.errBd = 0.000456 %error bound is recorded"
+time =
+    0.4834
+time =
+    0.4837
+>> 
