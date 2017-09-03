@@ -10,8 +10,8 @@ function DownloadInstallGail_2_2()
 %"GAIL_2.2/GAIL_Matlab".
 %% Download the package and change the directory
 disp('The GAIL package is now being downloaded...')
-unzip('http://math.iit.edu/~openscholar/sites/default/files/meshfree/files/gail_2_2.zip') %download and unzip
-cd('GAIL_Matlab')  %get to the right subdirectory
+unzip('http://www.math.iit.edu/~Meshfree-methods-seminar/GAIL/GAIL_2_2.zip', 'GAIL_2_2') %download and unzip
+cd('GAIL_2_2')  %get to the right subdirectory
 
 %% Install GAIL
 GAIL_Install      %this installs GAIL
