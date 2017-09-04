@@ -14,7 +14,7 @@ try
     DisplayTestResults_BlacknColor({'ex1', 'ex2', 'ex3'},'black')
 catch err
     display('Error: DisplayTestResults_BlacknColor is wrongly coded. We skip it.')
-    display( ['file: ', err.stack(1).name, '; line number ', int2str(err.stack(1).line),  '; Error: ',  err.message ])
+    display( ['File: ', err.stack(1).name, '; Line number ', int2str(err.stack(1).line),  '; Error: ',  err.message ])
     %fprintf(fid,'Error: DisplayTestResults_BlacknColor is wrongly coded. We skip it.\n');
 end
 
