@@ -123,7 +123,7 @@ function [sol, out] = meanMC_CLT(varargin)
 %
 %
 %
-% _Authors: Yueyi Li, Hu Cauw Hung, Fred J. Hickernell_
+% _Authors: Yueyi Li, Cu Hauw Hung, Fred J. Hickernell_
 
 tstart = tic; %start the clock 
 
