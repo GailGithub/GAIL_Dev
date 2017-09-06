@@ -1,0 +1,131 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Compare funmin_g with fminbnd</title><meta name="generator" content="MATLAB 9.1"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2017-08-27"><meta name="DC.source" content="demo_funmin_g2.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:14px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:18px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Compare <b>funmin_g</b> with <b>fminbnd</b></h1><!--introduction--><p>Author: Xin Tong, July 2017</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Function definition</a></li><li><a href="#2">Function minimization</a></li><li><a href="#3">Plot of the function and minima</a></li><li><a href="#4">References</a></li></ul></div><h2>Function definition<a name="1"></a></h2><p>Define a function with two minima as follows:</p><p>\[ f(x) = -5 \exp(-100(x-0.2)^2) - \exp(-100(x-1)^2). \]</p><pre class="codeinput">close <span class="string">all</span>; clearvars; format <span class="string">compact</span>; format <span class="string">short</span>;
+f = @(x) -5*exp((-100*(x-0.2).^2))-exp((-100.*(x-1).^2));
+</pre><h2>Function minimization<a name="2"></a></h2><p>We use <b>funmin_g</b> to find the minimum of \(f\) over the interval \([a,b]\), where \(a = 0\) and \(b = 1.5\):</p><pre class="codeinput">a = 0;
+b = 1.5;
+[fmin,out ] = funmin_g(f,a,b);
+[xval,fval] = fminbnd(f,a,b);
+</pre><h2>Plot of the function and minima<a name="3"></a></h2><p>We plot \(f(x)\) and the global minimum value  returned by <b>funmin_g</b> and a local minimum by <b>fminbnd</b> below:</p><pre class="codeinput">figure;
+x = a:1e-6:b;
+fminvec = fmin.*ones(size(x));
+plot(x,f(x),<span class="string">'r-'</span>,out.intervals,[fmin,fmin],<span class="string">'go'</span>,xval,fval,<span class="string">'b*'</span>);
+ylim([-6 1])
+xlabel(<span class="string">'$x$'</span>,<span class="string">'interpreter'</span>,<span class="string">'latex'</span>)
+h_legend=legend(<span class="string">'$f(x)$'</span>,<span class="string">'funmin\_g'</span>,<span class="string">'fminbnd'</span>);
+set(h_legend,<span class="string">'interpreter'</span>,<span class="string">'latex'</span>);
+</pre><img vspace="5" hspace="5" src="demo_funmin_g2_01.png" alt=""> <h2>References<a name="4"></a></h2><p>[1] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Xin Tong, "Local     Adaption for Approximation and Minimization of Univariate Functions,"     <i>Journal of Complexity</i> 40, pp. 17-33, 2017.</p><p>[2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis     Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan     Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic     Integration Library (Version 2.2) [MATLAB Software], 2017. Available     from <a href="http://gailgithub.github.io/GAIL_Dev/">http://gailgithub.github.io/GAIL_Dev/</a></p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2016b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Compare *funmin_g* with *fminbnd*
+% Author: Xin Tong, July 2017
+
+%% Function definition
+%
+% Define a function with two minima as follows:
+%
+% \[ f(x) = -5 \exp(-100(x-0.2)^2) - \exp(-100(x-1)^2). \]
+%
+close all; clearvars; format compact; format short;
+f = @(x) -5*exp((-100*(x-0.2).^2))-exp((-100.*(x-1).^2));
+
+%% Function minimization
+% We use *funmin_g* to find the minimum of \(f\) over the interval
+% \([a,b]\), where \(a = 0\) and \(b = 1.5\):
+a = 0;
+b = 1.5;
+[fmin,out ] = funmin_g(f,a,b);
+[xval,fval] = fminbnd(f,a,b);
+
+%% Plot of the function and minima
+% We plot \(f(x)\) and the global minimum value  returned
+% by *funmin_g* and a local minimum by *fminbnd* below:
+figure;
+x = a:1e-6:b;
+fminvec = fmin.*ones(size(x));
+plot(x,f(x),'r-',out.intervals,[fmin,fmin],'go',xval,fval,'b*');
+ylim([-6 1])
+xlabel('$x$','interpreter','latex')
+h_legend=legend('$f(x)$','funmin\_g','fminbnd');
+set(h_legend,'interpreter','latex');
+
+
+%% References
+%
+% [1] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Xin Tong, "Local
+%     Adaption for Approximation and Minimization of Univariate Functions,"
+%     _Journal of Complexity_ 40, pp. 17-33, 2017.
+%
+% [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
+%     Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
+%     Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
+%     Integration Library (Version 2.2) [MATLAB Software], 2017. Available
+%     from http://gailgithub.github.io/GAIL_Dev/
+
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,112 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Release Notes</title><meta name="generator" content="MATLAB 9.1"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2017-08-27"><meta name="DC.source" content="help_ReleaseNotes.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:14px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:18px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Release Notes</h1><!--introduction--><p>GAIL Version 2.2, 2017.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Major changes in algorithms</a></li><li><a href="#2">Major changes in publications</a></li><li><a href="#3">Major changes in documentation</a></li><li><a href="#4">Major changes in tests</a></li></ul></div><h2>Major changes in algorithms<a name="1"></a></h2><p>We have a new algorithm called <b>meanMC_CLT</b>. In addition, all algorithms in version 2.1 are improved with reduced computational complexity and some new features. For example, funappx_g and funmin_g are locally adaptive; our three multidimensional integration algorithms (<b>cubMC_g</b>, <b>cubLattice_g</b>, and <b>cubSobol_g</b>) may take the probability measure uniform sphere in addition to uniform hyperbox and Gaussian. The directory Algorithms is reorganized with new subfolders to group algorithms and object classes by their shared functionalities. We deprecated <b>funappx_g</b>, <b>funmin_g</b>, and integral_g in version 2.1 and renamed them in this version as <b>funappxPenalty_g</b>, <b>funminPenalty_g</b>, and <b>integralPenalty_g</b>, respectively. Lastly, <b>meanMCBer_g</b> in version 2.1 is removed.</p><h2>Major changes in publications<a name="2"></a></h2><p>In the folder "Papers", we include currently working and recently published research articles related to our core algorithms. In addition, we have included nine PhD or MS theses relevant to our research areas. For theses and published papers, we included the PDF files of the articles as well as MATLAB scripts for reproducing key figures, tables, and numerical results in the papers.</p><h2>Major changes in documentation<a name="3"></a></h2><p>We continue to release both PDF and searchable HTML documentation for GAIL in MATLAB.  In addition, we have added more than a half dozen demos for our algorithms.</p><h2>Major changes in tests<a name="4"></a></h2><p>We continue to conduct automated nightly tests and weekly long tests on our own server.</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2016b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Release Notes 
+%
+% GAIL Version 2.2, 2017.
+% 
+%% Major changes in algorithms
+% 
+% We have a new algorithm called *meanMC_CLT*. In addition, all algorithms in
+% version 2.1 are improved with reduced computational complexity and some
+% new features. For example, funappx_g and funmin_g are locally adaptive;
+% our three multidimensional integration algorithms (*cubMC_g*, *cubLattice_g*,
+% and *cubSobol_g*) may take the probability measure uniform sphere in
+% addition to uniform hyperbox and Gaussian. The directory Algorithms is
+% reorganized with new subfolders to group algorithms and object classes by
+% their shared functionalities. We deprecated *funappx_g*, *funmin_g*, and
+% integral_g in version 2.1 and renamed them in this version as
+% *funappxPenalty_g*, *funminPenalty_g*, and *integralPenalty_g*, respectively.
+% Lastly, *meanMCBer_g* in version 2.1 is removed.
+% 
+% 
+%% Major changes in publications
+% 
+% In the folder "Papers", we include currently working and recently
+% published research articles related to our core algorithms. In addition,
+% we have included nine PhD or MS theses relevant to our research areas.
+% For theses and published papers, we included the PDF files of the
+% articles as well as MATLAB scripts for reproducing key figures, tables,
+% and numerical results in the papers.
+% 
+% 
+%% Major changes in documentation
+% 
+% We continue to release both PDF and searchable HTML documentation for
+% GAIL in MATLAB.  In addition, we have added more than a half dozen demos
+% for our algorithms.
+% 
+%% Major changes in tests
+% 
+% We continue to conduct automated nightly tests and weekly long tests on
+% our own server.
+
+##### SOURCE END #####
+--></body></html>

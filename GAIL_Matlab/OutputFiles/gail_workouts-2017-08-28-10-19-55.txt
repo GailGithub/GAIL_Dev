@@ -1,0 +1,494 @@
+
+Tests = 
+
+  1x2 <a href="matlab:helpPopup matlab.unittest.Test" style="font-weight:bold">Test</a> array with properties:
+
+    Name
+    BaseFolder
+    Parameterization
+    SharedTestFixtures
+    Tags
+
+Tests Include:
+   0 Parameterizations, 0 Shared Test Fixture Classes, 0 Tags.
+
+Running ut_save_mat
+..
+Done ut_save_mat
+__________
+
+
+results = 
+
+  1x2 <a href="matlab:helpPopup matlab.unittest.TestResult" style="font-weight:bold">TestResult</a> array with properties:
+
+    Name
+    Passed
+    Failed
+    Incomplete
+    Duration
+    Details
+
+Totals:
+   2 Passed, 0 Failed, 0 Incomplete.
+   0.097839 seconds testing time.
+
+
+Tests = 
+
+  1x3 <a href="matlab:helpPopup matlab.unittest.Test" style="font-weight:bold">Test</a> array with properties:
+
+    Name
+    BaseFolder
+    Parameterization
+    SharedTestFixtures
+    Tags
+
+Tests Include:
+   0 Parameterizations, 0 Shared Test Fixture Classes, 0 Tags.
+
+Running ut_save_eps
+...
+Done ut_save_eps
+__________
+
+
+results = 
+
+  1x3 <a href="matlab:helpPopup matlab.unittest.TestResult" style="font-weight:bold">TestResult</a> array with properties:
+
+    Name
+    Passed
+    Failed
+    Incomplete
+    Duration
+    Details
+
+Totals:
+   3 Passed, 0 Failed, 0 Incomplete.
+   3.7142 seconds testing time.
+
+Starting longtests at 2017-08-28 10:19:59 
+TAP version 13
+1..52
+ok 1 - "in_param.dim = 3;alpha = ones(1,in_param.dim); beta = 1./ (1:in_param.dim);r=1;"
+ok 2 - "hyperbox = [zeros(1,in_param.dim);ones(1,in_param.dim)];index = 1;"
+ok 3 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 4 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 5 - "Q = cubLattice_g(f,hyperbox,'uniform',1e-3,1e-2);"
+not ok 6 - "check = abs(f_true-Q) < gail.tolfun(1e-3,1e-2,1,f_true,'max')"
+    in <a href="matlab:editorservices.openAndGoToLine('C:\GAIL_2_2\Workouts\Workout_cubLattice_g\dt_cubLattice_g.m', 1);">dt_cubLattice_g</a>
+    expected: check = logical 1
+    got     : check = 1
+ok 7 - "index = 2;"
+ok 8 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 9 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 10 - "Q = cubLattice_g(f,hyperbox,'uniform',1e-3,1e-3);"
+not ok 11 - "check = abs(f_true-Q) < gail.tolfun(1e-3,1e-3,1,f_true,'max')"
+    in <a href="matlab:editorservices.openAndGoToLine('C:\GAIL_2_2\Workouts\Workout_cubLattice_g\dt_cubLattice_g.m', 1);">dt_cubLattice_g</a>
+    expected: check = logical 1
+    got     : check = 1
+ok 12 - "index = 3;"
+ok 13 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 14 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 15 - "Q = cubLattice_g(f,hyperbox,'uniform',1e-3,1e-2);"
+not ok 16 - "check = abs(f_true-Q) < gail.tolfun(1e-3,1e-2,1,f_true,'max')"
+    in <a href="matlab:editorservices.openAndGoToLine('C:\GAIL_2_2\Workouts\Workout_cubLattice_g\dt_cubLattice_g.m', 1);">dt_cubLattice_g</a>
+    expected: check = logical 1
+    got     : check = 1
+ok 17 - "index = 4;"
+ok 18 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 19 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 20 - "Q = cubLattice_g(f,hyperbox,'uniform',1e-3,1e-3);"
+not ok 21 - "check = abs(f_true-Q) < gail.tolfun(1e-3,1e-3,1,f_true,'max')"
+    in <a href="matlab:editorservices.openAndGoToLine('C:\GAIL_2_2\Workouts\Workout_cubLattice_g\dt_cubLattice_g.m', 1);">dt_cubLattice_g</a>
+    expected: check = logical 1
+    got     : check = 1
+ok 22 - "index = 5;"
+ok 23 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 24 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 25 - "Q = cubLattice_g(f,hyperbox,'uniform',1e-3,1e-3);"
+not ok 26 - "check = abs(f_true-Q) < gail.tolfun(1e-3,1e-3,1,f_true,'max')"
+    in <a href="matlab:editorservices.openAndGoToLine('C:\GAIL_2_2\Workouts\Workout_cubLattice_g\dt_cubLattice_g.m', 1);">dt_cubLattice_g</a>
+    expected: check = logical 1
+    got     : check = 1
+ok 27 - "in_param.dim = 3;alpha = ones(1,in_param.dim); beta = 1./ (1:in_param.dim);r=1;"
+ok 28 - "hyperbox = [-ones(1,in_param.dim);ones(1,in_param.dim)];index = 1;"
+ok 29 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 30 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 31 - "Q = cubLattice_g(f,hyperbox,'uniform',1e-2,1e-13);"
+not ok 32 - "check = abs(f_true-Q) < gail.tolfun(1e-2,1e-13,1,f_true,'max')"
+    in <a href="matlab:editorservices.openAndGoToLine('C:\GAIL_2_2\Workouts\Workout_cubLattice_g\dt_cubLattice_g.m', 1);">dt_cubLattice_g</a>
+    expected: check = logical 1
+    got     : check = 1
+ok 33 - "index = 2;hyperbox = [-ones(1,in_param.dim);ones(1,in_param.dim)];"
+ok 34 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 35 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 36 - "Q = cubLattice_g(f,hyperbox,'uniform',1e-2,1e-13);"
+not ok 37 - "check = abs(f_true-Q) < gail.tolfun(1e-2,1e-13,1,f_true,'max')"
+    in <a href="matlab:editorservices.openAndGoToLine('C:\GAIL_2_2\Workouts\Workout_cubLattice_g\dt_cubLattice_g.m', 1);">dt_cubLattice_g</a>
+    expected: check = logical 1
+    got     : check = 1
+ok 38 - "index = 3;hyperbox = [ones(1,in_param.dim)/2;2*ones(1,in_param.dim)];"
+ok 39 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 40 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 41 - "Q = cubLattice_g(f,hyperbox,'uniform',1e-2,1e-3);"
+not ok 42 - "check = abs(f_true-Q) < gail.tolfun(1e-2,1e-3,1,f_true,'max')"
+    in <a href="matlab:editorservices.openAndGoToLine('C:\GAIL_2_2\Workouts\Workout_cubLattice_g\dt_cubLattice_g.m', 1);">dt_cubLattice_g</a>
+    expected: check = logical 1
+    got     : check = 1
+ok 43 - "index = 4;hyperbox = [-ones(1,in_param.dim)/2;ones(1,in_param.dim)];"
+ok 44 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 45 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 46 - "Q = cubLattice_g(f,hyperbox,'uniform',1e-2,1e-3);"
+not ok 47 - "check = abs(f_true-Q) < gail.tolfun(1e-2,1e-3,1,f_true,'max')"
+    in <a href="matlab:editorservices.openAndGoToLine('C:\GAIL_2_2\Workouts\Workout_cubLattice_g\dt_cubLattice_g.m', 1);">dt_cubLattice_g</a>
+    expected: check = logical 1
+    got     : check = 1
+ok 48 - "index = 5;hyperbox = [-ones(1,in_param.dim)/2;ones(1,in_param.dim)];"
+ok 49 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 50 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 51 - "Q = cubLattice_g(f,hyperbox,'uniform',1e-2,1e-2);"
+not ok 52 - "check = abs(f_true-Q) < gail.tolfun(1e-2,1e-2,1,f_true,'max')"
+    in <a href="matlab:editorservices.openAndGoToLine('C:\GAIL_2_2\Workouts\Workout_cubLattice_g\dt_cubLattice_g.m', 1);">dt_cubLattice_g</a>
+    expected: check = logical 1
+    got     : check = 1
+Running ut_Papers_cubLattice_g
+irep =
+    10
+irep =
+    20
+irep =
+    30
+irep =
+    40
+irep =
+    50
+irep =
+    60
+irep =
+    70
+irep =
+    80
+irep =
+    90
+irep =
+   100
+irep =
+   110
+irep =
+   120
+irep =
+   130
+irep =
+   140
+irep =
+   150
+irep =
+   160
+irep =
+   170
+irep =
+   180
+irep =
+   190
+irep =
+   200
+irep =
+   210
+irep =
+   220
+irep =
+   230
+irep =
+   240
+irep =
+   250
+irep =
+   260
+irep =
+   270
+irep =
+   280
+irep =
+   290
+irep =
+   300
+irep =
+   310
+irep =
+   320
+irep =
+   330
+irep =
+   340
+irep =
+   350
+irep =
+   360
+irep =
+   370
+irep =
+   380
+irep =
+   390
+irep =
+   400
+irep =
+   410
+irep =
+   420
+irep =
+   430
+irep =
+   440
+irep =
+   450
+irep =
+   460
+irep =
+   470
+irep =
+   480
+irep =
+   490
+irep =
+   500
+.irep =
+    10
+irep =
+    20
+irep =
+    30
+irep =
+    40
+irep =
+    50
+irep =
+    60
+irep =
+    70
+irep =
+    80
+irep =
+    90
+irep =
+   100
+irep =
+   110
+irep =
+   120
+irep =
+   130
+irep =
+   140
+irep =
+   150
+irep =
+   160
+irep =
+   170
+irep =
+   180
+irep =
+   190
+irep =
+   200
+irep =
+   210
+irep =
+   220
+irep =
+   230
+irep =
+   240
+irep =
+   250
+irep =
+   260
+irep =
+   270
+irep =
+   280
+irep =
+   290
+irep =
+   300
+irep =
+   310
+irep =
+   320
+irep =
+   330
+irep =
+   340
+irep =
+   350
+irep =
+   360
+irep =
+   370
+irep =
+   380
+irep =
+   390
+irep =
+   400
+irep =
+   410
+irep =
+   420
+irep =
+   430
+irep =
+   440
+irep =
+   450
+irep =
+   460
+irep =
+   470
+irep =
+   480
+irep =
+   490
+irep =
+   500
+.
+Done ut_Papers_cubLattice_g
+__________
+
+Finished longtests_cubLattice_g at 2017-08-28 10:20:37 
+TAP version 13
+1..56
+ok 1 - " in_param.dim = 3;alpha = ones(1,in_param.dim); beta = 1./ (1:in_param.dim);r=1;"
+ok 2 - "hyperbox = [zeros(1,in_param.dim);ones(1,in_param.dim)];index = 1;"
+ok 3 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 4 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.001"
+ok 5 - "Q = cubMC_g(f,hyperbox,'uniform',1e-3,1e-2)+0.001"
+ok 6 - "index = 2;"
+ok 7 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 8 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.001"
+ok 9 - "Q = cubMC_g(f,hyperbox,'uniform',1e-3,1e-3)+0.001"
+ok 10 - "index = 3;"
+ok 11 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 12 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.001"
+ok 13 - "Q = cubMC_g(f,hyperbox,'uniform',1e-3,1e-2)+0.001"
+ok 14 - "index = 4;"
+ok 15 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 16 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.001"
+ok 17 - "Q = cubMC_g(f,hyperbox,'uniform',1e-3,1e-3)+0.001"
+ok 18 - "index = 5;"
+ok 19 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 20 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 21 - "Q = cubMC_g(f,hyperbox,'uniform',1e-3,1e-3)"
+ok 22 - "index = 6;"
+ok 23 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 24 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 25 - "Q = cubMC_g(f,hyperbox,'uniform',1e-3,1e-3)"
+ok 26 - "index = 7; in_param.dim = 3;"
+ok 27 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 28 - "Q = cubMC_g(f,hyperbox,'uniform',1e-3,1e-4)"
+ok 29 - "in_param.dim = 3; alpha = ones(1,in_param.dim); beta = 1./ (1:in_param.dim);r=1;"
+ok 30 - "hyperbox = [-ones(1,in_param.dim);ones(1,in_param.dim)];index = 1;"
+ok 31 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 32 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 33 - "abstol = 1e-2; reltol = 1e-13;"
+ok 34 - "Q = cubMC_g(f,hyperbox,'uniform',abstol,reltol);"
+ok 35 - "abs(f_true-Q) <= max(abstol, reltol * abs(f_true))"
+ok 36 - "index = 2;hyperbox = [-ones(1,in_param.dim);ones(1,in_param.dim)];"
+ok 37 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 38 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 39 - "Q = cubMC_g(f,hyperbox,'uniform',1e-2,1e-13)"
+ok 40 - "index = 3;hyperbox = [ones(1,in_param.dim)/2;2*ones(1,in_param.dim)];"
+ok 41 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 42 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 43 - "Q = cubMC_g(f,hyperbox,'uniform',1e-2,1e-3)"
+ok 44 - "index = 4;hyperbox = [-ones(1,in_param.dim)/2;ones(1,in_param.dim)];"
+ok 45 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 46 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.005"
+ok 47 - "Q = cubMC_g(f,hyperbox,'uniform',1e-2,1e-3)+0.005;"
+ok 48 - "check = abs(Q - f_true)< max(1e-2, 1e-3*f_true)"
+ok 49 - "index = 5;hyperbox = [-ones(1,in_param.dim)/2;ones(1,in_param.dim)];"
+ok 50 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 51 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.005"
+ok 52 - "Q = cubMC_g(f,hyperbox,'uniform',1e-2,1e-2)+0.005"
+ok 53 - "index = 6;"
+ok 54 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 55 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 56 - "Q = cubMC_g(f,hyperbox,'uniform',1e-3,1e-3)"
+Running MCQMC2012Figs ...
+Elapsed time is 8.359374 seconds.
+Elapsed time is 8.422922 seconds.
+Elapsed time is 9.380554 seconds.
+Running FoolAutomaticAlgorithms ...
+info = 
+       filename: 'scriptValues.mat'
+         degree: 2
+    coefficient: 0
+        RegFunc: @(x)info.coefficient*x.^info.degree
+info = 
+        filename: 'scriptValues.mat'
+          degree: 2
+     coefficient: 0
+         RegFunc: @(x)info.coefficient*x.^info.degree
+    RegFuncprime: @(x)info.degree.*info.coefficient*x.^(info.degree-1)
+info = 
+           filename: 'scriptValues.mat'
+             degree: 2
+        coefficient: 0
+            RegFunc: @(x)info.coefficient*x.^info.degree
+       RegFuncprime: @(x)info.degree.*info.coefficient*x.^(info.degree-1)
+    RegFuncdubprime: @(x)info.degree.*(info.degree-1).*info.coefficient*x.^(info.degree-2)
+fname =
+chebint
+[Warning: Please install the chebfun package to plot this figure.] 
+[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('FoolAutomaticAlgorithms', 'C:\GAIL_2_2\Papers\MCQMC2012Paper\FoolAutomaticAlgorithms.m', 45)" style="font-weight:bold">FoolAutomaticAlgorithms</a> (<a href="matlab: opentoline('C:\GAIL_2_2\Papers\MCQMC2012Paper\FoolAutomaticAlgorithms.m',45,0)">line 45</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('run', 'C:\Program Files\MATLAB\R2016a\toolbox\matlab\lang\run.m', 96)" style="font-weight:bold">run</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2016a\toolbox\matlab\lang\run.m',96,0)">line 96</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('run_handle', 'C:\GAIL_2_2\Tests\Developers_only\automatic_workouts\run_handle.m', 10)" style="font-weight:bold">run_handle</a> (<a href="matlab: opentoline('C:\GAIL_2_2\Tests\Developers_only\automatic_workouts\run_handle.m',10,0)">line 10</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('longtests_cubMC_g', 'C:\GAIL_2_2\Tests\Developers_only\automatic_workouts\longtests_cubMC_g.m', 9)" style="font-weight:bold">longtests_cubMC_g</a> (<a href="matlab: opentoline('C:\GAIL_2_2\Tests\Developers_only\automatic_workouts\longtests_cubMC_g.m',9,0)">line 9</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('longtests', 'C:\GAIL_2_2\Tests\Developers_only\automatic_workouts\longtests.m', 21)" style="font-weight:bold">longtests</a> (<a href="matlab: opentoline('C:\GAIL_2_2\Tests\Developers_only\automatic_workouts\longtests.m',21,0)">line 21</a>)] 
+Elapsed time is 0.002202 seconds.
+ratio =
+  36.070312500000000
+Running RunTestcubMConGeoAsianCall ...
+Warning: tried to evaluate at 4894177380 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 5520660088 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 21014729736 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 21685160448 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 9824788976 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 11199412152 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 6962111374 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 5584486872 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 10501523224 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 11262572184 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 19907078736 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 22669274264 samples,
+which is more than the allowed maximum of 1000000000 samples
+Warning: tried to evaluate at 5287334564 samples,
+which is more than the allowed maximum of 1000000000 samples
+{Operation terminated by user during <a href="matlab:matlab.internal.language.introspective.errorDocCallback('cubMC', 'C:\GAIL_2_2\Papers\MCQMC2012Paper\cubMC.m', 182)" style="font-weight:bold">cubMC</a> (<a href="matlab: opentoline('C:\GAIL_2_2\Papers\MCQMC2012Paper\cubMC.m',182,0)">line 182</a>)
+
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('TestcubMCDiffSettings', 'C:\GAIL_2_2\Papers\MCQMC2012Paper\TestcubMCDiffSettings.m', 96)" style="font-weight:bold">TestcubMCDiffSettings</a> (<a href="matlab: opentoline('C:\GAIL_2_2\Papers\MCQMC2012Paper\TestcubMCDiffSettings.m',96,0)">line 96</a>)
+        [~,param]=cubMC(testfun,param.interval,param);
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('RunTestcubMConGeoAsianCall', 'C:\GAIL_2_2\Papers\MCQMC2012Paper\RunTestcubMConGeoAsianCall.m', 28)" style="font-weight:bold">RunTestcubMConGeoAsianCall</a> (<a href="matlab: opentoline('C:\GAIL_2_2\Papers\MCQMC2012Paper\RunTestcubMConGeoAsianCall.m',28,0)">line 28</a>)
+res = TestcubMCDiffSettings(test,fun,param);
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('run', 'C:\Program Files\MATLAB\R2016a\toolbox\matlab\lang\run.m', 96)" style="font-weight:bold">run</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2016a\toolbox\matlab\lang\run.m',96,0)">line 96</a>)
+evalin('caller', [script ';']);
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('run_handle', 'C:\GAIL_2_2\Tests\Developers_only\automatic_workouts\run_handle.m', 10)" style="font-weight:bold">run_handle</a> (<a href="matlab: opentoline('C:\GAIL_2_2\Tests\Developers_only\automatic_workouts\run_handle.m',10,0)">line 10</a>)
+  run(filename)
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('longtests_cubMC_g', 'C:\GAIL_2_2\Tests\Developers_only\automatic_workouts\longtests_cubMC_g.m', 10)" style="font-weight:bold">longtests_cubMC_g</a> (<a href="matlab: opentoline('C:\GAIL_2_2\Tests\Developers_only\automatic_workouts\longtests_cubMC_g.m',10,0)">line 10</a>)
+run_handle('RunTestcubMConGeoAsianCall')
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('longtests', 'C:\GAIL_2_2\Tests\Developers_only\automatic_workouts\longtests.m', 21)" style="font-weight:bold">longtests</a> (<a href="matlab: opentoline('C:\GAIL_2_2\Tests\Developers_only\automatic_workouts\longtests.m',21,0)">line 21</a>)
+longtests_cubMC_g} 

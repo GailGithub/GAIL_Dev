@@ -1,0 +1,9 @@
+
+# of replications = 1000
+   Test         Number of Points                    Time Used                          Success (%)                                  Failure (%)
+  Function   ----------------------------    -------------------------------     --------------------------------------   ----------------------------------------
+             Local      Global    Chebfun    Local       Global      Chebfun     Local        Global         Chebfun       Local         Global        Chebfun
+                                                                                 No Warn Warn No Warn Warn   No Warn Warn  No Warn Warn  No Warn Warn  No Warn Warn
+        3      6577     46439        116      0.0030       0.0024      0.0216     100      0    100      0      0        0      0      0      0      0    100      0
+        1      5017     26265         43      0.0032       0.0029      0.0063     100      0    100      0      3        0      0      0      0      0     97      0
+        2     15698     97106         22      0.0050       0.0079      0.0039     100      0    100      0      3        0      0      0      0      0     97      0
