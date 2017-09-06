@@ -23,7 +23,7 @@ warning(warninfo.state, warninfo.identifier);
 addpath(gailp);           % Add GAIL directories and subdirectories
 savepath;                 % Save the changes
 if isBuild
-   unzip('http://www.math.iit.edu/~Meshfree-methods-seminar/GAIL/GAIL_Build.zip',[GAILPATH,'..',filesep]);
+   unzip('http://www.math.iit.edu/~Meshfree-methods-seminar/GAIL/GAIL_2_2.zip',[GAILPATH,'..',filesep]);
 end
 if isPublish
    gail.GAIL_Publish(isPublish,~isPublish,isPublish);
