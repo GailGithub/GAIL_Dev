@@ -4,17 +4,22 @@
 
 GAIL is a suite of algorithms for integration problems in one and many dimensions, and whose answers are guaranteed to be correct.
 
-<p>GAIL is created, developed, and maintained by  <a href="http://mypages.iit.edu/~hickernell/" rel="nofollow">Fred Hickernell</a> (Illinois Institute of Technology), <a href="http://home.uchicago.edu/sctchoi" rel="nofollow">Sou-Cheng Choi</a> (NORC at the University of Chicago and IIT), and their collaborators including Yuhan Ding (IIT), Lan Jiang (IIT), Lluís Antoni Jiménez Rugama (IIT), Xin Tong (UIC), Yizhi Zhang (IIT), and Xuan Zhou (J.P. Morgan).  It is a free software and could be downloaded via the link below.</p>
+<p>GAIL is created, developed, and maintained by  <a href="http://mypages.iit.edu/~hickernell/" rel="nofollow">Fred Hickernell</a> (Illinois Institute of Technology), <a href="http://home.uchicago.edu/sctchoi" rel="nofollow">Sou-Cheng Choi</a> (IIT), and their collaborators including Yuhan Ding (IIT), Lan Jiang (IIT), Da Li (IIT), Jiazhen Lu (IIT), Jagadeeswaran Rathinavel (IIT), Lluís Antoni Jiménez Rugama (UBS), Xin Tong (UIC), Kan Zhang (IIT), Yizhi Zhang (IIT), Xiaoyang Zhao (IIT), and Xuan Zhou (J.P. Morgan).  It is a free software and could be downloaded via the link below.</p>
 
 *To download the latest version of GAIL, follow one of the links below to:*
-<font size="2" color="red"><pre>           Get zip file            OR   run the MATLAB installation script</pre> </font>
+<font size="2" color="red"><pre>            Get zip file              OR      run the MATLAB installation script</pre> </font>
 
 
-<a href="http://math.iit.edu/~openscholar/sites/default/files/meshfree/files/gail_2_1_1.zip"><img hspace="40" src="https://raw.githubusercontent.com/harryzyz/GAILPubPic/master/downloadzip.png"></a>
-<a href="http://math.iit.edu/~openscholar/sites/default/files/meshfree/files/downloadinstallgail_2_1_2.m"><img hspace="5" src="https://raw.githubusercontent.com/harryzyz/GAILPubPic/master/downloadscript.png"></a>
+<a href="http://www.math.iit.edu/~Meshfree-methods-seminar/GAIL/GAIL_2_2.zip"><img hspace="40" src="https://raw.githubusercontent.com/harryzyz/GAILPubPic/master/downloadzip.png"></a>
+<a href="http://www.math.iit.edu/~Meshfree-methods-seminar/GAIL/DownloadInstallGail_2_2.m"><img hspace="5" src="https://raw.githubusercontent.com/harryzyz/GAILPubPic/master/downloadscript.png"></a>
 
 
 ## News
+
+* <span style="color:red">GAIL version 2.2 is released on August 28, 2017 (Chinese Valentine's Day) </span>
+
+* <a href="https://science.iit.edu/sites/science/files/elements/science/pdfs/SciLetters-W2016-Newsletter.pdf">Press about GAIL: Reliable Mathematical Software</a>
+
 * GAIL version 2.1 is released on March 14, 2015 (Super Pi Day and Albert Einstein's Birthday)
 
 * GAIL's GitHub repository is open to public at https://github.com/GailGithub/GAIL_Dev starting February 6, 2015.
@@ -28,6 +33,9 @@ GAIL is a suite of algorithms for integration problems in one and many dimension
 If you find GAIL helpful in your work, please support us by citing the following papers and software.
 
 ### Free GAIL Software
+ 
+* Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Da Li,  Jagadeeswaran
+Rathinavel, Lluis Antoni Jimenez Rugama, Xin Tong, Kan Zhang, Yizhi Zhang, and Xuan Zhou.  <em>GAIL: Guaranteed Automatic Integration Library (Version 2.2)</em>, MATLAB Software, 2017.  (Download <a href="http://www.math.iit.edu/~Meshfree-methods-seminar/GAIL/GAIL_2_2.zip">zip</a>, or download and run <a href="http://www.math.iit.edu/~Meshfree-methods-seminar/GAIL/DownloadInstallGail_2_2.m">Matlab script</a>,  or clone <a href="https://github.com/GailGithub/GAIL_Dev">repository</a>.  <a href="http://mypages.iit.edu/~schoi32/GAIL_2_2/Documentation/html/GAIL.html">HTML documentation</a> and <a href="http://mypages.iit.edu/~schoi32/GAIL_2_2/Documentation/gail_ug_2_2.pdf">PDF documentation</a>.  <a href="http://mypages.iit.edu/~schoi32/bibtex_CDHJ17.txt">Bibtex</a>.)
 
 * Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang, and Xuan Zhou.  <em>GAIL: Guaranteed Automatic Integration Library (Version 2.1)</em>, MATLAB Software, 2015.  (Download <a href="http://math.iit.edu/~openscholar/sites/default/files/meshfree/files/gail_2_1_1.zip">zip</a>, or download and run <a href="http://math.iit.edu/~openscholar/sites/default/files/meshfree/files/downloadinstallgail_2_1_2.m">Matlab script</a>,  or clone <a href="https://github.com/GailGithub/GAIL_Dev">repository</a>.  <a href="http://mypages.iit.edu/~schoi32/GAIL_2_1/Documentation/html/GAIL.html">HTML documentation</a> and <a href="http://mypages.iit.edu/~schoi32/GAIL_2_1/Documentation/gail_doc_2_1.pdf">PDF documentation</a>.  <a href="http://mypages.iit.edu/~schoi32/bibtex_CDHJJTZZ15.txt">Bibtex</a>.)
 
@@ -42,18 +50,37 @@ If you find GAIL helpful in your work, please support us by citing the following
 
 ### Papers and Reports
 
+2017 
+
+* Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Xin Tong, <em><a href="http://www.sciencedirect.com/science/article/pii/S0885064X16301108">Local adaption for approximation and minimization of univariate functions</a></em>, Journal of Complexity, *40*, pp. 17-33, 2017.
+
+* F. J. Hickernell, Ll. A. Jim\'enez Rugama, and D. Li, <em><a href="https://arxiv.org/abs/1702.01491">Adaptive 
+quasi-Monte Carlo methods for Cubature</a></em>, Ian Sloan's 80th Birthday Fetschrift, to appear.
+
+* F. J. Hickernell, <em><a href="https://arxiv.org/abs/1702.01487">The Trio Identity for Quasi-Monte Carlo Error</a></em>, Monte Carlo and Quasi-Monte Carlo Methods: MCQMC, Stanford, USA, August 2016 (P. Glynn and A. Owen, eds.), to appear.
+
+
+2016
+* Lan Jiang, <em><a href="http://repository.iit.edu/handle/10560/3844">Guaranteed Adaptive Monte Carlo Methods for Estimating Means of Random Variables</a></em>,  Ph.D Thesis, Illinois Institute of Technology,  2016.
+
+* Lluís Antoni Jiménez Rugama, <em><a href="http://search.proquest.com/openview/9f2d8affbbb995fc4ff99527d6587a46/1?pq-origsite=gscholar&cbl=18750&diss=y">Adaptive quasi-Monte Carlo cubature</a></em>,  Ph.D Thesis, Illinois Institute of Technology,  2016.
+
+*   Daniel S. Katz, Sou-Cheng T. Choi, Nancy Wilkins-Diehr, Neil Chue Hong, Colin C. Venters, James Howison, Frank Seinstra, Matthew Jones, Karen Cranston, Thomas L. Clune, Miguel de Val-Borro, Richard Littauer, <em><a href="http://arxiv.org/abs/1507.01715">Report on the Second Workshop on Sustainable Software for Science: Practice and Experiences (WSSSPE2)</a></em>, Journal of Open Research Software, Volume 4, Number 1, e7, 2016.
+
 2015
-*   Xuan Zhou and Fred J. Hickernell, <em><a href="http://arxiv.org/abs/1411.0790">Tractability of function approximation with product kernels</a></em>, Monte Carlo and Quasi-Monte Carlo Methods 2014 (R. Cools and D. Nuyens, eds.), Springer-Verlag, Berlin, 2015. Accepted.
-
-*   Daniel S. Katz, Sou-Cheng T. Choi, Nancy Wilkins-Diehr, Neil Chue Hong, Colin C. Venters, James Howison, Frank Seinstra, Matthew Jones, Karen Cranston, Thomas L. Clune, Miguel de Val-Borro, Richard Littauer, <em><a href="http://arxiv.org/abs/1507.01715">Report on the Second Workshop on Sustainable Software for Science: Practice and Experiences (WSSSPE2)</a></em>, submitted, 2015.
-
 *  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang, and Xuan Zhou, <em><a href="http://mypages.iit.edu/~schoi32/GAIL_2_1/Documentation/gail_doc_2_1.pdf">GAIL---Guaranteed Automatic Integration Library in MATLAB: Documentation for Version 2.1</a></em>, Technical Report, Illinois Institute of Technology, 2015.
 
+* Yuhan Ding, <em><a href="https://books.google.com/books/about/Guaranteed_Adaptive_Univariate_Function.html?id=hR9iAQAACAAJ">Guaranteed Adaptive Univariate Function Approximation</a></em>,   Ph.D Thesis, Illinois Institute of Technology,  2015.
+
+* Fred J. Hickernell and Lluís Antoni Jiménez Rugama, <em><a href="http://arxiv.org/abs/1410.8615">Reliable Adaptive Cubature Using Digital Sequences</a></em>, Monte Carlo and Quasi-Monte Carlo Methods 2014 (R. Cools and D. Nuyens, eds.), Springer-Verlag, Berlin, 2015.
+
+* Lluís Antoni Jiménez Rugama and Fred J. Hickernell, <em><a href="http://arxiv.org/abs/1411.1966">Adaptive Multidimensional Integration Based on Rank-1 Lattices</a></em>, Monte Carlo and Quasi-Monte Carlo Methods 2014 (R. Cools and D. Nuyens, eds.), Springer-Verlag, Berlin, 2015.
+
+* Xuan Zhou, <em><a href="https://books.google.com/books/about/Function_Approximation_with_Kernel_Metho.html?id=oDpoAQAACAAJ">Function Approximation with Kernel Methods</a></em>,  Ph.D Thesis, Illinois Institute of Technology,  2015.
+
+*   Xuan Zhou and Fred J. Hickernell, <em><a href="http://arxiv.org/abs/1411.0790">Tractability of function approximation with product kernels</a></em>, Monte Carlo and Quasi-Monte Carlo Methods 2014 (R. Cools and D. Nuyens, eds.), Springer-Verlag, Berlin, 2015.
+
 2014
-* Fred J. Hickernell and Lluís Antoni Jiménez Rugama, <em><a href="http://arxiv.org/abs/1410.8615">Reliable Adaptive Cubature Using Digital Sequences</a></em>, submitted.
-
-* Lluís Antoni Jiménez Rugama and Fred J. Hickernell, <em><a href="http://arxiv.org/abs/1411.1966">Adaptive Multidimensional Integration Based on Rank-1 Lattices</a></em>, submitted.
-
 * Xin Tong, <em><a href="https://gail.googlecode.com/git/GAIL_2_0/Papers/UniFunMin/XinTong's%20Master%20Thesis.pdf">A Guaranteed, Adaptive, Automatic Algorithm for Univariate Function Minimization</a></em>,  M.S. Thesis, Illinois Institute of Technology,  2014.
 
 * Fred J. Hickernell, Lan Jiang, Yuewei Liu, and Art B. Owen, <em>Guaranteed conservative fixed width confidence intervals via Monte Carlo sampling</em>, Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F. Y. Kuo, G. W. Peters, and I. H. Sloan, eds.), pp. 105-128, Springer-Verlag, Berlin, 2014, <a href="http://link.springer.com/chapter/10.1007/978-3-642-41095-6_5">DOI: 10.1007/978-3-642-41095-6_5</a>. (<a href="https://gail.googlecode.com/git/GAIL_2_0/Papers/MCQMC2012Paper/MCQMC2012GuaranteedFixedWidthConfidenceIntervals.pdf">PDF</a>)
@@ -69,6 +96,10 @@ If you find GAIL helpful in your work, please support us by citing the following
 Sou-Cheng T. Choi and Fred J. Hickernell, <em>IIT MATH-573 Reliable Mathematical Software</em> [Course Slides], Illinois Institute of Technology, Chicago, IL, 2013.  (<a href ="http://mypages.iit.edu/~schoi32/MATH573Slides.pdf">slides</a>)
 
 ### Presentations and Slides
+2017
+
+*  <a href="https://www.slideshare.net/fjhickernell">_Fred Hickernell's slideshare_</a>
+
 
 2016 
 
@@ -224,7 +255,7 @@ Univariate Function Minimization_</a>
 ### Events of Interest
 
 
-* <a href="http://www.ams.org/meetings/sectional/2219_program_ss25.html">Special Session on Frontiers in Computational Mathematics</a>, <a href="http://www.ams.org/meetings/sectional/2219_program.html">AMS Central Fall Sectional Meeting</a>, Chicago, IL, Oct 3, 2015</a>
+* <a href="http://www.ams.org/meetings/sectional/2219_program_ss25.html">Special Session on Frontiers in Computational Mathematics</a>, <a href="http://www.ams.org/meetings/sectional/2219_program.html">AMS Central Fall Sectional Meeting</a>, Chicago, IL, Oct 3, 2015
 
 * <a href="http://wssspe.researchcomputing.org.uk/wssspe3/">3rd Workshop on Sustainable Software for Science: Practice and Experiences (WSSSPE3)</a>, Boulder, CO, September 28-29, 2015.
 
