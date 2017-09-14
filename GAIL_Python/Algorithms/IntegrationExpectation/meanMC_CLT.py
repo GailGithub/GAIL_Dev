@@ -1,0 +1,1 @@
+# MEANMC_CLT Monte Carlo method to estimate the mean of a random variable
