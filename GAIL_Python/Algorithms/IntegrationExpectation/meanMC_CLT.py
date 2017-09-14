@@ -8,13 +8,14 @@ from scipy.special import erfcinv
 def check_meanMC_CLT_params(**kwargs):
     checked_params = kwargs
 
+    #TODO meanYOut and meanYParam functions
     # if not (0 <= relTol <= 1):
     #     logging.error("Relative error tolerance should be in the range [0,1]")
     return checked_params
 
 
 def stdnorminv(p):
-    # this function is the inverse function of CDF of standard normal distribution
+    # This function is the inverse function of CDF of standard normal distribution
     erfinv_val = erfcinv(np.multiply(2, p))
     return np.multiply(-1 * np.sqrt(2), erfinv_val)
 
@@ -43,7 +44,7 @@ def meanMC_CLT(Y=None, absTol=1e-2, relTol=0, alpha=0.01, nSig=1000, inflate=1.2
     nmu = max(1, np.power(np.ceil(
         np.multiply(
             np.multiply(-1, stdnorminv(out['alpha'] / 2)), sig0up)
-        / max(out['absTol'], out['relTol'] * abs(hmu0))
+        / max(out['absTol'], out['relTol'] * abs(hmu0)) #TODO get tolerances from out[err]
     ), 2))
 
     out['sol'] = np.mean(YY)
