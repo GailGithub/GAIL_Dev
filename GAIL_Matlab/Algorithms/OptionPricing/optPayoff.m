@@ -34,6 +34,8 @@ classdef optPayoff < assetPath
     %     ***
     
     % Authors: Fred J. Hickernell, Tianci Zhu, Hartur Santi, Tianpei Qian
+    % Shihao Cui
+    
     %% Properties
     % This process inherits properties from the |stochProcess| class.  Below are
     % values assigned to that are abstractly defined in that class plus some
