@@ -5,7 +5,8 @@ function [integ, out] = cubMC_CLT(varargin)
 %
 %   [integ, out] = CUBMC_CLT(f, domain, domainType, measure)
 % 
-% The main work is done by MEANMC_CLT.
+% The main work is done by MEANMC_CLT.  Input can also be done via
+% structures or classes.
 %
 % Input Arguments
 %   f --- the integrand, in general a function of d variables
