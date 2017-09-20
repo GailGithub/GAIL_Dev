@@ -2,7 +2,10 @@ function [integ, out] = cubMC_CLT(varargin)
 % CUBMC_CLT approximates integrals via Monte Carlo simulation with Central
 % Limit Theorem (CLT) confidence intervals constructed to fit the error
 % tolerance
-%   [integ, out] = CUBMC_CLT(f, domain, domainType, measure, 
+%
+%   [integ, out] = CUBMC_CLT(f, domain, domainType, measure)
+% 
+% The main work is done by MEANMC_CLT.
 %
 % Input Arguments
 %   f --- the integrand, in general a function of d variables
