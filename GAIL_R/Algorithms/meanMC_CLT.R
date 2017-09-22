@@ -38,8 +38,9 @@
 #     out_param.time --- the time elapsed in seconds.
 #
 
-#This is a heuristic algorithm based on a Central Limit Theorem
-#approximation
+# This is a heuristic algorithm based on a Central Limit Theorem approximation.
+# It will be updated to include control variates
+
 #Default Values
 #fudge = 1.2; variance inflation factor
 #nSig = 1e2; number of samples to estimate variance  100
