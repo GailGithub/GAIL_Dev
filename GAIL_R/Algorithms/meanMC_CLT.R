@@ -47,7 +47,8 @@
 #abstol = 0.01; absolute error tolerance  
 #Yrand = @(n) rand(n,1); random number generator 
 #
-# Authors: Anthony Karahalios,Luana Terra, Marcela Ribeiro, Ramon Oliveira and Joao Mateus Cunha
+# Authors: Anthony Karahalios, Luana Terra, Marcela Ribeiro, Ramon Oliveira, Joao Mateus Cunha
+# Youhan Lu, Batsuren Davaademberel
 
 meanMC_CLT = function(Yrand = function(n) {runif(n)},abstol = 0.01,alpha = 0.01,nSig = 1e2,fudge = 1.2) {
   
