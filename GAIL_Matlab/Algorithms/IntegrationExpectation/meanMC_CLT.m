@@ -180,8 +180,8 @@ sol = mean(YY); %estimated mean
 out.sol = sol; %record answer in output class
 
 out.nSample = out.nSig+nmu; %total samples required
-out.time = toc(tstart); %elapsed time
 out.errBd = -gail.stdnorminv(out.alpha/2)*sig0up/sqrt(nmu);
+out.time = toc(tstart); %elapsed time
 end
 
 
