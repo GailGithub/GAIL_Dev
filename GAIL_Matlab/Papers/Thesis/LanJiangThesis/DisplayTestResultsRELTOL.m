@@ -1,13 +1,9 @@
-%This function is to plot the figure 3-6 in MCQMC 2012 Paper
-% Numerical Example --- three numerical examples {'ex1' 'ex2' 'ex3'} 
-% coloroption --- 'black' or 'color' 
+%This function is to plot the figures in Lan Jiang' thesis
+% coloroption --- 'black' or 'color'
 % Call the function as below:
-% DisplayTestResultsRELTOL({'ex1' 'ex2' 'ex3'},'black') would plot
-% example 1-3 using black marker.
-%
 % DisplayTestResultsRELTOL({'ex1'},'black') would plot
 % example 1 using color marker.
-%
+
 function DisplayTestResultsRELTOL(NumericalExample,coloroption)
 set(0,'defaultaxesfontsize',20,'defaulttextfontsize',20)
 for i = 1:length(NumericalExample)

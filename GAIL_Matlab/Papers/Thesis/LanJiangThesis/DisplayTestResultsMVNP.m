@@ -1,12 +1,8 @@
-%This function is to plot the figure 3-6 in MCQMC 2012 Paper
-% Numerical Example --- three numerical examples {'ex1' 'ex2' 'ex3'}
+%This function is to plot the figures in Lan Jiang' thesis
 % coloroption --- 'black' or 'color'
 % Call the function as below:
-
-%
 % DisplayTestResultsMVNP('black') would plot
 % example 1 using color marker.
-%
 function DisplayTestResultsMVNP(coloroption)
 set(0,'defaultaxesfontsize',20,'defaulttextfontsize',20)
 %load TestcubMCgFixedCovon-MVNP-N500d4abstol0.0001rel0.001-2015-09-17-23-38-21.mat
