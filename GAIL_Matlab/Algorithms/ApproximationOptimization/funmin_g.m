@@ -97,7 +97,7 @@ function [fmin,out_param]=funmin_g(varargin)
 %
 %      1
 %
-%  out_param = ***
+%  out_param =***
 %
 %             f: @(x)exp(0.01*(x-0.5).^2)
 %             a: 0
@@ -122,7 +122,7 @@ function [fmin,out_param]=funmin_g(varargin)
 %
 %      1
 %
-%  out_param = ***
+%  out_param =***
 %
 %            f: @(x)exp(0.01*(x-0.5).^2)
 %            a: -2
@@ -151,7 +151,7 @@ function [fmin,out_param]=funmin_g(varargin)
 %
 %     1.0000
 %
-%  out_param = ***
+%  out_param =***
 %
 %            f: @(x)exp(0.01*(x-0.5).^2)
 %            a: -13
@@ -176,7 +176,7 @@ function [fmin,out_param]=funmin_g(varargin)
 %
 %     1
 %
-%  out_param = ***
+%  out_param =***
 %
 %            f: @(x)exp(0.01*(x-0.5).^2)
 %            a: -2
