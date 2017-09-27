@@ -35,6 +35,11 @@ if ~exist('testAll','var')
 end
 
 
+% Force to stop after meeting the error tolerance
+% for gail type of plots
+testAll = false;
+
+
 debugEnable=false;
 
 % comment this line of code to use GPU for computations
@@ -146,11 +151,12 @@ for iter = 1:numM
     MLEKernel(exp(lna),br_xun,ftilde,order,arbMean), ...
     -5,5,optimset('TolX',1e-2)); 
   aMLE = exp(lnaMLE);
-  [loss,Ktilde,KtildeSq,RKHSnorm,K] = MLEKernel(aMLE,br_xun,ftilde,order,arbMean);
+  [loss,Ktilde,Kthat_new,RKHSnorm,K] = MLEKernel(aMLE,br_xun,ftilde,order,arbMean);
   %wt = 1/Ktilde(1);
   
   %Check error criterion
-  DSC = abs(1 - (n/Ktilde(1)));
+  % DSC = abs(1 - (n/Ktilde(1)));
+  DSC = abs(Kthat_new(1)/(n + Kthat_new(1)));
   
   % store the debug information
   dscAll(iter) = sqrt(DSC);
@@ -203,15 +209,38 @@ if ~exist('visiblePlot','var')
   visiblePlot = true;
 end
 
+if 0 % disable plotting the MLE objective function
 if exist('fName','var') && exist('figSavePath','var')
   minTheta = plotMLE_Loss(ff, mvec, figSavePath, fName, d, order, ptransform, ...
               arbMean,visiblePlot,aMLEAll,lossMLEAll)
 end
+end
 
 end
 
+
+% computes Ktilde = K - 1
+% to avoid cancellation error in the computation of (1 - n/\lambda_1)
+function [Kt, K] = kernel_t(a, const, Bern)
+theta = a*const;
+d = size(Bern, 2);
+
+Kjt = theta*Bern(:,1);
+Kj = 1 + Kjt; 
+
+for j=2:d
+  Kjt_1 = Kjt; Kj_1 = Kj;
+  
+  Kjt = theta*Bern(:,j).*Kj_1 + Kjt_1;
+  Kj = 1 + Kjt;
+end
+
+Kt = Kjt; K = Kt;
+end
+
+
 % bernoulli polynomial based kernel
-function [K, Ktilde] = kernel(xun,order,a)
+function [K, Ktilde, Kthat_new] = kernel(xun,order,a)
 
 constMult = -(-1)^(order/2)*((2*pi)^order)/factorial(order);
 if order == 2
@@ -223,6 +252,11 @@ else
 end
 K = prod(1 + (a)*constMult*bernPloy(xun),2);
 
+[Kt_new, K_new] = kernel_t(a, constMult, bernPloy(xun));
+
+Kthat_new = abs(fft(Kt_new));
+Khat_new = abs(fft(K_new));
+
 % matlab's builtin fft is much faster and accurate
 Ktilde = abs(fft(K));  % remove any negative values
 
@@ -231,33 +265,28 @@ if sum(K)==length(K) || Ktilde(1)==length(K)
 end
 end
 
-function [loss,Ktilde,KtildeSq,RKHSnorm,K] = MLEKernel(a,xun,ftilde,...
+
+% MLE objective to find the optimal shape parmaeter
+function [loss,Ktilde,Kthat_new,RKHSnorm,K] = MLEKernel(a,xun,ftilde,...
   order,useArbMean)
 
-roundOffErrOptimize = false;
 n = length(ftilde);
 if order==4
-  if n>(2^18) && roundOffErrOptimize
-    [K, Ktilde] = kernel(xun,order,a);
-    [K2, Ktilde2] = kernel(xun,order/2,sqrt(a));
+
+    [K, Ktilde, Kthat_new] = kernel(xun,order,a);
     
-    KtildeSq = (Ktilde2/sqrt(n));
-  else
-    [K, Ktilde] = kernel(xun,order,a);
-    KtildeSq = sqrt(Ktilde);
-  end
+
 elseif order==2
-  [K, Ktilde] = kernel(xun,order,a);
-  KtildeSq = sqrt(Ktilde);
+  [K, Ktilde, Kthat_new] = kernel(xun,order,a);
+  
 else
   error('Unsupported Bernoulli polyn order !');
 end
 
 ftilde = abs(ftilde);  % remove any negative values
 
-if any(KtildeSq==0)
-  % fprintf('Ktilde has zero vals \n');
-end
+Ktilde(1) = Kthat_new(1) + n;
+Ktilde(2:end) = Kthat_new(2:end);
 
 %RKHSnorm = mean(abs(ftilde).^2./Ktilde);
 
@@ -265,10 +294,10 @@ end
 temp = (abs(ftilde(Ktilde~=0).^2)./(Ktilde(Ktilde~=0))) ;
 
 if useArbMean==true
-  RKHSnorm = sum(temp(2:end))/numel(Ktilde);
+  RKHSnorm = sum(temp(2:end))/n;
   temp_1 = sum(temp(2:end));
 else
-  RKHSnorm = sum(temp)/numel(Ktilde);
+  RKHSnorm = sum(temp)/n;
   temp_1 = sum(temp);
 end
 RKHSnormSq = sqrt(RKHSnorm);
@@ -278,10 +307,8 @@ if isnan(RKHSnormSq)
 end
 % loss = mean(2*log(KtildeSq)) + log(RKHSnorm);
 % loss = mean(log(Ktilde)) + log(RKHSnorm);
-if any(Ktilde==0)
-end
 
-% Ktilde(Ktilde==0) = min(Ktilde(Ktilde~=0)); %eps;
+
 loss1 = sum(log(Ktilde(Ktilde~=0)));
 if isinf(loss1)
   fprintf('loss1 is infinity \n');
@@ -291,7 +318,7 @@ if isinf(loss2)
   fprintf('loss2 is infinity \n');
 end
 % ignore all zero val eigenvalues
-loss = sum(log(Ktilde(Ktilde~=0))) + numel(Ktilde)*log(temp_1);
+loss = sum(log(Ktilde(Ktilde~=0))) + n*log(temp_1);
 
 if isinf(loss)
   fprintf('loss is infinity \n');
@@ -312,6 +339,8 @@ a;
 %ftilde(1)/Ktilde(1);
 end
 
+
+% computes the periodization transform for the given function values
 function f = doPeriodTx(fInput, ptransform)
 
 if strcmp(ptransform,'Baker')
@@ -408,6 +437,7 @@ end
 end
 
 
+% plots the objective for the MLE of theta
 function minTheta = plotMLE_Loss(ff, mvec, fullPath, fName, d, order, ...
   ptransform,useArbMean,visiblePlot,aMLEAll,lossMLEAll)
 
@@ -487,6 +517,5 @@ temp(end+1) = '\(\theta_{min_{true}}\)';
 temp(end+1) = '\(\theta_{min_{est}}\)';
 legend(temp,'location','best'); axis tight
 saveas(hFigCost, plotFileName)
-
 
 end

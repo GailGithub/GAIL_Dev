@@ -3,15 +3,22 @@
 gail.InitializeWorkspaceDisplay %initialize the workspace and the display parameters
 format long
 
-figSavePath = '/home/jagadees/MyWriteup/Aug_3rdweek/';
+figSavePath = '/home/jagadees/MyWriteup/Sep_2ndweek/';
 
+if exist(figSavePath,'dir')==false
+    mkdir(figSavePath);
+end
+
+% log the results
 completereport = strcat(figSavePath,...
     '_tests-logs-', datestr(now,'yyyy-mm-dd-HH-MM-SS'),'.txt');
 diary(completereport)
 
 visiblePlot=false;
 
-
+%
+% https://www.mathworks.com/matlabcentral/answers/98969-how-can-i-temporarily-avoid-figures-to-be-displayed-in-matlab
+%
 if visiblePlot==false
   set(0,'DefaultFigureVisible','off')
 else
@@ -27,8 +34,6 @@ if false
   fprintf('done')
 end
 
-
-% visiblePlot=true; % lets test if the setting really works
 
 tstart=tic;
 pdTx = {'C1','C1sin', 'C2sin', 'C0', 'none', 'Baker'};

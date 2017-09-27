@@ -1,7 +1,6 @@
 %% Test Multivariate Normal Probabilities
-
-function [muhat,aMLE,err,outAll] = TestMVN_BayesianCubature(dim,BernPolyOrder,...
-          ptransform,figSavePath,visiblePlot,arbMean)
+function [muhat,aMLE,errVec,outAll] = TestMVN_BayesianCubature(dim,BernPolyOrder,...
+          ptransform,figSavePath,visiblePlot,arbMean,testAll,absTol)
 
 %gail.InitializeWorkspaceDisplay %clean up
 %format long
@@ -79,45 +78,55 @@ disp(['mu  = ' num2str(muBest,15) ' +/- ' num2str(2*std(muBestvec),10)])
 %% Try MLE Bayseian cubature with Fourier kernel and Rank1 Lattice points
 nvecMLE = 2.^(10:20)';
 nnMLE = numel(nvecMLE);
+
+if exist('absTol','var')==false
+  absTolVal = 1e-4;
+else
+  absTolVal = absTol;
+end
+
 MVNProbMLELatticeGn = multivarGauss('a',a,'b',b,'Cov',Cov,'n',nvecMLE, ...
     'errMeth','n','cubMeth','MLELattice','intMeth','Genz', ...
     'BernPolyOrder',BernPolyOrder,'ptransform',ptransform, ...
-    'fName',fName,'figSavePath',fullPath,'arbMean',arbMean);
+    'fName',fName,'figSavePath',fullPath,'arbMean',arbMean,'absTol',absTolVal);
 compMLELattice = true;
 
 if compMLELattice
     datetime
     tic
-    nRep = 2; % reduced it
+    nRep = 100; % increase it for gail plots
     outAll = {'a', 'b'};
     muMVNProbMLELatticeGn = zeros(nnMLE,nRep);
     aMLE = zeros(nnMLE,nRep);
     errbdvecMBVProbMLELatticeGn(nnMLE,nRep) = 0;
+    muhatVec(nRep) = 0;
     for i = 1:nRep
         if i/1 == floor(i/1), i, end
         tic
-        [~, out] = compProb(MVNProbMLELatticeGn);
+        [muhat, out] = compProb(MVNProbMLELatticeGn);
         muMVNProbMLELatticeGn(:,i) = out.muhatAll;
+        muhatVec(i) = muhat;
         toc
         errbdvecMBVProbMLELatticeGn(:,i) = out.ErrBdAll;
         aMLE(:,i) = out.aMLEAll;
         outAll{i} = out;
     end
-    muhat = muMVNProbMLELatticeGn;
+    %muhat = muMVNProbMLELatticeGn;
     
     % loglog(2.^(out.mvec) , (abs(muBest - muMVNProbMLELatticeGn(:,1:i))), 2.^(out.mvec) , (abs(errbdvecMBVProbMLELatticeGn(:,1:i)))); axis tight
     
     errvecMVNProbMLELatticeGn = abs(muBest - muMVNProbMLELatticeGn);
     errCubMLE = median(errvecMVNProbMLELatticeGn,2);
-    err = errCubMLE;
+    errVec = abs(muBest - muhatVec);
     errtopMVNProbMLELatticeGn = quantile(errvecMVNProbMLELatticeGn,1-alpha,2);
     ErrBd = quantile(errbdvecMBVProbMLELatticeGn,1-alpha,2);
     toc
     datetime
 
-   
+   if exist('testAll','var')==false || testAll==true
     plotCubatureError(dim, nvecMLE, errCubMLE, ErrBd, fName, BernPolyOrder, ...
       ptransform, fullPath,visiblePlot,arbMean,outAll{1}.s_All, outAll{1}.dscAll)
+   end
 
     figSavePathName = sprintf('%s%s computeTime d_%d bernoulli_%d Period_%s.png', ...
         fullPath, fName, dim, BernPolyOrder, ptransform);

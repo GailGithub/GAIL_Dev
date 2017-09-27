@@ -8,7 +8,8 @@
 % \exp(-\lVert \boldsymbol{x} \rVert^2) \, \mathrm{d} \boldsymbol{x},
 % \qquad d = 1, 2, \ldots. \]
 
-function [muhat,aMLE,err,out] = TestKeisterBayesianCubature(dim,BernPolyOrder,ptransform,figSavePath,visiblePlot,arbMean)
+function [muhat,aMLE,err,out] = TestKeisterBayesianCubature(dim,BernPolyOrder,...
+  ptransform,figSavePath,visiblePlot,arbMean)
 
 normsqd = @(t) sum(t.*t,2); %squared l_2 norm of t
 
@@ -21,7 +22,7 @@ fKeister = @(t,dim) cos( sqrt( normsqd(yinv(t)) )) *(sqrt(pi))^dim;
 
 %% Bayesian Cubature
 fName='Keister';
-%figSavePath = '/home/jagadees/MyWriteup/Apr1stweek/';
+
 f1 = @(x) fKeister(x,dim);
 
 fullPath = strcat(figSavePath,'/',fName,'/',ptransform,'/');
