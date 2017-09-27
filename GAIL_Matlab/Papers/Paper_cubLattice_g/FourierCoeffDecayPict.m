@@ -24,7 +24,7 @@ testfun=@(x) sin(20*sqrt((x(:,1)-0.5).^2+(x(:,2)-0.5).^2)+eps)./(20*sqrt((x(:,1)
 
 
 %% Plot the function
-[~,~,~,MATLABVERSION] = GAILstart(false);
+[~,~,MATLABVERSION] = GAILstart(false);
 if usejava('jvm') || MATLABVERSION <= 7.12
 [X,Y] = meshgrid(0:.01:1);
 R = sqrt((X-0.5).^2 + (Y-0.5).^2) + eps;
@@ -49,7 +49,7 @@ for l=0:mmax-1
    nl=2^l;
    nmmaxlm1=2^(mmax-l-1);
    ptind=repmat([true(nl,1); false(nl,1)],nmmaxlm1,1);
-   coef=exp(-2*pi()*sqrt(-1)*(0:nl-1)/(2*nl))';
+   coef=exp(-2*pi()*sqrt(-1)*(0:nl-1)'/(2*nl));
    coefv=repmat(coef,nmmaxlm1,1);
    evenval=y(ptind);
    oddval=y(~ptind);
@@ -72,7 +72,7 @@ ymap=y(kappanumap);
 
 
 %% Plot FW coefficients
-[~,~,~,MATLABVERSION] = GAILstart(false);
+[~,~,MATLABVERSION] = GAILstart(false);
 if usejava('jvm') || MATLABVERSION <= 7.12
     ltgray=0.8*ones(1,3);
     gray=0.5*ones(1,3);

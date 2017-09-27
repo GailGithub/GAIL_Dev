@@ -10,7 +10,7 @@ classdef optPrice < optPayoff
     % obj =***
     %    optPrice with properties:
     % 
-    %                       inputType: 'n'
+    %                   inputType: 'n'
     %          timeDim_timeVector: [1 2 3]
     %           timeDim_startTime: 1
     %             timeDim_endTime: 3

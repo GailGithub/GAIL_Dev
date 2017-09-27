@@ -170,7 +170,7 @@ function [fmin,out_param]=funmin01_g(varargin)
 %   [2]  Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
 %   and Yizhi Zhang, "GAIL: Guaranteed Automatic Integration Library
 %   (Version 1.3.0)" [MATLAB Software], 2014. Available from
-%   http://code.google.com/p/gail/
+%   http://gailgithub.github.io/GAIL_Dev/
 %
 %   [3]  Xin Tong. A Guaranteed, Adaptive, Automatic Algorithm for
 %   Univariate Function Minimization. 2014
@@ -303,13 +303,13 @@ end;
 
 % check tau change flag
 if tauchange == 1
-    warning('MATLAB:funmin01_g:peaky','This function is peaky relative to ninit. You may wish to increase ninit for similar functions.')
+    warning('GAIL:funmin01_g:peaky','This function is peaky relative to ninit. You may wish to increase ninit for similar functions.')
 end;
 
 % check cost budget flag
 if out_param.exceedbudget == 1
     n = l;
-    warning('MATLAB:funmin01_g:exceedbudget','funmin01_g attempted to exceed the cost budget. The answer may be unreliable.')
+    warning('GAIL:funmin01_g:exceedbudget','funmin01_g attempted to exceed the cost budget. The answer may be unreliable.')
 end
 
 fmin = Un;

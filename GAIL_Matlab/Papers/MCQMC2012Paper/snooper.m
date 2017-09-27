@@ -1,10 +1,9 @@
 function y=snooper(x,info)
 %This records all the values of x it is asked for in a file named what you
 %like (.txt, .mat, or other suffix must be specially typed)
-
-[GAILPATH,~,PATHNAMESEPARATOR] = GAILstart(0);
-outputfolder =  [GAILPATH,'OutputFiles',PATHNAMESEPARATOR,'MCQMC2012PaperOutput'];
-fullfilename = strcat(outputfolder, PATHNAMESEPARATOR', info.filename);
+GAILPATH = GAILstart(0);
+outputfolder =  [GAILPATH,'OutputFiles',filesep,'MCQMC2012PaperOutput'];
+fullfilename = strcat(outputfolder, filesep', info.filename);
 load(fullfilename,'xsample')
 xsample=[xsample; x(:)];
 save(fullfilename,'xsample')

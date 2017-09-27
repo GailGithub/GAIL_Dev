@@ -11,6 +11,7 @@ param.measure='normal';
 param.abstol=2e-2;
 param.reltol=0; % 0 reltol means all absolut error
 param.toltype  = 'max';
+param.fudge  = @(m) ones(size(m));
 param_indicator=1;
 
 test.nrep=500;
@@ -99,7 +100,7 @@ if any(strcmp('cubLattice',test.whichsample))
     end
     Latticesuccess=mean(res.Latticeerr<=param_indicator);
 end
-gail.save_mat('Paper_cubLattice_g', 'Paper_cubLattice_g_TestGeoAsianCall', Latticesuccess,dimchoice,...
+gail.save_mat('Paper_cubLattice_g', 'Paper_cubLattice_g_TestGeoAsianCall', true, Latticesuccess,dimchoice,...
         fun,irep,res,test,testfunqmc);    
 end
 
@@ -107,7 +108,7 @@ end
 
 %% Defining function plotTestColor
 function plotTestColor(plotTest,param)
-[~,~,~,MATLABVERSION] = GAILstart(false);
+[~,~,MATLABVERSION] = GAILstart(false);
 if usejava('jvm') || MATLABVERSION <= 7.12
 figure
 ntot=length(plotTest.err);
