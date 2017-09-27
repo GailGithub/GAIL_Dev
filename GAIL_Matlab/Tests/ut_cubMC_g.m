@@ -83,7 +83,7 @@ classdef ut_cubMC_g < matlab.unittest.TestCase
                 [q,out_param] = cubMC_g(f,hyperbox,'normal',1e-3,1e-3);
                 exactsol = 1; check = abs(exactsol-q) < gail.tolfun(1e-3,1e-3,1,exactsol,'max');
                 if check==0 || isfinite(q) ==0,
-                    i, exactsol, q, exitflag = out_param.exit,
+                    i, exactsol, q, exitflag = out_param.exitflag,
                     abserr = abs(exactsol-q), tol = gail.tolfun(1e-3,1e-3,1,exactsol,'max')
                     disp('-----');
                     count = count + 1;
@@ -97,3 +97,4 @@ classdef ut_cubMC_g < matlab.unittest.TestCase
         end
     end
 end
+

@@ -10,7 +10,7 @@ fun.T=1;
 fun.r=0.03;
 param.measure='Gaussian';
 param.impyes=false;
-param.tol=2e-2;
+param.abstol=2e-2;
 param.n0=1024;
 
 %test.nrep=500;%in the paper, we use 500 repilcation numbers

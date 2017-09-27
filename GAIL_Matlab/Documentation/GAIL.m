@@ -2,10 +2,9 @@
 %
 % GAIL (Guaranteed Automatic Integration Library) is created, developed,
 % and maintained by Fred Hickernell (Illinois Institute of Technology),
-% Sou-Cheng Choi (NORC at the University of Chicago and IIT),
-% Yuhan Ding (IIT), Lan Jiang (IIT), Lluis Antoni Jimenez Rugama (IIT), Xin
-% Tong (University of Illinois at Chicago), Yizhi Zhang (IIT), and Xuan
-% Zhou (IIT).
+% Sou-Cheng Choi (IIT), Yuhan Ding (IIT), Lan Jiang (IIT), Lluis Antoni
+% Jimenez Rugama (IIT), Xin Tong (University of Illinois at Chicago), Yizhi
+% Zhang (IIT), and Xuan Zhou (IIT).
 %
 % GAIL is a suite of algorithms for integration problems in one, many, and
 % infinite dimensions, and whose answers are guaranteed to be correct.
@@ -14,7 +13,8 @@
 %
 % <html>
 % <a href="help_license.html">GAIL License</a>
-% <a href="help_readme.html">README</a>
+% <p><a href="help_readme.html">README</a>
+% <p><a href="help_ReleaseNotes.html">Release Notes</a>
 % </html>
 %
 %% Functions
@@ -27,6 +27,7 @@
 % <p><a href="help_cubMC_g.html">cubMC_g</a>
 % <p><a href="help_cubSobol_g.html">cubSobol_g</a>
 % <p><a href="help_cubLattice_g.html">cubLattice_g</a>
+% <p><a href="help_meanMC_CLT.html">meanMC_CLT</a>
 % </html>
 %
 %% Demos
@@ -44,3 +45,6 @@
 % For more information about GAIL, visit
 % <http://gailgithub.github.io/GAIL_Dev/ Gailteam>
 %
+
+
+

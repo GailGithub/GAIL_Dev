@@ -14,7 +14,7 @@ ndim=size(dimchoice,1);
 test.randch.dimoverall=dimchoice(randi(ndim,test.nrep,1));
 
 param.impyes=false;
-param.tol=1e-2;
+param.abstol=1e-2;
 param.n0=2^13;
 test.howoftenrep=10;
 shapemin=1e-6;

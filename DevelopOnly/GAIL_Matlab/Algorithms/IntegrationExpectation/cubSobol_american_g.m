@@ -218,7 +218,7 @@ function [q,out_param,b,y,kappanumap] = cubSobol_american_g(varargin)
 %   Frank Loffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr,
 %   James Hetherington, James Howison, Shel Swenson, Gabrielle D. Allen,
 %   Anne C. Elster, Bruce Berriman, Colin Venters, "Summary of the First
-%   Workshop On Sustainable Software for Science: Practice And Experiences
+%   Workshop On Sustainable Software for Science: Practice and Experiences
 %   (WSSSPE1)," Journal of Open Research Software, Volume 2, Number 1, e6,
 %   pp. 1-21, 2014.
 %

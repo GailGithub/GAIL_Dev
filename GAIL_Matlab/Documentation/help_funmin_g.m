@@ -72,15 +72,15 @@
 % <html>
 % <ul type="square">
 %  <li>out_param.exit --- this is a vector with two elements, for
-%  tracking important warnings in the algorithm. The algorithm is 
-%  considered successful (with out_param.exit == [0 0]) if no flags arise 
+%  tracking important warnings in the algorithm. The algorithm is
+%  considered successful (with out_param.exit == [0 0]) if no flags arise
 %  warning that the results are not guaranteed. The initial value is [0 0]
 %  and the final value of this parameter is encoded as follows:</li>
 %   <ul type="circle">
-%    <li>[1 0]   If reaching overbudget. It states whether
+%    <li>[1 0]:  If reaching overbudget. It states whether
 %                the max budget is attained without reaching the
 %                guaranteed error tolerance.</li>
-%    <li>[0 1]   If reaching overiteration. It states whether
+%    <li>[0 1]:  If reaching overiteration. It states whether
 %                the max iterations is attained without reaching the
 %                guaranteed error tolerance.</li>
 %   </ul>
@@ -101,38 +101,42 @@
 %
 %% Examples
 % *Example 1*
+%
+% Minimize function \(\exp(0.01 (x-0.5)^2)\) with default input parameters.
+  f = @(x) exp(0.01*(x-0.5).^2); [fmin,out_param] = funmin_g(f)
 
-f=@(x) exp(0.01*(x-0.5).^2); [fmin,out_param] = funmin_g(f)
 
-% Minimize function exp(0.01*(x-0.5).^2) with default input parameter.
 %%
 % *Example 2*
-
+%
+% Minimize function \(\exp(0.01 (x-0.5)^2)\) on \([-2,2]\) with error tolerance
+% \(10^{-7}\), cost budget \(1000000\), initial number of points \(10\).
 f = @(x) exp(0.01*(x-0.5).^2);
 [fmin,out_param] = funmin_g(f,-2,2,1e-7,10,1000000)
 
-% Minimize function exp(0.01*(x-0.5).^2) on [-2,2] with error tolerance  
-% 1e-7, cost budget 1000000, initial number of points 10
+
 
 %%
 % *Example 3*
-
+%
+% Minimize function \(\exp(0.01 (x-0.5)^2)\) on \([-13,8]\) with error tolerance
+% \(10^{-7}\), cost budget \(1000000\), initial number of points \(100\).
 clear in_param; in_param.a = -13; in_param.b = 8;
 in_param.abstol = 1e-7;
 in_param.ninit = 100;
 in_param.nmax = 10^6;
 [fmin,out_param] = funmin_g(f,in_param)
 
-% Minimize function exp(0.01*(x-0.5).^2) on [-13,8] with error tolerance 
-% 1e-7, cost budget 1000000, initial number of points 100
+
 %%
 % *Example 4*
-
+%
+% Minimize function \(\exp(0.01 (x-0.5)^2)\) on \([-2,2]\) with error tolerance \(10^{-5}\),
+% cost budget \(1000000\), initial number of points \(64\).
 f=@(x) exp(0.01*(x-0.5).^2);
 [fmin,out_param] = funmin_g(f,'a',-2,'b',2,'ninit',64,'nmax',1e6,'abstol',1e-5)
 
-% Minimize function exp(0.01*(x-0.5).^2) on [-2,2] with error tolerance 1e-5, 
-% cost budget 1000000, initial number of points 64
+
 %% See Also
 %
 % <html>
@@ -156,10 +160,11 @@ f=@(x) exp(0.01*(x-0.5).^2);
 % Univariate Function Minimization," MS thesis, Illinois Institute of
 % Technology, 2014.
 %
-% [3] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang,
-% Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
-% GAIL: Guaranteed Automatic Integration Library (Version 2.2)
-% [MATLAB Software], 2017. Available from http://gailgithub.github.io/GAIL_Dev/
+% [3] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
+% Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
+% Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
+% Integration Library (Version 2.2) [MATLAB Software], 2017. Available
+% from http://gailgithub.github.io/GAIL_Dev/
 %
 % [4] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
 % Research via Supportable Scientific Software," Journal of Open Research

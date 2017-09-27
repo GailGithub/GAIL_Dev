@@ -13,6 +13,7 @@ doctest cubMCabs_g;
 doctest cubLattice_old_g;
 
 longtests_conePaper
+
 % try
 %     Tests = matlab.unittest.TestSuite.fromClass(?ut_funappxglobal_g);
 %     results=run(ut_funappxglobal_g);
@@ -26,6 +27,7 @@ longtests_conePaper
 %     display('Error: Test ut_funappxglobal_g is wrongly coded. We skip it.')
 %     %fprintf(fid,'Error: Test ut_funappxglobal_g is wrongly coded. We skip it.\n');
 % end
+
 try
     Tests = matlab.unittest.TestSuite.fromClass(?ut_integralPenalty_g);
     results=run(ut_integral01_g);

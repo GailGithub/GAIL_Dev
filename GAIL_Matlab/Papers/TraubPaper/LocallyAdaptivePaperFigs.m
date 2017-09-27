@@ -206,7 +206,7 @@ if numel(funappxRes) > 0
    npoints = 0;
    time = 0;
    load(funappxRes)
-   [fileID, fullPath] = gail.open_txt('TraubPaperOutput', [funappxRes 'Table']);
+   [fileID, fullPath] = gail.open_txt('TraubPaperOutput', ['funappx_g_test']);
    fprintf(fileID,'\n');
    fprintf(fileID,'# of replications = %1.0f\n',nrep);
    fprintf(fileID,'   Test         Number of Points                    Time Used                          Success (%%)                                  Failure (%%)\n');
@@ -251,7 +251,7 @@ if numel(funminRes) > 0
    npoints = 0;
    time = 0;
    load(funminRes) 
-   [fileID, fullPath] = gail.open_txt('TraubPaperOutput', [algoname,'_test']);
+   [fileID, fullPath] = gail.open_txt('TraubPaperOutput', ['funmin_g_test']);
    fprintf(fileID,'\n');
    fprintf(fileID,'# of replications = %1.0f\n',nrep);
    fprintf(fileID,'   Test         Number of Points                    Time Used                          Success (%%)                                  Failure (%%)\n');

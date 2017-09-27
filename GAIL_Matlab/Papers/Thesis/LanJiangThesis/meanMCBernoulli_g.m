@@ -122,7 +122,7 @@ function [pHat,out_param]=meanMCBernoulli_g(varargin)
 %
 %  References
 %
-%   [1]  F. J. Hickernell, L. Jiang, Y. Liu, and A. B. Owen, Guaranteed
+%   [1] Fred J. Hickernell, Lan Jiang, Yuewei Liu, and Art B. Owen, Guaranteed
 %   conservative fixed width confidence intervals via Monte Carlo sampling,
 %   Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F. Y. Kuo, G. W.
 %   Peters, and I. H. Sloan, eds.), Springer-Verlag, Berlin, 2014.

@@ -1,24 +1,24 @@
 function [fappx,out_param]=funappxtau_g(varargin)
 %FUNAPPXTAU_G 1-D guaranteed function recovery on [0,1] with cone condition tau
 %
-%   fappx = FUNAPPXTAU_G(f) recovers function f on the interval [0,1] by a 
-%   piecewise linear interpolant fappx to within a guaranteed absolute 
+%   fappx = FUNAPPXTAU_G(f) recovers function f on the interval [0,1] by a
+%   piecewise linear interpolant fappx to within a guaranteed absolute
 %   error of 1e-6. Default cone constant is 10 and default cost budget is
-%   1e7.  Input f a function handle. The statement Y=f(X) should accept a 
-%   a vector argument X and return a vector Y of function values that is 
+%   1e7.  Input f a function handle. The statement Y=f(X) should accept a
+%   a vector argument X and return a vector Y of function values that is
 %   the same size as X.
 %
-%   fappx = FUNAPPXTAU_G(f,abstol,tau,nmax) for given function f and the 
-%   ordered input parameters with the guaranteed absolute error abstol, 
+%   fappx = FUNAPPXTAU_G(f,abstol,tau,nmax) for given function f and the
+%   ordered input parameters with the guaranteed absolute error abstol,
 %   cone condition tau, and cost budget nmax.
 %
 %   fappx = FUNAPPXTAU_G(f,'abstol',abstol,'tau',tau,'nmax',nmax) recovers
 %   function f with the guaranteed absolute error abstol, cone constant tau,
-%   and cost budget nmax. All three filed-value pairs are optional and can 
+%   and cost budget nmax. All three filed-value pairs are optional and can
 %   be supplied in different order.
 %
 %   fappx = FUNAPPXTAU_G(f,in_param) recovers function f with the guaranteed
-%   absolute error in_param.abstol, cone constant in_param.tau, and cost 
+%   absolute error in_param.abstol, cone constant in_param.tau, and cost
 %   budget in_param.nmax. If a field is not specified, the default value is
 %   used.
 %
@@ -33,80 +33,83 @@ function [fappx,out_param]=funappxtau_g(varargin)
 %
 %   out_param.nmax --- cost budget, default value is 1e7.
 %
-%   out_param.exceedbudget --- it is 0 if the number of points used in the 
+%   out_param.exceedbudget --- it is 0 if the number of points used in the
 %   construction of fappx is less than cost budget, 1 otherwise.
 %
 %   out_param.npoints --- number of points we need to reach the guaranteed
 %   absolute error tol
 %
-%   out_param.tauchange --- it is 1 if tau is too small, and the algorithm 
+%   out_param.tauchange --- it is 1 if tau is too small, and the algorithm
 %   has used a larger tau.
 %
-%   out_param.tau --- if input tau is changed, this field will give new 
+%   out_param.tau --- if input tau is changed, this field will give new
 %   value of tau
 %
 %   out_param.abtol --- guaranteed absolute error, default value is 1e-6.
 %
-%   
+%
 %   Examples
 %
 %   Example 1:
-%   
+%
 %
 %   >> format short; f = @(x) x.^2; [fappx, out_param] = funappxtau_g(f)
-%   
-%   fappx = 
 %
+%   fappx =
+%   function_handle with value:
 %       @(x)interp1(x1,y1,x,'linear')
 %
-%   out_param = ***
-%           abstol: 1.0000e-***6
+%   out_param =
+%   struct with fields:
+%           abstol: 1.0000e-06
 %              tau: 10
 %             nmax: 10000000
 %     exceedbudget: 0
 %        tauchange: 0
-%       ballradius: 2.0000e+***7
+%       ballradius: 2.0000e+07
 %          npoints: 2053
-% 
+%
 %
 %   Example 2:
 %
-%   >> clear in_param; format short; in_param.abstol = 10^(-8); 
-%   >> in_param.tau = 15; in_param.nmax = 10^6; 
+%   >> clear in_param; format short; in_param.abstol = 10^(-8);
+%   >> in_param.tau = 15; in_param.nmax = 10^6;
 %   >> [fappx, out_param] = funappxtau_g(@(x) x.^2, in_param)
 %
-%   fappx = 
-%
+%   fappx =
+%   function_handle with value:
 %       @(x)interp1(x1,y1,x,'linear')
 %
-%   out_param = ***
-%           abstol: 1.0000e-***8
+%   out_param =
+%   struct with fields:
+%           abstol: 1.0000e-08
 %                f: @(x)x.^2
 %             nmax: 1000000
 %              tau: 15
 %     exceedbudget: 0
 %        tauchange: 0
-%       ballradius: 1.3333e+***3
+%       ballradius: 1.3333e+03
 %          npoints: 25633
 %
 %
 %   Example 3:
 %
-%   >> format short; f = @(x) x.^2; 
+%   >> format short; f = @(x) x.^2;
 %   >> [fappx, out_param] = funappxtau_g(f,'tau',15,'nmax',1e6,'abstol',1e-8)
 %
-%   fappx = 
-%
+%   fappx =
+%   function_handle with value:
 %       @(x)interp1(x1,y1,x,'linear')
 %
-%   out_param = ***
-%           abstol: 1.0000e-***8
+%   out_param =
+%   struct with fields:
+%           abstol: 1.0000e-08
 %                f: @(x)x.^2
 %             nmax: 1000000
 %              tau: 15
 %     exceedbudget: 0
 %        tauchange: 0
-%       ballradius: 1.3333e+***3
+%       ballradius: 1.3333e+03
 %          npoints: 25633
 %
 %
@@ -114,8 +117,8 @@ function [fappx,out_param]=funappxtau_g(varargin)
 %   See also INTEGRAL_G, MEANMC_G, CUBMC_G
 %
 %   Reference
-%   [1]  N. Clancy, Y. Ding, C. Hamilton, F. J. Hickernell, and Y. Zhang, 
-%        The Cost of Deterministic, Adaptive, Automatic Algorithms:  Cones, 
+%   [1]  N. Clancy, Y. Ding, C. Hamilton, F. J. Hickernell, and Y. Zhang,
+%        The Cost of Deterministic, Adaptive, Automatic Algorithms:  Cones,
 %        Not Balls, Journal of Complexity (2013), to appear, DOI
 %        10.1016/j.jco.2013.09.002
 %
@@ -145,7 +148,7 @@ while n < out_param.nmax;
     gn = max((n-1)*abs(diff_y-(y(n)-y(1))/(n-1)));
     %approximate the stronger norm of input function
     fn = max((n-1)^2*abs(diff(diff_y)));
-    
+
     % Stage 2: satisfy necessary condition
     if out_param.tau*(gn+fn/(2*n-2))>= fn;
         % Stage 3: check for convergence
@@ -248,7 +251,7 @@ else
         addParamValue(p,'abstol',default.abstol,@isnumeric);
         addParamValue(p,'tau',default.tau,@isnumeric);
         addParamValue(p,'nmax',default.nmax,@isnumeric);
-        
+
     end
     parse(p,f,varargin{2:end})
     out_param = p.Results;

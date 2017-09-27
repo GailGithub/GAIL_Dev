@@ -98,9 +98,6 @@ function [tmu,out_param]=meanMC_g(varargin)
 %
 %     out_param.time --- the time elapsed in seconds.
 %
-%     out_param.exitflag --- parameter checking status
-%
-%                           1  checked by meanMC_g
 %
 %  Guarantee
 % This algorithm attempts to calculate the mean, mu, of a random variable
@@ -131,9 +128,9 @@ function [tmu,out_param]=meanMC_g(varargin)
 % Calculate the mean of x^2 when x is uniformly distributed in
 % [0 1], with the absolute error tolerance = 1e-3 and uncertainty 5%.
 %
-% >> in_param.reltol=0; in_param.abstol = 1e-3;
+% >> in_param.reltol = 0; in_param.abstol = 1e-3;
 % >> in_param.alpha = 0.05; Yrand=@(n) rand(n,1).^2;
-% >> tmu=meanMC_g(Yrand,in_param);exactsol = 1/3;
+% >> tmu = meanMC_g(Yrand,in_param); exactsol = 1/3;
 % >> check = double(abs(exactsol-tmu) < 1e-3)
 % check = 1
 %
@@ -142,7 +139,7 @@ function [tmu,out_param]=meanMC_g(varargin)
 % Calculate the mean of exp(x) when x is uniformly distributed in
 % [0 1], with the absolute error tolerance 1e-3.
 %
-% >> tmu=meanMC_g(@(n)exp(rand(n,1)),1e-3,0);exactsol=exp(1)-1;
+% >> tmu = meanMC_g(@(n)exp(rand(n,1)),1e-3,0); exactsol = exp(1)-1;
 % >> check = double(abs(exactsol-tmu) < 1e-3)
 % check = 1
 %
@@ -151,7 +148,7 @@ function [tmu,out_param]=meanMC_g(varargin)
 % Calculate the mean of cos(x) when x is uniformly distributed in
 % [0 1], with the relative error tolerance 1e-2 and uncertainty 0.05.
 %
-% >> tmu=meanMC_g(@(n)cos(rand(n,1)),'reltol',1e-3,'abstol',1e-4,'alpha',0.01);
+% >> tmu = meanMC_g(@(n)cos(rand(n,1)),'reltol',1e-3,'abstol',1e-4,'alpha',0.01);
 % >> exactsol = sin(1);
 % >> check = double(abs(exactsol-tmu) < max(1e-3,1e-2*abs(exactsol)))
 % check = 1
@@ -161,16 +158,17 @@ function [tmu,out_param]=meanMC_g(varargin)
 %
 %  References
 %
-%   [1]  F. J. Hickernell, L. Jiang, Y. Liu, and A. B. Owen, "Guaranteed
+%   [1] Fred J. Hickernell, Lan Jiang, Yuewei Liu, and Art B. Owen, "Guaranteed
 %   conservative fixed width confidence intervals via Monte Carlo
 %   sampling," Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F.
 %   Y. Kuo, G. W. Peters, and I. H. Sloan, eds.), pp. 105-128,
 %   Springer-Verlag, Berlin, 2014. DOI: 10.1007/978-3-642-41095-6_5
 %
-%   [2] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang,
-%   Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
-%   GAIL: Guaranteed Automatic Integration Library (Version 2.2)
-%   [MATLAB Software], 2017. Available from http://gailgithub.github.io/GAIL_Dev/
+%   [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
+%   Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
+%   Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
+%   Integration Library (Version 2.2) [MATLAB Software], 2017. Available
+%   from http://gailgithub.github.io/GAIL_Dev/
 %
 %   [3] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
 %   Research via Supportable Scientific Software," Journal of Open Research
@@ -179,21 +177,21 @@ function [tmu,out_param]=meanMC_g(varargin)
 %   [4] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable
 %   Mathematical Software" [Course Slides], Illinois Institute of
 %   Technology, Chicago, IL, 2013. Available from
-%   http://gailgithub.github.io/GAIL_Dev/ 
+%   http://gailgithub.github.io/GAIL_Dev/
 %
 %   [5] Daniel S. Katz, Sou-Cheng T. Choi, Hilmar Lapp, Ketan Maheshwari,
 %   Frank Loffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr,
 %   James Hetherington, James Howison, Shel Swenson, Gabrielle D. Allen,
 %   Anne C. Elster, Bruce Berriman, Colin Venters, "Summary of the First
-%   Workshop On Sustainable Software for Science: Practice And Experiences
+%   Workshop On Sustainable Software for Science: Practice and Experiences
 %   (WSSSPE1)," Journal of Open Research Software, Volume 2, Number 1, e6,
 %   pp. 1-21, 2014.
 %
-%   [6] Fang, K.-T., & Wang, Y. (1994). Number-theoretic Methods in 
+%   [6] Fang, K.-T., & Wang, Y. (1994). Number-theoretic Methods in
 %   Statistics. London, UK: CHAPMAN & HALL
-%    
+%
 %   [7] Lan Jiang, Guaranteed Adaptive Monte Carlo Methods for Estimating
-%   Means of Random Variables, Ph.D Thesis, Illinois Institute of
+%   Means of Random Variables, PhD Thesis, Illinois Institute of
 %   Technology, 2016.
 %
 %   If you find GAIL helpful in your work, please support us by citing the
@@ -203,7 +201,7 @@ function [tmu,out_param]=meanMC_g(varargin)
 
 tstart = tic; %start the clock
 [Yrand, out_param] = meanMC_g_param(varargin{:});
-
+out_param.Yrand = Yrand;
 n1 = 2;
 Yrand(n1); %let it run once to load all the data. warm up the machine.
 nsofar = n1;
@@ -238,7 +236,6 @@ elseif  tpern>=1e-3 && tpern<1e-1 %each sample use moderate time
 else %each sample use lots of time, stop try
 end
 [tmu,out_param] =  meanmctolfun(Yrand,out_param,ntry,ttry,nsofar,tstart);
-
 %control the order of out_param
 if out_param.reltol ~= 0
     out_param = orderfields(out_param, ...

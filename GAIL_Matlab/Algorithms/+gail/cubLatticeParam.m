@@ -6,26 +6,26 @@ classdef cubLatticeParam < gail.cubParam
    %
    % Example 1. Construct a cubParam object with default parameters
    % >> cubLatticeParamObj = gail.cubLatticeParam
-   % cubLatticeParamObj = 
-   %   cubLatticeParam with properties:
-   % 
+   % cubLatticeParamObj = ***
+   %
    %              f: @(x)sum(x.^2,2)
-   %         domain: [2×1 double]
+   %         domain: [2***1 double]
+   %    measureType: 'uniform'
    %        measure: 'uniform'
-   %         absTol: 0.010000000000000
+   %         absTol: 0.0100
    %         relTol: 0
    %
    %
    % Example 2. Using name/value pairs
    % >> cubLatticeParamObj = gail.cubLatticeParam('domain', [-2 -2; 2 2], 'f', @(x) sum(x.^3.2), 'relTol', 0.1, 'isShift', false)
-   % cubLatticeParamObj = 
-   %   cubLatticeParam with properties:
-   % 
+   % cubLatticeParamObj = ***
+   %
    %              f: @(x)sum(x.^3.2)
-   %         domain: [2×2 double]
+   %         domain: [2***2 double]
+   %    measureType: 'uniform'
    %        measure: 'uniform'
-   %         absTol: 0.010000000000000
-   %         relTol: 0.100000000000000
+   %         absTol: 0.0100
+   %         relTol: 0.1000
    %        isShift: 0
    %
    %
@@ -34,60 +34,60 @@ classdef cubLatticeParam < gail.cubParam
    % >> inpStruct.domain = [zeros(1,4); ones(1,4)];
    % >> inpStruct.isShift = false;
    % >> cubLatticeParamObj = gail.cubLatticeParam(inpStruct)
-   % cubLatticeParamObj = 
-   %   cubLatticeParam with properties:
-   % 
+   % cubLatticeParamObj = ***
+   %
    %              f: @(x)sin(sum(x,2))
-   %         domain: [2×4 double]
+   %         domain: [2***4 double]
+   %    measureType: 'uniform'
    %        measure: 'uniform'
-   %         absTol: 0.010000000000000
+   %         absTol: 0.0100
    %         relTol: 0
    %        isShift: 0
    %
    %
    % Example 4. Copying a cubParam object and changing some properties
    % >> NewCubLatticeParamObj = gail.cubLatticeParam(cubLatticeParamObj,'measure','Lebesgue')
-   % NewCubLatticeParamObj = 
-   %   cubLatticeParam with properties:
-   % 
+   % NewCubLatticeParamObj = ***
+   %
    %              f: @(x)sin(sum(x,2))
-   %         domain: [2×4 double]
+   %         domain: [2***4 double]
+   %    measureType: 'uniform'
    %        measure: 'Lebesgue'
-   %         absTol: 0.010000000000000
+   %         absTol: 0.0100
    %         relTol: 0
    %        isShift: 0
    %
    %
    % Author: Fred J. Hickernell
-   
+
    properties
       periodTransform %periodizing transformation
       isShift %is the lattice shifted
    end
-   
+
    properties (Dependent = true)
       fff %function after periodizing transformation
    end
-   
-      
+
+
    properties (Hidden, SetAccess = private)
       def_periodTransform = 'tent' %default periodizing transformation
       def_isShift = true %default is a random shift
    end
-   
-   
+
+
    methods
-      
+
       % Creating a cubParam process
       function obj = cubLatticeParam(varargin)
          %this constructor essentially parses inputs
-         
+
          start = 1; %index to begin to parse
          useDefaults = true; %true unless copying an fParam object, then false
          objInp = 0; %where is the an object in the class
          structInp = 0; %where is the structure
          if nargin %there are inputs to parse and assign
-            if isa(varargin{start},'gail.cubLatticeParam') 
+            if isa(varargin{start},'gail.cubLatticeParam')
                %the first input is a cubLatticeParam object so copy it
                objInp = start;
                start = start + 1;
@@ -99,7 +99,7 @@ classdef cubLatticeParam < gail.cubParam
                end
             end
          end
-         
+
          %Parse errorParam properties
          whichParse = [objInp structInp start:nargin];
          whichParse = whichParse(whichParse > 0);
@@ -137,9 +137,9 @@ classdef cubLatticeParam < gail.cubParam
          end
          f_addParamVal(p,'periodTransform',obj.def_periodTransform);
          f_addParamVal(p,'isShift',obj.def_isShift);
-         
+
          if structInp
-            parse(p,varargin{parseRange},varargin{structInp}) 
+            parse(p,varargin{parseRange},varargin{structInp})
             %parse inputs with a structure
          else
             parse(p,varargin{parseRange}) %parse inputs w/o structure
@@ -148,43 +148,43 @@ classdef cubLatticeParam < gail.cubParam
          if ~useDefaults %remove defaults if copying cubParam object
             struct_val = rmfield(struct_val,p.UsingDefaults);
          end
-         
+
          %Assign values of structure to corresponding class properties
          if isfield(struct_val,'periodTransform')
             obj.periodTransform = struct_val.periodTransform;
          end
-       
+
          %Assign values of structure to corresponding class properties
          if isfield(struct_val,'isShift')
             obj.isShift = struct_val.isShift;
          end
-         
+
       end %of constructor
-     
+
       function set.periodTransform(obj,val)
          validateattributes(val, {'char'}, {})
          obj.periodTransform = val;
       end
-      
+
       function set.isShift(obj,val)
          validateattributes(val, {'logical'}, {'scalar'})
          obj.isShift = val;
       end
-      
+
       function val = get.fff(obj)
          if strcmp(obj.periodTransform,'tent') && strcmp(obj.domainType,'box')
             val = @(x) obj.ff(1 - abs(2*x-1)); %tent transformation
          else %no transformation
             val = obj.ff;
          end
-         
+
       end
-            
-      
+
+
    end
-   
+
    methods (Access = protected)
-         
+
       function propList = getPropertyList(obj)
          propList = getPropertyList@gail.cubParam(obj);
          if ~strcmp(obj.periodTransform,obj.def_periodTransform)
@@ -197,7 +197,6 @@ classdef cubLatticeParam < gail.cubParam
 
    end
 
-   
-   
-end
 
+
+end

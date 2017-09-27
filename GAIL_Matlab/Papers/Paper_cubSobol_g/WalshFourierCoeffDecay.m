@@ -41,7 +41,7 @@ if usejava('jvm') || MATLABVERSION <= 7.12
     xpts=sobstr(1:n,1:d);
     y=testfun(xpts);
     yval=y;
-    yfwt=fwht(y);
+    %yfwt=fwht(y);
 
     %% Compute initial FWT
     for l=0:mmax-1
@@ -59,7 +59,7 @@ if usejava('jvm') || MATLABVERSION <= 7.12
     for l=mmax-1:-1:1
        nl=2^l;
        oldone=abs(y(kappanumap(2:nl))); %earlier values of kappa, don't touch first one
-       newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa, 
+       newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa,
        flip=find(newone>oldone); %
        temp=kappanumap(nl+1+flip);
        kappanumap(nl+1+flip)=kappanumap(1+flip);
@@ -111,7 +111,7 @@ if usejava('jvm') || MATLABVERSION <= 7.12
        legend(h([4 2 3]),{['error $\le \hat{S}_{0,' int2str(mdual) '}(f)$'],...
           ['$\check{S}_{' int2str(mdual) '}(f)$'],...
           ['$S_{' int2str(mdual-mlag) '}(f)$']},...
-          'location','southwest')
+          'location','southwest','interpreter','latex')
        legend('boxoff')
        set(gca,'Position',[0.2 0.155 0.75 0.77])
        gail.save_eps('Paper_cubSobol_g', 'Paper_cubSobol_g_WalshFourierCoeffDecay');
@@ -119,6 +119,3 @@ if usejava('jvm') || MATLABVERSION <= 7.12
     close all
 end
 end
-
-
-

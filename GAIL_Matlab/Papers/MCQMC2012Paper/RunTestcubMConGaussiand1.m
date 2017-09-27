@@ -3,7 +3,7 @@ function [res,test,fun,param]=RunTestcubMConGaussiand1()
 format compact
 
 %test.nrep=500;%in the paper, we use 500 repilcation numbers
-test.nrep = 50;
+test.nrep = 500;
 fun.funtype='gaussian';
 param.dim=1;
 param.measure='uniform';
@@ -11,7 +11,7 @@ param.measure='uniform';
 % param.measure='normal';
 % param.interval=[-inf(1,param.dim);inf(1,param.dim)];
 param.impyes=false;
-param.tol=1e-3;
+param.abstol=1e-3;
 param.n0=2^13;
 param.interval=[zeros(1,param.dim);ones(1,param.dim)];
 param.bmina=param.interval(2,:)-param.interval(1,:);

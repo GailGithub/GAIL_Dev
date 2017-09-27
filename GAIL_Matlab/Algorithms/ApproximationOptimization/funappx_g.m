@@ -29,7 +29,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %   fappx and an output structure out_param.
 %
 %   Properties
-%    
+%
 %     fappx can be used for linear extrapolation outside [a,b].
 %
 %   Input Arguments
@@ -77,12 +77,12 @@ function [fappx,out_param]=funappx_g(varargin)
 %     flags arise warning that the results are not guaranteed. The initial
 %     value is [0 0] and the final value of this parameter is encoded as
 %     follows:
-%       
-%                      [1 0]   If reaching overbudget. It states whether
+%
+%                      [1 0]:   If reaching overbudget. It states whether
 %                      the max budget is attained without reaching the
 %                      guaranteed error tolerance.
-%        
-%                      [0 1]   If reaching overiteration. It states whether
+%
+%                      [0 1]:   If reaching overiteration. It states whether
 %                      the max iterations is attained without reaching the
 %                      guaranteed error tolerance.
 %
@@ -97,7 +97,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %
 %   Guarantee
 %
-%   Plese check the details of the guarantee in [1].
+%   Please check the details of the guarantee in [1].
 %
 %
 %   Examples
@@ -108,7 +108,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %   >> [~, out_param] = funappx_g(f,-2,2,1e-7,18)
 %
 % out_param =***
-% 
+%
 %            a: -2
 %       abstol: 1.0000e-07
 %            b: 2
@@ -147,9 +147,9 @@ function [fappx,out_param]=funappx_g(varargin)
 %   >> in_param.a = -5; in_param.b = 5; f = @(x) x.^2;
 %   >> in_param.abstol = 10^(-6); in_param.ninit=18;
 %   >> [~, out_param] = funappx_g(f,in_param)
-% 
+%
 % out_param =***
-% 
+%
 %            a: -5
 %       abstol: 1.0000e-06
 %            b: 5
@@ -168,7 +168,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %
 %  References
 %
-%   [1] Sou-Cheng T. Choi, Yuhan Ding, Fred J.Hickernell, Xin Tong, "Local
+%   [1] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Xin Tong, "Local
 %   Adaption for Approximation and Minimization of Univariate Functions,"
 %   Journal of Complexity 40, pp. 17-33, 2017.
 %
@@ -176,11 +176,12 @@ function [fappx,out_param]=funappx_g(varargin)
 %   Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic
 %   Algorithms: Cones, Not Balls," Journal of Complexity 30, pp. 21-45,
 %   2014.
-%            
-%   [3] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
-%   Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
-%   GAIL: Guaranteed Automatic Integration Library (Version 2.2) [MATLAB
-%   Software], 2017. Available from http://gailgithub.github.io/GAIL_Dev/
+%
+%   [3] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
+%   Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
+%   Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
+%   Integration Library (Version 2.2) [MATLAB Software], 2017. Available
+%   from http://gailgithub.github.io/GAIL_Dev/
 %
 %   [4] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
 %   Research via Supportable Scientific Software," Journal of Open Research
@@ -189,7 +190,7 @@ function [fappx,out_param]=funappx_g(varargin)
 %   [5] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable
 %   Mathematical Software" [Course Slides], Illinois Institute of
 %   Technology, Chicago, IL, 2013. Available from
-%   http://gailgithub.github.io/GAIL_Dev/ 
+%   http://gailgithub.github.io/GAIL_Dev/
 %
 %   If you find GAIL helpful in your work, please support us by citing the
 %   above papers, software, and materials.
@@ -224,9 +225,9 @@ if ~isempty(iSing)
     %out_param.exitflag(5) = true;
     error('GAIL:funappx_g:yInf',['Function f(x) = Inf at x = ', num2str(x(iSing))]);
 end
-if length(y) == 1  
-    % probably f is a constant function and Matlab would  
-    % reutrn only a scalar y = f(x) even if x is a vector 
+if length(y) == 1
+    % probably f is a constant function and Matlab would
+    % reutrn only a scalar y = f(x) even if x is a vector
     f = @(x) f(x) + 0 * x;
     y(1:ninitp) = f(x(1:ninitp));
 end
@@ -255,14 +256,14 @@ for iter_i = 1:out_param.maxiter
     max_errest = max(err);
     if (max_errest <= abstol)
         break
-    end 
- 
+    end
+
     %% Stage 2: Split the subintervals as needed
     %find the index of the subinterval which is needed to be cut
     midpoint = ([indexI(3:end) 0 0 ] | [indexI(2:end) 0]...
                | indexI | [0 indexI(1:end-1)]);
     whichcut = midpoint(1:end-1);
-    
+
     %check to see if exceed the cost budget
     if (out_param.nmax<(npoints+length(find(whichcut))))
         out_param.exitflag(1) = true;
@@ -270,8 +271,8 @@ for iter_i = 1:out_param.maxiter
             'attempted to exceed the cost budget. The answer may be '...
             'unreliable.'])
         break;
-    end; 
-    
+    end;
+
     %check to see if exceed the maximumber number of iterations
     if(iter==out_param.maxiter)
         out_param.exitflag(2) = true;
@@ -279,10 +280,10 @@ for iter_i = 1:out_param.maxiter
             'reached maximum number of iterations.'])
         break;
     end;
-    
+
     %generate split points for x
     newx=x(whichcut)+0.5*len(whichcut);
-    
+
     %relocate the space for new x
     if npoints + length(newx) > length(x)
       xx = zeros(1, out_param.nmax);
@@ -292,22 +293,22 @@ for iter_i = 1:out_param.maxiter
       x = xx;
       y = yy;
     end
-    
+
     %update x and y
-    tt = cumsum(whichcut);   
+    tt = cumsum(whichcut);
     x([1 (2:npoints)+tt]) = x(1:npoints);
     y([1 (2:npoints)+tt]) = y(1:npoints);
     tem = 2 * tt + cumsum(whichcut==0);
     x(tem(whichcut)) = newx;
     y(tem(whichcut)) = f(newx);
-    
+
     %update the set I to consist of the new indices
     newindex = zeros(1,npoints+length(newx));
     newindex([1 (2:npoints)+tt]) = ([indexI(2:end) 0]|[0 indexI(1:end-1)]);
     tempindex = (indexI|[0 indexI(1:end-1)]);
     newindex(tem) = tempindex(2:end);
     indexI = ([0 newindex(2:end-1) 0]>0);
-    
+
     %update # of points and initialize error for all the subintervals
     npoints = npoints + length(newx);
     err = zeros(1,npoints-2);
@@ -335,7 +336,7 @@ out_param.errest = max_errest;
 if MATLABVERSION >= 8.3
     fappx = griddedInterpolant(x,y,'linear');
 else
-    fappx = @(t) ppval(interp1(x,y,'linear','pp'), t);     
+    fappx = @(t) ppval(interp1(x,y,'linear','pp'), t);
 end;
 if (in_param.memorytest)
   w = whos;
@@ -368,7 +369,7 @@ else
     f_addParamVal = @addParamValue;
 end;
 
- 
+
 if isempty(varargin)
   warning('GAIL:funappx_g:nofunction',['Function f must be a function handle. '...
       'Now GAIL is using f(x)=exp(-100*(x-0.5)^2) and unit interval '...
@@ -515,7 +516,7 @@ end
 %         ' Using ', num2str(ceil(out_param.nhi)) ' as nhi' ])
 %         out_param.nhi = ceil(out_param.nhi);
 % end
-% 
+%
 % if (out_param.nlo > out_param.nhi)
 %     warning('GAIL:funappx_g:logrhi', ['Lower bound of initial number of'...
 %         ' points is larger than upper bound of initial number of '...
