@@ -1,0 +1,15 @@
+1-D approximation:
+funappx_g
+
+1-D integration:
+integral_g
+
+1-D minimization:
+funmin_g
+
+Higher dimensional integration:
+meanMC_g
+cubMC_g
+cubSobol_g
+cubLattice_g
+
