@@ -141,6 +141,7 @@ p = out.CM.nCV; %the number of control variates
 val = Yrand(out.nSig); %get samples to estimate variance 
 if p==0 && q==1
    YY = val(:,1); 
+   theta = 1;
 else
 %if there is control variate, construct a new random variable that has the
 %same expected value and smaller variance
@@ -149,8 +150,8 @@ else
    [U, S, V] = svd([A; [ones(1,q) zeros(1,p)] ],0); %use SVD to solve a constrained least square problem
    Sdiag = diag(S); %the vector of the single values
    U2 = U(end,:); %last row of U
-   beta = V*(U2'/(U2*U2')./Sdiag); %get the coefficient for control variates
-   YY = [val(:,1:q) A(:,q+1:end)] * beta; %get samples of the new random variable 
+   theta = V*(U2'/(U2*U2')./Sdiag); %get the coefficient for control variates
+   YY = [val(:,1:q) A(:,q+1:end)] * theta; %get samples of the new random variable 
 end
 
 out.stddev = std(YY); %standard deviation of the new samples
@@ -166,21 +167,25 @@ if nmu > out.CM.nMax %don't exceed sample budget
    nmu = out.CM.nMax; %revise nmu
 end
 
-YY = Yrand(nmu); %get samples for computing the mean
+W = Yrand(nmu); %get samples for computing the mean
 
-if p > 0 || q > 1   %samples of the new random variable
+if p == 0 && q == 1 %no control variates
+   YY = W;
+else %samples of the new random variable
   if ~isempty(out.CM.trueMuCV)
-     YY(:,q+1:end) = bsxfun(@minus, YY(:,q+1:end), out.CM.trueMuCV); 
+     W(:,q+1:end) = bsxfun(@minus, W(:,q+1:end), out.CM.trueMuCV); 
      %subtract true mean from control variates
   end
-  YY = YY * beta; %incorporate the control variates and multiple Y's
+  YY = W * theta; %incorporate the control variates and multiple Y's
 end
+
 
 sol = mean(YY); %estimated mean
 out.sol = sol; %record answer in output class
 
 out.nSample = out.nSig+nmu; %total samples required
 out.errBd = -gail.stdnorminv(out.alpha/2)*sig0up/sqrt(nmu);
+out.theta = theta; %coefficients of the control variates
 out.time = toc(tstart); %elapsed time
 end
 
