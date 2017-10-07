@@ -60,7 +60,7 @@ date_today = datetime.datetime.now().strftime("%Y-%m-%d")
 # path where all the error greps stored
 path_automatic_tests = '/home/gail/GAIL_tests/repo/gail-development/GAIL_Matlab/Tests/Developers_only/automatic_tests/'
 Test_results_correct = 'Test_Results_correct.txt'
-Test_results_file_prefix = 'Test_Results'
+Test_results_file_prefix = 'Test_Results-'
 
 def prcoess_test_results(path, correct_file, Test_results_file_prefix):
     # compare the result file (Test_ResultsR2016a.tx) with the reference-correct file Test_Results_correct.txt
