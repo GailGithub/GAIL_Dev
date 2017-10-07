@@ -34,10 +34,20 @@ cd $PBS_O_WORKDIR
 # Generate files necessary for creating HTML documentation
 #./GAIL_Matlab/Documentation/Developers_only/autodoc.sh
 
+if [ $# -eq 0 ]
+  then
+    echo "gailpbs_tests: No arguments supplied"
+    matlabVer="R2017a"
+else
+  echo 'gailpbs_tests: Input arg' $1
+  matlabVer=$1
+fi
+
 # Set the directory for running our matlab test
 cd /home/gail/GAIL_tests/repo/gail-development/GAIL_Matlab/Tests/Developers_only/automatic_tests/
-#/share/apps/matlab/R2017a/bin/matlab -nodisplay -nojvm < automatictests.m
-/share/apps/matlab/R2017a/bin/matlab -nodisplay < automatictests.m
+# don't use this, eps files not generated  # /share/apps/matlab/R2017a/bin/matlab -nodisplay -nojvm < automatictests.m
+# /share/apps/matlab/R2017a/bin/matlab -nodisplay < automatictests.m
+/share/apps/matlab/$matlabVer/bin/matlab -nodisplay < automatictests.m
 
 
 # SETTING THE TEST OUTPUT FILE FOR COMPARING
@@ -52,7 +62,7 @@ echo ${begin}${nl} > test_results_grep.txt
 grep -A 3 "not ok" gail_doctests.txt >> test_results_grep.txt
 grep -A 3 "Warning" gail_doctests.txt | tail -n +11 >> test_results_grep.txt # We use the tail command to skip the first 2 Warnings that are regarding nojvm Matlab interface and missing admin rights to install GAIL
 echo ${nl}${nl}${end}${nl} >> test_results_grep.txt
-cat test_results_grep.txt gail_unittests.txt > Test_Results.txt
+cat test_results_grep.txt gail_unittests.txt > Test_Results-$matlabVer.txt
 rm test_results_grep.txt
 rm gail*
 
@@ -74,4 +84,5 @@ find /home/gail/GAIL_tests/test_reports/* -mtime +30 -exec rm {} \;
 find /home/gail/GAIL_tests/PBS_jobs/pbs_reports/* -mtime +30 -exec rm {} \;
 
 # send results in email
-#sh /home/gail/GAIL_tests/PBS_jobs/sendemail.sh
+# can't call from here, output file not yet closed
+# sh /home/gail/GAIL_tests/PBS_jobs/sendemail.sh $matlabVer
