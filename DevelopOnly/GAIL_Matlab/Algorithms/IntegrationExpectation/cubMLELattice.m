@@ -266,19 +266,15 @@ end
 end
 
 
-% MLE objective to find the optimal shape parmaeter
+% MLE objective function to find the optimal shape parmaeter
 function [loss,Ktilde,Kthat_new,RKHSnorm,K] = MLEKernel(a,xun,ftilde,...
   order,useArbMean)
 
 n = length(ftilde);
 if order==4
-
     [K, Ktilde, Kthat_new] = kernel(xun,order,a);
-    
-
 elseif order==2
   [K, Ktilde, Kthat_new] = kernel(xun,order,a);
-  
 else
   error('Unsupported Bernoulli polyn order !');
 end
