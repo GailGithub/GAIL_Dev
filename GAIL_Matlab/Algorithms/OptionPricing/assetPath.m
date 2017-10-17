@@ -116,10 +116,11 @@ classdef assetPath < brownianMotion
             validateattributes(val.initPrice,{'numeric'}, ...
                {'nonnegative'})
            if numel(val.initPrice) == obj.assetParam.nAsset
-                obj.assetParam.initPrice=val.initPrice(:);
+                obj.assetParam.initPrice = val.initPrice(:);
+                obj.timeDim.initValue = val.initPrice(:);
            else
               obj.assetParam.initPrice ...
-                    =repmat(val.initPrice(1),obj.assetParam.nAsset,1);
+                    = repmat(val.initPrice(1),obj.assetParam.nAsset,1);
            end  
          end
          if isfield(val,'interest') %data for type of option
