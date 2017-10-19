@@ -17,7 +17,7 @@ for a in avec:
 
 def normsqd_fun(normt,a,d):
     cos_value = np.multiply(np.power((2 * math.pi * a ^ 2), d / 2), math.cos(np.multiply(a, math.sqrt(normt))))
-    exp_value = math.exp(np.diff(1 / 2, np.power(a, 2)))
+    exp_value = math.exp(np.multiply(np.diff(1 / 2, np.power(a, 2))),normt)
     final_value = np.multiply(cos_value, exp_value)
     return final_value
 
