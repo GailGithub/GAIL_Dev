@@ -18,7 +18,7 @@ for a in avec:
     start_time = time.time()
     mu, sigma = 0,1
     normal = lambda n: np.random.normal(mu, sigma, n)
-    f = normsqd_fun(normal, a,d)
+    f = normsqd_fun(normal, a, d)
     print(meanMC_CLT(f, abstol, reltol))
 
 
