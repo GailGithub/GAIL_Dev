@@ -134,12 +134,11 @@ def meanMC_CLT(Y=None, absTol=1e-2, relTol=0, alpha=0.01, nSig=1000, inflate=1.2
     sig0up = np.multiply(out['inflate'], out['stddev'])  # TODO change inflate factor out.CM.inflate
     hmu0 = np.mean(YY)
 
-    nmu = max(1, np.power(np.ceil(
+    nmu = int(max(1, np.power(np.ceil(
         np.multiply(
             np.multiply(-1, stdnorminv(out['alpha'] / 2)), sig0up)
         / max(out['absTol'], out['relTol'] * abs(hmu0)) #TODO get tolerances from out[err]
-    ), 2))
-
+    ), 2)))
     # TODO
     # if nmu > out['CM']['nMax']: # don't exceed sample budget
     # # warning(['The algorithm wants to use nmu = ' int2str(nmu)...
