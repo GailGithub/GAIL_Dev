@@ -3,6 +3,7 @@ import time
 import numpy as np
 from scipy.special import erfcinv
 from copy import copy, deepcopy
+from GAIL_Python.Algorithms.IntegrationExpectation.meanYParam import MeanYParam
 
 class CubMeanParam(object):
     """
@@ -22,53 +23,6 @@ class ErrorParam(object):
     pass
 
 
-
-class MeanYParam(object):
-    """
-    MeanYParam is a class containing the parameters related to
-    algorithms that find the mean of a random variable
-    This class contains the random number generator, the uncertainty
-    """
-    def __init__(self, y=None, abs_tol=1e-2, rel_tol=0, alpha=0.01, n_sig=1000):
-        self.y = y  # random number generator
-
-        self.abs_tol = abs_tol
-        self.rel_tol = rel_tol
-        self.alpha = alpha  # uncertainty
-        self.nSig = n_sig  # sample size to estimate variance
-
-        def default_random_generator(n=self.nSig):
-            # X_i^2 where X_i comes from a U[0,1]
-            return np.random.uniform(size=n)**2
-
-        if self.y is None:
-            self.y = default_random_generator
-
-        self.err = {}  # an errorParam object #TODO
-        self.CM = {}  # a cubMeanParam object #TODO
-        self.nY = 1  # number of Y for each mean
-
-
-
-    def check_parameters(self):
-        pass
-
-
-    # def __copy__(self):
-    #     cls =self.__class__
-    #     result = cls.__new__(cls)
-    #     result.__dict__.update(self.__dict__)
-    #     return result
-    #
-    # def __deepcopy__(self, memodict={}):
-    #     cls = self.__class__
-    #     result = cls.__new__(cls)
-    #     memodict[id(self)] = result
-    #     for k, v in self.__dict__
-    #     result.__dict__.update(self.__dict__)
-    #     return result
-
-
 class MeanYOut(MeanYParam):
     """
     MeanYOut is a class containing the parameters related to the
@@ -84,15 +38,16 @@ class MeanYOut(MeanYParam):
         self.out = {}
 
 
-class meanMC_CLT(MeanYOut):
-    def __init__(self, y=None, abs_tol=1e-2, rel_tol=0, alpha=0.01, n_sig=1000, inflate=1.2):
-        super().__init__(y, abs_tol, rel_tol, alpha, n_sig, inflate)
-        self.out = {}
-
-
-    def generate_y_values(self):
-        self.yy = np.empty(self.n_sig)
-        for i, el in enumerate(self.y): self.yy[i] = el
+#
+# class meanMC_CLT(MeanYOut):
+#     def __init__(self, y=None, abs_tol=1e-2, rel_tol=0, alpha=0.01, n_sig=1000, inflate=1.2):
+#         super().__init__(y, abs_tol, rel_tol, alpha, n_sig, inflate)
+#         self.out = {}
+#
+#
+#     def generate_y_values(self):
+#         self.yy = np.empty(self.n_sig)
+#         for i, el in enumerate(self.y): self.yy[i] = el
 
 def check_meanMC_CLT_params(**kwargs):
     checked_params = kwargs
@@ -116,9 +71,12 @@ def stdnorminv(p):
 def meanMC_CLT(Y=None, absTol=1e-2, relTol=0, alpha=0.01, nSig=1000, inflate=1.2):
     start_time = time.time()
 
+    # out = MeanYOut(**{'Y': Y, 'absTol': absTol, 'relTol': relTol,
+    #                                  'alpha': alpha, 'nSig': nSig, 'inflate': inflate})
     out = check_meanMC_CLT_params(**{'Y': Y, 'absTol': absTol, 'relTol': relTol,
                                      'alpha': alpha, 'nSig': nSig, 'inflate': inflate})
 
+    # Yrand = out.Y
     Yrand = out['Y']
     p = 0  # out['CM']['nCV']
     q = 1  # out['nY']
