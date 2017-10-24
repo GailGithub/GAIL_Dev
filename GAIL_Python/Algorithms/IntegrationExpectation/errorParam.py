@@ -3,7 +3,7 @@ import numbers
 import numpy as np
 
 
-class ErrorParam():
+class ErrorParam(object):
     """
     This class contains the error tolerances, solution function, and
     related parameters determining the error criterion.
