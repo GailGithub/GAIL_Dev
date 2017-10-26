@@ -216,7 +216,7 @@ classdef assetPath < brownianMotion
                         .* tempc));
                 end
             else
-                shift = obj.assetParam.meanShift/obj.timeDim.endTime;
+                shift = obj.assetParam.meanShift;
                 t = obj.timeDim.timeVector;
                 shifts = shift*t;
                 CovMat = zeros(obj.timeDim.nSteps);
@@ -276,7 +276,7 @@ classdef assetPath < brownianMotion
                  UV1 = normcdf(Z);
              else
                  %delta = size(bmpaths,2);
-                 shift = obj.assetParam.meanShift/obj.timeDim.endTime;% use meanShift per time step                 
+                 shift = obj.assetParam.meanShift;% use meanShift per time step                 
                  dW2 = [bmpaths(:,1) diff(bmpaths(:,1:Ntime),1,2)]/sqrt(dT) + shift; %Use Brownian motion to generate normal distribution N(MeanShift,I)
                  Z=[bmpaths(:,Ntime+1) diff(bmpaths(:,Ntime+1:end),1,2)]/sqrt(dT);
                  likelihoodRatio = exp(0.5*shift^2*Ntime-shift.*sum(dW2,2));
@@ -361,7 +361,7 @@ classdef assetPath < brownianMotion
                  %Use normal distribution to generate uniform distribution
                  UV1 = normcdf(Z);
              else
-                 shift = obj.assetParam.meanShift/obj.timeDim.endTime;
+                 shift = obj.assetParam.meanShift;
                  %delta = size(bmpaths,2);          
                  dW2 = [bmpaths(:,1) diff(bmpaths(:,1:Ntime),1,2)]/sqrt(dT) + shift; %Use Brownian motion to generate normal distribution N(MeanShift,I)
 %                  Z=[bmpaths(:,Ntime+1) diff(bmpaths(:,Ntime+1:end),1,2)]/sqrt(dT) + shift;
