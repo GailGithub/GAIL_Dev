@@ -7,13 +7,16 @@ doctest cubSobol_old_g;
 % cubSobol_g paper
 try
   SobolWalshPict;
-catch
+catch ME
     display('Error: SobolWalshPict is wrongly coded. We skip it.')
+    msgText = getReport(ME); display(msgText)
 end
+
 try
   WalshFourierCoeffDecay;
-catch
+catch ME
     display('Error: WalshFourierCoeffDecay is wrongly coded. We skip it.')
+    msgText = getReport(ME); display(msgText)
 end
 %run_handle('RunTestCubatureonGeoAsianCallSobol');
 %run_handle('RunTestCubatureonKeisterSobol')
@@ -26,7 +29,8 @@ try
         %  fprintf(fid,'%s\n',Tests(failed(i)).Name);
         %end
     end
-catch
+catch ME
     display('Error: Test ut_Papers_cubSobol_g is wrongly coded. We skip it.')
+    msgText = getReport(ME); display(msgText)
     %fprintf(fid,'Error: Test ut_Papers_cubSobol_g is wrongly coded. We skip it.\n');
 end

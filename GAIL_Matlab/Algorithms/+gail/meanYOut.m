@@ -32,6 +32,7 @@ classdef meanYOut < gail.meanYParam & gail.outParam
    properties 
       sol %solution
       stddev %sample standard deviation of the random variable
+      theta %coefficients of the control variates
    end
       
    methods
