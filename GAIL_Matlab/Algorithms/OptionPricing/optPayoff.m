@@ -668,6 +668,9 @@ classdef optPayoff < assetPath
         
     function varargout = plot(obj,varargin)
          offset = 1;
+         if ~numel(varargin)
+            varargin{1} = 'paths';
+         end
          if strcmp(varargin{1},'paths')
             % Plot the asset paths along with the strike and 
             % the exercise boundary for American put options
@@ -710,8 +713,8 @@ classdef optPayoff < assetPath
             payoffs = genOptPayoffs(obj,nPayoffs);
             probs = (1/(2*nPayoffs)):(1/nPayoffs):(1 - 1/(2*nPayoffs));
             h = plot(sort(payoffs),probs,'-');
-            if numel(varargin) > 1
-               set(h,varargin{2:end});
+            if numel(varargin) > offset
+               set(h,varargin{offset+1:end});
             else
                set(h,obj.defaultSpecs{:});
             end
