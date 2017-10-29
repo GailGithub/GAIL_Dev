@@ -1,6 +1,6 @@
 %% Test Multivariate Normal Probabilities
 function [muhat,aMLE,errVec,outAll] = TestMVN_BayesianCubature(dim,BernPolyOrder,...
-          ptransform,figSavePath,visiblePlot,arbMean,testAll,absTol)
+          ptransform,figSavePath,visiblePlot,arbMean,stopAtTol,absTol)
 
 %gail.InitializeWorkspaceDisplay %clean up
 %format long
@@ -76,7 +76,7 @@ end
 disp(['mu  = ' num2str(muBest,15) ' +/- ' num2str(2*std(muBestvec),10)])
 
 %% Try MLE Bayseian cubature with Fourier kernel and Rank1 Lattice points
-nvecMLE = 2.^(10:20)';
+nvecMLE = 2.^(8:20)';
 nnMLE = numel(nvecMLE);
 
 if exist('absTol','var')==false
@@ -123,7 +123,7 @@ if compMLELattice
     toc
     datetime
 
-   if exist('testAll','var')==false || testAll==true
+   if exist('stopAtTol','var')==false || stopAtTol==false
     plotCubatureError(dim, nvecMLE, errCubMLE, ErrBd, fName, BernPolyOrder, ...
       ptransform, fullPath,visiblePlot,arbMean,outAll{1}.s_All, outAll{1}.dscAll)
    end

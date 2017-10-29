@@ -17,8 +17,8 @@ tic
     absTol = 1E-15;
     relTol = 0;
     order = BernPolyOrder;
-    testAll = true;  % to plot the error, run for for all n values
-    [muhatFinal,out]=cubMLELattice(f,dim,absTol,relTol,order,ptransform,testAll,fullPath,fName,arbMean);
+    stopAtTol = false;  % to plot the error, run for for all n values
+    [muhatFinal,out]=cubMLELattice(f,dim,absTol,relTol,order,ptransform,stopAtTol,fullPath,fName,arbMean);
     nvec = 2.^out.mvec;
     muhat = out.muhatAll;
     ErrBd = out.ErrBdAll;

@@ -19,6 +19,7 @@ classdef multivarGauss < handle
       fName = '' %function name for plot title
       figSavePath  = '' % path to save the figure
       arbMean = true  % Non zero mean m for Bayesian cubature
+      stopAtTol = true % Algorithm stops and exits the loop after meeting error tolerance
    end
 
    properties (SetAccess = private)
@@ -68,6 +69,8 @@ classdef multivarGauss < handle
                if ~isempty(wh), obj.figSavePath = varargin{wh+iStart}; end
                wh = find(strcmp(varargin(iStart:end),'arbMean'));
                if ~isempty(wh), obj.arbMean = varargin{wh+iStart}; end
+               wh = find(strcmp(varargin(iStart:end),'stopAtTol'));
+               if ~isempty(wh), obj.stopAtTol = varargin{wh+iStart}; end
            end
          end
          updateCovProp(obj)
@@ -242,10 +245,9 @@ classdef multivarGauss < handle
                   [zeros(1,realDim); ones(1,realDim)], ...
                   'uniform',obj.absTol,obj.relTol);
             elseif strcmp(obj.cubMeth,'MLELattice')
-               testAll=false;
                [prob, out] = cubMLELattice(obj.f, ...
                   realDim,obj.absTol,obj.relTol,obj.bernPolyOrder,obj.ptransform, ...
-                  testAll,obj.figSavePath,obj.fName);
+                  obj.stopAtTol,obj.figSavePath,obj.fName);
             end
           end
       end

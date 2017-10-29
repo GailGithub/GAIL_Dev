@@ -34,9 +34,9 @@ tic
     absTol = 1E-15;
     relTol = 0;
     order = BernPolyOrder;
-    regression = true;
+    stopAtTol = false;  % to plot the error, run for for all n values
     tic
-    [muhatFinal,out]=cubMLELattice(f1,dim,absTol,relTol,order,ptransform,regression,fullPath,fName,arbMean);
+    [muhatFinal,out]=cubMLELattice(f1,dim,absTol,relTol,order,ptransform,stopAtTol,fullPath,fName,arbMean);
     toc
     nvec = 2.^out.mvec;
     muhat = out.muhatAll;

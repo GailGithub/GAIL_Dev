@@ -1,5 +1,5 @@
 function [muhat,out]=cubMLELattice(f,d,absTol,relTol,order,ptransform, ...
-  testAll,figSavePath,fName,arbMean)
+  stopAtTol,figSavePath,fName,arbMean)
 %CUBMLE Monte Carlo method to estimate the mean of a random variable
 %
 %   tmu = cubMLELattice(f,absTol,relTol,alpha,nSig,inflate) estimates the mean,
@@ -30,14 +30,14 @@ if nargin < 6
   end
 end
 
-if ~exist('testAll','var')
-  testAll = false;
+if ~exist('stopAtTol','var')
+  stopAtTol = false;
 end
 
 
 % Force to stop after meeting the error tolerance
 % for gail type of plots
-testAll = false;
+stopAtTol = false;
 
 
 debugEnable=false;
@@ -47,7 +47,7 @@ gpuArray = @(x) x;   gather = @(x) x;
 
 tstart = tic; %start the clock
 % define min and max number of points allowed in the automatic cubature
-mmin = 10;
+mmin = 8;
 mmax = 20;
 mvec = mmin:mmax;
 numM = length(mvec);
@@ -181,9 +181,10 @@ for iter = 1:numM
       errorBdAll(iter) = eps;
     end
     
-    % if testAll flag is set, run for for all 'n' values to compute error
-    % used for error plotting
-    if testAll==false
+    % if stopAtTol true, exit the loop
+    % else, run for for all 'n' values.
+    % Used to compute error values for 'n' vs error plotting
+    if stopAtTol==true
       break
     end
   end

@@ -34,6 +34,7 @@ if false
   fprintf('done')
 end
 
+stopAtTol = false;
 
 tstart=tic;
 pdTx = {'C1','C1sin', 'C2sin', 'C0', 'none', 'Baker'};
@@ -47,10 +48,10 @@ for arbMean=arbMeanType
   for tx=pdTx
     for dim=[2 3 4]
       for bern=[4 2]
-        TestExpCosBayesianCubature(dim,bern,tx{1},newPath,visiblePlot,arbMean)
-        TestKeisterBayesianCubature(dim,bern,tx{1},newPath,visiblePlot,arbMean)
+        TestExpCosBayesianCubature(dim,bern,tx{1},newPath,visiblePlot,arbMean,stopAtTol)
+        TestKeisterBayesianCubature(dim,bern,tx{1},newPath,visiblePlot,arbMean,stopAtTol)
         if dim~=4
-          TestMVN_BayesianCubature(dim,bern,tx{1},newPath,visiblePlot,arbMean)
+          TestMVN_BayesianCubature(dim,bern,tx{1},newPath,visiblePlot,arbMean,stopAtTol)
         end
       end
     end

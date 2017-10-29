@@ -8,17 +8,17 @@ l = linspace(0,1,n);
 [X, Y] = meshgrid(l);
 
 shape_param = [0.1 0.9];
-dim = [2 4];
+order = [2 4];
 
 for sh = shape_param
-  for d = dim
-    hFig = figure;
+  for r = order
+    hFig = figure('visible','off');
     set(hFig, 'units', 'inches', 'Position', [4 4 6.5 5.5])
-    Z = kernel([X(:) Y(:)], d, sh);
+    Z = kernel([X(:) Y(:)], r, sh);
     meshc(X, Y, reshape(Z, [n, n]));
     
-    title(sprintf('d=%d shape=%0.2f', d, sh))
-    figSavePathName = sprintf('fourier_kernel d_%d 100_shape_%d.png', d, 100*sh);
+    title(sprintf('r=%d shape=%0.2f', r, sh))
+    figSavePathName = sprintf('fourier_kernel r_%d shape_%dby100.png', r, 100*sh)
     saveas(hFig, figSavePathName)
   end
 end
