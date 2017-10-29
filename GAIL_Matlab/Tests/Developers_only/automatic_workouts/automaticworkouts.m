@@ -8,16 +8,14 @@ GAIL_Install
 % git clone https://github.com/chebfun/chebfun.git
 chebfunroot = '/home/gail/GAIL_tests/chebfun';
 addpath(chebfunroot), savepath
-% print the version
-help chebfun
 
 % Go to the tests direcoty (% is comment in matlab environment)
 cd /home/gail/GAIL_tests/repo/gail-development/GAIL_Matlab/Tests/Developers_only/automatic_workouts/
 
-fprintf('Launching longtests at %s \n', datetime)
+fprintf('Launching longtests at %s \n', datestr(now,'yyyy-mm-dd-HH-MM-SS'))
 
 longtests
 
-fprintf('Exiting longtests at %s \n', datetime)
+fprintf('Exiting longtests at %s \n', datestr(now,'yyyy-mm-dd-HH-MM-SS'))
 
 exit
