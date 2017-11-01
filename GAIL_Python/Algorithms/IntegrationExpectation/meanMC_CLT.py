@@ -4,6 +4,7 @@ import warnings
 
 import numpy as np
 from scipy.special import erfcinv
+
 try:
     from GAIL_Python.Algorithms.IntegrationExpectation.MeanYOut import MeanYOut, stdnorminv
 except:
@@ -48,30 +49,18 @@ def meanMC_CLT(Y=None, absTol=1e-2, relTol=0, alpha=0.01, nSig=1000, inflate=1.2
     else:
         # if there is control variate, construct a new random variable that has the
         # same expected value and smaller variance
-        # TODO replace with control variate procedures
-        #    meanVal = mean(val); %the mean of each column
-        #    A = bsxfun(@minus, val, meanVal); %covariance matrix of the samples
-        #    [U, S, V] = svd([A; [ones(1,q) zeros(1,p)] ],0); %use SVD to solve a constrained least square problem
-        #    Sdiag = diag(S); %the vector of the single values
-        #    U2 = U(end,:); %last row of U
-        #    beta = V*(U2'/(U2*U2')./Sdiag); %get the coefficient for control variates
-        #    YY = [val(:,1:q) A(:,q+1:end)] * beta; %get samples of the new random variable
-        meanVal = np.mean(val, axis=0)
-        A = np.diff(val, meanVal, axis=1)
-        U, S, V = np.linalg.svd(A, full_matrices=True)
-        Sdiag = np.diag(S)
-        nrow = U.shape[0]
-        U2 = U[-1]
-        U2_t = np.transpose(U2)
-        divide = np.divide(U2_t, np.multiply(U2, U2_t))
-        multiply = np.multiply(V, divide)
-        beta = np.divide(multiply, Sdiag)
+        meanVal = np.mean(val, axis=0)  # the mean of each column
+        A = val - meanVal  # covariance matrix of the samples
+        U, Sdiag, V = np.linalg.svd(np.vstack([A, np.hstack([np.ones(shape=[1, q]), np.zeros(shape=[1, p])])]),
+                                    full_matrices=False)  # use SVD to solve a constrained least square problem
+        U2 = U[-1]  # last row of U
+        beta = np.dot(V.T,
+                      np.divide(np.divide(U2.T, np.dot(U2, U2.T)), Sdiag))  # get the coefficient for control variates
+        YY = np.dot(np.hstack([val[:, :q], A[:, q:]]), beta)  # get samples of the new random variable
 
-        YY = val
-
-    out.stddev = np.std(YY) # standard deviation of the new samples
-    sig0up = np.multiply(out.CM.inflate, out.stddev) # upper bound on the standard deviation
-    hmu0 = np.mean(YY) # mean of the samples
+    out.stddev = np.std(YY)  # standard deviation of the new samples
+    sig0up = np.multiply(out.CM.inflate, out.stddev)  # upper bound on the standard deviation
+    hmu0 = np.mean(YY)  # mean of the samples
 
     nmu = int(max(1, np.power(np.ceil(
         np.multiply(
