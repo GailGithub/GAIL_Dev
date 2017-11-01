@@ -1,12 +1,16 @@
 import numpy as np
 import math
-import time
 import pytest
 
 try:
     from GAIL_Python.Algorithms.IntegrationExpectation.meanMC_CLT import meanMC_CLT, stdnorminv
 except:
     from meanMC_CLT import meanMC_CLT, stdnorminv
+
+try:
+    from GAIL_Python.Algorithms.IntegrationExpectation.MeanYOut import MeanYOut
+except:
+    from MeanYOut import MeanYOut
 
 
 # Test case1
@@ -46,4 +50,15 @@ def test_default_uniform_sq():
     exact = 1 / 3
     assert abs(exact - sol) < exact*reltol
 
-# test Case3
+
+# Test Case3
+
+def test_CV_1():
+    f = lambda x: np.hstack([np.exp(-1 * (np.power(x, 2))), x])
+    YXn = lambda n: f(np.random.uniform(size=n))
+    inp = dict(Y=YXn, nY=1, trueMuCV=1 / 2, absTol=0, relTol=1e-3)
+    hmu, out = meanMC_CLT(**inp)
+    exact = math.erf(1) * math.sqrt(math.pi) / 2
+    assert abs(exact - hmu) < max(0, 1e-3 * abs(exact))
+
+    # Test Case 4
