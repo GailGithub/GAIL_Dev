@@ -54,10 +54,18 @@ class ErrorParam(object):
                 raise Exception("relTol value cannot be negative. " + msg)
         self._relTol = relTol_value
 
-    def __init__(self, absTol=1e-2, relTol=0):
+    def __init__(self, absTol=1e-2, relTol=0, solFun=None, solbdFun=None, **kwargs):
         self.absTol = absTol
         self.relTol = relTol
-        self.sol_fun = lambda mu: mu
-        self.solbd_fun = lambda muhat, errbd: (muhat - errbd, muhat + errbd)
-
-
+        if solFun is None:
+            self.solFun = lambda mu: mu
+        else:
+            self.solFun = solFun
+        if solbdFun is None:
+            self.solbdFun = lambda muhat, errbd: (muhat - errbd, muhat + errbd)
+        else:
+            self.solbdFun = solbdFun
+        meanYparams = {'sol_fun': 'solFun', 'solbd_fun': 'solbdFun', 'solfun': 'solFun'}
+        for k, v in kwargs.items():
+            if k in meanYparams:
+                setattr(self, meanYparams[k], v)

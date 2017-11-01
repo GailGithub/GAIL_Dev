@@ -29,53 +29,6 @@ class MeanYParam(object):
     This class contains the random number generator, the uncertainty
     """
 
-
-
-
-
-    def __init__(self, Y=None, absTol=1e-2, relTol=0, alpha=0.01, nSig=1000, inflate=1.2):
-        if isinstance(Y, MeanYParam):
-            # copy the MeanYParam object
-            self.make_copy(Y)
-        else:
-            if Y is None:
-                self.Y = default_random_generator
-            else:
-                self.Y = Y  # random number generator
-
-            self.absTol = absTol
-            self.relTol = relTol
-
-            self.alpha = alpha  # uncertainty
-            self.nSig = nSig  # sample size to estimate variance
-
-            self.err = ErrorParam(absTol=absTol, relTol=relTol)  # an errorParam object #TODO
-            self.CM = CubMeanParam(inflate=inflate)  # a cubMeanParam object #TODO
-            self.nY = 1  # number of Y for each mean#TODO
-
-
-    def make_copy(self, Y):
-        self.Y = Y.Y
-        self.absTol = Y.absTol
-        self.relTol = Y.relTol
-        self.alpha = Y.alpha  # uncertainty
-        self.nSig = Y.nSig  # sample size to estimate variance
-        self.err = ErrorParam(absTol=Y.err.absTol, relTol=Y.err.relTol)
-        self.CM = CubMeanParam(inflate=Y.CM.inflate, inflateFun=Y.CM.inflateFun, nInit=Y.CM.nInit, nMax=Y.CM.nMax,
-                               nMu=Y.CM.nMu, trueMuCV=Y.CM.trueMuCV)
-        self.nY = Y.nY
-
-    def __str__(self):
-
-        try:
-            function_source = inspect.getsource(self.Y)
-        except:
-            function_source = str(self.Y)
-
-        return 'meanYParam with properties:\n\tY\t: {}\n\tabsTol\t: {}\n\trelTol\t: {}\n\talpha\t: {}\n\tnSig\t: {}' \
-            .format(function_source, self.absTol, self.relTol, self.alpha, self.nSig)
-
-
     @property
     def Yout(self):
         if self._Yout is None:
@@ -153,3 +106,46 @@ class MeanYParam(object):
                 raise Exception("relTol value cannot be negative. " + msg)
         self._relTol = relTol_value
 
+    def __init__(self, Y=None, absTol=1e-2, relTol=0, alpha=0.01, nSig=1000, **kwargs):
+        if isinstance(Y, MeanYParam):
+            # copy the MeanYParam object
+            self.make_copy(Y)
+        else:
+            if Y is None:
+                self.Y = default_random_generator
+            else:
+                self.Y = Y  # random number generator
+
+            self.absTol = absTol
+            self.relTol = relTol
+
+            self.alpha = alpha  # uncertainty
+            self.nSig = nSig  # sample size to estimate variance
+
+            self.err = ErrorParam(absTol=absTol, relTol=relTol, **kwargs)  # an errorParam object
+            self.CM = CubMeanParam(**kwargs)  # a cubMeanParam object
+            try:
+                self.nY = kwargs['nY']
+            except:
+                self.nY = 1  # number of Y for each mean
+
+    def make_copy(self, Y):
+        self.Y = Y.Y
+        self.absTol = Y.absTol
+        self.relTol = Y.relTol
+        self.alpha = Y.alpha  # uncertainty
+        self.nSig = Y.nSig  # sample size to estimate variance
+        self.err = ErrorParam(absTol=Y.err.absTol, relTol=Y.err.relTol)
+        self.CM = CubMeanParam(inflate=Y.CM.inflate, inflateFun=Y.CM.inflateFun, nInit=Y.CM.nInit, nMax=Y.CM.nMax,
+                               nMu=Y.CM.nMu, trueMuCV=Y.CM.trueMuCV)
+        self.nY = Y.nY
+
+    def __str__(self):
+
+        try:
+            function_source = inspect.getsource(self.Y)
+        except:
+            function_source = str(self.Y)
+
+        return 'meanYParam with properties:\n\tY\t: {}\n\tabsTol\t: {}\n\trelTol\t: {}\n\talpha\t: {}\n\tnSig\t: {}' \
+            .format(function_source, self.absTol, self.relTol, self.alpha, self.nSig)

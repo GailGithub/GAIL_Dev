@@ -30,7 +30,7 @@ def stdnorminv(p):
     return np.multiply(-1 * np.sqrt(2), erfinv_val)
 
 
-def meanMC_CLT(Y=None, absTol=1e-2, relTol=0, alpha=0.01, nSig=1000, inflate=1.2):
+def meanMC_CLT(Y=None, absTol=1e-2, relTol=0, alpha=0.01, nSig=1000, inflate=1.2, **kwargs):
     start_time = time.time()
 
     out = MeanYOut(**{'Y': Y, 'absTol': absTol, 'relTol': relTol,

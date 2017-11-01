@@ -47,5 +47,9 @@ class MeanYOut(MeanYParam):
     def errBd(self, errBd_value):
         self._errBd = errBd_value
 
-    def __init__(self, Y=None, absTol=1e-2, relTol=0, alpha=0.01, nSig=1000, inflate=1.2):
-        super().__init__(Y, absTol, relTol, alpha, nSig, inflate)
+    def __init__(self, Y=None, absTol=1e-2, relTol=0, alpha=0.01, nSig=1000, **kwargs):
+        super().__init__(Y, absTol, relTol, alpha, nSig, **kwargs)
+        meanYOutParams = {'stddev', 'errBd', 'nSample', 'sol'}
+        for k, v in kwargs.items():
+            if k in meanYOutParams:
+                setattr(self, k, v)

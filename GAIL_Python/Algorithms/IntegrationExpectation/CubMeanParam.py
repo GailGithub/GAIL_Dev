@@ -103,7 +103,7 @@ class CubMeanParam(object):
 
             self._trueMuCV = trueMuCV_value
 
-    def __init__(self, inflate=1.2, inflateFun=None, nInit=1024, nMax=2 ** 24, nMu=1, trueMuCV=None):
+    def __init__(self, inflate=1.2, inflateFun=None, nInit=1024, nMax=2 ** 24, nMu=1, trueMuCV=None, **kwargs):
         if inflate is not None: self.inflate = inflate  # inflation factor for bounding the error
         if inflateFun is None:
             self.inflateFun = lambda m: np.multiply((16 / 3), np.power(2., (-1 * m)))
