@@ -56,6 +56,8 @@ def meanMC_CLT(Y=None, absTol=1e-2, relTol=0, alpha=0.01, nSig=1000, inflate=1.2
         U2 = U[-1]  # last row of U
         beta = np.dot(V.T,
                       np.divide(np.divide(U2.T, np.dot(U2, U2.T)), Sdiag))  # get the coefficient for control variates
+
+        # TODO ask V.T, V which one to use for calculating beta.
         YY = np.dot(np.hstack([val[:, :q], A[:, q:]]), beta)  # get samples of the new random variable
 
     out.stddev = np.std(YY)  # standard deviation of the new samples
@@ -73,9 +75,17 @@ def meanMC_CLT(Y=None, absTol=1e-2, relTol=0, alpha=0.01, nSig=1000, inflate=1.2
                                 ', which is too big. Using', str(out.CM.nMax), 'instead.']))
         nmu = out.CM.nMax  # revise nmu
 
-    YY = (y for y in Yrand(nmu))  # get samples for computing the mean
+    W = Yrand(nmu)  # get samples for computing the mean
 
-    sol = np.mean(list(YY))
+    if p == 0 and q == 1:  # no control variates
+        YY = W
+    else:  # samples of the new random variable
+        if out.CM.trueMuCV is None:
+            W[:, q:] = W[:, q:] - out.CM.trueMuCV  # subtract true mean from control variates
+
+        YY = W * beta  # incorporate the control variates and multiple Y's
+
+    sol = np.mean(YY)
     out.sol = sol
 
     out.nSample = out.nSig + nmu
