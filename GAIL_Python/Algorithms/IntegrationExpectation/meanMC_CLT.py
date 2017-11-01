@@ -56,7 +56,16 @@ def meanMC_CLT(Y=None, absTol=1e-2, relTol=0, alpha=0.01, nSig=1000, inflate=1.2
         #    U2 = U(end,:); %last row of U
         #    beta = V*(U2'/(U2*U2')./Sdiag); %get the coefficient for control variates
         #    YY = [val(:,1:q) A(:,q+1:end)] * beta; %get samples of the new random variable
-
+        meanVal = np.mean(val, axis=0)
+        A = np.diff(val, meanVal, axis=1)
+        U, S, V = np.linalg.svd(A, full_matrices=True)
+        Sdiag = np.diag(S)
+        nrow = U.shape[0]
+        U2 = U[-1]
+        U2_t = np.transpose(U2)
+        divide = np.divide(U2_t, np.multiply(U2, U2_t))
+        multiply = np.multiply(V, divide)
+        beta = np.divide(multiply, Sdiag)
 
         YY = val
 
