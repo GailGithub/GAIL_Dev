@@ -1,7 +1,16 @@
-from operator import attrgetter
-import numbers
-import numpy as np
 import inspect
+import numbers
+from operator import attrgetter
+
+import numpy as np
+try:
+    from GAIL_Python.Algorithms.IntegrationExpectation.CubMeanParam import CubMeanParam
+except:
+    from CubMeanParam import CubMeanParam
+try:
+    from GAIL_Python.Algorithms.IntegrationExpectation.ErrorParam import ErrorParam
+except:
+    from ErrorParam import ErrorParam
 
 
 def default_random_generator(n):
@@ -20,92 +29,127 @@ class MeanYParam(object):
     This class contains the random number generator, the uncertainty
     """
 
-    def __init__(self, y=None, abs_tol=1e-2, rel_tol=0, alpha=0.01, n_sig=1000):
-        if y is None:
-            self.y = default_random_generator
+
+
+
+
+    def __init__(self, Y=None, absTol=1e-2, relTol=0, alpha=0.01, nSig=1000, inflate=1.2):
+        if isinstance(Y, MeanYParam):
+            # copy the MeanYParam object
+            self.make_copy(Y)
         else:
-            self.y = y  # random number generator
+            if Y is None:
+                self.Y = default_random_generator
+            else:
+                self.Y = Y  # random number generator
 
-        self.abs_tol = abs_tol
-        self.rel_tol = rel_tol
+            self.absTol = absTol
+            self.relTol = relTol
 
-        self.alpha = alpha  # uncertainty
-        self.n_sig = n_sig  # sample size to estimate variance
+            self.alpha = alpha  # uncertainty
+            self.nSig = nSig  # sample size to estimate variance
 
-        self.err = {}  # an errorParam object #TODO
-        self.CM = {}  # a cubMeanParam object #TODO
-        self.nY = 1  # number of Y for each mean#TODO
-        self.Yout = None  #
-
-    # def __copy__(self):
-    #     cls =self.__class__
-    #     result = cls.__new__(cls)
-    #     result.__dict__.update(self.__dict__)
-    #     return result
-    #
-    # def __deepcopy__(self, memodict={}):
-    #     cls = self.__class__
-    #     result = cls.__new__(cls)
-    #     memodict[id(self)] = result
-    #     for k, v in self.__dict__
-    #     result.__dict__.update(self.__dict__)
-    #     return result
+            self.err = ErrorParam(absTol=absTol, relTol=relTol)  # an errorParam object #TODO
+            self.CM = CubMeanParam(inflate=inflate)  # a cubMeanParam object #TODO
+            self.nY = 1  # number of Y for each mean#TODO
 
 
+    def make_copy(self, Y):
+        self.Y = Y.Y
+        self.absTol = Y.absTol
+        self.relTol = Y.relTol
+        self.alpha = Y.alpha  # uncertainty
+        self.nSig = Y.nSig  # sample size to estimate variance
+        self.err = ErrorParam(absTol=Y.err.absTol, relTol=Y.err.relTol)
+        self.CM = CubMeanParam(inflate=Y.CM.inflate, inflateFun=Y.CM.inflateFun, nInit=Y.CM.nInit, nMax=Y.CM.nMax,
+                               nMu=Y.CM.nMu, trueMuCV=Y.CM.trueMuCV)
+        self.nY = Y.nY
 
-    y = property(attrgetter('_y'))
+    def __str__(self):
 
-    @y.setter
-    def y(self, y_func):
+        try:
+            function_source = inspect.getsource(self.Y)
+        except:
+            function_source = str(self.Y)
+
+        return 'meanYParam with properties:\n\tY\t: {}\n\tabsTol\t: {}\n\trelTol\t: {}\n\talpha\t: {}\n\tnSig\t: {}' \
+            .format(function_source, self.absTol, self.relTol, self.alpha, self.nSig)
+
+
+    @property
+    def Yout(self):
+        if self._Yout is None:
+            self._Yout = len(self.y(1))
+        return self._Yout
+
+    @Yout.setter
+    def Yout(self, Yout_value):
+        self._Yout = Yout_value
+
+    Y = property(attrgetter('_Y'))
+
+    @Y.setter
+    def Y(self, Y_func):
         # ISFCN To judge if input is a function handle or not
-        if not callable(y_func):
+        if not callable(Y_func):
             raise Exception("y has to be a function")
-        self._y = y_func
+        self._Y = Y_func
 
     alpha = property(attrgetter('_alpha'))
 
     @alpha.setter
     def alpha(self, alpha_value):  # {'numeric'}, {'scalar','nonnegative', '<', 1})
         msg = "alpha should be positive and less than 1"
-        if not alpha_value:
-            raise Exception("value cannot be empty. " + msg)
+        if alpha_value is None:
+            raise Exception("alpha is empty. " + msg)
         if not isinstance(alpha_value, numbers.Number):
             raise Exception("alpha value should be a number. " + msg)
         else:
             if alpha_value < 0:
-                raise Exception("alpha value cannot be negative. " + msg)
+                raise Exception("alpha is negative. " + msg)
             elif alpha_value > 1:
-                raise Exception("alpha value cannot be greater than 1. " + msg)
+                raise Exception("alpha is greater than 1. " + msg)
         self._alpha = alpha_value
 
-    n_sig = property(attrgetter('_n_sig'))
+    nSig = property(attrgetter('_nSig'))
 
-    @n_sig.setter
-    def n_sig(self, n_sig_value):  # {'numeric'}, {'scalar','nonnegative'})
-        msg = "n_sig should be a positive number"
-        if not n_sig_value:
-            raise Exception("value cannot be empty. " + msg)
-        if not isinstance(n_sig_value, numbers.Number):
-            raise Exception("n_sig value should be a number. " + msg)
+    @nSig.setter
+    def nSig(self, nSig_value):  # {'numeric'}, {'scalar','nonnegative'})
+        msg = "nSig should be a positive number"
+        if nSig_value is None:
+            raise Exception("nSig is empty. " + msg)
+        if not isinstance(nSig_value, numbers.Number):
+            raise Exception("nSig is not a number. " + msg)
         else:
-            if n_sig_value < 0:
-                raise Exception("n_sig value cannot be negative. " + msg)
-        self._n_sig = n_sig_value
+            if nSig_value < 0:
+                raise Exception("nSig is negative. " + msg)
+        self._nSig = nSig_value
 
-    def __str__(self):
-        return 'meanYParam with properties:\n\tY\t: {}\n\tabs_tol\t: {}\n\trel_tol\t: {}\n\talpha\t: {}\n\tn_sig\t: {}' \
-            .format(inspect.getsource(self.y), self.abs_tol, self.rel_tol, self.alpha, self.n_sig)
+    absTol = property(attrgetter('_absTol'))
 
+    @absTol.setter
+    def absTol(self, absTol_value):  # {'numeric'}, {'scalar','nonnegative', '<', 1})
+        msg = "absTol should be positive number"
+        if absTol_value is None:
+            raise Exception("value cannot be empty. " + msg)
+        if not isinstance(absTol_value, numbers.Number):
+            raise Exception("absTol value should be a number. " + msg)
+        else:
+            if absTol_value < 0:
+                raise Exception("absTol value cannot be negative. " + msg)
+        self._absTol = absTol_value
 
-if __name__ == '__main__':
-    def f(n): return range(n)
+    relTol = property(attrgetter('_relTol'))
 
+    @relTol.setter
+    def relTol(self, relTol_value):  # {'numeric'}, {'scalar','nonnegative'})
+        msg = "relTol should be a positive number"
+        if relTol_value is None:
+            raise Exception("value cannot be empty. " + msg)
+        if not isinstance(relTol_value, numbers.Number):
+            raise Exception("relTol value should be a number. " + msg)
+        else:
+            if relTol_value < 0:
+                raise Exception("relTol value cannot be negative. " + msg)
+        self._relTol = relTol_value
 
-    mean_y_parm_inst = MeanYParam(None)
-
-    # mean_y_parm_inst.alpha = -1
-    # mean_y_parm_inst.alpha = 'dfs'
-    # mean_y_parm_inst.alpha = 5
-    mean_y_parm_inst.alpha = 0.25
-    # mean_y_parm_inst.alpha = None
-    print(mean_y_parm_inst)

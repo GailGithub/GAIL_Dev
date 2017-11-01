@@ -30,9 +30,9 @@ def test_complex_f1(a_val, expected):
     reltol = 0.01
     norm_sqd = lambda t: np.sum(np.multiply(t, t), axis=1)
     f = lambda t, a, d: f1(norm_sqd(t), a, d=4)
-    out = meanMC_CLT(lambda n: f(np.random.standard_normal(size=(n, d_val)), a_val, d_val),
+    sol, out = meanMC_CLT(lambda n: f(np.random.standard_normal(size=(n, d_val)), a_val, d_val),
                      abstol, reltol)
-    assert abs(expected - out['sol']) <= expected * reltol
+    assert abs(expected - sol) <= expected * reltol
 
 
 # Test case2
@@ -42,8 +42,8 @@ default_random_generator = lambda n: np.random.uniform(size=n) ** 2
 def test_default_uniform_sq():
     abstol = 0
     reltol = 0.01
-    out = meanMC_CLT(default_random_generator, abstol, reltol)
-    exact = 1 / 3;
-    assert abs(exact - out['sol']) < 2e-3
+    sol, out = meanMC_CLT(default_random_generator, abstol, reltol)
+    exact = 1 / 3
+    assert abs(exact - sol) < exact*reltol
 
 # test Case3

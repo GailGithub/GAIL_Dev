@@ -1,58 +1,19 @@
 # MEANMC_CLT Monte Carlo method to estimate the mean of a random variable
 import time
+import warnings
+
 import numpy as np
 from scipy.special import erfcinv
-from copy import copy, deepcopy
-from GAIL_Python.Algorithms.IntegrationExpectation.meanYParam import MeanYParam
+try:
+    from GAIL_Python.Algorithms.IntegrationExpectation.MeanYOut import MeanYOut, stdnorminv
+except:
+    from MeanYOut import MeanYOut
 
-class CubMeanParam(object):
-    """
-    CubMeanParam is a class containing the parameters related to
-    algorithms that act on functions of x
-    This class contains the function, its domain, etc.
-    """
-    pass
-
-class ErrorParam(object):
-    """
-    ErrorParam is a class containing the parameters related to the
-    error tolerance
-    This class contains the error tolerances, solution function, and
-    related parameters determining the error criterion
-    """
-    pass
-
-
-class MeanYOut(MeanYParam):
-    """
-    MeanYOut is a class containing the parameters related to the
-    outputs from the algorithms that find the mean of a random variable.
-    This class includes the time and sample size required for the
-    computation
-    """
-    def __init__(self, y=None, abs_tol=1e-2, rel_tol=0, alpha=0.01, n_sig=1000, inflate=1.2):
-        super().__init__(y, abs_tol, rel_tol, alpha, n_sig, inflate)
-        self.inflate = inflate
-        self.nSig = n_sig
-        self.timekeeper = {}
-        self.out = {}
-
-
-#
-# class meanMC_CLT(MeanYOut):
-#     def __init__(self, y=None, abs_tol=1e-2, rel_tol=0, alpha=0.01, n_sig=1000, inflate=1.2):
-#         super().__init__(y, abs_tol, rel_tol, alpha, n_sig, inflate)
-#         self.out = {}
-#
-#
-#     def generate_y_values(self):
-#         self.yy = np.empty(self.n_sig)
-#         for i, el in enumerate(self.y): self.yy[i] = el
 
 def check_meanMC_CLT_params(**kwargs):
     checked_params = kwargs
 
-    #TODO meanYOut and meanYParam functions
+    # TODO meanYOut and meanYParam functions
     # if not (0 <= relTol <= 1):
     #     logging.error("Relative error tolerance should be in the range [0,1]")
     return checked_params
@@ -71,47 +32,59 @@ def stdnorminv(p):
 def meanMC_CLT(Y=None, absTol=1e-2, relTol=0, alpha=0.01, nSig=1000, inflate=1.2):
     start_time = time.time()
 
-    # out = MeanYOut(**{'Y': Y, 'absTol': absTol, 'relTol': relTol,
+    out = MeanYOut(**{'Y': Y, 'absTol': absTol, 'relTol': relTol,
+                      'alpha': alpha, 'nSig': nSig, 'inflate': inflate})
+    # out = check_meanMC_CLT_params(**{'Y': Y, 'absTol': absTol, 'relTol': relTol,
     #                                  'alpha': alpha, 'nSig': nSig, 'inflate': inflate})
-    out = check_meanMC_CLT_params(**{'Y': Y, 'absTol': absTol, 'relTol': relTol,
-                                     'alpha': alpha, 'nSig': nSig, 'inflate': inflate})
 
-    # Yrand = out.Y
-    Yrand = out['Y']
-    p = 0  # out['CM']['nCV']
-    q = 1  # out['nY']
-    val = (y for y in Yrand(out['nSig']))
+    Yrand = out.Y  # the random number generator
+    # Yrand = out['Y']
+    p = out.CM.nCV  # the number of control variates
+    q = out.nY  # the number of target random variable
+    val = Yrand(out.nSig)  # get samples to estimate variance
 
     if p == 0 and q == 1:
-        YY = list(val)
+        YY = val
     else:
+        # if there is control variate, construct a new random variable that has the
+        # same expected value and smaller variance
         # TODO replace with control variate procedures
-        YY = list(val)
+        #    meanVal = mean(val); %the mean of each column
+        #    A = bsxfun(@minus, val, meanVal); %covariance matrix of the samples
+        #    [U, S, V] = svd([A; [ones(1,q) zeros(1,p)] ],0); %use SVD to solve a constrained least square problem
+        #    Sdiag = diag(S); %the vector of the single values
+        #    U2 = U(end,:); %last row of U
+        #    beta = V*(U2'/(U2*U2')./Sdiag); %get the coefficient for control variates
+        #    YY = [val(:,1:q) A(:,q+1:end)] * beta; %get samples of the new random variable
 
-    out['stddev'] = np.std(YY)
-    sig0up = np.multiply(out['inflate'], out['stddev'])  # TODO change inflate factor out.CM.inflate
-    hmu0 = np.mean(YY)
+
+        YY = val
+
+    out.stddev = np.std(YY) # standard deviation of the new samples
+    sig0up = np.multiply(out.CM.inflate, out.stddev) # upper bound on the standard deviation
+    hmu0 = np.mean(YY) # mean of the samples
 
     nmu = int(max(1, np.power(np.ceil(
         np.multiply(
-            np.multiply(-1, stdnorminv(out['alpha'] / 2)), sig0up)
-        / max(out['absTol'], out['relTol'] * abs(hmu0)) #TODO get tolerances from out[err]
+            np.multiply(-1, stdnorminv(out.alpha / 2)), sig0up)
+        / max(out.err.absTol, out.err.relTol * abs(hmu0))  # TODO get tolerances from out[err]
     ), 2)))
-    # TODO
-    # if nmu > out['CM']['nMax']: # don't exceed sample budget
-    # # warning(['The algorithm wants to use nmu = ' int2str(nmu)...
-    # #          ', which is too big. Using ' int2str(out.CM.nMax) ' instead.'])
-    #     nmu = out['CM']['nMax'] # revise nmu
 
-    YY = (y for y in Yrand(nmu)) #get samples for computing the mean
+    if nmu > out.CM.nMax:  # don't exceed sample budget
+        warnings.warn(' '.join(['The algorithm wants to use nmu =', str(nmu),
+                                ', which is too big. Using', str(out.CM.nMax), 'instead.']))
+        nmu = out.CM.nMax  # revise nmu
 
-    out['sol'] = np.mean(list(YY))
+    YY = (y for y in Yrand(nmu))  # get samples for computing the mean
 
-    out['nSample'] = out['nSig'] + nmu
+    sol = np.mean(list(YY))
+    out.sol = sol
 
-    out['errBd'] = np.multiply(
-        np.multiply(-1, stdnorminv(out['alpha'] / 2)), sig0up / np.sqrt(nmu))
+    out.nSample = out.nSig + nmu
 
-    out['time'] = time.time() - start_time
+    out.errBd = np.multiply(
+        np.multiply(-1, stdnorminv(out.alpha / 2)), sig0up / np.sqrt(nmu))
 
-    return out
+    out.time = time.time() - start_time
+
+    return sol, out
