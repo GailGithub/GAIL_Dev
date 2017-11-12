@@ -4,7 +4,7 @@ classdef ut_MC_StoppingCriteria < matlab.unittest.TestCase
   methods(Test)
              
     function testMC_StoppingCriteria_Keister(testCase)
-      nrep = 10; 
+      nrep = 1000; 
       succTable = KeisterCubatureExampleWiley(nrep);
       testCase.verifyGreaterThanOrEqual(table2array(succTable), 0.95);
     end
