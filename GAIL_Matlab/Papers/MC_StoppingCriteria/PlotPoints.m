@@ -29,18 +29,20 @@ ylabel('\(x_2\)')
 title('IID Nodes')
 axis square
 set(gca,'xtick',tick,'ytick',tick)
-print -depsc IIDPoints.eps
+%print -depsc IIDPoints.eps
+gail.save_eps('MC_StoppingCriteria', 'IIDPoints');
 
 %% Plot Unscramled Sobol Points
 xUSobol = net(sobolset(d),n);
 figure
-plot(xUSobol(:,1),xUSobol(:,2),'.','color',MATLABOrange)
+plot(xUSobol(:,1),xUSobol(:,2),'.','color',MATLABOrange);
 xlabel('\(x_1\)')
 ylabel('\(x_2\)')
 title('Unscrambled Sobol'' Nodes')
 axis square
 set(gca,'xtick',tick,'ytick',tick)
-print -depsc USobolPoints.eps
+%print -depsc USobolPoints.eps
+gail.save_eps('MC_StoppingCriteria', 'USobolPoints');
 
 %% Plot Scramled Sobol Points
 xSSobol = net(scramble(sobolset(d),'MatousekAffineOwen'),n);
@@ -51,7 +53,8 @@ ylabel('\(x_2\)')
 title('Scrambled Sobol'' Nodes')
 axis square
 set(gca,'xtick',tick,'ytick',tick)
-print -depsc SSobolPoints.eps
+%print -depsc SSobolPoints.eps
+gail.save_eps('MC_StoppingCriteria', 'SSobolPoints');
 
 %% Plot Lattice Points
 rng(47)
@@ -65,5 +68,6 @@ ylabel('\(x_2\)')
 title('Shifted Lattice Nodes')
 axis square
 set(gca,'xtick',tick,'ytick',tick)
-print -depsc ShiftedLatticePoints.eps
+%print -depsc ShiftedLatticePoints.eps
+gail.save_eps('MC_StoppingCriteria', 'ShiftedLatticePoints');
 

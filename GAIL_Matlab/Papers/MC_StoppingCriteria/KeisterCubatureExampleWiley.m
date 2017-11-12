@@ -27,7 +27,8 @@
 % To find \(I\) by Monte Carlo methods we define an anonymous function
 % \(f\) as follows:
 
-function KeisterCubatureExampleWiley(nRep) %make it a function to not overwrite other variables
+function [succTable,avgAbsErrTable,timeTable,nSampleTable,warnTable] = KeisterCubatureExampleWiley(nRep) 
+%make it a function to not overwrite other variables
 
 if nargin < 1
    nRep = 10;
@@ -123,27 +124,45 @@ nSampleLat = mean(nSampleLat)
 Ivec = repmat(Keistertrue(dvec),nRep,1);
 absErrMC = abs(Ivec-IMCvec);
 succMC = mean(absErrMC <= repmat(abstol,nRep,1))
-avgabsErrMC = mean(absErrMC)
+avgAbsErrMC = mean(absErrMC)
 absErrSob = abs(Ivec-ISobvec);
 succSob = mean(absErrSob <= repmat(abstol,nRep,1))
-avgabsErrSob = mean(absErrSob)
+avgAbsErrSob = mean(absErrSob)
 absErrLat = abs(Ivec-ILatvec);
 succLat = mean(absErrLat <= repmat(abstol,nRep,1))
-avgabsErrLat = mean(absErrLat)
+avgAbsErrLat = mean(absErrLat)
 
 %% Print number of warnings from each algorithms
+warnMC = sum(nWarnMC,1);
+warnLat = sum(nWarnLat,1);
+warnSob = sum(nWarnSob,1);
 disp(['warnings issued by cubMC_g: ', num2str(sum(nWarnMC,1))])
 disp(['warnings issued by cubLattice_g: ', num2str(sum(nWarnLat,1))])
 disp(['warnings issued by cubSonol_g: ', num2str(sum(nWarnSob,1))])
 
 
-outFileName = ['KeisterCubExWileyDataNRep' int2str(nRep) ...
-   datestr(now,'-yyyy-mm-dd-HH-MM-SS') '.mat'];
-save(outFileName)
+%outFileName = ['KeisterCubExWileyDataNRep' int2str(nRep) ...
+%   datestr(now,'-yyyy-mm-dd-HH-MM-SS') '.mat'];
+%save(outFileName)
+
+outFileName = gail.save_mat('MC_StoppingCriteria',['KeisterCubExWileyDataNRep' int2str(nRep)],...
+    true, abstol,...
+    avgAbsErrMC, avgAbsErrLat, avgAbsErrSob, succMC, succLat, succSob,...
+    timeMC, timeLat, timeSob, nSampleMC, nSampleLat, nSampleSob, ...
+    warnMC, warnLat, warnSob);
 
 KeisterCubExWileyOut(outFileName)
 
-pause
+%% Prepare outputs
+rowNames = {'cubMC_g','cubLattice_g','cubSobol_g'};
+colNames = {'d_eq_3','d_eq_8'};
+succTable = array2table([succMC; succLat; succSob],'RowNames',rowNames,'VariableNames',colNames);
+%succTable(1,1)
+avgAbsErrTable = array2table([avgAbsErrMC; avgAbsErrSob; avgAbsErrLat],'RowNames',rowNames,'VariableNames',colNames);
+timeTable = array2table([timeMC; timeLat; timeSob],'RowNames',rowNames,'VariableNames',colNames);
+nSampleTable = array2table([nSampleMC; nSampleLat; nSampleSob],'RowNames',rowNames,'VariableNames',colNames);
+warnTable = array2table([warnMC; warnLat; warnSob],'RowNames',rowNames,'VariableNames',colNames);
+
 %%
 %
 % _Author: Fred J. Hickernell_
