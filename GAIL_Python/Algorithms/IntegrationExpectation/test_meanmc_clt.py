@@ -22,13 +22,13 @@ def f1(normt, a, d):
 
 
 @pytest.mark.parametrize(
-    'a_val, expected', [
-        (1 / math.sqrt(2), 2.1701),
-        (1, 2.1601),
-        (1.2, 2.1649)
+    'a_val, expected, comment', [
+        (1 / math.sqrt(2), 2.1701, "  Comment: a=1/sqrt(2), expected=2.1701"),
+        (1, 2.1601, "  Comment: a=1, expected=2.1601"),
+        (1.2, 2.1649, "  Comment: a=1.2, expected=2.1649")
     ]
 )
-def test_complex_f1(a_val, expected):
+def test_complex_f1(a_val, expected, comment):
     d_val = 4
     abstol = 0
     reltol = 0.01
