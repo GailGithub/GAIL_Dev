@@ -11,16 +11,6 @@ class CubMeanParam(object):
     This class contains the function, its domain, etc.
     """
 
-    @property
-    def nCV(self):
-        if self._nCV is None:
-            self._nCV = len(self.trueMuCV)
-        return self._nCV
-
-    @nCV.setter
-    def nCV(self, nCV_value):
-        self._nCV = nCV_value
-
     inflate = property(attrgetter('_inflate'))
 
     @inflate.setter
@@ -43,65 +33,79 @@ class CubMeanParam(object):
 
         self._inflateFun = inflateFun_value
 
-        nInit = property(attrgetter('_nInit'))
+    nInit = property(attrgetter('_nInit'))
 
-        @nInit.setter
-        def nInit(self, nInit_value):  # {'numeric'}, {'scalar', 'positive', 'integer'})
-            msg = "nInit should be positive integer"
-            if nInit_value is None:
-                raise Exception("nInit value is empty. " + msg)
-            if not isinstance(nInit_value, numbers.Number):
-                raise Exception("nInit value is not number. " + msg)
-            else:
-                if not isinstance(nInit_value, int):
-                    raise Exception("nInit value is not an integer. " + msg)
-                if nInit_value < 0:
-                    raise Exception("nInit value is negative. " + msg)
+    @nInit.setter
+    def nInit(self, nInit_value):  # {'numeric'}, {'scalar', 'positive', 'integer'})
+        msg = "nInit should be positive integer"
+        if nInit_value is None:
+            raise Exception("nInit value is empty. " + msg)
+        if not isinstance(nInit_value, numbers.Number):
+            raise Exception("nInit value is not number. " + msg)
+        else:
+            if not isinstance(nInit_value, int):
+                raise Exception("nInit value is not an integer. " + msg)
+            if nInit_value < 0:
+                raise Exception("nInit value is negative. " + msg)
 
-            self._nInit = nInit_value
+        self._nInit = nInit_value
 
-        nMax = property(attrgetter('_nMax'))
+    nMax = property(attrgetter('_nMax'))
 
-        @nMax.setter
-        def nMax(self, nMax_value):  # {'numeric'}, {'scalar', 'positive', 'integer'})
-            msg = "nMax should be positive integer"
-            if nMax_value is None:
-                raise Exception("nMax value is empty. " + msg)
-            if not isinstance(nMax_value, numbers.Number):
-                raise Exception("nMax value is not number. " + msg)
-            else:
-                if not isinstance(nMax_value, int):
-                    raise Exception("nMax value is not an integer. " + msg)
-                if nMax_value < 0:
-                    raise Exception("nMax value is negative. " + msg)
+    @nMax.setter
+    def nMax(self, nMax_value):  # {'numeric'}, {'scalar', 'positive', 'integer'})
+        msg = "nMax should be positive integer"
+        if nMax_value is None:
+            raise Exception("nMax value is empty. " + msg)
+        if not isinstance(nMax_value, numbers.Number):
+            raise Exception("nMax value is not number. " + msg)
+        else:
+            if not isinstance(nMax_value, int):
+                raise Exception("nMax value is not an integer. " + msg)
+            if nMax_value < 0:
+                raise Exception("nMax value is negative. " + msg)
 
-            self._nMax = nMax_value
+        self._nMax = nMax_value
 
-        nMu = property(attrgetter('_nMu'))
+    nMu = property(attrgetter('_nMu'))
 
-        @nMu.setter
-        def nMu(self, nMu_value):  # {'numeric'}, {'positive', 'integer'})
-            msg = "nMu should be positive integer"
-            if nMu_value is None:
-                raise Exception("nMu value is empty. " + msg)
-            if not isinstance(nMu_value, numbers.Number):
-                raise Exception("nMu value is not number. " + msg)
-            else:
-                if not isinstance(nMu_value, int):
-                    raise Exception("nMu value is not an integer. " + msg)
-                if nMu_value < 0:
-                    raise Exception("nMu value is negative. " + msg)
+    @nMu.setter
+    def nMu(self, nMu_value):  # {'numeric'}, {'positive', 'integer'})
+        msg = "nMu should be positive integer"
+        if nMu_value is None:
+            raise Exception("nMu value is empty. " + msg)
+        if not isinstance(nMu_value, numbers.Number):
+            raise Exception("nMu value is not number. " + msg)
+        else:
+            if not isinstance(nMu_value, int):
+                raise Exception("nMu value is not an integer. " + msg)
+            if nMu_value < 0:
+                raise Exception("nMu value is negative. " + msg)
 
-            self._nMu = nMu_value
+        self._nMu = nMu_value
 
-        trueMuCV = property(attrgetter('_trueMuCV'))
+    trueMuCV = property(attrgetter('_trueMuCV'))
 
-        @trueMuCV.setter
-        def trueMuCV(self, trueMuCV_value):  # {'numeric'}
-            if not isinstance(trueMuCV_value, numbers.Number):
-                raise Exception("trueMuCV value is not number.")
+    @trueMuCV.setter
+    def trueMuCV(self, trueMuCV_value):  # {'numeric'}
+        if isinstance(trueMuCV_value, (list, tuple)):
+            for tmcv in trueMuCV_value:
+                if not isinstance(tmcv, numbers.Number):
+                    raise Exception("trueMuCV value is not number.")
+        elif not isinstance(trueMuCV_value, numbers.Number):
+            raise Exception("trueMuCV value is not number.")
 
-            self._trueMuCV = trueMuCV_value
+        self._trueMuCV = trueMuCV_value if isinstance(trueMuCV_value, (list, tuple)) else [trueMuCV_value]
+
+    @property
+    def nCV(self):
+        if self._nCV is None:
+            self._nCV = len(self._trueMuCV)
+        return self._nCV
+
+    @nCV.setter
+    def nCV(self, nCV_value):
+        self._nCV = nCV_value
 
     def __init__(self, inflate=1.2, inflateFun=None, nInit=1024, nMax=2 ** 24, nMu=1, trueMuCV=None, **kwargs):
         if inflate is not None: self.inflate = inflate  # inflation factor for bounding the error
@@ -113,10 +117,12 @@ class CubMeanParam(object):
         self.nInit = nInit  # initial sample size
         self.nMax = nMax  # maximum sample size
         self.nMu = nMu  # number of integrals for solution function
+
         if trueMuCV is None:
             self.trueMuCV = []
         else:
-            self.trueMuCV = trueMuCV  # true integral for control variates
+            # true integral for control variates
+            self.trueMuCV = trueMuCV
 
         self._nCV = None  # number of control variates
 

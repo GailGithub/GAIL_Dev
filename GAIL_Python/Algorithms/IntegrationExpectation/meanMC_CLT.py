@@ -32,17 +32,16 @@ def stdnorminv(p):
 
 def meanMC_CLT(Y=None, absTol=1e-2, relTol=0, alpha=0.01, nSig=1000, inflate=1.2, **kwargs):
     start_time = time.time()
-
-    out = MeanYOut(**{'Y': Y, 'absTol': absTol, 'relTol': relTol,
-                      'alpha': alpha, 'nSig': nSig, 'inflate': inflate})
-    # out = check_meanMC_CLT_params(**{'Y': Y, 'absTol': absTol, 'relTol': relTol,
-    #                                  'alpha': alpha, 'nSig': nSig, 'inflate': inflate})
+    input_kwargs = {'Y': Y, 'absTol': absTol, 'relTol': relTol,
+                    'alpha': alpha, 'nSig': nSig, 'inflate': inflate}
+    input_kwargs.update(kwargs)
+    out = MeanYOut(**input_kwargs)
 
     Yrand = out.Y  # the random number generator
-    # Yrand = out['Y']
+
     p = out.CM.nCV  # the number of control variates
     q = out.nY  # the number of target random variable
-    val = Yrand(out.nSig)  # get samples to estimate variance
+    val = np.array(Yrand(out.nSig))  # get samples to estimate variance
 
     if p == 0 and q == 1:
         YY = val
@@ -51,17 +50,23 @@ def meanMC_CLT(Y=None, absTol=1e-2, relTol=0, alpha=0.01, nSig=1000, inflate=1.2
         # same expected value and smaller variance
         meanVal = np.mean(val, axis=0)  # the mean of each column
         A = val - meanVal  # covariance matrix of the samples
-        U, Sdiag, V = np.linalg.svd(np.vstack([A, np.hstack([np.ones(shape=[1, q]), np.zeros(shape=[1, p])])]),
-                                    full_matrices=False)  # use SVD to solve a constrained least square problem
+
+        U, Sdiag, V = np.linalg.svd(
+            np.concatenate([A, np.concatenate([np.ones(shape=[1, q]), np.zeros(shape=[1, p])], axis=1)], axis=0),
+            full_matrices=False)  # use SVD to solve a constrained least square problem
+
         U2 = U[-1]  # last row of U
+
         beta = np.dot(V.T,
                       np.divide(np.divide(U2.T, np.dot(U2, U2.T)), Sdiag))  # get the coefficient for control variates
 
         # TODO ask V.T, V which one to use for calculating beta.
-        YY = np.dot(np.hstack([val[:, :q], A[:, q:]]), beta)  # get samples of the new random variable
+        YY = np.dot(np.concatenate([val[:, :q], A[:, q:]], axis=1), beta)  # get samples of the new random variable
 
     out.stddev = np.std(YY)  # standard deviation of the new samples
+
     sig0up = np.multiply(out.CM.inflate, out.stddev)  # upper bound on the standard deviation
+
     hmu0 = np.mean(YY)  # mean of the samples
 
     nmu = int(max(1, np.power(np.ceil(
@@ -75,17 +80,18 @@ def meanMC_CLT(Y=None, absTol=1e-2, relTol=0, alpha=0.01, nSig=1000, inflate=1.2
                                 ', which is too big. Using', str(out.CM.nMax), 'instead.']))
         nmu = out.CM.nMax  # revise nmu
 
-    W = Yrand(nmu)  # get samples for computing the mean
+    W = np.array(Yrand(nmu))  # get samples for computing the mean
 
     if p == 0 and q == 1:  # no control variates
         YY = W
     else:  # samples of the new random variable
-        if out.CM.trueMuCV is None:
+        if out.CM.trueMuCV:
             W[:, q:] = W[:, q:] - out.CM.trueMuCV  # subtract true mean from control variates
 
-        YY = W * beta  # incorporate the control variates and multiple Y's
+        YY = np.dot(W, beta)  # incorporate the control variates and multiple Y's
 
     sol = np.mean(YY)
+
     out.sol = sol
 
     out.nSample = out.nSig + nmu
