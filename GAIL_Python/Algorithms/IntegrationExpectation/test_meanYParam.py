@@ -39,3 +39,38 @@ def test_alpha_excepetions(alpha, comment):
 def test_absTol_excepetions(absTol, comment):
     with pytest.raises(Exception):
         myp = MeanYParam(absTol=absTol)
+
+
+@pytest.mark.parametrize(
+    'nSig,  comment', [
+        (-0.1, '  Comment: negative nSig'),
+        ('0.1', '  Comment: non-numeric nSig'),
+        ('', '  Comment: empty nSig'),
+        (None, '  Comment: null nSig '),
+    ])
+def test_nSig_excepetions(nSig, comment):
+    with pytest.raises(Exception):
+        myp = MeanYParam(nSig=nSig)
+
+
+@pytest.mark.parametrize(
+    'relTol,  comment', [
+        (-0.1, '  Comment: negative relTol'),
+        ('0.1', '  Comment: non-numeric relTol'),
+        ('', '  Comment: empty relTol'),
+        (None, '  Comment: null relTol '),
+    ])
+def test_relTol_excepetions(relTol, comment):
+    with pytest.raises(Exception):
+        myp = MeanYParam(relTol=relTol)
+
+
+@pytest.mark.parametrize(
+    'Y,  comment', [
+        ('5', '  Comment: Y not String'),
+        ([5, 6, 6], '  Comment: Y not list'),
+        (45, '  Comment: Y not numeric'),
+    ])
+def test_y(Y, comment):
+    with pytest.raises(Exception):
+        myp = MeanYParam(Y=Y)
