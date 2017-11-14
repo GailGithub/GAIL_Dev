@@ -2,7 +2,7 @@ from MeanYOut import MeanYOut
 import pytest
 
 
-# MeanYOut functions
+# MeanYOut attribute setting functions
 
 @pytest.mark.parametrize(
     'stddev,  comment', [
