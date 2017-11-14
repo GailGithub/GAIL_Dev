@@ -117,8 +117,8 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %
 %   >> f = @(x) x.^2; [pp, out_param] = funappxglobal_g(f)
 %
-%     pp = ***
-%   
+%     pp =
+%
 %       form: 'pp'
 %     breaks: [1***5051 double]
 %      coefs: [5050***2 double]
@@ -127,7 +127,7 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %        dim: 1
 %     orient: 'first'
 %
-%     out_param = ***
+%     out_param =
 %
 %                f: @(x)x.^2
 %                a: 0
@@ -149,7 +149,7 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %   >> f = @(x) x.^2;
 %   >> [pp, out_param] = funappxglobal_g(f,-2,2,1e-7,10,10,1000000)
 %
-% pp = ***
+% pp =
 %
 %       form: 'pp'
 %     breaks: [1***38149 double]
@@ -159,7 +159,7 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %        dim: 1
 %     orient: 'first'
 %
-%     out_param = ***
+%     out_param =
 %
 %                a: -2
 %           abstol: 1.0000e-07
@@ -181,7 +181,7 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %   >> f = @(x) x.^2;
 %   >> [pp, out_param] = funappxglobal_g(f,'a',-2,'b',2,'nhi',100,'nlo',10)
 %
-% pp = ***
+% pp =
 %
 %       form: 'pp'
 %     breaks: [1***31851 double]
@@ -191,7 +191,7 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %        dim: 1
 %     orient: 'first'
 %
-% out_param = ***
+% out_param =
 %
 %                a: -2
 %           abstol: 1.0000e-06
@@ -215,7 +215,7 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %   >> in_param.nmax = 10^6; f = @(x) x.^2;
 %   >> [pp, out_param] =funappxglobal_g(f,in_param)
 %
-% pp = ***
+% pp =
 %
 %       form: 'pp'
 %     breaks: [1***596779 double]
@@ -225,7 +225,7 @@ function [pp,out_param]=funappxglobal_g(varargin)
 %        dim: 1
 %     orient: 'first'
 %
-%   out_param = ***
+%   out_param = 
 %
 %                a: -10
 %           abstol: 1.0000e-07
