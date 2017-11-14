@@ -4,6 +4,9 @@ from operator import attrgetter
 import numpy as np
 
 
+def defaultInflateFun(m):
+    return np.multiply((16 / 3), np.power(2., (-1 * m)))
+
 class CubMeanParam(object):
     """
     CubMeanParam is a class containing the parameters related to
@@ -110,7 +113,7 @@ class CubMeanParam(object):
     def __init__(self, inflate=1.2, inflateFun=None, nInit=1024, nMax=2 ** 24, nMu=1, trueMuCV=None, **kwargs):
         if inflate is not None: self.inflate = inflate  # inflation factor for bounding the error
         if inflateFun is None:
-            self.inflateFun = lambda m: np.multiply((16 / 3), np.power(2., (-1 * m)))
+            self.inflateFun = defaultInflateFun
         else:
             self.inflateFun = inflateFun  # inflateFun factor
 
