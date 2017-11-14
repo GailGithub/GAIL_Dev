@@ -1,5 +1,5 @@
 from meanYParam import MeanYParam, default_random_generator
-from CubMeanParam import CubMeanParam
+
 import inspect
 import pytest
 
@@ -11,7 +11,6 @@ import pytest
         ('nSig', 1000, '  Comment: default nSig = 1000'),
         ('relTol', 0, '  Comment: default relTol = 0'),
         ('Y', default_random_generator, '  Comment: default Y = Uniform Square Random generator')
-            ('inflate', 1.2, '  Comment: default inflate = 1.2')
     ])
 def test_defaults(property, default_value, comment):
     myp = MeanYParam()
@@ -69,56 +68,11 @@ def test_relTol_excepetions(relTol, comment):
 
 @pytest.mark.parametrize(
     'Y,  comment', [
-        ('5', '  Comment: Y not String'),
+        ('5', '  Comment: Y is non-numeric'),
         ([5, 6, 6], '  Comment: Y not list'),
         (45, '  Comment: Y not numeric'),
     ])
-def test_y(Y, comment):
+def test_y_Exceptions(Y, comment):
     with pytest.raises(Exception):
         myp = MeanYParam(Y=Y)
 
-
-@pytest.mark.parametrize(
-    'inflate,  comment', [
-        ('5', '  Comment: inflate not String'),
-        ('', '  Comment: empty inflate'),
-    ])
-def test_inflate(inflate, comment):
-    with pytest.raises(Exception):
-        myp = CubMeanParam(inflate=inflate)
-
-
-@pytest.mark.parametrize(
-    'nInit,  comment', [
-        ('5', '  Comment: nInit not String'),
-        ('', '  Comment: empty nInit'),
-        (-1.1, '  Comment: nInit negative nSig'),
-        (2.1, '  Comment: nInit integer')
-    ])
-def test_nInit(nInit, comment):
-    with pytest.raises(Exception):
-        myp = CubMeanParam(nInit=nInit)
-
-
-@pytest.mark.parametrize(
-    'nMax,  comment', [
-        ('5', '  Comment: nMax not String'),
-        ('', '  Comment: empty nMax'),
-        (-1.1, '  Comment: nMax negative nSig'),
-        (2.1, '  Comment: nMax integer')
-    ])
-def test_nMax(nMax, comment):
-    with pytest.raises(Exception):
-        myp = CubMeanParam(nMax=nMax)
-
-
-@pytest.mark.parametrize(
-    'nMu,  comment', [
-        ('5', '  Comment: nMu not String'),
-        ('', '  Comment: empty nMu'),
-        (-1.1, '  Comment: nMu negative nSig'),
-        (2.1, '  Comment: nMu integer')
-    ])
-def test_nMu(nMu, comment):
-    with pytest.raises(Exception):
-        myp = CubMeanParam(nMu=nMu)
