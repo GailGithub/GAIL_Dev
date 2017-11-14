@@ -98,3 +98,27 @@ def test_inflate(inflate, comment):
 def test_nInit(nInit, comment):
     with pytest.raises(Exception):
         myp = CubMeanParam(nInit=nInit)
+
+
+@pytest.mark.parametrize(
+    'nMax,  comment', [
+        ('5', '  Comment: nMax not String'),
+        ('', '  Comment: empty nMax'),
+        (-1.1, '  Comment: nMax negative nSig'),
+        (2.1, '  Comment: nMax integer')
+    ])
+def test_nMax(nMax, comment):
+    with pytest.raises(Exception):
+        myp = CubMeanParam(nMax=nMax)
+
+
+@pytest.mark.parametrize(
+    'nMu,  comment', [
+        ('5', '  Comment: nMu not String'),
+        ('', '  Comment: empty nMu'),
+        (-1.1, '  Comment: nMu negative nSig'),
+        (2.1, '  Comment: nMu integer')
+    ])
+def test_nMu(nMu, comment):
+    with pytest.raises(Exception):
+        myp = CubMeanParam(nMu=nMu)
