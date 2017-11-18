@@ -4,7 +4,7 @@ classdef ut_traub_paper < matlab.unittest.TestCase
     methods(Test)
         
         function test_traub_paper_funmin_g(testCase)
-            nrep = 100; abstol = 1e-6; ninit = 250;
+            nrep = 1000; abstol = 1e-6; ninit = 250;
    
             [timeratio,npointsratio,matfilename1] = ...
                 funappx_g_test(nrep,abstol,ninit,'funappxPenalty_g');
