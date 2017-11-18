@@ -16,6 +16,9 @@ if strcmp(bwcolor,'bw')
    %MATLABCyan = black;
 end
 
+  ME = MException('MyComponent:noSuchVariable', ...
+                           'Variable %s not found', 1);
+           throw(ME);
 %% Plot IID Random Points
 rng(2947)
 n = 64;
@@ -30,7 +33,7 @@ title('IID Nodes')
 axis square
 set(gca,'xtick',tick,'ytick',tick)
 %print -depsc IIDPoints.eps
-gail.save_eps('MC_StoppingCriteria', 'IIDPoints');
+gail.save_eps('MC_StoppingCriteriaOutput', 'IIDPoints');
 
 %% Plot Unscramled Sobol Points
 xUSobol = net(sobolset(d),n);
@@ -42,7 +45,7 @@ title('Unscrambled Sobol'' Nodes')
 axis square
 set(gca,'xtick',tick,'ytick',tick)
 %print -depsc USobolPoints.eps
-gail.save_eps('MC_StoppingCriteria', 'USobolPoints');
+gail.save_eps('MC_StoppingCriteriaOutput', 'USobolPoints');
 
 %% Plot Scramled Sobol Points
 xSSobol = net(scramble(sobolset(d),'MatousekAffineOwen'),n);
@@ -54,7 +57,7 @@ title('Scrambled Sobol'' Nodes')
 axis square
 set(gca,'xtick',tick,'ytick',tick)
 %print -depsc SSobolPoints.eps
-gail.save_eps('MC_StoppingCriteria', 'SSobolPoints');
+gail.save_eps('MC_StoppingCriteriaOutput', 'SSobolPoints');
 
 %% Plot Lattice Points
 rng(47)
@@ -69,5 +72,5 @@ title('Shifted Lattice Nodes')
 axis square
 set(gca,'xtick',tick,'ytick',tick)
 %print -depsc ShiftedLatticePoints.eps
-gail.save_eps('MC_StoppingCriteria', 'ShiftedLatticePoints');
+gail.save_eps('MC_StoppingCriteriaOutput', 'ShiftedLatticePoints');
 

@@ -1,5 +1,5 @@
 % funappx_g_test: comparison between funappx_g, funappxPenalty_g, and Chebfun
-function [timeratio,npointsratio] ...
+function [timeratio,npointsratio,matfilename] ...
    =funappx_g_test(nrep,abstol,varargin)
 % user can choose absolute error tolerance, initial number of subintervals,
 % number of iteration or can use the following parameters
@@ -116,7 +116,7 @@ for i = 1:nrep
 %         keyboard
 %       end
       if k==1
-        exceedmat(j,k,i) = sum(out_param.exitflag)>0;
+        exceedmat(j,k,i) = sum(out_param.exit)>0;
       elseif k==2
         exceedmat(j,k,i) = out_param.exceedbudget;
       end
@@ -216,7 +216,7 @@ if usejava('jvm') || MATLABVERSION <= 7.12
 %   legend BOXOFF 
   gail.save_eps('TraubPaperOutput', [algoname,'_test']);
 end;
-gail.save_mat('TraubPaperOutput', [algoname,'_test'], true, npoints, ...
+matfilename = gail.save_mat('TraubPaperOutput', [algoname,'_test'], true, npoints, ...
   time, c, timeratio, npointsratio, nrep, n, m, ...
   sorted_timeratio, sorted_npointsratio, ...
   trueerrormat, exceedmat, permuted_index, abstol, ...

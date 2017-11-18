@@ -3,6 +3,9 @@
 format short
 
 %% Workouts
+
+run(ut_traub_paper)
+
 % funmin_g
 %doctest par_funmin_g
 
