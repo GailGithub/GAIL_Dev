@@ -198,6 +198,7 @@ if exist('chebfun','file')
 end
 
 %% Output funappx Table
+funappx_g_success_rate = [];
 if numel(funappxRes) > 0
    sorted_timeratio = 0;
    sorted_npointsratio = 0;
