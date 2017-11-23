@@ -117,7 +117,7 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 %     in_param.scramble --- boolean which allows to choose Owen scrambled
 %     Sobol' sequences. By default it is true.
 %
-%     in_param.betaUpdate--- this input decides whether to update beta during each
+%     in_param.betaUpdate --- this input decides whether to update beta during each
 %     iteration when using control variates. With value 0 beta is not updated.
 %     If betaUpdate = 1, beta is updated. By default, betaUpdate = 0.
 %
@@ -248,7 +248,7 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 %
 %  References
 %
-%   [1] Fred J. Hickernell and Lluis Antoni Jimenez Rugama "Reliable
+%   [1] Fred J. Hickernell and Lluis Antoni Jimenez Rugama, "Reliable
 %   adaptive cubature using digital sequences", Monte Carlo and Quasi-Monte
 %   Carlo Methods: MCQMC, Leuven, Belgium, April 2014 (R. Cools and D.
 %   Nuyens, eds.), Springer Proceedings in Mathematics and Statistics, vol.
