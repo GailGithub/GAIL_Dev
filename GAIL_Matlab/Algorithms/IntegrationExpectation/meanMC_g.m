@@ -333,7 +333,7 @@ else
         toloversig = out_param.bound_err(i)/sig0up;%next tolerance over sigma
         alphai = (out_param.alpha-alpha_sig)/(1-alpha_sig)*2.^(-i);
         %update the next uncertainty
-        [out_param.n(i),out_param.bound_err(i-1)] = nchebe(toloversig,alphai,out_param.kurtmax,out_param.nbudget,sig0up);
+        out_param.n(i) = nchebe(toloversig,alphai,out_param.kurtmax,out_param.nbudget,sig0up);
     end
 end
 %get the next sample size needed
