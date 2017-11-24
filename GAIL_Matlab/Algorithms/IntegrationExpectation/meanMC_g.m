@@ -358,12 +358,13 @@ logsqrtnCLT=log(gail.stdnorminv(1-alpha/2)/toloversig);%sample size by CLT
 nbe=ceil(exp(2*fzero(BEfun2,logsqrtnCLT)));
 %calculate Berry-Esseen n by fzero function
 ncb = min(min(ncheb,nbe),nbudget);%take the min of two sample sizes.
-
-logsqrtn = log(sqrt(ncb));
-BEfun3=@(toloversig)gail.stdnormcdf(-exp(logsqrtn).*toloversig)...
-    +exp(-logsqrtn).*min(A1*(M3upper+A2), ...
-    A*M3upper./(1+(exp(logsqrtn).*toloversig).^3))-alpha/2;
-err = fzero(BEfun3,toloversig) * sig0up;
+if(nargout>1)
+    logsqrtn = log(sqrt(ncb));
+    BEfun3=@(toloversig)gail.stdnormcdf(-exp(logsqrtn).*toloversig)...
+        +exp(-logsqrtn).*min(A1*(M3upper+A2), ...
+        A*M3upper./(1+(exp(logsqrtn).*toloversig).^3))-alpha/2;
+    err = fzero(BEfun3,toloversig) * sig0up;
+end
 end
 
 function eps = ncbinv(n1,alpha1,kurtmax)
