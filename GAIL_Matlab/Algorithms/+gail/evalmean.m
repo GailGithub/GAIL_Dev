@@ -1,4 +1,4 @@
-function p =evalmean(RV,n,npcmax)
+function p = evalmean(RV,n,npcmax)
 %%  Split n samples into columns and evaluate the mean recursively
 % RV --- the function to generate the random variables
 % n --- the number of samples

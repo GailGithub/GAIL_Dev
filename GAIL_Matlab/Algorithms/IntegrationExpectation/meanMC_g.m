@@ -84,7 +84,7 @@ function [tmu,out_param]=meanMC_g(varargin)
 %
 %     out_param.hmu --- estimated mean in each iteration.
 %
-%     out_param.tol --- the reliable upper bound on error for each iteration.
+%     out_param.bound_err --- a reliable upper bound on error for each iteration.
 %
 %     out_param.var --- the sample variance.
 %
@@ -239,9 +239,14 @@ end
 %control the order of out_param
 if out_param.reltol ~= 0
     out_param = orderfields(out_param, ...
-        {'Yrand','abstol','reltol','tol','alpha','fudge', 'tau','hmu','time',...
+        {'Yrand','abstol','reltol','bound_err','alpha','fudge', 'tau','hmu','time',...
         'n1','nSig', 'n','nremain','nbudget','ntot','tbudget','var',...
         'kurtmax','exitflag'});
+else
+    out_param = orderfields(out_param, ...
+        {'Yrand','abstol','reltol','bound_err','alpha','fudge', 'tau','time',...
+        'n1','nSig', 'n','nremain','nbudget','ntot','tbudget','var',...
+        'kurtmax','exitflag'}); % no hmu
 end
 end
 
@@ -270,7 +275,7 @@ if out_param.reltol ==0
     else
         toloversig = out_param.abstol/sig0up;
         % absolute error tolerance over sigma
-        out_param.n = nchebe(toloversig,alphai,out_param.kurtmax);
+        [out_param.n,out_param.bound_err] = nchebe(toloversig,alphai,out_param.kurtmax,out_param.nbudget,sig0up);
         if out_param.n > out_param.nremain;
             out_param.exitflag=1; %pass a flag
             meanMC_g_err(out_param); % print warning message
@@ -284,7 +289,7 @@ else
     %uncertainty to do iteration
     eps1 = ncbinv(out_param.n1,alphai,out_param.kurtmax);
     %tolerance for initial estimation
-    out_param.tol(1) = sig0up*eps1;
+    out_param.bound_err(1) = sig0up*eps1;
     %the width of initial confidence interval for the mean
     i=1;
     out_param.n(i) = out_param.n1;% initial sample size to do iteration
@@ -308,27 +313,27 @@ else
         % for more info
         theta  = 0;% relative error case
         deltaplus = (gail.tolfun(out_param.abstol,out_param.reltol,...
-            theta,out_param.hmu(i) - out_param.tol(i),errtype)...
+            theta,out_param.hmu(i) - out_param.bound_err(i),errtype)...
             +gail.tolfun(out_param.abstol,out_param.reltol,...
-            theta,out_param.hmu(i) + out_param.tol(i),errtype))/2;
+            theta,out_param.hmu(i) + out_param.bound_err(i),errtype))/2;
         % a combination of tolfun, which used to decide stopping time
-        if deltaplus >= out_param.tol(i) % stopping criterion
+        if deltaplus >= out_param.bound_err(i) % stopping criterion
             deltaminus= (gail.tolfun(out_param.abstol,out_param.reltol,...
-                theta,out_param.hmu(i) - out_param.tol(i),errtype)...
+                theta,out_param.hmu(i) - out_param.bound_err(i),errtype)...
                 -gail.tolfun(out_param.abstol,out_param.reltol,...
-                theta,out_param.hmu(i) + out_param.tol(i),errtype))/2;
+                theta,out_param.hmu(i) + out_param.bound_err(i),errtype))/2;
             % the other combination of tolfun, which adjust the hmu a bit
             tmu = out_param.hmu(i)+deltaminus;
             break;
         else
-            out_param.tol(i+1) = min(out_param.tol(i)/2,max(out_param.abstol,...
+            out_param.bound_err(i+1) = min(out_param.bound_err(i)/2,max(out_param.abstol,...
                 0.95*out_param.reltol*abs(out_param.hmu(i))));
             i=i+1;
         end
-        toloversig = out_param.tol(i)/sig0up;%next tolerance over sigma
+        toloversig = out_param.bound_err(i)/sig0up;%next tolerance over sigma
         alphai = (out_param.alpha-alpha_sig)/(1-alpha_sig)*2.^(-i);
         %update the next uncertainty
-        out_param.n(i) = nchebe(toloversig,alphai,out_param.kurtmax);
+        [out_param.n(i),out_param.bound_err(i-1)] = nchebe(toloversig,alphai,out_param.kurtmax,out_param.nbudget,sig0up);
     end
 end
 %get the next sample size needed
@@ -336,7 +341,7 @@ out_param.ntot = nsofar;%total sample size used
 out_param.time=toc(tstart); %elapsed time
 end
 
-function ncb = nchebe(toloversig,alpha,kurtmax)
+function [ncb, err] = nchebe(toloversig,alpha,kurtmax,nbudget,sig0up)
 %this function uses Chebyshev and Berry-Esseen Inequality to calculate the
 %sample size needed
 ncheb = ceil(1/(toloversig^2*alpha));%sample size by Chebyshev's Inequality
@@ -352,7 +357,13 @@ BEfun2=@(logsqrtn)gail.stdnormcdf(-exp(logsqrtn).*toloversig)...
 logsqrtnCLT=log(gail.stdnorminv(1-alpha/2)/toloversig);%sample size by CLT
 nbe=ceil(exp(2*fzero(BEfun2,logsqrtnCLT)));
 %calculate Berry-Esseen n by fzero function
-ncb = min(ncheb,nbe);%take the min of two sample sizes.
+ncb = min(min(ncheb,nbe),nbudget);%take the min of two sample sizes.
+
+logsqrtn = log(sqrt(ncb));
+BEfun3=@(toloversig)gail.stdnormcdf(-exp(logsqrtn).*toloversig)...
+    +exp(-logsqrtn).*min(A1*(M3upper+A2), ...
+    A*M3upper./(1+(exp(logsqrtn).*toloversig).^3))-alpha/2;
+err = fzero(BEfun3,toloversig) * sig0up;
 end
 
 function eps = ncbinv(n1,alpha1,kurtmax)
