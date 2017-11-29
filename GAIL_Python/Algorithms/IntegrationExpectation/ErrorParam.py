@@ -1,30 +1,40 @@
+#!/usr/bin/env python
+"""Definition of ErrorParam object"""
+
+__author__ = ["Anil Simon", "Divya Vasireddy"]
+
 from operator import attrgetter
 import numbers
-import numpy as np
+
+try:
+    from GAIL_Python.Algorithms.IntegrationExpectation.helper_functions import identity_function, ci_calculator, \
+        set_named_args, default_random_generator
+except ModuleNotFoundError:
+    from helper_functions import identity_function, ci_calculator, set_named_args, default_random_generator
 
 
 class ErrorParam(object):
-    """
+    """ Definition of ErrorParam Object
     This class contains the error tolerances, solution function, and
     related parameters determining the error criterion.
     """
-    sol_fun = property(attrgetter('_sol_fun'))
+    solFun = property(attrgetter('_solFun'))
 
-    @sol_fun.setter
-    def sol_fun(self, sol_fun_func):
-        # ISFCN To judge if input is a function handle or not
+    @solFun.setter
+    def solFun(self, sol_fun_func):
+        """To judge if input is a function handle or not"""
         if not callable(sol_fun_func):
-            raise Exception("sol_fun has to be a function")
-        self._sol_fun = sol_fun_func
+            raise Exception("solFun has to be a function")
+        self._solFun = sol_fun_func
 
-    solbd_fun = property(attrgetter('_solbd_fun'))
+    solBdFun = property(attrgetter('_solBdFun'))
 
-    @solbd_fun.setter
-    def solbd_fun(self, solbd_fun_func):
-        # ISFCN To judge if input is a function handle or not
+    @solBdFun.setter
+    def solBdFun(self, solbd_fun_func):
+        """To judge if input is a function handle or not"""
         if not callable(solbd_fun_func):
-            raise Exception("solbd_fun has to be a function")
-        self._solbd_fun = solbd_fun_func
+            raise Exception("solBdFun has to be a function")
+        self._solBdFun = solbd_fun_func
 
     absTol = property(attrgetter('_absTol'))
 
@@ -54,18 +64,19 @@ class ErrorParam(object):
                 raise Exception("relTol value cannot be negative. " + msg)
         self._relTol = relTol_value
 
-    def __init__(self, absTol=1e-2, relTol=0, solFun=None, solbdFun=None, **kwargs):
+    def __init__(self, absTol=1e-2, relTol=0, solFun=None, solBdFun=None, **kwargs):
         self.absTol = absTol
         self.relTol = relTol
         if solFun is None:
-            self.solFun = lambda mu: mu
+            self.solFun = identity_function
         else:
             self.solFun = solFun
-        if solbdFun is None:
-            self.solbdFun = lambda muhat, errbd: (muhat - errbd, muhat + errbd)
+        if solBdFun is None:
+            self.solBdFun = ci_calculator
         else:
-            self.solbdFun = solbdFun
-        meanYparams = {'sol_fun': 'solFun', 'solbd_fun': 'solbdFun', 'solfun': 'solFun'}
-        for k, v in kwargs.items():
-            if k in meanYparams:
-                setattr(self, meanYparams[k], v)
+            self.solBdFun = solBdFun
+
+        # set mis-spelled input arguments
+        params_names = ['absTol', 'relTol', 'solFun', 'solBdFun']
+        set_named_args(self, kwargs, params_names)
+
