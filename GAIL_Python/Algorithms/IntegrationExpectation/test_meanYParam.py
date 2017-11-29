@@ -1,8 +1,19 @@
+#!/usr/bin/env python
+"""Tests for validation of MeanYParam input parameters
+"""
+__author__ = ["Anil Simon", "Divya Vasireddy"]
+
 import pytest
 try:
-    from GAIL_Python.Algorithms.IntegrationExpectation.meanYParam import MeanYParam, default_random_generator
+    from GAIL_Python.Algorithms.IntegrationExpectation.meanYParam import MeanYParam
 except:
-    from meanYParam import MeanYParam, default_random_generator
+    from meanYParam import MeanYParam
+
+try:
+    from GAIL_Python.Algorithms.IntegrationExpectation.helper_functions import default_random_generator
+except ModuleNotFoundError:
+    from helper_functions import default_random_generator
+
 
 
 def simple_test(property_name, tests=None):
