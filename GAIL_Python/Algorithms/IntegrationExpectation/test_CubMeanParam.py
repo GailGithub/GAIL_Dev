@@ -1,23 +1,33 @@
-from CubMeanParam import CubMeanParam, defaultInflateFun
+#!/usr/bin/env python
+"""Tests for validation of CubMeanParam input parameters
+"""
+__author__ = ["Anil Simon", "Divya Vasireddy"]
+
 import pytest
+from CubMeanParam import CubMeanParam
+
+try:
+    from GAIL_Python.Algorithms.IntegrationExpectation.helper_functions import defaultInflateFun, simple_test
+except ModuleNotFoundError:
+    from helper_functions import defaultInflateFun, simple_test
+
+cubmeanparam_defaults_tests = [
+    ('inflate', 1.2, '  Comment: default inflate = 1.2'),
+    ('nInit', 1024, '  Comment: default nInit = 1024'),
+    ('nMax', 2 ** 24, '  Comment: default nMax = 2**24'),
+    ('nMu', 1, '  Comment: default nMu = 1'),
+    ('trueMuCV', [], '  Comment: default trueMuCV = []'),
+    ('inflateFun', defaultInflateFun,
+     '  Comment: default inflateFun = np.multiply((16 / 3), np.power(2., (-1 * m)))')
+]
 
 
 @pytest.mark.parametrize(
-    'property, default_value, comment', [
-        ('inflate', 1.2, '  Comment: default inflate = 1.2'),
-        ('nInit', 1024, '  Comment: default inflate = 1024'),
-        ('nMax', 2 ** 24, '  Comment: default inflate = 2**24'),
-        ('nMu', 1, '  Comment: default nMu = 1'),
-        ('trueMuCV', [], '  Comment: default trueMuCV = []'),
-        ('inflateFun', defaultInflateFun,
-         '  Comment: default inflateFun = np.multiply((16 / 3), np.power(2., (-1 * m)))')
-    ])
+    'property, default_value, comment', cubmeanparam_defaults_tests)
 def test_CubMeanParams_defaults(property, default_value, comment):
     cmp = CubMeanParam()
     assert getattr(cmp, property) == default_value
 
-
-# CubMeanParam functions
 
 @pytest.mark.parametrize(
     'inflate,  comment', [
@@ -29,57 +39,31 @@ def test_inflate_Exceptions(inflate, comment):
         cmp = CubMeanParam(inflate=inflate)
 
 
-@pytest.mark.parametrize(
-    'nInit,  comment', [
-        ('5', '  Comment: nInit is non-numeric'),
-        ('', '  Comment: empty nInit'),
-        (-1.1, '  Comment: nInit negative nSig'),
-        (2.1, '  Comment: nInit is float')
-    ])
-def test_nInit_Exceptions(nInit, comment):
-    with pytest.raises(Exception):
-        cmp = CubMeanParam(nInit=nInit)
+exception_tests = simple_test('nInit', ['non-numeric', 'empty', 'null', 'negative', 'negative large', 'float']) + \
+                  simple_test('nmax', ['non-numeric', 'empty', 'null', 'negative', 'negative large', 'float']) + \
+                  simple_test('nMu', ['non-numeric', 'empty', 'null', 'negative', 'negative large', 'float']) + \
+                  simple_test('inflateFun', ['non-numeric', 'list']) + \
+                  simple_test('trueMuCV', ['non-numeric'])
 
 
-@pytest.mark.parametrize(
-    'nMax,  comment', [
-        ('5', '  Comment: nMax is non-numeric'),
-        ('', '  Comment: empty nMax'),
-        (-1.1, '  Comment: nMax negative nSig'),
-        (2.1, '  Comment: nMax is float')
-    ])
-def test_nMax_Exceptions(nMax, comment):
+@pytest.mark.parametrize('property_name, property_value,  comment', exception_tests)
+def test_cubmeanparam_exceptions(property_name, property_value, comment):
     with pytest.raises(Exception):
-        cmp = CubMeanParam(nMax=nMax)
+        cmp = CubMeanParam(**{property_name: property_value})
+
+
+cubmeanparam_valid_values = [
+    ('inflate', 1.3, 1.3, '  Comment: valid inflate = 1.3'),
+    ('nInit', 10000, 10000, '  Comment: valid nInit = 10000'),
+    ('nMax', 2 ** 15, 2 ** 15, '  Comment: valid nMax = 2**15'),
+    ('trueMuCV', 5, [5], '  Comment: valid trueMuCV = 5'),
+    ('trueMuCV', [2, 3], [2, 3], '  Comment: valid trueMuCV = [2,3]')
+]
 
 
 @pytest.mark.parametrize(
-    'nMu,  comment', [
-        ('5', '  Comment: nMu is non-numeric'),
-        ('', '  Comment: empty nMu'),
-        (-1.1, '  Comment: nMu negative nSig'),
-        (2.1, '  Comment: nMu is float')
-    ])
-def test_nMu_Exceptions(nMu, comment):
-    with pytest.raises(Exception):
-        cmp = CubMeanParam(nMu=nMu)
-
-
-@pytest.mark.parametrize(
-    'inflateFun,  comment', [
-        ('5', '  Comment: inflateFun is non-numeric'),
-        ('', '  Comment: inflateFun not empty'),
-    ])
-def test_inflateFun_Exceptions(inflateFun, comment):
-    with pytest.raises(Exception):
-        cmp = CubMeanParam(inflateFun=inflateFun)
-
-
-@pytest.mark.parametrize(
-    'trueMuCV,  comment', [
-        ('5', '  Comment: trueMuCV is non-numeric'),
-        (['2', '3'], '  Comment: list of non-numeric values')
-    ])
-def test_trueMuCV_Exceptions(trueMuCV, comment):
-    with pytest.raises(Exception):
-        cmp = CubMeanParam(trueMuCV=trueMuCV)
+    'property, valid_input, test_value, comment', cubmeanparam_valid_values)
+def test_CubMeanParams_valid(property, valid_input, test_value, comment):
+    cmp = CubMeanParam()
+    setattr(cmp, property, valid_input)
+    assert getattr(cmp, property) == test_value
