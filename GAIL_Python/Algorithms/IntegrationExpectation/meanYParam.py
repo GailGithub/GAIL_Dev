@@ -1,25 +1,28 @@
+#!/usr/bin/env python
+"""Definition of MeanYParam object
+
+"""
+
+__author__ = ["Anil Simon", "Divya Vasireddy"]
+
 import inspect
 import numbers
 from operator import attrgetter
 
 import numpy as np
 try:
-    from GAIL_Python.Algorithms.IntegrationExpectation.CubMeanParam import CubMeanParam
-except:
-    from CubMeanParam import CubMeanParam
+    from GAIL_Python.Algorithms.IntegrationExpectation.helper_functions import default_random_generator, set_named_args
+except ModuleNotFoundError:
+    from helper_functions import default_random_generator, set_named_args
 try:
     from GAIL_Python.Algorithms.IntegrationExpectation.ErrorParam import ErrorParam
-except:
+except ModuleNotFoundError:
     from ErrorParam import ErrorParam
 
-
-def default_random_generator(n):
-    """
-    X_i^2 where X_i comes from a U[0,1]
-    :param n: n is length of random numbers needed
-    :return: vector of random numbers
-    """
-    return np.random.uniform(size=n) ** 2
+try:
+    from GAIL_Python.Algorithms.IntegrationExpectation.CubMeanParam import CubMeanParam
+except ModuleNotFoundError:
+    from CubMeanParam import CubMeanParam
 
 
 class MeanYParam(object):
@@ -129,6 +132,10 @@ class MeanYParam(object):
             except:
                 self.nY = 1  # number of Y for each mean
 
+        # set mis-spelled input arguments
+        params_names = ['Y', 'absTol', 'relTol', 'alpha', 'nSig']
+        set_named_args(self, kwargs, params_names)
+
     def make_copy(self, Y):
         self.Y = Y.Y
         self.absTol = Y.absTol
@@ -141,7 +148,6 @@ class MeanYParam(object):
         self.nY = Y.nY
 
     def __str__(self):
-
         try:
             function_source = inspect.getsource(self.Y)
         except:
@@ -149,3 +155,4 @@ class MeanYParam(object):
 
         return 'meanYParam with properties:\n\tY\t: {}\n\tabsTol\t: {}\n\trelTol\t: {}\n\talpha\t: {}\n\tnSig\t: {}' \
             .format(function_source, self.absTol, self.relTol, self.alpha, self.nSig)
+
