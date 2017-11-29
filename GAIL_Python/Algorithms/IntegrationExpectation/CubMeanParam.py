@@ -1,11 +1,15 @@
+#!/usr/bin/env python
+
+"""Definition of CubMeanParam object"""
+__author__ = ["Anil Simon", "Divya Vasireddy"]
+
 import numbers
 from operator import attrgetter
-
 import numpy as np
-
-
-def defaultInflateFun(m):
-    return np.multiply((16 / 3), np.power(2., (-1 * m)))
+try:
+    from GAIL_Python.Algorithms.IntegrationExpectation.helper_functions import set_named_args, defaultInflateFun
+except:
+    from helper_functions import set_named_args, defaultInflateFun
 
 class CubMeanParam(object):
     """
@@ -94,7 +98,7 @@ class CubMeanParam(object):
         if isinstance(trueMuCV_value, (list, tuple)):
             for tmcv in trueMuCV_value:
                 if not isinstance(tmcv, numbers.Number):
-                    raise Exception("trueMuCV value is not number.")
+                    raise Exception("trueMuCV value is not number")
         elif not isinstance(trueMuCV_value, numbers.Number):
             raise Exception("trueMuCV value is not number.")
 
@@ -129,4 +133,7 @@ class CubMeanParam(object):
 
         self._nCV = None  # number of control variates
 
+        # set mis-spelled input arguments
+        params_names = ['inflate', 'inflateFun', 'nInit', 'nMax', 'nMu', 'trueMuCV']
+        set_named_args(self, kwargs, params_names)
 
