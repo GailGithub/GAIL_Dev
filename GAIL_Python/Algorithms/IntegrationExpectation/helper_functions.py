@@ -61,3 +61,36 @@ def set_named_args(some_object, kwargs, params_names):
     for k, v in kwargs.items():
         if k in alias_params:
             setattr(some_object, alias_params[k], v)
+
+
+
+def simple_test(property_name, tests=None):
+    """Constructs parameter lists for use in parametrised test"""
+    if tests is None:
+        tests = ['non-numeric', 'negative', 'empty', 'null']
+
+    test_value = {'non-numeric': 'text',
+                  'negative': -0.1,
+                  'negative large': -0.1,
+                  'greater than 1': 2,
+                  'empty': '',
+                  'null': None,
+                  'list': [4, 5, 6],
+                  'numeric': 5,
+                  'positive fraction': 0.3,
+                  'callable': lambda x: x,
+                  'float': 2.5,
+                  'float large': 2000.332
+                  }
+
+    test_parameters_list = []
+    for test in tests:
+        test_parameters_list.append(
+            (property_name, test_value[test],
+             '   Test for {} {} = {} '.format(test, str(property_name), str(test_value[test]))))
+
+    return test_parameters_list
+
+
+def defaultInflateFun(m):
+    return np.multiply((16 / 3), np.power(2., (-1 * m)))
