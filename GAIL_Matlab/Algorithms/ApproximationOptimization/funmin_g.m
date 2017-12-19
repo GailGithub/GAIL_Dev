@@ -317,7 +317,7 @@ while n < out_param.nmax
             'attempted to exceed the cost budget. The answer may be '...
             'unreliable.'])
         break;
-    end;
+    end
 
     %check to see if exceed the maximumber number of iterations
     if(iter==out_param.maxiter)
@@ -325,7 +325,7 @@ while n < out_param.nmax
         warning('GAIL:funmin_g:exceediter',['Number of iterations has '...
             'reached maximum number of iterations.'])
         break;
-    end;
+    end
 
     %generate split points for x
     newx=x(whichcut)+0.5*len(whichcut);
@@ -423,7 +423,7 @@ else
         f = @(x) exp(0.01*(x-0.5).^2);
         out_param.f = f;
     end
-end;
+end
 
 validvarargin=numel(varargin)>1;
 if validvarargin
@@ -468,7 +468,7 @@ else
     end
     parse(p,f,varargin{2:end})
     out_param = p.Results;
-end;
+end
 
 % let end point of interval not be infinity
 if (out_param.a == inf || out_param.a == -inf)
@@ -513,7 +513,7 @@ if (~gail.isposint(out_param.nmax))
             'a positive integer. Using default cost budget '...
             int2str(default.nmax)])
         out_param.nmax = default.nmax;
-    end;
+    end
 end
 
 if (~gail.isposint(out_param.ninit))
@@ -545,10 +545,10 @@ if (~gail.isposint(out_param.maxiter))
             ' should be a positive integer. Using max number of '...
             'iterations as ' int2str(default.maxiter)])
         out_param.maxiter = default.maxiter;
-    end;
+    end
 end
 if (out_param.output_x~=true&&out_param.output_x~=false)
     warning('GAIL:funmin_g:output_x', ['Input of output_x'...
         ' can only be true or false; use default value false'])
     out_param.output_x = false;
-end;
+end
