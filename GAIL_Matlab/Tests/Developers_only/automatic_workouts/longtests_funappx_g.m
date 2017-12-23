@@ -35,4 +35,7 @@ catch
     %fprintf(fid,'Error: Test ut_convtest_funappx_g is wrongly coded. We skip it.\n');
 end
 
+% Workouts for Traub paper
+run(ut_traub_paper,'test_traub_paper_funappx_g')
+
 

@@ -1,7 +1,12 @@
 % longtests_cubLattice_g : long tests for cublattice_g
 format short
 
-doctest dt_cubLattice_g
+try
+  doctest dt_cubLattice_g
+catch ME
+    display('Exception: longtests_cubLattice_g : in doctest dt_cubLattice_g.')
+    msgText = getReport(ME); display(msgText)
+end
 
 % cubLattice_g paper
 try

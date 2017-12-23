@@ -8,3 +8,5 @@
 %   meanMC_CLT          - Monte Carlo method with Central Limit Theorem (CLT) confidence 
 %                         intervals to estimate the mean of a random variable
 %   meanMC_g            - Monte Carlo method to estimate the mean of a random variable
+%   cubMC_CLT           - Monte Carlo method with Central Limit Theorem (CLT) confidence 
+%                         to evaluate a multidimensional integral

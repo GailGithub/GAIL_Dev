@@ -1,5 +1,5 @@
 %funmin_g_test: comparison between funmin_g, fminbnd, and chebfun
-function [timeratio,npointsratio]=funmin_g_test(nrep,abstol,varargin)
+function [timeratio,npointsratio,matfilename]=funmin_g_test(nrep,abstol,varargin)
 % user can choose absolut error tolerance, initial number of points, number
 % of iteration or can use the following parameters
 % nrep = 100; abstol = 1e-6;
@@ -227,7 +227,7 @@ if usejava('jvm') || MATLABVERSION <= 7.12
 %   legend BOXOFF 
   gail.save_eps('TraubPaperOutput', [algoname,'_test']);
 end;
-gail.save_mat('TraubPaperOutput', [algoname,'_test'], true, npoints, ...
+matfilename = gail.save_mat('TraubPaperOutput', [algoname,'_test'], true, npoints, ...
   time, c, timeratio, npointsratio, nrep, n, m,...
   sorted_timeratio, sorted_npointsratio,...
   trueerrormat, exceedmat, permuted_index, abstol);

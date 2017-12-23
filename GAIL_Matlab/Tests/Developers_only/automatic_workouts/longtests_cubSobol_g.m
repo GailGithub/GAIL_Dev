@@ -34,3 +34,14 @@ catch ME
     msgText = getReport(ME); display(msgText)
     %fprintf(fid,'Error: Test ut_Papers_cubSobol_g is wrongly coded. We skip it.\n');
 end
+
+% Wiley paper
+try
+  Tests = matlab.unittest.TestSuite.fromClass(?ut_MC_StoppingCriteria);
+    results=run(ut_MC_StoppingCriteria);
+    if sum([results.Failed])>0
+        failed=find([results.Failed]>0);
+    end
+catch
+    display('Error: Test ut_MC_StoppingCriteria is wrongly coded. We skip it.')
+end

@@ -29,3 +29,5 @@
 %   ut_whiteNoise          - unit tests for object class whiteNoise
 %   ut_workout_funappx_g   - long unit tests for workoutfunappx_g
 %   ut_workout_integral_g  - unit test for workout_integral_g
+%   ut_MC_StoppingCriteria - unit test for MC Stopping Criteria article
+%   ut_traub_paper         - unit tests for the Traub paper

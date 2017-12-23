@@ -1,4 +1,4 @@
-function LocallyAdaptivePaperFigs(funappxRes,funminRes,colorfig)
+function [funappx_g_success_rate, funmin_g_success_rate] = LocallyAdaptivePaperFigs(funappxRes,funminRes,colorfig)
 % LOCALLYADPATIVEPAPERFIGS creates all figures and tables in the paper on local
 % adpation for function approximation and optimization published in the
 % Joseph Traub memorial issue in the Journal of Complexity:
@@ -198,6 +198,7 @@ if exist('chebfun','file')
 end
 
 %% Output funappx Table
+funappx_g_success_rate = [];
 if numel(funappxRes) > 0
    sorted_timeratio = 0;
    sorted_npointsratio = 0;
@@ -217,6 +218,8 @@ if numel(funappxRes) > 0
    timelgratio = zeros(1,n);
 
    for i = permuted_index
+     funappx_g_success_rate(i) = 100.0*sum(trueerrormat(i,1,:)<=abstol)/nrep;
+      
      fprintf(fileID,'%9.0f %9.0f %9.0f  %9.0f %11.4f  %11.4f %11.4f  %6.0f %6.0f %6.0f %6.0f %6.0f   %6.0f %6.0f %6.0f %6.0f %6.0f %6.0f %6.0f\n',...
        [i mean(npoints(i,1,:)) mean(npoints(i,2,:)) mean(npoints(i,3,:))...
        mean(time(i,1,:)) mean(time(i,2,:)) mean(time(i,3,:))...
@@ -262,6 +265,8 @@ if numel(funminRes) > 0
    timelgratio = zeros(1,n);
    
    for i = permuted_index
+       funmin_g_success_rate(i) = 100.0*sum(trueerrormat(i,1,:)<=abstol)/nrep;
+       
        fprintf(fileID,'%9.0f %9.0f %9.0f  %9.0f %11.4f  %11.4f %11.4f  %6.0f %6.0f %6.0f %6.0f %6.0f   %6.0f %6.0f %6.0f %6.0f %6.0f %6.0f %6.0f \n',...
            [i mean(npoints(i,1,:)) mean(npoints(i,2,:)) mean(npoints(i,3,:))...
            mean(time(i,1,:)) mean(time(i,2,:)) mean(time(i,3,:))...
