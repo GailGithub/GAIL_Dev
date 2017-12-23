@@ -3,7 +3,8 @@
 gail.InitializeWorkspaceDisplay %initialize the workspace and the display parameters
 format long
 
-figSavePath = '/home/jagadees/MyWriteup/Sep_2ndweek/';
+%figSavePath = '/home/jagadees/MyWriteup/Sep_2ndweek/';
+figSavePath = 'D:/MyWriteup/Dec_3rdweek/';
 
 if exist(figSavePath,'dir')==false
     mkdir(figSavePath);
@@ -14,7 +15,7 @@ completereport = strcat(figSavePath,...
     '_tests-logs-', datestr(now,'yyyy-mm-dd-HH-MM-SS'),'.txt');
 diary(completereport)
 
-visiblePlot=false;
+visiblePlot=true;
 
 %
 % https://www.mathworks.com/matlabcentral/answers/98969-how-can-i-temporarily-avoid-figures-to-be-displayed-in-matlab
@@ -25,12 +26,15 @@ else
   set(0,'DefaultFigureVisible','on')
 end
 
-if false
+if true
+  [muhat,aMLE,err,out] = TestExpCosBayesianCubature(1,2,'none',...
+  strcat(figSavePath, 'zeroMean/'),visiblePlot,false,false)
+
   [muhat,aMLE,err,out] = TestExpCosBayesianCubature(2,2,'none',...
-    strcat(figSavePath, 'zeroMean/'),visiblePlot,false)
+    strcat(figSavePath, 'zeroMean/'),visiblePlot,false,false)
   
   [muhat,aMLE,err,out] = TestMVN_BayesianCubature(2,2,'Baker',...
-    strcat(figSavePath, 'zeroMean/'),visiblePlot,false)
+    strcat(figSavePath, 'zeroMean/'),visiblePlot,false,false)
   fprintf('done')
 end
 

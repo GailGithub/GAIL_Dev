@@ -14,7 +14,7 @@ function [muhat,out]=cubMLELattice(f,d,absTol,relTol,order,ptransform, ...
 if nargin < 6
   ptransform = 'Baker';
   if nargin < 5
-    order = 2; %type of sampling, scrambled Sobol
+    order = 2; %order of the Bernoulli polynomial kernel
     if nargin < 4
       relTol = 0;
       if nargin < 3

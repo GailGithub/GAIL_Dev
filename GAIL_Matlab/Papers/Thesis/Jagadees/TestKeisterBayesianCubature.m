@@ -9,7 +9,7 @@
 % \qquad d = 1, 2, \ldots. \]
 
 function [muhat,aMLE,err,out] = TestKeisterBayesianCubature(dim,BernPolyOrder,...
-  ptransform,figSavePath,visiblePlot,arbMean)
+  ptransform,figSavePath,visiblePlot,arbMean,stopAtTol)
 
 normsqd = @(t) sum(t.*t,2); %squared l_2 norm of t
 
@@ -34,7 +34,9 @@ tic
     absTol = 1E-15;
     relTol = 0;
     order = BernPolyOrder;
-    stopAtTol = false;  % to plot the error, run for for all n values
+    if ~exist('stopAtTol','var')
+      stopAtTol = false;  % to plot the error, run for for all n values
+    end
     tic
     [muhatFinal,out]=cubMLELattice(f1,dim,absTol,relTol,order,ptransform,stopAtTol,fullPath,fName,arbMean);
     toc
