@@ -16,9 +16,9 @@
 classdef cubMLESobol < handle
     
     properties
-        f = @(x) x.^2; %function
-        dim = 1; %dimension
-        mmin = 5; %min number of points to start with = 2^mmin
+        f = @(x) x.^2; %function to integrate
+        dim = 1; %dimension of the integrand
+        mmin = 8; %min number of points to start with = 2^mmin
         mmax = 20; %max number of points allowed = 2^mmax
         absTol = 0.01; %absolute tolerance
         relTol = 0; %relative tolerance
@@ -35,20 +35,20 @@ classdef cubMLESobol < handle
     
     properties (SetAccess = private)
         %CovProp; %square root and determinant of covariance matrix
-        
+        mvec = [];
+
         % variables to save debug info in each iteration
-        errorBdAll = zeros(length(mvec),1);
-        muhatAll = zeros(length(mvec),1);
-        aMLEAll = zeros(length(mvec),1);
-        lossMLEAll = zeros(length(mvec),1);
-        timeAll = zeros(length(mvec),1);
-        dscAll = zeros(length(mvec),1);
-        s_All = zeros(length(mvec),1);
+        errorBdAll = [];
+        muhatAll = [];
+        aMLEAll = [];
+        lossMLEAll = [];
+        timeAll = [];
+        dscAll = [];
+        s_All = [];
     end
     
     methods
         function obj = cubMLESobol(varargin)  %Constructor
-            
             if nargin > 0
                 iStart = 1;
                 if isa(varargin{1},'cubMLESobol')
@@ -78,19 +78,26 @@ classdef cubMLESobol < handle
                     if ~isempty(wh), obj.fName = varargin{wh+iStart}; end
                 end
             end
+            
+            obj.mvec = obj.mmin:obj.mmax;
+            length_mvec = length(obj.mvec);
+            obj.errorBdAll = zeros(length_mvec,1);
+            obj.muhatAll = zeros(length_mvec,1);
+            obj.aMLEAll = zeros(length_mvec,1);
+            obj.lossMLEAll = zeros(length_mvec,1);
+            obj.timeAll = zeros(length_mvec,1);
+            obj.dscAll = zeros(length_mvec,1);
+            obj.s_All = zeros(length_mvec,1);
         end
         
         % computes the integral
         function [muhat,out] = compInteg(obj)
-            
             % comment this line of code to use GPU for computations
             gpuArray = @(x) x;   gather = @(x) x;
             
             tstart = tic; %start the clock
-            % define min and max number of points allowed in the automatic cubature
             
-            mvec = obj.mmin:obj.mmax;
-            numM = length(mvec);
+            numM = length(obj.mvec);
             
             %wKernel = @(x)12*( (1/4) - 2.^(floor(log2(x))-1) );
             sobstr = sobolset(obj.dim); %generate a Sobol' sequence
@@ -98,9 +105,11 @@ classdef cubMLESobol < handle
             % no periodization transfrom required for this algorithm
             ff = obj.f;
             
+            %% Iteratively find the number of points required for the cubature to meet
+            % the error threshold
             for iter = 1:numM
                 tstart_iter = tic;
-                m = mvec(iter);
+                m = obj.mvec(iter);
                 n = 2^m;
                 
                 if iter==1
@@ -112,7 +121,7 @@ classdef cubMLESobol < handle
                 else
                     n0=1+n/2;
                     nnext=n;
-                    xptsnext=sobstr(n0:nnext,1:out_param.d); %grab Sobol' points
+                    xptsnext=sobstr(n0:nnext,1:obj.dim); %grab Sobol' points
                     xpts=[xpts;xptsnext];
                     fx=gpuArray(ff(xptsnext));  % initialize for inplace computation
                     ftildeNext=fwht(fx);
@@ -124,10 +133,10 @@ classdef cubMLESobol < handle
                 
                 %Compute MLE parameter
                 lnaMLE = fminbnd(@(lna) ...
-                    MLEKernel(exp(lna),br_xpts,ftilde), ...
+                    MLEKernel(obj, exp(lna),br_xpts,ftilde), ...
                     -5,5,optimset('TolX',1e-2));
                 aMLE = exp(lnaMLE);
-                [loss,Ktilde,RKHSnorm,K] = MLEKernel(aMLE,br_pts,ftilde);
+                [loss,Ktilde,RKHSnorm,K] = MLEKernel(obj, aMLE,br_xpts,ftilde);
                 
                 %Check error criterion
                 DSC = abs(1 - (n/Ktilde(1)));
@@ -169,10 +178,10 @@ classdef cubMLESobol < handle
             end %iteration loop
             
             out.n = n;
-            out.time = toc(tstart);   % let it to print
+            out.time = toc(tstart);
             out.ErrBdAll = obj.errorBdAll;
             out.muhatAll = obj.muhatAll;
-            out.mvec = mvec;
+            out.mvec = obj.mvec;
             out.aMLEAll = obj.aMLEAll;
             out.timeAll = obj.timeAll;
             out.s_All = obj.s_All;
@@ -181,22 +190,19 @@ classdef cubMLESobol < handle
             % convert from gpu memory to local
             muhat=gather(muhat);
             out=gather(out);
-            muhat
+            muhat   % let it to print
             out
-            
         end  %function
 
         
         % plots the objective function for the MLE of theta
         function minTheta = plotMLE_Loss(obj)
-            
-            useArbMean = obj.arbMean;
+
             n = 2^obj.mmax;
             sobstr=sobolset(obj.dim); %generate a Sobol' sequence
             xpts = sobstr(1:n,1:obj.dim); %grab Sobol' points
             fx = obj.f(xpts);  % No periodization transform required
-            mvec = obj.mmin:obj.mmax;
-            numM = length(mvec);
+            numM = length(obj.mvec);
             
             %% plot MLEKernel cost function
             lnTheta = -5:0.2:5;
@@ -210,7 +216,7 @@ classdef cubMLESobol < handle
             tstart=tic;
             
             for iter = 1:numM
-                nii = 2^mvec(iter);
+                nii = 2^obj.mvec(iter);
                 nii
                 
                 eigvalK = zeros(numel(lnTheta),nii);
@@ -221,7 +227,7 @@ classdef cubMLESobol < handle
                 
                 tic
                 %par
-                for k=1:numel(lnTheta)
+                parfor k=1:numel(lnTheta)
                     [costMLE(iter,k),eigvalK(k,:)] = MLEKernel(obj, exp(lnTheta(k)),...
                         br_xpts,ftilde);
                 end
@@ -240,14 +246,14 @@ classdef cubMLESobol < handle
                 fprintf('costMLE has complex values !! \n')
             end
             
-            % semilogx
-            loglog(exp(lnTheta),real(costMLE));
+            % semilogx : loglog
+            semilogx(exp(lnTheta),real(costMLE));
             set(hFigCost, 'units', 'inches', 'Position', [0 0 13.5 11.5])
             xlabel('Shape param, \(\theta\)')
             ylabel('MLE Cost, \( \log \log \frac{y^T K_\theta^{-1}y}{[\det(K_\theta^{-1})]^{1/n}} \)')
             % ylabel('Log MLE Obj. fun.')
             axis tight;
-            if useArbMean
+            if obj.arbMean
                 mType = '\(m \neq 0\)';  % arb mean
             else
                 mType = '\(m = 0\)';  % zero mean
@@ -260,11 +266,11 @@ classdef cubMLESobol < handle
             % mark the min theta values found using fminbnd
             minTheta = exp(lnTheta(Index));
             hold on;
-            loglog(minTheta,minVal, '.');
+            semilogx(minTheta,minVal, '.');
             if exist('aMLEAll', 'var')
-                loglog(obj.aMLEAll,obj.lossMLEAll, '+');
+                semilogx(obj.aMLEAll,obj.lossMLEAll, '+');
             end
-            temp = string(mvec); temp=strcat('2^',temp);
+            temp = string(obj.mvec); temp=strcat('\(2^{',temp,'}\)');
             temp(end+1) = '\(\theta_{min_{true}}\)';
             if exist('aMLEAll', 'var')
                 temp(end+1) = '\(\theta_{min_{est}}\)';
@@ -272,14 +278,12 @@ classdef cubMLESobol < handle
             
             legend(temp,'location','best'); axis tight
             saveas(hFigCost, plotFileName)
-            
         end
         
         
         % MLE objective function to find the optimal shape parmaeter
         function [loss,Ktilde,RKHSnorm,K] = MLEKernel(obj, a, xpts, ftilde)
-            
-            useArbMean = obj.arbMean;
+
             n = length(ftilde);
             if obj.order==4
                 [K, Ktilde] = cubMLESobol.kernel(xpts,obj.order,a);
@@ -292,58 +296,70 @@ classdef cubMLESobol < handle
             ftilde = abs(ftilde);  % remove any negative values
             temp = (abs(ftilde(Ktilde~=0).^2)./(Ktilde(Ktilde~=0))) ;
             
-            if useArbMean==true
+            if obj.arbMean==true
                 RKHSnorm = sum(temp(2:end))/n;
                 temp_1 = sum(temp(2:end));
             else
                 RKHSnorm = sum(temp)/n;
                 temp_1 = sum(temp);
             end
+            cubMLESobol.alertMsg(temp_1, 'Imag');
             RKHSnormSq = sqrt(RKHSnorm);
             
-            if isnan(RKHSnormSq)
-                fprintf('RKHSnormSq NaN \n');
-            end
+            cubMLESobol.alertMsg(RKHSnormSq, 'Nan');
             % loss = mean(2*log(KtildeSq)) + log(RKHSnorm);
             % loss = mean(log(Ktilde)) + log(RKHSnorm);
             
             loss1 = sum(log(Ktilde(Ktilde~=0)));
-            if isinf(loss1)
-                fprintf('loss1 is infinity \n');
-            end
+            cubMLESobol.alertMsg(loss1, 'Inf');
             loss2 = n*log(temp_1);
-            if isinf(loss2)
-                fprintf('loss2 is infinity \n');
-            end
+            cubMLESobol.alertMsg(loss2, 'Inf');
             % ignore all zero val eigenvalues
             loss = sum(log(Ktilde(Ktilde~=0))) + n*log(temp_1);
-            fprintf('Shap %03.3f loss1 %03.3f\t loss2 %03.3f\t Loss %03.3f\t Nzero eigvals %d\n',...
-                a, loss1, loss2, loss, sum(Ktilde~=0)  )
+            %fprintf('Shap %03.3f loss1 %03.3f\t loss2 %03.3f\t Loss %03.3f\t Nzero eigvals %d\n',...
+            %    a, loss1, loss2, loss, sum(Ktilde~=0)  )
             
-            if isinf(loss)
-                fprintf('loss is infinity \n');
-            end
-            
-            if ~isreal(loss)
-                fprintf('Total loss has complex vals \n');
-            end
-            
-            if ~isreal(Ktilde)
-                fprintf('Ktilde has complex vals \n');
-            end
-            
-            if ~isreal(temp_1)
-                fprintf('temp_1 has complex vals \n');
-            end
-            
-            if isnan(loss)
-                fprintf('loss NaN \n');
-            end
+            cubMLESobol.alertMsg(loss, 'Inf', 'Imag', 'Nan');
+            cubMLESobol.alertMsg(Ktilde, 'Imag');
         end
-   
     end
     
     methods(Static)
+        % prints debug message if the given variable is Inf, Nan or
+        % complex, etc
+        function alertMsg(varargin)
+            %varname = @(x) inputname(1);            
+            if nargin > 1
+                iStart = 1;
+                varTocheck = varargin{iStart};
+                iStart = iStart + 1;
+                inpvarname = inputname(1);
+                
+                while iStart <= nargin
+                    type = varargin{iStart};
+                    iStart = iStart + 1;
+                    
+                    switch type
+                        case 'Nan'
+                            if isnan(varTocheck)
+                                fprintf('%s has NaN values', inpvarname);
+                            end
+                        case 'Inf'
+                            if isinf(varTocheck)
+                                fprintf('%s has Inf values', inpvarname);
+                            end
+                        case 'Imag'
+                            if ~isreal(varTocheck)
+                                fprintf('%s has complex values', inpvarname)
+                            end
+                        otherwise
+                            fprintf('%s : unknown type check requested !', inpvarname)
+                    end
+                end
+            end
+            
+        end
+        
         % Builds the difference matrix to compute kernel matrix
         % x : input points of size [n,d]
         function dm = diffMatrix(x)
@@ -357,7 +373,6 @@ classdef cubMLESobol < handle
         
         % walsh kernel
         function [K, Ktilde] = kernel(xpts,order,a)
-            
             order; % not used for now
             
             %a1 = @(x)(-floor(log2(x)));
@@ -387,7 +402,7 @@ classdef cubMLESobol < handle
             % figure(2); x=[0:0.001:1]; plot(x, omega2(x), '.'); grid on; axis([0 1 -1 2])
             
             if a==1
-                fprintf('Shape a==1\n')
+                %fprintf('Shape a==1\n')
             end
             
             K = omega2(xpts, a);
@@ -406,8 +421,6 @@ classdef cubMLESobol < handle
             if ~isreal(Ktilde)
                 fprintf('Ktilde has complex vals \n');
             end
-            
         end
-        
     end
 end

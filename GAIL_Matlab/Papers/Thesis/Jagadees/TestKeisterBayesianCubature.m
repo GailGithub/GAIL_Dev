@@ -9,7 +9,7 @@
 % \qquad d = 1, 2, \ldots. \]
 
 function [muhat,aMLE,err,out] = TestKeisterBayesianCubature(dim,BernPolyOrder,...
-  ptransform,figSavePath,visiblePlot,arbMean,stopAtTol)
+  ptransform,figSavePath,visiblePlot,arbMean,stopAtTol,samplingMethod)
 
 normsqd = @(t) sum(t.*t,2); %squared l_2 norm of t
 
@@ -38,7 +38,24 @@ tic
       stopAtTol = false;  % to plot the error, run for for all n values
     end
     tic
-    [muhatFinal,out]=cubMLELattice(f1,dim,absTol,relTol,order,ptransform,stopAtTol,fullPath,fName,arbMean);
+    %[muhatFinal,out]=cubMLELattice(f1,dim,absTol,relTol,order,ptransform,stopAtTol,fullPath,fName,arbMean);
+    if exist('samplingMethod','var') && ...
+        strcmp(samplingMethod,'Sobol') % use Sobol points
+        %[muhatFinal,out]=cubMLELattice(f,dim,absTol,relTol,order,ptransform,...
+        % stopAtTol,fullPath,fName,arbMean);
+        obj=cubMLESobol('f',f1, 'dim',dim, 'absTol',absTol, 'relTol',relTol,...
+        'order',order, 'ptransform',ptransform, ...
+        'stopAtTol',stopAtTol, 'figSavePath',fullPath, ...
+        'fName',fName, 'arbMean',arbMean);
+    else % use Lattice points
+        obj=cubMLELattice('f',f1, 'dim',dim, 'absTol',absTol, 'relTol',relTol,...
+        'order',order, 'ptransform',ptransform, ...
+        'stopAtTol',stopAtTol, 'figSavePath',fullPath, ...
+        'fName',fName, 'arbMean',arbMean);
+    end
+
+    plotMLE_Loss(obj)
+    [muhatFinal,out]=compInteg(obj);
     toc
     nvec = 2.^out.mvec;
     muhat = out.muhatAll;

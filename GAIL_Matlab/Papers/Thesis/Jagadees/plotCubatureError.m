@@ -11,7 +11,7 @@ end
 
 % Bayesian Cubature Fourier Lattice
 MATLABYellow = [0.9290, 0.6940, 0.1250];
-set(hFigErr, 'units', 'inches', 'Position', [4 4 5.5 5.5])
+set(hFigErr, 'units', 'inches', 'Position', [1 1 5.5 5.5])
 %set(gca,'position',[0 0 1 1],'units','normalized')
 
 %set(hFigErr, 'position',[0 0 1 1],'units','normalized')

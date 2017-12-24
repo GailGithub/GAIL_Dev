@@ -1,6 +1,6 @@
 %% integrat Exp(cos) using Bayesian cubature
 function [nvec,muhat,aMLE,errCubMLE,out] = TestExpCosBayesianCubature(dim,BernPolyOrder,...
-  ptransform,figSavePath,visiblePlot,arbMean,stopAtTol)
+  ptransform,figSavePath,visiblePlot,arbMean,stopAtTol,samplingMethod)
 
 % define the integrand function
 f = @(x) exp(sum(cos(2*pi*x), 2));
@@ -21,17 +21,23 @@ tic
       stopAtTol = false;  % to plot the error, run for for all n values
     end
     
-    if true % use Lattice points
-        [muhatFinal,out]=cubMLELattice(f,dim,absTol,relTol,order,ptransform,stopAtTol,fullPath,fName,arbMean);
-    else % use sobol points
-        %[muhatFinal,out]=cubMLESobol(f,dim,absTol,relTol,order,ptransform,stopAtTol,fullPath,fName,arbMean);
+    if exist('samplingMethod','var') && ...
+        strcmp(samplingMethod,'Sobol') % use Sobol points
+        %[muhatFinal,out]=cubMLELattice(f,dim,absTol,relTol,order,ptransform,...
+        % stopAtTol,fullPath,fName,arbMean);
         obj=cubMLESobol('f',f, 'dim',dim, 'absTol',absTol, 'relTol',relTol,...
-            'order',order, 'ptransform',ptransform, ...
-            'stopAtTol',stopAtTol, 'figSavePath',fullPath, ...
-            'fName',fName, 'arbMean',arbMean);
-        %plotMLE_Loss(obj)
-        [muhatFinal,out]=compInteg(obj);
+        'order',order, 'ptransform',ptransform, ...
+        'stopAtTol',stopAtTol, 'figSavePath',fullPath, ...
+        'fName',fName, 'arbMean',arbMean);
+    else % use Lattice points
+        obj=cubMLELattice('f',f, 'dim',dim, 'absTol',absTol, 'relTol',relTol,...
+        'order',order, 'ptransform',ptransform, ...
+        'stopAtTol',stopAtTol, 'figSavePath',fullPath, ...
+        'fName',fName, 'arbMean',arbMean);
     end
+    
+    plotMLE_Loss(obj)
+    [muhatFinal,out]=compInteg(obj);
     nvec = 2.^out.mvec;
     muhat = out.muhatAll;
     ErrBd = out.ErrBdAll;

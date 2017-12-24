@@ -14,7 +14,7 @@ nvevMaternKernel = 2.^(7:13);
 computeTimeMaternKernel = [0.080798000000000, 0.104679000000000, 0.292205000000000, 1.481677000000000, ....
  14.238427000000000, 1.083312010000000e+02, 7.074992927000000e+03];
 
-set(hFigTime, 'units', 'inches', 'Position', [4 4 6.5 5.5])
+set(hFigTime, 'units', 'inches', 'Position', [1 1 6.5 5.5])
 loglog(nvec,computeTime, 'b.-', ...
   nvevMaternKernel, computeTimeMaternKernel, 'r:', ...
   [nvec(1) nvec(end)],computeTime(2)*[1 (nvec(end)/nvec(1))^1], 'g--')
@@ -30,7 +30,7 @@ ylabel('Comp.\ time')
 
 saveas(hFigTime, figSavePath)
 
-plot_nvec_vs_computeTime_matern_example(visiblePlot)
+%plot_nvec_vs_computeTime_matern_example(visiblePlot)
 
 
 end

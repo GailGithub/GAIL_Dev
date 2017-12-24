@@ -26,15 +26,19 @@ else
   set(0,'DefaultFigureVisible','on')
 end
 
-if true
+%samplingMethod='Lattice';
+samplingMethod='Sobol';
+figSavePath = strcat(figSavePath, samplingMethod, '/');
+
+if false
   [muhat,aMLE,err,out] = TestExpCosBayesianCubature(1,2,'none',...
-  strcat(figSavePath, 'zeroMean/'),visiblePlot,false,false)
+  strcat(figSavePath, 'zeroMean/'),visiblePlot,false,false,samplingMethod)
 
   [muhat,aMLE,err,out] = TestExpCosBayesianCubature(2,2,'none',...
-    strcat(figSavePath, 'zeroMean/'),visiblePlot,false,false)
+    strcat(figSavePath, 'zeroMean/'),visiblePlot,false,false,samplingMethod)
   
   [muhat,aMLE,err,out] = TestMVN_BayesianCubature(2,2,'Baker',...
-    strcat(figSavePath, 'zeroMean/'),visiblePlot,false,false)
+    strcat(figSavePath, 'zeroMean/'),visiblePlot,false,false,samplingMethod)
   fprintf('done')
 end
 
@@ -52,10 +56,10 @@ for arbMean=arbMeanType
   for tx=pdTx
     for dim=[2 3 4]
       for bern=[4 2]
-        TestExpCosBayesianCubature(dim,bern,tx{1},newPath,visiblePlot,arbMean,stopAtTol)
-        TestKeisterBayesianCubature(dim,bern,tx{1},newPath,visiblePlot,arbMean,stopAtTol)
+        TestKeisterBayesianCubature(dim,bern,tx{1},newPath,visiblePlot,arbMean,stopAtTol,samplingMethod)
+        TestExpCosBayesianCubature(dim,bern,tx{1},newPath,visiblePlot,arbMean,stopAtTol,samplingMethod)
         if dim~=4
-          TestMVN_BayesianCubature(dim,bern,tx{1},newPath,visiblePlot,arbMean,stopAtTol)
+          %TestMVN_BayesianCubature(dim,bern,tx{1},newPath,visiblePlot,arbMean,stopAtTol,samplingMethod)
         end
       end
     end
