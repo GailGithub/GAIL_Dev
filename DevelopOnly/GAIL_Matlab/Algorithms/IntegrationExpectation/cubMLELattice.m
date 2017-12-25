@@ -247,7 +247,7 @@ classdef cubMLELattice < handle
             
             numM = length(obj.mvec);
             n = 2.^obj.mvec(end);
-            xun = cubMLELattice.simple_lattice_gen(n,d,true);
+            xun = cubMLELattice.simple_lattice_gen(n,obj.dim,true);
             fx = obj.ff(xun);  % Note: periodization transform already applied
             
             %% plot MLEKernel cost function
@@ -272,7 +272,7 @@ classdef cubMLELattice < handle
                 %par
                 parfor k=1:numel(lnTheta)
                     [costMLE(iter,k),eigvalK(k,:)] = MLEKernel(obj, exp(lnTheta(k)),...
-                        br_xun,ftilde,obj.order,obj.arbMean);
+                        br_xun,ftilde);
                 end
                 toc
             end
@@ -287,11 +287,11 @@ classdef cubMLELattice < handle
             
             % semilogx
             semilogx(exp(lnTheta),real(costMLE));
-            set(hFigCost, 'units', 'inches', 'Position', [4 4 13.5 11.5])
+            set(hFigCost, 'units', 'inches', 'Position', [1 1 13.5 11.5])
             %title(lgd,'Sample Size, \(n\)'); legend boxoff
             xlabel('Shape param, \(\theta\)')
-            % ylabel('MLE Cost, \( \frac{y^T K_\theta^{-1}y}{[\det(K_\theta^{-1})]^{1/n}} \)')
-            ylabel('Log MLE Obj. fun.')
+            ylabel('MLE Cost, \( \log \frac{y^T K_\theta^{-1}y}{[\det(K_\theta^{-1})]^{1/n}} \)')
+            % ylabel('Log MLE Obj. fun.')
             axis tight;
             if obj.arbMean
                 mType = '\(m \neq 0\)'; % arb mean
@@ -305,10 +305,15 @@ classdef cubMLELattice < handle
             minTheta = exp(lnTheta(Index));
             hold on;
             semilogx(minTheta, minVal, '.');
-            semilogx(obj.aMLEAll, obj.lossMLEAll, '+');
+            if exist('aMLEAll', 'var')
+                semilogx(obj.aMLEAll, obj.lossMLEAll, '+');
+            end
             temp = string(obj.mvec);
+            temp = strcat('\(2^{',temp,'}\)');
             temp(end+1) = '\(\theta_{min_{true}}\)';
-            temp(end+1) = '\(\theta_{min_{est}}\)';
+            if exist('aMLEAll', 'var')
+                temp(end+1) = '\(\theta_{min_{est}}\)';
+            end
             legend(temp,'location','best'); axis tight
             saveas(hFigCost, plotFileName)
             
@@ -316,7 +321,7 @@ classdef cubMLELattice < handle
 
        
         % MLE objective function to find the optimal shape parmaeter
-        function [loss,Ktilde,Kthat_new,RKHSnorm,K] = MLEKernel(obj, a,xun,ftilde)
+        function [loss,Ktilde,Kthat_new,RKHSnorm,K] = MLEKernel(obj, a, xun, ftilde)
             
             n = length(ftilde);
             if obj.order==4

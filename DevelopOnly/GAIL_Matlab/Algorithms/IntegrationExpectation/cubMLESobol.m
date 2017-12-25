@@ -81,6 +81,7 @@ classdef cubMLESobol < handle
             
             obj.mvec = obj.mmin:obj.mmax;
             length_mvec = length(obj.mvec);
+            
             obj.errorBdAll = zeros(length_mvec,1);
             obj.muhatAll = zeros(length_mvec,1);
             obj.aMLEAll = zeros(length_mvec,1);
@@ -94,6 +95,7 @@ classdef cubMLESobol < handle
         function [muhat,out] = compInteg(obj)
             % comment this line of code to use GPU for computations
             gpuArray = @(x) x;   gather = @(x) x;
+            obj = gpuArray(obj);
             
             tstart = tic; %start the clock
             
@@ -250,7 +252,7 @@ classdef cubMLESobol < handle
             semilogx(exp(lnTheta),real(costMLE));
             set(hFigCost, 'units', 'inches', 'Position', [0 0 13.5 11.5])
             xlabel('Shape param, \(\theta\)')
-            ylabel('MLE Cost, \( \log \log \frac{y^T K_\theta^{-1}y}{[\det(K_\theta^{-1})]^{1/n}} \)')
+            ylabel('MLE Cost, \( \log \frac{y^T K_\theta^{-1}y}{[\det(K_\theta^{-1})]^{1/n}} \)')
             % ylabel('Log MLE Obj. fun.')
             axis tight;
             if obj.arbMean

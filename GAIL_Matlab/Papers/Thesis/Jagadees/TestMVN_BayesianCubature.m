@@ -1,6 +1,6 @@
 %% Test Multivariate Normal Probabilities
 function [muhat,aMLE,errVec,outAll] = TestMVN_BayesianCubature(dim,BernPolyOrder,...
-          ptransform,figSavePath,visiblePlot,arbMean,stopAtTol,absTol)
+          ptransform,figSavePath,visiblePlot,arbMean,stopAtTol,samplingMethod)
 
 %gail.InitializeWorkspaceDisplay %clean up
 %format long
@@ -62,8 +62,10 @@ if exist('MVNProbExampleAllData.mat','file')
 end
 if compGold
     disp('(Re-)computing gold standard answer')
+    parpool('local',2)
     muBestvec = zeros(1,nRepGold);
     tic
+    %par
     parfor i = 1:nRepGold
         i
         tic
@@ -85,16 +87,23 @@ else
   absTolVal = absTol;
 end
 
+if strcmp(samplingMethod,'Sobol')
+  cubMethod='MLESobol';
+else
+  cubMethod='MLELattice';
+end
+
 MVNProbMLELatticeGn = multivarGauss('a',a,'b',b,'Cov',Cov,'n',nvecMLE, ...
-    'errMeth','n','cubMeth','MLELattice','intMeth','Genz', ...
+    'errMeth','g','cubMeth',cubMethod,'intMeth','Genz', ...
     'BernPolyOrder',BernPolyOrder,'ptransform',ptransform, ...
-    'fName',fName,'figSavePath',fullPath,'arbMean',arbMean,'absTol',absTolVal);
+    'fName',fName,'figSavePath',fullPath,'arbMean',arbMean,...
+    'absTol',absTolVal);
 compMLELattice = true;
 
 if compMLELattice
     datetime
     tic
-    nRep = 100; % increase it for gail plots
+    nRep = 3; % increase it for gail plots
     outAll = {'a', 'b'};
     muMVNProbMLELatticeGn = zeros(nnMLE,nRep);
     aMLE = zeros(nnMLE,nRep);

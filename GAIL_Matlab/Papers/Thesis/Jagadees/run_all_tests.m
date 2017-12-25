@@ -1,18 +1,24 @@
 
-!synclient HorizEdgeScroll=0 HorizTwoFingerScroll=0 # disable horizontal scrolling
+if isunix
+  !synclient HorizEdgeScroll=0 HorizTwoFingerScroll=0 # disable horizontal scrolling
+end
 gail.InitializeWorkspaceDisplay %initialize the workspace and the display parameters
 format long
 
-%figSavePath = '/home/jagadees/MyWriteup/Sep_2ndweek/';
-figSavePath = 'D:/MyWriteup/Dec_3rdweek/';
+if isunix
+  figSavePath = '/home/jagadees/MyWriteup/';
+else
+  figSavePath = 'D:/MyWriteup/';
+end
+figSavePath = strcat(figSavePath, 'Dec_3rdweek/');
 
 if exist(figSavePath,'dir')==false
-    mkdir(figSavePath);
+  mkdir(figSavePath);
 end
 
 % log the results
 completereport = strcat(figSavePath,...
-    '_tests-logs-', datestr(now,'yyyy-mm-dd-HH-MM-SS'),'.txt');
+  '_tests-logs-', datestr(now,'yyyy-mm-dd-HH-MM-SS'),'.txt');
 diary(completereport)
 
 visiblePlot=true;
@@ -26,19 +32,18 @@ else
   set(0,'DefaultFigureVisible','on')
 end
 
-%samplingMethod='Lattice';
-samplingMethod='Sobol';
-figSavePath = strcat(figSavePath, samplingMethod, '/');
-
 if false
+  %sampling='Lattice';
+  sampling='Sobol';
+  figSavePath = strcat(figSavePath, sampling, '/');
   [muhat,aMLE,err,out] = TestExpCosBayesianCubature(1,2,'none',...
-  strcat(figSavePath, 'zeroMean/'),visiblePlot,false,false,samplingMethod)
-
+    strcat(figSavePath, 'zeroMean/'),visiblePlot,false,false,sampling)
+  
   [muhat,aMLE,err,out] = TestExpCosBayesianCubature(2,2,'none',...
-    strcat(figSavePath, 'zeroMean/'),visiblePlot,false,false,samplingMethod)
+    strcat(figSavePath, 'zeroMean/'),visiblePlot,false,false,sampling)
   
   [muhat,aMLE,err,out] = TestMVN_BayesianCubature(2,2,'Baker',...
-    strcat(figSavePath, 'zeroMean/'),visiblePlot,false,false,samplingMethod)
+    strcat(figSavePath, 'zeroMean/'),visiblePlot,false,false,sampling)
   fprintf('done')
 end
 
@@ -47,19 +52,28 @@ stopAtTol = false;
 tstart=tic;
 pdTx = {'C1','C1sin', 'C2sin', 'C0', 'none', 'Baker'};
 arbMeanType = [true,false];
-for arbMean=arbMeanType
-  if arbMean==true
-    newPath = strcat(figSavePath, 'arbMean/');
-  else
-    newPath = strcat(figSavePath, 'zeroMean/');
-  end
-  for tx=pdTx
-    for dim=[2 3 4]
-      for bern=[4 2]
-        TestKeisterBayesianCubature(dim,bern,tx{1},newPath,visiblePlot,arbMean,stopAtTol,samplingMethod)
-        TestExpCosBayesianCubature(dim,bern,tx{1},newPath,visiblePlot,arbMean,stopAtTol,samplingMethod)
-        if dim~=4
-          %TestMVN_BayesianCubature(dim,bern,tx{1},newPath,visiblePlot,arbMean,stopAtTol,samplingMethod)
+samplingMethod = {'Lattice', 'Sobol', };
+for sampling=samplingMethod
+  for arbMean=arbMeanType
+    if arbMean==true
+      newPath = strcat(figSavePath, sampling{1}, '/', 'arbMean/');
+    else
+      newPath = strcat(figSavePath, sampling{1}, '/', 'zeroMean/');
+    end
+
+    if strcmp(sampling,'Sobol')
+      transforms={'none'};
+    else
+      transforms=pdTx;
+    end
+    for tx=transforms
+      for dim=[2 3 4]
+        for bern=[4 2]
+          if dim~=4
+            TestMVN_BayesianCubature(dim,bern,tx{1},newPath,visiblePlot,arbMean,stopAtTol,sampling)
+          end
+          TestKeisterBayesianCubature(dim,bern,tx{1},newPath,visiblePlot,arbMean,stopAtTol,sampling)
+          TestExpCosBayesianCubature(dim,bern,tx{1},newPath,visiblePlot,arbMean,stopAtTol,sampling)
         end
       end
     end
