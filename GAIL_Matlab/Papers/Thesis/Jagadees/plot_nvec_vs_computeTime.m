@@ -1,8 +1,13 @@
-function plot_nvec_vs_computeTime(nvec, computeTime, visiblePlot, figSavePath)
+function plot_nvec_vs_computeTime(nvec, computeTime, visiblePlot, ...
+  figSavePath, samplingMethod)
 % disabled for now
 
 %end
 % function dummy()
+
+if ~exist('samplingMethod','var')
+  samplingMethod = 'Lattice';
+end
   
 % Plot n vs time for the given cubature
 if exist('visiblePlot','var') && visiblePlot==false
@@ -19,7 +24,7 @@ loglog(nvec,computeTime, 'b.-', ...
   nvevMaternKernel, computeTimeMaternKernel, 'r:', ...
   [nvec(1) nvec(end)],computeTime(2)*[1 (nvec(end)/nvec(1))^1], 'g--')
 
-legend({'Fourier', 'Matern', '\(O(n^{})\)'}, ...
+legend({samplingMethod, 'Matern', '\(O(n^{})\)'}, ...
                 'location','best')
               
 axis([100 1e6 1e-2 1e5])

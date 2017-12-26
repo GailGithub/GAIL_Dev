@@ -35,7 +35,7 @@ xlabel('\(x_1\)')
 ylabel('\(x_2\)')
 zlabel('\(f_{\textrm{Keister}}(x_1,x_2)\)')
 view(-20,20)
-print -depsc Keisteri_wholeR.eps
+print -depsc Keister_wholeR.eps
 
 
 %% Plot the Exp(Cos) function

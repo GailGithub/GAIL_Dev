@@ -51,7 +51,7 @@ plotCubatureError(dim, nvec, errCubMLE, ErrBd, fName, BernPolyOrder, ptransform,
 % plot computation time vs number of points 
 figSavePathName = sprintf('%s%s computeTime d_%d bernoulli_%d Period_%s.png', ...
         fullPath, fName, dim, BernPolyOrder, ptransform);
-plot_nvec_vs_computeTime(nvec, out.timeAll, visiblePlot, figSavePathName)
+plot_nvec_vs_computeTime(nvec, out.timeAll, visiblePlot, figSavePathName, samplingMethod)
 
 fprintf('done');
 

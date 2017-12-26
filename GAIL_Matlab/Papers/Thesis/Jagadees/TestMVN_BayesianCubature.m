@@ -139,7 +139,7 @@ if compMLELattice
 
     figSavePathName = sprintf('%s%s computeTime d_%d bernoulli_%d Period_%s.png', ...
         fullPath, fName, dim, BernPolyOrder, ptransform);
-    plot_nvec_vs_computeTime(nvecMLE, outAll{1}.timeAll, visiblePlot, figSavePathName)
+    plot_nvec_vs_computeTime(nvecMLE, outAll{1}.timeAll, visiblePlot, figSavePathName, samplingMethod)
     fprintf('done\n');
 
 end
