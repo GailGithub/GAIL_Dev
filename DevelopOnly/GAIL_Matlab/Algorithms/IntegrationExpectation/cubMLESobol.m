@@ -30,7 +30,7 @@ classdef cubMLESobol < handle
         fName = 'None'; %name of the integrand
         figSavePath = ''; %path where to save he figures
         visiblePlot = true; %make plots visible
-        debugEnable = false; %enable debug prints
+        debugEnable = true; %enable debug prints
     end
     
     properties (SetAccess = private)
@@ -91,6 +91,7 @@ classdef cubMLESobol < handle
             obj.s_All = zeros(length_mvec,1);
         end
         
+        
         % computes the integral
         function [muhat,out] = compInteg(obj)
             % comment this line of code to use GPU for computations
@@ -103,6 +104,8 @@ classdef cubMLESobol < handle
             
             %wKernel = @(x)12*( (1/4) - 2.^(floor(log2(x))-1) );
             sobstr = sobolset(obj.dim); %generate a Sobol' sequence
+            
+            
             
             % no periodization transfrom required for this algorithm
             ff = obj.f;
@@ -119,17 +122,27 @@ classdef cubMLESobol < handle
                     nnext=n;
                     xpts=sobstr(n0:nnext,1:obj.dim); %grab Sobol' points
                     fx=gpuArray(ff(xpts)); %evaluate integrand
-                    ftilde = fwht(fx);
+                    ftilde = cubMLESobol.fwht_hs(fx);
                 else
                     n0=1+n/2;
                     nnext=n;
                     xptsnext=sobstr(n0:nnext,1:obj.dim); %grab Sobol' points
-                    xpts=[xpts;xptsnext];
-                    fx=gpuArray(ff(xptsnext));  % initialize for inplace computation
-                    ftildeNext=fwht(fx);
-                    ftilde=[ftilde;ftildeNext];
+                    xpts = [xpts;xptsnext];
+
+                    fx = gpuArray(ff(xptsnext));  % initialize for inplace computation
+                    ftildeNext = cubMLESobol.fwht_hs(fx);
+                    ftilde = [(ftilde+ftildeNext)/2; (ftilde-ftildeNext)/2];
+                    
+                    if obj.debugEnable
+                      fx = gpuArray(ff(xpts)); %evaluate integrand
+                      ftilde_direct = cubMLESobol.fwht_hs(fx);
+                      if sum(ftilde-ftilde_direct) > 1
+                        fprintf('fwht_hs computation is wrong');
+                      end
+                    end
                 end
                 
+              
                 %br_xpts = bitrevorder(gpuArray(xpts));
                 br_xpts = gpuArray(xpts);
                 
@@ -141,7 +154,9 @@ classdef cubMLESobol < handle
                 [loss,Ktilde,RKHSnorm,K] = MLEKernel(obj, aMLE,br_xpts,ftilde);
                 
                 %Check error criterion
-                DSC = abs(1 - (n/Ktilde(1)));
+                % DSC = abs(1 - (n/Ktilde(1)));  
+                % Ktilde already divided by 'n'
+                DSC = abs(1 - (1/Ktilde(1)));
                 %DSC = abs(Kthat_new(1)/(n + Kthat_new(1)));
                 
                 % store the debug information
@@ -150,7 +165,10 @@ classdef cubMLESobol < handle
                 
                 out.ErrBd = 2.58*sqrt(DSC)*sqrt(RKHSnorm/n);
                 if obj.arbMean==true % zero mean case
-                    muhat = ftilde(1)/n;
+                  % compute sum of 'f' divided by 'n'
+                  % muhat = ftilde(1)/n;
+                  muhat = ftilde(1);  % ftilde already divided by 'n'
+                    
                 else % non zero mean case
                     muhat = ftilde(1)/Ktilde(1);
                 end
@@ -223,8 +241,8 @@ classdef cubMLESobol < handle
                 
                 eigvalK = zeros(numel(lnTheta),nii);
                 %br_xpts = bitrevorder(xpts(1:nii, :));
-                %ftilde = fwht(obj.f(br_xpts)); %/nii;
-                ftilde = fwht(fx(1:nii)); %, nii, 'hadamard'
+                %ftilde = cubMLESobol.fwht_hs(obj.f(br_xpts)); %/nii;
+                ftilde = cubMLESobol.fwht_hs(fx(1:nii)); %, nii, 'hadamard'
                 br_xpts = xpts(1:nii,:);
                 
                 tic
@@ -292,17 +310,19 @@ classdef cubMLESobol < handle
             elseif obj.order==2
                 [K, Ktilde] = cubMLESobol.kernel(xpts,obj.order,a);
             else
-                error('Unsupported Bernoulli polyn order !');
+                error('Unsupported Kernel order !');
             end
             
             ftilde = abs(ftilde);  % remove any negative values
             temp = (abs(ftilde(Ktilde~=0).^2)./(Ktilde(Ktilde~=0))) ;
             
             if obj.arbMean==true
-                RKHSnorm = sum(temp(2:end))/n;
+                % RKHSnorm = sum(temp(2:end))/n;
+                RKHSnorm = sum(temp(2:end)); % already divided by 'n'
                 temp_1 = sum(temp(2:end));
             else
-                RKHSnorm = sum(temp)/n;
+                % RKHSnorm = sum(temp)/n;
+                RKHSnorm = sum(temp); % already divided by 'n'
                 temp_1 = sum(temp);
             end
             cubMLESobol.alertMsg(temp_1, 'Imag');
@@ -327,6 +347,12 @@ classdef cubMLESobol < handle
     end
     
     methods(Static)
+        % compute fwalsh transh transform in 'hadamard' ordering
+        function t = fwht_hs(fx)
+          [n, ~] = size(fx);
+          t = fwht(fx,n,'hadamard');
+        end
+        
         % prints debug message if the given variable is Inf, Nan or
         % complex, etc
         function alertMsg(varargin)
@@ -374,8 +400,28 @@ classdef cubMLESobol < handle
         end
         
         % walsh kernel
-        function [K, Ktilde] = kernel(xpts,order,a)
-            order; % not used for now
+        function [K, Ktilde] = kernel(xpts,order,theta)
+          
+          if order==2
+              wKernel_1D = @(x, shp)(1 + shp*12*( (1/6) - 2.^(floor(log2(x))-1) ));
+              [~, dim] = size(xpts);
+              if dim > 1
+                  wKernel2 = @(x, shp)prod(wKernel_1D(x,shp), ndims(x));
+              else
+                  wKernel2 = wKernel_1D;
+              end
+
+              K = wKernel2(xpts, theta);
+          else
+            error('kernel order not yet supported');
+          end
+          Ktilde = abs(cubMLESobol.fwht_hs(K));
+          
+          cubMLESobol.alertMsg(Ktilde, 'Imag');
+        end
+        
+        % High order walsh kernel
+        function [K, Ktilde] = kernel_high(xpts,order,theta)
             
             %a1 = @(x)(-floor(log2(x)));
             function out = a1(x)
@@ -388,27 +434,49 @@ classdef cubMLESobol < handle
                 out = (2.^(-a1(x)));
                 out(x==0) = 0;  % t1 is zero when x is zero
             end
+            
+            %t2 = @(x)(2.^(-2*a1(x)));
+            function out = t2(x)
+                out = (2.^(-2*a1(x)));
+                out(x==0) = 0;  % t2 is zero when x is zero
+            end
+            
             s1 = @(x)(1-2*x);
+            s2 = @(x)(1/3 - 2*(1-x).*x);
             ts2 = @(x)((1-5*t1(x))/2 - (a1(x)-2).*x);
+            ts3 = @(x)((1-43*t2(x))/18 + (5*t1(x)-1).*x +(a1(x)-2).*x.^2);
             
-            %omega2 = @(x, a)prod(1 + a*(s1(x) + ts2(x) - 1), ndims(x));
-            % to avoid subtracting "1", s1 is used directly
-            %omega2 = @(x, a)prod(1 + a*(-2*x + ts2(x)), ndims(x));
-            omega2_1D = @(x, a)(1 + a*(-2*x + ts2(x)));
-            [n, dim] = size(xpts);
-            if dim > 1
-                omega2 = @(x, a)prod(omega2_1D(x,a), ndims(x));
+            if order==2 
+              %omega2 = @(x, a)prod(1 + theta*(s1(x) + ts2(x) - 1), ndims(x));
+              % to avoid subtracting "1", s1 is used directly
+              %omega2 = @(x, a)prod(1 + theta*(-2*x + ts2(x)), ndims(x));
+              omega2_1D = @(x, shp)(1 + shp*(-2*x + ts2(x)));
+              [n, dim] = size(xpts);
+              if dim > 1
+                  omega2 = @(x, shp)prod(omega2_1D(x,shp), ndims(x));
+              else
+                  omega2 = omega2_1D;
+              end
+              % figure(2); x=[0:0.001:1]; plot(x, omega2(x), '.'); grid on; axis([0 1 -1 2])
+
+              if theta==1 % debug
+                  %fprintf('Shape a==1\n')
+              end
+              K = omega2(xpts, theta);
+
+            elseif order==3 
+              omega3_1D = @(x, shp)(1 + shp*(-2*x + s2(x) + ts3(x)));
+              [~, dim] = size(xpts);
+              if dim > 1
+                  omega3 = @(x, shp)prod(omega3_1D(x,shp), ndims(x));
+              else
+                  omega3 = omega3_1D;
+              end
+              K = omega3(xpts, theta);
             else
-                omega2 = omega2_1D;
+              error('kernel order not yet supported');
             end
-            % figure(2); x=[0:0.001:1]; plot(x, omega2(x), '.'); grid on; axis([0 1 -1 2])
-            
-            if a==1
-                %fprintf('Shape a==1\n')
-            end
-            
-            K = omega2(xpts, a);
-            Ktilde = abs(fwht(K)); %, n, 'hadamard'
+            Ktilde = abs(cubMLESobol.fwht_hs(K)); 
 
             if 0 % Create the full kernel matrix to compare
                 dm = cubMLESobol.diffMatrix(xun);
@@ -420,9 +488,50 @@ classdef cubMLESobol < handle
                 end
             end
             
-            if ~isreal(Ktilde)
-                fprintf('Ktilde has complex vals \n');
+            cubMLESobol.alertMsg(Ktilde, 'Imag');
+        end
+        
+        % plots the kernel with different params
+        % useful for visualization and debugging
+        % For Ex: 
+        %   obj = cubMLESobol(); obj.demoKernel(1024,2,2,1)
+        function demoKernel(npts,ndims,order,theta)
+          
+          sobstr=sobolset(ndims); %generate a Sobol' sequence
+          xpts = sobstr(1:npts,1:ndims); %grab Sobol' points
+          K1 = cubMLESobol.kernel(xpts,order,theta);
+          if ndims==1
+            figure(); plot(xpts, K1, '.'); grid on; axis([0 1 -1 2])
+          elseif ndims==2
+            ns = sqrt(npts);
+            if floor(ns) ~= ns
+              error('number of points should be n = 2^m');
             end
+            x = sobstr(1:ns,1:1); %grab Sobol' points
+            x = sort(x);
+            [X,Y] = meshgrid(x,x);
+            xpts = [X(:) Y(:)];
+            K1 = cubMLESobol.kernel(xpts,order,theta);
+            Z = reshape(K1, ns,ns);
+            figure(); surf(X,Y, Z); axis tight
+            xlabel('$x_1$')
+            ylabel('$x_2$')
+            zlabel('$\omega_2$')
+          elseif ndims==2 && false
+            figure(); plot3(xpts(:,1), xpts(:,2), K1,'.'); axis tight; grid on
+            xlabel('$x_1$')
+            ylabel('$x_2$')
+            zlabel('$\omega_2$')
+
+          elseif ndims==2 && false  % does not work
+            ns = sqrt(npts);
+            %xpts = sortrows(xpts);
+            X = reshape(xpts(:,1), ns,ns); Y= reshape(xpts(:,2), ns,ns);
+            Z = reshape(K1, ns,ns);
+            figure(); surf(X,Y, Z ,'FaceAlpha',0.5); axis tight
+          else
+            error('demoKernel: ndims > 2 not implemented');
+          end
         end
     end
 end

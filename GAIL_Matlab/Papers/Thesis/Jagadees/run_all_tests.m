@@ -10,7 +10,7 @@ if isunix
 else
   figSavePath = 'D:/MyWriteup/';
 end
-figSavePath = strcat(figSavePath, 'Dec_3rdweek/');
+figSavePath = strcat(figSavePath, 'Jan_2ndweek/');
 
 if exist(figSavePath,'dir')==false
   mkdir(figSavePath);
@@ -52,28 +52,32 @@ stopAtTol = false;
 tstart=tic;
 pdTx = {'C1','C1sin', 'C2sin', 'C0', 'none', 'Baker'};
 arbMeanType = [true,false];
-samplingMethod = {'Lattice', 'Sobol', };
+samplingMethod = {'Sobol', 'Lattice', }; % };
 for sampling=samplingMethod
+
+  sampling = sampling{1};
   for arbMean=arbMeanType
     if arbMean==true
-      newPath = strcat(figSavePath, sampling{1}, '/', 'arbMean/');
+      newPath = strcat(figSavePath, sampling, '/', 'arbMean/');
     else
-      newPath = strcat(figSavePath, sampling{1}, '/', 'zeroMean/');
+      newPath = strcat(figSavePath, sampling, '/', 'zeroMean/');
     end
 
     if strcmp(sampling,'Sobol')
-      transforms={'none'};
+      transforms={'none'}; % no periodization used for Sobol points based algorithm
+      bernOrder=[2]
     else
       transforms=pdTx;
+      bernOrder=[2 4]
     end
     for tx=transforms
       for dim=[2 3 4]
-        for bern=[4 2]
+        for bern=bernOrder
+          TestKeisterBayesianCubature(dim,bern,tx{1},newPath,visiblePlot,arbMean,stopAtTol,sampling)
+          TestExpCosBayesianCubature(dim,bern,tx{1},newPath,visiblePlot,arbMean,stopAtTol,sampling)
           if dim~=4
             TestMVN_BayesianCubature(dim,bern,tx{1},newPath,visiblePlot,arbMean,stopAtTol,sampling)
           end
-          TestKeisterBayesianCubature(dim,bern,tx{1},newPath,visiblePlot,arbMean,stopAtTol,sampling)
-          TestExpCosBayesianCubature(dim,bern,tx{1},newPath,visiblePlot,arbMean,stopAtTol,sampling)
         end
       end
     end

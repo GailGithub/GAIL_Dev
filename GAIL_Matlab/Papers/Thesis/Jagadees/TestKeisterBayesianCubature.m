@@ -27,39 +27,41 @@ f1 = @(x) fKeister(x,dim);
 
 fullPath = strcat(figSavePath,'/',fName,'/',ptransform,'/');
 if exist(fullPath,'dir')==false
-    mkdir(fullPath);
+  mkdir(fullPath);
 end
 
 tic
-    absTol = 1E-15;
-    relTol = 0;
-    order = BernPolyOrder;
-    if ~exist('stopAtTol','var')
-      stopAtTol = false;  % to plot the error, run for for all n values
-    end
-    tic
-    %[muhatFinal,out]=cubMLELattice(f1,dim,absTol,relTol,order,ptransform,stopAtTol,fullPath,fName,arbMean);
-    if exist('samplingMethod','var') && ...
-        strcmp(samplingMethod,'Sobol') % use Sobol points
-        %[muhatFinal,out]=cubMLELattice(f,dim,absTol,relTol,order,ptransform,...
-        % stopAtTol,fullPath,fName,arbMean);
-        obj=cubMLESobol('f',f1, 'dim',dim, 'absTol',absTol, 'relTol',relTol,...
-            'order',order, 'ptransform',ptransform, ...
-            'stopAtTol',stopAtTol, 'figSavePath',fullPath, ...
-            'fName',fName, 'arbMean',arbMean);
-    else % use Lattice points
-        obj=cubMLELattice('f',f1, 'dim',dim, 'absTol',absTol, 'relTol',relTol,...
-            'order',order, 'ptransform',ptransform, ...
-            'stopAtTol',stopAtTol, 'figSavePath',fullPath, ...
-            'fName',fName, 'arbMean',arbMean);
-    end
+absTol = 1E-15;
+relTol = 0;
+order = BernPolyOrder;
+if ~exist('stopAtTol','var')
+  stopAtTol = false;  % to plot the error, run for for all n values
+end
+tic
+%[muhatFinal,out]=cubMLELattice(f1,dim,absTol,relTol,order,ptransform,stopAtTol,fullPath,fName,arbMean);
+if exist('samplingMethod','var') && ...
+    strcmp(samplingMethod,'Sobol') % use Sobol points
+  
+  %[muhatFinal,out]=cubMLELattice(f,dim,absTol,relTol,order,ptransform,...
+  % stopAtTol,fullPath,fName,arbMean);
+  obj=cubMLESobol('f',f1, 'dim',dim, 'absTol',absTol, 'relTol',relTol,...
+    'order',order, 'ptransform',ptransform, ...
+    'stopAtTol',stopAtTol, 'figSavePath',fullPath, ...
+    'fName',fName, 'arbMean',arbMean);
+else % use Lattice points
+  
+  obj=cubMLELattice('f',f1, 'dim',dim, 'absTol',absTol, 'relTol',relTol,...
+    'order',order, 'ptransform',ptransform, ...
+    'stopAtTol',stopAtTol, 'figSavePath',fullPath, ...
+    'fName',fName, 'arbMean',arbMean);
+end
 
-    [muhatFinal,out]=compInteg(obj);
-    plotMLE_Loss(obj)
-    toc
-    nvec = 2.^out.mvec;
-    muhat = out.muhatAll;
-    ErrBd = out.ErrBdAll;
+[muhatFinal,out]=compInteg(obj);
+%plotMLE_Loss(obj)
+toc
+nvec = 2.^out.mvec;
+muhat = out.muhatAll;
+ErrBd = out.ErrBdAll;
 toc
 
 
@@ -68,10 +70,10 @@ exactInteg = Keistertrue(dim);
 errCubMLE = abs(exactInteg - muhat);
 
 plotCubatureError(dim, nvec, errCubMLE, ErrBd, fName, BernPolyOrder, ptransform, ...
-    fullPath,visiblePlot,arbMean, out.s_All, out.dscAll)
+  fullPath,visiblePlot,arbMean, out.s_All, out.dscAll)
 
 figSavePathName = sprintf('%s%s computeTime d_%d bernoulli_%d Period_%s.png', ...
-        fullPath, fName, dim, BernPolyOrder, ptransform);
+  fullPath, fName, dim, BernPolyOrder, ptransform);
 plot_nvec_vs_computeTime(nvec, out.timeAll, visiblePlot, figSavePathName, samplingMethod)
 
 fprintf('Done\n')

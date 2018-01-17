@@ -51,6 +51,7 @@ classdef cubMLELattice < handle
                     obj = copy(varargin{1});
                     iStart = 2;
                 end
+                % parse each input argument passed
                 if nargin >= iStart
                     wh = find(strcmp(varargin(iStart:end),'f'));
                     if ~isempty(wh), obj.f = varargin{wh+iStart}; end
@@ -80,6 +81,8 @@ classdef cubMLELattice < handle
             
             obj.mvec = obj.mmin:obj.mmax;
             length_mvec = length(obj.mvec);
+            
+            % to store debug info
             obj.errorBdAll = zeros(length_mvec,1);
             obj.muhatAll = zeros(length_mvec,1);
             obj.aMLEAll = zeros(length_mvec,1);
@@ -138,7 +141,7 @@ classdef cubMLELattice < handle
                     mnext=m-1;
                     ftildeNextNew=gpuArray(obj.ff(xnew));  % initialize for inplace computation
                     
-                    if obj.debugEnable==true
+                    if obj.debugEnable
                         if any(isnan(ftildeNextNew)) || any(isinf(ftildeNextNew))
                             fprintf('ftildeNextNew NaN \n');
                         end
@@ -176,7 +179,6 @@ classdef cubMLELattice < handle
                 end
                 
                 ftilde = ftildeNew;
-                % ftilde(1) = sum(ff(x)); % correction to avoid round off error
                 br_xun = bitrevorder(gpuArray(xun));
                 
                 %Compute MLE parameter
@@ -187,7 +189,7 @@ classdef cubMLELattice < handle
                 [loss,Ktilde,Kthat_new,RKHSnorm,K] = MLEKernel(obj, aMLE,br_xun,ftilde);
                 
                 %Check error criterion
-                % DSC = abs(1 - (n/Ktilde(1)));
+                % compute DSC = abs(1 - (n/Ktilde(1)));
                 DSC = abs(Kthat_new(1)/(n + Kthat_new(1)));
                 
                 % store the debug information
@@ -252,7 +254,7 @@ classdef cubMLELattice < handle
             
             %% plot MLEKernel cost function
             lnTheta = -5:0.2:5;
-            % fullPath = strcat(figSavePath,'/',fName,'/',ptransform,'/');
+            % print filename with path to store the plot
             plotFileName = sprintf('%s%s Cost d_%d bernoulli_%d Period_%s.png',...
                 obj.figSavePath, obj.fName, obj.dim, obj.order, obj.ptransform);
             plotFileName
@@ -260,6 +262,7 @@ classdef cubMLELattice < handle
             costMLE = zeros(numM,numel(lnTheta));
             tstart = tic;
             
+            % loop over all the m values
             for iter = 1:numM
                 nii = 2^obj.mvec(iter);
                 nii
@@ -288,10 +291,8 @@ classdef cubMLELattice < handle
             % semilogx
             semilogx(exp(lnTheta),real(costMLE));
             set(hFigCost, 'units', 'inches', 'Position', [1 1 13.5 11.5])
-            %title(lgd,'Sample Size, \(n\)'); legend boxoff
             xlabel('Shape param, \(\theta\)')
             ylabel('MLE Cost, \( \log \frac{y^T K_\theta^{-1}y}{[\det(K_\theta^{-1})]^{1/n}} \)')
-            % ylabel('Log MLE Obj. fun.')
             axis tight;
             if obj.arbMean
                 mType = '\(m \neq 0\)'; % arb mean
@@ -337,7 +338,7 @@ classdef cubMLELattice < handle
             Ktilde(1) = Kthat_new(1) + n;
             Ktilde(2:end) = Kthat_new(2:end);
             
-            %RKHSnorm = mean(abs(ftilde).^2./Ktilde);
+            % compute RKHSnorm = mean(abs(ftilde).^2./Ktilde);
             
             % temp = (abs(ftilde(KtildeSq~=0))./(KtildeSq(KtildeSq~=0))).^2 ;
             temp = (abs(ftilde(Ktilde~=0).^2)./(Ktilde(Ktilde~=0))) ;
@@ -353,8 +354,7 @@ classdef cubMLELattice < handle
             RKHSnormSq = sqrt(RKHSnorm);
             
             cubMLESobol.alertMsg(RKHSnormSq, 'Nan');
-            % loss = mean(2*log(KtildeSq)) + log(RKHSnorm);
-            % loss = mean(log(Ktilde)) + log(RKHSnorm);
+            % compute loss = mean(log(Ktilde)) + log(RKHSnorm);
             
             loss1 = sum(log(Ktilde(Ktilde~=0)));
             cubMLESobol.alertMsg(loss1, 'Inf');
@@ -369,7 +369,7 @@ classdef cubMLELattice < handle
     end
     
     methods(Static)  
-		% prints debug message if the given variable is Inf, Nan or
+		    % prints debug message if the given variable is Inf, Nan or
         % complex, etc
         function alertMsg(varargin)
             %varname = @(x) inputname(1);            
@@ -429,18 +429,18 @@ classdef cubMLELattice < handle
             
             constMult = -(-1)^(order/2)*((2*pi)^order)/factorial(order);
             if order == 2
-                bernPloy = @(x)(-x.*(1-x) + 1/6);
+                bernPoly = @(x)(-x.*(1-x) + 1/6);
             elseif order == 4
-                bernPloy = @(x)( ( (x.*(1-x)).^2 ) - 1/30);
+                bernPoly = @(x)( ( (x.*(1-x)).^2 ) - 1/30);
             else
                 error('Bernoulli order not implemented !');
             end
-            K = prod(1 + (a)*constMult*bernPloy(xun),2);
+            K = prod(1 + (a)*constMult*bernPoly(xun),2);
             
-            [Kt_new, K_new] = cubMLELattice.kernel_t(a, constMult, bernPloy(xun));
+            [Kt_new, K_new] = cubMLELattice.kernel_t(a, constMult, bernPoly(xun));
             
-            Kthat_new = abs(fft(Kt_new));
-            Khat_new = abs(fft(K_new));
+            Kthat_new = abs(fft(Kt_new)); % Kthat_new is more acccurate
+            Khat_new = abs(fft(K_new)); % Note: fft output not normalized
             
             % matlab's builtin fft is much faster and accurate
             Ktilde = abs(fft(K));  % remove any negative values
