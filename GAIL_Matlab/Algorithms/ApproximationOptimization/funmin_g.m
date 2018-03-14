@@ -1,6 +1,6 @@
 function [fmin,out_param]=funmin_g(varargin)
 %funmin_g 1-D guaranteed locally adaptive function optimization on [a,b]
-%  FRED's Mess
+%
 %   fmin = FUNMIN_G(f) finds minimum value of function f on the
 %   default interval [0,1] within the guaranteed absolute error tolerance
 %   of 1e-6. Input f is a function handle.
