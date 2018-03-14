@@ -6,4 +6,4 @@
 %   optPayoff        - A class of option payoffs based on asset paths
 %   optPrice         - Computes the price of an object via (Quasi-)Monte
 %                         Carlo methods
-% add
+% add some more
