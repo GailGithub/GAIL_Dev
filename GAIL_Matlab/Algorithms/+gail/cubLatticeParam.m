@@ -172,7 +172,7 @@ classdef cubLatticeParam < gail.cubParam
       end
 
       function val = get.fff(obj)
-         if strcmp(obj.periodTransform,'tent') && strcmp(obj.domainType,'box')
+         if strcmp(obj.periodTransform,'tent') && strcmp(obj.fun.domainType,'box')
             val = @(x) obj.ff(1 - abs(2*x-1)); %tent transformation
          else %no transformation
             val = obj.ff;

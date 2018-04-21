@@ -13,13 +13,13 @@ function [vSol,out]=cubBayesLatticeCLASS(varargin)
 tstart = tic; %start the clock
 inp = gail.cubBayesLatticeParam(varargin{:});
 out = gail.cubBayesLatticeOut(inp);
-d = out.d;
+d = out.fun.d;
 z = [1, 433461, 315689, 441789, 501101, 146355, 88411, 215837, 273599 ...
    151719, 258185, 357967, 96407, 203741, 211709, 135719, 100779, ...
    85729, 14597, 94813, 422013, 484367]; %generator
 z = z(1:d);
-mmin = ceil(log2(out.nInit)); %minimum power of 2
-mmax = ceil(log2(out.nMax)); %maximum power of 2
+mmin = ceil(log2(out.CM.nInit)); %minimum power of 2
+mmax = ceil(log2(out.CM.nMax)); %maximum power of 2
 mvec = mmin:mmax;
 numM = length(mvec);
 if out.isShift
