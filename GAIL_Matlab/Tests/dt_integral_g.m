@@ -77,6 +77,13 @@ function dt_integral_g()
 %   q =  0.6667
 %
 % 
+%  Testing reltol
+%   >> reltol = 1e-14;  qtrue = 0.746824132812427;
+%   >> q = integral_g(@(x) exp(-x.^2), 0, 1,'abstol', 0,'reltol',reltol);
+%   >> abs(qtrue-q) < reltol * qtrue
+%   1
+%
+% 
 %  >> [~,out_param]=integral_g(@(x) x.^2) 
 %         out_param =***
 % 
@@ -84,6 +91,7 @@ function dt_integral_g()
 %                    a: 0
 %                    b: 1
 %               abstol: 1.0000e-06
+%               reltol: 0 
 %                  nlo: 10
 %                  nhi: 1000
 %                 nmax: 10000000
@@ -103,6 +111,7 @@ function dt_integral_g()
 %                    a: 1
 %                    b: 2
 %               abstol: 1.0000e-05
+%               reltol: 0 
 %                  nlo: 100
 %                  nhi: 10000
 %                 nmax: 10000000
