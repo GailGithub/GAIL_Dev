@@ -1,6 +1,6 @@
 %% Generate Examples of Asian Arithmetic Mean Option Pricing
 function [muhat,aMLE,errVec,outAll] = TestAsianArithmeticMeanOptionAutoExample(dim,BernPolyOrder_1,...
-  ptransform_1,figSavePath_1,visiblePlot_1,arbMean_1,testAll_arg,absTol_arg)
+  ptransform_1,figSavePath_1,visiblePlot_1,arbMean_1,testAll_1,samplingMethod,absTol_arg)
 
 whichExample = 'Pierre'
 dataFileName = [whichExample 'AsianCallExampleAllData.mat'];
@@ -113,7 +113,7 @@ disp(['mu  = ' num2str(callPriceExact,15) ' +/- ' num2str(2*std(callPriceGold),1
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Try Bayesian automatic cubature
 disp('Automatic Bayesian cubature')
-nRepAuto = 100;
+nRepAuto = 50;
 timeVecAsianCallBayesAutoo(nRepAuto,1) = 0;
 nVecAsianCallBayesAutoo(nRepAuto,1) = 0;
 compCallAutoBayes = true;
@@ -157,10 +157,27 @@ if true
   tic
   for i =  1:nRepAuto
     gail.TakeNote(i,10)
-    [muAsianCallBayesAuto(i),outCallBayes{i}] = ...
-      cubMLELattice(f,dim,absTol_arg,relTol,...
-            BernPolyOrder_1,ptransform_1,testAll_1,figSavePath_1,...
-            fName_1,arbMean_1);
+
+%     [muAsianCallBayesAuto(i),outCallBayes{i}] = ...
+%       cubMLELattice(f,dim,absTol_arg,relTol,...
+%             BernPolyOrder_1,ptransform_1,testAll_1,figSavePath_1,...
+%             fName_1,arbMean_1);
+    
+    if exist('samplingMethod','var') && ...
+      strcmp(samplingMethod,'Sobol') % use Sobol points
+      obj=cubMLESobol('f',f, 'dim',dim, 'absTol',absTol_arg, 'relTol',relTol,...
+        'order',BernPolyOrder_1, 'ptransform',ptransform_1, ...
+        'stopAtTol',testAll_1, 'figSavePath',figSavePath_1, ...
+        'fName',fName_1, 'arbMean',arbMean_1);
+    else % use Lattice points
+
+      obj=cubMLELattice('f',f, 'dim',dim, 'absTol',absTol_arg, 'relTol',relTol,...
+        'order',BernPolyOrder_1, 'ptransform',ptransform_1, ...
+        'stopAtTol',testAll_1, 'figSavePath',figSavePath_1, ...
+        'fName',fName_1, 'arbMean',arbMean_1);
+    end
+    [muAsianCallBayesAuto(i),outCallBayes{i}] = compInteg(obj);
+    
     timeVecAsianCallBayesAutoo(i) = outCallBayes{i}.time;
     nVecAsianCallBayesAutoo(i) = outCallBayes{i}.n;
   end
@@ -174,6 +191,10 @@ timetopAsianCallBayesAutoo = quantile(timeVecAsianCallBayesAutoo,1-alpha);
 ntopAsianCallBayesAutoo    = quantile(nVecAsianCallBayesAutoo,1-alpha);
 successAsianCallBayesAutoo = mean(errvecAsianCallBayesAutoo <= absTol);
 
+fprintf('\nMedian error_n %1.2e, worst_n %d, worst_time %1.3f, absTol %1.2e, relTol %1.2e ', ...
+  errmedAsianCallBayesAutoo, ntopAsianCallBayesAutoo, timetopAsianCallBayesAutoo, ...
+  outCallBayes{i}.absTol, outCallBayes{i}.relTol);
+  
 muhat = median(muAsianCallBayesAuto);
 aMLE = 0;
 errVec = errvecAsianCallBayesAutoo;

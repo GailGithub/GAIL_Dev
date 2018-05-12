@@ -83,7 +83,7 @@ nvecMLE = 2.^(8:20)';
 nnMLE = numel(nvecMLE);
 
 if exist('absTol','var')==false
-  absTolVal = 1e-4;
+  absTolVal = 1e-2;
 else
   absTolVal = absTol;
 end
@@ -94,31 +94,37 @@ else
   cubMethod='MLELattice';
 end
 
+if exist('stopAtTol','var')==false
+  stopAtTol = false;
+end
 MVNProbMLELatticeGn = multivarGauss('a',a,'b',b,'Cov',Cov,'n',nvecMLE, ...
   'errMeth','g','cubMeth',cubMethod,'intMeth','Genz', ...
   'BernPolyOrder',BernPolyOrder,'ptransform',ptransform, ...
   'fName',fName,'figSavePath',fullPath,'arbMean',arbMean,...
-  'absTol',absTolVal);
+  'absTol',absTolVal, 'stopAtTol',stopAtTol);
 compMLELattice = true;
 
 if compMLELattice
   datetime
-  tic
-  nRep = 3; % increase it for gail plots
+  
+  nRep = 100; % increase it for gail plots
   outAll = {'a', 'b'};
   muMVNProbMLELatticeGn = zeros(nnMLE,nRep);
   aMLE = zeros(nnMLE,nRep);
   errbdvecMBVProbMLELatticeGn(nnMLE,nRep) = 0;
   muhatVec(nRep) = 0;
+  timeVec(nRep) = 0;
+  nPointsVec(nRep) = 0;
   for i = 1:nRep
-    if i/1 == floor(i/1), i, end
+    %if i/1 == floor(i/1), i, end
     tic
     [muhat, out] = compProb(MVNProbMLELatticeGn);
     muMVNProbMLELatticeGn(:,i) = out.muhatAll;
     muhatVec(i) = muhat;
-    toc
+    timeVec(i) = toc;
     errbdvecMBVProbMLELatticeGn(:,i) = out.ErrBdAll;
     aMLE(:,i) = out.aMLEAll;
+    nPointsVec(i) = out.n;
     outAll{i} = out;
   end
   %muhat = muMVNProbMLELatticeGn;
@@ -130,17 +136,20 @@ if compMLELattice
   errVec = abs(muBest - muhatVec);
   errtopMVNProbMLELatticeGn = quantile(errvecMVNProbMLELatticeGn,1-alpha,2);
   ErrBd = quantile(errbdvecMBVProbMLELatticeGn,1-alpha,2);
-  toc
+  fprintf('\nMedian error_n %1.2e, worst_n %d, worst_time %1.3f, absTol %1.2e, relTol %1.2e ', ...
+    median(errVec), quantile(nPointsVec,1-alpha), quantile(timeVec,1-alpha), ...
+    out.absTol, out.relTol);
+  
   datetime
   
   if exist('stopAtTol','var')==false || stopAtTol==false
     plotCubatureError(dim, nvecMLE, errCubMLE, ErrBd, fName, BernPolyOrder, ...
       ptransform, fullPath,visiblePlot,arbMean,outAll{1}.s_All, outAll{1}.dscAll)
+    figSavePathName = sprintf('%s%s computeTime d_%d bernoulli_%d Period_%s.png', ...
+      fullPath, fName, dim, BernPolyOrder, ptransform);
+    plot_nvec_vs_computeTime(nvecMLE, outAll{1}.timeAll, visiblePlot, figSavePathName, samplingMethod)
   end
   
-  figSavePathName = sprintf('%s%s computeTime d_%d bernoulli_%d Period_%s.png', ...
-    fullPath, fName, dim, BernPolyOrder, ptransform);
-  plot_nvec_vs_computeTime(nvecMLE, outAll{1}.timeAll, visiblePlot, figSavePathName, samplingMethod)
   fprintf('done\n');
   
 end
