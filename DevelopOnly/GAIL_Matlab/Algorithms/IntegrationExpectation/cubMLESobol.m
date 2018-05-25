@@ -1,4 +1,5 @@
-%CUBMLESobol Monte Carlo method to estimate the mean of a random variable
+%CUBMLESobol Bayesian cubature method to estimate the mean of a random
+% variable with with Sobol points
 %
 %   obj = cubMLESobol('f',f,'dim',dim,'absTol',absTol,'relTol',relTol,...
 %     'order',order, 'ptransform',ptransform, ...
@@ -167,7 +168,7 @@ classdef cubMLESobol < handle
         [loss,Lambda,RKHSnorm] = MLEKernel(obj, aMLE,br_xpts,ftilde);
         
         if obj.gaussianCheckEnable==true
-          PlotToCheckGaussianDist(obj, ftilde, Lambda)
+          PlotToCheckGaussianDensity(obj, ftilde, Lambda)
         end
         
         %Check error criterion
@@ -373,9 +374,9 @@ classdef cubMLESobol < handle
     % Plots the transformed and scaled integrand values as normal plots.
     % This is to verify the assumption, integrand was an instance of
     % gaussian process
-    function PlotToCheckGaussianDist(obj ,ftilde, lambda)
+    function PlotToCheckGaussianDensity(obj ,ftilde, lambda)
       n = length(ftilde);
-      w_ftilde = ftilde./lambda/n;
+      w_ftilde = (1/n)*abs(ftilde)./sqrt(abs(lambda));
       figure();
       normplot(w_ftilde)
       title(sprintf('Hist. %s n=%d Tx=%s', obj.fName, n, obj.ptransform))

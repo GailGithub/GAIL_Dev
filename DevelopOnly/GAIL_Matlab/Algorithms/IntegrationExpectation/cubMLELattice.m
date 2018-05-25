@@ -1,4 +1,4 @@
-%CUBMLE Monte Carlo method to estimate the mean of a random variable
+%CUBMLE Bayesian cubature method to estimate the mean of a random variable
 %
 %   tmu = cubMLELattice(f,absTol,relTol,alpha,nSig,inflate) estimates the mean,
 %   mu, of a f(X) using nvec samples of a random variable X in [0,1]^d.
@@ -26,6 +26,8 @@ classdef cubMLELattice < handle
     figSavePath = ''; %path where to save he figures
     visiblePlot = true; %make plots visible
     debugEnable = false; %enable debug prints
+    gaussianCheckEnable = true; %enable plot to check Guassian pdf
+    
   end
   
   properties (SetAccess = private)
@@ -113,6 +115,9 @@ classdef cubMLELattice < handle
         
         %Update function values
         %% Efficient FFT computation algorithm
+        % In every iteration, "n" number_of_points is doubled, but FFT is only
+        % computed for the newly added points. Previously computed FFT is
+        % reused.
         if iter == 1
           % in the first iteration compute the full FFT
           xun = cubMLELattice.simple_lattice_gen(n,obj.dim,true);
@@ -142,11 +147,10 @@ classdef cubMLELattice < handle
           ftildeNextNew=gpuArray(obj.ff(xnew));  % initialize for inplace computation
           
           if obj.debugEnable
-            cubMLELattice.alertMsg(ftildeNextNew, 'Nan');
-            cubMLELattice.alertMsg(ftildeNextNew, 'Inf');
+            cubMLELattice.alertMsg(ftildeNextNew, 'Nan', 'Inf');
           end
           
-          % Compute initial FFT on next set of new points
+          % Compute FFT on next set of new points
           for l=0:mnext-1
             nl=2^l;
             nmminlm1=2^(mnext-l-1);
@@ -159,8 +163,7 @@ classdef cubMLELattice < handle
             ftildeNextNew(~ptind)=(evenval-coefv.*oddval);
             
             if obj.debugEnable==true
-              cubMLELattice.alertMsg(ftildeNextNew, 'Nan');
-              cubMLELattice.alertMsg(ftildeNextNew, 'Inf');
+              cubMLELattice.alertMsg(ftildeNextNew, 'Nan', 'Inf');
             end
           end
           
@@ -181,16 +184,9 @@ classdef cubMLELattice < handle
         
         %Compute MLE parameter
         lnaMLE = fminbnd(@(lna) ...
-          MLEKernel(obj, exp(lna),br_xun,ftilde), ...
-          -5,5,optimset('TolX',1e-2));
+          MLEKernel(obj, exp(lna),br_xun,ftilde), -5,5,optimset('TolX',1e-2));
         aMLE = exp(lnaMLE);
-        [loss,Ktilde,Kthat_new,RKHSnorm,K] = MLEKernel(obj, aMLE,br_xun,ftilde);
-        
-        if obj.debugEnable == true
-          % plots the transformed and scaled integrand values as normal plot
-          % Useful to verify the assumption, integrand was an instance of a Gaussian process
-          CheckGaussianDist(obj, ftilde, Ktilde)
-        end
+        [loss,Ktilde,Kthat_new,RKHSnorm] = MLEKernel(obj, aMLE,br_xun,ftilde);
         
         %Check error criterion
         % compute DSC = abs(1 - (n/Ktilde(1)));
@@ -208,10 +204,18 @@ classdef cubMLELattice < handle
         end
         muminus = muhat - out.ErrBd;
         muplus = muhat + out.ErrBd;
+        obj.timeAll(iter) = toc(tstart_iter);  % store per iteration time
+        
         obj.muhatAll(iter) = muhat;
         obj.errorBdAll(iter) = out.ErrBd;
         obj.aMLEAll(iter) = aMLE;
         obj.lossMLEAll(iter) = loss;
+        
+        if obj.gaussianCheckEnable == true
+          % plots the transformed and scaled integrand values as normal plot
+          % Useful to verify the assumption, integrand was an instance of a Gaussian process
+          CheckGaussianDensity(obj, ftilde, Ktilde)
+        end
         
         if 2*out.ErrBd <= ...
             max(obj.absTol,obj.relTol*abs(muminus)) + max(obj.absTol,obj.relTol*abs(muplus))
@@ -227,7 +231,6 @@ classdef cubMLELattice < handle
           end
         end
         
-        obj.timeAll(iter) = toc(tstart_iter);
       end
       out.n = n;
       out.time = toc(tstart);
@@ -258,7 +261,7 @@ classdef cubMLELattice < handle
       
       %% plot MLEKernel cost function
       lnTheta = -5:0.2:5;
-      % print filename with path to store the plot
+      % build filename with path to store the plot
       plotFileName = sprintf('%s%s Cost d_%d bernoulli_%d Period_%s.png',...
         obj.figSavePath, obj.fName, obj.dim, obj.order, obj.ptransform);
       plotFileName
@@ -326,26 +329,26 @@ classdef cubMLELattice < handle
     
     
     % MLE objective function to find the optimal shape parmaeter
-    function [loss,Ktilde,Kthat_new,RKHSnorm,K] = MLEKernel(obj, a, xun, ftilde)
+    function [loss,Lambda,Kthat_new,RKHSnorm,K] = MLEKernel(obj, a, xun, ftilde)
       
       n = length(ftilde);
       if obj.order==4
-        [K, Ktilde, Kthat_new] = cubMLELattice.kernel(xun,obj.order,a);
+        [K, Lambda, Kthat_new] = cubMLELattice.kernel(xun,obj.order,a);
       elseif obj.order==2
-        [K, Ktilde, Kthat_new] = cubMLELattice.kernel(xun,obj.order,a);
+        [K, Lambda, Kthat_new] = cubMLELattice.kernel(xun,obj.order,a);
       else
         error('Unsupported Bernoulli polyn order !');
       end
       
       ftilde = abs(ftilde);  % remove any negative values
       
-      Ktilde(1) = Kthat_new(1) + n;
-      Ktilde(2:end) = Kthat_new(2:end);
+      Lambda(1) = Kthat_new(1) + n;
+      Lambda(2:end) = Kthat_new(2:end);
       
-      % compute RKHSnorm = mean(abs(ftilde).^2./Ktilde);
+      % compute RKHSnorm = mean(abs(ftilde).^2./Lambda);
       
-      % temp = (abs(ftilde(KtildeSq~=0))./(KtildeSq(KtildeSq~=0))).^2 ;
-      temp = (abs(ftilde(Ktilde~=0).^2)./(Ktilde(Ktilde~=0))) ;
+      % temp = (abs(ftilde(LambdaSq~=0))./(LambdaSq(LambdaSq~=0))).^2 ;
+      temp = (abs(ftilde(Lambda~=0).^2)./(Lambda(Lambda~=0))) ;
       
       if obj.arbMean==true
         RKHSnorm = sum(temp(2:end))/n;
@@ -358,34 +361,46 @@ classdef cubMLELattice < handle
       RKHSnormSq = sqrt(RKHSnorm);
       
       cubMLESobol.alertMsg(RKHSnormSq, 'Nan');
-      % compute loss = mean(log(Ktilde)) + log(RKHSnorm);
+      % compute loss = mean(log(Lambda)) + log(RKHSnorm);
       
-      loss1 = sum(log(Ktilde(Ktilde~=0)));
+      loss1 = sum(log(Lambda(Lambda~=0)));
       cubMLESobol.alertMsg(loss1, 'Inf');
       loss2 = n*log(temp_1);
       cubMLESobol.alertMsg(loss2, 'Inf');
       % ignore all zero val eigenvalues
-      loss = sum(log(Ktilde(Ktilde~=0))) + n*log(temp_1);
+      loss = sum(log(Lambda(Lambda~=0))) + n*log(temp_1);
       
       cubMLESobol.alertMsg(loss, 'Inf', 'Imag', 'Nan');
-      cubMLESobol.alertMsg(Ktilde, 'Imag');
+      cubMLESobol.alertMsg(Lambda, 'Imag');
     end
     
     % Plots the transformed and scaled integrand values as normal plots.
     % This is to verify the assumption, integrand was an instance of
     % gaussian process
-    function CheckGaussianDist(obj, ftilde, lambda)
+    function CheckGaussianDensity(obj, ftilde, lambda)
       n = length(ftilde);
-      w_ftilde = real(ftilde)./lambda/n;
-      figure();
+      w_ftilde = (1/n)*abs(ftilde)./sqrt(abs(lambda));
+      if obj.visiblePlot==false
+        hFigNormplot = figure('visible','off');
+      else
+        hFigNormplot = figure();
+      end
       normplot(w_ftilde)
       title(sprintf('Normplot %s n=%d Tx=%s', obj.fName, n, obj.ptransform))
+      
+      % build filename with path to store the plot
+      plotFileName = sprintf('%s%s Normplot d_%d bernoulli_%d Period_%s n_%d.png',...
+        obj.figSavePath, obj.fName, obj.dim, obj.order, obj.ptransform, n);
+      % plotFileName
+      saveas(hFigNormplot, plotFileName)
     end
   end
   
   methods(Static)
     % prints debug message if the given variable is Inf, Nan or
     % complex, etc
+    % Example: alertMsg(x, 'Inf', 'Imag')
+    %          prints if variable 'x' is either Infinite or Imaginary
     function alertMsg(varargin)
       %varname = @(x) inputname(1);
       if nargin > 1
@@ -419,29 +434,35 @@ classdef cubMLELattice < handle
       
     end
     
-    % computes Ktilde = K - 1
+    % Computes modified kernel Kt = K - 1
     % to avoid cancellation error in the computation of (1 - n/\lambda_1)
-    function [Kt, K] = kernel_t(a, const, Bern)
+    function [Km1, K] = kernel_t(a, const, Bern)
       theta = a*const;
       d = size(Bern, 2);
       
-      Kjt = theta*Bern(:,1);
-      Kj = 1 + Kjt;
+      Kjm1 = theta*Bern(:,1);  % Kernel at j-dim minus One
+      Kj = 1 + Kjm1;  % Kernel at j-dim
       
       for j=2:d
-        Kjt_1 = Kjt; Kj_1 = Kj;
+        Kjm1_prev = Kjm1; Kj_prev = Kj;  % save the Kernel at the prev dim
         
-        Kjt = theta*Bern(:,j).*Kj_1 + Kjt_1;
-        Kj = 1 + Kjt;
+        Kjm1 = theta*Bern(:,j).*Kj_prev + Kjm1_prev;
+        Kj = 1 + Kjm1;
       end
       
-      Kt = Kjt; K = Kt;
+      Km1 = Kjm1; K = Kj;
     end
     
     
     % bernoulli polynomial based kernel
-    function [K, Ktilde, Kthat_new] = kernel(xun,order,a)
+    % C1 first row of the kernel
+    % Lambda eigen values of the kernel
+    % Lambdahat = fft(C1 - 1)
+    function [C1, Lambda, Lambdahat] = kernel(xun,order,a,debugEnable)
       
+      if ~exist('debugEnable', 'var')
+        debugEnable = false;
+      end
       constMult = -(-1)^(order/2)*((2*pi)^order)/factorial(order);
       if order == 2
         bernPoly = @(x)(-x.*(1-x) + 1/6);
@@ -450,18 +471,26 @@ classdef cubMLELattice < handle
       else
         error('Bernoulli order not implemented !');
       end
-      K = prod(1 + (a)*constMult*bernPoly(xun),2);
       
-      [Kt_new, K_new] = cubMLELattice.kernel_t(a, constMult, bernPoly(xun));
-      
-      Kthat_new = abs(fft(Kt_new)); % Kthat_new is more acccurate
-      Khat_new = abs(fft(K_new)); % Note: fft output not normalized
-      
+      % direct appraoch to compute first row of the Kernel matrix
+      C1 = prod(1 + (a)*constMult*bernPoly(xun),2);  %
       % matlab's builtin fft is much faster and accurate
-      Ktilde = abs(fft(K));  % remove any negative values
+      Lambda = abs(fft(C1));  % remove any negative values
       
-      if sum(K)==length(K) || Ktilde(1)==length(K)
-        %fprintf('debug');
+      % Computes C1m1 = C1 - 1
+      % C1_new = 1 + C1m1 indirectly computed in the process
+      [C1m1, C1_alt] = cubMLELattice.kernel_t(a, constMult, bernPoly(xun));
+      Lambdahat = abs(fft(C1m1));
+      
+      if debugEnable == true
+        Lambda_alt = abs(fft(C1_alt)); % Note: fft output not normalized
+        if sum(abs(Lambda_alt-Lambda)) > 1
+          fprintf('Possible error: check Lambda_alt computation')
+        end
+        
+        if sum(C1)==length(C1) || Lambda(1)==length(C1)
+          %fprintf('debug');
+        end
       end
     end
     

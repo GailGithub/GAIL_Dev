@@ -5,7 +5,7 @@ if str2double(getfield(ver('MATLAB'),'Version')) >= 8.5 %the next part only work
    set(groot,'defaultAxesTickLabelInterpreter','latex', ... %LaTeX interpreted axis tics
       'defaultLegendInterpreter','latex', ... %LaTeX interpreted legends
       'defaultTextArrowShapeInterpreter','latex', ... %LaTeX interpreted annotations
-      'defaultTextBoxShapeInterpreter','latex'), %LaTeX interpreted annotations
+      'defaultTextBoxShapeInterpreter','latex', ...%LaTeX interpreted annotations
       'defaultTextBoxShapeInterpreter','latex', ... %LaTeX interpreted annotations
       'defaultColorbarTickLabelInterpreter','latex', ... %LaTeX interpreted colorbar
       'defaultPolaraxesTickLabelInterpreter','latex') %Latex intepreted polar
