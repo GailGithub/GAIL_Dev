@@ -1,4 +1,4 @@
-function makeMovieRotateCoord(xPts,vidFileName,coord,nFrame,xDim,plotStyle)
+function makeMovieRotateCoord(xPts,vidFileName,coord,nFrame,xDim,plotStyle,tick)
 % MAKEMOVIEROTATECOORD rotates the 3-D plot axes through several angles and
 % outputs a movie
 
@@ -7,6 +7,9 @@ if nargin < 1
    error('Must have at least one input')
 else
    d = size(xPts,2);
+end
+if nargin < 7
+   tick = 0:0.25:1;
 end
 if nargin < 6
    plotStyle = '';
@@ -46,7 +49,7 @@ set(gcf,'Color',[1 1 1]);          %make background color white
 mov(nLoop*nFrame) = getframe(gcf); %initialize movie
 k = 0;                             %initialize frame index
 
-%% Creater movie frames
+%% Create movie frames
 for l = 1:nLoop
    cd = coord(l:l+2);              %get coordianate triple
    h = plot3(xPts(:,cd(1)),xPts(:,cd(2)),xPts(:,cd(3)),'.'); %plot points
@@ -56,11 +59,12 @@ for l = 1:nLoop
    xlabel(['\(x_' int2str(cd(1)) '\)']) %label
    ylabel(['\(x_' int2str(cd(2)) '\)']) %all three
    zlabel(['\(x_' int2str(cd(3)) '\)']) %axes
-   axis(xDim(:))                   %make axes have correct dimension
+   axDim = xDim(:,cd);
+   axis(axDim(:))                   %make axes have correct dimension
    axis('square')                  %make axes square
-   set(gca,'Xtick',[xDim(1) (xDim(1)+xDim(2))/2 xDim(2)], ...
-      'Ytick',[xDim(3) (xDim(3)+xDim(4))/2 xDim(4)], ...
-      'Ztick',[xDim(5) (xDim(5)+xDim(6))/2 xDim(6)])
+   set(gca,'Xtick',xDim(1) + tick*(xDim(2)-xDim(1)), ...
+      'Ytick',xDim(3) + tick*(xDim(4)-xDim(3)), ...
+      'Ztick',xDim(5) + tick*(xDim(6)-xDim(5)))
    for i = 1:nFrame
       k = k+1;                     %increment frame index
       view(azInc(i),elInc(i));     %set view
