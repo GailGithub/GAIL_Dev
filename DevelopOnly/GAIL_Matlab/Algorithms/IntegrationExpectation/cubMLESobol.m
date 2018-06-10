@@ -110,7 +110,7 @@ classdef cubMLESobol < handle
       numM = length(obj.mvec);
       
       %wKernel = @(x)12*( (1/4) - 2.^(floor(log2(x))-1) );
-      sobstr = sobolset(obj.dim); %generate a Sobol' sequence
+      sobstr = scramble(sobolset(obj.dim),'MatousekAffineOwen'); %generate a Sobol' sequence
       
       % no periodization transfrom required for this algorithm
       obj.ptransform = 'Baker';  % Hack : remove it soon
@@ -118,7 +118,7 @@ classdef cubMLESobol < handle
       % ff = obj.f;
       
       % pick a random value to apply as shift
-      shift = rand(1,obj.dim);
+      %shift = rand(1,obj.dim);
       
       %% Iteratively find the number of points required for the cubature to meet
       % the error threshold
@@ -130,16 +130,18 @@ classdef cubMLESobol < handle
         if iter == 1
           n0 = 1;
           nnext = n;
-          xun = sobstr(n0:nnext,1:obj.dim); %grab Sobol' points
-          xpts = mod(bsxfun(@plus,xun,shift),1);  % shifted
+%          xun = sobstr(n0:nnext,1:obj.dim); %grab Sobol' points
+%          xpts = mod(bsxfun(@plus,xun,shift),1);  % shifted
+          xpts = sobstr(n0:nnext,1:obj.dim);  % grab Sobol' points
           fx = gpuArray(ff(xpts)); %evaluate integrand
           ftilde = cubMLESobol.fwht_hs(fx);
         else
           n0=1+n/2;
           nnext = n;
-          xunnew = sobstr(n0:nnext,1:obj.dim); %grab Sobol' points
-          xptsnext = mod(bsxfun(@plus,xunnew,shift),1);
-          xun = [xun;xunnew];
+%          xunnew = sobstr(n0:nnext,1:obj.dim); %grab Sobol' points
+%          xptsnext = mod(bsxfun(@plus,xunnew,shift),1);
+          xptsnext = sobstr(n0:nnext,1:obj.dim);
+%          xun = [xun;xunnew];
           xpts = [xpts;xptsnext];
           
           fx = gpuArray(ff(xptsnext));  % initialize for inplace computation
@@ -158,7 +160,8 @@ classdef cubMLESobol < handle
         
         
         %br_xpts = bitrevorder(gpuArray(xpts));
-        br_xpts = gpuArray(xun);
+%        br_xpts = gpuArray(xun);
+        br_xpts = gpuArray(xpts);
         
         %Compute MLE parameter
         lnaMLE = fminbnd(@(lna) ...

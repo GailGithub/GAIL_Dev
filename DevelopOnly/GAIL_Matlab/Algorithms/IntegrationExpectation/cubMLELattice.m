@@ -26,7 +26,7 @@ classdef cubMLELattice < handle
     figSavePath = ''; %path where to save he figures
     visiblePlot = true; %make plots visible
     debugEnable = false; %enable debug prints
-    gaussianCheckEnable = true; %enable plot to check Guassian pdf
+    gaussianCheckEnable = false; %enable plot to check Guassian pdf
     
   end
   
@@ -245,8 +245,8 @@ classdef cubMLELattice < handle
       % convert from gpu memory to local
       muhat=gather(muhat);
       out=gather(out);
-      muhat   % let it to print
-      out
+      %muhat   % let it to print
+      %out
       
     end
     
