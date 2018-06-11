@@ -26,7 +26,7 @@ classdef cubMLESobol < handle
     order = 2; %order of the kernel
     
     ptransform = 'none'; %periodization transform
-    stopAtTol = false; %stop after meeting the error tolerance
+    stopAtTol = true; %automatice mode: stop after meeting the error tolerance
     arbMean = false; %by default use zero mean algorithm
     fName = 'None'; %name of the integrand
     figSavePath = ''; %path where to save he figures
@@ -130,18 +130,13 @@ classdef cubMLESobol < handle
         if iter == 1
           n0 = 1;
           nnext = n;
-%          xun = sobstr(n0:nnext,1:obj.dim); %grab Sobol' points
-%          xpts = mod(bsxfun(@plus,xun,shift),1);  % shifted
           xpts = sobstr(n0:nnext,1:obj.dim);  % grab Sobol' points
           fx = gpuArray(ff(xpts)); %evaluate integrand
           ftilde = cubMLESobol.fwht_hs(fx);
         else
           n0=1+n/2;
           nnext = n;
-%          xunnew = sobstr(n0:nnext,1:obj.dim); %grab Sobol' points
-%          xptsnext = mod(bsxfun(@plus,xunnew,shift),1);
           xptsnext = sobstr(n0:nnext,1:obj.dim);
-%          xun = [xun;xunnew];
           xpts = [xpts;xptsnext];
           
           fx = gpuArray(ff(xptsnext));  % initialize for inplace computation
@@ -160,7 +155,6 @@ classdef cubMLESobol < handle
         
         
         %br_xpts = bitrevorder(gpuArray(xpts));
-%        br_xpts = gpuArray(xun);
         br_xpts = gpuArray(xpts);
         
         %Compute MLE parameter

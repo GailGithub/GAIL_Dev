@@ -20,7 +20,7 @@ classdef cubMLELattice < handle
     relTol = 0; %relative tolerance
     order = 2; %order of the kernel
     ptransform = 'Baker'; %periodization transform
-    stopAtTol = false; %stop after meeting the error tolerance
+    stopAtTol = true; %automatice mode: stop after meeting the error tolerance
     arbMean = false; %by default use zero mean algorithm
     fName = 'None'; %name of the integrand
     figSavePath = ''; %path where to save he figures
