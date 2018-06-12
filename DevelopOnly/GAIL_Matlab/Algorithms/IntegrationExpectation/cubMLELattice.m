@@ -120,34 +120,13 @@ classdef cubMLELattice < handle
         % reused.
         if iter == 1
           % in the first iteration compute the full FFT
-          [xun, z] = obj.simple_lattice_gen(n,obj.dim,true);
+          [~, z] = obj.simple_lattice_gen(n,obj.dim,true);
           xun_1 = mod(bsxfun(@times,(0:1/n:1-1/n)',z),1);
           x_1 = mod(bsxfun(@plus,xun_1,shift),1);  % shifted
           
           % Compute initial FFT
-          ftildeNew_1 = fft(obj.ff(x_1));
-          if obj.debugEnable
-            x = mod(bsxfun(@plus,xun,shift),1);  % shifted
-            ftildeNew=gpuArray(obj.ff(x)); %evaluate integrand
-          
-            for l=0:obj.mmin-1
-              nl=2^l;
-              nmminlm1=2^(obj.mmin-l-1);
-              ptind=repmat([true(nl,1); false(nl,1)],nmminlm1,1);
-              coef=exp(-2*pi()*sqrt(-1)*(0:nl-1)'/(2*nl));
-              coefv=repmat(coef,nmminlm1,1);
-              evenval=ftildeNew(ptind);
-              oddval=ftildeNew(~ptind);
-              ftildeNew(ptind)=(evenval+coefv.*oddval);
-              ftildeNew(~ptind)=(evenval-coefv.*oddval);
-            end
-          
-            %ftildeNew_1 = obj.fft_DIT(gpuArray(obj.ff(x)), obj.mmin);
-            if sum(abs(ftildeNew-ftildeNew_1))>1
-              fprintf('Error: fft mismatch')
-            end
+          ftildeNew_1 = fft(gpuArray(obj.ff(x_1))); %evaluate integrand's fft
 
-          end
         else
           xunnew_1 = mod(bsxfun(@times,(1/n:2/n:1-1/n)',z),1);
           xnew_1 = mod(bsxfun(@plus,xunnew_1,shift),1);
@@ -156,82 +135,17 @@ classdef cubMLELattice < handle
           mnext=m-1;
           
           % Compute FFT on next set of new points
-          ftildeNextNew_1 = fft(obj.ff(xnew_1));
+          ftildeNextNew_1 = fft(gpuArray(obj.ff(xnew_1)));
           if obj.debugEnable
             cubMLELattice.alertMsg(ftildeNextNew_1, 'Nan', 'Inf');
           end
-          
-          if obj.debugEnable
-            xunnew = cubMLELattice.simple_lattice_gen(n,obj.dim,false);
-            xnew = mod(bsxfun(@plus,xunnew,shift),1);
-            xun = [xun;xunnew];
-            x = [x;xnew];
-
-            ftildeNextNew=gpuArray(obj.ff(xnew));  % initialize for inplace computation
-          
-            if obj.debugEnable
-              cubMLELattice.alertMsg(ftildeNextNew, 'Nan', 'Inf');
-            end
-          
-            for l=0:mnext-1
-              nl=2^l;
-              nmminlm1=2^(mnext-l-1);
-              ptind=repmat([true(nl,1); false(nl,1)],nmminlm1,1);
-              coef=exp(-2*pi()*sqrt(-1)*(0:nl-1)'/(2*nl));
-              coefv=repmat(coef,nmminlm1,1);
-              evenval=ftildeNextNew(ptind);
-              oddval=ftildeNextNew(~ptind);
-              ftildeNextNew(ptind)=(evenval+coefv.*oddval);
-              ftildeNextNew(~ptind)=(evenval-coefv.*oddval);
-
-              if obj.debugEnable
-                cubMLELattice.alertMsg(ftildeNextNew, 'Nan', 'Inf');
-              end
-            end
-          
-            %ftildeNextNew_1 = obj.fft_DIT(gpuArray(obj.ff(xnew)), mnext);
-            if sum(abs(ftildeNextNew-ftildeNextNew_1))>1
-              fprintf('Error: fft p2 mismatch')
-            end
-          end
-          
+                    
           % combine the previous batch and new batch to get FFT on all points
-          if obj.debugEnable
-            ftildeNew=[ftildeNew;ftildeNextNew];
-            nl=2^mnext;
-            ptind=[true(nl,1); false(nl,1)];
-            coef=exp(-2*pi()*sqrt(-1)*(0:nl-1)'/(2*nl));
-            coefv=repmat(coef,nmminlm1,1);
-            evenval=ftildeNew(ptind);
-            oddval=ftildeNew(~ptind);
-            ftildeNew(ptind)=(evenval+coefv.*oddval);
-            ftildeNew(~ptind)=(evenval-coefv.*oddval);
-          end
-          
           ftildeNew_1 = obj.merge_fft(ftildeNew_1, ftildeNextNew_1, mnext);
         end
         
-        if true
-          %figure; plot(abs(fft(obj.ff(bitrevorder(x)))-ftildeNew))
-        end
-        
-        %ftildeNew_1 = fft(obj.ff(x_1)); % super direct method
-        
         ftilde = ftildeNew_1;
-        if obj.debugEnable
-          ftilde_1 = ftildeNew;
-          if sum(abs(ftilde-ftilde_1))>1
-            fprintf('Error: fft merged mismatch')
-          end
-        end
-            
         br_xun = xun_1;
-        if obj.debugEnable
-          br_xun_1 = bitrevorder(gpuArray(xun));
-          if sum(sum([br_xun-br_xun_1]))>1
-            fprintf('Error: Lattice pts mismatch')
-          end
-        end
         
         %Compute MLE parameter
         lnaMLE = fminbnd(@(lna) ...

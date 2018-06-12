@@ -79,7 +79,7 @@ end
 disp(['mu  = ' num2str(muBest,15) ' +/- ' num2str(2*std(muBestvec),10)])
 
 %% Try MLE Bayseian cubature with Fourier kernel and Rank1 Lattice points
-nvecMLE = 2.^(8:20)';
+nvecMLE = 2.^(10:20)';
 nnMLE = numel(nvecMLE);
 
 if exist('absTol','var')==false
