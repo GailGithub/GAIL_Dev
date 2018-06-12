@@ -14,7 +14,7 @@ classdef cubMLELattice < handle
   properties
     f = @(x) x.^2; %function to integrate
     dim = 1; %dimension of the integrand
-    mmin = 8; %min number of points to start with = 2^mmin
+    mmin = 10; %min number of points to start with = 2^mmin
     mmax = 20; %max number of points allowed = 2^mmax
     absTol = 0.01; %absolute tolerance
     relTol = 0; %relative tolerance
@@ -79,7 +79,7 @@ classdef cubMLELattice < handle
       end
       
       % apply periodization transformation to the function
-      obj.ff = cubMLELattice.doPeriodTx(obj.f, obj.ptransform);
+      obj.ff = obj.doPeriodTx(obj.f, obj.ptransform);
       
       obj.mvec = obj.mmin:obj.mmax;
       length_mvec = length(obj.mvec);
@@ -120,16 +120,86 @@ classdef cubMLELattice < handle
         % reused.
         if iter == 1
           % in the first iteration compute the full FFT
-          xun = cubMLELattice.simple_lattice_gen(n,obj.dim,true);
-          x = mod(bsxfun(@plus,xun,shift),1);  % shifted
-          
-          ftildeNew=gpuArray(obj.ff(x)); %evaluate integrand
+          [xun, z] = obj.simple_lattice_gen(n,obj.dim,true);
+          xun_1 = mod(bsxfun(@times,(0:1/n:1-1/n)',z),1);
+          x_1 = mod(bsxfun(@plus,xun_1,shift),1);  % shifted
           
           % Compute initial FFT
-          for l=0:obj.mmin-1
-            nl=2^l;
-            nmminlm1=2^(obj.mmin-l-1);
-            ptind=repmat([true(nl,1); false(nl,1)],nmminlm1,1);
+          ftildeNew_1 = fft(obj.ff(x_1));
+          if obj.debugEnable
+            x = mod(bsxfun(@plus,xun,shift),1);  % shifted
+            ftildeNew=gpuArray(obj.ff(x)); %evaluate integrand
+          
+            for l=0:obj.mmin-1
+              nl=2^l;
+              nmminlm1=2^(obj.mmin-l-1);
+              ptind=repmat([true(nl,1); false(nl,1)],nmminlm1,1);
+              coef=exp(-2*pi()*sqrt(-1)*(0:nl-1)'/(2*nl));
+              coefv=repmat(coef,nmminlm1,1);
+              evenval=ftildeNew(ptind);
+              oddval=ftildeNew(~ptind);
+              ftildeNew(ptind)=(evenval+coefv.*oddval);
+              ftildeNew(~ptind)=(evenval-coefv.*oddval);
+            end
+          
+            %ftildeNew_1 = obj.fft_DIT(gpuArray(obj.ff(x)), obj.mmin);
+            if sum(abs(ftildeNew-ftildeNew_1))>1
+              fprintf('Error: fft mismatch')
+            end
+
+          end
+        else
+          xunnew_1 = mod(bsxfun(@times,(1/n:2/n:1-1/n)',z),1);
+          xnew_1 = mod(bsxfun(@plus,xunnew_1,shift),1);
+          [xun_1, x_1] = obj.merge_pts(xun_1, xunnew_1, x_1, xnew_1, n, obj.dim);
+          
+          mnext=m-1;
+          
+          % Compute FFT on next set of new points
+          ftildeNextNew_1 = fft(obj.ff(xnew_1));
+          if obj.debugEnable
+            cubMLELattice.alertMsg(ftildeNextNew_1, 'Nan', 'Inf');
+          end
+          
+          if obj.debugEnable
+            xunnew = cubMLELattice.simple_lattice_gen(n,obj.dim,false);
+            xnew = mod(bsxfun(@plus,xunnew,shift),1);
+            xun = [xun;xunnew];
+            x = [x;xnew];
+
+            ftildeNextNew=gpuArray(obj.ff(xnew));  % initialize for inplace computation
+          
+            if obj.debugEnable
+              cubMLELattice.alertMsg(ftildeNextNew, 'Nan', 'Inf');
+            end
+          
+            for l=0:mnext-1
+              nl=2^l;
+              nmminlm1=2^(mnext-l-1);
+              ptind=repmat([true(nl,1); false(nl,1)],nmminlm1,1);
+              coef=exp(-2*pi()*sqrt(-1)*(0:nl-1)'/(2*nl));
+              coefv=repmat(coef,nmminlm1,1);
+              evenval=ftildeNextNew(ptind);
+              oddval=ftildeNextNew(~ptind);
+              ftildeNextNew(ptind)=(evenval+coefv.*oddval);
+              ftildeNextNew(~ptind)=(evenval-coefv.*oddval);
+
+              if obj.debugEnable
+                cubMLELattice.alertMsg(ftildeNextNew, 'Nan', 'Inf');
+              end
+            end
+          
+            %ftildeNextNew_1 = obj.fft_DIT(gpuArray(obj.ff(xnew)), mnext);
+            if sum(abs(ftildeNextNew-ftildeNextNew_1))>1
+              fprintf('Error: fft p2 mismatch')
+            end
+          end
+          
+          % combine the previous batch and new batch to get FFT on all points
+          if obj.debugEnable
+            ftildeNew=[ftildeNew;ftildeNextNew];
+            nl=2^mnext;
+            ptind=[true(nl,1); false(nl,1)];
             coef=exp(-2*pi()*sqrt(-1)*(0:nl-1)'/(2*nl));
             coefv=repmat(coef,nmminlm1,1);
             evenval=ftildeNew(ptind);
@@ -137,50 +207,31 @@ classdef cubMLELattice < handle
             ftildeNew(ptind)=(evenval+coefv.*oddval);
             ftildeNew(~ptind)=(evenval-coefv.*oddval);
           end
-        else
-          xunnew = cubMLELattice.simple_lattice_gen(n,obj.dim,false);
-          xnew = mod(bsxfun(@plus,xunnew,shift),1);
-          xun = [xun;xunnew];
-          x = [x;xnew];
           
-          mnext=m-1;
-          ftildeNextNew=gpuArray(obj.ff(xnew));  % initialize for inplace computation
-          
-          if obj.debugEnable
-            cubMLELattice.alertMsg(ftildeNextNew, 'Nan', 'Inf');
-          end
-          
-          % Compute FFT on next set of new points
-          for l=0:mnext-1
-            nl=2^l;
-            nmminlm1=2^(mnext-l-1);
-            ptind=repmat([true(nl,1); false(nl,1)],nmminlm1,1);
-            coef=exp(-2*pi()*sqrt(-1)*(0:nl-1)'/(2*nl));
-            coefv=repmat(coef,nmminlm1,1);
-            evenval=ftildeNextNew(ptind);
-            oddval=ftildeNextNew(~ptind);
-            ftildeNextNew(ptind)=(evenval+coefv.*oddval);
-            ftildeNextNew(~ptind)=(evenval-coefv.*oddval);
-            
-            if obj.debugEnable==true
-              cubMLELattice.alertMsg(ftildeNextNew, 'Nan', 'Inf');
-            end
-          end
-          
-          % combine the previous batch and new batch to get FFT on all points
-          ftildeNew=[ftildeNew;ftildeNextNew];
-          nl=2^mnext;
-          ptind=[true(nl,1); false(nl,1)];
-          coef=exp(-2*pi()*sqrt(-1)*(0:nl-1)'/(2*nl));
-          coefv=repmat(coef,nmminlm1,1);
-          evenval=ftildeNew(ptind);
-          oddval=ftildeNew(~ptind);
-          ftildeNew(ptind)=(evenval+coefv.*oddval);
-          ftildeNew(~ptind)=(evenval-coefv.*oddval);
+          ftildeNew_1 = obj.merge_fft(ftildeNew_1, ftildeNextNew_1, mnext);
         end
         
-        ftilde = ftildeNew;
-        br_xun = bitrevorder(gpuArray(xun));
+        if true
+          %figure; plot(abs(fft(obj.ff(bitrevorder(x)))-ftildeNew))
+        end
+        
+        %ftildeNew_1 = fft(obj.ff(x_1)); % super direct method
+        
+        ftilde = ftildeNew_1;
+        if obj.debugEnable
+          ftilde_1 = ftildeNew;
+          if sum(abs(ftilde-ftilde_1))>1
+            fprintf('Error: fft merged mismatch')
+          end
+        end
+            
+        br_xun = xun_1;
+        if obj.debugEnable
+          br_xun_1 = bitrevorder(gpuArray(xun));
+          if sum(sum([br_xun-br_xun_1]))>1
+            fprintf('Error: Lattice pts mismatch')
+          end
+        end
         
         %Compute MLE parameter
         lnaMLE = fminbnd(@(lna) ...
@@ -189,14 +240,15 @@ classdef cubMLELattice < handle
         [loss,Ktilde,Kthat_new,RKHSnorm] = MLEKernel(obj, aMLE,br_xun,ftilde);
         
         %Check error criterion
-        % compute DSC = abs(1 - (n/Ktilde(1)));
+        % compute DSC :
+        % DSC = abs(1 - (n/Ktilde(1)));
         DSC = abs(Kthat_new(1)/(n + Kthat_new(1)));
         
         % store the debug information
         obj.dscAll(iter) = sqrt(DSC);
         obj.s_All(iter) = sqrt(RKHSnorm/n);
         
-        out.ErrBd = 2.58*sqrt(DSC)*sqrt(RKHSnorm/n);
+        out.ErrBd = 2.58*sqrt(DSC * RKHSnorm/n);
         if obj.arbMean==true % zero mean case
           muhat = ftilde(1)/n;
         else % non zero mean case
@@ -241,6 +293,8 @@ classdef cubMLELattice < handle
       out.timeAll = obj.timeAll;
       out.s_All = obj.s_All;
       out.dscAll = obj.dscAll;
+      out.absTol = obj.absTol;
+      out.relTol = obj.relTol;
       
       % convert from gpu memory to local
       muhat=gather(muhat);
@@ -329,26 +383,29 @@ classdef cubMLELattice < handle
     
     
     % MLE objective function to find the optimal shape parmaeter
-    function [loss,Lambda,Kthat_new,RKHSnorm,K] = MLEKernel(obj, a, xun, ftilde)
+    function [loss,Lambda,Kthat_new,RKHSnorm] = MLEKernel(obj, a, xun, ftilde)
       
       n = length(ftilde);
       if obj.order==4
-        [K, Lambda, Kthat_new] = cubMLELattice.kernel(xun,obj.order,a);
+        [Lambda, Kthat_new] = obj.kernel(xun,obj.order,a);
       elseif obj.order==2
-        [K, Lambda, Kthat_new] = cubMLELattice.kernel(xun,obj.order,a);
+        [Lambda, Kthat_new] = obj.kernel(xun,obj.order,a);
       else
         error('Unsupported Bernoulli polyn order !');
       end
       
       ftilde = abs(ftilde);  % remove any negative values
       
-      Lambda(1) = Kthat_new(1) + n;
-      Lambda(2:end) = Kthat_new(2:end);
+      if true
+        Lambda(1) = Kthat_new(1) + n;
+        Lambda(2:end) = Kthat_new(2:end);
+      end
       
       % compute RKHSnorm = mean(abs(ftilde).^2./Lambda);
       
       % temp = (abs(ftilde(LambdaSq~=0))./(LambdaSq(LambdaSq~=0))).^2 ;
       temp = (abs(ftilde(Lambda~=0).^2)./(Lambda(Lambda~=0))) ;
+      % temp = (abs(ftilde.^2)./(Lambda)) ;
       
       if obj.arbMean==true
         RKHSnorm = sum(temp(2:end))/n;
@@ -357,21 +414,23 @@ classdef cubMLELattice < handle
         RKHSnorm = sum(temp)/n;
         temp_1 = sum(temp);
       end
-      cubMLESobol.alertMsg(temp_1, 'Imag');
       RKHSnormSq = sqrt(RKHSnorm);
       
-      cubMLESobol.alertMsg(RKHSnormSq, 'Nan');
       % compute loss = mean(log(Lambda)) + log(RKHSnorm);
       
       loss1 = sum(log(Lambda(Lambda~=0)));
-      cubMLESobol.alertMsg(loss1, 'Inf');
       loss2 = n*log(temp_1);
-      cubMLESobol.alertMsg(loss2, 'Inf');
       % ignore all zero val eigenvalues
       loss = sum(log(Lambda(Lambda~=0))) + n*log(temp_1);
       
-      cubMLESobol.alertMsg(loss, 'Inf', 'Imag', 'Nan');
-      cubMLESobol.alertMsg(Lambda, 'Imag');
+      if obj.debugEnable
+        cubMLESobol.alertMsg(RKHSnormSq, 'Nan');
+        cubMLESobol.alertMsg(temp_1, 'Imag');
+        cubMLESobol.alertMsg(loss1, 'Inf');
+        cubMLESobol.alertMsg(loss2, 'Inf');
+        cubMLESobol.alertMsg(loss, 'Inf', 'Imag', 'Nan');
+        cubMLESobol.alertMsg(Lambda, 'Imag');
+      end
     end
     
     % Plots the transformed and scaled integrand values as normal plots.
@@ -458,12 +517,13 @@ classdef cubMLELattice < handle
     % C1 first row of the kernel
     % Lambda eigen values of the kernel
     % Lambdahat = fft(C1 - 1)
-    function [C1, Lambda, Lambdahat] = kernel(xun,order,a,debugEnable)
+    function [Lambda, Lambdahat] = kernel(xun,order,a,debugEnable)
       
       if ~exist('debugEnable', 'var')
         debugEnable = false;
       end
-      constMult = -(-1)^(order/2)*((2*pi)^order)/factorial(order);
+      % constMult = -(-1)^(order/2)*((2*pi)^order)/factorial(order);
+      constMult = -(-1)^(order/2);
       if order == 2
         bernPoly = @(x)(-x.*(1-x) + 1/6);
       elseif order == 4
@@ -475,7 +535,7 @@ classdef cubMLELattice < handle
       % direct appraoch to compute first row of the Kernel matrix
       C1 = prod(1 + (a)*constMult*bernPoly(xun),2);  %
       % matlab's builtin fft is much faster and accurate
-      Lambda = abs(fft(C1));  % remove any negative values
+      Lambda = real(fft(C1));  % remove any negative values
       
       % Computes C1m1 = C1 - 1
       % C1_new = 1 + C1m1 indirectly computed in the process
@@ -520,7 +580,7 @@ classdef cubMLELattice < handle
       
     end
     
-    function xlat = simple_lattice_gen(n,d,firstBatch)
+    function [xlat, z] = simple_lattice_gen(n,d,firstBatch)
       if d<=10
         % this gives best accuracy
         z = [1, 364981, 245389, 97823, 488939, 62609, 400749, 385317, 21281, 223487]; % generator from Hickernell's paper
@@ -574,8 +634,8 @@ classdef cubMLELattice < handle
     
     
     % fft with deimation in time i.e, input is already in 'bitrevorder'
-    function y = fft_DIT( y )
-      nmmin = log2(length(y));
+    function y = fft_DIT( y, nmmin )
+      %nmmin = log2(length(y));
       %y = bitrevorder(y);
       for l=0:nmmin-1
         nl=2^l;
@@ -585,11 +645,34 @@ classdef cubMLELattice < handle
         coefv=repmat(coef,nmminlm1,1);
         evenval=y(ptind);
         oddval=y(~ptind);
-        y(ptind)=(evenval+coefv.*oddval)/2;
-        y(~ptind)=(evenval-coefv.*oddval)/2;
+        y(ptind)=(evenval+coefv.*oddval); %/2;
+        y(~ptind)=(evenval-coefv.*oddval); %/2;
       end
     end
     
+    
+    function ftildeNew = merge_fft(ftildeNew, ftildeNextNew, mnext)
+      ftildeNew=[ftildeNew;ftildeNextNew];
+      nl=2^mnext;
+      ptind=[true(nl,1); false(nl,1)];
+      coef=exp(-2*pi()*sqrt(-1)*(0:nl-1)'/(2*nl));
+      coefv=repmat(coef,1,1);
+      evenval=ftildeNew(ptind);
+      oddval=ftildeNew(~ptind);
+      ftildeNew(ptind)=(evenval+coefv.*oddval);
+      ftildeNew(~ptind)=(evenval-coefv.*oddval);
+    end
+    
+    
+    function [xun, x] = merge_pts(xun, xunnew, x, xnew, n, d)
+      temp = zeros(n,d);
+      temp(1:2:n-1,:) = xun;
+      temp(2:2:n,:) = xunnew;
+      xun = temp;
+      temp(1:2:n-1,:) = x;
+      temp(2:2:n,:) = xnew;
+      x = temp;
+    end
     
   end
 end
