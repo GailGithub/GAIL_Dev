@@ -361,7 +361,7 @@ m(\mu(1) - \vone^T  \mC^{-1}\vc )
 \vc^T \mC^{-1} \vy
 \end{array}
 \end{align*}
-If we can assume the observed data comes from the source of Gaussian process with zero mean $m=0$ then $w_0 = 0$; This fact can be used where applicable. For the integration problem as defined eqn (\ref{eqn:defn_mu}), which is the focus of this work, $\mu(1) = 1$. So, further in this work, we use the actual value.
+If we can assume the observed data comes from the source of Gaussian process with zero mean $m=0$ then $w_0 = 0$; This fact can be used where applicable. For the integration problem as defined eqn (\ref{eqn:defn_mu}), which is the focus of this work, $\mu(1) = 1$. So, further in this work, we use the actual value instead.
 
 Subsequently, since the posterior error $\mu-\hmu\;|\vy$ is a Normal random variable, we can obtain a confidence interval or inference using integrand-samples and estimated-parameters. If $n$ is chosen large enough to make
 \begin{align}
@@ -392,7 +392,7 @@ where the constant $2.58$ comes from the fact that $99\%$ standard Normal distri
 
 
 \subsection{Maximal likelihood estimation of parameters}
-The covariance scale parameter $s^2$, mean $m$ and kernel shape parameter $\vtheta$ must be estimated. We choose to do this estimation through Maximum likelihood estimation (MLE), by using the observed integrand values for the purpose of estimating the integral.  The log-likelihood function of the parameters given the data $\vy = \{y_i = f(\vx_i)\}_{i=1}^n$ is 
+The covariance scale parameter $s^2$, mean $m$ and kernel shape parameter $\vtheta$ must be estimated. We choose to do this estimation through Maximum likelihood estimation (MLE), by using the observed integrand values for the purpose of estimating the integral.  The log-likelihood function of the parameters given the data $\vy = \{f(\vx_i)\}_{i=1}^n$ is:
 \begin{nalign}
 & l(s,m,\vtheta | \vy) = \log 
 \left(
@@ -404,12 +404,12 @@ The covariance scale parameter $s^2$, mean $m$ and kernel shape parameter $\vthe
 &= -\frac{1}{2} s^{-2} (\vy-m\vone)^T\mCInv(\vy-m\vone) - \frac{1}{2} \log(\det\, \mC) - n \log(s ) + \text{constants.}
 \end{nalign}
 
-Maximizing $l(s,m,\vtheta | \vy)$ with respect to $m$, provides the MLE of $m$ 
+Maximizing $l(s,m,\vtheta | \vy)$ with respect to $m$, provides the MLE of $m$:
 \begin{align}
 \label{eqn_m_MLE}
 m_\MLE &= \frac{\vone^T \mCInv \vy }{ \vone^T \mCInv \vone}
 \end{align}
-Then using the above result
+Then using this result, 
 \begin{align*}
 (\vy-m\vone)^T\mCInv(\vy-m\vone) 
 & = 
@@ -422,7 +422,7 @@ Then using the above result
 \right] \vy.
 \end{align*}
 
-Maximizing $l(s,m,\vtheta | \vy)$ with respect to `$s$' provides the MLE of $s$
+Maximizing $l(s,m,\vtheta | \vy)$ with respect to `$s$' provides the MLE of $s$:
 \begin{align}
 \label{eqn_s2_MLE}
 \nonumber
@@ -435,7 +435,7 @@ s^2_{\MLE}
 \left[ 
 \mCInv - 
 \frac{ \mCInv \vone \vone^T \mCInv }{\vone^T\mCInv \vone}
-\right] \vy
+\right] \vy.
 \end{align}
 
 Plug in the results of $m_\MLE$ and $s_\MLE$ to simplify the log likelihood:
@@ -514,12 +514,16 @@ Using those two MLE results of $m$ and $s$, the simplified stopping criterion be
 (c_0 - \vc^T\mC^{-1}\vc) }  \leq \errtol .
 \]
 
-When computing $\hmu$, we use the MLE estimated parameters $m_\MLE , s_\MLE$ and $\vthetaMLE$:
+Finally, using the MLE estimated parameters $m_\MLE , s_\MLE$ and $\vthetaMLE$, we compute:
 \begin{align*}
-\hmu(f) = w_0 + \vw^T \vy = 
-m_\MLE(1 - \vone^T  \mC^{-1}\vc )
+\hmu(f) = 
+\underbrace{ m_\MLE(1 - \vone^T  \mC^{-1}\vc )}_{w_0}
 +
-\vc^T \mC^{-1} \vy
+\underbrace{\vc^T \mC^{-1}}_{\vw} \vy 
+=
+\left(
+\frac{ (1 - \vone^T  \mCInv\vc ) }{ \vone^T \mCInv \vone}   \mCInv \vone +  \mCInv\vc 
+\right)^T \vy
 \end{align*}
 
 
@@ -552,7 +556,7 @@ m_\MLE(1 - \vone^T  \mC^{-1}\vc )
 
 
 
-\subsection{Formulating the Bayesian cubature algorithm}
+\subsection{Formulating the automatic Bayesian cubature algorithm}
 \label{sec:bayes_cubature_algo}
 Let the function to integrate be $f \sim \mathcal{GP}(m,s^2 C_\vtheta)$.
 Our goal is to compute $\hat{\mu}$ within the error tolerance $\errtol$, i.e.,
@@ -560,17 +564,13 @@ Our goal is to compute $\hat{\mu}$ within the error tolerance $\errtol$, i.e.,
 |\mu - \hat{\mu}| \leq \errtol.
 \end{align*}
 It is not possible to know true error $|\mu - \hat{\mu}|$ for real problems. So, the error-bound $\errn$ is used as the approximate error estimate.
-Our algorithm keeps adding more function values till the stopping criterion is met, i.e., $\errn \le \errtol$. 
+Basic principle of our algorithm is to keep adding more function values till the stopping criterion is met, i.e., $\errn \le \errtol$. 
 Once the stopping criterion is met, the approximation of $\mu$ can be computed:
 \begin{nalign}
 \label{eqn_muhat}
-\hmu_n &= w_0 + \vw^T \vy
- &=
-\left(
-\frac{ (1 - \vone^T  \mCInv\vc ) }{ \vone^T \mCInv \vone}   \mCInv \vone +  \mCInv\vc 
-\right)^T \vy
+\hmu_n &= w_0 + \vw^T \vy,
 \end{nalign}
-Where the suffix $n$ is used to imply the number of integrand-samples used. In every iteration of the \emph{automatic cubature algorithm (\ref{algorithm1})}, only need to estimate the MLE $\vtheta_\MLE$ and then use it to compute $\mC$ and $\errn$. 
+Where the suffix $n$ is used to imply the number of integrand-samples used. In every iteration of the \emph{automatic cubature algorithm (\ref{algorithm1})}, we only need to numerically estimate the MLE of $\vtheta$ and then use it to compute $\mC$ and $\errn$. 
 
 
 
@@ -598,7 +598,7 @@ Where the suffix $n$ is used to imply the number of integrand-samples used. In e
 
 
 
-The following pseudo-code briefly explains the working of Automatic cubature algorithm.
+The following pseudo-code briefly explains the working of the automatic cubature algorithm.
 \begin{algorithm}[H]
 \caption{}\label{algorithm1}
   \begin{algorithmic}[1]
@@ -619,9 +619,11 @@ The following pseudo-code briefly explains the working of Automatic cubature alg
     \EndProcedure
   \end{algorithmic}
 \end{algorithm}
-The main idea behind our algorithm is to continue the iteration loop till the stopping-criterion is met, i.e., $\errn$ is smaller than error threshold $\errtol$. 
+
+As shown, the algorithm continues the iteration loop till the stopping-criterion is met, i.e., $\errn$ is smaller than error threshold $\errtol$. 
 At the end of every iteration, if the computed error bound  $\errn$ is higher than the required $\errtol$, algorithm doubles the number of points $n$ and repeats. When the error tolerance $\errtol$ is met, exits the loop. Finally using the $n$ and the MLE estimated parameters, computes the $\hmu_n$.
-Hence accurately computing the data-driven error bound $\errn$ which closely matches the true error is very important for the effectiveness of \emph{Automatic cubature algorithm}. Accurate and faster computation of $\errn$ and $\hmu_n$ are the main objective of the following sections.
+
+Accurately computing the data-driven error bound $\errn$ which closely matches the true error is essential for the effectiveness of our algorithm. So, accurate and faster computation of $\errn$ and $\hmu_n$ are the main objective of the following sections.
 
 
 
@@ -644,7 +646,7 @@ Hence accurately computing the data-driven error bound $\errn$ which closely mat
 \subsection{Example with Matern kernel}
 
 
-We would like to demonstrate and test numerical accuracy and computational cost of the \textit{Bayesian cubature algorithm} using the results obtained so far.
+We would like to demonstrate and test numerical accuracy and computational cost of the automatic {Bayesian cubature algorithm} using the results obtained so far.
 For this example, we use the Matern kernel:
 \begin{align}
 \label{matern_kernel}
@@ -666,12 +668,12 @@ C_{\vtheta}(\vx, \vt) = \prod_{k=1}^d \exp(-\theta_k|\vx_k-\vt_k|)(1+\theta_k |\
 \caption{MVN for d=2 with Matern kernel  }
 \label{fig:MVN_Metern_d2b2}
 \end{figure}
-While testing on a computer with Intel i7 3630QM and 16GB RAM memory, it took 118 minutes to compute the $\hmu_n$ with $n=2^{13}$. As shown in Figure \ref{fig:MVN_Metern_d2b2}, the time to compute increases rapidly with $n$. 
-Especially, the Maximum-likelihood-estimation which needs the computation of loss function is the most time consuming of all. 
-Because the loss functions need to computed multiple times, in every iteration to choose the optimal shape parameter which minimizes the loss function. 
-It is not only complexity increase, the kernel matrix become highly ill-conditioned with the increasing $n$ number of data-points.
+On our test computer with Intel i7 3630QM and 16GB RAM memory, it took 118 minutes to compute $\hmu_n$ with $n=2^{13}$. As shown in Figure \ref{fig:MVN_Metern_d2b2}, computation time increases rapidly with $n$. 
+Especially, Maximum-likelihood-estimation of $\vtheta$ which needs the loss function, is the most time consuming of all. 
+Because the loss functions need to be computed multiple times in every iteration to choose the optimal shape parameter till its minimum is found. 
+Not only the complexity increases, also the kernel matrix becomes highly ill-conditioned with increasing $n$ number of data-points.
 We must use alternative techniques to overcome this problem.
-So the \textit{Bayesian cubature} algorithm in the current form is not usable for any practical applications.
+So, our algorithm in the current form is not straightaway usable for any practical applications.
 
 
 
@@ -745,18 +747,18 @@ So the \textit{Bayesian cubature} algorithm in the current form is not usable fo
 
 
 \section{Fast automatic Bayesian cubature}\label{fast_transform_kernel}
-{Bayesian cubature algorithm} described (Section \ref{sec:bayes_cubature_algo}) is very slow due to its computationally intensive nature. This could be a hindrance in real world applications when a larger number of data points are needed. This section and further sections explore techniques to make it faster.
+{Automatic Bayesian cubature algorithm} described (Section \ref{sec:bayes_cubature_algo}) is slow due to its computationally intensive nature. This could be a hindrance in real world applications when a larger number of data points are needed to achieve the desired accuracy. This section and further sections explore techniques to make it faster.
 
-Bayesian cubature algorithm uses the error bound $\errn$ to decide when to stop, and uses MLE loss function (\ref{eqn_MLE_loss_function}) to find the optimal {shape parameter}.
+Bayesian cubature algorithm uses error-bound $\errn$ to decide when to stop, and uses MLE loss function (\ref{eqn_MLE_loss_function}) to find the optimal {shape parameter}.
 These computations involve covariance matrix inversions and multiplications, which are time-consuming and prone to numerical error. 
-When the algorithm tries to adapt by increasing $n$ to get better accuracy, the covariance matrix size also grows, along with it, the matrix condition number also grows significantly causing numerical error in matrix operations. This phenomenon is called ill-conditioning.
+When the algorithm tries to adapt by increasing $n$ to get better accuracy, the covariance matrix size also grows, along with it, the matrix's condition number also grows significantly causing numerical error in matrix operations. This phenomenon is called ill-conditioning.
 
-One approach to overcome these issues could be to use an efficient method to compute the whole equation without incurring the ill-conditioning, which involves, for example, using \textit{stable computation} \cite{FassBook2007} of the power function. But it is still slower and time-consuming. 
+One approach to overcome these issues could be to use an efficient method to compute the whole equation without incurring the ill-conditioning, which involves, for example, using \textit{stable computation} \cite{FassBook2007}. But it is going to be still slower and time-consuming. 
 
 Another approach for stable and faster computation is, using a carefully chosen kernel with some special properties which leads to faster matrix operations, like faster matrix inversion and multiplication. 
-This approach is faster in computation while avoiding the numerical error due to ill-conditioning. 
+This approach can be designed to be faster in computation while avoiding the numerical error due to ill-conditioning. 
 The later approach is the major objective of this research work. 
-Our approach is especially to choose a special form of kernel, which is called \emph{fast transform kernel} along with suitable pointset, that will avoid expensive matrix operations.
+Our approach is especially to choose a special form of kernel, which is called \emph{fast transform kernel} along with a suitable pointset, that will avoid expensive matrix operations.
 
 
 
@@ -764,12 +766,12 @@ Our approach is especially to choose a special form of kernel, which is called \
 
 
 \subsection{Fast transform kernel}
-Suppose the domain is $\mathcal{X} = [0,1]^d$ and the probability measure is uniform, If the kernel $C_\vtheta(\vx,\vt)$ is chosen carefully along with appropriate point set $\{\vx_i\}_{i=1}^n$ have the special properties, so the resulting Gram matrix has factorization of the form:
+Suppose the domain is $\mathcal{X} = [0,1]^d$ and the probability measure is uniform, If the kernel $C_\vtheta(\vx,\vt)$ is chosen carefully along with appropriate point set $\{\vx_i\}_{i=1}^n$, have the special properties, so the resulting Gram matrix has factorization of the form:
 \begin{align}
-\label{eqn:ftk_factor}
+\nonumber
 \mC &= \Big(C_\vtheta(\vx_i,\vx_j)\Big)_{i,j=1}^n  = (\vC_1,...,\vC_n) 
 \\
-\nonumber
+\label{eqn:ftk_factor}
 &= \frac 1n \mV \mLambda \mV^H  = \frac 1n \mV^* \mLambda \mV^T , 
 \quad \quad \mV^H = n \mV^{-1},
 \end{align}
@@ -780,7 +782,7 @@ Where $V^H$ is the Hermitian of $V$,
 %\label{eqn:ftk_factor_2}
 \mV = (\vv_1,...,\vv_n)^T = (\vV_1,...,\vV_n), \; \text{also} \;  \vv_1 = \vV_1 = \vone
 \\
-\mLambda = \diag(\vlambda), \; 
+\mLambda = \diag(\vlambda), \quad 
 \vlambda = (\lambda_1, ... \lambda_n),
 \\
 \mV^{-1} = \frac 1n \mV^H, \;
@@ -791,8 +793,8 @@ Where $V^H$ is the Hermitian of $V$,
 \end{gather*}
 
 Suppose the transform $\hat{\vz} = \mV^T \vz$ for any arbitrary $\vz$ can be computed within the computational cost of $\Order( n \, log\, n)$, we call it a \emph{Fast transform}. Consequently $C_{\vtheta}$ is called a \emph{fast transform kernel}.
-We use the notation $\hat{\vz}$ to indicate the transform.
-The properties of fast transform can be leverage to make the computations in Bayesian cubature algorithm faster. $\vlambda$ can be computed faster by simply,
+We use the notation $\hat{\vz}$ to indicate the transform of $\vz$.
+The properties of fast transform can be leveraged to make the computations in Bayesian cubature algorithm faster. To begin with, $\vlambda$ can be computed faster by simply,
 \begin{align}
 \label{eqn:fast_trasnform_to_eigvalues}
 \mV^T \vC_1 = \mV^T \left( \frac 1n \mV^* \mLambda \vv_1 \right) =
@@ -801,17 +803,18 @@ The properties of fast transform can be leverage to make the computations in Bay
 \lambda_1 \\ \vdots \\ \lambda_n
 \end{pmatrix} = \vlambda
 \end{align}
-Most of our computations are of the form $\va^T\mCInv\vb$, can be simplified easily:
+Most of the computations in the algorithm are of the form $\va^T\mCInv\vb$, can be simplified easily:
 \begin{align*}
 \mC V_1 &= \lambda_1 V_1 , \quad \text{by definition}
 \\
-\mCInv \vone &= \mCInv V_1 = \frac{V_1}{\lambda_1} = \frac{\vone}{\lambda_1} , \quad \text{similarly},
+\text{So}, \quad
+\mCInv \vone &= \mCInv V_1 = \frac{V_1}{\lambda_1} = \frac{\vone}{\lambda_1} , 
 \\
-\va^T\mCInv\vb &= \frac 1n \va^T \mV \mLambdaInv \mV^H \vb
+\text{similarly}, \quad \va^T\mCInv\vb &= \frac 1n \va^T \mV \mLambdaInv \mV^H \vb
 = \frac 1n \widehat{\va}^T\mLambdaInv \widehat{\vb}^*
-= \frac 1n \sum_{i=1}^n \frac{\widehat{a_i} \widehat{b_i^*}}{\lambda_i}
+= \frac 1n \sum_{i=1}^n \frac{\widehat{a_i} \widehat{b_i^*}}{\lambda_i},
 \end{align*}
-where $\widehat{\va} = \mV^T \va$ and $\widehat{\vb} = \mV^T \vb$. Similarly some of the recurring terms in our algorithm are simplified,
+where $\widehat{\va} = \mV^T \va$ and $\widehat{\vb} = \mV^T \vb$. By using this, some of the recurring terms in the algorithm are simplified,
 \begin{align*}
 \vone^T\mCInv\vone &= \vone^T \left(\frac{\vone}{\lambda_1}\right) = \frac{n}{\lambda_1}
 \\
@@ -825,7 +828,7 @@ where $\widehat{\va} = \mV^T \va$ and $\widehat{\vb} = \mV^T \vb$. Similarly som
 \end{align*}
 Then the MLE estimates can be simplified using these results:
 \begin{align*}
-m_\MLE &= \frac{\vone^T\mCInv\vy}{\vone^T\mCInv\vone} = \frac{\widehat{y}_1}{n} = \frac 1n \sum_{i=1}^n y_i
+m_\MLE &= \frac{\vone^T\mCInv\vy}{\vone^T\mCInv\vone} = \frac{\widehat{y}_1}{n} = \frac 1n \sum_{i=1}^n y_i,
 \\
 s^2_\MLE &= \frac 1n \vy^T \left[ \mCInv - \frac{\mCInv \vone \vone^T \mCInv}{\vone^T\mCInv\vone}\right]
 =
@@ -845,145 +848,23 @@ s^2_\MLE &= \frac 1n \vy^T \left[ \mCInv - \frac{\mCInv \vone \vone^T \mCInv}{\v
 
 
 
-\iffalse
-\subsection{Computing $s^2_\MLE$ and $m_\MLE$ faster}
-In all the computations of Bayesian cubature, $s^2_\MLE$ is used extensively. As a first step, we simplify this to make it faster
-
-\begin{align*}
-s^2_\MLE &= \frac{1}{n} (\vy-m_{\MLE}\vone)^T{\mC}^{-1}_\MLE(\vy-m_{\MLE}\vone) 
-\\
-&=
-\frac{1}{n}  \left(
-\vy^T{\mC}^{-1}_\MLE \vy  + m_{\MLE}^2 \vone^T{\mC}^{-1}_\MLE \vone
- -2  m_{\MLE}\vone^T{\mC}^{-1}_\MLE\vy
-\right) 
-\end{align*}
-each term in this equation can be simplified further. Further discussions will show the ways to avoid expensive matrix multiplications and inversions in $s^2_\MLE$.
 
 
 
 
 
 
-\subsubsection{Computing $\vy^T \mCInv \vy$ :}
-The matrix inversion in this term can be avoided by using the property of $\mCtheta = \frac 1n \mV \mLambda \mV^H$ as given in eqn (\ref{eqn:ftk_factor}).
-\begin{nalign}
-\label{eqn_RKHS_norm}
-\vy^T \mCInv \vy &= \vy^T \big(\frac 1n \mV \mLambda \mV^H \big)^{-1} \vy 
- &= \vy^T \big(n \mV^{-H} \mLambda^{-1} \mV^{-1} \big) \vy 
- \\
- & =  \vy^T  n \frac 1n \mV \mLambda^{-1} \frac 1n \mV^H \vy 
- & = \frac 1n \underbrace{ (\mV^T \vy)^T }_{\hatvy^T}  \mLambda^{-1} \underbrace{(\mV^T \vy)^*}_{\hatvy^*} \\
- & = \frac 1n \sum_{i=1}^{n} \frac{|\haty_i|^2}{\lambda_i}
-\end{nalign}
-where $\hatvy$ is considered to be the \textit{Fast Transform} of $\vy$. i.e., $ \hatvy = W^T y $
+\subsection{Application of fast transform kernel}
+Using the properties of the fast transform, matrix multiplications and inversions can be avoided, so the overall computation cost is $\Order(n \log n )$.
+To begin with, MLE estimate of $\vtheta$ can be made faster:
 
+%Using the properties of the fast transform, matrix multiplications and inversions can also be avoided in the computation of $\hmu_n$
 
+%Maximum likelihood estimate of $\vtheta$ is made faster by
+%using the results so far:
 
+%\subsection{Estimating the shape parameter $\vtheta_\MLE$}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-\subsubsection{Computing $\vone^T{\mCtheta}^{-1} \vone$ :}
-
-Using the property (\ref{eqn:ftk_vone_eigvector}) $\mC^{-1} \vone = \lambda_1 \vone$
-\begin{align}
-\label{eqn_kernel_matrix_result_1}
-\vone^T{\mCtheta}^{-1} \vone = \vone^T \frac1\lambda_1 \vone = \frac{n}{\lambda_1}
-\end{align}
-
-
-
-
-
-
-
-
-
-
-
-
-
-\subsubsection{Computing $\vone^T{\mCtheta}^{-1} \vy$ :}
-Using the property (\ref{eqn:ftk_vone_eigvector}) $\mC^{-1} \vone = \lambda_1 \vone$ again
-\begin{nalign}
-\label{eqn_kernel_matrix_result_2}
-\vone^T{\mCtheta}^{-1} \vy & = \vone^T \frac1\lambda_1 \vy 
-& = \frac{\sum_{j=1}^{n} y_j}{\lambda_1} 
-\end{nalign}
-Using the above results and (\ref{eqn_RKHS_norm}, \ref{eqn_kernel_matrix_result_1}, \ref{eqn_kernel_matrix_result_2}), we can rewrite $s^2_\MLE$(\ref{eqn_s2_MLE}) and $m_\MLE$(\ref{eqn_m_MLE})  
-\begin{nalign}
-m_\MLE &= \frac{\vone^T \mCInv \vy }{ \vone^T \mCInv \vone} = 
-\frac{\sum_{j=1}^{n} y_j}{\lambda_1}
-\Bigg/ \frac{n}{\lambda_1}
-&=
-\frac{1}{n} \sum_{j=1}^{n} y_j
-\end{nalign}
-Similarly,
-\begin{align*}
-s^2_\MLE 
-&=
-\frac{1}{n} 
-\left(
-\frac{1}{n} 
-\sum_{j=1}^{n} \frac{|\haty_j|^2}{\lambda_j}
- + m_{\MLE}^2 \frac{n}{\lambda_1}
- -2 m_{\MLE} \frac{\sum_{j=1}^{n} y_j}{\lambda_1}
-\right)
-&= 
-\frac{1}{n} 
-\left(
-\frac{1}{n} 
-\sum_{j=1}^{n} \frac{|\haty_j|^2}{\lambda_j}
- - \frac{1}{n}  \frac{ \left(\vone^T \vy \right)^2}{\lambda_1}
-\right)
-\end{align*}
-By using another interesting fact about the Transform matrix $\mV$, $
-\haty_1
-=
- \sum_{j=1}^{n} y_j 
-$,
-we get
-\begin{nalign}
-\label{eqn_s2_MLE_optimized}
-s^2_\MLE &= 
-\frac{1}{n^2} 
-\sum_{j=2}^{n} \frac{|\haty_j|^2}{\lambda_j}
-\end{nalign}
-\fi
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-\subsection{Estimating the shape parameter $\vtheta_\MLE$}
-
-Maximum likelihood estimate of $\vtheta$ is made faster by
-using the properties of the fast transform kernel:
 \begin{align}
 \nonumber
 \vtheta_\MLE
@@ -1003,108 +884,17 @@ using the properties of the fast transform kernel:
  \frac 1n \sum_{i=2}^n \frac{\abs{\widehat{y_i}}^2}{\lambda_i}
  \right) 
 \right]
+\\
+\nonumber
+&\text{where} \quad 
+\hat{\vy} = (\hat{y}_i)_{i=1}^{n} = \mV^T \vy.
 \end{align}
-where
-\begin{align*}
-\hat{\vy} = (\hat{y}_i)_{i=1}^{n} = \mV^T \vy
-\end{align*}
 %{$\Order(n \log n)$ operations to compute $\vC_1$, also the $\vthetaMLE$}
 
 
 
-
-
-
-\iffalse
-Maximum likelihood estimation of $\vtheta$  (\ref{eqn_MLE_loss_function}) can also be made faster by using the nicer properties of the kernel matrix $\mC$.
-\begin{nalign}
-\vtheta_\MLE
-&= 
-\argmin_{\vtheta}
-\left[
- \frac{1}{n} \log(\det( \mCtheta)) + 
- \log\left( s^2_\MLE \right) 
-\right]
-\\
-&= 
-\argmin_{\vtheta}
-\left[
- \frac{1}{n} \sum_{j=1}^n \log( \lambda_j ) + 
- \log\left( 
-   s^2_\MLE 
- \right) 
-\right]
-\end{nalign}
-$\vtheta_\MLE$ can be simplified so it does not have any matrix inversion. 
-Using the results from faster $s^2_\MLE $ (\ref{eqn_s2_MLE_optimized}), we can rewrite 
-\begin{nalign}
-\vtheta_\MLE
-& = 
-\argmin_{\vtheta}
-\left[
-\frac{1}{n} \sum_{j=1}^n \log( \lambda_j ) + 
-\log\left(
-\frac{1}{n^2} 
-\sum_{j=2}^{n} \frac{|\haty_j|^2}{\lambda_j}
-\right) 
-\right]
-\\
-& = 
-\argmin_{\vtheta}
-\left[
-\sum_{j=1}^n \log( \lambda_j ) + 
-n
-\log\left(
-\sum_{j=2}^{n} \frac{|\haty_j|^2}{\lambda_j}
-\right) 
-\right]
-\end{nalign}
-\fi
-
-The simplified computation of $\vthetaMLE$ involves no matrix inversion or multiplications. 
-It just uses scalar divisions and multiplications so the memory usage is $\Order(n)$. 
-But the {fast transform computation} of $\widehat{\vy}$ has the computational cost of $\Order(n \log n)$.  Consequently the overall computation cost is also $\Order(n \log n )$. 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-\subsection{Computing error bound $err_n$}
-Using the properties of the {fast transform kernel}, the error bound {$\errn$} computation can be made faster
+%\subsection{Computing error bound $err_n$}
+Similarly, the error bound {$\errn$} computation can be made faster:
 \begin{align*}
 \errn &=
 2.58 \; \sqrt{ 
@@ -1127,66 +917,18 @@ Using the properties of the {fast transform kernel}, the error bound {$\errn$} c
 \left( c_0 - \frac 1n \sum_{i=1}^n \frac{\abs{\widehat{c}_i}^2}{\lambda_i} \right) 
 }
 }
-}}, \quad \text{where} \quad 
+}}, 
+\\
+\nonumber
+& \text{where} \quad 
 \widehat{\vy} = \mV^T \vy,  
-\widehat{\vc} = \mV^T \vc,  
+\widehat{\vc} = \mV^T \vc. 
 \end{align*}
-%{$\Order(n \log n )$ operations to compute the $\errn$} and involves no matrix operations.
-%{$\Order(n )$ operations to compute the $\hmu_n$}.
-
-\iffalse
-Automatic Bayesian cubature uses the \textit{estimated error bound} $\errn$ to decide when to stop. Using the properties of the kernel matrix (\ref{eqn:ftk_factor}), now we shall to try to simplify the computation of error bound $\errn$ (\ref{eqn_error_bound}). 
-The nicer properties of the kernel (\ref{eqn:ftk_factor}) leads to $c_0 = 1$ and $\vc = \vone$ as defined in (\ref{eqn:ftk_integral_definitions}).  Using these results in combination with $s^2_\MLE$(\ref{eqn_s2_MLE_optimized}) and (\ref{eqn_kernel_matrix_result_1})
-\begin{nalign}
-\errn = 
-2.58 \; 
-\sqrt{
-s^2_\MLE
- \left(c_{0,\vtheta_\MLE} - {\vc}_{\vtheta_\MLE}^T\mCInv\vc_{\vtheta_\MLE}
-\right)
-}
-&= 
-2.58 \; 
-\sqrt{
-\left(
-\frac{1}{n^2} 
-\sum_{j=2}^{n} \frac{|\haty_j|^2}{\lambda_j}
-\right)
-\left(1 - \frac{n}{\lambda_1} 
-\right)
-}
-\end{nalign}
-\fi
-This result also does not involve any matrix multiplication or inversion. It just uses scalar divisions and multiplications so the computational cost is $\Order(n)$. But considering the complexity of {fast transform} of $\widehat{\vy}$, overall computational cost is $\Order(n \log n)$. 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-\subsection{Computing the $\hmu$ faster}
-
-Using the properties of the fast transform, matrix multiplications and inversions can also be avoided in the computation of $\hmu_n$
+Finally, the computation of $\hmu_n$ is made faster:
 \begin{align}
 \nonumber
 \hmu_n(f) &= w_0 + \vw^T \vy 
@@ -1206,7 +948,11 @@ m[1 - \vone^T  \mC^{-1}\vc ]
 \end{align}
 It is interesting to note that, with $m \neq 0$ assumption, $\hmu$ is simply the sample mean. 
 Moreover the choice of kernel or any MLE estimated parameters do not affect the $\hmu_n$ but influences the accuracy of the error bound $\errn$.
-This result also does not involve and matrix inversion or multiplication. It just uses scalar division so the computational cost is $\Order(n)$. But the overall computational cost is $\Order(n \log n)$, because the computation of $\lambda_i$ involves the usage of \textit{fast transform} which is $\Order(n \log n)$. 
+
+
+These simplified computations involve no matrix inversion or multiplications. 
+It just uses scalar divisions and multiplications so the computational cost is $\Order(n)$. 
+But computation of fast transform $\widehat{\vy}$ is $\Order(n \log n)$.  Consequently the overall computation cost is $\Order(n \log n )$. 
 
 
 
@@ -1237,7 +983,8 @@ c_0 =\int_{[0,1]^d\times [0,1]^d}C_\vtheta(\vx,\vt) \dvx \dvt = 1, \quad \vc = \
 
 \section{Implementation 1: Using a shift invariant kernel for Bayesian cubature}
 \label{sec:shift_invariant_kernel}
-We have defined the concept of fast transform and showed how it can make the computations faster. But we assumed there exist a kernel that meets the requirements.
+We have established the concept of fast transform and showed how it can make the computations faster. But we assumed there exist a kernel that meets the requirements.
+Now we are going to show a example.
 The following shift invariant kernel satisfies the requirements of the fast transform kernel when combined with Rank-1 lattice points:
 \iffalse
 \begin{align}
@@ -1253,35 +1000,36 @@ e^{2 \pi\sqrt{-1} \vk^T(\vx -\vt )}
 \begin{align}
 \label{bayes_SI_kernel}
 C_\vtheta(\vx, \vt) := &  \sum_{\vk \in \mathbb{Z}^d} \alpha_{\vk,\vtheta}  e^{2 \pi\sqrt{-1} \vk^T\vx}
-e^{-2 \pi\sqrt{-1} \vk^T\vt}
+e^{-2 \pi\sqrt{-1} \vk^T\vt},
 \\
+\nonumber
 \text{where} \quad
-\alpha_{\vk,\vtheta} := & \prod_{l=1}^d \frac{1}{\max(\frac{|k_l|}{\theta_l},1)^r_{\theta_l\leq 1}}  \;,  \quad \text{with} \; {\alpha}_{\bm{0},\vtheta} = 1
+\alpha_{\vk,\vtheta} := & \prod_{l=1}^d \frac{1}{\max(\frac{|k_l|}{\theta_l},1)^r_{\theta_l\leq 1}}  \;,  \quad \text{with} \; {\alpha}_{\bm{0},\vtheta} = 1,
 \end{align}
-where $d$ is number of dimensions and $\alpha_{\vk}$ is a scalar. The Gram matrix formed by this kernel is a Hermitian (symmetric) matrix. 
-
-As this kernel involves infinite sum, it is not suitable for use with finite precision computers. It is preferred to use a simpler expression of the kernel for practical computations.
-The \textit{shape parameter} $\vtheta$ is used as in the definition (\ref{bayes_SI_kernel}) to make the kernel more generic. More specifically, the {shape parameter} customizes the kernel, so that the function space spanned by the kernel closely resembles the space where the integrand function belongs.
+where $d$ is number of dimensions and $\alpha_{\vk}$ is a scalar. The Gram matrix formed by this kernel is a Hermitian matrix. 
 With some more simplifications:
-\begin{align}
-\label{bayes_SI_kernel_theta}
+\begin{align*}
+%\label{bayes_SI_kernel_theta}
 C_\vtheta(\vx, \vt) = & \prod_{l=1}^d  
 \left[ 1 +
 \sum_{k_l=1}^\infty
 \Big|\frac{\theta_l}{k_l}\Big|^r 
 2 \cos({2 \pi\sqrt{-1} k_l(x_l - t_l )})
-\right],
-\end{align}
-where $\vtheta$ is the {shape parameter}. 
-%The reason for these simplifications will be obvious in the further sections.
+\right].
+\end{align*}
 
+The \textit{shape parameter} $\vtheta$ is used to make the kernel customizable. To be specific, the {shape parameter} tweaks the kernel, so that the function space spanned by the kernel closely resembles the space where the integrand function belongs.
+
+%where $\vtheta$ is the {shape parameter}. 
+%The reason for these simplifications will be obvious in the further sections.
+As this kernel involves infinite sum, it is not suitable for use with finite precision computers. It is preferred to have a simpler expression of the kernel without infinite sum for practical computations. 
 
 
 
 
 \subsection{Using Lattice points}
-Along with the kernel (\ref{bayes_SI_kernel_theta}), Rank-1 lattice points $\vx_i \in \mathsf{L}_{n,\bm{h}}$ are used to get the \textit{fast transform kernel} matrix $\mC$. We will demonstrate the kernel (\ref{bayes_SI_kernel_theta}) satisfies the conditions as defined in eqn (\ref{eqn:ftk_factor}) to (\ref{eqn:fast_trasnform_to_eigvalues}). 
-In this work, the lattice points as defined in \cite{Rank1Lattice} are used:
+Along with the kernel (\ref{bayes_SI_kernel}), Rank-1 lattice points $\vx_i \in \mathsf{L}_{n,\bm{h}}$ are used to get the \textit{fast transform kernel}. 
+In this work, we use the lattice points as defined in \cite{Rank1Lattice}:
 
 
 
@@ -1304,21 +1052,21 @@ z_{b^{m-1}} \sum_{l=0}^{m-1} i_l b^{m-1-l} \mod 1 : i_0, \hdots i_{m-1} \in \mat
 
 
 %for simplicity, we define $x_i$ in this form,
-\begin{align}
-\label{eqn:lattice_defn}
+\begin{align*}
+%\label{eqn:lattice_defn}
 \mathsf{L}_{n,\bm{h}} := \lbrace \vx_i :=  \bm{h} \frac{ i-1}{n} \mod 1 ;\ \; i=1,\hdots,n
-\rbrace
-\end{align}
-where $\bm{h}$ is the generating vector.
+\rbrace,
+\end{align*}
+Where $\bm{h}$ is the generating vector.
 Its dual lattice is defined as 
 
-\begin{align}
-\label{eqn:dual_lattice}
+\begin{align*}
+%\label{eqn:dual_lattice}
 \mathsf{L}_{n,\bm{h}}^{\perp } := 
 \lbrace 
 \bm{g} \in \mathbb{Z}^d : \bm{h}^T \bm{g} \equiv 0 \;\;  (\mod n)
-\rbrace
-\end{align}
+\rbrace,
+\end{align*}
 With lattice points, the kernel is written as:
 \[
 C(\vx_i, \vx_j)
@@ -1336,8 +1084,8 @@ Please note that `$\mod 1$' need not be used explicitly in $C(\vx_i, \vx_j)$ sin
 \[
 e^{\pm 2 \pi \sqrt{-1}} = 1.
 \]
-When the kernel is used with the Rank-1 Lattice points, it leads to symmetric and circulant kernel matrix $\mCtheta$.
-
+The kernel (\ref{bayes_SI_kernel}), when used with Rank-1 Lattice points, leads to symmetric and circulant Gram matrix $\mCtheta$.
+We can demonstrate the resulting Gram matrix satisfies the conditions of a fast transform. 
 
 
 
@@ -1360,17 +1108,10 @@ When the kernel is used with the Rank-1 Lattice points, it leads to symmetric an
 
 
 \subsection{Computing the kernel using Bernoulli polynomials}
-
-As mentioned before the shift-invariant-kernel (\ref{bayes_SI_kernel_theta}) cannot be computed directly, since it has an infinite sum. If the coefficients $\alpha_{\vk}$ were chosen appropriately, then there exist a direct expression for the kernel in terms of Bernoulli polynomial. We can use the Fourier series expansion properties \cite{DLMF} of Bernoulli polynomial $B_r$ to find the appropriate $\alpha_{\vk}$. This provides a closed form expression for the kernel without the infinite sum. It also allows to choose the smoothness of kernel, i.e, how fast the coefficients $\alpha_{\vk}$ in (\ref{bayes_SI_kernel_theta}) decay.
-\iffalse
-\begin{align*}
-%\label{dlmf_bernoulli_24_8_1}
-B_{2r}(x) = (-1)^{r+1} \frac{2(2r)!}{(2 \pi)^{2r}} 
-\sum_{k=1}^\infty \frac{\cos(2\pi k x)}{k^{2r}}
- \;\; \text{for} \;\; r=1,2,\hdots \;\; 0 \leq x \leq 1
-\end{align*}
-\fi
-The following very useful expansion of our interest is referenced from \cite{DLMF} under eqn 24.8.3
+The shift-invariant-kernel (\ref{bayes_SI_kernel}) cannot be computed directly due to it's  infinite sum. 
+If the coefficients $\alpha_{\vk}$ were chosen appropriately, then there exist a direct expression for the kernel in terms of Bernoulli polynomial. 
+We can use the Fourier series expansion properties \cite{DLMF} of Bernoulli polynomial $B_r$ to find the appropriate $\alpha_{\vk}$. This provides a closed form expression for the kernel without the infinite sum. It also allows to choose the smoothness of kernel, i.e, how fast the coefficients $\alpha_{\vk}$ in (\ref{bayes_SI_kernel}) decay.
+The following very useful expansion is referenced from \cite{DLMF} under eqn (24.8.3):
 \begin{align}
 \label{dlmf_bernoulli_24_8_3}
 B_{r}(x) = \frac{-r!}{(2 \pi \sqrt{-1})^{r}} 
@@ -1382,9 +1123,10 @@ B_{r}(x) = \frac{-r!}{(2 \pi \sqrt{-1})^{r}}
 \text{for} \;\; r=2,3,\hdots \;\; 0 \leq x \leq 1
 \end{cases}
 \end{align}
-Our goal is to represent the kernel using Bernoulli polynomials. Since using direct form of Bernoulli polynomial, Once can do the computations in any software like Matlab.
+
+Our goal is to represent the kernel using Bernoulli polynomials. Since the direct form of Bernoulli polynomial allows us to do computations in any software like Matlab.
 As shown below,  part of the kernel's infinite sum can be represented as the Bernoulli polynomial's series expansion. 
-For 1-D $(d=1)$ using (\ref{dlmf_bernoulli_24_8_3}),
+For 1-D $(d=1)$ using (\ref{dlmf_bernoulli_24_8_3}):
 \[
 \sum_{k \neq 0, k=-\infty}^\infty \frac{e^{2\pi\sqrt{-1} k |x|}}{ (\frac{k}{\theta})^{r}}
 =
@@ -1395,20 +1137,20 @@ Comparing this expansion with (\ref{bayes_SI_kernel}), one can deduce, for $d=1$
 \[
 C({x}, {t}) = 
 \alpha_0 + \sum_{k \neq 0, k=-\infty}^\infty \alpha_k e^{2\pi\sqrt{-1} k |x-t|}   
-, \quad -1 \leq x,t \leq 1
+, \quad -1 \leq x,t \leq 1,
 \]
-where the kernel coefficients ${\alpha}_{\vk}$ can be expressed explicitly
+where the kernel coefficients ${\alpha}_{\vk}$ can be expressed explicitly:
 \[
 \alpha_k = 
 \begin{cases}
 1, & k=0 \\
 \frac{1}{k^r}, & \text{otherwise}
-\end{cases}
+\end{cases},
 \]
 In general for $d>1$, the coefficients $\alpha_{\vk}$ for $C_{\vtheta}(\vx,\vt)$ is computed using 
 \begin{equation}
 \label{bayes_kernel_lambda}
-\alpha_{\vk, \vtheta} = \frac{1}{\prod_{l=1}^d \max(\frac{|k_l|}{\theta_l}, 1)^r} \; 
+\alpha_{\vk, \vtheta} = \frac{1}{\prod_{l=1}^d \max(\frac{|k_l|}{\theta_l}, 1)^r} \; ,
 \end{equation}
 where $\vtheta$ is the shape parameter and `$r$' is the Bernoulli polynomial. The value of '$r$' will be chosen specific to the integrand when using in the cubature algorithm. We keep the value of `$r$' to be even positive integer in this work.
 Using the above-found results, we can write the simplified form of the kernel:
@@ -1420,7 +1162,7 @@ C_\vtheta(\vx, \vt) &= \sum_{ \vk \in \mathbb{Z}^d} \bm{\alpha}_{\vk, \vtheta} e
  &=
  \prod_{l=1}^d
 1 - \theta_l^r \frac{(2 \pi \sqrt{-1})^{r}}{r!} B_{r}( |{x_l-t_l}| ),
-& 0 \leq |x_l - t_l| \leq 1
+& 0 \leq |x_l - t_l| \leq 1,
 \end{align}
 where $\vtheta \in (0,1]^d$ is the {shape parameter}, `$r$' is the order of the Bernoulli polynomial $B_{r}$.
 
@@ -1448,12 +1190,11 @@ The kernel matrix $\mCtheta$ is circulant. It is generated by the vector
 \begin{equation}
 \label{eqn_top_row_of_kernel_matrix}
 \left( \vCvtheta(\vx_1,\vx_1),\vCvtheta(\vx_2,\vx_1),...,\vCvtheta(\vx_{n},\vx_1 \right) 
-)^T =: \vC_1
+)^T =: \vC_1,
 \end{equation}
-which is also the first row or column of $\mCtheta$ (since it is a symmetric matrix).  Then the normalized eigenvectors of a circulant matrix can be obtained by
-
-\begin{equation}
-\label{eqn_eig_vectors_of_mC}
+which is also the first row or column of $\mCtheta$ (since it is a symmetric matrix).  Then the normalized eigenvectors of a circulant matrix are:
+\begin{align*}
+%\label{eqn_eig_vectors_of_mC}
 \left(
 1, 
 e^{- 2 \pi \sqrt{-1} \frac{j}{n}},
@@ -1461,16 +1202,18 @@ e^{- 2 \pi \sqrt{-1} \frac{2j}{n}}
 ,...,
 e^{- 2 \pi \sqrt{-1} \frac{j(n-1)}{n}}  
 \right)^T, \quad \text{for} \;
-j=0,1,...,n-1 
-\end{equation}
-We define the matrix with these eigenvectors as 
-\begin{nalign}
+j=0,1,...,n-1 .
+\end{align*}
+
+We define a matrix with these eigenvectors as 
+\begin{align*}
 \mV  &:= \left(e^{- 2 \pi \sqrt{-1} \frac{i j}{n}} \right)_{i,j=0}^{n-1}
 \\
+\text{Whereas}, \quad
 \mV^H &:= \frac{1}{n} \left(e^{ 2 \pi \sqrt{-1} \frac{i j}{n}} \right)_{i,j=0}^{n-1}
-\end{nalign}
-we never compute these eigenvectors explicitly. but we are interested in their corresponding eigenvalues, which are
-\begin{equation}
+\end{align*}
+But, we never compute these eigenvectors explicitly. However, we are interested in their corresponding eigenvalues, which are:
+\begin{align*}
 \left(
 {\vC_1}_1 + 
 {\vC_1}_{n} e^{ -2 \pi \sqrt{-1} \frac{j}{n}} + 
@@ -1479,20 +1222,23 @@ we never compute these eigenvectors explicitly. but we are interested in their c
 {\vC_1}_2 e^{ -2 \pi \sqrt{-1} \frac{({n-1})j}{n}}
 \right)_{
 j=0}^{n-1}
-\end{equation}
+\end{align*}
 where ${\vC_1}_j = \vCvtheta(\vx_j,\vx_1)$. 
-As we know the kernel matrix $\mC$ is circulant and symmetric, we can use these properties to simplify the computation of eigenvalues. i.e., The eigenvalues are just the Discrete Fourier Transform(DFT) of $\vC_1$ (\ref{eqn_top_row_of_kernel_matrix}).
-
-\begin{equation}
-\label{eqn_eig_values_of_mC}
+As we know the kernel matrix $\mC$ is circulant and symmetric, we can use these properties to simplify the computation of eigenvalues. i.e., The eigenvalues are just the Discrete Fourier Transform(DFT) of $\vC_1$ (\ref{eqn_top_row_of_kernel_matrix}):
+\begin{align*}
+%\label{eqn_eig_values_of_mC}
 \mLambda = \left( \lambda_j \right)_{j=1}^{n} = \mV^T \vC_1 := \mathcal{DFT} \left\lbrace \vC_1 \right\rbrace
-\end{equation}
-i.e., eigenvalues of the matrix $\mCtheta$ are computed by taking DFT of its first row of $\mCtheta$. In this case, we case \emph{Fast Fourier Transform} (FFT). Finally we can write the kernel matrix in the desired form
-\begin{align}
-\mCtheta = \frac1n \mV \mLambda \mV^H
-\end{align}
-This is the type of factorization needed for the fast transform. Also, for the kernel (\ref{bayes_SI_kernel} $c_0=1$ and $\vc = \vone$.
-Thus we have shown the shift invariant kernel in eqn (\ref{bayes_SI_kernel}), obeys all the properties to be considered as a {fast transform kernel}. Numerical experiments using this kernel will be shown in the section (\ref{sec:numerical_experiments}).
+\end{align*}
+i.e., eigenvalues of the matrix $\mCtheta$ are computed by taking DFT of its first row of $\mCtheta$. 
+In this case, we use \emph{Fast Fourier Transform} (FFT). 
+Finally we can write the kernel matrix in the desired form:
+\begin{align*}
+\mC = \frac1n \mV \mLambda \mV^H,
+\end{align*}
+This is the type of factorization needed for the fast transform. Also, for the kernel (\ref{bayes_SI_kernel}), we get $c_0=1$ and $\vc = \vone$. 
+Additionally, computational cost of FFT is $\Order(n \log n)$.
+Thus we have shown the shift invariant kernel in eqn (\ref{bayes_SI_kernel}), obeys all the properties to be considered as a {fast transform kernel}. So the operation $\mV^T z$ is a fast transform.
+Numerical experiments using this kernel will be shown in the section (\ref{sec:numerical_experiments}).
 
 
 
@@ -1504,7 +1250,7 @@ Thus we have shown the shift invariant kernel in eqn (\ref{bayes_SI_kernel}), ob
 
 
 \subsection{Variable transforms}
-Fast transform kernel technique discussed with shift invariant kernel eqn() and lattice points so far assumes the integrand is periodic and has continuous derivatives on the boundaries of the domain $[0,1]^d$. Non-periodic functions do not lie in the space spanned by the kernel.
+Fast transform kernel technique discussed with shift invariant kernel eqn(\ref{bayes_SI_kernel}) and lattice points so far assumes the integrand is periodic and has continuous derivatives on the boundaries of the domain $[0,1]^d$. Non-periodic functions do not lie in the space spanned by the kernel.
 Variable transformation or periodization transform techniques are used to improve the accuracy in multi-dimensional numerical integrations where boundary conditions needs to be enforced. These transformations could be either polynomial, exponential and also trigonometric nature.
 \begin{eqnarray}
 \text{Baker's} & : & \tilde{f}(\vt) 
@@ -1562,7 +1308,7 @@ These transforms vary in terms of computational complexity and accuracy, shall b
 
 \subsection{Iterative Discrete Fourier transform for function values}
 
-Automatic cubature algorithms needs to compute Discrete Fourier transform of function values $\left(f(\vx_i) = y_i\right)_{i=1}^n$ in every iteration with newly added points. Recomputing the whole Fourier transform in every iteration can be avoided when using Rank-1 Lattice points by using structural properties of the Lattice points.  
+Automatic cubature algorithms needs to compute Discrete Fourier transform of function values $\vy = \left(f(\vx_i)\right)_{i=1}^n$ in every iteration with newly added points. Recomputing the whole Fourier transform in every iteration can be avoided when using Rank-1 Lattice points by using structural properties of the Lattice points.  
 Discrete Fourier transform is defined as 
 \begin{align*}
 \mathcal{DFT} \{y \} := \hat{y} = \left( \sum_{j=1}^{n} y_j 
