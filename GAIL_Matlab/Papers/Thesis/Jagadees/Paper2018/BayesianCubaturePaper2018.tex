@@ -152,7 +152,8 @@
 \providecommand{\argmin}{\operatorname*{argmin}}
 \providecommand{\argmax}{\operatorname*{argmax}}
 
-\graphicspath{{./figures/}{D:/Mega/MyWriteupBackup/Sep_2ndweek/}}
+\graphicspath{{./figures/}{D:/Mega/MyWriteupBackup/Sep_2ndweek_1/}}
+%\graphicspath{{./figures/}}
 
 %
 % Insert the name of "your journal" with
@@ -271,8 +272,8 @@ The ``algorithms for numerical tasks" that return uncertainties in their calcula
 Our BC algorithm can be categorized as a probabilistic numeric method, due to the nature of assumptions made and the confidence interval it provides.
 
 Section 2 introduces the Bayesian approach to estimate the posterior error and develops the concepts to derive error bound. Then formulates the Automatic cubature algorithm using the error bound. Finally demonstrates why directly using Bayesian cubature algorithm is computationally very expensive.
-Section 3 Introduces the concept of “Fast transform kernel” and develops the concepts to make the Bayesian cubature faster which is the major contribution of this research.
-Section 4 Demonstrates the realization of “Fast transform kernel” using a shift-invariant kernel and Rank-1 Lattice points.
+Section 3 Introduces the concept of Fast transform kernel and develops the concepts to make the Bayesian cubature faster which is the major contribution of this research.
+Section 4 Demonstrates the realization of Fast transform kernel using a shift-invariant kernel and Rank-1 Lattice points.
 Section 5 covers further enhancements to the algorithm to avoid cancellation error and make it faster. Finally, numerical examples are shown using the faster algorithm developed.
 
 
@@ -1411,14 +1412,60 @@ d=3 &&  C_3 &= [1 +  \theta B(\{x_{i_3} - x_{j_3}\})][ 1 + \tilde{C}_2]
 
 
 
+\subsection{Validating Gaussian process assumption}
 
 
+We begin developing the Bayesian cubature with the assumption that the integrand arises from a Gaussian process. Here is an attempt to validate that assumption. Let,
+\begin{align*}
+\vf = \left( f(\vx_i) \right)_{i=1}^n
+\sim \mathcal{N} \left( m\vone, \mC \right), 
+\quad \text{where}\quad \mC = \frac 1n \mV \mLambda \mV^H, \quad \mV^H \mV = n
+\end{align*}
+Then
+\begin{align*}
+\mathbb{E}\left[ \frac{1}{\sqrt{n}} \mLambda^{-\frac 12} \mV^H \vf \right]
+& =
+\frac{1}{\sqrt{n}} \mLambda^{-\frac 12} \mV^H \mathbb{E}[\vf] 
+\\
+& =
+\frac{1}{\sqrt{n}} \mLambda^{-\frac 12} \mV^H m \vone
+\\
+& = m \sqrt{\frac{n}{\lambda_1}} \left( 
+\begin{array}{c}
+1 \\ 0 \\ \vdots \\ 0
+\end{array}
+\right),
+\end{align*}
+And,
+\begin{align*}
+COV \left[ \frac{1}{\sqrt{n}} \mLambda^{-\frac 12} \mV^H \vf  \right]
+&=
+\frac{1}{n} \mathbb{E}\left[  
+\mLambda^{-\frac 12} \mV^H (\vf - m \vone)
+(\vf - m \vone)^T \mV \mLambda^{-\frac 12}
+\right]
+\\
+&=
+\frac{1}{n} \mLambda^{-\frac 12} \mV^H 
+\mathbb{E}\left[ (\vf - m \vone)
+(\vf - m \vone)^T \right] \mV \mLambda^{-\frac 12}
+\\
+&=
+\frac{1}{n} \mLambda^{-\frac 12} \mV^H 
+\frac 1n \mV \mLambda \mV^H \mV \mLambda^{-\frac 12}
+\\
+& = \mathsf{I}
+\end{align*}
 
-
-
-
-
-
+Let $\vf' = \frac{1}{\sqrt{n}} \mLambda^{-\frac 12} \mV^H \vf$,
+\begin{align*}
+\vf' \sim \mathcal{N} \left( 
+m' \vone,
+\mathsf{1}
+\right),
+\end{align*}
+Where $m' = m \sqrt{\frac{n}{\lambda_1}} $.
+If we can verify the smaple distribution of $\vf'$ is approximately $\mathcal{N}\left( m' \vone, \mathsf{1} \right)$ by using Normal plots , could validate our assumption.
 
 
 
