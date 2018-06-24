@@ -67,6 +67,7 @@ h = b - a;
 %ninit = 2*ceil(nhi*(nlo/nhi)^(1/(1+h)))+1;
 ninit = nlo;
 x = a:h/ninit:b;
+x0 = x;
 y = f(x);
 maxy = max(y);
 miny = min(y);
@@ -107,6 +108,7 @@ in_param.ninit = ninit;
 % tmpstr = strsplit(algoname,'_g');
 % level = funmin_g(f,a,b,tol,nlo,nhi)-0.2;
 
+
 while(max(err) > tol)
     if max(err) > tol;
         in_param.maxiter = k+1; 
@@ -118,12 +120,15 @@ while(max(err) > tol)
         k = k + 1;
         p = flipud(get(gca,'children'));
         set(p(1),'xdata',x,'ydata',y)
-        set(gca,'xtick',x,'xticklabel',[]);
-        plot(x,y,'.','MarkerSize',20,'color',MATLABBlue); hold on;        
+        plot(x,y,'.','MarkerSize',20,'color',MATLABBlue);   hold on;
+        set(gca,'xtick', x0, 'xticklabel',x0);
+        ax = gca;
+        ax.XAxis.MinorTick = 'on';
+        ax.XAxis.MinorTickValues = x;
         %plot(x,zeros(size(x)),'.','color',MATLABGreen); hold on;
         set(gca,'FontSize',16)
-        title(['error bound is ' num2str(err),...
-        '; number of points is ' num2str(npoints) ])
+        title(['iter ', num2str(k), '; error bound is ' num2str(err),...
+            '; number of points is ' num2str(npoints) ])
         %hTitle=title([tmpstr{1}, '\_g: error \(\approx\) ' sprintf('%0.2g',max(err)) ' in iter ' num2str(k)]);
         %set(hTitle,'FontSize',25,'Interpreter', 'latex')
         pause(.25)
@@ -141,9 +146,9 @@ end
 
 p = flipud(get(gca,'child'));
 set(p(1),'xdata',x,'ydata',y)
-set(gca,'xtick',x,'xticklabel',[]);
+set(gca,'xtick', x0, 'xticklabel',x0);
 set(gca,'FontSize',16)
-title(['error bound is ' num2str(err),...
+title(['iter ', num2str(k), '; error bound is ' num2str(err),...
     '; number of points is ' num2str(npoints) ])
 %hTitle=title([tmpstr{1}, '\_g: error \(\approx\) '  sprintf('%0.2g',max(err)) ' in iter ' num2str(k)]);
 %set(hTitle,'FontSize',25,'Interpreter', 'latex')
