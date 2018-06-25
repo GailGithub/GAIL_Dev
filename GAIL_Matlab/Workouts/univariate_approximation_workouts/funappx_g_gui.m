@@ -98,6 +98,11 @@ q(2) = uicontrol('string','auto', ...
     'callback','set(gcf,''userdata'',2)');
 err = tol+1;
 
+% Plot the input function
+delta = 0.00001;
+xx=a:delta:b; 
+
+
 in_param.a = a; 
 in_param.b = b; 
 in_param.abstol = tol; 
@@ -107,7 +112,6 @@ in_param.output_x = 1;
 in_param.ninit = ninit;
 % tmpstr = strsplit(algoname,'_g');
 % level = funmin_g(f,a,b,tol,nlo,nhi)-0.2;
-
 
 while(max(err) > tol)
     if max(err) > tol;
@@ -120,7 +124,9 @@ while(max(err) > tol)
         k = k + 1;
         p = flipud(get(gca,'children'));
         set(p(1),'xdata',x,'ydata',y)
-        plot(x,y,'.','MarkerSize',20,'color',MATLABBlue);   hold on;
+        plot(x,y,'.','MarkerSize',20,'color',MATLABBlue);  hold on;
+        plot(xx,f(xx),'color',MATLABBlue); 
+        axis tight
         set(gca,'xtick', x0, 'xticklabel',x0);
         ax = gca;
         ax.XAxis.MinorTick = 'on';
@@ -171,11 +177,7 @@ errest = max(err);
 delete(q);
 warning('on', ['GAIL:', algoname ,':exceediter']);
 
-hold on;
-delta = 0.00001;
-x=a:delta:b; 
-plot(x,f(x),'color',MATLABBlue);
-hold off;
+
 gail.save_eps('WorkoutFunappxOutput', [algoname, '_gui']);
 %keyboard
 
