@@ -215,29 +215,32 @@ Our work employs low discrepancy data sites and matching kernels that lower the 
 
 \section{Introduction}
 \label{intro}
-Cubature is defined as the problem of inferring the integral $\mu = \int f(x)dx$ over a multi-dimensional function $f$ where $\mu$ has no simple analytic value. Typically, $f$ is only accessible in the form of a function handle. 
-Numerical integration is a key component of many problems in scientific computing, finance, statistical modeling, and machine learning etc.  
-One could use Numerical algorithms to estimate quantities that can not be directly computed, using the results of more readily available computations.
+Cubature is the problem of inferring a numerical value integral 
+$\mu = \int g(x) \, \dif x$ of a multi-dimensional function $f$ where $\mu$ has no closed form analytic expression. Typically, $g$ is only accessible in the form of a black-box function routine. 
+Cubature is a key component of many problems in scientific computing, finance, statistical modeling, and machine learning.  
+%One could use Numerical algorithms to estimate quantities that can not be directly computed, using the results of %more readily available computations.
 
 
 %Multivariate integrals arise in applications such as evaluating financial risk, computing multivariate probabilities, statistical physics, and uncertainty quantification.
 
 
-We are interested in finding the integral $\mu : \mathcal{F} \to \mathbb{R}$ of $f$ of the form:
-
+The integral $\mu$ is typically expressed in the form
 \begin{equation}
 \label{eqn:defn_mu}
 \mu(f) := \mathbb{E}[f(\bm{X})] := \int_{\mathcal{X}} f(\vx)\, \nu(\dif\vx),
 \end{equation}
-which is approximated by a cubature algorithm $\hmu : \mathcal{F} \to \mathbb{R}$, where
+where $f:\cx \to \reals$ is the integrand and $\nu$ is a probability measure defined on the measurable set $\cx \subseteq \reals^d$.  The problem of choosing $f$ and $\nu$ well to correspond to the original integrand, $g$, is the matter of importance sampling, which we do not address here.  The cubature algorithm is defined as
 \begin{equation}
 \label{eqn:defn_hmu}  % remove this
 \hmu(f) := w_0 + \sum_{i=1}^{n} f(\vx_i) w_i = \int_{\mathcal{X}} f(\vx)\, \hat{\nu}(\dif\vx),
 \end{equation}
-where $\nu$ is the probability measure and $\hat{\nu}$ is the sampling measure and the function $f$ has domain $\mathcal{X} \subseteq \mathbb{R}^d$. 
-Here $f$ is the given black-box function that provides $f(\vx)$ for any $\vx \in \mathcal{X}$.
-After perhaps a transformation of integration variable, one may pose any problem as constructing an accurate approximation to the unit cube $\mathcal{X} = [0,1]^d$. 
-The weights $\vw = \{w_i\}_{i=0}^n$ and nodes $\{x_i\}_{i=1}^n$ are typically chosen to minimize the integral approximation error $\abs{\mu(f) - \hmu(f)}$.
+where the weights, $w_0$, and  $\vw = \{w_i\}_{i=1}^n$, and the nodes $\{x_i\}_{i=1}^n$ are chosen to make the error, $\abs{\mu(f) - \hmu(f)}$, small.
+
+Our concern is constructing a reliable stopping criterion that determines the number of integrand values required, $n$, to ensure that the error is no greater than a user-defined error tolerance, i.e., 
+\[
+\abs{\mu(f) - \hmu(f)} \leq \errtol 
+\] 
+Rather than relying on strong assumptions about the integrand, such as its variance or total variation, we construct a stopping criterion that is data-driven, and based on a credible interval arising by a Bayesian assumption on the problem.  We build upon the ideas of Diaconis \cite{DiaconisBayesian}, O'Hagan \cite{HagenBayes}, Ritter \cite{RiterAverage}, Rasmussen and Ghahramani \cite{RasmussenBayesian}, and others.  Our contribution here is to demonstrate how the choice of a family of kernels that match the low discrepancy sampling nodes facilitates fast computation of the data-driven stopping criterion.  If $n$ function values are obtained for cubature purposes, then $\Order(n \log(n))$ additional operations are required to check whether the error tolerance is satisfied.  This is significantly fewer operations than the $\Order(n^3)$ typically required for Bayesian cubature.
 
 
 
