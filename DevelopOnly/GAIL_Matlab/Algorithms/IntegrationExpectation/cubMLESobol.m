@@ -19,7 +19,7 @@ classdef cubMLESobol < handle
   properties
     f = @(x) x.^2; %function to integrate
     dim = 1; %dimension of the integrand
-    mmin = 8; %min number of points to start with = 2^mmin
+    mmin = 10; %min number of points to start with = 2^mmin
     mmax = 20; %max number of points allowed = 2^mmax
     absTol = 0.01; %absolute tolerance
     relTol = 0; %relative tolerance
