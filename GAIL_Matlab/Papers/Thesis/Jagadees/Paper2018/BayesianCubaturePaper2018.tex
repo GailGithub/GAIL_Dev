@@ -279,6 +279,9 @@ Section 5 covers further enhancements to the algorithm to avoid cancellation err
 
 
 
+\subsection{Related work}
+
+
 
 \section{Bayesian cubature}
 \label{sec:1}
@@ -832,7 +835,7 @@ Then the MLE estimates can be simplified using these results:
 \begin{align*}
 m_\MLE &= \frac{\vone^T\mCInv\vy}{\vone^T\mCInv\vone} = \frac{\widehat{y}_1}{n} = \frac 1n \sum_{i=1}^n y_i,
 \\
-s^2_\MLE &= \frac 1n \vy^T \left[ \mCInv - \frac{\mCInv \vone \vone^T \mCInv}{\vone^T\mCInv\vone}\right]
+s^2_\MLE &= \frac 1n \vy^T \left[ \mCInv - \frac{\mCInv \vone \vone^T \mCInv}{\vone^T\mCInv\vone}\right] \vy
 =
 \frac 1n \sum_{i=1}^n \frac{\abs{\widehat{y_i}}^2}{\lambda_i} - \frac{\abs{\widehat{y}_1}^2}{n \lambda_1} = 
 \frac 1n \sum_{i=2}^n \frac{\abs{\widehat{y_i}}^2}{\lambda_i}
@@ -1459,7 +1462,7 @@ d=3 &&  C_3 &= [1 +  \theta B(\{x_{i_3} - x_{j_3}\})][ 1 + \tilde{C}_2]
 \subsection{Validating Gaussian process assumption}
 
 
-We begin developing the Bayesian cubature with the assumption that the integrand arises from a Gaussian process. Here is an attempt to validate that assumption. Let,
+We begin developing the Bayesian cubature with the assumption that the integrand arises from a Gaussian process. How can we check if $m, s, \vtheta$ and $\mC$ are chosen appropriately so that the $\vf$ is a draw from the Gaussian process?. Here is an attempt to validate that assumption. Let,
 \begin{align*}
 \vf = \left( f(\vx_i) \right)_{i=1}^n
 \sim \mathcal{N} \left( m\vone, \mC \right), 
@@ -1504,12 +1507,12 @@ COV \left[ \frac{1}{\sqrt{n}} \mLambda^{-\frac 12} \mV^H \vf  \right]
 Let $\vf' = \frac{1}{\sqrt{n}} \mLambda^{-\frac 12} \mV^H \vf$,
 \begin{align*}
 \vf' \sim \mathcal{N} \left( 
-m' \vone,
+m' \bm{e}_1,
 \mathsf{1}
 \right),
 \end{align*}
 Where $m' = m \sqrt{\frac{n}{\lambda_1}} $.
-If we can verify the smaple distribution of $\vf'$ is approximately $\mathcal{N}\left( m' \vone, \mathsf{1} \right)$ by using Normal plots , could validate our assumption.
+If we can verify the sample distribution of $\vf'$ is approximately $\mathcal{N}\left( m' \bm{e}_1, \mathsf{1} \right)$ by using Normal plots , could validate our assumption.
 
 
 
@@ -1789,7 +1792,7 @@ where $d$ - number of dimensions and $T, S, S_0, K, r, \sigma$ are the parameter
 
 
 
-
+\subsection{Results and observation}
 
 
 
