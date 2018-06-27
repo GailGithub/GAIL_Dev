@@ -1,0 +1,116 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% This is the beamerthemeORNL.sty
+% Author:  Clayton G. Webster
+% Date: July 24, 2011
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usetheme{Rochester}
+\RequirePackage{pgf}
+\RequirePackage[overlay]{textpos}
+
+%\setbeamercovered{transparent}
+\setbeamertemplate{navigation symbols}{} %remove navigation symbols
+
+\beamer@headheight=0.13\paperwidth
+
+\useoutertheme{infolines}
+\usecolortheme{FJHSlim}
+\usefonttheme[onlymath]{serif} %I want san serif fonts
+
+%\pgfdeclareimage[width=1.0\paperwidth]{IIT_skyline}{IITcampusphoto.pdf}
+\pgfdeclareimage[width=1.0\paperwidth]{plain_bg}{plain_backg.pdf}
+
+
+\def\insertthanksnote{}
+\newcommand{\thanksnote}[1]{\def\insertthanksnote{#1}}
+\setbeamerfont{section in head/foot}{size=\scriptsize,series=\normalfont}
+\setbeamerfont{footer}{size=\scriptsize,series=\normalfont}
+\setbeamerfont{frametitle}{size=\Large}
+\setbeamerfont{title}{size=\Large,series = \bf}
+
+\setbeamertemplate{headline}
+{
+\ifnumequal{\c@framenumber}{1}
+ {%
+  \pgfuseimage{plain_bg}
+  \vskip -1cm
+ }%
+ {
+  \linethickness{0.0pt}
+%Change this and it adds a faint line along the top for some separation
+  \begin{beamercolorbox}{section in head/foot}
+    \vskip3pt\insertnavigation{\paperwidth}\vskip3pt
+  \end{beamercolorbox}%
+
+  \begin{beamercolorbox}[wd=\paperwidth,ht=0.7\beamer@headheight]{Title bar}
+  \end{beamercolorbox}
+}
+}
+
+\setbeamertemplate{footline} %the bottom of the frame
+{
+\ifnumequal{\c@framenumber}{1}
+{
+\includegraphics[width=0.75cm]{MengerIITRedGray.pdf}
+\vskip -0.38cm
+  \linethickness{0.0pt}
+  \framelatex{
+  %\begin{beamercolorbox}[leftskip=4cm,wd=\paperwidth,ht=0.23\beamer@headheight,sep=0.14cm]{footer}
+\begin{beamercolorbox}[wd=\paperwidth,ht=0.23\beamer@headheight,sep=0.14cm]{footer}
+    %
+    \usebeamerfont{footer}
+    \hfill
+    \insertdate
+    \hfill
+    \insertframenumber/\inserttotalframenumber
+  \end{beamercolorbox}}
+}
+{
+\includegraphics[width=0.75cm]{MengerIITRedGray.pdf}
+\vskip -0.38cm
+  \linethickness{0.0pt}
+  \framelatex{
+  \begin{beamercolorbox}[leftskip=0.75cm,wd=\paperwidth,ht=0.23\beamer@headheight,sep=0.14cm]{footer}
+    \usebeamerfont{footer}%
+    \insertshortauthor\;\;\textbullet\;\;\insertshorttitle\;\;\textbullet\;\;\insertshortdate
+    \hfill
+    \insertframenumber/\inserttotalframenumber
+  \end{beamercolorbox}}
+ }
+}
+
+\setbeamertemplate{title page}
+{
+\vspace{-10ex}
+  \begingroup
+    \centering
+    {\usebeamerfont{title}\usebeamercolor[bg]{title}\inserttitle} \par
+    {\usebeamerfont{author}\usebeamercolor[bg]{title}\textbf{\insertauthor}} \\
+    {\usebeamerfont{institute}\usebeamercolor[bg]{title} \textbf{\insertinstitute}} \par
+    \vfill
+    {\usebeamerfont{text}\usebeamercolor[fg]{title}\insertthanksnote} \par
+  \endgroup
+  %\vfill
+}
+
+\setlength{\TPHorizModule}{1\paperwidth}
+\setlength{\TPVertModule}{1\paperheight}
+\newcommand{\finalthankyoumessage}{Thank you}
+\def\insertfinalthanksnote{}
+\newcommand{\finalthanksnote}[1]{\def\insertfinalthanksnote{#1}}
+\newcommand{\thankyouframe}{ %my final thank you frame, uses textpos to position the text
+{
+\setbeamertemplate{headline}{}
+\begin{frame}
+\vspace*{-3cm}
+\hspace*{-0.53cm}
+%\pgfuseimage{IIT_skyline} \\
+\pgfuseimage{plain_bg} \\
+\begin{textblock}{1}(0,-0.02)
+\begin{center}{\usebeamerfont{title}\usebeamercolor[bg]{title}\finalthankyoumessage}\end{center}
+\end{textblock}
+\vfill
+    \begin{center}{\usebeamerfont{text}\usebeamercolor[fg]{title}\insertfinalthanksnote} \end{center} \par
+\end{frame}
+}
+}
