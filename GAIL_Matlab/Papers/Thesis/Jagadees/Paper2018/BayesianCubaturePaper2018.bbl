@@ -1,0 +1,59 @@
+\begin{thebibliography}{DLM12}
+
+\bibitem[Dia88]{DiaconisBayesian}
+P.~Diaconis.
+\newblock Bayesian numerical analysis.
+\newblock {\em Statistical decision theory and related topics IV, Papers from
+  the 4th Purdue symp., West Lafayette, Indiana 1986,}, page 163–175, 1988.
+
+\bibitem[DLM12]{DLMF}
+DLMF.
+\newblock Nist digital library of mathematical functions.
+\newblock {\em http://dlmf.nist.gov/}, Part 2:Release 1.0.5 of 2012--10--01,
+  2012.
+
+\bibitem[Fas07]{FassBook2007}
+G.~E. Fasshauer.
+\newblock {\em Meshfree Approximation Methods with Matlab}.
+\newblock World Scientific Publishing Co, 2007.
+
+\bibitem[Gen93]{Gen93}
+A.~Genz.
+\newblock Comparison of methods for the computation of multivariate normal
+  probabilities.
+\newblock {\em Computing Science and Statistics}, 25:400 -- 405, 1993.
+
+\bibitem[Hic17]{Fred2017}
+Fred~J. Hickernell.
+\newblock Error analysis for quasi-monte carlo methods.
+\newblock {\em arXiv:1702.01487 [math.NA]}, 2017.
+
+\bibitem[Kei96]{KeisterExample}
+B.~D. Keister.
+\newblock Multidimensional quadrature algorithms.
+\newblock {\em Computers in Physics}, 10:119--122, 1996.
+
+\bibitem[O'H91]{HagenBayes}
+A.~O'Hagan.
+\newblock Bayes-hermite quadrature.
+\newblock {\em J. Statist. Plann. Inference}, 29:245–260, 1991.
+
+\bibitem[RG03]{RasmussenBayesian}
+C.~E. Rasmussen and Z.~Ghahramani.
+\newblock Bayesian monte carlo.
+\newblock {\em Advances in Neural Information Processing Systems}, pages
+  489--496, 2003.
+
+\bibitem[Rit00]{RiterAverage}
+K.~Ritter.
+\newblock Average-case analysis of numerical problems.
+\newblock {\em Lecture Notes in Mathematics, Springer-Verlag, Berlin}, vol.
+  1733:163–175, 2000.
+
+\bibitem[SD06]{Rank1Lattice}
+Alexander~Keller Sabrina~Dammertz.
+\newblock Image synthesis by rank-1 lattices.
+\newblock {\em Monte Carlo and Quasi-Monte Carlo Methods}, Part 2:217--236,
+  2006.
+
+\end{thebibliography}
