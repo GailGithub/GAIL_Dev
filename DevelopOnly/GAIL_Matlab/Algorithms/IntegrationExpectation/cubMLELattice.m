@@ -123,7 +123,7 @@ classdef cubMLELattice < handle
     debugEnable = false; %enable debug prints
     gaussianCheckEnable = false; %enable plot to check Guassian pdf
     avoidCancelError = true;
-    GCV = true; % Generalized cros validation
+    GCV = true; % Generalized cross validation
     full_bayes = true; % assumes m ans s^2 as hyperparameters, 
                  % so the posterior error is a Student-t distribution
   end
@@ -278,60 +278,6 @@ classdef cubMLELattice < handle
     end
     
     
-    function [success,muhat] = stopping_criteria_empirical_bayes(obj, xpts, ftilde, iter, n)
-      
-      success = false;
-      %Compute MLE parameter
-      lnaMLE = fminbnd(@(lna) ...
-        ObjectiveFunction(obj, exp(lna),xpts,ftilde), -5,5,optimset('TolX',1e-2));
-      aMLE = exp(lnaMLE);
-      [loss,Lambda,Lambda_tilde,RKHSnorm] = ObjectiveFunction(obj, aMLE,xpts,ftilde);
-      
-      %Check error criterion
-      % compute DSC :
-      if obj.avoidCancelError
-        DSC = abs(Lambda_tilde(1)/(n + Lambda_tilde(1)));
-      else
-        DSC = abs(1 - (n/Lambda(1)));
-      end
-      
-      % store the debug information
-      obj.dscAll(iter) = sqrt(DSC);
-      obj.s_All(iter) = sqrt(RKHSnorm/n);
-      
-      out.ErrBd = 2.58*sqrt(DSC * RKHSnorm/n);
-      if obj.arbMean==true % zero mean case
-        muhat = ftilde(1)/n;
-      else % non zero mean case
-        muhat = ftilde(1)/Lambda(1);
-      end
-      muminus = muhat - out.ErrBd;
-      muplus = muhat + out.ErrBd;
-      
-      % store intermediate values for post analysis
-      obj.muhatAll(iter) = muhat;
-      obj.errorBdAll(iter) = out.ErrBd;
-      obj.aMLEAll(iter) = aMLE;
-      obj.lossMLEAll(iter) = loss;
-      
-      if obj.gaussianCheckEnable == true
-        % plots the transformed and scaled integrand values as normal plot
-        % Useful to verify the assumption, integrand was an instance of a Gaussian process
-        CheckGaussianDensity(obj, ftilde, Lambda)
-      end
-      
-      if 2*out.ErrBd <= ...
-          max(obj.absTol,obj.relTol*abs(muminus)) + max(obj.absTol,obj.relTol*abs(muplus))
-        if obj.errorBdAll(iter)==0
-          obj.errorBdAll(iter) = eps;
-        end
-        
-        success = true;
-      end
-      
-    end
-    
-    
     function [success,muhat] = stopping_criteria(obj, xpts, ftilde, iter, n)
       
       success = false;
@@ -344,11 +290,13 @@ classdef cubMLELattice < handle
       %Check error criterion
       % compute DSC :
       if obj.full_bayes==true
+        % full bayes
         if obj.avoidCancelError
           DSC = abs(Lambda_tilde(1)/n);
         else
           DSC = abs((Lambda(1)/n) - 1);
         end
+        % 99.5% two sided confidence interval, degrees of freedom = infinity
         out.ErrBd = 2.807*sqrt(DSC * RKHSnorm/(n-1));
       else
         % empirical bayes
