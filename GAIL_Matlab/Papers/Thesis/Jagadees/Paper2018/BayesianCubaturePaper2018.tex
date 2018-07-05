@@ -33,6 +33,7 @@
 \usepackage{algpseudocode}
 %\usepackage[caption=false]{subfig}
 \usepackage{subcaption}
+\usepackage{booktabs, mathtools}
 \captionsetup{compatibility=false}
 
 \algdef{SE}[DOWHILE]{Do}{doWhile}{\algorithmicdo}[1]{\algorithmicwhile\ #1}%
@@ -46,12 +47,16 @@
 \newcommand{\smallocite}[1]{{\small\ocite{#1}}}
 % \newcommand{\bm}[1]{\boldsymbol{#1}}
 \newcommand{\dif}[1]{\text{d}{#1}}
+\newcommand{\D}[1]{\text{d}{#1}}
+\newcommand{\trace}[1]{\textup{trace}{#1}}
 
 \newcommand{\naturals}{\mathbb{N}}
 \newcommand{\reals}{\mathbb{R}}
 \newcommand{\integers}{\mathbb{Z}}
+\newcommand{\posIntegers}{\mathbb{Z}_{> 0}}
 \newcommand{\complex}{\mathbb{C}}
 \newcommand{\hilbert}{\mathbb{H}}
+\newcommand{\Ex}{\mathbb{E}}
 
 \newcommand{\cf}{\mathcal{F}}
 \newcommand{\cx}{\mathcal{X}}
@@ -63,9 +68,11 @@
 \newcommand{\vphi}{{\bm{\phi}}}
 \newcommand{\vpsi}{{\bm{\psi}}}
 \newcommand{\vtheta}{{\bm{\theta}}}
+\newcommand{\vzeta}{{\bm{\zeta}}}
 \newcommand{\vthetaMLE}{\bm{\theta}_{\text{MLE}}}
 \newcommand{\hvtheta}{\hat{\vtheta}}
 \newcommand{\va}{\bm{a}}
+\newcommand{\vA}{\bm{A}}
 \newcommand{\vb}{\bm{b}}
 \newcommand{\vc}{\bm{c}}
 \newcommand{\vC}{\bm{C}}
@@ -74,6 +81,7 @@
 \newcommand{\vh}{\bm{h}}
 \newcommand{\vf}{\bm{f}}
 \newcommand{\vk}{\bm{k}}
+\newcommand{\vm}{\bm{m}}
 \newcommand{\vs}{\bm{s}}
 \newcommand{\vt}{\bm{t}}
 \newcommand{\vv}{\bm{v}}
@@ -89,6 +97,7 @@
 \newcommand{\vrho}{\bm{\rho}}
 \newcommand{\hy}{\hat{y}}
 \newcommand{\vy}{\bm{y}}
+\newcommand{\vY}{\bm{Y}}
 \newcommand{\hvy}{\hat{\vy}}
 \newcommand{\vz}{\bm{z}}
 \newcommand{\dvz}{\dif{\bm{z}}}
@@ -106,12 +115,15 @@
 \newcommand{\vzero}{\bm{0}}
 \newcommand{\vone}{\bm{1}}
 \newcommand{\tvone}{\tilde{\bm{1}}}
+\newcommand{\mA}{\mathsf{A}}
 \newcommand{\mC}{\mathsf{C}}
 \newcommand{\mCtheta}{{\mathsf{C}_{\vtheta}}}
 %\newcommand{\mCthetaInv}{{\mathsf{C}^{-1}_{\vtheta}}}
 %\newcommand{\mCthetaMLE}{{\mathsf{C}_{\vthetaMLE}}}
 %\newcommand{\mCthetaInvMLE}{{\mathsf{C}^{-1}_{\vthetaMLE}}}
 \newcommand{\mCInv}{{\mathsf{C}^{-1}}}
+\newcommand{\cov}{{\textup{cov}}}
+\newcommand{\var}{{\textup{var}}}
 
 
 \newcommand{\tmC}{\widetilde{\mathsf{C}}}
@@ -125,6 +137,8 @@
 \newcommand{\mV}{\mathsf{V}}
 \newcommand{\mW}{\mathsf{W}}
 
+\newcommand{\calN}{\mathcal{N}}
+
 \newcommand{\tvrho}{\widetilde{\vrho}}
 \newcommand{\heta}{\hat{\eta}}
 \newcommand{\hmu}{\hat{\mu}}
@@ -133,7 +147,7 @@
 
 \newcommand{\MLE}{\text{MLE}}
 %\newcommand{\errtol}{\text{tol}}
-\newcommand{\errtol}{\epsilon}
+\newcommand{\errtol}{\varepsilon}
 \newcommand{\errn}{\text{err}_{n}}
 \newcommand{\diag}{\text{diag}}
 
@@ -227,7 +241,7 @@ Cubature is a key component of many problems in scientific computing, finance, s
 The integral $\mu$ is typically expressed in the form
 \begin{equation}
 \label{eqn:defn_mu}
-\mu(f) := \mathbb{E}[f(\bm{X})] := \int_{\mathcal{X}} f(\vx)\, \nu(\dif\vx),
+\mu(f) := \Ex[f(\bm{X})] := \int_{\mathcal{X}} f(\vx)\, \nu(\dif\vx),
 \end{equation}
 where $f:\cx \to \reals$ is the integrand and $\nu$ is a probability measure defined on the measurable set $\cx \subseteq \reals^d$.  The problem of choosing $f$ and $\nu$ well to correspond to the original integrand, $g$, is the matter of importance sampling, which we do not address here.  The cubature algorithm is defined as
 \begin{equation}
@@ -237,9 +251,10 @@ where $f:\cx \to \reals$ is the integrand and $\nu$ is a probability measure def
 where the weights, $w_0$, and  $\vw = \{w_i\}_{i=1}^n$, and the nodes $\{x_i\}_{i=1}^n$ are chosen to make the error, $\abs{\mu(f) - \hmu(f)}$, small.
 
 Our concern is constructing a reliable stopping criterion that determines the number of integrand values required, $n$, to ensure that the error is no greater than a user-defined error tolerance, i.e., 
-\[
+\begin{align}
+\label{eqn:err_crit} 
 \abs{\mu(f) - \hmu(f)} \leq \errtol 
-\] 
+\end{align}
 Rather than relying on strong assumptions about the integrand, such as its variance or total variation, we construct a stopping criterion that is data-driven, and based on a credible interval arising by a Bayesian assumption on the problem.  We build upon the ideas of Diaconis \cite{DiaconisBayesian}, O'Hagan \cite{HagenBayes}, Ritter \cite{RiterAverage}, Rasmussen and Ghahramani \cite{RasmussenBayesian}, and others.  Our contribution here is to demonstrate how the choice of a family of kernels that match the low discrepancy sampling nodes facilitates fast computation of the data-driven stopping criterion.  If $n$ function values are obtained for cubature purposes, then $\Order(n \log(n))$ additional operations are required to check whether the error tolerance is satisfied.  This is significantly fewer operations than the $\Order(n^3)$ typically required for Bayesian cubature.
 
 
@@ -305,30 +320,49 @@ a^2+b^2=c^2
 \fi
 
 
-Random $f$ postulated by Diaconis \cite{DiaconisBayesian}, O'Hagen \cite{HagenBayes}, Ritter \cite{RiterAverage}, Rasmussen and Ghahramani \cite{RasmussenBayesian} and others: $f \sim \mathcal{GP}(m,s^2 C_\vtheta)$, a Gaussian process from the sample space $\mathcal{F}$ with mean $m$ and covariance function $s^2C_\vtheta$, $C_\vtheta: \mathcal{X} \times \mathcal{X} \to \mathbb{R} $. In this work, we use $\mathcal{X} = [0,1]^d$ and uniform measure.  The scale parameter $s^2$ and shape parameter $\vtheta$ should be estimated.
+Random $f$ postulated by Diaconis \cite{DiaconisBayesian}, O'Hagen \cite{HagenBayes}, Ritter \cite{RiterAverage}, Rasmussen and Ghahramani \cite{RasmussenBayesian} and others: $f \sim \mathcal{GP}(m,s^2 C_\vtheta)$, an instance of a Gaussian process with mean $m$, non-negative scale factor $s$ and covariance function $s^2C_\vtheta$. Where $C_\vtheta: [0,1]^d \times [0,1]^d \to \mathbb{R} $ is a symmetric, positive-definite function and parameterized by $\vtheta$:
+\begin{multline} \label{FJH:eq:CondPosDef}
+C(\vt,\vx)  = C(\vx, \vt),  \qquad \sum_{i,j = 1}^n a_iC(\vx_i,\vx_j) a_j  
+> 0 \text{ when } \va \ne \vzero, \\
+\forall n\in \mathbb{N}, \; \vt, \vx, \vx_1, \ldots, \vx_n \in [0,1]^d, \; \va = (a_1, \ldots, a_n) \in \mathbb{R}^n.
+\end{multline}
+
+In this work, we use domain $\mathcal{X} = [0,1]^d$ and uniform measure.  The scale parameter $s^2$ and shape parameter $\vtheta$ should be estimated.
 
 For a Gaussian process, all vectors of linear functionals of $f$ have a multivariate Gaussian distribution. Sometimes we drop $\vtheta$ in the writings to simplify the notation. With this assumption,
-\begin{align*}
-\label{eqn:kernel_integral_definitions}
-\begin{array}{cc}
-\mu(f) \sim \mathcal{N}(m \mu(1), s^2 c_0), 
-\quad
+\begin{subequations}
+\begin{align}
+\mu(f) \sim \calN(m \mu(1), s^2 c_0), 
+\quad\text{where}\quad
 c_0 = \int_{[0,1]^2} C_\vtheta(\vx,\vt) \, \dif{\vx} \, \dif{\vt},
 \\
-\vf  = \left( f(\vx_i)\right)_{i=1}^n \sim \mathcal{N}(m \vone, s^2 \mC), 
-\quad
-\mC = \left(  C_\vtheta(\vx_i,\vx_j)  \right)_{i,j=1}^n,
+\label{eqn:fGaussDist}
+\vf  = \left( f(\vx_i)\right)_{i=1}^n \sim \calN(m \vone, s^2 \mC), 
+\quad\text{where}\quad
+\mC = \left(  C_\vtheta(\vx_i,\vx_j)  \right)_{i,j=1}^n.
+\end{align}
+\end{subequations}
+
+Let us consider a fixed node set design $\{ \vx_i \}_{i=1}^n$, then we observe $\vy = \{y_i = f(\vx_i) \}_{i=1}^n$. 
+The integral is correlated with the observed data as follows:
+\begin{align*}
+\cov(\vf, \mu) &= \Ex\left \{(\vf - m \vone) \left [\int_{[0,1]^d} [f(\vx) - m ] \, \D \vx  \right] \right\}  = \vc, 
 \\
-\hmu(f) = w_0 + \vw^T \vf \sim \mathcal{N} (w_0 + m \vw^T \vone, s^2 \vw^T \mC \vw),
-\quad
-\vone = \left(1,...,1 \right)^T.
-\end{array}
+& \qquad \qquad \text{where } \vc = \left(  \int_{[0,1]^d} C(\vt,\vx_i) \, \D \vt \right)_{i=1}^n.
 \end{align*}
 
-Let us consider a fixed node set design $\{ \vx_i \}_{i=1}^n$, then we observe $\vy = \{y_i = f(\vx_i) \}_{i=1}^n$. With this, the conditional probability density of error $\mu-\hmu$ given observed data $\vy$:
+
+
+
+Therefore,  it follows from Lemma \ref{thrm:condDist} that the \emph{conditional} distribution of the integral given the observed function values, $\vf = \vy$ is also Gaussian:
+\begin{equation} \label{eqn:condInteg}
+\mu | (\vf = \vy) \sim \calN \bigl(m (1 - \vc^T \mC^{-1} \vone)  + \vc^T \mC^{-1} \vy, s^2(c_0  -\vc ^T \mC^{-1} \vc) \bigr)
+\end{equation}
+
+Similarly, the conditional probability density of cubature error $\mu-\hmu$ given observed data $\vy$:
 \begin{nalign}
 \mu-\hmu\;|\vy
-\; \sim \; \mathcal{N} 
+\; \sim \; \calN 
 \left(
 \begin{array}{cc}
 -w_0 + m (\mu(1) - \vone^T  \mC^{-1}\vc )
@@ -339,11 +373,7 @@ s^2 (c_0 - \vc^T\mC^{-1}\vc)
 \end{array}
 \right),
 \end{nalign}
-\begin{align*}
-\text{where} \quad 
-\vc = \left( \int_{[0,1]} C_\vtheta(\vx_i,\vx) \dif{\vx} \right)_{i=1}^n
-\end{align*}
-By choosing the weights $w_0$ and $\vw$ carefully:
+Properly choosing the weights:
 \begin{align*}
 w_0 =  m (\mu(1) - \vone^T  \mC^{-1}\vc ),
 \quad
@@ -351,24 +381,30 @@ w_0 =  m (\mu(1) - \vone^T  \mC^{-1}\vc ),
 \end{align*}
 we can force the posterior error $\mu-\hmu\;|\vy$ to have zero mean:
 \begin{align*}
-\label{eqn_error_cond_prob}
+%\label{eqn_error_cond_prob}
 \mu-\hmu\;|\vy
-\; \sim \; \mathcal{N} 
+\; \sim \; \calN 
 \left(
 0, \;
 s^2 (c_0 - \vc^T\mC^{-1}\vc) 
 \right)
 ,
 \end{align*}
-which leads to unbiased solution:
-\begin{align*}
-\begin{array}{cc}
-\hmu(f) = w_0 + \vw^T \vy = 
+This leads to the cubature rule as unbiased solution:
+\begin{align}
+\label{eqn:BayesCub}
+\widehat{\mu}  \vert ( \vf = \vy)
+= w_0 + \vw^T \vy = 
 m(\mu(1) - \vone^T  \mC^{-1}\vc )
 +
-\vc^T \mC^{-1} \vy
-\end{array}
-\end{align*}
+\vc^T \mC^{-1} \vy,
+\end{align}
+which is also the posterior mean: 
+\begin{equation} \label{eqn:BayesCub}
+\Ex [\mu \vert ( \vf = \vy)] = m(\mu(1) -  \vc^T \mC^{-1}\vone) + \vc^T \mC^{-1}  \vy.
+\end{equation}
+This cubature rule is an affine function of the data.
+
 If we can assume the observed data comes from the source of Gaussian process with zero mean $m=0$ then $w_0 = 0$; This fact can be used where applicable. For the integration problem as defined eqn (\ref{eqn:defn_mu}), which is the focus of this work, $\mu(1) = 1$. So, further in this work, we use the actual value instead.
 
 Subsequently, since the posterior error $\mu-\hmu\;|\vy$ is a Normal random variable, we can obtain a confidence interval or inference using integrand-samples and estimated-parameters. If $n$ is chosen large enough to make
@@ -385,6 +421,11 @@ Then
 \end{align}
 where the constant $2.58$ comes from the fact that $99\%$ standard Normal distribution is comprised within $2.58$ times the standard deviation. We call $\errn$, error bound and $\errn \leq \errtol$, stopping criterion.
 
+As mentioned above, our algorithm assumes that the sample size belongs a sequence of positive integers, $\posIntegers$.  If $n$ is chosen so that 
+\begin{equation} \label{FJH:eq:stopcritA}
+n = \min\{n_j \in \posIntegers: 2.58^2s ^2 [c_0  -\vc ^T \mC^{-1} \vc] \le \errtol^2, \quad j \in \naturals \} ,
+\end{equation}
+then one can be confident that \eqref{eqn:err_crit} is satisfied.  In the above stopping criterion it is understood that $c_0$, $\vc$, and $\mC$, all depend on $n_j$
 
 
 
@@ -396,20 +437,22 @@ where the constant $2.58$ comes from the fact that $99\%$ standard Normal distri
 
 
 
+\subsection{Parameters estimation}
+The covariance scale parameter $s^2$, mean $m$ and kernel shape parameter $\vtheta$ must be estimated, since the cubature \eqref{eqn:BayesCub} and the credible interval in \eqref{eqn_prob_confidence_interval} involve these parameters.
 
-
-
-\subsection{Maximal likelihood estimation of parameters}
-The covariance scale parameter $s^2$, mean $m$ and kernel shape parameter $\vtheta$ must be estimated. We choose to do this estimation through Maximum likelihood estimation (MLE), by using the observed integrand values for the purpose of estimating the integral.  The log-likelihood function of the parameters given the data $\vy = \{f(\vx_i)\}_{i=1}^n$ is:
+\subsubsection{Empirical Bayes}
+One approach to do this estimation through Maximum likelihood estimation (MLE), by using the observed integrand values for the purpose of estimating the integral.  The log-likelihood function of the parameters given the data $\vy = \{f(\vx_i)\}_{i=1}^n$ is:
 \begin{nalign}
-& l(s,m,\vtheta | \vy) = \log 
+l(s,m,\vtheta | \vy) &= \log 
 \left(
 \frac{
 \exp\left( -\frac{1}{2} s^{-2} (\vy-m\vone)^T\mCInv(\vy-m\vone)\right) }
 {\sqrt{(2\pi)^n \det(s^2\mC)}}
 \right) 
 \\
-&= -\frac{1}{2} s^{-2} (\vy-m\vone)^T\mCInv(\vy-m\vone) - \frac{1}{2} \log(\det\, \mC) - n \log(s ) + \text{constants.}
+&= -\frac{1}{2} s^{-2} (\vy-m\vone)^T\mCInv(\vy-m\vone) 
+\\
+& \qquad - \frac{1}{2} \log(\det\, \mC) - \frac{n}{2} \log(s^2) + \text{constants.}
 \end{nalign}
 
 Maximizing $l(s,m,\vtheta | \vy)$ with respect to $m$, provides the MLE of $m$:
@@ -449,30 +492,31 @@ s^2_{\MLE}
 Plug in the results of $m_\MLE$ and $s_\MLE$ to simplify the log likelihood:
 \begin{align*}
 l(s,m,\vtheta | \vy) 
-= -\frac{1}{2} n - \frac{1}{2} \log(\det\,\mC) - n \log(s_\MLE) + \text{const}
+= -\frac{1}{2n}  - \frac{1}{2} \log(\det\,\mC) - \frac{n}{2} \log(s^2_\MLE) + \text{const}
 \end{align*}
 By minimizing the negative of $l(s,m,\vtheta | \vy) $ with respect to `$\vtheta$', the MLE of $\vtheta$ can be obtained. This is usually done by numerically searching for the minimum:
-\begin{nalign}
-\label{eqn_MLE_loss_function}
+\begin{align}
+\label{eqn:thetaMLE}
 \vtheta_\MLE
 = 
 \argmin_{\vtheta}
 \left[
- \frac{1}{2n} \log(\det\, \mC) + 
- \log\left(s_\MLE \right) 
+ \frac{1}{n} \log(\det\, \mC) + 
+ \log\left(s^2_\MLE \right) 
 \right].
 %\argmin_{\vtheta}
 %\left[ 
 % \log\left(\frac{ (\vy-m_{\MLE}\vone)^T{\mC}^{-1}(\vy-m_{\MLE}%\vone) }{ [\det( \mC^{-1})]^{\frac1n} } \right) 
 %\right]
-\end{nalign}
+\end{align}
 
 \iffalse
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 The posterior error mean (\ref{eqn_error_cond_prob}) can be simplified using the MLE of mean $m$.
 \begin{nalign}
 \label{eqn_error_cond_prob_1}
 \mu-\hmu|\vy 
-& \sim \mathcal{N} 
+& \sim \calN 
 \left(m (1 - \vone^T  \mC^{-1}\vc )
 +
 \vy^T( \mC^{-1}\vc - \vw ), s^2 (c_0 - \vc^T\mC^{-1}\vc) \right)
@@ -508,44 +552,162 @@ s^2_\MLE
 \right] = 99\%
 \end{align}
 Where $s^2_\MLE$ is from the eqn (\ref{eqn_s2_MLE}). Using this, one can define the error bound for Bayesian cubature algorithm.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \fi
 
-Using those two MLE results of $m$ and $s$, the simplified stopping criterion becomes:
-\[
-2.58 \; \sqrt{ 
-\frac{1}{n}
+Using those two MLE results of $m$ and $s$, the simplified stopping criterion to choose $n$ becomes:
+\begin{multline}
+\label{eqn:stopcritMLE}
+n = \min \biggl\{ n_j \in \posIntegers :
+\\
+\frac{2.58^2}{n_j} \;  
 \vy^T 
 \left[ 
 \mCInv - 
 \frac{ \mCInv \vone \vone^T \mCInv }{\vone^T\mCInv \vone}
-\right] \vy
-(c_0 - \vc^T\mC^{-1}\vc) }  \leq \errtol .
-\]
+\right] \vy \times
+(c_0 - \vc^T\mC^{-1}\vc)   \leq \errtol^2 
+\biggr\}
+.
+\end{multline}
 
-Finally, using the MLE estimated parameters $m_\MLE , s_\MLE$ and $\vthetaMLE$, we compute:
-\begin{align*}
-\hmu(f) = 
-\underbrace{ m_\MLE(1 - \vone^T  \mC^{-1}\vc )}_{w_0}
-+
-\underbrace{\vc^T \mC^{-1}}_{\vw} \vy 
-=
+Finally, using the MLE estimated parameters $m_\MLE , s_\MLE$ and $\vthetaMLE$, the cubature rule:
+\begin{align} \label{eqn:cubMLE}
+\hmu_\MLE(f) = 
 \left(
 \frac{ (1 - \vone^T  \mCInv\vc ) }{ \vone^T \mCInv \vone}   \mCInv \vone +  \mCInv\vc 
 \right)^T \vy
+\end{align}
+
+
+
+
+
+
+
+
+
+\subsubsection{Full Bayes}
+
+Full Bayes approach includes $m, s$ as hyper-parameters
+ while estimating the distribution of cubature error. Then assumes conjugate for the hyper-parameters namely $\vrho_{m,s^2}(\xi, \lambda) \propto 1/\lambda$. Then the posterior density for the integral given the data using the Bayes theorem is
+\begin{align*}
+\MoveEqLeft{\rho_{\mu}(z | \vf = \vy)} \\
+& = \int_{0}^\infty \int_{-\infty}^\infty \rho_{\mu}(z | \vf = \vy, m = \xi, s^2 = \lambda) \rho_{m, s^2}(\xi, \lambda | \vf = \vy ) \, \D \xi \D \lambda \\
+&\qquad \qquad \qquad \qquad \text{by the properties of conditional probability} \\
+& \propto \int_{0}^\infty \int_{-\infty}^\infty \rho_{\mu}(z | \vf = \vy, m = \xi, s^2 = \lambda)  \rho_{\vf}(\vy | \xi, \lambda ) \rho_{m, s^2}(\xi, \lambda) \, \D \xi \D \lambda \\
+&\qquad \qquad \qquad \qquad \text{by Bayes' Theorem} \\
+& \propto \displaystyle \int_{0}^\infty  \frac{1}{\lambda^{(n+3)/2}} \int_{-\infty}^\infty  \exp \biggl( -\frac{1}{2\lambda}\Bigl\{
+\frac{
+[z - \xi (1 - \vc^T \mC^{-1} \vone)  -  \vc^T \mC^{-1} \vy]^2}
+{[c_0  -\vc ^T \mC^{-1} \vc]}  \\
+& \qquad \qquad  + (\vy - \xi \vone)^T \mC^{-1}(\vy - \xi \vone) \Bigr \} \biggr) \, \D \xi \D \lambda \\
+&\qquad \qquad \qquad \qquad  
+\text{by \eqref{eqn:fGaussDist}, \eqref{eqn:condInteg}} \; \text{and} \; \rho_{m,s^2}(\xi,\lambda) \propto 1/\lambda \\
+& \propto \displaystyle \int_{0}^\infty  \frac{1}{\lambda^{(n+3)/2}} \int_{-\infty}^\infty  \exp\left( -\frac{\alpha \xi^2 -2 \beta \xi + \gamma}{2\lambda(c_0  -\vc ^T \mC^{-1} \vc)} \right) \, \D \xi \D \lambda, \\
+\intertext{where}
+\alpha & = (1 - \vc^T \mC^{-1} \vone)^2 + \vone^T \mC^{-1} \vone (c_0  -\vc ^T \mC^{-1} \vc),\\
+\beta & =(1 - \vc^T \mC^{-1} \vone)(z - \vc^T \mC^{-1} \vy )  + \vone^T \mC^{-1} \vy (c_0  -\vc ^T \mC^{-1} \vc),\\
+\gamma &  = (z - \vc^T \mC^{-1} \vy )^2  + \vy^T \mC^{-1} \vy (c_0  -\vc ^T \mC^{-1} \vc).
 \end{align*}
+In the derivation above and below, factors that are independent of $\xi$, $\lambda$, or $z$ can be discarded since we only need to preserve the proportion, however, factors that depend on $\xi$, $\lambda$, or $z$ must be kept.  
+%Completing the square allows us to compute the integral with respect to $\xi$:
+Completing the square $
+\alpha \xi^2 -2 \beta \xi + \gamma 
+= \alpha (\xi -\beta/\alpha)^2  - (\beta^2/\alpha) + \gamma,
+$
+allows us to compute the integral with respect to $\xi$:
+\begin{align*}
+\MoveEqLeft{\rho_{\mu}(z | \vf = \vy)} \\
+& \propto \displaystyle \int_{0}^\infty  \frac{1}{\lambda^{(n+3)/2}}  \exp\left( -\frac{  \gamma - \beta^2/\alpha}{2\lambda(c_0  -\vc ^T \mC^{-1} \vc)} \right)  \\
+& \qquad \qquad \times \int_{-\infty}^\infty  \exp\left( -\frac{\alpha (\xi -\beta/\alpha)^2}{2\lambda(c_0  -\vc ^T \mC^{-1} \vc)} \right) \, \D \xi \D \lambda \\
+& \propto \displaystyle \int_{0}^\infty  \frac{1}{\lambda^{(n+2)/2}}  \exp\left( -\frac{  \gamma - \beta^2/\alpha}{2\lambda(c_0  -\vc ^T \mC^{-1} \vc)} \right) \D \lambda \\
+& \propto \left(\gamma - \frac{\beta^2}{\alpha}\right)^{-n/2} \propto \left(\alpha \gamma - \beta^2\right)^{n/2}.
+\end{align*}
+Finally, we simplify the key term:
+\begin{align*}
+\alpha \gamma - \beta^2 
+& = \vone^T \mC^{-1} \vone (c_0  -\vc ^T \mC^{-1} \vc) (z - \vc^T \mC^{-1} \vy )^2 \\
+& \qquad \qquad - 2 \vone^T \mC^{-1} \vy (c_0  -\vc ^T \mC^{-1} \vc)(1 - \vc^T \mC^{-1} \vone)(z - \vc^T \mC^{-1} \vy ) \\
+& \qquad \qquad + (1 - \vc^T \mC^{-1} \vone)^2 \vy^T \mC^{-1} \vy (c_0  -\vc ^T \mC^{-1} \vc) \\
+&\qquad \qquad  + [\vone^T \mC^{-1} \vone \vy^T \mC^{-1} \vy - (\vone^T \mC^{-1} \vy)^2](c_0  -\vc ^T \mC^{-1} \vc)^2  \\
+& \propto \vone^T \mC^{-1} \vone  \left (z - \vc^T \mC^{-1} \vy - \frac{(1 - \vc^T \mC^{-1} \vone)\vone^T \mC^{-1} \vy}{\vone^T \mC^{-1} \vone } \right )^2 \\
+& \qquad \qquad -  \frac{[(1 - \vc^T \mC^{-1} \vone)\vone^T \mC^{-1} \vy]^2}{\vone^T \mC^{-1} \vone }  
++ (1 - \vc^T \mC^{-1} \vone)^2 \vy^T \mC^{-1} \vy \\
+& \qquad \qquad (c_0  -\vc ^T \mC^{-1} \vc) [\vone^T \mC^{-1} \vone  \vy^T \mC^{-1} \vy
+- (\vone^T \mC^{-1} \vy)^2] \\
+& \propto \left (z - \left[ \frac{(1 - \vc^T \mC^{-1} \vone)\vone}{\vone^T \mC^{-1} \vone } + \vc \right]^T \mC^{-1} \vy \right )^2 \\
+& \qquad  + \left[\frac{(1 - \vc^T \mC^{-1} \vone)^2}{\vone^T \mC^{-1} \vone} + (c_0  -\vc ^T \mC^{-1} \vc) \right] \times \vy^T\left[ \mC^{-1} 
+- \frac{ \mC^{-1} \vone\vone^T \mC^{-1}}{\vone^T \mC^{-1} \vone}  \right]\vy
+\\
+& \propto (z - \widehat{\mu}_{\textup{full}})^2 + (n-1) \sigma_{\textup{full}}^2
+\\
+& \propto \left(1 +  \frac{1}{n-1} \frac{(z - \mu_{\textup{full}})^2}{\widehat{\sigma}_{\textup{full}}^2} \right)
+\end{align*}
+This means that $\mu \vert (\vf = \vy )$, properly centered and scaled, has a Student's $t$-distribution with $n-1$ degrees of freedom. The cubature rule is the same as in the empirical Bayes case in \eqref{eqn:cubMLE}:
+\begin{gather}\label{FJH:eq:cubFull}
+\widehat{\mu}_{\textup{full}}  \vert ( \vf = \vy) = \left[\frac{(1 -  \vc^T \mC^{-1}\vone)\vone^T}{\vone^T \mC^{-1} \vone} + \vc^T \right] \mC^{-1}  \vy,
+\\
+\label{FJH:eq:signmaFull}
+\widehat{\sigma}^2_{\textup{full}}  \vert ( \vf = \vy)  
+= \frac{1}{n-1}
+\left[\frac{(1 - \vc^T \mC^{-1} \vone)^2}{\vone^T \mC^{-1} \vone} + (c_0  -\vc ^T \mC^{-1} \vc) \right] 
+\\
+\nonumber
+\qquad \times \quad \vy^T\left[ \mC^{-1} 
+- \frac{ \mC^{-1} \vone\vone^T \mC^{-1}}{\vone^T \mC^{-1} \vone}  \right]\vy .
+\end{gather}
+But the variance is different.
+So, the stopping criterion for the full Bayes case,  
+\begin{multline} \label{FJH:eq:stopcritHyper}
+n  = \min \biggl \{n_j \in \posIntegers:  
+\frac {t_{n_j-1,0.995}^2}{n_j - 1}   \left[\frac{(1 - \vc^T \mC^{-1} \vone)^2}{\vone^T \mC^{-1} \vone} + (c_0  -\vc ^T \mC^{-1} \vc) \right]
+\\
+ \times \vy^T \left[\mC^{-1} - \frac{\mC^{-1} \vone \vone^T \mC^{-1}}{\vone^T \mC^{-1} \vone}  \right] \vy  \le \varepsilon^2 \biggr\}.
+\end{multline}
+is more conservative than that in the empirical Bayes case, \eqref{eqn:stopcritMLE}.
+Here $t_{n-1,0.995}$ denotes the $99.5$ percentile of a standard Student's $t$-distribution with $n-1$ degrees of freedom.
+
+Because the shape parameter, $\vtheta$, enters the definition of the covariance kernel in a non-trivial way, it typically cannot be practically considered as a hyper-parameter in a full Bayesian model.  The empirical Bayes approach for determining $\vtheta$ in \eqref{eqn:thetaMLE} is one possibility
 
 
 
 
+ 
+\subsubsection{Cross-validation} 
+Another alternative to determining $m$, $s$, and $\vtheta$ is \emph{leave-one-out cross-validation}.  Let $\widetilde{y}_i$ denote the expected value of $f(\vx_i)$ conditioned on $\vf_{-i} = \vy_{-i}$, where the subscript $-i$ denotes vector excluding the $i^{\text{th}}$ component.  The cross-validation criterion, which is to be minimized, is
+\begin{equation} \label{FJH:eq:CVA}
+\textup{CV} = \sum_{i=1}^n (y_i - \widetilde{y}_i)^2.
+\end{equation}
 
+Let $\mA = \mC^{-1}$ as in Lemma \ref{thrm:condDist} below, let $\vzeta = \mA (\vy - m \vone)$, and partition $\mC$, $\mA$, and $\vzeta$ as
+\begin{equation*}
+\mC = \begin{pmatrix} C_{ii}  & \vC_{-i,i}^T \\  \vC_{-i,i} & \mC_{-i,-i}\end{pmatrix}, \qquad
+\mA = \begin{pmatrix} A_{ii}  & \vA_{-i,i}^T \\  \vA_{-i,i} & \mA_{-i,-i}\end{pmatrix}, \qquad \vzeta = \begin{pmatrix} \zeta_i   \\  \vzeta_{-i} \end{pmatrix}
+\end{equation*}
+Note that in this notation, Lemma \ref{thrm:condDist} implies that 
+\begin{align*}
+\widetilde{y}_i & = m + \vC^T_{-i,i} \mC_{-i,-i}^{-1} (\vy_{-i} -m \vone)  \\
+\zeta_i  & = A_{ii}(y_i - m) + \vA_{-i,i}^T(\vy_{-i} - m \vone) \\
+& = A_{ii}[(y_i - m) - \vC^T_{-i,i} \mC_{-i,-i}^{-1} (\vy_{-i} -m \vone)] \\
+& = A_{ii}(y_i - \widetilde{y}_i).
+\end{align*}
+Thus, \eqref{FJH:eq:CVA} may be re-written as 
+\begin{equation} \label{FJH:eq:CVA}
+\textup{CV} = \sum_{i=1}^n \left(\frac{\zeta_i}{A_{ii}} \right)^2, \qquad \vzeta = \mC^{-1}(\vy - m \vone)
+\end{equation}
+Wahba recommended a generalized cross-validation criterion, which replaces the $i^{\text{th}}$ diagonal element of $\mA$ in the denominator with the average diagonal element of $\mA$:
+\begin{equation} \label{FJH:eq:CVA}
+\textup{GCV} 
+= \frac{\sum_{i=1}^n\zeta_i^2}{\left(\frac 1n \sum_{i=1}^n A_{ii} \right)^2} 
+= \frac{(\vy - m\vone)^T \mC^{-2} (\vy - m \vone)}{\left(\frac 1n \trace(\mC^{-1}) \right)^2}.
+\end{equation}
 
-
-
-
-
-
-
-
+The loss function $GCV$ depends on $m$ and $\vtheta$, but not on $s$.  Minimizing it yields
+\begin{gather}
+m_{\textup{GCV}} = \frac{\vone^T \mC^{-2} \vy}{\vone^T \mC^{-2} \vone},\\ 
+\vtheta_{\textup{GCV}} = \argmin_\vtheta \log \left (  \vy^T \left[\mC^{-2} - \frac{\mC^{-2} \vone \vone^T \mC^{-2}}{\vone^T \mC^{-2} \vone}  \right] \vy \right ) - 2 \log \left ( \trace(\mC^{-1}) \right )
+\end{gather}
 
 
 
@@ -757,7 +919,7 @@ So, our algorithm in the current form is not straightaway usable for any practic
 \section{Fast automatic Bayesian cubature}\label{fast_transform_kernel}
 {Automatic Bayesian cubature algorithm} described (Section \ref{sec:bayes_cubature_algo}) is slow due to its computationally intensive nature. This could be a hindrance in real world applications when a larger number of data points are needed to achieve the desired accuracy. This section and further sections explore techniques to make it faster.
 
-Bayesian cubature algorithm uses error-bound $\errn$ to decide when to stop, and uses MLE loss function (\ref{eqn_MLE_loss_function}) to find the optimal {shape parameter}.
+Bayesian cubature algorithm uses error-bound $\errn$ to decide when to stop, and uses MLE loss function (\ref{eqn:thetaMLE}) to find the optimal {shape parameter}.
 These computations involve covariance matrix inversions and multiplications, which are time-consuming and prone to numerical error. 
 When the algorithm tries to adapt by increasing $n$ to get better accuracy, the covariance matrix size also grows, along with it, the matrix's condition number also grows significantly causing numerical error in matrix operations. This phenomenon is called ill-conditioning.
 
@@ -818,9 +980,13 @@ Most of the computations in the algorithm are of the form $\va^T\mCInv\vb$, can 
 \text{So}, \quad
 \mCInv \vone &= \mCInv V_1 = \frac{V_1}{\lambda_1} = \frac{\vone}{\lambda_1} , 
 \\
-\text{similarly}, \quad \va^T\mCInv\vb &= \frac 1n \va^T \mV \mLambdaInv \mV^H \vb
+\text{Similarly}, \quad \va^T\mCInv\vb &= \frac 1n \va^T \mV \mLambdaInv \mV^H \vb
 = \frac 1n \widehat{\va}^T\mLambdaInv \widehat{\vb}^*
 = \frac 1n \sum_{i=1}^n \frac{\widehat{a_i} \widehat{b_i^*}}{\lambda_i},
+\\
+\quad \va^T\mC^{-2}\vb &= \frac 1n \va^T \mV \mLambda^{-2} \mV^H \vb
+= \frac 1n \widehat{\va}^T\mLambda^{-2} \widehat{\vb}^*
+= \frac 1n \sum_{i=1}^n \frac{\widehat{a_i} \widehat{b_i^*}}{\lambda_i^2},
 \end{align*}
 where $\widehat{\va} = \mV^T \va$ and $\widehat{\vb} = \mV^T \vb$. By using this, some of the recurring terms in the algorithm are simplified,
 \begin{align*}
@@ -833,15 +999,19 @@ where $\widehat{\va} = \mV^T \va$ and $\widehat{\vb} = \mV^T \vb$. By using this
 \vc^T\mCInv \vone &= \vc^T \left(\frac{ \vone }{\lambda_1} \right) = \frac{\widehat{c}_1}{\lambda_1}
 \\
 \vc^T\mCInv \vc &= \frac 1n \sum_{i=1}^n \frac{\abs{\widehat{c}_i}^2}{\lambda_i}
+\\
+\vy^T\mC^{-2} \vy &= \frac 1n \sum_{i=1}^n \frac{\abs{\widehat{y_i}}^2}{\lambda_i^2}
 \end{align*}
 Then the MLE estimates can be simplified using these results:
 \begin{align*}
 m_\MLE &= \frac{\vone^T\mCInv\vy}{\vone^T\mCInv\vone} = \frac{\widehat{y}_1}{n} = \frac 1n \sum_{i=1}^n y_i,
 \\
 s^2_\MLE &= \frac 1n \vy^T \left[ \mCInv - \frac{\mCInv \vone \vone^T \mCInv}{\vone^T\mCInv\vone}\right] \vy
-=
-\frac 1n \sum_{i=1}^n \frac{\abs{\widehat{y_i}}^2}{\lambda_i} - \frac{\abs{\widehat{y}_1}^2}{n \lambda_1} = 
-\frac 1n \sum_{i=2}^n \frac{\abs{\widehat{y_i}}^2}{\lambda_i}
+\\
+& =
+\frac 1n \left[ \frac 1n \sum_{i=1}^n \frac{\abs{\widehat{y_i}}^2}{\lambda_i} - \frac{\abs{\widehat{y}_1}^2/\lambda_1^2}{n/ \lambda_1} \right] = 
+\frac{1}{n^2} 
+\sum_{i=2}^n \frac{\abs{\widehat{y_i}}^2}{\lambda_i}
 \end{align*}
 
 
@@ -873,23 +1043,24 @@ To begin with, MLE estimate of $\vtheta$ can be made faster:
 
 %\subsection{Estimating the shape parameter $\vtheta_\MLE$}
 
+\subsubsection{Empirical Bayes}
 \begin{align}
 \nonumber
 \vtheta_\MLE
 &= 
 \argmin_{\vtheta}
 \left[
- \frac{1}{2n} \log(\det\, \mC) + 
- \log\left(s_\MLE \right) 
+ \frac{1}{n} \log(\det\, \mC) + 
+ \log\left(s^2_\MLE \right) 
 \right]
 \\
 \label{eqn_MLE_loss_func_optimized_2}
 &= 
 \argmin_{\vtheta}
 \left[
- \frac{1}{2n}\sum_{i=1}^n \log(\lambda_i) + 
+ \frac{1}{n}\sum_{i=1}^n \log(\lambda_i) + 
  \log\left(
- \frac 1n \sum_{i=2}^n \frac{\abs{\widehat{y_i}}^2}{\lambda_i}
+ \frac{1}{n^2} \sum_{i=2}^n \frac{\abs{\widehat{y_i}}^2}{\lambda_i}
  \right) 
 \right]
 \\
@@ -939,9 +1110,7 @@ Similarly, the error bound {$\errn$} computation can be made faster:
 Finally, the computation of $\hmu_n$ is made faster:
 \begin{align}
 \nonumber
-\hmu_n(f) &= w_0 + \vw^T \vy 
-= 
-m[1 - \vone^T  \mC^{-1}\vc ]
+\hmu_\MLE(f) &= m_\MLE[1 - \vone^T  \mC^{-1}\vc ]
 +
 \vc^T \mC^{-1} \vy
 \\
@@ -954,8 +1123,54 @@ m[1 - \vone^T  \mC^{-1}\vc ]
  \frac{\widehat{y}_1}{n} +
  \frac 1n \sum_{i=2}^n \frac{ \widehat{c}_i \widehat{y}_i^*}{\lambda_i}
 \end{align}
-It is interesting to note that, with $m \neq 0$ assumption, $\hmu$ is simply the sample mean. 
+It is interesting to note that, with $m \neq 0$ assumption, $\hmu_\MLE$ is simply the sample mean. 
 Moreover the choice of kernel or any MLE estimated parameters do not affect the $\hmu_n$ but influences the accuracy of the error bound $\errn$.
+
+\subsubsection{Full Bayes}
+
+
+\begin{gather}
+\nonumber
+\vtheta_{\textup{GCV}} 
+%= \argmin_\vtheta \log \left (  \vy^T \left[\mC^{-2} - \frac{\mC^{-2} \vone \vone^T \mC^{-2}}{\vone^T \mC^{-2} \vone}  \right] \vy \right ) -2 \log \left ( \trace(\mC^{-1}) \right ) \\
+= \argmin_\vtheta \left[ \log \left ( \frac 1n \sum_{i=1}^n \frac{\abs{\widehat{y}_i}^2}{\lambda_i^2} - 
+\frac{\widehat{y}_1^2/\lambda_1^4}{n/\lambda^2_1}
+\right) -2\log\left( \sum_{i=1}^n \frac{1}{\lambda_i} \right)
+\right]
+\\
+= \argmin_\vtheta \left[ \log \left ( \frac 1n \sum_{i=2}^n \frac{\abs{\widehat{y}_i}^2}{\lambda_i^2} 
+\right) -2\log\left( \sum_{i=1}^n \frac{1}{\lambda_i} \right)
+\right]
+\end{gather}
+
+\begin{gather}\label{FJH:eq:cubFull}
+\widehat{\mu}_{\textup{full}}  \vert ( \vf = \vy) = \left[\frac{(1 -  \vc^T \mC^{-1}\vone)\vone^T}{\vone^T \mC^{-1} \vone} + \vc^T \right] \mC^{-1}  \vy = 
+ \frac{\widehat{y}_1}{n} +
+ \frac 1n \sum_{i=2}^n \frac{ \widehat{c}_i \widehat{y}_i^*}{\lambda_i},
+\\
+\label{FJH:eq:signmaFull}
+\widehat{\sigma}^2_{\textup{full}}  \vert ( \vf = \vy)  
+= \frac{1}{n-1}
+\left[\frac{(1 - \vc^T \mC^{-1} \vone)^2}{\vone^T \mC^{-1} \vone} + (c_0  -\vc ^T \mC^{-1} \vc) \right] 
+\\
+\nonumber
+\qquad \times \quad \vy^T\left[ \mC^{-1} 
+- \frac{ \mC^{-1} \vone\vone^T \mC^{-1}}{\vone^T \mC^{-1} \vone}  \right]\vy 
+\\ \nonumber
+=
+\frac{1}{n-1} \left[\frac{\lambda_1}{n}{\left(1 - \frac{\widehat{c}_1}{\lambda_1}\right)^2} + (c_0  - \frac 1n \sum_{i=1}^n \frac{\abs{\widehat{c}_i}^2}{\lambda_i}) \right] 
+\times
+\frac{1}{n} \sum_{i=2}^n \frac{\abs{\widehat{y_i}}^2}{\lambda_i}
+\end{gather}
+
+The stopping criterion for the full Bayes case,  
+\begin{multline} \label{FJH:eq:stopcritHyper}
+n  = \min \biggl \{n_j \in \posIntegers:  
+\\
+\frac {t_{n_j-1,0.995}^2}{n_j(n_j - 1)}  
+\left[\frac{\lambda_1}{n_j}{\left(1 - \frac{\widehat{c}_1}{\lambda_1}\right)^2} + (c_0  - \frac{1}{n_j} \sum_{i=1}^n \frac{\abs{\widehat{c}_i}^2}{\lambda_i}) \right] 
+ \times \sum_{i=2}^n \frac{\abs{\widehat{y_i}}^2}{\lambda_i}  \le \varepsilon^2 \biggr\}.
+\end{multline}
 
 
 These simplified computations involve no matrix inversion or multiplications. 
@@ -1221,7 +1436,7 @@ Numerical experiments using this kernel will be shown in the section (\ref{sec:n
 
 
 \subsection{Additional assumptions}
-The shift invariant kernel (\ref{bayes_SI_kernel}) has some more desirable properties, leading to get $c_0=1$ and $\vc = \vone$, which will help to make the computations even faster:
+The shift invariant kernel (\ref{bayes_SI_kernel}) has some more desirable properties, leading to $c_0=1$ and $\vc = \vone$, which will help to make the computations even faster:
 \begin{align*}
 %\label{eqn:ftk_integral_definitions}
 \displaystyle
@@ -1261,6 +1476,51 @@ And the cubature:
  \widehat{\vc}_i=0 \; \forall \; i \neq 0
 \end{align*}
 
+
+
+
+
+\subsubsection{Full Bayes}
+
+
+\begin{align}
+\label{FJH:eq:cubFull}
+\widehat{\mu}_{\textup{full}}  \vert ( \vf = \vy) &= 
+ \frac{\widehat{y}_1}{n} ,
+\end{align}
+\begin{align}
+\vtheta_{\textup{GCV}} 
+&= \argmin_\vtheta \left[ \log \left ( \frac 1n \sum_{i=2}^n \frac{\abs{\widehat{y}_i}^2}{\lambda_i^2} 
+\right) -2\log\left( \sum_{i=1}^n \frac{1}{\lambda_i} \right)
+\right]
+\end{align}
+\begin{multline*}
+%\label{FJH:eq:signmaFull}
+\widehat{\sigma}^2_{\textup{full}}  \vert ( \vf = \vy) \\ 
+= 
+\frac{1}{n-1} \left[\frac{\lambda_1}{n}{\left(1 - \frac{\widehat{c}_1}{\lambda_1}\right)^2} + (c_0  - \frac 1n \sum_{i=1}^n \frac{\abs{\widehat{c}_i}^2}{\lambda_i}) \right] 
+\times
+\frac{1}{n} \sum_{i=2}^n \frac{\abs{\widehat{y_i}}^2}{\lambda_i} 
+\\
+= 
+\frac{1}{n-1} \left( 1- \frac{n}{\lambda_1}\right) \left[\frac{\lambda_1}{n}{\left(1 - \frac{n}{\lambda_1}\right)} + 1\right] 
+\times
+\frac{1}{n} \sum_{i=2}^n \frac{\abs{\widehat{y_i}}^2}{\lambda_i} 
+\\
+= 
+\frac{1}{n(n-1)} \left( \frac{\lambda_1}{n} - 1\right)  
+\times
+ \sum_{i=2}^n \frac{\abs{\widehat{y_i}}^2}{\lambda_i} 
+\end{multline*}
+
+The stopping criterion for the full Bayes case,  
+\begin{multline} \label{FJH:eq:stopcritHyper}
+n  = \min \biggl \{n_j \in \posIntegers:  
+\frac {t_{n_j-1,0.995}^2}{n_j(n_j - 1)} 
+\left( \frac{\lambda_1}{n_j} - 1\right)  
+\times
+ \sum_{i=2}^{n_j} \frac{\abs{\widehat{y_i}}^2}{\lambda_i}  \le \varepsilon^2 \biggr\}.
+\end{multline}
 
 
 
@@ -1468,14 +1728,14 @@ d=3 &&  C_3 &= [1 +  \theta B(\{x_{i_3} - x_{j_3}\})][ 1 + \tilde{C}_2]
 We begin developing the Bayesian cubature with the assumption that the integrand arises from a Gaussian process. How can we check if $m, s, \vtheta$ and $\mC$ are chosen appropriately so that the $\vf$ is a draw from the Gaussian process?. Here is an attempt to validate that assumption. Let,
 \begin{align*}
 \vf = \left( f(\vx_i) \right)_{i=1}^n
-\sim \mathcal{N} \left( m\vone, \mC \right), 
+\sim \calN \left( m\vone, \mC \right), 
 \quad \text{where}\quad \mC = \frac 1n \mV \mLambda \mV^H, \quad \mV^H \mV = n
 \end{align*}
 Then,
 \begin{align*}
-\mathbb{E}\left[ \frac{1}{\sqrt{n}} \mLambda^{-\frac 12} \mV^H \vf \right]
+\Ex\left[ \frac{1}{\sqrt{n}} \mLambda^{-\frac 12} \mV^H \vf \right]
 & =
-\frac{1}{\sqrt{n}} \mLambda^{-\frac 12} \mV^H \mathbb{E}[\vf] 
+\frac{1}{\sqrt{n}} \mLambda^{-\frac 12} \mV^H \Ex[\vf] 
 \\
 & =
 \frac{1}{\sqrt{n}} \mLambda^{-\frac 12} \mV^H m \vone
@@ -1488,16 +1748,16 @@ Then,
 \end{align*}
 And,
 \begin{align*}
-COV \left[ \frac{1}{\sqrt{n}} \mLambda^{-\frac 12} \mV^H \vf  \right]
+\cov \left[ \frac{1}{\sqrt{n}} \mLambda^{-\frac 12} \mV^H \vf  \right]
 &=
-\frac{1}{n} \mathbb{E}\left[  
+\frac{1}{n} \Ex\left[  
 \mLambda^{-\frac 12} \mV^H (\vf - m \vone)
 (\vf - m \vone)^T \mV \mLambda^{-\frac 12}
 \right]
 \\
 &=
 \frac{1}{n} \mLambda^{-\frac 12} \mV^H 
-\mathbb{E}\left[ (\vf - m \vone)
+\Ex\left[ (\vf - m \vone)
 (\vf - m \vone)^T \right] \mV \mLambda^{-\frac 12}
 \\
 &=
@@ -1509,13 +1769,13 @@ COV \left[ \frac{1}{\sqrt{n}} \mLambda^{-\frac 12} \mV^H \vf  \right]
 
 Let $\vf' = \frac{1}{\sqrt{n}} \mLambda^{-\frac 12} \mV^H \vf$,
 \begin{align*}
-\vf' \sim \mathcal{N} \left( 
+\vf' \sim \calN \left( 
 m' \bm{e}_1,
 \mathsf{1}
 \right),
 \end{align*}
 Where $m' = m \sqrt{\frac{n}{\lambda_1}} $.
-If we can verify the sample distribution of $\vf'$ is approximately $\mathcal{N}\left( m' \bm{e}_1, \mathsf{1} \right)$ by using Normal plots , could validate our assumption.
+If we can verify the sample distribution of $\vf'$ is approximately $\calN\left( m' \bm{e}_1, \mathsf{1} \right)$ by using Normal plots , could validate our assumption.
 
 
 
@@ -1614,7 +1874,7 @@ The following multidimensional integral example is based on the paper \cite{Keis
 f(\vx) &=  \cos(\norm{ \vx}) \exp(-\norm{ \vx }^2) \dvx, \;  
 \\
 \\
-\int_{\mathbb{R}^d} f(\vx) \dvx & = \frac{2 \pi^{\frac d2}}{\text{gamma}(\frac d2)} \text{cosinteg}(d), \quad d=1,2,3,\hdots
+\int_{\reals^d} f(\vx) \dvx & = \frac{2 \pi^{\frac d2}}{\text{gamma}(\frac d2)} \text{cosinteg}(d), \quad d=1,2,3,\hdots
 \end{align*}
 where
 
@@ -1673,7 +1933,7 @@ We use the Genz's method to compute Multivariate normal probability as explained
 \begin{tabular}{m{8.5cm}m{3cm}}
 %{Multivariate Normal (MVN)} \vspace{-2ex}
 \begin{gather*}
-\mu = \int_{[\va,\vb] \in \mathbb{R}^d} \frac{\exp\bigl(- \frac 12 \vt^T \mSigma^{-1} \vt \bigr)}{\sqrt{(2 \pi)^d \det(\mSigma)}} \, \dvt \
+\mu = \int_{[\va,\vb] \in \reals^d} \frac{\exp\bigl(- \frac 12 \vt^T \mSigma^{-1} \vt \bigr)}{\sqrt{(2 \pi)^d \det(\mSigma)}} \, \dvt \
 \overset{\text{\small\cite{Gen93}}}{=} \ 
 \int_{[0,1]^{d-1}} f_{\text{Genz}}(\vx) \, \dvx 
 \end{gather*} 
@@ -1755,10 +2015,10 @@ d=3
 \item Option pricing
 
 
-The price of financial derivatives can often be modeled by high dimensional integrals. If the underlying asset is described in terms of a Brownian motion, B, at time $t_1,...,t_d$, then $Z = (B(t_1), ..., B(t_d)) \sim \mathcal{N}(\vzero,\mSigma)$, where $\mSigma = \left(\min(t_j,t_k) \right)_{j,k=1}^d$, and the fair price of the option is
+The price of financial derivatives can often be modeled by high dimensional integrals. If the underlying asset is described in terms of a Brownian motion, B, at time $t_1,...,t_d$, then $Z = (B(t_1), ..., B(t_d)) \sim \calN(\vzero,\mSigma)$, where $\mSigma = \left(\min(t_j,t_k) \right)_{j,k=1}^d$, and the fair price of the option is
 
 \begin{align*}
-\mu = \int_{\mathbb{R}^d} \text{payoff}(\vz) \frac{\exp(\frac 12 \vz^T\mSigma^{-1}\vz)}{\sqrt{(2\pi)^d \det(\mSigma)}} \dvz = \int_{[0,1]^d} f(\vx) \dvx
+\mu = \int_{\reals^d} \text{payoff}(\vz) \frac{\exp(\frac 12 \vz^T\mSigma^{-1}\vz)}{\sqrt{(2\pi)^d \det(\mSigma)}} \dvz = \int_{[0,1]^d} f(\vx) \dvx
 \end{align*}
 where the function payoff(.) describes the discounted payoff of the option,
 
@@ -1854,7 +2114,7 @@ $ (f - \beta_1 g_1 -, ... , - \beta_p g_p) $
 
 than
 \begin{align*}
-f = \mathcal{N} \left( \beta_0 + \beta_1 g_1 + , ... , + \beta_p g_p, s^2 \mC  \right)
+f = \calN \left( \beta_0 + \beta_1 g_1 + , ... , + \beta_p g_p, s^2 \mC  \right)
 \end{align*}
 
 \item Function approximation
@@ -1882,6 +2142,95 @@ Finally, the function approximation is
 \end{enumerate}
 
 
+
+
+
+
+\section{Appendix}
+
+\subsection{Properties of Multivariate Normal Distributions}
+
+
+\begin{lemma} \label{thrm:condDist} If $\vY = (\vY_1, \vY_2)^T \sim \calN (\vm,\mC)$, where 
+	\begin{equation*}
+	\vm = \begin{pmatrix} \vm_1 \\ \vm_2 \end{pmatrix} = \begin{pmatrix} \Ex(\vY_1) \\ \Ex(\vY_2) \end{pmatrix}, \qquad 
+	\mC = \begin{pmatrix}
+	\mC_{11} & \mC_{21}^T \\ 	\mC_{21} & \mC_{22}
+	\end{pmatrix} =
+	 \begin{pmatrix}
+	\var(\vY_{1}) & \cov(\vY_{1}, \vY_2) \\ 	\cov(\vY_2,\vY_{1}) & \var(\vY_{2})
+	\end{pmatrix} 
+	\end{equation*}
+	then 
+	\begin{equation*}
+	\vY_1 \vert \vY_2 \; \sim \; \calN \bigl(\vm_1 + \mC_{21}^T \mC_{22}^{-1}(\vY_2 - \vm_2), \; \mC_{11} - \mC_{21}^T \mC_{22}^{-1} \mC_{21} \bigr)
+	\end{equation*}
+	
+\end{lemma}
+
+\begin{proof}:
+Note that
+	\begin{gather*}
+	\mC^{-1} = \begin{pmatrix} \mA_{11} & \mA_{21}^T \\ \mA_{21} & \mA_{22} \end{pmatrix}, \\
+	\mA_{11} = (\mC_{11} - \mC_{12} \mC_{22}^{-1} \mC_{21})^{-1}, \qquad 
+	\mA_{21} = -  \mC_{22}^{-1} \mC_{21} \mA_{11}, \\ 
+	\mA_{22} = \mC_{22}^{-1} + \mC_{22}^{-1} \mC_{21} \mA_{11} \mC_{21}^T \mC_{22}^{-1}.
+	\end{gather*}
+%
+% Reference: https://stats.stackexchange.com/questions/30588/deriving-the-conditional-distributions-of-a-multivariate-normal-distribution
+%
+Let's denote the first partition $\vY_1$ and the second $\vY_2$. 
+Since $\vY_1$ and $\vY_2$ have a Gaussian distribution, the conditional distribution of $\vY_1 \vert \vY_2$ is also Gaussian. So, it is sufficient to prove 
+\begin{align*}
+\Ex(\vY_1 \vert \vY_2) = \vm_1 + \mC_{21}^T \mC_{22}^{-1}(\vy_2 - \vm_2)
+\\
+\var(\vY_1 \vert \vY_2) = \mC_{11} - \mC_{21}^T \mC_{22}^{-1} \mC_{21}.
+\end{align*}
+
+
+Now define $z=\vY_1+ A \vY_2$ where $A=-\mC_{21}^T \mCInv_{22}$. We can write
+\begin{align*}
+\cov(z,\vY_2) &= \mC_{21}^T + \cov(A\vY_2,\vY_2)
+\\
+&=\mC_{21}^T + A \; \var(\vY_2)
+\\
+&=\mC_{21}^T-\mC_{21}^T\mCInv_{22}\mC_{22}=0
+\end{align*}
+Therefore $z$ and $\vY_2$ are uncorrelated and, since they are jointly normal, they are independent. Now, clearly $\Ex(z) = m_1 + A m_2$, therefore it follows that
+\begin{align*}
+\Ex(\vY_1 \vert \vY_2) &= \Ex(z - A \vY_2 \vert \vY_2) 
+\\
+& = \Ex(z \vert \vY_2) - \Ex(A \vY_2 \vert \vY_2) 
+= \Ex(z)-A\vY_2 
+\\
+& = m_1 + A (m_2-\vY_2)=  m_1+ \mC_{21}^T \mCInv_{22}(\vY_2 - m_2)
+\end{align*}
+which proves the mean $\Ex(\vY_1 \vert \vY_2)$. For the covariance matrix, note that
+\begin{align*}
+\var(\vY_1|\vY_2) &=\var(z - A\vY_2|\vY_2)
+\\
+& =\var(z|\vY_2)+\var(A\vY_2|\vY_2) - A \cov(z, \vY_2) - \cov(z, \vY_2)A^T
+\\
+& =\var(z|\vY_2)
+\\
+&=\var(z)
+\end{align*}
+So, it is enough to show:
+\begin{align*}
+\var(\vY_1|\vY_2) & =\var(z) =\var(\vY_1+A\vY_2)
+\\
+ & =\var(\vY_1)+A\var(\vY_2)A^T + A \cov(\vY_1,\vY_2) + \cov(\vY_2,\vY_1)A^T
+\\
+&=\mC_{11}+\mC_{21}^T\mC_{22}^{-1}\mC_{22}\mC_{22}^{-1}\mC_{21}-2\mC_{21}^T\mC_{22}^{-1}\mC_{21}
+\\
+&=\mC_{11}+\mC_{21}^T\mC_{22}^{-1}\mC_{21}-2\mC_{21}^T\mC_{22}^{-1}\mC_{21}
+\\
+&=\mC_{11}-\mC_{21}^T\mC_{22}^{-1}\mC_{21}
+\end{align*}
+which proves the variance.
+
+
+\end{proof}
 
 
 
