@@ -1,19 +1,19 @@
-%CUBMLELATTICE Bayesian cubature method to estimate the integral 
+%CUBMLELATTICE Bayesian cubature method to estimate the integral
 % of a random variable
 %
 %   OBJ = CUBMLELATTICE('f',f,'dim',dim,'absTol',absTol,'relTol',relTol,...
-%         'order',order, 'ptransform',ptransform, 'arbMean',arbMean); 
+%         'order',order, 'ptransform',ptransform, 'arbMean',arbMean);
 %   Initializes the object with the given parameters.
 %   Q = COMPINTEG(OBJ); estimates the integral of f over hyperbox [0,1]^d
-%   using Rank-1 Lattice sampling to within a specified generalized error 
-%   tolerance, tolfun = max(abstol, reltol*| I |), i.e., | I - Q | <= tolfun 
-%   with cofidence of at least 99%, where I is the true integral value,  
-%   abstol is the absolute error tolerance, and reltol is the relative  
-%   error tolerance. Usually the reltol determines the accuracy of the 
-%   estimation, however, if | I | is rather small, then abstol determines  
-%   the accuracy of the estimation. Input f is a function handle that 
-%   accepts an n x d matrix input, where d is the dimension of the hyperbox,  
-%   and n is the number of points being evaluated simultaneously. 
+%   using Rank-1 Lattice sampling to within a specified generalized error
+%   tolerance, tolfun = max(abstol, reltol*| I |), i.e., | I - Q | <= tolfun
+%   with cofidence of at least 99%, where I is the true integral value,
+%   abstol is the absolute error tolerance, and reltol is the relative
+%   error tolerance. Usually the reltol determines the accuracy of the
+%   estimation, however, if | I | is rather small, then abstol determines
+%   the accuracy of the estimation. Input f is a function handle that
+%   accepts an n x d matrix input, where d is the dimension of the hyperbox,
+%   and n is the number of points being evaluated simultaneously.
 %
 %   Input Arguments
 %
@@ -26,7 +26,7 @@
 %
 %     order --- order of the bernoulli polynomial of the kernel.
 %     ptransform --- periodization transform to use
-%     arbMean --- If false, the algorithm assumes the integrand was sampled 
+%     arbMean --- If false, the algorithm assumes the integrand was sampled
 %                 from a Gaussian process of zero mean
 %
 %  Guarantee
@@ -35,13 +35,13 @@
 % with guaranteed confidence level 99%. If the algorithm terminates
 % without showing any warning messages and provides an answer Q, then the
 % following inequality would be satisfied:
-% 
+%
 % Pr(| Q - I | <= tolfun) >= 99%
 %
 % Please refer to our paper for detailed arguments and proofs.
-% 
+%
 %  Examples
-% 
+%
 % Example 1:
 %
 % If no parameters are parsed, help text will show up as follows:
@@ -53,16 +53,16 @@
 %
 % Estimate the integral with integrand f(x) = x.^2 over the interval
 % [0,1] with parameters: order=2, ptransform=Baker, abstol=0.01, relTol=0
-% 
+%
 % >> obj = cubMLELattice;
 % >> exactInteg = 1.0/3;
 % >> muhat=compInteg(obj);
 % >> check = double(abs(exactInteg-muhat) < 0.01)
 % check = 1
-% 
+%
 % Example 3: ExpCos
 %
-% Estimate the integral with integrand f(x) = exp(sum(cos(2*pi*x)) over the 
+% Estimate the integral with integrand f(x) = exp(sum(cos(2*pi*x)) over the
 % interval [0,1] with parameters: order=4, ptransform=C1sin, abstol=0.01
 %
 % >> fun = @(x) exp(sum(cos(2*pi*x), 2));
@@ -80,7 +80,7 @@
 % >> normsqd = @(t) sum(t.*t,2); %squared l_2 norm of t
 % >> domain = repmat([0;1],[1,dim]);
 % >> replaceZeros = @(t) (t+(t==0)*eps); % to avoid getting infinity, NaN
-% >> yinv = @(t)(erfcinv( replaceZeros(abs(t)) ));  
+% >> yinv = @(t)(erfcinv( replaceZeros(abs(t)) ));
 % >> f1 = @(t,dim) cos( sqrt( normsqd(yinv(t)) )) *(sqrt(pi))^dim;
 % >> fKeister = @(x) f1(x,dim); exactInteg = Keistertrue(dim);
 % >> obj=cubMLELattice('f',fKeister, 'dim',dim, 'absTol',absTol, 'relTol',relTol,...
@@ -121,8 +121,11 @@ classdef cubMLELattice < handle
     figSavePath = ''; %path where to save he figures
     visiblePlot = true; %make plots visible
     debugEnable = false; %enable debug prints
-    gaussianCheckEnable = true; %enable plot to check Guassian pdf
+    gaussianCheckEnable = false; %enable plot to check Guassian pdf
     avoidCancelError = true;
+    GCV = true; % Generalized cros validation
+    full_bayes = true; % assumes m ans s^2 as hyperparameters, 
+                 % so the posterior error is a Student-t distribution
   end
   
   properties (SetAccess = private)
@@ -221,7 +224,7 @@ classdef cubMLELattice < handle
           
           % Compute initial FFT
           ftildeNew = fft(gpuArray(obj.ff(x_1))); %evaluate integrand's fft
-
+          
         else
           xunnew = mod(bsxfun(@times,(1/n:2/n:1-1/n)',z),1);
           xnew = mod(bsxfun(@plus,xunnew,shift),1);
@@ -234,7 +237,7 @@ classdef cubMLELattice < handle
           if obj.debugEnable
             cubMLELattice.alertMsg(ftildeNextNew_1, 'Nan', 'Inf');
           end
-                    
+          
           % combine the previous batch and new batch to get FFT on all points
           ftildeNew = obj.merge_fft(ftildeNew, ftildeNextNew_1, mnext);
         end
@@ -242,58 +245,15 @@ classdef cubMLELattice < handle
         ftilde = ftildeNew;
         br_xun = xun;
         
-        %Compute MLE parameter
-        lnaMLE = fminbnd(@(lna) ...
-          MLEKernel(obj, exp(lna),br_xun,ftilde), -5,5,optimset('TolX',1e-2));
-        aMLE = exp(lnaMLE);
-        [loss,Lambda,Lambda_tilde,RKHSnorm] = MLEKernel(obj, aMLE,br_xun,ftilde);
+        [stop_flag, muhat] = stopping_criteria(obj, br_xun, ftilde, iter, n);
         
-        %Check error criterion
-        % compute DSC :
-        if obj.avoidCancelError
-          DSC = abs(Lambda_tilde(1)/(n + Lambda_tilde(1)));
-        else
-          DSC = abs(1 - (n/Lambda(1)));
-        end
-        
-        % store the debug information
-        obj.dscAll(iter) = sqrt(DSC);
-        obj.s_All(iter) = sqrt(RKHSnorm/n);
-        
-        out.ErrBd = 2.58*sqrt(DSC * RKHSnorm/n);
-        if obj.arbMean==true % zero mean case
-          muhat = ftilde(1)/n;
-        else % non zero mean case
-          muhat = ftilde(1)/Lambda(1);
-        end
-        muminus = muhat - out.ErrBd;
-        muplus = muhat + out.ErrBd;
         obj.timeAll(iter) = toc(tstart_iter);  % store per iteration time
-        
-        % store intermediate values for post analysis
-        obj.muhatAll(iter) = muhat;
-        obj.errorBdAll(iter) = out.ErrBd;
-        obj.aMLEAll(iter) = aMLE;
-        obj.lossMLEAll(iter) = loss;
-        
-        if obj.gaussianCheckEnable == true
-          % plots the transformed and scaled integrand values as normal plot
-          % Useful to verify the assumption, integrand was an instance of a Gaussian process
-          CheckGaussianDensity(obj, ftilde, Lambda)
-        end
-        
-        if 2*out.ErrBd <= ...
-            max(obj.absTol,obj.relTol*abs(muminus)) + max(obj.absTol,obj.relTol*abs(muplus))
-          if obj.errorBdAll(iter)==0
-            obj.errorBdAll(iter) = eps;
-          end
-          
-          % if stopAtTol true, exit the loop
-          % else, run for for all 'n' values.
-          % Used to compute error values for 'n' vs error plotting
-          if obj.stopAtTol==true
-            break
-          end
+
+        % if stopAtTol true, exit the loop
+        % else, run for for all 'n' values.
+        % Used to compute error values for 'n' vs error plotting
+        if obj.stopAtTol==true && stop_flag==true 
+          break
         end
         
       end
@@ -318,6 +278,123 @@ classdef cubMLELattice < handle
     end
     
     
+    function [success,muhat] = stopping_criteria_empirical_bayes(obj, xpts, ftilde, iter, n)
+      
+      success = false;
+      %Compute MLE parameter
+      lnaMLE = fminbnd(@(lna) ...
+        ObjectiveFunction(obj, exp(lna),xpts,ftilde), -5,5,optimset('TolX',1e-2));
+      aMLE = exp(lnaMLE);
+      [loss,Lambda,Lambda_tilde,RKHSnorm] = ObjectiveFunction(obj, aMLE,xpts,ftilde);
+      
+      %Check error criterion
+      % compute DSC :
+      if obj.avoidCancelError
+        DSC = abs(Lambda_tilde(1)/(n + Lambda_tilde(1)));
+      else
+        DSC = abs(1 - (n/Lambda(1)));
+      end
+      
+      % store the debug information
+      obj.dscAll(iter) = sqrt(DSC);
+      obj.s_All(iter) = sqrt(RKHSnorm/n);
+      
+      out.ErrBd = 2.58*sqrt(DSC * RKHSnorm/n);
+      if obj.arbMean==true % zero mean case
+        muhat = ftilde(1)/n;
+      else % non zero mean case
+        muhat = ftilde(1)/Lambda(1);
+      end
+      muminus = muhat - out.ErrBd;
+      muplus = muhat + out.ErrBd;
+      
+      % store intermediate values for post analysis
+      obj.muhatAll(iter) = muhat;
+      obj.errorBdAll(iter) = out.ErrBd;
+      obj.aMLEAll(iter) = aMLE;
+      obj.lossMLEAll(iter) = loss;
+      
+      if obj.gaussianCheckEnable == true
+        % plots the transformed and scaled integrand values as normal plot
+        % Useful to verify the assumption, integrand was an instance of a Gaussian process
+        CheckGaussianDensity(obj, ftilde, Lambda)
+      end
+      
+      if 2*out.ErrBd <= ...
+          max(obj.absTol,obj.relTol*abs(muminus)) + max(obj.absTol,obj.relTol*abs(muplus))
+        if obj.errorBdAll(iter)==0
+          obj.errorBdAll(iter) = eps;
+        end
+        
+        success = true;
+      end
+      
+    end
+    
+    
+    function [success,muhat] = stopping_criteria(obj, xpts, ftilde, iter, n)
+      
+      success = false;
+      %Compute MLE parameter
+      lnaMLE = fminbnd(@(lna) ...
+        ObjectiveFunction(obj, exp(lna),xpts,ftilde), -5,5,optimset('TolX',1e-2));
+      aMLE = exp(lnaMLE);
+      [loss,Lambda,Lambda_tilde,RKHSnorm] = ObjectiveFunction(obj, aMLE,xpts,ftilde);
+      
+      %Check error criterion
+      % compute DSC :
+      if obj.full_bayes==true
+        if obj.avoidCancelError
+          DSC = abs(Lambda_tilde(1)/n);
+        else
+          DSC = abs((Lambda(1)/n) - 1);
+        end
+        out.ErrBd = 2.807*sqrt(DSC * RKHSnorm/(n-1));
+      else
+        % empirical bayes
+        if obj.avoidCancelError
+          DSC = abs(Lambda_tilde(1)/(n + Lambda_tilde(1)));
+        else
+          DSC = abs(1 - (n/Lambda(1)));
+        end
+        out.ErrBd = 2.58*sqrt(DSC * RKHSnorm/n);
+      end
+      
+      if obj.arbMean==true % zero mean case
+        muhat = ftilde(1)/n;
+      else % non zero mean case
+        muhat = ftilde(1)/Lambda(1);
+      end
+      muminus = muhat - out.ErrBd;
+      muplus = muhat + out.ErrBd;
+      
+      % store intermediate values for post analysis
+      % store the debug information
+      obj.dscAll(iter) = sqrt(DSC);
+      obj.s_All(iter) = sqrt(RKHSnorm/n);
+      
+      obj.muhatAll(iter) = muhat;
+      obj.errorBdAll(iter) = out.ErrBd;
+      obj.aMLEAll(iter) = aMLE;
+      obj.lossMLEAll(iter) = loss;
+      
+      if obj.gaussianCheckEnable == true
+        % plots the transformed and scaled integrand values as normal plot
+        % Useful to verify the assumption, integrand was an instance of a Gaussian process
+        CheckGaussianDensity(obj, ftilde, Lambda)
+      end
+      
+      if 2*out.ErrBd <= ...
+          max(obj.absTol,obj.relTol*abs(muminus)) + max(obj.absTol,obj.relTol*abs(muplus))
+        if obj.errorBdAll(iter)==0
+          obj.errorBdAll(iter) = eps;
+        end
+        
+        success = true;
+      end
+      
+    end
+    
     % plots the objective for the MLE of theta
     function minTheta = plotMLE_Loss(obj)
       
@@ -326,7 +403,7 @@ classdef cubMLELattice < handle
       xun = cubMLELattice.simple_lattice_gen(n,obj.dim,true);
       fx = obj.ff(xun);  % Note: periodization transform already applied
       
-      %% plot MLEKernel cost function
+      %% plot ObjectiveFunction
       lnTheta = -5:0.2:5;
       % build filename with path to store the plot
       plotFileName = sprintf('%s%s Cost d_%d bernoulli_%d Period_%s.png',...
@@ -348,7 +425,7 @@ classdef cubMLELattice < handle
         tic
         %par
         parfor k=1:numel(lnTheta)
-          [costMLE(iter,k),eigvalK(k,:)] = MLEKernel(obj, exp(lnTheta(k)),...
+          [costMLE(iter,k),eigvalK(k,:)] = ObjectiveFunction(obj, exp(lnTheta(k)),...
             br_xun,ftilde);
         end
         toc
@@ -439,10 +516,64 @@ classdef cubMLELattice < handle
       end
     end
     
+    % MLE objective function to find the optimal shape parmaeter
+    function [loss,Lambda,Lambda_tilde,RKHSnorm] = ObjectiveFunction(obj, a, xun, ftilde)
+      
+      n = length(ftilde);
+      if obj.order==4 || obj.order==2
+        [Lambda, Lambda_tilde] = obj.kernel(xun,obj.order,a,obj.avoidCancelError);
+      else
+        error('Unsupported Bernoulli polyn order !');
+      end
+      
+      ftilde = abs(ftilde);  % remove any negative values
+      
+      % compute RKHSnorm = mean(abs(ftilde).^2./Lambda);
+      
+      % temp = (abs(ftilde(LambdaSq~=0))./(LambdaSq(LambdaSq~=0))).^2 ;
+      % compute temp = (abs(ftilde.^2)./(Lambda)) ;
+      temp = (abs(ftilde(Lambda~=0).^2)./(Lambda(Lambda~=0))) ;
+      
+      if obj.arbMean==true
+        RKHSnorm = sum(temp(2:end))/n;
+        temp_1 = sum(temp(2:end));
+      else
+        RKHSnorm = sum(temp)/n;
+        temp_1 = sum(temp);
+      end
+      RKHSnormSq = sqrt(RKHSnorm);
+      
+      % compute loss = mean(log(Lambda)) + log(RKHSnorm);
+      
+      if obj.GCV==true
+        temp_gcv = (abs(ftilde(Lambda~=0).^2)./(Lambda(Lambda~=0).^2)) ;
+        loss1 = log(sum(1./Lambda(Lambda~=0)));
+        loss2 = log(sum(temp_gcv(2:end)));
+        % ignore all zero val eigenvalues
+        loss = log(sum(temp_gcv(2:end))) - 2*log(sum(1./Lambda(Lambda~=0)));
+      else
+        % MLE
+        loss1 = sum(log(Lambda(Lambda~=0)));
+        loss2 = n*log(temp_1);
+        % ignore all zero val eigenvalues
+        loss = sum(log(Lambda(Lambda~=0))) + n*log(temp_1);
+      end
+      
+      if obj.debugEnable
+        cubMLESobol.alertMsg(RKHSnormSq, 'Nan');
+        cubMLESobol.alertMsg(temp_1, 'Imag');
+        cubMLESobol.alertMsg(loss1, 'Inf');
+        cubMLESobol.alertMsg(loss2, 'Inf');
+        cubMLESobol.alertMsg(loss, 'Inf', 'Imag', 'Nan');
+        cubMLESobol.alertMsg(Lambda, 'Imag');
+      end
+    end
+    
+    
     % Plots the transformed and scaled integrand values as normal plots.
     % This is to verify the assumption, integrand was an instance of
     % gaussian process.
-    % Normally distributed : 
+    % Normally distributed :
     %    https://www.itl.nist.gov/div898/handbook/eda/section3/normprp1.htm
     % Short Tails :
     %   https://www.itl.nist.gov/div898/handbook/eda/section3/normprp2.htm
@@ -457,7 +588,7 @@ classdef cubMLELattice < handle
         hFigNormplot = figure();
       end
       set(hFigNormplot,'defaultaxesfontsize',16,'defaulttextfontsize',16, ... %make font larger
-      'defaultLineLineWidth',0.75, 'defaultLineMarkerSize',8)
+        'defaultLineLineWidth',0.75, 'defaultLineMarkerSize',8)
       normplot(w_ftilde)
       set(hFigNormplot, 'units', 'inches', 'Position', [1 1 8 6])
       
@@ -553,7 +684,7 @@ classdef cubMLELattice < handle
         % C1_new = 1 + C1m1 indirectly computed in the process
         [C1m1, C1_alt] = cubMLELattice.kernel_t(a, constMult, bernPoly(xun));
         Lambda_tilde = abs(fft(C1m1));
-
+        
         Lambda = Lambda_tilde;
         Lambda(1) = Lambda_tilde(1) + length(Lambda_tilde);
       else
