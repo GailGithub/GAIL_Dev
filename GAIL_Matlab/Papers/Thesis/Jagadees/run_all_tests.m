@@ -10,7 +10,7 @@ if isunix
 else
   figSavePath = 'D:/MyWriteup/';
 end
-figSavePath = strcat(figSavePath, 'Jan_2ndweek/');
+figSavePath = strcat(figSavePath, 'Jul2018_1stweek/');
 
 if exist(figSavePath,'dir')==false
   mkdir(figSavePath);
@@ -21,7 +21,7 @@ completereport = strcat(figSavePath,...
   '_tests-logs-', datestr(now,'yyyy-mm-dd-HH-MM-SS'),'.txt');
 diary(completereport)
 
-visiblePlot=true;
+visiblePlot=false;
 
 %
 % https://www.mathworks.com/matlabcentral/answers/98969-how-can-i-temporarily-avoid-figures-to-be-displayed-in-matlab
@@ -52,7 +52,7 @@ stopAtTol = false;
 tstart=tic;
 pdTx = {'C1','C1sin', 'C2sin', 'C0', 'none', 'Baker'};
 arbMeanType = [true,false];
-samplingMethod = {'Sobol', 'Lattice', }; % };
+samplingMethod = {'Lattice', 'Sobol', };
 for sampling=samplingMethod
 
   sampling = sampling{1};
@@ -65,18 +65,23 @@ for sampling=samplingMethod
 
     if strcmp(sampling,'Sobol')
       transforms={'none'}; % no periodization used for Sobol points based algorithm
-      bernOrder=[2]
+      bernOrder=[2];
     else
       transforms=pdTx;
-      bernOrder=[2 4]
+      bernOrder=[2 4];
     end
     for tx=transforms
+      vartx=tx{1};
       for dim=[2 3 4]
         for bern=bernOrder
-          TestKeisterBayesianCubature(dim,bern,tx{1},newPath,visiblePlot,arbMean,stopAtTol,sampling)
-          TestExpCosBayesianCubature(dim,bern,tx{1},newPath,visiblePlot,arbMean,stopAtTol,sampling)
+          inputArgs = {'dim',dim, 'absTol',errTol, 'order',bern, ...
+              'ptransform',vartx, 'stopAtTol',stopAtTol, ...
+              'figSavePath',newPath, 'arbMean',arbMean, ...
+              'samplingMethod',sampling, 'visiblePlot',visiblePlot};
+          TestExpCosBayesianCubature(inputArgs{:})
+          TestKeisterBayesianCubature(inputArgs{:})
           if dim~=4
-            TestMVN_BayesianCubature(dim,bern,tx{1},newPath,visiblePlot,arbMean,stopAtTol,sampling)
+            TestMVN_BayesianCubature(inputArgs{1})
           end
         end
       end

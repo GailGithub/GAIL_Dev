@@ -125,8 +125,8 @@ classdef cubMLELattice < handle
     gaussianCheckEnable = false; %enable plot to check Guassian pdf
     avoidCancelError = true;
     GCV = false; % Generalized cross validation
-    full_bayes = false; % assumes m and s^2 as hyperparameters, 
-                 % so the posterior error is a Student-t distribution
+    full_bayes = false; % assumes m and s^2 as hyperparameters,
+    % so the posterior error is a Student-t distribution
   end
   
   properties (SetAccess = private)
@@ -250,16 +250,20 @@ classdef cubMLELattice < handle
           
           % combine the previous batch and new batch to get FFT on all points
           ftildeNew = obj.merge_fft(ftildeNew, ftildeNextNew, mnext);
+          
+          %if ~any(xnew(:))
+          %  error('bug')
+          %end
         end
         
         [stop_flag, muhat] = stopping_criterion(obj, xun, ftildeNew, iter, n);
         
         obj.timeAll(iter) = toc(tstart_iter);  % store per iteration time
-
+        
         % if stopAtTol true, exit the loop
         % else, run for for all 'n' values.
         % Used to compute error values for 'n' vs error plotting
-        if obj.stopAtTol==true && stop_flag==true 
+        if obj.stopAtTol==true && stop_flag==true
           break
         end
         
