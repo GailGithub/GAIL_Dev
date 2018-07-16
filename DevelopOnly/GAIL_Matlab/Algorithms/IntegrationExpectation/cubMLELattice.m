@@ -114,6 +114,7 @@ classdef cubMLELattice < handle
     absTol = 0.01; %absolute tolerance
     relTol = 0; %relative tolerance
     order = 2; %order of the kernel
+    alpha = 0.001; % the uncertainty, the default value is 0.1%.
     ptransform = 'Baker'; %periodization transform
     stopAtTol = true; %automatice mode: stop after meeting the error tolerance
     arbMean = true; %by default use zero mean algorithm
@@ -123,14 +124,15 @@ classdef cubMLELattice < handle
     debugEnable = false; %enable debug prints
     gaussianCheckEnable = false; %enable plot to check Guassian pdf
     avoidCancelError = true;
-    GCV = true; % Generalized cross validation
-    full_bayes = true; % assumes m ans s^2 as hyperparameters, 
+    GCV = false; % Generalized cross validation
+    full_bayes = false; % assumes m and s^2 as hyperparameters, 
                  % so the posterior error is a Student-t distribution
   end
   
   properties (SetAccess = private)
     ff = []; %integrand after the periodization transform
     mvec = [];
+    uncert = 0;
     
     % variables to save debug info in each iteration
     errorBdAll = [];
@@ -174,6 +176,14 @@ classdef cubMLELattice < handle
           wh = find(strcmp(varargin(iStart:end),'fName'));
           if ~isempty(wh), obj.fName = varargin{wh+iStart}; end
         end
+      end
+      
+      % uncertainity : two sided confidence
+      if obj.full_bayes
+        % degrees of freedom = 2^mmin - 1
+        obj.uncert = -tinv(obj.alpha/2, (2^obj.mmin) - 1);
+      else
+        obj.uncert = -norminv(obj.alpha/2);
       end
       
       % apply periodization transformation to the function
@@ -220,32 +230,29 @@ classdef cubMLELattice < handle
           % in the first iteration compute the full FFT
           [~, z] = obj.simple_lattice_gen(n,obj.dim,true);
           xun = mod(bsxfun(@times,(0:1/n:1-1/n)',z),1);
-          x_1 = mod(bsxfun(@plus,xun,shift),1);  % shifted
+          xpts = mod(bsxfun(@plus,xun,shift),1);  % shifted
           
           % Compute initial FFT
-          ftildeNew = fft(gpuArray(obj.ff(x_1))); %evaluate integrand's fft
+          ftildeNew = fft(gpuArray(obj.ff(xpts))); %evaluate integrand's fft
           
         else
           xunnew = mod(bsxfun(@times,(1/n:2/n:1-1/n)',z),1);
           xnew = mod(bsxfun(@plus,xunnew,shift),1);
-          [xun, x_1] = obj.merge_pts(xun, xunnew, x_1, xnew, n, obj.dim);
+          [xun, xpts] = obj.merge_pts(xun, xunnew, xpts, xnew, n, obj.dim);
           
           mnext=m-1;
           
           % Compute FFT on next set of new points
-          ftildeNextNew_1 = fft(gpuArray(obj.ff(xnew)));
+          ftildeNextNew = fft(gpuArray(obj.ff(xnew)));
           if obj.debugEnable
-            cubMLELattice.alertMsg(ftildeNextNew_1, 'Nan', 'Inf');
+            cubMLELattice.alertMsg(ftildeNextNew, 'Nan', 'Inf');
           end
           
           % combine the previous batch and new batch to get FFT on all points
-          ftildeNew = obj.merge_fft(ftildeNew, ftildeNextNew_1, mnext);
+          ftildeNew = obj.merge_fft(ftildeNew, ftildeNextNew, mnext);
         end
         
-        ftilde = ftildeNew;
-        br_xun = xun;
-        
-        [stop_flag, muhat] = stopping_criteria(obj, br_xun, ftilde, iter, n);
+        [stop_flag, muhat] = stopping_criterion(obj, xun, ftildeNew, iter, n);
         
         obj.timeAll(iter) = toc(tstart_iter);  % store per iteration time
 
@@ -278,7 +285,8 @@ classdef cubMLELattice < handle
     end
     
     
-    function [success,muhat] = stopping_criteria(obj, xpts, ftilde, iter, n)
+    % decides if the user define error threshold is met
+    function [success,muhat] = stopping_criterion(obj, xpts, ftilde, iter, n)
       
       success = false;
       %Compute MLE parameter
@@ -296,8 +304,8 @@ classdef cubMLELattice < handle
         else
           DSC = abs((Lambda(1)/n) - 1);
         end
-        % 99.5% two sided confidence interval, degrees of freedom = infinity
-        out.ErrBd = 2.807*sqrt(DSC * RKHSnorm/(n-1));
+        % 1-alpha two sided confidence interval
+        out.ErrBd = obj.uncert*sqrt(DSC * RKHSnorm/(n-1));
       else
         % empirical bayes
         if obj.avoidCancelError
@@ -305,7 +313,7 @@ classdef cubMLELattice < handle
         else
           DSC = abs(1 - (n/Lambda(1)));
         end
-        out.ErrBd = 2.58*sqrt(DSC * RKHSnorm/n);
+        out.ErrBd = obj.uncert*sqrt(DSC * RKHSnorm/n);
       end
       
       if obj.arbMean==true % zero mean case
@@ -337,7 +345,7 @@ classdef cubMLELattice < handle
         if obj.errorBdAll(iter)==0
           obj.errorBdAll(iter) = eps;
         end
-        
+        % stopping criterion achieved
         success = true;
       end
       
