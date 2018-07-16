@@ -11,8 +11,8 @@
 %
 %\documentclass{svjour3}                     % onecolumn (standard format)
 %\documentclass[smallcondensed]{svjour3}     % onecolumn (ditto)
-\documentclass[smallextended]{svjour3}       % onecolumn (second format)
-%\documentclass[twocolumn]{svjour3}          % twocolumn
+%\documentclass[smallextended]{svjour3}       % onecolumn (second format)
+\documentclass[twocolumn]{svjour3}          % twocolumn
 %
 \smartqed  % flush right qed marks, e.g. at end of proof
 %
@@ -273,9 +273,9 @@ Traditional cubature methods may not provide any guaranteed error accuracy.
 %Though the QMC methods are known to have convergence rate of $\Order(n^{-(1-\delta)})$, this information is not sufficient to identify the number of samples $n$ required to meet the given error tolerance, $\errtol$. 
 The goal of this work is to develop a guaranteed, BC algorithm using the confidence intervals given by Bayesian posterior error. 
 Our algorithm strives to find the minimum sample size `$n$' - \textit{number of integrand values} required so that the error $\abs{\mu(f) - \hmu(f)}$ is less than the user-defined error threshold $\errtol$, i.e, 
-\[
+\begin{equation*}
 \abs{\mu(f) - \hmu(f)} \leq \errtol 
-\] 
+\end{equation*}
 But the true error $\abs{\mu(f) - \hmu(f)}$ will not be available for problems that do require cubature methods.
 So we compute an approximate error bound $\errn$ using the confidence interval obtained from the posterior error which meets,
 \begin{align*}
@@ -322,9 +322,10 @@ a^2+b^2=c^2
 
 Random $f$ postulated by Diaconis \cite{DiaconisBayesian}, O'Hagen \cite{HagenBayes}, Ritter \cite{RiterAverage}, Rasmussen and Ghahramani \cite{RasmussenBayesian} and others: $f \sim \mathcal{GP}(m,s^2 C_\vtheta)$, an instance of a Gaussian process with mean $m$, non-negative scale factor $s$ and covariance function $s^2C_\vtheta$. Where $C_\vtheta: [0,1]^d \times [0,1]^d \to \mathbb{R} $ is a symmetric, positive-definite function and parameterized by $\vtheta$:
 \begin{multline} \label{FJH:eq:CondPosDef}
-C(\vt,\vx)  = C(\vx, \vt),  \qquad \sum_{i,j = 1}^n a_iC(\vx_i,\vx_j) a_j  
+C(\vt,\vx)  = C(\vx, \vt),  \; \sum_{i,j = 1}^n a_iC(\vx_i,\vx_j) a_j  
 > 0 \text{ when } \va \ne \vzero, \\
-\forall n\in \mathbb{N}, \; \vt, \vx, \vx_1, \ldots, \vx_n \in [0,1]^d, \; \va = (a_1, \ldots, a_n) \in \mathbb{R}^n.
+\forall n\in \mathbb{N}, \; \vt, \vx, (\vx_i)_{i=1}^n \in [0,1]^d, \;
+\va = (a_i)_{i=1}^n \in \mathbb{R}^n.
 \end{multline}
 
 In this work, we use domain $\mathcal{X} = [0,1]^d$ and uniform measure.  The scale parameter $s^2$ and shape parameter $\vtheta$ should be estimated.
@@ -332,13 +333,17 @@ In this work, we use domain $\mathcal{X} = [0,1]^d$ and uniform measure.  The sc
 For a Gaussian process, all vectors of linear functionals of $f$ have a multivariate Gaussian distribution. Sometimes we drop $\vtheta$ in the writings to simplify the notation. With this assumption,
 \begin{subequations}
 \begin{align}
-\mu(f) \sim \calN(m \mu(1), s^2 c_0), 
-\quad\text{where}\quad
+\mu(f) \sim &\calN(m \mu(1), s^2 c_0), 
+\\
+\nonumber
+&\text{where}\;
 c_0 = \int_{[0,1]^2} C_\vtheta(\vx,\vt) \, \dif{\vx} \, \dif{\vt},
 \\
 \label{eqn:fGaussDist}
-\vf  = \left( f(\vx_i)\right)_{i=1}^n \sim \calN(m \vone, s^2 \mC), 
-\quad\text{where}\quad
+\vf  = \left( f(\vx_i)\right)_{i=1}^n &\sim \calN(m \vone, s^2 \mC), 
+\\
+\nonumber
+&\text{where}\;
 \mC = \left(  C_\vtheta(\vx_i,\vx_j)  \right)_{i,j=1}^n.
 \end{align}
 \end{subequations}
@@ -355,24 +360,24 @@ The integral is correlated with the observed data as follows:
 
 
 Therefore,  it follows from Lemma \ref{thrm:condDist} that the \emph{conditional} distribution of the integral given the observed function values, $\vf = \vy$ is also Gaussian:
-\begin{equation} \label{eqn:condInteg}
-\mu | (\vf = \vy) \sim \calN \bigl(m (1 - \vc^T \mC^{-1} \vone)  + \vc^T \mC^{-1} \vy, s^2(c_0  -\vc ^T \mC^{-1} \vc) \bigr)
-\end{equation}
+\begin{multline} \label{eqn:condInteg}
+\mu | (\vf = \vy) \sim \calN \bigl(m (1 - \vc^T \mC^{-1} \vone)  + \vc^T \mC^{-1} \vy, 
+\\
+s^2(c_0  -\vc ^T \mC^{-1} \vc) \bigr)
+\end{multline}
 
 Similarly, the conditional probability density of cubature error $\mu-\hmu$ given observed data $\vy$:
-\begin{nalign}
+\begin{multline}
 \mu-\hmu\;|\vy
 \; \sim \; \calN 
-\left(
-\begin{array}{cc}
+\bigl(
 -w_0 + m (\mu(1) - \vone^T  \mC^{-1}\vc )
 +
 \vy^T( \mC^{-1}\vc - \vw ),
 \\
 s^2 (c_0 - \vc^T\mC^{-1}\vc) 
-\end{array}
-\right),
-\end{nalign}
+\bigr),
+\end{multline}
 Properly choosing the weights:
 \begin{align*}
 w_0 =  m (\mu(1) - \vone^T  \mC^{-1}\vc ),
@@ -391,14 +396,15 @@ s^2 (c_0 - \vc^T\mC^{-1}\vc)
 ,
 \end{align*}
 This leads to the cubature rule as unbiased solution:
-\begin{align}
+\begin{multline}
 \label{eqn:BayesCub}
 \widehat{\mu}  \vert ( \vf = \vy)
 = w_0 + \vw^T \vy = 
+\\
 m(\mu(1) - \vone^T  \mC^{-1}\vc )
 +
 \vc^T \mC^{-1} \vy,
-\end{align}
+\end{multline}
 which is also the posterior mean: 
 \begin{equation} \label{eqn:BayesCub}
 \Ex [\mu \vert ( \vf = \vy)] = m(\mu(1) -  \vc^T \mC^{-1}\vone) + \vc^T \mC^{-1}  \vy.
@@ -647,7 +653,8 @@ Finally, we simplify the key term:
 This means that $\mu \vert (\vf = \vy )$, properly centered and scaled, has a Student's $t$-distribution with $n-1$ degrees of freedom. The cubature rule is the same as in the empirical Bayes case in \eqref{eqn:cubMLE}:
 \begin{gather}\label{FJH:eq:cubFull}
 \widehat{\mu}_{\textup{full}}  \vert ( \vf = \vy) = \left[\frac{(1 -  \vc^T \mC^{-1}\vone)\vone^T}{\vone^T \mC^{-1} \vone} + \vc^T \right] \mC^{-1}  \vy,
-\\
+\end{gather}
+\begin{multline}
 \label{FJH:eq:signmaFull}
 \widehat{\sigma}^2_{\textup{full}}  \vert ( \vf = \vy)  
 = \frac{1}{n-1}
@@ -656,10 +663,10 @@ This means that $\mu \vert (\vf = \vy )$, properly centered and scaled, has a St
 \nonumber
 \qquad \times \quad \vy^T\left[ \mC^{-1} 
 - \frac{ \mC^{-1} \vone\vone^T \mC^{-1}}{\vone^T \mC^{-1} \vone}  \right]\vy .
-\end{gather}
+\end{multline}
 But the variance is different.
 So, the stopping criterion for the full Bayes case,  
-\begin{multline} \label{FJH:eq:stopcritHyper}
+\begin{multline} %\label{FJH:eq:stopcritHyper}
 n  = \min \biggl \{n_j \in \posIntegers:  
 \frac {t_{n_j-1,0.995}^2}{n_j - 1}   \left[\frac{(1 - \vc^T \mC^{-1} \vone)^2}{\vone^T \mC^{-1} \vone} + (c_0  -\vc ^T \mC^{-1} \vc) \right]
 \\
@@ -1123,12 +1130,12 @@ Finally, the computation of $\hmu_n$ is made faster:
  \frac{\widehat{y}_1}{n} +
  \frac 1n \sum_{i=2}^n \frac{ \widehat{c}_i \widehat{y}_i^*}{\lambda_i}
 \end{align}
-It is interesting to note that, with $m \neq 0$ assumption, $\hmu_\MLE$ is simply the sample mean. 
+It is interesting to note that, in general with no assumption on $m$, $\hmu_\MLE$ is simply the sample mean. 
 Moreover the choice of kernel or any MLE estimated parameters do not affect the $\hmu_n$ but influences the accuracy of the error bound $\errn$.
 
 \subsubsection{Full Bayes}
 
-
+Generalized cross validation criterion:
 \begin{gather}
 \nonumber
 \vtheta_{\textup{GCV}} 
@@ -1143,12 +1150,13 @@ Moreover the choice of kernel or any MLE estimated parameters do not affect the 
 \right]
 \end{gather}
 
+The cubature rule:
 \begin{gather}\label{FJH:eq:cubFull}
 \widehat{\mu}_{\textup{full}}  \vert ( \vf = \vy) = \left[\frac{(1 -  \vc^T \mC^{-1}\vone)\vone^T}{\vone^T \mC^{-1} \vone} + \vc^T \right] \mC^{-1}  \vy = 
  \frac{\widehat{y}_1}{n} +
  \frac 1n \sum_{i=2}^n \frac{ \widehat{c}_i \widehat{y}_i^*}{\lambda_i},
-\\
-\label{FJH:eq:signmaFull}
+\end{gather}
+\begin{multline} %\label{FJH:eq:signmaFull}
 \widehat{\sigma}^2_{\textup{full}}  \vert ( \vf = \vy)  
 = \frac{1}{n-1}
 \left[\frac{(1 - \vc^T \mC^{-1} \vone)^2}{\vone^T \mC^{-1} \vone} + (c_0  -\vc ^T \mC^{-1} \vc) \right] 
@@ -1161,15 +1169,17 @@ Moreover the choice of kernel or any MLE estimated parameters do not affect the 
 \frac{1}{n-1} \left[\frac{\lambda_1}{n}{\left(1 - \frac{\widehat{c}_1}{\lambda_1}\right)^2} + (c_0  - \frac 1n \sum_{i=1}^n \frac{\abs{\widehat{c}_i}^2}{\lambda_i}) \right] 
 \times
 \frac{1}{n} \sum_{i=2}^n \frac{\abs{\widehat{y_i}}^2}{\lambda_i}
-\end{gather}
+\end{multline}
 
 The stopping criterion for the full Bayes case,  
 \begin{multline} \label{FJH:eq:stopcritHyper}
 n  = \min \biggl \{n_j \in \posIntegers:  
-\\
-\frac {t_{n_j-1,0.995}^2}{n_j(n_j - 1)}  
+\frac {t_{n_j-1,0.995}^2}{n_j(n_j - 1)} 
+\\ \times
 \left[\frac{\lambda_1}{n_j}{\left(1 - \frac{\widehat{c}_1}{\lambda_1}\right)^2} + (c_0  - \frac{1}{n_j} \sum_{i=1}^n \frac{\abs{\widehat{c}_i}^2}{\lambda_i}) \right] 
- \times \sum_{i=2}^n \frac{\abs{\widehat{y_i}}^2}{\lambda_i}  \le \varepsilon^2 \biggr\}.
+\times 
+\sum_{i=2}^n \frac{\abs{\widehat{y_i}}^2}{\lambda_i} 
+\le \varepsilon^2 \biggr\}.
 \end{multline}
 
 
@@ -1481,8 +1491,7 @@ And the cubature:
 
 
 \subsubsection{Full Bayes}
-
-
+Final version of full Bayes equations optimized using the properties of the shift invariant kernel are:
 \begin{align}
 \label{FJH:eq:cubFull}
 \widehat{\mu}_{\textup{full}}  \vert ( \vf = \vy) &= 
@@ -1496,7 +1505,7 @@ And the cubature:
 \end{align}
 \begin{multline*}
 %\label{FJH:eq:signmaFull}
-\widehat{\sigma}^2_{\textup{full}}  \vert ( \vf = \vy) \\ 
+\widehat{\sigma}^2_{\textup{full}}  \vert ( \vf = \vy) 
 = 
 \frac{1}{n-1} \left[\frac{\lambda_1}{n}{\left(1 - \frac{\widehat{c}_1}{\lambda_1}\right)^2} + (c_0  - \frac 1n \sum_{i=1}^n \frac{\abs{\widehat{c}_i}^2}{\lambda_i}) \right] 
 \times
