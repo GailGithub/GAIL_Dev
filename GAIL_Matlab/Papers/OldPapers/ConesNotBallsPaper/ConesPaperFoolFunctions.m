@@ -48,10 +48,10 @@ if usejava('jvm') || MATLABVERSION <= 7.12
     axis([0 1 -0.3 1.1])
     set(gca,'Ytick',-0.2:0.2:1)
     legend(h,{'$f$','data'},'location','southeast')
-    
-    filename = strcat(GAILPATH,'OutputFiles',filesep,...
-        'ConesPaperOutput',filesep,'ConesPaperSpikyquad.eps');
-    print('-deps',filename)
+    gail.save_eps('ConesPaperOutput','ConesPaperSpikyquad');
+%     filename = strcat(GAILPATH,'OutputFiles',filesep,...
+%         'ConesPaperOutput',filesep,'ConesPaperSpikyquad.eps');
+%     print('-deps',filename)
 end
 fprintf('  Integral of spiky function = %7.5f\n',integralspiky)
 if MATLABVERSION >= 8, 
@@ -121,9 +121,10 @@ if usejava('jvm') || MATLABVERSION <= 7.12
     axis([0 1 -0.8 1.2])
     set(gca,'Ytick',-0.8:0.4:1.2)
     legend(h,{'$f$','data'},'location','north')
-    filename = strcat(GAILPATH,'OutputFiles',filesep,...
-        'ConesPaperOutput',filesep,'ConesPaperFlukyquad.eps');
-    print('-deps',filename)
+    gail.save_eps('ConesPaperOutput', 'ConesPaperFlukyquad');
+%     filename = strcat(GAILPATH,'OutputFiles',filesep,...
+%         'ConesPaperOutput',filesep,'ConesPaperFlukyquad.eps');
+%     print('-deps',filename)
 end
 fprintf('  Condition number of matrix = %7.5f\n',cond(A))
 fprintf('  Integral of fluky function = %7.5f\n',integralfluky)
