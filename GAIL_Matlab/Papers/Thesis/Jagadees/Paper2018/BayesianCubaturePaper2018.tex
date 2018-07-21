@@ -167,6 +167,7 @@
 
 \providecommand{\argmin}{\operatorname*{argmin}}
 \providecommand{\argmax}{\operatorname*{argmax}}
+\newcommand\figref{Figure~\ref}
 
 \graphicspath{{./figures/}{D:/Mega/MyWriteupBackup/Sep_2ndweek_1/}}
 %\graphicspath{{./figures/}}
@@ -1316,6 +1317,7 @@ C_\vtheta(\vx, \vt) &=
 \end{align}
 where $\vtheta \in (0,1]^d$ is the {shape parameter}, `$r$' is the order of the Bernoulli polynomial $B_{r}$.
 
+We call \eqref{the_kernel_eqn_bernoulli} a Fourier kernel as the resulting Fast transform is Fast Fourier transform. Plots of this kernel in $d=2$ is shown in \figref{fig:Fourier_kernel}.
 
 
 
@@ -1323,9 +1325,26 @@ where $\vtheta \in (0,1]^d$ is the {shape parameter}, `$r$' is the order of the 
 
 
 
-
-
-
+\begin{figure}
+	\centering
+	\begin{subfigure}{0.40\textwidth}
+		\includegraphics[width=\textwidth]{"fourier_kernel r_2 shape_10by100"}
+	\end{subfigure}
+	\centering
+	\begin{subfigure}{0.40\textwidth}
+		\includegraphics[width=\textwidth]{"fourier_kernel r_2 shape_90by100"}
+	\end{subfigure}
+	\centering
+	\begin{subfigure}{0.40\textwidth}
+		\includegraphics[width=\textwidth]{"fourier_kernel r_4 shape_10by100"}
+	\end{subfigure}
+	\centering
+	\begin{subfigure}{0.40\textwidth}
+		\includegraphics[width=\textwidth]{"fourier_kernel r_4 shape_90by100"}
+	\end{subfigure}
+\caption{Fourier kernel \eqref{the_kernel_eqn_bernoulli} with $r=2,4$ and $\theta = 0.1, 0.9$}
+\label{fig:Fourier_kernel}
+\end{figure}
 
 
 
