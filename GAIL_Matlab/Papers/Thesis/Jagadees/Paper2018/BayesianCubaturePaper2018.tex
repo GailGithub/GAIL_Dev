@@ -179,7 +179,7 @@
 \setlength\abovedisplayskip{1pt}
 \setlength{\belowdisplayskip}{1pt}
 
-\title{Fast automatic Bayesian cubature using Lattice sampling
+\title{Fast Automatic Bayesian Cubature Using Lattice Sampling
 %\thanks{}
 }
 % Grants or other notes about the article that should go on the front
@@ -242,135 +242,67 @@ Cubature is a key component of many problems in scientific computing, finance, s
 The integral $\mu$ may often be expressed in the form
 \begin{equation}
 \label{eqn:defn_mu}
-\mu(f) := \Ex[f(\boldsymbol{X})] := \int_{[0,1]^d} f(\vx)\, \dif\vx, 
+\mu:= \mu(f) := \Ex[f(\boldsymbol{X})] = \int_{[0,1]^d} f(\vx)\, \dif\vx, 
 \end{equation}
 where $f:[0,1]^d \to \reals$ is the integrand, and $\boldsymbol{X} \sim \mathcal{U}[0,1]^d$.  The problem of transforming the original integral into the above form is not addressed here.  The cubature algorithm may take the form
 \begin{equation}
 \label{eqn:defn_hmu}  % remove this
-\hmu(f) := w_0 + \sum_{i=1}^{n} f(\vx_i) w_i,
+\hmu: = \hmu(f) := w_0 + \sum_{i=1}^{n} f(\vx_i) w_i,
 \end{equation}
-where the weights, $w_0$, and  $\vw = (w_i)_{i=1}^n \in \reals^n$, and the nodes, $\{x_i\}_{i=1}^n \subset [0,1]^d$, are chosen to make the error, $\abs{\mu(f) - \hmu(f)}$, small.
+where the weights, $w_0$, and  $\vw = (w_i)_{i=1}^n \in \reals^n$, and the nodes, $\{x_i\}_{i=1}^n \subset [0,1]^d$, are chosen to make the error, $\abs{\mu - \hmu}$, small.  In this article the nodes is assumed to be deterministic.
 
 Our concern is constructing a reliable stopping criterion that determines the number of integrand values required, $n$, to ensure that the error is no greater than a user-defined error tolerance, i.e., 
 \begin{equation}
 \label{eqn:err_crit} 
-\abs{\mu(f) - \hmu(f)} \leq \errtol 
+\abs{\mu - \hmu} \leq \errtol 
 \end{equation}
 Rather than relying on strong assumptions about the integrand, such as its variance or total variation, we construct a stopping criterion that is data-driven, and based on a credible interval arising from a Bayesian approach to the problem.  We build upon the ideas of Diaconis\cite{DiaconisBayesian}, O'Hagan\cite{HagenBayes}, Ritter\cite{RiterAverage}, Rasmussen and Ghahramani\cite{RasmussenBayesian}, Briol et al.\cite{BriEtal18a}, and others.  Thus, our algorithm is an example of \emph{probabilistic numerics}.
 
 Our primary contribution here is to demonstrate how the choice of a family of kernels that match the low discrepancy sampling nodes facilitates fast computation of the data-driven stopping criterion.  If $n$ function values, at a cost of $\$(f)$ each, are obtained for cubature purposes, then $\Order(n \log(n))$ additional operations are required to check whether the error tolerance is satisfied.  The total cost of our algorithm is then $\Order(\$(f)n + n \log(n))$.  This is significantly fewer operations than the $\Order(n^3)$ typically required for Bayesian cubature.
 
-Error analyis for cubature that assumes a deterministic integrand lying in a Banach space, leads to an error bound that is typically impractical for deciding how large $n$ must be to satisfy \eqref{eqn:err_crit}.  The deterministic error bound involves some (semi-)norm of the integrand, which is often more complex to compute than the original integral.
+Hickernell \cite{Hic17a} compares and contrasts different approaches to cubature error analysis depending on whether the rule is deterministic or random and whether the integrand is assumed to be deterministic or random.  Error analyis that assumes a deterministic integrand lying in a Banach space, leads to an error bound that is typically impractical for deciding how large $n$ must be to satisfy \eqref{eqn:err_crit}.  The deterministic error bound includes a (semi-)norm of the integrand, which is often more complex to compute than the original integral.
 
 Hickernell and Jim\'enez-Rugama\cite{HicJim16a,JimHic16a} have developed stopping criteria for cubature rules based on low discrepancy nodes by tracking the discrete Fourier coefficients of the integrand.  The algorithm proposed here also depends on the discrete Fourier coefficients of the integrand, but in a different way.
 
-
-
-Traditional cubature methods assume the integrand to be a deterministic function.
-An alternative to this approach is to assume that the integrand is a \emph{stochastic process}.
-Bayesian cubature (BC) methods assume the integrand is an instance of a Gaussian process. 
-BC methods approximate the multivariate integrals that cannot be evaluated analytically, using weighted sums of integrand values at carefully chosen nodes over the domain $\mathcal{X}$ as shown in eqn  (\ref{eqn:defn_hmu}).
-
-
-%Multivariate integrals evaluation by QMC methods is an important problem studied by Ian Sloan. 
-
-
-
-Traditional cubature methods may not provide any guaranteed error accuracy. 
-%Though the QMC methods are known to have convergence rate of $\Order(n^{-(1-\delta)})$, this information is not sufficient to identify the number of samples $n$ required to meet the given error tolerance, $\errtol$. 
-The goal of this work is to develop a guaranteed, BC algorithm using the confidence intervals given by Bayesian posterior error. 
-Our algorithm strives to find the minimum sample size `$n$' - \textit{number of integrand values} required so that the error $\abs{\mu(f) - \hmu(f)}$ is less than the user-defined error threshold $\errtol$, i.e, 
-\begin{equation*}
-\abs{\mu(f) - \hmu(f)} \leq \errtol 
-\end{equation*}
-But the true error $\abs{\mu(f) - \hmu(f)}$ will not be available for problems that do require cubature methods.
-So we compute an approximate error bound $\errn$ using the confidence interval obtained from the posterior error which meets,
-\begin{align*}
-\errn \leq \abs{\mu(f) - \hmu(f)}
-\end{align*}
-By calculating a data-driven error bound, our algorithm adaptively determines `$n$'.
-An added advantage of our approach is being data-driven, so it does not require any other parameter of the integrand like the `total variation'.
-%To minimize the integration error $\errn$, one can appeal to loss functions based on the \textit{posterior error distribution} given the observed function values.
-
-
-%Probability theory can be used to quantify \emph{epistemic} uncertainty arising from the missing information. 
-The ``algorithms for numerical tasks" that return uncertainties in their calculations are called \emph{probabilistic numeric methods}. %Uncertainties could arise from the loss of precision induced by numerical calculation with limited time or hardware.
-Our BC algorithm can be categorized as a probabilistic numeric method, due to the nature of assumptions made and the confidence interval it provides.
-
-Section 2 introduces the Bayesian approach to estimate the posterior error and develops the concepts to derive error bound. Then formulates the Automatic cubature algorithm using the error bound. Finally demonstrates why directly using Bayesian cubature algorithm is computationally very expensive.
-Section 3 Introduces the concept of Fast transform kernel and develops the concepts to make the Bayesian cubature faster which is the major contribution of this research.
+Section \ref{sec:BC} explains the Bayesian approach to estimate the posterior cubature error and defines our automatic Bayesian cubature . Although much of this material is not new, it is included for completeness.  We end Section \ref{sec:BC}  by demonstrating why Bayesian cubature is typically quite computationally expensive.
+Section \ref{sec:fast_BC}  introduces the concept of covariance kernels that match well the nodes and expedites the computations required by our automatic Bayesian cubature. Fast transform kernel and develops the concepts to make the Bayesian cubature faster which is the major contribution of this research.
 Section 4 Demonstrates the realization of Fast transform kernel using a shift-invariant kernel and Rank-1 Lattice points.
 Section 5 covers further enhancements to the algorithm to avoid cancellation error and make it faster. Finally, numerical examples are shown using the faster algorithm developed.
 
 
 
-\subsection{Related work}
-
-
-
-\section{Bayesian cubature}
+\section{Bayesian cubature} \label{sec:BC}
 \label{sec:1}
 %Text with citations \cite{RefB} and \cite{RefJ}.
 
-This section introduces the concepts of the Bayesian cubature and derives all the basic results which will be used in the next section for further speedup of the algorithm. \emph{Bayesian posterior error} \cite{Fred2017} is used to estimate an error bound for the cubature. 
-
 \subsection{Bayesian posterior error}
-\label{sec:2}
+\label{sec:BayesPostErr}
 
-\iffalse
-as required. Don't forget to give each section
-and subsection a unique label (see Sect.~\ref{sec:1}).
-\paragraph{Paragraph headings} Use paragraph headings as needed.
-\begin{equation}
-a^2+b^2=c^2
-\end{equation}
-\fi
-
-
-Random $f$ postulated by Diaconis \cite{DiaconisBayesian}, O'Hagen \cite{HagenBayes}, Ritter \cite{RiterAverage}, Rasmussen and Ghahramani \cite{RasmussenBayesian} and others: $f \sim \mathcal{GP}(m,s^2 C_\vtheta)$, an instance of a Gaussian process with mean $m$, non-negative scale factor $s$ and covariance function $s^2C_\vtheta$. Where $C_\vtheta: [0,1]^d \times [0,1]^d \to \mathbb{R} $ is a symmetric, positive-definite function and parameterized by $\vtheta$:
+Suppose that the integrand, $f$, is drawn from a Gaussian process, i.e., $f \sim \mathcal{GP}(m,s^2 C_\vtheta)$.  Specifically, $f$ has real-valued mean $m$ and covariance function $s^2C_\vtheta$, where $s$ is a non-negative scale factor $s$ $C_\vtheta: [0,1]^d \times [0,1]^d \to \mathbb{R} $ is a symmetric, positive-definite function and parameterized by $\vtheta$:
 \begin{multline} \label{FJH:eq:CondPosDef}
-C(\vt,\vx)  = C(\vx, \vt),  \; \sum_{i,j = 1}^n a_iC(\vx_i,\vx_j) a_j  
-> 0 \text{ when } \va \ne \vzero, \\
-\forall n\in \mathbb{N}, \; \vt, \vx, (\vx_i)_{i=1}^n \in [0,1]^d, \;
-\va = (a_i)_{i=1}^n \in \mathbb{R}^n.
+\mC^T = \mC,  \qquad \va^T \mC \va > 0 \quad  \forall \va \ne \vzero, 
+\\ \text{where } \mC = \left(  C_\vtheta(\vx_i,\vx_j)  \right)_{i,j=1}^n,\\
+\forall n\in \mathbb{N}, \; \vt, \vx, \vx_1, \ldots, \vx_n \in [0,1]^d.
 \end{multline}
+The covariance function, $C$, and the Gram matrix, $\mC$ depend implicitly on $\vtheta$, but sometimes this is omitted in the notation for simplicity's sake.
 
-In this work, we use domain $\mathcal{X} = [0,1]^d$ and uniform measure.  The scale parameter $s^2$ and shape parameter $\vtheta$ should be estimated.
-
-For a Gaussian process, all vectors of linear functionals of $f$ have a multivariate Gaussian distribution. Sometimes we drop $\vtheta$ in the writings to simplify the notation. With this assumption,
+For a Gaussian process, all vectors of linear functionals of $f$ have a multivariate Gaussian distribution. Defining  $\vf  := \left( f(\vx_i)\right)_{i=1}^n$ as the multivariate normal vector of function values, it follows that 
 \begin{subequations}
 \begin{align}
-\mu(f) \sim &\calN(m \mu(1), s^2 c_0), 
-\\
-\nonumber
-&\text{where}\;
-c_0 = \int_{[0,1]^2} C_\vtheta(\vx,\vt) \, \dif{\vx} \, \dif{\vt},
-\\
 \label{eqn:fGaussDist}
-\vf  = \left( f(\vx_i)\right)_{i=1}^n &\sim \calN(m \vone, s^2 \mC), 
+\vf  & \sim \calN(m \vone, s^2 \mC), \\
+\mu & \sim \calN(m, s^2 c_0), 
 \\
-\nonumber
-&\text{where}\;
-\mC = \left(  C_\vtheta(\vx_i,\vx_j)  \right)_{i,j=1}^n.
+\text{where }
+c_0 &= \int_{[0,1]^{2d}} C_\vtheta(\vx,\vt) \, \dif{\vx} \, \dif{\vt}, \\
+\cov(\vf, \mu) &= \left(  \int_{[0,1]^d} C(\vt,\vx_i) \, \D \vt \right)_{i=1}^n  =: \vc.
 \end{align}
 \end{subequations}
-
-Let us consider a fixed node set design $\{ \vx_i \}_{i=1}^n$, then we observe $\vy = \{y_i = f(\vx_i) \}_{i=1}^n$. 
-The integral is correlated with the observed data as follows:
-\begin{align*}
-\cov(\vf, \mu) &= \Ex\left \{(\vf - m \vone) \left [\int_{[0,1]^d} [f(\vx) - m ] \, \D \vx  \right] \right\}  = \vc, 
-\\
-& \qquad \qquad \text{where } \vc = \left(  \int_{[0,1]^d} C(\vt,\vx_i) \, \D \vt \right)_{i=1}^n.
-\end{align*}
-
-
-
-
-Therefore,  it follows from Lemma \ref{thrm:condDist} that the \emph{conditional} distribution of the integral given the observed function values, $\vf = \vy$ is also Gaussian:
+Therefore,  it follows from Lemma \ref{thrm:condDist} ???? that the \emph{conditional} distribution of the integral given the observed function values, $\vf = \vy$ is also Gaussian:
 \begin{multline} \label{eqn:condInteg}
 \mu | (\vf = \vy) \sim \calN \bigl(m (1 - \vc^T \mC^{-1} \vone)  + \vc^T \mC^{-1} \vy, 
 \\
-s^2(c_0  -\vc ^T \mC^{-1} \vc) \bigr)
+s^2(c_0  -\vc ^T \mC^{-1} \vc) \bigr).
 \end{multline}
 
 Similarly, the conditional probability density of cubature error $\mu-\hmu$ given observed data $\vy$:
@@ -930,7 +862,8 @@ So, our algorithm in the current form is not straightaway usable for any practic
 
 
 
-\section{Fast automatic Bayesian cubature}\label{fast_transform_kernel}
+\section{Fast automatic Bayesian cubature}\label{sec:fast_BC}
+
 {Automatic Bayesian cubature algorithm} described (Section \ref{sec:bayes_cubature_algo}) is slow due to its computationally intensive nature. This could be a hindrance in real world applications when a larger number of data points are needed to achieve the desired accuracy. This section and further sections explore techniques to make it faster.
 
 Bayesian cubature algorithm uses error-bound $\errn$ to decide when to stop, and uses MLE loss function (\ref{eqn:thetaMLE}) to find the optimal {shape parameter}.
