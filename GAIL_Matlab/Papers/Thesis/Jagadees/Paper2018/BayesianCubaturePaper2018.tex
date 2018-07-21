@@ -42,6 +42,7 @@
 
 % please place your own definitions here and don't use \def but
 % \newcommand{}{}
+\providecommand{\HickernellFJ}{Hickernell}
 \newcommand{\bm}[1]{\boldsymbol{#1}}
 \newcommand{\mSigma}{\Sigma}
 \newcommand{\smallocite}[1]{{\small\ocite{#1}}}
@@ -141,7 +142,7 @@
 
 \newcommand{\tvrho}{\widetilde{\vrho}}
 \newcommand{\heta}{\hat{\eta}}
-\newcommand{\hmu}{\hat{\mu}}
+\newcommand{\hmu}{\widehat{\mu}}
 \newcommand{\hnu}{\hat{\nu}}
 \newcommand{\rhoCond}{\mathring{\vrho}}
 
@@ -229,8 +230,8 @@ Our work employs low discrepancy data sites and matching kernels that lower the 
 
 \section{Introduction}
 \label{intro}
-Cubature is the problem of inferring a numerical value integral 
-$\mu = \int g(x) \, \dif x$ of a multi-dimensional function $f$ where $\mu$ has no closed form analytic expression. Typically, $g$ is only accessible in the form of a black-box function routine. 
+Cubature is the problem of inferring a numerical value for the integral 
+$\mu = \int_{\reals^d} g(\vx) \, \dif \vx$, of a multi-dimensional function $g$ where $\mu$ has no closed form analytic expression. Typically, $g$ is only accessible in the form of a black-box function routine. 
 Cubature is a key component of many problems in scientific computing, finance, statistical modeling, and machine learning.  
 %One could use Numerical algorithms to estimate quantities that can not be directly computed, using the results of %more readily available computations.
 
@@ -238,24 +239,30 @@ Cubature is a key component of many problems in scientific computing, finance, s
 %Multivariate integrals arise in applications such as evaluating financial risk, computing multivariate probabilities, statistical physics, and uncertainty quantification.
 
 
-The integral $\mu$ is typically expressed in the form
+The integral $\mu$ may often be expressed in the form
 \begin{equation}
 \label{eqn:defn_mu}
-\mu(f) := \Ex[f(\bm{X})] := \int_{\mathcal{X}} f(\vx)\, \nu(\dif\vx),
+\mu(f) := \Ex[f(\boldsymbol{X})] := \int_{[0,1]^d} f(\vx)\, \dif\vx, 
 \end{equation}
-where $f:\cx \to \reals$ is the integrand and $\nu$ is a probability measure defined on the measurable set $\cx \subseteq \reals^d$.  The problem of choosing $f$ and $\nu$ well to correspond to the original integrand, $g$, is the matter of importance sampling, which we do not address here.  The cubature algorithm is defined as
+where $f:[0,1]^d \to \reals$ is the integrand, and $\boldsymbol{X} \sim \mathcal{U}[0,1]^d$.  The problem of transforming the original integral into the above form is not addressed here.  The cubature algorithm may take the form
 \begin{equation}
 \label{eqn:defn_hmu}  % remove this
-\hmu(f) := w_0 + \sum_{i=1}^{n} f(\vx_i) w_i = \int_{\mathcal{X}} f(\vx)\, \hat{\nu}(\dif\vx),
+\hmu(f) := w_0 + \sum_{i=1}^{n} f(\vx_i) w_i,
 \end{equation}
-where the weights, $w_0$, and  $\vw = \{w_i\}_{i=1}^n$, and the nodes $\{x_i\}_{i=1}^n$ are chosen to make the error, $\abs{\mu(f) - \hmu(f)}$, small.
+where the weights, $w_0$, and  $\vw = (w_i)_{i=1}^n \in \reals^n$, and the nodes, $\{x_i\}_{i=1}^n \subset [0,1]^d$, are chosen to make the error, $\abs{\mu(f) - \hmu(f)}$, small.
 
 Our concern is constructing a reliable stopping criterion that determines the number of integrand values required, $n$, to ensure that the error is no greater than a user-defined error tolerance, i.e., 
-\begin{align}
+\begin{equation}
 \label{eqn:err_crit} 
 \abs{\mu(f) - \hmu(f)} \leq \errtol 
-\end{align}
-Rather than relying on strong assumptions about the integrand, such as its variance or total variation, we construct a stopping criterion that is data-driven, and based on a credible interval arising by a Bayesian assumption on the problem.  We build upon the ideas of Diaconis \cite{DiaconisBayesian}, O'Hagan \cite{HagenBayes}, Ritter \cite{RiterAverage}, Rasmussen and Ghahramani \cite{RasmussenBayesian}, and others.  Our contribution here is to demonstrate how the choice of a family of kernels that match the low discrepancy sampling nodes facilitates fast computation of the data-driven stopping criterion.  If $n$ function values are obtained for cubature purposes, then $\Order(n \log(n))$ additional operations are required to check whether the error tolerance is satisfied.  This is significantly fewer operations than the $\Order(n^3)$ typically required for Bayesian cubature.
+\end{equation}
+Rather than relying on strong assumptions about the integrand, such as its variance or total variation, we construct a stopping criterion that is data-driven, and based on a credible interval arising from a Bayesian approach to the problem.  We build upon the ideas of Diaconis\cite{DiaconisBayesian}, O'Hagan\cite{HagenBayes}, Ritter\cite{RiterAverage}, Rasmussen and Ghahramani\cite{RasmussenBayesian}, Briol et al.\cite{BriEtal18a}, and others.  Thus, our algorithm is an example of \emph{probabilistic numerics}.
+
+Our primary contribution here is to demonstrate how the choice of a family of kernels that match the low discrepancy sampling nodes facilitates fast computation of the data-driven stopping criterion.  If $n$ function values, at a cost of $\$(f)$ each, are obtained for cubature purposes, then $\Order(n \log(n))$ additional operations are required to check whether the error tolerance is satisfied.  The total cost of our algorithm is then $\Order(\$(f)n + n \log(n))$.  This is significantly fewer operations than the $\Order(n^3)$ typically required for Bayesian cubature.
+
+Error analyis for cubature that assumes a deterministic integrand lying in a Banach space, leads to an error bound that is typically impractical for deciding how large $n$ must be to satisfy \eqref{eqn:err_crit}.  The deterministic error bound involves some (semi-)norm of the integrand, which is often more complex to compute than the original integral.
+
+Hickernell and Jim\'enez-Rugama\cite{HicJim16a,JimHic16a} have developed stopping criteria for cubature rules based on low discrepancy nodes by tracking the discrete Fourier coefficients of the integrand.  The algorithm proposed here also depends on the discrete Fourier coefficients of the integrand, but in a different way.
 
 
 
@@ -2301,8 +2308,8 @@ number & number & number \\
 %\bibliographystyle{spmpsci}      % mathematics and physical sciences
 %\bibliographystyle{spphys}       % APS-like style for physics
 %\bibliography{}   % name your BibTeX data base
-\bibliography{mybib}
-\bibliographystyle{alpha}
+\bibliography{mybib,FJHOwn23,FJH23}
+\bibliographystyle{spmpsci}
 
 
 

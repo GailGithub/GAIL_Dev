@@ -1,59 +1,79 @@
-\begin{thebibliography}{DLM12}
+\def\Ignore#1{}\def\notesupp#1{}\providecommand{\HickernellFJ}{Hickernell\xspace}\def\Ignore#1{}\def\notesupp#1{}\providecommand{\HickernellFJ}{Hickernell\xspace}
+\begin{thebibliography}{10}
+\providecommand{\url}[1]{{#1}}
+\providecommand{\urlprefix}{URL }
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{DOI~\discretionary{}{}{}#1}\else
+  \providecommand{\doi}{DOI~\discretionary{}{}{}\begingroup
+  \urlstyle{rm}\Url}\fi
 
-\bibitem[Dia88]{DiaconisBayesian}
-P.~Diaconis.
-\newblock Bayesian numerical analysis.
-\newblock {\em Statistical decision theory and related topics IV, Papers from
-  the 4th Purdue symp., West Lafayette, Indiana 1986,}, page 163–175, 1988.
+\bibitem{BriEtal18a}
+Briol, F.X., Oates, C.J., Griolami, M., Osborne, M.A., Sejdinovic, D.:
+  Probabilistic integration: A role in statistical computation?
+\newblock Statist.\ Sci.  (2018+).
+\newblock To appear
 
-\bibitem[DLM12]{DLMF}
-DLMF.
-\newblock Nist digital library of mathematical functions.
-\newblock {\em http://dlmf.nist.gov/}, Part 2:Release 1.0.5 of 2012--10--01,
-  2012.
+\bibitem{CooNuy16a}
+Cools, R., Nuyens, D. (eds.): {M}onte {C}arlo and Quasi-{M}onte {C}arlo
+  Methods: {MCQMC}, {L}euven, {B}elgium, {A}pril 2014, \emph{Springer
+  Proceedings in Mathematics and Statistics}, vol. 163. Springer-Verlag, Berlin
+  (2016)
 
-\bibitem[Fas07]{FassBook2007}
-G.~E. Fasshauer.
-\newblock {\em Meshfree Approximation Methods with Matlab}.
-\newblock World Scientific Publishing Co, 2007.
+\bibitem{DiaconisBayesian}
+Diaconis, P.: Bayesian numerical analysis.
+\newblock Statistical decision theory and related topics IV, Papers from the
+  4th Purdue symp., West Lafayette, Indiana 1986, p. 163–175 (1988)
 
-\bibitem[Gen93]{Gen93}
-A.~Genz.
-\newblock Comparison of methods for the computation of multivariate normal
+\bibitem{DLMF}
+DLMF: Nist digital library of mathematical functions.
+\newblock http://dlmf.nist.gov/ \textbf{Part 2}, Release 1.0.5 of 2012--10--01
+  (2012)
+
+\bibitem{FassBook2007}
+Fasshauer, G.E.: Meshfree Approximation Methods with Matlab.
+\newblock World Scientific Publishing Co (2007)
+
+\bibitem{Gen93}
+Genz, A.: Comparison of methods for the computation of multivariate normal
   probabilities.
-\newblock {\em Computing Science and Statistics}, 25:400 -- 405, 1993.
+\newblock Computing Science and Statistics \textbf{25}, 400 -- 405 (1993)
 
-\bibitem[Hic17]{Fred2017}
-Fred~J. Hickernell.
-\newblock Error analysis for quasi-monte carlo methods.
-\newblock {\em arXiv:1702.01487 [math.NA]}, 2017.
+\bibitem{Fred2017}
+Hickernell, F.J.: Error analysis for quasi-monte carlo methods.
+\newblock arXiv:1702.01487 [math.NA]  (2017)
 
-\bibitem[Kei96]{KeisterExample}
-B.~D. Keister.
-\newblock Multidimensional quadrature algorithms.
-\newblock {\em Computers in Physics}, 10:119--122, 1996.
+\bibitem{HicJim16a}
+\HickernellFJ, F.J., {Jim\'enez Rugama}, {\relax Ll}.A.: Reliable adaptive
+  cubature using digital sequences.
+\newblock In: Cools and Nuyens  \cite{CooNuy16a}, pp. 367--383.
+\newblock ArXiv:1410.8615 [math.NA]
 
-\bibitem[O'H91]{HagenBayes}
-A.~O'Hagan.
-\newblock Bayes-hermite quadrature.
-\newblock {\em J. Statist. Plann. Inference}, 29:245–260, 1991.
+\bibitem{JimHic16a}
+{Jim\'enez Rugama}, {\relax Ll}.A., \HickernellFJ, F.J.: Adaptive
+  multidimensional integration based on rank-1 lattices.
+\newblock In: Cools and Nuyens  \cite{CooNuy16a}, pp. 407--422.
+\newblock ArXiv:1411.1966
 
-\bibitem[RG03]{RasmussenBayesian}
-C.~E. Rasmussen and Z.~Ghahramani.
-\newblock Bayesian monte carlo.
-\newblock {\em Advances in Neural Information Processing Systems}, pages
-  489--496, 2003.
+\bibitem{KeisterExample}
+Keister, B.D.: Multidimensional quadrature algorithms.
+\newblock Computers in Physics \textbf{10}, 119--122 (1996)
 
-\bibitem[Rit00]{RiterAverage}
-K.~Ritter.
-\newblock Average-case analysis of numerical problems.
-\newblock {\em Lecture Notes in Mathematics, Springer-Verlag, Berlin}, vol.
-  1733:163–175, 2000.
+\bibitem{HagenBayes}
+O'Hagan, A.: Bayes-hermite quadrature.
+\newblock J. Statist. Plann. Inference \textbf{29}, 245–260 (1991)
 
-\bibitem[SD06]{Rank1Lattice}
-Alexander~Keller Sabrina~Dammertz.
-\newblock Image synthesis by rank-1 lattices.
-\newblock {\em Monte Carlo and Quasi-Monte Carlo Methods}, Part 2:217--236,
-  2006.
+\bibitem{RasmussenBayesian}
+Rasmussen, C.E., Ghahramani., Z.: Bayesian monte carlo.
+\newblock Advances in Neural Information Processing Systems pp. 489--496 (2003)
+
+\bibitem{RiterAverage}
+Ritter, K.: Average-case analysis of numerical problems.
+\newblock Lecture Notes in Mathematics, Springer-Verlag, Berlin \textbf{vol.
+  1733}, 163–175 (2000)
+
+\bibitem{Rank1Lattice}
+Sabrina~Dammertz, A.K.: Image synthesis by rank-1 lattices.
+\newblock Monte Carlo and Quasi-Monte Carlo Methods \textbf{Part 2}, 217--236
+  (2006)
 
 \end{thebibliography}
