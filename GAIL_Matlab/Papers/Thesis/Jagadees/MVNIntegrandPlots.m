@@ -1,50 +1,19 @@
 
 %% Plot the Keister function
-dim = 1;
-
-if 0
-  % whole R domain
-  normsqd = @(t) sum(t.^2, 2); %squared l_2 norm of t
-  fKeister = @(t,dim) cos( sqrt( normsqd(t) )) .* exp(-normsqd(t));
-  integrand = @(x) fKeister(x,dim);
-  xplot = linspace(-10,10,2^12);
-
-elseif 0
-  % domain = [0, 1]
-  normsqd = @(t) sum(t.*t,2); %squared l_2 norm of t
-  replaceZeros = @(t) (t+(t==0)*eps); % to avoid getting infinity, NaN
-  yinv = @(t)(erfcinv( replaceZeros(abs(t)) ));  %using erfcinv is more accurate than erfinv with -1
-  fKeister = @(t,dim) cos( sqrt( normsqd(yinv(t)) )) *(sqrt(pi))^dim;
-  integrand = @(x) fKeister(x,dim);
+dim = 2;
   
-  xplot = linspace(0,1,2^12);
-else
-  a = 0.999;
-  
-  normsqd = @(t) sum(t.^2,2); %squared l_2 norm of t
-  replaceZeros = @(t) (t+(t==0)*eps); % to avoid getting infinity, NaN
-  %yinv = @(t)(erfinv( replaceZeros(abs(t)) ));  %using erfcinv is more accurate than erfinv with -1
+a = 0.99;
+normsqd = @(t) sum(t.*t,2); %squared l_2 norm of t
+replaceZeros = @(t) (t+(t==0)*eps); % to avoid getting infinity, NaN
+%yinv = @(t)(erfcinv( replaceZeros(abs(t)) ));  %using erfcinv is more accurate than erfinv with -1
+yinv = @(t) erfcinv(t);
 
-  yinv = @(t)erfinv(t);
-  parta = @(t,a) a^dim *cos( a*sqrt( normsqd(t) ));
-  partb = @(t,a) exp((1-a^2)*normsqd(t) );
-  fKeister = @(t,dim,a) parta(t,a).*partb(t,a)*(sqrt(2*pi))^dim;
-  integrand = @(x) fKeister(yinv(x),dim,a);
-  
-  if 0
-  normsqd = @(t) sum(t.*t,2); %squared l_2 norm of t
-  replaceZeros = @(t) (t+(t==0)*eps); % to avoid getting infinity, NaN
-  %yinv = @(t)(erfcinv( replaceZeros(abs(t)) ));  %using erfcinv is more accurate than erfinv with -1
+parta = @(nt,a) a^dim .*cos( a*sqrt( nt ));
+partb = @(nt,a) exp(nt*(1-a^2));
+fKeister = @(nt,dim,a) parta(nt,a).*partb(nt,a)*(sqrt(pi))^dim;
+integrand = @(x) fKeister(normsqd(yinv(x)),dim,a);
 
-  yinv = @(t)erfcinv(t);
-  parta = @(nt,a) a^dim .*cos( a*sqrt( nt ));
-  partb = @(nt,a) exp(nt*(1-a^2));
-  fKeister = @(nt,dim,a) parta(nt,a).*partb(nt,a)*(sqrt(pi))^dim;
-  integrand = @(x) fKeister(normsqd(yinv(x)),dim,a);
-  end
-  
-  xplot = linspace(0,1,2^12);
-end
+xplot = linspace(0,1,2^12);
 
 if dim==2
   nx = numel(xplot);
@@ -58,12 +27,12 @@ if dim==2
   ylabel('\(x_2\)')
   zlabel('\(f_{\textrm{Keister}}(x_1,x_2)\)')
   view(-20,20)
-  print -depsc Keisteri_cube.eps
+  print -depsc Keisteri_cube_0_1.png
 else
   figure; plot(xplot', integrand(xplot'))
 end
 
-
+% whole R domain
 f = @(x) cos(sum(x.^2, 2)).*exp(-sum(x.^2, 2));
 xplot = (-5:0.002:5);
 nx = numel(xplot);
@@ -77,7 +46,7 @@ xlabel('\(x_1\)')
 ylabel('\(x_2\)')
 zlabel('\(f_{\textrm{Keister}}(x_1,x_2)\)')
 view(-20,20)
-print -depsc Keister_wholeR.eps
+print -depsc Keister_wholeR.png
 
 
 %% Plot the Exp(Cos) function

@@ -279,6 +279,7 @@ classdef cubMLELattice < handle
       out.dscAll = obj.dscAll;
       out.absTol = obj.absTol;
       out.relTol = obj.relTol;
+      out.shift = shift;
       
       % convert from gpu memory to local
       muhat=gather(muhat);
