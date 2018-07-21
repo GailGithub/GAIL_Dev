@@ -20,16 +20,18 @@ if dim==2
   [xx,yy] = meshgrid(xplot);
   xyplot = [xx(:) yy(:) zeros(nx*nx, dim-2)];
   zz = reshape(integrand(xyplot),nx,nx);
-  figure
+  figH1 = figure();
   surf(xx,yy,zz)
   shading interp
   xlabel('\(x_1\)')
   ylabel('\(x_2\)')
   zlabel('\(f_{\textrm{Keister}}(x_1,x_2)\)')
   view(-20,20)
-  print -depsc Keisteri_cube_0_1.png
+  saveas(figH1, sprintf('Keister_cube_0_1.png'))
 else
   figure; plot(xplot', integrand(xplot'))
+  xlabel('\(x\)')
+  ylabel('\(f_{\textrm{Keister}}(x)\)')
 end
 
 % whole R domain
@@ -39,14 +41,14 @@ nx = numel(xplot);
 [xx,yy] = meshgrid(xplot);
 xyplot = [xx(:) yy(:) zeros(nx*nx, dim-2)];
 zz = reshape(f(xyplot),nx,nx);
-figure
+figH2 = figure();
 surf(xx,yy,zz)
 shading interp
 xlabel('\(x_1\)')
 ylabel('\(x_2\)')
 zlabel('\(f_{\textrm{Keister}}(x_1,x_2)\)')
 view(-20,20)
-print -depsc Keister_wholeR.png
+saveas(figH2, sprintf('Keister_wholeR.png'))
 
 
 %% Plot the Exp(Cos) function
@@ -58,14 +60,14 @@ nx = numel(xplot);
 dim = 2;
 xyplot = [xx(:) yy(:) zeros(nx*nx, dim-2)];
 zz = reshape(f(xyplot),nx,nx);
-figure
+figH3 = figure();
 surf(xx,yy,zz)
 shading interp
 xlabel('\(x_1\)')
 ylabel('\(x_2\)')
 zlabel('\( e^{\cos(2\pi x_1) + \cos(2\pi x_2)}\)')
 view(-20,20)
-print -depsc ExpCos.eps
+saveas(figH3, sprintf('ExpCos.png'))
 
 
 %% Produce plots for MVNExample
@@ -80,14 +82,14 @@ nx = numel(xplot);
 dim = numel(MVNProbIIDGn.a) - 1;
 xyplot = [xx(:) yy(:) zeros(nx*nx, dim-2)];
 zz = reshape(MVNProbIIDGn.f(xyplot),nx,nx);
-figure
+figH4 = figure();
 surf(xx,yy,zz)
 shading interp
 xlabel('\(x_1\)')
 ylabel('\(x_2\)')
 zlabel('\(f_{\textrm{Genz}}(x_1,x_2)\)')
 view(-20,20)
-print -depsc GenzFun.eps
+saveas(figH4, sprintf('GenzFun.png'))
 
 %% Plot the Affine function
 xplot = (0:0.002:1);
@@ -96,12 +98,12 @@ nx = numel(xplot);
 dim = numel(MVNProbSobolAn.a);
 xyplot = [xx(:) yy(:) 0.5*ones(nx*nx, dim-2)];
 zz = reshape(MVNProbSobolAn.f(xyplot),nx,nx);
-figure
+figH4 = figure();
 surf(xx,yy,zz)
 shading interp
 xlabel('\(x_1\)')
 ylabel('\(x_2\)')
 zlabel('\(f_{\textrm{aff}}(x_1,x_2,1/2)\)')
 view(-45,20)
-print -depsc AffineFun.eps
+saveas(figH4, sprintf('AffineFun.png'))
 
