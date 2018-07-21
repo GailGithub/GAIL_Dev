@@ -260,55 +260,18 @@ Rather than relying on strong assumptions about the integrand, such as its varia
 
 Our primary contribution here is to demonstrate how the choice of a family of kernels that match the low discrepancy sampling nodes facilitates fast computation of the data-driven stopping criterion.  If $n$ function values, at a cost of $\$(f)$ each, are obtained for cubature purposes, then $\Order(n \log(n))$ additional operations are required to check whether the error tolerance is satisfied.  The total cost of our algorithm is then $\Order(\$(f)n + n \log(n))$.  This is significantly fewer operations than the $\Order(n^3)$ typically required for Bayesian cubature.
 
-Error analyis for cubature that assumes a deterministic integrand lying in a Banach space, leads to an error bound that is typically impractical for deciding how large $n$ must be to satisfy \eqref{eqn:err_crit}.  The deterministic error bound involves some (semi-)norm of the integrand, which is often more complex to compute than the original integral.
+Hickernell \cite{Hic17a} compares and contrasts different approaches to cubature error analysis depending on whether the rule is deterministic or random and whether the integrand is assumed to be deterministic or random.  Error analyis that assumes a deterministic integrand lying in a Banach space, leads to an error bound that is typically impractical for deciding how large $n$ must be to satisfy \eqref{eqn:err_crit}.  The deterministic error bound includes a (semi-)norm of the integrand, which is often more complex to compute than the original integral.
 
 Hickernell and Jim\'enez-Rugama\cite{HicJim16a,JimHic16a} have developed stopping criteria for cubature rules based on low discrepancy nodes by tracking the discrete Fourier coefficients of the integrand.  The algorithm proposed here also depends on the discrete Fourier coefficients of the integrand, but in a different way.
 
-
-
-Traditional cubature methods assume the integrand to be a deterministic function.
-An alternative to this approach is to assume that the integrand is a \emph{stochastic process}.
-Bayesian cubature (BC) methods assume the integrand is an instance of a Gaussian process. 
-BC methods approximate the multivariate integrals that cannot be evaluated analytically, using weighted sums of integrand values at carefully chosen nodes over the domain $\mathcal{X}$ as shown in eqn  (\ref{eqn:defn_hmu}).
-
-
-%Multivariate integrals evaluation by QMC methods is an important problem studied by Ian Sloan. 
-
-
-
-Traditional cubature methods may not provide any guaranteed error accuracy. 
-%Though the QMC methods are known to have convergence rate of $\Order(n^{-(1-\delta)})$, this information is not sufficient to identify the number of samples $n$ required to meet the given error tolerance, $\errtol$. 
-The goal of this work is to develop a guaranteed, BC algorithm using the confidence intervals given by Bayesian posterior error. 
-Our algorithm strives to find the minimum sample size `$n$' - \textit{number of integrand values} required so that the error $\abs{\mu(f) - \hmu(f)}$ is less than the user-defined error threshold $\errtol$, i.e, 
-\begin{equation*}
-\abs{\mu(f) - \hmu(f)} \leq \errtol 
-\end{equation*}
-But the true error $\abs{\mu(f) - \hmu(f)}$ will not be available for problems that do require cubature methods.
-So we compute an approximate error bound $\errn$ using the confidence interval obtained from the posterior error which meets,
-\begin{align*}
-\errn \leq \abs{\mu(f) - \hmu(f)}
-\end{align*}
-By calculating a data-driven error bound, our algorithm adaptively determines `$n$'.
-An added advantage of our approach is being data-driven, so it does not require any other parameter of the integrand like the `total variation'.
-%To minimize the integration error $\errn$, one can appeal to loss functions based on the \textit{posterior error distribution} given the observed function values.
-
-
-%Probability theory can be used to quantify \emph{epistemic} uncertainty arising from the missing information. 
-The ``algorithms for numerical tasks" that return uncertainties in their calculations are called \emph{probabilistic numeric methods}. %Uncertainties could arise from the loss of precision induced by numerical calculation with limited time or hardware.
-Our BC algorithm can be categorized as a probabilistic numeric method, due to the nature of assumptions made and the confidence interval it provides.
-
-Section 2 introduces the Bayesian approach to estimate the posterior error and develops the concepts to derive error bound. Then formulates the Automatic cubature algorithm using the error bound. Finally demonstrates why directly using Bayesian cubature algorithm is computationally very expensive.
-Section 3 Introduces the concept of Fast transform kernel and develops the concepts to make the Bayesian cubature faster which is the major contribution of this research.
+Section \ref{sec:BC} explains the Bayesian approach to estimate the posterior cubature error and defines our automatic Bayesian cubature . Although much of this material is not new, it is included for completeness.  We end Section \ref{sec:BC}  by demonstrating why Bayesian cubature is typically quite computationally expensive.
+Section \ref{sec:fast_BC}  introduces the concept of covariance kernels that match well the nodes and expedites the computations required by our automatic Bayesian cubature. Fast transform kernel and develops the concepts to make the Bayesian cubature faster which is the major contribution of this research.
 Section 4 Demonstrates the realization of Fast transform kernel using a shift-invariant kernel and Rank-1 Lattice points.
 Section 5 covers further enhancements to the algorithm to avoid cancellation error and make it faster. Finally, numerical examples are shown using the faster algorithm developed.
 
 
 
-\subsection{Related work}
-
-
-
-\section{Bayesian cubature}
+\section{Bayesian cubature} \label{sec:BC}
 \label{sec:1}
 %Text with citations \cite{RefB} and \cite{RefJ}.
 
@@ -930,7 +893,8 @@ So, our algorithm in the current form is not straightaway usable for any practic
 
 
 
-\section{Fast automatic Bayesian cubature}\label{fast_transform_kernel}
+\section{Fast automatic Bayesian cubature}\label{sec:fast_BC}
+
 {Automatic Bayesian cubature algorithm} described (Section \ref{sec:bayes_cubature_algo}) is slow due to its computationally intensive nature. This could be a hindrance in real world applications when a larger number of data points are needed to achieve the desired accuracy. This section and further sections explore techniques to make it faster.
 
 Bayesian cubature algorithm uses error-bound $\errn$ to decide when to stop, and uses MLE loss function (\ref{eqn:thetaMLE}) to find the optimal {shape parameter}.

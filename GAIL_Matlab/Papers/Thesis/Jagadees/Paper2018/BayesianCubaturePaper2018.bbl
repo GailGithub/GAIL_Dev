@@ -42,6 +42,15 @@ Genz, A.: Comparison of methods for the computation of multivariate normal
 Hickernell, F.J.: Error analysis for quasi-monte carlo methods.
 \newblock arXiv:1702.01487 [math.NA]  (2017)
 
+\bibitem{Hic17a}
+\HickernellFJ, F.J.: The trio identity for quasi-{M}onte {C}arlo error
+  analysis.
+\newblock In: P.~Glynn, A.~Owen (eds.) {M}onte {C}arlo and Quasi-{M}onte
+  {C}arlo Methods: {MCQMC}, {S}tanford, USA, {A}ugust 2016, Springer
+  Proceedings in Mathematics and Statistics, pp. 13--37. Springer-Verlag,
+  Berlin (2018).
+\newblock ArXiv:1702.01487
+
 \bibitem{HicJim16a}
 \HickernellFJ, F.J., {Jim\'enez Rugama}, {\relax Ll}.A.: Reliable adaptive
   cubature using digital sequences.
