@@ -1982,11 +1982,11 @@ and $\mL$ is any square matrix satisfying $\mSigma = \mL \mL^T$.
 
 For the Asian arithmetic mean call option
 
-\begin{align*}
-\text{payoff}(\vz) = \max\left( \frac 1d  \sum_{j=1}^d S_j - K, 0 \right) e^{-r t}, \quad
-S_j = S_0 \exp((r-\sigma^2/2)t_j + \sigma z_j )
-\end{align*}
-where $d$ - number of dimensions and $T, S, S_0, K, r, \sigma$ are the parameters to be specified
+\begin{multline*}
+\text{payoff}(\vz) = \max\left( \frac 1d  \sum_{j=1}^d S_j - K, 0 \right) e^{-r t}, \\ \text{where} \;
+S_j = S_0 \exp((r-\sigma^2/2)t_j + \sigma z_j ),
+\end{multline*}
+$d$ - number of dimensions and $T, S, S_0, K, r, \sigma$ are the parameters to be specified.
 
 
 \end{enumerate}
@@ -2006,15 +2006,36 @@ where $d$ - number of dimensions and $T, S, S_0, K, r, \sigma$ are the parameter
 
 \subsection{Results and observation}
 
+We tested our cubature to integrate the above specified functions. The following plots summarize the results. We used a random shift of $\delta \sim \mathcal{U}[0,1]^d$ to randomly shift the rank-1 Lattice points. This provides randomness in the cubature's behavior. Then we run the cubature for 100 times and take the mean of it as the final result. We integrated with the error thresholds $\varepsilon \in \{1E-2, 1E-3, 1E-4, 1E-5\}$. We use $\frac{\abs{\mu - \hmu}}{\varepsilon}$ as x-axis so that a single plot can include all these $\varepsilon$.
+
+
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.95\linewidth]{"figures/Keister guaranteed 20-Jul-2018 20-54-43"}
+	\caption[Guaranteed:]{Keister function integrated within the given threshold $\varepsilon$ and finite time}
+	\label{fig:keister-guaranteed}
+\end{figure}
+
+
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.95\linewidth]{"figures/MVN guaranteed 19-Jul-2018 00-01-41"}
+	\caption[Guaranteed:]{MVN integrated within the given threshold $\varepsilon$ and finite time}
+	\label{fig:MVN-guaranteed}
+\end{figure}
 
 
 
 
 
-
-
-
-
+\begin{figure}
+	\centering
+	\includegraphics[width=0.95\linewidth]{"figures/Exp(cos) guaranteed 19-Jul-2018 08-14-22"}
+	\caption[Guaranteed:]{Exp(Cos) integrated within the given threshold $\varepsilon$ and finite time}
+	\label{fig:ExpCos-guaranteed}
+\end{figure}
 
 
 
