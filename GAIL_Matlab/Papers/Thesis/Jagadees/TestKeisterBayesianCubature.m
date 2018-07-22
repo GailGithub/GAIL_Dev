@@ -85,7 +85,7 @@ if err/obj.absTol > 1
 end
 %% plot error
 if stopAtTol==false
-  
+  BernPolyOrder = outVec{end}.order;
   nvec = 2.^outVec{end}.mvec;
   temp = [outVec(:).muhatAll];
   muhatVec = median(temp,2);
@@ -93,8 +93,8 @@ if stopAtTol==false
   ErrBdVec = median(temp,2);
   
   errCubatureVec = abs(exactInteg - muhatVec);
-  plotCubatureError(dim, nvec, errCubatureVec, ErrBdVec, fName, BernPolyOrder, ptransform, ...
-    fullPath,visiblePlot,arbMean, out.s_All, out.dscAll)
+  plotCubatureError(dim, nvec, errCubatureVec, ErrBdVec, fName, BernPolyOrder, ...
+    ptransform, fullPath,visiblePlot,arbMean, out.s_All, out.dscAll)
 
   % plot computation time vs number of points
   figSavePathName = sprintf('%s%s computeTime d_%d bernoulli_%d Period_%s.png', ...

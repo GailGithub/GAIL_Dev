@@ -40,11 +40,13 @@ fName = 'Keister';
 %fName = 'MVN';
 
 tstart=tic;
+muhatVec = [];
 errVec = [];
 timeVec = [];
 tolVec = [];
+outStructVec = {};
 indx = 1;
-pdTx = {'C0', 'C1','C1sin', 'C2sin', 'none', 'Baker', };  %
+pdTx = {'Baker', 'C0', 'C1','C1sin', 'C2sin', };  %, 'none'
 arbMeanType = [true,false];
 samplingMethod = {'Lattice',}; %'Sobol',
 log10ErrVec = [-5,-4,-3,-2];
@@ -58,7 +60,7 @@ for sampling=samplingMethod
     bernOrder=[2];
   else
     transforms=pdTx;
-    bernOrder=[2 4];
+    bernOrder=[4 2];
   end  
   for errTol=errTolVec
     errTol;
@@ -71,7 +73,7 @@ for sampling=samplingMethod
 
       for tx=transforms
         vartx=tx{1};
-        for dim=[2 3 4]
+        for dim=[4 3 2]
           for bern=bernOrder
             
             inputArgs = {'dim',dim, 'absTol',errTol, 'order',bern, ...
@@ -97,8 +99,9 @@ for sampling=samplingMethod
             end
             timeVec(indx) = time;
             tolVec(indx) = errTol;
+            outStructVec{indx} = out;
+            muhatVec(indx) = muhat;
             indx = indx + 1;
-            
           end
         end
       end
@@ -115,11 +118,12 @@ plot([1, 1], timeLimits, 'r', 'LineWidth',1)
 hold on
 pointSize=30; %point size
 
-pointShapes = {'o','+','x','d'};
+%pointShapes = {'o','+','x','d'};
+pointShapes = {'o','s','d','^','v','<','>','p','h'};
 offset = length(errVec)/length(errTolVec);
 a=1; b=offset;
 for i=1:length(errTolVec)
-  scatter(errVec(a:b),timeVec(a:b),pointSize,log10(tolVec(a:b)),pointShapes{i})
+  scatter(errVec(a:b),timeVec(a:b),pointSize,log10(tolVec(a:b)),pointShapes{i},'filled')
   a=a+offset; b=b+offset;
 end
 
@@ -138,9 +142,14 @@ axis([errVecLimits(1) errVecLimits(2) timeLimits(1) timeLimits(2)])
 set(gca,'Xtick',(10.^(log10(errVecLimits(1)):4:log10(errVecLimits(2)))), ...
   'YTick',(10.^(log10(timeLimits(1)) :2:log10(timeLimits(2)))))
 title(sprintf('Guaranteed cubature : %s', fName));
+timeStamp = datetime('now','Format','d-MMM-y HH-mm-ss');
 figSavePathName = sprintf('%s%s guaranteed %s.png', ...
-  figSavePath, fName, datetime('now','Format','d-MMM-y HH-mm-ss') );
+  figSavePath, fName, timeStamp );
 saveas(figH, figSavePathName)
+
+save(sprintf('%sGuaranteed_plot_data_%s_%s.mat',figSavePath,fName,timeStamp),...
+  'errVec','timeVec','tolVec','errVecLimits','timeLimits', 'errTolVec',...
+  'outStructVec','muhatVec','log10ErrVec','errTolVecText','fName','figSavePath');
 
 diary off
 
