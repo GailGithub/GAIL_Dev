@@ -913,29 +913,33 @@ Where $V^H$ is the Hermitian of $V$,
 Suppose the transform $\hat{\vz} = \mV^T \vz$ for any arbitrary $\vz$ can be computed within the computational cost of $\Order( n \, log\, n)$, we call it a \emph{Fast transform}. Consequently $C_{\vtheta}$ is called a \emph{fast transform kernel}.
 We use the notation $\hat{\vz}$ to indicate the transform of $\vz$.
 The properties of fast transform can be leveraged to make the computations in Bayesian cubature algorithm faster. To begin with, $\vlambda$ can be computed faster by simply,
-\begin{align}
+\begin{multline}
 \label{eqn:fast_trasnform_to_eigvalues}
-\mV^T \vC_1 = \mV^T \left( \frac 1n \mV^* \mLambda \vv_1 \right) =
+\mV^T \vC_1 = \mV^T \left( \frac 1n \mV^* \mLambda \vv_1 \right) 
+\\
+=
 \underbrace{\left( \frac 1n \mV^T  \mV^* \right) }_{\mathsf{I}} \mLambda \vv_1  =  \mLambda \vone =
 \begin{pmatrix}
 \lambda_1 \\ \vdots \\ \lambda_n
 \end{pmatrix} = \vlambda
-\end{align}
+\end{multline}
 Most of the computations in the algorithm are of the form $\va^T\mCInv\vb$, can be simplified easily:
 \begin{align*}
 \mC V_1 &= \lambda_1 V_1 , \quad \text{by definition}
 \\
 \text{So}, \quad
 \mCInv \vone &= \mCInv V_1 = \frac{V_1}{\lambda_1} = \frac{\vone}{\lambda_1} , 
-\\
-\text{Similarly}, \quad \va^T\mCInv\vb &= \frac 1n \va^T \mV \mLambdaInv \mV^H \vb
+\end{align*}
+Similarly, 
+\begin{multline*}
+\va^T\mCInv\vb = \frac 1n \va^T \mV \mLambdaInv \mV^H \vb
 = \frac 1n \widehat{\va}^T\mLambdaInv \widehat{\vb}^*
 = \frac 1n \sum_{i=1}^n \frac{\widehat{a_i} \widehat{b_i^*}}{\lambda_i},
 \\
-\quad \va^T\mC^{-2}\vb &= \frac 1n \va^T \mV \mLambda^{-2} \mV^H \vb
+\va^T\mC^{-2}\vb = \frac 1n \va^T \mV \mLambda^{-2} \mV^H \vb
 = \frac 1n \widehat{\va}^T\mLambda^{-2} \widehat{\vb}^*
 = \frac 1n \sum_{i=1}^n \frac{\widehat{a_i} \widehat{b_i^*}}{\lambda_i^2},
-\end{align*}
+\end{multline*}
 where $\widehat{\va} = \mV^T \va$ and $\widehat{\vb} = \mV^T \vb$. By using this, some of the recurring terms in the algorithm are simplified,
 \begin{align*}
 \vone^T\mCInv\vone &= \vone^T \left(\frac{\vone}{\lambda_1}\right) = \frac{n}{\lambda_1}
@@ -1092,11 +1096,13 @@ Generalized cross validation criterion:
 \end{gather}
 
 The cubature rule:
-\begin{gather}\label{FJH:eq:cubFull}
-\widehat{\mu}_{\textup{full}}  \vert ( \vf = \vy) = \left[\frac{(1 -  \vc^T \mC^{-1}\vone)\vone^T}{\vone^T \mC^{-1} \vone} + \vc^T \right] \mC^{-1}  \vy = 
+\begin{multline}\label{FJH:eq:cubFull}
+\widehat{\mu}_{\textup{full}}  \vert ( \vf = \vy) = \left[\frac{(1 -  \vc^T \mC^{-1}\vone)\vone^T}{\vone^T \mC^{-1} \vone} + \vc^T \right] \mC^{-1}  \vy 
+\\
+= 
  \frac{\widehat{y}_1}{n} +
  \frac 1n \sum_{i=2}^n \frac{ \widehat{c}_i \widehat{y}_i^*}{\lambda_i},
-\end{gather}
+\end{multline}
 \begin{multline} %\label{FJH:eq:signmaFull}
 \widehat{\sigma}^2_{\textup{full}}  \vert ( \vf = \vy)  
 = \frac{1}{n-1}
@@ -1267,31 +1273,33 @@ The shift-invariant-kernel (\ref{bayes_SI_kernel}) cannot be computed directly d
 If the coefficients $\alpha_{\vk}$ were chosen appropriately, then there exist a direct expression for the kernel in terms of Bernoulli polynomial. 
 We can use the Fourier series expansion properties \cite{DLMF} of Bernoulli polynomial $B_r$ to find the appropriate $\alpha_{\vk}$. This provides a closed form expression for the kernel without the infinite sum. It also allows to choose the smoothness of kernel, i.e, how fast the coefficients $\alpha_{\vk}$ in (\ref{bayes_SI_kernel}) decay.
 The following very useful expansion is referenced from \cite{DLMF} under eqn (24.8.3):
-\begin{align}
+\begin{multline}
 \label{dlmf_bernoulli_24_8_3}
 B_{r}(x) = \frac{-r!}{(2 \pi \sqrt{-1})^{r}} 
 \sum_{\substack{k \neq 0,\\ k=-\infty}}^\infty 
 \frac{e^{2\pi\sqrt{-1} k x}}{k^{r}}
 \;\;
+\\
 \begin{cases}
-\text{for} \;\; r=1, \;\; 0 < x < 1 \\
+\text{for} \;\; r=1, \qquad \; 0 < x < 1 \\
 \text{for} \;\; r=2,3,\hdots \;\; 0 \leq x \leq 1
 \end{cases}
-\end{align}
+\end{multline}
 
 Our goal is to replace the infinite sum of the kernel using Bernoulli polynomials. This would allows the computations to be carried out in any software like Matlab.
 For 1-D $(d=1)$ rewriting (\ref{dlmf_bernoulli_24_8_3}):
-\[
+\begin{multline*}
 \sum_{k \neq 0, k=-\infty}^\infty \frac{e^{2\pi\sqrt{-1} k |x|}}{ (\frac{k}{\theta})^{r}}
 =
 -{\theta^r} B_{r}(|x|) \frac{(2 \pi \sqrt{-1})^{r}}{r!}
-\quad \text{for} \quad -1 \leq x \leq 1
-\]
+\\
+\text{for} \; -1 \leq x \leq 1
+\end{multline*}
 Comparing this expansion with (\ref{bayes_SI_kernel}), one can deduce, for $d=1$:
 \[
 C({x}, {t}) = 
 \alpha_0 + \sum_{k \neq 0, k=-\infty}^\infty \alpha_k e^{2\pi\sqrt{-1} k |x-t|}   
-, \quad -1 \leq x,t \leq 1,
+, \; -1 \leq x,t \leq 1,
 \]
 Where the kernel coefficients ${\alpha}_{\vk}$ can be expressed explicitly:
 \[
@@ -1308,13 +1316,14 @@ In general for $d>1$, the coefficients $\alpha_{\vk}$ for $C_{\vtheta}(\vx,\vt)$
 \end{align*}
 Where $\vtheta$ is the shape parameter and `$r$' is the Bernoulli polynomial. The value of '$r$' will be chosen specific to the integrand when using in the cubature algorithm. We keep the value of `$r$' to be even positive integer in this work.
 Using the above-found results, we get the simplified form of the kernel:
-\begin{align}
+\begin{multline}
 \label{the_kernel_eqn_bernoulli}
-C_\vtheta(\vx, \vt) &=
+C_\vtheta(\vx, \vt) =
  \prod_{l=1}^d
 1 - \theta_l^r \frac{(2 \pi \sqrt{-1})^{r}}{r!} B_{r}( |{x_l-t_l}| ),
-& 0 \leq |x_l - t_l| \leq 1,
-\end{align}
+\\
+\text{where} \; 0 \leq |x_l - t_l| \leq 1,
+\end{multline}
 where $\vtheta \in (0,1]^d$ is the {shape parameter}, `$r$' is the order of the Bernoulli polynomial $B_{r}$.
 
 We call \eqref{the_kernel_eqn_bernoulli} a Fourier kernel as the resulting Fast transform is Fast Fourier transform. Plots of this kernel in $d=2$ is shown in \figref{fig:Fourier_kernel}.
@@ -1406,11 +1415,13 @@ Numerical experiments using this kernel will be shown in the section (\ref{sec:n
 
 \subsection{Additional assumptions}
 The shift invariant kernel (\ref{bayes_SI_kernel}) has some more desirable properties, leading to $c_0=1$ and $\vc = \vone$, which will help to make the computations even faster:
-\begin{align*}
+\begin{multline*}
 %\label{eqn:ftk_integral_definitions}
 \displaystyle
-c_0 =\int_{[0,1]^d\times [0,1]^d}C_\vtheta(\vx,\vt) \dvx \dvt = 1, \quad \vc = \left( \int_{[0,1]^d}C_\vtheta(\vx_i,\vt) \dvt\right)_{i=1}^n = \vone .
-\end{align*}
+c_0 =\int_{[0,1]^d\times [0,1]^d}C_\vtheta(\vx,\vt) \dvx \dvt = 1, 
+\\
+\quad \vc = \left( \int_{[0,1]^d}C_\vtheta(\vx_i,\vt) \dvt\right)_{i=1}^n = \vone .
+\end{multline*}
 
 This gives simplified error bound:
 \begin{align*}
@@ -1466,24 +1477,27 @@ Final version of full Bayes equations optimized using the properties of the shif
 %\label{FJH:eq:signmaFull}
 \widehat{\sigma}^2_{\textup{full}}  \vert ( \vf = \vy) 
 = 
-\frac{1}{n-1} \left[\frac{\lambda_1}{n}{\left(1 - \frac{\widehat{c}_1}{\lambda_1}\right)^2} + (c_0  - \frac 1n \sum_{i=1}^n \frac{\abs{\widehat{c}_i}^2}{\lambda_i}) \right] 
-\times
-\frac{1}{n} \sum_{i=2}^n \frac{\abs{\widehat{y_i}}^2}{\lambda_i} 
+\frac{1}{n-1} 
+\frac{1}{n} \sum_{i=2}^n \frac{\abs{\widehat{y_i}}^2}{\lambda_i} \times
+\\
+\qquad \qquad \left[\frac{\lambda_1}{n}{\left(1 - \frac{\widehat{c}_1}{\lambda_1}\right)^2} + \left(c_0  - \frac 1n \sum_{i=1}^n \frac{\abs{\widehat{c}_i}^2}{\lambda_i}\right) \right] 
 \\
 = 
-\frac{1}{n-1} \left( 1- \frac{n}{\lambda_1}\right) \left[\frac{\lambda_1}{n}{\left(1 - \frac{n}{\lambda_1}\right)} + 1\right] 
-\times
+\frac{1}{n-1} 
 \frac{1}{n} \sum_{i=2}^n \frac{\abs{\widehat{y_i}}^2}{\lambda_i} 
+\times
+\left( 1- \frac{n}{\lambda_1}\right) \left[\frac{\lambda_1}{n}{\left(1 - \frac{n}{\lambda_1}\right)} + 1\right] 
 \\
 = 
-\frac{1}{n(n-1)} \left( \frac{\lambda_1}{n} - 1\right)  
+\frac{1}{n(n-1)} \sum_{i=2}^n \frac{\abs{\widehat{y_i}}^2}{\lambda_i}
 \times
- \sum_{i=2}^n \frac{\abs{\widehat{y_i}}^2}{\lambda_i} 
+\left( \frac{\lambda_1}{n} - 1\right)  
 \end{multline*}
 
 The stopping criterion for the full Bayes case,  
 \begin{multline} \label{FJH:eq:stopcritHyper}
 n  = \min \biggl \{n_j \in \posIntegers:  
+\\
 \frac {t_{n_j-1,0.995}^2}{n_j(n_j - 1)} 
 \left( \frac{\lambda_1}{n_j} - 1\right)  
 \times
@@ -1495,44 +1509,44 @@ n  = \min \biggl \{n_j \in \posIntegers:
 \subsection{Variable transforms}
 Fast transform kernel technique discussed with shift invariant kernel eqn(\ref{bayes_SI_kernel}) and lattice points so far, assumes the integrand is periodic and has continuous derivatives on the boundaries of the domain $[0,1]^d$. Non-periodic functions do not live in the space spanned by the kernel.
 Variable transformation or periodization transform techniques are typically used to improve the accuracy in multi-dimensional numerical integrations where boundary conditions needs to be enforced. These transformations could be either polynomial, exponential and also trigonometric nature.
-\begin{eqnarray}
-\text{Baker's} & : & \tilde{f}(\vt) 
+\begin{align*}
+\text{Baker's} & : \tilde{f}(\vt) 
 = f\left( \left(1-2 \abs{t_j-\frac{1}{2}} \right)_{j=1}^d \right) 
 \\
-\text{C0} & : & \tilde{f}(\vt) 
+\text{C0} & : \tilde{f}(\vt) 
 = f\left( \vg_0 \right)\prod_{j=1}^d g'_0(t_j), 
-  \quad \vg_0 = \left( g_0(t_j) \right)_{j=1}^d
+  \; \vg_0 = \left( g_0(t_j) \right)_{j=1}^d
 \\
-\text{C1} & : & \tilde{f}(\vt) 
+\text{C1} & : \tilde{f}(\vt) 
 = f\left( \vg_1\right)\prod_{j=1}^d g'_1(t_j),
-  \quad \vg_1 = \left( g_1(t_j) \right)_{j=1}^d 
+  \; \vg_1 = \left( g_1(t_j) \right)_{j=1}^d 
 \\
-\text{Sidi's C1} & : & \tilde{f}(\vt) 
+\text{Sidi's C1} & : \tilde{f}(\vt) 
 = f\left( \bm{\psi}_2 \right) \prod_{j=1}^d \psi'_2(t_j),
-  \quad \bm{\psi}_2 = \left( \bm{\psi}_2(t_j) \right)_{j=1}^d
+  \; \bm{\psi}_2 = \left( {\psi}_2(t_j) \right)_{j=1}^d
 \\
-\text{Sidi's C2} & : & \tilde{f}(\vt) 
+\text{Sidi's C2} & : \tilde{f}(\vt) 
 = f\left( \bm{\psi}_3 \right) \prod_{j=1}^d \psi'_3(t_j),
-  \quad \bm{\psi}_3 = \left( \bm{\psi}_3(t_j) \right)_{j=1}^d
-\end{eqnarray}
+  \; \bm{\psi}_3 = \left( {\psi}_3(t_j) \right)_{j=1}^d
+\end{align*}
 where
-\begin{align*}
-g_0(t) &= 3 t^2 - 2 t^3,  & g'_0(t) &= 6t(1-t))
+\begin{multline*}
+g_0(t) = 3 t^2 - 2 t^3,   g'_0(t) = 6t(1-t))
 \\
-g_1(t) &= t^3(10-15t+6t^2),  & g'_1(t) &= 30t^2(1-t)^2
+g_1(t) = t^3(10-15t+6t^2),   g'_1(t) = 30t^2(1-t)^2
 \\
-\psi_2(t)   &= 
+\psi_2(t) = 
 \left(t - \frac{1}{2\pi} \sin(2\pi t) \right) 
-, &
-\psi'_2(t) &= 
+,  \psi'_2(t) = 
 \left(1 - \cos(2 \pi t)  \right) 
 \\
-\psi_3(t)   &= 
+\psi_3(t) = 
 \frac{1}{16} \left(8-9\cos(\pi t)+ \cos(3\pi t) \right) 
-, & 
-\psi'_3(t) &= 
+, 
+\\ 
+\psi'_3(t) = 
 \frac{1}{16} \left(9 \sin(\pi t) \pi - \sin(3 \pi t) 3 \pi \right) 
-\end{align*}
+\end{multline*}
 
 These transforms vary in terms of computational complexity and accuracy, shall be chosen on a need basis.
 Such as:
@@ -1565,19 +1579,20 @@ e^{- \frac{2\pi \sqrt{-1}}{n} (j-1) (i-1) }
 \end{align*}
 We could rearrange the sum into even indexed $j=2l$ and odd indexed $j=2 l + 1$:
 
-\begin{align*}
-\hat{y}_i &=  
+\begin{multline*}
+\hat{y}_i =  
 \underbrace{
 \sum_{l=1}^{n/2} y_{2l} 
 e^{- \frac{2\pi \sqrt{-1}}{n/2} (l-1)( i-1) }
 }_{\text{DFT of even-indexed part of}\; y_i}
+\\
 +
 e^{- \frac{2\pi \sqrt{-1}}{n} (i-1) }
 \underbrace{
 \sum_{l=1}^{n/2} y_{2l+1} 
 e^{- \frac{2\pi \sqrt{-1}}{n/2} (l-1)( i-1) }
 }_{\text{DFT of odd-indexed part of}\; y_i},
-\end{align*}
+\end{multline*}
 Which shows two separately computed DFTs can be combined to produce single output. For example, the odd indexed were the existing DFT and the even indexed are from the new halve of samples, algorithm wants to add to improve accuracy.
 We use this concept to avoid recomputing the full length DFT of $\vy$ in every iteration. In other words, DFT is computed only for the newly added samples in every iteration.
 
@@ -1694,11 +1709,12 @@ d=3 &&  C_3 &= [1 +  \theta B(\{x_{i_3} - x_{j_3}\})][ 1 + \tilde{C}_2]
 
 
 We begin developing the Bayesian cubature with the assumption that the integrand arises from a Gaussian process. How can we check if $m, s, \vtheta$ and $\mC$ are chosen appropriately so that the $\vf$ is a draw from the Gaussian process?. Here is an attempt to validate that assumption. Let,
-\begin{align*}
+\begin{multline*}
 \vf = \left( f(\vx_i) \right)_{i=1}^n
 \sim \calN \left( m\vone, \mC \right), 
+\\
 \quad \text{where}\quad \mC = \frac 1n \mV \mLambda \mV^H, \quad \mV^H \mV = n
-\end{align*}
+\end{multline*}
 Then,
 \begin{align*}
 \Ex\left[ \frac{1}{\sqrt{n}} \mLambda^{-\frac 12} \mV^H \vf \right]
@@ -1785,27 +1801,18 @@ The following test functions were used to test the integration speed and accurac
 \item Exponential of Cosine: 
 
 This is a very simple function, serves as an example to check the working of the cubature,
-\begin{figure}[H]
-\linespread{0.7}
-\centering
-\captionsetup[subfigure]{labelformat=empty}
-\begin{subfigure}[b]{0.48\textwidth}
-\includegraphics[width=\textwidth]{ExpCos}
-%\includegraphics[width=\textwidth]{example}
-\end{subfigure}
-\caption{Exp(Cos) in 2 dimensions}
-\label{fig:Exp(Cos)}
+\begin{figure}
+	\centering
+	\includegraphics[width=0.95\linewidth]{"figures/ExpCos"}
+	\caption[Exp(Cos):]{Exp(Cos) in d=2}
+	\label{fig:ExpCos}
 \end{figure}
-%\vspace{-3ex}
 where the function is defined as
-\begin{align*}
-\begin{matrix}
-f(\vx) &= e^{\sum_{i=1}^d\cos(2 \pi x_d)},  
-\\
-\\
-\int_{[0,1]^d} f(\vx) \dvx &= \text{BesselI(0,1)}^d
-\end{matrix}
-\end{align*}
+\begin{multline*}
+f(\vx) = e^{\sum_{i=1}^d\cos(2 \pi x_d)},  
+\quad
+\int_{[0,1]^d} f(\vx) \dvx = \text{BesselI(0,1)}^d
+\end{multline*}
 where `$\text{BesselI}$' is the \textit{modified Bessel} function. Exp(Cos) function is periodic in $[0,1]$, so we do not need to use any \textit{transform} to make it periodic.
 
 
@@ -1817,53 +1824,44 @@ where `$\text{BesselI}$' is the \textit{modified Bessel} function. Exp(Cos) func
 \item Keister function
 
 The following multidimensional integral example is based on the paper \cite{KeisterExample}, inspired by a physics application.
+\begin{figure}
+	\centering
+	\includegraphics[width=0.95\linewidth]{"figures/Keister_wholeR"}
+	\caption[Guaranteed:]{Keister function in d=2}
+	\label{fig:keister-R}
+\end{figure}
 
-
-\begin{figure}[H]
-\linespread{0.7}
-\centering
-\captionsetup[subfigure]{labelformat=empty}
-\begin{subfigure}[b]{0.48\textwidth}
-\includegraphics[width=\textwidth]{Keister_wholeR}
-%\includegraphics[width=\textwidth]{example}
-\end{subfigure}
-\centering
-\captionsetup[subfigure]{labelformat=empty}
-\begin{subfigure}[b]{0.48\textwidth}
-\includegraphics[width=\textwidth]{Keister_cube}
-%\includegraphics[width=\textwidth]{example}
-\end{subfigure}
-\caption{Keister function in original form and its transform to $[0,1]^2$}
-\label{fig:Keister}
+\begin{figure}
+	\centering
+	\includegraphics[width=0.95\linewidth]{"figures/Keister_cube_0_1"}
+	\caption[Guaranteed:]{Keister function transformed to $[0,1]^2$}
+	\label{fig:keister-0_1}
 \end{figure}
 
 
-\begin{align*}
-f(\vx) &=  \cos(\norm{ \vx}) \exp(-\norm{ \vx }^2) \dvx, \;  
+\begin{multline*}
+f(\vx) =  \cos(\norm{ \vx}) \exp(-\norm{ \vx }^2) \dvx, \;  
 \\
+\int_{\reals^d} f(\vx) \dvx  = \frac{2 \pi^{\frac d2}}{\Gamma(\frac d2)} \text{CI}(d), \quad d=1,2,3,\hdots
 \\
-\int_{\reals^d} f(\vx) \dvx & = \frac{2 \pi^{\frac d2}}{\text{gamma}(\frac d2)} \text{cosinteg}(d), \quad d=1,2,3,\hdots
-\end{align*}
-where
-
-\begin{align*}
-\text{cosinteg}(1) &= \frac{\sqrt{\pi}}{2 \exp(1/4)}
+\text{where}, \Gamma  := \text{gamma function}, \; \text{and}
 \\
-\text{sininteg}(1) &= \int_{x=0}^\infty \exp(-\vx^T\vx)\sin(\vx) \dvx \quad = \quad 0.4244363835020225
+\text{CI}(1) = \frac{\sqrt{\pi}}{2 \exp(1/4)}, 
 \\
-\text{cosinteg}(2) &= \frac{1-\text{sininteg}(1)}{2}
+\text{SI}(1) = \int_{x=0}^\infty \exp(-\vx^T\vx)\sin(\vx) \dvx 
 \\
-\text{sininteg}(2) &= \frac{\text{cosinteg}(1)}{2}
+\qquad =  0.4244363835020225,
 \\
-\text{cosinteg}(j) &= \frac{(j-2)\text{cosinteg}(j-2)-\text{sininteg}(j-1)}{2},
-\quad j =3,4,\hdots
+\text{CI}(2) = \frac{1-\text{SI}(1)}{2}, \;
+\text{SI}(2) = \frac{\text{CI}(1)}{2}
 \\
-\text{sininteg}(j) &= \frac{(j-2)\text{sininteg}(j-2)-\text{cosinteg}(j-1)}{2},
-\quad j =3,4,\hdots
+\text{CI}(j) = \frac{(j-2)\text{CI}(j-2)-\text{SI}(j-1)}{2},
+\; j =3,4,\hdots
 \\
-\text{where gamma(.)} & := \text{gamma function}
+\text{SI}(j) = \frac{(j-2)\text{SI}(j-2)-\text{CI}(j-1)}{2},
+\; j =3,4,\hdots.
 % ref: https://www.mathworks.com/help/matlab/ref/gamma.html
-\end{align*}
+\end{multline*}
 
 
 
@@ -1882,31 +1880,27 @@ where
 We use the Genz's method to compute Multivariate normal probability as explained below. This method reduces the original dimension of the problem by 1.
 
 
-\begin{figure}[H]
-\linespread{0.7}
+\begin{figure}
 \centering
 \captionsetup[subfigure]{labelformat=empty}
-\begin{subfigure}[b]{0.48\textwidth}
-%\includegraphics[width=\textwidth]{example}
+\begin{subfigure}{0.48\textwidth}
 \includegraphics[width=\textwidth]{Plotting_gaussian}
 \end{subfigure}
 \centering
-\begin{subfigure}[b]{0.48\textwidth}
-%\includegraphics[width=\textwidth]{example}
+\begin{subfigure}{0.48\textwidth}
+
 \includegraphics[width=\textwidth]{GenzFun}
 \end{subfigure}
 \caption{Mutivariate Normal and Genz function }
 \label{fig:MVN and Genz}
 \end{figure}
-\begin{tabular}{m{8.5cm}m{3cm}}
-%{Multivariate Normal (MVN)} \vspace{-2ex}
-\begin{gather*}
-\mu = \int_{[\va,\vb] \in \reals^d} \frac{\exp\bigl(- \frac 12 \vt^T \mSigma^{-1} \vt \bigr)}{\sqrt{(2 \pi)^d \det(\mSigma)}} \, \dvt \
-\overset{\text{\small\cite{Gen93}}}{=} \ 
+
+\begin{multline*}
+\mu = \int_{[\va,\vb] \in \reals^d} \frac{\exp\bigl(- \frac 12 \vt^T \mSigma^{-1} \vt \bigr)}{\sqrt{(2 \pi)^d \det(\mSigma)}} \, \dvt 
+\\
+\overset{\text{\small\cite{Gen93}}}{=} \,
 \int_{[0,1]^{d-1}} f_{\text{Genz}}(\vx) \, \dvx 
-\end{gather*} 
-% & \includegraphics[width=3cm,angle=0]{Plotting_gaussian.png}
-\end{tabular}
+\end{multline*} 
 
 where $\mSigma= \mL \mL^T$ is the Cholesky decomposition of the covariance matrix, $\mL = (l_{jk})_{j,k=1}^d$ is a lower triangular matrix, and
 
