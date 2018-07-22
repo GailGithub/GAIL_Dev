@@ -300,7 +300,7 @@ c_0 &= \int_{[0,1]^{2d}} C_\vtheta(\vx,\vt) \, \dif{\vx} \, \dif{\vt}, \\
 \cov(\vf, \mu) &= \left(  \int_{[0,1]^d} C(\vt,\vx_i) \, \D \vt \right)_{i=1}^n  =: \vc.
 \end{align}
 \end{subequations}
-Therefore,  it follows from Lemma \ref{thrm:condDist} ???? that the \emph{conditional} distribution of the integral given the observed function values, $\vf = \vy$ is also Gaussian:
+Therefore,  it follows from \cite{RasWil06a} Appendix A.2 Gaussian Identities that the \emph{conditional} distribution of the integral given observed function values, $\vf = \vy$ is also Gaussian:
 \begin{multline} \label{eqn:condInteg}
 \mu | (\vf = \vy) \sim \calN \bigl(m (1 - \vc^T \mC^{-1} \vone)  + \vc^T \mC^{-1} \vy, 
 \\
@@ -391,14 +391,17 @@ Under these estimates of the parameters, the cubature \eqref{eqn:BayesCub} and t
 \times 
 (c_0 - \vc^T\mC^{-1}\vc ),
 \end{align}
-\begin{equation}
-\label{eqn_prob_CI_MLE}
-\mathbb{P}_f [
-|\mu-\hmu| \leq  2.58\hsigma_\MLE]  \geq 99\%.
-\end{equation}
+So the stopping criterion for the empirical Bayes case is
+\begin{multline} \label{eqn:stopcritMLE}
+n  = \min \biggl \{n_j \in \posIntegers:  
+2.58^2  \vy^T \left[ \mCInv - 
+\frac{ \mCInv \vone \vone^T \mCInv }{\vone^T\mCInv \vone}
+\right] \vy 
+\\
+\times 
+(c_0 - \vc^T\mC^{-1}\vc ) \vy \; \le \; \varepsilon^2 \biggr\}.
+\end{multline}
 Here $c_0$, $\vc$, and $\mC$ are assumed implicitly to be based on $\vtheta = \vtheta_\MLE$.
-
-
 
 \subsubsection{Full Bayes}
 
@@ -408,14 +411,16 @@ Rather than use maximum likelihood to determine $m$ and $s$ one treat them as hy
 & \propto \int_{0}^\infty \int_{-\infty}^\infty \rho_{\mu}(z | \vf = \vy, m = \xi, s^2 = \lambda) \\
 & \qquad \qquad \times  \rho_{\vf}(\vy | \xi, \lambda ) \rho_{m, s^2}(\xi, \lambda) \, \D \xi \D \lambda \\
 & \propto \displaystyle \int_{0}^\infty  \frac{1}{\lambda^{(n+3)/2}} \\
-& \times \int_{-\infty}^\infty  \exp \biggl( -\frac{1}{2\lambda}\Bigl\{
+& \times \int_{-\infty}^\infty  \exp \biggl(
+-\frac{1}{2\lambda}\Bigl\{
 \frac{
 [z - \xi (1 - \vc^T \mC^{-1} \vone)  -  \vc^T \mC^{-1} \vy]^2}
 {c_0  -\vc ^T \mC^{-1} \vc}  \\
 & \qquad \qquad  + (\vy - \xi \vone)^T \mC^{-1}(\vy - \xi \vone) \Bigr \} \biggr) \, \D \xi \D \lambda \\
 &\qquad \qquad
 \text{by \eqref{eqn:fGaussDist}, \eqref{eqn:condInteg}} \; \text{and} \; \rho_{m,s^2}(\xi,\lambda) \propto 1/\lambda \\
-& \propto \displaystyle \int_{0}^\infty  \frac{1}{\lambda^{(n+3)/2}} \int_{-\infty}^\infty  \exp\left( -\frac{\alpha \xi^2 -2 \beta \xi + \gamma}{2\lambda(c_0  -\vc ^T \mC^{-1} \vc)} \right) \, \D \xi \D \lambda, \\
+& \propto \displaystyle \int_{0}^\infty  \frac{1}{\lambda^{(n+3)/2}} \\
+&\times \qquad \qquad \int_{-\infty}^\infty  \exp\left( -\frac{\alpha \xi^2 -2 \beta \xi + \gamma}{2\lambda(c_0  -\vc ^T \mC^{-1} \vc)} \right) \, \D \xi \D \lambda, \\
 \intertext{where}
 \alpha & = (1 - \vc^T \mC^{-1} \vone)^2 + \vone^T \mC^{-1} \vone (c_0  -\vc ^T \mC^{-1} \vc),\\
 \beta & =(1 - \vc^T \mC^{-1} \vone)(z - \vc^T \mC^{-1} \vy ) \\
@@ -430,7 +435,7 @@ Completing the square $
 $
 allows us to compute the integral with respect to $\xi$:
 \begin{align*}
-\MoveEqLeft{\rho_{\mu}(z | \vf = \vy)} \\
+\MoveEqLeft[1]{\rho_{\mu}(z | \vf = \vy)} \\
 & \propto \displaystyle \int_{0}^\infty  \frac{1}{\lambda^{(n+3)/2}}  \exp\left( -\frac{  \gamma - \beta^2/\alpha}{2\lambda(c_0  -\vc ^T \mC^{-1} \vc)} \right)  \\
 & \qquad \qquad \times \int_{-\infty}^\infty  \exp\left( -\frac{\alpha (\xi -\beta/\alpha)^2}{2\lambda(c_0  -\vc ^T \mC^{-1} \vc)} \right) \, \D \xi \D \lambda \\
 & \propto \displaystyle \int_{0}^\infty  \frac{1}{\lambda^{(n+2)/2}}  \exp\left( -\frac{  \gamma - \beta^2/\alpha}{2\lambda(c_0  -\vc ^T \mC^{-1} \vc)} \right) \D \lambda \\
@@ -438,18 +443,19 @@ allows us to compute the integral with respect to $\xi$:
 \end{align*}
 Finally, we simplify the key term:
 \begin{align*}
-\alpha \gamma - \beta^2 
+\MoveEqLeft[1]{\alpha \gamma - \beta^2} \\
 & = \vone^T \mC^{-1} \vone (c_0  -\vc ^T \mC^{-1} \vc) (z - \vc^T \mC^{-1} \vy )^2 \\
-& \qquad \qquad - 2 \vone^T \mC^{-1} \vy (c_0  -\vc ^T \mC^{-1} \vc)(1 - \vc^T \mC^{-1} \vone)(z - \vc^T \mC^{-1} \vy ) \\
-& \qquad \qquad + (1 - \vc^T \mC^{-1} \vone)^2 \vy^T \mC^{-1} \vy (c_0  -\vc ^T \mC^{-1} \vc) \\
-&\qquad \qquad  + [\vone^T \mC^{-1} \vone \vy^T \mC^{-1} \vy - (\vone^T \mC^{-1} \vy)^2](c_0  -\vc ^T \mC^{-1} \vc)^2  \\
+& \quad - 2 \vone^T \mC^{-1} \vy (c_0  -\vc ^T \mC^{-1} \vc)(1 - \vc^T \mC^{-1} \vone)(z - \vc^T \mC^{-1} \vy ) \\
+& \quad  + (1 - \vc^T \mC^{-1} \vone)^2 \vy^T \mC^{-1} \vy (c_0  -\vc ^T \mC^{-1} \vc) \\
+&\quad   + [\vone^T \mC^{-1} \vone \vy^T \mC^{-1} \vy - (\vone^T \mC^{-1} \vy)^2](c_0  -\vc ^T \mC^{-1} \vc)^2  \\
 & \propto \vone^T \mC^{-1} \vone  \left (z - \vc^T \mC^{-1} \vy - \frac{(1 - \vc^T \mC^{-1} \vone)\vone^T \mC^{-1} \vy}{\vone^T \mC^{-1} \vone } \right )^2 \\
-& \qquad \qquad -  \frac{[(1 - \vc^T \mC^{-1} \vone)\vone^T \mC^{-1} \vy]^2}{\vone^T \mC^{-1} \vone }  
-+ (1 - \vc^T \mC^{-1} \vone)^2 \vy^T \mC^{-1} \vy \\
-& \qquad \qquad (c_0  -\vc ^T \mC^{-1} \vc) [\vone^T \mC^{-1} \vone  \vy^T \mC^{-1} \vy
+& \quad  -  \frac{[(1 - \vc^T \mC^{-1} \vone)\vone^T \mC^{-1} \vy]^2}{\vone^T \mC^{-1} \vone }  \\
+& \quad + (1 - \vc^T \mC^{-1} \vone)^2 \vy^T \mC^{-1} \vy \\
+& \quad  (c_0  -\vc ^T \mC^{-1} \vc) [\vone^T \mC^{-1} \vone  \vy^T \mC^{-1} \vy
 - (\vone^T \mC^{-1} \vy)^2] \\
 & \propto \left (z - \left[ \frac{(1 - \vc^T \mC^{-1} \vone)\vone}{\vone^T \mC^{-1} \vone } + \vc \right]^T \mC^{-1} \vy \right )^2 \\
-& \qquad  + \left[\frac{(1 - \vc^T \mC^{-1} \vone)^2}{\vone^T \mC^{-1} \vone} + (c_0  -\vc ^T \mC^{-1} \vc) \right] \times \vy^T\left[ \mC^{-1} 
+& \quad  + \left[\frac{(1 - \vc^T \mC^{-1} \vone)^2}{\vone^T \mC^{-1} \vone} + (c_0  -\vc ^T \mC^{-1} \vc) \right] \\
+& \quad \times \vy^T\left[ \mC^{-1} 
 - \frac{ \mC^{-1} \vone\vone^T \mC^{-1}}{\vone^T \mC^{-1} \vone}  \right]\vy
 \\
 & \propto (z - \widehat{\mu}_{\textup{full}})^2 + (n-1) \sigma_{\textup{full}}^2
@@ -474,6 +480,7 @@ But the variance is different.
 So, the stopping criterion for the full Bayes case,  
 \begin{multline} %\label{FJH:eq:stopcritHyper}
 n  = \min \biggl \{n_j \in \posIntegers:  
+\\
 \frac {t_{n_j-1,0.995}^2}{n_j - 1}   \left[\frac{(1 - \vc^T \mC^{-1} \vone)^2}{\vone^T \mC^{-1} \vone} + (c_0  -\vc ^T \mC^{-1} \vc) \right]
 \\
  \times \vy^T \left[\mC^{-1} - \frac{\mC^{-1} \vone \vone^T \mC^{-1}}{\vone^T \mC^{-1} \vone}  \right] \vy  \le \varepsilon^2 \biggr\}.
@@ -493,12 +500,13 @@ Another alternative to determining $m$, $s$, and $\vtheta$ is \emph{leave-one-ou
 \textup{CV} = \sum_{i=1}^n (y_i - \widetilde{y}_i)^2.
 \end{equation}
 
-Let $\mA = \mC^{-1}$ as in Lemma \ref{thrm:condDist} below, let $\vzeta = \mA (\vy - m \vone)$, and partition $\mC$, $\mA$, and $\vzeta$ as
-\begin{equation*}
-\mC = \begin{pmatrix} C_{ii}  & \vC_{-i,i}^T \\  \vC_{-i,i} & \mC_{-i,-i}\end{pmatrix}, \qquad
-\mA = \begin{pmatrix} A_{ii}  & \vA_{-i,i}^T \\  \vA_{-i,i} & \mA_{-i,-i}\end{pmatrix}, \qquad \vzeta = \begin{pmatrix} \zeta_i   \\  \vzeta_{-i} \end{pmatrix}
-\end{equation*}
-Note that in this notation, Lemma \ref{thrm:condDist} implies that 
+Let $\mA = \mC^{-1}$ and $\vzeta = \mA (\vy - m \vone)$, and partition $\mC$, $\mA$, and $\vzeta$ as
+\begin{align*}
+\mC = \begin{pmatrix} C_{ii}  & \vC_{-i,i}^T \\  \vC_{-i,i} & \mC_{-i,-i}\end{pmatrix}, 
+\mA = \begin{pmatrix} A_{ii}  & \vA_{-i,i}^T \\  \vA_{-i,i} & \mA_{-i,-i}\end{pmatrix},  
+\vzeta = \begin{pmatrix} \zeta_i   \\  \vzeta_{-i} \end{pmatrix}
+\end{align*}
+Then using the results from \cite{RasWil06a} Gaussian Identities eqn A.6, implies that 
 \begin{align*}
 \widetilde{y}_i & = m + \vC^T_{-i,i} \mC_{-i,-i}^{-1} (\vy_{-i} -m \vone)  \\
 \zeta_i  & = A_{ii}(y_i - m) + \vA_{-i,i}^T(\vy_{-i} - m \vone) \\
@@ -525,22 +533,6 @@ m_{\textup{GCV}} = \frac{\vone^T \mC^{-2} \vy}{\vone^T \mC^{-2} \vone},\\
 \end{multline}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 \subsection{Formulating the automatic Bayesian cubature algorithm}
 \label{sec:bayes_cubature_algo}
 Let the function to integrate be $f \sim \mathcal{GP}(m,s^2 C_\vtheta)$.
@@ -556,31 +548,6 @@ Once the stopping criterion is met, the approximation of $\mu$ can be computed:
 \hmu_n &= w_0 + \vw^T \vy,
 \end{nalign}
 Where the suffix $n$ is used to imply the number of integrand-samples used. In every iteration of the \emph{automatic cubature algorithm (\ref{algorithm1})}, we only need to numerically estimate the MLE of $\vtheta$ and then use it to compute $\mC$ and $\errn$. 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 The following pseudo-code briefly explains the working of the automatic cubature algorithm.
@@ -609,23 +576,6 @@ As shown, the algorithm continues the iteration loop till the stopping-criterion
 At the end of every iteration, if the computed error bound  $\errn$ is higher than the required $\errtol$, algorithm doubles the number of points $n$ and repeats. When the error tolerance $\errtol$ is met, exits the loop. Finally using the $n$ and the MLE estimated parameters, computes the $\hmu_n$.
 
 Accurately computing the data-driven error bound $\errn$ which closely matches the true error is essential for the effectiveness of our algorithm. So, accurate and faster computation of $\errn$ and $\hmu_n$ are the main objective of the following sections.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 \subsection{Example with Matern kernel}
@@ -949,51 +899,53 @@ Moreover the choice of kernel or any MLE estimated parameters do not affect the 
 \subsubsection{Full Bayes}
 
 Generalized cross validation criterion:
-\begin{gather}
-\nonumber
-\vtheta_{\textup{GCV}} 
-%= \argmin_\vtheta \log \left (  \vy^T \left[\mC^{-2} - \frac{\mC^{-2} \vone \vone^T \mC^{-2}}{\vone^T \mC^{-2} \vone}  \right] \vy \right ) -2 \log \left ( \trace(\mC^{-1}) \right ) \\
-= \argmin_\vtheta \left[ \log \left ( \frac 1n \sum_{i=1}^n \frac{\abs{\widehat{y}_i}^2}{\lambda_i^2} - 
+\begin{align*}
+{\vtheta_{\textup{GCV}} }
+%= \argmin_\vtheta \log \left (  \vy^T \left[\mC^{-2} - \frac{\mC^{-2} \vone \vone^T \mC^{-2}}{\vone^T \mC^{-2} \vone}  \right] \vy \right ) -2 \log \left ( \trace(\mC^{-1}) \right ) 
+&= \argmin_\vtheta \biggl[ \log \left ( \frac 1n \sum_{i=1}^n \frac{\abs{\widehat{y}_i}^2}{\lambda_i^2} - 
 \frac{\widehat{y}_1^2/\lambda_1^4}{n/\lambda^2_1}
-\right) -2\log\left( \sum_{i=1}^n \frac{1}{\lambda_i} \right)
-\right]
+\right) 
 \\
-= \argmin_\vtheta \left[ \log \left ( \frac 1n \sum_{i=2}^n \frac{\abs{\widehat{y}_i}^2}{\lambda_i^2} 
+& \qquad \qquad \qquad - 2\log\left( \sum_{i=1}^n \frac{1}{\lambda_i} \right)
+\biggr]
+\\
+&= \argmin_\vtheta \left[ \log \left ( \frac 1n \sum_{i=2}^n \frac{\abs{\widehat{y}_i}^2}{\lambda_i^2} 
 \right) -2\log\left( \sum_{i=1}^n \frac{1}{\lambda_i} \right)
 \right]
-\end{gather}
+\end{align*}
 
 The cubature rule:
-\begin{multline}\label{FJH:eq:cubFull}
-\widehat{\mu}_{\textup{full}}  \vert ( \vf = \vy) = \left[\frac{(1 -  \vc^T \mC^{-1}\vone)\vone^T}{\vone^T \mC^{-1} \vone} + \vc^T \right] \mC^{-1}  \vy 
+\begin{align}\label{FJH:eq:cubFull}
+\nonumber
+\widehat{\mu}_{\textup{full}}  \vert ( \vf = \vy) &= \left[\frac{(1 -  \vc^T \mC^{-1}\vone)\vone^T}{\vone^T \mC^{-1} \vone} + \vc^T \right] \mC^{-1}  \vy 
 \\
-= 
+& = 
  \frac{\widehat{y}_1}{n} +
  \frac 1n \sum_{i=2}^n \frac{ \widehat{c}_i \widehat{y}_i^*}{\lambda_i},
-\end{multline}
-\begin{multline} %\label{FJH:eq:signmaFull}
-\widehat{\sigma}^2_{\textup{full}}  \vert ( \vf = \vy)  
-= \frac{1}{n-1}
-\left[\frac{(1 - \vc^T \mC^{-1} \vone)^2}{\vone^T \mC^{-1} \vone} + (c_0  -\vc ^T \mC^{-1} \vc) \right] 
-\\
-\nonumber
-\qquad \times \quad \vy^T\left[ \mC^{-1} 
+\end{align}
+\begin{multline*} %\label{FJH:eq:signmaFull}
+\widehat{\sigma}^2_{\textup{full}}  \vert ( \vf = \vy) \\
+ = \frac{1}{n-1} 
+\vy^T\left[ \mC^{-1} 
 - \frac{ \mC^{-1} \vone\vone^T \mC^{-1}}{\vone^T \mC^{-1} \vone}  \right]\vy 
-\\ \nonumber
-=
-\frac{1}{n-1} \left[\frac{\lambda_1}{n}{\left(1 - \frac{\widehat{c}_1}{\lambda_1}\right)^2} + (c_0  - \frac 1n \sum_{i=1}^n \frac{\abs{\widehat{c}_i}^2}{\lambda_i}) \right] 
+\\
+\qquad \qquad \times 
+\biggl[\frac{(1 - \vc^T \mC^{-1} \vone)^2}{\vone^T \mC^{-1} \vone} 
+ + (c_0  -\vc ^T \mC^{-1} \vc) \biggr] 
+\\
+ =
+\frac{1}{n-1} \frac{1}{n} \sum_{i=2}^n \frac{\abs{\widehat{y_i}}^2}{\lambda_i}
+\\
 \times
-\frac{1}{n} \sum_{i=2}^n \frac{\abs{\widehat{y_i}}^2}{\lambda_i}
-\end{multline}
+\left[\frac{\lambda_1}{n}{\left(1 - \frac{\widehat{c}_1}{\lambda_1}\right)^2} + \left(c_0  - \frac 1n \sum_{i=1}^n \frac{\abs{\widehat{c}_i}^2}{\lambda_i}\right) \right] 
+\end{multline*}
 
 The stopping criterion for the full Bayes case,  
 \begin{multline} \label{FJH:eq:stopcritHyper}
 n  = \min \biggl \{n_j \in \posIntegers:  
-\frac {t_{n_j-1,0.995}^2}{n_j(n_j - 1)} 
+\frac {t_{n_j-1,0.995}^2}{n_j(n_j - 1)} \sum_{i=2}^n \frac{\abs{\widehat{y_i}}^2}{\lambda_i} 
 \\ \times
-\left[\frac{\lambda_1}{n_j}{\left(1 - \frac{\widehat{c}_1}{\lambda_1}\right)^2} + (c_0  - \frac{1}{n_j} \sum_{i=1}^n \frac{\abs{\widehat{c}_i}^2}{\lambda_i}) \right] 
-\times 
-\sum_{i=2}^n \frac{\abs{\widehat{y_i}}^2}{\lambda_i} 
+\left[\frac{\lambda_1}{n_j}{\left(1 - \frac{\widehat{c}_1}{\lambda_1}\right)^2} + \left(c_0  - \frac{1}{n_j} \sum_{i=1}^n \frac{\abs{\widehat{c}_i}^2}{\lambda_i}\right) \right] 
 \le \varepsilon^2 \biggr\}.
 \end{multline}
 
@@ -2016,19 +1968,20 @@ Finally, the function approximation is
 
 \section{Appendix}
 
+\iffalse
 \subsection{Properties of Multivariate Normal Distributions}
 
 
 \begin{lemma} \label{thrm:condDist} If $\vY = (\vY_1, \vY_2)^T \sim \calN (\vm,\mC)$, where 
-	\begin{equation*}
-	\vm = \begin{pmatrix} \vm_1 \\ \vm_2 \end{pmatrix} = \begin{pmatrix} \Ex(\vY_1) \\ \Ex(\vY_2) \end{pmatrix}, \qquad 
-	\mC = \begin{pmatrix}
+	\begin{align*}
+	\vm &= \begin{pmatrix} \vm_1 \\ \vm_2 \end{pmatrix} = \begin{pmatrix} \Ex(\vY_1) \\ \Ex(\vY_2) \end{pmatrix}, \\ 
+	\mC &= \begin{pmatrix}
 	\mC_{11} & \mC_{21}^T \\ 	\mC_{21} & \mC_{22}
 	\end{pmatrix} =
 	 \begin{pmatrix}
 	\var(\vY_{1}) & \cov(\vY_{1}, \vY_2) \\ 	\cov(\vY_2,\vY_{1}) & \var(\vY_{2})
 	\end{pmatrix} 
-	\end{equation*}
+	\end{align*}
 	then 
 	\begin{equation*}
 	\vY_1 \vert \vY_2 \; \sim \; \calN \bigl(\vm_1 + \mC_{21}^T \mC_{22}^{-1}(\vY_2 - \vm_2), \; \mC_{11} - \mC_{21}^T \mC_{22}^{-1} \mC_{21} \bigr)
@@ -2101,7 +2054,7 @@ which proves the variance.
 \end{proof}
 
 
-
+\fi
 
 
 
