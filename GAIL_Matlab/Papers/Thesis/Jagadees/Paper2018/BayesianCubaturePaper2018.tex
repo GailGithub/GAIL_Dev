@@ -1036,7 +1036,6 @@ Its dual lattice is defined as:
 \end{align*}
 
 
-
 \begin{figure}[htp]
 \centering
     \includegraphics[height=5cm]{ShiftedLatticePoints}
@@ -1044,48 +1043,24 @@ Its dual lattice is defined as:
 \end{figure}
 
 
-
-
-
-
 With lattice points, the kernel is written as:
-\[
+\begin{align*}
 C(\vx_i, \vx_j)
- =
+ &=
 \sum_{\vk \in \mathbb{Z}^d} \alpha_{\vk}  
 e^{ 2 \pi\sqrt{-1} \vk^T  \frac{\bm{h} i}{n}}
 e^{-2 \pi\sqrt{-1} \vk^T  \frac{\bm{h} j}{n}}
-\]
-\[
- =
+\\
+ &=
 \sum_{\vk \in \mathbb{Z}^d} \alpha_{\vk}  
 e^{2 \pi\sqrt{-1} \vk^T \bm{h} \frac{(i-j)}{n}}
-\]
+\end{align*}
 Please note that `$\mod 1$' need not be used explicitly in $C(\vx_i, \vx_j)$ since 
 $
 e^{\pm 2 \pi \sqrt{-1}} = 1
 $. 
 The kernel (\ref{bayes_SI_kernel}), when used with Rank-1 Lattice points, leads to symmetric and circulant Gram matrix $\mC$.
 We can demonstrate the resulting Gram matrix satisfies the conditions of a fast transform. 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 \subsection{Computing the kernel using Bernoulli polynomials}
@@ -1146,7 +1121,7 @@ C_\vtheta(\vx, \vt) =
 \end{multline}
 where $\vtheta \in (0,1]^d$ is the {shape parameter}, `$r$' is the order of the Bernoulli polynomial $B_{r}$.
 
-We call \eqref{the_kernel_eqn_bernoulli} a Fourier kernel as the resulting Fast transform is Fast Fourier transform. Plots of this kernel in $d=2$ is shown in \figref{fig:Fourier_kernel}.
+We call \eqref{the_kernel_eqn_bernoulli} a Fourier kernel as the resulting Fast transform is the \emph{Fast Fourier transform} (FFT). Plots of this kernel in $d=2$ is shown in \figref{fig:Fourier_kernel}.
 
 
 
@@ -1441,11 +1416,11 @@ Let's recollect the definition of the shift invariant kernel:
 \begin{align*}
 C(\vx_i, \vx_j) = \prod_{k=1}^d \left[1 + \theta B(\{x_{i_k} - x_{j_k}\}) \right].
 \end{align*}
-Let's define:
+Let's define the modified kernel:
 \begin{align*}
-\text{modified kernel} \quad \widetilde{C}(\vx_i, \vx_j) &= C(\vx_i, \vx_j) - 1,
+\widetilde{C}(\vx_i, \vx_j) &:= C(\vx_i, \vx_j) - 1,
 \\
-\text{Gram matrix} \quad \tmC &= \mC - \vone \vone^T,
+\text{Then Its Gram matrix:} \quad \tmC &= \mC - \vone \vone^T,
 \end{align*}
 Let $(\lambda_1, ..., \lambda_n)$ be the eigenvalues of $\mC$. Similarly let $(\tlambda_1, ..., \tlambda_n)$ be the eigenvalues of $\tmC$. As per the definition of the Gram matrix $\mC$, the eigenvector corresponding to $\lambda_1$ is a vector one $\vone$. 
 Then:
@@ -1735,7 +1710,7 @@ We use the Genz's method to compute Multivariate normal probability as explained
 where $\mSigma= \mL \mL^T$ is the Cholesky decomposition of the covariance matrix, $\mL = (l_{jk})_{j,k=1}^d$ is a lower triangular matrix, and
 
 \begin{multline*}
-\valpha_1 = \Phi(a_1), \quad \vbeta_1 = \Phi(b_1)
+\valpha_1 = \Phi(a_1), \qquad \vbeta_1 = \Phi(b_1)
 \\
 \valpha_j(x_1,...,x_{j-1}) = 
 \\
@@ -1761,7 +1736,7 @@ b_j - \sum_{k=1}^{j-1} l_{jk} \Phi^{-1}(\valpha_k + x_k(\vbeta_k-\valpha_k))
 \\
 \qquad \qquad \qquad j=2,...,d,
 \\
-f_{\text{Genz}}(\vx) = \prod_{j=1}^d [\vbeta_j(\vx) - \valpha_j(\vx)]
+f_{\text{Genz}}(\vx) = \prod_{j=1}^d [\vbeta_j(\vx) - \valpha_j(\vx)]. \hspace{12ex}
 \end{multline*}
 
 As we see from the figure, Genz function is not periodic, So we need to make it periodic to get the best accuracy with Bayesian cubature.
@@ -1813,15 +1788,11 @@ d=3
 
 \item Option pricing
 
-
-The price of financial derivatives can often be modeled by high dimensional integrals. If the underlying asset is described in terms of a Brownian motion, B, at time $t_1,...,t_d$, then $Z = (B(t_1), ..., B(t_d)) \sim \calN(\vzero,\mSigma)$, where $\mSigma = \left(\min(t_j,t_k) \right)_{j,k=1}^d$, and the fair price of the option is
-
+The price of financial derivatives can often be modeled by high dimensional integrals. If the underlying asset is described in terms of a Brownian motion, B, at time $t_1,...,t_d$, then $Z = (B(t_1), ..., B(t_d)) \sim \calN(\vzero,\mSigma)$, where $\mSigma = \left(\min(t_j,t_k) \right)_{j,k=1}^d$, and the fair price of the option is:
 \begin{align*}
 \mu = \int_{\reals^d} \text{payoff}(\vz) \frac{\exp(\frac 12 \vz^T\mSigma^{-1}\vz)}{\sqrt{(2\pi)^d \det(\mSigma)}} \dvz = \int_{[0,1]^d} f(\vx) \dvx
 \end{align*}
-where the function payoff(.) describes the discounted payoff of the option,
-
-
+where the function {payoff(.)} defines the discounted payoff of the option,
 \begin{align*}
 f(\vx) = \text{payoff}(\vz), & \quad \vz = \mL 
 \begin{pmatrix}
@@ -1830,12 +1801,10 @@ f(\vx) = \text{payoff}(\vz), & \quad \vz = \mL
 \end{align*}
 and $\mL$ is any square matrix satisfying $\mSigma = \mL \mL^T$.
 
-For the Asian arithmetic mean call option
-
+For the Asian arithmetic mean call option:
 \begin{multline*}
-\text{payoff}(\vz) = \max\left( \frac 1d  \sum_{j=1}^d S_j - K, 0 \right) e^{-r t}, \\ \text{where} \;
-S_j = S_0 \exp((r-\sigma^2/2)t_j + \sigma z_j ),
-\end{multline*}
+\text{payoff}(\vz) = \max\left( \frac 1d  \sum_{j=1}^d S_j - K, 0 \right) e^{-r t}, \end{multline*}
+Where $S_j = S_0 \exp((r-\sigma^2/2)t_j + \sigma z_j$, 
 $d$ - number of dimensions and $T, S, S_0, K, r, \sigma$ are the parameters to be specified.
 
 
@@ -1859,32 +1828,23 @@ $d$ - number of dimensions and $T, S, S_0, K, r, \sigma$ are the parameters to b
 We tested our cubature to integrate the above specified functions. The following plots summarize the results. We used a random shift of $\delta \sim \mathcal{U}[0,1]^d$ to randomly shift the rank-1 Lattice points. This provides randomness in the cubature's behavior. Then we run the cubature for 100 times and take the mean of it as the final result. We integrated with the error thresholds $\varepsilon \in \{1E-2, 1E-3, 1E-4, 1E-5\}$. We use $\frac{\abs{\mu - \hmu}}{\varepsilon}$ as x-axis so that a single plot can include all these $\varepsilon$.
 
 
-
 \begin{figure}
 	\centering
-	\includegraphics[width=0.95\linewidth]{"figures/Keister guaranteed 20-Jul-2018 20-54-43"}
-	\caption[Guaranteed:]{Keister function integrated within the given threshold $\varepsilon$ and finite time}
-	\label{fig:keister-guaranteed}
+	\includegraphics[width=0.95\linewidth]{"figures/Exp(cos) guaranteed time 19-Jul-2018 08-14-22"}
+	\caption[Guaranteed:]{Exp(Cos) integrated within $\varepsilon$ and finite time}
+	\label{fig:expcos-guaranteed-time}
 \end{figure}
-
-
-
 \begin{figure}
 	\centering
-	\includegraphics[width=0.95\linewidth]{"figures/MVN guaranteed 19-Jul-2018 00-01-41"}
-	\caption[Guaranteed:]{MVN integrated within the given threshold $\varepsilon$ and finite time}
-	\label{fig:MVN-guaranteed}
+	\includegraphics[width=0.95\linewidth]{"figures/Keister guaranteed time 20-Jul-2018 20-54-43"}
+	\caption[Guaranteed:]{Keister function integrated within $\varepsilon$ and finite time}
+	\label{fig:keister-guaranteed-time}
 \end{figure}
-
-
-
-
-
 \begin{figure}
 	\centering
-	\includegraphics[width=0.95\linewidth]{"figures/Exp(cos) guaranteed 19-Jul-2018 08-14-22"}
-	\caption[Guaranteed:]{Exp(Cos) integrated within the given threshold $\varepsilon$ and finite time}
-	\label{fig:ExpCos-guaranteed}
+	\includegraphics[width=0.95\linewidth]{"figures/MVN guaranteed time 19-Jul-2018 00-01-41"}
+	\caption[Guaranteed:]{MVN integrated within $\varepsilon$ and finite time}
+	\label{fig:mvn-guaranteed-time}
 \end{figure}
 
 
@@ -1892,9 +1852,28 @@ We tested our cubature to integrate the above specified functions. The following
 
 
 
+\begin{figure}
+	\centering
+	\includegraphics[width=0.95\linewidth]{"figures/Exp(cos) guaranteed npts 19-Jul-2018 08-14-22"}
+	\caption[Exp(Cos) guaranteed : Number of samples]{Exp(Cos) integrated within $\varepsilon$ using finite number of samples}
+	\label{fig:expcos-guaranteed-npts}
+\end{figure}
+\begin{figure}
+	\centering
+	\includegraphics[width=0.95\linewidth]{"figures/Keister guaranteed npts 20-Jul-2018 20-54-43"}
+	\caption[Keister guaranteed: Num sample]{Keister integrated within $\varepsilon$ using finite number of samples}
+	\label{fig:keister-guaranteed-npts}
+\end{figure}
+\begin{figure}
+	\centering
+	\includegraphics[width=0.95\linewidth]{"figures/MVN guaranteed npts 19-Jul-2018 00-01-41"}
+	\caption[MVN guaranteed : Number of sample]{MVN integrated within $\varepsilon$ using finite number of samples}
+	\label{fig:mvn-guaranteed-npts}
+\end{figure}
 
 
-
+The figures \figref{fig:expcos-guaranteed-time}, \figref{fig:keister-guaranteed-time} and \figref{fig:mvn-guaranteed-time} show the integration done in a finite time within the error tolerance $\varepsilon$. 
+Similarly, the figures \figref{fig:expcos-guaranteed-npts}, \figref{fig:keister-guaranteed-npts} and \figref{fig:mvn-guaranteed-npts} show the integration done using a finite number of samples within the error tolerance $\varepsilon$.
 
 
 \section{Conclusion}
