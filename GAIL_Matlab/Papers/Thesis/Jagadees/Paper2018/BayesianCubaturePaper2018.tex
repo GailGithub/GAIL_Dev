@@ -45,6 +45,7 @@
 \providecommand{\HickernellFJ}{Hickernell}
 \newcommand{\bm}[1]{\boldsymbol{#1}}
 \newcommand{\mSigma}{\Sigma}
+\newcommand{\mB}{\mathsf{B}}
 \newcommand{\smallocite}[1]{{\small\ocite{#1}}}
 % \newcommand{\bm}[1]{\boldsymbol{#1}}
 \newcommand{\dif}[1]{\text{d}{#1}}
@@ -101,6 +102,7 @@
 \newcommand{\vY}{\bm{Y}}
 \newcommand{\hvy}{\hat{\vy}}
 \newcommand{\vz}{\bm{z}}
+\newcommand{\vZ}{\bm{Z}}
 \newcommand{\dvz}{\dif{\bm{z}}}
 \newcommand{\tf}{\tilde{f}}
 
@@ -152,6 +154,7 @@
 \newcommand{\errtol}{\varepsilon}
 \newcommand{\errn}{\text{err}_{n}}
 \newcommand{\diag}{\text{diag}}
+\newcommand{\err}{\textup{err}}
 
 \def\abs#1{\ensuremath{\left \lvert #1 \right \rvert}}
 \newcommand{\norm}[2][{}]{\ensuremath{\left \lVert #2 \right \rVert}_{#1}}
@@ -300,7 +303,7 @@ c_0 &= \int_{[0,1]^{2d}} C_\vtheta(\vx,\vt) \, \dif{\vx} \, \dif{\vt}, \\
 \cov(\vf, \mu) &= \left(  \int_{[0,1]^d} C(\vt,\vx_i) \, \D \vt \right)_{i=1}^n  =: \vc.
 \end{align}
 \end{subequations}
-Therefore,  it follows from Lemma \ref{thrm:condDist} ???? that the \emph{conditional} distribution of the integral given the observed function values, $\vf = \vy$ is also Gaussian:
+Therefore,  it follows from Lemma \ref{thrm:condDist} in the Appendix that the \emph{conditional} distribution of the integral given the observed function values, $\vf = \vy$ is also Gaussian:
 \begin{multline} \label{eqn:condInteg}
 \mu | (\vf = \vy) \sim \calN \bigl(m (1 - \vc^T \mC^{-1} \vone)  + \vc^T \mC^{-1} \vy, 
 \\
@@ -329,7 +332,7 @@ A credible interval for the integral is given given by
 \label{eqn_prob_confidence_interval}
 \mathbb{P}_f \left[
 |\mu-\hmu| \leq  2.58 s \sqrt{c_0 - \vc^T\mC^{-1}\vc } 
-\right] \geq 99\%.
+\right] = 99\%.
 \end{equation}
 Natually, the $2.58$ and $99\%$ can be replaced by other quantiles and credible levels.
 
@@ -381,20 +384,20 @@ Under these estimates of the parameters, the cubature \eqref{eqn:BayesCub} and t
 \begin{align} \label{eqn:cubMLE}
 \hmu_\MLE  &= 
 \left(
-\frac{ (1 - \vone^T  \mCInv\vc ) }{ \vone^T \mCInv \vone}   \vone +  \vc 
+\frac{ (1 - \vone^T  \mCInv\vc )  \vone }{ \vone^T \mCInv \vone}   +  \vc 
 \right)^T  \mCInv \vy, \\
 \nonumber 
-\hsigma_\MLE^2 & : = 
+\err_\MLE^2 & : = \frac{2.58^2}{n}
  \vy^T \left[ \mCInv - 
 \frac{ \mCInv \vone \vone^T \mCInv }{\vone^T\mCInv \vone}
-\right] \vy 
-\times 
+\right] \vy \\
+&\qquad \qquad \times 
 (c_0 - \vc^T\mC^{-1}\vc ),
 \end{align}
 \begin{equation}
 \label{eqn_prob_CI_MLE}
-\mathbb{P}_f [
-|\mu-\hmu| \leq  2.58\hsigma_\MLE]  \geq 99\%.
+\mathbb{P}_f \left[
+|\mu-\hmu_\MLE| \leq \err_\MLE \right]  = 99\%.
 \end{equation}
 Here $c_0$, $\vc$, and $\mC$ are assumed implicitly to be based on $\vtheta = \vtheta_\MLE$.
 
@@ -408,14 +411,14 @@ Rather than use maximum likelihood to determine $m$ and $s$ one treat them as hy
 & \propto \int_{0}^\infty \int_{-\infty}^\infty \rho_{\mu}(z | \vf = \vy, m = \xi, s^2 = \lambda) \\
 & \qquad \qquad \times  \rho_{\vf}(\vy | \xi, \lambda ) \rho_{m, s^2}(\xi, \lambda) \, \D \xi \D \lambda \\
 & \propto \displaystyle \int_{0}^\infty  \frac{1}{\lambda^{(n+3)/2}} \\
-& \times \int_{-\infty}^\infty  \exp \biggl( -\frac{1}{2\lambda}\Bigl\{
+& \times \int_{-\infty}^\infty  \exp \biggl( -\frac{1}{2\lambda}\biggl\{
 \frac{
 [z - \xi (1 - \vc^T \mC^{-1} \vone)  -  \vc^T \mC^{-1} \vy]^2}
 {c_0  -\vc ^T \mC^{-1} \vc}  \\
-& \qquad \qquad  + (\vy - \xi \vone)^T \mC^{-1}(\vy - \xi \vone) \Bigr \} \biggr) \, \D \xi \D \lambda \\
+& \qquad \qquad  + (\vy - \xi \vone)^T \mC^{-1}(\vy - \xi \vone) \biggr \} \biggr) \, \D \xi \D \lambda \\
 &\qquad \qquad
 \text{by \eqref{eqn:fGaussDist}, \eqref{eqn:condInteg}} \; \text{and} \; \rho_{m,s^2}(\xi,\lambda) \propto 1/\lambda \\
-& \propto \displaystyle \int_{0}^\infty  \frac{1}{\lambda^{(n+3)/2}} \int_{-\infty}^\infty  \exp\left( -\frac{\alpha \xi^2 -2 \beta \xi + \gamma}{2\lambda(c_0  -\vc ^T \mC^{-1} \vc)} \right) \, \D \xi \D \lambda, \\
+& \propto \displaystyle \int_{0}^\infty  \frac{1}{\lambda^{(n+3)/2}} \cdots \\ & \qquad \cdots \int_{-\infty}^\infty  \exp\left( -\frac{\alpha \xi^2 -2 \beta \xi + \gamma}{2\lambda(c_0  -\vc ^T \mC^{-1} \vc)} \right) \, \D \xi \D \lambda, \\
 \intertext{where}
 \alpha & = (1 - \vc^T \mC^{-1} \vone)^2 + \vone^T \mC^{-1} \vone (c_0  -\vc ^T \mC^{-1} \vc),\\
 \beta & =(1 - \vc^T \mC^{-1} \vone)(z - \vc^T \mC^{-1} \vy ) \\
@@ -428,100 +431,91 @@ Completing the square $
 \alpha \xi^2 -2 \beta \xi + \gamma 
 = \alpha (\xi -\beta/\alpha)^2  - (\beta^2/\alpha) + \gamma,
 $
-allows us to compute the integral with respect to $\xi$:
+allows us to evaluate the integrals with respect to $\xi$ and $\lambda$:
 \begin{align*}
 \MoveEqLeft{\rho_{\mu}(z | \vf = \vy)} \\
-& \propto \displaystyle \int_{0}^\infty  \frac{1}{\lambda^{(n+3)/2}}  \exp\left( -\frac{  \gamma - \beta^2/\alpha}{2\lambda(c_0  -\vc ^T \mC^{-1} \vc)} \right)  \\
-& \qquad \qquad \times \int_{-\infty}^\infty  \exp\left( -\frac{\alpha (\xi -\beta/\alpha)^2}{2\lambda(c_0  -\vc ^T \mC^{-1} \vc)} \right) \, \D \xi \D \lambda \\
+& \propto \displaystyle \int_{0}^\infty  \frac{1}{\lambda^{(n+3)/2}}  \exp\left( -\frac{  \gamma - \beta^2/\alpha}{2\lambda(c_0  -\vc ^T \mC^{-1} \vc)} \right)  \cdots \\
+& \qquad \qquad \cdots \int_{-\infty}^\infty  \exp\left( -\frac{\alpha (\xi -\beta/\alpha)^2}{2\lambda(c_0  -\vc ^T \mC^{-1} \vc)} \right) \, \D \xi \D \lambda \\
 & \propto \displaystyle \int_{0}^\infty  \frac{1}{\lambda^{(n+2)/2}}  \exp\left( -\frac{  \gamma - \beta^2/\alpha}{2\lambda(c_0  -\vc ^T \mC^{-1} \vc)} \right) \D \lambda \\
 & \propto \left(\gamma - \frac{\beta^2}{\alpha}\right)^{-n/2} \propto \left(\alpha \gamma - \beta^2\right)^{n/2}.
 \end{align*}
-Finally, we simplify the key term:
-\begin{align*}
-\alpha \gamma - \beta^2 
-& = \vone^T \mC^{-1} \vone (c_0  -\vc ^T \mC^{-1} \vc) (z - \vc^T \mC^{-1} \vy )^2 \\
-& \qquad \qquad - 2 \vone^T \mC^{-1} \vy (c_0  -\vc ^T \mC^{-1} \vc)(1 - \vc^T \mC^{-1} \vone)(z - \vc^T \mC^{-1} \vy ) \\
-& \qquad \qquad + (1 - \vc^T \mC^{-1} \vone)^2 \vy^T \mC^{-1} \vy (c_0  -\vc ^T \mC^{-1} \vc) \\
-&\qquad \qquad  + [\vone^T \mC^{-1} \vone \vy^T \mC^{-1} \vy - (\vone^T \mC^{-1} \vy)^2](c_0  -\vc ^T \mC^{-1} \vc)^2  \\
-& \propto \vone^T \mC^{-1} \vone  \left (z - \vc^T \mC^{-1} \vy - \frac{(1 - \vc^T \mC^{-1} \vone)\vone^T \mC^{-1} \vy}{\vone^T \mC^{-1} \vone } \right )^2 \\
-& \qquad \qquad -  \frac{[(1 - \vc^T \mC^{-1} \vone)\vone^T \mC^{-1} \vy]^2}{\vone^T \mC^{-1} \vone }  
-+ (1 - \vc^T \mC^{-1} \vone)^2 \vy^T \mC^{-1} \vy \\
-& \qquad \qquad (c_0  -\vc ^T \mC^{-1} \vc) [\vone^T \mC^{-1} \vone  \vy^T \mC^{-1} \vy
-- (\vone^T \mC^{-1} \vy)^2] \\
-& \propto \left (z - \left[ \frac{(1 - \vc^T \mC^{-1} \vone)\vone}{\vone^T \mC^{-1} \vone } + \vc \right]^T \mC^{-1} \vy \right )^2 \\
-& \qquad  + \left[\frac{(1 - \vc^T \mC^{-1} \vone)^2}{\vone^T \mC^{-1} \vone} + (c_0  -\vc ^T \mC^{-1} \vc) \right] \times \vy^T\left[ \mC^{-1} 
-- \frac{ \mC^{-1} \vone\vone^T \mC^{-1}}{\vone^T \mC^{-1} \vone}  \right]\vy
-\\
-& \propto (z - \widehat{\mu}_{\textup{full}})^2 + (n-1) \sigma_{\textup{full}}^2
-\\
-& \propto \left(1 +  \frac{1}{n-1} \frac{(z - \mu_{\textup{full}})^2}{\widehat{\sigma}_{\textup{full}}^2} \right)
-\end{align*}
-This means that $\mu \vert (\vf = \vy )$, properly centered and scaled, has a Student's $t$-distribution with $n-1$ degrees of freedom. The cubature rule is the same as in the empirical Bayes case in \eqref{eqn:cubMLE}:
-\begin{gather}\label{FJH:eq:cubFull}
-\widehat{\mu}_{\textup{full}}  \vert ( \vf = \vy) = \left[\frac{(1 -  \vc^T \mC^{-1}\vone)\vone^T}{\vone^T \mC^{-1} \vone} + \vc^T \right] \mC^{-1}  \vy,
-\end{gather}
+Finally, we simplify the key term via straightforward calculations to the following:
+\begin{equation*}
+\alpha \gamma - \beta^2 \propto 1 +  \frac{(z - \hmu_{\textup{MLE}})^2}{(n-1)\widehat{\sigma}_{\textup{full}}^2}, \\
+\end{equation*}
+where 
 \begin{multline}
 \label{FJH:eq:signmaFull}
-\widehat{\sigma}^2_{\textup{full}}  \vert ( \vf = \vy)  
-= \frac{1}{n-1}
-\left[\frac{(1 - \vc^T \mC^{-1} \vone)^2}{\vone^T \mC^{-1} \vone} + (c_0  -\vc ^T \mC^{-1} \vc) \right] 
-\\
-\nonumber
-\qquad \times \quad \vy^T\left[ \mC^{-1} 
-- \frac{ \mC^{-1} \vone\vone^T \mC^{-1}}{\vone^T \mC^{-1} \vone}  \right]\vy .
+\hsigma^2_{\textup{full}} 
+:= \frac{1}{n-1}
+\vy^T\left[ \mC^{-1} 
+- \frac{ \mC^{-1} \vone\vone^T \mC^{-1}}{\vone^T \mC^{-1} \vone}  \right]\vy
+\\ 
+\times  \left[\frac{(1 - \vc^T \mC^{-1} \vone)^2}{\vone^T \mC^{-1} \vone} + (c_0  -\vc ^T \mC^{-1} \vc) \right].
 \end{multline}
-But the variance is different.
-So, the stopping criterion for the full Bayes case,  
-\begin{multline} %\label{FJH:eq:stopcritHyper}
-n  = \min \biggl \{n_j \in \posIntegers:  
-\frac {t_{n_j-1,0.995}^2}{n_j - 1}   \left[\frac{(1 - \vc^T \mC^{-1} \vone)^2}{\vone^T \mC^{-1} \vone} + (c_0  -\vc ^T \mC^{-1} \vc) \right]
-\\
- \times \vy^T \left[\mC^{-1} - \frac{\mC^{-1} \vone \vone^T \mC^{-1}}{\vone^T \mC^{-1} \vone}  \right] \vy  \le \varepsilon^2 \biggr\}.
-\end{multline}
-is more conservative than that in the empirical Bayes case, \eqref{eqn:stopcritMLE}.
+
+This means that $\mu \vert (\vf = \vy )$, properly centered and scaled, has a Student's $t$-distribution with $n-1$ degrees of freedom.   The estimated integral is the same as in the empirical Bayes case, but the confidence interval is wider:
+\begin{equation}
+\label{eqn_prob_CI_full}
+\mathbb{P}_f \left[
+|\mu-\hmu_\MLE| \leq \err_{\textup{full}} \right]  = 99\%,
+\end{equation}
+where
+\begin{equation}
+\label{FJH:eq:errFull}
+\err_{\textup{full}} 
+:= t_{n_j-1,0.995} \hsigma_{\textup{full}} > \err_\MLE .
+\end{equation}
 Here $t_{n-1,0.995}$ denotes the $99.5$ percentile of a standard Student's $t$-distribution with $n-1$ degrees of freedom.
 
-Because the shape parameter, $\vtheta$, enters the definition of the covariance kernel in a non-trivial way, it typically cannot be practically considered as a hyper-parameter in a full Bayesian model.  The empirical Bayes approach for determining $\vtheta$ in \eqref{eqn:thetaMLE} is one possibility
+Because the shape parameter, $\vtheta$, enters the definition of the covariance kernel in a non-trivial way, the only way to treat it as a hyperparameter and assign a tractable prior would be for the prior to be discrete.  We believe in practice that choosing such a prior involves more guesswork than using the empirical Bayes estimate of $\vtheta$ in \eqref{eqn:thetaMLE} or the cross-validation approached described next.
 
 
-
-
- 
 \subsubsection{Cross-validation} 
-Another alternative to determining $m$, $s$, and $\vtheta$ is \emph{leave-one-out cross-validation}.  Let $\widetilde{y}_i$ denote the expected value of $f(\vx_i)$ conditioned on $\vf_{-i} = \vy_{-i}$, where the subscript $-i$ denotes vector excluding the $i^{\text{th}}$ component.  The cross-validation criterion, which is to be minimized, is
+A third parameter optimization is \emph{leave-one-out cross-validation}.  Let $\widetilde{y}_i = \Ex[f(\vx_i ) | \vf_{-i} = \vy_{-i}]$, where the subscript $-i$ denotes the vector excluding the $i^{\text{th}}$ component.  This is the conditional expectation of $f(\vx_i )$ given all data but the function value at $\vx_i$.  The cross-validation criterion, which is to be minimized, is sum of squares of the difference between these conditional expectations and the observed values:
 \begin{equation} \label{FJH:eq:CVA}
 \textup{CV} = \sum_{i=1}^n (y_i - \widetilde{y}_i)^2.
 \end{equation}
 
-Let $\mA = \mC^{-1}$ as in Lemma \ref{thrm:condDist} below, let $\vzeta = \mA (\vy - m \vone)$, and partition $\mC$, $\mA$, and $\vzeta$ as
-\begin{equation*}
-\mC = \begin{pmatrix} C_{ii}  & \vC_{-i,i}^T \\  \vC_{-i,i} & \mC_{-i,-i}\end{pmatrix}, \qquad
-\mA = \begin{pmatrix} A_{ii}  & \vA_{-i,i}^T \\  \vA_{-i,i} & \mA_{-i,-i}\end{pmatrix}, \qquad \vzeta = \begin{pmatrix} \zeta_i   \\  \vzeta_{-i} \end{pmatrix}
-\end{equation*}
-Note that in this notation, Lemma \ref{thrm:condDist} implies that 
+Let $\mA = \mC^{-1}$, let $\vzeta = \mA (\vy - m \vone)$, and partition $\mC$, $\mA$, and $\vzeta$ as
+\begin{gather*}
+\mC = \begin{pmatrix} c_{ii}  & \vC_{-i,i}^T \\  \vC_{-i,i} & \mC_{-i,-i}\end{pmatrix}, \qquad
+\mA = \begin{pmatrix} a_{ii}  & \vA_{-i,i}^T \\  \vA_{-i,i} & \mA_{-i,-i}\end{pmatrix}, \\ \vzeta = \begin{pmatrix} \zeta_i   \\  \vzeta_{-i} \end{pmatrix}.
+\end{gather*}
+Following this notation, Lemma \ref{thrm:condDist} implies that 
 \begin{align*}
 \widetilde{y}_i & = m + \vC^T_{-i,i} \mC_{-i,-i}^{-1} (\vy_{-i} -m \vone)  \\
-\zeta_i  & = A_{ii}(y_i - m) + \vA_{-i,i}^T(\vy_{-i} - m \vone) \\
-& = A_{ii}[(y_i - m) - \vC^T_{-i,i} \mC_{-i,-i}^{-1} (\vy_{-i} -m \vone)] \\
-& = A_{ii}(y_i - \widetilde{y}_i).
+\zeta_i  & = a_{ii}(y_i - m) + \vA_{-i,i}^T(\vy_{-i} - m \vone) \\
+& = a_{ii}[(y_i - m) - \vC^T_{-i,i} \mC_{-i,-i}^{-1} (\vy_{-i} -m \vone)] \\
+& = a_{ii}(y_i - \widetilde{y}_i).
 \end{align*}
 Thus, \eqref{FJH:eq:CVA} may be re-written as 
-\begin{equation} \label{FJH:eq:CVA}
-\textup{CV} = \sum_{i=1}^n \left(\frac{\zeta_i}{A_{ii}} \right)^2, \qquad \vzeta = \mC^{-1}(\vy - m \vone)
-\end{equation}
-Wahba recommended a generalized cross-validation criterion, which replaces the $i^{\text{th}}$ diagonal element of $\mA$ in the denominator with the average diagonal element of $\mA$:
-\begin{equation} \label{FJH:eq:CVA}
-\textup{GCV} 
-= \frac{\sum_{i=1}^n\zeta_i^2}{\left(\frac 1n \sum_{i=1}^n A_{ii} \right)^2} 
-= \frac{(\vy - m\vone)^T \mC^{-2} (\vy - m \vone)}{\left(\frac 1n \trace(\mC^{-1}) \right)^2}.
-\end{equation}
+\begin{equation*} %\label{FJH:eq:CVB}
+\textup{CV} = \sum_{i=1}^n \left(\frac{\zeta_i}{a_{ii}} \right)^2, \qquad \vzeta = \mC^{-1}(\vy - m \vone).
+\end{equation*}
+Wahba \ref{} recommended a generalized cross-validation criterion, which replaces the $i^{\text{th}}$ diagonal element of $\mA$ in the denominator with the average diagonal element of $\mA$:
+\begin{align} 
+\nonumber
+\textup{GCV} &
+= \frac{\sum_{i=1}^n\zeta_i^2}{\left(\frac 1n \sum_{i=1}^n A_{ii} \right)^2} \\
+\label{FJH:eq:GCV}
+& = \frac{(\vy - m\vone)^T \mC^{-2} (\vy - m \vone)}{\left(\frac 1n \trace(\mC^{-1}) \right)^2}.
+\end{align}
 
-The loss function $GCV$ depends on $m$ and $\vtheta$, but not on $s$.  Minimizing it yields
-\begin{gather}
+The loss function $GCV$ depends on $m$ and $\vtheta$, but not on $s$.  Minimizing the GCV  yields
+\begin{equation}
 m_{\textup{GCV}} = \frac{\vone^T \mC^{-2} \vy}{\vone^T \mC^{-2} \vone},\\ 
-\vtheta_{\textup{GCV}} = \argmin_\vtheta \log \left (  \vy^T \left[\mC^{-2} - \frac{\mC^{-2} \vone \vone^T \mC^{-2}}{\vone^T \mC^{-2} \vone}  \right] \vy \right ) - 2 \log \left ( \trace(\mC^{-1}) \right )
-\end{gather}
-
+\end{equation}
+\begin{multline}
+\vtheta_{\textup{GCV}} = \argmin_\vtheta \log \left (  \vy^T \left[\mC^{-2} - \frac{\mC^{-2} \vone \vone^T \mC^{-2}}{\vone^T \mC^{-2} \vone}  \right] \vy \right ) \\
+- 2 \log \left ( \trace(\mC^{-1}) \right ).
+\end{multline}
+Plugging this value of $m$ into \eqref{eqn:BayesCub} yields
+\begin{equation}
+\label{eqn:muCV}
+\widehat{\mu}_{\textup{GCV}}
+= \left(\frac{(1 - \vone^T  \mC^{-1}\vc) \mC^{-1} \vone}{\vone^T \mC^{-2} \vone} + \vc \right)^T \mC^{-1} \vy.
+\end{equation}
 
 
 
@@ -583,23 +577,25 @@ Where the suffix $n$ is used to imply the number of integrand-samples used. In e
 
 The following pseudo-code briefly explains the working of the automatic cubature algorithm.
 \begin{algorithm}[H]
-\caption{}\label{algorithm1}
+\caption{Bayesian Cubature}\label{algorithm1}
   \begin{algorithmic}[1]
-    \Procedure{AutoCubature}{$f,\errtol$} \Comment{Integrate within the error tolerance}
-      \State $n_0 \gets 2^8$ \Comment{start with minimum number of points}
+  	\Require a generator for the sequence
+  	$\vx_1, \vx_2, \ldots$; a black-box function, $f$; an absolute error tolerance,
+  	$\varepsilon>0$; the initial sample size, $n_0$
+  	
       \State $n \gets n_0, \; n' \gets 0$
-      \While{true} \Comment{Iterate till error tolerance is met}
-        \State Generate $\{ \vx_i\}_{i=n' + 1}^{n}$ and sample $\{f(x_i)\}_{i=n'+1}^{n}$
+
+        \State Generate $\{ \vx_i\}_{i=n' + 1}^{n}$ and sample $\{f(\vx_i)\}_{i=n'+1}^{n}$
+        \State Compute $\vtheta$ by \eqref{}
         \State Compute error bound \emph{$\errn$ } \Comment{$\errn$ data driven error bound}
         \If{\emph{$\errn \leq \errtol$}}
 	        \textbf{break}
         \EndIf
         \State $n' \gets n, n\gets 2 \times n'$
-      \EndWhile
       \State Compute cubature weights $\{ w_i \}_{i=1}^{n}$
       \State Compute approximate integral  $\hmu_n$
       \State \textbf{return} $\hmu_n$ \Comment{Integral estimate $\hmu_n$}
-    \EndProcedure
+
   \end{algorithmic}
 \end{algorithm}
 
@@ -1997,88 +1993,55 @@ Finally, the function approximation is
 
 \section{Appendix}
 
-\subsection{Properties of Multivariate Normal Distributions}
-
-
-\begin{lemma} \label{thrm:condDist} If $\vY = (\vY_1, \vY_2)^T \sim \calN (\vm,\mC)$, where 
-	\begin{equation*}
-	\vm = \begin{pmatrix} \vm_1 \\ \vm_2 \end{pmatrix} = \begin{pmatrix} \Ex(\vY_1) \\ \Ex(\vY_2) \end{pmatrix}, \qquad 
+\begin{lemma} \label{thrm:condDist} If $\vY = (\vY_1, \vY_2)^T \sim \calN (\vm,\mC)$, where $\vY_1$ and $\vY_2$ are random vectors of arbitrary length, and 
+\begin{gather*}
+	\vm = \begin{pmatrix} \vm_1 \\ \vm_2 \end{pmatrix} = \begin{pmatrix} \Ex(\vY_1) \\ \Ex(\vY_2) \end{pmatrix}, \\
 	\mC = \begin{pmatrix}
 	\mC_{11} & \mC_{21}^T \\ 	\mC_{21} & \mC_{22}
 	\end{pmatrix} =
 	 \begin{pmatrix}
 	\var(\vY_{1}) & \cov(\vY_{1}, \vY_2) \\ 	\cov(\vY_2,\vY_{1}) & \var(\vY_{2})
 	\end{pmatrix} 
-	\end{equation*}
+	\end{gather*}
 	then 
-	\begin{equation*}
-	\vY_1 \vert \vY_2 \; \sim \; \calN \bigl(\vm_1 + \mC_{21}^T \mC_{22}^{-1}(\vY_2 - \vm_2), \; \mC_{11} - \mC_{21}^T \mC_{22}^{-1} \mC_{21} \bigr)
-	\end{equation*}
+	\begin{multline*}
+	\vY_1 \vert \vY_2 \; \sim \; \calN \bigl(\vm_1 + \mC_{21}^T \mC_{22}^{-1}(\vY_2 - \vm_2), \\ \mC_{11} - \mC_{21}^T \mC_{22}^{-1} \mC_{21} \bigr).
+	\end{multline*}
 	
 \end{lemma}
 
 \begin{proof}:
-Note that
+The inverse of the matrix $\mC$ may be partitioned as \cite{???}
 	\begin{gather*}
 	\mC^{-1} = \begin{pmatrix} \mA_{11} & \mA_{21}^T \\ \mA_{21} & \mA_{22} \end{pmatrix}, \\
 	\mA_{11} = (\mC_{11} - \mC_{12} \mC_{22}^{-1} \mC_{21})^{-1}, \qquad 
 	\mA_{21} = -  \mC_{22}^{-1} \mC_{21} \mA_{11}, \\ 
 	\mA_{22} = \mC_{22}^{-1} + \mC_{22}^{-1} \mC_{21} \mA_{11} \mC_{21}^T \mC_{22}^{-1}.
 	\end{gather*}
-%
-% Reference: https://stats.stackexchange.com/questions/30588/deriving-the-conditional-distributions-of-a-multivariate-normal-distribution
-%
-Let's denote the first partition $\vY_1$ and the second $\vY_2$. 
-Since $\vY_1$ and $\vY_2$ have a Gaussian distribution, the conditional distribution of $\vY_1 \vert \vY_2$ is also Gaussian. So, it is sufficient to prove 
-\begin{align*}
-\Ex(\vY_1 \vert \vY_2) = \vm_1 + \mC_{21}^T \mC_{22}^{-1}(\vy_2 - \vm_2)
-\\
-\var(\vY_1 \vert \vY_2) = \mC_{11} - \mC_{21}^T \mC_{22}^{-1} \mC_{21}.
-\end{align*}
+Since $\vY_1$ and $\vY_2$ have a Gaussian distribution, the conditional distribution of $\vY_1 \vert \vY_2$ is also Gaussian. So, it is sufficient to prove that $\Ex(\vY_1 \vert \vY_2)$ and $\cov(\vY_1 \vert \vY_2)$ are as hypothesized.
 
-
-Now define $z=\vY_1+ A \vY_2$ where $A=-\mC_{21}^T \mCInv_{22}$. We can write
+Define $\vZ=\vY_1- \mB \vY_2$ where $\mB=\mC_{21}^T \mCInv_{22}$. Note that $\Ex(\vZ) = \vm_1 - \mB \vm_2$.  Elementary calculations establish that $\vZ$ and $\vY_2$ are uncorrelated and therefore independent.   Therefore it follows that the conditional mean is
 \begin{align*}
-\cov(z,\vY_2) &= \mC_{21}^T + \cov(A\vY_2,\vY_2)
+\Ex(\vY_1 \vert \vY_2) &= \Ex(\vZ + \mB \vY_2 \vert \vY_2) 
+\\ & = \Ex(\vZ \vert \vY_2) + \Ex(\mB \vY_2 \vert \vY_2) 
+= \Ex(\vZ) + \mB\vY_2 
 \\
-&=\mC_{21}^T + A \; \var(\vY_2)
-\\
-&=\mC_{21}^T-\mC_{21}^T\mCInv_{22}\mC_{22}=0
+& = \vm_1 + \mB (\vY_2 - \vm_2) \\
+& =  \vm_1+ \mC_{21}^T \mCInv_{22}(\vY_2 - \vm_2)
 \end{align*}
-Therefore $z$ and $\vY_2$ are uncorrelated and, since they are jointly normal, they are independent. Now, clearly $\Ex(z) = m_1 + A m_2$, therefore it follows that
+Likewise the conditional covariance is 
 \begin{align*}
-\Ex(\vY_1 \vert \vY_2) &= \Ex(z - A \vY_2 \vert \vY_2) 
+\cov(\vY_1|\vY_2) &=\cov(\vZ + \mB \vY_2|\vY_2) \\
+& =\cov(\vZ) = \var(\vY_1 - \mB \vY_2)
 \\
-& = \Ex(z \vert \vY_2) - \Ex(A \vY_2 \vert \vY_2) 
-= \Ex(z)-A\vY_2 
-\\
-& = m_1 + A (m_2-\vY_2)=  m_1+ \mC_{21}^T \mCInv_{22}(\vY_2 - m_2)
-\end{align*}
-which proves the mean $\Ex(\vY_1 \vert \vY_2)$. For the covariance matrix, note that
-\begin{align*}
-\var(\vY_1|\vY_2) &=\var(z - A\vY_2|\vY_2)
-\\
-& =\var(z|\vY_2)+\var(A\vY_2|\vY_2) - A \cov(z, \vY_2) - \cov(z, \vY_2)A^T
-\\
-& =\var(z|\vY_2)
-\\
-&=\var(z)
-\end{align*}
-So, it is enough to show:
-\begin{align*}
-\var(\vY_1|\vY_2) & =\var(z) =\var(\vY_1+A\vY_2)
-\\
- & =\var(\vY_1)+A\var(\vY_2)A^T + A \cov(\vY_1,\vY_2) + \cov(\vY_2,\vY_1)A^T
+ & =\cov(\vY_1)+\mB\cov(\vY_2)\mB^T \\
+ & \qquad  \qquad  - 2  \cov(\vY_1,\vY_2) \mB^T
 \\
 &=\mC_{11}+\mC_{21}^T\mC_{22}^{-1}\mC_{22}\mC_{22}^{-1}\mC_{21}-2\mC_{21}^T\mC_{22}^{-1}\mC_{21}
 \\
-&=\mC_{11}+\mC_{21}^T\mC_{22}^{-1}\mC_{21}-2\mC_{21}^T\mC_{22}^{-1}\mC_{21}
-\\
-&=\mC_{11}-\mC_{21}^T\mC_{22}^{-1}\mC_{21}
+&=\mC_{11}-\mC_{21}^T\mC_{22}^{-1}\mC_{21}.
 \end{align*}
-which proves the variance.
-
-
+This completes the proof. \qed
 \end{proof}
 
 

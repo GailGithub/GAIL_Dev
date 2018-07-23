@@ -38,10 +38,6 @@ Genz, A.: Comparison of methods for the computation of multivariate normal
   probabilities.
 \newblock Computing Science and Statistics \textbf{25}, 400 -- 405 (1993)
 
-\bibitem{Fred2017}
-Hickernell, F.J.: Error analysis for quasi-monte carlo methods.
-\newblock arXiv:1702.01487 [math.NA]  (2017)
-
 \bibitem{Hic17a}
 \HickernellFJ, F.J.: The trio identity for quasi-{M}onte {C}arlo error
   analysis.
