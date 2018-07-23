@@ -303,7 +303,7 @@ c_0 &= \int_{[0,1]^{2d}} C_\vtheta(\vx,\vt) \, \dif{\vx} \, \dif{\vt}, \\
 \cov(\vf, \mu) &= \left(  \int_{[0,1]^d} C(\vt,\vx_i) \, \D \vt \right)_{i=1}^n  =: \vc.
 \end{align}
 \end{subequations}
-Therefore,  it follows from Lemma \ref{thrm:condDist} in the Appendix that the \emph{conditional} distribution of the integral given the observed function values, $\vf = \vy$ is also Gaussian:
+Therefore,  it follows from \cite{RasWil06a} Appendix A.2 Gaussian Identities that the \emph{conditional} distribution of the integral given observed function values, $\vf = \vy$ is also Gaussian:
 \begin{multline} \label{eqn:condInteg}
 \mu | (\vf = \vy) \sim \calN \bigl(m (1 - \vc^T \mC^{-1} \vone)  + \vc^T \mC^{-1} \vy, 
 \\
@@ -400,8 +400,6 @@ Under these estimates of the parameters, the cubature \eqref{eqn:BayesCub} and t
 |\mu-\hmu_\MLE| \leq \err_\MLE \right]  = 99\%.
 \end{equation}
 Here $c_0$, $\vc$, and $\mC$ are assumed implicitly to be based on $\vtheta = \vtheta_\MLE$.
-
-
 
 \subsubsection{Full Bayes}
 
@@ -550,31 +548,6 @@ Once the stopping criterion is met, the approximation of $\mu$ can be computed:
 Where the suffix $n$ is used to imply the number of integrand-samples used. In every iteration of the \emph{automatic cubature algorithm (\ref{algorithm1})}, we only need to numerically estimate the MLE of $\vtheta$ and then use it to compute $\mC$ and $\errn$. 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 The following pseudo-code briefly explains the working of the automatic cubature algorithm.
 \begin{algorithm}[H]
 \caption{Bayesian Cubature}\label{algorithm1}
@@ -603,23 +576,6 @@ As shown, the algorithm continues the iteration loop till the stopping-criterion
 At the end of every iteration, if the computed error bound  $\errn$ is higher than the required $\errtol$, algorithm doubles the number of points $n$ and repeats. When the error tolerance $\errtol$ is met, exits the loop. Finally using the $n$ and the MLE estimated parameters, computes the $\hmu_n$.
 
 Accurately computing the data-driven error bound $\errn$ which closely matches the true error is essential for the effectiveness of our algorithm. So, accurate and faster computation of $\errn$ and $\hmu_n$ are the main objective of the following sections.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 \subsection{Example with Matern kernel}
@@ -943,51 +899,53 @@ Moreover the choice of kernel or any MLE estimated parameters do not affect the 
 \subsubsection{Full Bayes}
 
 Generalized cross validation criterion:
-\begin{gather}
-\nonumber
-\vtheta_{\textup{GCV}} 
-%= \argmin_\vtheta \log \left (  \vy^T \left[\mC^{-2} - \frac{\mC^{-2} \vone \vone^T \mC^{-2}}{\vone^T \mC^{-2} \vone}  \right] \vy \right ) -2 \log \left ( \trace(\mC^{-1}) \right ) \\
-= \argmin_\vtheta \left[ \log \left ( \frac 1n \sum_{i=1}^n \frac{\abs{\widehat{y}_i}^2}{\lambda_i^2} - 
+\begin{align*}
+{\vtheta_{\textup{GCV}} }
+%= \argmin_\vtheta \log \left (  \vy^T \left[\mC^{-2} - \frac{\mC^{-2} \vone \vone^T \mC^{-2}}{\vone^T \mC^{-2} \vone}  \right] \vy \right ) -2 \log \left ( \trace(\mC^{-1}) \right ) 
+&= \argmin_\vtheta \biggl[ \log \left ( \frac 1n \sum_{i=1}^n \frac{\abs{\widehat{y}_i}^2}{\lambda_i^2} - 
 \frac{\widehat{y}_1^2/\lambda_1^4}{n/\lambda^2_1}
-\right) -2\log\left( \sum_{i=1}^n \frac{1}{\lambda_i} \right)
-\right]
+\right) 
 \\
-= \argmin_\vtheta \left[ \log \left ( \frac 1n \sum_{i=2}^n \frac{\abs{\widehat{y}_i}^2}{\lambda_i^2} 
+& \qquad \qquad \qquad - 2\log\left( \sum_{i=1}^n \frac{1}{\lambda_i} \right)
+\biggr]
+\\
+&= \argmin_\vtheta \left[ \log \left ( \frac 1n \sum_{i=2}^n \frac{\abs{\widehat{y}_i}^2}{\lambda_i^2} 
 \right) -2\log\left( \sum_{i=1}^n \frac{1}{\lambda_i} \right)
 \right]
-\end{gather}
+\end{align*}
 
 The cubature rule:
-\begin{multline}\label{FJH:eq:cubFull}
-\widehat{\mu}_{\textup{full}}  \vert ( \vf = \vy) = \left[\frac{(1 -  \vc^T \mC^{-1}\vone)\vone^T}{\vone^T \mC^{-1} \vone} + \vc^T \right] \mC^{-1}  \vy 
+\begin{align}\label{FJH:eq:cubFull}
+\nonumber
+\widehat{\mu}_{\textup{full}}  \vert ( \vf = \vy) &= \left[\frac{(1 -  \vc^T \mC^{-1}\vone)\vone^T}{\vone^T \mC^{-1} \vone} + \vc^T \right] \mC^{-1}  \vy 
 \\
-= 
+& = 
  \frac{\widehat{y}_1}{n} +
  \frac 1n \sum_{i=2}^n \frac{ \widehat{c}_i \widehat{y}_i^*}{\lambda_i},
-\end{multline}
-\begin{multline} %\label{FJH:eq:signmaFull}
-\widehat{\sigma}^2_{\textup{full}}  \vert ( \vf = \vy)  
-= \frac{1}{n-1}
-\left[\frac{(1 - \vc^T \mC^{-1} \vone)^2}{\vone^T \mC^{-1} \vone} + (c_0  -\vc ^T \mC^{-1} \vc) \right] 
-\\
-\nonumber
-\qquad \times \quad \vy^T\left[ \mC^{-1} 
+\end{align}
+\begin{multline*} %\label{FJH:eq:signmaFull}
+\widehat{\sigma}^2_{\textup{full}}  \vert ( \vf = \vy) \\
+ = \frac{1}{n-1} 
+\vy^T\left[ \mC^{-1} 
 - \frac{ \mC^{-1} \vone\vone^T \mC^{-1}}{\vone^T \mC^{-1} \vone}  \right]\vy 
-\\ \nonumber
-=
-\frac{1}{n-1} \left[\frac{\lambda_1}{n}{\left(1 - \frac{\widehat{c}_1}{\lambda_1}\right)^2} + (c_0  - \frac 1n \sum_{i=1}^n \frac{\abs{\widehat{c}_i}^2}{\lambda_i}) \right] 
+\\
+\qquad \qquad \times 
+\biggl[\frac{(1 - \vc^T \mC^{-1} \vone)^2}{\vone^T \mC^{-1} \vone} 
+ + (c_0  -\vc ^T \mC^{-1} \vc) \biggr] 
+\\
+ =
+\frac{1}{n-1} \frac{1}{n} \sum_{i=2}^n \frac{\abs{\widehat{y_i}}^2}{\lambda_i}
+\\
 \times
-\frac{1}{n} \sum_{i=2}^n \frac{\abs{\widehat{y_i}}^2}{\lambda_i}
-\end{multline}
+\left[\frac{\lambda_1}{n}{\left(1 - \frac{\widehat{c}_1}{\lambda_1}\right)^2} + \left(c_0  - \frac 1n \sum_{i=1}^n \frac{\abs{\widehat{c}_i}^2}{\lambda_i}\right) \right] 
+\end{multline*}
 
 The stopping criterion for the full Bayes case,  
 \begin{multline} \label{FJH:eq:stopcritHyper}
 n  = \min \biggl \{n_j \in \posIntegers:  
-\frac {t_{n_j-1,0.995}^2}{n_j(n_j - 1)} 
+\frac {t_{n_j-1,0.995}^2}{n_j(n_j - 1)} \sum_{i=2}^n \frac{\abs{\widehat{y_i}}^2}{\lambda_i} 
 \\ \times
-\left[\frac{\lambda_1}{n_j}{\left(1 - \frac{\widehat{c}_1}{\lambda_1}\right)^2} + (c_0  - \frac{1}{n_j} \sum_{i=1}^n \frac{\abs{\widehat{c}_i}^2}{\lambda_i}) \right] 
-\times 
-\sum_{i=2}^n \frac{\abs{\widehat{y_i}}^2}{\lambda_i} 
+\left[\frac{\lambda_1}{n_j}{\left(1 - \frac{\widehat{c}_1}{\lambda_1}\right)^2} + \left(c_0  - \frac{1}{n_j} \sum_{i=1}^n \frac{\abs{\widehat{c}_i}^2}{\lambda_i}\right) \right] 
 \le \varepsilon^2 \biggr\}.
 \end{multline}
 
@@ -1078,7 +1036,6 @@ Its dual lattice is defined as:
 \end{align*}
 
 
-
 \begin{figure}[htp]
 \centering
     \includegraphics[height=5cm]{ShiftedLatticePoints}
@@ -1086,48 +1043,24 @@ Its dual lattice is defined as:
 \end{figure}
 
 
-
-
-
-
 With lattice points, the kernel is written as:
-\[
+\begin{align*}
 C(\vx_i, \vx_j)
- =
+ &=
 \sum_{\vk \in \mathbb{Z}^d} \alpha_{\vk}  
 e^{ 2 \pi\sqrt{-1} \vk^T  \frac{\bm{h} i}{n}}
 e^{-2 \pi\sqrt{-1} \vk^T  \frac{\bm{h} j}{n}}
-\]
-\[
- =
+\\
+ &=
 \sum_{\vk \in \mathbb{Z}^d} \alpha_{\vk}  
 e^{2 \pi\sqrt{-1} \vk^T \bm{h} \frac{(i-j)}{n}}
-\]
+\end{align*}
 Please note that `$\mod 1$' need not be used explicitly in $C(\vx_i, \vx_j)$ since 
 $
 e^{\pm 2 \pi \sqrt{-1}} = 1
 $. 
 The kernel (\ref{bayes_SI_kernel}), when used with Rank-1 Lattice points, leads to symmetric and circulant Gram matrix $\mC$.
 We can demonstrate the resulting Gram matrix satisfies the conditions of a fast transform. 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 \subsection{Computing the kernel using Bernoulli polynomials}
@@ -1152,10 +1085,10 @@ Our goal is to replace the infinite sum of the kernel using Bernoulli polynomial
 For 1-D $(d=1)$ rewriting (\ref{dlmf_bernoulli_24_8_3}):
 \begin{multline*}
 \sum_{k \neq 0, k=-\infty}^\infty \frac{e^{2\pi\sqrt{-1} k |x|}}{ (\frac{k}{\theta})^{r}}
+\\
 =
 -{\theta^r} B_{r}(|x|) \frac{(2 \pi \sqrt{-1})^{r}}{r!}
-\\
-\text{for} \; -1 \leq x \leq 1
+\; \text{for} \; -1 \leq x \leq 1
 \end{multline*}
 Comparing this expansion with (\ref{bayes_SI_kernel}), one can deduce, for $d=1$:
 \[
@@ -1188,7 +1121,7 @@ C_\vtheta(\vx, \vt) =
 \end{multline}
 where $\vtheta \in (0,1]^d$ is the {shape parameter}, `$r$' is the order of the Bernoulli polynomial $B_{r}$.
 
-We call \eqref{the_kernel_eqn_bernoulli} a Fourier kernel as the resulting Fast transform is Fast Fourier transform. Plots of this kernel in $d=2$ is shown in \figref{fig:Fourier_kernel}.
+We call \eqref{the_kernel_eqn_bernoulli} a Fourier kernel as the resulting Fast transform is the \emph{Fast Fourier transform} (FFT). Plots of this kernel in $d=2$ is shown in \figref{fig:Fourier_kernel}.
 
 
 
@@ -1233,7 +1166,7 @@ The kernel's Gram matrix $\mC$ is circulant. It is generated by the vector:
 )^T =: \vC_1,
 \end{equation}
 Which is the first row or column of $\mC$ (since it is a symmetric matrix).  By the properties of circulant matrix, the normalized eigenvectors are:
-\begin{align*}
+\begin{multline*}
 %\label{eqn_eig_vectors_of_mC}
 \left(
 1, 
@@ -1241,16 +1174,14 @@ e^{- 2 \pi \sqrt{-1} \frac{j}{n}},
 e^{- 2 \pi \sqrt{-1} \frac{2j}{n}}
 ,...,
 e^{- 2 \pi \sqrt{-1} \frac{j(n-1)}{n}}  
-\right)^T, \quad \text{for} \;
+\right)^T, \\ \text{for} \;
 j=0,1,...,n-1 .
-\end{align*}
+\end{multline*}
 
 The matrix constructed with these eigenvectors is: 
 \begin{align*}
-\mV  &:= \left(e^{- 2 \pi \sqrt{-1} \frac{i j}{n}} \right)_{i,j=0}^{n-1},
-\\
-\text{Whereas}, \quad
-\mV^H &:= \frac{1}{n} \left(e^{ 2 \pi \sqrt{-1} \frac{i j}{n}} \right)_{i,j=0}^{n-1},
+\mV  := \left(e^{- 2 \pi \sqrt{-1} \frac{i j}{n}} \right)_{i,j=0}^{n-1},\;
+\mV^H := \frac{1}{n} \left(e^{ 2 \pi \sqrt{-1} \frac{i j}{n}} \right)_{i,j=0}^{n-1},
 \end{align*}
 Where the first column of $\mV$, $\vV_1 = \vone$.
 The columns of $\mV$ are complex exponential vectors independent of the kernel values. But their corresponding eigenvalues are:
@@ -1485,11 +1416,11 @@ Let's recollect the definition of the shift invariant kernel:
 \begin{align*}
 C(\vx_i, \vx_j) = \prod_{k=1}^d \left[1 + \theta B(\{x_{i_k} - x_{j_k}\}) \right].
 \end{align*}
-Let's define:
+Let's define the modified kernel:
 \begin{align*}
-\text{modified kernel} \quad \widetilde{C}(\vx_i, \vx_j) &= C(\vx_i, \vx_j) - 1,
+\widetilde{C}(\vx_i, \vx_j) &:= C(\vx_i, \vx_j) - 1,
 \\
-\text{Gram matrix} \quad \tmC &= \mC - \vone \vone^T,
+\text{Then Its Gram matrix:} \quad \tmC &= \mC - \vone \vone^T,
 \end{align*}
 Let $(\lambda_1, ..., \lambda_n)$ be the eigenvalues of $\mC$. Similarly let $(\tlambda_1, ..., \tlambda_n)$ be the eigenvalues of $\tmC$. As per the definition of the Gram matrix $\mC$, the eigenvector corresponding to $\lambda_1$ is a vector one $\vone$. 
 Then:
@@ -1592,9 +1523,9 @@ Then,
 \end{array}
 \right),
 \end{align*}
-And,
+Let $\vf' = \frac{1}{\sqrt{n}} \mLambda^{-\frac 12} \mV^H \vf$,
 \begin{align*}
-\cov \left[ \frac{1}{\sqrt{n}} \mLambda^{-\frac 12} \mV^H \vf  \right]
+\cov \left[ \vf'  \right]
 &=
 \frac{1}{n} \Ex\left[  
 \mLambda^{-\frac 12} \mV^H (\vf - m \vone)
@@ -1612,25 +1543,37 @@ And,
 \\
 & = \mathsf{I}
 \end{align*}
-
-Let $\vf' = \frac{1}{\sqrt{n}} \mLambda^{-\frac 12} \mV^H \vf$,
+Thus
 \begin{align*}
 \vf' \sim \calN \left( 
 m' \bm{e}_1,
-\mathsf{1}
+\mathsf{I}
 \right),
 \end{align*}
 Where $m' = m \sqrt{\frac{n}{\lambda_1}} $.
-If we can verify the sample distribution of $\vf'$ is approximately $\calN\left( m' \bm{e}_1, \mathsf{1} \right)$ by using Normal plots , could validate our assumption.
+If we can verify the sample distribution of $\vf'$ is approximately $\calN\left( m' \bm{e}_1, \mathsf{I} \right)$ by using Normal plots, could validate our assumption.
+
+We plotted the Normal plots of $\vf'$ for Keister and Multivariate Normal functions as shown in \figref{fig:mvn-normplot} and \figref{fig:keister-normplot}. These plots show the transformed $\vf'$ follows approximately standard normal with a constant mean.
 
 
 
 
+\begin{figure}
+	\centering
+	\includegraphics[width=0.9\linewidth]{"figures/arbMean/Keister/C1sin/Keister Normplot d_2 bernoulli_2 Period_C1sin n_32768"}
+	\caption{Normal plot : Keister function with arbMean assumption}
+	\label{fig:keister-normplot}
+\end{figure}
 
 
 
 
-
+\begin{figure}
+	\centering
+	\includegraphics[width=0.9\linewidth]{"figures/arbMean/MVN/C1sin/MVN Normplot d_2 bernoulli_2 Period_C1sin n_32768"}
+	\caption{Normal plot : MVN with arbMean assumption}
+	\label{fig:mvn-normplot}
+\end{figure}
 
 
 
@@ -1766,28 +1709,35 @@ We use the Genz's method to compute Multivariate normal probability as explained
 
 where $\mSigma= \mL \mL^T$ is the Cholesky decomposition of the covariance matrix, $\mL = (l_{jk})_{j,k=1}^d$ is a lower triangular matrix, and
 
-\begin{align*}
-\valpha_1 &= \Phi(a_1), \quad \vbeta_1 = \Phi(b_1)
+\begin{multline*}
+\valpha_1 = \Phi(a_1), \qquad \vbeta_1 = \Phi(b_1)
 \\
-\valpha_j(x_1,...,x_{j-1}) &= \Phi
+\valpha_j(x_1,...,x_{j-1}) = 
+\\
+\Phi
 \left(
 \frac{1}{l_{jj}} 
 \left(
 a_j - \sum_{k=1}^{j-1} l_{jk} \Phi^{-1}(\valpha_k + x_k(\vbeta_k-\valpha_k))
 \right)
-\right), j=2,...,d,
+\right), 
 \\
-\vbeta_j(x_1,...,x_{j-1}) &= \Phi
+\qquad \qquad \qquad j=2,...,d,
+\\
+\vbeta_j(x_1,...,x_{j-1}) = 
+\\
+\Phi
 \left(
 \frac{1}{l_{jj}} 
 \left(
 b_j - \sum_{k=1}^{j-1} l_{jk} \Phi^{-1}(\valpha_k + x_k(\vbeta_k-\valpha_k))
 \right)
-\right), j=2,...,d,
+\right), 
 \\
+\qquad \qquad \qquad j=2,...,d,
 \\
-f_{\text{Genz}}(\vx) &= \prod_{j=1}^d [\vbeta_j(\vx) - \valpha_j(\vx)]
-\end{align*}
+f_{\text{Genz}}(\vx) = \prod_{j=1}^d [\vbeta_j(\vx) - \valpha_j(\vx)]. \hspace{12ex}
+\end{multline*}
 
 As we see from the figure, Genz function is not periodic, So we need to make it periodic to get the best accuracy with Bayesian cubature.
 
@@ -1838,15 +1788,11 @@ d=3
 
 \item Option pricing
 
-
-The price of financial derivatives can often be modeled by high dimensional integrals. If the underlying asset is described in terms of a Brownian motion, B, at time $t_1,...,t_d$, then $Z = (B(t_1), ..., B(t_d)) \sim \calN(\vzero,\mSigma)$, where $\mSigma = \left(\min(t_j,t_k) \right)_{j,k=1}^d$, and the fair price of the option is
-
+The price of financial derivatives can often be modeled by high dimensional integrals. If the underlying asset is described in terms of a Brownian motion, B, at time $t_1,...,t_d$, then $Z = (B(t_1), ..., B(t_d)) \sim \calN(\vzero,\mSigma)$, where $\mSigma = \left(\min(t_j,t_k) \right)_{j,k=1}^d$, and the fair price of the option is:
 \begin{align*}
 \mu = \int_{\reals^d} \text{payoff}(\vz) \frac{\exp(\frac 12 \vz^T\mSigma^{-1}\vz)}{\sqrt{(2\pi)^d \det(\mSigma)}} \dvz = \int_{[0,1]^d} f(\vx) \dvx
 \end{align*}
-where the function payoff(.) describes the discounted payoff of the option,
-
-
+where the function {payoff(.)} defines the discounted payoff of the option,
 \begin{align*}
 f(\vx) = \text{payoff}(\vz), & \quad \vz = \mL 
 \begin{pmatrix}
@@ -1855,12 +1801,10 @@ f(\vx) = \text{payoff}(\vz), & \quad \vz = \mL
 \end{align*}
 and $\mL$ is any square matrix satisfying $\mSigma = \mL \mL^T$.
 
-For the Asian arithmetic mean call option
-
+For the Asian arithmetic mean call option:
 \begin{multline*}
-\text{payoff}(\vz) = \max\left( \frac 1d  \sum_{j=1}^d S_j - K, 0 \right) e^{-r t}, \\ \text{where} \;
-S_j = S_0 \exp((r-\sigma^2/2)t_j + \sigma z_j ),
-\end{multline*}
+\text{payoff}(\vz) = \max\left( \frac 1d  \sum_{j=1}^d S_j - K, 0 \right) e^{-r t}, \end{multline*}
+Where $S_j = S_0 \exp((r-\sigma^2/2)t_j + \sigma z_j$, 
 $d$ - number of dimensions and $T, S, S_0, K, r, \sigma$ are the parameters to be specified.
 
 
@@ -1884,32 +1828,23 @@ $d$ - number of dimensions and $T, S, S_0, K, r, \sigma$ are the parameters to b
 We tested our cubature to integrate the above specified functions. The following plots summarize the results. We used a random shift of $\delta \sim \mathcal{U}[0,1]^d$ to randomly shift the rank-1 Lattice points. This provides randomness in the cubature's behavior. Then we run the cubature for 100 times and take the mean of it as the final result. We integrated with the error thresholds $\varepsilon \in \{1E-2, 1E-3, 1E-4, 1E-5\}$. We use $\frac{\abs{\mu - \hmu}}{\varepsilon}$ as x-axis so that a single plot can include all these $\varepsilon$.
 
 
-
 \begin{figure}
 	\centering
-	\includegraphics[width=0.95\linewidth]{"figures/Keister guaranteed 20-Jul-2018 20-54-43"}
-	\caption[Guaranteed:]{Keister function integrated within the given threshold $\varepsilon$ and finite time}
-	\label{fig:keister-guaranteed}
+	\includegraphics[width=0.95\linewidth]{"figures/Exp(cos) guaranteed time 19-Jul-2018 08-14-22"}
+	\caption[Guaranteed:]{Exp(Cos) integrated within $\varepsilon$ and finite time}
+	\label{fig:expcos-guaranteed-time}
 \end{figure}
-
-
-
 \begin{figure}
 	\centering
-	\includegraphics[width=0.95\linewidth]{"figures/MVN guaranteed 19-Jul-2018 00-01-41"}
-	\caption[Guaranteed:]{MVN integrated within the given threshold $\varepsilon$ and finite time}
-	\label{fig:MVN-guaranteed}
+	\includegraphics[width=0.95\linewidth]{"figures/Keister guaranteed time 20-Jul-2018 20-54-43"}
+	\caption[Guaranteed:]{Keister function integrated within $\varepsilon$ and finite time}
+	\label{fig:keister-guaranteed-time}
 \end{figure}
-
-
-
-
-
 \begin{figure}
 	\centering
-	\includegraphics[width=0.95\linewidth]{"figures/Exp(cos) guaranteed 19-Jul-2018 08-14-22"}
-	\caption[Guaranteed:]{Exp(Cos) integrated within the given threshold $\varepsilon$ and finite time}
-	\label{fig:ExpCos-guaranteed}
+	\includegraphics[width=0.95\linewidth]{"figures/MVN guaranteed time 19-Jul-2018 00-01-41"}
+	\caption[Guaranteed:]{MVN integrated within $\varepsilon$ and finite time}
+	\label{fig:mvn-guaranteed-time}
 \end{figure}
 
 
@@ -1917,9 +1852,28 @@ We tested our cubature to integrate the above specified functions. The following
 
 
 
+\begin{figure}
+	\centering
+	\includegraphics[width=0.95\linewidth]{"figures/Exp(cos) guaranteed npts 19-Jul-2018 08-14-22"}
+	\caption[Exp(Cos) guaranteed : Number of samples]{Exp(Cos) integrated within $\varepsilon$ using finite number of samples}
+	\label{fig:expcos-guaranteed-npts}
+\end{figure}
+\begin{figure}
+	\centering
+	\includegraphics[width=0.95\linewidth]{"figures/Keister guaranteed npts 20-Jul-2018 20-54-43"}
+	\caption[Keister guaranteed: Num sample]{Keister integrated within $\varepsilon$ using finite number of samples}
+	\label{fig:keister-guaranteed-npts}
+\end{figure}
+\begin{figure}
+	\centering
+	\includegraphics[width=0.95\linewidth]{"figures/MVN guaranteed npts 19-Jul-2018 00-01-41"}
+	\caption[MVN guaranteed : Number of sample]{MVN integrated within $\varepsilon$ using finite number of samples}
+	\label{fig:mvn-guaranteed-npts}
+\end{figure}
 
 
-
+The figures \figref{fig:expcos-guaranteed-time}, \figref{fig:keister-guaranteed-time} and \figref{fig:mvn-guaranteed-time} show the integration done in a finite time within the error tolerance $\varepsilon$. 
+Similarly, the figures \figref{fig:expcos-guaranteed-npts}, \figref{fig:keister-guaranteed-npts} and \figref{fig:mvn-guaranteed-npts} show the integration done using a finite number of samples within the error tolerance $\varepsilon$.
 
 
 \section{Conclusion}
@@ -1993,6 +1947,10 @@ Finally, the function approximation is
 
 \section{Appendix}
 
+\iffalse
+\subsection{Properties of Multivariate Normal Distributions}
+
+
 \begin{lemma} \label{thrm:condDist} If $\vY = (\vY_1, \vY_2)^T \sim \calN (\vm,\mC)$, where $\vY_1$ and $\vY_2$ are random vectors of arbitrary length, and 
 \begin{gather*}
 	\vm = \begin{pmatrix} \vm_1 \\ \vm_2 \end{pmatrix} = \begin{pmatrix} \Ex(\vY_1) \\ \Ex(\vY_2) \end{pmatrix}, \\
@@ -2045,7 +2003,7 @@ This completes the proof. \qed
 \end{proof}
 
 
-
+\fi
 
 
 
