@@ -1,7 +1,7 @@
-%CUBMLELATTICE Bayesian cubature method to estimate the integral
+%CUBBAYESLATTICE_G Bayesian cubature method to estimate the integral
 % of a random variable
 %
-%   OBJ = CUBMLELATTICE('f',f,'dim',dim,'absTol',absTol,'relTol',relTol,...
+%   OBJ = CUBBAYESLATTICE_G('f',f,'dim',dim,'absTol',absTol,'relTol',relTol,...
 %         'order',order, 'ptransform',ptransform, 'arbMean',arbMean);
 %   Initializes the object with the given parameters.
 %   Q = COMPINTEG(OBJ); estimates the integral of f over hyperbox [0,1]^d
@@ -45,7 +45,7 @@
 % Example 1:
 %
 % If no parameters are parsed, help text will show up as follows:
-% >> cubMLELattice_g
+% >> cubBayesLattice_g
 % ***Bayesian cubature method to estimate the integral ***
 %
 %
@@ -54,7 +54,7 @@
 % Estimate the integral with integrand f(x) = x.^2 over the interval
 % [0,1] with parameters: order=2, ptransform=Baker, abstol=0.01, relTol=0
 %
-% >> obj = cubMLELattice;
+% >> obj = cubBayesLattice_g;
 % >> exactInteg = 1.0/3;
 % >> muhat=compInteg(obj);
 % >> check = double(abs(exactInteg-muhat) < 0.01)
@@ -68,7 +68,7 @@
 % >> fun = @(x) exp(sum(cos(2*pi*x), 2));
 % >> dim=2; absTol=1e-3; relTol=1e-2; fName = 'ExpCos';
 % >> exactInteg = besseli(0,1)^dim;
-% >> obj=cubMLELattice('f',fun, 'dim',dim, 'absTol',absTol, 'relTol',relTol,...
+% >> obj=cubBayesLattice_g('f',fun, 'dim',dim, 'absTol',absTol, 'relTol',relTol,...
 % >>    'order',4, 'ptransform','C1sin');
 % >> muhat=compInteg(obj);
 % >> check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))
@@ -83,7 +83,7 @@
 % >> yinv = @(t)(erfcinv( replaceZeros(abs(t)) ));
 % >> f1 = @(t,dim) cos( sqrt( normsqd(yinv(t)) )) *(sqrt(pi))^dim;
 % >> fKeister = @(x) f1(x,dim); exactInteg = Keistertrue(dim);
-% >> obj=cubMLELattice('f',fKeister, 'dim',dim, 'absTol',absTol, 'relTol',relTol,...
+% >> obj=cubBayesLattice_g('f',fKeister, 'dim',dim, 'absTol',absTol, 'relTol',relTol,...
 % >>    'order',4, 'ptransform','C1','arbMean',false);
 % >> muhat=compInteg(obj);
 % >> check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))
@@ -104,7 +104,7 @@
 %
 
 
-classdef cubMLELattice < handle
+classdef cubBayesLattice_g < handle
   
   properties
     f = @(x) x.^2; %function to integrate
@@ -280,6 +280,7 @@ classdef cubMLELattice < handle
       out.absTol = obj.absTol;
       out.relTol = obj.relTol;
       out.shift = shift;
+      out.stopAtTol = obj.stopAtTol; 
       
       % convert from gpu memory to local
       muhat=gather(muhat);
