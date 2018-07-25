@@ -1,4 +1,4 @@
-function [muhat,out]=cubBayesLattice(f,d,absTol,relTol,order,arbMean)
+function [muhat,out]=cubBayesLatticeDeprecated(f,d,absTol,relTol,order,arbMean)
 %CUBMLE Monte Carlo method to estimate the mean of a random variable
 %
 %   tmu = cubMLELattice(f,absTol,relTol,alpha,nSig,inflate) estimates the mean,
