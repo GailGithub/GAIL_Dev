@@ -478,9 +478,9 @@ A third parameter optimization is \emph{leave-one-out cross-validation}.  Let $\
 Let $\mA = \mC^{-1}$, let $\vzeta = \mA (\vy - m \vone)$, and partition $\mC$, $\mA$, and $\vzeta$ as
 \begin{gather*}
 \mC = \begin{pmatrix} c_{ii}  & \vC_{-i,i}^T \\  \vC_{-i,i} & \mC_{-i,-i}\end{pmatrix}, \qquad
-\mA = \begin{pmatrix} a_{ii}  & \vA_{-i,i}^T \\  \vA_{-i,i} & \mA_{-i,-i}\end{pmatrix}, \\ \vzeta = \begin{pmatrix} \zeta_i   \\  \vzeta_{-i} \end{pmatrix}.
+\mA = \begin{pmatrix} a_{ii}  & \vA_{-i,i}^T \\  \vA_{-i,i} & \mA_{-i,-i}\end{pmatrix}, \\ \vzeta = \begin{pmatrix} \zeta_i   \\  \vzeta_{-i} \end{pmatrix},
 \end{gather*}
-Following this notation, Lemma \ref{thrm:condDist} implies that 
+where the subscript $i$ denotes the $i^{\text{th}}$ row or column, and the subscript $-i$ denotes all rows or columns except the $i^{\text{th}}$. Following this notation, Lemma \ref{thrm:condDist} implies that 
 \begin{align*}
 \widetilde{y}_i & = m + \vC^T_{-i,i} \mC_{-i,-i}^{-1} (\vy_{-i} -m \vone)  \\
 \zeta_i  & = a_{ii}(y_i - m) + \vA_{-i,i}^T(\vy_{-i} - m \vone) \\
@@ -491,7 +491,7 @@ Thus, \eqref{FJH:eq:CVA} may be re-written as
 \begin{equation*} %\label{FJH:eq:CVB}
 \textup{CV} = \sum_{i=1}^n \left(\frac{\zeta_i}{a_{ii}} \right)^2, \qquad \vzeta = \mC^{-1}(\vy - m \vone).
 \end{equation*}
-Wahba \ref{} recommended a generalized cross-validation criterion, which replaces the $i^{\text{th}}$ diagonal element of $\mA$ in the denominator with the average diagonal element of $\mA$:
+Wahba \ref{} recommended a generalized cross-validation criterion, which replaces the $i^{\text{th}}$ diagonal element of $\mA$ in the denominator by the average diagonal element of $\mA$:
 \begin{align} 
 \nonumber
 \textup{GCV} &
@@ -514,6 +514,16 @@ Plugging this value of $m$ into \eqref{eqn:BayesCub} yields
 \widehat{\mu}_{\textup{GCV}}
 = \left(\frac{(1 - \vone^T  \mC^{-1}\vc) \mC^{-1} \vone}{\vone^T \mC^{-2} \vone} + \vc \right)^T \mC^{-1} \vy.
 \end{equation}
+
+An estimate for $s$ may be obtained by noting that by Lemma \ref{thrm:condDist},
+\[
+\var[f(\vx_i ) | \vf_{-i} = \vy_{-i}] = s^2 a_{ii},
+\]
+Thus, we may estimate $s$ using a similar idea
+\begin{align}
+s^2 &= \frac{\var[f(\vx_i ) | \vf_{-i} = \vy_{-i}] }{a_{ii}} \\
+& \approx \frac 1n \sum_{i=1}^n (y_i - \widetilde{y}_i)^2
+\end{align}
 
 
 
@@ -1947,7 +1957,7 @@ Finally, the function approximation is
 
 \section{Appendix}
 
-\iffalse
+%\iffalse
 \subsection{Properties of Multivariate Normal Distributions}
 
 
@@ -2003,7 +2013,7 @@ This completes the proof. \qed
 \end{proof}
 
 
-\fi
+%\fi
 
 
 
