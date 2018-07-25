@@ -34,6 +34,8 @@
 %\usepackage[caption=false]{subfig}
 \usepackage{subcaption}
 \usepackage{booktabs, mathtools}
+\usepackage[dvipsnames]{xcolor}
+
 \captionsetup{compatibility=false}
 
 \algdef{SE}[DOWHILE]{Do}{doWhile}{\algorithmicdo}[1]{\algorithmicwhile\ #1}%
@@ -180,6 +182,12 @@
 % Insert the name of "your journal" with
 % \journalname{myjournal}
 %
+
+\newcommand{\FJHNote}[1]{{\textcolor{blue}{FJH: #1}}}
+\newcommand{\JRNote}[1]{{\textcolor{green}{JR: #1}}}
+
+
+
 \begin{document}
 \setlength\abovedisplayskip{1pt}
 \setlength{\belowdisplayskip}{1pt}
@@ -366,9 +374,7 @@ s^2_{\MLE}
 \right] \vy, \\
 \label{eqn:thetaMLE}
 \vtheta_\MLE
-&= 
-\argmin_{\vtheta}
-\biggl \{
+&= \argmin_{\vtheta} \biggl \{
  \frac{1}{n} \log(\det\, \mC) \\
  & \qquad + 
  \log\left(\vy^T 
@@ -386,7 +392,7 @@ Under these estimates of the parameters, the cubature \eqref{eqn:BayesCub} and t
 \left(
 \frac{ (1 - \vone^T  \mCInv\vc )  \vone }{ \vone^T \mCInv \vone}   +  \vc 
 \right)^T  \mCInv \vy, \\
-\nonumber 
+ \label{eqn:errMLE}
 \err_\MLE^2 & : = \frac{2.58^2}{n}
  \vy^T \left[ \mCInv - 
 \frac{ \mCInv \vone \vone^T \mCInv }{\vone^T\mCInv \vone}
@@ -469,7 +475,7 @@ Here $t_{n-1,0.995}$ denotes the $99.5$ percentile of a standard Student's $t$-d
 Because the shape parameter, $\vtheta$, enters the definition of the covariance kernel in a non-trivial way, the only way to treat it as a hyperparameter and assign a tractable prior would be for the prior to be discrete.  We believe in practice that choosing such a prior involves more guesswork than using the empirical Bayes estimate of $\vtheta$ in \eqref{eqn:thetaMLE} or the cross-validation approached described next.
 
 
-\subsubsection{Cross-validation} 
+\subsubsection{Generalized Cross-validation} 
 A third parameter optimization is \emph{leave-one-out cross-validation}.  Let $\widetilde{y}_i = \Ex[f(\vx_i ) | \vf_{-i} = \vy_{-i}]$, where the subscript $-i$ denotes the vector excluding the $i^{\text{th}}$ component.  This is the conditional expectation of $f(\vx_i )$ given all data but the function value at $\vx_i$.  The cross-validation criterion, which is to be minimized, is sum of squares of the difference between these conditional expectations and the observed values:
 \begin{equation} \label{FJH:eq:CVA}
 \textup{CV} = \sum_{i=1}^n (y_i - \widetilde{y}_i)^2.
@@ -495,7 +501,7 @@ Wahba \ref{} recommended a generalized cross-validation criterion, which replace
 \begin{align} 
 \nonumber
 \textup{GCV} &
-= \frac{\sum_{i=1}^n\zeta_i^2}{\left(\frac 1n \sum_{i=1}^n A_{ii} \right)^2} \\
+= \frac{\sum_{i=1}^n\zeta_i^2}{\left(\frac 1n \sum_{i=1}^n a_{ii} \right)^2} \\
 \label{FJH:eq:GCV}
 & = \frac{(\vy - m\vone)^T \mC^{-2} (\vy - m \vone)}{\left(\frac 1n \trace(\mC^{-1}) \right)^2}.
 \end{align}
@@ -505,6 +511,7 @@ The loss function $GCV$ depends on $m$ and $\vtheta$, but not on $s$.  Minimizin
 m_{\textup{GCV}} = \frac{\vone^T \mC^{-2} \vy}{\vone^T \mC^{-2} \vone},\\ 
 \end{equation}
 \begin{multline}
+\label{vthetaGCV}
 \vtheta_{\textup{GCV}} = \argmin_\vtheta \log \left (  \vy^T \left[\mC^{-2} - \frac{\mC^{-2} \vone \vone^T \mC^{-2}}{\vone^T \mC^{-2} \vone}  \right] \vy \right ) \\
 - 2 \log \left ( \trace(\mC^{-1}) \right ).
 \end{multline}
@@ -517,81 +524,73 @@ Plugging this value of $m$ into \eqref{eqn:BayesCub} yields
 
 An estimate for $s$ may be obtained by noting that by Lemma \ref{thrm:condDist},
 \[
-\var[f(\vx_i ) | \vf_{-i} = \vy_{-i}] = s^2 a_{ii},
+\var[f(\vx_i ) | \vf_{-i} = \vy_{-i}] = s^2 a_{ii}^{-1},
 \]
-Thus, we may estimate $s$ using a similar idea
+Thus, we may estimate $s$ using an argument similar to that used in deriving the GCV and then substituting $m_{\textup{GCV}}$ for $m$:
 \begin{align}
-s^2 &= \frac{\var[f(\vx_i ) | \vf_{-i} = \vy_{-i}] }{a_{ii}} \\
-& \approx \frac 1n \sum_{i=1}^n (y_i - \widetilde{y}_i)^2
+\nonumber 
+s^2 &= \var[f(\vx_i ) | \vf_{-i} = \vy_{-i}] a_{ii} \\
+\nonumber 
+& \approx \frac 1n \sum_{i=1}^n (y_i - \widetilde{y}_i)^2a_{ii}
+ = \frac 1n \sum_{i=1}^n \frac{\zeta_i^2}{a_{ii}} \\
+\nonumber 
+ & \approx \frac{ \frac 1n \sum_{i=1}^n \zeta_i^2}{\frac 1n \sum_{i=1}^n a_{ii} } = \frac{(\vy - m\vone)^T \mC^{-2} (\vy - m \vone)}{ \trace(\mC^{-1}) } \\
+\nonumber 
+ & \approx  s^2_{\textup{GCV}} \\
+ \intertext{where}
+ \nonumber
+ s^2_{\textup{GCV}} & : = \vy^T \left[\mC^{-2} - \frac{\mC^{-2} \vone \vone^T \mC^{-2}}{\vone^T \mC^{-2} \vone}  \right] \vy \\
+ &\qquad \qquad  \qquad \qquad  \times \left[ \trace(\mC^{-1}) \right]^{-1} \label{sGCVDef}
 \end{align}
 
+The confidence interval based on generalized cross-validation corresponds to \eqref{eqn_prob_confidence_interval} with the GCV estimates for $m$, $s$, and $\vtheta$:
+\begin{gather}
+\label{GCVerr}
+\err_{\textup{GCV}} = 2.58 s_{\textup{GCV}}  \sqrt{c_0 - \vc^T\mC^{-1}\vc} \\
+\label{GCVCI}
+\mathbb{P}_f \left[
+|\mu-\hmu_{\textup{GCV}}| \leq \err_{\textup{GCV}} 
+\right] = 99\%.
+\end{gather}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-\subsection{Formulating the automatic Bayesian cubature algorithm}
+\subsection{The automatic Bayesian cubature algorithm}
 \label{sec:bayes_cubature_algo}
-Let the function to integrate be $f \sim \mathcal{GP}(m,s^2 C_\vtheta)$.
-Our goal is to compute $\hat{\mu}$ within the error tolerance $\errtol$, i.e.,
-\begin{align*}
-|\mu - \hat{\mu}| \leq \errtol.
-\end{align*}
-It is not possible to know true error $|\mu - \hat{\mu}|$ for real problems. So, the error-bound $\errn$ is used as the approximate error estimate.
-Basic principle of our algorithm is to keep adding more function values till the stopping criterion is met, i.e., $\errn \le \errtol$. 
-Once the stopping criterion is met, the approximation of $\mu$ can be computed:
-\begin{nalign}
-\label{eqn_muhat}
-\hmu_n &= w_0 + \vw^T \vy,
-\end{nalign}
-Where the suffix $n$ is used to imply the number of integrand-samples used. In every iteration of the \emph{automatic cubature algorithm (\ref{algorithm1})}, we only need to numerically estimate the MLE of $\vtheta$ and then use it to compute $\mC$ and $\errn$. 
+The previous section presents three credible intervals, \eqref{eqn_prob_CI_MLE}, \eqref{eqn_prob_CI_full}, and \eqref{GCVCI}, for the $\mu$, the desired integral.  Each credible interval is based on different assumptions about the hyperparameters $m$, $s$, and $\vtheta$.  We stress that one must estimate these hyperparameters or assume a prior distribution on them because the credible intervals are used as stopping criteria for our cubature rule.  Since a credible intervals makes a statement about a typical function---not an outlier---one must try to ensure that the integrand is a typical draw from the assumed Gaussian process.
 
+Our  Bayesian cubature algorithm increases the sample size until the width of the credible interval is small enough.  This is accomplished through successfully doubling the sample size.  The steps are detailed in Algorithm \ref{algorithm1}.
 
-The following pseudo-code briefly explains the working of the automatic cubature algorithm.
-\begin{algorithm}[H]
+\begin{algorithm}
 \caption{Bayesian Cubature}\label{algorithm1}
   \begin{algorithmic}[1]
   	\Require a generator for the sequence
   	$\vx_1, \vx_2, \ldots$; a black-box function, $f$; an absolute error tolerance,
   	$\varepsilon>0$; the initial sample size, $n_0$
   	
-      \State $n \gets n_0, \; n' \gets 0$
+      \State $n \gets n_0, \; n' \gets 0, \; \err = \infty$
+      
+      \While{$\err > \varepsilon$}
 
-        \State Generate $\{ \vx_i\}_{i=n' + 1}^{n}$ and sample $\{f(\vx_i)\}_{i=n'+1}^{n}$
-        \State Compute $\vtheta$ by \eqref{}
-        \State Compute error bound \emph{$\errn$ } \Comment{$\errn$ data driven error bound}
-        \If{\emph{$\errn \leq \errtol$}}
-	        \textbf{break}
-        \EndIf
-        \State $n' \gets n, n\gets 2 \times n'$
-      \State Compute cubature weights $\{ w_i \}_{i=1}^{n}$
-      \State Compute approximate integral  $\hmu_n$
-      \State \textbf{return} $\hmu_n$ \Comment{Integral estimate $\hmu_n$}
+        \If{$n' > 0$}
+			$n' \gets n, \ n\gets 2 n'$
+		\EndIf
+        \State\label{LoopStart}Generate $\{ \vx_i\}_{i=n' + 1}^{n}$ and sample $\{f(\vx_i)\}_{i=n'+1}^{n}$
+        \State Compute $\vtheta$ by \eqref{eqn:thetaMLE} or \eqref{vthetaGCV}
+        \State Compute $\err$, the width of the credible interval,  according to \eqref{eqn:errMLE}, \eqref{FJH:eq:errFull}, or \eqref{GCVerr}
+        
+        \EndWhile
+        
+        \State Compute $\hmu$, the approximate integral,   according to \eqref{eqn_m_MLE} or \eqref{eqn:muCV}
+      \State \Return $\hmu$  and $\err$
 
   \end{algorithmic}
 \end{algorithm}
 
-As shown, the algorithm continues the iteration loop till the stopping-criterion is met, i.e., $\errn$ is smaller than error threshold $\errtol$. 
-At the end of every iteration, if the computed error bound  $\errn$ is higher than the required $\errtol$, algorithm doubles the number of points $n$ and repeats. When the error tolerance $\errtol$ is met, exits the loop. Finally using the $n$ and the MLE estimated parameters, computes the $\hmu_n$.
 
-Accurately computing the data-driven error bound $\errn$ which closely matches the true error is essential for the effectiveness of our algorithm. So, accurate and faster computation of $\errn$ and $\hmu_n$ are the main objective of the following sections.
+\subsection{Example with the Matern kernel}
 
 
-\subsection{Example with Matern kernel}
-
-
-We would like to demonstrate and test numerical accuracy and computational cost of the automatic {Bayesian cubature algorithm} using the results obtained so far.
+\FJHNote{What is your integrand?  $d$?  Does $\theta$ really depend on $k$?}  We would like to demonstrate and test numerical accuracy and computational cost of the automatic {Bayesian cubature algorithm} using the results obtained so far.
 For this example, we use the Matern kernel:
 \begin{align}
 \label{matern_kernel}
