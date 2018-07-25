@@ -63,8 +63,7 @@ nnMLE = numel(nvecMLE);
 if compMLELattice
   tic
   
-  nRep = 30; %100; % increase it for gail plots
-  %outVec = {'a', 'b'}; 
+  nRep = 100; % increase it for gail plots
   muMVNProbMLELatticeGn = zeros(nnMLE,nRep);
   aMLE = zeros(nnMLE,nRep);
   errbdvecMBVProbMLELatticeGn(nnMLE,nRep) = 0;
@@ -79,7 +78,6 @@ if compMLELattice
     nPointsVec(i) = outVec(i).n;
   end
   timeVec = [outVec(:).time];
-  % loglog(2.^(out.mvec) , (abs(muBest - muMVNProbMLELatticeGn(:,1:i))), 2.^(out.mvec) , (abs(errbdvecMBVProbMLELatticeGn(:,1:i)))); axis tight
   
   errvecMVNProbMLELatticeGn = abs(muBest - muMVNProbMLELatticeGn);
   errCubMLE = median(errvecMVNProbMLELatticeGn,2);

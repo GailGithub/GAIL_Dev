@@ -36,7 +36,7 @@ else % use Lattice points
   obj=cubMLELattice(inputArgs{:});
 end
 
-nRep = 20;
+nRep = 100;
 muhatVec = zeros(nRep,1);
 
 for i=1:nRep
