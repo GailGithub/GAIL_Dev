@@ -652,7 +652,7 @@ where $\mV^H$ is the Hermitian of $\mV$.  The columns of matrix $\mV$ are eigenv
 \mCInv  = \frac 1n \mV \mLambda^{-1} \mV^H
  = \frac 1n \mV^* \mLambda^{-1} \mV^T.
 \end{gather*}
-For any $n \times n$ vector $\vb$, define the notation  $\widehat{\vb} := \mV^T \vb$.
+For any $n \times n$ vector $\vb$, define the notation  $\widetilde{\vb} := \mV^T \vb$.
 
 We make two assumptions that allow the fast computation:
 \begin{subequations} \label{fastcompAssump}
@@ -673,36 +673,36 @@ Under assumptions \eqref{fastcompAssump} the eigenvalues may be identified as th
  \end{pmatrix} = \mLambda \vone = \mLambda \vv_1 
  = \underbrace{\left( \frac 1n \mV^T  \mV^* \right) }_{\mathsf{I}} \mLambda \vv_1 \\
   &= \mV^T \left( \frac 1n \mV^* \mLambda \vv_1 \right)
- = \mV^T \vC_1 =  \widehat{\vC}_1.
+ = \mV^T \vC_1 =  \widetilde{\vC}_1.
  \label{eqn:fast_transform_to_eigvalues}
 \end{align}
 Also note that the fast transform of $\vone$ has a simple form
 \begin{align}
-\widehat{\vone}
+\widetilde{\vone}
 & = \mV^T \vone = \mV^T \vV_1^* = \begin{pmatrix}n  \\ 0 \\ \vdots \\ 0 \end{pmatrix}.
 \label{eqn:fast_transform_one}
 \end{align}
 
-Many of the terms that arise in the calculations in  Algorithm \ref{algorithm1} are of the form $\va^T\mC^{p}\vb$ for integer $p$.  These can be calculated via the transforms $\widehat{\va} = \mV^T \va$ and $\widehat{\vb} = \mV^T \vb$ as 
+Many of the terms that arise in the calculations in  Algorithm \ref{algorithm1} are of the form $\va^T\mC^{p}\vb$ for integer $p$.  These can be calculated via the transforms $\widetilde{\va} = \mV^T \va$ and $\widetilde{\vb} = \mV^T \vb$ as 
 \begin{equation*}
 \va^T\mC^p\vb = \frac 1n \va^T \mV \mLambda^p \mV^H \vb
-= \frac 1n \widehat{\va}^T\mLambda^p \widehat{\vb}^*
-= \frac 1n \sum_{i=1}^n \lambda_i^p \widehat{a}_i \widehat{b}_i^*, 
+= \frac 1n \widetilde{\va}^T\mLambda^p \widetilde{\vb}^*
+= \frac 1n \sum_{i=1}^n \lambda_i^p \widetilde{a}_i \widetilde{b}_i^*, 
 \end{equation*}
 In particular,
 \begin{align*}
 \vone^T\mC^{-p}\vone & = \frac{n}{\lambda_1^p},
 &
-\vone^T\mC^{-p}\vy &= \frac{\widehat{y}_1}{\lambda_1^p},
+\vone^T\mC^{-p}\vy &= \frac{\widetilde{y}_1}{\lambda_1^p},
 \\
-\vy^T\mC^{-p} \vy &= \frac 1n \sum_{i=1}^n \frac{\abs{\widehat{y_i}}^2}{\lambda_i^p},
-\\
-\vc^T\mCInv \vone &= \frac{\widehat{c}_1}{\lambda_1},
+\vy^T\mC^{-p} \vy &= \frac 1n \sum_{i=1}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i^p},
 &
-\vc^T\mCInv \vc &= \frac 1n \sum_{i=1}^n \frac{\abs{\widehat{c}_i}^2}{\lambda_i},
+\vc^T\mCInv \vone &= \frac{\widetilde{c}_1}{\lambda_1},\\
+\vc^T\mCInv \vy &= \frac 1n \sum_{i=1}^n \frac{\widetilde{c}_i \widetilde{y}_i^*}{\lambda_i}, & 
+\vc^T\mCInv \vc &= \frac 1n \sum_{i=1}^n \frac{\abs{\widetilde{c}_i}^2}{\lambda_i},
 \end{align*}
-where $\widehat{\vy} = \mV^T \vy$ and 
-$\widehat{\vc} = \mV^T \vc$. 
+where $\widetilde{\vy} = \mV^T \vy$ and 
+$\widetilde{\vc} = \mV^T \vc$. 
 
 The covariance kernel used in practice also may satisfy an additional assumption:
 \begin{equation} \label{addAssump}
@@ -720,20 +720,20 @@ which implies that $c_0 = 1$ and $\vc = \vone$.  Under \eqref{addAssump}, the ex
 Under assumptions \eqref{fastcompAssump}, the empirical Bayes parameters in \eqref{eqn_m_MLE}, \eqref{eqn_s2_MLE}, \eqref{eqn:thetaMLE} \eqref{eqn:cubMLE}, and \eqref{eqn:errMLE} can be expressed in terms of the fast transforms of the function data, the first column of the Gram matrix, and $\vc$ as follows:
 \begin{align}
 \nonumber
-m_\MLE &=  \frac{\widehat{y}_1}{n} = \frac 1n \sum_{i=1}^n y_i,
+m_\MLE &=  \frac{\widetilde{y}_1}{n} = \frac 1n \sum_{i=1}^n y_i,
 \\
 \nonumber
 s^2_\MLE 
 & =
 \frac{1}{n^2} 
-\sum_{i=2}^n \frac{\abs{\widehat{y}_i}^2}{\lambda_i} \\
+\sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i} \\
 \nonumber 
 \vtheta_\MLE
 &= 
 \argmin_{\vtheta}
 \left[
 \log\left(
-\sum_{i=2}^n \frac{\abs{\widehat{y_i}}^2}{\lambda_i}
+\sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i}
 \right) 
  \right . \\
 &
@@ -743,14 +743,14 @@ s^2_\MLE
 \right]
 \\
 \hmu_\MLE  &= 
-\frac{\widehat{y}_1}{n} +
-\frac 1n \sum_{i=2}^n \frac{ \widehat{c}_i \widehat{y}_i^*}{\lambda_i} \\
+\frac{\widetilde{y}_1}{n} +
+\frac 1n \sum_{i=2}^n \frac{ \widetilde{c}_i \widetilde{y}_i^*}{\lambda_i} \\
 \err_\MLE  &
 =
   \frac{2.58}{n}\sqrt{
- \sum_{i=2}^{n} \frac{\abs{\widehat{y}_i}^2}{\lambda_i}  
+ \sum_{i=2}^{n} \frac{\abs{\widetilde{y}_i}^2}{\lambda_i}  
 				\,
-				\left( c_0 - \frac 1n \sum_{i=1}^n \frac{\abs{\widehat{c}_i}^2}{\lambda_i} \right) 
+				\left( c_0 - \frac 1n \sum_{i=1}^n \frac{\abs{\widetilde{c}_i}^2}{\lambda_i} \right) 
 			},
 \end{align}
 Since all the quantities on the right hand sides can be obtained in in $\Order(n \log(n))$ operations by fast transforms, the left hand sides are all computable using the asymptotic computational cost.
@@ -759,11 +759,11 @@ Under the further assumption \eqref{addAssump} it follows that
 \begin{align}
 \nonumber
 \hmu_\MLE  &= 
-\frac{\widehat{y}_1}{n} = \frac 1n \sum_{i=1}^n y_i,\\
+\frac{\widetilde{y}_1}{n} = \frac 1n \sum_{i=1}^n y_i,\\
 \err_\MLE  &
 =
 \frac{2.58}{n}\sqrt{
-	\sum_{i=2}^{n} \frac{\abs{\widehat{y}_i}^2}{\lambda_i}  
+	\sum_{i=2}^{n} \frac{\abs{\widetilde{y}_i}^2}{\lambda_i}  
 	\,
 	\left( 1 -  \frac{n}{\lambda_1} \right) 
 }.
@@ -778,16 +778,16 @@ For the full Bayes approach the cubature is the same as for empirical Bayes.  We
 \begin{multline*} %\label{FJH:eq:signmaFull}
 \widehat{\sigma}^2_{\textup{full}}
 =
-\frac{1}{n(n-1)} \sum_{i=2}^n \frac{\abs{\widehat{y_i}}^2}{\lambda_i}
+\frac{1}{n(n-1)} \sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i}
 \\
 \times
-\left[\frac{\lambda_1}{n}{\left(1 - \frac{\widehat{c}_1}{\lambda_1}\right)^2} + \left(c_0  - \frac 1n \sum_{i=1}^n \frac{\abs{\widehat{c}_i}^2}{\lambda_i}\right) \right] .
+\left[\frac{\lambda_1}{n}{\left(1 - \frac{\widetilde{c}_1}{\lambda_1}\right)^2} + \left(c_0  - \frac 1n \sum_{i=1}^n \frac{\abs{\widetilde{c}_i}^2}{\lambda_i}\right) \right] .
 \end{multline*}
 Under assumption \eqref{addAssump} further simplification can be made:
 \begin{equation*} %\label{FJH:eq:signmaFull}
 \widehat{\sigma}^2_{\textup{full}}
 =
-\frac{1}{n(n-1)} \sum_{i=2}^n \frac{\abs{\widehat{y_i}}^2}{\lambda_i} \, \left(\frac{\lambda_1}{n}  - 1  \right).
+\frac{1}{n(n-1)} \sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i} \, \left(\frac{\lambda_1}{n}  - 1  \right).
 \end{equation*}
 
 
@@ -796,31 +796,31 @@ Under assumption \eqref{addAssump} further simplification can be made:
 
 GCV yields a different cubature, which nevertheless can also be computed quickly using the fast transform.  Under assumptions \eqref{fastcompAssump}:
 \begin{align*}
-m_{\textup{GCV}} & = m_\MLE =  \frac{\widehat{y}_1}{n} = \frac 1n \sum_{i=1}^n y_i,\\
- s^2_{\textup{GCV}} & : =  \frac 1{n} \sum_{i=2}^n \frac{\abs{\widehat{y}_i}^2}{\lambda_i^2}  \left [ \sum_{i=1}^n \frac{1}{\lambda_i} \right]^{-1}, \\
+m_{\textup{GCV}} & = m_\MLE =  \frac{\widetilde{y}_1}{n} = \frac 1n \sum_{i=1}^n y_i,\\
+ s^2_{\textup{GCV}} & : =  \frac 1{n} \sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i^2}  \left [ \sum_{i=1}^n \frac{1}{\lambda_i} \right]^{-1}, \\
 \vtheta_{\textup{GCV}} 
-&= \argmin_\vtheta \left[ \log \left ( \sum_{i=2}^n \frac{\abs{\widehat{y}_i}^2}{\lambda_i^2} 
+&= \argmin_\vtheta \left[ \log \left ( \sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i^2} 
 \right) -2\log\left( \sum_{i=1}^n \frac{1}{\lambda_i} \right)
 \right], \\
-\widehat{\mu}_{\textup{GCV}}
-&= \hmu_\MLE  = 
-\frac 1n \sum_{i=2}^n \frac{ \widehat{c}_i \widehat{y}_i^*}{\lambda_i}, \\
+\hmu_{\textup{GCV}}
+&= \hmu_\MLE  = \frac{\widetilde{y}_1}{n} +
+\frac 1n \sum_{i=2}^n \frac{ \widetilde{c}_i \widetilde{y}_i^*}{\lambda_i}, \\
 \err_{\textup{GCV}} & =
-\frac{2.58}{\sqrt{n}}\left\{\sum_{i=2}^n \frac{\abs{\widehat{y}_i}^2}{\lambda_i^2}  \left [ \sum_{i=1}^n \frac{1}{\lambda_i} \right]^{-1} \right.
+\frac{2.58}{\sqrt{n}}\left\{\sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i^2}  \left [ \sum_{i=1}^n \frac{1}{\lambda_i} \right]^{-1} \right.
 \\ 
 &\qquad \qquad \left . \times
-	\left( c_0 - \frac 1n \sum_{i=1}^n \frac{\abs{\widehat{c}_i}^2}{\lambda_i} \right) 
+	\left( c_0 - \frac 1n \sum_{i=1}^n \frac{\abs{\widetilde{c}_i}^2}{\lambda_i} \right) 
 \right\}^{1/2}.
 \end{align*}
 Moreover, under further assumption \eqref{addAssump} it follows that 
 \begin{align}
 \nonumber
 \widehat{\mu}_{\textup{GCV}}
-&= \hmu_\MLE
-\frac{\widehat{y}_1}{n} = \frac 1n \sum_{i=1}^n y_i,\\
+&= \hmu_\MLE =
+\frac{\widetilde{y}_1}{n} = \frac 1n \sum_{i=1}^n y_i,\\
 \nonumber
 \err_{\textup{GCV}} & =
-\frac{2.58}{\sqrt{n}}\left\{\sum_{i=2}^n \frac{\abs{\widehat{y}_i}^2}{\lambda_i^2}  \left [ \sum_{i=1}^n \frac{1}{\lambda_i} \right]^{-1} \right.
+\frac{2.58}{\sqrt{n}}\left\{\sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i^2}  \left [ \sum_{i=1}^n \frac{1}{\lambda_i} \right]^{-1} \right.
 \\ 
 &\qquad \qquad \left . \times
 	\left( 1 -  \frac{n}{\lambda_1} \right)  
