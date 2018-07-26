@@ -112,6 +112,7 @@
 \newcommand{\tvz}{\tilde{\vz}}
 
 \newcommand{\vCvtheta}{{C_\vtheta}}
+\newcommand{\hc}{\widehat{c}}
 
 \newcommand{\hatvy}{\hat{\bm{y}}}
 \newcommand{\haty}{\hat{y}}
@@ -561,11 +562,11 @@ The previous section presents three credible intervals, \eqref{eqn_prob_CI_MLE},
 Our  Bayesian cubature algorithm increases the sample size until the width of the credible interval is small enough.  This is accomplished through successfully doubling the sample size.  The steps are detailed in Algorithm \ref{algorithm1}.
 
 \begin{algorithm}
-\caption{Bayesian Cubature}\label{algorithm1}
+\caption{Automatic Bayesian Cubature}\label{algorithm1}
   \begin{algorithmic}[1]
   	\Require a generator for the sequence
   	$\vx_1, \vx_2, \ldots$; a black-box function, $f$; an absolute error tolerance,
-  	$\varepsilon>0$; the initial sample size, $n_0$
+  	$\varepsilon>0$; the positive initial sample size, $n_0$
   	
       \State $n \gets n_0, \; n' \gets 0, \; \err = \infty$
       
@@ -621,111 +622,29 @@ So, our algorithm in the current form is not straightaway usable for any practic
 
 
 
+\section{Fast Automatic Bayesian Cubature}\label{sec:fast_BC}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-\section{Fast automatic Bayesian cubature}\label{sec:fast_BC}
-
-{Automatic Bayesian cubature algorithm} described (Section \ref{sec:bayes_cubature_algo}) is slow due to its computationally intensive nature. This could be a hindrance in real world applications when a larger number of data points are needed to achieve the desired accuracy. This section and further sections explore techniques to make it faster.
-
-Bayesian cubature algorithm uses error-bound $\errn$ to decide when to stop, and uses MLE loss function (\ref{eqn:thetaMLE}) to find the optimal {shape parameter}.
-These computations involve covariance matrix inversions and multiplications, which are time-consuming and prone to numerical error. 
-When the algorithm tries to adapt by increasing $n$ to get better accuracy, the covariance matrix size also grows, along with it, the matrix's condition number also grows significantly causing numerical error in matrix operations. This phenomenon is called ill-conditioning.
-
-One approach to overcome these issues could be to use an efficient method to compute the whole equation without incurring the ill-conditioning, which involves, for example, using \textit{stable computation} \cite{FassBook2007}. But it is going to be still slower and time-consuming. 
-
-Another approach for stable and faster computation is, using a carefully chosen kernel with some special properties which leads to faster matrix operations, like faster matrix inversion and multiplication. 
-This approach can be designed to be faster in computation while avoiding the numerical error due to ill-conditioning. 
-The later approach is the major objective of this research work. 
-Our approach is especially to choose a special form of kernel, which is called \emph{fast transform kernel} along with a suitable pointset, that will avoid expensive matrix operations.
-
-
-
-
-
+The generic automatic Bayesian cubature algorithm described in the previous section requires $\Order(n^3)$ operations to estimate $\vtheta$, compute the credible interval width, and compute the cubature.  There is also the potential ill-condtioning that can arise.  This section explains how speed up the calculations and avoid ill-conditioning.  A key is to choose kernels that match the design, $\{\vx_i\}_{i=1}^n$, so that the vector-matrix operations required by Bayesian cubature can be accomplished using fast transforms at a cost of $\Order(n \log(n))$.
 
 \subsection{Fast transform kernel}
-Suppose the domain is $\mathcal{X} = [0,1]^d$ and the probability measure is uniform, If the kernel $C_\vtheta(\vx,\vt)$ is chosen carefully along with appropriate point set $\{\vx_i\}_{i=1}^n$, have the special properties, so the resulting Gram matrix has factorization of the form:
+We make some assumptions about the relationship between the covariance kernel and the design, which will be shown to hold in Section \ref{sec:shift_invariant_kernel} for rank-1 lattices and shift-invariant kernels.  Firs we introduced the notation
 \begin{align}
 \nonumber
 \mC &= \Big(C_\vtheta(\vx_i,\vx_j)\Big)_{i,j=1}^n  = (\vC_1,...,\vC_n) 
 \\
 \label{eqn:ftk_factor}
 &= \frac 1n \mV \mLambda \mV^H  = \frac 1n \mV^* \mLambda \mV^T , 
-\quad \quad \mV^H = n \mV^{-1},
+\quad \quad \mV^H = n \mV^{-1}, \\
+\nonumber
+\mCInv  &= \frac 1n \mV \mLambda^{-1} \mV^H
+= \frac 1n \mV^* \mLambda^{-1} \mV^T,
 \end{align}
-Where $V^H$ is the Hermitian of $V$,
+where $\mV^H$ is the Hermitian of $\mV$.  The columns of matrix $\mV$ are eigenvectors of $\mC$, and $\mLambda$ is a diagonal matrix of eigenvalues of $\mC$.
 \begin{gather*}
 %\begin{array}{cc}
 %\displaystyle
 %\label{eqn:ftk_factor_2}
-\mV = (\vv_1,...,\vv_n)^T = (\vV_1,...,\vV_n), \; \text{also} \;  \vv_1 = \vV_1 = \vone
+\mV = (\vV_1,...,\vV_n)= (\vv_1,...,\vv_n)^T , \; \text{also} \;  \vv_1 = \vV_1 = \vone
 \\
 \mLambda = \diag(\vlambda), \quad 
 \vlambda = (\lambda_1, ... \lambda_n),
@@ -736,174 +655,104 @@ Where $V^H$ is the Hermitian of $V$,
 %\end{array}
 .
 \end{gather*}
+For any $n \times n$ vector $\vb$, define the notation  $\widehat{\vb} := \mV^T \vb$.
 
-Suppose the transform $\hat{\vz} = \mV^T \vz$ for any arbitrary $\vz$ can be computed within the computational cost of $\Order( n \, log\, n)$, we call it a \emph{Fast transform}. Consequently $C_{\vtheta}$ is called a \emph{fast transform kernel}.
-We use the notation $\hat{\vz}$ to indicate the transform of $\vz$.
-The properties of fast transform can be leveraged to make the computations in Bayesian cubature algorithm faster. To begin with, $\vlambda$ can be computed faster by simply,
-\begin{multline}
-\label{eqn:fast_trasnform_to_eigvalues}
-\mV^T \vC_1 = \mV^T \left( \frac 1n \mV^* \mLambda \vv_1 \right) 
-\\
-=
-\underbrace{\left( \frac 1n \mV^T  \mV^* \right) }_{\mathsf{I}} \mLambda \vv_1  =  \mLambda \vone =
-\begin{pmatrix}
-\lambda_1 \\ \vdots \\ \lambda_n
-\end{pmatrix} = \vlambda
-\end{multline}
-Most of the computations in the algorithm are of the form $\va^T\mCInv\vb$, can be simplified easily:
-\begin{align*}
-\mC V_1 &= \lambda_1 V_1 , \quad \text{by definition}
-\\
-\text{So}, \quad
-\mCInv \vone &= \mCInv V_1 = \frac{V_1}{\lambda_1} = \frac{\vone}{\lambda_1} , 
-\end{align*}
-Similarly, 
-\begin{multline*}
-\va^T\mCInv\vb = \frac 1n \va^T \mV \mLambdaInv \mV^H \vb
-= \frac 1n \widehat{\va}^T\mLambdaInv \widehat{\vb}^*
-= \frac 1n \sum_{i=1}^n \frac{\widehat{a_i} \widehat{b_i^*}}{\lambda_i},
-\\
-\va^T\mC^{-2}\vb = \frac 1n \va^T \mV \mLambda^{-2} \mV^H \vb
-= \frac 1n \widehat{\va}^T\mLambda^{-2} \widehat{\vb}^*
-= \frac 1n \sum_{i=1}^n \frac{\widehat{a_i} \widehat{b_i^*}}{\lambda_i^2},
-\end{multline*}
-where $\widehat{\va} = \mV^T \va$ and $\widehat{\vb} = \mV^T \vb$. By using this, some of the recurring terms in the algorithm are simplified,
-\begin{align*}
-\vone^T\mCInv\vone &= \vone^T \left(\frac{\vone}{\lambda_1}\right) = \frac{n}{\lambda_1}
-\\
-\vone^T\mCInv\vy &= \vone^T \left( \frac{\vy}{\lambda_1} \right) = \frac{\sum_{i=1}^n y_i}{\lambda_1} = \frac{\widehat{y_1}}{\lambda_1}
-\\
-\vy^T\mCInv \vy &= \frac 1n \sum_{i=1}^n \frac{\abs{\widehat{y_i}}^2}{\lambda_i}
-\\
-\vc^T\mCInv \vone &= \vc^T \left(\frac{ \vone }{\lambda_1} \right) = \frac{\widehat{c}_1}{\lambda_1}
-\\
-\vc^T\mCInv \vc &= \frac 1n \sum_{i=1}^n \frac{\abs{\widehat{c}_i}^2}{\lambda_i}
-\\
-\vy^T\mC^{-2} \vy &= \frac 1n \sum_{i=1}^n \frac{\abs{\widehat{y_i}}^2}{\lambda_i^2}
-\end{align*}
-Then the MLE estimates can be simplified using these results:
-\begin{align*}
-m_\MLE &= \frac{\vone^T\mCInv\vy}{\vone^T\mCInv\vone} = \frac{\widehat{y}_1}{n} = \frac 1n \sum_{i=1}^n y_i,
-\\
-s^2_\MLE &= \frac 1n \vy^T \left[ \mCInv - \frac{\mCInv \vone \vone^T \mCInv}{\vone^T\mCInv\vone}\right] \vy
-\\
-& =
-\frac 1n \left[ \frac 1n \sum_{i=1}^n \frac{\abs{\widehat{y_i}}^2}{\lambda_i} - \frac{\abs{\widehat{y}_1}^2/\lambda_1^2}{n/ \lambda_1} \right] = 
-\frac{1}{n^2} 
-\sum_{i=2}^n \frac{\abs{\widehat{y_i}}^2}{\lambda_i}
-\end{align*}
+We make two assumptions that allow the fast computation:
+\begin{subequations}
+	\begin{gather}
+	\mV \text{ may be identified analytically}, \\
+	\vv_1 = \vV_1 = \vone, \\
+     \mV^T \vb  \text{ requires only $\Order(n \log(n))$ operations } \forall \vb.
+	\end{gather}
+\end{subequations}
+We call the transformation $\vz \mapsto \mV^T \vz$ a \emph{fast transform}.  
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-\subsection{Application of fast transform kernel}
-Using the properties of the fast transform, matrix multiplications and inversions can be avoided, so the overall computation cost is $\Order(n \log n )$.
-To begin with, MLE estimate of $\vtheta$ can be made faster:
-
-%Using the properties of the fast transform, matrix multiplications and inversions can also be avoided in the computation of $\hmu_n$
-
-%Maximum likelihood estimate of $\vtheta$ is made faster by
-%using the results so far:
-
-%\subsection{Estimating the shape parameter $\vtheta_\MLE$}
-
-\subsubsection{Empirical Bayes}
+The eigenvalues may be identified as the fast transform of the first column of $\mC$:
 \begin{align}
 \nonumber
+ \vlambda 
+ & = \begin{pmatrix}
+ \lambda_1 \\ \vdots \\ \lambda_n
+ \end{pmatrix} = \mLambda \vone = \mLambda \vv_1 
+ = \underbrace{\left( \frac 1n \mV^T  \mV^* \right) }_{\mathsf{I}} \mLambda \vv_1 \\
+  &= \mV^T \left( \frac 1n \mV^* \mLambda \vv_1 \right)
+ = \mV^T \vC_1 =  \widehat{\vC}_1.
+ \label{eqn:fast_transform_to_eigvalues}
+\end{align}
+Also note that the fast transform of $\vone$ has a simple form
+\begin{align}
+\widehat{\vone}
+& = \mV^T \vone = \mV^T \vV_1^* = \begin{pmatrix}n  \\ 0 \\ \vdots \\ 0 \end{pmatrix}.
+\label{eqn:fast_transform_one}
+\end{align}
+
+Many of the terms that arise in the calculations in  Algorithm \ref{algorithm1} are of the form $\va^T\mC^{p}\vb$ for integer $p$.  These can be calculated via the transforms $\widehat{\va} = \mV^T \va$ and $\widehat{\vb} = \mV^T \vb$ as 
+\begin{equation*}
+\va^T\mC^p\vb = \frac 1n \va^T \mV \mLambda^p \mV^H \vb
+= \frac 1n \widehat{\va}^T\mLambda^p \widehat{\vb}^*
+= \frac 1n \sum_{i=1}^n \lambda_i^p \widehat{a}_i \widehat{b}_i^*, 
+\end{equation*}
+In particular,
+\begin{align*}
+\vone^T\mCInv\vone & = \frac{n}{\lambda_1},
+&
+\vone^T\mCInv\vy &= \frac{\widehat{y}_1}{\lambda_1},
+\\
+\vy^T\mC^{-p} \vy &= \frac 1n \sum_{i=1}^n \frac{\abs{\widehat{y_i}}^2}{\lambda_i^p},
+\\
+\vc^T\mCInv \vone &= \frac{\widehat{c}_1}{\lambda_1},
+&
+\vc^T\mCInv \vc &= \frac 1n \sum_{i=1}^n \frac{\abs{\widehat{c}_i}^2}{\lambda_i},
+\end{align*}
+where $\widehat{\vy} = \mV^T \vy$ and 
+$\widehat{\vc} = \mV^T \vc$. 
+
+Using the observations above, the empirical Bayes parameters in ??? can be expressed in terms of the fast transforms of the function data, the first column of the Gram matrix, and $\vc$ as follows:
+\begin{align}
+\nonumber
+m_\MLE &=  \frac{\widehat{y}_1}{n} = \frac 1n \sum_{i=1}^n y_i,
+\\
+\nonumber
+s^2_\MLE 
+& =
+\frac{1}{n^2} 
+\sum_{i=2}^n \frac{\abs{\widehat{y}_i}^2}{\lambda_i} \\
+\nonumber 
 \vtheta_\MLE
 &= 
 \argmin_{\vtheta}
 \left[
- \frac{1}{n} \log(\det\, \mC) + 
- \log\left(s^2_\MLE \right) 
-\right]
-\\
-\label{eqn_MLE_loss_func_optimized_2}
-&= 
-\argmin_{\vtheta}
-\left[
- \frac{1}{n}\sum_{i=1}^n \log(\lambda_i) + 
- \log\left(
- \frac{1}{n^2} \sum_{i=2}^n \frac{\abs{\widehat{y_i}}^2}{\lambda_i}
- \right) 
-\right]
-\\
-\nonumber
-&\text{where} \quad 
-\hat{\vy} = (\hat{y}_i)_{i=1}^{n} = \mV^T \vy.
-\end{align}
-%{$\Order(n \log n)$ operations to compute $\vC_1$, also the $\vthetaMLE$}
-
-
-
-%\subsection{Computing error bound $err_n$}
-Similarly, the error bound {$\errn$} computation can be made faster:
-\begin{align*}
-\errn &=
-2.58 \; \sqrt{ 
-\frac{1}{n}
-\vy^T 
-\left[ 
-\mCInv - 
-\frac{ \mCInv \vone \vone^T \mCInv }{\vone^T\mCInv \vone}
-\right] \vy
-(c_0 - \vc^T\mC^{-1}\vc) } 
-\\
+\frac{1}{n}\sum_{i=1}^n \log(\lambda_i) \right . \\
 &
+\label{eqn_MLE_loss_func_optimized_2}
+\qquad \qquad \qquad \qquad  \left .+ 
+\log\left(
+ \sum_{i=2}^n \frac{\abs{\widehat{y_i}}^2}{\lambda_i}
+\right) 
+\right]
+\\
+\hmu_\MLE  &= 
+\frac{\widehat{y}_1}{n} +
+\frac 1n \sum_{i=2}^n \frac{ \widehat{c}_i \widehat{y}_i^*}{\lambda_i} \\
+\err_\MLE  &
 =
-{{
-\displaystyle
-{
-2.58\sqrt{
-\frac {1}{n^2} \sum_{i=2}^{n} \frac{\abs{\widehat{y}_i}^2}{\lambda_i}  
-\,
-\left( c_0 - \frac 1n \sum_{i=1}^n \frac{\abs{\widehat{c}_i}^2}{\lambda_i} \right) 
-}
-}
-}}, 
-\\
-\nonumber
-& \text{where} \quad 
-\widehat{\vy} = \mV^T \vy,  
-\widehat{\vc} = \mV^T \vc. 
-\end{align*}
-
-
-
-
-Finally, the computation of $\hmu_n$ is made faster:
-\begin{align}
-\nonumber
-\hmu_\MLE(f) &= m_\MLE[1 - \vone^T  \mC^{-1}\vc ]
-+
-\vc^T \mC^{-1} \vy
-\\
-\nonumber
-&= \frac{\widehat{y}_1}{n} \left[1 - \frac{\widehat{c}_1}{\lambda_1}\right]
-+ \frac 1n \sum_{i=1}^n \frac{ \widehat{c}_i \widehat{y}_i^*}{\lambda_i}
-\\
-\label{eqn:hmu_complicated}
-& =
- \frac{\widehat{y}_1}{n} +
- \frac 1n \sum_{i=2}^n \frac{ \widehat{c}_i \widehat{y}_i^*}{\lambda_i}
+  \frac{2.58}{n}\sqrt{
+ \sum_{i=2}^{n} \frac{\abs{\widehat{y}_i}^2}{\lambda_i}  
+				\,
+				\left( c_0 - \frac 1n \sum_{i=1}^n \frac{\abs{\widehat{c}_i}^2}{\lambda_i} \right) 
+			},
 \end{align}
-It is interesting to note that, in general with no assumption on $m$, $\hmu_\MLE$ is simply the sample mean. 
-Moreover the choice of kernel or any MLE estimated parameters do not affect the $\hmu_n$ but influences the accuracy of the error bound $\errn$.
+Since all the quantities on the right hand sides can be obtained in in $\Order(n \log(n))$ operations by fast transforms, the left hand sides are all computable using the asymptotic computational cost.
+
+
+
+
+
+
+
+
+
+
 
 \subsubsection{Full Bayes}
 
