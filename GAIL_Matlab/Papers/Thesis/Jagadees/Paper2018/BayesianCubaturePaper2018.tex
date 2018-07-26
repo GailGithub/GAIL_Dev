@@ -812,7 +812,21 @@ m_{\textup{GCV}} & = m_\MLE =  \frac{\widehat{y}_1}{n} = \frac 1n \sum_{i=1}^n y
 	\left( c_0 - \frac 1n \sum_{i=1}^n \frac{\abs{\widehat{c}_i}^2}{\lambda_i} \right) 
 \right\}^{1/2}.
 \end{align*}
-
+Moreover, under further assumption \eqref{addAssump} it follows that 
+\begin{align}
+\nonumber
+\widehat{\mu}_{\textup{GCV}}
+&= \hmu_\MLE
+\frac{\widehat{y}_1}{n} = \frac 1n \sum_{i=1}^n y_i,\\
+\nonumber
+\err_{\textup{GCV}} & =
+\frac{2.58}{\sqrt{n}}\left\{\sum_{i=2}^n \frac{\abs{\widehat{y}_i}^2}{\lambda_i^2}  \left [ \sum_{i=1}^n \frac{1}{\lambda_i} \right]^{-1} \right.
+\\ 
+&\qquad \qquad \left . \times
+	\left( 1 -  \frac{n}{\lambda_1} \right)  
+\right\}^{1/2}.
+\end{align}
+Thus, in this  case $\hmu$ is simply the sample mean.
 
 
 
