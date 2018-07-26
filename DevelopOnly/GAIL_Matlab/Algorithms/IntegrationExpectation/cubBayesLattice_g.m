@@ -145,11 +145,11 @@ classdef cubBayesLattice_g < handle
   end
   
   methods
-    function obj = cubMLELattice(varargin)  %Constructor
+    function obj = cubBayesLattice_g(varargin)  %Constructor
       
       if nargin > 0
         iStart = 1;
-        if isa(varargin{1},'cubMLELattice')
+        if isa(varargin{1},'cubBayesLattice_g')
           obj = copy(varargin{1});
           iStart = 2;
         end
@@ -245,7 +245,7 @@ classdef cubBayesLattice_g < handle
           % Compute FFT on next set of new points
           ftildeNextNew = fft(gpuArray(obj.ff(xnew)));
           if obj.debugEnable
-            cubMLELattice.alertMsg(ftildeNextNew, 'Nan', 'Inf');
+            cubBayesLattice_g.alertMsg(ftildeNextNew, 'Nan', 'Inf');
           end
           
           % combine the previous batch and new batch to get FFT on all points
@@ -334,7 +334,6 @@ classdef cubBayesLattice_g < handle
       % store the debug information
       obj.dscAll(iter) = sqrt(DSC);
       obj.s_All(iter) = sqrt(RKHSnorm/n);
-      
       obj.muhatAll(iter) = muhat;
       obj.errorBdAll(iter) = out.ErrBd;
       obj.aMLEAll(iter) = aMLE;
@@ -362,7 +361,7 @@ classdef cubBayesLattice_g < handle
       
       numM = length(obj.mvec);
       n = 2.^obj.mvec(end);
-      xun = cubMLELattice.simple_lattice_gen(n,obj.dim,true);
+      xun = cubBayesLattice_g.simple_lattice_gen(n,obj.dim,true);
       fx = obj.ff(xun);  % Note: periodization transform already applied
       
       %% plot ObjectiveFunction
@@ -583,15 +582,15 @@ classdef cubBayesLattice_g < handle
           
           switch type
             case 'Nan'
-              if isnan(varTocheck)
+              if any(isnan(varTocheck))
                 fprintf('%s has NaN values', inpvarname);
               end
             case 'Inf'
-              if isinf(varTocheck)
+              if any(isinf(varTocheck))
                 fprintf('%s has Inf values', inpvarname);
               end
             case 'Imag'
-              if ~isreal(varTocheck)
+              if ~all(isreal(varTocheck))
                 fprintf('%s has complex values', inpvarname)
               end
             otherwise
@@ -644,7 +643,7 @@ classdef cubBayesLattice_g < handle
       if avoidCancelError
         % Computes C1m1 = C1 - 1
         % C1_new = 1 + C1m1 indirectly computed in the process
-        [C1m1, C1_alt] = cubMLELattice.kernel_t(a, constMult, bernPoly(xun));
+        [C1m1, C1_alt] = cubBayesLattice_g.kernel_t(a, constMult, bernPoly(xun));
         Lambda_tilde = abs(fft(C1m1));
         
         Lambda = Lambda_tilde;
@@ -722,9 +721,9 @@ classdef cubBayesLattice_g < handle
         nelem=nmax-nmin+1;
         
         if firstBatch==true
-          brIndices=cubMLELattice.vdc(nelem)';
+          brIndices=cubBayesLattice_g.vdc(nelem)';
         else
-          brIndices=cubMLELattice.vdc(nelem)'+1/(2*(nmin-1));
+          brIndices=cubBayesLattice_g.vdc(nelem)'+1/(2*(nmin-1));
         end
       end
       xlat = mod(bsxfun(@times,brIndices',z),1);  % unshifted

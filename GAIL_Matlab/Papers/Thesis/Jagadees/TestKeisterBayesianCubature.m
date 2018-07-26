@@ -62,7 +62,7 @@ if exist('samplingMethod','var') && ...
     strcmp(samplingMethod,'Sobol') % use Sobol points
   obj=cubMLESobol(inputArgs{:});
 else % use Lattice points
-  obj=cubMLELattice(inputArgs{:});
+  obj=cubBayesLattice_g(inputArgs{:});
 end
 
 nRep = 100;
