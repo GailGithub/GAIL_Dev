@@ -29,10 +29,6 @@ DLMF: Nist digital library of mathematical functions.
 \newblock http://dlmf.nist.gov/ \textbf{Part 2}, Release 1.0.5 of 2012--10--01
   (2012)
 
-\bibitem{FassBook2007}
-Fasshauer, G.E.: Meshfree Approximation Methods with Matlab.
-\newblock World Scientific Publishing Co (2007)
-
 \bibitem{Gen93}
 Genz, A.: Comparison of methods for the computation of multivariate normal
   probabilities.
