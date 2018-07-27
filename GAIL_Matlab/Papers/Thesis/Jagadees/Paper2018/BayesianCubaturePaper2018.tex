@@ -68,6 +68,7 @@
 
 \newcommand{\valpha}{{\bm{\alpha}}}
 \newcommand{\vbeta}{{\bm{\beta}}}
+\newcommand{\vDelta}{{\boldsymbol{\Delta}}}
 \newcommand{\vlambda}{{\bm{\lambda}}}
 \newcommand{\vphi}{{\bm{\phi}}}
 \newcommand{\vpsi}{{\bm{\psi}}}
@@ -144,6 +145,7 @@
 \newcommand{\mW}{\mathsf{W}}
 
 \newcommand{\calN}{\mathcal{N}}
+\newcommand{\me}{\mathrm{e}}
 
 \newcommand{\tvrho}{\widetilde{\vrho}}
 \newcommand{\heta}{\hat{\eta}}
@@ -270,13 +272,13 @@ Our concern is constructing a reliable stopping criterion that determines the nu
 \label{eqn:err_crit} 
 \abs{\mu - \hmu} \leq \errtol 
 \end{equation}
-Rather than relying on strong assumptions about the integrand, such as its variance or total variation, we construct a stopping criterion that is data-driven, and based on a credible interval arising from a Bayesian approach to the problem.  We build upon the ideas of Diaconis\cite{DiaconisBayesian}, O'Hagan\cite{HagenBayes}, Ritter\cite{RiterAverage}, Rasmussen and Ghahramani\cite{RasmussenBayesian}, Briol et al.\cite{BriEtal18a}, and others.  Thus, our algorithm is an example of \emph{probabilistic numerics}.
+Rather than relying on strong assumptions about the integrand, such as its variance or total variation, we construct a stopping criterion that is data-driven, and based on a credible interval arising from a Bayesian approach to the problem.  We build upon the ideas of Diaconis~\cite{DiaconisBayesian}, O'Hagan~\cite{HagenBayes}, Ritter~\cite{RiterAverage}, Rasmussen and Ghahramani~\cite{RasmussenBayesian}, Briol et al.~\cite{BriEtal18a}, and others.  Thus, our algorithm is an example of \emph{probabilistic numerics}.
 
 Our primary contribution here is to demonstrate how the choice of a family of kernels that match the low discrepancy sampling nodes facilitates fast computation of the data-driven stopping criterion.  If $n$ function values, at a cost of $\$(f)$ each, are obtained for cubature purposes, then $\Order(n \log(n))$ additional operations are required to check whether the error tolerance is satisfied.  The total cost of our algorithm is then $\Order(\$(f)n + n \log(n))$.  This is significantly fewer operations than the $\Order(n^3)$ typically required for Bayesian cubature.
 
-Hickernell \cite{Hic17a} compares and contrasts different approaches to cubature error analysis depending on whether the rule is deterministic or random and whether the integrand is assumed to be deterministic or random.  Error analyis that assumes a deterministic integrand lying in a Banach space, leads to an error bound that is typically impractical for deciding how large $n$ must be to satisfy \eqref{eqn:err_crit}.  The deterministic error bound includes a (semi-)norm of the integrand, which is often more complex to compute than the original integral.
+Hickernell~\cite{Hic17a} compares and contrasts different approaches to cubature error analysis depending on whether the rule is deterministic or random and whether the integrand is assumed to be deterministic or random.  Error analyis that assumes a deterministic integrand lying in a Banach space, leads to an error bound that is typically impractical for deciding how large $n$ must be to satisfy \eqref{eqn:err_crit}.  The deterministic error bound includes a (semi-)norm of the integrand, which is often more complex to compute than the original integral.
 
-Hickernell and Jim\'enez-Rugama\cite{HicJim16a,JimHic16a} have developed stopping criteria for cubature rules based on low discrepancy nodes by tracking the discrete Fourier coefficients of the integrand.  The algorithm proposed here also depends on the discrete Fourier coefficients of the integrand, but in a different way.
+Hickernell and Jim\'enez-Rugama~\cite{HicJim16a,JimHic16a} have developed stopping criteria for cubature rules based on low discrepancy nodes by tracking the discrete Fourier coefficients of the integrand.  The algorithm proposed here also depends on the discrete Fourier coefficients of the integrand, but in a different way.
 
 Section \ref{sec:BC} explains the Bayesian approach to estimate the posterior cubature error and defines our automatic Bayesian cubature . Although much of this material is not new, it is included for completeness.  We end Section \ref{sec:BC}  by demonstrating why Bayesian cubature is typically quite computationally expensive.
 Section \ref{sec:fast_BC}  introduces the concept of covariance kernels that match well the nodes and expedites the computations required by our automatic Bayesian cubature. 
@@ -629,7 +631,7 @@ So, our algorithm in the current form is not straightaway usable for any practic
 The generic automatic Bayesian cubature algorithm described in the previous section requires $\Order(n^3)$ operations to estimate $\vtheta$, compute the credible interval width, and compute the cubature.  There is also the potential ill-condtioning that can arise.  This section explains how speed up the calculations and avoid ill-conditioning.  A key is to choose kernels that match the design, $\{\vx_i\}_{i=1}^n$, so that the vector-matrix operations required by Bayesian cubature can be accomplished using fast transforms at a cost of $\Order(n \log(n))$.
 
 \subsection{Fast transform kernel}
-We make some assumptions about the relationship between the covariance kernel and the design, which will be shown to hold in Section \ref{sec:shift_invariant_kernel} for rank-1 lattices and shift-invariant kernels.  Firs we introduced the notation
+We make some assumptions about the relationship between the covariance kernel and the design, which will be shown to hold in Section \ref{sec:shift_invariant_kernel} for rank-1 lattices and shift-invariant kernels.  First we introduced the notation
 \begin{align}
 \nonumber
 \mC &= \Big(C_\vtheta(\vx_i,\vx_j)\Big)_{i,j=1}^n  = (\vC_1,...,\vC_n) 
@@ -654,11 +656,14 @@ where $\mV^H$ is the Hermitian of $\mV$.  The columns of matrix $\mV$ are eigenv
 \end{gather*}
 For any $n \times n$ vector $\vb$, define the notation  $\widetilde{\vb} := \mV^T \vb$.
 
-We make two assumptions that allow the fast computation:
+We make three assumptions that allow the fast computation:
 \begin{subequations} \label{fastcompAssump}
 	\begin{gather}
+	\label{fastcompAssumpA}
 	\mV \text{ may be identified analytically}, \\
+	\label{fastcompAssumpB}
 	\vv_1 = \vV_1 = \vone, \\
+	\label{fastcompAssumpC}
      \mV^T \vb  \text{ requires only $\Order(n \log(n))$ operations } \forall \vb.
 	\end{gather}
 \end{subequations}
@@ -830,108 +835,98 @@ Thus, in this  case $\hmu$ is simply the sample mean.
 
 
 
-
-
-
-
-
 \section{Integration Lattices and Shift Invariant Kernels}
 \label{sec:shift_invariant_kernel}
-We have established the concept of fast transform and showed how it can make the computations faster. But we assumed there exist a kernel that meets the requirements.
-Now we are going to show a example.
-The following shift invariant kernel satisfies the requirements of the fast transform kernel when combined with Rank-1 lattice points:
-\iffalse
-\begin{align}
-\nonumber
-C(\vx, \vt) := & \sum_{\vk \in \mathbb{Z}^d} \alpha_{\vk}  e^{2 \pi\sqrt{-1} \vk^T\vx}
-e^{-2 \pi\sqrt{-1} \vk^T\vt} & ,\; \text{where} \; {\alpha}_{\bm{0}} = 1
-\\
-\nonumber
-= & \sum_{\vk \in \mathbb{Z}^d} {\alpha_{\vk}  } 
-e^{2 \pi\sqrt{-1} \vk^T(\vx -\vt )}
-\end{align}
-\fi
-\begin{align}
-\label{bayes_SI_kernel}
-C_\vtheta(\vx, \vt) := &  \sum_{\vk \in \mathbb{Z}^d} \alpha_{\vk,\vtheta}  e^{2 \pi\sqrt{-1} \vk^T\vx}
-e^{-2 \pi\sqrt{-1} \vk^T\vt},
-\\
-\nonumber
-\text{where} \quad
-\alpha_{\vk,\vtheta} := & \prod_{l=1}^d \frac{1}{\max(\frac{|k_l|}{\theta_l},1)^r_{\theta_l\leq 1}}  \;,  \quad \text{with} \; {\alpha}_{\bm{0},\vtheta} = 1,
-\end{align}
-where $d$ is number of dimensions and $\alpha_{\vk}$ is a scalar. The Gram matrix formed by this kernel is a Hermitian matrix. 
-With some more simplifications:
-\begin{align*}
-%\label{bayes_SI_kernel_theta}
-C_\vtheta(\vx, \vt) = & \prod_{l=1}^d  
-\left[ 1 +
-\sum_{k_l=1}^\infty
-\Big|\frac{\theta_l}{k_l}\Big|^r 
-2 \cos({2 \pi\sqrt{-1} k_l(x_l - t_l )})
-\right].
-\end{align*}
 
-The \textit{shape parameter} $\vtheta$ is used to make the kernel customizable. To be specific, the {shape parameter} tweaks the kernel, so that the function space spanned by the kernel closely resembles the space where the integrand function belongs.
-
-%where $\vtheta$ is the {shape parameter}. 
-%The reason for these simplifications will be obvious in the further sections.
-This form of the kernel is very convenient to use in any analytical derivations or proofs, but not suitable for use with finite precision computers as this kernel involves infinite sum. It is preferred to have a simpler expression of the kernel without infinite sum for practical computations. 
+The preceding sections lay out an automatic Bayesian cubature algorithm whose computational cost is only $\Order(n \log(n))$ if $n$ function values are used.  However, this algorithm relies on covariance kernel functions, $C$ and designs, $\{\vx_i\}_{i=1}^n$ that satisfy assumptions \eqref{fastcompAssump}.  We will also satisfy assumption \eqref{addAssump}.
 
 
+\subsection{Extensible Integration Lattice Node Sets}
 
+The design or set of data sites used is defined by a shifted extensible integration lattice node sequence, which takes the form
+\begin{equation}
+\vx_{i} = \vh \phi(i-1) + \vDelta \mod \vone, \qquad i \in \naturals.
+\end{equation} 
+Here $\vh$ is a $d$-dimensional generating vector of positive integers, $\vDelta$ is some point in $[0,1)^d$, often chosen at random, and $\{\phi(i)\}_{i=0}^n$ is the van der Corput sequence, defined by reflecting the binary digits of the integer about the decimal point, i.e., 
+\begin{equation*}
+\begin{array}{r|ccccccccccccc}
+i & 0 & 1 & 2 & 3 & 4 &  5 & 6 & 7 & \cdots \\
+i & 0_2 & 1_2 & 10_2 & 11_2 & 100_2 & 101_2 & 110_2 & 111_2  & \cdots\\
+\toprule
+\phi(i) & {}_2.0 &  {}_2.1 & {}_2.01 &  {}_2.11  & {}_2.001 &  {}_2.101 & {}_2.011 &  {}_2.111 & \cdots\\
+\phi(i) & 0 &  0.5 &  0.25 & 0.75 &  0.125 & 0.625  &  0.375 & 0.875 & \cdots
+\end{array}
+\end{equation*}
+To facilitate the fast transform to exist, $n$ must be a power of $2$.  
 
-\subsection{Using Lattice points}
-Along with the kernel (\ref{bayes_SI_kernel}), Rank-1 lattice points $\vx_i \in \mathsf{L}_{n,\bm{h}}$ are used to get the \textit{fast transform kernel}. 
-In this work, we use the lattice points as defined in \cite{Rank1Lattice}:
-\begin{align*}
-%\label{eqn:lattice_defn}
-\mathsf{L}_{n,\bm{h}} := \lbrace \vx_i :=  \bm{h} \frac{ i-1}{n} \mod 1 ;\ \; i=1,\hdots,n
-\rbrace,
-\end{align*}
-Where $\bm{h}$ is the generating vector.
-Its dual lattice is defined as:
-\begin{align*}
-%\label{eqn:dual_lattice}
-\mathsf{L}_{n,\bm{h}}^{\perp } := 
-\lbrace 
-\vk \in \mathbb{Z}^d : \vh^T \vk \equiv 0 \;\;  (\mod n)
-\rbrace,
-\end{align*}
-
-
+An example of $64$ data sites is given in Figure  \ref{latticefig}.  The even coverage of the unit cube is ensured by a well chosen generating vector.  The choice of generating vector is typically done offline by computer search.  See \cite{DicEtal14a} and \cite{HicNie03a} for more on extensible integration lattices 
 \begin{figure}[htp]
-\centering
-    \includegraphics[height=5cm]{ShiftedLatticePoints}
-    \caption{Randomly shifted Lattice points in d=2  }
+	\centering
+	\includegraphics[height=5cm]{ShiftedLatticePoints}
+	\caption{Example of a shifted integration lattice node set  in $d=2$ \label{latticefig} }
 \end{figure}
 
 
-With lattice points, the kernel is written as:
+\subsection{Shift Invariant Kernels}
+The covariance functions $C$ that match integration lattice node sets have the form
+\begin{equation} \label{eq:shInv}
+C(\vt,\vx) = K(\vt - \vx \bmod \vone).
+\end{equation}
+This is called a \emph{shift invariant kernel} because shifting both arguments of the covariance function by the same amount leaves the value unchanged.   By a proper scaling of the kernel $K$ it follows that assumption \eqref{addAssump} is satisfied. Of course, $K$ must also be of the form that ensures that $C$ is symmetric and positive definite, as assumed in \eqref{FJH:eq:CondPosDef}. 
+For covariance functions of the form \eqref{eq:shInv} the Gram matrix takes the form
+\begin{align}
+\mC &= \bigl ( C(\vx_i, \vx_j) \bigr)_{i, j = 1}^n \\
+& = \Bigl ( K(\vh(\phi(i-1) - \phi(j-1)) \bmod \vone ) \Bigr)_{i, j = 1}^n.
+\end{align}
+
+
+We now demonstrate that the eigenvector matrix for $\mC$ is 
+\begin{equation}
+\mV = \Bigl ( \me^{2 \pi n \sqrt{-1} \phi(i-1)\phi(j-1)} \Bigr)_{i = 1}^n.
+\end{equation}
+Assumption \eqref{fastcompAssumpB} follows automatically.
+Now, note that the $k,j$ element of $\mV^H\mV$ is
+\begin{equation*}
+ \sum_{i=1}^n \me^{2 \pi n \sqrt{-1} \phi(i-1)[\phi(j-1) - \phi(k-1)]}.
+\end{equation*}
+Noting that the sequence $\{\phi(i-1)\}_{i=1}^n$ is a re-ordering of $0, \ldots, 1-1/n$ for $n$ a power of $2$, this sum may be re-written by replacing $\phi(i-1)$ by $(i-1)/n$:
+\begin{equation*}
+ \sum_{i=1}^n \me^{2 \pi \sqrt{-1} (i-1)[\phi(j-1) - \phi(k-1)]}.
+\end{equation*}
+Since $\phi(j-1) - \phi(k-1)$ is some integer multiple of $1/n$, it follows that this sum is $n \delta_{j,k}$, where $\delta$ is the Kroneker delta function.  This establishes that $\mV^H = n \mV^{-1}$ as in \eqref{eqn:ftk_factor}.
+
+Next, let $\omega_{k, \ell}$ denote the $k,\ell$ element of $\mV^H \mC \mV$, which is given by the double sum
+\begin{multline*}
+\omega_{k, \ell} = \sum_{i,j=1}^n K(\vh(\phi(i-1) - \phi(j-1)) \bmod \vone ) \\
+\times   \me^{-2 \pi n \sqrt{-1} \phi(k-1)\phi(i-1)}  \me^{2 \pi n \sqrt{-1} \phi(j-1)\phi(m-1)}
+\end{multline*}
+Noting that the sequence $\{\phi(i-1)\}_{i=1}^n$ is a re-ordering of $0, \ldots, 1-1/n$ for $n$ a power of $2$, this sum may be re-written by replacing $\phi(i-1)$ by $(i-1)/n$ and $\phi(j-1)$ by $(j-1)/n$:
+\begin{multline*}
+\omega_{k, \ell} = \sum_{i,j=1}^n K\left (\vh \left(\frac{i-j}{n} \right) \bmod \vone \right) \\
+\times   \me^{-2 \pi \sqrt{-1} \phi(k-1)(i-1)}  \me^{2 \pi \sqrt{-1} (j-1)\phi(\ell-1)}.
+\end{multline*}
+This sum also remains unchanged if $i$ is replaced by $i+m$ and $j$ is replaced by $j+m$ for any integer $m$:
+\begin{multline*}
+\omega_{k, \ell} = \sum_{i,j=1}^n K\left (\vh \left(\frac{i-j}{n} \right) \bmod \vone \right) \\
+\times   \me^{-2 \pi \sqrt{-1} \phi(k-1)(i+m-1)}  \me^{2 \pi \sqrt{-1} (j+m-1)\phi(\ell-1)} \\
+=   \omega_{k, \ell}  \me^{2 \pi \sqrt{-1} m(\phi(\ell-1) - \phi(k-1))}.
+\end{multline*}
+For this last equality to hold for all integers $m$, we must have $k = \ell$ or $\omega_{k,\ell} = 0$.  Thus, 
 \begin{align*}
-C(\vx_i, \vx_j)
- &=
-\sum_{\vk \in \mathbb{Z}^d} \alpha_{\vk}  
-e^{ 2 \pi\sqrt{-1} \vk^T  \frac{\bm{h} i}{n}}
-e^{-2 \pi\sqrt{-1} \vk^T  \frac{\bm{h} j}{n}}
-\\
- &=
-\sum_{\vk \in \mathbb{Z}^d} \alpha_{\vk}  
-e^{2 \pi\sqrt{-1} \vk^T \bm{h} \frac{(i-j)}{n}}
+\omega_{k, \ell} &= \delta_{k,\ell} \sum_{i,j=1}^n K\left (\vh \left(\frac{i-j}{n} \right) \bmod \vone \right) \\
+& \qquad \qquad \qquad \qquad \times   \me^{-2 \pi \sqrt{-1} (i - j) \phi(k-1)} \\
+& = n \delta_{k,\ell}  \sum_{i=1}^n K\left ( \left(\frac{i\vh}{n} \right) \bmod \vone \right)  \me^{-2 \pi \sqrt{-1} i \phi(k-1) }.
 \end{align*}
-Please note that `$\mod 1$' need not be used explicitly in $C(\vx_i, \vx_j)$ since 
-$
-e^{\pm 2 \pi \sqrt{-1}} = 1
-$. 
-The kernel (\ref{bayes_SI_kernel}), when used with Rank-1 Lattice points, leads to symmetric and circulant Gram matrix $\mC$.
-We can demonstrate the resulting Gram matrix satisfies the conditions of a fast transform. 
+This establishes $\mV^H \mC \mV$ as a diagonal matrix whose diagonal elements are $n$ times the eigenvalues, i.e., $\lambda_k = \omega_{k,k}/n$.  Furthermore, $\mV$ is the matrix of eigenvectors, which satisfies assumption \eqref{fastcompAssumpA}.
+
+\subsection{Iterative Computation of the Fast Transform}
 
 
 \subsection{Computing the kernel using Bernoulli polynomials}
 The shift-invariant-kernel (\ref{bayes_SI_kernel}) cannot be computed directly due to it's  infinite sum. 
 If the coefficients $\alpha_{\vk}$ were chosen appropriately, then there exist a direct expression for the kernel in terms of Bernoulli polynomial. 
-We can use the Fourier series expansion properties \cite{DLMF} of Bernoulli polynomial $B_r$ to find the appropriate $\alpha_{\vk}$. This provides a closed form expression for the kernel without the infinite sum. It also allows to choose the smoothness of kernel, i.e, how fast the coefficients $\alpha_{\vk}$ in (\ref{bayes_SI_kernel}) decay.
-The following very useful expansion is referenced from \cite{DLMF} under eqn (24.8.3):
+We can use the Fourier series expansion properties~\cite{DLMF} of Bernoulli polynomial $B_r$ to find the appropriate $\alpha_{\vk}$. This provides a closed form expression for the kernel without the infinite sum. It also allows to choose the smoothness of kernel, i.e, how fast the coefficients $\alpha_{\vk}$ in (\ref{bayes_SI_kernel}) decay.
+The following very useful expansion is referenced from~\cite{DLMF} under eqn (24.8.3):
 \begin{multline}
 \label{dlmf_bernoulli_24_8_3}
 B_{r}(x) = \frac{-r!}{(2 \pi \sqrt{-1})^{r}} 
@@ -1021,145 +1016,9 @@ We call \eqref{the_kernel_eqn_bernoulli} a Fourier kernel as the resulting Fast 
 
 
 
-\subsection{Eigenvalues and Eigenvectors of $\mC$}
-
-The kernel's Gram matrix $\mC$ is circulant. It is generated by the vector:
-\begin{equation}
-\label{eqn_top_row_of_kernel_matrix}
-\left( \vCvtheta(\vx_1,\vx_1),\vCvtheta(\vx_2,\vx_1),...,\vCvtheta(\vx_{n},\vx_1 \right) 
-)^T =: \vC_1,
-\end{equation}
-Which is the first row or column of $\mC$ (since it is a symmetric matrix).  By the properties of circulant matrix, the normalized eigenvectors are:
-\begin{multline*}
-%\label{eqn_eig_vectors_of_mC}
-\left(
-1, 
-e^{- 2 \pi \sqrt{-1} \frac{j}{n}},
-e^{- 2 \pi \sqrt{-1} \frac{2j}{n}}
-,...,
-e^{- 2 \pi \sqrt{-1} \frac{j(n-1)}{n}}  
-\right)^T, \\ \text{for} \;
-j=0,1,...,n-1 .
-\end{multline*}
-
-The matrix constructed with these eigenvectors is: 
-\begin{align*}
-\mV  := \left(e^{- 2 \pi \sqrt{-1} \frac{i j}{n}} \right)_{i,j=0}^{n-1},\;
-\mV^H := \frac{1}{n} \left(e^{ 2 \pi \sqrt{-1} \frac{i j}{n}} \right)_{i,j=0}^{n-1},
-\end{align*}
-Where the first column of $\mV$, $\vV_1 = \vone$.
-The columns of $\mV$ are complex exponential vectors independent of the kernel values. But their corresponding eigenvalues are:
-\begin{align*}
-%\label{eqn_eig_values_of_mC}
-\mLambda = \left( \lambda_j \right)_{j=1}^{n} = \mV^T \vC_1 := \mathcal{DFT} \left\lbrace \vC_1 \right\rbrace,
-\end{align*}
-i.e., eigenvalues of the matrix $\mC$ are computed by applying DFT over $\vC_1$. 
-for this kernel, the corresponding fast transform is \emph{Fast Fourier Transform} (FFT). 
-The kernel's Gram matrix $\mC$ can be written in the factorized form:
-\begin{align*}
-\mC = \frac1n \mV \mLambda \mV^H,
-\end{align*}
-This is the exact factorization used for the construction of fast transform. 
-Another requirement $\vV_1 = \vone$ is also met.
-Additionally, computational cost of FFT is $\Order(n \log n)$.
-Thus we can conclude the shift invariant kernel in eqn (\ref{bayes_SI_kernel}), obeys all the requirements to be considered as a {fast transform kernel}. So the operation $\mV^T z$ is a fast transform.
-Numerical experiments using this kernel will be shown in the section (\ref{sec:numerical_experiments}).
 
 
 
-
-
-
-\subsection{Additional assumptions}
-The shift invariant kernel (\ref{bayes_SI_kernel}) has some more desirable properties, leading to $c_0=1$ and $\vc = \vone$, which will help to make the computations even faster:
-\begin{multline*}
-%\label{eqn:ftk_integral_definitions}
-\displaystyle
-c_0 =\int_{[0,1]^d\times [0,1]^d}C_\vtheta(\vx,\vt) \dvx \dvt = 1, 
-\\
-\quad \vc = \left( \int_{[0,1]^d}C_\vtheta(\vx_i,\vt) \dvt\right)_{i=1}^n = \vone .
-\end{multline*}
-
-This gives simplified error bound:
-\begin{align*}
-\errn &=
-2.58\sqrt{
-\frac {1}{n^2} \sum_{i=2}^{n} \frac{\abs{\widehat{y}_i}^2}{\lambda_i}  
-\,
-\left( c_0 - \frac 1n \sum_{i=1}^n \frac{\abs{\widehat{c}_i}^2}{\lambda_i} \right) 
-}, 
-\\
-&= 
-2.58\sqrt{
-\frac {1}{n^2} \sum_{i=2}^{n} \frac{\abs{\widehat{y}_i}^2}{\lambda_i}  
-\,
-\left( 1 - \frac{n}{\lambda_1}  \right) 
-}, 
-\\
-& \text{where} \quad \widehat{\vc} = (n,0,...,0)^T, \quad 
-\widehat{\vy} = \mV^T \vy,  
-\widehat{\vc} = \mV^T \vc. 
-\end{align*}
-
-
-And the cubature:
-\begin{align*}
-\nonumber
-\hmu_n(f) &= w_0 + \vw^T \vy 
-= 
-\frac{\widehat{y}_1}{n} +
-\frac 1n \sum_{i=2}^n \frac{ \widehat{c}_i \widehat{y}_i^*}{\lambda_i} \\
-& = \frac{\widehat{y}_1}{n}, \quad \text{since} \quad
- \widehat{\vc}_i=0 \; \forall \; i \neq 0
-\end{align*}
-
-
-
-
-
-\subsubsection{Full Bayes}
-Final version of full Bayes equations optimized using the properties of the shift invariant kernel are:
-\begin{align}
-\label{FJH:eq:cubFull}
-\widehat{\mu}_{\textup{full}}  \vert ( \vf = \vy) &= 
- \frac{\widehat{y}_1}{n} ,
-\end{align}
-\begin{align}
-\vtheta_{\textup{GCV}} 
-&= \argmin_\vtheta \left[ \log \left ( \frac 1n \sum_{i=2}^n \frac{\abs{\widehat{y}_i}^2}{\lambda_i^2} 
-\right) -2\log\left( \sum_{i=1}^n \frac{1}{\lambda_i} \right)
-\right]
-\end{align}
-\begin{multline*}
-%\label{FJH:eq:signmaFull}
-\widehat{\sigma}^2_{\textup{full}}  \vert ( \vf = \vy) 
-= 
-\frac{1}{n-1} 
-\frac{1}{n} \sum_{i=2}^n \frac{\abs{\widehat{y_i}}^2}{\lambda_i} \times
-\\
-\qquad \qquad \left[\frac{\lambda_1}{n}{\left(1 - \frac{\widehat{c}_1}{\lambda_1}\right)^2} + \left(c_0  - \frac 1n \sum_{i=1}^n \frac{\abs{\widehat{c}_i}^2}{\lambda_i}\right) \right] 
-\\
-= 
-\frac{1}{n-1} 
-\frac{1}{n} \sum_{i=2}^n \frac{\abs{\widehat{y_i}}^2}{\lambda_i} 
-\times
-\left( 1- \frac{n}{\lambda_1}\right) \left[\frac{\lambda_1}{n}{\left(1 - \frac{n}{\lambda_1}\right)} + 1\right] 
-\\
-= 
-\frac{1}{n(n-1)} \sum_{i=2}^n \frac{\abs{\widehat{y_i}}^2}{\lambda_i}
-\times
-\left( \frac{\lambda_1}{n} - 1\right)  
-\end{multline*}
-
-The stopping criterion for the full Bayes case,  
-\begin{multline} \label{FJH:eq:stopcritHyper}
-n  = \min \biggl \{n_j \in \posIntegers:  
-\\
-\frac {t_{n_j-1,0.995}^2}{n_j(n_j - 1)} 
-\left( \frac{\lambda_1}{n_j} - 1\right)  
-\times
- \sum_{i=2}^{n_j} \frac{\abs{\widehat{y_i}}^2}{\lambda_i}  \le \varepsilon^2 \biggr\}.
-\end{multline}
 
 
 
