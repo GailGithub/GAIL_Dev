@@ -110,7 +110,7 @@ classdef cubBayesLattice_g < handle
     f = @(x) x.^2; %function to integrate
     dim = 1; %dimension of the integrand
     mmin = 10; %min number of points to start with = 2^mmin
-    mmax = 20; %max number of points allowed = 2^mmax
+    mmax = 22; %max number of points allowed = 2^mmax
     absTol = 0.01; %absolute tolerance
     relTol = 0; %relative tolerance
     order = 2; %order of the kernel
@@ -120,12 +120,12 @@ classdef cubBayesLattice_g < handle
     arbMean = true; %by default use zero mean algorithm
     fName = 'None'; %name of the integrand
     figSavePath = ''; %path where to save he figures
-    visiblePlot = true; %make plots visible
+    visiblePlot = false; %make plots visible
     debugEnable = false; %enable debug prints
     gaussianCheckEnable = false; %enable plot to check Guassian pdf
     avoidCancelError = true;
     GCV = false; % Generalized cross validation
-    full_bayes = false; % assumes m and s^2 as hyperparameters,
+    fullBayes = false; % assumes m and s^2 as hyperparameters,
     % so the posterior error is a Student-t distribution
   end
   
@@ -175,11 +175,15 @@ classdef cubBayesLattice_g < handle
           if ~isempty(wh), obj.figSavePath = varargin{wh+iStart}; end
           wh = find(strcmp(varargin(iStart:end),'fName'));
           if ~isempty(wh), obj.fName = varargin{wh+iStart}; end
+          wh = find(strcmp(varargin(iStart:end),'GCV'));
+          if ~isempty(wh), obj.GCV = varargin{wh+iStart}; end
+          wh = find(strcmp(varargin(iStart:end),'fullBayes'));
+          if ~isempty(wh), obj.fullBayes = varargin{wh+iStart}; end
         end
       end
       
       % uncertainity : two sided confidence
-      if obj.full_bayes
+      if obj.fullBayes
         % degrees of freedom = 2^mmin - 1
         obj.uncert = -tinv(obj.alpha/2, (2^obj.mmin) - 1);
       else
@@ -285,13 +289,11 @@ classdef cubBayesLattice_g < handle
       % convert from gpu memory to local
       muhat=gather(muhat);
       out=gather(out);
-      %muhat   % let it to print
-      %out
       
     end
     
     
-    % decides if the user define error threshold is met
+    % decides if the user defined error threshold is met
     function [success,muhat] = stopping_criterion(obj, xpts, ftilde, iter, n)
       
       success = false;
@@ -303,7 +305,7 @@ classdef cubBayesLattice_g < handle
       
       %Check error criterion
       % compute DSC :
-      if obj.full_bayes==true
+      if obj.fullBayes==true
         % full bayes
         if obj.avoidCancelError
           DSC = abs(Lambda_tilde(1)/n);
@@ -695,14 +697,15 @@ classdef cubBayesLattice_g < handle
     end
     
     function [xlat, z] = simple_lattice_gen(n,d,firstBatch)
-      if d<=10
-        % this gives best accuracy
-        z = [1, 364981, 245389, 97823, 488939, 62609, 400749, 385317, 21281, 223487]; % generator from Hickernell's paper
-        %z = [1, 433461, 315689, 441789, 501101, 146355, 88411, 215837, 273599]; %generator
-      else
-        z = [1 182667 302247 433461 160317 94461 481331 252345 358305 221771 48157 489023 438503 399693 200585 169833 308325 247437 281713 424209 244841 205461 336811 359375 86263 370621 422443 284811 231547 360239 505287 355195 52937 344561 286935 312429 513879 171905 50603 441451 164379 139609 371213 152351 138607 441127 157037 510073 281681 380297 208143 497641 482925 233389 238553 121499 137783 463115 168681 70699];
-      end
-      
+%       if d<=10
+%         % this gives best accuracy
+%         %z = [1, 364981, 245389, 97823, 488939, 62609, 400749, 385317, 21281, 223487]; % generator from Hickernell's paper
+%       else
+%         z = [1 182667 302247 433461 160317 94461 481331 252345 358305 221771 48157 489023 438503 399693 200585 169833 308325 247437 281713 424209 244841 205461 336811 359375 86263 370621 422443 284811 231547 360239 505287 355195 52937 344561 286935 312429 513879 171905 50603 441451 164379 139609 371213 152351 138607 441127 157037 510073 281681 380297 208143 497641 482925 233389 238553 121499 137783 463115 168681 70699];
+%       end
+      z = [1, 433461, 315689, 441789, 501101, 146355, 88411, 215837, 273599 ...
+            151719, 258185, 357967, 96407, 203741, 211709, 135719, 100779, ...
+            85729, 14597, 94813, 422013, 484367]; %generator      
       z = z(1:d);
       
       if false

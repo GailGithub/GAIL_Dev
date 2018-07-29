@@ -34,10 +34,41 @@ else
 end
 
 stopAtTol = true;
+alpha = 0.01;
 
-for fName={'MVN','Keister','Exp(cos)', }
+testFunArgs(1)=struct('fName','MVN','dim',2,'order',2','varTx','C0',...
+  'sampling','Lattice','arbMean',true,'fullBayes',false,'GCV',false);
+testFunArgs(2)=struct('fName','Keister','dim',4,'order',4','varTx','C2sin',...
+  'sampling','Lattice','arbMean',true,'fullBayes',false,'GCV',false);
+testFunArgs(3)=struct('fName','optPrice','dim',12,'order',2','varTx','Baker',...
+  'sampling','Lattice','arbMean',true,'fullBayes',false,'GCV',false);
+
+for i=1:3
+  testFunArgs(i+3)=testFunArgs(i);
+  testFunArgs(i+3).fullBayes=true;
+end
+for i=1:3
+  testFunArgs(i+6)=testFunArgs(i);
+  testFunArgs(i+6).GCV=true;
+end
+
+for testFunArg=testFunArgs(1:end)
   
-  fName = fName{1};
+  stopCrit='MLE';
+  if testFunArg.fullBayes
+    stopCrit='FB';
+  end
+  if testFunArg.GCV
+    stopCrit='GCV';
+  end
+  
+  fName = testFunArg.fName;
+%   if strcmp(fName, 'Keister')
+%     continue
+%   end
+%   if strcmp(fName, 'MVN')
+%     continue
+%   end
   tstart=tic;
   muhatVec = [];
   errVec = [];
@@ -46,82 +77,77 @@ for fName={'MVN','Keister','Exp(cos)', }
   tolVec = [];
   outStructVec = {};
   indx = 1;
-  pdTx = {'Baker', 'C0', 'C1','C1sin', 'C2sin', };  %, 'none'
-  arbMeanType = [true,false];
-  samplingMethod = {'Lattice',}; %'Sobol',
-  log10ErrVec = [-5,-4,-3,-2];
-  errTolVecText = {'1e-5','1e-4','1e-3','1e-2',};
+  %pdTx = {'Baker', 'C0',};  % 'C1','C1sin', 'C2sin', };  %, 'none'
+  %arbMeanType = [true,false];
+  %samplingMethod = {'Lattice',}; %'Sobol',
+  %log10ErrVec = -5:1:-2;
+  log10ErrVec = -4:1:-1;
+  %errTolVecText = {'1e-5','1e-4','1e-3','1e-2',};
+  errTolVecText = arrayfun(@(x){sprintf('1e%d', x)}, log10ErrVec);
   errTolVec = 10.^log10ErrVec;
-  for sampling=samplingMethod
-    sampling = sampling{1};
+  
+  sampling = testFunArg.sampling;
+  
+  for errTol=errTolVec
+    errTol;
     
-    if strcmp(sampling,'Sobol')
-      transforms={'none'}; % no periodization used for Sobol points based algorithm
-      bernOrder=[2];
+    arbMean=testFunArg.arbMean;
+    if arbMean==true
+      newPath = strcat(figSavePath, sampling, '/', 'arbMean/');
     else
-      transforms=pdTx;
-      bernOrder=[4 2];
+      newPath = strcat(figSavePath, sampling, '/', 'zeroMean/');
     end
-    for errTol=errTolVec
-      errTol;
-      for arbMean=arbMeanType
-        if arbMean==true
-          newPath = strcat(figSavePath, sampling, '/', 'arbMean/');
-        else
-          newPath = strcat(figSavePath, sampling, '/', 'zeroMean/');
+    
+    vartx=testFunArg.varTx;
+    dim=testFunArg.dim;
+    bern=testFunArg.order;
+    
+    inputArgs = {'dim',dim, 'absTol',errTol, 'order',bern, 'GCV',testFunArg.GCV...
+      'ptransform',vartx, 'stopAtTol',stopAtTol, 'fullBayes',testFunArg.fullBayes...
+      'figSavePath',newPath, 'arbMean',arbMean, 'alpha',alpha ...
+      'samplingMethod',sampling, 'visiblePlot',visiblePlot};
+    testFun = '';
+    switch fName
+      case 'Exp(cos)'
+        testFun = @()TestExpCosBayesianCubature(inputArgs{:});
+      case 'Keister'
+        testFun = @()TestKeisterBayesianCubature(inputArgs{:});
+      case 'MVN'
+        if dim~=4
+          testFun = @()TestMVN_BayesianCubature(inputArgs{:});
         end
-        
-        for tx=transforms
-          vartx=tx{1};
-          dimVec=[4 3 2];
-          if strcmp(fName,'MVN')
-            dimVec=[3 2];
-          end
-          for dim=dimVec
-            for bern=bernOrder
-              
-              inputArgs = {'dim',dim, 'absTol',errTol, 'order',bern, ...
-                'ptransform',vartx, 'stopAtTol',stopAtTol, ...
-                'figSavePath',newPath, 'arbMean',arbMean, ...
-                'samplingMethod',sampling, 'visiblePlot',visiblePlot};
-              switch fName
-                case 'Exp(cos)'
-                  [muhat,err,time,out] = TestExpCosBayesianCubature(inputArgs{:});
-                case 'Keister'
-                  [muhat,err,time,out] = TestKeisterBayesianCubature(inputArgs{:});
-                case 'MVN'
-                  if dim~=4
-                    [muhat,err,time,out] = TestMVN_BayesianCubature(inputArgs{:});
-                  end
-                otherwise
-                  error('Unknown Integrand !');
-              end
-              
-              errVec(indx) = err/errTol;
-              if errVec(indx) > 1
-                error('bug')
-              end
-              
-              nptsVec(indx) = median([out.n]);
-              timeVec(indx) = time;
-              tolVec(indx) = errTol;
-              outStructVec{indx} = out;
-              muhatVec(indx) = muhat;
-              indx = indx + 1;
-              
-            end
-          end
-        end
+      case 'optPrice'
+        testFun = @()TestAsianArithmeticMeanOptionAutoExample(inputArgs{:});
+      otherwise
+        error('Unknown Integrand !');
+    end
+    
+    if ~strcmp(testFun,'')
+      [muhat,err,time,out] = testFun();
+      
+      errVec = [errVec err/errTol];
+      if any(err > errTol)
+        warning 'Error exceeded given threshold'
       end
+      
+      nptsVec = [nptsVec [out.n]'];
+      timeVec = [timeVec [out.time]'];
+      tolVec = [tolVec repmat(errTol,size(err))];
+      outStructVec{indx} = out;
+      muhatVec(indx) = muhat;
+      indx = indx + 1;
     end
   end
+  
   toc(tstart)
   timeStamp = datetime('now','Format','d-MMM-y HH-mm-ss');
   
-  save(sprintf('%sGuaranteed_plot_data_%s_%s.mat',figSavePath,fName,timeStamp),...
+  datFileName=sprintf('%sGuaranteed_plot_data_%s_%s_%s_%s.mat',...
+    figSavePath,fName,stopCrit,vartx,timeStamp);
+  save(datFileName,...
     'errVec','timeVec','tolVec', 'errTolVec',...
-    'outStructVec','muhatVec','log10ErrVec','errTolVecText','fName',...
-    'timeStamp','figSavePath','nptsVec');
+    'outStructVec','testFunArg','log10ErrVec','errTolVecText','fName',...
+    'timeStamp','figSavePath','nptsVec','stopCrit');
   
   
   % matFilePath = 'D:\Dropbox\fjhickernellGithub\GAIL_Dev-BayesianCubature\GAIL_Matlab\Papers\Thesis\Jagadees\Paper2018\figures\';
@@ -141,21 +167,20 @@ for fName={'MVN','Keister','Exp(cos)', }
   
   figHn = figure();
   set(figHn, 'units', 'inches', 'Position', [1 1 9 6])
-  errVecLimits = [1E-16, 1E2];
-  nptsLimits = [2^9, 2^21];
+  errVecLimits = [1E-12, 1E2];
+  mvec = outStructVec{1}(1).mvec;
+  nptsLimits = [2^(mvec(1)-1), 2^(mvec(end)+1)];
   plot([1, 1], nptsLimits, 'r', 'LineWidth',1)
   hold on
   pointSize=30; %point size
-  
   pointShapes = {'o','s','d','^','v','<','>','p','h'};
-  offset = length(errVec)/length(errTolVec);
-  a=1; b=offset;
-  for i=1:length(errTolVec)
-    scatter(errVec(a:b),nptsVec(a:b),pointSize,log10(tolVec(a:b)),pointShapes{i},'filled')
-    a=a+offset; b=b+offset;
-  end
   
-  assert(max(nptsVec) <= nptsLimits(2), sprintf('nume samples greater than max limit %d', nptsLimits(2)))
+  for i=1:size(errVec,2)
+    scatter(errVec(:,i),nptsVec(:,i),pointSize,log10(tolVec(:,i)),pointShapes{i},'filled')
+  end
+    
+  assert(max(nptsVec(:)) <= nptsLimits(2), ...
+    sprintf('nume samples greater than max limit %d', nptsLimits(2)))
   
   set(gca,'xscale','log')
   set(gca,'yscale','log')
@@ -171,10 +196,16 @@ for fName={'MVN','Keister','Exp(cos)', }
   axis([errVecLimits(1) errVecLimits(2) nptsLimits(1) nptsLimits(2)])
   set(gca,'Xtick',(10.^(log10(errVecLimits(1)):4:log10(errVecLimits(2)))), ...
     'YTick',(10.^floor(log10(nptsLimits(1)) :1:log10(nptsLimits(2)))))
-  %title(sprintf('Guaranteed cubature n : %s', fName));
+  if testFunArg.arbMean
+    mType = '\(m \neq 0\)'; % arb mean
+  else
+    mType = '\(m = 0\)'; % zero mean
+  end
+%   title(sprintf('%s d %d r %d %s %s', testFunArg.fName, ...
+%                 testFunArg.dim, testFunArg.order, testFunArg.varTx, mType));
   
-  figSavePathName = sprintf('%s%s guaranteed npts %s.png', ...
-    figSavePath, fName, timeStamp );
+  figSavePathName = sprintf('%s%s_guaranteed_npts_%s_%s_%s.png', ...
+    figSavePath, fName,stopCrit,vartx,timeStamp );
   saveas(figHn, figSavePathName)
   
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -182,18 +213,13 @@ for fName={'MVN','Keister','Exp(cos)', }
   
   figH = figure();
   set(figH, 'units', 'inches', 'Position', [1 1 9 6])
-  errVecLimits = [1E-16, 1E2];
   timeLimits = [1E-3, 1E1];
-  plot([1, 1], timeLimits, 'r', 'LineWidth',1)
+  maxTimeLimit = 2*max(max(timeVec(:)), timeLimits(2));
+  plot([1, 1], [timeLimits(1) maxTimeLimit], 'r', 'LineWidth',1)
   hold on
-  pointSize=30; %point size
   
-  pointShapes = {'o','s','d','^','v','<','>','p','h'};
-  offset = length(errVec)/length(errTolVec);
-  a=1; b=offset;
-  for i=1:length(errTolVec)
-    scatter(errVec(a:b),timeVec(a:b),pointSize,log10(tolVec(a:b)),pointShapes{i},'filled')
-    a=a+offset; b=b+offset;
+  for i=1:size(errVec,2)
+    scatter(errVec(:,i),timeVec(:,i),pointSize,log10(tolVec(:,i)),pointShapes{i},'filled')
   end
   
   set(gca,'xscale','log')
@@ -206,15 +232,15 @@ for fName={'MVN','Keister','Exp(cos)', }
   c.Label.String = 'ErrTol, $\varepsilon$';
   % axis tight; not required
   
-  assert(max(timeVec) <= timeLimits(2), sprintf('time val greater than max limit %d', timeLimits(2)))
+  %assert(max(timeVec(:)) <= timeLimits(2), sprintf('time val greater than max limit %d', timeLimits(2)))
   
-  axis([errVecLimits(1) errVecLimits(2) timeLimits(1) timeLimits(2)])
+  axis([errVecLimits(1) errVecLimits(2) timeLimits(1) maxTimeLimit ])
   set(gca,'Xtick',(10.^(log10(errVecLimits(1)):4:log10(errVecLimits(2)))), ...
     'YTick',(10.^(log10(timeLimits(1)) :2:log10(timeLimits(2)))))
-  %title(sprintf('Guaranteed cubature : %s', fName));
-  
-  figSavePathName = sprintf('%s%s guaranteed time %s.png', ...
-    figSavePath, fName, timeStamp );
+  %title(sprintf('%s d %d r %d %s %s', testFunArg.fName, ...
+  %              testFunArg.dim, testFunArg.order, testFunArg.varTx, mType));  
+  figSavePathName = sprintf('%s%s_guaranteed_time_%s_%s_%s.png', ...
+    figSavePath, fName,stopCrit,vartx,timeStamp );
   saveas(figH, figSavePathName)
   
 end

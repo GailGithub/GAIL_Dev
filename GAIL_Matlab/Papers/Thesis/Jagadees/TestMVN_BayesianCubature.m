@@ -1,6 +1,6 @@
 %% Test Multivariate Normal Probabilities
 %
-function [muhat,err,time,outVec] = TestMVN_BayesianCubature(varargin)
+function [muhat,errVec,timeVec,outVec] = TestMVN_BayesianCubature(varargin)
 
 
 dim = get_arg('dim', varargin);
@@ -67,8 +67,8 @@ if compMLELattice
   muMVNProbMLELatticeGn = zeros(nnMLE,nRep);
   aMLE = zeros(nnMLE,nRep);
   errbdvecMBVProbMLELatticeGn(nnMLE,nRep) = 0;
-  muhatVec(nRep) = 0;
-  nPointsVec(nRep) = 0;
+  muhatVec(nRep,1) = 0;
+  nPointsVec(nRep,1) = 0;
   for i = 1:nRep
     %if i/1 == floor(i/1), i, end
     [muhatVec(i),outVec(i)]=compInteg(objCubBayes);
@@ -77,7 +77,7 @@ if compMLELattice
     aMLE(:,i) = outVec(i).aMLEAll;
     nPointsVec(i) = outVec(i).n;
   end
-  timeVec = [outVec(:).time];
+  timeVec = [outVec(:).time]';
   
   errvecMVNProbMLELatticeGn = abs(muBest - muMVNProbMLELatticeGn);
   errCubMLE = median(errvecMVNProbMLELatticeGn,2);
@@ -89,7 +89,7 @@ if compMLELattice
     outVec(1).absTol, outVec(1).relTol);
   
   %time = quantile(timeVec,1-alpha);
-  time = median([outVec(:).time]);
+  %time = median(timeVec);
   err = median(errVec);
   muhat = median(muhatVec);
   if err/outVec(1).absTol > 1
