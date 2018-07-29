@@ -55,6 +55,7 @@
 \newcommand{\trace}[1]{\textup{trace}{#1}}
 
 \newcommand{\naturals}{\mathbb{N}}
+\newcommand{\natzero}{\mathbb{N}_0}
 \newcommand{\reals}{\mathbb{R}}
 \newcommand{\integers}{\mathbb{Z}}
 \newcommand{\posIntegers}{\mathbb{Z}_{> 0}}
@@ -838,7 +839,7 @@ Thus, in this  case $\hmu$ is simply the sample mean.
 \section{Integration Lattices and Shift Invariant Kernels}
 \label{sec:shift_invariant_kernel}
 
-The preceding sections lay out an automatic Bayesian cubature algorithm whose computational cost is only $\Order(n \log(n))$ if $n$ function values are used.  However, this algorithm relies on covariance kernel functions, $C$ and designs, $\{\vx_i\}_{i=1}^n$ that satisfy assumptions \eqref{fastcompAssump}.  We will also satisfy assumption \eqref{addAssump}.
+The preceding sections lay out an automatic Bayesian cubature algorithm whose computational cost is only $\Order(n \log(n))$ if $n$ function values are used.  However, this algorithm relies on covariance kernel functions, $C$ and designs, $\{\vx_i\}_{i=1}^n$ that satisfy assumptions \eqref{fastcompAssump}.  We will also satisfy assumption \eqref{addAssump}.  To facilitate the fast transform, it is assumed in this section and the next that $n$ is power of $2$.  
 
 
 \subsection{Extensible Integration Lattice Node Sets}
@@ -848,7 +849,7 @@ The design or set of data sites used is defined by a shifted extensible integrat
 \vx_{i} = \vh \phi(i-1) + \vDelta \mod \vone, \qquad i \in \naturals.
 \end{equation} 
 Here $\vh$ is a $d$-dimensional generating vector of positive integers, $\vDelta$ is some point in $[0,1)^d$, often chosen at random, and $\{\phi(i)\}_{i=0}^n$ is the van der Corput sequence, defined by reflecting the binary digits of the integer about the decimal point, i.e., 
-\begin{equation*}
+\begin{equation} \label{vdCDef}
 \begin{array}{r|ccccccccccccc}
 i & 0 & 1 & 2 & 3 & 4 &  5 & 6 & 7 & \cdots \\
 i & 0_2 & 1_2 & 10_2 & 11_2 & 100_2 & 101_2 & 110_2 & 111_2  & \cdots\\
@@ -856,8 +857,8 @@ i & 0_2 & 1_2 & 10_2 & 11_2 & 100_2 & 101_2 & 110_2 & 111_2  & \cdots\\
 \phi(i) & {}_2.0 &  {}_2.1 & {}_2.01 &  {}_2.11  & {}_2.001 &  {}_2.101 & {}_2.011 &  {}_2.111 & \cdots\\
 \phi(i) & 0 &  0.5 &  0.25 & 0.75 &  0.125 & 0.625  &  0.375 & 0.875 & \cdots
 \end{array}
-\end{equation*}
-To facilitate the fast transform to exist, $n$ must be a power of $2$.  
+\end{equation}
+
 
 An example of $64$ data sites is given in Figure  \ref{latticefig}.  The even coverage of the unit cube is ensured by a well chosen generating vector.  The choice of generating vector is typically done offline by computer search.  See \cite{DicEtal14a} and \cite{HicNie03a} for more on extensible integration lattices 
 \begin{figure}[htp]
@@ -879,9 +880,8 @@ For covariance functions of the form \eqref{eq:shInv} the Gram matrix takes the 
 & = \Bigl ( K(\vh(\phi(i-1) - \phi(j-1)) \bmod \vone ) \Bigr)_{i, j = 1}^n.
 \end{align}
 
-
 We now demonstrate that the eigenvector matrix for $\mC$ is 
-\begin{equation}
+\begin{equation} \label{latticeVdef}
 \mV = \Bigl ( \me^{2 \pi n \sqrt{-1} \phi(i-1)\phi(j-1)} \Bigr)_{i = 1}^n.
 \end{equation}
 Assumption \eqref{fastcompAssumpB} follows automatically.
@@ -920,6 +920,37 @@ For this last equality to hold for all integers $m$, we must have $k = \ell$ or 
 This establishes $\mV^H \mC \mV$ as a diagonal matrix whose diagonal elements are $n$ times the eigenvalues, i.e., $\lambda_k = \omega_{k,k}/n$.  Furthermore, $\mV$ is the matrix of eigenvectors, which satisfies assumption \eqref{fastcompAssumpA}.
 
 \subsection{Iterative Computation of the Fast Transform}
+Assumption \eqref{fastcompAssumpA} is that computing $\mV^T \vb$ requires only $\Order(n \log(n)) $ operations.  Recall that we assume that $n$ is a power of $2$.  This can be accomplished by an iterative algorithm.  Let $\mV^{(n)}$ denote the $n \times n$ matrix $\mV$ defined in  \eqref{latticeVdef}.  We show how to compute $\mV^{(2n)T}\vb$ quickly for all $\vb \in \reals^{2n}$ assuming that $\mV^{(n)T}\vb$ can be computed quickly for all $\vb \in \reals^n$.
+
+From the definition of the van der Corput sequence in \eqref{vdCDef} it follows that
+\begin{gather} \label{vdCProp}
+\phi(2i) = \phi(i)/2, \;  \phi(2i+1) = [\phi(i)+1]/2, \ \ \ i \in \natzero\\
+ \label{vdCPropB}
+\phi(i+n) = \phi(i) + 1/n, \qquad i = 0, \ldots, n-1,
+\end{gather}
+still assuming that $n$ is an integer power of two.
+Let $\widetilde{\vb} = \mV^{(2n)T}\vb$ for some arbitrary $\vb \in \reals^{2n}$, and define
+\begin{gather*}
+\vb = \begin{pmatrix} b_1 \\ \vdots \\ b_{2n} \end{pmatrix}, \quad 
+\vb^{(1)} = \begin{pmatrix} b_1 \\ \vdots \\ b_{n} \end{pmatrix}, \quad 
+\vb^{(2)}  = \begin{pmatrix} b_{n+1} \\ \vdots \\ b_{2n} \end{pmatrix}, \\ 
+\widetilde{\vb} = \begin{pmatrix} \widetilde{b}_1 \\ \vdots \\ \widetilde{b}_{2n} \end{pmatrix}, \quad 
+\widetilde{\vb}^{(1)} = \begin{pmatrix} b_1 \\ b_3 \\ \vdots \\ b_{2n-1} \end{pmatrix}, \quad 
+\widetilde{\vb}^{(2)}  = \begin{pmatrix} b_{2} \\  b_{4} \\ \vdots \\ b_{2n} \end{pmatrix}. 
+\end{gather*}
+It follows from these definitions and the definition of $\mV$ in  \eqref{latticeVdef} that
+\begin{align*}
+\widetilde{\vb}^{(1)} &= \left( \sum_{j=1}^{2n}  \me^{4 \pi n \sqrt{-1} \phi(2i-2)\phi(j-1)} b_{j} \right)_{i=1}^n \\
+&= \left( \sum_{j=1}^{2n}  \me^{2 \pi n \sqrt{-1} \phi(i-1)\phi(j-1)} b_{j} \right)_{i=1}^n \quad \text{by \eqref{vdCProp}}\\
+&= \left( \sum_{j=1}^{n}  \me^{2 \pi n \sqrt{-1} \phi(i-1)\phi(j-1)} b_{j} \right)_{i=1}^n \quad \\
+&\qquad \qquad +  \left( \sum_{j=1}^{n}  \me^{2 \pi n \sqrt{-1} \phi(i-1)\phi(n+j-1)} b_{n+j} \right)_{i=1}^n \\
+&= \mV^{(n)}\vb^{(1)} \quad \\
+&+  \left(  \me^{2 \pi \sqrt{-1} \phi(i-1)} \sum_{j=1}^{n}  \me^{2 \pi n \sqrt{-1} \phi(i-1)\phi(j-1)} b_{n+j} \right)_{i=1}^n \\
+& \hspace{5cm}  \text{by \eqref{vdCPropB}}\\
+&= \mV^{(n)}\vb^{(1)} +  \left(  \me^{2 \pi \sqrt{-1} \phi(i-1)} \right)_{i=1}^n \odot \bigl(\mV^{(n)}\vb^{(2)} \bigr),
+\end{align*}
+where $\odot$ denotes the Hadamard (term-by-term) product.
+
 
 
 \subsection{Computing the kernel using Bernoulli polynomials}
