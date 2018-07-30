@@ -923,10 +923,14 @@ This establishes $\mV^H \mC \mV$ as a diagonal matrix whose diagonal elements ar
 Assumption \eqref{fastcompAssumpA} is that computing $\mV^T \vb$ requires only $\Order(n \log(n)) $ operations.  Recall that we assume that $n$ is a power of $2$.  This can be accomplished by an iterative algorithm.  Let $\mV^{(n)}$ denote the $n \times n$ matrix $\mV$ defined in  \eqref{latticeVdef}.  We show how to compute $\mV^{(2n)T}\vb$ quickly for all $\vb \in \reals^{2n}$ assuming that $\mV^{(n)T}\vb$ can be computed quickly for all $\vb \in \reals^n$.
 
 From the definition of the van der Corput sequence in \eqref{vdCDef} it follows that
-\begin{gather} \label{vdCProp}
+\begin{gather} 
+\label{vdCProp}
 \phi(2i) = \phi(i)/2, \;  \phi(2i+1) = [\phi(i)+1]/2, \ \ \ i \in \natzero\\
  \label{vdCPropB}
-\phi(i+n) = \phi(i) + 1/n, \qquad i = 0, \ldots, n-1,
+\phi(i+n) = \phi(i) + 1/(2n), \qquad i = 0, \ldots, n-1,
+\\
+\label{vdCPropC}
+n \phi(i) \in \natzero, \qquad i = 0, \ldots, n-1,
 \end{gather}
 still assuming that $n$ is an integer power of two.
 Let $\widetilde{\vb} = \mV^{(2n)T}\vb$ for some arbitrary $\vb \in \reals^{2n}$, and define
@@ -945,11 +949,23 @@ It follows from these definitions and the definition of $\mV$ in  \eqref{lattice
 &= \left( \sum_{j=1}^{n}  \me^{2 \pi n \sqrt{-1} \phi(i-1)\phi(j-1)} b_{j} \right)_{i=1}^n \quad \\
 &\qquad \qquad +  \left( \sum_{j=1}^{n}  \me^{2 \pi n \sqrt{-1} \phi(i-1)\phi(n+j-1)} b_{n+j} \right)_{i=1}^n \\
 &= \mV^{(n)}\vb^{(1)} \quad \\
-&+  \left(  \me^{2 \pi \sqrt{-1} \phi(i-1)} \sum_{j=1}^{n}  \me^{2 \pi n \sqrt{-1} \phi(i-1)\phi(j-1)} b_{n+j} \right)_{i=1}^n \\
+&+  \left(  \me^{\pi \sqrt{-1} \phi(i-1)} \sum_{j=1}^{n}  \me^{2 \pi n \sqrt{-1} \phi(i-1)\phi(j-1)} b_{n+j} \right)_{i=1}^n \\
 & \hspace{5cm}  \text{by \eqref{vdCPropB}}\\
-&= \mV^{(n)}\vb^{(1)} +  \left(  \me^{2 \pi \sqrt{-1} \phi(i-1)} \right)_{i=1}^n \odot \bigl(\mV^{(n)}\vb^{(2)} \bigr),
+&= \mV^{(n)}\vb^{(1)} +  \left(  \me^{\pi \sqrt{-1} \phi(i-1)} \right)_{i=1}^n \odot \bigl(\mV^{(n)}\vb^{(2)} \bigr),
 \end{align*}
-where $\odot$ denotes the Hadamard (term-by-term) product.
+where $\odot$ denotes the Hadamard (term-by-term) product.  By a similar argument, 
+\begin{align*}
+\widetilde{\vb}^{(2)} &= \left( \sum_{j=1}^{2n}  \me^{4 \pi n \sqrt{-1} \phi(2i-1)\phi(j-1)} b_{j} \right)_{i=1}^n \\
+&= \left( \sum_{j=1}^{2n}  \me^{2 \pi n \sqrt{-1} [\phi(i-1)+1]\phi(j-1)} b_{j} \right)_{i=1}^n \quad \text{by \eqref{vdCProp}}\\
+&= \left( \sum_{j=1}^{n}  \me^{2 \pi n \sqrt{-1} [\phi(i-1)+1]\phi(j-1)} b_{j} \right)_{i=1}^n \quad \\
+&\qquad  +  \left( \sum_{j=1}^{n}  \me^{2 \pi n \sqrt{-1} [\phi(i-1)+1]\phi(n+j-1)} b_{n+j} \right)_{i=1}^n \\
+&= \mV^{(n)}\vb^{(1)} 
++  \left(  \me^{ \pi \sqrt{-1} [\phi(i-1) + 1]} \right. 
+\\
+& \qquad \qquad \left . \times \sum_{j=1}^{n}  \me^{2 \pi n \sqrt{-1} \phi(i-1)\phi(j-1)} b_{n+j} \right)_{i=1}^n \\
+& \hspace{4cm}  \text{by \eqref{vdCPropB} and \eqref{vdCPropC}}\\
+&= \mV^{(n)}\vb^{(1)} -  \left(  \me^{\pi \sqrt{-1} \phi(i-1)} \right)_{i=1}^n \odot \bigl(\mV^{(n)}\vb^{(2)} \bigr).
+\end{align*}
 
 
 
