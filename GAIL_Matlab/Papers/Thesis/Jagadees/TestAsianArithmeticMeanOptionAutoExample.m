@@ -64,11 +64,6 @@ elseif strcmp(whichExample,'Pierre')
   absTolGold = 1e-5;
   nvec = 2.^(7:17)';
 end
-nmax = max(nvec);
-nRep = 100;
-nlarge = nmax*2;
-nn = numel(nvec);
-alpha = 0.1;
 
 %% Construct some different options
 EuroCall = optPrice(inp); %construct a European optPrice object

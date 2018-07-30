@@ -126,10 +126,12 @@ ylabel('Error, \(|\mu - \hat{\mu}|\)')
 print -depsc MVNIIDUSobolSobolWtSobol.eps
 
 %% Bayesian cubature only
-figure
-
+figH1 = figure();
+line_start = nvecMLE(1);
+line_end = 2^16;
+line_slope = line_start/line_end;
 h = loglog(nvecMLE,errmedMVNProbMLESobolGn,'.', ...
-      [nvecMLE(1) nvecMLE(end)],errmedMVNProbMLESobolGn(1)*[1 (nvecMLE(1)/nvecMLE(end))^2], '--', ...
+      [line_start line_end],errmedMVNProbMLESobolGn(1)*[1 (line_slope)^2], '--', ...
       [nvecMLE nvecMLE]', [errmedMVNProbMLESobolGn errtopMVNProbMLESobolGn]' , '-', ...
       'color', noYcolorSequence{4});
 % gail.colorMarkerLinePlot(h(1),1,noYcolorSequence,markerSequence,markerSize, ...
@@ -141,32 +143,33 @@ h = loglog(nvecMLE,errmedMVNProbMLESobolGn,'.', ...
 % gail.colorMarkerLinePlot(h(7),4,noYcolorSequence,markerSequence,markerSize, ...
 %    {'none'})
 legend(h([1 2]),{
-   'Bayesian Cubature Sobol''', '\(O(n^{-2})\)'}, ...
-   'location','southwest')
+   'BayesCub Sobol''', '\(O(n^{-2})\)'}, ...
+   'location','best')
 legend boxoff
-axis(axisvec)
+axis([100 1e5 1e-12 0.1])
 set(gca,'Xtick',xtick,'YTick',ytick)
 xlabel('Sample Size, \(n\)')
 ylabel('Error, \(|\mu - \hat{\mu}|\)')
-print -depsc MVNBayesianWtSobol.eps
-
+figSavePathName = sprintf('MVNBayesianWtSobol.png');
+saveas(figH1, figSavePathName)
 
 
 
 %% Plot n vs time for bayesian cubature
-figure
+figH2=figure();
 nii = 2.^(7:13);
 computeTime = [0.080798000000000, 0.104679000000000, 0.292205000000000, 1.481677000000000, ....
  14.238427000000000, 1.083312010000000e+02, 7.074992927000000e+03];
 
 loglog(nii,computeTime, 'b--')
-axis([100 1e7 1e-2 1e5])
-set(gca,'Xtick',(10.^(2:7)),'YTick',(10.^(-2:2:5)))
+axis([100 1e5 1e-2 1e5])
+set(gca,'Xtick',(10.^(2:5)),'YTick',(10.^(-2:2:5)))
 xlabel('Sample Size, \(n\)')
 ylabel('Comp.\ time')
 %title('MVN with Matern kernel')
-print -depsc MVN_bayesianCubaturecomputeTime.eps
-
+%print -depsc MVN_bayesianCubaturecomputeTime.eps
+figSavePathName = sprintf('MVN_bayesianCubaturecomputeTime.png');
+saveas(figH2, figSavePathName)
 
 
 %% Plot Error Bounds

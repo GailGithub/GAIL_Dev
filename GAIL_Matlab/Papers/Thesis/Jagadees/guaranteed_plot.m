@@ -63,12 +63,10 @@ for testFunArg=testFunArgs(1:end)
   end
   
   fName = testFunArg.fName;
-%   if strcmp(fName, 'Keister')
-%     continue
-%   end
-%   if strcmp(fName, 'MVN')
-%     continue
-%   end
+  
+  if ~strcmp(fName, 'optPrice')
+    continue
+  end
   tstart=tic;
   muhatVec = [];
   errVec = [];
@@ -184,7 +182,6 @@ for testFunArg=testFunArgs(1:end)
   
   set(gca,'xscale','log')
   set(gca,'yscale','log')
-  %set(gca,'zscale','log')
   xlabel('\(\frac{\vert\mu-\widehat{\mu} \vert}{\varepsilon}\)')
   ylabel('Num. Samples')
   c = colorbar('Direction','reverse', 'Ticks',log10ErrVec, ...
