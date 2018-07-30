@@ -1,6 +1,6 @@
 %% Test Multivariate Normal Probabilities
 %
-function [muhat,err,time,outVec] = TestMVN_BayesianCubature(varargin)
+function [muhat,errVec,timeVec,outVec] = TestMVN_BayesianCubature(varargin)
 
 
 dim = get_arg('dim', varargin);
@@ -54,7 +54,7 @@ if exist('samplingMethod','var') && ...
     strcmp(samplingMethod,'Sobol') % use Sobol points
   objCubBayes=cubMLESobol(inputArgs{:});
 else % use Lattice points
-  objCubBayes=cubMLELattice(inputArgs{:});
+  objCubBayes=cubBayesLattice_g(inputArgs{:});
 end
 
 nvecMLE = 2.^(objCubBayes.mvec');
@@ -63,13 +63,12 @@ nnMLE = numel(nvecMLE);
 if compMLELattice
   tic
   
-  nRep = 30; %100; % increase it for gail plots
-  %outVec = {'a', 'b'}; 
+  nRep = 100; % increase it for gail plots
   muMVNProbMLELatticeGn = zeros(nnMLE,nRep);
   aMLE = zeros(nnMLE,nRep);
   errbdvecMBVProbMLELatticeGn(nnMLE,nRep) = 0;
-  muhatVec(nRep) = 0;
-  nPointsVec(nRep) = 0;
+  muhatVec(nRep,1) = 0;
+  nPointsVec(nRep,1) = 0;
   for i = 1:nRep
     %if i/1 == floor(i/1), i, end
     [muhatVec(i),outVec(i)]=compInteg(objCubBayes);
@@ -78,8 +77,7 @@ if compMLELattice
     aMLE(:,i) = outVec(i).aMLEAll;
     nPointsVec(i) = outVec(i).n;
   end
-  timeVec = [outVec(:).time];
-  % loglog(2.^(out.mvec) , (abs(muBest - muMVNProbMLELatticeGn(:,1:i))), 2.^(out.mvec) , (abs(errbdvecMBVProbMLELatticeGn(:,1:i)))); axis tight
+  timeVec = [outVec(:).time]';
   
   errvecMVNProbMLELatticeGn = abs(muBest - muMVNProbMLELatticeGn);
   errCubMLE = median(errvecMVNProbMLELatticeGn,2);
@@ -91,7 +89,7 @@ if compMLELattice
     outVec(1).absTol, outVec(1).relTol);
   
   %time = quantile(timeVec,1-alpha);
-  time = median([outVec(:).time]);
+  %time = median(timeVec);
   err = median(errVec);
   muhat = median(muhatVec);
   if err/outVec(1).absTol > 1

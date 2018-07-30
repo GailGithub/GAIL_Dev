@@ -1,8 +1,19 @@
 %% Generate Examples of Asian Arithmetic Mean Option Pricing
-function [muhat,aMLE,errVec,outAll] = TestAsianArithmeticMeanOptionAutoExample(dim,BernPolyOrder_1,...
-  ptransform_1,figSavePath_1,visiblePlot_1,arbMean_1,testAll_1,samplingMethod,absTol_arg)
+%function [muhat,aMLE,errVec,outAll] = TestAsianArithmeticMeanOptionAutoExample(dim,BernPolyOrder_1,...
+%  ptransform,figSavePath,visiblePlot_1,arbMean_1,stopAtTol,samplingMethod,absTol_arg)
+function [muhat,err,timeVec,outVec] = TestAsianArithmeticMeanOptionAutoExample(varargin)
 
-whichExample = 'Pierre'
+% sampling = 'Lattice';
+% figSavePath = 'D:/Mega/MyWriteupBackup/';
+% newPath = strcat(figSavePath, sampling, '/', 'arbMean/');
+% 
+% inputArgs = {'dim',12, 'absTol',1e-2, 'order',2, ...
+%                 'ptransform','Baker', 'stopAtTol',true, ...
+%                 'figSavePath',newPath, 'arbMean',true, ...
+%                 'samplingMethod',sampling, 'visiblePlot',true};
+% varargin = inputArgs;
+
+whichExample = 'Pierre';
 dataFileName = [whichExample 'AsianCallExampleAllData.mat'];
 
 if exist(dataFileName,'file')
@@ -53,11 +64,6 @@ elseif strcmp(whichExample,'Pierre')
   absTolGold = 1e-5;
   nvec = 2.^(7:17)';
 end
-nmax = max(nvec);
-nRep = 100;
-nlarge = nmax*2;
-nn = numel(nvec);
-alpha = 0.1;
 
 %% Construct some different options
 EuroCall = optPrice(inp); %construct a European optPrice object
@@ -112,8 +118,8 @@ disp(['mu  = ' num2str(callPriceExact,15) ' +/- ' num2str(2*std(callPriceGold),1
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Try Bayesian automatic cubature
-disp('Automatic Bayesian cubature')
-nRepAuto = 50;
+%disp('Automatic Bayesian cubature')
+nRepAuto = 100;
 timeVecAsianCallBayesAutoo(nRepAuto,1) = 0;
 nVecAsianCallBayesAutoo(nRepAuto,1) = 0;
 compCallAutoBayes = true;
@@ -127,80 +133,80 @@ if exist(dataFileName,'file')
   end
 end
 if true
-  f = @(x) genOptPayoffs(AsianCall,x);
+  integrand = @(x) genOptPayoffs(AsianCall,x);
   dim = AsianCall.timeDim.nSteps;
   muAsianCallBayesAuto(nRepAuto,1) = 0;
-  outCallBayes = cell(nRepAuto,1);
+  %outCallBayes(nRepAuto,1) = 0;
   
-  if ~exist('figSavePath_1','var')
-    figSavePath_1 = '/home/jagadees/MyWriteup/Sep2ndweek_optprice/';
+  % input params initializations
+  ptransform = get_arg('ptransform', varargin);
+  stopAtTol = get_arg('stopAtTol', varargin);
+  figSavePath = get_arg('figSavePath', varargin);
+  visiblePlot = get_arg('visiblePlot', varargin);
+  samplingMethod = get_arg('samplingMethod', varargin);
+
+  fName = 'optPrice';
+  
+  inputArgs = varargin;
+  inputArgs{end+1} = 'f'; inputArgs{end+1} = integrand;
+  inputArgs{end+1} = 'fName'; inputArgs{end+1} = fName;
+  %inputArgs{end+1} = 'dim'; inputArgs{end+1} = dim;
+  inputArgs = set_arg('dim', inputArgs, dim);
+
+  % initialise the object based on the sampling method
+  if exist('samplingMethod','var') && ...
+      strcmp(samplingMethod,'Sobol') % use Sobol points
+    obj=cubMLESobol(inputArgs{:});
+  else % use Lattice points
+    obj=cubBayesLattice_g(inputArgs{:});
   end
-  if ~exist('ptransform_1','var')
-    ptransform_1 = 'Baker';
-  end
-  if ~exist('testAll_1','var')
-    testAll_1 = false;
-  end
-  if ~exist('fName_1','var')
-    fName_1 = 'optPrice';
-  end
-  if ~exist('BernPolyOrder_1','var')
-    BernPolyOrder_1 = 4;
-  end
-  if ~exist('arbMean_1','var')
-    arbMean_1 = false;
-  end
-  if ~exist('absTol_arg','var')
-    absTol_arg = absTol;
-  end
+
   
   tic
   for i =  1:nRepAuto
     gail.TakeNote(i,10)
 
-%     [muAsianCallBayesAuto(i),outCallBayes{i}] = ...
-%       cubMLELattice(f,dim,absTol_arg,relTol,...
-%             BernPolyOrder_1,ptransform_1,testAll_1,figSavePath_1,...
-%             fName_1,arbMean_1);
-    
-    if exist('samplingMethod','var') && ...
-      strcmp(samplingMethod,'Sobol') % use Sobol points
-      obj=cubMLESobol('f',f, 'dim',dim, 'absTol',absTol_arg, 'relTol',relTol,...
-        'order',BernPolyOrder_1, 'ptransform',ptransform_1, ...
-        'stopAtTol',testAll_1, 'figSavePath',figSavePath_1, ...
-        'fName',fName_1, 'arbMean',arbMean_1);
-    else % use Lattice points
-
-      obj=cubMLELattice('f',f, 'dim',dim, 'absTol',absTol_arg, 'relTol',relTol,...
-        'order',BernPolyOrder_1, 'ptransform',ptransform_1, ...
-        'stopAtTol',testAll_1, 'figSavePath',figSavePath_1, ...
-        'fName',fName_1, 'arbMean',arbMean_1);
-    end
-    [muAsianCallBayesAuto(i),outCallBayes{i}] = compInteg(obj);
-    
-    timeVecAsianCallBayesAutoo(i) = outCallBayes{i}.time;
-    nVecAsianCallBayesAutoo(i) = outCallBayes{i}.n;
+    [muAsianCallBayesAuto(i),outCallBayes(i)] = compInteg(obj);
+    timeVecAsianCallBayesAutoo(i) = outCallBayes(i).time;
+    nVecAsianCallBayesAutoo(i) = outCallBayes(i).n;
   end
   toc
 end
 errvecAsianCallBayesAutoo = abs(callPriceExact - muAsianCallBayesAuto);
 errmedAsianCallBayesAutoo = median(errvecAsianCallBayesAutoo);
-errtopAsianCallBayesAutoo = quantile(errvecAsianCallBayesAutoo,1-alpha);
+errtopAsianCallBayesAutoo = quantile(errvecAsianCallBayesAutoo,1-obj.alpha);
 rangeAsianCallBayesAutoo  = range(muAsianCallBayesAuto);
-timetopAsianCallBayesAutoo = quantile(timeVecAsianCallBayesAutoo,1-alpha);
-ntopAsianCallBayesAutoo    = quantile(nVecAsianCallBayesAutoo,1-alpha);
-successAsianCallBayesAutoo = mean(errvecAsianCallBayesAutoo <= absTol);
+timetopAsianCallBayesAutoo = quantile(timeVecAsianCallBayesAutoo,1-obj.alpha);
+ntopAsianCallBayesAutoo    = quantile(nVecAsianCallBayesAutoo,1-obj.alpha);
+successAsianCallBayesAutoo = mean(errvecAsianCallBayesAutoo <= obj.absTol);
 
-fprintf('\nMedian error_n %1.2e, worst_n %d, worst_time %1.3f, absTol %1.2e, relTol %1.2e ', ...
-  errmedAsianCallBayesAutoo, ntopAsianCallBayesAutoo, timetopAsianCallBayesAutoo, ...
-  outCallBayes{i}.absTol, outCallBayes{i}.relTol);
-  
+fprintf('\nError: Median %1.2e, Worst %1.2e, Range %1.2e, \n worstN %d, worstTime %1.3f, SuccessRatio %1.2f, \n absTol %1.2e, relTol %1.2e\n', ...
+  errmedAsianCallBayesAutoo, errtopAsianCallBayesAutoo, rangeAsianCallBayesAutoo, ...
+  ntopAsianCallBayesAutoo, timetopAsianCallBayesAutoo, ...
+  successAsianCallBayesAutoo, outCallBayes(1).absTol, outCallBayes(1).relTol);
+
+
 muhat = median(muAsianCallBayesAuto);
-aMLE = 0;
-errVec = errvecAsianCallBayesAutoo;
-outAll = outCallBayes;
+err = errvecAsianCallBayesAutoo;
+outVec = outCallBayes;
+timeVec = timeVecAsianCallBayesAutoo;
 
 %% Save output
 %% save(dataFileName)
+end
 
+
+% picks the input argument from the varargin cell array
+function output = get_arg(argName, inputArgs, defaultVal)
+iStart = 1;
+wh = find(strcmp(inputArgs(iStart:end),argName));
+if ~isempty(wh), output=inputArgs{wh+iStart}; else, output=defaultVal; end
+end
+
+function outArgs = set_arg(argName, inputArgs, val)
+outArgs=inputArgs;
+iStart=1;
+wh=find(strcmp(outArgs(iStart:end),argName));
+if ~isempty(wh), outArgs{wh+1}=val; else, outArgs{end+1}=argName; outArgs{end+2}=val; end
+end
 

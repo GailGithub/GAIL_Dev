@@ -8,7 +8,7 @@
 % \exp(-\lVert \boldsymbol{x} \rVert^2) \, \mathrm{d} \boldsymbol{x},
 % \qquad d = 1, 2, \ldots. \]
 
-function [muhat,err,time,out] = TestKeisterBayesianCubature(varargin)
+function [muhat,errVec,timeVec,outVec] = TestKeisterBayesianCubature(varargin)
 
 % input params initializations
 dim = get_arg('dim', varargin);
@@ -62,10 +62,10 @@ if exist('samplingMethod','var') && ...
     strcmp(samplingMethod,'Sobol') % use Sobol points
   obj=cubMLESobol(inputArgs{:});
 else % use Lattice points
-  obj=cubMLELattice(inputArgs{:});
+  obj=cubBayesLattice_g(inputArgs{:});
 end
 
-nRep = 20;
+nRep = 100;
 muhatVec = zeros(nRep,1);
 
 for i=1:nRep
@@ -76,13 +76,11 @@ muhat = median(muhatVec);
 %plotMLE_Loss(obj);
 toc
 
-err = abs(exactInteg - muhat);
-time = median([outVec(:).time]);
+errVec = abs(exactInteg - muhatVec);
+timeVec = [outVec(:).time]';
 out = outVec;
 
-if err/obj.absTol > 1
-  error('wait')
-end
+
 %% plot error
 if stopAtTol==false
   BernPolyOrder = outVec{end}.order;

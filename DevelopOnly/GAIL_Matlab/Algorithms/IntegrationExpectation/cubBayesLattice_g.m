@@ -110,7 +110,7 @@ classdef cubBayesLattice_g < handle
     f = @(x) x.^2; %function to integrate
     dim = 1; %dimension of the integrand
     mmin = 10; %min number of points to start with = 2^mmin
-    mmax = 20; %max number of points allowed = 2^mmax
+    mmax = 22; %max number of points allowed = 2^mmax
     absTol = 0.01; %absolute tolerance
     relTol = 0; %relative tolerance
     order = 2; %order of the kernel
@@ -120,12 +120,12 @@ classdef cubBayesLattice_g < handle
     arbMean = true; %by default use zero mean algorithm
     fName = 'None'; %name of the integrand
     figSavePath = ''; %path where to save he figures
-    visiblePlot = true; %make plots visible
+    visiblePlot = false; %make plots visible
     debugEnable = false; %enable debug prints
     gaussianCheckEnable = false; %enable plot to check Guassian pdf
     avoidCancelError = true;
     GCV = false; % Generalized cross validation
-    full_bayes = false; % assumes m and s^2 as hyperparameters,
+    fullBayes = false; % assumes m and s^2 as hyperparameters,
     % so the posterior error is a Student-t distribution
   end
   
@@ -145,11 +145,11 @@ classdef cubBayesLattice_g < handle
   end
   
   methods
-    function obj = cubMLELattice(varargin)  %Constructor
+    function obj = cubBayesLattice_g(varargin)  %Constructor
       
       if nargin > 0
         iStart = 1;
-        if isa(varargin{1},'cubMLELattice')
+        if isa(varargin{1},'cubBayesLattice_g')
           obj = copy(varargin{1});
           iStart = 2;
         end
@@ -175,11 +175,15 @@ classdef cubBayesLattice_g < handle
           if ~isempty(wh), obj.figSavePath = varargin{wh+iStart}; end
           wh = find(strcmp(varargin(iStart:end),'fName'));
           if ~isempty(wh), obj.fName = varargin{wh+iStart}; end
+          wh = find(strcmp(varargin(iStart:end),'GCV'));
+          if ~isempty(wh), obj.GCV = varargin{wh+iStart}; end
+          wh = find(strcmp(varargin(iStart:end),'fullBayes'));
+          if ~isempty(wh), obj.fullBayes = varargin{wh+iStart}; end
         end
       end
       
       % uncertainity : two sided confidence
-      if obj.full_bayes
+      if obj.fullBayes
         % degrees of freedom = 2^mmin - 1
         obj.uncert = -tinv(obj.alpha/2, (2^obj.mmin) - 1);
       else
@@ -245,7 +249,7 @@ classdef cubBayesLattice_g < handle
           % Compute FFT on next set of new points
           ftildeNextNew = fft(gpuArray(obj.ff(xnew)));
           if obj.debugEnable
-            cubMLELattice.alertMsg(ftildeNextNew, 'Nan', 'Inf');
+            cubBayesLattice_g.alertMsg(ftildeNextNew, 'Nan', 'Inf');
           end
           
           % combine the previous batch and new batch to get FFT on all points
@@ -285,13 +289,11 @@ classdef cubBayesLattice_g < handle
       % convert from gpu memory to local
       muhat=gather(muhat);
       out=gather(out);
-      %muhat   % let it to print
-      %out
       
     end
     
     
-    % decides if the user define error threshold is met
+    % decides if the user defined error threshold is met
     function [success,muhat] = stopping_criterion(obj, xpts, ftilde, iter, n)
       
       success = false;
@@ -303,7 +305,7 @@ classdef cubBayesLattice_g < handle
       
       %Check error criterion
       % compute DSC :
-      if obj.full_bayes==true
+      if obj.fullBayes==true
         % full bayes
         if obj.avoidCancelError
           DSC = abs(Lambda_tilde(1)/n);
@@ -334,7 +336,6 @@ classdef cubBayesLattice_g < handle
       % store the debug information
       obj.dscAll(iter) = sqrt(DSC);
       obj.s_All(iter) = sqrt(RKHSnorm/n);
-      
       obj.muhatAll(iter) = muhat;
       obj.errorBdAll(iter) = out.ErrBd;
       obj.aMLEAll(iter) = aMLE;
@@ -362,7 +363,7 @@ classdef cubBayesLattice_g < handle
       
       numM = length(obj.mvec);
       n = 2.^obj.mvec(end);
-      xun = cubMLELattice.simple_lattice_gen(n,obj.dim,true);
+      xun = cubBayesLattice_g.simple_lattice_gen(n,obj.dim,true);
       fx = obj.ff(xun);  % Note: periodization transform already applied
       
       %% plot ObjectiveFunction
@@ -583,15 +584,15 @@ classdef cubBayesLattice_g < handle
           
           switch type
             case 'Nan'
-              if isnan(varTocheck)
+              if any(isnan(varTocheck))
                 fprintf('%s has NaN values', inpvarname);
               end
             case 'Inf'
-              if isinf(varTocheck)
+              if any(isinf(varTocheck))
                 fprintf('%s has Inf values', inpvarname);
               end
             case 'Imag'
-              if ~isreal(varTocheck)
+              if ~all(isreal(varTocheck))
                 fprintf('%s has complex values', inpvarname)
               end
             otherwise
@@ -644,7 +645,7 @@ classdef cubBayesLattice_g < handle
       if avoidCancelError
         % Computes C1m1 = C1 - 1
         % C1_new = 1 + C1m1 indirectly computed in the process
-        [C1m1, C1_alt] = cubMLELattice.kernel_t(a, constMult, bernPoly(xun));
+        [C1m1, C1_alt] = cubBayesLattice_g.kernel_t(a, constMult, bernPoly(xun));
         Lambda_tilde = abs(fft(C1m1));
         
         Lambda = Lambda_tilde;
@@ -696,14 +697,15 @@ classdef cubBayesLattice_g < handle
     end
     
     function [xlat, z] = simple_lattice_gen(n,d,firstBatch)
-      if d<=10
-        % this gives best accuracy
-        z = [1, 364981, 245389, 97823, 488939, 62609, 400749, 385317, 21281, 223487]; % generator from Hickernell's paper
-        %z = [1, 433461, 315689, 441789, 501101, 146355, 88411, 215837, 273599]; %generator
-      else
-        z = [1 182667 302247 433461 160317 94461 481331 252345 358305 221771 48157 489023 438503 399693 200585 169833 308325 247437 281713 424209 244841 205461 336811 359375 86263 370621 422443 284811 231547 360239 505287 355195 52937 344561 286935 312429 513879 171905 50603 441451 164379 139609 371213 152351 138607 441127 157037 510073 281681 380297 208143 497641 482925 233389 238553 121499 137783 463115 168681 70699];
-      end
-      
+%       if d<=10
+%         % this gives best accuracy
+%         %z = [1, 364981, 245389, 97823, 488939, 62609, 400749, 385317, 21281, 223487]; % generator from Hickernell's paper
+%       else
+%         z = [1 182667 302247 433461 160317 94461 481331 252345 358305 221771 48157 489023 438503 399693 200585 169833 308325 247437 281713 424209 244841 205461 336811 359375 86263 370621 422443 284811 231547 360239 505287 355195 52937 344561 286935 312429 513879 171905 50603 441451 164379 139609 371213 152351 138607 441127 157037 510073 281681 380297 208143 497641 482925 233389 238553 121499 137783 463115 168681 70699];
+%       end
+      z = [1, 433461, 315689, 441789, 501101, 146355, 88411, 215837, 273599 ...
+            151719, 258185, 357967, 96407, 203741, 211709, 135719, 100779, ...
+            85729, 14597, 94813, 422013, 484367]; %generator      
       z = z(1:d);
       
       if false
@@ -722,9 +724,9 @@ classdef cubBayesLattice_g < handle
         nelem=nmax-nmin+1;
         
         if firstBatch==true
-          brIndices=cubMLELattice.vdc(nelem)';
+          brIndices=cubBayesLattice_g.vdc(nelem)';
         else
-          brIndices=cubMLELattice.vdc(nelem)'+1/(2*(nmin-1));
+          brIndices=cubBayesLattice_g.vdc(nelem)'+1/(2*(nmin-1));
         end
       end
       xlat = mod(bsxfun(@times,brIndices',z),1);  % unshifted

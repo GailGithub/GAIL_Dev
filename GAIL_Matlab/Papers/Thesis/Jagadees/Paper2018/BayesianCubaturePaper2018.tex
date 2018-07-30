@@ -315,7 +315,66 @@ c_0 &= \int_{[0,1]^{2d}} C_\vtheta(\vx,\vt) \, \dif{\vx} \, \dif{\vt}, \\
 \cov(\vf, \mu) &= \left(  \int_{[0,1]^d} C(\vt,\vx_i) \, \D \vt \right)_{i=1}^n  =: \vc.
 \end{align}
 \end{subequations}
-Therefore,  it follows from \cite{RasWil06a} Appendix A.2 Gaussian Identities that the \emph{conditional} distribution of the integral given observed function values, $\vf = \vy$ is also Gaussian:
+We need the following Lemma \ref{thrm:condDist} to derive the posterior.
+
+\begin{lemma} \label{thrm:condDist} If $\vY = (\vY_1, \vY_2)^T \sim \calN (\vm,\mC)$, where $\vY_1$ and $\vY_2$ are random vectors of arbitrary length, and 
+	\begin{gather*}
+	\vm = \begin{pmatrix} \vm_1 \\ \vm_2 \end{pmatrix} = \begin{pmatrix} \Ex(\vY_1) \\ \Ex(\vY_2) \end{pmatrix}, \\
+	\mC = \begin{pmatrix}
+	\mC_{11} & \mC_{21}^T \\ 	\mC_{21} & \mC_{22}
+	\end{pmatrix} =
+	\begin{pmatrix}
+	\var(\vY_{1}) & \cov(\vY_{1}, \vY_2) \\ 	\cov(\vY_2,\vY_{1}) & \var(\vY_{2})
+	\end{pmatrix} 
+	\end{gather*}
+	then 
+	\begin{multline*}
+	\vY_1 \vert \vY_2 \; \sim \; \calN \bigl(\vm_1 + \mC_{21}^T \mC_{22}^{-1}(\vY_2 - \vm_2), \\ \mC_{11} - \mC_{21}^T \mC_{22}^{-1} \mC_{21} \bigr).
+	\end{multline*}
+	
+	Inverse of the matrix $\mC$ may be partitioned as \cite{RasWil06a} eqns (A.11, A.12 and A.13):
+\begin{gather*}
+\mC^{-1} = \begin{pmatrix} \mA_{11} & \mA_{21}^T \\ \mA_{21} & \mA_{22} \end{pmatrix}, \\
+\mA_{11} = (\mC_{11} - \mC_{12} \mC_{22}^{-1} \mC_{21})^{-1}, \qquad 
+\mA_{21} = -  \mC_{22}^{-1} \mC_{21} \mA_{11}, \\ 
+\mA_{22} = \mC_{22}^{-1} + \mC_{22}^{-1} \mC_{21} \mA_{11} \mC_{21}^T \mC_{22}^{-1}.
+\end{gather*}
+For more details of the proof refer to \cite{RasWil06a} eqn (A.6).
+\end{lemma}
+\iffalse
+\begin{proof}:
+
+	
+	Since $\vY_1$ and $\vY_2$ have a Gaussian distribution, the conditional distribution of $\vY_1 \vert \vY_2$ is also Gaussian. So, it is sufficient to prove that $\Ex(\vY_1 \vert \vY_2)$ and $\cov(\vY_1 \vert \vY_2)$ are as hypothesized.
+	
+	Define $\vZ=\vY_1- \mB \vY_2$ where $\mB=\mC_{21}^T \mCInv_{22}$. Note that $\Ex(\vZ) = \vm_1 - \mB \vm_2$.  Elementary calculations establish that $\vZ$ and $\vY_2$ are uncorrelated and therefore independent.   Therefore it follows that the conditional mean is
+	\begin{align*}
+	\Ex(\vY_1 \vert \vY_2) &= \Ex(\vZ + \mB \vY_2 \vert \vY_2) 
+	\\ & = \Ex(\vZ \vert \vY_2) + \Ex(\mB \vY_2 \vert \vY_2) 
+	= \Ex(\vZ) + \mB\vY_2 
+	\\
+	& = \vm_1 + \mB (\vY_2 - \vm_2) \\
+	& =  \vm_1+ \mC_{21}^T \mCInv_{22}(\vY_2 - \vm_2)
+	\end{align*}
+	Likewise the conditional covariance is 
+	\begin{align*}
+	\cov(\vY_1|\vY_2) &=\cov(\vZ + \mB \vY_2|\vY_2) \\
+	& =\cov(\vZ) = \var(\vY_1 - \mB \vY_2)
+	\\
+	& =\cov(\vY_1)+\mB\cov(\vY_2)\mB^T \\
+	& \qquad  \qquad  - 2  \cov(\vY_1,\vY_2) \mB^T
+	\\
+	&=\mC_{11}+\mC_{21}^T\mC_{22}^{-1}\mC_{22}\mC_{22}^{-1}\mC_{21}-2\mC_{21}^T\mC_{22}^{-1}\mC_{21}
+	\\
+	&=\mC_{11}-\mC_{21}^T\mC_{22}^{-1}\mC_{21}.
+	\end{align*}
+	This completes the proof. \qed
+
+	
+\end{proof}
+\fi
+
+Therefore,  it follows from Lemma \ref{thrm:condDist} that the \emph{conditional} distribution of the integral given observed function values, $\vf = \vy$ is also Gaussian:
 \begin{multline} \label{eqn:condInteg}
 \mu | (\vf = \vy) \sim \calN \bigl(m (1 - \vc^T \mC^{-1} \vone)  + \vc^T \mC^{-1} \vy, 
 \\
@@ -501,7 +560,7 @@ Thus, \eqref{FJH:eq:CVA} may be re-written as
 \begin{equation*} %\label{FJH:eq:CVB}
 \textup{CV} = \sum_{i=1}^n \left(\frac{\zeta_i}{a_{ii}} \right)^2, \qquad \vzeta = \mC^{-1}(\vy - m \vone).
 \end{equation*}
-Wahba \ref{} recommended a generalized cross-validation criterion, which replaces the $i^{\text{th}}$ diagonal element of $\mA$ in the denominator by the average diagonal element of $\mA$:
+Wahba \cite{WahbaGCV} recommended a generalized cross-validation criterion, which replaces the $i^{\text{th}}$ diagonal element of $\mA$ in the denominator by the average diagonal element of $\mA$:
 \begin{align} 
 \nonumber
 \textup{GCV} &
@@ -1027,14 +1086,14 @@ C_\vtheta(\vx, \vt) =
 \end{multline}
 where $\vtheta \in (0,1]^d$ is the {shape parameter}, `$r$' is the order of the Bernoulli polynomial $B_{r}$.
 
-We call \eqref{the_kernel_eqn_bernoulli} a Fourier kernel as the resulting Fast transform is the \emph{Fast Fourier transform} (FFT). Plots of this kernel in $d=2$ is shown in \figref{fig:Fourier_kernel}.
+We call \eqref{the_kernel_eqn_bernoulli} a Fourier kernel as the resulting Fast transform is the \emph{Fast Fourier transform} (FFT). Plots of this kernel in $d=$ is shown in \figref{fig:fourierkernel-dim1} with order $r=2,4$ and $\vtheta=0.2,0.8$.
 
 
 
 
 
 
-
+\iffalse
 \begin{figure}
 	\centering
 	\begin{subfigure}{0.40\textwidth}
@@ -1055,10 +1114,16 @@ We call \eqref{the_kernel_eqn_bernoulli} a Fourier kernel as the resulting Fast 
 \caption{Fourier kernel \eqref{the_kernel_eqn_bernoulli} with $r=2,4$ and $\theta = 0.1, 0.9$}
 \label{fig:Fourier_kernel}
 \end{figure}
+\fi
 
 
 
-
+\begin{figure}
+	\centering
+	\includegraphics[width=0.9\linewidth]{"figures/fourier_kernel dim_1"}
+	\caption[Fourier kernel]{Shift invariant kernel in 1D shifted by 0.3 to show the discontinuity}
+	\label{fig:fourierkernel-dim1}
+\end{figure}
 
 
 
@@ -1373,6 +1438,9 @@ Having all the tools and optimization done handy, now we shall run the numerical
 The following test functions were used to test the integration speed and accuracy of \textit{Fast Bayesian cubature algorithm} that we developed so far
 
 \begin{enumerate}
+	
+	
+\iffalse
 \item Exponential of Cosine: 
 
 This is a very simple function, serves as an example to check the working of the cubature,
@@ -1389,7 +1457,7 @@ f(\vx) = e^{\sum_{i=1}^d\cos(2 \pi x_d)},
 \int_{[0,1]^d} f(\vx) \dvx = \text{BesselI(0,1)}^d
 \end{multline*}
 where `$\text{BesselI}$' is the \textit{modified Bessel} function. Exp(Cos) function is periodic in $[0,1]$, so we do not need to use any \textit{transform} to make it periodic.
-
+\fi
 
 
 
@@ -1398,7 +1466,7 @@ where `$\text{BesselI}$' is the \textit{modified Bessel} function. Exp(Cos) func
 
 \item Keister function
 
-The following multidimensional integral example is based on the paper \cite{KeisterExample}, inspired by a physics application.
+The following multidimensional integral example is based on the paper \cite{KeisterExample}, inspired by a physics application. There exist an iterative algorithm to compute the true integral of this function. But the domain of this function is $\reals^d$ so variation transformation must be used to use with $[0,1]^d$.
 \begin{figure}
 	\centering
 	\includegraphics[width=0.95\linewidth]{"figures/Keister_wholeR"}
@@ -1600,21 +1668,21 @@ We tested our cubature to integrate the above specified functions. The following
 
 \begin{figure}
 	\centering
-	\includegraphics[width=0.95\linewidth]{"figures/Exp(cos) guaranteed time 19-Jul-2018 08-14-22"}
-	\caption[Guaranteed:]{Exp(Cos) integrated within $\varepsilon$ and finite time}
-	\label{fig:expcos-guaranteed-time}
+	\includegraphics[width=0.95\linewidth]{"figures/optPrice_guaranteed_time_MLE_Baker_29-Jul-2018 03-10-33"}
+	\caption[Guaranteed:]{Option pricing estimated within $\varepsilon$ using empirical Bayes stopping criterion}
+	\label{fig:optprice-guaranteed-MLE}
 \end{figure}
 \begin{figure}
 	\centering
-	\includegraphics[width=0.95\linewidth]{"figures/Keister guaranteed time 20-Jul-2018 20-54-43"}
-	\caption[Guaranteed:]{Keister function integrated within $\varepsilon$ and finite time}
-	\label{fig:keister-guaranteed-time}
+	\includegraphics[width=0.95\linewidth]{"figures/Keister_guaranteed_time_MLE_C2sin_29-Jul-2018 02-13-57"}
+	\caption[Guaranteed:]{Keister function integrated within $\varepsilon$ using empirical Bayes stopping criterion}
+	\label{fig:keister-guaranteed-MLE}
 \end{figure}
 \begin{figure}
 	\centering
-	\includegraphics[width=0.95\linewidth]{"figures/MVN guaranteed time 19-Jul-2018 00-01-41"}
-	\caption[Guaranteed:]{MVN integrated within $\varepsilon$ and finite time}
-	\label{fig:mvn-guaranteed-time}
+	\includegraphics[width=0.95\linewidth]{"figures/MVN_guaranteed_time_MLE_C0_29-Jul-2018 02-13-31"}
+	\caption[Guaranteed:]{MVN integrated within $\varepsilon$ using empirical Bayes stopping criterion}
+	\label{fig:mvn-guaranteed-MLE}
 \end{figure}
 
 
@@ -1624,26 +1692,50 @@ We tested our cubature to integrate the above specified functions. The following
 
 \begin{figure}
 	\centering
-	\includegraphics[width=0.95\linewidth]{"figures/Exp(cos) guaranteed npts 19-Jul-2018 08-14-22"}
-	\caption[Exp(Cos) guaranteed : Number of samples]{Exp(Cos) integrated within $\varepsilon$ using finite number of samples}
-	\label{fig:expcos-guaranteed-npts}
+	\includegraphics[width=0.95\linewidth]{"figures/optPrice_guaranteed_time_FB_Baker_29-Jul-2018 04-03-05"}
+	\caption[OptPrice guaranteed : Number of samples]{Option pricing estimated within $\varepsilon$ using Full Bayes stopping criterion}
+	\label{fig:optprice-guaranteed-FB}
 \end{figure}
 \begin{figure}
 	\centering
-	\includegraphics[width=0.95\linewidth]{"figures/Keister guaranteed npts 20-Jul-2018 20-54-43"}
-	\caption[Keister guaranteed: Num sample]{Keister integrated within $\varepsilon$ using finite number of samples}
-	\label{fig:keister-guaranteed-npts}
+	\includegraphics[width=0.95\linewidth]{"figures/Keister_guaranteed_time_FB_C2sin_29-Jul-2018 03-11-01"}
+	\caption[Keister guaranteed: Num sample]{Keister integrated within $\varepsilon$ using Full Bayes stopping criterion}
+	\label{fig:keister-guaranteed-FB}
 \end{figure}
 \begin{figure}
 	\centering
-	\includegraphics[width=0.95\linewidth]{"figures/MVN guaranteed npts 19-Jul-2018 00-01-41"}
-	\caption[MVN guaranteed : Number of sample]{MVN integrated within $\varepsilon$ using finite number of samples}
-	\label{fig:mvn-guaranteed-npts}
+	\includegraphics[width=0.95\linewidth]{"figures/MVN_guaranteed_time_FB_C0_29-Jul-2018 03-10-36"}
+	\caption[MVN guaranteed : Number of sample]{MVN integrated within $\varepsilon$ using Full Bayes stopping criterion}
+	\label{fig:mvn-guaranteed-FB}
 \end{figure}
 
 
-The figures \figref{fig:expcos-guaranteed-time}, \figref{fig:keister-guaranteed-time} and \figref{fig:mvn-guaranteed-time} show the integration done in a finite time within the error tolerance $\varepsilon$. 
-Similarly, the figures \figref{fig:expcos-guaranteed-npts}, \figref{fig:keister-guaranteed-npts} and \figref{fig:mvn-guaranteed-npts} show the integration done using a finite number of samples within the error tolerance $\varepsilon$.
+
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.95\linewidth]{"figures/optPrice_guaranteed_time_GCV_Baker_29-Jul-2018 05-00-29"}
+	\caption[OptPrice guaranteed : GCV]{Option pricing estimated within $\varepsilon$ using Full Bayes stopping criterion and GCV}
+	\label{fig:optprice-guaranteed-GCV}
+\end{figure}
+\begin{figure}
+	\centering
+	\includegraphics[width=0.95\linewidth]{"figures/Keister_guaranteed_time_GCV_C2sin_29-Jul-2018 04-03-33"}
+	\caption[Keister guaranteed: GCV]{Keister integrated within $\varepsilon$ using Full Bayes stopping criterion and GCV}
+	\label{fig:keister-guaranteed-GCV}
+\end{figure}
+\begin{figure}
+	\centering
+	\includegraphics[width=0.95\linewidth]{"figures/MVN_guaranteed_time_GCV_C0_29-Jul-2018 04-03-09"}
+	\caption[MVN guaranteed : GCV]{MVN integrated within $\varepsilon$ using Full Bayes stopping criterion and GCV}
+	\label{fig:mvn-guaranteed-GCV}
+\end{figure}
+
+
+
+The figures \figref{fig:optprice-guaranteed-MLE}, \figref{fig:keister-guaranteed-MLE} and \figref{fig:mvn-guaranteed-MLE} show the integration using empirical Bayes stopping criterion within the error tolerance $\varepsilon$. 
+And, the figures \figref{fig:optprice-guaranteed-FB}, \figref{fig:keister-guaranteed-FB} and \figref{fig:mvn-guaranteed-FB} show the integration using full Bayes stopping criterion within the error tolerance $\varepsilon$.
+Finally, the figures \figref{fig:optprice-guaranteed-GCV}, \figref{fig:keister-guaranteed-GCV} and \figref{fig:mvn-guaranteed-GCV} show the integration using full Bayes stopping criterion and generalized cross validation (GCV) within the error tolerance $\varepsilon$.
 
 
 \section{Conclusion}
@@ -1715,62 +1807,12 @@ Finally, the function approximation is
 
 
 
-\section{Appendix}
+%\section{Appendix}
 
 %\iffalse
-\subsection{Properties of Multivariate Normal Distributions}
+%\subsection{Properties of Multivariate Normal Distributions}
 
 
-\begin{lemma} \label{thrm:condDist} If $\vY = (\vY_1, \vY_2)^T \sim \calN (\vm,\mC)$, where $\vY_1$ and $\vY_2$ are random vectors of arbitrary length, and 
-\begin{gather*}
-	\vm = \begin{pmatrix} \vm_1 \\ \vm_2 \end{pmatrix} = \begin{pmatrix} \Ex(\vY_1) \\ \Ex(\vY_2) \end{pmatrix}, \\
-	\mC = \begin{pmatrix}
-	\mC_{11} & \mC_{21}^T \\ 	\mC_{21} & \mC_{22}
-	\end{pmatrix} =
-	 \begin{pmatrix}
-	\var(\vY_{1}) & \cov(\vY_{1}, \vY_2) \\ 	\cov(\vY_2,\vY_{1}) & \var(\vY_{2})
-	\end{pmatrix} 
-	\end{gather*}
-	then 
-	\begin{multline*}
-	\vY_1 \vert \vY_2 \; \sim \; \calN \bigl(\vm_1 + \mC_{21}^T \mC_{22}^{-1}(\vY_2 - \vm_2), \\ \mC_{11} - \mC_{21}^T \mC_{22}^{-1} \mC_{21} \bigr).
-	\end{multline*}
-	
-\end{lemma}
-
-\begin{proof}:
-The inverse of the matrix $\mC$ may be partitioned as \cite{???}
-	\begin{gather*}
-	\mC^{-1} = \begin{pmatrix} \mA_{11} & \mA_{21}^T \\ \mA_{21} & \mA_{22} \end{pmatrix}, \\
-	\mA_{11} = (\mC_{11} - \mC_{12} \mC_{22}^{-1} \mC_{21})^{-1}, \qquad 
-	\mA_{21} = -  \mC_{22}^{-1} \mC_{21} \mA_{11}, \\ 
-	\mA_{22} = \mC_{22}^{-1} + \mC_{22}^{-1} \mC_{21} \mA_{11} \mC_{21}^T \mC_{22}^{-1}.
-	\end{gather*}
-Since $\vY_1$ and $\vY_2$ have a Gaussian distribution, the conditional distribution of $\vY_1 \vert \vY_2$ is also Gaussian. So, it is sufficient to prove that $\Ex(\vY_1 \vert \vY_2)$ and $\cov(\vY_1 \vert \vY_2)$ are as hypothesized.
-
-Define $\vZ=\vY_1- \mB \vY_2$ where $\mB=\mC_{21}^T \mCInv_{22}$. Note that $\Ex(\vZ) = \vm_1 - \mB \vm_2$.  Elementary calculations establish that $\vZ$ and $\vY_2$ are uncorrelated and therefore independent.   Therefore it follows that the conditional mean is
-\begin{align*}
-\Ex(\vY_1 \vert \vY_2) &= \Ex(\vZ + \mB \vY_2 \vert \vY_2) 
-\\ & = \Ex(\vZ \vert \vY_2) + \Ex(\mB \vY_2 \vert \vY_2) 
-= \Ex(\vZ) + \mB\vY_2 
-\\
-& = \vm_1 + \mB (\vY_2 - \vm_2) \\
-& =  \vm_1+ \mC_{21}^T \mCInv_{22}(\vY_2 - \vm_2)
-\end{align*}
-Likewise the conditional covariance is 
-\begin{align*}
-\cov(\vY_1|\vY_2) &=\cov(\vZ + \mB \vY_2|\vY_2) \\
-& =\cov(\vZ) = \var(\vY_1 - \mB \vY_2)
-\\
- & =\cov(\vY_1)+\mB\cov(\vY_2)\mB^T \\
- & \qquad  \qquad  - 2  \cov(\vY_1,\vY_2) \mB^T
-\\
-&=\mC_{11}+\mC_{21}^T\mC_{22}^{-1}\mC_{22}\mC_{22}^{-1}\mC_{21}-2\mC_{21}^T\mC_{22}^{-1}\mC_{21}
-\\
-&=\mC_{11}-\mC_{21}^T\mC_{22}^{-1}\mC_{21}.
-\end{align*}
-This completes the proof. \qed
-\end{proof}
 
 
 %\fi
