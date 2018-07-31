@@ -694,29 +694,18 @@ So, our algorithm in the current form is not straightaway usable for any practic
 The generic automatic Bayesian cubature algorithm described in the previous section requires $\Order(n^3)$ operations to estimate $\vtheta$, compute the credible interval width, and compute the cubature.  There is also the potential ill-condtioning that can arise.  This section explains how speed up the calculations and avoid ill-conditioning.  A key is to choose kernels that match the design, $\{\vx_i\}_{i=1}^n$, so that the vector-matrix operations required by Bayesian cubature can be accomplished using fast transforms at a cost of $\Order(n \log(n))$.
 
 \subsection{Fast transform kernel}
-We make some assumptions about the relationship between the covariance kernel and the design, which will be shown to hold in Section \ref{sec:shift_invariant_kernel} for rank-1 lattices and shift-invariant kernels.  First we introduced the notation
+We make some assumptions about the relationship between the covariance kernel and the design, which will be shown to hold in Section \ref{sec:shift_invariant_kernel} for rank-1 lattices and shift-invariant kernels.  First we introduce the notation
 \begin{align}
 \nonumber
 \mC &= \Big(C_\vtheta(\vx_i,\vx_j)\Big)_{i,j=1}^n  = (\vC_1,...,\vC_n) 
 \\
 \label{eqn:ftk_factor}
-&= \frac 1n \mV \mLambda \mV^H  = \frac 1n \mV^* \mLambda \mV^T , 
+&= \frac 1n \mV \mLambda \mV^H , 
 \quad \quad \mV^H = n \mV^{-1}, \\
 \nonumber
-\mCInv  &= \frac 1n \mV \mLambda^{-1} \mV^H
-= \frac 1n \mV^* \mLambda^{-1} \mV^T,
+\mC^p  &= \frac 1n \mV \mLambda^{p} \mV^H, \qquad \forall p \in \integers,
 \end{align}
 where $\mV^H$ is the Hermitian of $\mV$.  The columns of matrix $\mV$ are eigenvectors of $\mC$, and $\mLambda$ is a diagonal matrix of eigenvalues of $\mC$.
-\begin{gather*}
-\mV = (\vV_1,...,\vV_n)= (\vv_1,...,\vv_n)^T , \; \text{also} \;  \vv_1 = \vV_1 = \vone
-\\
-\mLambda = \diag(\vlambda), \quad 
-\vlambda = (\lambda_1, ... \lambda_n),
-\\
-\mV^{-1} = \frac 1n \mV^H, \;
-\mCInv  = \frac 1n \mV \mLambda^{-1} \mV^H
- = \frac 1n \mV^* \mLambda^{-1} \mV^T.
-\end{gather*}
 For any $n \times n$ vector $\vb$, define the notation  $\widetilde{\vb} := \mV^T \vb$.
 
 We make three assumptions that allow the fast computation:
@@ -727,35 +716,35 @@ We make three assumptions that allow the fast computation:
 	\label{fastcompAssumpB}
 	\vv_1 = \vV_1 = \vone, \\
 	\label{fastcompAssumpC}
-     \mV^T \vb  \text{ requires only $\Order(n \log(n))$ operations } \forall \vb.
+	\mV^H \vb  \text{ requires only $\Order(n \log(n))$ operations } \forall \vb.
 	\end{gather}
 \end{subequations}
-We call the transformation $\vz \mapsto \mV^T \vz$ a \emph{fast transform}.  
+We call the transformation $\vz \mapsto \mV^H \vz$ a \emph{fast transform}.  
 
 Under assumptions \eqref{fastcompAssump} the eigenvalues may be identified as the fast transform of the first column of $\mC$:
 \begin{align}
 \nonumber
- \vlambda 
- & = \begin{pmatrix}
- \lambda_1 \\ \vdots \\ \lambda_n
- \end{pmatrix} = \mLambda \vone = \mLambda \vv_1 
- = \underbrace{\left( \frac 1n \mV^T  \mV^* \right) }_{\mathsf{I}} \mLambda \vv_1 \\
-  &= \mV^T \left( \frac 1n \mV^* \mLambda \vv_1 \right)
- = \mV^T \vC_1 =  \widetilde{\vC}_1.
- \label{eqn:fast_transform_to_eigvalues}
+\vlambda 
+& = \begin{pmatrix}
+\lambda_1 \\ \vdots \\ \lambda_n
+\end{pmatrix} = \mLambda \vone = \mLambda \vv_1^* 
+= \underbrace{\left( \frac 1n \mV^H  \mV \right) }_{\mathsf{I}} \mLambda \vv_1^* \\
+&= \mV^H \left( \frac 1n \mV \mLambda \vv_1^* \right)
+= \mV^H \vC_1 =  \widetilde{\vC}_1.
+\label{eqn:fast_transform_to_eigvalues}
 \end{align}
 Also note that the fast transform of $\vone$ has a simple form
 \begin{align}
 \widetilde{\vone}
-& = \mV^T \vone = \mV^T \vV_1^* = \begin{pmatrix}n  \\ 0 \\ \vdots \\ 0 \end{pmatrix}.
+& = \mV^H \vone = \mV^H \vV_1 = \begin{pmatrix}n  \\ 0 \\ \vdots \\ 0 \end{pmatrix}.
 \label{eqn:fast_transform_one}
 \end{align}
 
-Many of the terms that arise in the calculations in  Algorithm \ref{algorithm1} are of the form $\va^T\mC^{p}\vb$ for integer $p$.  These can be calculated via the transforms $\widetilde{\va} = \mV^T \va$ and $\widetilde{\vb} = \mV^T \vb$ as 
+Many of the terms that arise in the calculations in  Algorithm \ref{algorithm1} are of the form $\va^T\mC^{p}\vb$ for real $\va$ and $\vb$ and integer $p$.  These can be calculated via the transforms $\widetilde{\va} = \mV^H \va$ and $\widetilde{\vb} = \mV^H \vb$ as 
 \begin{equation*}
 \va^T\mC^p\vb = \frac 1n \va^T \mV \mLambda^p \mV^H \vb
-= \frac 1n \widetilde{\va}^T\mLambda^p \widetilde{\vb}^*
-= \frac 1n \sum_{i=1}^n \lambda_i^p \widetilde{a}_i \widetilde{b}_i^*, 
+= \frac 1n \widetilde{\va}^H\mLambda^p \widetilde{\vb}
+= \frac 1n \sum_{i=1}^n \lambda_i^p \widetilde{a}_i^* \widetilde{b}_i, 
 \end{equation*}
 In particular,
 \begin{align*}
@@ -766,11 +755,11 @@ In particular,
 \vy^T\mC^{-p} \vy &= \frac 1n \sum_{i=1}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i^p},
 &
 \vc^T\mCInv \vone &= \frac{\widetilde{c}_1}{\lambda_1},\\
-\vc^T\mCInv \vy &= \frac 1n \sum_{i=1}^n \frac{\widetilde{c}_i \widetilde{y}_i^*}{\lambda_i}, & 
+\vc^T\mCInv \vy &= \frac 1n \sum_{i=1}^n \frac{\widetilde{c}_i^* \widetilde{y}_i}{\lambda_i}, & 
 \vc^T\mCInv \vc &= \frac 1n \sum_{i=1}^n \frac{\abs{\widetilde{c}_i}^2}{\lambda_i},
 \end{align*}
-where $\widetilde{\vy} = \mV^T \vy$ and 
-$\widetilde{\vc} = \mV^T \vc$. 
+where $\widetilde{\vy} = \mV^H \vy$ and 
+$\widetilde{\vc} = \mV^H \vc$.  For any real $\vb$, with $\widetilde{\vb} = \mV^H\vb$, it follows that $\widetilde{b}_1$ is real since the first row of $\mV^H$ is $\vone$.
 
 The covariance kernel used in practice also may satisfy an additional assumption:
 \begin{equation} \label{addAssump}
@@ -803,7 +792,7 @@ s^2_\MLE
 \log\left(
 \sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i}
 \right) 
- \right . \\
+\right . \\
 &
 \label{eqn_MLE_loss_func_optimized_2}
 \qquad \qquad \qquad \qquad  \left . + 
@@ -812,14 +801,14 @@ s^2_\MLE
 \\
 \hmu_\MLE  &= 
 \frac{\widetilde{y}_1}{n} +
-\frac 1n \sum_{i=2}^n \frac{ \widetilde{c}_i \widetilde{y}_i^*}{\lambda_i} \\
+\frac 1n \sum_{i=2}^n \frac{ \widetilde{c}_i^* \widetilde{y}_i}{\lambda_i} \\
 \err_\MLE  &
 =
-  \frac{2.58}{n}\sqrt{
- \sum_{i=2}^{n} \frac{\abs{\widetilde{y}_i}^2}{\lambda_i}  
-				\,
-				\left( c_0 - \frac 1n \sum_{i=1}^n \frac{\abs{\widetilde{c}_i}^2}{\lambda_i} \right) 
-			},
+\frac{2.58}{n}\sqrt{
+	\sum_{i=2}^{n} \frac{\abs{\widetilde{y}_i}^2}{\lambda_i}  
+	\,
+	\left( c_0 - \frac 1n \sum_{i=1}^n \frac{\abs{\widetilde{c}_i}^2}{\lambda_i} \right) 
+},
 \end{align}
 Since all the quantities on the right hand sides can be obtained in in $\Order(n \log(n))$ operations by fast transforms, the left hand sides are all computable using the asymptotic computational cost.
 
@@ -868,8 +857,8 @@ GCV yields a different cubature, which nevertheless can also be computed quickly
 \nonumber
 m_{\textup{GCV}} & = m_\MLE =  \frac{\widetilde{y}_1}{n} = \frac 1n \sum_{i=1}^n y_i,\\
 \nonumber 
- s^2_{\textup{GCV}} & : =  \frac 1{n} \sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i^2}  \left [ \sum_{i=1}^n \frac{1}{\lambda_i} \right]^{-1}, \\
- \nonumber 
+s^2_{\textup{GCV}} & : =  \frac 1{n} \sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i^2}  \left [ \sum_{i=1}^n \frac{1}{\lambda_i} \right]^{-1}, \\
+\nonumber 
 \vtheta_{\textup{GCV}} 
 &= \argmin_\vtheta \left[ \log \left ( \sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i^2} 
 \right) \right .\\
@@ -878,12 +867,12 @@ m_{\textup{GCV}} & = m_\MLE =  \frac{\widetilde{y}_1}{n} = \frac 1n \sum_{i=1}^n
 \right], \\
 \hmu_{\textup{GCV}}
 &= \hmu_\MLE  = \frac{\widetilde{y}_1}{n} +
-\frac 1n \sum_{i=2}^n \frac{ \widetilde{c}_i \widetilde{y}_i^*}{\lambda_i}, \\
+\frac 1n \sum_{i=2}^n \frac{ \widetilde{c}_i^* \widetilde{y}_i}{\lambda_i}, \\
 \err_{\textup{GCV}} & =
 \frac{2.58}{n}\left\{\sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i^2}  \left [ \sum_{i=1}^n \frac{1}{\lambda_i} \right]^{-1} \right.
 \\ 
 &\qquad \qquad \left . \times
-	\left( c_0 - \frac 1n \sum_{i=1}^n \frac{\abs{\widetilde{c}_i}^2}{\lambda_i} \right) 
+\left( c_0 - \frac 1n \sum_{i=1}^n \frac{\abs{\widetilde{c}_i}^2}{\lambda_i} \right) 
 \right\}^{1/2}.
 \end{align}
 Moreover, under further assumption \eqref{addAssump} it follows that 
@@ -897,7 +886,7 @@ Moreover, under further assumption \eqref{addAssump} it follows that
 \frac{2.58}{n}\left\{\sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i^2}  \left [ \sum_{i=1}^n \frac{1}{\lambda_i} \right]^{-1} \right.
 \\ 
 &\qquad \qquad \left . \times
-	\left( 1 -  \frac{n}{\lambda_1} \right)  
+\left( 1 -  \frac{n}{\lambda_1} \right)  
 \right\}^{1/2}. \label{errGCVSimple}
 \end{align}
 Thus, in this  case $\hmu$ is simply the sample mean.
@@ -976,11 +965,11 @@ We now demonstrate that the eigenvector matrix for $\mC$ is
 Assumption \eqref{fastcompAssumpB} follows automatically.
 Now, note that the $k,j$ element of $\mV^H\mV$ is
 \begin{equation*}
- \sum_{i=1}^n \me^{2 \pi n \sqrt{-1} \phi(i-1)[\phi(j-1) - \phi(k-1)]}.
+\sum_{i=1}^n \me^{2 \pi n \sqrt{-1} \phi(i-1)[\phi(j-1) - \phi(k-1)]}.
 \end{equation*}
 Noting that the sequence $\{\phi(i-1)\}_{i=1}^n$ is a re-ordering of $0, \ldots, 1-1/n$ for $n$ a power of $2$, this sum may be re-written by replacing $\phi(i-1)$ by $(i-1)/n$:
 \begin{equation*}
- \sum_{i=1}^n \me^{2 \pi \sqrt{-1} (i-1)[\phi(j-1) - \phi(k-1)]}.
+\sum_{i=1}^n \me^{2 \pi \sqrt{-1} (i-1)[\phi(j-1) - \phi(k-1)]}.
 \end{equation*}
 Since $\phi(j-1) - \phi(k-1)$ is some integer multiple of $1/n$, it follows that this sum is $n \delta_{j,k}$, where $\delta$ is the Kroneker delta function.  This establishes that $\mV^H = n \mV^{-1}$ as in \eqref{eqn:ftk_factor}.
 
@@ -1009,20 +998,20 @@ For this last equality to hold for all integers $m$, we must have $k = \ell$ or 
 This establishes $\mV^H \mC \mV$ as a diagonal matrix whose diagonal elements are $n$ times the eigenvalues, i.e., $\lambda_k = \omega_{k,k}/n$.  Furthermore, $\mV$ is the matrix of eigenvectors, which satisfies assumption \eqref{fastcompAssumpA}.
 
 \subsection{Iterative Computation of the Fast Transform}
-Assumption \eqref{fastcompAssumpA} is that computing $\mV^T \vb$ requires only $\Order(n \log(n)) $ operations.  Recall that we assume that $n$ is a power of $2$.  This can be accomplished by an iterative algorithm.  Let $\mV^{(n)}$ denote the $n \times n$ matrix $\mV$ defined in  \eqref{latticeVdef}.  We show how to compute $\mV^{(2n)T}\vb$ quickly for all $\vb \in \reals^{2n}$ assuming that $\mV^{(n)T}\vb$ can be computed quickly for all $\vb \in \reals^n$.
+Assumption \eqref{fastcompAssumpA} is that computing $\mV^H \vb$ requires only $\Order(n \log(n)) $ operations.  Recall that we assume that $n$ is a power of $2$.  This can be accomplished by an iterative algorithm.  Let $\mV^{(n)}$ denote the $n \times n$ matrix $\mV$ defined in  \eqref{latticeVdef}.  We show how to compute $\mV^{(2n)H}\vb$ quickly for all $\vb \in \reals^{2n}$ assuming that $\mV^{(n)H}\vb$ can be computed quickly for all $\vb \in \reals^n$.
 
 From the definition of the van der Corput sequence in \eqref{vdCDef} it follows that
 \begin{gather} 
 \label{vdCProp}
 \phi(2i) = \phi(i)/2, \;  \phi(2i+1) = [\phi(i)+1]/2, \ \ \ i \in \natzero\\
- \label{vdCPropB}
+\label{vdCPropB}
 \phi(i+n) = \phi(i) + 1/(2n), \qquad i = 0, \ldots, n-1,
 \\
 \label{vdCPropC}
 n \phi(i) \in \natzero, \qquad i = 0, \ldots, n-1,
 \end{gather}
 still assuming that $n$ is an integer power of two.
-Let $\widetilde{\vb} = \mV^{(2n)T}\vb$ for some arbitrary $\vb \in \reals^{2n}$, and define
+Let $\widetilde{\vb} = \mV^{(2n)H}\vb$ for some arbitrary $\vb \in \reals^{2n}$, and define
 \begin{gather*}
 \vb = \begin{pmatrix} b_1 \\ \vdots \\ b_{2n} \end{pmatrix}, \quad 
 \vb^{(1)} = \begin{pmatrix} b_1 \\ \vdots \\ b_{n} \end{pmatrix}, \quad 
@@ -1033,30 +1022,29 @@ Let $\widetilde{\vb} = \mV^{(2n)T}\vb$ for some arbitrary $\vb \in \reals^{2n}$,
 \end{gather*}
 It follows from these definitions and the definition of $\mV$ in  \eqref{latticeVdef} that
 \begin{align*}
-\widetilde{\vb}^{(1)} &= \left( \sum_{j=1}^{2n}  \me^{4 \pi n \sqrt{-1} \phi(2i-2)\phi(j-1)} b_{j} \right)_{i=1}^n \\
-&= \left( \sum_{j=1}^{2n}  \me^{2 \pi n \sqrt{-1} \phi(i-1)\phi(j-1)} b_{j} \right)_{i=1}^n \quad \text{by \eqref{vdCProp}}\\
-&= \left( \sum_{j=1}^{n}  \me^{2 \pi n \sqrt{-1} \phi(i-1)\phi(j-1)} b_{j} \right)_{i=1}^n \quad \\
-&\qquad \qquad +  \left( \sum_{j=1}^{n}  \me^{2 \pi n \sqrt{-1} \phi(i-1)\phi(n+j-1)} b_{n+j} \right)_{i=1}^n \\
-&= \mV^{(n)}\vb^{(1)} \quad \\
-&+  \left(  \me^{\pi \sqrt{-1} \phi(i-1)} \sum_{j=1}^{n}  \me^{2 \pi n \sqrt{-1} \phi(i-1)\phi(j-1)} b_{n+j} \right)_{i=1}^n \\
-& \hspace{5cm}  \text{by \eqref{vdCPropB}}\\
-&= \mV^{(n)}\vb^{(1)} +  \left(  \me^{\pi \sqrt{-1} \phi(i-1)} \right)_{i=1}^n \odot \bigl(\mV^{(n)}\vb^{(2)} \bigr),
+\widetilde{\vb}^{(1)} &= \left( \sum_{j=1}^{2n}  \me^{-4 \pi n \sqrt{-1} \phi(2i-2)\phi(j-1)} b_{j} \right)_{i=1}^n \\
+&= \left( \sum_{j=1}^{2n}  \me^{-2 \pi n \sqrt{-1} \phi(i-1)\phi(j-1)} b_{j} \right)_{i=1}^n \quad \text{by \eqref{vdCProp}}\\
+&= \left( \sum_{j=1}^{n}  \me^{-2 \pi n \sqrt{-1} \phi(i-1)\phi(j-1)} b_{j} \right)_{i=1}^n \quad \\
+&\qquad \qquad +  \left( \sum_{j=1}^{n}  \me^{-2 \pi n \sqrt{-1} \phi(i-1)\phi(n+j-1)} b_{n+j} \right)_{i=1}^n \\
+&= \mV^{(n)}\vb^{(1)}  +  \left(  \me^{-\pi \sqrt{-1} \phi(i-1)}  \right .\\
+& \quad \times \left . \sum_{j=1}^{n}  \me^{-2 \pi n \sqrt{-1} \phi(i-1)\phi(j-1)} b_{n+j} \right)_{i=1}^n \quad  \text{by \eqref{vdCPropB}}\\
+&= \mV^{(n)H}\vb^{(1)} +  \left(  \me^{-\pi \sqrt{-1} \phi(i-1)} \right)_{i=1}^n \odot \bigl(\mV^{(n)H}\vb^{(2)} \bigr),
 \end{align*}
 where $\odot$ denotes the Hadamard (term-by-term) product.  By a similar argument, 
 \begin{align*}
-\widetilde{\vb}^{(2)} &= \left( \sum_{j=1}^{2n}  \me^{4 \pi n \sqrt{-1} \phi(2i-1)\phi(j-1)} b_{j} \right)_{i=1}^n \\
-&= \left( \sum_{j=1}^{2n}  \me^{2 \pi n \sqrt{-1} [\phi(i-1)+1]\phi(j-1)} b_{j} \right)_{i=1}^n \quad \text{by \eqref{vdCProp}}\\
-&= \left( \sum_{j=1}^{n}  \me^{2 \pi n \sqrt{-1} [\phi(i-1)+1]\phi(j-1)} b_{j} \right)_{i=1}^n \quad \\
-&\qquad  +  \left( \sum_{j=1}^{n}  \me^{2 \pi n \sqrt{-1} [\phi(i-1)+1]\phi(n+j-1)} b_{n+j} \right)_{i=1}^n \\
+\widetilde{\vb}^{(2)} &= \left( \sum_{j=1}^{2n}  \me^{-4 \pi n \sqrt{-1} \phi(2i-1)\phi(j-1)} b_{j} \right)_{i=1}^n \\
+&= \left( \sum_{j=1}^{2n}  \me^{-2 \pi n \sqrt{-1} [\phi(i-1)+1]\phi(j-1)} b_{j} \right)_{i=1}^n \quad \text{by \eqref{vdCProp}}\\
+&= \left( \sum_{j=1}^{n}  \me^{-2 \pi n \sqrt{-1} [\phi(i-1)+1]\phi(j-1)} b_{j} \right)_{i=1}^n \quad \\
+&\qquad  +  \left( \sum_{j=1}^{n}  \me^{-2 \pi n \sqrt{-1} [\phi(i-1)+1]\phi(n+j-1)} b_{n+j} \right)_{i=1}^n \\
 &= \mV^{(n)}\vb^{(1)} 
-+  \left(  \me^{ \pi \sqrt{-1} [\phi(i-1) + 1]} \right. 
++  \left(  \me^{ -\pi \sqrt{-1} [\phi(i-1) + 1]} \right. 
 \\
-& \qquad \qquad \left . \times \sum_{j=1}^{n}  \me^{2 \pi n \sqrt{-1} \phi(i-1)\phi(j-1)} b_{n+j} \right)_{i=1}^n \\
+& \qquad \qquad \left . \times \sum_{j=1}^{n}  \me^{-2 \pi n \sqrt{-1} \phi(i-1)\phi(j-1)} b_{n+j} \right)_{i=1}^n \\
 & \hspace{4cm}  \text{by \eqref{vdCPropB} and \eqref{vdCPropC}}\\
-&= \mV^{(n)}\vb^{(1)} -  \left(  \me^{\pi \sqrt{-1} \phi(i-1)} \right)_{i=1}^n \odot \bigl(\mV^{(n)}\vb^{(2)} \bigr).
+&= \mV^{(n)H}\vb^{(1)} -  \left(  \me^{-\pi \sqrt{-1} \phi(i-1)} \right)_{i=1}^n \odot \bigl(\mV^{(n)H}\vb^{(2)} \bigr).
 \end{align*}
 
-The computational cost to compute $\mV^{(2n)T}\vb$ is then twice the cost of computing $\mV^{(n)T}\vb^{(1)}$ plus $2n$ multiplications plus $2n$ additions/subtractions.  An inductive argument establishes that $\mV^{(n)T}\vb$ requires only $\Order(n \log(n))$ operations.
+The computational cost to compute $\mV^{(2n)H}\vb$ is then twice the cost of computing $\mV^{(n)H}\vb^{(1)}$ plus $2n$ multiplications plus $2n$ additions/subtractions.  An inductive argument establishes that $\mV^{(n)H}\vb$ requires only $\Order(n \log(n))$ operations.
 
 
 \subsection{Overcoming Cancellation Error}
@@ -1116,13 +1104,11 @@ The widths of the credible intervals in \eqref{eq:errMLEAllAsump}, \eqref{FJH:eq
 \\
 \err_{\textup{full}} 
 & := \frac{t_{n_j-1,0.995}}{n} \sqrt{
-\frac{\rlambda_1}{n-1} \sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i}
+	\frac{\rlambda_1}{n-1} \sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i}
 }, \\
 \err_{\textup{GCV}} & =
 \frac{2.58}{n}\sqrt{	\frac{\rlambda_1}{n + \rlambda_1} \sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i^2}  \left [ \frac{1}{n + \rlambda_1} + \sum_{i=2}^n \frac{1}{\lambda_i} \right]^{-1}} .
 \end{align*}
-
-
 
 
 

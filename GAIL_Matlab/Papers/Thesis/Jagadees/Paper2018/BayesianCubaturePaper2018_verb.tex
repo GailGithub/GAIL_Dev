@@ -1032,19 +1032,19 @@ It follows from these definitions and the definition of $\mV$ in  \eqref{lattice
 \end{align*}
 where $\odot$ denotes the Hadamard (term-by-term) product.  By a similar argument, 
 \begin{align*}
-\widetilde{\vb}^{(2)} &= \left( \sum_{j=1}^{2n}  \me^{4 \pi n \sqrt{-1} \phi(2i-1)\phi(j-1)} b_{j} \right)_{i=1}^n \\
-&= \left( \sum_{j=1}^{2n}  \me^{2 \pi n \sqrt{-1} [\phi(i-1)+1]\phi(j-1)} b_{j} \right)_{i=1}^n \quad \text{by \eqref{vdCProp}}\\
-&= \left( \sum_{j=1}^{n}  \me^{2 \pi n \sqrt{-1} [\phi(i-1)+1]\phi(j-1)} b_{j} \right)_{i=1}^n \quad \\
-&\qquad  +  \left( \sum_{j=1}^{n}  \me^{2 \pi n \sqrt{-1} [\phi(i-1)+1]\phi(n+j-1)} b_{n+j} \right)_{i=1}^n \\
+\widetilde{\vb}^{(2)} &= \left( \sum_{j=1}^{2n}  \me^{-4 \pi n \sqrt{-1} \phi(2i-1)\phi(j-1)} b_{j} \right)_{i=1}^n \\
+&= \left( \sum_{j=1}^{2n}  \me^{-2 \pi n \sqrt{-1} [\phi(i-1)+1]\phi(j-1)} b_{j} \right)_{i=1}^n \quad \text{by \eqref{vdCProp}}\\
+&= \left( \sum_{j=1}^{n}  \me^{-2 \pi n \sqrt{-1} [\phi(i-1)+1]\phi(j-1)} b_{j} \right)_{i=1}^n \quad \\
+&\qquad  +  \left( \sum_{j=1}^{n}  \me^{-2 \pi n \sqrt{-1} [\phi(i-1)+1]\phi(n+j-1)} b_{n+j} \right)_{i=1}^n \\
 &= \mV^{(n)}\vb^{(1)} 
-+  \left(  \me^{ \pi \sqrt{-1} [\phi(i-1) + 1]} \right. 
++  \left(  \me^{ -\pi \sqrt{-1} [\phi(i-1) + 1]} \right. 
 \\
-& \qquad \qquad \left . \times \sum_{j=1}^{n}  \me^{2 \pi n \sqrt{-1} \phi(i-1)\phi(j-1)} b_{n+j} \right)_{i=1}^n \\
+& \qquad \qquad \left . \times \sum_{j=1}^{n}  \me^{-2 \pi n \sqrt{-1} \phi(i-1)\phi(j-1)} b_{n+j} \right)_{i=1}^n \\
 & \hspace{4cm}  \text{by \eqref{vdCPropB} and \eqref{vdCPropC}}\\
-&= \mV^{(n)}\vb^{(1)} -  \left(  \me^{\pi \sqrt{-1} \phi(i-1)} \right)_{i=1}^n \odot \bigl(\mV^{(n)}\vb^{(2)} \bigr).
+&= \mV^{(n)H}\vb^{(1)} -  \left(  \me^{-\pi \sqrt{-1} \phi(i-1)} \right)_{i=1}^n \odot \bigl(\mV^{(n)H}\vb^{(2)} \bigr).
 \end{align*}
 
-The computational cost to compute $\mV^{(2n)T}\vb$ is then twice the cost of computing $\mV^{(n)T}\vb^{(1)}$ plus $2n$ multiplications plus $2n$ additions/subtractions.  An inductive argument establishes that $\mV^{(n)T}\vb$ requires only $\Order(n \log(n))$ operations.
+The computational cost to compute $\mV^{(2n)H}\vb$ is then twice the cost of computing $\mV^{(n)H}\vb^{(1)}$ plus $2n$ multiplications plus $2n$ additions/subtractions.  An inductive argument establishes that $\mV^{(n)H}\vb$ requires only $\Order(n \log(n))$ operations.
 
 
 \subsection{Overcoming Cancellation Error}
