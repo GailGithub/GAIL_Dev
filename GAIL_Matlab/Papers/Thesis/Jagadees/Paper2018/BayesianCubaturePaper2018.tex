@@ -66,6 +66,8 @@
 \newcommand{\cf}{\mathcal{F}}
 \newcommand{\cx}{\mathcal{X}}
 \newcommand{\tcx}{\widetilde{\cx}}
+\newcommand{\rC}{\mathring{C}}
+\newcommand{\rlambda}{\mathring{\lambda}}
 
 \newcommand{\valpha}{{\bm{\alpha}}}
 \newcommand{\vbeta}{{\bm{\beta}}}
@@ -125,6 +127,7 @@
 \newcommand{\tvone}{\tilde{\bm{1}}}
 \newcommand{\mA}{\mathsf{A}}
 \newcommand{\mC}{\mathsf{C}}
+\newcommand{\rmC}{\mathring{\mathsf{C}}}
 \newcommand{\mCtheta}{{\mathsf{C}_{\vtheta}}}
 %\newcommand{\mCthetaInv}{{\mathsf{C}^{-1}_{\vtheta}}}
 %\newcommand{\mCthetaMLE}{{\mathsf{C}_{\vthetaMLE}}}
@@ -222,8 +225,13 @@
               \email{fauthor@example.com}           %  \\
 %             \emph{Present address:} of F. Author  %  if needed
            \and
-           S. Author \at
-              second address
+           Fred J. Hickernell \at
+           Center for Computational Science and Department of Applied Mathematics, 
+           Illinois Institute of Technology \\
+           PS 106, 3105 S. Dearborn St., 
+           Chicago IL 60616
+           \\
+           \email{hickernell@iit.edu} 
 }
 
 \date{Received: date / Accepted: date}
@@ -248,36 +256,31 @@ Our work employs low discrepancy data sites and matching kernels that lower the 
 \section{Introduction}
 \label{intro}
 Cubature is the problem of inferring a numerical value for the integral 
-$\mu = \int_{\reals^d} g(\vx) \, \dif \vx$, of a multi-dimensional function $g$ where $\mu$ has no closed form analytic expression. Typically, $g$ is only accessible in the form of a black-box function routine. 
+$ \mu := \int_{\reals^d} g(\vx) \, \dif \vx$ where $\mu$ has no closed form analytic expression. Typically, the multivariate integrand $g$ is only accessible in the form of a black-box function routine. 
 Cubature is a key component of many problems in scientific computing, finance, statistical modeling, and machine learning.  
-%One could use Numerical algorithms to estimate quantities that can not be directly computed, using the results of %more readily available computations.
 
-
-%Multivariate integrals arise in applications such as evaluating financial risk, computing multivariate probabilities, statistical physics, and uncertainty quantification.
-
-
-The integral $\mu$ may often be expressed in the form
+The integral may often be expressed as
 \begin{equation}
 \label{eqn:defn_mu}
 \mu:= \mu(f) := \Ex[f(\boldsymbol{X})] = \int_{[0,1]^d} f(\vx)\, \dif\vx, 
 \end{equation}
-where $f:[0,1]^d \to \reals$ is the integrand, and $\boldsymbol{X} \sim \mathcal{U}[0,1]^d$.  The problem of transforming the original integral into the above form is not addressed here.  The cubature algorithm may take the form
+where $f:[0,1]^d \to \reals$ is the integrand, and $\boldsymbol{X} \sim \mathcal{U}[0,1]^d$.  The process of transforming the original integral into the form of \eqref{eqn:defn_mu}  is not addressed here.  The cubature algorithm may take the form
 \begin{equation}
 \label{eqn:defn_hmu}  % remove this
 \hmu: = \hmu(f) := w_0 + \sum_{i=1}^{n} f(\vx_i) w_i,
 \end{equation}
-where the weights, $w_0$, and  $\vw = (w_i)_{i=1}^n \in \reals^n$, and the nodes, $\{x_i\}_{i=1}^n \subset [0,1]^d$, are chosen to make the error, $\abs{\mu - \hmu}$, small.  In this article the nodes is assumed to be deterministic.
+where the weights, $w_0$, and  $\vw = (w_i)_{i=1}^n \in \reals^n$, and the nodes, $\{\vx_i\}_{i=1}^n \subset [0,1]^d$, are chosen to make the error, $\abs{\mu - \hmu}$, small. The integration domain $[0,1]^d$ is convenient for the low discrepancy node sets that we use.  The nodes are assumed to be deterministic.
 
-Our concern is constructing a reliable stopping criterion that determines the number of integrand values required, $n$, to ensure that the error is no greater than a user-defined error tolerance, i.e., 
+We will construct a reliable stopping criterion that determines the number of integrand values required, $n$, to ensure that the error is no greater than a user-defined error tolerance, i.e., 
 \begin{equation}
 \label{eqn:err_crit} 
 \abs{\mu - \hmu} \leq \errtol 
 \end{equation}
-Rather than relying on strong assumptions about the integrand, such as its variance or total variation, we construct a stopping criterion that is data-driven, and based on a credible interval arising from a Bayesian approach to the problem.  We build upon the ideas of Diaconis~\cite{DiaconisBayesian}, O'Hagan~\cite{HagenBayes}, Ritter~\cite{RiterAverage}, Rasmussen and Ghahramani~\cite{RasmussenBayesian}, Briol et al.~\cite{BriEtal18a}, and others.  Thus, our algorithm is an example of \emph{probabilistic numerics}.
+Rather than relying on strong assumptions about the integrand, such as its variance or total variation, we construct a stopping criterion that is data-driven, and based on a credible interval arising from a Bayesian approach to the problem.  We build upon the ideas of Briol et al.~\cite{BriEtal18a}, Diaconis~\cite{DiaconisBayesian}, O'Hagan~\cite{HagenBayes}, Ritter~\cite{RiterAverage}, Rasmussen and Ghahramani~\cite{RasmussenBayesian}, and others.  Our algorithm is an example of \emph{probabilistic numerics}.
 
-Our primary contribution here is to demonstrate how the choice of a family of kernels that match the low discrepancy sampling nodes facilitates fast computation of the data-driven stopping criterion.  If $n$ function values, at a cost of $\$(f)$ each, are obtained for cubature purposes, then $\Order(n \log(n))$ additional operations are required to check whether the error tolerance is satisfied.  The total cost of our algorithm is then $\Order(\$(f)n + n \log(n))$.  This is significantly fewer operations than the $\Order(n^3)$ typically required for Bayesian cubature.
+Our primary contribution here is to demonstrate how the choice of a family of covariance kernels that match the low discrepancy sampling nodes facilitates fast computation of the cubature and the data-driven stopping criterion.  Our cubature requires $n$ function values---at a cost of $\$(f)$ each---plus $\Order(n \log(n))$ operations to check whether the error tolerance is satisfied.  The total cost of our algorithm is then $\Order(n [\$(f) + \log(n)])$.  This is significantly fewer operations than the $\Order(n^3)$ typically required for Bayesian cubature.  If function evaluation is expensive, then $\$(f)$ might be similar in magnitude to $\log(n)$.
 
-Hickernell~\cite{Hic17a} compares and contrasts different approaches to cubature error analysis depending on whether the rule is deterministic or random and whether the integrand is assumed to be deterministic or random.  Error analyis that assumes a deterministic integrand lying in a Banach space, leads to an error bound that is typically impractical for deciding how large $n$ must be to satisfy \eqref{eqn:err_crit}.  The deterministic error bound includes a (semi-)norm of the integrand, which is often more complex to compute than the original integral.
+Hickernell~\cite{Hic17a} compares different approaches to cubature error analysis depending on whether the rule is deterministic or random and whether the integrand is assumed to be deterministic or random.  Error analyis that assumes a deterministic integrand lying in a Banach space, leads to an error bound that is typically impractical for deciding how large $n$ must be to satisfy \eqref{eqn:err_crit}.  The deterministic error bound includes a (semi-) norm of the integrand, which is often more complex to compute than the original integral.
 
 Hickernell and Jim\'enez-Rugama~\cite{HicJim16a,JimHic16a} have developed stopping criteria for cubature rules based on low discrepancy nodes by tracking the discrete Fourier coefficients of the integrand.  The algorithm proposed here also depends on the discrete Fourier coefficients of the integrand, but in a different way.
 
@@ -825,6 +828,7 @@ Under the further assumption \eqref{addAssump} it follows that
 \nonumber
 \hmu_\MLE  &= 
 \frac{\widetilde{y}_1}{n} = \frac 1n \sum_{i=1}^n y_i,\\
+\label{eq:errMLEAllAsump}
 \err_\MLE  &
 =
 \frac{2.58}{n}\sqrt{
@@ -849,34 +853,39 @@ For the full Bayes approach the cubature is the same as for empirical Bayes.  We
 \left[\frac{\lambda_1}{n}{\left(1 - \frac{\widetilde{c}_1}{\lambda_1}\right)^2} + \left(c_0  - \frac 1n \sum_{i=1}^n \frac{\abs{\widetilde{c}_i}^2}{\lambda_i}\right) \right] .
 \end{multline*}
 Under assumption \eqref{addAssump} further simplification can be made:
-\begin{equation*} %\label{FJH:eq:signmaFull}
+\begin{equation} \label{FJH:eq:signmaFullSimple}
 \widehat{\sigma}^2_{\textup{full}}
 =
 \frac{1}{n(n-1)} \sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i} \, \left(\frac{\lambda_1}{n}  - 1  \right).
-\end{equation*}
+\end{equation}
 
 
 
 \subsection{Generalized Cross-Validation}
 
 GCV yields a different cubature, which nevertheless can also be computed quickly using the fast transform.  Under assumptions \eqref{fastcompAssump}:
-\begin{align*}
+\begin{align}
+\nonumber
 m_{\textup{GCV}} & = m_\MLE =  \frac{\widetilde{y}_1}{n} = \frac 1n \sum_{i=1}^n y_i,\\
+\nonumber 
  s^2_{\textup{GCV}} & : =  \frac 1{n} \sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i^2}  \left [ \sum_{i=1}^n \frac{1}{\lambda_i} \right]^{-1}, \\
+ \nonumber 
 \vtheta_{\textup{GCV}} 
 &= \argmin_\vtheta \left[ \log \left ( \sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i^2} 
-\right) -2\log\left( \sum_{i=1}^n \frac{1}{\lambda_i} \right)
+\right) \right .\\
+\label{thetaGCV}
+& \qquad \qquad \qquad \qquad  \left . -2\log\left( \sum_{i=1}^n \frac{1}{\lambda_i} \right)
 \right], \\
 \hmu_{\textup{GCV}}
 &= \hmu_\MLE  = \frac{\widetilde{y}_1}{n} +
 \frac 1n \sum_{i=2}^n \frac{ \widetilde{c}_i \widetilde{y}_i^*}{\lambda_i}, \\
 \err_{\textup{GCV}} & =
-\frac{2.58}{\sqrt{n}}\left\{\sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i^2}  \left [ \sum_{i=1}^n \frac{1}{\lambda_i} \right]^{-1} \right.
+\frac{2.58}{n}\left\{\sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i^2}  \left [ \sum_{i=1}^n \frac{1}{\lambda_i} \right]^{-1} \right.
 \\ 
 &\qquad \qquad \left . \times
 	\left( c_0 - \frac 1n \sum_{i=1}^n \frac{\abs{\widetilde{c}_i}^2}{\lambda_i} \right) 
 \right\}^{1/2}.
-\end{align*}
+\end{align}
 Moreover, under further assumption \eqref{addAssump} it follows that 
 \begin{align}
 \nonumber
@@ -885,11 +894,11 @@ Moreover, under further assumption \eqref{addAssump} it follows that
 \frac{\widetilde{y}_1}{n} = \frac 1n \sum_{i=1}^n y_i,\\
 \nonumber
 \err_{\textup{GCV}} & =
-\frac{2.58}{\sqrt{n}}\left\{\sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i^2}  \left [ \sum_{i=1}^n \frac{1}{\lambda_i} \right]^{-1} \right.
+\frac{2.58}{n}\left\{\sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i^2}  \left [ \sum_{i=1}^n \frac{1}{\lambda_i} \right]^{-1} \right.
 \\ 
 &\qquad \qquad \left . \times
 	\left( 1 -  \frac{n}{\lambda_1} \right)  
-\right\}^{1/2}.
+\right\}^{1/2}. \label{errGCVSimple}
 \end{align}
 Thus, in this  case $\hmu$ is simply the sample mean.
 
@@ -933,7 +942,28 @@ The covariance functions $C$ that match integration lattice node sets have the f
 C(\vt,\vx) = K(\vt - \vx \bmod \vone).
 \end{equation}
 This is called a \emph{shift invariant kernel} because shifting both arguments of the covariance function by the same amount leaves the value unchanged.   By a proper scaling of the kernel $K$ it follows that assumption \eqref{addAssump} is satisfied. Of course, $K$ must also be of the form that ensures that $C$ is symmetric and positive definite, as assumed in \eqref{FJH:eq:CondPosDef}. 
-For covariance functions of the form \eqref{eq:shInv} the Gram matrix takes the form
+
+An family of shift invariant kernels is constructed via even degree Bernoulli polynomials:
+\begin{multline}
+\label{the_kernel_eqn_bernoulli}
+C_\vtheta(\vt, \vx) =
+\prod_{l=1}^d
+1 - (-1)^{r} \gamma B_{2r}( |{x_l-t_l}| ), \quad  \forall \vt,\vx \in [0,1]^d, \\ \vtheta = (r,\gamma), \ r \in \naturals, \ \gamma > 0.
+\end{multline}
+Symmetric, positive definite kernels of this form appear in  \cite{DicEtal14a} and \cite{Hic96a}.  The Bernoulli polynomials are described in \cite[Chapter 24]{OlvEtal10a}.
+
+Larger $r$ implies a greater degree of smoothness of the kernel.  Larger $\theta$ implies greater fluctuations of the output with respect to the input.  Plots of $C(\cdot, 0.3)$ are given in \figref{fig:fourierkernel-dim1} for various $r$ and $\gamma$ values.
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.9\linewidth]{"figures/fourier_kernel dim_1"}
+	\caption[Fourier kernel]{Shift invariant kernel in 1D shifted by 0.3 to show the discontinuity}
+	\label{fig:fourierkernel-dim1}
+\end{figure}
+
+\subsection{Eigenvectors}
+
+For general shift-invariance covariance functions the Gram matrix takes the form
 \begin{align}
 \mC &= \bigl ( C(\vx_i, \vx_j) \bigr)_{i, j = 1}^n \\
 & = \Bigl ( K(\vh(\phi(i-1) - \phi(j-1)) \bmod \vone ) \Bigr)_{i, j = 1}^n.
@@ -1026,109 +1056,71 @@ where $\odot$ denotes the Hadamard (term-by-term) product.  By a similar argumen
 &= \mV^{(n)}\vb^{(1)} -  \left(  \me^{\pi \sqrt{-1} \phi(i-1)} \right)_{i=1}^n \odot \bigl(\mV^{(n)}\vb^{(2)} \bigr).
 \end{align*}
 
+The computational cost to compute $\mV^{(2n)T}\vb$ is then twice the cost of computing $\mV^{(n)T}\vb^{(1)}$ plus $2n$ multiplications plus $2n$ additions/subtractions.  An inductive argument establishes that $\mV^{(n)T}\vb$ requires only $\Order(n \log(n))$ operations.
 
 
-\subsection{Computing the kernel using Bernoulli polynomials}
-The shift-invariant-kernel (\ref{bayes_SI_kernel}) cannot be computed directly due to it's  infinite sum. 
-If the coefficients $\alpha_{\vk}$ were chosen appropriately, then there exist a direct expression for the kernel in terms of Bernoulli polynomial. 
-We can use the Fourier series expansion properties~\cite{DLMF} of Bernoulli polynomial $B_r$ to find the appropriate $\alpha_{\vk}$. This provides a closed form expression for the kernel without the infinite sum. It also allows to choose the smoothness of kernel, i.e, how fast the coefficients $\alpha_{\vk}$ in (\ref{bayes_SI_kernel}) decay.
-The following very useful expansion is referenced from~\cite{DLMF} under eqn (24.8.3):
-\begin{multline}
-\label{dlmf_bernoulli_24_8_3}
-B_{r}(x) = \frac{-r!}{(2 \pi \sqrt{-1})^{r}} 
-\sum_{\substack{k \neq 0,\\ k=-\infty}}^\infty 
-\frac{e^{2\pi\sqrt{-1} k x}}{k^{r}}
-\;\;
-\\
-\begin{cases}
-\text{for} \;\; r=1, \qquad \; 0 < x < 1 \\
-\text{for} \;\; r=2,3,\hdots \;\; 0 \leq x \leq 1
-\end{cases}
-\end{multline}
+\subsection{Overcoming Cancellation Error}
+For the kernels used in our computation it may happen that $n/\lambda_1$ is close to $1$.  Thus, the term $1-n/\lambda_1$, which appears in the credible interval widths, $\err_{\MLE}$, $\err_{\textup{full}}$, and $\err_{\textup{GCV}}$, may suffer from cancellation error.  We can avoid this cancellation error by modifying how we compute the Gram matrix and its eigenvalues.
 
-Our goal is to replace the infinite sum of the kernel using Bernoulli polynomials. This would allows the computations to be carried out in any software like Matlab.
-For 1-D $(d=1)$ rewriting (\ref{dlmf_bernoulli_24_8_3}):
-\begin{multline*}
-\sum_{k \neq 0, k=-\infty}^\infty \frac{e^{2\pi\sqrt{-1} k |x|}}{ (\frac{k}{\theta})^{r}}
-\\
-=
--{\theta^r} B_{r}(|x|) \frac{(2 \pi \sqrt{-1})^{r}}{r!}
-\; \text{for} \; -1 \leq x \leq 1
-\end{multline*}
-Comparing this expansion with (\ref{bayes_SI_kernel}), one can deduce, for $d=1$:
-\[
-C({x}, {t}) = 
-\alpha_0 + \sum_{k \neq 0, k=-\infty}^\infty \alpha_k e^{2\pi\sqrt{-1} k |x-t|}   
-, \; -1 \leq x,t \leq 1,
-\]
-Where the kernel coefficients ${\alpha}_{\vk}$ can be expressed explicitly:
-\[
-\alpha_k = 
-\begin{cases}
-1, & k=0 \\
-\frac{1}{k^r}, & \text{otherwise}
-\end{cases},
-\]
-In general for $d>1$, the coefficients $\alpha_{\vk}$ for $C_{\vtheta}(\vx,\vt)$ is computed using:
+Define a new function $\rC : = C -1$, and its associated Gram matrix $\rmC = \mC - \vone \vone^T$.   Note that $\rC$ inherits the shift-invariant properties of $C$.  Since $\vone$ is the first eigenvector of $\mC$ it follows that the eigenvectors of $\rmC$ are $\rlambda_1 = \lambda_1 - n, \lambda_2, \ldots, \lambda_n$.  Moreover,
+\begin{equation}
+1 - \frac{n}{\lambda_1}  = \frac{\lambda_1 - n}{\lambda_1} = \frac{\rlambda_1}{\rlambda_1 +n},
+\end{equation}
+where now the right hand side is free of cancellation error.
+
+We show how to compute $\rC$ without introducing round-off error.  The covariance functions that we use are of product form, namely,
+\begin{equation*}
+C(\vt, \vx) = \prod_{\ell=1}^d \left[1 + \rC_\ell(t_\ell,x_\ell) \right], \qquad  \rC_\ell:[0,1]^2 \to \reals.
+\end{equation*}
+Direct computation of $\rC (\vt,\vx) = C(\vt,\vx) -1$ introduces cancellation error if the $ \rC_\ell$ are small.  So, we employ the iteration
 \begin{align*}
-%\label{bayes_kernel_lambda}
-\alpha_{\vk, \vtheta} = \frac{1}{\prod_{l=1}^d \max(\frac{|k_l|}{\theta_l}, 1)^r} \; ,
+\rC^{(1)} &= \rC_1(t_1,x_1),  \\
+\rC^{(\ell)} &  = \rC^{(\ell-1)}[1 + \rC_\ell(t_\ell,x_\ell)] + \rC_\ell(t_\ell,x_\ell), \\
+& \hspace{5cm} \ell = 2, \ldots, d, \\
+\rC(\vt,\vx)  & = \rC^{(d)}.
 \end{align*}
-Where $\vtheta$ is the shape parameter and `$r$' is the Bernoulli polynomial. The value of '$r$' will be chosen specific to the integrand when using in the cubature algorithm. We keep the value of `$r$' to be even positive integer in this work.
-Using the above-found results, we get the simplified form of the kernel:
-\begin{multline}
-\label{the_kernel_eqn_bernoulli}
-C_\vtheta(\vx, \vt) =
- \prod_{l=1}^d
-1 - \theta_l^r \frac{(2 \pi \sqrt{-1})^{r}}{r!} B_{r}( |{x_l-t_l}| ),
+In this way, the Gram matrix $\rmC$, whose $i,j$-element is $\rC(\vx_i,\vx_j)$ can be constructed with minimal round-off error.
+
+Computing the eigenvalues of $\rmC$ via the procedure given in \eqref{eqn:fast_transform_to_eigvalues} yields $\rlambda_1 = \lambda_1 - n, \lambda_2, \ldots, \lambda_n$. The estimates of $\vtheta$ are computed in terms of the eigenvalues of $\rmC$, so \eqref{eqn_MLE_loss_func_optimized_2} and \eqref{thetaGCV} become
+\begin{align}
+\nonumber
+\vtheta_\MLE
+&= 
+\argmin_{\vtheta}
+\left[
+\log\left(
+\sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i}
+\right) 
+\right . \\
+&
+%\label{eqn_MLE_loss_func_optimized_2}
+\qquad \qquad   \left . + 
+\frac{\log(n + \rlambda_1)}{n} + \frac{1}{n}\sum_{i=2}^n \log(\lambda_i)
+\right], \\
+\nonumber
+\vtheta_{\textup{GCV}} 
+&= \argmin_\vtheta \left[ \log \left ( \sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i^2} 
+\right) \right .\\
+%\label{thetaGCV}
+& \qquad \qquad  \left . -2\log\left(\frac 1{n+\rlambda_1} + \sum_{i=2}^n \frac{1}{\lambda_i} \right)
+\right].
+\end{align}
+The widths of the credible intervals in \eqref{eq:errMLEAllAsump}, \eqref{FJH:eq:signmaFullSimple}, and   \eqref{errGCVSimple} become
+\begin{align*}
+\err_\MLE  &
+=
+\frac{2.58}{n}\sqrt{
+	\frac{\rlambda_1}{n + \rlambda_1}
+	\sum_{i=2}^{n} \frac{\abs{\widetilde{y}_i}^2}{\lambda_i}  
+}, 
 \\
-\text{where} \; 0 \leq |x_l - t_l| \leq 1,
-\end{multline}
-where $\vtheta \in (0,1]^d$ is the {shape parameter}, `$r$' is the order of the Bernoulli polynomial $B_{r}$.
-
-We call \eqref{the_kernel_eqn_bernoulli} a Fourier kernel as the resulting Fast transform is the \emph{Fast Fourier transform} (FFT). Plots of this kernel in $d=$ is shown in \figref{fig:fourierkernel-dim1} with order $r=2,4$ and $\vtheta=0.2,0.8$.
-
-
-
-
-
-
-\iffalse
-\begin{figure}
-	\centering
-	\begin{subfigure}{0.40\textwidth}
-		\includegraphics[width=\textwidth]{"fourier_kernel r_2 shape_10by100"}
-	\end{subfigure}
-	\centering
-	\begin{subfigure}{0.40\textwidth}
-		\includegraphics[width=\textwidth]{"fourier_kernel r_2 shape_90by100"}
-	\end{subfigure}
-	\centering
-	\begin{subfigure}{0.40\textwidth}
-		\includegraphics[width=\textwidth]{"fourier_kernel r_4 shape_10by100"}
-	\end{subfigure}
-	\centering
-	\begin{subfigure}{0.40\textwidth}
-		\includegraphics[width=\textwidth]{"fourier_kernel r_4 shape_90by100"}
-	\end{subfigure}
-\caption{Fourier kernel \eqref{the_kernel_eqn_bernoulli} with $r=2,4$ and $\theta = 0.1, 0.9$}
-\label{fig:Fourier_kernel}
-\end{figure}
-\fi
-
-
-
-\begin{figure}
-	\centering
-	\includegraphics[width=0.9\linewidth]{"figures/fourier_kernel dim_1"}
-	\caption[Fourier kernel]{Shift invariant kernel in 1D shifted by 0.3 to show the discontinuity}
-	\label{fig:fourierkernel-dim1}
-\end{figure}
-
-
-
-
-
+\err_{\textup{full}} 
+& := \frac{t_{n_j-1,0.995}}{n} \sqrt{
+\frac{\rlambda_1}{n-1} \sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i}
+}, \\
+\err_{\textup{GCV}} & =
+\frac{2.58}{n}\sqrt{	\frac{\rlambda_1}{n + \rlambda_1} \sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i^2}  \left [ \frac{1}{n + \rlambda_1} + \sum_{i=2}^n \frac{1}{\lambda_i} \right]^{-1}} .
+\end{align*}
 
 
 
@@ -1185,144 +1177,6 @@ Such as:
 \item C1sin : Sidi's transform with Sine, preserving the first derivative. This is, in general, a better option than `C1'.
 \item C2sin : Sidi's transform with Sine, preserving upto second derivative. We use this when smoothness of `C1sin' is not sufficient and need to preserve upto second derivative.
 \end{enumerate}
-
-
-
-
-
-
-\subsection{Iterative Discrete Fourier transform for function values}
-
-Automatic cubature algorithms needs to compute Discrete Fourier transform of function values $\vy = \left(f(\vx_i)\right)_{i=1}^n$ in every iteration with newly added points. Recomputing the whole Fourier transform in every iteration can be avoided when using Rank-1 Lattice points by using structural properties of the Lattice points.  
-Discrete Fourier transform is defined as :
-\begin{align*}
-\mathcal{DFT} \{y \} := \hat{y} = \left( \sum_{j=1}^{n} y_j 
-e^{-\frac{2\pi \sqrt{-1}}{n} (j-1) (i-1) }
-\right)_{i=1}^{n}
-\end{align*}
-In essence:
-\begin{align*}
-\hat{y}_i &=  \sum_{j=1}^{n} y_j 
-e^{- \frac{2\pi \sqrt{-1}}{n} (j-1) (i-1) }
-\end{align*}
-We could rearrange the sum into even indexed $j=2l$ and odd indexed $j=2 l + 1$:
-
-\begin{multline*}
-\hat{y}_i =  
-\underbrace{
-\sum_{l=1}^{n/2} y_{2l} 
-e^{- \frac{2\pi \sqrt{-1}}{n/2} (l-1)( i-1) }
-}_{\text{DFT of even-indexed part of}\; y_i}
-\\
-+
-e^{- \frac{2\pi \sqrt{-1}}{n} (i-1) }
-\underbrace{
-\sum_{l=1}^{n/2} y_{2l+1} 
-e^{- \frac{2\pi \sqrt{-1}}{n/2} (l-1)( i-1) }
-}_{\text{DFT of odd-indexed part of}\; y_i},
-\end{multline*}
-Which shows two separately computed DFTs can be combined to produce single output. For example, the odd indexed were the existing DFT and the even indexed are from the new halve of samples, algorithm wants to add to improve accuracy.
-We use this concept to avoid recomputing the full length DFT of $\vy$ in every iteration. In other words, DFT is computed only for the newly added samples in every iteration.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-\subsection{Overcoming the cancellation error}
-During the numerical experiments, we noticed numerical cancellation error in the computation of the term, especially for the bigger values $n > 2^{15}$. Cancellation error happens because two almost equal values are subtracted, when they differ only in very high decimal values. 
-\[
-\left(c_{0,\vtheta} - {\vc}_{\vtheta}^T\mCInv\vc_{\vtheta} \right) = 
-\left(
-1 - \frac{n }{\lambda_1} \right)
-\]
-In this expression $\frac{n}{\lambda_1}$ almost close to $1$.
-We would like to explore techniques to avoid the subtraction in this computation.
-Let's recollect the definition of the shift invariant kernel:
-\begin{align*}
-C(\vx_i, \vx_j) = \prod_{k=1}^d \left[1 + \theta B(\{x_{i_k} - x_{j_k}\}) \right].
-\end{align*}
-Let's define the modified kernel:
-\begin{align*}
-\widetilde{C}(\vx_i, \vx_j) &:= C(\vx_i, \vx_j) - 1,
-\\
-\text{Then Its Gram matrix:} \quad \tmC &= \mC - \vone \vone^T,
-\end{align*}
-Let $(\lambda_1, ..., \lambda_n)$ be the eigenvalues of $\mC$. Similarly let $(\tlambda_1, ..., \tlambda_n)$ be the eigenvalues of $\tmC$. As per the definition of the Gram matrix $\mC$, the eigenvector corresponding to $\lambda_1$ is a vector one $\vone$. 
-Then:
-\begin{equation}
-\nonumber
-\lambda_1 \vone  = \mC \vone 
- = (\tmC + \vone \vone^T) \vone
- = \tlambda_1 \vone + n \vone,
-\end{equation}
-This shows $\tlambda_1 = \lambda - n$. In fact for the rest of the values are:
-\begin{align}
-\label{eqn:lambda_to_tlambda_relation}
-\tlambda_j = \lambda_j, \; \forall j=1,...,n-1.
-\end{align}
-
-Let $\vv_j, \forall j=0,...,n-1$ be the eigenvectors of $\mC$, similarly
- $\tvv_j, \forall j=0,...,n-1$ be the eigenvectors of $\tmC$,
-\begin{align*}
-\vv_j^T \mC \vone = \lambda_1 \vv_j^T \vone
- = \vone^T \mC \vv_j
- = \lambda_j \vone^T  \vv_j
- \end{align*}
-Since $\lambda_1 \neq \lambda_j$, the above statement implies $\vv_j^T \vone = 0$. This interesting property provides the proof of the eqn. (\ref{eqn:lambda_to_tlambda_relation}).
-\[
-\lambda_j \vv_j = \mC \vv_j = \mathsf{1}_{n \times n} \vv_j + \tmC \vv_j 
-= \tmC \vv_j = \tlambda_j \vv_j ,
-\]
-Thus proven. 
-Using this result, 
-cancellation error in the computation of $\errn$ can be avoided:
-\begin{align*}
-\left( 1 - \frac{n }{\lambda_1} \right) 
-& = \left( 1 - \frac{n }{\tlambda_1 + n} \right)
-\\
-& = \left( \frac{\tlambda_1 + n - n }{\tlambda_1 + n} \right)
- = \left( \frac{\tlambda_1 }{\tlambda_1 + n} \right).
-\end{align*}
-
-
-The following technique shows an iterative approach to compute $\tilde{C}(\vx_i,\vx_j)$ for $d > 1$. This iterative technique is developed using induction:
-\begin{align*}
-d=1 &:& C_1 &= 1 + \theta B(\{x_{i_1} - x_{j_1}\}) = 1 + \tilde{C}_1
-\\
-d=2 &:& C_2 &= [1 + \theta B(\{x_{i_2} - x_{j_2}\})] [1 + \tilde{C}_1]
-\\
-    &&      &= 1 +  \theta B(\{x_{i_2} - x_{j_2}\}) [1 + \tilde{C}_1]  +  \tilde{C}_1 
-\\
-    &&      &= 1 +  \underbrace{\theta B(\{x_{i_2} - x_{j_2}\}) C_1  +  \tilde{C}_1 }_{\tilde{C}_2}
-\\
-d=3 &&  C_3 &= [1 +  \theta B(\{x_{i_3} - x_{j_3}\})][ 1 + \tilde{C}_2] 
-\\
-    &&      &= 1 +  \theta B(\{x_{i_3} - x_{j_3}\})[1 + \tilde{C}_2] + \tilde{C}_2
-\\
-    &&      &= 1 +  \theta B(\{x_{i_3} - x_{j_3}\})C_2 + \tilde{C}_2
-\\
-\vdots
-\\
-\forall d>2 && C_d &= [1 +  \theta B(\{x_{i_d} - x_{j_d}\})][ 1 + \tilde{C}_{d-1}] 
-\\
-&& &= 1 +  \theta B(\{x_{i_d} - x_{j_d}\})[ 1 + \tilde{C}_{d-1}] + \tilde{C}_{d-1}
-\\
-&& &= 1 +  \theta B(\{x_{i_d} - x_{j_d}\})C_{d-1} + \tilde{C}_{d-1}
-\end{align*}
-
-
-
-
 
 
 
@@ -1874,7 +1728,7 @@ number & number & number \\
 %\bibliographystyle{spmpsci}      % mathematics and physical sciences
 %\bibliographystyle{spphys}       % APS-like style for physics
 %\bibliography{}   % name your BibTeX data base
-\bibliography{mybib,FJHOwn23,FJH23}
+\bibliography{mybib,FJHown23,FJH23}
 \bibliographystyle{spmpsci}
 
 
