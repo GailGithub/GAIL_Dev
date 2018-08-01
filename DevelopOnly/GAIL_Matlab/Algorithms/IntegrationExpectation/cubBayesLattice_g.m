@@ -121,7 +121,7 @@ classdef cubBayesLattice_g < handle
     fName = 'None'; %name of the integrand
     figSavePath = ''; %path where to save he figures
     visiblePlot = false; %make plots visible
-    debugEnable = false; %enable debug prints
+    debugEnable = true; %enable debug prints
     gaussianCheckEnable = false; %enable plot to check Guassian pdf
     avoidCancelError = true;
     GCV = false; % Generalized cross validation
@@ -131,9 +131,14 @@ classdef cubBayesLattice_g < handle
   
   properties (SetAccess = private)
     ff = []; %integrand after the periodization transform
-    mvec = [];
-    uncert = 0;
+    mvec = []; % n = 2^m
+    uncert = 0;  % quantile value for the error bound
+    gen_vec = []; % generator for the Lattice points
     
+    xun = [];
+    xpts = [];
+    ftilde = [];
+
     % variables to save debug info in each iteration
     errorBdAll = [];
     muhatAll = [];
@@ -192,7 +197,8 @@ classdef cubBayesLattice_g < handle
       
       % apply periodization transformation to the function
       obj.ff = obj.doPeriodTx(obj.f, obj.ptransform);
-      
+      obj.gen_vec = obj.get_lattice_gen_vec(obj.dim);
+
       obj.mvec = obj.mmin:obj.mmax;
       length_mvec = length(obj.mvec);
       
@@ -222,45 +228,13 @@ classdef cubBayesLattice_g < handle
       % the error threshold
       for iter = 1:numM
         tstart_iter = tic;
-        m = obj.mvec(iter);
-        n = 2^m;
+        
+        n = 2^obj.mvec(iter);
         
         %Update function values
-        %% Efficient FFT computation algorithm
-        % In every iteration, "n" number_of_points is doubled, but FFT is only
-        % computed for the newly added points. Previously computed FFT is
-        % reused.
-        if iter == 1
-          % in the first iteration compute the full FFT
-          [~, z] = obj.simple_lattice_gen(n,obj.dim,true);
-          xun = mod(bsxfun(@times,(0:1/n:1-1/n)',z),1);
-          xpts = mod(bsxfun(@plus,xun,shift),1);  % shifted
-          
-          % Compute initial FFT
-          ftildeNew = fft(gpuArray(obj.ff(xpts))); %evaluate integrand's fft
-          
-        else
-          xunnew = mod(bsxfun(@times,(1/n:2/n:1-1/n)',z),1);
-          xnew = mod(bsxfun(@plus,xunnew,shift),1);
-          [xun, xpts] = obj.merge_pts(xun, xunnew, xpts, xnew, n, obj.dim);
-          
-          mnext=m-1;
-          
-          % Compute FFT on next set of new points
-          ftildeNextNew = fft(gpuArray(obj.ff(xnew)));
-          if obj.debugEnable
-            cubBayesLattice_g.alertMsg(ftildeNextNew, 'Nan', 'Inf');
-          end
-          
-          % combine the previous batch and new batch to get FFT on all points
-          ftildeNew = obj.merge_fft(ftildeNew, ftildeNextNew, mnext);
-          
-          %if ~any(xnew(:))
-          %  error('bug')
-          %end
-        end
+        [ftilde_iter,xun_iter] = iter_fft(obj,iter,shift);
         
-        [stop_flag, muhat] = stopping_criterion(obj, xun, ftildeNew, iter, n);
+        [stop_flag, muhat] = stopping_criterion(obj, xun_iter, ftilde_iter, iter, n);
         
         obj.timeAll(iter) = toc(tstart_iter);  % store per iteration time
         
@@ -292,6 +266,44 @@ classdef cubBayesLattice_g < handle
       
     end
     
+    %% Efficient FFT computation algorithm
+    function [ftilde_iter,xun_iter] = iter_fft(obj,iter,shift)
+      m = obj.mvec(iter);
+      n = 2^m;
+      gpuArray = @(x) x;   
+      
+      % In every iteration, "n" number_of_points is doubled, but FFT is only
+      % computed for the newly added points. Previously computed FFT is
+      % reused.
+      if iter == 1
+        % in the first iteration compute the full FFT
+        xun_iter = mod(bsxfun(@times,(0:1/n:1-1/n)',obj.gen_vec),1);
+        xpts_iter = mod(bsxfun(@plus,xun_iter,shift),1);  % shifted
+        
+        % Compute initial FFT
+        ftilde_iter = fft(gpuArray(obj.ff(xpts_iter))); %evaluate integrand's fft
+        
+      else
+        xunnew = mod(bsxfun(@times,(1/n:2/n:1-1/n)',obj.gen_vec),1);
+        xnew = mod(bsxfun(@plus,xunnew,shift),1);
+        [xun_iter, xpts_iter] = obj.merge_pts(obj.xun, xunnew, obj.xpts, xnew, n, obj.dim);
+        
+        mnext=m-1;
+        
+        % Compute FFT on next set of new points
+        ftildeNextNew = fft(gpuArray(obj.ff(xnew)));
+        if obj.debugEnable
+          cubBayesLattice_g.alertMsg(ftildeNextNew, 'Nan', 'Inf');
+        end
+        
+        % combine the previous batch and new batch to get FFT on all points
+        ftilde_iter = obj.merge_fft(obj.ftilde, ftildeNextNew, mnext);
+      end
+      
+      obj.xun = xun_iter;
+      obj.xpts = xpts_iter;
+      obj.ftilde = ftilde_iter;
+    end
     
     % decides if the user defined error threshold is met
     function [success,muhat] = stopping_criterion(obj, xpts, ftilde, iter, n)
@@ -363,15 +375,14 @@ classdef cubBayesLattice_g < handle
       
       numM = length(obj.mvec);
       n = 2.^obj.mvec(end);
-      xun = cubBayesLattice_g.simple_lattice_gen(n,obj.dim,true);
-      fx = obj.ff(xun);  % Note: periodization transform already applied
+      xptsun = cubBayesLattice_g.simple_lattice_gen(n,obj.dim,true);
+      fx = obj.ff(xptsun);  % Note: periodization transform already applied
       
       %% plot ObjectiveFunction
       lnTheta = -5:0.2:5;
       % build filename with path to store the plot
       plotFileName = sprintf('%s%s Cost d_%d bernoulli_%d Period_%s.png',...
         obj.figSavePath, obj.fName, obj.dim, obj.order, obj.ptransform);
-      plotFileName
       
       costMLE = zeros(numM,numel(lnTheta));
       tstart = tic;
@@ -379,17 +390,16 @@ classdef cubBayesLattice_g < handle
       % loop over all the m values
       for iter = 1:numM
         nii = 2^obj.mvec(iter);
-        nii
         
         eigvalK = zeros(numel(lnTheta),nii);
-        ftilde = fft(bitrevorder(fx(1:nii))); %/nii;
-        br_xun = bitrevorder(xun(1:nii,:));
+        ftilde_iter = fft(bitrevorder(fx(1:nii))); %/nii;
+        br_xun = bitrevorder(xptsun(1:nii,:));
         
         tic
         %par
         parfor k=1:numel(lnTheta)
           [costMLE(iter,k),eigvalK(k,:)] = ObjectiveFunction(obj, exp(lnTheta(k)),...
-            br_xun,ftilde);
+            br_xun,ftilde_iter);
         end
         toc
       end
@@ -449,7 +459,6 @@ classdef cubBayesLattice_g < handle
       
       % compute RKHSnorm = mean(abs(ftilde).^2./Lambda);
       
-      % temp = (abs(ftilde(LambdaSq~=0))./(LambdaSq(LambdaSq~=0))).^2 ;
       temp = (abs(ftilde(Lambda~=0).^2)./(Lambda(Lambda~=0))) ;
       % temp = (abs(ftilde.^2)./(Lambda)) ;
       
@@ -696,7 +705,7 @@ classdef cubBayesLattice_g < handle
       
     end
     
-    function [xlat, z] = simple_lattice_gen(n,d,firstBatch)
+    function [z] = get_lattice_gen_vec(d)
 %       if d<=10
 %         % this gives best accuracy
 %         %z = [1, 364981, 245389, 97823, 488939, 62609, 400749, 385317, 21281, 223487]; % generator from Hickernell's paper
@@ -707,6 +716,10 @@ classdef cubBayesLattice_g < handle
             151719, 258185, 357967, 96407, 203741, 211709, 135719, 100779, ...
             85729, 14597, 94813, 422013, 484367]; %generator      
       z = z(1:d);
+    end
+    
+    function [xlat, z] = simple_lattice_gen(n,d,firstBatch)
+      z = get_lattice_gen_vec(d);
       
       if false
         % this is very slow
