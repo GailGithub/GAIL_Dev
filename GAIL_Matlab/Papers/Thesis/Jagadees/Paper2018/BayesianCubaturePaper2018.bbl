@@ -30,15 +30,17 @@ Dick, J., Kuo, F., Sloan, I.H.: High dimensional integration --- the
 \newblock Acta Numer. \textbf{22}, 133--288 (2013).
 \newblock \doi{10.1017/S0962492913000044}
 
-\bibitem{DLMF}
-DLMF: Nist digital library of mathematical functions.
-\newblock http://dlmf.nist.gov/ \textbf{Part 2}, Release 1.0.5 of 2012--10--01
-  (2012)
-
 \bibitem{Gen93}
 Genz, A.: Comparison of methods for the computation of multivariate normal
   probabilities.
 \newblock Computing Science and Statistics \textbf{25}, 400 -- 405 (1993)
+
+\bibitem{Hic96a}
+\HickernellFJ, F.J.: Quadrature error bounds with applications to lattice
+  rules.
+\newblock SIAM J. Numer.\ Anal. \textbf{33}, 1995--2016 (1996).
+\newblock Corrected printing of Sections 3-6 in ibid., {\bf 34} (1997),
+  853--866
 
 \bibitem{Hic17a}
 \HickernellFJ, F.J.: The trio identity for quasi-{M}onte {C}arlo error
@@ -74,6 +76,11 @@ Keister, B.D.: Multidimensional quadrature algorithms.
 O'Hagan, A.: Bayes-hermite quadrature.
 \newblock J. Statist. Plann. Inference \textbf{29}, 245–260 (1991)
 
+\bibitem{OlvEtal10a}
+Olver, F.W.J., Lozier, D.W., Boisvert, R.F., Clark, C.W., Dalhuis, A.B.O.:
+  Digital library of mathematical functions (2018).
+\newblock \urlprefix\url{http://dlmf.nist.gov/}
+
 \bibitem{RasmussenBayesian}
 Rasmussen, C.E., Ghahramani., Z.: Bayesian monte carlo.
 \newblock Advances in Neural Information Processing Systems pp. 489--496 (2003)
@@ -87,5 +94,10 @@ Rasmussen, C.E., Williams, C.: Gaussian Processes for Machine Learning.
 Ritter, K.: Average-case analysis of numerical problems.
 \newblock Lecture Notes in Mathematics, Springer-Verlag, Berlin \textbf{vol.
   1733}, 163–175 (2000)
+
+\bibitem{WahbaGCV}
+Wahba, G.: A comparison of gcv and gml for choosing the smoothing parameter in
+  the generalized spline smoothing problem.
+\newblock The Annals of Statistics \textbf{13}, 1378--1402 (1985)
 
 \end{thebibliography}
