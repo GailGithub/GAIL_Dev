@@ -44,6 +44,7 @@
 
 % please place your own definitions here and don't use \def but
 % \newcommand{}{}
+\newtheorem{prop}{Proposition}
 \providecommand{\HickernellFJ}{Hickernell}
 \newcommand{\bm}[1]{\boldsymbol{#1}}
 \newcommand{\mSigma}{\Sigma}
@@ -1110,7 +1111,13 @@ The widths of the credible intervals in \eqref{eq:errMLEAllAsump}, \eqref{FJH:eq
 \frac{2.58}{n}\sqrt{	\frac{\rlambda_1}{n + \rlambda_1} \sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i^2}  \left [ \frac{1}{n + \rlambda_1} + \sum_{i=2}^n \frac{1}{\lambda_i} \right]^{-1}} .
 \end{align*}
 
+We summarize the results of this section and the previous one as follows:
+\begin{prop}
+	\end{prop}
 
+We have implemented this algorithm in the Guaranteed ....
+
+\section{Numerical Experiments}
 
 \subsection{Variable transforms}
 Fast transform kernel technique discussed with shift invariant kernel eqn(\ref{bayes_SI_kernel}) and lattice points so far, assumes the integrand is periodic and has continuous derivatives on the boundaries of the domain $[0,1]^d$. Non-periodic functions do not live in the space spanned by the kernel.
@@ -1173,107 +1180,17 @@ Such as:
 
 
 
-\subsection{Validating Gaussian process assumption}
-
-
-We begin developing the Bayesian cubature with the assumption that the integrand arises from a Gaussian process. How can we check if $m, s, \vtheta$ and $\mC$ are chosen appropriately so that the $\vf$ is a draw from the Gaussian process?. Here is an attempt to validate that assumption. Let,
-\begin{multline*}
-\vf = \left( f(\vx_i) \right)_{i=1}^n
-\sim \calN \left( m\vone, \mC \right), 
-\\
-\quad \text{where}\quad \mC = \frac 1n \mV \mLambda \mV^H, \quad \mV^H \mV = n
-\end{multline*}
-Then,
-\begin{align*}
-\Ex\left[ \frac{1}{\sqrt{n}} \mLambda^{-\frac 12} \mV^H \vf \right]
-& =
-\frac{1}{\sqrt{n}} \mLambda^{-\frac 12} \mV^H \Ex[\vf] 
-\\
-& =
-\frac{1}{\sqrt{n}} \mLambda^{-\frac 12} \mV^H m \vone
-\\
-& = m \sqrt{\frac{n}{\lambda_1}} \left( 
-\begin{array}{c}
-1 \\ 0 \\ \vdots \\ 0
-\end{array}
-\right),
-\end{align*}
-Let $\vf' = \frac{1}{\sqrt{n}} \mLambda^{-\frac 12} \mV^H \vf$,
-\begin{align*}
-\cov \left[ \vf'  \right]
-&=
-\frac{1}{n} \Ex\left[  
-\mLambda^{-\frac 12} \mV^H (\vf - m \vone)
-(\vf - m \vone)^T \mV \mLambda^{-\frac 12}
-\right]
-\\
-&=
-\frac{1}{n} \mLambda^{-\frac 12} \mV^H 
-\Ex\left[ (\vf - m \vone)
-(\vf - m \vone)^T \right] \mV \mLambda^{-\frac 12}
-\\
-&=
-\frac{1}{n} \mLambda^{-\frac 12} \mV^H 
-\frac 1n \mV \mLambda \mV^H \mV \mLambda^{-\frac 12}
-\\
-& = \mathsf{I}
-\end{align*}
-Thus
-\begin{align*}
-\vf' \sim \calN \left( 
-m' \bm{e}_1,
-\mathsf{I}
-\right),
-\end{align*}
-Where $m' = m \sqrt{\frac{n}{\lambda_1}} $.
-If we can verify the sample distribution of $\vf'$ is approximately $\calN\left( m' \bm{e}_1, \mathsf{I} \right)$ by using Normal plots, could validate our assumption.
-
-We plotted the Normal plots of $\vf'$ for Keister and Multivariate Normal functions as shown in \figref{fig:mvn-normplot} and \figref{fig:keister-normplot}. These plots show the transformed $\vf'$ follows approximately standard normal with a constant mean.
-
-
-
-
-\begin{figure}
-	\centering
-	\includegraphics[width=0.9\linewidth]{"figures/arbMean/Keister/C1sin/Keister Normplot d_2 bernoulli_2 Period_C1sin n_32768"}
-	\caption{Normal plot : Keister function with arbMean assumption}
-	\label{fig:keister-normplot}
-\end{figure}
-
-
-
-
-\begin{figure}
-	\centering
-	\includegraphics[width=0.9\linewidth]{"figures/arbMean/MVN/C1sin/MVN Normplot d_2 bernoulli_2 Period_C1sin n_32768"}
-	\caption{Normal plot : MVN with arbMean assumption}
-	\label{fig:mvn-normplot}
-\end{figure}
 
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-\subsection{Numerical Experiments}
+\subsection{Test Functions}
 \label{sec:numerical_experiments}
 
 Having all the tools and optimization done handy, now we shall run the numerical simulations to see the performance.
 
-\subsubsection{Test Functions}
 
 The following test functions were used to test the integration speed and accuracy of \textit{Fast Bayesian cubature algorithm} that we developed so far
 
@@ -1576,6 +1493,97 @@ We tested our cubature to integrate the above specified functions. The following
 The figures \figref{fig:optprice-guaranteed-MLE}, \figref{fig:keister-guaranteed-MLE} and \figref{fig:mvn-guaranteed-MLE} show the integration using empirical Bayes stopping criterion within the error tolerance $\varepsilon$. 
 And, the figures \figref{fig:optprice-guaranteed-FB}, \figref{fig:keister-guaranteed-FB} and \figref{fig:mvn-guaranteed-FB} show the integration using full Bayes stopping criterion within the error tolerance $\varepsilon$.
 Finally, the figures \figref{fig:optprice-guaranteed-GCV}, \figref{fig:keister-guaranteed-GCV} and \figref{fig:mvn-guaranteed-GCV} show the integration using full Bayes stopping criterion and generalized cross validation (GCV) within the error tolerance $\varepsilon$.
+
+
+
+
+
+\subsection{Validating Gaussian process assumption}
+
+
+We begin developing the Bayesian cubature with the assumption that the integrand arises from a Gaussian process. How can we check if $m, s, \vtheta$ and $\mC$ are chosen appropriately so that the $\vf$ is a draw from the Gaussian process?. Here is an attempt to validate that assumption. Let,
+\begin{multline*}
+\vf = \left( f(\vx_i) \right)_{i=1}^n
+\sim \calN \left( m\vone, \mC \right), 
+\\
+\quad \text{where}\quad \mC = \frac 1n \mV \mLambda \mV^H, \quad \mV^H \mV = n
+\end{multline*}
+Then,
+\begin{align*}
+\Ex\left[ \frac{1}{\sqrt{n}} \mLambda^{-\frac 12} \mV^H \vf \right]
+& =
+\frac{1}{\sqrt{n}} \mLambda^{-\frac 12} \mV^H \Ex[\vf] 
+\\
+& =
+\frac{1}{\sqrt{n}} \mLambda^{-\frac 12} \mV^H m \vone
+\\
+& = m \sqrt{\frac{n}{\lambda_1}} \left( 
+\begin{array}{c}
+1 \\ 0 \\ \vdots \\ 0
+\end{array}
+\right),
+\end{align*}
+Let $\vf' = \frac{1}{\sqrt{n}} \mLambda^{-\frac 12} \mV^H \vf$,
+\begin{align*}
+\cov \left[ \vf'  \right]
+&=
+\frac{1}{n} \Ex\left[  
+\mLambda^{-\frac 12} \mV^H (\vf - m \vone)
+(\vf - m \vone)^T \mV \mLambda^{-\frac 12}
+\right]
+\\
+&=
+\frac{1}{n} \mLambda^{-\frac 12} \mV^H 
+\Ex\left[ (\vf - m \vone)
+(\vf - m \vone)^T \right] \mV \mLambda^{-\frac 12}
+\\
+&=
+\frac{1}{n} \mLambda^{-\frac 12} \mV^H 
+\frac 1n \mV \mLambda \mV^H \mV \mLambda^{-\frac 12}
+\\
+& = \mathsf{I}
+\end{align*}
+Thus
+\begin{align*}
+\vf' \sim \calN \left( 
+m' \bm{e}_1,
+\mathsf{I}
+\right),
+\end{align*}
+Where $m' = m \sqrt{\frac{n}{\lambda_1}} $.
+If we can verify the sample distribution of $\vf'$ is approximately $\calN\left( m' \bm{e}_1, \mathsf{I} \right)$ by using Normal plots, could validate our assumption.
+
+We plotted the Normal plots of $\vf'$ for Keister and Multivariate Normal functions as shown in \figref{fig:mvn-normplot} and \figref{fig:keister-normplot}. These plots show the transformed $\vf'$ follows approximately standard normal with a constant mean.
+
+
+
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.9\linewidth]{"figures/arbMean/Keister/C1sin/Keister Normplot d_2 bernoulli_2 Period_C1sin n_32768"}
+	\caption{Normal plot : Keister function with arbMean assumption}
+	\label{fig:keister-normplot}
+\end{figure}
+
+
+
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.9\linewidth]{"figures/arbMean/MVN/C1sin/MVN Normplot d_2 bernoulli_2 Period_C1sin n_32768"}
+	\caption{Normal plot : MVN with arbMean assumption}
+	\label{fig:mvn-normplot}
+\end{figure}
+
+
+
+
+
+
+
+
+
+
 
 
 \section{Conclusion}
