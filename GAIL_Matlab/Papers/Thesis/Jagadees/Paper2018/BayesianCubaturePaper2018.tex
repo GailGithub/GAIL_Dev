@@ -44,6 +44,7 @@
 
 % please place your own definitions here and don't use \def but
 % \newcommand{}{}
+\newtheorem{prop}{Proposition}
 \providecommand{\HickernellFJ}{Hickernell}
 \newcommand{\bm}[1]{\boldsymbol{#1}}
 \newcommand{\mSigma}{\Sigma}
@@ -111,6 +112,7 @@
 \newcommand{\vZ}{\bm{Z}}
 \newcommand{\dvz}{\dif{\bm{z}}}
 \newcommand{\tf}{\tilde{f}}
+\newcommand{\vPsi}{\boldsymbol{\Psi}}
 
 \newcommand{\tvv}{\tilde{\vv}}
 \newcommand{\tvz}{\tilde{\vz}}
@@ -307,9 +309,8 @@ Suppose that the integrand, $f$, is drawn from a Gaussian process, i.e., $f \sim
 The covariance function, $C$, and the Gram matrix, $\mC$ depend implicitly on $\vtheta$, but sometimes this is omitted in the notation for simplicity's sake.
 
 For a Gaussian process, all vectors of linear functionals of $f$ have a multivariate Gaussian distribution. Defining  $\vf  := \left( f(\vx_i)\right)_{i=1}^n$ as the multivariate normal vector of function values, it follows that 
-\begin{subequations}
+\begin{subequations} \label{eqn:fGaussDist}
 \begin{align}
-\label{eqn:fGaussDist}
 \vf  & \sim \calN(m \vone, s^2 \mC), \\
 \mu & \sim \calN(m, s^2 c_0), 
 \\
@@ -1110,170 +1111,60 @@ The widths of the credible intervals in \eqref{eq:errMLEAllAsump}, \eqref{FJH:eq
 \frac{2.58}{n}\sqrt{	\frac{\rlambda_1}{n + \rlambda_1} \sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i^2}  \left [ \frac{1}{n + \rlambda_1} + \sum_{i=2}^n \frac{1}{\lambda_i} \right]^{-1}} .
 \end{align*}
 
+We summarize the results of this section and the previous one as follows:
+\begin{prop}
+	\end{prop}
 
+We have implemented this algorithm in the Guaranteed ....
 
-\subsection{Variable transforms}
-Fast transform kernel technique discussed with shift invariant kernel eqn(\ref{bayes_SI_kernel}) and lattice points so far, assumes the integrand is periodic and has continuous derivatives on the boundaries of the domain $[0,1]^d$. Non-periodic functions do not live in the space spanned by the kernel.
-Variable transformation or periodization transform techniques are typically used to improve the accuracy in multi-dimensional numerical integrations where boundary conditions needs to be enforced. These transformations could be either polynomial, exponential and also trigonometric nature.
+\section{Numerical Experiments}
+
+\subsection{Periodizing Variable Transforms}
+The shift-invariant covariance kernels underlying our Bayesian cubature is based assume that the integrand has a degree of periodicity, with the smoothness assumed depending on the smoothness of the kernel.  While integrands arising in practice may be smooth, they might not be periodic.  Variable transformations can be used to ensure periodicity.
+
+Suppose that the original integral has been expressed as 
+\begin{equation*}
+\mu := \int_{[0,1]^d} g(\vt) \, \dif \vt
+\end{equation*}
+where $g$ has sufficient smoothness, but lacks periodicity.  The baker's transform,
+\begin{equation} \label{eq:bakerTrans}
+\vPsi: \vx \mapsto (\Psi(x_1),  \ldots, \Psi(x_d)), \quad \Psi(x)  =1 - 2 \abs{x - 1/2},
+\end{equation}
+allows us to write $\mu$ in the form of \eqref{eqn:defn_mu}, where $f(\vx) = g(\vPsi(\vx))$.  
+
+A family of variable transforms take the form
+\begin{subequations} \label{eq:varTrans}
+\begin{equation}
+\vPsi: \vx \mapsto (\Psi(x_1),  \ldots, \Psi(x_d)), \quad \Psi:[0,1] \mapsto [0,1],
+\end{equation}
+which allows us to write $\mu$ in the form of \eqref{eqn:defn_mu} with
+\begin{equation}
+f(\vx) = g(\vPsi(\vx)) \prod_{\ell = 1}^d \Psi'(x_1).
+\end{equation}
+\end{subequations}
+If $\Psi$ is sufficiently smooth, $\lim_{x \downarrow 0}x^{-r}\Psi'(x) = \lim_{x \uparrow 1} (x-1)^{-r}\Psi'(x) = 0$ for $ r \in \natzero$, and $g \in C^{(r, \ldots, r)}[0,1]^d$, then $f$ has continuous, periodic derivatives up to order $r$ in each direction.  
+Examples of this kind of transform include:
 \begin{align*}
-\text{Baker's} & : \tilde{f}(\vt) 
-= f\left( \left(1-2 \abs{t_j-\frac{1}{2}} \right)_{j=1}^d \right) 
-\\
-\text{C0} & : \tilde{f}(\vt) 
-= f\left( \vg_0 \right)\prod_{j=1}^d g'_0(t_j), 
-  \; \vg_0 = \left( g_0(t_j) \right)_{j=1}^d
-\\
-\text{C1} & : \tilde{f}(\vt) 
-= f\left( \vg_1\right)\prod_{j=1}^d g'_1(t_j),
-  \; \vg_1 = \left( g_1(t_j) \right)_{j=1}^d 
-\\
-\text{Sidi's C1} & : \tilde{f}(\vt) 
-= f\left( \bm{\psi}_2 \right) \prod_{j=1}^d \psi'_2(t_j),
-  \; \bm{\psi}_2 = \left( {\psi}_2(t_j) \right)_{j=1}^d
-\\
-\text{Sidi's C2} & : \tilde{f}(\vt) 
-= f\left( \bm{\psi}_3 \right) \prod_{j=1}^d \psi'_3(t_j),
-  \; \bm{\psi}_3 = \left( {\psi}_3(t_j) \right)_{j=1}^d
+C^0 &: \Psi(x) =  3 x^2 - 2 x^3, \quad   \Psi'(x) = 6x(1-x), \\
+C^1 & : \Psi(x) = x^3(10-15x+6x^2),  \\
+&\qquad \qquad \qquad \qquad   \Psi'(x) = 30x^2(1-x)^2 \\
+\text{Sidi's } C^1 & : \Psi(x) = x - \frac{\sin(2\pi x)}{2 \pi},  \\
+&\qquad \qquad \qquad \qquad   \Psi'(x) = 1 - \cos(2\pi x), \\
+\text{Sidi's } C^2 & : \Psi(x) = \frac {8 - 9 \cos(\pi x) + \cos(3 \pi x)}{16} ,  \\
+&\qquad \qquad \Psi'(x) = \frac {3 \pi[3 \cos(\pi x) - \cos(3 \pi x)]}{16}.
 \end{align*}
-where
-\begin{multline*}
-g_0(t) = 3 t^2 - 2 t^3,   g'_0(t) = 6t(1-t))
-\\
-g_1(t) = t^3(10-15t+6t^2),   g'_1(t) = 30t^2(1-t)^2
-\\
-\psi_2(t) = 
-\left(t - \frac{1}{2\pi} \sin(2\pi t) \right) 
-,  \psi'_2(t) = 
-\left(1 - \cos(2 \pi t)  \right) 
-\\
-\psi_3(t) = 
-\frac{1}{16} \left(8-9\cos(\pi t)+ \cos(3\pi t) \right) 
-, 
-\\ 
-\psi'_3(t) = 
-\frac{1}{16} \left(9 \sin(\pi t) \pi - \sin(3 \pi t) 3 \pi \right) 
-\end{multline*}
 
-These transforms vary in terms of computational complexity and accuracy, shall be chosen on a need basis.
-Such as:
-\begin{enumerate}
-\item Baker's : Baker's transform or called tent map in each coordinate. It preserves only continuity but it is easier to compute.
-\item C0 : Polynomial transformation only ensures periodicity of function.
-\item C1 : Polynomial transformation preserving the first derivative.
-\item C1sin : Sidi's transform with Sine, preserving the first derivative. This is, in general, a better option than `C1'.
-\item C2sin : Sidi's transform with Sine, preserving upto second derivative. We use this when smoothness of `C1sin' is not sufficient and need to preserve upto second derivative.
-\end{enumerate}
+Periodizing variable transforms are used for the numerical examples below.  In some cases they can speed the convergence of the Bayesia cubature.
+	
 
 
 
 
-
-
-
-
-
-
-\subsection{Validating Gaussian process assumption}
-
-
-We begin developing the Bayesian cubature with the assumption that the integrand arises from a Gaussian process. How can we check if $m, s, \vtheta$ and $\mC$ are chosen appropriately so that the $\vf$ is a draw from the Gaussian process?. Here is an attempt to validate that assumption. Let,
-\begin{multline*}
-\vf = \left( f(\vx_i) \right)_{i=1}^n
-\sim \calN \left( m\vone, \mC \right), 
-\\
-\quad \text{where}\quad \mC = \frac 1n \mV \mLambda \mV^H, \quad \mV^H \mV = n
-\end{multline*}
-Then,
-\begin{align*}
-\Ex\left[ \frac{1}{\sqrt{n}} \mLambda^{-\frac 12} \mV^H \vf \right]
-& =
-\frac{1}{\sqrt{n}} \mLambda^{-\frac 12} \mV^H \Ex[\vf] 
-\\
-& =
-\frac{1}{\sqrt{n}} \mLambda^{-\frac 12} \mV^H m \vone
-\\
-& = m \sqrt{\frac{n}{\lambda_1}} \left( 
-\begin{array}{c}
-1 \\ 0 \\ \vdots \\ 0
-\end{array}
-\right),
-\end{align*}
-Let $\vf' = \frac{1}{\sqrt{n}} \mLambda^{-\frac 12} \mV^H \vf$,
-\begin{align*}
-\cov \left[ \vf'  \right]
-&=
-\frac{1}{n} \Ex\left[  
-\mLambda^{-\frac 12} \mV^H (\vf - m \vone)
-(\vf - m \vone)^T \mV \mLambda^{-\frac 12}
-\right]
-\\
-&=
-\frac{1}{n} \mLambda^{-\frac 12} \mV^H 
-\Ex\left[ (\vf - m \vone)
-(\vf - m \vone)^T \right] \mV \mLambda^{-\frac 12}
-\\
-&=
-\frac{1}{n} \mLambda^{-\frac 12} \mV^H 
-\frac 1n \mV \mLambda \mV^H \mV \mLambda^{-\frac 12}
-\\
-& = \mathsf{I}
-\end{align*}
-Thus
-\begin{align*}
-\vf' \sim \calN \left( 
-m' \bm{e}_1,
-\mathsf{I}
-\right),
-\end{align*}
-Where $m' = m \sqrt{\frac{n}{\lambda_1}} $.
-If we can verify the sample distribution of $\vf'$ is approximately $\calN\left( m' \bm{e}_1, \mathsf{I} \right)$ by using Normal plots, could validate our assumption.
-
-We plotted the Normal plots of $\vf'$ for Keister and Multivariate Normal functions as shown in \figref{fig:mvn-normplot} and \figref{fig:keister-normplot}. These plots show the transformed $\vf'$ follows approximately standard normal with a constant mean.
-
-
-
-
-\begin{figure}
-	\centering
-	\includegraphics[width=0.9\linewidth]{"figures/arbMean/Keister/C1sin/Keister Normplot d_2 bernoulli_2 Period_C1sin n_32768"}
-	\caption{Normal plot : Keister function with arbMean assumption}
-	\label{fig:keister-normplot}
-\end{figure}
-
-
-
-
-\begin{figure}
-	\centering
-	\includegraphics[width=0.9\linewidth]{"figures/arbMean/MVN/C1sin/MVN Normplot d_2 bernoulli_2 Period_C1sin n_32768"}
-	\caption{Normal plot : MVN with arbMean assumption}
-	\label{fig:mvn-normplot}
-\end{figure}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-\subsection{Numerical Experiments}
+\subsection{Test Functions}
 \label{sec:numerical_experiments}
 
 Having all the tools and optimization done handy, now we shall run the numerical simulations to see the performance.
 
-\subsubsection{Test Functions}
 
 The following test functions were used to test the integration speed and accuracy of \textit{Fast Bayesian cubature algorithm} that we developed so far
 
@@ -1576,6 +1467,64 @@ We tested our cubature to integrate the above specified functions. The following
 The figures \figref{fig:optprice-guaranteed-MLE}, \figref{fig:keister-guaranteed-MLE} and \figref{fig:mvn-guaranteed-MLE} show the integration using empirical Bayes stopping criterion within the error tolerance $\varepsilon$. 
 And, the figures \figref{fig:optprice-guaranteed-FB}, \figref{fig:keister-guaranteed-FB} and \figref{fig:mvn-guaranteed-FB} show the integration using full Bayes stopping criterion within the error tolerance $\varepsilon$.
 Finally, the figures \figref{fig:optprice-guaranteed-GCV}, \figref{fig:keister-guaranteed-GCV} and \figref{fig:mvn-guaranteed-GCV} show the integration using full Bayes stopping criterion and generalized cross validation (GCV) within the error tolerance $\varepsilon$.
+
+
+
+
+
+\subsection{Diagnostics for the Gaussian Process Assumption}
+
+
+The starting point for our Bayesian cubature is the assumption that the integrand arises from a Gaussian process. This means that the function data, $\vf$ satisfy a multivariate Gaussian distribution, as in \eqref{eqn:fGaussDist}.  The transformed data, $\vZ = ( n\mLambda)^{-\frac 12} \mV^H(\vf - m \vone)$ has zero mean and is also uncorrelated because
+\begin{align*}
+\cov (\vZ) 
+&= \frac 1n \Ex\left[  
+\mLambda^{-\frac 12} \mV^H (\vf - m \vone)
+(\vf - m \vone)^T \mV \mLambda^{-\frac 12}
+\right]
+\\
+&=
+ \mLambda^{-\frac 12} \mV^H 
+\Ex\left[ (\vf - m \vone)
+(\vf - m \vone)^T \right] \mV \mLambda^{-\frac 12}
+\\
+&=
+\frac{1}{n} \mLambda^{-\frac 12} \mV^H 
+\frac 1n \mV \mLambda \mV^H \mV \mLambda^{-\frac 12}
+ = \mathsf{I}
+\end{align*}
+Thus, the elements of $\vZ$ are IID standard Gaussian random variables.  
+
+\figref{fig:mvn-normplot} and \figref{fig:keister-normplot} are normal probability plots of the $Z_i$ using empirical Bayes estimates of $m$ and $\vtheta$. \textbf{more goes here}.
+
+
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.9\linewidth]{"figures/arbMean/Keister/C1sin/Keister Normplot d_2 bernoulli_2 Period_C1sin n_32768"}
+	\caption{Normal plot : Keister function with arbMean assumption}
+	\label{fig:keister-normplot}
+\end{figure}
+
+
+
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.9\linewidth]{"figures/arbMean/MVN/C1sin/MVN Normplot d_2 bernoulli_2 Period_C1sin n_32768"}
+	\caption{Normal plot : MVN with arbMean assumption}
+	\label{fig:mvn-normplot}
+\end{figure}
+
+
+
+
+
+
+
+
+
+
 
 
 \section{Conclusion}
