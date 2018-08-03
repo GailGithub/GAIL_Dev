@@ -112,6 +112,7 @@
 \newcommand{\vZ}{\bm{Z}}
 \newcommand{\dvz}{\dif{\bm{z}}}
 \newcommand{\tf}{\tilde{f}}
+\newcommand{\vPsi}{\boldsymbol{\Psi}}
 
 \newcommand{\tvv}{\tilde{\vv}}
 \newcommand{\tvz}{\tilde{\vz}}
@@ -1119,69 +1120,43 @@ We have implemented this algorithm in the Guaranteed ....
 
 \section{Numerical Experiments}
 
-\subsection{Variable transforms}
-Fast transform kernel technique discussed with shift invariant kernel eqn(\ref{bayes_SI_kernel}) and lattice points so far, assumes the integrand is periodic and has continuous derivatives on the boundaries of the domain $[0,1]^d$. Non-periodic functions do not live in the space spanned by the kernel.
-Variable transformation or periodization transform techniques are typically used to improve the accuracy in multi-dimensional numerical integrations where boundary conditions needs to be enforced. These transformations could be either polynomial, exponential and also trigonometric nature.
+\subsection{Periodizing Variable Transforms}
+The shift-invariant covariance kernels underlying our Bayesian cubature is based assume that the integrand has a degree of periodicity, with the smoothness assumed depending on the smoothness of the kernel.  While integrands arising in practice may be smooth, they might not be periodic.  Variable transformations can be used to ensure periodicity.
+
+Suppose that the original integral has been expressed as 
+\begin{equation*}
+\mu := \int_{[0,1]^d} g(\vt) \, \dif \vt
+\end{equation*}
+where $g$ has sufficient smoothness, but lacks periodicity.  The baker's transform,
+\begin{equation} \label{eq:bakerTrans}
+\vPsi: \vx \mapsto (\Psi(x_1),  \ldots, \Psi(x_d)), \quad \Psi(x)  =1 - 2 \abs{x - 1/2},
+\end{equation}
+allows us to write $\mu$ in the form of \eqref{eqn:defn_mu}, where $f(\vx) = g(\vPsi(\vx))$.  
+
+A family of variable transforms take the form
+\begin{subequations} \label{eq:varTrans}
+\begin{equation}
+\vPsi: \vx \mapsto (\Psi(x_1),  \ldots, \Psi(x_d)), \quad \Psi:[0,1] \mapsto [0,1],
+\end{equation}
+which allows us to write $\mu$ in the form of \eqref{eqn:defn_mu} with
+\begin{equation}
+f(\vx) = g(\vPsi(\vx)) \prod_{\ell = 1}^d \Psi'(x_1).
+\end{equation}
+\end{subequations}
+If $\Psi$ is sufficiently smooth, $\lim_{x \downarrow 0}x^{-r}\Psi'(x) = \lim_{x \uparrow 1} (x-1)^{-r}\Psi'(x) = 0$ for $ r \in \natzero$, and $g \in C^{(r, \ldots, r)}[0,1]^d$, then $f$ has continuous, periodic derivatives up to order $r$ in each direction.  
+Examples of this kind of transform include:
 \begin{align*}
-\text{Baker's} & : \tilde{f}(\vt) 
-= f\left( \left(1-2 \abs{t_j-\frac{1}{2}} \right)_{j=1}^d \right) 
-\\
-\text{C0} & : \tilde{f}(\vt) 
-= f\left( \vg_0 \right)\prod_{j=1}^d g'_0(t_j), 
-  \; \vg_0 = \left( g_0(t_j) \right)_{j=1}^d
-\\
-\text{C1} & : \tilde{f}(\vt) 
-= f\left( \vg_1\right)\prod_{j=1}^d g'_1(t_j),
-  \; \vg_1 = \left( g_1(t_j) \right)_{j=1}^d 
-\\
-\text{Sidi's C1} & : \tilde{f}(\vt) 
-= f\left( \bm{\psi}_2 \right) \prod_{j=1}^d \psi'_2(t_j),
-  \; \bm{\psi}_2 = \left( {\psi}_2(t_j) \right)_{j=1}^d
-\\
-\text{Sidi's C2} & : \tilde{f}(\vt) 
-= f\left( \bm{\psi}_3 \right) \prod_{j=1}^d \psi'_3(t_j),
-  \; \bm{\psi}_3 = \left( {\psi}_3(t_j) \right)_{j=1}^d
+C^0 &: \Psi(x) =  3 x^2 - 2 x^3, \quad   \Psi'(x) = 6x(1-x), \\
+C^1 & : \Psi(x) = x^3(10-15x+6x^2),  \\
+&\qquad \qquad \qquad \qquad   \Psi'(x) = 30x^2(1-x)^2 \\
+\text{Sidi's } C^1 & : \Psi(x) = x - \frac{\sin(2\pi x)}{2 \pi},  \\
+&\qquad \qquad \qquad \qquad   \Psi'(x) = 1 - \cos(2\pi x), \\
+\text{Sidi's } C^2 & : \Psi(x) = \frac {8 - 9 \cos(\pi x) + \cos(3 \pi x)}{16} ,  \\
+&\qquad \qquad \Psi'(x) = \frac {3 \pi[3 \cos(\pi x) - \cos(3 \pi x)]}{16}.
 \end{align*}
-where
-\begin{multline*}
-g_0(t) = 3 t^2 - 2 t^3,   g'_0(t) = 6t(1-t))
-\\
-g_1(t) = t^3(10-15t+6t^2),   g'_1(t) = 30t^2(1-t)^2
-\\
-\psi_2(t) = 
-\left(t - \frac{1}{2\pi} \sin(2\pi t) \right) 
-,  \psi'_2(t) = 
-\left(1 - \cos(2 \pi t)  \right) 
-\\
-\psi_3(t) = 
-\frac{1}{16} \left(8-9\cos(\pi t)+ \cos(3\pi t) \right) 
-, 
-\\ 
-\psi'_3(t) = 
-\frac{1}{16} \left(9 \sin(\pi t) \pi - \sin(3 \pi t) 3 \pi \right) 
-\end{multline*}
 
-These transforms vary in terms of computational complexity and accuracy, shall be chosen on a need basis.
-Such as:
-\begin{enumerate}
-\item Baker's : Baker's transform or called tent map in each coordinate. It preserves only continuity but it is easier to compute.
-\item C0 : Polynomial transformation only ensures periodicity of function.
-\item C1 : Polynomial transformation preserving the first derivative.
-\item C1sin : Sidi's transform with Sine, preserving the first derivative. This is, in general, a better option than `C1'.
-\item C2sin : Sidi's transform with Sine, preserving upto second derivative. We use this when smoothness of `C1sin' is not sufficient and need to preserve upto second derivative.
-\end{enumerate}
-
-
-
-
-
-
-
-
-
-
-
-
+Periodizing variable transforms are used for the numerical examples below.  In some cases they can speed the convergence of the Bayesia cubature.
+	
 
 
 
