@@ -309,9 +309,8 @@ Suppose that the integrand, $f$, is drawn from a Gaussian process, i.e., $f \sim
 The covariance function, $C$, and the Gram matrix, $\mC$ depend implicitly on $\vtheta$, but sometimes this is omitted in the notation for simplicity's sake.
 
 For a Gaussian process, all vectors of linear functionals of $f$ have a multivariate Gaussian distribution. Defining  $\vf  := \left( f(\vx_i)\right)_{i=1}^n$ as the multivariate normal vector of function values, it follows that 
-\begin{subequations}
+\begin{subequations} \label{eqn:fGaussDist}
 \begin{align}
-\label{eqn:fGaussDist}
 \vf  & \sim \calN(m \vone, s^2 \mC), \\
 \mu & \sim \calN(m, s^2 c_0), 
 \\
@@ -1473,63 +1472,30 @@ Finally, the figures \figref{fig:optprice-guaranteed-GCV}, \figref{fig:keister-g
 
 
 
-\subsection{Validating Gaussian process assumption}
+\subsection{Diagnostics for the Gaussian Process Assumption}
 
 
-We begin developing the Bayesian cubature with the assumption that the integrand arises from a Gaussian process. How can we check if $m, s, \vtheta$ and $\mC$ are chosen appropriately so that the $\vf$ is a draw from the Gaussian process?. Here is an attempt to validate that assumption. Let,
-\begin{multline*}
-\vf = \left( f(\vx_i) \right)_{i=1}^n
-\sim \calN \left( m\vone, \mC \right), 
-\\
-\quad \text{where}\quad \mC = \frac 1n \mV \mLambda \mV^H, \quad \mV^H \mV = n
-\end{multline*}
-Then,
+The starting point for our Bayesian cubature is the assumption that the integrand arises from a Gaussian process. This means that the function data, $\vf$ satisfy a multivariate Gaussian distribution, as in \eqref{eqn:fGaussDist}.  The transformed data, $\vZ = ( n\mLambda)^{-\frac 12} \mV^H(\vf - m \vone)$ has zero mean and is also uncorrelated because
 \begin{align*}
-\Ex\left[ \frac{1}{\sqrt{n}} \mLambda^{-\frac 12} \mV^H \vf \right]
-& =
-\frac{1}{\sqrt{n}} \mLambda^{-\frac 12} \mV^H \Ex[\vf] 
-\\
-& =
-\frac{1}{\sqrt{n}} \mLambda^{-\frac 12} \mV^H m \vone
-\\
-& = m \sqrt{\frac{n}{\lambda_1}} \left( 
-\begin{array}{c}
-1 \\ 0 \\ \vdots \\ 0
-\end{array}
-\right),
-\end{align*}
-Let $\vf' = \frac{1}{\sqrt{n}} \mLambda^{-\frac 12} \mV^H \vf$,
-\begin{align*}
-\cov \left[ \vf'  \right]
-&=
-\frac{1}{n} \Ex\left[  
+\cov (\vZ) 
+&= \frac 1n \Ex\left[  
 \mLambda^{-\frac 12} \mV^H (\vf - m \vone)
 (\vf - m \vone)^T \mV \mLambda^{-\frac 12}
 \right]
 \\
 &=
-\frac{1}{n} \mLambda^{-\frac 12} \mV^H 
+ \mLambda^{-\frac 12} \mV^H 
 \Ex\left[ (\vf - m \vone)
 (\vf - m \vone)^T \right] \mV \mLambda^{-\frac 12}
 \\
 &=
 \frac{1}{n} \mLambda^{-\frac 12} \mV^H 
 \frac 1n \mV \mLambda \mV^H \mV \mLambda^{-\frac 12}
-\\
-& = \mathsf{I}
+ = \mathsf{I}
 \end{align*}
-Thus
-\begin{align*}
-\vf' \sim \calN \left( 
-m' \bm{e}_1,
-\mathsf{I}
-\right),
-\end{align*}
-Where $m' = m \sqrt{\frac{n}{\lambda_1}} $.
-If we can verify the sample distribution of $\vf'$ is approximately $\calN\left( m' \bm{e}_1, \mathsf{I} \right)$ by using Normal plots, could validate our assumption.
+Thus, the elements of $\vZ$ are IID standard Gaussian random variables.  
 
-We plotted the Normal plots of $\vf'$ for Keister and Multivariate Normal functions as shown in \figref{fig:mvn-normplot} and \figref{fig:keister-normplot}. These plots show the transformed $\vf'$ follows approximately standard normal with a constant mean.
-
+\figref{fig:mvn-normplot} and \figref{fig:keister-normplot} are normal probability plots of the $Z_i$ using empirical Bayes estimates of $m$ and $\vtheta$. \textbf{more goes here}.
 
 
 
