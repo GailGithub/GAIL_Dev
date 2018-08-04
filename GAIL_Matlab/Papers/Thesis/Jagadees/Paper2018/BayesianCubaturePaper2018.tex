@@ -661,28 +661,120 @@ Our  Bayesian cubature algorithm increases the sample size until the width of th
 \subsection{Example with the Matern kernel}
 
 
-\FJHNote{What is your integrand?  $d$?  Does $\theta$ really depend on $k$?}  We would like to demonstrate and test numerical accuracy and computational cost of the automatic {Bayesian cubature algorithm} using the results obtained so far.
-For this example, we use the Matern kernel:
+\FJHNote{What is your integrand?  $d$?  Does $\theta$ really depend on $k$?}  
+We would like to demonstrate and test numerical accuracy and computational cost of the automatic {Bayesian cubature algorithm} using the results obtained so far.
+For this example, we chose multivariate normal as integrand and the Matern kernel as covariance function:
 \begin{align}
 \label{matern_kernel}
-C_{\vtheta}(\vx, \vt) = \prod_{k=1}^d \exp(-\theta_k|\vx_k-\vt_k|)(1+\theta_k |\vx_k-\vt_k|)
+C_{\theta}(\vx, \vt) = \prod_{k=1}^d \exp(-\theta|\vx_k-\vt_k|)(1+\theta_k |\vx_k-\vt_k|)
 \end{align}
 
 
+\paragraph{Multivariate Normal} does not have an analytic expression to compute the integral, So numerical algorithms are necessary to approximate it. But It's domain is $\mathbb{R}$. To integrate with our algorithm it has to be transformed to the unit cube.
+We use the Genz's method for this reason as explained below. This method not only transforms the integrand into unit cube and also reduces the original dimension of the problem by 1.
+\begin{figure}
+	\captionsetup[subfigure]{labelformat=empty}
+	\begin{subfigure}[h]{0.48\linewidth}
+		\includegraphics[width=1.1\linewidth]{Plotting_gaussian}
+	\end{subfigure}
+	\begin{subfigure}[h]{0.48\linewidth}
+		\includegraphics[width=1.1\linewidth]{GenzFun}
+	\end{subfigure}
+	\caption{Mutivariate Normal and  in d=2 and its transformed Genz function  $[0,1]^2$}
+	\label{fig:MVN_Genz}
+\end{figure}
 
-\begin{figure}[htp]
+\begin{multline*}
+f_{\textup{MVN}} = \int_{[\va,\vb] \in \reals^d} \frac{\exp\bigl(- \frac 12 \vt^T \mSigma^{-1} \vt \bigr)}{\sqrt{(2 \pi)^d \det(\mSigma)}} \, \dvt 
+\\
+\overset{\text{\small\cite{Gen93}}}{=} \,
+\int_{[0,1]^{d-1}} f_{\text{Genz}}(\vx) \, \dvx 
+\end{multline*} 
+
+where $\mSigma= \mL \mL^T$ is the Cholesky decomposition of the covariance matrix, $\mL = (l_{jk})_{j,k=1}^d$ is a lower triangular matrix, and
+
+\begin{multline*}
+\valpha_1 = \Phi(a_1), \qquad \vbeta_1 = \Phi(b_1)
+\\
+\valpha_j(x_1,...,x_{j-1}) = 
+\\
+\Phi
+\left(
+\frac{1}{l_{jj}} 
+\left(
+a_j - \sum_{k=1}^{j-1} l_{jk} \Phi^{-1}(\valpha_k + x_k(\vbeta_k-\valpha_k))
+\right)
+\right), 
+\\
+\qquad \qquad \qquad j=2,...,d,
+\\
+\vbeta_j(x_1,...,x_{j-1}) = 
+\\
+\Phi
+\left(
+\frac{1}{l_{jj}} 
+\left(
+b_j - \sum_{k=1}^{j-1} l_{jk} \Phi^{-1}(\valpha_k + x_k(\vbeta_k-\valpha_k))
+\right)
+\right), 
+\\
+\qquad \qquad \qquad j=2,...,d,
+\\
+f_{\text{Genz}}(\vx) = \prod_{j=1}^d [\vbeta_j(\vx) - \valpha_j(\vx)]. \hspace{12ex}
+\end{multline*}
+where $\Phi$ is the cumulative normal distribution function.
+As we see from the figure, Genz function is not periodic, So we need to make it periodic (Section \ref{period_var_tx}) to get the best accuracy with Bayesian cubature.
+
+We use the following parameter values for the numerical examples
+\begin{equation*}
+\begin{array}{c|ccc}
+& a  & b & L  \\
+\hline
+d=2 
+& 
+\begin{pmatrix}
+-6 \\ -2 \\ -2
+\end{pmatrix}
+& 
+\begin{pmatrix}
+5 \\ 2 \\ 1
+\end{pmatrix} 
+& 
+\begin{pmatrix}
+4 & 1 & 1 \\ 0 & 1 & 0.5 \\ 0 & 0 & 0.25
+\end{pmatrix} 
+\\
+d=3
+& 
+\begin{pmatrix}
+-6 \\ -2 \\ -2 \\ 2
+\end{pmatrix}
+& 
+\begin{pmatrix}
+5 \\ 2 \\ 1 \\2
+\end{pmatrix} 
+& 
+\begin{pmatrix}
+4 & 1 & 1 & 1\\ 0 & 1 & 0.5 & 0.5 \\ 0 & 0 & 0.25 & 0.25 \\ 0 & 0 & 0 & 0.25
+\end{pmatrix} 
+\end{array}
+\end{equation*}
+
+
+\begin{figure}
 \captionsetup[subfigure]{labelformat=empty}
-\centering
-\begin{subfigure}[b]{0.49\textwidth}
-\includegraphics[height=4cm]{MVNBayesianWtSobol}
+%\centering
+\begin{subfigure}[h]{0.48\linewidth}
+\includegraphics[width=1.1\linewidth]{MVNBayesianWtSobol}
 \end{subfigure}
-\centering
-\begin{subfigure}[b]{0.49\textwidth}
-\includegraphics[height=4cm]{MVN_bayesianCubaturecomputeTime}
+%\centering
+\begin{subfigure}[h]{0.48\linewidth}
+\includegraphics[width=1.1\linewidth]{MVN_bayesianCubaturecomputeTime}
 \end{subfigure}
-\caption{MVN for d=2 with Matern kernel  }
+\caption{Multivariate Normal probability estimated using Matern kernel in d=2}
 \label{fig:MVN_Metern_d2b2}
 \end{figure}
+
 On our test computer with Intel i7 3630QM and 16GB RAM memory, it took 118 minutes to compute $\hmu_n$ with $n=2^{13}$. As shown in Figure \ref{fig:MVN_Metern_d2b2}, computation time increases rapidly with $n$. 
 Especially, Maximum-likelihood-estimation of $\vtheta$ which needs the loss function, is the most time consuming of all. 
 Because the loss functions need to be computed multiple times in every iteration to choose the optimal shape parameter till its minimum is found. 
@@ -1118,7 +1210,7 @@ We summarize the results of this section and the previous one as follows:
 If any symmetric positive-definite shift-invariant-kernel of the form \eqref{eq:shInv} with  property \eqref{addAssump} when used with rank-1 Lattice data-sites yields Fast transform in the form of \emph{Fast Fourier transform}(FFT). Consequently faster adaptive Bayesian cubature can be constructed with stopping criteria as shown in \eqref{fastStoppingCriterions}.
 \end{prop}
 \begin{proof}:
-	Any symmetric positive-definite shift-invariant-kernel of the form 
+	consider any symmetric positive-definite shift-invariant-kernel of the form 
 	\begin{equation} \tag{\ref{eq:shInv}}
 	C(\vt,\vx) = K(\vt - \vx \bmod \vone),
 	\end{equation}
@@ -1140,11 +1232,12 @@ If any symmetric positive-definite shift-invariant-kernel of the form \eqref{eq:
 	 then the stopping criteria as shown in \eqref{fastStoppingCriterions} are applicable. \qed
 \end{proof}
 
-We have implemented this algorithm in MATLAB and is part of the Guaranteed Adaptive Integration Library (GAIL) as a method  \code{cubBayesLattice\_g}, for more details please refer to $\cite{ChoEtal17b}$.
+We have implemented this algorithm in MATLAB and is part of the Guaranteed Adaptive Integration Library (GAIL) as a method  \code{cubBayesLattice\_g}, for more details please refer to \cite{ChoEtal17b}.
 
 \section{Numerical Experiments}
 
 \subsection{Periodizing Variable Transforms}
+\label{period_var_tx}
 The shift-invariant covariance kernels underlying our Bayesian cubature is based assume that the integrand has a degree of periodicity, with the smoothness assumed depending on the smoothness of the kernel.  While integrands arising in practice may be smooth, they might not be periodic.  Variable transformations can be used to ensure periodicity.
 
 Suppose that the original integral has been expressed as 
@@ -1222,26 +1315,37 @@ where `$\text{BesselI}$' is the \textit{modified Bessel} function. Exp(Cos) func
 
 \item Keister function
 
-The following multidimensional integral example is based on the paper \cite{KeisterExample}, inspired by a physics application. There exist an iterative algorithm to compute the true integral of this function. But the domain of this function is $\reals^d$ so variation transformation must be used to use with $[0,1]^d$.
+The following multidimensional integral example is based on the paper \cite{KeisterExample}, inspired by a physics application. 
 \begin{figure}
-	\centering
-	\includegraphics[width=0.95\linewidth]{"figures/Keister_wholeR"}
-	\caption[Guaranteed:]{Keister function in d=2}
-	\label{fig:keister-R}
+	\captionsetup[subfigure]{labelformat=empty}
+	\begin{subfigure}[h]{0.48\linewidth}
+		\includegraphics[width=1.1\linewidth]{Keister_wholeR_1D}
+	\end{subfigure}
+	\begin{subfigure}[h]{0.48\linewidth}
+		\includegraphics[width=1.1\linewidth]{Keister_cube_1D}
+	\end{subfigure}
+	\caption{Keister function in d=2 and its transformed version in $[0,1]^2$ with various values of $a$}
+	\label{fig:keister}
 \end{figure}
-
-\begin{figure}
-	\centering
-	\includegraphics[width=0.95\linewidth]{"figures/Keister_cube_0_1"}
-	\caption[Guaranteed:]{Keister function transformed to $[0,1]^2$}
-	\label{fig:keister-0_1}
-\end{figure}
-
-
+\begin{align}
+\label{keisterFunction}
+f_{\textup{Keister}}(\vx) =  \cos(\norm{ \vx}) \exp(-\norm{ \vx }^2) \dvx
+\end{align}
+The domain of this function is $\reals^d$ so variation transformation must be used to transform this to $[0,1]^d$. 
 \begin{multline*}
-f(\vx) =  \cos(\norm{ \vx}) \exp(-\norm{ \vx }^2) \dvx, \;  
-\\
-\int_{\reals^d} f(\vx) \dvx  = \frac{2 \pi^{\frac d2}}{\Gamma(\frac d2)} \text{CI}(d), \quad d=1,2,3,\hdots
+\int_{\reals^d} \cos(\norm{ \vx}) \exp(-\norm{ \vx }^2)  \dvx  
+\\ = 
+\int_{\reals^d} \cos(a\norm{ \vx}) \exp(-a\norm{ \vx }^2)  a^d \dvx 
+\\ =
+\pi^{\frac d2} a^d \int_{[0,1]^d} \cos(a\norm{ \vt}) \exp((1-a^2)\norm{ \vt }^2)  \dvt
+\end{multline*}
+\begin{align}
+\widehat{f}_\textup{Keister} = \pi^{\frac d2} a^d \cos(a\norm{ \vt}) \exp((1-a^2)\norm{ \vt }^2)
+\end{align}
+To enforce additional boundary conditions, we could use any desired periodizing variable transforms listed in Section \ref{period_var_tx}.
+The following iterative algorithms describes the method to compute the true integral:
+\begin{multline*}
+\int_{\reals^d} f_{\textup{Keister}}(\vx) \dvx  = \frac{2 \pi^{\frac d2}}{\Gamma(\frac d2)} \text{CI}(d), \quad d=1,2,3,\hdots
 \\
 \text{where}, \Gamma  := \text{gamma function}, \; \text{and}
 \\
@@ -1267,112 +1371,6 @@ f(\vx) =  \cos(\norm{ \vx}) \exp(-\norm{ \vx }^2) \dvx, \;
 
 
 
-
-
-
-
-
-
-\item Multivariate Normal:
-
-
-We use the Genz's method to compute Multivariate normal probability as explained below. This method reduces the original dimension of the problem by 1.
-
-
-\begin{figure}
-\centering
-\captionsetup[subfigure]{labelformat=empty}
-\begin{subfigure}{0.48\textwidth}
-\includegraphics[width=\textwidth]{Plotting_gaussian}
-\end{subfigure}
-\centering
-\begin{subfigure}{0.48\textwidth}
-
-\includegraphics[width=\textwidth]{GenzFun}
-\end{subfigure}
-\caption{Mutivariate Normal and Genz function }
-\label{fig:MVN and Genz}
-\end{figure}
-
-\begin{multline*}
-\mu = \int_{[\va,\vb] \in \reals^d} \frac{\exp\bigl(- \frac 12 \vt^T \mSigma^{-1} \vt \bigr)}{\sqrt{(2 \pi)^d \det(\mSigma)}} \, \dvt 
-\\
-\overset{\text{\small\cite{Gen93}}}{=} \,
-\int_{[0,1]^{d-1}} f_{\text{Genz}}(\vx) \, \dvx 
-\end{multline*} 
-
-where $\mSigma= \mL \mL^T$ is the Cholesky decomposition of the covariance matrix, $\mL = (l_{jk})_{j,k=1}^d$ is a lower triangular matrix, and
-
-\begin{multline*}
-\valpha_1 = \Phi(a_1), \qquad \vbeta_1 = \Phi(b_1)
-\\
-\valpha_j(x_1,...,x_{j-1}) = 
-\\
-\Phi
-\left(
-\frac{1}{l_{jj}} 
-\left(
-a_j - \sum_{k=1}^{j-1} l_{jk} \Phi^{-1}(\valpha_k + x_k(\vbeta_k-\valpha_k))
-\right)
-\right), 
-\\
-\qquad \qquad \qquad j=2,...,d,
-\\
-\vbeta_j(x_1,...,x_{j-1}) = 
-\\
-\Phi
-\left(
-\frac{1}{l_{jj}} 
-\left(
-b_j - \sum_{k=1}^{j-1} l_{jk} \Phi^{-1}(\valpha_k + x_k(\vbeta_k-\valpha_k))
-\right)
-\right), 
-\\
-\qquad \qquad \qquad j=2,...,d,
-\\
-f_{\text{Genz}}(\vx) = \prod_{j=1}^d [\vbeta_j(\vx) - \valpha_j(\vx)]. \hspace{12ex}
-\end{multline*}
-
-As we see from the figure, Genz function is not periodic, So we need to make it periodic to get the best accuracy with Bayesian cubature.
-
-
-We use the following parameter values for the numerical examples
-\begin{equation*}
-\begin{array}{c|ccc}
- & a  & b & L  \\
-\hline
-d=2 
- & 
-\begin{pmatrix}
--6 \\ -2 \\ -2
-\end{pmatrix}
- & 
-\begin{pmatrix}
-5 \\ 2 \\ 1
-\end{pmatrix} 
- & 
-\begin{pmatrix}
-4 & 1 & 1 \\ 0 & 1 & 0.5 \\ 0 & 0 & 0.25
-\end{pmatrix} 
-\\
-d=3
- & 
-\begin{pmatrix}
--6 \\ -2 \\ -2 \\ 2
-\end{pmatrix}
- & 
-\begin{pmatrix}
-5 \\ 2 \\ 1 \\2
-\end{pmatrix} 
- & 
-\begin{pmatrix}
-4 & 1 & 1 & 1\\ 0 & 1 & 0.5 & 0.5 \\ 0 & 0 & 0.25 & 0.25 \\ 0 & 0 & 0 & 0.25
-\end{pmatrix} 
-\end{array}
-\end{equation*}
-
-%\begin{equation*}
-%\begin{array}{ccccc}
 
 
 
@@ -1422,35 +1420,12 @@ $d$ - number of dimensions and $T, S, S_0, K, r, \sigma$ are the parameters to b
 We tested our cubature to integrate the above specified functions. The following plots summarize the results. We used a random shift of $\delta \sim \mathcal{U}[0,1]^d$ to randomly shift the rank-1 Lattice points. This provides randomness in the cubature's behavior. Then we run the cubature for 100 times and take the mean of it as the final result. We integrated with the error thresholds $\varepsilon \in \{1E-2, 1E-3, 1E-4, 1E-5\}$. We use $\frac{\abs{\mu - \hmu}}{\varepsilon}$ as x-axis so that a single plot can include all these $\varepsilon$.
 
 
-\begin{figure}
-	\centering
-	\includegraphics[width=0.95\linewidth]{"figures/optPrice_guaranteed_time_MLE_Baker_29-Jul-2018 03-10-33"}
-	\caption[Guaranteed:]{Option pricing estimated within $\varepsilon$ using empirical Bayes stopping criterion}
-	\label{fig:optprice-guaranteed-MLE}
-\end{figure}
+
 \begin{figure}
 	\centering
 	\includegraphics[width=0.95\linewidth]{"figures/Keister_guaranteed_time_MLE_C2sin_29-Jul-2018 02-13-57"}
 	\caption[Guaranteed:]{Keister function integrated within $\varepsilon$ using empirical Bayes stopping criterion}
 	\label{fig:keister-guaranteed-MLE}
-\end{figure}
-\begin{figure}
-	\centering
-	\includegraphics[width=0.95\linewidth]{"figures/MVN_guaranteed_time_MLE_C0_29-Jul-2018 02-13-31"}
-	\caption[Guaranteed:]{MVN integrated within $\varepsilon$ using empirical Bayes stopping criterion}
-	\label{fig:mvn-guaranteed-MLE}
-\end{figure}
-
-
-
-
-
-
-\begin{figure}
-	\centering
-	\includegraphics[width=0.95\linewidth]{"figures/optPrice_guaranteed_time_FB_Baker_29-Jul-2018 04-03-05"}
-	\caption[OptPrice guaranteed : Number of samples]{Option pricing estimated within $\varepsilon$ using Full Bayes stopping criterion}
-	\label{fig:optprice-guaranteed-FB}
 \end{figure}
 \begin{figure}
 	\centering
@@ -1460,25 +1435,22 @@ We tested our cubature to integrate the above specified functions. The following
 \end{figure}
 \begin{figure}
 	\centering
-	\includegraphics[width=0.95\linewidth]{"figures/MVN_guaranteed_time_FB_C0_29-Jul-2018 03-10-36"}
-	\caption[MVN guaranteed : Number of sample]{MVN integrated within $\varepsilon$ using Full Bayes stopping criterion}
-	\label{fig:mvn-guaranteed-FB}
-\end{figure}
-
-
-
-
-\begin{figure}
-	\centering
-	\includegraphics[width=0.95\linewidth]{"figures/optPrice_guaranteed_time_GCV_Baker_29-Jul-2018 05-00-29"}
-	\caption[OptPrice guaranteed : GCV]{Option pricing estimated within $\varepsilon$ using Full Bayes stopping criterion and GCV}
-	\label{fig:optprice-guaranteed-GCV}
-\end{figure}
-\begin{figure}
-	\centering
 	\includegraphics[width=0.95\linewidth]{"figures/Keister_guaranteed_time_GCV_C2sin_29-Jul-2018 04-03-33"}
 	\caption[Keister guaranteed: GCV]{Keister integrated within $\varepsilon$ using Full Bayes stopping criterion and GCV}
 	\label{fig:keister-guaranteed-GCV}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.95\linewidth]{"figures/MVN_guaranteed_time_MLE_C0_29-Jul-2018 02-13-31"}
+	\caption[Guaranteed:]{Multivariate Normal integrated within $\varepsilon$ using empirical Bayes stopping criterion}
+	\label{fig:mvn-guaranteed-MLE}
+\end{figure}
+\begin{figure}
+	\centering
+	\includegraphics[width=0.95\linewidth]{"figures/MVN_guaranteed_time_FB_C0_29-Jul-2018 03-10-36"}
+	\caption[Multivariate Normal guaranteed : Number of sample]{MVN integrated within $\varepsilon$ using Full Bayes stopping criterion}
+	\label{fig:mvn-guaranteed-FB}
 \end{figure}
 \begin{figure}
 	\centering
@@ -1487,12 +1459,35 @@ We tested our cubature to integrate the above specified functions. The following
 	\label{fig:mvn-guaranteed-GCV}
 \end{figure}
 
+\begin{figure}
+	\centering
+	\includegraphics[width=0.95\linewidth]{"figures/optPrice_guaranteed_time_MLE_Baker_29-Jul-2018 03-10-33"}
+	\caption[Guaranteed:]{Option pricing estimated within $\varepsilon$ using empirical Bayes stopping criterion}
+	\label{fig:optprice-guaranteed-MLE}
+\end{figure}
+\begin{figure}
+	\centering
+	\includegraphics[width=0.95\linewidth]{"figures/optPrice_guaranteed_time_FB_Baker_29-Jul-2018 04-03-05"}
+	\caption[OptPrice guaranteed : Number of samples]{Option pricing estimated within $\varepsilon$ using Full Bayes stopping criterion}
+	\label{fig:optprice-guaranteed-FB}
+\end{figure}
+\begin{figure}
+	\centering
+	\includegraphics[width=0.95\linewidth]{"figures/optPrice_guaranteed_time_GCV_Baker_29-Jul-2018 05-00-29"}
+	\caption[OptPrice guaranteed : GCV]{Option pricing estimated within $\varepsilon$ using Full Bayes stopping criterion and GCV}
+	\label{fig:optprice-guaranteed-GCV}
+\end{figure}
+
 
 
 The figures \figref{fig:optprice-guaranteed-MLE}, \figref{fig:keister-guaranteed-MLE} and \figref{fig:mvn-guaranteed-MLE} show the integration using empirical Bayes stopping criterion within the error tolerance $\varepsilon$. 
 And, the figures \figref{fig:optprice-guaranteed-FB}, \figref{fig:keister-guaranteed-FB} and \figref{fig:mvn-guaranteed-FB} show the integration using full Bayes stopping criterion within the error tolerance $\varepsilon$.
 Finally, the figures \figref{fig:optprice-guaranteed-GCV}, \figref{fig:keister-guaranteed-GCV} and \figref{fig:mvn-guaranteed-GCV} show the integration using full Bayes stopping criterion and generalized cross validation (GCV) within the error tolerance $\varepsilon$.
 
+As shown in the figures, Bayesian cubature algorithm computes the integral within  user specified threshold most of the times except on a few occasions. This is especially the case with option pricing example due to the complexity and high dimension of the integrand. 
+Also notice the algorithm finished within 10seconds of time for Keister and multivariate Normal. For the option pricing it look closer to 70seconds. This is again due to the complexity of the integrand.
+
+Another noticeable aspect from the plots is how much estimated error differs from the true error. For option pricing example, estimated error is closer to the true error but it is not so much with Keister and multivariate Normal. This could be a future work to obtain more accurate error estimate.
 
 
 

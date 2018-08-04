@@ -1,19 +1,33 @@
 
 %% Plot the Keister function
-dim = 2;
+dim = 1;
   
-a = 0.99;
-normsqd = @(t) sum(t.*t,2); %squared l_2 norm of t
-replaceZeros = @(t) (t+(t==0)*eps); % to avoid getting infinity, NaN
-%yinv = @(t)(erfcinv( replaceZeros(abs(t)) ));  %using erfcinv is more accurate than erfinv with -1
-yinv = @(t) erfcinv(t);
+if 0
+  a = 0.99;
+  normsqd = @(t) sum(t.*t,2); %squared l_2 norm of t
+  replaceZeros = @(t) (t+(t==0)*eps); % to avoid getting infinity, NaN
+  %yinv = @(t)(erfcinv( replaceZeros(abs(t)) ));  %using erfcinv is more accurate than erfinv with -1
+  yinv = @(t) erfcinv(t);
 
-parta = @(nt,a) a^dim .*cos( a*sqrt( nt ));
-partb = @(nt,a) exp(nt*(1-a^2));
-fKeister = @(nt,dim,a) parta(nt,a).*partb(nt,a)*(sqrt(pi))^dim;
-integrand = @(x) fKeister(normsqd(yinv(x)),dim,a);
+  parta = @(nt,a) a^dim .*cos( a*sqrt( nt ));
+  partb = @(nt,a) exp(nt*(1-a^2));
+  fKeister = @(nt,dim,a) parta(nt,a).*partb(nt,a)*(sqrt(pi))^dim;
+  integrand = @(x) fKeister(normsqd(yinv(x)),dim,a);
+else
+  a = 0.75;
+  normsqd = @(t) sum(t.*t,2); %squared l_2 norm of t
+  replaceZeros = @(t) (t+(t==0)*eps); % to avoid getting infinity, NaN
+  %yinv = @(t)(erfcinv( replaceZeros(abs(t)) ));  %using erfcinv is more accurate than erfinv with -1
+  yinv = @(t) gail.stdnorminv(t);
 
-xplot = linspace(0,1,2^12);
+  parta = @(nt,a) a^dim .*cos( a*sqrt( nt ));
+  partb = @(nt,a) exp(nt*(1-2*a^2)/2);
+  fKeister = @(nt,dim,a) parta(nt,a).*partb(nt,a)*(2*pi)^(dim/2);
+  integrand = @(x,a) fKeister(normsqd(yinv(x)),dim,a);
+
+end
+
+xplot = linspace(0,1,2^10);
 
 if dim==2
   nx = numel(xplot);
@@ -25,30 +39,52 @@ if dim==2
   shading interp
   xlabel('\(x_1\)')
   ylabel('\(x_2\)')
-  zlabel('\(f_{\textrm{Keister}}(x_1,x_2)\)')
+  zlabel('\(\widehat{f}_{\textrm{Keister}}(x_1,x_2)\)')
   view(-20,20)
-  saveas(figH1, sprintf('Keister_cube_0_1.png'))
+  saveas(figH1, sprintf('Keister_cube_a%d.png',ceil(a*1000)))
 else
-  figure; plot(xplot', integrand(xplot'))
+  pointShapes = {'o','s','d','^','v','<','>','p','h'};
+  lineShapes = {'-','--',':','-.'};
+
+  pointSize=30;
+  figH1=figure(); 
+  aVec = [0.75 0.9 1.2 1.9];
+  for iter=1:length(aVec)
+    plot(xplot', integrand(xplot',aVec(iter)), lineShapes{iter})
+    hold on
+  end
+  temp = string(aVec);
+  legend(temp,'location','best'); axis tight
   xlabel('\(x\)')
-  ylabel('\(f_{\textrm{Keister}}(x)\)')
+  ylabel('\(\widehat{f}_{\textrm{Keister}}(x)\)')
+  saveas(figH1, sprintf('Keister_cube_1D.png'))
+
 end
 
 % whole R domain
-f = @(x) cos(sum(x.^2, 2)).*exp(-sum(x.^2, 2));
-xplot = (-5:0.002:5);
-nx = numel(xplot);
-[xx,yy] = meshgrid(xplot);
-xyplot = [xx(:) yy(:) zeros(nx*nx, dim-2)];
-zz = reshape(f(xyplot),nx,nx);
-figH2 = figure();
-surf(xx,yy,zz)
-shading interp
-xlabel('\(x_1\)')
-ylabel('\(x_2\)')
-zlabel('\(f_{\textrm{Keister}}(x_1,x_2)\)')
-view(-20,20)
-saveas(figH2, sprintf('Keister_wholeR.png'))
+fKeister = @(x) cos(sum(x.^2, 2)).*exp(-sum(x.^2, 2));
+if dim==2
+  xplot = (-5:0.002:5);
+  nx = numel(xplot);
+  [xx,yy] = meshgrid(xplot);
+  xyplot = [xx(:) yy(:) zeros(nx*nx, dim-2)];
+  zz = reshape(fKeister(xyplot),nx,nx);
+  figH2 = figure();
+  surf(xx,yy,zz)
+  shading interp
+  xlabel('\(x_1\)')
+  ylabel('\(x_2\)')
+  zlabel('\(f_{\textrm{Keister}}(x_1,x_2)\)')
+  view(-20,20)
+  saveas(figH2, sprintf('Keister_wholeR.png'))
+else
+  xplot = -5:0.001:5;
+  figH2 = figure();
+  plot(xplot',fKeister(xplot'))
+  xlabel('$x \in \bf{R}$', 'Interpreter','latex')
+  ylabel('$f_{\textrm{Keister}}(x)$', 'Interpreter','latex')
+  saveas(figH2, sprintf('Keister_wholeR_1D.png'))
+end
 
 
 %% Plot the Exp(Cos) function
