@@ -35,6 +35,7 @@
 \usepackage{subcaption}
 \usepackage{booktabs, mathtools}
 \usepackage[dvipsnames]{xcolor}
+\usepackage{url}
 
 \captionsetup{compatibility=false}
 
@@ -166,6 +167,7 @@
 \newcommand{\errn}{\text{err}_{n}}
 \newcommand{\diag}{\text{diag}}
 \newcommand{\err}{\textup{err}}
+\newcommand{\code}[1]{\texttt{#1}}
 
 \def\abs#1{\ensuremath{\left \lvert #1 \right \rvert}}
 \newcommand{\norm}[2][{}]{\ensuremath{\left \lVert #2 \right \rVert}_{#1}}
@@ -785,18 +787,14 @@ s^2_\MLE
 & =
 \frac{1}{n^2} 
 \sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i} \\
-\nonumber 
-\vtheta_\MLE
+\label{eqn_MLE_loss_func_optimized_2}\vtheta_\MLE
 &= 
 \argmin_{\vtheta}
 \left[
 \log\left(
 \sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i}
 \right) 
-\right . \\
-&
-\label{eqn_MLE_loss_func_optimized_2}
-\qquad \qquad \qquad \qquad  \left . + 
+  + 
 \frac{1}{n}\sum_{i=1}^n \log(\lambda_i)
 \right]
 \\
@@ -955,6 +953,7 @@ Larger $r$ implies a greater degree of smoothness of the kernel.  Larger $\theta
 
 For general shift-invariance covariance functions the Gram matrix takes the form
 \begin{align}
+\label{shInvKernGramMatrix}
 \mC &= \bigl ( C(\vx_i, \vx_j) \bigr)_{i, j = 1}^n \\
 & = \Bigl ( K(\vh(\phi(i-1) - \phi(j-1)) \bmod \vone ) \Bigr)_{i, j = 1}^n.
 \end{align}
@@ -1095,7 +1094,9 @@ Computing the eigenvalues of $\rmC$ via the procedure given in \eqref{eqn:fast_t
 \right].
 \end{align}
 The widths of the credible intervals in \eqref{eq:errMLEAllAsump}, \eqref{FJH:eq:signmaFullSimple}, and   \eqref{errGCVSimple} become
-\begin{align*}
+\begin{subequations}
+\label{fastStoppingCriterions}
+	\begin{align}
 \err_\MLE  &
 =
 \frac{2.58}{n}\sqrt{
@@ -1104,18 +1105,42 @@ The widths of the credible intervals in \eqref{eq:errMLEAllAsump}, \eqref{FJH:eq
 }, 
 \\
 \err_{\textup{full}} 
-& := \frac{t_{n_j-1,0.995}}{n} \sqrt{
+& = \frac{t_{n_j-1,0.995}}{n} \sqrt{
 	\frac{\rlambda_1}{n-1} \sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i}
 }, \\
 \err_{\textup{GCV}} & =
 \frac{2.58}{n}\sqrt{	\frac{\rlambda_1}{n + \rlambda_1} \sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i^2}  \left [ \frac{1}{n + \rlambda_1} + \sum_{i=2}^n \frac{1}{\lambda_i} \right]^{-1}} .
-\end{align*}
+	\end{align}
+\end{subequations}
 
 We summarize the results of this section and the previous one as follows:
 \begin{prop}
-	\end{prop}
+If any symmetric positive-definite shift-invariant-kernel of the form \eqref{eq:shInv} with  property \eqref{addAssump} when used with rank-1 Lattice data-sites yields Fast transform in the form of \emph{Fast Fourier transform}(FFT). Consequently faster adaptive Bayesian cubature can be constructed with stopping criteria as shown in \eqref{fastStoppingCriterions}.
+\end{prop}
+\begin{proof}:
+	Any symmetric positive-definite shift-invariant-kernel of the form 
+	\begin{equation} \tag{\ref{eq:shInv}}
+	C(\vt,\vx) = K(\vt - \vx \bmod \vone),
+	\end{equation}
+	 when used with rank-1 Lattice data-sites leads to positive-definite-circulant gram matrix $\mC = \bigl ( C(\vx_i, \vx_j) \bigr)_{i, j = 1}^n $ which has the factorization
+	 \begin{equation}
+	 \tag{\ref{eqn:ftk_factor}}
+	 \mC = \frac 1n \mV \mLambda \mV^H , 
+	 \quad \quad \mV^H = n \mV^{-1}, \\
+	 \end{equation}
+	 Where the eigenvector matrix can be computed analytically 
+	 \begin{equation} \tag{\ref{latticeVdef}}
+	 \mV = \Bigl ( \me^{2 \pi n \sqrt{-1} \phi(i-1)\phi(j-1)} \Bigr)_{i = 1}^n,
+	 \end{equation}
+	 Which is nothing but the Discrete Fourier transform (DFT) matrix thus transform $\mV^H z$ can be computed in $\Order(n \log n)$ using FFT.
+	 If the kernel $C(\vt,\vx)$ can also scaled to have the property  
+	 \begin{equation} \tag{\ref{addAssump}}
+	 \int_{[0,1]^d} C(\vt,\vx) \, \D \vt = 1 \qquad \forall \vx \in [0,1]^d,
+	 \end{equation}
+	 then the stopping criteria as shown in \eqref{fastStoppingCriterions} are applicable. \qed
+\end{proof}
 
-We have implemented this algorithm in the Guaranteed ....
+We have implemented this algorithm in MATLAB and is part of the Guaranteed Adaptive Integration Library (GAIL) as a method  \code{cubBayesLattice\_g}, for more details please refer to $\cite{ChoEtal17b}$.
 
 \section{Numerical Experiments}
 
