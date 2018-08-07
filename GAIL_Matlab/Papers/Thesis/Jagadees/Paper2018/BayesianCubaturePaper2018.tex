@@ -222,11 +222,12 @@
 
 %\authorrunning{Short form of author list} % if too long for running head
 
-\institute{F. Author \at
-              first address \\
-              Tel.: +123-45-678910\\
-              Fax: +123-45-678910\\
-              \email{fauthor@example.com}           %  \\
+\institute{R. Jagadeeswaran \at
+              Department of Applied Mathematics, \\
+              Illinois Institute of Technology \\
+              10 W. 32nd St., Room 208\\
+              Chicago IL 60616\\
+              \email{jrathin1@@iit.edu}           %  \\
 %             \emph{Present address:} of F. Author  %  if needed
            \and
            Fred J. Hickernell \at
@@ -545,7 +546,7 @@ Because the shape parameter, $\vtheta$, enters the definition of the covariance 
 
 
 \subsubsection{Generalized Cross-validation} \label{sec:GCV}
-A third parameter optimization is \emph{leave-one-out cross-validation}.  Let $\widetilde{y}_i = \Ex[f(\vx_i ) | \vf_{-i} = \vy_{-i}]$, where the subscript $-i$ denotes the vector excluding the $i^{\text{th}}$ component.  This is the conditional expectation of $f(\vx_i )$ given all data but the function value at $\vx_i$.  The cross-validation criterion, which is to be minimized, is sum of squares of the difference between these conditional expectations and the observed values:
+A third parameter optimization technique is \emph{leave-one-out cross-validation}.  Let $\widetilde{y}_i = \Ex[f(\vx_i ) | \vf_{-i} = \vy_{-i}]$, where the subscript $-i$ denotes the vector excluding the $i^{\text{th}}$ component.  This is the conditional expectation of $f(\vx_i )$ given all data but the function value at $\vx_i$.  The cross-validation criterion, which is to be minimized, is sum of squares of the difference between these conditional expectations and the observed values:
 \begin{equation} \label{FJH:eq:CVA}
 \textup{CV} = \sum_{i=1}^n (y_i - \widetilde{y}_i)^2.
 \end{equation}
@@ -629,7 +630,7 @@ Looking back over the results of Sections  \ref{sec:MLE}--\ref{sec:GCV}, it is n
 \label{sec:bayes_cubature_algo}
 The previous section presents three credible intervals, \eqref{eqn_prob_CI_MLE}, \eqref{eqn_prob_CI_full}, and \eqref{GCVCI}, for the $\mu$, the desired integral.  Each credible interval is based on different assumptions about the hyperparameters $m$, $s$, and $\vtheta$.  We stress that one must estimate these hyperparameters or assume a prior distribution on them because the credible intervals are used as stopping criteria for our cubature rule.  Since a credible intervals makes a statement about a typical function---not an outlier---one must try to ensure that the integrand is a typical draw from the assumed Gaussian process.
 
-Our  Bayesian cubature algorithm increases the sample size until the width of the credible interval is small enough.  This is accomplished through successfully doubling the sample size.  The steps are detailed in Algorithm \ref{algorithm1}.
+Our  Bayesian cubature algorithm increases the sample size until the width of the credible interval is small enough.  This is accomplished through successively doubling the sample size.  The steps are detailed in Algorithm \ref{algorithm1}.
 
 \begin{algorithm}
 \caption{Automatic Bayesian Cubature}\label{algorithm1}
@@ -1205,6 +1206,7 @@ The widths of the credible intervals in \eqref{eq:errMLEAllAsump}, \eqref{FJH:eq
 	\end{align}
 \end{subequations}
 
+\subsection{Contribution of this research}
 We summarize the results of this section and the previous one as follows:
 \begin{prop}
 If any symmetric positive-definite shift-invariant-kernel of the form \eqref{eq:shInv} with  property \eqref{addAssump} when used with rank-1 Lattice data-sites yields Fast transform in the form of \emph{Fast Fourier transform}(FFT). Consequently faster adaptive Bayesian cubature can be constructed with stopping criteria as shown in \eqref{fastStoppingCriterions}.
@@ -1232,7 +1234,8 @@ If any symmetric positive-definite shift-invariant-kernel of the form \eqref{eq:
 	 then the stopping criteria as shown in \eqref{fastStoppingCriterions} are applicable. \qed
 \end{proof}
 
-We have implemented this algorithm in MATLAB and is part of the Guaranteed Adaptive Integration Library (GAIL) as a method  \code{cubBayesLattice\_g}, for more details please refer to \cite{ChoEtal17b}.
+\subsection{MATLAB program}
+We have implemented this algorithm in MATLAB and is part of the Guaranteed Adaptive Integration Library (GAIL) as a method  \code{cubBayesLattice\_g}, for more details please refer to \cite{ChoEtal17b}. This algorithm uses the kernel defined in  \eqref{the_kernel_eqn_bernoulli} with order $r=2,4$.
 
 \section{Numerical Experiments}
 
@@ -1272,16 +1275,15 @@ C^1 & : \Psi(x) = x^3(10-15x+6x^2),  \\
 &\qquad \qquad \Psi'(x) = \frac {3 \pi[3 \cos(\pi x) - \cos(3 \pi x)]}{16}.
 \end{align*}
 
-Periodizing variable transforms are used for the numerical examples below.  In some cases they can speed the convergence of the Bayesia cubature.
+Periodizing variable transforms are used for the numerical examples below.  In some cases they can speed the convergence of the Bayesia cubature. 
 	
-
 
 
 
 \subsection{Test Functions}
 \label{sec:numerical_experiments}
 
-Having all the tools and optimization done handy, now we shall run the numerical simulations to see the performance.
+Having all the tools and optimization done handy, now we shall run the numerical simulations to see the performance. \code{cubBayesLattice\_g} is used to run these tests.
 
 
 The following test functions were used to test the integration speed and accuracy of \textit{Fast Bayesian cubature algorithm} that we developed so far
@@ -1337,11 +1339,16 @@ The domain of this function is $\reals^d$ so variation transformation must be us
 \\ = 
 \int_{\reals^d} \cos(a\norm{ \vx}) \exp(-a\norm{ \vx }^2)  a^d \dvx 
 \\ =
-\pi^{\frac d2} a^d \int_{[0,1]^d} \cos(a\norm{ \vt}) \exp((1-a^2)\norm{ \vt }^2)  \dvt
+(2\pi)^{\frac d2} a^d \int_{[0,1]^d} \cos(a\norm{ \Phi^{-1}(\vt)})
+\\
+\times \exp\left(-(a^2-\frac{1}{2})\norm{ \Phi^{-1}(\vt) }^2\right)  \dvt
 \end{multline*}
-\begin{align}
-\widehat{f}_\textup{Keister} = \pi^{\frac d2} a^d \cos(a\norm{ \vt}) \exp((1-a^2)\norm{ \vt }^2)
-\end{align}
+So the transformed function is
+\begin{multline}
+\widehat{f}_\textup{Keister}(\vt) = (2\pi)^{\frac d2} a^d \cos(a\norm{ \Phi^{-1}(\vt)}) 
+\\ \times \exp(-(a^2-\frac{1}{2})\norm{ \Phi^{-1}(\vt) }^2)
+\end{multline}
+Where $a > $
 To enforce additional boundary conditions, we could use any desired periodizing variable transforms listed in Section \ref{period_var_tx}.
 The following iterative algorithms describes the method to compute the true integral:
 \begin{multline*}
@@ -1430,13 +1437,13 @@ We tested our cubature to integrate the above specified functions. The following
 \begin{figure}
 	\centering
 	\includegraphics[width=0.95\linewidth]{"figures/Keister_guaranteed_time_FB_C2sin_29-Jul-2018 03-11-01"}
-	\caption[Keister guaranteed: Num sample]{Keister integrated within $\varepsilon$ using Full Bayes stopping criterion}
+	\caption[Keister guaranteed: Num sample]{Keister function integrated within $\varepsilon$ using Full Bayes stopping criterion}
 	\label{fig:keister-guaranteed-FB}
 \end{figure}
 \begin{figure}
 	\centering
 	\includegraphics[width=0.95\linewidth]{"figures/Keister_guaranteed_time_GCV_C2sin_29-Jul-2018 04-03-33"}
-	\caption[Keister guaranteed: GCV]{Keister integrated within $\varepsilon$ using Full Bayes stopping criterion and GCV}
+	\caption[Keister guaranteed: GCV]{Keister function integrated within $\varepsilon$ using Full Bayes stopping criterion and GCV}
 	\label{fig:keister-guaranteed-GCV}
 \end{figure}
 
