@@ -124,20 +124,21 @@ classdef cubBayesLattice_g < handle
     debugEnable = true; %enable debug prints
     gaussianCheckEnable = false; %enable plot to check Guassian pdf
     avoidCancelError = true;
-    GCV = false; % Generalized cross validation
-    fullBayes = false; % Full Bayes - assumes m and s^2 as hyperparameters,
     % so the posterior error is a Student-t distribution
+    stopCriterion = 'MLE'; % Available options {'MLE', 'GCV', 'full'}
   end
-  
+ 
   properties (SetAccess = private)
     ff = []; %integrand after the periodization transform
     mvec = []; % n = 2^m
     uncert = 0;  % quantile value for the error bound
     gen_vec = []; % generator for the Lattice points
     
-    xun = [];
-    xpts = [];
-    ftilde = [];
+    xun = []; % unshifted lattice points
+    xpts = []; % random shifted lattice points
+    ftilde = []; % FFT transformed function values
+    fullBayes = false; % Full Bayes - assumes m and s^2 as hyperparameters,
+    GCV = false; % Generalized cross validation
 
     % variables to save debug info in each iteration
     errorBdAll = [];
@@ -147,6 +148,10 @@ classdef cubBayesLattice_g < handle
     timeAll = [];
     dscAll = [];
     s_All = [];
+  end
+  
+  enumeration
+    StopCritMLE, StopCritFullBayes, StopCritGCV
   end
   
   methods
@@ -180,11 +185,21 @@ classdef cubBayesLattice_g < handle
           if ~isempty(wh), obj.figSavePath = varargin{wh+iStart}; end
           wh = find(strcmp(varargin(iStart:end),'fName'));
           if ~isempty(wh), obj.fName = varargin{wh+iStart}; end
-          wh = find(strcmp(varargin(iStart:end),'GCV'));
-          if ~isempty(wh), obj.GCV = varargin{wh+iStart}; end
-          wh = find(strcmp(varargin(iStart:end),'fullBayes'));
-          if ~isempty(wh), obj.fullBayes = varargin{wh+iStart}; end
+          wh = find(strcmp(varargin(iStart:end),'stopCriterion'));
+          if ~isempty(wh), obj.stopCriterion = varargin{wh+iStart}; end
         end
+      end
+      
+      if strcmp(obj.stopCriterion, 'full')
+        % use full Bayes
+        obj.fullBayes = true;
+      elseif strcmp(obj.stopCriterion, 'GCV')
+        % use Generalized cross validation
+        obj.GCV = true;
+      else
+        % use Maximum likelihood estimation
+        obj.fullBayes = false;
+        obj.GCV = false;
       end
       
       % uncertainity : two sided confidence
@@ -211,6 +226,7 @@ classdef cubBayesLattice_g < handle
       obj.timeAll = zeros(length_mvec,1);
       obj.dscAll = zeros(length_mvec,1);
       obj.s_All = zeros(length_mvec,1);
+      
     end
     
     % computes the integral
@@ -336,7 +352,7 @@ classdef cubBayesLattice_g < handle
         temp = Lambda;
         temp(1) = n + Lambda_ring(1);
         C_Inv_trace = sum(1./temp(temp~=0));
-        out.ErrBd = obj.uncert*sqrt(DSC * (RKHSnorm/n) /C_Inv_trace);
+        out.ErrBd = obj.uncert*sqrt(DSC * (RKHSnorm) /C_Inv_trace);
       else
         % empirical bayes
         if obj.avoidCancelError
@@ -400,7 +416,7 @@ classdef cubBayesLattice_g < handle
       % compute loss 
       if obj.GCV==true
         % GCV 
-        temp_gcv = (abs(ftilde(Lambda~=0).^2)./(Lambda(Lambda~=0).^2)) ;
+        temp_gcv = (real(ftilde(Lambda~=0))./(Lambda(Lambda~=0))).^2 ;
         loss1 = log(sum(1./Lambda(Lambda~=0)));
         loss2 = log(sum(temp_gcv(2:end)));
         % ignore all zero val eigenvalues
@@ -428,7 +444,7 @@ classdef cubBayesLattice_g < handle
       end
       
       if obj.debugEnable
-        cubMLESobol.alertMsg(temp_1, 'Imag');
+        cubMLESobol.alertMsg(RKHSnorm, 'Imag');
         cubMLESobol.alertMsg(loss1, 'Inf');
         cubMLESobol.alertMsg(loss2, 'Inf');
         cubMLESobol.alertMsg(loss, 'Inf', 'Imag', 'Nan');
@@ -470,18 +486,18 @@ classdef cubBayesLattice_g < handle
     
     % plots the objective for the MLE of theta, useful for diagnozing any
     % issues with the code
-    function minTheta = plotMLE_Loss(obj)
+    function minTheta = plotObjectiveFunc(obj)
       
       numM = length(obj.mvec);
       n = 2.^obj.mvec(end);
       xptsun = cubBayesLattice_g.simple_lattice_gen(n,obj.dim,true);
       fx = obj.ff(xptsun);  % Note: periodization transform already applied
-      
+        
       %% plot ObjectiveFunction
       lnTheta = -5:0.2:5;
       % build filename with path to store the plot
-      plotFileName = sprintf('%s%s Cost d_%d bernoulli_%d Period_%s.png',...
-        obj.figSavePath, obj.fName, obj.dim, obj.order, obj.ptransform);
+      plotFileName = sprintf('%s%s_Cost_d%d_r%d_%s_%s.png',...
+        obj.figSavePath, obj.fName, obj.dim, obj.order, obj.ptransform, obj.stopCriterion);
       
       costMLE = zeros(numM,numel(lnTheta));
       tstart = tic;
@@ -610,8 +626,8 @@ classdef cubBayesLattice_g < handle
       if ~exist('debugEnable', 'var')
         debugEnable = false;
       end
-      % constMult = -(-1)^(order/2)*((2*pi)^order)/factorial(order);
-      constMult = -(-1)^(order/2);
+      constMult = -(-1)^(order/2)*((2*pi)^order)/factorial(order);
+      % constMult = -(-1)^(order/2);
       if order == 2
         bernPoly = @(x)(-x.*(1-x) + 1/6);
       elseif order == 4
@@ -626,10 +642,10 @@ classdef cubBayesLattice_g < handle
         [C1m1, C1_alt] = cubBayesLattice_g.kernel_t(a, constMult, bernPoly(xun));
         Lambda_ring = real(fft(C1m1));
         
-        %Lambda = Lambda_ring;
-        %Lambda(1) = Lambda_ring(1) + length(Lambda_ring);
-        C1 = prod(1 + (a)*constMult*bernPoly(xun),2);  %
-        Lambda = real(fft(C1));
+        Lambda = Lambda_ring;
+        Lambda(1) = Lambda_ring(1) + length(Lambda_ring);
+        % C1 = prod(1 + (a)*constMult*bernPoly(xun),2);  %
+        % Lambda = real(fft(C1));
       else
         % direct appraoch to compute first row of the Kernel Gram matrix
         C1 = prod(1 + (a)*constMult*bernPoly(xun),2);  %
@@ -690,7 +706,7 @@ classdef cubBayesLattice_g < handle
     
     % generates rank-1 Lattice points in Vander corput sequence order
     function [xlat, z] = simple_lattice_gen(n,d,firstBatch)
-      z = get_lattice_gen_vec(d);
+      z = cubBayesLattice_g.get_lattice_gen_vec(d);
       
       nmax = n;
       nmin = 1 + n/2;
@@ -766,3 +782,4 @@ classdef cubBayesLattice_g < handle
     end
   end
 end
+
