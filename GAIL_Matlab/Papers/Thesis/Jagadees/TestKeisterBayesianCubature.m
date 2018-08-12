@@ -44,19 +44,7 @@ fName='Keister';
 % %   integrand = @(x) fKeister(normsqd(yinv(x)),dim,a);
 % end
 
-function y = keisterFunction(x,dim)
-  a = 0.8;
-  normsqd = @(t) sum(t.*t,2); %squared l_2 norm of t
-  yinv = @(t) gail.stdnorminv(t);
-
-  parta = @(nt,a) a^dim .*cos( a*sqrt( nt ));
-  partb = @(nt,a) exp(nt*(1-2*a^2)/2);
-  fKeister = @(nt,dim,a) parta(nt,a).*partb(nt,a)*(2*pi)^(dim/2);
-  y = fKeister(normsqd(yinv(x)),dim,a);
-  y(isnan(y)) = eps; % remove any NaN vlaues that could be due to Inf values from stdnorminv
-end
-
-integrand = @(x) keisterFunction(x, dim);
+integrand = @(x) keisterFunc(x, dim);
 exactInteg = Keistertrue(dim);
 
 % set the output dir to save the plots        
@@ -82,6 +70,7 @@ end
 nRep = 100;
 muhatVec = zeros(nRep,1);
 
+%plotObjectiveFunc(obj)
 for i=1:nRep
   [muhatVec(i),outVec(i)]=compInteg(obj);
 end

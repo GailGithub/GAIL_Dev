@@ -33,39 +33,35 @@ else
   set(0,'DefaultFigureVisible','on')
 end
 
+rng(202326) % control random number generation
+
 stopAtTol = true;
 alpha = 0.01;
 
-testFunArgs(1)=struct('fName','MVN','dim',2,'order',2','varTx','C0',...
-  'sampling','Lattice','arbMean',true,'fullBayes',false,'GCV',false);
-testFunArgs(2)=struct('fName','Keister','dim',4,'order',4','varTx','C2sin',...
-  'sampling','Lattice','arbMean',true,'fullBayes',false,'GCV',false);
-testFunArgs(3)=struct('fName','optPrice','dim',12,'order',2','varTx','Baker',...
-  'sampling','Lattice','arbMean',true,'fullBayes',false,'GCV',false);
+testFunArgs(2)=struct('fName','MVN','dim',2,'order',2,'varTx','C0',...
+  'sampling','Lattice','arbMean',true,'stopCriterion','GCV');
+testFunArgs(1)=struct('fName','Keister','dim',4,'order',4,'varTx','C1',...
+  'sampling','Lattice','arbMean',true,'stopCriterion','GCV');
+testFunArgs(3)=struct('fName','optPrice','dim',12,'order',2,'varTx','Baker',...
+  'sampling','Lattice','arbMean',true,'stopCriterion','GCV');
 
 for i=1:3
   testFunArgs(i+3)=testFunArgs(i);
-  testFunArgs(i+3).fullBayes=true;
+  testFunArgs(i+3).stopCriterion='full';
 end
 for i=1:3
   testFunArgs(i+6)=testFunArgs(i);
-  testFunArgs(i+6).GCV=true;
+  testFunArgs(i+6).stopCriterion='MLE';
 end
 
 for testFunArg=testFunArgs(1:end)
   
-  stopCrit='MLE';
-  if testFunArg.fullBayes
-    stopCrit='FB';
-  end
-  if testFunArg.GCV
-    stopCrit='GCV';
-  end
+  stopCrit=testFunArg.stopCriterion;
   
   fName = testFunArg.fName;
   
-  if ~strcmp(fName, 'optPrice')
-    continue
+  if ~strcmp(fName, 'Keister')
+    %continue
   end
   tstart=tic;
   muhatVec = [];
@@ -75,18 +71,12 @@ for testFunArg=testFunArgs(1:end)
   tolVec = [];
   outStructVec = {};
   indx = 1;
-  %pdTx = {'Baker', 'C0',};  % 'C1','C1sin', 'C2sin', };  %, 'none'
-  %arbMeanType = [true,false];
-  %samplingMethod = {'Lattice',}; %'Sobol',
-  %log10ErrVec = -5:1:-2;
-  log10ErrVec = -4:1:-1;
-  %errTolVecText = {'1e-5','1e-4','1e-3','1e-2',};
+  log10ErrVec = -4:1:-1; 
   errTolVecText = arrayfun(@(x){sprintf('1e%d', x)}, log10ErrVec);
   errTolVec = 10.^log10ErrVec;
-  
   sampling = testFunArg.sampling;
   
-  for errTol=errTolVec
+  for errTol=errTolVec(1:end)
     errTol;
     
     arbMean=testFunArg.arbMean;
@@ -100,8 +90,8 @@ for testFunArg=testFunArgs(1:end)
     dim=testFunArg.dim;
     bern=testFunArg.order;
     
-    inputArgs = {'dim',dim, 'absTol',errTol, 'order',bern, 'GCV',testFunArg.GCV...
-      'ptransform',vartx, 'stopAtTol',stopAtTol, 'fullBayes',testFunArg.fullBayes...
+    inputArgs = {'dim',dim, 'absTol',errTol, 'order',bern, 'ptransform',vartx, ....
+      'stopAtTol',stopAtTol, 'stopCriterion',testFunArg.stopCriterion...
       'figSavePath',newPath, 'arbMean',arbMean, 'alpha',alpha ...
       'samplingMethod',sampling, 'visiblePlot',visiblePlot};
     testFun = '';
@@ -140,8 +130,8 @@ for testFunArg=testFunArgs(1:end)
   toc(tstart)
   timeStamp = datetime('now','Format','d-MMM-y HH-mm-ss');
   
-  datFileName=sprintf('%sGuaranteed_plot_data_%s_%s_%s_%s.mat',...
-    figSavePath,fName,stopCrit,vartx,timeStamp);
+  datFileName=sprintf('%sGuaranteed_plot_data_%s_%s_%s_d%d_r%d_%s.mat',...
+    figSavePath,fName,stopCrit,vartx,testFunArg.dim,testFunArg.order,timeStamp);
   save(datFileName,...
     'errVec','timeVec','tolVec', 'errTolVec',...
     'outStructVec','testFunArg','log10ErrVec','errTolVecText','fName',...
@@ -165,7 +155,7 @@ for testFunArg=testFunArgs(1:end)
   
   figHn = figure();
   set(figHn, 'units', 'inches', 'Position', [1 1 9 6])
-  errVecLimits = [1E-12, 1E2];
+  errVecLimits = [1E-15, 1E2];
   mvec = outStructVec{1}(1).mvec;
   nptsLimits = [2^(mvec(1)-1), 2^(mvec(end)+1)];
   plot([1, 1], nptsLimits, 'r', 'LineWidth',1)
@@ -201,8 +191,8 @@ for testFunArg=testFunArgs(1:end)
 %   title(sprintf('%s d %d r %d %s %s', testFunArg.fName, ...
 %                 testFunArg.dim, testFunArg.order, testFunArg.varTx, mType));
   
-  figSavePathName = sprintf('%s%s_guaranteed_npts_%s_%s_%s.png', ...
-    figSavePath, fName,stopCrit,vartx,timeStamp );
+  figSavePathName = sprintf('%s%s_guaranteed_npts_%s_%s_d%d_r%d_%s.png', ...
+    figSavePath, fName,stopCrit,vartx,testFunArg.dim,testFunArg.order,timeStamp );
   saveas(figHn, figSavePathName)
   
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -236,8 +226,8 @@ for testFunArg=testFunArgs(1:end)
     'YTick',(10.^(log10(timeLimits(1)) :2:log10(timeLimits(2)))))
   %title(sprintf('%s d %d r %d %s %s', testFunArg.fName, ...
   %              testFunArg.dim, testFunArg.order, testFunArg.varTx, mType));  
-  figSavePathName = sprintf('%s%s_guaranteed_time_%s_%s_%s.png', ...
-    figSavePath, fName,stopCrit,vartx,timeStamp );
+  figSavePathName = sprintf('%s%s_guaranteed_time_%s_%s_d%d_r%d_%s.png', ...
+    figSavePath, fName,stopCrit,vartx,testFunArg.dim,testFunArg.order,timeStamp );
   saveas(figH, figSavePathName)
   
 end

@@ -114,28 +114,6 @@ end
 %% Save output
 %save MVNProbExampleAllData.mat
 
-function fval = GenzFunc(w,obj)
-dim = numel(obj.a);
-nn = size(w,1);
-am = obj.a - obj.mu;
-bm = obj.b - obj.mu;
-a1 = am(1)/obj.CovProp.C(1,1);
-b1 = bm(1)/obj.CovProp.C(1,1);
-d = gail.stdnormcdf(a1);
-e = gail.stdnormcdf(b1);
-fval = (e-d)*ones(nn,1);
-y = zeros(nn,dim-1);
-for i = 2:dim
-  y(:,i-1) = gail.stdnorminv(d+w(:,i-1).*(e-d));
-  aux = sum(bsxfun(@times,obj.CovProp.C(i,1:i-1),y(:,1:i-1)),2);
-  a1 = (am(i)-aux)/obj.CovProp.C(i,i);
-  b1 = (bm(i)-aux)/obj.CovProp.C(i,i);
-  d = gail.stdnormcdf(a1);
-  e = gail.stdnormcdf(b1);
-  fval = fval .* (e-d);
-end
-end
-
 function muBest = computeGoldenMuhat(MVNParams)
 
 if 0

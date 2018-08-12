@@ -26,6 +26,8 @@ if dim==1
   end
 
   plot(xpts,Z)
+  xlabel('\(x\)')
+  ylabel('\(C_{\theta}(x,0.3)\)')
   legend(leg_text, 'Interpreter','latex','location','best')
   axis tight
 
