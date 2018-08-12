@@ -121,7 +121,7 @@ classdef cubBayesLattice_g < handle
     fName = 'None'; %name of the integrand
     figSavePath = ''; %path where to save he figures
     visiblePlot = false; %make plots visible
-    debugEnable = true; %enable debug prints
+    debugEnable = false; %enable debug prints
     gaussianCheckEnable = false; %enable plot to check Guassian pdf
     avoidCancelError = true;
     % so the posterior error is a Student-t distribution
@@ -148,10 +148,6 @@ classdef cubBayesLattice_g < handle
     timeAll = [];
     dscAll = [];
     s_All = [];
-  end
-  
-  enumeration
-    StopCritMLE, StopCritFullBayes, StopCritGCV
   end
   
   methods
@@ -463,13 +459,15 @@ classdef cubBayesLattice_g < handle
     %    https://www.itl.nist.gov/div898/handbook/eda/section3/normprp3.htm
     function CheckGaussianDensity(obj, ftilde, lambda)
       n = length(ftilde);
+      ftilde(1) = 0;  % substract by (m_\MLE \vone) to get zero mean
       w_ftilde = (1/sqrt(n))*real(ftilde)./sqrt(real(lambda));
       if obj.visiblePlot==false
         hFigNormplot = figure('visible','off');
       else
         hFigNormplot = figure();
       end
-      set(hFigNormplot,'defaultaxesfontsize',16,'defaulttextfontsize',16, ... %make font larger
+      set(hFigNormplot,'defaultaxesfontsize',16, ...
+        'defaulttextfontsize',16, ... %make font larger
         'defaultLineLineWidth',0.75, 'defaultLineMarkerSize',8)
       %normplot(w_ftilde)
       qqplot(w_ftilde);
