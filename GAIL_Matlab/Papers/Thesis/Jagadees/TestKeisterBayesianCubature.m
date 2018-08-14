@@ -20,31 +20,7 @@ samplingMethod = get_arg('samplingMethod', varargin);
 
 % define the integrand 
 fName='Keister';
-
-% if 0
-%   normsqd = @(t) sum(t.^2,2); %squared l_2 norm of t
-%   %domain = repmat([0;1],[1,dim]);
-%   replaceZeros = @(t) (t+(t==0)*eps); % to avoid getting infinity, NaN
-%   yinv = @(t)(erfinv( replaceZeros(abs(t)) ));  %using erfcinv is more accurate than erfinv with -1
-%   fKeister = @(t,dim) cos( sqrt( normsqd(yinv(t)) )) *(sqrt(pi))^dim;
-%   integrand = @(x) fKeister(x,dim);
-% else
-%   %integrand = @(x) keisterFunction(x, dim);
-% %   a = 0.99;
-% %   
-% %   normsqd = @(t) sum(t.*t,2); %squared l_2 norm of t
-% %   replaceZeros = @(t) (t+(t==0)*eps); % to avoid getting infinity, NaN
-% %   yinv = @(t)(erfcinv( replaceZeros(abs(t)) ));  %using erfcinv is more accurate than erfinv with -1
-% %   %yinv = @(t) erfcinv(t);
-% % 
-% %   parta = @(nt,a) a^dim .*cos( a*sqrt( nt ));
-% %   partb = @(nt,a) exp(nt*(1-a^2));
-% %   %fKeister = @(nt,dim,a) parta(nt,a).*partb(nt,a)*(sqrt(pi))^dim;
-% %   fKeister = @(nt,dim,a) parta(nt,a).*partb(nt,a)*(pi)^(dim/2);
-% %   integrand = @(x) fKeister(normsqd(yinv(x)),dim,a);
-% end
-
-integrand = @(x) keisterFunc(x, dim);
+integrand = @(x) keisterFunc(x,dim,0.8); % a=0.8
 exactInteg = Keistertrue(dim);
 
 % set the output dir to save the plots        

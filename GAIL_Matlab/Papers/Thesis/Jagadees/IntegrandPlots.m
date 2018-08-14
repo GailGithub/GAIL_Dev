@@ -37,24 +37,13 @@ end
 %% Plot the Keister function
 dim = 1;
   
-function y = keisterFunction(x,dim,a)
-  %a = 0.8;
-  normsqd = @(t) sum(t.*t,2); %squared l_2 norm of t
-  yinv = @(t) gail.stdnorminv(t);
-  parta = @(nt,a) a^dim .*cos( a*sqrt( nt ));
-  partb = @(nt,a) exp(nt*(1-2*a^2)/2);
-  fKeisterR = @(nt,dim,a) parta(nt,a).*partb(nt,a)*(2*pi)^(dim/2);
-  y = fKeisterR(normsqd(yinv(x)),dim,a);
-  y(isnan(y)) = 0; % remove any NaN vlaues that could be due to Inf values from stdnorminv
-end
-
 xplot = linspace(0,1,2^10);
 
 if dim==2
   nx = numel(xplot);
   [xx,yy] = meshgrid(xplot);
   xyplot = [xx(:) yy(:) zeros(nx*nx, dim-2)];
-  zz = reshape(keisterFunction(xyplot,dim,0.8),nx,nx);
+  zz = reshape(keisterFunc(xyplot,dim,0.8),nx,nx);
   figH1 = figure();
   surf(xx,yy,zz)
   shading interp
@@ -69,7 +58,7 @@ else
   figH1=figure(); 
   aVec = [0.8 1.5];
   for iter=1:length(aVec)
-    plot(xplot', keisterFunction(xplot',1,aVec(iter)), lineShapes{iter})
+    plot(xplot', keisterFunc(xplot',1,aVec(iter)), lineShapes{iter})
     hold on
   end
   temp = string(aVec);

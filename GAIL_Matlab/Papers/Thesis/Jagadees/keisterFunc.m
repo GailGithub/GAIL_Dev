@@ -1,6 +1,6 @@
 
-function y = keisterFunc(x,dim)
-  a = 0.8;
+function y = keisterFunc(x,dim,a)
+  % a = 0.8;
   normsqd = @(t) sum(t.*t,2); %squared l_2 norm of t
   yinv = @(t) gail.stdnorminv(t);
 
