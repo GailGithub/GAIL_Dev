@@ -134,11 +134,9 @@ classdef cubBayesLattice_g < handle
     uncert = 0;  % quantile value for the error bound
     gen_vec = []; % generator for the Lattice points
     
-    xun = []; % unshifted lattice points
-    xpts = []; % random shifted lattice points
-    ftilde = []; % FFT transformed function values
     fullBayes = false; % Full Bayes - assumes m and s^2 as hyperparameters,
     GCV = false; % Generalized cross validation
+    vdc_order = false; % use Lattice points generated in vdc order 
 
     % variables to save debug info in each iteration
     errorBdAll = [];
@@ -237,17 +235,21 @@ classdef cubBayesLattice_g < handle
       % pick a random value to apply as shift
       shift = rand(1,obj.dim);
       
+      xun_=[];xpts_=[];ftilde_=[]; % temporary storage between iterations
       %% Iteratively find the number of points required for the cubature to meet
       % the error threshold
       for iter = 1:numM
         tstart_iter = tic;
-        
-        n = 2^obj.mvec(iter);
+        m = obj.mvec(iter);
+        n = 2^m;
         
         %Update function values
-        [ftilde_iter,xun_iter] = iter_fft(obj,iter,shift);
-        
-        [stop_flag, muhat] = stopping_criterion(obj, xun_iter, ftilde_iter, iter, n);
+        if obj.vdc_order
+          [ftilde_,xun_,xpts_] = iter_fft_vdc(obj,iter,shift,xun_,xpts_,ftilde_);
+        else
+          [ftilde_,xun_,xpts_] = iter_fft(obj,iter,shift,xun_,xpts_,ftilde_);
+        end
+        [stop_flag, muhat] = stopping_criterion(obj, xun_, ftilde_, iter, m);
         
         obj.timeAll(iter) = toc(tstart_iter);  % store per iteration time
         
@@ -257,7 +259,6 @@ classdef cubBayesLattice_g < handle
         if obj.stopAtTol==true && stop_flag==true
           break
         end
-        
       end
       out.n = n;
       out.time = toc(tstart);
@@ -280,7 +281,7 @@ classdef cubBayesLattice_g < handle
     end
     
     %% Efficient FFT computation algorithm
-    function [ftilde_iter,xun_iter] = iter_fft(obj,iter,shift)
+    function [ftilde_,xun_,xpts_] = iter_fft(obj,iter,shift,xun,xpts,ftildePrev)
       m = obj.mvec(iter);
       n = 2^m;
       gpuArray = @(x) x;   
@@ -289,17 +290,16 @@ classdef cubBayesLattice_g < handle
       % computed for the newly added points. Previously computed FFT is
       % reused.
       if iter == 1
-        % in the first iteration compute the full FFT
-        xun_iter = mod(bsxfun(@times,(0:1/n:1-1/n)',obj.gen_vec),1);
-        xpts_iter = mod(bsxfun(@plus,xun_iter,shift),1);  % shifted
+        % In the first iteration compute full FFT
+        xun_ = mod(bsxfun(@times,(0:1/n:1-1/n)',obj.gen_vec),1);
+        xpts_ = mod(bsxfun(@plus,xun_,shift),1);  % shifted
         
         % Compute initial FFT
-        ftilde_iter = fft(gpuArray(obj.ff(xpts_iter))); %evaluate integrand's fft
-        
+        ftilde_ = fft(gpuArray(obj.ff(xpts_))); %evaluate integrand's fft
       else
         xunnew = mod(bsxfun(@times,(1/n:2/n:1-1/n)',obj.gen_vec),1);
         xnew = mod(bsxfun(@plus,xunnew,shift),1);
-        [xun_iter, xpts_iter] = obj.merge_pts(obj.xun, xunnew, obj.xpts, xnew, n, obj.dim);
+        [xun_, xpts_] = obj.merge_pts(xun, xunnew, xpts, xnew, n, obj.dim);
         mnext=m-1;
         
         % Compute FFT on next set of new points
@@ -309,23 +309,57 @@ classdef cubBayesLattice_g < handle
         end
         
         % combine the previous batch and new batch to get FFT on all points
-        ftilde_iter = obj.merge_fft(obj.ftilde, ftildeNextNew, mnext);
+        ftilde_ = obj.merge_fft(ftildePrev, ftildeNextNew, mnext);
+      end
+    end
+    
+    function [ftilde_,xun_,xpts_] = iter_fft_vdc(obj,iter,shift,xun,xpts,ftildePrev)
+      m = obj.mvec(iter);
+      n = 2^m;
+      gpuArray = @(x) x;
+      
+      function [xun, x] = merge_pts_vdc(xun, xunnew, x, xnew)
+        xun = [xun; xunnew];
+        x = [x; xnew];
       end
       
-      obj.xun = xun_iter;
-      obj.xpts = xpts_iter;
-      obj.ftilde = ftilde_iter;
+      % In every iteration, "n" number_of_points is doubled, but FFT is only
+      % computed for the newly added points. Previously computed FFT is
+      % reused.
+      if iter == 1
+        % in the first iteration compute the full FFT
+        xun_ = obj.simple_lattice_gen(n,obj.dim,true);
+        xpts_ = mod(bsxfun(@plus,xun_,shift),1);  % shifted
+        
+        % Compute initial FFT
+        ftilde_ = obj.fft_DIT(gpuArray(obj.ff(xpts_)),m); %evaluate integrand's fft
+      else
+        xunnew = obj.simple_lattice_gen(n,obj.dim,false);
+        xnew = mod(bsxfun(@plus,xunnew,shift),1);
+        mnext=m-1;
+        
+        % Compute FFT on next set of new points
+        ftildeNextNew = obj.fft_DIT(gpuArray(obj.ff(xnew)),mnext);
+        if obj.debugEnable
+          cubBayesLattice_g.alertMsg(ftildeNextNew, 'Nan', 'Inf');
+        end
+        
+        [xun_, xpts_] = merge_pts_vdc(xun, xunnew, xpts, xnew);
+        % combine the previous batch and new batch to get FFT on all points
+        ftilde_ = obj.merge_fft(ftildePrev, ftildeNextNew, mnext);
+      end
     end
     
     % decides if the user defined error threshold is met
-    function [success,muhat] = stopping_criterion(obj, xpts, ftilde, iter, n)
+    function [success,muhat] = stopping_criterion(obj, xpts, ftilde, iter, m)
       
+      n=2^m;
       success = false;
       %Compute MLE parameter
       lnaMLE = fminbnd(@(lna) ...
-        ObjectiveFunction(obj, exp(lna),xpts,ftilde), -5,5,optimset('TolX',1e-2));
+        ObjectiveFunction(obj, exp(lna),xpts,ftilde,m), -5,5,optimset('TolX',1e-2));
       aMLE = exp(lnaMLE);
-      [loss,Lambda,Lambda_ring,RKHSnorm] = ObjectiveFunction(obj, aMLE,xpts,ftilde);
+      [loss,Lambda,Lambda_ring,RKHSnorm] = ObjectiveFunction(obj, aMLE,xpts,ftilde,m);
       
       %Check error criterion
       % compute DSC :
@@ -396,11 +430,12 @@ classdef cubBayesLattice_g < handle
     % objective function to estimate parmaeter theta
     % MLE : Maximum likelihook estimation
     % GCV : Generalized cross validation
-    function [loss,Lambda,Lambda_ring,RKHSnorm] = ObjectiveFunction(obj, a, xun, ftilde)
+    function [loss,Lambda,Lambda_ring,RKHSnorm] = ObjectiveFunction(obj,a,xun,ftilde,m)
       
       n = length(ftilde);
       if obj.order==4 || obj.order==2
-        [Lambda, Lambda_ring] = obj.kernel(xun,obj.order,a,obj.avoidCancelError);
+        [Lambda, Lambda_ring] = obj.kernel(xun,obj.order,a,obj.avoidCancelError,...
+          m,obj.vdc_order,obj.debugEnable);
       else
         error('Unsupported Bernoulli polyn order !');
       end
@@ -619,11 +654,9 @@ classdef cubBayesLattice_g < handle
     % C1 : first row of the kernel
     % Lambda : eigen values of the kernel
     % Lambdahat = fft(C1 - 1)
-    function [Lambda, Lambda_ring] = kernel(xun,order,a,avoidCancelError,debugEnable)
+    function [Lambda, Lambda_ring] = kernel(xun,order,a,avoidCancelError,...
+        m,vdc_order,debugEnable)
       
-      if ~exist('debugEnable', 'var')
-        debugEnable = false;
-      end
       constMult = -(-1)^(order/2)*((2*pi)^order)/factorial(order);
       % constMult = -(-1)^(order/2);
       if order == 2
@@ -638,7 +671,11 @@ classdef cubBayesLattice_g < handle
         % Computes C1m1 = C1 - 1
         % C1_new = 1 + C1m1 indirectly computed in the process
         [C1m1, C1_alt] = cubBayesLattice_g.kernel_t(a, constMult, bernPoly(xun));
-        Lambda_ring = real(fft(C1m1));
+        if vdc_order
+          Lambda_ring = real(cubBayesLattice_g.fft_DIT(C1m1,m));
+        else
+          Lambda_ring = real(fft(C1m1));
+        end
         
         Lambda = Lambda_ring;
         Lambda(1) = Lambda_ring(1) + length(Lambda_ring);
@@ -738,7 +775,10 @@ classdef cubBayesLattice_g < handle
     end
     
     % fft with deimation in time i.e, input is already in 'bitrevorder'
-    function y = fft_DIT( y, nmmin )
+    function y = fft_DIT(y,nmmin)
+      %if nmmin~=log2(length(y))
+      %  warning('mismatch')
+      %end
       %nmmin = log2(length(y));
       %y = bitrevorder(y);
       for l=0:nmmin-1
