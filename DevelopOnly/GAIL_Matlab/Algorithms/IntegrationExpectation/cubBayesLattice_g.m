@@ -136,7 +136,7 @@ classdef cubBayesLattice_g < handle
     
     fullBayes = false; % Full Bayes - assumes m and s^2 as hyperparameters,
     GCV = false; % Generalized cross validation
-    vdc_order = false; % use Lattice points generated in vdc order 
+    vdc_order = flase; % use Lattice points generated in vdc order 
 
     % variables to save debug info in each iteration
     errorBdAll = [];
@@ -280,15 +280,15 @@ classdef cubBayesLattice_g < handle
       
     end
     
-    %% Efficient FFT computation algorithm
+    %% Efficient FFT computation algorithm, avoids recomputing the full fft
     function [ftilde_,xun_,xpts_] = iter_fft(obj,iter,shift,xun,xpts,ftildePrev)
       m = obj.mvec(iter);
       n = 2^m;
       gpuArray = @(x) x;   
       
-      % In every iteration, "n" number_of_points is doubled, but FFT is only
-      % computed for the newly added points. Previously computed FFT is
-      % reused.
+      % In every iteration except the first one, "n" number_of_points is doubled, 
+      % but FFT is only computed for the newly added points.
+      % Previously computed FFT is reused.
       if iter == 1
         % In the first iteration compute full FFT
         xun_ = mod(bsxfun(@times,(0:1/n:1-1/n)',obj.gen_vec),1);
@@ -313,29 +313,24 @@ classdef cubBayesLattice_g < handle
       end
     end
     
+    % Lattice points are order in Varder corput sequence, So we cant use
+    % Matlab's buil in fft routine. So we use a custom one.
     function [ftilde_,xun_,xpts_] = iter_fft_vdc(obj,iter,shift,xun,xpts,ftildePrev)
       m = obj.mvec(iter);
       n = 2^m;
       gpuArray = @(x) x;
       
-      function [xun, x] = merge_pts_vdc(xun, xunnew, x, xnew)
-        xun = [xun; xunnew];
-        x = [x; xnew];
-      end
-      
-      % In every iteration, "n" number_of_points is doubled, but FFT is only
-      % computed for the newly added points. Previously computed FFT is
-      % reused.
+      % In every iteration except the first one, "n" number_of_points is doubled, 
+      % but FFT is only computed for the newly added points.
+      % Previously computed FFT is reused.
       if iter == 1
         % in the first iteration compute the full FFT
-        xun_ = obj.simple_lattice_gen(n,obj.dim,true);
-        xpts_ = mod(bsxfun(@plus,xun_,shift),1);  % shifted
+        [xpts_,xun_] = obj.simple_lattice_gen(n,obj.dim,shift,true);
         
         % Compute initial FFT
         ftilde_ = obj.fft_DIT(gpuArray(obj.ff(xpts_)),m); %evaluate integrand's fft
       else
-        xunnew = obj.simple_lattice_gen(n,obj.dim,false);
-        xnew = mod(bsxfun(@plus,xunnew,shift),1);
+        [xnew,xunnew] = obj.simple_lattice_gen(n,obj.dim,shift,false);
         mnext=m-1;
         
         % Compute FFT on next set of new points
@@ -344,7 +339,11 @@ classdef cubBayesLattice_g < handle
           cubBayesLattice_g.alertMsg(ftildeNextNew, 'Nan', 'Inf');
         end
         
-        [xun_, xpts_] = merge_pts_vdc(xun, xunnew, xpts, xnew);
+        xpts_ = [xpts; xnew];
+        temp = zeros(n,obj.dim);
+        temp(1:2:n-1,:) = xun;
+        temp(2:2:n,:) = xunnew;
+        xun_ = temp;
         % combine the previous batch and new batch to get FFT on all points
         ftilde_ = obj.merge_fft(ftildePrev, ftildeNextNew, mnext);
       end
@@ -357,9 +356,9 @@ classdef cubBayesLattice_g < handle
       success = false;
       %Compute MLE parameter
       lnaMLE = fminbnd(@(lna) ...
-        ObjectiveFunction(obj, exp(lna),xpts,ftilde,m), -5,5,optimset('TolX',1e-2));
+        ObjectiveFunction(obj, exp(lna),xpts,ftilde), -5,5,optimset('TolX',1e-2));
       aMLE = exp(lnaMLE);
-      [loss,Lambda,Lambda_ring,RKHSnorm] = ObjectiveFunction(obj, aMLE,xpts,ftilde,m);
+      [loss,Lambda,Lambda_ring,RKHSnorm] = ObjectiveFunction(obj, aMLE,xpts,ftilde);
       
       %Check error criterion
       % compute DSC :
@@ -430,12 +429,12 @@ classdef cubBayesLattice_g < handle
     % objective function to estimate parmaeter theta
     % MLE : Maximum likelihook estimation
     % GCV : Generalized cross validation
-    function [loss,Lambda,Lambda_ring,RKHSnorm] = ObjectiveFunction(obj,a,xun,ftilde,m)
+    function [loss,Lambda,Lambda_ring,RKHSnorm] = ObjectiveFunction(obj,a,xun,ftilde)
       
       n = length(ftilde);
       if obj.order==4 || obj.order==2
         [Lambda, Lambda_ring] = obj.kernel(xun,obj.order,a,obj.avoidCancelError,...
-          m,obj.vdc_order,obj.debugEnable);
+          obj.debugEnable);
       else
         error('Unsupported Bernoulli polyn order !');
       end
@@ -655,7 +654,7 @@ classdef cubBayesLattice_g < handle
     % Lambda : eigen values of the kernel
     % Lambdahat = fft(C1 - 1)
     function [Lambda, Lambda_ring] = kernel(xun,order,a,avoidCancelError,...
-        m,vdc_order,debugEnable)
+        debugEnable)
       
       constMult = -(-1)^(order/2)*((2*pi)^order)/factorial(order);
       % constMult = -(-1)^(order/2);
@@ -671,11 +670,7 @@ classdef cubBayesLattice_g < handle
         % Computes C1m1 = C1 - 1
         % C1_new = 1 + C1m1 indirectly computed in the process
         [C1m1, C1_alt] = cubBayesLattice_g.kernel_t(a, constMult, bernPoly(xun));
-        if vdc_order
-          Lambda_ring = real(cubBayesLattice_g.fft_DIT(C1m1,m));
-        else
-          Lambda_ring = real(fft(C1m1));
-        end
+        Lambda_ring = real(fft(C1m1));
         
         Lambda = Lambda_ring;
         Lambda(1) = Lambda_ring(1) + length(Lambda_ring);
@@ -740,7 +735,7 @@ classdef cubBayesLattice_g < handle
     end
     
     % generates rank-1 Lattice points in Vander corput sequence order
-    function [xlat, z] = simple_lattice_gen(n,d,firstBatch)
+    function [xlat,xlat_] = simple_lattice_gen(n,d,shift,firstBatch)
       z = cubBayesLattice_g.get_lattice_gen_vec(d);
       
       nmax = n;
@@ -752,10 +747,13 @@ classdef cubBayesLattice_g < handle
       
       if firstBatch==true
         brIndices=cubBayesLattice_g.vdc(nelem)';
+        xlat_=mod(bsxfun(@times,(0:1/n:1-1/n)',z),1); % unshifted in direct order
       else
         brIndices=cubBayesLattice_g.vdc(nelem)'+1/(2*(nmin-1));
+        xlat_=mod(bsxfun(@times,(1/n:2/n:1-1/n)',z),1); % unshifted in direct order
       end
       xlat = mod(bsxfun(@times,brIndices',z),1);  % unshifted
+      xlat = mod(bsxfun(@plus,xlat,shift),1);  % shifted in VDC order
     end
     
     % Van der Corput sequence in base 2
