@@ -161,7 +161,9 @@
 \newcommand{\hnu}{\hat{\nu}}
 \newcommand{\rhoCond}{\mathring{\vrho}}
 
-\newcommand{\MLE}{\text{MLE}}
+\newcommand{\MLE}{\textup{MLE}}
+\newcommand{\full}{\textup{full}}
+\newcommand{\GCV}{\text{GCV}}
 %\newcommand{\errtol}{\text{tol}}
 \newcommand{\errtol}{\varepsilon}
 \newcommand{\errn}{\text{err}_{n}}
@@ -664,7 +666,7 @@ We would like to demonstrate and test numerical accuracy and computational cost 
 For this example, we chose multivariate normal as integrand and the Matern kernel as covariance function:
 \begin{align}
 \label{matern_kernel}
-C_{\theta}(\vx, \vt) = \prod_{k=1}^d \exp(-\theta|\vx_k-\vt_k|)(1+\theta_k |\vx_k-\vt_k|)
+C_{\theta}(\vx, \vt) = \prod_{k=1}^d \exp(-\theta|\vx_k-\vt_k|)(1+\theta |\vx_k-\vt_k|)
 \end{align}
 
 \paragraph{Multivariate Normal}\label{MVN_example} does not have an analytic expression to compute the integral, So numerical algorithms are necessary to approximate it. But It's domain is $\mathbb{R}$. To integrate with our algorithm it has to be transformed to the unit cube.
@@ -675,7 +677,7 @@ We use the Genz's method for this reason. This method not only transforms the in
 		\includegraphics[width=1.1\linewidth]{Plotting_gaussian}
 	\end{subfigure}
 	\begin{subfigure}[h]{0.48\linewidth}
-		\includegraphics[width=1.1\linewidth]{GenzFun}
+		\includegraphics[width=1.1\linewidth]{GenzFunc_varTx_none}
 	\end{subfigure}
 	\caption{Mutivariate Normal in d=2 and its transformed form of Genz function  $[0,1]^2$}
 	\label{fig:MVN_Genz}
@@ -779,7 +781,7 @@ So, our algorithm in the current form is not straightaway usable for any practic
 
 \section{Fast Automatic Bayesian Cubature}\label{sec:fast_BC}
 
-The generic automatic Bayesian cubature algorithm described in the previous section requires $\Order(n^3)$ operations to estimate $\vtheta$, compute the credible interval width, and compute the cubature.  There is also the potential ill-condtioning that can arise.  This section explains how speed up the calculations and avoid ill-conditioning.  A key is to choose kernels that match the design, $\{\vx_i\}_{i=1}^n$, so that the vector-matrix operations required by Bayesian cubature can be accomplished using fast transforms at a cost of $\Order(n \log(n))$.
+The generic automatic Bayesian cubature algorithm described in the previous section requires $\Order(n^3)$ operations to estimate $\vtheta$, compute the credible interval width, and compute the cubature.  There is also the potential ill-condtioning that can arise.  This section explains how to speed up the calculations and avoid ill-conditioning.  A key is to choose kernels that match the design, $\{\vx_i\}_{i=1}^n$, so that the vector-matrix operations required by Bayesian cubature can be accomplished using fast transforms at a cost of $\Order(n \log(n))$.
 
 \subsection{Fast transform kernel}
 We make some assumptions about the relationship between the covariance kernel and the design, which will be shown to hold in Section \ref{sec:shift_invariant_kernel} for rank-1 lattices and shift-invariant kernels.  First we introduce the notation
@@ -790,6 +792,8 @@ We make some assumptions about the relationship between the covariance kernel an
 \label{eqn:ftk_factor}
 &= \frac 1n \mV \mLambda \mV^H , 
 \quad \quad \mV^H = n \mV^{-1}, \\
+\nonumber
+\mV &= (\vv_1,...,\vv_n)^T = (\vV_1,...,\vV_n) \\
 \nonumber
 \mC^p  &= \frac 1n \mV \mLambda^{p} \mV^H, \qquad \forall p \in \integers,
 \end{align}
@@ -894,7 +898,7 @@ s^2_\MLE
 	\left( c_0 - \frac 1n \sum_{i=1}^n \frac{\abs{\widetilde{c}_i}^2}{\lambda_i} \right) 
 },
 \end{align}
-Since all the quantities on the right hand sides can be obtained in in $\Order(n \log(n))$ operations by fast transforms, the left hand sides are all computable using the asymptotic computational cost.
+Since all the quantities on the right hand sides can be obtained in $\Order(n \log(n))$ operations by fast transforms, the left hand sides are all computable using the asymptotic computational cost.
 
 Under the further assumption \eqref{addAssump} it follows that 
 \begin{align}
@@ -923,15 +927,21 @@ For the full Bayes approach the cubature is the same as for empirical Bayes.  We
 \frac{1}{n(n-1)} \sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i}
 \\
 \times
-\left[\frac{\lambda_1}{n}{\left(1 - \frac{\widetilde{c}_1}{\lambda_1}\right)^2} + \left(c_0  - \frac 1n \sum_{i=1}^n \frac{\abs{\widetilde{c}_i}^2}{\lambda_i}\right) \right] .
+\left[\frac{\lambda_1}{n}{\left(1 - \frac{\widetilde{c}_1}{\lambda_1}\right)^2} + \left(c_0  - \frac 1n \sum_{i=1}^n \frac{\abs{\widetilde{c}_i}^2}{\lambda_i}\right) \right],
 \end{multline*}
 Under assumption \eqref{addAssump} further simplification can be made:
 \begin{equation} \label{FJH:eq:signmaFullSimple}
 \widehat{\sigma}^2_{\textup{full}}
 =
-\frac{1}{n(n-1)} \sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i} \, \left(\frac{\lambda_1}{n}  - 1  \right).
+\frac{1}{n(n-1)} \sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i} \, \left(\frac{\lambda_1}{n}  - 1  \right),
 \end{equation}
-
+It follows that
+\begin{equation} \label{FJH:eq:errFullSimple}
+\err_{\textup{full}}
+=
+t_{n_j-1,0.995}
+\sqrt{\frac{1}{n(n-1)} \sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i} \, \left(\frac{\lambda_1}{n}  - 1  \right)}.
+\end{equation}
 
 
 \subsection{Generalized Cross-Validation}
@@ -973,7 +983,7 @@ Moreover, under further assumption \eqref{addAssump} it follows that
 \left( 1 -  \frac{n}{\lambda_1} \right)  
 \right\}^{1/2}. \label{errGCVSimple}
 \end{align}
-Thus, in this  case $\hmu$ is simply the sample mean.
+Thus, in this case too $\hmu$ is simply the sample mean.
 
 
 
@@ -1018,12 +1028,12 @@ An family of shift invariant kernels is constructed via even degree Bernoulli po
 \begin{multline}
 \label{the_kernel_eqn_bernoulli}
 C_\vtheta(\vt, \vx) =
-\prod_{l=1}^d
-1 - (-1)^{r} \gamma B_{2r}( |{x_l-t_l}| ), \quad  \forall \vt,\vx \in [0,1]^d, \\ \vtheta = (r,\gamma), \ r \in \naturals, \ \gamma > 0.
+\prod_{l=1}^d \biggl[
+1 - (-1)^{r} \gamma B_{2r}( |{x_l-t_l}| ) \biggr], \quad  \forall \vt,\vx \in [0,1]^d, \\ \vtheta = (r,\gamma), \ r \in \naturals, \ \gamma > 0.
 \end{multline}
 Symmetric, positive definite kernels of this form appear in  \cite{DicEtal14a} and \cite{Hic96a}.  The Bernoulli polynomials are described in \cite[Chapter 24]{OlvEtal10a}.
 
-Larger $r$ implies a greater degree of smoothness of the kernel.  Larger $\theta$ implies greater fluctuations of the output with respect to the input.  Plots of $C(\cdot, 0.3)$ are given in \figref{fig:fourierkernel-dim1} for various $r$ and $\gamma$ values.
+Larger $r$ implies a greater degree of smoothness of the kernel.  Larger $\gamma$ implies greater fluctuations of the output with respect to the input.  Plots of $C(\cdot, 0.3)$ are given in \figref{fig:fourierkernel-dim1} for various $r$ and $\gamma$ values.
 
 \begin{figure}
 	\centering
@@ -1058,7 +1068,7 @@ Since $\phi(j-1) - \phi(k-1)$ is some integer multiple of $1/n$, it follows that
 Next, let $\omega_{k, \ell}$ denote the $k,\ell$ element of $\mV^H \mC \mV$, which is given by the double sum
 \begin{multline*}
 \omega_{k, \ell} = \sum_{i,j=1}^n K(\vh(\phi(i-1) - \phi(j-1)) \bmod \vone ) \\
-\times   \me^{-2 \pi n \sqrt{-1} \phi(k-1)\phi(i-1)}  \me^{2 \pi n \sqrt{-1} \phi(j-1)\phi(m-1)}
+\times   \me^{-2 \pi n \sqrt{-1} \phi(k-1)\phi(i-1)}  \me^{2 \pi n \sqrt{-1} \phi(j-1)\phi(l-1)}
 \end{multline*}
 Noting that the sequence $\{\phi(i-1)\}_{i=1}^n$ is a re-ordering of $0, \ldots, 1-1/n$ for $n$ a power of $2$, this sum may be re-written by replacing $\phi(i-1)$ by $(i-1)/n$ and $\phi(j-1)$ by $(j-1)/n$:
 \begin{multline*}
@@ -1178,7 +1188,7 @@ Computing the eigenvalues of $\rmC$ via the procedure given in \eqref{eqn:fast_t
 \right].
 \end{align}
 \end{subequations}
-The widths of the credible intervals in \eqref{eq:errMLEAllAsump}, \eqref{FJH:eq:signmaFullSimple}, and   \eqref{errGCVSimple} become
+The widths of the credible intervals in \eqref{eq:errMLEAllAsump}, \eqref{FJH:eq:errFullSimple}, and   \eqref{errGCVSimple} become
 \begin{subequations}
 \label{fastStoppingCriterions}
 	\begin{align}
@@ -1197,12 +1207,33 @@ The widths of the credible intervals in \eqref{eq:errMLEAllAsump}, \eqref{FJH:eq
 \frac{2.58}{n^{1/2}}\sqrt{	\frac{\rlambda_1}{n + \rlambda_1} \sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i^2}  \left [ \frac{1}{n + \rlambda_1} + \sum_{i=2}^n \frac{1}{\lambda_i} \right]^{-1}} .
 	\end{align}
 \end{subequations}
-
+Since $\rlambda_1 = \lambda_1 - n$ and $\lambda \sim n$ it follows $\lambda_1$ is a small value closer to 1. For significantly large $n$, credible intervals $\err_\MLE$ and $\err_\full$ are almost the same, since the Student-t distribution quantile value $t_{n_j-1,0.995}$ approaches $2.58$. Whereas to compare $\err_\GCV$, it needs little more insight due to the term $\lambda_i^2$ in the denominator. Rewriting it:
+\begin{align*}
+\err_\GCV^2 & =
+\frac{2.58^2}{n^2}	\frac{\rlambda_1}{n + \rlambda_1} \frac{ \sum_{i=2}^n \left( \frac{\abs{\widetilde{y}_i}^2}{\lambda_i} \frac{1}{\lambda_i} \right)}{ \frac 1n \sum_{i=1}^n \frac{1}{\lambda_i} } 
+\end{align*}
+If the eigenvalues are ordered with $n$ then,
+\[
+\frac{1}{\lambda_n} \geq \frac{1}{\lambda_{n-1}} ... \geq \frac{1}{\lambda_1} 
+\]
+Note that we assumed the kernel Gram matrix is positive definite, so all the eigen values are positive
+\begin{align*}
+\frac{ \sum_{i=2}^n \left( \frac{\abs{\widetilde{y}_i}^2}{\lambda_i} \frac{1}{\lambda_i} \right)}{ \frac 1n \sum_{i=1}^n \frac{1}{\lambda_i} } 
+\leq 
+\frac{ \frac{1}{\lambda_n} \sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i}  }{ \frac 1n n \frac{1}{\lambda_1} } 
+\leq 
+ \frac{\lambda_1}{\lambda_n} \sum_{i=2}^n  \frac{\abs{\widetilde{y}_i}^2}{\lambda_i}  
+\end{align*}
+Thus we can write
+\begin{align*}
+\err^2_\GCV \leq \frac{\lambda_1}{\lambda_n} \err^2_\MLE
+\end{align*}
+This shows the $\err_\GCV$ is more aggressive stopping criterion than $\err_\MLE$. If the chosen kernel is very smooth then eigen values decay very quickly with increasing $n$. 
 
 We summarize the results of this section and the previous one as follows:
 \begin{prop}
 Any symmetric positive-definite shift-invariant-kernel of the form \eqref{eq:shInv} satisfying properties \eqref{addAssump} that can be matched with rank-1 Lattice data-sites, is a fast-transform-kernel \eqref{fastcompAssump}.
-Thus It has a fast-transform with computational cost of $\Order(n \log n )$ in the form of \emph{Fast Fourier transform}(FFT). Consequently the kernel can be used to construct fast adaptive Bayesian cubature with parameter estimation \eqref{thetaSimple}, stopping criteria \eqref{fastStoppingCriterions} and cubature rule \eqref{muhatGCV-FB-MLE-Simple}.
+Thus it has a fast-transform with computational cost of $\Order(n \log n )$ in the form of \emph{Fast Fourier transform}(FFT). Consequently the kernel can be used to construct fast adaptive Bayesian cubature with parameter estimation \eqref{thetaSimple}, stopping criteria \eqref{fastStoppingCriterions} and cubature rule \eqref{muhatGCV-FB-MLE-Simple}.
 \end{prop}
 
 
@@ -1236,18 +1267,18 @@ f(\vx) = g(\vPsi(\vx)) \prod_{\ell = 1}^d \Psi'(x_l).
 \end{equation}
 \end{subequations}
 If $\Psi$ is sufficiently smooth, $\lim_{x \downarrow 0}x^{-r}\Psi'(x) = \lim_{x \uparrow 1} (x-1)^{-r}\Psi'(x) = 0$ for $ r \in \natzero$, and $g \in C^{(r, \ldots, r)}[0,1]^d$, then $f$ has continuous, periodic derivatives up to order $r$ in each direction.  
-Examples of this kind of transform include:
+Examples of this kind of transform include \cite{LaurieVarTx}, \cite{Sidi1993}, \cite{Sidi2008FurtherEO}:
 \begin{align*}
 C^0 &: \Psi(x) =  3 x^2 - 2 x^3, \quad   \Psi'(x) = 6x(1-x), \\
 C^1 & : \Psi(x) = x^3(10-15x+6x^2),  \\
 &\qquad \qquad \qquad \qquad   \Psi'(x) = 30x^2(1-x)^2 \\
-\text{Sidi's } C^1 & : \Psi(x) = x - \frac{\sin(2\pi x)}{2 \pi},  \\
+\text{Sidi's } C^1 & : \Psi(x) = x - \frac{\sin(2\pi x)}{2 \pi}, \\
 &\qquad \qquad \qquad \qquad   \Psi'(x) = 1 - \cos(2\pi x), \\
 \text{Sidi's } C^2 & : \Psi(x) = \frac {8 - 9 \cos(\pi x) + \cos(3 \pi x)}{16} ,  \\
 &\qquad \qquad \Psi'(x) = \frac {3 \pi[3 \cos(\pi x) - \cos(3 \pi x)]}{16}.
 \end{align*}
 
-Periodizing variable transforms are used for the numerical examples below.  In some cases they can speed the convergence of the Bayesia cubature. 
+Periodizing variable transforms are used for the numerical examples below.  In some cases they can speed the convergence of the Bayesian cubature. 
 	
 
 
@@ -1275,24 +1306,24 @@ This function was already introduced in Section \ref{MVN_example}. We use the va
 	\label{fig:GenzP}
 \end{figure}
 As we see from \figref{fig:MVN_Genz}, Genz function is not periodic, So we need to also make it periodic (\secref{period_var_tx}) to get the best accuracy with our algorithm. We used $C^0$ periodization-transformed $f_{\textup{GenzP}}(\vx) = f_{\textup{Genz}}(\vPsi(\vx)) \prod_{\ell = 1}^d \Psi'(x_l)$ in the simulations. One can compare \figref{fig:MVN_Genz} with \figref{fig:GenzP} to see the effect of the periodization transform.
-The simulation results for this example function are summarized in figures \figref{fig:mvn-guaranteed-MLE}, \figref{fig:mvn-guaranteed-FB} and \figref{fig:mvn-guaranteed-GCV}.
+The simulation results for this example function are summarized in figures \figref{fig:mvn-guaranteed-MLE}, \figref{fig:mvn-guaranteed-FB} and \figref{fig:mvn-guaranteed-GCV}. We used $d=3, r=2$ and $C2sin$ periodization transform.
 
 \begin{figure}
 	\centering
-	\includegraphics[width=0.95\linewidth]{"figures/MVN_guaranteed_time_MLE_C0_29-Jul-2018 02-13-31"}
-	\caption[Guaranteed:]{Multivariate Normal integrated within $\varepsilon$ using empirical Bayes stopping criterion}
+	\includegraphics[width=0.95\linewidth]{"MVN_guaranteed_time_MLE_C2sin_d3_r4_2018-Aug-19"}
+	\caption[Guaranteed:]{Multivariate Normal integrated within $\varepsilon$ using empirical Bayes stopping criterion using $d=3, r=2$ and Sidi's $C^2$ transform}
 	\label{fig:mvn-guaranteed-MLE}
 \end{figure}
 \begin{figure}
 	\centering
-	\includegraphics[width=0.95\linewidth]{"figures/MVN_guaranteed_time_FB_C0_29-Jul-2018 03-10-36"}
-	\caption[MVN guaranteed : FB]{Multivariate Normal integrated within $\varepsilon$ using full-Bayes stopping criterion}
+	\includegraphics[width=0.95\linewidth]{"MVN_guaranteed_time_full_C2sin_d3_r4_2018-Aug-19"}
+	\caption[MVN guaranteed : FB]{Multivariate Normal integrated within $\varepsilon$ using full-Bayes stopping criterion using $d=3, r=2$ and Sidi's $C^2$ transform}
 	\label{fig:mvn-guaranteed-FB}
 \end{figure}
 \begin{figure}
 	\centering
-	\includegraphics[width=0.95\linewidth]{"figures/MVN_guaranteed_time_GCV_C0_29-Jul-2018 04-03-09"}
-	\caption[MVN guaranteed : GCV]{Multivariate Normal integrated within $\varepsilon$ using GCV stopping criterion}
+	\includegraphics[width=0.95\linewidth]{"MVN_guaranteed_time_GCV_C2sin_d3_r4_2018-Aug-19"}
+	\caption[MVN guaranteed : GCV]{Multivariate Normal integrated within $\varepsilon$ using GCV stopping criterion using $d=3, r=2$ and Sidi's $C^2$ transform}
 	\label{fig:mvn-guaranteed-GCV}
 \end{figure}
 
@@ -1337,43 +1368,43 @@ The following iterative technique used to compute the true integral:
 \\
 \text{where}, \Gamma  := \text{gamma function}, \; \text{and}
 \\
-\text{CI}(1) = \frac{\sqrt{\pi}}{2 \exp(1/4)}, 
+I_s(1) = \frac{\sqrt{\pi}}{2 \exp(1/4)}, 
 \\
-\text{SI}(1) = \int_{x=0}^\infty \exp(-\vx^T\vx)\sin(\vx) \dvx 
+I_s(1) = \int_{x=0}^\infty \exp(-\vx^T\vx)\sin(\vx) \dvx 
 \\
 \qquad =  0.4244363835020225,
 \\
-\text{CI}(2) = \frac{1-\text{SI}(1)}{2}, \;
-\text{SI}(2) = \frac{\text{CI}(1)}{2}
+I_c(2) = \frac{1-I_s(1)}{2}, \;
+I_s(2) = \frac{I_c(1)}{2}
 \\
-\text{CI}(j) = \frac{(j-2)\text{CI}(j-2)-\text{SI}(j-1)}{2},
+I_c(j) = \frac{(j-2)I_c(j-2)-I_s(j-1)}{2},
 \; j =3,4,\hdots
 \\
-\text{SI}(j) = \frac{(j-2)\text{SI}(j-2)-\text{CI}(j-1)}{2},
+I_s(j) = \frac{(j-2)I_s(j-2)-I_c(j-1)}{2},
 \; j =3,4,\hdots.
 % ref: https://www.mathworks.com/help/matlab/ref/gamma.html
 \end{multline*}
 \begin{figure}
 	\centering
-	\includegraphics[width=0.95\linewidth]{"figures/Keister_guaranteed_time_MLE_C2sin_29-Jul-2018 02-13-57"}
-	\caption[Keister guaranteed:MLE]{Keister function integrated within $\varepsilon$ using empirical Bayes stopping criterion}
+	\includegraphics[width=0.95\linewidth]{"Keister_guaranteed_time_MLE_C1_d4_r4_2018-Aug-19"}
+	\caption[Keister guaranteed:MLE]{Keister function integrated within $\varepsilon$ using empirical Bayes stopping criterion using $d=4, r=2$ and $C^1$ transform}
 	\label{fig:keister-guaranteed-MLE}
 \end{figure}
 \begin{figure}
 	\centering
-	\includegraphics[width=0.95\linewidth]{"figures/Keister_guaranteed_time_FB_C2sin_29-Jul-2018 03-11-01"}
-	\caption[Keister guaranteed:FB]{Keister function integrated within $\varepsilon$ using full-Bayes stopping criterion}
+	\includegraphics[width=0.95\linewidth]{"Keister_guaranteed_time_full_C1_d4_r4_2018-Aug-19"}
+	\caption[Keister guaranteed:FB]{Keister function integrated within $\varepsilon$ using full-Bayes stopping criterion using $d=4, r=2$ and $C^1$ transform}
 	\label{fig:keister-guaranteed-FB}
 \end{figure}
 \begin{figure}
 	\centering
-	\includegraphics[width=0.95\linewidth]{"figures/Keister_guaranteed_time_GCV_C2sin_29-Jul-2018 04-03-33"}
-	\caption[Keister guaranteed:GCV]{Keister function integrated within $\varepsilon$ using GCV stopping criterion}
+	\includegraphics[width=0.95\linewidth]{"Keister_guaranteed_time_GCV_C1_d4_r4_2018-Aug-19"}
+	\caption[Keister guaranteed:GCV]{Keister function integrated within $\varepsilon$ using GCV stopping criterion using $d=4, r=2$ and $C^1$ transform}
 	\label{fig:keister-guaranteed-GCV}
 \end{figure}
 The Figures \ref{fig:keister-guaranteed-MLE}, \ref{fig:keister-guaranteed-FB} and \ref{fig:keister-guaranteed-GCV} summarizes the result for this example function. 
-For these tests we used the $C^1$ periodization-transformed function $f_{\textup{KeisterP}}(\vx) = f_{\textup{Keister}}(\vPsi(\vx)) \prod_{\ell = 1}^d \Psi'(x_l)$.
-As we can see the stopping criteria was very conservative so the true errors are much smaller than user requested. This could be attributed to the smoothness of the variable transformed ${f}_\textup{Keister}(\vt)$.
+For these tests we used $C^1$ periodization-transformed function $f_{\textup{KeisterP}}(\vx) = f_{\textup{Keister}}(\vPsi(\vx)) \prod_{\ell = 1}^d \Psi'(x_l)$, dimension $d=4$ and Bernoulli order $r=2$.
+As we can see the stopping criteria is very conservative so the true errors are much smaller than user requested. This could be attributed to the smoothness of the variable transformed ${f}_\textup{Keister}(\vt)$.
 
 \item Option pricing
 
@@ -1397,24 +1428,24 @@ Where $S_j = S_0 \exp((r-\sigma^2/2)t_j + \sigma z_j$,
 $d$ - number of dimensions and $T, S, S_0, K, r, \sigma$ are the parameters to be specified.
 
 The Figures \ref{fig:optprice-guaranteed-MLE}, \ref{fig:optprice-guaranteed-FB} and 
-\ref{fig:optprice-guaranteed-GCV} summarizes the results for this example.
+\ref{fig:optprice-guaranteed-GCV} summarizes the results for this example. We used $d=12, r=2$ and $Baker$ periodization transform for this example.
 
 \begin{figure}
 	\centering
-	\includegraphics[width=0.95\linewidth]{"figures/optPrice_guaranteed_time_MLE_Baker_29-Jul-2018 03-10-33"}
-	\caption[Option pricing Guaranteed: MLE]{Option pricing estimated within $\varepsilon$ using empirical Bayes stopping criterion}
+	\includegraphics[width=0.95\linewidth]{"optPrice_guaranteed_time_MLE_Baker_d12_r2_2018-Aug-19"}
+	\caption[Option pricing Guaranteed: MLE]{Option pricing estimated within $\varepsilon$ using empirical Bayes stopping criterion using $d=12, r=1$ and Baker transform}
 	\label{fig:optprice-guaranteed-MLE}
 \end{figure}
 \begin{figure}
 	\centering
-	\includegraphics[width=0.95\linewidth]{"figures/optPrice_guaranteed_time_FB_Baker_29-Jul-2018 04-03-05"}
-	\caption[OptPrice guaranteed : FB]{Option pricing estimated within $\varepsilon$ using Full Bayes stopping criterion}
+	\includegraphics[width=0.95\linewidth]{"optPrice_guaranteed_time_full_Baker_d12_r2_2018-Aug-19"}
+	\caption[OptPrice guaranteed : FB]{Option pricing estimated within $\varepsilon$ using Full Bayes stopping criterion using $d=12, r=1$ and Baker transform}
 	\label{fig:optprice-guaranteed-FB}
 \end{figure}
 \begin{figure}
 	\centering
-	\includegraphics[width=0.95\linewidth]{"figures/optPrice_guaranteed_time_GCV_Baker_29-Jul-2018 05-00-29"}
-	\caption[OptPrice guaranteed : GCV]{Option pricing estimated within $\varepsilon$ using GCV stopping criterion}
+	\includegraphics[width=0.95\linewidth]{"optPrice_guaranteed_time_GCV_Baker_d12_r2_2018-Aug-19"}
+	\caption[OptPrice guaranteed : GCV]{Option pricing estimated within $\varepsilon$ using GCV stopping criterion using $d=12, r=1$ and Baker transform}
 	\label{fig:optprice-guaranteed-GCV}
 \end{figure}
 \end{enumerate}
@@ -1488,7 +1519,7 @@ By adjusting the Bernoulli order $r$ of the kernel and using the appropriately s
 In general, without any assumption on the integrand's mean, the optimal $\hmu$ is just the sample mean and so the order of convergence is defined by the smoothness of the underlying function that is integrated and the variable transformation used. 
 Though the optimal $\hmu$ is just the sample mean, the error bound $\errn$ still depends on the kernel order.
 So when we use higher order $r$, the error bound $\errn$ closely matches the actual error.
-We could integrate using upto $2^{23}$ data points on a 16GB of RAM memory computer within 5 minutes. 
+We could integrate using upto $2^{23}$ data points on a 16GB of RAM memory computer within 2 minutes. 
 Numerical results show that the theoretical error $\errn$ closely matches the actual error but it could still be improved with more tighter error bound especially when the $r$ is smaller.
 
 
@@ -1534,8 +1565,6 @@ Finally, the function approximation is
 \tilde{f}(\vx) &= \tilde{g}(\vpsi( \vx )) \\
 &= \sum w_i C(.,.)
 \end{align*}
-
-\item Deterministic interpretation of Bayesian cubature.
 
 \end{enumerate}
 
