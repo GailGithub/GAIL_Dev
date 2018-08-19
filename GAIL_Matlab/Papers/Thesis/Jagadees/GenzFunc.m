@@ -19,4 +19,6 @@ for i = 2:dim
   e = gail.stdnormcdf(b1);
   fval = fval .* (e-d);
 end
+
+fval(isnan(fval)) = 0; % reset NanN vlaues to zero
 end

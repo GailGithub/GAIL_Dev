@@ -1,17 +1,5 @@
 %% Generate Examples of Asian Arithmetic Mean Option Pricing
-%function [muhat,aMLE,errVec,outAll] = TestAsianArithmeticMeanOptionAutoExample(dim,BernPolyOrder_1,...
-%  ptransform,figSavePath,visiblePlot_1,arbMean_1,stopAtTol,samplingMethod,absTol_arg)
 function [muhat,err,timeVec,outVec] = TestAsianArithmeticMeanOptionAutoExample(varargin)
-
-% sampling = 'Lattice';
-% figSavePath = 'D:/Mega/MyWriteupBackup/';
-% newPath = strcat(figSavePath, sampling, '/', 'arbMean/');
-% 
-% inputArgs = {'dim',12, 'absTol',1e-2, 'order',2, ...
-%                 'ptransform','Baker', 'stopAtTol',true, ...
-%                 'figSavePath',newPath, 'arbMean',true, ...
-%                 'samplingMethod',sampling, 'visiblePlot',true};
-% varargin = inputArgs;
 
 whichExample = 'Pierre';
 dataFileName = [whichExample 'AsianCallExampleAllData.mat'];
@@ -111,9 +99,6 @@ if compGold
   toc
 end
 disp(['mu  = ' num2str(callPriceExact,15) ' +/- ' num2str(2*std(callPriceGold),10)])
-%return
-
-
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -132,46 +117,47 @@ if exist(dataFileName,'file')
     disp('Already have automatic scrambled Bayesian Asian Call')
   end
 end
-if true
-  integrand = @(x) genOptPayoffs(AsianCall,x);
-  dim = AsianCall.timeDim.nSteps;
-  muAsianCallBayesAuto(nRepAuto,1) = 0;
-  %outCallBayes(nRepAuto,1) = 0;
-  
-  % input params initializations
-  ptransform = get_arg('ptransform', varargin);
-  stopAtTol = get_arg('stopAtTol', varargin);
-  figSavePath = get_arg('figSavePath', varargin);
-  visiblePlot = get_arg('visiblePlot', varargin);
-  samplingMethod = get_arg('samplingMethod', varargin);
+integrand = @(x) genOptPayoffs_fixNan(AsianCall,x);
 
-  fName = 'optPrice';
-  
-  inputArgs = varargin;
-  inputArgs{end+1} = 'f'; inputArgs{end+1} = integrand;
-  inputArgs{end+1} = 'fName'; inputArgs{end+1} = fName;
-  %inputArgs{end+1} = 'dim'; inputArgs{end+1} = dim;
-  inputArgs = set_arg('dim', inputArgs, dim);
 
-  % initialise the object based on the sampling method
-  if exist('samplingMethod','var') && ...
-      strcmp(samplingMethod,'Sobol') % use Sobol points
-    obj=cubMLESobol(inputArgs{:});
-  else % use Lattice points
-    obj=cubBayesLattice_g(inputArgs{:});
-  end
+dim = AsianCall.timeDim.nSteps;
+muAsianCallBayesAuto(nRepAuto,1) = 0;
+%outCallBayes(nRepAuto,1) = 0;
 
-  
-  tic
-  for i =  1:nRepAuto
-    gail.TakeNote(i,10)
+% input params initializations
+ptransform = get_arg('ptransform', varargin);
+stopAtTol = get_arg('stopAtTol', varargin);
+figSavePath = get_arg('figSavePath', varargin);
+visiblePlot = get_arg('visiblePlot', varargin);
+samplingMethod = get_arg('samplingMethod', varargin);
 
-    [muAsianCallBayesAuto(i),outCallBayes(i)] = compInteg(obj);
-    timeVecAsianCallBayesAutoo(i) = outCallBayes(i).time;
-    nVecAsianCallBayesAutoo(i) = outCallBayes(i).n;
-  end
-  toc
+fName = 'optPrice';
+
+inputArgs = varargin;
+inputArgs{end+1} = 'f'; inputArgs{end+1} = integrand;
+inputArgs{end+1} = 'fName'; inputArgs{end+1} = fName;
+%inputArgs{end+1} = 'dim'; inputArgs{end+1} = dim;
+inputArgs = set_arg('dim', inputArgs, dim);
+
+% initialise the object based on the sampling method
+if exist('samplingMethod','var') && ...
+    strcmp(samplingMethod,'Sobol') % use Sobol points
+  obj=cubMLESobol(inputArgs{:});
+else % use Lattice points
+  obj=cubBayesLattice_g(inputArgs{:});
 end
+
+
+tic
+for i =  1:nRepAuto
+  gail.TakeNote(i,10)
+  
+  [muAsianCallBayesAuto(i),outCallBayes(i)] = compInteg(obj);
+  timeVecAsianCallBayesAutoo(i) = outCallBayes(i).time;
+  nVecAsianCallBayesAutoo(i) = outCallBayes(i).n;
+end
+toc
+
 errvecAsianCallBayesAutoo = abs(callPriceExact - muAsianCallBayesAuto);
 errmedAsianCallBayesAutoo = median(errvecAsianCallBayesAutoo);
 errtopAsianCallBayesAutoo = quantile(errvecAsianCallBayesAutoo,1-obj.alpha);
@@ -195,6 +181,11 @@ timeVec = timeVecAsianCallBayesAutoo;
 %% save(dataFileName)
 end
 
+% reset NanN vlaues to zero
+function y = genOptPayoffs_fixNan(AsianCall,x)
+y = genOptPayoffs(AsianCall,x);
+y(isnan(y)) = 0;
+end
 
 % picks the input argument from the varargin cell array
 function output = get_arg(argName, inputArgs, defaultVal)

@@ -3,7 +3,7 @@ function plot_fourier_kernel()
 
 n = 512;
 shape_param = [0.2 0.8];
-order = [2 4];
+order = [1 2];
 dim = 1;
 
 % using uniform points
@@ -19,7 +19,7 @@ if dim==1
   leg_text = cell(4,1);
   for r = order
     for sh = shape_param
-      Z(:,i) = kernel(xpts, r, sh);
+      Z(:,i) = kernel(xpts, 2*r, sh);
       leg_text{i} = sprintf('$r=%d,\\gamma=%1.1f$', r, sh);
       i=i+1;
     end
@@ -42,7 +42,7 @@ if dim==2
     for r = order
       hFig = figure('visible','off');
       set(hFig, 'units', 'inches', 'Position', [4 4 6.5 5.5])
-      Z = kernel([X(:) Y(:)], r, sh);
+      Z = kernel([X(:) Y(:)], 2*r, sh);
       meshc(X, Y, reshape(Z, [n, n]));
       
       title(sprintf('$r=%d, \\theta$=%0.2f', r, sh), 'Interpreter','latex')
