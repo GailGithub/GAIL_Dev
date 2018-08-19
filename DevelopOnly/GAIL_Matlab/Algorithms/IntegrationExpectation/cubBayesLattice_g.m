@@ -136,7 +136,7 @@ classdef cubBayesLattice_g < handle
     
     fullBayes = false; % Full Bayes - assumes m and s^2 as hyperparameters,
     GCV = false; % Generalized cross validation
-    vdc_order = flase; % use Lattice points generated in vdc order 
+    vdc_order = true; % use Lattice points generated in vdc order 
 
     % variables to save debug info in each iteration
     errorBdAll = [];
@@ -676,6 +676,13 @@ classdef cubBayesLattice_g < handle
         Lambda(1) = Lambda_ring(1) + length(Lambda_ring);
         % C1 = prod(1 + (a)*constMult*bernPoly(xun),2);  %
         % Lambda = real(fft(C1));
+        
+        if debugEnable == true
+          Lambda_direct = real(fft(C1_alt)); % Note: fft output unnormalized
+          if sum(abs(Lambda_direct-Lambda)) > 1
+            fprintf('Possible error: check Lambda_ring computation')
+          end
+        end
       else
         % direct appraoch to compute first row of the Kernel Gram matrix
         C1 = prod(1 + (a)*constMult*bernPoly(xun),2);  %
@@ -684,16 +691,6 @@ classdef cubBayesLattice_g < handle
         Lambda_ring = 0;
       end
       
-      if debugEnable == true
-        Lambda_direct = abs(fft(C1_alt)); % Note: fft output not normalized
-        if sum(abs(Lambda_direct-Lambda)) > 1
-          fprintf('Possible error: check Lambda_ring computation')
-        end
-        
-        if sum(C1)==length(C1) || Lambda(1)==length(C1)
-          %fprintf('debug');
-        end
-      end
     end
     
     % computes the periodization transform for the given function values
