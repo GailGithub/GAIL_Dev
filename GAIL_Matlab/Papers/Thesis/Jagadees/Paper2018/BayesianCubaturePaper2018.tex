@@ -48,7 +48,7 @@
 \newtheorem{prop}{Proposition}
 \providecommand{\HickernellFJ}{Hickernell}
 \newcommand{\bm}[1]{\boldsymbol{#1}}
-\newcommand{\mSigma}{\Sigma}
+\newcommand{\mSigma}{\mathsf{\Sigma}}
 \newcommand{\mB}{\mathsf{B}}
 \newcommand{\smallocite}[1]{{\small\ocite{#1}}}
 % \newcommand{\bm}[1]{\boldsymbol{#1}}
@@ -628,14 +628,49 @@ Our  Bayesian cubature algorithm increases the sample size until the width of th
 
 \subsection{Example with the Matern kernel}
 
-To demonstrate automatic Bayesian cubature consider the Matern kernel as covariance function:
+To demonstrate automatic Bayesian cubature consider a Mat\'ern covariance kernel:
 \begin{align}
 \label{matern_kernel}
-C_{\theta}(\vx, \vt) = \prod_{k=1}^d \exp(-\theta|\vx_k-\vt_k|)(1+\theta |\vx_k-\vt_k|)
+C_{\theta}(\vx, \vt) = \prod_{k=1}^d \exp(-\theta|\vx_k-\vt_k|)(1+\theta |\vx_k-\vt_k|).
 \end{align}
+Also, consider the integration problem of evaluating  \emph{multivariate normal probabilities}
+\begin{equation}
+\mu = \int_{(\va,\vb)} \frac{\exp\bigl(- \frac 12 \vt^T \mSigma^{-1} \vt \bigr)}{\sqrt{(2 \pi)^d \det(\mSigma)}} \, \dvt,
+\end{equation}
+where $(\va,\vb)$ is a finite, semi-infinite or infinite box in $\reals^d$.  This integral not have an analytic expression for general $\mSigma$, so cubatures are required.  
 
-\paragraph{Multivariate Normal}\label{MVN_example} does not have an analytic expression to compute the integral, So numerical algorithms are necessary to approximate it. But It's domain is $\mathbb{R}$. To integrate with our algorithm it has to be transformed to the unit cube.
-We use the Genz's method for this reason. This method not only transforms the integrand into unit cube but also reduces the original dimension of the problem by 1.
+Genz \cite{Gen93} introduced a variable transformation to transform $\mu$ into an integral on the unit cube.  Let $\mSigma= \mL \mL^T$ be the Cholesky decomposition where $\mL = (l_{jk})_{j,k=1}^d$ is a lower triangular matrix.  Iteratively define
+\begin{gather*}
+\alpha_1 = \Phi(a_1), \qquad \beta_1 = \Phi(b_1)
+\\
+\alpha_j(x_1,...,x_{j-1}) = 
+\\
+\Phi
+\left(
+\frac{1}{l_{jj}} 
+\left(
+a_j - \sum_{k=1}^{j-1} l_{jk} \Phi^{-1}(\alpha_k + x_k(\beta_k-\alpha_k))
+\right)
+\right), 
+\\
+\hspace{5cm} j=2,...,d,
+\\
+\beta_j(x_1,...,x_{j-1}) = 
+\\
+\Phi
+\left(
+\frac{1}{l_{jj}} 
+\left(
+b_j - \sum_{k=1}^{j-1} l_{jk} \Phi^{-1}(\alpha_k + x_k(\beta_k-\alpha_k))
+\right)
+\right), 
+\\
+\hspace{5cm} j=2,...,d,
+\\
+f_{\text{Genz}}(\vx) = \prod_{j=1}^d [\beta_j(\vx) - \alpha_j(\vx)].
+\end{gather*}
+where $\Phi$ is the cumulative standard normal distribution function.  Then, $\mu = \int_{[0,1]^{d-1}} f_{\text{Genz}}(\vx) \, \dvx$.
+
 \begin{figure}
 	\captionsetup[subfigure]{labelformat=empty}
 	\begin{subfigure}[h]{0.48\linewidth}
@@ -644,52 +679,17 @@ We use the Genz's method for this reason. This method not only transforms the in
 	\begin{subfigure}[h]{0.48\linewidth}
 		\includegraphics[width=1.1\linewidth]{GenzFunc_varTx_none}
 	\end{subfigure}
-	\caption{Mutivariate Normal in d=2 and its transformed form of Genz function  $[0,1]^2$}
+	\caption{The original multivarivate Gaussian density (left) \FJHNote{Did you use your $\mL$ from below? Which dimension?}  and the transformed integrand, $f_{\text{Genz}}$ for $d=3$ (right)}
 	\label{fig:MVN_Genz}
 \end{figure}
-\begin{multline*}
-\mu = \int_{[\va,\vb] \in \reals^d} \frac{\exp\bigl(- \frac 12 \vt^T \mSigma^{-1} \vt \bigr)}{\sqrt{(2 \pi)^d \det(\mSigma)}} \, \dvt 
-\\
-\overset{\text{\small\cite{Gen93}}}{=} \,
-\int_{[0,1]^{d-1}} f_{\text{Genz}}(\vx) \, \dvx 
-\end{multline*} 
-where $\mSigma= \mL \mL^T$ is the Cholesky decomposition of the covariance matrix, $\mL = (l_{jk})_{j,k=1}^d$ is a lower triangular matrix, and
-\begin{multline*}
-\valpha_1 = \Phi(a_1), \qquad \vbeta_1 = \Phi(b_1)
-\\
-\valpha_j(x_1,...,x_{j-1}) = 
-\\
-\Phi
-\left(
-\frac{1}{l_{jj}} 
-\left(
-a_j - \sum_{k=1}^{j-1} l_{jk} \Phi^{-1}(\valpha_k + x_k(\vbeta_k-\valpha_k))
-\right)
-\right), 
-\\
-\qquad \qquad \qquad j=2,...,d,
-\\
-\vbeta_j(x_1,...,x_{j-1}) = 
-\\
-\Phi
-\left(
-\frac{1}{l_{jj}} 
-\left(
-b_j - \sum_{k=1}^{j-1} l_{jk} \Phi^{-1}(\valpha_k + x_k(\vbeta_k-\valpha_k))
-\right)
-\right), 
-\\
-\qquad \qquad \qquad j=2,...,d,
-\\
-f_{\text{Genz}}(\vx) = \prod_{j=1}^d [\vbeta_j(\vx) - \valpha_j(\vx)]. \hspace{12ex}
-\end{multline*}
-where $\Phi$ is the cumulative standard normal distribution function.
+
+
 We use the following parameter values in the simulation:
 \begin{equation*}
 \begin{array}{c|ccc}
 & a  & b & L  \\
 \hline
-d=2 
+d=3
 & 
 \begin{pmatrix}
 -6 \\ -2 \\ -2
@@ -703,7 +703,7 @@ d=2
 4 & 1 & 1 \\ 0 & 1 & 0.5 \\ 0 & 0 & 0.25
 \end{pmatrix} 
 \\
-d=3
+d=4
 & 
 \begin{pmatrix}
 -6 \\ -2 \\ -2 \\ 2
@@ -746,7 +746,7 @@ So, our algorithm in the current form is not straightaway usable for any practic
 
 \section{Fast Automatic Bayesian Cubature}\label{sec:fast_BC}
 
-The generic automatic Bayesian cubature algorithm described in the previous section requires $\Order(n^3)$ operations to estimate $\vtheta$, compute the credible interval width, and compute the cubature.  There is also the potential ill-condtioning that can arise.  This section explains how to speed up the calculations and avoid ill-conditioning.  A key is to choose kernels that match the design, $\{\vx_i\}_{i=1}^n$, so that the vector-matrix operations required by Bayesian cubature can be accomplished using fast transforms at a cost of $\Order(n \log(n))$.
+The generic automatic Bayesian cubature algorithm described in the previous section requires $\Order(n^3)$ operations to estimate $\vtheta$, compute the credible interval width, and compute the cubature.  There is also round-off error that can arise.  This section explains how to speed up the calculations and this round-off error.  A key is to choose kernels that match the design, $\{\vx_i\}_{i=1}^n$, so that the vector-matrix operations required by Bayesian cubature can be accomplished using fast transforms at a cost of $\Order(n \log(n))$.
 
 \subsection{Fast transform kernel}
 We make some assumptions about the relationship between the covariance kernel and the design, which will be shown to hold in Section \ref{sec:shift_invariant_kernel} for rank-1 lattices and shift-invariant kernels.  First we introduce the notation
@@ -1172,7 +1172,9 @@ The widths of the credible intervals in \eqref{eq:errMLEAllAsump}, \eqref{FJH:eq
 \frac{2.58}{n^{1/2}}\sqrt{	\frac{\rlambda_1}{n + \rlambda_1} \sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i^2}  \left [ \frac{1}{n + \rlambda_1} + \sum_{i=2}^n \frac{1}{\lambda_i} \right]^{-1}} .
 	\end{align}
 \end{subequations}
-Since $\rlambda_1 = \lambda_1 - n$ and $\lambda \sim n$ it follows $\lambda_1$ is a small value closer to 1. For significantly large $n$, credible intervals $\err_\MLE$ and $\err_\full$ are almost the same, since the Student-t distribution quantile value $t_{n_j-1,0.995}$ approaches $2.58$. Whereas to compare $\err_\GCV$, need little more insight due to the term $\lambda_i^2$ in the denominator. Rewriting it:
+Since $\rlambda_1 = \lambda_1 - n$ and $\lambda \sim n$ it follows $\lambda_1$ is a small value closer to 1. For significantly large $n$, credible intervals $\err_\MLE$ and $\err_\full$ are almost the same, since the Student-t distribution quantile value $t_{n_j-1,0.995}$ approaches $2.58$. 
+
+\iffalse Whereas to compare $\err_\GCV$, need little more insight due to the term $\lambda_i^2$ in the denominator. Rewriting it:
 \begin{align*}
 \err_\GCV^2 & =
 \frac{2.58^2}{n^2}	\frac{\rlambda_1}{n + \rlambda_1} \frac{ \sum_{i=2}^n \left( \frac{\abs{\widetilde{y}_i}^2}{\lambda_i} \frac{1}{\lambda_i} \right)}{ \frac 1n \sum_{i=1}^n \frac{1}{\lambda_i} } 
@@ -1195,21 +1197,21 @@ Thus we can write
 \end{align*}
 This shows the $\err_\GCV$ is more aggressive stopping criterion than $\err_\MLE$. If the chosen kernel is very smooth then eigen values decay very quickly with increasing $n$. 
 
+\fi
+
 We summarize the results of this section and the previous one as follows:
 \begin{prop}
-Any periodic symmetric positive-definite shift-invariant-kernel of the form \eqref{eq:shInv} satisfying properties \eqref{addAssump} that can be matched with rank-1 Lattice data-sites, is a fast-transform-kernel \eqref{fastcompAssump}.
-Thus it has a fast-transform with computational cost of $\Order(n \log n )$ in the form of \emph{Fast Fourier transform}(FFT). Consequently the kernel can be used to construct fast adaptive Bayesian cubature with parameter estimation \eqref{thetaSimple}, stopping criteria \eqref{fastStoppingCriterions} and cubature rule \eqref{muhatGCV-FB-MLE-Simple}.
+Any periodic symmetric, positive definite, shift-invariant covariance kernel of the form \eqref{eq:shInv} scaled to satisfy \eqref{addAssump}, when matched with rank-1 lattice data-sites, must satisfy assumptions \eqref{fastcompAssump}.  The \emph{fast Fourier transform} (FFT)  can be used to compute objective functions used to estimates of $\vtheta$ in \eqref{thetaSimple} and the credible interval widths \eqref{fastStoppingCriterions} in $\Order(n \log(n))$ operations.
 \end{prop}
 
 
-\paragraph{MATLAB program:}
-We have implemented the fast adaptive Bayesian cubature algorithm in MATLAB and is part of the Guaranteed Adaptive Integration Library (GAIL) as a method named \code{cubBayesLattice\_g}, for more details please refer to \cite{ChoEtal17b}. This algorithm uses the kernel defined in  \eqref{the_kernel_eqn_bernoulli} with order $r=2,4$.
+We have implemented the fast adaptive Bayesian cubature algorithm in MATLAB as part of the Guaranteed Adaptive Integration Library (GAIL) \cite{ChoEtal17b} as \allowbreak \code{cubBayesLattice\_g}. This algorithm uses the kernel defined in  \eqref{the_kernel_eqn_bernoulli} with order $r=2,4$.
 
 \section{Numerical Experiments} \label{sec:NumExp}
 
 \subsection{Periodizing Variable Transforms}
 \label{period_var_tx}
-The shift-invariant covariance kernels underlying our Bayesian cubature is based assume that the integrand has a degree of periodicity, with the smoothness assumed depending on the smoothness of the kernel.  While integrands arising in practice may be smooth, they might not be periodic.  Variable transformations can be used to ensure periodicity.
+The shift-invariant covariance kernels underlying our Bayesian cubature  assume that the integrand has a degree of periodicity, with the smoothness assumed depending on the smoothness of the kernel.  While integrands arising in practice may be smooth, they might not be periodic.  Variable transformations can be used to ensure periodicity.
 
 Suppose that the original integral has been expressed as 
 \begin{equation*}
