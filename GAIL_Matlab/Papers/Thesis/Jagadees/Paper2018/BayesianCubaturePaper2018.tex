@@ -1207,7 +1207,7 @@ The widths of the credible intervals in \eqref{eq:errMLEAllAsump}, \eqref{FJH:eq
 \frac{2.58}{n^{1/2}}\sqrt{	\frac{\rlambda_1}{n + \rlambda_1} \sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i^2}  \left [ \frac{1}{n + \rlambda_1} + \sum_{i=2}^n \frac{1}{\lambda_i} \right]^{-1}} .
 	\end{align}
 \end{subequations}
-Since $\rlambda_1 = \lambda_1 - n$ and $\lambda \sim n$ it follows $\lambda_1$ is a small value closer to 1. For significantly large $n$, credible intervals $\err_\MLE$ and $\err_\full$ are almost the same, since the Student-t distribution quantile value $t_{n_j-1,0.995}$ approaches $2.58$. Whereas to compare $\err_\GCV$, it needs little more insight due to the term $\lambda_i^2$ in the denominator. Rewriting it:
+Since $\rlambda_1 = \lambda_1 - n$ and $\lambda \sim n$ it follows $\lambda_1$ is a small value closer to 1. For significantly large $n$, credible intervals $\err_\MLE$ and $\err_\full$ are almost the same, since the Student-t distribution quantile value $t_{n_j-1,0.995}$ approaches $2.58$. Whereas to compare $\err_\GCV$, need little more insight due to the term $\lambda_i^2$ in the denominator. Rewriting it:
 \begin{align*}
 \err_\GCV^2 & =
 \frac{2.58^2}{n^2}	\frac{\rlambda_1}{n + \rlambda_1} \frac{ \sum_{i=2}^n \left( \frac{\abs{\widetilde{y}_i}^2}{\lambda_i} \frac{1}{\lambda_i} \right)}{ \frac 1n \sum_{i=1}^n \frac{1}{\lambda_i} } 
@@ -1232,7 +1232,7 @@ This shows the $\err_\GCV$ is more aggressive stopping criterion than $\err_\MLE
 
 We summarize the results of this section and the previous one as follows:
 \begin{prop}
-Any symmetric positive-definite shift-invariant-kernel of the form \eqref{eq:shInv} satisfying properties \eqref{addAssump} that can be matched with rank-1 Lattice data-sites, is a fast-transform-kernel \eqref{fastcompAssump}.
+Any periodic symmetric positive-definite shift-invariant-kernel of the form \eqref{eq:shInv} satisfying properties \eqref{addAssump} that can be matched with rank-1 Lattice data-sites, is a fast-transform-kernel \eqref{fastcompAssump}.
 Thus it has a fast-transform with computational cost of $\Order(n \log n )$ in the form of \emph{Fast Fourier transform}(FFT). Consequently the kernel can be used to construct fast adaptive Bayesian cubature with parameter estimation \eqref{thetaSimple}, stopping criteria \eqref{fastStoppingCriterions} and cubature rule \eqref{muhatGCV-FB-MLE-Simple}.
 \end{prop}
 
@@ -1513,14 +1513,16 @@ Thus, the elements of $\vZ$ are IID standard Gaussian random variables.
 
 \section{Conclusion}
 
-
-We developed and generalized a technique called \emph{Fast transform kernel}. Using this we further developed fast automatic Bayesian cubature algorithm that has very low computational cost in the order of $\Order(n \log n)$ compared to direct Bayesian cubature of $\Order(n^{3})$, so it can be used in practical applications. 
-By adjusting the Bernoulli order $r$ of the kernel and using the appropriately smoother variable transformation, we could get higher order of error convergence when the integrand is assumed to have zero mean. 
+We developed an automatic Bayesian cubature algorithm that can estimate the integral within user defined error threshold. To accomplish the automatic stopping we provided three different stopping criteria 1. Maximum like estimated based, 2. Full Bayes and 3. Generalized cross validation stopping criterion.
+We demonstrated the bare-bone automatic Bayesian cubature algorithm is computationally intensive and may not be suitable for practical applications without speedup.
+We developed and generalized a technique called \emph{Fast transform kernel}. Using this we further developed fast automatic Bayesian cubature algorithm that has very low computational cost in the order of $\Order(n \log n)$ compared to direct Bayesian cubature of $\Order(n^{3})$. 
+We provided a sample implementation of the proposed fast algorithm using a shift invariant family of kernels based on Bernoulli polynomials.
+By adjusting the Bernoulli order $r$ of the kernel and using the appropriately smoother variable transformation, one could get higher order of error convergence. 
 In general, without any assumption on the integrand's mean, the optimal $\hmu$ is just the sample mean and so the order of convergence is defined by the smoothness of the underlying function that is integrated and the variable transformation used. 
 Though the optimal $\hmu$ is just the sample mean, the error bound $\errn$ still depends on the kernel order.
-So when we use higher order $r$, the error bound $\errn$ closely matches the actual error.
+With higher order $r$ shift invariant kernel, the error bound $\errn$ closely matches the actual error.
 We could integrate using upto $2^{23}$ data points on a 16GB of RAM memory computer within 2 minutes. 
-Numerical results show that the theoretical error $\errn$ closely matches the actual error but it could still be improved with more tighter error bound especially when the $r$ is smaller.
+Numerical results show the theoretical error $\errn$ closely matches the actual error but it could still be improved with more tighter error bound especially when the $r$ is smaller.
 
 
 
