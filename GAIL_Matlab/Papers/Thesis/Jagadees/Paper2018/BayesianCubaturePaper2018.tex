@@ -1217,7 +1217,7 @@ We have implemented the fast adaptive Bayesian cubature algorithm in MATLAB as p
 
 \section{Numerical Experiments} \label{sec:NumExp}
 
-\subsection{Periodizing Variable Transforms}
+\subsection{Periodizing Variable Transformations}
 \label{period_var_tx}
 The shift-invariant covariance kernels underlying our Bayesian cubature  assume that the integrand has a degree of periodicity, with the smoothness assumed depending on the smoothness of the kernel.  While integrands arising in practice may be smooth, they might not be periodic.  Variable transformations can be used to ensure periodicity.
 
@@ -1355,49 +1355,53 @@ I_s(j) &= \frac{(j-2)I_s(j-2)-I_c(j-1)}{2},
 	\label{fig:keister-guaranteed-GCV}
 \end{figure}
 
-Figures \ref{fig:keister-guaranteed-MLE}, \ref{fig:keister-guaranteed-FB} and \ref{fig:keister-guaranteed-GCV} summarizes the numerical tests for this integral.  We used the $C^1$ periodization, dimension $d=4$, and $r=2$.
+Figures \ref{fig:keister-guaranteed-MLE}, \ref{fig:keister-guaranteed-FB} and \ref{fig:keister-guaranteed-GCV} summarizes the numerical tests for this integral.  We used the $C^1$ periodization, dimension $d=4$, and $r=2$. \FJHNote{What is $a$?}
 As we can see the stopping criteria is very conservative so the true errors are much smaller than user requested. \FJHNote{??} This could be attributed to the smoothness of the variable transformed ${f}_\textup{Keister}(\vt)$.
 
 \paragraph{Option pricing}
 
-The price of financial derivatives can often be modeled by high dimensional integrals. If the underlying asset is described in terms of a Brownian motion, $B$, at time $t_1,...,t_d$, then $Z = (B(t_1), ..., B(t_d)) \sim \calN(\vzero,\mSigma)$, where $\mSigma = \left(\min(t_j,t_k) \right)_{j,k=1}^d$, and the fair price of the option is:
+The price of financial derivatives can often be modeled by high dimensional integrals. If the underlying asset is described in terms of a discretized geometric Brownian motion, then the the fair price of the option is:
+\begin{equation*}
+\mu = \int_{\reals^d} \text{payoff}(\vz) \frac{\exp(\frac 12 \vz^T\mSigma^{-1}\vz)}{\sqrt{(2\pi)^d \det(\mSigma)}} \, \dvz = \int_{[0,1]^d} f(\vx) \, \dvx,
+\end{equation*} 
+where {payoff($\cdot$)} defines the discounted payoff of the option,
 \begin{align*}
-\mu = \int_{\reals^d} \text{payoff}(\vz) \frac{\exp(\frac 12 \vz^T\mSigma^{-1}\vz)}{\sqrt{(2\pi)^d \det(\mSigma)}} \dvz = \int_{[0,1]^d} f(\vx) \dvx
-\end{align*}
-where the function {payoff(.)} defines the discounted payoff of the option,
-\begin{align*}
-g(\vx) = \text{payoff}(\vz), & \quad \vz = \mL 
+\mSigma &= (T/d) \bigl(\min(j,k) \bigr)_{j,k=1}^d = \mL \mL^T,\\
+f(\vx) &= \text{payoff} \left(\mL 
 \begin{pmatrix}
 \Phi^{-1}(x_1) \\ \vdots \\ \Phi^{-1}(x_d)
-\end{pmatrix},
+\end{pmatrix} \right).
 \end{align*}
-and $\mL$ is any square matrix satisfying $\mSigma = \mL \mL^T$.
-
-For the Asian arithmetic mean call option:
-\begin{multline*}
-\text{payoff}(\vz) = \max\left( \frac 1d  \sum_{j=1}^d S_j - K, 0 \right) e^{-r t}, \end{multline*}
-Where $S_j = S_0 \exp((r-\sigma^2/2)t_j + \sigma z_j$, 
-$d$ - number of dimensions and $T, S, S_0, K, r, \sigma$ are the parameters to be specified.
+The Asian arithmetic mean call option has a payoff of the form
+\begin{align*}
+\text{payoff}(\vz) &= \max\left( \frac 1d  \sum_{j=1}^d S_j(\vz) - K, 0 \right) \me^{-r T}, \\
+S_j(\vz) &= S_0 \exp\bigl((r-\sigma^2/2)jT/d + \sigma \sqrt{T/d} z_j \bigr).
+\end{align*}
+Here, $T$ denotes the time to maturity of the option, $d$ the number of time steps, $S_0$ the initial price of the stock, $r$ the interest rate, $\sigma$ the volatility, and $K$ the strike price.  
 
 The Figures \ref{fig:optprice-guaranteed-MLE}, \ref{fig:optprice-guaranteed-FB} and 
-\ref{fig:optprice-guaranteed-GCV} summarizes the results for this example. We used $d=12, r=2$ and $Baker$ periodization transform for this example.
+\ref{fig:optprice-guaranteed-GCV} summarize the numerical results for this example using
+\begin{equation*}
+T = ??, \ \ d = 12, \ \ S_0 = ??, \ \ r =  ??, \ \ \sigma = ??, \ \ K = ??.
+\end{equation*}
+Because the integrand has a kink caused by the $\max$ function, it does not help to use a periodizing transform that is very smooth.  We choose the baker's transform and $r = 1$.
 
 \begin{figure}
 	\centering
 	\includegraphics[width=0.95\linewidth]{"optPrice_guaranteed_time_MLE_Baker_d12_r2_2018-Aug-19"}
-	\caption[Option pricing Guaranteed: MLE]{Option pricing estimated within $\varepsilon$ using empirical Bayes stopping criterion using $d=12, r=1$ and Baker transform}
+	\caption[Option pricing Guaranteed: MLE]{Option pricing using the empirical Bayes stopping criterion.}
 	\label{fig:optprice-guaranteed-MLE}
 \end{figure}
 \begin{figure}
 	\centering
 	\includegraphics[width=0.95\linewidth]{"optPrice_guaranteed_time_full_Baker_d12_r2_2018-Aug-19"}
-	\caption[OptPrice guaranteed : FB]{Option pricing estimated within $\varepsilon$ using Full Bayes stopping criterion using $d=12, r=1$ and Baker transform}
+	\caption[OptPrice guaranteed : FB]{Option pricing using the full Bayes stopping criterion.}
 	\label{fig:optprice-guaranteed-FB}
 \end{figure}
 \begin{figure}
 	\centering
 	\includegraphics[width=0.95\linewidth]{"optPrice_guaranteed_time_GCV_Baker_d12_r2_2018-Aug-19"}
-	\caption[OptPrice guaranteed : GCV]{Option pricing estimated within $\varepsilon$ using GCV stopping criterion using $d=12, r=1$ and Baker transform}
+	\caption[OptPrice guaranteed : GCV]{Option pricing using the  GCV stopping criterion.}
 	\label{fig:optprice-guaranteed-GCV}
 \end{figure}
 
@@ -1458,72 +1462,17 @@ Thus, the elements of $\vZ$ are IID standard Gaussian random variables.
 
 
 
+\section{Discussion and Further Work}
 
+We have developed a fast, automatic Bayesian cubature that estimates the integral within a user defined error tolerance.  The stopping criteria arise from assuming the integrand to be a Gaussian process.  There are three versions:  empirical Bayes, full Bayes, and generalized cross-validation.  The computational cost of the automatic Bayesian cubature can be dramatically reduced if the covariance kernel matches the data sites.  We have demonstrated one such match in practice: rank-1 lattice data sites and shift-invariant kernels.  The matrix-vector multiplications can be accomplished using the fast Fourier Transform.  Three integration problems illustrate the performance of our automatic Bayesian cubature.  
 
+Digital sequences and digital shift and/or scramble invariant kernels have the potential of being another match that satisfies the conditions in Section \ref{sec:fast_BC}.  The fast transform would correspond to a fast Walsh transform.  For such kernels, periodicity is not assumed, however, special structure of both the sequences and the kernels are required to take advantage of integrand smoothness.
 
-
-
-
-\section{Conclusion}
-
-We developed an automatic Bayesian cubature algorithm that can estimate the integral within user defined error threshold. To accomplish the automatic stopping we provided three different stopping criteria 1. Maximum like estimated based, 2. Full Bayes and 3. Generalized cross validation stopping criterion.
-We demonstrated the bare-bone automatic Bayesian cubature algorithm is computationally intensive and may not be suitable for practical applications without speedup.
-We developed and generalized a technique called \emph{Fast transform kernel}. Using this we further developed fast automatic Bayesian cubature algorithm that has very low computational cost in the order of $\Order(n \log n)$ compared to direct Bayesian cubature of $\Order(n^{3})$. 
-We provided a sample implementation of the proposed fast algorithm using a shift invariant family of kernels based on Bernoulli polynomials.
-By adjusting the Bernoulli order $r$ of the kernel and using the appropriately smoother variable transformation, one could get higher order of error convergence. 
-In general, without any assumption on the integrand's mean, the optimal $\hmu$ is just the sample mean and so the order of convergence is defined by the smoothness of the underlying function that is integrated and the variable transformation used. 
-Though the optimal $\hmu$ is just the sample mean, the error bound $\errn$ still depends on the kernel order.
-With higher order $r$ shift invariant kernel, the error bound $\errn$ closely matches the actual error.
-We could integrate using upto $2^{23}$ data points on a 16GB of RAM memory computer within 2 minutes. 
-Numerical results show the theoretical error $\errn$ closely matches the actual error but it could still be improved with more tighter error bound especially when the $r$ is smaller.
-
-
-
-
-
-\section{Future work}
-As an extension to the ideas and techniques established in this work, the following are considered potential future work
-
-\begin{enumerate}
-
-
-\item Sobol points and Fast Walsh Transform (FWT)
-
-We have shown one example of a special form of kernel with defined requirements to build a \textit{Fast transform kernel}.
-Using the established generalized requirements for a {fast-transform-kernel}, we could use the same approach with other point-sets and matching kernels to achieve similar or better performance and accuracy. One such point-sets that to consider in future is, \textit{Sobol points} and with appropriate choice of kernel, which should lead to \textit{Fast Walsh Transform}.
-
-\item Control variates
-
-We would like to approximate a function of the form
-$ (f - \beta_1 g_1 -, ... , - \beta_p g_p) $
-then
-\begin{align*}
-f = \calN \left( \beta_0 + \beta_1 g_1 + , ... , + \beta_p g_p, s^2 \mC  \right)
-\end{align*}
-
-\item Function approximation
-
-Let us consider approximating a function of the form
-\begin{align*}
-\int_{[0,1]^d} \underbrace{ f(\vphi(\vt)) . \abs{\frac{\partial \vphi}{\partial \vt}} }_{g(\vt)} \dvt
-\end{align*}
-where $\abs{\frac{\partial \vphi}{\partial \vt}}$ is Jacobian and then
-
-\begin{align*}
-g(\vpsi(\vx)) &= f( \underbrace{ \vphi(\vpsi(\vx) }_{\vx } ) . \abs{\frac{\partial \vphi}{\partial \vt} }  (\vpsi(\vx))
-\\
-f(\vx) &= g(\vpsi(\vx)) . \frac{1}{  \abs{\frac{\partial \vphi}{\partial \vt}}  (\vpsi(\vx)) }
-\end{align*}
-Finally, the function approximation is
-
-\begin{align*}
-\tilde{f}(\vx) &= \tilde{g}(\vpsi( \vx )) \\
-&= \sum w_i C(.,.)
-\end{align*}
-
-\end{enumerate}
-
-
+One should be able to adapt our Bayesian cubature to control variates, i.e., assuming  
+\begin{equation*}
+f = \mathcal{GP} \left( \beta_0 + \beta_1 g_1 + , ... , + \beta_p g_p, s^2 C \right),
+\end{equation*}
+for some choice of $g_1, \ldots, g_p$ whose integrals are known, and some parameters $\beta_0, \ldots, \beta_p$ in addition to the $s$ and $C$.  The efficacy of this approach has not yet been explored.
 
 
 
