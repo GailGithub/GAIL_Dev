@@ -48,7 +48,7 @@
 \newtheorem{prop}{Proposition}
 \providecommand{\HickernellFJ}{Hickernell}
 \newcommand{\bm}[1]{\boldsymbol{#1}}
-\newcommand{\mSigma}{\Sigma}
+\newcommand{\mSigma}{\mathsf{\Sigma}}
 \newcommand{\mB}{\mathsf{B}}
 \newcommand{\smallocite}[1]{{\small\ocite{#1}}}
 % \newcommand{\bm}[1]{\boldsymbol{#1}}
@@ -248,11 +248,11 @@
 \maketitle
 
 \begin{abstract}
-Automatic cubatures provide approximations to multidimensional integrals that satisfy user-specified error tolerances.  For multidimensional problems, the sampling density is fixed, but the
-sample size, $n$, is determined automatically. Bayesian cubature postulates that the integrand is an instance of a stochastic process.
-Prior information about the mean and covariance of this process is used to form data-driven error bounds.  However, the process of inferring the mean and covariance governing the stochastic process from $n$ integrand values involves computing matrix inverses and determinants,
-which are in general time-consuming $O(n^3)$ operations.
-Our work employs low discrepancy data sites and matching kernels that lower the  computational cost to $O(n \log n)$.  The confidence interval for the Bayesian posterior error is used to choose $n$ automatically to satisfy the user-defined error tolerance.  This approach is demonstrated using rank-1 lattice sequences and shift-invariant kernels.
+Automatic cubatures approximate multidimensional integrals to user-specified error tolerances.  For large dimensional problems, the sampling density may be fixed, but the
+sample size, $n$, is determined automatically. Bayesian cubature postulates that the integrand is an instance of a stochastic process.  In our case, we assume a Gaussian process parameterized by a constant mean and a covariance function defined by a scale parameter and a function specifying how the integrand values at two different points in the domain are related.
+The hyper-parameters are estimated from integrand values or are given non-informative priors.  This leads to a data-driven error bound on the cubature.  
+
+However, the process just outlined requires vector-matrix operations  with a computational cost of $O(n^3)$, where   $n$ is the number of integrand values. Our innovation is to pair low discrepancy data sites with matching kernels that lower the  computational cost to $O(n \log n)$.  The credible interval for the Bayesian posterior error is used to choose $n$ automatically to satisfy the user-defined error tolerance.  This approach is demonstrated using rank-1 lattice sequences and shift-invariant kernels.
 
 
 \keywords{Bayesian cubature \and Probabilistic numeric methods \and GAIL}
@@ -263,7 +263,7 @@ Our work employs low discrepancy data sites and matching kernels that lower the 
 \section{Introduction}
 \label{intro}
 Cubature is the problem of inferring a numerical value for the integral 
-$ \mu := \int_{\reals^d} g(\vx) \, \dif \vx$ where $\mu$ has no closed form analytic expression. Typically, the multivariate integrand $g$ is only accessible in the form of a black-box function routine. 
+$ \mu := \int_{\reals^d} g(\vx) \, \dif \vx$ where $\mu$ has no closed form analytic expression. Typically, $g$ is only accessible through a black-box function routine. 
 Cubature is a key component of many problems in scientific computing, finance, statistical modeling, and machine learning.  
 
 The integral may often be expressed as
@@ -281,20 +281,19 @@ where the weights, $w_0$, and  $\vw = (w_i)_{i=1}^n \in \reals^n$, and the nodes
 We will construct a reliable stopping criterion that determines the number of integrand values required, $n$, to ensure that the error is no greater than a user-defined error tolerance, i.e., 
 \begin{equation}
 \label{eqn:err_crit} 
-\abs{\mu - \hmu} \leq \errtol 
+\abs{\mu - \hmu} \leq \errtol .
 \end{equation}
-Rather than relying on strong assumptions about the integrand, such as its variance or total variation, we construct a stopping criterion that is data-driven, and based on a credible interval arising from a Bayesian approach to the problem.  We build upon the ideas of Briol et al.~\cite{BriEtal18a}, Diaconis~\cite{DiaconisBayesian}, O'Hagan~\cite{HagenBayes}, Ritter~\cite{RiterAverage}, Rasmussen and Ghahramani~\cite{RasmussenBayesian}, and others.  Our algorithm is an example of \emph{probabilistic numerics}.
+Rather than relying on strong assumptions about the integrand, such as an upper bound on its variance or total variation, we construct a stopping criterion that is based on a credible interval arising from a Bayesian approach to the problem.  We build upon the work of Briol et al.~\cite{BriEtal18a}, Diaconis~\cite{Dia88a}, O'Hagan~\cite{OHa91a}, Ritter~\cite{Rit00a}, Rasmussen and Ghahramani~\cite{RasGha03a}, and others.  Our algorithm is an example of \emph{probabilistic numerics}.
 
 Our primary contribution here is to demonstrate how the choice of a family of covariance kernels that match the low discrepancy sampling nodes facilitates fast computation of the cubature and the data-driven stopping criterion.  Our cubature requires $n$ function values---at a cost of $\$(f)$ each---plus $\Order(n \log(n))$ operations to check whether the error tolerance is satisfied.  The total cost of our algorithm is then $\Order(n [\$(f) + \log(n)])$.  This is significantly fewer operations than the $\Order(n^3)$ typically required for Bayesian cubature.  If function evaluation is expensive, then $\$(f)$ might be similar in magnitude to $\log(n)$.
 
 Hickernell~\cite{Hic17a} compares different approaches to cubature error analysis depending on whether the rule is deterministic or random and whether the integrand is assumed to be deterministic or random.  Error analyis that assumes a deterministic integrand lying in a Banach space, leads to an error bound that is typically impractical for deciding how large $n$ must be to satisfy \eqref{eqn:err_crit}.  The deterministic error bound includes a (semi-) norm of the integrand, which is often more complex to compute than the original integral.
 
-Hickernell and Jim\'enez-Rugama~\cite{HicJim16a,JimHic16a} have developed stopping criteria for cubature rules based on low discrepancy nodes by tracking the discrete Fourier coefficients of the integrand.  The algorithm proposed here also depends on the discrete Fourier coefficients of the integrand, but in a different way.
+Hickernell and Jim\'enez-Rugama~\cite{HicJim16a,JimHic16a} have developed stopping criteria for cubature rules based on low discrepancy nodes by tracking the discrete Fourier coefficients of the integrand.  The algorithm proposed here also depends on the discrete Fourier coefficients of the integrand, but in a different way.  Although we do not explore automatic Bayesian cubature for relative error tolerances, the recent work by Hickernell, Jim\'enez-Rugama, and Li~\cite{HicEtal17a} suggest how this might be done.
 
-Section \ref{sec:BC} explains the Bayesian approach to estimate the posterior cubature error and defines our automatic Bayesian cubature . Although much of this material is not new, it is included for completeness.  We end Section \ref{sec:BC}  by demonstrating why Bayesian cubature is typically quite computationally expensive.
+Section \ref{sec:BC} explains the Bayesian approach to estimate the posterior cubature error and defines our automatic Bayesian cubature. Although much of this material is not new, it is included for completeness.  We end Section \ref{sec:BC}  by demonstrating why Bayesian cubature is typically quite computationally expensive.
 Section \ref{sec:fast_BC}  introduces the concept of covariance kernels that match well the nodes and expedites the computations required by our automatic Bayesian cubature. 
-Section \ref{sec:shift_invariant_kernel} implements this idea for shift invariant kernels and rank-1 lattice nodes.
-Section 5 covers further enhancements to the algorithm to avoid cancellation error and make it faster. Finally, numerical examples are shown using the faster algorithm developed.
+Section \ref{sec:shift_invariant_kernel} implements this idea for shift invariant kernels and rank-1 lattice nodes.  It also describes further enhancements to the algorithm to avoid cancellation error and make it faster.  Numerical examples are provided in Section \ref{sec:NumExp} to demonstrate our new algorithm.  We conclude with a brief discussion.
 
 
 
@@ -305,13 +304,13 @@ Section 5 covers further enhancements to the algorithm to avoid cancellation err
 \subsection{Bayesian posterior error}
 \label{sec:BayesPostErr}
 
-Suppose that the integrand, $f$, is drawn from a Gaussian process, i.e., $f \sim \mathcal{GP}(m,s^2 C_\vtheta)$.  Specifically, $f$ has real-valued mean $m$ and covariance function $s^2C_\vtheta$, where $s$ is a non-negative scale factor $s$ $C_\vtheta: [0,1]^d \times [0,1]^d \to \mathbb{R} $ is a symmetric, positive-definite function and parameterized by $\vtheta$:
+Suppose that the integrand, $f$, is drawn from a Gaussian process, i.e., $f \sim \mathcal{GP}(m,s^2 C_\vtheta)$.  Specifically, $f$ has real-valued constant mean $m$ and covariance function $s^2C_\vtheta$, where $s$ is a non-negative scale factor, and $C_\vtheta: [0,1]^d \times [0,1]^d \to \mathbb{R} $ is a symmetric, positive-definite function and parameterized by $\vtheta$:
 \begin{multline} \label{FJH:eq:CondPosDef}
 \mC^T = \mC,  \qquad \va^T \mC \va > 0 \quad  \forall \va \ne \vzero, 
-\\ \text{where } \mC = \left(  C_\vtheta(\vx_i,\vx_j)  \right)_{i,j=1}^n,\\
+\\ \qquad \text{where } \mC = \left(  C_\vtheta(\vx_i,\vx_j)  \right)_{i,j=1}^n,\\
 \forall n\in \mathbb{N}, \; \vt, \vx, \vx_1, \ldots, \vx_n \in [0,1]^d.
 \end{multline}
-The covariance function, $C$, and the Gram matrix, $\mC$ depend implicitly on $\vtheta$, but sometimes this is omitted in the notation for simplicity's sake.
+The covariance function, $C$, and the Gram matrix, $\mC$ depend implicitly on $\vtheta$, but this may be omitted in the notation for simplicity's sake.
 
 For a Gaussian process, all vectors of linear functionals of $f$ have a multivariate Gaussian distribution. Defining  $\vf  := \left( f(\vx_i)\right)_{i=1}^n$ as the multivariate normal vector of function values, it follows that 
 \begin{subequations} \label{eqn:fGaussDist}
@@ -324,7 +323,7 @@ c_0 &= \int_{[0,1]^{2d}} C_\vtheta(\vx,\vt) \, \dif{\vx} \, \dif{\vt}, \\
 \cov(\vf, \mu) &= \left(  \int_{[0,1]^d} C(\vt,\vx_i) \, \D \vt \right)_{i=1}^n  =: \vc.
 \end{align}
 \end{subequations}
-We need the following Lemma \ref{thrm:condDist} to derive the posterior.
+We need the following Lemma \ref{thrm:condDist} to derive the posterior error of our cubature.  See  \cite[(A.6), (A.11--13)]{RasWil06a} for the proof.
 
 \begin{lemma} \label{thrm:condDist} If $\vY = (\vY_1, \vY_2)^T \sim \calN (\vm,\mC)$, where $\vY_1$ and $\vY_2$ are random vectors of arbitrary length, and 
 	\begin{gather*}
@@ -340,63 +339,31 @@ We need the following Lemma \ref{thrm:condDist} to derive the posterior.
 	\begin{multline*}
 	\vY_1 \vert \vY_2 \; \sim \; \calN \bigl(\vm_1 + \mC_{21}^T \mC_{22}^{-1}(\vY_2 - \vm_2), \\ \mC_{11} - \mC_{21}^T \mC_{22}^{-1} \mC_{21} \bigr).
 	\end{multline*}
-	
-	Inverse of the matrix $\mC$ may be partitioned as \cite{RasWil06a} eqns (A.11, A.12 and A.13):
+Moreover, the inverse of the matrix $\mC$ may be partitioned as
 \begin{gather*}
 \mC^{-1} = \begin{pmatrix} \mA_{11} & \mA_{21}^T \\ \mA_{21} & \mA_{22} \end{pmatrix}, \\
 \mA_{11} = (\mC_{11} - \mC_{12} \mC_{22}^{-1} \mC_{21})^{-1}, \qquad 
 \mA_{21} = -  \mC_{22}^{-1} \mC_{21} \mA_{11}, \\ 
 \mA_{22} = \mC_{22}^{-1} + \mC_{22}^{-1} \mC_{21} \mA_{11} \mC_{21}^T \mC_{22}^{-1}.
 \end{gather*}
-For more details of the proof refer to \cite{RasWil06a} eqn (A.6).
+
 \end{lemma}
-\iffalse
-\begin{proof}:
 
-	
-	Since $\vY_1$ and $\vY_2$ have a Gaussian distribution, the conditional distribution of $\vY_1 \vert \vY_2$ is also Gaussian. So, it is sufficient to prove that $\Ex(\vY_1 \vert \vY_2)$ and $\cov(\vY_1 \vert \vY_2)$ are as hypothesized.
-	
-	Define $\vZ=\vY_1- \mB \vY_2$ where $\mB=\mC_{21}^T \mCInv_{22}$. Note that $\Ex(\vZ) = \vm_1 - \mB \vm_2$.  Elementary calculations establish that $\vZ$ and $\vY_2$ are uncorrelated and therefore independent.   Therefore it follows that the conditional mean is
-	\begin{align*}
-	\Ex(\vY_1 \vert \vY_2) &= \Ex(\vZ + \mB \vY_2 \vert \vY_2) 
-	\\ & = \Ex(\vZ \vert \vY_2) + \Ex(\mB \vY_2 \vert \vY_2) 
-	= \Ex(\vZ) + \mB\vY_2 
-	\\
-	& = \vm_1 + \mB (\vY_2 - \vm_2) \\
-	& =  \vm_1+ \mC_{21}^T \mCInv_{22}(\vY_2 - \vm_2)
-	\end{align*}
-	Likewise the conditional covariance is 
-	\begin{align*}
-	\cov(\vY_1|\vY_2) &=\cov(\vZ + \mB \vY_2|\vY_2) \\
-	& =\cov(\vZ) = \var(\vY_1 - \mB \vY_2)
-	\\
-	& =\cov(\vY_1)+\mB\cov(\vY_2)\mB^T \\
-	& \qquad  \qquad  - 2  \cov(\vY_1,\vY_2) \mB^T
-	\\
-	&=\mC_{11}+\mC_{21}^T\mC_{22}^{-1}\mC_{22}\mC_{22}^{-1}\mC_{21}-2\mC_{21}^T\mC_{22}^{-1}\mC_{21}
-	\\
-	&=\mC_{11}-\mC_{21}^T\mC_{22}^{-1}\mC_{21}.
-	\end{align*}
-	This completes the proof. \qed
 
-	
-\end{proof}
-\fi
-
-Therefore,  it follows from Lemma \ref{thrm:condDist} that the \emph{conditional} distribution of the integral given observed function values, $\vf = \vy$ is also Gaussian:
+It follows from Lemma \ref{thrm:condDist} that the \emph{conditional} distribution of the integral given observed function values, $\vf = \vy$ is also Gaussian:
 \begin{multline} \label{eqn:condInteg}
 \mu | (\vf = \vy) \sim \calN \bigl(m (1 - \vc^T \mC^{-1} \vone)  + \vc^T \mC^{-1} \vy, 
 \\
 s^2(c_0  -\vc ^T \mC^{-1} \vc) \bigr).
 \end{multline}
-
 The natural choice for  the cubature is the posterior mean of the integral, namely, 
 \begin{equation}
 \label{eqn:BayesCub}
 \widehat{\mu}  \vert ( \vf = \vy)
 = m(1 - \vone^T  \mC^{-1}\vc )
-+ \vc^T \mC^{-1} \vy.
++ \vc^T \mC^{-1} \vy,
 \end{equation}
+which takes the form of \eqref{eqn:defn_hmu}.
 Under this definition, the cubature error has zero mean and a variance depending on the choice of nodes:
 \begin{equation*}
 %\label{eqn_error_cond_prob}
@@ -418,7 +385,7 @@ Natually, the $2.58$ and $99\%$ can be replaced by other quantiles and credible 
 
 
 \subsection{Parameter estimation}
-The credible interval in \eqref{eqn_prob_confidence_interval} suggests how our automatic Bayesian cubature proceeds.  Function data is accumulated until we can be confident that the error is no greater than the error tolerance.  However, the credible interval still depends on the parameters $m, s$, and $\vtheta$.  These should not be assumed a priori but be inferred from the data.  This section describes three approaches.
+The credible interval in \eqref{eqn_prob_confidence_interval} suggests how our automatic Bayesian cubature proceeds.  Integrand data is accumulated until the width of the credible interval is no greater than the error tolerance.  However, the credible interval still depends on the parameters $m, s$, and $\vtheta$.  These should not be assumed a priori but be inferred from the data.  This section describes three approaches.
 
 \subsubsection{Empirical Bayes}  \label{sec:MLE}
 One approach to estimate the parameters is via maximum likelihood estimation (MLE).  The log-likelihood function of the parameters given the function data $\vy$ is:
@@ -530,7 +497,7 @@ where
 \times  \left[\frac{(1 - \vc^T \mC^{-1} \vone)^2}{\vone^T \mC^{-1} \vone} + (c_0  -\vc ^T \mC^{-1} \vc) \right].
 \end{multline}
 
-This means that $\mu \vert (\vf = \vy )$, properly centered and scaled, has a Student's $t$-distribution with $n-1$ degrees of freedom.   The estimated integral is the same as in the empirical Bayes case, but the confidence interval is wider:
+This means that $\mu \vert (\vf = \vy )$, properly centered and scaled, has a Student's $t$-distribution with $n-1$ degrees of freedom.   The estimated integral is the same as in the empirical Bayes case, $\hmu_{\textup{full}} = \hmu_{\MLE}$, but the confidence interval is wider:
 \begin{equation}
 \label{eqn_prob_CI_full}
 \mathbb{P}_f \left[
@@ -569,7 +536,7 @@ Thus, \eqref{FJH:eq:CVA} may be re-written as
 \begin{equation*} %\label{FJH:eq:CVB}
 \textup{CV} = \sum_{i=1}^n \left(\frac{\zeta_i}{a_{ii}} \right)^2, \qquad \vzeta = \mC^{-1}(\vy - m \vone).
 \end{equation*}
-Wahba \cite{WahbaGCV} recommended a generalized cross-validation criterion, which replaces the $i^{\text{th}}$ diagonal element of $\mA$ in the denominator by the average diagonal element of $\mA$:
+The generalized cross-validation criterion replaces the $i^{\text{th}}$ diagonal element of $\mA$ in the denominator by the average diagonal element of $\mA$ \cite{CraWah79a,GolHeaWah79a,Wah90}:
 \begin{align} 
 \nonumber
 \textup{GCV} &
@@ -612,7 +579,7 @@ s^2 &= \var[f(\vx_i ) | \vf_{-i} = \vy_{-i}] a_{ii} \\
  \intertext{where}
  \nonumber
  s^2_{\textup{GCV}} & : = \vy^T \left[\mC^{-2} - \frac{\mC^{-2} \vone \vone^T \mC^{-2}}{\vone^T \mC^{-2} \vone}  \right] \vy \\
- &\qquad \qquad  \qquad \qquad  \times \left[ \trace(\mC^{-1}) \right]^{-1} \label{sGCVDef}
+ &\qquad \qquad  \qquad \qquad  \times \left[ \trace(\mC^{-1}) \right]^{-1}. \label{sGCVDef}
 \end{align}
 
 The confidence interval based on generalized cross-validation corresponds to \eqref{eqn_prob_confidence_interval} with the GCV estimates for $m$, $s$, and $\vtheta$:
@@ -659,18 +626,59 @@ Our  Bayesian cubature algorithm increases the sample size until the width of th
   \end{algorithmic}
 \end{algorithm}
 
-\subsection{Example with the Matern kernel}
+\subsection{Example with the Matern kernel} \label{MVN_example}
 
-\FJHNote{What is your integrand?  $d$?  Does $\theta$ really depend on $k$?}  
-We would like to demonstrate and test numerical accuracy and computational cost of the automatic {Bayesian cubature algorithm} using the results obtained so far.
-For this example, we chose multivariate normal as integrand and the Matern kernel as covariance function:
+To demonstrate automatic Bayesian cubature consider a Mat\'ern covariance kernel:
 \begin{align}
 \label{matern_kernel}
-C_{\theta}(\vx, \vt) = \prod_{k=1}^d \exp(-\theta|\vx_k-\vt_k|)(1+\theta |\vx_k-\vt_k|)
+C_{\theta}(\vx, \vt) = \prod_{k=1}^d \exp(-\theta|\vx_k-\vt_k|)(1+\theta |\vx_k-\vt_k|).
 \end{align}
+Also, consider the integration problem of evaluating  \emph{multivariate normal probabilities}
+\begin{equation}
+\mu = \int_{(\va,\vb)} \frac{\exp\bigl(- \frac 12 \vt^T \mSigma^{-1} \vt \bigr)}{\sqrt{(2 \pi)^d \det(\mSigma)}} \, \dvt,
+\end{equation}
+where $(\va,\vb)$ is a finite, semi-infinite or infinite box in $\reals^d$.  This integral not have an analytic expression for general $\mSigma$, so cubatures are required.  
 
-\paragraph{Multivariate Normal}\label{MVN_example} does not have an analytic expression to compute the integral, So numerical algorithms are necessary to approximate it. But It's domain is $\mathbb{R}$. To integrate with our algorithm it has to be transformed to the unit cube.
-We use the Genz's method for this reason. This method not only transforms the integrand into unit cube but also reduces the original dimension of the problem by 1.
+Genz \cite{Gen93} introduced a variable transformation to transform $\mu$ into an integral on the unit cube.  Let $\mSigma= \mL \mL^T$ be the Cholesky decomposition where $\mL = (l_{jk})_{j,k=1}^d$ is a lower triangular matrix.  Iteratively define
+\begin{gather}
+\nonumber
+\alpha_1 = \Phi(a_1), \qquad \beta_1 = \Phi(b_1)
+\\
+\nonumber
+\alpha_j(x_1,...,x_{j-1}) = 
+\\
+\nonumber
+\Phi
+\left(
+\frac{1}{l_{jj}} 
+\left(
+a_j - \sum_{k=1}^{j-1} l_{jk} \Phi^{-1}(\alpha_k + x_k(\beta_k-\alpha_k))
+\right)
+\right), 
+\\
+\nonumber
+\hspace{5cm} j=2,...,d,
+\\
+\nonumber
+\beta_j(x_1,...,x_{j-1}) = 
+\\
+\nonumber
+\Phi
+\left(
+\frac{1}{l_{jj}} 
+\left(
+b_j - \sum_{k=1}^{j-1} l_{jk} \Phi^{-1}(\alpha_k + x_k(\beta_k-\alpha_k))
+\right)
+\right), 
+\\
+\nonumber
+\hspace{5cm} j=2,...,d,
+\\
+\label{fGenzdef}
+f_{\text{Genz}}(\vx) = \prod_{j=1}^d [\beta_j(\vx) - \alpha_j(\vx)].
+\end{gather}
+where $\Phi$ is the cumulative standard normal distribution function.  Then, $\mu = \int_{[0,1]^{d-1}} f_{\text{Genz}}(\vx) \, \dvx$.
+
 \begin{figure}
 	\captionsetup[subfigure]{labelformat=empty}
 	\begin{subfigure}[h]{0.48\linewidth}
@@ -679,52 +687,17 @@ We use the Genz's method for this reason. This method not only transforms the in
 	\begin{subfigure}[h]{0.48\linewidth}
 		\includegraphics[width=1.1\linewidth]{GenzFunc_varTx_none}
 	\end{subfigure}
-	\caption{Mutivariate Normal in d=2 and its transformed form of Genz function  $[0,1]^2$}
+	\caption{The original multivarivate Gaussian density (left) \FJHNote{Did you use your $\mL$ from below? Which dimension?}  and the transformed integrand, $f_{\text{Genz}}$ for $d=3$ (right)}
 	\label{fig:MVN_Genz}
 \end{figure}
-\begin{multline*}
-\mu = \int_{[\va,\vb] \in \reals^d} \frac{\exp\bigl(- \frac 12 \vt^T \mSigma^{-1} \vt \bigr)}{\sqrt{(2 \pi)^d \det(\mSigma)}} \, \dvt 
-\\
-\overset{\text{\small\cite{Gen93}}}{=} \,
-\int_{[0,1]^{d-1}} f_{\text{Genz}}(\vx) \, \dvx 
-\end{multline*} 
-where $\mSigma= \mL \mL^T$ is the Cholesky decomposition of the covariance matrix, $\mL = (l_{jk})_{j,k=1}^d$ is a lower triangular matrix, and
-\begin{multline*}
-\valpha_1 = \Phi(a_1), \qquad \vbeta_1 = \Phi(b_1)
-\\
-\valpha_j(x_1,...,x_{j-1}) = 
-\\
-\Phi
-\left(
-\frac{1}{l_{jj}} 
-\left(
-a_j - \sum_{k=1}^{j-1} l_{jk} \Phi^{-1}(\valpha_k + x_k(\vbeta_k-\valpha_k))
-\right)
-\right), 
-\\
-\qquad \qquad \qquad j=2,...,d,
-\\
-\vbeta_j(x_1,...,x_{j-1}) = 
-\\
-\Phi
-\left(
-\frac{1}{l_{jj}} 
-\left(
-b_j - \sum_{k=1}^{j-1} l_{jk} \Phi^{-1}(\valpha_k + x_k(\vbeta_k-\valpha_k))
-\right)
-\right), 
-\\
-\qquad \qquad \qquad j=2,...,d,
-\\
-f_{\text{Genz}}(\vx) = \prod_{j=1}^d [\vbeta_j(\vx) - \valpha_j(\vx)]. \hspace{12ex}
-\end{multline*}
-where $\Phi$ is the cumulative standard normal distribution function.
+
+
 We use the following parameter values in the simulation:
 \begin{equation*}
 \begin{array}{c|ccc}
 & a  & b & L  \\
 \hline
-d=2 
+d=3
 & 
 \begin{pmatrix}
 -6 \\ -2 \\ -2
@@ -738,7 +711,7 @@ d=2
 4 & 1 & 1 \\ 0 & 1 & 0.5 \\ 0 & 0 & 0.25
 \end{pmatrix} 
 \\
-d=3
+d=4
 & 
 \begin{pmatrix}
 -6 \\ -2 \\ -2 \\ 2
@@ -781,7 +754,7 @@ So, our algorithm in the current form is not straightaway usable for any practic
 
 \section{Fast Automatic Bayesian Cubature}\label{sec:fast_BC}
 
-The generic automatic Bayesian cubature algorithm described in the previous section requires $\Order(n^3)$ operations to estimate $\vtheta$, compute the credible interval width, and compute the cubature.  There is also the potential ill-condtioning that can arise.  This section explains how to speed up the calculations and avoid ill-conditioning.  A key is to choose kernels that match the design, $\{\vx_i\}_{i=1}^n$, so that the vector-matrix operations required by Bayesian cubature can be accomplished using fast transforms at a cost of $\Order(n \log(n))$.
+The generic automatic Bayesian cubature algorithm described in the previous section requires $\Order(n^3)$ operations to estimate $\vtheta$, compute the credible interval width, and compute the cubature.  There is also round-off error that can arise.  This section explains how to speed up the calculations and this round-off error.  A key is to choose kernels that match the design, $\{\vx_i\}_{i=1}^n$, so that the vector-matrix operations required by Bayesian cubature can be accomplished using fast transforms at a cost of $\Order(n \log(n))$.
 
 \subsection{Fast transform kernel}
 We make some assumptions about the relationship between the covariance kernel and the design, which will be shown to hold in Section \ref{sec:shift_invariant_kernel} for rank-1 lattices and shift-invariant kernels.  First we introduce the notation
@@ -1207,7 +1180,9 @@ The widths of the credible intervals in \eqref{eq:errMLEAllAsump}, \eqref{FJH:eq
 \frac{2.58}{n^{1/2}}\sqrt{	\frac{\rlambda_1}{n + \rlambda_1} \sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i^2}  \left [ \frac{1}{n + \rlambda_1} + \sum_{i=2}^n \frac{1}{\lambda_i} \right]^{-1}} .
 	\end{align}
 \end{subequations}
-Since $\rlambda_1 = \lambda_1 - n$ and $\lambda \sim n$ it follows $\lambda_1$ is a small value closer to 1. For significantly large $n$, credible intervals $\err_\MLE$ and $\err_\full$ are almost the same, since the Student-t distribution quantile value $t_{n_j-1,0.995}$ approaches $2.58$. Whereas to compare $\err_\GCV$, need little more insight due to the term $\lambda_i^2$ in the denominator. Rewriting it:
+Since $\rlambda_1 = \lambda_1 - n$ and $\lambda \sim n$ it follows $\lambda_1$ is a small value closer to 1. For significantly large $n$, credible intervals $\err_\MLE$ and $\err_\full$ are almost the same, since the Student-t distribution quantile value $t_{n_j-1,0.995}$ approaches $2.58$. 
+
+\iffalse Whereas to compare $\err_\GCV$, need little more insight due to the term $\lambda_i^2$ in the denominator. Rewriting it:
 \begin{align*}
 \err_\GCV^2 & =
 \frac{2.58^2}{n^2}	\frac{\rlambda_1}{n + \rlambda_1} \frac{ \sum_{i=2}^n \left( \frac{\abs{\widetilde{y}_i}^2}{\lambda_i} \frac{1}{\lambda_i} \right)}{ \frac 1n \sum_{i=1}^n \frac{1}{\lambda_i} } 
@@ -1230,21 +1205,21 @@ Thus we can write
 \end{align*}
 This shows the $\err_\GCV$ is more aggressive stopping criterion than $\err_\MLE$. If the chosen kernel is very smooth then eigen values decay very quickly with increasing $n$. 
 
+\fi
+
 We summarize the results of this section and the previous one as follows:
 \begin{prop}
-Any periodic symmetric positive-definite shift-invariant-kernel of the form \eqref{eq:shInv} satisfying properties \eqref{addAssump} that can be matched with rank-1 Lattice data-sites, is a fast-transform-kernel \eqref{fastcompAssump}.
-Thus it has a fast-transform with computational cost of $\Order(n \log n )$ in the form of \emph{Fast Fourier transform}(FFT). Consequently the kernel can be used to construct fast adaptive Bayesian cubature with parameter estimation \eqref{thetaSimple}, stopping criteria \eqref{fastStoppingCriterions} and cubature rule \eqref{muhatGCV-FB-MLE-Simple}.
+Any periodic symmetric, positive definite, shift-invariant covariance kernel of the form \eqref{eq:shInv} scaled to satisfy \eqref{addAssump}, when matched with rank-1 lattice data-sites, must satisfy assumptions \eqref{fastcompAssump}.  The \emph{fast Fourier transform} (FFT)  can be used to compute objective functions used to estimates of $\vtheta$ in \eqref{thetaSimple} and the credible interval widths \eqref{fastStoppingCriterions} in $\Order(n \log(n))$ operations.
 \end{prop}
 
 
-\paragraph{MATLAB program:}
-We have implemented the fast adaptive Bayesian cubature algorithm in MATLAB and is part of the Guaranteed Adaptive Integration Library (GAIL) as a method named \code{cubBayesLattice\_g}, for more details please refer to \cite{ChoEtal17b}. This algorithm uses the kernel defined in  \eqref{the_kernel_eqn_bernoulli} with order $r=2,4$.
+We have implemented the fast adaptive Bayesian cubature algorithm in MATLAB as part of the Guaranteed Adaptive Integration Library (GAIL) \cite{ChoEtal17b} as \allowbreak \code{cubBayesLattice\_g}. This algorithm uses the kernel defined in  \eqref{the_kernel_eqn_bernoulli} with order $r=2,4$.
 
-\section{Numerical Experiments}
+\section{Numerical Experiments} \label{sec:NumExp}
 
-\subsection{Periodizing Variable Transforms}
+\subsection{Periodizing Variable Transformations}
 \label{period_var_tx}
-The shift-invariant covariance kernels underlying our Bayesian cubature is based assume that the integrand has a degree of periodicity, with the smoothness assumed depending on the smoothness of the kernel.  While integrands arising in practice may be smooth, they might not be periodic.  Variable transformations can be used to ensure periodicity.
+The shift-invariant covariance kernels underlying our Bayesian cubature  assume that the integrand has a degree of periodicity, with the smoothness assumed depending on the smoothness of the kernel.  While integrands arising in practice may be smooth, they might not be periodic.  Variable transformations can be used to ensure periodicity.
 
 Suppose that the original integral has been expressed as 
 \begin{equation*}
@@ -1267,7 +1242,7 @@ f(\vx) = g(\vPsi(\vx)) \prod_{\ell = 1}^d \Psi'(x_l).
 \end{equation}
 \end{subequations}
 If $\Psi$ is sufficiently smooth, $\lim_{x \downarrow 0}x^{-r}\Psi'(x) = \lim_{x \uparrow 1} (x-1)^{-r}\Psi'(x) = 0$ for $ r \in \natzero$, and $g \in C^{(r, \ldots, r)}[0,1]^d$, then $f$ has continuous, periodic derivatives up to order $r$ in each direction.  
-Examples of this kind of transform include \cite{LaurieVarTx}, \cite{Sidi1993}, \cite{Sidi2008FurtherEO}:
+Examples of this kind of transform include \cite{Lau96a}, \cite{Sid93}, \cite{Sid08a}:
 \begin{align*}
 C^0 &: \Psi(x) =  3 x^2 - 2 x^3, \quad   \Psi'(x) = 6x(1-x), \\
 C^1 & : \Psi(x) = x^3(10-15x+6x^2),  \\
@@ -1286,169 +1261,150 @@ Periodizing variable transforms are used for the numerical examples below.  In s
 \subsection{Test Results and Observations}
 \label{sec:numerical_experiments}
 
-Having all the tools and optimization done handy, now we shall run the numerical simulations to see the performance. \code{cubBayesLattice\_g} is used to run these tests.
-
-We used three functions 1. Multivariate Normal, 2. Keister function and 3. Option pricing to test the integration speed and accuracy of \textit{Fast Bayesian cubature algorithm}. A random shift of $\delta \sim \mathcal{U}[0,1)^d$ is added to the rank-1 Lattice points. This provides randomness in the cubature's behavior. The test is run for 100 times and each result is plotted against $\frac{\abs{\mu - \hmu}}{\varepsilon}$. The tests are repeated with four different error thresholds $\varepsilon \in \{10^{-1}, 10^{-2}, 10^{-3}, 10^{-4}\}$ and three stopping criteria we developed in this research. We use $\frac{\abs{\mu - \hmu}}{\varepsilon}$ in x-axis to enable the plot to include all the tests with different $\varepsilon$s. 
+Three integrals were evaluated using the GAIL algorithm \code{cubBayesLattice\_g}:  a multivariate normal probability, the Keister's example, and an option pricing example.  Four different error tolerances, $\varepsilon$,  were set for each example, with the tolerances chosen depending on the difficulty of the problem.  The data sites were the randomly shifted lattice rules supplied by GAIL.  For each integral,  each tolerance, and each of our stoppinc criteria---empirical Bayes, full Bayes, and generalized cross-validation---our algorithm is run  $100$ times.  Each the execution time is plotted against $\abs{\mu - \hmu}/\varepsilon$.  We expect $\abs{\mu - \hmu}/\varepsilon$ to be no greater than one, but hope that it is not too much smaller than one, which would indicate a stopping criterion that is too conservative.
 
 
-\begin{enumerate}
+\paragraph{Multivariate Normal Probability.}
 
-\item Multivariate Normal
-
-This function was already introduced in Section \ref{MVN_example}. We use the variable transformed function $f_{\textup{Genz}}$ as our algorithm needs the integrand to be in unit cube.
-\begin{figure}
-	\captionsetup[subfigure]{labelformat=empty}
-	\centering
-	\begin{subfigure}[h]{0.48\linewidth}
-		\includegraphics[width=1.1\linewidth]{GenzFunc_varTx_C0}
-	\end{subfigure}
-	\caption{$f_{\textup{GenzP}}$: $C^0$ Periodization transformed Genz function.}
-	\label{fig:GenzP}
-\end{figure}
-As we see from \figref{fig:MVN_Genz}, Genz function is not periodic, So we need to also make it periodic (\secref{period_var_tx}) to get the best accuracy with our algorithm. We used $C^0$ periodization-transformed $f_{\textup{GenzP}}(\vx) = f_{\textup{Genz}}(\vPsi(\vx)) \prod_{\ell = 1}^d \Psi'(x_l)$ in the simulations. One can compare \figref{fig:MVN_Genz} with \figref{fig:GenzP} to see the effect of the periodization transform.
-The simulation results for this example function are summarized in figures \figref{fig:mvn-guaranteed-MLE}, \figref{fig:mvn-guaranteed-FB} and \figref{fig:mvn-guaranteed-GCV}. We used $d=3, r=2$ and $C2sin$ periodization transform.
+This example was already introduced in Section \ref{MVN_example}, where we used the Mat\'ern covariance kernel.  Here we apply Sidi's $C^2$  \FJHNote{????} periodization to $ f_{\textup{Genz}}$ defined in \eqref{fGenzdef}, and chose $d = 3$ and $r = \FJHNote{???}.$ The simulation results for this example function are summarized in Figures \ref{fig:mvn-guaranteed-MLE}, \ref{fig:mvn-guaranteed-FB}, and \ref{fig:mvn-guaranteed-GCV}.  In all cases the Bayesian cubature returns an approximation within the prescribed error tolerance.  
 
 \begin{figure}
 	\centering
 	\includegraphics[width=0.95\linewidth]{"MVN_guaranteed_time_MLE_C2sin_d3_r4_2018-Aug-19"}
-	\caption[Guaranteed:]{Multivariate Normal integrated within $\varepsilon$ using empirical Bayes stopping criterion using $d=3, r=2$ and Sidi's $C^2$ transform}
+	\caption[Guaranteed:]{Multivariate normal probability example using the empirical Bayes stopping criterion.}
 	\label{fig:mvn-guaranteed-MLE}
 \end{figure}
+
 \begin{figure}
 	\centering
 	\includegraphics[width=0.95\linewidth]{"MVN_guaranteed_time_full_C2sin_d3_r4_2018-Aug-19"}
-	\caption[MVN guaranteed : FB]{Multivariate Normal integrated within $\varepsilon$ using full-Bayes stopping criterion using $d=3, r=2$ and Sidi's $C^2$ transform}
+	\caption[MVN guaranteed : FB]{Multivariate normal probability example using the full Bayes stopping criterion.}
 	\label{fig:mvn-guaranteed-FB}
 \end{figure}
+
 \begin{figure}
 	\centering
 	\includegraphics[width=0.95\linewidth]{"MVN_guaranteed_time_GCV_C2sin_d3_r4_2018-Aug-19"}
-	\caption[MVN guaranteed : GCV]{Multivariate Normal integrated within $\varepsilon$ using GCV stopping criterion using $d=3, r=2$ and Sidi's $C^2$ transform}
+	\caption[MVN guaranteed : GCV]{Multivariate normal probability example using the GCV stopping criterion.}
 	\label{fig:mvn-guaranteed-GCV}
 \end{figure}
 
-\item Keister function
+\paragraph{Keister's Example.}
 
-This multidimensional integral function is based on the paper \cite{KeisterExample}, inspired by a physics application. 
-\begin{figure}
-	\captionsetup[subfigure]{labelformat=empty}
-	\begin{subfigure}[h]{0.48\linewidth}
-		\includegraphics[width=1.1\linewidth]{Keister_wholeR_1D}
-	\end{subfigure}
-	\begin{subfigure}[h]{0.48\linewidth}
-		\includegraphics[width=1.1\linewidth]{Keister_cube_1D}
-	\end{subfigure}
-	\caption{Keister function in d=2 and its transformed version in $[0,1]^2$ with various values of $a$.}
-	\label{fig:keister}
-\end{figure}
-\begin{align}
-\label{keisterFunction}
-g_{\textup{Keister}}(\vx) =  \cos(\norm{ \vx}) \exp(-\norm{ \vx }^2) \dvx
-\end{align}
-The domain of this function is $\reals^d$ so variation transformation must be used to transform this to $[0,1]^d$. 
-\begin{multline*}
-\int_{\reals^d} \cos(\norm{ \vx}) \exp(-\norm{ \vx }^2)  \dvx  
-\\ = 
-\int_{\reals^d} \cos(a\norm{ \vx}) \exp(-a\norm{ \vx }^2)  a^d \dvx 
-\\ =
-(2\pi)^{\frac d2} a^d \int_{[0,1]^d} \cos(a\norm{ \Phi^{-1}(\vt)})
+This multidimensional integral function comes from \cite{Kei96} and is inspired by a physics application:
+\begin{align*}
+\mu & =  \int_{\reals^d} \cos(\norm{ \vt}) \exp(-\norm{ \vt }^2) \, \dvt \\
+\nonumber
+&  = 
+\int_{\reals^d} \cos(a\norm{ \vt}) \exp(-a\norm{ \vt }^2)  a^d \, \dvt \\
+& = \int_{[0,1]^d} f_{\textup{Keister}}(\vx) \, \dvx,\\
+\intertext{where }
+f_\textup{Keister}(\vx) &= (2\pi)^{\frac d2} a^d \cos(a\norm{ \Phi^{-1}(\vx)}) \\
+& \qquad \qquad \times \exp(-(a^2-\frac{1}{2})\norm{ \Phi^{-1}(\vx) }^2),
+\end{align*}
+and again $\Phi$ is the standard normal distribution.  Also, $a$ should be chosen at least as large as $1/\sqrt{2}$ to ensure that the integrand does not blow up at the boundaries of the unit cube.
+%\begin{figure}
+%	\captionsetup[subfigure]{labelformat=empty}
+%	\begin{subfigure}[h]{0.48\linewidth}
+%		\includegraphics[width=1.1\linewidth]{Keister_wholeR_1D}
+%	\end{subfigure}
+%	\begin{subfigure}[h]{0.48\linewidth}
+%		\includegraphics[width=1.1\linewidth]{Keister_cube_1D}
+%	\end{subfigure}
+%	\caption{Keister function in d=2 and its transformed version in $[0,1]^2$ with various values of $a$.}
+%	\label{fig:keister}
+%\end{figure}
+The true value of $\mu$ can be calculated iteratively in terms of a quadrature as follows:  
+\begin{equation*}
+\mu = \frac{2 \pi^{d/2} I_c(d)}{\Gamma(d/2)}, \quad d=1,2, \ldots
+\end{equation*}
+where $\Gamma$ denotes the gamma function, and
+\begin{align*}
+I_c(1) &= \frac{\sqrt{\pi}}{2 \exp(1/4)}, 
 \\
-\times \exp\left(-(a^2-\frac{1}{2})\norm{ \Phi^{-1}(\vt) }^2\right)  \dvt
-\end{multline*}
-So the transformed function is
-\begin{multline}
-{f}_\textup{Keister}(\vt) = (2\pi)^{\frac d2} a^d \cos(a\norm{ \Phi^{-1}(\vt)}) 
-\\ \times \exp(-(a^2-\frac{1}{2})\norm{ \Phi^{-1}(\vt) }^2)
-\end{multline}
-Where $a > $
-To enforce additional boundary conditions, we could use any desired periodizing variable transforms listed in Section \ref{period_var_tx}.
-The following iterative technique used to compute the true integral:
-\begin{multline*}
-\int_{[0,1]^d} f_{\textup{Keister}}(\vx) \dvx  = \frac{2 \pi^{\frac d2}}{\Gamma(\frac d2)} \text{CI}(d), \quad d=1,2,3,\hdots
+I_s(1) &= \int_{x=0}^\infty \exp(-\vx^T\vx)\sin(\vx) \, \dvx 
 \\
-\text{where}, \Gamma  := \text{gamma function}, \; \text{and}
+& =  0.4244363835020225,
 \\
-I_s(1) = \frac{\sqrt{\pi}}{2 \exp(1/4)}, 
-\\
-I_s(1) = \int_{x=0}^\infty \exp(-\vx^T\vx)\sin(\vx) \dvx 
-\\
-\qquad =  0.4244363835020225,
-\\
-I_c(2) = \frac{1-I_s(1)}{2}, \;
+I_c(2) &= \frac{1-I_s(1)}{2}, \qquad
 I_s(2) = \frac{I_c(1)}{2}
 \\
-I_c(j) = \frac{(j-2)I_c(j-2)-I_s(j-1)}{2},
-\; j =3,4,\hdots
+I_c(j) &= \frac{(j-2)I_c(j-2)-I_s(j-1)}{2},
+\qquad j =3,4,\ldots
 \\
-I_s(j) = \frac{(j-2)I_s(j-2)-I_c(j-1)}{2},
-\; j =3,4,\hdots.
+I_s(j) &= \frac{(j-2)I_s(j-2)-I_c(j-1)}{2},
+\qquad j =3,4,\ldots.
 % ref: https://www.mathworks.com/help/matlab/ref/gamma.html
-\end{multline*}
+\end{align*}
 \begin{figure}
 	\centering
 	\includegraphics[width=0.95\linewidth]{"Keister_guaranteed_time_MLE_C1_d4_r4_2018-Aug-19"}
-	\caption[Keister guaranteed:MLE]{Keister function integrated within $\varepsilon$ using empirical Bayes stopping criterion using $d=4, r=2$ and $C^1$ transform}
+	\caption[Keister guaranteed:MLE]{Keister example using the empirical Bayes stopping criterion.}
 	\label{fig:keister-guaranteed-MLE}
 \end{figure}
 \begin{figure}
 	\centering
 	\includegraphics[width=0.95\linewidth]{"Keister_guaranteed_time_full_C1_d4_r4_2018-Aug-19"}
-	\caption[Keister guaranteed:FB]{Keister function integrated within $\varepsilon$ using full-Bayes stopping criterion using $d=4, r=2$ and $C^1$ transform}
+	\caption[Keister guaranteed:FB]{Keister example using the full Bayes stopping criterion.}
 	\label{fig:keister-guaranteed-FB}
 \end{figure}
 \begin{figure}
 	\centering
 	\includegraphics[width=0.95\linewidth]{"Keister_guaranteed_time_GCV_C1_d4_r4_2018-Aug-19"}
-	\caption[Keister guaranteed:GCV]{Keister function integrated within $\varepsilon$ using GCV stopping criterion using $d=4, r=2$ and $C^1$ transform}
+	\caption[Keister guaranteed:GCV]{Keister example using the GCV stopping criterion.}
 	\label{fig:keister-guaranteed-GCV}
 \end{figure}
-The Figures \ref{fig:keister-guaranteed-MLE}, \ref{fig:keister-guaranteed-FB} and \ref{fig:keister-guaranteed-GCV} summarizes the result for this example function. 
-For these tests we used $C^1$ periodization-transformed function $f_{\textup{KeisterP}}(\vx) = f_{\textup{Keister}}(\vPsi(\vx)) \prod_{\ell = 1}^d \Psi'(x_l)$, dimension $d=4$ and Bernoulli order $r=2$.
-As we can see the stopping criteria is very conservative so the true errors are much smaller than user requested. This could be attributed to the smoothness of the variable transformed ${f}_\textup{Keister}(\vt)$.
 
-\item Option pricing
+Figures \ref{fig:keister-guaranteed-MLE}, \ref{fig:keister-guaranteed-FB} and \ref{fig:keister-guaranteed-GCV} summarizes the numerical tests for this integral.  We used the $C^1$ periodization, dimension $d=4$, and $r=2$. \FJHNote{What is $a$?}
+As we can see the stopping criteria is very conservative so the true errors are much smaller than user requested. \FJHNote{??} This could be attributed to the smoothness of the variable transformed ${f}_\textup{Keister}(\vt)$.
 
-The price of financial derivatives can often be modeled by high dimensional integrals. If the underlying asset is described in terms of a Brownian motion, $B$, at time $t_1,...,t_d$, then $Z = (B(t_1), ..., B(t_d)) \sim \calN(\vzero,\mSigma)$, where $\mSigma = \left(\min(t_j,t_k) \right)_{j,k=1}^d$, and the fair price of the option is:
+\paragraph{Option pricing}
+
+The price of financial derivatives can often be modeled by high dimensional integrals. If the underlying asset is described in terms of a discretized geometric Brownian motion, then the the fair price of the option is:
+\begin{equation*}
+\mu = \int_{\reals^d} \text{payoff}(\vz) \frac{\exp(\frac 12 \vz^T\mSigma^{-1}\vz)}{\sqrt{(2\pi)^d \det(\mSigma)}} \, \dvz = \int_{[0,1]^d} f(\vx) \, \dvx,
+\end{equation*} 
+where {payoff($\cdot$)} defines the discounted payoff of the option,
 \begin{align*}
-\mu = \int_{\reals^d} \text{payoff}(\vz) \frac{\exp(\frac 12 \vz^T\mSigma^{-1}\vz)}{\sqrt{(2\pi)^d \det(\mSigma)}} \dvz = \int_{[0,1]^d} f(\vx) \dvx
-\end{align*}
-where the function {payoff(.)} defines the discounted payoff of the option,
-\begin{align*}
-g(\vx) = \text{payoff}(\vz), & \quad \vz = \mL 
+\mSigma &= (T/d) \bigl(\min(j,k) \bigr)_{j,k=1}^d = \mL \mL^T,\\
+f(\vx) &= \text{payoff} \left(\mL 
 \begin{pmatrix}
 \Phi^{-1}(x_1) \\ \vdots \\ \Phi^{-1}(x_d)
-\end{pmatrix},
+\end{pmatrix} \right).
 \end{align*}
-and $\mL$ is any square matrix satisfying $\mSigma = \mL \mL^T$.
-
-For the Asian arithmetic mean call option:
-\begin{multline*}
-\text{payoff}(\vz) = \max\left( \frac 1d  \sum_{j=1}^d S_j - K, 0 \right) e^{-r t}, \end{multline*}
-Where $S_j = S_0 \exp((r-\sigma^2/2)t_j + \sigma z_j$, 
-$d$ - number of dimensions and $T, S, S_0, K, r, \sigma$ are the parameters to be specified.
+The Asian arithmetic mean call option has a payoff of the form
+\begin{align*}
+\text{payoff}(\vz) &= \max\left( \frac 1d  \sum_{j=1}^d S_j(\vz) - K, 0 \right) \me^{-r T}, \\
+S_j(\vz) &= S_0 \exp\bigl((r-\sigma^2/2)jT/d + \sigma \sqrt{T/d} z_j \bigr).
+\end{align*}
+Here, $T$ denotes the time to maturity of the option, $d$ the number of time steps, $S_0$ the initial price of the stock, $r$ the interest rate, $\sigma$ the volatility, and $K$ the strike price.  
 
 The Figures \ref{fig:optprice-guaranteed-MLE}, \ref{fig:optprice-guaranteed-FB} and 
-\ref{fig:optprice-guaranteed-GCV} summarizes the results for this example. We used $d=12, r=2$ and $Baker$ periodization transform for this example.
+\ref{fig:optprice-guaranteed-GCV} summarize the numerical results for this example using
+\begin{equation*}
+T = ??, \ \ d = 12, \ \ S_0 = ??, \ \ r =  ??, \ \ \sigma = ??, \ \ K = ??.
+\end{equation*}
+Because the integrand has a kink caused by the $\max$ function, it does not help to use a periodizing transform that is very smooth.  We choose the baker's transform and $r = 1$.
 
 \begin{figure}
 	\centering
 	\includegraphics[width=0.95\linewidth]{"optPrice_guaranteed_time_MLE_Baker_d12_r2_2018-Aug-19"}
-	\caption[Option pricing Guaranteed: MLE]{Option pricing estimated within $\varepsilon$ using empirical Bayes stopping criterion using $d=12, r=1$ and Baker transform}
+	\caption[Option pricing Guaranteed: MLE]{Option pricing using the empirical Bayes stopping criterion.}
 	\label{fig:optprice-guaranteed-MLE}
 \end{figure}
 \begin{figure}
 	\centering
 	\includegraphics[width=0.95\linewidth]{"optPrice_guaranteed_time_full_Baker_d12_r2_2018-Aug-19"}
-	\caption[OptPrice guaranteed : FB]{Option pricing estimated within $\varepsilon$ using Full Bayes stopping criterion using $d=12, r=1$ and Baker transform}
+	\caption[OptPrice guaranteed : FB]{Option pricing using the full Bayes stopping criterion.}
 	\label{fig:optprice-guaranteed-FB}
 \end{figure}
 \begin{figure}
 	\centering
 	\includegraphics[width=0.95\linewidth]{"optPrice_guaranteed_time_GCV_Baker_d12_r2_2018-Aug-19"}
-	\caption[OptPrice guaranteed : GCV]{Option pricing estimated within $\varepsilon$ using GCV stopping criterion using $d=12, r=1$ and Baker transform}
+	\caption[OptPrice guaranteed : GCV]{Option pricing using the  GCV stopping criterion.}
 	\label{fig:optprice-guaranteed-GCV}
 \end{figure}
-\end{enumerate}
+
 
 As shown in Figures \ref{fig:mvn-guaranteed-MLE} to \ref{fig:optprice-guaranteed-GCV}, Bayesian cubature algorithm computes the integral within  user specified threshold most of the times except on a few occasions. This is especially the case with option pricing example due to the complexity and high dimension of the integrand. 
 Also notice the algorithm finished within 10seconds of time for Keister and multivariate Normal. For the option pricing it look closer to 70seconds. This is again due to the complexity of the integrand.
@@ -1456,6 +1412,7 @@ Also notice the algorithm finished within 10seconds of time for Keister and mult
 Another noticeable aspect from the plots is how much estimated error differs from the true error. For option pricing example, estimated error is closer to the true error but it is not so much with Keister and multivariate Normal. This could be due to the smoothness of the integrand after the transformation. Obtaining a more accurate error estimate could be a future work.
 
 
+\iffalse
 \subsection{Diagnostics for the Gaussian Process Assumption}
 
 
@@ -1500,77 +1457,22 @@ Thus, the elements of $\vZ$ are IID standard Gaussian random variables.
 	\label{fig:mvn-normplot}
 \end{figure}
 
+\fi
 
 
 
 
+\section{Discussion and Further Work}
 
+We have developed a fast, automatic Bayesian cubature that estimates the integral within a user defined error tolerance.  The stopping criteria arise from assuming the integrand to be a Gaussian process.  There are three versions:  empirical Bayes, full Bayes, and generalized cross-validation.  The computational cost of the automatic Bayesian cubature can be dramatically reduced if the covariance kernel matches the data sites.  We have demonstrated one such match in practice: rank-1 lattice data sites and shift-invariant kernels.  The matrix-vector multiplications can be accomplished using the fast Fourier Transform.  Three integration problems illustrate the performance of our automatic Bayesian cubature.  
 
+Digital sequences and digital shift and/or scramble invariant kernels have the potential of being another match that satisfies the conditions in Section \ref{sec:fast_BC}.  The fast transform would correspond to a fast Walsh transform.  For such kernels, periodicity is not assumed, however, special structure of both the sequences and the kernels are required to take advantage of integrand smoothness.
 
-
-
-
-
-\section{Conclusion}
-
-We developed an automatic Bayesian cubature algorithm that can estimate the integral within user defined error threshold. To accomplish the automatic stopping we provided three different stopping criteria 1. Maximum like estimated based, 2. Full Bayes and 3. Generalized cross validation stopping criterion.
-We demonstrated the bare-bone automatic Bayesian cubature algorithm is computationally intensive and may not be suitable for practical applications without speedup.
-We developed and generalized a technique called \emph{Fast transform kernel}. Using this we further developed fast automatic Bayesian cubature algorithm that has very low computational cost in the order of $\Order(n \log n)$ compared to direct Bayesian cubature of $\Order(n^{3})$. 
-We provided a sample implementation of the proposed fast algorithm using a shift invariant family of kernels based on Bernoulli polynomials.
-By adjusting the Bernoulli order $r$ of the kernel and using the appropriately smoother variable transformation, one could get higher order of error convergence. 
-In general, without any assumption on the integrand's mean, the optimal $\hmu$ is just the sample mean and so the order of convergence is defined by the smoothness of the underlying function that is integrated and the variable transformation used. 
-Though the optimal $\hmu$ is just the sample mean, the error bound $\errn$ still depends on the kernel order.
-With higher order $r$ shift invariant kernel, the error bound $\errn$ closely matches the actual error.
-We could integrate using upto $2^{23}$ data points on a 16GB of RAM memory computer within 2 minutes. 
-Numerical results show the theoretical error $\errn$ closely matches the actual error but it could still be improved with more tighter error bound especially when the $r$ is smaller.
-
-
-
-
-
-\section{Future work}
-As an extension to the ideas and techniques established in this work, the following are considered potential future work
-
-\begin{enumerate}
-
-
-\item Sobol points and Fast Walsh Transform (FWT)
-
-We have shown one example of a special form of kernel with defined requirements to build a \textit{Fast transform kernel}.
-Using the established generalized requirements for a {fast-transform-kernel}, we could use the same approach with other point-sets and matching kernels to achieve similar or better performance and accuracy. One such point-sets that to consider in future is, \textit{Sobol points} and with appropriate choice of kernel, which should lead to \textit{Fast Walsh Transform}.
-
-\item Control variates
-
-We would like to approximate a function of the form
-$ (f - \beta_1 g_1 -, ... , - \beta_p g_p) $
-then
-\begin{align*}
-f = \calN \left( \beta_0 + \beta_1 g_1 + , ... , + \beta_p g_p, s^2 \mC  \right)
-\end{align*}
-
-\item Function approximation
-
-Let us consider approximating a function of the form
-\begin{align*}
-\int_{[0,1]^d} \underbrace{ f(\vphi(\vt)) . \abs{\frac{\partial \vphi}{\partial \vt}} }_{g(\vt)} \dvt
-\end{align*}
-where $\abs{\frac{\partial \vphi}{\partial \vt}}$ is Jacobian and then
-
-\begin{align*}
-g(\vpsi(\vx)) &= f( \underbrace{ \vphi(\vpsi(\vx) }_{\vx } ) . \abs{\frac{\partial \vphi}{\partial \vt} }  (\vpsi(\vx))
-\\
-f(\vx) &= g(\vpsi(\vx)) . \frac{1}{  \abs{\frac{\partial \vphi}{\partial \vt}}  (\vpsi(\vx)) }
-\end{align*}
-Finally, the function approximation is
-
-\begin{align*}
-\tilde{f}(\vx) &= \tilde{g}(\vpsi( \vx )) \\
-&= \sum w_i C(.,.)
-\end{align*}
-
-\end{enumerate}
-
-
+One should be able to adapt our Bayesian cubature to control variates, i.e., assuming  
+\begin{equation*}
+f = \mathcal{GP} \left( \beta_0 + \beta_1 g_1 + , ... , + \beta_p g_p, s^2 C \right),
+\end{equation*}
+for some choice of $g_1, \ldots, g_p$ whose integrals are known, and some parameters $\beta_0, \ldots, \beta_p$ in addition to the $s$ and $C$.  The efficacy of this approach has not yet been explored.
 
 
 
@@ -1642,7 +1544,7 @@ number & number & number \\
 %\bibliographystyle{spmpsci}      % mathematics and physical sciences
 %\bibliographystyle{spphys}       % APS-like style for physics
 %\bibliography{}   % name your BibTeX data base
-\bibliography{mybib,FJHown23,FJH23}
+\bibliography{FJHown23,FJH23}
 \bibliographystyle{spmpsci}
 
 
