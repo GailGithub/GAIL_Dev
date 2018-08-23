@@ -220,7 +220,7 @@
 %\titlerunning{Short form of title}        % if too long for running head
 
 \author{R. Jagadeeswaran         \and
-        Fred. J. Hickernell %etc.
+        Fred J. Hickernell %etc.
 }
 
 %\authorrunning{Short form of author list} % if too long for running head
@@ -297,9 +297,9 @@ Section \ref{sec:shift_invariant_kernel} implements this idea for shift invarian
 
 
 
-\section{Bayesian cubature} \label{sec:BC}
+\section{Bayesian cubature} \label{sec:BC} \FJHNote{Please check the derivations once more.}
 \label{sec:1}
-%Text with citations \cite{RefB} and \cite{RefJ}.
+
 
 \subsection{Bayesian posterior error}
 \label{sec:BayesPostErr}
@@ -516,7 +516,7 @@ Here $t_{n-1,0.995}$ denotes the $99.5$ percentile of a standard Student's $t$-d
 Because the shape parameter, $\vtheta$, enters the definition of the covariance kernel in a non-trivial way, the only way to treat it as a hyperparameter and assign a tractable prior would be for the prior to be discrete.  We believe in practice that choosing such a prior involves more guesswork than using the empirical Bayes estimate of $\vtheta$ in \eqref{eqn:thetaMLE} or the cross-validation approached described next.
 
 
-\subsubsection{Generalized Cross-validation} \label{sec:GCV}
+\subsubsection{Generalized Cross-Validation} \label{sec:GCV}
 A third parameter optimization technique is \emph{leave-one-out cross-validation}.  Let $\widetilde{y}_i = \Ex[f(\vx_i ) | \vf_{-i} = \vy_{-i}]$, where the subscript $-i$ denotes the vector excluding the $i^{\text{th}}$ component.  This is the conditional expectation of $f(\vx_i )$ given all data but the function value at $\vx_i$.  The cross-validation criterion, which is to be minimized, is sum of squares of the difference between these conditional expectations and the observed values:
 \begin{equation} \label{FJH:eq:CVA}
 \textup{CV} = \sum_{i=1}^n (y_i - \widetilde{y}_i)^2.
@@ -689,12 +689,12 @@ where $\Phi$ is the cumulative standard normal distribution function.  Then, $\m
 	\begin{subfigure}[h]{0.48\linewidth}
 		\includegraphics[width=1.1\linewidth]{GenzFunc_varTx_none}
 	\end{subfigure}
-	\caption{The original multivarivate Gaussian density (left) \FJHNote{Did you use your $\mL$ from below? Which dimension?}  and the transformed integrand, $f_{\text{Genz}}$ for $d=3$ (right)}
+	\caption{The original multivarivate Gaussian density (left) \FJHNote{Check the left plot and label the axes.  Did you use your $\mL$ from below? Which dimension?}  and the transformed integrand, $f_{\text{Genz}}$ for $d=3$ (right).}
 	\label{fig:MVN_Genz}
 \end{figure}
 
 
-We use the following parameter values in the simulation:
+We use the following parameter values in the simulation: \FJHNote{Delete $d=4$ if you don't use it.}
 \begin{equation*}
 \begin{array}{c|ccc}
 & a  & b & L  \\
@@ -1184,7 +1184,8 @@ The widths of the credible intervals in \eqref{eq:errMLEAllAsump}, \eqref{FJH:eq
 \end{subequations}
 Since $\rlambda_1 = \lambda_1 - n$ and $\lambda \sim n$ it follows $\lambda_1$ is a small value closer to 1. For significantly large $n$, credible intervals $\err_\MLE$ and $\err_\full$ are almost the same, since the Student-t distribution quantile value $t_{n_j-1,0.995}$ approaches $2.58$. 
 
-\iffalse Whereas to compare $\err_\GCV$, need little more insight due to the term $\lambda_i^2$ in the denominator. Rewriting it:
+\iffalse 
+Whereas to compare $\err_\GCV$, need little more insight due to the term $\lambda_i^2$ in the denominator. Rewriting it:
 \begin{align*}
 \err_\GCV^2 & =
 \frac{2.58^2}{n^2}	\frac{\rlambda_1}{n + \rlambda_1} \frac{ \sum_{i=2}^n \left( \frac{\abs{\widetilde{y}_i}^2}{\lambda_i} \frac{1}{\lambda_i} \right)}{ \frac 1n \sum_{i=1}^n \frac{1}{\lambda_i} } 
@@ -1215,7 +1216,7 @@ Any periodic symmetric, positive definite, shift-invariant covariance kernel of 
 \end{prop}
 
 
-We have implemented the fast adaptive Bayesian cubature algorithm in MATLAB as part of the Guaranteed Adaptive Integration Library (GAIL) \cite{ChoEtal17b} as \allowbreak \code{cubBayesLattice\_g}. This algorithm uses the kernel defined in  \eqref{the_kernel_eqn_bernoulli} with order $r=2,4$.
+We have implemented the fast adaptive Bayesian cubature algorithm in MATLAB as part of the Guaranteed Adaptive Integration Library (GAIL) \cite{ChoEtal17b} as \allowbreak \code{cubBayesLattice\_g}. This algorithm uses the kernel defined in  \eqref{the_kernel_eqn_bernoulli} with  $r=1,2$.  The rank-1 lattice node generator is taken from \FJHNote{\cite{???}}.
 
 \section{Numerical Experiments} \label{sec:NumExp}
 
@@ -1228,9 +1229,9 @@ Suppose that the original integral has been expressed as
 \mu := \int_{[0,1]^d} g(\vt) \, \dif \vt
 \end{equation*}
 where $g$ has sufficient smoothness, but lacks periodicity.  The baker's transform,
-\begin{equation} \label{eq:bakerTrans}
-\vPsi: \vx \mapsto (\Psi(x_1),  \ldots, \Psi(x_d)), \quad \Psi(x)  =1 - 2 \abs{x - 1/2},
-\end{equation}
+\begin{multline} \label{eq:bakerTrans}
+\vPsi: \vx \mapsto (\Psi(x_1),  \ldots, \Psi(x_d)), \\ \Psi(x)  =1 - 2 \abs{x - 1/2},
+\end{multline}
 allows us to write $\mu$ in the form of \eqref{eqn:defn_mu}, where $f(\vx) = g(\vPsi(\vx))$.  
 
 A family of variable transforms take the form
@@ -1244,7 +1245,7 @@ f(\vx) = g(\vPsi(\vx)) \prod_{\ell = 1}^d \Psi'(x_l).
 \end{equation}
 \end{subequations}
 If $\Psi$ is sufficiently smooth, $\lim_{x \downarrow 0}x^{-r}\Psi'(x) = \lim_{x \uparrow 1} (x-1)^{-r}\Psi'(x) = 0$ for $ r \in \natzero$, and $g \in C^{(r, \ldots, r)}[0,1]^d$, then $f$ has continuous, periodic derivatives up to order $r$ in each direction.  
-Examples of this kind of transform include \cite{Lau96a}, \cite{Sid93}, \cite{Sid08a}:
+Examples of this kind of transform include \cite{Lau96a}, \cite{Sid93}, \cite{Sid08a}: \FJHNote{Do we need all of these periodizations?}
 \begin{align*}
 C^0 &: \Psi(x) =  3 x^2 - 2 x^3, \quad   \Psi'(x) = 6x(1-x), \\
 C^1 & : \Psi(x) = x^3(10-15x+6x^2),  \\
@@ -1263,7 +1264,7 @@ Periodizing variable transforms are used for the numerical examples below.  In s
 \subsection{Test Results and Observations}
 \label{sec:numerical_experiments}
 
-Three integrals were evaluated using the GAIL algorithm \code{cubBayesLattice\_g}:  a multivariate normal probability, the Keister's example, and an option pricing example.  Four different error tolerances, $\varepsilon$,  were set for each example, with the tolerances chosen depending on the difficulty of the problem.  The nodes were the randomly shifted lattice rules supplied by GAIL.  For each integral,  each tolerance, and each of our stoppinc criteria---empirical Bayes, full Bayes, and generalized cross-validation---our algorithm is run  $100$ times.  Each the execution time is plotted against $\abs{\mu - \hmu}/\varepsilon$.  We expect $\abs{\mu - \hmu}/\varepsilon$ to be no greater than one, but hope that it is not too much smaller than one, which would indicate a stopping criterion that is too conservative.
+Three integrals were evaluated using the GAIL algorithm \code{cubBayesLattice\_g}:  a multivariate normal probability, the Keister's example, and an option pricing example.  Four different error tolerances, $\varepsilon$,  were set for each example, with the tolerances chosen depending on the difficulty of the problem.  \FJHNote{Change the tolerances for different problems.} The nodes were the randomly shifted lattice rules supplied by GAIL.  For each integral,  each tolerance, and each of our stoppinc criteria---empirical Bayes, full Bayes, and generalized cross-validation---our algorithm is run  $100$ times.  Each the execution time is plotted against $\abs{\mu - \hmu}/\varepsilon$.  We expect $\abs{\mu - \hmu}/\varepsilon$ to be no greater than one, but hope that it is not too much smaller than one, which would indicate a stopping criterion that is too conservative.
 
 
 \paragraph{Multivariate Normal Probability.}
@@ -1298,7 +1299,7 @@ This multidimensional integral function comes from \cite{Kei96} and is inspired 
 \mu & =  \int_{\reals^d} \cos(\norm{ \vt}) \exp(-\norm{ \vt }^2) \, \dvt \\
 \nonumber
 &  = 
-\int_{\reals^d} \cos(a\norm{ \vt}) \exp(-a\norm{ \vt }^2)  a^d \, \dvt \\
+\int_{\reals^d} \cos(a\norm{ \vt}) \exp(-a^2\norm{ \vt }^2)  a^d \, \dvt \\
 & = \int_{[0,1]^d} f_{\textup{Keister}}(\vx) \, \dvx,\\
 \intertext{where }
 f_\textup{Keister}(\vx) &= (2\pi)^{\frac d2} a^d \cos(a\norm{ \Phi^{-1}(\vx)}) \\
@@ -1360,7 +1361,7 @@ I_s(j) &= \frac{(j-2)I_s(j-2)-I_c(j-1)}{2},
 Figures \ref{fig:keister-guaranteed-MLE}, \ref{fig:keister-guaranteed-FB} and \ref{fig:keister-guaranteed-GCV} summarizes the numerical tests for this integral.  We used the $C^1$ periodization, dimension $d=4$, and $r=2$. \FJHNote{What is $a$?}
 As we can see the stopping criteria is very conservative so the true errors are much smaller than user requested. \FJHNote{??} This could be attributed to the smoothness of the variable transformed ${f}_\textup{Keister}(\vt)$.
 
-\paragraph{Option pricing}
+\paragraph{Option Pricing.}
 
 The price of financial derivatives can often be modeled by high dimensional integrals. If the underlying asset is described in terms of a discretized geometric Brownian motion, then the the fair price of the option is:
 \begin{equation*}
@@ -1386,6 +1387,7 @@ The Figures \ref{fig:optprice-guaranteed-MLE}, \ref{fig:optprice-guaranteed-FB} 
 \begin{equation*}
 T = ??, \ \ d = 12, \ \ S_0 = ??, \ \ r =  ??, \ \ \sigma = ??, \ \ K = ??.
 \end{equation*}
+Moreover, $\mL$ is chosen to be the matrix of eigenvectors of $\mSigma$ times the square root of the diagonal matrix of eigenvalues of $\mSigma$.
 Because the integrand has a kink caused by the $\max$ function, it does not help to use a periodizing transform that is very smooth.  We choose the baker's transform and $r = 1$.
 
 \begin{figure}
@@ -1472,7 +1474,7 @@ Digital sequences and digital shift and/or scramble invariant kernels have the p
 
 One should be able to adapt our Bayesian cubature to control variates, i.e., assuming  
 \begin{equation*}
-f = \mathcal{GP} \left( \beta_0 + \beta_1 g_1 + , ... , + \beta_p g_p, s^2 C \right),
+f = \mathcal{GP} \left( \beta_0 + \beta_1 g_1 + \cdots + \beta_p g_p, s^2 C \right),
 \end{equation*}
 for some choice of $g_1, \ldots, g_p$ whose integrals are known, and some parameters $\beta_0, \ldots, \beta_p$ in addition to the $s$ and $C$.  The efficacy of this approach has not yet been explored.
 
