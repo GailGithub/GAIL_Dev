@@ -42,6 +42,7 @@ if exist('samplingMethod','var') && ...
 else % use Lattice points
   obj=cubBayesLattice_g(inputArgs{:});
 end
+plotObjectiveFunc(obj);
 
 nRep = 100;
 muhatVec = zeros(nRep,1);
@@ -52,7 +53,6 @@ for i=1:nRep
 end
 muhat = median(muhatVec);
 
-%plotMLE_Loss(obj);
 toc
 
 errVec = abs(exactInteg - muhatVec);

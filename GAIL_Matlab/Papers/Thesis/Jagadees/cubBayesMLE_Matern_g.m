@@ -1,4 +1,4 @@
-function [muhat,out]=cubMLEBasic(f,nvec,domain,whSample,whKer,powerFuncMethod)
+function [muhat,out]=cubBayesMLE_Matern_g(varargin)
 %CUBMLE Monte Carlo method to estimate the mean of a random variable
 %
 %   tmu = cubML(Yrand,absTol,relTol,alpha,nSig,inflate) estimates the mean,
@@ -12,34 +12,26 @@ function [muhat,out]=cubMLEBasic(f,nvec,domain,whSample,whKer,powerFuncMethod)
 %
 % This is a heuristic algorithm based on a Central Limit Theorem
 % approximation
-if nargin < 7
-  if ~exist('powerFuncMethod','var') || isempty(powerFuncMethod)
-    powerFuncMethod='cauchy';  %technique to compute power function%
-  end
-  if nargin < 6
-    if nargin < 5
-      whKer = 'Mat1'; %type of kernel
-      if nargin < 4
-        whSample = 'Sobol'; %type of sampling, scrambled Sobol
-        if nargin < 3
-          domain = [0;1]; %dimension
-          if nargin < 2
-            nvec = 2^10; %number of samples
-            if nargin < 1
-              f = @(x) x.^2; %function
-            end
-          end
-        end
-      end
-    end
-  end
-end
 
+% f,nvec,domain,whSample,whKer,powerFuncMethod
+default_args.f = @(x) x.^2; %function
+default_args.nvec = 2^10; %number of samples
+default_args.whSample = 'Sobol'; %type of sampling, scrambled Sobol
+default_args.whKer = 'Mat1'; %type of kernel
+default_args.powerFuncMethod = 'cauchy';
+s_args = parse_args(default_args, varargin{:});
+
+f = s_args.f;
+whKer = s_args.whKer;
+domain = repmat([0;1], 1,s_args.dim);
+
+mvec = 5:1:13;  %15; % 2^14 comp takes time > 5 hours
+nvec = 2.^mvec;
 tstart = tic; %start the clock
 nmax = max(nvec);
 nn = numel(nvec);
 d = size(domain,2);
-if strcmp(whSample,'Sobol')
+if strcmp(s_args.whSample,'Sobol')
   x = net(scramble(sobolset(d),'MatousekAffineOwen'),nmax);
 end
 fx = f(x);
@@ -63,7 +55,7 @@ for ii = 1:nn
   % compute the approximate mu
   muhat(ii) = kvec'*Kinvy;
   
-  if strcmp(powerFuncMethod, 'cauchy')
+  if strcmp(s_args.powerFuncMethod, 'cauchy')
     eigK = eig(K);
     eigKaug = eig([k0 kvec'; kvec K]);
     disc2 = exp(sum(log(eigKaug(1:nii)) - log(eigK)))*eigKaug(end);
@@ -77,8 +69,17 @@ for ii = 1:nn
     disc2 = 1/sum(uii.^2 ./ eigValKaug);
   end
   out.ErrBd(ii) = 2.58*sqrt(disc2*(fx(1:nii)'*Kinvy)/nii);
+  muminus = muhat(ii) - out.ErrBd(ii);
+  muplus = muhat(ii) + out.ErrBd(ii);
+  
+  if 2*out.ErrBd(ii) <= ...
+      max(s_args.absTol,s_args.relTol*abs(muminus)) + max(s_args.absTol,s_args.relTol*abs(muplus))
+    muhat = muhat(ii);
+    break
+  end
 end
 out.time = toc(tstart);
+out.n = nii;
 end
 
 function val = MLEKernel(shape,x,y,whKer,domain)
@@ -127,6 +128,28 @@ elseif strcmp(whKer,'Mat1')
     kvec = kvec.*(2 - exp(-tempc).*(1+tempc/2) ...
       - exp(-tempb).*(1+tempb/2));
   end
+end
+
+end
+
+function s_args = parse_args(s_args, varargin)
+
+iStart = 1;
+
+% parse each input argument passed
+if nargin >= iStart
+  wh = find(strcmp(varargin(iStart:end),'f'));
+  if ~isempty(wh), s_args.f = varargin{wh+iStart}; end
+  wh = find(strcmp(varargin(iStart:end),'dim'));
+  if ~isempty(wh), s_args.dim = varargin{wh+iStart}; end
+  wh = find(strcmp(varargin(iStart:end),'absTol'));
+  if ~isempty(wh), s_args.absTol = varargin{wh+iStart}; end
+  wh = find(strcmp(varargin(iStart:end),'relTol'));
+  if ~isempty(wh), s_args.relTol = varargin{wh+iStart}; end
+  wh = find(strcmp(varargin(iStart:end),'stopAtTol'));
+  if ~isempty(wh), s_args.stopAtTol = varargin{wh+iStart}; end
+  wh = find(strcmp(varargin(iStart:end),'fName'));
+  if ~isempty(wh), s_args.fName = varargin{wh+iStart}; end
 end
 
 end

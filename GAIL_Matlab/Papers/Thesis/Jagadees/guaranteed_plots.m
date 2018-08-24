@@ -1,4 +1,4 @@
-function guaranteed_plot_save(varargin)
+function guaranteed_plots(varargin)
 
 if nargin < 1
 matFilePath = 'D:\Dropbox\fjhickernellGithub\GAIL_Dev-BayesianCubature\GAIL_Matlab\Papers\Thesis\Jagadees\Paper2018\figures\';
