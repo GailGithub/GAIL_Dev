@@ -36,7 +36,8 @@ if strcmp(s_args.whSample,'Sobol')
 end
 fx = f(x);
 out.aMLE(nn,1) = 0;
-muhat(nn,1) = 0;
+muhatVec(nn,1) = 0;
+muhat = 0;
 for ii = 1:nn
   nii = nvec(ii);
   
@@ -50,10 +51,15 @@ for ii = 1:nn
   [K,kvec,k0] = kernelFun(x(1:nii,:),whKer,aMLE);
   Kinv = pinv(K);
   %w = Kinv*kvec;
-  Kinvy = Kinv*fx(1:nii);
+  %Kinvy = Kinv*fx(1:nii);
+  Kinvy = K\fx(1:nii);
+  
+%   if sum(abs(Kinvy_-Kinvy)) > 1
+%     fprintf('Error too big');
+%   end
   
   % compute the approximate mu
-  muhat(ii) = kvec'*Kinvy;
+  muhatVec(ii) = kvec'*Kinvy;
   
   if strcmp(s_args.powerFuncMethod, 'cauchy')
     eigK = eig(K);
@@ -68,18 +74,20 @@ for ii = 1:nn
     uii = eigVecKaug(:,1);
     disc2 = 1/sum(uii.^2 ./ eigValKaug);
   end
-  out.ErrBd(ii) = 2.58*sqrt(disc2*(fx(1:nii)'*Kinvy)/nii);
-  muminus = muhat(ii) - out.ErrBd(ii);
-  muplus = muhat(ii) + out.ErrBd(ii);
+  out.ErrBdVec(ii) = 2.58*sqrt(disc2*(fx(1:nii)'*Kinvy)/nii);
+  muminus = muhatVec(ii) - out.ErrBdVec(ii);
+  muplus = muhatVec(ii) + out.ErrBdVec(ii);
   
-  if 2*out.ErrBd(ii) <= ...
+  if 2*out.ErrBdVec(ii) <= ...
       max(s_args.absTol,s_args.relTol*abs(muminus)) + max(s_args.absTol,s_args.relTol*abs(muplus))
-    muhat = muhat(ii);
+    muhat = muhatVec(ii);
     break
   end
 end
 out.time = toc(tstart);
 out.n = nii;
+out.absTol = s_args.absTol;
+out.reltol = s_args.relTol;
 end
 
 function val = MLEKernel(shape,x,y,whKer,domain)

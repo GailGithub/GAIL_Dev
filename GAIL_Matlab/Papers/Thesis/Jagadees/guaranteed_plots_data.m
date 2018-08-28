@@ -38,11 +38,11 @@ rng(202326) % control random number generation
 stopAtTol = true;
 alpha = 0.01;
 
-testFunArgs(2)=struct('fName','MVN','dim',3,'order',4,'varTx','C2sin',...
+testFunArgs(2)=struct('fName','MVN','dim',2,'order',2,'varTx','C2sin',...
   'sampling','Lattice','arbMean',true,'stopCriterion','GCV');
-testFunArgs(1)=struct('fName','Keister','dim',4,'order',4,'varTx','C1',...
+testFunArgs(1)=struct('fName','Keister','dim',4,'order',2,'varTx','C1sin',...
   'sampling','Lattice','arbMean',true,'stopCriterion','GCV');
-testFunArgs(3)=struct('fName','optPrice','dim',12,'order',2,'varTx','Baker',...
+testFunArgs(3)=struct('fName','optPrice','dim',12,'order',1,'varTx','Baker',...
   'sampling','Lattice','arbMean',true,'stopCriterion','GCV');
 
 for i=1:3
@@ -59,8 +59,8 @@ for testFunArg=testFunArgs(1:end)
   stopCrit=testFunArg.stopCriterion;
   fName = testFunArg.fName;
   
-  if strcmp(fName, 'optPrice')
-    %continue
+  if ~strcmp(fName, 'Keister')
+    continue
   end
   tstart=tic;
   muhatVec = [];
@@ -70,7 +70,13 @@ for testFunArg=testFunArgs(1:end)
   tolVec = [];
   outStructVec = {};
   indx = 1;
-  log10ErrVec = -4:1:-1; 
+  if strcmp(fName, 'MVN')
+    log10ErrVec = -7:1:-4; 
+  elseif strcmp(fName, 'Keister')
+    log10ErrVec = -5:1:-2; 
+  else
+    log10ErrVec = -4:1:-1; 
+  end
   errTolVecText = arrayfun(@(x){sprintf('1e%d', x)}, log10ErrVec);
   errTolVec = 10.^log10ErrVec;
   sampling = testFunArg.sampling;
@@ -100,8 +106,10 @@ for testFunArg=testFunArgs(1:end)
       case 'Keister'
         testFun = @()TestKeisterBayesianCubature(inputArgs{:});
       case 'MVN'
-        if dim~=4
+        if dim==2 || dim==3
           testFun = @()TestMVN_BayesianCubature(inputArgs{:});
+        else
+          continue
         end
       case 'optPrice'
         testFun = @()TestAsianArithmeticMeanOptionAutoExample(inputArgs{:});
@@ -137,7 +145,9 @@ for testFunArg=testFunArgs(1:end)
     'outStructVec','testFunArg','log10ErrVec','fName',...
     'timeStamp','figSavePath','nptsVec','stopCrit');
   
-  guaranteed_plots('', {datFileName});
+  if exist(datFileName, 'file') == 2
+    guaranteed_plots('', {datFileName});
+  end
   
 end
 diary off

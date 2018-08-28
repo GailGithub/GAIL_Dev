@@ -1,6 +1,6 @@
 function IntegrandPlots()
 
-% d-3 problem reduced to d-2 using Genz method
+% d=3 problem reduced to d=2 using Genz method
 MVNParams.C = [4 1 1; 0 1 0.5; 0 0 0.25];
 MVNParams.Cov = MVNParams.C'*MVNParams.C;
 MVNParams.a = [-6 -2 -2];

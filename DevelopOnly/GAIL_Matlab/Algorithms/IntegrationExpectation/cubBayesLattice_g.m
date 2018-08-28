@@ -168,7 +168,7 @@ classdef cubBayesLattice_g < handle
           wh = find(strcmp(varargin(iStart:end),'relTol'));
           if ~isempty(wh), obj.relTol = varargin{wh+iStart}; end
           wh = find(strcmp(varargin(iStart:end),'order'));
-          if ~isempty(wh), obj.order = varargin{wh+iStart}; end
+          if ~isempty(wh), obj.order = 2*varargin{wh+iStart}; end
           wh = find(strcmp(varargin(iStart:end),'ptransform'));
           if ~isempty(wh), obj.ptransform = varargin{wh+iStart}; end
           wh = find(strcmp(varargin(iStart:end),'arbMean'));
@@ -522,7 +522,8 @@ classdef cubBayesLattice_g < handle
       
       numM = length(obj.mvec);
       n = 2.^obj.mvec(end);
-      xptsun = cubBayesLattice_g.simple_lattice_gen(n,obj.dim,true);
+      shift = rand(1,obj.dim);
+      xptsun = cubBayesLattice_g.simple_lattice_gen(n,obj.dim,shift,true);
       fx = obj.ff(xptsun);  % Note: periodization transform already applied
         
       %% plot ObjectiveFunction

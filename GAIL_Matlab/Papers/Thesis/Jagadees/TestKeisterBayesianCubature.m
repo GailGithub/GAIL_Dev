@@ -20,7 +20,7 @@ samplingMethod = get_arg('samplingMethod', varargin);
 
 % define the integrand 
 fName='Keister';
-integrand = @(x) keisterFunc(x,dim,0.8); % a=0.8
+integrand = @(x) keisterFunc(x,dim,1/sqrt(2)); % a=0.8
 exactInteg = Keistertrue(dim);
 
 % set the output dir to save the plots        
@@ -42,7 +42,7 @@ if exist('samplingMethod','var') && ...
 else % use Lattice points
   obj=cubBayesLattice_g(inputArgs{:});
 end
-plotObjectiveFunc(obj);
+%plotObjectiveFunc(obj);
 
 nRep = 100;
 muhatVec = zeros(nRep,1);

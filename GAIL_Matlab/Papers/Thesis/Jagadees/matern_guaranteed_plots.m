@@ -38,7 +38,6 @@ rng(202326) % control random number generation
 stopAtTol = true;
 alpha = 0.01;
 
-dim = 2;
 errTol = 0.001;
 relTol = 0;
 stopAtTol = true;
@@ -46,39 +45,54 @@ stopAtTol = true;
 log10ErrVec = -2:-1:-5;  % 1E-6 cannot be computed
 errTolVecText = arrayfun(@(x){sprintf('1e%d', x)}, log10ErrVec);
 errTolVec = 10.^log10ErrVec;
+orig_dim = 3;  % MVN problem dimension
 
-% d-3 problem reduced to d-2 using Genz method
-MVNParams.C = [4 1 1; 0 1 0.5; 0 0 0.25];
-MVNParams.Cov = MVNParams.C'*MVNParams.C;
-MVNParams.a = [-6 -2 -2];
-MVNParams.b = [5 2 1];
-MVNParams.mu = 0;
-MVNParams.CovProp.C = chol(MVNParams.Cov)';
-muBest = '0.676337324357787483819492990733124315738677978515625';
-muBest = str2double(muBest);
-
+if orig_dim==3
+  % d=3 problem reduced to d=2 using Genz method
+  dim = 2;  % Genz reduced dim
+  MVNParams.C = [4 1 1; 0 1 0.5; 0 0 0.25];
+  MVNParams.Cov = MVNParams.C'*MVNParams.C;
+  MVNParams.a = [-6 -2 -2];
+  MVNParams.b = [5 2 1];
+  MVNParams.mu = 0;
+  MVNParams.CovProp.C = chol(MVNParams.Cov)';
+  muBest = '0.676337324357787483819492990733124315738677978515625';
+  muBest = str2double(muBest);
+elseif orig_dim == 4
+  dim = 3;
+  MVNParams.C = [4 1 1 1; 0 1 0.5 0.5; 0 0 0.25 0.25; 0 0 0 0.25];
+  MVNParams.Cov = MVNParams.C'*MVNParams.C;
+  MVNParams.a = [-6 -2 -2 -2];
+  MVNParams.b = [5 2 1 2];
+  MVNParams.mu = 0;
+  MVNParams.CovProp.C = chol(MVNParams.Cov)';
+  muBest = '0.67451648307312195296248091835877858102321624755859375';
+  muBest = str2double(muBest);
+end
+  
 integrand = @(t) GenzFunc(t,MVNParams);
 fName = 'MVN';
 nRep = 100;
 muhatVec(nRep,1) = 0;
 indx = 1;
 
-for errTol=errTolVec(1:end)
+for errTol=errTolVec(end:-1:1)
+  tic
   for i=1:nRep
-    fprintf('%1.1e \n', errTol)
+    fprintf('%d  %1.1e', indx, errTol)
     inputArgs = {'fName',fName,'dim',dim, 'absTol',errTol,'relTol',relTol, ....
       'stopAtTol',stopAtTol,'f',integrand };
-    tic
     [muhatVec(indx),outVec(indx)] = cubBayesMLE_Matern_g(inputArgs{:});
-    toc
+    fprintf(', time %1.3f n %d \n', outVec(indx).time, outVec(indx).n)
     indx = indx+1;
   end
+  toc
 end
 
 timeStamp = datetime('now','Format','y-MMM-d');
 
-save('matern_guranteed.mat', 'muhatVec', 'outVec','inputArgs',...
-  'MVNParams','muBest')
+save(sprintf('matern_guranteed_%s.mat', timeStamp), 'muhatVec', 'outVec',...
+  'inputArgs','MVNParams','muBest','timeStamp')
 
 fprintf('done')
 
@@ -87,7 +101,7 @@ errVec = abs(muhatVec-muBest);
 S.timeVec = reshape(timeVec, [], length(errTolVec));
 S.errVec = reshape(errVec, [], length(errTolVec));
 S.log10ErrVec = log10ErrVec;
-S.tolVec = repmat(errTolVec, 100,1);
+S.tolVec = repmat(errTolVec, length(timeVec)/length(errTolVec),1);
 S.testFunArg = struct(inputArgs{:});
 S.timeStamp = timeStamp;
 pointSize = 30;
@@ -145,10 +159,11 @@ axis([errTolLimits(1) errTolLimits(2) timeAxisLimits(1) timeAxisLimits(2)])
 
 set(gca,'Xtick',(10.^(log10(errTolLimits(1)):2:log10(errTolLimits(2)))), ...
   'YTick',(10.^(timeTicksLimits(1) :1: timeTicksLimits(2))))
+set(gca, 'XDir','reverse')
 
-figSavePathName = sprintf('%s%s_rapid_time_Matern_d%d_%s.png', ...
+figSavePathName1 = sprintf('%s%s_rapid_time_Matern_d%d_%s.png', ...
   figSavePath, S.testFunArg.fName,...
   S.testFunArg.dim, S.timeStamp );
-saveas(figH1, figSavePathName)
+saveas(figH1, figSavePathName1)
 
 
