@@ -18,14 +18,16 @@ default_args.f = @(x) x.^2; %function
 default_args.nvec = 2^10; %number of samples
 default_args.whSample = 'Sobol'; %type of sampling, scrambled Sobol
 default_args.whKer = 'Mat1'; %type of kernel
-default_args.powerFuncMethod = 'cauchy';
+% default_args.powerFuncMethod = 'cauchy';
+default_args.powerFuncMethod = 'thompson';
+default_args.arbMean = false;
 s_args = parse_args(default_args, varargin{:});
 
 f = s_args.f;
 whKer = s_args.whKer;
 domain = repmat([0;1], 1,s_args.dim);
 
-mvec = 5:1:13;  %15; % 2^14 comp takes time > 5 hours
+mvec = 4:1:13;  %15; % 2^14 comp takes time > 5 hours
 nvec = 2.^mvec;
 tstart = tic; %start the clock
 nmax = max(nvec);
@@ -43,28 +45,27 @@ for ii = 1:nn
   
   % Find the optimal shape parameter
   lnaMLE = fminbnd(@(lna) ...
-    MLEKernel(exp(lna),x(1:nii,:),fx(1:nii),whKer,domain), ...
+    MLEKernel(exp(lna),x(1:nii,:),fx(1:nii),whKer,domain,s_args.arbMean), ...
     -5,5,optimset('TolX',1e-2));
   aMLE = exp(lnaMLE);
   out.aMLE(ii) = aMLE;
   
   [K,kvec,k0] = kernelFun(x(1:nii,:),whKer,aMLE);
-  Kinv = pinv(K);
-  %w = Kinv*kvec;
-  %Kinvy = Kinv*fx(1:nii);
   Kinvy = K\fx(1:nii);
   
-%   if sum(abs(Kinvy_-Kinvy)) > 1
-%     fprintf('Error too big');
-%   end
-  
   % compute the approximate mu
-  muhatVec(ii) = kvec'*Kinvy;
+  if s_args.arbMean == true
+    KinvOne = K\ones(nii, 1);
+    muhat = ( (1-kvec'*KinvOne)/(sum(KinvOne)) + kvec)'*Kinvy;
+  else
+    muhat = kvec'*Kinvy;
+  end
+  muhatVec(ii) = muhat;
   
   if strcmp(s_args.powerFuncMethod, 'cauchy')
-    eigK = eig(K);
+    eigvalK = eig(K);
     eigKaug = eig([k0 kvec'; kvec K]);
-    disc2 = exp(sum(log(eigKaug(1:nii)) - log(eigK)))*eigKaug(end);
+    disc2 = exp(sum(log(eigKaug(1:nii)) - log(eigvalK)))*eigKaug(end);
   else
     % from R.C.Thompson paper
     [eigVecKaug, eigValKaug] = eig([k0 kvec'; kvec K]);
@@ -74,7 +75,15 @@ for ii = 1:nn
     uii = eigVecKaug(:,1);
     disc2 = 1/sum(uii.^2 ./ eigValKaug);
   end
-  out.ErrBdVec(ii) = 2.58*sqrt(disc2*(fx(1:nii)'*Kinvy)/nii);
+  % \vy^T \mC^{-1} \vy - 
+  % (\vone^T \mC^{-1} \vy)^2 / (\vone^T \mC^{-1} \vone)
+  if s_args.arbMean == true
+    s2 = abs((fx(1:nii)'*Kinvy) - (sum(Kinvy)^2/sum(KinvOne)))/nii;
+  else
+    s2 = fx(1:nii)'*Kinvy/nii;
+  end
+  out.ErrBdVec(ii) = 2.58*sqrt(disc2*s2);
+
   muminus = muhatVec(ii) - out.ErrBdVec(ii);
   muplus = muhatVec(ii) + out.ErrBdVec(ii);
   
@@ -90,7 +99,7 @@ out.absTol = s_args.absTol;
 out.reltol = s_args.relTol;
 end
 
-function val = MLEKernel(shape,x,y,whKer,domain)
+function val = MLEKernel(shape,x,y,whKer,domain,arbMean)
 % The function MLEKERNEL is the loss function to be minimized to obtain the
 % shape parameter |shape| that defines the kernel.  It uses data |(x,y)|
 % and the function |kernelFun|.
@@ -101,8 +110,19 @@ nx = size(x,1);
 K = kernelFun(x,whKer,shape,domain);
 [eigvec,eigval] = eig(K,'vector');
 Vty = eigvec'*y;
-%val = sum(log(eigval))/nx + Vty'*(Vty./eigval);
-val = sum(log(eigval))/nx + log(Vty'*(Vty./eigval));  %corrected
+% zero mean
+if arbMean==true
+  % \vy^T \mC^{-1} \vy;
+  parta = Vty'*(Vty./eigval);  
+
+  Vtone = eigvec'*ones(nx,1);
+  % (\vone^T \mC^{-1} \vy)^2 / (\vone^T \mC^{-1} \vone) 
+  partb = (Vtone'*(Vty./eigval))^2/(Vtone'*(Vtone./eigval));
+
+  val = sum(log(eigval))/nx + log(abs(parta - partb));  %corrected
+else
+  val = sum(log(eigval))/nx + log(Vty'*(Vty./eigval));
+end
 end
 
 function [K,kvec,k0] = kernelFun(x,whKer,shape,domain)
@@ -158,6 +178,8 @@ if nargin >= iStart
   if ~isempty(wh), s_args.stopAtTol = varargin{wh+iStart}; end
   wh = find(strcmp(varargin(iStart:end),'fName'));
   if ~isempty(wh), s_args.fName = varargin{wh+iStart}; end
+  wh = find(strcmp(varargin(iStart:end),'arbMean'));
+  if ~isempty(wh), s_args.arbMean = varargin{wh+iStart}; end
 end
 
 end
