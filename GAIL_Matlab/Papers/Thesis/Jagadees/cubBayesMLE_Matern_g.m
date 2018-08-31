@@ -18,9 +18,9 @@ default_args.f = @(x) x.^2; %function
 default_args.nvec = 2^10; %number of samples
 default_args.whSample = 'Sobol'; %type of sampling, scrambled Sobol
 default_args.whKer = 'Mat1'; %type of kernel
-% default_args.powerFuncMethod = 'cauchy';
-default_args.powerFuncMethod = 'thompson';
-default_args.arbMean = false;
+default_args.powerFuncMethod = 'cauchy';
+%default_args.powerFuncMethod = 'thompson';
+default_args.arbMean = true;
 s_args = parse_args(default_args, varargin{:});
 
 f = s_args.f;
@@ -63,7 +63,7 @@ for ii = 1:nn
   muhatVec(ii) = muhat;
   
   if strcmp(s_args.powerFuncMethod, 'cauchy')
-    eigvalK = eig(K);
+    [eigvecK, eigvalK] = eig(K,'vector');
     eigKaug = eig([k0 kvec'; kvec K]);
     disc2 = exp(sum(log(eigKaug(1:nii)) - log(eigvalK)))*eigKaug(end);
   else
@@ -78,7 +78,18 @@ for ii = 1:nn
   % \vy^T \mC^{-1} \vy - 
   % (\vone^T \mC^{-1} \vy)^2 / (\vone^T \mC^{-1} \vone)
   if s_args.arbMean == true
-    s2 = abs((fx(1:nii)'*Kinvy) - (sum(Kinvy)^2/sum(KinvOne)))/nii;
+    %s2 = abs((fx(1:nii)'*Kinvy) - (sum(Kinvy)^2/sum(KinvOne)))/nii;
+
+    y = fx(1:nii);
+    nx = nii;
+    Vty = eigvecK'*y;
+    % \vy^T \mC^{-1} \vy;
+    parta = Vty'*(Vty./eigvalK);  
+
+    Vtone = eigvecK'*ones(nx,1);
+    % (\vone^T \mC^{-1} \vy)^2 / (\vone^T \mC^{-1} \vone) 
+    partb = (Vtone'*(Vty./eigvalK))^2/(Vtone'*(Vtone./eigvalK));
+    s2 = abs(parta - partb)/nii;
   else
     s2 = fx(1:nii)'*Kinvy/nii;
   end
@@ -110,8 +121,8 @@ nx = size(x,1);
 K = kernelFun(x,whKer,shape,domain);
 [eigvec,eigval] = eig(K,'vector');
 Vty = eigvec'*y;
-% zero mean
 if arbMean==true
+  % arbitrary mean
   % \vy^T \mC^{-1} \vy;
   parta = Vty'*(Vty./eigval);  
 
@@ -121,6 +132,7 @@ if arbMean==true
 
   val = sum(log(eigval))/nx + log(abs(parta - partb));  %corrected
 else
+  % zero mean
   val = sum(log(eigval))/nx + log(Vty'*(Vty./eigval));
 end
 end

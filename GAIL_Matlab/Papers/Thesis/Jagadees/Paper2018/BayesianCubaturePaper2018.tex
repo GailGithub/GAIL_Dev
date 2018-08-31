@@ -623,7 +623,7 @@ Our  Bayesian cubature algorithm increases the sample size until the width of th
         
         \EndWhile
         
-        \State Compute $\hmu$, the approximate integral,   according to \eqref{eqn_m_MLE} or \eqref{eqn:muCV}
+        \State Compute $\hmu$, the approximate integral,   according to \eqref{eqn:cubMLE} or \eqref{eqn:muCV}
       \State \Return $\hmu$  and $\err$
   \end{algorithmic}
 \end{algorithm}
@@ -707,19 +707,19 @@ d = 3, \quad \va = \begin{pmatrix}
 \begin{figure}
 \captionsetup[subfigure]{labelformat=empty}
 \centering
-\begin{subfigure}[h]{0.68\linewidth}
-\includegraphics[width=1.1\linewidth]{MVN_guaranteed_time_Matern_d2_2018-Aug-23}
+\begin{subfigure}[h]{0.8\linewidth}
+\includegraphics[width=1.1\linewidth]{MVN_guaranteed_time_Matern_d2_2018-Aug-31}
 \end{subfigure}
-%\centering
-\begin{subfigure}[h]{0.68\linewidth}
-\includegraphics[width=1.1\linewidth]{MVN_rapid_time_Matern_d2_2018-Aug-23}
+\centering
+\begin{subfigure}[h]{0.8\linewidth}
+\includegraphics[width=1.1\linewidth]{MVN_rapid_time_Matern_d2_2018-Aug-31}
 \end{subfigure}
 \caption{Multivariate Normal probability estimated using Matern kernel in d=2 using empirical stopping criterion. Top: Guaranteed integration within error tolerance $\varepsilon$. Bottom: Computation time rapidly increases with increase of $n$}
 \label{fig:MVN_Metern_d2b2}
 \end{figure}
 
 %with Intel i7 3630QM and 16GB RAM memory
-On our test computer, it took 118 minutes to compute $\hmu_n$ with $n=2^{13}$. As shown in Figure \ref{fig:MVN_Metern_d2b2}, computation time increases rapidly with $n$. 
+On our test computer, it took more than an hour to compute $\hmu_n$ with $n=2^{14}$. As shown in Figure \ref{fig:MVN_Metern_d2b2}, computation time increases rapidly with $n$. 
 Especially, Maximum-likelihood-estimation of $\vtheta$ which needs the loss function, is the most time consuming of all. 
 Because the loss functions need to be computed multiple times in every iteration to choose the optimal shape parameter till its minimum is found. 
 Not only the complexity increases, also the kernel matrix becomes highly ill-conditioned with increasing $n$ number of data-points.

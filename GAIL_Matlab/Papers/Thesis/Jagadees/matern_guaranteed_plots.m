@@ -77,7 +77,7 @@ muhatVec(nRep,1) = 0;
 indx = 1;
 
 matFilePath = 'D:\Dropbox\fjhickernellGithub\GAIL_Dev-BayesianCubature\GAIL_Matlab\Papers\Thesis\Jagadees\Paper2018\figures\';
-filename = 'matern_guranteed_2018-Aug-29';
+filename = 'matern_guranteed_2018-Aug-31';
 matFileName = [matFilePath filename '.mat'];
 if exist(matFileName, 'file') == 2
   S = load(matFileName);
@@ -117,19 +117,20 @@ end
 fprintf('done')
 
 timeVec = [S.outVec.time];
-errVec = abs(S.muhatVec-S.muBest);
+errVec = [abs(S.muhatVec-S.muBest)];
+tolVec = [S.outVec.absTol]';
+errVec = errVec./tolVec;
 S.timeVec = reshape(timeVec, [], length(errTolVec));
 S.errVec = reshape(errVec, [], length(errTolVec));
 S.log10ErrVec = log10ErrVec;
 % S.tolVec = repmat(errTolVec, length(timeVec)/length(errTolVec),1);
-tolVec = [S.outVec.absTol];
 S.tolVec = reshape(tolVec, [], length(errTolVec));
 S.testFunArg = struct(S.inputArgs{:});
 timeStamp = S.timeStamp;
 
 pointSize = 30;
 pointShapes = {'o','s','d','^','v','<','>','p','h'};
-errVecLimits = [1E-7, 1E1];
+errVecLimits = [1E-6, 1E1];
 
 figH = figure();
 set(figH, 'units', 'inches', 'Position', [1 1 9 6])
@@ -139,6 +140,7 @@ set(figH, 'units', 'inches', 'Position', [1 1 9 6])
 %plot([1, 1], timeAxisLimits, 'r', 'LineWidth',1)
 timeTicksLimits(1) = floor(log10(min(S.timeVec(:)))); 
 timeTicksLimits(2) = ceil(log10(max(S.timeVec(:))));
+timeTickInterval = ceil(diff(timeTicksLimits)/3);
 plot([1, 1], 10.^timeTicksLimits, 'r', 'LineWidth',1)
 hold on
 
@@ -160,11 +162,12 @@ c.Label.String = 'Error Tolerance, $\varepsilon$';
 
 %assert(max(timeVec(:)) <= timeLimits(2), sprintf('time val greater than max limit %d', timeLimits(2)))
 axis([errVecLimits(1) errVecLimits(2) 10^timeTicksLimits(1) 10^timeTicksLimits(2) ])
-
-%timeTicksLimits(1) = floor(log10(min(S.timeVec(:))));
-%timeTicksLimits(2) = floor(log10(max(S.timeVec(:))));
+timeTicksVec = (timeTicksLimits(1) :timeTickInterval: timeTicksLimits(2));
+if timeTicksVec(end) ~= timeTicksLimits(2)
+  timeTicksVec(end+1) = timeTicksLimits(2);
+end
 set(gca,'Xtick',(10.^(log10(errVecLimits(1)):3:log10(errVecLimits(2)))), ...
-  'YTick',(10.^(timeTicksLimits(1) :1: timeTicksLimits(2))))
+  'YTick',(10.^timeTicksVec))
 
 figSavePathName = sprintf('%s%s_guaranteed_time_Matern_d%d_%s.png', ...
   figSavePath, S.testFunArg.fName,...
@@ -184,7 +187,7 @@ errTolLimits = [1E-6 1E-1];
 axis([errTolLimits(1) errTolLimits(2) 10^timeTicksLimits(1) 10^timeTicksLimits(2)])
 
 set(gca,'Xtick',(10.^(log10(errTolLimits(1)):2:log10(errTolLimits(2)))), ...
-  'YTick',(10.^(timeTicksLimits(1) :1: timeTicksLimits(2))))
+  'YTick',(10.^(timeTicksVec)) )
 set(gca, 'XDir','reverse')
 
 figSavePathName1 = sprintf('%s%s_rapid_time_Matern_d%d_%s.png', ...
