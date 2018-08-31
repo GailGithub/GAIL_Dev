@@ -102,9 +102,9 @@ Keister, B.D.: Multidimensional quadrature algorithms.
 \newblock Computers in Physics \textbf{10}, 119--122 (1996).
 \newblock \doi{10.1063/1.168565}
 
-\bibitem{Lau96a}
-Laurie, D.: Periodizing transformations for numerical integration.
-\newblock J. Comput.\ Appl.\ Math. \textbf{66}, 337---344 (1996)
+\bibitem{Nuy17a}
+Nuyens, D.:
+  \urlprefix\url{https://people.cs.kuleuven.be/~dirk.nuyens/qmc-generators/genvecs/exod2_base2_m20.txt}
 
 \bibitem{OHa91a}
 {O'H}agan, A.: {B}ayes-{H}ermite quadrature.
@@ -130,12 +130,6 @@ Rasmussen, C.E., Williams, C.: Gaussian Processes for Machine Learning.
 Ritter, K.: Average-Case Analysis of Numerical Problems, \emph{Lecture Notes in
   Mathematics}, vol. 1733.
 \newblock Springer-Verlag, Berlin (2000)
-
-\bibitem{Sid93}
-Sidi, A.: A new variable transformation for numerical integration.
-\newblock In: H.~Brass, G.~H\"ammerlin (eds.) Numerical Integration IV, no. 112
-  in International Series of Numerical Mathematics, pp. 359--373. Birkh\"auser,
-  Basel (1993)
 
 \bibitem{Sid08a}
 Sidi, A.: Further extension of a class of periodizing variable transformations

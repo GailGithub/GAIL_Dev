@@ -266,7 +266,7 @@ However, the process just outlined typically requires vector-matrix operations  
 \label{intro}
 Cubature is the problem of inferring a numerical value for an integral, 
 $ \mu := \int_{\reals^d} g(\vx) \, \dif \vx$, where $\mu$ has no closed form analytic expression. Typically, $g$ is accessible through a black-box function routine. 
-Cubature is a key component of many problems in scientific computing, finance, statistical modeling, and machine learning.  \marginpar{\FJHNote{We need to make sure that all numbered equations are referenced elsewhere.}}
+Cubature is a key component of many problems in scientific computing, finance, statistical modeling, and machine learning.  
 
 The integral may often be expressed as
 \begin{equation}
@@ -634,7 +634,7 @@ To demonstrate automatic Bayesian cubature consider a Mat\'ern covariance kernel
 \begin{align*}
 C_{\theta}(\vx, \vt) = \prod_{k=1}^d \exp(-\theta|\vx_k-\vt_k|)(1+\theta |\vx_k-\vt_k|).
 \end{align*}
-Also, consider the integration problem of evaluating  \emph{multivariate normal probabilities}
+Also, consider the integration problem of evaluating  \emph{multivariate normal probabilities}:
 \begin{equation}
 \label{eqn:GaussDef}
 \mu = \int_{(\va,\vb)} \frac{\exp\bigl(- \frac 12 \vt^T \mSigma^{-1} \vt \bigr)}{\sqrt{(2 \pi)^d \det(\mSigma)}} \, \dvt,
@@ -684,36 +684,29 @@ where $\Phi$ is the cumulative standard normal distribution function.  Then, $\m
 	\begin{subfigure}[h]{0.48\linewidth}
 		\includegraphics[width=1.1\linewidth]{GenzFunc_varTx_none}
 	\end{subfigure}
-	\caption{The $d=3$ multivarivate Gaussian density transformed to $d=2$ $f_{\text{Genz}}$.}
+	\caption{The $d=3$ multivarivate normal probability transformed to an integral of $f_{\text{Genz}}$ with  $d=2$.}
 	\label{fig:MVN_Genz}
 \end{figure}
 
 
 We use the following parameter values in the simulation: 
+
 \begin{equation*}
-\begin{array}{c|ccc}
-& a  & b & L  \\
-\hline
-d=3
-& 
-\begin{pmatrix}
+d = 3, \quad \va = \begin{pmatrix}
 -6 \\ -2 \\ -2
-\end{pmatrix}
-& 
-\begin{pmatrix}
+\end{pmatrix}, \quad 
+\vb = \begin{pmatrix}
 5 \\ 2 \\ 1
-\end{pmatrix} 
-& 
-\begin{pmatrix}
+\end{pmatrix} , \quad 
+\mL = \begin{pmatrix}
 4 & 1 & 1 \\ 0 & 1 & 0.5 \\ 0 & 0 & 0.25
-\end{pmatrix} 
-\end{array}
+\end{pmatrix}.
 \end{equation*}
 
 
 \begin{figure}
 \captionsetup[subfigure]{labelformat=empty}
-%\centering
+\centering
 \begin{subfigure}[h]{0.68\linewidth}
 \includegraphics[width=1.1\linewidth]{MVN_guaranteed_time_Matern_d2_2018-Aug-23}
 \end{subfigure}
@@ -1135,29 +1128,25 @@ Computing the eigenvalues of $\rmC$ via the procedure given in \eqref{eqn:fast_t
 \log\left(
 \sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i}
 \right) 
-\right . \\
-&
 %\label{thetaMLEsimple}
-\qquad \qquad   \left . + 
-\frac{\log(n + \rlambda_1)}{n} + \frac{1}{n}\sum_{i=2}^n \log(\lambda_i)
+ + 
+ \frac{1}{n}\sum_{i=1}^n \log(\lambda_i)
 \right], \\
 \nonumber
 \vtheta_{\GCV} 
 &= \argmin_\vtheta \left[ \log \left ( \sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i^2} 
-\right) \right .\\
-%\label{thetaGCVsimple}
-& \qquad \qquad  \left . -2\log\left(\frac 1{n+\rlambda_1} + \sum_{i=2}^n \frac{1}{\lambda_i} \right)
-\right].
+\right)  -2\log\left( \sum_{i=1}^n \frac{1}{\lambda_i} \right)
+\right],
 \end{align*}
 \end{subequations}
-The widths of the credible intervals in \eqref{eq:errMLEAllAsump}, \eqref{FJH:eq:errFullSimple}, and   \eqref{errGCVSimple} become
+where $\lambda_1 = n + \rlambda_1$.  The widths of the credible intervals in \eqref{eq:errMLEAllAsump}, \eqref{FJH:eq:errFullSimple}, and   \eqref{errGCVSimple} become
 \begin{subequations}
 \label{fastStoppingCriterions}
 	\begin{align}
 \err_\MLE  &
 =
 \frac{2.58}{n}\sqrt{
-	\frac{\rlambda_1}{n + \rlambda_1}
+	\frac{\rlambda_1}{\lambda_1}
 	\sum_{i=2}^{n} \frac{\abs{\widetilde{y}_i}^2}{\lambda_i}  
 }, 
 \\
@@ -1166,10 +1155,10 @@ The widths of the credible intervals in \eqref{eq:errMLEAllAsump}, \eqref{FJH:eq
 	\frac{\rlambda_1}{n-1} \sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i}
 }, \\
 \err_{\textup{GCV}} & =
-\frac{2.58}{n}\sqrt{	\frac{\rlambda_1}{n + \rlambda_1} \sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i^2}  \left [ \frac 1n \sum_{i=1}^n \frac{1}{\lambda_i} \right]^{-1}} .
+\frac{2.58}{n}\sqrt{	\frac{\rlambda_1}{\lambda_1} \sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i^2}  \left [ \frac 1n \sum_{i=1}^n \frac{1}{\lambda_i} \right]^{-1}} .
 	\end{align}
 \end{subequations}
-Since $\rlambda_1 = \lambda_1 - n$ and $\lambda \sim n$ it follows $\lambda_1$ is a small value closer to 1. For significantly large $n$, credible intervals $\err_\MLE$ and $\err_\full$ are almost the same, since the Student-t distribution quantile value $t_{n_j-1,0.995}$ approaches $2.58$. 
+Since $\rlambda_1 = \lambda_1 - n$ and $\lambda \sim n$ it follows $\rlambda_1/\lambda_1 \approx \rlambda_1/(n-1)$ and is small for  large $n$.  Moreover, the credible intervals via empirical Bayes and full Bayes are similar, since $t_{n_j-1,0.995}$ is approximately $2.58$. 
 
 \iffalse 
 Whereas to compare $\err_\GCV$, need little more insight due to the term $\lambda_i^2$ in the denominator. Rewriting it:
@@ -1231,7 +1220,7 @@ f(\vx) = g(\vPsi(\vx)) \prod_{\ell = 1}^d \Psi'(x_l).
 \end{equation*}
 \end{subequations}
 If $\Psi$ is sufficiently smooth, $\lim_{x \downarrow 0}x^{-r}\Psi'(x) = \lim_{x \uparrow 1} (x-1)^{-r}\Psi'(x) = 0$ for $ r \in \natzero$, and $g \in C^{(r, \ldots, r)}[0,1]^d$, then $f$ has continuous, periodic derivatives up to order $r$ in each direction.  
-Examples of this kind of transform include \cite{Sid08a}: \FJHNote{Do we need all of these periodizations?} \JRNote{Keeping only 3 varTxs}
+Examples of this kind of transform include \cite{Sid08a}:
 \begin{align*}
 %C^0 &: \Psi(x) =  3 x^2 - 2 x^3, \quad   \Psi'(x) = 6x(1-x), \\
 %C^1 & : \Psi(x) = x^3(10-15x+6x^2),  \\
@@ -1250,12 +1239,12 @@ Periodizing variable transforms are used for the numerical examples below.  In s
 \subsection{Test Results and Observations}
 %\label{sec:numerical_experiments}
 
-Three integrals were evaluated using the GAIL algorithm \code{cubBayesLattice\_g}:  a multivariate normal probability, the Keister's example, and an option pricing example.  Four different error tolerances, $\varepsilon$,  were set for each example, with the tolerances chosen depending on the difficulty of the problem.  \FJHNote{Change the tolerances for different problems.} \JRNote{Done} The nodes were the randomly shifted lattice rules supplied by GAIL.  For each integral,  each tolerance, and each of our stopping criteria---empirical Bayes, full Bayes, and generalized cross-validation---our algorithm is run  $100$ times.  Each the execution time is plotted against $\abs{\mu - \hmu}/\varepsilon$.  We expect $\abs{\mu - \hmu}/\varepsilon$ to be no greater than one, but hope that it is not too much smaller than one, which would indicate a stopping criterion that is too conservative.
+Three integrals were evaluated using the GAIL algorithm \code{cubBayesLattice\_g}:  a multivariate normal probability, the Keister's example, and an option pricing example.  Four different error tolerances, $\varepsilon$,  were set for each example, with the tolerances chosen depending on the difficulty of the problem.  The nodes were the randomly shifted lattice rules supplied by GAIL.  For each integral,  each tolerance, and each of our stopping criteria---empirical Bayes, full Bayes, and generalized cross-validation---our algorithm is run  $100$ times.  Each the execution time is plotted against $\abs{\mu - \hmu}/\varepsilon$.  We expect $\abs{\mu - \hmu}/\varepsilon$ to be no greater than one, but hope that it is not too much smaller than one, which would indicate a stopping criterion that is too conservative.
 
 
 \paragraph{Multivariate Normal Probability.}
 
-This example was already introduced in Section \ref{MVN_example}, where we used the Mat\'ern covariance kernel.  Here we apply Sidi's $C^2$  \FJHNote{????} periodization to $ f_{\textup{Genz}}$ \eqref{fGenzdef}, and chose $d=3$ and $r=2$ The simulation results for this example function are summarized in Figures \ref{fig:mvn-guaranteed-MLE}, \ref{fig:mvn-guaranteed-FB}, and \ref{fig:mvn-guaranteed-GCV}.  In all cases the Bayesian cubature returns an approximation within the prescribed error tolerance. We used the same setting as before with basic slow Bayesian cubature in \secref{MVN_example} for comparision. For error threshold $\varepsilon=10^{-5}$ with empirical stopping criterion, our fast algorithm takes 0.001 seconds as shown in \figref{fig:mvn-guaranteed-MLE} whereas the basic algorithm takes 30 seconds as shown in \figref{fig:MVN_Metern_d2b2}. Amongst the three stopping criteria, GCV achieved the results faster than others.
+This example was already introduced in Section \ref{MVN_example}, where we used the Mat\'ern covariance kernel.  Here we apply Sidi's $C^2$  periodization to $ f_{\textup{Genz}}$ \eqref{fGenzdef}, and chose $d=3$ and $r=2$ The simulation results for this example function are summarized in Figures \ref{fig:mvn-guaranteed-MLE}, \ref{fig:mvn-guaranteed-FB}, and \ref{fig:mvn-guaranteed-GCV}.  In all cases the Bayesian cubature returns an approximation within the prescribed error tolerance. We used the same setting as before with basic slow Bayesian cubature in \secref{MVN_example} for comparision. For error threshold $\varepsilon=10^{-5}$ with empirical stopping criterion, our fast algorithm takes 0.001 seconds as shown in \figref{fig:mvn-guaranteed-MLE} whereas the basic algorithm takes 30 seconds as shown in \figref{fig:MVN_Metern_d2b2}. Amongst the three stopping criteria, GCV achieved the results faster than others.
 
 \begin{figure}
 	\centering
@@ -1282,13 +1271,13 @@ This multidimensional integral function comes from \cite{Kei96} and is inspired 
 \begin{align*}
 \mu & =  \int_{\reals^d} \cos(\norm{ \vt}) \exp(-\norm{ \vt }^2) \, \dvt \\
 \nonumber
-&  = 
-\int_{\reals^d} \cos(a\norm{ \vt}) \exp(-a^2\norm{ \vt }^2)  a^d \, \dvt \\
+%&  = 
+%\int_{\reals^d} \cos(a\norm{ \vt}) \exp(-a^2\norm{ \vt }^2)  a^d \, \dvt \\
 & = \int_{[0,1]^d} f_{\textup{Keister}}(\vx) \, \dvx,\\
 \intertext{where }
 f_\textup{Keister}(\vx) &= \pi^{\frac d2} \cos\left(\norm{ \Phi^{-1}(\vx)/2}\right)  ,
 \end{align*}
-and again $\Phi$ is the standard normal distribution. \JRNote{Removed $a$ in $f_\textup{Keister}$}
+and again $\Phi$ is the standard normal distribution.
 %\begin{figure}
 %	\captionsetup[subfigure]{labelformat=empty}
 %	\begin{subfigure}[h]{0.48\linewidth}
