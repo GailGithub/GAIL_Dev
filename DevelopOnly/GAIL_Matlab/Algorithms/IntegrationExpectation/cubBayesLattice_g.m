@@ -8,12 +8,13 @@
 %   using Rank-1 Lattice sampling to within a specified generalized error
 %   tolerance, tolfun = max(abstol, reltol*| I |), i.e., | I - Q | <= tolfun
 %   with cofidence of at least 99%, where I is the true integral value,
-%   abstol is the absolute error tolerance, and reltol is the relative
-%   error tolerance. Usually the reltol determines the accuracy of the
-%   estimation, however, if | I | is rather small, then abstol determines
-%   the accuracy of the estimation. Input f is a function handle that
-%   accepts an n x d matrix input, where d is the dimension of the hyperbox,
-%   and n is the number of points being evaluated simultaneously.
+%   Q is the estimated integral value, abstol is the absolute error tolerance, 
+%   and reltol is the relative error tolerance. Usually the reltol determines
+%   the accuracy of the estimation, however, if | I | is rather small, 
+%   then abstol determines the accuracy of the estimation. 
+%   Input f is a function handle that accepts an n x d matrix input, 
+%   where d is the dimension of the hyperbox, and n is the number of points
+%   being evaluated simultaneously.
 %
 %   Input Arguments
 %
@@ -21,13 +22,18 @@
 %     dim --- number of dimensions of the integrand.
 %     absTol --- the absolute error tolerance | I - Q | <= absTol.
 %     relTol --- the relative error tolerance | I - Q | <= I*relTol.
-
+%
 %   Optional Input Arguments
 %
-%     order --- order of the bernoulli polynomial of the kernel.
-%     ptransform --- periodization transform to use
+%     order --- order of the bernoulli polynomial of the kernel: r=1,2
+%     ptransform --- periodization variable transform to use: 'Baker',
+%     'C0', 'C1', 'C1sin', 'C2sin'
 %     arbMean --- If false, the algorithm assumes the integrand was sampled
 %                 from a Gaussian process of zero mean
+%
+%   More optional Input Arguments
+%
+%     alpha --- Credible interval quantile value
 %
 %  Guarantee
 % This algorithm attempts to calculate the integral of function f over the
@@ -68,13 +74,13 @@
 % >> fun = @(x) exp(sum(cos(2*pi*x), 2));
 % >> dim=2; absTol=1e-3; relTol=1e-2; fName = 'ExpCos';
 % >> exactInteg = besseli(0,1)^dim;
-% >> obj=cubBayesLattice_g('f',fun, 'dim',dim, 'absTol',absTol, 'relTol',relTol,...
-% >>    'order',4, 'ptransform','C1sin');
+% >> obj=cubBayesLattice_g('f',fun, 'dim',dim, 'absTol',absTol,...
+% >>    'relTol',relTol, 'order',4, 'ptransform','C1sin');
 % >> muhat=compInteg(obj);
 % >> check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))
 % check = 1
 %
-% Example 3: Keister
+% Example 3: Keister function
 %
 % >> dim=2; absTol=1e-3; relTol=1e-2; fName = 'Keister';
 % >> normsqd = @(t) sum(t.*t,2); %squared l_2 norm of t
@@ -83,27 +89,43 @@
 % >> yinv = @(t)(erfcinv( replaceZeros(abs(t)) ));
 % >> f1 = @(t,dim) cos( sqrt( normsqd(yinv(t)) )) *(sqrt(pi))^dim;
 % >> fKeister = @(x) f1(x,dim); exactInteg = Keistertrue(dim);
-% >> obj=cubBayesLattice_g('f',fKeister, 'dim',dim, 'absTol',absTol, 'relTol',relTol,...
-% >>    'order',4, 'ptransform','C1','arbMean',false);
+% >> obj=cubBayesLattice_g('f',fKeister, 'dim',dim, 'absTol',absTol,...
+% >>    'relTol',relTol, 'order',4, 'ptransform','C1','arbMean',true);
 % >> muhat=compInteg(obj);
 % >> check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))
 % check = 1
 %
-% Example 3: MVN
+% Example 3: Multivariate Normal probability
 % >> dim=2; absTol=1e-3; relTol=1e-2; fName = 'MVN';
-% >> C = [4 1 1; 0 1 0.5; 0 0 0.25]; Cov = C'*C;
-% >> a = [-6 -2 -2]; b = [5 2 1];
+% >> C = [4 1 1; 0 1 0.5; 0 0 0.25]; MVNParams.Cov = C'*C; MVNParams.C = C;
+% >> MVNParams.a = [-6 -2 -2]; MVNParams.b = [5 2 1]; MVNParams.mu = 0;
+% >> MVNParams.CovProp.C = chol(MVNParams.Cov)';
 % >> muBest = 0.676337324357787;
-% >> MVNProbMLELattice = multivarGauss('a',a,'b',b,'Cov',Cov,'n',nvecMLE, ...
-% >>   'errMeth','g','cubMeth','MLELattice','intMeth','Genz', ...
-% >>   'BernPolyOrder',2,'ptransform','C1sin', ...
-% >>   'fName',fName,'arbMean',true,'absTol',absTol,'relTol',relTol);
-% >> muhat = compProb(MVNProbMLELattice);
+% >> integrand = @(t) GenzFunc(t,MVNParams);
+% >> obj=cubBayesLattice_g('f',integrand, 'dim',dim, 'absTol',absTol, ...
+% >>    'relTol',relTol, 'order',2, 'ptransform','C1sin','arbMean',true);
+% >> muhat = compInteg(obj);
 % >> check = double(abs(muBest-muhat) < max(absTol,relTol*abs(muBest)))
 % check = 1
 %
-
-
+%
+%   See also CUBSOBOL_G, CUBLATTICE_G, CUBMC_G, MEANMC_G, INTEGRAL_G
+%
+%  References
+%
+%   [1] R. Jagadeeswaran and Fred J. Hickernell, "Faster Adaptive
+%   Bayesian cubature using Lattice Sampling", Workshop on Probabilistic 
+%   Numerical Methods, London, UK, April 2018 
+%
+%   [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
+%   Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
+%   Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
+%   Integration Library (Version 2.2) [MATLAB Software], 2017. Available
+%   from http://gailgithub.github.io/GAIL_Dev/
+%
+%   If you find GAIL helpful in your work, please support us by citing the
+%   above papers, software, and materials.
+%
 classdef cubBayesLattice_g < handle
   
   properties
@@ -113,9 +135,9 @@ classdef cubBayesLattice_g < handle
     mmax = 22; %max number of points allowed = 2^mmax
     absTol = 0.01; %absolute tolerance
     relTol = 0; %relative tolerance
-    order = 2; %order of the kernel
+    order = 2; %Bernoulli order of the kernel
     alpha = 0.001; % the uncertainty, the default value is 0.1%.
-    ptransform = 'Baker'; %periodization transform
+    ptransform = 'C1sin'; %periodization transform
     stopAtTol = true; %automatice mode: stop after meeting the error tolerance
     arbMean = true; %by default use zero mean algorithm
     fName = 'None'; %name of the integrand
@@ -123,8 +145,7 @@ classdef cubBayesLattice_g < handle
     visiblePlot = false; %make plots visible
     debugEnable = false; %enable debug prints
     gaussianCheckEnable = false; %enable plot to check Guassian pdf
-    avoidCancelError = true;
-    % so the posterior error is a Student-t distribution
+    avoidCancelError = true; % avoid cancellation error in stopping criterion
     stopCriterion = 'MLE'; % Available options {'MLE', 'GCV', 'full'}
   end
  
@@ -136,8 +157,8 @@ classdef cubBayesLattice_g < handle
     
     fullBayes = false; % Full Bayes - assumes m and s^2 as hyperparameters,
     GCV = false; % Generalized cross validation
-    vdc_order = true; % use Lattice points generated in vdc order 
-
+    vdc_order = true; % use Lattice points generated in vdc order
+    
     % variables to save debug info in each iteration
     errorBdAll = [];
     muhatAll = [];
@@ -185,18 +206,18 @@ classdef cubBayesLattice_g < handle
       end
       
       if strcmp(obj.stopCriterion, 'full')
-        % use full Bayes
+        % Full Bayes : The posterior error is a Student-t distribution
         obj.fullBayes = true;
       elseif strcmp(obj.stopCriterion, 'GCV')
         % use Generalized cross validation
         obj.GCV = true;
       else
-        % use Maximum likelihood estimation
+        % use empirical Bayes : Maximum likelihood estimation
         obj.fullBayes = false;
         obj.GCV = false;
       end
       
-      % uncertainity : two sided confidence
+      % Credible interval : two sided confidence
       % i.e, alpha percent quantile
       if obj.fullBayes
         % degrees of freedom = 2^mmin - 1
@@ -211,24 +232,22 @@ classdef cubBayesLattice_g < handle
 
       obj.mvec = obj.mmin:obj.mmax;
       length_mvec = length(obj.mvec);
-      
+           
       % to store debug info
-      obj.errorBdAll = zeros(length_mvec,1);
-      obj.muhatAll = zeros(length_mvec,1);
-      obj.aMLEAll = zeros(length_mvec,1);
-      obj.lossMLEAll = zeros(length_mvec,1);
-      obj.timeAll = zeros(length_mvec,1);
-      obj.dscAll = zeros(length_mvec,1);
-      obj.s_All = zeros(length_mvec,1);
+      temp = cubBayesLattice_g.gpuArray_(zeros(length_mvec,1));
+      obj.errorBdAll = temp;
+      obj.muhatAll = temp;
+      obj.aMLEAll = temp;
+      obj.lossMLEAll = temp;
+      obj.timeAll = temp;
+      obj.dscAll = temp;
+      obj.s_All = temp;
       
     end
     
     % computes the integral
     function [muhat,out] = compInteg(obj)
-      
-      % comment this line of code to use GPU for computations
-      gpuArray = @(x) x;   gather = @(x) x;
-      
+            
       tstart = tic; %start the clock
       numM = length(obj.mvec);
       
@@ -275,8 +294,8 @@ classdef cubBayesLattice_g < handle
       out.stopAtTol = obj.stopAtTol; 
       
       % convert from gpu memory to local
-      muhat=gather(muhat);
-      out=gather(out);
+      muhat=obj.gather_(muhat);
+      out=obj.gather_(out);
       
     end
     
@@ -284,7 +303,6 @@ classdef cubBayesLattice_g < handle
     function [ftilde_,xun_,xpts_] = iter_fft(obj,iter,shift,xun,xpts,ftildePrev)
       m = obj.mvec(iter);
       n = 2^m;
-      gpuArray = @(x) x;   
       
       % In every iteration except the first one, "n" number_of_points is doubled, 
       % but FFT is only computed for the newly added points.
@@ -295,7 +313,7 @@ classdef cubBayesLattice_g < handle
         xpts_ = mod(bsxfun(@plus,xun_,shift),1);  % shifted
         
         % Compute initial FFT
-        ftilde_ = fft(gpuArray(obj.ff(xpts_))); %evaluate integrand's fft
+        ftilde_ = fft(objgpuArray_(obj.ff(xpts_))); %evaluate integrand's fft
       else
         xunnew = mod(bsxfun(@times,(1/n:2/n:1-1/n)',obj.gen_vec),1);
         xnew = mod(bsxfun(@plus,xunnew,shift),1);
@@ -303,7 +321,7 @@ classdef cubBayesLattice_g < handle
         mnext=m-1;
         
         % Compute FFT on next set of new points
-        ftildeNextNew = fft(gpuArray(obj.ff(xnew)));
+        ftildeNextNew = fft(obj.gpuArray_(obj.ff(xnew)));
         if obj.debugEnable
           cubBayesLattice_g.alertMsg(ftildeNextNew, 'Nan', 'Inf');
         end
@@ -318,7 +336,6 @@ classdef cubBayesLattice_g < handle
     function [ftilde_,xun_,xpts_] = iter_fft_vdc(obj,iter,shift,xun,xpts,ftildePrev)
       m = obj.mvec(iter);
       n = 2^m;
-      gpuArray = @(x) x;
       
       % In every iteration except the first one, "n" number_of_points is doubled, 
       % but FFT is only computed for the newly added points.
@@ -328,13 +345,13 @@ classdef cubBayesLattice_g < handle
         [xpts_,xun_] = obj.simple_lattice_gen(n,obj.dim,shift,true);
         
         % Compute initial FFT
-        ftilde_ = obj.fft_DIT(gpuArray(obj.ff(xpts_)),m); %evaluate integrand's fft
+        ftilde_ = obj.fft_DIT(obj.gpuArray_(obj.ff(xpts_)),m); %evaluate integrand's fft
       else
         [xnew,xunnew] = obj.simple_lattice_gen(n,obj.dim,shift,false);
         mnext=m-1;
         
         % Compute FFT on next set of new points
-        ftildeNextNew = obj.fft_DIT(gpuArray(obj.ff(xnew)),mnext);
+        ftildeNextNew = obj.fft_DIT(obj.gpuArray_(obj.ff(xnew)),mnext);
         if obj.debugEnable
           cubBayesLattice_g.alertMsg(ftildeNextNew, 'Nan', 'Inf');
         end
@@ -458,7 +475,7 @@ classdef cubBayesLattice_g < handle
           RKHSnorm = sum(temp_gcv)/n;
         end
       else
-        % MLE
+        % default: MLE
         if obj.arbMean==true
           RKHSnorm = sum(temp(2:end))/n;
           temp_1 = sum(temp(2:end));
@@ -488,9 +505,9 @@ classdef cubBayesLattice_g < handle
     % Normally distributed :
     %    https://www.itl.nist.gov/div898/handbook/eda/section3/normprp1.htm
     % Short Tails :
-    %   https://www.itl.nist.gov/div898/handbook/eda/section3/normprp2.htm
+    %   .../normprp2.htm
     % Long Tails :
-    %    https://www.itl.nist.gov/div898/handbook/eda/section3/normprp3.htm
+    %    .../normprp3.htm
     function CheckGaussianDensity(obj, ftilde, lambda)
       n = length(ftilde);
       ftilde(1) = 0;  % substract by (m_\MLE \vone) to get zero mean
@@ -503,7 +520,7 @@ classdef cubBayesLattice_g < handle
       set(hFigNormplot,'defaultaxesfontsize',16, ...
         'defaulttextfontsize',16, ... %make font larger
         'defaultLineLineWidth',0.75, 'defaultLineMarkerSize',8)
-      %normplot(w_ftilde)
+      % other option : normplot(w_ftilde)
       qqplot(w_ftilde);
       set(hFigNormplot, 'units', 'inches', 'Position', [1 1 8 6])
       
@@ -514,81 +531,6 @@ classdef cubBayesLattice_g < handle
         obj.figSavePath, obj.fName, obj.dim, obj.order, obj.ptransform, n);
       % plotFileName
       saveas(hFigNormplot, plotFileName)
-    end
-    
-    % plots the objective for the MLE of theta, useful for diagnozing any
-    % issues with the code
-    function minTheta = plotObjectiveFunc(obj)
-      
-      numM = length(obj.mvec);
-      n = 2.^obj.mvec(end);
-      shift = rand(1,obj.dim);
-      xptsun = cubBayesLattice_g.simple_lattice_gen(n,obj.dim,shift,true);
-      fx = obj.ff(xptsun);  % Note: periodization transform already applied
-        
-      %% plot ObjectiveFunction
-      lnTheta = -5:0.2:5;
-      % build filename with path to store the plot
-      plotFileName = sprintf('%s%s_Cost_d%d_r%d_%s_%s.png',...
-        obj.figSavePath, obj.fName, obj.dim, obj.order, obj.ptransform, obj.stopCriterion);
-      
-      costMLE = zeros(numM,numel(lnTheta));
-      tstart = tic;
-      
-      % loop over all the m values
-      for iter = 1:numM
-        nii = 2^obj.mvec(iter);
-        
-        eigvalK = zeros(numel(lnTheta),nii);
-        ftilde_iter = fft(bitrevorder(fx(1:nii))); %/nii;
-        br_xun = bitrevorder(xptsun(1:nii,:));
-        
-        tic
-        %par
-        parfor k=1:numel(lnTheta)
-          [costMLE(iter,k),eigvalK(k,:)] = ObjectiveFunction(obj, exp(lnTheta(k)),...
-            br_xun,ftilde_iter);
-        end
-        toc
-      end
-      
-      toc(tstart)
-      
-      if obj.visiblePlot==false
-        hFigCost = figure('visible','off');
-      else
-        hFigCost = figure();
-      end
-      
-      % semilogx
-      semilogx(exp(lnTheta),real(costMLE));
-      set(hFigCost, 'units', 'inches', 'Position', [1 1 13.5 11.5])
-      xlabel('Shape param, \(\theta\)')
-      ylabel('MLE Cost, \( \log \frac{y^T K_\theta^{-1}y}{[\det(K_\theta^{-1})]^{1/n}} \)')
-      axis tight;
-      if obj.arbMean
-        mType = '\(m \neq 0\)'; % arb mean
-      else
-        mType = '\(m = 0\)'; % zero mean
-      end
-      title(sprintf('%s d=%d r=%d Tx=%s %s', obj.fName, obj.dim, obj.order, obj.ptransform, mType));
-      [minVal,Index] = min(real(costMLE),[],2);
-      
-      % mark the min theta values found using fminbnd
-      minTheta = exp(lnTheta(Index));
-      hold on;
-      semilogx(minTheta, minVal, '.');
-      if exist('aMLEAll', 'var')
-        semilogx(obj.aMLEAll, obj.lossMLEAll, '+');
-      end
-      temp = string(obj.mvec);
-      temp = strcat('\(2^{',temp,'}\)');
-      temp(end+1) = '\(\theta_{min_{true}}\)';
-      if exist('aMLEAll', 'var')
-        temp(end+1) = '\(\theta_{min_{est}}\)';
-      end
-      legend(temp,'location','best'); axis tight
-      saveas(hFigCost, plotFileName)
     end
     
   end
@@ -772,11 +714,6 @@ classdef cubBayesLattice_g < handle
     
     % fft with deimation in time i.e, input is already in 'bitrevorder'
     function y = fft_DIT(y,nmmin)
-      %if nmmin~=log2(length(y))
-      %  warning('mismatch')
-      %end
-      %nmmin = log2(length(y));
-      %y = bitrevorder(y);
       for l=0:nmmin-1
         nl=2^l;
         nmminlm1=2^(nmmin-l-1);
@@ -813,6 +750,17 @@ classdef cubBayesLattice_g < handle
       temp(1:2:n-1,:) = x;
       temp(2:2:n,:) = xnew;
       x = temp;
+    end
+    
+    % to enable GPU for computations
+    function y = gpuArray_(x)
+      % y = gpuArray(x);
+      y = x;   
+    end
+    
+    function y = gather_(x)
+      % y = gather(x);
+      y = x;
     end
   end
 end
