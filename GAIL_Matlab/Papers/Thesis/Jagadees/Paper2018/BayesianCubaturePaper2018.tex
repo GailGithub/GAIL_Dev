@@ -596,6 +596,11 @@ The previous section presents three credible intervals, \eqref{eqn_prob_CI_MLE},
 
 Our  Bayesian cubature algorithm increases the sample size until the width of the credible interval is small enough.  This is accomplished through successively doubling the sample size.  The steps are detailed in Algorithm \ref{algorithm1}.
 
+\algnewcommand{\IIf}[1]{\State\algorithmicif\ #1\ \algorithmicthen\ }
+\algnewcommand{\IElse}{\unskip\ \algorithmicelse\ }
+\algnewcommand{\EndIIf}{\unskip\ \algorithmicend\ \algorithmicif}
+
+
 \begin{algorithm}
 \caption{Automatic Bayesian Cubature}\label{algorithm1}
   \begin{algorithmic}[1]
@@ -603,16 +608,19 @@ Our  Bayesian cubature algorithm increases the sample size until the width of th
   	$\vx_1, \vx_2, \ldots$; a black-box function, $f$; an absolute error tolerance,
   	$\varepsilon>0$; the positive initial sample size, $n_0$
   	
-      \State $n \gets n_0, \; n' \gets 0, \; \err = \infty$
+      \State $n \gets 0, \; \err \gets \infty$
       
       \While{$\err > \varepsilon$}
+      
+      \State	$n' \gets n$
 
-        \If{$n' > 0$}
-			$n' \gets n, \ n\gets 2 n'$
-		\EndIf
+        \IIf {$n =  0$}{$n\gets n_0$}
+	\IElse{$ n\gets 2 n'$}
+	\EndIIf
+
         \State\label{LoopStart}Generate $\{ \vx_i\}_{i=n' + 1}^{n}$ and sample $\{f(\vx_i)\}_{i=n'+1}^{n}$
         \State Compute $\vtheta$ by \eqref{eqn:thetaMLE} or \eqref{vthetaGCV}
-        \State Compute $\err$, the width of the credible interval,  according to \eqref{eqn:errMLE}, \eqref{FJH:eq:errFull}, or \eqref{GCVerr}
+        \State Compute $\err$  according to \eqref{eqn:errMLE}, \eqref{FJH:eq:errFull}, or \eqref{GCVerr}
         
         \EndWhile
         
@@ -720,7 +728,7 @@ So, our algorithm in the current form is not straightaway usable for any practic
 
 \section{Fast Automatic Bayesian Cubature}\label{sec:fast_BC}
 
-The generic automatic Bayesian cubature algorithm described in the previous section requires $\Order(n^3)$ operations to estimate $\vtheta$, compute the credible interval width, and compute the cubature.  There is also round-off error that can arise.  This section explains how to speed up the calculations and reduce this round-off error.  A key is to choose kernels that match the design, $\{\vx_i\}_{i=1}^n$, so that the vector-matrix operations required by Bayesian cubature can be accomplished using fast transforms at a cost of $\Order(n \log(n))$.
+The generic automatic Bayesian cubature algorithm described in the previous section requires $\Order(n^3)$ operations to estimate $\vtheta$, compute the credible interval width, and compute the cubature.  This section explains how to speed up the calculations.  \FJHNote{Where does round-off come from?} A key is to choose kernels that match the design, $\{\vx_i\}_{i=1}^n$, so that the vector-matrix operations required by Bayesian cubature can be accomplished using fast transforms at a cost of $\Order(n \log(n))$.
 
 \subsection{Fast Transform Kernel}
 We make some assumptions about the relationship between the covariance kernel and the design, which will be shown to hold in Section \ref{sec:shift_invariant_kernel} for rank-1 lattices and shift-invariant kernels.  First we introduce the notation
@@ -750,7 +758,7 @@ We make three assumptions that allow the fast computation:
 	\mV^H \vb  \text{ requires only $\Order(n \log(n))$ operations } \forall \vb.
 	\end{gather}
 \end{subequations}
-We call the transformation $\vz \mapsto \mV^H \vz$ a \emph{fast transform} and $C_\vtheta$ a \emph{fast transform kernel}.  
+We call the transformation $\vb \mapsto \mV^H \vb$ a \emph{fast transform} and $C_\vtheta$ a \emph{fast transform kernel}.  
 
 Under assumptions \eqref{fastcompAssump} the eigenvalues may be identified as the fast transform of the first column of $\mC$:
 \begin{align}
@@ -771,7 +779,7 @@ Also note that the fast transform of $\vone$ has a simple form
 \label{eqn:fast_transform_one}
 \end{align*}
 
-Many of the terms that arise in the calculations in  Algorithm \ref{algorithm1} are of the form $\va^T\mC^{p}\vb$ for real $\va$ and $\vb$ and integer $p$.  These can be calculated via the transforms $\widetilde{\va} = \mV^H \va$ and $\widetilde{\vb} = \mV^H \vb$ as 
+Many of the terms that arise in the calculations in  Algorithm \ref{algorithm1} take the form $\va^T\mC^{p}\vb$ for real $\va$ and $\vb$ and integer $p$.  These can be calculated via the transforms $\widetilde{\va} = \mV^H \va$ and $\widetilde{\vb} = \mV^H \vb$ as 
 \begin{equation*}
 \va^T\mC^p\vb = \frac 1n \va^T \mV \mLambda^p \mV^H \vb
 = \frac 1n \widetilde{\va}^H\mLambda^p \widetilde{\vb}
@@ -815,13 +823,16 @@ s^2_\MLE
 & =
 \frac{1}{n^2} 
 \sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i} \\
-\label{eqn_MLE_loss_func_optimized_2}\vtheta_\MLE
+\nonumber
+\vtheta_\MLE
 &= 
 \argmin_{\vtheta}
 \left[
 \log\left(
 \sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i}
-\right) 
+\right) \right .\\
+\label{eqn_MLE_loss_func_optimized_2}
+& \hspace{3cm} \left .
   + 
 \frac{1}{n}\sum_{i=1}^n \log(\lambda_i)
 \right]
@@ -927,7 +938,7 @@ Moreover, under further assumption \eqref{addAssump} it follows that
 \left( 1 -  \frac{n}{\lambda_1} \right)  
 \right\}^{1/2}. \label{errGCVSimple}
 \end{align}
-Thus, in this case too $\hmu$ is simply the sample mean.
+In this case too, $\hmu$ is simply the sample mean.
 
 
 
@@ -1175,10 +1186,10 @@ This shows the $\err_\GCV$ is more aggressive stopping criterion than $\err_\MLE
 
 We summarize the results of this section and the previous one as follows:
 \begin{prop}
-Any periodic, symmetric, positive definite \eqref{FJH:eq:CondPosDef}, shift-invariant covariance kernel of the form \eqref{eq:shInv} scaled to satisfy \eqref{addAssump}, when matched with rank-1 lattice data-sites, must satisfy assumptions \eqref{fastcompAssump}.  The \emph{fast Fourier transform} (FFT) can be used to expedite the estimates of $\vtheta$ in \eqref{thetaSimple} and the credible interval widths \eqref{fastStoppingCriterions} in $\Order(n \log(n))$ operations. The $\hmu$ is just the sample mean.
+Any periodic, symmetric, positive definite, shift-invariant covariance kernel of the form \eqref{eq:shInv} scaled to satisfy \eqref{addAssump}, when matched with rank-1 lattice data-sites, must satisfy assumptions \eqref{fastcompAssump}.  The \emph{fast Fourier transform} (FFT) can be used to expedite the estimates of $\vtheta$ in \eqref{thetaSimple} and the credible interval widths \eqref{fastStoppingCriterions} in $\Order(n \log(n))$ operations. The cubature, $\hmu$, is just the sample mean.
 \end{prop}
 
-We have implemented the fast adaptive Bayesian cubature algorithm in MATLAB as part of the Guaranteed Adaptive Integration Library (GAIL) \cite{ChoEtal17b} as \allowbreak \code{cubBayesLattice\_g}. This algorithm uses the kernel defined in  \eqref{the_kernel_eqn_bernoulli} with  $r=1,2$ and periodizing variable transforms in  \secref{period_var_tx}.  The rank-1 lattice node generator is taken from \cite{Nuy17a} (\code{exod2\_base2\_m20}).
+We have implemented the fast adaptive Bayesian cubature algorithm in MATLAB as part of the Guaranteed Adaptive Integration Library (GAIL) \cite{ChoEtal17b} as \allowbreak \code{cubBayesLattice\_g}. This algorithm uses the kernel defined in  \eqref{the_kernel_eqn_bernoulli} with  $r=1,2$ and the periodizing variable transforms in  \secref{period_var_tx}.  The rank-1 lattice node generator is taken from \cite{Nuy17a} (\code{exod2\_base2\_m20}).
 
 \section{Numerical Experiments} \label{sec:NumExp}
 
@@ -1375,7 +1386,7 @@ Because the integrand has a kink caused by the $\max$ function, it does not help
 As shown in Figures \ref{fig:mvn-guaranteed-MLE} to \ref{fig:optprice-guaranteed-GCV}, Bayesian cubature algorithm computes the integral within  user specified threshold most of the times except on a few occasions. This is especially the case with option pricing example due to the complexity and high dimension of the integrand. 
 Also notice the algorithm finished within 10seconds of time for Keister and multivariate Normal. For the option pricing it look closer to 70seconds. This is again due to the complexity of the integrand.
 
-Another noticeable aspect from the plots is how much estimated error differs from the true error. For option pricing example, estimated error is closer to the true error but it is not so much with Keister and multivariate Normal. This could be due to the smoothness of the integrand after the transformation. Obtaining a more accurate error estimate could be a future work.
+Another noticeable aspect from the plots is how much the error bounds differ from the true error. For option pricing example, the error bound is not as conservative as it is for the multivariate normal and Keister examples. A possible reason is that the latter integrands are significantly smoother than is assumed by our covariance kernel.  This is a matter for further investigation.
 
 
 \iffalse
