@@ -250,8 +250,8 @@
 \maketitle
 
 \begin{abstract}
-Automatic cubatures approximate multidimensional integrals to user-specified error tolerances.  For large dimensional problems, it makes sense to fix the sampling density but determine the 
-sample size, $n$, automatically. Bayesian cubature postulates that the integrand is an instance of a stochastic process.  In our case, we assume a Gaussian process parameterized by a constant mean and a covariance function defined by a scale parameter and a function specifying how the integrand values at two different points in the domain are related.
+Automatic cubatures approximate multidimensional integrals to user-specified error tolerances.  For high dimensional problems, it makes sense to fix the sampling density but determine the 
+sample size, $n$, automatically. Bayesian cubature postulates that the integrand is an instance of a stochastic process.  Here we assume a Gaussian process parameterized by a constant mean and a covariance function defined by a scale parameter and a function specifying how the integrand values at two different points in the domain are related.
 These parameters are estimated from integrand values or are given non-informative priors.  This leads to credible interval for the integral.  The sample size, $n$, is chosen to make the credible interval for the Bayesian posterior error no greater than the error tolerance. 
 
 However, the process just outlined typically requires vector-matrix operations  with a computational cost of $O(n^3)$. Our innovation is to pair low discrepancy nodes with matching kernels that lower the  computational cost to $O(n \log n)$.   This approach is demonstrated using rank-1 lattice sequences and shift-invariant kernels.  It is also implemented in the Guaranteed Automatic Integration Library (GAIL).
@@ -273,33 +273,33 @@ The integral may often be expressed as
 \label{eqn:defn_mu}
 \mu:= \mu(f) := \Ex[f(\boldsymbol{X})] = \int_{[0,1]^d} f(\vx)\, \dif\vx, 
 \end{equation}
-where $f:[0,1]^d \to \reals$ is the integrand, and $\boldsymbol{X} \sim \mathcal{U}[0,1]^d$.  The process of transforming the original integral into the form of \eqref{eqn:defn_mu}  is not addressed here.  The cubature algorithm may take the form
+where $f:[0,1]^d \to \reals$ is the integrand, and $\boldsymbol{X} \sim \mathcal{U}[0,1]^d$.  The process of transforming the original integral into the form of \eqref{eqn:defn_mu}  is not addressed here.  The cubature may be an affine function of integrand values:
 \begin{equation}
 \label{eqn:defn_hmu}  % remove this
 \hmu: = \hmu(f) := w_0 + \sum_{i=1}^{n} f(\vx_i) w_i,
 \end{equation}
 where the weights, $w_0$, and  $\vw = (w_i)_{i=1}^n \in \reals^n$, and the nodes, $\{\vx_i\}_{i=1}^n \subset [0,1]^d$, are chosen to make the error, $\abs{\mu - \hmu}$, small. The integration domain $[0,1]^d$ is convenient for the low discrepancy node sets that we use.  The nodes are assumed to be deterministic.
 
-We will construct a reliable stopping criterion that determines the number of integrand values required, $n$, to ensure that the error is no greater than a user-defined error tolerance denoted $\varepsilon$, i.e., 
+We construct a reliable stopping criterion that determines the number of integrand values required, $n$, to ensure that the error is no greater than a user-defined error tolerance denoted $\varepsilon$, i.e., 
 \begin{equation}
 \label{eqn:err_crit} 
 \abs{\mu - \hmu} \leq \errtol .
 \end{equation}
 Rather than relying on strong assumptions about the integrand, such as an upper bound on its variance or total variation, we construct a stopping criterion that is based on a credible interval arising from a Bayesian approach to the problem.  We build upon the work of Briol et al.~\cite{BriEtal18a}, Diaconis~\cite{Dia88a}, O'Hagan~\cite{OHa91a}, Ritter~\cite{Rit00a}, Rasmussen and Ghahramani~\cite{RasGha03a}, and others.  Our algorithm is an example of \emph{probabilistic numerics}.
 
-Our primary contribution here is to demonstrate how the choice of a family of covariance kernels that match the low discrepancy sampling nodes facilitates fast computation of the cubature and the data-driven stopping criterion.  Our cubature requires $n$ function values---at a cost of $\$(f)$ each---plus $\Order(n \log(n))$ operations to check whether the error tolerance is satisfied.  The total cost of our algorithm is then $\Order(n [\$(f) + \log(n)])$.  This is significantly fewer operations than the $\Order(n^3)$ typically required for Bayesian cubature.  If function evaluation is expensive, then $\$(f)$ might be similar in magnitude to $\log(n)$.
+The primary contribution of this article is to demonstrate how the choice of a family of covariance kernels that match the low discrepancy sampling nodes facilitates fast computation of the cubature and the data-driven stopping criterion.  Our cubature requires $n$ function values---at a cost of $\$(f)$ each---plus $\Order(n \log(n))$ operations to check whether the error tolerance is satisfied.  The total cost of our algorithm is then $\Order(n [\$(f) + \log(n)])$.  This is significantly fewer operations than the $\Order(n^3)$ typically required for Bayesian cubature.  If function evaluation is expensive, then $\$(f)$ might be similar in magnitude to $\log(n)$.
 
 Hickernell~\cite{Hic17a} compares different approaches to cubature error analysis depending on whether the rule is deterministic or random and whether the integrand is assumed to be deterministic or random.  Error analyis that assumes a deterministic integrand lying in a Banach space leads to an error bound that is typically impractical for deciding how large $n$ must be to satisfy \eqref{eqn:err_crit}.  The deterministic error bound includes a (semi-) norm of the integrand, which is often more complex to compute than the original integral.
 
-Hickernell and Jim\'enez-Rugama~\cite{HicJim16a,JimHic16a} have developed stopping criteria for cubature rules based on low discrepancy nodes by tracking the decay of the discrete Fourier coefficients of the integrand.  The algorithm proposed here also relies on the discrete Fourier coefficients of the integrand, but in a different way.  Although we do not explore here automatic Bayesian cubature for relative error tolerances, the recent work by Hickernell, Jim\'enez-Rugama, and Li~\cite{HicEtal17a} suggest how this might be done.
+Hickernell and Jim\'enez-Rugama~\cite{HicJim16a,JimHic16a} have developed stopping criteria for cubature rules based on low discrepancy nodes by tracking the decay of the discrete Fourier coefficients of the integrand.  The algorithm proposed here also relies on discrete Fourier coefficients, but in a different way.  Although we only explore automatic Bayesian cubature for absolute error tolerances, the recent work by Hickernell, Jim\'enez-Rugama, and Li~\cite{HicEtal17a} suggest how one might accommodate more general error criteria, such as relative error tolerances.
 
-Section \ref{sec:BC} explains the Bayesian approach to estimate the posterior cubature error and defines our automatic Bayesian cubature. Although much of this material is not new, it is included for completeness.  We end Section \ref{sec:BC}  by demonstrating why Bayesian cubature is typically quite computationally expensive.
-Section \ref{sec:fast_BC}  introduces the concept of covariance kernels that match the nodes and expedites the computations required by our automatic Bayesian cubature. 
-Section \ref{sec:shift_invariant_kernel} implements this idea for shift invariant kernels and rank-1 lattice nodes.  It also describes further enhancements to the algorithm to avoid cancellation error and make it faster.  Numerical examples are provided in Section \ref{sec:NumExp} to demonstrate our new algorithm.  We conclude with a brief discussion.
+Section \ref{sec:BC} explains the Bayesian approach to estimate the posterior cubature error and defines our automatic Bayesian cubature. Although much of this material is known, it is included for completeness.  We end Section \ref{sec:BC}  by demonstrating why Bayesian cubature is typically computationally expensive.
+Section \ref{sec:fast_BC}  introduces the concept of covariance kernels that match the nodes and expedite the computations required by our automatic Bayesian cubature. 
+Section \ref{sec:shift_invariant_kernel} implements this concept for shift invariant kernels and rank-1 lattice nodes.  It also describes how to avoid cancellation error for kernels of product form.  Numerical examples are provided in Section \ref{sec:NumExp} to demonstrate our new algorithm.  We conclude with a brief discussion.
 
 
 
-\section{Bayesian cubature} \label{sec:BC} \FJHNote{Please check the derivations once more.}
+\section{Bayesian cubature} \label{sec:BC} 
 
 
 \subsection{Bayesian posterior error}
@@ -307,13 +307,11 @@ Section \ref{sec:shift_invariant_kernel} implements this idea for shift invarian
 
 Suppose that the integrand, $f$, is drawn from a Gaussian process, i.e., $f \sim \mathcal{GP}(m,s^2 C_\vtheta)$.  Specifically, $f$ has real-valued constant mean $m$ and covariance function $s^2C_\vtheta$, where $s$ is a non-negative scale factor, and $C_\vtheta: [0,1]^d \times [0,1]^d \to \mathbb{R} $ is a symmetric, positive-definite function and parameterized by $\vtheta$:
 \begin{multline} \label{FJH:eq:CondPosDef}
-\mC^T = \mC,  \quad \va^T \mC \va > 0 \\
-\qquad \qquad  
+\mC^T = \mC,  \quad \va^T \mC \va > 0, \quad \text{where }  \mC = \left(  C_\vtheta(\vx_i,\vx_j)  \right)_{i,j=1}^n,\\
  \text{for all } \va \ne 0, \;
-  \mC = \left(  C_\vtheta(\vx_i,\vx_j)  \right)_{i,j=1}^n,\\
  n\in \mathbb{N}, \; \vx_1, \ldots, \vx_n \in [0,1]^d.
 \end{multline}
-The covariance function, $C$, and the Gram matrix, $\mC$ depend implicitly on $\vtheta$, but this may be omitted in the notation for simplicity's sake.
+The covariance function, $C$, and the Gram matrix, $\mC$ depend implicitly on $\vtheta$, but the notation may omit this for simplicity's sake.
 
 For a Gaussian process, all vectors of linear functionals of $f$ have a multivariate Gaussian distribution. Defining  $\vf  := \left( f(\vx_i)\right)_{i=1}^n$ as the multivariate normal vector of function values, it follows that 
 \begin{subequations} \label{eqn:fGaussDist}
@@ -326,9 +324,9 @@ c_0 &= \int_{[0,1]^{2d}} C_\vtheta(\vx,\vt) \, \dif{\vx} \, \dif{\vt}, \\
 \cov(\vf, \mu) &= \left(  \int_{[0,1]^d} C(\vt,\vx_i) \, \D \vt \right)_{i=1}^n  =: \vc.
 \end{align}
 \end{subequations}
-We need the following Lemma \ref{thrm:condDist} to derive the posterior error of our cubature.  See  \cite[(A.6), (A.11--13)]{RasWil06a} for the proof.
+We need the following lemma to derive the posterior error of our cubature. 
 
-\begin{lemma} \label{thrm:condDist} If $\vY = (\vY_1, \vY_2)^T \sim \calN (\vm,\mC)$, where $\vY_1$ and $\vY_2$ are random vectors of arbitrary length, and 
+\begin{lemma} \cite[(A.6), (A.11--13)]{RasWil06a} \label{thrm:condDist} If $\vY = (\vY_1, \vY_2)^T \sim \calN (\vm,\mC)$, where $\vY_1$ and $\vY_2$ are random vectors of arbitrary length, and 
 	\begin{gather*}
 	\vm = \begin{pmatrix} \vm_1 \\ \vm_2 \end{pmatrix} = \begin{pmatrix} \Ex(\vY_1) \\ \Ex(\vY_2) \end{pmatrix}, \\
 	\mC = \begin{pmatrix}
@@ -384,14 +382,14 @@ A credible interval for the integral is given given by
 |\mu-\hmu| \leq  2.58 s \sqrt{c_0 - \vc^T\mC^{-1}\vc } 
 \right] = 99\%.
 \end{equation}
-Natually, the $2.58$ and $99\%$ can be replaced by other quantiles and credible levels.
+Natually, $2.58$ and $99\%$ can be replaced by other quantiles and credible levels.
 
 
 \subsection{Parameter estimation}
 The credible interval in \eqref{eqn_prob_confidence_interval} suggests how our automatic Bayesian cubature proceeds.  Integrand data is accumulated until the width of the credible interval is no greater than the error tolerance.  However, the credible interval still depends on the parameters $m, s$, and $\vtheta$.  These should not be assumed a priori but be inferred from the data.  This section describes three approaches.
 
 \subsubsection{Empirical Bayes}  \label{sec:MLE}
-One approach to estimate the parameters is via maximum likelihood estimation (MLE).  The log-likelihood function of the parameters given the function data $\vy$ is:
+One approach is to estimate the parameters is via maximum likelihood estimation (MLE).  The log-likelihood function of the parameters given the function data $\vy$ is:
 \begin{multline*}
 l(s,m,\vtheta | \vy)
 = -\frac{1}{2} s^{-2} (\vy-m\vone)^T\mCInv(\vy-m\vone) 
@@ -401,7 +399,7 @@ l(s,m,\vtheta | \vy)
 Maximizing the log-likelihood first with respect to $m$, then with respect to $s$, and finally with respect to $\vtheta$ yields
 \begin{align}
 \label{eqn_m_MLE}
-m_\MLE &= \frac{\vone^T \mCInv \vy }{ \vone^T \mCInv \vone} \\
+m_\MLE &= \frac{\vone^T \mCInv \vy }{ \vone^T \mCInv \vone}, \\
 \nonumber
 s^2_{\MLE}  
 &= \frac{1}{n} (\vy-m_{\MLE}\vone)^T\mCInv(\vy-m_{\MLE}\vone) 
@@ -452,7 +450,7 @@ Here $c_0$, $\vc$, and $\mC$ are assumed implicitly to be based on $\vtheta = \v
 
 \subsubsection{Full Bayes}
 
-Rather than use maximum likelihood to determine $m$ and $s$ one can treat them as hyper-parameters and may chose a non-informative, conjugate prior, namely $\vrho_{m,s^2}(\xi, \lambda) \propto 1/\lambda$. Then the posterior density for the integral given the data using Bayes theorem is
+Rather than use maximum likelihood to determine $m$ and $s$ one can treat them as hyper-parameters with a non-informative, conjugate prior, namely $\vrho_{m,s^2}(\xi, \lambda) \propto 1/\lambda$. Then the posterior density for the integral given the data using Bayes theorem is
 \begin{align*}
 \MoveEqLeft[1]{\rho_{\mu}(z | \vf = \vy)} \\
 & \propto \int_{0}^\infty \int_{-\infty}^\infty \rho_{\mu}(z | \vf = \vy, m = \xi, s^2 = \lambda) \\
@@ -472,7 +470,7 @@ Rather than use maximum likelihood to determine $m$ and $s$ one can treat them a
 & \qquad \qquad  + \vone^T \mC^{-1} \vy (c_0  -\vc ^T \mC^{-1} \vc),\\
 \gamma &  = (z - \vc^T \mC^{-1} \vy )^2  + \vy^T \mC^{-1} \vy (c_0  -\vc ^T \mC^{-1} \vc).
 \end{align*}
-In the derivation above and below, factors that are independent of $\xi$, $\lambda$, or $z$ can be discarded since we only need to preserve the proportion, however, factors that depend on $\xi$, $\lambda$, or $z$ must be kept.  
+In the derivation above and below, factors that are independent of $\xi$, $\lambda$, or $z$ can be discarded since we only need to preserve the proportion.  But, factors that depend on $\xi$, $\lambda$, or $z$ must be kept.  
 %Completing the square allows us to compute the integral with respect to $\xi$:
 Completing the square $
 \alpha \xi^2 -2 \beta \xi + \gamma 
@@ -515,7 +513,7 @@ where
 \end{equation}
 Here $t_{n-1,0.995}$ denotes the $99.5$ percentile of a standard Student's $t$-distribution with $n-1$ degrees of freedom.
 
-Because the shape parameter, $\vtheta$, enters the definition of the covariance kernel in a non-trivial way, the only way to treat it as a hyperparameter and assign a tractable prior would be for the prior to be discrete.  We believe in practice that choosing such a prior involves more guesswork than using the empirical Bayes estimate of $\vtheta$ in \eqref{eqn:thetaMLE} or the cross-validation approached described next.
+Because the shape parameter, $\vtheta$, enters the definition of the covariance kernel in a non-trivial way, the only way to treat it as a hyperparameter and assign a tractable prior would be for the prior to be discrete.  We believe in practice that choosing such a prior involves more guesswork than using the empirical Bayes estimate of $\vtheta$ in \eqref{eqn:thetaMLE} or the generalized cross-validation approached described next.
 
 
 \subsubsection{Generalized Cross-Validation} \label{sec:GCV}
@@ -565,7 +563,7 @@ Plugging this value of $m$ into \eqref{eqn:BayesCub} yields
 
 An estimate for $s$ may be obtained by noting that by Lemma \ref{thrm:condDist},
 \[
-\var[f(\vx_i ) | \vf_{-i} = \vy_{-i}] = s^2 a_{ii}^{-1},
+\var[f(\vx_i ) | \vf_{-i} = \vy_{-i}] = s^2 a_{ii}^{-1}.
 \]
 Thus, we may estimate $s$ using an argument similar to that used in deriving the GCV and then substituting $m_{\textup{GCV}}$ for $m$:
 \begin{align*}
@@ -573,7 +571,7 @@ s^2 &= \var[f(\vx_i ) | \vf_{-i} = \vy_{-i}] a_{ii} \\
 & \approx \frac 1n \sum_{i=1}^n (y_i - \widetilde{y}_i)^2a_{ii}
  = \frac 1n \sum_{i=1}^n \frac{\zeta_i^2}{a_{ii}} \\ 
  & \approx \frac{ \frac 1n \sum_{i=1}^n \zeta_i^2}{\frac 1n \sum_{i=1}^n a_{ii} } = \frac{(\vy - m\vone)^T \mC^{-2} (\vy - m \vone)}{ \trace(\mC^{-1}) } \\ 
- & \approx  s^2_{\textup{GCV}} \\
+ & \approx  s^2_{\textup{GCV}}, \\
  \intertext{where}
  s^2_{\textup{GCV}} & : = \vy^T \left[\mC^{-2} - \frac{\mC^{-2} \vone \vone^T \mC^{-2}}{\vone^T \mC^{-2} \vone}  \right] \vy \\
  &\qquad \qquad  \qquad \qquad  \times \left[ \trace(\mC^{-1}) \right]^{-1}. 
@@ -582,7 +580,7 @@ s^2 &= \var[f(\vx_i ) | \vf_{-i} = \vy_{-i}] a_{ii} \\
 The confidence interval based on generalized cross-validation corresponds to \eqref{eqn_prob_confidence_interval} with the GCV estimates for $m$, $s$, and $\vtheta$:
 \begin{gather}
 \label{GCVerr}
-\err_{\textup{GCV}} = 2.58 s_{\textup{GCV}}  \sqrt{c_0 - \vc^T\mC^{-1}\vc} \\
+\err_{\textup{GCV}} = 2.58 s_{\textup{GCV}}  \sqrt{c_0 - \vc^T\mC^{-1}\vc}, \\
 \label{GCVCI}
 \mathbb{P}_f \left[
 |\mu-\hmu_{\textup{GCV}}| \leq \err_{\textup{GCV}} 
@@ -1270,7 +1268,7 @@ This multidimensional integral function comes from \cite{Kei96} and is inspired 
 %\int_{\reals^d} \cos(a\norm{ \vt}) \exp(-a^2\norm{ \vt }^2)  a^d \, \dvt \\
 & = \int_{[0,1]^d} f_{\textup{Keister}}(\vx) \, \dvx,\\
 \intertext{where }
-f_\textup{Keister}(\vx) &= \pi^{\frac d2} \cos\left(\norm{ \Phi^{-1}(\vx)/2}\right)  ,
+f_\textup{Keister}(\vx) &= \pi^{d/2} \cos\left(\norm{ \Phi^{-1}(\vx)/2}\right)  ,
 \end{align*}
 and again $\Phi$ is the standard normal distribution.
 %\begin{figure}
@@ -1505,10 +1503,10 @@ number & number & number \\
 
 
 
-%\begin{acknowledgements}
-%If you'd like to thank anyone, place your comments here
-%and remove the percent signs.
-%\end{acknowledgements}
+\begin{acknowledgements}
+This research was supported in part by the National Science Foundation grants DMS-1522687 and DMS-1638521 (SAMSI).
+The authors would like to thank the organizers of the SAMSI-Lloyds-Turing Workshop on Probabilistic Numerical Methods, where a preliminary version of this work was discussed.  The authors also thank Chris Oates and Sou-Cheng Choi for valuable comments.
+\end{acknowledgements}
 
 % BibTeX users please use one of
 %\bibliographystyle{spbasic}      % basic style, author-year citations
