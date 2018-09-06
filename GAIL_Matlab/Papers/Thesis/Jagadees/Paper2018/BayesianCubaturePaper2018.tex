@@ -605,27 +605,27 @@ Our  Bayesian cubature algorithm increases the sample size until the width of th
 \caption{Automatic Bayesian Cubature}\label{algorithm1}
   \begin{algorithmic}[1]
   	\Require a generator for the sequence
-  	$\vx_1, \vx_2, \ldots$; a black-box function, $f$; an absolute error tolerance,
-  	$\varepsilon>0$; the positive initial sample size, $n_0$
+  	$\vx_1, \vx_2, \ldots$; 
+  	a black-box function, $f$; 
+  	an absolute error tolerance,
+  	$\varepsilon>0$; the positive initial sample size, $n_0$;
+  	the maximum sample size $n_{\textup{max}}$
   	
-      \State $n \gets 0, \; \err \gets \infty$
+      \State $n \gets n_0, \; n' \gets 0, \; \err \gets \infty$
       
-      \While{$\err > \varepsilon$}
+      \While{$\err > \varepsilon$ and $n \le n_{\textup{max}}$}
       
-      \State	$n' \gets n$
-
-        \IIf {$n =  0$}{$n\gets n_0$}
-	\IElse{$ n\gets 2 n'$}
-	\EndIIf
-
         \State\label{LoopStart}Generate $\{ \vx_i\}_{i=n' + 1}^{n}$ and sample $\{f(\vx_i)\}_{i=n'+1}^{n}$
         \State Compute $\vtheta$ by \eqref{eqn:thetaMLE} or \eqref{vthetaGCV}
         \State Compute $\err$  according to \eqref{eqn:errMLE}, \eqref{FJH:eq:errFull}, or \eqref{GCVerr}
         
+       	\State	$n' \gets n, \; n \gets 2n'$
+        
         \EndWhile
         
+        \State Sample size to compute $\hmu$, $n \gets n'$
         \State Compute $\hmu$, the approximate integral,   according to \eqref{eqn:cubMLE} or \eqref{eqn:muCV}
-      \State \Return $\hmu$  and $\err$
+      \State \Return $\hmu, \; n$  and $\err$
   \end{algorithmic}
 \end{algorithm}
 
@@ -710,7 +710,7 @@ d = 3, \quad \va = \begin{pmatrix}
 \end{subfigure}
 \centering
 \begin{subfigure}[h]{0.8\linewidth}
-\includegraphics[width=1.1\linewidth]{MVN_rapid_time_Matern_d2_2018-Aug-31}
+\includegraphics[width=1.1\linewidth]{MVN_rapid_n_vs_time_Matern_d2_2018-Aug-31}
 \end{subfigure}
 \caption{Multivariate Normal probability estimated using Matern kernel in d=2 using empirical stopping criterion. Top: Guaranteed integration within error tolerance $\varepsilon$. Bottom: Computation time rapidly increases with increase of $n$}
 \label{fig:MVN_Metern_d2b2}
@@ -718,17 +718,16 @@ d = 3, \quad \va = \begin{pmatrix}
 
 %with Intel i7 3630QM and 16GB RAM memory
 On our test computer, it took more than an hour to compute $\hmu_n$ with $n=2^{14}$. As shown in Figure \ref{fig:MVN_Metern_d2b2}, computation time increases rapidly with $n$. 
-Especially, Maximum likelihood estimation of $\vtheta$ which needs the objective function, is the most time consuming of all. 
-Because the objective functions need to be computed multiple times in every iteration to find its minimum, to choose the optimal shape parameter. 
-Not only the complexity increases, also the kernel matrix becomes highly ill-conditioned with increasing $n$ number of data-points.
-We must use alternative techniques to overcome this problem.
+Especially, maximum likelihood estimation of $\vtheta$, which needs the objective function, is the most time consuming of all. 
+Because the objective function needs to be computed multiple times in every iteration to find its minimum. 
+Not only the computational cost increases, also the $\mC$ becomes highly ill-conditioned with increasing $n$.
 So, our algorithm in the current form is not straightaway usable for any practical applications.
 
 
 
 \section{Fast Automatic Bayesian Cubature}\label{sec:fast_BC}
 
-The generic automatic Bayesian cubature algorithm described in the previous section requires $\Order(n^3)$ operations to estimate $\vtheta$, compute the credible interval width, and compute the cubature.  This section explains how to speed up the calculations.  \FJHNote{Where does round-off come from?} A key is to choose kernels that match the design, $\{\vx_i\}_{i=1}^n$, so that the vector-matrix operations required by Bayesian cubature can be accomplished using fast transforms at a cost of $\Order(n \log(n))$.
+The generic automatic Bayesian cubature algorithm described in the previous section requires $\Order(n^3)$ operations to estimate $\vtheta$, compute the credible interval width, and compute the cubature.  This section explains how to speed up the calculations. A key is to choose kernels that match the design, $\{\vx_i\}_{i=1}^n$, so that the vector-matrix operations required by Bayesian cubature can be accomplished using fast transforms at a cost of $\Order(n \log(n))$.
 
 \subsection{Fast Transform Kernel}
 We make some assumptions about the relationship between the covariance kernel and the design, which will be shown to hold in Section \ref{sec:shift_invariant_kernel} for rank-1 lattices and shift-invariant kernels.  First we introduce the notation
@@ -1242,7 +1241,7 @@ Three integrals were evaluated using the GAIL algorithm \code{cubBayesLattice\_g
 
 \paragraph{Multivariate Normal Probability.}
 
-This example was already introduced in Section \ref{MVN_example}, where we used the Mat\'ern covariance kernel.  Here we apply Sidi's $C^2$  periodization to $ f_{\textup{Genz}}$ \eqref{fGenzdef}, and chose $d=3$ and $r=2$ The simulation results for this example function are summarized in Figures \ref{fig:mvn-guaranteed-MLE}, \ref{fig:mvn-guaranteed-FB}, and \ref{fig:mvn-guaranteed-GCV}.  In all cases the Bayesian cubature returns an approximation within the prescribed error tolerance. We used the same setting as before with basic slow Bayesian cubature in \secref{MVN_example} for comparision. For error threshold $\varepsilon=10^{-5}$ with empirical stopping criterion, our fast algorithm takes 0.001 seconds as shown in \figref{fig:mvn-guaranteed-MLE} whereas the basic algorithm takes 30 seconds as shown in \figref{fig:MVN_Metern_d2b2}. 
+This example was already introduced in Section \ref{MVN_example}, where we used the Mat\'ern covariance kernel.  Here we apply Sidi's $C^2$  periodization to $ f_{\textup{Genz}}$ \eqref{fGenzdef}, and chose $d=3$ and $r=2$ The simulation results for this example function are summarized in Figures \ref{fig:mvn-guaranteed-MLE}, \ref{fig:mvn-guaranteed-FB}, and \ref{fig:mvn-guaranteed-GCV}.  In all cases the Bayesian cubature returns an approximation within the prescribed error tolerance. We used the same setting as before with generic slow Bayesian cubature in \secref{MVN_example} for comparision. For error threshold $\varepsilon=10^{-5}$ with empirical stopping criterion, our fast algorithm takes 0.001 seconds as shown in \figref{fig:mvn-guaranteed-MLE} whereas the basic algorithm takes 30 seconds as shown in \figref{fig:MVN_Metern_d2b2}. 
 Amongst the three stopping criteria, GCV achieved the results faster than others. 
 One can also observe from the figures, the credible intervals are wider, causing the true error much smaller than requested.
 This could be due to the periodization transformed $f_\textup{Genz}$ is smoother than the $r=2$ kernel could approximate. Using a kernel of matching smoothness could produce right credible intervals.
