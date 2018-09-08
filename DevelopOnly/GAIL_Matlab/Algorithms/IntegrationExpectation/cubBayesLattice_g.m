@@ -51,7 +51,7 @@
 % Example 1:
 %
 % If no parameters are parsed, help text will show up as follows:
-% >> cubBayesLattice_g
+% >> help cubBayesLattice_g
 % ***Bayesian cubature method to estimate the integral ***
 %
 %
@@ -66,6 +66,7 @@
 % >> check = double(abs(exactInteg-muhat) < 0.01)
 % check = 1
 %
+%
 % Example 3: ExpCos
 %
 % Estimate the integral with integrand f(x) = exp(sum(cos(2*pi*x)) over the
@@ -74,11 +75,13 @@
 % >> fun = @(x) exp(sum(cos(2*pi*x), 2));
 % >> dim=2; absTol=1e-3; relTol=1e-2; fName = 'ExpCos';
 % >> exactInteg = besseli(0,1)^dim;
-% >> obj=cubBayesLattice_g('f',fun, 'dim',dim, 'absTol',absTol,...
-% >>    'relTol',relTol, 'order',4, 'ptransform','C1sin');
+% >> inputArgs = {'relTol',relTol, 'order',2, 'ptransform','C1sin'};
+% >> inputArgs = [inputArgs {'f',fun, 'dim',dim, 'absTol',absTol,}];
+% >> obj=cubBayesLattice_g(inputArgs{:});
 % >> muhat=compInteg(obj);
 % >> check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))
 % check = 1
+%
 %
 % Example 3: Keister function
 %
@@ -89,11 +92,13 @@
 % >> yinv = @(t)(erfcinv( replaceZeros(abs(t)) ));
 % >> f1 = @(t,dim) cos( sqrt( normsqd(yinv(t)) )) *(sqrt(pi))^dim;
 % >> fKeister = @(x) f1(x,dim); exactInteg = Keistertrue(dim);
-% >> obj=cubBayesLattice_g('f',fKeister, 'dim',dim, 'absTol',absTol,...
-% >>    'relTol',relTol, 'order',4, 'ptransform','C1','arbMean',true);
+% >> inputArgs ={'f',fKeister,'dim',dim,'absTol',absTol, 'relTol',relTol};
+% >> inputArgs =[inputArgs {'order',2, 'ptransform','C1','arbMean',true}];
+% >> obj=cubBayesLattice_g(inputArgs{:});
 % >> muhat=compInteg(obj);
 % >> check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))
 % check = 1
+%
 %
 % Example 3: Multivariate Normal probability
 % >> dim=2; absTol=1e-3; relTol=1e-2; fName = 'MVN';
@@ -101,9 +106,10 @@
 % >> MVNParams.a = [-6 -2 -2]; MVNParams.b = [5 2 1]; MVNParams.mu = 0;
 % >> MVNParams.CovProp.C = chol(MVNParams.Cov)';
 % >> muBest = 0.676337324357787;
-% >> integrand = @(t) GenzFunc(t,MVNParams);
-% >> obj=cubBayesLattice_g('f',integrand, 'dim',dim, 'absTol',absTol, ...
-% >>    'relTol',relTol, 'order',2, 'ptransform','C1sin','arbMean',true);
+% >> integrand =@(t) GenzFunc(t,MVNParams);
+% >> inputArgs={'f',integrand,'dim',dim, 'absTol',absTol,'relTol',relTol};
+% >> inputArgs=[inputArgs {'order',1,'ptransform','C1sin','arbMean',true}];
+% >> obj=cubBayesLattice_g(inputArgs{:});
 % >> muhat = compInteg(obj);
 % >> check = double(abs(muBest-muhat) < max(absTol,relTol*abs(muBest)))
 % check = 1
@@ -136,7 +142,7 @@ classdef cubBayesLattice_g < handle
     absTol = 0.01; %absolute tolerance
     relTol = 0; %relative tolerance
     order = 2; %Bernoulli order of the kernel
-    alpha = 0.001; % the uncertainty, the default value is 0.1%.
+    alpha = 0.001; % p-value, default 0.1%.
     ptransform = 'C1sin'; %periodization transform
     stopAtTol = true; %automatice mode: stop after meeting the error tolerance
     arbMean = true; %by default use zero mean algorithm
@@ -202,6 +208,8 @@ classdef cubBayesLattice_g < handle
           if ~isempty(wh), obj.fName = varargin{wh+iStart}; end
           wh = find(strcmp(varargin(iStart:end),'stopCriterion'));
           if ~isempty(wh), obj.stopCriterion = varargin{wh+iStart}; end
+          wh = find(strcmp(varargin(iStart:end),'alpha'));
+          if ~isempty(wh), obj.alpha = varargin{wh+iStart}; end
         end
       end
       
@@ -218,7 +226,7 @@ classdef cubBayesLattice_g < handle
       end
       
       % Credible interval : two sided confidence
-      % i.e, alpha percent quantile
+      % i.e, 1-alpha percent quantile
       if obj.fullBayes
         % degrees of freedom = 2^mmin - 1
         obj.uncert = -tinv(obj.alpha/2, (2^obj.mmin) - 1);
@@ -651,11 +659,13 @@ classdef cubBayesLattice_g < handle
         f=@(x) fInput(x-sin(2*pi*x)/(2*pi)).*prod(2*sin(pi*x).^2,2);
       elseif strcmp(ptransform,'C2sin')
         % Sidi C^2 transform
-        psi3 = @(t) (8-9*cos(pi*t)+cos(3*pi*t))/16; psi3_1 = @(t) (9*sin(pi*t)*pi- sin(3*pi*t)*3*pi)/16;
+        psi3 = @(t) (8-9*cos(pi*t)+cos(3*pi*t))/16; 
+        psi3_1 = @(t) (9*sin(pi*t)*pi- sin(3*pi*t)*3*pi)/16;
         f=@(x) fInput(psi3(x)).*prod(psi3_1(x),2);
       elseif strcmp(ptransform,'C3sin')
         % Sidi C^3 transform
-        psi4 = @(t) (12*pi*t-8*sin(2*pi*t)+sin(4*pi*t))/(12*pi); psi4_1 = @(t) (12*pi-8*cos(2*pi*t)*2*pi+sin(4*pi*t)*4*pi)/(12*pi);
+        psi4 = @(t) (12*pi*t-8*sin(2*pi*t)+sin(4*pi*t))/(12*pi); 
+        psi4_1 = @(t) (12*pi-8*cos(2*pi*t)*2*pi+sin(4*pi*t)*4*pi)/(12*pi);
         f=@(x) fInput(psi4(x)).*prod(psi4_1(x),2);
       elseif strcmp(ptransform,'none')
         % do nothing
