@@ -70,7 +70,7 @@
 % Example 3: ExpCos
 %
 % Estimate the integral with integrand f(x) = exp(sum(cos(2*pi*x)) over the
-% interval [0,1] with parameters: order=4, ptransform=C1sin, abstol=0.01
+% interval [0,1] with parameters: order=2, ptransform=C1sin, abstol=0.01
 %
 % >> fun = @(x) exp(sum(cos(2*pi*x), 2));
 % >> dim=2; absTol=1e-3; relTol=1e-2; fName = 'ExpCos';
@@ -186,31 +186,11 @@ classdef cubBayesLattice_g < handle
         end
         % parse each input argument passed
         if nargin >= iStart
-          wh = find(strcmp(varargin(iStart:end),'f'));
-          if ~isempty(wh), obj.f = varargin{wh+iStart}; end
-          wh = find(strcmp(varargin(iStart:end),'dim'));
-          if ~isempty(wh), obj.dim = varargin{wh+iStart}; end
-          wh = find(strcmp(varargin(iStart:end),'absTol'));
-          if ~isempty(wh), obj.absTol = varargin{wh+iStart}; end
-          wh = find(strcmp(varargin(iStart:end),'relTol'));
-          if ~isempty(wh), obj.relTol = varargin{wh+iStart}; end
-          wh = find(strcmp(varargin(iStart:end),'order'));
-          if ~isempty(wh), obj.order = 2*varargin{wh+iStart}; end
-          wh = find(strcmp(varargin(iStart:end),'ptransform'));
-          if ~isempty(wh), obj.ptransform = varargin{wh+iStart}; end
-          wh = find(strcmp(varargin(iStart:end),'arbMean'));
-          if ~isempty(wh), obj.arbMean = varargin{wh+iStart}; end
-          wh = find(strcmp(varargin(iStart:end),'stopAtTol'));
-          if ~isempty(wh), obj.stopAtTol = varargin{wh+iStart}; end
-          wh = find(strcmp(varargin(iStart:end),'figSavePath'));
-          if ~isempty(wh), obj.figSavePath = varargin{wh+iStart}; end
-          wh = find(strcmp(varargin(iStart:end),'fName'));
-          if ~isempty(wh), obj.fName = varargin{wh+iStart}; end
-          wh = find(strcmp(varargin(iStart:end),'stopCriterion'));
-          if ~isempty(wh), obj.stopCriterion = varargin{wh+iStart}; end
-          wh = find(strcmp(varargin(iStart:end),'alpha'));
-          if ~isempty(wh), obj.alpha = varargin{wh+iStart}; end
+          % parse and set the input arguments to obj
+          obj.parse_input_args(varargin{:});
         end
+      else
+        obj.warn_fd();
       end
       
       if strcmp(obj.stopCriterion, 'full')
@@ -299,7 +279,13 @@ classdef cubBayesLattice_g < handle
       out.absTol = obj.absTol;
       out.relTol = obj.relTol;
       out.shift = shift;
-      out.stopAtTol = obj.stopAtTol; 
+      out.stopAtTol = obj.stopAtTol;
+      
+      if stop_flag==false
+        warning('GAIL:cubBayesLattice_g:maxreached',...
+            ['In order to achieve the guaranteed accuracy, ', ...
+            sprintf('used maximum allowed sample size %d. \n', n)] );
+      end
       
       % convert from gpu memory to local
       muhat=obj.gather_(muhat);
@@ -379,7 +365,7 @@ classdef cubBayesLattice_g < handle
       
       n=2^m;
       success = false;
-      %Compute MLE parameter
+      % search for optimal shape parameter
       lnaMLE = fminbnd(@(lna) ...
         ObjectiveFunction(obj, exp(lna),xpts,ftilde), -5,5,optimset('TolX',1e-2));
       aMLE = exp(lnaMLE);
@@ -457,7 +443,7 @@ classdef cubBayesLattice_g < handle
     function [loss,Lambda,Lambda_ring,RKHSnorm] = ObjectiveFunction(obj,a,xun,ftilde)
       
       n = length(ftilde);
-      if obj.order==4 || obj.order==2
+      if obj.order==2 || obj.order==1
         [Lambda, Lambda_ring] = obj.kernel(xun,obj.order,a,obj.avoidCancelError,...
           obj.debugEnable);
       else
@@ -541,6 +527,78 @@ classdef cubBayesLattice_g < handle
       saveas(hFigNormplot, plotFileName)
     end
     
+    % parses each input argument passed and assigns to obj.
+    % Warns any unsupported options passed
+    function parse_input_args(obj, varargin)
+      if nargin > 0
+        iStart = 1;
+        if isa(varargin{1},'cubBayesLattice_g')
+          iStart = 2;
+        end
+        % parse each input argument passed
+        if nargin >= iStart
+          wh = find(strcmp(varargin(iStart:end),'f'));
+          if ~isempty(wh), obj.f = varargin{wh+iStart}; else, obj.warn_fd(); end
+          wh = find(strcmp(varargin(iStart:end),'dim'));
+          if ~isempty(wh), obj.dim = varargin{wh+iStart}; else, obj.warn_fd; end
+          wh = find(strcmp(varargin(iStart:end),'absTol'));
+          if ~isempty(wh), obj.absTol = varargin{wh+iStart}; end
+          wh = find(strcmp(varargin(iStart:end),'relTol'));
+          if ~isempty(wh), obj.relTol = varargin{wh+iStart}; end
+          wh = find(strcmp(varargin(iStart:end),'order'));
+          if ~isempty(wh), obj.order = varargin{wh+iStart}; end
+          wh = find(strcmp(varargin(iStart:end),'ptransform'));
+          if ~isempty(wh), obj.ptransform = varargin{wh+iStart}; end
+          wh = find(strcmp(varargin(iStart:end),'arbMean'));
+          if ~isempty(wh), obj.arbMean = varargin{wh+iStart}; end
+          wh = find(strcmp(varargin(iStart:end),'stopAtTol'));
+          if ~isempty(wh), obj.stopAtTol = varargin{wh+iStart}; end
+          wh = find(strcmp(varargin(iStart:end),'figSavePath'));
+          if ~isempty(wh), obj.figSavePath = varargin{wh+iStart}; end
+          wh = find(strcmp(varargin(iStart:end),'fName'));
+          if ~isempty(wh), obj.fName = varargin{wh+iStart}; end
+          wh = find(strcmp(varargin(iStart:end),'stopCriterion'));
+          if ~isempty(wh), obj.stopCriterion = varargin{wh+iStart}; end
+          wh = find(strcmp(varargin(iStart:end),'alpha'));
+          if ~isempty(wh), obj.alpha = varargin{wh+iStart}; end
+        end
+      end
+      
+      function validate_input_args(obj)
+        if ~gail.isfcn(obj.f)
+          warning('GAIL:cubBayesLattice_g:fnotfcn',...
+            'The given input f should be a function handle.\n' );
+        end
+        
+        if ~(obj.order==1 || obj.order==2)
+          warning('GAIL:cubBayesLattice_g:r_invalid',...
+            'Kernel order, r=%d not supported, must be 1 or 2, using default r=2\n', ...
+            obj.order);
+          obj.order = 1;
+        end
+        
+        stopCriterions = {'full','GCV','MLE'};
+        if ~ismember(obj.stopCriterion, stopCriterions)
+          str_stopCriterions = join(stopCriterions, ',');
+          warning('GAIL:cubBayesLattice_g:stop_crit_invalid',...
+            'Stop criterion = %s not supported, must be from %s, using default MLE\n', ...
+            obj.stopCriterion, str_stopCriterions{1});
+          obj.stopCriterion = 'MLE';
+        end
+        
+        var_txs = {'Baker','C0','C1','C1sin','C2sin','C3sin','none'};
+        if ~ismember(obj.ptransform, var_txs)
+          str_var_txs = join(var_txs, ',');
+          warning('GAIL:cubBayesLattice_g:var_transform_invalid',...
+            'Periodizing transform = %s not supported, must be from %s, using default Baker\n', ...
+            obj.ptransform, str_var_txs{1});
+          obj.ptransform = 'Baker';
+        end
+      end
+      
+      validate_input_args(obj);
+    end
+    
   end
   
   methods(Static)
@@ -601,17 +659,18 @@ classdef cubBayesLattice_g < handle
     end
     
     % bernoulli polynomial based kernel
-    % C1 : first row of the kernel
-    % Lambda : eigen values of the kernel
-    % Lambdahat = fft(C1 - 1)
+    % C1 : first row of the covariance matrix
+    % Lambda : eigen values of the covariance matrix
+    % Lambda_ring = fft(C1 - 1)
     function [Lambda, Lambda_ring] = kernel(xun,order,a,avoidCancelError,...
         debugEnable)
       
-      constMult = -(-1)^(order/2)*((2*pi)^order)/factorial(order);
+      b_order = order*2; % Bernoulli polynomial order as per the equation
+      constMult = -(-1)^(b_order/2)*((2*pi)^b_order)/factorial(b_order);
       % constMult = -(-1)^(order/2);
-      if order == 2
+      if b_order == 2
         bernPoly = @(x)(-x.*(1-x) + 1/6);
-      elseif order == 4
+      elseif b_order == 4
         bernPoly = @(x)( ( (x.*(1-x)).^2 ) - 1/30);
       else
         error('Bernoulli order not implemented !');
@@ -771,6 +830,11 @@ classdef cubBayesLattice_g < handle
     function y = gather_(x)
       % y = gather(x);
       y = x;
+    end
+    
+    function warn_fd()
+      warning('GAIL:cubBayesLattice_g:fdnotgiven',...
+          'At least, function f and dimension need to be specified');
     end
   end
 end
