@@ -38,12 +38,12 @@
 %  Guarantee
 % This algorithm attempts to calculate the integral of function f over the
 % hyperbox [0,1]^d to a prescribed error tolerance tolfun:= max(abstol,reltol*| I |)
-% with guaranteed confidence level 99%. If the algorithm terminates
-% without showing any warning messages and provides an answer Q, then the
-% following inequality would be satisfied:
+% with guaranteed confidence level, For Ex. 99%, when alpha=0.5. If the 
+% algorithm terminates without showing any warning messages and provides 
+% an answer Q, then the following inequality would be satisfied:
 %
-% Pr(| Q - I | <= tolfun) >= 99%
-%
+% Pr(| Q - I | <= tolfun) = 99%
+%  
 % Please refer to our paper for detailed arguments and proofs.
 %
 %  Examples
@@ -57,8 +57,8 @@
 %
 % Example 2: Quadratic
 %
-% Estimate the integral with integrand f(x) = x.^2 over the interval
-% [0,1] with parameters: order=2, ptransform=Baker, abstol=0.01, relTol=0
+% Estimate the integral with integrand f(x) = x.^2 over the interval [0,1] 
+% with default parameters: order=2, ptransform=C1sin, abstol=0.01, relTol=0
 %
 % >> obj = cubBayesLattice_g;
 % >> exactInteg = 1.0/3;
@@ -73,7 +73,7 @@
 % interval [0,1] with parameters: order=2, ptransform=C1sin, abstol=0.01
 %
 % >> fun = @(x) exp(sum(cos(2*pi*x), 2));
-% >> dim=2; absTol=1e-3; relTol=1e-2; fName = 'ExpCos';
+% >> dim=2; absTol=1e-3; relTol=1e-2;
 % >> exactInteg = besseli(0,1)^dim;
 % >> inputArgs = {'relTol',relTol, 'order',2, 'ptransform','C1sin'};
 % >> inputArgs = [inputArgs {'f',fun, 'dim',dim, 'absTol',absTol,}];
@@ -85,9 +85,8 @@
 %
 % Example 3: Keister function
 %
-% >> dim=2; absTol=1e-3; relTol=1e-2; fName = 'Keister';
+% >> dim=2; absTol=1e-3; relTol=1e-2; 
 % >> normsqd = @(t) sum(t.*t,2); %squared l_2 norm of t
-% >> domain = repmat([0;1],[1,dim]);
 % >> replaceZeros = @(t) (t+(t==0)*eps); % to avoid getting infinity, NaN
 % >> yinv = @(t)(erfcinv( replaceZeros(abs(t)) ));
 % >> f1 = @(t,dim) cos( sqrt( normsqd(yinv(t)) )) *(sqrt(pi))^dim;
@@ -101,6 +100,7 @@
 %
 %
 % Example 3: Multivariate Normal probability
+%
 % >> dim=2; absTol=1e-3; relTol=1e-2; fName = 'MVN';
 % >> C = [4 1 1; 0 1 0.5; 0 0 0.25]; MVNParams.Cov = C'*C; MVNParams.C = C;
 % >> MVNParams.a = [-6 -2 -2]; MVNParams.b = [5 2 1]; MVNParams.mu = 0;
