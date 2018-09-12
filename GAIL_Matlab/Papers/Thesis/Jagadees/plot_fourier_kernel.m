@@ -4,7 +4,8 @@ function plot_fourier_kernel()
 n = 512;
 shape_param = [0.2 0.8];
 order = [1 2];
-dim = 1;
+bvec = [0.2 0.8];
+dim = 2;
 
 % using uniform points
 l = linspace(0,1,n);
@@ -40,7 +41,7 @@ if dim==2
   
   for sh = shape_param
     for r = order
-      hFig = figure('visible','off');
+      hFig = figure('visible','on');
       set(hFig, 'units', 'inches', 'Position', [4 4 6.5 5.5])
       Z = kernel([X(:) Y(:)], 2*r, sh);
       meshc(X, Y, reshape(Z, [n, n]));
@@ -50,6 +51,24 @@ if dim==2
       saveas(hFig, figSavePathName)
     end
   end
+  
+  if true
+    [X, Y] = meshgrid(l);
+    
+    for sh = shape_param
+      for b = bvec
+        hFig = figure('visible','on');
+        set(hFig, 'units', 'inches', 'Position', [4 4 6.5 5.5])
+        Z = kernelSmooth([X(:) Y(:)], b, sh);
+        meshc(X, Y, reshape(Z, [n, n]));
+        
+        title(sprintf('$b=%0.2f, \\theta$=%0.2f', b, sh), 'Interpreter','latex')
+        figSavePathName = sprintf('fourier_kernel b_%dby100 shape_%dby100.png', 100*b, 100*sh);
+        %saveas(hFig, figSavePathName)
+      end
+    end
+  end
+  
 end
 
 end
@@ -70,4 +89,12 @@ end
 xun = mod(xun+0.3, 1);
 K = prod(1 + (a)*constMult*bernPloy(xun),2);
 
+end
+
+function K = kernelSmooth(xun,b,shape)
+  tempa = 2*pi*xun;  % Lattice
+  tempb = b*cos(tempa);
+  tempc = 1 + shape*(2*(tempb-1))./(1 + b^2 - 2*tempb);
+  %tempc = 1 + shape*((b^2-1))./(1 + b^2 - 2*tempb);
+  K = prod(tempc, 2);
 end

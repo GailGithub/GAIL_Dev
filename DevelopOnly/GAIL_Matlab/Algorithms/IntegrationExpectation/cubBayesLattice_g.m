@@ -667,7 +667,7 @@ classdef cubBayesLattice_g < handle
       
       b_order = order*2; % Bernoulli polynomial order as per the equation
       constMult = -(-1)^(b_order/2)*((2*pi)^b_order)/factorial(b_order);
-      % constMult = -(-1)^(order/2);
+      % constMult = -(-1)^(b_order/2);
       if b_order == 2
         bernPoly = @(x)(-x.*(1-x) + 1/6);
       elseif b_order == 4

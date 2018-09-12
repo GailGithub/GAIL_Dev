@@ -35,9 +35,7 @@ end
 
 rng(202326) % control random number generation
 
-stopAtTol = true;
 alpha = 0.01;
-
 errTol = 0.001;
 relTol = 0;
 stopAtTol = true;
@@ -77,7 +75,7 @@ muhatVec(nRep,1) = 0;
 indx = 1;
 
 matFilePath = 'D:\Dropbox\fjhickernellGithub\GAIL_Dev-BayesianCubature\GAIL_Matlab\Papers\Thesis\Jagadees\Paper2018\figures\';
-filename = 'matern_guranteed_2018-Aug-31';
+filename = 'matern_guranteed_2018-Aug-21';
 matFileName = [matFilePath filename '.mat'];
 if exist(matFileName, 'file') == 2
   S = load(matFileName);
@@ -101,16 +99,6 @@ else
 
   save(sprintf('matern_guranteed_%s.mat', timeStamp), 'muhatVec', 'outVec',...
     'inputArgs','MVNParams','muBest','timeStamp')
-%   timeVec = [outVec.time];
-%   errVec = abs(muhatVec-muBest);
-%   S.timeVec = reshape(timeVec, [], length(errTolVec));
-%   S.errVec = reshape(errVec, [], length(errTolVec));
-%   S.log10ErrVec = log10ErrVec;
-%   % S.tolVec = repmat(errTolVec, length(timeVec)/length(errTolVec),1);
-%   tolVec = [outVec.absTol];
-%   S.tolVec = reshape(tolVec, [], length(errTolVec));
-%   S.testFunArg = struct(inputArgs{:});
-%   S.timeStamp = timeStamp;
   S = load(sprintf('matern_guranteed_%s.mat', timeStamp));
 end
 
@@ -119,9 +107,11 @@ fprintf('done')
 timeVec = [S.outVec.time];
 errVec = [abs(S.muhatVec-S.muBest)];
 tolVec = [S.outVec.absTol]';
+nVec = [S.outVec.n]';
 errVec = errVec./tolVec;
 S.timeVec = reshape(timeVec, [], length(errTolVec));
 S.errVec = reshape(errVec, [], length(errTolVec));
+S.nVec = reshape(nVec, [], length(errTolVec));
 S.log10ErrVec = log10ErrVec;
 % S.tolVec = repmat(errTolVec, length(timeVec)/length(errTolVec),1);
 S.tolVec = reshape(tolVec, [], length(errTolVec));
@@ -140,7 +130,7 @@ set(figH, 'units', 'inches', 'Position', [1 1 9 6])
 %plot([1, 1], timeAxisLimits, 'r', 'LineWidth',1)
 timeTicksLimits(1) = floor(log10(min(S.timeVec(:)))); 
 timeTicksLimits(2) = ceil(log10(max(S.timeVec(:))));
-timeTickInterval = ceil(diff(timeTicksLimits)/3);
+timeTickInterval = ceil(diff(timeTicksLimits)/5);
 plot([1, 1], 10.^timeTicksLimits, 'r', 'LineWidth',1)
 hold on
 
@@ -178,7 +168,7 @@ saveas(figH, figSavePathName)
 figH1 = figure();
 set(figH1, 'units', 'inches', 'Position', [1 1 9 6])
 
-scatter(S.tolVec(:),S.timeVec(:),pointSize,'o','filled')
+scatter(S.errVec(:),S.timeVec(:),pointSize,'o','filled')
 set(gca,'xscale','log')
 set(gca,'yscale','log')
 xlabel('Error Tolerance, $\varepsilon$')
@@ -187,13 +177,39 @@ errTolLimits = [1E-6 1E-1];
 axis([errTolLimits(1) errTolLimits(2) 10^timeTicksLimits(1) 10^timeTicksLimits(2)])
 
 set(gca,'Xtick',(10.^(log10(errTolLimits(1)):2:log10(errTolLimits(2)))), ...
-  'YTick',(10.^(timeTicksVec)) )
+   'YTick',(10.^(timeTicksVec)) )
 set(gca, 'XDir','reverse')
 
 figSavePathName1 = sprintf('%s%s_rapid_time_Matern_d%d_%s.png', ...
   figSavePath, S.testFunArg.fName,...
   S.testFunArg.dim, S.timeStamp );
 saveas(figH1, figSavePathName1)
+ 
+
+%
+% Num. points vs time growth
+figH2 = figure();
+set(figH2, 'units', 'inches', 'Position', [1 1 9 6])
+
+scatter(S.nVec(:),S.timeVec(:),pointSize,'o','filled')
+set(gca,'xscale','log')
+set(gca,'yscale','log')
+xlabel('Num. Samples, $n$')
+ylabel('Time (secs)')
+nvecLimits = [1E1 1E4];
+axis([nvecLimits(1) nvecLimits(2) 10^timeTicksLimits(1) 10^timeTicksLimits(2)])
+
+set(gca,'Xtick',(10.^(log10(nvecLimits(1)):1:log10(nvecLimits(2)))), ...
+  'YTick',(10.^(timeTicksVec)) )
+
+% hold on
+% loglog([min(S.nVec(:)) max(S.nVec(:))],...
+%   min(S.timeVec(:))*[1 exp(nvecLimits(end)/nvecLimits(1)) ], 'g--')
+
+figSavePathName2 = sprintf('%s%s_rapid_n_vs_time_Matern_d%d_%s.png', ...
+  figSavePath, S.testFunArg.fName,...
+  S.testFunArg.dim, S.timeStamp );
+saveas(figH2, figSavePathName2)
 
 fprintf('done')
 
