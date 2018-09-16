@@ -134,8 +134,9 @@
 %   If you find GAIL helpful in your work, please support us by citing the
 %   above papers, software, and materials.
 %
+%
+
 classdef cubBayesLattice_g < handle
-  
   properties
     f = @(x) x.^2; %function to integrate
     dim = 1; %dimension of the integrand
@@ -166,6 +167,7 @@ classdef cubBayesLattice_g < handle
     fullBayes = false; % Full Bayes - assumes m and s^2 as hyperparameters,
     GCV = false; % Generalized cross validation
     vdc_order = true; % use Lattice points generated in vdc order
+    kernType = 1; % Type-1: algebraic convergence, Type-2: exponential convergence
     
     % variables to save debug info in each iteration
     errorBdAll = [];
@@ -367,9 +369,15 @@ classdef cubBayesLattice_g < handle
       
       n=2^m;
       success = false;
+      if obj.kernType==1
+        lnaRange = [-3,0];
+      else
+        lnaRange = [-5,5];
+      end
       % search for optimal shape parameter
       lnaMLE = fminbnd(@(lna) ...
-        ObjectiveFunction(obj, exp(lna),xpts,ftilde), -5,5,optimset('TolX',1e-2));
+        ObjectiveFunction(obj, exp(lna),xpts,ftilde), ...
+        lnaRange(1),lnaRange(2),optimset('TolX',1e-2));
       aMLE = exp(lnaMLE);
       [loss,Lambda,Lambda_ring,RKHSnorm] = ObjectiveFunction(obj, aMLE,xpts,ftilde);
       
@@ -446,20 +454,18 @@ classdef cubBayesLattice_g < handle
       
       n = length(ftilde);
       [Lambda, Lambda_ring] = obj.kernel(xun,obj.order,a,obj.avoidCancelError,...
-          obj.debugEnable);
-
-      ftilde = abs(ftilde);  % remove any negative values
+          obj.kernType,obj.debugEnable);
       
       % compute RKHSnorm 
-      temp = (abs(ftilde(Lambda~=0).^2)./(Lambda(Lambda~=0))) ;
+      temp = abs(ftilde(Lambda~=0).^2)./(Lambda(Lambda~=0)) ;
       
       % compute loss 
       if obj.GCV==true
         % GCV 
-        temp_gcv = (real(ftilde(Lambda~=0))./(Lambda(Lambda~=0))).^2 ;
+        temp_gcv = abs(ftilde(Lambda~=0)./(Lambda(Lambda~=0))).^2 ;
         loss1 = log(sum(1./Lambda(Lambda~=0)));
         loss2 = log(sum(temp_gcv(2:end)));
-        % ignore all zero val eigenvalues
+        % ignore all zero eigenvalues
         loss = log(sum(temp_gcv(2:end))) - 2*log(sum(1./Lambda(Lambda~=0)));
         
         if obj.arbMean==true
@@ -477,10 +483,10 @@ classdef cubBayesLattice_g < handle
           temp_1 = sum(temp);
         end
         
+        % ignore all zero eigenvalues
         loss1 = sum(log(Lambda(Lambda~=0)));
         loss2 = n*log(temp_1);
-        % ignore all zero eigenvalues
-        loss = sum(log(Lambda(Lambda~=0))) + n*log(temp_1);        
+        loss = loss1 + loss2;        
       end
       
       if obj.debugEnable
@@ -504,7 +510,7 @@ classdef cubBayesLattice_g < handle
     function CheckGaussianDensity(obj, ftilde, lambda)
       n = length(ftilde);
       ftilde(1) = 0;  % substract by (m_\MLE \vone) to get zero mean
-      % w_ftilde = (1/sqrt(n))*real(ftilde)./sqrt(real(lambda));
+       % after ifft, the result is 'real' so taking real() justified
       w_ftilde = real(ifft(ftilde./sqrt(lambda)));
       if obj.visiblePlot==false
         hFigNormplot = figure('visible','off');
@@ -570,11 +576,20 @@ classdef cubBayesLattice_g < handle
             'The given input f should be a function handle.\n' );
         end
         
-        if ~(obj.order==1 || obj.order==2)
-          warning('GAIL:cubBayesLattice_g:r_invalid',...
-            'Kernel order, r=%d not supported, must be 1 or 2, using default r=2\n', ...
-            obj.order);
-          obj.order = 1;
+        if obj.kernType==1
+          if ~(obj.order==1 || obj.order==2)
+            warning('GAIL:cubBayesLattice_g:r_invalid',...
+              'Kernel order, r=%d not supported, must be 1 or 2, using default r=2\n', ...
+              obj.order);
+            obj.order = 1;
+          end
+        elseif obj.kernType==2
+          if ~(obj.order>0 && obj.order<1)
+            warning('GAIL:cubBayesLattice_g:r_invalid',...
+              'Kernel order, r=%1.1f invalid, must be in (0, 1), using default r=0.4\n', ...
+              obj.order);
+            obj.order = 0.4;
+          end
         end
         
         stopCriterions = {'full','GCV','MLE'};
@@ -641,8 +656,8 @@ classdef cubBayesLattice_g < handle
     
     % Computes modified kernel Km1 = K - 1
     % Useful to avoid cancellation error in the computation of (1 - n/\lambda_1)
-    function [Km1, K] = kernel_t(a, const, Bern)
-      theta = a*const;
+    function [Km1, K] = kernel_t(aconst, Bern)
+      theta = aconst;
       d = size(Bern, 2);
       
       Kjm1 = theta*Bern(:,1);  % Kernel at j-dim minus One
@@ -657,30 +672,37 @@ classdef cubBayesLattice_g < handle
       
       Km1 = Kjm1; K = Kj;
     end
-    
+
     % bernoulli polynomial based kernel
     % C1 : first row of the covariance matrix
     % Lambda : eigen values of the covariance matrix
     % Lambda_ring = fft(C1 - 1)
     function [Lambda, Lambda_ring] = kernel(xun,order,a,avoidCancelError,...
-        debugEnable)
+        kernType,debugEnable)
       
-      b_order = order*2; % Bernoulli polynomial order as per the equation
-      constMult = -(-1)^(b_order/2)*((2*pi)^b_order)/factorial(b_order);
-      % constMult = -(-1)^(b_order/2);
-      if b_order == 2
-        bernPoly = @(x)(-x.*(1-x) + 1/6);
-      elseif b_order == 4
-        bernPoly = @(x)( ( (x.*(1-x)).^2 ) - 1/30);
+      if kernType==1
+        b_order = order*2; % Bernoulli polynomial order as per the equation
+        constMult = -(-1)^(b_order/2)*((2*pi)^b_order)/factorial(b_order);
+        % constMult = -(-1)^(b_order/2);
+        if b_order == 2
+          bernPoly = @(x)(-x.*(1-x) + 1/6);
+        elseif b_order == 4
+          bernPoly = @(x)( ( (x.*(1-x)).^2 ) - 1/30);
+        else
+          error('Bernoulli order not implemented !');
+        end
+        kernelFunc = @(x) bernPoly(x);
       else
-        error('Bernoulli order not implemented !');
+        b = order;
+        kernelFunc = @(x) 2*b*((cos(2*pi*x)-b))./(1 + b^2 - 2*b*cos(2*pi*x));
+        constMult = 1;
       end
       
       if avoidCancelError
         % Computes C1m1 = C1 - 1
         % C1_new = 1 + C1m1 indirectly computed in the process
-        [C1m1, C1_alt] = cubBayesLattice_g.kernel_t(a, constMult, bernPoly(xun));
-        Lambda_ring = real(fft(C1m1));
+        [C1m1, C1_alt] = cubBayesLattice_g.kernel_t(a*constMult, kernelFunc(xun));
+        Lambda_ring = real(fft(C1m1)); % real eigenvalues: Symmetric pos definite Kernel
         
         Lambda = Lambda_ring;
         Lambda(1) = Lambda_ring(1) + length(Lambda_ring);
@@ -695,9 +717,9 @@ classdef cubBayesLattice_g < handle
         end
       else
         % direct appraoch to compute first row of the Kernel Gram matrix
-        C1 = prod(1 + (a)*constMult*bernPoly(xun),2);  %
+        C1 = prod(1 + (a)*constMult*kernelFunc(xun),2);
         % matlab's builtin fft is much faster and accurate
-        Lambda = real(fft(C1));  % remove any negative values
+        Lambda = real(fft(C1));  % real eigenvalues: Symmetric pos definite kernel
         Lambda_ring = 0;
       end
       
