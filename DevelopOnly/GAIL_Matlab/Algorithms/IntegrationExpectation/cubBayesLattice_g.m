@@ -60,9 +60,11 @@
 % Estimate the integral with integrand f(x) = x.^2 over the interval [0,1] 
 % with default parameters: order=2, ptransform=C1sin, abstol=0.01, relTol=0
 %
+% >> warning('off','GAIL:cubBayesLattice_g:fdnotgiven')
 % >> obj = cubBayesLattice_g;
 % >> exactInteg = 1.0/3;
 % >> muhat=compInteg(obj);
+% >> warning('on','GAIL:cubBayesLattice_g:fdnotgiven')
 % >> check = double(abs(exactInteg-muhat) < 0.01)
 % check = 1
 %
@@ -443,12 +445,9 @@ classdef cubBayesLattice_g < handle
     function [loss,Lambda,Lambda_ring,RKHSnorm] = ObjectiveFunction(obj,a,xun,ftilde)
       
       n = length(ftilde);
-      if obj.order==2 || obj.order==1
-        [Lambda, Lambda_ring] = obj.kernel(xun,obj.order,a,obj.avoidCancelError,...
+      [Lambda, Lambda_ring] = obj.kernel(xun,obj.order,a,obj.avoidCancelError,...
           obj.debugEnable);
-      else
-        error('Unsupported Bernoulli polyn order !');
-      end
+
       ftilde = abs(ftilde);  % remove any negative values
       
       % compute RKHSnorm 
@@ -505,7 +504,8 @@ classdef cubBayesLattice_g < handle
     function CheckGaussianDensity(obj, ftilde, lambda)
       n = length(ftilde);
       ftilde(1) = 0;  % substract by (m_\MLE \vone) to get zero mean
-      w_ftilde = (1/sqrt(n))*real(ftilde)./sqrt(real(lambda));
+      % w_ftilde = (1/sqrt(n))*real(ftilde)./sqrt(real(lambda));
+      w_ftilde = real(ifft(ftilde./sqrt(lambda)));
       if obj.visiblePlot==false
         hFigNormplot = figure('visible','off');
       else
@@ -514,8 +514,8 @@ classdef cubBayesLattice_g < handle
       set(hFigNormplot,'defaultaxesfontsize',16, ...
         'defaulttextfontsize',16, ... %make font larger
         'defaultLineLineWidth',0.75, 'defaultLineMarkerSize',8)
-      % other option : normplot(w_ftilde)
-      qqplot(w_ftilde);
+      % other option : qqplot(w_ftilde)
+      normplot(w_ftilde)
       set(hFigNormplot, 'units', 'inches', 'Position', [1 1 8 6])
       
       title(sprintf('Normplot %s n=%d Tx=%s', obj.fName, n, obj.ptransform))
