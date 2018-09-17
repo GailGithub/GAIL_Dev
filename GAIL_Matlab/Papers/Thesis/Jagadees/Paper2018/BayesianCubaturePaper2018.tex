@@ -279,7 +279,7 @@ for some discussion of variable transformations and the related error analysis. 
 \label{eqn:defn_hmu}  % remove this
 \hmu: = \hmu(f) := w_0 + \sum_{i=1}^{n} f(\vx_i) w_i,
 \end{align}
-where the weights, $w_0$, and  $\vw = (w_i)_{i=1}^n \in \reals^n$, and the nodes, $\{\vx_i\}_{i=1}^n \subset [0,1]^d$, are chosen to make the error, $\abs{\mu - \hmu}$, small. The integration domain $[0,1]^d$ is convenient for the low discrepancy node sets that we use.  The nodes are assumed to be deterministic.
+where the weights, $w_0$, and  $\vw = (w_i)_{i=1}^n \in \reals^n$, and the nodes, $\{\vx_i\}_{i=1}^n \subset [0,1]^d$, are chosen to make the error, $\abs{\mu - \hmu}$, small. The integration domain $[0,1]^d$ is convenient for the low discrepancy node sets \cite{DicEtal14a,SloJoe94} that we use.  The nodes are assumed to be deterministic.
 
 We construct a reliable stopping criterion that determines the number of integrand values required, $n$, to ensure that the error is no greater than a user-defined error tolerance denoted $\varepsilon$, i.e., 
 \begin{align}
@@ -703,31 +703,26 @@ d = 3, \quad \va = \begin{pmatrix}
 4 & 1 & 1 \\ 0 & 1 & 0.5 \\ 0 & 0 & 0.25
 \end{pmatrix}.
 \end{align*}
+The node sets are randomly scrambled Sobol points \cite{DicEtal14a,DicPil10a}.  The results for  $\varepsilon = 10^{-2}, 10^{-3}, 10^{-4}$, and $10^{-5}$ and $100$ scrambles for each $\varepsilon$ are shown in \figref{fig:MVN_Metern_d2b2}.  We  observe the algorithm meets the error criterion 95\% of the time.
+%with Intel i7 3630QM and 16GB RAM memory
+%On our test computer, 
+As shown in \figref{fig:MVN_Metern_d2b2}, computation time increases rapidly with $n$. 
+The  maximum likelihood estimation of $\vtheta$, which requires repeated evaluation of the objective function, is the most time consuming of all. It takes tens of seconds to compute $\hmu_n$ once with $\varepsilon = 10^{-5}$.   In contrast, this example in Section \ref{sec:NumExp} take less than a hundredth of a second to compute $\hmu_n$ once with $\varepsilon = 10^{-5}$ using our new algorithm. Not only is the Bayesian cubature with the the Mat\'ern kernel slow, but also $\mC$ becomes highly ill-conditioned as $n$ increases.
+So, Algorithm \ref{algorithm1}  in its current form is not practical. \FJHNote{Jags, please check this re-write}
 
 \begin{figure}
-\captionsetup[subfigure]{labelformat=empty}
-\centering
-\begin{subfigure}[h]{0.8\linewidth}
-\includegraphics[width=1.1\linewidth]{MVN_guaranteed_time_Matern_d2_2018-Aug-31}
-\end{subfigure}
-\centering
-\begin{subfigure}[h]{0.8\linewidth}
-\includegraphics[width=1.1\linewidth]{MVN_rapid_n_vs_time_Matern_d2_2018-Aug-31}
-\end{subfigure}
-\caption{Multivariate normal probability estimated using Mat\'ern kernel with $d=2$ using empirical stopping criterion. Top: Guaranteed integration within error tolerance $\varepsilon$. Bottom: Computation time rapidly increases with increase of $n$.}
-\label{fig:MVN_Metern_d2b2}
+	\captionsetup[subfigure]{labelformat=empty}
+	\centering
+	\begin{subfigure}[h]{0.8\linewidth}
+		\includegraphics[width=1.1\linewidth]{MVN_guaranteed_time_Matern_d2_2018-Aug-31}
+	\end{subfigure}
+	\centering
+	\begin{subfigure}[h]{0.8\linewidth}
+		\includegraphics[width=1.1\linewidth]{MVN_rapid_n_vs_time_Matern_d2_2018-Aug-31}
+	\end{subfigure}
+	\caption{Multivariate normal probability estimated using Mat\'ern kernel with $d=2$ using empirical stopping criterion. Top: Guaranteed integration within error tolerance $\varepsilon$. Bottom: Computation time rapidly increases with increase of $n$.}
+	\label{fig:MVN_Metern_d2b2}
 \end{figure}
-
-The results are in shown in \figref{fig:MVN_Metern_d2b2}. Sobol points are randomly scrambled in every run, causing the accuracy to vary accordingly. 
-\JRNote{Do we need to explain why scrambling is needed?}
-For each $\varepsilon$, the test was repeated 100 times. We can observe the algorithm meets the $\varepsilon$ 95\% of the times.
-%with Intel i7 3630QM and 16GB RAM memory
-On our test computer, it took more than an hour to compute $\hmu_n$ with $n=2^{14}$. As shown in \figref{fig:MVN_Metern_d2b2}, computation time increases rapidly with $n$. 
-Especially, maximum likelihood estimation of $\vtheta$, which needs the objective function, is the most time consuming of all. 
-Because the objective function needs to be computed multiple times in every iteration to find its minimum. 
-Not only the computational cost increases, but also the $\mC$ becomes highly ill-conditioned with increasing $n$.
-So, our algorithm in the current form is not straightaway usable for any practical applications.
-
 
 
 \section{Fast Automatic Bayesian Cubature}\label{sec:fast_BC}
