@@ -8,7 +8,7 @@
 %   Q = COMPINTEG(OBJ); estimates the integral of f over hyperbox [0,1]^d
 %   using Rank-1 Lattice sampling to within a specified generalized error
 %   tolerance, tolfun = max(abstol, reltol*| I |), i.e., | I - Q | <= tolfun
-%   with cofidence of at least 99%, where I is the true integral value,
+%   with confidence of at least 99%, where I is the true integral value,
 %   Q is the estimated integral value, abstol is the absolute error tolerance, 
 %   and reltol is the relative error tolerance. Usually the reltol determines
 %   the accuracy of the estimation, however, if | I | is rather small, 
@@ -60,9 +60,11 @@
 % Estimate the integral with integrand f(x) = x.^2 over the interval [0,1] 
 % with default parameters: order=2, ptransform=C1sin, abstol=0.01, relTol=0
 %
+% >> warning('off','GAIL:cubBayesLattice_g:fdnotgiven')
 % >> obj = cubBayesLattice_g;
 % >> exactInteg = 1.0/3;
 % >> muhat=compInteg(obj);
+% >> warning('on','GAIL:cubBayesLattice_g:fdnotgiven')
 % >> check = double(abs(exactInteg-muhat) < 0.01)
 % check = 1
 %
@@ -145,7 +147,7 @@ classdef cubBayesLattice_g < handle
     order = 2; %Bernoulli order of the kernel
     alpha = 0.001; % p-value, default 0.1%.
     ptransform = 'C1sin'; %periodization transform
-    stopAtTol = true; %automatice mode: stop after meeting the error tolerance
+    stopAtTol = true; %automatic mode: stop after meeting the error tolerance
     arbMean = true; %by default use zero mean algorithm
     fName = 'None'; %name of the integrand
     figSavePath = ''; %path where to save he figures
@@ -696,9 +698,9 @@ classdef cubBayesLattice_g < handle
         end
       else
         % direct approach to compute first row of the kernel Gram matrix
-        C1 = prod(1 + (a)*constMult*bernPoly(xun),2);  %
+        C1 = prod(1 + (a)*constMult*bernPoly(xun),2);
         % matlab's builtin fft is much faster and accurate
-        Lambda = real(fft(C1));  % remove any negative values
+        Lambda = real(fft(C1));  % real eigenvalues: Symmetric pos definite kernel
         Lambda_ring = 0;
       end
       
@@ -782,7 +784,7 @@ classdef cubBayesLattice_g < handle
       end
     end
     
-    % fft with deimation in time i.e., input is already in 'bitrevorder'
+    % fft with decimation in time i.e., input is already in 'bitrevorder'
     function y = fft_DIT(y,nmmin)
       for l=0:nmmin-1
         nl=2^l;
@@ -792,8 +794,8 @@ classdef cubBayesLattice_g < handle
         coefv=repmat(coef,nmminlm1,1);
         evenval=y(ptind);
         oddval=y(~ptind);
-        y(ptind)=(evenval+coefv.*oddval); %/2;
-        y(~ptind)=(evenval-coefv.*oddval); %/2;
+        y(ptind)=(evenval+coefv.*oddval);
+        y(~ptind)=(evenval-coefv.*oddval);
       end
     end
     
