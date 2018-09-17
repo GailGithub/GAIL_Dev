@@ -1,5 +1,5 @@
 function [muhat,out]=cubBayesMLE_Matern_g(varargin)
-%CUBMLE Monte Carlo method to estimate the mean of a random variable
+%CUBMLE Byesian cubature method to estimate the mean of a random variable
 %
 %   tmu = cubML(Yrand,absTol,relTol,alpha,nSig,inflate) estimates the mean,
 %   mu, of a f(X) using nvec samples of a random variable X in [0,1]^d.
@@ -33,24 +33,24 @@ tstart = tic; %start the clock
 nmax = max(nvec);
 nn = numel(nvec);
 d = size(domain,2);
-if strcmp(s_args.whSample,'Sobol')
-  x = net(scramble(sobolset(d),'MatousekAffineOwen'),nmax);
-end
+x = net(scramble(sobolset(d),'MatousekAffineOwen'),nmax);
 fx = f(x);
+
 out.aMLE(nn,1) = 0;
 muhatVec(nn,1) = 0;
 muhat = 0;
 for ii = 1:nn
   nii = nvec(ii);
+  xun = x(1:nii,:);
   
   % Find the optimal shape parameter
   lnaMLE = fminbnd(@(lna) ...
-    MLEKernel(exp(lna),x(1:nii,:),fx(1:nii),whKer,domain,s_args.arbMean), ...
+    MLEKernel(exp(lna),xun,fx(1:nii),whKer,domain,s_args.arbMean), ...
     -5,5,optimset('TolX',1e-2));
   aMLE = exp(lnaMLE);
   out.aMLE(ii) = aMLE;
   
-  [K,kvec,k0] = kernelFun(x(1:nii,:),whKer,aMLE);
+  [K,kvec,k0] = kernelFun(xun,whKer,aMLE);
   Kinvy = K\fx(1:nii);
   
   % compute the approximate mu
@@ -99,7 +99,8 @@ for ii = 1:nn
   muplus = muhatVec(ii) + out.ErrBdVec(ii);
   
   if 2*out.ErrBdVec(ii) <= ...
-      max(s_args.absTol,s_args.relTol*abs(muminus)) + max(s_args.absTol,s_args.relTol*abs(muplus))
+      max(s_args.absTol,s_args.relTol*abs(muminus)) + ...
+      max(s_args.absTol,s_args.relTol*abs(muplus))
     muhat = muhatVec(ii);
     break
   end
@@ -149,7 +150,7 @@ if nargin < 4
   end
 end
 K = ones(nx);
-if strcmp(whKer,'sqExp') %al  l wrong
+if strcmp(whKer,'sqExp') %all wrong
   kvec = ones(nx,1)*(sqrt(pi)/(2*shape))^d;
   for k = 1:d
     K = K.*exp(-(shape*bsxfun(@minus,x(:,k),x(:,k)')).^2);
@@ -171,6 +172,7 @@ elseif strcmp(whKer,'Mat1')
 end
 
 end
+
 
 function s_args = parse_args(s_args, varargin)
 

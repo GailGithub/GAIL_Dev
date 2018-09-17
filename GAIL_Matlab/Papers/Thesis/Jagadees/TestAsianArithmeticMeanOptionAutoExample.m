@@ -7,6 +7,8 @@ dataFileName = [whichExample 'AsianCallExampleAllData.mat'];
 if exist(dataFileName,'file')
   S = load(dataFileName);
   callPriceExact = S.callPriceExact;
+else
+  callPriceExact = str2double('13.121994282389803033');
 end
 
 %% Parameters for the Asian option, Pierre's Example

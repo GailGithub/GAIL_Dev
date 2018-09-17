@@ -318,6 +318,7 @@ For a Gaussian process, all vectors of linear functionals of $f$ have a multivar
 \begin{subequations} \label{eqn:fGaussDist}
 \begin{align}
 \vf  & \sim \calN(m \vone, s^2 \mC), \\
+\nonumber & \qquad \qquad \text{where $\vone$ is a vector of all ones,}\\
 \mu & \sim \calN(m, s^2 c_0), 
 \\
 \text{where }
@@ -325,7 +326,6 @@ c_0 &= \int_{[0,1]^{d}\times [0,1]^{d}} C_\vtheta(\vx,\vt) \, \dif{\vx} \, \dif{
 \cov(\vf, \mu) &= \left(  \int_{[0,1]^d} C(\vt,\vx_i) \, \D \vt \right)_{i=1}^n  =: \vc.
 \end{align}
 \end{subequations}
-Where $\vone$ is a vector of all ones.
 We need the following lemma to derive the posterior error of our cubature. 
 
 \begin{lemma} \cite[(A.6), (A.11--13)]{RasWil06a} \label{thrm:condDist} If $\vY = (\vY_1, \vY_2)^T \sim \calN (\vm,\mC)$, where $\vY_1$ and $\vY_2$ are random vectors of arbitrary length, and 

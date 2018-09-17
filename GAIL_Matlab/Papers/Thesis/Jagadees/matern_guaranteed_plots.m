@@ -75,13 +75,13 @@ muhatVec(nRep,1) = 0;
 indx = 1;
 
 matFilePath = 'D:\Dropbox\fjhickernellGithub\GAIL_Dev-BayesianCubature\GAIL_Matlab\Papers\Thesis\Jagadees\Paper2018\figures\';
-filename = 'matern_guranteed_2018-Aug-21';
+filename = 'matern_guranteed_2018-Aug-31';
 matFileName = [matFilePath filename '.mat'];
 if exist(matFileName, 'file') == 2
+  % data already exists, just load it
   S = load(matFileName);
-  
 else
-
+  % recompute the data required to plot
   for errTol=errTolVec(end:-1:1)
     tic
     for i=1:nRep
@@ -122,12 +122,9 @@ pointSize = 30;
 pointShapes = {'o','s','d','^','v','<','>','p','h'};
 errVecLimits = [1E-6, 1E1];
 
+% guaranteed plot with colorbar showing \varepsilon, error tolerance
 figH = figure();
 set(figH, 'units', 'inches', 'Position', [1 1 9 6])
-%timeLimits = [1E-3, 1E-2];
-%timeAxisLimits(1) = min(S.timeVec(:))/2;
-%timeAxisLimits(2) = max(S.timeVec(:))*2;
-%plot([1, 1], timeAxisLimits, 'r', 'LineWidth',1)
 timeTicksLimits(1) = floor(log10(min(S.timeVec(:)))); 
 timeTicksLimits(2) = ceil(log10(max(S.timeVec(:))));
 timeTickInterval = ceil(diff(timeTicksLimits)/5);
@@ -165,26 +162,50 @@ figSavePathName = sprintf('%s%s_guaranteed_time_Matern_d%d_%s.png', ...
 saveas(figH, figSavePathName)
 
 
+% colorbar shows 'n', the number of samples
 figH1 = figure();
 set(figH1, 'units', 'inches', 'Position', [1 1 9 6])
+timeTicksLimits(1) = floor(log10(min(S.timeVec(:)))); 
+timeTicksLimits(2) = ceil(log10(max(S.timeVec(:))));
+timeTickInterval = ceil(diff(timeTicksLimits)/5);
+plot([1, 1], 10.^timeTicksLimits, 'r', 'LineWidth',1)
+hold on
 
-scatter(S.errVec(:),S.timeVec(:),pointSize,'o','filled')
+for i=1:size(S.errVec,2)
+  scatter(S.errVec(:,i),S.timeVec(:,i),pointSize,log2(S.nVec(:,i)),...
+    pointShapes{i},'filled')
+end
+
+temp = arrayfun(@(x){sprintf('${\\varepsilon=10^{%d}}$', x)}, log10ErrVec(end:-1:1));
+temp = [{'${\vert\mu-\widehat{\mu} \vert}/{\varepsilon}=1$'}, temp];
+legend(temp,'location','best','Interpreter','latex'); axis tight
+
 set(gca,'xscale','log')
 set(gca,'yscale','log')
-xlabel('Error Tolerance, $\varepsilon$')
+xlabel('\({\vert\mu-\widehat{\mu} \vert}/{\varepsilon}\)')
 ylabel('Time (secs)')
-errTolLimits = [1E-6 1E-1];
-axis([errTolLimits(1) errTolLimits(2) 10^timeTicksLimits(1) 10^timeTicksLimits(2)])
+cticks = log2(sort(unique(S.nVec(:))));
+cticks = [4 6 8 10 12];
+cticks_text = arrayfun(@(x){sprintf('2^{%d}', x)}, cticks);
+c = colorbar('Ticks',cticks, ...
+  'TickLabels',cticks_text, 'TickLabelInterpreter','tex');
+c.Label.Interpreter = 'latex';
+c.Label.String = 'Sample Size, $n$';
+% axis tight; not required
 
-set(gca,'Xtick',(10.^(log10(errTolLimits(1)):2:log10(errTolLimits(2)))), ...
-   'YTick',(10.^(timeTicksVec)) )
-set(gca, 'XDir','reverse')
+axis([errVecLimits(1) errVecLimits(2) 10^timeTicksLimits(1) 10^timeTicksLimits(2) ])
+timeTicksVec = (timeTicksLimits(1) :timeTickInterval: timeTicksLimits(2));
+if timeTicksVec(end) ~= timeTicksLimits(2)
+  timeTicksVec(end+1) = timeTicksLimits(2);
+end
+set(gca,'Xtick',(10.^(log10(errVecLimits(1)):3:log10(errVecLimits(2)))), ...
+  'YTick',(10.^timeTicksVec))
 
-figSavePathName1 = sprintf('%s%s_rapid_time_Matern_d%d_%s.png', ...
+figSavePathName = sprintf('%s%s_guaranteed_time_with_n_Matern_d%d_%s.png', ...
   figSavePath, S.testFunArg.fName,...
   S.testFunArg.dim, S.timeStamp );
-saveas(figH1, figSavePathName1)
- 
+saveas(figH1, figSavePathName)
+
 
 %
 % Num. points vs time growth
@@ -194,7 +215,7 @@ set(figH2, 'units', 'inches', 'Position', [1 1 9 6])
 scatter(S.nVec(:),S.timeVec(:),pointSize,'o','filled')
 set(gca,'xscale','log')
 set(gca,'yscale','log')
-xlabel('Num. Samples, $n$')
+xlabel('Number of Samples, $n$')
 ylabel('Time (secs)')
 nvecLimits = [1E1 1E4];
 axis([nvecLimits(1) nvecLimits(2) 10^timeTicksLimits(1) 10^timeTicksLimits(2)])
