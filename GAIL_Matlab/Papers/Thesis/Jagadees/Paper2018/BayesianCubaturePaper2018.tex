@@ -720,7 +720,7 @@ So, Algorithm \ref{algorithm1}  in its current form is not practical. \FJHNote{J
 	\begin{subfigure}[h]{0.8\linewidth}
 		\includegraphics[width=1.1\linewidth]{MVN_rapid_n_vs_time_Matern_d2_2018-Aug-31}
 	\end{subfigure}
-	\caption{Multivariate normal probability estimated using Mat\'ern kernel with $d=2$ using empirical stopping criterion. Top: Guaranteed integration within error tolerance $\varepsilon$. Bottom: Computation time rapidly increases with increase of $n$.}
+	\caption{Multivariate normal probability estimated using Mat\'ern kernel with $d=2$ using empirical stopping criterion. Top: Guaranteed integration within error tolerance $\varepsilon$. Bottom: Computation time rapidly increases with increase of $n$. These figures can be reproduced using \code{matern\_guaranteed\_plots\_data.m} in GAIL.}
 	\label{fig:MVN_Metern_d2b2}
 \end{figure}
 
@@ -892,7 +892,7 @@ It follows that
 \err_{\textup{full}}
 =
 t_{n_j-1,0.995}
-\sqrt{\frac{1}{n(n-1)} \sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i} \, \left(\frac{\lambda_1}{n}  - 1  \right)}.
+\sqrt{\frac{1}{n(n-1)} \sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i}  \left(\frac{\lambda_1}{n}  - 1  \right)}.
 \end{align}
 
 
@@ -926,7 +926,7 @@ s^2_{\textup{GCV}} & : =  \frac 1{n} \sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}
 \end{align}
 Moreover, under further assumption \eqref{addAssump}, it follows that 
 \begin{align}
-\nonumber %\label{muhatGCV-FB-MLE-Simple}
+\label{muhatGCV-FB-MLE-Simple}
 \hmu_{\textup{GCV}}
 &= \hmu_\MLE = \hmu_{\textup{full}} =
 \frac{\widetilde{y}_1}{n} = \frac 1n \sum_{i=1}^n y_i,\\
@@ -995,7 +995,7 @@ Larger $r$ implies a greater degree of smoothness of the kernel.  Larger $\gamma
 \begin{figure}
 	\centering
 	\includegraphics[width=0.9\linewidth]{"figures/fourier_kernel dim_1"}
-	\caption[Fourier kernel]{Shift invariant kernel in 1D shifted by 0.3 to show the discontinuity }
+	\caption[Fourier kernel]{Shift invariant kernel in 1D shifted by 0.3 to show the discontinuity. This figure can be reproduced using \code{plot\_fourier\_kernel.m} in GAIL. }
 	\label{fig:fourierkernel-dim1}
 \end{figure}
 
@@ -1159,31 +1159,36 @@ where $\lambda_1 = n + \rlambda_1$.  The widths of the credible intervals in \eq
 	\end{align}
 \end{subequations}
 Since $\rlambda_1 = \lambda_1 - n$ and $\lambda_1 \sim n$ it follows $\rlambda_1/\lambda_1 \approx \rlambda_1/(n-1)$ and is small for  large $n$.  Moreover, the credible intervals via empirical Bayes and full Bayes are similar, since $t_{n_j-1,0.995}$ is approximately $2.58$. 
+The computational steps for the improved, faster, automatic Bayesian cubature are detailed in Algorithm \ref{algorithm2}.
 
-\iffalse 
-Whereas to compare $\err_\GCV$, need little more insight due to the term $\lambda_i^2$ in the denominator. Rewriting it:
-\begin{align*}
-\err_\GCV^2 & =
-\frac{2.58^2}{n^2}	\frac{\rlambda_1}{n + \rlambda_1} \frac{ \sum_{i=2}^n \left( \frac{\abs{\widetilde{y}_i}^2}{\lambda_i} \frac{1}{\lambda_i} \right)}{ \frac 1n \sum_{i=1}^n \frac{1}{\lambda_i} } 
-\end{align*}
-If the eigenvalues are ordered with $n$ then,
-\[
-\frac{1}{\lambda_n} \geq \frac{1}{\lambda_{n-1}} ... \geq \frac{1}{\lambda_1} 
-\]
-Note that we assumed the kernel Gram matrix is positive definite, so all the eigen values are positive
-\begin{align*}
-\frac{ \sum_{i=2}^n \left( \frac{\abs{\widetilde{y}_i}^2}{\lambda_i} \frac{1}{\lambda_i} \right)}{ \frac 1n \sum_{i=1}^n \frac{1}{\lambda_i} } 
-\leq 
-\frac{ \frac{1}{\lambda_n} \sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i}  }{ \frac 1n n \frac{1}{\lambda_1} } 
-\leq 
- \frac{\lambda_1}{\lambda_n} \sum_{i=2}^n  \frac{\abs{\widetilde{y}_i}^2}{\lambda_i}  
-\end{align*}
-Thus we can write
-\begin{align*}
-\err^2_\GCV \leq \frac{\lambda_1}{\lambda_n} \err^2_\MLE
-\end{align*}
-This shows the $\err_\GCV$ is more aggressive stopping criterion than $\err_\MLE$. If the chosen kernel is very smooth then eigen values decay very quickly with increasing $n$. 
-\fi
+\begin{algorithm}
+	\caption{Fast Automatic Bayesian Cubature}\label{algorithm2}
+	\begin{algorithmic}[1]
+		\Require a generator for the rank-1 Lattice sequence
+		$\vx_1, \vx_2, \ldots$; 
+		a shift-invariant periodic kernel, $C$;
+		a black-box function, $f$; 
+		an absolute error tolerance,
+		$\varepsilon>0$; the positive initial sample size, $n_0$;
+		the maximum sample size $n_{\textup{max}}$
+		
+		\State $n \gets n_0, \; n' \gets 0, \; \err \gets \infty$
+		
+		\While{$\err > \varepsilon$ and $n \le n_{\textup{max}}$}
+		
+		\State\label{LoopStart}Generate $\{ \vx_i\}_{i=n' + 1}^{n}$ and sample $\{f(\vx_i)\}_{i=n'+1}^{n}$
+		\State Compute $\vtheta$ by \eqref{thetaSimple}
+		\State Compute $\err$  according to \eqref{fastStoppingCriterions}
+		
+		\State	$n' \gets n, \; n \gets 2n'$
+		
+		\EndWhile
+		
+		\State Sample size to compute $\hmu$, $n \gets n'$
+		\State Compute $\hmu$, the approximate integral,   according to \eqref{muhatGCV-FB-MLE-Simple}
+		\State \Return $\hmu, \; n$  and $\err$
+	\end{algorithmic}
+\end{algorithm}
 
 We summarize the results of this section and the previous one as follows:
 \begin{prop}
@@ -1202,7 +1207,7 @@ Suppose that the original integral has been expressed as
 \begin{equation*}
 \mu := \int_{[0,1]^d} g(\vt) \, \dif \vt
 \end{equation*}
-where $g$ has sufficient smoothness, but lacks periodicity.  The baker's transform,
+where $g$ has sufficient smoothness, but lacks periodicity.  The Baker's transform,
 \begin{multline} \label{eq:bakerTrans}
 \vPsi: \vx \mapsto (\Psi(x_1),  \ldots, \Psi(x_d)), \\ \Psi(x)  =1 - 2 \abs{x - 1/2},
 \end{multline}
@@ -1238,7 +1243,9 @@ Periodizing variable transforms are used for the numerical examples below. In so
 \subsection{Test Results and Observations}
 %\label{sec:numerical_experiments}
 
-Three integrals were evaluated using the GAIL algorithm \code{cubBayesLattice\_g}:  a multivariate normal probability, the Keister's example, and an option pricing example.  Four different error tolerances, $\varepsilon$,  were set for each example, with the tolerances chosen depending on the difficulty of the problem.  The nodes were the randomly shifted lattice rules supplied by GAIL. Depending on the shift, accuracy of the algorithm differs. For each integral,  each tolerance, and each of our stopping criteria---empirical Bayes, full Bayes, and generalized cross-validation---our algorithm is run  $100$ times.  For each test, the execution time is plotted against $\abs{\mu - \hmu}/\varepsilon$.  We expect $\abs{\mu - \hmu}/\varepsilon$ to be no greater than one, but hope that it is not too much smaller than one, which would indicate a stopping criterion that is too conservative.
+Three integrals were evaluated using the GAIL algorithm \code{cubBayesLattice\_g}:  a multivariate normal probability, the Keister's example, and an option pricing example.  Four different error tolerances, $\varepsilon$,  were set for each example, with the tolerances chosen depending on the difficulty of the problem.  The nodes were the randomly shifted lattice rules supplied by GAIL. Depending on the shift, accuracy of the algorithm differs. For each integral,  each tolerance, and each of our stopping criteria---empirical Bayes, full Bayes, and generalized cross-validation---our algorithm was run  $100$ times.  For each test, the execution times were plotted against $\abs{\mu - \hmu}/\varepsilon$.  We expect $\abs{\mu - \hmu}/\varepsilon$ to be no greater than one, but hope that it is not too much smaller than one, which would indicate a stopping criterion that is too conservative. 
+
+The following plots \ref{fig:mvn-guaranteed-MLE} to \ref{fig:optprice-guaranteed-GCV} can be reproduced using \code{cubBayesLattice\_guaranteed\_plots.m} in GAIL.
 
 
 \paragraph{Multivariate Normal Probability.}
@@ -1248,7 +1255,7 @@ This example was already introduced in Section \ref{MVN_example}, where we used 
 % breaking it a paragraph here, otherwise it looks big
 Amongst the three stopping criteria, GCV achieved the results faster than others. 
 One can also observe from the figures, the credible intervals are wider, causing the true error much smaller than requested.
-This could be due to the periodization transformed $f_\textup{Genz}$ is smoother than the $r=2$ kernel could approximate. Using a kernel of matching smoothness could produce right credible intervals.
+This could be due to the periodization transformed $f_\textup{Genz}$ being smoother than the $r=2$ kernel could approximate. Using a kernel of matching smoothness could produce better credible intervals.
 
 \begin{figure}
 	\centering
@@ -1325,7 +1332,7 @@ I_s(j) &= \frac{(j-2)I_s(j-2)-I_c(j-1)}{2},
 \end{figure}
 
 Figures \ref{fig:keister-guaranteed-MLE}, \ref{fig:keister-guaranteed-FB} and \ref{fig:keister-guaranteed-GCV} summarize the numerical tests for this integral.  We used the Sidi's $C^1$ periodization, dimension $d=4$, and $r=2$. 
-As we can see, the GCV stopping criterion achieved the results faster than the others similar to the multivariate normal case.
+As we can see, the GCV stopping criterion achieved the results faster than the others, similar to the multivariate normal case.
 
 \paragraph{Option Pricing.}
 
@@ -1344,6 +1351,7 @@ f(\vx) &= \text{payoff} \left(\mL
 The Asian (arithmetic mean) call option has a payoff of the form
 \begin{align*}
 \text{payoff}(\vz) &= \max\left( \frac 1d  \sum_{j=1}^d S_j(\vz) - K, 0 \right) \me^{-r T}, \\
+\text{where}\;
 S_j(\vz) &= S_0 \exp\bigl((r-\sigma^2/2)jT/d + \sigma \sqrt{T/d} z_j \bigr).
 \end{align*}
 Here, $T$ denotes the time to maturity of the option, $d$ the number of time steps, $S_0$ the initial price of the stock, $r$ the interest rate, $\sigma$ the volatility, and $K$ the strike price.  
@@ -1354,7 +1362,7 @@ $
 T = 1/4, \ \ d = 13, \ \ S_0 = 100, \ \ r =  0.05, \ \ \sigma = 0.5, \ \ K = 100.
 $
 Moreover, $\mL$ is chosen to be the matrix of eigenvectors of $\mSigma$ times the square root of the diagonal matrix of eigenvalues of $\mSigma$.
-Because the integrand has a kink caused by the $\max$ function, it does not help to use a periodizing transform that is very smooth.  We choose the baker's transform \eqref{eq:bakerTrans} and $r = 1$.
+Because the integrand has a kink caused by the $\max$ function, it does not help to use a periodizing transform that is very smooth.  We choose the Baker's transform \eqref{eq:bakerTrans} and $r = 1$.
 
 \begin{figure}
 	\centering
@@ -1376,10 +1384,10 @@ Because the integrand has a kink caused by the $\max$ function, it does not help
 \end{figure}
 
 
-As shown in Figures \ref{fig:mvn-guaranteed-MLE} to \ref{fig:optprice-guaranteed-GCV}, Bayesian cubature algorithm computes the integral within  user specified threshold most of the times except on a few occasions. This is especially the case with option pricing example due to the complexity and high dimension of the integrand. 
-Also notice the algorithm finished within 10 seconds of time for Keister and multivariate Normal. For the option pricing it look closer to 70 seconds. This is again due to the complexity of the integrand.
+As shown in Figures \ref{fig:mvn-guaranteed-MLE} to \ref{fig:optprice-guaranteed-GCV}, Bayesian cubature algorithm computes the integral within  user-specified threshold most of the times except on a few occasions. This is especially the case with option pricing example due to the complexity and high dimension of the integrand. 
+Also notice, our algorithm finished within 10 seconds for Keister and multivariate Normal examples. For the option pricing it look closer to 70 seconds. This is again due to the complexity of the integrand.
 
-Another noticeable aspect from the plots is how much the error bounds differ from the true error. For option pricing example, the error bound is not as conservative as it is for the multivariate normal and Keister examples. A possible reason is that the latter integrands are significantly smoother than is assumed by our covariance kernel.  This is a matter for further investigation.
+Another noticeable aspect from the plots is how much the error bounds differ from the true error. For option pricing example, the error bound is not as conservative as it is for the multivariate normal and Keister examples. A possible reason is that the latter integrands are significantly smoother than the covariance kernel.  This is a matter for further investigation.
 
 
 \iffalse
