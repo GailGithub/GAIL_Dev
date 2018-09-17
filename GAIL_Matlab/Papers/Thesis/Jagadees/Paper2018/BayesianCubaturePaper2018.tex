@@ -703,12 +703,12 @@ d = 3, \quad \va = \begin{pmatrix}
 4 & 1 & 1 \\ 0 & 1 & 0.5 \\ 0 & 0 & 0.25
 \end{pmatrix}.
 \end{align*}
-The node sets are randomly scrambled Sobol points \cite{DicPil10a,DicEtal14a}.  The results for  $\varepsilon = 10^{-2}, 10^{-3}, 10^{-4}$, and $10^{-5}$ and $100$ scrambles for each $\varepsilon$ are shown in \figref{fig:MVN_Metern_d2b2}.  We  observe the algorithm meets the error criterion 95\% of the time.
+The node sets are randomly scrambled Sobol points \cite{DicEtal14a,DicPil10a}.  The results for  $\varepsilon = 10^{-2}, 10^{-3}, 10^{-4}$, and $10^{-5}$ and $100$ scrambles for each $\varepsilon$ are shown in \figref{fig:MVN_Metern_d2b2}.  We  observe the algorithm meets the error criterion 95\% of the time.
 %with Intel i7 3630QM and 16GB RAM memory
 %On our test computer, 
 As shown in \figref{fig:MVN_Metern_d2b2}, computation time increases rapidly with $n$. 
-The  maximum likelihood estimation of $\vtheta$, which requires repeated evaluation of the objective function, is the most time consuming of all. It takes tens of seconds to compute $\hmu_n$ once with $\varepsilon = 10^{-5}$.   In contrast, the examples in Section \ref{sec:NumExp} take less than a hundredth of a second to compute $\hmu_n$ once with $\varepsilon = 10^{-5}$. Not only does the computational cost increase with $n$, but also $\mC$ becomes highly ill-conditioned as $n$ increases.
-So, our algorithm in its current form is not practical. \FJHNote{Jags, please check this re-write}
+The  maximum likelihood estimation of $\vtheta$, which requires repeated evaluation of the objective function, is the most time consuming of all. It takes tens of seconds to compute $\hmu_n$ once with $\varepsilon = 10^{-5}$.   In contrast, this example in Section \ref{sec:NumExp} take less than a hundredth of a second to compute $\hmu_n$ once with $\varepsilon = 10^{-5}$ using our new algorithm. Not only is the Bayesian cubature with the the Mat\'ern kernel slow, but also $\mC$ becomes highly ill-conditioned as $n$ increases.
+So, Algorithm \ref{algorithm1}  in its current form is not practical. \FJHNote{Jags, please check this re-write}
 
 \begin{figure}
 	\captionsetup[subfigure]{labelformat=empty}
