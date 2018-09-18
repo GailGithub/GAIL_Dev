@@ -265,7 +265,7 @@ However, the process just outlined typically requires vector-matrix operations  
 \section{Introduction}
 \label{intro}
 Cubature is the problem of inferring a numerical value for an integral, 
-$ \mu := \int_{\reals^d} g(\vx) \, \dif \vx$, where $\mu$ has no closed form analytic expression. Typically, $g$ is accessible through a black-box function routine. 
+$ \mu := \int_{\reals^d} g(\vx) \, \dif \vx$, where $\mu$ has no closed form analytic expression. Typically, $g$ is accessible through a black-box function. 
 Cubature is a key component of many problems in scientific computing, finance, statistical modeling, and machine learning.  
 
 The integral may often be expressed as
@@ -281,7 +281,7 @@ for some discussion of variable transformations and the related error analysis. 
 \end{align}
 where the weights, $w_0$, and  $\vw = (w_i)_{i=1}^n \in \reals^n$, and the nodes, $\{\vx_i\}_{i=1}^n \subset [0,1]^d$, are chosen to make the error, $\abs{\mu - \hmu}$, small. The integration domain $[0,1]^d$ is convenient for the low discrepancy node sets \cite{DicEtal14a,SloJoe94} that we use.  The nodes are assumed to be deterministic.
 
-We construct a reliable stopping criterion that determines the number of integrand values required, $n$, to ensure that the error is no greater than a user-defined error tolerance denoted $\varepsilon$, i.e., 
+We construct a reliable stopping criterion that determines the number of integrand values required, $n$, to ensure that the error is no greater than a user-defined error tolerance denoted by $\varepsilon$, i.e., 
 \begin{align}
 \label{eqn:err_crit} 
 \abs{\mu - \hmu} \leq \errtol .
@@ -708,7 +708,8 @@ The node sets are randomly scrambled Sobol points \cite{DicEtal14a,DicPil10a}.  
 %On our test computer, 
 As shown in \figref{fig:MVN_Metern_d2b2}, computation time increases rapidly with $n$. 
 The  maximum likelihood estimation of $\vtheta$, which requires repeated evaluation of the objective function, is the most time consuming of all. It takes tens of seconds to compute $\hmu_n$ once with $\varepsilon = 10^{-5}$.   In contrast, this example in Section \ref{sec:NumExp} take less than a hundredth of a second to compute $\hmu_n$ once with $\varepsilon = 10^{-5}$ using our new algorithm. Not only is the Bayesian cubature with the the Mat\'ern kernel slow, but also $\mC$ becomes highly ill-conditioned as $n$ increases.
-So, Algorithm \ref{algorithm1}  in its current form is not practical. \FJHNote{Jags, please check this re-write}
+So, Algorithm \ref{algorithm1}  in its current form is not practical. 
+%\FJHNote{Jags, please check this re-write} %\JRNote{looks good}
 
 \begin{figure}
 	\captionsetup[subfigure]{labelformat=empty}
@@ -720,7 +721,7 @@ So, Algorithm \ref{algorithm1}  in its current form is not practical. \FJHNote{J
 	\begin{subfigure}[h]{0.8\linewidth}
 		\includegraphics[width=1.1\linewidth]{MVN_rapid_n_vs_time_Matern_d2_2018-Aug-31}
 	\end{subfigure}
-	\caption{Multivariate normal probability estimated using Mat\'ern kernel with $d=2$ using empirical stopping criterion. Top: Guaranteed integration within error tolerance $\varepsilon$. Bottom: Computation time rapidly increases with increase of $n$. These figures can be reproduced using \code{matern\_guaranteed\_plots\_data.m} in GAIL.}
+	\caption{Multivariate normal probability estimated using Mat\'ern kernel with $d=2$ using empirical stopping criterion. Top: Guaranteed integration within error tolerance $\varepsilon$. Bottom: Computation time rapidly increases with increase of $n$. These figures can be reproduced using \code{matern\_guaranteed\_plots.m} in GAIL.}
 	\label{fig:MVN_Metern_d2b2}
 \end{figure}
 
@@ -1385,9 +1386,9 @@ Because the integrand has a kink caused by the $\max$ function, it does not help
 
 
 As shown in Figures \ref{fig:mvn-guaranteed-MLE} to \ref{fig:optprice-guaranteed-GCV}, Bayesian cubature algorithm computes the integral within  user-specified threshold most of the times except on a few occasions. This is especially the case with option pricing example due to the complexity and high dimension of the integrand. 
-Also notice, our algorithm finished within 10 seconds for Keister and multivariate Normal examples. For the option pricing it look closer to 70 seconds. This is again due to the complexity of the integrand.
+Also notice, our algorithm finished within 10 seconds for Keister and multivariate Normal examples while the option pricing took closer to 70 seconds. This is again due to the complexity of the integrand.
 
-Another noticeable aspect from the plots is how much the error bounds differ from the true error. For option pricing example, the error bound is not as conservative as it is for the multivariate normal and Keister examples. A possible reason is that the latter integrands are significantly smoother than the covariance kernel.  This is a matter for further investigation.
+Another noticeable aspect from the plots is how much the error bounds differ from the true error. For option pricing example, the error bound is not as conservative as it is for the multivariate normal and Keister examples. A possible reason is that the latter integrands are significantly smoother than the covariance kernel used.  This is a matter for further investigation.
 
 
 \iffalse
@@ -1442,7 +1443,7 @@ Thus, the elements of $\vZ$ are IID standard Gaussian random variables.
 
 \section{Discussion and Further Work}
 
-We have developed a fast, automatic Bayesian cubature that estimates a multidimensional definite integral within a user defined error tolerance.  The stopping criteria arise from assuming the integrand to be a Gaussian process.  There are three approaches:  empirical Bayes, full Bayes, and generalized cross-validation.  The computational cost of the automatic Bayesian cubature can be dramatically reduced if the covariance kernel matches the nodes.  We have demonstrated one such match in practice: rank-1 lattice nodes and shift-invariant kernels.  The matrix-vector multiplications can be accomplished using the fast Fourier Transform.  Three integration problems illustrate the performance of our automatic Bayesian cubature.  
+We have developed a fast, automatic Bayesian cubature that estimates a multidimensional definite integral within a user defined error tolerance.  The stopping criteria arise from assuming the integrand to be a Gaussian process.  There are three approaches:  empirical Bayes, full Bayes, and generalized cross-validation.  The computational cost of the automatic Bayesian cubature can be dramatically reduced if the covariance kernel matches the nodes.  We have demonstrated one such match in practice: rank-1 lattice nodes and shift-invariant kernels.  The matrix-vector multiplications can be accomplished using the fast Fourier Transform.  The performance of our automatic Bayesian cubature was illustrated using three integration problems.  
 
 Digital sequences and digital shift and/or scramble invariant kernels have the potential of being another match that satisfies the conditions in Section \ref{sec:fast_BC}.  The fast transform would correspond to a fast Walsh transform.  For such kernels, periodicity is not assumed; however, special structure of both the sequences and the kernels are required to take advantage of integrand smoothness.
 
