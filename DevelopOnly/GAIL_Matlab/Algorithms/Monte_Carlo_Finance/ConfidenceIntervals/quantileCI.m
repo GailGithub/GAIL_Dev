@@ -10,7 +10,7 @@ elseif nargin < 4 %if no alpha input
    end
 end
 n=length(Xsample); %number of samples
-Xorder=[extremes(1); sort(Xsample); extremes(2)]; %order statistics
+Xorder=[extremes(1); sort(Xsample(:)); extremes(2)]; %order statistics
 al2=alpha/2; %half significance level
 lo=1+gail.binoinv_bs_ver2(al2,n,quant); %position of the lower bound
 up=2+gail.binoinv_bs_ver2(1-al2,n,quant); %position of the upper bound
