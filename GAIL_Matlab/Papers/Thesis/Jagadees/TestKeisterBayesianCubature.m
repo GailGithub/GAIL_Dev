@@ -12,22 +12,12 @@ function [muhat,errVec,timeVec,outVec] = TestKeisterBayesianCubature(varargin)
 
 % input params initializations
 dim = get_arg('dim', varargin);
-ptransform = get_arg('ptransform', varargin);
-stopAtTol = get_arg('stopAtTol', varargin);
-figSavePath = get_arg('figSavePath', varargin);
-visiblePlot = get_arg('visiblePlot', varargin);
 samplingMethod = get_arg('samplingMethod', varargin);
 
 % define the integrand 
 fName='Keister';
 integrand = @(x) keisterFunc(x,dim,1/sqrt(2)); % a=0.8
 exactInteg = Keistertrue(dim);
-
-% set the output dir to save the plots        
-fullPath = strcat(figSavePath,'/',fName,'/',ptransform,'/');
-if exist(fullPath,'dir')==false
-  mkdir(fullPath);
-end
 
 tic
 
@@ -57,27 +47,7 @@ toc
 
 errVec = abs(exactInteg - muhatVec);
 timeVec = [outVec(:).time]';
-out = outVec;
 
-
-%% plot error
-if stopAtTol==false
-  BernPolyOrder = outVec{end}.order;
-  nvec = 2.^outVec{end}.mvec;
-  temp = [outVec(:).muhatAll];
-  muhatVec = median(temp,2);
-  temp = [outVec(:).ErrBdAll];
-  ErrBdVec = median(temp,2);
-  
-  errCubatureVec = abs(exactInteg - muhatVec);
-  plotCubatureError(dim, nvec, errCubatureVec, ErrBdVec, fName, BernPolyOrder, ...
-    ptransform, fullPath,visiblePlot,arbMean, out.s_All, out.dscAll)
-
-  % plot computation time vs number of points
-  figSavePathName = sprintf('%s%s computeTime d_%d bernoulli_%d Period_%s.png', ...
-    fullPath, fName, dim, BernPolyOrder, ptransform);
-  plot_nvec_vs_computeTime(nvec, out.timeAll, visiblePlot, figSavePathName, samplingMethod)
-end
 fprintf('Done\n');
 
 end

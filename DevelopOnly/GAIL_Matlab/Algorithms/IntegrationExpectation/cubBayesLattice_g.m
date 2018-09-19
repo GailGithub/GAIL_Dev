@@ -5,15 +5,16 @@
 %         'order',order, 'ptransform',ptransform, 'arbMean',arbMean);
 %   Initializes the object with the given parameters.
 %
-%   Q = COMPINTEG(OBJ); estimates the integral of f over hyperbox [0,1]^d
-%   using Rank-1 Lattice sampling to within a specified generalized error
-%   tolerance, tolfun = max(abstol, reltol*| I |), i.e., | I - Q | <= tolfun
+%   [Q,OutP] = COMPINTEG(OBJ); estimates the integral of f over hyperbox
+%   [0,1]^d using rank-1 Lattice sampling to within a specified generalized
+%   error tolerance, tolfun = max(abstol, reltol*| I |), i.e., | I - Q | <= tolfun
 %   with confidence of at least 99%, where I is the true integral value,
 %   Q is the estimated integral value, abstol is the absolute error tolerance, 
 %   and reltol is the relative error tolerance. Usually the reltol determines
 %   the accuracy of the estimation, however, if | I | is rather small, 
 %   then abstol determines the accuracy of the estimation. 
-%   Input f is a function handle that accepts an n x d matrix input, 
+%   OutP is the structure holding additional output params, more details provided
+%   below. Input f is a function handle that accepts an n x d matrix input, 
 %   where d is the dimension of the hyperbox, and n is the number of points
 %   being evaluated simultaneously.
 %
@@ -23,17 +24,27 @@
 %     dim --- number of dimensions of the integrand.
 %
 %   Optional Input Arguments
-%     absTol --- absolute error tolerance | I - Q | <= absTol. Default is 0.1.
+%     absTol --- absolute error tolerance | I - Q | <= absTol. Default is 0.01.
 %     relTol --- relative error tolerance | I - Q | <= I*relTol. Default is 0.
 %     order --- order of the Bernoulli polynomial of the kernel: r=1,2
 %     ptransform --- periodization variable transform to use: 'Baker',
-%     'C0', 'C1', 'C1sin', or 'C2sin'.  
+%     'C0', 'C1', 'C1sin', or 'C2sin'. Default is 'Baker'
 %     arbMean --- If false, the algorithm assumes the integrand was sampled
 %                 from a Gaussian process of zero mean. Default is True.
-%
-%   More optional Input Arguments
-%
 %     alpha --- confidence level for a credible interval of Q. Default is 0.01. 
+%     mmin --- min number of samples to start with = 2^mmin
+%     mmax --- max number of samples allowed = 2^mmax
+%
+%   Output Arguments
+%    OutP.n --- number of samples used to compute the integral of f.
+%    OutP.time --- time to compute the integral in seconds.
+%    OutP.exitFlag --- indicates the exit condition of the algorithm:
+%                      1 - integral computed within the error tolerance and
+%                      without exceeding max sample limit 2^mmax
+%                      2 - used max number of samples and yet not met the
+%                      error tolerance
+%    OutP.ErrBd  --- estimated integral error | I - Q |
+%
 %
 %  Guarantee
 % This algorithm attempts to calculate the integral of function f over the
@@ -140,8 +151,6 @@ classdef cubBayesLattice_g < handle
   properties
     f = @(x) x.^2; %function to integrate
     dim = 1; %dimension of the integrand
-    mmin = 10; %min number of points to start with = 2^mmin
-    mmax = 22; %max number of points allowed = 2^mmax
     absTol = 0.01; %absolute tolerance
     relTol = 0; %relative tolerance
     order = 2; %Bernoulli order of the kernel
@@ -149,13 +158,9 @@ classdef cubBayesLattice_g < handle
     ptransform = 'C1sin'; %periodization transform
     stopAtTol = true; %automatic mode: stop after meeting the error tolerance
     arbMean = true; %by default use zero mean algorithm
-    fName = 'None'; %name of the integrand
-    figSavePath = ''; %path where to save he figures
-    visiblePlot = false; %make plots visible
-    debugEnable = false; %enable debug prints
-    gaussianCheckEnable = false; %enable plot to check Gaussian pdf
-    avoidCancelError = true; % avoid cancellation error in stopping criterion
     stopCriterion = 'MLE'; % Available options {'MLE', 'GCV', 'full'}
+    mmin = 10; %min number of samples to start with = 2^mmin
+    mmax = 22; %max number of samples allowed = 2^mmax
   end
  
   properties (SetAccess = private)
@@ -168,6 +173,13 @@ classdef cubBayesLattice_g < handle
     GCV = false; % Generalized cross validation
     vdc_order = true; % use Lattice points generated in vdc order
     kernType = 1; % Type-1: algebraic convergence, Type-2: exponential convergence
+    
+    fName = 'None'; %name of the integrand
+    figSavePath = ''; %path where to save he figures
+    visiblePlot = false; %make plots visible
+    debugEnable = false; %enable debug prints
+    gaussianCheckEnable = false; %enable plot to check Gaussian pdf
+    avoidCancelError = true; % avoid cancellation error in stopping criterion
     
     % variables to save debug info in each iteration
     errorBdAll = [];
@@ -273,17 +285,25 @@ classdef cubBayesLattice_g < handle
       end
       out.n = n;
       out.time = toc(tstart);
-      out.ErrBdAll = obj.errorBdAll;
-      out.muhatAll = obj.muhatAll;
-      out.mvec = obj.mvec;
-      out.aMLEAll = obj.aMLEAll;
-      out.timeAll = obj.timeAll;
-      out.s_All = obj.s_All;
-      out.dscAll = obj.dscAll;
-      out.absTol = obj.absTol;
-      out.relTol = obj.relTol;
-      out.shift = shift;
-      out.stopAtTol = obj.stopAtTol;
+      out.ErrBd = obj.errorBdAll(end);
+      
+      debugParams.ErrBdAll = obj.errorBdAll;
+      debugParams.muhatAll = obj.muhatAll;
+      debugParams.mvec = obj.mvec;
+      debugParams.aMLEAll = obj.aMLEAll;
+      debugParams.timeAll = obj.timeAll;
+      debugParams.s_All = obj.s_All;
+      debugParams.dscAll = obj.dscAll;
+      debugParams.absTol = obj.absTol;
+      debugParams.relTol = obj.relTol;
+      debugParams.shift = shift;
+      debugParams.stopAtTol = obj.stopAtTol;
+      out.debugParams = debugParams;
+      if stop_flag==true
+        out.exitFlag = 1;
+      else
+        out.exitFlag = 2;  % error tolerance may not be met
+      end
       
       if stop_flag==false
         warning('GAIL:cubBayesLattice_g:maxreached',...
@@ -391,7 +411,7 @@ classdef cubBayesLattice_g < handle
           DSC = abs((Lambda(1)/n) - 1);
         end
         % 1-alpha two sided confidence interval
-        out.ErrBd = obj.uncert*sqrt(DSC * RKHSnorm/(n-1));
+        ErrBd = obj.uncert*sqrt(DSC * RKHSnorm/(n-1));
       elseif obj.GCV==true 
         % GCV based stopping criterion
         if obj.avoidCancelError
@@ -402,7 +422,7 @@ classdef cubBayesLattice_g < handle
         temp = Lambda;
         temp(1) = n + Lambda_ring(1);
         C_Inv_trace = sum(1./temp(temp~=0));
-        out.ErrBd = obj.uncert*sqrt(DSC * (RKHSnorm) /C_Inv_trace);
+        ErrBd = obj.uncert*sqrt(DSC * (RKHSnorm) /C_Inv_trace);
       else
         % empirical bayes
         if obj.avoidCancelError
@@ -410,7 +430,7 @@ classdef cubBayesLattice_g < handle
         else
           DSC = abs(1 - (n/Lambda(1)));
         end
-        out.ErrBd = obj.uncert*sqrt(DSC * RKHSnorm/n);
+        ErrBd = obj.uncert*sqrt(DSC * RKHSnorm/n);
       end
       
       if obj.arbMean==true % zero mean case
@@ -418,15 +438,15 @@ classdef cubBayesLattice_g < handle
       else % non zero mean case
         muhat = ftilde(1)/Lambda(1);
       end
-      muminus = muhat - out.ErrBd;
-      muplus = muhat + out.ErrBd;
+      muminus = muhat - ErrBd;
+      muplus = muhat + ErrBd;
       
       % store intermediate values for post analysis
       % store the debug information
       obj.dscAll(iter) = sqrt(DSC);
       obj.s_All(iter) = sqrt(RKHSnorm/n);
       obj.muhatAll(iter) = muhat;
-      obj.errorBdAll(iter) = out.ErrBd;
+      obj.errorBdAll(iter) = ErrBd;
       obj.aMLEAll(iter) = aMLE;
       obj.lossMLEAll(iter) = loss;
       
@@ -437,7 +457,7 @@ classdef cubBayesLattice_g < handle
       end
       %fprintf('aMLE=%1.3f, n=%d, ErrBd=%1.3f, absTol=%1.3e\n', aMLE, n, out.ErrBd, obj.absTol);
       
-      if 2*out.ErrBd <= ...
+      if 2*ErrBd <= ...
           max(obj.absTol,obj.relTol*abs(muminus)) + max(obj.absTol,obj.relTol*abs(muplus))
         if obj.errorBdAll(iter)==0
           obj.errorBdAll(iter) = eps;

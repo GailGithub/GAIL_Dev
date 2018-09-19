@@ -1,4 +1,4 @@
-%% Generate Examples of Asian Arithmetic Mean Option Pricing
+%% Interface to test Asian Arithmetic Mean Option Pricing
 function [muhat,err,timeVec,outVec] = TestAsianArithmeticMeanOptionAutoExample(varargin)
 
 whichExample = 'Pierre';
@@ -38,8 +38,6 @@ AsianCall.payoffParam = struct( ...
 samplingMethod = get_arg('samplingMethod', varargin, 'Lattice');
 nRepAuto = get_arg('nRepAuto', varargin, 100);
 
-timeVecAsianCallBayesAutoo(nRepAuto,1) = 0;
-nVecAsianCallBayesAutoo(nRepAuto,1) = 0;
 integrand = @(x) genOptPayoffs_fixNan(AsianCall,x);
 
 dim = AsianCall.timeDim.nSteps;
@@ -66,29 +64,29 @@ for i =  1:nRepAuto
   tic
   [muAsianCallBayesAuto(i),outCallBayes(i)] = compInteg(obj);
   toc
-  timeVecAsianCallBayesAutoo(i) = outCallBayes(i).time;
-  nVecAsianCallBayesAutoo(i) = outCallBayes(i).n;
 end
 toc
 
-errvecAsianCallBayesAutoo = abs(callPriceExact - muAsianCallBayesAuto);
-errmedAsianCallBayesAutoo = median(errvecAsianCallBayesAutoo);
-errtopAsianCallBayesAutoo = quantile(errvecAsianCallBayesAutoo,1-obj.alpha);
-rangeAsianCallBayesAutoo  = range(muAsianCallBayesAuto);
-timetopAsianCallBayesAutoo = quantile(timeVecAsianCallBayesAutoo,1-obj.alpha);
-ntopAsianCallBayesAutoo    = quantile(nVecAsianCallBayesAutoo,1-obj.alpha);
-successAsianCallBayesAutoo = mean(errvecAsianCallBayesAutoo <= obj.absTol);
+timeVecAsianCallBayesAuto = [outCallBayes(:).time]';
+nVecAsianCallBayesAuto = [outCallBayes(:).n]';
+
+errvecAsianCallBayesAuto = abs(callPriceExact - muAsianCallBayesAuto);
+errmedAsianCallBayesAuto = median(errvecAsianCallBayesAuto);
+errtopAsianCallBayesAuto = quantile(errvecAsianCallBayesAuto,1-obj.alpha);
+rangeAsianCallBayesAuto  = range(muAsianCallBayesAuto);
+timetopAsianCallBayesAuto = quantile(timeVecAsianCallBayesAuto,1-obj.alpha);
+ntopAsianCallBayesAuto    = quantile(nVecAsianCallBayesAuto,1-obj.alpha);
+successAsianCallBayesAuto = mean(errvecAsianCallBayesAuto <= obj.absTol);
 
 fprintf('\nError: Median %1.2e, Worst %1.2e, Range %1.2e, \n worstN %d, worstTime %1.3f, SuccessRatio %1.2f, \n absTol %1.2e, relTol %1.2e\n', ...
-  errmedAsianCallBayesAutoo, errtopAsianCallBayesAutoo, rangeAsianCallBayesAutoo, ...
-  ntopAsianCallBayesAutoo, timetopAsianCallBayesAutoo, ...
-  successAsianCallBayesAutoo, outCallBayes(1).absTol, outCallBayes(1).relTol);
-
+  errmedAsianCallBayesAuto, errtopAsianCallBayesAuto, rangeAsianCallBayesAuto, ...
+  ntopAsianCallBayesAuto, timetopAsianCallBayesAuto, ...
+  successAsianCallBayesAuto, outCallBayes(1).absTol, outCallBayes(1).relTol);
 
 muhat = median(muAsianCallBayesAuto);
-err = errvecAsianCallBayesAutoo;
+err = errvecAsianCallBayesAuto;
 outVec = outCallBayes;
-timeVec = timeVecAsianCallBayesAutoo;
+timeVec = timeVecAsianCallBayesAuto;
 
 end
 

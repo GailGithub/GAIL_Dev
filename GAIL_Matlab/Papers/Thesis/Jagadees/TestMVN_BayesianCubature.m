@@ -1,24 +1,19 @@
-%% Test Multivariate Normal Probabilities
+%% Interface to test Multivariate Normal Probabilities
 %
 function [muhat,errVec,timeVec,outVec] = TestMVN_BayesianCubature(varargin)
 
-
 dim = get_arg('dim', varargin);
-ptransform = get_arg('ptransform', varargin);
-figSavePath = get_arg('figSavePath', varargin);
-visiblePlot = get_arg('visiblePlot', varargin);
 samplingMethod = get_arg('samplingMethod', varargin);
-BernPolyOrder = get_arg('order', varargin);
-arbMean = get_arg('arbMean', varargin);
 
 if dim==2
-  % d-3 problem reduced to d-2 using Genz method
+  % d=3 problem reduced to d=2 using Genz method
   MVNParams.C = [4 1 1; 0 1 0.5; 0 0 0.25];
   MVNParams.Cov = MVNParams.C'*MVNParams.C;
   MVNParams.a = [-6 -2 -2];
   MVNParams.b = [5 2 1];
   MVNParams.mu = 0;
 elseif dim==3
+  % d=4 problem reduced to d=3 using Genz method
   MVNParams.C = [4 1 1 1; 0 1 0.5 0.5; 0 0 0.25 0.25; 0 0 0 0.25];
   MVNParams.Cov = MVNParams.C'*MVNParams.C;
   MVNParams.a = [-6 -2 -2 -2];
@@ -30,19 +25,10 @@ end
 MVNParams.CovProp.C = chol(MVNParams.Cov)';
 
 fName = 'MVN' ;
-fullPath = strcat(figSavePath,'/',fName,'/',ptransform,'/');
-if exist(fullPath,'dir')==false
-  mkdir(fullPath);
-end
-
-alpha = 0.1;
 
 muBest = computeGoldenMuhat(MVNParams);
 
-%% Try MLE Bayseian cubature with Fourier kernel and Rank1 Lattice points
-
-compMLELattice = true;
-
+%% Bayseian cubature with Shif invariant kernel and rank-1 Lattice points
 integrand = @(t) GenzFunc(t,MVNParams);
 
 inputArgs = varargin;
@@ -57,82 +43,41 @@ else % use Lattice points
   objCubBayes=cubBayesLattice_g(inputArgs{:});
 end
 
-nvecMLE = 2.^(objCubBayes.mvec');
-nnMLE = numel(nvecMLE);
+tic
 
-if compMLELattice
-  tic
-  
-  nRep = 100; % increase it for gail plots
-  muMVNProbMLELatticeGn = zeros(nnMLE,nRep);
-  aMLE = zeros(nnMLE,nRep);
-  errbdvecMBVProbMLELatticeGn(nnMLE,nRep) = 0;
-  muhatVec(nRep,1) = 0;
-  nPointsVec(nRep,1) = 0;
-  for i = 1:nRep
-    %if i/1 == floor(i/1), i, end
-    [muhatVec(i),outVec(i)]=compInteg(objCubBayes);
-    muMVNProbMLELatticeGn(:,i) = outVec(i).muhatAll;
-    errbdvecMBVProbMLELatticeGn(:,i) = outVec(i).ErrBdAll;
-    aMLE(:,i) = outVec(i).aMLEAll;
-    nPointsVec(i) = outVec(i).n;
-  end
-  timeVec = [outVec(:).time]';
-  
-  errvecMVNProbMLELatticeGn = abs(muBest - muMVNProbMLELatticeGn);
-  errCubMLE = median(errvecMVNProbMLELatticeGn,2);
-  errVec = abs(muBest - muhatVec);
-  %errtopMVNProbMLELatticeGn = quantile(errvecMVNProbMLELatticeGn,1-alpha,2);
-  ErrBd = quantile(errbdvecMBVProbMLELatticeGn,1-alpha,2);
-  fprintf('\nMedian error_n %1.2e, worst_n %d, worst_time %1.3f, absTol %1.2e, relTol %1.2e ', ...
-    median(errVec), quantile(nPointsVec,1-alpha), quantile(timeVec,1-alpha), ...
-    outVec(1).absTol, outVec(1).relTol);
-  
-  %time = quantile(timeVec,1-alpha);
-  %time = median(timeVec);
-  err = median(errVec);
-  muhat = median(muhatVec);
-  if err/outVec(1).absTol > 1
-    error('wait')
-  end
-  toc
-  
-  if outVec(1).stopAtTol==false
-    nvecMLE = 2.^outVec(1).mvec;
-    plotCubatureError(dim, nvecMLE, errCubMLE, ErrBd, fName, BernPolyOrder, ...
-      ptransform, fullPath,visiblePlot,arbMean,outVec{1}.s_All, outVec{1}.dscAll)
-    figSavePathName = sprintf('%s%s computeTime d_%d bernoulli_%d Period_%s.png', ...
-      fullPath, fName, dim, BernPolyOrder, ptransform);
-    plot_nvec_vs_computeTime(nvecMLE, outVec{1}.timeAll, visiblePlot, figSavePathName, samplingMethod)
-  end
-  
-  fprintf('done\n');
-  
+nRep = 100; % increased it for gail plots
+
+muhatVec(nRep,1) = 0;
+for i = 1:nRep
+  [muhatVec(i),outVec(i)]=compInteg(objCubBayes);
 end
+timeVec = [outVec(:).time]';
+errVec = abs(muBest - muhatVec);
+
+toc
+
+muhat = median(muhatVec);
+fprintf('done\n');
 
 end
-%% Save output
-%save MVNProbExampleAllData.mat
 
 function muBest = computeGoldenMuhat(MVNParams)
 
-if 0
-if exist('MVNProbExampleAllData.mat','file')
-  load MVNProbExampleAllData
-  MVNProbBestArch = MVNProbBest;
-  nRepGoldArch = nRepGold;
-  nRepArch = nRep;
-  MVNProbIIDGnArch = MVNProbIIDGn;
-  MVNProbSobolGnArch = MVNProbSobolGn;
-  MVNProbuSobolGnArch = MVNProbuSobolGn;
-  MVNProbMLESobolGnArch = MVNProbMLESobolGn;
-  if exist('MVNProbMLELatticeGn', 'var')
-    MVNProbMLELatticeGnArch = MVNProbMLELatticeGn;
-  end
-end
+dim = length(MVNParams.a)-1;
+if 0 % if we need to recompute
+
+if dim==2
+  dataFileName = 'MVNProbExampleDim3.mat';
+elsif dim==3
+  dataFileName = 'MVNProbExampleDim4.mat';
 end
 
-if 0
+if exist(dataFileName,'file')
+  S = load(dataFileName);
+  MVNProbBestArch = S.MVNProbBest;
+  nRepGoldArch = S.nRepGold;
+end
+
 %% First compute a high accuracy answer
 nRep = 100;
 
@@ -164,16 +109,15 @@ if compGold
   toc
   muBest = mean(muBestvec);
   
-  save('MVNProbExampleDim4.mat','muBest', 'muBestvec', 'nRepGold', 'MVNProbBest');
+  save(dataFileName,'muBest', 'muBestvec', 'nRepGold', 'MVNProbBest');
 end
 %disp(['mu  = ' num2str(muBest,15) ' +/- ' num2str(2*std(muBestvec),10)])
 end
 
-dim = length(MVNParams.a)-1;
 if dim==2
-  muBest = '0.676337324357787483819492990733124315738677978515625';
+  muBest = '0.67633732435778748381';
 elseif dim==3
-  muBest = '0.67451648307312195296248091835877858102321624755859375';
+  muBest = '0.674516483073121952962';
 else
   error('Unsupported dim')
 end

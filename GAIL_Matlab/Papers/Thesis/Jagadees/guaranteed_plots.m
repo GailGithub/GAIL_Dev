@@ -58,7 +58,7 @@ elseif strcmp(S.fName, 'Keister')
 else
   errVecLimits = [1E-4, 1E1];
 end
-mvec = 2.^S.outStructVec{1}(1).mvec;
+mvec = 2.^S.outStructVec{1}(1).debugParams.mvec;
 nptsLimits = [(mvec(1)-1), (mvec(end)+1)];
 nptsLimits(1) = 10^floor(log10(0.5*min(S.nptsVec(:))));
 nptsLimits(2) = 10^ceil(log10(2*max(S.nptsVec(:))));
