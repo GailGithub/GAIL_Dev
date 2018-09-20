@@ -79,7 +79,7 @@ if exist(dataFileName,'file')
 end
 
 %% First compute a high accuracy answer
-nRep = 100;
+nRep = get_arg('nRepAuto', varargin, 100);
 
 nGold = 2^27;
 nRepGold = nRep;

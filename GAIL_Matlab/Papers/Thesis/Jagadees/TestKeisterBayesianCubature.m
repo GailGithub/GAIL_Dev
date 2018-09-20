@@ -34,7 +34,7 @@ else % use Lattice points
 end
 %plotObjectiveFunc(obj);
 
-nRep = 100;
+nRep = get_arg('nRepAuto', varargin, 100);
 muhatVec = zeros(nRep,1);
 
 %plotObjectiveFunc(obj)

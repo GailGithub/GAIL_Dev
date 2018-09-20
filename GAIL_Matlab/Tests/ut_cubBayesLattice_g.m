@@ -30,6 +30,14 @@ classdef ut_cubBayesLattice_g < matlab.unittest.TestCase
         'ptransform','uniform'),...
         'GAIL:cubBayesLattice_g:var_transform_invalid');
     end
+
+    function cubBayesLattice_gOfwarningMaxReached(testCase)
+      testCase.verifyWarning( ...
+      @()TestAsianArithmeticMeanOptionAutoExample('absTol',1E-4, ...
+        'order',1, 'ptransform','Baker', 'stopAtTol',true, ....
+        'stopCriterion','GCV', 'samplingMethod','Lattice', ...
+        'nRepAuto',1), 'GAIL:cubBayesLattice_g:maxreached');
+    end
     
     function cubBayesLattice_gOfxsquare(testCase)
       f = @(x) x.^2;
@@ -83,24 +91,20 @@ classdef ut_cubBayesLattice_g < matlab.unittest.TestCase
       testCase.verifyLessThanOrEqual(actualerr,abstol);
     end
     
-%         function cubBayesLattice_gOfWorkouts(testCase)
-%             [ut_abserr,ut_relerr,abstol,reltol] = Test_cubBayesLattice_g;
-%             verifyabserr = ut_abserr<=abstol;
-%             verifyrelerr = ut_relerr<=reltol;
-%             testCase.verifyTrue(min(min(verifyabserr + verifyrelerr))>0);
-%         end
-%
-    function cubBayesLattice_gNormal(testCase)   
-      inputArgs = {'absTol',1E-4, 'order',1, 'ptransform','Baker', ....
+    function cubBayesLattice_gOptPrice(testCase)
+      absTolArg = 1E-4;
+      inputArgs = {'absTol',absTolArg, 'order',1, 'ptransform','Baker', ....
         'stopAtTol',true, 'stopCriterion','GCV'...
         'samplingMethod','Lattice', 'nRepAuto',1};
       
       format compact
       warning('off','GAIL:cubBayesLattice_g:maxreached')
-      [muhat,actualerr,timeVal,out_param] = ...
+      [muhat,actualerr] = ...
         TestAsianArithmeticMeanOptionAutoExample(inputArgs{:});
       warning('on','GAIL:cubBayesLattice_g:maxreached')
-      testCase.verifyLessThanOrEqual(actualerr,out_param.absTol);
+      testCase.verifyWarning(@()cubBayesLattice_g(),...
+        'GAIL:cubBayesLattice_g:fdnotgiven');
+      testCase.verifyLessThanOrEqual(actualerr,absTolArg);
     end
     
   end

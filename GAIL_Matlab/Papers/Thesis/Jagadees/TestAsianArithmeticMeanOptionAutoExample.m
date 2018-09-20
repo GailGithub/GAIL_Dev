@@ -81,7 +81,7 @@ successAsianCallBayesAuto = mean(errvecAsianCallBayesAuto <= obj.absTol);
 fprintf('\nError: Median %1.2e, Worst %1.2e, Range %1.2e, \n worstN %d, worstTime %1.3f, SuccessRatio %1.2f, \n absTol %1.2e, relTol %1.2e\n', ...
   errmedAsianCallBayesAuto, errtopAsianCallBayesAuto, rangeAsianCallBayesAuto, ...
   ntopAsianCallBayesAuto, timetopAsianCallBayesAuto, ...
-  successAsianCallBayesAuto, outCallBayes(1).absTol, outCallBayes(1).relTol);
+  successAsianCallBayesAuto, outCallBayes(1).optParams.absTol, outCallBayes(1).optParams.relTol);
 
 muhat = median(muAsianCallBayesAuto);
 err = errvecAsianCallBayesAuto;
@@ -90,7 +90,7 @@ timeVec = timeVecAsianCallBayesAuto;
 
 end
 
-% reset NanN vlaues to zero
+% reset NaN vlaues to zero
 function y = genOptPayoffs_fixNan(AsianCall,x)
 y = genOptPayoffs(AsianCall,x);
 y(isnan(y)) = 0;
