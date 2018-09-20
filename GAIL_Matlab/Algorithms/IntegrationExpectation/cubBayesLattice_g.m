@@ -5,15 +5,16 @@
 %         'order',order, 'ptransform',ptransform, 'arbMean',arbMean);
 %   Initializes the object with the given parameters.
 %
-%   Q = COMPINTEG(OBJ); estimates the integral of f over hyperbox [0,1]^d
-%   using Rank-1 Lattice sampling to within a specified generalized error
-%   tolerance, tolfun = max(abstol, reltol*| I |), i.e., | I - Q | <= tolfun
+%   [Q,OutP] = COMPINTEG(OBJ); estimates the integral of f over hyperbox
+%   [0,1]^d using rank-1 Lattice sampling to within a specified generalized
+%   error tolerance, tolfun = max(abstol, reltol*| I |), i.e., | I - Q | <= tolfun
 %   with confidence of at least 99%, where I is the true integral value,
 %   Q is the estimated integral value, abstol is the absolute error tolerance, 
 %   and reltol is the relative error tolerance. Usually the reltol determines
 %   the accuracy of the estimation, however, if | I | is rather small, 
 %   then abstol determines the accuracy of the estimation. 
-%   Input f is a function handle that accepts an n x d matrix input, 
+%   OutP is the structure holding additional output params, more details provided
+%   below. Input f is a function handle that accepts an n x d matrix input, 
 %   where d is the dimension of the hyperbox, and n is the number of points
 %   being evaluated simultaneously.
 %
@@ -23,17 +24,27 @@
 %     dim --- number of dimensions of the integrand.
 %
 %   Optional Input Arguments
-%     absTol --- absolute error tolerance | I - Q | <= absTol. Default is 0.1.
+%     absTol --- absolute error tolerance | I - Q | <= absTol. Default is 0.01.
 %     relTol --- relative error tolerance | I - Q | <= I*relTol. Default is 0.
 %     order --- order of the Bernoulli polynomial of the kernel: r=1,2
 %     ptransform --- periodization variable transform to use: 'Baker',
-%     'C0', 'C1', 'C1sin', or 'C2sin'.  
+%     'C0', 'C1', 'C1sin', or 'C2sin'. Default is 'C1sin'
 %     arbMean --- If false, the algorithm assumes the integrand was sampled
 %                 from a Gaussian process of zero mean. Default is True.
-%
-%   More optional Input Arguments
-%
 %     alpha --- confidence level for a credible interval of Q. Default is 0.01. 
+%     mmin --- min number of samples to start with = 2^mmin
+%     mmax --- max number of samples allowed = 2^mmax
+%
+%   Output Arguments
+%    OutP.n --- number of samples used to compute the integral of f.
+%    OutP.time --- time to compute the integral in seconds.
+%    OutP.exitFlag --- indicates the exit condition of the algorithm:
+%                      1 - integral computed within the error tolerance and
+%                      without exceeding max sample limit 2^mmax
+%                      2 - used max number of samples and yet not met the
+%                      error tolerance
+%    OutP.ErrBd  --- estimated integral error | I - Q |
+%
 %
 %  Guarantee
 % This algorithm attempts to calculate the integral of function f over the
@@ -135,13 +146,11 @@
 %   If you find GAIL helpful in your work, please support us by citing the
 %   above papers, software, and materials.
 %
+%
 classdef cubBayesLattice_g < handle
-  
   properties
     f = @(x) x.^2; %function to integrate
     dim = 1; %dimension of the integrand
-    mmin = 10; %min number of points to start with = 2^mmin
-    mmax = 22; %max number of points allowed = 2^mmax
     absTol = 0.01; %absolute tolerance
     relTol = 0; %relative tolerance
     order = 2; %Bernoulli order of the kernel
@@ -149,13 +158,9 @@ classdef cubBayesLattice_g < handle
     ptransform = 'C1sin'; %periodization transform
     stopAtTol = true; %automatic mode: stop after meeting the error tolerance
     arbMean = true; %by default use zero mean algorithm
-    fName = 'None'; %name of the integrand
-    figSavePath = ''; %path where to save he figures
-    visiblePlot = false; %make plots visible
-    debugEnable = false; %enable debug prints
-    gaussianCheckEnable = false; %enable plot to check Gaussian pdf
-    avoidCancelError = true; % avoid cancellation error in stopping criterion
     stopCriterion = 'MLE'; % Available options {'MLE', 'GCV', 'full'}
+    mmin = 10; %min number of samples to start with = 2^mmin
+    mmax = 22; %max number of samples allowed = 2^mmax
   end
  
   properties (SetAccess = private)
@@ -167,6 +172,13 @@ classdef cubBayesLattice_g < handle
     fullBayes = false; % Full Bayes - assumes m and s^2 as hyperparameters,
     GCV = false; % Generalized cross validation
     vdc_order = true; % use Lattice points generated in vdc order
+    
+    fName = 'None'; %name of the integrand
+    figSavePath = ''; %path where to save he figures
+    visiblePlot = false; %make plots visible
+    debugEnable = false; %enable debug prints
+    gaussianCheckEnable = false; %enable plot to check Gaussian pdf
+    avoidCancelError = true; % avoid cancellation error in stopping criterion
     
     % variables to save debug info in each iteration
     errorBdAll = [];
@@ -272,17 +284,25 @@ classdef cubBayesLattice_g < handle
       end
       out.n = n;
       out.time = toc(tstart);
-      out.ErrBdAll = obj.errorBdAll;
-      out.muhatAll = obj.muhatAll;
-      out.mvec = obj.mvec;
-      out.aMLEAll = obj.aMLEAll;
-      out.timeAll = obj.timeAll;
-      out.s_All = obj.s_All;
-      out.dscAll = obj.dscAll;
-      out.absTol = obj.absTol;
-      out.relTol = obj.relTol;
-      out.shift = shift;
-      out.stopAtTol = obj.stopAtTol;
+      out.ErrBd = obj.errorBdAll(end);
+      
+      optParams.ErrBdAll = obj.errorBdAll;
+      optParams.muhatAll = obj.muhatAll;
+      optParams.mvec = obj.mvec;
+      optParams.aMLEAll = obj.aMLEAll;
+      optParams.timeAll = obj.timeAll;
+      optParams.s_All = obj.s_All;
+      optParams.dscAll = obj.dscAll;
+      optParams.absTol = obj.absTol;
+      optParams.relTol = obj.relTol;
+      optParams.shift = shift;
+      optParams.stopAtTol = obj.stopAtTol;
+      out.optParams = optParams;
+      if stop_flag==true
+        out.exitFlag = 1;
+      else
+        out.exitFlag = 2;  % error tolerance may not be met
+      end
       
       if stop_flag==false
         warning('GAIL:cubBayesLattice_g:maxreached',...
@@ -384,7 +404,7 @@ classdef cubBayesLattice_g < handle
           DSC = abs((Lambda(1)/n) - 1);
         end
         % 1-alpha two sided confidence interval
-        out.ErrBd = obj.uncert*sqrt(DSC * RKHSnorm/(n-1));
+        ErrBd = obj.uncert*sqrt(DSC * RKHSnorm/(n-1));
       elseif obj.GCV==true 
         % GCV based stopping criterion
         if obj.avoidCancelError
@@ -395,7 +415,7 @@ classdef cubBayesLattice_g < handle
         temp = Lambda;
         temp(1) = n + Lambda_ring(1);
         C_Inv_trace = sum(1./temp(temp~=0));
-        out.ErrBd = obj.uncert*sqrt(DSC * (RKHSnorm) /C_Inv_trace);
+        ErrBd = obj.uncert*sqrt(DSC * (RKHSnorm) /C_Inv_trace);
       else
         % empirical bayes
         if obj.avoidCancelError
@@ -403,7 +423,7 @@ classdef cubBayesLattice_g < handle
         else
           DSC = abs(1 - (n/Lambda(1)));
         end
-        out.ErrBd = obj.uncert*sqrt(DSC * RKHSnorm/n);
+        ErrBd = obj.uncert*sqrt(DSC * RKHSnorm/n);
       end
       
       if obj.arbMean==true % zero mean case
@@ -411,15 +431,15 @@ classdef cubBayesLattice_g < handle
       else % non zero mean case
         muhat = ftilde(1)/Lambda(1);
       end
-      muminus = muhat - out.ErrBd;
-      muplus = muhat + out.ErrBd;
+      muminus = muhat - ErrBd;
+      muplus = muhat + ErrBd;
       
       % store intermediate values for post analysis
       % store the debug information
       obj.dscAll(iter) = sqrt(DSC);
       obj.s_All(iter) = sqrt(RKHSnorm/n);
       obj.muhatAll(iter) = muhat;
-      obj.errorBdAll(iter) = out.ErrBd;
+      obj.errorBdAll(iter) = ErrBd;
       obj.aMLEAll(iter) = aMLE;
       obj.lossMLEAll(iter) = loss;
       
@@ -429,7 +449,7 @@ classdef cubBayesLattice_g < handle
         CheckGaussianDensity(obj, ftilde, Lambda)
       end
       
-      if 2*out.ErrBd <= ...
+      if 2*ErrBd <= ...
           max(obj.absTol,obj.relTol*abs(muminus)) + max(obj.absTol,obj.relTol*abs(muplus))
         if obj.errorBdAll(iter)==0
           obj.errorBdAll(iter) = eps;
@@ -446,25 +466,20 @@ classdef cubBayesLattice_g < handle
     function [loss,Lambda,Lambda_ring,RKHSnorm] = ObjectiveFunction(obj,a,xun,ftilde)
       
       n = length(ftilde);
-      if obj.order==2 || obj.order==1
-        [Lambda, Lambda_ring] = obj.kernel(xun,obj.order,a,obj.avoidCancelError,...
+      [Lambda, Lambda_ring] = obj.kernel(xun,obj.order,a,obj.avoidCancelError,...
           obj.debugEnable);
-      else
-        error('Unsupported Bernoulli polyn order !');
-      end
-      ftilde = abs(ftilde);  % remove any negative values
       
       % compute RKHSnorm 
-      temp = (abs(ftilde(Lambda~=0).^2)./(Lambda(Lambda~=0))) ;
+      temp = abs(ftilde(Lambda~=0).^2)./(Lambda(Lambda~=0)) ;
       
       % compute loss 
       if obj.GCV==true
         % GCV 
-        temp_gcv = (real(ftilde(Lambda~=0))./(Lambda(Lambda~=0))).^2 ;
-        loss1 = log(sum(1./Lambda(Lambda~=0)));
+        temp_gcv = abs(ftilde(Lambda~=0)./(Lambda(Lambda~=0))).^2 ;
+        loss1 = 2*log(sum(1./Lambda(Lambda~=0)));
         loss2 = log(sum(temp_gcv(2:end)));
-        % ignore all zero val eigenvalues
-        loss = log(sum(temp_gcv(2:end))) - 2*log(sum(1./Lambda(Lambda~=0)));
+        % ignore all zero eigenvalues
+        loss = loss2 - loss1;
         
         if obj.arbMean==true
           RKHSnorm = sum(temp_gcv(2:end))/n;
@@ -481,10 +496,10 @@ classdef cubBayesLattice_g < handle
           temp_1 = sum(temp);
         end
         
+        % ignore all zero eigenvalues
         loss1 = sum(log(Lambda(Lambda~=0)));
         loss2 = n*log(temp_1);
-        % ignore all zero eigenvalues
-        loss = sum(log(Lambda(Lambda~=0))) + n*log(temp_1);        
+        loss = loss1 + loss2;        
       end
       
       if obj.debugEnable
@@ -508,7 +523,8 @@ classdef cubBayesLattice_g < handle
     function CheckGaussianDensity(obj, ftilde, lambda)
       n = length(ftilde);
       ftilde(1) = 0;  % substract by (m_\MLE \vone) to get zero mean
-      w_ftilde = (1/sqrt(n))*real(ftilde)./sqrt(real(lambda));
+      % 'y' is real, so ifft(fft(real)) is 'real' 
+      w_ftilde = real(ifft(ftilde./sqrt(lambda)));
       if obj.visiblePlot==false
         hFigNormplot = figure('visible','off');
       else
@@ -517,8 +533,8 @@ classdef cubBayesLattice_g < handle
       set(hFigNormplot,'defaultaxesfontsize',16, ...
         'defaulttextfontsize',16, ... %make font larger
         'defaultLineLineWidth',0.75, 'defaultLineMarkerSize',8)
-      % other option : normplot(w_ftilde)
-      qqplot(w_ftilde);
+      % other option : qqplot(w_ftilde)
+      normplot(w_ftilde)
       set(hFigNormplot, 'units', 'inches', 'Position', [1 1 8 6])
       
       title(sprintf('Normplot %s n=%d Tx=%s', obj.fName, n, obj.ptransform))
@@ -624,18 +640,18 @@ classdef cubBayesLattice_g < handle
           switch type
             case 'Nan'
               if any(isnan(varTocheck))
-                fprintf('%s has NaN values', inpvarname);
+                warning('%s has NaN values', inpvarname);
               end
             case 'Inf'
               if any(isinf(varTocheck))
-                fprintf('%s has Inf values', inpvarname);
+                warning('%s has Inf values', inpvarname);
               end
             case 'Imag'
               if ~all(isreal(varTocheck))
-                fprintf('%s has complex values', inpvarname)
+                warning('%s has complex values', inpvarname)
               end
             otherwise
-              fprintf('%s : unknown type check requested !', inpvarname)
+              warning('%s : unknown type check requested !', inpvarname)
           end
         end
       end
@@ -644,8 +660,8 @@ classdef cubBayesLattice_g < handle
     
     % Computes modified kernel Km1 = K - 1
     % Useful to avoid cancellation error in the computation of (1 - n/\lambda_1)
-    function [Km1, K] = kernel_t(a, const, Bern)
-      theta = a*const;
+    function [Km1, K] = kernel_t(aconst, Bern)
+      theta = aconst;
       d = size(Bern, 2);
       
       Kjm1 = theta*Bern(:,1);  % Kernel at j-dim minus One
@@ -661,7 +677,7 @@ classdef cubBayesLattice_g < handle
       Km1 = Kjm1; K = Kj;
     end
     
-    % Bernoulli polynomial based kernel
+    % Shift invariant kernel
     % C1 : first row of the covariance matrix
     % Lambda : eigenvalues of the covariance matrix
     % Lambda_ring = fft(C1 - 1)
@@ -682,15 +698,17 @@ classdef cubBayesLattice_g < handle
       if avoidCancelError
         % Computes C1m1 = C1 - 1
         % C1_new = 1 + C1m1 indirectly computed in the process
-        [C1m1, C1_alt] = cubBayesLattice_g.kernel_t(a, constMult, bernPoly(xun));
+        [C1m1, C1_alt] = cubBayesLattice_g.kernel_t(a*constMult, bernPoly(xun));
+        % eigenvalues must be real : Symmetric pos definite Kernel
         Lambda_ring = real(fft(C1m1));
         
         Lambda = Lambda_ring;
         Lambda(1) = Lambda_ring(1) + length(Lambda_ring);
-        % C1 = prod(1 + (a)*constMult*bernPoly(xun),2);  %
+        % C1 = prod(1 + (a)*constMult*bernPoly(xun),2);  % direct computation
         % Lambda = real(fft(C1));
         
         if debugEnable == true
+          % eigenvalues must be real : Symmetric pos definite Kernel
           Lambda_direct = real(fft(C1_alt)); % Note: fft output unnormalized
           if sum(abs(Lambda_direct-Lambda)) > 1
             fprintf('Possible error: check Lambda_ring computation')
@@ -700,7 +718,8 @@ classdef cubBayesLattice_g < handle
         % direct approach to compute first row of the kernel Gram matrix
         C1 = prod(1 + (a)*constMult*bernPoly(xun),2);
         % matlab's builtin fft is much faster and accurate
-        Lambda = real(fft(C1));  % real eigenvalues: Symmetric pos definite kernel
+        % eigenvalues must be real : Symmetric pos definite Kernel
+        Lambda = real(fft(C1));
         Lambda_ring = 0;
       end
       

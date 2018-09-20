@@ -28,7 +28,7 @@
 %     relTol --- relative error tolerance | I - Q | <= I*relTol. Default is 0.
 %     order --- order of the Bernoulli polynomial of the kernel: r=1,2
 %     ptransform --- periodization variable transform to use: 'Baker',
-%     'C0', 'C1', 'C1sin', or 'C2sin'. Default is 'Baker'
+%     'C0', 'C1', 'C1sin', or 'C2sin'. Default is 'C1sin'
 %     arbMean --- If false, the algorithm assumes the integrand was sampled
 %                 from a Gaussian process of zero mean. Default is True.
 %     alpha --- confidence level for a credible interval of Q. Default is 0.01. 
@@ -154,7 +154,7 @@ classdef cubBayesLattice_g < handle
     absTol = 0.01; %absolute tolerance
     relTol = 0; %relative tolerance
     order = 2; %Bernoulli order of the kernel
-    alpha = 0.001; % p-value, default 0.1%.
+    alpha = 0.01; % p-value, default 0.1%.
     ptransform = 'C1sin'; %periodization transform
     stopAtTol = true; %automatic mode: stop after meeting the error tolerance
     arbMean = true; %by default use zero mean algorithm
@@ -287,18 +287,18 @@ classdef cubBayesLattice_g < handle
       out.time = toc(tstart);
       out.ErrBd = obj.errorBdAll(end);
       
-      debugParams.ErrBdAll = obj.errorBdAll;
-      debugParams.muhatAll = obj.muhatAll;
-      debugParams.mvec = obj.mvec;
-      debugParams.aMLEAll = obj.aMLEAll;
-      debugParams.timeAll = obj.timeAll;
-      debugParams.s_All = obj.s_All;
-      debugParams.dscAll = obj.dscAll;
-      debugParams.absTol = obj.absTol;
-      debugParams.relTol = obj.relTol;
-      debugParams.shift = shift;
-      debugParams.stopAtTol = obj.stopAtTol;
-      out.debugParams = debugParams;
+      optParams.ErrBdAll = obj.errorBdAll;
+      optParams.muhatAll = obj.muhatAll;
+      optParams.mvec = obj.mvec;
+      optParams.aMLEAll = obj.aMLEAll;
+      optParams.timeAll = obj.timeAll;
+      optParams.s_All = obj.s_All;
+      optParams.dscAll = obj.dscAll;
+      optParams.absTol = obj.absTol;
+      optParams.relTol = obj.relTol;
+      optParams.shift = shift;
+      optParams.stopAtTol = obj.stopAtTol;
+      out.optParams = optParams;
       if stop_flag==true
         out.exitFlag = 1;
       else
@@ -657,18 +657,18 @@ classdef cubBayesLattice_g < handle
           switch type
             case 'Nan'
               if any(isnan(varTocheck))
-                fprintf('%s has NaN values', inpvarname);
+                warning('%s has NaN values', inpvarname);
               end
             case 'Inf'
               if any(isinf(varTocheck))
-                fprintf('%s has Inf values', inpvarname);
+                warning('%s has Inf values', inpvarname);
               end
             case 'Imag'
               if ~all(isreal(varTocheck))
-                fprintf('%s has complex values', inpvarname)
+                warning('%s has complex values', inpvarname)
               end
             otherwise
-              fprintf('%s : unknown type check requested !', inpvarname)
+              warning('%s : unknown type check requested !', inpvarname)
           end
         end
       end
@@ -723,14 +723,16 @@ classdef cubBayesLattice_g < handle
         % Computes C1m1 = C1 - 1
         % C1_new = 1 + C1m1 indirectly computed in the process
         [C1m1, C1_alt] = cubBayesLattice_g.kernel_t(a*constMult, kernelFunc(xun));
-        Lambda_ring = real(fft(C1m1)); % real eigenvalues: Symmetric pos definite Kernel
+        % eigenvalues must be real : Symmetric pos definite Kernel
+        Lambda_ring = real(fft(C1m1));
         
         Lambda = Lambda_ring;
         Lambda(1) = Lambda_ring(1) + length(Lambda_ring);
-        % C1 = prod(1 + (a)*constMult*bernPoly(xun),2);  %
+        % C1 = prod(1 + (a)*constMult*bernPoly(xun),2);  % direct computation
         % Lambda = real(fft(C1));
         
         if debugEnable == true
+          % eigenvalues must be real : Symmetric pos definite Kernel
           Lambda_direct = real(fft(C1_alt)); % Note: fft output unnormalized
           if sum(abs(Lambda_direct-Lambda)) > 1
             fprintf('Possible error: check Lambda_ring computation')
@@ -740,7 +742,8 @@ classdef cubBayesLattice_g < handle
         % direct approach to compute first row of the kernel Gram matrix
         C1 = prod(1 + (a)*constMult*kernelFunc(xun),2);
         % matlab's builtin fft is much faster and accurate
-        Lambda = real(fft(C1));  % real eigenvalues: Symmetric pos definite kernel
+        % eigenvalues must be real : Symmetric pos definite Kernel
+        Lambda = real(fft(C1));
         Lambda_ring = 0;
       end
       
