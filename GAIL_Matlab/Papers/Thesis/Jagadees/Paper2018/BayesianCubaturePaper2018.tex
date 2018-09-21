@@ -712,19 +712,13 @@ So, Algorithm \ref{algorithm1}  in its current form is not practical.
 %\FJHNote{Jags, please check this re-write} %\JRNote{looks good}
 
 \begin{figure}
-	\captionsetup[subfigure]{labelformat=empty}
 	\centering
-	\begin{subfigure}[h]{0.8\linewidth}
-		\includegraphics[width=1.1\linewidth]{MVN_guaranteed_time_Matern_d2_2018-Aug-31}
-	\end{subfigure}
+		\includegraphics[width=0.95\linewidth]{MVN_guaranteed_time_Matern_d2_2018-Aug-31}
 	\centering
-	\begin{subfigure}[h]{0.8\linewidth}
-		\includegraphics[width=1.1\linewidth]{MVN_rapid_n_vs_time_Matern_d2_2018-Aug-31}
-	\end{subfigure}
+		\includegraphics[width=0.95\linewidth]{MVN_rapid_n_vs_time_Matern_d2_2018-Aug-31}
 	\caption{Multivariate normal probability estimated using Mat\'ern kernel with $d=2$ using empirical stopping criterion. Top: Guaranteed integration within error tolerance $\varepsilon$. Bottom: Computation time rapidly increases with increase of $n$. These figures can be reproduced using \code{matern\_guaranteed\_plots.m} in GAIL.}
 	\label{fig:MVN_Metern_d2b2}
 \end{figure}
-
 
 \section{Fast Automatic Bayesian Cubature}\label{sec:fast_BC}
 
@@ -1267,19 +1261,15 @@ This could be due to the periodization transformed $f_\textup{Genz}$ being smoot
 \begin{figure}
 	\centering
 	%d=3 problem transformed into d=2
-	\includegraphics[width=0.95\linewidth]{"MVN_guaranteed_time_MLE_C2sin_d2_r2_2018-Sep-6"}
+	\includegraphics[width=0.98\linewidth]{"MVN_guaranteed_time_MLE_C2sin_d2_r2_2018-Sep-6"}
 	\caption[Guaranteed:]{Multivariate normal probability example using the empirical Bayes stopping criterion.}
 	\label{fig:mvn-guaranteed-MLE}
-%\end{figure}
-%\begin{figure}
 	\centering
-	\includegraphics[width=0.95\linewidth]{"MVN_guaranteed_time_full_C2sin_d2_r2_2018-Sep-6"}
+	\includegraphics[width=0.98\linewidth]{"MVN_guaranteed_time_full_C2sin_d2_r2_2018-Sep-6"}
 	\caption[MVN guaranteed : FB]{Multivariate normal probability example using the full Bayes stopping criterion.}
 	\label{fig:mvn-guaranteed-FB}
-%\end{figure}
-%\begin{figure}
 	\centering
-	\includegraphics[width=0.95\linewidth]{"MVN_guaranteed_time_GCV_C2sin_d2_r2_2018-Sep-6"}
+	\includegraphics[width=0.98\linewidth]{"MVN_guaranteed_time_GCV_C2sin_d2_r2_2018-Sep-6"}
 	\caption[MVN guaranteed : GCV]{Multivariate normal probability example using the GCV stopping criterion.}
 	\label{fig:mvn-guaranteed-GCV}
 \end{figure}
