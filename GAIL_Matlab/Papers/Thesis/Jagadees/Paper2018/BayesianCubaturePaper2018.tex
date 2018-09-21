@@ -624,7 +624,7 @@ Our  Bayesian cubature algorithm increases the sample size until the width of th
         
         \EndWhile
         
-        \State Sample size to compute $\hmu$, $n \gets n'$
+        \State Update sample size to compute $\hmu$, $n \gets n'$
         \State Compute $\hmu$, the approximate integral,   according to \eqref{eqn:cubMLE} or \eqref{eqn:muCV}
       \State \Return $\hmu, \; n$  and $\err$
   \end{algorithmic}
@@ -687,7 +687,7 @@ where $\Phi$ is the cumulative standard normal distribution function.  Then, $\m
 	\begin{subfigure}[h]{0.48\linewidth}
 		\includegraphics[width=1.1\linewidth]{GenzFunc_varTx_none}
 	\end{subfigure}
-	\caption{The $d=3$ multivariate normal probability transformed to an integral of $f_{\text{Genz}}$ with  $d=2$.}
+	\caption{The $d=3$ multivariate normal probability transformed to an integral of $f_{\text{Genz}}$ with  $d=2$. This plot can be reproduced using \code{IntegrandPlots.m} in GAIL}
 	\label{fig:MVN_Genz}
 \end{figure}
 
@@ -1124,6 +1124,7 @@ Computing the eigenvalues of $\rmC$ via the procedure given in \eqref{eqn:fast_t
 \begin{subequations}
 \label{thetaSimple}
 \begin{align}
+\label{thetaSimpleMLE}
 \vtheta_\MLE
 &= 
 \argmin_{\vtheta}
@@ -1135,6 +1136,7 @@ Computing the eigenvalues of $\rmC$ via the procedure given in \eqref{eqn:fast_t
  + 
  \frac{1}{n}\sum_{i=1}^n \log(\lambda_i)
 \right], \\
+\label{thetaSimpleGCV}
 \vtheta_{\GCV} 
 &= \argmin_\vtheta \left[ \log \left ( \sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i^2} 
 \right)  -2\log\left( \sum_{i=1}^n \frac{1}{\lambda_i} \right)
@@ -1145,6 +1147,7 @@ where $\lambda_1 = n + \rlambda_1$.  The widths of the credible intervals in \eq
 \begin{subequations}
 \label{fastStoppingCriterions}
 	\begin{align}
+\label{fastStoppingCriterionMLE}
 \err_\MLE  &
 =
 \frac{2.58}{n}\sqrt{
@@ -1152,10 +1155,12 @@ where $\lambda_1 = n + \rlambda_1$.  The widths of the credible intervals in \eq
 	\sum_{i=2}^{n} \frac{\abs{\widetilde{y}_i}^2}{\lambda_i}  
 }, 
 \\
+\label{fastStoppingCriterionFull}
 \err_{\textup{full}} 
 & = \frac{t_{n_j-1,0.995}}{n} \sqrt{
 	\frac{\rlambda_1}{n-1} \sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i}
 }, \\
+\label{fastStoppingCriterionGCV}
 \err_{\textup{GCV}} & =
 \frac{2.58}{n}\sqrt{	\frac{\rlambda_1}{\lambda_1} \sum_{i=2}^n \frac{\abs{\widetilde{y}_i}^2}{\lambda_i^2}  \left [ \frac 1n \sum_{i=1}^n \frac{1}{\lambda_i} \right]^{-1}} .
 	\end{align}
@@ -1179,14 +1184,14 @@ The computational steps for the improved, faster, automatic Bayesian cubature ar
 		\While{$\err > \varepsilon$ and $n \le n_{\textup{max}}$}
 		
 		\State\label{LoopStart}Generate $\{ \vx_i\}_{i=n' + 1}^{n}$ and sample $\{f(\vx_i)\}_{i=n'+1}^{n}$
-		\State Compute $\vtheta$ by \eqref{thetaSimple}
-		\State Compute $\err$  according to \eqref{fastStoppingCriterions}
+		\State Compute $\vtheta$ by \eqref{thetaSimpleMLE} or \eqref{thetaSimpleGCV}
+		\State Compute $\err$  according to \eqref{fastStoppingCriterionMLE}, \eqref{fastStoppingCriterionFull}, or \eqref{fastStoppingCriterionGCV}
 		
 		\State	$n' \gets n, \; n \gets 2n'$
 		
 		\EndWhile
 		
-		\State Sample size to compute $\hmu$, $n \gets n'$
+		\State Update sample size to compute $\hmu$, $n \gets n'$
 		\State Compute $\hmu$, the approximate integral,   according to \eqref{muhatGCV-FB-MLE-Simple}
 		\State \Return $\hmu, \; n$  and $\err$
 	\end{algorithmic}
@@ -1247,7 +1252,7 @@ Periodizing variable transforms are used for the numerical examples below. In so
 
 Three integrals were evaluated using the GAIL algorithm \code{cubBayesLattice\_g}:  a multivariate normal probability, the Keister's example, and an option pricing example.  Four different error tolerances, $\varepsilon$,  were set for each example, with the tolerances chosen depending on the difficulty of the problem.  The nodes were the randomly shifted lattice rules supplied by GAIL. Depending on the shift, accuracy of the algorithm differs. For each integral,  each tolerance, and each of our stopping criteria---empirical Bayes, full Bayes, and generalized cross-validation---our algorithm was run  $100$ times.  For each test, the execution times were plotted against $\abs{\mu - \hmu}/\varepsilon$.  We expect $\abs{\mu - \hmu}/\varepsilon$ to be no greater than one, but hope that it is not too much smaller than one, which would indicate a stopping criterion that is too conservative. 
 
-The following plots \ref{fig:mvn-guaranteed-MLE} to \ref{fig:optprice-guaranteed-GCV} can be reproduced using \code{cubBayesLattice\_guaranteed\_plots.m} in GAIL.
+Figures \ref{fig:mvn-guaranteed-MLE} to \ref{fig:optprice-guaranteed-GCV} can be reproduced using the script \code{cubBayesLattice\_guaranteed\_plots.m} in GAIL.
 
 
 \paragraph{Multivariate Normal Probability.}
