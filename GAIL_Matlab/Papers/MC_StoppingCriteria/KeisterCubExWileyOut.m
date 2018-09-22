@@ -5,7 +5,7 @@ function KeisterCubExWileyOut(dataFileName)
 gail.InitializeDisplay
 
 GAILPATH = GAILstart(0);
-dirpath=strcat([GAILPATH,'OutputFiles',filesep], 'MC_StoppingCriteria');
+dirpath=strcat([GAILPATH,'OutputFiles',filesep], 'MC_StoppingCriteriaOutput');
 
 load(dataFileName)
 
