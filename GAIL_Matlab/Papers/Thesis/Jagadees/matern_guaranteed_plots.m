@@ -75,6 +75,7 @@ muhatVec(nRep,1) = 0;
 indx = 1;
 
 matFilePath = 'D:\Dropbox\fjhickernellGithub\GAIL_Dev-BayesianCubature\GAIL_Matlab\Papers\Thesis\Jagadees\Paper2018\figures\';
+figSavePath = matFilePath;
 filename = 'matern_guranteed_2018-Aug-31';
 matFileName = [matFilePath filename '.mat'];
 if exist(matFileName, 'file') == 2
@@ -124,7 +125,7 @@ errVecLimits = [1E-6, 1E1];
 
 % guaranteed plot with colorbar showing \varepsilon, error tolerance
 figH = figure();
-set(figH, 'units', 'inches', 'Position', [1 1 9 6])
+set(figH, 'units', 'inches', 'Position', [1 1 9 5])
 timeTicksLimits(1) = floor(log10(min(S.timeVec(:)))); 
 timeTicksLimits(2) = ceil(log10(max(S.timeVec(:))));
 timeTickInterval = ceil(diff(timeTicksLimits)/5);
@@ -164,7 +165,7 @@ saveas(figH, figSavePathName)
 
 % colorbar shows 'n', the number of samples
 figH1 = figure();
-set(figH1, 'units', 'inches', 'Position', [1 1 9 6])
+set(figH1, 'units', 'inches', 'Position', [1 1 9 5])
 timeTicksLimits(1) = floor(log10(min(S.timeVec(:)))); 
 timeTicksLimits(2) = ceil(log10(max(S.timeVec(:))));
 timeTickInterval = ceil(diff(timeTicksLimits)/5);
@@ -210,7 +211,7 @@ saveas(figH1, figSavePathName)
 %
 % Num. points vs time growth
 figH2 = figure();
-set(figH2, 'units', 'inches', 'Position', [1 1 9 6])
+set(figH2, 'units', 'inches', 'Position', [1 1 9 5])
 
 scatter(S.nVec(:),S.timeVec(:),pointSize,'o','filled')
 set(gca,'xscale','log')
