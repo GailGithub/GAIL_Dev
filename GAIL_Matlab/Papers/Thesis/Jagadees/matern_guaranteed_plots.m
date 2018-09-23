@@ -1,39 +1,30 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-if isunix
-  !synclient HorizEdgeScroll=0 HorizTwoFingerScroll=0 # disable horizontal scrolling
-end
+%% Creates the plots for the Matern kernel example
 gail.InitializeWorkspaceDisplay %initialize the workspace and the display parameters
 format long
 
-if isunix
-  figSavePath = '/home/jagadees/MyWriteup/';
-else
-  figSavePath = 'D:/Mega/MyWriteupBackup/';
-end
-figSavePath = strcat(figSavePath, 'Jul_2ndweek2018/');
+% path where the GAIL is installed
+GAIL_path = GAILstart(0);
+logSavePath=strcat([GAIL_path,'OutputFiles',filesep], 'Paper_cubBayesLattice_g');
 
-if exist(figSavePath,'dir')==false
-  mkdir(figSavePath);
+if exist(logSavePath,'dir')==false
+  mkdir(logSavePath);
 end
 
 % log the results
-completereport = strcat(figSavePath,...
+completereport = strcat(logSavePath, filesep, ...
   '_tests-logs-', datestr(now,'yyyy-mm-dd-HH-MM-SS'),'.txt');
 diary(completereport)
 
 visiblePlot=true;
-
-%
-% https://www.mathworks.com/matlabcentral/answers/
-% 98969-how-can-i-temporarily-avoid-figures-to-be-displayed-in-matlab
-%
+% temporarily avoid figures to be displayed in matlab
 if visiblePlot==false
   set(0,'DefaultFigureVisible','off')
 else
   set(0,'DefaultFigureVisible','on')
 end
 
-rng(202326) % control random number generation
+rng(202326) % initialize random number generation to enable reproducability
 
 alpha = 0.01;
 errTol = 0.001;
@@ -54,7 +45,7 @@ if orig_dim==3
   MVNParams.b = [5 2 1];
   MVNParams.mu = 0;
   MVNParams.CovProp.C = chol(MVNParams.Cov)';
-  muBest = '0.676337324357787483819492990733124315738677978515625';
+  muBest = '0.676337324357787483819';
   muBest = str2double(muBest);
 elseif orig_dim == 4
   dim = 3;
@@ -64,7 +55,7 @@ elseif orig_dim == 4
   MVNParams.b = [5 2 1 2];
   MVNParams.mu = 0;
   MVNParams.CovProp.C = chol(MVNParams.Cov)';
-  muBest = '0.67451648307312195296248091835877858102321624755859375';
+  muBest = '0.674516483073121952962';
   muBest = str2double(muBest);
 end
   
@@ -74,8 +65,10 @@ nRep = 100;
 muhatVec(nRep,1) = 0;
 indx = 1;
 
-matFilePath = 'D:\Dropbox\fjhickernellGithub\GAIL_Dev-BayesianCubature\GAIL_Matlab\Papers\Thesis\Jagadees\Paper2018\figures\';
-figSavePath = matFilePath;
+
+% path to save/read the .mat files
+matFilePath = 'Papers\Thesis\Jagadees\Paper2018\figures\';
+figSavePath = [GAIL_path filesep matFilePath];
 filename = 'matern_guranteed_2018-Aug-31';
 matFileName = [matFilePath filename '.mat'];
 if exist(matFileName, 'file') == 2
@@ -97,10 +90,11 @@ else
   end
 
   timeStamp = datetime('now','Format','y-MMM-d');
-
-  save(sprintf('matern_guranteed_%s.mat', timeStamp), 'muhatVec', 'outVec',...
-    'inputArgs','MVNParams','muBest','timeStamp')
-  S = load(sprintf('matern_guranteed_%s.mat', timeStamp));
+  matfilename = [figSavePath, filesep, ...
+    sprintf('matern_guranteed_%s', timeStamp), '.mat'];
+  save(matfilename, ...
+    'muhatVec', 'outVec','inputArgs','MVNParams','muBest','timeStamp')
+  S = load(matfilename);
 end
 
 fprintf('done')
@@ -123,7 +117,7 @@ pointSize = 30;
 pointShapes = {'o','s','d','^','v','<','>','p','h'};
 errVecLimits = [1E-6, 1E1];
 
-% guaranteed plot with colorbar showing \varepsilon, error tolerance
+% guaranteed plot with colorbar showing \varepsilon, the error tolerance
 figH = figure();
 set(figH, 'units', 'inches', 'Position', [1 1 9 5])
 timeTicksLimits(1) = floor(log10(min(S.timeVec(:)))); 
@@ -148,7 +142,6 @@ c.Label.Interpreter = 'latex';
 c.Label.String = 'Error Tolerance, $\varepsilon$';
 % axis tight; not required
 
-%assert(max(timeVec(:)) <= timeLimits(2), sprintf('time val greater than max limit %d', timeLimits(2)))
 axis([errVecLimits(1) errVecLimits(2) 10^timeTicksLimits(1) 10^timeTicksLimits(2) ])
 timeTicksVec = (timeTicksLimits(1) :timeTickInterval: timeTicksLimits(2));
 if timeTicksVec(end) ~= timeTicksLimits(2)
@@ -185,7 +178,7 @@ set(gca,'xscale','log')
 set(gca,'yscale','log')
 xlabel('\({\vert\mu-\widehat{\mu} \vert}/{\varepsilon}\)')
 ylabel('Time (secs)')
-cticks = log2(sort(unique(S.nVec(:))));
+% cticks = log2(sort(unique(S.nVec(:))));
 cticks = [4 6 8 10 12];
 cticks_text = arrayfun(@(x){sprintf('2^{%d}', x)}, cticks);
 c = colorbar('Ticks',cticks, ...
@@ -206,7 +199,6 @@ figSavePathName = sprintf('%s%s_guaranteed_time_with_n_Matern_d%d_%s.png', ...
   figSavePath, S.testFunArg.fName,...
   S.testFunArg.dim, S.timeStamp );
 saveas(figH1, figSavePathName)
-
 
 %
 % Num. points vs time growth

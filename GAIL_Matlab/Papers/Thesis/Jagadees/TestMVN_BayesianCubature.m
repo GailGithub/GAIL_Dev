@@ -114,6 +114,7 @@ end
 %disp(['mu  = ' num2str(muBest,15) ' +/- ' num2str(2*std(muBestvec),10)])
 end
 
+% use precomputed values
 if dim==2
   muBest = '0.67633732435778748381';
 elseif dim==3

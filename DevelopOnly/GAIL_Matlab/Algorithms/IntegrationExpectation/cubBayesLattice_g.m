@@ -174,6 +174,7 @@ classdef cubBayesLattice_g < handle
     vdc_order = true; % use Lattice points generated in vdc order
     kernType = 1; % Type-1: algebraic convergence, Type-2: exponential convergence
     
+    % only for developers use
     fName = 'None'; %name of the integrand
     figSavePath = ''; %path where to save he figures
     visiblePlot = false; %make plots visible
@@ -869,13 +870,13 @@ classdef cubBayesLattice_g < handle
     
     % to enable GPU for computations
     function y = gpuArray_(x)
-      % y = gpuArray(x);
-      y = x;   
+      % y = gpuArray(x);  % use GPU
+      y = x;  % use CPU
     end
     
     function y = gather_(x)
-      % y = gather(x);
-      y = x;
+      % y = gather(x);  % use GPU
+      y = x;  % use CPU
     end
     
     function warn_fd()

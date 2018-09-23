@@ -1,46 +1,46 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-if isunix
-  !synclient HorizEdgeScroll=0 HorizTwoFingerScroll=0 # disable horizontal scrolling
-end
+%% Generates the plots for the numerical experiments section of the paper
+% stores the results to .mat files 
 gail.InitializeWorkspaceDisplay %initialize the workspace and the display parameters
 format long
 
-if isunix
-  figSavePath = '/home/jagadees/MyWriteup/';
-else
-  figSavePath = 'D:/Mega/MyWriteupBackup/';
-end
-figSavePath = strcat(figSavePath, 'Jul_2ndweek2018/');
+GAIL_path = GAILstart(0);
+logSavePath=strcat([GAIL_path,'OutputFiles',filesep], 'Paper_cubBayesLattice_g');
 
+if exist(logSavePath,'dir')==false
+  mkdir(logSavePath);
+end
+
+% log the results
+completereport = strcat(logSavePath, filesep, ...
+  '_tests-logs-', datestr(now,'yyyy-mm-dd-HH-MM-SS'),'.txt');
+diary(completereport)
+
+% path to save/read the .mat files
+matFilePath = 'Papers\Thesis\Jagadees\Paper2018\figures\';
+figSavePath = [GAIL_path filesep matFilePath];
 if exist(figSavePath,'dir')==false
   mkdir(figSavePath);
 end
 
-% log the results
-completereport = strcat(figSavePath,...
-  '_tests-logs-', datestr(now,'yyyy-mm-dd-HH-MM-SS'),'.txt');
-diary(completereport)
-
 visiblePlot=true;
 
-%
-% https://www.mathworks.com/matlabcentral/answers/
-% 98969-how-can-i-temporarily-avoid-figures-to-be-displayed-in-matlab
-%
+% temporarily avoid figures to be displayed in matlab
 if visiblePlot==false
   set(0,'DefaultFigureVisible','off')
 else
   set(0,'DefaultFigureVisible','on')
 end
 
-rng(202326) % control random number generation
+rng(202326) % initialize random number generation to enable reproducability
 
 stopAtTol = true;
 alpha = 0.01;
 
-testFunArgs(2)=struct('fName','MVN','dim',2,'order',2,'varTx','C2sin',...
+% template of input arguments
+testFunArgs(1)=struct('fName','MVN','dim',2,'order',2,'varTx','C2sin',...
   'sampling','Lattice','arbMean',true,'stopCriterion','GCV');
-testFunArgs(1)=struct('fName','Keister','dim',4,'order',2,'varTx','C1sin',...
+testFunArgs(2)=struct('fName','Keister','dim',4,'order',2,'varTx','C1sin',...
   'sampling','Lattice','arbMean',true,'stopCriterion','GCV');
 testFunArgs(3)=struct('fName','optPrice','dim',12,'order',1,'varTx','Baker',...
   'sampling','Lattice','arbMean',true,'stopCriterion','GCV');
@@ -135,22 +135,23 @@ for testFunArg=testFunArgs(1:end)
   end
   
   toc(tstart)
+  % suffix this timestamp to all the files stored
   % timeStamp = datetime('now','Format','d-MMM-y HH-mm-ss');
   timeStamp = datetime('now','Format','y-MMM-d');
   
-  datFileName=sprintf('%sGuaranteed_plot_data_%s_%s_%s_d%d_r%d_%s.mat',...
-    figSavePath,fName,stopCrit,vartx,testFunArg.dim,testFunArg.order,timeStamp);
-  save(datFileName,...
+  datFileName=sprintf('Guaranteed_plot_data_%s_%s_%s_d%d_r%d_%s.mat',...
+    fName,stopCrit,vartx,testFunArg.dim,testFunArg.order,timeStamp);
+  save([figSavePath filesep datFileName],...
     'errVec','timeVec','tolVec', 'errTolVec',...
     'outStructVec','testFunArg','log10ErrVec','fName',...
     'timeStamp','figSavePath','nptsVec','stopCrit');
   
-  if exist(datFileName, 'file') == 2
-    guaranteed_plots('', {datFileName});
+  if exist([figSavePath filesep datFileName], 'file') == 2
+    guaranteed_plots(figSavePath, {datFileName});
   end
   
 end
 diary off
 
+fprintf('finished')
 
-error 'finished'

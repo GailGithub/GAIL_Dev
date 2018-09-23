@@ -1,4 +1,5 @@
 %% Interface to test Asian Arithmetic Mean Option Pricing
+% using Bayesian cubature algorithm
 function [muhat,err,timeVec,outVec] = TestAsianArithmeticMeanOptionAutoExample(varargin)
 
 whichExample = 'Pierre';
@@ -12,7 +13,7 @@ else
 end
 
 %% Parameters for the Asian option, Pierre's Example
-absTol = 1e-2; %1e-4;
+absTol = 1e-2;
 relTol = 0;
 inp.timeDim.timeVector = 1/12:1/12:1; %weekly monitoring for one quarter
 inp.assetParam.initPrice = 100; %initial stock price
@@ -42,7 +43,6 @@ integrand = @(x) genOptPayoffs_fixNan(AsianCall,x);
 
 dim = AsianCall.timeDim.nSteps;
 muAsianCallBayesAuto(nRepAuto,1) = 0;
-%outCallBayes(nRepAuto,1) = 0;
 
 fName = 'optPrice';
 inputArgs = varargin;
@@ -81,7 +81,8 @@ successAsianCallBayesAuto = mean(errvecAsianCallBayesAuto <= obj.absTol);
 fprintf('\nError: Median %1.2e, Worst %1.2e, Range %1.2e, \n worstN %d, worstTime %1.3f, SuccessRatio %1.2f, \n absTol %1.2e, relTol %1.2e\n', ...
   errmedAsianCallBayesAuto, errtopAsianCallBayesAuto, rangeAsianCallBayesAuto, ...
   ntopAsianCallBayesAuto, timetopAsianCallBayesAuto, ...
-  successAsianCallBayesAuto, outCallBayes(1).optParams.absTol, outCallBayes(1).optParams.relTol);
+  successAsianCallBayesAuto, outCallBayes(1).optParams.absTol, ...
+  outCallBayes(1).optParams.relTol);
 
 muhat = median(muAsianCallBayesAuto);
 err = errvecAsianCallBayesAuto;
@@ -90,19 +91,20 @@ timeVec = timeVecAsianCallBayesAuto;
 
 end
 
-% reset NaN vlaues to zero
+% reset NaN values to zero
 function y = genOptPayoffs_fixNan(AsianCall,x)
 y = genOptPayoffs(AsianCall,x);
 y(isnan(y)) = 0;
 end
 
-% picks the input argument from the varargin cell array
+% picks the value of given argument from varargin cell array
 function output = get_arg(argName, inputArgs, defaultVal)
 iStart = 1;
 wh = find(strcmp(inputArgs(iStart:end),argName));
 if ~isempty(wh), output=inputArgs{wh+iStart}; else, output=defaultVal; end
 end
 
+% sets the argument of the given argument
 function outArgs = set_arg(argName, inputArgs, val)
 outArgs=inputArgs;
 iStart=1;
