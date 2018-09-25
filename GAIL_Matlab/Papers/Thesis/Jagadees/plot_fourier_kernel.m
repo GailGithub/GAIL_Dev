@@ -5,7 +5,7 @@ n = 512;
 shape_param = [0.2 0.8];
 order = [1 2];
 bvec = [0.2 0.8];
-dim = 2;
+dim = 1;
 
 % using uniform points
 l = linspace(0,1,n);
@@ -30,6 +30,7 @@ if dim==1
   xlabel('\(x\)')
   ylabel('\(C_{\theta}(x,0.3)\)')
   legend(leg_text, 'Interpreter','latex','location','best')
+  legend boxoff
   axis tight
 
   figSavePathName = sprintf('fourier_kernel dim_1.png');

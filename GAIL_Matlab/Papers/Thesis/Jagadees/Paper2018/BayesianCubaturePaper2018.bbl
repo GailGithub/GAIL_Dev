@@ -13,11 +13,6 @@ Briol, F.X., Oates, C.J., Griolami, M., Osborne, M.A., Sejdinovic, D.:
 \newblock Statist.\ Sci.  (2018+).
 \newblock To appear
 
-\bibitem{Caf98}
-Caflisch, R.E.: {M}onte {C}arlo and quasi-{M}onte {C}arlo methods.
-\newblock Acta Numer. \textbf{7}, 1--49 (1998).
-\newblock \doi{10.1017/S0962492900002804}
-
 \bibitem{ChoEtal17b}
 Choi, S.C.T., Ding, Y., \HickernellFJ, F.J., Jiang, L., {Jim\'enez Rugama},
   {\relax Ll}.A., Li, D., Jagadeeswaran, R., Tong, X., Zhang, K., Zhang, Y.,
@@ -101,28 +96,6 @@ Golub, G.H., Heath, M., Wahba, G.: Generalized cross-validation as a method for
   lattices.
 \newblock J. Complexity \textbf{19}, 286--300 (2003)
 
-\bibitem{HicSloWas03c}
-\HickernellFJ, F.J., Sloan, I.H., Wasilkowski, G.W.: On strong tractability of
-  weighted multivariate integration.
-\newblock Math.\ Comp. \textbf{73}, 1903--1911 (2004).
-\newblock \doi{10.1090/S0025-5718-04-01653-9}
-
-\bibitem{HicSloWas03b}
-\HickernellFJ, F.J., Sloan, I.H., Wasilkowski, G.W.: On tractability of
-  weighted integration for certain {B}anach spaces of functions.
-\newblock In: Niederreiter  \cite{Nie04}, pp. 51--71
-
-\bibitem{HicSloWas03a}
-\HickernellFJ, F.J., Sloan, I.H., Wasilkowski, G.W.: On tractability of
-  weighted integration over bounded and unbounded regions in {$\mathbb{R}^s$}.
-\newblock Math.\ Comp. \textbf{73}, 1885--1901 (2004).
-\newblock \doi{10.1090/S0025-5718-04-01624-2}
-
-\bibitem{HicSloWas03e}
-\HickernellFJ, F.J., Sloan, I.H., Wasilkowski, G.W.: The strong tractability of
-  multivariate integration using lattice rules.
-\newblock In: Niederreiter  \cite{Nie04}, pp. 259--273
-
 \bibitem{JimHic16a}
 {Jim\'enez Rugama}, {\relax Ll}.A., \HickernellFJ, F.J.: Adaptive
   multidimensional integration based on rank-1 lattices.
@@ -133,10 +106,6 @@ Golub, G.H., Heath, M., Wahba, G.: Generalized cross-validation as a method for
 Keister, B.D.: Multidimensional quadrature algorithms.
 \newblock Computers in Physics \textbf{10}, 119--122 (1996).
 \newblock \doi{10.1063/1.168565}
-
-\bibitem{Nie04}
-Niederreiter, H. (ed.): {M}onte {C}arlo and Quasi-{M}onte {C}arlo Methods 2002.
-  Springer-Verlag, Berlin (2004)
 
 \bibitem{Nuy17a}
 Nuyens, D.:
