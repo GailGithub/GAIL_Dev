@@ -1386,7 +1386,7 @@ Because the integrand has a kink caused by the $\max$ function, it does not help
 \end{figure}
 
 
-In summary,  as shown in Figures \ref{fig:mvn-guaranteed-MLE} to \ref{fig:optprice-guaranteed-GCV}, the Bayesian cubature algorithm computes the integral within the user-specified threshold in nearly all of the test cases.  The exceptions sometimes occurred in the option pricing example due to the complexity and high dimension of the integrand. 
+In summary,  as shown in Figures \ref{fig:mvn-guaranteed-MLE} to \ref{fig:optprice-guaranteed-GCV}, the Bayesian cubature algorithm computes the integral within the user-specified threshold in nearly all of the test cases.  The exceptions sometimes occurred in the option pricing example for $\varepsilon=10^{-4}$. Our algorithm used maximum allowed sample size and still did not reach the stopping criterion $\err_{\textup{CI}} \leq \varepsilon$, due to the complexity and high dimension of the integrand. 
 Also notice, our algorithm finished within 10 seconds for Keister and multivariate Normal examples while the option pricing took closer to 70 seconds, again due to the complexity of the integrand.
 
 Another noticeable aspect from the plots is how much the error bounds differ from the true error. For option pricing example, the error bound is not as conservative as it is for the multivariate normal and Keister examples. A possible reason is that the latter integrands are significantly smoother than the covariance kernel assumed.  This is a matter for further investigation.
