@@ -9,12 +9,12 @@
 %   [0,1]^d using rank-1 Lattice sampling to within a specified generalized
 %   error tolerance, tolfun = max(abstol, reltol*| I |), i.e., | I - Q | <= tolfun
 %   with confidence of at least 99%, where I is the true integral value,
-%   Q is the estimated integral value, abstol is the absolute error tolerance, 
+%   Q is the estimated integral value, abstol is the absolute error tolerance,
 %   and reltol is the relative error tolerance. Usually the reltol determines
-%   the accuracy of the estimation, however, if | I | is rather small, 
-%   then abstol determines the accuracy of the estimation. 
+%   the accuracy of the estimation, however, if | I | is rather small,
+%   then abstol determines the accuracy of the estimation.
 %   OutP is the structure holding additional output params, more details provided
-%   below. Input f is a function handle that accepts an n x d matrix input, 
+%   below. Input f is a function handle that accepts an n x d matrix input,
 %   where d is the dimension of the hyperbox, and n is the number of points
 %   being evaluated simultaneously.
 %
@@ -31,7 +31,7 @@
 %     'C0', 'C1', 'C1sin', or 'C2sin'. Default is 'C1sin'
 %     arbMean --- If false, the algorithm assumes the integrand was sampled
 %                 from a Gaussian process of zero mean. Default is True.
-%     alpha --- confidence level for a credible interval of Q. Default is 0.01. 
+%     alpha --- confidence level for a credible interval of Q. Default is 0.01.
 %     mmin --- min number of samples to start with = 2^mmin
 %     mmax --- max number of samples allowed = 2^mmax
 %
@@ -49,12 +49,12 @@
 %  Guarantee
 % This algorithm attempts to calculate the integral of function f over the
 % hyperbox [0,1]^dim to a prescribed error tolerance tolfun:= max(abstol,reltol*| I |)
-% with guaranteed confidence level, e.g., 99% when alpha=0.5%. If the 
-% algorithm terminates without showing any warning messages and provides 
+% with guaranteed confidence level, e.g., 99% when alpha=0.5%. If the
+% algorithm terminates without showing any warning messages and provides
 % an answer Q, then the following inequality would be satisfied:
 %
 % Pr(| Q - I | <= tolfun) = 99%
-%  
+%
 % Please refer to our paper for detailed arguments and proofs.
 %
 %  Examples
@@ -68,7 +68,7 @@
 %
 % Example 2: Quadratic
 %
-% Estimate the integral with integrand f(x) = x.^2 over the interval [0,1] 
+% Estimate the integral with integrand f(x) = x.^2 over the interval [0,1]
 % with default parameters: order=2, ptransform=C1sin, abstol=0.01, relTol=0
 %
 % >> warning('off','GAIL:cubBayesLattice_g:fdnotgiven')
@@ -99,7 +99,7 @@
 %
 % Example 3: Keister function
 %
-% >> dim=2; absTol=1e-3; relTol=1e-2; 
+% >> dim=2; absTol=1e-3; relTol=1e-2;
 % >> normsqd = @(t) sum(t.*t,2); %squared l_2 norm of t
 % >> replaceZeros = @(t) (t+(t==0)*eps); % to avoid getting infinity, NaN
 % >> yinv = @(t)(erfcinv( replaceZeros(abs(t)) ));
@@ -134,8 +134,8 @@
 %  References
 %
 %   [1] R. Jagadeeswaran and Fred J. Hickernell, "Faster Adaptive
-%   Bayesian cubature using Lattice Sampling", Workshop on Probabilistic 
-%   Numerical Methods, London, UK, April 2018 
+%   Bayesian cubature using Lattice Sampling", 
+%   https://arxiv.org/abs/1809.09803 (submitted).
 %
 %   [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 %   Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
@@ -162,7 +162,7 @@ classdef cubBayesLattice_g < handle
     mmin = 10; %min number of samples to start with = 2^mmin
     mmax = 22; %max number of samples allowed = 2^mmax
   end
- 
+  
   properties (SetAccess = private)
     ff = []; %integrand after the periodization transform
     mvec = []; % n = 2^m
@@ -172,7 +172,9 @@ classdef cubBayesLattice_g < handle
     fullBayes = false; % Full Bayes - assumes m and s^2 as hyperparameters,
     GCV = false; % Generalized cross validation
     vdc_order = true; % use Lattice points generated in vdc order
+    kernType = 1; % Type-1: algebraic convergence, Type-2: exponential convergence
     
+    % only for developers use
     fName = 'None'; %name of the integrand
     figSavePath = ''; %path where to save he figures
     visiblePlot = false; %make plots visible
@@ -232,10 +234,10 @@ classdef cubBayesLattice_g < handle
       % apply periodization transformation to the function
       obj.ff = obj.doPeriodTx(obj.f, obj.ptransform);
       obj.gen_vec = obj.get_lattice_gen_vec(obj.dim);
-
+      
       obj.mvec = obj.mmin:obj.mmax;
       length_mvec = length(obj.mvec);
-           
+      
       % to store debug info
       temp = cubBayesLattice_g.gpuArray_(zeros(length_mvec,1));
       obj.errorBdAll = temp;
@@ -250,7 +252,7 @@ classdef cubBayesLattice_g < handle
     
     % computes the integral
     function [muhat,out] = compInteg(obj)
-            
+      
       tstart = tic; %start the clock
       numM = length(obj.mvec);
       
@@ -306,8 +308,8 @@ classdef cubBayesLattice_g < handle
       
       if stop_flag==false
         warning('GAIL:cubBayesLattice_g:maxreached',...
-            ['In order to achieve the guaranteed accuracy, ', ...
-            sprintf('used maximum allowed sample size %d. \n', n)] );
+          ['In order to achieve the guaranteed accuracy, ', ...
+          sprintf('used maximum allowed sample size %d. \n', n)] );
       end
       
       % convert from gpu memory to local
@@ -321,7 +323,7 @@ classdef cubBayesLattice_g < handle
       m = obj.mvec(iter);
       n = 2^m;
       
-      % In every iteration except the first one, "n" number_of_points is doubled, 
+      % In every iteration except the first one, "n" number_of_points is doubled,
       % but FFT is only computed for the newly added points.
       % Previously computed FFT is reused.
       if iter == 1
@@ -354,7 +356,7 @@ classdef cubBayesLattice_g < handle
       m = obj.mvec(iter);
       n = 2^m;
       
-      % In every iteration except the first one, "n" number_of_points is doubled, 
+      % In every iteration except the first one, "n" number_of_points is doubled,
       % but FFT is only computed for the newly added points.
       % Previously computed FFT is reused.
       if iter == 1
@@ -386,13 +388,47 @@ classdef cubBayesLattice_g < handle
     % decides if the user-defined error threshold is met
     function [success,muhat] = stopping_criterion(obj, xpts, ftilde, iter, m)
       
+      tstart=tic;
       n=2^m;
       success = false;
       % search for optimal shape parameter
-      lnaMLE = fminbnd(@(lna) ...
-        ObjectiveFunction(obj, exp(lna),xpts,ftilde), -5,5,optimset('TolX',1e-2));
-      aMLE = exp(lnaMLE);
-      [loss,Lambda,Lambda_ring,RKHSnorm] = ObjectiveFunction(obj, aMLE,xpts,ftilde);
+      if obj.kernType==2
+        % lnaRange = [-3,0]; % \theta \in [0, \inf]
+        % lnbRange = [-5,5]; % b \in [0, 1]
+        if 1
+          % unconstrained search on two variables.
+          % unstable, fails some times
+          options = optimset('TolX',1e-2);  %,'PlotFcns',@optimplotfval);
+          fLoss = @(x)ObjectiveFunctionFmin(obj,exp(x(1)),1.0/(1+exp(-x(2))),xpts,ftilde);
+          aOPT = fminsearch(fLoss, [0,0], options);
+          thetaOpt = exp(aOPT(1));
+          bOpt = 1.0/(1+exp(-aOPT(2)));
+          [loss,Lambda,Lambda_ring,RKHSnorm] = ObjectiveFunctionFmin(obj, ...
+            thetaOpt,bOpt,xpts,ftilde);
+        else
+          lnaMLE = fminsearch(@(lna) ...
+            ObjectiveFunction(obj, exp(lna),xpts,ftilde), ...
+            0,optimset('TolX',1e-2));
+          thetaOpt = exp(lnaMLE);
+          [loss,Lambda,Lambda_ring,RKHSnorm] = ObjectiveFunction(obj, thetaOpt,xpts,ftilde);
+        end
+      else
+        if 1
+          % bounded search
+          lnaRange = [-5,5];
+          lnaMLE = fminbnd(@(lna) ...
+            ObjectiveFunction(obj, exp(lna),xpts,ftilde), ...
+            lnaRange(1),lnaRange(2),optimset('TolX',1e-2));
+          thetaOpt = exp(lnaMLE);
+          [loss,Lambda,Lambda_ring,RKHSnorm] = ObjectiveFunction(obj, thetaOpt,xpts,ftilde);
+        else
+          lnaMLE = fminsearch(@(lna) ...
+            ObjectiveFunction(obj, exp(lna),xpts,ftilde), ...
+            0,optimset('TolX',1e-2));
+          thetaOpt = exp(lnaMLE);
+          [loss,Lambda,Lambda_ring,RKHSnorm] = ObjectiveFunction(obj, thetaOpt,xpts,ftilde);
+        end
+      end
       
       %Check error criterion
       % compute DSC
@@ -405,7 +441,7 @@ classdef cubBayesLattice_g < handle
         end
         % 1-alpha two sided confidence interval
         ErrBd = obj.uncert*sqrt(DSC * RKHSnorm/(n-1));
-      elseif obj.GCV==true 
+      elseif obj.GCV==true
         % GCV based stopping criterion
         if obj.avoidCancelError
           DSC = abs(Lambda_ring(1)/(n + Lambda_ring(1)));
@@ -440,7 +476,7 @@ classdef cubBayesLattice_g < handle
       obj.s_All(iter) = sqrt(RKHSnorm/n);
       obj.muhatAll(iter) = muhat;
       obj.errorBdAll(iter) = ErrBd;
-      obj.aMLEAll(iter) = aMLE;
+      obj.aMLEAll(iter) = thetaOpt;
       obj.lossMLEAll(iter) = loss;
       
       if obj.gaussianCheckEnable == true
@@ -448,6 +484,9 @@ classdef cubBayesLattice_g < handle
         % Useful to verify the assumption, integrand was an instance of a Gaussian process
         CheckGaussianDensity(obj, ftilde, Lambda)
       end
+      t_end=toc(tstart);
+      fprintf('thetaOpt=%1.3f, n=%d, ErrBd=%1.3e, time=%1.2f, absTol=%1.3e\n', ...
+        thetaOpt, n, ErrBd, t_end, obj.absTol);
       
       if 2*ErrBd <= ...
           max(obj.absTol,obj.relTol*abs(muminus)) + max(obj.absTol,obj.relTol*abs(muplus))
@@ -463,18 +502,19 @@ classdef cubBayesLattice_g < handle
     % objective function to estimate parameter theta
     % MLE : Maximum likelihood estimation
     % GCV : Generalized cross validation
+    % function [loss,Lambda,Lambda_ring,RKHSnorm] = ObjectiveFunctionFmin(obj,a,b,xun,ftilde)
     function [loss,Lambda,Lambda_ring,RKHSnorm] = ObjectiveFunction(obj,a,xun,ftilde)
       
       n = length(ftilde);
-      [Lambda, Lambda_ring] = obj.kernel(xun,obj.order,a,obj.avoidCancelError,...
-          obj.debugEnable);
+      %[Lambda, Lambda_ring] = obj.kernel(xun,b,a,obj.avoidCancelError,obj.kernType, obj.debugEnable);
+      [Lambda, Lambda_ring] = obj.kernel(xun,obj.order,a,obj.avoidCancelError, obj.kernType,obj.debugEnable);
       
-      % compute RKHSnorm 
-      temp = abs(ftilde(Lambda~=0).^2)./(Lambda(Lambda~=0)) ;
+      % compute RKHSnorm
+       temp = abs(ftilde(Lambda~=0).^2)./(Lambda(Lambda~=0)) ;
       
-      % compute loss 
+      % compute loss
       if obj.GCV==true
-        % GCV 
+        % GCV
         temp_gcv = abs(ftilde(Lambda~=0)./(Lambda(Lambda~=0))).^2 ;
         loss1 = 2*log(sum(1./Lambda(Lambda~=0)));
         loss2 = log(sum(temp_gcv(2:end)));
@@ -499,7 +539,7 @@ classdef cubBayesLattice_g < handle
         % ignore all zero eigenvalues
         loss1 = sum(log(Lambda(Lambda~=0)));
         loss2 = n*log(temp_1);
-        loss = loss1 + loss2;        
+        loss = (loss1 + loss2)/n;
       end
       
       if obj.debugEnable
@@ -520,10 +560,10 @@ classdef cubBayesLattice_g < handle
     %   .../normprp2.htm
     % Long Tails :
     %    .../normprp3.htm
-    function CheckGaussianDensity(obj, ftilde, lambda)
+    function [hFigNormplot] = CheckGaussianDensity(obj, ftilde, lambda)
       n = length(ftilde);
       ftilde(1) = 0;  % substract by (m_\MLE \vone) to get zero mean
-      % 'y' is real, so ifft(fft(real)) is 'real' 
+      % 'y' is real, so ifft(fft(real)) is 'real'
       w_ftilde = real(ifft(ftilde./sqrt(lambda)));
       if obj.visiblePlot==false
         hFigNormplot = figure('visible','off');
@@ -533,17 +573,30 @@ classdef cubBayesLattice_g < handle
       set(hFigNormplot,'defaultaxesfontsize',16, ...
         'defaulttextfontsize',16, ... %make font larger
         'defaultLineLineWidth',0.75, 'defaultLineMarkerSize',8)
+      
+      % Shapiro-Wilk test, 
+      % Ex:
+      % random normal  [H_,pValue_,W_] = swtest(randn(1024,1))
+      % random uniform [H_,pValue_,W_] = swtest(rand(1024,1))
+      [H, pValue, W] = swtest(w_ftilde);
+      Hval='false';
+      if H==true
+        Hval='false';
+      end
+      fprintf('Shapiro-Wilk test: Normal=%s, pValue=%1.3e, W=%1.3f\n', Hval, pValue, W);
+      
       % other option : qqplot(w_ftilde)
       normplot(w_ftilde)
       set(hFigNormplot, 'units', 'inches', 'Position', [1 1 8 6])
       
       title(sprintf('Normplot %s n=%d Tx=%s', obj.fName, n, obj.ptransform))
+      % figure(); hist(w_ftilde);
       
       % build filename with path to store the plot
-      plotFileName = sprintf('%s%s Normplot d_%d bernoulli_%d Period_%s n_%d.png',...
-        obj.figSavePath, obj.fName, obj.dim, obj.order, obj.ptransform, n);
+      % plotFileName = sprintf('%s%s Normplot d_%d bernoulli_%d Period_%s n_%d.png',...
+      %   obj.figSavePath, obj.fName, obj.dim, obj.order, obj.ptransform, n);
       % plotFileName
-      saveas(hFigNormplot, plotFileName)
+      % saveas(hFigNormplot, plotFileName)
     end
     
     % parses each input argument passed and assigns to obj.
@@ -589,11 +642,20 @@ classdef cubBayesLattice_g < handle
             'The given input f should be a function handle.\n' );
         end
         
-        if ~(obj.order==1 || obj.order==2)
-          warning('GAIL:cubBayesLattice_g:r_invalid',...
-            'Kernel order, r=%d, is not supported; it must be 1 or 2. The algorithm is using default value r=2.\n', ...
-            obj.order);
-          obj.order = 1;
+        if obj.kernType==1
+          if ~(obj.order==1 || obj.order==2)
+            warning('GAIL:cubBayesLattice_g:r_invalid',...
+              'Kernel order, r=%d, is not supported; it must be 1 or 2. The algorithm is using default value r=2.\n', ...
+              obj.order);
+            obj.order = 1;
+          end
+        elseif obj.kernType==2
+          if ~(obj.order>0 && obj.order<1)
+            warning('GAIL:cubBayesLattice_g:r_invalid',...
+              'Kernel order, r=%1.1f invalid, must be in (0, 1), using default r=0.4\n', ...
+              obj.order);
+            obj.order = 0.4;
+          end
         end
         
         stopCriterions = {'full','GCV','MLE'};
@@ -617,6 +679,105 @@ classdef cubBayesLattice_g < handle
       
       validate_input_args(obj);
     end
+
+    
+    % plots the objective for the MLE of theta, useful for diagnozing any
+    % issues with the code
+    function [minTheta, hFigCost, hFigNormVec] = plotObjectiveFunc(obj)
+      
+      obj.visiblePlot= true;
+      
+      numM = length(obj.mvec);
+%       n = 2.^obj.mvec(end);
+      shift = rand(1,obj.dim);
+
+%       [xpts, xptsun] = cubBayesLattice_g.simple_lattice_gen(n,obj.dim,shift,true);
+%       fx = obj.ff(xpts);  % Note: periodization transform already applied
+        
+      %% plot ObjectiveFunction
+      lnTheta = -5:0.2:5;
+%       % build filename with path to store the plot
+%       plotFileName = sprintf('%s%s_Cost_d%d_r%d_%s_%s.png',...
+%         obj.figSavePath, obj.fName, obj.dim, obj.order, obj.ptransform, obj.stopCriterion);
+      
+      costMLE = zeros(numM,numel(lnTheta));
+      tstart = tic;
+      
+      % loop over all the m values
+      for iter = 1:numM
+        nii = 2^obj.mvec(iter);
+        
+        eigvalK = zeros(numel(lnTheta),nii);
+        % ftilde_iter = fft(bitrevorder(fx(1:nii))); %/nii;
+        
+        % [xlat,xpts_un,xlat_un,xpts]
+        % br_xun = bitrevorder(xpts(1:nii,:));
+        % br_xun = xptsun(1:nii,:);
+        [xlat, xpts_un, ~, xpts] = cubBayesLattice_g.simple_lattice_gen(nii,obj.dim,shift,true);
+        ftilde_iter = fft(obj.ff(xpts));
+        
+        tic
+        %par
+        for k=1:numel(lnTheta)
+          [costMLE(iter,k),eigvalK(k,:)] = ObjectiveFunction(obj, exp(lnTheta(k)),...
+            xpts_un,(ftilde_iter));
+        end
+        toc
+        
+        % Gaussian diagnosis for n < 8194, swtest does not work bigger
+        % values
+        if nii < (2^13)
+          [minVal,Index] = min(real(costMLE(iter,:)));
+          minTheta = exp(lnTheta(Index));
+
+          lambda = eigvalK(Index,:)';
+          % figure(); loglog(sort(lambda, 'descend'), 'o', 'MarkerSize',2);
+          % figure(); loglog(lambda, 'o', 'MarkerSize',2);
+          if any(lambda <=0)
+            warning('lambda cannot be zero or negative')
+          end
+          hFigNormVec{iter} = CheckGaussianDensity(obj, (ftilde_iter), lambda);
+        end
+      end
+      
+      toc(tstart)
+      
+      if obj.visiblePlot==false
+        hFigCost = figure('visible','off');
+      else
+        hFigCost = figure();
+      end
+      
+      % semilogx
+      semilogx(exp(lnTheta),real(costMLE));
+      set(hFigCost, 'units', 'inches', 'Position', [0 0 14 9])
+      xlabel('Shape param, \(\theta\)')
+      ylabel('MLE Cost, \( \log \frac{y^T K_\theta^{-1}y}{[\det(K_\theta^{-1})]^{1/n}} \)')
+      axis tight;
+      if obj.arbMean
+        mType = '\(m \neq 0\)'; % arb mean
+      else
+        mType = '\(m = 0\)'; % zero mean
+      end
+      title(sprintf('%s d=%d r=%d Tx=%s %s', obj.fName, obj.dim, obj.order, obj.ptransform, mType));
+      [minVal,Index] = min(real(costMLE),[],2);
+      
+      % mark the min theta values found using fminbnd
+      minTheta = exp(lnTheta(Index));
+      hold on;
+      semilogx(minTheta, minVal, '.');
+      if exist('aMLEAll', 'var')
+        semilogx(obj.aMLEAll, obj.lossMLEAll, '+');
+      end
+      temp = string(obj.mvec);
+      temp = strcat('\(2^{',temp,'}\)');
+      temp(end+1) = '\(\theta_{min_{true}}\)';
+      if exist('aMLEAll', 'var')
+        temp(end+1) = '\(\theta_{min_{est}}\)';
+      end
+      legend(temp,'location','best'); axis tight
+      % saveas(hFigCost, plotFileName)
+    end    
     
   end
   
@@ -682,23 +843,30 @@ classdef cubBayesLattice_g < handle
     % Lambda : eigenvalues of the covariance matrix
     % Lambda_ring = fft(C1 - 1)
     function [Lambda, Lambda_ring] = kernel(xun,order,a,avoidCancelError,...
-        debugEnable)
+        kernType,debugEnable)
       
-      b_order = order*2; % Bernoulli polynomial order as per the equation
-      constMult = -(-1)^(b_order/2)*((2*pi)^b_order)/factorial(b_order);
-      % constMult = -(-1)^(b_order/2);
-      if b_order == 2
-        bernPoly = @(x)(-x.*(1-x) + 1/6);
-      elseif b_order == 4
-        bernPoly = @(x)( ( (x.*(1-x)).^2 ) - 1/30);
+      if kernType==1
+        b_order = order*2; % Bernoulli polynomial order as per the equation
+        constMult = -(-1)^(b_order/2)*((2*pi)^b_order)/factorial(b_order);
+        % constMult = -(-1)^(b_order/2);
+        if b_order == 2
+          bernPoly = @(x)(-x.*(1-x) + 1/6);
+        elseif b_order == 4
+          bernPoly = @(x)( ( (x.*(1-x)).^2 ) - 1/30);
+        else
+          error('Bernoulli order not implemented !');
+        end
+        kernelFunc = @(x) bernPoly(x);
       else
-        error('Bernoulli order not implemented !');
+        b = order;
+        kernelFunc = @(x) 2*b*((cos(2*pi*x)-b))./(1 + b^2 - 2*b*cos(2*pi*x));
+        constMult = 1;
       end
       
       if avoidCancelError
         % Computes C1m1 = C1 - 1
         % C1_new = 1 + C1m1 indirectly computed in the process
-        [C1m1, C1_alt] = cubBayesLattice_g.kernel_t(a*constMult, bernPoly(xun));
+        [C1m1, C1_alt] = cubBayesLattice_g.kernel_t(a*constMult, kernelFunc(xun));
         % eigenvalues must be real : Symmetric pos definite Kernel
         Lambda_ring = real(fft(C1m1));
         
@@ -716,7 +884,7 @@ classdef cubBayesLattice_g < handle
         end
       else
         % direct approach to compute first row of the kernel Gram matrix
-        C1 = prod(1 + (a)*constMult*bernPoly(xun),2);
+        C1 = prod(1 + (a)*constMult*kernelFunc(xun),2);
         % matlab's builtin fft is much faster and accurate
         % eigenvalues must be real : Symmetric pos definite Kernel
         Lambda = real(fft(C1));
@@ -740,12 +908,12 @@ classdef cubBayesLattice_g < handle
         f=@(x) fInput(x-sin(2*pi*x)/(2*pi)).*prod(2*sin(pi*x).^2,2);
       elseif strcmp(ptransform,'C2sin')
         % Sidi C^2 transform
-        psi3 = @(t) (8-9*cos(pi*t)+cos(3*pi*t))/16; 
+        psi3 = @(t) (8-9*cos(pi*t)+cos(3*pi*t))/16;
         psi3_1 = @(t) (9*sin(pi*t)*pi- sin(3*pi*t)*3*pi)/16;
         f=@(x) fInput(psi3(x)).*prod(psi3_1(x),2);
       elseif strcmp(ptransform,'C3sin')
         % Sidi C^3 transform
-        psi4 = @(t) (12*pi*t-8*sin(2*pi*t)+sin(4*pi*t))/(12*pi); 
+        psi4 = @(t) (12*pi*t-8*sin(2*pi*t)+sin(4*pi*t))/(12*pi);
         psi4_1 = @(t) (12*pi-8*cos(2*pi*t)*2*pi+sin(4*pi*t)*4*pi)/(12*pi);
         f=@(x) fInput(psi4(x)).*prod(psi4_1(x),2);
       elseif strcmp(ptransform,'none')
@@ -760,13 +928,13 @@ classdef cubBayesLattice_g < handle
     % just returns the generator for rank-1 Lattice point generation
     function [z] = get_lattice_gen_vec(d)
       z = [1, 433461, 315689, 441789, 501101, 146355, 88411, 215837, 273599 ...
-            151719, 258185, 357967, 96407, 203741, 211709, 135719, 100779, ...
-            85729, 14597, 94813, 422013, 484367]; %generator      
+        151719, 258185, 357967, 96407, 203741, 211709, 135719, 100779, ...
+        85729, 14597, 94813, 422013, 484367]; %generator
       z = z(1:d);
     end
     
     % generates rank-1 Lattice points in van der Corput sequence order
-    function [xlat,xlat_] = simple_lattice_gen(n,d,shift,firstBatch)
+    function [xlat,xpts_un,xlat_un,xpts] = simple_lattice_gen(n,d,shift,firstBatch)
       z = cubBayesLattice_g.get_lattice_gen_vec(d);
       
       nmax = n;
@@ -778,13 +946,16 @@ classdef cubBayesLattice_g < handle
       
       if firstBatch==true
         brIndices=cubBayesLattice_g.vdc(nelem)';
-        xlat_=mod(bsxfun(@times,(0:1/n:1-1/n)',z),1); % unshifted in direct order
+        xpts_un=mod(bsxfun(@times,(0:1/n:1-1/n)',z),1); % unshifted in direct order
       else
         brIndices=cubBayesLattice_g.vdc(nelem)'+1/(2*(nmin-1));
-        xlat_=mod(bsxfun(@times,(1/n:2/n:1-1/n)',z),1); % unshifted in direct order
+        xpts_un=mod(bsxfun(@times,(1/n:2/n:1-1/n)',z),1); % unshifted in direct order
+
       end
-      xlat = mod(bsxfun(@times,brIndices',z),1);  % unshifted
-      xlat = mod(bsxfun(@plus,xlat,shift),1);  % shifted in VDC order
+      xpts = mod(bsxfun(@plus,xpts_un,shift),1);  % shifted in direct order
+      
+      xlat_un = mod(bsxfun(@times,brIndices',z),1);  % unshifted
+      xlat = mod(bsxfun(@plus,xlat_un,shift),1);  % shifted in VDC order
     end
     
     % van der Corput sequence in base 2
@@ -845,18 +1016,18 @@ classdef cubBayesLattice_g < handle
     
     % to enable GPU for computations
     function y = gpuArray_(x)
-      % y = gpuArray(x);
-      y = x;   
+      % y = gpuArray(x);  % use GPU
+      y = x;  % use CPU
     end
     
     function y = gather_(x)
-      % y = gather(x);
-      y = x;
+      % y = gather(x);  % use GPU
+      y = x;  % use CPU
     end
     
     function warn_fd()
       warning('GAIL:cubBayesLattice_g:fdnotgiven',...
-          'At least, function f and dimension need to be specified');
+        'At least, function f and dimension need to be specified');
     end
   end
 end

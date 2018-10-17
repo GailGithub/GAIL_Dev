@@ -32,9 +32,9 @@ if exist('samplingMethod','var') && ...
 else % use Lattice points
   obj=cubBayesLattice_g(inputArgs{:});
 end
-%plotObjectiveFunc(obj);
+% minTheta=plotObjectiveFunc(obj);
 
-nRep = get_arg('nRepAuto', varargin, 100);
+nRep = get_arg('nRep', varargin, 100);
 muhatVec = zeros(nRep,1);
 
 %plotObjectiveFunc(obj)

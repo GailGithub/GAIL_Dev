@@ -45,7 +45,8 @@ end
 
 tic
 
-nRep = 100; % increased it for gail plots
+nRep = get_arg('nRep', varargin, 100);
+% nRep = 10; % increased it for gail plots
 
 muhatVec(nRep,1) = 0;
 for i = 1:nRep
@@ -55,6 +56,24 @@ timeVec = [outVec(:).time]';
 errVec = abs(muBest - muhatVec);
 
 toc
+
+if 0
+  % Example to plot objective function
+  [minTheta, hFig] = plotObjectiveFunc(obj)
+  plotFileName = sprintf('%s%s Cost d_%d order_%d.png', ...
+         obj.figSavePath, obj.fName, obj.dim, obj.order);
+  saveas(hFig, plotFileName)
+
+  % Example to plot cubature error
+  obj = objCubBayes;
+  trueError = abs(outVec(1).optParams.muhatAll - muBest);
+  estError = outVec(1).optParams.ErrBdAll;
+  visiblePlot = true;
+  scale = outVec(1).optParams.s_All;
+  dsc = outVec(1).optParams.dscAll;
+  plotCubatureError(obj.dim, 2.^obj.mvec, trueError, estError, obj.fName, obj.order, ...
+    obj.ptransform, obj.figSavePath, visiblePlot, obj.arbMean, scale, dsc)
+end
 
 muhat = median(muhatVec);
 fprintf('done\n');
