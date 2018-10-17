@@ -191,7 +191,7 @@
 \newcommand\figref{Figure~\ref}
 \newcommand\secref{Section~\ref}
 
-\graphicspath{{./figures/}{D:/Mega/MyWriteupBackup/Sep_2ndweek_1/}}
+\graphicspath{{.}{./figures/}{D:/Mega/MyWriteupBackup/Sep_2ndweek_1/}}
 %\graphicspath{{./figures/}}
 
 %
@@ -689,9 +689,9 @@ where $\Phi$ is the cumulative standard normal distribution function.  Then, $\m
 	%	\includegraphics[width=1.1\linewidth]{Plotting_gaussian}
 	%\end{subfigure}
 	\centering
-	\begin{subfigure}[h]{0.48\linewidth}
-		\includegraphics[width=1.1\linewidth]{GenzFunc_varTx_none}
-	\end{subfigure}
+	%\begin{subfigure}[h]{0.48\linewidth}
+		\includegraphics[width=0.7\linewidth]{GenzFunc_varTx_none}
+	%\end{subfigure}
 	\caption{The $d=3$ multivariate normal probability transformed to an integral of $f_{\text{Genz}}$ with  $d=2$. This plot can be reproduced using \code{IntegrandPlots.m} in GAIL}
 	\label{fig:MVN_Genz}
 \end{figure}
@@ -995,7 +995,7 @@ Larger $r$ implies a greater degree of smoothness of the kernel.  Larger $\gamma
 
 \begin{figure}
 	\centering
-	\includegraphics[width=0.9\linewidth]{"figures/fourier_kernel dim_1"}
+	\includegraphics[width=0.9\linewidth]{"fourier_kernel_dim_1"}
 	\caption[Fourier kernel]{Shift invariant kernel in 1D shifted by 0.3 to show the discontinuity. This figure can be reproduced using \code{plot\_fourier\_kernel.m} in GAIL. }
 	\label{fig:fourierkernel-dim1}
 \end{figure}

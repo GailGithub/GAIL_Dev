@@ -64,13 +64,16 @@ rng(47)
 xlattice = gail.lattice_gen(1,n,d);
 shift = rand(1,d);
 sxlat = mod(bsxfun(@plus,xlattice,shift),1); 
-figure
+figH = figure()
 plot(sxlat(:,1),sxlat(:,2),'.','color',MATLABGreen)
 xlabel('\(x_1\)')
 ylabel('\(x_2\)')
-title('Shifted Lattice Nodes')
+% title('Shifted Lattice Nodes')
 axis square
+axis tight
 set(gca,'xtick',tick,'ytick',tick)
+saveas(figH, 'ShiftedLatticePoints.png')
+
 %print -depsc ShiftedLatticePoints.eps
 gail.save_eps('MC_StoppingCriteriaOutput', 'ShiftedLatticePoints');
 
