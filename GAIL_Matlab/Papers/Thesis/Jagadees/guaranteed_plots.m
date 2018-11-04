@@ -1,7 +1,7 @@
 % generates the plots for the paper using given data or pre-computed data
 function guaranteed_plots(varargin)
 
-close all
+% close all
 % if .mat file is not given then use the below files
 if nargin < 1
   myGAIL_path = GAILstart(0);
@@ -112,6 +112,7 @@ end
 set(gca,'xscale','log')
 set(gca,'yscale','log')
 xlabel('\({\vert\mu-\widehat{\mu} \vert}/{\varepsilon}\)')
+% xlabel('\({\vert\Pi(f)-\hat{\Pi}(f) \vert}/{\varepsilon}\)')
 ylabel('Time (secs)')
 c = colorbar('Direction','reverse', 'Ticks',S.log10ErrVec, ...
   'TickLabels',errTolVecText, 'TickLabelInterpreter','tex');

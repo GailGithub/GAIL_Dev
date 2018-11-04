@@ -560,43 +560,43 @@ classdef cubBayesLattice_g < handle
     %   .../normprp2.htm
     % Long Tails :
     %    .../normprp3.htm
-    function [hFigNormplot] = CheckGaussianDensity(obj, ftilde, lambda)
+    function [hFig, plotFileName] = CheckGaussianDensity(obj, ftilde, lambda)
       n = length(ftilde);
       ftilde(1) = 0;  % substract by (m_\MLE \vone) to get zero mean
       % 'y' is real, so ifft(fft(real)) is 'real'
-      w_ftilde = real(ifft(ftilde./sqrt(lambda)));
-      if obj.visiblePlot==false
-        hFigNormplot = figure('visible','off');
-      else
-        hFigNormplot = figure();
-      end
-      set(hFigNormplot,'defaultaxesfontsize',16, ...
+      w_ftilde = real(ifft((ftilde)./sqrt(lambda)));
+      % w_ftilde = ((abs(ftilde)./sqrt(lambda)));
+      % w_ftilde = real(ifft((ftilde.^2)./(lambda)));
+      
+      if obj.visiblePlot, hFig=figure();
+      else, hFig = figure('visible','off'); end
+      
+      set(hFig,'defaultaxesfontsize',16, ...
         'defaulttextfontsize',16, ... %make font larger
         'defaultLineLineWidth',0.75, 'defaultLineMarkerSize',8)
       
       % Shapiro-Wilk test, 
       % Ex:
-      % random normal  [H_,pValue_,W_] = swtest(randn(1024,1))
-      % random uniform [H_,pValue_,W_] = swtest(rand(1024,1))
+      %   random normal  [H_,pValue_,W_] = swtest(randn(1024,1))
+      %   random uniform [H_,pValue_,W_] = swtest(rand(1024,1))
       [H, pValue, W] = swtest(w_ftilde);
-      Hval='false';
-      if H==true
-        Hval='false';
-      end
-      fprintf('Shapiro-Wilk test: Normal=%s, pValue=%1.3e, W=%1.3f\n', Hval, pValue, W);
+      
+      if H==1, Hval='false'; else, Hval='true'; end
+      fprintf('Shapiro-Wilk test: Normal=%s, pValue=%1.3e, W=%1.3f, n=%d\n', ...
+        Hval, pValue, W, n);
       
       % other option : qqplot(w_ftilde)
       normplot(w_ftilde)
-      set(hFigNormplot, 'units', 'inches', 'Position', [1 1 8 6])
+      set(hFig, 'units', 'inches', 'Position', [1 1 8 6])
       
       title(sprintf('Normplot %s n=%d Tx=%s', obj.fName, n, obj.ptransform))
       % figure(); hist(w_ftilde);
       
       % build filename with path to store the plot
-      % plotFileName = sprintf('%s%s Normplot d_%d bernoulli_%d Period_%s n_%d.png',...
-      %   obj.figSavePath, obj.fName, obj.dim, obj.order, obj.ptransform, n);
+      plotFileName = sprintf('%s%s Normplot d_%d order_%d Period_%s n_%d.png',...
+         obj.figSavePath, obj.fName, obj.dim, obj.order, obj.ptransform, n);
       % plotFileName
-      % saveas(hFigNormplot, plotFileName)
+      % saveas(hFig, plotFileName)
     end
     
     % parses each input argument passed and assigns to obj.
@@ -714,7 +714,7 @@ classdef cubBayesLattice_g < handle
         % br_xun = bitrevorder(xpts(1:nii,:));
         % br_xun = xptsun(1:nii,:);
         [xlat, xpts_un, ~, xpts] = cubBayesLattice_g.simple_lattice_gen(nii,obj.dim,shift,true);
-        ftilde_iter = fft(obj.ff(xpts));
+        ftilde_iter = fft(obj.ff(xpts_un));
         
         tic
         %par
@@ -724,11 +724,14 @@ classdef cubBayesLattice_g < handle
         end
         toc
         
-        % Gaussian diagnosis for n < 8194, swtest does not work bigger
+        % Gaussian diagnosis for n < 8194, swtest does not work bigger 'n'
         % values
         if nii < (2^13)
           [minVal,Index] = min(real(costMLE(iter,:)));
           minTheta = exp(lnTheta(Index));
+          % if Index==numel(lnTheta)
+            Index = find(lnTheta==0);
+          % end
 
           lambda = eigvalK(Index,:)';
           % figure(); loglog(sort(lambda, 'descend'), 'o', 'MarkerSize',2);
@@ -736,7 +739,8 @@ classdef cubBayesLattice_g < handle
           if any(lambda <=0)
             warning('lambda cannot be zero or negative')
           end
-          hFigNormVec{iter} = CheckGaussianDensity(obj, (ftilde_iter), lambda);
+          [hFigNorm, fileName] = CheckGaussianDensity(obj, (ftilde_iter), lambda);
+          hFigNormVec{iter} = {hFigNorm, fileName};
         end
       end
       
@@ -838,19 +842,39 @@ classdef cubBayesLattice_g < handle
       Km1 = Kjm1; K = Kj;
     end
     
+    % Truncated Bernoulli polynomial series expansion
+    function fval = bernoulli_series(xpts,b_order)
+      % Eqn. 24.8.1 from https://dlmf.nist.gov/24.8
+      const = -(-1)^(b_order/2)*2*factorial(b_order)/((2*pi)^b_order);
+      N = 2^10;
+      kvec = (1:N)';
+      argx = @(x) 2*pi*bsxfun(@times, kvec, x);
+      c_r = @(x)cos(argx(x))./(kvec.^2);
+      f_ran = @(x) const*(( sum(c_r(x) ))) ;
+      [n,d]=size(xpts);
+      A = reshape(xpts, 1,n,d);  % add extra dimension for the series sum
+      fval = f_ran(A);
+      fval = reshape(fval, n,d);  % remove extra dimension
+      %   fval=zeros(n,d);
+      %   for i=1:n
+      %     fval(i,:) = f_ran(xpts(i,:));
+      %   end
+    end
+      
     % Shift invariant kernel
     % C1 : first row of the covariance matrix
     % Lambda : eigenvalues of the covariance matrix
     % Lambda_ring = fft(C1 - 1)
     function [Lambda, Lambda_ring] = kernel(xun,order,a,avoidCancelError,...
         kernType,debugEnable)
-      
+           
       if kernType==1
         b_order = order*2; % Bernoulli polynomial order as per the equation
         constMult = -(-1)^(b_order/2)*((2*pi)^b_order)/factorial(b_order);
         % constMult = -(-1)^(b_order/2);
         if b_order == 2
           bernPoly = @(x)(-x.*(1-x) + 1/6);
+          % bernPoly = @(x) cubBayesLattice_g.bernoulli_series(x,b_order);
         elseif b_order == 4
           bernPoly = @(x)( ( (x.*(1-x)).^2 ) - 1/30);
         else

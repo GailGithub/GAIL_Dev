@@ -160,8 +160,8 @@ classdef cubBayesNet_g < handle
           
           fx = gpuArray(ff(xptsnext));  % initialize for inplace computation
           ftildeNext = cubBayesNet_g.fwht_hs(fx);
-          % ftilde = [(ftilde+ftildeNext)/2; (ftilde-ftildeNext)/2];
-          ftilde = [(ftilde+ftildeNext); (ftilde-ftildeNext)];
+          ftilde = [(ftilde+ftildeNext)/2; (ftilde-ftildeNext)/2];
+          % ftilde = [(ftilde+ftildeNext); (ftilde-ftildeNext)];
           
           if obj.verify_ftilde == true
             fx = gpuArray(ff(xpts)); %evaluate integrand
@@ -197,9 +197,11 @@ classdef cubBayesNet_g < handle
         %Check error criterion
         % empirical bayes
         if obj.avoidCancelError
-          DSC = abs(Lambda_ring(1)/(n + Lambda_ring(1)));
+          % DSC = abs(Lambda_ring(1)/(n + Lambda_ring(1)));
+          DSC = abs(Lambda_ring(1)/(1 + Lambda_ring(1)));
         else
-          DSC = abs(1 - (n/Lambda(1)));
+          % DSC = abs(1 - (n/Lambda(1)));
+          DSC = abs(1 - (1/Lambda(1)));
         end
         
         % store the debug information
@@ -209,7 +211,7 @@ classdef cubBayesNet_g < handle
         out.ErrBd = 2.58*sqrt(DSC*RKHSnorm/n);
         if obj.arbMean == true % zero mean case
           % muhat is just the sample mean
-          muhat = ftilde(1)/n;
+          muhat = ftilde(1);  %/n;
           
         else % non zero mean case
           muhat = ftilde(1)/Lambda(1);
@@ -410,11 +412,11 @@ classdef cubBayesNet_g < handle
       temp = ((ftilde(Lambda~=0).^2)./(Lambda(Lambda~=0)));
       
       if obj.arbMean==true
-        RKHSnorm = sum(temp(2:end))/n;
+        RKHSnorm = sum(temp(2:end));  %/n;
         % RKHSnorm = sum(temp(2:end)); % already divided by 'n'
         temp_1 = sum(temp(2:end));
       else
-        RKHSnorm = sum(temp)/n;
+        RKHSnorm = sum(temp);  %/n;
         % RKHSnorm = sum(temp); % already divided by 'n'
         temp_1 = sum(temp);
       end
@@ -452,7 +454,7 @@ classdef cubBayesNet_g < handle
     % compute fast walsh transform in 'hadamard' ordering
     function t = fwht_hs(fx)
       [n, ~] = size(fx);
-      t = fwht(fx,n,'hadamard')*n;
+      t = fwht(fx,n,'hadamard');  %*n;
     end
     
     % prints debug message if the given variable is Inf, Nan or
@@ -536,12 +538,12 @@ classdef cubBayesNet_g < handle
         if any(Lambda_ring < 0)
           warning('eigen values are negative!\n')
         end
-        Lambda(1) = Lambda_ring(1) + n;
+        Lambda(1) = Lambda_ring(1) + 1;  %n;
       else
         C1 = prod(1 + theta*kernelFunc(xpts),2);
         Lambda = real(cubBayesNet_g.fwht_hs(C1));
         Lambda_ring = Lambda;
-        Lambda_ring(1) = Lambda_ring(1) - n;
+        Lambda_ring(1) = Lambda_ring(1) - 1;  %n;
       end
       
       if 0 % Create the full kernel matrix to compare
