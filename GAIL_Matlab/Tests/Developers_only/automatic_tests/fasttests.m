@@ -6,9 +6,9 @@ completereport = strcat(GAILPATH,'OutputFiles',filesep,...
     'gail_tests-', datestr(now,'yyyy-mm-dd-HH-MM-SS'),'.txt');
 diary(completereport)
 
-shortutestreport = strcat(GAILPATH,'OutputFiles',filesep,...
-    'gail_unittests','.txt');
-fid = fopen(shortutestreport,'wt');
+%shortutestreport = strcat(GAILPATH,'OutputFiles',filesep,...
+%    'gail_unittests','.txt');
+%fid = fopen(shortutestreport,'wt');
 
 tic
 
@@ -31,5 +31,5 @@ fasttests_InputClasses
 time=toc
  
 diary off
-fclose(fid);
+%fclose(fid);
 format
