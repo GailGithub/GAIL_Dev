@@ -1,7 +1,7 @@
 % LONGTESTS Drives all lengthy doctests, unit tests, workouts, and scripts
 
 [GAILPATH,GAILVERSION,MATLABVERSION]  = GAILstart(false);
-ver_str = sprintf('MatlabVer%2.2f', MATLABVERSION)
+ver_str = sprintf('MatlabVer%2.2f', MATLABVERSION);
 ver_str = strrep(ver_str,'.','-')
 filename = strcat(GAILPATH,'OutputFiles',filesep,...
     'gail_workouts-', datestr(now,'yyyy-mm-dd-HH-MM-SS'), '_', ver_str, '.txt');
@@ -14,7 +14,18 @@ format short
 ver
 
 % print chebfun version
-help chebfun
+ver_chebfun = ver('Chebfun');
+if ~isempty(ver_chebfun)
+  ver_chebfun
+else
+  ver_matlab = ver;
+  index = find(strcmp({A.Name}, 'Chebfun')==1);
+  if index > 0 
+      fprintf('\nChebfun version is %s.\n\n', ver_matlab(index).Version);
+  else
+      fprintf('\nChebfun version not found.\n');
+  end
+end
 
 %% utilties
 run_handle_ut('ut_save_mat')
