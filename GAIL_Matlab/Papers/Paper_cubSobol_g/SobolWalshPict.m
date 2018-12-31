@@ -101,6 +101,6 @@ baseException = MException(msgID,msg);
 
 % Throw the exception to stop execution and display an error
 % message.
-throw(baseException)
+%throw(baseException)
 
 end
