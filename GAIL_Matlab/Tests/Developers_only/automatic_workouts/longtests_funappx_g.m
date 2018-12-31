@@ -3,7 +3,7 @@
 format short
 
 %% doctest
-doctest par_funappx_g
+%doctest par_funappx_g
 
 %% unit test
 % funappx_g
