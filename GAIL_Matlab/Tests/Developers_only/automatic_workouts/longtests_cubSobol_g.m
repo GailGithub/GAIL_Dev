@@ -2,7 +2,6 @@
 
 format short
 doctest dt_cubSobol_g
-doctest cubSobol_old_g;
 
 % cubSobol_g paper
 try
