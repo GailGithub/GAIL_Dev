@@ -30,7 +30,7 @@ if any(strcmp('cubSobol',test.whichsample))
 end
 
 for irep=1:test.nrep
-    RunTestCubatureonKeisterSobol
+    gail.print_iterations(irep, "irep", true);
     param.sample='qmc';
     [testfunqmc,fun,param]= ...
           test.randchoicefun(fun,param,test.randch,irep);
