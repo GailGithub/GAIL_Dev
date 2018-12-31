@@ -58,7 +58,7 @@ for i=1:nd
 %      [IMCvec(k,i),out] = meanMC_g(@(n) f(randn(n,d),a,d),abstol(i),reltol(i));
       [IMCvec(k,i),out] = cubMC_g(@(x) f(x,a,d),[-inf(1,d); inf(1,d)], ...
          'normal',abstol(i),reltol(i));
-       if out.exitflag > 0,
+       if out.exitflag > 0
           nWarnMC(k,i) = 1;
       end
       timeMC(k,i) = out.time;
@@ -81,7 +81,7 @@ for i=1:nd
       gail.print_iterations(k, "k", true);
       [ISobvec(k,i),out] = cubSobol_g(@(x) f(x,a,d),[-inf(1,d); inf(1,d)], ...
           'normal',abstol(i),reltol(i));
-      if out.exitflag > 0,
+      if out.exitflag > 0
           nWarnSob(k,i) = 1;
       end
       timeSob(k,i) = out.time;
@@ -104,7 +104,7 @@ for i=1:nd
         gail.print_iterations(k, "k", true);
         [ILatvec(k,i),out] = cubLattice_g(@(x) f(x,a,d),[-inf(1,d); inf(1,d)], ...
             'normal',abstol(i),reltol(i));
-        if out.exitflag > 0,
+        if out.exitflag > 0
             nWarnLat(k,i) = 1;
         end
         timeLat(k,i) = out.time;
