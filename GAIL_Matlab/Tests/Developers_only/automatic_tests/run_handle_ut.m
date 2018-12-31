@@ -20,7 +20,7 @@ try
     cls = sprintf(['?' filename]);
     %Tests = matlab.unittest.TestSuite.fromClass(cls); % This is not working
     %results=run(filename)
-    eval(['Tests = matlab.unittest.TestSuite.fromClass(', cls , ')']);
+    eval(['Tests = matlab.unittest.TestSuite.fromClass(', cls , ');']);
     results = run(Tests)
     if sum([results.Failed])>0
         failed=find([results.Failed]>0);
