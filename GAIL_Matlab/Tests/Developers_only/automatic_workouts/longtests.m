@@ -19,7 +19,7 @@ if ~isempty(ver_chebfun)
   ver_chebfun
 else
   ver_matlab = ver;
-  index = find(strcmp({A.Name}, 'Chebfun')==1);
+  index = find(strcmp({ver_matlab.Name}, 'Chebfun')==1);
   if index > 0 
       fprintf('\nChebfun version is %s.\n\n', ver_matlab(index).Version);
   else
