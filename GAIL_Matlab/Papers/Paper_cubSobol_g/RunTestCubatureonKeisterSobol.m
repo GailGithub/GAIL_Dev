@@ -30,7 +30,7 @@ if any(strcmp('cubSobol',test.whichsample))
 end
 
 for irep=1:test.nrep
-    if round(irep/test.howoftenrep)==irep/test.howoftenrep, irep, end
+    RunTestCubatureonKeisterSobol
     param.sample='qmc';
     [testfunqmc,fun,param]= ...
           test.randchoicefun(fun,param,test.randch,irep);

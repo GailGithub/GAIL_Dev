@@ -60,7 +60,7 @@ end
 
 tic
 for i =  1:nRepAuto
-  gail.TakeNote(i,10)
+  gail.print_iterations(i, "i", true);
   tic
   [muAsianCallBayesAuto(i),outCallBayes(i)] = compInteg(obj);
   toc
