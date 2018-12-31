@@ -64,9 +64,7 @@ b = zeros(1,n);
 a(1:3) = [-1,-1,-1];
 b(1:3) = [1,1,1];
 for i = 1:nrep
-  if (i-1)/10 == round((i-1)/10)
-     disp(['Starting case ' int2str(i) ' out of ' int2str(nrep)])
-  end
+  gail.print_iterations(i, strcat("Starting case i of ", int2str(nrep), ", i"), true);
   f1 = @(x) g1(x,c(i));
   f2 = @(x) g2(x,c(i));
   f3 = @(x) g3(x,cc(i)*0.6);
@@ -79,7 +77,7 @@ for i = 1:nrep
   %              - 2* sin(x) - c(i)*sin(2*x)));
   for j = 1:length(fcns)
     f = fcns{j};
-    if j > 3,
+    if j > 3
       b(j) = c(i)+1;
     end
     xx = a(j):0.000001:b(j);%rand(1000000,1)*(b-a)+a;
@@ -122,7 +120,7 @@ for i = 1:nrep
       end
     end
   end
-end;
+end
 warning('on','GAIL:funappxglobal_g:exceedbudget')
 warning('on','GAIL:funappxglobal_g:peaky')
 warning('on',['GAIL:',algoname,':peaky'])
@@ -215,7 +213,7 @@ if usejava('jvm') || MATLABVERSION <= 7.12
 %   set(h, 'Interpreter', 'latex')
 %   legend BOXOFF 
   gail.save_eps('TraubPaperOutput', [algoname,'_test']);
-end;
+end
 matfilename = gail.save_mat('TraubPaperOutput', [algoname,'_test'], true, npoints, ...
   time, c, timeratio, npointsratio, nrep, n, m, ...
   sorted_timeratio, sorted_npointsratio, ...
