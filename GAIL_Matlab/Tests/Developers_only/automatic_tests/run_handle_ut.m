@@ -31,9 +31,10 @@ try
     cls = sprintf(['?' filename]);
     eval(['Tests = matlab.unittest.TestSuite.fromMethod(', cls , ',''', testname, ''');']);
   end
+  newline = char(13);
+  disp(newline)
   results = run(Tests);
   disp('Totals:')
-  newline = char(13);
   disp(['   ', num2str(nnz([results.Passed])), ' Passed, ', ...
     num2str(nnz([results.Failed])), ' Failed, ', ...
     num2str(nnz([results.Incomplete])), ' Incomplete.', ...
@@ -50,6 +51,7 @@ try
   for r=1:rows
     fprintf(1,'%*.*s %8s %8s %10s     %5.4f\n', minlength, maxlength, rt{r,1}, num2str(rt{r,2}), num2str(rt{r,3}), num2str(rt{r,4}), rt{r,5});
   end
+  disp(newline)
 catch
   disp(['Test ', filename, ' is wrongly coded. We skip it.'])
   if nargin > 2
