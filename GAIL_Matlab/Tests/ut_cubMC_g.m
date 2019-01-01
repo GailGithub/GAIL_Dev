@@ -82,16 +82,16 @@ classdef ut_cubMC_g < matlab.unittest.TestCase
             for i=1:20
                 [q,out_param] = cubMC_g(f,hyperbox,'normal',1e-3,1e-3);
                 exactsol = 1; check = abs(exactsol-q) < gail.tolfun(1e-3,1e-3,1,exactsol,'max');
-                if check==0 || isfinite(q) ==0,
+                if check==0 || isfinite(q) ==0
                     i, exactsol, q, exitflag = out_param.exitflag,
                     abserr = abs(exactsol-q), tol = gail.tolfun(1e-3,1e-3,1,exactsol,'max')
                     disp('-----');
                     count = count + 1;
                     %keyboard
                 else
-                    i
-                end;
-            end;
+                    gail.print_iterations(i,"i",true)
+                end
+            end
             warning('on','GAIL:meanMC_g:maxreached')
             testCase.verifyTrue(count==0);
         end

@@ -2,6 +2,9 @@
 %
 % Input
 %   filename   String of Matlab filename
+%
+% See also: run_handle_ut
+%
 function run_handle(filename)
 
 try
