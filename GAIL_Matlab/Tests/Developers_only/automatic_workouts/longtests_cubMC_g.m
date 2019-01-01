@@ -11,14 +11,14 @@ doctest dt_cubMC_g
 % cubMC_g
 run_handle_ut('ut_cubMC_g')
 
-% MCQMC paper
-run_handle_ut('MCQMC2012Figs')
-run_handle_ut('FoolAutomaticAlgorithms')
-run_handle_ut('RunTestcubMConGeoAsianCall')
-run_handle_ut('RunTestcubMConGaussian')
-run_handle_ut('RunTestcubMConGaussiand1')
-
 %% other tests
+% MCQMC paper
+run_handle('MCQMC2012Figs')
+run_handle('FoolAutomaticAlgorithms')
+run_handle('RunTestcubMConGeoAsianCall')
+run_handle('RunTestcubMConGaussian')
+run_handle('RunTestcubMConGaussiand1')
+
 try
     DisplayTestResults_BlacknColor({'ex1', 'ex2', 'ex3'},'black')
 catch err
@@ -27,4 +27,6 @@ catch err
 end
 
 warning('on', 'MATLAB:meanMC_g:maxreached')
+
+
 
