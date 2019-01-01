@@ -1,16 +1,16 @@
 % fasttests: Drives all fast doctests and unit tests
 format short
 
-GAILPATH = GAILstart(0);
 completereport = strcat(GAILPATH,'OutputFiles',filesep,...
     'gail_tests-', datestr(now,'yyyy-mm-dd-HH-MM-SS'),'.txt');
 diary(completereport)
 
+[GAILPATH,GAILVERSION,MATLABVERSION] = GAILstart(false)
 %shortutestreport = strcat(GAILPATH,'OutputFiles',filesep,...
 %    'gail_unittests','.txt');
 %fid = fopen(shortutestreport,'wt');
 
-tic
+tstart=tic;
 
 %% CALL fasttests for individual algorithms
 fasttests_integral_g
@@ -28,7 +28,7 @@ format short
 fasttests_OptionPricing
 fasttests_InputClasses
 
-time=toc
+total_time=toc(tstart)
  
 diary off
 %fclose(fid);
