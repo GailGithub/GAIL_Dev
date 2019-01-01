@@ -54,7 +54,7 @@ tic
 for i=1:nd
    d = dvec(i);
    for k = 1:nRep
-      gail.print_iterations(k, "k", true);
+      gail.print_iterations(k, 'k', true);
 %      [IMCvec(k,i),out] = meanMC_g(@(n) f(randn(n,d),a,d),abstol(i),reltol(i));
       [IMCvec(k,i),out] = cubMC_g(@(x) f(x,a,d),[-inf(1,d); inf(1,d)], ...
          'normal',abstol(i),reltol(i));
@@ -78,7 +78,7 @@ tic
 for i=1:nd
    d = dvec(i);
    for k = 1:nRep
-      gail.print_iterations(k, "k", true);
+      gail.print_iterations(k, 'k', true);
       [ISobvec(k,i),out] = cubSobol_g(@(x) f(x,a,d),[-inf(1,d); inf(1,d)], ...
           'normal',abstol(i),reltol(i));
       if out.exitflag > 0
@@ -101,7 +101,7 @@ tic
 for i=1:nd
     d = dvec(i);
     for k = 1:nRep
-        gail.print_iterations(k, "k", true);
+        gail.print_iterations(k, 'k', true);
         [ILatvec(k,i),out] = cubLattice_g(@(x) f(x,a,d),[-inf(1,d); inf(1,d)], ...
             'normal',abstol(i),reltol(i));
         if out.exitflag > 0

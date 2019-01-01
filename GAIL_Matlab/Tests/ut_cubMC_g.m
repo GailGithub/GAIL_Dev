@@ -89,7 +89,7 @@ classdef ut_cubMC_g < matlab.unittest.TestCase
                     count = count + 1;
                     %keyboard
                 else
-                    gail.print_iterations(i,"i",true)
+                    gail.print_iterations(i,'i',true);
                 end
             end
             warning('on','GAIL:meanMC_g:maxreached')

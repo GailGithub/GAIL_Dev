@@ -64,7 +64,7 @@ b = zeros(1,n);
 a(1:3) = [-1,-1,-1];
 b(1:3) = [1,1,1];
 for i = 1:nrep
-  gail.print_iterations(i, strcat("Starting case i of ", int2str(nrep), ", i"), true);
+  gail.print_iterations(i, strcat('Starting case i of ', int2str(nrep), ', i'), true);
   f1 = @(x) g1(x,c(i));
   f2 = @(x) g2(x,c(i));
   f3 = @(x) g3(x,cc(i)*0.6);

@@ -97,7 +97,7 @@ if any(strcmp('chebfunheavy',test.whichsample))
 end
 
 for irep=1:test.nrep
-    gail.print_iterations(irep, "irep", true)
+    gail.print_iterations(irep, 'irep', true);
     [testfun,fun,param]=test.randchoicefun(fun,param,test.randch,irep);
     if strcmp(fun.funtype,'step')
         res.exactkurtosis(irep)=param.exactkurtosis;
