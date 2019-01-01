@@ -10,8 +10,8 @@ reltol = abstol;
 format long
 in_param.measure  = 'uniform';
 disp([char(13), char(13)]);
-disp(horzcat('Dim  ', ' FcnIdx ',  '      Q    ','    f_true     ',...
-    '     Err      ',' Sample Used ', '         Stats  ')); 
+disp(horzcat('  Dim ', ' FcnIdx ',  '      Q    ','    f_true     ',...
+    '     Err     ',' Sample Used ', '     Stats  ')); 
 disp(        '-----------------------------------------------------------------------------------------------------');
 ut_abserr = nan(dimsize,indexsize);
 ut_relerr = nan(dimsize,indexsize);
@@ -29,7 +29,7 @@ for dim=1:dimsize
   in_param.timebudget = 300;% time budget
   in_param.nbudget = 1e10;% sample budget
   alpha = ones(1,in_param.dim);
-  beta = 1./ (1:in_param.dim); 
+  beta = 1./ (1:in_param.dim);
   r=2; % three coefficients in genz_test_fun and genz_test_fun_true
   for index=1:indexsize % index refers to different integrands in genz_test_fun
     test_function = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
@@ -40,25 +40,24 @@ for dim=1:dimsize
     % the results by using cubLattice_g
     abserr = abs(Q-f_true);% the absolute error
     relerr = abs((Q-f_true)/f_true);% the relative error
-    numstr=sprintf('%6d %10d %+10.5e %+10.5e  %10.5e %6d', ... 
-         dim, index,   Q,  f_true,  abserr, out_param.n);
+    numstr=sprintf('%6d %6d %+10.5e %+10.5e %10.5e %6d', ...
+      dim, index, Q, f_true, abserr, out_param.n);
     % print the results
     if abserr > in_param.abstol && relerr > in_param.reltol
       %if both absolute error and relative error does not meet tolerance
-      disp(strjust([numstr,'            NoErrMet'], 'left'));% mark it as "both err exceed"
+      disp([numstr,'            NoErrMet']);% mark it as "both err exceed"
     elseif abserr < in_param.abstol && relerr > in_param.reltol
       % if only relative error does not meet the tolerance
-      disp(strjust([numstr,'             AbsErrMet'], 'left'));% mark it as "rel err exceed"
+      disp([numstr,'             AbsErrMet']);% mark it as "rel err exceed"
     elseif abserr > in_param.abstol && relerr < in_param.reltol
       %if only the absolute error does not meet the tolerance
-      disp(strjust([numstr,'            RelErrMet'], 'left'));% mark it as "abs err exceed"
+      disp([numstr,'            RelErrMet']);% mark it as "abs err exceed"
     else
-      disp(strjust([numstr,'             BothErrMet'], 'left'));% otherwise disp "OK"
+      disp([numstr,'             BothErrMet']);% otherwise disp "OK"
     end
     ut_abserr(dim,index) = abserr;
     ut_relerr(dim,index) = relerr;
   end
-end
 end
 
 
