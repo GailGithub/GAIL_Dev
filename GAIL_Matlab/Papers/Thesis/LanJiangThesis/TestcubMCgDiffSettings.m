@@ -216,6 +216,7 @@ for irep=1:test.nrep
         end
     end
 end
+disp(' ')
 subdir = 'LanThesisOutput';
 filename = ['TestcubMCon-' fun.funtype '-' param.measure  '-N'...
     int2str(test.nrep) 'd' int2str(param.dim)  ...
