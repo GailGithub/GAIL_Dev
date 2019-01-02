@@ -63,6 +63,10 @@ for i = 1:length(NumericalExample)
     end
     
     %% Plot iid results
+    if isfield(param,'tol') % attempt to debug legacy code
+       param.abstol = param.tol;
+       param = rmfield(param,'tol');
+    end 
     if any(strcmp('iid',test.whichsample))
         plotTest.err=res.iiderr;
         plotTest.time=res.iidtime;
