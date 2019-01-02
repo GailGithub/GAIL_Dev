@@ -138,7 +138,7 @@ warnLat = sum(nWarnLat,1);
 warnSob = sum(nWarnSob,1);
 disp(['warnings issued by cubMC_g: ', num2str(sum(nWarnMC,1))])
 disp(['warnings issued by cubLattice_g: ', num2str(sum(nWarnLat,1))])
-disp(['warnings issued by cubSonol_g: ', num2str(sum(nWarnSob,1))])
+disp(['warnings issued by cubSobol_g: ', num2str(sum(nWarnSob,1))])
 
 
 %outFileName = ['KeisterCubExWileyDataNRep' int2str(nRep) ...
