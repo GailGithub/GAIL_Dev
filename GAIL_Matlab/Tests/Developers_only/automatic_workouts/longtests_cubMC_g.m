@@ -22,6 +22,8 @@ run_handle('RunTestcubMConGaussian')
 run_handle('RunTestcubMConGaussiand1')
 
 try
+    newline = char(13);
+    disp(horzcat(newline, newline, 'Running ', filename, ' ...'));
     DisplayTestResults_BlacknColor({'ex1', 'ex2', 'ex3'},'black')
 catch err
     disp('Error: DisplayTestResults_BlacknColor is wrongly coded. We skip it.')

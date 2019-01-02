@@ -14,6 +14,7 @@ try
 catch
     disp('Error: lattice_example is wrongly coded. We skip it.')
 end
+
 try
   FourierCoeffDecayPict;
 catch

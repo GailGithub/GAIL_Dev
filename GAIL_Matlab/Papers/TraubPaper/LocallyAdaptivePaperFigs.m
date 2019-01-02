@@ -128,6 +128,7 @@ delta = 0.3;
 f3 = @(x) f3param(x,delta,c);
 figure
 [~,fappxout] = funappx_g(@(x) -f3(x),in_param);
+newline = char(13);
 disp([newline newline 'funappx_g used ' int2str(fappxout.npoints) ' points and ' ...
    int2str(fappxout.iter) ' iterations'])
 disp(['   to satisfy an absolute error tolerance of ' ...
