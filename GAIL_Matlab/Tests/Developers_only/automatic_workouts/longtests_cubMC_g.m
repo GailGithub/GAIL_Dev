@@ -23,11 +23,11 @@ run_handle('RunTestcubMConGaussiand1')
 
 try
     newline = char(13);
-    disp(horzcat(newline, newline, 'Running ', filename, ' ...'));
+    disp(horzcat(newline, 'Running DisplayTestResults_BlacknColor ...'));
     DisplayTestResults_BlacknColor({'ex1', 'ex2', 'ex3'},'black')
 catch err
     disp('Error: DisplayTestResults_BlacknColor is wrongly coded. We skip it.')
-    disp(['File: ', err.stack(1).name, '; Line number ', int2str(err.stack(1).line),  '; Error: ',  err.message ])
+    disp(['File: ', err.stack(1).name, '; Line number: ', int2str(err.stack(1).line),  '; Error: ',  err.message ])
 end
 
 warning('on', 'GAIL:meanMC_g:maxreached')
