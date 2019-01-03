@@ -65,6 +65,7 @@ for i=1:nd
       nSampleMC(k,i) = out.ntot;
    end
 end
+disp(' ')
 toc
 nSampleMC = mean(nSampleMC)
 timeMC = mean(timeMC)
@@ -88,6 +89,7 @@ for i=1:nd
       nSampleSob(k,i) = out.n;
    end
 end
+disp(' ')
 toc
 timeSob = mean(timeSob)
 nSampleSob = mean(nSampleSob)
@@ -111,6 +113,7 @@ for i=1:nd
         nSampleLat(k,i) = out.n;
    end
 end
+disp(' ')
 toc
 timeLat = mean(timeLat)
 nSampleLat = mean(nSampleLat)

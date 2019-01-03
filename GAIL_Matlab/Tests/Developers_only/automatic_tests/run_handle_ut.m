@@ -42,11 +42,14 @@ try
   percentPassed = 100 * nnz([results.Passed]) / numel(results);
   disp(['   ', num2str(percentPassed), '% Passed.', newline]);
   rt = table(results);
-  rt = sortrows(rt(:,[1:5]),'Duration');
+  rt = sortrows(rt(:, [1:5]),'Duration');
   rt = table2cell(rt);
   [rows,~] = size(rt);
-  minlength = 40;
   maxlength = 40;
+  for r=1:rows
+    maxlength = max(length(rt{r,1}), maxlength);
+  end
+  minlength = maxlength;
   fprintf(1,'%*.*s %8s %8s %10s %10s\n', minlength, maxlength, 'Name', 'Passed', 'Failed', 'Incomplete', 'Duration');
   for r=1:rows
     fprintf(1,'%*.*s %8s %8s %10s     %5.4f\n', minlength, maxlength, rt{r,1}, num2str(rt{r,2}), num2str(rt{r,3}), num2str(rt{r,4}), rt{r,5});

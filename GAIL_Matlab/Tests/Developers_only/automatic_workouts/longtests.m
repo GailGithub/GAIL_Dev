@@ -32,6 +32,8 @@ longtests_cubLattice_g
 fprintf('=============================Finished longtests_cubLattice_g at %s \n', datestr(now,'yyyy-mm-dd-HH-MM-SS'))
 longtests_cubSobol_g
 fprintf('=============================Finished longtests_cubSobol_g at %s \n', datestr(now,'yyyy-mm-dd-HH-MM-SS'))
+longtests_cubBayesLattice_g
+fprintf('=============================Finished longtests_cubBayesLattice_g at %s \n', datestr(now,'yyyy-mm-dd-HH-MM-SS'))
 longtests_meanMC_g
 fprintf('=============================Finished longtests_meanMC_g at %s \n', datestr(now,'yyyy-mm-dd-HH-MM-SS'))
 longtests_cubMC_g
@@ -42,7 +44,6 @@ longtests_funmin_g
 fprintf('=============================Finished longtests_funmin_g at %s \n', datestr(now,'yyyy-mm-dd-HH-MM-SS'))
 longtests_integral_g
 fprintf('=============================Finished longtests_integral_g at %s \n', datestr(now,'yyyy-mm-dd-HH-MM-SS'))
-
 
 %% doctests and unit tests for deprecated algos
 %longtests_deprecated_algos

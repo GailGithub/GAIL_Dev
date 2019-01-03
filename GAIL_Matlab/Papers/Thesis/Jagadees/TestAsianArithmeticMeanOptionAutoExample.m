@@ -58,14 +58,16 @@ else % use Lattice points
   obj=cubBayesLattice_g(inputArgs{:});
 end
 
-tic
+tStart=tic;
 for i =  1:nRepAuto
   gail.print_iterations(i, 'i', true);
   tic
   [muAsianCallBayesAuto(i),outCallBayes(i)] = compInteg(obj);
+  disp(' '); 
   toc
 end
-toc
+disp(' ');
+toc(tStart)
 
 timeVecAsianCallBayesAuto = [outCallBayes(:).time]';
 nVecAsianCallBayesAuto = [outCallBayes(:).n]';
@@ -78,7 +80,7 @@ timetopAsianCallBayesAuto = quantile(timeVecAsianCallBayesAuto,1-obj.alpha);
 ntopAsianCallBayesAuto    = quantile(nVecAsianCallBayesAuto,1-obj.alpha);
 successAsianCallBayesAuto = mean(errvecAsianCallBayesAuto <= obj.absTol);
 
-fprintf('\nError: Median %1.2e, Worst %1.2e, Range %1.2e, \n worstN %d, worstTime %1.3f, SuccessRatio %1.2f, \n absTol %1.2e, relTol %1.2e\n', ...
+fprintf('\n err: Median %1.2e, Worst %1.2e, Range %1.2e, \n worstN %d, worstTime %1.3f, SuccessRatio %1.2f, \n absTol %1.2e, relTol %1.2e\n', ...
   errmedAsianCallBayesAuto, errtopAsianCallBayesAuto, rangeAsianCallBayesAuto, ...
   ntopAsianCallBayesAuto, timetopAsianCallBayesAuto, ...
   successAsianCallBayesAuto, outCallBayes(1).optParams.absTol, ...

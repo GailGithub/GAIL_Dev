@@ -21,6 +21,7 @@ fasttests_meanMC_g
 fasttests_cubMC_g
 fasttests_cubLattice_g
 fasttests_cubSobol_g
+fasttests_cubBayesLattice_g
 fasttests_meanMC_CLT
 
 %% CALL fasttests for other key GAIL components
