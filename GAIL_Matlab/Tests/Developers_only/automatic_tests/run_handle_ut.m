@@ -56,6 +56,7 @@ try
   end
   disp(newline)
 catch
+  disp(['File: ', err.stack(1).name, '; Line number: ', int2str(err.stack(1).line),  '; Error: ',  err.message ])
   disp(['Test ', filename, ' is wrongly coded. We skip it.'])
   if nargin > 2
     fprintf(fid, '%s\n', horzcat ('Test ', filename, ' is wrongly coded. We skip it.\n'));
