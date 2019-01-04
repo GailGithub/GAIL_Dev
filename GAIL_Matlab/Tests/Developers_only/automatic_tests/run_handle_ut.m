@@ -55,7 +55,7 @@ try
     fprintf(1,'%*.*s %8s %8s %10s     %5.4f\n', minlength, maxlength, rt{r,1}, num2str(rt{r,2}), num2str(rt{r,3}), num2str(rt{r,4}), rt{r,5});
   end
   disp(newline)
-catch
+catch err
   disp(['File: ', err.stack(1).name, '; Line number: ', int2str(err.stack(1).line),  '; Error: ',  err.message ])
   disp(['Test ', filename, ' is wrongly coded. We skip it.'])
   if nargin > 2
