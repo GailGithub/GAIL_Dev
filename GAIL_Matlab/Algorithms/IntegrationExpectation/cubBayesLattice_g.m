@@ -598,19 +598,19 @@ classdef cubBayesLattice_g < handle
         
         stopCriterions = {'full','GCV','MLE'};
         if ~ismember(obj.stopCriterion, stopCriterions)
-          str_stopCriterions = join(stopCriterions, ',');
+          str_stopCriterions = strjoin(stopCriterions, ',');
           warning('GAIL:cubBayesLattice_g:stop_crit_invalid',...
             'Stop criterion = "%s" is not supported; it must be from "%s". The algorithm is using default value "MLE".\n', ...
-            obj.stopCriterion, str_stopCriterions{1});
+            obj.stopCriterion, str_stopCriterions);
           obj.stopCriterion = 'MLE';
         end
         
         var_txs = {'Baker','C0','C1','C1sin','C2sin','C3sin','none'};
         if ~ismember(obj.ptransform, var_txs)
-          str_var_txs = join(var_txs, ',');
+          str_var_txs = strjoin(var_txs, ',');
           warning('GAIL:cubBayesLattice_g:var_transform_invalid',...
             'Periodizing transform = "%s" is not supported; the value must be from "%s". The algorithm is using default value "Baker".\n', ...
-            obj.ptransform, str_var_txs{1});
+            obj.ptransform, str_var_txs);
           obj.ptransform = 'Baker';
         end
       end
