@@ -15,9 +15,11 @@ Developed by
 Fred Hickernell, Sou-Cheng Choi, and their collaborators including Yuhan
 Ding, Lan Jiang, Lluis Antoni Jimenez Rugama, Da Li, Jagadeeswaran
 Rathinavel, Kan Zhang, Yizhi Zhang, and Xuan Zhou, Department of Applied
-Mathematics, Illinois Institute of Technology (IIT) and  Xin Tong,
+Mathematics, Illinois Institute of Technology (IIT) and Xin Tong,
 Department of Mathematics, Statistics, and Computer Science, University
-of Illinois at Chicago. We thank the contributions of Francisco
+of Illinois at Chicago. 
+
+We thank the contributions of Aleksei Sorokin, Noah Grudowski, Francisco
 Hernandez, Cu Hauw Hung, Yueyi Li, Xincheng Sheng, Xiaoyang Zhao, Tianci
 Zhu, and the IIT classes of SCI 498 Adaptive Monte Carlo Algorithms with
 Applications to Financial Risk Management, Summer 2016; MATH 491 Reading
@@ -30,18 +32,18 @@ Tools from Computational Mathematics and Statistics, Summer 2015; Math
 
 Please cite the following software, papers, and materials:
 
-Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible Research via
-Supportable Scientific Software," Journal of Open Research Software, Volume 2,
-Number 1, e22, pp. 1-7, 2014.
-(describes principles of Reliable Reproducible Research and Supportable
-Scientific Software)
-
 Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
 Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
 Integration Library (Version 2.3) [MATLAB Software], 2019. Available from
 http://gailgithub.github.io/GAIL_Dev/
 (this software)
+
+Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible Research via
+Supportable Scientific Software," Journal of Open Research Software, Volume 2,
+Number 1, e22, pp. 1-7, 2014.
+(describes principles of Reliable Reproducible Research and Supportable
+Scientific Software)
 
 Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Xin Tong, "Local
 Adaption for Approximation and Minimization of Univariate Functions,"
@@ -77,7 +79,7 @@ Springer Proceedings in Mathematics and Statistics, vol. 163,
 Springer-Verlag, Berlin, 2016, arXiv:1410.8615 [math.NA], pp. 367-383.
 (describes cubSobol_g.m)
 
-Fred J. Hickernell, Lluis Antoni Jimenez Rugama, and Da Li,"Adaptive
+Fred J. Hickernell, Lluis Antoni Jimenez Rugama, and Da Li, "Adaptive
 quasi-Monte Carlo methods, 2017+, submitted for publication, 
 arXiv:1702.01491 [math.NA].
 
@@ -97,6 +99,11 @@ and Quasi-Monte Carlo  Methods: MCQMC, Leuven, Belgium, April 2014
 and Statistics, vol. 163, Springer-Verlag, Berlin, 2016, arXiv:1411.1966,
 pp. 407-422.
 (describes cubLattice_g.m)
+
+Fred J. Hickernell, Sou-Cheng T. Choi, Lan Jiang, and Lluis Antoni Jimenez
+Rugama, "Monte Carlo simulation, automatic stopping criteria for", Wiley
+StatsRef: Statistics Reference Online, pp. 1-7, 2018.
+(review of cubMC_g, cubLattice_g, and cubSobol_g)
 
 Daniel S. Katz, Sou-Cheng T. Choi, Hilmar Lapp, Ketan Maheshwari,
 Frank Loffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr,
@@ -175,11 +182,16 @@ GAIL version 2.3 includes the following eight algorithms:
 
 5.  cubMC_g: Monte Carlo method for numerical multiple integration
 
-6.  cubSobol_g: Quasi-Monte Carlo method using Sobol' cubature for d-dimensional integration
+6.  cubSobol_g: Quasi-Monte Carlo method using Sobol' cubature for
+d-dimensional integration
 
-7.  cubLattice_g: Quasi-Monte Carlo method using rank-1 Lattices cubature for d-dimensional integration
+7.  cubLattice_g: Quasi-Monte Carlo method using rank-1 Lattices cubature
+for d-dimensional integration
 
-8.  meanMC_CLT: Monte Carlo method with Central Limit Theorem (CLT) confidence intervals for estimating mean of a random variable
+8. cubBayesLattice_g: Bayesian cubature method for d-dimensional integration
+
+9.  meanMC_CLT: Monte Carlo method with Central Limit Theorem (CLT)
+confidence intervals for estimating mean of a random variable
 
 
 
