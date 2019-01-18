@@ -1,8 +1,5 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Workouts for cubBayesLAttice_g
-
-gail.InitializeWorkspaceDisplay %initialize the workspace and the display parameters
-format long
+%% Workouts for cubBayesLattice_g
 
 GAIL_path = GAILstart(0);
 logSavePath=strcat([GAIL_path,'OutputFiles',filesep], 'Paper_cubBayesLattice_g');
@@ -10,11 +7,6 @@ logSavePath=strcat([GAIL_path,'OutputFiles',filesep], 'Paper_cubBayesLattice_g')
 if exist(logSavePath,'dir')==false
   mkdir(logSavePath);
 end
-
-% log the results
-completereport = strcat(logSavePath, filesep, ...
-  '_longtests-logs-', datestr(now,'yyyy-mm-dd-HH-MM-SS'),'.txt');
-diary(completereport)
 
 % path to save/read the .mat files
 figSavePath = logSavePath;
@@ -38,7 +30,7 @@ alpha = 0.01;
 
 % template of input arguments
 testFunArgs(1)=struct('fName','MVN','dim',2,'order',2,'varTx','C2sin',...
-  'sampling','Lattice','arbMean',true,'stopCriterion','GCV');
+  'sampling','Lattice','arbMean',true,'stopCriterion','GCV');  % MVN d=3 transformed to Genz d=2
 testFunArgs(2)=struct('fName','Keister','dim',4,'order',2,'varTx','C1sin',...
   'sampling','Lattice','arbMean',true,'stopCriterion','GCV');
 testFunArgs(3)=struct('fName','optPrice','dim',12,'order',1,'varTx','Baker',...
@@ -93,8 +85,7 @@ for testFunArg=testFunArgs(1:end)
     
     inputArgs = {'dim',dim, 'absTol',errTol, 'order',bern, 'ptransform',vartx, ....
       'stopAtTol',stopAtTol, 'stopCriterion',testFunArg.stopCriterion...
-      'figSavePath',newPath, ...
-      'arbMean',arbMean, 'alpha',alpha ...
+      'figSavePath',newPath, 'arbMean',arbMean, 'alpha',alpha ...
       'samplingMethod',sampling, 'visiblePlot',visiblePlot};
     testFun = '';
     switch fName
