@@ -26,6 +26,9 @@ if usejava('jvm') || MATLABVERSION <= 7.12
     run_handle_ut('ut_save_eps')
 end
 
+%% doctests
+longtests_meanMC_CLT
+
 %% Workouts
 fprintf('=============================Starting longtests at %s \n', datestr(now,'yyyy-mm-dd-HH-MM-SS'))
 longtests_cubLattice_g
