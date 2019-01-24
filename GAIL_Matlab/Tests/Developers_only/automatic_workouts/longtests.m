@@ -26,6 +26,7 @@ if usejava('jvm') || MATLABVERSION <= 7.12
     run_handle_ut('ut_save_eps')
 end
 
+
 %% Workouts
 fprintf('=============================Starting longtests at %s \n', datestr(now,'yyyy-mm-dd-HH-MM-SS'))
 longtests_cubLattice_g
@@ -44,6 +45,8 @@ longtests_funmin_g
 fprintf('=============================Finished longtests_funmin_g at %s \n', datestr(now,'yyyy-mm-dd-HH-MM-SS'))
 longtests_integral_g
 fprintf('=============================Finished longtests_integral_g at %s \n', datestr(now,'yyyy-mm-dd-HH-MM-SS'))
+longtests_meanMC_CLT
+fprintf('=============================Finished longtests_meanMC_CLT at %s \n', datestr(now,'yyyy-mm-dd-HH-MM-SS'))
 
 %% doctests and unit tests for deprecated algos
 %longtests_deprecated_algos
