@@ -56,7 +56,7 @@ def send_mail(send_from, send_to, send_cc, subject, text, files=None,
 
 datetime_today = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
 subject = "Daily test results: {0}".format(datetime_today)
-text = 'Please review the attached output log for more details'
+text = 'Please review the output log for more details'
 date_today = datetime.datetime.now().strftime("%Y-%m-%d")
 
 # path where all the error greps stored
@@ -111,7 +111,9 @@ if __name__ == '__main__':
     mail_body += '\n' + error_text + '\n' + text
     mail_body += '\n'
     def mega_cmd_login():
-        proc = subprocess.Popen(['/home/gail/usr/bin/mega-login','jrathin1@iit.edu', 'TestsForGail'],stdout=subprocess.PIPE)
+        MEGASYNC_UNAME='jrathin1@iit.edu'
+        MEGASYNC_PWD='TestsForGail'
+        proc = subprocess.Popen(['/home/gail/usr/bin/mega-login', MEGASYNC_UNAME, MEGASYNC_PWD],stdout=subprocess.PIPE)
         if True:
             line = proc.stdout.readline()
             if line != '':
@@ -135,8 +137,17 @@ if __name__ == '__main__':
     # mega_cmd_login()
     for fn in output_files:
         filepath = '/PBS_jobs/pbs_reports/' + os.path.split(fn)[-1]
-        mail_body += get_file_link(filepath)
-    mail_body += get_file_link('/PBS_jobs/pbs_reports')
+        exp_result = get_file_link(filepath)
+        mail_body += "{0} : {1} ".format(os.path.split(fn)[-1], exp_result.split(': ')[1])
+    
+    mail_body += '\n'
+    mail_body += 'Archived reports can be found here \n'
+    test_report_dirs = {'PBS logs':'/PBS_jobs/pbs_reports', 'Fast tests': '/test_reports', 'Workouts': '/workout_reports'}
+    for tn, trd in test_report_dirs.items():
+        exp_result = get_file_link(trd)
+        temp = "{0} : {1}".format(tn, exp_result.split(': ')[1])
+        mail_body += temp
+
     subject = "Daily test results {0} : {1}".format( ('OK' if tests_passed else 'Wrong'), datetime_today)
-    res = send_mail(from_email, to_emails, cc_emails, subject, mail_body, output_files)
+    res = send_mail(from_email, to_emails, cc_emails, subject, mail_body, [])
     print('done')

@@ -70,7 +70,6 @@ echo "Copy and then delete the eps and mat files ....."
 # we use cp to retain the folder structure, whereas mv cmd does not
 find -name '*.mat' -exec cp {} /home/gail/GAIL_tests/workout_reports/ \; # Finds all the files in directories and subdirectories with extension .mat
 find -name '*.eps' -exec cp {} /home/gail/GAIL_tests/workout_reports/ \; # Finds all the files in directories and subdirectories with extension .eps
-
 find -name '*.mat' -exec rm {} \; # delete it
 find -name '*.eps' -exec rm {} \; # delete it
 
@@ -97,11 +96,11 @@ cat workout_results_grep.txt > Workout_Results-$matlabVer.txt
 rm workout_results_grep.txt
 #------------------------
 
-echo "Finally, send the report in email ....."
+echo "Finally, send the report in email ......"
 
 #mail -s $(ls -Art | grep gail_workouts- | tail -n 1) schoi32@iit.edu,jrathin1@iit.edu < $(ls -Art | grep gail_workouts- | tail -n 1)
 # sending as attachment
-TO_EMAIL_IDS="Sou-cheng<schoi32@iit.edu>, Jagadeeswaran<jrathin1@iit.edu>, Kan Zhang<kzhang23@hawk.iit.edu>"
+TO_EMAIL_IDS="Sou-cheng<schoi32@iit.edu>, Jagadeeswaran<jrathin1@iit.edu>, KanZhang<kzhang23@hawk.iit.edu>"
 MAIL_BODY="Please find the workouts report attached"
 SUBJECT="$matlabVer: $(ls -Art | grep gail_workouts- | tail -n 1)"
 
