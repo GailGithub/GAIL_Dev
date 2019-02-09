@@ -97,7 +97,7 @@
 % check = 1
 %
 %
-% Example 3: Keister function
+% Example 4: Keister function
 %
 % >> dim=2; absTol=1e-3; relTol=1e-2;
 % >> normsqd = @(t) sum(t.*t,2); %squared l_2 norm of t
@@ -113,7 +113,7 @@
 % check = 1
 %
 %
-% Example 3: Multivariate normal probability
+% Example 5: Multivariate normal probability
 %
 % >> dim=2; absTol=1e-3; relTol=1e-2; fName = 'MVN';
 % >> C = [4 1 1; 0 1 0.5; 0 0 0.25]; MVNParams.Cov = C'*C; MVNParams.C = C;
