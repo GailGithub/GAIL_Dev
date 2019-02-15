@@ -276,6 +276,10 @@
 % <a href="help_integral_g.html">integral_g</a>
 % </html>
 %
+% <html>
+% <p><a href="help_cubBayesLattice_g.html">cubBayesLattice_g</a>
+% </html>
+%
 %% References
 %
 % [1] Fred J. Hickernell and Lluis Antoni Jimenez Rugama "Reliable

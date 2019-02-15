@@ -259,6 +259,10 @@
 % <a href="help_cubSobol_g.html">cubSobol_g</a>
 % </html>
 %
+% <html>
+% <p><a href="help_cubBayesLattice_g.html">cubBayesLattice_g</a>
+% </html>
+%
 %% References
 %
 % [1] Fred J. Hickernell, Lan Jiang, Yuewei Liu, and Art B. Owen, "Guaranteed

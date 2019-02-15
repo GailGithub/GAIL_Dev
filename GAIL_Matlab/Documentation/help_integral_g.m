@@ -162,6 +162,10 @@ f = @(x) exp(-x.^2); [q, out_param] = integral_g(f,'a',1,'b',2,'nlo',100,'nhi',1
 % <a href="help_funmin_g.html">funmin_g</a>
 % </html>
 %
+% <html>
+% <p><a href="help_cubBayesLattice_g.html">cubBayesLattice_g</a>
+% </html>
+%
 %% References
 %
 % [1] Fred J. Hickernell, Martha Razo, and Sunny Yun, "Reliable Adaptive
