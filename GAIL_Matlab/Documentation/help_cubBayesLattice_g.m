@@ -2,18 +2,18 @@
 % Bayesian cubature method to estimate the integral
 % of a random variable
 %% Syntax
-% OBJ = *cubBayesLattice_g*('f',f,'dim',dim,'absTol',absTol,'relTol',relTol,
+% OBJ = *cubBayesLattice_g*('f',f,'dim',d,'absTol',absTol,'relTol',relTol,
 % 'order',order, 'ptransform',ptransform, 'arbMean',arbMean)
 % [Q,OutP] = *compInteg*(OBJ)
 %
 %% Description
 %
-% OBJ = *cubBayesLattice_g*('f',f,'dim',dim,'absTol',absTol,'relTol',relTol,
+% OBJ = *cubBayesLattice_g*('f',f,'dim',d,'absTol',absTol,'relTol',relTol,
 % 'order',order, 'ptransform',ptransform, 'arbMean',arbMean) initializes 
 % the object with the given parameters.
 %
 % [Q,OutP] = *compInteg*(OBJ) estimates the integral of f over hyperbox
-%   [0,1]^d using rank-1 Lattice sampling to within a specified generalized
+%   \([0,1]^{d}\) using rank-1 Lattice sampling to within a specified generalized
 %   error tolerance, tolfun = max(abstol, reltol*| I |), i.e., | I - Q | <= tolfun
 %   with confidence of at least 99%, where I is the true integral value,
 %   Q is the estimated integral value, abstol is the absolute error tolerance,
@@ -29,7 +29,7 @@
 %
 % * f --- the integrand.
 %
-% * dim --- number of dimensions of the integrand.
+% * d --- number of dimensions of the integrand.
 %
 % *Optional Input Arguments*
 %
@@ -67,15 +67,15 @@
 %                <li>2 - used max number of samples and yet not met the
 %                      error tolerance</li>
 %   </ul>
+%  <li>OutP.ErrBd  --- estimated integral error | I - Q |</li>
 %  </ul>
 % </html>
 % 
-% * OutP.ErrBd  --- estimated integral error | I - Q |
 %
 %%  Guarantee
 %
 % This algorithm attempts to calculate the integral of function f over the
-% hyperbox [0,1]^dim to a prescribed error tolerance tolfun:= max(abstol,reltol*| I |)
+% hyperbox \([0,1]^d\) to a prescribed error tolerance tolfun:= max(abstol,reltol*| I |)
 % with guaranteed confidence level, e.g., 99% when alpha=0.5%. If the
 % algorithm terminates without showing any warning messages and provides
 % an answer Q, then the following inequality would be satisfied:
@@ -142,10 +142,10 @@ check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))
 %
 % Multivariate normal probability:
 % Estimate the multivariate normal probability between the hyper interval 
-% \(\left(\begin{array}{c} -6\\ -2\\ -2\end{array}\right))\ and 
-% \(\left(\begin{array}{c} 5\\ 2\\ 1\end{array}\right))\ in \(\bf{R}^3)\
+% \(\left(\begin{array}{c} -6\\ -2\\ -2\end{array}\right) \) and 
+% \(\left(\begin{array}{c} 5\\ 2\\ 1\end{array}\right)\) in \(\bf{R}^3\)
 % having zero mean and covariance 
-% \(\left(\begin{array}{ccc} 4& 1& 1\\ 0& 1& 0.5\\ 0& 0& 0.25 \end{array}\right))\ with 
+% \(\left(\begin{array}{ccc} 4& 1& 1\\ 0& 1& 0.5\\ 0& 0& 0.25 \end{array}\right)\) with 
 % parameters: order=1, C1sin variable transform, 
 % abstol=0.001, relTol=0.01
 
