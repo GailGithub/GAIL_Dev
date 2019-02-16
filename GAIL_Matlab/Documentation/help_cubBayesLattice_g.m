@@ -90,7 +90,7 @@
 %%
 % *Example 1*
 %
-% Estimate the integral with integrand \(f(x) = x^2)\ over the interval \([0,1])\
+% Estimate the integral with integrand \(f(x) = x^2\) over the interval \([0,1]\)
 % with default parameters: order=2, ptransform=C1sin, abstol=0.01, relTol=0
 
 warning('off','GAIL:cubBayesLattice_g:fdnotgiven')
@@ -104,8 +104,8 @@ check = double(abs(exactInteg-muhat) < 0.01)
 % *Example 2*
 %
 % Estimate the integral with integrand 
-% \(f({x}) = \exp\left(\sum_{i=1}^2cos(2\pi x_i)\right))\ over the
-% interval \([0,1]^2)\ with parameters: order=2, C1sin variable transform, abstol=0.001,
+% \(f({x}) = \exp\left(\sum_{i=1}^2cos(2\pi x_i)\right)\) over the
+% interval \([0,1]^2\) with parameters: order=2, C1sin variable transform, abstol=0.001,
 % relTol=0.01
 
 fun = @(x) exp(sum(cos(2*pi*x), 2));
@@ -122,7 +122,7 @@ check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))
 %
 % Keister function:
 % Estimate the integral with keister function as integrand over the
-% interval \([0,1]^2)\ with parameters: order=2, C1 variable transform, 
+% interval \([0,1]^2\) with parameters: order=2, C1 variable transform, 
 % abstol=0.001, relTol=0.01
 
 dim=2; absTol=1e-3; relTol=1e-2;
