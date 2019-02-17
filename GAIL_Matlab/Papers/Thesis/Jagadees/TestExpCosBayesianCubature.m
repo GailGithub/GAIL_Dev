@@ -31,7 +31,7 @@ inputArgs{end+1} = 'fName'; inputArgs{end+1} = fName;
 % initialise the object based on the sampling method
 if exist('samplingMethod','var') && ...
     strcmp(samplingMethod,'Sobol') % use Sobol points
-  obj=cubMLESobol(inputArgs{:});
+  obj=cubBayesNet_g(inputArgs{:});
 else % use Lattice points
   obj=cubBayesLattice_g(inputArgs{:});
 end
@@ -50,6 +50,17 @@ toc
 err = abs(exactInteg - muhat);
 time = median([outVec(:).time]);
 out = outVec;
+
+if 0
+  % Example to plot cubature error
+  trueError = abs(outVec(1).optParams.muhatAll - exactInteg);
+  estError = outVec(1).optParams.ErrBdAll;
+  visiblePlot = true;
+  scale = outVec(1).optParams.s_All;
+  dsc = outVec(1).optParams.dscAll;
+  plotCubatureError(obj.dim, 2.^obj.mvec, trueError, estError, obj.fName, obj.order, ...
+    obj.ptransform, obj.figSavePath, visiblePlot, obj.arbMean, scale, dsc)
+end
 
 if err/obj.absTol > 1
   error('wait')

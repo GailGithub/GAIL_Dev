@@ -55,7 +55,7 @@
 %
 % Pr(| Q - I | <= tolfun) = 99%
 %
-% Please refer to our paper for detailed arguments and proofs.
+% Please refer to our paper (1) for detailed arguments and proofs.
 %
 %  Examples
 %
@@ -551,6 +551,37 @@ classdef cubBayesLattice_g < handle
       end
     end
     
+    function [loss,Lambda,trace_part,deriv_part_num,deriv_part_den] = dObjectiveFunction(obj,a,xun,ftilde)
+            
+      n = length(ftilde);
+      [dLambda, dLambda_ring] = obj.dKernel(xun,obj.order,a,obj.avoidCancelError, ...
+        obj.kernType,obj.debugEnable);
+      
+      [Lambda, Lambda_ring] = obj.kernel(xun,obj.order,a,obj.avoidCancelError, ...
+        obj.kernType,obj.debugEnable);
+
+      trace_part = sum(dLambda(Lambda~=0)./Lambda(Lambda~=0))/n;
+      ztilde = ftilde; ztilde(1) = 0;
+
+      % ignore all zero eigenvalues
+      % compute RKHSnorm
+      temp = abs(ftilde(Lambda~=0).^2)./(Lambda(Lambda~=0)) ;
+      deriv_part_num = abs((ztilde(Lambda~=0).^2).*dLambda)./(Lambda(Lambda~=0).^2);
+      
+      % default: MLE
+      if obj.arbMean==true
+        deriv_part_num = sum(deriv_part_num(2:end));
+        deriv_part_den = sum(temp(2:end));
+      else
+        deriv_part_num = sum(deriv_part_num(1:end));
+        deriv_part_den = sum(temp);
+      end
+
+      deriv_part = deriv_part_num/deriv_part_den;
+
+      loss = trace_part + deriv_part;
+    end
+        
     % Plots the transformed and scaled integrand values as normal plots.
     % This is to verify the assumption, integrand was an instance of
     % gaussian process.
@@ -660,19 +691,19 @@ classdef cubBayesLattice_g < handle
         
         stopCriterions = {'full','GCV','MLE'};
         if ~ismember(obj.stopCriterion, stopCriterions)
-          str_stopCriterions = join(stopCriterions, ', ');
+          str_stopCriterions = strjoin(stopCriterions, ', ');
           warning('GAIL:cubBayesLattice_g:stop_crit_invalid',...
             'Stop criterion = "%s" is not supported; it must be from "%s". The algorithm is using default value "MLE".\n', ...
-            obj.stopCriterion, str_stopCriterions{1});
+            obj.stopCriterion, str_stopCriterions);
           obj.stopCriterion = 'MLE';
         end
         
         var_txs = {'Baker','C0','C1','C1sin','C2sin','C3sin','none'};
         if ~ismember(obj.ptransform, var_txs)
-          str_var_txs = join(var_txs, ', ');
+          str_var_txs = strjoin(var_txs, ', ');
           warning('GAIL:cubBayesLattice_g:var_transform_invalid',...
             'Periodizing transform = "%s" is not supported; the value must be from "%s". The algorithm is using default value "Baker".\n', ...
-            obj.ptransform, str_var_txs{1});
+            obj.ptransform, str_var_txs);
           obj.ptransform = 'Baker';
         end
       end
@@ -860,14 +891,76 @@ classdef cubBayesLattice_g < handle
       %     fval(i,:) = f_ran(xpts(i,:));
       %   end
     end
+    
+    % derivative of the kernel w.r.t. shape parameter
+    function [Lambda, Lambda_ring] = dKernel(xun,order,a,avoidCancelError,...
+        kernType,debugEnable)
+           
+      if kernType==1
+        b_order = order*2; % Bernoulli polynomial order as per the equation
+        constMult = -(-1)^(b_order/2)*((2*pi)^b_order)/factorial(b_order);
+        % constMult = -(-1)^(b_order/2);
+        if b_order == 2
+          bernPoly = @(x)(-x.*(1-x) + 1/6);
+          % bernPoly = @(x) cubBayesLattice_g.bernoulli_series(x,b_order);
+        elseif b_order == 4
+          bernPoly = @(x)( ( (x.*(1-x)).^2 ) - 1/30);
+        else
+          error('Bernoulli order not implemented !');
+        end
+        kernelFunc = @(x) bernPoly(x);
+      else
+        b = order;
+        kernelFunc = @(x) 2*b*((cos(2*pi*x)-b))./(1 + b^2 - 2*b*cos(2*pi*x));
+        constMult = 1;
+      end
       
+      if avoidCancelError
+        [~, dim] = size(xun);
+        temp = kernelFunc(xun);
+        % Computes C1m1 = C1 - 1
+        % C1_new = 1 + C1m1 indirectly computed in the process
+        [C1m1, C1_alt] = cubBayesLattice_g.kernel_t(a*constMult, temp);
+        % eigenvalues must be real : Symmetric pos definite Kernel
+        
+        partb = -(1/dim)*sum(1./(1+a*constMult*temp));
+        C1m1 = (dim/a)*(1 + C1m1 + partb + C1m1*partb);
+        Lambda_ring = real(fft(C1m1));
+        
+        Lambda = Lambda_ring;
+        Lambda(1) = Lambda_ring(1) + length(Lambda_ring);
+        % C1 = prod(1 + (a)*constMult*bernPoly(xun),2);  % direct computation
+        % Lambda = real(fft(C1));
+        
+        if debugEnable == true
+          % eigenvalues must be real : Symmetric pos definite Kernel
+          Lambda_direct = real(fft(C1_alt)); % Note: fft output unnormalized
+          if sum(abs(Lambda_direct-Lambda)) > 1
+            fprintf('Possible error: check Lambda_ring computation')
+          end
+        end
+      else
+        % direct approach to compute first row of the kernel Gram matrix
+        temp = (a)*constMult*kernelFunc(xun);
+        C1 = prod(1 + temp,2);
+        C1 = (dim/a)*C1*(1 - (1/dim)*sum(1./(1+temp)));
+        
+        % matlab's builtin fft is much faster and accurate
+        % eigenvalues must be real : Symmetric pos definite Kernel
+        Lambda = real(fft(C1));
+        Lambda_ring = 0;
+      end
+      
+    end
+    
     % Shift invariant kernel
     % C1 : first row of the covariance matrix
+    % a : kernel's shape parameter
     % Lambda : eigenvalues of the covariance matrix
     % Lambda_ring = fft(C1 - 1)
     function [Lambda, Lambda_ring] = kernel(xun,order,a,avoidCancelError,...
         kernType,debugEnable)
-           
+      
       if kernType==1
         b_order = order*2; % Bernoulli polynomial order as per the equation
         constMult = -(-1)^(b_order/2)*((2*pi)^b_order)/factorial(b_order);

@@ -15,7 +15,7 @@ nvec = 2.^(1:18);
 
 % Generators were downloaded from url:
 % https://bitbucket.org/dnuyens/qmc-generators/src/3b059b39685a/DIGSEQ/?at=master
-gen_names = {'exod2_base2_m20', 'nxmats\nx_s5_alpha3_m32', 'sobolmats\sobol_alpha3_Bs', };
+gen_names = {'exod2_base2_m20', 'nxmats/nx_s5_alpha3_m32', 'sobolmats/sobol_alpha3_Bs', };
 figH = figure(); fc=1;
 fig_size = [1 1 15 8];  % [1 1 9 6]
 set(figH, 'units', 'inches', 'Position', fig_size)
@@ -25,7 +25,7 @@ for gen_name=gen_names(1:3)
   if strcmp(gen_name, 'exod2_base2_m20')
     genmat = gen_name;
   else
-    genmat = load(['dirk_nuyens\qmc-generators\DIGSEQ\' gen_name '.col']);
+    genmat = load(['dirk_nuyens/qmc-generators/DIGSEQ/' gen_name '.col']);
   end
   for dim=[1 2 3]
     shift = rand(1,dim);
@@ -40,7 +40,7 @@ for gen_name=gen_names(1:3)
     axis(10.^[0 7 -16 0])
     set(gca,'Xtick',10.^[0 2 5 7], 'YTick',10.^[-16 -12 -8 -4 0])
     grid on
-    g = strsplit(gen_name, '\'); title(sprintf('d=%d %s', dim, g{end}),'Interpreter','none')
+    g = strsplit(gen_name, '/'); title(sprintf('d=%d %s', dim, g{end}),'Interpreter','none')
   end
 end
 figSavePathName = sprintf('%s_%d_%s.png', fName, nvec(end), ptransform);
