@@ -128,7 +128,8 @@ delta = 0.3;
 f3 = @(x) f3param(x,delta,c);
 figure
 [~,fappxout] = funappx_g(@(x) -f3(x),in_param);
-disp(['funappx_g used ' int2str(fappxout.npoints) ' points and ' ...
+newline = char(13);
+disp([newline newline 'funappx_g used ' int2str(fappxout.npoints) ' points and ' ...
    int2str(fappxout.iter) ' iterations'])
 disp(['   to satisfy an absolute error tolerance of ' ...
    num2str(in_param.abstol)])
@@ -172,8 +173,8 @@ if exist('chebfun','file')
     chebfuntol = 1e-12;
     t0 = tic;
     chf = chebfun(f,[a,b],'chebfuneps', chebfuntol,'splitting','on');
-    t_chebfun = toc(t0)
-    x=a:0.00001:b;
+    t_chebfun = toc(t0);
+    x = a:0.00001:b;
     err = abs(chf(x) - f(x));
     [~,ind] = find(err > chebfuntol*10);
     figure;
@@ -191,10 +192,10 @@ if exist('chebfun','file')
     
     %% Time and error for funappx_g
     t0 = tic;
-    [fhat,out] = funappx_g(f,a,b,chebfuntol)
-    t_funappx = toc(t0)
-    t_ratio = t_funappx/t_chebfun
-    err_funappx = max(abs(f(x) - fhat(x)))
+    [fhat, out] = funappx_g(f,a,b,chebfuntol);
+    t_funappx = toc(t0);
+    t_ratio = t_funappx/t_chebfun;
+    err_funappx = max(abs(f(x) - fhat(x)));
 end
 
 %% Output funappx Table
@@ -207,7 +208,7 @@ if numel(funappxRes) > 0
    npoints = 0;
    time = 0;
    load(funappxRes)
-   [fileID, fullPath] = gail.open_txt('TraubPaperOutput', ['funappx_g_test']);
+   [fileID, fullPath] = gail.open_txt('TraubPaperOutput', 'funappx_g_test');
    fprintf(fileID,'\n');
    fprintf(fileID,'# of replications = %1.0f\n',nrep);
    fprintf(fileID,'   Test         Number of Points                    Time Used                          Success (%%)                                  Failure (%%)\n');
@@ -217,6 +218,7 @@ if numel(funappxRes) > 0
    npointslgratio = zeros(1,n);
    timelgratio = zeros(1,n);
 
+   funmin_g_success_rate = zeros(length(permuted_index),1);   
    for i = permuted_index
      funappx_g_success_rate(i) = 100.0*sum(trueerrormat(i,1,:)<=abstol)/nrep;
       
@@ -254,7 +256,7 @@ if numel(funminRes) > 0
    npoints = 0;
    time = 0;
    load(funminRes) 
-   [fileID, fullPath] = gail.open_txt('TraubPaperOutput', ['funmin_g_test']);
+   [fileID, fullPath] = gail.open_txt('TraubPaperOutput', 'funmin_g_test');
    fprintf(fileID,'\n');
    fprintf(fileID,'# of replications = %1.0f\n',nrep);
    fprintf(fileID,'   Test         Number of Points                    Time Used                          Success (%%)                                  Failure (%%)\n');

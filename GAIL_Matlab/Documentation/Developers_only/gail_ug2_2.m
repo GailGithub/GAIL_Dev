@@ -1,5 +1,5 @@
 function gail_ug_2()
-%% Guaranteed Automatic Integration Library (GAIL) Version 2.2 Documentation
+%% Guaranteed Automatic Integration Library (GAIL) Version 2.3 Documentation
 %
 % GAIL (Guaranteed Automatic Integration Library) is created, developed,
 % and maintained by Fred Hickernell (Illinois Institute of Technology),
@@ -99,7 +99,7 @@ function gail_ug_2()
 % HAS READ THE SAME, AGREES THAT THE FOREGOING LIMITATIONS AND RESTRICTIONS 
 % REPRESENT A REASONABLE ALLOCATION OF RISK.%% Guaranteed Automatic Integration Library (GAIL)
 % 
-% GAIL Version 2.2, 2017.
+% GAIL Version 2.3, 2019.
 % See LICENSE.m for copyright and disclaimer.
 % 
 % GAIL is a suite of algorithms for integration problems in one and many
@@ -129,8 +129,8 @@ function gail_ug_2()
 % 
 % Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 % Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang, and Xuan Zhou, GAIL: 
-% Guaranteed Automatic Integration Library (Version 2.2) [MATLAB Software],
-% 2017. Available from http://gailgithub.github.io/GAIL_Dev/
+% Guaranteed Automatic Integration Library (Version 2.3) [MATLAB Software],
+% 2019. Available from http://gailgithub.github.io/GAIL_Dev/
 % (this software)
 % 
 % Sou-Cheng T. Choi, Yuhan Ding, Fred J.Hickernell, Xin Tong, "Local
@@ -234,7 +234,7 @@ function gail_ug_2()
 %% General Usage Notes
 % 
 % 
-% GAIL version 2.2 includes the following eight algorithms:
+% GAIL version 2.3 includes the following eight algorithms:
 % 
 % 1.  funappx_g: One-dimensional function approximation on bounded interval
 % 
@@ -272,7 +272,7 @@ function gail_ug_2()
 % 
 % Alternatively, you could do this:
 % 
-% 1.  Download DownloadInstallGail_2_2.m and put it where you want
+% 1.  Download DownloadInstallGail_2_3.m and put it where you want
 %     GAIL to be installed.
 % 
 % 2.  Execute it in MATLAB.
@@ -562,8 +562,8 @@ in_param.abstol = 10^(-6); in_param.ninit=18;
 %            
 % [3] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
 % Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
-% GAIL: Guaranteed Automatic Integration Library (Version 2.2) [MATLAB
-% Software], 2017. Available from http://gailgithub.github.io/GAIL_Dev/
+% GAIL: Guaranteed Automatic Integration Library (Version 2.3) [MATLAB
+% Software], 2019. Available from http://gailgithub.github.io/GAIL_Dev/
 %
 % [4] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
 % Research via Supportable Scientific Software," Journal of Open Research
@@ -736,8 +736,8 @@ f=@(x) exp(0.01*(x-0.5).^2);
 %
 % [3] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang,
 % Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
-% GAIL: Guaranteed Automatic Integration Library (Version 2.2)
-% [MATLAB Software], 2017. Available from http://gailgithub.github.io/GAIL_Dev/
+% GAIL: Guaranteed Automatic Integration Library (Version 2.3)
+% [MATLAB Software], 2019. Available from http://gailgithub.github.io/GAIL_Dev/
 %
 % [4] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
 % Research via Supportable Scientific Software," Journal of Open Research
@@ -943,8 +943,8 @@ q = integral_g()
 %
 % [3] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang,
 % Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
-% GAIL: Guaranteed Automatic Integration Library (Version 2.2)
-% [MATLAB Software], 2017. Available from http://gailgithub.github.io/GAIL_Dev/
+% GAIL: Guaranteed Automatic Integration Library (Version 2.3)
+% [MATLAB Software], 2019. Available from http://gailgithub.github.io/GAIL_Dev/
 %
 % [4] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable
 % Mathematical Software" [Course Slides], Illinois Institute of
@@ -1161,8 +1161,8 @@ q = integral_g()
 %
 % [2] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang,
 % Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
-% GAIL: Guaranteed Automatic Integration Library (Version 2.2)
-% [MATLAB Software], 2017. Available from http://gailgithub.github.io/GAIL_Dev/
+% GAIL: Guaranteed Automatic Integration Library (Version 2.3)
+% [MATLAB Software], 2019. Available from http://gailgithub.github.io/GAIL_Dev/
 %
 % [3] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
 % Research via Supportable Scientific Software," Journal of Open Research
@@ -1467,8 +1467,8 @@ q = integral_g()
 %
 % [2] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang,
 % Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
-% GAIL: Guaranteed Automatic Integration Library (Version 2.2)
-% [MATLAB Software], 2017. Available from http://gailgithub.github.io/GAIL_Dev/
+% GAIL: Guaranteed Automatic Integration Library (Version 2.3)
+% [MATLAB Software], 2019. Available from http://gailgithub.github.io/GAIL_Dev/
 %
 % [3] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
 % Research via Supportable Scientific Software," Journal of Open Research
@@ -1784,8 +1784,8 @@ q = integral_g()
 %
 % [2] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang,
 % Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
-% GAIL: Guaranteed Automatic Integration Library (Version 2.2)
-% [MATLAB Software], 2017. Available from http://gailgithub.github.io/GAIL_Dev/
+% GAIL: Guaranteed Automatic Integration Library (Version 2.3)
+% [MATLAB Software], 2019. Available from http://gailgithub.github.io/GAIL_Dev/
 %
 % [3] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
 % Research via Supportable Scientific Software," Journal of Open Research
@@ -2093,8 +2093,8 @@ q = integral_g()
 % 
 % [2] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang,
 % Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
-% GAIL: Guaranteed Automatic Integration Library (Version 2.2)
-% [MATLAB Software], 2017. Available from http://gailgithub.github.io/GAIL_Dev/
+% GAIL: Guaranteed Automatic Integration Library (Version 2.3)
+% [MATLAB Software], 2019. Available from http://gailgithub.github.io/GAIL_Dev/
 %
 % [3] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
 % Research via Supportable Scientific Software," Journal of Open Research
@@ -2240,8 +2240,8 @@ max_abs_error = max(abs(f(x)-fappx(x)))
 %
 % [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
 %     Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
-%     GAIL: Guaranteed Automatic Integration Library (Version 2.2) [MATLAB
-%     Software], 2017. Available from <http://gailgithub.github.io/GAIL_Dev/
+%     GAIL: Guaranteed Automatic Integration Library (Version 2.3) [MATLAB
+%     Software], 2019. Available from <http://gailgithub.github.io/GAIL_Dev/
 %     GitHub>.
 
 %% A GUI (graphical user interface) for *funappx_g*
@@ -2300,8 +2300,8 @@ axis tight
 %
 % [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
 %     Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
-%     GAIL: Guaranteed Automatic Integration Library (Version 2.2) [MATLAB
-%     Software], 2017. Available from <http://gailgithub.github.io/GAIL_Dev/
+%     GAIL: Guaranteed Automatic Integration Library (Version 2.3) [MATLAB
+%     Software], 2019. Available from <http://gailgithub.github.io/GAIL_Dev/
 %     GitHub>.
 
 %% Demos for funmin_g
@@ -2363,8 +2363,8 @@ max_abs_error = max(abs(truefmin-fmin2))
 %
 % [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
 %     Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
-%     GAIL: Guaranteed Automatic Integration Library (Version 2.2) [MATLAB
-%     Software], 2017. Available from <http://gailgithub.github.io/GAIL_Dev/
+%     GAIL: Guaranteed Automatic Integration Library (Version 2.3) [MATLAB
+%     Software], 2019. Available from <http://gailgithub.github.io/GAIL_Dev/
 %     GitHub>.
 %% Compare *funmin_g* with *fminbnd*
 % Author: Xin Tong, July 2017
@@ -2407,8 +2407,8 @@ set(h_legend,'interpreter','latex');
 %
 % [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
 %     Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
-%     GAIL: Guaranteed Automatic Integration Library (Version 2.2) [MATLAB
-%     Software], 2017. Available from <http://gailgithub.github.io/GAIL_Dev/
+%     GAIL: Guaranteed Automatic Integration Library (Version 2.3) [MATLAB
+%     Software], 2019. Available from <http://gailgithub.github.io/GAIL_Dev/
 %     GitHub>.
 
 %% Demos for integral_g
@@ -2490,8 +2490,8 @@ if_meet_abstol = (abs_errors < abstol)
 %
 % [3] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
 %     Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
-%     GAIL: Guaranteed Automatic Integration Library (Version 2.2) [MATLAB
-%     Software], 2017. Available from <http://gailgithub.github.io/GAIL_Dev/
+%     GAIL: Guaranteed Automatic Integration Library (Version 2.3) [MATLAB
+%     Software], 2019. Available from <http://gailgithub.github.io/GAIL_Dev/
 %     GitHub>.
 %% Demos for meanMC_g
 %
@@ -2670,8 +2670,8 @@ end
 % 
 % [3] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
 %     Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
-%     GAIL: Guaranteed Automatic Integration Library (Version 2.2) [MATLAB
-%     Software], 2017. Available from <http://gailgithub.github.io/GAIL_Dev/
+%     GAIL: Guaranteed Automatic Integration Library (Version 2.3) [MATLAB
+%     Software], 2019. Available from <http://gailgithub.github.io/GAIL_Dev/
 %     GitHub>.%% Demos for cubSobol_g
 %
 % <html>
@@ -2838,8 +2838,8 @@ end
 % 
 % [3] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang,
 %     Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
-%     GAIL: Guaranteed Automatic Integration Library (Version 2.2) [MATLAB
-%     Software], 2017. Available from <http://gailgithub.github.io/GAIL_Dev/
+%     GAIL: Guaranteed Automatic Integration Library (Version 2.3) [MATLAB
+%     Software], 2019. Available from <http://gailgithub.github.io/GAIL_Dev/
 %     GitHub>.% TEST_CUBSOBOL_G This is the driver script to test cubSobol_g algorithm
 %using seven integrands of dimensions up to 8
 %clear all;close all;clc;

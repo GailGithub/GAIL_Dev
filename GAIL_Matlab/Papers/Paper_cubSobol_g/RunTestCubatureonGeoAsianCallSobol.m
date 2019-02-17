@@ -37,7 +37,7 @@ if any(strcmp('cubSobol',test.whichsample))
 end
 
 for irep=1:test.nrep
-    if round(irep/test.howoftenrep)==irep/test.howoftenrep, irep, end
+    gail.print_iterations(irep, 'irep', true);
     param.sample='qmc';
     [testfunqmc,fun,param]= ...
           test.randchoicefun(fun,param,test.randch,irep);
@@ -90,12 +90,12 @@ if any(strcmp('cubSobol',test.whichsample))
        int2str(max(res.dim))];
     plotTest.defaultcolor=[1 0 0];
     if any(strcmp('black',plotTest.plotcolor))
-    plotTest.ptsize=200;
-    plotTestcubMCblack_FJH(plotTest,param)
+      plotTest.ptsize=200;
+      plotTestcubMCblack_FJH(plotTest,param)
     end
     if any(strcmp('color',plotTest.plotcolor))
-    plotTest.ptsize=400;
-    plotTestColor(plotTest,param)
+      plotTest.ptsize=400;
+      plotTestColor(plotTest,param)
     end
     Sobolsuccess=mean(res.Sobolerr<=param_indicator);
 end
@@ -201,7 +201,7 @@ function [testfun,param]=geomMeanAsianCall(fun,param)
 %   fun.overaddc        = overall additive constant (scalar)
 %   fun.overmultc       = overall multiplicative constant (scalar)
 
-if nargin < 2; %give the basic default parameters 
+if nargin < 2 %give the basic default parameters 
     param.interval=[0;1]; %default integration interval
     if nargin < 1; fun.funtype='exp'; end %exponential test function
 end

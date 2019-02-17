@@ -4,7 +4,7 @@ format short
 
 %% Workouts
 % Workouts for Traub paper
-run(ut_traub_paper,'test_traub_paper_funmin_g')
+run(ut_traub_paper,'test_traub_paper_funmin_g');
 
 % funmin_g
 %doctest par_funmin_g

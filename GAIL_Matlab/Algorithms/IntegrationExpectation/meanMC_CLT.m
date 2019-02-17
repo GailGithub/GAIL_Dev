@@ -75,10 +75,11 @@ function [sol, out] = meanMC_CLT(varargin)
 % >> f = @(x)[exp(-x.^2), x];
 % >> YXn = @(n)f(rand(n,1));
 % >> s = struct('Y',YXn,'nY',1,'trueMuCV',1/2);
-% >> [hmu,out] = meanMC_CLT(s,0,1e-3);
 % >> exact = erf(1)*sqrt(pi)/2;
-% >> check = double(abs(exact-hmu) < max(0,1e-3*abs(exact)))
-% check = 1
+% >> success = 0; runs = 1000; tol = 1e-3;
+% >> for i=1:runs, success = success + double(abs(exact-meanMC_CLT(s,0,tol)) < tol*exact); end
+% >> check = success >= 0.99 * runs
+%    1
 %
 %
 % Example 3:

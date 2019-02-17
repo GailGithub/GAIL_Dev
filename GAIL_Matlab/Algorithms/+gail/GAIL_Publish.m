@@ -13,7 +13,7 @@ if usejava('jvm')
     mfile_list = {'GAIL','help_license','help_readme','help_ReleaseNotes','funclist','demolist',...
         'help_funappx_g','help_funmin_g','help_integral_g',...
         'help_meanMC_g', 'help_meanMC_CLT','help_cubMC_g',...%'help_cubMC_CLT',...
-        'help_cubLattice_g','help_cubSobol_g',... % demos below
+        'help_cubLattice_g','help_cubSobol_g','help_cubBayesLattice_g', ... % demos below
         'demo_funappx_g','demo_funappx_g1', 'demo_funappx_g2',...
         'demo_funmin_g','demo_funmin_g1', 'demo_funmin_g2',...
         'demo_integral_g','demo_integral_g1',...
@@ -26,10 +26,10 @@ if usejava('jvm')
     if ifGenerateHtml
       opts.stylesheet = strcat(GAILPATH,'Documentation',filesep,'mxdom2mathjaxbigfont.xsl');
       delete(strcat(GAILPATH,'Documentation',filesep,'html',filesep,'*.png'))
-      for i=1:length(mfile_list),
+      for i=1:length(mfile_list)
         publish(mfile_list{i}, opts);
       end
-      for i=1:length(wofile_list),
+      for i=1:length(wofile_list)
         publish(wofile_list{i}, opts);
         wopath = which(wofile_list{i});
         htmlpath = strrep(wopath, strcat([wofile_list{i},'.m']), strcat(['html',filesep]));
@@ -45,10 +45,10 @@ if usejava('jvm')
         if all(s(1:2)=='PC') == 0
             delete(strcat(GAILPATH,'Documentation',filesep,'Developers_only',filesep,'gail_ug.*'))
             cat_cmd = 'cat ';
-            for i=1:length(mfile_list),
+            for i=1:length(mfile_list)
                 cat_cmd = strcat([cat_cmd, ' ', GAILPATH,'Documentation',filesep,mfile_list{i},'.m', ' ']);
             end
-            for i=1:length(wofile_list),
+            for i=1:length(wofile_list)
                 wopath = which(wofile_list{i});
                 wopath = strrep(wopath, strcat([wofile_list{i},'.m']), strcat(['']));
                 cat_cmd = strcat([cat_cmd, ' ', wopath, wofile_list{i},'.m' ]);
@@ -71,7 +71,7 @@ if usejava('jvm')
     %set(0, 'DefaultFigureVisible', oldStatus)
     
     %% build search index
-    if ifBuildSearchIndex,
+    if ifBuildSearchIndex
         warninfo = warning('query','MATLAB:doc:DocNotInstalled');
         warning('off', warninfo.identifier);
         builddocsearchdb(strcat(GAILPATH,'Documentation',filesep,'html'));

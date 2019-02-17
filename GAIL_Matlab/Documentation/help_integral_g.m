@@ -162,6 +162,10 @@ f = @(x) exp(-x.^2); [q, out_param] = integral_g(f,'a',1,'b',2,'nlo',100,'nhi',1
 % <a href="help_funmin_g.html">funmin_g</a>
 % </html>
 %
+% <html>
+% <p><a href="help_cubBayesLattice_g.html">cubBayesLattice_g</a>
+% </html>
+%
 %% References
 %
 % [1] Fred J. Hickernell, Martha Razo, and Sunny Yun, "Reliable Adaptive
@@ -174,7 +178,7 @@ f = @(x) exp(-x.^2); [q, out_param] = integral_g(f,'a',1,'b',2,'nlo',100,'nhi',1
 % [3] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 % Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
 % Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
-% Integration Library (Version 2.2) [MATLAB Software], 2017. Available
+% Integration Library (Version 2.3) [MATLAB Software], 2019. Available
 % from http://gailgithub.github.io/GAIL_Dev/
 %
 % [4] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable

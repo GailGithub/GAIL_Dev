@@ -141,8 +141,8 @@ function [q,out_param] = integralPenalty_g(varargin)
 %
 %   [2] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang,
 %   Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
-%   GAIL: Guaranteed Automatic Integration Library (Version 2.2)
-%   [MATLAB Software], 2017. Available from http://gailgithub.github.io/GAIL_Dev/
+%   GAIL: Guaranteed Automatic Integration Library (Version 2.3)
+%   [MATLAB Software], 2019. Available from http://gailgithub.github.io/GAIL_Dev/
 %
 %   [3] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
 %   Research via Supportable Scientific Software," Journal of Open Research

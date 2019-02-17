@@ -40,6 +40,10 @@
 % </html>
 %
 % <html>
+% <p><a href="help_cubBayesLattice_g.html">cubBayesLattice_g</a>
+% </html>
+%
+% <html>
 % <a href="help_meanMC_CLT.html">meanMC_CLT</a>
 % </html>
 % 

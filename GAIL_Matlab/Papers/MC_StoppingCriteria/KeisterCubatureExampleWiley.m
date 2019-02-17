@@ -54,17 +54,18 @@ tic
 for i=1:nd
    d = dvec(i);
    for k = 1:nRep
-      gail.TakeNote(k,10)
+      gail.print_iterations(k, 'k', true);
 %      [IMCvec(k,i),out] = meanMC_g(@(n) f(randn(n,d),a,d),abstol(i),reltol(i));
       [IMCvec(k,i),out] = cubMC_g(@(x) f(x,a,d),[-inf(1,d); inf(1,d)], ...
          'normal',abstol(i),reltol(i));
-       if out.exitflag > 0,
+       if out.exitflag > 0
           nWarnMC(k,i) = 1;
       end
       timeMC(k,i) = out.time;
       nSampleMC(k,i) = out.ntot;
    end
 end
+disp(' ')
 toc
 nSampleMC = mean(nSampleMC)
 timeMC = mean(timeMC)
@@ -78,16 +79,17 @@ tic
 for i=1:nd
    d = dvec(i);
    for k = 1:nRep
-      gail.TakeNote(k,10)
+      gail.print_iterations(k, 'k', true);
       [ISobvec(k,i),out] = cubSobol_g(@(x) f(x,a,d),[-inf(1,d); inf(1,d)], ...
           'normal',abstol(i),reltol(i));
-      if out.exitflag > 0,
+      if out.exitflag > 0
           nWarnSob(k,i) = 1;
       end
       timeSob(k,i) = out.time;
       nSampleSob(k,i) = out.n;
    end
 end
+disp(' ')
 toc
 timeSob = mean(timeSob)
 nSampleSob = mean(nSampleSob)
@@ -101,16 +103,17 @@ tic
 for i=1:nd
     d = dvec(i);
     for k = 1:nRep
-        gail.TakeNote(k,10)
+        gail.print_iterations(k, 'k', true);
         [ILatvec(k,i),out] = cubLattice_g(@(x) f(x,a,d),[-inf(1,d); inf(1,d)], ...
             'normal',abstol(i),reltol(i));
-        if out.exitflag > 0,
+        if out.exitflag > 0
             nWarnLat(k,i) = 1;
         end
         timeLat(k,i) = out.time;
         nSampleLat(k,i) = out.n;
    end
 end
+disp(' ')
 toc
 timeLat = mean(timeLat)
 nSampleLat = mean(nSampleLat)
@@ -138,7 +141,7 @@ warnLat = sum(nWarnLat,1);
 warnSob = sum(nWarnSob,1);
 disp(['warnings issued by cubMC_g: ', num2str(sum(nWarnMC,1))])
 disp(['warnings issued by cubLattice_g: ', num2str(sum(nWarnLat,1))])
-disp(['warnings issued by cubSonol_g: ', num2str(sum(nWarnSob,1))])
+disp(['warnings issued by cubSobol_g: ', num2str(sum(nWarnSob,1))])
 
 
 %outFileName = ['KeisterCubExWileyDataNRep' int2str(nRep) ...

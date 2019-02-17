@@ -167,7 +167,7 @@ function [tmu,out_param]=meanMC_g(varargin)
 %   [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 %   Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
 %   Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
-%   Integration Library (Version 2.2) [MATLAB Software], 2017. Available
+%   Integration Library (Version 2.3) [MATLAB Software], 2019. Available
 %   from http://gailgithub.github.io/GAIL_Dev/
 %
 %   [3] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
@@ -267,10 +267,10 @@ out_param.kurtmax = (out_param.nSig-3)/(out_param.nSig-1) ...
     *(1-1/out_param.fudge^2)^2;
 %the upper bound on the modified kurtosis
 npcmax = 1e6;%constant to do iteration and mean calculation4
-if out_param.reltol ==0
+if out_param.reltol == 0
     out_param.tau = 1;
     alphai = 1-(1-out_param.alpha)/(1-alpha_sig);
-    if sig0up == 0; % if the variance is zero, just take n_sigma samples
+    if sig0up == 0 % if the variance is zero, just take n_sigma samples
         out_param.n = out_param.nSig;
     else
         toloversig = out_param.abstol/sig0up;
@@ -539,6 +539,7 @@ if (~gail.isposge30(out_param.nbudget))
         'We will use the default value 1e9.'])
     out_param.nbudget =default.nbudget;
 end
+out_param.bound_err = inf; %create this field
 out_param.exitflag = 1;
 %pass the signal indicating the parameters have been checked
 end

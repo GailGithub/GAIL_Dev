@@ -2,9 +2,9 @@ function version = ver(toolbox_name)
 % VER Return external MATLAB toolbox version
 %
 % >> gail.ver('GAIL')
-% 2.2
+% 2.3
 % >> gail.ver('Chebfun')
-% 5.4.0
+% 5.7.0
 %
 v = ver;
 n = toolbox_name;

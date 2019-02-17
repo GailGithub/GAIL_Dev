@@ -73,8 +73,8 @@ function [fmin, out_param] = par_funmin_g(workers,varargin)
 %
 %   [2] Sou-Cheng T. Choi, Fred J. Hickernell, Yuhan Ding, Lan Jiang,
 %   Lluis Antoni Jimenez Rugama, Xin Tong, Yizhi Zhang and Xuan Zhou,
-%   GAIL: Guaranteed Automatic Integration Library (Version 2.2)
-%   [MATLAB Software], 2017. Available from http://gailgithub.github.io/GAIL_Dev/
+%   GAIL: Guaranteed Automatic Integration Library (Version 2.3)
+%   [MATLAB Software], 2019. Available from http://gailgithub.github.io/GAIL_Dev/
 %
 %   If you find GAIL helpful in your work, please support us by citing the
 %   above papers, software, and materials.

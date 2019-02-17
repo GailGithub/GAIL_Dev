@@ -4,7 +4,7 @@ format short
 try
   doctest dt_cubLattice_g
 catch ME
-    display('Exception: longtests_cubLattice_g : in doctest dt_cubLattice_g.')
+    disp('Exception: longtests_cubLattice_g : in doctest dt_cubLattice_g.')
     msgText = getReport(ME); display(msgText)
 end
 
@@ -12,15 +12,15 @@ end
 try
   lattice_example;
 catch
-    display('Error: lattice_example is wrongly coded. We skip it.')
+    disp('Error: lattice_example is wrongly coded. We skip it.')
 end
+
 try
   FourierCoeffDecayPict;
 catch
-    display('Error: FourierCoeffDecayPict is wrongly coded. We skip it.')
+    disp('Error: FourierCoeffDecayPict is wrongly coded. We skip it.')
 end
-%run_handle('RunTestCubatureonGeoAsianCallLattice');
-%run_handle('RunTestCubatureonKeisterLattice');
+
 try
     Tests = matlab.unittest.TestSuite.fromClass(?ut_Papers_cubLattice_g);
     results=run(ut_Papers_cubLattice_g);
@@ -31,6 +31,5 @@ try
         %end
     end
 catch
-    display('Error: Test ut_Papers_cubLattice_g is wrongly coded. We skip it.')
-    %fprintf(fid,'Error: Test ut_Papers_cubLattice_g is wrongly coded. We skip it.\n');
+    disp('Error: Test ut_Papers_cubLattice_g is wrongly coded. We skip it.')
 end

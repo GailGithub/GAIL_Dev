@@ -37,7 +37,7 @@ if any(strcmp('cubLattice',test.whichsample))
 end
 
 for irep=1:test.nrep
-    if round(irep/test.howoftenrep)==irep/test.howoftenrep, irep, end
+    gail.print_iterations(irep, 'irep', true);
     param.sample='qmc';
     [testfunqmc,fun,param]= ...
           test.randchoicefun(fun,param,test.randch,irep);

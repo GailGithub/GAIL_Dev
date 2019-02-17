@@ -2,11 +2,14 @@
 %
 % Input
 %   filename   String of Matlab filename
+%
+% See also: run_handle_ut
+%
 function run_handle(filename)
 
 try
-  disp('');
-  disp(horzcat('Running ', filename, ' ...'));
+  newline = char(13);
+  disp(horzcat(newline, newline, 'Running ', filename, ' ...'));
   run(filename)
 catch err
   % warning(['Runtime error executing ',filename, ':']); % This line is
@@ -17,5 +20,5 @@ catch err
       '  File: ', err.stack(e).name, ', Line ', num2str(err.stack(e).line));
     disp(stack_str);
   end
-  disp('');
+  disp(newline);
 end

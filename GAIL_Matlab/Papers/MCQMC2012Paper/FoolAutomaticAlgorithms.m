@@ -20,9 +20,9 @@ saveMCQMC2012peakyfundir(info.filename,xsample)
 info.degree=2;
 info.coefficient=0;
 info.RegFunc=... %slowly varying function
-    @(x) info.coefficient*x.^info.degree 
+    @(x) info.coefficient*x.^info.degree;
 info.RegFuncprime=... %and its derivative
-    @(x) info.degree.*info.coefficient*x.^(info.degree-1) %slowly varying
+    @(x) info.degree.*info.coefficient*x.^(info.degree-1); %slowly varying
 info.RegFuncdubprime=... %and its second derivative
     @(x) info.degree.*(info.degree-1).*info.coefficient*x.^(info.degree-2) 
 info.lower=0; %left endpoint of function domain

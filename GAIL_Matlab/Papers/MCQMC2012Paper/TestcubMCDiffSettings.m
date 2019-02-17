@@ -72,7 +72,7 @@ end
 nsigold=param.n0;
 
 for irep=1:test.nrep
-    if round(irep/test.howoftenrep)==irep/test.howoftenrep, irep, end
+    gail.print_iterations(irep, 'irep', true);
     [testfun,fun,param]=test.randchoicefun(fun,param,test.randch,irep);
     if strcmp(fun.funtype,'step')
         res.exactkurtosis(irep)=param.exactkurtosis;
@@ -187,6 +187,7 @@ for irep=1:test.nrep
         end        
     end    
 end
+disp(' ')
 subdir = 'MCQMC2012PaperOutput';
 filename = ['TestcubMCon-' fun.funtype '-' param.measure  '-N'...
     int2str(test.nrep) 'd' int2str(param.dim)  ...

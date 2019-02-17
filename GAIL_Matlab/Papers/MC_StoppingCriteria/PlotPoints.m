@@ -1,24 +1,22 @@
 %% Plot of IID and Sobol Points
 function PlotPoints(bwcolor)
-gail.InitializeDisplay %clean up 
+gail.InitializeDisplay %clean up
 format long
 
 if ~nargin
-   bwcolor = 'color';
+  bwcolor = 'color';
 end
 
 if strcmp(bwcolor,'bw')
-   black = [0 0 0];
-   MATLABBlue = black;
-   MATLABOrange = black;
-   MATLABPurple = black;
-   MATLABGreen = black;
-   %MATLABCyan = black;
+  black = [0 0 0];
+  MATLABBlue = black;
+  MATLABOrange = black;
+  MATLABPurple = black;
+  MATLABGreen = black;
+  %MATLABCyan = black;
 end
 
-  ME = MException('MyComponent:noSuchVariable', ...
-                           'Variable %s not found', 1);
-           throw(ME);
+
 %% Plot IID Random Points
 rng(2947)
 n = 64;
@@ -63,8 +61,8 @@ gail.save_eps('MC_StoppingCriteriaOutput', 'SSobolPoints');
 rng(47)
 xlattice = gail.lattice_gen(1,n,d);
 shift = rand(1,d);
-sxlat = mod(bsxfun(@plus,xlattice,shift),1); 
-figH = figure()
+sxlat = mod(bsxfun(@plus,xlattice,shift),1);
+figure
 plot(sxlat(:,1),sxlat(:,2),'.','color',MATLABGreen)
 xlabel('\(x_1\)')
 ylabel('\(x_2\)')

@@ -2,18 +2,18 @@ function CopyZipGAILRepoAndGoogleDrive(newpath,GoogleDrivePath,zipfilename,exclu
 % This script copies and combines files in both repository and GAIL's
 % Google drive to make a release zip package.
 %
-% newpath --- path to where the zip is created, e.g., 'E:\GAIL_2_2\' for
-% GAIL version 2.2
+% newpath --- path to where the zip is created, e.g., 'E:\GAIL_2_3\' for
+% GAIL version 2.3
 %
 % GoogleDrivePath --- where your Google drive path, e.g.,
 % 'E:\GoogleDrive\GAIL_Dev\'
 %
-% zipfilename --- the name of zip file, e.g., 'GAIL_2_2.zip' for GAIL 2.2
+% zipfilename --- the name of zip file, e.g., 'GAIL_2_3.zip' for GAIL 2.3
 %
 % excludefilelist --- name of an external file that contains the list of
-% files we want to exclude in the zip, e.g., 'exclude2_2.lst' for GAIL 2.2
+% files we want to exclude in the zip, e.g., 'exclude2_3.lst' for GAIL 2.3
 %
-% CopyZipGAILRepoAndGoogleDrive('E:\GAIL_2_2\','E:\GoogleDrive\GAIL_Dev\','GAIL_2_2.zip','exclude2_2.lst')
+% CopyZipGAILRepoAndGoogleDrive('E:\GAIL_2_3\','E:\GoogleDrive\GAIL_Dev\','GAIL_2_3.zip','exclude2_3.lst')
 
 GAILPATH = GAILstart(0); % Get the path of GAIL_Matlab
 GoogleDrivePath1 = horzcat(GoogleDrivePath,'GAIL_Matlab',filesep);
