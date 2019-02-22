@@ -1,0 +1,103 @@
+\def\Ignore#1{}\def\notesupp#1{}\providecommand{\HickernellFJ}{Hickernell\xspace}\def\Ignore#1{}\def\notesupp#1{}\providecommand{\HickernellFJ}{Hickernell\xspace}
+\begin{thebibliography}{10}
+\providecommand{\url}[1]{{#1}}
+\providecommand{\urlprefix}{URL }
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{DOI~\discretionary{}{}{}#1}\else
+  \providecommand{\doi}{DOI~\discretionary{}{}{}\begingroup
+  \urlstyle{rm}\Url}\fi
+
+\bibitem{BriEtal18a}
+Briol, F.X., Oates, C.J., Griolami, M., Osborne, M.A., Sejdinovic, D.:
+  Probabilistic integration: A role in statistical computation?
+\newblock Statist.\ Sci.  (2018+).
+\newblock To appear
+
+\bibitem{CooNuy16a}
+Cools, R., Nuyens, D. (eds.): {M}onte {C}arlo and Quasi-{M}onte {C}arlo
+  Methods: {MCQMC}, {L}euven, {B}elgium, {A}pril 2014, \emph{Springer
+  Proceedings in Mathematics and Statistics}, vol. 163. Springer-Verlag, Berlin
+  (2016)
+
+\bibitem{DiaconisBayesian}
+Diaconis, P.: Bayesian numerical analysis.
+\newblock Statistical decision theory and related topics IV, Papers from the
+  4th Purdue symp., West Lafayette, Indiana 1986, p. 163–175 (1988)
+
+\bibitem{DicEtal14a}
+Dick, J., Kuo, F., Sloan, I.H.: High dimensional integration --- the
+  {Q}uasi-{M}onte {C}arlo way.
+\newblock Acta Numer. \textbf{22}, 133--288 (2013).
+\newblock \doi{10.1017/S0962492913000044}
+
+\bibitem{Gen93}
+Genz, A.: Comparison of methods for the computation of multivariate normal
+  probabilities.
+\newblock Computing Science and Statistics \textbf{25}, 400 -- 405 (1993)
+
+\bibitem{Hic96a}
+\HickernellFJ, F.J.: Quadrature error bounds with applications to lattice
+  rules.
+\newblock SIAM J. Numer.\ Anal. \textbf{33}, 1995--2016 (1996).
+\newblock Corrected printing of Sections 3-6 in ibid., {\bf 34} (1997),
+  853--866
+
+\bibitem{Hic17a}
+\HickernellFJ, F.J.: The trio identity for quasi-{M}onte {C}arlo error
+  analysis.
+\newblock In: P.~Glynn, A.~Owen (eds.) {M}onte {C}arlo and Quasi-{M}onte
+  {C}arlo Methods: {MCQMC}, {S}tanford, USA, {A}ugust 2016, Springer
+  Proceedings in Mathematics and Statistics, pp. 13--37. Springer-Verlag,
+  Berlin (2018).
+\newblock ArXiv:1702.01487
+
+\bibitem{HicJim16a}
+\HickernellFJ, F.J., {Jim\'enez Rugama}, {\relax Ll}.A.: Reliable adaptive
+  cubature using digital sequences.
+\newblock In: Cools and Nuyens  \cite{CooNuy16a}, pp. 367--383.
+\newblock ArXiv:1410.8615 [math.NA]
+
+\bibitem{HicNie03a}
+\HickernellFJ, F.J., Niederreiter, H.: The existence of good extensible rank-1
+  lattices.
+\newblock J. Complexity \textbf{19}, 286--300 (2003)
+
+\bibitem{JimHic16a}
+{Jim\'enez Rugama}, {\relax Ll}.A., \HickernellFJ, F.J.: Adaptive
+  multidimensional integration based on rank-1 lattices.
+\newblock In: Cools and Nuyens  \cite{CooNuy16a}, pp. 407--422.
+\newblock ArXiv:1411.1966
+
+\bibitem{KeisterExample}
+Keister, B.D.: Multidimensional quadrature algorithms.
+\newblock Computers in Physics \textbf{10}, 119--122 (1996)
+
+\bibitem{HagenBayes}
+O'Hagan, A.: Bayes-hermite quadrature.
+\newblock J. Statist. Plann. Inference \textbf{29}, 245–260 (1991)
+
+\bibitem{OlvEtal10a}
+Olver, F.W.J., Lozier, D.W., Boisvert, R.F., Clark, C.W., Dalhuis, A.B.O.:
+  Digital library of mathematical functions (2018).
+\newblock \urlprefix\url{http://dlmf.nist.gov/}
+
+\bibitem{RasmussenBayesian}
+Rasmussen, C.E., Ghahramani., Z.: Bayesian monte carlo.
+\newblock Advances in Neural Information Processing Systems pp. 489--496 (2003)
+
+\bibitem{RasWil06a}
+Rasmussen, C.E., Williams, C.: Gaussian Processes for Machine Learning.
+\newblock MIT Press, Cambridge, Massachusetts (2006).
+\newblock (online version at {\tt http://www.gaussianprocess.org/gpml/})
+
+\bibitem{RiterAverage}
+Ritter, K.: Average-case analysis of numerical problems.
+\newblock Lecture Notes in Mathematics, Springer-Verlag, Berlin \textbf{vol.
+  1733}, 163–175 (2000)
+
+\bibitem{WahbaGCV}
+Wahba, G.: A comparison of gcv and gml for choosing the smoothing parameter in
+  the generalized spline smoothing problem.
+\newblock The Annals of Statistics \textbf{13}, 1378--1402 (1985)
+
+\end{thebibliography}
