@@ -196,8 +196,9 @@
 % Estimate the integral with integrand \(f(x) = x_1^2  x_2^2 x_3^2\)
 % in the hyperbox \(R^3\) where \(x_1\), \(x_2\) and \(x_3\) are normally distributed:
 
-  f = @(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2; hyperbox = [-inf(1,3);inf(1,3)];
-  q = cubSobol_g(f,hyperbox,'normal',1e-3,1e-3); exactsol = 1;
+  f = @(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2; 
+  hyperbox = [-inf(1,3);inf(1,3)]; exactsol = 1;
+  q = cubSobol_g(f,hyperbox,'normal',1e-3,1e-3, 'fudge',@(m) 10*2.^-m); 
   check = double(abs(exactsol-q) < max(1e-3,1e-3*abs(exactsol)))
 
 %%
@@ -240,9 +241,8 @@
 % with center \((0,0)\) and radius \(1\) with pure absolute error
 % \(10^{-5}\), where \(x = [x_1, x_2]\) is a vector.
 
-  f = @(x) x(:,1).^2+x(:,2).^2; hyperbox = [0,0,1];
+  f = @(x) x(:,1).^2+x(:,2).^2; hyperbox = [0,0,1]; exactsol = pi/2;
   q = cubSobol_g(f,hyperbox,'uniform ball','abstol',1e-4,'reltol',0); 
-  exactsol = pi/2;
   check = double(abs(exactsol-q) < 1e-4)
 
 %%
@@ -274,6 +274,10 @@
 %
 % <html>
 % <a href="help_integral_g.html">integral_g</a>
+% </html>
+%
+% <html>
+% <p><a href="help_cubBayesLattice_g.html">cubBayesLattice_g</a>
 % </html>
 %
 %% References

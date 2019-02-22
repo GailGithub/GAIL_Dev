@@ -187,8 +187,9 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 % Estimate the integral with integrand f(x) = x1.^2.*x2.^2.*x3.^2
 % in the interval R^3 where x1, x2 and x3 are normally distributed:
 %
-% >> f = @(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2; hyperbox = [-inf(1,3);inf(1,3)];
-% >> q = cubSobol_g(f,hyperbox,'normal',1e-3,1e-3); exactsol = 1;
+% >> f = @(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2; 
+% >> hyperbox = [-inf(1,3);inf(1,3)]; exactsol = 1;
+% >> q = cubSobol_g(f,hyperbox,'normal',1e-3,1e-3, 'fudge',@(m) 10*2.^-m); 
 % >> check = double(abs(exactsol-q) < max(1e-3,1e-3*abs(exactsol)))
 % check = 1
 %
@@ -198,7 +199,8 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 % interval [-1,2)^2:
 %
 % >> f = @(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [-ones(1,2);2*ones(1,2)];
-% >> q = cubSobol_g(f,hyperbox,'uniform',1e-3,1e-2); exactsol = (sqrt(pi)/2*(erf(2)+erf(1)))^2;
+% >> q = cubSobol_g(f,hyperbox,'uniform',1e-3,1e-2); 
+% >> exactsol = (sqrt(pi)/2*(erf(2)+erf(1)))^2;
 % >> check = double(abs(exactsol-q) < max(1e-3,1e-2*abs(exactsol)))
 % check = 1
 %
@@ -207,8 +209,10 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 % Estimate the price of an European call with S0=100, K=100, r=sigma^2/2,
 % sigma=0.05 and T=1.
 %
-% >> f = @(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); hyperbox = [-inf(1,1);inf(1,1)];
-% >> q = cubSobol_g(f,hyperbox,'normal',1e-4,1e-2); price = normcdf(0.05)*100 - 0.5*100*exp(-0.05^2/2);
+% >> f = @(x) exp(-0.05^2/2)*max(100*exp(0.05*x)-100,0); 
+% >> hyperbox = [-inf(1,1);inf(1,1)];
+% >> q = cubSobol_g(f,hyperbox,'normal',1e-4,1e-2); 
+% >> price = normcdf(0.05)*100 - 0.5*100*exp(-0.05^2/2);
 % >> check = double(abs(price-q) < max(1e-4,1e-2*abs(price)))
 % check = 1
 %
@@ -227,8 +231,8 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 % Estimate the integral with integrand f(x) = x1^2+x2^2 over the disk with
 % center (0,0) and radius 1 with pure absolute error 1e-4, where x is a vector x = [x1 x2].
 %
-% >> f = @(x) x(:,1).^2+x(:,2).^2; hyperbox = [0,0,1];
-% >> q = cubSobol_g(f,hyperbox,'uniform ball','abstol',1e-4,'reltol',0); exactsol = pi/2;
+% >> f = @(x) x(:,1).^2+x(:,2).^2; hyperbox = [0,0,1]; exactsol = pi/2;
+% >> q = cubSobol_g(f,hyperbox,'uniform ball','abstol',1e-4,'reltol',0); 
 % >> check = double(abs(exactsol-q) < 1e-4)
 % check = 1
 %
