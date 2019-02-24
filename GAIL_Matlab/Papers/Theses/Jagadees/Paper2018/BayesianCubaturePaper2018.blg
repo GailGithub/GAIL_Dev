@@ -1,0 +1,50 @@
+This is BibTeX, Version 0.99d (TeX Live 2018)
+Capacity: max_strings=100000, hash_size=100000, hash_prime=85009
+The top-level auxiliary file: BayesianCubaturePaper2018.aux
+The style file: spmpsci.bst
+Database file #1: FJHown23.bib
+Database file #2: FJH23.bib
+Warning--entry type for "Nuy17a" isn't style-file defined
+--line 558 of file FJH23.bib
+You've used 25 entries,
+            2945 wiz_defined-function locations,
+            855 strings with 9957 characters,
+and the built_in function-call counts, 11989 in all, are:
+= -- 954
+> -- 377
+< -- 13
++ -- 153
+- -- 126
+* -- 729
+:= -- 1572
+add.period$ -- 39
+call.type$ -- 25
+change.case$ -- 144
+chr.to.int$ -- 0
+cite$ -- 25
+duplicate$ -- 1071
+empty$ -- 1106
+format.name$ -- 151
+if$ -- 2577
+int.to.chr$ -- 0
+int.to.str$ -- 25
+missing$ -- 255
+newline$ -- 118
+num.names$ -- 61
+pop$ -- 455
+preamble$ -- 2
+purify$ -- 108
+quote$ -- 0
+skip$ -- 301
+stack$ -- 0
+substring$ -- 534
+swap$ -- 584
+text.length$ -- 11
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 89
+warning$ -- 0
+while$ -- 85
+width$ -- 27
+write$ -- 272
+(There was 1 warning)
