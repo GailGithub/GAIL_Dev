@@ -1,1 +1,4 @@
-To be finished
+YZThesis.tex --- Latex file for Yizhi Zhang's PhD Thesis
+abstract.tex --- Latex file for the abstract
+
+matlab and mathematica code folder contains all necessary .m codes and .nb codes used in the thesis writing process
