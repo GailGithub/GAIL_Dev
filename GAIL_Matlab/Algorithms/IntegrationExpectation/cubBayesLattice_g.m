@@ -159,7 +159,7 @@ classdef cubBayesLattice_g < handle
     stopAtTol = true; %automatic mode: stop after meeting the error tolerance
     arbMean = true; %by default use zero mean algorithm
     stopCriterion = 'MLE'; % Available options {'MLE', 'GCV', 'full'}
-    mmin = 10; %min number of samples to start with = 2^mmin
+    mmin = 4;  %10; %min number of samples to start with = 2^mmin
     mmax = 22; %max number of samples allowed = 2^mmax
   end
   
@@ -242,7 +242,7 @@ classdef cubBayesLattice_g < handle
       temp = cubBayesLattice_g.gpuArray_(zeros(length_mvec,1));
       obj.errorBdAll = temp;
       obj.muhatAll = temp;
-      obj.aMLEAll = temp;
+      obj.aMLEAll = cubBayesLattice_g.gpuArray_(zeros(length_mvec,obj.dim));
       obj.lossMLEAll = temp;
       obj.timeAll = temp;
       obj.dscAll = temp;
@@ -414,19 +414,90 @@ classdef cubBayesLattice_g < handle
         end
       else
         if 1
-          % bounded search
-          lnaRange = [-5,5];
-          lnaMLE = fminbnd(@(lna) ...
-            ObjectiveFunction(obj, exp(lna),xpts,ftilde), ...
-            lnaRange(1),lnaRange(2),optimset('TolX',1e-2));
-          thetaOpt = exp(lnaMLE);
-          [loss,Lambda,Lambda_ring,RKHSnorm] = ObjectiveFunction(obj, thetaOpt,xpts,ftilde);
+          % Gradient descent to find opt shape param
+          thetaOpt = fmin_adam(...
+            @(phi)dObjectiveFunction(obj, phi,xpts,ftilde), ...
+                ones(1,obj.dim), 0.01);
+          [loss,Lambda,Lambda_ring,RKHSnorm] = ObjectiveFunction(obj, ...
+            thetaOpt,xpts,ftilde);
+
+          if 0
+            % parameter optimization using steepest descent
+            lnaRange = -5:0.1:5;
+            lossD = zeros(1, length(lnaRange));
+            lossMLE = zeros(1, length(lnaRange));
+            lossMLE_ = zeros(1, length(lnaRange));
+            trace_part = zeros(1, length(lnaRange));
+            deriv_part_num = zeros(1, length(lnaRange));
+            deriv_part_den = zeros(1, length(lnaRange));
+            loss1 = zeros(1, length(lnaRange));
+            for j=1:length(lnaRange)
+              a = exp(lnaRange(j));
+              % , Lambda,trace_part(j),deriv_part_num(j),deriv_part_den(j),loss1(j)
+              [lossMLE_(j),lossD(j)] = dObjectiveFunction(obj,a,xpts,ftilde);
+              [lossMLE(j)] = ObjectiveFunction(obj, a,xpts,ftilde);
+            end
+          end
+          
+          if 0
+            % simple steepses descent
+            lntheta = 2;
+            maxiter = 1000;
+            lnthetaVec = zeros(1, maxiter); 
+            for iter=1:maxiter
+              theta = exp(lntheta);
+              [~, grad] = dObjectiveFunction(obj,theta,xpts,ftilde);
+              lntheta = lntheta - 0.1*grad;
+              lnthetaVec(iter) = lntheta;
+            end
+            figure; plot(lnthetaVec)
+          end
+
+          if 0
+            figure(123)
+            semilogy(lnaRange, (trace_part), lnaRange, (loss1 - min(loss1)))
+            legend({'trace','loss1'},'Location','best')
+            
+            figure(124)
+            semilogy(lnaRange, abs(trace_part), lnaRange, deriv_part_num, ...
+              lnaRange, deriv_part_den)
+            legend({'trace','num','den'},'Location','best')
+            
+            figure(125)
+            semilogy(lnaRange, abs(trace_part), lnaRange, deriv_part_num, ...
+              lnaRange, deriv_part_den, lnaRange, deriv_part_num./deriv_part_den)
+            legend({'trace','num','den','deriv'},'Location','best')
+          end
+          
+          if 0
+            figure(126)
+            % Compare MLE loss vs derivative
+            % semilogy(lnaRange, (lossD - min(lossD)+1), lnaRange, (lossMLE - min(lossMLE)+1))
+            % legend({'lossD', 'lossMLE'},'Location','best')
+            
+            figure(127)
+            % Compare MLE loss vs derivative
+            plot(lnaRange, (lossD), lnaRange, (lossMLE))
+            legend({'lossD', 'lossMLE'},'Location','best')
+          end
+          
+          fprintf('');
         else
-          lnaMLE = fminsearch(@(lna) ...
-            ObjectiveFunction(obj, exp(lna),xpts,ftilde), ...
-            0,optimset('TolX',1e-2));
-          thetaOpt = exp(lnaMLE);
-          [loss,Lambda,Lambda_ring,RKHSnorm] = ObjectiveFunction(obj, thetaOpt,xpts,ftilde);
+          if 1
+            % bounded search
+            lnaRange = [-5,5];
+            lnaMLE = fminbnd(@(lna) ...
+              ObjectiveFunction(obj, exp(lna),xpts,ftilde), ...
+              lnaRange(1),lnaRange(2),optimset('TolX',1e-2));
+            thetaOpt = exp(lnaMLE);
+            [loss,Lambda,Lambda_ring,RKHSnorm] = ObjectiveFunction(obj, thetaOpt,xpts,ftilde);
+          else
+            lnaMLE = fminsearch(@(lna) ...
+              ObjectiveFunction(obj, exp(lna),xpts,ftilde), ...
+              0,optimset('TolX',1e-2));
+            thetaOpt = exp(lnaMLE);
+            [loss,Lambda,Lambda_ring,RKHSnorm] = ObjectiveFunction(obj, thetaOpt,xpts,ftilde);
+          end
         end
       end
       
@@ -476,7 +547,7 @@ classdef cubBayesLattice_g < handle
       obj.s_All(iter) = sqrt(RKHSnorm/n);
       obj.muhatAll(iter) = muhat;
       obj.errorBdAll(iter) = ErrBd;
-      obj.aMLEAll(iter) = thetaOpt;
+      obj.aMLEAll(iter, :) = thetaOpt;
       obj.lossMLEAll(iter) = loss;
       
       if obj.gaussianCheckEnable == true
@@ -485,8 +556,9 @@ classdef cubBayesLattice_g < handle
         CheckGaussianDensity(obj, ftilde, Lambda)
       end
       t_end=toc(tstart);
-      fprintf('thetaOpt=%1.3f, n=%d, ErrBd=%1.3e, time=%1.2f, absTol=%1.3e\n', ...
-        thetaOpt, n, ErrBd, t_end, obj.absTol);
+
+      fprintf('thetaOpt=%s, n=%d, ErrBd=%1.2e, time=%1.2e, absTol=%1.2e\n', ...
+        mat2str(thetaOpt, 3), n, ErrBd, t_end, obj.absTol);
       
       if 2*ErrBd <= ...
           max(obj.absTol,obj.relTol*abs(muminus)) + max(obj.absTol,obj.relTol*abs(muplus))
@@ -507,7 +579,8 @@ classdef cubBayesLattice_g < handle
       
       n = length(ftilde);
       %[Lambda, Lambda_ring] = obj.kernel(xun,b,a,obj.avoidCancelError,obj.kernType, obj.debugEnable);
-      [Lambda, Lambda_ring] = obj.kernel(xun,obj.order,a,obj.avoidCancelError, obj.kernType,obj.debugEnable);
+      [Lambda, Lambda_ring] = obj.kernel(xun,obj.order,a,obj.avoidCancelError, ...
+                              obj.kernType,obj.debugEnable);
       
       % compute RKHSnorm
        temp = abs(ftilde(Lambda~=0).^2)./(Lambda(Lambda~=0)) ;
@@ -551,35 +624,73 @@ classdef cubBayesLattice_g < handle
       end
     end
     
-    function [loss,Lambda,trace_part,deriv_part_num,deriv_part_den] = dObjectiveFunction(obj,a,xun,ftilde)
-            
+    % ,Lambda,trace_part,deriv_part_num,deriv_part_den, loss1
+    % computes Gradient of the objective function
+    function [lossObj,lossD] = dObjectiveFunction(obj,a,xun,ftilde)
+      
+      if length(a) > 1
+        if size(a,1) > size(a,2)
+          a = a';  % we need row vector
+        end
+      end
       n = length(ftilde);
-      [dLambda, dLambda_ring] = obj.dKernel(xun,obj.order,a,obj.avoidCancelError, ...
+      [dLambda, Lambda] = obj.dKernel(xun,obj.order,a,obj.avoidCancelError, ...
         obj.kernType,obj.debugEnable);
       
-      [Lambda, Lambda_ring] = obj.kernel(xun,obj.order,a,obj.avoidCancelError, ...
-        obj.kernType,obj.debugEnable);
-
-      trace_part = sum(dLambda(Lambda~=0)./Lambda(Lambda~=0))/n;
-      ztilde = ftilde; ztilde(1) = 0;
+%       [Lambda, Lambda_ring] = obj.kernel(xun,obj.order,a,obj.avoidCancelError, ...
+%         obj.kernType,obj.debugEnable);
+%       if abs(sum(Lambda_-Lambda)) > 1E-5
+%         fprintf('')
+%       end
 
       % ignore all zero eigenvalues
-      % compute RKHSnorm
-      temp = abs(ftilde(Lambda~=0).^2)./(Lambda(Lambda~=0)) ;
-      deriv_part_num = abs((ztilde(Lambda~=0).^2).*dLambda)./(Lambda(Lambda~=0).^2);
-      
-      % default: MLE
-      if obj.arbMean==true
-        deriv_part_num = sum(deriv_part_num(2:end));
-        deriv_part_den = sum(temp(2:end));
+      if obj.GCV==true
+        % GCV
+        temp_gcv = abs(ftilde(Lambda~=0)./(Lambda(Lambda~=0))).^2 ;
+        % error("Not implemented")
+        deriv_part_num = abs(...
+          bsxfun(@times, ...
+          (ftilde(Lambda~=0).^2)./(Lambda(Lambda~=0).^3), dLambda(Lambda~=0, :)));
+        if obj.arbMean==true
+          deriv_part_num = sum(deriv_part_num(2:end, :), 1);
+          deriv_part_den = sum(temp_gcv(2:end));
+        else
+          deriv_part_num = sum(deriv_part_num(1:end, :), 1);
+          deriv_part_den = sum(temp_gcv);
+        end
+        deriv_part = deriv_part_num/deriv_part_den;
+        det_part_num = sum(...
+          bsxfun(@times, ...
+          dLambda(Lambda~=0, :), (Lambda(Lambda~=0).^2)), 1);
+        det_part = det_part_num/sum(1./Lambda(Lambda~=0));
+        lossD = -deriv_part - det_part;
+        lossGCV = log(deriv_part_den) - 2*log(sum(1./Lambda(Lambda~=0)));
+        lossObj = lossGCV;
       else
-        deriv_part_num = sum(deriv_part_num(1:end));
-        deriv_part_den = sum(temp);
+        % trace_part = sum(dLambda(Lambda~=0)./Lambda(Lambda~=0))/n;
+        trace_part = sum(bsxfun(@rdivide, dLambda(Lambda~=0,:), Lambda(Lambda~=0)), 1)/n;
+
+        % default: MLE
+        temp = abs(ftilde(Lambda~=0).^2)./(Lambda(Lambda~=0)) ;
+        % deriv_part_num = abs((ftilde(Lambda~=0).^2).*dLambda(Lambda~=0))./(Lambda(Lambda~=0).^2);
+        deriv_part_num = abs(...
+          bsxfun(@times, ...
+          (ftilde(Lambda~=0).^2)./(Lambda(Lambda~=0).^2), dLambda(Lambda~=0, :)));
+        if obj.arbMean==true
+          deriv_part_num = sum(deriv_part_num(2:end, :), 1);
+          deriv_part_den = sum(temp(2:end));
+        else
+          deriv_part_num = sum(deriv_part_num(1:end, :), 1);
+          deriv_part_den = sum(temp);
+        end
+
+        deriv_part = deriv_part_num/deriv_part_den;
+        lossD = trace_part - deriv_part;
+        lossDet = sum(log(Lambda(Lambda~=0)))/n;
+        lossMLE = lossDet + log(deriv_part_den);
+        lossObj = lossMLE;
       end
 
-      deriv_part = deriv_part_num/deriv_part_den;
-
-      loss = trace_part + deriv_part;
     end
         
     % Plots the transformed and scaled integrand values as normal plots.
@@ -857,16 +968,20 @@ classdef cubBayesLattice_g < handle
     % Computes modified kernel Km1 = K - 1
     % Useful to avoid cancellation error in the computation of (1 - n/\lambda_1)
     function [Km1, K] = kernel_t(aconst, Bern)
-      theta = aconst;
       d = size(Bern, 2);
+      if length(aconst) == 1
+        theta = ones(1,d)*aconst;
+      else
+        theta = aconst;
+      end
       
-      Kjm1 = theta*Bern(:,1);  % Kernel at j-dim minus One
+      Kjm1 = theta(1)*Bern(:,1);  % Kernel at j-dim minus One
       Kj = 1 + Kjm1;  % Kernel at j-dim
       
       for j=2:d
         Kjm1_prev = Kjm1; Kj_prev = Kj;  % save the Kernel at the prev dim
         
-        Kjm1 = theta*Bern(:,j).*Kj_prev + Kjm1_prev;
+        Kjm1 = theta(j)*Bern(:,j).*Kj_prev + Kjm1_prev;
         Kj = 1 + Kjm1;
       end
       
@@ -893,9 +1008,9 @@ classdef cubBayesLattice_g < handle
     end
     
     % derivative of the kernel w.r.t. shape parameter
-    function [Lambda, Lambda_ring] = dKernel(xun,order,a,avoidCancelError,...
+    function [dLambda, Lambda] = dKernel(xun,order,a,avoidCancelError,...
         kernType,debugEnable)
-           
+      
       if kernType==1
         b_order = order*2; % Bernoulli polynomial order as per the equation
         constMult = -(-1)^(b_order/2)*((2*pi)^b_order)/factorial(b_order);
@@ -915,40 +1030,42 @@ classdef cubBayesLattice_g < handle
         constMult = 1;
       end
       
+      [~, dim] = size(xun);
       if avoidCancelError
-        [~, dim] = size(xun);
         temp = kernelFunc(xun);
         % Computes C1m1 = C1 - 1
         % C1_new = 1 + C1m1 indirectly computed in the process
-        [C1m1, C1_alt] = cubBayesLattice_g.kernel_t(a*constMult, temp);
+        [C1m1] = cubBayesLattice_g.kernel_t(a*constMult, temp);
         % eigenvalues must be real : Symmetric pos definite Kernel
         
-        partb = -(1/dim)*sum(1./(1+a*constMult*temp));
-        C1m1 = (dim/a)*(1 + C1m1 + partb + C1m1*partb);
-        Lambda_ring = real(fft(C1m1));
-        
-        Lambda = Lambda_ring;
-        Lambda(1) = Lambda_ring(1) + length(Lambda_ring);
-        % C1 = prod(1 + (a)*constMult*bernPoly(xun),2);  % direct computation
-        % Lambda = real(fft(C1));
-        
-        if debugEnable == true
-          % eigenvalues must be real : Symmetric pos definite Kernel
-          Lambda_direct = real(fft(C1_alt)); % Note: fft output unnormalized
-          if sum(abs(Lambda_direct-Lambda)) > 1
-            fprintf('Possible error: check Lambda_ring computation')
+        if length(a) > 1
+          % different theta per dimension
+          try
+            partb = 1 - 1./(1+bsxfun(@times,a*constMult,temp));
+          catch mErr
+            error('*** cubBayesLattice_g: Error when evaluating partb.');
           end
+          % dC1 = (1./a)*(1 + C1m1).*partb;
+          dC1 = bsxfun(@times, (1./a), ...
+            bsxfun(@times, (1 + C1m1), partb));
+        else
+          % common theta
+          partb = -(1/dim)*sum(1./(1+a*constMult*temp), 2);
+          dC1 = (dim/a)*(1 + C1m1 + partb + C1m1.*partb);
         end
+        dLambda = real(fft(dC1));
+        Lambda = real(fft(1 + C1m1));
+        
       else
         % direct approach to compute first row of the kernel Gram matrix
-        temp = (a)*constMult*kernelFunc(xun);
-        C1 = prod(1 + temp,2);
-        C1 = (dim/a)*C1*(1 - (1/dim)*sum(1./(1+temp)));
+        temp_ = bsxfun(@times, (a)*constMult, kernelFunc(xun));
+        C1 = prod(1 + temp_, 2);
+        dC1 = (dim/a)*C1.*(1 - (1/dim)*sum(1./(1+temp_), 2));
         
         % matlab's builtin fft is much faster and accurate
         % eigenvalues must be real : Symmetric pos definite Kernel
+        dLambda = real(fft(dC1));
         Lambda = real(fft(C1));
-        Lambda_ring = 0;
       end
       
     end
@@ -1001,7 +1118,7 @@ classdef cubBayesLattice_g < handle
         end
       else
         % direct approach to compute first row of the kernel Gram matrix
-        C1 = prod(1 + (a)*constMult*kernelFunc(xun),2);
+        C1 = prod(1 + bsxfun(@times, (a)*constMult, kernelFunc(xun)),2);
         % matlab's builtin fft is much faster and accurate
         % eigenvalues must be real : Symmetric pos definite Kernel
         Lambda = real(fft(C1));
