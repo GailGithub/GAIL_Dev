@@ -159,7 +159,7 @@ classdef cubBayesLattice_g < handle
     stopAtTol = true; %automatic mode: stop after meeting the error tolerance
     arbMean = true; %by default use zero mean algorithm
     stopCriterion = 'MLE'; % Available options {'MLE', 'GCV', 'full'}
-    mmin = 4;  %10; %min number of samples to start with = 2^mmin
+    mmin = 10; %min number of samples to start with = 2^mmin
     mmax = 22; %max number of samples allowed = 2^mmax
   end
   
@@ -415,9 +415,9 @@ classdef cubBayesLattice_g < handle
       else
         if 1
           % Gradient descent to find opt shape param
-          thetaOpt = fmin_adam(...
-            @(phi)dObjectiveFunction(obj, phi,xpts,ftilde), ...
-                ones(1,obj.dim), 0.01);
+          [thetaOpt, fval, exitflag, output] = fmin_adam(...
+            @(phi)dObjectiveFunctionBatch(obj, phi,xpts,ftilde), ...
+                ones(1,obj.dim), 0.1);
           [loss,Lambda,Lambda_ring,RKHSnorm] = ObjectiveFunction(obj, ...
             thetaOpt,xpts,ftilde);
 
@@ -560,6 +560,9 @@ classdef cubBayesLattice_g < handle
       fprintf('thetaOpt=%s, n=%d, ErrBd=%1.2e, time=%1.2e, absTol=%1.2e\n', ...
         mat2str(thetaOpt, 3), n, ErrBd, t_end, obj.absTol);
       
+      % if ~isreal(ErrBd) || (RKHSnorm < 0) 
+      %  fprintf('');
+      % end
       if 2*ErrBd <= ...
           max(obj.absTol,obj.relTol*abs(muminus)) + max(obj.absTol,obj.relTol*abs(muplus))
         if obj.errorBdAll(iter)==0
@@ -624,6 +627,25 @@ classdef cubBayesLattice_g < handle
       end
     end
     
+    function [lossObj,lossD] = dObjectiveFunctionBatch(obj,a,xun,ftilde)
+      [len, dim] = size(xun);
+      if len > 1024
+        step = len/1024;
+        offset = randi(step);
+        xun_ = xun(offset:step:end, :);
+        ftilde_ = fft(obj.ff(xun_));
+        xun_ = xun(1:step:end, :);
+        % fn = obj.ff(xun_);
+        % figure; plot(abs(ftilde));
+        % figure; plot(abs(ftilde_));
+      else
+        xun_ = xun;
+        ftilde_ = ftilde;
+      end
+      [lossObj,lossD] = dObjectiveFunction(obj,a,xun_,ftilde_);
+
+    end
+
     % ,Lambda,trace_part,deriv_part_num,deriv_part_den, loss1
     % computes Gradient of the objective function
     function [lossObj,lossD] = dObjectiveFunction(obj,a,xun,ftilde)
@@ -663,7 +685,7 @@ classdef cubBayesLattice_g < handle
           bsxfun(@times, ...
           dLambda(Lambda~=0, :), (Lambda(Lambda~=0).^2)), 1);
         det_part = det_part_num/sum(1./Lambda(Lambda~=0));
-        lossD = -deriv_part - det_part;
+        lossD = -2*deriv_part + 2*det_part;
         lossGCV = log(deriv_part_den) - 2*log(sum(1./Lambda(Lambda~=0)));
         lossObj = lossGCV;
       else

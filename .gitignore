@@ -27,7 +27,7 @@ GAIL_Matlab/Documentation/html/helpsearch*
 GAIL_Matlab/ThirdParty
 
 *.eps 
-*.png 
+*.png
 *.aux
 *.log
 *.gz
@@ -39,3 +39,8 @@ GAIL_Matlab/ThirdParty
 *.toc 
 *.pdf
 *.dvi
+GAIL_Matlab/OutputFiles/
+GAIL_Matlab/Papers/Theses/Jagadees/dirk_nuyens/
+GAIL_Matlab/Papers/Theses/Jagadees/InvLaplace/
+
+GAIL_Matlab/Papers/Theses/Jagadees/GradDescent/
