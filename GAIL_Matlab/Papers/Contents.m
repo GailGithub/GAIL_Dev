@@ -1,7 +1,7 @@
 % PAPERS
 %
 % Folders
-%   MC_StoppingCriteria - 
+%   MC_StoppingCriteria - Monte Carlo automatic stopping criteria
 %   MCQMC2012Paper      - code of examples in MCQMC paper
 %   OldPapers           - directory for archiving work of old papers 
 %   Paper_cubLattice_g  - code of examples in cubLattice_g paper
