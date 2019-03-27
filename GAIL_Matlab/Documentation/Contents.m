@@ -19,8 +19,8 @@
 %   demolist                  - GAIL Demos
 %   funclist                  - Functions
 %   GAIL                      - Guaranteed Automatic Integration Library (GAIL) Version 2.3 Documentation
-%   help_cubLattice_g         - cubLattice_g
 %   help_cubBayesLattice_g    - cubBayesLattice_g
+%   help_cubLattice_g         - cubLattice_g
 %   help_cubMC_CLT            - cubMC_CLT
 %   help_cubMC_g              - cubMC_g
 %   help_cubSobol_g           - cubSobol_g
@@ -33,6 +33,10 @@
 %   help_meanMC_g             - meanMC_g
 %   help_readme               - Readme
 %   help_ReleaseNotes         - Release Notes 
+%
+% Tools
+%   LatexInterpreter          - Set the Latex interpreter
+%   publishMathJax            - Publish MATLAB scripts using the XSL file
 %
 % Folders
 %   html                      - folder of all html files

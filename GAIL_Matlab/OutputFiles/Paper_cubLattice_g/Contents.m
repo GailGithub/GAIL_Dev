@@ -19,5 +19,3 @@
 %
 %   Paper_cubLattice_g_TestKeister-2015-03-07-17-17-37.mat - data used to plot
 
-% 
-
