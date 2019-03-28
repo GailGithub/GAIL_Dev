@@ -16,7 +16,9 @@ GAIL is a suite of algorithms for integration problems in one and many dimension
 
 ## News
 
-* <span style="color:red">GAIL version 2.2 is released on August 28, 2017 (Chinese Valentine's Day) </span>
+* <span style="color:red">GAIL version 2.3 is to be released in April, 2019 </span>
+
+* GAIL version 2.2 is released on August 28, 2017 (Chinese Valentine's Day)
 
 * <a href="https://science.iit.edu/sites/science/files/elements/science/pdfs/SciLetters-W2016-Newsletter.pdf">Press about GAIL: Reliable Mathematical Software</a>
 
@@ -96,6 +98,11 @@ quasi-Monte Carlo methods for Cubature</a></em>, Ian Sloan's 80th Birthday Fetsc
 Sou-Cheng T. Choi and Fred J. Hickernell, <em>IIT MATH-573 Reliable Mathematical Software</em> [Course Slides], Illinois Institute of Technology, Chicago, IL, 2013.  (<a href ="http://mypages.iit.edu/~schoi32/MATH573Slides.pdf">slides</a>)
 
 ### Presentations and Slides
+
+2018
+
+*  <a href= "http://homepages.math.uic.edu/~xtong20/talks/Xin_SIAMAN18.pdf">_A Locally Adaptive Algorithm for Global Minimization of Univariate Functions_</a>
+
 2017
 
 *  <a href="https://www.slideshare.net/fjhickernell">_Fred Hickernell's slideshare_</a>
