@@ -4,9 +4,10 @@ function guaranteed_plots(varargin)
 close all
 % if .mat file is not given then use the below files
 if nargin < 1
-  myGAIL_path = GAILstart(0);
-  matFilePath = [myGAIL_path, filesep, ...
-    'Papers\Thesis\Jagadees\Paper2018\figures\'];
+  % myGAIL_path = GAILstart(0);
+  % matFilePath = [myGAIL_path, filesep, ...
+  %  'Papers\Thesis\Jagadees\Paper2018\figures\'];
+  matFilePath = 'figures\';
   timestamp = '2018-Sep-6';
   
   filenames_ = {...
