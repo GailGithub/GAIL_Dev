@@ -98,7 +98,18 @@ if (isequal(fun, 'defaults'))
       'UseParallel', false);
    return;
 end
-
+% if (isequal(fun, 'defaults'))
+%    % x = struct('Display', 'final', ...
+%    x = struct('Display', 'none', ...
+%       'GradObj', 'on', ...
+%       'DerivativeCheck', 'off', ...
+%       'MaxFunEvals', 1e4, ...
+%       'MaxIter', 1e6, ...
+%       'TolFun', 1e-4, ...
+%       'TolX', 1e-2, ...
+%       'UseParallel', false);
+%    return;
+% end
 
 %% - Check arguments and assign defaults
 
@@ -294,7 +305,7 @@ while true
          break;
       end
       
-      if (optimValues.stepsize < options.TolX)
+      if (optimValues.stepsize < options.TolX) && (fImprEst < options.TolFun / nEpochSize)  %Jag
          optimValues.exitflag = 2;
          break;
       end
