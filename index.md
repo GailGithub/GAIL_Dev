@@ -57,9 +57,9 @@ Rathinavel, Lluis Antoni Jimenez Rugama, Xin Tong, Kan Zhang, Yizhi Zhang, and X
 * Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Xin Tong, <em><a href="http://www.sciencedirect.com/science/article/pii/S0885064X16301108">Local adaption for approximation and minimization of univariate functions</a></em>, Journal of Complexity, *40*, pp. 17-33, 2017.
 
 * F. J. Hickernell, Ll. A. Jim\'enez Rugama, and D. Li, <em><a href="https://arxiv.org/abs/1702.01491">Adaptive 
-quasi-Monte Carlo methods for Cubature</a></em>, Ian Sloan's 80th Birthday Fetschrift, to appear.
+quasi-Monte Carlo methods for Cubature</a></em>, Ian Sloan's 80th Birthday Fetschrift.
 
-* F. J. Hickernell, <em><a href="https://arxiv.org/abs/1702.01487">The Trio Identity for Quasi-Monte Carlo Error</a></em>, Monte Carlo and Quasi-Monte Carlo Methods: MCQMC, Stanford, USA, August 2016 (P. Glynn and A. Owen, eds.), to appear.
+* F. J. Hickernell, <em><a href="https://arxiv.org/abs/1702.01487">The Trio Identity for Quasi-Monte Carlo Error</a></em>, Monte Carlo and Quasi-Monte Carlo Methods: MCQMC, Stanford, USA, August 2016 (P. Glynn and A. Owen, eds.).
 
 
 2016

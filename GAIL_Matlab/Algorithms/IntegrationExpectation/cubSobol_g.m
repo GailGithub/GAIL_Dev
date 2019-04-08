@@ -334,8 +334,8 @@ end
 %------------------------------------------------------------------------------
 
 l_star = out_param.mmin - r_lag; % Minimum gathering of points for the sums of DFWT
-omg_circ = @(m) 2.^(-m);
-omg_hat = @(m) out_param.fudge(m)/((1+out_param.fudge(r_lag))*omg_circ(r_lag));
+omg_circ = @(m) 2.^(-m)*10;
+omg_hat = @(m) out_param.fudge(m)/((1+out_param.fudge(r_lag))*omg_circ(r_lag))*10;
 
 % intialize CV param, redefine target function
 mu=0;beta=0;
