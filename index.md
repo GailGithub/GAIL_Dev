@@ -52,12 +52,17 @@ Rathinavel, Lluis Antoni Jimenez Rugama, Xin Tong, Kan Zhang, Yizhi Zhang, and X
 
 ### Papers and Reports
 
+2018 
+
+* Lluís Antoni Jiménez Rugama, Laurent Gilquin, <em><a href="https://link.springer.com/article/10.1007/s11222-017-9759-1">Reliable error estimation for Sobol’ indices</a></em>, Statistics and Computing, Volume 28, Number 4, Page 725, 2018.
+
+* F. J. Hickernell, Ll. A. Jim\'enez Rugama, and D. Li, <em><a href="https://link.springer.com/chapter/10.1007/978-3-319-72456-0_27">Adaptive 
+quasi-Monte Carlo methods for Cubature</a></em>, Ian Sloan's 80th Birthday Fetschrift.
+
 2017 
 
 * Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Xin Tong, <em><a href="http://www.sciencedirect.com/science/article/pii/S0885064X16301108">Local adaption for approximation and minimization of univariate functions</a></em>, Journal of Complexity, *40*, pp. 17-33, 2017.
 
-* F. J. Hickernell, Ll. A. Jim\'enez Rugama, and D. Li, <em><a href="https://arxiv.org/abs/1702.01491">Adaptive 
-quasi-Monte Carlo methods for Cubature</a></em>, Ian Sloan's 80th Birthday Fetschrift.
 
 * F. J. Hickernell, <em><a href="https://arxiv.org/abs/1702.01487">The Trio Identity for Quasi-Monte Carlo Error</a></em>, Monte Carlo and Quasi-Monte Carlo Methods: MCQMC, Stanford, USA, August 2016 (P. Glynn and A. Owen, eds.).
 
