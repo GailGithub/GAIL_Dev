@@ -146,7 +146,7 @@ Xin Tong, "A Guaranteed, Adaptive, Automatic Algorithm for Univariate
 Function Minimization," MS thesis, Illinois Institute of Technology, 2014.
 (describes deprecated funmin01_g.m)
 
-R. Jagadeeswaran and F. J. Hickernell,  "Fast Adaptive Bayesian cubature 
+R. Jagadeeswaran and F. J. Hickernell, "Fast Adaptive Bayesian cubature 
 using Lattice sampling", 2018+, In review
 (describes cubBayesLattice_g.m)
 
