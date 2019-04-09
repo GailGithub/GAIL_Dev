@@ -83,8 +83,9 @@ Fred J. Hickernell, Lluis Antoni Jimenez Rugama, and Da Li, "Adaptive
 quasi-Monte Carlo methods, 2017+, submitted for publication, 
 arXiv:1702.01491 [math.NA].
 
-Fred J. Hickernell, Martha Razo, and Sunny Yun, "Reliable Adaptive
-Numerical Integration", 2015+, working.
+Yizhi Zhang, Guaranteed Adaptive Automatic Algorithms for 
+Univariate Integration: Methods, Costs and Implementations, PhD
+Thesis, Illinois Institute of Technology, 2018.
 (describes integral_g.m)
 
 Lan Jiang, Guaranteed Adaptive Monte Carlo Methods for Estimating

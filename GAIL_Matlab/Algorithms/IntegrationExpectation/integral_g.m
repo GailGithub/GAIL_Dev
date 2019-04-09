@@ -124,7 +124,7 @@ function [q,out_param] = integral_g(varargin)
 %
 %   [1] Yizhi Zhang, "Guaranteed Adaptive Automatic Algorithms for 
 %   Univariate Integration: Methods, Costs and Implementations," PhD
-%   thesis, Illinois Institute of Technology, 2018.
+%   Thesis, Illinois Institute of Technology, 2018.
 %
 %   [2] Nick Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
 %   Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic Algorithms:
