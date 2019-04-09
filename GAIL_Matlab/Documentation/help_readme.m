@@ -105,7 +105,7 @@
 % Fred J. Hickernell, Sou-Cheng T. Choi, Lan Jiang, and Lluis Antoni Jimenez
 % Rugama, "Monte Carlo simulation, automatic stopping criteria for", Wiley
 % StatsRef: Statistics Reference Online, pp. 1-7, 2018.
-% (review of cubMC_g, cubLattice_g, and cubSobol_g)
+% (review of *cubMC_g*, *cubLattice_g*, and *cubSobol_g*)
 % 
 % Daniel S. Katz, Sou-Cheng T. Choi, Hilmar Lapp, Ketan Maheshwari,
 % Frank Loffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr,
@@ -180,7 +180,7 @@
 %% General Usage Notes
 % 
 % 
-% GAIL version 2.3 includes the following eight algorithms:
+% GAIL version 2.3 includes the following algorithms:
 % 
 % 1.  funappx_g: One-dimensional function approximation on bounded interval
 % 

@@ -242,7 +242,7 @@ function [Q,out_param] = cubMC_g(varargin)
 % check = 1
 %
 %
-%   See also FUNAPPX_G, INTEGRAL_G, MEANMC_G, CUBLATTICE_G, CUBSOBOL_G
+%   See also FUNAPPX_G, INTEGRAL_G, MEANMC_G, CUBLATTICE_G, CUBSOBOL_G, CUBBAYESLATTICE_G
 %
 %  References
 %

@@ -21,10 +21,11 @@
 %  function handle that accepts a positive integer input n and returns an
 %  n x 1 vector of IID instances of the random variable Y.
 %
-% tmu = *meanMC_g*(Yrand,abstol,reltol,alpha) estimates the mean of a
-%  random variable Y to within a specified generalized error tolerance
-%  tolfun with guaranteed confidence level 1-alpha using all ordered parsing
-%  inputs abstol, reltol, alpha, fudge, nSig, n1, tbudget, nbudget.
+% tmu = *meanMC_g*(Yrand,abstol,reltol,alpha,fudge,nSig,n1,tbudget,nbudget)
+%  estimates the mean of a random variable Y to within a specified 
+%  generalized error tolerance tolfun with guaranteed confidence 
+%  level 1-alpha using all ordered parsing inputs abstol, reltol, alpha, 
+%  fudge, nSig, n1, tbudget, nbudget.
 %
 % tmu = *meanMC_g*(Yrand,'abstol',abstol,'reltol',reltol,'alpha',alpha)
 %  estimates the mean of a random variable Y to within a specified
@@ -110,19 +111,19 @@
 %
 %
 %%  Guarantee
-% This algorithm attempts to calculate the mean, |mu|, of a random variable
-% to a prescribed error tolerance, |tolfun| = max(|abstol|, |reltol| ||mu||), with
-% guaranteed confidence level (|1 - alpha|). If the algorithm terminates without
-% showing any warning messages and provides an answer |tmu|, then the follow
+% This algorithm attempts to calculate the mean, mu, of a random variable
+% to a prescribed error tolerance, tolfun:= max(abstol,reltol*|mu|), with
+% guaranteed confidence level 1-alpha. If the algorithm terminates without
+% showing any warning messages and provides an answer tmu, then the follow
 % inequality would be satisfied:
 %
-% |Pr(| mu - tmu | <= tolfun) >= 1-alpha|.
+% Pr(|mu-tmu| <= tolfun) >= 1-alpha
 %
-% The cost of the algorithm, |N_tot|, is also bounded above by |N_up|, which is
-% defined in terms of |abstol|, |reltol|, |nSig|, |n1|, |fudge|, |kurtmax|, |beta|. And
+% The cost of the algorithm, N_tot, is also bounded above by N_up, which is
+% defined in terms of abstol, reltol, nSig, n1, fudge, kurtmax, beta. And
 % the following inequality holds:
 %
-% |Pr(N_tot <= N_up) >= 1-beta|.
+% Pr (N_tot <= N_up) >= 1-beta
 %
 % Please refer to our paper for detailed arguments and proofs.
 %

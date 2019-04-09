@@ -4,6 +4,7 @@
 %% Syntax
 % OBJ = *cubBayesLattice_g*('f',f,'dim',d,'absTol',absTol,'relTol',relTol,
 % 'order',order, 'ptransform',ptransform, 'arbMean',arbMean)
+%
 % [Q,OutP] = *compInteg*(OBJ)
 %
 %% Description

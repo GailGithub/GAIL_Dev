@@ -154,7 +154,7 @@ function [tmu,out_param]=meanMC_g(varargin)
 % check = 1
 %
 %
-%   See also FUNAPPX_G, INTEGRAL_G, CUBMC_G, CUBSOBOL_G, CUBLATTICE_G
+%   See also FUNAPPX_G, INTEGRAL_G, CUBMC_G, CUBSOBOL_G, CUBLATTICE_G, CUBBAYESLATTICE_G
 %
 %  References
 %

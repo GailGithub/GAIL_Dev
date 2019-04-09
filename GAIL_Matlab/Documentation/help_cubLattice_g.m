@@ -95,9 +95,9 @@
 % 
 % *Optional Input Arguments*
 %
-% * in_param.shift --- the Rank-1 lattices can be shifted to avoid the
-%  origin or other particular points. The shift is a vector in [0,1)^d.
-%  By default we consider a shift uniformly sampled from [0,1)^d.
+% * in_param.shift --- in_param.shift --- the Rank-1 lattices can be shifted to avoid the
+%  origin or other particular points. The shift is a vector in [0,1]^d.
+%  By default we consider a shift uniformly sampled from [0,1]^d.
 % 
 % * in_param.mmin --- the minimum number of points to start is 2^mmin.
 %  The cone condition on the Fourier coefficients decay requires a

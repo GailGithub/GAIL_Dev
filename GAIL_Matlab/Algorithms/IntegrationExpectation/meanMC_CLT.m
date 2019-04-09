@@ -122,7 +122,13 @@ function [sol, out] = meanMC_CLT(varargin)
 % >> check = double(abs(exact-hmu) < max(1e-4,1e-3*abs(exact)))
 % check = 1
 %
+%  References
 %
+%   [1] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
+%   Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
+%   Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
+%   Integration Library (Version 2.3) [MATLAB Software], 2019. Available
+%   from http://gailgithub.github.io/GAIL_Dev/
 %
 % _Authors: Yueyi Li, Cu Hauw Hung, Fred J. Hickernell_
 
