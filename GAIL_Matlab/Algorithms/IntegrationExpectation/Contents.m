@@ -8,7 +8,7 @@
 %                         to evaluate a multidimensional integrals
 %   cubMC_g             - Monte Carlo method to evaluate a multidimensional integral
 %   cubSobol_g          - Quasi-Monte Carlo method using Sobol' cubature over the
-%   integral_g          - 1-D guaranteed function integration using trapezoidal rule
+%   integral_g          - 1-D guaranteed function integration using Simpson's rule
 %   meanMC_CLT          - Monte Carlo method with Central Limit Theorem (CLT) confidence
 %                         intervals to estimate the mean of a random variable
 %   meanMC_g            - Monte Carlo method to estimate the mean of a random variable

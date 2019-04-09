@@ -1,5 +1,5 @@
 %% integral_g
-% 1-D guaranteed function integration using trapezoidal rule
+% 1-D guaranteed function integration using Simpson's rule
 %% Syntax
 % q = *integral_g*(f)
 %
@@ -13,29 +13,29 @@
 %% Description
 %
 % q = *integral_g*(f) computes q, the definite integral of function f on
-%  the interval [a,b] by trapezoidal rule with in a guaranteed absolute
-%  error of 1e-6. Default starting number of sample points taken is 100
-%  and default cost budget is 1e7. Input f is a function handle. The
-%  function y = f(x) should accept a vector argument x and return a vector
-%  result y, the integrand evaluated at each element of x.
+%   the interval [a,b] by Simpson's rule with in a guaranteed absolute
+%   error of 1e-6. Default starting number of sample points taken is 100
+%   and default cost budget is 1e7. Input f is a function handle. The
+%   function y = f(x) should accept a vector argument x and return a vector
+%   result y, the integrand evaluated at each element of x.
 %
-% q = *integral_g*(f,a,b,abstol) computes q, the definite integral of
-%  function f on the finite interval [a,b] by trapezoidal rule with the
-%  ordered input parameters, and guaranteed absolute error tolerance
-%  abstol.
+% q = *integral_g*(f,a,b,abstol)  computes q, the definite integral of
+%   function f on the finite interval [a,b] by Simpson's rule with the
+%   ordered input parameters, and guaranteed absolute error tolerance
+%   abstol.
 %
 % q = *integral_g*(f,'a',a,'b',b,'abstol',abstol) computes q, the definite
-%  integral of function f on the finite interval [a,b] by trapezoidal rule
-%  within a guaranteed absolute error tolerance abstol. All four
-%  field-value pairs are optional and can be supplied.
+%   integral of function f on the finite interval [a,b] by Simpson's rule
+%   within a guaranteed absolute error tolerance abstol. All four
+%   field-value pairs are optional and can be supplied.
 %
 % q = *integral_g*(f,in_param) computes q, the definite integral of
-%  function f by trapezoidal rule within a guaranteed absolute error
-%  in_param.abstol. If a field is not specified, the default value is
-%  used.
+%   function f by Simpson's rule within a guaranteed absolute error
+%   in_param.abstol. If a field is not specified, the default value is
+%   used.
 %
 % [q, out_param] = *integral_g*(f,...) returns the approximated integration
-%  q and output structure out_param.
+%   q and output structure out_param.
 %
 % *Input Arguments*
 %
@@ -126,7 +126,6 @@
 f = @(x) exp(-x.^2); [q, out_param] = integral_g(f,'a',1,'b',2,'nlo',100,'nhi',10000,...
     'abstol',1e-5,'nmax',1e7)
 
-
  
 %% See Also
 %
@@ -168,8 +167,9 @@ f = @(x) exp(-x.^2); [q, out_param] = integral_g(f,'a',1,'b',2,'nlo',100,'nhi',1
 %
 %% References
 %
-% [1] Fred J. Hickernell, Martha Razo, and Sunny Yun, "Reliable Adaptive
-% Numerical Integration", 2015+, working.
+% [1] Yizhi Zhang, "Guaranteed Adaptive Automatic Algorithms for 
+% Univariate Integration: Methods, Costs and Implementations," PhD
+% Thesis, Illinois Institute of Technology, 2018.
 %
 % [2] Nick Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
 % Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic Algorithms:
