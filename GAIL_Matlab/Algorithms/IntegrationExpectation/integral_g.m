@@ -122,28 +122,24 @@ function [q,out_param] = integral_g(varargin)
 %
 %  References
 %
-%   [1] Fred J. Hickernell, Martha Razo, and Sunny Yun, "Reliable Adaptive
-%   Numerical Integration", 2015+, working.
+%   [1] Yizhi Zhang, "Guaranteed Adaptive Automatic Algorithms for 
+%   Univariate Integration: Methods, Costs and Implementations," PhD
+%   thesis, Illinois Institute of Technology, 2018.
 %
-%   [2]  Nick Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
+%   [2] Nick Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
 %   Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic Algorithms:
 %   Cones, Not Balls," Journal of Complexity 30, pp. 21-45, 2014.
 %
 %   [3] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 %   Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
 %   Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
-%   Integration Library (Version 2.2) [MATLAB Software], 2017. Available
+%   Integration Library (Version 2.3) [MATLAB Software], 2019. Available
 %   from http://gailgithub.github.io/GAIL_Dev/
 %
 %   [4] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable
 %   Mathematical Software" [Course Slides], Illinois Institute of
 %   Technology, Chicago, IL, 2013. Available from
 %   http://gailgithub.github.io/GAIL_Dev/
-%
-%   [5] Yizhi Zhang "Guaranteed Adaptive Automatic Algorithms for 
-%   Univariate Integration: Methods, Costs and Implementations," PhD thesis
-%   Illinois Institute of Technology, 2018.
-%
 %
 %   If you find GAIL helpful in your work, please support us by citing the
 %   above papers, software, and materials.
@@ -246,7 +242,7 @@ out_param.VarfpCI=[Varf3p(ii) Varf3pup(ii+1)];
 
 % reorder fields in out_param
 out_param = orderfields(out_param, ...
-           {'f', 'a', 'b','abstol','nmax','ninit','hcut','exceedbudget','conechange',...
+           {'f', 'a', 'b','abstol','nlo','nhi','nmax','ninit','hcut','exceedbudget','conechange',...
             'npoints','errest','VarfpCI'});
 
 function [f, out_param, flip] = integral_s_param(varargin)
