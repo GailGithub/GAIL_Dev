@@ -23,12 +23,12 @@
 %
 %   plot_fourier_kernel - generates the plots of the shift invariant kenerl
 %
-%   TestAsianArithmeticMeanOptionAutoExample : main script to estimate Asian 
+%   TestAsianArithmeticMeanOptionAutoExample - main script to estimate Asian 
 %          arithmetic option price
 %
-%   TestKeisterBayesianCubature : main script to integrate Keister function
+%   TestKeisterBayesianCubature - main script to integrate Keister function
 %
-%   TestMVN_BayesianCubature : main script to integrate Multivariate normal probability
+%   TestMVN_BayesianCubature - main script to integrate Multivariate normal probability
 %   
 %	   
 %   Fast automatic Bayesian cubature using Lattice sampling.pdf - Paper 

@@ -7,7 +7,7 @@
 %   funmin_g_demo              - visualize f and minimum from funmin_g
 %   funmin_g_test              - comparison between funmin_g, fminbnd, and chebfun
 %   LocallyAdaptivePaperFigs   - driver for creating all figures and tables in the paper
-%   permn                     - permutations with repetition
+%   permn                      - permutations with repetition
 %   sim_FourCoef               - main code to generate the figures in
 %                                linear functional paper
 %   sim_FourCoef_plot_results  - create the figures, called in sim_Fourecoef
