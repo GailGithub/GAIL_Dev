@@ -34,7 +34,7 @@
 % (3) Major changes in tests
 % 
 % We continue to execute automated nightly fast tests and weekly long tests
-% on our server. Moreover, fast tests are now conducted for all MATLAB
+% on our server. Moreover, these tests are now conducted for all MATLAB
 % versions from R2016a to R2019a. The test reports are available on Mega
 % cloud storage at https://mega.nz/. More specifically, fast and long test
 % reports are archived at
