@@ -104,6 +104,12 @@ Sou-Cheng T. Choi and Fred J. Hickernell, <em>IIT MATH-573 Reliable Mathematical
 
 ### Presentations and Slides
 
+2019
+
+*  <a href="https://speakerdeck.com/fjhickernell">_Fred Hickernell's speakerdeck_</a>
+
+*  <a href="https://speakerdeck.com/kanzzzzhang/gail-guaranteed-automatic-integration-library">_Menger'd Day Poster of GAIL_</a>
+
 2018
 
 *  <a href= "http://homepages.math.uic.edu/~xtong20/talks/Xin_SIAMAN18.pdf">_A Locally Adaptive Algorithm for Global Minimization of Univariate Functions_</a>
