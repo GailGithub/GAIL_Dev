@@ -1,5 +1,4 @@
-%% Estimation of normal probabilities by *cubSobol_g*, *cubMC_g* 
-%% and *cubBayesLattice_g*
+%% Estimation of normal probabilities by *cubSobol_g*, *cubMC_g* and *cubBayesLattice_g*
 % Authors: Lluis Antoni Jimenez Rugama, Lan Jiang
 % and Jagadeeswaran Rathinavel, April 2019
 %
@@ -16,7 +15,6 @@
 % algorithms respectively in GAIL. In order to facilitate the computations
 % when $d$ is reasonably high (~4), we are going to apply a special transformation
 % of the integrand proposed by Alan Genz.
-%%
 
 
 %% Basic integration parameters set up
