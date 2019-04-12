@@ -134,7 +134,7 @@
 %
 %  References
 %
-%   [1] R. Jagadeeswaran and Fred J. Hickernell, "Faster Adaptive
+%   [1] R. Jagadeeswaran and Fred J. Hickernell, "Fast Automatic
 %   Bayesian cubature using Lattice Sampling", In review, 
 %   Proceedings of Prob Num 2018, Journal of Statistics and Computing, 
 %   arXiv:1809.09803 [math.NA] (In review)
