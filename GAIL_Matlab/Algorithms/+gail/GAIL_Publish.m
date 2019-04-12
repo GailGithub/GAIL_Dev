@@ -5,7 +5,7 @@ function GAIL_Publish(ifGenerateHtml, ifGenerateLateX, ifBuildSearchIndex)
 % ifGenerateLateX: true to generate tex source documentation files
 % ifBuildSearchIndex: true to build search index in MATLAB
 %
-[GAILPATH,GAILVERSION,MATLABVERSION] = GAILstart;
+[~,~,~] = GAILstart;
 if usejava('jvm')
     %oldStatus = get(0,'DefaultFigureVisible');
     %set(0, 'DefaultFigureVisible', 'off')
@@ -22,6 +22,7 @@ if usejava('jvm')
         'demo_normal_probabilities'};
         %,'demo_normal_probabilities_cubMC', 'demo_normal_probabilities'};
     wofile_list = {}; %{'Test_cubSobol_g'}; 
+    
     %% generate GAIL Documentation in HTML format
     if ifGenerateHtml
       opts.stylesheet = strcat(GAILPATH,'Documentation',filesep,'mxdom2mathjaxbigfont.xsl');
@@ -38,6 +39,17 @@ if usejava('jvm')
         %rmdir(htmlpath);
       end
     end
+   
+    
+    %% build search index
+    if ifBuildSearchIndex
+        warninfo = warning('query','MATLAB:doc:DocNotInstalled');
+        warning('off', warninfo.identifier);
+        builddocsearchdb(strcat(GAILPATH,'Documentation',filesep,'html'));
+        warning(warninfo.state,warninfo.identifier);
+    end
+    
+    fprintf('\nYou can go to help documentation ---> Supplemental Software to learn how to use GAIL.\n');
     
     %% generate GAIL Documentation in latex format
     if ifGenerateLateX
@@ -50,7 +62,7 @@ if usejava('jvm')
             end
             for i=1:length(wofile_list)
                 wopath = which(wofile_list{i});
-                wopath = strrep(wopath, strcat([wofile_list{i},'.m']), strcat(['']));
+                wopath = strrep(wopath, strcat([wofile_list{i},'.m']), strcat(''));
                 cat_cmd = strcat([cat_cmd, ' ', wopath, wofile_list{i},'.m' ]);
             end
             gailug_file = strcat(['gail_ug',strrep(GAILVERSION, '.', '_'),'.m']);
@@ -61,7 +73,7 @@ if usejava('jvm')
 %           echo_cmd = strcat(['echo ', '"', 'function ', strrep(gailug_file,'.m',''), '"', ' > ',gailug_file]);
 %           [status,result] = system(echo_cmd);
             cat_cmd = strcat([cat_cmd, '>> ', gailug_path]);
-            [status,result] = system(cat_cmd);
+            [~,~] = system(cat_cmd);
 %           echo_cmd = strcat(['echo ', '"', 'end', '"', ' >> ', gailug_file]);
 %           [status,result] = system(echo_cmd);
 %           publish(gailug_filename,'pdf');
@@ -69,15 +81,5 @@ if usejava('jvm')
         end
     end
     %set(0, 'DefaultFigureVisible', oldStatus)
-    
-    %% build search index
-    if ifBuildSearchIndex
-        warninfo = warning('query','MATLAB:doc:DocNotInstalled');
-        warning('off', warninfo.identifier);
-        builddocsearchdb(strcat(GAILPATH,'Documentation',filesep,'html'));
-        warning(warninfo.state,warninfo.identifier);
-    end
-    
-    fprintf('\nYou can go to help documentation ---> Supplemental Software to learn how to use GAIL.\n');
 end
 end

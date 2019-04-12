@@ -77,10 +77,10 @@ assert(max(S.nptsVec(:)) <= nptsLimits(2), ...
 
 set(gca,'xscale','log')
 set(gca,'yscale','log')
-xlabel('\(\frac{\vert\mu-\widehat{\mu} \vert}{\varepsilon}\)')
+xlabel('\(\frac{\vert\mu-\widehat{\mu} \vert}{\varepsilon}\)','Interpreter','latex')
 ylabel('Num. Samples')
 c = colorbar('Direction','reverse', 'Ticks',S.log10ErrVec, ...
-  'TickLabels',errTolVecText, 'TickLabelInterpreter','tex');
+  'TickLabels',errTolVecText, 'TickLabelInterpreter','latex');
 c.Label.Interpreter = 'latex';
 c.Label.String = 'Error Tolerance, $\varepsilon$';
 % axis tight; not required
@@ -112,10 +112,10 @@ end
 
 set(gca,'xscale','log')
 set(gca,'yscale','log')
-xlabel('\({\vert\mu-\widehat{\mu} \vert}/{\varepsilon}\)')
+xlabel('\({\vert\mu-\widehat{\mu} \vert}/{\varepsilon}\)', 'Interpreter', 'latex')
 ylabel('Time (secs)')
 c = colorbar('Direction','reverse', 'Ticks',S.log10ErrVec, ...
-  'TickLabels',errTolVecText, 'TickLabelInterpreter','tex');
+  'TickLabels',errTolVecText, 'TickLabelInterpreter','latex');
 c.Label.Interpreter = 'latex';
 c.Label.String = 'Error Tolerance, $\varepsilon$';
 % axis tight; not required

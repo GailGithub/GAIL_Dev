@@ -34,10 +34,6 @@
 %   help_readme               - Readme
 %   help_ReleaseNotes         - Release Notes 
 %
-% Tools
-%   LatexInterpreter          - Set the Latex interpreter
-%   publishMathJax            - Publish MATLAB scripts using the XSL file
-%
 % Folders
 %   html                      - folder of all html files
 
