@@ -147,8 +147,9 @@
 % Function Minimization," MS thesis, Illinois Institute of Technology, 2014.
 % (describes deprecated *funmin01_g.m*)
 % 
-% R. Jagadeeswaran and F. J. Hickernell,  "Fast Adaptive Bayesian cubature 
-% using Lattice sampling", 2018+, In review
+% R. Jagadeeswaran and F. J. Hickernell, "Fast Automatic Bayesian cubature 
+% using Lattice sampling", In review, Proceedings of Prob Num 2018, 
+% Journal of Statistics and Computing, arXiv:1809.09803 [math.NA]
 % (describes *cubBayesLattice_g.m*)
 % 
 % 
