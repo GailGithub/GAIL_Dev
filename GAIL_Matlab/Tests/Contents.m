@@ -16,10 +16,7 @@
 %   ut_funappx_g           - fast unit tests for funappx_g
 %   ut_funmin_g            - fast unit tests for funmin_g
 %   ut_funmin_g_end        - unit test for funmin_g at end points
-%   ut_integral01_g        - fast unit tests for integral01_g
 %   ut_integral_g          - fast unit tests for integral_g
-%   ut_integralPenalty_g   - UT_INTEGRAL_G unit test for integralPenalty_g
-%   ut_integralsim_g       - unit test for integralsim_g
 %   ut_MC_StoppingCriteria - unit test for MC Stopping Criteria article
 %   ut_meanMC_g            - fast unit tests for meanMC_g
 %   ut_meanMCabs_g         - fast unit test for meanMCabs_g
