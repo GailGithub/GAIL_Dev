@@ -18,7 +18,7 @@
 
 
 %% Basic integration parameters set up
-% For all the examples, the dimension of the problem is $d=30$.
+% For all the examples, the dimension of the problem is $d=4$.
 % The user input tolerances are also set up below: |abstol| is the absolute
 % error tolerance, and |reltol| the relative error tolerance. When |reltol|
 % is set to 0, the algorithms use pure absolute error bound, and
