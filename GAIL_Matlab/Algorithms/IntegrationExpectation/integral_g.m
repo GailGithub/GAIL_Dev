@@ -148,7 +148,7 @@ function [q,out_param] = integral_g(varargin)
 
 %%
 % check parameter satisfy conditions or not
-[f,out_param, flip] = integral_s_param(varargin{:});
+[f,out_param, flip] = integral_g_param(varargin{:});
 
 %% main alg
 out_param.hcut=(out_param.ninit-1)/6;%add comment
@@ -245,7 +245,7 @@ out_param = orderfields(out_param, ...
            {'f', 'a', 'b','abstol','nlo','nhi','nmax','ninit','hcut','exceedbudget','conechange',...
             'npoints','errest','VarfpCI'});
 
-function [f, out_param, flip] = integral_s_param(varargin)
+function [f, out_param, flip] = integral_g_param(varargin)
 % parse the input to the integral_g function
 
 % Default parameter values
