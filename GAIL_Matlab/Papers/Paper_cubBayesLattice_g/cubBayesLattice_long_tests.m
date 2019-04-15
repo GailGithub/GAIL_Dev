@@ -106,7 +106,13 @@ for testFunArg=testFunArgs(1:end)
     end
         
     if ~strcmp(testFun,'')
-      [muhat,err,time,out] = testFun();
+        if strcmp(fName,'optPrice') && errTol < 1e-3
+            warning('off','GAIL:cubBayesLattice_g:maxreached')
+            [muhat,err,time,out] = testFun();
+            warning('on','GAIL:cubBayesLattice_g:maxreached')
+        else
+            [muhat,err,time,out] = testFun();
+        end
       
       if quantile(err, 1-alpha/2) > errTol
         error 'Error exceeded given threshold'

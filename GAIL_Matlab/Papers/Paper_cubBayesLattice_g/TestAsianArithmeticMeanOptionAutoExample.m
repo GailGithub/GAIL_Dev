@@ -58,7 +58,6 @@ else % use Lattice points
   obj=cubBayesLattice_g(inputArgs{:});
 end
 
-warning('off','GAIL:cubBayesLattice_g:maxreached')
 tStart=tic;
 for i =  1:nRepAuto
   gail.print_iterations(i, 'i', true);
@@ -69,7 +68,6 @@ for i =  1:nRepAuto
 end
 disp(' ');
 toc(tStart)
-warning('on','GAIL:cubBayesLattice_g:maxreached')
 
 timeVecAsianCallBayesAuto = [outCallBayes(:).time]';
 nVecAsianCallBayesAuto = [outCallBayes(:).n]';
