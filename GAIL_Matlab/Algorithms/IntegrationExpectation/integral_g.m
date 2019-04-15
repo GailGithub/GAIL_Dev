@@ -118,7 +118,7 @@ function [q,out_param] = integral_g(varargin)
 %
 %
 %   See also INTEGRAL, QUAD, MEANMC_G, CUBMC_G, CUBSOBOL_G, CUBLATTICE_G,
-%   FUNAPPX_G,  FUNMIN_G
+%   FUNAPPX_G, FUNMIN_G
 %
 %  References
 %
