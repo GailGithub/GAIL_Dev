@@ -49,8 +49,6 @@ function [q,out_param] = integral_g(varargin)
 %     in_param.nmax --- cost budget (maximum number of function values),
 %     default value is 1e7
 %
-%     in_param.maxiter --- max number of iterations, default value is 1000
-%
 %   Output Arguments
 %
 %     q --- approximated integral
@@ -68,8 +66,6 @@ function [q,out_param] = integral_g(varargin)
 %     out_param.nhi --- highest initial number of function values
 %
 %     out_param.nmax --- cost budget (maximum number of function values)
-%
-%     out_param.maxiter --- max number of iterations
 %
 %     out_param.ninit --- initial number of points we use, computed by nlo
 %     and nhi
