@@ -108,7 +108,7 @@ Sou-Cheng T. Choi and Fred J. Hickernell, <em>IIT MATH-573 Reliable Mathematical
 
 *  <a href="https://speakerdeck.com/fjhickernell">_Fred Hickernell's speakerdeck_</a>
 
-*  <a href="https://speakerdeck.com/kanzzzzhang/gail-guaranteed-automatic-integration-library">_Menger'd Day Poster of GAIL_</a>
+*  <a href="https://speakerdeck.com/kanzzzzhang/gail-guaranteed-automatic-integration-library">_Menger Day Poster of GAIL_</a>
 
 2018
 
