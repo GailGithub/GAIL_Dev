@@ -59,7 +59,7 @@ Scientific Software)
 Nicholas Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
 Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic Algorithms:
 Cones, Not Balls," Journal of Complexity 30, pp. 21-45, 2014.
-(describes deprecated integralPenalty_g.m and deprecated funappxtau_g.m)
+(describes deprecated integralTrap_g.m and deprecated funappxtau_g.m)
 
 Yuhan Ding, "Guaranteed Adaptive Univariate Function Approximation," PhD
 thesis, Illinois Institute of Technology, 2015.
