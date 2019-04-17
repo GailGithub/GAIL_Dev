@@ -84,14 +84,16 @@
 % * out_param.ninit --- initial number of points we use, computed by nlo
 %  and nhi
 %
+% * out_param.hcut --- cut off value of the largest width between points
+%  used to estimate the third derivative of the function. See [1] for
+%  details.
+%
 % * out_param.exceedbudget --- it is true if the algorithm tries to use
 %  more points than cost budget, false otherwise.
 %
-% * out_param.tauchange --- it is true if the cone constant has been
+% * out_param.conechange --- it is true if the cone constant has been
 %  changed, false otherwise. See [1] for details. If true, you may wish to
 %  change the input in_param.ninit to a larger number.
-%
-% * out_param.iter --- number of iterations
 %
 % * out_param.npoints --- number of points we need to
 %  reach the guaranteed absolute error tolerance abstol.
@@ -99,9 +101,6 @@
 % * out_param.errest --- approximation error defined as the differences
 %  between the true value and the approximated value of the integral.
 %
-% * out_param.nstar --- final value of the parameter defining the cone of
-%  functions for which this algorithm is guaranteed; nstar = ninit-2
-%  initially and is increased as necessary
 %
 %% Guarantee
 %
