@@ -332,7 +332,7 @@ classdef cubBayesLattice_g < handle
         xpts_ = mod(bsxfun(@plus,xun_,shift),1);  % shifted
         
         % Compute initial FFT
-        ftilde_ = fft(objgpuArray_(obj.ff(xpts_))); %evaluate integrand's fft
+        ftilde_ = fft(obj.gpuArray_(obj.ff(xpts_))); %evaluate integrand's fft
       else
         xunnew = mod(bsxfun(@times,(1/n:2/n:1-1/n)',obj.gen_vec),1);
         xnew = mod(bsxfun(@plus,xunnew,shift),1);
