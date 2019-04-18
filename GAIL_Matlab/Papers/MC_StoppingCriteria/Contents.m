@@ -1,5 +1,10 @@
-% MC_STOPPINGCRITERIA
+% MC_STOPPINGCRITERIA reproducing scripts for the following article:
 %
+%   Fred J. Hickernell, Sou-Cheng T. Choi, Lan Jiang, and Lluis Antoni Jimenez
+%   Rugama, "Monte Carlo simulation, automatic stopping criteria for", Wiley
+%   StatsRef: Statistics Reference Online, pp. 1-7, 2018.
+%   
+%  
 % Files
 %   KeisterCubatureExampleWiley - Keister's example of multidimensional integration (Table 1)
 %   KeisterCubExWileyOut        - Prints LaTeX table of outputs from KeisterCubatureExampleWiley

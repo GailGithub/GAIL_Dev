@@ -12,7 +12,7 @@
 %                                linear functional paper
 %   sim_FourCoef_plot_results  - create the figures, called in sim_Fourecoef
 %
-%   traub_paper.pdf - Paper of Local Adaption for Approximation and
-%                     Minimization of Univariate Functions
-%   linear_functional.pdf - Paper of Adaptive Algorithms Employing on 
-%                           Continuous Linear Functionals
+%   traub_paper.pdf            - Paper of Local Adaption for Approximation and
+%                                Minimization of Univariate Functions
+%   linear_functional.pdf      - Paper of Adaptive Algorithms Employing on 
+%                                Continuous Linear Functionals
