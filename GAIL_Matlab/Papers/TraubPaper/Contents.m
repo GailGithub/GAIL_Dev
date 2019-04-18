@@ -14,5 +14,3 @@
 %
 %   traub_paper.pdf            - Paper of Local Adaption for Approximation and
 %                                Minimization of Univariate Functions
-%   linear_functional.pdf      - Paper of Adaptive Algorithms Employing on 
-%                                Continuous Linear Functionals
