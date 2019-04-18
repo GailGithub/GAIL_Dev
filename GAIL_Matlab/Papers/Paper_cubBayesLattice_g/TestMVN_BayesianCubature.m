@@ -57,7 +57,6 @@ errVec = abs(muBest - muhatVec);
 toc
 
 muhat = median(muhatVec);
-fprintf('done\n');
 
 end
 
@@ -101,10 +100,7 @@ if compGold
   tic
   %par
   for i = 1:nRepGold
-    i
-    tic
     muBestvec(1,i) = compProb(MVNProbBest);
-    toc
   end
   toc
   muBest = mean(muBestvec);

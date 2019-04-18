@@ -26,7 +26,7 @@
 % to be \(\bf{\mu}=\bf{0}\):
 
 function demo_normal_probabilities_small()
-d = 4;  % Dimension of the problem
+d = 20;  % Dimension of the problem
 abstol = 1e-3; % User input, absolute error bound
 reltol = 0;  % User input, relative error bound
 mu = zeros(d,1); % Mean of the distribution
@@ -181,7 +181,7 @@ disp(['The algorithm took ' num2str(out_param.time) ' seconds and '...
     
     [~,dim] = size(hyperbox);
     inputArgs = {'dim',dim, 'absTol',abstol, 'reltol',reltol, ...
-      'order',2, 'ptransform','C1sin', ....
+      'order',1, 'ptransform','Baker', ....
       'stopAtTol',true, 'stopCriterion','full'...
       'arbMean',true, 'alpha',0.01 ...
       'optTechnique','None'};
@@ -222,6 +222,8 @@ disp(['The algorithm took ' num2str(out_param.time) ' seconds and '...
       e = gail.stdnormcdf(b);
       f_eval = f_eval .* (e-s);
     end
+
+    f_eval(isnan(f_eval)) = 0; % reset NaN vlaues to zero
   end
 
   function MVNPfunvalfinal = MVNPexact(t,b,sig)

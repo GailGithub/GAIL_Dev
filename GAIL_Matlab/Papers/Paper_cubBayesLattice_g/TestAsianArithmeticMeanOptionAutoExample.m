@@ -60,11 +60,7 @@ end
 
 tStart=tic;
 for i =  1:nRepAuto
-  gail.print_iterations(i, 'i', true);
-  tic
   [muAsianCallBayesAuto(i),outCallBayes(i)] = compInteg(obj);
-  disp(' '); 
-  toc
 end
 disp(' ');
 toc(tStart)

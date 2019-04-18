@@ -173,7 +173,7 @@ classdef cubBayesLattice_g < handle
     
     fullBayes = false; % Full Bayes - assumes m and s^2 as hyperparameters,
     GCV = false; % Generalized cross validation
-    vdc_order = true; % use Lattice points generated in vdc order
+    vdc_order = false; % use Lattice points generated in vdc order
     
     fName = 'None'; %name of the integrand
     figSavePath = ''; %path where to save he figures
@@ -500,7 +500,7 @@ classdef cubBayesLattice_g < handle
         
         % ignore all zero eigenvalues
         loss1 = sum(log(Lambda(Lambda~=0)));
-        loss2 = n*log(temp_1);
+        loss2 = n*log(temp_1 + eps);
         loss = loss1 + loss2;
       end
       

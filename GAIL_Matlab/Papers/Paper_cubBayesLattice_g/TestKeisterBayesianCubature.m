@@ -48,8 +48,6 @@ toc
 errVec = abs(exactInteg - muhatVec);
 timeVec = [outVec(:).time]';
 
-fprintf('Done\n');
-
 end
 
 % picks the input argument from the varargin cell array
