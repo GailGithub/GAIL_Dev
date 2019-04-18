@@ -122,6 +122,7 @@ function [sol, out] = meanMC_CLT(varargin)
 % >> check = double(abs(exact-hmu) < max(1e-4,1e-3*abs(exact)))
 % check = 1
 %
+%
 %  References
 %
 %   [1] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis

@@ -49,8 +49,6 @@ function [q,out_param] = integral_g(varargin)
 %     in_param.nmax --- cost budget (maximum number of function values),
 %     default value is 1e7
 %
-%     in_param.maxiter --- max number of iterations, default value is 1000
-%
 %   Output Arguments
 %
 %     q --- approximated integral
@@ -69,19 +67,19 @@ function [q,out_param] = integral_g(varargin)
 %
 %     out_param.nmax --- cost budget (maximum number of function values)
 %
-%     out_param.maxiter --- max number of iterations
-%
 %     out_param.ninit --- initial number of points we use, computed by nlo
 %     and nhi
+%
+%     out_param.hcut --- cut off value of the largest width between points
+%     used to estimate the third derivative of the function. See [1] for
+%     details.
 %
 %     out_param.exceedbudget --- it is true if the algorithm tries to use
 %      more points than cost budget, false otherwise.
 %
-%     out_param.tauchange --- it is true if the cone constant has been
+%     out_param.conechange --- it is true if the cone constant has been
 %     changed, false otherwise. See [1] for details. If true, you may wish to
 %     change the input in_param.ninit to a larger number.
-%
-%     out_param.iter --- number of iterations
 %
 %     out_param.npoints --- number of points we need to
 %     reach the guaranteed absolute error tolerance abstol.
@@ -89,9 +87,6 @@ function [q,out_param] = integral_g(varargin)
 %     out_param.errest --- approximation error defined as the differences
 %     between the true value and the approximated value of the integral.
 %
-%     out_param.nstar --- final value of the parameter defining the cone of
-%     functions for which this algorithm is guaranteed; nstar = ninit-2
-%     initially and is increased as necessary
 %
 %  Guarantee
 %
@@ -118,7 +113,7 @@ function [q,out_param] = integral_g(varargin)
 %
 %
 %   See also INTEGRAL, QUAD, MEANMC_G, CUBMC_G, CUBSOBOL_G, CUBLATTICE_G,
-%   FUNAPPX_G,  FUNMIN_G
+%   FUNAPPX_G, FUNMIN_G
 %
 %  References
 %
@@ -148,7 +143,7 @@ function [q,out_param] = integral_g(varargin)
 
 %%
 % check parameter satisfy conditions or not
-[f,out_param, flip] = integral_s_param(varargin{:});
+[f,out_param, flip] = integral_g_param(varargin{:});
 
 %% main alg
 out_param.hcut=(out_param.ninit-1)/6;%add comment
@@ -238,14 +233,13 @@ if flip
 end
 out_param.npoints=nint+1;  % number of points finally used
 out_param.errest=errest;    % error of integral
-out_param.VarfpCI=[Varf3p(ii) Varf3pup(ii+1)];
 
 % reorder fields in out_param
 out_param = orderfields(out_param, ...
            {'f', 'a', 'b','abstol','nlo','nhi','nmax','ninit','hcut','exceedbudget','conechange',...
-            'npoints','errest','VarfpCI'});
+            'npoints','errest'});
 
-function [f, out_param, flip] = integral_s_param(varargin)
+function [f, out_param, flip] = integral_g_param(varargin)
 % parse the input to the integral_g function
 
 % Default parameter values
