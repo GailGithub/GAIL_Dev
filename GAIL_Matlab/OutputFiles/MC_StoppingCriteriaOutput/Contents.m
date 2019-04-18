@@ -6,10 +6,9 @@
 % 
 % Files
 %
-%   IIDPoints-2019-04-18-08-24-24.eps.eps               - Figure 1 left subplot
-%   ShiftedLatticePoints-2019-04-18-08-24-27.eps        - Figure 1 middle subplot
-%   SSobolPoints-2019-04-18-08-24-26.eps                - Figure 1 right subplot
-%   USobolPoints-2019-04-18-08-24-26.eps                - Unscramled Sobol Points
-%   KeisterCubExWileyDataNRep10-2019-04-18-05-16-43.mat - Table 1 ouptut data
-%   KeisterOut.txt                                      - Table 1 in LaTeX
-%
+%   IIDPoints-2019-03-31-04-58-37.eps                     - Figure 1 left subplot
+%   ShiftedLatticePoints-2019-03-31-04-58-38.eps          - Figure 1 middle subplot
+%   SSobolPoints-2019-03-31-04-58-38.eps                  - Figure 1 right subplot
+%   USobolPoints-2019-03-31-04-58-38.eps                  - Unscramled Sobol Points
+%   KeisterCubExWileyDataNRep1000-2019-03-31-04-58-36.mat - Table 1 ouptut data
+%   KeisterOut.txt                                        - Table 1 in LaTeX
