@@ -133,5 +133,4 @@ figSavePathName = sprintf('%s%s_guaranteed_time_%s_%s_d%d_r%d_%s.png', ...
   S.testFunArg.dim,S.testFunArg.order,S.timeStamp );
 saveas(figH, figSavePathName)
 
-fprintf('done\n')
 end

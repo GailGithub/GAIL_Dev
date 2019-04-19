@@ -1,5 +1,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Workouts for cubBayesLattice_g
+fprintf('Starting Workouts for cubBayesLattice_g')
 
 GAIL_path = GAILstart(0);
 logSavePath=strcat([GAIL_path,'OutputFiles',filesep], 'Paper_cubBayesLattice_g');
@@ -49,6 +50,7 @@ for testFunArg=testFunArgs(1:end)
   
   stopCrit=testFunArg.stopCriterion;
   fName = testFunArg.fName;
+  fprintf('Integrand: %s', fName)
   
   tstart=tic;
   muhatVec = [];
@@ -70,7 +72,7 @@ for testFunArg=testFunArgs(1:end)
   sampling = testFunArg.sampling;
   
   for errTol=errTolVec(1:end)
-    errTol;
+    fprintf('errTol %1.3f', errTol)
     
     arbMean=testFunArg.arbMean;
     if arbMean==true
@@ -146,6 +148,5 @@ for testFunArg=testFunArgs(1:end)
   end
   
 end
-diary off
 
-fprintf('finished')
+fprintf('Workouts for cubBayesLattice_g: finished')
