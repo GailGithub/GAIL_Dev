@@ -8,7 +8,7 @@ function version = ver(toolbox_name)
 %
 v = ver;
 n = toolbox_name;
-version = [];
+version = '';
 for k = 1:length(v)
   %fprintf('%s\n', v(k).Name);
   pat = strcat('.*',toolbox_name,'.*');
