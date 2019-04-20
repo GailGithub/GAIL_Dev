@@ -1,6 +1,7 @@
 % PAPERS
 %
 % Folders
+%   LinearFunctionals       - code of figures in Linear Functionals paper(2018MCQMC)
 %   MC_StoppingCriteria     - Monte Carlo automatic stopping criteria
 %   MCQMC2012Paper          - code of examples in MCQMC paper
 %   OldPapers               - directory for archiving work of old papers
