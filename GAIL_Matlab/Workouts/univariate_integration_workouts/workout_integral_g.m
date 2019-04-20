@@ -78,22 +78,22 @@ nave = mean(npointsmat);
 %% Output the table
 % To just re-display the output, load the .mat file and run this section
 % only
-disp(' ')
-disp('          Success    Success   Failure    Failure    number      time')
-disp(' ninit   No Warning  Warning  No Warning  Warning   of points   elasped')
+[fileID, fullPath] = gail.open_txt('WorkoutIntegralOutput', 'WorkoutIntegralTest');
+fprintf(fileID,'\n          Success    Success   Failure    Failure    number      time');
+fprintf(fileID,'\n ninit   No Warning  Warning  No Warning  Warning   of points   elasped\n');
 for i=1:nninit
-    fprintf(['%5.0f %10.2f%%' ...
-        '%10.2f%% %8.2f%% %8.2f%% %8.2f %8.2f \n'],...
+    fprintf(fileID,['%5.0f %10.2f%%' ...
+        '%10.2f%% %8.2f%% %8.2f%% %9.2f %8.2f \n'],...
         [ninitvec(i) 100*[succnowarn(i) ...
-        succwarn(i) failnowarn(i) failwarn(i)] nave(i) timeave(i)])
+        succwarn(i) failnowarn(i) failwarn(i)] nave(i) timeave(i)]);
 end
-
+fclose(fileID);
 
 %% Save Output
 
 time = toc(tstart);
 
-gail.save_mat('WorkoutIntegralOutput', 'WorkoutIntegralTest',true, nrep,time,...
+gail.save_mat('WorkoutIntegralOutput','WorkoutIntegralTest',true, nrep,time,...
         succnowarn,succwarn,failnowarn,failwarn,nave,timeave);
 warning on
 warning('on','GAIL:integral_g:exceedbudget');
