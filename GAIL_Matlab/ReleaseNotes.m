@@ -43,9 +43,3 @@
 %     https://mega.nz/#F!I0cAEKJD!AyQ_8tmxkknfIsuEW0_jnA
 % respectively.
 % 
-% 
-% Every GAIL algorithm is associated with two test files, whose names start
-% with "fasttests" and "longtests". For instance, fasttests_funappx_g and
-% longtests_funappx_g contain quick and long tests separately for our
-% function approximation algorithm, funappx_g.
-% 
