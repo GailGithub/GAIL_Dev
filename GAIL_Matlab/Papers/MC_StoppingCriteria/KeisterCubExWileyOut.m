@@ -1,5 +1,4 @@
-% KeisterCubExWileyOut: Prints LaTeX table of outputs from
-% KeisterCubatureExampleWiley.m
+% KeisterCubExWileyOut: Prints LaTeX table of outputs from KeisterCubatureExampleWiley
 function KeisterCubExWileyOut(dataFileName)
 
 gail.InitializeDisplay

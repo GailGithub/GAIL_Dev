@@ -59,7 +59,7 @@ Scientific Software)
 Nicholas Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
 Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic Algorithms:
 Cones, Not Balls," Journal of Complexity 30, pp. 21-45, 2014.
-(describes deprecated integralPenalty_g.m and deprecated funappxtau_g.m)
+(describes deprecated integralTrap_g.m and deprecated funappxtau_g.m)
 
 Yuhan Ding, "Guaranteed Adaptive Univariate Function Approximation," PhD
 thesis, Illinois Institute of Technology, 2015.
@@ -83,8 +83,9 @@ Fred J. Hickernell, Lluis Antoni Jimenez Rugama, and Da Li, "Adaptive
 quasi-Monte Carlo methods, 2017+, submitted for publication, 
 arXiv:1702.01491 [math.NA].
 
-Fred J. Hickernell, Martha Razo, and Sunny Yun, "Reliable Adaptive
-Numerical Integration", 2015+, working.
+Yizhi Zhang, Guaranteed Adaptive Automatic Algorithms for 
+Univariate Integration: Methods, Costs and Implementations, PhD
+Thesis, Illinois Institute of Technology, 2018.
 (describes integral_g.m)
 
 Lan Jiang, Guaranteed Adaptive Monte Carlo Methods for Estimating
@@ -144,6 +145,11 @@ Science, Volume 2, e86, 2016.
 Xin Tong, "A Guaranteed, Adaptive, Automatic Algorithm for Univariate
 Function Minimization," MS thesis, Illinois Institute of Technology, 2014.
 (describes deprecated funmin01_g.m)
+
+R. Jagadeeswaran and F. J. Hickernell, "Fast Automatic Bayesian cubature 
+using Lattice sampling", In review, Proceedings of Prob Num 2018, 
+Journal of Statistics and Computing, arXiv:1809.09803 [math.NA]
+(describes cubBayesLattice_g.m)
 
 Downloads
 ------------

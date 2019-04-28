@@ -1,30 +1,27 @@
 function [q,out_param] = integral_g(varargin)
-%INTEGRAL_G 1-D guaranteed function integration using trapezoidal rule
+%INTEGRAL_G 1-D guaranteed function integration using Simpson's rule
 %
 %   q = INTEGRAL_G(f) computes q, the definite integral of function f on
-%   the interval [a,b] by trapezoidal rule to within a specified
-%   generalized error tolerance, tolfun := max(abstol, reltol*|q|). Default
-%   starting number of sample points taken is 100 and default cost budget
-%   is 1e7. Input f is a function handle. The function y = f(x) should
-%   accept a vector argument x and return a vector result y, the integrand
-%   evaluated at each element of x.
+%   the interval [a,b] by Simpson's rule with in a guaranteed absolute
+%   error of 1e-6. Default starting number of sample points taken is 100
+%   and default cost budget is 1e7. Input f is a function handle. The
+%   function y = f(x) should accept a vector argument x and return a vector
+%   result y, the integrand evaluated at each element of x.
 %
-%   q = INTEGRAL_G(f,a,b,abstol,reltol) computes q, the definite integral
-%   of function f on the finite interval [a,b] by trapezoidal rule with the
-%   ordered input parameters, and to within the guaranteed generalized
-%   error tolerance, tolfun.
+%   q = INTEGRAL_G(f,a,b,abstol) computes q, the definite integral of
+%   function f on the finite interval [a,b] by Simpson's rule with the
+%   ordered input parameters, and guaranteed absolute error tolerance
+%   abstol.
 %
-%   q = INTEGRAL_G(f,'a',a,'b',b,'abstol',abstol,'reltol',reltol) computes
-%   q, the definite integral of function f on the finite interval [a,b] by
-%   trapezoidal rule to within a guaranteed generalized error tolerance,
-%   tolfun. All five field-value pairs are optional and can be supplied by
-%   default values.
+%   q = INTEGRAL_G(f,'a',a,'b',b,'abstol',abstol) computes q, the definite
+%   integral of function f on the finite interval [a,b] by Simpson's rule
+%   within a guaranteed absolute error tolerance abstol. All four
+%   field-value pairs are optional and can be supplied.
 %
 %   q = INTEGRAL_G(f,in_param) computes q, the definite integral of
-%   function f by trapezoidal rule to within a guaranteed guaranteed
-%   generalized error tolerance, tolfun := max(in_param.abstol,
-%   in_param.reltol * |q|). If a field is not specified, the default value
-%   is used.
+%   function f by Simpson's rule within a guaranteed absolute error
+%   in_param.abstol. If a field is not specified, the default value is
+%   used.
 %
 %   [q, out_param] = INTEGRAL_G(f,...) returns the approximated integration
 %   q and output structure out_param.
@@ -38,25 +35,19 @@ function [q,out_param] = integral_g(varargin)
 %
 %     in_param.b --- right end of the integral, default value is 1
 %
-%     in_param.abstol --- guaranteed absolute error tolerance, default
-%     value is 1e-6
+%     in_param.abstol --- guaranteed absolute error tolerance, default value
+%     is 1e-6
 %
-%     in_param.reltol --- guaranteed relative error tolerance, default
-%     value is 0
+%  Optional  Input Arguments (Recommended not to change very often)
 %
-%  Optional Input Arguments (Recommended not to change very often)
-%
-%
-%     in_param.nlo --- lowest initial number of function values used,
-%     default value is 10
+%     in_param.nlo --- lowest initial number of function values used, default
+%     value is 10
 %
 %     in_param.nhi --- highest initial number of function values used,
 %     default value is 1000
 %
 %     in_param.nmax --- cost budget (maximum number of function values),
 %     default value is 1e7
-%
-%     in_param.maxiter --- max number of iterations, default value is 1000
 %
 %   Output Arguments
 %
@@ -70,37 +61,32 @@ function [q,out_param] = integral_g(varargin)
 %
 %     out_param.abstol --- guaranteed absolute error tolerance
 %
-%     out_param.reltol --- guaranteed relative error tolerance
-% 
 %     out_param.nlo --- lowest initial number of function values
 %
 %     out_param.nhi --- highest initial number of function values
 %
 %     out_param.nmax --- cost budget (maximum number of function values)
 %
-%     out_param.maxiter --- max number of iterations
-%
 %     out_param.ninit --- initial number of points we use, computed by nlo
 %     and nhi
 %
+%     out_param.hcut --- cut off value of the largest width between points
+%     used to estimate the third derivative of the function. See [1] for
+%     details.
+%
 %     out_param.exceedbudget --- it is true if the algorithm tries to use
-%     more points than cost budget, false otherwise.
+%      more points than cost budget, false otherwise.
 %
-%     out_param.tauchange --- it is true if the cone constant has been
-%     changed, false otherwise. See [1] for details. If true, you may wish
-%     to change the input in_param.ninit to a larger number.
+%     out_param.conechange --- it is true if the cone constant has been
+%     changed, false otherwise. See [1] for details. If true, you may wish to
+%     change the input in_param.ninit to a larger number.
 %
-%     out_param.iter --- number of iterations
-%
-%     out_param.npoints --- number of points we need to reach the
-%     generalized error tolerance, tolfun.
+%     out_param.npoints --- number of points we need to
+%     reach the guaranteed absolute error tolerance abstol.
 %
 %     out_param.errest --- approximation error defined as the differences
 %     between the true value and the approximated value of the integral.
 %
-%     out_param.nstar --- final value of the parameter defining the cone of
-%     functions for which this algorithm is guaranteed; nstar = ninit-2
-%     initially and is increased as necessary
 %
 %  Guarantee
 %
@@ -115,18 +101,11 @@ function [q,out_param] = integral_g(varargin)
 %
 %
 %   Example 2:
-%   >> f = @(x) exp(-x.^2); 
-%   >> q = integral_g(f,'a',1,'b',2,'nlo',100,'nhi',10000,'abstol',1e-5,'nmax',1e7)
+%   >> f = @(x) exp(-x.^2); q = integral_g(f,'a',1,'b',2,'nlo',100,'nhi',10000,'abstol',1e-5,'nmax',1e7)
 %   q = 0.1353
 %
 %
 %   Example 3:
-%   >> f = @(x) exp(-x.^2); in_param.abstol = 1e-6; in_param.reltol = 1e-5;
-%   >> q = integral_g(f,in_param)
-%   q = 0.7468
-%
-%
-%   Example 4:
 %   >> q = integral_g()
 %   Warning: Function f must be a function handle. Now GAIL is using f(x)=exp(-100*(x-0.5)^2).
 %   >  In ***
@@ -134,31 +113,28 @@ function [q,out_param] = integral_g(varargin)
 %
 %
 %   See also INTEGRAL, QUAD, MEANMC_G, CUBMC_G, CUBSOBOL_G, CUBLATTICE_G,
-%   FUNAPPX_G,  FUNMIN_G
+%   FUNAPPX_G, FUNMIN_G
 %
 %  References
 %
-%   [1] Fred J. Hickernell, Martha Razo, and Sunny Yun, "Reliable Adaptive
-%   Numerical Integration", 2015+, working.
+%   [1] Yizhi Zhang, "Guaranteed Adaptive Automatic Algorithms for 
+%   Univariate Integration: Methods, Costs and Implementations," PhD
+%   Thesis, Illinois Institute of Technology, 2018.
 %
-%   [2] Jiazhen Lu, "Adaptive Quadrature with a General Error Criterion,"
-%   MS thesis, Illinois Institute of Technology, 2018.
-%
-%   [3] Nick Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
+%   [2] Nick Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
 %   Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic Algorithms:
 %   Cones, Not Balls," Journal of Complexity 30, pp. 21-45, 2014.
 %
-%   [4] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
+%   [3] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 %   Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
 %   Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
 %   Integration Library (Version 2.3) [MATLAB Software], 2019. Available
 %   from http://gailgithub.github.io/GAIL_Dev/
 %
-%   [5] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable
+%   [4] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable
 %   Mathematical Software" [Course Slides], Illinois Institute of
 %   Technology, Chicago, IL, 2013. Available from
 %   http://gailgithub.github.io/GAIL_Dev/
-%
 %
 %   If you find GAIL helpful in your work, please support us by citing the
 %   above papers, software, and materials.
@@ -170,64 +146,65 @@ function [q,out_param] = integral_g(varargin)
 [f,out_param, flip] = integral_g_param(varargin{:});
 
 %% main alg
-out_param.tau=ceil((out_param.ninit-1)*2-1); % computes the minimum number of points to start
+out_param.hcut=(out_param.ninit-1)/6;%add comment
 out_param.exceedbudget=false;   % if the number of points used in the calculation of q is less than cost budget
 out_param.conechange=false;  % if the cone constant has been changed
-ntrap=out_param.ninit-1; % number of trapezoids
+nint=out_param.ninit-1; % number of intervals
+if mod(nint,6)
+    nint=6*ceil(nint/6);
+end
 intervallen=out_param.b-out_param.a; % length of integration interval (>=0)
-Varfp=zeros(10,1); %initialize vector of approximations to Var(f')
-Varfpup=[inf; zeros(10,1)]; %initialize vector of upper bounds to Var(f')
+Varf3p=zeros(10,1); %initialize vector of approximations to Var(f')
+Varf3pup=[inf; zeros(10,1)]; %initialize vector of upper bounds to Var(f')
 ii=1; %index
 
 if intervallen>0
-    steplen=intervallen/ntrap; % length of subinterval
+    steplen=intervallen/nint; % length of subinterval
     steplenvec=zeros(10,1); %vector to record subinterval lengths
-    hcut=2*intervallen/(ntrap-1); %minimum interval size
+    hcut=out_param.hcut; %minimum interval size
     inflatelim=1.5;
     xpts=(out_param.a:steplen:out_param.b)'; % generate ninit uniformly spaced points in [a,b]
     fpts=f(xpts);   % get function values at xpts
-    sumf=(fpts(1)+fpts(out_param.ninit))/2+sum(fpts(2:ntrap)); % computes the sum of trapezoidal rule
+    sumf=(fpts(1)+2*sum(fpts(3:2:end-2))+4*sum(fpts(2:2:end-1))+fpts(end))/3; % computes the sum of trapezoidal rule
     while true
         steplenvec(ii)=steplen;
 
         %Compute approximation to Var(f')
-        Varfp(ii)=sum(abs(diff(fpts,2)))/steplen; %approx Var(f')
-        Varfpup(ii+1)=min(Varfpup(ii),Varfp(ii)*inflatelim*hcut/(hcut-2*steplen));
+        Varf3p(ii)=sum(abs(fpts(1:3:end-6)-3*fpts(2:3:end-5)...
+            +3*fpts(3:3:end-4)-2*fpts(4:3:end-3)+3*fpts(5:3:end-2)...
+            -3*fpts(6:3:end-1)+fpts(7:3:end)))/steplen^3; %approx Var(f')
+        Varf3pup(ii+1)=min(Varf3pup(ii),Varf3p(ii)*inflatelim*hcut/(hcut-6*steplen));
             %update upper bound on Var(f')
 
         %Check necessary condition for integrand to lie in cone
-        if Varfp(ii) > Varfpup(ii+1) %f lies outside cone
+        if Varf3p(ii) > Varf3pup(ii+1) %f lies outside cone
             %Decrease hcut
-            tempa=1-inflatelim*Varfp(1:ii)/Varfp(ii);
+            tempa=1-inflatelim*hcut/(hcut-6*steplen)*Varf3p(1:ii)/Varf3p(ii);
             whpos=find(tempa>0,1,'first');
-            hcut=min(steplenvec(whpos:ii)./tempa(whpos:ii));
+            hcut=hcut/2;
             out_param.conechange=true; %flag the changed tau
             warning('GAIL:integral_g:spiky','This integrand is spiky relative to ninit. You may wish to increase ninit for similar integrands.');
 
             %Update Varfpup
-            Varfpup(whpos+1:ii+1)=min(Varfp(whpos:ii)*inflatelim*hcut/(hcut-2*steplenvec(whpos:ii)));
+            Varf3pup(whpos+1:ii+1)=min(Varf3p(whpos:ii)*inflatelim*hcut/(hcut-6*steplenvec(whpos:ii)));
         end
 
         %Check error
-        errest=Varfpup(ii+1)*(steplen.^2)/8;
-        t=sumf*steplen; %compute the integral
-        tminus=t-errest; 
-        tplus=t+errest;%compute extreme value
-        delta=(max(out_param.abstol,out_param.reltol*abs(tplus))+max(out_param.abstol,out_param.reltol*abs(tminus)))/2;
-        if errest <= delta %tolerance is satisfied
-            q=(tminus*max(out_param.abstol,out_param.reltol*abs(tplus))+tplus*max(out_param.abstol,out_param.reltol*abs(tminus)))/...
-                (max(out_param.abstol,out_param.reltol*abs(tplus))+max(out_param.abstol,out_param.reltol*abs(tminus)));
+        errest=Varf3pup(ii+1)*(steplen.^4)/72;
+        if errest <= out_param.abstol %tolerance is satisfied
+            q=sumf*steplen; %compute the integral
             %keyboard
             break %exit while loop
         else %need to increase number of trapezoids
             %proposed inflation factor to increase ntrap by
-            inflation=2;
+            inflation=max(2,ceil(( ...
+                2*steplen*(Varf3p(ii)/(72*out_param.abstol)).^0.25)));
         end
-        if ntrap*inflation+1 > out_param.nmax
+        if nint*inflation+1 > out_param.nmax
                 %cost budget does not allow intended increase in ntrap
             out_param.exceedbudget=true; %tried to exceed budget
             warning('GAIL:integral_g:exceedbudget','integral_g attempts to exceed the cost budget. The answer may be unreliable.');
-            inflation=floor((out_param.nmax-1)/ntrap);
+            inflation=floor((out_param.nmax-1)/nint);
                 %max possible increase allowed by cost budget
             if inflation == 1 %cannot increase ntrap at all
                 q=sumf*steplen; %compute the integral
@@ -237,13 +214,13 @@ if intervallen>0
 
         %Increase number of sample points
         steplen=steplen/inflation;
-        ntrapnew=ntrap*inflation;
-        xnew=bsxfun(@plus,(1:inflation-1)'*steplen,xpts(1:ntrap)'); %additional x values
+        ntrapnew=nint*inflation;
+        xnew=bsxfun(@plus,(1:inflation-1)'*steplen,xpts(1:nint)'); %additional x values
         ynew=f(xnew); %additional f(x) values
-        sumf=sumf+sum(ynew(:)); %updated weighted sum of function values
-        xpts = [reshape([xpts(1:ntrap)'; xnew],ntrapnew,1); xpts(ntrap+1)];
-        fpts = [reshape([fpts(1:ntrap)'; ynew],ntrapnew,1); fpts(ntrap+1)];
-        ntrap=ntrapnew; %new number of trapezoids
+        xpts = [reshape([xpts(1:nint)'; xnew],ntrapnew,1); xpts(nint+1)];
+        fpts = [reshape([fpts(1:nint)'; ynew],ntrapnew,1); fpts(nint+1)];
+        sumf=(fpts(1)+2*sum(fpts(3:2:end-2))+4*sum(fpts(2:2:end-1))+fpts(end))/3;
+        nint=ntrapnew; %new number of trapezoids
         ii=ii+1; %increment the counter
 
     end
@@ -254,26 +231,22 @@ end
 if flip
     q = -1*q;
 end
-out_param.npoints=ntrap+1;  % number of points finally used
+out_param.npoints=nint+1;  % number of points finally used
 out_param.errest=errest;    % error of integral
-out_param.VarfpCI=[Varfp(ii) Varfpup(ii+1)];
 
 % reorder fields in out_param
 out_param = orderfields(out_param, ...
-           {'f', 'a', 'b', 'abstol', 'reltol', 'nlo', 'nhi', 'nmax', ...
-            'ninit', 'tau', 'exceedbudget', 'conechange', 'npoints',...
-            'errest', 'VarfpCI'});
-            
+           {'f', 'a', 'b','abstol','nlo','nhi','nmax','ninit','hcut','exceedbudget','conechange',...
+            'npoints','errest'});
 
 function [f, out_param, flip] = integral_g_param(varargin)
 % parse the input to the integral_g function
 
 % Default parameter values
 default.abstol  = 1e-6;
-default.reltol = 0;
 default.nmax  = 1e7;
-default.nlo = 10;
-default.nhi = 1000;
+default.nlo=10;
+default.nhi=1000;
 default.a = 0;
 default.b = 1;
 % if a<b, flip = 0; if a>b, flip = 1;
@@ -293,7 +266,7 @@ else
     f = @(x) x.^2;
     out_param.f = f;
   end
-end;
+end
 
 validvarargin=numel(varargin)>1;
 if validvarargin
@@ -307,7 +280,6 @@ if ~validvarargin
     out_param.a = default.a;
     out_param.b = default.b;
     out_param.abstol = default.abstol;
-    out_param.reltol = default.reltol;
     out_param.nlo = default.nlo;
     out_param.nhi = default.nhi;
     out_param.nmax = default.nmax;
@@ -319,7 +291,6 @@ else
         addOptional(p,'a',default.a,@isnumeric);
         addOptional(p,'b',default.b,@isnumeric);
         addOptional(p,'abstol',default.abstol,@isnumeric);
-        addOptional(p,'reltol',default.reltol,@isnumeric);
         addOptional(p,'nlo',default.nlo,@isnumeric);
         addOptional(p,'nhi',default.nhi,@isnumeric);
         addOptional(p,'nmax',default.nmax,@isnumeric);
@@ -331,57 +302,34 @@ else
         addParamValue(p,'a',default.a,@isnumeric);
         addParamValue(p,'b',default.b,@isnumeric);
         addParamValue(p,'abstol',default.abstol,@isnumeric);
-        addOptional(p,'reltol',default.reltol,@isnumeric);
         addParamValue(p,'nlo',default.nlo,@isnumeric);
         addParamValue(p,'nhi',default.nhi,@isnumeric);
         addParamValue(p,'nmax',default.nmax,@isnumeric);
     end
     parse(p,f,varargin{2:end})
     out_param = p.Results;
-end;
+end
 
 if (out_param.a == inf||out_param.a == -inf||isnan(out_param.a)==1)
     warning('GAIL:integral_g:anoinfinity',['a can not be infinity nor NaN. Use default a = ' num2str(default.a)])
     out_param.a = default.a;
-end;
+end
 if (out_param.b == inf||out_param.b == -inf||isnan(out_param.b)==1)
     warning('GAIL:integral_g:bnoinfinity',['b can not be infinity not Nan. Use default b = ' num2str(default.b)])
     out_param.b = default.b;
-end;
+end
 if (out_param.b < out_param.a)
     tmp = out_param.b;
     out_param.b = out_param.a;
     out_param.a = tmp;
     flip=1;
 end
-
-% let absolute error tolerance be greater than 0
-if (out_param.abstol < 0)
-    warning('GAIL:integral_g:abstolneg',['Error tolerance should be greater than or equal to 0.' ...
+% let error tolerance greater than 0
+if (out_param.abstol <= 0 )
+    warning('GAIL:integral_g:abstolnonpos',['Error tolerance should be greater than 0.' ...
             ' Using default error tolerance ' num2str(default.abstol)])
     out_param.abstol = default.abstol;
 end
-% let relative error tolernace be between 0 and 1
-if (out_param.reltol < 0)
-    warning('GAIL:integral_g:abstolnonpos',['Relative error tolerance should be between 0 and 1.' ...
-        ' Using default error tolerance ' num2str(default.reltol)])
-    out_param.reltol = default.reltol;
-end
-if (out_param.reltol >= 1)
-    warning('GAIL:integral_g:abstolgt1',['Relative error tolerance should be between 0 and 1.' ...
-        ' Using default error tolerance ' num2str(default.reltol)])
-    out_param.reltol = default.reltol;
-end
-% let generalized error tolernace be greater than 0
-tol = max(out_param.abstol, out_param.reltol);
-if (tol <= 0)
-    warning('GAIL:integral_g:gentolnonpos',['Generalized error tolerance should be greater than 0.' ...
-            ' Using default absolute error tolerance ' num2str(default.abstol) ...
-            ' and relative error tolerance ' num2str(default.reltol)])
-    out_param.abstol = default.abstol;
-    out_param.reltol = default.reltol;
-end
-
 % let initial number of points be a positive integer
 if (~gail.isposint(out_param.nlo))
     if isposge3(out_param.nlo)
@@ -417,7 +365,7 @@ if (out_param.nlo > out_param.nhi)
     end
 end
 
-out_param.ninit = max(ceil(out_param.nhi*(out_param.nlo/out_param.nhi)^(1/(1+(out_param.b-out_param.a)))),3);
+out_param.ninit = max(ceil(6*(out_param.b-out_param.a)*out_param.nhi*(out_param.nlo/out_param.nhi))+2,7);
 if (~gail.isposint(out_param.nmax))
     if ispositive(out_param.nmax)
         warning('GAIL:integral_g:budgetnotint',['Cost budget should be a positive integer.' ...
@@ -427,5 +375,5 @@ if (~gail.isposint(out_param.nmax))
         warning('GAIL:integral_g:budgetisneg',['Cost budget should be a positive integer.' ...
             ' Using default cost budget ' int2str(default.nmax)])
         out_param.nmax = default.nmax;
-    end;
+    end
 end

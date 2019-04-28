@@ -2,4 +2,6 @@
 %
 % Files
 %
-% WorkoutIntegralTest-2015-03-07-14-42-06 --- Output file for workout example
+% WorkoutIntegralTest-2019-04-20-13-43-13.txt --- Output text for workout 
+% WorkoutIntegralTest-2019-04-20-13-43-13.mat --- Output mat file for workout 
+%

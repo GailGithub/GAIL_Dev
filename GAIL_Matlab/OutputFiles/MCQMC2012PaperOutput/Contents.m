@@ -22,10 +22,3 @@
 %                                  the geomatric mean Asian option function
 %                                  with higher dimension. It was used to
 %                                  generate the figure 6 in paper.
-
-
-
-
-
-
-

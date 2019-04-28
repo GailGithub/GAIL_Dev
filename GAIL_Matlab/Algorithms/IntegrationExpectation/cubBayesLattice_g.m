@@ -24,16 +24,17 @@
 %     dim --- number of dimensions of the integrand.
 %
 %   Optional Input Arguments
-%     absTol --- absolute error tolerance | I - Q | <= absTol. Default is 0.01.
-%     relTol --- relative error tolerance | I - Q | <= I*relTol. Default is 0.
-%     order --- order of the Bernoulli polynomial of the kernel: r=1,2
+%     absTol --- absolute error tolerance | I - Q | <= absTol. Default is 0.01
+%     relTol --- relative error tolerance | I - Q | <= I*relTol. Default is 0
+%     order --- order of the Bernoulli polynomial of the kernel r=1,2.
+%               Default is 2
 %     ptransform --- periodization variable transform to use: 'Baker',
-%     'C0', 'C1', 'C1sin', or 'C2sin'. Default is 'C1sin'
+%                    'C0', 'C1', 'C1sin', or 'C2sin'. Default is 'C1sin'
 %     arbMean --- If false, the algorithm assumes the integrand was sampled
-%                 from a Gaussian process of zero mean. Default is True.
-%     alpha --- confidence level for a credible interval of Q. Default is 0.01.
-%     mmin --- min number of samples to start with = 2^mmin
-%     mmax --- max number of samples allowed = 2^mmax
+%                 from a Gaussian process of zero mean. Default is 'true'
+%     alpha --- confidence level for a credible interval of Q. Default is 0.01
+%     mmin --- min number of samples to start with: 2^mmin. Default is 10
+%     mmax --- max number of samples allowed: 2^mmax. Default is 22
 %
 %   Output Arguments
 %    OutP.n --- number of samples used to compute the integral of f.
@@ -133,9 +134,10 @@
 %
 %  References
 %
-%   [1] R. Jagadeeswaran and Fred J. Hickernell, "Faster Adaptive
-%   Bayesian cubature using Lattice Sampling",
-%   https://arxiv.org/abs/1809.09803 (submitted).
+%   [1] R. Jagadeeswaran and Fred J. Hickernell, "Fast Automatic
+%   Bayesian cubature using Lattice Sampling", In review, 
+%   Proceedings of Prob Num 2018, Journal of Statistics and Computing, 
+%   arXiv:1809.09803 [math.NA] (In review)
 %
 %   [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 %   Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan

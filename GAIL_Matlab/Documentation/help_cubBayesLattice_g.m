@@ -4,6 +4,7 @@
 %% Syntax
 % OBJ = *cubBayesLattice_g*('f',f,'dim',d,'absTol',absTol,'relTol',relTol,
 % 'order',order, 'ptransform',ptransform, 'arbMean',arbMean)
+%
 % [Q,OutP] = *compInteg*(OBJ)
 %
 %% Description
@@ -33,23 +34,24 @@
 %
 % *Optional Input Arguments*
 %
-% * absTol --- absolute error tolerance | I - Q | <= absTol. Default is 0.01.
+% * absTol --- absolute error tolerance | I - Q | <= absTol. Default is 0.01
 % 
-% * relTol --- relative error tolerance | I - Q | <= I*relTol. Default is 0.
+% * relTol --- relative error tolerance | I - Q | <= I*relTol. Default is 0
 %  
-% * order --- order of the Bernoulli polynomial of the kernel: r=1,2
+% * order --- order of the Bernoulli polynomial of the kernel r=1,2.
+%             Default is 2
 %     
 % * ptransform --- periodization variable transform to use: 'Baker', 'C0', 
 %  'C1', 'C1sin', or 'C2sin'. Default is 'C1sin'
 %     
-% * arbMean --- If false, the algorithm assumes the integrand was sampled 
-%  from a Gaussian process of zero mean. Default is True.
+% * arbMean --- If false, the algorithm assumes the integrand was sampled
+%                 from a Gaussian process of zero mean. Default is 'true'
 %     
-% * alpha --- confidence level for a credible interval of Q. Default is 0.01.
+% * alpha --- confidence level for a credible interval of Q. Default is 0.01
 %     
-% * mmin --- min number of samples to start with = 2^mmin
+% * mmin --- min number of samples to start with: 2^mmin. Default is 10
 %     
-% * mmax --- max number of samples allowed = 2^mmax
+% * mmax --- max number of samples allowed: 2^mmax. Default is 22
 %
 % *Output Arguments*
 %
@@ -186,9 +188,10 @@ check = double(abs(muBest-muhat) < max(absTol,relTol*abs(muBest)))
 %
 %% References
 %
-% [1] R. Jagadeeswaran and Fred J. Hickernell, "Faster Adaptive
-%   Bayesian cubature using Lattice Sampling", Workshop on Probabilistic
-%   Numerical Methods, London, UK, April 2018
+% [1] R. Jagadeeswaran and Fred J. Hickernell, "Fast Automatic
+%   Bayesian cubature using Lattice Sampling", In review, 
+%   Proceedings of Prob Num 2018, Journal of Statistics and Computing, 
+%   arXiv:1809.09803 [math.NA] (In review)
 %
 % [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 %   Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan

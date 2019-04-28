@@ -248,7 +248,7 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 % check = 1
 %
 %
-%   See also CUBLATTICE_G, CUBMC_G, MEANMC_G, INTEGRAL_G
+%   See also CUBLATTICE_G, CUBMC_G, MEANMC_G, INTEGRAL_G, CUBBAYESLATTICE_G
 %
 %  References
 %

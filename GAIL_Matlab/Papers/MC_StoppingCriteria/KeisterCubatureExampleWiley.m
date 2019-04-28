@@ -1,4 +1,4 @@
-%% Keister's Example of Multidimensional Integration
+%% Keister's example of multidimensional integration
 % 
 % B. D. Keister, Multidimensional quadrature algorithms, _Computers in
 % Physics_, *10*, pp. 119-122, 1996, presents the following
