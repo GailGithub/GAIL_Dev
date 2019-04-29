@@ -40,7 +40,7 @@ ylim([-6 1])
 xlabel('$x$','interpreter','latex')
 h_legend = legend([h(1) h(3) h(5)],{'$f(x)$','funmin\_g','fminbnd'},'Location','SouthEast');
 set(h_legend,'interpreter','latex');
-gail.save_eps('GAIL_PEARC2019_Output/','humps');
+
 
 
 
