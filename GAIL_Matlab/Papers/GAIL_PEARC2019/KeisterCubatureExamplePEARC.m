@@ -73,7 +73,6 @@ for i=1:nd
 end
 disp(' ')
 toc
-
 timeBay = mean(timeBay)
 nSampleBay = mean(nSampleBay)
 
@@ -136,7 +135,7 @@ tic
 for i=1:nd
     d = dvec(i);
     for k = 1:nRep
-        gail.TakeNote(k,10)
+        gail.print_iterations(k, 'k', true);
         [ILatvec(k,i),out] = cubLattice_g(@(x) f(x,a,d),[-inf(1,d); inf(1,d)], ...
             'normal',abstol(i),reltol(i));
         if out.exitflag > 0
@@ -146,6 +145,7 @@ for i=1:nd
         nSampleLat(k,i) = out.n;
    end
 end
+disp(' ')
 toc
 timeLat = mean(timeLat)
 nSampleLat = mean(nSampleLat)
