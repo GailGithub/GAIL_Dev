@@ -21,7 +21,12 @@ figure;
 x = a:1e-6:b;
 fminvec = fmin.*ones(size(x));
 
-plot(x,f(x),'r-',out.intervals,[fmin,fmin],'go',xval,fval,'b*');
+plot(x,f(x),'r-')
+hold on
+plot (out.intervals,[fmin,fmin],'go','MarkerSize',12)
+hold on
+plot(xval,fval,'b*','MarkerSize',12);
+
 ylim([-6 1])
 xlabel('$x$','interpreter','latex')
 h_legend = legend('$f(x)$','funmin\_g','fminbnd','Location','SouthEast');
@@ -51,7 +56,12 @@ fminbnd_max_abs_error = [max(abs(truexmin-xval)), max(abs(truefmin-fval))]
 
 x = 1.2:1e-6:b;
 fminvec = fmin.*ones(size(x));
-plot(x,f(x),'r-',out.intervals,[fmin,fmin],'go',xval,fval,'b*');
+plot(x,f(x),'r-')
+hold on
+plot (out.intervals,[fmin,fmin],'go','MarkerSize',12)
+hold on
+plot(xval,fval,'b*','MarkerSize',12);
+
 ylim([-6 1])
 xlabel('$x$','interpreter','latex')
 h_legend = legend('$f(x)$','funmin\_g','fminbnd','Location','SouthEast');
