@@ -60,31 +60,24 @@ for i=1:nd
         yinv = @(t)(erfcinv(replaceZeros(abs(t))));
         f1 = @(t,d) cos( sqrt( normsqd(yinv(t)))) *(sqrt(pi))^d;
         fKeister = @(x) f1(x,d); 
-        exactInteg = Keistertrue(d);
-        inputArgs ={'f',fKeister,'dim',d,'absTol',abstol(i), 'relTol',reltol(i)};
+        inputArgs = {'f',fKeister,'dim',d,'absTol',abstol(i), 'relTol',reltol(i)};
         inputArgs =[inputArgs {'order',2, 'ptransform','C1','arbMean',true}];
         obj = cubBayesLattice_g(inputArgs{:});
         [IBayvec(k,i), out] = compInteg(obj);
-        if out.exitflag > 0,
+        if out.exitflag > 0
             nWarnBay(k,i) = 1;
         end
        timeBay(k,i) = out.time;
        nSampleBay(k,i) = out.n;
-       outVec(k,i) = out;
    end
 end
+disp(' ')
 toc
-% timeBay = reshape([outVec.time], nRep, nd);
-% nSampleBay = reshape([outVec.n], nRep, nd);
-% nWarnBay = reshape([outVec.exitflag], nRep, nd);
 
 timeBay = mean(timeBay)
 nSampleBay = mean(nSampleBay)
 
-
-
-%%
-% Next we call |meanMC_g| or |cubMC_g|
+%%  Next we call |meanMC_g| or |cubMC_g|
 IMCvec(nRep,nd) = 0; %vector of answers
 timeMC(nRep,nd) = 0;
 nSampleMC(nRep,nd) = 0;
@@ -93,17 +86,18 @@ tic
 for i=1:nd
    d = dvec(i);
    for k = 1:nRep
-      gail.TakeNote(k,10)
-%      [IMCvec(k,i),out] = meanMC_g(@(n) f(randn(n,d),a,d),abstol(i),reltol(i));
+      gail.print_iterations(k, 'k', true);
+%     [IMCvec(k,i),out] = meanMC_g(@(n) f(randn(n,d),a,d),abstol(i),reltol(i));
       [IMCvec(k,i),out] = cubMC_g(@(x) f(x,a,d),[-inf(1,d); inf(1,d)], ...
          'normal',abstol(i),reltol(i));
-       if out.exitflag > 0,
+       if out.exitflag > 0
           nWarnMC(k,i) = 1;
       end
       timeMC(k,i) = out.time;
       nSampleMC(k,i) = out.ntot;
    end
 end
+disp(' ')
 toc
 nSampleMC = mean(nSampleMC)
 timeMC = mean(timeMC)
@@ -118,16 +112,17 @@ tic
 for i=1:nd
    d = dvec(i);
    for k = 1:nRep
-      gail.TakeNote(k,10)
+      gail.print_iterations(k, 'k', true);
       [ISobvec(k,i),out] = cubSobol_g(@(x) f(x,a,d),[-inf(1,d); inf(1,d)], ...
           'normal',abstol(i),reltol(i));
-      if out.exitflag > 0,
+      if out.exitflag > 0
           nWarnSob(k,i) = 1;
       end
       timeSob(k,i) = out.time;
       nSampleSob(k,i) = out.n;
    end
 end
+disp(' ')
 toc
 timeSob = mean(timeSob)
 nSampleSob = mean(nSampleSob)
@@ -144,7 +139,7 @@ for i=1:nd
         gail.TakeNote(k,10)
         [ILatvec(k,i),out] = cubLattice_g(@(x) f(x,a,d),[-inf(1,d); inf(1,d)], ...
             'normal',abstol(i),reltol(i));
-        if out.exitflag > 0,
+        if out.exitflag > 0
             nWarnLat(k,i) = 1;
         end
         timeLat(k,i) = out.time;
@@ -175,8 +170,6 @@ absErrBay = abs(Ivec-IBayvec);
 succBay = mean(absErrBay <= repmat(abstol,nRep,1))
 avgAbsErrBay = mean(absErrBay)
 
-
-
 %% Print number of warnings from each algorithms
 warnMC = sum(nWarnMC,1);
 warnLat = sum(nWarnLat,1);
@@ -187,14 +180,12 @@ disp(['warnings issued by cubLattice_g: ', num2str(sum(nWarnLat,1))])
 disp(['warnings issued by cubSobol_g: ', num2str(sum(nWarnSob,1))])
 disp(['warnings issued by cubBayesLattice_g: ', num2str(sum(nWarnBay,1))])
 
-%outFileName = ['KeisterCubExPearcDataNRep' int2str(nRep) ...
-%   datestr(now,'-yyyy-mm-dd-HH-MM-SS') '.mat'];
-%save(outFileName)
-
 outFileName = gail.save_mat('GAIL_PEARC2019_Output',['KeisterCubExPearcDataNRep' int2str(nRep)],...
-    true, abstol,...
-    avgAbsErrMC, avgAbsErrLat, avgAbsErrSob, avgAbsErrBay, succMC, succLat, succSob, succBay,...
-    timeMC, timeLat, timeSob, nSampleMC, nSampleLat, nSampleSob, nSampleBay,...
+    true, dvec, abstol, ...
+    avgAbsErrMC, avgAbsErrLat, avgAbsErrSob, avgAbsErrBay, ...
+    succMC, succLat, succSob, succBay, ...
+    timeMC, timeLat, timeSob, timeBay, ... 
+    nSampleMC, nSampleLat, nSampleSob, nSampleBay, ...
     warnMC, warnLat, warnSob, warnBay);
 
 KeisterCubExPearcOut(outFileName)
