@@ -48,15 +48,17 @@ chebxvals = roots(diff(chebf));
 chebxval = chebxvals(i);
 chebn = length(chebf)
 h(6) = plot(chebxval,chebfval,'o');
-set(h(6),'color',MATLABCyan,'MarkerSize',30)
+set(h(6),'color',MATLABPurple,'MarkerSize',20)
 load fmin_ex1X xAll fAll
 h(7) = plot(xAll,fAll,'.');
-set(h(7),'color',MATLABCyan)
+set(h(7),'color',MATLABPurple)
 
 
 ylim([-6 1])
 xlabel('$x$','interpreter','latex')
-h_legend = legend([h(1) h(2) h(4) h(6)],{'$f(x)$','funmin\_g','fminbnd','chebfun'},'Location','SouthEast');
+h_legend = legend([h(1) h(2) h(4) h(6) h(3) h(5) h(7)],{'$f(x)$','funmin\_g''s min',...
+    'fminbnd''s min','chebfun''s min','funmin\_g''s sample','fminbnd''s sample','chebfun''s sample'},...
+    'Location','Southeast');
 set(h_legend,'interpreter','latex');
 
 save fmin_ex1X ffmg outfmg xfmb ffmb chebxval chebfval xAll fAll
