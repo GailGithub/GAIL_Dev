@@ -104,8 +104,8 @@
 % >> normsqd = @(t) sum(t.*t,2); %squared l_2 norm of t
 % >> replaceZeros = @(t) (t+(t==0)*eps); % to avoid getting infinity, NaN
 % >> yinv = @(t)(erfcinv( replaceZeros(abs(t)) ));
-% >> f1 = @(t,dim) cos( sqrt( normsqd(yinv(t)) )) *(sqrt(pi))^dim;
-% >> fKeister = @(x) f1(x,dim); exactInteg = Keistertrue(dim);
+% >> ft = @(t,dim) cos( sqrt( normsqd(yinv(t)) )) *(sqrt(pi))^dim;
+% >> fKeister = @(x) ft(x,dim); exactInteg = Keistertrue(dim);
 % >> inputArgs ={'f',fKeister,'dim',dim,'absTol',absTol, 'relTol',relTol};
 % >> inputArgs =[inputArgs {'order',2, 'ptransform','C1','arbMean',true}];
 % >> obj=cubBayesLattice_g(inputArgs{:});
