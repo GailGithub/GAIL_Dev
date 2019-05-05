@@ -69,10 +69,7 @@ disp('Test 1.3: cubBayesLattice_g')
 disp(['Estimated probability with cubBayesLattice_g is: ' num2str(approx_prob)])
 disp(['The algorithm took ' num2str(out_param.time) ' seconds and '...
   num2str(out_param.n) ' points.'])
-disp(['Real error is ' ...
-  num2str(abs(exactsol-approx_prob))...
-  ' which is less than the user input tolerance '...
-  num2str(gail.tolfun(abstol,reltol,1,exactsol,'max')) '.'])
+report_integration_result(abstol,reltol,exactsol,approx_prob)
 
 %% Second test: \(\Sigma=0.4I_d + 0.6\bf{1}\bf{1}^T\)
 % For this second example, we consider \(\Sigma=0.4I_d + 0.6\bf{1}\bf{1}^T\)
@@ -115,10 +112,7 @@ disp('Test 2.3: cubBayesLattice_g')
 disp(['Estimated probability with cubBayesLattice_g is: ' num2str(approx_prob)])
 disp(['The algorithm took ' num2str(out_param.time) ' seconds and '...
   num2str(out_param.n) ' points.'])
-disp(['Real error is ' ...
-  num2str(abs(exactsol-approx_prob))...
-  ' which is less than the user input tolerance '...
-  num2str(gail.tolfun(abstol,reltol,1,exactsol,'max')) '.'])
+report_integration_result(abstol,reltol,exactsol,approx_prob)
 
 %% Third test: \(\Sigma=0.4I_d + 0.6\bf{1}\bf{1}^T\)
 % For this last example, we consider the same covariance matrix in the
@@ -242,6 +236,20 @@ disp(['The algorithm took ' num2str(out_param.time) ' seconds and '...
       %i=i+100;
     end
     MVNPfunvalfinal = MVNPfunval.*exp(-t.^2/2);
+  end
+
+  function report_integration_result(abstol,reltol,exactsol,approx_prob)
+    errTol = gail.tolfun(abstol,reltol,1,exactsol,'max');
+    errReal = abs(exactsol-approx_prob);
+    if errReal > errTol
+      ME = MException('cubBayesLattice_g_demo:errorExceeded', ...
+        'Real error %1.2e exceeds given tolerance %1.2e',errReal,errTol);
+      throw(ME)
+    else
+      disp(['Real error is ' num2str(errReal)...
+        ' which is less than the user input tolerance '...
+        num2str(errTol) '.'])
+    end
   end
 end
 
