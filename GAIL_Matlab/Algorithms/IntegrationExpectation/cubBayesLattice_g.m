@@ -82,6 +82,7 @@
 %
 %
 % Example 3: ExpCos
+% Shape parameter independently chosen for each dimension
 %
 % Estimate the integral with integrand f(x) = exp(sum(cos(2*pi*x)) over the
 % interval [0,1] with parameters: order=2, ptransform=C1sin, abstol=0.001,
@@ -91,16 +92,19 @@
 % >> dim=2; absTol=1e-3; relTol=1e-2;
 % >> exactInteg = besseli(0,1)^dim;
 % >> inputArgs = {'relTol',relTol, 'order',2, 'ptransform','C1sin'};
-% >> inputArgs = [inputArgs {'f',fun, 'dim',dim, 'absTol',absTol,}];
+% >> inputArgs = [inputArgs {'f',fun, 'dim',dim, 'absTol',absTol,'oneTheta',false}];
 % >> obj=cubBayesLattice_g(inputArgs{:});
-% >> muhat=compInteg(obj);
+% >> [muhat,outParams]=compInteg(obj);
 % >> check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))
 % check = 1
+% >> etaDim = size(outParams.optParams.aMLEAll, 2)
+% etaDim = 2
 %
 %
 % Example 4: Keister function
+% Same shape parameter for  all dimensions
 %
-% >> dim=2; absTol=1e-3; relTol=1e-2;
+% >> dim=3; absTol=1e-3; relTol=1e-2;
 % >> normsqd = @(t) sum(t.*t,2); %squared l_2 norm of t
 % >> replaceZeros = @(t) (t+(t==0)*eps); % to avoid getting infinity, NaN
 % >> yinv = @(t)(erfcinv( replaceZeros(abs(t)) ));
@@ -109,12 +113,16 @@
 % >> inputArgs ={'f',fKeister,'dim',dim,'absTol',absTol, 'relTol',relTol};
 % >> inputArgs =[inputArgs {'order',2, 'ptransform','C1','arbMean',true}];
 % >> obj=cubBayesLattice_g(inputArgs{:});
-% >> muhat=compInteg(obj);
+% >> [muhat,outParams]=compInteg(obj);
 % >> check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))
 % check = 1
+% >> etaDim = size(outParams.optParams.aMLEAll, 2)
+% etaDim = 1
 %
 %
 % Example 5: Multivariate normal probability
+% Steepest gradient descent used with analytic kernel gradient 
+% in parameter search
 %
 % >> dim=2; absTol=1e-3; relTol=1e-2; fName = 'MVN';
 % >> C = [4 1 1; 0 1 0.5; 0 0 0.25]; MVNParams.Cov = C'*C; MVNParams.C = C;
@@ -124,10 +132,31 @@
 % >> integrand =@(t) GenzFunc(t,MVNParams);
 % >> inputArgs={'f',integrand,'dim',dim, 'absTol',absTol,'relTol',relTol};
 % >> inputArgs=[inputArgs {'order',1,'ptransform','C1sin','arbMean',true}];
+% >> inputArgs=[inputArgs {'useGradient',true}];
 % >> obj=cubBayesLattice_g(inputArgs{:});
 % >> muhat = compInteg(obj);
 % >> check = double(abs(muBest-muhat) < max(absTol,relTol*abs(muBest)))
 % check = 1
+%
+%
+% Example 6: Keister function
+% Kernel order r chosen automatically
+%
+% >> dim=2; absTol=1e-3; relTol=1e-2;
+% >> normsqd = @(t) sum(t.*t,2); %squared l_2 norm of t
+% >> replaceZeros = @(t) (t+(t==0)*eps); % to avoid getting infinity, NaN
+% >> yinv = @(t)(erfcinv( replaceZeros(abs(t)) ));
+% >> ft = @(t,dim) cos( sqrt( normsqd(yinv(t)) )) *(sqrt(pi))^dim;
+% >> fKeister = @(x) ft(x,dim); exactInteg = Keistertrue(dim);
+% >> inputArgs ={'f',fKeister,'dim',dim,'absTol',absTol, 'relTol',relTol};
+% >> inputArgs =[inputArgs {'order',0, 'ptransform','C1','arbMean',true}];
+% >> obj=cubBayesLattice_g(inputArgs{:});
+% >> [muhat,outParams] = compInteg(obj);
+% >> check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))
+% check = 1
+% >> check = double(outParams.optParams.r > 0)
+% check = 1
+% 
 %
 %
 %   See also CUBSOBOL_G, CUBLATTICE_G, CUBMC_G, MEANMC_G, INTEGRAL_G
@@ -254,7 +283,11 @@ classdef cubBayesLattice_g < handle
       temp = cubBayesLattice_g.gpuArray_(zeros(length_mvec,1));
       obj.errorBdAll = temp;
       obj.muhatAll = temp;
-      obj.aMLEAll = cubBayesLattice_g.gpuArray_(zeros(length_mvec,obj.dim));
+      if obj.oneTheta==true
+        obj.aMLEAll = temp;
+      else
+        obj.aMLEAll = cubBayesLattice_g.gpuArray_(zeros(length_mvec,obj.dim));
+      end
       obj.lossMLEAll = temp;
       obj.timeAll = temp;
       obj.dscAll = temp;
@@ -285,7 +318,7 @@ classdef cubBayesLattice_g < handle
         else
           [ftilde_,xun_,xpts_] = iter_fft(obj,iter,shift,xun_,xpts_,ftilde_);
         end
-        [stop_flag, muhat] = stopping_criterion(obj, xun_, ftilde_, iter, m);
+        [stop_flag,muhat,order_] = stopping_criterion(obj, xun_, ftilde_, iter, m);
         
         obj.timeAll(iter) = toc(tstart_iter);  % store per iteration time
         
@@ -311,6 +344,7 @@ classdef cubBayesLattice_g < handle
       optParams.relTol = obj.relTol;
       optParams.shift = shift;
       optParams.stopAtTol = obj.stopAtTol;
+      optParams.r = order_;
       out.optParams = optParams;
       if stop_flag==true
         out.exitflag = 1;
@@ -401,11 +435,12 @@ classdef cubBayesLattice_g < handle
     end
     
     % decides if the user-defined error threshold is met
-    function [success,muhat] = stopping_criterion(obj, xpts, ftilde, iter, m)
+    function [success,muhat,r] = stopping_criterion(obj, xpts, ftilde, iter, m)
       
       tstart=tic;
       n=2^m;
       success = false;
+      r = obj.order;
       
       % search for optimal shape parameter
       if obj.kernType==2
@@ -424,6 +459,7 @@ classdef cubBayesLattice_g < handle
 
         thetaOpt = exp(aOPT(1));
         bOpt = 1 + exp(aOPT(2));
+        r = bOpt;
         [loss,Lambda,Lambda_ring,RKHSnorm] = ObjectiveFunctionFmin(obj, ...
           thetaOpt,bOpt,xpts,ftilde);
         
@@ -466,7 +502,8 @@ classdef cubBayesLattice_g < handle
           ObjectiveFunction(obj, exp(lna),xpts,ftilde), ...
           lnaRange(1),lnaRange(2),optimset('TolX',1e-2));
         thetaOpt = exp(lnaMLE);
-        [loss,Lambda,Lambda_ring,RKHSnorm] = ObjectiveFunction(obj, thetaOpt,xpts,ftilde);
+        [loss,Lambda,Lambda_ring,RKHSnorm] = ObjectiveFunction(obj, ...
+          thetaOpt,xpts,ftilde);
       end
       
       %Check error criterion
@@ -724,7 +761,7 @@ classdef cubBayesLattice_g < handle
         end
         
         if obj.kernType==1
-          if ~(obj.order==1 || obj.order==2)
+          if ~(obj.order==0 || obj.order==1 || obj.order==2)
             warning('GAIL:cubBayesLattice_g:r_invalid',...
               'Kernel order, r=%d, is not supported; it must be 1 or 2. The algorithm is using default value r=2.\n', ...
               obj.order);

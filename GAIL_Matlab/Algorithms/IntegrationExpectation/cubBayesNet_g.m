@@ -171,7 +171,7 @@ classdef cubBayesNet_g < handle
   
   properties (SetAccess = private)
     avoidCancelError = true;
-
+    
     gen_h = 0;
     gen_h_un = 0;
     
@@ -228,7 +228,7 @@ classdef cubBayesNet_g < handle
       obj.dscAll = zeros(length_mvec,1);
       obj.s_All = zeros(length_mvec,1);
       
-      if obj.verify_ftilde==true
+      if obj.verify_ftilde==true || obj.debugEnable==true
         warning('Caution: debugEnable is set, this will increase computation time !')
       end
     end
@@ -270,7 +270,7 @@ classdef cubBayesNet_g < handle
           % xptsnext = sobstr(n0:nnext,1:obj.dim);
           % xptsnext = digitalseq_b2g(obj.dim, nnext-n0+1)';
           [xptsnext,xptsnext_un] = gen_digital_nets(obj,false,n/2);
-
+          
           xpts = [xpts;xptsnext];
           
           fx = gpuArray(ff(xptsnext));  % initialize for inplace computation
@@ -292,10 +292,10 @@ classdef cubBayesNet_g < handle
         br_xpts = gpuArray(xpts);
         
         %Compute MLE parameter
-          lnaMLE = fminsearch(@(lna) ...
-            ObjectiveFunction(obj, exp(lna),br_xpts,ftilde), ...
-            0,optimset('TolX',1e-2));
-          thetaOpt = exp(lnaMLE);
+        lnaMLE = fminsearch(@(lna) ...
+          ObjectiveFunction(obj, exp(lna),br_xpts,ftilde), ...
+          0,optimset('TolX',1e-2));
+        thetaOpt = exp(lnaMLE);
         [loss,Lambda,Lambda_ring,RKHSnorm] = ObjectiveFunction(obj, thetaOpt,br_xpts,ftilde);
         
         %Check error criterion
@@ -324,7 +324,7 @@ classdef cubBayesNet_g < handle
         obj.errorBdAll(iter) = out.ErrBd;
         obj.aMLEAll(iter) = thetaOpt;
         obj.lossMLEAll(iter) = loss;
-                
+        
         if 2*out.ErrBd <= ...
             max(obj.absTol,obj.relTol*abs(muminus)) + max(obj.absTol,obj.relTol*abs(muplus))
           % if stopAtTol true, exit the loop
@@ -364,7 +364,7 @@ classdef cubBayesNet_g < handle
       % convert from gpu memory to local
       muhat = gather(muhat);
       out = gather(out);
-
+      
     end  %function
     
     
@@ -405,8 +405,10 @@ classdef cubBayesNet_g < handle
         RKHSnorm = sum(temp);  % already divided by 'n'
         temp_1 = sum(temp);
       end
-      cubBayesNet_g.alertMsg(temp_1, 'Imag');
-
+      if obj.debugEnable==true
+        cubBayesNet_g.alertMsg(temp_1, 'Imag');
+      end
+      
       % loss = mean(log(Lambda)) + log(RKHSnorm);
       
       loss1 = sum(log(Lambda(Lambda~=0)))/n;
@@ -414,10 +416,12 @@ classdef cubBayesNet_g < handle
       % ignore all zero val eigenvalues
       loss = loss1 + loss2;
       
-      cubBayesNet_g.alertMsg(loss1, 'Inf');
-      cubBayesNet_g.alertMsg(loss2, 'Inf');
-      cubBayesNet_g.alertMsg(loss, 'Inf', 'Imag', 'Nan');
-      cubBayesNet_g.alertMsg(Lambda, 'Imag');
+      if obj.debugEnable==true
+        cubBayesNet_g.alertMsg(loss1, 'Inf');
+        cubBayesNet_g.alertMsg(loss2, 'Inf');
+        cubBayesNet_g.alertMsg(loss, 'Inf', 'Imag', 'Nan');
+        cubBayesNet_g.alertMsg(Lambda, 'Imag');
+      end
     end
     
   end % end of methods
@@ -501,7 +505,7 @@ classdef cubBayesNet_g < handle
       end
       
       Km1 = Kjm1; K = Kj;
-    end    
+    end
     
     % Interface for all the kernels and to call cancellation error fix
     function [Lambda,Lambda_ring] = kernel(xpts,order,theta,avoidCancelError)
@@ -580,8 +584,8 @@ classdef cubBayesNet_g < handle
       end
       
     end
- 
-       
+    
+    
     % plots the kernel with different params
     % useful for visualization and debugging
     % For Ex:
@@ -594,7 +598,7 @@ classdef cubBayesNet_g < handle
       kernelFunc = cubBayesNet_g.BuildKernelFunc(order);
       C1 = prod(1 + theta*kernelFunc(xpts),2);
       % Lambda = cubBayesNet_g.kernel(xpts,order,theta,avoidCancelError);
-
+      
       if ndims==1
         figure(); plot(xpts, C1, '.', 'MarkerSize', 10); grid on; axis([0 1 -1 3])
       elseif ndims==2
@@ -617,7 +621,7 @@ classdef cubBayesNet_g < handle
         xlabel('$x_1$')
         ylabel('$x_2$')
         zlabel('$\omega_2$')
-
+        
       else
         error('demoKernel: ndims > 2 not implemented');
       end
