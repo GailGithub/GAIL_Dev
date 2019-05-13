@@ -70,8 +70,13 @@ echo "Copy and then delete the eps and mat files ....."
 # we use cp to retain the folder structure, whereas mv cmd does not
 find -name '*.mat' -exec cp {} /home/gail/GAIL_tests/workout_reports/ \; # Finds all the files in directories and subdirectories with extension .mat
 find -name '*.eps' -exec cp {} /home/gail/GAIL_tests/workout_reports/ \; # Finds all the files in directories and subdirectories with extension .eps
+find -name '*.png' -exec cp {} /home/gail/GAIL_tests/workout_reports/ \;
 find -name '*.mat' -exec rm {} \; # delete it
 find -name '*.eps' -exec rm {} \; # delete it
+find -name '*.png' -exec rm {} \; # delete it
+
+# Finds all the files in directories and subdirectories with extension .mat, .eps, .png and move
+# find ./ -type f \( -iname \*.mat -o -iname \*.eps -o -iname \*.png \) mv {} /home/gail/GAIL_tests/workout_reports/
 
 echo "Move the report files ....."
 
@@ -82,6 +87,7 @@ mv /home/gail/GAIL_tests/repo/gail-development/GAIL_Matlab/OutputFiles/gail_work
 cd /home/gail/GAIL_tests/workout_reports/
 
 #------------------------
+# pick the most recent output file
 WORKOUT_RESULT_FILE=$(ls -Art | grep gail_workouts- | tail -n 1)
 # Preparing results txt files
 begin="------Workout wrong results start:";
