@@ -158,6 +158,20 @@
 % check = 1
 % 
 %
+% Example 7: Another example using dimesnion specific shpae parameter
+% >> const = [1E-4 1 1E4];
+% >> fun = @(x)sum(const.* sin(2*pi*x.^2), 2);
+% >> dim=3; absTol=1e-3; relTol=1e-2;
+% >> exactInteg = fresnels(2)*sum(const)/2;
+% >> inputArgs = {'relTol',relTol, 'order',2, 'ptransform','C1sin'};
+% >> inputArgs = [inputArgs {'f',fun, 'dim',dim, 'absTol',absTol,'oneTheta',false,'useGradient',false}];
+% >> obj=cubBayesLattice_g(inputArgs{:});
+% >> [muhat,outParams]=compInteg(obj);
+% >> check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))
+% check = 1
+% >> etaDim = size(outParams.optParams.aMLEAll, 2)
+% etaDim = 3
+%
 %
 %   See also CUBSOBOL_G, CUBLATTICE_G, CUBMC_G, MEANMC_G, INTEGRAL_G
 %
@@ -484,7 +498,7 @@ classdef cubBayesLattice_g < handle
         else
           % Nelder Mead: gradient not required
           nm_start = tic;
-          theta0 = ones(1,obj.dim)*0.1; %
+          theta0 = zeros(1,obj.dim)*0.1; %
           nmOptions = optimset('TolX',1e-2);
           [lnaMLE_,fval_,exitflag_,output_] = fminsearch(@(lna) ...
             ObjectiveFunction(obj, exp(lna),xpts,ftilde), ...
