@@ -165,7 +165,7 @@ classdef cubBayesNet_g < handle
     fName = 'None'; %name of the integrand
     figSavePath = ''; %path where to save he figures
     visiblePlot = true; %make plots visible
-    debugEnable = true; %enable debug prints
+    debugEnable = false; %enable debug prints
     gaussianCheckEnable = false; %enable plot to check Guassian pdf
     verify_ftilde = false; % enable to verrify iterative computation of ftilde
     net_type = 'Sobol'; % type of nets. Options: NX or Sobol

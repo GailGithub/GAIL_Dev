@@ -89,6 +89,9 @@ axis([errVecLimits(1) errVecLimits(2) nptsLimits(1) nptsLimits(2)])
 set(gca,'Xtick',(10.^(log10(errVecLimits(1)):4:log10(errVecLimits(2)))), ...
   'YTick',(10.^(floor(log10(nptsLimits(1))) :1:ceil(log10(nptsLimits(2))))))
 
+if ~strcmp(S.testFunArg.sampling,'Lattice')
+  S.testFunArg.varTx='';
+end
 figSavePathName = sprintf('%s%s_guaranteed_npts_%s_%s_d%d_r%d_%s.png', ...
   figSavePath, S.fName,S.stopCrit,S.testFunArg.varTx,...
   S.testFunArg.dim,S.testFunArg.order,S.timeStamp );

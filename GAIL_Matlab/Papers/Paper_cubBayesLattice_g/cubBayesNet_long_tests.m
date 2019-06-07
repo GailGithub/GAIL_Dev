@@ -1,8 +1,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Generates the plots for the numerical experiments section of the paper
-% stores the results to .mat files 
-gail.InitializeWorkspaceDisplay %initialize the workspace and the display parameters
-format long
+%% Workouts for cubBayesNet_g
+fprintf('Starting Workouts for cubBayesNet_g')
 
 GAIL_path = GAILstart(0);
 logSavePath=strcat([GAIL_path,'OutputFiles',filesep], 'Paper_cubBayesLattice_g');
@@ -11,14 +9,8 @@ if exist(logSavePath,'dir')==false
   mkdir(logSavePath);
 end
 
-% log the results
-completereport = strcat(logSavePath, filesep, ...
-  '_tests-logs-', datestr(now,'yyyy-mm-dd-HH-MM-SS'),'.txt');
-diary(completereport)
-
 % path to save/read the .mat files
-matFilePath = 'Papers\Thesis\Jagadees\Paper2018\figures\';
-figSavePath = [GAIL_path filesep matFilePath];
+figSavePath = logSavePath;
 if exist(figSavePath,'dir')==false
   mkdir(figSavePath);
 end
@@ -36,16 +28,15 @@ rng(202326) % initialize random number generation to enable reproducability
 
 stopAtTol = true;
 alpha = 0.01;
-oneTheta = true;
-useGradient = false;
+nRepAuto = 100;
 
 % template of input arguments
-testFunArgs(1)=struct('fName','MVN','dim',2,'order',2,'varTx','C2sin',...
-  'sampling','Lattice','arbMean',true,'stopCriterion','GCV');
-testFunArgs(2)=struct('fName','Keister','dim',4,'order',2,'varTx','C1sin',...
-  'sampling','Lattice','arbMean',true,'stopCriterion','GCV');
-testFunArgs(3)=struct('fName','optPrice','dim',12,'order',1,'varTx','Baker',...
-  'sampling','Lattice','arbMean',true,'stopCriterion','GCV');
+testFunArgs(1)=struct('fName','MVN','dim',2,'order',1,...
+  'sampling','Net','arbMean',true,'stopCriterion','GCV');  % MVN d=3 transformed to Genz d=2
+testFunArgs(2)=struct('fName','Keister','dim',4,'order',1,...
+  'sampling','Net','arbMean',true,'stopCriterion','GCV');
+testFunArgs(3)=struct('fName','optPrice','dim',12,'order',1,...  
+  'sampling','Net','arbMean',true,'stopCriterion','GCV');
 
 for i=1:3
   testFunArgs(i+3)=testFunArgs(i);
@@ -60,12 +51,7 @@ for testFunArg=testFunArgs(1:end)
   
   stopCrit=testFunArg.stopCriterion;
   fName = testFunArg.fName;
-  
-%   if ~strcmp(fName,'optPrice')
-%     continue
-%   else
-%     oneTheta = false;
-%   end
+  fprintf('Integrand: %s', fName)
   
   tstart=tic;
   muhatVec = [];
@@ -76,9 +62,9 @@ for testFunArg=testFunArgs(1:end)
   outStructVec = {};
   indx = 1;
   if strcmp(fName, 'MVN')
-    log10ErrVec = -7:1:-4; 
+    log10ErrVec = -4:1:-1; 
   elseif strcmp(fName, 'Keister')
-    log10ErrVec = -5:1:-2; 
+    log10ErrVec = -4:1:-1; 
   else
     log10ErrVec = -4:1:-1; 
   end
@@ -87,7 +73,7 @@ for testFunArg=testFunArgs(1:end)
   sampling = testFunArg.sampling;
   
   for errTol=errTolVec(1:end)
-    errTol;
+    fprintf('errTol %1.3f', errTol)
     
     arbMean=testFunArg.arbMean;
     if arbMean==true
@@ -96,14 +82,13 @@ for testFunArg=testFunArgs(1:end)
       newPath = strcat(figSavePath, sampling, '/', 'zeroMean/');
     end
     
-    vartx=testFunArg.varTx;
     dim=testFunArg.dim;
     bern=testFunArg.order;
     
-    inputArgs = {'dim',dim, 'absTol',errTol, 'order',bern, 'ptransform',vartx, ....
+    inputArgs = {'dim',dim, 'absTol',errTol, 'order',bern, ....
       'stopAtTol',stopAtTol, 'stopCriterion',testFunArg.stopCriterion...
-      'oneTheta',oneTheta, 'useGradient',useGradient...
       'figSavePath',newPath, 'arbMean',arbMean, 'alpha',alpha ...
+      'nRepAuto', nRepAuto,...
       'samplingMethod',sampling, 'visiblePlot',visiblePlot};
     testFun = '';
     switch fName
@@ -122,13 +107,22 @@ for testFunArg=testFunArgs(1:end)
       otherwise
         error('Unknown Integrand !');
     end
-    
+        
     if ~strcmp(testFun,'')
-      [muhat,err,time,out] = testFun();
-      
+      if strcmp(fName,'optPrice') && errTol < 1e-3
+        warning('off','GAIL:cubBayesLattice_g:maxreached')
+        [muhat,err,time,out] = testFun();
+        warning('on','GAIL:cubBayesLattice_g:maxreached')
+      else
+        [muhat,err,time,out] = testFun();
+      end
       errVec = [errVec err/errTol];
-      if any(err > errTol)
+      
+      if quantile(err, 1-alpha/2) > errTol
         warning 'Error exceeded given threshold'
+        ME = MException('cubBayesLattice_g_longtests:errorExceeded', ...
+          'Error exceeded given threshold: test failed for function %s',fName);
+        % throw(ME)
       end
       
       nptsVec = [nptsVec [out.n]'];
@@ -142,7 +136,6 @@ for testFunArg=testFunArgs(1:end)
   
   toc(tstart)
   % suffix this timestamp to all the files stored
-  % timeStamp = datetime('now','Format','d-MMM-y HH-mm-ss');
   timeStamp = datetime('now','Format','y-MMM-d');
   
   datFileName=sprintf('Guaranteed_plot_data_%s_%s_%s_d%d_r%d_%s.mat',...
@@ -157,7 +150,5 @@ for testFunArg=testFunArgs(1:end)
   end
   
 end
-diary off
 
-fprintf('finished')
-
+fprintf('Workouts for cubBayesNet_g: finished')
