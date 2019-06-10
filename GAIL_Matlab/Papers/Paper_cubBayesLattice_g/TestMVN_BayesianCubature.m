@@ -37,8 +37,8 @@ inputArgs{end+1} = 'fName'; inputArgs{end+1} = fName;
 
 % initialise the object based on the sampling method
 if exist('samplingMethod','var') && ...
-    strcmp(samplingMethod,'Sobol') % use Sobol points
-  objCubBayes=cubMLESobol(inputArgs{:});
+    strcmp(samplingMethod,'Net') % use Sobol points
+  objCubBayes=cubBayesNet_g(inputArgs{:});
 else % use Lattice points
   objCubBayes=cubBayesLattice_g(inputArgs{:});
 end

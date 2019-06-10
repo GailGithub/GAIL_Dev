@@ -1,7 +1,7 @@
 % generates the plots for the paper using given data or pre-computed data
 function guaranteed_plots(varargin)
 
-close all
+% close all
 % if .mat file is not given then use the below files
 if nargin < 1
   % myGAIL_path = GAILstart(0);

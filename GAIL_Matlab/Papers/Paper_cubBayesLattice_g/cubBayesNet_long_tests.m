@@ -25,7 +25,7 @@ else
 end
 
 rng(202326) % initialize random number generation to enable reproducability
-
+vartx = '';
 stopAtTol = true;
 alpha = 0.01;
 nRepAuto = 100;
@@ -62,7 +62,7 @@ for testFunArg=testFunArgs(1:end)
   outStructVec = {};
   indx = 1;
   if strcmp(fName, 'MVN')
-    log10ErrVec = -4:1:-1; 
+    log10ErrVec = -5:1:-2; 
   elseif strcmp(fName, 'Keister')
     log10ErrVec = -4:1:-1; 
   else
@@ -110,9 +110,9 @@ for testFunArg=testFunArgs(1:end)
         
     if ~strcmp(testFun,'')
       if strcmp(fName,'optPrice') && errTol < 1e-3
-        warning('off','GAIL:cubBayesLattice_g:maxreached')
+        warning('off','GAIL:cubBayesNet_g:maxreached')
         [muhat,err,time,out] = testFun();
-        warning('on','GAIL:cubBayesLattice_g:maxreached')
+        warning('on','GAIL:cubBayesNet_g:maxreached')
       else
         [muhat,err,time,out] = testFun();
       end
@@ -120,7 +120,7 @@ for testFunArg=testFunArgs(1:end)
       
       if quantile(err, 1-alpha/2) > errTol
         warning 'Error exceeded given threshold'
-        ME = MException('cubBayesLattice_g_longtests:errorExceeded', ...
+        ME = MException('cubBayesNet_g_longtests:errorExceeded', ...
           'Error exceeded given threshold: test failed for function %s',fName);
         % throw(ME)
       end
