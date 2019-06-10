@@ -157,6 +157,7 @@ classdef cubBayesNet_g < handle
     relTol = 0; %relative tolerance
     order = 1; %order of the kernel
     digitalNetAlpha = 1; %order of the digital nets
+    stopCriterion = 'MLE'; %Available options {'MLE', 'GCV', 'full'}
     
     alpha = 0.01; % p-value, default 0.1%.
     ptransform = 'none'; %periodization transform
@@ -178,6 +179,9 @@ classdef cubBayesNet_g < handle
     gen_h_un = 0;
     
     mvec = [];
+    fullBayes = false; % Full Bayes - assumes m and s^2 as hyperparameters,
+    GCV = false; % Generalized cross validation
+    uncert = 0;  % quantile value for the error bound
     
     % variables to save debug info in each iteration, indexed in sequence
     errorBdAll = [];  % computed error bound
@@ -197,6 +201,60 @@ classdef cubBayesNet_g < handle
           obj = copy(varargin{1});
           iStart = 2;
         end
+        if nargin >= iStart
+          % parse and set the input arguments to obj
+          obj.parse_input_args(varargin{:});
+        end
+      else
+        obj.warn_fd();        
+      end
+      
+      if strcmp(obj.stopCriterion, 'full')
+        % Full Bayes : The posterior error is a Student-t distribution
+        obj.fullBayes = true;
+      elseif strcmp(obj.stopCriterion, 'GCV')
+        % use Generalized cross validation
+        obj.GCV = true;
+      else
+        % use empirical Bayes : Maximum likelihood estimation
+        obj.fullBayes = false;
+        obj.GCV = false;
+      end
+      
+      % Credible interval : two-sided confidence
+      % i.e., 1-alpha percent quantile
+      if obj.fullBayes
+        % degrees of freedom = 2^mmin - 1
+        obj.uncert = -tinv(obj.alpha/2, (2^obj.mmin) - 1);
+      else
+        obj.uncert = -norminv(obj.alpha/2);
+      end
+      
+      obj.mvec = obj.mmin:obj.mmax;
+      length_mvec = length(obj.mvec);
+      
+      obj.errorBdAll = zeros(length_mvec,1);
+      obj.muhatAll = zeros(length_mvec,1);
+      obj.aMLEAll = zeros(length_mvec,1);
+      obj.lossMLEAll = zeros(length_mvec,1);
+      obj.timeAll = zeros(length_mvec,1);
+      obj.dscAll = zeros(length_mvec,1);
+      obj.s_All = zeros(length_mvec,1);
+      
+      if obj.verify_ftilde==true || obj.debugEnable==true
+        warning('Caution: debugEnable is set, this will increase computation time !')
+      end
+    end
+    
+    % parses each input argument passed and assigns to obj.
+    % Warns any unsupported options passed
+    function parse_input_args(obj, varargin)
+      if nargin > 0
+        iStart = 1;
+        if isa(varargin{1},'cubBayesNet_g')
+          iStart = 2;
+        end
+        % parse each input argument passed
         if nargin >= iStart
           wh = find(strcmp(varargin(iStart:end),'f'));
           if ~isempty(wh), obj.f = varargin{wh+iStart}; end
@@ -218,25 +276,35 @@ classdef cubBayesNet_g < handle
           if ~isempty(wh), obj.fName = varargin{wh+iStart}; end
           wh = find(strcmp(varargin(iStart:end),'alpha'));
           if ~isempty(wh), obj.alpha = varargin{wh+iStart}; end
+          wh = find(strcmp(varargin(iStart:end),'stopCriterion'));
+          if ~isempty(wh), obj.stopCriterion = varargin{wh+iStart}; end
+        end
+      end        
+        
+      function validate_input_args(obj)
+        if ~gail.isfcn(obj.f)
+          warning('GAIL:cubBayesNet_g:fnotfcn',...
+            'The given input f should be a function handle.\n' );
+        end
+        
+        if obj.dim>20
+          error('GAIL:cubBayesNet_g:dim_invalid',...
+            'Integrand dimension=%d, is not implemented; max allowed is 20.\n', ...
+            obj.dim);
+        end
+        
+        stopCriterions = {'full','GCV','MLE'};
+        if ~ismember(obj.stopCriterion, stopCriterions)
+          str_stopCriterions = strjoin(stopCriterions, ', ');
+          warning('GAIL:cubBayesNet_g:stop_crit_invalid',...
+            'Stop criterion = "%s" is not supported; it must be from "%s". The algorithm is using default value "MLE".\n', ...
+            obj.stopCriterion, str_stopCriterions);
+          obj.stopCriterion = 'MLE';
         end
       end
       
-      obj.mvec = obj.mmin:obj.mmax;
-      length_mvec = length(obj.mvec);
-      
-      obj.errorBdAll = zeros(length_mvec,1);
-      obj.muhatAll = zeros(length_mvec,1);
-      obj.aMLEAll = zeros(length_mvec,1);
-      obj.lossMLEAll = zeros(length_mvec,1);
-      obj.timeAll = zeros(length_mvec,1);
-      obj.dscAll = zeros(length_mvec,1);
-      obj.s_All = zeros(length_mvec,1);
-      
-      if obj.verify_ftilde==true || obj.debugEnable==true
-        warning('Caution: debugEnable is set, this will increase computation time !')
-      end
+      validate_input_args(obj);
     end
-    
     
     % computes the integral
     function [muhat,out] = compInteg(obj)
@@ -311,18 +379,50 @@ classdef cubBayesNet_g < handle
         [loss,Lambda,Lambda_ring,RKHSnorm] = ObjectiveFunction(obj, thetaOpt,br_xpts,ftilde);
         
         %Check error criterion
-        % empirical bayes
-        if obj.avoidCancelError
-          DSC = abs(Lambda_ring(1)/(1 + Lambda_ring(1)));
+        
+        % out.ErrBd = 2.58*sqrt(DSC*RKHSnorm/n);
+        if obj.fullBayes==true
+          % full bayes
+          if obj.avoidCancelError
+            DSC = abs(Lambda_ring(1)/1);
+          else
+            DSC = abs((Lambda(1)/1) - 1);
+          end
+          % 1-alpha two sided confidence interval
+          ErrBd = obj.uncert*sqrt(DSC * RKHSnorm/(n-1));
+        elseif obj.GCV==true
+          % GCV based stopping criterion
+          if obj.avoidCancelError
+            DSC = abs(Lambda_ring(1)/(1 + Lambda_ring(1)));
+          else
+            DSC = abs(1 - (1/Lambda(1)));
+          end
+          temp = Lambda;
+          temp(1) = n*(1 + Lambda_ring(1));
+          C_Inv_trace = sum(1./temp(temp~=0));
+          ErrBd = obj.uncert*sqrt(DSC * (RKHSnorm) /C_Inv_trace);
         else
-          DSC = abs(1 - (1/Lambda(1)));
-        end
+          % % empirical bayes
+          % if obj.avoidCancelError
+          %   DSC = abs(Lambda_ring(1)/(1 + Lambda_ring(1)));
+          % else
+          %   DSC = abs(1 - (1/Lambda(1)));
+          % end
+        
+          % empirical bayes
+          if obj.avoidCancelError
+            DSC = abs(Lambda_ring(1)/(1 + Lambda_ring(1)));
+          else
+            DSC = abs(1 - (1/Lambda(1)));
+          end
+          ErrBd = obj.uncert*sqrt(DSC * RKHSnorm/n);
+        end        
+        out.ErrBd = ErrBd;
         
         % store the debug information
         obj.dscAll(iter) = sqrt(DSC);
-        obj.s_All(iter) = sqrt(RKHSnorm/n);
+        obj.s_All(iter) = sqrt(RKHSnorm/n);        
         
-        out.ErrBd = 2.58*sqrt(DSC*RKHSnorm/n);
         if obj.arbMean == true % zero mean case
           % muhat is just the sample mean
           muhat = ftilde(1);
@@ -433,24 +533,40 @@ classdef cubBayesNet_g < handle
       % Not required ftilde = abs(ftilde);  % remove any negative/imaginary values
       temp = ((ftilde(Lambda~=0).^2)./(Lambda(Lambda~=0)));
       
+      % compute loss
       % Note: unlike FFT, FWT divides the output by 'n'
-      if obj.arbMean==true
-        RKHSnorm = sum(temp(2:end));  % already divided by 'n'
-        temp_1 = sum(temp(2:end));
-      else
-        RKHSnorm = sum(temp);  % already divided by 'n'
-        temp_1 = sum(temp);
-      end
-      if obj.debugEnable==true
-        cubBayesNet_g.alertMsg(temp_1, 'Imag');
-      end
-      
-      % loss = mean(log(Lambda)) + log(RKHSnorm);
+      if obj.GCV==true
+        % GCV
+        temp_gcv = abs(ftilde(Lambda~=0)./(Lambda(Lambda~=0))).^2 ;
+        loss1 = 2*log(sum(1./Lambda(Lambda~=0)));
+        loss2 = log(sum(temp_gcv(2:end)));
+        % ignore all zero eigenvalues
+        loss = loss2 - loss1;
         
-      loss1 = sum(log(abs(Lambda(Lambda~=0))));
-      loss2 = n*log(abs(temp_1 + eps)); % add eps to avoid zero
-      % ignore all zero val eigenvalues
-      loss = loss1 + loss2;
+        if obj.arbMean==true
+          RKHSnorm = sum(temp_gcv(2:end));
+        else
+          RKHSnorm = sum(temp_gcv);
+        end
+      else
+        % default: MLE
+        if obj.arbMean==true
+          RKHSnorm = sum(temp(2:end));  % already divided by 'n'
+          temp_1 = sum(temp(2:end));
+        else
+          RKHSnorm = sum(temp);  % already divided by 'n'
+          temp_1 = sum(temp);
+        end
+        if obj.debugEnable==true
+          cubBayesNet_g.alertMsg(temp_1, 'Imag');
+        end
+
+        % loss = mean(log(Lambda)) + log(RKHSnorm);
+        loss1 = sum(log(abs(Lambda(Lambda~=0))));
+        loss2 = n*log(abs(temp_1 + eps)); % add eps to avoid zero
+        % ignore all zero val eigenvalues
+        loss = loss1 + loss2;
+      end
       
       if obj.debugEnable==true
         cubBayesNet_g.alertMsg(loss1, 'Inf');
@@ -760,5 +876,9 @@ classdef cubBayesNet_g < handle
         error('demoKernel: ndims > 2 not implemented');
       end
     end
+    function warn_fd()
+      warning('GAIL:cubBayesNet_g:fdnotgiven',...
+        'At least, function f and dimension need to be specified');
+    end    
   end % end of static functions
 end
