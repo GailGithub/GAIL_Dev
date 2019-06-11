@@ -311,7 +311,7 @@ classdef cubBayesNet_g < handle
       % comment this line of code to use GPU for computations
       gpuArray = @(x) x;   gather = @(x) x;
       obj = gpuArray(obj);
-      
+      success = false;
       tstart = tic; %start the clock
       
       numM = length(obj.mvec);
@@ -320,8 +320,6 @@ classdef cubBayesNet_g < handle
       gen_digital_nets(obj,true);
       
       % no periodization transfrom required for this algorithm
-      % obj.ptransform = 'C1sin';  % Hack : remove it soon
-      % ff = cubBayesNet_g.doPeriodTx(obj.f, obj.ptransform) ;
       ff = obj.f;
       
       %% Iteratively find the number of points required for the cubature to meet
@@ -402,13 +400,6 @@ classdef cubBayesNet_g < handle
           C_Inv_trace = sum(1./temp(temp~=0));
           ErrBd = obj.uncert*sqrt(DSC * (RKHSnorm) /C_Inv_trace);
         else
-          % % empirical bayes
-          % if obj.avoidCancelError
-          %   DSC = abs(Lambda_ring(1)/(1 + Lambda_ring(1)));
-          % else
-          %   DSC = abs(1 - (1/Lambda(1)));
-          % end
-        
           % empirical bayes
           if obj.avoidCancelError
             DSC = abs(Lambda_ring(1)/(1 + Lambda_ring(1)));
@@ -443,6 +434,7 @@ classdef cubBayesNet_g < handle
           % else, run for for all 'n' values.
           % Used to compute errorValues for 'n' vs error plotting
           if obj.stopAtTol==true
+            success = true;
             break
           end
         end
@@ -473,6 +465,17 @@ classdef cubBayesNet_g < handle
         %    n, out.ErrBd, out.time, obj.absTol, obj.relTol)
       end
       
+      if stop_flag==true
+        out.exitflag = 1;
+      else
+        out.exitflag = 2;  % error tolerance may not be met
+      end
+      
+      if stop_flag==false
+        warning('GAIL:cubBayesNet_g:maxreached',...
+          ['In order to achieve the guaranteed accuracy, ', ...
+          sprintf('used maximum allowed sample size %d. \n', n)] );
+      end      
       % convert from gpu memory to local
       muhat = gather(muhat);
       out = gather(out);
