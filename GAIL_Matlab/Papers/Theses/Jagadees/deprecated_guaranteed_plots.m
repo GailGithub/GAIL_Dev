@@ -27,17 +27,15 @@ if nargin < 1
     filenames_, 'UniformOutput', false);
 else
   matFilePath = varargin{1};
-  filenames = varargin{2};
-  optTechnique = varargin{3};
 end
 
 for filename=filenames
-  generate_plot(matFilePath, filename{1}, optTechnique);
+  generate_plot(matFilePath, filename{1});
 end
 
 end
 
-function generate_plot(matFilePath, filename, optTechnique)
+function generate_plot(matFilePath, filename)
 
 S = load([matFilePath filesep filename]);
 figSavePath = matFilePath;
@@ -77,10 +75,10 @@ assert(max(S.nptsVec(:)) <= nptsLimits(2), ...
 
 set(gca,'xscale','log')
 set(gca,'yscale','log')
-xlabel('\(\frac{\vert\mu-\widehat{\mu} \vert}{\varepsilon}\)')
+xlabel('\(\frac{\vert\mu-\widehat{\mu} \vert}{\varepsilon}\)','Interpreter','latex')
 ylabel('Num. Samples')
 c = colorbar('Direction','reverse', 'Ticks',S.log10ErrVec, ...
-  'TickLabels',errTolVecText, 'TickLabelInterpreter','tex');
+  'TickLabels',errTolVecText, 'TickLabelInterpreter','latex');
 c.Label.Interpreter = 'latex';
 c.Label.String = 'Error Tolerance, $\varepsilon$';
 % axis tight; not required
@@ -89,6 +87,9 @@ axis([errVecLimits(1) errVecLimits(2) nptsLimits(1) nptsLimits(2)])
 set(gca,'Xtick',(10.^(log10(errVecLimits(1)):4:log10(errVecLimits(2)))), ...
   'YTick',(10.^(floor(log10(nptsLimits(1))) :1:ceil(log10(nptsLimits(2))))))
 
+if ~strcmp(S.testFunArg.sampling,'Lattice')
+  S.testFunArg.varTx='';
+end
 figSavePathName = sprintf('%s%s_guaranteed_npts_%s_%s_d%d_r%d_%s.png', ...
   figSavePath, S.fName,S.stopCrit,S.testFunArg.varTx,...
   S.testFunArg.dim,S.testFunArg.order,S.timeStamp );
@@ -112,11 +113,11 @@ end
 
 set(gca,'xscale','log')
 set(gca,'yscale','log')
-xlabel('\({\vert\mu-\widehat{\mu} \vert}/{\varepsilon}\)')
+xlabel('\({\vert\mu-\widehat{\mu} \vert}/{\varepsilon}\)', 'Interpreter', 'latex')
 % xlabel('\({\vert\Pi(f)-\hat{\Pi}(f) \vert}/{\varepsilon}\)')
 ylabel('Time (secs)')
 c = colorbar('Direction','reverse', 'Ticks',S.log10ErrVec, ...
-  'TickLabels',errTolVecText, 'TickLabelInterpreter','tex');
+  'TickLabels',errTolVecText, 'TickLabelInterpreter','latex');
 c.Label.Interpreter = 'latex';
 c.Label.String = 'Error Tolerance, $\varepsilon$';
 % axis tight; not required
@@ -132,9 +133,8 @@ set(gca,'Xtick',(10.^(log10(errVecLimits(1)):3:log10(errVecLimits(2)))), ...
 %optTechnique = 'Adam';
 %optTechnique = 'Nelder';
 figSavePathName = sprintf('%s%s_%s_guaranteed_time_%s_%s_d%d_r%d_%s.png', ...
-  figSavePath, optTechnique, S.fName,S.stopCrit,S.testFunArg.varTx,...
+  figSavePath, filesep, S.fName,S.stopCrit,S.testFunArg.varTx,...
   S.testFunArg.dim,S.testFunArg.order,S.timeStamp );
 saveas(figH, figSavePathName)
 
-fprintf('done\n')
 end
