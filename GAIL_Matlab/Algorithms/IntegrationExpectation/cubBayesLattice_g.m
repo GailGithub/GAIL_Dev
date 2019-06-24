@@ -260,11 +260,6 @@ classdef cubBayesLattice_g < handle
         obj.warn_fd();
       end
       
-      if obj.order == 0
-        % find optimal kernel order
-        obj.kernType = 2;
-      end
-      
       if strcmp(obj.stopCriterion, 'full')
         % Full Bayes : The posterior error is a Student-t distribution
         obj.fullBayes = true;
@@ -761,6 +756,11 @@ classdef cubBayesLattice_g < handle
           if ~isempty(wh), obj.oneTheta = varargin{wh+iStart}; end
         end
       end
+            
+      if obj.order <= 0
+        % find optimal kernel order
+        obj.kernType = 2;
+      end
       
       function validate_input_args(obj)
         if ~gail.isfcn(obj.f)
@@ -777,10 +777,16 @@ classdef cubBayesLattice_g < handle
         if obj.kernType==1
           if ~(obj.order==0 || obj.order==1 || obj.order==2)
             warning('GAIL:cubBayesLattice_g:r_invalid',...
-              'Kernel order, r=%d, is not supported; it must be 1 or 2. The algorithm is using default value r=2.\n', ...
+              'Kernel order, r=%d, is not supported; it must be 1 or 2. The algorithm is using default value r=1.\n', ...
               obj.order);
             obj.order = 1;
           end
+        else
+          if obj.oneTheta==false
+            warning('GAIL:cubBayesLattice_g:r_invalid',...
+              'Kernel order, r, must be specified when choosing oneTheta = false. The algorithm is using default value r=1.\n');
+          end
+          obj.order = 1;
         end
         
         stopCriterions = {'full','GCV','MLE'};

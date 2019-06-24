@@ -21,10 +21,10 @@ end
 
 GAILPATH = GAILstart(0);
 outputfolder =  [GAILPATH,'OutputFiles',filesep,subdir];
-if exist(outputfolder,'dir') ~= 7,
+if exist(outputfolder,'dir') ~= 7
   mkdir(outputfolder);
 end
-if isTimeStamped == true,
+if isTimeStamped == true
     fullfilename = strcat(outputfolder, filesep', filename,'-',...
         datestr(now,'yyyy-mm-dd-HH-MM-SS'),'.mat');
 else

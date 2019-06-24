@@ -10,8 +10,8 @@ close all; clearvars; format compact; format short;
 funmin_example1;
 
 load fmin_ex1X 
-truefmin = fmin_ex1(0.15);
-truexmin = 0.15;
+truexmin = 0.15000000016489229192;
+truefmin = fmin_ex1(truexmin);
 funmin_g_max_abs_error = [max(abs(truexmin-mean(outfmg.intervals))), max(abs(truefmin-ffmg))]
 fminbnd_max_abs_error = [max(abs(truexmin-xfmb)), max(abs(truefmin-ffmb))]
 cheb_max_abs_error = [max(abs(truexmin-chebxval)), max(abs(truefmin-chebfval))]

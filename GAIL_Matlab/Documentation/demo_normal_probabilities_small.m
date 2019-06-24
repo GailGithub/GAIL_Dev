@@ -274,17 +274,13 @@ hyperbox = [-(d/3)*rand(1,d) ; (d/3)*rand(1,d)]; % We define the integration lim
 
 % Solution approx_prob and integration output parameters in out_param
 [approx_prob,out_param] = multi_normcdf_cubMC(hyperbox,mu,Sigma,abstol,reltol);
-disp('Test 3.1: cubMC_g')
-disp(['Estimated probability with cubMC_g is: ' num2str(approx_prob)])
-disp(['The algorithm took ' num2str(out_param.time) ' seconds and '...
-  num2str(out_param.ntot) ' points.'])
+report_integration_result('Test 3.1','cubMC_g',abstol,reltol,...
+  NaN,approx_prob,out_param.time,out_param.ntot)
 
 % Solution approx_prob and integration output parameters in out_param
 [approx_prob,out_param] = multi_normcdf_cubSobol(hyperbox,mu,Sigma,abstol,reltol);
-disp('Test 3.2: cubSobol_g')
-disp(['Estimated probability with cubSobol_g is: ' num2str(approx_prob)])
-disp(['The algorithm took ' num2str(out_param.time) ' seconds and '...
-  num2str(out_param.n) ' points.'])
+report_integration_result('Test 3.2','cubSobol_g',abstol,reltol,...
+  NaN,approx_prob,out_param.time,out_param.n)
 
 % Solution approx_prob and integration output parameters in out_param
 [approx_prob,out_param] = multi_normcdf_cubBayesLat(hyperbox,mu,...
@@ -442,10 +438,23 @@ fprintf('')
         ' which is less than the user input tolerance '...
         num2str(errTol) '.'])
     end
+    fprintf('  The algorithm took %1.3f seconds and %d points \n', timeSec,nSample)
+    
+    if ~isnan(exactsol)
+      errTol = gail.tolfun(abstol,reltol,1,exactsol,'max');
+      errReal = abs(exactsol-approx_prob);
+      if errReal > errTol
+        ME = MException('cubBayesLattice_g_demo:errorExceeded', ...
+          'Real error %1.2e exceeds given tolerance %1.2e',errReal,errTol);
+        throw(ME)
+      else
+        fprintf('  Real error is %1.3e, which is less than the tolerance %1.3e\n',...
+          errReal, errTol)
+      end
+    end
   end
+  
 end
-
-
 
 
 %% References
