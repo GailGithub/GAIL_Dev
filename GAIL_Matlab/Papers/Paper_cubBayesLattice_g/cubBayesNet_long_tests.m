@@ -25,7 +25,6 @@ else
 end
 
 rng(202326) % initialize random number generation to enable reproducability
-vartx = '';
 stopAtTol = true;
 alpha = 0.01;
 nRepAuto = 100;
@@ -59,8 +58,13 @@ for testFunArg=testFunArgs(1:end)
   nptsVec = [];
   timeVec = [];
   tolVec = [];
+  exitflagVec = [];
   outStructVec = {};
   indx = 1;
+  
+  if strcmp(fName, 'optPrice')
+    % continue
+  end
   if strcmp(fName, 'MVN')
     log10ErrVec = -5:1:-2; 
   elseif strcmp(fName, 'Keister')
@@ -82,6 +86,7 @@ for testFunArg=testFunArgs(1:end)
       newPath = strcat(figSavePath, sampling, '/', 'zeroMean/');
     end
     
+	vartx = '';
     dim=testFunArg.dim;
     bern=testFunArg.order;
     
@@ -125,6 +130,7 @@ for testFunArg=testFunArgs(1:end)
         % throw(ME)
       end
       
+      exitflagVec = [exitflagVec [out.exitflag]'];
       nptsVec = [nptsVec [out.n]'];
       timeVec = [timeVec [out.time]'];
       tolVec = [tolVec repmat(errTol,size(err))];
@@ -138,10 +144,10 @@ for testFunArg=testFunArgs(1:end)
   % suffix this timestamp to all the files stored
   timeStamp = datetime('now','Format','y-MMM-d');
   
-  datFileName=sprintf('Guaranteed_plot_data_%s_%s_%s_d%d_r%d_%s.mat',...
+  datFileName=sprintf('Sobol_Guaranteed_plot_data_%s_%s_%s_d%d_r%d_%s.mat',...
     fName,stopCrit,vartx,testFunArg.dim,testFunArg.order,timeStamp);
   save([figSavePath filesep datFileName],...
-    'errVec','timeVec','tolVec', 'errTolVec',...
+    'errVec','timeVec','tolVec', 'errTolVec','exitflagVec',...
     'outStructVec','testFunArg','log10ErrVec','fName',...
     'timeStamp','figSavePath','nptsVec','stopCrit');
   

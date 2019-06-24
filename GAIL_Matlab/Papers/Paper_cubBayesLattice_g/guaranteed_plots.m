@@ -65,7 +65,7 @@ nptsLimits(2) = 10^ceil(log10(2*max(S.nptsVec(:))));
 plot([1, 1], nptsLimits, 'r', 'LineWidth',1)
 hold on
 pointSize=30; %point size
-pointShapes = {'o','s','d','^','v','<','>','p','h'};
+pointShapes = {'<','s','>','d','^','v','o','p','h'};
 
 for i=1:size(S.errVec,2)
   scatter(S.errVec(:,i),S.nptsVec(:,i),pointSize,log10(S.tolVec(:,i)),...
@@ -109,8 +109,12 @@ plot([1, 1], 10.^timeTicksLimits, 'r', 'LineWidth',1)
 hold on
 
 for i=1:size(S.errVec,2)
-  scatter(S.errVec(:,i),S.timeVec(:,i),pointSize,log10(S.tolVec(:,i)),...
-    pointShapes{i},'filled')
+  succeeded = find(S.exitflagVec(:,i) == 1);
+  scatter(S.errVec(succeeded,i),S.timeVec(succeeded,i),pointSize,...
+    log10(S.tolVec(succeeded,i)),pointShapes{i},'filled')
+  missed = find(S.exitflagVec(:,i) ~= 1);
+  scatter(S.errVec(missed,i),S.timeVec(missed,i),65,...
+    log10(S.tolVec(missed,i)),'p')
 end
 
 set(gca,'xscale','log')

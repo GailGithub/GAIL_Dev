@@ -311,7 +311,7 @@ classdef cubBayesNet_g < handle
       % comment this line of code to use GPU for computations
       gpuArray = @(x) x;   gather = @(x) x;
       obj = gpuArray(obj);
-      success = false;
+      successFlag = false;
       tstart = tic; %start the clock
       
       numM = length(obj.mvec);
@@ -434,7 +434,7 @@ classdef cubBayesNet_g < handle
           % else, run for for all 'n' values.
           % Used to compute errorValues for 'n' vs error plotting
           if obj.stopAtTol==true
-            success = true;
+            successFlag = true;
             break
           end
         end
@@ -465,13 +465,13 @@ classdef cubBayesNet_g < handle
         %    n, out.ErrBd, out.time, obj.absTol, obj.relTol)
       end
       
-      if stop_flag==true
+      if successFlag==true
         out.exitflag = 1;
       else
         out.exitflag = 2;  % error tolerance may not be met
       end
       
-      if stop_flag==false
+      if successFlag==false
         warning('GAIL:cubBayesNet_g:maxreached',...
           ['In order to achieve the guaranteed accuracy, ', ...
           sprintf('used maximum allowed sample size %d. \n', n)] );

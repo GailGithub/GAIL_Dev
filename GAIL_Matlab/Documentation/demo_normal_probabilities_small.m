@@ -1,4 +1,5 @@
-%% Estimation of normal probabilities by *cubSobol_g*, *cubMC_g* and *cubBayesLattice_g*
+%% Estimation of normal probabilities by *cubSobol_g*, *cubMC_g* 
+% *cubBayesLattice_g*, *cubLattice_g*, and *cubBayesNet_g*
 % Authors: Lluis Antoni Jimenez Rugama, Lan Jiang
 % and Jagadeeswaran Rathinavel, April 2019
 %
@@ -11,25 +12,55 @@
 %
 % We present three tests, each of which approximates the aforementioned
 % probability using *cubSobol_g*, *cubMC_g* and *cubBayesLattice_g*, 
+% *cubLattice_g*, and *cubBayesNet_g*
 % which  are quasi-Monte Carlo, IID Monte Carlo and Bayesian cubature
 % algorithms respectively in GAIL. In order to facilitate the computations
-% when $d$ is reasonably high (~4), we are going to apply a special transformation
-% of the integrand proposed by Alan Genz.
+% when $d$ is high (>4), we are going to apply a special 
+% transformation of the integrand proposed by Alan Genz.
 
 
 %% Basic integration parameters set up
-% For all the examples, the dimension of the problem is $d=4$.
+% For all the examples, the dimension of the problem is $d=20$.
 % The user input tolerances are also set up below: |abstol| is the absolute
 % error tolerance, and |reltol| the relative error tolerance. When |reltol|
 % is set to 0, the algorithms use pure absolute error bound, and
 % vice versa. Finally, for simplicity we define the mean of the distribution
 % to be \(\bf{\mu}=\bf{0}\):
 
-function demo_normal_probabilities_small()
+function demo_normal_probabilities_small(nRep)
 d = 20;  % Dimension of the problem
 abstol = 1e-3; % User input, absolute error bound
 reltol = 0;  % User input, relative error bound
 mu = zeros(d,1); % Mean of the distribution
+if nargin < 1
+   nRep = 10;
+end
+nTest = 2;
+Ivec(nTest) = 0;
+approx_prob_MC(nRep,nTest) = 0;
+% out_param_MC(nRep,nTest) = 0;
+timeMC(nRep,nTest) = 0;
+nSampleMC(nRep,nTest) = 0;
+
+approx_prob_sobol(nRep,nTest) = 0;
+% out_param_sobol(nRep,nTest) = 0;
+timeSob(nRep,nTest) = 0;
+nSampleSob(nRep,nTest) = 0;
+
+approx_prob_lat(nRep,nTest) = 0;
+% out_param_lat(nRep,nTest) = 0;
+timeLat(nRep,nTest) = 0;
+nSampleLat(nRep,nTest) = 0;
+
+
+approx_prob_BayLat(nRep,nTest) = 0;
+% out_param_BayLat(nRep,nTest) = 0;
+timeBayLat(nRep,nTest) = 0;
+nSampleBayLat(nRep,nTest) = 0;
+
+approx_prob_BaySob(nRep,nTest) = 0;
+timeBaySob(nRep,nTest) = 0;
+nSampleBaySob(nRep,nTest) = 0;
 
 %% First test: \(\Sigma=I_d\)
 % For this first example, we consider \(\Sigma=I_d\), and
@@ -40,36 +71,77 @@ Sigma = eye(d); % We set the covariance matrix to the identity
 factor = 3.5;
 hyperbox = [-factor*ones(1,d) ; factor*ones(1,d)]; % We define the integration limits
 exactsol = (gail.stdnormcdf(factor)-gail.stdnormcdf(-factor))^d; % Exact integral solution
+Ivec(1) = exactsol;
 
 % Solution approx_prob and integration output parameters in out_param
-[approx_prob,out_param] = multi_normcdf_cubMC(hyperbox,mu,Sigma,abstol,reltol);
+for k=1:nRep
+  [approx_prob_MC(k,1),out_param_MC(k,1)] = multi_normcdf_cubMC(hyperbox,mu,Sigma,abstol,reltol);
+end
+timeMC(:,1) = [out_param_MC(:,1).time];
+nSampleMC(:,1) = [out_param_MC(:,1).ntot];
 disp('Test 1.1: cubMC_g')
-disp(['Estimated probability with cubMC_g is: ' num2str(approx_prob)])
-disp(['The algorithm took ' num2str(out_param.time) ' seconds and '...
-  num2str(out_param.ntot) ' points.'])
+disp(['Estimated probability with cubMC_g is: ' num2str(mean(approx_prob_MC(:,1)))])
+disp(['The algorithm took ' num2str(mean(timeMC(:,1))) ' seconds and '...
+  num2str(mean(nSampleMC(:,1))) ' points.'])
 disp(['Real error is ' ...
-  num2str(abs(exactsol-approx_prob))...
+  num2str(abs(exactsol-mean(approx_prob_MC(:,1))))...
   ' which is less than the user input tolerance '...
   num2str(gail.tolfun(abstol,reltol,1,exactsol,'max')) '.'])
 
 % Solution approx_prob and integration output parameters in out_param
-[approx_prob,out_param] = multi_normcdf_cubSobol(hyperbox,mu,Sigma,abstol,reltol);
-disp('Test 1.2: cubSobol_g')
-disp(['Estimated probability with cubSobol_g is: ' num2str(approx_prob)])
-disp(['The algorithm took ' num2str(out_param.time) ' seconds and '...
-  num2str(out_param.n) ' points.'])
+for k=1:nRep
+  [approx_prob_lat(k,1),out_param_lat(k,1)] = multi_normcdf_cubLat(hyperbox,mu,Sigma,abstol,reltol);
+end
+timeLat(:,1) = [out_param_lat(:,1).time];
+nSampleLat(:,1) = [out_param_lat(:,1).n];
+disp('Test 1.2: cubLattice_g')
+disp(['Estimated probability with cubLattice_g is: ' num2str(mean(approx_prob_lat(:,1)))])
+disp(['The algorithm took ' num2str(mean(timeLat(:,1))) ' seconds and '...
+  num2str(mean(nSampleLat(:,1))) ' points.'])
 disp(['Real error is ' ...
-  num2str(abs(exactsol-approx_prob))...
+  num2str(abs(exactsol-mean(approx_prob_lat(:,1))))...
   ' which is less than the user input tolerance '...
   num2str(gail.tolfun(abstol,reltol,1,exactsol,'max')) '.'])
 
 % Solution approx_prob and integration output parameters in out_param
-[approx_prob,out_param] = multi_normcdf_cubBayes(hyperbox,mu,Sigma,abstol,reltol);
-disp('Test 1.3: cubBayesLattice_g')
-disp(['Estimated probability with cubBayesLattice_g is: ' num2str(approx_prob)])
-disp(['The algorithm took ' num2str(out_param.time) ' seconds and '...
-  num2str(out_param.n) ' points.'])
-report_integration_result(abstol,reltol,exactsol,approx_prob)
+for k=1:nRep
+  [approx_prob_sobol(k,1),out_param_sobol(k,1)] = multi_normcdf_cubSobol(hyperbox,mu,Sigma,abstol,reltol);
+end
+timeSob(:,1) = [out_param_sobol(:,1).time];
+nSampleSob(:,1) = [out_param_sobol(:,1).n];
+disp('Test 1.3: cubSobol_g')
+disp(['Estimated probability with cubSobol_g is: ' num2str(mean(approx_prob_sobol(:,1)))])
+disp(['The algorithm took ' num2str(mean(timeSob(:,1))) ' seconds and '...
+  num2str(mean(nSampleSob(:,1))) ' points.'])
+disp(['Real error is ' ...
+  num2str(abs(exactsol-mean(approx_prob_sobol(:,1))))...
+  ' which is less than the user input tolerance '...
+  num2str(gail.tolfun(abstol,reltol,1,exactsol,'max')) '.'])
+
+% Solution approx_prob and integration output parameters in out_param
+for k=1:nRep
+  [approx_prob_BayLat(k,1),out_param_BayLat(k,1)] = multi_normcdf_cubBayesLat(hyperbox,mu,Sigma,abstol,reltol);
+end
+timeBayLat(:,1) = [out_param_BayLat(:,1).time];
+nSampleBayLat(:,1) = [out_param_BayLat(:,1).n];
+disp('Test 1.4: cubBayesLattice_g')
+disp(['Estimated probability with cubBayesLattice_g is: ' num2str(mean(approx_prob_BayLat(:,1)))])
+disp(['The algorithm took ' num2str(mean(timeBayLat(:,1))) ' seconds and '...
+  num2str(mean(nSampleBayLat(:,1))) ' points.'])
+report_integration_result(abstol,reltol,exactsol,mean(approx_prob_BayLat(:,1)))
+
+% Solution approx_prob and integration output parameters in out_param
+for k=1:nRep
+  [approx_prob_BaySob(k,1),out_param_BaySob(k,1)] = multi_normcdf_cubBayesNet(hyperbox,mu,Sigma,abstol,reltol);
+end
+timeBaySob(:,1) = [out_param_BaySob(:,1).time];
+nSampleBaySob(:,1) = [out_param_BaySob(:,1).n];
+disp('Test 1.5: cubBayesNet_g')
+disp(['Estimated probability with cubBayesNet_g is: ' num2str(mean(approx_prob_BaySob(:,1)))])
+disp(['The algorithm took ' num2str(mean(timeBayLat(:,1))) ' seconds and '...
+  num2str(mean(nSampleBayLat(:,1))) ' points.'])
+report_integration_result(abstol,reltol,exactsol,mean(approx_prob_BaySob(:,1)))
+
 
 %% Second test: \(\Sigma=0.4I_d + 0.6\bf{1}\bf{1}^T\)
 % For this second example, we consider \(\Sigma=0.4I_d + 0.6\bf{1}\bf{1}^T\)
@@ -82,37 +154,116 @@ Sigma = sig*ones(d,d); Sigma(1:d+1:d*d) = 1; % set the covariance matrix
 hyperbox = [-Inf*ones(1,d) ; sqrt(d)*rand(1,d)]; % define the integration limits
 exactsol = integral(@(t)MVNPexact(t,hyperbox(2,:),sig),...
   -inf, inf,'Abstol',1e-8,'RelTol',1e-8)/sqrt(2*pi);
+Ivec(2) = exactsol;
 
 % Solution approx_prob and integration output parameters in out_param
-[approx_prob,out_param] = multi_normcdf_cubMC(hyperbox,mu,Sigma,abstol,reltol);
+for k=1:nRep
+  [approx_prob_MC(k,2),out_param_MC(k,2)] = multi_normcdf_cubMC(hyperbox,mu,Sigma,abstol,reltol);
+end
+timeMC(:,2) = [out_param_MC(:,2).time];
+nSampleMC(:,2) = [out_param_MC(:,2).ntot];
 disp('Test 2.1: cubMC_g')
-disp(['Estimated probability with cubMC_g is: ' num2str(approx_prob)])
-disp(['The algorithm took ' num2str(out_param.time) ' seconds and '...
-  num2str(out_param.ntot) ' points.'])
+disp(['Estimated probability with cubMC_g is: ' num2str(mean(approx_prob_MC(:,2)))])
+disp(['The algorithm took ' num2str(mean(timeMC(:,2))) ' seconds and '...
+  num2str(mean(nSampleMC(:,2))) ' points.'])
 disp(['Real error is ' ...
-  num2str(abs(exactsol-approx_prob))...
+  num2str(abs(exactsol-mean(approx_prob_MC(:,2))))...
   ' which is less than the user input tolerance '...
   num2str(gail.tolfun(abstol,reltol,1,exactsol,'max')) '.'])
 
 % Solution approx_prob and integration output parameters in out_param
-[approx_prob,out_param] = multi_normcdf_cubSobol(hyperbox,mu,Sigma,abstol,reltol);
-disp('Test 2.2: cubSobol_g')
-disp(['Estimated probability with cubSobol_g is: ' num2str(approx_prob)])
-disp(['The algorithm took ' num2str(out_param.time) ' seconds and '...
-  num2str(out_param.n) ' points.'])
+for k=1:nRep
+  [approx_prob_lat(k,2),out_param_lat(k,2)] = multi_normcdf_cubLat(hyperbox,mu,Sigma,abstol,reltol);
+end
+timeLat(:,2) = [out_param_lat(:,2).time];
+nSampleLat(:,2) = [out_param_lat(:,2).n];
+disp('Test 2.2: cubLattice_g')
+disp(['Estimated probability with cubLattice_g is: ' num2str(mean(approx_prob_lat(:,2)))])
+disp(['The algorithm took ' num2str(mean(timeLat(:,2))) ' seconds and '...
+  num2str(mean(nSampleLat(:,2))) ' points.'])
 disp(['Real error is ' ...
-  num2str(abs(exactsol-approx_prob))...
+  num2str(abs(exactsol-mean(approx_prob_lat(:,2))))...
   ' which is less than the user input tolerance '...
   num2str(gail.tolfun(abstol,reltol,1,exactsol,'max')) '.'])
 
 % Solution approx_prob and integration output parameters in out_param
-[approx_prob,out_param] = multi_normcdf_cubBayes(hyperbox,mu,...
-  Sigma,abstol,reltol);
-disp('Test 2.3: cubBayesLattice_g')
-disp(['Estimated probability with cubBayesLattice_g is: ' num2str(approx_prob)])
-disp(['The algorithm took ' num2str(out_param.time) ' seconds and '...
-  num2str(out_param.n) ' points.'])
-report_integration_result(abstol,reltol,exactsol,approx_prob)
+for k=1:nRep
+  [approx_prob_sobol(k,2),out_param_sobol(k,2)] = multi_normcdf_cubSobol(hyperbox,mu,Sigma,abstol,reltol);
+end
+timeSob(:,2) = [out_param_sobol(:,2).time];
+nSampleSob(:,2) = [out_param_sobol(:,2).n];
+disp('Test 2.3: cubSobol_g')
+disp(['Estimated probability with cubSobol_g is: ' num2str(mean(approx_prob_sobol(:,2)))])
+disp(['The algorithm took ' num2str(mean(timeSob(:,2))) ' seconds and '...
+  num2str(mean(nSampleSob(:,2))) ' points.'])
+disp(['Real error is ' ...
+  num2str(abs(exactsol-mean(approx_prob_sobol(:,2))))...
+  ' which is less than the user input tolerance '...
+  num2str(gail.tolfun(abstol,reltol,1,exactsol,'max')) '.'])
+
+
+% Solution approx_prob and integration output parameters in out_param
+for k=1:nRep
+  [approx_prob_BayLat(k,2),out_param_BayLat(k,2)] = multi_normcdf_cubBayesLat(...
+    hyperbox,mu,Sigma,abstol,reltol);
+end
+timeBayLat(:,2) = [out_param_BayLat(:,2).time];
+nSampleBayLat(:,2) = [out_param_BayLat(:,2).n];
+
+disp('Test 2.4: cubBayesLattice_g')
+disp(['Estimated probability with cubBayesLattice_g is: ' num2str(mean(approx_prob_BayLat(:,2)))])
+disp(['The algorithm took ' num2str(mean(timeBayLat(:,2))) ' seconds and '...
+  num2str(mean(nSampleBayLat(:,2))) ' points.'])
+report_integration_result(abstol,reltol,exactsol,mean(approx_prob_BayLat(:,2)))
+
+
+% Solution approx_prob and integration output parameters in out_param
+for k=1:nRep
+  [approx_prob_BaySob(k,2),out_param_BaySob(k,2)] = multi_normcdf_cubBayesNet(...
+    hyperbox,mu,Sigma,abstol,reltol);
+end
+timeBaySob(:,2) = [out_param_BaySob(:,2).time];
+nSampleBaySob(:,2) = [out_param_BaySob(:,2).n];
+disp('Test 2.5: cubBayesNet_g')
+disp(['Estimated probability with cubBayesNet_g is: ' num2str(mean(approx_prob_BaySob(:,2)))])
+disp(['The algorithm took ' num2str(mean(timeBayLat(:,2))) ' seconds and '...
+  num2str(mean(nSampleBayLat(:,2))) ' points.'])
+report_integration_result(abstol,reltol,exactsol,mean(approx_prob_BaySob(:,2)))
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Ivec = repmat(Ivec,nRep,1);
+
+absErrMC = abs(Ivec-approx_prob_MC);
+succMC = mean(absErrMC <= abstol)
+avgAbsErrMC = mean(absErrMC)
+
+absErrSob = abs(Ivec-approx_prob_sobol);
+succSob = mean(absErrSob <= abstol)
+avgAbsErrSob = mean(absErrSob)
+
+absErrLat = abs(Ivec-approx_prob_lat);
+succLat = mean(absErrLat <= abstol)
+avgAbsErrLat = mean(absErrLat)
+
+absErrBayLat = abs(Ivec-approx_prob_BayLat);
+succBayLat = mean(absErrBayLat <= abstol)
+avgAbsErrBayLat = mean(absErrBayLat)
+
+absErrBaySob = abs(Ivec-approx_prob_BaySob);
+succBaySob = mean(absErrBaySob <= abstol)
+avgAbsErrBaySob = mean(absErrBaySob)
+
+outFileName = gail.save_mat('Paper_cubBayesLattice_g',['MVNCubExBayesDataNRep' int2str(nRep)],...
+    true, abstol, ...
+    avgAbsErrMC, avgAbsErrLat, avgAbsErrSob, avgAbsErrBayLat, avgAbsErrBaySob, ...
+    succMC, succLat, succSob, succBayLat, succBaySob, ...
+    timeMC, timeLat, timeSob, timeBayLat, timeBaySob, ... 
+    nSampleMC, nSampleLat, nSampleSob, nSampleBayLat, nSampleBaySob);
+
+MVNCubExBayesOut(outFileName)
+fprintf('')
+
 
 %% Third test: \(\Sigma=0.4I_d + 0.6\bf{1}\bf{1}^T\)
 % For this last example, we consider the same covariance matrix in the
@@ -136,12 +287,13 @@ disp(['The algorithm took ' num2str(out_param.time) ' seconds and '...
   num2str(out_param.n) ' points.'])
 
 % Solution approx_prob and integration output parameters in out_param
-[approx_prob,out_param] = multi_normcdf_cubBayes(hyperbox,mu,...
+[approx_prob,out_param] = multi_normcdf_cubBayesLat(hyperbox,mu,...
   Sigma,abstol,reltol);
 disp('Test 3.3: cubBayesLattice_g')
 disp(['Estimated probability with cubBayesLattice_g is: ' num2str(approx_prob)])
 disp(['The algorithm took ' num2str(out_param.time) ' seconds and '...
   num2str(out_param.n) ' points.'])
+fprintf('')
 
 %% Appendix: Auxiliary function definitions
 % The following functions are defined for the above test examples.
@@ -150,7 +302,8 @@ disp(['The algorithm took ' num2str(out_param.time) ' seconds and '...
 % Alan Genz's transformation. |f| is the function resulting from applying
 % Alan Genz's transform that is called in either *cubSobol_g* or *cubMC_g*.
 
-  function [p,out, y, kappanumap] = multi_normcdf_cubSobol(hyperbox,mu,Sigma,abstol,reltol)
+  function [p,out, y, kappanumap] = multi_normcdf_cubSobol(hyperbox,mu,...
+      Sigma,abstol,reltol)
     % Using cubSobol_g, multi_normcdf_cubMC computes the cumulative
     % distribution function of the multivariate normal distribution with mean
     % mu, covariance matrix Sigma and within the region defined by hyperbox.
@@ -163,13 +316,27 @@ disp(['The algorithm took ' num2str(out_param.time) ' seconds and '...
       'uniform',abstol,reltol);
   end
 
-  function [p,out] = multi_normcdf_cubBayes(hyperbox,mu,Sigma,abstol,reltol)
-    % Using cubBayesLattice_g, multi_normcdf_cubBayes computes the cumulative
+  function [p,out, y, kappanumap] = multi_normcdf_cubLat(hyperbox,mu,...
+      Sigma,abstol,reltol)
+    % Using cubLattice_g, multi_normcdf_cubLat computes the cumulative
+    % distribution function of the multivariate normal distribution with mean
+    % mu, covariance matrix Sigma and within the region defined by hyperbox.
+    hyperbox = bsxfun(@minus, hyperbox, mu');
+    C = chol(Sigma)'; d = size(C,1);
+    a = hyperbox(1,1)/C(1,1); b = hyperbox(2,1)/C(1,1);
+    s = gail.stdnormcdf(a); e = gail.stdnormcdf(b);
+    [p, out, y, kappanumap] = cubLattice_g(...
+      @(x) f(s,e,hyperbox,x,C), [zeros(1,d-1);ones(1,d-1)],...
+      'uniform',abstol,reltol);
+  end
+
+  function [p,out] = multi_normcdf_cubBayesLat(hyperbox,mu,Sigma,abstol,reltol)
+    % Using cubBayesLattice_g, multi_normcdf_cubBayesLat computes the cumulative
     % distribution function of the multivariate normal distribution with mean
     % mu, covariance matrix Sigma and within the region defined by hyperbox.
     
     hyperbox = bsxfun(@minus, hyperbox, mu');
-    C = chol(Sigma)'; dim = size(C,1);
+    C = chol(Sigma)'; 
     a = hyperbox(1,1)/C(1,1); b = hyperbox(2,1)/C(1,1);
     s = gail.stdnormcdf(a); e = gail.stdnormcdf(b);
     
@@ -184,6 +351,31 @@ disp(['The algorithm took ' num2str(out_param.time) ' seconds and '...
     inputArgs{end+1} = 'fName'; inputArgs{end+1} = 'MVN';
     
     objCubBayes=cubBayesLattice_g(inputArgs{:});
+    [p,out]=compInteg(objCubBayes);
+    
+  end
+
+  function [p,out] = multi_normcdf_cubBayesNet(hyperbox,mu,Sigma,abstol,reltol)
+    % Using cubBayesLattice_g, multi_normcdf_cubBayes computes the cumulative
+    % distribution function of the multivariate normal distribution with mean
+    % mu, covariance matrix Sigma and within the region defined by hyperbox.
+    
+    hyperbox = bsxfun(@minus, hyperbox, mu');
+    C = chol(Sigma)'; 
+    a = hyperbox(1,1)/C(1,1); b = hyperbox(2,1)/C(1,1);
+    s = gail.stdnormcdf(a); e = gail.stdnormcdf(b);
+    
+    [~,dim] = size(hyperbox);
+    inputArgs = {'dim',dim, 'absTol',abstol, 'reltol',reltol, ...
+      'order',1, ....
+      'stopAtTol',true, 'stopCriterion','full'...
+      'arbMean',true, 'alpha',0.01 ...
+      'optTechnique','None'};
+    
+    inputArgs{end+1} = 'f'; inputArgs{end+1} = @(x) f(s,e,hyperbox,x,C);
+    inputArgs{end+1} = 'fName'; inputArgs{end+1} = 'MVN';
+    
+    objCubBayes=cubBayesNet_g(inputArgs{:});
     [p,out]=compInteg(objCubBayes);
     
   end
@@ -242,9 +434,9 @@ disp(['The algorithm took ' num2str(out_param.time) ' seconds and '...
     errTol = gail.tolfun(abstol,reltol,1,exactsol,'max');
     errReal = abs(exactsol-approx_prob);
     if errReal > errTol
-      ME = MException('cubBayesLattice_g_demo:errorExceeded', ...
+      warning('cubBayesLattice_g_demo:errorExceeded', ...
         'Real error %1.2e exceeds given tolerance %1.2e',errReal,errTol);
-      throw(ME)
+      % throw(MException(msg))
     else
       disp(['Real error is ' num2str(errReal)...
         ' which is less than the user input tolerance '...

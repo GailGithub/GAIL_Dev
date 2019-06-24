@@ -15,7 +15,7 @@ if exist(figSavePath,'dir')==false
   mkdir(figSavePath);
 end
 
-visiblePlot=false;
+visiblePlot=true;
 
 % temporarily avoid figures to be displayed in matlab
 if visiblePlot==false
@@ -28,6 +28,7 @@ rng(202326) % initialize random number generation to enable reproducability
 
 stopAtTol = true;
 alpha = 0.01;
+nRepAuto = 100;
 
 % template of input arguments
 testFunArgs(1)=struct('fName','MVN','dim',2,'order',2,'varTx','C2sin',...
@@ -58,8 +59,13 @@ for testFunArg=testFunArgs(1:end)
   nptsVec = [];
   timeVec = [];
   tolVec = [];
+  exitflagVec = [];
   outStructVec = {};
   indx = 1;
+  
+  if ~strcmp(fName, 'optPrice')
+    % continue
+  end
   if strcmp(fName, 'MVN')
     log10ErrVec = -7:1:-4; 
   elseif strcmp(fName, 'Keister')
@@ -88,6 +94,7 @@ for testFunArg=testFunArgs(1:end)
     inputArgs = {'dim',dim, 'absTol',errTol, 'order',bern, 'ptransform',vartx, ....
       'stopAtTol',stopAtTol, 'stopCriterion',testFunArg.stopCriterion...
       'figSavePath',newPath, 'arbMean',arbMean, 'alpha',alpha ...
+      'nRepAuto', nRepAuto,...
       'samplingMethod',sampling, 'visiblePlot',visiblePlot};
     testFun = '';
     switch fName
@@ -115,14 +122,16 @@ for testFunArg=testFunArgs(1:end)
         else
             [muhat,err,time,out] = testFun();
         end
+      errVec = [errVec err/errTol];
       
       if quantile(err, 1-alpha/2) > errTol
-        error 'Error exceeded given threshold'
+        warning 'Error exceeded given threshold'
         ME = MException('cubBayesLattice_g_longtests:errorExceeded', ...
           'Error exceeded given threshold: test failed for function %s',fName);
-        throw(ME)
+        % throw(ME)
       end
       
+      exitflagVec = [exitflagVec [out.exitflag]'];
       nptsVec = [nptsVec [out.n]'];
       timeVec = [timeVec [out.time]'];
       tolVec = [tolVec repmat(errTol,size(err))];
@@ -136,10 +145,10 @@ for testFunArg=testFunArgs(1:end)
   % suffix this timestamp to all the files stored
   timeStamp = datetime('now','Format','y-MMM-d');
   
-  datFileName=sprintf('Guaranteed_plot_data_%s_%s_%s_d%d_r%d_%s.mat',...
+  datFileName=sprintf('Lattice_Guaranteed_plot_data_%s_%s_%s_d%d_r%d_%s.mat',...
     fName,stopCrit,vartx,testFunArg.dim,testFunArg.order,timeStamp);
   save([figSavePath filesep datFileName],...
-    'errVec','timeVec','tolVec', 'errTolVec',...
+    'errVec','timeVec','tolVec', 'errTolVec','exitflagVec',...
     'outStructVec','testFunArg','log10ErrVec','fName',...
     'timeStamp','figSavePath','nptsVec','stopCrit');
   
