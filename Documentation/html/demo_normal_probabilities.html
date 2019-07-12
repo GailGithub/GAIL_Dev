@@ -6,7 +6,7 @@
    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>Estimation of normal probabilities by cubSobol_g and cubMC_g</title><meta name="generator" content="MATLAB 9.1"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2017-08-27"><meta name="DC.source" content="demo_normal_probabilities.m"><style type="text/css">
+      --><title>Estimation of normal probabilities by cubSobol_g and cubMC_g</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2019-04-17"><meta name="DC.source" content="demo_normal_probabilities.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -99,11 +99,11 @@ disp([<span class="string">'Real error is '</span> <span class="keyword">...</sp
     num2str(gail.tolfun(abstol,reltol,1,exactsol,<span class="string">'max'</span>)) <span class="string">'.'</span>])
 </pre><pre class="codeoutput">Test 1.1: cubMC_g
 Estimated probability with cubMC_g is: 0.98614
-The algorithm took 0.12089 seconds and 10013 points.
+The algorithm took 0.10621 seconds and 10013 points.
 Real error is 1.1102e-16 which is less than the user input tolerance 0.001.
 Test 1.2: cubSobol_g
 Estimated probability with cubSobol_g is: 0.98614
-The algorithm took 0.55576 seconds and 1024 points.
+The algorithm took 1.1301 seconds and 1024 points.
 Real error is 2.1316e-14 which is less than the user input tolerance 0.001.
 </pre><h2>Second test: \(\Sigma=0.4I_d + 0.6\bf{1}\bf{1}^T\)<a name="4"></a></h2><p>For this second example, we consider \(\Sigma=0.4I_d + 0.6\bf{1}\bf{1}^T\) (\(1\) on the diagonal, \(0.6\) off the diagonal), \(\bf{a}=(-\infty,\dots,-\infty)\), and \(\bf{b}=\sqrt{d}(U_1,\dots,U_d)\) (\(\bf{b}\) is chosen randomly). The solution for this integral is known too so we can verify the real error:</p><pre class="codeinput">sig = 0.6;
 Sigma = sig*ones(d,d); Sigma(1:d+1:d*d) = 1; <span class="comment">% set the covariance matrix</span>
@@ -133,13 +133,13 @@ disp([<span class="string">'Real error is '</span> <span class="keyword">...</sp
     <span class="string">' which is less than the user input tolerance '</span><span class="keyword">...</span>
     num2str(gail.tolfun(abstol,reltol,1,exactsol,<span class="string">'max'</span>)) <span class="string">'.'</span>])
 </pre><pre class="codeoutput">Test 2.1: cubMC_g
-Estimated probability with cubMC_g is: 0.41944
-The algorithm took 10.2458 seconds and 1610035 points.
-Real error is 3.6678e-05 which is less than the user input tolerance 0.001.
+Estimated probability with cubMC_g is: 0.25208
+The algorithm took 6.7919 seconds and 1256612 points.
+Real error is 0.00019316 which is less than the user input tolerance 0.001.
 Test 2.2: cubSobol_g
-Estimated probability with cubSobol_g is: 0.41942
-The algorithm took 0.18627 seconds and 4096 points.
-Real error is 1.8714e-05 which is less than the user input tolerance 0.001.
+Estimated probability with cubSobol_g is: 0.2515
+The algorithm took 0.092277 seconds and 4096 points.
+Real error is 0.00038123 which is less than the user input tolerance 0.001.
 </pre><h2>Third test: \(\Sigma=0.4I_d + 0.6\bf{1}\bf{1}^T\)<a name="5"></a></h2><p>For this last example, we consider the same covariance matrix in the second test but the upper and lower limits are different, \(\bf{a}=-d/3(U_1,\dots,U_d)\), and \(\bf{b}=d/3(U_{d+1},\dots,U_{2d})\) (both \(\bf{a}\) and \(\bf{b}\) are chosen randomly):</p><pre class="codeinput">hyperbox = [-(d/3)*rand(1,d) ; (d/3)*rand(1,d)]; <span class="comment">% We define the integration limits</span>
 
 <span class="comment">% Solution approx_prob and integration output parameters in out_param</span>
@@ -156,11 +156,11 @@ disp([<span class="string">'Estimated probability with cubSobol_g is: '</span> n
 disp([<span class="string">'The algorithm took '</span> num2str(out_param.time) <span class="string">' seconds and '</span><span class="keyword">...</span>
     num2str(out_param.n) <span class="string">' points.'</span>])
 </pre><pre class="codeoutput">Test 3.1: cubMC_g
-Estimated probability with cubMC_g is: 0.12366
-The algorithm took 1.3694 seconds and 247113 points.
+Estimated probability with cubMC_g is: 0.19694
+The algorithm took 1.3788 seconds and 243069 points.
 Test 3.2: cubSobol_g
-Estimated probability with cubSobol_g is: 0.12474
-The algorithm took 0.049283 seconds and 1024 points.
+Estimated probability with cubSobol_g is: 0.19626
+The algorithm took 0.048709 seconds and 1024 points.
 </pre><h2>Appendix: Auxiliary function definitions<a name="6"></a></h2><p>The following functions are defined for the above test examples. <tt>multi_normcdf_cubSobol</tt> and <tt>multi_normcdf_cubMC</tt> redefine <b>cubSobol_g</b> and <b>cubMC_g</b> respectively for computing normal probabilites based on Alan Genz's transformation. <tt>f</tt> is the function resulting from applying Alan Genz's transform that is called in either <b>cubSobol_g</b> or <b>cubMC_g</b>.</p><pre class="codeinput"><span class="keyword">function</span> [p,out, y, kappanumap] = multi_normcdf_cubSobol(hyperbox,mu,Sigma,abstol,reltol)
 <span class="comment">% Using cubSobol_g, multi_normcdf_cubMC computes the cumulative</span>
 <span class="comment">% distribution function of the multivariate normal distribution with mean</span>
@@ -222,7 +222,7 @@ dim =  length(b);
 MVNPfunvalfinal = MVNPfunval.*exp(-t.^2/2);
 <span class="keyword">end</span>
 </pre><pre class="codeinput"><span class="keyword">end</span>
-</pre><h2>References<a name="8"></a></h2><p>[1] Fred J. Hickernell, Lluis Antoni Jimenez Rugama "Reliable adaptive     cubature using digital sequences", Monte Carlo and Quasi-Monte Carlo     Methods: MCQMC, Leuven, Belgium, April 2014 (R. Cools and D. Nuyens,     eds.), Springer Proceedings in Mathematics and Statistics, vol. 163,     Springer-Verlag, Berlin, 2016, arXiv:1410.8615 [math.NA], pp.     367-383.</p><p>[2] Fred J. Hickernell, Lan Jiang, Yuewei Liu, and Art B. Owen,     "Guaranteed conservative fixed width confidence intervals via Monte     Carlo sampling," Monte Carlo and Quasi-Monte Carlo Methods 2012     (J. Dick, F. Y. Kuo, G. W. Peters, and I. H. Sloan, eds.),     Springer-Verlag, Berlin, pp. 105-128, 2014.</p><p>[3] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis     Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan     Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic     Integration Library (Version 2.2) [MATLAB Software], 2017. Available     from <a href="http://gailgithub.github.io/GAIL_Dev/">http://gailgithub.github.io/GAIL_Dev/</a></p><p>[4] Lan Jiang, Guaranteed Adaptive Monte Carlo Methods for Estimating     Means of Random Variables, PhD Thesis, Illinois Institute of     Technology, 2016.</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2016b</a><br></p></div><!--
+</pre><h2>References<a name="8"></a></h2><p>[1] Fred J. Hickernell, Lluis Antoni Jimenez Rugama "Reliable adaptive     cubature using digital sequences", Monte Carlo and Quasi-Monte Carlo     Methods: MCQMC, Leuven, Belgium, April 2014 (R. Cools and D. Nuyens,     eds.), Springer Proceedings in Mathematics and Statistics, vol. 163,     Springer-Verlag, Berlin, 2016, arXiv:1410.8615 [math.NA], pp.     367-383.</p><p>[2] Fred J. Hickernell, Lan Jiang, Yuewei Liu, and Art B. Owen,     "Guaranteed conservative fixed width confidence intervals via Monte     Carlo sampling," Monte Carlo and Quasi-Monte Carlo Methods 2012     (J. Dick, F. Y. Kuo, G. W. Peters, and I. H. Sloan, eds.),     Springer-Verlag, Berlin, pp. 105-128, 2014.</p><p>[3] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis     Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan     Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic     Integration Library (Version 2.3) [MATLAB Software], 2019. Available     from <a href="http://gailgithub.github.io/GAIL_Dev/">http://gailgithub.github.io/GAIL_Dev/</a></p><p>[4] Lan Jiang, Guaranteed Adaptive Monte Carlo Methods for Estimating     Means of Random Variables, PhD Thesis, Illinois Institute of     Technology, 2016.</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Estimation of normal probabilities by *cubSobol_g* and *cubMC_g*
 % Authors: Lluis Antoni Jimenez Rugama and Lan Jiang, August 2017
@@ -433,7 +433,7 @@ end
 % [3] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 %     Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
 %     Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
-%     Integration Library (Version 2.2) [MATLAB Software], 2017. Available
+%     Integration Library (Version 2.3) [MATLAB Software], 2019. Available
 %     from http://gailgithub.github.io/GAIL_Dev/
 %
 % [4] Lan Jiang, Guaranteed Adaptive Monte Carlo Methods for Estimating

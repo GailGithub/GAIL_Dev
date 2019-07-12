@@ -6,7 +6,7 @@
    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>funappx_g</title><meta name="generator" content="MATLAB 9.1"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2017-08-27"><meta name="DC.source" content="help_funappx_g.m"><style type="text/css">
+      --><title>funappx_g</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2019-04-17"><meta name="DC.source" content="help_funappx_g.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -84,9 +84,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
   </ul>
 </ul>
 </p><div><ul><li>out_param.iter --- number of iterations.</li></ul></div><div><ul><li>out_param.npoints --- number of points we need to reach the  guaranteed absolute error tolerance.</li></ul></div><div><ul><li>out_param.errest --- an estimation of the absolute error for the  approximation.</li></ul></div><h2>Guarantee<a name="3"></a></h2><p><b>Please check the details of the guarantee in [1].</b></p><h2>Examples<a name="4"></a></h2><p><b>Example 1</b></p><p>Approximate function \(x^2\) on \([-2,2]\) with error tolerance \(10^{-7}\), default cost budget and initial number of subintervals 18.</p><pre class="codeinput">f = @(x) x.^2; [~, out_param] = funappx_g(f,-2,2,1e-7,18)
-</pre><pre class="codeoutput">
-out_param = 
-
+</pre><pre class="codeoutput">out_param = 
   struct with fields:
 
            a: -2
@@ -100,12 +98,9 @@ out_param =
         iter: 12
      npoints: 36865
       errest: 2.9448e-08
-
 </pre><p><b>Example 2</b></p><p>Approximate function \(x^2\) on \([-2,2]\) with default error tolerance, default cost budget and initial number of subintervals 17.</p><pre class="codeinput">f = @(x) x.^2;
 [~, out_param] = funappx_g(f,<span class="string">'a'</span>,-2,<span class="string">'b'</span>,2,<span class="string">'ninit'</span>,17)
-</pre><pre class="codeoutput">
-out_param = 
-
+</pre><pre class="codeoutput">out_param = 
   struct with fields:
 
            a: -2
@@ -119,13 +114,10 @@ out_param =
         iter: 10
      npoints: 8705
       errest: 5.2896e-07
-
 </pre><p><b>Example 3</b></p><p>Approximate function \(x^2\) on \([-5,5]\) with error tolerance \(10^{-6}\), default cost budget and initial number of subintervals 18.</p><pre class="codeinput">clear <span class="string">in_param</span>; in_param.a = -5; in_param.b = 5; f = @(x) x.^2;
 in_param.abstol = 10^(-6); in_param.ninit=18;
 [~, out_param] = funappx_g(f,in_param)
-</pre><pre class="codeoutput">
-out_param = 
-
+</pre><pre class="codeoutput">out_param = 
   struct with fields:
 
            a: -5
@@ -139,7 +131,6 @@ out_param =
         iter: 11
      npoints: 18433
       errest: 7.3654e-07
-
 </pre><h2>See Also<a name="7"></a></h2><p>
 <a href="http://www.mathworks.com/help/matlab/ref/interp1.html">interp1</a>
 </p><p>
@@ -152,7 +143,7 @@ out_param =
 <a href="help_cubMC_g.html">cubMC_g</a>
 </p><p>
 <a href="help_funmin_g.html">funmin_g</a>
-</p><p><a href="http://gailgithub.github.io/GAIL_Dev/">GAIL_Dev</a></p><h2>References<a name="8"></a></h2><p>[1] Sou-Cheng T. Choi, Yuhan Ding, Fred J.Hickernell, Xin Tong, "Local Adaption for Approximation and Minimization of Univariate Functions," Journal of Complexity 40, pp. 17-33, 2017.</p><p>[2] Nick Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic Algorithms: Cones, Not Balls," Journal of Complexity 30, pp. 21-45, 2014.</p><p>[3] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic Integration Library (Version 2.2) [MATLAB Software], 2017. Available from <a href="http://gailgithub.github.io/GAIL_Dev/">http://gailgithub.github.io/GAIL_Dev/</a></p><p>[4] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible Research via Supportable Scientific Software," Journal of Open Research Software, Volume 2, Number 1, e22, pp. 1-7, 2014.</p><p>[5] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable Mathematical Software" [Course Slides], Illinois Institute of Technology, Chicago, IL, 2013. Available from <a href="http://gailgithub.github.io/GAIL_Dev/">http://gailgithub.github.io/GAIL_Dev/</a></p><p>If you find GAIL helpful in your work, please support us by citing the above papers, software, and materials.</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2016b</a><br></p></div><!--
+</p><p><a href="http://gailgithub.github.io/GAIL_Dev/">GAIL_Dev</a></p><h2>References<a name="8"></a></h2><p>[1] Sou-Cheng T. Choi, Yuhan Ding, Fred J.Hickernell, Xin Tong, "Local Adaption for Approximation and Minimization of Univariate Functions," Journal of Complexity 40, pp. 17-33, 2017.</p><p>[2] Nick Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic Algorithms: Cones, Not Balls," Journal of Complexity 30, pp. 21-45, 2014.</p><p>[3] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic Integration Library (Version 2.3) [MATLAB Software], 2019. Available from <a href="http://gailgithub.github.io/GAIL_Dev/">http://gailgithub.github.io/GAIL_Dev/</a></p><p>[4] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible Research via Supportable Scientific Software," Journal of Open Research Software, Volume 2, Number 1, e22, pp. 1-7, 2014.</p><p>[5] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable Mathematical Software" [Course Slides], Illinois Institute of Technology, Chicago, IL, 2013. Available from <a href="http://gailgithub.github.io/GAIL_Dev/">http://gailgithub.github.io/GAIL_Dev/</a></p><p>If you find GAIL helpful in your work, please support us by citing the above papers, software, and materials.</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 %% funappx_g
 % 1-D guaranteed locally adaptive function approximation (or
@@ -337,7 +328,7 @@ in_param.abstol = 10^(-6); in_param.ninit=18;
 % [3] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 % Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
 % Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
-% Integration Library (Version 2.2) [MATLAB Software], 2017. Available
+% Integration Library (Version 2.3) [MATLAB Software], 2019. Available
 % from http://gailgithub.github.io/GAIL_Dev/
 %
 % [4] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible

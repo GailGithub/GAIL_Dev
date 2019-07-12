@@ -9,8 +9,9 @@ abstol = 1e-3;
 reltol = abstol;
 format long
 in_param.measure  = 'uniform';
-disp(horzcat('Dim  ', ' FcnIdx ',  '      Q    ','         f_true     ',...
-    '          Err      ','      Sample Used    ', '         Stats  ')); 
+disp(char(13));
+disp(horzcat('  Dim ', ' FcnIdx ',  '      Q    ','    f_true     ',...
+    '     Err     ','  Sample Used ', '            Stats  ')); 
 disp(        '-----------------------------------------------------------------------------------------------------');
 ut_abserr = nan(dimsize,indexsize);
 ut_relerr = nan(dimsize,indexsize);
@@ -39,18 +40,16 @@ for dim=1:dimsize
     % the results by using cubMC_g
     abserr = abs(Q-f_true);% the absolute error
     relerr = abs((Q-f_true)/f_true);% the relative error
-    numstr=horzcat(num2str(dim), '     ', num2str(index), '       ',...
-        num2str(Q,'%10.5e'), '       ', num2str(f_true,'%10.5e'),...
-        '       ', num2str(abserr,'%10.5e'),...
-        '         ', num2str(out_param.ntot));
+    numstr=sprintf('%6d %6d %+10.5e %+10.5e %10.5e %14d', ...
+      dim, index, Q, f_true, abserr, out_param.ntot);
     % print the results
-    if abserr > in_param.abstol && relerr > in_param.reltol,
+    if abserr > in_param.abstol && relerr > in_param.reltol
     %if both absolute error and relative error does not meet tolerance
       disp([numstr,'            NoErrMet']);% mark it as "both err exceed"
-    elseif abserr < in_param.abstol && relerr > in_param.reltol,
+    elseif abserr < in_param.abstol && relerr > in_param.reltol
         % if only relative error does not meet the tolerance
         disp([numstr,'             AbsErrMet']);% mark it as "rel err exceed"
-    elseif abserr > in_param.abstol && relerr < in_param.reltol,
+    elseif abserr > in_param.abstol && relerr < in_param.reltol
         %if only the absolute error does not meet the tolerance
         disp([numstr,'            RelErrMet']);% mark it as "abs err exceed"
     else

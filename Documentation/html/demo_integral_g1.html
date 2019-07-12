@@ -6,7 +6,7 @@
    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>Integrate a spiky function using integral_g</title><meta name="generator" content="MATLAB 9.1"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2017-08-27"><meta name="DC.source" content="demo_integral_g1.m"><style type="text/css">
+      --><title>Integrate a spiky function using integral_g</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2019-04-17"><meta name="DC.source" content="demo_integral_g1.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -97,6 +97,8 @@ MATgailspiky = integral_g(spikyfun,a,b,abstol)
    4.5714e-01
 MATquadspiky =
    2.7021e-44
+Warning: This integrand is spiky relative to ninit. You may wish to increase
+ninit for similar integrands. 
 MATgailspiky =
    4.5714e-01
 </pre><h2>Compute approximation errors<a name="4"></a></h2><p>The true integral value of the spiky function is \(16/35\). The following code computes absolute errors from the above approximation methods. Only <b>integral_g</b> achieves the required accuracy with respect to the absolute tolerance of \( 10^{-11} \) in this example.</p><pre class="codeinput">integralspiky = 16/35;
@@ -107,11 +109,11 @@ MATgailspiky =
 <span class="keyword">end</span>
 if_meet_abstol = (abs_errors &lt; abstol)
 </pre><pre class="codeoutput">abs_errors =
-   6.1854e-10   4.5714e-01   1.4322e-14
+   6.1854e-10   4.5714e-01   5.7065e-14
 if_meet_abstol =
   1&times;3 logical array
    0   0   1
-</pre><h2>References<a name="5"></a></h2><p>[1] Nick Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and     Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic     Algorithms: Cones, Not Balls," Journal of Complexity 30, pp. 21-45,     2014.</p><p>[2] Fred J. Hickernell, Martha Razo, and Sunny Yun, "Reliable Adaptive     Numerical Integration", 2015+, working.</p><p>[3] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis     Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan     Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic     Integration Library (Version 2.2) [MATLAB Software], 2017. Available     from <a href="http://gailgithub.github.io/GAIL_Dev/">http://gailgithub.github.io/GAIL_Dev/</a></p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2016b</a><br></p></div><!--
+</pre><h2>References<a name="5"></a></h2><p>[1] Nick Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and     Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic     Algorithms: Cones, Not Balls," Journal of Complexity 30, pp. 21-45,     2014.</p><p>[2] Fred J. Hickernell, Martha Razo, and Sunny Yun, "Reliable Adaptive     Numerical Integration", 2015+, working.</p><p>[3] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis     Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan     Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic     Integration Library (Version 2.3) [MATLAB Software], 2019. Available     from <a href="http://gailgithub.github.io/GAIL_Dev/">http://gailgithub.github.io/GAIL_Dev/</a></p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Integrate a spiky function using *integral_g*
 % Authors:  Fred Hickernell and Sou-Cheng Choi, August 2017
@@ -187,7 +189,7 @@ if_meet_abstol = (abs_errors < abstol)
 % [3] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 %     Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
 %     Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
-%     Integration Library (Version 2.2) [MATLAB Software], 2017. Available
+%     Integration Library (Version 2.3) [MATLAB Software], 2019. Available
 %     from http://gailgithub.github.io/GAIL_Dev/
 
 ##### SOURCE END #####

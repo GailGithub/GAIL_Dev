@@ -68,9 +68,9 @@
 % Estimate the integral with integrand \(f(x) = x_1 x_2\) in the interval
 % \([0,1]^2\) with absolute tolerance \(10^{-3}\) and relative tolerance \(0\):
 
-  [mu,out] = meanMC_CLT(@(n) rand(n,1).^2, 0.001);
-  exact = 1/3;
-  check = abs(exact - mu) < 2e-3
+  [mu,out] = meanMC_CLT(@(n) prod(rand(n,2),2), 0.001);
+  exact = 1/4;
+  check = double(abs(exact - mu) < 2e-3)
   
 %%
 % *Example 2*
@@ -81,10 +81,11 @@
   f = @(x)[exp(-x.^2), x];
   YXn = @(n)f(rand(n,1));
   s = struct('Y',YXn,'nY',1,'trueMuCV',1/2);
-  [hmu,out] = meanMC_CLT(s,0,1e-3);
   exact = erf(1)*sqrt(pi)/2;
-  check = abs(exact-hmu) < max(0,1e-3*abs(exact))
-
+  success = 0; runs = 1000; tol = 1e-3;
+  for i=1:runs, success = success + double(abs(exact-meanMC_CLT(s,0,tol)) < tol*exact); end
+  check = success >= 0.99 * runs  
+  
 %%
 % *Example 3*
 %
@@ -97,9 +98,9 @@
   f2 = @(x)[f1(x,1,1),f1(x,1/sqrt(2),1),cos(x)];
   YXn = @(n)f2(randn(n,1));
   s = struct('Y',YXn,'nY',2,'trueMuCV',1/sqrt(exp(1)));
-  [hmu,out] = meanMC_CLT(s,0,1e-3); 
+  [hmu,out] = meanMC_CLT(s,0,1e-3);
   exact = 1.380388447043143;
-  check = abs(exact-hmu) < max(0,1e-3*abs(exact))
+  check = double(abs(exact-hmu) < max(0,1e-3*abs(exact)))
 
 %%
 % *Example 4*
@@ -112,7 +113,7 @@
   s = struct('Y',@(n)f(rand(n,3)),'nY',1,'trueMuCV',1/8);
   [hmu,out] = meanMC_CLT(s,1e-3,0);
   exact = 1/64;
-  check = abs(exact-hmu) < max(1e-3,1e-3*abs(exact))
+  check = double(abs(exact-hmu) < max(1e-3,1e-3*abs(exact)))
 
 %%
 % *Example 5*
@@ -128,14 +129,14 @@
   s = struct('Y',@(n)f(rand(n,3)),'nY',2,'trueMuCV',[1/8 1.5]);
   [hmu,out] = meanMC_CLT(s,1e-4,1e-3);
   exact = 1/64;
-  check = abs(exact-hmu) < max(1e-4,1e-3*abs(exact))
+  check = double(abs(exact-hmu) < max(1e-4,1e-3*abs(exact)))
   
 %% References
 %
 % [1] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 %     Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
 %     Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
-%     Integration Library (Version 2.2) [MATLAB Software], 2017. Available
+%     Integration Library (Version 2.3) [MATLAB Software], 2019. Available
 %     from http://gailgithub.github.io/GAIL_Dev/
 %
 % If you find GAIL helpful in your work, please support us by citing the

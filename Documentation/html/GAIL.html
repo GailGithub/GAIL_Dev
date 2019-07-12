@@ -6,7 +6,7 @@
    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>Guaranteed Automatic Integration Library (GAIL) Version 2.2 Documentation</title><meta name="generator" content="MATLAB 9.1"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2017-08-27"><meta name="DC.source" content="GAIL.m"><style type="text/css">
+      --><title>Guaranteed Automatic Integration Library (GAIL) Version 2.3 Documentation</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2019-04-21"><meta name="DC.source" content="GAIL.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -66,7 +66,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1>Guaranteed Automatic Integration Library (GAIL) Version 2.2 Documentation</h1><!--introduction--><p>GAIL (Guaranteed Automatic Integration Library) is created, developed, and maintained by Fred Hickernell (Illinois Institute of Technology), Sou-Cheng Choi (IIT), Yuhan Ding (IIT), Lan Jiang (IIT), Lluis Antoni Jimenez Rugama (IIT), Xin Tong (University of Illinois at Chicago), Yizhi Zhang (IIT), and Xuan Zhou (IIT).</p><p>GAIL is a suite of algorithms for integration problems in one, many, and infinite dimensions, and whose answers are guaranteed to be correct.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Introduction</a></li><li><a href="#2">Functions</a></li><li><a href="#3">Demos</a></li><li><a href="#4">Website</a></li></ul></div><h2>Introduction<a name="1"></a></h2><p>
+  </style></head><body><div class="content"><h1>Guaranteed Automatic Integration Library (GAIL) Version 2.3 Documentation</h1><!--introduction--><p>GAIL (Guaranteed Automatic Integration Library) is created, developed, and maintained by Fred Hickernell (Illinois Institute of Technology), Sou-Cheng Choi (IIT), Yuhan Ding (IIT), Lan Jiang (IIT alum), Jagadeeswaran Rathinavel (IIT), Lluis Antoni Jimenez Rugama (IIT alum), Xin Tong (University of Illinois at Chicago), Kan Zhang (IIT), Yizhi Zhang (IIT alum), and Xuan Zhou (IIT alum).</p><p>GAIL is a suite of algorithms for integration problems in one, many, and infinite dimensions, and whose answers are guaranteed to be correct.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Introduction</a></li><li><a href="#2">Functions</a></li><li><a href="#3">Demos</a></li><li><a href="#4">Website</a></li></ul></div><h2>Introduction<a name="1"></a></h2><p>
 <a href="help_license.html">GAIL License</a>
 <p><a href="help_readme.html">README</a>
 <p><a href="help_ReleaseNotes.html">Release Notes</a>
@@ -78,6 +78,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 <p><a href="help_cubMC_g.html">cubMC_g</a>
 <p><a href="help_cubSobol_g.html">cubSobol_g</a>
 <p><a href="help_cubLattice_g.html">cubLattice_g</a>
+<p><a href="help_cubBayesLattice_g.html">cubBayesLattice_g</a>
 <p><a href="help_meanMC_CLT.html">meanMC_CLT</a>
 </p><h2>Demos<a name="3"></a></h2><p>
 <a href="demo_funappx_g.html">Demos for funappx_g</a>
@@ -86,15 +87,17 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 <p><a href="demo_meanMC_g.html">Demos for meanMC_g</a>
 <p><a href="demo_cubMC_g.html">Demos for cubMC_g</a>
 <p><a href="demo_cubSobol_g.html">Demos for cubSobol_g</a>
-</p><h2>Website<a name="4"></a></h2><p>For more information about GAIL, visit <a href="http://gailgithub.github.io/GAIL_Dev/">Gailteam</a></p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2016b</a><br></p></div><!--
+<p><a href="demo_cubBayesLattice_g.html">Demos for cubBayesLattice_g</a>
+</p><h2>Website<a name="4"></a></h2><p>For more information about GAIL, visit <a href="http://gailgithub.github.io/GAIL_Dev/">Gailteam</a></p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
-%% Guaranteed Automatic Integration Library (GAIL) Version 2.2 Documentation
+%% Guaranteed Automatic Integration Library (GAIL) Version 2.3 Documentation
 %
 % GAIL (Guaranteed Automatic Integration Library) is created, developed,
 % and maintained by Fred Hickernell (Illinois Institute of Technology),
-% Sou-Cheng Choi (IIT), Yuhan Ding (IIT), Lan Jiang (IIT), Lluis Antoni
-% Jimenez Rugama (IIT), Xin Tong (University of Illinois at Chicago), Yizhi
-% Zhang (IIT), and Xuan Zhou (IIT).
+% Sou-Cheng Choi (IIT), Yuhan Ding (IIT), Lan Jiang (IIT alum), 
+% Jagadeeswaran Rathinavel (IIT), Lluis Antoni Jimenez Rugama (IIT alum), 
+% Xin Tong (University of Illinois at Chicago), Kan Zhang (IIT), 
+% Yizhi Zhang (IIT alum), and Xuan Zhou (IIT alum).
 %
 % GAIL is a suite of algorithms for integration problems in one, many, and
 % infinite dimensions, and whose answers are guaranteed to be correct.
@@ -117,6 +120,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 % <p><a href="help_cubMC_g.html">cubMC_g</a>
 % <p><a href="help_cubSobol_g.html">cubSobol_g</a>
 % <p><a href="help_cubLattice_g.html">cubLattice_g</a>
+% <p><a href="help_cubBayesLattice_g.html">cubBayesLattice_g</a>
 % <p><a href="help_meanMC_CLT.html">meanMC_CLT</a>
 % </html>
 %
@@ -129,6 +133,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 % <p><a href="demo_meanMC_g.html">Demos for meanMC_g</a>
 % <p><a href="demo_cubMC_g.html">Demos for cubMC_g</a>
 % <p><a href="demo_cubSobol_g.html">Demos for cubSobol_g</a>
+% <p><a href="demo_cubBayesLattice_g.html">Demos for cubBayesLattice_g</a>
 % </html>
 %
 %% Website

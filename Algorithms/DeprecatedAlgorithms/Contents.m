@@ -8,8 +8,6 @@
 %   funmin01_g        - 1-D guaranteed global minimum value(s) on [0,1] and the subset containing optimal solutions
 %   funminPenalty_g   - 1-D guaranteed global minimum value on [a,b] and the subset
 %   integral01_g      - 1-D guaranteed function integration using trapezoidal rule on [0,1]
-%   integralab_g      - 1-D guaranteed function integration using trapezoidal rule on [a,b]
-%   integralPenalty_g - 1-D guaranteed function integration using trapezoidal rule on [a,b] with cone condition tau
-%   integraltau_g     - 1-D guaranteed function integration using trapezoidal rule on [0,1] with cone condition tau
+%   integralTrap_g    - 1-D guaranteed function integration using trapezoidal rule
 %   meanMCabs_g       - Monte Carlo method to estimate the mean of a random variable with absolute error criterion
 

@@ -11,6 +11,7 @@
 function DisplayTestResults_BlacknColor(NumericalExample,coloroption)
 set(0,'defaultaxesfontsize',20,'defaulttextfontsize',20)
 for i = 1:length(NumericalExample)
+    disp(['Running ', NumericalExample{i}])
     switch NumericalExample{i}
         case 'ex1'
             if exist('TestcubMCon-gaussian-uniform-Out-17-Aug-2012_13.12.36N500d1tol0.001.mat')
@@ -18,7 +19,7 @@ for i = 1:length(NumericalExample)
                 % this MAT file is to plot figure 3&4 in paper
             else
                 warning(['TestcubMCon-gaussian-uniform-Out-17-Aug-2012_13.12.36N500d1tol0.001.mat does not exist. '...
-                    'Need to call function RunTestcubMConGaussiand1 to produce the MAT file.'])
+                    'Calling function RunTestcubMConGaussiand1 to produce the MAT file.'])
                 [res,test,fun,param] = RunTestcubMConGaussiand1;
             end
         case 'ex2'
@@ -27,19 +28,18 @@ for i = 1:length(NumericalExample)
                 % this MAT file is to plot figure 5 in paper
             else
                 warning(['TestcubMCon-gaussian-uniform-Out-17-Aug-2012_17.46.40N500d6tol0.001.mat does not exist. '...
-                    'Need to call function RunTestcubMConGaussian to produce the MAT file.'])
+                    'Calling function RunTestcubMConGaussian to produce the MAT file.'])
                 [res,test,fun,param] = RunTestcubMConGaussian;
             end
         case 'ex3'
             if exist('TestcubMCon-geomean-Out-17-Aug-2012_20.38.24N500d1tol0.05.mat')
                 load TestcubMCon-geomean-Out-17-Aug-2012_20.38.24N500d1tol0.05.mat
-           % this MAT file is to plot figure 6 in paper
+                % this MAT file is to plot figure 6 in paper
             else
                 warning(['TestcubMCon-geomean-Out-17-Aug-2012_20.38.24N500d1tol0.05.mat does not exist. '...
-                    'Need to call function RunTestcubMConGeoAsianCall to produce the MAT file.'])
+                    'Calling function RunTestcubMConGeoAsianCall to produce the MAT file.'])
                 [res,test,fun,param] = RunTestcubMConGeoAsianCall;
-            end
-            
+            end 
     end    
     plotTest.plotcolor=coloroption;
     plotTest.logerrlo=-5;
@@ -63,6 +63,10 @@ for i = 1:length(NumericalExample)
     end
     
     %% Plot iid results
+    if isfield(param,'tol') % attempt to debug legacy code
+       param.abstol = param.tol;
+       param = rmfield(param,'tol');
+    end 
     if any(strcmp('iid',test.whichsample))
         plotTest.err=res.iiderr;
         plotTest.time=res.iidtime;

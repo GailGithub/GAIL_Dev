@@ -6,7 +6,7 @@ ntot=length(plotTest.err);
 standard=true(size(plotTest.err));
 if isfield(plotTest,'kurtvec') && isfield(plotTest,'kurtmax')
     smallkurt=plotTest.kurtvec<=plotTest.kurtmax;
-    standard=standard &~smallkurt;
+    standard = standard & ~smallkurt;
     scatter(plotTest.err(smallkurt,:),plotTest.time(smallkurt,:),plotTest.ptsize,'k*', ...
         'linewidth',1);
 end

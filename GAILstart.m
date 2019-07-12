@@ -5,7 +5,7 @@ if nargin < 1
     isverbose =  true;
 end % print the variable names and values
 
-GAILVERSION = '2.2';
+GAILVERSION = '2.3';
 GAILPATH=[fileparts(which('GAILstart')),filesep];
 V = version;
 wh = strfind(V,'.');

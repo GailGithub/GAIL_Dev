@@ -100,7 +100,7 @@ classdef ut_cubSobol_g < matlab.unittest.TestCase
       f.cv = exactOpt(2:end); 
       in_param.abstol = inp.priceParam.absTol;
       in_param.reltol = inp.priceParam.relTol;
-      hyperbox = [zeros(1,opt.timeDim.nSteps);ones(1,opt.timeDim.nSteps)];;
+      hyperbox = [zeros(1,opt.timeDim.nSteps);ones(1,opt.timeDim.nSteps)];
       exactf = exactOpt(1);
       [meanf,out_param] = cubSobol_g(f,hyperbox,in_param);
       actualerr = abs(meanf-exactf);

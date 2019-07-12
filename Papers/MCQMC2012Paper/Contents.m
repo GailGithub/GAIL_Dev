@@ -2,7 +2,8 @@
 %
 % Files
 %
-%   AdaptiveMCProbErrAnal_rev_m.pdf - Monte Carlo and Quasi-Monte Carlo Methods 2012 paper 
+%   MCQMC2012GuaranteedFixedWidthConfidenceIntervals.pdf
+%                                  - Monte Carlo and Quasi-Monte Carlo Methods 2012 paper 
 %   choosetestfun                  - choose and set up a test function
 %   cubMC                          - main algorithm to evaluate a
 %                                    multidimensional integral
@@ -22,14 +23,14 @@
 %   randchoicegaussian             - randomly choose parameters in Gaussian test function with multiple dimensions
 %   randchoicegaussiand1           - randomly choose parameters in Gaussian test function with multiple dimension one
 %   randchoiceGeoCall              - randomly choose parameters in geometric asian mean option test function
-%   RunTestcubMConGaussiand1       - driver file to run the test on
-%                                    Gaussian test function with dimension
-%                                    one to generate a MAT file used to
-%                                    plot figure 3 and 4
 %   RunTestcubMConGaussian         - driver file to run the test on 
 %                                    Gaussian test function with dimension
 %                                    2-8,to generate a MAT file used to
 %                                    plot figure 5
+%   RunTestcubMConGaussiand1       - driver file to run the test on
+%                                    Gaussian test function with dimension
+%                                    one to generate a MAT file used to
+%                                    plot figure 3 and 4
 %   RunTestcubMConGeoAsianCall     - driver file to run the test on
 %                                    geometric Asian mean option test
 %                                    function to generate a MAT file used to

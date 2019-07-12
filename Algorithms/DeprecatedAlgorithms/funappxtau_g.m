@@ -56,11 +56,11 @@ function [fappx,out_param]=funappxtau_g(varargin)
 %   >> format short; f = @(x) x.^2; [fappx, out_param] = funappxtau_g(f)
 %
 %   fappx =
-%   function_handle with value:
+%
 %       @(x)interp1(x1,y1,x,'linear')
 %
 %   out_param =
-%   struct with fields:
+%
 %           abstol: 1.0000e-06
 %              tau: 10
 %             nmax: 10000000
@@ -77,11 +77,11 @@ function [fappx,out_param]=funappxtau_g(varargin)
 %   >> [fappx, out_param] = funappxtau_g(@(x) x.^2, in_param)
 %
 %   fappx =
-%   function_handle with value:
+%
 %       @(x)interp1(x1,y1,x,'linear')
 %
 %   out_param =
-%   struct with fields:
+%
 %           abstol: 1.0000e-08
 %                f: @(x)x.^2
 %             nmax: 1000000
@@ -98,11 +98,11 @@ function [fappx,out_param]=funappxtau_g(varargin)
 %   >> [fappx, out_param] = funappxtau_g(f,'tau',15,'nmax',1e6,'abstol',1e-8)
 %
 %   fappx =
-%   function_handle with value:
+%
 %       @(x)interp1(x1,y1,x,'linear')
 %
 %   out_param =
-%   struct with fields:
+%
 %           abstol: 1.0000e-08
 %                f: @(x)x.^2
 %             nmax: 1000000

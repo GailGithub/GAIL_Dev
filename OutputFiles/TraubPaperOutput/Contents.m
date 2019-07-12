@@ -2,10 +2,10 @@
 %
 % Files
 %
-% chebfun_errors-2017-08-21-08-27-34.eps    --- Figure 4(a) in paper
-% ConeDefineFig-2017-08-21-08-27-29.eps     --- Figure 1 in paper
-% f3foolplot-2017-08-21-08-27-31.eps        --- Figure 2(b) in paper
-% f3plot-2017-08-21-08-27-30.eps            --- Figure 2(a) in paper
+% chebfun_errors-2019-03-31-12-20-27.eps    --- Figure 4(a) in paper
+% ConeDefineFig-2019-03-31-12-20-21.eps     --- Figure 1 in paper
+% f3foolplot-2019-03-31-12-20-25.eps        --- Figure 2(b) in paper
+% f3plot-2019-03-31-12-21-40.eps            --- Figure 2(a) in paper
 % funappx_g_test-2016-10-17-18-20-32.mat    --- Table 1 in paper   
 % funappx_g_test-2017-08-21-08-27-42.txt    --- Table 1 in paper            
 % funappx_g_test-2017-08-21-08-27-42.eps    --- Figure 4(b) in paper

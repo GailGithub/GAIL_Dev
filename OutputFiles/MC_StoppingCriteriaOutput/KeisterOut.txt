@@ -1,0 +1,11 @@
+& \multicolumn{3}{c}{d = 3,\ \varepsilon =  0.005} & \multicolumn{3}{c}{d = 8,\ \varepsilon =   0.05} \\
+ \text{Method} & \texttt{cubMC\_g}  & \texttt{cubLattice\_g} & \texttt{cubSobol\_g} & \texttt{cubMC\_g} & \texttt{cubLattice\_g} & \texttt{cubSobol\_g}  \\
+ \text{Absolute Error} & \num{0.00120} & \num{0.00052} & \num{0.00051} & \num{0.01200} & \num{0.01500} & \num{0.00710}  \\
+ \text{Tolerance Met} & \num{  100} \% & 
+um{  100} \% & 
+um{  100} \% & 
+um{  100} \% & 
+um{  100} \% & 
+um{  100} \%  \\
+ n & \num{ 2500000} & \num{    4100} & \num{    4000} & \num{ 7400000} & \num{   15000} & \num{   16000} \\
+ \text{Time (seconds)} & \num{ 0.1300} & \num{ 0.0052} & \num{ 0.0036} & \num{ 0.8500} & \num{ 0.0160} & \num{ 0.0120}  

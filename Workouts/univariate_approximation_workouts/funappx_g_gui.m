@@ -67,6 +67,7 @@ h = b - a;
 %ninit = 2*ceil(nhi*(nlo/nhi)^(1/(1+h)))+1;
 ninit = nlo;
 x = a:h/ninit:b;
+x0 = x;
 y = f(x);
 maxy = max(y);
 miny = min(y);
@@ -97,6 +98,11 @@ q(2) = uicontrol('string','auto', ...
     'callback','set(gcf,''userdata'',2)');
 err = tol+1;
 
+% Plot the input function
+delta = 0.00001;
+xx=a:delta:b; 
+
+
 in_param.a = a; 
 in_param.b = b; 
 in_param.abstol = tol; 
@@ -118,12 +124,17 @@ while(max(err) > tol)
         k = k + 1;
         p = flipud(get(gca,'children'));
         set(p(1),'xdata',x,'ydata',y)
-        set(gca,'xtick',x,'xticklabel',[]);
-        plot(x,y,'.','MarkerSize',20,'color',MATLABBlue); hold on;        
+        plot(x,y,'.','MarkerSize',20,'color',MATLABBlue);  hold on;
+        plot(xx,f(xx),'color',MATLABBlue); 
+        axis tight
+        set(gca,'xtick', x0, 'xticklabel',x0);
+        ax = gca;
+        ax.XAxis.MinorTick = 'on';
+        ax.XAxis.MinorTickValues = x;
         %plot(x,zeros(size(x)),'.','color',MATLABGreen); hold on;
         set(gca,'FontSize',16)
-        title(['error bound is ' num2str(err),...
-        '; number of points is ' num2str(npoints) ])
+        title(['iter ', num2str(k), '; error bound is ' num2str(err),...
+            '; number of points is ' num2str(npoints) ])
         %hTitle=title([tmpstr{1}, '\_g: error \(\approx\) ' sprintf('%0.2g',max(err)) ' in iter ' num2str(k)]);
         %set(hTitle,'FontSize',25,'Interpreter', 'latex')
         pause(.25)
@@ -141,9 +152,9 @@ end
 
 p = flipud(get(gca,'child'));
 set(p(1),'xdata',x,'ydata',y)
-set(gca,'xtick',x,'xticklabel',[]);
+set(gca,'xtick', x0, 'xticklabel',x0);
 set(gca,'FontSize',16)
-title(['error bound is ' num2str(err),...
+title(['iter ', num2str(k), '; error bound is ' num2str(err),...
     '; number of points is ' num2str(npoints) ])
 %hTitle=title([tmpstr{1}, '\_g: error \(\approx\) '  sprintf('%0.2g',max(err)) ' in iter ' num2str(k)]);
 %set(hTitle,'FontSize',25,'Interpreter', 'latex')
@@ -166,11 +177,7 @@ errest = max(err);
 delete(q);
 warning('on', ['GAIL:', algoname ,':exceediter']);
 
-hold on;
-delta = 0.00001;
-x=a:delta:b; 
-plot(x,f(x),'color',MATLABBlue);
-hold off;
+
 gail.save_eps('WorkoutFunappxOutput', [algoname, '_gui']);
 %keyboard
 

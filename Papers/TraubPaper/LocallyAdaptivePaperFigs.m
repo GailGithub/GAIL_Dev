@@ -1,4 +1,4 @@
-function LocallyAdaptivePaperFigs(funappxRes,funminRes,colorfig)
+function [funappx_g_success_rate, funmin_g_success_rate] = LocallyAdaptivePaperFigs(funappxRes,funminRes,colorfig)
 % LOCALLYADPATIVEPAPERFIGS creates all figures and tables in the paper on local
 % adpation for function approximation and optimization published in the
 % Joseph Traub memorial issue in the Journal of Complexity:
@@ -128,7 +128,8 @@ delta = 0.3;
 f3 = @(x) f3param(x,delta,c);
 figure
 [~,fappxout] = funappx_g(@(x) -f3(x),in_param);
-disp(['funappx_g used ' int2str(fappxout.npoints) ' points and ' ...
+newline = char(13);
+disp([newline newline 'funappx_g used ' int2str(fappxout.npoints) ' points and ' ...
    int2str(fappxout.iter) ' iterations'])
 disp(['   to satisfy an absolute error tolerance of ' ...
    num2str(in_param.abstol)])
@@ -172,8 +173,8 @@ if exist('chebfun','file')
     chebfuntol = 1e-12;
     t0 = tic;
     chf = chebfun(f,[a,b],'chebfuneps', chebfuntol,'splitting','on');
-    t_chebfun = toc(t0)
-    x=a:0.00001:b;
+    t_chebfun = toc(t0);
+    x = a:0.00001:b;
     err = abs(chf(x) - f(x));
     [~,ind] = find(err > chebfuntol*10);
     figure;
@@ -191,13 +192,14 @@ if exist('chebfun','file')
     
     %% Time and error for funappx_g
     t0 = tic;
-    [fhat,out] = funappx_g(f,a,b,chebfuntol)
-    t_funappx = toc(t0)
-    t_ratio = t_funappx/t_chebfun
-    err_funappx = max(abs(f(x) - fhat(x)))
+    [fhat, out] = funappx_g(f,a,b,chebfuntol);
+    t_funappx = toc(t0);
+    t_ratio = t_funappx/t_chebfun;
+    err_funappx = max(abs(f(x) - fhat(x)));
 end
 
 %% Output funappx Table
+funappx_g_success_rate = [];
 if numel(funappxRes) > 0
    sorted_timeratio = 0;
    sorted_npointsratio = 0;
@@ -206,7 +208,7 @@ if numel(funappxRes) > 0
    npoints = 0;
    time = 0;
    load(funappxRes)
-   [fileID, fullPath] = gail.open_txt('TraubPaperOutput', ['funappx_g_test']);
+   [fileID, fullPath] = gail.open_txt('TraubPaperOutput', 'funappx_g_test');
    fprintf(fileID,'\n');
    fprintf(fileID,'# of replications = %1.0f\n',nrep);
    fprintf(fileID,'   Test         Number of Points                    Time Used                          Success (%%)                                  Failure (%%)\n');
@@ -216,7 +218,10 @@ if numel(funappxRes) > 0
    npointslgratio = zeros(1,n);
    timelgratio = zeros(1,n);
 
+   funmin_g_success_rate = zeros(length(permuted_index),1);   
    for i = permuted_index
+     funappx_g_success_rate(i) = 100.0*sum(trueerrormat(i,1,:)<=abstol)/nrep;
+      
      fprintf(fileID,'%9.0f %9.0f %9.0f  %9.0f %11.4f  %11.4f %11.4f  %6.0f %6.0f %6.0f %6.0f %6.0f   %6.0f %6.0f %6.0f %6.0f %6.0f %6.0f %6.0f\n',...
        [i mean(npoints(i,1,:)) mean(npoints(i,2,:)) mean(npoints(i,3,:))...
        mean(time(i,1,:)) mean(time(i,2,:)) mean(time(i,3,:))...
@@ -251,7 +256,7 @@ if numel(funminRes) > 0
    npoints = 0;
    time = 0;
    load(funminRes) 
-   [fileID, fullPath] = gail.open_txt('TraubPaperOutput', ['funmin_g_test']);
+   [fileID, fullPath] = gail.open_txt('TraubPaperOutput', 'funmin_g_test');
    fprintf(fileID,'\n');
    fprintf(fileID,'# of replications = %1.0f\n',nrep);
    fprintf(fileID,'   Test         Number of Points                    Time Used                          Success (%%)                                  Failure (%%)\n');
@@ -262,6 +267,8 @@ if numel(funminRes) > 0
    timelgratio = zeros(1,n);
    
    for i = permuted_index
+       funmin_g_success_rate(i) = 100.0*sum(trueerrormat(i,1,:)<=abstol)/nrep;
+       
        fprintf(fileID,'%9.0f %9.0f %9.0f  %9.0f %11.4f  %11.4f %11.4f  %6.0f %6.0f %6.0f %6.0f %6.0f   %6.0f %6.0f %6.0f %6.0f %6.0f %6.0f %6.0f \n',...
            [i mean(npoints(i,1,:)) mean(npoints(i,2,:)) mean(npoints(i,3,:))...
            mean(time(i,1,:)) mean(time(i,2,:)) mean(time(i,3,:))...

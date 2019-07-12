@@ -93,4 +93,14 @@ gail.save_eps('Paper_cubSobol_g', 'Paper_cubSobol_g_256ScrambledShiftedSobolPoin
 end
 close all
 end
+
+%  Construct an MException object to represent the error.
+msgID = 'MYFUN:DemoExample';
+msg = 'Demonstrate throw exception.';
+baseException = MException(msgID,msg);
+
+% Throw the exception to stop execution and display an error
+% message.
+%throw(baseException)
+
 end

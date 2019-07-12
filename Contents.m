@@ -1,5 +1,5 @@
 % Guaranteed Automatic Integration Library (GAIL)
-% Version 2.2 2017
+% Version 2.3, 2019
 %
 % Files
 %   GAILstart      - Initialize all the GAIL paths and system parameters.

@@ -417,28 +417,28 @@ classdef optPayoff < assetPath
                 else
                     tempPay(:,wheurobarriercall) ...
                         = max(repmat(paths(:,obj.timeDim.nSteps), 1, sum(wheurobarriercall)) ...
-                        - obj.payoffParam.strike, 0) ...
+                        - repmat(obj.payoffParam.strike,nPaths,sum(wheurobarriercall)), 0) ...
                         .* exp(- obj.assetParam.interest .* obj.timeDim.endTime);
                 end
             end
             
             wheurobarrierput = wheurobarrier  ...
                 & strcmp(obj.payoffParam.putCallType,'put');
-            if any(wheurobarrierput); %put payoff
+            if any(wheurobarrierput) %put payoff
                 if multistrike
                     tempPay(:,wheurobarrierput) ...
                         = max(repmat(obj.payoffParam.strike(wheurobarrierput), nPaths, 1) ...
                         - repmat(paths(:,obj.timeDim.nSteps), 1, sum(wheurobarrierput)), 0) ...
                         .* exp(- obj.assetParam.interest .* obj.timeDim.endTime);
                 else
-                    tempPay(:,wheurobarrierput) =  max(obj.payoffParam.strike ...
-                        - paths(:,obj.timeDim.nSteps), 0) ...
+                    tempPay(:,wheurobarrierput) =  max(repmat(obj.payoffParam.strike,nPaths,sum(wheurobarrierput)) ...
+                        - repmat(paths(:,obj.timeDim.nSteps), 1, sum(wheurobarrierput)), 0) ...
                         .* exp(- obj.assetParam.interest .* obj.timeDim.endTime);
                 end
             end
             
             wh=strcmp(obj.payoffParam.optType,'upin');
-            if any(wh); %up and in barrier
+            if any(wh) %up and in barrier
                 if obj.assetParam.initPrice < obj.payoffParam.barrier;
                     tempPay(:,wh) = tempPay(:,wh) ...
                         .* any(paths >= obj.payoffParam.barrier,2);
@@ -446,7 +446,7 @@ classdef optPayoff < assetPath
             end
             
             wh=strcmp(obj.payoffParam.optType,'downin');
-            if any(wh); %down and in barrier
+            if any(wh) %down and in barrier
                 if obj.assetParam.initPrice > obj.payoffParam.barrier;
                     tempPay(:,wh) = tempPay(:,wh) ...
                         .* any(paths <= obj.payoffParam.barrier,2);
@@ -454,7 +454,7 @@ classdef optPayoff < assetPath
             end
             
             wh=strcmp(obj.payoffParam.optType,'upout');
-            if any(wh); %up and out barrier
+            if any(wh) %up and out barrier
                 if obj.assetParam.initPrice < obj.payoffParam.barrier;
                     tempPay(:,wh) = tempPay(:,wh) ...
                         .* all(paths < obj.payoffParam.barrier,2);
@@ -668,6 +668,9 @@ classdef optPayoff < assetPath
         
     function varargout = plot(obj,varargin)
          offset = 1;
+         if ~numel(varargin)
+            varargin{1} = 'paths';
+         end
          if strcmp(varargin{1},'paths')
             % Plot the asset paths along with the strike and 
             % the exercise boundary for American put options
@@ -710,8 +713,8 @@ classdef optPayoff < assetPath
             payoffs = genOptPayoffs(obj,nPayoffs);
             probs = (1/(2*nPayoffs)):(1/nPayoffs):(1 - 1/(2*nPayoffs));
             h = plot(sort(payoffs),probs,'-');
-            if numel(varargin) > 1
-               set(h,varargin{2:end});
+            if numel(varargin) > offset
+               set(h,varargin{offset+1:end});
             else
                set(h,obj.defaultSpecs{:});
             end

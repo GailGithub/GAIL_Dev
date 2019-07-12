@@ -1,0 +1,6 @@
+
+          Success    Success   Failure    Failure    number      time
+ ninit   No Warning  Warning  No Warning  Warning   of points   elasped
+   62      18.50%     27.90%    35.90%    17.70%  17606.73     0.00 
+  602      49.10%     32.00%     5.40%    13.50% 164750.25     0.02 
+ 6002      84.90%     15.10%     0.00%     0.00% 649441.56     0.06 
