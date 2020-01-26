@@ -205,7 +205,7 @@ classdef cubBayesLattice_g < handle
     stopAtTol = true; %automatic mode: stop after meeting the error tolerance
     arbMean = true; %by default use zero mean algorithm
     stopCriterion = 'MLE'; %Available options {'MLE', 'GCV', 'full'}
-    mmin = 10; %min number of samples to start with = 2^mmin
+    mmin = 8; %min number of samples to start with = 2^mmin
     mmax = 22; %max number of samples allowed = 2^mmax
     useGradient = false; %If true usegradient descent in parameter search
     oneTheta = true; %If true use common shape parameter for all dimensions
@@ -462,9 +462,6 @@ classdef cubBayesLattice_g < handle
         
         [aOPT, fval, exitflag, output] = fminsearch(fLoss, ...
           theta0,optimset('TolX',1e-2));
-        if exitflag==0
-          fprintf('')
-        end
 
         thetaOpt = exp(aOPT(1));
         bOpt = 1 + exp(aOPT(2));

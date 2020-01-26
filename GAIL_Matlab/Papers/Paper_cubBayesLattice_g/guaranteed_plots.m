@@ -105,17 +105,19 @@ set(figH, 'units', 'inches', 'Position', fig_size)
 
 timeTicksLimits(1) = floor(log10(min(S.timeVec(:))));
 timeTicksLimits(2) = ceil(log10(max(S.timeVec(:))));
+% timeTicksLimits=[-2 2]
 plot([1, 1], 10.^timeTicksLimits, 'r', 'LineWidth',1)
 hold on
 
-for i=1:size(S.errVec,2)
-  succeeded = find(S.exitflagVec(:,i) == 1);
-  scatter(S.errVec(succeeded,i),S.timeVec(succeeded,i),pointSize,...
-    log10(S.tolVec(succeeded,i)),pointShapes{i},'filled')
-  missed = find(S.exitflagVec(:,i) ~= 1);
-  scatter(S.errVec(missed,i),S.timeVec(missed,i),65,...
-    log10(S.tolVec(missed,i)),'p')
-end
+% for i=1:size(S.errVec,2)
+%   succeeded = find(S.exitflagVec(:,i) == 1);
+%   scatter(S.errVec(succeeded,i),S.timeVec(succeeded,i),pointSize,...
+%     log10(S.tolVec(succeeded,i)),pointShapes{1},'filled')
+%   missed = find(S.exitflagVec(:,i) ~= 1);
+%   scatter(S.errVec(missed,i),S.timeVec(missed,i),65,...
+%     log10(S.tolVec(missed,i)),'p')
+% end
+
 
 set(gca,'xscale','log')
 set(gca,'yscale','log')
@@ -125,6 +127,14 @@ c = colorbar('Direction','reverse', 'Ticks',S.log10ErrVec, ...
   'TickLabels',errTolVecText, 'TickLabelInterpreter','latex');
 c.Label.Interpreter = 'latex';
 c.Label.String = 'Error Tolerance, $\varepsilon$';
+
+
+succeeded = find(S.exitflagVec(:,:) == 1);
+  scatter(S.errVec(succeeded),S.timeVec(succeeded),pointSize,...
+    log10(S.tolVec(succeeded)),'o','filled')
+  missed = find(S.exitflagVec(:,:) ~= 1);
+  scatter(S.errVec(missed),S.timeVec(missed),65,...
+    log10(S.tolVec(missed)),'p')
 % axis tight; not required
 %axis([errVecLimits(1) errVecLimits(2) timeAxisLimits(1) timeAxisLimits(2) ])
 %assert(max(timeVec(:)) <= timeLimits(2), sprintf('time val greater than max limit %d', timeLimits(2)))

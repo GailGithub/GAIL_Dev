@@ -76,7 +76,8 @@ for testFunArg=testFunArgs(1:end)
   errTolVec = 10.^log10ErrVec;
   sampling = testFunArg.sampling;
   
-  for errTol=errTolVec(1:end)
+  % for errTol=errTolVec(1:end)
+  for iter=1:length(log10ErrVec)
     fprintf('errTol %1.3f', errTol)
     
     arbMean=testFunArg.arbMean;
@@ -93,7 +94,7 @@ for testFunArg=testFunArgs(1:end)
     inputArgs = {'dim',dim, 'absTol',errTol, 'order',bern, ....
       'stopAtTol',stopAtTol, 'stopCriterion',testFunArg.stopCriterion...
       'figSavePath',newPath, 'arbMean',arbMean, 'alpha',alpha ...
-      'nRepAuto', nRepAuto,...
+      'nRepAuto', nRepAuto, 'log10ErrVec',log10ErrVec,...
       'samplingMethod',sampling, 'visiblePlot',visiblePlot};
     testFun = '';
     switch fName
@@ -114,16 +115,17 @@ for testFunArg=testFunArgs(1:end)
     end
         
     if ~strcmp(testFun,'')
-      if strcmp(fName,'optPrice') && errTol < 1e-3
+      if strcmp(fName,'optPrice') % && errTol < 1e-3
         warning('off','GAIL:cubBayesNet_g:maxreached')
-        [muhat,err,time,out] = testFun();
+        [muhat,err,time,out,tolVec_] = testFun();
         warning('on','GAIL:cubBayesNet_g:maxreached')
       else
-        [muhat,err,time,out] = testFun();
+        [muhat,err,time,out,tolVec_] = testFun();
       end
-      errVec = [errVec err/errTol];
+      % errVec = [errVec err/errTol];
+      errVec = [errVec err./tolVec_];
       
-      if quantile(err, 1-alpha/2) > errTol
+      if quantile(err./tolVec_, 1-alpha/2) > 1
         warning 'Error exceeded given threshold'
         ME = MException('cubBayesNet_g_longtests:errorExceeded', ...
           'Error exceeded given threshold: test failed for function %s',fName);
@@ -133,7 +135,8 @@ for testFunArg=testFunArgs(1:end)
       exitflagVec = [exitflagVec [out.exitflag]'];
       nptsVec = [nptsVec [out.n]'];
       timeVec = [timeVec [out.time]'];
-      tolVec = [tolVec repmat(errTol,size(err))];
+      % tolVec = [tolVec repmat(errTol,size(err))];
+      tolVec = [tolVec tolVec_];
       outStructVec{indx} = out;
       muhatVec(indx) = muhat;
       indx = indx + 1;

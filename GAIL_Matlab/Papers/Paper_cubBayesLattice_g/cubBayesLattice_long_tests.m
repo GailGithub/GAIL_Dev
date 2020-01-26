@@ -47,7 +47,7 @@ for i=1:3
   testFunArgs(i+6).stopCriterion='MLE';
 end
 
-for testFunArg=testFunArgs(1:end)
+for testFunArg=testFunArgs  %(end:-1:1)
   
   stopCrit=testFunArg.stopCriterion;
   fName = testFunArg.fName;
@@ -63,8 +63,8 @@ for testFunArg=testFunArgs(1:end)
   outStructVec = {};
   indx = 1;
   
-  if ~strcmp(fName, 'optPrice')
-    % continue
+  if ~strcmp(fName, 'Keister')
+    continue
   end
   if strcmp(fName, 'MVN')
     log10ErrVec = -7:1:-4; 
@@ -77,8 +77,9 @@ for testFunArg=testFunArgs(1:end)
   errTolVec = 10.^log10ErrVec;
   sampling = testFunArg.sampling;
   
-  for errTol=errTolVec(1:end)
-    fprintf('errTol %1.3f', errTol)
+  % for errTol=errTolVec(1:end)
+  for iter=1:length(log10ErrVec)
+    % fprintf('errTol %1.3f', errTol)
     
     arbMean=testFunArg.arbMean;
     if arbMean==true
@@ -90,11 +91,11 @@ for testFunArg=testFunArgs(1:end)
     vartx=testFunArg.varTx;
     dim=testFunArg.dim;
     bern=testFunArg.order;
-    
-    inputArgs = {'dim',dim, 'absTol',errTol, 'order',bern, 'ptransform',vartx, ....
+    % 'absTol',errTol, 
+    inputArgs = {'dim',dim, 'order',bern, 'ptransform',vartx, ....
       'stopAtTol',stopAtTol, 'stopCriterion',testFunArg.stopCriterion...
       'figSavePath',newPath, 'arbMean',arbMean, 'alpha',alpha ...
-      'nRepAuto', nRepAuto,...
+      'nRepAuto', nRepAuto, 'log10ErrVec',log10ErrVec, ...
       'samplingMethod',sampling, 'visiblePlot',visiblePlot};
     testFun = '';
     switch fName
@@ -115,16 +116,16 @@ for testFunArg=testFunArgs(1:end)
     end
         
     if ~strcmp(testFun,'')
-        if strcmp(fName,'optPrice') && errTol < 1e-3
+        if strcmp(fName,'optPrice')
             warning('off','GAIL:cubBayesLattice_g:maxreached')
-            [muhat,err,time,out] = testFun();
+            [muhat,err,time,out,tolVec_] = testFun();
             warning('on','GAIL:cubBayesLattice_g:maxreached')
         else
-            [muhat,err,time,out] = testFun();
+            [muhat,err,time,out,tolVec_] = testFun();
         end
-      errVec = [errVec err/errTol];
+      errVec = [errVec err./tolVec_];
       
-      if quantile(err, 1-alpha/2) > errTol
+      if quantile(err./tolVec_, 1-alpha/2) > 1
         warning 'Error exceeded given threshold'
         ME = MException('cubBayesLattice_g_longtests:errorExceeded', ...
           'Error exceeded given threshold: test failed for function %s',fName);
@@ -134,7 +135,7 @@ for testFunArg=testFunArgs(1:end)
       exitflagVec = [exitflagVec [out.exitflag]'];
       nptsVec = [nptsVec [out.n]'];
       timeVec = [timeVec [out.time]'];
-      tolVec = [tolVec repmat(errTol,size(err))];
+      tolVec = [tolVec tolVec_];
       outStructVec{indx} = out;
       muhatVec(indx) = muhat;
       indx = indx + 1;

@@ -583,10 +583,12 @@ classdef cubBayesNet_g < handle
   
   % static methods are the ones that do not need to access obj
   methods(Static)
-    % compute fast walsh transform in 'hadamard' ordering
+    % compute fast walsh transform in 'hadamard' ordering.
+    % Matlab by default uses 'sequency' ordering, thus the need to be spcific
     function t = fwht_hs(fx)
       [n, ~] = size(fx);
       t = fwht(fx,n,'hadamard');  %*n;
+      % Note: Unlike fft, fwht normalizes the output, i.e. divideds by 'n'
     end
     
     % prints debug message if the given variable is Inf, Nan or
@@ -746,26 +748,18 @@ classdef cubBayesNet_g < handle
     end
     
     
-    
     % plots the objective function for the MLE of theta
     function [minTheta, hFigCost] = plotObjectiveFunc(obj)
       
       n = 2^obj.mmax;
-      %sobstr = sobolset(obj.dim); %generate a Sobol' sequence
-      %xpts = sobstr(1:n,1:obj.dim); %grab Sobol' points
-      gen_digital_nets(obj,true);
-      [xpts, xpts_un] = gen_digital_nets(obj,false,1,n);
+      gen_digital_nets(obj,true); % initialize digital net sequence
+      [xpts, xpts_un] = gen_digital_nets(obj,false,1,n); % grab points
       % use scrambled points only to compute f
       fx = obj.f(xpts);  % No periodization transform required
       numM = length(obj.mvec);
       
       %% plot MLEKernel cost function
       lnTheta = -8:0.2:5;
-      
-      %fullPath = strcat(obj.figSavePath,'/',obj.fName,'/',obj.ptransform,'/');
-%       plotFileName = sprintf('%s%s Cost d_%d bernoulli_%d Period_%s.png', ...
-%         obj.figSavePath, obj.fName, obj.dim, obj.order, obj.ptransform);
-%       plotFileName  % just to display it
       
       costMLE = zeros(numM,numel(lnTheta));
       tstart=tic;
@@ -853,7 +847,9 @@ classdef cubBayesNet_g < handle
       % Lambda = cubBayesNet_g.kernel(xpts,order,theta,avoidCancelError);
       
       if ndims==1
-        figure(); plot(xpts, C1, '.', 'MarkerSize', 10); grid on; axis([0 1 -1 3])
+        hFig = figure(); 
+        set(hFig, 'units', 'inches', 'Position', [4 4 6.5 5.5])
+        plot(xpts, C1, '.', 'MarkerSize', 10); grid on; axis([0 1 -1 3])
       elseif ndims==2
         ns = sqrt(npts);
         if floor(ns) ~= ns

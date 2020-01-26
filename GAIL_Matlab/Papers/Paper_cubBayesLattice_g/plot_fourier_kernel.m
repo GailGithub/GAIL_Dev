@@ -5,7 +5,7 @@ n = 512;
 shape_param = [0.2 0.8];
 order = [1 2];
 bvec = [0.2 0.8];
-dim = 2;
+dim = 1;
 
 % using uniform points
 l = linspace(0,1,n);
@@ -21,7 +21,7 @@ if dim==1
   for r = order
     for sh = shape_param
       Z(:,i) = kernel(xpts, 2*r, sh);
-      leg_text{i} = sprintf('$r=%d,\\gamma=%1.1f$', r, sh);
+      leg_text{i} = sprintf('$r=%d,\\eta=%1.1f$', r, sh);
       i=i+1;
     end
   end
@@ -46,7 +46,7 @@ if dim==2
       Z = kernel([X(:) Y(:)], 2*r, sh);
       meshc(X, Y, reshape(Z, [n, n]));
       
-      title(sprintf('$r=%d, \\theta$=%0.2f', r, sh), 'Interpreter','latex')
+      title(sprintf('$r=%d, \\eta$=%0.2f', r, sh), 'Interpreter','latex')
       figSavePathName = sprintf('fourier_kernel r_%d shape_%dby100.png', r, 100*sh);
       saveas(hFig, figSavePathName)
     end
@@ -62,7 +62,7 @@ if dim==2
         Z = kernelSmooth([X(:) Y(:)], b, sh);
         meshc(X, Y, reshape(Z, [n, n]));
         
-        title(sprintf('$b=%0.2f, \\theta$=%0.2f', b, sh), 'Interpreter','latex')
+        title(sprintf('$b=%0.2f, \\eta$=%0.2f', b, sh), 'Interpreter','latex')
         figSavePathName = sprintf('fourier_kernel b_%dby100 shape_%dby100.png', 100*b, 100*sh);
         %saveas(hFig, figSavePathName)
       end
