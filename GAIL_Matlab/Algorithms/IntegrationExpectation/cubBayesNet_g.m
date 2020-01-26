@@ -156,14 +156,17 @@ classdef cubBayesNet_g < handle
     absTol = 0.01; %absolute tolerance
     relTol = 0; %relative tolerance
     order = 1; %order of the kernel
+    digitalNetAlpha = 1; %order of the digital nets
+    stopCriterion = 'MLE'; %Available options {'MLE', 'GCV', 'full'}
     
+    alpha = 0.01; % p-value, default 0.1%.
     ptransform = 'none'; %periodization transform
     stopAtTol = true; %automatice mode: stop after meeting the error tolerance
     arbMean = true; %by default use zero mean algorithm
     fName = 'None'; %name of the integrand
     figSavePath = ''; %path where to save he figures
     visiblePlot = true; %make plots visible
-    debugEnable = true; %enable debug prints
+    debugEnable = false; %enable debug prints
     gaussianCheckEnable = false; %enable plot to check Guassian pdf
     verify_ftilde = false; % enable to verrify iterative computation of ftilde
     net_type = 'Sobol'; % type of nets. Options: NX or Sobol
@@ -176,6 +179,9 @@ classdef cubBayesNet_g < handle
     gen_h_un = 0;
     
     mvec = [];
+    fullBayes = false; % Full Bayes - assumes m and s^2 as hyperparameters,
+    GCV = false; % Generalized cross validation
+    uncert = 0;  % quantile value for the error bound
     
     % variables to save debug info in each iteration, indexed in sequence
     errorBdAll = [];  % computed error bound
@@ -196,25 +202,32 @@ classdef cubBayesNet_g < handle
           iStart = 2;
         end
         if nargin >= iStart
-          wh = find(strcmp(varargin(iStart:end),'f'));
-          if ~isempty(wh), obj.f = varargin{wh+iStart}; end
-          wh = find(strcmp(varargin(iStart:end),'dim'));
-          if ~isempty(wh), obj.dim = varargin{wh+iStart}; end
-          wh = find(strcmp(varargin(iStart:end),'absTol'));
-          if ~isempty(wh), obj.absTol = varargin{wh+iStart}; end
-          wh = find(strcmp(varargin(iStart:end),'relTol'));
-          if ~isempty(wh), obj.relTol = varargin{wh+iStart}; end
-          wh = find(strcmp(varargin(iStart:end),'order'));
-          if ~isempty(wh), obj.order = varargin{wh+iStart}; end
-          wh = find(strcmp(varargin(iStart:end),'arbMean'));
-          if ~isempty(wh), obj.arbMean = varargin{wh+iStart}; end
-          wh = find(strcmp(varargin(iStart:end),'stopAtTol'));
-          if ~isempty(wh), obj.stopAtTol = varargin{wh+iStart}; end
-          wh = find(strcmp(varargin(iStart:end),'figSavePath'));
-          if ~isempty(wh), obj.figSavePath = varargin{wh+iStart}; end
-          wh = find(strcmp(varargin(iStart:end),'fName'));
-          if ~isempty(wh), obj.fName = varargin{wh+iStart}; end
+          % parse and set the input arguments to obj
+          obj.parse_input_args(varargin{:});
         end
+      else
+        obj.warn_fd();
+      end
+      
+      if strcmp(obj.stopCriterion, 'full')
+        % Full Bayes : The posterior error is a Student-t distribution
+        obj.fullBayes = true;
+      elseif strcmp(obj.stopCriterion, 'GCV')
+        % use Generalized cross validation
+        obj.GCV = true;
+      else
+        % use empirical Bayes : Maximum likelihood estimation
+        obj.fullBayes = false;
+        obj.GCV = false;
+      end
+      
+      % Credible interval : two-sided confidence
+      % i.e., 1-alpha percent quantile
+      if obj.fullBayes
+        % degrees of freedom = 2^mmin - 1
+        obj.uncert = -tinv(obj.alpha/2, (2^obj.mmin) - 1);
+      else
+        obj.uncert = -norminv(obj.alpha/2);
       end
       
       obj.mvec = obj.mmin:obj.mmax;
@@ -233,13 +246,72 @@ classdef cubBayesNet_g < handle
       end
     end
     
+    % parses each input argument passed and assigns to obj.
+    % Warns any unsupported options passed
+    function parse_input_args(obj, varargin)
+      if nargin > 0
+        iStart = 1;
+        if isa(varargin{1},'cubBayesNet_g')
+          iStart = 2;
+        end
+        % parse each input argument passed
+        if nargin >= iStart
+          wh = find(strcmp(varargin(iStart:end),'f'));
+          if ~isempty(wh), obj.f = varargin{wh+iStart}; end
+          wh = find(strcmp(varargin(iStart:end),'dim'));
+          if ~isempty(wh), obj.dim = varargin{wh+iStart}; end
+          wh = find(strcmp(varargin(iStart:end),'absTol'));
+          if ~isempty(wh), obj.absTol = varargin{wh+iStart}; end
+          wh = find(strcmp(varargin(iStart:end),'relTol'));
+          if ~isempty(wh), obj.relTol = varargin{wh+iStart}; end
+          wh = find(strcmp(varargin(iStart:end),'order'));
+          if ~isempty(wh), obj.order = varargin{wh+iStart}; end
+          wh = find(strcmp(varargin(iStart:end),'arbMean'));
+          if ~isempty(wh), obj.arbMean = varargin{wh+iStart}; end
+          wh = find(strcmp(varargin(iStart:end),'stopAtTol'));
+          if ~isempty(wh), obj.stopAtTol = varargin{wh+iStart}; end
+          wh = find(strcmp(varargin(iStart:end),'figSavePath'));
+          if ~isempty(wh), obj.figSavePath = varargin{wh+iStart}; end
+          wh = find(strcmp(varargin(iStart:end),'fName'));
+          if ~isempty(wh), obj.fName = varargin{wh+iStart}; end
+          wh = find(strcmp(varargin(iStart:end),'alpha'));
+          if ~isempty(wh), obj.alpha = varargin{wh+iStart}; end
+          wh = find(strcmp(varargin(iStart:end),'stopCriterion'));
+          if ~isempty(wh), obj.stopCriterion = varargin{wh+iStart}; end
+        end
+      end
+      
+      function validate_input_args(obj)
+        if ~gail.isfcn(obj.f)
+          warning('GAIL:cubBayesNet_g:fnotfcn',...
+            'The given input f should be a function handle.\n' );
+        end
+        
+        if obj.dim>20
+          error('GAIL:cubBayesNet_g:dim_invalid',...
+            'Integrand dimension=%d, is not implemented; max allowed is 20.\n', ...
+            obj.dim);
+        end
+        
+        stopCriterions = {'full','GCV','MLE'};
+        if ~ismember(obj.stopCriterion, stopCriterions)
+          str_stopCriterions = strjoin(stopCriterions, ', ');
+          warning('GAIL:cubBayesNet_g:stop_crit_invalid',...
+            'Stop criterion = "%s" is not supported; it must be from "%s". The algorithm is using default value "MLE".\n', ...
+            obj.stopCriterion, str_stopCriterions);
+          obj.stopCriterion = 'MLE';
+        end
+      end
+      
+      validate_input_args(obj);
+    end
     
     % computes the integral
     function [muhat,out] = compInteg(obj)
       % comment this line of code to use GPU for computations
       gpuArray = @(x) x;   gather = @(x) x;
       obj = gpuArray(obj);
-      
+      successFlag = false;
       tstart = tic; %start the clock
       
       numM = length(obj.mvec);
@@ -248,8 +320,6 @@ classdef cubBayesNet_g < handle
       gen_digital_nets(obj,true);
       
       % no periodization transfrom required for this algorithm
-      % obj.ptransform = 'C1sin';  % Hack : remove it soon
-      % ff = cubBayesNet_g.doPeriodTx(obj.f, obj.ptransform) ;
       ff = obj.f;
       
       %% Iteratively find the number of points required for the cubature to meet
@@ -262,16 +332,17 @@ classdef cubBayesNet_g < handle
         if iter == 1
           % xpts = sobstr(n0:nnext,1:obj.dim);  % grab Sobol' points
           % xpts = digitalseq_b2g(obj.dim, nnext-n0+1)';
-          [xpts,xpts_un] = gen_digital_nets(obj,false,n);
+          [xpts,xpts_un] = gen_digital_nets(obj,false,1,n);
           
           fx = gpuArray(ff(xpts)); %evaluate integrand
           ftilde = cubBayesNet_g.fwht_hs(fx);
         else
           % xptsnext = sobstr(n0:nnext,1:obj.dim);
           % xptsnext = digitalseq_b2g(obj.dim, nnext-n0+1)';
-          [xptsnext,xptsnext_un] = gen_digital_nets(obj,false,n/2);
+          [xptsnext,xptsnext_un] = gen_digital_nets(obj,false,1+n/2,n);
           
           xpts = [xpts;xptsnext];
+          xpts_un = [xpts_un;xptsnext_un];
           
           fx = gpuArray(ff(xptsnext));  % initialize for inplace computation
           ftildeNext = cubBayesNet_g.fwht_hs(fx);
@@ -289,28 +360,55 @@ classdef cubBayesNet_g < handle
         
         
         %br_xpts = bitrevorder(gpuArray(xpts));
-        br_xpts = gpuArray(xpts);
+        br_xpts = gpuArray(xpts_un);
         
         %Compute MLE parameter
-        lnaMLE = fminsearch(@(lna) ...
+        lnaRange = [-8,5];
+        lnaMLE = fminbnd(@(lna) ...
           ObjectiveFunction(obj, exp(lna),br_xpts,ftilde), ...
-          0,optimset('TolX',1e-2));
+          lnaRange(1),lnaRange(2),optimset('TolX',1e-2));
+        
         thetaOpt = exp(lnaMLE);
         [loss,Lambda,Lambda_ring,RKHSnorm] = ObjectiveFunction(obj, thetaOpt,br_xpts,ftilde);
         
         %Check error criterion
-        % empirical bayes
-        if obj.avoidCancelError
-          DSC = abs(Lambda_ring(1)/(1 + Lambda_ring(1)));
+        
+        % out.ErrBd = 2.58*sqrt(DSC*RKHSnorm/n);
+        if obj.fullBayes==true
+          % full bayes
+          if obj.avoidCancelError
+            DSC = abs(Lambda_ring(1)/1);
+          else
+            DSC = abs((Lambda(1)/1) - 1);
+          end
+          % 1-alpha two sided confidence interval
+          ErrBd = obj.uncert*sqrt(DSC * RKHSnorm/(n-1));
+        elseif obj.GCV==true
+          % GCV based stopping criterion
+          if obj.avoidCancelError
+            DSC = abs(Lambda_ring(1)/(1 + Lambda_ring(1)));
+          else
+            DSC = abs(1 - (1/Lambda(1)));
+          end
+          temp = Lambda;
+          temp(1) = n*(1 + Lambda_ring(1));
+          C_Inv_trace = sum(1./temp(temp~=0));
+          ErrBd = obj.uncert*sqrt(DSC * (RKHSnorm) /C_Inv_trace);
         else
-          DSC = abs(1 - (1/Lambda(1)));
+          % empirical bayes
+          if obj.avoidCancelError
+            DSC = abs(Lambda_ring(1)/(1 + Lambda_ring(1)));
+          else
+            DSC = abs(1 - (1/Lambda(1)));
+          end
+          ErrBd = obj.uncert*sqrt(DSC * RKHSnorm/n);
         end
+        out.ErrBd = ErrBd;
         
         % store the debug information
         obj.dscAll(iter) = sqrt(DSC);
         obj.s_All(iter) = sqrt(RKHSnorm/n);
         
-        out.ErrBd = 2.58*sqrt(DSC*RKHSnorm/n);
         if obj.arbMean == true % zero mean case
           % muhat is just the sample mean
           muhat = ftilde(1);
@@ -331,6 +429,7 @@ classdef cubBayesNet_g < handle
           % else, run for for all 'n' values.
           % Used to compute errorValues for 'n' vs error plotting
           if obj.stopAtTol==true
+            successFlag = true;
             break
           end
         end
@@ -361,6 +460,17 @@ classdef cubBayesNet_g < handle
         %    n, out.ErrBd, out.time, obj.absTol, obj.relTol)
       end
       
+      if successFlag==true
+        out.exitflag = 1;
+      else
+        out.exitflag = 2;  % error tolerance may not be met
+      end
+      
+      if successFlag==false
+        warning('GAIL:cubBayesNet_g:maxreached',...
+          ['In order to achieve the guaranteed accuracy, ', ...
+          sprintf('used maximum allowed sample size %d. \n', n)] );
+      end
       % convert from gpu memory to local
       muhat = gather(muhat);
       out = gather(out);
@@ -369,20 +479,41 @@ classdef cubBayesNet_g < handle
     
     
     % generates higher order interlaced digital nets or sobol points
-    function [xpts,xpts_un] = gen_digital_nets(obj,init,n)
+    function [xpts,xpts_un] = gen_digital_nets(obj,init,nStart,nEnd)
       if init==true
-        if obj.order==1
+        if obj.digitalNetAlpha==1
           obj.gen_h = scramble(sobolset(obj.dim),'MatousekAffineOwen'); %generate a Sobol' sequence
           obj.gen_h_un = sobolset(obj.dim); %generate a Sobol' sequence
         else
-          error('Not implemented')
+          if strcmp(obj.net_type,'NX')
+            switch obj.digitalNetAlpha
+              case 2
+                gen_name = 'nxmats\nx_s5_alpha2_m32.col';
+              case 3
+                gen_name = 'nxmats\nx_s5_alpha3_m32.col';
+              otherwise
+                error('Higher order=%d NX net not supported', obj.digitalNetAlpha)
+            end
+          else
+            switch obj.digitalNetAlpha
+              case 2
+                gen_name = 'sobolmats\sobol_alpha2_Bs53.col';
+              case 3
+                gen_name = 'sobolmats\sobol_alpha3_Bs53.col';
+              otherwise
+                error('Higher order=%d sobol net not supported', obj.digitalNetAlpha)
+            end
+          end
+          genmat = load(['dirk_nuyens\qmc-generators\DIGSEQ\' gen_name]);
+          digitalseq_b2g('init0', genmat)
         end
       else
-        if obj.order==1
-          xpts = obj.gen_h(1:n,1:obj.dim); %grab Sobol' points
-          xpts_un = obj.gen_h_un(1:n,1:obj.dim); %grab unscrambled Sobol' points
+        if obj.digitalNetAlpha==1
+          xpts = obj.gen_h(nStart:nEnd,1:obj.dim); %grab Sobol' points
+          xpts_un = obj.gen_h_un(nStart:nEnd,1:obj.dim); %grab unscrambled Sobol' points
         else
-          error('Not implemented')
+          xpts_un = digitalseq_b2g(obj.dim, nEnd-nStart+1)';
+          xpts = xpts_un;  % not yet implemented
         end
       end
     end
@@ -398,23 +529,40 @@ classdef cubBayesNet_g < handle
       % Not required ftilde = abs(ftilde);  % remove any negative/imaginary values
       temp = ((ftilde(Lambda~=0).^2)./(Lambda(Lambda~=0)));
       
-      if obj.arbMean==true
-        RKHSnorm = sum(temp(2:end));  % already divided by 'n'
-        temp_1 = sum(temp(2:end));
+      % compute loss
+      % Note: unlike FFT, FWT divides the output by 'n'
+      if obj.GCV==true
+        % GCV
+        temp_gcv = abs(ftilde(Lambda~=0)./(Lambda(Lambda~=0))).^2 ;
+        loss1 = 2*log(sum(1./Lambda(Lambda~=0)));
+        loss2 = log(sum(temp_gcv(2:end)));
+        % ignore all zero eigenvalues
+        loss = loss2 - loss1;
+        
+        if obj.arbMean==true
+          RKHSnorm = sum(temp_gcv(2:end));
+        else
+          RKHSnorm = sum(temp_gcv);
+        end
       else
-        RKHSnorm = sum(temp);  % already divided by 'n'
-        temp_1 = sum(temp);
+        % default: MLE
+        if obj.arbMean==true
+          RKHSnorm = sum(temp(2:end));  % already divided by 'n'
+          temp_1 = sum(temp(2:end));
+        else
+          RKHSnorm = sum(temp);  % already divided by 'n'
+          temp_1 = sum(temp);
+        end
+        if obj.debugEnable==true
+          cubBayesNet_g.alertMsg(temp_1, 'Imag');
+        end
+        
+        % loss = mean(log(Lambda)) + log(RKHSnorm);
+        loss1 = sum(log(abs(Lambda(Lambda~=0))));
+        loss2 = n*log(abs(temp_1 + eps)); % add eps to avoid zero
+        % ignore all zero val eigenvalues
+        loss = loss1 + loss2;
       end
-      if obj.debugEnable==true
-        cubBayesNet_g.alertMsg(temp_1, 'Imag');
-      end
-      
-      % loss = mean(log(Lambda)) + log(RKHSnorm);
-      
-      loss1 = sum(log(Lambda(Lambda~=0)))/n;
-      loss2 = log(temp_1);
-      % ignore all zero val eigenvalues
-      loss = loss1 + loss2;
       
       if obj.debugEnable==true
         cubBayesNet_g.alertMsg(loss1, 'Inf');
@@ -428,10 +576,12 @@ classdef cubBayesNet_g < handle
   
   % static methods are the ones that do not need to access obj
   methods(Static)
-    % compute fast walsh transform in 'hadamard' ordering
+    % compute fast walsh transform in 'hadamard' ordering.
+    % Matlab by default uses 'sequency' ordering, thus the need to be spcific
     function t = fwht_hs(fx)
       [n, ~] = size(fx);
       t = fwht(fx,n,'hadamard');  %*n;
+      % Note: Unlike fft, fwht normalizes the output, i.e. divideds by 'n'
     end
     
     % prints debug message if the given variable is Inf, Nan or
@@ -511,14 +661,10 @@ classdef cubBayesNet_g < handle
     function [Lambda,Lambda_ring] = kernel(xpts,order,theta,avoidCancelError)
       kernelFunc = cubBayesNet_g.BuildKernelFunc(order);
       if avoidCancelError
-        [C1m1] = cubBayesLattice_g.kernel_t(theta, kernelFunc(xpts));
+        [C1m1] = cubBayesNet_g.kernel_t(theta, kernelFunc(xpts));
         % eigenvalues must be real : Symmetric pos definite Kernel
         Lambda_ring = real(cubBayesNet_g.fwht_hs(C1m1));
         
-        if any(Lambda_ring < 0)
-          % warning('eigen values are negative!\n')
-          Lambda_ring = abs(Lambda_ring);
-        end
         Lambda = Lambda_ring;
         Lambda(1) = Lambda_ring(1) + 1;  %n;
       else
@@ -528,14 +674,21 @@ classdef cubBayesNet_g < handle
         Lambda_ring(1) = Lambda_ring(1) - 1;  %n;
       end
       
+      if any(Lambda < 0)
+        % warning('eigen values are negative!\n')
+        Lambda_ring(2:end) = abs(Lambda_ring(2:end));
+        Lambda(2:end) = Lambda_ring(2:end);
+      end
+      
       if 0 % Create the full kernel matrix to compare
         dm = cubBayesNet_g.diffMatrix(xpts);
+        [n,dim] = size(xpts);
         K = 1 + theta*kernelFunc(dm);
         if dim > 1
           K = prod(K, 3);  % for d>1 reduce the 3rd dim by multiplication
         else
         end
-        lambda = eig(K);
+        lambda = eig(K)/n;
         temp = lambda./sort(Lambda);
         if std(abs(temp)) > 0.1 || max(abs(temp-1)) > 0.1
           warning('estimated eigenvalues wrong')
@@ -572,7 +725,7 @@ classdef cubBayesNet_g < handle
       ts3 = @(x)((1-43*t2(x))/18 + (5*t1(x)-1).*x +(a1(x)-2).*x.^2);
       
       if order==1
-        kernFunc = @(x)(12*( (1/6) - 2.^(floor(log2(x))-1) ));
+        kernFunc = @(x)(6*( (1/6) - 2.^(floor(log2(x))-1) ));
       elseif order==2
         omega2_1D = @(x)(s1(x) + ts2(x));
         kernFunc = omega2_1D;
@@ -584,6 +737,91 @@ classdef cubBayesNet_g < handle
       end
       
     end
+    
+    
+    % plots the objective function for the MLE of theta
+    function [minTheta, hFigCost] = plotObjectiveFunc(obj)
+      
+      n = 2^obj.mmax;
+      gen_digital_nets(obj,true); % initialize digital net sequence
+      [xpts, xpts_un] = gen_digital_nets(obj,false,1,n); % grab points
+      % use scrambled points only to compute f
+      fx = obj.f(xpts);  % No periodization transform required
+      numM = length(obj.mvec);
+      
+      %% plot MLEKernel cost function
+      lnTheta = -8:0.2:5;
+      
+      costMLE = zeros(numM,numel(lnTheta));
+      tstart=tic;
+      
+      for iter = 1:numM
+        nii = 2^obj.mvec(iter);
+        nii
+        
+        eigvalK = zeros(numel(lnTheta),nii);
+        %br_xpts = bitrevorder(xpts(1:nii, :));
+        %ftilde = cubBayesNet_g.fwht_hs(obj.f(br_xpts)); %/nii;
+        ftilde = cubBayesNet_g.fwht_hs(fx(1:nii)); %, nii, 'hadamard'
+        br_xpts = xpts_un(1:nii,:);
+        
+        tic
+        %par
+        for k=1:numel(lnTheta)
+          [costMLE(iter,k),eigvalK(k,:)] = ObjectiveFunction(obj, exp(lnTheta(k)),...
+            br_xpts,ftilde);
+          %[costMLE(iter,k),eigvalK(k,:)] = MLEKernel(obj, exp(lnTheta(k)),...
+          %  br_xpts,ftilde);
+        end
+        toc
+      end
+      
+      toc(tstart)
+      
+      if obj.visiblePlot==false
+        hFigCost = figure('visible','off');
+      else
+        hFigCost = figure();
+      end
+      
+      if ~isreal(costMLE)
+        fprintf('costMLE has complex values !! \n')
+      end
+      
+      % semilogx : loglog
+      semilogx(exp(lnTheta),real(costMLE));
+      set(hFigCost, 'units', 'inches', 'Position', [0 0 13.5 11.5])
+      xlabel('Shape param, \(\theta\)')
+      ylabel('MLE Cost, \( \log \frac{y^T K_\theta^{-1}y}{[\det(K_\theta^{-1})]^{1/n}} \)')
+      % ylabel('Log MLE Obj. fun.')
+      axis tight;
+      if obj.arbMean
+        mType = '\(m \neq 0\)';  % arb mean
+      else
+        mType = '\(m = 0\)';  % zero mean
+      end
+      %title(lgd,'Sample Size, \(n\)'); legend boxoff
+      title(sprintf('%s d=%d r=%d %s', obj.fName, obj.dim, ...
+        obj.order, mType));
+      [minVal,Index] = min(real(costMLE),[],2);
+      
+      % mark the min theta values found using fminbnd
+      minTheta = exp(lnTheta(Index));
+      hold on;
+      semilogx(minTheta,minVal, '.');
+      if exist('aMLEAll', 'var')
+        semilogx(obj.aMLEAll,obj.lossMLEAll, '+');
+      end
+      temp = string(obj.mvec); temp=strcat('\(2^{',temp,'}\)');
+      temp(end+1) = '\(\theta_{min_{true}}\)';
+      if exist('aMLEAll', 'var')
+        temp(end+1) = '\(\theta_{min_{est}}\)';
+      end
+      
+      legend(temp,'location','best'); axis tight
+      % saveas(hFigCost, plotFileName)
+    end
+    
     
     
     % plots the kernel with different params
@@ -600,7 +838,9 @@ classdef cubBayesNet_g < handle
       % Lambda = cubBayesNet_g.kernel(xpts,order,theta,avoidCancelError);
       
       if ndims==1
-        figure(); plot(xpts, C1, '.', 'MarkerSize', 10); grid on; axis([0 1 -1 3])
+        hFig = figure();
+        set(hFig, 'units', 'inches', 'Position', [4 4 6.5 5.5])
+        plot(xpts, C1, '.', 'MarkerSize', 10); grid on; axis([0 1 -1 3])
       elseif ndims==2
         ns = sqrt(npts);
         if floor(ns) ~= ns
@@ -625,6 +865,10 @@ classdef cubBayesNet_g < handle
       else
         error('demoKernel: ndims > 2 not implemented');
       end
+    end
+    function warn_fd()
+      warning('GAIL:cubBayesNet_g:fdnotgiven',...
+        'At least, function f and dimension need to be specified');
     end
   end % end of static functions
 end

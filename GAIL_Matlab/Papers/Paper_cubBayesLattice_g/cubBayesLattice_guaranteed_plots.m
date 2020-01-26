@@ -36,6 +36,8 @@ rng(202326) % initialize random number generation to enable reproducability
 
 stopAtTol = true;
 alpha = 0.01;
+oneTheta = true;
+useGradient = false;
 
 % template of input arguments
 testFunArgs(1)=struct('fName','MVN','dim',2,'order',2,'varTx','C2sin',...
@@ -94,6 +96,7 @@ for testFunArg=testFunArgs(1:end)
     
     inputArgs = {'dim',dim, 'absTol',errTol, 'order',bern, 'ptransform',vartx, ....
       'stopAtTol',stopAtTol, 'stopCriterion',testFunArg.stopCriterion...
+      'oneTheta',oneTheta, 'useGradient',useGradient...
       'figSavePath',newPath, 'arbMean',arbMean, 'alpha',alpha ...
       'samplingMethod',sampling, 'visiblePlot',visiblePlot};
     testFun = '';

@@ -1,6 +1,6 @@
 %% Interface to test Asian Arithmetic Mean Option Pricing
 % using Bayesian cubature algorithm
-function [muhat,err,timeVec,outVec] = TestAsianArithmeticMeanOptionAutoExample(varargin)
+function [muhat,err,timeVec,outVec,errTolVec] = TestAsianArithmeticMeanOptionAutoExample(varargin)
 
 whichExample = 'Pierre';
 dataFileName = [whichExample 'AsianCallExampleAllData.mat'];
@@ -38,11 +38,17 @@ AsianCall.payoffParam = struct( ...
 % read input params
 samplingMethod = get_arg('samplingMethod', varargin, 'Lattice');
 nRepAuto = get_arg('nRepAuto', varargin, 100);
+log10ErrVec = get_arg('log10ErrVec', varargin);
 
 integrand = @(x) genOptPayoffs_fixNan(AsianCall,x);
 
 dim = AsianCall.timeDim.nSteps;
 muAsianCallBayesAuto(nRepAuto,1) = 0;
+errTolVec(nRepAuto,1) = 0;
+
+log10ErrTol_a = log10ErrVec(1) - 0.3;
+log10ErrTol_b = log10ErrVec(end) + 0.3;
+randErrTol = @() 10^(log10ErrTol_a + (log10ErrTol_b - log10ErrTol_a)*rand());
 
 fName = 'optPrice';
 inputArgs = varargin;
@@ -50,16 +56,19 @@ inputArgs{end+1} = 'f'; inputArgs{end+1} = integrand;
 inputArgs{end+1} = 'fName'; inputArgs{end+1} = fName;
 inputArgs = set_arg('dim', inputArgs, dim);
 
-% initialise the object based on the sampling method
-if exist('samplingMethod','var') && ...
-    strcmp(samplingMethod,'Sobol') % use Sobol points
-  obj=cubMLESobol(inputArgs{:});
-else % use Lattice points
-  obj=cubBayesLattice_g(inputArgs{:});
-end
-
 tStart=tic;
 for i =  1:nRepAuto
+  errTolVec(i) = randErrTol();
+  inputArgs = set_arg('absTol', inputArgs, errTolVec(i));
+  
+  % initialise the object based on the sampling method
+  if exist('samplingMethod','var') && ...
+      strcmp(samplingMethod,'Net') % use Sobol points
+    obj=cubBayesNet_g(inputArgs{:});
+  else % use Lattice points
+    obj=cubBayesLattice_g(inputArgs{:});
+  end
+
   [muAsianCallBayesAuto(i),outCallBayes(i)] = compInteg(obj);
 end
 disp(' ');

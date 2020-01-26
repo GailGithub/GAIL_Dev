@@ -158,6 +158,20 @@
 % check = 1
 % 
 %
+% Example 7: Another example using dimesnion specific shpae parameter
+% >> const = [1E-4 1 1E4];
+% >> fun = @(x)sum(const.* sin(2*pi*x.^2), 2);
+% >> dim=3; absTol=1e-3; relTol=1e-2;
+% >> exactInteg = fresnels(2)*sum(const)/2;
+% >> inputArgs = {'relTol',relTol, 'order',2, 'ptransform','C1sin'};
+% >> inputArgs = [inputArgs {'f',fun, 'dim',dim, 'absTol',absTol,'oneTheta',false,'useGradient',false}];
+% >> obj=cubBayesLattice_g(inputArgs{:});
+% >> [muhat,outParams]=compInteg(obj);
+% >> check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))
+% check = 1
+% >> etaDim = size(outParams.optParams.aMLEAll, 2)
+% etaDim = 3
+%
 %
 %   See also CUBSOBOL_G, CUBLATTICE_G, CUBMC_G, MEANMC_G, INTEGRAL_G
 %
@@ -191,7 +205,7 @@ classdef cubBayesLattice_g < handle
     stopAtTol = true; %automatic mode: stop after meeting the error tolerance
     arbMean = true; %by default use zero mean algorithm
     stopCriterion = 'MLE'; % Available options {'MLE', 'GCV', 'full'}
-    mmin = 10; %min number of samples to start with = 2^mmin
+    mmin = 8; %min number of samples to start with = 2^mmin
     mmax = 22; %max number of samples allowed = 2^mmax
     useGradient = false; %If true usegradient descent in parameter search
     oneTheta = true; %If true use common shape parameter for all dimensions
@@ -448,9 +462,6 @@ classdef cubBayesLattice_g < handle
         
         [aOPT, fval, exitflag, output] = fminsearch(fLoss, ...
           theta0,optimset('TolX',1e-2));
-        if exitflag==0
-          fprintf('')
-        end
 
         thetaOpt = exp(aOPT(1));
         bOpt = 1 + exp(aOPT(2));
@@ -479,7 +490,7 @@ classdef cubBayesLattice_g < handle
         else
           % Nelder Mead: gradient not required
           nm_start = tic;
-          theta0 = ones(1,obj.dim)*0.1; %
+          theta0 = zeros(1,obj.dim)*0.1; %
           nmOptions = optimset('TolX',1e-2);
           [lnaMLE_,fval_,exitflag_,output_] = fminsearch(@(lna) ...
             ObjectiveFunction(obj, exp(lna),xpts,ftilde), ...
@@ -1005,7 +1016,7 @@ classdef cubBayesLattice_g < handle
     end
     
     % generates rank-1 Lattice points in vander Corput sequence order
-    function [xlat,xlat_] = simple_lattice_gen(n,d,shift,firstBatch)
+    function [xlat,xpts_un,xlat_un,xpts] = simple_lattice_gen(n,d,shift,firstBatch)
       z = cubBayesLattice_g.get_lattice_gen_vec(d);
       
       nmax = n;
@@ -1017,13 +1028,16 @@ classdef cubBayesLattice_g < handle
       
       if firstBatch==true
         brIndices=cubBayesLattice_g.vdc(nelem)';
-        xlat_=mod(bsxfun(@times,(0:1/n:1-1/n)',z),1); % unshifted in direct order
+        xpts_un=mod(bsxfun(@times,(0:1/n:1-1/n)',z),1); % unshifted in direct order
       else
         brIndices=cubBayesLattice_g.vdc(nelem)'+1/(2*(nmin-1));
-        xlat_=mod(bsxfun(@times,(1/n:2/n:1-1/n)',z),1); % unshifted in direct order
+        xpts_un=mod(bsxfun(@times,(1/n:2/n:1-1/n)',z),1); % unshifted in direct order
+        
       end
-      xlat = mod(bsxfun(@times,brIndices',z),1);  % unshifted
-      xlat = mod(bsxfun(@plus,xlat,shift),1);  % shifted in VDC order
+      xpts = mod(bsxfun(@plus,xpts_un,shift),1);  % shifted in direct order
+      
+      xlat_un = mod(bsxfun(@times,brIndices',z),1);  % unshifted
+      xlat = mod(bsxfun(@plus,xlat_un,shift),1);  % shifted in VDC order
     end
     
     % van der Corput sequence in base 2

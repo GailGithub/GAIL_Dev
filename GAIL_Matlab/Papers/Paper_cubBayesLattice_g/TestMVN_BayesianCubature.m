@@ -1,9 +1,10 @@
 %% Interface to test Multivariate Normal Probabilities
 %
-function [muhat,errVec,timeVec,outVec] = TestMVN_BayesianCubature(varargin)
+function [muhat,errVec,timeVec,outVec,errTolVec] = TestMVN_BayesianCubature(varargin)
 
 dim = get_arg('dim', varargin);
 samplingMethod = get_arg('samplingMethod', varargin);
+log10ErrVec = get_arg('log10ErrVec', varargin);
 
 if dim==2
   % d=3 problem reduced to d=2 using Genz method
@@ -35,20 +36,28 @@ inputArgs = varargin;
 inputArgs{end+1} = 'f'; inputArgs{end+1} = integrand;
 inputArgs{end+1} = 'fName'; inputArgs{end+1} = fName;
 
-% initialise the object based on the sampling method
-if exist('samplingMethod','var') && ...
-    strcmp(samplingMethod,'Sobol') % use Sobol points
-  objCubBayes=cubMLESobol(inputArgs{:});
-else % use Lattice points
-  objCubBayes=cubBayesLattice_g(inputArgs{:});
-end
+nRep = 100; % increased it for gail plots
+muhatVec(nRep,1) = 0;
+errTolVec(nRep,1) = 0;
+
+log10ErrTol_a = log10ErrVec(1) - 0.3;
+log10ErrTol_b = log10ErrVec(end) + 0.3;
+randErrTol = @() 10^(log10ErrTol_a + (log10ErrTol_b - log10ErrTol_a)*rand());
 
 tic
 
-nRep = 100; % increased it for gail plots
-
-muhatVec(nRep,1) = 0;
 for i = 1:nRep
+  errTolVec(i) = randErrTol();
+  inputArgs = set_arg('absTol', inputArgs, errTolVec(i));
+
+  % initialise the object based on the sampling method
+  if exist('samplingMethod','var') && ...
+      strcmp(samplingMethod,'Net') % use Sobol points
+    objCubBayes=cubBayesNet_g(inputArgs{:});
+  else % use Lattice points
+    objCubBayes=cubBayesLattice_g(inputArgs{:});
+  end
+
   [muhatVec(i),outVec(i)]=compInteg(objCubBayes);
 end
 timeVec = [outVec(:).time]';
@@ -129,4 +138,10 @@ wh = find(strcmp(inputArgs(iStart:end),argName));
 if ~isempty(wh), output=inputArgs{wh+iStart}; else, output=defaultVal; end
 end
 
-
+% sets the argument of the given argument
+function outArgs = set_arg(argName, inputArgs, val)
+outArgs=inputArgs;
+iStart=1;
+wh=find(strcmp(outArgs(iStart:end),argName));
+if ~isempty(wh), outArgs{wh+1}=val; else, outArgs{end+1}=argName; outArgs{end+1}=val; end
+end

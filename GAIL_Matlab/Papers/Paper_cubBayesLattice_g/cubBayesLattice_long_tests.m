@@ -28,6 +28,7 @@ rng(202326) % initialize random number generation to enable reproducability
 
 stopAtTol = true;
 alpha = 0.01;
+nRepAuto = 100;
 
 % template of input arguments
 testFunArgs(1)=struct('fName','MVN','dim',2,'order',2,'varTx','C2sin',...
@@ -58,6 +59,7 @@ for testFunArg=testFunArgs(1:end)
   nptsVec = [];
   timeVec = [];
   tolVec = [];
+  exitflagVec = [];
   outStructVec = {};
   indx = 1;
   if strcmp(fName, 'MVN')
@@ -71,8 +73,7 @@ for testFunArg=testFunArgs(1:end)
   errTolVec = 10.^log10ErrVec;
   sampling = testFunArg.sampling;
   
-  for errTol=errTolVec(1:end)
-    fprintf('errTol %1.3f', errTol)
+  for iter=1:length(log10ErrVec)
     
     arbMean=testFunArg.arbMean;
     if arbMean==true
@@ -85,9 +86,10 @@ for testFunArg=testFunArgs(1:end)
     dim=testFunArg.dim;
     bern=testFunArg.order;
     
-    inputArgs = {'dim',dim, 'absTol',errTol, 'order',bern, 'ptransform',vartx, ....
+    inputArgs = {'dim',dim, 'order',bern, 'ptransform',vartx, ....
       'stopAtTol',stopAtTol, 'stopCriterion',testFunArg.stopCriterion...
       'figSavePath',newPath, 'arbMean',arbMean, 'alpha',alpha ...
+      'nRepAuto', nRepAuto, 'log10ErrVec',log10ErrVec, ...
       'samplingMethod',sampling, 'visiblePlot',visiblePlot};
     testFun = '';
     switch fName
@@ -108,24 +110,26 @@ for testFunArg=testFunArgs(1:end)
     end
         
     if ~strcmp(testFun,'')
-        if strcmp(fName,'optPrice') && errTol < 1e-3
+        if strcmp(fName,'optPrice')
             warning('off','GAIL:cubBayesLattice_g:maxreached')
-            [muhat,err,time,out] = testFun();
+            [muhat,err,time,out,tolVec_] = testFun();
             warning('on','GAIL:cubBayesLattice_g:maxreached')
         else
-            [muhat,err,time,out] = testFun();
+            [muhat,err,time,out,tolVec_] = testFun();
         end
+      errVec = [errVec err./tolVec_];
       
-      if quantile(err, 1-alpha/2) > errTol
-        error 'Error exceeded given threshold'
+      if quantile(err./tolVec_, 1-alpha/2) > 1
+        warning 'Error exceeded given threshold'
         ME = MException('cubBayesLattice_g_longtests:errorExceeded', ...
           'Error exceeded given threshold: test failed for function %s',fName);
-        throw(ME)
+        % throw(ME)
       end
       
+      exitflagVec = [exitflagVec [out.exitflag]'];
       nptsVec = [nptsVec [out.n]'];
       timeVec = [timeVec [out.time]'];
-      tolVec = [tolVec repmat(errTol,size(err))];
+      tolVec = [tolVec tolVec_];
       outStructVec{indx} = out;
       muhatVec(indx) = muhat;
       indx = indx + 1;
@@ -136,10 +140,10 @@ for testFunArg=testFunArgs(1:end)
   % suffix this timestamp to all the files stored
   timeStamp = datetime('now','Format','y-MMM-d');
   
-  datFileName=sprintf('Guaranteed_plot_data_%s_%s_%s_d%d_r%d_%s.mat',...
+  datFileName=sprintf('Lattice_Guaranteed_plot_data_%s_%s_%s_d%d_r%d_%s.mat',...
     fName,stopCrit,vartx,testFunArg.dim,testFunArg.order,timeStamp);
   save([figSavePath filesep datFileName],...
-    'errVec','timeVec','tolVec', 'errTolVec',...
+    'errVec','timeVec','tolVec', 'errTolVec','exitflagVec',...
     'outStructVec','testFunArg','log10ErrVec','fName',...
     'timeStamp','figSavePath','nptsVec','stopCrit');
   
