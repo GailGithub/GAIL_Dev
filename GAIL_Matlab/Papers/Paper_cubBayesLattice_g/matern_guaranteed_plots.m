@@ -65,7 +65,6 @@ integrand = @(t) GenzFunc(t,MVNParams);
 fName = 'MVN';
 nRep = 100;
 muhatVec(nRep,length(log10ErrVec)) = 0;
-% errTolVec(nRep,length(log10ErrVec)) = 0;
 indx = 1;
 
 
@@ -82,7 +81,6 @@ else
     tic
     for i=1:nRep
       errTol = randErrTol();
-      % errTolVec(i,k) = errTol;
       fprintf('%d  %1.1e', indx, errTol)
       inputArgs = {'fName',fName,'dim',dim, 'absTol',errTol,'relTol',relTol, ....
         'stopAtTol',stopAtTol,'f',integrand };
@@ -130,10 +128,6 @@ timeTickInterval = ceil(diff(timeTicksLimits)/5);
 plot([1, 1], 10.^timeTicksLimits, 'r', 'LineWidth',1)
 hold on
 
-% for i=1:size(S.errVec,2)
-%   scatter(S.errVec(:,i),S.timeVec(:,i),pointSize,log10(S.tolVec(:,i)),...
-%     pointShapes{i},'filled')
-% end
 
 % pointshapes represent number of samples
 i=1;
@@ -157,7 +151,6 @@ c.Label.String = 'Error Tolerance, $\varepsilon$';
 
 temp = arrayfun(@(x){sprintf('${n={%d}}$', x)}, unique(S.nVec));
 temp = [{'${\vert\mu-\widehat{\mu} \vert}/{\varepsilon}=1$'}, temp'];
-% legend(temp,'location','best','Interpreter','latex'); axis tight
 
 axis([errVecLimits(1) errVecLimits(2) 10^timeTicksLimits(1) 10^timeTicksLimits(2) ])
 timeTicksVec = (timeTicksLimits(1) :timeTickInterval: timeTicksLimits(2));

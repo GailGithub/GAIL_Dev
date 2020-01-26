@@ -55,7 +55,6 @@ inputArgs = varargin;
 inputArgs{end+1} = 'f'; inputArgs{end+1} = integrand;
 inputArgs{end+1} = 'fName'; inputArgs{end+1} = fName;
 inputArgs = set_arg('dim', inputArgs, dim);
-% obj.plotObjectiveFunc(obj)
 
 tStart=tic;
 for i =  1:nRepAuto

@@ -105,7 +105,6 @@ set(figH, 'units', 'inches', 'Position', fig_size)
 
 timeTicksLimits(1) = floor(log10(min(S.timeVec(:))));
 timeTicksLimits(2) = ceil(log10(max(S.timeVec(:))));
-% timeTicksLimits=[-2 2]
 plot([1, 1], 10.^timeTicksLimits, 'r', 'LineWidth',1)
 hold on
 

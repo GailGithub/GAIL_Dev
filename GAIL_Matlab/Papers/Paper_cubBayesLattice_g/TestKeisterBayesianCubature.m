@@ -34,7 +34,7 @@ randErrTol = @() 10^(log10ErrTol_a + (log10ErrTol_b - log10ErrTol_a)*rand());
 
 tic
 
-%plotObjectiveFunc(obj)
+
 for i=1:nRep
   errTolVec(i) = randErrTol();
   inputArgs = set_arg('absTol', inputArgs, errTolVec(i));

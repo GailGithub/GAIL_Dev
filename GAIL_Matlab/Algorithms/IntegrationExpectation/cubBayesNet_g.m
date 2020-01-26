@@ -363,11 +363,6 @@ classdef cubBayesNet_g < handle
         br_xpts = gpuArray(xpts_un);
         
         %Compute MLE parameter
-        
-%         lnaMLE = fminsearch(@(lna) ...
-%           ObjectiveFunction(obj, exp(lna),br_xpts,ftilde), ...
-%           0.1,optimset('TolX',1e-2));
-
         lnaRange = [-8,5];
         lnaMLE = fminbnd(@(lna) ...
           ObjectiveFunction(obj, exp(lna),br_xpts,ftilde), ...
@@ -489,8 +484,7 @@ classdef cubBayesNet_g < handle
         if obj.digitalNetAlpha==1
           obj.gen_h = scramble(sobolset(obj.dim),'MatousekAffineOwen'); %generate a Sobol' sequence
           obj.gen_h_un = sobolset(obj.dim); %generate a Sobol' sequence
-        else
-          % error('Not implemented')
+        else         
           if strcmp(obj.net_type,'NX')
             switch obj.digitalNetAlpha
               case 2
@@ -518,7 +512,6 @@ classdef cubBayesNet_g < handle
           xpts = obj.gen_h(nStart:nEnd,1:obj.dim); %grab Sobol' points
           xpts_un = obj.gen_h_un(nStart:nEnd,1:obj.dim); %grab unscrambled Sobol' points
         else
-          % error('Not implemented')
           xpts_un = digitalseq_b2g(obj.dim, nEnd-nStart+1)';
           xpts = xpts_un;  % not yet implemented
         end
@@ -674,7 +667,6 @@ classdef cubBayesNet_g < handle
         
         Lambda = Lambda_ring;
         Lambda(1) = Lambda_ring(1) + 1;  %n;
-
       else
         C1 = prod(1 + theta*kernelFunc(xpts),2);
         Lambda = real(cubBayesNet_g.fwht_hs(C1));
@@ -733,7 +725,6 @@ classdef cubBayesNet_g < handle
       ts3 = @(x)((1-43*t2(x))/18 + (5*t1(x)-1).*x +(a1(x)-2).*x.^2);
       
       if order==1
-        % kernFunc = @(x)(12*( (1/6) - 2.^(floor(log2(x))-1) ));
         kernFunc = @(x)(6*( (1/6) - 2.^(floor(log2(x))-1) ));
       elseif order==2
         omega2_1D = @(x)(s1(x) + ts2(x));

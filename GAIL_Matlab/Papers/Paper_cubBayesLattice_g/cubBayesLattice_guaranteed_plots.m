@@ -61,12 +61,6 @@ for testFunArg=testFunArgs(1:end)
   stopCrit=testFunArg.stopCriterion;
   fName = testFunArg.fName;
   
-%   if ~strcmp(fName,'optPrice')
-%     continue
-%   else
-%     oneTheta = false;
-%   end
-  
   tstart=tic;
   muhatVec = [];
   errVec = [];

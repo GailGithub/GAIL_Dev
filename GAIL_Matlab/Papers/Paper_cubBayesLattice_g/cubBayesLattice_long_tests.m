@@ -15,7 +15,7 @@ if exist(figSavePath,'dir')==false
   mkdir(figSavePath);
 end
 
-visiblePlot=true;
+visiblePlot=false;
 
 % temporarily avoid figures to be displayed in matlab
 if visiblePlot==false
@@ -47,7 +47,7 @@ for i=1:3
   testFunArgs(i+6).stopCriterion='MLE';
 end
 
-for testFunArg=testFunArgs  %(end:-1:1)
+for testFunArg=testFunArgs(1:end)
   
   stopCrit=testFunArg.stopCriterion;
   fName = testFunArg.fName;
@@ -62,10 +62,6 @@ for testFunArg=testFunArgs  %(end:-1:1)
   exitflagVec = [];
   outStructVec = {};
   indx = 1;
-  
-  if ~strcmp(fName, 'Keister')
-    continue
-  end
   if strcmp(fName, 'MVN')
     log10ErrVec = -7:1:-4; 
   elseif strcmp(fName, 'Keister')
@@ -77,9 +73,7 @@ for testFunArg=testFunArgs  %(end:-1:1)
   errTolVec = 10.^log10ErrVec;
   sampling = testFunArg.sampling;
   
-  % for errTol=errTolVec(1:end)
   for iter=1:length(log10ErrVec)
-    % fprintf('errTol %1.3f', errTol)
     
     arbMean=testFunArg.arbMean;
     if arbMean==true
@@ -91,7 +85,7 @@ for testFunArg=testFunArgs  %(end:-1:1)
     vartx=testFunArg.varTx;
     dim=testFunArg.dim;
     bern=testFunArg.order;
-    % 'absTol',errTol, 
+    
     inputArgs = {'dim',dim, 'order',bern, 'ptransform',vartx, ....
       'stopAtTol',stopAtTol, 'stopCriterion',testFunArg.stopCriterion...
       'figSavePath',newPath, 'arbMean',arbMean, 'alpha',alpha ...
