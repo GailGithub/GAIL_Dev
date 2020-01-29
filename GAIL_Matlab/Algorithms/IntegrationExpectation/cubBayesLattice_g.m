@@ -160,7 +160,7 @@
 %
 % Example 7: Another example using dimesnion specific shpae parameter
 % >> const = [1E-4 1 1E4];
-% >> fun = @(x)sum(const.* sin(2*pi*x.^2), 2);
+% >> fun = @(x)sum(bsxfun(@times, const, sin(2*pi*x.^2)), 2);
 % >> dim=3; absTol=1e-3; relTol=1e-2;
 % >> exactInteg = fresnels(2)*sum(const)/2;
 % >> inputArgs = {'relTol',relTol, 'order',2, 'ptransform','C1sin'};
