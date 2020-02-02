@@ -6,7 +6,7 @@
 %   Initializes the object with the given parameters.
 %
 %   [Q,OutP] = COMPINTEG(OBJ); estimates the integral of f over hyperbox
-%   [0,1]^d using Sobol points to within a specified generalized
+%   [0,1]^d using digital nets (Sobol points) to within a specified generalized
 %   error tolerance, tolfun = max(abstol, reltol*| I |), i.e., | I - Q | <= tolfun
 %   with confidence of at least 99%, where I is the true integral value,
 %   Q is the estimated integral value, abstol is the absolute error tolerance,
@@ -22,7 +22,6 @@
 %
 %     f --- the integrand.
 %     dim --- number of dimensions of the integrand.
-%
 %
 %   Optional Input Arguments
 %     absTol --- absolute error tolerance | I - Q | <= absTol. Default is 0.01
@@ -160,7 +159,6 @@ classdef cubBayesNet_g < handle
     stopCriterion = 'MLE'; %Available options {'MLE', 'GCV', 'full'}
     
     alpha = 0.01; % p-value, default 0.1%.
-    ptransform = 'none'; %periodization transform
     stopAtTol = true; %automatice mode: stop after meeting the error tolerance
     arbMean = true; %by default use zero mean algorithm
     fName = 'None'; %name of the integrand
@@ -257,9 +255,9 @@ classdef cubBayesNet_g < handle
         % parse each input argument passed
         if nargin >= iStart
           wh = find(strcmp(varargin(iStart:end),'f'));
-          if ~isempty(wh), obj.f = varargin{wh+iStart}; end
+          if ~isempty(wh), obj.f = varargin{wh+iStart}; else, obj.warn_fd(); end
           wh = find(strcmp(varargin(iStart:end),'dim'));
-          if ~isempty(wh), obj.dim = varargin{wh+iStart}; end
+          if ~isempty(wh), obj.dim = varargin{wh+iStart}; else, obj.warn_fd(); end
           wh = find(strcmp(varargin(iStart:end),'absTol'));
           if ~isempty(wh), obj.absTol = varargin{wh+iStart}; end
           wh = find(strcmp(varargin(iStart:end),'relTol'));
@@ -285,6 +283,13 @@ classdef cubBayesNet_g < handle
         if ~gail.isfcn(obj.f)
           warning('GAIL:cubBayesNet_g:fnotfcn',...
             'The given input f should be a function handle.\n' );
+        end
+        
+       if ~(obj.order==1)
+          warning('GAIL:cubBayesNet_g:r_invalid',...
+            'Kernel order, r=%d, is not supported; it must be 1. The algorithm is using default value r=1.\n', ...
+            obj.order);
+          obj.order = 1;
         end
         
         if obj.dim>20
@@ -580,7 +585,11 @@ classdef cubBayesNet_g < handle
     % Matlab by default uses 'sequency' ordering, thus the need to be spcific
     function t = fwht_hs(fx)
       [n, ~] = size(fx);
-      t = fwht(fx,n,'hadamard');  %*n;
+      if license('test', 'Signal_Toolbox')
+        t = fwht(fx,n,'hadamard');  %*n;
+      else
+        t = fwht_custom(fx,n,'hadamard');
+      end
       % Note: Unlike fft, fwht normalizes the output, i.e. divideds by 'n'
     end
     
