@@ -1,6 +1,6 @@
 Guaranteed Automatic Integration Library (GAIL)
 -----------------------------------------------
-GAIL Version 2.3, 2019.
+GAIL Version 2.3.1, 2020.
 
 See LICENSE.m for copyright and disclaimer. Refer to ReleaseNotes.m for
 what is new in this version.
@@ -35,7 +35,7 @@ Please cite the following software, papers, and materials:
 Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
 Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
-Integration Library (Version 2.3) [MATLAB Software], 2019. Available from
+Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available from
 http://gailgithub.github.io/GAIL_Dev/
 (this software)
 
@@ -176,7 +176,7 @@ Detailed documentation is available at GAIL_Matlab/Documentation.
 General Usage Notes
 -------------------
 
-GAIL version 2.3 includes the following eight algorithms:
+GAIL Version 2.3.1 includes the following eight algorithms:
 
 1.  funappx_g: One-dimensional function approximation on bounded interval
 

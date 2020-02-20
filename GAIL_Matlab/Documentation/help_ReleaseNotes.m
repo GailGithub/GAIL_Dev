@@ -1,6 +1,6 @@
 %% Release Notes 
 %
-% GAIL Version 2.3, 2019.
+% GAIL Version 2.3.1, 2020.
 % 
 %% Major changes in algorithms
 % 

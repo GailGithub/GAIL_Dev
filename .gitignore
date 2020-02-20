@@ -25,3 +25,4 @@ GAIL_Matlab/ThirdParty
 
 
 *.bak
+*.synctex*
