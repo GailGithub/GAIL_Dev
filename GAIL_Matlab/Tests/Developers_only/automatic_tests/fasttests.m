@@ -4,11 +4,11 @@ format compact
 
 [GAILPATH,GAILVERSION,MATLABVERSION]  = GAILstart(false);
 ver_str = sprintf('MatlabVer%2.2f', MATLABVERSION);
-ver_str = strrep(ver_str,'.','-')
+ver_str = strrep(ver_str,'.','-');
 completereport = strcat(GAILPATH,'OutputFiles',filesep,...
     'gail_tests-', datestr(now,'yyyy-mm-dd-HH-MM-SS'),  '_', ver_str,'.txt');
 diary(completereport)
-disp(['GAILVERSION = ', num2str(GAILVERSION),'. MATLABVERSION = ', num2str(MATLABVERSION)]);
+disp(['GAILVERSION = ', num2str(GAILVERSION),'.  MATLABVERSION = ', num2str(MATLABVERSION)]);
 
 
 tstart=tic;
