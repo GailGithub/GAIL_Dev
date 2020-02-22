@@ -176,7 +176,7 @@ Detailed documentation is available at GAIL_Matlab/Documentation.
 General Usage Notes
 -------------------
 
-GAIL Version 2.3.1 includes the following eight algorithms:
+GAIL Version 2.3.1 includes the following ten algorithms:
 
 1.  funappx_g: One-dimensional function approximation on bounded interval
 
@@ -195,8 +195,12 @@ d-dimensional integration
 for d-dimensional integration
 
 8. cubBayesLattice_g: Bayesian cubature method for d-dimensional integration
+   using lattice points
 
-9.  meanMC_CLT: Monte Carlo method with Central Limit Theorem (CLT)
+9. CubBayesNet_g: Bayesian cubature method for d-dimensional integration
+   using Sobol points
+
+10.  meanMC_CLT: Monte Carlo method with Central Limit Theorem (CLT)
 confidence intervals for estimating mean of a random variable
 
 
@@ -222,7 +226,7 @@ Installation Instruction
 
 Alternatively, you could do this:
 
-1.  Download DownloadInstallGail_2_3.m and put it where you want
+1.  Download DownloadInstallGail_2_3_1.m and put it where you want
     GAIL to be installed.
 
 2.  Execute it in MATLAB.
@@ -240,6 +244,16 @@ funappx_g.
 
 We also provide unit tests for MATLAB version 8 or later. To run unit
 tests for funmin_g, for instance, execute run(ut_funmin_g).
+
+We execute automated nightly fast tests and weekly long tests
+on our server. Moreover, these tests are now conducted for all MATLAB
+versions from R2016a to R2019b. The test reports are available on Mega
+cloud storage at https://mega.nz/. More specifically, fast and long test
+reports are archived at
+     https://mega.nz/#F!4olmWa6L!vYuscSnGqkvkZrGJXW5Umw
+and
+     https://mega.nz/#F!I0cAEKJD!AyQ_8tmxkknfIsuEW0_jnA
+respectively.
 
 Known Bugs
 ----------
