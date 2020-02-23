@@ -121,7 +121,9 @@ check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))
 %%
 % *Example 3: Keister function*
 %
-% JAGS: ADD DESCRIPTION
+% Estimate the Keister's [3] integrand, a multidimensional integral  
+% inspired by a physics application over the interval \([0,1]^2\) 
+% with parameters: order=2, abstol=0.001, relTol=0.01
 
 dim=2; absTol=1e-3; relTol=1e-2;
 normsqd = @(t) sum(t.*t,2); %squared l_2 norm of t
@@ -139,7 +141,14 @@ check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))
 %%
 % *Example 4: Multivariate normal probability*
 %
-% JAGS: ADD DESCRIPTION
+% For \(\bf{X}\sim N(\bf{\mu},\Sigma)\), estimate the following
+% probability:
+%
+% \( P\left(\bf{a} \leq \bf{X} \leq \bf{b} \right) = \int_{\bf{a}}^{\bf{b}}
+% \frac{{\rm e}^{(\bf{x}-\bf{\mu})^T {\Sigma}^{-1}(\bf{x}-\bf{\mu})}}
+% {(2\pi)^{d/2}\left|{\Sigma}\right|^{1/2}}\,{\rm d}\bf{x}. \)
+% Given \(a = [-6 -2 -2] and b = [5 2 1] \) with zero mean \(\mu=0 \)
+% and covariance \(\Sigma=[4 1 1; 0 1 0.5; 0 0 0.25] \).
 
 dim=2; absTol=1e-3; relTol=1e-2; fName = 'MVN';
 C = [4 1 1; 0 1 0.5; 0 0 0.25]; MVNParams.Cov = C'*C; MVNParams.C = C;
@@ -191,6 +200,8 @@ check = double(abs(muBest-muhat) < max(absTol,relTol*abs(muBest)))
 %   Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
 %   Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available
 %   from http://gailgithub.github.io/GAIL_Dev/
+% [3] B. D. Keister, Multidimensional quadrature algorithms, _Computers in
+%   Physics_, *10*, pp. 119-122, 1996
 %
 % If you find GAIL helpful in your work, please support us by citing the
 % above papers, software, and materials.
