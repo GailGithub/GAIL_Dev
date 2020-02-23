@@ -828,7 +828,7 @@ classdef cubBayesNet_g < handle
       end
       
       legend(temp,'location','best'); axis tight
-      % saveas(hFigCost, plotFileName)
+      % save_image(hFigCost, 'Paper_cubBayesLattice_g', plotFileName)
     end
     
     

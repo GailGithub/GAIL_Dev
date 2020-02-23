@@ -95,7 +95,7 @@ end
 figSavePathName = sprintf('%s%s_guaranteed_npts_%s_%s_d%d_r%d_%s.png', ...
   figSavePath, S.fName,S.stopCrit,S.testFunArg.varTx,...
   S.testFunArg.dim,S.testFunArg.order,S.timeStamp );
-% saveas(figHn, figSavePathName)
+% save_image(figHn, 'Paper_cubBayesLattice_g', figSavePathName)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -142,6 +142,6 @@ set(gca,'Xtick',(10.^(log10(errVecLimits(1)):3:log10(errVecLimits(2)))), ...
 figSavePathName = sprintf('%s%s%s_guaranteed_time_%s_%s_d%d_r%d_%s.png', ...
   figSavePath, filesep, S.fName,S.stopCrit,S.testFunArg.varTx,...
   S.testFunArg.dim,S.testFunArg.order,S.timeStamp );
-saveas(figH, figSavePathName)
+save_image(figH, 'Paper_cubBayesLattice_g', figSavePathName)
 
 end

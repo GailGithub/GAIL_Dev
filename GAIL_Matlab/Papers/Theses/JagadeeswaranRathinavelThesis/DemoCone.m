@@ -58,7 +58,7 @@ if dim==1
     '$f_{\textup{smooth}} = f_{\textup{nice}} = f_{\textup{peaky}}$'},...
     'Interpreter','latex', 'location','best') % R2018a and earlier
   
-  saveas(figH3, sprintf('cone_bayes_f_real.png'))
+  save_image(figH3, 'JagadeeswaranRathinavelThesis', sprintf('cone_bayes_f_real.png'))
 end
 
 if dim==2
@@ -118,7 +118,7 @@ legend({'$\rho_\mu|_{(\boldmath{f}=\boldmath{y})}$', ...
 %text(mu_nice,0.2,'$\downarrow\mu_{nice}$','Interpreter','latex')
 %text(exactInteg,0.05,'$\downarrow\mu_{true}$','Interpreter','latex')
 
-saveas(figH4, sprintf('cone_bayes_mu_pdf.png'))
+save_image(figH4, 'JagadeeswaranRathinavelThesis', sprintf('cone_bayes_mu_pdf.png'))
 
 fprintf('')
 end

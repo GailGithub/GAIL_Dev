@@ -16,7 +16,7 @@ ylabel('\(x_2\)')
 axis square
 set(gca,'xtick',tick,'ytick',tick)
 % print -depsc IIDPoints.eps
-saveas(figIID, 'IIDPoints.png')
+save_image(figIID, 'JagadeeswaranRathinavelThesis', 'IIDPoints.png')
 
 %% Plot Unscramled Sobol Points
 xUSobol = net(sobolset(d),n);
@@ -28,7 +28,7 @@ ylabel('\(x_2\)')
 axis square
 set(gca,'xtick',tick,'ytick',tick)
 % print -depsc USobolPoints.eps
-saveas(figSobolU, 'USobolPoints.png')
+save_image(figSobolU, 'JagadeeswaranRathinavelThesis', 'USobolPoints.png')
 
 %% Plot Scramled Sobol Points
 xSSobol = net(scramble(sobolset(d),'MatousekAffineOwen'),n);
@@ -40,7 +40,7 @@ ylabel('\(x_2\)')
 axis square
 set(gca,'xtick',tick,'ytick',tick)
 % print -depsc SSobolPoints.eps
-saveas(figSobolS, 'SSobolPoints.png')
+save_image(figSobolS, 'JagadeeswaranRathinavelThesis', 'SSobolPoints.png')
 
 %% Plot Lattice Points
 rng(47)
@@ -54,4 +54,4 @@ ylabel('\(x_2\)')
 % title('Shifted Lattice Points')
 axis square
 set(gca,'xtick',tick,'ytick',tick)
-saveas(figH, 'ShiftedLatticePoints.png')
+save_image(figH, 'JagadeeswaranRathinavelThesis', 'ShiftedLatticePoints.png')
