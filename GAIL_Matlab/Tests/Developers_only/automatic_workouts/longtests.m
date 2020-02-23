@@ -28,13 +28,18 @@ end
 
 
 %% Workouts
+if license('test', 'Signal_Toolbox') && MATLABVERSION >= 9.7
+    longtests_cubBayesNet_g
+    fprintf('=============================Finished longtests_cubBayesNet_g at %s \n', datestr(now,'yyyy-mm-dd-HH-MM-SS'))
+end
+longtests_cubBayesLattice_g
+fprintf('=============================Finished longtests_cubBayesLattice_g at %s \n', datestr(now,'yyyy-mm-dd-HH-MM-SS'))
+
 fprintf('=============================Starting longtests at %s \n', datestr(now,'yyyy-mm-dd-HH-MM-SS'))
 longtests_cubLattice_g
 fprintf('=============================Finished longtests_cubLattice_g at %s \n', datestr(now,'yyyy-mm-dd-HH-MM-SS'))
 longtests_cubSobol_g
 fprintf('=============================Finished longtests_cubSobol_g at %s \n', datestr(now,'yyyy-mm-dd-HH-MM-SS'))
-longtests_cubBayesLattice_g
-fprintf('=============================Finished longtests_cubBayesLattice_g at %s \n', datestr(now,'yyyy-mm-dd-HH-MM-SS'))
 longtests_meanMC_g
 fprintf('=============================Finished longtests_meanMC_g at %s \n', datestr(now,'yyyy-mm-dd-HH-MM-SS'))
 longtests_cubMC_g
