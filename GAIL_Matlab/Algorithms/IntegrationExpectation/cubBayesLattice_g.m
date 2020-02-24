@@ -177,10 +177,9 @@
 %
 %  References
 %
-%   [1] R. Jagadeeswaran and Fred J. Hickernell, "Fast Automatic
-%   Bayesian cubature using Lattice Sampling", In review,
-%   Proceedings of Prob Num 2018, Journal of Statistics and Computing,
-%   arXiv:1809.09803 [math.NA] (In review)
+%   [1] Jagadeeswaran Rathinavel, Fred J. Hickernell, Fast automatic Bayesian cubature 
+%   using lattice sampling.  Stat Comput 29, 1215–1229 (2019). 
+%   https://doi.org/10.1007/s11222-019-09895-9
 %
 %   [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 %   Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
