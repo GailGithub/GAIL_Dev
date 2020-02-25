@@ -44,7 +44,7 @@ figSavePath = matFilePath;
 fig_size = [1 1 9 5];  % [1 1 9 6]
 errTolVecText = arrayfun(@(x){sprintf('1e%d', x)}, S.log10ErrVec);
 
-figHn = figure('visible','off');
+figHn = figure();
 set(figHn, 'units', 'inches', 'Position', fig_size)
 if strcmp(S.fName, 'MVN')
   errVecLimits = [1E-7, 1E1];
