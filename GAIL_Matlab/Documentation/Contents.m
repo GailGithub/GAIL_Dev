@@ -23,6 +23,7 @@
 %   funclist                  - Functions
 %   GAIL                      - Guaranteed Automatic Integration Library (GAIL) Version 2.3.1 Documentation
 %   help_cubBayesLattice_g    - cubBayesLattice_g
+%   help_cubBayesNet_g        - cubBayesNet_g
 %   help_cubLattice_g         - cubLattice_g
 %   help_cubMC_CLT            - cubMC_CLT
 %   help_cubMC_g              - cubMC_g

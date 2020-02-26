@@ -15,4 +15,4 @@
 %   plot_walsh_kernel.m            - plots the kernel used in cubBayesNet_g, Thesis Chapter 5
 %   cubBayesNet_long_tests.m       - Thesis numerical example plots in Chapter 7
 % 
-%   Jagadees-thesis-Nov07-2019 FJH Signed.pdf  --- Thesis
+%   JagadeeswaranRathinavelThesis.pdf  --- Thesis

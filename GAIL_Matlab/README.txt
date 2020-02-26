@@ -147,7 +147,7 @@ Function Minimization," MS thesis, Illinois Institute of Technology, 2014.
 (describes deprecated funmin01_g.m)
 
 Jagadeeswaran Rathinavel, Fred J. Hickernell, Fast automatic Bayesian cubature using lattice sampling. 
-Stat Comput 29, 1215–1229 (2019). https://doi.org/10.1007/s11222-019-09895-9
+Stat Comput 29, 1215-1229 (2019). https://doi.org/10.1007/s11222-019-09895-9
 (describes cubBayesLattice_g)
 
 Jagadeeswaran Rathinavel, "Fast automatic Bayesian cubature using matching kernels and designs," PhD

@@ -178,7 +178,7 @@
 %  References
 %
 %   [1] Jagadeeswaran Rathinavel, Fred J. Hickernell, Fast automatic Bayesian cubature 
-%   using lattice sampling.  Stat Comput 29, 1215–1229 (2019). 
+%   using lattice sampling.  Stat Comput 29, 1215-1229 (2019). 
 %   https://doi.org/10.1007/s11222-019-09895-9
 %
 %   [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis

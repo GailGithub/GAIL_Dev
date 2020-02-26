@@ -190,18 +190,15 @@ check = double(abs(muBest-muhat) < max(absTol,relTol*abs(muBest)))
 %
 %% References
 %
-% [1] R. Jagadeeswaran and Fred J. Hickernell, "Fast Automatic
-%   Bayesian cubature using Lattice Sampling", In review,
-%   Proceedings of Prob Num 2018, Journal of Statistics and Computing,
-%   arXiv:1809.09803 [math.NA] (In review)
+% [1] Jagadeeswaran Rathinavel, "Fast automatic Bayesian cubature using
+%   matching kernels and designs," PhD thesis, Illinois Institute of Technology, 2019.
+%   
 %
 % [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 %   Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
 %   Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
 %   Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available
 %   from http://gailgithub.github.io/GAIL_Dev/
-% [3] B. D. Keister, Multidimensional quadrature algorithms, _Computers in
-%   Physics_, *10*, pp. 119-122, 1996
 %
 % If you find GAIL helpful in your work, please support us by citing the
 % above papers, software, and materials.
