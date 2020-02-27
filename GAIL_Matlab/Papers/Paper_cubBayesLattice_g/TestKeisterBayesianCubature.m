@@ -46,8 +46,10 @@ for i=1:nRep
   else % use Lattice points
     obj=cubBayesLattice_g(inputArgs{:});
   end
+
   [muhatVec(i),outVec(i)]=compInteg(obj);
 end
+
 muhat = median(muhatVec);
 
 toc

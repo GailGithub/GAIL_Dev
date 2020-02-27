@@ -9,6 +9,7 @@
 %   ut_ConesPaper          - unit test for Cone Paper
 %   ut_convtest_funappx_g  - unit tests for convergence test of funappx_g
 %   ut_cubBayesLattice_g   - unit tests for cubBayesLattice_g
+%   ut_cubBayesNet_g       - unit tests for cubBayesNet_g
 %   ut_cubLattice_g        - fast unit tests for cubLattice_g
 %   ut_cubMC_g             - fast unit tests for cubMC_g
 %   ut_cubMCabs_g          - fast unit test for cubMCabs_g

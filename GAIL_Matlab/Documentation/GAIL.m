@@ -1,4 +1,4 @@
-%% Guaranteed Automatic Integration Library (GAIL) Version 2.3 Documentation
+%% Guaranteed Automatic Integration Library (GAIL) Version 2.3.1 Documentation
 %
 % GAIL (Guaranteed Automatic Integration Library) is created, developed,
 % and maintained by Fred Hickernell (Illinois Institute of Technology),
@@ -29,6 +29,7 @@
 % <p><a href="help_cubSobol_g.html">cubSobol_g</a>
 % <p><a href="help_cubLattice_g.html">cubLattice_g</a>
 % <p><a href="help_cubBayesLattice_g.html">cubBayesLattice_g</a>
+% <p><a href="help_cubBayesNet_g.html">cubBayesNet_g</a>
 % <p><a href="help_meanMC_CLT.html">meanMC_CLT</a>
 % </html>
 %

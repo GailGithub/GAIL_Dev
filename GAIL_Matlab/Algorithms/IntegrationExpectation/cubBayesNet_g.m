@@ -6,7 +6,7 @@
 %   Initializes the object with the given parameters.
 %
 %   [Q,OutP] = COMPINTEG(OBJ); estimates the integral of f over hyperbox
-%   [0,1]^d using Sobol points to within a specified generalized
+%   [0,1]^d using digital nets (Sobol points) to within a specified generalized
 %   error tolerance, tolfun = max(abstol, reltol*| I |), i.e., | I - Q | <= tolfun
 %   with confidence of at least 99%, where I is the true integral value,
 %   Q is the estimated integral value, abstol is the absolute error tolerance,
@@ -22,7 +22,6 @@
 %
 %     f --- the integrand.
 %     dim --- number of dimensions of the integrand.
-%
 %
 %   Optional Input Arguments
 %     absTol --- absolute error tolerance | I - Q | <= absTol. Default is 0.01
@@ -127,19 +126,17 @@
 % check = 1
 %
 %
-%   See also CUBSOBOL_G, CUBLATTICE_G, CUBMC_G, MEANMC_G, INTEGRAL_G
+%   See also CUBBAYESLATTICE_G, CUBSOBOL_G, CUBLATTICE_G, CUBMC_G, MEANMC_G, INTEGRAL_G
 %
 %  References
 %
-%   [1] R. Jagadeeswaran and Fred J. Hickernell, "Fast Automatic
-%   Bayesian cubature using Lattice Sampling", In review,
-%   Proceedings of Prob Num 2018, Journal of Statistics and Computing,
-%   arXiv:1809.09803 [math.NA] (In review)
+%   [1] Jagadeeswaran Rathinavel, "Fast automatic Bayesian cubature using 
+%   matching kernels and designs," PhD thesis, Illinois Institute of Technology, 2019.
 %
 %   [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 %   Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
 %   Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
-%   Integration Library (Version 2.3) [MATLAB Software], 2019. Available
+%   Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available
 %   from http://gailgithub.github.io/GAIL_Dev/
 %
 %   If you find GAIL helpful in your work, please support us by citing the
@@ -160,7 +157,6 @@ classdef cubBayesNet_g < handle
     stopCriterion = 'MLE'; %Available options {'MLE', 'GCV', 'full'}
     
     alpha = 0.01; % p-value, default 0.1%.
-    ptransform = 'none'; %periodization transform
     stopAtTol = true; %automatice mode: stop after meeting the error tolerance
     arbMean = true; %by default use zero mean algorithm
     fName = 'None'; %name of the integrand
@@ -206,7 +202,7 @@ classdef cubBayesNet_g < handle
           obj.parse_input_args(varargin{:});
         end
       else
-        obj.warn_fd();        
+        obj.warn_fd();
       end
       
       if strcmp(obj.stopCriterion, 'full')
@@ -257,9 +253,9 @@ classdef cubBayesNet_g < handle
         % parse each input argument passed
         if nargin >= iStart
           wh = find(strcmp(varargin(iStart:end),'f'));
-          if ~isempty(wh), obj.f = varargin{wh+iStart}; end
+          if ~isempty(wh), obj.f = varargin{wh+iStart}; else, obj.warn_fd(); end
           wh = find(strcmp(varargin(iStart:end),'dim'));
-          if ~isempty(wh), obj.dim = varargin{wh+iStart}; end
+          if ~isempty(wh), obj.dim = varargin{wh+iStart}; else, obj.warn_fd(); end
           wh = find(strcmp(varargin(iStart:end),'absTol'));
           if ~isempty(wh), obj.absTol = varargin{wh+iStart}; end
           wh = find(strcmp(varargin(iStart:end),'relTol'));
@@ -279,12 +275,19 @@ classdef cubBayesNet_g < handle
           wh = find(strcmp(varargin(iStart:end),'stopCriterion'));
           if ~isempty(wh), obj.stopCriterion = varargin{wh+iStart}; end
         end
-      end        
-        
+      end
+      
       function validate_input_args(obj)
         if ~gail.isfcn(obj.f)
           warning('GAIL:cubBayesNet_g:fnotfcn',...
             'The given input f should be a function handle.\n' );
+        end
+        
+       if ~(obj.order==1)
+          warning('GAIL:cubBayesNet_g:r_invalid',...
+            'Kernel order, r=%d, is not supported; it must be 1. The algorithm is using default value r=1.\n', ...
+            obj.order);
+          obj.order = 1;
         end
         
         if obj.dim>20
@@ -302,7 +305,7 @@ classdef cubBayesNet_g < handle
           obj.stopCriterion = 'MLE';
         end
       end
-      
+
       validate_input_args(obj);
     end
     
@@ -402,7 +405,7 @@ classdef cubBayesNet_g < handle
             DSC = abs(1 - (1/Lambda(1)));
           end
           ErrBd = obj.uncert*sqrt(DSC * RKHSnorm/n);
-        end        
+        end
         out.ErrBd = ErrBd;
         
         % store the debug information
@@ -470,7 +473,8 @@ classdef cubBayesNet_g < handle
         warning('GAIL:cubBayesNet_g:maxreached',...
           ['In order to achieve the guaranteed accuracy, ', ...
           sprintf('used maximum allowed sample size %d. \n', n)] );
-      end      
+      end
+
       % convert from gpu memory to local
       muhat = gather(muhat);
       out = gather(out);
@@ -484,7 +488,7 @@ classdef cubBayesNet_g < handle
         if obj.digitalNetAlpha==1
           obj.gen_h = scramble(sobolset(obj.dim),'MatousekAffineOwen'); %generate a Sobol' sequence
           obj.gen_h_un = sobolset(obj.dim); %generate a Sobol' sequence
-        else         
+        else
           if strcmp(obj.net_type,'NX')
             switch obj.digitalNetAlpha
               case 2
@@ -580,7 +584,13 @@ classdef cubBayesNet_g < handle
     % Matlab by default uses 'sequency' ordering, thus the need to be spcific
     function t = fwht_hs(fx)
       [n, ~] = size(fx);
-      t = fwht(fx,n,'hadamard');  %*n;
+
+      if license('test', 'Signal_Toolbox')
+        t = fwht(fx,n,'hadamard');  %*n;
+      else
+        t = fwht_custom(fx,n,'hadamard');
+      end
+
       % Note: Unlike fft, fwht normalizes the output, i.e. divideds by 'n'
     end
     
@@ -679,7 +689,7 @@ classdef cubBayesNet_g < handle
         Lambda_ring(2:end) = abs(Lambda_ring(2:end));
         Lambda(2:end) = Lambda_ring(2:end);
       end
-        
+
       if 0 % Create the full kernel matrix to compare
         dm = cubBayesNet_g.diffMatrix(xpts);
         [n,dim] = size(xpts);
@@ -819,7 +829,8 @@ classdef cubBayesNet_g < handle
       end
       
       legend(temp,'location','best'); axis tight
-      % saveas(hFigCost, plotFileName)
+
+      % save_image(hFigCost, 'Paper_cubBayesLattice_g', plotFileName)
     end
     
     
@@ -838,7 +849,7 @@ classdef cubBayesNet_g < handle
       % Lambda = cubBayesNet_g.kernel(xpts,order,theta,avoidCancelError);
       
       if ndims==1
-        hFig = figure(); 
+        hFig = figure();
         set(hFig, 'units', 'inches', 'Position', [4 4 6.5 5.5])
         plot(xpts, C1, '.', 'MarkerSize', 10); grid on; axis([0 1 -1 3])
       elseif ndims==2
@@ -869,6 +880,6 @@ classdef cubBayesNet_g < handle
     function warn_fd()
       warning('GAIL:cubBayesNet_g:fdnotgiven',...
         'At least, function f and dimension need to be specified');
-    end    
+    end
   end % end of static functions
 end

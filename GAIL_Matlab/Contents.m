@@ -1,5 +1,5 @@
 % Guaranteed Automatic Integration Library (GAIL)
-% Version 2.3, 2019
+% Version 2.3.1, 2020
 %
 % Files
 %   GAILstart      - Initialize all the GAIL paths and system parameters.
@@ -8,7 +8,7 @@
 %   LICENSE        - License of GAIL
 %   README         - Installation of and introduction to GAIL.
 %   ReleaseNotes   - What is new in this version?
-% 
+%
 % Folders
 %   Algorithms     - GAIL algorithms
 %   Documentation  - GAIL documentation

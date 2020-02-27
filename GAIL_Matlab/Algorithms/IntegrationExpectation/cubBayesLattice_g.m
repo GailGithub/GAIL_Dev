@@ -160,7 +160,7 @@
 %
 % Example 7: Another example using dimesnion specific shpae parameter
 % >> const = [1E-4 1 1E4];
-% >> fun = @(x)sum(const.* sin(2*pi*x.^2), 2);
+% >> fun = @(x)sum(bsxfun(@times, const, sin(2*pi*x.^2)), 2);
 % >> dim=3; absTol=1e-3; relTol=1e-2;
 % >> exactInteg = fresnels(2)*sum(const)/2;
 % >> inputArgs = {'relTol',relTol, 'order',2, 'ptransform','C1sin'};
@@ -173,19 +173,18 @@
 % etaDim = 3
 %
 %
-%   See also CUBSOBOL_G, CUBLATTICE_G, CUBMC_G, MEANMC_G, INTEGRAL_G
+%   See also CUBBAYESNET_G, CUBSOBOL_G, CUBLATTICE_G, CUBMC_G, MEANMC_G, INTEGRAL_G
 %
 %  References
 %
-%   [1] R. Jagadeeswaran and Fred J. Hickernell, "Fast Automatic
-%   Bayesian cubature using Lattice Sampling", In review,
-%   Proceedings of Prob Num 2018, Journal of Statistics and Computing,
-%   arXiv:1809.09803 [math.NA] (In review)
+%   [1] Jagadeeswaran Rathinavel, Fred J. Hickernell, Fast automatic Bayesian cubature 
+%   using lattice sampling.  Stat Comput 29, 1215-1229 (2019). 
+%   https://doi.org/10.1007/s11222-019-09895-9
 %
 %   [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 %   Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
 %   Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
-%   Integration Library (Version 2.3) [MATLAB Software], 2019. Available
+%   Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available
 %   from http://gailgithub.github.io/GAIL_Dev/
 %
 %   If you find GAIL helpful in your work, please support us by citing the
@@ -204,7 +203,7 @@ classdef cubBayesLattice_g < handle
     ptransform = 'C1sin'; %periodization transform
     stopAtTol = true; %automatic mode: stop after meeting the error tolerance
     arbMean = true; %by default use zero mean algorithm
-    stopCriterion = 'MLE'; %Available options {'MLE', 'GCV', 'full'}
+    stopCriterion = 'MLE'; % Available options {'MLE', 'GCV', 'full'}
     mmin = 8; %min number of samples to start with = 2^mmin
     mmax = 22; %max number of samples allowed = 2^mmax
     useGradient = false; %If true usegradient descent in parameter search
@@ -1014,7 +1013,7 @@ classdef cubBayesLattice_g < handle
         85729, 14597, 94813, 422013, 484367]; %generator      
       z = z(1:d);
     end
-    
+
     % generates rank-1 Lattice points in van der Corput sequence order
     function [xlat,xpts_un,xlat_un,xpts] = simple_lattice_gen(n,d,shift,firstBatch)
       z = cubBayesLattice_g.get_lattice_gen_vec(d);

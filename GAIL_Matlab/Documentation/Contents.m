@@ -21,8 +21,9 @@
 %                             - Estimation of normal probabilities by cubSobol_g, cubMC_g and cubBayesLattice_g
 %   demolist                  - GAIL Demos
 %   funclist                  - Functions
-%   GAIL                      - Guaranteed Automatic Integration Library (GAIL) Version 2.3 Documentation
+%   GAIL                      - Guaranteed Automatic Integration Library (GAIL) Version 2.3.1 Documentation
 %   help_cubBayesLattice_g    - cubBayesLattice_g
+%   help_cubBayesNet_g        - cubBayesNet_g
 %   help_cubLattice_g         - cubLattice_g
 %   help_cubMC_CLT            - cubMC_CLT
 %   help_cubMC_g              - cubMC_g
@@ -35,7 +36,7 @@
 %   help_meanMC_CLT           - meanMC_CLT
 %   help_meanMC_g             - meanMC_g
 %   help_readme               - Readme
-%   help_ReleaseNotes         - Release Notes 
+%   help_ReleaseNotes         - Release Notes
 %
 % Folders
 %   html                      - folder of all html files

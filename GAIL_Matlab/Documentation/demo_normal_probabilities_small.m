@@ -1,4 +1,4 @@
-%% Estimation of normal probabilities by *cubSobol_g*, *cubMC_g* 
+%% Estimation of normal probabilities by *cubSobol_g*, *cubMC_g*
 % *cubBayesLattice_g*, *cubLattice_g*, and *cubBayesNet_g*
 % Authors: Lluis Antoni Jimenez Rugama, Lan Jiang
 % and Jagadeeswaran Rathinavel, April 2019
@@ -11,11 +11,11 @@
 % {(2\pi)^{d/2}\left|{\Sigma}\right|^{1/2}}\,{\rm d}\bf{x}. \]
 %
 % We present three tests, each of which approximates the aforementioned
-% probability using *cubSobol_g*, *cubMC_g* and *cubBayesLattice_g*, 
+% probability using *cubSobol_g*, *cubMC_g* and *cubBayesLattice_g*,
 % *cubLattice_g*, and *cubBayesNet_g*
 % which  are quasi-Monte Carlo, IID Monte Carlo and Bayesian cubature
 % algorithms respectively in GAIL. In order to facilitate the computations
-% when $d$ is high (>4), we are going to apply a special 
+% when $d$ is high (>4), we are going to apply a special
 % transformation of the integrand proposed by Alan Genz.
 
 
@@ -258,7 +258,7 @@ outFileName = gail.save_mat('Paper_cubBayesLattice_g',['MVNCubExBayesDataNRep' i
     true, abstol, ...
     avgAbsErrMC, avgAbsErrLat, avgAbsErrSob, avgAbsErrBayLat, avgAbsErrBaySob, ...
     succMC, succLat, succSob, succBayLat, succBaySob, ...
-    timeMC, timeLat, timeSob, timeBayLat, timeBaySob, ... 
+    timeMC, timeLat, timeSob, timeBayLat, timeBaySob, ...
     nSampleMC, nSampleLat, nSampleSob, nSampleBayLat, nSampleBaySob);
 
 MVNCubExBayesOut(outFileName)
@@ -328,27 +328,66 @@ fprintf('')
 
   function [p,out] = multi_normcdf_cubBayesLat(hyperbox,mu,Sigma,abstol,reltol)
     % Using cubBayesLattice_g, multi_normcdf_cubBayesLat computes the cumulative
+
     % distribution function of the multivariate normal distribution with mean
     % mu, covariance matrix Sigma and within the region defined by hyperbox.
-    
     hyperbox = bsxfun(@minus, hyperbox, mu');
-    C = chol(Sigma)'; 
+    C = chol(Sigma)'; d = size(C,1);
     a = hyperbox(1,1)/C(1,1); b = hyperbox(2,1)/C(1,1);
     s = gail.stdnormcdf(a); e = gail.stdnormcdf(b);
-    
+    [p, out, y, kappanumap] = cubLattice_g(...
+      @(x) f(s,e,hyperbox,x,C), [zeros(1,d-1);ones(1,d-1)],...
+      'uniform',abstol,reltol);
+  end
+
+  function [p,out] = multi_normcdf_cubBayesLat(hyperbox,mu,Sigma,abstol,reltol)
+    % Using cubBayesLattice_g, multi_normcdf_cubBayesLat computes the cumulative
+    % distribution function of the multivariate normal distribution with mean
+    % mu, covariance matrix Sigma and within the region defined by hyperbox.
+
+    hyperbox = bsxfun(@minus, hyperbox, mu');
+    C = chol(Sigma)';
+    a = hyperbox(1,1)/C(1,1); b = hyperbox(2,1)/C(1,1);
+    s = gail.stdnormcdf(a); e = gail.stdnormcdf(b);
+
     [~,dim] = size(hyperbox);
     inputArgs = {'dim',dim, 'absTol',abstol, 'reltol',reltol, ...
       'order',1, 'ptransform','Baker', ....
       'stopAtTol',true, 'stopCriterion','full'...
       'arbMean',true, 'alpha',0.01 ...
       'optTechnique','None'};
-    
+
     inputArgs{end+1} = 'f'; inputArgs{end+1} = @(x) f(s,e,hyperbox,x,C);
     inputArgs{end+1} = 'fName'; inputArgs{end+1} = 'MVN';
-    
+
     objCubBayes=cubBayesLattice_g(inputArgs{:});
     [p,out]=compInteg(objCubBayes);
-    
+
+  end
+
+  function [p,out] = multi_normcdf_cubBayesNet(hyperbox,mu,Sigma,abstol,reltol)
+    % Using cubBayesLattice_g, multi_normcdf_cubBayes computes the cumulative
+    % distribution function of the multivariate normal distribution with mean
+    % mu, covariance matrix Sigma and within the region defined by hyperbox.
+
+    hyperbox = bsxfun(@minus, hyperbox, mu');
+    C = chol(Sigma)';
+    a = hyperbox(1,1)/C(1,1); b = hyperbox(2,1)/C(1,1);
+    s = gail.stdnormcdf(a); e = gail.stdnormcdf(b);
+
+    [~,dim] = size(hyperbox);
+    inputArgs = {'dim',dim, 'absTol',abstol, 'reltol',reltol, ...
+      'order',1, ....
+      'stopAtTol',true, 'stopCriterion','full'...
+      'arbMean',true, 'alpha',0.01 ...
+      'optTechnique','None'};
+
+    inputArgs{end+1} = 'f'; inputArgs{end+1} = @(x) f(s,e,hyperbox,x,C);
+    inputArgs{end+1} = 'fName'; inputArgs{end+1} = 'MVN';
+
+    objCubBayes=cubBayesNet_g(inputArgs{:});
+    [p,out]=compInteg(objCubBayes);
+
   end
 
   function [p,out] = multi_normcdf_cubBayesNet(hyperbox,mu,Sigma,abstol,reltol)
@@ -439,7 +478,7 @@ fprintf('')
         num2str(errTol) '.'])
     end
     fprintf('  The algorithm took %1.3f seconds and %d points \n', timeSec,nSample)
-    
+
     if ~isnan(exactsol)
       errTol = gail.tolfun(abstol,reltol,1,exactsol,'max');
       errReal = abs(exactsol-approx_prob);
@@ -453,7 +492,7 @@ fprintf('')
       end
     end
   end
-  
+
 end
 
 
@@ -475,15 +514,15 @@ end
 % [3] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 %     Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
 %     Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
-%     Integration Library (Version 2.3) [MATLAB Software], 2019. Available
+%     Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available
 %     from http://gailgithub.github.io/GAIL_Dev/
 %
 % [4] Lan Jiang, Guaranteed Adaptive Monte Carlo Methods for Estimating
 %     Means of Random Variables, PhD Thesis, Illinois Institute of
 %     Technology, 2016.
 %
-% [5] R. Jagadeeswaran and F. J. Hickernell, "Fast Automatic Bayesian 
-%     cubature using Lattice sampling", In review,  
-%     Proceedings of Prob Num 2018, Journal of Statistics and Computing, 
+% [5] R. Jagadeeswaran and F. J. Hickernell, "Fast Automatic Bayesian
+%     cubature using Lattice sampling", In review,
+%     Proceedings of Prob Num 2018, Journal of Statistics and Computing,
 %     arXiv:1809.09803 [math.NA]
 %

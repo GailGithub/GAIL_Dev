@@ -1,6 +1,6 @@
 Guaranteed Automatic Integration Library (GAIL)
 -----------------------------------------------
-GAIL Version 2.3, 2019.
+GAIL Version 2.3.1, 2020.
 
 See LICENSE.m for copyright and disclaimer. Refer to ReleaseNotes.m for
 what is new in this version.
@@ -35,7 +35,7 @@ Please cite the following software, papers, and materials:
 Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
 Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
-Integration Library (Version 2.3) [MATLAB Software], 2019. Available from
+Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available from
 http://gailgithub.github.io/GAIL_Dev/
 (this software)
 
@@ -146,10 +146,13 @@ Xin Tong, "A Guaranteed, Adaptive, Automatic Algorithm for Univariate
 Function Minimization," MS thesis, Illinois Institute of Technology, 2014.
 (describes deprecated funmin01_g.m)
 
-R. Jagadeeswaran and F. J. Hickernell, "Fast Automatic Bayesian cubature 
-using Lattice sampling", In review, Proceedings of Prob Num 2018, 
-Journal of Statistics and Computing, arXiv:1809.09803 [math.NA]
-(describes cubBayesLattice_g.m)
+Jagadeeswaran Rathinavel, Fred J. Hickernell, Fast automatic Bayesian cubature using lattice sampling. 
+Stat Comput 29, 1215-1229 (2019). https://doi.org/10.1007/s11222-019-09895-9
+(describes cubBayesLattice_g)
+
+Jagadeeswaran Rathinavel, "Fast automatic Bayesian cubature using matching kernels and designs," PhD
+thesis, Illinois Institute of Technology, 2019.
+(describes cubBayesLattice_g and cubBayesNet_g)
 
 Downloads
 ------------
@@ -176,7 +179,7 @@ Detailed documentation is available at GAIL_Matlab/Documentation.
 General Usage Notes
 -------------------
 
-GAIL version 2.3 includes the following eight algorithms:
+GAIL Version 2.3.1 includes the following ten algorithms:
 
 1.  funappx_g: One-dimensional function approximation on bounded interval
 
@@ -195,8 +198,12 @@ d-dimensional integration
 for d-dimensional integration
 
 8. cubBayesLattice_g: Bayesian cubature method for d-dimensional integration
+   using lattice points
 
-9.  meanMC_CLT: Monte Carlo method with Central Limit Theorem (CLT)
+9. CubBayesNet_g: Bayesian cubature method for d-dimensional integration
+   using Sobol points
+
+10.  meanMC_CLT: Monte Carlo method with Central Limit Theorem (CLT)
 confidence intervals for estimating mean of a random variable
 
 
@@ -222,7 +229,7 @@ Installation Instruction
 
 Alternatively, you could do this:
 
-1.  Download DownloadInstallGail_2_3.m and put it where you want
+1.  Download DownloadInstallGail_2_3_1.m and put it where you want
     GAIL to be installed.
 
 2.  Execute it in MATLAB.
@@ -240,6 +247,16 @@ funappx_g.
 
 We also provide unit tests for MATLAB version 8 or later. To run unit
 tests for funmin_g, for instance, execute run(ut_funmin_g).
+
+We execute automated nightly fast tests and weekly long tests
+on our server. Moreover, these tests are now conducted for all MATLAB
+versions from R2016a to R2019b. The test reports are available on Mega
+cloud storage at https://mega.nz/. More specifically, fast and long test
+reports are archived at
+     https://mega.nz/#F!4olmWa6L!vYuscSnGqkvkZrGJXW5Umw
+and
+     https://mega.nz/#F!I0cAEKJD!AyQ_8tmxkknfIsuEW0_jnA
+respectively.
 
 Known Bugs
 ----------

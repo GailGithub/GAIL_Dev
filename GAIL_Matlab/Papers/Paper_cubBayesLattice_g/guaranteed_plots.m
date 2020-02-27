@@ -44,7 +44,7 @@ figSavePath = matFilePath;
 fig_size = [1 1 9 5];  % [1 1 9 6]
 errTolVecText = arrayfun(@(x){sprintf('1e%d', x)}, S.log10ErrVec);
 
-figHn = figure('visible','off');
+figHn = figure();
 set(figHn, 'units', 'inches', 'Position', fig_size)
 if strcmp(S.fName, 'MVN')
   errVecLimits = [1E-7, 1E1];
@@ -95,7 +95,7 @@ end
 figSavePathName = sprintf('%s%s_guaranteed_npts_%s_%s_d%d_r%d_%s.png', ...
   figSavePath, S.fName,S.stopCrit,S.testFunArg.varTx,...
   S.testFunArg.dim,S.testFunArg.order,S.timeStamp );
-% saveas(figHn, figSavePathName)
+% save_image(figHn, 'Paper_cubBayesLattice_g', figSavePathName)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -116,7 +116,6 @@ hold on
 %   scatter(S.errVec(missed,i),S.timeVec(missed,i),65,...
 %     log10(S.tolVec(missed,i)),'p')
 % end
-
 
 set(gca,'xscale','log')
 set(gca,'yscale','log')
@@ -147,6 +146,6 @@ set(gca,'Xtick',(10.^(log10(errVecLimits(1)):3:log10(errVecLimits(2)))), ...
 figSavePathName = sprintf('%s%s%s_guaranteed_time_%s_%s_d%d_r%d_%s.png', ...
   figSavePath, filesep, S.fName,S.stopCrit,S.testFunArg.varTx,...
   S.testFunArg.dim,S.testFunArg.order,S.timeStamp );
-saveas(figH, figSavePathName)
+save_image(figH, 'Paper_cubBayesLattice_g', figSavePathName)
 
 end
