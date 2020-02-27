@@ -119,7 +119,7 @@ for testFunArg=testFunArgs(1:end)
       end
       errVec = [errVec err./tolVec_];
       
-      if quantile(err./tolVec_, 1-alpha/2) > 1
+      if quantile(err./tolVec_, 1-alpha/2) > 1 && sum((err./tolVec_) > 1) > 1
         qval = quantile(err./tolVec_, 1-alpha/2);
         fail_count = sum((err./tolVec_) > 1);
         warning('Error exceeded given threshold: test failed for function %s, qval %f, fail_count %d',...

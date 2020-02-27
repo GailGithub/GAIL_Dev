@@ -40,8 +40,8 @@ if dim==1
   legend(leg_text, 'Interpreter','latex','location','best')
   axis tight
 
-  figSavePathName = sprintf('walsh_kernel dim_1.png');
-  save_image(hFig, 'JagadeeswaranRathinavelThesis', figSavePathName)
+  figSavePathName = sprintf('walsh_kernel dim_1');
+  gail.save_image(hFig, 'JagadeeswaranRathinavelThesis', figSavePathName)
   F = getframe(hFig);
   % imwrite(rgb2gray(F.cdata), 'walsh_kernel_dim_1-gray.png', 'png')  
 end

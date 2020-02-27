@@ -38,7 +38,7 @@ if dim==1
   legend boxoff
   axis tight
 
-  figSavePathName = sprintf('fourier_kernel_dim_1.png');
+  figSavePathName = sprintf('fourier_kernel_dim_1');
   save_image(hFig, 'JagadeeswaranRathinavelThesis', figSavePathName)
   F = getframe(hFig);
   % imwrite(rgb2gray(F.cdata), 'fourier_kernel_dim_1-gray.png','png')
@@ -56,7 +56,7 @@ if dim==2
       meshc(X, Y, reshape(Z, [n, n]));
       
       title(sprintf('$r=%d, \\theta$=%0.2f', r, sh), 'Interpreter','latex')
-      figSavePathName = sprintf('fourier_kernel r_%d shape_%dby100.png', r, 100*sh);
+      figSavePathName = sprintf('fourier_kernel r_%d shape_%dby100', r, 100*sh);
       save_image(hFig, 'JagadeeswaranRathinavelThesis', figSavePathName)
     end
   end
@@ -72,7 +72,7 @@ if dim==2
         meshc(X, Y, reshape(Z, [n, n]));
         
         title(sprintf('$b=%0.2f, \\theta$=%0.2f', b, sh), 'Interpreter','latex')
-        figSavePathName = sprintf('fourier_kernel b_%dby100 shape_%dby100.png', 100*b, 100*sh);
+        figSavePathName = sprintf('fourier_kernel b_%dby100 shape_%dby100', 100*b, 100*sh);
         %save_image(hFig, 'JagadeeswaranRathinavelThesis', figSavePathName)
       end
     end

@@ -32,8 +32,8 @@ if dim==1
   legend(leg_text, 'Interpreter','latex','location','best')
   axis tight
 
-  figSavePathName = sprintf('fourier_kernel dim_1.png');
-  save_image(hFig, 'Paper_cubBayesLattice_g', figSavePathName)
+  figSavePathName = sprintf('fourier_kernel dim_1');
+  gail.save_image(hFig, 'Paper_cubBayesLattice_g', figSavePathName)
 end
 
 if dim==2
@@ -47,8 +47,8 @@ if dim==2
       meshc(X, Y, reshape(Z, [n, n]));
       
       title(sprintf('$r=%d, \\eta$=%0.2f', r, sh), 'Interpreter','latex')
-      figSavePathName = sprintf('fourier_kernel r_%d shape_%dby100.png', r, 100*sh);
-      save_image(hFig, figSavePathName)
+      figSavePathName = sprintf('fourier_kernel r_%d shape_%dby100', r, 100*sh);
+      gail.save_image(hFig, 'Paper_cubBayesLattice_g', figSavePathName)
     end
   end
   
@@ -63,8 +63,8 @@ if dim==2
         meshc(X, Y, reshape(Z, [n, n]));
         
         title(sprintf('$b=%0.2f, \\eta$=%0.2f', b, sh), 'Interpreter','latex')
-        figSavePathName = sprintf('fourier_kernel b_%dby100 shape_%dby100.png', 100*b, 100*sh);
-        %save_image(hFig, 'Paper_cubBayesLattice_g', figSavePathName)
+        figSavePathName = sprintf('fourier_kernel b_%dby100 shape_%dby100', 100*b, 100*sh);
+        %gail.save_image(hFig, 'Paper_cubBayesLattice_g', figSavePathName)
       end
     end
   end
