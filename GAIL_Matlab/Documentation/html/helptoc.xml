@@ -15,6 +15,7 @@
             <tocitem target="help_cubLattice_g.html">cubLattice_g</tocitem>
             <tocitem target="help_cubSobol_g.html">cubSobol_g</tocitem>
             <tocitem target="help_cubBayesLattice_g.html">cubBayesLattice_g</tocitem>
+            <tocitem target="help_cubBayesNet_g.html">cubBayesNet_g</tocitem>
     </tocitem>
     <tocitem target="demolist.html" image="HelpIcon.EXAMPLES">Demos
             <tocitem target="demo_funappx_g.html">funappx_g</tocitem>

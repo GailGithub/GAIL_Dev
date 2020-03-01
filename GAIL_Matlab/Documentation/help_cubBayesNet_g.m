@@ -188,6 +188,10 @@ check = double(abs(muBest-muhat) < max(absTol,relTol*abs(muBest)))
 % <a href="help_cubBayesLattice_g.html">cubBayesLattice_g</a>
 % </html>
 %
+% <html>
+% <p><a href="cubBayesNet_g.html">cubBayesNet_g</a>
+% </html>
+%
 %% References
 %
 % [1] Jagadeeswaran Rathinavel, "Fast automatic Bayesian cubature using

@@ -164,6 +164,10 @@ f = @(x) exp(-x.^2); [q, out_param] = integral_g(f,'a',1,'b',2,'nlo',100,'nhi',1
 % <p><a href="help_cubBayesLattice_g.html">cubBayesLattice_g</a>
 % </html>
 %
+% <html>
+% <p><a href="cubBayesNet_g.html">cubBayesNet_g</a>
+% </html>
+%
 %% References
 %
 % [1] Yizhi Zhang, "Guaranteed Adaptive Automatic Algorithms for 
