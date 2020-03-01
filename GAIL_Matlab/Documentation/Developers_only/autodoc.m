@@ -4,7 +4,7 @@ end
 
 function transform_readme
 % find the correct directory and file
-dir = which('README.txt');
+dir = which('README.md');
 
 % read the file
 filetext = fileread(dir);
