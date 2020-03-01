@@ -14,7 +14,9 @@ disp(['GAILVERSION = ', num2str(GAILVERSION),'.  MATLABVERSION = ', num2str(MATL
 tstart=tic;
 
 %% CALL fasttests for individual algorithms
-fasttests_cubBayesNet_g
+if license('test', 'Signal_Toolbox') && MATLABVERSION >= 9.7
+    fasttests_cubBayesNet_g
+end
 fasttests_cubBayesLattice_g
 fasttests_integral_g
 fasttests_funappx_g

@@ -130,10 +130,8 @@
 %
 %  References
 %
-%   [1] R. Jagadeeswaran and Fred J. Hickernell, "Fast Automatic
-%   Bayesian cubature using Lattice Sampling", In review,
-%   Proceedings of Prob Num 2018, Journal of Statistics and Computing,
-%   arXiv:1809.09803 [math.NA] (In review)
+%   [1] Jagadeeswaran Rathinavel, "Fast automatic Bayesian cubature using 
+%   matching kernels and designs," PhD thesis, Illinois Institute of Technology, 2019.
 %
 %   [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 %   Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
@@ -828,7 +826,7 @@ classdef cubBayesNet_g < handle
       end
       
       legend(temp,'location','best'); axis tight
-      % saveas(hFigCost, plotFileName)
+      % gail.save_image(hFigCost, 'Paper_cubBayesLattice_g', plotFileName)
     end
     
     
