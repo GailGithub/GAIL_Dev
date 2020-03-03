@@ -11,6 +11,7 @@
             <tocitem target="help_funmin_g.html">funmin_g</tocitem>
             <tocitem target="help_integral_g.html">integral_g</tocitem>
             <tocitem target="help_meanMC_g.html">meanMC_g</tocitem>
+            <tocitem target="help_meanMC_CLT.html">meanMC_CLT</tocitem>
             <tocitem target="help_cubMC_g.html">cubMC_g</tocitem>
             <tocitem target="help_cubLattice_g.html">cubLattice_g</tocitem>
             <tocitem target="help_cubSobol_g.html">cubSobol_g</tocitem>
