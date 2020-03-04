@@ -1,7 +1,8 @@
 %% Estimation of normal probabilities by *cubSobol_g* and *cubMC_g*
 % Authors: Lluis Antoni Jimenez Rugama and Lan Jiang, August 2017
-%
-% For \(\bf{X}\sim N(\bf{\mu},\Sigma)\), we will estimate the following
+
+%% Introduction
+% For \( \bf{X} \sim N(\bf{\mu}, \Sigma) \), we will estimate the following
 % probability:
 %
 % \[ P\left(\bf{a} \leq \bf{X} \leq \bf{b} \right) = \int_{\bf{a}}^{\bf{b}}
@@ -13,7 +14,7 @@
 % and IID Monte Carlo algorithms in GAIL, respectively. In order to
 % facilitate the computations when $d$ is high (~30), we are going to apply
 % a special transformation of the integrand proposed by Alan Genz.
-%%
+
 
 
 %% Basic integration parameters set up

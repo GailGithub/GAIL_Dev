@@ -1,9 +1,8 @@
-%% Estimation of normal probabilities by *cubSobol_g*, *cubMC_g*
-% *cubBayesLattice_g*, *cubLattice_g*, and *cubBayesNet_g*
-% Authors: Lluis Antoni Jimenez Rugama, Lan Jiang
-% and Jagadeeswaran Rathinavel, April 2019
-%
-% For \(\bf{X}\sim N(\bf{\mu},\Sigma)\), we will estimate the following
+%% Estimation of normal probabilities by *cubSobol_g*, *cubMC_g*, *cubBayesLattice_g*, *cubLattice_g*, and *cubBayesNet_g*
+% Authors: Lluis Antoni Jimenez Rugama, Lan Jiang, and Jagadeeswaran Rathinavel, April 2019
+
+%% Introduction
+% For $\bf{X}\sim N(\bf{\mu},\Sigma)$, we will estimate the following
 % probability:
 %
 % \[ P\left(\bf{a} \leq \bf{X} \leq \bf{b} \right) = \int_{\bf{a}}^{\bf{b}}
@@ -274,13 +273,13 @@ hyperbox = [-(d/3)*rand(1,d) ; (d/3)*rand(1,d)]; % We define the integration lim
 
 % Solution approx_prob and integration output parameters in out_param
 [approx_prob,out_param] = multi_normcdf_cubMC(hyperbox,mu,Sigma,abstol,reltol);
-report_integration_result('Test 3.1','cubMC_g',abstol,reltol,...
-  NaN,approx_prob,out_param.time,out_param.ntot)
+%report_integration_result('Test 3.1','cubMC_g',abstol,reltol,...
+%  NaN,approx_prob,out_param.time,out_param.ntot)
 
 % Solution approx_prob and integration output parameters in out_param
 [approx_prob,out_param] = multi_normcdf_cubSobol(hyperbox,mu,Sigma,abstol,reltol);
-report_integration_result('Test 3.2','cubSobol_g',abstol,reltol,...
-  NaN,approx_prob,out_param.time,out_param.n)
+%report_integration_result('Test 3.2','cubSobol_g',abstol,reltol,...
+%  NaN,approx_prob,out_param.time,out_param.n)
 
 % Solution approx_prob and integration output parameters in out_param
 [approx_prob,out_param] = multi_normcdf_cubBayesLat(hyperbox,mu,...
@@ -438,7 +437,7 @@ fprintf('')
         ' which is less than the user input tolerance '...
         num2str(errTol) '.'])
     end
-    fprintf('  The algorithm took %1.3f seconds and %d points \n', timeSec,nSample)
+    %fprintf('  The algorithm took %1.3f seconds and %d points \n', timeSec,nSample)
 
     if ~isnan(exactsol)
       errTol = gail.tolfun(abstol,reltol,1,exactsol,'max');
