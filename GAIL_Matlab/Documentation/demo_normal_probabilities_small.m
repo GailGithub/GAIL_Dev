@@ -116,6 +116,8 @@ disp(['Real error is ' ...
   num2str(abs(exactsol-mean(approx_prob_sobol(:,1))))...
   ' which is less than the user input tolerance '...
   num2str(gail.tolfun(abstol,reltol,1,exactsol,'max')) '.'])
+report_integration_result('Test 1.3', 'cubSobol_g',abstol,reltol,exactsol,... 
+  mean(approx_prob_sobol(:,1)),mean(timeSob(:,1),mean(nSampleSob(:,1))))
 
 % Solution approx_prob and integration output parameters in out_param
 for k=1:nRep
@@ -127,7 +129,8 @@ disp('Test 1.4: cubBayesLattice_g')
 disp(['Estimated probability with cubBayesLattice_g is: ' num2str(mean(approx_prob_BayLat(:,1)))])
 disp(['The algorithm took ' num2str(mean(timeBayLat(:,1))) ' seconds and '...
   num2str(mean(nSampleBayLat(:,1))) ' points.'])
-report_integration_result(abstol,reltol,exactsol,mean(approx_prob_BayLat(:,1)))
+report_integration_result('Test 1.4', 'cubBayesLattice_g', abstol,reltol,...
+   NaN,mean(approx_prob_BayLat(:,1)), num2str(mean(timeBayLat(:,1))), num2str(mean(nSampleBayLat(:,1))))
 
 % Solution approx_prob and integration output parameters in out_param
 for k=1:nRep
@@ -139,7 +142,8 @@ disp('Test 1.5: cubBayesNet_g')
 disp(['Estimated probability with cubBayesNet_g is: ' num2str(mean(approx_prob_BaySob(:,1)))])
 disp(['The algorithm took ' num2str(mean(timeBayLat(:,1))) ' seconds and '...
   num2str(mean(nSampleBayLat(:,1))) ' points.'])
-report_integration_result(abstol,reltol,exactsol,mean(approx_prob_BaySob(:,1)))
+report_integration_result('Test 1.5','cubBayesNet_g',abstol,reltol,NaN,...
+   mean(approx_prob_BaySob(:,1)),mean(timeBayLat(:,1)),mean(nSampleBayLat(:,1)))
 
 
 %% Second test: \(\Sigma=0.4I_d + 0.6\bf{1}\bf{1}^T\)
@@ -199,7 +203,8 @@ disp(['Real error is ' ...
   num2str(abs(exactsol-mean(approx_prob_sobol(:,2))))...
   ' which is less than the user input tolerance '...
   num2str(gail.tolfun(abstol,reltol,1,exactsol,'max')) '.'])
-
+report_integration_result('Test 2.3','cubSobol_g',abstol,reltol,...
+  exactsol,mean(approx_prob_sobol(:,2)),mean(timeSob(:,2)),mean(nSampleSob(:,2)))
 
 % Solution approx_prob and integration output parameters in out_param
 for k=1:nRep
@@ -213,7 +218,8 @@ disp('Test 2.4: cubBayesLattice_g')
 disp(['Estimated probability with cubBayesLattice_g is: ' num2str(mean(approx_prob_BayLat(:,2)))])
 disp(['The algorithm took ' num2str(mean(timeBayLat(:,2))) ' seconds and '...
   num2str(mean(nSampleBayLat(:,2))) ' points.'])
-report_integration_result(abstol,reltol,exactsol,mean(approx_prob_BayLat(:,2)))
+report_integration_result('Test 2.4','cubBayesLattice_g',abstol,reltol,...
+  NaN,mean(approx_prob_BayLat(:,2)),mean(timeBayLat(:,2)),mean(nSampleBayLat(:,2)))
 
 
 % Solution approx_prob and integration output parameters in out_param
@@ -227,7 +233,8 @@ disp('Test 2.5: cubBayesNet_g')
 disp(['Estimated probability with cubBayesNet_g is: ' num2str(mean(approx_prob_BaySob(:,2)))])
 disp(['The algorithm took ' num2str(mean(timeBayLat(:,2))) ' seconds and '...
   num2str(mean(nSampleBayLat(:,2))) ' points.'])
-report_integration_result(abstol,reltol,exactsol,mean(approx_prob_BaySob(:,2)))
+report_integration_result('Test 2.5','cubBayesNet_g',abstol,reltol,...
+  NaN,mean(approx_prob_BaySob(:,2)),mean(approx_prob_BaySob(:,2)),mean(nSampleBayLat(:,2)))
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -289,6 +296,8 @@ disp(['Estimated probability with cubBayesLattice_g is: ' num2str(approx_prob)])
 disp(['The algorithm took ' num2str(out_param.time) ' seconds and '...
   num2str(out_param.n) ' points.'])
 fprintf('')
+report_integration_result('Test 3.3','cubBayesLattice_g',abstol,reltol,...
+  NaN,approx_prob,out_param.time,out_param.n)
 
 %% Appendix: Auxiliary function definitions
 % The following functions are defined for the above test examples.
@@ -425,19 +434,14 @@ fprintf('')
     MVNPfunvalfinal = MVNPfunval.*exp(-t.^2/2);
   end
 
-  function report_integration_result(abstol,reltol,exactsol,approx_prob)
-    errTol = gail.tolfun(abstol,reltol,1,exactsol,'max');
-    errReal = abs(exactsol-approx_prob);
-    if errReal > errTol
-      warning('cubBayesLattice_g_demo:errorExceeded', ...
-        'Real error %1.2e exceeds given tolerance %1.2e',errReal,errTol);
-      % throw(MException(msg))
-    else
-      disp(['Real error is ' num2str(errReal)...
-        ' which is less than the user input tolerance '...
-        num2str(errTol) '.'])
+  function report_integration_result(testId,algo,abstol,reltol,exactsol,approxsol,timeSec,nSample)
+    fprintf('%s: %s\n', testId,algo)
+    fprintf('  Estimated probability: %f \n', approxsol)
+    if ~isnan(exactsol)
+      fprintf('       True probability: %f \n', exactsol)
     end
-    %fprintf('  The algorithm took %1.3f seconds and %d points \n', timeSec,nSample)
+
+    fprintf('  The algorithm took %1.3f seconds and %d points \n', timeSec,nSample)
 
     if ~isnan(exactsol)
       errTol = gail.tolfun(abstol,reltol,1,exactsol,'max');
