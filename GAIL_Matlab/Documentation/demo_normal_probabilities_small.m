@@ -78,14 +78,8 @@ for k=1:nRep
 end
 timeMC(:,1) = [out_param_MC(:,1).time];
 nSampleMC(:,1) = [out_param_MC(:,1).ntot];
-disp('Test 1.1: cubMC_g')
-disp(['Estimated probability with cubMC_g is: ' num2str(mean(approx_prob_MC(:,1)))])
-disp(['The algorithm took ' num2str(mean(timeMC(:,1))) ' seconds and '...
-  num2str(mean(nSampleMC(:,1))) ' points.'])
-disp(['Real error is ' ...
-  num2str(abs(exactsol-mean(approx_prob_MC(:,1))))...
-  ' which is less than the user input tolerance '...
-  num2str(gail.tolfun(abstol,reltol,1,exactsol,'max')) '.'])
+report_integration_result('Test 1.1', 'cubMC_g',abstol,reltol,exactsol,... 
+  mean(approx_prob_MC(:,1)),mean(timeMC(:,1)),mean(nSampleMC(:,1)))
 
 % Solution approx_prob and integration output parameters in out_param
 for k=1:nRep
@@ -93,14 +87,8 @@ for k=1:nRep
 end
 timeLat(:,1) = [out_param_lat(:,1).time];
 nSampleLat(:,1) = [out_param_lat(:,1).n];
-disp('Test 1.2: cubLattice_g')
-disp(['Estimated probability with cubLattice_g is: ' num2str(mean(approx_prob_lat(:,1)))])
-disp(['The algorithm took ' num2str(mean(timeLat(:,1))) ' seconds and '...
-  num2str(mean(nSampleLat(:,1))) ' points.'])
-disp(['Real error is ' ...
-  num2str(abs(exactsol-mean(approx_prob_lat(:,1))))...
-  ' which is less than the user input tolerance '...
-  num2str(gail.tolfun(abstol,reltol,1,exactsol,'max')) '.'])
+report_integration_result('Test 1.2', 'cubLattice_g',abstol,reltol,exactsol,... 
+  mean(approx_prob_lat(:,1)),mean(timeLat(:,1)),mean(nSampleLat(:,1)))
 
 % Solution approx_prob and integration output parameters in out_param
 for k=1:nRep
@@ -108,14 +96,6 @@ for k=1:nRep
 end
 timeSob(:,1) = [out_param_sobol(:,1).time];
 nSampleSob(:,1) = [out_param_sobol(:,1).n];
-disp('Test 1.3: cubSobol_g')
-disp(['Estimated probability with cubSobol_g is: ' num2str(mean(approx_prob_sobol(:,1)))])
-disp(['The algorithm took ' num2str(mean(timeSob(:,1))) ' seconds and '...
-  num2str(mean(nSampleSob(:,1))) ' points.'])
-disp(['Real error is ' ...
-  num2str(abs(exactsol-mean(approx_prob_sobol(:,1))))...
-  ' which is less than the user input tolerance '...
-  num2str(gail.tolfun(abstol,reltol,1,exactsol,'max')) '.'])
 report_integration_result('Test 1.3', 'cubSobol_g',abstol,reltol,exactsol,... 
   mean(approx_prob_sobol(:,1)),mean(timeSob(:,1)),mean(nSampleSob(:,1)))
 
@@ -125,10 +105,6 @@ for k=1:nRep
 end
 timeBayLat(:,1) = [out_param_BayLat(:,1).time];
 nSampleBayLat(:,1) = [out_param_BayLat(:,1).n];
-disp('Test 1.4: cubBayesLattice_g')
-disp(['Estimated probability with cubBayesLattice_g is: ' num2str(mean(approx_prob_BayLat(:,1)))])
-disp(['The algorithm took ' num2str(mean(timeBayLat(:,1))) ' seconds and '...
-  num2str(mean(nSampleBayLat(:,1))) ' points.'])
 report_integration_result('Test 1.4', 'cubBayesLattice_g', abstol,reltol,...
    NaN,mean(approx_prob_BayLat(:,1)), (mean(timeBayLat(:,1))), (mean(nSampleBayLat(:,1))))
 
@@ -161,14 +137,8 @@ for k=1:nRep
 end
 timeMC(:,2) = [out_param_MC(:,2).time];
 nSampleMC(:,2) = [out_param_MC(:,2).ntot];
-disp('Test 2.1: cubMC_g')
-disp(['Estimated probability with cubMC_g is: ' num2str(mean(approx_prob_MC(:,2)))])
-disp(['The algorithm took ' num2str(mean(timeMC(:,2))) ' seconds and '...
-  num2str(mean(nSampleMC(:,2))) ' points.'])
-disp(['Real error is ' ...
-  num2str(abs(exactsol-mean(approx_prob_MC(:,2))))...
-  ' which is less than the user input tolerance '...
-  num2str(gail.tolfun(abstol,reltol,1,exactsol,'max')) '.'])
+report_integration_result('Test 2.1','cubMC_g',abstol,reltol,...
+  exactsol,mean(approx_prob_MC(:,2)),mean(timeMC(:,2)),mean(nSampleMC(:,2)))
 
 % Solution approx_prob and integration output parameters in out_param
 for k=1:nRep
@@ -176,14 +146,8 @@ for k=1:nRep
 end
 timeLat(:,2) = [out_param_lat(:,2).time];
 nSampleLat(:,2) = [out_param_lat(:,2).n];
-disp('Test 2.2: cubLattice_g')
-disp(['Estimated probability with cubLattice_g is: ' num2str(mean(approx_prob_lat(:,2)))])
-disp(['The algorithm took ' num2str(mean(timeLat(:,2))) ' seconds and '...
-  num2str(mean(nSampleLat(:,2))) ' points.'])
-disp(['Real error is ' ...
-  num2str(abs(exactsol-mean(approx_prob_lat(:,2))))...
-  ' which is less than the user input tolerance '...
-  num2str(gail.tolfun(abstol,reltol,1,exactsol,'max')) '.'])
+report_integration_result('Test 2.2','cubLattice_g',abstol,reltol,...
+  exactsol,mean(approx_prob_lat(:,2)),mean(timeLat(:,2)),mean(nSampleLat(:,2)))
 
 % Solution approx_prob and integration output parameters in out_param
 for k=1:nRep
