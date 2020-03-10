@@ -42,7 +42,9 @@
 % <p><a href="demo_meanMC_g.html">Demos for meanMC_g</a>
 % <p><a href="demo_cubMC_g.html">Demos for cubMC_g</a>
 % <p><a href="demo_cubSobol_g.html">Demos for cubSobol_g</a>
+% <p><a href="demo_cubLattice_g.html">Demos for cubLattice_g</a>
 % <p><a href="demo_cubBayesLattice_g.html">Demos for cubBayesLattice_g</a>
+% <p><a href="demo_cubBayesNet_g.html">Demos for cubBayesNet_g</a>
 % </html>
 %
 %% Website

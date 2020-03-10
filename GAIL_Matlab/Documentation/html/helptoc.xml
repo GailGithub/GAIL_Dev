@@ -25,7 +25,9 @@
             <tocitem target="demo_meanMC_g.html">meanMC_g</tocitem>
             <tocitem target="demo_cubMC_g.html">cubMC_g</tocitem>
             <tocitem target="demo_cubSobol_g.html">cubSobol_g</tocitem>
+            <tocitem target="demo_cubLattice_g.html">cubSobol_g</tocitem>
             <tocitem target="demo_cubBayesLattice_g.html">cubBayesLattice_g</tocitem>
+            <tocitem target="demo_cubBayesNet_g.html">cubBayesNet_g</tocitem>
     </tocitem>
 </tocitem>
 </toc>

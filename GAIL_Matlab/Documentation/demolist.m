@@ -33,6 +33,14 @@
 % </html>
 %
 % <html>
+% <a href="demo_cubLattice_g.html">cubLattice_g</a>
+% </html>
+%
+% <html>
 % <a href="demo_cubBayesLattice_g.html">cubBayesLattice_g</a>
+% </html>
+%
+% <html>
+% <a href="demo_cubBayesNet_g.html">cubBayesNet_g</a>
 % </html>
 
