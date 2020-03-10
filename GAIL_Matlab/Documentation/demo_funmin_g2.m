@@ -5,29 +5,29 @@
 %
 % Define a function with two minima as follows:
 %
-% \[ f(x) = -5 \exp(-100(x-0.2)^2) - \exp(-100(x-1)^2). \]
+% $$ f(x) = -5 \exp(-100(x-0.2)^2) - \exp(-100(x-1)^2). $$
 %
 close all; clearvars; format compact; format short;
 f = @(x) -5*exp((-100*(x-0.2).^2))-exp((-100.*(x-1).^2));
 
 %% Function minimization
-% We use *funmin_g* to find the minimum of \(f\) over the interval
-% \([a,b]\), where \(a = 0\) and \(b = 1.5\):
+% We use *funmin_g* to find the minimum of $f$ over the interval
+% $[a,b]$, where $a = 0$ and $b = 1.5$:
 a = 0;
 b = 1.5;
 [fmin,out ] = funmin_g(f,a,b);
 [xval,fval] = fminbnd(f,a,b);
 
 %% Plot of the function and minima
-% We plot \(f(x)\) and the global minimum value  returned
+% We plot $f(x)$ and the global minimum value  returned
 % by *funmin_g* and a local minimum by *fminbnd* below:
 figure;
 x = a:1e-6:b;
 fminvec = fmin.*ones(size(x));
-plot(x,f(x),'r-',out.intervals,[fmin,fmin],'go',xval,fval,'b*');
+plot(x,f(x),'r-',out.intervals,[fmin,fmin],'go',xval,fval,'b*','MarkerSize',16);
 ylim([-6 1])
 xlabel('$x$','interpreter','latex')
-h_legend=legend('$f(x)$','funmin\_g','fminbnd');
+h_legend=legend('$f(x)$','funmin\_g','fminbnd','Location','best');
 set(h_legend,'interpreter','latex');
 
 

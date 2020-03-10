@@ -76,7 +76,7 @@
 %%  Guarantee
 %
 % This algorithm attempts to calculate the integral of function f over the
-% hyperbox \([0,1]^dim\) to a prescribed error tolerance 
+% hyperbox $[0,1]^dim$ to a prescribed error tolerance 
 % tolfun:= max(abstol,reltol*| I |) with guaranteed confidence level,
 % e.g.,99% when alpha=0.5%. If the algorithm terminates without showing any
 % warning messages and provides an answer Q, then the following inequality
@@ -92,8 +92,8 @@
 %%
 % *Example 1: Quadratic*
 %
-% Estimate the integral with integrand \(f(x) = x^2\) over the interval
-% \([0,1]\) with default parameters: order=1, abstol=0.01, relTol=0
+% Estimate the integral with integrand $f(x) = x^2$ over the interval
+% $[0,1]$ with default parameters: order=1, abstol=0.01, relTol=0
 
 warning('off','GAIL:cubBayesNet_g:fdnotgiven')
 obj = cubBayesNet_g;
@@ -106,8 +106,8 @@ check = double(abs(exactInteg-muhat) < 0.01)
 % *Example 2: ExpCos*
 %
 % Estimate the integral with integrand
-% \(f({x}) = \exp\left(\sum_{i=1}^2cos(2\pi x_i)\right)\) over the
-% interval \([0,1]^2\) with parameters: order=2, abstol=0.001, relTol=0.01
+% $f({x}) = \exp\left(\sum_{i=1}^2cos(2\pi x_i)\right)$ over the
+% interval $[0,1]^2$ with parameters: order=2, abstol=0.001, relTol=0.01
 
 fun = @(x) exp(sum(cos(2*pi*x), 2));
 dim=2; absTol=1e-3; relTol=1e-2;
@@ -122,7 +122,7 @@ check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))
 % *Example 3: Keister function*
 %
 % Estimate the Keister's [3] integrand, a multidimensional integral  
-% inspired by a physics application over the interval \([0,1]^2\) 
+% inspired by a physics application over the interval $[0,1]^2$ 
 % with parameters: order=2, abstol=0.001, relTol=0.01
 
 dim=2; absTol=1e-3; relTol=1e-2;
@@ -141,14 +141,16 @@ check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))
 %%
 % *Example 4: Multivariate normal probability*
 %
-% For \(\bf{X}\sim N(\bf{\mu},\Sigma)\), estimate the following
+% For $\bf{X}\sim N(\bf{\mu},\Sigma)$, estimate the following
 % probability:
 %
-% \( P\left(\bf{a} \leq \bf{X} \leq \bf{b} \right) = \int_{\bf{a}}^{\bf{b}}
+% $$ P\left(\bf{a} \leq \bf{X} \leq \bf{b} \right) = \int_{\bf{a}}^{\bf{b}}
 % \frac{{\rm e}^{(\bf{x}-\bf{\mu})^T {\Sigma}^{-1}(\bf{x}-\bf{\mu})}}
-% {(2\pi)^{d/2}\left|{\Sigma}\right|^{1/2}}\,{\rm d}\bf{x}. \)
-% Given \(a = [-6 -2 -2] and b = [5 2 1] \) with zero mean \(\mu=0 \)
-% and covariance \(\Sigma=[4 1 1; 0 1 0.5; 0 0 0.25] \).
+% {(2\pi)^{d/2}\left|{\Sigma}\right|^{1/2}}\,{\rm d}\bf{x}. $$
+%
+% Given $\left(\begin{array}{c} -6\\ -2\\ -2\end{array}\right)$ and 
+% $\left(\begin{array}{c} 5\\ 2\\ 1\end{array}\right)$  with zero mean $\mu=0$
+% and covariance  $\left(\begin{array}{ccc} 4& 1& 1\\ 0& 1& 0.5\\ 0& 0& 0.25 \end{array}\right)$.
 
 dim=2; absTol=1e-3; relTol=1e-2; fName = 'MVN';
 C = [4 1 1; 0 1 0.5; 0 0 0.25]; MVNParams.Cov = C'*C; MVNParams.C = C;

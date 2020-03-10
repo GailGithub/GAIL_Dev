@@ -4,19 +4,19 @@
 %
 % Define a highly oscillating function as follows:
 %
-% \[ f(x) = \sin (10 \pi x^4 ) - x \]
+% $$ f(x) = \sin (10 \pi x^4 ) - x. $$
 %
 close all; clearvars; format compact; format short;
 f = @(x) sin(10*pi*x.^4)-x;
 
 %% Function minimization
-% We use *funmin_g* to approximate \(f\) over the interval \([a,b]\), where
-% \(a = 0\) and \(b = 2\) with default parameter values:
+% We use *funmin_g* to approximate $f$ over the interval $[a,b]$, where
+% $a = 0$ and $b = 2$ with default parameter values:
 a = 0; b = 2;
 [fmin,outmin] = funmin_g(f, a, b);
 
 %% Plots of the function and its minimum
-% We plot \(f(x)\) and the approximate minimum returned by *funmin_g* below.
+% We plot $f(x)$ and the approximate minimum returned by *funmin_g* below.
 % It is obvious that the approximation is not satisfactory. We compute the
 % error by comparing to the true minimum returned by the Mathematica
 % command, |N[Minimize[{Sin[10 Pi x^4] - x, 0 <= x <= 2}, {x}],15]|.  The

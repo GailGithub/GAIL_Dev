@@ -4,7 +4,7 @@
 
 %% Function definition
 %
-% This example is taken from [1], where a function is defined on \( [0,1] \)
+% This example is taken from [1], where a function is defined on $[0,1]$
 % with twelve spikes.
 %
 close all; clear all; format compact; format short e;
@@ -23,7 +23,7 @@ spikyfun = @(x) foolfunmaker(x, @(x,c) fbump((x-c(1))/c(2)),...
     ones(nnode-1,1), [xall(1:nnode-1) diff(xall)]);
 
 %% Plot of the spiky function
-% In the following, we plot \(f(x)\) and show the data sampling points
+% In the following, we plot $f(x)$ and show the data sampling points
 % picked by MATLAB's built-in integration function *quad*, which explains
 % why *quad* essentially gives the answer zero for our spiky function:
 figure;
@@ -35,7 +35,7 @@ legend(h,{'$f$','data'},'location','southeast')
 
 %% Integral approximation
 % We use MATLAB built-in functions and *integral_g* [2] from GAIL [3] to
-% integrate \(f\) over the unit interval:
+% integrate $f$ over the unit interval:
 a = 0;
 b = 1;
 abstol = 1e-11;
@@ -47,10 +47,10 @@ MATgailspiky = integral_g(spikyfun,a,b,abstol)
 
 
 %% Compute approximation errors
-% The true integral value of the spiky function is \(16/35\). The following
+% The true integral value of the spiky function is $\frac{16}{35}$. The following
 % code computes absolute errors from the above approximation methods. Only
 % *integral_g* achieves the required accuracy with respect to the absolute
-% tolerance of \( 10^{-11} \) in this example.
+% tolerance of $10^{-11}$ in this example.
 integralspiky = 16/35;
 if MATLABVERSION >= 8,
   abs_errors = abs(integralspiky - [MATintegralspiky, MATquadspiky, MATgailspiky])
