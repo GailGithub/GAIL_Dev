@@ -161,21 +161,21 @@ disp(['Real error was ' ...
 % that the we do a change of variable $\mathbf{t} = \mathbf{X}/a$
 % and transform the integral:
 %
-%
-% \begin{align*} 
-% I &= \int_{\mathbf{R}^d} \cos(\lVert \mathbf{X}
-% \rVert) \exp(-\lVert \mathbf{X} \rVert^2) \, \mathrm{d}
-% \mathbf{X} \\
-% &= \int_{\mathbf{R}^d} a^d \cos(a \lVert \mathbf{t}
-% \rVert) \exp(-a^2 \lVert \mathbf{t} \rVert^2) \, \mathrm{d}
-% \mathbf{t}, \qquad a > 0, \\ & = \int_{\mathbf{R}^d}
-% \underbrace{(2\pi a^2)^{d/2} \cos(a \lVert \mathbf{t} \rVert)
-% \exp((1/2-a^2) \lVert \mathbf{t} \rVert^2)}_{f(\mathbf{t})}
-% \times \underbrace{\frac{\exp(-\lVert \mathbf{t} \rVert^2/2)}
+% $$
+% \begin{array}{cl}
+% I &= \int_{\mathbf{R}^d} \cos(\| \mathbf{X} \|) 
+% \exp(-\| \mathbf{X} \|^2) \, \mathrm{d} \mathbf{X} \\
+% &= \int_{\mathbf{R}^d} a^d \cos(a \|  \mathbf{t}
+% \| ) \exp(-a^2 \|  \mathbf{t} \| ^2) \, \mathrm{d}
+% \mathbf{t}, \qquad a > 0, \\
+% & = \int_{\mathbf{R}^d} \underbrace{(2\pi a^2)^{d/2} 
+% \cos(a \| \mathbf{t} \|) \exp((1/2-a^2) \| \mathbf{t} \|^2)}_{f(\mathbf{t})}
+% \times \underbrace{\frac{\exp(-\| \mathbf{t} \|^2/2)}
 % {(2\pi)^{d/2}}}_{\varrho(\mathbf{t})} \, \mathrm{d} \mathbf{t} \\
-% & = \mathbf{E}[f(\mathbf{T})], \qquad \mathrm{where } \mathbf{T} \sim \mathcal{N}(\mathbf{0},
-% \mathsf{I}). 
-% \end{align*} 
+% & = \mathbf{E}[f(\mathbf{T})], \qquad \mathrm{where} \quad \mathbf{T} 
+% \sim \mathcal{N}(\mathbf{0},\mathbf{I}). 
+% \end{array}
+% $$
 % 
 % 
 %%
