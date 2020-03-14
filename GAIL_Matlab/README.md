@@ -106,6 +106,15 @@ Rugama, "Monte Carlo simulation, automatic stopping criteria for", Wiley
 StatsRef: Statistics Reference Online, pp. 1-7, 2018.
 (review of cubMC_g, cubLattice_g, and cubSobol_g)
 
+Jagadeeswaran Rathinavel and Fred J. Hickernell, "Fast automatic Bayesian 
+cubature using lattice sampling," Statistics and Computingt 29, 
+pp. 1215-1229, 2019. Available from https://doi.org/10.1007/s11222-019-09895-9
+(describes cubBayesLattice_g)
+
+Jagadeeswaran Rathinavel, "Fast automatic Bayesian cubature using matching 
+kernels and designs," PhD thesis, Illinois Institute of Technology, 2019.
+(describes cubBayesLattice_g and cubBayesNet_g)
+
 Daniel S. Katz, Sou-Cheng T. Choi, Hilmar Lapp, Ketan Maheshwari,
 Frank Loffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr,
 James Hetherington, James Howison, Shel Swenson, Gabrielle D. Allen,
@@ -146,13 +155,6 @@ Xin Tong, "A Guaranteed, Adaptive, Automatic Algorithm for Univariate
 Function Minimization," MS thesis, Illinois Institute of Technology, 2014.
 (describes deprecated funmin01_g.m)
 
-Jagadeeswaran Rathinavel, Fred J. Hickernell, Fast automatic Bayesian cubature using lattice sampling. 
-Stat Comput 29, 1215-1229 (2019). https://doi.org/10.1007/s11222-019-09895-9
-(describes cubBayesLattice_g)
-
-Jagadeeswaran Rathinavel, "Fast automatic Bayesian cubature using matching kernels and designs," PhD
-thesis, Illinois Institute of Technology, 2019.
-(describes cubBayesLattice_g and cubBayesNet_g)
 
 Downloads
 ------------
