@@ -1,5 +1,5 @@
 function path = save_image(figh, subdir, filename, varargin)
-% SAVE_IMAGE: Save figure to an image file in a subdirectory in 'OutputFiles'
+% SAVE_IMAGE: Save figure as an image file in a subdirectory in 'OutputFiles'
 % 
 % Inputs:
 %   figh            handle, handle to the figure
@@ -16,7 +16,7 @@ if nargin <= 3
 else 
     isTimeStamped = varargin{1};
 end
-filetype = '.png'
+filetype = '.png';
 
 GAILPATH = GAILstart(0);
 dirpath=strcat([GAILPATH,'OutputFiles',filesep], subdir);

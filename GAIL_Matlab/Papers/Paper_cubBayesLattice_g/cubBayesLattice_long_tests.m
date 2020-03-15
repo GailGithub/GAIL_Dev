@@ -30,6 +30,10 @@ stopAtTol = true;
 alpha = 0.01;
 nRepAuto = 100;
 
+% initialize with a template
+testFunArgs(9)=struct('fName','','dim',2,'order',2,'varTx','',...
+  'sampling','','arbMean',true,'stopCriterion','');
+
 % template of input arguments
 testFunArgs(1)=struct('fName','MVN','dim',2,'order',2,'varTx','C2sin',...
   'sampling','Lattice','arbMean',true,'stopCriterion','GCV');  % MVN d=3 transformed to Genz d=2
