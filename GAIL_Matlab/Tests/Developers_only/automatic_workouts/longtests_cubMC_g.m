@@ -16,7 +16,7 @@ run_handle_ut('ut_cubMC_g')
 %% other tests
 % MCQMC paper
 run_handle('MCQMC2012Figs')
-run_handle('FoolAutomaticAlgorithms')
+% run_handle('FoolAutomaticAlgorithms')
 run_handle('RunTestcubMConGeoAsianCall')
 run_handle('RunTestcubMConGaussian')
 run_handle('RunTestcubMConGaussiand1')
