@@ -76,7 +76,7 @@
 %%  Guarantee
 %
 % This algorithm attempts to calculate the integral of function f over the
-% hyperbox $[0,1]^dim$ to a prescribed error tolerance 
+% hyperbox $[0,1]^{d}$ to a prescribed error tolerance 
 % tolfun:= max(abstol,reltol*| I |) with guaranteed confidence level,
 % e.g.,99% when alpha=0.5%. If the algorithm terminates without showing any
 % warning messages and provides an answer Q, then the following inequality
