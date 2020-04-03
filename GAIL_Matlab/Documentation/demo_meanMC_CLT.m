@@ -20,7 +20,7 @@ function demo_meanMC_CLT
 gail.InitializeWorkspaceDisplay
 %initialize the workspace and the display parameters
 
-%% Example 1: Estimate $\mathbf{E}[f(\mathbf{X})]$ where $f(\mathbf{X})=\exp(-\mathbf{X}^2)$ and $\mathbf{X} \sim \mathcal{U} (0,1)$ using $x \mapsto x$ as a control variate
+%% Example 1: Estimate $\mathbf{E}[f(X)]$ where $f(X)=\exp(-X^2)$ and $X \sim \mathcal{U} (0,1)$ using $x \mapsto x$ as a control variate
 % In this example a function that cannot be integrated analytically is
 % integrated using our adaptive IID Monte Carlo method.  We also use the
 % function  $x \mapsto x$ as a control variate.
