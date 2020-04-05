@@ -1,9 +1,10 @@
 %CUBBAYESLATTICE_G Bayesian cubature method to estimate the integral
 % of a random variable
 %
-%   OBJ = CUBBAYESLATTICE_G('f',f,'dim',dim,'absTol',absTol,'relTol',relTol,...
+%   [OBJ,Q] = CUBBAYESLATTICE_G('f',f,'dim',dim,'absTol',absTol,'relTol',relTol,...
 %         'order',order, 'ptransform',ptransform, 'arbMean',arbMean);
-%   Initializes the object with the given parameters.
+%   Initializes the object with the given parameters and also returns 
+%   an estimate of integral Q.
 %
 %   [Q,OutP] = COMPINTEG(OBJ); estimates the integral of f over hyperbox
 %   [0,1]^d using rank-1 Lattice sampling to within a specified generalized
@@ -13,6 +14,8 @@
 %   and reltol is the relative error tolerance. Usually the reltol determines
 %   the accuracy of the estimation, however, if | I | is rather small,
 %   then abstol determines the accuracy of the estimation.
+%   It is recommended to use COMPINTEG for estimating the integral
+%   repeatedly.
 %   OutP is the structure holding additional output params, more details provided
 %   below. Input f is a function handle that accepts an n x d matrix input,
 %   where d is the dimension of the hyperbox, and n is the number of points
@@ -73,9 +76,8 @@
 % with default parameters: order=2, ptransform=C1sin, abstol=0.01, relTol=0
 %
 % >> warning('off','GAIL:cubBayesLattice_g:fdnotgiven')
-% >> obj = cubBayesLattice_g;
+% >> [obj,muhat] = cubBayesLattice_g;
 % >> exactInteg = 1.0/3;
-% >> muhat=compInteg(obj);
 % >> warning('on','GAIL:cubBayesLattice_g:fdnotgiven')
 % >> check = double(abs(exactInteg-muhat) < 0.01)
 % check = 1
@@ -133,8 +135,7 @@
 % >> inputArgs={'f',integrand,'dim',dim, 'absTol',absTol,'relTol',relTol};
 % >> inputArgs=[inputArgs {'order',1,'ptransform','C1sin','arbMean',true}];
 % >> inputArgs=[inputArgs {'useGradient',true}];
-% >> obj=cubBayesLattice_g(inputArgs{:});
-% >> muhat = compInteg(obj);
+% >> [obj,muhat]=cubBayesLattice_g(inputArgs{:});
 % >> check = double(abs(muBest-muhat) < max(absTol,relTol*abs(muBest)))
 % check = 1
 %
@@ -242,7 +243,7 @@ classdef cubBayesLattice_g < handle
   end
   
   methods
-    function obj = cubBayesLattice_g(varargin)  %Constructor
+    function [obj,muhat] = cubBayesLattice_g(varargin)  %Constructor
       
       if nargin > 0
         iStart = 1;
@@ -300,6 +301,8 @@ classdef cubBayesLattice_g < handle
       obj.timeAll = temp;
       obj.dscAll = temp;
       obj.s_All = temp;
+      
+      muhat = compInteg(obj);
       
     end
     
