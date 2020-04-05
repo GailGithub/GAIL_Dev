@@ -15,7 +15,7 @@
 %   the accuracy of the estimation, however, if | I | is rather small,
 %   then abstol determines the accuracy of the estimation.
 %   It is recommended to use COMPINTEG for estimating the integral
-%   repeatedly.
+%   repeatedly after the object initialization..
 %   OutP is the structure holding additional output params, more details provided
 %   below. Input f is a function handle that accepts an n x d matrix input,
 %   where d is the dimension of the hyperbox, and n is the number of points

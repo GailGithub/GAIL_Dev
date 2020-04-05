@@ -1,9 +1,10 @@
 %CUBBAYESNET_G Bayesian cubature method to estimate the integral
 % variable using digital nets. Currently, only Sobol points are supported.
 %
-%   OBJ = CUBBAYESNET_G('f',f,'dim',dim,'absTol',absTol,'relTol',relTol,...
+%   [OBJ,Q] = CUBBAYESNET_G('f',f,'dim',dim,'absTol',absTol,'relTol',relTol,...
 %     'order',order, 'arbMean',arbMean);
-%   Initializes the object with the given parameters.
+%   Initializes the object with the given parameters and also returns 
+%   an estimate of integral Q.
 %
 %   [Q,OutP] = COMPINTEG(OBJ); estimates the integral of f over hyperbox
 %   [0,1]^d using digital nets (Sobol points) to within a specified generalized
@@ -13,6 +14,8 @@
 %   and reltol is the relative error tolerance. Usually the reltol determines
 %   the accuracy of the estimation, however, if | I | is rather small,
 %   then abstol determines the accuracy of the estimation.
+%   It is recommended to use COMPINTEG for estimating the integral
+%   repeatedly after the object initialization.
 %   OutP is the structure holding additional output params, more details provided
 %   below. Input f is a function handle that accepts an n x d matrix input,
 %   where d is the dimension of the hyperbox, and n is the number of points
@@ -69,9 +72,8 @@
 % with default parameters: order=1, abstol=0.01, relTol=0
 %
 % >> warning('off','GAIL:cubBayesNet_g:fdnotgiven')
-% >> obj = cubBayesNet_g;
+% >> [obj,muhat] = cubBayesNet_g;
 % >> exactInteg = 1.0/3;
-% >> muhat=compInteg(obj);
 % >> warning('on','GAIL:cubBayesNet_g:fdnotgiven')
 % >> check = double(abs(exactInteg-muhat) < 0.01)
 % check = 1
@@ -88,8 +90,7 @@
 % >> exactInteg = besseli(0,1)^dim;
 % >> inputArgs = {'relTol',relTol};
 % >> inputArgs = [inputArgs {'f',fun, 'dim',dim, 'absTol',absTol,}];
-% >> obj=cubBayesNet_g(inputArgs{:});
-% >> muhat=compInteg(obj);
+% >> [obj,muhat]=cubBayesNet_g(inputArgs{:});
 % >> check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))
 % check = 1
 %
@@ -104,8 +105,7 @@
 % >> fKeister = @(x) ft(x,dim); exactInteg = Keistertrue(dim);
 % >> inputArgs ={'f',fKeister,'dim',dim,'absTol',absTol, 'relTol',relTol};
 % >> inputArgs =[inputArgs {'arbMean',true}];
-% >> obj=cubBayesNet_g(inputArgs{:});
-% >> muhat=compInteg(obj);
+% >> [obj,muhat]=cubBayesNet_g(inputArgs{:});
 % >> check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))
 % check = 1
 %
@@ -121,9 +121,11 @@
 % >> inputArgs={'f',integrand,'dim',dim, 'absTol',absTol,'relTol',relTol};
 % >> inputArgs=[inputArgs {'arbMean',true}];
 % >> obj=cubBayesNet_g(inputArgs{:});
-% >> muhat = compInteg(obj);
+% >> [muhat,outParams] = compInteg(obj);
 % >> check = double(abs(muBest-muhat) < max(absTol,relTol*abs(muBest)))
 % check = 1
+% >> etaDim = size(outParams.optParams.aMLEAll, 2)
+% etaDim = 1
 %
 %
 %   See also CUBBAYESLATTICE_G, CUBSOBOL_G, CUBLATTICE_G, CUBMC_G, MEANMC_G, INTEGRAL_G
@@ -190,7 +192,7 @@ classdef cubBayesNet_g < handle
   end
   
   methods
-    function obj = cubBayesNet_g(varargin)  %Constructor
+    function [obj,muhat] = cubBayesNet_g(varargin)  %Constructor
       if nargin > 0
         iStart = 1;
         if isa(varargin{1},'cubBayesNet_g')
@@ -240,6 +242,8 @@ classdef cubBayesNet_g < handle
       if obj.verify_ftilde==true || obj.debugEnable==true
         warning('Caution: debugEnable is set, this will increase computation time !')
       end
+      
+      muhat = compInteg(obj);
     end
     
     % parses each input argument passed and assigns to obj.
