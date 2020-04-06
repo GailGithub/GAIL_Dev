@@ -310,6 +310,11 @@ classdef cubBayesNet_g < handle
         end
       end
       
+      if ~license('test', 'Signal_Toolbox')
+        error('GAIL:cubBayesNet_g:fwht_not_supported',...
+            'Signal Processing Toolbox license required to continue !\n');
+      end
+      
       validate_input_args(obj);
     end
     
@@ -587,11 +592,8 @@ classdef cubBayesNet_g < handle
     % Matlab by default uses 'sequency' ordering, thus the need to be spcific
     function t = fwht_hs(fx)
       [n, ~] = size(fx);
-      if license('test', 'Signal_Toolbox')
-        t = fwht(fx,n,'hadamard');  %*n;
-      else
-        t = fwht_custom(fx,n,'hadamard');
-      end
+      t = fwht(fx,n,'hadamard');
+
       % Note: Unlike fft, fwht normalizes the output, i.e. divideds by 'n'
     end
     
