@@ -51,5 +51,5 @@ GAIL_Matlab/Algorithms/\+gail/ver\.m
 
 GAIL_Matlab/Algorithms/IntegrationExpectation/cubBayesNet_g_github\.txt
 
-*.bak
+*.bak*
 *.synctex*
