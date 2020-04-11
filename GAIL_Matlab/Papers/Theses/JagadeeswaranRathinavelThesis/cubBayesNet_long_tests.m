@@ -30,6 +30,7 @@ alpha = 0.01;
 nRepAuto = 100;
 
 % initialize with a template
+clear testFunArgs
 testFunArgs(9)=struct('fName','','dim',2,'order',1,...
   'sampling','','arbMean',true,'stopCriterion','');
   
@@ -80,9 +81,7 @@ for testFunArg=testFunArgs(1:end)
   errTolVec = 10.^log10ErrVec;
   sampling = testFunArg.sampling;
   
-  % for errTol=errTolVec(1:end)
   for iter=1:length(log10ErrVec)
-    fprintf('errTol %1.3f', errTol)
     
     arbMean=testFunArg.arbMean;
     if arbMean==true
@@ -95,7 +94,7 @@ for testFunArg=testFunArgs(1:end)
     dim=testFunArg.dim;
     bern=testFunArg.order;
     
-    inputArgs = {'dim',dim, 'absTol',errTol, 'order',bern, ....
+    inputArgs = {'dim',dim, 'order',bern, .... 
       'stopAtTol',stopAtTol, 'stopCriterion',testFunArg.stopCriterion...
       'figSavePath',newPath, 'arbMean',arbMean, 'alpha',alpha ...
       'nRepAuto', nRepAuto, 'log10ErrVec',log10ErrVec,...

@@ -31,6 +31,7 @@ alpha = 0.01;
 nRepAuto = 100;
 
 % initialize with a template
+clear testFunArgs
 testFunArgs(9)=struct('fName','','dim',2,'order',2,'varTx','',...
   'sampling','','arbMean',true,'stopCriterion','');
 
