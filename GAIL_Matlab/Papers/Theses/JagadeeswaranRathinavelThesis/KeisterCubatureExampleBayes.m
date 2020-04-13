@@ -46,7 +46,7 @@ nd = length(dvec);
 a = 1/sqrt(2); %"best" value of a
 
 
-%% Next we do Bayes Lattice
+%% first we call Bayes Lattice
 IBayesLatticeVec(nRep,nd) = 0; %vector of answers
 timeBayLat(nRep,nd) = 0;
 nSampleBayLat(nRep,nd) = 0;
@@ -79,7 +79,7 @@ timeBayLat = mean(timeBayLat)
 nSampleBayLat = mean(nSampleBayLat)
 
 
-%% Finally we do Bayes Sobol
+%% Next we call Bayes Sobol
 IBayesSobolVec(nRep,nd) = 0; %vector of answers
 timeBaySob(nRep,nd) = 0;
 nSampleBaySob(nRep,nd) = 0;
