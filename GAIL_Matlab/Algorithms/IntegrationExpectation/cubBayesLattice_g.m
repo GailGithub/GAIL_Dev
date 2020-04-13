@@ -2,26 +2,26 @@
 % of a random variable
 %
 %   [OBJ,Q] = CUBBAYESLATTICE_G('f',f,'dim',dim,'absTol',absTol,'relTol',relTol,...
-%         'order',order, 'ptransform',ptransform, 'arbMean',arbMean);
-%   Initializes the object with the given parameters and also returns 
-%   an estimate of integral Q.
+%         'order',order,'ptransform',ptransform, 'arbMean',arbMean);
+%   initializes the object with the given parameters and also returns an
+%   estimate of integral Q.
 %
 %   [Q,OutP] = COMPINTEG(OBJ); estimates the integral of f over hyperbox
-%   [0,1]^d using rank-1 Lattice sampling to within a specified generalized
-%   error tolerance, tolfun = max(abstol, reltol*| I |), i.e., | I - Q | <= tolfun
-%   with confidence of at least 99%, where I is the true integral value,
-%   Q is the estimated integral value, abstol is the absolute error tolerance,
-%   and reltol is the relative error tolerance. Usually the reltol determines
-%   the accuracy of the estimation, however, if | I | is rather small,
-%   then abstol determines the accuracy of the estimation.
+%   [0,1]^d using rank-1 lattice sampling to within a specified generalized
+%   error tolerance, tolfun = max(abstol, reltol*| I |), i.e., | I - Q | <=
+%   tolfun with confidence of at least 99%, where I is the true integral
+%   value, Q is the estimated integral value, abstol is the absolute error
+%   tolerance, and reltol is the relative error tolerance. Usually the
+%   reltol determines the accuracy of the estimation; however, if | I | is
+%   rather small, then abstol determines the accuracy of the estimation.
 %
 %   It is recommended to use COMPINTEG for estimating the integral
 %   repeatedly after the object initialization.
 %
-%   OutP is the structure holding additional output params, more details provided
-%   below. Input f is a function handle that accepts an n x d matrix input,
-%   where d is the dimension of the hyperbox, and n is the number of points
-%   being evaluated simultaneously.
+%   OutP is the structure holding additional output params, more details
+%   provided below. Input f is a function handle that accepts an n x d
+%   matrix input, where d is the dimension of the hyperbox, and n is the
+%   number of points being evaluated simultaneously.
 %
 %   Input Arguments
 %
@@ -29,6 +29,7 @@
 %     dim --- number of dimensions of the integrand.
 %
 %   Optional Input Arguments
+%
 %     absTol --- absolute error tolerance | I - Q | <= absTol. Default is 0.01
 %     relTol --- relative error tolerance | I - Q | <= I*relTol. Default is 0
 %     order --- order of the Bernoulli polynomial of the kernel r=1,2.
@@ -42,6 +43,7 @@
 %     mmax --- max number of samples allowed: 2^mmax. Default is 22
 %
 %   Output Arguments
+%
 %    OutP.n --- number of samples used to compute the integral of f.
 %    OutP.time --- time to compute the integral in seconds.
 %    OutP.exitFlag --- indicates the exit condition of the algorithm:
@@ -53,136 +55,135 @@
 %
 %
 %  Guarantee
-% This algorithm attempts to calculate the integral of function f over the
-% hyperbox [0,1]^dim to a prescribed error tolerance tolfun:= max(abstol,reltol*| I |)
-% with guaranteed confidence level, e.g., 99% when alpha=0.5%. If the
-% algorithm terminates without showing any warning messages and provides
-% an answer Q, then the following inequality would be satisfied:
+%   This algorithm attempts to calculate the integral of function f over the
+%   hyperbox [0,1]^dim to a prescribed error tolerance tolfun:= max(abstol,reltol*| I |)
+%   with guaranteed confidence level, e.g., 99% when alpha=0.5%. If the
+%   algorithm terminates without showing any warning messages and provides
+%   an answer Q, then the following inequality would be satisfied:
 %
-% Pr(| Q - I | <= tolfun) = 99%
+%   Pr(| Q - I | <= tolfun) = 99%
 %
-% Please refer to our paper [1] for detailed arguments and proofs.
+%   Please refer to our paper [1] for detailed arguments and proofs.
 %
 %  Examples
 %
-% Example 1:
-%
-% If no parameters are parsed, help text will show up as follows:
-% >> help cubBayesLattice_g
-% ***Bayesian cubature method to estimate the integral ***
-%
-%
-% Example 2: Quadratic
-%
-% Estimate the integral with integrand f(x) = x.^2 over the interval [0,1]
-% with default parameters: order=2, ptransform=C1sin, abstol=0.01, relTol=0
-%
-% >> warning('off','GAIL:cubBayesLattice_g:fdnotgiven')
-% >> [obj,muhat] = cubBayesLattice_g;
-% >> exactInteg = 1.0/3;
-% >> warning('on','GAIL:cubBayesLattice_g:fdnotgiven')
-% >> check = double(abs(exactInteg-muhat) < 0.01)
-% check = 1
-%
-%
-% Example 3: ExpCos
-% Shape parameter independently chosen for each dimension
-%
-% Estimate the integral with integrand f(x) = exp(sum(cos(2*pi*x)) over the
-% interval [0,1] with parameters: order=2, ptransform=C1sin, abstol=0.001,
-% relTol=0.01
-%
-% >> fun = @(x) exp(sum(cos(2*pi*x), 2));
-% >> dim=2; absTol=1e-3; relTol=1e-2;
-% >> exactInteg = besseli(0,1)^dim;
-% >> inputArgs = {'relTol',relTol, 'order',2, 'ptransform','C1sin'};
-% >> inputArgs = [inputArgs {'f',fun, 'dim',dim, 'absTol',absTol,'oneTheta',false}];
-% >> obj=cubBayesLattice_g(inputArgs{:});
-% >> [muhat,outParams]=compInteg(obj);
-% >> check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))
-% check = 1
-% >> etaDim = size(outParams.optParams.aMLEAll, 2)
-% etaDim = 2
-%
-%
-% Example 4: Keister function
-% Same shape parameter for  all dimensions
-%
-% >> dim=3; absTol=1e-3; relTol=1e-2;
-% >> normsqd = @(t) sum(t.*t,2); %squared l_2 norm of t
-% >> replaceZeros = @(t) (t+(t==0)*eps); % to avoid getting infinity, NaN
-% >> yinv = @(t)(erfcinv( replaceZeros(abs(t)) ));
-% >> ft = @(t,dim) cos( sqrt( normsqd(yinv(t)) )) *(sqrt(pi))^dim;
-% >> fKeister = @(x) ft(x,dim); exactInteg = Keistertrue(dim);
-% >> inputArgs ={'f',fKeister,'dim',dim,'absTol',absTol, 'relTol',relTol};
-% >> inputArgs =[inputArgs {'order',2, 'ptransform','C1','arbMean',true}];
-% >> obj=cubBayesLattice_g(inputArgs{:});
-% >> [muhat,outParams]=compInteg(obj);
-% >> check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))
-% check = 1
-% >> etaDim = size(outParams.optParams.aMLEAll, 2)
-% etaDim = 1
-%
-%
-% Example 5: Multivariate normal probability
-% Steepest gradient descent used with analytic kernel gradient 
-% in parameter search
-%
-% >> dim=2; absTol=1e-3; relTol=1e-2; fName = 'MVN';
-% >> C = [4 1 1; 0 1 0.5; 0 0 0.25]; MVNParams.Cov = C'*C; MVNParams.C = C;
-% >> MVNParams.a = [-6 -2 -2]; MVNParams.b = [5 2 1]; MVNParams.mu = 0;
-% >> MVNParams.CovProp.C = chol(MVNParams.Cov)';
-% >> muBest = 0.676337324357787;
-% >> integrand =@(t) GenzFunc(t,MVNParams);
-% >> inputArgs={'f',integrand,'dim',dim, 'absTol',absTol,'relTol',relTol};
-% >> inputArgs=[inputArgs {'order',1,'ptransform','C1sin','arbMean',true}];
-% >> inputArgs=[inputArgs {'useGradient',true}];
-% >> [obj,muhat]=cubBayesLattice_g(inputArgs{:});
-% >> check = double(abs(muBest-muhat) < max(absTol,relTol*abs(muBest)))
-% check = 1
-%
-%
-% Example 6: Keister function
-% Kernel order r chosen automatically
-%
-% >> dim=2; absTol=1e-3; relTol=1e-2;
-% >> normsqd = @(t) sum(t.*t,2); %squared l_2 norm of t
-% >> replaceZeros = @(t) (t+(t==0)*eps); % to avoid getting infinity, NaN
-% >> yinv = @(t)(erfcinv( replaceZeros(abs(t)) ));
-% >> ft = @(t,dim) cos( sqrt( normsqd(yinv(t)) )) *(sqrt(pi))^dim;
-% >> fKeister = @(x) ft(x,dim); exactInteg = Keistertrue(dim);
-% >> inputArgs ={'f',fKeister,'dim',dim,'absTol',absTol, 'relTol',relTol};
-% >> inputArgs =[inputArgs {'order',0, 'ptransform','C1','arbMean',true}];
-% >> obj=cubBayesLattice_g(inputArgs{:});
-% >> [muhat,outParams] = compInteg(obj);
-% >> check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))
-% check = 1
-% >> check = double(outParams.optParams.r > 0)
-% check = 1
+%   Example 1:
+%   If no parameters are parsed, help text will show up as follows:
+%   >> help cubBayesLattice_g
+%   ***Bayesian cubature method to estimate the integral ***
 % 
+% 
+%   Example 2: Quadratic
+%   Estimate the integral with integrand f(x) = x.^2 over the interval [0,1]
+%   with default parameters: order=2, ptransform=C1sin, abstol=0.01, relTol=0
+% 
+%   >> warning('off','GAIL:cubBayesLattice_g:fdnotgiven')
+%   >> [obj,muhat] = cubBayesLattice_g;
+%   >> exactInteg = 1.0/3;
+%   >> warning('on','GAIL:cubBayesLattice_g:fdnotgiven')
+%   >> check = double(abs(exactInteg-muhat) < 0.01)
+%   check = 1
+% 
+% 
+%   Example 3: ExpCos
+%   Shape parameter independently chosen for each dimension
+% 
+%   Estimate the integral with integrand f(x) = exp(sum(cos(2*pi*x)) over the
+%   interval [0,1] with parameters: order=2, ptransform=C1sin, abstol=0.001,
+%   relTol=0.01
+% 
+%   >> fun = @(x) exp(sum(cos(2*pi*x), 2));
+%   >> dim=2; absTol=1e-3; relTol=1e-2;
+%   >> exactInteg = besseli(0,1)^dim;
+%   >> inputArgs = {'relTol',relTol, 'order',2, 'ptransform','C1sin'};
+%   >> inputArgs = [inputArgs {'f',fun, 'dim',dim, 'absTol',absTol,'oneTheta',false}];
+%   >> obj=cubBayesLattice_g(inputArgs{:});
+%   >> [muhat,outParams]=compInteg(obj);
+%   >> check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))
+%   check = 1
+%   >> etaDim = size(outParams.optParams.aMLEAll, 2)
+%   etaDim = 2
+% 
+% 
+%   Example 4: Keister function
+%   Same shape parameter for all dimensions
+% 
+%   >> dim=3; absTol=1e-3; relTol=1e-2;
+%   >> normsqd = @(t) sum(t.*t,2); %squared l_2 norm of t
+%   >> replaceZeros = @(t) (t+(t==0)*eps); % to avoid getting infinity, NaN
+%   >> yinv = @(t)(erfcinv( replaceZeros(abs(t)) ));
+%   >> ft = @(t,dim) cos( sqrt( normsqd(yinv(t)) )) *(sqrt(pi))^dim;
+%   >> fKeister = @(x) ft(x,dim); exactInteg = Keistertrue(dim);
+%   >> inputArgs ={'f',fKeister,'dim',dim,'absTol',absTol, 'relTol',relTol};
+%   >> inputArgs =[inputArgs {'order',2, 'ptransform','C1','arbMean',true}];
+%   >> obj=cubBayesLattice_g(inputArgs{:});
+%   >> [muhat,outParams]=compInteg(obj);
+%   >> check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))
+%   check = 1
+%   >> etaDim = size(outParams.optParams.aMLEAll, 2)
+%   etaDim = 1
+% 
+% 
+%   Example 5: Multivariate normal probability
+%   Steepest gradient descent used with analytic kernel gradient in
+%   parameter search
+% 
+%   >> dim=2; absTol=1e-3; relTol=1e-2; fName = 'MVN';
+%   >> C = [4 1 1; 0 1 0.5; 0 0 0.25]; MVNParams.Cov = C'*C; MVNParams.C = C;
+%   >> MVNParams.a = [-6 -2 -2]; MVNParams.b = [5 2 1]; MVNParams.mu = 0;
+%   >> MVNParams.CovProp.C = chol(MVNParams.Cov)';
+%   >> muBest = 0.676337324357787;
+%   >> integrand =@(t) GenzFunc(t,MVNParams);
+%   >> inputArgs={'f',integrand,'dim',dim, 'absTol',absTol,'relTol',relTol};
+%   >> inputArgs=[inputArgs {'order',1,'ptransform','C1sin','arbMean',true}];
+%   >> inputArgs=[inputArgs {'useGradient',true}];
+%   >> [obj,muhat]=cubBayesLattice_g(inputArgs{:});
+%   >> check = double(abs(muBest-muhat) < max(absTol,relTol*abs(muBest)))
+%   check = 1
+% 
+% 
+%   Example 6: Keister function
+%   Kernel order r chosen automatically
+% 
+%   >> dim=2; absTol=1e-3; relTol=1e-2;
+%   >> normsqd = @(t) sum(t.*t,2); %squared l_2 norm of t
+%   >> replaceZeros = @(t) (t+(t==0)*eps); % to avoid getting infinity, NaN
+%   >> yinv = @(t)(erfcinv( replaceZeros(abs(t)) ));
+%   >> ft = @(t,dim) cos( sqrt( normsqd(yinv(t)) )) *(sqrt(pi))^dim;
+%   >> fKeister = @(x) ft(x,dim); exactInteg = Keistertrue(dim);
+%   >> inputArgs ={'f',fKeister,'dim',dim,'absTol',absTol, 'relTol',relTol};
+%   >> inputArgs =[inputArgs {'order',0, 'ptransform','C1','arbMean',true}];
+%   >> obj=cubBayesLattice_g(inputArgs{:});
+%   >> [muhat,outParams] = compInteg(obj);
+%   >> check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))
+%   check = 1
+%   >> check = double(outParams.optParams.r > 0)
+%   check = 1
+% 
+% 
+%   Example 7: Another example using dimension specific shape parameter
+%   >> const = [1E-4 1 1E4];
+%   >> fun = @(x)sum(bsxfun(@times, const, sin(2*pi*x.^2)), 2);
+%   >> dim=3; absTol=1e-3; relTol=1e-2;
+%   >> exactInteg = fresnels(2)*sum(const)/2;
+%   >> inputArgs = {'relTol',relTol, 'order',2, 'ptransform','C1sin'};
+%   >> inputArgs = [inputArgs {'f',fun, 'dim',dim, 'absTol',absTol,'oneTheta',false,'useGradient',false}];
+%   >> obj=cubBayesLattice_g(inputArgs{:});
+%   >> [muhat,outParams]=compInteg(obj);
+%   >> check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))
+%   check = 1
+%   >> etaDim = size(outParams.optParams.aMLEAll, 2)
+%   etaDim = 3
 %
-% Example 7: Another example using dimesnion specific shpae parameter
-% >> const = [1E-4 1 1E4];
-% >> fun = @(x)sum(bsxfun(@times, const, sin(2*pi*x.^2)), 2);
-% >> dim=3; absTol=1e-3; relTol=1e-2;
-% >> exactInteg = fresnels(2)*sum(const)/2;
-% >> inputArgs = {'relTol',relTol, 'order',2, 'ptransform','C1sin'};
-% >> inputArgs = [inputArgs {'f',fun, 'dim',dim, 'absTol',absTol,'oneTheta',false,'useGradient',false}];
-% >> obj=cubBayesLattice_g(inputArgs{:});
-% >> [muhat,outParams]=compInteg(obj);
-% >> check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))
-% check = 1
-% >> etaDim = size(outParams.optParams.aMLEAll, 2)
-% etaDim = 3
 %
-%
-%   See also CUBBAYESNET_G, CUBSOBOL_G, CUBLATTICE_G, CUBMC_G, MEANMC_G, INTEGRAL_G
+%  See also CUBBAYESNET_G, CUBSOBOL_G, CUBLATTICE_G, CUBMC_G, MEANMC_G,
+%  INTEGRAL_G
 %
 %  References
 %
-%   [1] Jagadeeswaran Rathinavel, Fred J. Hickernell, Fast automatic Bayesian cubature 
-%   using lattice sampling.  Stat Comput 29, 1215-1229 (2019). 
-%   https://doi.org/10.1007/s11222-019-09895-9
+%   [1] Jagadeeswaran Rathinavel, Fred J. Hickernell, Fast automatic
+%   Bayesian cubature using lattice sampling.  Stat Comput 29, 1215-1229
+%   (2019). https://doi.org/10.1007/s11222-019-09895-9
 %
 %   [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 %   Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
