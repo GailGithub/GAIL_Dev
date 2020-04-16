@@ -10,8 +10,8 @@ GAIL is a suite of algorithms for integration problems in one and many dimension
 <font size="2" color="red"><pre>            Get zip file              OR      run the MATLAB installation script</pre> </font>
 
 
-<a href="https://sourceforge.net/projects/gailmatlab/files/GAIL_2_3.zip/download"><img hspace="40" src="https://raw.githubusercontent.com/harryzyz/GAILPubPic/master/downloadzip.png"></a>
-<a href="https://sourceforge.net/projects/gailmatlab/files/DownloadInstallGail_2_3.m/download"><img hspace="5" src="https://raw.githubusercontent.com/harryzyz/GAILPubPic/master/downloadscript.png"></a>
+<a href="https://sourceforge.net/projects/gailmatlab/files/GAIL_2_3.zip/download"><img hspace="40" src="https://raw.githubusercontent.com/GailGithub/GAIL_Dev/gh-pages/downloadzip.png"></a>
+<a href="https://sourceforge.net/projects/gailmatlab/files/DownloadInstallGail_2_3.m/download"><img hspace="5" src="https://raw.githubusercontent.com/GailGithub/GAIL_Dev/gh-pages/downloadscript.png"></a>
 
 
 ## News
