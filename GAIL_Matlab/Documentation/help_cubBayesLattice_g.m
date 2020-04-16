@@ -99,7 +99,7 @@
 %
 
 %%
-% *Example 1*
+% *Example 1: Quadratic*
 %
 % Estimate the integral with integrand $f(x) = x^2$ over the interval $[0,1]$
 % with default parameters: order=2, ptransform=C1sin, abstol=0.01, relTol=0
@@ -111,7 +111,7 @@ warning('on','GAIL:cubBayesLattice_g:fdnotgiven')
 check = double(abs(exactInteg-muhat) < 0.01)
 
 %%
-% *Example 2*
+% *Example 2: ExpCos*
 %
 % Estimate the integral with integrand
 % $f({x}) = \exp\left(\sum_{i=1}^2cos(2\pi x_i)\right)$ over the
@@ -129,7 +129,7 @@ check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))
 etaDim = size(outParams.optParams.aMLEAll, 2)
 
 %%
-% *Example 3*
+% *Example 3: Keister function*
 %
 % Keister function:
 % Estimate the integral with keister function as integrand over the
@@ -174,7 +174,7 @@ inputArgs=[inputArgs {'useGradient',true}];
 check = double(abs(muBest-muhat) < max(absTol,relTol*abs(muBest)))
 
 %%
-% *Example 5*
+% *Example 5: Keister function*
 %
 % Kernel order r chosen automatically
  
