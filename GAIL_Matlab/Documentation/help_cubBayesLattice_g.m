@@ -2,16 +2,17 @@
 % Bayesian cubature method to estimate the integral
 % of a random variable
 %% Syntax
-% OBJ = *cubBayesLattice_g*('f',f,'dim',d,'absTol',absTol,'relTol',relTol,
-% 'order',order, 'ptransform',ptransform, 'arbMean',arbMean)
+% [OBJ,Q] = *cubBayesLattice_g*('f',f,'dim',dim,'absTol',absTol,'relTol',relTol,
+% 'order',order,'ptransform',ptransform,'arbMean',arbMean)
 %
 % [Q,OutP] = *compInteg*(OBJ)
 %
 %% Description
 %
-% OBJ = *cubBayesLattice_g*('f',f,'dim',d,'absTol',absTol,'relTol',relTol,
-% 'order',order, 'ptransform',ptransform, 'arbMean',arbMean) initializes 
-% the object with the given parameters.
+% [OBJ,Q] = *cubBayesLattice_g*('f',f,'dim',d,'absTol',absTol,'relTol',relTol,
+% 'order',order,'ptransform',ptransform,'arbMean',arbMean)
+% initializes the object with the given parameters and also returns an
+% estimate of integral Q.
 %
 % [Q,OutP] = *compInteg*(OBJ) estimates the integral of f over hyperbox
 %   $[0,1]^{d}$ using rank-1 Lattice sampling to within a specified generalized
@@ -26,6 +27,14 @@
 %   where d is the dimension of the hyperbox, and n is the number of points
 %   being evaluated simultaneously.
 %
+% It is recommended to use COMPINTEG for estimating the integral repeatedly
+% after the object initialization.
+%
+% OutP is the structure holding additional output params, more details
+% provided below. Input f is a function handle that accepts an n x d
+% matrix input, where d is the dimension of the hyperbox, and n is the
+% number of points being evaluated simultaneously.
+%
 % *Input Arguments*
 %
 % * f --- the integrand.
@@ -35,30 +44,30 @@
 % *Optional Input Arguments*
 %
 % * absTol --- absolute error tolerance | I - Q | <= absTol. Default is 0.01
-% 
+%
 % * relTol --- relative error tolerance | I - Q | <= I*relTol. Default is 0
-%  
+%
 % * order --- order of the Bernoulli polynomial of the kernel r=1,2.
 %             Default is 2
-%     
-% * ptransform --- periodization variable transform to use: 'Baker', 'C0', 
+%
+% * ptransform --- periodization variable transform to use: 'Baker', 'C0',
 %  'C1', 'C1sin', or 'C2sin'. Default is 'C1sin'
-%     
+%
 % * arbMean --- If false, the algorithm assumes the integrand was sampled
 %                 from a Gaussian process of zero mean. Default is 'true'
-%     
+%
 % * alpha --- confidence level for a credible interval of Q. Default is 0.01
-%     
+%
 % * mmin --- min number of samples to start with: 2^mmin. Default is 10
-%     
+%
 % * mmax --- max number of samples allowed: 2^mmax. Default is 22
 %
 % *Output Arguments*
 %
 % * OutP.n --- number of samples used to compute the integral of f.
-%    
+%
 % * OutP.time --- time to compute the integral in seconds.
-% 
+%
 % <html>
 % <ul type="square">
 %  <li>OutP.exitFlag --- indicates the exit condition of the
@@ -72,7 +81,7 @@
 %  <li>OutP.ErrBd  --- estimated integral error | I - Q |</li>
 %  </ul>
 % </html>
-% 
+%
 %
 %%  Guarantee
 %
@@ -90,22 +99,21 @@
 %
 
 %%
-% *Example 1*
+% *Example 1: Quadratic*
 %
 % Estimate the integral with integrand $f(x) = x^2$ over the interval $[0,1]$
 % with default parameters: order=2, ptransform=C1sin, abstol=0.01, relTol=0
 
 warning('off','GAIL:cubBayesLattice_g:fdnotgiven')
-obj = cubBayesLattice_g;
+[obj,muhat] = cubBayesLattice_g;
 exactInteg = 1.0/3;
-muhat=compInteg(obj);
 warning('on','GAIL:cubBayesLattice_g:fdnotgiven')
 check = double(abs(exactInteg-muhat) < 0.01)
 
 %%
-% *Example 2*
+% *Example 2: ExpCos*
 %
-% Estimate the integral with integrand 
+% Estimate the integral with integrand
 % $f({x}) = \exp\left(\sum_{i=1}^2cos(2\pi x_i)\right)$ over the
 % interval $[0,1]^2$ with parameters: order=2, C1sin variable transform, abstol=0.001,
 % relTol=0.01
@@ -114,41 +122,43 @@ fun = @(x) exp(sum(cos(2*pi*x), 2));
 dim=2; absTol=1e-3; relTol=1e-2;
 exactInteg = besseli(0,1)^dim;
 inputArgs = {'relTol',relTol, 'order',2, 'ptransform','C1sin'};
-inputArgs = [inputArgs {'f',fun, 'dim',dim, 'absTol',absTol,}];
+inputArgs = [inputArgs {'f',fun, 'dim',dim, 'absTol',absTol,'oneTheta',false}];
 obj=cubBayesLattice_g(inputArgs{:});
-muhat=compInteg(obj);
+[muhat,outParams]=compInteg(obj);
 check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))
+etaDim = size(outParams.optParams.aMLEAll, 2)
 
 %%
-% *Example 3*
+% *Example 3: Keister function*
 %
 % Keister function:
 % Estimate the integral with keister function as integrand over the
-% interval $[0,1]^2$ with parameters: order=2, C1 variable transform, 
+% interval $[0,1]^2$ with parameters: order=2, C1 variable transform,
 % abstol=0.001, relTol=0.01
 
-dim=2; absTol=1e-3; relTol=1e-2;
-normsqd = @(t) sum(t.*t,2); 
-replaceZeros = @(t) (t+(t==0)*eps); 
+dim=3; absTol=1e-3; relTol=1e-2;
+normsqd = @(t) sum(t.*t,2); %squared l_2 norm of t
+replaceZeros = @(t) (t+(t==0)*eps); % to avoid getting infinity, NaN
 yinv = @(t)(erfcinv( replaceZeros(abs(t)) ));
-f1 = @(t,dim) cos( sqrt( normsqd(yinv(t)) )) *(sqrt(pi))^dim;
-fKeister = @(x) f1(x,dim); exactInteg = Keistertrue(dim);
+ft = @(t,dim) cos( sqrt( normsqd(yinv(t)) )) *(sqrt(pi))^dim;
+fKeister = @(x) ft(x,dim); exactInteg = Keistertrue(dim);
 inputArgs ={'f',fKeister,'dim',dim,'absTol',absTol, 'relTol',relTol};
 inputArgs =[inputArgs {'order',2, 'ptransform','C1','arbMean',true}];
 obj=cubBayesLattice_g(inputArgs{:});
-muhat=compInteg(obj);
+[muhat,outParams]=compInteg(obj);
 check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))
+etaDim = size(outParams.optParams.aMLEAll, 2)
 
 %%
 % *Example 4*
 %
 % Multivariate normal probability:
-% Estimate the multivariate normal probability between the hyper interval 
-% $\left(\begin{array}{c} -6\\ -2\\ -2\end{array}\right) $ and 
+% Estimate the multivariate normal probability between the hyper interval
+% $\left(\begin{array}{c} -6\\ -2\\ -2\end{array}\right) $ and
 % $\left(\begin{array}{c} 5\\ 2\\ 1\end{array}\right)$ in $\bf{R}^3$
-% having zero mean and covariance 
-% $\left(\begin{array}{ccc} 4& 1& 1\\ 0& 1& 0.5\\ 0& 0& 0.25 \end{array}\right)$ with 
-% parameters: order=1, C1sin variable transform, 
+% having zero mean and covariance
+% $\left(\begin{array}{ccc} 4& 1& 1\\ 0& 1& 0.5\\ 0& 0& 0.25 \end{array}\right)$ with
+% parameters: order=1, C1sin variable transform,
 % abstol=0.001, relTol=0.01
 
 dim=2; absTol=1e-3; relTol=1e-2; fName = 'MVN';
@@ -159,9 +169,43 @@ muBest = 0.676337324357787;
 integrand =@(t) GenzFunc(t,MVNParams);
 inputArgs={'f',integrand,'dim',dim, 'absTol',absTol,'relTol',relTol};
 inputArgs=[inputArgs {'order',1,'ptransform','C1sin','arbMean',true}];
-obj=cubBayesLattice_g(inputArgs{:});
-muhat = compInteg(obj);
+inputArgs=[inputArgs {'useGradient',true}];
+[obj,muhat]=cubBayesLattice_g(inputArgs{:});
 check = double(abs(muBest-muhat) < max(absTol,relTol*abs(muBest)))
+
+%%
+% *Example 5: Keister function*
+%
+% Kernel order r chosen automatically
+ 
+dim=2; absTol=1e-3; relTol=1e-2;
+normsqd = @(t) sum(t.*t,2); %squared l_2 norm of t
+replaceZeros = @(t) (t+(t==0)*eps); % to avoid getting infinity, NaN
+yinv = @(t)(erfcinv( replaceZeros(abs(t)) ));
+ft = @(t,dim) cos( sqrt( normsqd(yinv(t)) )) *(sqrt(pi))^dim;
+fKeister = @(x) ft(x,dim); exactInteg = Keistertrue(dim);
+inputArgs ={'f',fKeister,'dim',dim,'absTol',absTol, 'relTol',relTol};
+inputArgs =[inputArgs {'order',0, 'ptransform','C1','arbMean',true}];
+obj=cubBayesLattice_g(inputArgs{:});
+[muhat,outParams] = compInteg(obj);
+check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))
+check = double(outParams.optParams.r > 0)
+
+%%
+% *Example 6*
+%
+% Another example using dimension specific shape parameter
+
+const = [1E-4 1 1E4];
+fun = @(x)sum(bsxfun(@times, const, sin(2*pi*x.^2)), 2);
+dim=3; absTol=1e-3; relTol=1e-2;
+exactInteg = fresnels(2)*sum(const)/2;
+inputArgs = {'relTol',relTol, 'order',2, 'ptransform','C1sin'};
+inputArgs = [inputArgs {'f',fun, 'dim',dim, 'absTol',absTol,'oneTheta',false,'useGradient',false}];
+obj=cubBayesLattice_g(inputArgs{:});
+[muhat,outParams]=compInteg(obj);
+check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))
+etaDim = size(outParams.optParams.aMLEAll, 2)
 
 
 %% See Also
@@ -188,8 +232,8 @@ check = double(abs(muBest-muhat) < max(absTol,relTol*abs(muBest)))
 %
 %% References
 %
-% [1] Jagadeeswaran Rathinavel, Fred J. Hickernell, Fast automatic Bayesian cubature 
-%   using lattice sampling.  Stat Comput 29, 1215-1229 (2019). 
+% [1] Jagadeeswaran Rathinavel, Fred J. Hickernell, Fast automatic Bayesian cubature
+%   using lattice sampling.  Stat Comput 29, 1215-1229 (2019).
 %   https://doi.org/10.1007/s11222-019-09895-9
 %
 % [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis

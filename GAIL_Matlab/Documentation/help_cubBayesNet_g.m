@@ -2,30 +2,34 @@
 % Bayesian cubature method to estimate the integral
 % variable using digital nets. Currently, only Sobol points are supported.
 %% Syntax
-% OBJ = *cubBayesNet_g*('f',f,'dim',dim,'absTol',absTol,'relTol',relTol,...
-%     'order',order, 'arbMean',arbMean);
+% [OBJ,Q] = *cubBayesNet_g*('f',f,'dim',dim,'absTol',absTol,'relTol',relTol,...
+%     'order',order,'arbMean',arbMean);
 %
 % [Q,OutP] = *compInteg*(OBJ)
 %
 %% Description
 %
 % OBJ = *cubBayesNet_g*('f',f,'dim',dim,'absTol',absTol,'relTol',relTol,...
-%     'order',order, 'arbMean',arbMean); Initializes the object with the
-%     given parameters
+%     'order',order, 'arbMean',arbMean); initializes the object with the given
+%   parameters and also returns an estimate of integral Q.
 %
 % [Q,OutP] = *compInteg*(OBJ) estimates the integral of f over hyperbox
 %   [0,1]^d using digital nets (Sobol points) to within a specified
-%   generalized error tolerance, tolfun = max(abstol, reltol*| I |), i.e., 
-%   | I - Q | <= tolfun with confidence of at least 99%, where I is the 
-%   true integral value, Q is the estimated integral value, abstol is the 
-%   absolute error tolerance, and reltol is the relative error tolerance. 
-%   Usually the reltol determines the accuracy of the estimation, however, 
-%   bif | I | is rather small, then abstol determines the accuracy of the 
-%   estimation. OutP is the structure holding additional output params, 
-%   more details provided below. Input f is a function handle that accepts
-%   an n x d matrix input, where d is the dimension of the hyperbox, and n
-%   is the number of points being evaluated simultaneously
-%   
+%   generalized error tolerance, tolfun = max(abstol, reltol*| I |), i.e.,
+%   | I - Q | <= tolfun with confidence of at least 99%, where I is the
+%   true integral value, Q is the estimated integral value, abstol is the
+%   absolute error tolerance, and reltol is the relative error tolerance.
+%   Usually the reltol determines the accuracy of the estimation; however,
+%   if | I | is rather small, then abstol determines the accuracy of the
+%   estimation.
+% 
+% It is recommended to use COMPINTEG for estimating the integral
+% repeatedly after the object initialization.
+%
+% OutP is the structure holding additional output params, more details
+% provided below. Input f is a function handle that accepts an n x d
+% matrix input, where d is the dimension of the hyperbox, and n is the
+% number of points being evaluated simultaneously.
 %
 % *Input Arguments*
 %
@@ -43,9 +47,6 @@
 %                   from a Gaussian process of zero mean. Default is 'true'
 %
 % * alpha --- confidence level for a credible interval of Q. Default is 0.01
-%
-% * arbMean --- If false, the algorithm assumes the integrand was sampled
-%                 from a Gaussian process of zero mean. Default is 'true'
 %
 % * mmin --- min number of samples to start with: 2^mmin. Default is 8
 %
@@ -96,9 +97,8 @@
 % $[0,1]$ with default parameters: order=1, abstol=0.01, relTol=0
 
 warning('off','GAIL:cubBayesNet_g:fdnotgiven')
-obj = cubBayesNet_g;
+[obj,muhat] = cubBayesNet_g;
 exactInteg = 1.0/3;
-muhat=compInteg(obj);
 warning('on','GAIL:cubBayesNet_g:fdnotgiven')
 check = double(abs(exactInteg-muhat) < 0.01)
 
@@ -114,8 +114,7 @@ dim=2; absTol=1e-3; relTol=1e-2;
 exactInteg = besseli(0,1)^dim;
 inputArgs = {'relTol',relTol};
 inputArgs = [inputArgs {'f',fun, 'dim',dim, 'absTol',absTol,}];
-obj=cubBayesNet_g(inputArgs{:});
-muhat=compInteg(obj);
+[obj,muhat]=cubBayesNet_g(inputArgs{:});
 check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))
 
 %%
@@ -133,10 +132,8 @@ ft = @(t,dim) cos( sqrt( normsqd(yinv(t)) )) *(sqrt(pi))^dim;
 fKeister = @(x) ft(x,dim); exactInteg = Keistertrue(dim);
 inputArgs ={'f',fKeister,'dim',dim,'absTol',absTol, 'relTol',relTol};
 inputArgs =[inputArgs {'arbMean',true}];
-obj=cubBayesNet_g(inputArgs{:});
-muhat=compInteg(obj);
+[obj,muhat]=cubBayesNet_g(inputArgs{:});
 check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))
-
 
 %%
 % *Example 4: Multivariate normal probability*
@@ -152,7 +149,6 @@ check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))
 % $\left(\begin{array}{c} 5\\ 2\\ 1\end{array}\right)$  with zero mean $\mu=0$
 % and covariance  $\left(\begin{array}{ccc} 4& 1& 1\\ 0& 1& 0.5\\ 0& 0& 0.25 \end{array}\right)$.
 
-dim=2; absTol=1e-3; relTol=1e-2; fName = 'MVN';
 C = [4 1 1; 0 1 0.5; 0 0 0.25]; MVNParams.Cov = C'*C; MVNParams.C = C;
 MVNParams.a = [-6 -2 -2]; MVNParams.b = [5 2 1]; MVNParams.mu = 0;
 MVNParams.CovProp.C = chol(MVNParams.Cov)';
@@ -161,8 +157,10 @@ integrand =@(t) GenzFunc(t,MVNParams);
 inputArgs={'f',integrand,'dim',dim, 'absTol',absTol,'relTol',relTol};
 inputArgs=[inputArgs {'arbMean',true}];
 obj=cubBayesNet_g(inputArgs{:});
-muhat = compInteg(obj);
+[muhat,outParams] = compInteg(obj);
 check = double(abs(muBest-muhat) < max(absTol,relTol*abs(muBest)))
+etaDim = size(outParams.optParams.aMLEAll, 2)
+
 
 %% See Also
 %
