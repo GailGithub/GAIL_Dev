@@ -171,11 +171,27 @@ Requirements
 
 You will need to install MATLAB 7 or a later version.
 
+GAIL is developed in MATLAB versions R2016a to R2020a. In particular, three  
+of our core algorithms, cubSobol_g, cubBayesNet_g, and cubBayesLattice_g 
+require the following MATLAB add-on toolboxes: Signal Processing Toolbox, 
+Optimization Toolbox, Statistics and Machine Learning Toolbox. In MATLAB, 
+we could use the following command to find out toolbox dependencies of an 
+algorithm: 
+
+  names = dependencies.toolboxDependencyAnalysis({'cubBayesNet_g'}).
+
+For development and testing purposes, we use the third-party toolboxes, 
+Chebfun version 5.7.0 and Doctest for MATLAB, version 2010. 
 
 Documentation
 -------------
 
-Detailed documentation is available at GAIL_Matlab/Documentation.
+Detailed documentation is available in the folder, GAIL_Matlab/Documentation.
+
+You can also go to MATLAB's Help. Under the section of Supplemental Software,
+you will find GAIL Toolbox's searchable HTML documentation.
+
+A PDF version of GAIL's documentation with selected examples is available at 
 
 
 General Usage Notes
@@ -252,7 +268,7 @@ tests for funmin_g, for instance, execute run(ut_funmin_g).
 
 We execute automated nightly fast tests and weekly long tests
 on our server. Moreover, these tests are now conducted for all MATLAB
-versions from R2016a to R2019b. The test reports are available on Mega
+versions from R2016a to R2020a. The test reports are available on Mega
 cloud storage at https://mega.nz/. More specifically, fast and long test
 reports are archived at
      https://mega.nz/#F!4olmWa6L!vYuscSnGqkvkZrGJXW5Umw
@@ -260,9 +276,16 @@ and
      https://mega.nz/#F!I0cAEKJD!AyQ_8tmxkknfIsuEW0_jnA
 respectively.
 
-Known Bugs
-----------
-None.
+Known Issues
+-------------
+
+During our documentation development with MATLAB release 2019a, the 
+software's internal HTML viewer is found to display LaTeX expression in 
+larger font size than it is intended to be. This is an aesthetic issue with
+no impact on the content accuracy.  Users may use a web browser to view our
+HTML documentation instead. The main page to GAIL's HTML documentation is 
+GAIL.html, located in the subfolder, Documentation/html/.
+
 
 Contact Information
 --------------------

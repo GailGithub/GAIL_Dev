@@ -28,7 +28,6 @@ if usejava('jvm')
         'count_success', 'demo_cubMC_g','demo_cubSobol_g','demo_cubLattice_g',...
         'demo_normal_probabilities','demo_cubBayesLattice_g','demo_cubBayesNet_g',...
         'demo_normal_probabilities_small'};
-        %,'demo_normal_probabilities_cubMC', 'demo_normal_probabilities'};
     wofile_list = {}; %{'Test_cubSobol_g'}; 
     
     %% generate GAIL Documentation in HTML format
@@ -73,8 +72,9 @@ if usejava('jvm')
                 wopath = strrep(wopath, strcat([wofile_list{i},'.m']), strcat(''));
                 cat_cmd = strcat([cat_cmd, ' ', wopath, wofile_list{i},'.m' ]);
             end
-            gailug_file = strcat(['gail_ug',strrep(GAILVERSION, '.', '_'),'.m']);
-            gailug_path = strcat([GAILPATH,'Documentation',filesep,'Developers_only',filesep,filesep,gailug_file]);
+            gailug_file = strcat(['gail_ug', strrep(GAILVERSION, '.', '_'),'.m']);
+            gail_dir = strcat([GAILPATH, 'Documentation', filesep, 'Developers_only', filesep]);
+            gailug_path = strcat([gail_dir, gailug_file]);
             if exist(gailug_path,'file') > 0
                 delete(gailug_path)
             end
