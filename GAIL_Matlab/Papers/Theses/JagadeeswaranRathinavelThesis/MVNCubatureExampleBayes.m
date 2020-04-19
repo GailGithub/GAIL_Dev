@@ -115,7 +115,7 @@ end
 timeBaySob(:,1) = [out_param_BaySob(:,1).time];
 nSampleBaySob(:,1) = [out_param_BaySob(:,1).n];
 report_integration_result('Test 1.5','cubBayesNet_g',abstol,reltol,NaN,...
-   mean(approx_prob_BaySob(:,1)),mean(timeBayLat(:,1)),mean(nSampleBayLat(:,1)))
+   mean(approx_prob_BaySob(:,1)),mean(timeBaySob(:,1)),mean(nSampleBaySob(:,1)))
 
 
 %% Second test: $\Sigma=0.4I_d + 0.6\bf{1}\bf{1}^T$
@@ -177,7 +177,7 @@ end
 timeBaySob(:,2) = [out_param_BaySob(:,2).time];
 nSampleBaySob(:,2) = [out_param_BaySob(:,2).n];
 report_integration_result('Test 2.5','cubBayesNet_g',abstol,reltol,...
-  NaN,mean(approx_prob_BaySob(:,2)),mean(approx_prob_BaySob(:,2)),mean(nSampleBayLat(:,2)))
+  NaN,mean(approx_prob_BaySob(:,2)),mean(timeBaySob(:,2)),mean(nSampleBaySob(:,2)))
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -202,6 +202,17 @@ avgAbsErrBayLat = mean(absErrBayLat)
 absErrBaySob = abs(Ivec-approx_prob_BaySob);
 succBaySob = mean(absErrBaySob <= abstol)
 avgAbsErrBaySob = mean(absErrBaySob)
+
+timeMC        = mean(timeMC);
+timeLat       = mean(timeLat);
+timeSob       = mean(timeSob);  
+timeBayLat    = mean(timeBayLat);
+timeBaySob    = mean(timeBaySob);
+nSampleMC     = mean(nSampleMC);
+nSampleLat    = mean(nSampleLat);
+nSampleSob    = mean(nSampleSob);
+nSampleBayLat = mean(nSampleBayLat);
+nSampleBaySob = mean(nSampleBaySob);
 
 outFileName = gail.save_mat('Paper_cubBayesLattice_g',['MVNCubExBayesDataNRep' int2str(nRep)],...
     true, abstol, ...
@@ -238,15 +249,6 @@ report_integration_result('Test 3.3','cubBayesLattice_g',abstol,reltol,...
   NaN,approx_prob,out_param.time,out_param.n)
 fprintf('')
 
-
-outFileName = gail.save_mat('Paper_cubBayesLattice_g',['MVNCubExBayesDataNRep' int2str(nRep)],...
-    true, abstol, ...
-    avgAbsErrMC, avgAbsErrLat, avgAbsErrSob, avgAbsErrBayLat, avgAbsErrBaySob, ...
-    succMC, succLat, succSob, succBayLat, succBaySob, ...
-    timeMC, timeLat, timeSob, timeBayLat, timeBaySob, ... 
-    nSampleMC, nSampleLat, nSampleSob, nSampleBayLat, nSampleBaySob);
-
-MVNCubExBayesOut(outFileName)
 
 %% Appendix: Auxiliary function definitions
 % The following functions are defined for the above test examples.

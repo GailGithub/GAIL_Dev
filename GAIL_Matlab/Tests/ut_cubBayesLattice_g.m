@@ -93,7 +93,7 @@ classdef ut_cubBayesLattice_g < matlab.unittest.TestCase
     end
     
     function cubBayesLattice_gOptPrice(testCase)
-      absTolArg = 1E-5;
+      absTolArg = 1E-6;
       inputArgs = {'absTol',absTolArg, 'order',1, 'ptransform','Baker', ....
         'stopAtTol',true, 'stopCriterion','GCV'...
         'samplingMethod','Lattice', 'nRepAuto',1, ...
@@ -101,12 +101,12 @@ classdef ut_cubBayesLattice_g < matlab.unittest.TestCase
       
       format compact
       warning('off','GAIL:cubBayesLattice_g:maxreached')
-      [muhat,actualerr] = ...
+      [~,actualerr] = ...
         TestAsianArithmeticMeanOptionAutoExample(inputArgs{:});
       warning('on','GAIL:cubBayesLattice_g:maxreached')
       testCase.verifyWarning(@()cubBayesLattice_g(),...
         'GAIL:cubBayesLattice_g:fdnotgiven');
-      testCase.verifyLessThanOrEqual(absTolArg,actualerr);
+      testCase.verifyGreaterThanOrEqual(actualerr,absTolArg);
     end
     
   end

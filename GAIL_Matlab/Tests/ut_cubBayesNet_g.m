@@ -87,7 +87,7 @@ classdef ut_cubBayesNet_g < matlab.unittest.TestCase
     end
     
     function cubBayesNet_gOptPrice(testCase)
-      absTolArg = 1E-5;
+      absTolArg = 1E-6;
       inputArgs = {'absTol',absTolArg, 'order',1, ....
         'stopAtTol',true, 'stopCriterion','GCV', ...
         'samplingMethod','Net', 'nRepAuto',1, ...
@@ -95,12 +95,12 @@ classdef ut_cubBayesNet_g < matlab.unittest.TestCase
       
       format compact
       warning('off','GAIL:cubBayesNet_g:maxreached')
-      [muhat,actualerr] = ...
+      [~,actualerr] = ...
         TestAsianArithmeticMeanOptionAutoExample(inputArgs{:});
       warning('on','GAIL:cubBayesNet_g:maxreached')
       testCase.verifyWarning(@()cubBayesNet_g(),...
         'GAIL:cubBayesNet_g:fdnotgiven');
-      testCase.verifyLessThanOrEqual(absTolArg,actualerr);
+      testCase.verifyGreaterThanOrEqual(actualerr,absTolArg);
     end
     
   end
