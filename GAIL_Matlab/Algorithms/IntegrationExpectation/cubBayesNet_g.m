@@ -40,14 +40,14 @@
 %
 %   Output Arguments
 %
-%    OutP.n --- number of samples used to compute the integral of f.
-%    OutP.time --- time to compute the integral in seconds.
-%    OutP.exitFlag --- indicates the exit condition of the algorithm:
+%    n --- number of samples used to compute the integral of f.
+%    time --- time to compute the integral in seconds.
+%    exitFlag --- indicates the exit condition of the algorithm:
 %                      1 - integral computed within the error tolerance and
 %                      without exceeding max sample limit 2^mmax
 %                      2 - used max number of samples and yet not met the
 %                      error tolerance
-%    OutP.ErrBd  --- estimated integral error | I - Q |
+%    ErrBd  --- estimated integral error | I - Q |
 %
 %
 %  Guarantee
@@ -131,6 +131,18 @@
 %   etaDim = 1
 %
 %
+%   Example 6: Legacy API with only two arguments: integrand and number of dimensions
+%   Estimate the integral with integrand f(x) = exp(sum(cos(2*pi*x)) over
+%   the interval [0,1] with parameters: order=1, abstol=0.001, relTol=0.01
+% 
+%   >> fun = @(x) exp(sum(cos(2*pi*x), 2));
+%   >> dim=2; 
+%   >> exactInteg = besseli(0,1)^dim;
+%   >> [~,muhat]=cubBayesNet_g(fun,dim);
+%   >> check = double(abs(exactInteg-muhat) < 0.01)
+%   check = 1
+% 
+% 
 %  See also CUBBAYESLATTICE_G, CUBSOBOL_G, CUBLATTICE_G, CUBMC_G, MEANMC_G,
 %  INTEGRAL_G
 %
@@ -260,12 +272,14 @@ classdef cubBayesNet_g < handle
         if isa(varargin{1},'cubBayesNet_g')
           iStart = 2;
         end
+        fun_not_found = false; 
+        dim_not_found = false;
         % parse each input argument passed
         if nargin >= iStart
           wh = find(strcmp(varargin(iStart:end),'f'));
-          if ~isempty(wh), obj.f = varargin{wh+iStart}; else, obj.warn_fd(); end
+          if ~isempty(wh), obj.f = varargin{wh+iStart}; else, fun_not_found=true; end
           wh = find(strcmp(varargin(iStart:end),'dim'));
-          if ~isempty(wh), obj.dim = varargin{wh+iStart}; else, obj.warn_fd(); end
+          if ~isempty(wh), obj.dim = varargin{wh+iStart}; else,  dim_not_found=true; end
           wh = find(strcmp(varargin(iStart:end),'absTol'));
           if ~isempty(wh), obj.absTol = varargin{wh+iStart}; end
           wh = find(strcmp(varargin(iStart:end),'relTol'));
@@ -284,6 +298,16 @@ classdef cubBayesNet_g < handle
           if ~isempty(wh), obj.alpha = varargin{wh+iStart}; end
           wh = find(strcmp(varargin(iStart:end),'stopCriterion'));
           if ~isempty(wh), obj.stopCriterion = varargin{wh+iStart}; end
+          
+          if fun_not_found==true || dim_not_found==true
+            if fun_not_found==true && dim_not_found==true && nargin-iStart == 2
+                obj.f = varargin{iStart};
+                obj.dim = varargin{iStart+1};
+            else
+              obj.warn_fd();           
+            end        
+          end
+        
         end
       end
       

@@ -44,14 +44,14 @@
 %
 %   Output Arguments
 %
-%    OutP.n --- number of samples used to compute the integral of f.
-%    OutP.time --- time to compute the integral in seconds.
-%    OutP.exitFlag --- indicates the exit condition of the algorithm:
+%    n --- number of samples used to compute the integral of f.
+%    time --- time to compute the integral in seconds.
+%    exitFlag --- indicates the exit condition of the algorithm:
 %                      1 - integral computed within the error tolerance and
 %                      without exceeding max sample limit 2^mmax
 %                      2 - used max number of samples and yet not met the
 %                      error tolerance
-%    OutP.ErrBd  --- estimated integral error | I - Q |
+%    ErrBd  --- estimated integral error | I - Q |
 %
 %
 %  Guarantee
@@ -162,6 +162,7 @@
 % 
 % 
 %   Example 7: Another example using dimension specific shape parameter
+%
 %   >> const = [1E-4 1 1E4];
 %   >> fun = @(x)sum(bsxfun(@times, const, sin(2*pi*x.^2)), 2);
 %   >> dim=3; absTol=1e-3; relTol=1e-2;
@@ -174,6 +175,18 @@
 %   check = 1
 %   >> etaDim = size(outParams.optParams.aMLEAll, 2)
 %   etaDim = 3
+%
+%
+%   Example 8: Legacy API with only two arguments: integrand and number of dimensions
+%   Estimate the integral with integrand f(x) = exp(sum(cos(2*pi*x)) over
+%   the interval [0,1] with parameters: order=1, abstol=0.001, relTol=0.01
+% 
+%   >> fun = @(x) exp(sum(cos(2*pi*x), 2));
+%   >> dim=2; 
+%   >> exactInteg = besseli(0,1)^dim;
+%   >> [obj,muhat]=cubBayesLattice_g(fun,dim);
+%   >> check = double(abs(exactInteg-muhat) < 0.01)
+%   check = 1
 %
 %
 %  See also CUBBAYESNET_G, CUBSOBOL_G, CUBLATTICE_G, CUBMC_G, MEANMC_G,
@@ -726,12 +739,14 @@ classdef cubBayesLattice_g < handle
         if isa(varargin{1},'cubBayesLattice_g')
           iStart = 2;
         end
+        fun_not_found = false; 
+        dim_not_found = false;
         % parse each input argument passed
         if nargin >= iStart
           wh = find(strcmp(varargin(iStart:end),'f'));
-          if ~isempty(wh), obj.f = varargin{wh+iStart}; else, obj.warn_fd(); end
+          if ~isempty(wh), obj.f = varargin{wh+iStart}; else, fun_not_found=true; end
           wh = find(strcmp(varargin(iStart:end),'dim'));
-          if ~isempty(wh), obj.dim = varargin{wh+iStart}; else, obj.warn_fd; end
+          if ~isempty(wh), obj.dim = varargin{wh+iStart}; else, dim_not_found=true; end
           wh = find(strcmp(varargin(iStart:end),'absTol'));
           if ~isempty(wh), obj.absTol = varargin{wh+iStart}; end
           wh = find(strcmp(varargin(iStart:end),'relTol'));
@@ -756,6 +771,15 @@ classdef cubBayesLattice_g < handle
           if ~isempty(wh), obj.useGradient = varargin{wh+iStart}; end
           wh = find(strcmp(varargin(iStart:end),'oneTheta'));
           if ~isempty(wh), obj.oneTheta = varargin{wh+iStart}; end
+        end
+        
+        if fun_not_found==true || dim_not_found==true
+          if fun_not_found==true && dim_not_found==true && nargin-iStart == 2
+              obj.f = varargin{iStart};
+              obj.dim = varargin{iStart+1};
+          else
+            obj.warn_fd();           
+          end        
         end
       end
             
