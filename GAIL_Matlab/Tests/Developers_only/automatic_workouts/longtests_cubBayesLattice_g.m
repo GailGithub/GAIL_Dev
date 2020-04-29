@@ -15,5 +15,5 @@ try
   cubBayesLattice_long_tests
 catch err
   disp(['File: ', err.stack(1).name, '; Line number: ', int2str(err.stack(1).line),  '; Error: ',  err.message ])
-  disp('Error: cubBayesLattice_long_tests is wrongly coded. We skip it.')
+  disp('Error: cubBayesLattice_long_tests is wrongly coded. not ok. We skip it.')
 end

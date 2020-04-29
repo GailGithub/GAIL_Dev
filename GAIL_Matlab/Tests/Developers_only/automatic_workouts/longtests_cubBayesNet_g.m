@@ -14,5 +14,5 @@ end
 try
   cubBayesNet_long_tests;
 catch
-    disp('Error: cubBayesNet_long_tests is wrongly coded. We skip it.')
+    disp('Error: cubBayesNet_long_tests is wrongly coded. not ok. We skip it.')
 end

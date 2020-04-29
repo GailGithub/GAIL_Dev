@@ -73,6 +73,7 @@ exactsol = (gail.stdnormcdf(factor)-gail.stdnormcdf(-factor))^d; % Exact integra
 Ivec(1) = exactsol;
 
 % Solution approx_prob and integration output parameters in out_param
+% Test 1.1: cubMC_g
 for k=1:nRep
   [approx_prob_MC(k,1),out_param_MC(k,1)] = multi_normcdf_cubMC(hyperbox,mu,Sigma,abstol,reltol);
 end
@@ -81,7 +82,7 @@ nSampleMC(:,1) = [out_param_MC(:,1).ntot];
 report_integration_result('Test 1.1', 'cubMC_g',abstol,reltol,exactsol,... 
   mean(approx_prob_MC(:,1)),mean(timeMC(:,1)),mean(nSampleMC(:,1)))
 
-% Solution approx_prob and integration output parameters in out_param
+% Test 1.2: cubLattice_g
 for k=1:nRep
   [approx_prob_lat(k,1),out_param_lat(k,1)] = multi_normcdf_cubLat(hyperbox,mu,Sigma,abstol,reltol);
 end
@@ -90,7 +91,7 @@ nSampleLat(:,1) = [out_param_lat(:,1).n];
 report_integration_result('Test 1.2', 'cubLattice_g',abstol,reltol,exactsol,... 
   mean(approx_prob_lat(:,1)),mean(timeLat(:,1)),mean(nSampleLat(:,1)))
 
-% Solution approx_prob and integration output parameters in out_param
+% Test 1.3: cubSobol_g
 for k=1:nRep
   [approx_prob_sobol(k,1),out_param_sobol(k,1)] = multi_normcdf_cubSobol(hyperbox,mu,Sigma,abstol,reltol);
 end
@@ -99,7 +100,7 @@ nSampleSob(:,1) = [out_param_sobol(:,1).n];
 report_integration_result('Test 1.3', 'cubSobol_g',abstol,reltol,exactsol,... 
   mean(approx_prob_sobol(:,1)),mean(timeSob(:,1)),mean(nSampleSob(:,1)))
 
-% Solution approx_prob and integration output parameters in out_param
+% Test 1.4: cubBayesLattice_g
 for k=1:nRep
   [approx_prob_BayLat(k,1),out_param_BayLat(k,1)] = multi_normcdf_cubBayesLat(hyperbox,mu,Sigma,abstol,reltol);
 end
@@ -108,7 +109,7 @@ nSampleBayLat(:,1) = [out_param_BayLat(:,1).n];
 report_integration_result('Test 1.4', 'cubBayesLattice_g', abstol,reltol,...
    NaN,mean(approx_prob_BayLat(:,1)), (mean(timeBayLat(:,1))), (mean(nSampleBayLat(:,1))))
 
-% Solution approx_prob and integration output parameters in out_param
+% Test 1.5: cubBayesNet_g
 for k=1:nRep
   [approx_prob_BaySob(k,1),out_param_BaySob(k,1)] = multi_normcdf_cubBayesNet(hyperbox,mu,Sigma,abstol,reltol);
 end
@@ -132,6 +133,7 @@ exactsol = integral(@(t)MVNPexact(t,hyperbox(2,:),sig),...
 Ivec(2) = exactsol;
 
 % Solution approx_prob and integration output parameters in out_param
+% Test 2.1: cubMC_g
 for k=1:nRep
   [approx_prob_MC(k,2),out_param_MC(k,2)] = multi_normcdf_cubMC(hyperbox,mu,Sigma,abstol,reltol);
 end
@@ -140,7 +142,7 @@ nSampleMC(:,2) = [out_param_MC(:,2).ntot];
 report_integration_result('Test 2.1','cubMC_g',abstol,reltol,...
   exactsol,mean(approx_prob_MC(:,2)),mean(timeMC(:,2)),mean(nSampleMC(:,2)))
 
-% Solution approx_prob and integration output parameters in out_param
+% Test 2.2: cubLattice_g
 for k=1:nRep
   [approx_prob_lat(k,2),out_param_lat(k,2)] = multi_normcdf_cubLat(hyperbox,mu,Sigma,abstol,reltol);
 end
@@ -149,7 +151,7 @@ nSampleLat(:,2) = [out_param_lat(:,2).n];
 report_integration_result('Test 2.2','cubLattice_g',abstol,reltol,...
   exactsol,mean(approx_prob_lat(:,2)),mean(timeLat(:,2)),mean(nSampleLat(:,2)))
 
-% Solution approx_prob and integration output parameters in out_param
+% Test 2.3: cubSobol_g
 for k=1:nRep
   [approx_prob_sobol(k,2),out_param_sobol(k,2)] = multi_normcdf_cubSobol(hyperbox,mu,Sigma,abstol,reltol);
 end
@@ -158,7 +160,7 @@ nSampleSob(:,2) = [out_param_sobol(:,2).n];
 report_integration_result('Test 2.3','cubSobol_g',abstol,reltol,...
   exactsol,mean(approx_prob_sobol(:,2)),mean(timeSob(:,2)),mean(nSampleSob(:,2)))
 
-% Solution approx_prob and integration output parameters in out_param
+% Test 2.4: cubBayesLattice_g
 for k=1:nRep
   [approx_prob_BayLat(k,2),out_param_BayLat(k,2)] = multi_normcdf_cubBayesLat(...
     hyperbox,mu,Sigma,abstol,reltol);
@@ -168,8 +170,7 @@ nSampleBayLat(:,2) = [out_param_BayLat(:,2).n];
 report_integration_result('Test 2.4','cubBayesLattice_g',abstol,reltol,...
   NaN,mean(approx_prob_BayLat(:,2)),mean(timeBayLat(:,2)),mean(nSampleBayLat(:,2)))
 
-
-% Solution approx_prob and integration output parameters in out_param
+% Test 2.5: cubBayesNet_g
 for k=1:nRep
   [approx_prob_BaySob(k,2),out_param_BaySob(k,2)] = multi_normcdf_cubBayesNet(...
     hyperbox,mu,Sigma,abstol,reltol);
@@ -233,19 +234,26 @@ fprintf('')
 hyperbox = [-(d/3)*rand(1,d) ; (d/3)*rand(1,d)]; % We define the integration limits
 
 % Solution approx_prob and integration output parameters in out_param
+% Test 3.1: cubMC_g
 [approx_prob,out_param] = multi_normcdf_cubMC(hyperbox,mu,Sigma,abstol,reltol);
 report_integration_result('Test 3.1','cubMC_g',abstol,reltol,...
   NaN,approx_prob,out_param.time,out_param.ntot)
 
-% Solution approx_prob and integration output parameters in out_param
+% Test 3.2: cubSobol_g
 [approx_prob,out_param] = multi_normcdf_cubSobol(hyperbox,mu,Sigma,abstol,reltol);
 report_integration_result('Test 3.2','cubSobol_g',abstol,reltol,...
   NaN,approx_prob,out_param.time,out_param.n)
 
-% Solution approx_prob and integration output parameters in out_param
+% Test 3.3: cubBayesLattice_g
 [approx_prob,out_param] = multi_normcdf_cubBayesLat(hyperbox,mu,...
   Sigma,abstol,reltol);
 report_integration_result('Test 3.3','cubBayesLattice_g',abstol,reltol,...
+  NaN,approx_prob,out_param.time,out_param.n)
+
+% Test 3.4: cubBayesNet_g
+[approx_prob,out_param] = multi_normcdf_cubBayesNet(hyperbox,mu,...
+  Sigma,abstol,reltol);
+report_integration_result('Test 3.4','cubBayesNet_g',abstol,reltol,...
   NaN,approx_prob,out_param.time,out_param.n)
 fprintf('')
 
