@@ -17,7 +17,7 @@ Ding, Lan Jiang, Lluis Antoni Jimenez Rugama, Da Li, Jagadeeswaran
 Rathinavel, Kan Zhang, Yizhi Zhang, and Xuan Zhou, Department of Applied
 Mathematics, Illinois Institute of Technology (IIT) and Xin Tong,
 Department of Mathematics, Statistics, and Computer Science, University
-of Illinois at Chicago. 
+of Illinois at Chicago.
 
 We thank the contributions of Aleksei Sorokin, Noah Grudowski, Francisco
 Hernandez, Cu Hauw Hung, Yueyi Li, Xincheng Sheng, Xiaoyang Zhao, Tianci
@@ -80,10 +80,10 @@ Springer-Verlag, Berlin, 2016, arXiv:1410.8615 [math.NA], pp. 367-383.
 (describes cubSobol_g.m)
 
 Fred J. Hickernell, Lluis Antoni Jimenez Rugama, and Da Li, "Adaptive
-quasi-Monte Carlo methods, 2017+, submitted for publication, 
+quasi-Monte Carlo methods, 2017+, submitted for publication,
 arXiv:1702.01491 [math.NA].
 
-Yizhi Zhang, Guaranteed Adaptive Automatic Algorithms for 
+Yizhi Zhang, Guaranteed Adaptive Automatic Algorithms for
 Univariate Integration: Methods, Costs and Implementations, PhD
 Thesis, Illinois Institute of Technology, 2018.
 (describes integral_g.m)
@@ -106,12 +106,12 @@ Rugama, "Monte Carlo simulation, automatic stopping criteria for", Wiley
 StatsRef: Statistics Reference Online, pp. 1-7, 2018.
 (review of cubMC_g, cubLattice_g, and cubSobol_g)
 
-Jagadeeswaran Rathinavel and Fred J. Hickernell, "Fast automatic Bayesian 
-cubature using lattice sampling," Statistics and Computingt 29, 
+Jagadeeswaran Rathinavel and Fred J. Hickernell, "Fast automatic Bayesian
+cubature using lattice sampling," Statistics and Computingt 29,
 pp. 1215-1229, 2019. Available from https://doi.org/10.1007/s11222-019-09895-9
 (describes cubBayesLattice_g)
 
-Jagadeeswaran Rathinavel, "Fast automatic Bayesian cubature using matching 
+Jagadeeswaran Rathinavel, "Fast automatic Bayesian cubature using matching
 kernels and designs," PhD thesis, Illinois Institute of Technology, 2019.
 (describes cubBayesLattice_g and cubBayesNet_g)
 
@@ -148,7 +148,7 @@ Illinois Institute of Technology, 2016.
 
 Arfon M. Smith, Daniel S. Katz, Kyle E. Niemeyer, and FORCE11 Software
 Citation Working Group, "Software citation principles," PeerJ Computer
-Science, Volume 2, e86, 2016. 
+Science, Volume 2, e86, 2016.
 (motivates research software citation)
 
 Xin Tong, "A Guaranteed, Adaptive, Automatic Algorithm for Univariate
@@ -171,17 +171,17 @@ Requirements
 
 You will need to install MATLAB 7 or a later version.
 
-GAIL is developed in MATLAB versions R2016a to R2020a. In particular, three  
-of our core algorithms, cubSobol_g, cubBayesNet_g, and cubBayesLattice_g 
-require the following MATLAB add-on toolboxes: Signal Processing Toolbox, 
-Optimization Toolbox, Statistics and Machine Learning Toolbox. In MATLAB, 
-we could use the following command to find out toolbox dependencies of an 
-algorithm: 
+GAIL is developed in MATLAB versions R2016a to R2020a. In particular, three
+of our core algorithms, cubSobol_g, cubBayesNet_g, and cubBayesLattice_g
+require the following MATLAB add-on toolboxes: Signal Processing Toolbox,
+Optimization Toolbox, Statistics and Machine Learning Toolbox. In MATLAB,
+we could use the following command to find out toolbox dependencies of an
+algorithm:
 
   names = dependencies.toolboxDependencyAnalysis({'cubBayesNet_g'}).
 
-For development and testing purposes, we use the third-party toolboxes, 
-Chebfun version 5.7.0 and Doctest for MATLAB, version 2010. 
+For development and testing purposes, we use the third-party toolboxes,
+Chebfun version 5.7.0 and Doctest for MATLAB, version 2010.
 
 Documentation
 -------------
@@ -191,8 +191,8 @@ Detailed documentation is available in the folder, GAIL_Matlab/Documentation.
 You can also go to MATLAB's Help. Under the section of Supplemental Software,
 you will find GAIL Toolbox's searchable HTML documentation.
 
-A PDF version of GAIL's documentation with selected examples is available at 
-
+A PDF version of GAIL's documentation with selected examples is available at
+https://github.com/GailGithub/GAIL_Dev/blob/master/Documentation/gail_ug_2_3_1.pdf.
 
 General Usage Notes
 -------------------
@@ -224,6 +224,17 @@ for d-dimensional integration
 10.  meanMC_CLT: Monte Carlo method with Central Limit Theorem (CLT)
 confidence intervals for estimating mean of a random variable
 
+Each one of our key GAIL algorithms can parse inputs with the following three patterns of
+APIs, where f is a real-valued MATLAB function or function handle; in_param and out_param
+are MATLAB structure arrays, or in some cases, object instances; and x is an estimated
+output:
+
+1. Ordered input values: [x, out_param] = algo(f, inputVal1, inputVal2, inputVal3,...)
+
+2. Input structure array: [x, out_param] = algo(f, in_param)
+
+3. Ordered input values, followed by optional name-value pairs:
+	[x, out_param] = algo(f, 'input2', inputVal2, 'input3', inputVal3,...)
 
 
 Installation Instruction
@@ -279,11 +290,11 @@ respectively.
 Known Issues
 -------------
 
-During our documentation development with MATLAB release 2019a, the 
-software's internal HTML viewer is found to display LaTeX expression in 
+During our documentation development with MATLAB release 2019a, the
+software's internal HTML viewer is found to display LaTeX expression in
 larger font size than it is intended to be. This is an aesthetic issue with
 no impact on the content accuracy.  Users may use a web browser to view our
-HTML documentation instead. The main page to GAIL's HTML documentation is 
+HTML documentation instead. The main page to GAIL's HTML documentation is
 GAIL.html, located in the subfolder, Documentation/html/.
 
 
