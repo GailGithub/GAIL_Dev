@@ -313,3 +313,12 @@ Our work was supported in part by grants from the National Science
 Foundation under grant NSF-DMS-1115392, and the Office of Advanced
 Scientific Computing Research, Office of Science, U.S. Department of
 Energy, under contract DE-AC02-06CH11357.
+
+
+Sponsors
+---------
+
+<img src="./Documentation/logo/illinois-institute-of-technology-vector-logo.jpg" alt="IIT logo"/>
+
+<img src="./Documentation/logo/kamakura-corporation-vector-logo.png" alt="Kamakura logo"/>
+
