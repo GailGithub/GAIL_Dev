@@ -1,7 +1,11 @@
 %% cubBayesNet_g
-% Bayesian cubature method to estimate the integral
-% variable using digital nets. Currently, only Sobol points are supported.
+% Bayesian cubature method to estimate the integral of a random variable 
+% using digital nets over a d-dimensional region within a 
+% specified generalized error tolerance with guarantees under Bayesian
+% assumptions. Currently, only Sobol points are supported.
 %% Syntax
+% [OBJ,Q] = *cubBayesNet_g*(f,dim)
+%
 % [OBJ,Q] = *cubBayesNet_g*('f',f,'dim',dim,'absTol',absTol,'relTol',relTol,...
 %     'order',order,'arbMean',arbMean);
 %
@@ -9,9 +13,13 @@
 %
 %% Description
 %
+% [OBJ,Q] = *cubBayesNet_g*(f,dim)
+%   Initializes the object with the default parameters and also returns an
+%   estimate of integral Q for the integrand f in d dimensions.
+% 
 % OBJ = *cubBayesNet_g*('f',f,'dim',dim,'absTol',absTol,'relTol',relTol,...
-%     'order',order, 'arbMean',arbMean); initializes the object with the given
-%   parameters and also returns an estimate of integral Q.
+%     'order',order, 'arbMean',arbMean); initializes the object with the 
+%   given parameters and also returns an estimate of integral Q.
 %
 % [Q,OutP] = *compInteg*(OBJ) estimates the integral of f over hyperbox
 %   [0,1]^d using digital nets (Sobol points) to within a specified
@@ -52,6 +60,12 @@
 %
 % * mmax --- max number of samples allowed: 2^mmax. Default is 20
 %
+% * stopCriterion -- stopping criterion to use. Supports three options 
+%                     1) MLE: Empirical Bayes, 
+%                     2) GCV: Generalized Cross Validation
+%                     3) full: Full Bayes
+%                     Default is MLE: Empirical Bayes
+%
 % *Output Arguments*
 %
 % * OutP.n --- number of samples used to compute the integral of f
@@ -85,7 +99,16 @@
 %
 % Pr(| Q - I | <= tolfun) = 99%
 %
-% Please refer to our paper for detailed arguments and proofs.
+% The Bayesian cubature postulates the integrand to be an instance of a 
+% Gaussian stochastic process. We assume a Gaussian process parameterized 
+% by a constant mean and a covariance function defined by a scale 
+% parameter and a function specifying how the integrand values at two 
+% different points in the domain are related.
+% The integration results are guaranteed for integrands belonging to cone
+% of well-behaved functions which reside in the middle of the sample 
+% space. The concept of a cone of functions is explained in our thesis 
+% and paper. Please refer to our thesis [1] for detailed 
+% arguments and proofs.
 %
 %% Examples
 %
@@ -97,7 +120,7 @@
 % $[0,1]$ with default parameters: order=1, abstol=0.01, relTol=0
 
 warning('off','GAIL:cubBayesNet_g:fdnotgiven')
-[obj,muhat] = cubBayesNet_g;
+[~,muhat] = cubBayesNet_g;
 exactInteg = 1.0/3;
 warning('on','GAIL:cubBayesNet_g:fdnotgiven')
 check = double(abs(exactInteg-muhat) < 0.01)
@@ -114,13 +137,13 @@ dim=2; absTol=1e-3; relTol=1e-2;
 exactInteg = besseli(0,1)^dim;
 inputArgs = {'relTol',relTol};
 inputArgs = [inputArgs {'f',fun, 'dim',dim, 'absTol',absTol,}];
-[obj,muhat]=cubBayesNet_g(inputArgs{:});
+[~,muhat]=cubBayesNet_g(inputArgs{:});
 check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))
 
 %%
 % *Example 3: Keister function*
 %
-% Estimate the Keister's [3] integrand, a multidimensional integral  
+% Estimate the Keister's integrand, a multidimensional integral  
 % inspired by a physics application over the interval $[0,1]^2$ 
 % with parameters: order=2, abstol=0.001, relTol=0.01
 
@@ -132,7 +155,7 @@ ft = @(t,dim) cos( sqrt( normsqd(yinv(t)) )) *(sqrt(pi))^dim;
 fKeister = @(x) ft(x,dim); exactInteg = Keistertrue(dim);
 inputArgs ={'f',fKeister,'dim',dim,'absTol',absTol, 'relTol',relTol};
 inputArgs =[inputArgs {'arbMean',true}];
-[obj,muhat]=cubBayesNet_g(inputArgs{:});
+[~,muhat]=cubBayesNet_g(inputArgs{:});
 check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))
 
 %%
@@ -196,9 +219,14 @@ etaDim = size(outParams.optParams.aMLEAll, 2)
 %
 % [1] Jagadeeswaran Rathinavel, "Fast automatic Bayesian cubature using
 %   matching kernels and designs," PhD thesis, Illinois Institute of Technology, 2019.
-%   
 %
-% [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
+%
+% [2] Jagadeeswaran Rathinavel, Fred J. Hickernell, Fast automatic Bayesian cubature
+%   using lattice sampling.  Stat Comput 29, 1215-1229 (2019).
+%   https://doi.org/10.1007/s11222-019-09895-9
+%
+%
+% [3] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 %   Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
 %   Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
 %   Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available

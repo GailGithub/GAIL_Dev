@@ -1,5 +1,7 @@
-%CUBBAYESLATTICE_G Bayesian cubature method to estimate the integral
-% of a random variable
+%CUBBAYESLATTICE_G Bayesian cubature method to estimate the integral 
+% of a random variable using rank-1 Lattices over a d-dimensional region 
+% within a specified generalized error tolerance with guarantees under Bayesian
+% assumptions.
 %
 %   [OBJ,Q] = CUBBAYESLATTICE_G('f',f,'dim',dim,'absTol',absTol,'relTol',relTol,...
 %         'order',order,'ptransform',ptransform, 'arbMean',arbMean);
@@ -7,7 +9,7 @@
 %   estimate of integral Q.
 %
 %   [Q,OutP] = COMPINTEG(OBJ); estimates the integral of f over hyperbox
-%   [0,1]^d using rank-1 lattice sampling to within a specified generalized
+%   [0,1]^d using rank-1 Lattice sampling to within a specified generalized
 %   error tolerance, tolfun = max(abstol, reltol*| I |), i.e., | I - Q | <=
 %   tolfun with confidence of at least 99%, where I is the true integral
 %   value, Q is the estimated integral value, abstol is the absolute error
@@ -78,7 +80,7 @@
 %   with default parameters: order=2, ptransform=C1sin, abstol=0.01, relTol=0
 % 
 %   >> warning('off','GAIL:cubBayesLattice_g:fdnotgiven')
-%   >> [obj,muhat] = cubBayesLattice_g;
+%   >> [~,muhat] = cubBayesLattice_g;
 %   >> exactInteg = 1.0/3;
 %   >> warning('on','GAIL:cubBayesLattice_g:fdnotgiven')
 %   >> check = double(abs(exactInteg-muhat) < 0.01)
@@ -223,7 +225,7 @@ classdef cubBayesLattice_g < handle
     stopCriterion = 'MLE'; % Available options {'MLE', 'GCV', 'full'}
     mmin = 8; %min number of samples to start with = 2^mmin
     mmax = 22; %max number of samples allowed = 2^mmax
-    useGradient = false; %If true usegradient descent in parameter search
+    useGradient = false; %If true uses gradient descent in parameter search
     oneTheta = true; %If true use common shape parameter for all dimensions
                       %else allow shape parameter vary across dimensions
   end

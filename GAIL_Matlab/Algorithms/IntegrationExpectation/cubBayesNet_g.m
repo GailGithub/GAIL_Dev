@@ -1,5 +1,7 @@
-%CUBBAYESNET_G Bayesian cubature method to estimate the integral variable
-%using digital nets. Currently, only Sobol points are supported.
+%CUBBAYESNET_G Bayesian cubature method to estimate the integral of a 
+% random variable using digital nets over a d-dimensional region within a 
+% specified generalized error tolerance with guarantees under Bayesian
+% assumptions. Currently, only Sobol points are supported.
 %
 %   [OBJ,Q] = CUBBAYESNET_G('f',f,'dim',dim,'absTol',absTol,'relTol',relTol,
 %   'order',order,'arbMean',arbMean) initializes the object with the given
@@ -77,7 +79,7 @@
 %   with default parameters: order=1, abstol=0.01, relTol=0
 % 
 %   >> warning('off','GAIL:cubBayesNet_g:fdnotgiven')
-%   >> [obj,muhat] = cubBayesNet_g;
+%   >> [~,muhat] = cubBayesNet_g;
 %   >> exactInteg = 1.0/3;
 %   >> warning('on','GAIL:cubBayesNet_g:fdnotgiven')
 %   >> check = double(abs(exactInteg-muhat) < 0.01)

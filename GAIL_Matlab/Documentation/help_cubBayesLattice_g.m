@@ -1,18 +1,28 @@
 %% cubBayesLattice_g
-% Bayesian cubature method to estimate the integral
-% of a random variable
+% Bayesian cubature method to estimate the integral of a random variable 
+% using rank-1 Lattices over a d-dimensional region within a 
+% specified generalized error tolerance with guarantees under Bayesian
+% assumptions.
 %% Syntax
+% [OBJ,Q] = *cubBayesLattice_g*(f,dim)
+%
 % [OBJ,Q] = *cubBayesLattice_g*('f',f,'dim',dim,'absTol',absTol,'relTol',relTol,
 % 'order',order,'ptransform',ptransform,'arbMean',arbMean)
 %
+% [OBJ] = *cubBayesLattice_g*('f',f,'dim',dim,'absTol',absTol,'relTol',relTol,
+% 'order',order,'ptransform',ptransform,'arbMean',arbMean)
 % [Q,OutP] = *compInteg*(OBJ)
 %
 %% Description
 %
+% [OBJ,Q] = *cubBayesLattice_g*(f,dim)
+%   Initializes the object with the default parameters and also returns an
+%   estimate of integral Q for the integrand f in d dimensions.
+% 
 % [OBJ,Q] = *cubBayesLattice_g*('f',f,'dim',d,'absTol',absTol,'relTol',relTol,
-% 'order',order,'ptransform',ptransform,'arbMean',arbMean)
-% initializes the object with the given parameters and also returns an
-% estimate of integral Q.
+% 'order',order,'ptransform',ptransform,'arbMean',arbMean) Initializes
+%   the object with the given parameters and also returns an
+%   estimate of integral Q.
 %
 % [Q,OutP] = *compInteg*(OBJ) estimates the integral of f over hyperbox
 %   $[0,1]^{d}$ using rank-1 Lattice sampling to within a specified generalized
@@ -48,10 +58,12 @@
 % * relTol --- relative error tolerance | I - Q | <= I*relTol. Default is 0
 %
 % * order --- order of the Bernoulli polynomial of the kernel r=1,2.
+%             If r ==0, algorithm automatically chooses the kernel order
+%             which can be a non-integer value.
 %             Default is 2
 %
 % * ptransform --- periodization variable transform to use: 'Baker', 'C0',
-%  'C1', 'C1sin', or 'C2sin'. Default is 'C1sin'
+%                  'C1', 'C1sin', or 'C2sin'. Default is 'C1sin'
 %
 % * arbMean --- If false, the algorithm assumes the integrand was sampled
 %                 from a Gaussian process of zero mean. Default is 'true'
@@ -61,6 +73,19 @@
 % * mmin --- min number of samples to start with: 2^mmin. Default is 10
 %
 % * mmax --- max number of samples allowed: 2^mmax. Default is 22
+%
+% * stopCriterion -- stopping criterion to use. Supports three options 
+%                     1) MLE: Empirical Bayes, 
+%                     2) GCV: Generalized Cross Validation
+%                     3) full: Full Bayes
+%                     Default is MLE: Empirical Bayes
+%
+%  * useGradient -- If true uses gradient descent in parameter search.
+%                   Default is false
+%
+%  * oneTheta -- If true uses common shape parameter for all dimensions,
+%                 else allow shape parameter vary across dimensions.
+%                 Default is true
 %
 % *Output Arguments*
 %
@@ -93,19 +118,28 @@
 %
 % Pr(| Q - I | <= tolfun) = 99%
 %
-% Please refer to our paper for detailed arguments and proofs.
+% The Bayesian cubature postulates the integrand to be an instance of a 
+% Gaussian stochastic process. We assume a Gaussian process parameterized 
+% by a constant mean and a covariance function defined by a scale 
+% parameter and a function specifying how the integrand values at two 
+% different points in the domain are related.
+% The integration results are guaranteed for integrands belonging to cone
+% of well-behaved functions which reside in the middle of the sample 
+% space. The concept of a cone of functions is explained in our thesis 
+% and paper. Please refer to our paper [1] and thesis [2] for detailed 
+% arguments and proofs.
 %
 %% Examples
 %
 
 %%
-% *Example 1: Quadratic*
+% *Example 1: Integrating a simple Quadratic function*
 %
 % Estimate the integral with integrand $f(x) = x^2$ over the interval $[0,1]$
 % with default parameters: order=2, ptransform=C1sin, abstol=0.01, relTol=0
 
 warning('off','GAIL:cubBayesLattice_g:fdnotgiven')
-[obj,muhat] = cubBayesLattice_g;
+[~,muhat] = cubBayesLattice_g;
 exactInteg = 1.0/3;
 warning('on','GAIL:cubBayesLattice_g:fdnotgiven')
 check = double(abs(exactInteg-muhat) < 0.01)
@@ -113,7 +147,7 @@ check = double(abs(exactInteg-muhat) < 0.01)
 %%
 % *Example 2: ExpCos*
 %
-% Estimate the integral with integrand
+% Estimate the integral of Exponential of Cosine function
 % $f({x}) = \exp\left(\sum_{i=1}^2cos(2\pi x_i)\right)$ over the
 % interval $[0,1]^2$ with parameters: order=2, C1sin variable transform, abstol=0.001,
 % relTol=0.01
@@ -131,7 +165,6 @@ etaDim = size(outParams.optParams.aMLEAll, 2)
 %%
 % *Example 3: Keister function*
 %
-% Keister function:
 % Estimate the integral with keister function as integrand over the
 % interval $[0,1]^2$ with parameters: order=2, C1 variable transform,
 % abstol=0.001, relTol=0.01
@@ -150,10 +183,9 @@ check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))
 etaDim = size(outParams.optParams.aMLEAll, 2)
 
 %%
-% *Example 4*
-%
-% Multivariate normal probability:
-% Estimate the multivariate normal probability between the hyper interval
+% *Example 4:  Multivariate normal probability *
+% 
+% Estimate the multivariate normal probability for the given hyper interval
 % $\left(\begin{array}{c} -6\\ -2\\ -2\end{array}\right) $ and
 % $\left(\begin{array}{c} 5\\ 2\\ 1\end{array}\right)$ in $\bf{R}^3$
 % having zero mean and covariance
@@ -170,13 +202,13 @@ integrand =@(t) GenzFunc(t,MVNParams);
 inputArgs={'f',integrand,'dim',dim, 'absTol',absTol,'relTol',relTol};
 inputArgs=[inputArgs {'order',1,'ptransform','C1sin','arbMean',true}];
 inputArgs=[inputArgs {'useGradient',true}];
-[obj,muhat]=cubBayesLattice_g(inputArgs{:});
+[~,muhat]=cubBayesLattice_g(inputArgs{:});
 check = double(abs(muBest-muhat) < max(absTol,relTol*abs(muBest)))
 
 %%
 % *Example 5: Keister function*
 %
-% Kernel order r chosen automatically
+% Estimating the Keister integral with Kernel order r chosen automatically
  
 dim=2; absTol=1e-3; relTol=1e-2;
 normsqd = @(t) sum(t.*t,2); %squared l_2 norm of t
@@ -194,7 +226,7 @@ check = double(outParams.optParams.r > 0)
 %%
 % *Example 6*
 %
-% Another example using dimension specific shape parameter
+% A simple example which uses dimension specific shape parameter
 
 const = [1E-4 1 1E4];
 fun = @(x)sum(bsxfun(@times, const, sin(2*pi*x.^2)), 2);
@@ -236,7 +268,10 @@ etaDim = size(outParams.optParams.aMLEAll, 2)
 %   using lattice sampling.  Stat Comput 29, 1215-1229 (2019).
 %   https://doi.org/10.1007/s11222-019-09895-9
 %
-% [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
+% [2] Jagadeeswaran Rathinavel, "Fast automatic Bayesian cubature using
+%   matching kernels and designs," PhD thesis, Illinois Institute of Technology, 2019.
+%
+% [3] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 %   Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
 %   Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
 %   Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available
