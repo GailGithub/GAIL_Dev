@@ -30,4 +30,5 @@
 %   ut_whiteNoise          - unit tests for object class whiteNoise
 %   ut_workout_funappx_g   - long unit tests for workoutfunappx_g
 %   ut_workout_integral_g  - unit test for workout_integral_g
-
+%   dt_cubBayesLattice_g   - fast doctest for cubBayesLattice_g
+%   dt_cubBayesNet_g       - fast doctest for cubBayesNet_g

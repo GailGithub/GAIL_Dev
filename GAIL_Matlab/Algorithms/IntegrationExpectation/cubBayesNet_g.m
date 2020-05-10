@@ -100,51 +100,6 @@
 %   check = 1
 % 
 % 
-%   Example 4: Keister function
-% 
-%   >> dim=2; absTol=1e-3; relTol=1e-2;
-%   >> normsqd = @(t) sum(t.*t,2); %squared l_2 norm of t
-%   >> replaceZeros = @(t) (t+(t==0)*eps); % to avoid getting infinity, NaN
-%   >> yinv = @(t)(erfcinv( replaceZeros(abs(t)) ));
-%   >> ft = @(t,dim) cos( sqrt( normsqd(yinv(t)) )) *(sqrt(pi))^dim;
-%   >> fKeister = @(x) ft(x,dim); exactInteg = Keistertrue(dim);
-%   >> inputArgs ={'f',fKeister,'dim',dim,'absTol',absTol, 'relTol',relTol};
-%   >> inputArgs =[inputArgs {'arbMean',true}];
-%   >> [obj,muhat]=cubBayesNet_g(inputArgs{:});
-%   >> check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))
-%   check = 1
-% 
-% 
-%   Example 5: Multivariate normal probability
-% 
-%   >> dim=2; absTol=1e-3; relTol=1e-2; fName = 'MVN';
-%   >> C = [4 1 1; 0 1 0.5; 0 0 0.25]; MVNParams.Cov = C'*C; MVNParams.C = C;
-%   >> MVNParams.a = [-6 -2 -2]; MVNParams.b = [5 2 1]; MVNParams.mu = 0;
-%   >> MVNParams.CovProp.C = chol(MVNParams.Cov)';
-%   >> muBest = 0.676337324357787;
-%   >> integrand =@(t) GenzFunc(t,MVNParams);
-%   >> inputArgs={'f',integrand,'dim',dim, 'absTol',absTol,'relTol',relTol};
-%   >> inputArgs=[inputArgs {'arbMean',true}];
-%   >> obj=cubBayesNet_g(inputArgs{:});
-%   >> [muhat,outParams] = compInteg(obj);
-%   >> check = double(abs(muBest-muhat) < max(absTol,relTol*abs(muBest)))
-%   check = 1
-%   >> etaDim = size(outParams.optParams.aMLEAll, 2)
-%   etaDim = 1
-%
-%
-%   Example 6: Legacy API with only two arguments: integrand and number of dimensions
-%   Estimate the integral with integrand f(x) = exp(sum(cos(2*pi*x)) over
-%   the interval [0,1] with parameters: order=1, abstol=0.001, relTol=0.01
-% 
-%   >> fun = @(x) exp(sum(cos(2*pi*x), 2));
-%   >> dim=2; 
-%   >> exactInteg = besseli(0,1)^dim;
-%   >> [~,muhat]=cubBayesNet_g(fun,dim);
-%   >> check = double(abs(exactInteg-muhat) < 0.01)
-%   check = 1
-% 
-% 
 %  See also CUBBAYESLATTICE_G, CUBSOBOL_G, CUBLATTICE_G, CUBMC_G, MEANMC_G,
 %  INTEGRAL_G
 %
