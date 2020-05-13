@@ -9,7 +9,6 @@
 % dimensions, and whose answers are guaranteed to be correct.
 % 
 % 
-% 
 %% Developed by
 % 
 % 
@@ -106,6 +105,15 @@
 % Rugama, "Monte Carlo simulation, automatic stopping criteria for", Wiley
 % StatsRef: Statistics Reference Online, pp. 1-7, 2018.
 % (review of *cubMC_g*, *cubLattice_g*, and *cubSobol_g*)
+%
+% Jagadeeswaran Rathinavel and Fred J. Hickernell, "Fast automatic Bayesian
+% cubature using lattice sampling," Statistics and Computingt 29,
+% pp. 1215-1229, 2019. Available from https://doi.org/10.1007/s11222-019-09895-9
+% (describes *cubBayesLattice_g*)
+% 
+% Jagadeeswaran Rathinavel, "Fast automatic Bayesian cubature using matching
+% kernels and designs," PhD thesis, Illinois Institute of Technology, 2019.
+% (describes *cubBayesLattice_g* and *cubBayesNet_g*)
 % 
 % Daniel S. Katz, Sou-Cheng T. Choi, Hilmar Lapp, Ketan Maheshwari,
 % Frank Loffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr,
@@ -136,7 +144,7 @@
 % 
 % Da Li, "Reliable Quasi-Monte Carlo with Control Variates," Master's thesis,
 % Illinois Institute of Technology, 2016.
-% (describes *cubSobol_g.m* for control variates)
+% (describes *cubSobol_g* for control variates)
 % 
 % Arfon M. Smith, Daniel S. Katz, Kyle E. Niemeyer, and FORCE11 Software
 % Citation Working Group, "Software citation principles," PeerJ Computer
@@ -145,15 +153,7 @@
 % 
 % Xin Tong, "A Guaranteed, Adaptive, Automatic Algorithm for Univariate
 % Function Minimization," MS thesis, Illinois Institute of Technology, 2014.
-% (describes deprecated *funmin01_g.m*)
-% 
-% Jagadeeswaran Rathinavel, Fred J. Hickernell, Fast automatic Bayesian cubature using lattice sampling. 
-% Stat Comput 29, 1215-1229 (2019). https://doi.org/10.1007/s11222-019-09895-9
-% (describes *cubBayesLattice_g*)
-% 
-% Jagadeeswaran Rathinavel, "Fast automatic Bayesian cubature using matching kernels and designs," PhD
-% thesis, Illinois Institute of Technology, 2019.
-% (describes *cubBayesLattice_g* and *cubBayesNet_g*)
+% (describes deprecated *funmin01_g*)
 % 
 % 
 %% Downloads
@@ -166,20 +166,33 @@
 %   git clone https://github.com/GailGithub/GAIL_Dev.git
 % 
 % 
-% 
 %% Requirements
 % 
 % 
 % You will need to install MATLAB 7 or a later version.
+%
+% GAIL is developed in MATLAB versions R2016a to R2020a. In particular, three
+% of our core algorithms, cubSobol_g, cubBayesNet_g, and cubBayesLattice_g
+% require the following MATLAB add-on toolboxes: Signal Processing Toolbox,
+% Optimization Toolbox, Statistics and Machine Learning Toolbox. In MATLAB,
+% we could use the following command to find out toolbox dependencies of an
+% algorithm:
 % 
+%   names = dependencies.toolboxDependencyAnalysis({'cubBayesNet_g'}).
 % 
+% For development and testing purposes, we use the third-party toolboxes,
+% Chebfun version 5.7.0 and Doctest for MATLAB, version 2010.
 % 
 %% Documentation
 % 
 % 
-% Detailed documentation is available at GAIL_Matlab/Documentation.
+% Detailed documentation is available in the folder, GAIL_Matlab/Documentation.
+%
+% You can also go to MATLAB's Help. Under the section of Supplemental Software,
+% you will find GAIL Toolbox's searchable HTML documentation.
 % 
-% 
+% A PDF version of GAIL's documentation with selected examples is available at
+% https://github.com/GailGithub/GAIL_Dev/blob/master/Documentation/gail_ug_2_3_1.pdf.
 % 
 %% General Usage Notes
 % 
@@ -211,8 +224,18 @@
 % 10.  meanMC_CLT: Monte Carlo method with Central Limit Theorem (CLT)
 % confidence intervals for estimating mean of a random variable
 % 
+% Each one of our key GAIL algorithms can parse inputs with the following three patterns of
+% APIs, where f is a real-valued MATLAB function or function handle; in_param and out_param
+% are MATLAB structure arrays, or in some cases, object instances; and x is an estimated
+% output:
 % 
+% 1. Ordered input values: [x, out_param] = algo(f, inputVal1, inputVal2, inputVal3,...)
 % 
+% 2. Input structure array: [x, out_param] = algo(f, in_param)
+% 
+% 3. Ordered input values, followed by optional name-value pairs:
+% 	[x, out_param] = algo(f, 'input2', inputVal2, 'input3', inputVal3,...)
+%  
 % 
 %% Installation Instruction
 % 
@@ -243,8 +266,7 @@
 % To uninstall GAIL, execute "GAIL_Uninstall".
 % 
 % To reinstall GAIL, execute "GAIL_Install".
-% 
-% 
+%  
 %% Tests
 % 
 % 
@@ -263,12 +285,17 @@
 %      https://mega.nz/#F!4olmWa6L!vYuscSnGqkvkZrGJXW5Umw
 % and
 %      https://mega.nz/#F!I0cAEKJD!AyQ_8tmxkknfIsuEW0_jnA
-% respectively.
+% respectively
 % 
 % 
-%% Known Bugs
+%% Known Issues
 % 
-% None.
+% During our documentation development with MATLAB release 2019a, the
+% software's internal HTML viewer is found to display LaTeX expression in
+% larger font size than it is intended to be. This is an aesthetic issue with
+% no impact on the content accuracy.  Users may use a web browser to view our
+% HTML documentation instead. The main page to GAIL's HTML documentation is
+% GAIL.html, located in the subfolder, Documentation/html/.
 % 
 % 
 %% Contact Information
@@ -279,7 +306,6 @@
 % http://gailgithub.github.io/GAIL_Dev/
 % 
 % 
-% 
 %% Acknowledgements
 % 
 % 
@@ -287,4 +313,11 @@
 % Foundation under grant NSF-DMS-1115392, and the Office of Advanced
 % Scientific Computing Research, Office of Science, U.S. Department of
 % Energy, under contract DE-AC02-06CH11357.
+%
 % 
+%% Sponsors
+% 
+% 
+% <<illinois-institute-of-technology-vector-logo.jpg>>
+% 
+% <<kamakura-corporation-vector-logo.png>>
