@@ -43,4 +43,8 @@
 % <html>
 % <a href="demo_cubBayesNet_g.html">cubBayesNet_g</a>
 % </html>
+%
+% <html>
+% <a href="demo_meanMC_CLT.html">meanMC_CLT</a>
+% </html>
 
