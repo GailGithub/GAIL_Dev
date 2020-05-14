@@ -4,40 +4,29 @@
 % specified generalized error tolerance with guarantees under Bayesian
 % assumptions.
 %% Syntax
-% [OBJ,Q] = *cubBayesLattice_g*(f,dim)
-%
 % [OBJ,Q] = *cubBayesLattice_g*('f',f,'dim',dim,'absTol',absTol,'relTol',relTol,
 % 'order',order,'ptransform',ptransform,'arbMean',arbMean)
 %
-% [OBJ] = *cubBayesLattice_g*('f',f,'dim',dim,'absTol',absTol,'relTol',relTol,
-% 'order',order,'ptransform',ptransform,'arbMean',arbMean)
-% [Q,OutP] = *compInteg*(OBJ)
+% [Q,OutP] = *compInteg*(OBJ);
 %
 %% Description
 %
-% [OBJ,Q] = *cubBayesLattice_g*(f,dim)
-%   Initializes the object with the default parameters and also returns an
-%   estimate of integral Q for the integrand f in d dimensions.
 % 
 % [OBJ,Q] = *cubBayesLattice_g*('f',f,'dim',d,'absTol',absTol,'relTol',relTol,
 % 'order',order,'ptransform',ptransform,'arbMean',arbMean) Initializes
 %   the object with the given parameters and also returns an
 %   estimate of integral Q.
 %
-% [Q,OutP] = *compInteg*(OBJ) estimates the integral of f over hyperbox
+% [Q,OutP] = *compInteg*(OBJ); estimates the integral of f over hyperbox
 %   $[0,1]^{d}$ using rank-1 Lattice sampling to within a specified generalized
-%   error tolerance, tolfun = max(abstol, reltol*| I |), i.e., | I - Q | <= tolfun
-%   with confidence of at least 99%, where I is the true integral value,
-%   Q is the estimated integral value, abstol is the absolute error tolerance,
-%   and reltol is the relative error tolerance. Usually the reltol determines
-%   the accuracy of the estimation, however, if | I | is rather small,
-%   then abstol determines the accuracy of the estimation.
-%   OutP is the structure holding additional output params, more details provided
-%   below. Input f is a function handle that accepts an n x d matrix input,
-%   where d is the dimension of the hyperbox, and n is the number of points
-%   being evaluated simultaneously.
+%   error tolerance, tolfun = max(abstol, reltol*| I |), i.e., | I - Q | <=
+%   tolfun with confidence of at least 99%, where I is the true integral
+%   value, Q is the estimated integral value, abstol is the absolute error
+%   tolerance, and reltol is the relative error tolerance. Usually the
+%   reltol determines the accuracy of the estimation; however, if | I | is
+%   rather small, then abstol determines the accuracy of the estimation.
 %
-% It is recommended to use COMPINTEG for estimating the integral repeatedly
+% It is recommended to use *compInteg* for estimating the integral repeatedly
 % after the object initialization.
 %
 % OutP is the structure holding additional output params, more details
@@ -74,28 +63,15 @@
 %
 % * mmax --- max number of samples allowed: 2^mmax. Default is 22
 %
-% * stopCriterion -- stopping criterion to use. Supports three options 
-%                     1) MLE: Empirical Bayes, 
-%                     2) GCV: Generalized Cross Validation
-%                     3) full: Full Bayes
-%                     Default is MLE: Empirical Bayes
-%
-%  * useGradient -- If true uses gradient descent in parameter search.
-%                   Default is false
-%
-%  * oneTheta -- If true uses common shape parameter for all dimensions,
-%                 else allow shape parameter vary across dimensions.
-%                 Default is true
-%
 % *Output Arguments*
 %
-% * OutP.n --- number of samples used to compute the integral of f.
+% * n --- number of samples used to compute the integral of f.
 %
-% * OutP.time --- time to compute the integral in seconds.
+% * time --- time to compute the integral in seconds.
 %
 % <html>
 % <ul type="square">
-%  <li>OutP.exitFlag --- indicates the exit condition of the
+%  <li>exitFlag --- indicates the exit condition of the
 %  algorithm:</li>
 %   <ul type="circle">
 %                <li>1 - integral computed within the error tolerance and
@@ -103,7 +79,7 @@
 %                <li>2 - used max number of samples and yet not met the
 %                      error tolerance</li>
 %   </ul>
-%  <li>OutP.ErrBd  --- estimated integral error | I - Q |</li>
+%  <li>ErrBd  --- estimated integral error | I - Q |</li>
 %  </ul>
 % </html>
 %
@@ -118,16 +94,7 @@
 %
 % Pr(| Q - I | <= tolfun) = 99%
 %
-% The Bayesian cubature postulates the integrand to be an instance of a 
-% Gaussian stochastic process. We assume a Gaussian process parameterized 
-% by a constant mean and a covariance function defined by a scale 
-% parameter and a function specifying how the integrand values at two 
-% different points in the domain are related.
-% The integration results are guaranteed for integrands belonging to cone
-% of well-behaved functions which reside in the middle of the sample 
-% space. The concept of a cone of functions is explained in our thesis 
-% and paper. Please refer to our paper [1] and thesis [2] for detailed 
-% arguments and proofs.
+% Please refer to our paper [1] for detailed arguments and proofs.
 %
 %% Examples
 %
@@ -264,14 +231,11 @@ etaDim = size(outParams.optParams.aMLEAll, 2)
 %
 %% References
 %
-% [1] Jagadeeswaran Rathinavel, Fred J. Hickernell, Fast automatic Bayesian cubature
-%   using lattice sampling.  Stat Comput 29, 1215-1229 (2019).
-%   https://doi.org/10.1007/s11222-019-09895-9
+% [1] Jagadeeswaran Rathinavel, Fred J. Hickernell, Fast automatic
+%   Bayesian cubature using lattice sampling.  Stat Comput 29, 1215-1229
+%   (2019). https://doi.org/10.1007/s11222-019-09895-9
 %
-% [2] Jagadeeswaran Rathinavel, "Fast automatic Bayesian cubature using
-%   matching kernels and designs," PhD thesis, Illinois Institute of Technology, 2019.
-%
-% [3] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
+% [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 %   Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
 %   Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
 %   Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available

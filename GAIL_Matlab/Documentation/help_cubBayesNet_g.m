@@ -4,25 +4,19 @@
 % specified generalized error tolerance with guarantees under Bayesian
 % assumptions. Currently, only Sobol points are supported.
 %% Syntax
-% [OBJ,Q] = *cubBayesNet_g*(f,dim)
-%
 % [OBJ,Q] = *cubBayesNet_g*('f',f,'dim',dim,'absTol',absTol,'relTol',relTol,...
 %     'order',order,'arbMean',arbMean);
 %
 % [Q,OutP] = *compInteg*(OBJ)
 %
 %% Description
-%
-% [OBJ,Q] = *cubBayesNet_g*(f,dim)
-%   Initializes the object with the default parameters and also returns an
-%   estimate of integral Q for the integrand f in d dimensions.
 % 
 % OBJ = *cubBayesNet_g*('f',f,'dim',dim,'absTol',absTol,'relTol',relTol,...
 %     'order',order, 'arbMean',arbMean); initializes the object with the 
 %   given parameters and also returns an estimate of integral Q.
 %
 % [Q,OutP] = *compInteg*(OBJ) estimates the integral of f over hyperbox
-%   [0,1]^d using digital nets (Sobol points) to within a specified
+%   $[0,1]^d$ using digital nets (Sobol points) to within a specified
 %   generalized error tolerance, tolfun = max(abstol, reltol*| I |), i.e.,
 %   | I - Q | <= tolfun with confidence of at least 99%, where I is the
 %   true integral value, Q is the estimated integral value, abstol is the
@@ -31,7 +25,7 @@
 %   if | I | is rather small, then abstol determines the accuracy of the
 %   estimation.
 % 
-% It is recommended to use COMPINTEG for estimating the integral
+% It is recommended to use *compInteg* for estimating the integral
 % repeatedly after the object initialization.
 %
 % OutP is the structure holding additional output params, more details
@@ -60,21 +54,15 @@
 %
 % * mmax --- max number of samples allowed: 2^mmax. Default is 20
 %
-% * stopCriterion -- stopping criterion to use. Supports three options 
-%                     1) MLE: Empirical Bayes, 
-%                     2) GCV: Generalized Cross Validation
-%                     3) full: Full Bayes
-%                     Default is MLE: Empirical Bayes
-%
 % *Output Arguments*
 %
-% * OutP.n --- number of samples used to compute the integral of f
+% * n --- number of samples used to compute the integral of f.
 %
-% * OutP.time --- time to compute the integral in seconds
+% * time --- time to compute the integral in seconds.
 %
 % <html>
 % <ul type="square">
-%  <li>OutP.exitFlag --- indicates the exit condition of the algorithm:
+%  <li>exitFlag --- indicates the exit condition of the algorithm:
 %  algorithm:</li>
 %   <ul type="circle">
 %                <li>1 - integral computed within the error tolerance and
@@ -85,7 +73,7 @@
 %  </ul>
 % </html>
 %
-% * OutP.ErrBd  --- estimated integral error | I - Q |
+% * ErrBd  --- estimated integral error | I - Q |
 %
 %
 %%  Guarantee
@@ -99,16 +87,7 @@
 %
 % Pr(| Q - I | <= tolfun) = 99%
 %
-% The Bayesian cubature postulates the integrand to be an instance of a 
-% Gaussian stochastic process. We assume a Gaussian process parameterized 
-% by a constant mean and a covariance function defined by a scale 
-% parameter and a function specifying how the integrand values at two 
-% different points in the domain are related.
-% The integration results are guaranteed for integrands belonging to cone
-% of well-behaved functions which reside in the middle of the sample 
-% space. The concept of a cone of functions is explained in our thesis 
-% and paper. Please refer to our thesis [1] for detailed 
-% arguments and proofs.
+% Please refer to our paper [1] for detailed arguments and proofs.
 %
 %% Examples
 %
@@ -218,15 +197,11 @@ etaDim = size(outParams.optParams.aMLEAll, 2)
 %% References
 %
 % [1] Jagadeeswaran Rathinavel, "Fast automatic Bayesian cubature using
-%   matching kernels and designs," PhD thesis, Illinois Institute of Technology, 2019.
+%   matching kernels and designs," PhD thesis, Illinois Institute of
+%   Technology, 2019.
 %
 %
-% [2] Jagadeeswaran Rathinavel, Fred J. Hickernell, Fast automatic Bayesian cubature
-%   using lattice sampling.  Stat Comput 29, 1215-1229 (2019).
-%   https://doi.org/10.1007/s11222-019-09895-9
-%
-%
-% [3] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
+% [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 %   Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
 %   Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
 %   Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available
