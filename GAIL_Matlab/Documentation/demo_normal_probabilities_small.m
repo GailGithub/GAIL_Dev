@@ -1,4 +1,4 @@
-%% Estimation of normal probabilities by *cubSobol_g*, *cubMC_g*, *cubBayesLattice_g*, *cubLattice_g*, and *cubBayesNet_g*
+%% Estimation of normal probabilities by multiple integration algorithms in GAIL
 % Authors: Lluis Antoni Jimenez Rugama, Lan Jiang, and Jagadeeswaran Rathinavel, April 2019
 
 %% Introduction
