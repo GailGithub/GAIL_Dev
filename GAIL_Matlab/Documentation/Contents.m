@@ -40,4 +40,5 @@
 %
 % Folders
 %   html                      - folder of all html files
+%   logo                      - Illinois Institute of Technology and Kamakura logos
 
