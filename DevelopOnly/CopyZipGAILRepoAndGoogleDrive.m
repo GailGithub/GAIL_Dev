@@ -16,7 +16,7 @@ function CopyZipGAILRepoAndGoogleDrive(newpath,GoogleDrivePath,zipfilename,exclu
 % CopyZipGAILRepoAndGoogleDrive('E:\GAIL_2_3\','E:\GoogleDrive\GAIL_Dev\','GAIL_2_3.zip','exclude2_3.lst')
 
 GAILPATH = GAILstart(0); % Get the path of GAIL_Matlab
-GoogleDrivePath1 = horzcat(GoogleDrivePath,'\GAIL_Matlab',filesep);
+GoogleDrivePath1 = horzcat(GoogleDrivePath,'GAIL_Matlab',filesep);
 
 %copy files in repository to new path
 copyfile(GAILPATH,newpath,'f') % copy files in Google drive to new path
