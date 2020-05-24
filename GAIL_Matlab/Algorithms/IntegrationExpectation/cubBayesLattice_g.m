@@ -39,7 +39,7 @@
 %   of f over hyperbox [0,1]^d using rank-1 Lattice sampling. All parameters
 %   should be input in the order specified above. The answer is given within
 %   the generalized error tolerance tolfun. All other input parameters
-%    are initialized with default values as given below.
+%   are initialized with default values as given below.
 %
 %   [OBJ,Q] = CUBBAYESLATTICE_G(f,dim,inParms); estimates the integral
 %   of f over hyperbox [0,1]^d using rank-1 Lattice sampling.
@@ -421,7 +421,7 @@ classdef cubBayesLattice_g < handle
         % theta0 = ones(1,obj.dim+1)*0.1;
         theta0 = [0.1,0.1];
         
-        [aOPT, fval, exitflag, output] = fminsearch(fLoss, ...
+        [aOPT] = fminsearch(fLoss, ...
           theta0,optimset('TolX',1e-2));
         
         thetaOpt = exp(aOPT(1));
@@ -441,7 +441,7 @@ classdef cubBayesLattice_g < handle
             'Algorithm','trust-region',...
             'SpecifyObjectiveGradient',true);
           try
-            [lnThetaOpt,fval,eflag,output] = fminunc(...
+            [lnThetaOpt] = fminunc(...
               @(phi)dObjectiveFunction(obj, exp(phi),xpts,ftilde), ...
               theta0,options);
           catch mErr
@@ -453,7 +453,7 @@ classdef cubBayesLattice_g < handle
           nm_start = tic;
           theta0 = zeros(1,obj.dim)*0.1; %
           nmOptions = optimset('TolX',1e-2);
-          [lnaMLE_,fval_,exitflag_,output_] = fminsearch(@(lna) ...
+          [lnaMLE_] = fminsearch(@(lna) ...
             ObjectiveFunction(obj, exp(lna),xpts,ftilde), ...
             theta0,nmOptions);
           thetaOpt = exp(lnaMLE_);
@@ -527,7 +527,6 @@ classdef cubBayesLattice_g < handle
         % Useful to verify the assumption, integrand was an instance of a Gaussian process
         CheckGaussianDensity(obj, ftilde, Lambda)
       end
-      t_end=toc(tstart);
       
       if 2*ErrBd <= ...
           max(obj.absTol,obj.relTol*abs(muminus)) + max(obj.absTol,obj.relTol*abs(muplus))
@@ -645,12 +644,11 @@ classdef cubBayesLattice_g < handle
         
         % default: MLE
         temp = abs(ftilde(Lambda~=0).^2)./(Lambda(Lambda~=0)) ;
-        % deriv_part_num = abs((ftilde(Lambda~=0).^2).*dLambda(Lambda~=0))./(Lambda(Lambda~=0).^2);
+        
         deriv_part_num = abs(...
           bsxfun(@times, ...
           (abs(ftilde(Lambda~=0))./Lambda(Lambda~=0)).^2, dLambda(Lambda~=0, :)));
-        % temp./(Lambda(Lambda~=0)), dLambda(Lambda~=0, :)));
-        % (ftilde(Lambda~=0).^2)./(Lambda(Lambda~=0).^2), dLambda(Lambda~=0, :)));
+
         if obj.arbMean==true
           deriv_part_num = sum(deriv_part_num(2:end, :), 1);
           deriv_part_den = sum(temp(2:end));

@@ -100,7 +100,7 @@ if __name__ == '__main__':
     error_text = ''
 
     # check if pass/fail then create message to pring and collect error greps
-    for m_ver, res in sorted(compare_result.iteritems()):
+    for m_ver, res in sorted(compare_result.items()):
         if res[0] is 'Fail':
             # If the test failed then attach the error grep
             with open(res[1], 'r') as test_file:
@@ -118,16 +118,17 @@ if __name__ == '__main__':
             line = proc.stdout.readline()
             if line != '':
                 # got output: parse it
-                print "Result:", line
+                print("Result:", line)
+
                 
     def get_file_link(fn):
         result = ''
         proc = subprocess.Popen(['/home/gail/usr/bin/mega-export','-a', fn],stdout=subprocess.PIPE)
         if True:
-            line = proc.stdout.readline()
+            line = proc.stdout.readline().decode('utf-8')
             if line != '':
                 # got output: parse it
-                print "Result:", line.rstrip()
+                print("Result:", line.rstrip())
                 if 'Exported' in line:
                     link = line.rstrip('\n').split(': ')
                     result = line

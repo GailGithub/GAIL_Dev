@@ -41,6 +41,9 @@
 %   where d is the dimension of the hyperbox, and n is the number of points
 %   being evaluated simultaneously.
 %
+% It is recommended to use *compInteg* for estimating the integral repeatedly
+% after the object initialization.
+%
 % [OBJ,Q] = cubBayesLattice_g(f,dim,absTol,relTol); estimates the integral 
 %   of f over hyperbox [0,1]^d using rank-1 Lattice sampling. All parameters
 %   should be input in the order specified above. The answer is given within 
@@ -50,9 +53,6 @@
 % [OBJ,Q] = cubBayesLattice_g(f,dim,inParms); estimates the integral 
 %   of f over hyperbox [0,1]^d using rank-1 Lattice sampling. 
 %   The structure inParams shall hold the optional input parameters.
-%
-% It is recommended to use *compInteg* for estimating the integral repeatedly
-% after the object initialization.
 %
 % OutP is the structure holding additional output params, more details
 % provided below. Input f is a function handle that accepts an n x d

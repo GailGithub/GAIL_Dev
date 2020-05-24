@@ -25,6 +25,23 @@
 %   matrix input, where d is the dimension of the hyperbox, and n is the
 %   number of points being evaluated simultaneously.
 %
+%   The following additional input parameter passing styles also supported:
+%
+%   [OBJ,Q] = CUBBAYESNET_G(f,dim); estimates the integral of f over
+%   hyperbox [0,1]^d using digital nets (Sobol points). All other input parameters
+%   are initialized with default values as given below. Returns the initialized
+%   object OBJ and the estimate of integral Q.
+%
+%   [OBJ,Q] = CUBBAYESNET_G(f,dim,absTol,relTol); estimates the integral
+%   of f over hyperbox [0,1]^d using digital nets (Sobol points). All parameters
+%   should be input in the order specified above. The answer is given within
+%   the generalized error tolerance tolfun. All other input parameters
+%   are initialized with default values as given below.
+%
+%   [OBJ,Q] = CUBBAYESNET_G(f,dim,inParms); estimates the integral
+%   of f over hyperbox [0,1]^d digital nets (Sobol points).
+%   The structure inParams shall hold the optional input parameters.
+%
 %   Input Arguments
 %
 %     f --- the integrand.
