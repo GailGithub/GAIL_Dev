@@ -1,10 +1,11 @@
-%CUBBAYESLATTICE_G Bayesian cubature method to estimate the integral 
-% of a random variable using rank-1 Lattices over a d-dimensional region 
+%CUBBAYESLATTICE_G Bayesian cubature method to estimate the integral
+% of a random variable using rank-1 Lattices over a d-dimensional region
 % within a specified generalized error tolerance with guarantees under Bayesian
 % assumptions.
 %
-%   [OBJ,Q] = CUBBAYESLATTICE_G('f',f,'dim',dim,'absTol',absTol,'relTol',relTol,...
-%         'order',order,'ptransform',ptransform, 'arbMean',arbMean);
+%   [OBJ,Q] = CUBBAYESLATTICE_G(f, dim, 'absTol',absTol, ...
+%         'relTol',relTol, 'order',order, ...
+%         'ptransform',ptransform, 'arbMean',arbMean);
 %   initializes the object with the given parameters and also returns an
 %   estimate of integral Q.
 %
@@ -16,6 +17,8 @@
 %   tolerance, and reltol is the relative error tolerance. Usually the
 %   reltol determines the accuracy of the estimation; however, if | I | is
 %   rather small, then abstol determines the accuracy of the estimation.
+%   Given the construction of our Lattices, d must be a positive integer
+%   with 1 <= d <= 600.
 %
 %   It is recommended to use COMPINTEG for estimating the integral
 %   repeatedly after the object initialization.
@@ -24,6 +27,23 @@
 %   provided below. Input f is a function handle that accepts an n x d
 %   matrix input, where d is the dimension of the hyperbox, and n is the
 %   number of points being evaluated simultaneously.
+%
+%   The following additional input parameter passing styles also supported:
+%
+%   [OBJ,Q] = CUBBAYESLATTICE_G(f,dim); estimates the integral of f over
+%   hyperbox [0,1]^d using rank-1 Lattice sampling. All other input parameters
+%   are initialized with default values as given below. Returns the initialized
+%   object OBJ and the estimate of integral Q.
+%
+%   [OBJ,Q] = CUBBAYESLATTICE_G(f,dim,absTol,relTol); estimates the integral
+%   of f over hyperbox [0,1]^d using rank-1 Lattice sampling. All parameters
+%   should be input in the order specified above. The answer is given within
+%   the generalized error tolerance tolfun. All other input parameters
+%    are initialized with default values as given below.
+%
+%   [OBJ,Q] = CUBBAYESLATTICE_G(f,dim,inParms); estimates the integral
+%   of f over hyperbox [0,1]^d using rank-1 Lattice sampling.
+%   The structure inParams shall hold the optional input parameters.
 %
 %   Input Arguments
 %
@@ -73,40 +93,42 @@
 %   If no parameters are parsed, help text will show up as follows:
 %   >> help cubBayesLattice_g
 %   ***Bayesian cubature method to estimate the integral ***
-% 
-% 
+%
+%
 %   Example 2: Quadratic
 %   Estimate the integral with integrand f(x) = x.^2 over the interval [0,1]
 %   with default parameters: order=2, ptransform=C1sin, abstol=0.01, relTol=0
-% 
+%
 %   >> warning('off','GAIL:cubBayesLattice_g:fdnotgiven')
 %   >> [~,muhat] = cubBayesLattice_g;
 %   >> exactInteg = 1.0/3;
 %   >> warning('on','GAIL:cubBayesLattice_g:fdnotgiven')
 %   >> check = double(abs(exactInteg-muhat) < 0.01)
 %   check = 1
-% 
-% 
+%
+%
 %   Example 3: ExpCos
 %   Shape parameter independently chosen for each dimension
-% 
+%
 %   Estimate the integral with integrand f(x) = exp(sum(cos(2*pi*x)) over the
 %   interval [0,1] with parameters: order=2, ptransform=C1sin, abstol=0.001,
 %   relTol=0.01
-% 
+%
 %   >> fun = @(x) exp(sum(cos(2*pi*x), 2));
-%   >> dim=2; absTol=1e-3; relTol=1e-2;
+%   >> dim=2; absTol=1e-2; relTol=1e-2;
 %   >> exactInteg = besseli(0,1)^dim;
 %   >> inputArgs = {'relTol',relTol, 'order',2, 'ptransform','C1sin'};
-%   >> inputArgs = [inputArgs {'f',fun, 'dim',dim, 'absTol',absTol,'oneTheta',false}];
+%   >> inputArgs = [{fun, dim, 'absTol',absTol,'oneTheta',false} inputArgs];
 %   >> obj=cubBayesLattice_g(inputArgs{:});
 %   >> [muhat,outParams]=compInteg(obj);
 %   >> check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))
 %   check = 1
 %   >> etaDim = size(outParams.optParams.aMLEAll, 2)
 %   etaDim = 2
-% 
-% 
+%
+%
+%  Please refer to dt_cubBayesLattice_g for more examples
+%
 %
 %  See also CUBBAYESNET_G, CUBSOBOL_G, CUBLATTICE_G, CUBMC_G, MEANMC_G,
 %  INTEGRAL_G
@@ -134,7 +156,7 @@ classdef cubBayesLattice_g < handle
     absTol = 0.01; %absolute tolerance
     relTol = 0; %relative tolerance
     order = 2; %Bernoulli order of the kernel
-                %If zero, choose order automatically
+    %If zero, choose order automatically
     alpha = 0.01; % p-value, default 0.1%.
     ptransform = 'C1sin'; %periodization transform
     stopAtTol = true; %automatic mode: stop after meeting the error tolerance
@@ -144,7 +166,7 @@ classdef cubBayesLattice_g < handle
     mmax = 22; %max number of samples allowed = 2^mmax
     useGradient = false; %If true uses gradient descent in parameter search
     oneTheta = true; %If true use common shape parameter for all dimensions
-                      %else allow shape parameter vary across dimensions
+    %else allow shape parameter vary across dimensions
   end
   
   properties (SetAccess = private)
@@ -157,7 +179,7 @@ classdef cubBayesLattice_g < handle
     GCV = false; % Generalized cross validation
     vdc_order = false; % use Lattice points generated in vdc order
     kernType = 1; % Type-1: Bernoulli polynomaial based algebraic convergence
-                  % Type-2: Truncated series
+    % Type-2: Truncated series
     
     % only for developers use
     fName = 'None'; %name of the integrand
@@ -189,7 +211,7 @@ classdef cubBayesLattice_g < handle
         % parse each input argument passed
         if nargin >= iStart
           % parse and set the input arguments to obj
-          obj.parse_input_args(varargin{:});
+          obj.parse_input_args(nargin-iStart+1, varargin{:});
         end
       else
         obj.warn_fd();
@@ -237,7 +259,9 @@ classdef cubBayesLattice_g < handle
       obj.dscAll = temp;
       obj.s_All = temp;
       
-      muhat = compInteg(obj);
+      if nargout > 1
+        muhat = compInteg(obj);
+      end
       
     end
     
@@ -399,7 +423,7 @@ classdef cubBayesLattice_g < handle
         
         [aOPT, fval, exitflag, output] = fminsearch(fLoss, ...
           theta0,optimset('TolX',1e-2));
-
+        
         thetaOpt = exp(aOPT(1));
         bOpt = 1 + exp(aOPT(2));
         r = bOpt;
@@ -652,56 +676,70 @@ classdef cubBayesLattice_g < handle
     
     % parses each input argument passed and assigns to obj.
     % Warns any unsupported options passed
-    function parse_input_args(obj, varargin)
-      if nargin > 0
-        iStart = 1;
-        if isa(varargin{1},'cubBayesLattice_g')
-          iStart = 2;
-        end
-        fun_not_found = false; 
-        dim_not_found = false;
-        % parse each input argument passed
-        if nargin >= iStart
-          wh = find(strcmp(varargin(iStart:end),'f'));
-          if ~isempty(wh), obj.f = varargin{wh+iStart}; else, fun_not_found=true; end
-          wh = find(strcmp(varargin(iStart:end),'dim'));
-          if ~isempty(wh), obj.dim = varargin{wh+iStart}; else, dim_not_found=true; end
-          wh = find(strcmp(varargin(iStart:end),'absTol'));
-          if ~isempty(wh), obj.absTol = varargin{wh+iStart}; end
-          wh = find(strcmp(varargin(iStart:end),'relTol'));
-          if ~isempty(wh), obj.relTol = varargin{wh+iStart}; end
-          wh = find(strcmp(varargin(iStart:end),'order'));
-          if ~isempty(wh), obj.order = varargin{wh+iStart}; end
-          wh = find(strcmp(varargin(iStart:end),'ptransform'));
-          if ~isempty(wh), obj.ptransform = varargin{wh+iStart}; end
-          wh = find(strcmp(varargin(iStart:end),'arbMean'));
-          if ~isempty(wh), obj.arbMean = varargin{wh+iStart}; end
-          wh = find(strcmp(varargin(iStart:end),'stopAtTol'));
-          if ~isempty(wh), obj.stopAtTol = varargin{wh+iStart}; end
-          wh = find(strcmp(varargin(iStart:end),'figSavePath'));
-          if ~isempty(wh), obj.figSavePath = varargin{wh+iStart}; end
-          wh = find(strcmp(varargin(iStart:end),'fName'));
-          if ~isempty(wh), obj.fName = varargin{wh+iStart}; end
-          wh = find(strcmp(varargin(iStart:end),'stopCriterion'));
-          if ~isempty(wh), obj.stopCriterion = varargin{wh+iStart}; end
-          wh = find(strcmp(varargin(iStart:end),'alpha'));
-          if ~isempty(wh), obj.alpha = varargin{wh+iStart}; end
-          wh = find(strcmp(varargin(iStart:end),'useGradient'));
-          if ~isempty(wh), obj.useGradient = varargin{wh+iStart}; end
-          wh = find(strcmp(varargin(iStart:end),'oneTheta'));
-          if ~isempty(wh), obj.oneTheta = varargin{wh+iStart}; end
-        end
-        
-        if fun_not_found==true || dim_not_found==true
-          if fun_not_found==true && dim_not_found==true && nargin-iStart == 2
-              obj.f = varargin{iStart};
-              obj.dim = varargin{iStart+1};
-          else
-            obj.warn_fd();           
-          end        
+    function parse_input_args(obj, nargin, varargin)
+      iStart = 1;
+      
+      % need atleast two input arguments
+      if nargin < 2
+        obj.warn_fd();
+      else
+        if isa(varargin{iStart}, 'function_handle') && isnumeric(varargin{1+iStart})
+          obj.f = varargin{iStart};  % must be a function_handle
+          obj.dim = varargin{1+iStart};  % must be an int
+        else
+          % input passing style not supported
+          error('GAIL:cubBayesLattice_g:input_invalid',...
+            'Invalid input aruguments.\n');
         end
       end
-            
+      
+      if nargin == 4 && isa(varargin{2+iStart}, 'float') && isa(varargin{3+iStart}, 'float')
+        obj.absTol = varargin{2+iStart};
+        obj.relTol = varargin{3+iStart};
+      else
+        
+        if nargin == 3
+          inParams = varargin{2+iStart};
+          if isa(inParams, 'struct')
+            % convert struct to name value pairs
+            inputArgs = [fieldnames(inParams) struct2cell(inParams)];
+            inputArgs = reshape(inputArgs', 1, []);
+            varargin = inputArgs;
+          else
+            % input passing style not supported
+            error('GAIL:cubBayesLattice_g:input_invalid',...
+              'Invalid input aruguments.\n');
+          end
+        end
+        
+        % parse additional input arguments
+        wh = find(strcmp(varargin(iStart:end),'absTol'));
+        if ~isempty(wh), obj.absTol = varargin{wh+iStart}; end
+        wh = find(strcmp(varargin(iStart:end),'relTol'));
+        if ~isempty(wh), obj.relTol = varargin{wh+iStart}; end
+        wh = find(strcmp(varargin(iStart:end),'order'));
+        if ~isempty(wh), obj.order = varargin{wh+iStart}; end
+        wh = find(strcmp(varargin(iStart:end),'ptransform'));
+        if ~isempty(wh), obj.ptransform = varargin{wh+iStart}; end
+        wh = find(strcmp(varargin(iStart:end),'arbMean'));
+        if ~isempty(wh), obj.arbMean = varargin{wh+iStart}; end
+        wh = find(strcmp(varargin(iStart:end),'stopAtTol'));
+        if ~isempty(wh), obj.stopAtTol = varargin{wh+iStart}; end
+        wh = find(strcmp(varargin(iStart:end),'figSavePath'));
+        if ~isempty(wh), obj.figSavePath = varargin{wh+iStart}; end
+        wh = find(strcmp(varargin(iStart:end),'fName'));
+        if ~isempty(wh), obj.fName = varargin{wh+iStart}; end
+        wh = find(strcmp(varargin(iStart:end),'stopCriterion'));
+        if ~isempty(wh), obj.stopCriterion = varargin{wh+iStart}; end
+        wh = find(strcmp(varargin(iStart:end),'alpha'));
+        if ~isempty(wh), obj.alpha = varargin{wh+iStart}; end
+        wh = find(strcmp(varargin(iStart:end),'useGradient'));
+        if ~isempty(wh), obj.useGradient = varargin{wh+iStart}; end
+        wh = find(strcmp(varargin(iStart:end),'oneTheta'));
+        if ~isempty(wh), obj.oneTheta = varargin{wh+iStart}; end
+        
+      end
+      
       if obj.order <= 0
         % find optimal kernel order
         obj.kernType = 2;

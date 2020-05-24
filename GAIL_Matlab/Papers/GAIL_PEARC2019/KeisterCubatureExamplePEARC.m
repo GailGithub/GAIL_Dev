@@ -60,9 +60,9 @@ for i=1:nd
         yinv = @(t)(erfcinv(replaceZeros(abs(t))));
         f1 = @(t,d) cos( sqrt( normsqd(yinv(t)))) *(sqrt(pi))^d;
         fKeister = @(x) f1(x,d); 
-        inputArgs = {'f',fKeister,'dim',d,'absTol',abstol(i), 'relTol',reltol(i)};
+        inputArgs = {'absTol',abstol(i), 'relTol',reltol(i)};
         inputArgs =[inputArgs {'order',2, 'ptransform','C1','arbMean',true}];
-        obj = cubBayesLattice_g(inputArgs{:});
+        obj = cubBayesLattice_g(fKeister,d,inputArgs{:});
         [IBayvec(k,i), out] = compInteg(obj);
         if out.exitflag > 0
             nWarnBay(k,i) = 1;

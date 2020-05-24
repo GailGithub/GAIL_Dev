@@ -9,7 +9,7 @@
 %   >> f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
 %   >> f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.001
 %   f_true = 0.06***
-%   >> [~,Q] = cubBayesNet_g('f',f, 'dim',in_param.dim, 'absTol',1e-3, 'relTol',1e-2); Q = Q + 0.001
+%   >> [~,Q] = cubBayesNet_g(f, in_param.dim, 'absTol',1e-3, 'relTol',1e-2); Q = Q + 0.001
 %   Q = 0.06***
 % 
 %
@@ -20,7 +20,7 @@
 %   >> f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
 %   >> f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.001
 %   f_true = 0.66***
-%   >> [~,Q] = cubBayesNet_g('f',f, 'dim',in_param.dim, 'absTol',1e-3, 'relTol',1e-3); Q = Q + 0.001
+%   >> [~,Q] = cubBayesNet_g(f, in_param.dim, 'absTol',1e-3, 'relTol',1e-3); Q = Q + 0.001
 %   Q = 0.66***
 %   
 %
@@ -31,7 +31,7 @@
 %   >> f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
 %   >> f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.001
 %   f_true = 0.04***
-%   >> [~,Q] = cubBayesNet_g('f',f, 'dim',in_param.dim, 'absTol',1e-3, 'relTol',1e-2); Q = Q + 0.001
+%   >> [~,Q] = cubBayesNet_g(f, in_param.dim, 1e-3, 1e-2); Q = Q + 0.001
 %   Q = 0.04***
 %   
 %
@@ -42,7 +42,7 @@
 %   >> f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
 %   >> f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.001
 %   f_true = 0.62***
-%   >> [~,Q] = cubBayesNet_g('f',f, 'dim',in_param.dim, 'absTol',1e-3, 'relTol',1e-3); Q = Q + 0.001
+%   >> [~,Q] = cubBayesNet_g(f, in_param.dim, 1e-3, 1e-3); Q = Q + 0.001
 %   Q = 0.62***
 %  
 %
@@ -53,7 +53,7 @@
 %   >> f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
 %   >> f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)
 %   f_true = 0.38***
-%   >> [~,Q] = cubBayesNet_g('f',f, 'dim',in_param.dim, 'absTol',1e-3, 'relTol',1e-3)
+%   >> [~,Q] = cubBayesNet_g(f, in_param.dim, 'absTol',1e-3, 'relTol',1e-3)
 %   Q = 0.38***
 %  
 %
@@ -64,7 +64,7 @@
 %   >> f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
 %   >> f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)
 %   f_true = 0.44***
-%   >> [~,Q] = cubBayesNet_g('f',f, 'dim',in_param.dim, 'absTol',1e-3, 'relTol',1e-3)
+%   >> [~,Q] = cubBayesNet_g(f, in_param.dim, 'absTol',1e-3, 'relTol',1e-3)
 %   Q = 0.44***
 %  
 %
@@ -73,7 +73,7 @@
 %   genz_test_fun, index 7.
 %   >> index = 7; in_param.dim = 3;
 %   >> f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
-%   >> [~,Q] = cubBayesNet_g('f',f, 'dim',in_param.dim, 'absTol',1e-3, 'relTol',1e-4)
+%   >> [~,Q] = cubBayesNet_g(f, in_param.dim, 'absTol',1e-3, 'relTol',1e-4)
 %   Q = 2.16***
 %  
 %  
@@ -84,9 +84,8 @@
 %   >> MVNParams.CovProp.C = chol(MVNParams.Cov)';
 %   >> muBest = 0.676337324357787;
 %   >> integrand =@(t) GenzFunc(t,MVNParams);
-%   >> inputArgs={'f',integrand,'dim',dim, 'absTol',absTol,'relTol',relTol};
-%   >> inputArgs=[inputArgs {'arbMean',true}];
-%   >> obj=cubBayesNet_g(inputArgs{:});
+%   >> inputArgs={'absTol',absTol,'relTol',relTol, 'arbMean',true};
+%   >> obj=cubBayesNet_g(integrand,dim, inputArgs{:});
 %   >> [muhat,outParams] = compInteg(obj);
 %   >> check = double(abs(muBest-muhat) < max(absTol,relTol*abs(muBest)))
 %   check = 1
@@ -114,9 +113,9 @@
 %   >> yinv = @(t)(erfcinv( replaceZeros(abs(t)) ));
 %   >> ft = @(t,dim) cos( sqrt( normsqd(yinv(t)) )) *(sqrt(pi))^dim;
 %   >> fKeister = @(x) ft(x,dim); exactInteg = Keistertrue(dim);
-%   >> inputArgs ={'f',fKeister,'dim',dim,'absTol',absTol, 'relTol',relTol};
+%   >> inputArgs ={'absTol',absTol, 'relTol',relTol};
 %   >> inputArgs =[inputArgs {'arbMean',true}];
-%   >> [obj,muhat]=cubBayesNet_g(inputArgs{:});
+%   >> [obj,muhat]=cubBayesNet_g(fKeister,dim,inputArgs{:});
 %   >> check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))
 %   check = 1
 % 
