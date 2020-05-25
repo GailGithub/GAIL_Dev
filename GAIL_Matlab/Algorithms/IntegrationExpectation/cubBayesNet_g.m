@@ -1,9 +1,9 @@
-%CUBBAYESNET_G Bayesian cubature method to estimate the integral of a 
-% random variable using digital nets over a d-dimensional region within a 
+%CUBBAYESNET_G Bayesian cubature method to estimate the integral of a
+% random variable using digital nets over a d-dimensional region within a
 % specified generalized error tolerance with guarantees under Bayesian
 % assumptions. Currently, only Sobol points are supported.
 %
-%   [OBJ,Q] = CUBBAYESNET_G('f',f,'dim',dim,'absTol',absTol,'relTol',relTol,
+%   [OBJ,Q] = CUBBAYESNET_G(f,dim,'absTol',absTol,'relTol',relTol,
 %   'order',order,'arbMean',arbMean) initializes the object with the given
 %   parameters and also returns an estimate of integral Q.
 %
@@ -24,6 +24,23 @@
 %   provided below. Input f is a function handle that accepts an n x d
 %   matrix input, where d is the dimension of the hyperbox, and n is the
 %   number of points being evaluated simultaneously.
+%
+%   The following additional input parameter passing styles also supported:
+%
+%   [OBJ,Q] = CUBBAYESNET_G(f,dim); estimates the integral of f over
+%   hyperbox [0,1]^d using digital nets (Sobol points). All other input parameters
+%   are initialized with default values as given below. Returns the initialized
+%   object OBJ and the estimate of integral Q.
+%
+%   [OBJ,Q] = CUBBAYESNET_G(f,dim,absTol,relTol); estimates the integral
+%   of f over hyperbox [0,1]^d using digital nets (Sobol points). All parameters
+%   should be input in the order specified above. The answer is given within
+%   the generalized error tolerance tolfun. All other input parameters
+%   are initialized with default values as given below.
+%
+%   [OBJ,Q] = CUBBAYESNET_G(f,dim,inParms); estimates the integral
+%   of f over hyperbox [0,1]^d digital nets (Sobol points).
+%   The structure inParams shall hold the optional input parameters.
 %
 %   Input Arguments
 %
@@ -53,16 +70,16 @@
 %
 %
 %  Guarantee
-% 
+%
 %   This algorithm attempts to calculate the integral of function f over the
 %   hyperbox [0,1]^dim to a prescribed error tolerance tolfun:=
 %   max(abstol,reltol*| I |) with guaranteed confidence level, e.g., 99% when
 %   alpha=0.5%. If the algorithm terminates without showing any warning
 %   messages and provides an answer Q, then the following inequality would be
 %   satisfied:
-% 
+%
 %   Pr(| Q - I | <= tolfun) = 99%
-% 
+%
 %   Please refer to our paper [1] for detailed arguments and proofs.
 %
 %
@@ -72,34 +89,35 @@
 %   If no parameters are parsed, help text will show up as follows:
 %   >> help cubBayesNet_g
 %   ***Bayesian cubature method to estimate the integral ***
-% 
-% 
+%
+%
 %   Example 2: Quadratic
 %   Estimate the integral with integrand f(x) = x.^2 over the interval [0,1]
 %   with default parameters: order=1, abstol=0.01, relTol=0
-% 
+%
 %   >> warning('off','GAIL:cubBayesNet_g:fdnotgiven')
 %   >> [~,muhat] = cubBayesNet_g;
 %   >> exactInteg = 1.0/3;
 %   >> warning('on','GAIL:cubBayesNet_g:fdnotgiven')
 %   >> check = double(abs(exactInteg-muhat) < 0.01)
 %   check = 1
-% 
-% 
+%
+%
 %   Example 3: ExpCos
 %   Estimate the integral with integrand f(x) = exp(sum(cos(2*pi*x)) over
 %   the interval [0,1] with parameters: order=1, abstol=0.001, relTol=0.01
-% 
+%
 %   >> fun = @(x) exp(sum(cos(2*pi*x), 2));
 %   >> dim=2; absTol=1e-3; relTol=1e-2;
 %   >> exactInteg = besseli(0,1)^dim;
-%   >> inputArgs = {'relTol',relTol};
-%   >> inputArgs = [inputArgs {'f',fun, 'dim',dim, 'absTol',absTol,}];
-%   >> [obj,muhat]=cubBayesNet_g(inputArgs{:});
+%   >> inputArgs = {'absTol',absTol,'relTol',relTol};
+%   >> [~,muhat]=cubBayesNet_g(fun, dim, inputArgs{:});
 %   >> check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))
 %   check = 1
-% 
-% 
+%
+%
+%  Please refer to dt_cubBayesNet_g for more examples
+%
 %  See also CUBBAYESLATTICE_G, CUBSOBOL_G, CUBLATTICE_G, CUBMC_G, MEANMC_G,
 %  INTEGRAL_G
 %
@@ -176,7 +194,7 @@ classdef cubBayesNet_g < handle
         end
         if nargin >= iStart
           % parse and set the input arguments to obj
-          obj.parse_input_args(varargin{:});
+          obj.parse_input_args(nargin-iStart+1, varargin{:});
         end
       else
         obj.warn_fd();
@@ -218,25 +236,51 @@ classdef cubBayesNet_g < handle
         warning('Caution: debugEnable is set, this will increase computation time !')
       end
       
-      muhat = compInteg(obj);
+      if nargout > 1
+        muhat = compInteg(obj);
+      end
     end
     
     % parses each input argument passed and assigns to obj.
     % Warns any unsupported options passed
-    function parse_input_args(obj, varargin)
+    function parse_input_args(obj, nargin, varargin)
       if nargin > 0
         iStart = 1;
-        if isa(varargin{1},'cubBayesNet_g')
-          iStart = 2;
+        
+        % need atleast two input arguments
+        if nargin < 2
+          obj.warn_fd();
+        else
+          if isa(varargin{iStart}, 'function_handle') && isnumeric(varargin{1+iStart})
+            obj.f = varargin{iStart};  % must be a function_handle
+            obj.dim = varargin{1+iStart};  % must be an int
+          else
+            % input passing style not supported
+            error('GAIL:cubBayesNet_g:input_invalid',...
+              'Invalid input aruguments.\n');
+          end
         end
-        fun_not_found = false; 
-        dim_not_found = false;
-        % parse each input argument passed
-        if nargin >= iStart
-          wh = find(strcmp(varargin(iStart:end),'f'));
-          if ~isempty(wh), obj.f = varargin{wh+iStart}; else, fun_not_found=true; end
-          wh = find(strcmp(varargin(iStart:end),'dim'));
-          if ~isempty(wh), obj.dim = varargin{wh+iStart}; else,  dim_not_found=true; end
+        
+        if nargin == 4 && isa(varargin{2+iStart}, 'float') && isa(varargin{3+iStart}, 'float')
+          obj.absTol = varargin{2+iStart};
+          obj.relTol = varargin{3+iStart};
+        else
+          
+          if nargin == 3
+            inParams = varargin{2+iStart};
+            if isa(inParams, 'struct')
+              % convert struct to name value pairs
+              inputArgs = [fieldnames(inParams) struct2cell(inParams)];
+              inputArgs = reshape(inputArgs', 1, []);
+              varargin = inputArgs;
+            else
+              % input passing style not supported
+              error('GAIL:cubBayesNet_g:input_invalid',...
+                'Invalid input aruguments.\n');
+            end
+          end
+          
+          % parse each input argument passed
           wh = find(strcmp(varargin(iStart:end),'absTol'));
           if ~isempty(wh), obj.absTol = varargin{wh+iStart}; end
           wh = find(strcmp(varargin(iStart:end),'relTol'));
@@ -256,15 +300,6 @@ classdef cubBayesNet_g < handle
           wh = find(strcmp(varargin(iStart:end),'stopCriterion'));
           if ~isempty(wh), obj.stopCriterion = varargin{wh+iStart}; end
           
-          if fun_not_found==true || dim_not_found==true
-            if fun_not_found==true && dim_not_found==true && nargin-iStart == 2
-                obj.f = varargin{iStart};
-                obj.dim = varargin{iStart+1};
-            else
-              obj.warn_fd();           
-            end        
-          end
-        
         end
       end
       
@@ -274,7 +309,7 @@ classdef cubBayesNet_g < handle
             'The given input f should be a function handle.\n' );
         end
         
-       if ~(obj.order==1)
+        if ~(obj.order==1)
           warning('GAIL:cubBayesNet_g:r_invalid',...
             'Kernel order, r=%d, is not supported; it must be 1. The algorithm is using default value r=1.\n', ...
             obj.order);
@@ -299,7 +334,7 @@ classdef cubBayesNet_g < handle
       
       if ~license('test', 'Signal_Toolbox')
         error('GAIL:cubBayesNet_g:fwht_not_supported',...
-            'Signal Processing Toolbox license required to continue !\n');
+          'Signal Processing Toolbox license required to continue !\n');
       end
       
       validate_input_args(obj);
@@ -580,7 +615,7 @@ classdef cubBayesNet_g < handle
     function t = fwht_hs(fx)
       [n, ~] = size(fx);
       t = fwht(fx,n,'hadamard');
-
+      
       % Note: Unlike fft, fwht normalizes the output, i.e. divideds by 'n'
     end
     
@@ -756,7 +791,7 @@ classdef cubBayesNet_g < handle
       
       for iter = 1:numM
         nii = 2^obj.mvec(iter);
-
+        
         eigvalK = zeros(numel(lnTheta),nii);
         %br_xpts = bitrevorder(xpts(1:nii, :));
         %ftilde = cubBayesNet_g.fwht_hs(obj.f(br_xpts)); %/nii;

@@ -305,16 +305,16 @@ fprintf('')
     s = gail.stdnormcdf(a); e = gail.stdnormcdf(b);
 
     [~,dim] = size(hyperbox);
-    inputArgs = {'dim',dim, 'absTol',abstol, 'reltol',reltol, ...
+    inputArgs = {'absTol',abstol, 'reltol',reltol, ...
       'order',1, 'ptransform','Baker', ....
       'stopAtTol',true, 'stopCriterion','full'...
       'arbMean',true, 'alpha',0.01 ...
       'optTechnique','None'};
 
-    inputArgs{end+1} = 'f'; inputArgs{end+1} = @(x) f(s,e,hyperbox,x,C);
+    integrand = @(x) f(s,e,hyperbox,x,C);
     inputArgs{end+1} = 'fName'; inputArgs{end+1} = 'MVN';
 
-    objCubBayes=cubBayesLattice_g(inputArgs{:});
+    objCubBayes=cubBayesLattice_g(integrand,dim, inputArgs{:});
     [p,out]=compInteg(objCubBayes);
 
   end
@@ -330,16 +330,16 @@ fprintf('')
     s = gail.stdnormcdf(a); e = gail.stdnormcdf(b);
 
     [~,dim] = size(hyperbox);
-    inputArgs = {'dim',dim, 'absTol',abstol, 'reltol',reltol, ...
+    inputArgs = {'absTol',abstol, 'reltol',reltol, ...
       'order',1, ....
       'stopAtTol',true, 'stopCriterion','full'...
       'arbMean',true, 'alpha',0.01 ...
       'optTechnique','None'};
 
-    inputArgs{end+1} = 'f'; inputArgs{end+1} = @(x) f(s,e,hyperbox,x,C);
+    integrand = @(x) f(s,e,hyperbox,x,C);
     inputArgs{end+1} = 'fName'; inputArgs{end+1} = 'MVN';
 
-    objCubBayes=cubBayesNet_g(inputArgs{:});
+    objCubBayes=cubBayesNet_g(integrand,dim,inputArgs{:});
     [p,out]=compInteg(objCubBayes);
 
   end

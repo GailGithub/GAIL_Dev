@@ -33,7 +33,6 @@ muBest = computeGoldenMuhat(MVNParams);
 integrand = @(t) GenzFunc(t,MVNParams);
 
 inputArgs = varargin;
-inputArgs{end+1} = 'f'; inputArgs{end+1} = integrand;
 inputArgs{end+1} = 'fName'; inputArgs{end+1} = fName;
 
 nRep = 100; % increased it for gail plots
@@ -53,9 +52,9 @@ for i = 1:nRep
   % initialise the object based on the sampling method
   if exist('samplingMethod','var') && ...
       strcmp(samplingMethod,'Net') % use Sobol points
-    objCubBayes=cubBayesNet_g(inputArgs{:});
+    objCubBayes=cubBayesNet_g(integrand,dim,inputArgs{:});
   else % use Lattice points
-    objCubBayes=cubBayesLattice_g(inputArgs{:});
+    objCubBayes=cubBayesLattice_g(integrand,dim,inputArgs{:});
   end
 
   [muhatVec(i),outVec(i)]=compInteg(objCubBayes);

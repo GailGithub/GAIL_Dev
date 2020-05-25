@@ -21,7 +21,6 @@ integrand = @(x) keisterFunc(x,dim,1/sqrt(2)); % a=0.8
 exactInteg = Keistertrue(dim);
 
 inputArgs = varargin;
-inputArgs{end+1} = 'f'; inputArgs{end+1} = integrand;
 inputArgs{end+1} = 'fName'; inputArgs{end+1} = fName;
 
 nRep = get_arg('nRepAuto', varargin, 100);
@@ -42,9 +41,9 @@ for i=1:nRep
   % initialise the object based on the sampling method
   if exist('samplingMethod','var') && ...
       strcmp(samplingMethod,'Net') % use Sobol points
-    obj=cubBayesNet_g(inputArgs{:});
+    obj=cubBayesNet_g(integrand,dim,inputArgs{:});
   else % use Lattice points
-    obj=cubBayesLattice_g(inputArgs{:});
+    obj=cubBayesLattice_g(integrand,dim,inputArgs{:});
   end
     [muhatVec(i),outVec(i)]=compInteg(obj);
   end

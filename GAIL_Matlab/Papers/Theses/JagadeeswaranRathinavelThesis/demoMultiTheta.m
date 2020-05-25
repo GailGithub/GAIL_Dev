@@ -9,9 +9,9 @@ fun = @(x)sum(const.* sin(2*pi*x.^2), 2);
 dim=3; absTol=1e-2;
 exactInteg = fresnels(2)*sum(const)/2; % 'relTol',relTol, 
 inputArgs = {'order',2, 'ptransform','none', ...
-  'f',fun, 'dim',dim, 'absTol',absTol, 'oneTheta',true,...
+  'absTol',absTol, 'oneTheta',true,...
   'useGradient',false};
-obj=cubBayesLattice_g(inputArgs{:});
+obj=cubBayesLattice_g(fun, dim, inputArgs{:});
 
 [muhatOneTheta(nRep),outParamsOneTheta(nRep)]=compInteg(obj);
 for i=1:nRep-1
@@ -29,9 +29,9 @@ fun = @(x)sum(const.* sin(2*pi*x.^2), 2);
 dim=3; absTol=1e-2;
 exactInteg = fresnels(2)*sum(const)/2; % 'relTol',relTol,
 inputArgs = { 'order',2, 'ptransform','none', ...
-  'f',fun, 'dim',dim, 'absTol',absTol, 'oneTheta',false,...
+  'absTol',absTol, 'oneTheta',false,...
   'useGradient',false};
-obj=cubBayesLattice_g(inputArgs{:});
+obj=cubBayesLattice_g(fun, dim, inputArgs{:});
 [muhatMultiTheta(nRep),outParamsMultiTheta(nRep)]=compInteg(obj);
 for i=1:nRep-1
   [muhatMultiTheta(i),outParamsMultiTheta(i)]=compInteg(obj);

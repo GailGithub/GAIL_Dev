@@ -2526,8 +2526,8 @@ f = @(x) exp(-x.^2); [q, out_param] = integral_g(f,'a',1,'b',2,'nlo',100,'nhi',1
 %
 % Estimate the integral with integrand \(f(x) = x_1 x_2\) in the hyperbox \([0,1]^2\):
 
-  f = @(x) prod(x,2); hyperbox = [zeros(1,2); ones(1,2)];
-  obj = cubBayesLattice_g(f,hyperbox,'uniform',1e-5,0); exactsol = 1/4;
+  f = @(x) prod(x,2); dim = 2;
+  obj = cubBayesLattice_g(f,dim,1e-5,0); exactsol = 1/4;
   q = compInteg(obj);
   check = double(abs(exactsol-q) < 1e-5)
 
@@ -2538,7 +2538,7 @@ f = @(x) exp(-x.^2); [q, out_param] = integral_g(f,'a',1,'b',2,'nlo',100,'nhi',1
 % in the hyperbox \(R^3\) where \(x_1\), \(x_2\) and \(x_3\) are normally distributed:
 
   f = @(x) x(:,1).^2.*x(:,2).^2.*x(:,3).^2; hyperbox = [-inf(1,3);inf(1,3)];
-  obj = cubBayesLattice_g(f,'dim', 3, hyperbox,'normal',1e-3,1e-3); exactsol = 1;
+  obj = cubBayesLattice_g(f, 3, 1e-3,1e-3); exactsol = 1;
   q = compInteg(obj);
   check = double(abs(exactsol-q) < max(1e-3,1e-3*abs(exactsol)))
 
@@ -2574,7 +2574,7 @@ f = @(x) exp(-x.^2); [q, out_param] = integral_g(f,'a',1,'b',2,'nlo',100,'nhi',1
 % \([0,1)^5\) with pure absolute error \(10^{-5}\).
 
   f = @(x) 8*prod(x,2); hyperbox = [zeros(1,5);ones(1,5)];
-  obj = cubBayesLattice_g(f,hyperbox,'uniform',1e-5,0); exactsol = 1/4;
+  obj = cubBayesLattice_g(f,5,1e-5,0); exactsol = 1/4;
   q = compInteg(obj);
   check = double(abs(exactsol-q) < 1e-5)
 

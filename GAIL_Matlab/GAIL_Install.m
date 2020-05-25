@@ -18,6 +18,8 @@ rmpath(gailp);% Remove path from MATLAB search path
 warning(warninfo.state, warninfo.identifier);
 addpath(gailp);           % Add GAIL directories and subdirectories
 savepath;                 % Save the changes
+%  file sturcture to build for the documentation purpose, by default it is
+%  false
 if isBuild
    unzip('http://www.math.iit.edu/~Meshfree-methods-seminar/GAIL/GAIL_Build.zip',[GAILPATH,'..',filesep]);
 end
