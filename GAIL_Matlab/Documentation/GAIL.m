@@ -2,10 +2,10 @@
 %
 % GAIL (Guaranteed Automatic Integration Library) is created, developed,
 % and maintained by Fred Hickernell (Illinois Institute of Technology),
-% Sou-Cheng Choi (IIT), Yuhan Ding (IIT), Lan Jiang (IIT alum), 
-% Jagadeeswaran Rathinavel (IIT), Lluis Antoni Jimenez Rugama (IIT alum), 
-% Xin Tong (University of Illinois at Chicago), Kan Zhang (IIT), 
-% Yizhi Zhang (IIT alum), and Xuan Zhou (IIT alum).
+% Sou-Cheng Choi (IIT and Kamakura Corporation), Yuhan Ding (IIT), Lan
+% Jiang (IIT alum), Jagadeeswaran Rathinavel (IIT), Lluis Antoni Jimenez
+% Rugama (IIT alum), Xin Tong (University of Illinois at Chicago), Kan
+% Zhang (IIT), Yizhi Zhang (IIT alum), and Xuan Zhou (IIT alum).
 %
 % GAIL is a suite of algorithms for integration problems in one, many, and
 % infinite dimensions, and whose answers are guaranteed to be correct.
