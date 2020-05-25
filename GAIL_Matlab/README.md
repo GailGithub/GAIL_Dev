@@ -320,8 +320,8 @@ Scientific Computing Research, Office of Science, U.S. Department of
 Energy, under contract DE-AC02-06CH11357.
 
 
-Sponsors
----------
+Organizations
+--------------
 
 <img src="./Documentation/logo/illinois-institute-of-technology-vector-logo.jpg" alt="IIT logo"/>
 

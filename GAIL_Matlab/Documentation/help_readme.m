@@ -315,9 +315,9 @@
 % Energy, under contract DE-AC02-06CH11357.
 %
 % 
-%% Sponsors
+%% Organizations
 % 
 % 
-% <<illinois-institute-of-technology-vector-logo.jpg>>
+% <<./logo/illinois-institute-of-technology-vector-logo.jpg>>
 % 
-% <<kamakura-corporation-vector-logo.png>>
+% <<./logo/kamakura-corporation-vector-logo.png>>
