@@ -68,6 +68,8 @@ h_legend = legend([h(1) h(2) h(4) h(6) h(3) h(5) h(7)],{'$f(x)$','funmin\_g''s m
     'Location','Southeast');
 set(h_legend,'interpreter','latex');
 
+delete('fmin_ex1X.mat');
+
 function y = fmin_ex1(x)
 if exist('fmin_ex1X.mat','file')
    load fmin_ex1X xAll fAll
