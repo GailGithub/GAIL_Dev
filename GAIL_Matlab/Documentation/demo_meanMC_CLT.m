@@ -82,7 +82,7 @@ plot(sortedpay,((1:n)-1/2)/n,'-'); %plot the empirical distribution function sce
 xlabel('Payoff in dollars')
 ylabel('CDF')
 axis([0 50 0 1])
-print -depsc PayoffCDF.eps %print the plot to a .eps file
+
 %%
 % Note that the option has a positive payoff only about 60% of the time.
 
