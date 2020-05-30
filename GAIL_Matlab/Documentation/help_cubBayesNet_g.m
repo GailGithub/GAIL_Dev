@@ -77,6 +77,9 @@
 % * n --- number of samples used to compute the integral of f.
 %
 % * time --- time to compute the integral in seconds.
+% * optParams --- optional parameters useful to debug and get better
+%                  understanding of the algorithm
+% *   optParams.aMLEAll ---- returns the shape parameters computed
 %
 % <html>
 % <ul type="square">

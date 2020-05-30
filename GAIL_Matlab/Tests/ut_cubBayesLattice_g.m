@@ -31,6 +31,11 @@ classdef ut_cubBayesLattice_g < matlab.unittest.TestCase
         'GAIL:cubBayesLattice_g:var_transform_invalid');
     end
 
+    function cubBayesLattice_gOferror14(testCase)
+      testCase.verifyError(@()cubBayesLattice_g('f',@(x)x.^2, 'dim',2),...
+        'GAIL:cubBayesLattice_g:input_invalid');
+    end
+    
     function cubBayesLattice_gOfwarningMaxReached(testCase)
       testCase.verifyWarning( ...
       @()TestAsianArithmeticMeanOptionAutoExample(...

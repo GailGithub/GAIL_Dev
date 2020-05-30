@@ -128,11 +128,13 @@ for testFunArg=testFunArgs(1:end)
       % errVec = [errVec err/errTol];
       errVec = [errVec err./tolVec_];
       
-      if quantile(err./tolVec_, 1-alpha/2) > 1 && sum((err./tolVec_) > 1) > 2
+      if quantile(err./tolVec_, 1-alpha/2) > 1 && sum((err./tolVec_) > 1) > 1
         qval = quantile(err./tolVec_, 1-alpha/2);
         fail_count = sum((err./tolVec_) > 1);
-        warning('Error exceeded given threshold: test failed for function %s, qval %f, fail_count %d',...
-          fName, qval, fail_count);
+        if ~strcmp(fName,'optPrice') || (strcmp(fName,'optPrice') && sum((err./tolVec_) > 1) > 3)
+            warning('Error exceeded given threshold: test failed for function %s, qval %f, fail_count %d',...
+              fName, qval, fail_count);
+        end
 
         ME = MException('cubBayesNet_g_longtests:errorExceeded', ...
           'Error exceeded given threshold: test failed for function %s',fName);

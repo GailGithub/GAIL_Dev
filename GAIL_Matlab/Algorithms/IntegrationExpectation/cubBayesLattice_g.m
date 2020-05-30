@@ -74,6 +74,9 @@
 %                      2 - used max number of samples and yet not met the
 %                      error tolerance
 %    ErrBd  --- estimated integral error | I - Q |
+%    optParams --- optional parameters useful to debug and get better
+%                  understanding of the algorithm
+%    optParams.aMLEAll ---- returns the shape parameters computed
 %
 %
 %  Guarantee

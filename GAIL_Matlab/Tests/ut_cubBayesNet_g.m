@@ -25,6 +25,11 @@ classdef ut_cubBayesNet_g < matlab.unittest.TestCase
         'GAIL:cubBayesNet_g:stop_crit_invalid');
     end
     
+    function cubBayesNet_gOferror14(testCase)
+      testCase.verifyError(@()cubBayesNet_g('f',@(x)x.^2, 'dim',2),...
+        'GAIL:cubBayesNet_g:input_invalid');
+    end
+    
     function cubBayesNet_gOfwarningMaxReached(testCase)
       testCase.verifyWarning( ...
       @()TestAsianArithmeticMeanOptionAutoExample('absTol',1E-7, ...
