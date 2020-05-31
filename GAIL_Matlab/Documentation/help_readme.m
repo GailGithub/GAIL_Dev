@@ -318,6 +318,6 @@
 %% Organizations
 % 
 % 
-% <<./logo/illinois-institute-of-technology-vector-logo.jpg>>
+% <<illinois-institute-of-technology-vector-logo.jpg>>
 % 
-% <<./logo/kamakura-corporation-vector-logo.png>>
+% <<kamakura-corporation-vector-logo.png>>
