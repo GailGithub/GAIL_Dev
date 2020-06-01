@@ -4,18 +4,16 @@
 % specified generalized error tolerance with guarantees under Bayesian
 % assumptions. Currently, only Sobol points are supported.
 %% Syntax
-% [OBJ,Q] = *cubBayesNet_g*(f,dim);
+% [OBJ,Q] = *cubBayesNet_g*(f,dim,'absTol',absTol,'relTol',relTol,
+%     'order',order,'arbMean',arbMean)
 %
-% [OBJ,Q] = *cubBayesNet_g*(f,dim,'absTol',absTol,'relTol',relTol,...
-%     'order',order,'arbMean',arbMean);
-%
-% [OBJ] = *cubBayesNet_g*(f,dim,'absTol',absTol,'relTol',relTol,...
-%     'order',order,'arbMean',arbMean);
 % [Q,OutP] = *compInteg*(OBJ)
 %
-% [OBJ,Q] = *cubBayesNet_g*(f,dim,absTol,relTol);
+% [OBJ,Q] = *cubBayesNet_g*(f,dim)
 %
-% [OBJ,Q] = *cubBayesNet_g*(f,dim,inParams);
+% [OBJ,Q] = *cubBayesNet_g*(f,dim,absTol,relTol)
+%
+% [OBJ,Q] = *cubBayesNet_g*(f,dim,inParams)
 %
 %% Description
 % 
@@ -24,7 +22,7 @@
 %   given parameters and also returns an estimate of integral Q.
 %
 % [Q,OutP] = *compInteg*(OBJ) estimates the integral of f over hyperbox
-%   $[0,1]^d$ using digital nets (Sobol points) to within a specified
+%   $[0,1]^{\mathrm{dim}}$ using digital nets (Sobol points) to within a specified
 %   generalized error tolerance, tolfun = max(abstol, reltol*| I |), i.e.,
 %   | I - Q | <= tolfun with confidence of at least 99%, where I is the
 %   true integral value, Q is the estimated integral value, abstol is the
@@ -36,20 +34,28 @@
 % It is recommended to use *compInteg* for estimating the integral
 % repeatedly after the object initialization.
 %
-% [OBJ,Q] = *cubBayesNet_g*(f,dim,absTol,relTol); estimates the integral 
-%   of f over hyperbox [0,1]^d using digital nets (Sobol points). All parameters
-%   should be input in the order specified above. The answer is given within 
-%   the generalized error tolerance tolfun. All other input parameters
-%    are initialized with default values as given below.  
-%
-% [OBJ,Q] = *cubBayesNet_g*(f,dim,inParms); estimates the integral 
-%   of f over hyperbox [0,1]^d using digital nets (Sobol points). 
-%   The structure inParams shall hold the optional input parameters.
-%
 % OutP is the structure holding additional output params, more details
 % provided below. Input f is a function handle that accepts an n x d
 % matrix input, where d is the dimension of the hyperbox, and n is the
 % number of points being evaluated simultaneously.
+%
+% The following additional input parameter passing styles also supported:
+%
+% [OBJ,Q] = *cubBayesNet_g*(f,dim); estimates the integral of f over
+%   hyperbox $[0,1]^{\mathrm{dim}}$ using digital nets (Sobol points). All other input parameters
+%   are initialized with default values as given below. Returns the initialized
+%   object OBJ and the estimate of integral Q.  
+%
+% [OBJ,Q] = *cubBayesNet_g*(f,dim,absTol,relTol); estimates the integral
+%   of f over hyperbox $[0,1]^{\mathrm{dim}}$ using digital nets (Sobol points). All parameters
+%   should be input in the order specified above. The answer is given within
+%   the generalized error tolerance tolfun. All other input parameters
+%   are initialized with default values as given below.
+%
+% [OBJ,Q] = *cubBayesNet_g*(f,dim,inParms); estimates the integral 
+%   of f over hyperbox $[0,1]^{\mathrm{dim}}$ using digital nets (Sobol points). 
+%   The structure inParams shall hold the optional input parameters.
+%
 %
 % *Input Arguments*
 %
@@ -77,9 +83,6 @@
 % * n --- number of samples used to compute the integral of f.
 %
 % * time --- time to compute the integral in seconds.
-% * optParams --- optional parameters useful to debug and get better
-%                  understanding of the algorithm
-% *   optParams.aMLEAll ---- returns the shape parameters computed
 %
 % <html>
 % <ul type="square">
@@ -96,11 +99,16 @@
 %
 % * ErrBd  --- estimated integral error | I - Q |
 %
+% * optParams --- optional parameters useful to debug and get better
+%                  understanding of the algorithm
+%
+% * optParams.aMLEAll ---- returns the shape parameters computed
+%
 %
 %%  Guarantee
 %
 % This algorithm attempts to calculate the integral of function f over the
-% hyperbox $[0,1]^{d}$ to a prescribed error tolerance 
+% hyperbox $[0,1]^{\mathrm{dim}}$ to a prescribed error tolerance 
 % tolfun:= max(abstol,reltol*| I |) with guaranteed confidence level,
 % e.g.,99% when alpha=0.5%. If the algorithm terminates without showing any
 % warning messages and provides an answer Q, then the following inequality
@@ -210,9 +218,6 @@ etaDim = size(outParams.optParams.aMLEAll, 2)
 % <a href="help_cubBayesLattice_g.html">cubBayesLattice_g</a>
 % </html>
 %
-% <html>
-% <p><a href="cubBayesNet_g.html">cubBayesNet_g</a>
-% </html>
 %
 %% References
 %

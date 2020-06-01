@@ -4,24 +4,18 @@
 % specified generalized error tolerance with guarantees under Bayesian
 % assumptions.
 %% Syntax
-% [OBJ,Q] = *cubBayesLattice_g*(f,dim)
-%
 % [OBJ,Q] = *cubBayesLattice_g*(f,dim,'absTol',absTol,'relTol',relTol,
 %           'order',order,'ptransform',ptransform,'arbMean',arbMean)
 %
-% [OBJ] = *cubBayesLattice_g*(f,dim,'absTol',absTol,'relTol',relTol,
-%         'order',order,'ptransform',ptransform,'arbMean',arbMean)
 % [Q,OutP] = *compInteg*(OBJ)
+%
+% [OBJ,Q] = *cubBayesLattice_g*(f,dim)
 %
 % [OBJ,Q] = *cubBayesLattice_g*(f,dim,absTol,relTol)
 %
 % [OBJ,Q] = *cubBayesLattice_g*(f,dim,inParams)
 %
 %% Description
-%
-% [OBJ,Q] = *cubBayesLattice_g*(f,dim)
-%   Initializes the object with the default parameters and also returns an
-%   estimate of integral Q for the integrand f in d dimensions.
 % 
 % [OBJ,Q] = *cubBayesLattice_g*(f,dim,'absTol',absTol,'relTol',relTol,
 %   'order',order,'ptransform',ptransform,'arbMean',arbMean) Initializes
@@ -29,41 +23,46 @@
 %   estimate of integral Q.
 %
 % [Q,OutP] = *compInteg*(OBJ) estimates the integral of f over hyperbox
-%   $[0,1]^{d}$ using rank-1 Lattice sampling to within a specified generalized
-%   error tolerance, tolfun = max(abstol, reltol*| I |), i.e., | I - Q | <= tolfun
-%   with confidence of at least 99%, where I is the true integral value,
-%   Q is the estimated integral value, abstol is the absolute error tolerance,
-%   and reltol is the relative error tolerance. Usually the reltol determines
-%   the accuracy of the estimation, however, if | I | is rather small,
-%   then abstol determines the accuracy of the estimation.
-%   OutP is the structure holding additional output params, more details provided
-%   below. Input f is a function handle that accepts an n x d matrix input,
-%   where d is the dimension of the hyperbox, and n is the number of points
-%   being evaluated simultaneously.
+%   $[0,1]^{\mathrm{dim}}$ using rank-1 Lattice sampling to within a specified generalized
+%   error tolerance, tolfun = max(abstol, reltol*| I |), i.e., | I - Q | <=
+%   tolfun with confidence of at least 99%, where I is the true integral
+%   value, Q is the estimated integral value, abstol is the absolute error
+%   tolerance, and reltol is the relative error tolerance. Usually the
+%   reltol determines the accuracy of the estimation; however, if | I | is
+%   rather small, then abstol determines the accuracy of the estimation.
+%   Given the construction of our Lattices, d must be a positive integer
+%   with 1 <= d <= 600.
 %
 % It is recommended to use *compInteg* for estimating the integral repeatedly
 % after the object initialization.
-%
-% [OBJ,Q] = cubBayesLattice_g(f,dim,absTol,relTol); estimates the integral 
-%   of f over hyperbox [0,1]^d using rank-1 Lattice sampling. All parameters
-%   should be input in the order specified above. The answer is given within 
-%   the generalized error tolerance tolfun. All other input parameters
-%    are initialized with default values as given below.  
-%
-% [OBJ,Q] = cubBayesLattice_g(f,dim,inParms); estimates the integral 
-%   of f over hyperbox [0,1]^d using rank-1 Lattice sampling. 
-%   The structure inParams shall hold the optional input parameters.
-%
+% 
 % OutP is the structure holding additional output params, more details
 % provided below. Input f is a function handle that accepts an n x d
 % matrix input, where d is the dimension of the hyperbox, and n is the
 % number of points being evaluated simultaneously.
 %
+% The following additional input parameter passing styles also supported:
+%
+% [OBJ,Q] = *cubBayesLattice_g*(f,dim) estimates the integral of f over
+%   hyperbox $[0,1]^{\mathrm{dim}}$ using rank-1 Lattice sampling. All other input parameters
+%   are initialized with default values as given below. Returns the initialized
+%   object OBJ and the estimate of integral Q.
+%
+% [OBJ,Q] = *cubBayesLattice_g*(f,dim,absTol,relTol); estimates the integral 
+%   of f over hyperbox $[0,1]^{\mathrm{dim}}$ using rank-1 Lattice sampling. All parameters
+%   should be input in the order specified above. The answer is given within 
+%   the generalized error tolerance tolfun. All other input parameters
+%    are initialized with default values as given below.  
+%
+% [OBJ,Q] = *cubBayesLattice_g*(f,dim,inParms); estimates the integral 
+%   of f over hyperbox $[0,1]^{\mathrm{dim}}$ using rank-1 Lattice sampling. 
+%   The structure inParams shall hold the optional input parameters.
+%
 % *Input Arguments*
 %
 % * f --- the integrand.
 %
-% * d --- number of dimensions of the integrand.
+% * dim --- number of dimensions of the integrand.
 %
 % *Optional Input Arguments*
 %
@@ -71,10 +70,7 @@
 %
 % * relTol --- relative error tolerance | I - Q | <= I*relTol. Default is 0
 %
-% * order --- order of the Bernoulli polynomial of the kernel r=1,2.
-%             If r ==0, algorithm automatically chooses the kernel order
-%             which can be a non-integer value.
-%             Default is 2
+% * order --- order of the Bernoulli polynomial of the kernel r=1,2. Default is 2
 %
 % * ptransform --- periodization variable transform to use: 'Baker', 'C0',
 %                  'C1', 'C1sin', or 'C2sin'. Default is 'C1sin'
@@ -88,27 +84,11 @@
 %
 % * mmax --- max number of samples allowed: 2^mmax. Default is 22
 %
-% * stopCriterion -- stopping criterion to use. Supports three options 
-%                     1) MLE: Empirical Bayes, 
-%                     2) GCV: Generalized Cross Validation
-%                     3) full: Full Bayes
-%                     Default is MLE: Empirical Bayes
-%
-%  * useGradient -- If true uses gradient descent in parameter search.
-%                   Default is false
-%
-%  * oneTheta -- If true uses common shape parameter for all dimensions,
-%                 else allow shape parameter vary across dimensions.
-%                 Default is true
-%
 % *Output Arguments*
 %
 % * n --- number of samples used to compute the integral of f.
 %
 % * time --- time to compute the integral in seconds.
-% * optParams --- optional parameters useful to debug and get better
-%                  understanding of the algorithm
-% *   optParams.aMLEAll ---- returns the shape parameters computed
 %
 % <html>
 % <ul type="square">
@@ -120,31 +100,29 @@
 %                <li>2 - used max number of samples and yet not met the
 %                      error tolerance</li>
 %   </ul>
-%  <li>ErrBd  --- estimated integral error | I - Q |</li>
 %  </ul>
 % </html>
+%
+% * ErrBd  --- estimated integral error | I - Q |
+%
+% * optParams --- optional parameters useful to debug and get better
+%                  understanding of the algorithm
+%
+% * optParams.aMLEAll ---- returns the shape parameters computed
+%
 %
 %
 %%  Guarantee
 %
 % This algorithm attempts to calculate the integral of function f over the
-% hyperbox $[0,1]^d$ to a prescribed error tolerance tolfun:= max(abstol,reltol*| I |)
+% hyperbox $[0,1]^{\mathrm{dim}}$ to a prescribed error tolerance tolfun:= max(abstol,reltol*| I |)
 % with guaranteed confidence level, e.g., 99% when alpha=0.5%. If the
 % algorithm terminates without showing any warning messages and provides
 % an answer Q, then the following inequality would be satisfied:
 %
 % Pr(| Q - I | <= tolfun) = 99%
 %
-% The Bayesian cubature postulates the integrand to be an instance of a 
-% Gaussian stochastic process. We assume a Gaussian process parameterized 
-% by a constant mean and a covariance function defined by a scale 
-% parameter and a function specifying how the integrand values at two 
-% different points in the domain are related.
-% The integration results are guaranteed for integrands belonging to cone
-% of well-behaved functions which reside in the middle of the sample 
-% space. The concept of a cone of functions is explained in our thesis 
-% and paper. Please refer to our paper [1] and thesis [2] for detailed 
-% arguments and proofs.
+% Please refer to our paper [1] for detailed arguments and proofs.
 %
 %% Examples
 %
@@ -200,7 +178,7 @@ check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))
 etaDim = size(outParams.optParams.aMLEAll, 2)
 
 %%
-% *Example 4:  Multivariate normal probability *
+% *Example 4:  Multivariate normal probability*
 % 
 % Estimate the multivariate normal probability for the given hyper interval
 % $\left(\begin{array}{c} -6\\ -2\\ -2\end{array}\right) $ and
@@ -279,16 +257,17 @@ etaDim = size(outParams.optParams.aMLEAll, 2)
 % <a href="help_integral_g.html">integral_g</a>
 % </html>
 %
+% <html>
+% <a href="help_cubBayesNet_g.html">cubBayesNet_g</a>
+% </html>
+%
 %% References
 %
 % [1] Jagadeeswaran Rathinavel, Fred J. Hickernell, Fast automatic Bayesian cubature
 %   using lattice sampling.  Stat Comput 29, 1215-1229 (2019).
 %   https://doi.org/10.1007/s11222-019-09895-9
 %
-% [2] Jagadeeswaran Rathinavel, "Fast automatic Bayesian cubature using
-%   matching kernels and designs," PhD thesis, Illinois Institute of Technology, 2019.
-%
-% [3] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
+% [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 %   Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
 %   Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
 %   Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available

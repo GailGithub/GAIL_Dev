@@ -10,7 +10,7 @@
 %   estimate of integral Q.
 %
 %   [Q,OutP] = COMPINTEG(OBJ); estimates the integral of f over hyperbox
-%   [0,1]^d using rank-1 Lattice sampling to within a specified generalized
+%   [0,1]^dim using rank-1 Lattice sampling to within a specified generalized
 %   error tolerance, tolfun = max(abstol, reltol*| I |), i.e., | I - Q | <=
 %   tolfun with confidence of at least 99%, where I is the true integral
 %   value, Q is the estimated integral value, abstol is the absolute error
@@ -31,18 +31,18 @@
 %   The following additional input parameter passing styles also supported:
 %
 %   [OBJ,Q] = CUBBAYESLATTICE_G(f,dim); estimates the integral of f over
-%   hyperbox [0,1]^d using rank-1 Lattice sampling. All other input parameters
+%   hyperbox [0,1]^dim using rank-1 Lattice sampling. All other input parameters
 %   are initialized with default values as given below. Returns the initialized
 %   object OBJ and the estimate of integral Q.
 %
 %   [OBJ,Q] = CUBBAYESLATTICE_G(f,dim,absTol,relTol); estimates the integral
-%   of f over hyperbox [0,1]^d using rank-1 Lattice sampling. All parameters
+%   of f over hyperbox [0,1]^dim using rank-1 Lattice sampling. All parameters
 %   should be input in the order specified above. The answer is given within
 %   the generalized error tolerance tolfun. All other input parameters
 %   are initialized with default values as given below.
 %
 %   [OBJ,Q] = CUBBAYESLATTICE_G(f,dim,inParms); estimates the integral
-%   of f over hyperbox [0,1]^d using rank-1 Lattice sampling.
+%   of f over hyperbox [0,1]^dim using rank-1 Lattice sampling.
 %   The structure inParams shall hold the optional input parameters.
 %
 %   Input Arguments
