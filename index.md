@@ -52,7 +52,17 @@ Rathinavel, Lluis Antoni Jimenez Rugama, Xin Tong, Kan Zhang, Yizhi Zhang, and X
 
 ### Papers and Reports
 
+2019
+
+* Jagadeeswaran Rathinavel and Fred J. Hickernell, <em><a href="https://doi.org/10.1007/s11222-019-09895-9">Fast automatic Bayesian cubature using lattice sampling</a></em>, Statistics and Computingt 29, pp. 1215-1229, 2019.
+
+* Jagadeeswaran Rathinavel, <em><a href="">Fast automatic Bayesian cubature using matching kernels and designs</a></em>,  Ph.D Thesis, Illinois Institute of Technology,  2019.
+
 2018 
+
+* Yizhi Zhang, <em><a href="http://hdl.handle.net/10560/islandora:1001318">Guaranteed Adaptive Automatic Algorithms for Univariate Integration: Methods, Costs and Implementations</a></em>,  Ph.D Thesis, Illinois Institute of Technology,  2018.
+
+* Fred J. Hickernell, Sou-Cheng T. Choi, Lan Jiang, and Lluís Antoni Jimenez Rugama, <em><a href="https://onlinelibrary.wiley.com/doi/abs/10.1002/9781118445112.stat08035">Monte Carlo simulation, automatic stopping criteria for</a></em>, Wiley StatsRef: Statistics Reference Online, pp. 1-7, 2018.
 
 * Lluís Antoni Jiménez Rugama, Laurent Gilquin, <em><a href="https://link.springer.com/article/10.1007/s11222-017-9759-1">Reliable error estimation for Sobol’ indices</a></em>, Statistics and Computing, Volume 28, Number 4, Page 725, 2018.
 
