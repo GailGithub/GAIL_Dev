@@ -7,6 +7,8 @@
 % [OBJ,Q] = *cubBayesLattice_g*(f,dim,'absTol',absTol,'relTol',relTol,
 %           'order',order,'ptransform',ptransform,'arbMean',arbMean)
 %
+% [OBJ] = *cubBayesLattice_g*(f,dim,'absTol',absTol,'relTol',relTol,
+%         'order',order,'ptransform',ptransform,'arbMean',arbMean)
 % [Q,OutP] = *compInteg*(OBJ)
 %
 % [OBJ,Q] = *cubBayesLattice_g*(f,dim)
@@ -70,7 +72,10 @@
 %
 % * relTol --- relative error tolerance | I - Q | <= I*relTol. Default is 0
 %
-% * order --- order of the Bernoulli polynomial of the kernel r=1,2. Default is 2
+% * order --- order of the Bernoulli polynomial of the kernel r=1,2. 
+%             If r==0, algorithm automatically chooses the kernel order
+%             which can be a non-integer value.
+%             Default is 2
 %
 % * ptransform --- periodization variable transform to use: 'Baker', 'C0',
 %                  'C1', 'C1sin', or 'C2sin'. Default is 'C1sin'
@@ -83,6 +88,19 @@
 % * mmin --- min number of samples to start with: 2^mmin. Default is 10
 %
 % * mmax --- max number of samples allowed: 2^mmax. Default is 22
+%
+% * stopCriterion -- stopping criterion to use. Supports three options 
+%                     1) MLE: Empirical Bayes, 
+%                     2) GCV: Generalized Cross Validation
+%                     3) full: Full Bayes
+%                     Default is MLE: Empirical Bayes
+%
+%  * useGradient -- If true uses gradient descent in parameter search.
+%                   Default is false
+%
+%  * oneTheta -- If true uses common shape parameter for all dimensions,
+%                 else allow shape parameter vary across dimensions.
+%                 Default is true
 %
 % *Output Arguments*
 %
@@ -263,8 +281,8 @@ etaDim = size(outParams.optParams.aMLEAll, 2)
 %
 %% References
 %
-% [1] Jagadeeswaran Rathinavel, Fred J. Hickernell, Fast automatic Bayesian cubature
-%   using lattice sampling.  Stat Comput 29, 1215-1229 (2019).
+% [1] Jagadeeswaran Rathinavel, Fred J. Hickernell, Fast automatic Bayesian 
+%   cubature using lattice sampling.  Stat Comput 29, 1215-1229 (2019).
 %   https://doi.org/10.1007/s11222-019-09895-9
 %
 % [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
@@ -272,6 +290,9 @@ etaDim = size(outParams.optParams.aMLEAll, 2)
 %   Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
 %   Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available
 %   from http://gailgithub.github.io/GAIL_Dev/
+%
+% [3] Jagadeeswaran Rathinavel, "Fast automatic Bayesian cubature using
+%   matching kernels and designs," PhD thesis, Illinois Institute of Technology, 2019.
 %
 % If you find GAIL helpful in your work, please support us by citing the
 % above papers, software, and materials.

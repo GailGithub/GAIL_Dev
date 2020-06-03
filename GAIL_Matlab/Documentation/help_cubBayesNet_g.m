@@ -7,6 +7,8 @@
 % [OBJ,Q] = *cubBayesNet_g*(f,dim,'absTol',absTol,'relTol',relTol,
 %     'order',order,'arbMean',arbMean)
 %
+% [OBJ] = *cubBayesNet_g*(f,dim,'absTol',absTol,'relTol',relTol,...
+%     'order',order,'arbMean',arbMean);
 % [Q,OutP] = *compInteg*(OBJ)
 %
 % [OBJ,Q] = *cubBayesNet_g*(f,dim)
@@ -225,12 +227,14 @@ etaDim = size(outParams.optParams.aMLEAll, 2)
 %   matching kernels and designs," PhD thesis, Illinois Institute of
 %   Technology, 2019.
 %
-%
 % [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 %   Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
 %   Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
 %   Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available
 %   from http://gailgithub.github.io/GAIL_Dev/
+%
+% [3] Jagadeeswaran Rathinavel, "Fast automatic Bayesian cubature using
+%   matching kernels and designs," PhD thesis, Illinois Institute of Technology, 2019.
 %
 % If you find GAIL helpful in your work, please support us by citing the
 % above papers, software, and materials.
