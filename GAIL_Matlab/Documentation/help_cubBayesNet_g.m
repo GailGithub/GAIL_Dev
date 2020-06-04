@@ -8,7 +8,8 @@
 %     'order',order,'arbMean',arbMean)
 %
 % [OBJ] = *cubBayesNet_g*(f,dim,'absTol',absTol,'relTol',relTol,...
-%     'order',order,'arbMean',arbMean);
+%     'order',order,'arbMean',arbMean)
+%
 % [Q,OutP] = *compInteg*(OBJ)
 %
 % [OBJ,Q] = *cubBayesNet_g*(f,dim)
