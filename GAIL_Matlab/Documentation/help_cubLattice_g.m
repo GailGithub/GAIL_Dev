@@ -218,7 +218,7 @@
 
   f = @(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [-ones(1,2);2*ones(1,2)];
   q = cubLattice_g(f,hyperbox,'uniform',1e-3,1e-2,'transform','C1'); 
-  exactsol = (sqrt(pi)/2*(erf(2)+erf(1)))^2;
+  exactsol = 1/9*(sqrt(pi)/2*(erf(2)+erf(1)))^2;
   check = double(abs(exactsol-q) < max(1e-3,1e-2*abs(exactsol)))
 
 %%

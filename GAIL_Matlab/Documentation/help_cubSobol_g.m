@@ -209,7 +209,7 @@
 
   f = @(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [-ones(1,2); 2*ones(1,2)];
   q = cubSobol_g(f,hyperbox,'uniform',1e-3,1e-2); 
-  exactsol = (sqrt(pi)/2*(erf(2)+erf(1)))^2;
+  exactsol = 1/9*(sqrt(pi)/2*(erf(2)+erf(1)))^2;
   check = double(abs(exactsol-q) < max(1e-3,1e-2*abs(exactsol)))
 
 %%
@@ -253,8 +253,8 @@
 % two control variates $h_1(x) = x_1$ and $h_2(x) = x_2^2$.
 
   g.func = @(x) [10*x(:,1)-5*x(:,2).^2+1*x(:,3).^3, x(:,1), x(:,2).^2];
-  g.cv = [8,32/3]; hyperbox = [zeros(1,3);2*ones(1,3)];
-  q = cubSobol_g(g,hyperbox,'uniform',1e-6,0); exactsol = 128/3;
+  g.cv = [1,4/3]; hyperbox= [zeros(1,3);2*ones(1,3)];
+  q = cubSobol_g(g,hyperbox,'uniform',1e-6,0); exactsol = 16/3;
   check = double(abs(exactsol-q) < 1e-6)
 
 
