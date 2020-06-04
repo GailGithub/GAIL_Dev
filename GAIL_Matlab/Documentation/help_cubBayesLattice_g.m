@@ -9,6 +9,7 @@
 %
 % [OBJ] = *cubBayesLattice_g*(f,dim,'absTol',absTol,'relTol',relTol,
 %         'order',order,'ptransform',ptransform,'arbMean',arbMean)
+%
 % [Q,OutP] = *compInteg*(OBJ)
 %
 % [OBJ,Q] = *cubBayesLattice_g*(f,dim)
@@ -33,7 +34,8 @@
 %   reltol determines the accuracy of the estimation; however, if | I | is
 %   rather small, then abstol determines the accuracy of the estimation.
 %   Given the construction of our Lattices, d must be a positive integer
-%   with 1 <= d <= 600.
+%   with 1 <= dim <= 600. For higher dimensions, it is recommended to use 
+%   simpler periodization transformation like 'Baker'.
 %
 % It is recommended to use *compInteg* for estimating the integral repeatedly
 % after the object initialization.
@@ -89,16 +91,22 @@
 %
 % * mmax --- max number of samples allowed: 2^mmax. Default is 22
 %
-% * stopCriterion -- stopping criterion to use. Supports three options 
-%                     1) MLE: Empirical Bayes, 
-%                     2) GCV: Generalized Cross Validation
-%                     3) full: Full Bayes
-%                     Default is MLE: Empirical Bayes
+% <html>
+% <ul type="square">
+% <li>stopCriterion --- stopping criterion to use. Supports three options: </li>
+%   <ul type="circle">
+%                <li>1) MLE: Empirical Bayes</li>
+%                <li>2) GCV: Generalized Cross Validation</li>
+%                <li>3) full: Full Bayes</li>
+%   </ul>
+%    Default is MLE: Empirical Bayes
+%  </ul>
+% </html>
 %
-%  * useGradient -- If true uses gradient descent in parameter search.
+% * useGradient -- If true uses gradient descent in parameter search.
 %                   Default is false
 %
-%  * oneTheta -- If true uses common shape parameter for all dimensions,
+% * oneTheta -- If true uses common shape parameter for all dimensions,
 %                 else allow shape parameter vary across dimensions.
 %                 Default is true
 %
