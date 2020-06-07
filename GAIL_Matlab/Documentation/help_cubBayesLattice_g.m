@@ -103,10 +103,10 @@
 %  </ul>
 % </html>
 %
-% * useGradient -- If true uses gradient descent in parameter search.
+% * useGradient --- If true uses gradient descent in parameter search.
 %                   Default is false
 %
-% * oneTheta -- If true uses common shape parameter for all dimensions,
+% * oneTheta --- If true uses common shape parameter for all dimensions,
 %                 else allow shape parameter vary across dimensions.
 %                 Default is true
 %
@@ -134,7 +134,7 @@
 % * optParams --- optional parameters useful to debug and get better
 %                  understanding of the algorithm
 %
-% * optParams.aMLEAll ---- returns the shape parameters computed
+% * optParams.aMLEAll --- returns the shape parameters computed
 %
 %
 %

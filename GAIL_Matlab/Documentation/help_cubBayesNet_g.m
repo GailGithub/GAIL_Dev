@@ -89,8 +89,7 @@
 %
 % <html>
 % <ul type="square">
-%  <li>exitFlag --- indicates the exit condition of the algorithm:
-%  algorithm:</li>
+%  <li>exitFlag --- indicates the exit condition of the algorithm:</li>
 %   <ul type="circle">
 %                <li>1 - integral computed within the error tolerance and
 %                      without exceeding max sample limit 2^mmax </li>
@@ -105,7 +104,7 @@
 % * optParams --- optional parameters useful to debug and get better
 %                  understanding of the algorithm
 %
-% * optParams.aMLEAll ---- returns the shape parameters computed
+% * optParams.aMLEAll --- returns the shape parameters computed
 %
 %
 %%  Guarantee
