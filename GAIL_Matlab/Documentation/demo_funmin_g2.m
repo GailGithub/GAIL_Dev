@@ -7,7 +7,7 @@
 %
 % $$ f(x) = -5 \exp(-100(x-0.15)^2) - \exp(-80(x-0.65)^2). $$
 %
-% We use *funmin_g*, *fminbnd*, and *chebfun* to find the minimum of $f$ 
+% We use *funmin_g*, MATLAB's *fminbnd*, and Chebfun's *min* to find the minimum of $f$ 
 % over the interval $[0,1]$.
 
 
@@ -94,4 +94,6 @@ end
 %     Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
 %     Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available
 %     from http://gailgithub.github.io/GAIL_Dev/
-
+%
+% [3] T. A. Driscoll, N. Hale, and L. N. Trefethen, editors, "Chebfun Guide",
+%     Pafnuty Publications, Oxford, 2014.
