@@ -112,4 +112,5 @@ switch index
             end
         end
 end
+f_true = f_true ./ prod(hyperbox(2,:)-hyperbox(1,:)); % pdf of uniform
 end
