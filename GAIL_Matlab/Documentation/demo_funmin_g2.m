@@ -97,3 +97,9 @@ end
 %
 % [3] T. A. Driscoll, N. Hale, and L. N. Trefethen, editors, "Chebfun Guide",
 %     Pafnuty Publications, Oxford, 2014.
+% 
+% [4] MATLAB's fminbnd, see 
+% 
+% <html>
+% <a href="https://www.mathworks.com/help/matlab/ref/fminbnd.html">fminbnd</a>
+% </html>
