@@ -54,9 +54,11 @@ Rathinavel, Lluis Antoni Jimenez Rugama, Xin Tong, Kan Zhang, Yizhi Zhang, and X
 
 2019
 
-* Jagadeeswaran Rathinavel and Fred J. Hickernell, <em><a href="https://doi.org/10.1007/s11222-019-09895-9">Fast automatic Bayesian cubature using lattice sampling</a></em>, Statistics and Computingt 29, pp. 1215-1229, 2019.
+* Jagadeeswaran Rathinavel and Fred J. Hickernell, <em><a href="https://projecteuclid.org/euclid.ss/1555056026">Comment on “Probabilistic Integration: A Role in Statistical Computation?”</a></em>, Statist. Sci., Volume 34, Number 1, 23-28, 2019.
 
-* Jagadeeswaran Rathinavel, <em><a href="">Fast automatic Bayesian cubature using matching kernels and designs</a></em>,  Ph.D Thesis, Illinois Institute of Technology,  2019.
+* Jagadeeswaran Rathinavel and Fred J. Hickernell, <em><a href="https://doi.org/10.1007/s11222-019-09895-9">Fast automatic Bayesian cubature using lattice sampling</a></em>, Statistics and Computing 29 (6), pp. 1215-1229, 2019.
+
+* Jagadeeswaran Rathinavel, <em><a href="http://hdl.handle.net/10560/islandora:1009731">Fast automatic Bayesian cubature using matching kernels and designs</a></em>,  Ph.D Thesis, Illinois Institute of Technology, 2019.
 
 2018 
 
@@ -74,7 +76,7 @@ quasi-Monte Carlo methods for Cubature</a></em>, Ian Sloan's 80th Birthday Fetsc
 * Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Xin Tong, <em><a href="http://www.sciencedirect.com/science/article/pii/S0885064X16301108">Local adaption for approximation and minimization of univariate functions</a></em>, Journal of Complexity, *40*, pp. 17-33, 2017.
 
 
-* F. J. Hickernell, <em><a href="https://arxiv.org/abs/1702.01487">The Trio Identity for Quasi-Monte Carlo Error</a></em>, Monte Carlo and Quasi-Monte Carlo Methods: MCQMC, Stanford, USA, August 2016 (P. Glynn and A. Owen, eds.).
+* Fred J. Hickernell, <em><a href="https://arxiv.org/abs/1702.01487">The Trio Identity for Quasi-Monte Carlo Error</a></em>, Monte Carlo and Quasi-Monte Carlo Methods: MCQMC, Stanford, USA, August 2016 (P. Glynn and A. Owen, eds.).
 
 
 2016
