@@ -83,9 +83,9 @@
 % >> hyperbox = [-ones(1,in_param.dim);ones(1,in_param.dim)];index = 1;
 % >> f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
 % >> f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)
-% f_true = 4.76***
+% f_true = 0.59***
 % >> Q = cubSobol_g(f,hyperbox,'uniform',1e-2,1e-13)
-% Q = 4.76***
+% Q = 0.59***
 %
 %%
 % Example 9: 
@@ -94,9 +94,9 @@
 % >> index = 2;hyperbox = [-ones(1,in_param.dim);ones(1,in_param.dim)];
 % >> f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
 % >> f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)
-% f_true = 2.4***
+% f_true = 0.30***
 % >> Q = cubSobol_g(f,hyperbox,'uniform',1e-2,1e-13)
-% Q = 2.4***
+% Q = 0.30***
 % 
 %
 % Example 10: 
@@ -116,9 +116,9 @@
 % >> index = 4;hyperbox = [-ones(1,in_param.dim)/2;ones(1,in_param.dim)];
 % >> f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
 % >> f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.005
-% f_true = 1.30***
+% f_true = 0.38***
 % >> Q = cubSobol_g(f,hyperbox,'uniform',1e-2,1e-3)+0.005
-% Q = 1.30***
+% Q = 0.38***
 %
 %
 % Example 12: 
@@ -127,9 +127,9 @@
 % >> index = 5;hyperbox = [-ones(1,in_param.dim)/2;ones(1,in_param.dim)];
 % >> f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
 % >> f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.005
-% f_true = 0.84***
+% f_true = 0.25***
 % >> Q = cubSobol_g(f,hyperbox,'uniform',1e-2,1e-2)+0.005
-% Q = 0.84***
+% Q = 0.25***
 %
 %
 % Example 13: 
@@ -138,8 +138,8 @@
 % >> index = 6;
 % >> f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
 % >> f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)
-% f_true = 1.73***
+% f_true = 0.51***
 % >> Q = cubSobol_g(f,hyperbox,'uniform',1e-3,1e-3)
-% Q = 1.73***
+% Q = 0.51***
 %
 %
