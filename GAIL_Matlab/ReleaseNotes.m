@@ -22,4 +22,19 @@
 % In addition, we have included Ding, Hickernell, and Jimenez Rugama's
 % recent paper, An Adaptive Algorithm Employing Continuous Linear
 % Functionals.
- 
+%
+%
+% (3) Bug Fixes
+% 
+% In the previous versions of GAIL, three of our multiple integration
+% algorithms, cubMC_g, cubLattice_g, and cubSobol_g, when applied to an
+% integral on a non-unit hypercube with respect to uniform measure, the
+% numerical approximations omitted a normalization constant, i.e., dividing
+% by the volume of the hypercube. This problem has been resolved in this
+% release. We illustrate the bug fix with a simple example. Consider f(x,y)
+% = exp(-x^2-y^2) with (x,y) in D := [-1,2]^2. Integrating f with respect
+% to the Legesgue measure, we obtainI = 2.65333. Integrating f with respect
+% to the uniform measure, we have instead d I /9, since the integration
+% domain has volume 9. Our GAIL functions by default integrate with respect
+% to the uniform measure, but previous versions returned answers with
+% respect to the Lebesgue measure, omitting the normalization.
