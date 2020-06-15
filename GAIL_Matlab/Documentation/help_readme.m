@@ -39,6 +39,12 @@
 % http://gailgithub.github.io/GAIL_Dev/
 % (this software)
 % 
+% Sou-Cheng T. Choi, Fred J. Hickernell, Michael McCourt, and Aleksei Sorokin.
+% QMCPy: A quasi-Monte Carlo Python library. 
+% https://qmcsoftware.github.io/QMCSoftware/, 2020. Working.
+% (open-source Python package for Quasi-Monte Carlo methods with some GAIL 
+% algorithms)
+% 
 % Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible Research via
 % Supportable Scientific Software," Journal of Open Research Software, Volume 2,
 % Number 1, e22, pp. 1-7, 2014.
