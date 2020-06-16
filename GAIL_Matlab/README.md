@@ -39,10 +39,10 @@ Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available from
 http://gailgithub.github.io/GAIL_Dev/
 (this software)
 
-Sou-Cheng T. Choi, Fred J. Hickernell, Michael McCourt, and Aleksei Sorokin.
-QMCPy: A quasi-Monte Carlo Python library. 
-https://qmcsoftware.github.io/QMCSoftware/, 2020. Working.
-(open-source Python package for Quasi-Monte Carlo methods with some GAIL 
+Sou-Cheng T. Choi, Fred J. Hickernell, Jagadeeswaran Rathinavel, Michael McCourt,
+and Aleksei Sorokin, QMCPy: A quasi-Monte Carlo Python library, 2020. Available
+from https://qmcsoftware.github.io/QMCSoftware/. Working.
+(open-source Python package for Quasi-Monte Carlo methods with some GAIL
 algorithms)
 
 Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible Research via
@@ -192,7 +192,7 @@ Chebfun version 5.7.0 and Doctest for MATLAB, version 2010.
 Documentation
 -------------
 
-Detailed documentation is available in the folder, 
+Detailed documentation is available in the folder,
 GAIL_Matlab/Documentation/html/GAIL.html.
 
 You can also go to MATLAB's Help. Under the section of Supplemental Software,
@@ -244,7 +244,7 @@ x is an estimated output:
 3. Ordered input values, followed by optional name-value pairs:
 	[x, out_param] = algo(f, 'input2', inputVal2, 'input3', inputVal3,...)
 
-For object classes cubBayesLattice_g and cubBayesNet_g, the output pattern 
+For object classes cubBayesLattice_g and cubBayesNet_g, the output pattern
 is [out, x], where out is an instance of the corresponding object class.
 
 Installation Instruction
@@ -291,10 +291,10 @@ We execute automated nightly fast tests and weekly long tests
 on our server. Moreover, these tests are now conducted for all MATLAB
 versions from R2016a to R2020a. The test reports are available on Mega
 cloud storage at https://mega.nz/. More specifically, fast and long test
-reports are archived in text files, gail_daily_tests* 
-and gail_weekly_tests* at 
+reports are archived in text files, gail_daily_tests*
+and gail_weekly_tests* at
 https://mega.nz/folder/FlMEjI5a#jVixXyAoI05ppbCstz8yEg
-respectively. Output files such as images of test scripts are archived 
+respectively. Output files such as images of test scripts are archived
 at https://mega.nz/folder/I0cAEKJD#AyQ_8tmxkknfIsuEW0_jnA
 respectively.
 
