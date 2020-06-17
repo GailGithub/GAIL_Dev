@@ -33,7 +33,7 @@
 % dividing by the volume of the hypercube. This problem has been resolved
 % in this release. We illustrate the bug fix with a simple example.
 % Consider f(x,y) = exp(-x^2-y^2) with (x,y) in D := [-1,2]^2. Integrating
-% f with respect to the Legesgue measure, we obtain I ~= 2.65333.
+% f with respect to the Lebesgue measure, we obtain I ~= 2.65333.
 % Integrating f with respect to the uniform measure, we have instead I / 9,
 % since the integration domain has volume 9. Our GAIL functions by default
 % integrate with respect to the uniform measure, but previous versions

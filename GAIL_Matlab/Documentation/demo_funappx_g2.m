@@ -34,7 +34,7 @@ axis tight
 %
 % <<localgui2.png>>
 %
-% Step 6: after serveral iterations, the approximation error almost meets the given tolerance:
+% Step 6: after several iterations, the approximation error almost meets the given tolerance:
 %
 % <<localgui6.png>>
 %

@@ -261,7 +261,7 @@ fprintf('')
 %% Appendix: Auxiliary function definitions
 % The following functions are defined for the above test examples.
 % |multi_normcdf_cubSobol| and |multi_normcdf_cubMC| redefine *cubSobol_g*
-% and *cubMC_g* respectively for computing normal probabilites based on
+% and *cubMC_g* respectively for computing normal probabilities based on
 % Alan Genz's transformation. |f| is the function resulting from applying
 % Alan Genz's transform that is called in either *cubSobol_g* or *cubMC_g*.
 
