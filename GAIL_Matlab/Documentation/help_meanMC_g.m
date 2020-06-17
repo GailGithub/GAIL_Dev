@@ -66,7 +66,7 @@
 %  equal to 30, the default value is 1e4.
 %
 % * in_param.n1 --- initial sample size for estimating the sample mean,
-%  which should be a moderate large positive integer at least 30, the
+%  which should be a moderately large positive integer at least 30, the
 %  default value is 1e4.
 %
 % * in_param.tbudget --- the time budget in seconds to do the two-stage
