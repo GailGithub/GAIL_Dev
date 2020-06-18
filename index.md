@@ -4,7 +4,7 @@
 
 GAIL is a suite of algorithms for integration problems in one and many dimensions, and whose answers are guaranteed to be correct.
 
-<p>GAIL is created, developed, and maintained by  <a href="http://mypages.iit.edu/~hickernell/" rel="nofollow">Fred Hickernell</a> (Illinois Institute of Technology), <a href="http://home.uchicago.edu/sctchoi" rel="nofollow">Sou-Cheng Choi</a> (IIT), and their collaborators including Yuhan Ding (IIT), Lan Jiang (IIT), Da Li (IIT), Jiazhen Lu (IIT), Jagadeeswaran Rathinavel (IIT), Lluís Antoni Jiménez Rugama (UBS), Xin Tong (UIC), Kan Zhang (IIT), Yizhi Zhang (IIT), Xiaoyang Zhao (IIT), and Xuan Zhou (J.P. Morgan).  It is a free software and could be downloaded via the link below.</p>
+<p>GAIL is created, developed, and maintained by  <a href="http://mypages.iit.edu/~hickernell/" rel="nofollow">Fred Hickernell</a> (Illinois Institute of Technology), <a href="http://home.uchicago.edu/sctchoi" rel="nofollow">Sou-Cheng Choi</a> (IIT), and their collaborators including Yuhan Ding (IIT), Lan Jiang (Compass), Da Li (IIT alumni), Jiazhen Lu (IIT alumni), Jagadeeswaran Rathinavel (IIT alumni), Lluís Antoni Jiménez Rugama (UBS), Xin Tong (UIC), Kan Zhang (IIT), Yizhi Zhang (Jamran International), Xiaoyang Zhao (IIT alumni), and Xuan Zhou (J.P. Morgan).  It is a free software and could be downloaded via the link below.</p>
 
 *To download the latest version of GAIL, follow one of the links below to:*
 <font size="2" color="red"><pre>            Get zip file              OR      run the MATLAB installation script</pre> </font>
@@ -13,6 +13,7 @@ GAIL is a suite of algorithms for integration problems in one and many dimension
 <a href="https://sourceforge.net/projects/gailmatlab/files/GAIL_2_3.zip/download"><img hspace="40" src="https://raw.githubusercontent.com/GailGithub/GAIL_Dev/gh-pages/downloadzip.png"></a>
 <a href="https://sourceforge.net/projects/gailmatlab/files/DownloadInstallGail_2_3.m/download"><img hspace="5" src="https://raw.githubusercontent.com/GailGithub/GAIL_Dev/gh-pages/downloadscript.png"></a>
 
+*To view the user guide, please see <em><a href="https://drive.google.com/file/d/1rkIuhazypLq--emi9GCAPCesmC3x3DRS/view?usp=sharing">here</a></em>.*
 
 ## News
 
@@ -315,6 +316,7 @@ The GAIL routines come with comprehensive online documentation and their impleme
 ### Acknowledgement
 
 Our work was supported in part by grants from  
+* the <a href="http://www.nsf.gov">National Science Foundation</a> under grant NSF-DMS-1522687, and
 * the <a href="http://www.nsf.gov">National Science Foundation</a> under grant NSF-DMS-1115392, and
 * the <a href="http://science.energy.gov/ascr/">Office of Advanced Scientific Computing Research</a>, <a href="http://science.energy.gov/">Office of Science</a>, <a href="http://energy.gov">U.S. Department of Energy</a>, under contract DE-AC02-06CH11357.
 
