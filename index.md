@@ -316,8 +316,7 @@ The GAIL routines come with comprehensive online documentation and their impleme
 ### Acknowledgement
 
 Our work was supported in part by grants from  
-* the <a href="http://www.nsf.gov">National Science Foundation</a> under grant NSF-DMS-1522687, and
-* the <a href="http://www.nsf.gov">National Science Foundation</a> under grant NSF-DMS-1115392, and
+* the <a href="http://www.nsf.gov">National Science Foundation</a> under grant NSF-DMS-1522687 and NSF-DMS-1115392, and
 * the <a href="http://science.energy.gov/ascr/">Office of Advanced Scientific Computing Research</a>, <a href="http://science.energy.gov/">Office of Science</a>, <a href="http://energy.gov">U.S. Department of Energy</a>, under contract DE-AC02-06CH11357.
 
 We thank the contributions of Xincheng Sheng, Xuan Zhou, and the class of Math 573 Reliable Mathematical Software, Fall 2013.
