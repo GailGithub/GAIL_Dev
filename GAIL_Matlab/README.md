@@ -320,8 +320,8 @@ http://gailgithub.github.io/GAIL_Dev/
 Acknowledgements
 ----------------
 
-Our work was supported in part by grants from the National Science
-Foundation under grant NSF-DMS-1115392, and the Office of Advanced
+Our work was supported in part by the National Science Foundation under
+grants NSF-DMS-1522687 and NSF-DMS-1115392; and by the Office of Advanced
 Scientific Computing Research, Office of Science, U.S. Department of
 Energy, under contract DE-AC02-06CH11357.
 
