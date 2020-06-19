@@ -39,6 +39,7 @@
 %   help_meanMC_g             - meanMC_g
 %   help_readme               - Readme
 %   help_ReleaseNotes         - Release Notes
+%   gail_ug_2_3_1.pdf         - User Guide
 %
 % Folders
 %   html                      - folder of all html files
