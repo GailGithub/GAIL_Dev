@@ -4,7 +4,7 @@
 
 GAIL is a suite of algorithms for integration problems in one and many dimensions, and whose answers are guaranteed to be correct.
 
-<p>GAIL is created, developed, and maintained by  <a href="http://mypages.iit.edu/~hickernell/" rel="nofollow">Fred Hickernell</a> (Illinois Institute of Technology), <a href="http://home.uchicago.edu/sctchoi" rel="nofollow">Sou-Cheng Choi</a> (IIT), and their collaborators including Yuhan Ding (IIT), Lan Jiang (Compass), Da Li (IIT alumni), Jiazhen Lu (IIT alumni), Jagadeeswaran Rathinavel (IIT alumni), Lluís Antoni Jiménez Rugama (UBS), Xin Tong (UIC), Kan Zhang (IIT), Yizhi Zhang (Jamran International), Xiaoyang Zhao (IIT alumni), and Xuan Zhou (J.P. Morgan).  It is a free software and could be downloaded via the link below.</p>
+<p>GAIL is created, developed, and maintained by  <a href="http://mypages.iit.edu/~hickernell/" rel="nofollow">Fred Hickernell</a> (Illinois Institute of Technology), <a href="http://home.uchicago.edu/sctchoi" rel="nofollow">Sou-Cheng Choi</a> (IIT), and their collaborators including Yuhan Ding (IIT), Lan Jiang (Compass), Da Li (IIT alumni), Jiazhen Lu (IIT alumni), Jagadeeswaran Rathinavel (IIT alumni), Lluís Antoni Jiménez Rugama (UBS), Xin Tong (UIC), Kan Zhang (IIT), Yizhi Zhang (Jamran International), Xiaoyang Zhao (Chicago Institute of Investment), and Xuan Zhou (J.P. Morgan).  It is a free software and could be downloaded via the link below.</p>
 
 *To download the latest version of GAIL, follow one of the links below to:*
 <font size="2" color="red"><pre>            Get zip file              OR      run the MATLAB installation script</pre> </font>
