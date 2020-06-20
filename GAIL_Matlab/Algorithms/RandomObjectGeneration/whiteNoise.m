@@ -103,7 +103,7 @@ classdef whiteNoise < stochProcess
             end
             assert(gail.compCellArray(val.distribName,obj.allowDistribName))
             obj.wnParam.distribName = val.distribName;
-            %obj.timeDim.dim = numel(val.distribName);
+            obj.timeDim.dim = numel(val.distribName);
         end
          if isfield(val,'xDistrib') %xDistrib is provided
             assert(any(strcmp(val.xDistrib,obj.allowDistribName)))
