@@ -9,3 +9,6 @@ tic; doctest stochProcess; time=toc
 tic; doctest whiteNoise; time=toc
 
 %% CALL UNIT TESTS
+run(ut_brownianMotion)
+run(ut_stochProcess)
+run(ut_whiteNoise)
