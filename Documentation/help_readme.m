@@ -192,7 +192,8 @@
 %% Documentation
 % 
 % 
-% Detailed documentation is available in the folder, GAIL_Matlab/Documentation.
+% Detailed documentation is available in the folder, 
+% GAIL_Matlab/Documentation/html/GAIL.html.
 %
 % You can also go to MATLAB's Help. Under the section of Supplemental Software,
 % you will find GAIL Toolbox's searchable HTML documentation.
@@ -230,10 +231,11 @@
 % 10.  meanMC_CLT: Monte Carlo method with Central Limit Theorem (CLT)
 % confidence intervals for estimating mean of a random variable
 % 
-% Each one of our key GAIL algorithms can parse inputs with the following three patterns of
-% APIs, where f is a real-valued MATLAB function or function handle; in_param and out_param
-% are MATLAB structure arrays, or in some cases, object instances; and x is an estimated
-% output:
+% Each one of our key GAIL algorithms, with the exception of
+% cubBayesLattice_g and cubBayesNet_g, can parse inputs with the following
+% three patterns of APIs, where f is a real-valued MATLAB function or
+% function handle; in_param and out_param are MATLAB structure arrays; and
+% x is an estimated output:
 % 
 % 1. Ordered input values: [x, out_param] = algo(f, inputVal1, inputVal2, inputVal3,...)
 % 
@@ -242,7 +244,9 @@
 % 3. Ordered input values, followed by optional name-value pairs:
 % 	[x, out_param] = algo(f, 'input2', inputVal2, 'input3', inputVal3,...)
 %  
-% 
+% For object classes cubBayesLattice_g and cubBayesNet_g, the output pattern
+% is [out, x], where out is an instance of the corresponding object class.
+%
 %% Installation Instruction
 % 
 % 
@@ -285,18 +289,18 @@
 % 
 % We execute automated nightly fast tests and weekly long tests
 % on our server. Moreover, these tests are now conducted for all MATLAB
-% versions from R2016a to R2019b. The test reports are available on Mega
+% versions from R2016a to R2020a. The test reports are available on Mega
 % cloud storage at https://mega.nz/. More specifically, fast and long test
-% reports are archived at
-%      https://mega.nz/#F!4olmWa6L!vYuscSnGqkvkZrGJXW5Umw
-% and
-%      https://mega.nz/#F!I0cAEKJD!AyQ_8tmxkknfIsuEW0_jnA
-% respectively
+% reports are archived in text files, gail_daily_tests* and gail_weekly_tests* at
+% https://mega.nz/folder/FlMEjI5a#jVixXyAoI05ppbCstz8yEg
+% respectively. Output files such as images of test scripts are archived at 
+% https://mega.nz/folder/I0cAEKJD#AyQ_8tmxkknfIsuEW0_jnA
+% respectively.
 % 
 % 
 %% Known Issues
 % 
-% During our documentation development with MATLAB release 2019a, the
+% During our documentation development with MATLAB releases 2019a and 2020a, the
 % software's internal HTML viewer is found to display LaTeX expression in
 % larger font size than it is intended to be. This is an aesthetic issue with
 % no impact on the content accuracy.  Users may use a web browser to view our
@@ -315,8 +319,8 @@
 %% Acknowledgements
 % 
 % 
-% Our work was supported in part by grants from the National Science
-% Foundation under grant NSF-DMS-1115392, and the Office of Advanced
+% Our work was supported in part by the National Science Foundation under
+% grants NSF-DMS-1522687 and NSF-DMS-1115392; and by the Office of Advanced
 % Scientific Computing Research, Office of Science, U.S. Department of
 % Energy, under contract DE-AC02-06CH11357.
 %

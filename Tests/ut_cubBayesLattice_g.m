@@ -45,6 +45,16 @@ classdef ut_cubBayesLattice_g < matlab.unittest.TestCase
         'GAIL:cubBayesLattice_g:maxreached');
     end
     
+    function cubBayesLattice_gOfwarningInvalidAbsTol(testCase)
+      testCase.verifyWarning(@()cubBayesLattice_g(@(x)x.^2, 2, 'absTol',-0.001),...
+        'GAIL:cubBayesLattice_g:absTol_invalid');      
+    end
+
+    function cubBayesLattice_gOfwarningInvalidRelTol(testCase)
+      testCase.verifyWarning(@()cubBayesLattice_g(@(x)x.^2, 2, 'relTol',-0.001),...
+        'GAIL:cubBayesLattice_g:relTol_invalid');      
+    end
+    
     function cubBayesLattice_gOfxsquare(testCase)
       f = @(x) x.^2;
       abstol = 1e-3;

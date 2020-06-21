@@ -39,6 +39,16 @@ classdef ut_cubBayesNet_g < matlab.unittest.TestCase
         'GAIL:cubBayesNet_g:maxreached');
     end
     
+    function cubBayesNet_gOfwarningInvalidAbsTol(testCase)
+      testCase.verifyWarning(@()cubBayesNet_g(@(x)x.^2, 2, 'absTol',-0.001),...
+        'GAIL:cubBayesNet_g:absTol_invalid');      
+    end
+
+    function cubBayesNet_gOfwarningInvalidRelTol(testCase)
+      testCase.verifyWarning(@()cubBayesNet_g(@(x)x.^2, 2, 'relTol',-0.001),...
+        'GAIL:cubBayesNet_g:relTol_invalid');      
+    end
+    
     function cubBayesNet_gOfxsquare(testCase)
       f = @(x) x.^2;
       abstol = 1e-3;
