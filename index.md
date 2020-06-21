@@ -10,14 +10,16 @@ GAIL is a suite of algorithms for integration problems in one and many dimension
 <font size="2" color="red"><pre>            Get zip file              OR      run the MATLAB installation script</pre> </font>
 
 
-<a href="https://sourceforge.net/projects/gailmatlab/files/GAIL_2_3.zip/download"><img hspace="40" src="https://raw.githubusercontent.com/GailGithub/GAIL_Dev/gh-pages/downloadzip.png"></a>
-<a href="https://sourceforge.net/projects/gailmatlab/files/DownloadInstallGail_2_3.m/download"><img hspace="5" src="https://raw.githubusercontent.com/GailGithub/GAIL_Dev/gh-pages/downloadscript.png"></a>
+<a href="http://www.math.iit.edu/~Meshfree-methods-seminar/GAIL/GAIL_2_3_1.zip"><img hspace="40" src="https://raw.githubusercontent.com/GailGithub/GAIL_Dev/gh-pages/downloadzip.png"></a>
+<a href="http://www.math.iit.edu/~Meshfree-methods-seminar/GAIL/DownloadInstallGail_2_3_1.m"><img hspace="5" src="https://raw.githubusercontent.com/GailGithub/GAIL_Dev/gh-pages/downloadscript.png"></a>
 
 *To view the user guide, please see <em><a href="https://drive.google.com/file/d/1rkIuhazypLq--emi9GCAPCesmC3x3DRS/view?usp=sharing">here</a></em>.*
 
 ## News
 
-* <span style="color:red">GAIL version 2.3 is released on April 21, 2019 (Easter)</span>
+* <span style="color:red">GAIL version 2.3.1 is released on June 21, 2020 (Father's Day)</span>
+
+* GAIL version 2.3 is released on April 21, 2019 (Easter)
 
 * GAIL version 2.2 is released on August 28, 2017 (Chinese Valentine's Day)
 
