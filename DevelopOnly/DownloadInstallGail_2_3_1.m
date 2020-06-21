@@ -12,7 +12,7 @@ function DownloadInstallGail_2_3_1()
 disp('The GAIL package is now being downloaded...')
 unzip('http://www.math.iit.edu/~Meshfree-methods-seminar/GAIL/GAIL_2_3_1.zip', 'GAIL_2_3_1') %download and unzip
 cd('GAIL_2_3_1')  %get to the right subdirectory
-
+addpath(genpath(pwd));
 %% Install GAIL
 GAIL_Install      %this installs GAIL
 fprintf('\n\nNext we will run a quick test. Press RETURN to continue...\n')
@@ -28,9 +28,9 @@ disp('Next README.txt will be displayed. Press RETURN to continue to ');
 disp('the next line, or press the spacebar to advance to the next page...');
 pause
 
-%% Print out README.txt
+%% Print out README.md
 moreStatus = get(0,'More');
 more on
-type('README.txt')
+type('README.md')
 more(moreStatus);
 end
