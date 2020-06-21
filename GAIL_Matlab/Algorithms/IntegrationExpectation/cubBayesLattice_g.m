@@ -806,13 +806,13 @@ classdef cubBayesLattice_g < handle
         
         if obj.absTol <= 0
           warning('GAIL:cubBayesLattice_g:absTol_invalid',...
-            'absTol %f is invalid, must be positve and non-zero, changing to default value 0.01', obj.absTol)
+            'absTol %f is invalid, must be positive and non-zero, changing to default value 0.01', obj.absTol)
           obj.absTol = 0.01;
         end
         
         if obj.relTol < 0
           warning('GAIL:cubBayesLattice_g:relTol_invalid',...
-            'relTol %f is invalid, must be positve, changing to default value 0', obj.relTol)
+            'relTol %f is invalid, must be positive, changing to default value 0', obj.relTol)
           obj.relTol = 0;
         end
       end
