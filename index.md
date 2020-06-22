@@ -17,27 +17,34 @@ GAIL is a suite of algorithms for integration problems in one and many dimension
 
 ## News
 
-* <span style="color:red">GAIL version 2.3.1 is released on June 21, 2020 (Father's Day)</span>
+* <span style="color:black">GAIL version 2.3.1 was released on June 21, 2020 (Father's Day)</span>
 
-* GAIL version 2.3 is released on April 21, 2019 (Easter)
+* GAIL version 2.3 was released on July 12, 2019 (National Simplicity Day)
 
-* GAIL version 2.2 is released on August 28, 2017 (Chinese Valentine's Day)
+* GAIL version 2.2 was released on August 28, 2017 (Chinese Valentine's Day)
 
 * <a href="https://science.iit.edu/sites/science/files/elements/science/pdfs/SciLetters-W2016-Newsletter.pdf">Press about GAIL: Reliable Mathematical Software</a>
 
-* GAIL version 2.1 is released on March 14, 2015 (Super Pi Day and Albert Einstein's Birthday)
+* GAIL version 2.1 was released on March 14, 2015 (Super Pi Day and Albert Einstein's Birthday)
 
 * GAIL's GitHub repository is open to public at https://github.com/GailGithub/GAIL_Dev starting February 6, 2015.
 
-* GAIL version 2.0 is released on November 1, 2014 (All Saints' Day).
+* GAIL version 2.0 was released on November 1, 2014 (All Saints' Day).
 
-* GAIL version 1.3 is released on February 14, 2014 (Valentine's Day, for our love of the package). 
+* GAIL version 1.3 was released on February 14, 2014 (Valentine's Day, for our love of the package). 
 
-* GAIL version 1.0 is released on September 3, 2013. 
+* GAIL version 1.0 was released on September 3, 2013. 
 
 If you find GAIL helpful in your work, please support us by citing the following papers and software.
 
 ### Free GAIL Software
+
+* Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Da Li,  Jagadeeswaran
+Rathinavel, Lluis Antoni Jimenez Rugama, Xin Tong, Kan Zhang, Yizhi Zhang, and Xuan Zhou.  <em>GAIL: Guaranteed Automatic Integration Library (Version 2.3.1)</em>, MATLAB Software, 2020.  (Download <a href="https://github.com/GailGithub/GAIL_Dev/archive/v2.3.1.zip">zip</a>, or download and run <a href="http://www.math.iit.edu/~Meshfree-methods-seminar/GAIL/DownloadInstallGail_2_3_1.m">Matlab script</a>,  or clone <a href="https://github.com/GailGithub/GAIL_Dev">repository</a>.  <a href="http://mypages.iit.edu/~schoi32/GAIL_2_3_1/Documentation/html/GAIL.html">HTML documentation</a> and <a href="http://mypages.iit.edu/~schoi32/GAIL_2_3_1/Documentation/gail_ug_2_3_1.pdf">PDF documentation</a>.  <a href="http://mypages.iit.edu/~schoi32/bibtex_CDHJ20.txt">Bibtex</a>.)
+
+* Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Da Li,  Jagadeeswaran
+Rathinavel, Lluis Antoni Jimenez Rugama, Xin Tong, Kan Zhang, Yizhi Zhang, and Xuan Zhou.  <em>GAIL: Guaranteed Automatic Integration Library (Version 2.3)</em>, MATLAB Software, 2019.  (Download <a href="https://github.com/GailGithub/GAIL_Dev/archive/v2.3.zip">zip</a>, or download and run <a href="http://www.math.iit.edu/~Meshfree-methods-seminar/GAIL/DownloadInstallGail_2_3.m">Matlab script</a>,  or clone <a href="https://github.com/GailGithub/GAIL_Dev">repository</a>.  <a href="http://mypages.iit.edu/~schoi32/GAIL_2_3/Documentation/html/GAIL.html">HTML documentation</a> and <a href="http://mypages.iit.edu/~schoi32/GAIL_2_3/Documentation/gail_ug_2_3.pdf">PDF documentation</a>.  <a href="http://mypages.iit.edu/~schoi32/bibtex_CDHJ19.txt">Bibtex</a>.)
+
  
 * Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Da Li,  Jagadeeswaran
 Rathinavel, Lluis Antoni Jimenez Rugama, Xin Tong, Kan Zhang, Yizhi Zhang, and Xuan Zhou.  <em>GAIL: Guaranteed Automatic Integration Library (Version 2.2)</em>, MATLAB Software, 2017.  (Download <a href="http://www.math.iit.edu/~Meshfree-methods-seminar/GAIL/GAIL_2_2.zip">zip</a>, or download and run <a href="http://www.math.iit.edu/~Meshfree-methods-seminar/GAIL/DownloadInstallGail_2_2.m">Matlab script</a>,  or clone <a href="https://github.com/GailGithub/GAIL_Dev">repository</a>.  <a href="http://mypages.iit.edu/~schoi32/GAIL_2_2/Documentation/html/GAIL.html">HTML documentation</a> and <a href="http://mypages.iit.edu/~schoi32/GAIL_2_2/Documentation/gail_ug_2_2.pdf">PDF documentation</a>.  <a href="http://mypages.iit.edu/~schoi32/bibtex_CDHJ17.txt">Bibtex</a>.)
@@ -317,8 +324,15 @@ The GAIL routines come with comprehensive online documentation and their impleme
 
 ### Acknowledgement
 
-Our work was supported in part by grants from  
-* the <a href="http://www.nsf.gov">National Science Foundation</a> under grant NSF-DMS-1522687 and NSF-DMS-1115392, and
+Our work was supported in part by  
+* the <a href="http://www.nsf.gov">National Science Foundation</a> under grants NSF-DMS-1522687 and NSF-DMS-1115392, and
 * the <a href="http://science.energy.gov/ascr/">Office of Advanced Scientific Computing Research</a>, <a href="http://science.energy.gov/">Office of Science</a>, <a href="http://energy.gov">U.S. Department of Energy</a>, under contract DE-AC02-06CH11357.
 
-We thank the contributions of Xincheng Sheng, Xuan Zhou, and the class of Math 573 Reliable Mathematical Software, Fall 2013.
+We thank the contributions of Aleksei Sorokin, Noah Grudowski, Francisco
+Hernandez, Cu Hauw Hung, Yueyi Li, Xincheng Sheng, Xiaoyang Zhao, Tianci
+Zhu, and the IIT classes of SCI 498 Adaptive Monte Carlo Algorithms with
+Applications to Financial Risk Management, Summer 2016; MATH 491 Reading
+& Research, Summer 2015; SCI 498/MATH 491 Computational Social Sciences,
+Summer 2016; MATH 491-195 Solving Problems in the Social Sciences Using
+Tools from Computational Mathematics and Statistics, Summer 2015; Math
+573 Reliable Mathematical Software, Fall 2013.
