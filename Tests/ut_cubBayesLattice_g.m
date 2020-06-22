@@ -70,7 +70,7 @@ classdef ut_cubBayesLattice_g < matlab.unittest.TestCase
     
     function cubBayesLattice_gOfexp(testCase)
       f = @(x) exp(x);
-      abstol = 0;
+      abstol = 0.1;
       reltol = 1e-2;
       dim=1;
       obj = cubBayesLattice_g(f,dim,abstol,reltol);

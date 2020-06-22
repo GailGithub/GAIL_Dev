@@ -1,0 +1,521 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>cubBayesLattice_g</title><meta name="generator" content="MATLAB 9.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-06-20"><meta name="DC.source" content="help_cubBayesLattice_g.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:14px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:18px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>cubBayesLattice_g</h1><!--introduction--><p>Bayesian cubature method to estimate the integral of a random variable using rank-1 Lattices over a d-dimensional region within a specified generalized error tolerance with guarantees under Bayesian assumptions.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Syntax</a></li><li><a href="#2">Description</a></li><li><a href="#3">Guarantee</a></li><li><a href="#4">Examples</a></li><li><a href="#11">See Also</a></li><li><a href="#12">References</a></li></ul></div><h2>Syntax<a name="1"></a></h2><p>[OBJ,Q] = <b>cubBayesLattice_g</b>(f,dim,'absTol',absTol,'relTol',relTol,           'order',order,'ptransform',ptransform,'arbMean',arbMean)</p><p>[OBJ] = <b>cubBayesLattice_g</b>(f,dim,'absTol',absTol,'relTol',relTol,         'order',order,'ptransform',ptransform,'arbMean',arbMean)</p><p>[Q,OutP] = <b>compInteg</b>(OBJ)</p><p>[OBJ,Q] = <b>cubBayesLattice_g</b>(f,dim)</p><p>[OBJ,Q] = <b>cubBayesLattice_g</b>(f,dim,absTol,relTol)</p><p>[OBJ,Q] = <b>cubBayesLattice_g</b>(f,dim,inParams)</p><h2>Description<a name="2"></a></h2><p>[OBJ,Q] = <b>cubBayesLattice_g</b>(f,dim,'absTol',absTol,'relTol',relTol,   'order',order,'ptransform',ptransform,'arbMean',arbMean) Initializes   the object with the given parameters and also returns an   estimate of integral Q.</p><p>[Q,OutP] = <b>compInteg</b>(OBJ) estimates the integral of f over hyperbox   <span class="MathJax_Preview"><img src="help_cubBayesLattice_g_eq14650353880000248593.png" alt="$[0,1]^{\mathrm{dim}}$"></span><script type="math/tex">[0,1]^{\mathrm{dim}}</script> using rank-1 Lattice sampling to within a specified generalized   error tolerance, tolfun = max(abstol, reltol*| I |), i.e., | I - Q | &lt;=   tolfun with confidence of at least 99%, where I is the true integral   value, Q is the estimated integral value, abstol is the absolute error   tolerance, and reltol is the relative error tolerance. Usually the   reltol determines the accuracy of the estimation; however, if | I | is   rather small, then abstol determines the accuracy of the estimation.   Given the construction of our Lattices, d must be a positive integer   with 1 &lt;= dim &lt;= 600. For higher dimensions, it is recommended to use   simpler periodization transformation like 'Baker'.</p><p>It is recommended to use <b>compInteg</b> for estimating the integral repeatedly after the object initialization.</p><p>OutP is the structure holding additional output params, more details provided below. Input f is a function handle that accepts an n x d matrix input, where d is the dimension of the hyperbox, and n is the number of points being evaluated simultaneously.</p><p>The following additional input parameter passing styles also supported:</p><p>[OBJ,Q] = <b>cubBayesLattice_g</b>(f,dim) estimates the integral of f over   hyperbox <span class="MathJax_Preview"><img src="help_cubBayesLattice_g_eq14650353880000248593.png" alt="$[0,1]^{\mathrm{dim}}$"></span><script type="math/tex">[0,1]^{\mathrm{dim}}</script> using rank-1 Lattice sampling. All other input parameters   are initialized with default values as given below. Returns the initialized   object OBJ and the estimate of integral Q.</p><p>[OBJ,Q] = <b>cubBayesLattice_g</b>(f,dim,absTol,relTol); estimates the integral   of f over hyperbox <span class="MathJax_Preview"><img src="help_cubBayesLattice_g_eq14650353880000248593.png" alt="$[0,1]^{\mathrm{dim}}$"></span><script type="math/tex">[0,1]^{\mathrm{dim}}</script> using rank-1 Lattice sampling. All parameters   should be input in the order specified above. The answer is given within   the generalized error tolerance tolfun. All other input parameters    are initialized with default values as given below.</p><p>[OBJ,Q] = <b>cubBayesLattice_g</b>(f,dim,inParms); estimates the integral   of f over hyperbox <span class="MathJax_Preview"><img src="help_cubBayesLattice_g_eq14650353880000248593.png" alt="$[0,1]^{\mathrm{dim}}$"></span><script type="math/tex">[0,1]^{\mathrm{dim}}</script> using rank-1 Lattice sampling.   The structure inParams shall hold the optional input parameters.</p><p><b>Input Arguments</b></p><div><ul><li>f --- the integrand.</li></ul></div><div><ul><li>dim --- number of dimensions of the integrand.</li></ul></div><p><b>Optional Input Arguments</b></p><div><ul><li>absTol --- absolute error tolerance | I - Q | &lt;= absTol. Default is 0.01</li></ul></div><div><ul><li>relTol --- relative error tolerance | I - Q | &lt;= I*relTol. Default is 0</li></ul></div><div><ul><li>order --- order of the Bernoulli polynomial of the kernel r=1,2.             If r==0, algorithm automatically chooses the kernel order             which can be a non-integer value.             Default is 2</li></ul></div><div><ul><li>ptransform --- periodization variable transform to use: 'Baker', 'C0',                  'C1', 'C1sin', or 'C2sin'. Default is 'C1sin'</li></ul></div><div><ul><li>arbMean --- If false, the algorithm assumes the integrand was sampled                 from a Gaussian process of zero mean. Default is 'true'</li></ul></div><div><ul><li>alpha --- confidence level for a credible interval of Q. Default is 0.01</li></ul></div><div><ul><li>mmin --- min number of samples to start with: 2^mmin. Default is 10</li></ul></div><div><ul><li>mmax --- max number of samples allowed: 2^mmax. Default is 22</li></ul></div><p>
+<ul type="square">
+<li>stopCriterion --- stopping criterion to use. Supports three options: </li>
+  <ul type="circle">
+               <li>1) MLE: Empirical Bayes</li>
+               <li>2) GCV: Generalized Cross Validation</li>
+               <li>3) full: Full Bayes</li>
+  </ul>
+   Default is MLE: Empirical Bayes
+ </ul>
+</p><div><ul><li>useGradient --- If true uses gradient descent in parameter search.                   Default is false</li></ul></div><div><ul><li>oneTheta --- If true uses common shape parameter for all dimensions,                 else allow shape parameter vary across dimensions.                 Default is true</li></ul></div><p><b>Output Arguments</b></p><div><ul><li>n --- number of samples used to compute the integral of f.</li></ul></div><div><ul><li>time --- time to compute the integral in seconds.</li></ul></div><p>
+<ul type="square">
+ <li>exitFlag --- indicates the exit condition of the
+ algorithm:</li>
+  <ul type="circle">
+               <li>1 - integral computed within the error tolerance and
+                     without exceeding max sample limit 2^mmax </li>
+               <li>2 - used max number of samples and yet not met the
+                     error tolerance</li>
+  </ul>
+ </ul>
+</p><div><ul><li>ErrBd  --- estimated integral error | I - Q |</li></ul></div><div><ul><li>optParams --- optional parameters useful to debug and get better                  understanding of the algorithm</li></ul></div><div><ul><li>optParams.aMLEAll --- returns the shape parameters computed</li></ul></div><h2>Guarantee<a name="3"></a></h2><p>This algorithm attempts to calculate the integral of function f over the hyperbox <span class="MathJax_Preview"><img src="help_cubBayesLattice_g_eq14650353880000248593.png" alt="$[0,1]^{\mathrm{dim}}$"></span><script type="math/tex">[0,1]^{\mathrm{dim}}</script> to a prescribed error tolerance tolfun:= max(abstol,reltol*| I |) with guaranteed confidence level, e.g., 99% when alpha=0.5%. If the algorithm terminates without showing any warning messages and provides an answer Q, then the following inequality would be satisfied:</p><p>Pr(| Q - I | &lt;= tolfun) = 99%</p><p>Please refer to our paper [1] for detailed arguments and proofs.</p><h2>Examples<a name="4"></a></h2><p><b>Example 1: Integrating a simple Quadratic function</b></p><p>Estimate the integral with integrand <span class="MathJax_Preview"><img src="help_cubBayesLattice_g_eq04957827169812010309.png" alt="$f(x) = x^2$"></span><script type="math/tex">f(x) = x^2</script> over the interval <span class="MathJax_Preview"><img src="help_cubBayesLattice_g_eq05816708510759450028.png" alt="$[0,1]$"></span><script type="math/tex">[0,1]</script> with default parameters: order=2, ptransform=C1sin, abstol=0.01, relTol=0</p><pre class="codeinput">warning(<span class="string">'off'</span>,<span class="string">'GAIL:cubBayesLattice_g:fdnotgiven'</span>)
+[~,muhat] = cubBayesLattice_g;
+exactInteg = 1.0/3;
+warning(<span class="string">'on'</span>,<span class="string">'GAIL:cubBayesLattice_g:fdnotgiven'</span>)
+check = double(abs(exactInteg-muhat) &lt; 0.01)
+</pre><pre class="codeoutput">
+check =
+
+     1
+
+</pre><p><b>Example 2: ExpCos</b></p><p>Estimate the integral of Exponential of Cosine function <span class="MathJax_Preview"><img src="help_cubBayesLattice_g_eq13377883513619493145.png" alt="$f({x}) = \exp\left(\sum_{i=1}^2cos(2\pi x_i)\right)$"></span><script type="math/tex">f({x}) = \exp\left(\sum_{i=1}^2cos(2\pi x_i)\right)</script> over the interval <span class="MathJax_Preview"><img src="help_cubBayesLattice_g_eq01259287712589338854.png" alt="$[0,1]^2$"></span><script type="math/tex">[0,1]^2</script> with parameters: order=2, C1sin variable transform, abstol=0.001, relTol=0.01</p><pre class="codeinput">fun = @(x) exp(sum(cos(2*pi*x), 2));
+dim=2; absTol=1e-3; relTol=1e-2;
+exactInteg = besseli(0,1)^dim;
+inputArgs = {<span class="string">'relTol'</span>,relTol, <span class="string">'order'</span>,2, <span class="string">'ptransform'</span>,<span class="string">'C1sin'</span>};
+inputArgs = [inputArgs {<span class="string">'absTol'</span>,absTol,<span class="string">'oneTheta'</span>,false}];
+obj=cubBayesLattice_g(fun,dim,inputArgs{:});
+[muhat,outParams]=compInteg(obj);
+check = double(abs(exactInteg-muhat) &lt; max(absTol,relTol*abs(exactInteg)))
+etaDim = size(outParams.optParams.aMLEAll, 2)
+</pre><pre class="codeoutput">
+check =
+
+     1
+
+
+etaDim =
+
+     2
+
+</pre><p><b>Example 3: Keister function</b></p><p>Estimate the integral with keister function as integrand over the interval <span class="MathJax_Preview"><img src="help_cubBayesLattice_g_eq01259287712589338854.png" alt="$[0,1]^2$"></span><script type="math/tex">[0,1]^2</script> with parameters: order=2, C1 variable transform, abstol=0.001, relTol=0.01</p><pre class="codeinput">dim=3; absTol=1e-3; relTol=1e-2;
+normsqd = @(t) sum(t.*t,2); <span class="comment">%squared l_2 norm of t</span>
+replaceZeros = @(t) (t+(t==0)*eps); <span class="comment">% to avoid getting infinity, NaN</span>
+yinv = @(t)(erfcinv( replaceZeros(abs(t)) ));
+ft = @(t,dim) cos( sqrt( normsqd(yinv(t)) )) *(sqrt(pi))^dim;
+fKeister = @(x) ft(x,dim); exactInteg = Keistertrue(dim);
+inputArgs ={<span class="string">'absTol'</span>,absTol, <span class="string">'relTol'</span>,relTol};
+inputArgs =[inputArgs {<span class="string">'order'</span>,2, <span class="string">'ptransform'</span>,<span class="string">'C1'</span>,<span class="string">'arbMean'</span>,true}];
+obj=cubBayesLattice_g(fKeister,dim,inputArgs{:});
+[muhat,outParams]=compInteg(obj);
+check = double(abs(exactInteg-muhat) &lt; max(absTol,relTol*abs(exactInteg)))
+etaDim = size(outParams.optParams.aMLEAll, 2)
+</pre><pre class="codeoutput">
+check =
+
+     1
+
+
+etaDim =
+
+     1
+
+</pre><p><b>Example 4:  Multivariate normal probability</b></p><p>Estimate the multivariate normal probability for the given hyper interval <span class="MathJax_Preview"><img src="help_cubBayesLattice_g_eq07416836781350849329.png" alt="$\left(\begin{array}{c} -6\\ -2\\ -2\end{array}\right) $ and $\left(\begin{array}{c} 5\\ 2\\ 1\end{array}\right)$"></span><script type="math/tex">\left(\begin{array}{c} -6\\ -2\\ -2\end{array}\right) $ and $\left(\begin{array}{c} 5\\ 2\\ 1\end{array}\right)</script> in <span class="MathJax_Preview"><img src="help_cubBayesLattice_g_eq03012844543760759790.png" alt="$\bf{R}^3$"></span><script type="math/tex">\bf{R}^3</script> having zero mean and covariance <span class="MathJax_Preview"><img src="help_cubBayesLattice_g_eq15941746379783747432.png" alt="$\left(\begin{array}{ccc} 4&amp; 1&amp; 1\\ 0&amp; 1&amp; 0.5\\ 0&amp; 0&amp; 0.25 \end{array}\right)$"></span><script type="math/tex">\left(\begin{array}{ccc} 4& 1& 1\\ 0& 1& 0.5\\ 0& 0& 0.25 \end{array}\right)</script> with parameters: order=1, C1sin variable transform, abstol=0.001, relTol=0.01</p><pre class="codeinput">dim=2; absTol=1e-3; relTol=1e-2; fName = <span class="string">'MVN'</span>;
+C = [4 1 1; 0 1 0.5; 0 0 0.25]; MVNParams.Cov = C'*C; MVNParams.C = C;
+MVNParams.a = [-6 -2 -2]; MVNParams.b = [5 2 1]; MVNParams.mu = 0;
+MVNParams.CovProp.C = chol(MVNParams.Cov)';
+muBest = 0.676337324357787;
+integrand =@(t) GenzFunc(t,MVNParams);
+inputArgs={<span class="string">'absTol'</span>,absTol,<span class="string">'relTol'</span>,relTol};
+inputArgs=[inputArgs {<span class="string">'order'</span>,1,<span class="string">'ptransform'</span>,<span class="string">'C1sin'</span>,<span class="string">'arbMean'</span>,true}];
+inputArgs=[inputArgs {<span class="string">'useGradient'</span>,true}];
+[~,muhat]=cubBayesLattice_g(integrand,dim, inputArgs{:});
+check = double(abs(muBest-muhat) &lt; max(absTol,relTol*abs(muBest)))
+</pre><pre class="codeoutput">
+check =
+
+     1
+
+</pre><p><b>Example 5: Keister function</b></p><p>Estimating the Keister integral with Kernel order r chosen automatically</p><pre class="codeinput">dim=2; absTol=1e-3; relTol=1e-2;
+normsqd = @(t) sum(t.*t,2); <span class="comment">%squared l_2 norm of t</span>
+replaceZeros = @(t) (t+(t==0)*eps); <span class="comment">% to avoid getting infinity, NaN</span>
+yinv = @(t)(erfcinv( replaceZeros(abs(t)) ));
+ft = @(t,dim) cos( sqrt( normsqd(yinv(t)) )) *(sqrt(pi))^dim;
+fKeister = @(x) ft(x,dim); exactInteg = Keistertrue(dim);
+inputArgs ={<span class="string">'absTol'</span>,absTol, <span class="string">'relTol'</span>,relTol};
+inputArgs =[inputArgs {<span class="string">'order'</span>,0, <span class="string">'ptransform'</span>,<span class="string">'C1'</span>,<span class="string">'arbMean'</span>,true}];
+obj=cubBayesLattice_g(fKeister,dim,inputArgs{:});
+[muhat,outParams] = compInteg(obj);
+check = double(abs(exactInteg-muhat) &lt; max(absTol,relTol*abs(exactInteg)))
+check = double(outParams.optParams.r &gt; 0)
+</pre><pre class="codeoutput">
+check =
+
+     1
+
+
+check =
+
+     1
+
+</pre><p><b>Example 6</b></p><p>A simple example which uses dimension specific shape parameter</p><pre class="codeinput">const = [1E-4 1 1E4];
+fun = @(x)sum(bsxfun(@times, const, sin(2*pi*x.^2)), 2);
+dim=3; absTol=1e-3; relTol=1e-2;
+exactInteg = fresnels(2)*sum(const)/2;
+inputArgs = {<span class="string">'relTol'</span>,relTol, <span class="string">'order'</span>,2, <span class="string">'ptransform'</span>,<span class="string">'C1sin'</span>};
+inputArgs = [inputArgs {<span class="string">'absTol'</span>,absTol,<span class="string">'oneTheta'</span>,false,<span class="string">'useGradient'</span>,false}];
+obj=cubBayesLattice_g(fun, dim, inputArgs{:});
+[muhat,outParams]=compInteg(obj);
+check = double(abs(exactInteg-muhat) &lt; max(absTol,relTol*abs(exactInteg)))
+etaDim = size(outParams.optParams.aMLEAll, 2)
+</pre><pre class="codeoutput">
+check =
+
+     1
+
+
+etaDim =
+
+     3
+
+</pre><h2>See Also<a name="11"></a></h2><p>
+<a href="help_cubSobol_g.html">cubSobol_g</a>
+</p><p>
+<a href="help_cubLattice_g.html">cubLattice_g</a>
+</p><p>
+<a href="help_cubMC_g.html">cubMC_g</a>
+</p><p>
+<a href="help_meanMC_g.html">meanMC_g</a>
+</p><p>
+<a href="help_integral_g.html">integral_g</a>
+</p><p>
+<a href="help_cubBayesNet_g.html">cubBayesNet_g</a>
+</p><h2>References<a name="12"></a></h2><p>[1] Jagadeeswaran Rathinavel, Fred J. Hickernell, Fast automatic Bayesian   cubature using lattice sampling.  Stat Comput 29, 1215-1229 (2019).   https://doi.org/10.1007/s11222-019-09895-9</p><p>[2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis   Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan   Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic   Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available   from <a href="http://gailgithub.github.io/GAIL_Dev/">http://gailgithub.github.io/GAIL_Dev/</a></p><p>[3] Jagadeeswaran Rathinavel, "Fast automatic Bayesian cubature using   matching kernels and designs," PhD thesis, Illinois Institute of Technology, 2019.</p><p>If you find GAIL helpful in your work, please support us by citing the above papers, software, and materials.</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% cubBayesLattice_g
+% Bayesian cubature method to estimate the integral of a random variable 
+% using rank-1 Lattices over a d-dimensional region within a 
+% specified generalized error tolerance with guarantees under Bayesian
+% assumptions.
+%% Syntax
+% [OBJ,Q] = *cubBayesLattice_g*(f,dim,'absTol',absTol,'relTol',relTol,
+%           'order',order,'ptransform',ptransform,'arbMean',arbMean)
+%
+% [OBJ] = *cubBayesLattice_g*(f,dim,'absTol',absTol,'relTol',relTol,
+%         'order',order,'ptransform',ptransform,'arbMean',arbMean)
+%
+% [Q,OutP] = *compInteg*(OBJ)
+%
+% [OBJ,Q] = *cubBayesLattice_g*(f,dim)
+%
+% [OBJ,Q] = *cubBayesLattice_g*(f,dim,absTol,relTol)
+%
+% [OBJ,Q] = *cubBayesLattice_g*(f,dim,inParams)
+%
+%% Description
+% 
+% [OBJ,Q] = *cubBayesLattice_g*(f,dim,'absTol',absTol,'relTol',relTol,
+%   'order',order,'ptransform',ptransform,'arbMean',arbMean) Initializes
+%   the object with the given parameters and also returns an
+%   estimate of integral Q.
+%
+% [Q,OutP] = *compInteg*(OBJ) estimates the integral of f over hyperbox
+%   $[0,1]^{\mathrm{dim}}$ using rank-1 Lattice sampling to within a specified generalized
+%   error tolerance, tolfun = max(abstol, reltol*| I |), i.e., | I - Q | <=
+%   tolfun with confidence of at least 99%, where I is the true integral
+%   value, Q is the estimated integral value, abstol is the absolute error
+%   tolerance, and reltol is the relative error tolerance. Usually the
+%   reltol determines the accuracy of the estimation; however, if | I | is
+%   rather small, then abstol determines the accuracy of the estimation.
+%   Given the construction of our Lattices, d must be a positive integer
+%   with 1 <= dim <= 600. For higher dimensions, it is recommended to use 
+%   simpler periodization transformation like 'Baker'.
+%
+% It is recommended to use *compInteg* for estimating the integral repeatedly
+% after the object initialization.
+% 
+% OutP is the structure holding additional output params, more details
+% provided below. Input f is a function handle that accepts an n x d
+% matrix input, where d is the dimension of the hyperbox, and n is the
+% number of points being evaluated simultaneously.
+%
+% The following additional input parameter passing styles also supported:
+%
+% [OBJ,Q] = *cubBayesLattice_g*(f,dim) estimates the integral of f over
+%   hyperbox $[0,1]^{\mathrm{dim}}$ using rank-1 Lattice sampling. All other input parameters
+%   are initialized with default values as given below. Returns the initialized
+%   object OBJ and the estimate of integral Q.
+%
+% [OBJ,Q] = *cubBayesLattice_g*(f,dim,absTol,relTol); estimates the integral 
+%   of f over hyperbox $[0,1]^{\mathrm{dim}}$ using rank-1 Lattice sampling. All parameters
+%   should be input in the order specified above. The answer is given within 
+%   the generalized error tolerance tolfun. All other input parameters
+%    are initialized with default values as given below.  
+%
+% [OBJ,Q] = *cubBayesLattice_g*(f,dim,inParms); estimates the integral 
+%   of f over hyperbox $[0,1]^{\mathrm{dim}}$ using rank-1 Lattice sampling. 
+%   The structure inParams shall hold the optional input parameters.
+%
+% *Input Arguments*
+%
+% * f REPLACE_WITH_DASH_DASH- the integrand.
+%
+% * dim REPLACE_WITH_DASH_DASH- number of dimensions of the integrand.
+%
+% *Optional Input Arguments*
+%
+% * absTol REPLACE_WITH_DASH_DASH- absolute error tolerance | I - Q | <= absTol. Default is 0.01
+%
+% * relTol REPLACE_WITH_DASH_DASH- relative error tolerance | I - Q | <= I*relTol. Default is 0
+%
+% * order REPLACE_WITH_DASH_DASH- order of the Bernoulli polynomial of the kernel r=1,2. 
+%             If r==0, algorithm automatically chooses the kernel order
+%             which can be a non-integer value.
+%             Default is 2
+%
+% * ptransform REPLACE_WITH_DASH_DASH- periodization variable transform to use: 'Baker', 'C0',
+%                  'C1', 'C1sin', or 'C2sin'. Default is 'C1sin'
+%
+% * arbMean REPLACE_WITH_DASH_DASH- If false, the algorithm assumes the integrand was sampled
+%                 from a Gaussian process of zero mean. Default is 'true'
+%
+% * alpha REPLACE_WITH_DASH_DASH- confidence level for a credible interval of Q. Default is 0.01
+%
+% * mmin REPLACE_WITH_DASH_DASH- min number of samples to start with: 2^mmin. Default is 10
+%
+% * mmax REPLACE_WITH_DASH_DASH- max number of samples allowed: 2^mmax. Default is 22
+%
+% <html>
+% <ul type="square">
+% <li>stopCriterion REPLACE_WITH_DASH_DASH- stopping criterion to use. Supports three options: </li>
+%   <ul type="circle">
+%                <li>1) MLE: Empirical Bayes</li>
+%                <li>2) GCV: Generalized Cross Validation</li>
+%                <li>3) full: Full Bayes</li>
+%   </ul>
+%    Default is MLE: Empirical Bayes
+%  </ul>
+% </html>
+%
+% * useGradient REPLACE_WITH_DASH_DASH- If true uses gradient descent in parameter search.
+%                   Default is false
+%
+% * oneTheta REPLACE_WITH_DASH_DASH- If true uses common shape parameter for all dimensions,
+%                 else allow shape parameter vary across dimensions.
+%                 Default is true
+%
+% *Output Arguments*
+%
+% * n REPLACE_WITH_DASH_DASH- number of samples used to compute the integral of f.
+%
+% * time REPLACE_WITH_DASH_DASH- time to compute the integral in seconds.
+%
+% <html>
+% <ul type="square">
+%  <li>exitFlag REPLACE_WITH_DASH_DASH- indicates the exit condition of the
+%  algorithm:</li>
+%   <ul type="circle">
+%                <li>1 - integral computed within the error tolerance and
+%                      without exceeding max sample limit 2^mmax </li>
+%                <li>2 - used max number of samples and yet not met the
+%                      error tolerance</li>
+%   </ul>
+%  </ul>
+% </html>
+%
+% * ErrBd  REPLACE_WITH_DASH_DASH- estimated integral error | I - Q |
+%
+% * optParams REPLACE_WITH_DASH_DASH- optional parameters useful to debug and get better
+%                  understanding of the algorithm
+%
+% * optParams.aMLEAll REPLACE_WITH_DASH_DASH- returns the shape parameters computed
+%
+%
+%
+%%  Guarantee
+%
+% This algorithm attempts to calculate the integral of function f over the
+% hyperbox $[0,1]^{\mathrm{dim}}$ to a prescribed error tolerance tolfun:= max(abstol,reltol*| I |)
+% with guaranteed confidence level, e.g., 99% when alpha=0.5%. If the
+% algorithm terminates without showing any warning messages and provides
+% an answer Q, then the following inequality would be satisfied:
+%
+% Pr(| Q - I | <= tolfun) = 99%
+%
+% Please refer to our paper [1] for detailed arguments and proofs.
+%
+%% Examples
+%
+
+%%
+% *Example 1: Integrating a simple Quadratic function*
+%
+% Estimate the integral with integrand $f(x) = x^2$ over the interval $[0,1]$
+% with default parameters: order=2, ptransform=C1sin, abstol=0.01, relTol=0
+
+warning('off','GAIL:cubBayesLattice_g:fdnotgiven')
+[~,muhat] = cubBayesLattice_g;
+exactInteg = 1.0/3;
+warning('on','GAIL:cubBayesLattice_g:fdnotgiven')
+check = double(abs(exactInteg-muhat) < 0.01)
+
+%%
+% *Example 2: ExpCos*
+%
+% Estimate the integral of Exponential of Cosine function
+% $f({x}) = \exp\left(\sum_{i=1}^2cos(2\pi x_i)\right)$ over the
+% interval $[0,1]^2$ with parameters: order=2, C1sin variable transform, abstol=0.001,
+% relTol=0.01
+
+fun = @(x) exp(sum(cos(2*pi*x), 2));
+dim=2; absTol=1e-3; relTol=1e-2;
+exactInteg = besseli(0,1)^dim;
+inputArgs = {'relTol',relTol, 'order',2, 'ptransform','C1sin'};
+inputArgs = [inputArgs {'absTol',absTol,'oneTheta',false}];
+obj=cubBayesLattice_g(fun,dim,inputArgs{:});
+[muhat,outParams]=compInteg(obj);
+check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))
+etaDim = size(outParams.optParams.aMLEAll, 2)
+
+%%
+% *Example 3: Keister function*
+%
+% Estimate the integral with keister function as integrand over the
+% interval $[0,1]^2$ with parameters: order=2, C1 variable transform,
+% abstol=0.001, relTol=0.01
+
+dim=3; absTol=1e-3; relTol=1e-2;
+normsqd = @(t) sum(t.*t,2); %squared l_2 norm of t
+replaceZeros = @(t) (t+(t==0)*eps); % to avoid getting infinity, NaN
+yinv = @(t)(erfcinv( replaceZeros(abs(t)) ));
+ft = @(t,dim) cos( sqrt( normsqd(yinv(t)) )) *(sqrt(pi))^dim;
+fKeister = @(x) ft(x,dim); exactInteg = Keistertrue(dim);
+inputArgs ={'absTol',absTol, 'relTol',relTol};
+inputArgs =[inputArgs {'order',2, 'ptransform','C1','arbMean',true}];
+obj=cubBayesLattice_g(fKeister,dim,inputArgs{:});
+[muhat,outParams]=compInteg(obj);
+check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))
+etaDim = size(outParams.optParams.aMLEAll, 2)
+
+%%
+% *Example 4:  Multivariate normal probability*
+% 
+% Estimate the multivariate normal probability for the given hyper interval
+% $\left(\begin{array}{c} -6\\ -2\\ -2\end{array}\right) $ and
+% $\left(\begin{array}{c} 5\\ 2\\ 1\end{array}\right)$ in $\bf{R}^3$
+% having zero mean and covariance
+% $\left(\begin{array}{ccc} 4& 1& 1\\ 0& 1& 0.5\\ 0& 0& 0.25 \end{array}\right)$ with
+% parameters: order=1, C1sin variable transform,
+% abstol=0.001, relTol=0.01
+
+dim=2; absTol=1e-3; relTol=1e-2; fName = 'MVN';
+C = [4 1 1; 0 1 0.5; 0 0 0.25]; MVNParams.Cov = C'*C; MVNParams.C = C;
+MVNParams.a = [-6 -2 -2]; MVNParams.b = [5 2 1]; MVNParams.mu = 0;
+MVNParams.CovProp.C = chol(MVNParams.Cov)';
+muBest = 0.676337324357787;
+integrand =@(t) GenzFunc(t,MVNParams);
+inputArgs={'absTol',absTol,'relTol',relTol};
+inputArgs=[inputArgs {'order',1,'ptransform','C1sin','arbMean',true}];
+inputArgs=[inputArgs {'useGradient',true}];
+[~,muhat]=cubBayesLattice_g(integrand,dim, inputArgs{:});
+check = double(abs(muBest-muhat) < max(absTol,relTol*abs(muBest)))
+
+%%
+% *Example 5: Keister function*
+%
+% Estimating the Keister integral with Kernel order r chosen automatically
+ 
+dim=2; absTol=1e-3; relTol=1e-2;
+normsqd = @(t) sum(t.*t,2); %squared l_2 norm of t
+replaceZeros = @(t) (t+(t==0)*eps); % to avoid getting infinity, NaN
+yinv = @(t)(erfcinv( replaceZeros(abs(t)) ));
+ft = @(t,dim) cos( sqrt( normsqd(yinv(t)) )) *(sqrt(pi))^dim;
+fKeister = @(x) ft(x,dim); exactInteg = Keistertrue(dim);
+inputArgs ={'absTol',absTol, 'relTol',relTol};
+inputArgs =[inputArgs {'order',0, 'ptransform','C1','arbMean',true}];
+obj=cubBayesLattice_g(fKeister,dim,inputArgs{:});
+[muhat,outParams] = compInteg(obj);
+check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))
+check = double(outParams.optParams.r > 0)
+
+%%
+% *Example 6*
+%
+% A simple example which uses dimension specific shape parameter
+
+const = [1E-4 1 1E4];
+fun = @(x)sum(bsxfun(@times, const, sin(2*pi*x.^2)), 2);
+dim=3; absTol=1e-3; relTol=1e-2;
+exactInteg = fresnels(2)*sum(const)/2;
+inputArgs = {'relTol',relTol, 'order',2, 'ptransform','C1sin'};
+inputArgs = [inputArgs {'absTol',absTol,'oneTheta',false,'useGradient',false}];
+obj=cubBayesLattice_g(fun, dim, inputArgs{:});
+[muhat,outParams]=compInteg(obj);
+check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))
+etaDim = size(outParams.optParams.aMLEAll, 2)
+
+
+%% See Also
+%
+% <html>
+% <a href="help_cubSobol_g.html">cubSobol_g</a>
+% </html>
+%
+% <html>
+% <a href="help_cubLattice_g.html">cubLattice_g</a>
+% </html>
+%
+% <html>
+% <a href="help_cubMC_g.html">cubMC_g</a>
+% </html>
+%
+% <html>
+% <a href="help_meanMC_g.html">meanMC_g</a>
+% </html>
+%
+% <html>
+% <a href="help_integral_g.html">integral_g</a>
+% </html>
+%
+% <html>
+% <a href="help_cubBayesNet_g.html">cubBayesNet_g</a>
+% </html>
+%
+%% References
+%
+% [1] Jagadeeswaran Rathinavel, Fred J. Hickernell, Fast automatic Bayesian 
+%   cubature using lattice sampling.  Stat Comput 29, 1215-1229 (2019).
+%   https://doi.org/10.1007/s11222-019-09895-9
+%
+% [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
+%   Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
+%   Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
+%   Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available
+%   from http://gailgithub.github.io/GAIL_Dev/
+%
+% [3] Jagadeeswaran Rathinavel, "Fast automatic Bayesian cubature using
+%   matching kernels and designs," PhD thesis, Illinois Institute of Technology, 2019.
+%
+% If you find GAIL helpful in your work, please support us by citing the
+% above papers, software, and materials.
+
+##### SOURCE END #####
+--></body></html>

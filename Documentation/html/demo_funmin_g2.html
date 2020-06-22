@@ -1,0 +1,246 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Compare funmin_g with fminbnd and chebfun</title><meta name="generator" content="MATLAB 9.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-06-20"><meta name="DC.source" content="demo_funmin_g2.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:14px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:18px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Compare <b>funmin_g</b> with <b>fminbnd</b> and <b>chebfun</b></h1><!--introduction--><p>Author: Xin Tong, May 2020</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Function definition and minimization</a></li><li><a href="#2">Set up</a></li><li><a href="#3">Plot function</a></li><li><a href="#4">Plot minimum values and sample points</a></li><li><a href="#5">References</a></li></ul></div><h2>Function definition and minimization<a name="1"></a></h2><p>Define a function with two minima as follows:</p><p><span class="MathJax_Preview"><img src="demo_funmin_g2_eq18254440305683715707.png" alt="$$ f(x) = -5 \exp(-100(x-0.15)^2) - \exp(-80(x-0.65)^2). $$"></span><script type="math/tex"> f(x) = -5 \exp(-100(x-0.15)^2) - \exp(-80(x-0.65)^2). </script></p><p>We use <b>funmin_g</b>, MATLAB's <b>fminbnd</b>, and Chebfun's <b>min</b> to find the minimum of <span class="MathJax_Preview"><img src="demo_funmin_g2_eq18096895394918367257.png" alt="$f$"></span><script type="math/tex">f</script> over the interval <span class="MathJax_Preview"><img src="demo_funmin_g2_eq05816708510759450028.png" alt="$[0,1]$"></span><script type="math/tex">[0,1]</script>.</p><h2>Set up<a name="2"></a></h2><pre class="codeinput">close <span class="string">all</span>; clearvars; format <span class="string">compact</span>; format <span class="string">short</span>;
+gail.InitializeDisplay
+set(0,<span class="string">'defaultLineMarkerSize'</span>,15)
+</pre><h2>Plot function<a name="3"></a></h2><pre class="codeinput">xplot = 0:0.001:1;
+fplot = fmin_ex1(xplot);
+h(1) = plot(xplot,fplot,<span class="string">'-'</span>);
+set(h(1),<span class="string">'color'</span>,MATLABBlue)
+h_legend = legend([h(1)],{<span class="string">'$f(x)$'</span>},<span class="string">'Location'</span>,<span class="string">'Southeast'</span>);
+set(h_legend,<span class="string">'interpreter'</span>,<span class="string">'latex'</span>);
+hold <span class="string">on</span>
+</pre><img vspace="5" hspace="5" src="demo_funmin_g2_01.png" alt=""> <h2>Plot minimum values and sample points<a name="4"></a></h2><pre class="codeinput">xAll = [];
+fAll = [];
+save <span class="string">fmin_ex1X</span> <span class="string">xAll</span> <span class="string">fAll</span>
+[ffmg,outfmg] = funmin_g(@fmin_ex1,0,1);
+h(2) = plot(mean(outfmg.intervals),ffmg,<span class="string">'.'</span>);
+set(h(2),<span class="string">'color'</span>,MATLABGreen,<span class="string">'MarkerSize'</span>,80)
+load <span class="string">fmin_ex1X</span> <span class="string">xAll</span> <span class="string">fAll</span>
+h(3) = plot(xAll,fAll,<span class="string">'.'</span>);
+set(h(3),<span class="string">'color'</span>,MATLABGreen)
+
+<span class="comment">% fminbnd</span>
+xAll = [];
+fAll = [];
+save <span class="string">fmin_ex1X</span> <span class="string">xAll</span> <span class="string">fAll</span>
+options = optimset(<span class="string">'TolX'</span>,outfmg.abstol,<span class="string">'TolFun'</span>,outfmg.abstol);
+[xfmb,ffmb] = fminbnd(@fmin_ex1,0,1,options);
+h(4) = plot(xfmb,ffmb,<span class="string">'.'</span>);
+set(h(4),<span class="string">'color'</span>,MATLABOrange,<span class="string">'MarkerSize'</span>,80)
+load <span class="string">fmin_ex1X</span> <span class="string">xAll</span> <span class="string">fAll</span>
+h(5) = plot(xAll,fAll,<span class="string">'.'</span>);
+set(h(5),<span class="string">'color'</span>,MATLABOrange)
+
+<span class="comment">% chebfun</span>
+xAll = [];
+fAll = [];
+save <span class="string">fmin_ex1X</span> <span class="string">xAll</span> <span class="string">fAll</span>
+chebf = chebfun(@fmin_ex1,[0,1],<span class="string">'chebfuneps'</span>, outfmg.abstol, <span class="string">'splitting'</span>,<span class="string">'on'</span>);
+chebfval = min(chebf);
+chebxvals = roots(diff(chebf));
+[v,i] = min(abs(fmin_ex1(chebxvals)-chebfval));
+chebxval = chebxvals(i);
+chebn = length(chebf);
+h(6) = plot(chebxval,chebfval,<span class="string">'o'</span>);
+set(h(6),<span class="string">'color'</span>,MATLABPurple,<span class="string">'MarkerSize'</span>,20)
+load <span class="string">fmin_ex1X</span> <span class="string">xAll</span> <span class="string">fAll</span>
+h(7) = plot(xAll,fAll,<span class="string">'.'</span>);
+set(h(7),<span class="string">'color'</span>,MATLABPurple)
+h_legend = legend([h(1) h(2) h(4) h(6) h(3) h(5) h(7)],{<span class="string">'$f(x)$'</span>,<span class="string">'funmin\_g''s min'</span>,<span class="keyword">...</span>
+    <span class="string">'fminbnd''s min'</span>,<span class="string">'chebfun''s min'</span>,<span class="string">'funmin\_g''s sample'</span>,<span class="string">'fminbnd''s sample'</span>,<span class="string">'chebfun''s sample'</span>},<span class="keyword">...</span>
+    <span class="string">'Location'</span>,<span class="string">'Southeast'</span>);
+set(h_legend,<span class="string">'interpreter'</span>,<span class="string">'latex'</span>);
+
+delete(<span class="string">'fmin_ex1X.mat'</span>);
+
+<span class="keyword">function</span> y = fmin_ex1(x)
+<span class="keyword">if</span> exist(<span class="string">'fmin_ex1X.mat'</span>,<span class="string">'file'</span>)
+   load <span class="string">fmin_ex1X</span> <span class="string">xAll</span> <span class="string">fAll</span>
+<span class="keyword">else</span>
+   xAll = [];
+   fAll = [];
+<span class="keyword">end</span>
+xAll = [xAll; x(:)];
+y = -5*exp(-100*(x-0.15).^2) - exp(-80*(x-0.65).^2);
+fAll = [fAll; y(:)];
+save <span class="string">fmin_ex1X</span> <span class="string">xAll</span> <span class="string">fAll</span>
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="demo_funmin_g2_02.png" alt=""> <h2>References<a name="5"></a></h2><p>[1] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Xin Tong, "Local     Adaption for Approximation and Minimization of Univariate Functions,"     <i>Journal of Complexity</i> 40, pp. 17-33, 2017.</p><p>[2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis     Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan     Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic     Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available     from <a href="http://gailgithub.github.io/GAIL_Dev/">http://gailgithub.github.io/GAIL_Dev/</a></p><p>[3] T. A. Driscoll, N. Hale, and L. N. Trefethen, editors, "Chebfun Guide",     Pafnuty Publications, Oxford, 2014.</p><p>[4] MATLAB's fminbnd, see</p><p>
+<a href="https://www.mathworks.com/help/matlab/ref/fminbnd.html">fminbnd</a>
+</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Compare *funmin_g* with *fminbnd* and *chebfun*
+% Author: Xin Tong, May 2020
+
+%% Function definition and minimization
+%
+% Define a function with two minima as follows:
+%
+% $$ f(x) = -5 \exp(-100(x-0.15)^2) - \exp(-80(x-0.65)^2). $$
+%
+% We use *funmin_g*, MATLAB's *fminbnd*, and Chebfun's *min* to find the minimum of $f$ 
+% over the interval $[0,1]$.
+
+
+%% Set up
+close all; clearvars; format compact; format short;
+gail.InitializeDisplay
+set(0,'defaultLineMarkerSize',15)
+
+%% Plot function
+xplot = 0:0.001:1;
+fplot = fmin_ex1(xplot);
+h(1) = plot(xplot,fplot,'-');
+set(h(1),'color',MATLABBlue)
+h_legend = legend([h(1)],{'$f(x)$'},'Location','Southeast');
+set(h_legend,'interpreter','latex');
+hold on
+
+%% Plot minimum values and sample points
+xAll = [];
+fAll = [];
+save fmin_ex1X xAll fAll
+[ffmg,outfmg] = funmin_g(@fmin_ex1,0,1); 
+h(2) = plot(mean(outfmg.intervals),ffmg,'.');
+set(h(2),'color',MATLABGreen,'MarkerSize',80)
+load fmin_ex1X xAll fAll
+h(3) = plot(xAll,fAll,'.');
+set(h(3),'color',MATLABGreen)
+
+% fminbnd
+xAll = [];
+fAll = [];
+save fmin_ex1X xAll fAll
+options = optimset('TolX',outfmg.abstol,'TolFun',outfmg.abstol);
+[xfmb,ffmb] = fminbnd(@fmin_ex1,0,1,options);
+h(4) = plot(xfmb,ffmb,'.');
+set(h(4),'color',MATLABOrange,'MarkerSize',80)
+load fmin_ex1X xAll fAll
+h(5) = plot(xAll,fAll,'.');
+set(h(5),'color',MATLABOrange)
+
+% chebfun
+xAll = [];
+fAll = [];
+save fmin_ex1X xAll fAll
+chebf = chebfun(@fmin_ex1,[0,1],'chebfuneps', outfmg.abstol, 'splitting','on');
+chebfval = min(chebf); 
+chebxvals = roots(diff(chebf));
+[v,i] = min(abs(fmin_ex1(chebxvals)-chebfval));
+chebxval = chebxvals(i);
+chebn = length(chebf);
+h(6) = plot(chebxval,chebfval,'o');
+set(h(6),'color',MATLABPurple,'MarkerSize',20)
+load fmin_ex1X xAll fAll
+h(7) = plot(xAll,fAll,'.');
+set(h(7),'color',MATLABPurple)
+h_legend = legend([h(1) h(2) h(4) h(6) h(3) h(5) h(7)],{'$f(x)$','funmin\_g''s min',...
+    'fminbnd''s min','chebfun''s min','funmin\_g''s sample','fminbnd''s sample','chebfun''s sample'},...
+    'Location','Southeast');
+set(h_legend,'interpreter','latex');
+
+delete('fmin_ex1X.mat');
+
+function y = fmin_ex1(x)
+if exist('fmin_ex1X.mat','file')
+   load fmin_ex1X xAll fAll
+else
+   xAll = [];
+   fAll = [];
+end
+xAll = [xAll; x(:)];
+y = -5*exp(-100*(x-0.15).^2) - exp(-80*(x-0.65).^2);
+fAll = [fAll; y(:)];
+save fmin_ex1X xAll fAll
+end
+
+%% References
+%
+% [1] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Xin Tong, "Local
+%     Adaption for Approximation and Minimization of Univariate Functions,"
+%     _Journal of Complexity_ 40, pp. 17-33, 2017.
+%
+% [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
+%     Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
+%     Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
+%     Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available
+%     from http://gailgithub.github.io/GAIL_Dev/
+%
+% [3] T. A. Driscoll, N. Hale, and L. N. Trefethen, editors, "Chebfun Guide",
+%     Pafnuty Publications, Oxford, 2014.
+% 
+% [4] MATLAB's fminbnd, see 
+% 
+% <html>
+% <a href="https://www.mathworks.com/help/matlab/ref/fminbnd.html">fminbnd</a>
+% </html>
+
+##### SOURCE END #####
+--></body></html>

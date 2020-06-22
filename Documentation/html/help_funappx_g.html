@@ -1,0 +1,356 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>funappx_g</title><meta name="generator" content="MATLAB 9.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-06-20"><meta name="DC.source" content="help_funappx_g.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:14px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:18px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>funappx_g</h1><!--introduction--><p>1-D guaranteed locally adaptive function approximation (or   function recovery) on [a,b]</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Syntax</a></li><li><a href="#2">Description</a></li><li><a href="#3">Guarantee</a></li><li><a href="#4">Examples</a></li><li><a href="#7">See Also</a></li><li><a href="#8">References</a></li></ul></div><h2>Syntax<a name="1"></a></h2><p>fappx = <b>funappx_g</b>(f)</p><p>fappx = <b>funappx_g</b>(f,a,b,abstol)</p><p>fappx = <b>funappx_g</b>(f,'a',a,'b',b,'abstol',abstol)</p><p>fappx = <b>funappx_g</b>(f,in_param)</p><p>[fappx, out_param] = <b>funappx_g</b>(f,...)</p><h2>Description<a name="2"></a></h2><p>fappx = <b>funappx_g</b>(f) approximates function f on the default interval  [0,1] by an approximated function handle fappx within the guaranteed  absolute error tolerance of 1e-6. When Matlab version is higher or  equal to 8.3, fappx is an interpolant generated by griddedInterpolant.  When Matlab version is lower than 8.3, fappx is a function handle  generated by ppval and interp1. Input f is a function handle. The  statement y = f(x) should accept a vector argument x and return a  vector y of function values that is of the same size as x.</p><p>fappx = <b>funappx_g</b>(f,a,b,abstol) for a given function f and the ordered  input parameters that define the finite interval [a,b], and a  guaranteed absolute error tolerance abstol.</p><p>fappx = <b>funappx_g</b>(f,'a',a,'b',b,'abstol',abstol) approximates function  f on the finite interval [a,b], given a guaranteed absolute error  tolerance abstol. All four field-value pairs are optional and can be  supplied in different order.</p><p>fappx = <b>funappx_g</b>(f,in_param) approximates function f on the finite  interval [in_param.a,in_param.b], given a guaranteed absolute error  tolerance in_param.abstol. If a field is not specified, the default  value is used.</p><p>[fappx, out_param] = <b>funappx_g</b>(f,...) returns an approximated function  fappx and an output structure out_param.</p><p><b>Properties</b></p><div><ul><li>fappx can be used for linear extrapolation outside [a,b].</li></ul></div><p><b>Input Arguments</b></p><div><ul><li>f --- input function</li></ul></div><div><ul><li>in_param.a --- left end point of interval, default value is 0.</li></ul></div><div><ul><li>in_param.b --- right end point of interval, default value is 1.</li></ul></div><div><ul><li>in_param.abstol --- guaranteed absolute error tolerance, default  value is 1e-6.</li></ul></div><p><b>Optional Input Arguments</b></p><div><ul><li>in_param.ninit --- initial number of subintervals. Default to 20.</li></ul></div><div><ul><li>in_param.nmax --- when number of points hits the value, iteration  will stop, default value is 1e7.</li></ul></div><div><ul><li>in_param.maxiter --- max number of iterations, default value is 1000.</li></ul></div><p><b>Output Arguments</b></p><div><ul><li>fappx --- approximated function handle (Note: When Matlab version is  higher or equal to 8.3, fappx is an interpolant generated by  griddedInterpolant. When Matlab version is lower than 8.3, fappx is a  function handle generated by ppval and interp1.)</li></ul></div><div><ul><li>out_param.f --- input function.</li></ul></div><div><ul><li>out_param.a --- left end point of interval.</li></ul></div><div><ul><li>out_param.b --- right end point of interval.</li></ul></div><div><ul><li>out_param.abstol --- guaranteed absolute error tolerance.</li></ul></div><div><ul><li>out_param.maxiter --- max number of iterations.</li></ul></div><div><ul><li>out_param.ninit --- initial number of subintervals.</li></ul></div><p>
+<ul type="square">
+ <li>out_param.exitflag --- this is a vector with two elements, for
+ tracking important warnings in the algorithm. The algorithm is
+ considered successful (with out_param.exitflag == [0 0]) if no other
+ flags arise warning that the results are not guaranteed. The initial
+ value is [0 0] and the final value of this parameter is encoded as
+ follows:</li>
+  <ul type="circle">
+   <li>[1 0]:  If reaching overbudget. It states whether
+               the max budget is attained without reaching the
+               guaranteed error tolerance.</li>
+   <li>[0 1]:  If reaching overiteration. It states whether
+               the max iterations is attained without reaching the
+               guaranteed error tolerance.</li>
+  </ul>
+</ul>
+</p><div><ul><li>out_param.iter --- number of iterations.</li></ul></div><div><ul><li>out_param.npoints --- number of points we need to reach the  guaranteed absolute error tolerance.</li></ul></div><div><ul><li>out_param.errest --- an estimation of the absolute error for the  approximation.</li></ul></div><h2>Guarantee<a name="3"></a></h2><p><b>Please check the details of the guarantee in [1].</b></p><h2>Examples<a name="4"></a></h2><p><b>Example 1</b></p><p>Approximate function <span class="MathJax_Preview"><img src="help_funappx_g_eq18272244738375251809.png" alt="$x^2$"></span><script type="math/tex">x^2</script> on <span class="MathJax_Preview"><img src="help_funappx_g_eq01169792831847459841.png" alt="$[-2,2]$"></span><script type="math/tex">[-2,2]</script> with error tolerance <span class="MathJax_Preview"><img src="help_funappx_g_eq04580600134691646967.png" alt="$10^{-7}$"></span><script type="math/tex">10^{-7}</script>, default cost budget and initial number of subintervals 18.</p><pre class="codeinput">f = @(x) x.^2; [~, out_param] = funappx_g(f,-2,2,1e-7,18)
+</pre><pre class="codeoutput">
+out_param = 
+
+  struct with fields:
+
+           a: -2
+      abstol: 1.0000e-07
+           b: 2
+           f: @(x)x.^2
+     maxiter: 1000
+       ninit: 18
+        nmax: 10000000
+    exitflag: [0 0]
+        iter: 12
+     npoints: 36865
+      errest: 2.9448e-08
+
+</pre><p><b>Example 2</b></p><p>Approximate function <span class="MathJax_Preview"><img src="help_funappx_g_eq18272244738375251809.png" alt="$x^2$"></span><script type="math/tex">x^2</script> on <span class="MathJax_Preview"><img src="help_funappx_g_eq01169792831847459841.png" alt="$[-2,2]$"></span><script type="math/tex">[-2,2]</script> with default error tolerance, default cost budget and initial number of subintervals 17.</p><pre class="codeinput">f = @(x) x.^2;
+[~, out_param] = funappx_g(f,<span class="string">'a'</span>,-2,<span class="string">'b'</span>,2,<span class="string">'ninit'</span>,17)
+</pre><pre class="codeoutput">
+out_param = 
+
+  struct with fields:
+
+           a: -2
+      abstol: 1.0000e-06
+           b: 2
+           f: @(x)x.^2
+     maxiter: 1000
+       ninit: 17
+        nmax: 10000000
+    exitflag: [0 0]
+        iter: 10
+     npoints: 8705
+      errest: 5.2896e-07
+
+</pre><p><b>Example 3</b></p><p>Approximate function <span class="MathJax_Preview"><img src="help_funappx_g_eq18272244738375251809.png" alt="$x^2$"></span><script type="math/tex">x^2</script> on <span class="MathJax_Preview"><img src="help_funappx_g_eq10697554184028431031.png" alt="$[-5,5]$"></span><script type="math/tex">[-5,5]</script> with error tolerance <span class="MathJax_Preview"><img src="help_funappx_g_eq15305046719526685932.png" alt="$10^{-6}$"></span><script type="math/tex">10^{-6}</script>, default cost budget and initial number of subintervals 18.</p><pre class="codeinput">clear <span class="string">in_param</span>; in_param.a = -5; in_param.b = 5; f = @(x) x.^2;
+in_param.abstol = 10^(-6); in_param.ninit=18;
+[~, out_param] = funappx_g(f,in_param)
+</pre><pre class="codeoutput">
+out_param = 
+
+  struct with fields:
+
+           a: -5
+      abstol: 1.0000e-06
+           b: 5
+           f: @(x)x.^2
+     maxiter: 1000
+       ninit: 18
+        nmax: 10000000
+    exitflag: [0 0]
+        iter: 11
+     npoints: 18433
+      errest: 7.3654e-07
+
+</pre><h2>See Also<a name="7"></a></h2><p>
+<a href="http://www.mathworks.com/help/matlab/ref/interp1.html">interp1</a>
+</p><p>
+<a href="http://www.mathworks.com/help/matlab/ref/griddedinterpolant-class.html">griddedinterpolant</a>
+</p><p>
+<a href="help_integral_g.html">integral_g</a>
+</p><p>
+<a href="help_meanMC_g.html">meanMC_g</a>
+</p><p>
+<a href="help_cubMC_g.html">cubMC_g</a>
+</p><p>
+<a href="help_funmin_g.html">funmin_g</a>
+</p><p><a href="http://gailgithub.github.io/GAIL_Dev/">GAIL_Dev</a></p><h2>References<a name="8"></a></h2><p>[1] Sou-Cheng T. Choi, Yuhan Ding, Fred J.Hickernell, Xin Tong, "Local Adaption for Approximation and Minimization of Univariate Functions," Journal of Complexity 40, pp. 17-33, 2017.</p><p>[2] Nick Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic Algorithms: Cones, Not Balls," Journal of Complexity 30, pp. 21-45, 2014.</p><p>[3] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available from <a href="http://gailgithub.github.io/GAIL_Dev/">http://gailgithub.github.io/GAIL_Dev/</a></p><p>[4] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible Research via Supportable Scientific Software," Journal of Open Research Software, Volume 2, Number 1, e22, pp. 1-7, 2014.</p><p>[5] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable Mathematical Software" [Course Slides], Illinois Institute of Technology, Chicago, IL, 2013. Available from <a href="http://gailgithub.github.io/GAIL_Dev/">http://gailgithub.github.io/GAIL_Dev/</a></p><p>If you find GAIL helpful in your work, please support us by citing the above papers, software, and materials.</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% funappx_g
+% 1-D guaranteed locally adaptive function approximation (or
+%   function recovery) on [a,b]
+%% Syntax
+% fappx = *funappx_g*(f)
+%
+% fappx = *funappx_g*(f,a,b,abstol)
+%
+% fappx = *funappx_g*(f,'a',a,'b',b,'abstol',abstol)
+%
+% fappx = *funappx_g*(f,in_param)
+%
+% [fappx, out_param] = *funappx_g*(f,...)
+%% Description
+%
+% fappx = *funappx_g*(f) approximates function f on the default interval
+%  [0,1] by an approximated function handle fappx within the guaranteed
+%  absolute error tolerance of 1e-6. When Matlab version is higher or
+%  equal to 8.3, fappx is an interpolant generated by griddedInterpolant.
+%  When Matlab version is lower than 8.3, fappx is a function handle
+%  generated by ppval and interp1. Input f is a function handle. The
+%  statement y = f(x) should accept a vector argument x and return a
+%  vector y of function values that is of the same size as x.
+%
+% fappx = *funappx_g*(f,a,b,abstol) for a given function f and the ordered
+%  input parameters that define the finite interval [a,b], and a
+%  guaranteed absolute error tolerance abstol.
+%
+% fappx = *funappx_g*(f,'a',a,'b',b,'abstol',abstol) approximates function
+%  f on the finite interval [a,b], given a guaranteed absolute error
+%  tolerance abstol. All four field-value pairs are optional and can be
+%  supplied in different order.
+%
+% fappx = *funappx_g*(f,in_param) approximates function f on the finite
+%  interval [in_param.a,in_param.b], given a guaranteed absolute error
+%  tolerance in_param.abstol. If a field is not specified, the default
+%  value is used.
+%
+% [fappx, out_param] = *funappx_g*(f,...) returns an approximated function
+%  fappx and an output structure out_param.
+%
+% *Properties*
+%
+% * fappx can be used for linear extrapolation outside [a,b].
+%
+% *Input Arguments*
+%
+% * f REPLACE_WITH_DASH_DASH- input function
+%
+% * in_param.a REPLACE_WITH_DASH_DASH- left end point of interval, default value is 0.
+%
+% * in_param.b REPLACE_WITH_DASH_DASH- right end point of interval, default value is 1.
+%
+% * in_param.abstol REPLACE_WITH_DASH_DASH- guaranteed absolute error tolerance, default
+%  value is 1e-6.
+%
+% *Optional Input Arguments*
+%
+% * in_param.ninit REPLACE_WITH_DASH_DASH- initial number of subintervals. Default to 20.
+%
+% * in_param.nmax REPLACE_WITH_DASH_DASH- when number of points hits the value, iteration
+%  will stop, default value is 1e7.
+%
+% * in_param.maxiter REPLACE_WITH_DASH_DASH- max number of iterations, default value is 1000.
+%
+% *Output Arguments*
+%
+% * fappx REPLACE_WITH_DASH_DASH- approximated function handle (Note: When Matlab version is
+%  higher or equal to 8.3, fappx is an interpolant generated by
+%  griddedInterpolant. When Matlab version is lower than 8.3, fappx is a
+%  function handle generated by ppval and interp1.)
+%
+% * out_param.f REPLACE_WITH_DASH_DASH- input function.
+%
+% * out_param.a REPLACE_WITH_DASH_DASH- left end point of interval.
+%
+% * out_param.b REPLACE_WITH_DASH_DASH- right end point of interval.
+%
+% * out_param.abstol REPLACE_WITH_DASH_DASH- guaranteed absolute error tolerance.
+%
+% * out_param.maxiter REPLACE_WITH_DASH_DASH- max number of iterations.
+%
+% * out_param.ninit REPLACE_WITH_DASH_DASH- initial number of subintervals.
+%
+% <html>
+% <ul type="square">
+%  <li>out_param.exitflag REPLACE_WITH_DASH_DASH- this is a vector with two elements, for
+%  tracking important warnings in the algorithm. The algorithm is
+%  considered successful (with out_param.exitflag == [0 0]) if no other
+%  flags arise warning that the results are not guaranteed. The initial
+%  value is [0 0] and the final value of this parameter is encoded as
+%  follows:</li>
+%   <ul type="circle">
+%    <li>[1 0]:  If reaching overbudget. It states whether
+%                the max budget is attained without reaching the
+%                guaranteed error tolerance.</li>
+%    <li>[0 1]:  If reaching overiteration. It states whether
+%                the max iterations is attained without reaching the
+%                guaranteed error tolerance.</li>
+%   </ul>
+% </ul>
+% </html>
+%
+% * out_param.iter REPLACE_WITH_DASH_DASH- number of iterations.
+%
+% * out_param.npoints REPLACE_WITH_DASH_DASH- number of points we need to reach the
+%  guaranteed absolute error tolerance.
+%
+% * out_param.errest REPLACE_WITH_DASH_DASH- an estimation of the absolute error for the
+%  approximation.
+%
+%% Guarantee
+%
+% *Please check the details of the guarantee in [1].*
+%
+%% Examples
+% *Example 1*
+%
+% Approximate function $x^2$ on $[-2,2]$ with error tolerance $10^{-7}$, default
+% cost budget and initial number of subintervals 18.
+f = @(x) x.^2; [~, out_param] = funappx_g(f,-2,2,1e-7,18)
+
+
+%%
+% *Example 2*
+%
+% Approximate function $x^2$ on $[-2,2]$ with default error tolerance, default
+% cost budget and initial number of subintervals 17.
+f = @(x) x.^2;
+[~, out_param] = funappx_g(f,'a',-2,'b',2,'ninit',17)
+
+
+%%
+% *Example 3*
+%
+% Approximate function $x^2$ on $[-5,5]$ with error tolerance $10^{-6}$, default
+% cost budget and initial number of subintervals 18.
+clear in_param; in_param.a = -5; in_param.b = 5; f = @(x) x.^2;
+in_param.abstol = 10^(-6); in_param.ninit=18;
+[~, out_param] = funappx_g(f,in_param)
+
+
+%% See Also
+%
+% <html>
+% <a href="http://www.mathworks.com/help/matlab/ref/interp1.html">interp1</a>
+% </html>
+%
+% <html>
+% <a href="http://www.mathworks.com/help/matlab/ref/griddedinterpolant-class.html">griddedinterpolant</a>
+% </html>
+%
+% <html>
+% <a href="help_integral_g.html">integral_g</a>
+% </html>
+%
+% <html>
+% <a href="help_meanMC_g.html">meanMC_g</a>
+% </html>
+%
+% <html>
+% <a href="help_cubMC_g.html">cubMC_g</a>
+% </html>
+%
+% <html>
+% <a href="help_funmin_g.html">funmin_g</a>
+% </html>
+%
+% <http://gailgithub.github.io/GAIL_Dev/ GAIL_Dev>
+%
+%% References
+% [1] Sou-Cheng T. Choi, Yuhan Ding, Fred J.Hickernell, Xin Tong, "Local
+% Adaption for Approximation and Minimization of Univariate Functions,"
+% Journal of Complexity 40, pp. 17-33, 2017.
+%
+% [2] Nick Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
+% Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic
+% Algorithms: Cones, Not Balls," Journal of Complexity 30, pp. 21-45,
+% 2014.
+%
+% [3] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
+% Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
+% Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
+% Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available
+% from http://gailgithub.github.io/GAIL_Dev/
+%
+% [4] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
+% Research via Supportable Scientific Software," Journal of Open Research
+% Software, Volume 2, Number 1, e22, pp. 1-7, 2014.
+%
+% [5] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable
+% Mathematical Software" [Course Slides], Illinois Institute of
+% Technology, Chicago, IL, 2013. Available from
+% http://gailgithub.github.io/GAIL_Dev/
+%
+% If you find GAIL helpful in your work, please support us by citing the
+% above papers, software, and materials.
+
+##### SOURCE END #####
+--></body></html>

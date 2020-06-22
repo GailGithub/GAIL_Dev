@@ -1,0 +1,193 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Integrate a spiky function using integral_g</title><meta name="generator" content="MATLAB 9.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-06-20"><meta name="DC.source" content="demo_integral_g1.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:14px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:18px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Integrate a spiky function using <b>integral_g</b></h1><!--introduction--><p>Authors:  Fred Hickernell and Sou-Cheng Choi, August 2017</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Function definition</a></li><li><a href="#2">Plot of the spiky function</a></li><li><a href="#3">Integral approximation</a></li><li><a href="#4">Compute approximation errors</a></li><li><a href="#5">References</a></li></ul></div><h2>Function definition<a name="1"></a></h2><p>This example is taken from [1], where a function is defined on <span class="MathJax_Preview"><img src="demo_integral_g1_eq05816708510759450028.png" alt="$[0,1]$"></span><script type="math/tex">[0,1]</script> with twelve spikes.</p><pre class="codeinput">close <span class="string">all</span>; clear <span class="string">all</span>; format <span class="string">compact</span>; format <span class="string">short</span> <span class="string">e</span>;
+[~,~,MATLABVERSION] = GAILstart(false);
+
+xquad = 0.13579; <span class="comment">%number used by quad to split interval into three parts</span>
+xleft = [0 xquad/2 xquad 3*xquad/2 2*xquad];
+xctr = [2*xquad 1/4+xquad 1/2 3/4-xquad 1-2*xquad];
+xrght = [1-2*xquad 1-3*xquad/2 1-xquad 1-xquad/2 1];
+xall = [xleft xctr(2:5) xrght(2:5)]';
+nnode = length(xall);
+
+fbump = @(x) 4^3*((x.*(1-x)).^3).*((x&gt;=0)&amp;(x&lt;=1)); <span class="comment">%one bump</span>
+xplot = (0:0.002:1)'; <span class="comment">%points to plot</span>
+spikyfun = @(x) foolfunmaker(x, @(x,c) fbump((x-c(1))/c(2)),<span class="keyword">...</span>
+    ones(nnode-1,1), [xall(1:nnode-1) diff(xall)]);
+</pre><h2>Plot of the spiky function<a name="2"></a></h2><p>In the following, we plot <span class="MathJax_Preview"><img src="demo_integral_g1_eq17663307419741296505.png" alt="$f(x)$"></span><script type="math/tex">f(x)</script> and show the data sampling points picked by MATLAB's built-in integration function <b>quad</b>, which explains why <b>quad</b> essentially gives the answer zero for our spiky function:</p><pre class="codeinput">figure;
+h = plot(xplot,spikyfun(xplot), <span class="string">'k-'</span>, xall, zeros(nnode,1), <span class="string">'k.'</span>);
+axis([0 1 -0.3 1.1])
+set(gca,<span class="string">'Ytick'</span>,-0.2:0.2:1)
+legend(h,{<span class="string">'$f$'</span>,<span class="string">'data'</span>},<span class="string">'location'</span>,<span class="string">'southeast'</span>)
+</pre><img vspace="5" hspace="5" src="demo_integral_g1_01.png" alt=""> <h2>Integral approximation<a name="3"></a></h2><p>We use MATLAB built-in functions and <b>integral_g</b> [2] from GAIL [3] to integrate <span class="MathJax_Preview"><img src="demo_integral_g1_eq18096895394918367257.png" alt="$f$"></span><script type="math/tex">f</script> over the unit interval:</p><pre class="codeinput">a = 0;
+b = 1;
+abstol = 1e-11;
+<span class="keyword">if</span> MATLABVERSION &gt;= 8,
+    MATintegralspiky = integral(spikyfun,a,b,<span class="string">'AbsTol'</span>,abstol)
+<span class="keyword">end</span>
+MATquadspiky = quad(spikyfun,a,b,abstol)
+MATgailspiky = integral_g(spikyfun,a,b,abstol)
+</pre><pre class="codeoutput">MATintegralspiky =
+   4.5714e-01
+MATquadspiky =
+   2.7021e-44
+Warning: This integrand is spiky relative to ninit. You may wish to increase
+ninit for similar integrands. 
+MATgailspiky =
+   4.5714e-01
+</pre><h2>Compute approximation errors<a name="4"></a></h2><p>The true integral value of the spiky function is <span class="MathJax_Preview"><img src="demo_integral_g1_eq01048776913929924224.png" alt="$\frac{16}{35}$"></span><script type="math/tex">\frac{16}{35}</script>. The following code computes absolute errors from the above approximation methods. Only <b>integral_g</b> achieves the required accuracy with respect to the absolute tolerance of <span class="MathJax_Preview"><img src="demo_integral_g1_eq11034617253539861099.png" alt="$10^{-11}$"></span><script type="math/tex">10^{-11}</script> in this example.</p><pre class="codeinput">integralspiky = 16/35;
+<span class="keyword">if</span> MATLABVERSION &gt;= 8,
+  abs_errors = abs(integralspiky - [MATintegralspiky, MATquadspiky, MATgailspiky])
+<span class="keyword">else</span>
+  abs_errors = abs(integralspiky - [MATquadspiky, MATgailspiky])
+<span class="keyword">end</span>
+if_meet_abstol = (abs_errors &lt; abstol)
+</pre><pre class="codeoutput">abs_errors =
+   6.1854e-10   4.5714e-01   5.7065e-14
+if_meet_abstol =
+  1&times;3 logical array
+   0   0   1
+</pre><h2>References<a name="5"></a></h2><p>[1] Nick Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and     Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic     Algorithms: Cones, Not Balls," Journal of Complexity 30, pp. 21-45,     2014.</p><p>[2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis     Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan     Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic     Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available     from <a href="http://gailgithub.github.io/GAIL_Dev/">http://gailgithub.github.io/GAIL_Dev/</a></p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Integrate a spiky function using *integral_g*
+% Authors:  Fred Hickernell and Sou-Cheng Choi, August 2017
+
+
+%% Function definition
+%
+% This example is taken from [1], where a function is defined on $[0,1]$
+% with twelve spikes.
+%
+close all; clear all; format compact; format short e;
+[~,~,MATLABVERSION] = GAILstart(false);
+
+xquad = 0.13579; %number used by quad to split interval into three parts
+xleft = [0 xquad/2 xquad 3*xquad/2 2*xquad];
+xctr = [2*xquad 1/4+xquad 1/2 3/4-xquad 1-2*xquad];
+xrght = [1-2*xquad 1-3*xquad/2 1-xquad 1-xquad/2 1];
+xall = [xleft xctr(2:5) xrght(2:5)]';
+nnode = length(xall);
+
+fbump = @(x) 4^3*((x.*(1-x)).^3).*((x>=0)&(x<=1)); %one bump
+xplot = (0:0.002:1)'; %points to plot
+spikyfun = @(x) foolfunmaker(x, @(x,c) fbump((x-c(1))/c(2)),...
+    ones(nnode-1,1), [xall(1:nnode-1) diff(xall)]);
+
+%% Plot of the spiky function
+% In the following, we plot $f(x)$ and show the data sampling points
+% picked by MATLAB's built-in integration function *quad*, which explains
+% why *quad* essentially gives the answer zero for our spiky function:
+figure;
+h = plot(xplot,spikyfun(xplot), 'k-', xall, zeros(nnode,1), 'k.');
+axis([0 1 -0.3 1.1])
+set(gca,'Ytick',-0.2:0.2:1)
+legend(h,{'$f$','data'},'location','southeast')
+
+
+%% Integral approximation
+% We use MATLAB built-in functions and *integral_g* [2] from GAIL [3] to
+% integrate $f$ over the unit interval:
+a = 0;
+b = 1;
+abstol = 1e-11;
+if MATLABVERSION >= 8,
+    MATintegralspiky = integral(spikyfun,a,b,'AbsTol',abstol)
+end
+MATquadspiky = quad(spikyfun,a,b,abstol)
+MATgailspiky = integral_g(spikyfun,a,b,abstol)
+
+
+%% Compute approximation errors
+% The true integral value of the spiky function is $\frac{16}{35}$. The following
+% code computes absolute errors from the above approximation methods. Only
+% *integral_g* achieves the required accuracy with respect to the absolute
+% tolerance of $10^{-11}$ in this example.
+integralspiky = 16/35;
+if MATLABVERSION >= 8,
+  abs_errors = abs(integralspiky - [MATintegralspiky, MATquadspiky, MATgailspiky])
+else
+  abs_errors = abs(integralspiky - [MATquadspiky, MATgailspiky])
+end
+if_meet_abstol = (abs_errors < abstol)
+
+%% References
+%
+% [1] Nick Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
+%     Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic
+%     Algorithms: Cones, Not Balls," Journal of Complexity 30, pp. 21-45,
+%     2014.
+%
+% [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
+%     Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
+%     Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
+%     Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available
+%     from http://gailgithub.github.io/GAIL_Dev/
+
+##### SOURCE END #####
+--></body></html>

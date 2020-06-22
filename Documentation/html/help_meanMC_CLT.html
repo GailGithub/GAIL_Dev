@@ -1,0 +1,274 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>meanMC_CLT</title><meta name="generator" content="MATLAB 9.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-06-20"><meta name="DC.source" content="help_meanMC_CLT.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:14px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:18px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>meanMC_CLT</h1><!--introduction--><p>Monte Carlo method to estimate the mean of a random variable</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Syntax</a></li><li><a href="#2">Description</a></li><li><a href="#3">Examples</a></li><li><a href="#9">References</a></li></ul></div><h2>Syntax<a name="1"></a></h2><p>sol = <b>MEANMC_CLT</b>(Y,absTol,relTol,alpha,nSig,inflate)</p><h2>Description<a name="2"></a></h2><p>sol = <b>MEANMC_CLT</b>(Y,absTol,relTol,alpha,nSig,inflate) estimates the  mean, mu, of a random variable to within a specified error tolerance,  i.e., | mu - tmu | &lt;= max(absTol,relTol|mu|) with probability at least  1-alpha, where abstol is the absolute error tolerance.  The default  values are abstol=1e-2 and alpha=1%. Input Y is a function handle that  accepts a positive integer input n and returns an n x 1 vector of IID  instances of the random variable.</p><p>This is a heuristic algorithm based on a Central Limit Theorem  approximation.</p><p><b>Input Arguments</b></p><div><ul><li>Y --- the function or structure for generating n IID instances of a     random variable Y whose mean we want to estimate. Y is often defined     as a function of some random variable X with a simple distribution.     The input of Yrand should be the number of random variables n, the     output of Yrand should be n function values. For example, if Y = X.^2     where X is a standard uniform random variable, then one may define     Yrand = @(n) rand(n,1).^2.</li></ul></div><div><ul><li>absTol --- the absolute error tolerance, which should be  non-negative --- default = 1e-2</li></ul></div><div><ul><li>relTol --- the relative error tolerance, which should be  non-negative and no greater than 1 --- default = 0</li></ul></div><div><ul><li>alpha --- the uncertainty, which should be a small positive  percentage --- default = 1%</li></ul></div><div><ul><li>nSig --- the number of samples used to compute the sample variance  --- default = 1000</li></ul></div><div><ul><li>inflate --- the standard deviation inflation factor --- default = 1.2</li></ul></div><p><b>Output Arguments</b></p><div><ul><li>Y --- the random generator</li></ul></div><div><ul><li>absTol --- the absolute error tolerance</li></ul></div><div><ul><li>relTol --- the relative error tolerance</li></ul></div><div><ul><li>alpha --- the uncertainty</li></ul></div><div><ul><li>mu --- the estimated mean of Y.</li></ul></div><div><ul><li>stddev --- sample standard deviation of the random variable</li></ul></div><div><ul><li>nSample --- total sample used.</li></ul></div><div><ul><li>time --- the time elapsed in seconds.</li></ul></div><div><ul><li>errBd --- the error bound.</li></ul></div><h2>Examples<a name="3"></a></h2><p><b>Example 1</b></p><p>Estimate the integral with integrand <span class="MathJax_Preview"><img src="help_meanMC_CLT_eq15766731790812892584.png" alt="$f(x) = x_1 x_2$"></span><script type="math/tex">f(x) = x_1 x_2</script> in the interval <span class="MathJax_Preview"><img src="help_meanMC_CLT_eq01259287712589338854.png" alt="$[0,1]^2$"></span><script type="math/tex">[0,1]^2</script> with absolute tolerance <span class="MathJax_Preview"><img src="help_meanMC_CLT_eq00957679905736456308.png" alt="$10^{-3}$"></span><script type="math/tex">10^{-3}</script> and relative tolerance <span class="MathJax_Preview"><img src="help_meanMC_CLT_eq00202142981986870057.png" alt="$0$"></span><script type="math/tex">0</script>:</p><pre class="codeinput">  [mu,out] = meanMC_CLT(@(n) prod(rand(n,2),2), 0.001);
+  exact = 1/4;
+  check = double(abs(exact - mu) &lt; 2e-3)
+</pre><pre class="codeoutput">
+check =
+
+     1
+
+</pre><p><b>Example 2</b></p><p>Estimate the integral <span class="MathJax_Preview"><img src="help_meanMC_CLT_eq12385297710666312786.png" alt="$f(x)=\exp(-x^2)$"></span><script type="math/tex">f(x)=\exp(-x^2)</script> in the interval <span class="MathJax_Preview"><img src="help_meanMC_CLT_eq05816708510759450028.png" alt="$[0,1]$"></span><script type="math/tex">[0,1]</script> using <span class="MathJax_Preview"><img src="help_meanMC_CLT_eq12428413953531653171.png" alt="$x$"></span><script type="math/tex">x</script> as a control variate and relative error <span class="MathJax_Preview"><img src="help_meanMC_CLT_eq00957679905736456308.png" alt="$10^{-3}$"></span><script type="math/tex">10^{-3}</script>:</p><pre class="codeinput">  f = @(x)[exp(-x.^2), x];
+  YXn = @(n)f(rand(n,1));
+  s = struct(<span class="string">'Y'</span>,YXn,<span class="string">'nY'</span>,1,<span class="string">'trueMuCV'</span>,1/2);
+  exact = erf(1)*sqrt(pi)/2;
+  success = 0; runs = 1000; tol = 1e-3;
+  <span class="keyword">for</span> i=1:runs, success = success + double(abs(exact-meanMC_CLT(s,0,tol)) &lt; tol*exact); <span class="keyword">end</span>
+  check = success &gt;= 0.99 * runs
+</pre><pre class="codeoutput">
+check =
+
+  logical
+
+   1
+
+</pre><p><b>Example 3</b></p><p>Estimate the Keister's integration in dimension 1 with <span class="MathJax_Preview"><img src="help_meanMC_CLT_eq13016372792947090052.png" alt="$a=1$"></span><script type="math/tex">a=1</script>, <span class="MathJax_Preview"><img src="help_meanMC_CLT_eq12948269891386178016.png" alt="$\frac{1}{\sqrt 2}$"></span><script type="math/tex">\frac{1}{\sqrt 2}</script> and using <span class="MathJax_Preview"><img src="help_meanMC_CLT_eq07963082637742243837.png" alt="$\cos(x)$"></span><script type="math/tex">\cos(x)</script> as a control variate:</p><pre class="codeinput">  normsqd = @(x) sum(x.*x,2);
+  f = @(normt,a,d) ((2*pi*a^2).^(d/2)) * cos(a*sqrt(normt)).* exp((1/2-a^2)*normt);
+  f1 = @(x,a,d) f(normsqd(x),a,d);
+  f2 = @(x)[f1(x,1,1),f1(x,1/sqrt(2),1),cos(x)];
+  YXn = @(n)f2(randn(n,1));
+  s = struct(<span class="string">'Y'</span>,YXn,<span class="string">'nY'</span>,2,<span class="string">'trueMuCV'</span>,1/sqrt(exp(1)));
+  [hmu,out] = meanMC_CLT(s,0,1e-3);
+  exact = 1.380388447043143;
+  check = double(abs(exact-hmu) &lt; max(0,1e-3*abs(exact)))
+</pre><pre class="codeoutput">
+check =
+
+     1
+
+</pre><p><b>Example 4</b></p><p>Estimate the integral with integrand <span class="MathJax_Preview"><img src="help_meanMC_CLT_eq16870113016333289272.png" alt="$f(x) = x_1^3 x_2^3 x_3^3$"></span><script type="math/tex">f(x) = x_1^3 x_2^3 x_3^3</script> in the interval <span class="MathJax_Preview"><img src="help_meanMC_CLT_eq03398223758297925068.png" alt="$[0,1]^3$"></span><script type="math/tex">[0,1]^3</script> with pure absolute error <span class="MathJax_Preview"><img src="help_meanMC_CLT_eq00957679905736456308.png" alt="$10^{-3}$"></span><script type="math/tex">10^{-3}</script> using <span class="MathJax_Preview"><img src="help_meanMC_CLT_eq00163639562268364092.png" alt="$x_1 x_2 x_3$"></span><script type="math/tex">x_1 x_2 x_3</script> as a control variate:</p><pre class="codeinput">  f = @(x) [x(:,1).^3.*x(:,2).^3.*x(:,3).^3, x(:,1).*x(:,2).*x(:,3)];
+  s = struct(<span class="string">'Y'</span>,@(n)f(rand(n,3)),<span class="string">'nY'</span>,1,<span class="string">'trueMuCV'</span>,1/8);
+  [hmu,out] = meanMC_CLT(s,1e-3,0);
+  exact = 1/64;
+  check = double(abs(exact-hmu) &lt; max(1e-3,1e-3*abs(exact)))
+</pre><pre class="codeoutput">
+check =
+
+     1
+
+</pre><p><b>Example 5</b></p><p>Estimate the integrals with integrands <span class="MathJax_Preview"><img src="help_meanMC_CLT_eq03642444731235351184.png" alt="$f_1(x) = x_1^3 x_2^3 x_3^3$"></span><script type="math/tex">f_1(x) = x_1^3 x_2^3 x_3^3</script> and <span class="MathJax_Preview"><img src="help_meanMC_CLT_eq16509818041756293970.png" alt="$f_2(x)= x_1^2 x_2^2 x_3^2- \frac{1}{27}+\frac{1}{64}$"></span><script type="math/tex">f_2(x)= x_1^2 x_2^2 x_3^2- \frac{1}{27}+\frac{1}{64}</script> in the interval <span class="MathJax_Preview"><img src="help_meanMC_CLT_eq03398223758297925068.png" alt="$[0,1]^3$"></span><script type="math/tex">[0,1]^3</script> using <span class="MathJax_Preview"><img src="help_meanMC_CLT_eq00163639562268364092.png" alt="$x_1 x_2 x_3$"></span><script type="math/tex">x_1 x_2 x_3</script> and <span class="MathJax_Preview"><img src="help_meanMC_CLT_eq03168892451990118073.png" alt="$x_1+x_2+x_3$"></span><script type="math/tex">x_1+x_2+x_3</script> as control variates:</p><pre class="codeinput">  f = @(x) [x(:,1).^3.*x(:,2).^3.*x(:,3).^3, <span class="keyword">...</span>
+            x(:,1).^2.*x(:,2).^2.*x(:,3).^2-1/27+1/64, <span class="keyword">...</span>
+            x(:,1).*x(:,2).*x(:,3), <span class="keyword">...</span>
+            x(:,1)+x(:,2)+x(:,3)];
+  s = struct(<span class="string">'Y'</span>,@(n)f(rand(n,3)),<span class="string">'nY'</span>,2,<span class="string">'trueMuCV'</span>,[1/8 1.5]);
+  [hmu,out] = meanMC_CLT(s,1e-4,1e-3);
+  exact = 1/64;
+  check = double(abs(exact-hmu) &lt; max(1e-4,1e-3*abs(exact)))
+</pre><pre class="codeoutput">
+check =
+
+     1
+
+</pre><h2>References<a name="9"></a></h2><p>[1] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis     Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan     Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic     Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available     from <a href="http://gailgithub.github.io/GAIL_Dev/">http://gailgithub.github.io/GAIL_Dev/</a></p><p>If you find GAIL helpful in your work, please support us by citing the above papers, software, and materials.</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% meanMC_CLT
+% Monte Carlo method to estimate the mean of a random variable
+%% Syntax
+% sol = *MEANMC_CLT*(Y,absTol,relTol,alpha,nSig,inflate)
+%
+%% Description
+%
+% sol = *MEANMC_CLT*(Y,absTol,relTol,alpha,nSig,inflate) estimates the
+%  mean, mu, of a random variable to within a specified error tolerance,
+%  i.e., | mu - tmu | <= max(absTol,relTol|mu|) with probability at least
+%  1-alpha, where abstol is the absolute error tolerance.  The default
+%  values are abstol=1e-2 and alpha=1%. Input Y is a function handle that
+%  accepts a positive integer input n and returns an n x 1 vector of IID
+%  instances of the random variable.
+%
+% This is a heuristic algorithm based on a Central Limit Theorem
+%  approximation.
+%   
+% *Input Arguments*
+%
+% * Y REPLACE_WITH_DASH_DASH- the function or structure for generating n IID instances of a
+%     random variable Y whose mean we want to estimate. Y is often defined
+%     as a function of some random variable X with a simple distribution.
+%     The input of Yrand should be the number of random variables n, the
+%     output of Yrand should be n function values. For example, if Y = X.^2
+%     where X is a standard uniform random variable, then one may define
+%     Yrand = @(n) rand(n,1).^2.
+%
+% * absTol REPLACE_WITH_DASH_DASH- the absolute error tolerance, which should be
+%  non-negative REPLACE_WITH_DASH_DASH- default = 1e-2
+%
+% * relTol REPLACE_WITH_DASH_DASH- the relative error tolerance, which should be
+%  non-negative and no greater than 1 REPLACE_WITH_DASH_DASH- default = 0
+%
+% * alpha REPLACE_WITH_DASH_DASH- the uncertainty, which should be a small positive
+%  percentage REPLACE_WITH_DASH_DASH- default = 1%
+%
+% * nSig REPLACE_WITH_DASH_DASH- the number of samples used to compute the sample variance
+%  REPLACE_WITH_DASH_DASH- default = 1000
+%
+% * inflate REPLACE_WITH_DASH_DASH- the standard deviation inflation factor REPLACE_WITH_DASH_DASH- default = 1.2
+%
+% *Output Arguments*
+%
+% * Y REPLACE_WITH_DASH_DASH- the random generator
+%
+% * absTol REPLACE_WITH_DASH_DASH- the absolute error tolerance
+%
+% * relTol REPLACE_WITH_DASH_DASH- the relative error tolerance
+%
+% * alpha REPLACE_WITH_DASH_DASH- the uncertainty
+%
+% * mu REPLACE_WITH_DASH_DASH- the estimated mean of Y.
+%
+% * stddev REPLACE_WITH_DASH_DASH- sample standard deviation of the random variable
+%
+% * nSample REPLACE_WITH_DASH_DASH- total sample used.
+%
+% * time REPLACE_WITH_DASH_DASH- the time elapsed in seconds.
+%
+% * errBd REPLACE_WITH_DASH_DASH- the error bound.
+%
+%% Examples
+%
+%%
+% *Example 1*
+%
+% Estimate the integral with integrand $f(x) = x_1 x_2$ in the interval
+% $[0,1]^2$ with absolute tolerance $10^{-3}$ and relative tolerance $0$:
+
+  [mu,out] = meanMC_CLT(@(n) prod(rand(n,2),2), 0.001);
+  exact = 1/4;
+  check = double(abs(exact - mu) < 2e-3)
+  
+%%
+% *Example 2*
+%
+% Estimate the integral $f(x)=\exp(-x^2)$ in the interval $[0,1]$
+% using $x$ as a control variate and relative error $10^{-3}$:
+
+  f = @(x)[exp(-x.^2), x];
+  YXn = @(n)f(rand(n,1));
+  s = struct('Y',YXn,'nY',1,'trueMuCV',1/2);
+  exact = erf(1)*sqrt(pi)/2;
+  success = 0; runs = 1000; tol = 1e-3;
+  for i=1:runs, success = success + double(abs(exact-meanMC_CLT(s,0,tol)) < tol*exact); end
+  check = success >= 0.99 * runs  
+  
+%%
+% *Example 3*
+%
+% Estimate the Keister's integration in dimension 1 with $a=1$, $\frac{1}{\sqrt 2}$ and
+% using $\cos(x)$ as a control variate:
+
+  normsqd = @(x) sum(x.*x,2);
+  f = @(normt,a,d) ((2*pi*a^2).^(d/2)) * cos(a*sqrt(normt)).* exp((1/2-a^2)*normt);
+  f1 = @(x,a,d) f(normsqd(x),a,d);
+  f2 = @(x)[f1(x,1,1),f1(x,1/sqrt(2),1),cos(x)];
+  YXn = @(n)f2(randn(n,1));
+  s = struct('Y',YXn,'nY',2,'trueMuCV',1/sqrt(exp(1)));
+  [hmu,out] = meanMC_CLT(s,0,1e-3);
+  exact = 1.380388447043143;
+  check = double(abs(exact-hmu) < max(0,1e-3*abs(exact)))
+
+%%
+% *Example 4*
+%
+% Estimate the integral with integrand $f(x) = x_1^3 x_2^3 x_3^3$ in the
+% interval $[0,1]^3$ with pure absolute error $10^{-3}$ using $x_1 x_2 x_3$ as
+% a control variate:
+
+  f = @(x) [x(:,1).^3.*x(:,2).^3.*x(:,3).^3, x(:,1).*x(:,2).*x(:,3)];
+  s = struct('Y',@(n)f(rand(n,3)),'nY',1,'trueMuCV',1/8);
+  [hmu,out] = meanMC_CLT(s,1e-3,0);
+  exact = 1/64;
+  check = double(abs(exact-hmu) < max(1e-3,1e-3*abs(exact)))
+
+%%
+% *Example 5*
+%
+% Estimate the integrals with integrands $f_1(x) = x_1^3 x_2^3 x_3^3$ and 
+% $f_2(x)= x_1^2 x_2^2 x_3^2- \frac{1}{27}+\frac{1}{64}$ in the interval $[0,1]^3$
+% using $x_1 x_2 x_3$ and $x_1+x_2+x_3$ as control variates:
+
+  f = @(x) [x(:,1).^3.*x(:,2).^3.*x(:,3).^3, ...
+            x(:,1).^2.*x(:,2).^2.*x(:,3).^2-1/27+1/64, ...
+            x(:,1).*x(:,2).*x(:,3), ...
+            x(:,1)+x(:,2)+x(:,3)];
+  s = struct('Y',@(n)f(rand(n,3)),'nY',2,'trueMuCV',[1/8 1.5]);
+  [hmu,out] = meanMC_CLT(s,1e-4,1e-3);
+  exact = 1/64;
+  check = double(abs(exact-hmu) < max(1e-4,1e-3*abs(exact)))
+  
+%% References
+%
+% [1] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
+%     Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
+%     Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
+%     Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available
+%     from http://gailgithub.github.io/GAIL_Dev/
+%
+% If you find GAIL helpful in your work, please support us by citing the
+% above papers, software, and materials.
+##### SOURCE END #####
+--></body></html>

@@ -64,7 +64,7 @@ classdef ut_cubBayesNet_g < matlab.unittest.TestCase
     
     function cubBayesNet_gOfexp(testCase)
       f = @(x) exp(x);
-      abstol = 0;
+      abstol = 0.1;
       reltol = 1e-2;
       dim=1;
       obj = cubBayesNet_g(f,dim,'absTol',abstol,...

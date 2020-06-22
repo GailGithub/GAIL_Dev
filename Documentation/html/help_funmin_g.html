@@ -1,0 +1,377 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>funmin_g</title><meta name="generator" content="MATLAB 9.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-06-20"><meta name="DC.source" content="help_funmin_g.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:14px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:18px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>funmin_g</h1><!--introduction--><p>1-D guaranteed locally adaptive function optimization on [a,b]</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Syntax</a></li><li><a href="#2">Description</a></li><li><a href="#3">Guarantee</a></li><li><a href="#4">Examples</a></li><li><a href="#8">See Also</a></li><li><a href="#9">References</a></li></ul></div><h2>Syntax<a name="1"></a></h2><p>fmin = <b>funmin_g</b>(f)</p><p>fmin = <b>funmin_g</b>(f,a,b,abstol)</p><p>fmin = <b>funmin_g</b>(f,'a',a,'b',b,'abstol',abstol)</p><p>fmin = <b>funmin_g</b>(f,in_param)</p><p>[fmin, out_param] = <b>funmin_g</b>(f,...)</p><h2>Description<a name="2"></a></h2><p>fmin = <b>funmin_g</b>(f) finds minimum value of function f on the  default interval [0,1] within the guaranteed absolute error tolerance  of 1e-6. Input f is a function handle.</p><p>fmin = <b>funmin_g</b>(f,a,b,abstol) finds minimum value of  function f with ordered input parameters that define the finite  interval [a,b], and a guaranteed absolute error tolerance abstol.</p><p>fmin = <b>funmin_g</b>(f,'a',a,'b',b,'abstol',abstol) finds minimum  value of function f on the interval [a,b] with a guaranteed absolute  error tolerance. All three field-value pairs are optional and can be  supplied in different order.</p><p>fmin = <b>funmin_g</b>(f,in_param) finds minimum value of function f  on the interval [in_param.a,in_param.b] with a guaranteed absolute  error tolerance in_param.abstol. If a field is not specified, the  default value is used.</p><p>[fmin, out_param] = <b>funmin_g</b>(f,...) returns minimum value fmin  of function f and an output structure out_param.</p><p><b>Input Arguments</b></p><div><ul><li>f --- input function.</li></ul></div><div><ul><li>in_param.a --- left end point of interval, default value is 0.</li></ul></div><div><ul><li>in_param.b --- right end point of interval, default value is 1.</li></ul></div><div><ul><li>in_param.abstol --- guaranteed absolute error tolerance, default  value is 1e-6.</li></ul></div><p><b>Optional Input Arguments</b></p><div><ul><li>in_param.ninit --- initial number of subintervals. Default to 20.</li></ul></div><div><ul><li>in_param.nmax --- cost budget, default value is 1e7.</li></ul></div><div><ul><li>in_param.maxiter --- max number of iterations, default value is 1000.</li></ul></div><p><b>Output Arguments</b></p><div><ul><li>out_param.f --- input function</li></ul></div><div><ul><li>out_param.a --- left end point of interval</li></ul></div><div><ul><li>out_param.b --- right end point of interval</li></ul></div><div><ul><li>out_param.abstol --- guaranteed absolute error tolerance</li></ul></div><div><ul><li>out_param.nmax --- cost budget</li></ul></div><div><ul><li>out_param.ninit --- initial number of points we use</li></ul></div><div><ul><li>out_param.npoints --- number of points needed to reach the guaranteed  absolute error tolerance</li></ul></div><p>
+<ul type="square">
+ <li>out_param.exit --- this is a vector with two elements, for
+ tracking important warnings in the algorithm. The algorithm is
+ considered successful (with out_param.exit == [0 0]) if no flags arise
+ warning that the results are not guaranteed. The initial value is [0 0]
+ and the final value of this parameter is encoded as follows:</li>
+  <ul type="circle">
+   <li>[1 0]:  If reaching overbudget. It states whether
+               the max budget is attained without reaching the
+               guaranteed error tolerance.</li>
+   <li>[0 1]:  If reaching overiteration. It states whether
+               the max iterations is attained without reaching the
+               guaranteed error tolerance.</li>
+  </ul>
+</ul>
+</p><div><ul><li>out_param.errest --- estimation of the absolute error bound</li></ul></div><div><ul><li>out_param.iter --- number of iterations</li></ul></div><div><ul><li>out_param.intervals --- the intervals containing point(s) where the  minimum occurs. Each column indicates one interval where the first raw  is the left point and the second row is the right point</li></ul></div><h2>Guarantee<a name="3"></a></h2><p><b>Please check the details of the guarantee in [1].</b></p><h2>Examples<a name="4"></a></h2><p><b>Example 1</b></p><p>Minimize function <span class="MathJax_Preview"><img src="help_funmin_g_eq13642969613492155129.png" alt="$\exp(0.01 (x-0.5)^2)$"></span><script type="math/tex">\exp(0.01 (x-0.5)^2)</script> with default input parameters.</p><pre class="codeinput">  f = @(x) exp(0.01*(x-0.5).^2); [fmin,out_param] = funmin_g(f)
+</pre><pre class="codeoutput">
+fmin =
+
+     1
+
+
+out_param = 
+
+  struct with fields:
+
+            f: @(x)exp(0.01*(x-0.5).^2)
+            a: 0
+            b: 1
+       abstol: 1.0000e-06
+        ninit: 20
+         nmax: 10000000
+      maxiter: 1000
+     exitflag: [0 0]
+         iter: 5
+      npoints: 69
+       errest: 2.5955e-07
+    intervals: [2&times;1 double]
+
+</pre><p><b>Example 2</b></p><p>Minimize function <span class="MathJax_Preview"><img src="help_funmin_g_eq13642969613492155129.png" alt="$\exp(0.01 (x-0.5)^2)$"></span><script type="math/tex">\exp(0.01 (x-0.5)^2)</script> on <span class="MathJax_Preview"><img src="help_funmin_g_eq01169792831847459841.png" alt="$[-2,2]$"></span><script type="math/tex">[-2,2]</script> with error tolerance <span class="MathJax_Preview"><img src="help_funmin_g_eq04580600134691646967.png" alt="$10^{-7}$"></span><script type="math/tex">10^{-7}</script>, cost budget <span class="MathJax_Preview"><img src="help_funmin_g_eq09218327157320246669.png" alt="$1000000$"></span><script type="math/tex">1000000</script>, initial number of points <span class="MathJax_Preview"><img src="help_funmin_g_eq05652116873258451120.png" alt="$10$"></span><script type="math/tex">10</script>.</p><pre class="codeinput">f = @(x) exp(0.01*(x-0.5).^2);
+[fmin,out_param] = funmin_g(f,-2,2,1e-7,10,1000000)
+</pre><pre class="codeoutput">
+fmin =
+
+     1
+
+
+out_param = 
+
+  struct with fields:
+
+            f: @(x)exp(0.01*(x-0.5).^2)
+            a: -2
+            b: 2
+       abstol: 1.0000e-07
+        ninit: 10
+         nmax: 1000000
+      maxiter: 1000
+     exitflag: [0 0]
+         iter: 9
+      npoints: 79
+       errest: 6.1251e-08
+    intervals: [2&times;1 double]
+
+</pre><p><b>Example 3</b></p><p>Minimize function <span class="MathJax_Preview"><img src="help_funmin_g_eq13642969613492155129.png" alt="$\exp(0.01 (x-0.5)^2)$"></span><script type="math/tex">\exp(0.01 (x-0.5)^2)</script> on <span class="MathJax_Preview"><img src="help_funmin_g_eq05413538720972937408.png" alt="$[-13,8]$"></span><script type="math/tex">[-13,8]</script> with error tolerance <span class="MathJax_Preview"><img src="help_funmin_g_eq04580600134691646967.png" alt="$10^{-7}$"></span><script type="math/tex">10^{-7}</script>, cost budget <span class="MathJax_Preview"><img src="help_funmin_g_eq09218327157320246669.png" alt="$1000000$"></span><script type="math/tex">1000000</script>, initial number of points <span class="MathJax_Preview"><img src="help_funmin_g_eq12220848736999192936.png" alt="$100$"></span><script type="math/tex">100</script>.</p><pre class="codeinput">clear <span class="string">in_param</span>; in_param.a = -13; in_param.b = 8;
+in_param.abstol = 1e-7;
+in_param.ninit = 100;
+in_param.nmax = 10^6;
+[fmin,out_param] = funmin_g(f,in_param)
+</pre><pre class="codeoutput">
+fmin =
+
+    1.0000
+
+
+out_param = 
+
+  struct with fields:
+
+            f: @(x)exp(0.01*(x-0.5).^2)
+            a: -13
+            b: 8
+       abstol: 1.0000e-07
+        ninit: 100
+         nmax: 1000000
+      maxiter: 1000
+     exitflag: [0 0]
+         iter: 8
+      npoints: 203
+       errest: 6.7816e-08
+    intervals: [2&times;1 double]
+
+</pre><p><b>Example 4</b></p><p>Minimize function <span class="MathJax_Preview"><img src="help_funmin_g_eq13642969613492155129.png" alt="$\exp(0.01 (x-0.5)^2)$"></span><script type="math/tex">\exp(0.01 (x-0.5)^2)</script> on <span class="MathJax_Preview"><img src="help_funmin_g_eq01169792831847459841.png" alt="$[-2,2]$"></span><script type="math/tex">[-2,2]</script> with error tolerance <span class="MathJax_Preview"><img src="help_funmin_g_eq11285194417576436925.png" alt="$10^{-5}$"></span><script type="math/tex">10^{-5}</script>, cost budget <span class="MathJax_Preview"><img src="help_funmin_g_eq09218327157320246669.png" alt="$1000000$"></span><script type="math/tex">1000000</script>, initial number of points <span class="MathJax_Preview"><img src="help_funmin_g_eq16012313407239000300.png" alt="$64$"></span><script type="math/tex">64</script>.</p><pre class="codeinput">f=@(x) exp(0.01*(x-0.5).^2);
+[fmin,out_param] = funmin_g(f,<span class="string">'a'</span>,-2,<span class="string">'b'</span>,2,<span class="string">'ninit'</span>,64,<span class="string">'nmax'</span>,1e6,<span class="string">'abstol'</span>,1e-5)
+</pre><pre class="codeoutput">
+fmin =
+
+     1
+
+
+out_param = 
+
+  struct with fields:
+
+            f: @(x)exp(0.01*(x-0.5).^2)
+            a: -2
+            b: 2
+       abstol: 1.0000e-05
+        ninit: 64
+         nmax: 1000000
+      maxiter: 1000
+     exitflag: [0 0]
+         iter: 3
+      npoints: 107
+       errest: 8.0997e-06
+    intervals: [2&times;1 double]
+
+</pre><h2>See Also<a name="8"></a></h2><p>
+<a href="http://www.mathworks.com/help/matlab/ref/fminbnd.html">fminbnd</a>
+</p><p>
+<a href="help_funappx_g.html">funappx_g</a>
+</p><p>
+<a href="help_integral_g.html">integral_g</a>
+</p><h2>References<a name="9"></a></h2><p>[1] Sou-Cheng T. Choi, Yuhan Ding, Fred J.Hickernell, Xin Tong, "Local Adaption for Approximation and Minimization of Univariate Functions," Journal of Complexity 40, pp. 17-33, 2017.</p><p>[2] Xin Tong. A Guaranteed, "Adaptive, Automatic Algorithm for Univariate Function Minimization," MS thesis, Illinois Institute of Technology, 2014.</p><p>[3] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available from <a href="http://gailgithub.github.io/GAIL_Dev/">http://gailgithub.github.io/GAIL_Dev/</a></p><p>[4] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible Research via Supportable Scientific Software," Journal of Open Research Software, Volume 2, Number 1, e22, pp. 1-7, 2014.</p><p>[5] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable Mathematical Software" [Course Slides], Illinois Institute of Technology, Chicago, IL, 2013. Available from <a href="http://gailgithub.github.io/GAIL_Dev/">http://gailgithub.github.io/GAIL_Dev/</a></p><p>If you find GAIL helpful in your work, please support us by citing the above papers, software, and materials.</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% funmin_g
+% 1-D guaranteed locally adaptive function optimization on [a,b]
+%% Syntax
+% fmin = *funmin_g*(f)
+%
+% fmin = *funmin_g*(f,a,b,abstol)
+%
+% fmin = *funmin_g*(f,'a',a,'b',b,'abstol',abstol)
+%
+% fmin = *funmin_g*(f,in_param)
+%
+% [fmin, out_param] = *funmin_g*(f,...)
+%% Description
+%
+% fmin = *funmin_g*(f) finds minimum value of function f on the
+%  default interval [0,1] within the guaranteed absolute error tolerance
+%  of 1e-6. Input f is a function handle.
+%
+% fmin = *funmin_g*(f,a,b,abstol) finds minimum value of
+%  function f with ordered input parameters that define the finite
+%  interval [a,b], and a guaranteed absolute error tolerance abstol.
+%
+% fmin = *funmin_g*(f,'a',a,'b',b,'abstol',abstol) finds minimum
+%  value of function f on the interval [a,b] with a guaranteed absolute
+%  error tolerance. All three field-value pairs are optional and can be
+%  supplied in different order.
+%
+% fmin = *funmin_g*(f,in_param) finds minimum value of function f
+%  on the interval [in_param.a,in_param.b] with a guaranteed absolute
+%  error tolerance in_param.abstol. If a field is not specified, the
+%  default value is used.
+%
+% [fmin, out_param] = *funmin_g*(f,...) returns minimum value fmin
+%  of function f and an output structure out_param.
+%
+% *Input Arguments*
+%
+% * f REPLACE_WITH_DASH_DASH- input function.
+%
+% * in_param.a REPLACE_WITH_DASH_DASH- left end point of interval, default value is 0.
+%
+% * in_param.b REPLACE_WITH_DASH_DASH- right end point of interval, default value is 1.
+%
+% * in_param.abstol REPLACE_WITH_DASH_DASH- guaranteed absolute error tolerance, default
+%  value is 1e-6.
+%
+% *Optional Input Arguments*
+%
+% * in_param.ninit REPLACE_WITH_DASH_DASH- initial number of subintervals. Default to 20.
+%
+% * in_param.nmax REPLACE_WITH_DASH_DASH- cost budget, default value is 1e7.
+%
+% * in_param.maxiter REPLACE_WITH_DASH_DASH- max number of iterations, default value is 1000.
+%
+% *Output Arguments*
+%
+% * out_param.f REPLACE_WITH_DASH_DASH- input function
+%
+% * out_param.a REPLACE_WITH_DASH_DASH- left end point of interval
+%
+% * out_param.b REPLACE_WITH_DASH_DASH- right end point of interval
+%
+% * out_param.abstol REPLACE_WITH_DASH_DASH- guaranteed absolute error tolerance
+%
+% * out_param.nmax REPLACE_WITH_DASH_DASH- cost budget
+%
+% * out_param.ninit REPLACE_WITH_DASH_DASH- initial number of points we use
+%
+% * out_param.npoints REPLACE_WITH_DASH_DASH- number of points needed to reach the guaranteed
+%  absolute error tolerance
+%
+% <html>
+% <ul type="square">
+%  <li>out_param.exit REPLACE_WITH_DASH_DASH- this is a vector with two elements, for
+%  tracking important warnings in the algorithm. The algorithm is
+%  considered successful (with out_param.exit == [0 0]) if no flags arise
+%  warning that the results are not guaranteed. The initial value is [0 0]
+%  and the final value of this parameter is encoded as follows:</li>
+%   <ul type="circle">
+%    <li>[1 0]:  If reaching overbudget. It states whether
+%                the max budget is attained without reaching the
+%                guaranteed error tolerance.</li>
+%    <li>[0 1]:  If reaching overiteration. It states whether
+%                the max iterations is attained without reaching the
+%                guaranteed error tolerance.</li>
+%   </ul>
+% </ul>
+% </html>
+%
+% * out_param.errest REPLACE_WITH_DASH_DASH- estimation of the absolute error bound
+%
+% * out_param.iter REPLACE_WITH_DASH_DASH- number of iterations
+%
+% * out_param.intervals REPLACE_WITH_DASH_DASH- the intervals containing point(s) where the
+%  minimum occurs. Each column indicates one interval where the first raw
+%  is the left point and the second row is the right point
+%
+%% Guarantee
+%
+% *Please check the details of the guarantee in [1].*
+%
+%% Examples
+% *Example 1*
+%
+% Minimize function $\exp(0.01 (x-0.5)^2)$ with default input parameters.
+  f = @(x) exp(0.01*(x-0.5).^2); [fmin,out_param] = funmin_g(f)
+
+
+%%
+% *Example 2*
+%
+% Minimize function $\exp(0.01 (x-0.5)^2)$ on $[-2,2]$ with error tolerance
+% $10^{-7}$, cost budget $1000000$, initial number of points $10$.
+f = @(x) exp(0.01*(x-0.5).^2);
+[fmin,out_param] = funmin_g(f,-2,2,1e-7,10,1000000)
+
+
+
+%%
+% *Example 3*
+%
+% Minimize function $\exp(0.01 (x-0.5)^2)$ on $[-13,8]$ with error tolerance
+% $10^{-7}$, cost budget $1000000$, initial number of points $100$.
+clear in_param; in_param.a = -13; in_param.b = 8;
+in_param.abstol = 1e-7;
+in_param.ninit = 100;
+in_param.nmax = 10^6;
+[fmin,out_param] = funmin_g(f,in_param)
+
+
+%%
+% *Example 4*
+%
+% Minimize function $\exp(0.01 (x-0.5)^2)$ on $[-2,2]$ with error tolerance $10^{-5}$,
+% cost budget $1000000$, initial number of points $64$.
+f=@(x) exp(0.01*(x-0.5).^2);
+[fmin,out_param] = funmin_g(f,'a',-2,'b',2,'ninit',64,'nmax',1e6,'abstol',1e-5)
+
+
+%% See Also
+%
+% <html>
+% <a href="http://www.mathworks.com/help/matlab/ref/fminbnd.html">fminbnd</a>
+% </html>
+%
+% <html>
+% <a href="help_funappx_g.html">funappx_g</a>
+% </html>
+%
+% <html>
+% <a href="help_integral_g.html">integral_g</a>
+% </html>
+%
+%% References
+% [1] Sou-Cheng T. Choi, Yuhan Ding, Fred J.Hickernell, Xin Tong, "Local
+% Adaption for Approximation and Minimization of Univariate Functions,"
+% Journal of Complexity 40, pp. 17-33, 2017.
+%
+% [2] Xin Tong. A Guaranteed, "Adaptive, Automatic Algorithm for
+% Univariate Function Minimization," MS thesis, Illinois Institute of
+% Technology, 2014.
+%
+% [3] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
+% Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
+% Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
+% Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available
+% from http://gailgithub.github.io/GAIL_Dev/
+%
+% [4] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
+% Research via Supportable Scientific Software," Journal of Open Research
+% Software, Volume 2, Number 1, e22, pp. 1-7, 2014.
+%
+% [5] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable
+% Mathematical Software" [Course Slides], Illinois Institute of
+% Technology, Chicago, IL, 2013. Available from
+% http://gailgithub.github.io/GAIL_Dev/
+%
+% If you find GAIL helpful in your work, please support us by citing the
+% above papers, software, and materials.
+%
+
+##### SOURCE END #####
+--></body></html>

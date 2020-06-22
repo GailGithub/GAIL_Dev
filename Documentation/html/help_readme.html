@@ -1,0 +1,409 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Guaranteed Automatic Integration Library (GAIL)</title><meta name="generator" content="MATLAB 9.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-06-20"><meta name="DC.source" content="help_readme.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:14px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:18px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Guaranteed Automatic Integration Library (GAIL)</h1><!--introduction--><p>GAIL Version 2.3.1, 2020.</p><p>See LICENSE.m for copyright and disclaimer. Refer to ReleaseNotes.m for what is new in this version.</p><p>GAIL is a suite of algorithms for integration problems in one and many dimensions, and whose answers are guaranteed to be correct.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Developed by</a></li><li><a href="#2">Downloads</a></li><li><a href="#3">Requirements</a></li><li><a href="#4">Documentation</a></li><li><a href="#5">General Usage Notes</a></li><li><a href="#6">Installation Instruction</a></li><li><a href="#7">Tests</a></li><li><a href="#8">Known Issues</a></li><li><a href="#9">Contact Information</a></li><li><a href="#10">Acknowledgements</a></li><li><a href="#11">Organizations</a></li></ul></div><h2>Developed by<a name="1"></a></h2><p>Fred Hickernell, Sou-Cheng Choi, and their collaborators including Yuhan Ding, Lan Jiang, Lluis Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Kan Zhang, Yizhi Zhang, and Xuan Zhou, Department of Applied Mathematics, Illinois Institute of Technology (IIT) and Xin Tong, Department of Mathematics, Statistics, and Computer Science, University of Illinois at Chicago.</p><p>We thank the contributions of Aleksei Sorokin, Noah Grudowski, Francisco Hernandez, Cu Hauw Hung, Yueyi Li, Xincheng Sheng, Xiaoyang Zhao, Tianci Zhu, and the IIT classes of SCI 498 Adaptive Monte Carlo Algorithms with Applications to Financial Risk Management, Summer 2016; MATH 491 Reading &amp; Research, Summer 2015; SCI 498/MATH 491 Computational Social Sciences, Summer 2016; MATH 491-195 Solving Problems in the Social Sciences Using Tools from Computational Mathematics and Statistics, Summer 2015; Math 573 Reliable Mathematical Software, Fall 2013.</p><p>Please cite the following software, papers, and materials:</p><p>Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available from <a href="http://gailgithub.github.io/GAIL_Dev/">http://gailgithub.github.io/GAIL_Dev/</a> (this software)</p><p>Sou-Cheng T. Choi, Fred J. Hickernell, Jagadeeswaran Rathinavel, Michael McCourt, and Aleksei Sorokin, QMCPy: A quasi-Monte Carlo Python library, 2020. Available from https://qmcsoftware.github.io/QMCSoftware/. Working. (open-source Python package for Quasi-Monte Carlo methods with some GAIL algorithms)</p><p>Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible Research via Supportable Scientific Software," Journal of Open Research Software, Volume 2, Number 1, e22, pp. 1-7, 2014. (describes principles of Reliable Reproducible Research and Supportable Scientific Software)</p><p>Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Xin Tong, "Local Adaption for Approximation and Minimization of Univariate Functions," Journal of Complexity 40, pp. 17-33, 2017. (describes <b>funappx_g.m</b> and <b>funmin_g.m</b>)</p><p>Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable Mathematical Software" [Course Slides], Illinois Institute of Technology, Chicago, IL, 2013. Available from <a href="http://gailgithub.github.io/GAIL_Dev/">http://gailgithub.github.io/GAIL_Dev/</a> (develops practices of Reliable Reproducible Research and Supportable Scientific Software)</p><p>Nicholas Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic Algorithms: Cones, Not Balls," Journal of Complexity 30, pp. 21-45, 2014. (describes deprecated <b>integralTrap_g.m</b> and deprecated <b>funappxtau_g.m</b>)</p><p>Yuhan Ding, "Guaranteed Adaptive Univariate Function Approximation," PhD thesis, Illinois Institute of Technology, 2015. (describes deprecated <b>funappxPenalty_g.m</b>)</p><p>Fred J. Hickernell, Lan Jiang, Yuewei Liu, and Art B. Owen, "Guaranteed conservative fixed width confidence intervals via Monte Carlo sampling," Monte Carlo and Quasi-Monte Carlo Methods 2012 (J. Dick, F. Y. Kuo, G. W. Peters, and I. H. Sloan, eds.), Springer-Verlag, Berlin, pp. 105-128, 2014. (describes <b>meanMC_g.m</b> and <b>cubMC_g.m</b>)</p><p>Fred J. Hickernell and Lluis Antoni Jimenez Rugama, "Reliable adaptive cubature using digital sequences", Monte Carlo and Quasi-Monte Carlo Methods: MCQMC, Leuven, Belgium, April 2014 (R. Cools and D. Nuyens, eds.), Springer Proceedings in Mathematics and Statistics, vol. 163, Springer-Verlag, Berlin, 2016, arXiv:1410.8615 [math.NA], pp. 367-383. (describes <b>cubSobol_g.m</b>)</p><p>Fred J. Hickernell, Lluis Antoni Jimenez Rugama, and Da Li, "Adaptive quasi-Monte Carlo methods, 2017+, submitted for publication, arXiv:1702.01491 [math.NA].</p><p>Yizhi Zhang, Guaranteed Adaptive Automatic Algorithms for Univariate Integration: Methods, Costs and Implementations, PhD Thesis, Illinois Institute of Technology, 2018. (describes <b>integral_g.m</b>)</p><p>Lan Jiang, Guaranteed Adaptive Monte Carlo Methods for Estimating Means of Random Variables, PhD Thesis, Illinois Institute of Technology, 2016. (describes <b>meanMC_g.m</b> and <b>cubMC_g.m</b>)</p><p>Lluis Antoni Jimenez Rugama and Fred J. Hickernell, "Adaptive multidimensional integration based on rank-1 lattices," Monte Carlo and Quasi-Monte Carlo  Methods: MCQMC, Leuven, Belgium, April 2014 (R. Cools and D. Nuyens, eds.), Springer Proceedings in Mathematics and Statistics, vol. 163, Springer-Verlag, Berlin, 2016, arXiv:1411.1966, pp. 407-422. (describes <b>cubLattice_g.m</b>)</p><p>Fred J. Hickernell, Sou-Cheng T. Choi, Lan Jiang, and Lluis Antoni Jimenez Rugama, "Monte Carlo simulation, automatic stopping criteria for", Wiley StatsRef: Statistics Reference Online, pp. 1-7, 2018. (review of <b>cubMC_g</b>, <b>cubLattice_g</b>, and <b>cubSobol_g</b>)</p><p>Jagadeeswaran Rathinavel and Fred J. Hickernell, "Fast automatic Bayesian cubature using lattice sampling," Statistics and Computingt 29, pp. 1215-1229, 2019. Available from https://doi.org/10.1007/s11222-019-09895-9 (describes <b>cubBayesLattice_g</b>)</p><p>Jagadeeswaran Rathinavel, "Fast automatic Bayesian cubature using matching kernels and designs," PhD thesis, Illinois Institute of Technology, 2019. (describes <b>cubBayesLattice_g</b> and <b>cubBayesNet_g</b>)</p><p>Daniel S. Katz, Sou-Cheng T. Choi, Hilmar Lapp, Ketan Maheshwari, Frank Loffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr, James Hetherington, James Howison, Shel Swenson, Gabrielle D. Allen, Anne C. Elster, Bruce Berriman, Colin Venters, "Summary of the First Workshop On Sustainable Software for Science: Practice and Experiences (WSSSPE1)," Journal of Open Research Software, Volume 2, Number 1, e6, pp. 1-21, 2014. (discusses practice and challenges in Sustainable Software for Science)</p><p>Daniel S. Katz, Sou-Cheng T. Choi, Nancy Wilkins-Diehr, Neil Chue Hong, Colin C. Venters, James Howison, Frank J. Seinstra, Matthew Jones, Karen Cranston, Thomas L. Clune,  Miguel de Val-Borro, and Richard Littauer, "Report on the Second Workshop on Sustainable Software for Science: Practice and Experiences (WSSSPE2)," Journal of Open Research Software, Volume 4, Number 1, e7, 2016. (discusses practice and challenges in Sustainable Software for Science)</p><p>Daniel S. Katz, Sou-Cheng T. Choi, Kyle E. Niemeyer, James Hetherington, Frank Loffler, Dan Gunter, Ray Idaszak, Steven R. Brandt, Mark A. Miller, Sandra Gesing, Nick D. Jones, Nic Weber, Suresh Marru, Gabrielle Allen, Birgit Penzenstadler, Colin C. Venters, Ethan Davis, Lorraine Hwang, Ilian Todorov, Abani Patra, and Miguel de Val-Borro, "Report on the Third Workshop on Sustainable Software for Science: Practice and Experiences (WSSSPE3)," Journal of Open Research Software, Volume 4, Number 1, e37, 2016. (discusses practice and challenges in Sustainable Software for Science)</p><p>Da Li, "Reliable Quasi-Monte Carlo with Control Variates," Master's thesis, Illinois Institute of Technology, 2016. (describes <b>cubSobol_g</b> for control variates)</p><p>Arfon M. Smith, Daniel S. Katz, Kyle E. Niemeyer, and FORCE11 Software Citation Working Group, "Software citation principles," PeerJ Computer Science, Volume 2, e86, 2016. (motivates research software citation)</p><p>Xin Tong, "A Guaranteed, Adaptive, Automatic Algorithm for Univariate Function Minimization," MS thesis, Illinois Institute of Technology, 2014. (describes deprecated <b>funmin01_g</b>)</p><h2>Downloads<a name="2"></a></h2><p>GAIL can be downloaded from <a href="http://gailgithub.github.io/GAIL_Dev/">http://gailgithub.github.io/GAIL_Dev/</a>.</p><p>Alternatively, you can get a local copy of the GAIL repository with this command:</p><pre class="language-matlab">git <span class="string">clone</span> <span class="string">https://github.com/GailGithub/GAIL_Dev.git</span>
+</pre><h2>Requirements<a name="3"></a></h2><p>You will need to install MATLAB 7 or a later version.</p><p>GAIL is developed in MATLAB versions R2016a to R2020a. In particular, three of our core algorithms, cubSobol_g, cubBayesNet_g, and cubBayesLattice_g require the following MATLAB add-on toolboxes: Signal Processing Toolbox, Optimization Toolbox, Statistics and Machine Learning Toolbox. In MATLAB, we could use the following command to find out toolbox dependencies of an algorithm:</p><pre class="language-matlab">names = dependencies.toolboxDependencyAnalysis({<span class="string">'cubBayesNet_g'</span>}).
+</pre><p>For development and testing purposes, we use the third-party toolboxes, Chebfun version 5.7.0 and Doctest for MATLAB, version 2010.</p><h2>Documentation<a name="4"></a></h2><p>Detailed documentation is available in the folder, GAIL_Matlab/Documentation/html/GAIL.html.</p><p>You can also go to MATLAB's Help. Under the section of Supplemental Software, you will find GAIL Toolbox's searchable HTML documentation.</p><p>A PDF version of GAIL's documentation with selected examples is available at https://github.com/GailGithub/GAIL_Dev/blob/master/Documentation/gail_ug_2_3_1.pdf.</p><h2>General Usage Notes<a name="5"></a></h2><p>GAIL Version 2.3.1 includes the following ten algorithms:</p><p>1.  funappx_g: One-dimensional function approximation on bounded interval</p><p>2.  funmin_g: global minimum value of univariate function on a closed interval</p><p>3.  integral_g: One-dimensional integration on bounded interval</p><p>4.  meanMC_g: Monte Carlo method for estimating mean of a random variable</p><p>5.  cubMC_g: Monte Carlo method for numerical multiple integration</p><p>6.  cubSobol_g: Quasi-Monte Carlo method using Sobol' cubature for d-dimensional integration</p><p>7.  cubLattice_g: Quasi-Monte Carlo method using rank-1 Lattices cubature for d-dimensional integration</p><p>8. cubBayesLattice_g: Bayesian cubature method for d-dimensional integration    using lattice points</p><p>9. CubBayesNet_g: Bayesian cubature method for d-dimensional integration    using Sobol points</p><p>10.  meanMC_CLT: Monte Carlo method with Central Limit Theorem (CLT) confidence intervals for estimating mean of a random variable</p><p>Each one of our key GAIL algorithms, with the exception of cubBayesLattice_g and cubBayesNet_g, can parse inputs with the following three patterns of APIs, where f is a real-valued MATLAB function or function handle; in_param and out_param are MATLAB structure arrays; and x is an estimated output:</p><p>1. Ordered input values: [x, out_param] = algo(f, inputVal1, inputVal2, inputVal3,...)</p><p>2. Input structure array: [x, out_param] = algo(f, in_param)</p><p>3. Ordered input values, followed by optional name-value pairs: 	[x, out_param] = algo(f, 'input2', inputVal2, 'input3', inputVal3,...)</p><p>For object classes cubBayesLattice_g and cubBayesNet_g, the output pattern is [out, x], where out is an instance of the corresponding object class.</p><h2>Installation Instruction<a name="6"></a></h2><p>1.  Unzip the contents of the zip file to a directory and maintain the     existing directory and subdirectory structure. (Please note: If you     install into the "toolbox" subdirectory of the MATLAB program     hierarchy, you will need to click the button "Update toolbox path     cache" from the File/Preferences... dialog in MATLAB.)</p><p>2.  In MATLAB, add the GAIL directory to your path. This can be done     by running "GAIL_Install.m".  Alternatively, this can be done by     selecting "File/Set Path..." from the main or Command window     menus, or with the command "pathtool". We recommend that you     select the "Save" button on this dialog so that GAIL is on the     path automatically in future MATLAB sessions.</p><p>3.  To check if you have installed GAIL successfully, type "help     funappx_g" to see if its documentation shows up.</p><p>Alternatively, you could do this:</p><p>1.  Download DownloadInstallGail_2_3_1.m and put it where you want     GAIL to be installed.</p><p>2.  Execute it in MATLAB.</p><p>To uninstall GAIL, execute "GAIL_Uninstall".</p><p>To reinstall GAIL, execute "GAIL_Install".</p><h2>Tests<a name="7"></a></h2><p>We provide quick doctests for each of the functions above. To run doctests in funappx_g, for example, issue the command doctest funappx_g.</p><p>We also provide unit tests for MATLAB version 8 or later. To run unit tests for funmin_g, for instance, execute run(ut_funmin_g).</p><p>We execute automated nightly fast tests and weekly long tests on our server. Moreover, these tests are now conducted for all MATLAB versions from R2016a to R2020a. The test reports are available on Mega cloud storage at https://mega.nz/. More specifically, fast and long test reports are archived in text files, gail_daily_tests* and gail_weekly_tests* at https://mega.nz/folder/FlMEjI5a#jVixXyAoI05ppbCstz8yEg respectively. Output files such as images of test scripts are archived at https://mega.nz/folder/I0cAEKJD#AyQ_8tmxkknfIsuEW0_jnA respectively.</p><h2>Known Issues<a name="8"></a></h2><p>During our documentation development with MATLAB releases 2019a and 2020a, the software's internal HTML viewer is found to display LaTeX expression in larger font size than it is intended to be. This is an aesthetic issue with no impact on the content accuracy.  Users may use a web browser to view our HTML documentation instead. The main page to GAIL's HTML documentation is GAIL.html, located in the subfolder, Documentation/html/.</p><h2>Contact Information<a name="9"></a></h2><p>Please send any queries, questions, or comments to <a href="mailto:gail-users@googlegroups.com">gail-users@googlegroups.com</a> or visit our project website: <a href="http://gailgithub.github.io/GAIL_Dev/">http://gailgithub.github.io/GAIL_Dev/</a></p><h2>Acknowledgements<a name="10"></a></h2><p>Our work was supported in part by the National Science Foundation under grants NSF-DMS-1522687 and NSF-DMS-1115392; and by the Office of Advanced Scientific Computing Research, Office of Science, U.S. Department of Energy, under contract DE-AC02-06CH11357.</p><h2>Organizations<a name="11"></a></h2><p><img vspace="5" hspace="5" src="illinois-institute-of-technology-vector-logo.jpg" alt=""> </p><p><img vspace="5" hspace="5" src="kamakura-corporation-vector-logo.png" alt=""> </p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Guaranteed Automatic Integration Library (GAIL)
+% 
+% GAIL Version 2.3.1, 2020.
+% 
+% See LICENSE.m for copyright and disclaimer. Refer to ReleaseNotes.m for
+% what is new in this version.
+% 
+% GAIL is a suite of algorithms for integration problems in one and many
+% dimensions, and whose answers are guaranteed to be correct.
+% 
+% 
+%% Developed by
+% 
+% 
+% Fred Hickernell, Sou-Cheng Choi, and their collaborators including Yuhan
+% Ding, Lan Jiang, Lluis Antoni Jimenez Rugama, Da Li, Jagadeeswaran
+% Rathinavel, Kan Zhang, Yizhi Zhang, and Xuan Zhou, Department of Applied
+% Mathematics, Illinois Institute of Technology (IIT) and Xin Tong,
+% Department of Mathematics, Statistics, and Computer Science, University
+% of Illinois at Chicago. 
+% 
+% We thank the contributions of Aleksei Sorokin, Noah Grudowski, Francisco
+% Hernandez, Cu Hauw Hung, Yueyi Li, Xincheng Sheng, Xiaoyang Zhao, Tianci
+% Zhu, and the IIT classes of SCI 498 Adaptive Monte Carlo Algorithms with
+% Applications to Financial Risk Management, Summer 2016; MATH 491 Reading
+% & Research, Summer 2015; SCI 498/MATH 491 Computational Social Sciences,
+% Summer 2016; MATH 491-195 Solving Problems in the Social Sciences Using
+% Tools from Computational Mathematics and Statistics, Summer 2015; Math
+% 573 Reliable Mathematical Software, Fall 2013.
+% 
+% 
+% 
+% Please cite the following software, papers, and materials:
+% 
+% Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
+% Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
+% Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
+% Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available from
+% http://gailgithub.github.io/GAIL_Dev/
+% (this software)
+% 
+% Sou-Cheng T. Choi, Fred J. Hickernell, Jagadeeswaran Rathinavel, Michael McCourt,
+% and Aleksei Sorokin, QMCPy: A quasi-Monte Carlo Python library, 2020. Available
+% from https://qmcsoftware.github.io/QMCSoftware/. Working.
+% (open-source Python package for Quasi-Monte Carlo methods with some GAIL
+% algorithms)
+% 
+% Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible Research via
+% Supportable Scientific Software," Journal of Open Research Software, Volume 2,
+% Number 1, e22, pp. 1-7, 2014.
+% (describes principles of Reliable Reproducible Research and Supportable
+% Scientific Software)
+% 
+% Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Xin Tong, "Local
+% Adaption for Approximation and Minimization of Univariate Functions,"
+% Journal of Complexity 40, pp. 17-33, 2017.
+% (describes *funappx_g.m* and *funmin_g.m*)
+% 
+% Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable Mathematical
+% Software" [Course Slides], Illinois Institute of Technology, Chicago, IL, 2013.
+% Available from http://gailgithub.github.io/GAIL_Dev/
+% (develops practices of Reliable Reproducible Research and Supportable
+% Scientific Software)
+% 
+% Nicholas Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and
+% Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic Algorithms:
+% Cones, Not Balls," Journal of Complexity 30, pp. 21-45, 2014.
+% (describes deprecated *integralTrap_g.m* and deprecated *funappxtau_g.m*)
+% 
+% Yuhan Ding, "Guaranteed Adaptive Univariate Function Approximation," PhD
+% thesis, Illinois Institute of Technology, 2015.
+% (describes deprecated *funappxPenalty_g.m*)
+% 
+% Fred J. Hickernell, Lan Jiang, Yuewei Liu, and Art B. Owen,
+% "Guaranteed conservative fixed width confidence intervals via Monte
+% Carlo sampling," Monte Carlo and Quasi-Monte Carlo Methods 2012
+% (J. Dick, F. Y. Kuo, G. W. Peters, and I. H. Sloan, eds.),
+% Springer-Verlag, Berlin, pp. 105-128, 2014.
+% (describes *meanMC_g.m* and *cubMC_g.m*)
+% 
+% Fred J. Hickernell and Lluis Antoni Jimenez Rugama, "Reliable adaptive
+% cubature using digital sequences", Monte Carlo and Quasi-Monte Carlo
+% Methods: MCQMC, Leuven, Belgium, April 2014 (R. Cools and D. Nuyens, eds.),
+% Springer Proceedings in Mathematics and Statistics, vol. 163,
+% Springer-Verlag, Berlin, 2016, arXiv:1410.8615 [math.NA], pp. 367-383.
+% (describes *cubSobol_g.m*)
+% 
+% Fred J. Hickernell, Lluis Antoni Jimenez Rugama, and Da Li, "Adaptive
+% quasi-Monte Carlo methods, 2017+, submitted for publication, 
+% arXiv:1702.01491 [math.NA].
+% 
+% Yizhi Zhang, Guaranteed Adaptive Automatic Algorithms for 
+% Univariate Integration: Methods, Costs and Implementations, PhD
+% Thesis, Illinois Institute of Technology, 2018.
+% (describes *integral_g.m*)
+% 
+% Lan Jiang, Guaranteed Adaptive Monte Carlo Methods for Estimating
+% Means of Random Variables, PhD Thesis, Illinois Institute of
+% Technology, 2016.
+% (describes *meanMC_g.m* and *cubMC_g.m*)
+% 
+% Lluis Antoni Jimenez Rugama and Fred J. Hickernell, "Adaptive
+% multidimensional integration based on rank-1 lattices," Monte Carlo
+% and Quasi-Monte Carlo  Methods: MCQMC, Leuven, Belgium, April 2014
+% (R. Cools and D. Nuyens, eds.), Springer Proceedings in Mathematics
+% and Statistics, vol. 163, Springer-Verlag, Berlin, 2016, arXiv:1411.1966,
+% pp. 407-422.
+% (describes *cubLattice_g.m*)
+% 
+% Fred J. Hickernell, Sou-Cheng T. Choi, Lan Jiang, and Lluis Antoni Jimenez
+% Rugama, "Monte Carlo simulation, automatic stopping criteria for", Wiley
+% StatsRef: Statistics Reference Online, pp. 1-7, 2018.
+% (review of *cubMC_g*, *cubLattice_g*, and *cubSobol_g*)
+%
+% Jagadeeswaran Rathinavel and Fred J. Hickernell, "Fast automatic Bayesian
+% cubature using lattice sampling," Statistics and Computingt 29,
+% pp. 1215-1229, 2019. Available from https://doi.org/10.1007/s11222-019-09895-9
+% (describes *cubBayesLattice_g*)
+% 
+% Jagadeeswaran Rathinavel, "Fast automatic Bayesian cubature using matching
+% kernels and designs," PhD thesis, Illinois Institute of Technology, 2019.
+% (describes *cubBayesLattice_g* and *cubBayesNet_g*)
+% 
+% Daniel S. Katz, Sou-Cheng T. Choi, Hilmar Lapp, Ketan Maheshwari,
+% Frank Loffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr,
+% James Hetherington, James Howison, Shel Swenson, Gabrielle D. Allen,
+% Anne C. Elster, Bruce Berriman, Colin Venters, "Summary of the First
+% Workshop On Sustainable Software for Science: Practice and Experiences
+% (WSSSPE1)," Journal of Open Research Software, Volume 2, Number 1, e6,
+% pp. 1-21, 2014.
+% (discusses practice and challenges in Sustainable Software for Science)
+% 
+% Daniel S. Katz, Sou-Cheng T. Choi, Nancy Wilkins-Diehr, Neil Chue Hong,
+% Colin C. Venters, James Howison, Frank J. Seinstra, Matthew Jones, Karen
+% Cranston, Thomas L. Clune,  Miguel de Val-Borro, and Richard Littauer,
+% "Report on the Second Workshop on Sustainable Software for Science:
+% Practice and Experiences (WSSSPE2)," Journal of Open Research Software,
+% Volume 4, Number 1, e7, 2016.
+% (discusses practice and challenges in Sustainable Software for Science)
+% 
+% Daniel S. Katz, Sou-Cheng T. Choi, Kyle E. Niemeyer, James
+% Hetherington, Frank Loffler, Dan Gunter, Ray Idaszak, Steven R. Brandt,
+% Mark A. Miller, Sandra Gesing, Nick D. Jones, Nic Weber, Suresh Marru,
+% Gabrielle Allen, Birgit Penzenstadler, Colin C. Venters, Ethan Davis,
+% Lorraine Hwang, Ilian Todorov, Abani Patra, and Miguel de Val-Borro,
+% "Report on the Third Workshop on Sustainable Software for Science:
+% Practice and Experiences (WSSSPE3)," Journal of Open Research Software,
+% Volume 4, Number 1, e37, 2016.
+% (discusses practice and challenges in Sustainable Software for Science)
+% 
+% Da Li, "Reliable Quasi-Monte Carlo with Control Variates," Master's thesis,
+% Illinois Institute of Technology, 2016.
+% (describes *cubSobol_g* for control variates)
+% 
+% Arfon M. Smith, Daniel S. Katz, Kyle E. Niemeyer, and FORCE11 Software
+% Citation Working Group, "Software citation principles," PeerJ Computer
+% Science, Volume 2, e86, 2016. 
+% (motivates research software citation)
+% 
+% Xin Tong, "A Guaranteed, Adaptive, Automatic Algorithm for Univariate
+% Function Minimization," MS thesis, Illinois Institute of Technology, 2014.
+% (describes deprecated *funmin01_g*)
+% 
+% 
+%% Downloads
+% 
+% GAIL can be downloaded from http://gailgithub.github.io/GAIL_Dev/.
+% 
+% Alternatively, you can get a local copy of the GAIL repository with
+% this command:
+% 
+%   git clone https://github.com/GailGithub/GAIL_Dev.git
+% 
+% 
+%% Requirements
+% 
+% 
+% You will need to install MATLAB 7 or a later version.
+%
+% GAIL is developed in MATLAB versions R2016a to R2020a. In particular, three
+% of our core algorithms, cubSobol_g, cubBayesNet_g, and cubBayesLattice_g
+% require the following MATLAB add-on toolboxes: Signal Processing Toolbox,
+% Optimization Toolbox, Statistics and Machine Learning Toolbox. In MATLAB,
+% we could use the following command to find out toolbox dependencies of an
+% algorithm:
+% 
+%   names = dependencies.toolboxDependencyAnalysis({'cubBayesNet_g'}).
+% 
+% For development and testing purposes, we use the third-party toolboxes,
+% Chebfun version 5.7.0 and Doctest for MATLAB, version 2010.
+% 
+%% Documentation
+% 
+% 
+% Detailed documentation is available in the folder, 
+% GAIL_Matlab/Documentation/html/GAIL.html.
+%
+% You can also go to MATLAB's Help. Under the section of Supplemental Software,
+% you will find GAIL Toolbox's searchable HTML documentation.
+% 
+% A PDF version of GAIL's documentation with selected examples is available at
+% https://github.com/GailGithub/GAIL_Dev/blob/master/Documentation/gail_ug_2_3_1.pdf.
+% 
+%% General Usage Notes
+% 
+% 
+% GAIL Version 2.3.1 includes the following ten algorithms:
+% 
+% 1.  funappx_g: One-dimensional function approximation on bounded interval
+% 
+% 2.  funmin_g: global minimum value of univariate function on a closed interval
+% 
+% 3.  integral_g: One-dimensional integration on bounded interval
+% 
+% 4.  meanMC_g: Monte Carlo method for estimating mean of a random variable
+% 
+% 5.  cubMC_g: Monte Carlo method for numerical multiple integration
+% 
+% 6.  cubSobol_g: Quasi-Monte Carlo method using Sobol' cubature for
+% d-dimensional integration
+% 
+% 7.  cubLattice_g: Quasi-Monte Carlo method using rank-1 Lattices cubature
+% for d-dimensional integration
+% 
+% 8. cubBayesLattice_g: Bayesian cubature method for d-dimensional integration
+%    using lattice points
+% 
+% 9. CubBayesNet_g: Bayesian cubature method for d-dimensional integration
+%    using Sobol points
+% 
+% 10.  meanMC_CLT: Monte Carlo method with Central Limit Theorem (CLT)
+% confidence intervals for estimating mean of a random variable
+% 
+% Each one of our key GAIL algorithms, with the exception of
+% cubBayesLattice_g and cubBayesNet_g, can parse inputs with the following
+% three patterns of APIs, where f is a real-valued MATLAB function or
+% function handle; in_param and out_param are MATLAB structure arrays; and
+% x is an estimated output:
+% 
+% 1. Ordered input values: [x, out_param] = algo(f, inputVal1, inputVal2, inputVal3,...)
+% 
+% 2. Input structure array: [x, out_param] = algo(f, in_param)
+% 
+% 3. Ordered input values, followed by optional name-value pairs:
+% 	[x, out_param] = algo(f, 'input2', inputVal2, 'input3', inputVal3,...)
+%  
+% For object classes cubBayesLattice_g and cubBayesNet_g, the output pattern
+% is [out, x], where out is an instance of the corresponding object class.
+% 
+%% Installation Instruction
+% 
+% 
+% 1.  Unzip the contents of the zip file to a directory and maintain the
+%     existing directory and subdirectory structure. (Please note: If you
+%     install into the "toolbox" subdirectory of the MATLAB program
+%     hierarchy, you will need to click the button "Update toolbox path
+%     cache" from the File/Preferences... dialog in MATLAB.)
+% 
+% 2.  In MATLAB, add the GAIL directory to your path. This can be done
+%     by running "GAIL_Install.m".  Alternatively, this can be done by
+%     selecting "File/Set Path..." from the main or Command window
+%     menus, or with the command "pathtool". We recommend that you
+%     select the "Save" button on this dialog so that GAIL is on the
+%     path automatically in future MATLAB sessions.
+% 
+% 3.  To check if you have installed GAIL successfully, type "help
+%     funappx_g" to see if its documentation shows up.
+% 
+% Alternatively, you could do this:
+% 
+% 1.  Download DownloadInstallGail_2_3_1.m and put it where you want
+%     GAIL to be installed.
+% 
+% 2.  Execute it in MATLAB.
+% 
+% To uninstall GAIL, execute "GAIL_Uninstall".
+% 
+% To reinstall GAIL, execute "GAIL_Install".
+%  
+%% Tests
+% 
+% 
+% We provide quick doctests for each of the functions above. To run
+% doctests in funappx_g, for example, issue the command doctest
+% funappx_g.
+% 
+% We also provide unit tests for MATLAB version 8 or later. To run unit
+% tests for funmin_g, for instance, execute run(ut_funmin_g).
+% 
+% We execute automated nightly fast tests and weekly long tests
+% on our server. Moreover, these tests are now conducted for all MATLAB
+% versions from R2016a to R2020a. The test reports are available on Mega
+% cloud storage at https://mega.nz/. More specifically, fast and long test
+% reports are archived in text files, gail_daily_tests* and gail_weekly_tests* at
+% https://mega.nz/folder/FlMEjI5a#jVixXyAoI05ppbCstz8yEg
+% respectively. Output files such as images of test scripts are archived at 
+% https://mega.nz/folder/I0cAEKJD#AyQ_8tmxkknfIsuEW0_jnA
+% respectively.
+% 
+% 
+%% Known Issues
+% 
+% 
+% During our documentation development with MATLAB releases 2019a and 2020a, the
+% software's internal HTML viewer is found to display LaTeX expression in
+% larger font size than it is intended to be. This is an aesthetic issue with
+% no impact on the content accuracy.  Users may use a web browser to view our
+% HTML documentation instead. The main page to GAIL's HTML documentation is
+% GAIL.html, located in the subfolder, Documentation/html/.
+% 
+% 
+%% Contact Information
+% 
+% 
+% Please send any queries, questions, or comments to
+% gail-users@googlegroups.com or visit our project website:
+% http://gailgithub.github.io/GAIL_Dev/
+% 
+% 
+%% Acknowledgements
+% 
+% 
+% Our work was supported in part by the National Science Foundation under
+% grants NSF-DMS-1522687 and NSF-DMS-1115392; and by the Office of Advanced
+% Scientific Computing Research, Office of Science, U.S. Department of
+% Energy, under contract DE-AC02-06CH11357.
+% 
+% 
+%% Organizations
+% 
+% 
+% <<illinois-institute-of-technology-vector-logo.jpg>>
+% 
+% <<kamakura-corporation-vector-logo.png>>
+
+##### SOURCE END #####
+--></body></html>

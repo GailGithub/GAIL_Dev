@@ -1,0 +1,263 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Approximate a highly fluctuating curve using funappx_g</title><meta name="generator" content="MATLAB 9.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-06-20"><meta name="DC.source" content="demo_funappx_g1.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:14px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:18px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Approximate a highly fluctuating curve using <b>funappx_g</b></h1><!--introduction--><p>Author: Sou-Cheng Choi, July 2017</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Function definition</a></li><li><a href="#2">Function approximation</a></li><li><a href="#3">Plots of the function and approximant</a></li><li><a href="#4">Plot of the approximation errors</a></li><li><a href="#5">A slightly different example</a></li><li><a href="#6">A workaround</a></li><li><a href="#7">A better way</a></li><li><a href="#8">References</a></li></ul></div><h2>Function definition<a name="1"></a></h2><p>Define a highly fluctuating function as follows:</p><p><span class="MathJax_Preview"><img src="demo_funappx_g1_eq16160492019778674143.png" alt="$$ f(x) = x^2 \sin \biggl(\frac{2 \pi}{ x^2} \biggr). $$"></span><script type="math/tex"> f(x) = x^2 \sin \biggl(\frac{2 \pi}{ x^2} \biggr). </script></p><pre class="codeinput">close <span class="string">all</span>; clear <span class="string">all</span>; format <span class="string">compact</span>; format <span class="string">short</span>;
+f = @(x) x.^2 .* sin((2*pi)./x.^2);
+</pre><h2>Function approximation<a name="2"></a></h2><p>We use <b>funappx_g</b> to approximate <span class="MathJax_Preview"><img src="demo_funappx_g1_eq18096895394918367257.png" alt="$f$"></span><script type="math/tex">f</script> over the interval <span class="MathJax_Preview"><img src="demo_funappx_g1_eq13003530951257114622.png" alt="$[a,b]$"></span><script type="math/tex">[a,b]</script>, where <span class="MathJax_Preview"><img src="demo_funappx_g1_eq01129342404505525673.png" alt="$a = 0.1$"></span><script type="math/tex">a = 0.1</script> and <span class="MathJax_Preview"><img src="demo_funappx_g1_eq09058234036099159411.png" alt="$b = 2.5$"></span><script type="math/tex">b = 2.5</script>:</p><pre class="codeinput">a = 0.1;
+b = 2.5;
+[q,out] = funappx_g(f, a, b);
+</pre><h2>Plots of the function and approximant<a name="3"></a></h2><p>We plot <span class="MathJax_Preview"><img src="demo_funappx_g1_eq17663307419741296505.png" alt="$f(x)$"></span><script type="math/tex">f(x)</script> and the approximant returned by <b>funappx_g</b>, <span class="MathJax_Preview"><img src="demo_funappx_g1_eq17559880918661070083.png" alt="$q(x)$"></span><script type="math/tex">q(x)</script>, below:</p><pre class="codeinput">figure;
+x = a:1e-6:b;
+plot(x,f(x),<span class="string">'r.'</span>, x,q(x),<span class="string">'g-'</span>);
+xlabel(<span class="string">'$x$'</span>,<span class="string">'interpreter'</span>,<span class="string">'latex'</span>)
+h_legend=legend(<span class="string">'$f(x)$'</span>, <span class="string">'$q(x)$'</span>);
+set(h_legend,<span class="string">'interpreter'</span>,<span class="string">'latex'</span>);
+axis <span class="string">tight</span>
+</pre><img vspace="5" hspace="5" src="demo_funappx_g1_01.png" alt=""> <h2>Plot of the approximation errors<a name="4"></a></h2><p>The following plot shows that all pointwise absolute errors are less than the default tolerance of <span class="MathJax_Preview"><img src="demo_funappx_g1_eq15305046719526685932.png" alt="$10^{-6}$"></span><script type="math/tex">10^{-6}</script>.</p><pre class="codeinput">figure;
+semilogy(x,abs(f(x)-q(x)));
+xlabel(<span class="string">'$x$'</span>,<span class="string">'interpreter'</span>,<span class="string">'latex'</span>)
+ylabel(<span class="string">'absolute error'</span>)
+axis <span class="string">tight</span>
+max_abs_error = max(abs(f(x)-q(x)))
+</pre><pre class="codeoutput">max_abs_error =
+   9.9886e-08
+</pre><img vspace="5" hspace="5" src="demo_funappx_g1_02.png" alt=""> <h2>A slightly different example<a name="5"></a></h2><p>If we changes <span class="MathJax_Preview"><img src="demo_funappx_g1_eq05508344529756732484.png" alt="$a$"></span><script type="math/tex">a</script> to a smaller number such as <span class="MathJax_Preview"><img src="demo_funappx_g1_eq04824699449894430030.png" alt="$10^{-2}$"></span><script type="math/tex">10^{-2}</script>, then even if we relax the tolerance to <span class="MathJax_Preview"><img src="demo_funappx_g1_eq06294580275139675239.png" alt="$10^{-4}$"></span><script type="math/tex">10^{-4}</script>, <b>funappx_g</b> may still return an approximant that fails to meet the tolerance. The reason is that <span class="MathJax_Preview"><img src="demo_funappx_g1_eq18096895394918367257.png" alt="$f$"></span><script type="math/tex">f</script> on <span class="MathJax_Preview"><img src="demo_funappx_g1_eq13003530951257114622.png" alt="$[a,b]$"></span><script type="math/tex">[a,b]</script> is no longer in the cone of functions conducive for successful approximation.</p><pre class="codeinput">a = 1e-2;
+abstol = 1e-4;
+[q2,out2] = funappx_g(f, a, b, abstol);
+figure;
+x = a:1e-6:b;
+semilogy(x,abs(f(x)-q2(x)));
+xlabel(<span class="string">'$x$'</span>,<span class="string">'interpreter'</span>,<span class="string">'latex'</span>)
+ylabel(<span class="string">'absolute error'</span>)
+axis <span class="string">tight</span>
+max_abs_error = max(abs(f(x)-q2(x)))
+</pre><pre class="codeoutput">max_abs_error =
+    0.0076
+</pre><img vspace="5" hspace="5" src="demo_funappx_g1_03.png" alt=""> <h2>A workaround<a name="6"></a></h2><p>We can widen the cone by increasing the number of initial points given to <b>funappx_g</b>.</p><pre class="codeinput">inparam.a = a;
+inparam.b = b;
+inparam.abstol = abstol;
+inparam.ninit = 5e6;
+inparam.nmax = inparam.ninit*10;
+[q3,out3] = funappx_g(f, inparam);
+x = a:1.0/(out3.npoints*2):b;
+figure;
+semilogy(x,abs(f(x)-q3(x)));
+xlabel(<span class="string">'$x$'</span>,<span class="string">'interpreter'</span>,<span class="string">'latex'</span>)
+ylabel(<span class="string">'absolute error'</span>)
+axis <span class="string">tight</span>
+max_abs_error = max(abs(f(x)-q3(x)))
+</pre><pre class="codeoutput">max_abs_error =
+   9.9093e-05
+</pre><img vspace="5" hspace="5" src="demo_funappx_g1_04.png" alt=""> <h2>A better way<a name="7"></a></h2><p>Using a large value of <tt>ninit</tt> defeats the purpose of <b>funappx_g</b>'s locally adaptive design. Notice that the failure region was <span class="MathJax_Preview"><img src="demo_funappx_g1_eq04754028844186837832.png" alt="$[0.01,0.1]$"></span><script type="math/tex">[0.01,0.1]</script>, So we can use <b>funappx_g</b> with a high value of <tt>ninit</tt> only in this region.</p><pre class="codeinput">inparam.a = a;
+inparam.b = 0.1;
+inparam.ninit = 2e5;
+inparam.nmax =  1e7;
+inparam.output_x = 1;
+[q4,out4] = funappx_g(f, inparam);
+
+<span class="comment">% Use default value of ninit on [0.1,2.5]</span>
+inparam.a = inparam.b;
+inparam.b = b;
+inparam.ninit = 20;
+[q5,out5] = funappx_g(f, inparam);
+
+<span class="comment">% Define a new approximant on [a,b]</span>
+xx = [out4.x, out5.x(2:end)];
+yy = [out4.y, out5.y(2:end)];
+<span class="keyword">if</span> gail.matlab_version &gt;= 8.3
+    fappx = griddedInterpolant(xx,yy,<span class="string">'linear'</span>);
+<span class="keyword">else</span>
+    fappx = @(t) ppval(interp1(xx,yy,<span class="string">'linear'</span>,<span class="string">'pp'</span>), t);
+<span class="keyword">end</span>;
+
+<span class="comment">% Evaluate the error again</span>
+x = a:1e-7:b;
+max_abs_error = max(abs(f(x)-fappx(x)))
+</pre><pre class="codeoutput">max_abs_error =
+   9.9616e-06
+</pre><h2>References<a name="8"></a></h2><p>[1] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Xin Tong, "Local     Adaption for Approximation and Minimization of Univariate Functions,"     <i>Journal of Complexity</i> 40, pp. 17-33, 2017.</p><p>[2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis     Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan     Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic     Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available     from <a href="http://gailgithub.github.io/GAIL_Dev/">http://gailgithub.github.io/GAIL_Dev/</a></p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Approximate a highly fluctuating curve using *funappx_g*
+% Author: Sou-Cheng Choi, July 2017
+
+%% Function definition
+%
+% Define a highly fluctuating function as follows:
+%
+% $$ f(x) = x^2 \sin \biggl(\frac{2 \pi}{ x^2} \biggr). $$
+%
+close all; clear all; format compact; format short;
+f = @(x) x.^2 .* sin((2*pi)./x.^2);
+
+%% Function approximation
+% We use *funappx_g* to approximate $f$ over the interval $[a,b]$, where
+% $a = 0.1$ and $b = 2.5$:
+a = 0.1;
+b = 2.5;
+[q,out] = funappx_g(f, a, b);
+
+%% Plots of the function and approximant
+% We plot $f(x)$ and the approximant returned by *funappx_g*, $q(x)$,
+% below:
+figure;
+x = a:1e-6:b;
+plot(x,f(x),'r.', x,q(x),'g-');
+xlabel('$x$','interpreter','latex')
+h_legend=legend('$f(x)$', '$q(x)$');
+set(h_legend,'interpreter','latex');
+axis tight
+
+%% Plot of the approximation errors
+% The following plot shows that all pointwise absolute errors are less than
+% the default tolerance of $10^{-6}$.
+figure;
+semilogy(x,abs(f(x)-q(x)));
+xlabel('$x$','interpreter','latex')
+ylabel('absolute error')
+axis tight
+max_abs_error = max(abs(f(x)-q(x)))
+
+%% A slightly different example
+% If we changes $a$ to a smaller number such as $10^{-2}$, then even if
+% we relax the tolerance to $10^{-4}$, *funappx_g* may still return an
+% approximant that fails to meet the tolerance. The reason is that $f$ on
+% $[a,b]$ is no longer in the cone of functions conducive for successful
+% approximation.
+a = 1e-2;
+abstol = 1e-4;
+[q2,out2] = funappx_g(f, a, b, abstol);
+figure;
+x = a:1e-6:b;
+semilogy(x,abs(f(x)-q2(x)));
+xlabel('$x$','interpreter','latex')
+ylabel('absolute error')
+axis tight
+max_abs_error = max(abs(f(x)-q2(x)))
+
+%% A workaround
+% We can widen the cone by increasing the number of initial points given to
+% *funappx_g*.
+inparam.a = a;
+inparam.b = b;
+inparam.abstol = abstol;
+inparam.ninit = 5e6;
+inparam.nmax = inparam.ninit*10;
+[q3,out3] = funappx_g(f, inparam);
+x = a:1.0/(out3.npoints*2):b;
+figure;
+semilogy(x,abs(f(x)-q3(x)));
+xlabel('$x$','interpreter','latex')
+ylabel('absolute error')
+axis tight
+max_abs_error = max(abs(f(x)-q3(x)))
+
+%% A better way
+% Using a large value of |ninit| defeats the purpose of *funappx_g*'s
+% locally adaptive design. Notice that the failure region was $[0.01,0.1]$,
+% So we can use *funappx_g* with a high value of |ninit| only in this
+% region.
+inparam.a = a;
+inparam.b = 0.1;
+inparam.ninit = 2e5;
+inparam.nmax =  1e7;
+inparam.output_x = 1;
+[q4,out4] = funappx_g(f, inparam);
+
+% Use default value of ninit on [0.1,2.5]
+inparam.a = inparam.b;
+inparam.b = b;
+inparam.ninit = 20;
+[q5,out5] = funappx_g(f, inparam);
+
+% Define a new approximant on [a,b]
+xx = [out4.x, out5.x(2:end)];
+yy = [out4.y, out5.y(2:end)];
+if gail.matlab_version >= 8.3
+    fappx = griddedInterpolant(xx,yy,'linear');
+else
+    fappx = @(t) ppval(interp1(xx,yy,'linear','pp'), t);
+end;
+
+% Evaluate the error again
+x = a:1e-7:b;
+max_abs_error = max(abs(f(x)-fappx(x)))
+
+%% References
+%
+% [1] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Xin Tong, "Local
+%     Adaption for Approximation and Minimization of Univariate Functions,"
+%     _Journal of Complexity_ 40, pp. 17-33, 2017.
+%
+% [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
+%     Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
+%     Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
+%     Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available
+%     from http://gailgithub.github.io/GAIL_Dev/
+
+##### SOURCE END #####
+--></body></html>

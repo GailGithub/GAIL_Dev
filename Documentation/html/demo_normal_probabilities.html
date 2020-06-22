@@ -1,0 +1,447 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Estimation of normal probabilities by cubSobol_g and cubMC_g</title><meta name="generator" content="MATLAB 9.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-06-20"><meta name="DC.source" content="demo_normal_probabilities.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:14px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:18px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Estimation of normal probabilities by <b>cubSobol_g</b> and <b>cubMC_g</b></h1><!--introduction--><p>Authors: Lluis Antoni Jimenez Rugama and Lan Jiang, August 2017</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Introduction</a></li><li><a href="#2">Basic integration parameters set up</a></li><li><a href="#4">First test: <span class="MathJax_Preview"><img src="demo_normal_probabilities_eq02102970749047382650.png" alt="$\Sigma=I_d$"></span><script type="math/tex">\Sigma=I_d</script></a></li><li><a href="#5">Second test: <span class="MathJax_Preview"><img src="demo_normal_probabilities_eq16882700412111380474.png" alt="$\Sigma=0.4I_d + 0.6\bf{1}\bf{1}^T$"></span><script type="math/tex">\Sigma=0.4I_d + 0.6\bf{1}\bf{1}^T</script></a></li><li><a href="#6">Third test: <span class="MathJax_Preview"><img src="demo_normal_probabilities_eq16882700412111380474.png" alt="$\Sigma=0.4I_d + 0.6\bf{1}\bf{1}^T$"></span><script type="math/tex">\Sigma=0.4I_d + 0.6\bf{1}\bf{1}^T</script></a></li><li><a href="#7">Appendix: Auxiliary function definitions</a></li><li><a href="#9">References</a></li></ul></div><h2>Introduction<a name="1"></a></h2><p>For <span class="MathJax_Preview"><img src="demo_normal_probabilities_eq01021699821693028194.png" alt="$\bf{X} \sim N(\bf{\mu}, \Sigma)$"></span><script type="math/tex">\bf{X} \sim N(\bf{\mu}, \Sigma)</script>, we will estimate the following probability:</p><p><span class="MathJax_Preview"><img src="demo_normal_probabilities_eq07192945831016865003.png" alt="$$ P\left(\bf{a} \leq \bf{X} \leq \bf{b} \right) = \int_{\bf{a}}^{\bf{b}}&#xA;\frac{{\rm e}^{(\bf{x}-\bf{\mu})^T {\Sigma}^{-1}(\bf{x}-\bf{\mu})}}&#xA;{(2\pi)^{d/2}\left|{\Sigma}\right|^{1/2}}\,{\rm d}\bf{x}. $$"></span><script type="math/tex"> P\left(\bf{a} \leq \bf{X} \leq \bf{b} \right) = \int_{\bf{a}}^{\bf{b}}
+\frac{{\rm e}^{(\bf{x}-\bf{\mu})^T {\Sigma}^{-1}(\bf{x}-\bf{\mu})}}
+{(2\pi)^{d/2}\left|{\Sigma}\right|^{1/2}}\,{\rm d}\bf{x}. </script></p><p>We present three tests, each of which approximates the aforementioned probability using <b>cubSobol_g</b> and <b>cubMC_g</b>, which are quasi-Monte Carlo and IID Monte Carlo algorithms in GAIL, respectively. In order to facilitate the computations when <span class="MathJax_Preview"><img src="demo_normal_probabilities_eq17615571056258974497.png" alt="$d$"></span><script type="math/tex">d</script> is high (~30), we are going to apply a special transformation of the integrand proposed by Alan Genz.</p><h2>Basic integration parameters set up<a name="2"></a></h2><p>For all the examples, the dimension of the problem is <span class="MathJax_Preview"><img src="demo_normal_probabilities_eq15496827329366810739.png" alt="$d=30$"></span><script type="math/tex">d=30</script>. The user input tolerances are also set up below: <tt>abstol</tt> is the absolute error tolerance, and <tt>reltol</tt> the relative error tolerance. When <tt>reltol</tt> is set to 0, the algorithms use pure absolute error bound, and vice versa. Finally, for simplicity we define the mean of the distribution to be <span class="MathJax_Preview"><img src="demo_normal_probabilities_eq09095304396580037701.png" alt="$\bf{\mu}=\bf{0}$"></span><script type="math/tex">\bf{\mu}=\bf{0}</script>:</p><pre class="codeinput"><span class="keyword">function</span> demo_normal_probabilities()
+</pre><pre class="codeinput">d = 30; <span class="comment">% Dimension of the problem</span>
+abstol = 1e-3; <span class="comment">% User input, absolute error bound</span>
+reltol = 0;  <span class="comment">% User input, relative error bound</span>
+mu = zeros(d,1); <span class="comment">% Mean of the distribution</span>
+</pre><h2>First test: <span class="MathJax_Preview"><img src="demo_normal_probabilities_eq02102970749047382650.png" alt="$\Sigma=I_d$"></span><script type="math/tex">\Sigma=I_d</script><a name="4"></a></h2><p>For this first example, we consider <span class="MathJax_Preview"><img src="demo_normal_probabilities_eq02102970749047382650.png" alt="$\Sigma=I_d$"></span><script type="math/tex">\Sigma=I_d</script>, and <span class="MathJax_Preview"><img src="demo_normal_probabilities_eq01341069938218223705.png" alt="$\bf{b}=-\bf{a}=(3.5,\dots,3.5)$"></span><script type="math/tex">\bf{b}=-\bf{a}=(3.5,\dots,3.5)</script>. In this case, the solution of the integral is known so we can verify that the error conditions are met:</p><pre class="codeinput">Sigma = eye(d); <span class="comment">% We set the covariance matrix to the identity</span>
+factor = 3.5;
+hyperbox = [-factor*ones(1,d) ; factor*ones(1,d)]; <span class="comment">% We define the integration limits</span>
+exactsol = (gail.stdnormcdf(factor)-gail.stdnormcdf(-factor))^d; <span class="comment">% Exact integral solution</span>
+
+<span class="comment">% Solution approx_prob and integration output parameters in out_param</span>
+[approx_prob,out_param] = multi_normcdf_cubMC(hyperbox,mu,Sigma,abstol,reltol);
+disp(<span class="string">'Test 1.1: cubMC_g'</span>)
+disp([<span class="string">'Estimated probability with cubMC_g is: '</span> num2str(approx_prob)])
+disp([<span class="string">'The algorithm took '</span> num2str(out_param.time) <span class="string">' seconds and '</span><span class="keyword">...</span>
+    num2str(out_param.ntot) <span class="string">' points.'</span>])
+disp([<span class="string">'Real error is '</span> <span class="keyword">...</span>
+    num2str(abs(exactsol-approx_prob))<span class="keyword">...</span>
+    <span class="string">' which is less than the user input tolerance '</span><span class="keyword">...</span>
+    num2str(gail.tolfun(abstol,reltol,1,exactsol,<span class="string">'max'</span>)) <span class="string">'.'</span>])
+
+<span class="comment">% Solution approx_prob and integration output parameters in out_param</span>
+[approx_prob,out_param] = multi_normcdf_cubSobol(hyperbox,mu,Sigma,abstol,reltol);
+disp(<span class="string">'Test 1.2: cubSobol_g'</span>)
+disp([<span class="string">'Estimated probability with cubSobol_g is: '</span> num2str(approx_prob)])
+disp([<span class="string">'The algorithm took '</span> num2str(out_param.time) <span class="string">' seconds and '</span><span class="keyword">...</span>
+    num2str(out_param.n) <span class="string">' points.'</span>])
+disp([<span class="string">'Real error is '</span> <span class="keyword">...</span>
+    num2str(abs(exactsol-approx_prob))<span class="keyword">...</span>
+    <span class="string">' which is less than the user input tolerance '</span><span class="keyword">...</span>
+    num2str(gail.tolfun(abstol,reltol,1,exactsol,<span class="string">'max'</span>)) <span class="string">'.'</span>])
+</pre><pre class="codeoutput">Test 1.1: cubMC_g
+Estimated probability with cubMC_g is: 0.98614
+The algorithm took 0.11792 seconds and 10013 points.
+Real error is 1.1102e-16 which is less than the user input tolerance 0.001.
+Test 1.2: cubSobol_g
+Estimated probability with cubSobol_g is: 0.98614
+The algorithm took 0.14596 seconds and 1024 points.
+Real error is 2.1316e-14 which is less than the user input tolerance 0.001.
+</pre><h2>Second test: <span class="MathJax_Preview"><img src="demo_normal_probabilities_eq16882700412111380474.png" alt="$\Sigma=0.4I_d + 0.6\bf{1}\bf{1}^T$"></span><script type="math/tex">\Sigma=0.4I_d + 0.6\bf{1}\bf{1}^T</script><a name="5"></a></h2><p>For this second example, we consider <span class="MathJax_Preview"><img src="demo_normal_probabilities_eq16882700412111380474.png" alt="$\Sigma=0.4I_d + 0.6\bf{1}\bf{1}^T$"></span><script type="math/tex">\Sigma=0.4I_d + 0.6\bf{1}\bf{1}^T</script> (<span class="MathJax_Preview"><img src="demo_normal_probabilities_eq18395870634560867587.png" alt="$1$"></span><script type="math/tex">1</script> on the diagonal, <span class="MathJax_Preview"><img src="demo_normal_probabilities_eq02909209318415422768.png" alt="$0.6$"></span><script type="math/tex">0.6</script> off the diagonal), <span class="MathJax_Preview"><img src="demo_normal_probabilities_eq12518382754158617643.png" alt="$\bf{a}=(-\infty,\dots,-\infty)$"></span><script type="math/tex">\bf{a}=(-\infty,\dots,-\infty)</script>, and <span class="MathJax_Preview"><img src="demo_normal_probabilities_eq13935231847229808294.png" alt="$\bf{b}=\sqrt{d}(U_1,\dots,U_d)$"></span><script type="math/tex">\bf{b}=\sqrt{d}(U_1,\dots,U_d)</script> (<span class="MathJax_Preview"><img src="demo_normal_probabilities_eq17873147620725306784.png" alt="$\bf{b}$"></span><script type="math/tex">\bf{b}</script> is chosen randomly). The solution for this integral is known too so we can verify the real error:</p><pre class="codeinput">sig = 0.6;
+Sigma = sig*ones(d,d); Sigma(1:d+1:d*d) = 1; <span class="comment">% set the covariance matrix</span>
+hyperbox = [-Inf*ones(1,d) ; sqrt(d)*rand(1,d)]; <span class="comment">% define the integration limits</span>
+exactsol = integral(@(t)MVNPexact(t,hyperbox(2,:),sig),<span class="keyword">...</span>
+    -inf, inf,<span class="string">'Abstol'</span>,1e-8,<span class="string">'RelTol'</span>,1e-8)/sqrt(2*pi);
+
+<span class="comment">% Solution approx_prob and integration output parameters in out_param</span>
+[approx_prob,out_param] = multi_normcdf_cubMC(hyperbox,mu,Sigma,abstol,reltol);
+disp(<span class="string">'Test 2.1: cubMC_g'</span>)
+disp([<span class="string">'Estimated probability with cubMC_g is: '</span> num2str(approx_prob)])
+disp([<span class="string">'The algorithm took '</span> num2str(out_param.time) <span class="string">' seconds and '</span><span class="keyword">...</span>
+    num2str(out_param.ntot) <span class="string">' points.'</span>])
+disp([<span class="string">'Real error is '</span> <span class="keyword">...</span>
+    num2str(abs(exactsol-approx_prob))<span class="keyword">...</span>
+    <span class="string">' which is less than the user input tolerance '</span><span class="keyword">...</span>
+    num2str(gail.tolfun(abstol,reltol,1,exactsol,<span class="string">'max'</span>)) <span class="string">'.'</span>])
+
+<span class="comment">% Solution approx_prob and integration output parameters in out_param</span>
+[approx_prob,out_param] = multi_normcdf_cubSobol(hyperbox,mu,Sigma,abstol,reltol);
+disp(<span class="string">'Test 2.2: cubSobol_g'</span>)
+disp([<span class="string">'Estimated probability with cubSobol_g is: '</span> num2str(approx_prob)])
+disp([<span class="string">'The algorithm took '</span> num2str(out_param.time) <span class="string">' seconds and '</span><span class="keyword">...</span>
+    num2str(out_param.n) <span class="string">' points.'</span>])
+disp([<span class="string">'Real error is '</span> <span class="keyword">...</span>
+    num2str(abs(exactsol-approx_prob))<span class="keyword">...</span>
+    <span class="string">' which is less than the user input tolerance '</span><span class="keyword">...</span>
+    num2str(gail.tolfun(abstol,reltol,1,exactsol,<span class="string">'max'</span>)) <span class="string">'.'</span>])
+</pre><pre class="codeoutput">Test 2.1: cubMC_g
+Estimated probability with cubMC_g is: 0.33029
+The algorithm took 6.7724 seconds and 1263850 points.
+Real error is 4.8811e-05 which is less than the user input tolerance 0.001.
+Test 2.2: cubSobol_g
+Estimated probability with cubSobol_g is: 0.33038
+The algorithm took 0.069213 seconds and 2048 points.
+Real error is 3.4743e-05 which is less than the user input tolerance 0.001.
+</pre><h2>Third test: <span class="MathJax_Preview"><img src="demo_normal_probabilities_eq16882700412111380474.png" alt="$\Sigma=0.4I_d + 0.6\bf{1}\bf{1}^T$"></span><script type="math/tex">\Sigma=0.4I_d + 0.6\bf{1}\bf{1}^T</script><a name="6"></a></h2><p>For this last example, we consider the same covariance matrix in the second test but the upper and lower limits are different, <span class="MathJax_Preview"><img src="demo_normal_probabilities_eq07298077891058389482.png" alt="$\bf{a}=-d/3(U_1,\dots,U_d)$"></span><script type="math/tex">\bf{a}=-d/3(U_1,\dots,U_d)</script>, and <span class="MathJax_Preview"><img src="demo_normal_probabilities_eq16630241037287970863.png" alt="$\bf{b}=d/3(U_{d+1},\dots,U_{2d})$"></span><script type="math/tex">\bf{b}=d/3(U_{d+1},\dots,U_{2d})</script> (both <span class="MathJax_Preview"><img src="demo_normal_probabilities_eq07091400195481646623.png" alt="$\bf{a}$"></span><script type="math/tex">\bf{a}</script> and <span class="MathJax_Preview"><img src="demo_normal_probabilities_eq17873147620725306784.png" alt="$\bf{b}$"></span><script type="math/tex">\bf{b}</script> are chosen randomly):</p><pre class="codeinput">hyperbox = [-(d/3)*rand(1,d) ; (d/3)*rand(1,d)]; <span class="comment">% We define the integration limits</span>
+
+<span class="comment">% Solution approx_prob and integration output parameters in out_param</span>
+[approx_prob,out_param] = multi_normcdf_cubMC(hyperbox,mu,Sigma,abstol,reltol);
+disp(<span class="string">'Test 3.1: cubMC_g'</span>)
+disp([<span class="string">'Estimated probability with cubMC_g is: '</span> num2str(approx_prob)])
+disp([<span class="string">'The algorithm took '</span> num2str(out_param.time) <span class="string">' seconds and '</span><span class="keyword">...</span>
+    num2str(out_param.ntot) <span class="string">' points.'</span>])
+
+<span class="comment">% Solution approx_prob and integration output parameters in out_param</span>
+[approx_prob,out_param] = multi_normcdf_cubSobol(hyperbox,mu,Sigma,abstol,reltol);
+disp(<span class="string">'Test 3.2: cubSobol_g'</span>)
+disp([<span class="string">'Estimated probability with cubSobol_g is: '</span> num2str(approx_prob)])
+disp([<span class="string">'The algorithm took '</span> num2str(out_param.time) <span class="string">' seconds and '</span><span class="keyword">...</span>
+    num2str(out_param.n) <span class="string">' points.'</span>])
+</pre><pre class="codeoutput">Test 3.1: cubMC_g
+Estimated probability with cubMC_g is: 0.20543
+The algorithm took 1.5302 seconds and 279892 points.
+Test 3.2: cubSobol_g
+Estimated probability with cubSobol_g is: 0.20369
+The algorithm took 0.042147 seconds and 1024 points.
+</pre><h2>Appendix: Auxiliary function definitions<a name="7"></a></h2><p>The following functions are defined for the above test examples. <tt>multi_normcdf_cubSobol</tt> and <tt>multi_normcdf_cubMC</tt> redefine <b>cubSobol_g</b> and <b>cubMC_g</b> respectively for computing normal probabilities based on Alan Genz's transformation. <tt>f</tt> is the function resulting from applying Alan Genz's transform that is called in either <b>cubSobol_g</b> or <b>cubMC_g</b>.</p><pre class="codeinput"><span class="keyword">function</span> [p,out, y, kappanumap] = multi_normcdf_cubSobol(hyperbox,mu,Sigma,abstol,reltol)
+<span class="comment">% Using cubSobol_g, multi_normcdf_cubMC computes the cumulative</span>
+<span class="comment">% distribution function of the multivariate normal distribution with mean</span>
+<span class="comment">% mu, covariance matrix Sigma and within the region defined by hyperbox.</span>
+hyperbox = bsxfun(@minus, hyperbox, mu');
+C = chol(Sigma)'; d = size(C,1);
+a = hyperbox(1,1)/C(1,1); b = hyperbox(2,1)/C(1,1);
+s = gail.stdnormcdf(a); e = gail.stdnormcdf(b);
+[p, out, y, kappanumap] = cubSobol_g(<span class="keyword">...</span>
+    @(x) f(s,e,hyperbox,x,C), [zeros(1,d-1);ones(1,d-1)],<span class="keyword">...</span>
+    <span class="string">'uniform'</span>,abstol,reltol);
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> [Q,param] = multi_normcdf_cubMC(hyperbox,mu,Sigma,abstol,reltol)
+<span class="comment">% Using cubMC_g, multi_normcdf_cubMC computes the cumulative distribution</span>
+<span class="comment">% function of the multivariate normal distribution with mean mu, covariance</span>
+<span class="comment">% matrix Sigma and within the region defined by hyperbox.</span>
+hyperbox = bsxfun(@minus, hyperbox, mu');
+C = chol(Sigma)'; d = size(C,1);
+a = hyperbox(1,1)/C(1,1); b = hyperbox(2,1)/C(1,1);
+s = gail.stdnormcdf(a); e = gail.stdnormcdf(b);
+[Q,param] = cubMC_g(<span class="keyword">...</span>
+    @(x) f(s,e,hyperbox,x,C), [zeros(1,d-1);ones(1,d-1)],<span class="keyword">...</span>
+    <span class="string">'uniform'</span>,abstol,reltol);
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> f_eval = f(s,e,hyperbox,w,C)
+<span class="comment">% This is the integrand resulting from applying Alan Genz's transformation,</span>
+<span class="comment">% which is recursively defined.</span>
+f_eval = (e-s)*ones(size(w,1),1);
+aux = ones(size(w,1),1);
+y = [];
+<span class="keyword">for</span> i = 2:size(hyperbox,2);
+    y = [y gail.stdnorminv(s+w(:,i-1).*(e-s))];
+    aux = sum(bsxfun(@times,C(i,1:i-1),y),2);
+    a = (hyperbox(1,i)-aux)/C(i,i);
+    b = (hyperbox(2,i)-aux)/C(i,i);
+    s = gail.stdnormcdf(a);
+    e = gail.stdnormcdf(b);
+    f_eval = f_eval .* (e-s);
+<span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> MVNPfunvalfinal = MVNPexact(t,b,sig)
+<span class="comment">% MVNPexact calculates the true solution of multivariate normal probability</span>
+<span class="comment">% when the covariance matrix is in a special form: diagonal is 1 and off</span>
+<span class="comment">% diagonal elements are all the same.</span>
+<span class="comment">%</span>
+<span class="comment">% b   - the upper limits of the integral with size 1 x d</span>
+<span class="comment">% sig - the off diagonal element</span>
+<span class="comment">% dim - the dimension of the integral</span>
+<span class="comment">% t   - the variable</span>
+MVNPfunval = (gail.stdnormcdf((b(1)+sqrt(sig)*t)/sqrt(1-sig)));
+dim =  length(b);
+<span class="keyword">for</span> i =2:dim
+    MVNPfunval= MVNPfunval.*(gail.stdnormcdf((b(i)+sqrt(sig)*t)/sqrt(1-sig)));
+    <span class="comment">%i=i+100;</span>
+<span class="keyword">end</span>
+MVNPfunvalfinal = MVNPfunval.*exp(-t.^2/2);
+<span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><h2>References<a name="9"></a></h2><p>[1] Fred J. Hickernell, Lluis Antoni Jimenez Rugama "Reliable adaptive     cubature using digital sequences", Monte Carlo and Quasi-Monte Carlo     Methods: MCQMC, Leuven, Belgium, April 2014 (R. Cools and D. Nuyens,     eds.), Springer Proceedings in Mathematics and Statistics, vol. 163,     Springer-Verlag, Berlin, 2016, arXiv:1410.8615 [math.NA], pp.     367-383.</p><p>[2] Fred J. Hickernell, Lan Jiang, Yuewei Liu, and Art B. Owen,     "Guaranteed conservative fixed width confidence intervals via Monte     Carlo sampling," Monte Carlo and Quasi-Monte Carlo Methods 2012     (J. Dick, F. Y. Kuo, G. W. Peters, and I. H. Sloan, eds.),     Springer-Verlag, Berlin, pp. 105-128, 2014.</p><p>[3] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis     Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan     Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic     Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available     from <a href="http://gailgithub.github.io/GAIL_Dev/">http://gailgithub.github.io/GAIL_Dev/</a></p><p>[4] Lan Jiang, Guaranteed Adaptive Monte Carlo Methods for Estimating     Means of Random Variables, PhD Thesis, Illinois Institute of     Technology, 2016.</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Estimation of normal probabilities by *cubSobol_g* and *cubMC_g*
+% Authors: Lluis Antoni Jimenez Rugama and Lan Jiang, August 2017
+
+%% Introduction
+% For $\bf{X} \sim N(\bf{\mu}, \Sigma)$, we will estimate the following
+% probability:
+%
+% $$ P\left(\bf{a} \leq \bf{X} \leq \bf{b} \right) = \int_{\bf{a}}^{\bf{b}}
+% \frac{{\rm e}^{(\bf{x}-\bf{\mu})^T {\Sigma}^{-1}(\bf{x}-\bf{\mu})}}
+% {(2\pi)^{d/2}\left|{\Sigma}\right|^{1/2}}\,{\rm d}\bf{x}. $$
+%
+% We present three tests, each of which approximates the aforementioned
+% probability using *cubSobol_g* and *cubMC_g*, which are quasi-Monte Carlo
+% and IID Monte Carlo algorithms in GAIL, respectively. In order to
+% facilitate the computations when $d$ is high (~30), we are going to apply
+% a special transformation of the integrand proposed by Alan Genz.
+
+
+
+%% Basic integration parameters set up
+% For all the examples, the dimension of the problem is $d=30$.
+% The user input tolerances are also set up below: |abstol| is the absolute
+% error tolerance, and |reltol| the relative error tolerance. When |reltol|
+% is set to 0, the algorithms use pure absolute error bound, and
+% vice versa. Finally, for simplicity we define the mean of the distribution
+% to be $\bf{\mu}=\bf{0}$:
+
+function demo_normal_probabilities()
+d = 30; % Dimension of the problem
+abstol = 1e-3; % User input, absolute error bound
+reltol = 0;  % User input, relative error bound
+mu = zeros(d,1); % Mean of the distribution
+
+%% First test: $\Sigma=I_d$
+% For this first example, we consider $\Sigma=I_d$, and
+% $\bf{b}=-\bf{a}=(3.5,\dots,3.5)$. In this case, the
+% solution of the integral is known so we can verify that the error
+% conditions are met:
+Sigma = eye(d); % We set the covariance matrix to the identity
+factor = 3.5;
+hyperbox = [-factor*ones(1,d) ; factor*ones(1,d)]; % We define the integration limits
+exactsol = (gail.stdnormcdf(factor)-gail.stdnormcdf(-factor))^d; % Exact integral solution
+
+% Solution approx_prob and integration output parameters in out_param
+[approx_prob,out_param] = multi_normcdf_cubMC(hyperbox,mu,Sigma,abstol,reltol);
+disp('Test 1.1: cubMC_g')
+disp(['Estimated probability with cubMC_g is: ' num2str(approx_prob)])
+disp(['The algorithm took ' num2str(out_param.time) ' seconds and '...
+    num2str(out_param.ntot) ' points.'])
+disp(['Real error is ' ...
+    num2str(abs(exactsol-approx_prob))...
+    ' which is less than the user input tolerance '...
+    num2str(gail.tolfun(abstol,reltol,1,exactsol,'max')) '.'])
+
+% Solution approx_prob and integration output parameters in out_param
+[approx_prob,out_param] = multi_normcdf_cubSobol(hyperbox,mu,Sigma,abstol,reltol);
+disp('Test 1.2: cubSobol_g')
+disp(['Estimated probability with cubSobol_g is: ' num2str(approx_prob)])
+disp(['The algorithm took ' num2str(out_param.time) ' seconds and '...
+    num2str(out_param.n) ' points.'])
+disp(['Real error is ' ...
+    num2str(abs(exactsol-approx_prob))...
+    ' which is less than the user input tolerance '...
+    num2str(gail.tolfun(abstol,reltol,1,exactsol,'max')) '.'])
+
+%% Second test: $\Sigma=0.4I_d + 0.6\bf{1}\bf{1}^T$
+% For this second example, we consider $\Sigma=0.4I_d + 0.6\bf{1}\bf{1}^T$
+% ($1$ on the diagonal, $0.6$ off the diagonal),
+% $\bf{a}=(-\infty,\dots,-\infty)$, and $\bf{b}=\sqrt{d}(U_1,\dots,U_d)$
+% ($\bf{b}$ is chosen randomly). The solution for this integral is known
+% too so we can verify the real error:
+sig = 0.6;
+Sigma = sig*ones(d,d); Sigma(1:d+1:d*d) = 1; % set the covariance matrix
+hyperbox = [-Inf*ones(1,d) ; sqrt(d)*rand(1,d)]; % define the integration limits
+exactsol = integral(@(t)MVNPexact(t,hyperbox(2,:),sig),...
+    -inf, inf,'Abstol',1e-8,'RelTol',1e-8)/sqrt(2*pi);
+
+% Solution approx_prob and integration output parameters in out_param
+[approx_prob,out_param] = multi_normcdf_cubMC(hyperbox,mu,Sigma,abstol,reltol);
+disp('Test 2.1: cubMC_g')
+disp(['Estimated probability with cubMC_g is: ' num2str(approx_prob)])
+disp(['The algorithm took ' num2str(out_param.time) ' seconds and '...
+    num2str(out_param.ntot) ' points.'])
+disp(['Real error is ' ...
+    num2str(abs(exactsol-approx_prob))...
+    ' which is less than the user input tolerance '...
+    num2str(gail.tolfun(abstol,reltol,1,exactsol,'max')) '.'])
+
+% Solution approx_prob and integration output parameters in out_param
+[approx_prob,out_param] = multi_normcdf_cubSobol(hyperbox,mu,Sigma,abstol,reltol);
+disp('Test 2.2: cubSobol_g')
+disp(['Estimated probability with cubSobol_g is: ' num2str(approx_prob)])
+disp(['The algorithm took ' num2str(out_param.time) ' seconds and '...
+    num2str(out_param.n) ' points.'])
+disp(['Real error is ' ...
+    num2str(abs(exactsol-approx_prob))...
+    ' which is less than the user input tolerance '...
+    num2str(gail.tolfun(abstol,reltol,1,exactsol,'max')) '.'])
+
+%% Third test: $\Sigma=0.4I_d + 0.6\bf{1}\bf{1}^T$
+% For this last example, we consider the same covariance matrix in the
+% second test but the upper and lower limits are different,
+% $\bf{a}=-d/3(U_1,\dots,U_d)$, and $\bf{b}=d/3(U_{d+1},\dots,U_{2d})$
+% (both $\bf{a}$ and $\bf{b}$ are chosen randomly):
+hyperbox = [-(d/3)*rand(1,d) ; (d/3)*rand(1,d)]; % We define the integration limits
+
+% Solution approx_prob and integration output parameters in out_param
+[approx_prob,out_param] = multi_normcdf_cubMC(hyperbox,mu,Sigma,abstol,reltol);
+disp('Test 3.1: cubMC_g')
+disp(['Estimated probability with cubMC_g is: ' num2str(approx_prob)])
+disp(['The algorithm took ' num2str(out_param.time) ' seconds and '...
+    num2str(out_param.ntot) ' points.'])
+
+% Solution approx_prob and integration output parameters in out_param
+[approx_prob,out_param] = multi_normcdf_cubSobol(hyperbox,mu,Sigma,abstol,reltol);
+disp('Test 3.2: cubSobol_g')
+disp(['Estimated probability with cubSobol_g is: ' num2str(approx_prob)])
+disp(['The algorithm took ' num2str(out_param.time) ' seconds and '...
+    num2str(out_param.n) ' points.'])
+
+%% Appendix: Auxiliary function definitions
+% The following functions are defined for the above test examples.
+% |multi_normcdf_cubSobol| and |multi_normcdf_cubMC| redefine *cubSobol_g*
+% and *cubMC_g* respectively for computing normal probabilities based on
+% Alan Genz's transformation. |f| is the function resulting from applying
+% Alan Genz's transform that is called in either *cubSobol_g* or *cubMC_g*.
+
+function [p,out, y, kappanumap] = multi_normcdf_cubSobol(hyperbox,mu,Sigma,abstol,reltol)
+% Using cubSobol_g, multi_normcdf_cubMC computes the cumulative
+% distribution function of the multivariate normal distribution with mean
+% mu, covariance matrix Sigma and within the region defined by hyperbox.
+hyperbox = bsxfun(@minus, hyperbox, mu');
+C = chol(Sigma)'; d = size(C,1);
+a = hyperbox(1,1)/C(1,1); b = hyperbox(2,1)/C(1,1);
+s = gail.stdnormcdf(a); e = gail.stdnormcdf(b);
+[p, out, y, kappanumap] = cubSobol_g(...
+    @(x) f(s,e,hyperbox,x,C), [zeros(1,d-1);ones(1,d-1)],...
+    'uniform',abstol,reltol);
+end
+
+function [Q,param] = multi_normcdf_cubMC(hyperbox,mu,Sigma,abstol,reltol)
+% Using cubMC_g, multi_normcdf_cubMC computes the cumulative distribution
+% function of the multivariate normal distribution with mean mu, covariance
+% matrix Sigma and within the region defined by hyperbox.
+hyperbox = bsxfun(@minus, hyperbox, mu');
+C = chol(Sigma)'; d = size(C,1);
+a = hyperbox(1,1)/C(1,1); b = hyperbox(2,1)/C(1,1);
+s = gail.stdnormcdf(a); e = gail.stdnormcdf(b);
+[Q,param] = cubMC_g(...
+    @(x) f(s,e,hyperbox,x,C), [zeros(1,d-1);ones(1,d-1)],...
+    'uniform',abstol,reltol);
+end
+
+function f_eval = f(s,e,hyperbox,w,C)
+% This is the integrand resulting from applying Alan Genz's transformation,
+% which is recursively defined.
+f_eval = (e-s)*ones(size(w,1),1);
+aux = ones(size(w,1),1);
+y = [];
+for i = 2:size(hyperbox,2);
+    y = [y gail.stdnorminv(s+w(:,i-1).*(e-s))];
+    aux = sum(bsxfun(@times,C(i,1:i-1),y),2);
+    a = (hyperbox(1,i)-aux)/C(i,i);
+    b = (hyperbox(2,i)-aux)/C(i,i);
+    s = gail.stdnormcdf(a);
+    e = gail.stdnormcdf(b);
+    f_eval = f_eval .* (e-s);
+end
+end
+
+function MVNPfunvalfinal = MVNPexact(t,b,sig)
+% MVNPexact calculates the true solution of multivariate normal probability
+% when the covariance matrix is in a special form: diagonal is 1 and off
+% diagonal elements are all the same.
+%
+% b   - the upper limits of the integral with size 1 x d
+% sig - the off diagonal element
+% dim - the dimension of the integral
+% t   - the variable
+MVNPfunval = (gail.stdnormcdf((b(1)+sqrt(sig)*t)/sqrt(1-sig)));
+dim =  length(b);
+for i =2:dim
+    MVNPfunval= MVNPfunval.*(gail.stdnormcdf((b(i)+sqrt(sig)*t)/sqrt(1-sig)));
+    %i=i+100;
+end
+MVNPfunvalfinal = MVNPfunval.*exp(-t.^2/2);
+end
+end
+
+
+
+
+%% References
+%
+% [1] Fred J. Hickernell, Lluis Antoni Jimenez Rugama "Reliable adaptive
+%     cubature using digital sequences", Monte Carlo and Quasi-Monte Carlo
+%     Methods: MCQMC, Leuven, Belgium, April 2014 (R. Cools and D. Nuyens,
+%     eds.), Springer Proceedings in Mathematics and Statistics, vol. 163,
+%     Springer-Verlag, Berlin, 2016, arXiv:1410.8615 [math.NA], pp.
+%     367-383.
+%
+% [2] Fred J. Hickernell, Lan Jiang, Yuewei Liu, and Art B. Owen,
+%     "Guaranteed conservative fixed width confidence intervals via Monte
+%     Carlo sampling," Monte Carlo and Quasi-Monte Carlo Methods 2012
+%     (J. Dick, F. Y. Kuo, G. W. Peters, and I. H. Sloan, eds.),
+%     Springer-Verlag, Berlin, pp. 105-128, 2014.
+%
+% [3] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
+%     Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
+%     Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
+%     Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available
+%     from http://gailgithub.github.io/GAIL_Dev/
+%
+% [4] Lan Jiang, Guaranteed Adaptive Monte Carlo Methods for Estimating
+%     Means of Random Variables, PhD Thesis, Illinois Institute of
+%     Technology, 2016.
+
+##### SOURCE END #####
+--></body></html>

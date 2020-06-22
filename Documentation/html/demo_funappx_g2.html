@@ -1,0 +1,156 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>A GUI (graphical user interface) for funappx_g</title><meta name="generator" content="MATLAB 9.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-06-20"><meta name="DC.source" content="demo_funappx_g2.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:14px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:18px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>A GUI (graphical user interface) for <b>funappx_g</b></h1><!--introduction--><p>Author: Yuhan Ding, July 2017</p><p>To approximate a peaky function with <b>funappx_g</b> and to show how <b>funappx_g</b> generates grid points for locally adaptive linear spline approximation</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Function definition</a></li><li><a href="#2">Function Approximation</a></li><li><a href="#3">Process to Generate Grid Points</a></li><li><a href="#4">References</a></li></ul></div><h2>Function definition<a name="1"></a></h2><p>Define a peaky function as follows:</p><pre class="codeinput">close <span class="string">all</span>; clear <span class="string">all</span>; format <span class="string">compact</span>; format <span class="string">short</span>;
+f = @(x) exp(-1000*(x-0.2).^2);
+x = 0:0.0001:1;
+figure;
+plot(x,f(x))
+axis <span class="string">tight</span>
+</pre><img vspace="5" hspace="5" src="demo_funappx_g2_01.png" alt=""> <h2>Function Approximation<a name="2"></a></h2><p>We use <b>funappx_g</b> to approximate <span class="MathJax_Preview"><img src="demo_funappx_g2_eq18096895394918367257.png" alt="$f$"></span><script type="math/tex">f</script> over the interval <span class="MathJax_Preview"><img src="demo_funappx_g2_eq05816708510759450028.png" alt="$[0,1]$"></span><script type="math/tex">[0,1]</script> with error tolerance <span class="MathJax_Preview"><img src="demo_funappx_g2_eq04824699449894430030.png" alt="$10^{-2}$"></span><script type="math/tex">10^{-2}</script> and 15 initial subintervals:</p><pre class="codeinput">[~,out_param] = funappx_g(@(x) exp(-1000*(x-0.2).^2),0,1,1e-2,15)
+
+<span class="comment">% We find that to reach the error tolerance, we need 105 points to</span>
+<span class="comment">% approximate the function.</span>
+</pre><pre class="codeoutput">out_param = 
+  struct with fields:
+
+           a: 0
+      abstol: 0.0100
+           b: 1
+           f: @(x)exp(-1000*(x-0.2).^2)
+     maxiter: 1000
+       ninit: 15
+        nmax: 10000000
+    exitflag: [0 0]
+        iter: 7
+     npoints: 105
+      errest: 0.0028
+</pre><h2>Process to Generate Grid Points<a name="3"></a></h2><p>Step 1: start with <span class="MathJax_Preview"><img src="demo_funappx_g2_eq17607112233168654994.png" alt="$16$"></span><script type="math/tex">16</script> evenly spaced points:</p><p><img vspace="5" hspace="5" src="localgui1.png" alt=""> </p><p>Step 2: add points to the peaky part:</p><p><img vspace="5" hspace="5" src="localgui2.png" alt=""> </p><p>Step 6: after several iterations, the approximation error almost meets the given tolerance:</p><p><img vspace="5" hspace="5" src="localgui6.png" alt=""> </p><p>Step 7: the error tolerance is reached:</p><p><img vspace="5" hspace="5" src="localgui7.png" alt=""> </p><p>This process can also be reproduced by the following command: funappx_g_gui(@(x) exp(-1000*(x-0.2).^2),0,1,1e-2,15,15);</p><h2>References<a name="4"></a></h2><p>[1] Sou-Cheng T. Choi, Yuhan Ding, Fred J.Hickernell, Xin Tong, "Local     Adaption for Approximation and Minimization of Univariate Functions,"     <i>Journal of Complexity</i> 40, pp. 17-33, 2017.</p><p>[2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis     Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan     Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic     Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available     from <a href="http://gailgithub.github.io/GAIL_Dev/">http://gailgithub.github.io/GAIL_Dev/</a></p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% A GUI (graphical user interface) for *funappx_g*
+% Author: Yuhan Ding, July 2017
+%
+% To approximate a peaky function with *funappx_g* and to show how
+% *funappx_g* generates grid points for locally adaptive linear spline
+% approximation
+
+%% Function definition
+%
+% Define a peaky function as follows:
+%
+close all; clear all; format compact; format short;
+f = @(x) exp(-1000*(x-0.2).^2);
+x = 0:0.0001:1;
+figure;
+plot(x,f(x))
+axis tight
+
+%% Function Approximation
+% We use *funappx_g* to approximate $f$ over the interval $[0,1]$ with
+% error tolerance $10^{-2}$ and 15 initial subintervals:
+[~,out_param] = funappx_g(@(x) exp(-1000*(x-0.2).^2),0,1,1e-2,15)
+
+% We find that to reach the error tolerance, we need 105 points to
+% approximate the function.
+
+%% Process to Generate Grid Points
+%
+% Step 1: start with $16$ evenly spaced points:
+%
+% <<localgui1.png>>
+%
+% Step 2: add points to the peaky part:
+%
+% <<localgui2.png>>
+%
+% Step 6: after several iterations, the approximation error almost meets the given tolerance:
+%
+% <<localgui6.png>>
+%
+% Step 7: the error tolerance is reached:
+%
+% <<localgui7.png>>
+%
+%
+% This process can also be reproduced by the following command:
+% funappx_g_gui(@(x) exp(-1000*(x-0.2).^2),0,1,1e-2,15,15);
+%
+%% References
+%
+% [1] Sou-Cheng T. Choi, Yuhan Ding, Fred J.Hickernell, Xin Tong, "Local
+%     Adaption for Approximation and Minimization of Univariate Functions,"
+%     _Journal of Complexity_ 40, pp. 17-33, 2017.
+%
+% [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
+%     Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
+%     Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
+%     Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available
+%     from http://gailgithub.github.io/GAIL_Dev/
+
+##### SOURCE END #####
+--></body></html>

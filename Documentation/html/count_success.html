@@ -1,0 +1,116 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Counting the success rate of meanMC_g</title><meta name="generator" content="MATLAB 9.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-06-20"><meta name="DC.source" content="count_success.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:14px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:18px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Counting the success rate of meanMC_g</h1><p>Authors: Lan Jiang and Sou-Cheng Choi, July 2017</p><p>Define an integration problem as follows:</p><p><span class="MathJax_Preview"><img src="count_success_eq02364193068235260622.png" alt="$$I = \int_0^1 x^2 dx.$$"></span><script type="math/tex">I = \int_0^1 x^2 dx.</script></p><p>The analytical solution is <span class="MathJax_Preview"><img src="count_success_eq05128278158669473352.png" alt="$\frac{1}{3}$"></span><script type="math/tex">\frac{1}{3}</script>. If we use <b>meanMC_g</b> to estimate the integral with <span class="MathJax_Preview"><img src="count_success_eq07508480584430870119.png" alt="$1000$"></span><script type="math/tex">1000</script> replications, we expect the success rate to be bigger than or equal to <tt>(1 - alpha)</tt>.</p><pre class="codeinput">success = 0;
+n = 1000;
+in_param.reltol = 0; in_param.abstol = 1e-3;
+in_param.alpha = 0.05; Yrand = @(n) rand(n,1).^2;
+exactsol = 1/3;
+<span class="keyword">for</span> i = 1:n,
+    tmu = meanMC_g(Yrand,in_param);
+    check = abs(exactsol-tmu) &lt; 1e-3;
+    <span class="keyword">if</span> check == 1,
+        success = success + 1;
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+disp([<span class="string">'Over '</span> num2str(n) <span class="string">' replications, there are '</span> num2str(success) <span class="string">' successes.'</span>])
+disp([<span class="string">'The success rate is '</span> num2str(success/n) <span class="string">', which is larger than '</span><span class="keyword">...</span>
+    num2str(1-in_param.alpha) <span class="string">'.'</span>])
+</pre><pre class="codeoutput">Over 1000 replications, there are 997 successes.
+The success rate is 0.997, which is larger than 0.95.
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Counting the success rate of meanMC_g
+% Authors: Lan Jiang and Sou-Cheng Choi, July 2017
+%
+% Define an integration problem as follows:
+%
+% $$I = \int_0^1 x^2 dx.$$
+% 
+% The analytical solution is $\frac{1}{3}$. If we use *meanMC_g* to estimate the
+% integral with $1000$ replications, we expect the success rate to be bigger
+% than or equal to |(1 - alpha)|.
+
+success = 0;
+n = 1000;
+in_param.reltol = 0; in_param.abstol = 1e-3;
+in_param.alpha = 0.05; Yrand = @(n) rand(n,1).^2;
+exactsol = 1/3;
+for i = 1:n,
+    tmu = meanMC_g(Yrand,in_param);
+    check = abs(exactsol-tmu) < 1e-3;
+    if check == 1,
+        success = success + 1;
+    end
+end
+disp(['Over ' num2str(n) ' replications, there are ' num2str(success) ' successes.'])
+disp(['The success rate is ' num2str(success/n) ', which is larger than '...
+    num2str(1-in_param.alpha) '.'])
+
+##### SOURCE END #####
+--></body></html>
