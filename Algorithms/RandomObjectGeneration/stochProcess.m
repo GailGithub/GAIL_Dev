@@ -56,7 +56,7 @@ classdef stochProcess < handle & matlab.mixin.CustomDisplay
       % Creating a stochastic process
       function obj = stochProcess(varargin)
          %this constructor essentially parses inputs
-         
+ 
          if nargin %there are inputs to parse and assign
             val=varargin{1}; %first input
             if isa(val,'stochProcess') %make a copy an existing stochProcess object
@@ -65,19 +65,19 @@ classdef stochProcess < handle & matlab.mixin.CustomDisplay
                if nargin == 1
                    return
                else
-                   val = varargin{2}; %structure that can contain additional inputs
+                   val = varargin{2}; %structure that can contain additional inputs                  
                end
             end
+            obj.restInput = val; %rest of inputs for subclasses
             if isstruct(val) %structure with properties of stochProcess
                if isfield(val,'inputType')
-                  obj.inputType = val.inputType;
-                  obj.restInput=rmfield(val,'inputType');
+                  obj.inputType = obj.restInput.inputType;
+                  obj.restInput = rmfield(obj.restInput,'inputType');
                end
                if isfield(val,'timeDim')
                   obj.timeDim = val.timeDim;
-                  obj.restInput=rmfield(val,'timeDim');
+                  obj.restInput = rmfield(obj.restInput,'timeDim');
                end
-               obj.restInput = val; %rest of inputs for subclasses
             end
          end
       end

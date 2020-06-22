@@ -6,7 +6,7 @@
    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>Integrate a spiky function using integral_g</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2019-04-17"><meta name="DC.source" content="demo_integral_g1.m"><style type="text/css">
+      --><title>Integrate a spiky function using integral_g</title><meta name="generator" content="MATLAB 9.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-06-20"><meta name="DC.source" content="demo_integral_g1.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -66,7 +66,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1>Integrate a spiky function using <b>integral_g</b></h1><!--introduction--><p>Authors:  Fred Hickernell and Sou-Cheng Choi, August 2017</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Function definition</a></li><li><a href="#2">Plot of the spiky function</a></li><li><a href="#3">Integral approximation</a></li><li><a href="#4">Compute approximation errors</a></li><li><a href="#5">References</a></li></ul></div><h2>Function definition<a name="1"></a></h2><p>This example is taken from [1], where a function is defined on \( [0,1] \) with twelve spikes.</p><pre class="codeinput">close <span class="string">all</span>; clear <span class="string">all</span>; format <span class="string">compact</span>; format <span class="string">short</span> <span class="string">e</span>;
+  </style></head><body><div class="content"><h1>Integrate a spiky function using <b>integral_g</b></h1><!--introduction--><p>Authors:  Fred Hickernell and Sou-Cheng Choi, August 2017</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Function definition</a></li><li><a href="#2">Plot of the spiky function</a></li><li><a href="#3">Integral approximation</a></li><li><a href="#4">Compute approximation errors</a></li><li><a href="#5">References</a></li></ul></div><h2>Function definition<a name="1"></a></h2><p>This example is taken from [1], where a function is defined on <span class="MathJax_Preview"><img src="demo_integral_g1_eq05816708510759450028.png" alt="$[0,1]$"></span><script type="math/tex">[0,1]</script> with twelve spikes.</p><pre class="codeinput">close <span class="string">all</span>; clear <span class="string">all</span>; format <span class="string">compact</span>; format <span class="string">short</span> <span class="string">e</span>;
 [~,~,MATLABVERSION] = GAILstart(false);
 
 xquad = 0.13579; <span class="comment">%number used by quad to split interval into three parts</span>
@@ -80,12 +80,12 @@ fbump = @(x) 4^3*((x.*(1-x)).^3).*((x&gt;=0)&amp;(x&lt;=1)); <span class="commen
 xplot = (0:0.002:1)'; <span class="comment">%points to plot</span>
 spikyfun = @(x) foolfunmaker(x, @(x,c) fbump((x-c(1))/c(2)),<span class="keyword">...</span>
     ones(nnode-1,1), [xall(1:nnode-1) diff(xall)]);
-</pre><h2>Plot of the spiky function<a name="2"></a></h2><p>In the following, we plot \(f(x)\) and show the data sampling points picked by MATLAB's built-in integration function <b>quad</b>, which explains why <b>quad</b> essentially gives the answer zero for our spiky function:</p><pre class="codeinput">figure;
+</pre><h2>Plot of the spiky function<a name="2"></a></h2><p>In the following, we plot <span class="MathJax_Preview"><img src="demo_integral_g1_eq17663307419741296505.png" alt="$f(x)$"></span><script type="math/tex">f(x)</script> and show the data sampling points picked by MATLAB's built-in integration function <b>quad</b>, which explains why <b>quad</b> essentially gives the answer zero for our spiky function:</p><pre class="codeinput">figure;
 h = plot(xplot,spikyfun(xplot), <span class="string">'k-'</span>, xall, zeros(nnode,1), <span class="string">'k.'</span>);
 axis([0 1 -0.3 1.1])
 set(gca,<span class="string">'Ytick'</span>,-0.2:0.2:1)
 legend(h,{<span class="string">'$f$'</span>,<span class="string">'data'</span>},<span class="string">'location'</span>,<span class="string">'southeast'</span>)
-</pre><img vspace="5" hspace="5" src="demo_integral_g1_01.png" alt=""> <h2>Integral approximation<a name="3"></a></h2><p>We use MATLAB built-in functions and <b>integral_g</b> [2] from GAIL [3] to integrate \(f\) over the unit interval:</p><pre class="codeinput">a = 0;
+</pre><img vspace="5" hspace="5" src="demo_integral_g1_01.png" alt=""> <h2>Integral approximation<a name="3"></a></h2><p>We use MATLAB built-in functions and <b>integral_g</b> [2] from GAIL [3] to integrate <span class="MathJax_Preview"><img src="demo_integral_g1_eq18096895394918367257.png" alt="$f$"></span><script type="math/tex">f</script> over the unit interval:</p><pre class="codeinput">a = 0;
 b = 1;
 abstol = 1e-11;
 <span class="keyword">if</span> MATLABVERSION &gt;= 8,
@@ -101,7 +101,7 @@ Warning: This integrand is spiky relative to ninit. You may wish to increase
 ninit for similar integrands. 
 MATgailspiky =
    4.5714e-01
-</pre><h2>Compute approximation errors<a name="4"></a></h2><p>The true integral value of the spiky function is \(16/35\). The following code computes absolute errors from the above approximation methods. Only <b>integral_g</b> achieves the required accuracy with respect to the absolute tolerance of \( 10^{-11} \) in this example.</p><pre class="codeinput">integralspiky = 16/35;
+</pre><h2>Compute approximation errors<a name="4"></a></h2><p>The true integral value of the spiky function is <span class="MathJax_Preview"><img src="demo_integral_g1_eq01048776913929924224.png" alt="$\frac{16}{35}$"></span><script type="math/tex">\frac{16}{35}</script>. The following code computes absolute errors from the above approximation methods. Only <b>integral_g</b> achieves the required accuracy with respect to the absolute tolerance of <span class="MathJax_Preview"><img src="demo_integral_g1_eq11034617253539861099.png" alt="$10^{-11}$"></span><script type="math/tex">10^{-11}</script> in this example.</p><pre class="codeinput">integralspiky = 16/35;
 <span class="keyword">if</span> MATLABVERSION &gt;= 8,
   abs_errors = abs(integralspiky - [MATintegralspiky, MATquadspiky, MATgailspiky])
 <span class="keyword">else</span>
@@ -113,7 +113,7 @@ if_meet_abstol = (abs_errors &lt; abstol)
 if_meet_abstol =
   1&times;3 logical array
    0   0   1
-</pre><h2>References<a name="5"></a></h2><p>[1] Nick Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and     Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic     Algorithms: Cones, Not Balls," Journal of Complexity 30, pp. 21-45,     2014.</p><p>[2] Fred J. Hickernell, Martha Razo, and Sunny Yun, "Reliable Adaptive     Numerical Integration", 2015+, working.</p><p>[3] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis     Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan     Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic     Integration Library (Version 2.3) [MATLAB Software], 2019. Available     from <a href="http://gailgithub.github.io/GAIL_Dev/">http://gailgithub.github.io/GAIL_Dev/</a></p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018a</a><br></p></div><!--
+</pre><h2>References<a name="5"></a></h2><p>[1] Nick Clancy, Yuhan Ding, Caleb Hamilton, Fred J. Hickernell, and     Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic     Algorithms: Cones, Not Balls," Journal of Complexity 30, pp. 21-45,     2014.</p><p>[2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis     Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan     Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic     Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available     from <a href="http://gailgithub.github.io/GAIL_Dev/">http://gailgithub.github.io/GAIL_Dev/</a></p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Integrate a spiky function using *integral_g*
 % Authors:  Fred Hickernell and Sou-Cheng Choi, August 2017
@@ -121,7 +121,7 @@ if_meet_abstol =
 
 %% Function definition
 %
-% This example is taken from [1], where a function is defined on \( [0,1] \)
+% This example is taken from [1], where a function is defined on $[0,1]$
 % with twelve spikes.
 %
 close all; clear all; format compact; format short e;
@@ -140,7 +140,7 @@ spikyfun = @(x) foolfunmaker(x, @(x,c) fbump((x-c(1))/c(2)),...
     ones(nnode-1,1), [xall(1:nnode-1) diff(xall)]);
 
 %% Plot of the spiky function
-% In the following, we plot \(f(x)\) and show the data sampling points
+% In the following, we plot $f(x)$ and show the data sampling points
 % picked by MATLAB's built-in integration function *quad*, which explains
 % why *quad* essentially gives the answer zero for our spiky function:
 figure;
@@ -152,7 +152,7 @@ legend(h,{'$f$','data'},'location','southeast')
 
 %% Integral approximation
 % We use MATLAB built-in functions and *integral_g* [2] from GAIL [3] to
-% integrate \(f\) over the unit interval:
+% integrate $f$ over the unit interval:
 a = 0;
 b = 1;
 abstol = 1e-11;
@@ -164,10 +164,10 @@ MATgailspiky = integral_g(spikyfun,a,b,abstol)
 
 
 %% Compute approximation errors
-% The true integral value of the spiky function is \(16/35\). The following
+% The true integral value of the spiky function is $\frac{16}{35}$. The following
 % code computes absolute errors from the above approximation methods. Only
 % *integral_g* achieves the required accuracy with respect to the absolute
-% tolerance of \( 10^{-11} \) in this example.
+% tolerance of $10^{-11}$ in this example.
 integralspiky = 16/35;
 if MATLABVERSION >= 8,
   abs_errors = abs(integralspiky - [MATintegralspiky, MATquadspiky, MATgailspiky])
@@ -183,13 +183,10 @@ if_meet_abstol = (abs_errors < abstol)
 %     Algorithms: Cones, Not Balls," Journal of Complexity 30, pp. 21-45,
 %     2014.
 %
-% [2] Fred J. Hickernell, Martha Razo, and Sunny Yun, "Reliable Adaptive
-%     Numerical Integration", 2015+, working.
-%
-% [3] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
+% [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 %     Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
 %     Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
-%     Integration Library (Version 2.3) [MATLAB Software], 2019. Available
+%     Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available
 %     from http://gailgithub.github.io/GAIL_Dev/
 
 ##### SOURCE END #####

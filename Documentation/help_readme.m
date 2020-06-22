@@ -1,13 +1,12 @@
 %% Guaranteed Automatic Integration Library (GAIL)
 % 
-% GAIL Version 2.3, 2019.
+% GAIL Version 2.3.1, 2020.
 % 
 % See LICENSE.m for copyright and disclaimer. Refer to ReleaseNotes.m for
 % what is new in this version.
 % 
 % GAIL is a suite of algorithms for integration problems in one and many
 % dimensions, and whose answers are guaranteed to be correct.
-% 
 % 
 % 
 %% Developed by
@@ -36,9 +35,15 @@
 % Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 % Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
 % Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
-% Integration Library (Version 2.3) [MATLAB Software], 2019. Available from
+% Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available from
 % http://gailgithub.github.io/GAIL_Dev/
 % (this software)
+% 
+% Sou-Cheng T. Choi, Fred J. Hickernell, Jagadeeswaran Rathinavel, Michael McCourt,
+% and Aleksei Sorokin, QMCPy: A quasi-Monte Carlo Python library, 2020. Available
+% from https://qmcsoftware.github.io/QMCSoftware/. Working.
+% (open-source Python package for Quasi-Monte Carlo methods with some GAIL
+% algorithms)
 % 
 % Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible Research via
 % Supportable Scientific Software," Journal of Open Research Software, Volume 2,
@@ -61,7 +66,7 @@
 % Yizhi Zhang, "The Cost of Deterministic, Adaptive, Automatic Algorithms:
 % Cones, Not Balls," Journal of Complexity 30, pp. 21-45, 2014.
 % (describes deprecated *integralTrap_g.m* and deprecated *funappxtau_g.m*)
-%
+% 
 % Yuhan Ding, "Guaranteed Adaptive Univariate Function Approximation," PhD
 % thesis, Illinois Institute of Technology, 2015.
 % (describes deprecated *funappxPenalty_g.m*)
@@ -106,6 +111,15 @@
 % Rugama, "Monte Carlo simulation, automatic stopping criteria for", Wiley
 % StatsRef: Statistics Reference Online, pp. 1-7, 2018.
 % (review of *cubMC_g*, *cubLattice_g*, and *cubSobol_g*)
+%
+% Jagadeeswaran Rathinavel and Fred J. Hickernell, "Fast automatic Bayesian
+% cubature using lattice sampling," Statistics and Computingt 29,
+% pp. 1215-1229, 2019. Available from https://doi.org/10.1007/s11222-019-09895-9
+% (describes *cubBayesLattice_g*)
+% 
+% Jagadeeswaran Rathinavel, "Fast automatic Bayesian cubature using matching
+% kernels and designs," PhD thesis, Illinois Institute of Technology, 2019.
+% (describes *cubBayesLattice_g* and *cubBayesNet_g*)
 % 
 % Daniel S. Katz, Sou-Cheng T. Choi, Hilmar Lapp, Ketan Maheshwari,
 % Frank Loffler, Matthew Turk, Marcus D. Hanwell, Nancy Wilkins-Diehr,
@@ -136,7 +150,7 @@
 % 
 % Da Li, "Reliable Quasi-Monte Carlo with Control Variates," Master's thesis,
 % Illinois Institute of Technology, 2016.
-% (describes *cubSobol_g.m* for control variates)
+% (describes *cubSobol_g* for control variates)
 % 
 % Arfon M. Smith, Daniel S. Katz, Kyle E. Niemeyer, and FORCE11 Software
 % Citation Working Group, "Software citation principles," PeerJ Computer
@@ -145,12 +159,7 @@
 % 
 % Xin Tong, "A Guaranteed, Adaptive, Automatic Algorithm for Univariate
 % Function Minimization," MS thesis, Illinois Institute of Technology, 2014.
-% (describes deprecated *funmin01_g.m*)
-% 
-% R. Jagadeeswaran and F. J. Hickernell, "Fast Automatic Bayesian cubature 
-% using Lattice sampling", In review, Proceedings of Prob Num 2018, 
-% Journal of Statistics and Computing, arXiv:1809.09803 [math.NA]
-% (describes *cubBayesLattice_g.m*)
+% (describes deprecated *funmin01_g*)
 % 
 % 
 %% Downloads
@@ -163,25 +172,39 @@
 %   git clone https://github.com/GailGithub/GAIL_Dev.git
 % 
 % 
-% 
 %% Requirements
 % 
 % 
 % You will need to install MATLAB 7 or a later version.
+%
+% GAIL is developed in MATLAB versions R2016a to R2020a. In particular, three
+% of our core algorithms, cubSobol_g, cubBayesNet_g, and cubBayesLattice_g
+% require the following MATLAB add-on toolboxes: Signal Processing Toolbox,
+% Optimization Toolbox, Statistics and Machine Learning Toolbox. In MATLAB,
+% we could use the following command to find out toolbox dependencies of an
+% algorithm:
 % 
+%   names = dependencies.toolboxDependencyAnalysis({'cubBayesNet_g'}).
 % 
+% For development and testing purposes, we use the third-party toolboxes,
+% Chebfun version 5.7.0 and Doctest for MATLAB, version 2010.
 % 
 %% Documentation
 % 
 % 
-% Detailed documentation is available at GAIL_Matlab/Documentation.
+% Detailed documentation is available in the folder, 
+% GAIL_Matlab/Documentation/html/GAIL.html.
+%
+% You can also go to MATLAB's Help. Under the section of Supplemental Software,
+% you will find GAIL Toolbox's searchable HTML documentation.
 % 
-% 
+% A PDF version of GAIL's documentation with selected examples is available at
+% https://github.com/GailGithub/GAIL_Dev/blob/master/Documentation/gail_ug_2_3_1.pdf.
 % 
 %% General Usage Notes
 % 
 % 
-% GAIL version 2.3 includes the following algorithms:
+% GAIL Version 2.3.1 includes the following ten algorithms:
 % 
 % 1.  funappx_g: One-dimensional function approximation on bounded interval
 % 
@@ -200,13 +223,30 @@
 % for d-dimensional integration
 % 
 % 8. cubBayesLattice_g: Bayesian cubature method for d-dimensional integration
+%    using lattice points
 % 
-% 9.  meanMC_CLT: Monte Carlo method with Central Limit Theorem (CLT)
+% 9. CubBayesNet_g: Bayesian cubature method for d-dimensional integration
+%    using Sobol points
+% 
+% 10.  meanMC_CLT: Monte Carlo method with Central Limit Theorem (CLT)
 % confidence intervals for estimating mean of a random variable
 % 
+% Each one of our key GAIL algorithms, with the exception of
+% cubBayesLattice_g and cubBayesNet_g, can parse inputs with the following
+% three patterns of APIs, where f is a real-valued MATLAB function or
+% function handle; in_param and out_param are MATLAB structure arrays; and
+% x is an estimated output:
 % 
+% 1. Ordered input values: [x, out_param] = algo(f, inputVal1, inputVal2, inputVal3,...)
 % 
+% 2. Input structure array: [x, out_param] = algo(f, in_param)
 % 
+% 3. Ordered input values, followed by optional name-value pairs:
+% 	[x, out_param] = algo(f, 'input2', inputVal2, 'input3', inputVal3,...)
+%  
+% For object classes cubBayesLattice_g and cubBayesNet_g, the output pattern
+% is [out, x], where out is an instance of the corresponding object class.
+%
 %% Installation Instruction
 % 
 % 
@@ -228,7 +268,7 @@
 % 
 % Alternatively, you could do this:
 % 
-% 1.  Download DownloadInstallGail_2_3.m and put it where you want
+% 1.  Download DownloadInstallGail_2_3_1.m and put it where you want
 %     GAIL to be installed.
 % 
 % 2.  Execute it in MATLAB.
@@ -236,8 +276,7 @@
 % To uninstall GAIL, execute "GAIL_Uninstall".
 % 
 % To reinstall GAIL, execute "GAIL_Install".
-% 
-% 
+%  
 %% Tests
 % 
 % 
@@ -248,10 +287,25 @@
 % We also provide unit tests for MATLAB version 8 or later. To run unit
 % tests for funmin_g, for instance, execute run(ut_funmin_g).
 % 
+% We execute automated nightly fast tests and weekly long tests
+% on our server. Moreover, these tests are now conducted for all MATLAB
+% versions from R2016a to R2020a. The test reports are available on Mega
+% cloud storage at https://mega.nz/. More specifically, fast and long test
+% reports are archived in text files, gail_daily_tests* and gail_weekly_tests* at
+% https://mega.nz/folder/FlMEjI5a#jVixXyAoI05ppbCstz8yEg
+% respectively. Output files such as images of test scripts are archived at 
+% https://mega.nz/folder/I0cAEKJD#AyQ_8tmxkknfIsuEW0_jnA
+% respectively.
 % 
-%% Known Bugs
 % 
-% None.
+%% Known Issues
+% 
+% During our documentation development with MATLAB releases 2019a and 2020a, the
+% software's internal HTML viewer is found to display LaTeX expression in
+% larger font size than it is intended to be. This is an aesthetic issue with
+% no impact on the content accuracy.  Users may use a web browser to view our
+% HTML documentation instead. The main page to GAIL's HTML documentation is
+% GAIL.html, located in the subfolder, Documentation/html/.
 % 
 % 
 %% Contact Information
@@ -262,12 +316,18 @@
 % http://gailgithub.github.io/GAIL_Dev/
 % 
 % 
-% 
 %% Acknowledgements
 % 
 % 
-% Our work was supported in part by grants from the National Science
-% Foundation under grant NSF-DMS-1115392, and the Office of Advanced
+% Our work was supported in part by the National Science Foundation under
+% grants NSF-DMS-1522687 and NSF-DMS-1115392; and by the Office of Advanced
 % Scientific Computing Research, Office of Science, U.S. Department of
 % Energy, under contract DE-AC02-06CH11357.
+%
 % 
+%% Organizations
+% 
+% 
+% <<illinois-institute-of-technology-vector-logo.jpg>>
+% 
+% <<kamakura-corporation-vector-logo.png>>

@@ -110,8 +110,8 @@
 %% Examples
 % *Example 1*
 %
-% Integrate function \(x^2\) with default input parameter to make the error less
-% than \(10^{-6}\).
+% Integrate function $x^2$ with default input parameter to make the error less
+% than $10^{-6}$.
 [q, out_param] = integral_g(@(x) x.^2)
 
 
@@ -119,9 +119,9 @@
 %%
 % *Example 2*
 %
-% Integrate function \(\exp(-x^2)\) on \([1,2]\) with lowest initial number of function
-% values \(100\) and highest initial number of function values \(10000\), absolute
-% error tolerance \(10^{-5}\) and cost budget \(10000000\).
+% Integrate function $\exp(-x^2)$ on $[1,2]$ with lowest initial number of function
+% values $100$ and highest initial number of function values $10000$, absolute
+% error tolerance $10^{-5}$ and cost budget $10000000$.
 f = @(x) exp(-x.^2); [q, out_param] = integral_g(f,'a',1,'b',2,'nlo',100,'nhi',10000,...
     'abstol',1e-5,'nmax',1e7)
 
@@ -164,6 +164,10 @@ f = @(x) exp(-x.^2); [q, out_param] = integral_g(f,'a',1,'b',2,'nlo',100,'nhi',1
 % <p><a href="help_cubBayesLattice_g.html">cubBayesLattice_g</a>
 % </html>
 %
+% <html>
+% <p><a href="cubBayesNet_g.html">cubBayesNet_g</a>
+% </html>
+%
 %% References
 %
 % [1] Yizhi Zhang, "Guaranteed Adaptive Automatic Algorithms for 
@@ -177,7 +181,7 @@ f = @(x) exp(-x.^2); [q, out_param] = integral_g(f,'a',1,'b',2,'nlo',100,'nhi',1
 % [3] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 % Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
 % Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
-% Integration Library (Version 2.3) [MATLAB Software], 2019. Available
+% Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available
 % from http://gailgithub.github.io/GAIL_Dev/
 %
 % [4] Sou-Cheng T. Choi and Fred J. Hickernell, "IIT MATH-573 Reliable

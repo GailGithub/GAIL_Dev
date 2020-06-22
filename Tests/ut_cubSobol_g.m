@@ -53,11 +53,11 @@ classdef ut_cubSobol_g < matlab.unittest.TestCase
 
     function cubSobol_gOfpolycv(testCase)
       f.func = @(x) [10*x(:,1)-5*x(:,2).^2+1*x(:,3).^3, x(:,1), x(:,2).^2];
-      f.cv = [8,32/3]; 
+      f.cv = [1,4/3]; 
       hyperbox= [zeros(1,3);2*ones(1,3)];
       in_param.abstol = 1e-4;
       [meanf,out_param] = cubSobol_g(f,hyperbox,in_param);
-      exactf = 128/3;
+      exactf = 16/3;
       actualerr = abs(meanf-exactf);
       tolerance = max(out_param.abstol,out_param.reltol*abs(exactf));
       testCase.verifyLessThanOrEqual(actualerr,tolerance);

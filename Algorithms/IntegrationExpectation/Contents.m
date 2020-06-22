@@ -3,6 +3,8 @@
 % Files
 %   cubBayesLattice_g   - Bayesian cubature method to estimate the integral
 %                         of a random variable
+%   cubBayesNet_g       - Bayesian cubature method to estimate the integral
+%                         variable using digital nets
 %   cubLattice_g        - Quasi-Monte Carlo method using rank-1 Lattices cubature
 %   cubMC_g             - Monte Carlo method to evaluate a multidimensional integral
 %   cubSobol_g          - Quasi-Monte Carlo method using Sobol' cubature over the

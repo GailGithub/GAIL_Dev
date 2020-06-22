@@ -1,0 +1,696 @@
+GAILVERSION = 2.3.1
+-----------------------------------------------------------------------------------------------------
+MATLAB Version: 9.3.0.713579 (R2017b)
+MATLAB License Number: 215361
+Operating System: Linux 2.6.32-754.2.1.el6.x86_64 #1 SMP Fri Jul 13 12:50:12 UTC 2018 x86_64
+Java Version: Java 1.8.0_121-b13 with Oracle Corporation Java HotSpot(TM) 64-Bit Server VM mixed mode
+-----------------------------------------------------------------------------------------------------
+MATLAB                                                Version 9.3         (R2017b)
+Chebfun                                               Version 5.7.0               
+Guaranteed Automatic Integration Library (GAIL)       Version 2.3.1,              
+Optimization Toolbox                                  Version 8.0         (R2017b)
+Parallel Computing Toolbox                            Version 6.11        (R2017b)
+Partial Differential Equation Toolbox                 Version 2.5         (R2017b)
+Statistics and Machine Learning Toolbox               Version 11.2        (R2017b)
+Symbolic Math Toolbox                                 Version 8.0         (R2017b)
+Wavelet Toolbox                                       Version 4.19        (R2017b)
+chebfun_ver =
+    '5.7.0'
+
+Running ut_save_mat
+..
+Done ut_save_mat
+__________
+
+Totals:
+   2 Passed, 0 Failed, 0 Incomplete.   0.53793 seconds testing time.
+   100% Passed.
+                                    Name   Passed   Failed Incomplete   Duration
+             ut_save_mat/test_save_mat_2        1        0          0     0.0369
+             ut_save_mat/test_save_mat_1        1        0          0     0.5010
+
+
+Running ut_save_eps
+...
+Done ut_save_eps
+__________
+
+Totals:
+   3 Passed, 0 Failed, 0 Incomplete.   4.9319 seconds testing time.
+   100% Passed.
+                                    Name   Passed   Failed Incomplete   Duration
+            ut_save_eps/test_save_eps_2b        1        0          0     0.4200
+            ut_save_eps/test_save_eps_2a        1        0          0     0.4848
+             ut_save_eps/test_save_eps_1        1        0          0     4.0271
+
+TAP version 13
+1..95
+ok 1 - "dim=2; absTol=1e-3; relTol=1e-2; fName = 'MVN';"
+ok 2 - "C = [4 1 1; 0 1 0.5; 0 0 0.25]; MVNParams.Cov = C'*C; MVNParams.C = C;"
+ok 3 - "MVNParams.a = [-6 -2 -2]; MVNParams.b = [5 2 1]; MVNParams.mu = 0;"
+ok 4 - "MVNParams.CovProp.C = chol(MVNParams.Cov)';"
+ok 5 - "muBest = 0.676337324357787;"
+ok 6 - "integrand =@(t) GenzFunc(t,MVNParams);"
+ok 7 - "inputArgs={'absTol',absTol,'relTol',relTol};"
+ok 8 - "inputArgs=[inputArgs {'order',1,'ptransform','C1sin','arbMean',true}];"
+ok 9 - "inputArgs=[inputArgs {'useGradient',true}];"
+ok 10 - "[obj,muhat]=cubBayesLattice_g(integrand,dim, inputArgs{:});"
+ok 11 - "check = double(abs(muBest-muhat) < max(absTol,relTol*abs(muBest)))"
+ok 12 - "dim=2; absTol=1e-3; relTol=1e-2;"
+ok 13 - "normsqd = @(t) sum(t.*t,2); %squared l_2 norm of t"
+ok 14 - "replaceZeros = @(t) (t+(t==0)*eps); % to avoid getting infinity, NaN"
+ok 15 - "yinv = @(t)(erfcinv( replaceZeros(abs(t)) ));"
+ok 16 - "ft = @(t,dim) cos( sqrt( normsqd(yinv(t)) )) *(sqrt(pi))^dim;"
+ok 17 - "fKeister = @(x) ft(x,dim); exactInteg = Keistertrue(dim);"
+ok 18 - "inputArgs ={'absTol',absTol, 'relTol',relTol};"
+ok 19 - "inputArgs =[inputArgs {'order',0, 'ptransform','C1','arbMean',true}];"
+ok 20 - "obj=cubBayesLattice_g(fKeister,dim,inputArgs{:});"
+ok 21 - "[muhat,outParams] = compInteg(obj);"
+ok 22 - "check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))"
+ok 23 - "check = double(outParams.optParams.r > 0)"
+ok 24 - "const = [1E-4 1 1E4];"
+ok 25 - "fun = @(x)sum(bsxfun(@times, const, sin(2*pi*x.^2)), 2);"
+ok 26 - "dim=3; absTol=1e-3; relTol=1e-2;"
+ok 27 - "exactInteg = fresnels(2)*sum(const)/2;"
+ok 28 - "inputArgs = {'relTol',relTol, 'order',2, 'ptransform','C1sin'};"
+ok 29 - "inputArgs = [{'absTol',absTol,'oneTheta',false,'useGradient',false} inputArgs];"
+ok 30 - "obj=cubBayesLattice_g(fun, dim, inputArgs{:});"
+ok 31 - "[muhat,outParams]=compInteg(obj);"
+ok 32 - "check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))"
+ok 33 - "etaDim = size(outParams.optParams.aMLEAll, 2)"
+ok 34 - "fun = @(x) exp(sum(cos(2*pi*x), 2));"
+ok 35 - "dim=2; "
+ok 36 - "exactInteg = besseli(0,1)^dim;"
+ok 37 - "[obj,muhat]=cubBayesLattice_g(fun,dim);"
+ok 38 - "check = double(abs(exactInteg-muhat) < 0.01)"
+ok 39 - "dim=3; absTol=1e-3; relTol=1e-2;"
+ok 40 - "normsqd = @(t) sum(t.*t,2); %squared l_2 norm of t"
+ok 41 - "replaceZeros = @(t) (t+(t==0)*eps); % to avoid getting infinity, NaN"
+ok 42 - "yinv = @(t)(erfcinv( replaceZeros(abs(t)) ));"
+ok 43 - "ft = @(t,dim) cos( sqrt( normsqd(yinv(t)) )) *(sqrt(pi))^dim;"
+ok 44 - "fKeister = @(x) ft(x,dim); exactInteg = Keistertrue(dim);"
+ok 45 - "inputArgs ={'absTol',absTol, 'relTol',relTol};"
+ok 46 - "inputArgs =[inputArgs {'order',2, 'ptransform','C1','arbMean',true}];"
+ok 47 - "obj=cubBayesLattice_g(fKeister,dim,inputArgs{:});"
+ok 48 - "[muhat,outParams]=compInteg(obj);"
+ok 49 - "check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))"
+ok 50 - "etaDim = size(outParams.optParams.aMLEAll, 2)"
+ok 51 - "in_param.dim = 3;alpha = ones(1,in_param.dim); beta = 1./ (1:in_param.dim);r=1;"
+ok 52 - "hyperbox = [zeros(1,in_param.dim);ones(1,in_param.dim)];index = 1;"
+ok 53 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 54 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 55 - "[obj,Q] = cubBayesLattice_g(f, in_param.dim, 'absTol',1e-3, 'relTol',1e-2);"
+ok 56 - "check = double(abs(f_true-Q) < gail.tolfun(1e-3,1e-2,1,f_true,'max'))"
+ok 57 - "index = 2;"
+ok 58 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 59 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 60 - "[~,Q] = cubBayesLattice_g(f,in_param.dim, 'absTol',1e-3, 'relTol',1e-2);"
+ok 61 - "check = double(abs(f_true-Q) < gail.tolfun(1e-3,1e-3,1,f_true,'max'))"
+ok 62 - "index = 3;"
+ok 63 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 64 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 65 - "[~,Q] = cubBayesLattice_g(f, in_param.dim, 'absTol',1e-3, 'relTol',1e-2);"
+ok 66 - "check = double(abs(f_true-Q) < gail.tolfun(1e-3,1e-2,1,f_true,'max'))"
+ok 67 - "index = 4;"
+ok 68 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 69 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 70 - "[~,Q] = cubBayesLattice_g(f,in_param.dim, 'absTol',1e-3, 'relTol',1e-3);"
+ok 71 - "check = double(abs(f_true-Q) < gail.tolfun(1e-3,1e-3,1,f_true,'max'))"
+ok 72 - "index = 5;"
+ok 73 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 74 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 75 - "[~,Q] = cubBayesLattice_g(f, in_param.dim, 'absTol',1e-3, 'relTol',1e-3);"
+ok 76 - "check = double(abs(f_true-Q) < gail.tolfun(1e-3,1e-3,1,f_true,'max'))"
+ok 77 - "fun = @(x) exp(sum(cos(2*pi*x), 2));"
+ok 78 - "dim=2; absTol=1e-2; relTol=1e-2;"
+ok 79 - "exactInteg = besseli(0,1)^dim;"
+ok 80 - "inParams.absTol = absTol;"
+ok 81 - "inParams.relTol = relTol;"
+ok 82 - "inParams.oneTheta = false;"
+ok 83 - "inParams.ptransform = 'C1sin';"
+ok 84 - "inParams.order = 2;"
+ok 85 - "obj=cubBayesLattice_g(fun, dim, inParams);"
+ok 86 - "[muhat,outParams]=compInteg(obj);"
+ok 87 - "check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))"
+ok 88 - "etaDim = size(outParams.optParams.aMLEAll, 2)"
+ok 89 - "fun = @(x) exp(sum(cos(2*pi*x), 2));"
+ok 90 - "dim=2; absTol=1e-2; relTol=1e-2;"
+ok 91 - "exactInteg = besseli(0,1)^dim;"
+ok 92 - "obj=cubBayesLattice_g(fun, dim, absTol, relTol);"
+ok 93 - "[muhat,outParams]=compInteg(obj);"
+ok 94 - "check = double(abs(exactInteg-muhat) < max(absTol,relTol*abs(exactInteg)))"
+ok 95 - "etaDim = size(outParams.optParams.aMLEAll, 2)"
+
+Running ut_cubBayesLattice_g
+..........
+. 
+Elapsed time is 52.491669 seconds.
+
+ err: Median 6.91e-06, Worst 6.91e-06, Range 0.00e+00, 
+ worstN 4194304, worstTime 52.484, SuccessRatio 0.00, 
+ absTol 5.41e-08, relTol 0.00e+00
+.
+Done ut_cubBayesLattice_g
+__________
+
+Totals:
+   12 Passed, 0 Failed, 0 Incomplete.   95.7103 seconds testing time.
+   100% Passed.
+                                                     Name   Passed   Failed Incomplete   Duration
+      ut_cubBayesLattice_g/cubBayesLattice_gOfmultierrfun        1        0          0     0.0076
+              ut_cubBayesLattice_g/cubBayesLattice_gOfsin        1        0          0     0.0085
+              ut_cubBayesLattice_g/cubBayesLattice_gOfexp        1        0          0     0.0090
+          ut_cubBayesLattice_g/cubBayesLattice_gOferror12        1        0          0     0.0302
+          ut_cubBayesLattice_g/cubBayesLattice_gOferror11        1        0          0     0.0325
+          ut_cubBayesLattice_g/cubBayesLattice_gOferror10        1        0          0     0.0349
+          ut_cubBayesLattice_g/cubBayesLattice_gOfxsquare        1        0          0     0.0379
+          ut_cubBayesLattice_g/cubBayesLattice_gOferror13        1        0          0     0.0624
+          ut_cubBayesLattice_g/cubBayesLattice_gOferror14        1        0          0     0.1312
+          ut_cubBayesLattice_g/cubBayesLattice_gOfwarning        1        0          0     0.3538
+ut_cubBayesLattice_g/cubBayesLattice_gOfwarningMaxReached        1        0          0     42.4000
+           ut_cubBayesLattice_g/cubBayesLattice_gOptPrice        1        0          0     52.6023
+
+Starting Workouts for cubBayesLattice_gIntegrand: MVNElapsed time is 2.595400 seconds.
+Elapsed time is 3.157618 seconds.
+Elapsed time is 2.616750 seconds.
+Elapsed time is 2.377703 seconds.
+Elapsed time is 10.805624 seconds.
+ans =
+    '/home/gail/GAIL_tests/repo/gail-development/GAIL_Matlab/OutputFiles/Paper_cubBayesLattice_g/MVN_guaranteed_time_GCV_C2sin_d2_r2_2020-Jun-20.png'
+Integrand: KeisterElapsed time is 5.183340 seconds.
+Elapsed time is 5.298359 seconds.
+Elapsed time is 5.577614 seconds.
+Elapsed time is 4.946117 seconds.
+Elapsed time is 21.065768 seconds.
+ans =
+    '/home/gail/GAIL_tests/repo/gail-development/GAIL_Matlab/OutputFiles/Paper_cubBayesLattice_g/Keister_guaranteed_time_GCV_C1sin_d4_r2_2020-Jun-20.png'
+Integrand: optPrice 
+Elapsed time is 1067.140764 seconds.
+
+ err: Median 2.10e-04, Worst 3.30e-02, Range 5.66e-02, 
+ worstN 4194304, worstTime 46.445, SuccessRatio 0.99, 
+ absTol 1.29e-03, relTol 0.00e+00
+ 
+Elapsed time is 1279.308122 seconds.
+
+ err: Median 1.56e-04, Worst 1.83e-02, Range 3.66e-02, 
+ worstN 4194304, worstTime 55.700, SuccessRatio 0.72, 
+ absTol 4.09e-02, relTol 0.00e+00
+ 
+Elapsed time is 1256.112584 seconds.
+
+ err: Median 8.53e-05, Worst 2.04e-02, Range 4.07e-02, 
+ worstN 4194304, worstTime 52.273, SuccessRatio 0.61, 
+ absTol 7.84e-03, relTol 0.00e+00
+ 
+Elapsed time is 1480.654902 seconds.
+
+ err: Median 7.45e-05, Worst 4.71e-02, Range 9.42e-02, 
+ worstN 4194304, worstTime 55.896, SuccessRatio 0.72, 
+ absTol 5.26e-05, relTol 0.00e+00
+Elapsed time is 5083.527828 seconds.
+ans =
+    '/home/gail/GAIL_tests/repo/gail-development/GAIL_Matlab/OutputFiles/Paper_cubBayesLattice_g/optPrice_guaranteed_time_GCV_Baker_d12_r1_2020-Jun-20.png'
+Integrand: MVNElapsed time is 3.197299 seconds.
+Elapsed time is 2.990701 seconds.
+Elapsed time is 2.762444 seconds.
+Elapsed time is 2.694692 seconds.
+Elapsed time is 11.662860 seconds.
+ans =
+    '/home/gail/GAIL_tests/repo/gail-development/GAIL_Matlab/OutputFiles/Paper_cubBayesLattice_g/MVN_guaranteed_time_full_C2sin_d2_r2_2020-Jun-20.png'
+Integrand: KeisterElapsed time is 87.466551 seconds.
+Elapsed time is 57.246216 seconds.
+Elapsed time is 144.105380 seconds.
+Elapsed time is 96.655245 seconds.
+Elapsed time is 385.492933 seconds.
+ans =
+    '/home/gail/GAIL_tests/repo/gail-development/GAIL_Matlab/OutputFiles/Paper_cubBayesLattice_g/Keister_guaranteed_time_full_C1sin_d4_r2_2020-Jun-20.png'
+Integrand: optPrice 
+Elapsed time is 1143.177016 seconds.
+
+ err: Median 1.30e-04, Worst 1.75e-02, Range 3.49e-02, 
+ worstN 4194304, worstTime 43.344, SuccessRatio 1.00, 
+ absTol 1.95e-02, relTol 0.00e+00
+ 
+Elapsed time is 962.907565 seconds.
+
+ err: Median 1.33e-04, Worst 2.10e-02, Range 3.65e-02, 
+ worstN 4194304, worstTime 48.183, SuccessRatio 0.68, 
+ absTol 2.41e-03, relTol 0.00e+00
+ 
+Elapsed time is 1175.822828 seconds.
+
+ err: Median 9.84e-05, Worst 1.92e-02, Range 3.84e-02, 
+ worstN 4194304, worstTime 45.717, SuccessRatio 0.62, 
+ absTol 1.86e-03, relTol 0.00e+00
+ 
+Elapsed time is 1186.260968 seconds.
+
+ err: Median 1.14e-04, Worst 2.89e-02, Range 4.88e-02, 
+ worstN 4194304, worstTime 53.807, SuccessRatio 0.95, 
+ absTol 2.18e-04, relTol 0.00e+00
+Elapsed time is 4468.313764 seconds.
+ans =
+    '/home/gail/GAIL_tests/repo/gail-development/GAIL_Matlab/OutputFiles/Paper_cubBayesLattice_g/optPrice_guaranteed_time_full_Baker_d12_r1_2020-Jun-20.png'
+Integrand: MVNElapsed time is 3.106582 seconds.
+Elapsed time is 2.606127 seconds.
+Elapsed time is 3.185310 seconds.
+Elapsed time is 3.010384 seconds.
+Elapsed time is 11.921663 seconds.
+ans =
+    '/home/gail/GAIL_tests/repo/gail-development/GAIL_Matlab/OutputFiles/Paper_cubBayesLattice_g/MVN_guaranteed_time_MLE_C2sin_d2_r2_2020-Jun-20.png'
+Integrand: KeisterElapsed time is 105.650059 seconds.
+Elapsed time is 87.536348 seconds.
+Elapsed time is 133.681913 seconds.
+Elapsed time is 94.153465 seconds.
+Elapsed time is 421.034173 seconds.
+ans =
+    '/home/gail/GAIL_tests/repo/gail-development/GAIL_Matlab/OutputFiles/Paper_cubBayesLattice_g/Keister_guaranteed_time_MLE_C1sin_d4_r2_2020-Jun-20.png'
+Integrand: optPrice 
+Elapsed time is 1093.655371 seconds.
+
+ err: Median 1.32e-04, Worst 1.66e-02, Range 3.18e-02, 
+ worstN 4194304, worstTime 50.351, SuccessRatio 0.97, 
+ absTol 1.43e-02, relTol 0.00e+00
+ 
+Elapsed time is 1633.251136 seconds.
+
+ err: Median 3.63e-05, Worst 1.43e-02, Range 2.36e-02, 
+ worstN 4194304, worstTime 57.683, SuccessRatio 1.00, 
+ absTol 2.74e-03, relTol 0.00e+00
+ 
+Elapsed time is 760.225717 seconds.
+
+ err: Median 1.66e-04, Worst 3.47e-02, Range 5.59e-02, 
+ worstN 4194304, worstTime 43.379, SuccessRatio 0.91, 
+ absTol 1.88e-04, relTol 0.00e+00
+ 
+Elapsed time is 529.562037 seconds.
+
+ err: Median 1.84e-04, Worst 4.08e-02, Range 6.55e-02, 
+ worstN 4194304, worstTime 32.189, SuccessRatio 0.76, 
+ absTol 5.95e-04, relTol 0.00e+00
+Elapsed time is 4016.852369 seconds.
+ans =
+    '/home/gail/GAIL_tests/repo/gail-development/GAIL_Matlab/OutputFiles/Paper_cubBayesLattice_g/optPrice_guaranteed_time_MLE_Baker_d12_r1_2020-Jun-20.png'
+Workouts for cubBayesLattice_g: finished=============================Finished longtests_cubBayesLattice_g at 2020-06-20-08-32-52 
+=============================Starting longtests at 2020-06-20-08-32-52 
+TAP version 13
+1..52
+ok 1 - "in_param.dim = 3;alpha = ones(1,in_param.dim); beta = 1./ (1:in_param.dim);r=1;"
+ok 2 - "hyperbox = [zeros(1,in_param.dim);ones(1,in_param.dim)];index = 1;"
+ok 3 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 4 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 5 - "Q = cubLattice_g(f,hyperbox,'uniform',1e-3,1e-2);"
+ok 6 - "check = double(abs(f_true-Q) < gail.tolfun(1e-3,1e-2,1,f_true,'max'))"
+ok 7 - "index = 2;"
+ok 8 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 9 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 10 - "Q = cubLattice_g(f,hyperbox,'uniform',1e-3,1e-3);"
+ok 11 - "check = double(abs(f_true-Q) < gail.tolfun(1e-3,1e-3,1,f_true,'max'))"
+ok 12 - "index = 3;"
+ok 13 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 14 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 15 - "Q = cubLattice_g(f,hyperbox,'uniform',1e-3,1e-2);"
+ok 16 - "check = double(abs(f_true-Q) < gail.tolfun(1e-3,1e-2,1,f_true,'max'))"
+ok 17 - "index = 4;"
+ok 18 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 19 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 20 - "Q = cubLattice_g(f,hyperbox,'uniform',1e-3,1e-3);"
+ok 21 - "check = double(abs(f_true-Q) < gail.tolfun(1e-3,1e-3,1,f_true,'max'))"
+ok 22 - "index = 5;"
+ok 23 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 24 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 25 - "Q = cubLattice_g(f,hyperbox,'uniform',1e-3,1e-3);"
+ok 26 - "check = double(abs(f_true-Q) < gail.tolfun(1e-3,1e-3,1,f_true,'max'))"
+ok 27 - "in_param.dim = 3;alpha = ones(1,in_param.dim); beta = 1./ (1:in_param.dim);r=1;"
+ok 28 - "hyperbox = [-ones(1,in_param.dim);ones(1,in_param.dim)];index = 1;"
+ok 29 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 30 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 31 - "Q = cubLattice_g(f,hyperbox,'uniform',1e-2,1e-13);"
+ok 32 - "check = double(abs(f_true-Q) < gail.tolfun(1e-2,1e-13,1,f_true,'max'))"
+ok 33 - "index = 2;hyperbox = [-ones(1,in_param.dim);ones(1,in_param.dim)];"
+ok 34 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 35 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 36 - "Q = cubLattice_g(f,hyperbox,'uniform',1e-2,1e-13);"
+ok 37 - "check = double(abs(f_true-Q) < gail.tolfun(1e-2,1e-13,1,f_true,'max'))"
+ok 38 - "index = 3;hyperbox = [ones(1,in_param.dim)/2;2*ones(1,in_param.dim)];"
+ok 39 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 40 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 41 - "Q = cubLattice_g(f,hyperbox,'uniform',1e-2,1e-3);"
+ok 42 - "check = double(abs(f_true-Q) < gail.tolfun(1e-2,1e-3,1,f_true,'max'))"
+ok 43 - "index = 4;hyperbox = [-ones(1,in_param.dim)/2;ones(1,in_param.dim)];"
+ok 44 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 45 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 46 - "Q = cubLattice_g(f,hyperbox,'uniform',1e-2,1e-3);"
+ok 47 - "check = double(abs(f_true-Q) < gail.tolfun(1e-2,1e-3,1,f_true,'max'))"
+ok 48 - "index = 5;hyperbox = [-ones(1,in_param.dim)/2;ones(1,in_param.dim)];"
+ok 49 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 50 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 51 - "Q = cubLattice_g(f,hyperbox,'uniform',1e-2,1e-2);"
+ok 52 - "check = double(abs(f_true-Q) < gail.tolfun(1e-2,1e-2,1,f_true,'max'))"
+Running ut_Papers_cubLattice_g
+
+irep = 1 ... 2 ... 3 ... 4 ... 5 ... 6 ... 7 ... 8 ... 9 ... 10 ... 20 ... 30 ... 40 ... 50 ... 60 ... 70 ... 80 ... 90 ... 100 ... 200 ... 300 ... 400 ... 500.
+irep = 1 ... 2 ... 3 ... 4 ... 5 ... 6 ... 7 ... 8 ... 9 ... 10 ... 20 ... 30 ... 40 ... 50 ... 60 ... 70 ... 80 ... 90 ... 100 ... 200 ... 300 ... 400 ... 500.
+Done ut_Papers_cubLattice_g
+__________
+
+=============================Finished longtests_cubLattice_g at 2020-06-20-08-33-23 
+TAP version 13
+1..53
+ok 1 - " in_param.dim = 3;alpha = ones(1,in_param.dim); beta = 1./ (1:in_param.dim);r=1;"
+ok 2 - "hyperbox = [zeros(1,in_param.dim);ones(1,in_param.dim)];index = 1;"
+ok 3 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 4 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.001"
+ok 5 - "Q = cubSobol_g(f,hyperbox,'uniform',1e-3,1e-2)+0.001"
+ok 6 - "index = 2;"
+ok 7 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 8 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.001"
+ok 9 - "Q = cubSobol_g(f,hyperbox,'uniform',1e-3,1e-3)+0.001"
+ok 10 - "index = 3;"
+ok 11 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 12 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.001"
+ok 13 - "Q = cubSobol_g(f,hyperbox,'uniform',1e-3,1e-2)+0.001"
+ok 14 - "index = 4;"
+ok 15 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 16 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.001"
+ok 17 - "Q = cubSobol_g(f,hyperbox,'uniform',1e-3,1e-3)+0.001"
+ok 18 - "index = 5;"
+ok 19 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 20 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 21 - "Q = cubSobol_g(f,hyperbox,'uniform',1e-3,1e-3)"
+ok 22 - "index = 6;"
+ok 23 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 24 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 25 - "Q = cubSobol_g(f,hyperbox,'uniform',1e-3,1e-3)"
+ok 26 - "index = 7; in_param.dim = 3;"
+ok 27 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 28 - "Q = cubSobol_g(f,hyperbox,'uniform',1e-3,1e-4)"
+ok 29 - "in_param.dim = 3;alpha = ones(1,in_param.dim); beta = 1./ (1:in_param.dim);r=1;"
+ok 30 - "hyperbox = [-ones(1,in_param.dim);ones(1,in_param.dim)];index = 1;"
+ok 31 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 32 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 33 - "Q = cubSobol_g(f,hyperbox,'uniform',1e-2,1e-13)"
+ok 34 - "index = 2;hyperbox = [-ones(1,in_param.dim);ones(1,in_param.dim)];"
+ok 35 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 36 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 37 - "Q = cubSobol_g(f,hyperbox,'uniform',1e-2,1e-13)"
+ok 38 - "index = 3;hyperbox = [ones(1,in_param.dim)/2;2*ones(1,in_param.dim)];"
+ok 39 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 40 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 41 - "Q = cubSobol_g(f,hyperbox,'uniform',1e-2,1e-3)"
+ok 42 - "index = 4;hyperbox = [-ones(1,in_param.dim)/2;ones(1,in_param.dim)];"
+ok 43 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 44 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.005"
+ok 45 - "Q = cubSobol_g(f,hyperbox,'uniform',1e-2,1e-3)+0.005"
+ok 46 - "index = 5;hyperbox = [-ones(1,in_param.dim)/2;ones(1,in_param.dim)];"
+ok 47 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 48 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.005"
+ok 49 - "Q = cubSobol_g(f,hyperbox,'uniform',1e-2,1e-2)+0.005"
+ok 50 - "index = 6;"
+ok 51 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 52 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 53 - "Q = cubSobol_g(f,hyperbox,'uniform',1e-3,1e-3)"
+Running ut_Papers_cubSobol_g
+
+irep = 1 ... 2 ... 3 ... 4 ... 5 ... 6 ... 7 ... 8 ... 9 ... 10 ... 20 ... 30 ... 40 ... 50 ... 60 ... 70 ... 80 ... 90 ... 100 ... 200 ... 300 ... 400 ... 500.
+irep = 1 ... 2 ... 3 ... 4 ... 5 ... 6 ... 7 ... 8 ... 9 ... 10 ... 20 ... 30 ... 40 ... 50 ... 60 ... 70 ... 80 ... 90 ... 100 ... 200 ... 300 ... 400 ... 500.
+Done ut_Papers_cubSobol_g
+__________
+
+Running ut_MC_StoppingCriteria
+
+k = 1 ... 2 ... 3 ... 4 ... 5 ... 6 ... 7 ... 8 ... 9 ... 10 ... 20 ... 30 ... 40 ... 50 ... 60 ... 70 ... 80 ... 90 ... 100 ... 200 ... 300 ... 400 ... 500 ... 600 ... 700 ... 800 ... 900 ... 1000
+k = 1 ... 2 ... 3 ... 4 ... 5 ... 6 ... 7 ... 8 ... 9 ... 10 ... 20 ... 30 ... 40 ... 50 ... 60 ... 70 ... 80 ... 90 ... 100 ... 200 ... 300 ... 400 ... 500 ... 600 ... 700 ... 800 ... 900 ... 1000 
+Elapsed time is 1.308736 seconds.
+nSampleMC =
+     2.546221024000000e+06     7.422324774000000e+06
+timeMC =
+     1.683103629999999e-01     1.275895658999999e+00
+
+k = 1 ... 2 ... 3 ... 4 ... 5 ... 6 ... 7 ... 8 ... 9 ... 10 ... 20 ... 30 ... 40 ... 50 ... 60 ... 70 ... 80 ... 90 ... 100 ... 200 ... 300 ... 400 ... 500 ... 600 ... 700 ... 800 ... 900 ... 1000
+k = 1 ... 2 ... 3 ... 4 ... 5 ... 6 ... 7 ... 8 ... 9 ... 10 ... 20 ... 30 ... 40 ... 50 ... 60 ... 70 ... 80 ... 90 ... 100 ... 200 ... 300 ... 400 ... 500 ... 600 ... 700 ... 800 ... 900 ... 1000 
+Elapsed time is 57.388064 seconds.
+timeSob =
+     1.512645299999998e-02     4.193350499999998e-02
+nSampleSob =
+     3.928064000000000e+03     1.638400000000000e+04
+
+k = 1 ... 2 ... 3 ... 4 ... 5 ... 6 ... 7 ... 8 ... 9 ... 10 ... 20 ... 30 ... 40 ... 50 ... 60 ... 70 ... 80 ... 90 ... 100 ... 200 ... 300 ... 400 ... 500 ... 600 ... 700 ... 800 ... 900 ... 1000
+k = 1 ... 2 ... 3 ... 4 ... 5 ... 6 ... 7 ... 8 ... 9 ... 10 ... 20 ... 30 ... 40 ... 50 ... 60 ... 70 ... 80 ... 90 ... 100 ... 200 ... 300 ... 400 ... 500 ... 600 ... 700 ... 800 ... 900 ... 1000 
+Elapsed time is 43.025928 seconds.
+timeLat =
+     1.102171800000001e-02     3.163995899999999e-02
+nSampleLat =
+     4.096000000000000e+03     1.517158400000000e+04
+succMC =
+     9.990000000000000e-01     1.000000000000000e+00
+avgAbsErrMC =
+     1.141483109914680e-03     1.169075247495853e-02
+succSob =
+     1     1
+avgAbsErrSob =
+     4.914669757813597e-04     7.115200678978738e-03
+succLat =
+     1.000000000000000e+00     9.940000000000000e-01
+avgAbsErrLat =
+     5.334921188744901e-04     1.481329934064345e-02
+warnings issued by cubMC_g: 0  0
+warnings issued by cubLattice_g: 0  613
+warnings issued by cubSobol_g: 0  881
+..
+Done ut_MC_StoppingCriteria
+__________
+
+=============================Finished longtests_cubSobol_g at 2020-06-20-08-59-53 
+TAP version 13
+1..3
+ok 1 - "dt_meanMC_g_TrafficModel('hi')"
+ok 2 - "dt_meanMC_g_TrafficModel(1e-2)"
+ok 3 - "dt_meanMC_g_TrafficModel(1e-3)"
+=============================Finished longtests_meanMC_g at 2020-06-20-09-00-19 
+TAP version 13
+1..56
+ok 1 - " in_param.dim = 3;alpha = ones(1,in_param.dim); beta = 1./ (1:in_param.dim);r=1;"
+ok 2 - "hyperbox = [zeros(1,in_param.dim);ones(1,in_param.dim)];index = 1;"
+ok 3 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 4 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.001"
+ok 5 - "Q = cubMC_g(f,hyperbox,'uniform',1e-3,1e-2)+0.001"
+ok 6 - "index = 2;"
+ok 7 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 8 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.001"
+ok 9 - "Q = cubMC_g(f,hyperbox,'uniform',1e-3,1e-3)+0.001"
+ok 10 - "index = 3;"
+ok 11 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 12 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.001"
+ok 13 - "Q = cubMC_g(f,hyperbox,'uniform',1e-3,1e-2)+0.001"
+ok 14 - "index = 4;"
+ok 15 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 16 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.001"
+ok 17 - "Q = cubMC_g(f,hyperbox,'uniform',1e-3,1e-3)+0.001"
+ok 18 - "index = 5;"
+ok 19 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 20 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 21 - "Q = cubMC_g(f,hyperbox,'uniform',1e-3,1e-3)"
+ok 22 - "index = 6;"
+ok 23 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 24 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 25 - "Q = cubMC_g(f,hyperbox,'uniform',1e-3,1e-3)"
+ok 26 - "index = 7; in_param.dim = 3;"
+ok 27 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 28 - "Q = cubMC_g(f,hyperbox,'uniform',1e-3,1e-4)"
+ok 29 - "in_param.dim = 3; alpha = ones(1,in_param.dim); beta = 1./ (1:in_param.dim);r=1;"
+ok 30 - "hyperbox = [-ones(1,in_param.dim);ones(1,in_param.dim)];index = 1;"
+ok 31 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 32 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 33 - "abstol = 1e-2; reltol = 1e-13;"
+ok 34 - "Q = cubMC_g(f,hyperbox,'uniform',abstol,reltol);"
+ok 35 - "abs(f_true-Q) <= max(abstol, reltol * abs(f_true))"
+ok 36 - "index = 2;hyperbox = [-ones(1,in_param.dim);ones(1,in_param.dim)];"
+ok 37 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 38 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 39 - "Q = cubMC_g(f,hyperbox,'uniform',1e-2,1e-13)"
+ok 40 - "index = 3;hyperbox = [ones(1,in_param.dim)/2;2*ones(1,in_param.dim)];"
+ok 41 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 42 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 43 - "Q = cubMC_g(f,hyperbox,'uniform',1e-2,1e-3)"
+ok 44 - "index = 4;hyperbox = [-ones(1,in_param.dim)/2;ones(1,in_param.dim)];"
+ok 45 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 46 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.005"
+ok 47 - "Q = cubMC_g(f,hyperbox,'uniform',1e-2,1e-3)+0.005;"
+ok 48 - "check = abs(Q - f_true)< max(1e-2, 1e-3*f_true)"
+ok 49 - "index = 5;hyperbox = [-ones(1,in_param.dim)/2;ones(1,in_param.dim)];"
+ok 50 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 51 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)+0.005"
+ok 52 - "Q = cubMC_g(f,hyperbox,'uniform',1e-2,1e-2)+0.005"
+ok 53 - "index = 6;"
+ok 54 - "f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);"
+ok 55 - "f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)"
+ok 56 - "Q = cubMC_g(f,hyperbox,'uniform',1e-3,1e-3)"
+
+Running ut_cubMC_g
+..........
+
+  Dim  FcnIdx       Q        f_true          Err       Sample Used             Stats  
+-----------------------------------------------------------------------------------------------------
+     1      1 +8.41694e-01 +8.41471e-01 2.23340e-04         717873             BothErrMet
+     1      2 +7.85420e-01 +7.85398e-01 2.21887e-05         888265             BothErrMet
+     2      1 +4.96651e-01 +4.96751e-01 1.00443e-04        2570648             BothErrMet
+     2      2 +7.28228e-01 +7.28296e-01 6.79633e-05         857033             BothErrMet
+     3      1 +6.23452e-02 +6.23593e-02 1.40831e-05        4294517             BothErrMet
+     3      2 +6.62691e-01 +6.62570e-01 1.21858e-04         876407             BothErrMet
+.
+i = 1 ... 2 ... 3 ... 4 ... 5 ... 6 ... 7 ... 8 ... 9 ... 10 ... 20.
+Done ut_cubMC_g
+__________
+
+Totals:
+   12 Passed, 0 Failed, 0 Incomplete.   614.7097 seconds testing time.
+   100% Passed.
+                                    Name   Passed   Failed Incomplete   Duration
+                 ut_cubMC_g/cubMC_gOfexp        1        0          0     0.0089
+             ut_cubMC_g/cubMC_gOferror12        1        0          0     0.0190
+             ut_cubMC_g/cubMC_gOferror11        1        0          0     0.0198
+             ut_cubMC_g/cubMC_gOferror14        1        0          0     0.0307
+             ut_cubMC_g/cubMC_gOfxsquare        1        0          0     0.0309
+             ut_cubMC_g/cubMC_gOferror13        1        0          0     0.0332
+                 ut_cubMC_g/cubMC_gOfsin        1        0          0     0.0336
+         ut_cubMC_g/cubMC_gOfmultierrfun        1        0          0     0.0451
+             ut_cubMC_g/cubMC_gOferror10        1        0          0     0.0832
+             ut_cubMC_g/cubMC_gOfwarning        1        0          0     0.5860
+            ut_cubMC_g/cubMC_gOfWorkouts        1        0          0     0.5976
+                ut_cubMC_g/cubMC_gNormal        1        0          0     613.2218
+
+Running MCQMC2012Figs ...
+Elapsed time is 8.112046 seconds.
+Elapsed time is 7.634574 seconds.
+Elapsed time is 8.312021 seconds.
+Running RunTestcubMConGeoAsianCall ...
+
+irep = 1 ... 2 ... 3 ... 4 ... 5 ... 6 ... 7 ... 8 ... 9 ... 10 ... 20 ... 30 ... 40 ... 50 
+Elapsed time is 2110.454982 seconds.
+Running RunTestcubMConGaussian ...
+
+irep = 1 ... 2 ... 3 ... 4 ... 5 ... 6 ... 7 ... 8 ... 9 ... 10 ... 20 ... 30 ... 40 ... 50 ... 60 ... 70 ... 80 ... 90 ... 100 
+Elapsed time is 1124.647817 seconds.
+Running RunTestcubMConGaussiand1 ...
+
+irep = 1 ... 2 ... 3 ... 4 ... 5 ... 6 ... 7 ... 8 ... 9 ... 10 ... 20 ... 30 ... 40 ... 50 ... 60 ... 70 ... 80 ... 90 ... 100 ... 200 ... 300 ... 400 ... 500 
+Elapsed time is 1990.802426 seconds.
+Running DisplayTestResults_BlacknColor ...
+Running ex1
+Running ex2
+Running ex3
+=============================Finished longtests_cubMC_g at 2020-06-20-10-40-09 
+Running ut_workout_funappx_g
+ 
+   Test      Number of Points       Time Used
+ Function   Local      Global     Local    Global
+        1     79225     201192   0.0098874    0.0108482
+        2    583949     475561   0.0572369    0.0291004
+        3    223454    2199066   0.0283071    0.1677749
+. 
+   Test      Number of Points       Time Used
+ Function   Local      Global     Local    Global
+        1       801     181462   0.0032762    0.0098986
+        2       768     360664   0.0031836    0.0207623
+        3       770    1994193   0.0035805    0.1416302
+.
+Done ut_workout_funappx_g
+__________
+
+Running ut_convtest_funappx_g
+..
+Done ut_convtest_funappx_g
+__________
+
+Running ut_traub_paper
+
+Starting case i of 1000, i = 1 ... 2 ... 3 ... 4 ... 5 ... 6 ... 7 ... 8 ... 9 ... 10 ... 20 ... 30 ... 40 ... 50 ... 60 ... 70 ... 80 ... 90 ... 100 ... 200 ... 300 ... 400 ... 500 ... 600 ... 700 ... 800 ... 900 ... 1000funappx_g used 65 points and 3 iterations
+   to satisfy an absolute error tolerance of 0.02
+the mesh width ranges from 0.025 to 0.1
+funmin_g used 43 points and 3 iterations
+   to satisfy an absolute error tolerance of 0.02
+the mesh width ranges from 0.025 to 0.1
+
+
+# of replications = 1000
+   Test         Number of Points                    Time Used                          Success (%)                                  Failure (%)
+  Function   ----------------------------    -------------------------------     --------------------------------------   ----------------------------------------
+             Local      Global    Chebfun    Local       Global      Chebfun     Local        Global         Chebfun       Local         Global        Chebfun
+                                                                                 No Warn Warn No Warn Warn   No Warn Warn  No Warn Warn  No Warn Warn  No Warn Warn
+        3      7558     46439        116      0.0039       0.0040      0.0289     100      0    100      0      0        0      0      0      0      0    100      0
+        1      7067     26265         43      0.0052       0.0036      0.0068     100      0    100      0      3        0      0      0      0      0     97      0
+        2     14714     97106         22      0.0067       0.0086      0.0047     100      0    100      0      3        0      0      0      0      0     97      0
+.
+Done ut_traub_paper
+__________
+
+=============================Finished longtests_funappx_g at 2020-06-20-11-05-12 
+Running ut_traub_paper
+
+Starting case i of 1000, i = 1 ... 2 ... 3 ... 4 ... 5 ... 6 ... 7 ... 8 ... 9 ... 10 ... 20 ... 30 ... 40 ... 50 ... 60 ... 70 ... 80 ... 90 ... 100 ... 200 ... 300 ... 400 ... 500 ... 600 ... 700 ... 800 ... 900 ... 1000funappx_g used 65 points and 3 iterations
+   to satisfy an absolute error tolerance of 0.02
+the mesh width ranges from 0.025 to 0.1
+funmin_g used 43 points and 3 iterations
+   to satisfy an absolute error tolerance of 0.02
+the mesh width ranges from 0.025 to 0.1
+
+
+# of replications = 1000
+   Test         Number of Points                    Time Used                          Success (%)                                  Failure (%)
+  Function   ----------------------------    -------------------------------     --------------------------------------   ----------------------------------------
+             funmin_g   fminbnd   Chebfun    funmin_g     fminbnd    Chebfun     funmin_g        fminbnd        Chebfun   funmin_g        fminbnd       Chebfun
+                                                                                 No Warn Warn No Warn Warn   No Warn Warn  No Warn Warn  No Warn Warn  No Warn Warn
+        3       111         8        116      0.0053       0.0009      0.0390     100      0    100      0     14        0      0      0      0      0     86      0 
+        1        48        22         43      0.0050       0.0010      0.0100     100      0     27      0     60        0      0      0     73      0     40      0 
+        2       108         9         22      0.0053       0.0009      0.0049     100      0    100      0     35        0      0      0      0      0     65      0 
+.
+Done ut_traub_paper
+__________
+
+=============================Finished longtests_funmin_g at 2020-06-20-11-06-33 
+Running ut_workout_integral_g
+.
+Done ut_workout_integral_g
+__________
+
+=============================Finished longtests_integral_g at 2020-06-20-11-08-06 
+TAP version 13
+1..29
+ok 1 - "[mu,out] = meanMC_CLT(@(n) prod(rand(n,2),2), 0.001);"
+ok 2 - "exact = 1/4;"
+ok 3 - "check = double(abs(exact - mu) < 2e-3)"
+ok 4 - "f = @(x)[exp(-x.^2), x];"
+ok 5 - "YXn = @(n)f(rand(n,1));"
+ok 6 - "s = struct('Y',YXn,'nY',1,'trueMuCV',1/2);"
+ok 7 - "exact = erf(1)*sqrt(pi)/2;"
+ok 8 - "success = 0; runs = 1000; tol = 1e-3;"
+ok 9 - "for i=1:runs, success = success + double(abs(exact-meanMC_CLT(s,0,tol)) < tol*exact); end"
+ok 10 - "check = success >= 0.99 * runs"
+ok 11 - "normsqd = @(x) sum(x.*x,2);"
+ok 12 - "f = @(normt,a,d) ((2*pi*a^2).^(d/2)) * cos(a*sqrt(normt)).* exp((1/2-a^2)*normt);"
+ok 13 - "f1 = @(x,a,d) f(normsqd(x),a,d);"
+ok 14 - "f2 = @(x)[f1(x,1,1),f1(x,1/sqrt(2),1),cos(x)];"
+ok 15 - "YXn = @(n)f2(randn(n,1));"
+ok 16 - "s = struct('Y',YXn,'nY',2,'trueMuCV',1/sqrt(exp(1)));"
+ok 17 - "[hmu,out] = meanMC_CLT(s,0,1e-3);"
+ok 18 - "exact = 1.380388447043143;"
+ok 19 - "check = double(abs(exact-hmu) < max(0,1e-3*abs(exact)))"
+ok 20 - "f = @(x) [x(:,1).^3.*x(:,2).^3.*x(:,3).^3, x(:,1).*x(:,2).*x(:,3)];"
+ok 21 - "s = struct('Y',@(n)f(rand(n,3)),'nY',1,'trueMuCV',1/8);"
+ok 22 - "[hmu,out] = meanMC_CLT(s,1e-3,0);"
+ok 23 - "exact = 1/64;"
+ok 24 - "check = double(abs(exact-hmu) < max(1e-3,1e-3*abs(exact)))"
+ok 25 - "f = @(x) [x(:,1).^3.*x(:,2).^3.*x(:,3).^3, x(:,1).^2.*x(:,2).^2.*x(:,3).^2-1/27+1/64,  x(:,1).*x(:,2).*x(:,3), x(:,1)+x(:,2)+x(:,3)];"
+ok 26 - "s = struct('Y',@(n)f(rand(n,3)),'nY',2,'trueMuCV',[1/8 1.5]);"
+ok 27 - "[hmu,out] = meanMC_CLT(s,1e-4,1e-3);"
+ok 28 - "exact = 1/64;"
+ok 29 - "check = double(abs(exact-hmu) < max(1e-4,1e-3*abs(exact)))"
+time =
+     1.442053100000000e+01
+=============================Finished longtests_meanMC_CLT at 2020-06-20-11-08-20 
+=============================Finished all the longtests at 2020-06-20-11-08-20 
+total_time =
+     1.334616987700000e+04

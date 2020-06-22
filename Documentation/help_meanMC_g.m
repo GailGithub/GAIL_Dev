@@ -66,7 +66,7 @@
 %  equal to 30, the default value is 1e4.
 %
 % * in_param.n1 --- initial sample size for estimating the sample mean,
-%  which should be a moderate large positive integer at least 30, the
+%  which should be a moderately large positive integer at least 30, the
 %  default value is 1e4.
 %
 % * in_param.tbudget --- the time budget in seconds to do the two-stage
@@ -132,8 +132,8 @@
 %%
 % *Example 1*
 %
-% Calculate the mean of \(x^2\) when \(x\) is uniformly distributed in
-% \([0, 1]\), with the absolute error tolerance = \(10^{-3}\) and uncertainty \(5\%\).
+% Calculate the mean of $x^2$ when $x$ is uniformly distributed in
+% $[0, 1]$, with the absolute error tolerance = $10^{-3}$ and uncertainty $5\%$.
 
   in_param.reltol = 0; in_param.abstol = 1e-3;
   in_param.alpha = 0.05; Yrand = @(n) rand(n,1).^2;
@@ -143,8 +143,8 @@
 %%
 % *Example 2*
 %
-% Calculate the mean of \(\exp(x)\) when \(x\) is uniformly distributed in
-% \([0, 1]\), with the absolute error tolerance \(10^{-3}\).
+% Calculate the mean of $\exp(x)$ when $x$ is uniformly distributed in
+% $[0, 1]$, with the absolute error tolerance $10^{-3}$.
 
   tmu = meanMC_g(@(n)exp(rand(n,1)),1e-3,0); exactsol = exp(1)-1;
   check = double(abs(exactsol-tmu) < 1e-3)
@@ -152,8 +152,8 @@
 %%
 % *Example 3*
 %
-% Calculate the mean of \(\cos(x)\) when \(x\) is uniformly distributed in
-% \([0, 1]\), with the relative error tolerance \(10^{-2}\) and uncertainty \(0.05\).
+% Calculate the mean of $\cos(x)$ when $x$ is uniformly distributed in
+% $[0, 1]$, with the relative error tolerance $10^{-2}$ and uncertainty $0.05$.
 
   tmu = meanMC_g(@(n)cos(rand(n,1)),'reltol',1e-3,'abstol',1e-4,'alpha',0.01);
   exactsol = sin(1);
@@ -185,6 +185,10 @@
 % <p><a href="help_cubBayesLattice_g.html">cubBayesLattice_g</a>
 % </html>
 %
+% <html>
+% <p><a href="cubBayesNet_g.html">cubBayesNet_g</a>
+% </html>
+%
 %% References
 %
 % [1] Fred J. Hickernell, Lan Jiang, Yuewei Liu, and Art B. Owen, "Guaranteed
@@ -196,7 +200,7 @@
 % [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 % Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
 % Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
-% Integration Library (Version 2.3) [MATLAB Software], 2019. Available
+% Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available
 % from http://gailgithub.github.io/GAIL_Dev/
 %
 % [3] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible

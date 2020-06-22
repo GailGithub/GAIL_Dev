@@ -9,6 +9,7 @@
 %   ut_ConesPaper          - unit test for Cone Paper
 %   ut_convtest_funappx_g  - unit tests for convergence test of funappx_g
 %   ut_cubBayesLattice_g   - unit tests for cubBayesLattice_g
+%   ut_cubBayesNet_g       - unit tests for cubBayesNet_g
 %   ut_cubLattice_g        - fast unit tests for cubLattice_g
 %   ut_cubMC_g             - fast unit tests for cubMC_g
 %   ut_cubMCabs_g          - fast unit test for cubMCabs_g
@@ -29,4 +30,5 @@
 %   ut_whiteNoise          - unit tests for object class whiteNoise
 %   ut_workout_funappx_g   - long unit tests for workoutfunappx_g
 %   ut_workout_integral_g  - unit test for workout_integral_g
-
+%   dt_cubBayesLattice_g   - fast doctest for cubBayesLattice_g
+%   dt_cubBayesNet_g       - fast doctest for cubBayesNet_g

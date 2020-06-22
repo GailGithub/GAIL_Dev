@@ -4,19 +4,19 @@
 %
 % Define a highly oscillating function as follows:
 %
-% \[ f(x) = \sin (10 \pi x^4 ) - x \]
+% $$ f(x) = \sin (10 \pi x^4 ) - x. $$
 %
 close all; clearvars; format compact; format short;
 f = @(x) sin(10*pi*x.^4)-x;
 
 %% Function minimization
-% We use *funmin_g* to approximate \(f\) over the interval \([a,b]\), where
-% \(a = 0\) and \(b = 2\) with default parameter values:
+% We use *funmin_g* to approximate $f$ over the interval $[a,b]$, where
+% $a = 0$ and $b = 2$ with default parameter values:
 a = 0; b = 2;
 [fmin,outmin] = funmin_g(f, a, b);
 
 %% Plots of the function and its minimum
-% We plot \(f(x)\) and the approximate minimum returned by *funmin_g* below.
+% We plot $f(x)$ and the approximate minimum returned by *funmin_g* below.
 % It is obvious that the approximation is not satisfactory. We compute the
 % error by comparing to the true minimum returned by the Mathematica
 % command, |N[Minimize[{Sin[10 Pi x^4] - x, 0 <= x <= 2}, {x}],15]|.  The
@@ -50,5 +50,5 @@ max_abs_error = max(abs(truefmin-fmin2))
 % [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 %     Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
 %     Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
-%     Integration Library (Version 2.3) [MATLAB Software], 2019. Available
+%     Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available
 %     from http://gailgithub.github.io/GAIL_Dev/

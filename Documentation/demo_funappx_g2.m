@@ -17,8 +17,8 @@ plot(x,f(x))
 axis tight
 
 %% Function Approximation
-% We use *funappx_g* to approximate \(f\) over the interval \([0,1]\) with
-% error tolerance \(10^{-2}\) and 15 initial subintervals:
+% We use *funappx_g* to approximate $f$ over the interval $[0,1]$ with
+% error tolerance $10^{-2}$ and 15 initial subintervals:
 [~,out_param] = funappx_g(@(x) exp(-1000*(x-0.2).^2),0,1,1e-2,15)
 
 % We find that to reach the error tolerance, we need 105 points to
@@ -26,7 +26,7 @@ axis tight
 
 %% Process to Generate Grid Points
 %
-% Step 1: start with \(16\) evenly spaced points:
+% Step 1: start with $16$ evenly spaced points:
 %
 % <<localgui1.png>>
 %
@@ -34,7 +34,7 @@ axis tight
 %
 % <<localgui2.png>>
 %
-% Step 6: after serveral iterations, the approximation error almost meets the given tolerance:
+% Step 6: after several iterations, the approximation error almost meets the given tolerance:
 %
 % <<localgui6.png>>
 %
@@ -55,5 +55,5 @@ axis tight
 % [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 %     Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
 %     Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
-%     Integration Library (Version 2.3) [MATLAB Software], 2019. Available
+%     Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available
 %     from http://gailgithub.github.io/GAIL_Dev/

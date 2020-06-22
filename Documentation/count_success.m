@@ -5,8 +5,8 @@
 %
 % $$I = \int_0^1 x^2 dx.$$
 % 
-% The analytical solution is \(\tfrac{1}{3}\). If we use *meanMC_g* to estimate the
-% integral with \(1000\) replications, we expect the success rate to be bigger
+% The analytical solution is $\frac{1}{3}$. If we use *meanMC_g* to estimate the
+% integral with $1000$ replications, we expect the success rate to be bigger
 % than or equal to |(1 - alpha)|.
 
 success = 0;

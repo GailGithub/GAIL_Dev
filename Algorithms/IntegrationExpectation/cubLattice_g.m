@@ -192,7 +192,7 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 % interval [-1,2]^2:
 %
 % >> f = @(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [-ones(1,2);2*ones(1,2)];
-% >> q = cubLattice_g(f,hyperbox,'uniform',1e-3,1e-2,'transform','C1'); exactsol = (sqrt(pi)/2*(erf(2)+erf(1)))^2;
+% >> q = cubLattice_g(f,hyperbox,'uniform',1e-3,1e-2,'transform','C1'); exactsol = 1/9*(sqrt(pi)/2*(erf(2)+erf(1)))^2;
 % >> check = double(abs(exactsol-q) < max(1e-3,1e-2*abs(exactsol)))
 % check = 1
 %
@@ -251,7 +251,7 @@ function [q,out_param,y,kappanumap] = cubLattice_g(varargin)
 %   [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 %   Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
 %   Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
-%   Integration Library (Version 2.3) [MATLAB Software], 2019. Available
+%   Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available
 %   from http://gailgithub.github.io/GAIL_Dev/
 %
 %   [3] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
@@ -335,8 +335,7 @@ omg_hat = @(m) out_param.fudge(m)/((1+out_param.fudge(r_lag))*omg_circ(r_lag));
 if strcmp(out_param.measure,'normal')
    f=@(x) f(gail.stdnorminv(x));
 elseif strcmp(out_param.measure,'uniform')
-   Cnorm = prod(hyperbox(2,:)-hyperbox(1,:));
-   f=@(x) Cnorm*f(bsxfun(@plus,hyperbox(1,:),bsxfun(@times,(hyperbox(2,:)-hyperbox(1,:)),x))); % a + (b-a)x = u
+   f=@(x) f(bsxfun(@plus,hyperbox(1,:),bsxfun(@times,(hyperbox(2,:)-hyperbox(1,:)),x))); % a + (b-a)x = u
 end
 
 if strcmp(out_param.transform,'Baker')

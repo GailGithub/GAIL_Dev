@@ -1,14 +1,13 @@
 %% Estimation of the Expected Value Using |meanMC_CLT|
-% For a random variable \(Y = f(\boldsymbol{X})\), we will estimate its expected value:
+% For a random variable $Y = f(\mathbf{X})$, we will estimate its expected value:
+% 
+% $$ \mu=\mathbf{E}(Y) = \mathbf{E}[f(\mathbf{X})]=\int_{\mathbf{R}^d}
+%  f(\mathbf{X}) \rho(\mathbf{X})\,\mathrm{d}\mathbf{X}
+%  \approx \frac{1}{n}\sum_{i=1}^{n}{f(x_i)}, \qquad {x_i} \, \mathrm{IID} \sim
+%  \, \rho $$
+% 
 %
-% \[
-%  \mu=\mathbb{E}(Y) = \mathbb{E}[f(\boldsymbol{X})]=\int_{\mathbb{R}^d}
-%  f(\boldsymbol{x}) \rho(\boldsymbol{x}) \, \mathrm{d}\boldsymbol{x}
-%  \approx \frac{1}{n}\sum_{i=1}^{n}{f(x_i)}, \qquad {x_i} \, \text{IID} \sim
-%  \, \rho
-% \]
-%
-% We will approximate \(\mu\) using the meanMC_CLT GAIL algorithm. It is an
+% We will approximate $\mu$ using the meanMC_CLT GAIL algorithm. It is an
 % IID Monte Carlo algorithm using the Central Limit Theorem to determine
 % the sample size required to meet the desired error tolerance. In order to
 % improve computation efficiency, we will also use control variates.
@@ -18,29 +17,33 @@ function demo_meanMC_CLT
 %% Initialize the workspace and set the display parameters
 % This script cleans up the workspace and makes the display beautiful.
 
-gail.InitializeWorkspaceDisplay %initialize the workspace and the display parameters
+gail.InitializeWorkspaceDisplay
+%initialize the workspace and the display parameters
 
-%% Example 1: Estimate \(\mathbb{E}[f(\boldsymbol{X})]\) where \(f(\boldsymbol{x})=\exp(-\boldsymbol{x}^2)\) and \(\boldsymbol{X} \sim \mathcal{U} (0,1)\) using \(x \mapsto x\) as a control variate
+%% Example 1: Estimate $\mathbf{E}[f(X)]$ where $f(X)=\exp(-X^2)$ and $X \sim \mathcal{U} (0,1)$ using $x \mapsto x$ as a control variate
 % In this example a function that cannot be integrated analytically is
 % integrated using our adaptive IID Monte Carlo method.  We also use the
-% function  \(x \mapsto x\) as a control variate.
+% function  $x \mapsto x$ as a control variate.
 %
 % First we plot our function
 
-f = @(x)[exp(-x.^2), x]; YXn = @(n)f(rand(n,1)); %set up the random variable 
+f = @(x)[exp(-x.^2), x]; YXn = @(n)f(rand(n,1)); 
+%set up the random variable 
 figure %plot f(x)
 x = (0:0.001:1)'; %x values for plot
 fx = f(x);
 plot(x,fx(:,1),'-'); 
-ylabel('\(\exp(-x^2)\)')
-xlabel('\(x\)')
+ylabel('$\exp(-x^2)$')
+xlabel('$x$')
 
 %%
 % Next we set up the parameters for Monte Carlo integration
 
 absTol = 1e-3; %absolute tolerance 
 relTol = 0; %relative tolerance
-s = struct('Y',YXn,'nY',1,'trueMuCV',1/2); % create a structure containing random variables, number of random variables and mean of the control variates 
+s = struct('Y',YXn,'nY',1,'trueMuCV',1/2); 
+% create a structure containing random variables, 
+% number of random variables and mean of the control variates 
 [hmu,out] = meanMC_CLT(s,absTol,relTol);  % calculate the mean
 exactsol = erf(1)*sqrt(pi)/2; %true mean
 disp('Example 1')
@@ -79,7 +82,7 @@ plot(sortedpay,((1:n)-1/2)/n,'-'); %plot the empirical distribution function sce
 xlabel('Payoff in dollars')
 ylabel('CDF')
 axis([0 50 0 1])
-print -depsc PayoffCDF.eps %print the plot to a .eps file
+
 %%
 % Note that the option has a positive payoff only about 60% of the time.
 
@@ -155,25 +158,28 @@ disp(['Real error was ' ...
 
 %% Example 3: Keister's multidimensional integration
 % We will evaluate the Keister's integral $I$ using meanMC_CLT.  Note
-% that the we do a change of variable \(\boldsymbol{t} = \boldsymbol{x}/a\)
+% that the we do a change of variable $\mathbf{t} = \mathbf{X}/a$
 % and transform the integral:
 %
-% \begin{align*} I &= \int_{\mathbb{R}^d} \cos(\lVert \boldsymbol{x}
-% \rVert) \exp(-\lVert \boldsymbol{x} \rVert^2) \, \mathrm{d}
-% \boldsymbol{x} \\
-% &= \int_{\mathbb{R}^d} a^d \cos(a \lVert \boldsymbol{t}
-% \rVert) \exp(-a^2 \lVert \boldsymbol{t} \rVert^2) \, \mathrm{d}
-% \boldsymbol{t}, \qquad a > 0, \\ & = \int_{\mathbb{R}^d}
-% \underbrace{(2\pi a^2)^{d/2} \cos(a \lVert \boldsymbol{t} \rVert)
-% \exp((1/2-a^2) \lVert \boldsymbol{t} \rVert^2)}_{f(\boldsymbol{t})}
-% \times \underbrace{\frac{\exp(-\lVert \boldsymbol{t} \rVert^2/2)}
-% {(2\pi)^{d/2}}}_{\varrho(\boldsymbol{t})} \, \mathrm{d} \boldsymbol{t} \\
-% & = \mathbb{E}[f(\boldsymbol{T})], \qquad \text{where } \boldsymbol{T} \sim \mathcal{N}(\boldsymbol{0},
-% \mathsf{I}). \end{align*}
-
-
+% $$
+% \begin{array}{cl}
+% I &= \int_{\mathbf{R}^d} \cos(\| \mathbf{X} \|) 
+% \exp(-\| \mathbf{X} \|^2) \, \mathrm{d} \mathbf{X} \\
+% &= \int_{\mathbf{R}^d} a^d \cos(a \|  \mathbf{t}
+% \| ) \exp(-a^2 \|  \mathbf{t} \| ^2) \, \mathrm{d}
+% \mathbf{t}, \qquad a > 0, \\
+% & = \int_{\mathbf{R}^d} \underbrace{(2\pi a^2)^{d/2} 
+% \cos(a \| \mathbf{t} \|) \exp((1/2-a^2) \| \mathbf{t} \|^2)}_{f(\mathbf{t})}
+% \times \underbrace{\frac{\exp(-\| \mathbf{t} \|^2/2)}
+% {(2\pi)^{d/2}}}_{\varrho(\mathbf{t})} \, \mathrm{d} \mathbf{t} \\
+% & = \mathbf{E}[f(\mathbf{T})], \qquad \mathrm{where} \quad \mathbf{T} 
+% \sim \mathcal{N}(\mathbf{0},\mathbf{I}). 
+% \end{array}
+% $$
+% 
+% 
 %%
-% define an anonymous function \(f\) as follows:
+% define an anonymous function $f$ as follows:
 
 normsqd = @(t) sum(t.*t,2); %squared l_2 norm of t
 f1 = @(normt,a,d) ((2*pi*a^2).^(d/2)) * cos(a*sqrt(normt)) ...

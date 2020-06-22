@@ -33,7 +33,7 @@ classdef ut_brownianMotion < matlab.unittest.TestCase
    end
     
    function bmDim(testCase)
-      param.timeDim.dim=2;
+      param.bmParam.whBM = [1 2];
       bm = brownianMotion(param);
       testCase.verifyClass(bm,'brownianMotion');
       testCase.verifyEqual(bm.timeDim.dim,2);

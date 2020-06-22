@@ -31,7 +31,7 @@ for varTx=varTxVec
     zlabel('\(f_{\textrm{GenzP}}(x_1,x_2)\)')
   end
   view(-20,20)
-  saveas(figH4, sprintf('GenzFunc_varTx_%s.png',varTx{1}))
+  gail.save_image(figH4, 'Paper_cubBayesLattice_g', sprintf('GenzFunc_varTx_%s',varTx{1}))
 end
 
 %% Plot the Keister function
@@ -51,7 +51,7 @@ if dim==2
   ylabel('\(x_2\)')
   zlabel('\({f}_{\textrm{Keister}}(x_1,x_2)\)')
   view(-20,20)
-  saveas(figH1, sprintf('Keister_cube_a%d.png',ceil(a*1000)))
+  gail.save_image(figH1, 'Paper_cubBayesLattice_g', sprintf('Keister_cube_a%d',ceil(a*1000)))
 else
   lineShapes = {'-','--',':','-.'};
 
@@ -66,7 +66,7 @@ else
   legend(temp,'location','south'); axis tight
   xlabel('\(x\)')
   ylabel('\({f}_{\textrm{Keister}}(x)\)')
-  saveas(figH1, sprintf('Keister_cube_1D.png'))
+  gail.save_image(figH1, 'Paper_cubBayesLattice_g', 'Keister_cube_1D')
 end
 
 % whole R domain
@@ -84,14 +84,14 @@ if dim==2
   ylabel('\(x_2\)')
   zlabel('\(f_{\textrm{Keister}}(x_1,x_2)\)')
   view(-20,20)
-  saveas(figH2, sprintf('Keister_wholeR.png'))
+  gail.save_image(figH2, 'Paper_cubBayesLattice_g', 'Keister_wholeR')
 else
   xplot = -5:0.001:5;
   figH2 = figure();
   plot(xplot',fKeister(xplot'))
   xlabel('$x \in \bf{R}$', 'Interpreter','latex')
   ylabel('$g_{\textrm{Keister}}(x)$', 'Interpreter','latex')
-  saveas(figH2, sprintf('Keister_wholeR_1D.png'))
+  gail.save_image(figH2, 'Paper_cubBayesLattice_g', 'Keister_wholeR_1D')
 end
 
 
@@ -111,7 +111,7 @@ xlabel('\(x_1\)')
 ylabel('\(x_2\)')
 zlabel('\( e^{\cos(2\pi x_1) + \cos(2\pi x_2)}\)')
 view(-20,20)
-saveas(figH3, sprintf('ExpCos.png'))
+gail.save_image(figH3, 'Paper_cubBayesLattice_g', 'ExpCos')
 
 
 %% Produce plots for MVNExample
@@ -130,6 +130,6 @@ xlabel('\(x_1\)')
 ylabel('\(x_2\)')
 zlabel('\(f_{\textrm{Genz}}(x_1,x_2)\)')
 view(-20,20)
-saveas(figH4, sprintf('GenzFun.png'))
+gail.save_image(figH4, 'Paper_cubBayesLattice_g', 'GenzFun')
 
 end

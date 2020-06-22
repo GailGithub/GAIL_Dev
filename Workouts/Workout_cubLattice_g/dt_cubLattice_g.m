@@ -68,7 +68,7 @@
 % >> hyperbox = [-ones(1,in_param.dim);ones(1,in_param.dim)];index = 1;
 % >> f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
 % >> f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)
-% f_true = 4.76***
+% f_true = 0.59***
 % >> Q = cubLattice_g(f,hyperbox,'uniform',1e-2,1e-13);
 % >> check = double(abs(f_true-Q) < gail.tolfun(1e-2,1e-13,1,f_true,'max'))
 % check = 1
@@ -80,7 +80,7 @@
 % >> index = 2;hyperbox = [-ones(1,in_param.dim);ones(1,in_param.dim)];
 % >> f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
 % >> f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)
-% f_true = 2.4***
+% f_true = 0.30***
 % >> Q = cubLattice_g(f,hyperbox,'uniform',1e-2,1e-13);
 % >> check = double(abs(f_true-Q) < gail.tolfun(1e-2,1e-13,1,f_true,'max'))
 % check = 1
@@ -104,7 +104,7 @@
 % >> index = 4;hyperbox = [-ones(1,in_param.dim)/2;ones(1,in_param.dim)];
 % >> f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
 % >> f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)
-% f_true = 1.29***
+% f_true = 0.38***
 % >> Q = cubLattice_g(f,hyperbox,'uniform',1e-2,1e-3);
 % >> check = double(abs(f_true-Q) < gail.tolfun(1e-2,1e-3,1,f_true,'max'))
 % check = 1
@@ -116,7 +116,7 @@
 % >> index = 5;hyperbox = [-ones(1,in_param.dim)/2;ones(1,in_param.dim)];
 % >> f = @(x)genz_test_fun(x,index,in_param.dim,alpha,beta,r);
 % >> f_true = genz_test_fun_true(hyperbox,index,in_param.dim,alpha,beta,r)
-% f_true = 0.83***
+% f_true = 0.24***
 % >> Q = cubLattice_g(f,hyperbox,'uniform',1e-2,1e-2);
 % >> check = double(abs(f_true-Q) < gail.tolfun(1e-2,1e-2,1,f_true,'max'))
 % check = 1

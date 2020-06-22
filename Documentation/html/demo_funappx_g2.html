@@ -6,7 +6,7 @@
    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>A GUI (graphical user interface) for funappx_g</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2019-04-17"><meta name="DC.source" content="demo_funappx_g2.m"><style type="text/css">
+      --><title>A GUI (graphical user interface) for funappx_g</title><meta name="generator" content="MATLAB 9.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-06-20"><meta name="DC.source" content="demo_funappx_g2.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -72,7 +72,7 @@ x = 0:0.0001:1;
 figure;
 plot(x,f(x))
 axis <span class="string">tight</span>
-</pre><img vspace="5" hspace="5" src="demo_funappx_g2_01.png" alt=""> <h2>Function Approximation<a name="2"></a></h2><p>We use <b>funappx_g</b> to approximate \(f\) over the interval \([0,1]\) with error tolerance \(10^{-2}\) and 15 initial subintervals:</p><pre class="codeinput">[~,out_param] = funappx_g(@(x) exp(-1000*(x-0.2).^2),0,1,1e-2,15)
+</pre><img vspace="5" hspace="5" src="demo_funappx_g2_01.png" alt=""> <h2>Function Approximation<a name="2"></a></h2><p>We use <b>funappx_g</b> to approximate <span class="MathJax_Preview"><img src="demo_funappx_g2_eq18096895394918367257.png" alt="$f$"></span><script type="math/tex">f</script> over the interval <span class="MathJax_Preview"><img src="demo_funappx_g2_eq05816708510759450028.png" alt="$[0,1]$"></span><script type="math/tex">[0,1]</script> with error tolerance <span class="MathJax_Preview"><img src="demo_funappx_g2_eq04824699449894430030.png" alt="$10^{-2}$"></span><script type="math/tex">10^{-2}</script> and 15 initial subintervals:</p><pre class="codeinput">[~,out_param] = funappx_g(@(x) exp(-1000*(x-0.2).^2),0,1,1e-2,15)
 
 <span class="comment">% We find that to reach the error tolerance, we need 105 points to</span>
 <span class="comment">% approximate the function.</span>
@@ -90,7 +90,7 @@ axis <span class="string">tight</span>
         iter: 7
      npoints: 105
       errest: 0.0028
-</pre><h2>Process to Generate Grid Points<a name="3"></a></h2><p>Step 1: start with \(16\) evenly spaced points:</p><p><img vspace="5" hspace="5" src="localgui1.png" alt=""> </p><p>Step 2: add points to the peaky part:</p><p><img vspace="5" hspace="5" src="localgui2.png" alt=""> </p><p>Step 6: after serveral iterations, the approximation error almost meets the given tolerance:</p><p><img vspace="5" hspace="5" src="localgui6.png" alt=""> </p><p>Step 7: the error tolerance is reached:</p><p><img vspace="5" hspace="5" src="localgui7.png" alt=""> </p><p>This process can also be reproduced by the following command: funappx_g_gui(@(x) exp(-1000*(x-0.2).^2),0,1,1e-2,15,15);</p><h2>References<a name="4"></a></h2><p>[1] Sou-Cheng T. Choi, Yuhan Ding, Fred J.Hickernell, Xin Tong, "Local     Adaption for Approximation and Minimization of Univariate Functions,"     <i>Journal of Complexity</i> 40, pp. 17-33, 2017.</p><p>[2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis     Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan     Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic     Integration Library (Version 2.3) [MATLAB Software], 2019. Available     from <a href="http://gailgithub.github.io/GAIL_Dev/">http://gailgithub.github.io/GAIL_Dev/</a></p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018a</a><br></p></div><!--
+</pre><h2>Process to Generate Grid Points<a name="3"></a></h2><p>Step 1: start with <span class="MathJax_Preview"><img src="demo_funappx_g2_eq17607112233168654994.png" alt="$16$"></span><script type="math/tex">16</script> evenly spaced points:</p><p><img vspace="5" hspace="5" src="localgui1.png" alt=""> </p><p>Step 2: add points to the peaky part:</p><p><img vspace="5" hspace="5" src="localgui2.png" alt=""> </p><p>Step 6: after several iterations, the approximation error almost meets the given tolerance:</p><p><img vspace="5" hspace="5" src="localgui6.png" alt=""> </p><p>Step 7: the error tolerance is reached:</p><p><img vspace="5" hspace="5" src="localgui7.png" alt=""> </p><p>This process can also be reproduced by the following command: funappx_g_gui(@(x) exp(-1000*(x-0.2).^2),0,1,1e-2,15,15);</p><h2>References<a name="4"></a></h2><p>[1] Sou-Cheng T. Choi, Yuhan Ding, Fred J.Hickernell, Xin Tong, "Local     Adaption for Approximation and Minimization of Univariate Functions,"     <i>Journal of Complexity</i> 40, pp. 17-33, 2017.</p><p>[2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis     Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan     Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic     Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available     from <a href="http://gailgithub.github.io/GAIL_Dev/">http://gailgithub.github.io/GAIL_Dev/</a></p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 %% A GUI (graphical user interface) for *funappx_g*
 % Author: Yuhan Ding, July 2017
@@ -111,8 +111,8 @@ plot(x,f(x))
 axis tight
 
 %% Function Approximation
-% We use *funappx_g* to approximate \(f\) over the interval \([0,1]\) with
-% error tolerance \(10^{-2}\) and 15 initial subintervals:
+% We use *funappx_g* to approximate $f$ over the interval $[0,1]$ with
+% error tolerance $10^{-2}$ and 15 initial subintervals:
 [~,out_param] = funappx_g(@(x) exp(-1000*(x-0.2).^2),0,1,1e-2,15)
 
 % We find that to reach the error tolerance, we need 105 points to
@@ -120,7 +120,7 @@ axis tight
 
 %% Process to Generate Grid Points
 %
-% Step 1: start with \(16\) evenly spaced points:
+% Step 1: start with $16$ evenly spaced points:
 %
 % <<localgui1.png>>
 %
@@ -128,7 +128,7 @@ axis tight
 %
 % <<localgui2.png>>
 %
-% Step 6: after serveral iterations, the approximation error almost meets the given tolerance:
+% Step 6: after several iterations, the approximation error almost meets the given tolerance:
 %
 % <<localgui6.png>>
 %
@@ -149,7 +149,7 @@ axis tight
 % [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 %     Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
 %     Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
-%     Integration Library (Version 2.3) [MATLAB Software], 2019. Available
+%     Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available
 %     from http://gailgithub.github.io/GAIL_Dev/
 
 ##### SOURCE END #####

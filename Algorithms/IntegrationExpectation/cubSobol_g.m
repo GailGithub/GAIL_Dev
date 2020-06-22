@@ -200,7 +200,7 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 %
 % >> f = @(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [-ones(1,2);2*ones(1,2)];
 % >> q = cubSobol_g(f,hyperbox,'uniform',1e-3,1e-2); 
-% >> exactsol = (sqrt(pi)/2*(erf(2)+erf(1)))^2;
+% >> exactsol = 1/9*(sqrt(pi)/2*(erf(2)+erf(1)))^2;
 % >> check = double(abs(exactsol-q) < max(1e-3,1e-2*abs(exactsol)))
 % check = 1
 %
@@ -242,8 +242,8 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 % with pure absolute error 1e-6 using two control variates h1(x) = x1 and h2(x) = x2^2.
 %
 % >> g.func = @(x) [10*x(:,1)-5*x(:,2).^2+1*x(:,3).^3, x(:,1), x(:,2).^2];
-% >> g.cv = [8,32/3]; hyperbox= [zeros(1,3);2*ones(1,3)];
-% >> q = cubSobol_g(g,hyperbox,'uniform',1e-6,0); exactsol = 128/3;
+% >> g.cv = [1,4/3]; hyperbox= [zeros(1,3);2*ones(1,3)];
+% >> q = cubSobol_g(g,hyperbox,'uniform',1e-6,0); exactsol = 16/3;
 % >> check = double(abs(exactsol-q) < 1e-6)
 % check = 1
 %
@@ -262,7 +262,7 @@ function [q,out_param,y,kappanumap] = cubSobol_g(varargin)
 %   [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 %   Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
 %   Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
-%   Integration Library (Version 2.3) [MATLAB Software], 2019. Available
+%   Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available
 %   from http://gailgithub.github.io/GAIL_Dev/
 %
 %   [3] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
@@ -349,9 +349,8 @@ end
 
 % hyperbox transform
 if strcmp(out_param.measure,'uniform')
-   Cnorm = prod(hyperbox(2,:)-hyperbox(1,:));
    tran = @(x) bsxfun(@plus,hyperbox(1,:),bsxfun(@times,(hyperbox(2,:)-hyperbox(1,:)),x));% a + (b-a)x = u
-   f = @(x) Cnorm*f(tran(x)); % a + (b-a)x = u
+   f = @(x) f(tran(x)); % a + (b-a)x = u
 elseif strcmp(out_param.measure,'normal')
    f = @(x) f(gail.stdnorminv(x));
 end
@@ -529,11 +528,11 @@ for m=out_param.mmin+1:out_param.mmax
        	    newone=abs(y(kappanumap(nl+2:2*nl))); %later values of kappa,
        	    flip=find(newone>oldone);
        	    if ~isempty(flip)
-           	flipall=bsxfun(@plus,flip,0:2^(l+1):2^m-1);
-           	flipall=flipall(:);
-           	temp=kappanumap(nl+1+flipall);
-           	kappanumap(nl+1+flipall)=kappanumap(1+flipall);
-           	kappanumap(1+flipall)=temp;
+                flipall=bsxfun(@plus,flip,0:2^(l+1):2^m-1);
+                flipall=flipall(:);
+                temp=kappanumap(nl+1+flipall);
+                kappanumap(nl+1+flipall)=kappanumap(1+flipall);
+                kappanumap(1+flipall)=temp;
        	    end
 	end
    %% updating beta

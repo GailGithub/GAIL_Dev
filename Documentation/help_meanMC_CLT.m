@@ -65,8 +65,8 @@
 %%
 % *Example 1*
 %
-% Estimate the integral with integrand \(f(x) = x_1 x_2\) in the interval
-% \([0,1]^2\) with absolute tolerance \(10^{-3}\) and relative tolerance \(0\):
+% Estimate the integral with integrand $f(x) = x_1 x_2$ in the interval
+% $[0,1]^2$ with absolute tolerance $10^{-3}$ and relative tolerance $0$:
 
   [mu,out] = meanMC_CLT(@(n) prod(rand(n,2),2), 0.001);
   exact = 1/4;
@@ -75,8 +75,8 @@
 %%
 % *Example 2*
 %
-% Estimate the integral \(f(x)=\exp(-x^2)\) in the interval \([0,1]\)
-% using \(x\) as a control variate and relative error \(10^{-3}\):
+% Estimate the integral $f(x)=\exp(-x^2)$ in the interval $[0,1]$
+% using $x$ as a control variate and relative error $10^{-3}$:
 
   f = @(x)[exp(-x.^2), x];
   YXn = @(n)f(rand(n,1));
@@ -89,8 +89,8 @@
 %%
 % *Example 3*
 %
-% Estimate the Keister's integration in dimension 1 with \(a=1\), \(\tfrac{1}{\sqrt 2}\) and
-% using \(\cos(x)\) as a control variate:
+% Estimate the Keister's integration in dimension 1 with $a=1$, $\frac{1}{\sqrt 2}$ and
+% using $\cos(x)$ as a control variate:
 
   normsqd = @(x) sum(x.*x,2);
   f = @(normt,a,d) ((2*pi*a^2).^(d/2)) * cos(a*sqrt(normt)).* exp((1/2-a^2)*normt);
@@ -105,8 +105,8 @@
 %%
 % *Example 4*
 %
-% Estimate the integral with integrand \(f(x) = x_1^3 x_2^3 x_3^3\) in the
-% interval \([0,1]^3\) with pure absolute error \(10^{-3}\) using \(x_1 x_2 x_3\) as
+% Estimate the integral with integrand $f(x) = x_1^3 x_2^3 x_3^3$ in the
+% interval $[0,1]^3$ with pure absolute error $10^{-3}$ using $x_1 x_2 x_3$ as
 % a control variate:
 
   f = @(x) [x(:,1).^3.*x(:,2).^3.*x(:,3).^3, x(:,1).*x(:,2).*x(:,3)];
@@ -118,9 +118,9 @@
 %%
 % *Example 5*
 %
-% Estimate the integrals with integrands \(f_1(x) = x_1^3 x_2^3 x_3^3\) and 
-% \(f_2(x)= x_1^2 x_2^2 x_3^2- \tfrac{1}{27}+\tfrac{1}{64}\) in the interval \([0,1]^3\)
-% using \(x_1 x_2 x_3\) and \(x_1+x_2+x_3\) as control variates:
+% Estimate the integrals with integrands $f_1(x) = x_1^3 x_2^3 x_3^3$ and 
+% $f_2(x)= x_1^2 x_2^2 x_3^2- \frac{1}{27}+\frac{1}{64}$ in the interval $[0,1]^3$
+% using $x_1 x_2 x_3$ and $x_1+x_2+x_3$ as control variates:
 
   f = @(x) [x(:,1).^3.*x(:,2).^3.*x(:,3).^3, ...
             x(:,1).^2.*x(:,2).^2.*x(:,3).^2-1/27+1/64, ...
@@ -136,7 +136,7 @@
 % [1] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 %     Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
 %     Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
-%     Integration Library (Version 2.3) [MATLAB Software], 2019. Available
+%     Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available
 %     from http://gailgithub.github.io/GAIL_Dev/
 %
 % If you find GAIL helpful in your work, please support us by citing the

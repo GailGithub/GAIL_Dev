@@ -6,7 +6,7 @@
    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>Release Notes</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2019-04-17"><meta name="DC.source" content="help_ReleaseNotes.m"><style type="text/css">
+      --><title>Release Notes</title><meta name="generator" content="MATLAB 9.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-06-20"><meta name="DC.source" content="help_ReleaseNotes.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -66,51 +66,47 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1>Release Notes</h1><!--introduction--><p>GAIL Version 2.3, 2019.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Major changes in algorithms</a></li><li><a href="#2">Major changes in publications</a></li><li><a href="#3">Major changes in tests</a></li></ul></div><h2>Major changes in algorithms<a name="1"></a></h2><p>First, we have a new algorithm called <b>cubBayesLattice_g</b>, an efficient automatic Bayesian cubature that considers the integrand a realization of a Gaussian process.</p><p>In addition, integral_g for univariate integration is enhanced by adopting the more efficient Simpson's rule in place of the trapezoidal rule. We deprecated <b>integral_g</b> in version 2.2 and renamed it in this version as <b>integralTrap_g</b>.</p><h2>Major changes in publications<a name="2"></a></h2><p>In the folder "Papers", we have added a few recently published research articles and theses related to our core algorithms.</p><p>First of all, it is the doctoral thesis by Yizhi Zhang that develops the theory behind <b>integral_g</b>.</p><p>Next, we have Jagadeeswaran and Hickernell (2018+), which elaborates on the theory behind the development of <b>cubBayesLattice_g</b>.</p><p>Lastly, a short paper by Hickernell et al. (2018) reviews and compares the three GAIL algorithms for high-dimensional integration based on (quasi-)Monte Carlo methods, namely <b>cubMC_g</b>, <b>cubLattice_g</b>, and <b>cubSobol_g</b>.</p><h2>Major changes in tests<a name="3"></a></h2><p>We continue to execute automated nightly fast tests and weekly long tests on our server. Moreover, fast tests are now conducted for all MATLAB versions from R2016a to R2019a. The test reports are available on Mega cloud storage at <a href="https://mega.nz/">https://mega.nz/</a>. More specifically, fast and long test reports are archived at     <a href="https://mega.nz/#F!4olmWa6L!vYuscSnGqkvkZrGJXW5Umw">https://mega.nz/#F!4olmWa6L!vYuscSnGqkvkZrGJXW5Umw</a> and     <a href="https://mega.nz/#F!I0cAEKJD!AyQ_8tmxkknfIsuEW0_jnA">https://mega.nz/#F!I0cAEKJD!AyQ_8tmxkknfIsuEW0_jnA</a> respectively.</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018a</a><br></p></div><!--
+  </style></head><body><div class="content"><h1>Release Notes</h1><!--introduction--><p>GAIL Version 2.3.1, 2020.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Major changes in algorithms</a></li><li><a href="#2">Major changes in publications</a></li><li><a href="#3">Bug Fixes</a></li></ul></div><h2>Major changes in algorithms<a name="1"></a></h2><p>In this release, we have a new algorithm called CubBayesNet_g. Similar to cubBayesLattice_g, it is an automatic Bayesian cubature that considers the integrand a realization of a Gaussian process. CubBayesNet_g uses Sobol points whereas cubBayesLattice_g uses lattice points.</p><h2>Major changes in publications<a name="2"></a></h2><p>In the folder "Papers", we have added a few recently published research articles and a thesis related to our core algorithms.</p><p>First, we have Rathinavel's 2019 PhD thesis and his joint publication with Hickernell that develop the theory behind cubBayesLattice_g and CubBayesNet_g.</p><p>In addition, we have included Ding, Hickernell, and Jimenez Rugama's recent paper, An Adaptive Algorithm Employing Continuous Linear Functionals.</p><h2>Bug Fixes<a name="3"></a></h2><p>In the previous versions of GAIL, three of our multiple integration algorithms, cubMC_g, cubLattice_g, and cubSobol_g, when applied to an integral on a non-unit hypercube with respect to uniform measure, the numerical approximations omitted the proper normalization constant, i.e., dividing by the volume of the hypercube. This problem has been resolved in this release. We illustrate the bug fix with a simple example. Consider f(x,y) = exp(-x^2-y^2) with (x,y) in D:=[-1,2]^2. Integrating f with respect to the Lebesgue measure, we obtain I ~= 2.65333. Integrating f with respect to the uniform measure, we have instead I / 9, since the integration domain has volume 9. Our GAIL functions by default integrate with respect to the uniform measure, but previous versions returned answers with respect to the Lebesgue measure.</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Release Notes 
 %
-% GAIL Version 2.3, 2019.
+% GAIL Version 2.3.1, 2020.
 % 
 %% Major changes in algorithms
-% 
-% First, we have a new algorithm called *cubBayesLattice_g*, an efficient
-% automatic Bayesian cubature that considers the integrand a realization of
-% a Gaussian process.
-% 
-% In addition, integral_g for univariate integration is enhanced by
-% adopting the more efficient Simpson's rule in place of the trapezoidal
-% rule. We deprecated *integral_g* in version 2.2 and renamed it in this
-% version as *integralTrap_g*.
+%
+% In this release, we have a new algorithm called CubBayesNet_g. Similar to
+% cubBayesLattice_g, it is an automatic Bayesian cubature that considers
+% the integrand a realization of a Gaussian process. CubBayesNet_g uses
+% Sobol points whereas cubBayesLattice_g uses lattice points.
 % 
 % 
 %% Major changes in publications
 % 
 % In the folder "Papers", we have added a few recently published research
-% articles and theses related to our core algorithms.
-% 
-% First of all, it is the doctoral thesis by Yizhi Zhang that develops the
-% theory behind *integral_g*.
-% 
-% Next, we have Jagadeeswaran and Hickernell (2018+), which elaborates on
-% the theory behind the development of *cubBayesLattice_g*.
-% 
-% Lastly, a short paper by Hickernell et al. (2018) reviews and compares
-% the three GAIL algorithms for high-dimensional integration based on
-% (quasi-)Monte Carlo methods, namely *cubMC_g*, *cubLattice_g*, and
-% *cubSobol_g*.
+% articles and a thesis related to our core algorithms.
+%
+% First, we have Rathinavel's 2019 PhD thesis and his joint publication
+% with Hickernell that develop the theory behind cubBayesLattice_g and
+% CubBayesNet_g.
+%
+% In addition, we have included Ding, Hickernell, and Jimenez Rugama's
+% recent paper, An Adaptive Algorithm Employing Continuous Linear
+% Functionals.
 % 
 % 
-%% Major changes in tests
+%% Bug Fixes
 % 
-% We continue to execute automated nightly fast tests and weekly long tests
-% on our server. Moreover, fast tests are now conducted for all MATLAB
-% versions from R2016a to R2019a. The test reports are available on Mega
-% cloud storage at <https://mega.nz/>. More specifically, fast and long test
-% reports are archived at
-%     <https://mega.nz/#F!4olmWa6L!vYuscSnGqkvkZrGJXW5Umw>
-% and
-%     <https://mega.nz/#F!I0cAEKJD!AyQ_8tmxkknfIsuEW0_jnA>
-% respectively.
+% In the previous versions of GAIL, three of our multiple integration
+% algorithms, cubMC_g, cubLattice_g, and cubSobol_g, when applied to an
+% integral on a non-unit hypercube with respect to uniform measure, the
+% numerical approximations omitted the proper normalization constant, i.e.,
+% dividing by the volume of the hypercube. This problem has been resolved
+% in this release. We illustrate the bug fix with a simple example.
+% Consider f(x,y) = exp(-x^2-y^2) with (x,y) in D:=[-1,2]^2. Integrating
+% f with respect to the Lebesgue measure, we obtain I ~= 2.65333.
+% Integrating f with respect to the uniform measure, we have instead I / 9,
+% since the integration domain has volume 9. Our GAIL functions by default
+% integrate with respect to the uniform measure, but previous versions
+% returned answers with respect to the Lebesgue measure.
 ##### SOURCE END #####
 --></body></html>

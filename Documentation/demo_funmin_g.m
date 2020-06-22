@@ -1,7 +1,7 @@
 %% Demos for funmin_g
 %
 % <html>
-% <a href="demo_funmin_g2.html">Comparing funmin_g with fminbnd</a>
+% <a href="demo_funmin_g2.html">Comparing funmin_g with fminbnd and chebfun</a>
 % </html>
 %
 % <html>

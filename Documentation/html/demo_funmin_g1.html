@@ -6,7 +6,7 @@
    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>Find the minimum of a highly oscillating curve using funmin_g</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2019-04-17"><meta name="DC.source" content="demo_funmin_g1.m"><style type="text/css">
+      --><title>Find the minimum of a highly oscillating curve using funmin_g</title><meta name="generator" content="MATLAB 9.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-06-20"><meta name="DC.source" content="demo_funmin_g1.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -66,11 +66,11 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1>Find the minimum of a highly oscillating curve using <b>funmin_g</b></h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Function definition</a></li><li><a href="#2">Function minimization</a></li><li><a href="#3">Plots of the function and its minimum</a></li><li><a href="#4">A fix</a></li><li><a href="#5">References</a></li></ul></div><h2>Function definition<a name="1"></a></h2><p>Define a highly oscillating function as follows:</p><p>\[ f(x) = \sin (10 \pi x^4 ) - x \]</p><pre class="codeinput">close <span class="string">all</span>; clearvars; format <span class="string">compact</span>; format <span class="string">short</span>;
+  </style></head><body><div class="content"><h1>Find the minimum of a highly oscillating curve using <b>funmin_g</b></h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Function definition</a></li><li><a href="#2">Function minimization</a></li><li><a href="#3">Plots of the function and its minimum</a></li><li><a href="#4">A fix</a></li><li><a href="#5">References</a></li></ul></div><h2>Function definition<a name="1"></a></h2><p>Define a highly oscillating function as follows:</p><p><span class="MathJax_Preview"><img src="demo_funmin_g1_eq10781270982583746243.png" alt="$$ f(x) = \sin (10 \pi x^4 ) - x. $$"></span><script type="math/tex"> f(x) = \sin (10 \pi x^4 ) - x. </script></p><pre class="codeinput">close <span class="string">all</span>; clearvars; format <span class="string">compact</span>; format <span class="string">short</span>;
 f = @(x) sin(10*pi*x.^4)-x;
-</pre><h2>Function minimization<a name="2"></a></h2><p>We use <b>funmin_g</b> to approximate \(f\) over the interval \([a,b]\), where \(a = 0\) and \(b = 2\) with default parameter values:</p><pre class="codeinput">a = 0; b = 2;
+</pre><h2>Function minimization<a name="2"></a></h2><p>We use <b>funmin_g</b> to approximate <span class="MathJax_Preview"><img src="demo_funmin_g1_eq18096895394918367257.png" alt="$f$"></span><script type="math/tex">f</script> over the interval <span class="MathJax_Preview"><img src="demo_funmin_g1_eq13003530951257114622.png" alt="$[a,b]$"></span><script type="math/tex">[a,b]</script>, where <span class="MathJax_Preview"><img src="demo_funmin_g1_eq09085368071032183443.png" alt="$a = 0$"></span><script type="math/tex">a = 0</script> and <span class="MathJax_Preview"><img src="demo_funmin_g1_eq17946099845445600217.png" alt="$b = 2$"></span><script type="math/tex">b = 2</script> with default parameter values:</p><pre class="codeinput">a = 0; b = 2;
 [fmin,outmin] = funmin_g(f, a, b);
-</pre><h2>Plots of the function and its minimum<a name="3"></a></h2><p>We plot \(f(x)\) and the approximate minimum returned by <b>funmin_g</b> below. It is obvious that the approximation is not satisfactory. We compute the error by comparing to the true minimum returned by the Mathematica command, <tt>N[Minimize[{Sin[10 Pi x^4] - x, 0 &lt;= x &lt;= 2}, {x}],15]</tt>.  The reason is probably that this function is not contained in the cone of functions sufficient for successful function minimization.</p><pre class="codeinput">funmin_g_demo(fmin,outmin)
+</pre><h2>Plots of the function and its minimum<a name="3"></a></h2><p>We plot <span class="MathJax_Preview"><img src="demo_funmin_g1_eq17663307419741296505.png" alt="$f(x)$"></span><script type="math/tex">f(x)</script> and the approximate minimum returned by <b>funmin_g</b> below. It is obvious that the approximation is not satisfactory. We compute the error by comparing to the true minimum returned by the Mathematica command, <tt>N[Minimize[{Sin[10 Pi x^4] - x, 0 &lt;= x &lt;= 2}, {x}],15]</tt>.  The reason is probably that this function is not contained in the cone of functions sufficient for successful function minimization.</p><pre class="codeinput">funmin_g_demo(fmin,outmin)
 truefmin=-2.99843616266006;
 truexmin=1.99843665971919;
 max_abs_error = max(abs(truefmin-fmin))
@@ -87,7 +87,7 @@ funmin_g_demo(fmin2,outmin2)
 max_abs_error = max(abs(truefmin-fmin2))
 </pre><pre class="codeoutput">max_abs_error =
    9.3413e-09
-</pre><img vspace="5" hspace="5" src="demo_funmin_g1_02.png" alt=""> <h2>References<a name="5"></a></h2><p>[1] Sou-Cheng T. Choi, Yuhan Ding, Fred J.Hickernell, Xin Tong, "Local     Adaption for Approximation and Minimization of Univariate Functions,"   <i>Journal of Complexity</i> 40, pp. 17-33, 2017.</p><p>[2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis     Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan     Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic     Integration Library (Version 2.3) [MATLAB Software], 2019. Available     from <a href="http://gailgithub.github.io/GAIL_Dev/">http://gailgithub.github.io/GAIL_Dev/</a></p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018a</a><br></p></div><!--
+</pre><img vspace="5" hspace="5" src="demo_funmin_g1_02.png" alt=""> <h2>References<a name="5"></a></h2><p>[1] Sou-Cheng T. Choi, Yuhan Ding, Fred J.Hickernell, Xin Tong, "Local     Adaption for Approximation and Minimization of Univariate Functions,"   <i>Journal of Complexity</i> 40, pp. 17-33, 2017.</p><p>[2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis     Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan     Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic     Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available     from <a href="http://gailgithub.github.io/GAIL_Dev/">http://gailgithub.github.io/GAIL_Dev/</a></p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Find the minimum of a highly oscillating curve using *funmin_g*
 
@@ -95,19 +95,19 @@ max_abs_error = max(abs(truefmin-fmin2))
 %
 % Define a highly oscillating function as follows:
 %
-% \[ f(x) = \sin (10 \pi x^4 ) - x \]
+% $$ f(x) = \sin (10 \pi x^4 ) - x. $$
 %
 close all; clearvars; format compact; format short;
 f = @(x) sin(10*pi*x.^4)-x;
 
 %% Function minimization
-% We use *funmin_g* to approximate \(f\) over the interval \([a,b]\), where
-% \(a = 0\) and \(b = 2\) with default parameter values:
+% We use *funmin_g* to approximate $f$ over the interval $[a,b]$, where
+% $a = 0$ and $b = 2$ with default parameter values:
 a = 0; b = 2;
 [fmin,outmin] = funmin_g(f, a, b);
 
 %% Plots of the function and its minimum
-% We plot \(f(x)\) and the approximate minimum returned by *funmin_g* below.
+% We plot $f(x)$ and the approximate minimum returned by *funmin_g* below.
 % It is obvious that the approximation is not satisfactory. We compute the
 % error by comparing to the true minimum returned by the Mathematica
 % command, |N[Minimize[{Sin[10 Pi x^4] - x, 0 <= x <= 2}, {x}],15]|.  The
@@ -141,7 +141,7 @@ max_abs_error = max(abs(truefmin-fmin2))
 % [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 %     Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
 %     Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
-%     Integration Library (Version 2.3) [MATLAB Software], 2019. Available
+%     Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available
 %     from http://gailgithub.github.io/GAIL_Dev/
 
 ##### SOURCE END #####

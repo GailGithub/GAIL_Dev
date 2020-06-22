@@ -102,15 +102,15 @@
 %% Examples
 % *Example 1*
 %
-% Minimize function \(\exp(0.01 (x-0.5)^2)\) with default input parameters.
+% Minimize function $\exp(0.01 (x-0.5)^2)$ with default input parameters.
   f = @(x) exp(0.01*(x-0.5).^2); [fmin,out_param] = funmin_g(f)
 
 
 %%
 % *Example 2*
 %
-% Minimize function \(\exp(0.01 (x-0.5)^2)\) on \([-2,2]\) with error tolerance
-% \(10^{-7}\), cost budget \(1000000\), initial number of points \(10\).
+% Minimize function $\exp(0.01 (x-0.5)^2)$ on $[-2,2]$ with error tolerance
+% $10^{-7}$, cost budget $1000000$, initial number of points $10$.
 f = @(x) exp(0.01*(x-0.5).^2);
 [fmin,out_param] = funmin_g(f,-2,2,1e-7,10,1000000)
 
@@ -119,8 +119,8 @@ f = @(x) exp(0.01*(x-0.5).^2);
 %%
 % *Example 3*
 %
-% Minimize function \(\exp(0.01 (x-0.5)^2)\) on \([-13,8]\) with error tolerance
-% \(10^{-7}\), cost budget \(1000000\), initial number of points \(100\).
+% Minimize function $\exp(0.01 (x-0.5)^2)$ on $[-13,8]$ with error tolerance
+% $10^{-7}$, cost budget $1000000$, initial number of points $100$.
 clear in_param; in_param.a = -13; in_param.b = 8;
 in_param.abstol = 1e-7;
 in_param.ninit = 100;
@@ -131,8 +131,8 @@ in_param.nmax = 10^6;
 %%
 % *Example 4*
 %
-% Minimize function \(\exp(0.01 (x-0.5)^2)\) on \([-2,2]\) with error tolerance \(10^{-5}\),
-% cost budget \(1000000\), initial number of points \(64\).
+% Minimize function $\exp(0.01 (x-0.5)^2)$ on $[-2,2]$ with error tolerance $10^{-5}$,
+% cost budget $1000000$, initial number of points $64$.
 f=@(x) exp(0.01*(x-0.5).^2);
 [fmin,out_param] = funmin_g(f,'a',-2,'b',2,'ninit',64,'nmax',1e6,'abstol',1e-5)
 
@@ -163,7 +163,7 @@ f=@(x) exp(0.01*(x-0.5).^2);
 % [3] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 % Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
 % Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
-% Integration Library (Version 2.3) [MATLAB Software], 2019. Available
+% Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available
 % from http://gailgithub.github.io/GAIL_Dev/
 %
 % [4] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible

@@ -90,7 +90,7 @@
 %  default value is 1e4.
 %
 % * in_param.n1 --- initial sample size for estimating the sample mean,
-%  which should be a moderate large positive integer at least 30, the
+%  which should be a moderately large positive integer at least 30, the
 %  default value is 1e4.
 %
 % * in_param.tbudget --- the time budget to do the estimation, the
@@ -183,8 +183,8 @@
 %%
 % *Example 1*
 %
-% Estimate the integral with integrand \(f(x) = \sin(x)\) over the interval
-% \([1,2]\) with default parameters.
+% Estimate the integral with integrand $f(x) = \sin(x)$ over the interval
+% $[1,2]$ with default parameters.
 
  f = @(x) sin(x); interval = [1;2];
  Q = cubMC_g(f,interval,'uniform',1e-3,1e-2);
@@ -194,8 +194,8 @@
 %%
 % *Example 2*
 %
-% Estimate the integral with integrand \(f(x) = \exp(-x_1^2-x_2^2)\) over the
-% hyperbox \([0, 0; 1, 1]\), where \(x= [x_1, x_2]\) is a vector.
+% Estimate the integral with integrand $f(x) = \exp(-x_1^2-x_2^2)$ over the
+% hyperbox $[0, 0; 1, 1]$, where $x= [x_1, x_2]$ is a vector.
 
  f = @(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [0 0;1 1];
  Q = cubMC_g(f,hyperbox,'uniform',1e-3,0);
@@ -205,9 +205,9 @@
 %%
 % *Example 3*
 %
-% Estimate the integral with integrand \(f(x) = 2^d \prod(x_1 x_2 \cdots
-% x_d)+0.555\) over the hyperbox |[zeros(1,d); ones(1,d)]|, where \(x =
-% [x_1, x_2, \ldots, x_d]\) is a vector.
+% Estimate the integral with integrand $f(x) = 2^d \prod(x_1 x_2 \cdots
+% x_d)+0.555$ over the hyperbox |[zeros(1,d); ones(1,d)]|, where $x =
+% [x_1, x_2, \ldots, x_d]$ is a vector.
 
   d = 3; f = @(x) 2^d*prod(x,2)+0.555; hyperbox = [zeros(1,d); ones(1,d)];
   in_param.abstol = 1e-3;in_param.reltol=1e-3;
@@ -218,8 +218,8 @@
 %%
 % *Example 4*
 %
-% Estimate the integral with integrand \(f(x) = \exp(-x_1^2-x_2^2)\) in
-% \(R^2\), where \(x = [x_1, x_2]\) is a vector.
+% Estimate the integral with integrand $f(x) = \exp(-x_1^2-x_2^2)$ in
+% $R^2$, where $x = [x_1, x_2]$ is a vector.
 
  f = @(x) exp(-x(:,1).^2-x(:,2).^2); hyperbox = [-inf -inf;inf inf];
  Q = cubMC_g(f,hyperbox,'normal',0,1e-2);
@@ -229,8 +229,8 @@
 %%
 % *Example 5*
 %
-% Estimate the integral with integrand \(f(x) = x_1^2+x_2^2\) in the disk with
-% center \((0,0)\) and radius 1, where \(x = [x_1, x_2]\) is a vector.
+% Estimate the integral with integrand $f(x) = x_1^2+x_2^2$ in the disk with
+% center $(0,0)$ and radius 1, where $x = [x_1, x_2]$ is a vector.
 
  f = @(x) x(:,1).^2+x(:,2).^2; hyperbox = [0,0,1];
  Q = cubMC_g(f,hyperbox,'uniform ball','abstol',1e-3,'reltol',1e-3);
@@ -263,6 +263,10 @@
 % <p><a href="help_cubBayesLattice_g.html">cubBayesLattice_g</a>
 % </html>
 %
+% <html>
+% <p><a href="cubBayesNet_g.html">cubBayesNet_g</a>
+% </html>
+%
 %% References
 %
 % [1] Fred J. Hickernell, Lan Jiang, Yuewei Liu, and Art B. Owen, "Guaranteed
@@ -274,7 +278,7 @@
 % [2] Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 % Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
 % Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
-% Integration Library (Version 2.3) [MATLAB Software], 2019. Available
+% Integration Library (Version 2.3.1) [MATLAB Software], 2020. Available
 % from http://gailgithub.github.io/GAIL_Dev/
 %
 % [3] Sou-Cheng T. Choi, "MINRES-QLP Pack and Reliable Reproducible
