@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4018190.svg)](https://doi.org/10.5281/zenodo.4018190)
+
 Guaranteed Automatic Integration Library (GAIL)
 -----------------------------------------------
 GAIL Version 2.3.1, 2020.
