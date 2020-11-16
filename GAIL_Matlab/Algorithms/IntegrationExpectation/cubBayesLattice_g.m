@@ -628,30 +628,34 @@ classdef cubBayesLattice_g < handle
         end
       end
       n = length(ftilde);
-      [dLambda, Lambda] = obj.dKernel(xun,obj.order,a,obj.avoidCancelError, ...
+      [Lambda,Lambda_ring,dLambda] = obj.dKernel(xun,obj.order,a,obj.avoidCancelError, ...
         obj.kernType,true,obj.debugEnable);
       
       % ignore all zero eigenvalues
       if obj.GCV==true
         % GCV
         temp_gcv = abs(ftilde(Lambda~=0)./(Lambda(Lambda~=0))).^2 ;
-        deriv_part_num = abs(...
-          bsxfun(@times, ...
-          (temp_gcv)./(Lambda(Lambda~=0)), dLambda(Lambda~=0, :)));
+        % deriv_part_num = abs(...
+        %   bsxfun(@times, ...
+        %   (temp_gcv)./(Lambda(Lambda~=0)), dLambda(Lambda~=0, :)));
+        deriv_part_num = temp_gcv./Lambda(Lambda~=0);
         % (ftilde(Lambda~=0).^2)./(Lambda(Lambda~=0).^3), dLambda(Lambda~=0, :)));
         if obj.arbMean==true
-          deriv_part_num = sum(deriv_part_num(2:end, :), 1);
+          % deriv_part_num = sum(deriv_part_num(2:end, :), 1);
+          deriv_part_num = [0; deriv_part_num(2:end, :)];
           deriv_part_den = sum(temp_gcv(2:end));
         else
-          deriv_part_num = sum(deriv_part_num(1:end, :), 1);
+          % deriv_part_num = sum(deriv_part_num(1:end, :), 1);
+          deriv_part_num = deriv_part_num(1:end, :);
           deriv_part_den = sum(temp_gcv);
         end
         deriv_part = deriv_part_num/deriv_part_den;
-        det_part_num = sum(...
-          bsxfun(@times, ...
-          dLambda(Lambda~=0, :), (Lambda(Lambda~=0).^2)), 1);
+        % det_part_num = sum(...
+        %   bsxfun(@times, ...
+        %   dLambda(Lambda~=0, :), (Lambda(Lambda~=0).^2)), 1);
+        det_part_num = 1./Lambda(Lambda~=0);
         det_part = det_part_num/sum(1./Lambda(Lambda~=0));
-        lossD = -2*deriv_part + 2*det_part;
+        lossD = (-2*deriv_part + 2*det_part)'*dLambda;
         lossGCV = log(deriv_part_den) - 2*log(sum(1./Lambda(Lambda~=0)));
         lossObj = lossGCV;
       else
