@@ -660,25 +660,33 @@ classdef cubBayesLattice_g < handle
         lossObj = lossGCV;
       else
         % trace_part = sum(dLambda(Lambda~=0)./Lambda(Lambda~=0))/n;
-        trace_part = sum(bsxfun(@rdivide, dLambda(Lambda~=0,:), Lambda(Lambda~=0)), 1)/n;
+        % trace_part = sum(bsxfun(@rdivide, dLambda(Lambda~=0,:), Lambda(Lambda~=0)), 1)/n;
+        trace_part = 1./(n*Lambda(Lambda~=0));
         
         % default: MLE
         temp = abs(ftilde(Lambda~=0).^2)./(Lambda(Lambda~=0)) ;
         
-        deriv_part_num = abs(...
-          bsxfun(@times, ...
-          (abs(ftilde(Lambda~=0))./Lambda(Lambda~=0)).^2, dLambda(Lambda~=0, :)));
-
+        % deriv_part_num = abs(...
+        %   bsxfun(@times, ...
+        %   (abs(ftilde(Lambda~=0))./Lambda(Lambda~=0)).^2, dLambda(Lambda~=0, :)));
+        deriv_part_num = (abs(ftilde(Lambda~=0))./Lambda(Lambda~=0)).^2;
+        
         if obj.arbMean==true
-          deriv_part_num = sum(deriv_part_num(2:end, :), 1);
+          deriv_part_num = [0; deriv_part_num(2:end, :)];
           deriv_part_den = sum(temp(2:end));
         else
-          deriv_part_num = sum(deriv_part_num(1:end, :), 1);
+          % deriv_part_num = deriv_part_num(1:end, :);
           deriv_part_den = sum(temp);
         end
         
         deriv_part = deriv_part_num/deriv_part_den;
-        lossD = trace_part - deriv_part;
+        try
+          lossD = zeros(n, 1);
+          lossD(Lambda~=0) = (-deriv_part + trace_part);
+          lossD = lossD'*dLambda;
+        catch mErr
+          fprintf(mErr);
+        end
         lossDet = sum(log(abs(Lambda(Lambda~=0))))/n;
         lossMLE = lossDet + log(abs(deriv_part_den));
         lossObj = lossMLE;
