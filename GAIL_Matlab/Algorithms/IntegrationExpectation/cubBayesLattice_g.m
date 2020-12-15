@@ -833,6 +833,112 @@ classdef cubBayesLattice_g < handle
     end
     
     
+    
+    % plots the objective for the MLE of theta, useful for diagnozing any
+    % issues with the code
+    function [minTheta, hFigCost, hFigNormVec] = plotObjectiveFunc(obj)
+      
+      obj.visiblePlot= true;
+      % get(groot, 'factory')
+      % set(groot, 'defaultAxesTickLabelInterpreter','latex'); set(groot, 'defaultLegendInterpreter','latex');
+      
+      numM = length(obj.mvec);
+%       n = 2.^obj.mvec(end);
+      shift = rand(1,obj.dim);
+
+%       [xpts, xptsun] = cubBayesLattice_g.simple_lattice_gen(n,obj.dim,shift,true);
+%       fx = obj.ff(xpts);  % Note: periodization transform already applied
+        
+      %% plot ObjectiveFunction
+      lnTheta = -5:0.2:5;
+%       % build filename with path to store the plot
+%       plotFileName = sprintf('%s%s_Cost_d%d_r%d_%s_%s.png',...
+%         obj.figSavePath, obj.fName, obj.dim, obj.order, obj.ptransform, obj.stopCriterion);
+      
+      costMLE = zeros(numM,numel(lnTheta));
+      tstart = tic;
+      
+      % loop over all the m values
+      for iter = 1:numM
+        nii = 2^obj.mvec(iter);
+        
+        eigvalK = zeros(numel(lnTheta),nii);
+        % ftilde_iter = fft(bitrevorder(fx(1:nii))); %/nii;
+        
+        % [xlat,xpts_un,xlat_un,xpts]
+        % br_xun = bitrevorder(xpts(1:nii,:));
+        % br_xun = xptsun(1:nii,:);
+        [xlat, xpts_un, ~, xpts] = cubBayesLattice_g.simple_lattice_gen(nii,obj.dim,shift,true);
+        ftilde_iter = fft(obj.ff(xpts_un));
+        
+        tic
+        %par
+        for k=1:numel(lnTheta)
+          [costMLE(iter,k),eigvalK(k,:)] = ObjectiveFunction(obj, exp(lnTheta(k)),...
+            xpts_un,ftilde_iter);
+        end
+        toc
+        
+        if false
+        % Gaussian diagnosis for n < 8194, swtest does not work bigger 'n'
+        % values
+        if nii < (2^13)
+          [minVal,Index] = min(real(costMLE(iter,:)));
+          minTheta = exp(lnTheta(Index));
+          % if Index==numel(lnTheta)
+            Index = find(lnTheta==0);
+          % end
+
+          lambda = eigvalK(Index,:)';
+          % figure(); loglog(sort(lambda, 'descend'), 'o', 'MarkerSize',2);
+          % figure(); loglog(lambda, 'o', 'MarkerSize',2);
+          if any(lambda <=0)
+            warning('lambda cannot be zero or negative')
+          end
+          [hFigNorm, fileName] = CheckGaussianDensity(obj, (ftilde_iter), lambda);
+          hFigNormVec{iter} = {hFigNorm, fileName};
+        end
+        end
+      end
+      
+      toc(tstart)
+      
+      if obj.visiblePlot==false
+        hFigCost = figure('visible','off');
+      else
+        hFigCost = figure();
+      end
+      
+      % semilogx
+      semilogx(exp(lnTheta),real(costMLE));
+      set(hFigCost, 'units', 'inches', 'Position', [0 0 14 9])
+      xlabel('Shape param, \(\theta\)', 'interpreter', 'latex')
+      ylabel('MLE Cost, \( \log \frac{y^T K_\theta^{-1}y}{[\det(K_\theta^{-1})]^{1/n}} \)', 'interpreter', 'latex')
+      axis tight;
+      if obj.arbMean
+        mType = '\(m \neq 0\)'; % arb mean
+      else
+        mType = '\(m = 0\)'; % zero mean
+      end
+      title(sprintf('%s d=%d r=%d Tx=%s %s', obj.fName, obj.dim, obj.order, obj.ptransform, mType), 'interpreter', 'latex');
+      [minVal,Index] = min(real(costMLE),[],2);
+      
+      % mark the min theta values found using fminbnd
+      minTheta = exp(lnTheta(Index));
+      hold on;
+      semilogx(minTheta, minVal, '.');
+      if exist('aMLEAll', 'var')
+        semilogx(obj.aMLEAll, obj.lossMLEAll, '+');
+      end
+      temp = string(obj.mvec);
+      temp = strcat('\(2^{',temp,'}\)');
+      temp(end+1) = '\(\theta_{min_{true}}\)';
+      if exist('aMLEAll', 'var')
+        temp(end+1) = '\(\theta_{min_{est}}\)';
+      end
+      legend(temp,'location','best'); axis tight
+      % saveas(hFigCost, plotFileName)
+    end
   end
   
   methods(Static)
@@ -896,6 +1002,16 @@ classdef cubBayesLattice_g < handle
       Km1 = Kjm1; K = Kj;
     end
     
+    function g = truncated_series_(N, r)
+      tilde_g_0 = 0;
+      m = 1:(-1 + N/2);
+      tilde_g_h1 = N./abs(m).^(r);
+      m = (N/2):(-1 + N);
+      tilde_g_h2 = N./abs(N-m).^(r);
+      tilde_g = [tilde_g_0 tilde_g_h1 tilde_g_h2];
+      g = ifft(tilde_g)';
+    end
+    
     function g = truncated_series(N, r)
       tilde_g_0 = 0;
       m = 1:(-1 + N/2);
@@ -904,6 +1020,14 @@ classdef cubBayesLattice_g < handle
       tilde_g_h2 = N./abs(N-m).^(r);
       tilde_g = [tilde_g_0 tilde_g_h1 tilde_g_h2];
       g = ifft(tilde_g)';
+      
+      % using zeta function
+      crn0 = 2/(N^r);
+      k = 1:(N-1);
+      crnk = 1./((N-k).^r) + 1./(k.^r);
+      tilde_g_ = [crn0 crnk];
+      g_ = N*ifft(tilde_g_)';
+      % sum(abs(g - g_))
     end
     
     function c = truncated_series_kernel(x,r)
