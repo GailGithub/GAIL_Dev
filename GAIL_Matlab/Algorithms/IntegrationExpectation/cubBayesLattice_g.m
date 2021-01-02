@@ -423,7 +423,6 @@ classdef cubBayesLattice_g < handle
     % decides if the user-defined error threshold is met
     function [success,muhat,r] = stopping_criterion(obj, xpts, ftilde, iter, m)
       
-      tstart=tic;
       n=2^m;
       success = false;
       r = obj.order;
@@ -450,15 +449,15 @@ classdef cubBayesLattice_g < handle
         % Use d length shape parameters, one per dimension
         if obj.useGradient==true
           % using Matlab fminunc
-          theta0 = ones(1,obj.dim)*0.1;
+          theta0 = ones(1,obj.dim)*(-3);
           options = optimoptions('fminunc',...
-            'Display','off',...
+            ... % 'Display','iter', ... %'Display','off',...
             'TolX',1e-2, ...
             'Algorithm','trust-region',...
             'SpecifyObjectiveGradient',true);
           try
             [lnThetaOpt] = fminunc(...
-              @(phi)dObjectiveFunction(obj, exp(phi),xpts,ftilde), ...
+              @(phi)dObjectiveFunction(obj, exp(phi),obj.order,xpts,ftilde), ...
               theta0,options);
           catch mErr
             error('*** cubBayesLattice_g: Error when evaluating fminunc.');
@@ -467,7 +466,9 @@ classdef cubBayesLattice_g < handle
         else
           % Nelder Mead: gradient not required
           nm_start = tic;
-          theta0 = zeros(1,obj.dim)*0.1; %
+          theta0 = ones(1,obj.dim)*(-3); %
+          % , 'TolFun',10
+          % , 'MaxFunEvals',1000,'Display','iter'
           nmOptions = optimset('TolX',1e-2);
           [lnaMLE_] = fminsearch(@(lna) ...
             ObjectiveFunction(obj, exp(lna),xpts,ftilde), ...
@@ -558,8 +559,11 @@ classdef cubBayesLattice_g < handle
     % objective function to estimate shape parameter eta and order r
     % MLE : Maximum likelihood estimation
     % GCV : Generalized cross validation
-    function [loss,Lambda,Lambda_ring,RKHSnorm] = ObjectiveFunctionFmin(obj,...
+    function [loss,Lambda,Lambda_ring,RKHSnorm] = ObjectiveFunctionFmin_delete(obj,...
         a,b,xun,ftilde)
+      
+      % disp(a)
+      fudge = 100*eps;
       
       if length(a) > 1
         if size(a,1) > size(a,2)
@@ -576,7 +580,7 @@ classdef cubBayesLattice_g < handle
       % compute loss
       if obj.GCV==true
         % GCV
-        temp_gcv = abs(ftilde(Lambda~=0)./(Lambda(Lambda~=0))).^2 ;
+        temp_gcv = abs(ftilde(Lambda > fudge)./(Lambda(Lambda~=0))).^2 ;
         loss1 = 2*log(sum(1./Lambda(Lambda~=0)));
         loss2 = log(sum(temp_gcv(2:end)));
         % ignore all zero eigenvalues
@@ -599,7 +603,7 @@ classdef cubBayesLattice_g < handle
         
         % ignore all zero eigenvalues
         loss1 = sum(log(abs(Lambda(Lambda~=0))));
-        loss2 = n*log(abs(temp_1 + eps)); % add eps to avoid zero
+        loss2 = n*log(abs(temp_1)); %  + eps %add eps to avoid zero
         loss = loss1 + loss2;
       end
       
@@ -619,26 +623,33 @@ classdef cubBayesLattice_g < handle
     end
     
     
+    function [lossObj,Lambda,Lambda_ring,RKHSnorm] = ObjectiveFunctionFmin(obj,...
+        theta,order,xun,ftilde)
+       [lossObj,lossD,Lambda,Lambda_ring,RKHSnorm] = dObjectiveFunction(obj,theta,order,xun,ftilde);
+    end
+
+    
     % computes Gradient of the objective function
-    function [lossObj,lossD] = dObjectiveFunction(obj,a,xun,ftilde)
+    function [lossObj,lossD,Lambda,Lambda_ring,RKHSnorm] = dObjectiveFunction(obj,theta,order,xun,ftilde)
       
-      if length(a) > 1
-        if size(a,1) > size(a,2)
-          a = a';  % we need row vector
+      fudge = 100*eps;      
+      if length(theta) > 1
+        if size(theta,1) > size(theta,2)
+          theta = theta';  % we need row vector
         end
       end
       n = length(ftilde);
-      [Lambda,Lambda_ring,dLambda] = obj.dKernel(xun,obj.order,a,obj.avoidCancelError, ...
+      [Lambda,Lambda_ring,dLambda] = obj.dKernel(xun,order,theta,obj.avoidCancelError, ...
         obj.kernType,true,obj.debugEnable);
       
       % ignore all zero eigenvalues
       if obj.GCV==true
         % GCV
-        temp_gcv = abs(ftilde(Lambda~=0)./(Lambda(Lambda~=0))).^2 ;
+        temp_gcv = abs(ftilde(Lambda>fudge)./(Lambda(Lambda>fudge))).^2 ;
         % deriv_part_num = abs(...
         %   bsxfun(@times, ...
         %   (temp_gcv)./(Lambda(Lambda~=0)), dLambda(Lambda~=0, :)));
-        deriv_part_num = temp_gcv./Lambda(Lambda~=0);
+        deriv_part_num = temp_gcv./Lambda(Lambda>fudge);
         % (ftilde(Lambda~=0).^2)./(Lambda(Lambda~=0).^3), dLambda(Lambda~=0, :)));
         if obj.arbMean==true
           % deriv_part_num = sum(deriv_part_num(2:end, :), 1);
@@ -653,23 +664,29 @@ classdef cubBayesLattice_g < handle
         % det_part_num = sum(...
         %   bsxfun(@times, ...
         %   dLambda(Lambda~=0, :), (Lambda(Lambda~=0).^2)), 1);
-        det_part_num = 1./Lambda(Lambda~=0);
-        det_part = det_part_num/sum(1./Lambda(Lambda~=0));
+        det_part_num = 1./Lambda(Lambda>fudge);
+        det_part = det_part_num/sum(1./Lambda(Lambda>fudge));
         lossD = (-2*deriv_part + 2*det_part)'*dLambda;
-        lossGCV = log(deriv_part_den) - 2*log(sum(1./Lambda(Lambda~=0)));
+        lossGCV = log(deriv_part_den) - 2*log(sum(1./Lambda(Lambda>fudge)));
         lossObj = lossGCV;
+		
+		if obj.arbMean==true
+          RKHSnorm = sum(temp_gcv(2:end))/n;
+        else
+          RKHSnorm = sum(temp_gcv)/n;
+        end
       else
         % trace_part = sum(dLambda(Lambda~=0)./Lambda(Lambda~=0))/n;
         % trace_part = sum(bsxfun(@rdivide, dLambda(Lambda~=0,:), Lambda(Lambda~=0)), 1)/n;
-        trace_part = 1./(n*Lambda(Lambda~=0));
+        trace_part = 1./(n*Lambda(Lambda>fudge));
         
         % default: MLE
-        temp = abs(ftilde(Lambda~=0).^2)./(Lambda(Lambda~=0)) ;
+        temp = abs(ftilde(Lambda>fudge).^2)./(Lambda(Lambda>fudge)) ;
         
         % deriv_part_num = abs(...
         %   bsxfun(@times, ...
         %   (abs(ftilde(Lambda~=0))./Lambda(Lambda~=0)).^2, dLambda(Lambda~=0, :)));
-        deriv_part_num = (abs(ftilde(Lambda~=0))./Lambda(Lambda~=0)).^2;
+        deriv_part_num = (abs(ftilde(Lambda>fudge))./Lambda(Lambda>fudge)).^2;
         
         if obj.arbMean==true
           deriv_part_num = [0; deriv_part_num(2:end, :)];
@@ -682,20 +699,31 @@ classdef cubBayesLattice_g < handle
         deriv_part = deriv_part_num/deriv_part_den;
         try
           lossD = zeros(n, 1);
-          lossD(Lambda~=0) = (-deriv_part + trace_part);
+          lossD(Lambda>fudge) = (-deriv_part + trace_part);
           lossD = lossD'*dLambda;
         catch mErr
           fprintf(mErr);
         end
-        lossDet = sum(log(abs(Lambda(Lambda~=0))))/n;
+        lossDet = sum(log(abs(Lambda(Lambda>fudge))))/n;
         lossMLE = lossDet + log(abs(deriv_part_den));
         lossObj = lossMLE;
-        
-        if obj.debugEnable
-          cubBayesLattice_g.alertMsg(lossD, 'Inf', 'Imag', 'Nan');
-          cubBayesLattice_g.alertMsg(lossObj, 'Inf', 'Imag', 'Nan');
+		
+		if obj.arbMean==true
+          RKHSnorm = sum(temp(2:end))/n;
+          temp_1 = sum(temp(2:end));
+        else
+          RKHSnorm = sum(temp)/n;
+          temp_1 = sum(temp);
         end
-      end
+	
+	  end
+        
+	  if obj.debugEnable
+	    cubBayesLattice_g.alertMsg(RKHSnorm, 'Imag');		
+	    cubBayesLattice_g.alertMsg(lossD, 'Inf', 'Imag', 'Nan');
+	    cubBayesLattice_g.alertMsg(lossObj, 'Inf', 'Imag', 'Nan');
+        cubBayesLattice_g.alertMsg(Lambda, 'Imag');		
+	  end
       
     end
     
@@ -1012,7 +1040,7 @@ classdef cubBayesLattice_g < handle
       g = ifft(tilde_g)';
     end
     
-    function g = truncated_series(N, r)
+    function g_ = truncated_series(N, r)
       tilde_g_0 = 0;
       m = 1:(-1 + N/2);
       tilde_g_h1 = N./abs(m).^(r);
