@@ -56,7 +56,9 @@ for i = 1:nRep
   else % use Lattice points
     objCubBayes=cubBayesLattice_g(integrand,dim,inputArgs{:});
   end
-
+  
+  % [minTheta, hFigCost, hFigNormVec] = plotObjectiveFunc(objCubBayes);
+  
   [muhatVec(i),outVec(i)]=compInteg(objCubBayes);
 end
 timeVec = [outVec(:).time]';

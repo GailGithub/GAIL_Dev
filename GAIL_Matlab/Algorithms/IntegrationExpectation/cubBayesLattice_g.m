@@ -18,7 +18,7 @@
 %   reltol determines the accuracy of the estimation; however, if | I | is
 %   rather small, then abstol determines the accuracy of the estimation.
 %   Given the construction of our Lattices, d must be a positive integer
-%   with 1 <= dim <= 600. For higher dimensions, it is recommended to use 
+%   with 1 <= dim <= 600. For higher dimensions, it is recommended to use
 %   simpler periodization transformation like 'Baker'.
 %
 %   It is recommended to use COMPINTEG for estimating the integral
@@ -66,8 +66,8 @@
 %     alpha --- confidence level for a credible interval of Q. Default is 0.01
 %     mmin --- min number of samples to start with: 2^mmin. Default is 10
 %     mmax --- max number of samples allowed: 2^mmax. Default is 22
-%     stopCriterion -- stopping criterion to use. Supports three options 
-%                     1) MLE: Empirical Bayes, 
+%     stopCriterion -- stopping criterion to use. Supports three options
+%                     1) MLE: Empirical Bayes,
 %                     2) GCV: Generalized Cross Validation
 %                     3) full: Full Bayes
 %                     Default is MLE: Empirical Bayes
@@ -201,7 +201,7 @@ classdef cubBayesLattice_g < handle
     fName = 'None'; %name of the integrand
     figSavePath = ''; %path where to save he figures
     visiblePlot = false; %make plots visible
-    debugEnable = false; %enable debug prints
+    debugEnable = true; %enable debug prints
     gaussianCheckEnable = false; %enable plot to check Gaussian pdf
     avoidCancelError = true; % avoid cancellation error in stopping criterion
     
@@ -372,6 +372,7 @@ classdef cubBayesLattice_g < handle
         mnext=m-1;
         
         % Compute FFT on next set of new points
+        yy = obj.fft(bitrevorder(obj.gpuArray_(obj.ff(xnew))),m-1);
         ftildeNextNew = fft(obj.gpuArray_(obj.ff(xnew)));
         if obj.debugEnable
           cubBayesLattice_g.alertMsg(ftildeNextNew, 'Nan', 'Inf');
@@ -420,8 +421,35 @@ classdef cubBayesLattice_g < handle
       end
     end
     
+    function plot_obj_functions_dist(obj, xpts, ftilde)
+      %% Sample a function
+      a = [5 0 0 0];
+      d = 4;
+      %f = @(x) exp(cos((2*pi)* ((x-1/2)*a')));
+      % f = @(x) sum(max(x-1/2,0),2); %let this be your objection function
+      integrand = @(phi)dObjectiveFunction(obj, exp(phi),obj.order,xpts,ftilde);
+      n = 2^14;
+      xsample = gail.lattice_gen(1,n,d);
+      xsample = 6*(xsample - 0.5);  % range -3 to 3
+      y = zeros(n,1);
+      for i=1:n
+        x = xsample(i,:);
+        y(i) = integrand(x);
+      end
+      figH = figure();
+      ysort = sort(y);
+      u = ((1:n)'-1/2)/n;
+      plot(ysort,u)
+      xlabel('function values')
+      ylabel('probability function \(\le\)')
+      path = 'obj_function_dist.png';
+      saveas(figH, path)
+    end
+    
     % decides if the user-defined error threshold is met
     function [success,muhat,r] = stopping_criterion(obj, xpts, ftilde, iter, m)
+      
+      % plot_obj_functions_dist(obj, xpts, ftilde)
       
       n=2^m;
       success = false;
@@ -446,12 +474,12 @@ classdef cubBayesLattice_g < handle
           thetaOpt,bOpt,xpts,ftilde);
         
       elseif obj.oneTheta==false
+        theta0 = ones(1,obj.dim)*(3);
         % Use d length shape parameters, one per dimension
         if obj.useGradient==true
           % using Matlab fminunc
-          theta0 = ones(1,obj.dim)*(-3);
           options = optimoptions('fminunc',...
-            ... % 'Display','iter', ... %'Display','off',...
+            'Display','iter', ... %'Display','off',...
             'TolX',1e-2, ...
             'Algorithm','trust-region',...
             'SpecifyObjectiveGradient',true);
@@ -466,10 +494,9 @@ classdef cubBayesLattice_g < handle
         else
           % Nelder Mead: gradient not required
           nm_start = tic;
-          theta0 = ones(1,obj.dim)*(-3); %
           % , 'TolFun',10
-          % , 'MaxFunEvals',1000,'Display','iter'
-          nmOptions = optimset('TolX',1e-2);
+          % , 'MaxFunEvals',1000,
+          nmOptions = optimset('TolX',1e-2, 'Display','iter');
           [lnaMLE_] = fminsearch(@(lna) ...
             ObjectiveFunction(obj, exp(lna),xpts,ftilde), ...
             theta0,nmOptions);
@@ -625,21 +652,23 @@ classdef cubBayesLattice_g < handle
     
     function [lossObj,Lambda,Lambda_ring,RKHSnorm] = ObjectiveFunctionFmin(obj,...
         theta,order,xun,ftilde)
-       [lossObj,lossD,Lambda,Lambda_ring,RKHSnorm] = dObjectiveFunction(obj,theta,order,xun,ftilde);
+      [lossObj,lossD,Lambda,Lambda_ring,RKHSnorm] = dObjectiveFunction(obj,theta,order,xun,ftilde);
     end
-
+    
     
     % computes Gradient of the objective function
     function [lossObj,lossD,Lambda,Lambda_ring,RKHSnorm] = dObjectiveFunction(obj,theta,order,xun,ftilde)
       
-      fudge = 100*eps;      
+      % disp(theta)
+      % fmt=['' repmat(' %1.3e',1,numel(theta)) '\n']; fprintf(fmt,theta)
+      fudge = 100*eps;
       if length(theta) > 1
         if size(theta,1) > size(theta,2)
           theta = theta';  % we need row vector
         end
       end
       n = length(ftilde);
-      [Lambda,Lambda_ring,dLambda] = obj.dKernel(xun,order,theta,obj.avoidCancelError, ...
+      [Lambda,Lambda_ring,dLambda,lambdaFactor] = obj.dKernel(xun,order,theta,obj.avoidCancelError, ...
         obj.kernType,true,obj.debugEnable);
       
       % ignore all zero eigenvalues
@@ -669,8 +698,8 @@ classdef cubBayesLattice_g < handle
         lossD = (-2*deriv_part + 2*det_part)'*dLambda;
         lossGCV = log(deriv_part_den) - 2*log(sum(1./Lambda(Lambda>fudge)));
         lossObj = lossGCV;
-		
-		if obj.arbMean==true
+        
+        if obj.arbMean==true
           RKHSnorm = sum(temp_gcv(2:end))/n;
         else
           RKHSnorm = sum(temp_gcv)/n;
@@ -705,25 +734,25 @@ classdef cubBayesLattice_g < handle
           fprintf(mErr);
         end
         lossDet = sum(log(abs(Lambda(Lambda>fudge))))/n;
-        lossMLE = lossDet + log(abs(deriv_part_den));
+        lossMLE = lambdaFactor*lossDet + log(abs(deriv_part_den/lambdaFactor));
         lossObj = lossMLE;
-		
-		if obj.arbMean==true
-          RKHSnorm = sum(temp(2:end))/n;
-          temp_1 = sum(temp(2:end));
-        else
-          RKHSnorm = sum(temp)/n;
-          temp_1 = sum(temp);
-        end
-	
-	  end
         
-	  if obj.debugEnable
-	    cubBayesLattice_g.alertMsg(RKHSnorm, 'Imag');		
-	    cubBayesLattice_g.alertMsg(lossD, 'Inf', 'Imag', 'Nan');
-	    cubBayesLattice_g.alertMsg(lossObj, 'Inf', 'Imag', 'Nan');
-        cubBayesLattice_g.alertMsg(Lambda, 'Imag');		
-	  end
+        if obj.arbMean==true
+          RKHSnorm = lambdaFactor*sum(temp(2:end))/n;
+          temp_1 = lambdaFactor*sum(temp(2:end));
+        else
+          RKHSnorm = lambdaFactor*sum(temp)/n;
+          temp_1 = lambdaFactor*sum(temp);
+        end
+        
+      end
+      
+      if obj.debugEnable
+        cubBayesLattice_g.alertMsg(RKHSnorm, 'Imag');
+        cubBayesLattice_g.alertMsg(lossD, 'Inf', 'Imag', 'Nan');
+        cubBayesLattice_g.alertMsg(lossObj, 'Inf', 'Imag', 'Nan');
+        cubBayesLattice_g.alertMsg(Lambda, 'Imag');
+      end
       
     end
     
@@ -871,17 +900,17 @@ classdef cubBayesLattice_g < handle
       % set(groot, 'defaultAxesTickLabelInterpreter','latex'); set(groot, 'defaultLegendInterpreter','latex');
       
       numM = length(obj.mvec);
-%       n = 2.^obj.mvec(end);
+      %       n = 2.^obj.mvec(end);
       shift = rand(1,obj.dim);
-
-%       [xpts, xptsun] = cubBayesLattice_g.simple_lattice_gen(n,obj.dim,shift,true);
-%       fx = obj.ff(xpts);  % Note: periodization transform already applied
-        
+      
+      %       [xpts, xptsun] = cubBayesLattice_g.simple_lattice_gen(n,obj.dim,shift,true);
+      %       fx = obj.ff(xpts);  % Note: periodization transform already applied
+      
       %% plot ObjectiveFunction
       lnTheta = -5:0.2:5;
-%       % build filename with path to store the plot
-%       plotFileName = sprintf('%s%s_Cost_d%d_r%d_%s_%s.png',...
-%         obj.figSavePath, obj.fName, obj.dim, obj.order, obj.ptransform, obj.stopCriterion);
+      %       % build filename with path to store the plot
+      %       plotFileName = sprintf('%s%s_Cost_d%d_r%d_%s_%s.png',...
+      %         obj.figSavePath, obj.fName, obj.dim, obj.order, obj.ptransform, obj.stopCriterion);
       
       costMLE = zeros(numM,numel(lnTheta));
       tstart = tic;
@@ -908,24 +937,24 @@ classdef cubBayesLattice_g < handle
         toc
         
         if false
-        % Gaussian diagnosis for n < 8194, swtest does not work bigger 'n'
-        % values
-        if nii < (2^13)
-          [minVal,Index] = min(real(costMLE(iter,:)));
-          minTheta = exp(lnTheta(Index));
-          % if Index==numel(lnTheta)
+          % Gaussian diagnosis for n < 8194, swtest does not work bigger 'n'
+          % values
+          if nii < (2^13)
+            [minVal,Index] = min(real(costMLE(iter,:)));
+            minTheta = exp(lnTheta(Index));
+            % if Index==numel(lnTheta)
             Index = find(lnTheta==0);
-          % end
-
-          lambda = eigvalK(Index,:)';
-          % figure(); loglog(sort(lambda, 'descend'), 'o', 'MarkerSize',2);
-          % figure(); loglog(lambda, 'o', 'MarkerSize',2);
-          if any(lambda <=0)
-            warning('lambda cannot be zero or negative')
+            % end
+            
+            lambda = eigvalK(Index,:)';
+            % figure(); loglog(sort(lambda, 'descend'), 'o', 'MarkerSize',2);
+            % figure(); loglog(lambda, 'o', 'MarkerSize',2);
+            if any(lambda <=0)
+              warning('lambda cannot be zero or negative')
+            end
+            [hFigNorm, fileName] = CheckGaussianDensity(obj, (ftilde_iter), lambda);
+            hFigNormVec{iter} = {hFigNorm, fileName};
           end
-          [hFigNorm, fileName] = CheckGaussianDensity(obj, (ftilde_iter), lambda);
-          hFigNormVec{iter} = {hFigNorm, fileName};
-        end
         end
       end
       
@@ -1009,7 +1038,7 @@ classdef cubBayesLattice_g < handle
     
     % Computes modified kernel Km1 = K - 1
     % Useful to avoid cancellation error in the computation of (1 - n/\lambda_1)
-    function [Km1, K] = kernel_t(aconst, Bern)
+    function [Km1, K] = kernel_t_old(aconst, Bern)
       d = size(Bern, 2);
       if length(aconst) == 1
         theta = ones(1,d)*aconst;
@@ -1028,6 +1057,28 @@ classdef cubBayesLattice_g < handle
       end
       
       Km1 = Kjm1; K = Kj;
+    end
+    
+    function [Km1, K, thataFactor] = kernel_t(aconst, Bern)
+      d = size(Bern, 2);
+      if length(aconst) == 1
+        theta = ones(1,d)*aconst;
+      else
+        theta = aconst;  % Allow theta vary per dimension
+      end
+      
+      Kjm1 = Bern(:,1);  % Kernel at j-dim minus One
+      Kj = 1/theta(1) + Kjm1;  % Kernel at j-dim
+      
+      for j=2:d
+        Kjm1_prev = Kjm1; Kj_prev = Kj;  % save the Kernel at the prev dim
+        
+        Kjm1 = Bern(:,j).*Kj_prev + Kjm1_prev/theta(j);
+        Kj = 1/prod(theta(1:j)) + Kjm1;
+      end
+      
+      Km1 = Kjm1; K = Kj;
+      thataFactor = prod(theta);
     end
     
     function g = truncated_series_(N, r)
@@ -1067,7 +1118,7 @@ classdef cubBayesLattice_g < handle
     
     function [kernelFunc,constMult] = bernPolyFun(r)
       constMult = -(-1)^(r/2)*((2*pi)^r)/factorial(r);
-      % constMult = -(-1)^(b_order/2);
+      % constMult = -(-1)^(r/2);
       if r == 2
         bernPoly = @(x)(-x.*(1-x) + 1/6);
       elseif r == 4
@@ -1080,12 +1131,13 @@ classdef cubBayesLattice_g < handle
     
     % Computes gradient of the kernel w.r.t. shape parameter
     % dLambda : Eigenvalues of the gradient of the kernel
-    function [Lambda,Lambda_ring,dLambda] = dKernel(xun,order,a,avoidCancelError,...
+    function [Lambda,Lambda_ring,dLambda,aFactor] = dKernel(xun,order,a,avoidCancelError,...
         kernType,gradient,debugEnable)
       
       if kernType==1
         % Bernoulli polynomial order as per the equation
         [kernelFunc,constMult] = cubBayesLattice_g.bernPolyFun(order*2);
+        % constMult = 1;
       else
         r = order*2;
         constMult = 1;
@@ -1097,9 +1149,18 @@ classdef cubBayesLattice_g < handle
         kernFuncValues = kernelFunc(xun);
         % Computes C1m1 = C1 - 1
         % C1_new = 1 + C1m1 indirectly computed in the process
-        [C1m1] = cubBayesLattice_g.kernel_t(a*constMult, kernFuncValues);
+        if a > 15
+          [C1m1,C1_alt, aFactor] = cubBayesLattice_g.kernel_t(a*constMult, kernFuncValues);
+        else
+          [C1m1,C1_alt] = cubBayesLattice_g.kernel_t_old(a*constMult, kernFuncValues);
+          aFactor = 1;
+        end
         % eigenvalues must be real : Symmetric pos definite Kernel
         
+        aFactor = aFactor*max(C1m1);
+        C1_alt = C1_alt/max(C1m1);
+        C1m1 = C1m1/max(C1m1);
+        % Lambda_ring = real(fft(C1m1/max(C1m1)));
         Lambda_ring = real(fft(C1m1));
         if any(find(Lambda_ring < 0))
           Lambda_ring = abs(Lambda_ring);
@@ -1107,7 +1168,7 @@ classdef cubBayesLattice_g < handle
         
         % Lambda = real(fft(1 + C1m1));
         Lambda = Lambda_ring;
-        Lambda(1) = Lambda_ring(1) + length(Lambda_ring);
+        Lambda(1) = Lambda_ring(1) + length(Lambda_ring)/aFactor;
         
         if gradient==true
           if length(a) > 1
@@ -1132,6 +1193,7 @@ classdef cubBayesLattice_g < handle
           Lambda_direct = real(fft(C1_alt)); % Note: fft output unnormalized
           if sum(abs(Lambda_direct-Lambda)) > 1
             fprintf('Possible error: check Lambda_ring computation')
+            % Lambda = Lambda_direct;
           end
         end
       else
@@ -1187,7 +1249,7 @@ classdef cubBayesLattice_g < handle
     function [z] = get_lattice_gen_vec(d)
       % 600 dimensional 2^20 points generating vector from Dirks website exod2_base2_m20.txt
       z = [1, 433461, 315689, 441789, 501101, 146355, 88411, 215837, 273599, 151719, 258185, 357967, 96407, 203741, 211709, 135719, 100779, 85729, 14597, 94813, 422013, 484367, 355029, 123065, 467905, 41129, 298607, 375981, 256421, 279695, 164795, 256413, 267543, 505211, 225547, 50293, 97031, 86633, 203383, 427981, 221421, 465833, 329843, 212325, 467017, 214065, 98063, 128867, 63891, 426443, 244641, 56441, 357107, 199459, 169327, 407687, 154961, 64579, 436713, 322855, 435589, 220821, 72219, 344125, 315189, 105979, 421183, 212659, 26699, 491987, 310515, 344337, 443019, 174213, 244609, 5979, 85677, 148663, 514069, 172383, 238589, 458305, 460201, 487365, 454835, 452035, 55005, 517221, 85841, 434641, 387469, 24883, 154373, 145103, 416491, 252109, 509385, 296473, 248789, 297219, 119711, 252395, 188293, 23943, 264817, 242005, 26689, 51931, 490263, 155451, 365301, 445277, 311581, 306887, 331445, 208941, 385313, 307593, 359113, 67919, 351803, 335955, 326111, 57853, 52153, 84863, 158013, 272483, 419143, 252581, 372097, 177007, 145815, 350453, 412791, 435559, 387627, 35887, 48461, 389563, 68569, 118715, 250699, 183713, 29615, 168429, 292527, 86465, 450915, 239063, 23051, 347131, 138885, 243505, 201835, 269831, 265457, 496089, 273459, 276803, 225507, 148131, 87909, 115693, 45749, 3233, 194661, 329135, 90215, 104003, 27611, 437589, 422687, 19029, 284433, 348413, 289359, 418785, 293911, 358343, 85919, 501439, 462941, 301185, 292875, 242667, 408165, 137921, 329199, 308125, 48743, 122291, 362643, 90781, 448407, 25389, 78793, 362423, 239423, 280833, 55483, 43757, 138415, 395119, 175965, 253391, 462987, 50655, 67155, 142149, 314277, 452523, 364029, 323001, 105873, 231785, 329547, 517581, 64375, 180745, 30693, 321739, 259327, 523313, 123863, 446629, 112611, 134019, 442879, 516621, 469677, 271077, 83859, 195209, 385581, 3287, 261841, 16525, 243831, 505215, 37669, 275001, 118849, 475943, 56509, 239489, 35893, 31015, 458209, 292255, 94197, 279055, 7573, 233705, 339587, 396313, 310037, 371939, 494279, 261481, 2875, 51129, 204067, 40633, 459101, 226639, 89795, 464665, 439937, 388665, 277539, 370801, 438367, 73733, 166153, 200849, 250477, 148655, 445817, 375723, 373433, 154819, 367247, 462549, 382217, 269073, 15985, 206263, 507895, 335263, 251183, 236851, 285491, 371291, 20143, 471543, 334263, 397501, 52335, 122837, 160981, 332741, 341961, 320455, 144133, 410489, 440261, 274789, 83793, 353867, 310001, 161271, 28267, 400007, 469779, 351385, 158419, 301117, 234521, 260047, 312511, 213851, 332001, 3699, 518163, 119209, 329387, 149889, 485193, 505407, 326067, 149541, 102343, 441707, 499551, 501199, 77817, 355999, 128165, 396261, 247463, 9733, 481107, 411379, 479917, 84085, 380091, 489765, 504237, 47847, 496129, 343905, 496621, 498123, 270835, 459931, 314289, 89077, 505051, 11647, 26765, 349111, 357217, 493937, 179089, 300189, 143621, 205639, 244475, 303281, 180189, 70443, 301471, 17853, 17121, 243179, 377849, 209079, 167565, 357373, 309503, 367039, 136041, 247861, 226573, 63631, 344345, 256401, 138305, 271675, 354845, 420971, 442981, 225321, 342755, 427957, 493767, 488177, 141063, 224621, 9439, 217623, 242451, 508557, 379609, 202291, 266555, 452509, 379789, 89867, 519873, 163115, 237191, 235291, 149683, 187821, 508801, 425951, 239141, 284505, 498919, 493857, 97373, 92147, 492967, 302591, 225277, 16947, 275043, 322807, 377713, 408445, 187103, 185133, 505963, 386109, 96301, 470963, 407939, 6601, 409277, 5031, 128747, 393271, 415197, 114049, 223999, 99373, 482183, 504981, 295837, 34235, 40765, 408397, 216741, 422925, 496079, 300813, 277283, 312489, 368009, 161369, 362997, 6663, 509953, 387903, 97597, 238917, 378851, 190545, 430029, 204931, 466553, 293441, 327939, 183495, 463331, 422655, 428099, 20715, 477503, 465937, 270399, 139589, 129581, 215571, 299645, 125221, 23345, 229345, 138059, 521769, 14731, 318159, 190173, 361381, 485577, 512807, 268009, 185937, 210939, 86965, 113005, 296923, 85753, 381527, 196325, 274565, 182689, 200951, 117371, 489747, 19521, 426587, 168393, 486039, 220941, 392473, 344051, 412275, 501127, 434941, 85569, 406757, 371643, 470783, 466117, 170707, 473019, 494155, 411809, 13371, 202745, 23597, 25621, 64351, 508445, 204947, 38279, 264269, 230499, 405605, 68513, 414481, 301849, 6815, 406425, 62881, 174349, 505503, 329037, 104357, 113815, 137669, 181689, 493057, 296191, 135279, 236891, 82135, 371269, 483993, 394407, 372929, 139823, 114515, 416815, 260309, 489593, 156763, 21523, 189285, 308129, 155369, 213557, 298023, 391439, 379245, 409109, 229765, 28521, 464087, 470911, 435965, 201451, 64371, 370499, 276377, 331635, 196813, 379415, 229547, 430067, 137053, 312839, 390385, 77155, 163911, 514381, 487453];
-
+      
       z = z(1:d);
     end
     
@@ -1229,6 +1291,20 @@ classdef cubBayesLattice_g < handle
         end
       else
         q=0;
+      end
+    end
+    
+    function y = fft(y,mmin)
+      for l=0:mmin-1
+        nl=2^l;
+        nmminlm1=2^(mmin-l-1);
+        ptind=repmat([true(nl,1); false(nl,1)],nmminlm1,1);
+        coef=exp(-2*pi()*sqrt(-1)*(0:nl-1)'/(2*nl));
+        coefv=repmat(coef,nmminlm1,1);
+        evenval=y(ptind);
+        oddval=y(~ptind);
+        y(ptind)=(evenval+coefv.*oddval);
+        y(~ptind)=(evenval-coefv.*oddval);
       end
     end
     

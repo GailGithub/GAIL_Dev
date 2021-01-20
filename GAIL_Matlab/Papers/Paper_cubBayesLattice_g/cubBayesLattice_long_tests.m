@@ -15,7 +15,7 @@ if exist(figSavePath,'dir')==false
   mkdir(figSavePath);
 end
 
-visiblePlot=false;
+visiblePlot=true;
 
 % temporarily avoid figures to be displayed in matlab
 if visiblePlot==false
@@ -24,13 +24,16 @@ else
   set(0,'DefaultFigureVisible','on')
 end
 
+format short e
+format long
 rng(202326) % initialize random number generation to enable reproducability
 
 stopAtTol = true;
 alpha = 0.01;
 nRepAuto = 100;
-oneTheta = false;
-useGradient = true;
+oneTheta = true; useGradient = false;  % default
+% oneTheta = false; useGradient = true;  % gradient descent with multi-theta
+% oneTheta = false; useGradient = false;  % fminsearch with multi-theta
 
 % initialize with a template
 clear testFunArgs
@@ -38,20 +41,23 @@ testFunArgs(9)=struct('fName','','dim',2,'order',2,'varTx','',...
   'sampling','','arbMean',true,'stopCriterion','');
 
 % template of input arguments
-testFunArgs(2)=struct('fName','MVN','dim',2,'order',2,'varTx','C2sin',...
-  'sampling','Lattice','arbMean',true,'stopCriterion','GCV');  % MVN d=3 transformed to Genz d=2
-testFunArgs(1)=struct('fName','Keister','dim',4,'order',2,'varTx','C1sin',...
-  'sampling','Lattice','arbMean',true,'stopCriterion','GCV');
-testFunArgs(3)=struct('fName','optPrice','dim',12,'order',1,'varTx','Baker',...
-  'sampling','Lattice','arbMean',true,'stopCriterion','GCV');
+testFunArgs(3)=struct('fName','MVN','dim',2,'order',2,'varTx','C2sin',...
+  'sampling','Lattice','arbMean',true,'stopCriterion','full');  % MVN d=3 transformed to Genz d=2
+testFunArgs(2)=struct('fName','Keister','dim',4,'order',2,'varTx','C1sin',...
+  'sampling','Lattice','arbMean',true,'stopCriterion','full');
+testFunArgs(1)=struct('fName','optPrice','dim',4,'order',1,'varTx','Baker',... % 12
+  'sampling','Lattice','arbMean',true,'stopCriterion','full'); % 'GCV'
+
+% testFunArgs(1)=struct('fName','Exp(cos)','dim',4,'order',2,'varTx','none',...
+%   'sampling','Lattice','arbMean',true,'stopCriterion','full');
 
 for i=1:3
   testFunArgs(i+3)=testFunArgs(i);
-  testFunArgs(i+3).stopCriterion='full';
+  testFunArgs(i+3).stopCriterion='MLE';
 end
 for i=1:3
   testFunArgs(i+6)=testFunArgs(i);
-  testFunArgs(i+6).stopCriterion='MLE';
+  testFunArgs(i+6).stopCriterion='GCV';  % 'GCV';  %  'full', 'MLE'
 end
 
 for testFunArg=testFunArgs(1:end)
@@ -59,6 +65,9 @@ for testFunArg=testFunArgs(1:end)
   stopCrit=testFunArg.stopCriterion;
   fName = testFunArg.fName;
   fprintf('Integrand: %s', fName)
+  if strcmp(fName, 'optPrice')
+    % continue
+  end
   
   tstart=tic;
   muhatVec = [];

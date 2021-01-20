@@ -15,11 +15,13 @@ end
 %% Parameters for the Asian option, Pierre's Example
 absTol = 1e-2;
 relTol = 0;
-inp.timeDim.timeVector = 1/12:1/12:1; %weekly monitoring for one quarter
+numInterval = 8;
+% inp.timeDim.timeVector = 1/12:1/12:1; %weekly monitoring for one quarter
+inp.timeDim.timeVector = 1/numInterval:1/numInterval:1; %weekly monitoring for one quarter
 inp.assetParam.initPrice = 100; %initial stock price
 inp.assetParam.interest = 0.05; %risk-free interest rate
 inp.assetParam.volatility = 0.5; %volatility
-inp.payoffParam.strike = 100; %strike price
+inp.payoffParam.strike = 200;  % 100; %strike price
 inp.priceParam.absTol = absTol; %absolute tolerance of a penny
 inp.priceParam.relTol = relTol; %zero relative tolerance
 inp.priceParam.cubMethod = 'Sobol'; %Sobol sampling
@@ -66,6 +68,8 @@ for i =  1:nRepAuto
   else % use Lattice points
     obj=cubBayesLattice_g(integrand,dim,inputArgs{:});
   end
+
+  % [minTheta, hFigCost] = plotObjectiveFunc(obj);
 
   [muAsianCallBayesAuto(i),outCallBayes(i)] = compInteg(obj);
 end
