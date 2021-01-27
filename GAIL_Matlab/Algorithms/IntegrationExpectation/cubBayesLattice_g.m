@@ -372,7 +372,7 @@ classdef cubBayesLattice_g < handle
         mnext=m-1;
         
         % Compute FFT on next set of new points
-        yy = obj.fft(bitrevorder(obj.gpuArray_(obj.ff(xnew))),m-1);
+        % yy = obj.fft(bitrevorder(obj.gpuArray_(obj.ff(xnew))),m-1);
         ftildeNextNew = fft(obj.gpuArray_(obj.ff(xnew)));
         if obj.debugEnable
           cubBayesLattice_g.alertMsg(ftildeNextNew, 'Nan', 'Inf');
@@ -508,7 +508,7 @@ classdef cubBayesLattice_g < handle
       else
         % Use one shape parameter for all dimensions
         % bounded search
-        lnaRange = [-5,5];
+        lnaRange = [-5,5];  %[-5,0];  % 
         lnaMLE = fminbnd(@(lna) ...
           ObjectiveFunction(obj, exp(lna),xpts,ftilde), ...
           lnaRange(1),lnaRange(2),optimset('TolX',1e-2));
@@ -733,16 +733,16 @@ classdef cubBayesLattice_g < handle
         catch mErr
           fprintf(mErr);
         end
-        lossDet = sum(log(abs(Lambda(Lambda>fudge))))/n;
-        lossMLE = lambdaFactor*lossDet + log(abs(deriv_part_den/lambdaFactor));
+        lossDet = sum(log(abs(lambdaFactor*Lambda(Lambda>fudge))))/n;
+        lossMLE = lossDet + log(abs(deriv_part_den/lambdaFactor));
         lossObj = lossMLE;
         
         if obj.arbMean==true
-          RKHSnorm = lambdaFactor*sum(temp(2:end))/n;
-          temp_1 = lambdaFactor*sum(temp(2:end));
+          RKHSnorm = (1/lambdaFactor)*sum(temp(2:end))/n;
+          temp_1 = (1/lambdaFactor)*sum(temp(2:end));
         else
-          RKHSnorm = lambdaFactor*sum(temp)/n;
-          temp_1 = lambdaFactor*sum(temp);
+          RKHSnorm = (1/lambdaFactor)*sum(temp)/n;
+          temp_1 = (1/lambdaFactor)*sum(temp);
         end
         
       end
@@ -753,6 +753,8 @@ classdef cubBayesLattice_g < handle
         cubBayesLattice_g.alertMsg(lossObj, 'Inf', 'Imag', 'Nan');
         cubBayesLattice_g.alertMsg(Lambda, 'Imag');
       end
+      Lambda = Lambda*lambdaFactor;
+      Lambda_ring = Lambda_ring*lambdaFactor;
       
     end
     
@@ -1157,9 +1159,9 @@ classdef cubBayesLattice_g < handle
         end
         % eigenvalues must be real : Symmetric pos definite Kernel
         
-        aFactor = aFactor*max(C1m1);
-        C1_alt = C1_alt/max(C1m1);
-        C1m1 = C1m1/max(C1m1);
+        aFactor = aFactor*max(abs(C1m1));
+        C1_alt = C1_alt/max(abs(C1m1));
+        C1m1 = C1m1/max(abs(C1m1));
         % Lambda_ring = real(fft(C1m1/max(C1m1)));
         Lambda_ring = real(fft(C1m1));
         if any(find(Lambda_ring < 0))
