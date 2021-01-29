@@ -508,7 +508,7 @@ classdef cubBayesLattice_g < handle
       else
         % Use one shape parameter for all dimensions
         % bounded search
-        lnaRange = [-5,5];  %[-5,0];  % 
+        lnaRange = [-5,0];  % [-5,5];  %
         lnaMLE = fminbnd(@(lna) ...
           ObjectiveFunction(obj, exp(lna),xpts,ftilde), ...
           lnaRange(1),lnaRange(2),optimset('TolX',1e-2));
@@ -836,9 +836,9 @@ classdef cubBayesLattice_g < handle
             'The given input f should be a function handle.\n' );
         end
         
-        if obj.dim>22
+        if obj.dim>100
           error('GAIL:cubBayesLattice_g:dim_invalid',...
-            'Integrand dimension=%d, is not implemented; max allowed is 22.\n', ...
+            'Integrand dimension=%d, is not implemented; max allowed is 100.\n', ...
             obj.dim);
         end
         
