@@ -7,9 +7,7 @@ if strcmp(out_param.measure,'uniform') %uniform measure
         newf=oldf;
     else %transform points and integrand
         bmina=b-a; %hyperbox width
-        volbox=prod(bmina); %volume of the hyperbox
-        newf=@(x) oldf(x.*repmat(bmina,size(x,1),1)+repmat(a,size(x,1),1))...
-            .*volbox;
+        newf=@(x) oldf(x.*repmat(bmina,size(x,1),1)+repmat(a,size(x,1),1));
         %stretch and shift, then multiply by volume
     end
 end
