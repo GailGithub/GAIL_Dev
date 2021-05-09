@@ -7,11 +7,10 @@
 %   Paper_cubLattice_g      	 	- output files of cubLattice_g paper
 %   Paper_cubSobol_g        	 	- output files of cubSobol_g paper
 %   Paper_cubBayesLattice_g 	 	- output files of cubBayesLattice_g paper
-%   TraubPaperOutput        	 	- output files of Traub paper	
+%   TraubPaperOutput        	 	- output files of Traub paper
 %   WorkoutFunappxOutput    	 	- output files of funappx_g workouts
 %   WorkoutIntegralOutput   	 	- output files of integral_g workouts
-%   gail_daily_tests-2020-06-20.out  - daily test result
-%   gail_tests-2020-06-20-04-04-51_MatlabVer9-80.txt	 
+%   gail_tests-2021-05-08-12-44-19_MatlabVer9-10-1.txt
 							- fast test result
-%   gail_workouts-2020-06-20-04-30-17_MatlabVer9-30.txt	 
+%   gail_workouts-2021-05-08-12-52-14_MatlabVer9-10-1
 							- workout result

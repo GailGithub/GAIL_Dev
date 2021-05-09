@@ -1,6 +1,6 @@
 Guaranteed Automatic Integration Library (GAIL)
 -----------------------------------------------
-GAIL Version 2.3, 2019.
+GAIL Version 2.3.2, 2021.
 
 See LICENSE.m for copyright and disclaimer. Refer to ReleaseNotes.m for
 what is new in this version.
@@ -35,7 +35,7 @@ Please cite the following software, papers, and materials:
 Sou-Cheng T. Choi, Yuhan Ding, Fred J. Hickernell, Lan Jiang, Lluis
 Antoni Jimenez Rugama, Da Li, Jagadeeswaran Rathinavel, Xin Tong, Kan
 Zhang, Yizhi Zhang, and Xuan Zhou, GAIL: Guaranteed Automatic
-Integration Library (Version 2.3) [MATLAB Software], 2019. Available from
+Integration Library (Version 2.3.1) [MATLAB Software], 2021. Available from
 http://gailgithub.github.io/GAIL_Dev/
 (this software)
 
@@ -176,7 +176,7 @@ Detailed documentation is available at GAIL_Matlab/Documentation.
 General Usage Notes
 -------------------
 
-GAIL version 2.3 includes the following eight algorithms:
+GAIL version 2.3.2 includes the following ten algorithms:
 
 1.  funappx_g: One-dimensional function approximation on bounded interval
 
@@ -196,7 +196,9 @@ for d-dimensional integration
 
 8. cubBayesLattice_g: Bayesian cubature method for d-dimensional integration
 
-9.  meanMC_CLT: Monte Carlo method with Central Limit Theorem (CLT)
+9. cubBayesNet_g: Bayesian cubature method for d-dimensional integration using Sobol points
+
+10. meanMC_CLT: Monte Carlo method with Central Limit Theorem (CLT)
 confidence intervals for estimating mean of a random variable
 
 
@@ -222,7 +224,7 @@ Installation Instruction
 
 Alternatively, you could do this:
 
-1.  Download DownloadInstallGail_2_3.m and put it where you want
+1.  Download DownloadInstallGail_2_3_2.m and put it where you want
     GAIL to be installed.
 
 2.  Execute it in MATLAB.
