@@ -17,7 +17,7 @@ GAIL is a suite of algorithms for integration problems in one and many dimension
 
 ## News
 
-* <span style="color:black">GAIL version 2.3.2 was released on May 8, 2021 (Mother's Day weekend)</span>
+* <span style="color:black">GAIL version 2.3.2 was released on May 9, 2021 (Mother's Day)</span>
 
 * <span style="color:black">GAIL version 2.3.1 was released on June 21, 2020 (Father's Day)</span>
 
