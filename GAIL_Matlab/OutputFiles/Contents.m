@@ -1,6 +1,7 @@
 % OUTPUTFILES
 %
 % Folders
+%   GAIL_PEARC2019_Output        - outputs of reproducing scripts
 %   MC_StoppingCriteriaOutput    	- output files of stopping criteria paper
 %   MCQMC2012PaperOutput    	 	- output files of MCQMC2012 paper
 %   Paper_cubBayesLattice_g      	- output files of cubBayesLattice_g paper
