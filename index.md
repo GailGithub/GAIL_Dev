@@ -11,7 +11,7 @@ GAIL is a suite of algorithms for integration problems in one and many dimension
 
 
 <a href="https://github.com/GailGithub/GAIL_Dev/archive/refs/tags/v2.3.2.zip"><img hspace="40" src="https://raw.githubusercontent.com/GailGithub/GAIL_Dev/gh-pages/downloadzip.png"></a>
-<a href="http://www.math.iit.edu/~Meshfree-methods-seminar/GAIL/DownloadInstallGail_2_3_2.m"><img hspace="5" src="https://raw.githubusercontent.com/GailGithub/GAIL_Dev/gh-pages/downloadscript.png"></a>
+<a href="https://raw.githubusercontent.com/GailGithub/GAIL_Dev/develop/DevelopOnly/DownloadInstallGail_2_3_2.m"><img hspace="5" src="https://raw.githubusercontent.com/GailGithub/GAIL_Dev/gh-pages/downloadscript.png"></a>
 
 *To view the user guide, please see <em><a href="https://drive.google.com/file/d/1rkIuhazypLq--emi9GCAPCesmC3x3DRS/view?usp=sharing">here</a></em>.*
 
