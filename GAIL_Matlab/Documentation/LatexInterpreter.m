@@ -4,7 +4,7 @@ function LatexInterpreter
 
 %% From https://www.mathworks.com/matlabcentral/answers/183311-setting-default-interpreter-to-latex?s_tid=mlc_ans_email_view#answer_803656
 
-list_factory = fieldnames(get(groot,'factory ')); 
+list_factory = fieldnames(get(groot,'factory')); 
 index_interpreter = find(contains(list_factory,'Interpreter'));
 
 for i = 1:length(index_interpreter) 
